@@ -1,18 +1,19 @@
-package service;
+package com.example.service;
 
-import model.Fortune;
+import com.example.model.Fortune;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 public class FortuneService {
-    private static final String FILE_NAME = "fortunes.txt";
+    private static final String FILE_NAME = "/fortunes.txt";
     private static final String SEPARATOR = "\\|";
 
     private final List<Fortune> fortunes;
@@ -23,30 +24,32 @@ public class FortuneService {
     }
 
     private List<Fortune> loadFortunes() {
-        Path path = Paths.get(FILE_NAME);
-        if (!Files.exists(path)) {
-            System.out.println("⚠️ 未找到 " + FILE_NAME + "，使用默认运势");
+        InputStream input = getClass().getResourceAsStream(FILE_NAME);
+        if (input == null) {
+            System.out.println("⚠️ 未找到 classpath 资源 " + FILE_NAME + "，使用默认运势");
             return defaultFortunes();
         }
 
         List<Fortune> loaded = new ArrayList<>();
-        try {
-            List<String> lines = Files.readAllLines(path);
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i).trim();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
+            String line;
+            int lineNumber = 0;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                line = line.trim();
                 if (line.isEmpty()) {
                     continue;
                 }
                 String[] parts = line.split(SEPARATOR, 2);
                 if (parts.length != 2) {
-                    System.out.println("⚠️ 第 " + (i + 1) + " 行格式错误，已跳过：" + line);
+                    System.out.println("⚠️ 第 " + lineNumber + " 行格式错误，已跳过：" + line);
                     continue;
                 }
                 try {
                     int level = Integer.parseInt(parts[1].trim());
                     loaded.add(new Fortune(parts[0].trim(), level));
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠️ 第 " + (i + 1) + " 行星级不是数字，已跳过：" + line);
+                    System.out.println("⚠️ 第 " + lineNumber + " 行星級不是数字，已跳过：" + line);
                 }
             }
         } catch (IOException e) {

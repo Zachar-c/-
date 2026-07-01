@@ -1,11 +1,11 @@
-package controller;
+package com.example.controller;
 
 import com.sun.net.httpserver.HttpExchange;
-import service.FortuneService;
+import com.example.model.Fortune;
+import com.example.service.FortuneService;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import model.Fortune;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;

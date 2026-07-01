@@ -2,6 +2,33 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.1.0] - 2026-07-01
+
+### 改造
+- 项目升级为 Maven 标准工程结构
+- 源码迁移至 `src/main/java/com/example/`
+- `fortunes.txt` 迁移至 `src/main/resources/`，通过 classpath 加载
+- 包名统一为 `com.example.controller/service/model`
+- 新增 `pom.xml`，使用 maven-shade-plugin 打包可执行 jar
+- `run.sh` 改用本地 `mvnd` 构建，自动输出 `target/fortune-app-1.0.0.jar`
+
+### 项目结构
+```
+fortune-app/
+├── pom.xml
+├── run.sh
+├── CHANGELOG.md
+├── .gitignore
+└── src/
+    └── main/
+        ├── java/com/example/
+        │   ├── Main.java
+        │   ├── controller/FortuneController.java
+        │   ├── service/FortuneService.java
+        │   └── model/Fortune.java
+        └── resources/fortunes.txt
+```
+
 ## [1.0.0] - 2026-07-01
 
 ### 新增
