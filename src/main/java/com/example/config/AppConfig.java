@@ -15,6 +15,11 @@ public class AppConfig {
         load();
     }
 
+    public AppConfig(int port, String dataFile) {
+        properties.setProperty("server.port", String.valueOf(port));
+        properties.setProperty("fortune.data.file", dataFile);
+    }
+
     private void load() {
         // 1. 加载 classpath 内置配置
         try (InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {

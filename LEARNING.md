@@ -138,7 +138,7 @@
 
 ### 对应 fortune-app 内容
 - `application.properties`：端口、数据路径外置 ✅
-- JUnit 5 + Mockito：测试 service 层
+- JUnit 5 + Mockito：测试 service 层 ✅
 - SLF4J + Logback：替换 `System.out.println`
 - SQLite / H2：替代文本文件
 - Docker / CI：打包部署
@@ -148,6 +148,10 @@
 - [ ] 能说明配置优先级：外部 > 内置 > 默认值
 - [ ] 能使用 `java.util.Properties` 读取配置文件
 - [ ] 能独立新增一个配置项并正确加载
+- [ ] 能解释单元测试的作用，并写出一个 JUnit 5 测试方法
+- [ ] 能理解 `@BeforeEach`、`@Test`、`@TempDir` 的用法
+- [ ] 能说出至少 3 个 JUnit 断言方法及其使用场景
+- [ ] 能解释为什么测试要隔离，避免互相影响
 - [ ] 能写出 RED-GREEN-REFACTOR 的 TDD 流程
 - [ ] 能解释日志级别 DEBUG/INFO/WARN/ERROR 的使用场景
 - [ ] 能设计一张简单的数据库表

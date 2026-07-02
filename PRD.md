@@ -34,6 +34,7 @@
 | 前端 | HTML5 / CSS3 / 原生 JS |
 | 设计指导 | `frontend-design` skill（Anthropics） |
 | 配置管理 | `application.properties`，支持外部覆盖内置 |
+| 单元测试 | JUnit 5 + Mockito |
 
 ## 3. 项目结构
 
@@ -176,6 +177,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 
 - 使用本地 mvnd：`/c/DevEnv/04_Language_Envs/Java/maven-mvnd-1.0.6-windows-amd64/bin/mvnd.exe`
 - 打包命令：`mvnd clean package`
+- 测试命令：`mvnd test`
 - 输出 jar：`target/fortune-app-1.0.0.jar`
 - 可执行 jar，包含所有依赖（shade 插件）
 
@@ -184,6 +186,17 @@ curl -X DELETE http://localhost:8080/fortune/34
 - 使用 Git 管理
 - 每次重要变更需更新 `CHANGELOG.md`
 - 忽略文件：`.gitignore` 中已配置 `target/`、IDE 文件、`.class`、`dependency-reduced-pom.xml`
+
+### 5.5 单元测试
+
+- 测试框架：JUnit 5 + Mockito
+- 测试目录：`src/test/java/`
+- 当前测试覆盖：`FortuneService`
+- 测试原则：
+  - 每个测试验证一个明确行为
+  - 使用 `@TempDir` 隔离文件系统副作用
+  - 边界条件必须覆盖（负数、空值、越界等）
+- 运行方式：`mvnd test`
 
 ---
 
@@ -205,7 +218,8 @@ curl -X DELETE http://localhost:8080/fortune/34
 | 1.2.0 | 87568c9 | 统一 JSON 输出，引入 Gson，保留 emoji display |
 | 1.3.0 | cd907fe | 修复包目录结构，新增 CODESTYLE.md |
 | 1.4.0 | 5ac996a | 前端展示页面，使用 frontend-design skill 指导设计 |
-| 1.5.0 | - | 配置外置：application.properties 支持端口和数据路径配置 |
+| 1.5.0 | b87b164 | 配置外置：application.properties 支持端口和数据路径配置 |
+| 1.6.0 | - | 引入 JUnit 5 + Mockito，新增 FortuneServiceTest 单元测试 |
 
 ---
 

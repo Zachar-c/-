@@ -2,6 +2,33 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.6.0] - 2026-07-02
+
+### 新增
+- 引入 JUnit 5 和 Mockito 测试依赖
+- 新增 `FortuneServiceTest`：覆盖 service 层 10 个核心测试场景
+- 新增 `AppConfig` 测试友好构造方法：支持直接指定端口和数据文件路径
+
+### 测试覆盖
+- 随机运势返回非空且在列表中
+- 查询全部运势数量正确
+- 按星级筛选结果正确
+- 按 id 查询：有效 id 返回运势、越界返回 null
+- 添加运势：成功添加、空文本拒绝、非法星级拒绝、null 拒绝
+- 删除运势：成功删除、非法 id 拒绝
+
+### 改造
+- `pom.xml` 新增 JUnit 5（5.10.2）和 Mockito（5.11.0）依赖
+- `AppConfig` 新增 `AppConfig(int port, String dataFile)` 构造方法，便于测试注入
+- 测试使用 `@TempDir` 创建临时数据文件，避免污染生产数据
+
+### 教学价值
+- 理解单元测试的作用和写法
+- 掌握 JUnit 5 基础注解：`@Test`、`@BeforeEach`、`@TempDir`
+- 掌握常用断言：`assertEquals`、`assertTrue`、`assertFalse`、`assertNull`、`assertNotNull`
+- 理解测试隔离的重要性
+- 为后续严格 TDD 开发打基础
+
 ## [1.5.0] - 2026-07-02
 
 ### 新增
