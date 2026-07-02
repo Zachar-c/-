@@ -284,11 +284,6 @@
                 await sleep(200);
                 await typeLine(line4, data.display, 'result');
 
-                const starsLine = document.createElement('div');
-                starsLine.className = 'terminal-line stars';
-                starsLine.textContent = '🌟'.repeat(data.level);
-                terminal.appendChild(starsLine);
-
             } catch (err) {
                 await typeLine(line3, '> 错误：无法连接到服务器', 'danger');
                 await typeLine(line4, '> ' + err.message);
