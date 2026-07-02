@@ -1,6 +1,6 @@
 # fortune-app 产品需求文档（PRD）
 
-> 版本：1.2.0  
+> 版本：1.3.0  
 > 最后更新：2026-07-02  
 > 用途：作为需求与实现的唯一事实来源，方便新会话快速接手。
 
@@ -25,7 +25,7 @@
 | HTTP 服务 | `com.sun.net.httpserver`（JDK 内置） |
 | 构建工具 | Maven / mvnd |
 | JSON 序列化 | Gson 2.10.1 |
-| 数据存储 | 文本文件 `fortunes.txt`（classpath 资源） |
+| 数据存储 | 文本文件 `data/fortunes.txt`（运行时外部文件），内置默认在 `src/main/resources/fortunes.txt` |
 | 版本控制 | Git |
 
 ---
@@ -61,21 +61,24 @@ fortune-app/
 
 所有接口前缀为 `/fortune`，统一返回 JSON。
 
-| 方法 | 路径 | 功能 | 成功响应 | 错误响应 |
-|---|---|---|---|---|
-| GET | `/fortune` | 随机返回一条运势 | `{"text":"...","level":n,"display":"🌟 ..."}` | - |
-| GET | `/fortune/list` | 返回所有运势 | `{"count":34,"data":[...]}` | - |
-| GET | `/fortune/count` | 返回运势总数 | `{"count":34}` | - |
-| GET | `/fortune/level/{level}` | 按星级筛选 | `{"count":n,"data":[...]}` | 404 `{"error":"没有找到 n 星运势"}` |
-| GET | `/fortune/{id}` | 按索引查询 | `{"text":"...","level":n,"display":"🌟 ..."}` | 404 `{"error":"id 超出范围：n"}` |
+| 方法 | 路径 | 功能 | 请求体 | 成功响应 | 错误响应 |
+|---|---|---|---|---|---|
+| GET | `/fortune` | 随机返回一条运势 | - | `{"text":"...","level":n,"display":"🌟 ..."}` | - |
+| GET | `/fortune/list` | 返回所有运势 | - | `{"count":34,"data":[...]}` | - |
+| GET | `/fortune/count` | 返回运势总数 | - | `{"count":34}` | - |
+| GET | `/fortune/level/{level}` | 按星级筛选 | - | `{"count":n,"data":[...]}` | 404 `{"error":"没有找到 n 星运势"}` |
+| GET | `/fortune/{id}` | 按索引查询 | - | `{"text":"...","level":n,"display":"🌟 ..."}` | 404 `{"error":"id 超出范围：n"}` |
+| POST | `/fortune` | 添加一条运势 | `text=...&level=n` | `{"count":35}` | 400 `{"error":"text 参数不能为空"}` |
+| DELETE | `/fortune/{id}` | 删除指定运势 | - | `{"count":34}` | 404 `{"error":"id 超出范围：n"}` |
 
-### 4.2 路径参数规则
+### 4.2 参数规则
 
 - `{level}` 必须是 1-6 的整数
 - `{id}` 必须是 0 到 `count-1` 的整数
+- `text` 参数不能为空
 - 路径参数非法时返回 **400**：`{"error":"..."}`
 - 资源不存在时返回 **404**：`{"error":"..."}`
-- 非 GET 请求返回 **405**
+- 请求方法不支持返回 **405**
 
 ### 4.3 数据格式
 
@@ -102,11 +105,24 @@ fortune-app/
 
 ### 4.4 数据源
 
-- 文件位置：`src/main/resources/fortunes.txt`
-- 打包后通过 classpath 加载
+- 内置默认数据：`src/main/resources/fortunes.txt`
+- 运行时外部数据：`data/fortunes.txt`
 - 格式：`运势文本|星级`，每行一条
-- 启动时加载，运行期间不变
+- 启动时优先加载外部文件；不存在时从 classpath 内置资源复制一份
+- 运行期间通过 POST/DELETE 修改内存列表，并同步写回外部文件
 - 文件缺失或格式错误时，回退到内置默认运势并打印警告
+
+### 4.5 POST/DELETE 示例
+
+```bash
+# 添加运势
+curl -X POST -d 'text=大吉：新项目顺利启动&level=5' http://localhost:8080/fortune
+# {"count":35}
+
+# 删除 id=34 的运势
+curl -X DELETE http://localhost:8080/fortune/34
+# {"count":34}
+```
 
 ---
 
@@ -155,16 +171,18 @@ fortune-app/
 | 1.0.0 | a4e7cac | 初始分层项目，5 个接口，34 条运势，文件持久化 |
 | 1.1.0 | 7a6ff7d | Maven 工程化改造，标准目录结构，mvnd 打包 |
 | 1.2.0 | 87568c9 | 统一 JSON 输出，引入 Gson，保留 emoji display |
+| 1.3.0 | cd907fe | 修复包目录结构，新增 CODESTYLE.md |
 
 ---
 
 ## 8. 下一步可选方向
 
-- **写操作接口**：`POST /fortune` 添加运势，`DELETE /fortune/{id}` 删除
 - **配置文件**：将端口、数据文件路径外置到 `application.properties`
 - **单元测试**：引入 JUnit 5 测试 service 层
 - **日志框架**：引入 SLF4J + Logback 替代 `System.out.println`
 - **持久化升级**：用 SQLite / H2 替代文本文件
+- **批量导入**：支持上传文件一次性导入多条运势
+- **热门统计**：记录每条运势被抽中次数
 
 ---
 

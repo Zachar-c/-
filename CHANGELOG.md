@@ -2,6 +2,31 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.3.0] - 2026-07-02
+
+### 新增
+- 支持 `POST /fortune`：通过 form 参数 `text` 和 `level` 添加新运势
+- 支持 `DELETE /fortune/{id}`：删除指定索引的运势
+- 运行时数据持久化到 `data/fortunes.txt`，增删后立即写回文件
+- 首次启动时自动将 classpath 内置资源复制到外部数据目录
+
+### 改造
+- `FortuneService` 重构：
+  - 支持从外部文件 `data/fortunes.txt` 加载
+  - 新增 `addFortune(text, level)` 和 `deleteFortune(id)` 方法
+  - 数据修改后同步保存
+- `FortuneController` 重构：
+  - 支持 GET/POST/DELETE 三种 HTTP 方法
+  - POST 解析 form 数据并校验 `text` 和 `level`
+  - 添加操作成功返回 201，删除成功返回 200
+
+### 修复
+- 修复源码目录结构：`src/main/java/xxx/` → `src/main/java/com/example/xxx/`
+- 解决 VSCode Java 扩展标红：package 与目录不匹配
+
+### 新增文档
+- `CODESTYLE.md`：记录包目录规范、分层约束、提交前检查等
+
 ## [1.2.0] - 2026-07-02
 
 ### 改造
