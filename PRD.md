@@ -1,6 +1,6 @@
 # fortune-app 产品需求文档（PRD）
 
-> 版本：1.3.0  
+> 版本：1.4.0  
 > 最后更新：2026-07-02  
 > 用途：作为需求与实现的唯一事实来源，方便新会话快速接手。
 
@@ -26,9 +26,8 @@
 | 构建工具 | Maven / mvnd |
 | JSON 序列化 | Gson 2.10.1 |
 | 数据存储 | 文本文件 `data/fortunes.txt`（运行时外部文件），内置默认在 `src/main/resources/fortunes.txt` |
-| 版本控制 | Git |
-
----
+| 前端 | HTML5 / CSS3 / 原生 JS |
+| 设计指导 | `frontend-design` skill（Anthropics） |
 
 ## 3. 项目结构
 
@@ -37,12 +36,13 @@ fortune-app/
 ├── pom.xml
 ├── run.sh
 ├── CHANGELOG.md
+├── CODESTYLE.md
 ├── PRD.md                    ← 本文档
 ├── .gitignore
 └── src/
     └── main/
         ├── java/com/example/
-        │   ├── Main.java                 # 启动入口
+        │   ├── Main.java                 # 启动入口 + 静态页面服务
         │   ├── controller/
         │   │   └── FortuneController.java # HTTP 请求分发
         │   ├── service/
@@ -50,7 +50,9 @@ fortune-app/
         │   └── model/
         │       └── Fortune.java           # 运势实体
         └── resources/
-            └── fortunes.txt               # 运势数据文件
+            ├── fortunes.txt               # 默认运势数据
+            └── static/
+                └── index.html             # 前端展示页面
 ```
 
 ---
@@ -63,6 +65,7 @@ fortune-app/
 
 | 方法 | 路径 | 功能 | 请求体 | 成功响应 | 错误响应 |
 |---|---|---|---|---|---|
+| GET | `/` | 前端展示页面 | - | `text/html` | - |
 | GET | `/fortune` | 随机返回一条运势 | - | `{"text":"...","level":n,"display":"🌟 ..."}` | - |
 | GET | `/fortune/list` | 返回所有运势 | - | `{"count":34,"data":[...]}` | - |
 | GET | `/fortune/count` | 返回运势总数 | - | `{"count":34}` | - |
@@ -70,6 +73,14 @@ fortune-app/
 | GET | `/fortune/{id}` | 按索引查询 | - | `{"text":"...","level":n,"display":"🌟 ..."}` | 404 `{"error":"id 超出范围：n"}` |
 | POST | `/fortune` | 添加一条运势 | `text=...&level=n` | `{"count":35}` | 400 `{"error":"text 参数不能为空"}` |
 | DELETE | `/fortune/{id}` | 删除指定运势 | - | `{"count":34}` | 404 `{"error":"id 超出范围：n"}` |
+
+### 4.2 前端页面
+
+- 访问 `http://localhost:8080/` 可打开可视化运势抽取界面
+- 设计风格：GitHub Dark 配色 + 紫色幸运光效
+- 标志性元素：「▶ 运行命运.exe」按钮
+- 字体：JetBrains Mono + Inter
+- 交互：按钮加载态、终端打字机效果输出运势、星级 emoji 展示
 
 ### 4.2 参数规则
 
@@ -172,6 +183,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 | 1.1.0 | 7a6ff7d | Maven 工程化改造，标准目录结构，mvnd 打包 |
 | 1.2.0 | 87568c9 | 统一 JSON 输出，引入 Gson，保留 emoji display |
 | 1.3.0 | cd907fe | 修复包目录结构，新增 CODESTYLE.md |
+| 1.4.0 | - | 前端展示页面，使用 frontend-design skill 指导设计 |
 
 ---
 
@@ -183,6 +195,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 - **持久化升级**：用 SQLite / H2 替代文本文件
 - **批量导入**：支持上传文件一次性导入多条运势
 - **热门统计**：记录每条运势被抽中次数
+- **前端增强**：历史记录、分享按钮、动画优化
 
 ---
 
@@ -194,6 +207,9 @@ cd fortune-app
 
 # 一键启动
 bash run.sh
+
+# 打开前端页面
+open http://localhost:8080
 
 # 测试接口
 curl http://localhost:8080/fortune

@@ -2,6 +2,23 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.4.0] - 2026-07-02
+
+### 新增
+- 前端展示页面：`src/main/resources/static/index.html`
+- 访问 `http://localhost:8080/` 可打开可视化运势抽取界面
+- 使用 `frontend-design` skill 指导设计
+
+### 设计特点
+- 采用 GitHub Dark 配色 + 紫色幸运光效，避免 AI 设计三俗
+- 标志性元素：「▶ 运行命运.exe」按钮
+- 字体：JetBrains Mono + Inter
+- 交互：按钮加载态、终端打字机效果输出运势、星级 emoji 展示
+
+### 改造
+- `Main.java` 新增 `StaticPageHandler`，从 classpath 提供静态页面
+- 根路径 `/` 返回 `index.html`，其余静态资源从 `/static/` 提供
+
 ## [1.3.0] - 2026-07-02
 
 ### 新增
