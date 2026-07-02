@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.config.AppConfig;
 import com.example.model.Fortune;
 
 import java.io.BufferedReader;
@@ -17,15 +18,14 @@ import java.util.stream.Collectors;
 
 public class FortuneService {
     private static final String CLASSPATH_FILE = "/fortunes.txt";
-    private static final String EXTERNAL_FILE = "data/fortunes.txt";
     private static final String SEPARATOR = "\\|";
 
     private final List<Fortune> fortunes;
     private final Path externalPath;
     private final Random random = new Random();
 
-    public FortuneService() {
-        this.externalPath = Paths.get(EXTERNAL_FILE);
+    public FortuneService(AppConfig config) {
+        this.externalPath = Paths.get(config.getFortuneDataFile());
         this.fortunes = loadFortunes();
     }
 

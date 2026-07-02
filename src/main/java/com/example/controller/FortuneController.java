@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import com.example.config.AppConfig;
 import com.example.model.Fortune;
 import com.example.service.FortuneService;
 
@@ -16,8 +17,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FortuneController {
-    private final FortuneService service = new FortuneService();
+    private final FortuneService service;
     private final Gson gson = new Gson();
+
+    public FortuneController(AppConfig config) {
+        this.service = new FortuneService(config);
+    }
 
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();

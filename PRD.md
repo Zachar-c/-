@@ -33,6 +33,7 @@
 | 数据存储 | 文本文件 `data/fortunes.txt`（运行时外部文件），内置默认在 `src/main/resources/fortunes.txt` |
 | 前端 | HTML5 / CSS3 / 原生 JS |
 | 设计指导 | `frontend-design` skill（Anthropics） |
+| 配置管理 | `application.properties`，支持外部覆盖内置 |
 
 ## 3. 项目结构
 
@@ -42,12 +43,16 @@ fortune-app/
 ├── run.sh
 ├── CHANGELOG.md
 ├── CODESTYLE.md
+├── LEARNING.md
+├── ROADMAP.md
 ├── PRD.md                    ← 本文档
 ├── .gitignore
 └── src/
     └── main/
         ├── java/com/example/
         │   ├── Main.java                 # 启动入口 + 静态页面服务
+        │   ├── config/
+        │   │   └── AppConfig.java        # 配置加载
         │   ├── controller/
         │   │   └── FortuneController.java # HTTP 请求分发
         │   ├── service/
@@ -55,6 +60,7 @@ fortune-app/
         │   └── model/
         │       └── Fortune.java           # 运势实体
         └── resources/
+            ├── application.properties     # 默认配置
             ├── fortunes.txt               # 默认运势数据
             └── static/
                 └── index.html             # 前端展示页面
@@ -119,16 +125,26 @@ fortune-app/
 }
 ```
 
-### 4.4 数据源
+### 4.4 配置管理
+
+- 内置默认配置：`src/main/resources/application.properties`
+- 外部覆盖配置：jar 运行目录下的 `application.properties`
+- 配置加载优先级：**外部配置 > 内置配置 > 代码默认值**
+- 当前可配置项：
+  - `server.port`：HTTP 服务端口，默认 `8080`
+  - `fortune.data.file`：运行时数据文件路径，默认 `data/fortunes.txt`
+- 配置值非法或缺失时，回退到默认值并打印警告
+
+### 4.5 数据源
 
 - 内置默认数据：`src/main/resources/fortunes.txt`
-- 运行时外部数据：`data/fortunes.txt`
+- 运行时外部数据：`data/fortunes.txt`（路径可通过配置修改）
 - 格式：`运势文本|星级`，每行一条
 - 启动时优先加载外部文件；不存在时从 classpath 内置资源复制一份
 - 运行期间通过 POST/DELETE 修改内存列表，并同步写回外部文件
 - 文件缺失或格式错误时，回退到内置默认运势并打印警告
 
-### 4.5 POST/DELETE 示例
+### 4.6 POST/DELETE 示例
 
 ```bash
 # 添加运势
@@ -152,7 +168,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 
 ### 5.2 部署
 
-- 绑定端口：8080
+- 默认绑定端口：`8080`（可通过 `application.properties` 修改）
 - 启动命令：`bash run.sh`
 - 手动启动：`java -Dfile.encoding=UTF-8 -jar target/fortune-app-1.0.0.jar`
 
@@ -188,7 +204,8 @@ curl -X DELETE http://localhost:8080/fortune/34
 | 1.1.0 | 7a6ff7d | Maven 工程化改造，标准目录结构，mvnd 打包 |
 | 1.2.0 | 87568c9 | 统一 JSON 输出，引入 Gson，保留 emoji display |
 | 1.3.0 | cd907fe | 修复包目录结构，新增 CODESTYLE.md |
-| 1.4.0 | - | 前端展示页面，使用 frontend-design skill 指导设计 |
+| 1.4.0 | 5ac996a | 前端展示页面，使用 frontend-design skill 指导设计 |
+| 1.5.0 | - | 配置外置：application.properties 支持端口和数据路径配置 |
 
 ---
 

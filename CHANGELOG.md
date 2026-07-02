@@ -2,6 +2,28 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.5.0] - 2026-07-02
+
+### 新增
+- 配置文件支持：新增 `src/main/resources/application.properties`
+- 新增 `com.example.config.AppConfig`：使用 `java.util.Properties` 加载配置
+- 支持外部配置覆盖内置配置：jar 运行目录下的 `application.properties` 优先级更高
+
+### 可配置项
+- `server.port`：HTTP 服务端口，默认 `8080`
+- `fortune.data.file`：运行时运势数据文件路径，默认 `data/fortunes.txt`
+
+### 改造
+- `Main.java` 从 `AppConfig` 读取端口启动服务
+- `FortuneService` 通过构造函数接收 `AppConfig`，动态获取数据文件路径
+- `FortuneController` 通过构造函数接收 `AppConfig` 并透传给 service
+
+### 教学价值
+- 理解"配置与代码分离"
+- 理解配置优先级：外部 > 内置 > 代码默认值
+- 掌握 `java.util.Properties` 的基础用法
+- 为后续 Docker / CI / 多环境部署打基础
+
 ## [1.4.0] - 2026-07-02
 
 ### 新增
