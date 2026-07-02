@@ -2,6 +2,30 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.2.0] - 2026-07-02
+
+### 改造
+- 引入 `com.google.code.gson` 依赖，统一接口返回 JSON 格式
+- `Fortune` 新增 `display` 字段，JSON 中保留 emoji 星级展示
+- `FortuneController` 重构：
+  - 所有响应改为 `application/json; charset=UTF-8`
+  - 单条运势返回 `{"text", "level", "display"}`
+  - 列表接口返回 `{"count", "data"}`
+  - 错误返回 `{"error"}`，并保留 400/404 状态码
+- `.gitignore` 增加 `dependency-reduced-pom.xml`
+
+### 接口示例
+```bash
+GET /fortune
+{"text":"中吉：服务器资源充足不卡顿","level":4,"display":"🌟 🌟 🌟 🌟 中吉：服务器资源充足不卡顿"}
+
+GET /fortune/count
+{"count":34}
+
+GET /fortune/abc
+{"error":"id 必须是数字：abc"}
+```
+
 ## [1.1.0] - 2026-07-01
 
 ### 改造

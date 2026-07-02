@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.example.model.Fortune;
 import com.example.service.FortuneService;
@@ -7,15 +8,17 @@ import com.example.service.FortuneService;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class FortuneController {
     private final FortuneService service = new FortuneService();
+    private final Gson gson = new Gson();
 
     public void handle(HttpExchange exchange) throws IOException {
         if (!"GET".equals(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(405, -1);
+            sendJson(exchange, errorResponse("仅支持 GET 请求"), 405);
             return;
         }
 
@@ -24,9 +27,9 @@ public class FortuneController {
         int statusCode = 200;
 
         if ("/fortune/list".equals(path)) {
-            response = formatFortunes(service.getAllFortunes());
+            response = listResponse(service.getAllFortunes());
         } else if ("/fortune/count".equals(path)) {
-            response = String.valueOf(service.getFortuneCount());
+            response = countResponse(service.getFortuneCount());
         } else if (path.startsWith("/fortune/level/")) {
             String levelPart = path.substring("/fortune/level/".length());
             try {
@@ -34,13 +37,13 @@ public class FortuneController {
                 List<Fortune> matched = service.getFortunesByLevel(level);
                 if (matched.isEmpty()) {
                     statusCode = 404;
-                    response = "没有找到 " + level + " 星运势";
+                    response = errorResponse("没有找到 " + level + " 星运势");
                 } else {
-                    response = formatFortunes(matched);
+                    response = listResponse(matched);
                 }
             } catch (NumberFormatException e) {
                 statusCode = 400;
-                response = "星级必须是数字：" + levelPart;
+                response = errorResponse("星级必须是数字：" + levelPart);
             }
         } else if (path.startsWith("/fortune/")) {
             String idPart = path.substring("/fortune/".length());
@@ -49,30 +52,43 @@ public class FortuneController {
                 Fortune fortune = service.getFortuneById(id);
                 if (fortune == null) {
                     statusCode = 404;
-                    response = "id 超出范围：" + id;
+                    response = errorResponse("id 超出范围：" + id);
                 } else {
-                    response = fortune.toString();
+                    response = gson.toJson(fortune);
                 }
             } catch (NumberFormatException e) {
                 statusCode = 400;
-                response = "id 必须是数字：" + idPart;
+                response = errorResponse("id 必须是数字：" + idPart);
             }
         } else {
-            response = service.getRandomFortune().toString();
+            response = gson.toJson(service.getRandomFortune());
         }
 
-        sendResponse(exchange, response, statusCode);
+        sendJson(exchange, response, statusCode);
     }
 
-    private String formatFortunes(List<Fortune> fortunes) {
-        return fortunes.stream()
-                .map(Fortune::toString)
-                .collect(Collectors.joining("\n"));
+    private String listResponse(List<Fortune> fortunes) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("count", fortunes.size());
+        map.put("data", fortunes);
+        return gson.toJson(map);
     }
 
-    private void sendResponse(HttpExchange exchange, String response, int statusCode) throws IOException {
+    private String countResponse(int count) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("count", count);
+        return gson.toJson(map);
+    }
+
+    private String errorResponse(String message) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("error", message);
+        return gson.toJson(map);
+    }
+
+    private void sendJson(HttpExchange exchange, String response, int statusCode) throws IOException {
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
         exchange.sendResponseHeaders(statusCode, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
