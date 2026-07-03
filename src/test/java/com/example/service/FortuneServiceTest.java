@@ -4,33 +4,29 @@ import com.example.config.AppConfig;
 import com.example.model.Fortune;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FortuneServiceTest {
 
-    @TempDir
-    Path tempDir;
-
     private FortuneService service;
 
     @BeforeEach
-    void setUp() throws IOException {
-        Path dataFile = tempDir.resolve("fortunes.txt");
-        Files.write(dataFile, List.of(
-            "大吉：测试1|5",
-            "中吉：测试2|4",
-            "凶：测试3|1"
-        ));
-
-        AppConfig config = new AppConfig(8080, dataFile.toString());
+    void setUp() {
+        String dbUrl = "jdbc:h2:mem:testdb-" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1";
+        AppConfig config = new AppConfig(8080, "data/fortunes.txt", dbUrl, "sa", "");
         service = new FortuneService(config);
+        clearAndSeedTestData();
+    }
+
+    private void clearAndSeedTestData() {
+        service.clearAll();
+        service.addFortune("大吉：测试1", 5);
+        service.addFortune("中吉：测试2", 4);
+        service.addFortune("凶：测试3", 1);
     }
 
     @Test

@@ -140,7 +140,7 @@
 - `application.properties`：端口、数据路径外置 ✅
 - JUnit 5 + Mockito：测试 service 层 ✅
 - SLF4J + Logback：替换 `System.out.println` ✅
-- SQLite / H2：替代文本文件
+- SQLite / H2：替代文本文件 ✅
 - Docker / CI：打包部署
 
 ### 学习检查点
@@ -157,6 +157,12 @@
 - [ ] 能写出 `logger.info/warn/error` 的占位符用法
 - [ ] 能解释日志级别 DEBUG/INFO/WARN/ERROR 的使用场景
 - [ ] 能设计一张简单的数据库表
+- [ ] 能解释 JDBC 中 Connection、Statement、PreparedStatement 的区别
+- [ ] 能写出 try-with-resources 管理 JDBC 资源
+- [ ] 能解释 Repository 分层模式的作用
+- [ ] 能理解自增主键与 API id 映射的必要性
+- [ ] 能用 H2 内存数据库为 DAO 层编写单元测试
+- [ ] 能说出文件持久化和数据库持久化的优缺点
 - [ ] 能写出 Dockerfile 并运行容器
 
 ---

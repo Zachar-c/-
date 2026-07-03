@@ -2,6 +2,42 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.8.0] - 2026-07-03
+
+### 新增
+- H2 数据库持久化：替代文本文件作为数据存储
+- 新增 `FortuneRepository` 数据访问层：封装 JDBC 操作
+- 新增 `src/main/resources/schema.sql`：建表脚本
+- 新增 `CODESTYLE.md` 数据库规范章节
+- 新增 `.gitignore` `data/` 规则，避免提交 H2 数据库文件
+
+### 改造
+- `FortuneService`：不再直接读写文件，委托 `FortuneRepository` 操作数据库
+- `pom.xml`：新增 H2 数据库依赖（2.2.224）
+- `application.properties`：新增数据库连接配置
+- `AppConfig`：新增数据库配置 getter 和测试用五参数构造方法
+- `FortuneServiceTest`：适配 Repository，使用 H2 内存数据库进行测试
+- API id 映射：对外 id 从 0 开始，内部映射到数据库 id（自增，从 1 开始）
+
+### 数据策略
+- 启动时数据库为空 → 从 classpath `fortunes.txt` 导入种子数据
+- 种子数据仅首次初始化时使用，之后由数据库独立管理
+- 增删操作直接操作数据库，不再维护文件同步
+
+### 数据库
+- 引擎：H2（文件模式 `jdbc:h2:file:./data/fortune-db`）
+- 表结构：`fortunes (id, text, level, created_at)`
+- 测试：H2 内存模式 `jdbc:h2:mem:testdb-xxx`
+- 资源管理：全部使用 try-with-resources 防止泄漏
+
+### 教学价值
+- JDBC 基础使用（DriverManager、Connection、PreparedStatement）
+- SQL 建表、增删查操作
+- Repository 分层模式：数据访问与业务逻辑解耦
+- 自增主键与 API id 的映射转化
+- 种子数据（Seed Data）概念
+- 内存数据库在单元测试中的应用
+
 ## [1.7.0] - 2026-07-03
 
 ### 新增

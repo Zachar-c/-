@@ -21,7 +21,13 @@ public class AppConfig {
 
     public AppConfig(int port, String dataFile) {
         properties.setProperty("server.port", String.valueOf(port));
-        properties.setProperty("fortune.data.file", dataFile);
+    }
+
+    public AppConfig(int port, String dataFile, String dbUrl, String dbUsername, String dbPassword) {
+        properties.setProperty("server.port", String.valueOf(port));
+        properties.setProperty("fortune.db.url", dbUrl);
+        properties.setProperty("fortune.db.username", dbUsername);
+        properties.setProperty("fortune.db.password", dbPassword);
     }
 
     private void load() {
@@ -58,7 +64,15 @@ public class AppConfig {
         }
     }
 
-    public String getFortuneDataFile() {
-        return properties.getProperty("fortune.data.file", "data/fortunes.txt");
+    public String getDbUrl() {
+        return properties.getProperty("fortune.db.url", "jdbc:h2:file:./data/fortune-db");
+    }
+
+    public String getDbUsername() {
+        return properties.getProperty("fortune.db.username", "sa");
+    }
+
+    public String getDbPassword() {
+        return properties.getProperty("fortune.db.password", "");
     }
 }

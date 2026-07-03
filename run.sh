@@ -2,7 +2,6 @@
 set -e
 
 PORT=8080
-JAR_NAME=target/fortune-app-1.0.0.jar
 MVND=/c/DevEnv/04_Language_Envs/Java/maven-mvnd-1.0.6-windows-amd64/bin/mvnd.exe
 
 echo "🔍 检查端口 $PORT ..."
@@ -18,7 +17,11 @@ fi
 echo "🔨 Maven 打包 ..."
 $MVND clean package -q
 
-echo "🚀 启动服务 ..."
+# 从 pom.xml 读取版本号
+VERSION=$(grep -oP '(?<=<version>)[^<]+' pom.xml | head -1)
+JAR_NAME=target/fortune-app-$VERSION.jar
+
+echo "🚀 启动服务 $JAR_NAME ..."
 java -Dfile.encoding=UTF-8 -jar $JAR_NAME &
 
 echo "⏳ 等待服务就绪 ..."

@@ -7,7 +7,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>fortune-app</artifactId>
-    <version>1.0.0</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -50,6 +50,12 @@
             <artifactId>logback-classic</artifactId>
             <version>1.5.6</version>
         </dependency>
+        <dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <version>2.2.224</version>
+</dependency>
+
     </dependencies>
 
     <build>

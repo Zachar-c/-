@@ -1,7 +1,7 @@
 # fortune-app 产品需求文档（PRD）
 
-> 版本：1.4.0  
-> 最后更新：2026-07-02  
+> 版本：1.8.0  
+> 最后更新：2026-07-03  
 > 用途：作为需求与实现的唯一事实来源，方便新会话快速接手。
 
 ---
@@ -30,7 +30,8 @@
 | HTTP 服务 | `com.sun.net.httpserver`（JDK 内置） |
 | 构建工具 | Maven / mvnd |
 | JSON 序列化 | Gson 2.10.1 |
-| 数据存储 | 文本文件 `data/fortunes.txt`（运行时外部文件），内置默认在 `src/main/resources/fortunes.txt` |
+| 数据存储 | H2 数据库 `jdbc:h2:file:./data/fortune-db`（文件模式），启动时从 classpath `fortunes.txt` 导入种子数据 |
+| 数据库访问 | JDBC（纯 Java，无 ORM） |
 | 前端 | HTML5 / CSS3 / 原生 JS |
 | 设计指导 | `frontend-design` skill（Anthropics） |
 | 配置管理 | `application.properties`，支持外部覆盖内置 |
@@ -58,12 +59,15 @@ fortune-app/
         │   ├── controller/
         │   │   └── FortuneController.java # HTTP 请求分发
         │   ├── service/
-        │   │   └── FortuneService.java    # 业务逻辑 + 数据加载
+        │   │   └── FortuneService.java    # 业务逻辑
+        │   ├── repository/
+        │   │   └── FortuneRepository.java # 数据访问层（JDBC）
         │   └── model/
         │       └── Fortune.java           # 运势实体
         └── resources/
             ├── application.properties     # 默认配置
-            ├── fortunes.txt               # 默认运势数据
+            ├── fortunes.txt               # 种子数据（仅首次初始化）
+            ├── schema.sql                 # 建表脚本
             └── static/
                 └── index.html             # 前端展示页面
 ```
@@ -134,17 +138,23 @@ fortune-app/
 - 配置加载优先级：**外部配置 > 内置配置 > 代码默认值**
 - 当前可配置项：
   - `server.port`：HTTP 服务端口，默认 `8080`
-  - `fortune.data.file`：运行时数据文件路径，默认 `data/fortunes.txt`
+  - `fortune.db.url`：H2 数据库连接 URL，默认 `jdbc:h2:file:./data/fortune-db`
+  - `fortune.db.username`：数据库用户名，默认 `sa`
+  - `fortune.db.password`：数据库密码，默认空字符串
 - 配置值非法或缺失时，回退到默认值并打印警告
 
 ### 4.5 数据源
 
-- 内置默认数据：`src/main/resources/fortunes.txt`
-- 运行时外部数据：`data/fortunes.txt`（路径可通过配置修改）
-- 格式：`运势文本|星级`，每行一条
-- 启动时优先加载外部文件；不存在时从 classpath 内置资源复制一份
-- 运行期间通过 POST/DELETE 修改内存列表，并同步写回外部文件
-- 文件缺失或格式错误时，回退到内置默认运势并打印警告
+- **数据库**：H2 文件模式，数据文件位于 `./data/fortune-db.mv.db`
+- **种子数据**：`src/main/resources/fortunes.txt`，仅首次启动（数据库为空）时导入
+- **数据格式**：`运势文本|星级`，每行一条
+- 运行时通过 `FortuneRepository`（JDBC）操作数据库
+- 增删操作直接写数据库，不再维护文件同步
+- 表结构：
+  ```sql
+  fortunes (id INT AUTO_INCREMENT, text VARCHAR(500), level INT, created_at TIMESTAMP)
+  ```
+- **API id 映射**：对外 id 从 0 开始，内部映射到数据库自增 id（id + 1）
 
 ### 4.6 POST/DELETE 示例
 
@@ -172,7 +182,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 
 - 默认绑定端口：`8080`（可通过 `application.properties` 修改）
 - 启动命令：`bash run.sh`
-- 手动启动：`java -Dfile.encoding=UTF-8 -jar target/fortune-app-1.0.0.jar`
+- 手动启动：`java -Dfile.encoding=UTF-8 -jar target/fortune-app-1.8.0.jar`
 
 ### 5.3 构建
 
@@ -186,7 +196,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 
 - 使用 Git 管理
 - 每次重要变更需更新 `CHANGELOG.md`
-- 忽略文件：`.gitignore` 中已配置 `target/`、IDE 文件、`.class`、`dependency-reduced-pom.xml`
+- 忽略文件：`.gitignore` 中已配置 `target/`、IDE 文件、`.class`、`dependency-reduced-pom.xml`、`logs/`、`data/`
 
 ### 5.5 单元测试
 
@@ -222,6 +232,7 @@ curl -X DELETE http://localhost:8080/fortune/34
 | 1.5.0 | b87b164 | 配置外置：application.properties 支持端口和数据路径配置 |
 | 1.6.0 | 503c039 | 引入 JUnit 5 + Mockito，新增 FortuneServiceTest 单元测试 |
 | 1.7.0 | - | 引入 SLF4J + Logback 生产级日志框架 |
+| 1.8.0 | - | H2 数据库持久化，新增 FortuneRepository |
 
 ---
 

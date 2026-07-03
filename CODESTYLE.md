@@ -67,9 +67,14 @@ src/main/java/com/example/
 
 ## 4. 数据文件
 
-- 内置默认数据：`src/main/resources/fortunes.txt`
-- 运行时外部数据：`data/fortunes.txt`
-- 代码中优先读取外部文件，不存在时从 classpath 复制
+### 种子数据
+- 内置数据：`src/main/resources/fortunes.txt`，仅供首次初始化使用
+- 首次启动（数据库为空）时从 classpath 导入到 H2 数据库
+- 种子数据导入后不再使用，后续独立由数据库管理
+
+### 运行时数据
+- 生产/开发环境：H2 数据库文件 `data/fortune-db.mv.db`
+- 测试环境：H2 内存数据库（不落盘）
 
 ---
 
@@ -114,3 +119,44 @@ src/main/java/com/example/
 - 1.5.0：配置外置
 - 1.6.0：单元测试
 - 1.7.0：生产级日志
+- 1.8.0：H2 数据库持久化
+
+---
+
+## 9. 数据库操作规范
+
+### 原则
+- 使用 JDBC 原生 API，不引入 ORM 框架（保持依赖最小化）
+- 所有数据库资源使用 try-with-resources 确保释放
+- 禁止在业务层直接操作 Connection，必须通过 Repository 层
+
+### Repository 规范
+- 每个方法独立获取连接（无连接池，简单项目适用）
+- 查询方法返回 `List<Fortune>` 或单个 `Fortune`
+- 写操作返回影响行数或布尔值
+- 异常内部捕获并记录日志，不向上抛出
+
+### SQL 规范
+- 表名、列名统一小写 + 下划线
+- 主键使用 `AUTO_INCREMENT`（H2 兼容）
+- 参数化查询使用 `PreparedStatement`，禁止字符串拼接 SQL
+- 示例：
+  ```java
+  // ✅ 正确
+  PreparedStatement stmt = conn.prepareStatement("SELECT text, level FROM fortunes WHERE id = ?");
+  stmt.setInt(1, id);
+
+  // ❌ 错误
+  Statement stmt = conn.createStatement();
+  stmt.executeQuery("SELECT text, level FROM fortunes WHERE id = " + id);
+  ```
+
+### 测试中的数据库
+- 单元测试使用 H2 内存模式 `jdbc:h2:mem:testdb-{UUID}`
+- 每个测试类使用独立数据库实例，确保隔离
+- 使用 `DB_CLOSE_DELAY=-1` 防止数据库被意外关闭
+
+### 文件 vs 数据库
+- 生产环境：H2 文件模式（数据持久化到磁盘）
+- 测试环境：H2 内存模式（每次测试重建，不残留数据）
+- 种子数据：`fortunes.txt` 仅首次初始化时使用，之后独立于数据库
