@@ -81,9 +81,36 @@ src/main/java/com/example/
 
 ---
 
-## 6. 版本号规则
+## 7. 日志规范
+
+- 使用 SLF4J + Logback 作为日志框架
+- 禁止直接使用 `System.out.println` 或 `System.err.println`
+- 每个类声明自己的 Logger：
+  ```java
+  private static final Logger logger = LoggerFactory.getLogger(Xxx.class);
+  ```
+- 日志级别选择：
+  - `DEBUG`：调试细节，如方法入参、循环内部状态
+  - `INFO`：正常流程信息，如启动、加载完成、关键业务操作
+  - `WARN`：可恢复的异常或警告，如配置缺失、格式错误、使用默认值
+  - `ERROR`：严重错误，如 IO 异常、数据库连接失败
+- 使用占位符写法，禁止字符串拼接：
+  - ✅ `logger.info("用户 {} 登录成功", username);`
+  - ❌ `logger.info("用户 " + username + " 登录成功");`
+- 异常对象作为最后一个参数传入，便于打印堆栈：
+  ```java
+  logger.error("保存失败：{}", e.getMessage(), e);
+  ```
+
+---
+
+## 8. 版本号规则
 
 - 1.0.0：初始可用版本
 - 1.1.0：架构/工程化改造
 - 1.2.0：功能增强（JSON 输出等）
 - 1.3.0：新增写操作接口（POST/DELETE）
+- 1.4.0：前端展示页面
+- 1.5.0：配置外置
+- 1.6.0：单元测试
+- 1.7.0：生产级日志

@@ -2,6 +2,8 @@ package com.example.service;
 
 import com.example.config.AppConfig;
 import com.example.model.Fortune;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class FortuneService {
+    private static final Logger logger = LoggerFactory.getLogger(FortuneService.class);
     private static final String CLASSPATH_FILE = "/fortunes.txt";
     private static final String SEPARATOR = "\\|";
 
@@ -33,21 +36,21 @@ public class FortuneService {
         InputStream input = null;
         try {
             if (Files.exists(externalPath)) {
-                System.out.println("📂 从外部文件加载运势：" + externalPath.toAbsolutePath());
+                logger.info("📂 从外部文件加载运势：{}", externalPath.toAbsolutePath());
                 return readFromReader(Files.newBufferedReader(externalPath, StandardCharsets.UTF_8));
             }
 
             input = getClass().getResourceAsStream(CLASSPATH_FILE);
             if (input == null) {
-                System.out.println("⚠️ 未找到 classpath 资源 " + CLASSPATH_FILE + "，使用默认运势");
+                logger.warn("⚠️ 未找到 classpath 资源 {}，使用默认运势", CLASSPATH_FILE);
                 return defaultFortunes();
             }
-            System.out.println("📦 从 classpath 加载运势，并复制到外部文件");
+            logger.info("📦 从 classpath 加载运势，并复制到外部文件");
             List<Fortune> loaded = readFromReader(new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)));
             saveFortunes(loaded);
             return loaded;
         } catch (IOException e) {
-            System.out.println("⚠️ 读取运势失败：" + e.getMessage());
+            logger.error("⚠️ 读取运势失败：{}", e.getMessage(), e);
             return defaultFortunes();
         } finally {
             if (input != null) {
@@ -74,7 +77,7 @@ public class FortuneService {
         }
 
         if (loaded.isEmpty()) {
-            System.out.println("⚠️ 数据文件中没有有效数据，使用默认运势");
+            logger.warn("⚠️ 数据文件中没有有效数据，使用默认运势");
             return defaultFortunes();
         }
         return loaded;
@@ -87,14 +90,14 @@ public class FortuneService {
         }
         String[] parts = line.split(SEPARATOR, 2);
         if (parts.length != 2) {
-            System.out.println("⚠️ 第 " + lineNumber + " 行格式错误，已跳过：" + line);
+            logger.warn("⚠️ 第 {} 行格式错误，已跳过：{}", lineNumber, line);
             return null;
         }
         try {
             int level = Integer.parseInt(parts[1].trim());
             return new Fortune(parts[0].trim(), level);
         } catch (NumberFormatException e) {
-            System.out.println("⚠️ 第 " + lineNumber + " 行星級不是数字，已跳过：" + line);
+            logger.warn("⚠️ 第 {} 行星級不是数字，已跳过：{}", lineNumber, line);
             return null;
         }
     }
@@ -106,8 +109,9 @@ public class FortuneService {
                     .map(f -> f.getText() + "|" + f.getLevel())
                     .collect(Collectors.toList());
             Files.write(externalPath, lines, StandardCharsets.UTF_8);
+            logger.debug("💾 已保存 {} 条运势到 {}", fortunesToSave.size(), externalPath);
         } catch (IOException e) {
-            System.out.println("⚠️ 保存运势失败：" + e.getMessage());
+            logger.error("⚠️ 保存运势失败：{}", e.getMessage(), e);
         }
     }
 
@@ -152,6 +156,7 @@ public class FortuneService {
         }
         fortunes.add(new Fortune(text.trim(), level));
         saveFortunes(fortunes);
+        logger.info("➕ 新增运势：{} | {}", text.trim(), level);
         return true;
     }
 
@@ -159,8 +164,9 @@ public class FortuneService {
         if (id < 0 || id >= fortunes.size()) {
             return false;
         }
-        fortunes.remove(id);
+        Fortune removed = fortunes.remove(id);
         saveFortunes(fortunes);
+        logger.info("🗑️ 删除运势 id={}：{}", id, removed.getText());
         return true;
     }
 }

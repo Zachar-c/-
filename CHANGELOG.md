@@ -2,6 +2,32 @@
 
 记录 fortune-app 项目的重要变更。
 
+## [1.7.0] - 2026-07-03
+
+### 新增
+- 引入 SLF4J 2.0.13 + Logback 1.5.6 生产级日志框架
+- 新增 `src/main/resources/logback.xml`：同时输出到控制台和 `logs/fortune-app.log`
+- 新增增删运势的 INFO 级别日志
+
+### 改造
+- `Main.java`：`System.out.println` 替换为 `logger.info`
+- `AppConfig.java`：`System.err.println` 替换为 `logger.warn`
+- `FortuneService.java`：所有日志输出统一使用 SLF4J 占位符写法
+- `pom.xml` 新增 SLF4J API 和 Logback Classic 依赖
+
+### 日志规范
+- `INFO`：正常流程（启动、加载数据、增删运势）
+- `WARN`：警告（配置加载失败、格式错误、使用默认值）
+- `ERROR`：错误（IO 异常）
+- `DEBUG`：调试信息（保存数据）
+
+### 教学价值
+- 理解 SLF4J 作为日志门面的优势
+- 理解 Logback 作为实现框架
+- 掌握日志级别 DEBUG/INFO/WARN/ERROR 的使用场景
+- 理解为什么生产项目不用 `System.out.println`
+- 学习占位符写法：`logger.info("消息 {}", value)`
+
 ## [1.6.0] - 2026-07-02
 
 ### 新增

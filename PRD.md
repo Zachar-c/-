@@ -35,6 +35,7 @@
 | 设计指导 | `frontend-design` skill（Anthropics） |
 | 配置管理 | `application.properties`，支持外部覆盖内置 |
 | 单元测试 | JUnit 5 + Mockito |
+| 日志框架 | SLF4J + Logback |
 
 ## 3. 项目结构
 
@@ -219,7 +220,8 @@ curl -X DELETE http://localhost:8080/fortune/34
 | 1.3.0 | cd907fe | 修复包目录结构，新增 CODESTYLE.md |
 | 1.4.0 | 5ac996a | 前端展示页面，使用 frontend-design skill 指导设计 |
 | 1.5.0 | b87b164 | 配置外置：application.properties 支持端口和数据路径配置 |
-| 1.6.0 | - | 引入 JUnit 5 + Mockito，新增 FortuneServiceTest 单元测试 |
+| 1.6.0 | 503c039 | 引入 JUnit 5 + Mockito，新增 FortuneServiceTest 单元测试 |
+| 1.7.0 | - | 引入 SLF4J + Logback 生产级日志框架 |
 
 ---
 

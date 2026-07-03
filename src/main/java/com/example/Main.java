@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.example.config.AppConfig;
 import com.example.controller.FortuneController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,8 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 public class Main {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws Exception {
         AppConfig config = new AppConfig();
         int port = config.getServerPort();
@@ -24,7 +28,7 @@ public class Main {
         server.setExecutor(null);
         server.start();
 
-        System.out.println("🏠 Maven 项目已启动！访问 http://localhost:" + port);
+        logger.info("🏠 Maven 项目已启动！访问 http://localhost:{}", port);
     }
 
     static class StaticPageHandler implements HttpHandler {

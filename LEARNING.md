@@ -139,7 +139,7 @@
 ### 对应 fortune-app 内容
 - `application.properties`：端口、数据路径外置 ✅
 - JUnit 5 + Mockito：测试 service 层 ✅
-- SLF4J + Logback：替换 `System.out.println`
+- SLF4J + Logback：替换 `System.out.println` ✅
 - SQLite / H2：替代文本文件
 - Docker / CI：打包部署
 
@@ -152,7 +152,9 @@
 - [ ] 能理解 `@BeforeEach`、`@Test`、`@TempDir` 的用法
 - [ ] 能说出至少 3 个 JUnit 断言方法及其使用场景
 - [ ] 能解释为什么测试要隔离，避免互相影响
-- [ ] 能写出 RED-GREEN-REFACTOR 的 TDD 流程
+- [ ] 能解释 SLF4J 和 Logback 的关系
+- [ ] 能说明为什么生产项目不用 `System.out.println`
+- [ ] 能写出 `logger.info/warn/error` 的占位符用法
 - [ ] 能解释日志级别 DEBUG/INFO/WARN/ERROR 的使用场景
 - [ ] 能设计一张简单的数据库表
 - [ ] 能写出 Dockerfile 并运行容器
