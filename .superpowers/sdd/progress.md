@@ -5,4 +5,6 @@
 
 - Task 1: complete locally; normalized index and source audit generated, reviewed, and ready for checkpoint.
 - Task 1 review: 724 candidates preserved; 679 clean canonical candidates; 41 rows require review because of duplicates, sequence breaks, or source noise; computed and user-stated character counts remain separate.
+- Task 2: complete locally; outline schema, fact-dispute ledger, and staged validator added.
+- Task 2 review: baseline validation passed; outline phase correctly blocks until the master outline exists; six dispute rows import successfully.
 
