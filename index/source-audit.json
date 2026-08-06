@@ -1,0 +1,17 @@
+﻿{
+    "source_path":  "C:\\DevEnv\\05_Downloads\\蛊真人.txt",
+    "source_bytes":  16576824,
+    "encoding":  "CP936 / GBK",
+    "source_line_count":  437060,
+    "decoded_characters_without_newlines":  8320079,
+    "user_stated_characters":  14577005,
+    "raw_index_rows":  724,
+    "parsed_heading_candidates":  724,
+    "duplicate_section_numbers":  208,
+    "sequence_runs":  25,
+    "review_required_rows":  41,
+    "non_monotonic_or_gap_rows":  24,
+    "raw_index_lines_not_reparsed":  0,
+    "reparsed_lines_missing_from_raw_index":  0,
+    "generated_at":  "2026-08-06T17:50:58"
+}
