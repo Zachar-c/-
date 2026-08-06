@@ -1,0 +1,12 @@
+# Local source input and transient files
+蛊真人.txt
+*.tmp
+*.bak
+*.log
+*.orig
+
+# Editor and operating-system metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
