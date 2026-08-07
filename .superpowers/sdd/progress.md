@@ -18,5 +18,9 @@
 - Task 5 review: the two Wangting wars are separated; Yitian Mountain, Reverse Flow River, pre-Fate War, Ghost Soul pursuit, Crazy Demon Cave, immortality, Zunzhe, Refining Heaven, Great Love, and post-Fate arcs are treated as causal state changes rather than result lists. Late-source line gaps remain explicitly qualified.
 - Task 5 validation: `scripts/validate_editorial_assets.ps1 -Phase outline` passed; all six volume files are strict UTF-8 and contain the shared eleven-section schema. Existing untracked EPUB/build-script files and the complete source were not touched.
 
-- Next task: create the transition map and the ten named climax/war outlines under `outlines/arcs/`.
+- Task 6: complete locally; the transition map and ten named climax/war outlines now cover Qing Mao Mountain, Three Kings Mountain, the two Wangting stages, Yitian Mountain, Reverse Flow River, the pre-Fate War, the post-Fate War, Ghost Soul pursuit, and Crazy Demon Cave.
+- Task 6 review: the six newly added late-stage outlines preserve event-level rules, protagonist goals, faction goals, resource limits, escalation, turning points, irreversible consequences, character changes, disclosure order, and editorial boundaries. Reverse Flow River is treated as a process-driven rule-bound炼蛊高潮 rather than a combat result; the pre- and post-Fate stages remain separate; the complete source remains outside Git.
+- Task 6 validation: `scripts/validate_editorial_assets.ps1 -Phase outline` passed; `git diff --check` passed. Existing untracked EPUB/build-script files were not touched.
+
+- Next task: create `outlines/detail/vol1-sec001-010.md` and `outlines/detail/vol1-sec011-020.md`, then use those detail outlines to recalibrate the first-twenty edited sections and record each actual text change in `notes/editorial-notes.md`.
 
