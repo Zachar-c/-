@@ -124,9 +124,9 @@ function Test-DetailHeadings {
     foreach ($duplicate in $duplicates) {
         Add-Error ('Duplicate detail section: {0}' -f $duplicate.Name)
     }
-    $expected = 1..60
+    $expected = 1..90
     if (($sectionNumbers | Sort-Object) -join ',' -ne ($expected -join ',')) {
-        Add-Error ('Detail sections must cover exactly 1-60; found: {0}' -f (($sectionNumbers | Sort-Object) -join ','))
+        Add-Error ('Detail sections must cover exactly 1-90; found: {0}' -f (($sectionNumbers | Sort-Object) -join ','))
     }
 }
 
@@ -168,6 +168,7 @@ if ($Phase -in @('detail', 'final')) {
     [void](Test-RequiredFile 'outlines/detail/vol1-sec011-020.md')
     [void](Test-RequiredFile 'outlines/detail/vol1-sec021-030.md')
     [void](Test-RequiredFile 'outlines/detail/vol1-sec031-060.md')
+    [void](Test-RequiredFile 'outlines/detail/vol1-sec061-090.md')
     Test-DetailHeadings
 }
 
