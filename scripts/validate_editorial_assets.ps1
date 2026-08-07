@@ -77,6 +77,7 @@ function Test-CsvAssets {
 
 function Test-EditedText {
     $files = @(Get-ChildItem -LiteralPath (Get-RepoPath 'volumes') -Filter '*.edited.txt' -Recurse -File -ErrorAction SilentlyContinue)
+    $maxParagraphLength = 500
     $markers = @(
         '**',
         ([string][char]0x7AD9 + [char]0x70B9),
@@ -92,6 +93,13 @@ function Test-EditedText {
         foreach ($marker in $markers) {
             if ($content.Contains($marker)) {
                 Add-Error ('Edited text contains forbidden noise marker "{0}": {1}' -f $marker, $file.FullName)
+            }
+        }
+
+        $lines = Get-Content -LiteralPath $file.FullName -Encoding UTF8
+        for ($index = 0; $index -lt $lines.Count; $index++) {
+            if ($lines[$index].Length -gt $maxParagraphLength) {
+                Add-Error ('Edited text has an overlong paragraph ({0} chars) at {1}:{2}' -f $lines[$index].Length, $file.FullName, ($index + 1))
             }
         }
     }
