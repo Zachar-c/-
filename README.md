@@ -18,19 +18,19 @@ README 只负责分工和启动，不复制完整规则。README、提示词或�
 
 ## 提效工具
 
-### 批次上下文简报 `scripts/gen_brief.ps1`
+### 批次上下文简报 `scripts/gen_brief.py`
 
 开工前恢复上下文的导航工具（只读，不修改正文或台账），一次汇总本卷批次进度、本批定位、逐节标题与源文行号、台账命中、Git 状态：
 
 ```powershell
 # 生成具体批次简报（控制台）
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_brief.ps1 -Volume vol2 -Batch 091-120
+py -3 scripts/gen_brief.py -Volume vol2 -Batch 091-120
 
 # 写简报文件 + 生成批内状态卡模板
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_brief.ps1 -Volume vol2 -Batch 091-120 -WriteState -BriefOut working/brief.md
+py -3 scripts/gen_brief.py -Volume vol2 -Batch 091-120 -WriteState -BriefOut working/brief.md
 
 # 仅查看某卷全部批次进度
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_brief.ps1 -Volume vol2
+py -3 scripts/gen_brief.py -Volume vol2
 ```
 
 参数：`-Volume` 卷 id（vol1/vol2），`-Batch` 与 `config/editorial-volumes.json` 中 `range` 一致的节范围，`-WriteState` 生成 `working/batch-state-<卷id>-<范围>.md` 状态卡模板，`-BriefOut` 简报写盘。
@@ -39,14 +39,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_brief.ps1 -Volum
 
 批次进行中的临时状态记录（人物修为/蛊组/伤势、资源、身份位置、信息边界、每节结束状态）。批次中间换会话或上下文压缩时，先读状态卡恢复进度。批末内容并入正式台账后删除，不随批次提交。
 
-### 批次审阅简报 `scripts/gen_report.ps1`
+### 批次审阅简报 `scripts/gen_report.py`
 
 批末交付给用户审阅的报告生成器（只读 + 运行验证），自动采集本批改动范围、关联提交、台账命中与落账情况、validate 和 `git diff --check` 结果：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_report.ps1 -Volume vol2 -Batch 091-120
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_report.ps1 -Volume vol2 -Batch 091-120 -OutFile notes/batch-report.md
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_report.ps1 -Volume vol2 -Batch 091-120 -SkipValidate
+py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120
+py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -OutFile notes/batch-report.md
+py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -SkipValidate
 ```
 
 "关键裁决及理由"和"遗留问题"两节由编辑会话填写后交付审阅；审阅通过后按批次提交（commit message 含批次范围 + 裁决要点 + 审阅状态）。
@@ -83,7 +83,7 @@ OpenCode 可同时启动多个 DeepSeek 对话，但每个正文会话只能领�
 
 ```text
 你负责《蛊真人》精编第XXX—YYY节，只处理这一批。
-先读 AGENTS.md，然后运行 scripts/gen_brief.ps1 -Volume <卷id> -Batch <节范围> -WriteState 生成批次简报，再按其中台账命中和源文行号指引读取对应文件。
+先读 AGENTS.md，然后运行 py -3 scripts/gen_brief.py -Volume <卷id> -Batch <节范围> -WriteState 生成批次简报，再按其中台账命中和源文行号指引读取对应文件。
 不得修改其他批次正文或共享裁决文件。先报告范围、冻结裁决、人物/资源/时间起止状态，再开始工作。
 完成后运行 AGENTS.md 规定的验证命令，输出改动摘要、台账更新建议和回归结果。
 ```
@@ -103,7 +103,7 @@ OpenCode 可同时启动多个 DeepSeek 对话，但每个正文会话只能领�
 基础验证：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate_editorial_assets.ps1 -Phase detail
+py -3 scripts/validate_editorial_assets.py -Phase detail
 git diff --check
 ```
 

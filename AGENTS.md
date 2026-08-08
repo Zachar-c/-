@@ -17,7 +17,7 @@
 先运行简报生成器（只读，不修改正文或台账）：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_brief.ps1 -Volume <卷id> -Batch <节范围，如 091-120> -WriteState
+py -3 scripts/gen_brief.py -Volume <卷id> -Batch <节范围，如 091-120> -WriteState
 ```
 
 简报一次汇总：本卷所有批次进度、本批正文/细纲/上批/下批定位、逐节标题与源文行号、台账中与本批号直接相关的记录、Git 状态。`-WriteState` 同时在工作区生成批次状态卡模板 `working/batch-state-<卷id>-<范围>.md`。`-BriefOut <路径>` 可把简报写文件，便于跨会话保存。
@@ -208,7 +208,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_brief.ps1 -Volum
 每批收尾运行审阅简报生成器（只读 + 运行验证，不改台账正文）：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_report.ps1 -Volume <卷id> -Batch <节范围>
+py -3 scripts/gen_report.py -Volume <卷id> -Batch <节范围>
 ```
 
 简报自动采集：本批关联提交与文件改动、工作区未提交改动、台账命中行、各台账落账情况与状态行、validate 结果、`git diff --check` 结果。
@@ -251,7 +251,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gen_report.ps1 -Volu
 每批至少运行：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate_editorial_assets.ps1 -Phase detail
+py -3 scripts/validate_editorial_assets.py -Phase detail
 git diff --check
 ```
 
