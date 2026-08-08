@@ -40,22 +40,18 @@ $result.Add('')
 $result.Add($VolumeTitle)
 $result.Add('')
 
-$skipPostscript = $false
 foreach ($rawLine in $lines) {
     $line = $rawLine.TrimEnd()
+
+    if ($line -match '^\s*CTRL\+D\s+') {
+        continue
+    }
 
     if ($line.TrimStart().StartsWith($siteMarker)) {
         continue
     }
 
-    if ($line -match '^\s*\(ps:') {
-        $skipPostscript = $line -notmatch '\)\s*$'
-        continue
-    }
-    if ($skipPostscript) {
-        if ($line -match '\)\s*$') {
-            $skipPostscript = $false
-        }
+    if ($line -match '^\s*[\uFF08(]\s*(?i:ps)\s*[\uFF1A:]') {
         continue
     }
 
@@ -69,7 +65,8 @@ foreach ($rawLine in $lines) {
     }
 
     $line = $line -replace '^\s{4}', ''
-    $line = $line -replace ('\(' + $unfinished + '[^)]*\)'), ''
+    $line = $line -replace ('\(' + $unfinished + '[^)]*(?:\)|$)'), ''
+    $line = $line -replace '</?dd>', ''
     $line = $line -replace 'RQ\s*$', ''
     $line = $line -replace $watermarkPattern, ''
 
@@ -81,6 +78,14 @@ foreach ($rawLine in $lines) {
 
 while ($result.Count -gt 0 -and $result[$result.Count - 1] -eq '') {
     $result.RemoveAt($result.Count - 1)
+}
+
+# Some scraped pages repeat the chapter heading once inside the body wrapper.
+for ($index = $result.Count - 1; $index -ge 2; $index--) {
+    if ($result[$index - 1] -eq '' -and $result[$index] -eq $result[$index - 2] -and $result[$index] -match ('^' + [char]0x7B2C + '.{1,12}' + [char]0x8282)) {
+        $result.RemoveAt($index)
+        $result.RemoveAt($index - 1)
+    }
 }
 $result.Add('')
 

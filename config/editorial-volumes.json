@@ -1,0 +1,36 @@
+{
+  "volumes": [
+    {
+      "id": "vol1",
+      "directoryPattern": "01-*",
+      "detailPattern": "vol1-sec*.md",
+      "sectionCount": 199,
+      "batches": [
+        { "range": "001-010", "count": 10 },
+        { "range": "011-020", "count": 10 },
+        { "range": "021-030", "count": 10 },
+        { "range": "031-060", "count": 30 },
+        { "range": "061-090", "count": 30 },
+        { "range": "091-120", "count": 30 },
+        { "range": "121-150", "count": 30 },
+        { "range": "151-180", "count": 30 },
+        { "range": "181-199", "count": 19 }
+      ]
+    },
+    {
+      "id": "vol2",
+      "directoryPattern": "02-*",
+      "detailPattern": "vol2-sec*.md",
+      "sectionCount": 206,
+      "batches": [
+        { "range": "001-030", "count": 30 },
+        { "range": "031-060", "count": 30 },
+        { "range": "061-090", "count": 30 },
+        { "range": "091-120", "count": 30 },
+        { "range": "121-150", "count": 30 },
+        { "range": "151-180", "count": 30 },
+        { "range": "181-206", "count": 26 }
+      ]
+    }
+  ]
+}
