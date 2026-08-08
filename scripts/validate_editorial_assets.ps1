@@ -106,7 +106,7 @@ function Test-EditedText {
 }
 
 function Test-DetailHeadings {
-    $detailFiles = @(Get-ChildItem -LiteralPath (Get-RepoPath 'outlines\detail') -Filter '*.md' -File -ErrorAction SilentlyContinue)
+    $detailFiles = @(Get-ChildItem -LiteralPath (Get-RepoPath 'outlines\detail') -Filter 'vol1-sec*.md' -File -ErrorAction SilentlyContinue)
     if ($detailFiles.Count -eq 0) {
         Add-Error 'No detail outline files found.'
         return
@@ -115,7 +115,8 @@ function Test-DetailHeadings {
     $sectionNumbers = [System.Collections.Generic.List[int]]::new()
     foreach ($file in $detailFiles) {
         $content = Get-Content -LiteralPath $file.FullName -Encoding UTF8 -Raw
-        $matches = [regex]::Matches($content, '(?m)^### \u7B2C\s*(\d+)\s*\u8282\uFF1A')
+        # Earlier batches use level-three headings; later batches use level-two headings.
+        $matches = [regex]::Matches($content, '(?m)^#{2,3}\s+\u7B2C\s*(\d+)\s*\u8282[\uFF1A:]')
         foreach ($match in $matches) {
             $sectionNumbers.Add([int]$match.Groups[1].Value)
         }
@@ -124,9 +125,47 @@ function Test-DetailHeadings {
     foreach ($duplicate in $duplicates) {
         Add-Error ('Duplicate detail section: {0}' -f $duplicate.Name)
     }
-    $expected = 1..90
+    $expected = 1..199
     if (($sectionNumbers | Sort-Object) -join ',' -ne ($expected -join ',')) {
-        Add-Error ('Detail sections must cover exactly 1-90; found: {0}' -f (($sectionNumbers | Sort-Object) -join ','))
+        Add-Error ('Volume-one detail sections must cover exactly 1-199; found: {0}' -f (($sectionNumbers | Sort-Object) -join ','))
+    }
+}
+
+function Test-VolumeOneSectionBatches {
+    $batches = @(
+        @{ File = 'vol1-sec001-010.edited.txt'; Count = 10 },
+        @{ File = 'vol1-sec011-020.edited.txt'; Count = 10 },
+        @{ File = 'vol1-sec021-030.edited.txt'; Count = 10 },
+        @{ File = 'vol1-sec031-060.edited.txt'; Count = 30 },
+        @{ File = 'vol1-sec061-090.edited.txt'; Count = 30 },
+        @{ File = 'vol1-sec091-120.edited.txt'; Count = 30 },
+        @{ File = 'vol1-sec121-150.edited.txt'; Count = 30 },
+        @{ File = 'vol1-sec151-180.edited.txt'; Count = 30 },
+        @{ File = 'vol1-sec181-199.edited.txt'; Count = 19 }
+    )
+    $volumeRoot = Get-RepoPath 'volumes'
+    $directory = @(Get-ChildItem -LiteralPath $volumeRoot -Directory | Where-Object Name -Like '01-*')
+    if ($directory.Count -ne 1) {
+        Add-Error ('Expected exactly one volume-one directory; found: {0}' -f $directory.Count)
+        return
+    }
+    $directory = $directory[0].FullName
+    $total = 0
+    foreach ($batch in $batches) {
+        $path = Join-Path $directory $batch.File
+        if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+            Add-Error ('Missing volume-one text batch: {0}' -f $batch.File)
+            continue
+        }
+        $content = Get-Content -LiteralPath $path -Encoding UTF8 -Raw
+        $matches = [regex]::Matches($content, '(?m)^(\u7B2C.{0,12}\u8282)(?:[\u3000\uFF1A:]|\s{2,})')
+        if ($matches.Count -ne $batch.Count) {
+            Add-Error ('Unexpected section count in {0}: expected {1}, found {2}' -f $batch.File, $batch.Count, $matches.Count)
+        }
+        $total += $matches.Count
+    }
+    if ($total -ne 199) {
+        Add-Error ('Volume-one text must contain exactly 199 section headings; found: {0}' -f $total)
     }
 }
 
@@ -169,7 +208,12 @@ if ($Phase -in @('detail', 'final')) {
     [void](Test-RequiredFile 'outlines/detail/vol1-sec021-030.md')
     [void](Test-RequiredFile 'outlines/detail/vol1-sec031-060.md')
     [void](Test-RequiredFile 'outlines/detail/vol1-sec061-090.md')
+    [void](Test-RequiredFile 'outlines/detail/vol1-sec091-120.md')
+    [void](Test-RequiredFile 'outlines/detail/vol1-sec121-150.md')
+    [void](Test-RequiredFile 'outlines/detail/vol1-sec151-180.md')
+    [void](Test-RequiredFile 'outlines/detail/vol1-sec181-199.md')
     Test-DetailHeadings
+    Test-VolumeOneSectionBatches
 }
 
 if ($Phase -in @('outline', 'detail', 'final')) {
