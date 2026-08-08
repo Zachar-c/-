@@ -2,12 +2,28 @@ param(
     [ValidateSet('baseline', 'outline', 'detail', 'final')]
     [string]$Phase = 'baseline',
 
-    [string]$RepoRoot = (Get-Location).Path
+    [string]$RepoRoot = (Get-Location).Path,
+
+    [string[]]$Volume = @('vol1')
 )
 
 $ErrorActionPreference = 'Stop'
 $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 $errors = [System.Collections.Generic.List[string]]::new()
+$configPath = Join-Path $RepoRoot 'config\editorial-volumes.json'
+if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) {
+    throw ('Missing editorial volume configuration: {0}' -f $configPath)
+}
+$volumeConfig = Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$knownVolumeIds = @($volumeConfig.volumes | ForEach-Object { $_.id })
+if ($Volume -contains 'all') {
+    $Volume = $knownVolumeIds
+}
+$unknownVolumeIds = @($Volume | Where-Object { $_ -notin $knownVolumeIds })
+if ($unknownVolumeIds.Count -gt 0) {
+    throw ('Unknown volume id(s): {0}. Known ids: {1}' -f ($unknownVolumeIds -join ', '), ($knownVolumeIds -join ', '))
+}
+$selectedVolumes = @($volumeConfig.volumes | Where-Object { $_.id -in $Volume })
 
 function Add-Error([string]$message) {
     $script:errors.Add($message)
@@ -105,10 +121,10 @@ function Test-EditedText {
     }
 }
 
-function Test-DetailHeadings {
-    $detailFiles = @(Get-ChildItem -LiteralPath (Get-RepoPath 'outlines\detail') -Filter 'vol1-sec*.md' -File -ErrorAction SilentlyContinue)
+function Test-DetailHeadings($volume) {
+    $detailFiles = @(Get-ChildItem -LiteralPath (Get-RepoPath 'outlines\detail') -Filter $volume.detailPattern -File -ErrorAction SilentlyContinue)
     if ($detailFiles.Count -eq 0) {
-        Add-Error 'No detail outline files found.'
+        Add-Error ('No detail outline files found for {0}.' -f $volume.id)
         return
     }
 
@@ -125,47 +141,37 @@ function Test-DetailHeadings {
     foreach ($duplicate in $duplicates) {
         Add-Error ('Duplicate detail section: {0}' -f $duplicate.Name)
     }
-    $expected = 1..199
+    $expected = 1..([int]$volume.sectionCount)
     if (($sectionNumbers | Sort-Object) -join ',' -ne ($expected -join ',')) {
-        Add-Error ('Volume-one detail sections must cover exactly 1-199; found: {0}' -f (($sectionNumbers | Sort-Object) -join ','))
+        Add-Error ('{0} detail sections must cover exactly 1-{1}; found: {2}' -f $volume.id, $volume.sectionCount, (($sectionNumbers | Sort-Object) -join ','))
     }
 }
 
-function Test-VolumeOneSectionBatches {
-    $batches = @(
-        @{ File = 'vol1-sec001-010.edited.txt'; Count = 10 },
-        @{ File = 'vol1-sec011-020.edited.txt'; Count = 10 },
-        @{ File = 'vol1-sec021-030.edited.txt'; Count = 10 },
-        @{ File = 'vol1-sec031-060.edited.txt'; Count = 30 },
-        @{ File = 'vol1-sec061-090.edited.txt'; Count = 30 },
-        @{ File = 'vol1-sec091-120.edited.txt'; Count = 30 },
-        @{ File = 'vol1-sec121-150.edited.txt'; Count = 30 },
-        @{ File = 'vol1-sec151-180.edited.txt'; Count = 30 },
-        @{ File = 'vol1-sec181-199.edited.txt'; Count = 19 }
-    )
+function Test-VolumeSectionBatches($volume) {
     $volumeRoot = Get-RepoPath 'volumes'
-    $directory = @(Get-ChildItem -LiteralPath $volumeRoot -Directory | Where-Object Name -Like '01-*')
+    $directory = @(Get-ChildItem -LiteralPath $volumeRoot -Directory | Where-Object Name -Like $volume.directoryPattern)
     if ($directory.Count -ne 1) {
-        Add-Error ('Expected exactly one volume-one directory; found: {0}' -f $directory.Count)
+        Add-Error ('Expected exactly one directory for {0}; found: {1}' -f $volume.id, $directory.Count)
         return
     }
     $directory = $directory[0].FullName
     $total = 0
-    foreach ($batch in $batches) {
-        $path = Join-Path $directory $batch.File
+    foreach ($batch in $volume.batches) {
+        $fileName = '{0}-sec{1}.edited.txt' -f $volume.id, $batch.range
+        $path = Join-Path $directory $fileName
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-            Add-Error ('Missing volume-one text batch: {0}' -f $batch.File)
+            Add-Error ('Missing {0} text batch: {1}' -f $volume.id, $fileName)
             continue
         }
         $content = Get-Content -LiteralPath $path -Encoding UTF8 -Raw
         $matches = [regex]::Matches($content, '(?m)^(\u7B2C.{0,12}\u8282)(?:[\u3000\uFF1A:]|\s{2,})')
         if ($matches.Count -ne $batch.Count) {
-            Add-Error ('Unexpected section count in {0}: expected {1}, found {2}' -f $batch.File, $batch.Count, $matches.Count)
+            Add-Error ('Unexpected section count in {0}: expected {1}, found {2}' -f $fileName, $batch.count, $matches.Count)
         }
         $total += $matches.Count
     }
-    if ($total -ne 199) {
-        Add-Error ('Volume-one text must contain exactly 199 section headings; found: {0}' -f $total)
+    if ($total -ne [int]$volume.sectionCount) {
+        Add-Error ('{0} text must contain exactly {1} section headings; found: {2}' -f $volume.id, $volume.sectionCount, $total)
     }
 }
 
@@ -203,17 +209,13 @@ if ($Phase -in @('outline', 'detail', 'final')) {
 }
 
 if ($Phase -in @('detail', 'final')) {
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec001-010.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec011-020.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec021-030.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec031-060.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec061-090.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec091-120.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec121-150.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec151-180.md')
-    [void](Test-RequiredFile 'outlines/detail/vol1-sec181-199.md')
-    Test-DetailHeadings
-    Test-VolumeOneSectionBatches
+    foreach ($selectedVolume in $selectedVolumes) {
+        foreach ($batch in $selectedVolume.batches) {
+            [void](Test-RequiredFile ('outlines/detail/{0}-sec{1}.md' -f $selectedVolume.id, $batch.range))
+        }
+        Test-DetailHeadings $selectedVolume
+        Test-VolumeSectionBatches $selectedVolume
+    }
 }
 
 if ($Phase -in @('outline', 'detail', 'final')) {
@@ -234,5 +236,5 @@ if ($errors.Count -gt 0) {
     exit 1
 }
 
-Write-Output ('Editorial asset validation passed: phase={0}' -f $Phase)
+Write-Output ('Editorial asset validation passed: phase={0}; volume={1}' -f $Phase, ($Volume -join ','))
 exit 0
