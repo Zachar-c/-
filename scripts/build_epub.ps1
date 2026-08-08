@@ -18,6 +18,40 @@ function Escape-Xml([string]$Value) {
     return [System.Security.SecurityElement]::Escape($Value)
 }
 
+function Convert-ChineseNumber([string]$Value) {
+    if ($Value -match '^\d+$') { return [int]$Value }
+
+    $digits = @{
+        '零' = 0; '〇' = 0; '一' = 1; '二' = 2; '两' = 2; '三' = 3; '四' = 4
+        '五' = 5; '六' = 6; '七' = 7; '八' = 8; '九' = 9
+    }
+    $units = @{ '十' = 10; '百' = 100; '千' = 1000; '万' = 10000 }
+    $total = 0
+    $section = 0
+    $number = 0
+
+    foreach ($character in $Value.ToCharArray()) {
+        $text = [string]$character
+        if ($digits.ContainsKey($text)) {
+            $number = $digits[$text]
+            continue
+        }
+        if ($units.ContainsKey($text)) {
+            $unit = $units[$text]
+            if ($number -eq 0) { $number = 1 }
+            if ($unit -eq 10000) {
+                $section = ($section + $number) * $unit
+                $total += $section
+                $section = 0
+            } else {
+                $section += $number * $unit
+            }
+            $number = 0
+        }
+    }
+    return $total + $section + $number
+}
+
 function Convert-ToSafeFileName([string]$Value) {
     $invalid = [IO.Path]::GetInvalidFileNameChars()
     $result = $Value
@@ -154,11 +188,24 @@ $headingPattern = '^第(?<number>[零〇一二两三四五六七八九十百千�
 
 foreach ($source in $SourcePath) {
     $lines = [IO.File]::ReadAllLines((Resolve-Path -LiteralPath $source).Path, [Text.UTF8Encoding]::new($false, $true))
+    $sourceName = [IO.Path]::GetFileName($source)
+    $rangeMatch = [regex]::Match($sourceName, 'sec(?<start>\d+)-(?<end>\d+)\.edited\.txt$', [Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    $rangeStart = if ($rangeMatch.Success) { [int]$rangeMatch.Groups['start'].Value } else { $null }
+    $rangeEnd = if ($rangeMatch.Success) { [int]$rangeMatch.Groups['end'].Value } else { $null }
     $current = $null
     $content = [System.Collections.Generic.List[string]]::new()
 
     foreach ($line in $lines) {
         if ($line -match $headingPattern) {
+            $chapterNumber = Convert-ChineseNumber $matches['number']
+            if ($null -ne $rangeEnd -and ($chapterNumber -lt $rangeStart -or $chapterNumber -gt $rangeEnd)) {
+                if ($null -ne $current) {
+                    $current.content = @($content)
+                    $chapters.Add($current)
+                }
+                $current = $null
+                break
+            }
             if ($null -ne $current) {
                 $current.content = @($content)
                 $chapters.Add($current)
