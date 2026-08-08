@@ -13,7 +13,7 @@ import sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, REPO_ROOT, git_silent, git_status_short, git_log_oneline
+from gu_tools import PsArgs, REPO_ROOT, git_silent, git_status_short, git_log_oneline, print_console
 
 REGISTER_NAMES = [
     'decision-register',
@@ -147,9 +147,9 @@ def main():
             os.makedirs(os.path.dirname(brief_out_path), exist_ok=True)
             with io.open(brief_out_path, 'w', encoding='utf-8', newline='') as fh:
                 fh.write(brief_text)
-            print(u'简报已写入：' + get_relative(brief_out_path))
+            print_console(u'简报已写入：' + get_relative(brief_out_path))
         else:
-            print(brief_text)
+            print_console(brief_text)
         sys.exit(0)
 
     batch_def = next((b for b in vol_cfg['batches'] if b['range'] == batch), None)
@@ -294,9 +294,9 @@ def main():
         os.makedirs(os.path.dirname(brief_out_path), exist_ok=True)
         with io.open(brief_out_path, 'w', encoding='utf-8', newline='') as fh:
             fh.write(brief_text)
-        print(u'简报已写入：' + get_relative(brief_out_path))
+        print_console(u'简报已写入：' + get_relative(brief_out_path))
     else:
-        print(brief_text)
+        print_console(brief_text)
 
 
 if __name__ == '__main__':

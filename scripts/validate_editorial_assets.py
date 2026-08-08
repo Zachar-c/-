@@ -8,7 +8,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, REPO_ROOT, git_ls_files, chinese_number
+from gu_tools import PsArgs, REPO_ROOT, git_ls_files, chinese_number, print_console
 
 PHASES = ('baseline', 'outline', 'detail', 'final')
 RE_BATCH_RANGE = re.compile(r'^(\d{3})-(\d{3})$')
@@ -270,12 +270,12 @@ def main():
             errors.append('Source audit JSON cannot be parsed: {0}'.format(exc))
 
     if errors:
-        print('', file=sys.stderr)
+        print_console('', stream=sys.stderr)
         for message in errors:
-            print('- ' + message, file=sys.stderr)
+            print_console('- ' + message, stream=sys.stderr)
         sys.exit(1)
 
-    print('Editorial asset validation passed: phase={0}; volume={1}'.format(phase, ','.join(volumes)))
+    print_console('Editorial asset validation passed: phase={0}; volume={1}'.format(phase, ','.join(volumes)))
     sys.exit(0)
 
 

@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, chinese_number, write_json, write_csv_utf8_bom
+from gu_tools import PsArgs, repo_abs, repo_path, read_source_lines, chinese_number, write_json, write_csv_utf8_bom, print_console
 
 HEADING_PATTERN = re.compile(
     r'^\s*(?:\u6B63\u6587\s*)?\u7B2C([\u96F6\u3007\u4E00\u4E8C\u4E24\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u767E\u5343\u4E07\d]+)\u8282[\uFF1A:]\s*(.+?)\s*$')
@@ -37,8 +37,14 @@ def main():
     output_dir = repo_abs(args.require('OutputDirectory'))
     os.makedirs(output_dir, exist_ok=True)
 
-    with io.open(source, 'r', encoding='gbk', newline='') as fh:
-        lines = fh.read().splitlines()
+    user_stated_characters = 0
+    config_path = repo_path('config\\editorial-volumes.json')
+    if os.path.isfile(config_path):
+        with io.open(config_path, 'r', encoding='utf-8-sig') as fh:
+            volume_config = json.load(fh)
+        user_stated_characters = int(volume_config.get('userStatedCharacters', 0))
+
+    lines = read_source_lines(source)
 
     all_text_characters = 0
     han_characters = 0
@@ -91,7 +97,7 @@ def main():
         'non_empty_lines': non_empty_lines,
         'decoded_characters_without_newlines': all_text_characters,
         'han_characters': han_characters,
-        'user_stated_characters': 14577005,
+        'user_stated_characters': user_stated_characters,
         'heading_hits': len(heading_records),
         'generated_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
     }
@@ -115,7 +121,7 @@ def main():
         })
     write_csv_utf8_bom(os.path.join(output_dir, 'chapter-number-summary.csv'), summary)
 
-    print(json.dumps(metadata, ensure_ascii=False))
+    print_console(json.dumps(metadata, ensure_ascii=False))
 
 
 if __name__ == '__main__':

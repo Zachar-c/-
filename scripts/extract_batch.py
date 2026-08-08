@@ -6,7 +6,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, read_source_lines, write_utf8_no_bom
+from gu_tools import PsArgs, read_source_lines, write_utf8_no_bom, print_console
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
         raise SystemExit('EndLine {0} exceeds source line count {1}'.format(end, len(lines)))
     selected = lines[start - 1:end]
     write_utf8_no_bom(output, '\n'.join(selected))
-    print('提取 {0} 行 -> {1}'.format(len(selected), output))
+    print_console('提取 {0} 行 -> {1}'.format(len(selected), output))
 
 
 if __name__ == '__main__':

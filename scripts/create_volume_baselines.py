@@ -1,14 +1,26 @@
 # -*- coding: utf-8 -*-
 """从完整源文中按批次拆分并清洗生成卷级基线，同时输出节-源行映射 CSV。
 对齐 create_volume_baselines.ps1；清洗复用 create_edited_baseline.clean_lines（原 ps1 子进程调用改为进程内调用）。"""
+import io
+import json
 import os
 import re
 import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, read_source_lines, chinese_section_number, write_utf8_no_bom, write_csv_utf8_bom
+from gu_tools import PsArgs, repo_abs, repo_path, read_source_lines, chinese_section_number, write_utf8_no_bom, write_csv_utf8_bom
 import create_edited_baseline as baseline
+
+
+def load_volume_config(volume_id):
+    config_path = repo_path('config\\editorial-volumes.json')
+    with io.open(config_path, 'r', encoding='utf-8-sig') as fh:
+        volume_config = json.load(fh)
+    vol_cfg = next((v for v in volume_config['volumes'] if v['id'] == volume_id), None)
+    if not vol_cfg:
+        raise SystemExit('Unknown volume id: {0}'.format(volume_id))
+    return int(vol_cfg['sectionCount'])
 
 BODY = chr(0x6B63) + chr(0x6587)       # 正文
 ORDINAL = chr(0x7B2C)                  # 第
@@ -51,8 +63,9 @@ def main():
                  for ln in range(start_line, end_line + 1) if ln not in excluded]
 
     headings = [row for row in canonical if HEADING_PATTERN.match(row['Text'])]
-    if len(headings) != 206:
-        raise SystemExit('Expected 206 canonical headings; found {0}'.format(len(headings)))
+    section_count = load_volume_config(volume_id)
+    if len(headings) != section_count:
+        raise SystemExit('Expected {0} canonical headings; found {1}'.format(section_count, len(headings)))
 
     heading_rows = []
     for row in headings:
@@ -62,9 +75,9 @@ def main():
             'SourceLine': row['SourceLine'],
             'Text': row['Text'],
         })
-    expected = list(range(1, 207))
+    expected = list(range(1, section_count + 1))
     if [r['Number'] for r in heading_rows] != expected:
-        raise SystemExit('Canonical section numbers are not continuous 1-206.')
+        raise SystemExit('Canonical section numbers are not continuous 1-{0}.'.format(section_count))
 
     os.makedirs(output_dir, exist_ok=True)
     by_number = {r['Number']: r for r in heading_rows}
