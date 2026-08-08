@@ -95,14 +95,17 @@ function Test-EditedText {
     $files = @(Get-ChildItem -LiteralPath (Get-RepoPath 'volumes') -Filter '*.edited.txt' -Recurse -File -ErrorAction SilentlyContinue)
     $maxParagraphLength = 500
     $markers = @(
-        '**',
         ([string][char]0x7AD9 + [char]0x70B9),
         ([string][char]0x4F5C + [char]0x8005 + [char]0x6309 + [char]0x8BED),
         ([string][char]0x6253 + [char]0x8D4F),
         ([string][char]0x63A8 + [char]0x8350 + [char]0x7968),
         ([string][char]0x6708 + [char]0x7968),
         ([string][char]0x8BF7 + [char]0x6536 + [char]0x85CF),
-        ([string][char]0x624B + [char]0x673A + [char]0x7528 + [char]0x6237)
+        ([string][char]0x624B + [char]0x673A + [char]0x7528 + [char]0x6237),
+        'CTRL+D',
+        '<dd>',
+        '</dd>',
+        ([string][char]0x672A + [char]0x5B8C + [char]0x5F85 + [char]0x7EED)
     )
     foreach ($file in $files) {
         $content = Get-Content -LiteralPath $file.FullName -Encoding UTF8 -Raw
@@ -164,7 +167,7 @@ function Test-VolumeSectionBatches($volume) {
             continue
         }
         $content = Get-Content -LiteralPath $path -Encoding UTF8 -Raw
-        $matches = [regex]::Matches($content, '(?m)^(\u7B2C.{0,12}\u8282)(?:[\u3000\uFF1A:]|\s{2,})')
+        $matches = [regex]::Matches($content, '(?m)^\u7B2C[\u96F6\u4E00\u4E8C\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u767E]+\u8282(?:[\uFF1A:]|\s+(?!\u8BFE))')
         if ($matches.Count -ne $batch.Count) {
             Add-Error ('Unexpected section count in {0}: expected {1}, found {2}' -f $fileName, $batch.count, $matches.Count)
         }
