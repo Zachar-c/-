@@ -9,10 +9,21 @@ import zipfile
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, chinese_number
+from gu_tools import PsArgs, repo_abs, chinese_number, print_console
 
 HEADING_PATTERN = re.compile(r'^第(?P<number>[零〇一二两三四五六七八九十百千万\d]+)节[：:\s　]*(?P<title>.+?)\s*$')
-RANGE_PATTERN = re.compile(r'sec(?P<start>\d+)-(?P<end>\d+)\.edited\.txt$', re.IGNORECASE)
+RANGE_PATTERN = re.compile(r'(?P<volume>vol\d)-sec(?P<start>\d+)-(?P<end>\d+)\.edited\.txt$', re.IGNORECASE)
+
+
+def default_book_id(source_paths):
+    """从第一个精编源文件名推导 BookId（vol1-sec001-199.edited.txt -> gu-zhenren-vol1-sec001-199）；
+    推导失败返回 None，由调用方强制要求显式提供。"""
+    for source in source_paths or []:
+        m = RANGE_PATTERN.search(os.path.basename(source))
+        if m:
+            return 'gu-zhenren-{0}-sec{1}-{2}'.format(
+                m.group('volume'), m.group('start'), m.group('end'))
+    return None
 
 
 def escape_xml(value):
@@ -136,13 +147,18 @@ def main():
     ], defaults={
         'BookTitle': '《蛊真人》精编版',
         'PartTitle': '第一部　魔性不改',
-        'BookId': 'gu-zhenren-vol1-sec001-199',
     })
     source_paths = args.require('SourcePath')
     output = repo_abs(args.require('OutputPath'))
     book_title = args.get('BookTitle')
     part_title = args.get('PartTitle')
     book_id = args.get('BookId')
+    if not book_id:
+        book_id = default_book_id(source_paths)
+    if not book_id:
+        raise SystemExit(
+            'Missing -BookId；无法从源文件名（如 vol1-sec001-199.edited.txt）自动推导，'
+            '请显式提供，例如 -BookId gu-zhenren-vol2-sec001-206')
 
     chapters = read_chapters(source_paths)
     if not chapters:
@@ -260,8 +276,8 @@ def main():
            os.linesep.join(chapter_manifest) + os.linesep, os.linesep.join(chapter_spine) + os.linesep)
         add_text_entry(zf, 'OEBPS/content.opf', manifest)
 
-    print('Created: {0}'.format(output))
-    print('Chapters: {0}'.format(len(chapters)))
+    print_console('Created: {0}'.format(output))
+    print_console('Chapters: {0}'.format(len(chapters)))
 
 
 if __name__ == '__main__':

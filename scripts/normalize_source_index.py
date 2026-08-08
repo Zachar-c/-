@@ -11,7 +11,7 @@ from collections import OrderedDict
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, chinese_number, write_json, write_csv_utf8_bom, write_utf8_bom
+from gu_tools import PsArgs, repo_abs, repo_path, read_source_lines, chinese_number, write_json, write_csv_utf8_bom, write_utf8_bom, print_console
 
 HEADING_CANDIDATE = re.compile(
     r'^\s*(?:(\u6B63\u6587)\s*)?\u7B2C([\u96F6\u3007\u4E00\u4E8C\u4E24\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u767E\u5343\u4E07\d]+)\u8282\s*[\uFF1A:]\s*(.*?)\s*$')
@@ -68,8 +68,13 @@ def main():
     output_dir = repo_abs(args.require('OutputDirectory'))
     os.makedirs(output_dir, exist_ok=True)
 
-    with io.open(source, 'r', encoding='gbk', newline='') as fh:
-        source_lines = fh.read().splitlines()
+    source_lines = read_source_lines(source)
+    user_stated_characters = 0
+    config_path = repo_path('config\\editorial-volumes.json')
+    if os.path.isfile(config_path):
+        with io.open(config_path, 'r', encoding='utf-8-sig') as fh:
+            volume_config = json.load(fh)
+        user_stated_characters = int(volume_config.get('userStatedCharacters', 0))
     with io.open(raw_index, 'r', encoding='utf-8-sig', newline='') as fh:
         raw_rows = list(csv.DictReader(fh))
 
@@ -194,7 +199,7 @@ def main():
         ('encoding', 'CP936 / GBK'),
         ('source_line_count', len(source_lines)),
         ('decoded_characters_without_newlines', sum(len(l) for l in source_lines)),
-        ('user_stated_characters', 14577005),
+        ('user_stated_characters', user_stated_characters),
         ('raw_index_rows', len(raw_rows)),
         ('parsed_heading_candidates', len(normalized)),
         ('duplicate_section_numbers', sum(1 for v in duplicate_groups.values() if v > 1)),
@@ -258,7 +263,7 @@ def main():
     ]
     write_utf8_bom(audit_markdown_path, os.linesep.join(md))
 
-    print(json.dumps(source_audit, ensure_ascii=False))
+    print_console(json.dumps(source_audit, ensure_ascii=False))
 
 
 if __name__ == '__main__':

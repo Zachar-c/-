@@ -14,7 +14,7 @@ import sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, REPO_ROOT, git_silent, git_status_short, git_log_oneline
+from gu_tools import PsArgs, REPO_ROOT, git_silent, git_status_short, git_log_oneline, print_console
 
 REGISTER_NAMES = [
     'decision-register',
@@ -84,9 +84,14 @@ def main():
     # 1. 本批改动范围
     report('## 1. 本批改动范围')
     report('')
-    related_commits = git_silent(repo_root, 'log', '--oneline', '-20', '--grep', batch)
+    # grep 锚定本批文件名形态（vol1-sec061-090），
+    # 避免 "061-199全卷回归" 之类的跨批合并提交因子串匹配污染本批清单。
+    grep_pattern = endpoint
+    related_commits = git_silent(repo_root, 'log', '--oneline', '-20', '--grep', grep_pattern)
+    if not related_commits:
+        related_commits = git_silent(repo_root, 'log', '--oneline', '-20', '--grep', batch)
     if related_commits:
-        report('- 关联提交（git log 命中本批号）：')
+        report(u'- 关联提交（git log 命中 {0}）：'.format(grep_pattern))
         for commit_line in related_commits:
             report('  - ' + commit_line)
         related_hash = related_commits[0].split(' ')[0]
@@ -231,7 +236,7 @@ def main():
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with io.open(out_path, 'w', encoding='utf-8', newline='') as fh:
         fh.write(report_text)
-    print(u'审阅简报已写入：' + get_relative(out_path))
+    print_console(u'审阅简报已写入：' + get_relative(out_path))
 
 
 if __name__ == '__main__':
