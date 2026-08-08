@@ -9,7 +9,13 @@
 working/read-*.txt
 working/round3-*.txt
 working/*.cp936.txt
+working/*.utf8.txt
 working/vol2-source/
+working/batch-state-*.md
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
 
 # Local isolated worktrees
 .worktrees/

@@ -255,11 +255,13 @@ def git_ls_files(repo, *pathspec):
     return git_silent(repo, '-c', 'core.quotePath=false', 'ls-files', *pathspec)
 
 
-def print_console(text):
-    """向控制台输出 UTF-8（无论重定向与否都以 utf-8 写出，避免 PS 乱码）。"""
+def print_console(text, stream=None):
+    """向控制台输出 UTF-8（无论重定向与否都以 utf-8 写出，避免 GBK 乱码）。
+    stream 缺省为 stdout；错误信息可传 sys.stderr。"""
+    out = stream if stream is not None else sys.stdout
     try:
-        sys.stdout.buffer.write(text.encode('utf-8'))
-        sys.stdout.buffer.write(b'\n')
-        sys.stdout.buffer.flush()
+        out.buffer.write(text.encode('utf-8'))
+        out.buffer.write(b'\n')
+        out.buffer.flush()
     except Exception:
-        print(text)
+        print(text, file=out)

@@ -4,7 +4,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, read_utf8, write_utf8_no_bom
+from gu_tools import PsArgs, repo_abs, read_utf8, write_utf8_no_bom, print_console
 
 
 def main():
@@ -33,10 +33,10 @@ def main():
     write_utf8_no_bom(source, volume_one)
     write_utf8_no_bom(destination, volume_two)
 
-    print('VolumeOneCharacters: {0}'.format(len(volume_one)))
-    print('VolumeTwoCharacters: {0}'.format(len(volume_two)))
-    print('BoundaryOccurrences:  {0}'.format(volume_two.count(marker)))
-    print('VolumeOneEndsCorrectly: {0}'.format(volume_one.rstrip().endswith('“中洲？！”方正震惊得大叫。')))
+    print_console('VolumeOneCharacters: {0}'.format(len(volume_one)))
+    print_console('VolumeTwoCharacters: {0}'.format(len(volume_two)))
+    print_console('BoundaryOccurrences:  {0}'.format(volume_two.count(marker)))
+    print_console('VolumeOneEndsCorrectly: {0}'.format(volume_one.rstrip().endswith('“中洲？！”方正震惊得大叫。')))
 
 
 if __name__ == '__main__':
