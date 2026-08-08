@@ -7,7 +7,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, read_gbk_lines, chinese_section_number, write_utf8_no_bom, write_csv_utf8_bom
+from gu_tools import PsArgs, repo_abs, read_source_lines, chinese_section_number, write_utf8_no_bom, write_csv_utf8_bom
 import create_edited_baseline as baseline
 
 BODY = chr(0x6B63) + chr(0x6587)       # 正文
@@ -39,7 +39,7 @@ def main():
     batches = args.require('Batches')
     exclude_ranges = args.get('ExcludeRanges')
 
-    all_lines = read_gbk_lines(source)
+    all_lines = read_source_lines(source)
     excluded = set()
     for range_text in exclude_ranges:
         m = re.match(r'^(\d+)-(\d+)$', range_text)

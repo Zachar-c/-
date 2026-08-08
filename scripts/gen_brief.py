@@ -264,13 +264,13 @@ def main():
     brief('## 6. 原文底稿')
     source_file = repo_path('蛊真人.txt')
     if os.path.isfile(source_file):
-        brief('- 完整源文：蛊真人.txt（对照细纲"源文位置"行号区间；编辑时必须读对应区间）')
+        brief('- 完整源文：蛊真人.txt（UTF-8；对照细纲"源文位置"行号区间；编辑时必须读对应区间）')
     else:
         brief('- 完整源文：仓库根目录未找到 蛊真人.txt')
-    working_file = repo_path(u'working\\{0}-sec{1}.cp936.txt'.format(vol_cfg['id'], batch))
+    working_file = repo_path(u'working\\{0}-sec{1}.utf8.txt'.format(vol_cfg['id'], batch))
     if os.path.isfile(working_file):
         size = os.path.getsize(working_file)
-        brief(u'- 本地底稿：{0}（{1} KB，GBK 编码）'.format(get_relative(working_file), round(size / 1024.0)))
+        brief(u'- 本地底稿：{0}（{1} KB，UTF-8 编码）'.format(get_relative(working_file), round(size / 1024.0)))
 
     if write_state:
         state_file = repo_path(u'working\\batch-state-{0}-{1}.md'.format(vol_cfg['id'], batch))
