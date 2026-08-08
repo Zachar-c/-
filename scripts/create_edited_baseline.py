@@ -6,7 +6,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, read_gbk_lines, write_utf8_no_bom
+from gu_tools import PsArgs, repo_abs, read_source_lines, write_utf8_no_bom
 
 
 def from_codepoints(*cps):
@@ -85,7 +85,7 @@ def main():
     book_title = args.get('BookTitle') or BOOK_TITLE
     volume_title = args.get('VolumeTitle') or VOLUME_TITLE
 
-    lines = read_gbk_lines(repo_abs(source))
+    lines = read_source_lines(repo_abs(source))
     result = clean_lines(lines)
     if book_title != BOOK_TITLE:
         result[0] = book_title
