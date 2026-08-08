@@ -23,7 +23,7 @@
 - 进度：第一部《魔性不改》199 节正文精编与逐节细纲全部完成并回修；EPUB（001-199）已按回修重建；第二部已由 vol2-sec001.edited.txt（黄龙江竹筏）开局。
 - 规范：`AGENTS.md` 为唯一完整规范源（开工前必读）；卷级裁决入 `notes/vol1-decision-register.md`。
 - 台账：5 本基础 CSV + 卷一级专项台账 7 本 + 全书核证登记表 `notes/full-book-audit-register.md`（FB-001~016）。
-- 数据源：`C:\DevEnv\05_Downloads\蛊真人.txt`（仓外，不入库；CP936/GBK，437060 行，解码 832 万字符；当前不可访问，working/ 底稿止于第 90 节）。
+- 数据源：仓库根目录 `蛊真人.txt`（授权基准源，tracked；CP936/GBK，437060 行；`working/*.cp936.txt` 为本地临时底稿，已 gitignore，91-199 底稿已补齐）。
 - 校验命令：`powershell -NoExecutionPolicy Bypass -File scripts/validate_editorial_assets.ps1 -Phase final`（已通过）。
 
 ## 变更记录

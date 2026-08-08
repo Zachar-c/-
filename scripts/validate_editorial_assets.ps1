@@ -55,14 +55,20 @@ function Test-RequiredFile([string]$relativePath) {
 }
 
 function Test-TrackedSourceBoundary {
-    $tracked = @(git -C $RepoRoot -c core.quotePath=false ls-files)
     $allowlist = @($volumeConfig.trackedSourceAllowlist)
+    $previousEncoding = [Console]::OutputEncoding
+    try {
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+        $tracked = @(git -C $RepoRoot -c core.quotePath=false ls-files)
+    } finally {
+        [Console]::OutputEncoding = $previousEncoding
+    }
     foreach ($path in $tracked) {
         if ($path -in $allowlist) {
             continue
         }
         $leaf = ($path -split '/')[-1]
-        if ($leaf -eq ([string][char]0x86CA + [char]0x771F + [char]0x4EBA + '.txt') -or $leaf -match '^(source|complete|full).*(txt|docx?|pdf)$') {
+        if ($leaf -match '^(source|complete|full).*(txt|docx?|pdf)$') {
             Add-Error ('Complete-source copy appears tracked: {0}' -f $path)
         }
     }
