@@ -1,4 +1,5 @@
 {
+  "trackedSourceAllowlist": ["蛊真人.txt"],
   "volumes": [
     {
       "id": "vol1",
