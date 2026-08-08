@@ -96,4 +96,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate_editorial_a
 
 生成总纲后使用 `-Phase outline`，生成细纲后使用 `-Phase detail`，全部资产和正文回校结束后使用 `-Phase final`。校验失败时修复文件或脚本，不通过放宽规则掩盖问题。
 
-完整原文只作为仓外证据源使用；原文路径、字符统计和索引差异记录在 `index/source-audit.*`，完整文本不得复制或加入 Git。
+完整原文以仓库根目录的 `蛊真人.txt` 作为授权基准源（tracked 白名单），原文路径、字符统计和索引差异记录在 `index/source-audit.*`；仓库内不得再出现其他名称的完整源文本复本（`source/`、`complete/`、`full/` 前缀）。
