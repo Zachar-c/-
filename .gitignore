@@ -5,6 +5,15 @@
 *.log
 *.orig
 
+# Local source extracts and intermediate editorial working copies
+working/read-*.txt
+working/round3-*.txt
+working/*.cp936.txt
+working/vol2-source/
+
+# Local isolated worktrees
+.worktrees/
+
 # Editor and operating-system metadata
 .DS_Store
 Thumbs.db
