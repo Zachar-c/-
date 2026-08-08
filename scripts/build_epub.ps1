@@ -6,7 +6,8 @@
     [string]$OutputPath,
 
     [string]$BookTitle = '《蛊真人》精编版',
-    [string]$PartTitle = '第一部　魔性不改'
+    [string]$PartTitle = '第一部　魔性不改',
+    [string]$BookId = 'gu-zhenren-vol1-sec001-199'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -391,7 +392,7 @@ $($navItems.ToString())      </ol>
 <?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
   <head>
-    <meta name="dtb:uid" content="gu-zhenren-vol1-sec001-020"/>
+    <meta name="dtb:uid" content="$(Escape-Xml $BookId)"/>
   </head>
   <docTitle><text>$(Escape-Xml $BookTitle)</text></docTitle>
   <navMap>
@@ -406,7 +407,7 @@ $($ncxItems.ToString())  </navMap>
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="zh-CN">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <dc:identifier id="book-id">gu-zhenren-vol1-sec001-020</dc:identifier>
+    <dc:identifier id="book-id">$(Escape-Xml $BookId)</dc:identifier>
     <dc:title>$(Escape-Xml $BookTitle)</dc:title>
     <dc:language>zh-CN</dc:language>
     <dc:creator>古月</dc:creator>
