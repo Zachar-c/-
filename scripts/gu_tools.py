@@ -30,6 +30,15 @@ def read_gbk_lines(path):
         return fh.read().splitlines()
 
 
+def read_source_lines(path):
+    """自动检测编码读取源文/底稿：UTF-8（含 BOM）优先，失败退回 CP936。"""
+    try:
+        with io.open(path, 'r', encoding='utf-8-sig', newline='') as fh:
+            return fh.read().splitlines()
+    except (UnicodeDecodeError, UnicodeError):
+        return read_gbk_lines(path)
+
+
 def read_utf8(path):
     with io.open(path, 'r', encoding='utf-8', newline='') as fh:
         return fh.read()

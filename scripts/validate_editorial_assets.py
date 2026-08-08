@@ -8,9 +8,10 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, REPO_ROOT, git_ls_files
+from gu_tools import PsArgs, REPO_ROOT, git_ls_files, chinese_number
 
 PHASES = ('baseline', 'outline', 'detail', 'final')
+RE_BATCH_RANGE = re.compile(r'^(\d{3})-(\d{3})$')
 NOISE_MARKERS = [
     chr(0x7AD9) + chr(0x70B9),          # 站点
     chr(0x4F5C) + chr(0x8005) + chr(0x6309) + chr(0x8BED),  # 作者按语
@@ -26,8 +27,17 @@ NOISE_MARKERS = [
 ]
 MAX_PARAGRAPH_LENGTH = 500
 RE_DETAIL_HEADING = re.compile(r'(?m)^#{2,3}\s+\u7B2C\s*(\d+)\s*\u8282[\uFF1A:]')
-RE_EDITED_HEADING = re.compile(r'(?m)^\u7B2C[\u96F6\u4E00\u4E8C\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u767E]+\u8282(?:[\uFF1A:]|\s+(?!\u8BFE))')
+RE_EDITED_HEADING = re.compile(r'(?m)^\u7B2C([\u96F6\u4E00\u4E8C\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u767E]+)\u8282(?:[\uFF1A:]|\s+(?!\u8BFE))')
 RE_OUTLINE_REF = re.compile(r'\]\(([^)#]+)\)')
+
+
+def parse_batch_range(spec, errors):
+    """解析 '001-030' 为 (1, 30)；非法时记入 errors 并返回 None。"""
+    m = RE_BATCH_RANGE.match(spec)
+    if not m:
+        errors.append('Invalid batch range spec "{0}"; expected DDD-DDD'.format(spec))
+        return None
+    return int(m.group(1)), int(m.group(2))
 
 
 def strict_utf8(path, errors):
@@ -45,6 +55,7 @@ def main():
         ('Phase', 'string'),
         ('RepoRoot', 'string'),
         ('Volume', 'string[]'),
+        ('Batch', 'string'),
     ], defaults={
         'Phase': 'baseline',
         'RepoRoot': REPO_ROOT,
@@ -55,6 +66,10 @@ def main():
         raise SystemExit('Invalid phase: {0}. Valid: {1}'.format(phase, ', '.join(PHASES)))
     repo_root = os.path.abspath(args.get('RepoRoot'))
     volumes = args.get('Volume')
+    batch_spec = args.get('Batch')
+    batch_range = parse_batch_range(batch_spec, []) if batch_spec else None
+    if batch_spec and batch_range is None:
+        raise SystemExit('Invalid -Batch value: {0}; expected DDD-DDD (e.g. 091-120)'.format(batch_spec))
 
     errors = []
     config_path = os.path.join(repo_root, 'config', 'editorial-volumes.json')
@@ -140,10 +155,16 @@ def main():
         test_required_file('outlines/00-full-book-outline.md')
 
     if phase in ('detail', 'final'):
+        batch_lo, batch_hi = (parse_batch_range(batch_spec, []) if batch_spec else (None, None))
         for volume in selected_volumes:
-            for batch in volume['batches']:
+            batches = volume['batches']
+            if batch_lo is not None:
+                batches = [b for b in batches if parse_batch_range(b['range'], []) == (batch_lo, batch_hi)]
+                if not batches:
+                    errors.append('{0} has no batch matching -Batch {1}'.format(volume['id'], batch_spec))
+            for batch in batches:
                 test_required_file('outlines/detail/{0}-sec{1}.md'.format(volume['id'], batch['range']))
-            # Test-DetailHeadings
+            # Test-DetailHeadings（-Batch 时只核对指定批次的细纲内节号区间）
             detail_dir = repo_path('outlines/detail')
             detail_files = []
             if os.path.isdir(detail_dir):
@@ -153,21 +174,35 @@ def main():
             if not detail_files:
                 errors.append('No detail outline files found for {0}.'.format(volume['id']))
             else:
-                section_numbers = []
-                for name in detail_files:
-                    with io.open(os.path.join(detail_dir, name), 'r', encoding='utf-8', newline='') as fh:
-                        content = fh.read()
-                    section_numbers.extend(int(m.group(1)) for m in RE_DETAIL_HEADING.finditer(content))
-                seen = {}
-                for number in section_numbers:
-                    seen[number] = seen.get(number, 0) + 1
-                for number, count in seen.items():
-                    if count > 1:
-                        errors.append('Duplicate detail section: {0}'.format(number))
-                expected = list(range(1, int(volume['sectionCount']) + 1))
-                if sorted(section_numbers) != expected:
-                    errors.append('{0} detail sections must cover exactly 1-{1}; found: {2}'.format(
-                        volume['id'], volume['sectionCount'], ','.join(map(str, sorted(section_numbers)))))
+                if batch_lo is not None:
+                    for batch in batches:
+                        if not parse_batch_range(batch['range'], []) == (batch_lo, batch_hi):
+                            continue
+                        path = os.path.join(detail_dir, '{0}-sec{1}.md'.format(volume['id'], batch['range']))
+                        if not os.path.isfile(path):
+                            continue
+                        with io.open(path, 'r', encoding='utf-8', newline='') as fh:
+                            content = fh.read()
+                        numbers = [int(m.group(1)) for m in RE_DETAIL_HEADING.finditer(content)]
+                        if numbers != list(range(batch_lo, batch_hi + 1)):
+                            errors.append('{0} detail batch {1} must cover exactly {2}-{3}; found: {4}'.format(
+                                volume['id'], batch['range'], batch_lo, batch_hi, ','.join(map(str, numbers))))
+                else:
+                    section_numbers = []
+                    for name in detail_files:
+                        with io.open(os.path.join(detail_dir, name), 'r', encoding='utf-8', newline='') as fh:
+                            content = fh.read()
+                        section_numbers.extend(int(m.group(1)) for m in RE_DETAIL_HEADING.finditer(content))
+                    seen = {}
+                    for number in section_numbers:
+                        seen[number] = seen.get(number, 0) + 1
+                    for number, count in seen.items():
+                        if count > 1:
+                            errors.append('Duplicate detail section: {0}'.format(number))
+                    expected = list(range(1, int(volume['sectionCount']) + 1))
+                    if sorted(section_numbers) != expected:
+                        errors.append('{0} detail sections must cover exactly 1-{1}; found: {2}'.format(
+                            volume['id'], volume['sectionCount'], ','.join(map(str, sorted(section_numbers)))))
             # Test-VolumeSectionBatches
             directories = [d for d in os.listdir(volume_root)
                            if os.path.isdir(os.path.join(volume_root, d)) and re.fullmatch(
@@ -177,7 +212,10 @@ def main():
             else:
                 directory = os.path.join(volume_root, directories[0])
                 total = 0
-                for batch in volume['batches']:
+                checked_any = False
+                for batch in batches:
+                    if batch_lo is not None and not parse_batch_range(batch['range'], []) == (batch_lo, batch_hi):
+                        continue
                     file_name = '{0}-sec{1}.edited.txt'.format(volume['id'], batch['range'])
                     path = os.path.join(directory, file_name)
                     if not os.path.isfile(path):
@@ -185,12 +223,22 @@ def main():
                         continue
                     with io.open(path, 'r', encoding='utf-8', newline='') as fh:
                         content = fh.read()
-                    count = len(RE_EDITED_HEADING.findall(content))
+                    headings = list(RE_EDITED_HEADING.finditer(content))
+                    count = len(headings)
                     if count != batch['count']:
                         errors.append('Unexpected section count in {0}: expected {1}, found {2}'.format(
                             file_name, batch['count'], count))
+                    if batch_lo is not None:
+                        lo, hi = parse_batch_range(batch['range'], [])
+                        numbers = [chinese_number(m.group(1)) for m in headings]
+                        if numbers != list(range(lo, hi + 1)):
+                            errors.append('Section numbers in {0} must be strictly {1}-{2} in order; found: {3}'.format(
+                                file_name, lo, hi, ','.join(map(str, numbers))))
+                        checked_any = True
                     total += count
-                if total != int(volume['sectionCount']):
+                if batch_lo is not None and not checked_any:
+                    errors.append('-Batch {0} matches no {1} text batch'.format(batch_spec, volume['id']))
+                elif batch_lo is None and total != int(volume['sectionCount']):
                     errors.append('{0} text must contain exactly {1} section headings; found: {2}'.format(
                         volume['id'], volume['sectionCount'], total))
 
