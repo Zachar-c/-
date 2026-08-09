@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""全书候选扫描：A/B/C 三级规则+清单输出（骨架版先跑通结构与输出，规则见 Task 2）."""
+"""全书候选扫描：A/B/C 三级规则+清单输出（词表/乱码遮蔽/重复/数字混用/作者越位/网络词/场景复写）。"""
 import io
 import json
 import os
 import re
 import sys
+from difflib import SequenceMatcher
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gu_tools import PsArgs, repo_abs, write_csv_utf8_bom, write_utf8_no_bom
@@ -29,13 +30,8 @@ def build_candidate(type_, severity, section, line_source, line_edit, sample, ru
             'rule': rule, 'verdict': verdict}
 
 
-def scan_rules(lines):
-    """规则入口。Task 1 返回空；Task 2 实现三层规则后替换本体。"""
-    return []
-
-
 def scan(lines):
-    """对外扫描入口（规则见 scan_rules；本任务为空规则占位）。"""
+    """对外扫描入口：组合三层规则全部候选。"""
     return scan_rules(lines)
 
 
@@ -60,6 +56,98 @@ def serialize_md(candidates, edit_lines, path):
         out.append(u'规则：{0}（verdict={1}）'.format(c['rule'], c['verdict']))
         out.append('')
     write_utf8_no_bom(path, u'\n'.join(out))
+
+
+RE_UNKNOWN_CHAR = re.compile(u'[\ufffd\uf8ff\ue000-\uf8ff]')
+RE_REDACT = re.compile(r'\[\*\*\*\]|\*\*')
+
+
+def mech_rules(lines):
+    out = []
+    for i, line in enumerate(lines, 1):
+        section = find_section(lines, i - 1)
+        for old, new in CONFIRMED_FIXES:
+            if old in line:
+                out.append(build_candidate('mech', 'A', section, i, i,
+                                           line.strip()[:120], 'wordlist', ''))
+        if RE_UNKNOWN_CHAR.search(line):
+            out.append(build_candidate('mech', 'B', section, i, i,
+                                       line.strip()[:120], 'mojibake', ''))
+        if RE_REDACT.search(line):
+            out.append(build_candidate('mech', 'B', section, i, i,
+                                       line.strip()[:120], 'redact', ''))
+    return out
+
+
+CHINESE_NUM = {u'零': '0', u'一': '1', u'二': '2', u'三': '3', u'四': '4',
+               u'五': '5', u'六': '6', u'七': '7', u'八': '8', u'九': '9'}
+UNIT_WORDS = re.compile(u'[块元石转成级年月日两岁]')
+
+
+def semantic_rules(lines):
+    out = []
+    for i, line in enumerate(lines, 1):
+        section = find_section(lines, i - 1)
+        prev = lines[i - 2] if i > 1 else u''
+        if len(line) >= 12 and len(prev) >= 12:
+            ratio = SequenceMatcher(None, prev, line).ratio()
+            if ratio >= 0.8:
+                out.append(build_candidate('semantic', 'B', section, i - 1, i - 1,
+                                           prev.strip()[:120], 'repeat',
+                                           u'相似度{0:.2f}'.format(ratio)))
+        compact = re.sub(r'\s+', '', line)
+        han = set(re.findall(u'[一二三四五六七八九]+' + UNIT_WORDS.pattern + u'+', compact))
+        arab = set(re.findall(u'[0-9]+' + UNIT_WORDS.pattern + u'+', compact))
+        if han and arab:
+            out.append(build_candidate('semantic', 'B', section, i, i,
+                                       line.strip()[:120], 'num-mix',
+                                       u'中文数字与阿拉伯数字混用'))
+    return out
+
+
+NETWORK_WORDS = [u'妥妥的', u'刷屏', u'热搜', u'流量', u'点赞', u'评论区', u'666', u'吐槽', u'打卡']
+RE_SCENE_SENT = re.compile(u'[。！？]')
+SCENE_VOCAB = u'风月云雪山光天雾气露霜星潮草木花石水树影'
+
+
+def literary_rules(lines):
+    out = []
+    n = len(lines)
+    for i, line in enumerate(lines, 1):
+        section = find_section(lines, i - 1)
+        stripped = line.strip()
+        if re.match(u'^(?:写到这里|说到这里|笔者|作者|本书|各位读者|读者)', stripped):
+            out.append(build_candidate('literary', 'C', section, i, i,
+                                       stripped[:90], 'author-speak', ''))
+        for w in NETWORK_WORDS:
+            if w in line:
+                out.append(build_candidate('literary', 'C', section, i, i,
+                                           stripped[:90], 'network-word', u'词={0}'.format(w)))
+    for start in range(0, n - 2):
+        chunk = lines[start:start + 4]
+        if _all_scene(chunk):
+            out.append(build_candidate('literary', 'C', find_section(lines, start),
+                                       start + 1, start + 1,
+                                       u' '.join(x.strip() for x in chunk)[:200],
+                                       'scene-repetition', ''))
+            break
+    return out
+
+
+def _all_scene(chunk):
+    for line in chunk:
+        s = line.strip()
+        if not s or not RE_SCENE_SENT.search(s):
+            return False
+        if re.search(u'[“”‘’：]', s):
+            return False
+        if sum(1 for ch in SCENE_VOCAB if ch in s) < 2:
+            return False
+    return True
+
+
+def scan_rules(lines):
+    return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
 
 
 def resolve_volume_dir(volume_id):
