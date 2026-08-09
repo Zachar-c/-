@@ -11,7 +11,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 sys.path.insert(0, SCRIPTS_DIR)
 
 from scan_candidates import (CANDIDATE_FIELDS, find_section, build_candidate,
-                             serialize_tsv, serialize_md, scan)
+                             serialize_tsv, serialize_md, scan,
+                             scan_rules, mech_rules, semantic_rules, literary_rules)
 
 
 class ScanBoneTests(unittest.TestCase):
@@ -54,6 +55,55 @@ class ScanBoneTests(unittest.TestCase):
     def test_findSectionMatchesChineseNumeralHead(self):
         lines = [u'第一百五十一节：竟是蛊仙传承', u'砰！', u'黑楼兰一脚踢翻黑旗胜。']
         self.assertEqual(find_section(lines, 1), 1)
+
+
+class RuleTests(unittest.TestCase):
+    def test_mechWordlist(self):
+        lines = [u'第 1 节：测试', u'他躲闪不及，真是淬不及防。', u'']
+        w = [c for c in mech_rules(lines) if c['rule'] == 'wordlist']
+        self.assertEqual(len(w), 1)
+        self.assertEqual(w[0]['severity'], 'A')
+        self.assertIn(u'淬不及防', w[0]['sample'])
+
+    def test_mechRedactAndMojibake(self):
+        lines = [u'少年脸色大变：“[***]！”', u'乱码行\ufffd。', u'']
+        r = [c for c in mech_rules(lines) if c['rule'] == 'redact']
+        m = [c for c in mech_rules(lines) if c['rule'] == 'mojibake']
+        self.assertEqual(len(r), 1)
+        self.assertEqual(len(m), 1)
+
+    def test_semanticRepeat(self):
+        lines = [u'他深深的吸了一口气，看了看身边的族人。',
+                 u'他深深的吸了一口气，看了看身边的族人。', u'']
+        rep = [c for c in semantic_rules(lines) if c['rule'] == 'repeat']
+        self.assertGreaterEqual(len(rep), 1)
+        self.assertEqual(rep[0]['severity'], 'B')
+
+    def test_semanticNumMix(self):
+        lines = [u'今日给他三块元石，明日又给他 3 块元石。', u'']
+        n = [c for c in semantic_rules(lines) if c['rule'] == 'num-mix']
+        self.assertGreaterEqual(len(n), 1)
+
+    def test_literaryAuthorSpeak(self):
+        lines = [u'写到这里，我也不禁要劝读者一句：魔道自有其代价。', u'']
+        a = [c for c in literary_rules(lines) if c['rule'] == 'author-speak']
+        self.assertEqual(len(a), 1)
+        self.assertEqual(a[0]['severity'], 'C')
+
+    def test_literaryNetworkWord(self):
+        lines = [u'这笔交易简直不要太爽，妥妥的。', u'']
+        n = [c for c in literary_rules(lines) if c['rule'] == 'network-word']
+        self.assertGreaterEqual(len(n), 1)
+
+    def test_literarySceneRep(self):
+        lines = [u'第 12 节：应试',
+                 u'清风拂过山岗，月光洒落林间，夜色如水。',
+                 u'微风轻抚古木，雾气氤氲半山，云影徘徊。',
+                 u'寒露沾湿石阶，风声掠过屋角，月华朦胧。',
+                 u'光影交错石缝，山气浮沉草木，星斗渐沉。',
+                 u'', u'']
+        s = [c for c in literary_rules(lines) if c['rule'] == 'scene-repetition']
+        self.assertGreaterEqual(len(s), 1)
 
 
 if __name__ == '__main__':
