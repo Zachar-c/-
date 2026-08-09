@@ -293,8 +293,10 @@ def main():
     brief('')
 
     brief('## 6. 原文底稿')
-    source_file = repo_path('蛊真人.txt')
+    source_file = repo_path('蛊真人-clean.txt')
     if os.path.isfile(source_file):
+        brief('- 完整源文：蛊真人-clean.txt（净版，UTF-8，行号与蛊真人.txt 完全一致；对照细纲"源文位置"行号区间；编辑时必须读对应区间）')
+    elif os.path.isfile(repo_path('蛊真人.txt')):
         brief('- 完整源文：蛊真人.txt（UTF-8；对照细纲"源文位置"行号区间；编辑时必须读对应区间）')
     else:
         brief('- 完整源文：仓库根目录未找到 蛊真人.txt')
