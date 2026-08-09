@@ -71,6 +71,19 @@ py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -SkipValidate
 
 所有 `notes/vol*-*.md` 台账第 2 行为状态行（`> 台账状态行：最后落地批次…`）；新批记录只追加到文件底部，不重写中部历史行；修正历史裁决时在底部加"勘误"行并注明原行 ID。批末更新状态行的"最后落地批次"与"最后更新"。
 
+### 全卷源文净化 `scripts/clean_full_source.py`
+
+对授权源文 `蛊真人.txt` 做一次性批量清洗（站点广告、作者 ps 碎碎念、打赏/月票拉票、`未完待续` 与 `</dd>` 章尾标记、HTML 标签、微信导流广告、页码水印），产出净版 `蛊真人-clean.txt`：
+
+```powershell
+py -3 scripts/clean_full_source.py -SourcePath 蛊真人.txt -OutputPath 蛊真人-clean.txt -ReportPath working/source-clean-candidates.tsv
+```
+
+- **行号零漂移**：只行内替换与整行置空，绝不删行；`蛊真人-clean.txt` 与 `蛊真人.txt` 行数一致，挂靠在原文上的 `source_line`、台账行号与 source-map 全部继续有效。
+- **已裁决词表自动替换**：淬不及防→猝不及防、幸-运→幸运、爱生离→爱别离、青矛山→青茅山、黒豕→黑豕 等历批确认项。
+- **上下文敏感项只出候选**：漠尘/漠北、王大/王二、拼音残留（sè→色 等 OCR 形态）、英文残留等写入 `working/source-clean-candidates.tsv`，仅供人工/LLM 逐条审阅，脚本不自动改。
+- 重跑是幂等的；`gen_brief.py` 已优先指向净版（行号不变），校验白名单含 `蛊真人-clean.txt`。
+
 ## 多对话并行
 
 OpenCode 可同时启动多个 DeepSeek 对话，但每个正文会话只能领取一个互不重叠的 30 节批次，例如：
