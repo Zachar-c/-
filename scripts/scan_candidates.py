@@ -150,6 +150,35 @@ def scan_rules(lines):
     return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
 
 
+def _in_quote(text, token):
+    """token 若落在成对中文引号（“…”或‘…’）内部，返回 True。"""
+    idx = text.find(token)
+    if idx < 0:
+        return False
+    left = text[:idx]
+    right = text[idx + len(token):]
+    for open_q, close_q in ((u'“', u'”'), (u'‘', u'’')):
+        opens = left.count(open_q) - left.count(close_q)
+        closes = right.count(close_q) - right.count(open_q)
+        if opens > 0 and closes > 0:
+            return True
+    return False
+
+
+def apply_wordlist(text, pairs):
+    applied = []
+    skipped = []
+    for old, new in pairs:
+        if old not in text:
+            continue
+        if _in_quote(text, old):
+            skipped.append(old)
+            continue
+        text = text.replace(old, new)
+        applied.append((old, new))
+    return text, applied, skipped
+
+
 def resolve_volume_dir(volume_id):
     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
         cfg = json.load(fh)
@@ -179,6 +208,22 @@ def main():
         raise SystemExit('Edited text not found: {0}'.format(edited_path))
     with io.open(edited_path, 'r', encoding='utf-8-sig', newline='') as fh:
         edit_lines = fh.read().splitlines()
+
+    if args.get('Apply'):
+        with io.open(edited_path, 'r', encoding='utf-8-sig') as fh:
+            raw = fh.read()
+        new_raw, applied, skipped = apply_wordlist(raw, CONFIRMED_FIXES)
+        if applied:
+            with io.open(edited_path, 'w', encoding='utf-8-sig', newline='') as fh:
+                fh.write(new_raw)
+        log_path = os.path.join(out_dir, u'apply-{0}-{1}.log'.format(volume_id, batch))
+        log_lines = []
+        for old, new in applied:
+            log_lines.append(u'{0}|{1}|{2}'.format(old, new, new_raw.count(new)))
+        for old in skipped:
+            log_lines.append(u'{0}|SKIP|引号语境保人工'.format(old))
+        write_utf8_no_bom(log_path, u'\n'.join(log_lines))
+        print(u'applied: {0} skipped: {1}'.format(len(applied), len(skipped)))
 
     candidates = scan(edit_lines)
     for idx, c in enumerate(candidates, 1):
