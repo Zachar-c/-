@@ -108,6 +108,12 @@ class RuleTests(unittest.TestCase):
 
 
 class ApplyTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
     def test_applyReplacesAndLogs(self):
         txt = u'他真是淬不及防。下一行还是淬不及防。\n'
         new_txt, applied, skipped = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
@@ -134,6 +140,28 @@ class ApplyTests(unittest.TestCase):
         new1, _, _ = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
         new2, applied, _ = apply_wordlist(new1 + u'淬不及防残留', [(u'淬不及防', u'猝不及防')])
         self.assertNotEqual(new2, new1)  # 新出现旧词会再次替换
+
+    def test_applyMixedQuoteAndBareOccurrence(self):
+        txt = u'他说：“淬不及防。”事后众人皆淬不及防。'
+        new_txt, applied, skipped = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(len(applied), 1)
+        self.assertIn(u'“淬不及防。”', new_txt)   # 引号内保持原词
+        self.assertIn(u'众人皆猝不及防', new_txt)  # 引号外被替换
+        self.assertGreaterEqual(len(skipped), 1)
+
+    def test_applyToFilePreservesCrlfAndBom(self):
+        import scan_candidates as sc
+        path = os.path.join(self.tmp, 'edit.txt')
+        raw = u'\ufeff真是淬不及防。\r\n下一行不动。\r\n'
+        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+            fh.write(raw)
+        applied, skipped = sc.apply_to_file(path, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(len(applied), 1)
+        with io.open(path, 'rb') as fh:
+            blob = fh.read()
+        self.assertTrue(blob.startswith(u'\ufeff'.encode('utf-8')))  # BOM 保持
+        self.assertEqual(blob.count(b'\r\n'), 2)                      # CRLF 保持
+        self.assertIn(u'猝不及防'.encode('utf-8'), blob)
 
 
 if __name__ == '__main__':

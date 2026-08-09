@@ -150,13 +150,12 @@ def scan_rules(lines):
     return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
 
 
-def _in_quote(text, token):
-    """token 若落在成对中文引号（“…”或‘…’）内部，返回 True。"""
-    idx = text.find(token)
+def _in_quote_at(text, idx, token_len):
+    """token 位于 idx 处（长度 token_len），判断是否落在成对中文引号内部。"""
     if idx < 0:
         return False
     left = text[:idx]
-    right = text[idx + len(token):]
+    right = text[idx + token_len:]
     for open_q, close_q in ((u'“', u'”'), (u'‘', u'’')):
         opens = left.count(open_q) - left.count(close_q)
         closes = right.count(close_q) - right.count(open_q)
@@ -171,12 +170,37 @@ def apply_wordlist(text, pairs):
     for old, new in pairs:
         if old not in text:
             continue
-        if _in_quote(text, old):
-            skipped.append(old)
-            continue
-        text = text.replace(old, new)
-        applied.append((old, new))
+        buf = []
+        pos = 0
+        replaced = False
+        while True:
+            idx = text.find(old, pos)
+            if idx < 0:
+                buf.append(text[pos:])
+                break
+            buf.append(text[pos:idx])
+            if _in_quote_at(text, idx, len(old)):
+                buf.append(old)
+                skipped.append(old)
+            else:
+                buf.append(new)
+                replaced = True
+            pos = idx + len(old)
+        text = u''.join(buf)
+        if replaced:
+            applied.append((old, new))
     return text, applied, skipped
+
+
+def apply_to_file(path, pairs):
+    """读文件→apply_wordlist→有改动才写回；newline='' 两侧保持原文换行风格。"""
+    with io.open(path, 'r', encoding='utf-8-sig', newline='') as fh:
+        raw = fh.read()
+    new_raw, applied, skipped = apply_wordlist(raw, pairs)
+    if applied:
+        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+            fh.write(new_raw)
+    return applied, skipped
 
 
 def resolve_volume_dir(volume_id):
@@ -210,14 +234,11 @@ def main():
         edit_lines = fh.read().splitlines()
 
     if args.get('Apply'):
-        with io.open(edited_path, 'r', encoding='utf-8-sig') as fh:
-            raw = fh.read()
-        new_raw, applied, skipped = apply_wordlist(raw, CONFIRMED_FIXES)
-        if applied:
-            with io.open(edited_path, 'w', encoding='utf-8-sig', newline='') as fh:
-                fh.write(new_raw)
+        applied, skipped = apply_to_file(edited_path, CONFIRMED_FIXES)
         log_path = os.path.join(out_dir, u'apply-{0}-{1}.log'.format(volume_id, batch))
         log_lines = []
+        with io.open(edited_path, 'r', encoding='utf-8-sig', newline='') as fh:
+            new_raw = fh.read()
         for old, new in applied:
             log_lines.append(u'{0}|{1}|{2}'.format(old, new, new_raw.count(new)))
         for old in skipped:
