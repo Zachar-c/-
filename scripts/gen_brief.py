@@ -54,6 +54,36 @@ STATE_TEMPLATE = u'''# 批内状态卡：{0}-sec{1}
 '''
 
 
+def summarize_hit(text):
+    """台账命中行收窄展示：表格行抽取关键列 + 裁决/项目摘要，正文行截断。"""
+    if text.startswith('|') and text.endswith('|'):
+        cells = [c.strip() for c in text.strip('|').split('|')]
+        if len(cells) >= 4:
+            key_id = cells[0]
+            if len(cells) >= 8:
+                kind = cells[2]
+                scope = cells[3]
+                verdict = cells[6]
+                status = cells[-1]
+            else:
+                kind = cells[2] if len(cells) >= 3 else u''
+                scope = cells[1]
+                verdict = cells[-1]
+                status = cells[-2]
+            if len(verdict) <= 12 and len(cells) >= 5:
+                verdict = cells[4]
+            cut = verdict[:44] + (u'…' if len(verdict) > 44 else u'')
+            return u'{0} [{1}] {2}：{3}（状态：{4}）'.format(key_id, kind, scope, cut, status)
+    if text.startswith('#'):
+        return text
+    if len(text) > 72:
+        for cut_at in (72, 64, 56, 48):
+            if len(text) > cut_at and text[cut_at - 1] in u'。．！？；，、':
+                return text[:cut_at] + u'…'
+        return text[:72] + u'…'
+    return text
+
+
 def main():
     args = PsArgs(specs=[
         ('Volume', 'string'),
@@ -235,12 +265,13 @@ def main():
                 trimmed = line_match.strip()
                 if not trimmed:
                     continue
-                brief('  - ' + trimmed)
+                brief('  - ' + summarize_hit(trimmed))
                 shown += 1
             if len(show_lines) > 6:
                 brief(u'  - …（另 {0} 行命中）'.format(len(show_lines) - 6))
         else:
             brief('  （无直接命中；涉及人物/资源续态仍须读该文件相关章节）')
+    brief(u'- 说明：命中行以「ID [类型] 范围：裁决/项目摘要（状态）」收窄展示；须读全文时按 ID 在对应台账中检索。')
     brief('')
 
     brief('## 5. 工作区与 Git')
