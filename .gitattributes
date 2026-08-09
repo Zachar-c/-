@@ -1,5 +1,6 @@
 # 源文行尾锁定：蛊真人.txt 保持 CRLF（工作区当前编码为 UTF-8，行尾 CRLF）
 蛊真人.txt text eol=crlf
+蛊真人-clean.txt text eol=crlf
 # 文档资产：仓库存储 LF，工作区 CRLF；统一后 diff 不再因行尾整行报错
 *.md text eol=crlf
 *.json text eol=crlf

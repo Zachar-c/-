@@ -1,5 +1,5 @@
 {
-  "trackedSourceAllowlist": ["蛊真人.txt"],
+  "trackedSourceAllowlist": ["蛊真人.txt", "蛊真人-clean.txt"],
   "userStatedCharacters": 14577005,
   "bookIdPattern": "gu-zhenren-{volume}-sec{first}-{last}",
   "volumes": [
