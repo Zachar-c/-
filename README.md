@@ -8,6 +8,22 @@
 
 README 只负责分工和启动，不复制完整规则。README、提示词或模型记忆与 `AGENTS.md` 冲突时，以 `AGENTS.md` 为准。
 
+## Git 同步保护
+
+每个 clone 或 worktree 初始化一次版本化 hooks：
+
+```powershell
+git config core.hooksPath .githooks
+```
+
+提交或推送前可手动校验远程基准；命令会先获取 `origin/main`，再阻止本地 `HEAD` 落后于该基准：
+
+```powershell
+py -3 scripts/check_remote_base.py
+```
+
+完整的处理规则与禁止绕过要求见 `AGENTS.md` 第 12.2 节。
+
 ## 目录
 
 - `volumes/`：分卷、分批次精编正文。

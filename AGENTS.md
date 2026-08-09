@@ -275,7 +275,14 @@ git diff --check
 - git log 本身即批次历史：开工恢复时 `git log --oneline -5` 配合简报即可定位上一批状态。
 - 工作区有用户改动时，先 `git diff HEAD` 核对再决定提交内容，禁止把用户改动混入本批提交。
 
-### 12.2 开工 diff 核对
+### 12.2 远程基准校准（强制）
+
+- 每次提交前必须运行 `py -3 scripts/check_remote_base.py`。该命令会先 `git fetch origin main`，再确认 `origin/main` 已包含于当前 `HEAD`；未通过时不得提交。
+- 每次推送前也必须重新运行该命令。远程在审阅期间推进时，先保护未提交改动，再执行 `git rebase origin/main`，处理完成后重新校验。
+- 每个 clone 或 worktree 均须执行一次 `git config core.hooksPath .githooks`，启用仓库版本化的 `pre-commit` 与 `pre-push` 保护；hooks 是人工校验之外的第二道门。
+- 禁止用跳过 hook、强制推送或改写远程历史绕过此规则。若远程基准不可用，停止提交和推送，先报告阻塞原因。
+
+### 12.3 开工 diff 核对
 
 - 上一批已提交时，开工只核对 `git diff HEAD~1 -- <上一批正文文件>`（或对应 `git show`），不必重读整份正文。
 - 上一批未提交时，用 `git diff HEAD -- <文件>` 确认边界状态，禁止覆盖未提交的用户改动。
