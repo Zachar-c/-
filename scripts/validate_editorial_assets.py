@@ -184,6 +184,9 @@ def main():
                             continue
                         with io.open(path, 'r', encoding='utf-8', newline='') as fh:
                             content = fh.read()
+                        if u'## 本批主线' not in content or u'## 关联冻结裁决' not in content:
+                            errors.append('{0} detail batch {1} missing summary block (## 本批主线 / ## 关联冻结裁决); run scripts/add_batch_summary.py'.format(
+                                volume['id'], batch['range']))
                         numbers = [int(m.group(1)) for m in RE_DETAIL_HEADING.finditer(content)]
                         expected = [n for n in range(batch_lo, batch_hi + 1) if n not in missing]
                         if numbers != expected:
@@ -194,6 +197,9 @@ def main():
                     for name in detail_files:
                         with io.open(os.path.join(detail_dir, name), 'r', encoding='utf-8', newline='') as fh:
                             content = fh.read()
+                        if u'## 本批主线' not in content or u'## 关联冻结裁决' not in content:
+                            errors.append('{0} detail outline {1} missing summary block; run scripts/add_batch_summary.py'.format(
+                                volume['id'], name))
                         section_numbers.extend(int(m.group(1)) for m in RE_DETAIL_HEADING.finditer(content))
                     seen = {}
                     for number in section_numbers:
