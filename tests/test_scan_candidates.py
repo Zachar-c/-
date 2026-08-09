@@ -12,7 +12,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 
 from scan_candidates import (CANDIDATE_FIELDS, find_section, build_candidate,
                              serialize_tsv, serialize_md, scan,
-                             scan_rules, mech_rules, semantic_rules, literary_rules)
+                             scan_rules, mech_rules, semantic_rules, literary_rules,
+                             apply_wordlist)
 
 
 class ScanBoneTests(unittest.TestCase):
@@ -104,6 +105,35 @@ class RuleTests(unittest.TestCase):
                  u'', u'']
         s = [c for c in literary_rules(lines) if c['rule'] == 'scene-repetition']
         self.assertGreaterEqual(len(s), 1)
+
+
+class ApplyTests(unittest.TestCase):
+    def test_applyReplacesAndLogs(self):
+        txt = u'他真是淬不及防。下一行还是淬不及防。\n'
+        new_txt, applied, skipped = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(applied, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(skipped, [])
+        self.assertIn(u'猝不及防', new_txt)
+        self.assertNotIn(u'淬不及防', new_txt)
+
+    def test_applySkipsQuoteContext(self):
+        txt = u'他说：“我偏要淬不及防。”\n'
+        new_txt, applied, skipped = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(applied, [])
+        self.assertEqual(skipped, [u'淬不及防'])
+
+    def test_applyPowerIdempotent(self):
+        txt = u'他真是淬不及防。\n'
+        new_txt, applied1, _ = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
+        _, applied2, _ = apply_wordlist(new_txt, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(len(applied1), 1)
+        self.assertEqual(applied2, [])
+
+    def test_applySecondRunNoSideEffect(self):
+        txt = u'真是淬不及防啊。\n'
+        new1, _, _ = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
+        new2, applied, _ = apply_wordlist(new1 + u'淬不及防残留', [(u'淬不及防', u'猝不及防')])
+        self.assertNotEqual(new2, new1)  # 新出现旧词会再次替换
 
 
 if __name__ == '__main__':
