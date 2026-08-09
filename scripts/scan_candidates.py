@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """全书候选扫描：A/B/C 三级规则+清单输出（词表/乱码遮蔽/重复/数字混用/作者越位/网络词/场景复写）。"""
+import codecs
 import io
 import json
 import os
@@ -193,13 +194,18 @@ def apply_wordlist(text, pairs):
 
 
 def apply_to_file(path, pairs):
-    """读文件→apply_wordlist→有改动才写回；newline='' 两侧保持原文换行风格。"""
-    with io.open(path, 'r', encoding='utf-8-sig', newline='') as fh:
-        raw = fh.read()
-    new_raw, applied, skipped = apply_wordlist(raw, pairs)
+    """读文件→apply_wordlist→有改动才写回；字节级读写，BOM 有无与换行风格原样保持。"""
+    with io.open(path, 'rb') as fh:
+        blob = fh.read()
+    has_bom = blob.startswith(codecs.BOM_UTF8)
+    text = blob.decode('utf-8-sig' if has_bom else 'utf-8')
+    new_text, applied, skipped = apply_wordlist(text, pairs)
     if applied:
-        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
-            fh.write(new_raw)
+        data = new_text.encode('utf-8')
+        if has_bom:
+            data = codecs.BOM_UTF8 + data
+        with io.open(path, 'wb') as fh:
+            fh.write(data)
     return applied, skipped
 
 
