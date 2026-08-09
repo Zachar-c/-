@@ -163,6 +163,20 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(blob.count(b'\r\n'), 2)                      # CRLF 保持
         self.assertIn(u'猝不及防'.encode('utf-8'), blob)
 
+    def test_applyToFileKeepsNoBomFileBomless(self):
+        import scan_candidates as sc
+        path = os.path.join(self.tmp, 'edit-nobom.txt')
+        raw = u'真是淬不及防。\n第二行。\n'
+        with io.open(path, 'w', encoding='utf-8', newline='') as fh:
+            fh.write(raw)
+        applied, _ = sc.apply_to_file(path, [(u'淬不及防', u'猝不及防')])
+        self.assertEqual(len(applied), 1)
+        with io.open(path, 'rb') as fh:
+            blob = fh.read()
+        self.assertFalse(blob.startswith(b'\xef\xbb\xbf'))  # 无 BOM 文件不被加 BOM
+        self.assertEqual(blob.count(b'\n'), 2)              # LF 行尾保持
+        self.assertIn(u'猝不及防'.encode('utf-8'), blob)
+
 
 if __name__ == '__main__':
     unittest.main()
