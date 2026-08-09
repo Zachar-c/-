@@ -158,6 +158,7 @@ def main():
         batch_lo, batch_hi = (parse_batch_range(batch_spec, []) if batch_spec else (None, None))
         for volume in selected_volumes:
             batches = volume['batches']
+            missing = set(volume.get('missingSections', []) or [])
             if batch_lo is not None:
                 batches = [b for b in batches if parse_batch_range(b['range'], []) == (batch_lo, batch_hi)]
                 if not batches:
@@ -184,8 +185,9 @@ def main():
                         with io.open(path, 'r', encoding='utf-8', newline='') as fh:
                             content = fh.read()
                         numbers = [int(m.group(1)) for m in RE_DETAIL_HEADING.finditer(content)]
-                        if numbers != list(range(batch_lo, batch_hi + 1)):
-                            errors.append('{0} detail batch {1} must cover exactly {2}-{3}; found: {4}'.format(
+                        expected = [n for n in range(batch_lo, batch_hi + 1) if n not in missing]
+                        if numbers != expected:
+                            errors.append('{0} detail batch {1} must cover exactly {2}-{3} minus missing; found: {4}'.format(
                                 volume['id'], batch['range'], batch_lo, batch_hi, ','.join(map(str, numbers))))
                 else:
                     section_numbers = []
@@ -199,10 +201,10 @@ def main():
                     for number, count in seen.items():
                         if count > 1:
                             errors.append('Duplicate detail section: {0}'.format(number))
-                    expected = list(range(1, int(volume['sectionCount']) + 1))
+                    expected = [n for n in range(1, int(volume['sectionCount']) + 1) if n not in missing]
                     if sorted(section_numbers) != expected:
-                        errors.append('{0} detail sections must cover exactly 1-{1}; found: {2}'.format(
-                            volume['id'], volume['sectionCount'], ','.join(map(str, sorted(section_numbers)))))
+                        errors.append('{0} detail sections must cover exactly 1-{1} minus missing {2}; found: {3}'.format(
+                            volume['id'], volume['sectionCount'], sorted(missing), ','.join(map(str, sorted(section_numbers)))))
             # Test-VolumeSectionBatches
             directories = [d for d in os.listdir(volume_root)
                            if os.path.isdir(os.path.join(volume_root, d)) and re.fullmatch(
@@ -231,16 +233,17 @@ def main():
                     if batch_lo is not None:
                         lo, hi = parse_batch_range(batch['range'], [])
                         numbers = [chinese_number(m.group(1)) for m in headings]
-                        if numbers != list(range(lo, hi + 1)):
-                            errors.append('Section numbers in {0} must be strictly {1}-{2} in order; found: {3}'.format(
+                        expected = [n for n in range(lo, hi + 1) if n not in missing]
+                        if numbers != expected:
+                            errors.append('Section numbers in {0} must be strictly {1}-{2} minus missing in order; found: {3}'.format(
                                 file_name, lo, hi, ','.join(map(str, numbers))))
                         checked_any = True
                     total += count
                 if batch_lo is not None and not checked_any:
                     errors.append('-Batch {0} matches no {1} text batch'.format(batch_spec, volume['id']))
-                elif batch_lo is None and total != int(volume['sectionCount']):
-                    errors.append('{0} text must contain exactly {1} section headings; found: {2}'.format(
-                        volume['id'], volume['sectionCount'], total))
+                elif batch_lo is None and total != int(volume['sectionCount']) - len(missing):
+                    errors.append('{0} text must contain exactly {1} section headings (missing {2}); found: {3}'.format(
+                        volume['id'], volume['sectionCount'] - len(missing), sorted(missing), total))
 
     if phase in ('outline', 'detail', 'final'):
         # Test-OutlineReferences

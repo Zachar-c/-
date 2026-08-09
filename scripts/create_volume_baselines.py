@@ -20,7 +20,7 @@ def load_volume_config(volume_id):
     vol_cfg = next((v for v in volume_config['volumes'] if v['id'] == volume_id), None)
     if not vol_cfg:
         raise SystemExit('Unknown volume id: {0}'.format(volume_id))
-    return int(vol_cfg['sectionCount'])
+    return vol_cfg
 
 BODY = chr(0x6B63) + chr(0x6587)       # 正文
 ORDINAL = chr(0x7B2C)                  # 第
@@ -62,10 +62,13 @@ def main():
     canonical = [{'SourceLine': ln, 'Text': all_lines[ln - 1]}
                  for ln in range(start_line, end_line + 1) if ln not in excluded]
 
+    vol_cfg = load_volume_config(volume_id)
+    section_count = int(vol_cfg['sectionCount'])
+    missing = set(vol_cfg.get('missingSections', []) or [])
     headings = [row for row in canonical if HEADING_PATTERN.match(row['Text'])]
-    section_count = load_volume_config(volume_id)
-    if len(headings) != section_count:
-        raise SystemExit('Expected {0} canonical headings; found {1}'.format(section_count, len(headings)))
+    if len(headings) != section_count - len(missing):
+        raise SystemExit('Expected {0} canonical headings; found {1}'.format(
+            section_count - len(missing), len(headings)))
 
     heading_rows = []
     for row in headings:
@@ -75,9 +78,10 @@ def main():
             'SourceLine': row['SourceLine'],
             'Text': row['Text'],
         })
-    expected = list(range(1, section_count + 1))
+    expected = [n for n in range(1, section_count + 1) if n not in missing]
     if [r['Number'] for r in heading_rows] != expected:
-        raise SystemExit('Canonical section numbers are not continuous 1-{0}.'.format(section_count))
+        raise SystemExit('Canonical section numbers must be continuous 1-{0} minus missing {1}.'.format(
+            section_count, sorted(missing)))
 
     os.makedirs(output_dir, exist_ok=True)
     by_number = {r['Number']: r for r in heading_rows}

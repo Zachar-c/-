@@ -24,11 +24,14 @@ FORUM_MARKER = from_codepoints(0x86CA, 0x771F, 0x4EBA, 0x5427)  # 蛊真人吧
 BAIDU_MARKER = from_codepoints(0x767E, 0x5EA6)  # 百度
 
 RE_CTRL_D = re.compile(r'^\s*CTRL\+D\s+')
-RE_PS_LINE = re.compile(r'^\s*[\uFF08(]\s*(?:ps|PS)\s*[\uFF1A:]')
+RE_PS_LINE = re.compile(r'^\s*[\uFF08(]?\s*[pP][sS]\s*[\uFF1A:]?\s*')
+RE_PS_THANKS = re.compile(r'^\s*[\uFF08(]\s*(?:感谢|统计|打赏|月票|推荐票|谢谢)')
+RE_PS_UNFINISHED_LINE = re.compile(r'^\s*[\uFF08(]?\s*' + re.escape(UNFINISHED) + r'\s*[\uFF09)]?\s*$')
+RE_AD_TAIL = re.compile(r'(?:投推荐票、月票，|订阅，打赏，)您的支持，就是我最大的动力。?手机用户请到(?:\.qda)?\.阅读。?[)）]?|订阅，打赏，您的支持，就是我最大的动力。[)）]?')
 RE_BODY_PREFIX = re.compile(r'\([^)]*\)\s*$')
 RE_BOLD = re.compile(r'^<b>.*</b>$')
 RE_LEAD_4SP = re.compile(r'^\s{4}')
-RE_UNFINISHED = re.compile(r'\(' + re.escape(UNFINISHED) + r'[^)]*(?:\)|$)')
+RE_UNFINISHED = re.compile(r'[\uFF08(]\s*' + re.escape(UNFINISHED) + r'[^)）]*(?:[)）]|$)')
 RE_DD = re.compile(r'</?dd>')
 RE_RQ = re.compile(r'RQ\s*$')
 RE_WATERMARK = re.compile(re.escape(OPEN_QUOTE) + r'[^' + re.escape(OPEN_QUOTE + CLOSE_QUOTE) + r']*(?:' +
@@ -47,6 +50,10 @@ def clean_lines(lines):
             continue
         if RE_PS_LINE.match(line):
             continue
+        if RE_PS_THANKS.match(line):
+            continue
+        if RE_PS_UNFINISHED_LINE.match(line):
+            continue
         if line.startswith(BODY_PREFIX + ' '):
             line = line[len(BODY_PREFIX):].lstrip()
             line = RE_BODY_PREFIX.sub('', line)
@@ -54,6 +61,7 @@ def clean_lines(lines):
             continue
         line = RE_LEAD_4SP.sub('', line)
         line = RE_UNFINISHED.sub('', line)
+        line = RE_AD_TAIL.sub('', line)
         line = RE_DD.sub('', line)
         line = RE_RQ.sub('', line)
         line = RE_WATERMARK.sub('', line)

@@ -34,6 +34,23 @@
         { "range": "151-180", "count": 30 },
         { "range": "181-206", "count": 26 }
       ]
+    },
+    {
+      "id": "vol3",
+      "directoryPattern": "03-*",
+      "detailPattern": "vol3-sec*.md",
+      "sectionCount": 244,
+      "missingSections": [128],
+      "batches": [
+        { "range": "001-030", "count": 30 },
+        { "range": "031-060", "count": 30 },
+        { "range": "061-090", "count": 30 },
+        { "range": "091-120", "count": 30 },
+        { "range": "121-150", "count": 29 },
+        { "range": "151-180", "count": 30 },
+        { "range": "181-210", "count": 30 },
+        { "range": "211-244", "count": 34 }
+      ]
     }
   ]
 }
