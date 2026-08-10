@@ -5,6 +5,7 @@
   py -3 scripts/gen_report.py -Volume vol2 -Batch 151-180 -OutFile notes/batch-report.md
   py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -SkipValidate
 注意：-OutFile 缺省时写入 notes\\batch-report.md（每批覆盖）；关键裁决与遗留问题两节必须由编辑会话或总编会话填写。"""
+import csv
 import io
 import json
 import os
@@ -33,6 +34,7 @@ def main():
         ('Batch', 'string'),
         ('OutFile', 'string'),
         ('SkipValidate', 'bool'),
+        ('Candidates', 'bool'),
         ('RepoRoot', 'string'),
     ], defaults={
         'Volume': 'vol2',
@@ -229,6 +231,30 @@ def main():
     report('')
     report('> 由编辑会话填写：本批未决的 P2/P3、待核算口径、跨批伏笔、待用户裁决项。')
     report('- ')
+
+    # 6. 候选与审计（附）
+    if args.get('Candidates'):
+        report('')
+        report(u'## 6. 候选与审计（附）')
+        report('')
+        cand_path = repo_path(u'working\\candidates-{0}-{1}.tsv'.format(vol_cfg['id'], batch))
+        if os.path.isfile(cand_path):
+            with io.open(cand_path, 'r', encoding='utf-8-sig') as fh:
+                cand_rows = list(csv.DictReader(fh))
+            n_a = sum(1 for r in cand_rows if r.get('severity') == 'A')
+            n_b = sum(1 for r in cand_rows if r.get('severity') == 'B')
+            n_c = sum(1 for r in cand_rows if r.get('severity') == 'C')
+            report(u'- 候选总数：{0}（A: {1} / B: {2} / C: {3}）'.format(len(cand_rows), n_a, n_b, n_c))
+        else:
+            report(u'- 候选清单缺失：先运行 py -3 scripts/scan_candidates.py -Volume {0} -Batch {1}'.format(
+                vol_cfg['id'], batch))
+        audit_path = repo_path(u'working\\audit-{0}-{1}.tsv'.format(vol_cfg['id'], batch))
+        if os.path.isfile(audit_path):
+            with io.open(audit_path, 'r', encoding='utf-8-sig') as fh:
+                audit_rows = list(csv.DictReader(fh))
+            wrong = sum(1 for r in audit_rows if r.get(u'人工结论') == u'错')
+            miss = sum(1 for r in audit_rows if r.get(u'人工结论') == u'漏检')
+            report(u'- 审计表已生成：{0} 条，错误/漏检 {1}/{2}'.format(len(audit_rows), wrong, miss))
 
     report_text = os.linesep.join(lines)
     target = out_file if out_file else 'notes\\batch-report.md'
