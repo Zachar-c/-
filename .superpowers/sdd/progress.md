@@ -37,3 +37,5 @@
 - Task 3 re-review: I1 closed, I3 closed; I2 closed at eb81cae (byte-level IO, BOM both-way); MINOR backlog: single-quote pair untested, skipped multi-entry semantics, LF assert ambiguous
 
 - Task 4: complete (commit pending; -Candidates switch added to gen_brief/gen_report, candidate stats section, audit stats section, tests/test_brief_report_candidates.py 7 cases green; fixed BOM/tab reading mismatch discovered while testing)
+
+- Task 6: pilot run vol3-151-180 complete (scan 30 B-level redact candidates; -Apply wordlist 0 hits; 30/30 redaction words restored to text with verdicts logged; audit table generated pending user tick; V3-DEC-017/018 logged; commit pending)
