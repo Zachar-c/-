@@ -13,6 +13,12 @@ working/*.utf8.txt
 working/vol2-source/
 working/batch-state-*.md
 
+# Candidate pipeline outputs (kept local, not committed)
+working/candidates-*.tsv
+working/candidates-*.md
+working/apply-*.log
+working/audit-*.tsv
+
 # Python build artifacts
 __pycache__/
 *.py[cod]

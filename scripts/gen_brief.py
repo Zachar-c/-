@@ -5,6 +5,7 @@
   py -3 scripts/gen_brief.py -Volume vol2 -Batch 151-180 -BriefOut working/brief.md
   py -3 scripts/gen_brief.py -Volume vol2 -Batch 151-180 -WriteState
 注意：简报是导航，不是原文；台账匹配行只列举与本批次相关的记录，未命中时仍需读全文。"""
+import csv
 import io
 import json
 import os
@@ -90,6 +91,7 @@ def main():
         ('Batch', 'string'),
         ('BriefOut', 'string'),
         ('WriteState', 'bool'),
+        ('Candidates', 'bool'),
         ('RepoRoot', 'string'),
     ], defaults={
         'Volume': 'vol2',
@@ -320,6 +322,30 @@ def main():
     brief('- 简报只做导航与命中提示：台账无命中的记录、上批尾节状态、source 行区间仍须读取对应文件。')
     brief('- 编辑前先 git diff（或 git diff HEAD^），检查用户批注，禁止覆盖用户改动。')
     brief('- 批内流程：开状态卡 → 对原文与台账逐节 edit → 收尾更新台账（视为建议，由总编会话落账）→ 运行 AGENTS.md 验证命令。')
+
+    if args.get('Candidates'):
+        candidates_txt = os.path.join(repo_path('working'), u'candidates-{0}-{1}.editable.txt'.format(vol_cfg['id'], batch))
+        candidates_file = os.path.join(repo_path('working'), u'candidates-{0}-{1}.tsv'.format(vol_cfg['id'], batch))
+        if os.path.isfile(candidates_file):
+            try:
+                with io.open(candidates_file, 'r', encoding='utf-8-sig', newline='') as fh:
+                    rows = list(csv.DictReader(fh))
+            except Exception:
+                rows = []
+            n_a = sum(1 for r in rows if r.get('severity', '').strip() == 'A')
+            n_b = sum(1 for r in rows if r.get('severity', '').strip() == 'B')
+            n_c = sum(1 for r in rows if r.get('severity', '').strip() == 'C')
+            brief('')
+            brief(u'- 候选清单：{0} 条（A: {1} / B: {2} / C: {3}）'.format(len(rows), n_a, n_b, n_c))
+            if os.path.isfile(candidates_txt):
+                brief(u'- 候选全文：' + get_relative(candidates_txt))
+            else:
+                brief(u'- 候选全文：见 working/candidates-{0}-{1}.md'.format(vol_cfg['id'], batch))
+        else:
+            brief('')
+            brief(u'- 候选清单尚未生成：请先运行 py -3 scripts/scan_candidates.py -Volume {0} -Batch {1}'.format(
+                vol_cfg['id'], batch))
+        brief('')
 
     brief_text = os.linesep.join(lines)
     if brief_out:

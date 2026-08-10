@@ -24,3 +24,16 @@
 
 - Next task: create `outlines/detail/vol1-sec001-010.md` and `outlines/detail/vol1-sec011-020.md`, then use those detail outlines to recalibrate the first-twenty edited sections and record each actual text change in `notes/editorial-notes.md`.
 
+
+## Candidate pipeline plan (2026-08-09)
+
+- Task 1: complete (commit 6fb2d6f; review clean, Approved; 6 Minor logged M-1..M-6)
+- Minor notes: M-1 empty candidate TSV headless output (harmless); M-2 resolve_batch_path inlined per code; M-3 ResourceWarning in tests; M-4 seq not sorted (set at scan time); M-5 placeholder leftovers expected; M-6 no trailing newline in serialized md — check in final review
+- .gitignore extended: working/candidates-*.tsv|md, apply-*.log, audit-*.tsv (pending dedicated commit)
+- Rebase fold-in: remote advanced 4 commits during Task 1; user vol3-sec091-120 changes preserved
+- Task 2: complete (commit 223c683; review Approved; Minor: M2 CHINESE_NUM dead code, M3 f8ff redundant, M4 wordlist test fragility, M5 repeat line assertion blind spot; mojibake plan sample corrected \xfc->U+FFFD — plan erratum noted)
+- Note: scan smoke produced ~30 candidates on vol3-151-180 per implementer report (verify at Task 6)
+- Task 3: complete (commit 2483df6 review Approved w/ Important I1-I3; fix commit added: per-occurrence quote check, newline='' preserve, apply_to_file + integration tests) — re-review pending
+- Task 3 re-review: I1 closed, I3 closed; I2 closed at eb81cae (byte-level IO, BOM both-way); MINOR backlog: single-quote pair untested, skipped multi-entry semantics, LF assert ambiguous
+
+- Task 4: complete (commit pending; -Candidates switch added to gen_brief/gen_report, candidate stats section, audit stats section, tests/test_brief_report_candidates.py 7 cases green; fixed BOM/tab reading mismatch discovered while testing)
