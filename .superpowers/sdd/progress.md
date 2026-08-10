@@ -39,3 +39,5 @@
 - Task 4: complete (commit pending; -Candidates switch added to gen_brief/gen_report, candidate stats section, audit stats section, tests/test_brief_report_candidates.py 7 cases green; fixed BOM/tab reading mismatch discovered while testing)
 
 - Task 6: pilot run vol3-151-180 complete (scan 30 B-level redact candidates; -Apply wordlist 0 hits; 30/30 redaction words restored to text with verdicts logged; audit table generated pending user tick; V3-DEC-017/018 logged; commit pending)
+
+- Task 6 review: user approved pilot output (R1 passed); V3-DEC-017 marked reviewed; pipeline rollout pending user decision on scope
