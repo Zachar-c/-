@@ -37,7 +37,7 @@
     },
     {
       "id": "vol3",
-      "directoryPattern": "03-*",
+      "directoryPattern": "03-魔头乱世",
       "detailPattern": "vol3-sec*.md",
       "sectionCount": 244,
       "missingSections": [128],
