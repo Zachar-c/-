@@ -9,3 +9,10 @@
 
 The upstream source is vendored as an unmodified source tree. Its MIT license
 is retained in `vendor/godot-open-rpg/LICENSE`.
+
+## GUT
+
+- Source URL: https://github.com/bitwes/Gut
+- Version: 9.6.1
+- License: MIT License
+- License retained at: `addons/gut/LICENSE.md`

@@ -1,0 +1,15 @@
+; Engine configuration file.
+; Target engine: Godot 4.6.2.
+; Edit in the editor where possible.
+
+config_version=5
+
+[application]
+
+config/name="Nanjiang Smoke"
+run/main_scene="res://scenes/main.tscn"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
