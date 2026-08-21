@@ -1,0 +1,42 @@
+[
+  {
+    "id": "caravan_steward",
+    "goals": ["recover_goods", "protect_caravan_reputation"],
+    "bottom_line": "will_not_abandon_injured_guard",
+    "will": 3,
+    "known_facts": ["missing_goods", "injured_guard"],
+    "retreat": "trade_safe_passage",
+    "reinforcements": "three_day_patrol",
+    "injury_reaction": "exploit"
+  },
+  {
+    "id": "earth_vein_scout",
+    "goals": ["claim_earth_vein_entry", "avoid_open_conflict"],
+    "bottom_line": "will_not_share_map_without_value",
+    "will": 4,
+    "known_facts": ["toxic_fog", "sealed_entry"],
+    "retreat": "leave_with_map_copy",
+    "reinforcements": "faction_guard_pair",
+    "injury_reaction": "caution"
+  },
+  {
+    "id": "wandering_healer",
+    "goals": ["repay_old_favor", "preserve_herbs"],
+    "bottom_line": "will_not_treat_known_betrayer",
+    "will": 2,
+    "known_facts": ["blood_moss_growth"],
+    "retreat": "offer_safe_treatment",
+    "reinforcements": "none",
+    "injury_reaction": "sympathy"
+  },
+  {
+    "id": "ridge_extortionist",
+    "goals": ["collect_stone", "keep_route_control"],
+    "bottom_line": "will_not_face_guarded_passage_alone",
+    "will": 2,
+    "known_facts": ["alternate_ridge_path"],
+    "retreat": "accept_stone_and_withdraw",
+    "reinforcements": "beast_swarm_lure",
+    "injury_reaction": "contempt"
+  }
+]
