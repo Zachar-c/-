@@ -14,6 +14,7 @@ var route: Array[Dictionary] = []
 var current_node: Dictionary = {}
 var current_battle: Dictionary = {}
 var last_result: Dictionary = {}
+var dialogue_replies: Array[Dictionary] = []
 var _view_name := "Map"
 var _views: Dictionary = {}
 
@@ -34,10 +35,15 @@ func start_new_run(seed: int) -> void:
 	current_node = {}
 	current_battle = {}
 	last_result = {}
+	dialogue_replies = []
 	_show_map()
 
 
 func submit_command(command: Dictionary) -> Dictionary:
+	if command.get("type", "") == "save_run":
+		return {"ok": save_current_run() == OK}
+	if command.get("type", "") == "load_run":
+		return {"ok": load_saved_run()}
 	if command.get("type", "") == "travel":
 		return _travel_to(str(command.get("node_id", "")))
 	if command.get("type", "") == "leave_encounter":
@@ -59,6 +65,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 	var resolved := Resolver.apply(state, command, catalog)
 	state = resolved["state"]
 	last_result = resolved["result"]
+	_record_dialogue_reply(last_result)
 	if command.get("type", "") == "attempt_ascension":
 		_show_ending(resolved["result"])
 	elif not current_node.is_empty():
@@ -72,6 +79,23 @@ func current_view_name() -> String:
 
 func force_complete_for_test() -> void:
 	_show_ending({"outcome": "survived_failure", "conditions": {}})
+
+
+func save_current_run() -> Error:
+	return SaveRepository.save_run(state, route, dialogue_replies)
+
+
+func load_saved_run() -> bool:
+	var loaded := SaveRepository.load_run()
+	if loaded.is_empty():
+		return false
+	state = loaded["state"]
+	route = loaded["route"]
+	dialogue_replies = loaded["replies"]
+	current_node = _node_by_id(state.current_node_id)
+	current_battle = {}
+	_show_map()
+	return true
 
 
 func _travel_to(node_id: String) -> Dictionary:
@@ -173,3 +197,13 @@ func _reveal_after(node_id: String) -> void:
 		if route[index]["id"] == node_id and index + 1 < route.size():
 			route[index + 1]["visible"] = true
 			return
+
+
+func _record_dialogue_reply(result: Dictionary) -> void:
+	var reply: Variant = result.get("dialogue", {})
+	if not reply is Dictionary or reply.is_empty():
+		return
+	var payload: Dictionary = reply.duplicate(true)
+	payload.erase("source")
+	if DialogueGateway.is_valid_response(payload):
+		dialogue_replies.append(payload)

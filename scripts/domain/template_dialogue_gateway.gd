@@ -2,10 +2,6 @@ class_name TemplateDialogueGateway
 extends DialogueGateway
 
 
-const ALLOWED_INTENTS := ["probe", "trade", "pressure", "leave", "clarify"]
-const ALLOWED_KEYS := ["intent", "confidence", "conditions", "text", "needs_clarification"]
-
-
 func respond(context: Dictionary) -> Dictionary:
 	var intent := str(context.get("intent", "clarify"))
 	var templates := _load_templates()
@@ -25,17 +21,7 @@ func _load_templates() -> Dictionary:
 
 
 func _is_valid(response: Dictionary) -> bool:
-	if response.keys().size() != ALLOWED_KEYS.size():
-		return false
-	for key in response:
-		if not ALLOWED_KEYS.has(key):
-			return false
-	return ALLOWED_INTENTS.has(response.get("intent", "")) \
-		and response.get("confidence", -1.0) >= 0.0 \
-		and response.get("confidence", 2.0) <= 1.0 \
-		and response.get("conditions", null) is Array \
-		and response.get("text", "") is String \
-		and response.get("needs_clarification", null) is bool
+	return DialogueGateway.is_valid_response(response)
 
 
 func _clarify_response() -> Dictionary:
