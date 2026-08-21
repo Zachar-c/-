@@ -17,16 +17,16 @@ func render(node: Dictionary, state: RunState, result: Dictionary) -> void:
 	column.add_theme_constant_override("separation", 12)
 	panel.add_child(column)
 	var title := Label.new()
-	title.text = "遭遇：%s" % str(node.get("id", "未知"))
+	title.text = "遭遇：%s" % DisplayText.node(str(node.get("id", "")))
 	title.add_theme_font_size_override("font_size", 26)
 	column.add_child(title)
 	var facts := Label.new()
-	facts.text = "真元 %d  元石 %d  已知：%s" % [state.essence, state.stone, ", ".join(state.known_facts)]
+	facts.text = "真元 %d  元石 %d  已知：%s" % [state.essence, state.stone, DisplayText.facts(state.known_facts)]
 	facts.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(facts)
 	if not result.is_empty():
 		var outcome := Label.new()
-		outcome.text = "结果：%s" % str(result)
+		outcome.text = "结果：%s" % DisplayText.result(result)
 		outcome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		outcome.add_theme_color_override("font_color", Color("b8d5cc"))
 		column.add_child(outcome)
@@ -35,7 +35,7 @@ func render(node: Dictionary, state: RunState, result: Dictionary) -> void:
 	column.add_child(actions)
 	for action_id in node.get("choices", []):
 		var button := Button.new()
-		button.text = str(action_id)
+		button.text = DisplayText.action(str(action_id))
 		button.custom_minimum_size = Vector2(112, 42)
 		button.tooltip_text = "执行此路径"
 		button.pressed.connect(func(): command_submitted.emit(_command_for(node, str(action_id))))

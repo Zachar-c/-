@@ -29,6 +29,6 @@ func _clarify_response() -> Dictionary:
 		"intent": "clarify",
 		"confidence": 0.0,
 		"conditions": [],
-		"text": "The steward asks what terms you are offering.",
+		"text": "管事追问你究竟想提出什么条件。",
 		"needs_clarification": true,
 	}

@@ -42,16 +42,12 @@ func render(route: Array[Dictionary], state: RunState) -> void:
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.tooltip_text = "进入此处"
 		if node["visible"]:
-			button.text = "%02d  %s  [%s]" % [index + 1, _display_name(node["id"]), node["type"]]
+			button.text = "%02d  %s  [%s]" % [index + 1, DisplayText.node(node["id"]), DisplayText.type(node["type"])]
 			button.pressed.connect(func(): node_selected.emit(node["id"]))
 		else:
 			button.text = "%02d  未明地带" % [index + 1]
 			button.disabled = true
 		nodes.add_child(button)
-
-
-func _display_name(node_id: String) -> String:
-	return node_id.replace("_", " ")
 
 
 func _clear() -> void:

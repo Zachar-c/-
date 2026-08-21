@@ -22,7 +22,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
 	column.add_theme_constant_override("separation", 14)
 	margin.add_child(column)
 	var title := Label.new()
-	title.text = "交锋：%s" % str(battle.get("enemy_kind", "未知"))
+	title.text = "交锋：%s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
 	title.add_theme_font_size_override("font_size", 28)
 	column.add_child(title)
 	var status := Label.new()
@@ -35,7 +35,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
 	for gu_id in battle.get("slots", []):
 		var gu: Dictionary = catalog["gu_by_id"].get(gu_id, {})
 		var button := Button.new()
-		button.text = str(gu_id).replace("_", " ")
+		button.text = DisplayText.gu(str(gu_id))
 		button.custom_minimum_size = Vector2(154, 78)
 		button.tooltip_text = "消耗 %d 真元" % int(gu.get("essence_cost", 0))
 		button.disabled = state.essence < int(gu.get("essence_cost", 0))
@@ -47,7 +47,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
 	for move in InheritanceResolver.available_moves(state.equipped_gu_ids, state.inheritance_ids, catalog):
 		var move_id := str(move["move_id"])
 		var button := Button.new()
-		button.text = move_id.replace("_", " ")
+		button.text = DisplayText.inheritance(move_id)
 		button.custom_minimum_size = Vector2(210, 42)
 		button.tooltip_text = "施展已声明的传承杀招"
 		button.pressed.connect(func(): command_submitted.emit({"type": "use_inheritance", "move_id": move_id}))

@@ -26,7 +26,7 @@ func show_ending(outcome: Dictionary, journal: Array[Dictionary]) -> void:
 	title.add_theme_font_size_override("font_size", 30)
 	column.add_child(title)
 	var result := Label.new()
-	result.text = "结局：%s" % str(outcome.get("outcome", "survived_failure"))
+	result.text = "结局：%s" % DisplayText.outcome(str(outcome.get("outcome", "survived_failure")))
 	result.add_theme_color_override("font_color", Color("e7c883"))
 	column.add_child(result)
 	var record := RichTextLabel.new()
@@ -51,8 +51,8 @@ func _clear() -> void:
 func _journal_text(journal: Array[Dictionary]) -> String:
 	var lines: Array[String] = []
 	for entry in journal:
-		lines.append("[b]%s[/b]" % entry["heading"])
-		lines.append(JournalBuilder.text_for(entry))
+		lines.append("[b]%s[/b]" % DisplayText.journal_heading(str(entry["heading"])))
+		lines.append(DisplayText.journal_body(entry))
 		if not entry["visible_facts"].is_empty():
-			lines.append("[color=#b8d5cc]%s[/color]" % ", ".join(entry["visible_facts"]))
+			lines.append("[color=#b8d5cc]%s[/color]" % DisplayText.facts(entry["visible_facts"]))
 	return "\n".join(lines)
