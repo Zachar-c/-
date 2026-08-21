@@ -1,0 +1,17 @@
+{
+  "seed": 101,
+  "route_ids": [
+    "village_short_work",
+    "toxic_mountain_path",
+    "moonlit_trail",
+    "body_imprint_ritual",
+    "caravan_missing_goods",
+    "ridge_market",
+    "herbalist_commission",
+    "faction_guard_checkpoint",
+    "earth_vein_contest",
+    "poison_fog_vein",
+    "sealed_earth_vein",
+    "ascension_window"
+  ]
+}
