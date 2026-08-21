@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Adapt the MIT-licensed GDQuest Godot Open RPG into a deterministic, local-first prototype in which a fixed-seed Nanjiang novice progresses through a 10–14-node run, resolves resource, social, combat, and opportunity choices, and reaches one of three ascension outcomes.
+**Goal:** Adapt the MIT-licensed GDQuest Godot Open RPG into a deterministic, local-first prototype in which a fixed-seed Nanjiang novice progresses through a 10–14-node run, resolves stone, essence, social, combat, and opportunity choices, and reaches one of three ascension outcomes.
 
 **Architecture:** Vendor the upstream project under `vendor/godot-open-rpg`, preserve its MIT license and provenance, and place all Nanjiang systems in the root project's `scripts/` and `scenes/` directories. Keep domain rules in pure GDScript `RefCounted` classes with immutable event-log entries; scenes render state and submit commands but never mutate state directly. Content is loaded from validated JSON data tables, while the dialogue gateway is an optional adapter with a template fallback and persisted responses for replay.
 
@@ -13,8 +13,11 @@
 - Implement only the South Border, 45–90 minute smoke slice; exclude other regions, multiple starts, metaprogression, open world, and playable immortal content.
 - Runs contain 10–14 effective nodes including opportunity contest and ascension; first-run seed must always expose the test route.
 - Start as one newly awakened wandering Gu Master with Small Light Gu; carry no more than four equipped Gu.
-- The content set is Small Light Gu plus eight obtainable mortal Gu and three explicitly authored remnant-recipe effects; tags may validate and route content but must not create effects automatically.
-- Rules, seeds, maps, battle, NPC state, recipe resolution, outcomes, saves, and replays remain local and deterministic.
+- The content set is Small Light Gu plus eight obtainable mortal Gu and three explicitly authored inheritance killer moves; tags may validate, route, and satisfy declared conditions but must not create effects automatically.
+- The only persistent numeric resources are stone and cultivation; essence is a local action resource. Materials, food, remnant recipes, generic Dao marks, and mortal-realm insight currencies are excluded.
+- Body imprints are only `iron_bone`, `ice_skin`, and `three_watch`; each has an authored, logged benefit and drawback, and none is a repeatable stat purchase. Healing must come from an equipped healing Gu or a declared node effect.
+- Gu balance follows conditional hooks, slot tradeoffs, timing, and trigger chains as analytical principles; it does not copy The Bazaar's autobattle or market loop.
+- Rules, seeds, maps, battle, NPC state, inheritance conditions, outcomes, saves, and replays remain local and deterministic.
 - LLM is optional: it cannot change rules or facts; valid responses are schema-checked, saved, and replaced with templates on network, timeout, or schema failure.
 - Critical state changes append an immutable event log; the cultivation journal may use only the log and player-known facts.
 - Use ASCII in source code, JSON keys, test names, identifiers, and commit messages. Chinese player-facing content may be UTF-8 JSON.
@@ -32,7 +35,7 @@ vendor/
 addons/gut/                              # Installed GUT framework
 data/
   gu.json                                # Nine Gu definitions and tags
-  recipes.json                           # Three authored effects, six routes
+  inheritances.json                      # Three authored inheritance killer moves
   nodes.json                              # Seventeen node templates
   npcs.json                               # NPC archetypes and injury reactions
   first_run.json                          # Fixed-seed 12-node verification route
@@ -47,7 +50,7 @@ scripts/
     rng.gd                                # Seeded deterministic random source
     map_generator.gd                      # First-run and generated route construction
     resolver.gd                           # Only state-transition entry point
-    recipe_resolver.gd                    # Explicit recipe matching and validation
+    inheritance_resolver.gd               # Explicit inheritance condition and buff validation
     dialogue_gateway.gd                   # Local dialogue adapter contract
     template_dialogue_gateway.gd          # Offline implementation
     save_repository.gd                    # Atomic local save/replay persistence
@@ -89,7 +92,7 @@ git -C vendor/godot-open-rpg rev-parse HEAD
 git -C vendor/godot-open-rpg status --short
 ```
 
-Expected: copy the printed commit hash into `THIRD_PARTY_NOTICES.md`; the final command has no output.
+Expected: copy the printed commit hash into `THIRD_PARTY_NOTICES.md`; the final command has no output. After recording the hash, remove only `vendor/godot-open-rpg/.git` so the upstream is committed as an ordinary vendored source tree rather than a gitlink. Verify the resolved path is exactly inside `vendor/godot-open-rpg` before the recursive removal.
 
 - [ ] **Step 2: Record provenance and complete a source audit**
 
@@ -199,7 +202,7 @@ Create `main.tscn` with a root `Node` and one child named `RunController`; confi
 
 Run: `godot --headless -d -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit`
 
-Expected: PASS with one test.
+Expected: PASS with all three smoke tests.
 
 - [ ] **Step 5: Commit the shell and adapter boundary**
 
@@ -226,16 +229,16 @@ git commit -m "feat: add isolated gu zu entry shell"
 func test_new_run_has_small_light_gu_and_initial_resources() -> void:
     var state := RunState.new_run(101)
     assert_eq(state.gu_ids, ["small_light_gu"])
-    assert_eq(state.food, 3)
+    assert_eq(state.stone, 12)
     assert_eq(state.essence, 3)
     assert_eq(state.event_log.size(), 1)
 
 func test_append_event_returns_new_state_without_changing_old_state() -> void:
     var before := RunState.new_run(101)
-    var after := before.append_event(EventFactory.resource_changed("food", 3, 2, "feed_gu", "camp"))
-    assert_eq(before.food, 3)
-    assert_eq(after.food, 2)
-    assert_eq(after.event_log.back()["reason"], "feed_gu")
+    var after := before.append_event(EventFactory.resource_changed("stone", 12, 9, "buy_information", "market"))
+    assert_eq(before.stone, 12)
+    assert_eq(after.stone, 9)
+    assert_eq(after.event_log.back()["reason"], "buy_information")
 ```
 
 - [ ] **Step 2: Run the focused test file**
@@ -246,7 +249,7 @@ Expected: FAIL because `RunState` and `EventFactory` do not exist.
 
 - [ ] **Step 3: Implement state snapshots and event records**
 
-Define a state dictionary with keys `seed`, `stage`, `essence`, `injury`, `stone`, `food`, `gu_ids`, `materials`, `clues`, `relations`, `ascension`, `known_facts`, `current_node_id`, and `event_log`. Event dictionaries must include `stage`, `time`, `node_id`, `action`, `before`, `after`, `reason`, `source`, and `targets`.
+Define a state dictionary with keys `seed`, `stage`, `cultivation`, `essence`, `injury`, `lifespan_debt`, `stone`, `gu_ids`, `equipped_gu_ids`, `inheritance_ids`, `body_imprints`, `clues`, `relations`, `pursuit`, `ascension`, `known_facts`, `current_node_id`, and `event_log`. Event dictionaries must include immutable `id`, `stage`, `time`, `node_id`, `action`, `before`, `after`, `reason`, `source`, and `targets`.
 
 ```gdscript
 static func resource_changed(key: String, before: int, after: int, reason: String, source: String) -> Dictionary:
@@ -270,34 +273,39 @@ git add scripts/domain/events.gd scripts/domain/run_state.gd tests/unit/test_run
 git commit -m "feat: add immutable run state event log"
 ```
 
-## Task 4: Add authored content tables and reference validation
+## Task 4: Add authored Gu and inheritance content with reference validation
 
 **Files:**
 - Create: `data/gu.json`
-- Create: `data/recipes.json`
+- Create: `data/inheritances.json`
 - Create: `data/npcs.json`
 - Create: `scripts/domain/content_catalog.gd`
-- Create: `scripts/domain/recipe_resolver.gd`
+- Create: `scripts/domain/inheritance_resolver.gd`
 - Test: `tests/unit/test_content_catalog.gd`
-- Test: `tests/unit/test_recipe_resolver.gd`
+- Test: `tests/unit/test_inheritance_resolver.gd`
 
 **Interfaces:**
 - Produces `ContentCatalog.load_all() -> Dictionary` and `ContentCatalog.validate(catalog: Dictionary) -> Array[String]`.
-- Produces `RecipeResolver.match_effect(gu_ids: Array[String], material_ids: Array[String], catalog: Dictionary) -> Dictionary`.
+- Produces `InheritanceResolver.available_moves(equipped_gu_ids: Array[String], inheritance_ids: Array[String], catalog: Dictionary) -> Array[Dictionary]`.
 - Task 5 consumes validated content and rejects commands against unavailable entries.
 
-- [ ] **Step 1: Write failing validation and recipe tests**
+- [ ] **Step 1: Write failing validation and inheritance tests**
 
 ```gdscript
-func test_catalog_has_exactly_nine_gu_and_six_recipe_routes() -> void:
+func test_catalog_has_exactly_nine_gu_and_three_inheritances() -> void:
     var catalog := ContentCatalog.load_all()
     assert_eq(catalog["gu"].size(), 9)
-    assert_eq(catalog["recipes"].size(), 6)
+    assert_eq(catalog["inheritances"].size(), 3)
     assert_eq(ContentCatalog.validate(catalog), [])
 
-func test_recipe_route_requires_explicit_gu_and_tag_constraints() -> void:
-    var result := RecipeResolver.match_effect(["small_light_gu", "trail_eye_gu"], ["mist_seed"], ContentCatalog.load_all())
-    assert_eq(result["effect_id"], "reveal_false_path")
+func test_inheritance_move_requires_equipped_gu_and_tag_constraints() -> void:
+    var moves := InheritanceResolver.available_moves(["small_light_gu", "trail_eye_gu"], ["moonlit_trace"], ContentCatalog.load_all())
+    assert_eq(moves[0]["move_id"], "moonlit_trace")
+
+func test_catalog_rejects_missing_inheritance_gu_reference() -> void:
+    var catalog := ContentCatalog.load_all()
+    catalog["inheritances"][0]["required_gu_ids"] = ["missing_gu"]
+    assert_eq(ContentCatalog.validate(catalog).size(), 1)
 ```
 
 - [ ] **Step 2: Run focused tests and confirm they fail**
@@ -308,22 +316,22 @@ Expected: FAIL because content loading does not exist.
 
 - [ ] **Step 3: Write the smallest valid data set**
 
-Give each Gu exactly `id`, `rank`, `essence_cost`, `food_tag`, `combat`, `field_actions`, `recipe_ids`, `upgrade`, and 2–3 `tags`. Define six routes across three effect IDs, each route with `id`, `effect_id`, `gu_ids`, `required_tags`, `material_ids`, `output`, and `version`. Define NPC fields `goals`, `bottom_line`, `will`, `known_facts`, `retreat`, `reinforcements`, and `injury_reaction` where the last value is one of `contempt`, `sympathy`, `caution`, `exploit`.
+Give each Gu exactly `id`, `rank`, `essence_cost`, `slot_role`, `combat`, `field_actions`, `synergy_hooks`, `replace_value`, and 2–3 `tags`. Define exactly three inheritance moves. Each inheritance declares `id`, `move_id`, `required_gu_ids`, `required_tags`, `effect_id`, `battle_limit`, `special_buff`, `source_kind`, and `version`. The three moves must cover a Small Light Gu information/reveal line, a healing-plus-offense line, and an escape/control line. Define NPC fields `goals`, `bottom_line`, `will`, `known_facts`, `retreat`, `reinforcements`, and `injury_reaction` where the last value is one of `contempt`, `sympathy`, `caution`, `exploit`.
 
-- [ ] **Step 4: Implement catalog and recipe checks**
+- [ ] **Step 4: Implement catalog and inheritance checks**
 
 ```gdscript
 func validate(catalog: Dictionary) -> Array[String]:
     var errors: Array[String] = []
     var gu_by_id: Dictionary = catalog["gu_by_id"]
-    for recipe in catalog["recipes"]:
-        for gu_id in recipe["gu_ids"]:
+    for inheritance in catalog["inheritances"]:
+        for gu_id in inheritance["required_gu_ids"]:
             if not gu_by_id.has(gu_id):
-                errors.append("recipe %s references missing gu %s" % [recipe["id"], gu_id])
+                errors.append("inheritance %s references missing gu %s" % [inheritance["id"], gu_id])
     return errors
 ```
 
-Do not add a generic tag-to-effect generator. A route matches only when its declared IDs, materials, and tag constraints all match.
+Do not add a generic tag-to-effect generator. An inheritance move is available only when the player owns that inheritance and its declared equipped Gu IDs and tag constraints match. Free Gu combinations may trigger only their individually authored hooks; they must never become an automatically generated killer move.
 
 - [ ] **Step 5: Run tests and the standalone validator**
 
@@ -334,8 +342,8 @@ Expected: PASS, including a test that intentionally injects a missing Gu referen
 - [ ] **Step 6: Commit the content system**
 
 ```bash
-git add data/gu.json data/recipes.json data/npcs.json scripts/domain/content_catalog.gd scripts/domain/recipe_resolver.gd tests/unit/test_content_catalog.gd tests/unit/test_recipe_resolver.gd
-git commit -m "feat: add validated gu and recipe content"
+git add data/gu.json data/inheritances.json data/npcs.json scripts/domain/content_catalog.gd scripts/domain/inheritance_resolver.gd tests/unit/test_content_catalog.gd tests/unit/test_inheritance_resolver.gd
+git commit -m "feat: add validated gu and inheritance content"
 ```
 
 ## Task 5: Build deterministic map data and first-run route
@@ -375,7 +383,7 @@ Expected: FAIL because `MapGenerator` is missing.
 
 - [ ] **Step 3: Author content and generator**
 
-Create seventeen templates in `nodes.json`: three hazard, three wild-Gu/material, four market/caravan/commission, three combat/pursuit, three inheritance/earth-vein contest, and one camp template. The first-run route must use the twelve nodes listed in the design and mark only the current and immediate next layer visible.
+Create seventeen templates in `nodes.json`: three hazard, three wild-Gu/inheritance, four market/caravan/commission, three combat/pursuit, three earth-vein contest, and one seclusion/body-imprint template. The first-run route must use the twelve nodes listed in the design and mark only the current and immediate next layer visible.
 
 Implement a tiny seeded integer generator, never `randf()` or global random state. For non-first runs choose only templates whose stage and prerequisites are valid, then append the required contest and ascension nodes.
 
@@ -401,16 +409,22 @@ git commit -m "feat: add deterministic nanjiang node routes"
 
 **Interfaces:**
 - Produces `Resolver.apply(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary` returning `{ "state": RunState, "result": Dictionary }`.
-- Commands are `travel`, `use_gu`, `feed_gu`, `rest`, `refine`, `choose_action`, `retreat`, and `attempt_ascension`.
+- Commands are `travel`, `use_gu`, `buy_opportunity`, `take_body_imprint`, `choose_action`, `retreat`, and `attempt_ascension`.
 - Task 7 extends `choose_action`; Task 8 extends `use_gu` during combat.
 
 - [ ] **Step 1: Write failing resource and outcome tests**
 
 ```gdscript
-func test_food_shortage_weakens_one_equipped_gu_and_logs_reason() -> void:
-    var result := Resolver.apply(RunState.new_run(101), {"type": "travel", "node_id": "mist_pass"}, catalog)
-    assert_true(result["state"].weak_gu_ids.has("small_light_gu"))
-    assert_eq(result["state"].event_log.back()["reason"], "food_shortage")
+func test_body_imprint_changes_rule_and_logs_its_lifespan_cost() -> void:
+    var result := Resolver.apply(RunState.new_run(101), {"type": "take_body_imprint", "imprint_id": "three_watch"}, catalog)
+    assert_true(result["state"].body_imprints.has("three_watch"))
+    assert_eq(result["state"].lifespan_debt, 1)
+    assert_eq(result["state"].event_log.back()["reason"], "body_imprint_cost")
+
+func test_iron_bone_defense_has_authored_stealth_drawback() -> void:
+    var result := Resolver.apply(RunState.new_run(101), {"type": "take_body_imprint", "imprint_id": "iron_bone"}, catalog)
+    assert_true(result["state"].body_imprints.has("iron_bone"))
+    assert_true(result["state"].known_facts.has("iron_bone_stealth_drawback"))
 
 func test_ascension_returns_risky_success_when_requirements_met_with_high_risk() -> void:
     var result := Resolver.apply(ready_but_hunted_state(), {"type": "attempt_ascension", "choice": "now"}, catalog)
@@ -425,7 +439,7 @@ Expected: FAIL because `Resolver` is missing.
 
 - [ ] **Step 3: Implement state transitions and explicit thresholds**
 
-Implement commands as match branches. Reject invalid commands with `{ "ok": false, "reason": "..." }` and leave state unchanged. Ascension must calculate five booleans: `aperture_foundation`, `heaven_earth_qi`, `site`, `protection`, and `external_interference`. Return `success` only when all are true and risk is at most 1; return `risky_success` when all are true and risk is 2–3; otherwise return `survived_failure` unless a node already declared a lethal irreversible result.
+Implement commands as match branches. Reject invalid commands with `{ "ok": false, "reason": "..." }` and leave state unchanged. `buy_opportunity` may spend stone only for an explicitly declared Gu, information, service, favor, or escape condition and never for generic attributes. `take_body_imprint` may grant only a declared `iron_bone`, `ice_skin`, or `three_watch` imprint and must log its fixed injury, stealth, or lifespan drawback. Ascension must calculate five booleans: `aperture_foundation`, `heaven_earth_qi`, `site`, `protection`, and `external_interference`. Return `success` only when all are true and risk is at most 1; return `risky_success` when all are true and risk is 2–3; otherwise return `survived_failure` unless a node already declared a lethal irreversible result.
 
 - [ ] **Step 4: Add outcome coverage**
 
@@ -433,6 +447,7 @@ Implement commands as match branches. Reject invalid commands with `{ "ok": fals
 func test_ascension_returns_success_for_prepared_state() -> void: pass
 func test_ascension_returns_survived_failure_for_missing_heaven_earth_qi() -> void: pass
 func test_invalid_command_does_not_mutate_state() -> void: pass
+func test_buy_opportunity_cannot_purchase_generic_attribute() -> void: pass
 ```
 
 - [ ] **Step 5: Run all resolver tests**
@@ -468,7 +483,7 @@ git commit -m "feat: resolve resources and ascension outcomes"
 func test_caravan_can_resolve_without_battle_using_evidence_and_trade() -> void:
     var state := caravan_state_with_ledger_evidence()
     state = act(state, "probe")
-    state = act(state, "trade", {"offer": "mist_seed"})
+    state = act(state, "trade", {"offer": "ledger_evidence"})
     assert_eq(state.relations["caravan_steward"]["stance"], "helpful")
     assert_true(state.known_facts.has("earth_vein_entry"))
 
@@ -533,6 +548,11 @@ func test_retreat_is_available_but_costs_a_declared_resource() -> void:
     var turn := BattleResolver.take_turn(pursuit_battle(), {"type": "retreat"}, state, catalog)
     assert_eq(turn["result"], "retreated")
     assert_lt(turn["state"].stone, state.stone)
+
+func test_moonlit_trace_requires_equipped_condition_and_applies_reveal_buff() -> void:
+    var turn := BattleResolver.take_turn(started_battle(), {"type": "use_inheritance", "move_id": "moonlit_trace"}, state, catalog)
+    assert_true(turn["battle"]["flags"].has("revealed"))
+    assert_eq(turn["battle"]["inheritance_uses"]["moonlit_trace"], 1)
 ```
 
 - [ ] **Step 2: Run tests and confirm failure**
@@ -543,7 +563,7 @@ Expected: FAIL because the battle resolver is missing.
 
 - [ ] **Step 3: Implement four enemy behavior tables**
 
-Implement `beast_swarm`, `greedy_wanderer`, `faction_guard`, and `resolute_elite` behavior tables with 2–3 parameter variants. Inspect the battle primitive recorded in `docs/open-rpg-audit.md`, invoke it only through `OpenRpgAdapter`, and retain a local deterministic fallback if it cannot express fixed Gu slots. All actions use equipped Gu slots and essence; no cards, decks, or random global calls. A retreat result must be based on terrain, movement tags, pursuit, and enemy control, then log a declared loss such as stone, food, wound, item, or relation.
+Implement `beast_swarm`, `greedy_wanderer`, `faction_guard`, and `resolute_elite` behavior tables with 2–3 parameter variants. Inspect the battle primitive recorded in `docs/open-rpg-audit.md`, invoke it only through `OpenRpgAdapter`, and retain a local deterministic fallback if it cannot express fixed Gu slots. All actions use equipped Gu slots and essence; a healing Gu consumes one of the four slots and can have an authored offense follow-up hook. The resolver may invoke an available inheritance move only through `InheritanceResolver`, apply its once-per-battle limit, and include its declared special buff. No cards, decks, materials, food, or random global calls. A retreat result must be based on terrain, movement tags, pursuit, and enemy control, then log a declared loss such as stone, wound, Gu, lifespan, or relation.
 
 - [ ] **Step 4: Add defeat and nonlethal objective tests**
 
@@ -598,7 +618,7 @@ Expected: FAIL because no views or controller transitions exist.
 
 - [ ] **Step 3: Implement utilitarian scenes**
 
-Use Godot `Control` nodes. The map presents stage lanes, visible node type/risk, fogged future nodes, and clear route buttons. The encounter shows facts, pressure, resources, action-tag buttons, one optional free-text field for major interactions, and a visible structured result. Battle uses four fixed Gu-slot buttons plus retreat. The ending view presents outcome, journal, and restart.
+Use Godot `Control` nodes. The map presents stage lanes, visible node type/risk, fogged future nodes, and clear route buttons. The encounter shows facts, pressure, resources, action-tag buttons, one optional free-text field for major interactions, and a visible structured result. Battle uses four fixed Gu-slot buttons, available inheritance-move buttons, and retreat. The ending view presents outcome, journal, and restart.
 
 No marketing landing screen, tutorial overlay, or decorative card nesting. Each interactive icon/button must have a tooltip and fixed dimensions.
 
@@ -704,7 +724,7 @@ Expected: FAIL because journal construction is missing.
 
 - [ ] **Step 3: Implement journal routing and final documentation**
 
-Build entries only from event-log IDs and known facts. Include five ascension conditions, resource balance, relationship outcome, key turning point, and one of four survived-failure endings. Do not send journal input to an LLM. Write `README.md` with Godot version, GUT installation, test command, launch command, fixed seed `101`, optional environment variable name for cloud dialogue, and offline fallback behavior.
+Build entries only from event-log IDs and known facts. Include five ascension conditions, stone balance, cultivation progression, body-imprint or lifespan consequence, relationship outcome, key turning point, and one of four survived-failure endings. Do not send journal input to an LLM. Write `README.md` with Godot version, GUT installation, test command, launch command, fixed seed `101`, optional environment variable name for cloud dialogue, and offline fallback behavior.
 
 - [ ] **Step 4: Run complete verification**
 
@@ -721,7 +741,7 @@ Expected: all unit and integration tests PASS; project boots headlessly; no whit
 - [ ] **Step 5: Manually run the acceptance matrix**
 
 1. Play seed `101` offline and resolve the caravan without combat; verify the contest has a changed entry or reduced interference.
-2. Trigger a food shortage; verify one Gu becomes weak and the journal names the feeding decision.
+2. Accept a body imprint; verify its declared drawback and that the journal names the decision.
 3. Trigger a retreat; verify a declared loss and continued run.
 4. Load a saved social event; verify no cloud request is made and displayed text matches the saved reply.
 5. Complete prepared, hunted, and missing-qi scenarios; verify success, risky success, and survived failure with player-known-only journals.
@@ -735,7 +755,7 @@ git commit -m "feat: complete nanjiang smoke slice"
 
 ## Plan Self-Review
 
-- **Spec coverage:** Tasks 1–2 establish an auditable MIT base and integration boundary; Tasks 3 and 11 implement event logs and journals; Tasks 4 and 5 cover data, recipes, and routes; Task 6 covers resource pressure and three ascension outcomes; Tasks 7 and 10 cover bounded, optional LLM dialogue; Task 8 covers non-card combat and retreat; Task 9 covers map fog and the playable interface; Task 11 covers the required deterministic smoke matrix.
+- **Spec coverage:** Tasks 1–2 establish an auditable MIT base and integration boundary; Tasks 3 and 11 implement event logs and journals; Tasks 4 and 5 cover Gu, inheritance, and routes; Task 6 covers stone, body-imprint pressure, and three ascension outcomes; Tasks 7 and 10 cover bounded, optional LLM dialogue; Task 8 covers non-card combat, inheritance moves, and retreat; Task 9 covers map fog and the playable interface; Task 11 covers the required deterministic smoke matrix.
 - **Scope check:** North Plain, Eastern Sea, Central Continent, additional backgrounds, full dynamic combination generation, and playable immortal content remain explicitly absent.
-- **Consistency check:** `RunState` is the only state input/output through resolver, battle, persistence, and journal layers. Recipe content uses declared route IDs and tags consistently. Gateway replies are always validated and persisted before replay.
+- **Consistency check:** `RunState` is the only state input/output through resolver, battle, persistence, and journal layers. Inheritance content uses declared equipped-Gu IDs and tags consistently; free Gu hooks do not generate killer moves. Gateway replies are always validated and persisted before replay.
 - **Placeholder scan:** This plan contains no deferred implementation markers. File paths, commands, interfaces, and test assertions are specified for every task.
