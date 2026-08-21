@@ -33,7 +33,7 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 		"take_body_imprint":
 			return _take_body_imprint(state, command)
 		"choose_action":
-			return _choose_action(state, command)
+			return _choose_action(state, command, catalog)
 		"retreat":
 			return _retreat(state)
 		"attempt_ascension":
@@ -129,7 +129,9 @@ static func _take_body_imprint(state: RunState, command: Dictionary) -> Dictiona
 	return _accepted(next)
 
 
-static func _choose_action(state: RunState, command: Dictionary) -> Dictionary:
+static func _choose_action(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	if command.get("npc_id", "") == "caravan_steward":
+		return apply_social_action(state, command, catalog)
 	var action_id := str(command.get("action_id", ""))
 	if action_id.is_empty():
 		return _rejected(state, "missing_action_id")
@@ -142,6 +144,99 @@ static func _choose_action(state: RunState, command: Dictionary) -> Dictionary:
 		state.current_node_id
 	))
 	return _accepted(next)
+
+
+static func apply_social_action(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var npc := _npc_by_id(catalog, str(command.get("npc_id", "")))
+	if npc.is_empty():
+		return _rejected(state, "unknown_npc")
+	var action_id := str(command.get("action_id", ""))
+	if not ["probe", "trade", "pressure", "deceive", "leave", "fight"].has(action_id):
+		return _rejected(state, "invalid_social_action")
+	var social: Dictionary = state.relations.get("caravan_steward", {
+		"stance": "neutral",
+		"round": 0,
+		"evidence": [],
+		"concession": 0,
+		"threat": 0,
+		"escape_route": false,
+		"deadline_days": 3,
+		"npc_disposition": "neutral",
+		"dialogue_calls": 0,
+	}).duplicate(true)
+	var known_facts := state.known_facts.duplicate()
+	var npc_reaction := _npc_reaction(state, npc)
+	var reason := "caravan_%s" % action_id
+	var surrendered := false
+	match action_id:
+		"probe":
+			if not social["evidence"].has("ledger_evidence") and known_facts.has("ledger_evidence"):
+				social["evidence"].append("ledger_evidence")
+			social["npc_disposition"] = "examining"
+		"trade":
+			if command.get("offer", "") == "ledger_evidence" and social["evidence"].has("ledger_evidence"):
+				social["stance"] = "helpful"
+				social["concession"] += 1
+				if not known_facts.has("earth_vein_entry"):
+					known_facts.append("earth_vein_entry")
+				reason = "caravan_trade_evidence"
+			else:
+				return _rejected(state, "missing_trade_evidence")
+		"pressure":
+			social["threat"] += 1
+			social["npc_disposition"] = npc_reaction
+			surrendered = social["threat"] >= int(npc["will"]) + 1 and social["evidence"].size() > 0
+		"leave":
+			social["stance"] = "suspicious"
+			social["escape_route"] = true
+			if not known_facts.has("caravan_suspicion"):
+				known_facts.append("caravan_suspicion")
+		"deceive", "fight":
+			social["npc_disposition"] = "guarded"
+	social["round"] += 1
+	social["deadline_days"] = maxi(0, int(social["deadline_days"]) - 1)
+	if social["deadline_days"] == 0 and not known_facts.has("caravan_reinforcements_arrived"):
+		known_facts.append("caravan_reinforcements_arrived")
+	var response := {}
+	if action_id in ["probe", "trade"] and social["dialogue_calls"] < 2:
+		social["dialogue_calls"] += 1
+		response = TemplateDialogueGateway.new().respond({
+			"intent": action_id,
+			"disposition": social["npc_disposition"],
+		})
+	var relations := state.relations.duplicate(true)
+	relations["caravan_steward"] = social
+	var next := state.append_event(_event(
+		state,
+		"social_%s" % action_id,
+		{"relations": state.relations, "known_facts": state.known_facts},
+		{"relations": relations, "known_facts": known_facts},
+		reason,
+		state.current_node_id,
+		["caravan_steward"]
+	))
+	return {
+		"state": next,
+		"result": {
+			"ok": true,
+			"npc_reaction": npc_reaction,
+			"surrendered": surrendered,
+			"dialogue": response,
+		},
+	}
+
+
+static func _npc_by_id(catalog: Dictionary, npc_id: String) -> Dictionary:
+	for npc in catalog.get("npcs", []):
+		if npc["id"] == npc_id:
+			return npc
+	return {}
+
+
+static func _npc_reaction(state: RunState, npc: Dictionary) -> String:
+	if state.injury >= 2:
+		return npc["injury_reaction"]
+	return "caution"
 
 
 static func _retreat(state: RunState) -> Dictionary:
