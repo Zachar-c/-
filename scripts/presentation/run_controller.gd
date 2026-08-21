@@ -155,7 +155,7 @@ func _show_ending(outcome: Dictionary) -> void:
 	_view_name = "Ending"
 	if _views.has("Ending"):
 		_show_only("Ending")
-		_views["Ending"].show_ending(outcome, state.event_log)
+		_views["Ending"].show_ending(outcome, JournalBuilder.build(state, outcome))
 
 
 func _ensure_views() -> void:

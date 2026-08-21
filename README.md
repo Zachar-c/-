@@ -21,11 +21,17 @@
 | `master` | 原始资料、设计文档和项目入口。 |
 | `codex/nanjiang-smoke-prototype` | 南疆冒烟版的游戏原型工作分支。 |
 
-## 当前状态
+## 运行原型
 
-- 小说资料与肉鸽设计原始数据已进入 `master`。
-- 南疆冒烟版的设计和实施计划已经确认，尚未完成 Godot 可玩原型。
-- GDQuest Open RPG 的 MIT 底座计划作为后续 Task 1 引入；此前的网络拉取未完成，因此仓库中没有假装完整的第三方底座副本。
+南疆冒烟版是一个本地可复现的 Godot 原型。固定种子 `101` 会生成包含商队纠纷、地脉争夺和升仙窗口的验证路线；没有网络或云端服务时，交涉仍使用本地模板继续。
+
+- 目标引擎：Godot `4.6.2`。
+- 测试框架：仓库已包含 GUT `9.x` 于 `addons/gut/`。
+- 启动：`godot --path .`，然后运行主场景。
+- 单元测试：`godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit -glog=2`。
+- 集成测试：`godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/integration -gexit -glog=2`。
+
+可选云端对话适配器只读取环境变量 `NANJIANG_CLOUD_DIALOGUE_KEY`，不将密钥写入存档。当前适配器不配置网络传输时必定回退到 `data/dialogue_templates.json` 中的本地文本；读档复用已校验的对话回复，不重新请求云端。
 
 ## 范围说明
 

@@ -32,8 +32,8 @@ func show_ending(outcome: Dictionary, journal: Array[Dictionary]) -> void:
 	var record := RichTextLabel.new()
 	record.bbcode_enabled = true
 	record.fit_content = true
-	record.custom_minimum_size = Vector2(0, 180)
-	record.text = "[color=#b8d5cc]事件记录 %d 条[/color]" % journal.size()
+	record.custom_minimum_size = Vector2(0, 260)
+	record.text = _journal_text(journal)
 	column.add_child(record)
 	var restart := Button.new()
 	restart.text = "重开种子 101"
@@ -46,3 +46,13 @@ func show_ending(outcome: Dictionary, journal: Array[Dictionary]) -> void:
 func _clear() -> void:
 	for child in get_children():
 		child.queue_free()
+
+
+func _journal_text(journal: Array[Dictionary]) -> String:
+	var lines: Array[String] = []
+	for entry in journal:
+		lines.append("[b]%s[/b]" % entry["heading"])
+		lines.append(JournalBuilder.text_for(entry))
+		if not entry["visible_facts"].is_empty():
+			lines.append("[color=#b8d5cc]%s[/color]" % ", ".join(entry["visible_facts"]))
+	return "\n".join(lines)
