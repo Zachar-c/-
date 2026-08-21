@@ -267,6 +267,7 @@ static func _attempt_ascension(state: RunState, command: Dictionary) -> Dictiona
 		outcome = "risky_success"
 	var ascension := state.ascension.duplicate(true)
 	ascension["outcome"] = outcome
+	ascension["conditions"] = conditions.duplicate(true)
 	var next := state.append_event(_event(
 		state,
 		"attempt_ascension",

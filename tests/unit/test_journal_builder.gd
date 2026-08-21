@@ -31,19 +31,26 @@ func test_journal_attributes_missing_qi_to_known_event() -> void:
 
 func test_journal_never_reveals_unknown_facts() -> void:
 	var state := RunState.new_run(101)
-	state.body_imprints = ["iron_bone"]
-	state.known_facts = ["iron_bone_defense", "iron_bone_stealth_drawback"]
-	state.ascension = {
-		"aperture_foundation": true,
-		"heaven_earth_qi": true,
-		"site": true,
-		"protection": true,
-		"external_interference": false,
-	}
-	var entries := JournalBuilder.build(state, {"outcome": "success", "conditions": state.ascension})
-	var visible_fact_count := 0
-	for entry in entries:
-		for fact in entry["visible_facts"]:
-			visible_fact_count += 1
-			assert_true(state.known_facts.has(fact))
-	assert_eq(visible_fact_count, 2)
+	state = state.append_event({
+		"action": "take_body_imprint",
+		"before": {},
+		"after": {
+			"body_imprints": ["iron_bone"],
+			"known_facts": ["iron_bone_defense", "iron_bone_stealth_drawback"],
+		},
+		"reason": "body_imprint_stealth_drawback",
+		"source": "resolver",
+		"targets": ["iron_bone"],
+	})
+	var entries := JournalBuilder.build(state, {"outcome": "success"})
+	var imprint_entries := entries.filter(func(entry: Dictionary): return entry["heading"] == "Body imprint")
+	assert_eq(imprint_entries[0]["visible_facts"], ["iron_bone_defense", "iron_bone_stealth_drawback"])
+
+
+func test_journal_uses_resource_snapshot_from_event_log() -> void:
+	var state := RunState.new_run(101)
+	state = state.append_event(EventFactory.resource_changed("stone", 12, 7, "buy_information", "market"))
+	state.stone = 99
+	var entries := JournalBuilder.build(state, {"outcome": "survived_failure"})
+	var stone_entries := entries.filter(func(entry: Dictionary): return entry["heading"] == "Stone balance")
+	assert_eq(JournalBuilder.text_for(stone_entries[0]), "The final stone balance was 7.")
