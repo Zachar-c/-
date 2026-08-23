@@ -30,6 +30,7 @@
 - 启动：`powershell -ExecutionPolicy Bypass -File tools/play.ps1`。
 - 单元测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite unit`。
 - 集成测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite integration`。
+- 蛊卡纵向切片验收（迷雾路线、原子提交、死亡重开）：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Test tests/integration/test_v3_roguelike_vertical_slice.gd`。
 - 全量检查（测试、无窗口启动、空白错误）：`powershell -ExecutionPolicy Bypass -File tools/check.ps1`。
 
 `tools/godot.ps1` 统一定位 Godot 控制台程序：优先使用环境变量 `GODOT_CONSOLE_PATH`，其次使用 WinGet 的本机安装路径。`tools/play.ps1` 同样支持用 `GODOT_PATH` 覆盖图形版 Godot 路径。这样 CI、终端和手工验收共用同一入口，不依赖编辑器生成的脚本缓存。

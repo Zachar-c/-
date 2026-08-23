@@ -131,6 +131,17 @@ func force_complete_for_test() -> void:
 	_show_ending({"outcome": "survived_failure", "conditions": {}})
 
 
+func visible_route_nodes(forward_layers: int = 2) -> Array[Dictionary]:
+	return MapGenerator.visible_nodes(route, state, forward_layers)
+
+
+func force_death_for_test(final_blow_id: String) -> void:
+	state = state.finalize_death()
+	var report := DeathReportBuilderScript.build({}, state)
+	report["final_blow"] = final_blow_id
+	_show_death(report)
+
+
 func save_current_run() -> Error:
 	return SaveRepository.save_run(state, route, dialogue_replies)
 

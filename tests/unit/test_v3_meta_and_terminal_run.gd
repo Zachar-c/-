@@ -39,3 +39,12 @@ func test_meta_save_uses_a_separate_global_only_payload() -> void:
 	assert_false(saved.has("state"))
 	assert_false(saved.has("route"))
 	assert_eq(loaded.to_save_data(), meta.to_save_data())
+
+
+func test_discovered_outcome_knowledge_persists_in_meta_save() -> void:
+	var meta_script: Script = load(META_PROGRESS_PATH)
+	var meta = meta_script.new_empty()
+	var next = meta.record_random_outcome("small_light_gu+trail_eye_gu", "mutation_venom")
+	var loaded = SaveRepository.load_meta_from_data(SaveRepository.serialize_meta(next))
+
+	assert_eq(loaded.unlocked_random_outcomes["small_light_gu+trail_eye_gu"], ["mutation_venom"])
