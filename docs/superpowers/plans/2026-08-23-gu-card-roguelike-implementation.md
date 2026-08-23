@@ -136,7 +136,7 @@ var soul_damage := ceili((1.0 + rank_gap * 2.0) * condition_multiplier * factors
 
 **Produces:** `RunState.new_run(seed)`, `RunState.refined_instances()`, `RunState.sync_legacy_gu_projections()`, `RunState.is_terminal()`, `MetaProgress.new_empty()`, `MetaProgress.record_run_end(run)`, and separated serialization.
 
-- [ ] **Step 1: Write failing foundation tests**
+- [x] **Step 1: Write failing foundation tests**
 
 ```gdscript
 func test_new_run_has_bing_aperture_without_gu_storage_limit() -> void:
@@ -163,13 +163,13 @@ func test_meta_progress_rejects_run_resources_and_records_only_codex_and_statist
     assert_eq(next.statistics["deaths"], 1)
 ```
 
-- [ ] **Step 2: Run foundation tests and verify they fail**
+- [x] **Step 2: Run foundation tests and verify they fail**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_run_state_gu_instances.gd`
 
 Expected: FAIL because structured aperture, Gu instances, and `MetaProgress` do not exist.
 
-- [ ] **Step 3: Implement the smallest migration layer**
+- [x] **Step 3: Implement the smallest migration layer**
 
 ```gdscript
 func refined_instances() -> Array[Dictionary]:
@@ -186,7 +186,7 @@ func is_terminal() -> bool:
 
 Create the start instance `gu_001` for `small_light_gu`; initialize `cultivator`, `cave_aperture`, `materials`, `gu_card_overrides`, and `terminal_state` in `new_run`. Copy, event application, and save data must deep-copy these keys. Keep old scalar fields synchronized from `cultivator`/`cave_aperture` until all existing code has migrated. `MetaProgress.record_run_end` only adds seen definitions and increments `runs_won` or `deaths`.
 
-- [ ] **Step 4: Run the focused tests and existing state/save regressions**
+- [x] **Step 4: Run the focused tests and existing state/save regressions**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_run_state_gu_instances.gd`
 
@@ -196,7 +196,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_save_repository.gd`
 
 Expected: PASS; legacy first-run and save tests remain green.
 
-- [ ] **Step 5: Commit the foundation**
+- [x] **Step 5: Commit the foundation**
 
 ```powershell
 git add scripts/domain/run_state.gd scripts/domain/meta_progress.gd scripts/domain/save_repository.gd tests/unit/test_v3_run_state_gu_instances.gd tests/unit/test_v3_meta_and_terminal_run.gd
@@ -216,7 +216,7 @@ git commit -m "feat: add run gu instances and meta boundary"
 
 **Produces:** `DeckBuilder.deck_hash(run, catalog)`, `DeckBuilder.build_card_cache(run, catalog)`, `DeckBuilder.build_battle_deck(run, catalog, hash)`, valid `CardDefinition`/`KillMove` data.
 
-- [ ] **Step 1: Write failing deck/cache tests**
+- [x] **Step 1: Write failing deck/cache tests**
 
 ```gdscript
 func test_deck_hash_is_stable_until_gu_or_card_override_changes() -> void:
@@ -238,13 +238,13 @@ func test_kill_move_requires_ordered_source_gu_and_has_pending_state_contract() 
     assert_eq(definition["sequence_window"], "same_turn")
 ```
 
-- [ ] **Step 2: Run the deck tests and verify failure**
+- [x] **Step 2: Run the deck tests and verify failure**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_deck_builder.gd`
 
 Expected: FAIL because the deck builder and card catalog do not exist.
 
-- [ ] **Step 3: Add minimum data and pure builder**
+- [x] **Step 3: Add minimum data and pure builder**
 
 Add `card_blueprint_ids` and `feeding_need: {"feed_points": N}` to each Gu definition. `cards.json` defines `light_probe`, `stone_guard`, `moonlight_strike`, and one multi-Gu `moonlight_return`; every card declares `id`, `source`, `cost`, `effects`, `duration_turns`, `occupies_soul_slots`, and `public_text_key`. A kill move additionally declares `kill_move_sequence`, `sequence_window`, and `sequence_timeout_action`.
 
@@ -262,7 +262,7 @@ static func build_card_cache(run: RunState, catalog: Dictionary) -> Array[Dictio
 
 `ContentCatalog.validate` rejects a card whose source Gu is missing, any `feeding_need` key not listed in `material_ids`, a kill move whose ordered source definition is missing, or a duration card without an integer `duration_turns`.
 
-- [ ] **Step 4: Run deck and catalog regression tests**
+- [x] **Step 4: Run deck and catalog regression tests**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_deck_builder.gd`
 
@@ -270,7 +270,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_action_preview_service.gd`
 
 Expected: PASS; existing action cards still render from their legacy Gu projections.
 
-- [ ] **Step 5: Commit the deck data boundary**
+- [x] **Step 5: Commit the deck data boundary**
 
 ```powershell
 git add data/gu.json data/cards.json scripts/domain/content_catalog.gd scripts/domain/deck_builder.gd tests/unit/test_v3_deck_builder.gd
@@ -291,7 +291,7 @@ git commit -m "feat: add gu derived battle deck definitions"
 
 **Produces:** Battle cards with `id = battle.<battle_id>.<card_instance_id>`, battle-local `hand_version`, cached deck arrays, and generic UI `action_card` submissions.
 
-- [ ] **Step 1: Write failing battle local-version and cache tests**
+- [x] **Step 1: Write failing battle local-version and cache tests**
 
 ```gdscript
 func test_playing_card_moves_only_cached_instances_without_rebuilding_full_deck() -> void:
@@ -321,13 +321,13 @@ func test_stale_battle_hand_version_is_rejected_atomically() -> void:
     assert_eq(result["state"], run)
 ```
 
-- [ ] **Step 2: Run the focused test and observe failure**
+- [x] **Step 2: Run the focused test and observe failure**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_battle_card_actions.gd`
 
 Expected: FAIL because battle uses raw `use_gu` actions and global event-log version validation.
 
-- [ ] **Step 3: Implement battle-local ActionCard flow**
+- [x] **Step 3: Implement battle-local ActionCard flow**
 
 At `BattleResolver.start`, calculate one deck hash, call `DeckBuilder.build_card_cache` once, deterministically shuffle/draw the initial hand through `SeededRng`, and assign a unique `battle_id`. Only rebuild cache when the saved `deck_generation_hash` differs from `DeckBuilder.deck_hash(run, catalog)` at battle start or after a declared card-override mutation; do not call `build_card_cache` from ordinary play, end-turn, intent, or reaction paths.
 
@@ -346,7 +346,7 @@ static func apply_action_card(battle: Dictionary, run: RunState, command: Dictio
 
 Increment `hand_version` when an action removes a card from hand, draws, shuffles, or discards. Do not increment it for a change to stone, event log, map position, enemy intent metadata, or a continuous effect tick that leaves hand content untouched.
 
-- [ ] **Step 4: Run targeted battle, preview, and controller tests**
+- [x] **Step 4: Run targeted battle, preview, and controller tests**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_battle_card_actions.gd`
 
@@ -356,7 +356,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_action_preview_service.gd`
 
 Expected: PASS; no test relies on the old global battle state version.
 
-- [ ] **Step 5: Commit the cached battle loop**
+- [x] **Step 5: Commit the cached battle loop**
 
 ```powershell
 git add scripts/domain/battle_resolver.gd scripts/domain/action_preview_service.gd scripts/presentation/run_controller.gd scripts/presentation/battle_view.gd tests/unit/test_v3_battle_card_actions.gd tests/integration/test_v3_roguelike_vertical_slice.gd
@@ -374,7 +374,7 @@ git commit -m "feat: add cached gu battle card hands"
 
 **Produces:** `DurationEffect` registry lifecycle, correct soul occupancy cleanup, progressive multi-Gu sequence, public risk metadata, deterministic backlash event changes.
 
-- [ ] **Step 1: Write failing concurrency/backlash tests**
+- [x] **Step 1: Write failing concurrency/backlash tests**
 
 ```gdscript
 func test_duration_effect_releases_soul_occupancy_after_expiry() -> void:
@@ -397,13 +397,13 @@ func test_force_activating_higher_rank_gu_uses_bing_backlash_factors() -> void:
     assert_eq(result["soul_damage"], 5)
 ```
 
-- [ ] **Step 2: Run the test and verify failure**
+- [x] **Step 2: Run the test and verify failure**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_soul_and_backlash.gd`
 
 Expected: FAIL because the battle has no duration registry, concurrent source accounting, or defined factor table.
 
-- [ ] **Step 3: Implement effect and sequence lifecycle**
+- [x] **Step 3: Implement effect and sequence lifecycle**
 
 ```gdscript
 func _register_duration(battle: Dictionary, card: Dictionary) -> void:
@@ -426,7 +426,7 @@ The actual implementation must replace `pass`: decrement `remaining_turns` only 
 
 Before resolving an activation, count the union of existing occupied Gu instance IDs and the card's source IDs. If it exceeds `soul_control_limit`, apply defined backlash through Resolver-owned state mutation; Preview marks the exact known occupancy and risk but does not calculate a hidden roll. High-rank activation uses the fixed factor table and appends one `backlash_applied` event with health/soul/aperture changes.
 
-- [ ] **Step 4: Run focused and legacy battle tests**
+- [x] **Step 4: Run focused and legacy battle tests**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_soul_and_backlash.gd`
 
@@ -434,7 +434,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_battle_loop.gd`
 
 Expected: PASS; no duration source remains active after expiry.
 
-- [ ] **Step 5: Commit effect and backlash rules**
+- [x] **Step 5: Commit effect and backlash rules**
 
 ```powershell
 git add scripts/domain/battle_resolver.gd scripts/domain/action_preview_service.gd tests/unit/test_v3_soul_and_backlash.gd
@@ -601,7 +601,7 @@ git commit -m "feat: add refinement knowledge and moonlight chain"
 
 **Produces:** One direct purchase, one lifespan deal, one Gu-for-unknown barter, a clearly hinted delayed-cost event, `jade_cicada_shell`, and `hungry_vine_token`.
 
-- [ ] **Step 1: Write failing market/event tests**
+- [x] **Step 1: Write failing market/event tests**
 
 ```gdscript
 func test_lifespan_market_deal_shows_known_cost_before_click_and_can_kill() -> void:
@@ -624,13 +624,13 @@ func test_hungry_vine_relic_adds_next_node_feeding_pressure() -> void:
     assert_eq(result["state"].estimate_feeding_materials(catalog)["feed_points"], 2)
 ```
 
-- [ ] **Step 2: Run the market/event test and verify failure**
+- [x] **Step 2: Run the market/event test and verify failure**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_market_event_relic.gd`
 
 Expected: FAIL because these data-driven cards and effects do not exist.
 
-- [ ] **Step 3: Implement complete preview/resolution pairs**
+- [x] **Step 3: Implement complete preview/resolution pairs**
 
 Define:
 
@@ -645,7 +645,7 @@ hungry_vine_token               # gain a basic Gu; +1 feed_points upkeep per nod
 
 `ActionPreviewService` exposes exact public costs, declared direct risks, and an `unknown_note` for only the hidden delayed branch. `Resolver` selects unknown barter/event outcomes with the run seed, appends structured outcome keys, then causes `EncounterSessionResolver` to return `actual_changes` and fresh `next_available_actions`. Relic hooks are small `match`/data lookups at battle start and feeding estimation; do not create a generic script-evaluation system.
 
-- [ ] **Step 4: Run focused market and session tests**
+- [x] **Step 4: Run focused market and session tests**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_market_event_relic.gd`
 
@@ -653,7 +653,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_encounter_session_resolver.gd`
 
 Expected: PASS; all non-executable offers remain visible with a reason and remedy.
 
-- [ ] **Step 5: Commit the market/event/relic slice**
+- [x] **Step 5: Commit the market/event/relic slice**
 
 ```powershell
 git add data/relics.json data/events.json data/shops.json scripts/domain/content_catalog.gd scripts/domain/action_preview_service.gd scripts/domain/resolver.gd scripts/domain/encounter_session_resolver.gd tests/unit/test_v3_market_event_relic.gd
@@ -678,7 +678,7 @@ git commit -m "feat: add market event and relic slice"
 
 **Produces:** Playable map route with limited fog, generic ActionCard UI commands, death/restart behavior, and full regression verification.
 
-- [ ] **Step 1: Write failing integration/atomicity tests**
+- [x] **Step 1: Write failing integration/atomicity tests**
 
 ```gdscript
 func test_duplicate_action_card_submission_is_atomic() -> void:
@@ -701,19 +701,19 @@ func test_first_vertical_slice_travels_fogged_route_to_boss_and_resets_after_dea
     assert_eq(controller.state.refined_gu_ids, ["small_light_gu"])
 ```
 
-- [ ] **Step 2: Run the integration test and verify failure**
+- [x] **Step 2: Run the integration test and verify failure**
 
 Run: `./tools/test.ps1 -Test tests/integration/test_v3_roguelike_vertical_slice.gd`
 
 Expected: FAIL because UI/controller still uses `battle_action_card` and the full reset/fog assertions do not exist.
 
-- [ ] **Step 3: Integrate without putting rules in scenes**
+- [x] **Step 3: Integrate without putting rules in scenes**
 
 Map rendering shows only current reachable nodes and the next two layers; remaining nodes are opaque fog labels without type/reward details. `RunController` owns route and battle context, sends only generic `action_card` submissions, and calls Resolver/Preview after every result. `BattleView` renders cards from `preview_battle_actions` with stable fixed-size controls, disabled state, tooltip containing `block_reason`/`remedy_hints`, known cost/risk/gain, and no direct domain mutation. `EncounterView` follows the same card rendering contract. `EndingView` displays the existing death report plus player-known structured outcome facts; it never reads hidden enemy state.
 
 Document launch and validation commands in `README.md`; do not state the game is complete until those commands run successfully.
 
-- [ ] **Step 4: Run all automated verification**
+- [x] **Step 4: Run all automated verification**
 
 Run: `./tools/test.ps1 -Suite unit`
 
@@ -733,7 +733,7 @@ Expected: all tests PASS, Godot parses headlessly, and `git diff --check` has no
 4. Buy or barter for a Gu, leave a node to see one total feeding bill, then attempt the moonlight recipe/free mix.
 5. Choose the lifespan market deal at one lifespan; verify death report and a newly started run has only the starting Gu while MetaProgress retains the discovered codex entry.
 
-- [ ] **Step 6: Commit the verified vertical slice**
+- [x] **Step 6: Commit the verified vertical slice**
 
 ```powershell
 git add scripts/domain/map_generator.gd scripts/domain/encounter_session_resolver.gd scripts/presentation/run_controller.gd scripts/presentation/map_view.gd scripts/presentation/encounter_view.gd scripts/presentation/battle_view.gd scripts/presentation/ending_view.gd README.md tests/integration/test_v3_roguelike_vertical_slice.gd tests/unit/test_v3_meta_and_terminal_run.gd
