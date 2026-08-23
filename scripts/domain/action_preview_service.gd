@@ -3,7 +3,7 @@ extends RefCounted
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
-static func preview_actions(state: RunState, node: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+static func preview_actions(state: RunState, node: Dictionary, catalog: Dictionary, knowledge: Dictionary = {}) -> Array[Dictionary]:
 	var cards: Array[Dictionary] = []
 	if state.is_terminal():
 		return cards
@@ -15,7 +15,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 			"caravan":
 				_append_caravan_cards(cards, state, catalog)
 			"refinement":
-				_append_refinement_cards(cards, state, catalog)
+				_append_refinement_cards(cards, state, catalog, knowledge)
 			"cultivation":
 				_append_cultivation_cards(cards, state)
 			"ledger":
@@ -249,26 +249,92 @@ static func _append_caravan_dispute_cards(cards: Array[Dictionary], state: RunSt
 	}))
 
 
-static func _append_refinement_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
+static func _append_refinement_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary, knowledge: Dictionary = {}) -> void:
 	for recipe in catalog.get("refinement_recipes", []):
-		var inputs: Array = recipe.get("input_gu_ids", [])
-		var missing := _missing_gu(state.refined_gu_ids, inputs)
-		var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
-		cards.append(_card(state, {
-			"id": "refine.%s" % str(recipe["id"]),
-			"title": "炼制%s" % DisplayText.gu(str(recipe["output_gu_id"])),
-			"summary": "以%s合炼。" % _gu_names(inputs),
-			"executable": missing.is_empty(),
-			"block_reason": "缺少%s。" % _gu_names(missing) if not missing.is_empty() else "",
-			"cost": _cost(0, inputs, 1),
-			"known_risk": ["失败会损毁输入蛊虫：%s。" % _gu_names(inputs)] if destroys_inputs else [],
-			"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
-			"unknown_note": "炼制成败未定。",
-			"success_rate": int(recipe.get("success_roll_max", 0)),
-			"remedy_hints": _gu_remedies(missing),
-			"command": {"type": "refine_gu", "recipe_id": str(recipe["id"])},
-		}))
+		match str(recipe.get("kind", "combine")):
+			"free_mix":
+				_append_free_mix_card(cards, state, recipe, knowledge)
+			_:
+				_append_recipe_card(cards, state, recipe)
 	_append_leave_card(cards, state)
+
+
+static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recipe: Dictionary) -> void:
+	var inputs: Array = recipe.get("input_gu_ids", [])
+	var missing := _missing_gu(state.refined_gu_ids, inputs)
+	var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
+	var locked := bool(recipe.get("locked", false))
+	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
+	var executable := missing.is_empty() and not locked
+	var reason := ""
+	if locked:
+		reason = str(recipe.get("locked_reason", "尚未获得对应的炼制传承，无法按固定配方合炼。"))
+	elif not missing.is_empty():
+		reason = "缺少%s。" % _gu_names(missing)
+	cards.append(_card(state, {
+		"id": "refine.%s" % str(recipe["id"]),
+		"title": "炼制%s" % DisplayText.gu(str(recipe["output_gu_id"])),
+		"summary": "以%s合炼。" % _gu_names(inputs),
+		"executable": executable,
+		"block_reason": reason,
+		"cost": _cost(0, inputs, 1),
+		"known_risk": ["失败会损毁输入蛊虫：%s。" % _gu_names(inputs)] if destroys_inputs else [],
+		"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
+		"unknown_note": "" if is_fixed else "炼制成败未定。",
+		"success_rate": null if is_fixed else int(recipe.get("success_roll_max", 0)),
+		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if locked else _gu_remedies(missing),
+		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"])},
+	}))
+
+
+static func _append_free_mix_card(cards: Array[Dictionary], state: RunState, recipe: Dictionary, knowledge: Dictionary) -> void:
+	var min_inputs := int(recipe.get("min_inputs", 2))
+	var usable := free_mix_input_instance_ids(state)
+	var enough := usable.size() >= min_inputs
+	var known_risks: Array[String] = []
+	if knowledge.has(_free_mix_combination_key(state, usable)):
+		for outcome_id_value in knowledge[_free_mix_combination_key(state, usable)]:
+			var line := _known_outcome_line(str(outcome_id_value))
+			if not line.is_empty() and not known_risks.has(line):
+				known_risks.append(line)
+	cards.append(_card(state, {
+		"id": "refine.%s" % str(recipe["id"]),
+		"title": "乱炼一炉",
+		"summary": "将两只以上已炼化蛊虫投入同一炉中乱炼，成败祸福全凭天意。",
+		"executable": enough,
+		"block_reason": "已炼化蛊虫不足 %d 只，无法乱炼。" % min_inputs if not enough else "",
+		"cost": {"time": 1},
+		"known_risk": known_risks,
+		"expected_gain": [],
+		"unknown_note": "" if not known_risks.is_empty() else "乱炼的结果未明：可能蛊虫尽毁、催生畸变，也可能炸炉伤身。",
+		"remedy_hints": ["可先通过交易、搜寻或炼制获取更多蛊虫。"] if not enough else [],
+		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"]), "input_instance_ids": usable},
+	}))
+
+
+static func free_mix_input_instance_ids(state: RunState) -> Array[String]:
+	var result: Array[String] = []
+	for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+		result.append(str(instance_id_value))
+	return result
+
+
+static func _free_mix_combination_key(state: RunState, instance_ids: Array) -> String:
+	var definition_ids: Array[String] = []
+	for instance_id_value in instance_ids:
+		var definition_id := str(state.gu_instances.get(str(instance_id_value), {}).get("definition_id", ""))
+		if not definition_id.is_empty() and not definition_ids.has(definition_id):
+			definition_ids.append(definition_id)
+	definition_ids.sort()
+	return "+".join(definition_ids)
+
+
+static func _known_outcome_line(outcome_id: String) -> String:
+	match outcome_id:
+		"destroyed": return "已知：这类组合很可能让所有输入蛊虫尽毁。"
+		"mutation_venom": return "已知：这类组合可能催生含毒畸变。"
+		"explosion": return "已知：这类组合可能炸炉，损伤气血魂魄与寿元。"
+	return ""
 
 
 static func _append_cultivation_cards(cards: Array[Dictionary], state: RunState) -> void:

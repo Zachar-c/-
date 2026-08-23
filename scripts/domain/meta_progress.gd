@@ -31,6 +31,15 @@ func record_run_end(run: RunState, outcome: String) -> RefCounted:
 	return next
 
 
+func record_random_outcome(combination_key: String, outcome_id: String) -> RefCounted:
+	var next := _copy()
+	var outcomes: Array = next.unlocked_random_outcomes.get(combination_key, []).duplicate()
+	if not outcomes.has(outcome_id):
+		outcomes.append(outcome_id)
+	next.unlocked_random_outcomes[combination_key] = outcomes
+	return next
+
+
 func to_save_data() -> Dictionary:
 	return {
 		"gu_codex_ids": gu_codex_ids.duplicate(),

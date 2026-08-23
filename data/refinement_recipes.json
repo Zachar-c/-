@@ -7,6 +7,57 @@
       "output_gu_id": "pulse_drum_gu",
       "success_roll_max": 70,
       "failure": "destroy_inputs"
+    },
+    {
+      "id": "moon_glow_fixed",
+      "kind": "fixed",
+      "input_gu_ids": ["moonlight_gu", "small_light_gu", "small_light_gu"],
+      "output_gu_id": "moon_glow_gu"
+    },
+    {
+      "id": "phantom_moon_locked",
+      "kind": "fixed",
+      "locked": true,
+      "requires_legacy_knowledge_id": "phantom_moon_recipe",
+      "input_gu_ids": ["moon_glow_gu", "shadow_veil_gu"],
+      "output_gu_id": "phantom_moon_gu"
+    },
+    {
+      "id": "moon_shadow_locked",
+      "kind": "fixed",
+      "locked": true,
+      "requires_legacy_knowledge_id": "moon_shadow_recipe",
+      "input_gu_ids": ["moon_glow_gu", "mist_step_gu"],
+      "output_gu_id": "moon_shadow_gu"
+    },
+    {
+      "id": "free_mix",
+      "kind": "free_mix",
+      "min_inputs": 2,
+      "outcomes": [
+        {
+          "id": "destroyed",
+          "weight": 5,
+          "effect": "destroy_inputs",
+          "event_reason": "free_mix_destroyed"
+        },
+        {
+          "id": "mutation_venom",
+          "weight": 4,
+          "effect": "mutate_to",
+          "target_gu_id": "venom_thread_gu",
+          "event_reason": "free_mix_mutation"
+        },
+        {
+          "id": "explosion",
+          "weight": 1,
+          "effect": "explosion",
+          "health_cost": 2,
+          "soul_cost": 1,
+          "lifespan_cost": 1,
+          "event_reason": "free_mix_explosion"
+        }
+      ]
     }
   ],
   "caravan_offers": [

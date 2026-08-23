@@ -189,6 +189,15 @@ static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary
 	var recipe: Dictionary = catalog.get("refinement_by_id", {}).get(str(command.get("recipe_id", "")), {})
 	if recipe.is_empty():
 		return _rejected(state, "unknown_refinement_recipe")
+	match str(recipe.get("kind", "combine")):
+		"fixed":
+			return _apply_fixed_recipe(state, command, catalog, recipe)
+		"free_mix":
+			return _apply_free_mix(state, command, catalog, recipe)
+	return _apply_combine_recipe(state, command, catalog, recipe)
+
+
+static func _apply_combine_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	if not _has_all_gu(state.refined_gu_ids, inputs):
 		return _rejected(state, "missing_refinement_input")
@@ -211,12 +220,203 @@ static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary
 	return _add_gu_transaction(state, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded")
 
 
+static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+	if bool(recipe.get("locked", false)):
+		return _rejected(state, "refinement_recipe_locked")
+	var inputs: Array = recipe.get("input_gu_ids", [])
+	var selected := _selected_input_instance_ids(state, command, inputs)
+	if selected.is_empty():
+		return _rejected(state, "missing_refinement_input")
+	var instances := state.gu_instances.duplicate(true)
+	var aperture := state.cave_aperture.duplicate(true)
+	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+	for instance_id_value in selected:
+		var instance_id := str(instance_id_value)
+		var consumed: Dictionary = instances[instance_id].duplicate(true)
+		consumed["state"] = "consumed"
+		instances[instance_id] = consumed
+		stored.erase(instance_id)
+	var output_instance_id := _next_gu_instance_id(instances)
+	instances[output_instance_id] = {
+		"instance_id": output_instance_id,
+		"definition_id": str(recipe["output_gu_id"]),
+		"state": "refined",
+	}
+	stored.append(output_instance_id)
+	aperture["stored_gu_instance_ids"] = stored
+	var next := state.append_event(_event(
+		state,
+		"refine_gu",
+		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"gu_instances": instances, "cave_aperture": aperture},
+		"refinement_succeeded",
+		state.current_node_id,
+		selected + [output_instance_id]
+	))
+	next.sync_legacy_gu_projections()
+	return _accepted(next)
+
+
+static func _selected_input_instance_ids(state: RunState, command: Dictionary, inputs: Array) -> Array[String]:
+	var remaining: Array[String] = []
+	for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+		remaining.append(str(instance_id_value))
+	var selected: Array[String] = []
+	var requested: Array = command.get("input_instance_ids", [])
+	if not requested.is_empty():
+		if requested.size() != inputs.size():
+			return []
+		for instance_id_value in requested:
+			var instance_id := str(instance_id_value)
+			if not remaining.has(instance_id):
+				return []
+			selected.append(instance_id)
+			remaining.erase(instance_id)
+		var definitions: Array[String] = []
+		for instance_id_value in selected:
+			definitions.append(str(state.gu_instances[str(instance_id_value)]["definition_id"]))
+		return definitions if _same_multiset(definitions, inputs) else ([] as Array[String])
+	for required_id_value in inputs:
+		var required_id := str(required_id_value)
+		var found := ""
+		for instance_id_value in remaining:
+			var candidate: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+			if str(candidate.get("definition_id", "")) == required_id and str(candidate.get("state", "")) == "refined":
+				found = str(instance_id_value)
+				break
+		if found.is_empty():
+			return []
+		selected.append(found)
+		remaining.erase(found)
+	return selected
+
+
+static func _same_multiset(actual: Array[String], expected: Array) -> bool:
+	var remaining := actual.duplicate()
+	for value in expected:
+		var index := remaining.find(str(value))
+		if index < 0:
+			return false
+		remaining.remove_at(index)
+	return remaining.is_empty()
+
+
+static func _next_gu_instance_id(instances: Dictionary) -> String:
+	var highest := 0
+	for key_value in instances:
+		var text := str(key_value)
+		if text.begins_with("gu_"):
+			highest = maxi(highest, int(text.trim_prefix("gu_")))
+	return "gu_%03d" % (highest + 1)
+
+
 static func _refinement_roll(state: RunState, recipe_id: String) -> int:
 	var recipe_hash := 0
 	for character in recipe_id:
 		recipe_hash = recipe_hash * 31 + character.unicode_at(0)
 	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + recipe_hash)
 	return rng.next_index(100) + 1
+
+
+static func _apply_free_mix(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+	var min_inputs := int(recipe.get("min_inputs", 2))
+	var requested: Array = command.get("input_instance_ids", [])
+	var selected: Array[String] = []
+	if requested.is_empty():
+		for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+			var candidate: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+			if str(candidate.get("state", "")) == "refined":
+				selected.append(str(instance_id_value))
+	else:
+		for instance_id_value in requested:
+			var instance_id := str(instance_id_value)
+			var candidate: Dictionary = state.gu_instances.get(instance_id, {})
+			if candidate.is_empty() or str(candidate.get("state", "")) != "refined":
+				return _rejected(state, "missing_refinement_input")
+			if not selected.has(instance_id):
+				selected.append(instance_id)
+	if selected.size() < min_inputs:
+		return _rejected(state, "missing_refinement_input")
+	var outcomes: Array = recipe.get("outcomes", [])
+	if outcomes.is_empty():
+		return _rejected(state, "unknown_refinement_recipe")
+	# The outcome is drawn from the run seed and immutable event position;
+	# commands never accept client supplied dice values.
+	var total := 0
+	for outcome_value in outcomes:
+		total += maxi(1, int(outcome_value.get("weight", 1)))
+	var roll := SeededRngScript.new(_free_mix_seed(state, selected)).next_index(total) + 1
+	var chosen: Dictionary = {}
+	var cursor := 0
+	for outcome_value in outcomes:
+		chosen = outcome_value
+		cursor += maxi(1, int(outcome_value.get("weight", 1)))
+		if roll <= cursor:
+			break
+	var instances := state.gu_instances.duplicate(true)
+	var aperture := state.cave_aperture.duplicate(true)
+	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+	var next_cultivator := state.cultivator.duplicate(true)
+	var next_health := state.health
+	match str(chosen.get("effect", "")):
+		"mutate_to":
+			var mutated_id := str(selected[0])
+			var mutated: Dictionary = instances[mutated_id].duplicate(true)
+			mutated["definition_id"] = str(chosen.get("target_gu_id", ""))
+			instances[mutated_id] = mutated
+			for index in range(1, selected.size()):
+				var other_id := str(selected[index])
+				var other: Dictionary = instances[other_id].duplicate(true)
+				other["state"] = "dead"
+				instances[other_id] = other
+				stored.erase(other_id)
+		"explosion":
+			next_health = maxi(0, next_health - int(chosen.get("health_cost", 0)))
+			next_cultivator["soul"] = maxi(0, int(next_cultivator.get("soul", 0)) - int(chosen.get("soul_cost", 0)))
+			next_cultivator["lifespan"] = maxi(0, int(next_cultivator.get("lifespan", 0)) - int(chosen.get("lifespan_cost", 0)))
+			for instance_id_value in selected:
+				var destroyed_id := str(instance_id_value)
+				var destroyed: Dictionary = instances[destroyed_id].duplicate(true)
+				destroyed["state"] = "dead"
+				instances[destroyed_id] = destroyed
+				stored.erase(destroyed_id)
+		_:
+			for instance_id_value in selected:
+				var consumed_id := str(instance_id_value)
+				var consumed: Dictionary = instances[consumed_id].duplicate(true)
+				consumed["state"] = "dead"
+				instances[consumed_id] = consumed
+				stored.erase(consumed_id)
+	aperture["stored_gu_instance_ids"] = stored
+	var next := state.append_event(_event(
+		state,
+		"refine_gu",
+		{
+			"health": state.health,
+			"cultivator": state.cultivator,
+			"gu_instances": state.gu_instances,
+			"cave_aperture": state.cave_aperture,
+		},
+		{
+			"health": next_health,
+			"cultivator": next_cultivator,
+			"gu_instances": instances,
+			"cave_aperture": aperture,
+		},
+		str(chosen.get("event_reason", "free_mix_destroyed")),
+		state.current_node_id,
+		selected
+	))
+	next.sync_legacy_gu_projections()
+	return _finalize_if_dead(next)
+
+
+static func _free_mix_seed(state: RunState, instance_ids: Array[String]) -> int:
+	var text := "+".join(instance_ids)
+	var hash := 0
+	for character in text:
+		hash = hash * 31 + character.unicode_at(0)
+	return int(state.seed) * 1000003 + state.event_log.size() * 97 + hash
 
 
 static func _cultivate_rank_two(state: RunState) -> Dictionary:

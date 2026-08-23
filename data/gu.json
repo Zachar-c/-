@@ -276,5 +276,91 @@
       "attack",
       "moon"
     ]
+  },
+  {
+    "id": "moon_glow_gu",
+    "rank": 2,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "moonlight_strike"
+    ],
+    "value": 9,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "illuminate",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "light_combo"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "light",
+      "attack",
+      "moon"
+    ]
+  },
+  {
+    "id": "phantom_moon_gu",
+    "rank": 2,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 12,
+    "essence_cost": 2,
+    "slot_role": "disguise",
+    "combat": "obscure_targeting",
+    "field_actions": [
+      "hide",
+      "impersonate",
+      "illuminate"
+    ],
+    "synergy_hooks": [
+      "avoid_control",
+      "light_combo"
+    ],
+    "replace_value": 8,
+    "tags": [
+      "light",
+      "stealth",
+      "moon"
+    ]
+  },
+  {
+    "id": "moon_shadow_gu",
+    "rank": 3,
+    "feeding_cost": 3,
+    "feeding_need": {
+      "feed_points": 3
+    },
+    "card_blueprint_ids": [],
+    "value": 16,
+    "essence_cost": 3,
+    "slot_role": "movement",
+    "combat": "shift_position",
+    "field_actions": [
+      "hide",
+      "cross_gap",
+      "withdraw"
+    ],
+    "synergy_hooks": [
+      "support_retreat",
+      "avoid_control",
+      "light_combo"
+    ],
+    "replace_value": 11,
+    "tags": [
+      "light",
+      "shadow",
+      "movement",
+      "moon"
+    ]
   }
 ]
