@@ -34,6 +34,10 @@ func test_result_summary_shows_chinese_dialogue_text_when_present() -> void:
 	assert_false(summary.contains("{"))
 
 
+func test_result_summary_describes_standard_encounter_action() -> void:
+	assert_eq(DisplayText.result({"ok": true, "action_id": "work"}), "你做完短工，换得了元石。")
+
+
 func test_result_summary_never_shows_non_chinese_dialogue_text() -> void:
 	var summary := DisplayText.result({
 		"ok": true,
@@ -41,3 +45,20 @@ func test_result_summary_never_shows_non_chinese_dialogue_text() -> void:
 		"dialogue": {"text": "The steward asks what terms you are offering."},
 	})
 	assert_eq(summary, "对方保持谨慎。")
+
+
+func test_cost_text_translates_gu_ids_for_player_display() -> void:
+	var view := EncounterView.new()
+	var cost := view._cost_text({"gu_ids": ["small_light_gu", "trail_eye_gu"]})
+
+	assert_eq(cost, "输入蛊 小光蛊、寻迹眼蛊")
+	assert_false(cost.contains("small_light_gu"))
+	view.free()
+
+
+func test_actual_change_text_uses_same_bbcode_color_as_result_history() -> void:
+	var view := EncounterView.new()
+	var text := view._actual_change_text([{"message": "元石增加 2。"}])
+
+	assert_eq(text, "[color=#b8d5cc]结算：元石增加 2。[/color]")
+	view.free()

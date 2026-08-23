@@ -3,22 +3,57 @@ extends RefCounted
 
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
+const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 
 
 static func load_all() -> Dictionary:
 	var gu := _load_array("res://data/gu.json")
+	var cards := _load_array("res://data/cards.json")
 	var inheritances := _load_array("res://data/inheritances.json")
+	var refinement := _load_object("res://data/refinement_recipes.json")
+	var recipes: Array = refinement.get("recipes", [])
+	var caravan_offers: Array = refinement.get("caravan_offers", [])
+	var enemy_catalog := EnemyCatalogScript.load_all()
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
+		"cards": cards,
+		"card_by_id": _index_by_id(cards),
+		"material_ids": ["feed_points"],
 		"inheritances": inheritances,
 		"npcs": _load_array("res://data/npcs.json"),
+		"refinement_recipes": recipes,
+		"refinement_by_id": _index_by_id(recipes),
+		"caravan_offers": caravan_offers,
+		"caravan_offer_by_id": _index_by_id(caravan_offers),
+		"enemies": enemy_catalog["enemies"],
+		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
 
 
 static func validate(catalog: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
 	var gu_by_id: Dictionary = catalog["gu_by_id"]
+	var card_by_id: Dictionary = catalog.get("card_by_id", {})
+	var material_ids: Array = catalog.get("material_ids", [])
+	for gu in catalog.get("gu", []):
+		for material_id in gu.get("feeding_need", {}):
+			if not material_ids.has(material_id):
+				errors.append("gu %s has unknown feeding material %s" % [gu["id"], material_id])
+		for card_id in gu.get("card_blueprint_ids", []):
+			if not card_by_id.has(card_id):
+				errors.append("gu %s references missing card %s" % [gu["id"], card_id])
+	for card in catalog.get("cards", []):
+		for source_gu_id in card.get("source_gu_ids", []):
+			if not gu_by_id.has(source_gu_id):
+				errors.append("card %s references missing source gu %s" % [card["id"], source_gu_id])
+		if int(card.get("duration_turns", -1)) < 0:
+			errors.append("card %s requires integer duration_turns" % card["id"])
+		if card.has("kill_move_sequence"):
+			for source_gu_id in card["kill_move_sequence"]:
+				if not gu_by_id.has(source_gu_id):
+					errors.append("kill move %s references missing gu %s" % [card["id"], source_gu_id])
+
 	for inheritance in catalog["inheritances"]:
 		var required_gu_ids: Array = inheritance["required_gu_ids"]
 		var available_tags: Array = []
@@ -37,6 +72,7 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("inheritance %s requires missing tag %s" % [inheritance["id"], tag])
 		if not EFFECT_IDS.has(inheritance["effect_id"]):
 			errors.append("inheritance %s has invalid effect %s" % [inheritance["id"], inheritance["effect_id"]])
+	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
 	return errors
 
 
@@ -47,6 +83,15 @@ static func _load_array(path: String) -> Array:
 	if json.data is Array:
 		return json.data
 	return []
+
+
+static func _load_object(path: String) -> Dictionary:
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK:
+		return {}
+	if json.data is Dictionary:
+		return json.data
+	return {}
 
 
 static func _index_by_id(entries: Array) -> Dictionary:

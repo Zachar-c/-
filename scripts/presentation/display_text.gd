@@ -3,6 +3,11 @@ extends RefCounted
 
 
 const NODES := {
+	"neutral_wanderer": "中立散修",
+	"ridge_caravan": "山脊商队",
+	"refinement_hollow": "炼蛊石穴",
+	"cultivation_spring": "修行山泉",
+	"stage_one_ledger": "第一阶段养蛊总账",
 	"toxic_mountain_path": "毒瘴山道",
 	"flooded_cave": "积水石窟",
 	"black_mud_marsh": "黑泥沼地",
@@ -24,6 +29,10 @@ const NODES := {
 }
 
 const TYPES := {
+	"contact": "接触",
+	"refinement": "炼蛊",
+	"cultivation": "修行",
+	"ledger": "总账",
 	"hazard": "险地",
 	"inheritance": "传承",
 	"wild_gu": "野蛊",
@@ -40,8 +49,9 @@ const TYPES := {
 const ACTIONS := {
 	"accept": "接取",
 	"ally": "结盟",
-	"attempt_ascension": "尝试升仙",
+	"attempt_ascension": "冲击升仙",
 	"buy_information": "购买情报",
+	"buy": "买蛊",
 	"claim": "占取",
 	"cross": "穿越",
 	"deceive": "欺瞒",
@@ -56,6 +66,10 @@ const ACTIONS := {
 	"pressure": "施压",
 	"probe": "试探",
 	"retreat": "撤离",
+	"refine": "炼蛊",
+	"cultivate": "冲击二转",
+	"settle_feeding": "结清养护",
+	"accept_debt": "欠下人情",
 	"scout": "探查",
 	"scheme": "设局",
 	"take_imprint": "承受体印",
@@ -73,7 +87,7 @@ const GU := {
 	"venom_thread_gu": "毒丝蛊",
 	"stone_shell_gu": "石甲蛊",
 	"shadow_veil_gu": "影幕蛊",
-	"pulse_drum_gu": "脉鼓蛊",
+	"pulse_drum_gu": "脉冲鼓蛊",
 }
 
 const INHERITANCES := {
@@ -105,6 +119,14 @@ const FACTS := {
 	"bought_service": "购得服务",
 	"bought_favor": "换得人情",
 	"bought_escape_condition": "取得脱身条件",
+	"commission_accepted": "接下药师委托",
+	"temporary_ally": "得到临时援手",
+	"claimed_opportunity": "占得一线机缘",
+	"site_clue": "掌握地势线索",
+	"route_left_behind": "放弃此处路线",
+	"lured_threat": "引开了眼前威胁",
+	"route_scouted": "探明前方路径",
+	"withdrawn_safely": "暂时全身而退",
 }
 
 const REACTIONS := {
@@ -127,6 +149,29 @@ const BATTLE_RESULTS := {
 	"retreated": "你付出代价后撤离。",
 	"defeat": "此战失利。",
 	"ongoing": "交锋仍在继续。",
+}
+
+const ACTION_RESULTS := {
+	"accept": "你接下了这桩委托，后续人情已记在身上。",
+	"ally": "你暂得一位同路人相助。",
+	"buy_information": "你付出元石，换得了可用情报。",
+	"claim": "你抢先占住了这线机缘。",
+	"cross": "你耗去真元，穿过了眼前险处。",
+	"deceive": "你暂时瞒过对方，却提高了被追查的风险。",
+	"harvest": "你从此处采得了可用的元石收获。",
+	"inspect": "你细查现场，掌握了一条地势线索。",
+	"leave": "你放下眼前收益，保留了退路。",
+	"lure": "你设下诱饵，引开了眼前威胁。",
+	"meditate": "你静修片刻，恢复了一点真元。",
+	"open": "地脉入口被你撬开，升仙地点有了着落。",
+	"prepare": "你提前布置护持，为升仙留下准备。",
+	"retreat": "你选择撤离，追击的压力随之增加。",
+	"scout": "你探明前路，留下了可靠的路径情报。",
+	"scheme": "你设局牵制外扰，冲仙局势有所缓和。",
+	"take_imprint": "你承下铁骨体印，护身与藏形的代价一并留下。",
+	"trade": "你付出元石，换得了一项可调用的服务。",
+	"withdraw": "你及时收手，暂时全身而退。",
+	"work": "你做完短工，换得了元石。",
 }
 
 const JOURNAL_HEADINGS := {
@@ -195,6 +240,9 @@ static func result(payload: Dictionary) -> String:
 		return "升仙结果：%s。" % outcome(str(payload["outcome"]))
 	if payload.has("battle_result"):
 		return battle_result(str(payload["battle_result"]))
+	var action_id := str(payload.get("action_id", ""))
+	if ACTION_RESULTS.has(action_id):
+		return str(ACTION_RESULTS[action_id])
 	var dialogue_text := _dialogue_text(payload)
 	if not dialogue_text.is_empty():
 		return dialogue_text

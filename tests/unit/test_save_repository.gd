@@ -1,6 +1,9 @@
 extends GutTest
 
 
+const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
+
+
 func test_saved_reply_is_replayed_without_gateway_call() -> void:
 	var state := RunState.new_run(101)
 	var route := MapGenerator.build(101, true)
@@ -16,6 +19,43 @@ func test_saved_reply_is_replayed_without_gateway_call() -> void:
 	var loaded := SaveRepository.load_run_from_data(saved)
 	assert_eq(loaded["replies"][0]["text"], "管事收下账册证据，为你打开一条有人照看的路。")
 	assert_eq(gateway.calls, 0)
+
+
+func test_save_round_trip_preserves_active_encounter_session() -> void:
+	var state := RunState.new_run(101)
+	state.health = 4
+	state.encounter_session = {"node_id": "neutral_wanderer", "completed": false}
+	state.encounter_results = [ResultFeedScript.entry("deceive", "contact_deceive_success", {"stone": 2}, [])]
+	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
+	var loaded := SaveRepository.load_run_from_data(saved)
+
+	assert_eq(loaded["state"].health, 4)
+	assert_eq(loaded["state"].encounter_session["node_id"], "neutral_wanderer")
+	assert_eq(loaded["state"].encounter_results[0]["text_key"], "contact_deceive_success")
+
+
+func test_load_rejects_save_with_non_contiguous_event_ids() -> void:
+	var state := RunState.new_run(101)
+	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
+	saved["state"]["event_log"][0]["id"] = "event_0002"
+
+	assert_true(SaveRepository.load_run_from_data(saved).is_empty())
+
+
+func test_load_rejects_save_with_tampered_state_checksum() -> void:
+	var state := RunState.new_run(101)
+	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
+	saved["state"]["seed"] = int(saved["state"]["seed"]) + 1
+
+	assert_true(SaveRepository.load_run_from_data(saved).is_empty())
+
+
+func test_load_rejects_save_without_checksum() -> void:
+	var state := RunState.new_run(101)
+	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
+	saved.erase("_checksum")
+
+	assert_true(SaveRepository.load_run_from_data(saved).is_empty())
 
 
 class CountingGateway extends DialogueGateway:

@@ -2,100 +2,279 @@
   {
     "id": "small_light_gu",
     "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "light_probe"
+    ],
+    "value": 3,
     "essence_cost": 1,
     "slot_role": "scout",
     "combat": "reveal_hidden_bonus",
-    "field_actions": ["scout", "signal", "disguise"],
-    "synergy_hooks": ["reveal_hidden", "support_retreat"],
+    "field_actions": [
+      "scout",
+      "signal",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden",
+      "support_retreat"
+    ],
     "replace_value": 3,
-    "tags": ["light", "scout", "subtle"]
+    "tags": [
+      "light",
+      "scout",
+      "subtle"
+    ]
   },
   {
     "id": "trail_eye_gu",
     "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [],
+    "value": 4,
     "essence_cost": 1,
     "slot_role": "scout",
     "combat": "mark_enemy_route",
-    "field_actions": ["trace", "inspect"],
-    "synergy_hooks": ["track_target", "reveal_hidden"],
+    "field_actions": [
+      "trace",
+      "inspect"
+    ],
+    "synergy_hooks": [
+      "track_target",
+      "reveal_hidden"
+    ],
     "replace_value": 4,
-    "tags": ["scout", "tracking", "reveal"]
+    "tags": [
+      "scout",
+      "tracking",
+      "reveal"
+    ]
   },
   {
     "id": "blood_moss_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_moss_relief"
+    ],
+    "value": 5,
     "essence_cost": 1,
     "slot_role": "healing",
     "combat": "heal_and_bleed",
-    "field_actions": ["tend_wound"],
-    "synergy_hooks": ["heal_then_strike", "injury_relief"],
+    "field_actions": [
+      "tend_wound"
+    ],
+    "synergy_hooks": [
+      "heal_then_strike",
+      "injury_relief"
+    ],
     "replace_value": 5,
-    "tags": ["blood", "healing", "wood"]
+    "tags": [
+      "blood",
+      "healing",
+      "wood"
+    ]
   },
   {
     "id": "thorn_whip_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "thorn_strike"
+    ],
+    "value": 5,
     "essence_cost": 1,
     "slot_role": "attack",
     "combat": "bind_and_strike",
-    "field_actions": ["climb", "restrain"],
-    "synergy_hooks": ["control_follow_up", "heal_then_strike"],
+    "field_actions": [
+      "climb",
+      "restrain"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "heal_then_strike"
+    ],
     "replace_value": 5,
-    "tags": ["wood", "attack", "control"]
+    "tags": [
+      "wood",
+      "attack",
+      "control"
+    ]
   },
   {
     "id": "mist_step_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 5,
     "essence_cost": 1,
     "slot_role": "movement",
     "combat": "shift_position",
-    "field_actions": ["cross_gap", "withdraw"],
-    "synergy_hooks": ["support_retreat", "avoid_control"],
+    "field_actions": [
+      "cross_gap",
+      "withdraw"
+    ],
+    "synergy_hooks": [
+      "support_retreat",
+      "avoid_control"
+    ],
     "replace_value": 5,
-    "tags": ["movement", "escape", "mist"]
+    "tags": [
+      "movement",
+      "escape",
+      "mist"
+    ]
   },
   {
     "id": "venom_thread_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 6,
     "essence_cost": 1,
     "slot_role": "control",
     "combat": "poison_and_slow",
-    "field_actions": ["set_snare", "threaten"],
-    "synergy_hooks": ["control_follow_up", "support_retreat"],
+    "field_actions": [
+      "set_snare",
+      "threaten"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "support_retreat"
+    ],
     "replace_value": 6,
-    "tags": ["poison", "control", "escape"]
+    "tags": [
+      "poison",
+      "control",
+      "escape"
+    ]
   },
   {
     "id": "stone_shell_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "stone_guard"
+    ],
+    "value": 5,
     "essence_cost": 1,
     "slot_role": "defense",
     "combat": "guard_against_hit",
-    "field_actions": ["brace", "hold_passage"],
-    "synergy_hooks": ["guard_ally", "resist_hazard"],
+    "field_actions": [
+      "brace",
+      "hold_passage"
+    ],
+    "synergy_hooks": [
+      "guard_ally",
+      "resist_hazard"
+    ],
     "replace_value": 5,
-    "tags": ["defense", "earth", "guard"]
+    "tags": [
+      "defense",
+      "earth",
+      "guard"
+    ]
   },
   {
     "id": "shadow_veil_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 6,
     "essence_cost": 1,
     "slot_role": "disguise",
     "combat": "obscure_targeting",
-    "field_actions": ["hide", "impersonate"],
-    "synergy_hooks": ["avoid_control", "support_retreat"],
+    "field_actions": [
+      "hide",
+      "impersonate"
+    ],
+    "synergy_hooks": [
+      "avoid_control",
+      "support_retreat"
+    ],
     "replace_value": 6,
-    "tags": ["stealth", "escape", "shadow"]
+    "tags": [
+      "stealth",
+      "escape",
+      "shadow"
+    ]
   },
   {
     "id": "pulse_drum_gu",
     "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 5,
     "essence_cost": 1,
     "slot_role": "tempo",
     "combat": "interrupt_enemy",
-    "field_actions": ["distract", "rally"],
-    "synergy_hooks": ["control_follow_up", "turn_order_shift"],
+    "field_actions": [
+      "distract",
+      "rally"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "turn_order_shift"
+    ],
     "replace_value": 5,
-    "tags": ["tempo", "control", "sound"]
+    "tags": [
+      "tempo",
+      "control",
+      "sound"
+    ]
+  },
+  {
+    "id": "moonlight_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "moonlight_strike"
+    ],
+    "value": 4,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "illuminate"
+    ],
+    "synergy_hooks": [
+      "light_combo"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "light",
+      "attack",
+      "moon"
+    ]
   }
 ]

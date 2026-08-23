@@ -1,0 +1,99 @@
+[
+  {
+    "id": "light_probe",
+    "source_gu_ids": [
+      "small_light_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "light_probe"
+  },
+  {
+    "id": "stone_guard",
+    "source_gu_ids": [
+      "stone_shell_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "gain_guard"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "stone_guard"
+  },
+  {
+    "id": "moonlight_strike",
+    "source_gu_ids": [
+      "moonlight_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "moonlight_strike"
+  },
+  {
+    "id": "moonlight_return",
+    "source_gu_ids": [
+      "moonlight_gu",
+      "small_light_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "returning_moonlight"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "moonlight_return",
+    "kill_move_sequence": [
+      "moonlight_gu",
+      "small_light_gu"
+    ],
+    "sequence_window": "same_turn",
+    "sequence_timeout_action": "clear"
+  },
+  {
+    "id": "blood_moss_relief",
+    "source_gu_ids": [
+      "blood_moss_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_and_strike"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_moss_relief"
+  },
+  {
+    "id": "thorn_strike",
+    "source_gu_ids": [
+      "thorn_whip_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "thorn_strike"
+  }
+]

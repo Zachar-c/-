@@ -1,0 +1,38 @@
+[
+  {
+    "id": "neutral_stone_wanderer",
+    "tier": "common",
+    "hp": 4,
+    "essence": 3,
+    "clues": ["stone_dust", "steady_stance"],
+    "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2},
+    "reactions": [
+      {
+        "id": "stone_shell",
+        "clue": "stone_dust",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "石甲护身"
+      }
+    ]
+  },
+  {
+    "id": "ridge_hound",
+    "tier": "common",
+    "hp": 3,
+    "essence": 0,
+    "clues": ["lowered_shoulders", "wet_fang"],
+    "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 3},
+    "reactions": [
+      {
+        "id": "counter_bite",
+        "clue": "lowered_shoulders",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "guarded",
+        "label": "反口撕咬"
+      }
+    ]
+  }
+]

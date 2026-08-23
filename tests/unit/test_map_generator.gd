@@ -4,14 +4,15 @@ extends GutTest
 func test_first_run_contains_required_anchor_nodes() -> void:
 	var route := MapGenerator.build(101, true)
 	var ids := route.map(func(node: Dictionary): return node["id"])
-	assert_eq(route.size(), 12)
-	assert_true(ids.has("caravan_missing_goods"))
-	assert_true(ids.has("earth_vein_contest"))
-	assert_eq(ids.back(), "ascension_window")
+	assert_eq(route.size(), 13)
+	assert_true(ids.has("ridge_caravan"))
+	assert_true(ids.has("blood_moss_grove"))
+	assert_eq(ids.back(), "stage_one_ledger")
 
 
 func test_same_seed_builds_same_non_first_route() -> void:
 	assert_eq(MapGenerator.build(202, false), MapGenerator.build(202, false))
+	assert_false(MapGenerator.build(202, false).is_empty())
 
 
 func test_generated_route_does_not_repeat_required_contest() -> void:

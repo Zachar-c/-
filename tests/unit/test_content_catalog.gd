@@ -1,9 +1,9 @@
 extends GutTest
 
 
-func test_catalog_has_exactly_nine_gu_and_three_inheritances() -> void:
+func test_catalog_has_ten_gu_and_three_inheritances() -> void:
 	var catalog := ContentCatalog.load_all()
-	assert_eq(catalog["gu"].size(), 9)
+	assert_eq(catalog["gu"].size(), 10)
 	assert_eq(catalog["inheritances"].size(), 3)
 	assert_eq(ContentCatalog.validate(catalog), [])
 

@@ -29,3 +29,19 @@ func test_buy_opportunity_rejects_generic_attribute_purchase() -> void:
 	assert_false(result["result"]["ok"])
 	assert_eq(result["state"].stone, before.stone)
 	assert_eq(result["state"].event_log.size(), before.event_log.size())
+
+
+func test_every_standard_encounter_action_returns_a_visible_consequence() -> void:
+	var actions := [
+		"accept", "ally", "buy_information", "claim", "cross", "deceive", "harvest",
+		"inspect", "leave", "lure", "meditate", "open", "prepare", "retreat", "scout",
+		"scheme", "take_imprint", "trade", "withdraw", "work",
+	]
+	for action_id in actions:
+		var before := RunState.new_run(101)
+		before.current_node_id = "village_short_work"
+		var resolved := Resolver.apply(before, {"type": "choose_action", "action_id": action_id}, catalog)
+		assert_true(resolved["result"]["ok"], action_id)
+		assert_eq(resolved["result"].get("action_id", ""), action_id, action_id)
+		assert_false(str(resolved["result"].get("effect_id", "")).is_empty(), action_id)
+		assert_false(resolved["state"].event_log.back()["after"].is_empty(), action_id)

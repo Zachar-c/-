@@ -1,0 +1,27 @@
+{
+  "recipes": [
+    {
+      "id": "bright_thread_risk",
+      "kind": "combine",
+      "input_gu_ids": ["small_light_gu", "trail_eye_gu"],
+      "output_gu_id": "pulse_drum_gu",
+      "success_roll_max": 70,
+      "failure": "destroy_inputs"
+    }
+  ],
+  "caravan_offers": [
+    {
+      "id": "caravan_thorn_offer",
+      "kind": "buy",
+      "output_gu_id": "thorn_whip_gu",
+      "stone_cost": 5
+    },
+    {
+      "id": "caravan_mist_exchange",
+      "kind": "exchange",
+      "input_gu_ids": ["trail_eye_gu", "stone_shell_gu"],
+      "output_gu_id": "mist_step_gu",
+      "stone_cost": 0
+    }
+  ]
+}

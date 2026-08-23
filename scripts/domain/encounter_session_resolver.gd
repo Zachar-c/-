@@ -1,0 +1,189 @@
+class_name EncounterSessionResolver
+extends RefCounted
+
+
+const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
+const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+
+
+static func start(node: Dictionary) -> Dictionary:
+	return {
+		"node_id": str(node.get("id", "")),
+		"kind": str(node.get("type", "")),
+		"phase": "active",
+		"completed": false,
+		"completion_reason": "",
+		"flags": {},
+	}
+
+
+static func begin(state: RunState, node: Dictionary) -> Dictionary:
+	var session := start(node)
+	var feed := ResultFeedScript.entry("enter_node", "node_entered", {}, [])
+	var next := _record_session_state(state, session, feed, "encounter_started", true)
+	return {"state": next, "session": session, "feed": feed, "result": {"ok": true}}
+
+
+static func apply(state: RunState, session: Dictionary, command: Dictionary, catalog: Dictionary, node: Dictionary = {}) -> Dictionary:
+	if bool(session.get("completed", false)):
+		return _rejected(state, session, "session_completed")
+	if str(command.get("type", "")) == "action_card":
+		return _apply_action_card(state, session, node, command, catalog)
+	if str(command.get("type", "")) == "leave_node":
+		return _leave(state, session, catalog)
+	var resolved := Resolver.apply(state, command, catalog)
+	var next_session := session.duplicate(true)
+	var feed := _feed_for(command, state, resolved["state"], resolved["result"])
+	var next := _record_session_state(resolved["state"], next_session, feed, "encounter_action")
+	return {
+		"state": next,
+		"session": next_session,
+		"feed": feed,
+		"result": _with_resolution(resolved["result"], state, next, node, catalog),
+	}
+
+
+static func _apply_action_card(
+	state: RunState,
+	session: Dictionary,
+	node: Dictionary,
+	command: Dictionary,
+	catalog: Dictionary
+) -> Dictionary:
+	if node.is_empty():
+		return _card_rejected(state, session, node, catalog, "missing_action_node")
+	if int(command.get("state_version", -1)) != state.event_log.size():
+		return _card_rejected(state, session, node, catalog, "action_preview_stale")
+	var card := ActionPreviewServiceScript.find_card(state, node, str(command.get("action_id", "")), catalog)
+	if card.is_empty():
+		return _card_rejected(state, session, node, catalog, "unknown_action_card")
+	if not bool(card.get("executable", false)):
+		return _card_rejected(state, session, node, catalog, "action_not_executable")
+	# Never accept a command object from the UI. Recompute and execute the current card only.
+	return apply(state, session, card["command"], catalog, node)
+
+
+static func _card_rejected(state: RunState, session: Dictionary, node: Dictionary, catalog: Dictionary, reason: String) -> Dictionary:
+	var rejected := _rejected(state, session, reason)
+	rejected["result"] = _with_resolution(rejected["result"], state, state, node, catalog)
+	return rejected
+
+
+static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) -> Dictionary:
+	var completed := Resolver.apply(state, {
+		"type": "complete_node",
+		"node_id": session["node_id"],
+		"outcome": "abandoned",
+	}, catalog)
+	if not bool(completed["result"].get("ok", false)):
+		return _rejected(state, session, str(completed["result"].get("reason", "cannot_leave_node")))
+	var next_session := session.duplicate(true)
+	next_session["completed"] = true
+	next_session["completion_reason"] = "player_left"
+	var feed := ResultFeedScript.entry("leave_node", "node_left", {}, [])
+	var next := _record_session_state(completed["state"], next_session, feed, "encounter_left")
+	return {
+		"state": next,
+		"session": next_session,
+		"feed": feed,
+		"result": _with_resolution({"ok": true}, state, next, {}, catalog),
+	}
+
+
+static func _record_session_state(
+	state: RunState,
+	session: Dictionary,
+	feed: Dictionary,
+	reason: String,
+	replace_results: bool = false
+) -> RunState:
+	var feeds: Array[Dictionary] = []
+	if not replace_results:
+		for existing_feed in state.encounter_results:
+			feeds.append(existing_feed.duplicate(true))
+	feeds.append(feed.duplicate(true))
+	return state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": session["node_id"],
+		"action": "encounter_session",
+		"before": {"encounter_session": state.encounter_session, "encounter_results": state.encounter_results},
+		"after": {"encounter_session": session, "encounter_results": feeds},
+		"reason": reason,
+		"source": "encounter_session_resolver",
+		"targets": [],
+	})
+
+
+static func _feed_for(command: Dictionary, before: RunState, after: RunState, result: Dictionary) -> Dictionary:
+	var action := str(command.get("approach", command.get("action_id", command.get("type", "action"))))
+	if not bool(result.get("ok", false)):
+		return ResultFeedScript.entry(action, "action_rejected", {}, [])
+	var changes := {}
+	if after.stone != before.stone:
+		changes["stone"] = after.stone - before.stone
+	if after.essence != before.essence:
+		changes["essence"] = after.essence - before.essence
+	var facts: Array[String] = []
+	for fact in after.known_facts:
+		if not before.known_facts.has(fact):
+			facts.append(fact)
+	return ResultFeedScript.entry(action, _text_key_for(action), changes, facts)
+
+
+static func _with_resolution(result: Dictionary, before: RunState, after: RunState, node: Dictionary, catalog: Dictionary) -> Dictionary:
+	var resolution := result.duplicate(true)
+	resolution["actual_changes"] = _actual_changes(before, after)
+	resolution["next_available_actions"] = ActionPreviewServiceScript.preview_actions(after, node, catalog) if not node.is_empty() else []
+	resolution["state_version"] = after.event_log.size()
+	return resolution
+
+
+static func _actual_changes(before: RunState, after: RunState) -> Array[Dictionary]:
+	var changes: Array[Dictionary] = []
+	_append_numeric_change(changes, "stone", before.stone, after.stone, "元石")
+	_append_numeric_change(changes, "spirit", before.essence, after.essence, "真元")
+	_append_numeric_change(changes, "hp", before.health, after.health, "气血")
+	for gu_id in after.refined_gu_ids:
+		if not before.refined_gu_ids.has(gu_id):
+			changes.append({"type": "gu_gained", "after": gu_id, "message": "获得蛊虫：%s。" % DisplayText.gu(gu_id)})
+	for gu_id in before.refined_gu_ids:
+		if not after.refined_gu_ids.has(gu_id):
+			changes.append({"type": "gu_lost", "before": gu_id, "message": "失去蛊虫：%s。" % DisplayText.gu(gu_id)})
+	for fact in after.known_facts:
+		if not before.known_facts.has(fact):
+			changes.append({"type": "intel", "after": fact, "message": "获得新情报。"})
+	return changes
+
+
+static func _append_numeric_change(changes: Array[Dictionary], change_type: String, before: int, after: int, label: String) -> void:
+	if before == after:
+		return
+	changes.append({
+		"type": change_type,
+		"before": before,
+		"delta": after - before,
+		"message": "%s%s %d。" % [label, "增加" if after > before else "减少", abs(after - before)],
+	})
+
+
+static func _text_key_for(action: String) -> String:
+	match action:
+		"deceive": return "contact_deceive_success"
+		"negotiate": return "contact_negotiate_result"
+		"fight": return "contact_fight_started"
+		"buy_gu": return "caravan_buy_result"
+		"sell_gu": return "caravan_sell_result"
+		"exchange_gu": return "caravan_exchange_result"
+		"refine_gu": return "refinement_result"
+		"cultivate_rank_two": return "cultivation_result"
+	return "action_result"
+
+
+static func _rejected(state: RunState, session: Dictionary, reason: String) -> Dictionary:
+	return {
+		"state": state,
+		"session": session.duplicate(true),
+		"feed": ResultFeedScript.entry("action", "action_rejected", {}, []),
+		"result": {"ok": false, "reason": reason},
+	}

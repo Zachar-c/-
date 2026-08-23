@@ -2,6 +2,9 @@ class_name MapView
 extends Control
 
 
+const ROUTE_TREE_CANVAS := preload("res://scripts/presentation/route_tree_canvas.gd")
+
+
 signal node_selected(node_id: String)
 
 
@@ -26,28 +29,16 @@ func render(route: Array[Dictionary], state: RunState) -> void:
 	title.add_theme_font_size_override("font_size", 30)
 	column.add_child(title)
 	var resources := Label.new()
-	resources.text = "元石 %d    真元 %d    伤势 %d    寿债 %d" % [state.stone, state.essence, state.injury, state.lifespan_debt]
+	resources.text = "一转 %d 阶  丙等资质  真元 %d/%d  元石 %d  伤势 %d  下次养护：预计 %d 元石" % [state.cultivation, state.essence, state.essence_capacity, state.stone, state.injury, state.estimate_feeding(ContentCatalog.load_all())]
 	resources.add_theme_color_override("font_color", Color("b8d5cc"))
 	column.add_child(resources)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(scroll)
-	var nodes := VBoxContainer.new()
-	nodes.add_theme_constant_override("separation", 8)
-	scroll.add_child(nodes)
-	for index in route.size():
-		var node: Dictionary = route[index]
-		var button := Button.new()
-		button.custom_minimum_size = Vector2(0, 48)
-		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.tooltip_text = "进入此处"
-		if node["visible"]:
-			button.text = "%02d  %s  [%s]" % [index + 1, DisplayText.node(node["id"]), DisplayText.type(node["type"])]
-			button.pressed.connect(func(): node_selected.emit(node["id"]))
-		else:
-			button.text = "%02d  未明地带" % [index + 1]
-			button.disabled = true
-		nodes.add_child(button)
+	var tree: Control = ROUTE_TREE_CANVAS.new()
+	scroll.add_child(tree)
+	tree.node_selected.connect(func(node_id: String): node_selected.emit(node_id))
+	tree.configure(route, state)
 
 
 func _clear() -> void:

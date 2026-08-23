@@ -27,9 +27,12 @@
 
 - 目标引擎：Godot `4.6.2`。
 - 测试框架：仓库已包含 GUT `9.x` 于 `addons/gut/`。
-- 启动：`godot --path .`，然后运行主场景。
-- 单元测试：`godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit -glog=2`。
-- 集成测试：`godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/integration -gexit -glog=2`。
+- 启动：`powershell -ExecutionPolicy Bypass -File tools/play.ps1`。
+- 单元测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite unit`。
+- 集成测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite integration`。
+- 全量检查（测试、无窗口启动、空白错误）：`powershell -ExecutionPolicy Bypass -File tools/check.ps1`。
+
+`tools/godot.ps1` 统一定位 Godot 控制台程序：优先使用环境变量 `GODOT_CONSOLE_PATH`，其次使用 WinGet 的本机安装路径。`tools/play.ps1` 同样支持用 `GODOT_PATH` 覆盖图形版 Godot 路径。这样 CI、终端和手工验收共用同一入口，不依赖编辑器生成的脚本缓存。
 
 可选云端对话适配器只读取环境变量 `NANJIANG_CLOUD_DIALOGUE_KEY`，不将密钥写入存档。当前适配器不配置网络传输时必定回退到 `data/dialogue_templates.json` 中的本地文本；读档复用已校验的对话回复，不重新请求云端。
 

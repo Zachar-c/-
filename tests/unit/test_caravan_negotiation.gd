@@ -42,13 +42,12 @@ func test_three_caravan_actions_trigger_reinforcement_outcome() -> void:
 	assert_eq(result["state"].relations["caravan_steward"]["deadline_days"], 0)
 
 
-func test_social_event_uses_at_most_two_gateway_responses() -> void:
+func test_social_resolution_does_not_embed_dialogue_payload() -> void:
 	var state := _caravan_state()
-	state = _act(state, "probe")["state"]
-	state = _act(state, "trade", {"offer": "ledger_evidence"})["state"]
-	var result := _act(state, "pressure")
-	assert_eq(result["state"].relations["caravan_steward"]["dialogue_calls"], 2)
-	assert_eq(result["result"]["dialogue"], {})
+	var result := _act(state, "probe")
+	assert_true(result["result"]["ok"])
+	assert_eq(result["result"]["action_id"], "probe")
+	assert_false(result["result"].has("dialogue"))
 
 
 func test_template_gateway_rejects_unknown_intent() -> void:
