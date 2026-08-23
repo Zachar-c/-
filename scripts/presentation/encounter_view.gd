@@ -160,6 +160,10 @@ func _cost_text(cost: Dictionary) -> String:
 		items.append("真元 %d" % int(cost["spirit"]))
 	if cost.has("time"):
 		items.append("时机 %d" % int(cost["time"]))
+	if cost.has("lifespan"):
+		items.append("寿元 %d" % int(cost["lifespan"]))
+	if cost.has("hp"):
+		items.append("气血 %d" % int(cost["hp"]))
 	if cost.has("gu_ids"):
 		var gu_names: Array[String] = []
 		for gu_id in cost["gu_ids"]:

@@ -8,6 +8,13 @@
       "stone_cost": 6
     },
     {
+      "id": "purchase_moonlight",
+      "kind": "purchase",
+      "card_key": "purchase.moonlight",
+      "gu_id": "moonlight_gu",
+      "stone_cost": 6
+    },
+    {
       "id": "lifespan_pulse_drum",
       "kind": "lifespan_deal",
       "card_key": "lifespan.pulse_drum",

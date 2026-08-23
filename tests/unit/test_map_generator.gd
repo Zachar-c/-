@@ -4,9 +4,11 @@ extends GutTest
 func test_first_run_contains_required_anchor_nodes() -> void:
 	var route := MapGenerator.build(101, true)
 	var ids := route.map(func(node: Dictionary): return node["id"])
-	assert_eq(route.size(), 13)
+	assert_eq(route.size(), 15)
 	assert_true(ids.has("ridge_caravan"))
 	assert_true(ids.has("blood_moss_grove"))
+	assert_true(ids.has("ridge_black_market"))
+	assert_true(ids.has("echo_cave"))
 	assert_eq(ids.back(), "stage_one_ledger")
 
 

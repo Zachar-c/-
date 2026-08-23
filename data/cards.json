@@ -95,5 +95,21 @@
     "duration_turns": 0,
     "occupies_soul_slots": false,
     "public_text_key": "thorn_strike"
+  },
+  {
+    "id": "thorn_bind",
+    "source_gu_ids": [
+      "thorn_whip_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "bind_enemy"
+    ],
+    "mode": "bind",
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "thorn_bind"
   }
 ]

@@ -92,7 +92,8 @@
       "feed_points": 2
     },
     "card_blueprint_ids": [
-      "thorn_strike"
+      "thorn_strike",
+      "thorn_bind"
     ],
     "value": 5,
     "essence_cost": 1,

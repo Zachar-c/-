@@ -25,6 +25,8 @@ const NODES := {
 	"sealed_earth_vein": "封存地脉",
 	"poison_fog_vein": "毒雾地脉",
 	"body_imprint_ritual": "体印仪式",
+	"ridge_black_market": "山脊黑市",
+	"echo_cave": "回声石洞",
 	"ascension_window": "升仙之机",
 }
 
@@ -43,6 +45,8 @@ const TYPES := {
 	"pursuit": "追击",
 	"earth_vein": "地脉",
 	"seclusion": "静修",
+	"shop": "黑市",
+	"event": "异象",
 	"ascension": "升仙",
 }
 
@@ -88,6 +92,10 @@ const GU := {
 	"stone_shell_gu": "石甲蛊",
 	"shadow_veil_gu": "影幕蛊",
 	"pulse_drum_gu": "脉冲鼓蛊",
+	"moonlight_gu": "月光蛊",
+	"moon_glow_gu": "月华蛊",
+	"phantom_moon_gu": "幻月蛊",
+	"moon_shadow_gu": "月影蛊",
 }
 
 const INHERITANCES := {

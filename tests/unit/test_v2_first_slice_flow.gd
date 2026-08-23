@@ -31,8 +31,8 @@ func test_tree_columns_group_branches_by_graph_depth() -> void:
 	var columns := MapGenerator.tree_columns(route)
 	assert_eq(_ids(columns[0]), ["neutral_wanderer", "ridge_caravan"])
 	assert_eq(_ids(columns[1]), ["beast_swarm_pass", "moonlit_trail", "refinement_hollow", "cultivation_spring", "village_short_work"])
-	assert_eq(_ids(columns[2]), ["toxic_mountain_path", "blood_moss_grove", "flooded_cave", "ridge_market", "body_imprint_ritual"])
-	assert_eq(_ids(columns[3]), ["stage_one_ledger"])
+	assert_eq(_ids(columns[2]), ["toxic_mountain_path", "blood_moss_grove", "flooded_cave", "ridge_black_market", "body_imprint_ritual"])
+	assert_eq(_ids(columns[3]), ["ridge_market", "echo_cave", "stage_one_ledger"])
 
 
 func test_controller_rejects_travel_to_a_node_outside_current_branch() -> void:

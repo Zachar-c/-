@@ -185,7 +185,7 @@ static func _command_for_card_instance(card: Dictionary, catalog: Dictionary) ->
 	var source_definition_ids: Array = definition.get("source_gu_ids", [])
 	if source_definition_ids.is_empty():
 		return {}
-	return {"type": "use_gu", "gu_id": str(source_definition_ids[0]), "mode": ""}
+	return {"type": "use_gu", "gu_id": str(source_definition_ids[0]), "mode": str(definition.get("mode", ""))}
 
 
 static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:

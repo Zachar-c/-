@@ -82,6 +82,7 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 	if source_gu_ids.is_empty():
 		return
 	var source_gu_id := str(source_gu_ids[0])
+	var card_mode := str(definition.get("mode", ""))
 	var executable := state.essence >= essence_cost
 	var risk: Array[String] = []
 	if source_gu_id == "thorn_whip_gu" and battle.get("clues", []).has("stone_dust"):
@@ -103,12 +104,12 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(instance.get("instance_id", ""))],
 		"title": DisplayText.gu(source_gu_id),
-		"summary": _battle_effect(source_gu_id, ""),
+		"summary": _battle_effect(source_gu_id, card_mode),
 		"executable": executable,
 		"block_reason": "真元不足：需要 %d 点，当前仅有 %d 点。" % [essence_cost, state.essence] if not executable else "",
 		"cost": {"spirit": essence_cost},
 		"known_risk": risk,
-		"expected_gain": [_battle_effect(source_gu_id, "")],
+		"expected_gain": [_battle_effect(source_gu_id, card_mode)],
 		"unknown_note": "部分效果会受敌方状态和未暴露后手影响。" if not risk.is_empty() else "",
 		"remedy_hints": ["可先收势恢复判断，或改用真元消耗更低的蛊虫。"] if not executable else [],
 	}))
