@@ -14,6 +14,9 @@ static func load_all() -> Dictionary:
 	var recipes: Array = refinement.get("recipes", [])
 	var caravan_offers: Array = refinement.get("caravan_offers", [])
 	var enemy_catalog := EnemyCatalogScript.load_all()
+	var relics := _load_array("res://data/relics.json")
+	var events: Array = _load_object("res://data/events.json").get("events", [])
+	var shop_offers: Array = _load_object("res://data/shops.json").get("offers", [])
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
@@ -26,6 +29,12 @@ static func load_all() -> Dictionary:
 		"refinement_by_id": _index_by_id(recipes),
 		"caravan_offers": caravan_offers,
 		"caravan_offer_by_id": _index_by_id(caravan_offers),
+		"relics": relics,
+		"relic_by_id": _index_by_id(relics),
+		"events": events,
+		"event_by_id": _index_by_id(events),
+		"shop_offers": shop_offers,
+		"shop_offer_by_id": _index_by_id(shop_offers),
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -73,6 +82,21 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not EFFECT_IDS.has(inheritance["effect_id"]):
 			errors.append("inheritance %s has invalid effect %s" % [inheritance["id"], inheritance["effect_id"]])
 	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
+	var relic_by_id: Dictionary = catalog.get("relic_by_id", {})
+	for relic in catalog.get("relics", []):
+		if int(relic.get("extra_upkeep_feed_points", 0)) > 0 and not material_ids.has("feed_points"):
+			errors.append("relic %s references unknown upkeep material feed_points" % relic["id"])
+	for offer in catalog.get("shop_offers", []):
+		if str(offer.get("kind", "")) in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
+			errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
+		for input_gu_id in offer.get("input_gu_ids", []):
+			if not gu_by_id.has(str(input_gu_id)):
+				errors.append("shop offer %s references missing gu %s" % [offer["id"], input_gu_id])
+		for reward in offer.get("rewards", []):
+			if reward.has("gu_id") and not gu_by_id.has(str(reward["gu_id"])):
+				errors.append("shop offer %s rewards missing gu %s" % [offer["id"], reward["gu_id"]])
+			if reward.has("relic_id") and not relic_by_id.has(str(reward["relic_id"])):
+				errors.append("shop offer %s rewards missing relic %s" % [offer["id"], reward["relic_id"]])
 	return errors
 
 

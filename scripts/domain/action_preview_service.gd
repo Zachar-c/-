@@ -20,9 +20,13 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 				_append_cultivation_cards(cards, state)
 			"ledger":
 				_append_ledger_cards(cards, state, catalog)
+			"shop":
+				_append_shop_cards(cards, state, catalog)
+			"event":
+				_append_event_cards(cards, state, catalog)
 			_:
 				_append_standard_cards(cards, state, node)
-		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger"]:
+		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event"]:
 			_append_leave_card(cards, state)
 	_assert_unique_ids(cards)
 	return cards
@@ -335,6 +339,82 @@ static func _known_outcome_line(outcome_id: String) -> String:
 		"mutation_venom": return "已知：这类组合可能催生含毒畸变。"
 		"explosion": return "已知：这类组合可能炸炉，损伤气血魂魄与寿元。"
 	return ""
+
+
+static func _append_shop_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
+	for offer in catalog.get("shop_offers", []):
+		_append_shop_offer_card(cards, state, catalog, offer)
+	_append_leave_card(cards, state)
+
+
+static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, catalog: Dictionary, offer: Dictionary) -> void:
+	match str(offer.get("kind", "")):
+		"purchase":
+			var cost := int(offer.get("stone_cost", 0))
+			var executable := state.stone >= cost
+			cards.append(_card(state, {
+				"id": "shop.%s" % str(offer["card_key"]),
+				"title": "购入%s" % DisplayText.gu(str(offer["gu_id"])),
+				"summary": "黑市明码标价，钱货两讫。",
+				"executable": executable,
+				"block_reason": "元石不足：需要 %d 枚，当前仅有 %d 枚。" % [cost, state.stone] if not executable else "",
+				"cost": {"stone": cost},
+				"expected_gain": ["获得%s。" % DisplayText.gu(str(offer["gu_id"]))],
+				"remedy_hints": _stone_remedies(cost - state.stone) if not executable else [],
+				"command": {"type": "shop_purchase", "offer_id": str(offer["id"])},
+			}))
+		"lifespan_deal":
+			var lifespan_cost := int(offer.get("lifespan_cost", 0))
+			var enough_life := int(state.cultivator.get("lifespan", 0)) >= lifespan_cost
+			cards.append(_card(state, {
+				"id": "shop.%s" % str(offer["card_key"]),
+				"title": "以寿元换%s" % DisplayText.gu(str(offer["gu_id"])),
+				"summary": "商人只收寿元，不收元石。",
+				"executable": enough_life,
+				"block_reason": "剩余寿元不足以支付这笔交易。" if not enough_life else "",
+				"cost": {"lifespan": lifespan_cost},
+				"known_risk": ["支付寿元会让寿元上限逼近枯竭，寿元归零会当场死亡。"],
+				"expected_gain": ["获得%s。" % DisplayText.gu(str(offer["gu_id"]))],
+				"remedy_hints": ["可改用元石购买其他蛊虫。"] if not enough_life else [],
+				"command": {"type": "shop_lifespan_deal", "offer_id": str(offer["id"])},
+			}))
+		"barter":
+			var inputs: Array = offer.get("input_gu_ids", [])
+			var missing := _missing_gu(state.refined_gu_ids, inputs)
+			var executable := missing.is_empty()
+			cards.append(_card(state, {
+				"id": "shop.%s" % str(offer["card_key"]),
+				"title": "以%s换取笼中物" % _gu_names(inputs),
+				"summary": "商人封着笼子，只肯让你观察，不肯说明里面是什么。",
+				"executable": executable,
+				"block_reason": "缺少%s。" % _gu_names(missing) if not missing.is_empty() else "",
+				"cost": _cost(0, inputs),
+				"known_risk": ["可见线索：商人封笼之前，先往笼中喂了一枚暗色石子。"],
+				"expected_gain": [],
+				"unknown_note": "换到手的东西结果未明。",
+				"remedy_hints": _gu_remedies(missing),
+				"command": {"type": "shop_barter", "offer_id": str(offer["id"])},
+			}))
+
+
+static func _append_event_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
+	for event in catalog.get("events", []):
+		var health_cost := int(event.get("health_cost", 0))
+		var executable := state.health > health_cost
+		cards.append(_card(state, {
+			"id": "event.%s.accept" % str(event["id"]),
+			"title": "承受回声",
+			"summary": "洞穴深处的回声在等待应答，应答者需先付出已知的气血代价。",
+			"executable": executable,
+			"block_reason": "当前气血不足以承受已知代价。" if not executable else "",
+			"cost": {"hp": health_cost},
+			"known_risk": ["已知代价：立即损失 %d 点气血。" % health_cost],
+			"expected_gain": ["取得回声允诺的机缘。"],
+			"unknown_note": "回声的后续代价结果未明，似有低语要在魂魄深处留下印记。",
+			"remedy_hints": ["可先恢复气血，再回来应答。"] if not executable else [],
+			"command": {"type": "accept_event", "event_id": str(event["id"])},
+		}))
+	_append_leave_card(cards, state)
 
 
 static func _append_cultivation_cards(cards: Array[Dictionary], state: RunState) -> void:

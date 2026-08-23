@@ -37,6 +37,9 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var draw_pile := _shuffled_cards(deck_cache, _battle_rng_seed(state, 0))
 	var hand: Array = []
 	_draw_into_hand(draw_pile, hand, BATTLE_HAND_SIZE)
+	var first_turn_energy := 0
+	for relic_id in state.relic_ids:
+		first_turn_energy += int(catalog.get("relic_by_id", {}).get(str(relic_id), {}).get("first_turn_energy", 0))
 	return {
 		"battle_id": "%d-%d" % [state.seed, state.event_log.size()],
 		"deck_generation_hash": deck_generation_hash,
@@ -64,6 +67,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"clues": enemy.get("clues", []).duplicate(),
 		"log": [{"id": "intent_revealed", "text_key": "intent_revealed", "intent": intent.get("id", "")}],
 		"inheritance_uses": {},
+		"first_turn_energy": first_turn_energy,
 		"turn": 1,
 		"phase": "player",
 		"final_blow": {},

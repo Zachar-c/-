@@ -1,0 +1,11 @@
+{
+  "events": [
+    {
+      "id": "echo_cave",
+      "kind": "delayed_cost",
+      "health_cost": 1,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel"
+    }
+  ]
+}

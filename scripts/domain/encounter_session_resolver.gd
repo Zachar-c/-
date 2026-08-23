@@ -144,6 +144,24 @@ static func _actual_changes(before: RunState, after: RunState) -> Array[Dictiona
 	_append_numeric_change(changes, "stone", before.stone, after.stone, "元石")
 	_append_numeric_change(changes, "spirit", before.essence, after.essence, "真元")
 	_append_numeric_change(changes, "hp", before.health, after.health, "气血")
+	var lifespan_before := int(before.cultivator.get("lifespan", 0))
+	var lifespan_after := int(after.cultivator.get("lifespan", 0))
+	if lifespan_before != lifespan_after:
+		changes.append({
+			"type": "lifespan",
+			"before": lifespan_before,
+			"delta": lifespan_after - lifespan_before,
+			"message": "寿元%s %d。" % ["增加" if lifespan_after > lifespan_before else "减少", abs(lifespan_after - lifespan_before)],
+		})
+	var soul_before := int(before.cultivator.get("soul", 0))
+	var soul_after := int(after.cultivator.get("soul", 0))
+	if soul_before != soul_after:
+		changes.append({
+			"type": "soul",
+			"before": soul_before,
+			"delta": soul_after - soul_before,
+			"message": "魂魄%s %d。" % ["增强" if soul_after > soul_before else "受损", abs(soul_after - soul_before)],
+		})
 	for gu_id in after.refined_gu_ids:
 		if not before.refined_gu_ids.has(gu_id):
 			changes.append({"type": "gu_gained", "after": gu_id, "message": "获得蛊虫：%s。" % DisplayText.gu(gu_id)})

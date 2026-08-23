@@ -148,6 +148,12 @@ func estimate_feeding_materials(catalog: Dictionary) -> Dictionary:
 		for material_id_value in definition.get("feeding_need", {}):
 			var material_id := str(material_id_value)
 			totals[material_id] = int(totals.get(material_id, 0)) + int(definition["feeding_need"][material_id_value])
+	var relic_by_id: Dictionary = catalog.get("relic_by_id", {})
+	for relic_id in relic_ids:
+		var relic: Dictionary = relic_by_id.get(str(relic_id), {})
+		var extra := int(relic.get("extra_upkeep_feed_points", 0))
+		if extra > 0:
+			totals["feed_points"] = int(totals.get("feed_points", 0)) + extra
 	return totals
 
 

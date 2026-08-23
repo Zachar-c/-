@@ -79,6 +79,16 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _retreat(state)
 		"attempt_ascension":
 			return _attempt_ascension(state, command)
+		"gain_relic":
+			return _gain_relic(state, command, catalog)
+		"shop_purchase":
+			return _shop_purchase(state, command, catalog)
+		"shop_lifespan_deal":
+			return _shop_lifespan_deal(state, command, catalog)
+		"shop_barter":
+			return _shop_barter(state, command, catalog)
+		"accept_event":
+			return _accept_event(state, command, catalog)
 		_:
 			return _rejected(state, "unsupported_command")
 
@@ -674,6 +684,167 @@ static func _without_gu(owned: Array[String], removed: Array) -> Array[String]:
 	return next
 
 
+static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var relic_id := str(command.get("relic_id", ""))
+	if not catalog.get("relic_by_id", {}).has(relic_id):
+		return _rejected(state, "unknown_relic")
+	if state.relic_ids.has(relic_id):
+		return _rejected(state, "relic_already_owned")
+	var relics := state.relic_ids.duplicate()
+	relics.append(relic_id)
+	var next := state.append_event(_event(
+		state,
+		"gain_relic",
+		{"relic_ids": state.relic_ids},
+		{"relic_ids": relics},
+		"relic_gained",
+		state.current_node_id,
+		[relic_id]
+	))
+	return _accepted(next)
+
+
+static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
+	if str(offer.get("kind", "")) != "purchase":
+		return _rejected(state, "unknown_shop_offer")
+	var cost := int(offer.get("stone_cost", 0))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var instances := state.gu_instances.duplicate(true)
+	var aperture := state.cave_aperture.duplicate(true)
+	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+	var instance_id := _next_gu_instance_id(instances)
+	instances[instance_id] = {
+		"instance_id": instance_id,
+		"definition_id": str(offer["gu_id"]),
+		"state": "refined",
+	}
+	stored.append(instance_id)
+	aperture["stored_gu_instance_ids"] = stored
+	var next := state.append_event(_event(
+		state,
+		"shop_purchase",
+		{"stone": state.stone, "gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"stone": state.stone - cost, "gu_instances": instances, "cave_aperture": aperture},
+		"shop_purchase_completed",
+		state.current_node_id,
+		[str(offer["gu_id"])]
+	))
+	next.sync_legacy_gu_projections()
+	return _accepted(next)
+
+
+static func _shop_lifespan_deal(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
+	if str(offer.get("kind", "")) != "lifespan_deal":
+		return _rejected(state, "unknown_shop_offer")
+	var cost := int(offer.get("lifespan_cost", 0))
+	if int(state.cultivator.get("lifespan", 0)) < cost:
+		return _rejected(state, "insufficient_lifespan")
+	var cultivator := state.cultivator.duplicate(true)
+	cultivator["lifespan"] = maxi(0, int(cultivator.get("lifespan", 0)) - cost)
+	var next := state.append_event(_event(
+		state,
+		"shop_lifespan_deal",
+		{"cultivator": state.cultivator},
+		{"cultivator": cultivator},
+		"shop_lifespan_deal_paid",
+		state.current_node_id,
+		[str(offer["gu_id"])]
+	))
+	return _finalize_if_dead(next)
+
+
+static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
+	if str(offer.get("kind", "")) != "barter":
+		return _rejected(state, "unknown_shop_offer")
+	var inputs: Array = offer.get("input_gu_ids", [])
+	var selected := _selected_input_instance_ids(state, command, inputs)
+	if selected.is_empty():
+		return _rejected(state, "missing_barter_input")
+	var rewards: Array = offer.get("rewards", [])
+	if rewards.is_empty():
+		return _rejected(state, "unknown_shop_offer")
+	# The reward is drawn from the run seed and immutable event position;
+	# commands never carry the reward id from the UI.
+	var total := 0
+	for reward_value in rewards:
+		total += maxi(1, int(reward_value.get("weight", 1)))
+	var roll := SeededRngScript.new(_free_mix_seed(state, selected)).next_index(total) + 1
+	var chosen: Dictionary = {}
+	var cursor := 0
+	for reward_value in rewards:
+		chosen = reward_value
+		cursor += maxi(1, int(reward_value.get("weight", 1)))
+		if roll <= cursor:
+			break
+	var instances := state.gu_instances.duplicate(true)
+	var aperture := state.cave_aperture.duplicate(true)
+	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+	for instance_id_value in selected:
+		var consumed_id := str(instance_id_value)
+		var consumed: Dictionary = instances[consumed_id].duplicate(true)
+		consumed["state"] = "dead"
+		instances[consumed_id] = consumed
+		stored.erase(consumed_id)
+	var relics := state.relic_ids.duplicate()
+	if chosen.has("gu_id"):
+		var instance_id := _next_gu_instance_id(instances)
+		instances[instance_id] = {
+			"instance_id": instance_id,
+			"definition_id": str(chosen["gu_id"]),
+			"state": "refined",
+		}
+		stored.append(instance_id)
+	elif chosen.has("relic_id") and not relics.has(str(chosen["relic_id"])):
+		relics.append(str(chosen["relic_id"]))
+	aperture["stored_gu_instance_ids"] = stored
+	var next := state.append_event(_event(
+		state,
+		"shop_barter",
+		{
+			"gu_instances": state.gu_instances,
+			"cave_aperture": state.cave_aperture,
+			"relic_ids": state.relic_ids,
+		},
+		{
+			"gu_instances": instances,
+			"cave_aperture": aperture,
+			"relic_ids": relics,
+		},
+		"shop_barter_resolved",
+		state.current_node_id,
+		[str(chosen.get("id", ""))]
+	))
+	next.sync_legacy_gu_projections()
+	var result := _accepted(next)
+	result["outcome"] = str(chosen.get("id", ""))
+	return result
+
+
+static func _accept_event(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var event: Dictionary = catalog.get("event_by_id", {}).get(str(command.get("event_id", "")), {})
+	if event.is_empty():
+		return _rejected(state, "unknown_event")
+	var health_cost := int(event.get("health_cost", 0))
+	if state.health <= health_cost:
+		return _rejected(state, "insufficient_health")
+	var flags := state.node_flags.duplicate(true)
+	flags["pending_delayed_soul_drain"] = int(flags.get("pending_delayed_soul_drain", 0)) + int(event.get("delayed_soul_cost", 0))
+	var next := state.append_event(_event(
+		state,
+		"accept_event",
+		{"health": state.health, "node_flags": state.node_flags},
+		{"health": state.health - health_cost, "node_flags": flags},
+		"event_accepted_delayed_cost",
+		state.current_node_id,
+		[str(event["id"])]
+	))
+	return _accepted(next)
+
+
 static func _travel(state: RunState, command: Dictionary) -> Dictionary:
 	var node_id := str(command.get("node_id", ""))
 	if node_id.is_empty():
@@ -686,6 +857,21 @@ static func _travel(state: RunState, command: Dictionary) -> Dictionary:
 		"travel",
 		node_id
 	))
+	var pending := int(state.node_flags.get("pending_delayed_soul_drain", 0))
+	if pending > 0:
+		var cultivator := next.cultivator.duplicate(true)
+		cultivator["soul"] = maxi(0, int(cultivator.get("soul", 0)) - pending)
+		var flags := next.node_flags.duplicate(true)
+		flags["pending_delayed_soul_drain"] = 0
+		next = next.append_event(_event(
+			next,
+			"delayed_cost",
+			{"cultivator": next.cultivator, "node_flags": next.node_flags},
+			{"cultivator": cultivator, "node_flags": flags},
+			"delayed_soul_drain",
+			node_id
+		))
+		return _finalize_if_dead(next)
 	return _accepted(next)
 
 
