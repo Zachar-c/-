@@ -506,7 +506,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_encounter_session_resolver.gd`
 
 Expected: PASS; terminal state blocks future action cards and resolver submissions.
 
-- [ ] **Step 5: Commit Gu lifecycle rules**
+- [x] **Step 5: Commit Gu lifecycle rules**
 
 ```powershell
 git add scripts/domain/resolver.gd scripts/domain/run_state.gd scripts/domain/action_preview_service.gd tests/unit/test_v3_gu_lifecycle.gd tests/unit/test_v3_meta_and_terminal_run.gd
@@ -528,7 +528,7 @@ git commit -m "feat: add gu feeding and terminal run rules"
 
 **Produces:** Fixed recipe success and failure; free-mix destroy/mutation/explosion outcomes; discovered outcomes that become precise on later Preview; the first moonlight recipe.
 
-- [ ] **Step 1: Write failing refinement and progressive-reveal tests**
+- [x] **Step 1: Write failing refinement and progressive-reveal tests**
 
 ```gdscript
 func test_fixed_moonlight_recipe_consumes_inputs_and_adds_moon_glow() -> void:
@@ -552,13 +552,13 @@ func test_free_mix_failure_records_one_seeded_outcome_and_never_accepts_ui_roll(
     assert_true(result["state"].event_log.back()["reason"] in ["free_mix_destroyed", "free_mix_mutation", "free_mix_explosion"])
 ```
 
-- [ ] **Step 2: Run tests and observe failure**
+- [x] **Step 2: Run tests and observe failure**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_refinement_and_knowledge.gd`
 
 Expected: FAIL because free mix and knowledge records do not exist.
 
-- [ ] **Step 3: Implement Resolver-only outcomes and knowledge records**
+- [x] **Step 3: Implement Resolver-only outcomes and knowledge records**
 
 Add the complete data chain:
 
@@ -570,7 +570,7 @@ phantom_moon_gu + moonlight_gu + shadow_silk -> moon_shadow_gu
 
 The first vertical slice implements the first fixed recipe and represents later two recipes as catalog-visible locked entries. `free_mix` takes at least two instance IDs and uses `SeededRng` only inside `Resolver`; it either destroys input Gu, creates a defined mutated Gu, or applies explosion health/soul/lifespan costs. Resolver returns structured effect keys, never player-facing prose. On every result, record the combination key and observed outcome in `MetaProgress.unlocked_random_outcomes`; Preview receives only the discovered record and changes from a vague clue to exact known branches. First-time Preview never exposes undiscovered outcome probabilities or raw seed.
 
-- [ ] **Step 4: Run focused tests and existing refinement ActionCard tests**
+- [x] **Step 4: Run focused tests and existing refinement ActionCard tests**
 
 Run: `./tools/test.ps1 -Test tests/unit/test_v3_refinement_and_knowledge.gd`
 
@@ -578,7 +578,7 @@ Run: `./tools/test.ps1 -Test tests/unit/test_action_preview_service.gd`
 
 Expected: PASS; existing 70% recipe remains displayed through `success_rate`, not a parsed string.
 
-- [ ] **Step 5: Commit refinement and knowledge loop**
+- [x] **Step 5: Commit refinement and knowledge loop**
 
 ```powershell
 git add data/refinement_recipes.json data/gu.json scripts/domain/content_catalog.gd scripts/domain/resolver.gd scripts/domain/action_preview_service.gd scripts/domain/meta_progress.gd tests/unit/test_v3_refinement_and_knowledge.gd
