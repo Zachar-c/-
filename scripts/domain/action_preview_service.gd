@@ -28,8 +28,20 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 				_append_standard_cards(cards, state, node)
 		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event"]:
 			_append_leave_card(cards, state)
+	_mark_consumed_cards(cards, state)
 	_assert_unique_ids(cards)
 	return cards
+
+
+static func _mark_consumed_cards(cards: Array[Dictionary], state: RunState) -> void:
+	var used: Array = state.encounter_session.get("used_action_ids", [])
+	if used.is_empty():
+		return
+	for card in cards:
+		if used.has(str(card.get("id", ""))):
+			card["executable"] = false
+			card["block_reason"] = "已在此处处置过，局势不会再次因此变化。"
+			card["remedy_hints"] = []
 
 
 static func find_card(state: RunState, node: Dictionary, action_id: String, catalog: Dictionary) -> Dictionary:

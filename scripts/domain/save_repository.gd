@@ -70,7 +70,7 @@ static func load_run_from_data(data: Dictionary) -> Dictionary:
 	var replies := _validated_replies(data.get("replies", []))
 	return {
 		"state": state,
-		"route": data["route"].duplicate(true),
+		"route": _dictionary_array(data.get("route", [])),
 		"replies": replies,
 	}
 

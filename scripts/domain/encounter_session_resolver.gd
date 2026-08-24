@@ -59,8 +59,14 @@ static func _apply_action_card(
 		return _card_rejected(state, session, node, catalog, "unknown_action_card")
 	if not bool(card.get("executable", false)):
 		return _card_rejected(state, session, node, catalog, "action_not_executable")
+	# Consume the card so the same action cannot be re-triggered in this session.
+	var next_session := session.duplicate(true)
+	var used: Array = next_session.get("used_action_ids", [])
+	if not used.has(str(card["id"])):
+		used.append(str(card["id"]))
+	next_session["used_action_ids"] = used
 	# Never accept a command object from the UI. Recompute and execute the current card only.
-	return apply(state, session, card["command"], catalog, node)
+	return apply(state, next_session, card["command"], catalog, node)
 
 
 static func _card_rejected(state: RunState, session: Dictionary, node: Dictionary, catalog: Dictionary, reason: String) -> Dictionary:

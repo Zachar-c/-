@@ -6,6 +6,7 @@ extends GutTest
 
 
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 const EncounterViewScript = preload("res://scripts/presentation/encounter_view.gd")
 const BattleViewScript = preload("res://scripts/presentation/battle_view.gd")
 
@@ -112,6 +113,99 @@ func test_run_save_round_trips_through_disk_json() -> void:
 	var loaded := SaveRepository.load_run()
 	assert_false(loaded.is_empty())
 	assert_eq(int(loaded["state"].health), 4)
+
+
+func test_same_encounter_card_cannot_be_applied_twice() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	state.stone = 20
+	var node := {"id": "neutral_wanderer", "type": "contact", "choices": ["negotiate", "deceive", "fight", "retreat"]}
+	var began := EncounterSessionResolverScript.begin(state, node)
+	state = began["state"]
+	var card := ActionPreviewServiceScript.find_card(state, node, "node.deceive", catalog)
+	assert_false(card.is_empty())
+	assert_true(bool(card.get("executable", false)))
+	var first := EncounterSessionResolverScript.apply(state, began["session"], {
+		"type": "action_card",
+		"action_id": "node.deceive",
+		"state_version": int(card["state_version"]),
+	}, catalog, node)
+	assert_true(bool(first["result"].get("ok", false)), "first use of the action must succeed")
+	state = first["state"]
+	var consumed := ActionPreviewServiceScript.find_card(state, node, "node.deceive", catalog)
+	assert_false(bool(consumed.get("executable", false)), "action card must be consumed after success")
+	var second := EncounterSessionResolverScript.apply(state, state.encounter_session, {
+		"type": "action_card",
+		"action_id": "node.deceive",
+		"state_version": int(state.event_log.size()),
+	}, catalog, node)
+	assert_false(bool(second["result"].get("ok", false)), "consumed action card must be rejected")
+	assert_eq(int(state.stone), 22, "second use must not grant rewards again")
+
+
+func test_controller_save_and_load_expose_feedback() -> void:
+	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
+	controller.start_new_run(101)
+	var save_result := controller.submit_command({"type": "save_run"})
+	assert_true(bool(save_result.get("ok", false)))
+	assert_false(str(save_result.get("feedback", "")).is_empty())
+	var load_result := controller.submit_command({"type": "load_run"})
+	assert_true(bool(load_result.get("ok", false)))
+	assert_false(str(load_result.get("feedback", "")).is_empty())
+
+
+func test_map_view_renders_feedback_line() -> void:
+	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
+	add_child(view)
+	view.render(MapGenerator.build(101, true), RunState.new_run(101), ContentCatalog.load_all(), null, "已存档。")
+	assert_not_null(_find_label_with_text(view, "已存档"))
+
+
+func test_encounter_view_keeps_actions_reachable_when_history_grows() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	var node := {"id": "neutral_wanderer", "type": "contact", "choices": ["negotiate", "deceive", "fight", "retreat"]}
+	var results: Array[Dictionary] = []
+	for i in 30:
+		results.append({"text_key": "node_entered"})
+	var cards := ActionPreviewServiceScript.preview_actions(state, node, catalog)
+	var view: Control = autofree(EncounterViewScript.new())
+	add_child(view)
+	view.render_session(node, state, {"completed": false}, results, {}, cards, catalog)
+	assert_not_null(_find_child(view, ScrollContainer), "encounter view must scroll to keep buttons reachable")
+	assert_not_null(_find_capped_history(view), "result history must be height-capped")
+
+
+func _find_child(root: Node, node_type: Variant) -> Node:
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back()
+		if is_instance_of(current, node_type):
+			return current
+		stack.append_array(current.get_children())
+	return null
+
+
+func _find_capped_history(root: Node) -> Node:
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back()
+		if current is RichTextLabel:
+			var label := current as RichTextLabel
+			if label.scroll_active and label.custom_maximum_size.y > 0:
+				return label
+		stack.append_array(current.get_children())
+	return null
+
+
+func _find_label_with_text(root: Node, substring: String) -> Node:
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back()
+		if current is Label and (current as Label).text.contains(substring):
+			return current
+		stack.append_array(current.get_children())
+	return null
 
 
 func _press_buttons(root: Node) -> void:

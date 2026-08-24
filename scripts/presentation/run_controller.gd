@@ -22,6 +22,7 @@ var current_battle: Dictionary = {}
 var current_session: Dictionary = {}
 var last_result: Dictionary = {}
 var dialogue_replies: Array[Dictionary] = []
+var last_feedback := ""
 var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
 var _views: Dictionary = {}
@@ -54,9 +55,15 @@ func start_new_run(seed: int) -> void:
 
 func submit_command(command: Dictionary) -> Dictionary:
 	if command.get("type", "") == "save_run":
-		return {"ok": save_current_run() == OK}
+		var save_error := save_current_run()
+		last_feedback = "已存档。" if save_error == OK else "存档失败（错误码 %d）。" % save_error
+		_show_map()
+		return {"ok": save_error == OK, "feedback": last_feedback}
 	if command.get("type", "") == "load_run":
-		return {"ok": load_saved_run()}
+		var loaded := load_saved_run()
+		last_feedback = "已读档：回到最近保存的行程。" if loaded else "没有可读的存档，先「存档」一次。"
+		_show_map()
+		return {"ok": loaded, "feedback": last_feedback}
 	if command.get("type", "") == "travel":
 		return _travel_to(str(command.get("node_id", "")))
 	if command.get("type", "") == "leave_encounter":
@@ -211,7 +218,7 @@ func _show_map() -> void:
 	_view_name = "Map"
 	if _views.has("Map"):
 		_show_only("Map")
-		_views["Map"].render(route, state, catalog, meta)
+		_views["Map"].render(route, state, catalog, meta, last_feedback)
 
 
 func _show_encounter() -> void:

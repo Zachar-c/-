@@ -26,9 +26,13 @@ func render_session(
 	_clear()
 	var panel := _panel()
 	add_child(panel)
+	var scroll := ScrollContainer.new()
+	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	panel.add_child(scroll)
 	var column := VBoxContainer.new()
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 12)
-	panel.add_child(column)
+	scroll.add_child(column)
 	var title := Label.new()
 	title.text = "遭遇：%s" % DisplayText.node(str(node.get("id", "")))
 	title.add_theme_font_size_override("font_size", 26)
@@ -48,7 +52,9 @@ func render_session(
 		var history := RichTextLabel.new()
 		history.bbcode_enabled = true
 		history.fit_content = true
+		history.scroll_active = true
 		history.custom_minimum_size = Vector2(0, 76)
+		history.custom_maximum_size = Vector2(0, 200)
 		history.text = _result_history(results)
 		column.add_child(history)
 	elif not result.is_empty():

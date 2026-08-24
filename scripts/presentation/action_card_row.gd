@@ -20,11 +20,13 @@ static func build(card: Dictionary, minimum_width: int = 360) -> ActionCardRow:
 	button.custom_minimum_size = Vector2(minimum_width, 46)
 	button.disabled = not bool(card.get("executable", false))
 	button.tooltip_text = _tooltip(card)
-	button.pressed.connect(func(): row.command_submitted.emit({
-		"type": "action_card",
-		"action_id": str(card["id"]),
-		"state_version": int(card["state_version"]),
-	}))
+	button.pressed.connect(func():
+		button.disabled = true
+		row.command_submitted.emit({
+			"type": "action_card",
+			"action_id": str(card["id"]),
+			"state_version": int(card["state_version"]),
+		}))
 	row.add_child(button)
 	var details := Label.new()
 	details.text = _details(card)

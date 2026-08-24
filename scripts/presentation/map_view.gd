@@ -15,7 +15,7 @@ func _ready() -> void:
 	theme = THEME
 
 
-func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta: RefCounted = null) -> void:
+func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta: RefCounted = null, feedback: String = "") -> void:
 	_clear()
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -73,6 +73,12 @@ func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta
 	panel.add_child(controls)
 	_append_command_button(controls, "存档", {"type": "save_run"})
 	_append_command_button(controls, "读档", {"type": "load_run"})
+	if not feedback.is_empty():
+		var feedback_label := Label.new()
+		feedback_label.text = feedback
+		feedback_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		feedback_label.add_theme_color_override("font_color", Color("b8d5cc"))
+		panel.add_child(feedback_label)
 
 
 func _append_panel_title(panel: VBoxContainer, text: String) -> void:
