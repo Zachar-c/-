@@ -42,9 +42,10 @@ var gu_card_overrides: Dictionary = {}
 var materials: Dictionary = {}
 var relic_ids: Array[String] = []
 var terminal_state: String = "active"
+var global_codex_ids: Array[String] = []
 
 
-static func new_run(run_seed: int) -> RunState:
+static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 	var state := RunState.new()
 	state.seed = run_seed
 	state.gu_ids = ["small_light_gu"]
@@ -82,6 +83,10 @@ static func new_run(run_seed: int) -> RunState:
 	state.materials = {"feed_points": 0}
 	state.relic_ids = []
 	state.terminal_state = "active"
+	if meta != null:
+		for codex_id in meta.recipe_codex_ids + meta.gu_codex_ids:
+			if not state.global_codex_ids.has(str(codex_id)):
+				state.global_codex_ids.append(str(codex_id))
 	state.current_node_id = "trailhead"
 	state.event_log = [state._initial_event()]
 	return state
@@ -202,6 +207,7 @@ func to_save_data() -> Dictionary:
 		"gu_card_overrides": gu_card_overrides.duplicate(true),
 		"materials": materials.duplicate(true),
 		"relic_ids": relic_ids.duplicate(),
+		"global_codex_ids": global_codex_ids.duplicate(),
 		"terminal_state": terminal_state,
 	}
 
@@ -264,6 +270,7 @@ func _copy() -> RunState:
 	copy.gu_card_overrides = gu_card_overrides.duplicate(true)
 	copy.materials = materials.duplicate(true)
 	copy.relic_ids = relic_ids.duplicate()
+	copy.global_codex_ids = global_codex_ids.duplicate()
 	copy.terminal_state = terminal_state
 	return copy
 
@@ -291,7 +298,7 @@ func _apply_after(after: Dictionary) -> void:
 			"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
 			"relations", "pursuit", "ascension", "known_facts", "current_node_id",
 			"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos",
-			"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials", "relic_ids", "terminal_state",
+			"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials", "relic_ids", "global_codex_ids", "terminal_state",
 		]:
 			set(key, _copy_value(after[key]))
 

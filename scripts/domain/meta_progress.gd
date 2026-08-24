@@ -24,6 +24,15 @@ func record_run_end(run: RunState, outcome: String) -> RefCounted:
 	for gu_id in run.refined_gu_ids:
 		if not next.gu_codex_ids.has(gu_id):
 			next.gu_codex_ids.append(gu_id)
+	for event in run.event_log:
+		if str(event.get("reason", "")) != "refinement_succeeded":
+			continue
+		for target_value in event.get("targets", []):
+			var target := str(target_value)
+			if target.begins_with("recipe:"):
+				var recipe_id := target.trim_prefix("recipe:")
+				if not next.recipe_codex_ids.has(recipe_id):
+					next.recipe_codex_ids.append(recipe_id)
 	if outcome == "won":
 		next.statistics["runs_won"] = int(next.statistics.get("runs_won", 0)) + 1
 	elif outcome == "dead":

@@ -40,10 +40,10 @@ func _initialize_view_flow() -> void:
 
 func start_new_run(seed: int) -> void:
 	catalog = ContentCatalog.load_all()
-	state = RunState.new_run(seed)
 	meta = SaveRepository.load_meta_file()
 	if meta == null:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
+	state = RunState.new_run(seed, meta)
 	route = MapGenerator.build(seed, seed == 101)
 	current_node = {}
 	current_battle = {}

@@ -161,6 +161,7 @@ static func _state_from_save_data(data: Dictionary) -> Variant:
 	state.node_flags = data.get("node_flags", {}).duplicate(true)
 	state.encounter_session = data.get("encounter_session", {}).duplicate(true)
 	state.encounter_results = _dictionary_array(data.get("encounter_results", []))
+	state.global_codex_ids = _string_array(data.get("global_codex_ids", []))
 	state.saved_combos = _dictionary_array(data.get("saved_combos", []))
 	state.event_log = _dictionary_array(data.get("event_log", []))
 	state.cultivator = data.get("cultivator", {

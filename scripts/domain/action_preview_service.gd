@@ -284,10 +284,11 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	var missing := _missing_gu(state.refined_gu_ids, inputs)
 	var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
 	var locked := bool(recipe.get("locked", false))
+	var codex_unlocked := state.global_codex_ids.has(str(recipe.get("id", ""))) or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
-	var executable := missing.is_empty() and not locked
+	var executable := missing.is_empty() and (not locked or codex_unlocked)
 	var reason := ""
-	if locked:
+	if locked and not codex_unlocked:
 		reason = str(recipe.get("locked_reason", "尚未获得对应的炼制传承，无法按固定配方合炼。"))
 	elif not missing.is_empty():
 		reason = "缺少%s。" % _gu_names(missing)
@@ -302,7 +303,7 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 		"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
 		"unknown_note": "" if is_fixed else "炼制成败未定。",
 		"success_rate": null if is_fixed else int(recipe.get("success_roll_max", 0)),
-		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if locked else _gu_remedies(missing),
+		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if locked and not codex_unlocked else _gu_remedies(missing),
 		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"])},
 	}))
 

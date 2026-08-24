@@ -234,11 +234,16 @@ static func _apply_combine_recipe(state: RunState, command: Dictionary, catalog:
 			inputs
 		))
 		return _accepted(failed)
-	return _add_gu_transaction(state, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded")
+	return _add_gu_transaction(state, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])])
+
+
+static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
+	return state.global_codex_ids.has(str(recipe.get("id", ""))) \
+		or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
 
 
 static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	if bool(recipe.get("locked", false)):
+	if bool(recipe.get("locked", false)) and not _codex_unlocks_recipe(state, recipe):
 		return _rejected(state, "refinement_recipe_locked")
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	if inputs.size() > SoulCapacityScript.craft_cap(state):
@@ -270,7 +275,7 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		{"gu_instances": instances, "cave_aperture": aperture},
 		"refinement_succeeded",
 		state.current_node_id,
-		selected + [output_instance_id]
+		selected + [output_instance_id, "recipe:%s" % str(recipe["id"])]
 	))
 	next.sync_legacy_gu_projections()
 	return _accepted(next)
@@ -660,7 +665,7 @@ static func _offer(catalog: Dictionary, offer_id: String, kind: String) -> Dicti
 	return offer
 
 
-static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String) -> Dictionary:
+static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String, extra_targets: Array = []) -> Dictionary:
 	var next_gu := _without_gu(state.refined_gu_ids, inputs)
 	next_gu.append(output_gu_id)
 	var next_equipped := _without_gu(state.equipped_gu_ids, inputs)
@@ -671,7 +676,7 @@ static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cos
 		{"stone": state.stone - stone_cost, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped},
 		reason,
 		state.current_node_id,
-		inputs + [output_gu_id]
+		inputs + [output_gu_id] + extra_targets
 	))
 	return _accepted(next)
 
