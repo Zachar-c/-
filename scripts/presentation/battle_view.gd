@@ -4,6 +4,7 @@ extends Control
 
 const THEME := preload("res://assets/theme/gu_theme.tres")
 const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+const HUD_INDICATOR_NAMES := ["真元", "元石", "寿元", "魂魄"]
 
 
 signal command_submitted(command: Dictionary)
@@ -16,39 +17,126 @@ func _ready() -> void:
 
 func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_cards: Array[Dictionary]) -> void:
 	_clear()
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 40)
-	margin.add_theme_constant_override("margin_right", 40)
-	margin.add_theme_constant_override("margin_top", 32)
-	margin.add_theme_constant_override("margin_bottom", 32)
-	add_child(margin)
+	var root := MarginContainer.new()
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.add_theme_constant_override("margin_left", 36)
+	root.add_theme_constant_override("margin_right", 36)
+	root.add_theme_constant_override("margin_top", 24)
+	root.add_theme_constant_override("margin_bottom", 24)
+	add_child(root)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 14)
-	margin.add_child(column)
-	var title := Label.new()
-	title.text = "交锋：%s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
-	title.add_theme_font_size_override("font_size", 28)
-	column.add_child(title)
-	var status := Label.new()
-	status.text = "你：气血 %d/%d  真元 %d    敌：气力 %d/%d  回合 %d" % [state.health, state.max_health, state.essence, battle.get("enemy_hp", 0), battle.get("enemy_max_hp", 0), battle.get("turn", 0)]
-	status.add_theme_color_override("font_color", Color("e7c883"))
-	column.add_child(status)
-	var intent := Label.new()
-	intent.text = "敌方意图：%s" % str(battle.get("visible_intent", {}).get("label", "正在观察"))
-	intent.add_theme_color_override("font_color", Color("e8b4a4"))
-	column.add_child(intent)
+	column.add_theme_constant_override("separation", 12)
+	root.add_child(column)
+
+	_append_hud(column, battle, state)
+	_append_field(column, battle, state)
+	_append_action_cards(column, battle, action_cards)
+
+
+func _hud_value(kind: String, battle: Dictionary, state: RunState) -> String:
+	match kind:
+		"真元": return "%d/%d" % [state.essence, state.essence_capacity]
+		"元石": return "%d" % state.stone
+		"寿元": return "%d" % int(state.cultivator.get("lifespan", 0))
+		"魂魄": return "%d/%d" % [int(state.cultivator.get("soul", 0)), int(state.cultivator.get("soul_max", 0))]
+	return ""
+
+
+func _append_hud(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
+	var strip := PanelContainer.new()
+	strip.custom_minimum_size = Vector2(0, 46)
+	column.add_child(strip)
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_BEGIN
+	row.add_theme_constant_override("separation", 18)
+	strip.add_child(row)
+	for kind in HUD_INDICATOR_NAMES:
+		var cell := Label.new()
+		cell.text = "%s  %s" % [kind, _hud_value(kind, battle, state)]
+		cell.add_theme_font_size_override("font_size", 20)
+		cell.add_theme_color_override("font_color", Color("e7c883"))
+		row.add_child(cell)
+
+
+func _append_field(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
+	var field := HBoxContainer.new()
+	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	field.add_theme_constant_override("separation", 24)
+	column.add_child(field)
+
+	var hero := VBoxContainer.new()
+	hero.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	field.add_child(hero)
+	_append_hero_block(hero, battle, state)
+
+	var enemy := VBoxContainer.new()
+	enemy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	field.add_child(enemy)
+	_append_enemy_block(enemy, battle)
+
+
+func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
+	var name := Label.new()
+	name.text = "我 · 南疆散修"
+	name.add_theme_font_size_override("font_size", 26)
+	column.add_child(name)
+	var life := ProgressBar.new()
+	life.max_value = maxi(1, int(state.max_health))
+	life.value = int(state.health)
+	life.custom_minimum_size = Vector2(0, 22)
+	life.tooltip_text = "气血 %d/%d" % [state.health, state.max_health]
+	column.add_child(life)
+	var life_label := Label.new()
+	life_label.text = "气血 %d/%d" % [state.health, state.max_health]
+	life_label.add_theme_color_override("font_color", Color("b8d5cc"))
+	column.add_child(life_label)
+	var armor := Label.new()
+	armor.text = "真元 %d/%d  伤势 %d" % [state.essence, state.essence_capacity, state.injury]
+	armor.add_theme_color_override("font_color", Color("c6d3cf"))
+	column.add_child(armor)
 	var clues := Label.new()
 	clues.text = "可见征兆：%s" % _clue_text(battle.get("clues", []))
 	clues.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	clues.add_theme_color_override("font_color", Color("c6d3cf"))
 	column.add_child(clues)
 	if not battle.get("log", []).is_empty():
 		var log := RichTextLabel.new()
 		log.bbcode_enabled = true
 		log.fit_content = true
-		log.custom_minimum_size = Vector2(0, 94)
+		log.custom_minimum_size = Vector2(0, 110)
 		log.text = _battle_log(battle.get("log", []))
 		column.add_child(log)
+
+
+func _append_enemy_block(column: VBoxContainer, battle: Dictionary) -> void:
+	var name := Label.new()
+	name.text = "敌 · %s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
+	name.add_theme_font_size_override("font_size", 26)
+	name.add_theme_color_override("font_color", Color("e8b4a4"))
+	column.add_child(name)
+	var intent := Label.new()
+	var label := str(battle.get("visible_intent", {}).get("label", "正在观察"))
+	intent.text = "意图：%s" % label
+	intent.add_theme_font_size_override("font_size", 22)
+	intent.add_theme_color_override("font_color", Color("e8b4a4"))
+	intent.tooltip_text = "敌方已露出的攻势倾向，仍可能藏有后手。"
+	column.add_child(intent)
+	var life := ProgressBar.new()
+	life.max_value = maxi(1, int(battle.get("enemy_max_hp", 1)))
+	life.value = int(battle.get("enemy_hp", 0))
+	life.custom_minimum_size = Vector2(0, 22)
+	column.add_child(life)
+	var life_label := Label.new()
+	life_label.text = "气力 %d/%d" % [int(battle.get("enemy_hp", 0)), int(battle.get("enemy_max_hp", 1))]
+	life_label.add_theme_color_override("font_color", Color("b8d5cc"))
+	column.add_child(life_label)
+	var turn := Label.new()
+	turn.text = "回合 %d" % int(battle.get("turn", 1))
+	turn.add_theme_color_override("font_color", Color("c6d3cf"))
+	column.add_child(turn)
+
+
+func _append_action_cards(column: VBoxContainer, battle: Dictionary, action_cards: Array[Dictionary]) -> void:
 	var action_row := VBoxContainer.new()
 	action_row.add_theme_constant_override("separation", 8)
 	column.add_child(action_row)

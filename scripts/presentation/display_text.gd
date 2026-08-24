@@ -109,6 +109,8 @@ const ENEMIES := {
 	"greedy_wanderer": "贪婪散修",
 	"faction_guard": "势力守卫",
 	"resolute_elite": "悍勇强敌",
+	"neutral_stone_wanderer": "石甲散修",
+	"ridge_hound": "山脊猎犬",
 }
 
 const FACTS := {

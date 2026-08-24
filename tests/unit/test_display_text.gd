@@ -55,6 +55,37 @@ func test_cost_text_translates_gu_ids_for_player_display() -> void:
 	assert_false(cost.contains("small_light_gu"))
 
 
+func test_risk_badge_derives_from_known_risk_count() -> void:
+	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+	assert_eq(ActionCardRowScript.risk_badge({"known_risk": []}), "低")
+	assert_eq(ActionCardRowScript.risk_badge({"known_risk": ["一条反制"]}), "中")
+	assert_eq(ActionCardRowScript.risk_badge({"known_risk": ["一条反制", "第二条"]}), "中")
+	assert_eq(ActionCardRowScript.risk_badge({"known_risk": ["一条", "二条", "三条"]}), "高")
+
+
+func test_battle_card_row_hides_success_rate_when_absent() -> void:
+	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+	var details := ActionCardRowScript._details({
+		"id": "battle.test.1",
+		"title": "小光蛊",
+		"executable": true,
+		"cost": {"spirit": 1},
+		"known_risk": ["可见反制"],
+		"success_rate": null,
+	})
+	assert_false(details.contains("成功率"))
+	assert_true(details.contains("风险"))
+	var details_with_rate := ActionCardRowScript._details({
+		"id": "refine.test",
+		"title": "炼制蜃月蛊",
+		"executable": true,
+		"cost": {"spirit": 2},
+		"known_risk": ["失败会损毁输入蛊虫"],
+		"success_rate": 65,
+	})
+	assert_true(details_with_rate.contains("成功率：65%"))
+
+
 func test_actual_change_text_uses_same_bbcode_color_as_result_history() -> void:
 	var view := EncounterView.new()
 	var text := view._actual_change_text([{"message": "元石增加 2。"}])

@@ -21,36 +21,56 @@ func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	margin.add_theme_constant_override("margin_left", 28)
 	margin.add_theme_constant_override("margin_right", 28)
-	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_bottom", 24)
+	margin.add_theme_constant_override("margin_top", 20)
+	margin.add_theme_constant_override("margin_bottom", 20)
 	add_child(margin)
-	var hbox := HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 20)
-	margin.add_child(hbox)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 12)
+	margin.add_child(column)
+	_append_header(column, state)
+	var body := HBoxContainer.new()
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_theme_constant_override("separation", 18)
+	column.add_child(body)
+	_append_brand(column, state)
+	var center := _append_route(body, route, state)
+	var panel := _append_panel(body, state, catalog, meta)
+	_append_command_bar(column, panel, feedback)
 
-	var left := VBoxContainer.new()
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hbox.add_child(left)
+
+func _append_header(column: VBoxContainer, state: RunState) -> void:
 	var title := Label.new()
 	title.text = "南疆行程"
 	title.add_theme_font_size_override("font_size", 30)
-	left.add_child(title)
-	var resources := Label.new()
-	resources.text = "一转 %d 阶  丙等资质  真元 %d/%d  元石 %d  伤势 %d  下次养护：预计 %d 元石" % [state.cultivation, state.essence, state.essence_capacity, state.stone, state.injury, state.estimate_feeding(ContentCatalog.load_all())]
-	resources.add_theme_color_override("font_color", Color("b8d5cc"))
-	left.add_child(resources)
+	column.add_child(title)
+
+
+func _append_brand(column: VBoxContainer, state: RunState) -> void:
+	return
+
+
+func _append_route(parent: HBoxContainer, route: Array[Dictionary], state: RunState) -> HBoxContainer:
+	var center := HBoxContainer.new()
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	parent.add_child(center)
 	var scroll := ScrollContainer.new()
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left.add_child(scroll)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	center.add_child(scroll)
 	var tree: Control = ROUTE_TREE_CANVAS.new()
 	scroll.add_child(tree)
 	tree.node_selected.connect(func(node_id: String): node_selected.emit(node_id))
 	tree.configure(route, state)
+	return center
 
+
+func _append_panel(parent: HBoxContainer, state: RunState, catalog: Dictionary, meta: RefCounted = null) -> VBoxContainer:
 	var panel := VBoxContainer.new()
-	panel.custom_minimum_size = Vector2(300, 0)
+	panel.custom_minimum_size = Vector2(288, 0)
 	panel.add_theme_constant_override("separation", 8)
-	hbox.add_child(panel)
+	parent.add_child(panel)
 	_append_panel_title(panel, "蛊囊")
 	var instances: Array[Dictionary] = state.refined_instances()
 	if instances.is_empty():
@@ -68,17 +88,28 @@ func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta
 	_append_line(panel, "已见蛊虫 %d 种" % codex.size())
 	if not knowledge.is_empty():
 		_append_line(panel, "乱炼见闻 %d 条" % knowledge.size())
-	var controls := HBoxContainer.new()
-	controls.add_theme_constant_override("separation", 8)
-	panel.add_child(controls)
-	_append_command_button(controls, "存档", {"type": "save_run"})
-	_append_command_button(controls, "读档", {"type": "load_run"})
+	return panel
+
+
+func _append_command_bar(column: VBoxContainer, panel: VBoxContainer, feedback: String) -> void:
+	var bar := HBoxContainer.new()
+	bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	bar.add_theme_constant_override("separation", 12)
+	column.add_child(bar)
+	var codex_button := Button.new()
+	codex_button.text = "图鉴"
+	codex_button.custom_minimum_size = Vector2(88, 34)
+	codex_button.tooltip_text = "展开或收起右侧蛊囊/图鉴面板。"
+	codex_button.toggled.connect(func(toggled: bool): panel.visible = toggled)
+	bar.add_child(codex_button)
+	_append_command_button(bar, "存档", {"type": "save_run"})
+	_append_command_button(bar, "读档", {"type": "load_run"})
 	if not feedback.is_empty():
 		var feedback_label := Label.new()
 		feedback_label.text = feedback
 		feedback_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		feedback_label.add_theme_color_override("font_color", Color("b8d5cc"))
-		panel.add_child(feedback_label)
+		bar.add_child(feedback_label)
 
 
 func _append_panel_title(panel: VBoxContainer, text: String) -> void:

@@ -56,6 +56,39 @@ func test_battle_view_renders_hand_and_turn_buttons() -> void:
 	assert_gt(_count_buttons(view), 1)
 
 
+func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	var view: Control = autofree(BattleViewScript.new())
+	add_child(view)
+	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
+	var hud := _find_label_with_text(view, "真元")
+	assert_not_null(hud, "battle view must expose essence hud")
+	for item in ["元石", "寿元", "魂魄"]:
+		assert_not_null(_find_label_with_text(view, item), "hud missing %s" % item)
+	assert_eq(_count_typed(view, ProgressBar), 2, "hero and enemy health bars expected in battle view")
+	assert_not_null(_find_label_with_text(view, "意图"), "battle view must expose enemy intent")
+
+
+func test_enemy_catalog_labels_cover_real_enemy_kinds() -> void:
+	assert_eq(DisplayText.enemy("neutral_stone_wanderer"), "石甲散修")
+	assert_eq(DisplayText.enemy("ridge_hound"), "山脊猎犬")
+
+
+func test_map_view_uses_reference_layout_regions() -> void:
+	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
+	controller.start_new_run(101)
+	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
+	add_child(view)
+	view.render(controller.route, controller.state, controller.catalog, controller.meta)
+	assert_not_null(_find_label_with_text(view, "南疆行程"), "map must keep the journey title")
+	assert_not_null(_find_label_with_text(view, "蛊囊"), "map must keep the gu satchel panel")
+	assert_not_null(_find_label_with_text(view, "图鉴"), "map must expose codex regions")
+	var bottom_save := _find_button_with_text(view, "存档")
+	assert_not_null(bottom_save, "save button must exist in bottom command group")
+
+
 func test_map_view_exposes_gu_management_and_save_commands() -> void:
 	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
 	controller.start_new_run(101)
@@ -186,6 +219,17 @@ func _find_child(root: Node, node_type: Variant) -> Node:
 	return null
 
 
+func _count_typed(root: Node, node_type: Variant) -> int:
+	var total := 0
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back()
+		if is_instance_of(current, node_type):
+			total += 1
+		stack.append_array(current.get_children())
+	return total
+
+
 func _find_capped_history(root: Node) -> Node:
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
@@ -203,6 +247,16 @@ func _find_label_with_text(root: Node, substring: String) -> Node:
 	while not stack.is_empty():
 		var current: Node = stack.pop_back()
 		if current is Label and (current as Label).text.contains(substring):
+			return current
+		stack.append_array(current.get_children())
+	return null
+
+
+func _find_button_with_text(root: Node, substring: String) -> Node:
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back()
+		if current is Button and (current as Button).text.contains(substring):
 			return current
 		stack.append_array(current.get_children())
 	return null

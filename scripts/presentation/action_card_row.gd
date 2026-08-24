@@ -46,8 +46,9 @@ static func _details(card: Dictionary) -> String:
 		lines.append("成功率：%d%%" % int(card["success_rate"]))
 	for gain in card.get("expected_gain", []):
 		lines.append("收益：%s" % str(gain))
-	for risk in card.get("known_risk", []):
-		lines.append("风险：%s" % str(risk))
+	var risks: Array = card.get("known_risk", [])
+	if not risks.is_empty():
+		lines.append("风险[%s]：%s" % [risk_badge(card), "；".join(_stringify_all(risks))])
 	if not str(card.get("unknown_note", "")).is_empty():
 		lines.append("未知：%s" % str(card["unknown_note"]))
 	if not bool(card.get("executable", false)):
@@ -55,6 +56,25 @@ static func _details(card: Dictionary) -> String:
 		for hint in card.get("remedy_hints", []):
 			lines.append("途径：%s" % str(hint))
 	return "\n".join(lines)
+
+
+static func risk_badge(card: Dictionary) -> String:
+	return risk_badge_for_count(int((card.get("known_risk", []) as Array).size()))
+
+
+static func risk_badge_for_count(count: int) -> String:
+	if count <= 0:
+		return "低"
+	if count <= 2:
+		return "中"
+	return "高"
+
+
+static func _stringify_all(values: Array) -> Array[String]:
+	var result: Array[String] = []
+	for value in values:
+		result.append(str(value))
+	return result
 
 
 static func _cost_text(cost: Dictionary) -> String:

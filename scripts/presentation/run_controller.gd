@@ -6,6 +6,7 @@ const MAP_SCENE := preload("res://scenes/map.tscn")
 const ENCOUNTER_SCENE := preload("res://scenes/encounter.tscn")
 const BATTLE_SCENE := preload("res://scenes/battle.tscn")
 const ENDING_SCENE := preload("res://scenes/ending.tscn")
+const TITLE_VIEW_SCRIPT := preload("res://scripts/presentation/title_view.gd")
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
@@ -34,7 +35,7 @@ func _ready() -> void:
 
 func _initialize_view_flow() -> void:
 	_ensure_views()
-	start_new_run(101)
+	_show_title()
 
 
 func start_new_run(seed: int) -> void:
@@ -214,6 +215,17 @@ func _battle_terrain() -> String:
 	return "path"
 
 
+func _show_title() -> void:
+	_view_name = "Title"
+	if _views.has("Title"):
+		_show_only("Title")
+
+
+func _start_run_from_title() -> void:
+	if _view_name == "Title":
+		start_new_run(101)
+
+
 func _show_map() -> void:
 	_view_name = "Map"
 	if _views.has("Map"):
@@ -272,10 +284,13 @@ func _ensure_views() -> void:
 	var host := get_parent()
 	if host == null:
 		host = self
+	var title := TITLE_VIEW_SCRIPT.new()
+	_add_view(host, "Title", title)
 	_add_view(host, "Map", MAP_SCENE.instantiate())
 	_add_view(host, "Encounter", ENCOUNTER_SCENE.instantiate())
 	_add_view(host, "Battle", BATTLE_SCENE.instantiate())
 	_add_view(host, "Ending", ENDING_SCENE.instantiate())
+	title.start_requested.connect(_start_run_from_title)
 	_views["Map"].node_selected.connect(func(node_id: String): submit_command({"type": "travel", "node_id": node_id}))
 	_views["Map"].action_submitted.connect(submit_command)
 	_views["Encounter"].command_submitted.connect(submit_command)
