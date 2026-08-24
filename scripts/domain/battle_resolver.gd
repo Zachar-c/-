@@ -61,6 +61,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"enemy_control": int(enemy.get("control", 0)),
 		"available_gu_ids": state.refined_gu_ids.duplicate(),
 		"soul_ops_cap": SoulCapacityScript.battle_ops_cap(state),
+		"first_mover": str(encounter.get("first_mover", "player")),
 		"flags": [],
 		"revealed_reactions": [],
 		"visible_intent": intent,
@@ -296,6 +297,23 @@ static func _use_inheritance(battle: Dictionary, action: Dictionary, state: RunS
 
 
 static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	var enemy := _apply_enemy_intents(battle, state, catalog)
+	var next_battle: Dictionary = enemy["battle"]
+	var next_state: RunState = enemy["state"]
+	next_battle["turn"] = int(next_battle["turn"]) + 1
+	next_battle["action_energy"] = 0
+	next_battle["flags"].erase("guarded")
+	next_battle["flags"].erase("targeting_obscured")
+	if bool(enemy["death"]):
+		return _result(next_battle, next_state.finalize_death(), true, "death", ["player_dead"])
+	_expire_effects(next_battle, "end_turn")
+	if not next_battle.get("pending_kill_move_state", {}).is_empty():
+		next_battle["pending_kill_move_state"] = {}
+	_refill_hand_after_turn(next_battle, next_state, catalog)
+	return _result(next_battle, next_state, false, "ongoing", ["enemy_intent_resolved"])
+
+
+static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var intent: Dictionary = battle.get("visible_intent", {})
 	var damage := int(intent.get("damage", 0))
 	if battle["flags"].has("enemy_interrupted"):
@@ -312,21 +330,25 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	var next_state: RunState = damage_hook["state"]
 	damage = int(damage_hook["damage"])
 	var next_health := maxi(0, state.health - damage)
-	battle["turn"] = int(battle["turn"]) + 1
-	battle["action_energy"] = 0
-	battle["flags"].erase("guarded")
-	battle["flags"].erase("targeting_obscured")
 	battle["log"].append({"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy"})
 	if next_health == 0 and damage > 0:
 		battle["final_blow"] = {"id": str(intent.get("id", "enemy_action")), "damage": damage}
-	next_state = next_state.append_event(_event(next_state, "battle_enemy_intent", {"health": state.health}, {"health": next_health}, "battle_enemy_%s" % str(intent.get("id", "action")), [str(intent.get("id", "action"))]))
-	if next_health == 0:
-		return _result(battle, next_state.finalize_death(), true, "death", ["player_dead"])
-	_expire_effects(battle, "end_turn")
-	if not battle.get("pending_kill_move_state", {}).is_empty():
-		battle["pending_kill_move_state"] = {}
-	_refill_hand_after_turn(battle, next_state, catalog)
-	return _result(battle, next_state, false, "ongoing", ["enemy_intent_resolved"])
+	next_state = next_state.append_event(_event(
+		next_state,
+		"battle_enemy_intent",
+		{"health": state.health},
+		{"health": next_health},
+		"battle_enemy_%s" % str(intent.get("id", "action")),
+		[str(intent.get("id", "action"))]
+	))
+	return {"battle": battle, "state": next_state, "death": next_health == 0}
+
+
+static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	var enemy := _apply_enemy_intents(battle, state, catalog)
+	if bool(enemy["death"]):
+		return _result(enemy["battle"], enemy["state"].finalize_death(), true, "death", ["player_dead"])
+	return _result(enemy["battle"], enemy["state"], false, "ongoing", ["enemy_first_move"])
 
 
 static func _shuffled_cards(cards: Array, seed: int) -> Array:

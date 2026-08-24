@@ -43,6 +43,11 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "wash_notoriety",
+      "kind": "wash_notoriety",
+      "card_key": "wash.notoriety"
     }
   ]
 }

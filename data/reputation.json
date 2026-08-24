@@ -1,0 +1,14 @@
+{
+  "gains": {
+    "kill_neutral_npc": 2,
+    "broken_trust": 1
+  },
+  "effects": {
+    "price_pct_per_point": 10,
+    "price_cap_pct": 60,
+    "hostile_chance_pct_per_point": 15,
+    "first_move_chance_pct_per_point": 10,
+    "wash_lifespan_cost": 10,
+    "wash_reduce": 2
+  }
+}

@@ -205,7 +205,36 @@ func _start_battle() -> void:
 		enemy_kind = "neutral_stone_wanderer"
 	elif current_node.get("id", "") == "beast_swarm_pass":
 		enemy_kind = "ridge_hound"
-	current_battle = BattleResolver.start({"enemy_kind": enemy_kind, "terrain": _battle_terrain()}, state, catalog)
+	var first_mover := "player"
+	var notorious := Resolver.notoriety(state)
+	if notorious > 0:
+		var hostile_flag := bool(current_session.get("flags", {}).get("reputation_hostile", false))
+		if hostile_flag:
+			first_mover = "enemy"
+		else:
+			var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+			var pct := notorious * int(effects.get("first_move_chance_pct_per_point", 10))
+			if Resolver.roll_chance(state, pct, "reputation_first_move"):
+				first_mover = "enemy"
+	var kill_source := ""
+	if str(current_session.get("kind", "")) in ["contact", "caravan", "market", "shop", "wild_gu"]:
+		kill_source = "neutral_npc"
+	current_battle = BattleResolver.start({
+		"enemy_kind": enemy_kind,
+		"terrain": _battle_terrain(),
+		"first_mover": first_mover,
+		"kill_source": kill_source,
+	}, state, catalog)
+	if first_mover == "enemy":
+		var pre := BattleResolver.apply_enemy_pre_turn(current_battle, state, catalog)
+		state = pre["state"]
+		current_battle = pre["battle"]
+		if bool(pre["finished"]):
+			if str(pre["result"]) == "death":
+				_show_death(DeathReportBuilderScript.build(current_battle, state))
+			else:
+				_finish_battle_in_session(str(pre["result"]))
+			return
 	_show_battle()
 
 
@@ -335,6 +364,7 @@ func _return_to_map() -> void:
 
 
 func _finish_battle_in_session(outcome: String) -> void:
+	var kill_source := str(current_battle.get("kill_source", ""))
 	current_battle = {}
 	current_session = current_session.duplicate(true)
 	current_session["phase"] = "post_battle"
@@ -352,6 +382,8 @@ func _finish_battle_in_session(outcome: String) -> void:
 		"source": "run_controller",
 		"targets": [],
 	})
+	if outcome == "victory" and kill_source == "neutral_npc":
+		state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, catalog)["state"]
 	_show_encounter()
 
 

@@ -366,7 +366,7 @@ static func _append_shop_cards(cards: Array[Dictionary], state: RunState, catalo
 static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, catalog: Dictionary, offer: Dictionary) -> void:
 	match str(offer.get("kind", "")):
 		"purchase":
-			var cost := int(offer.get("stone_cost", 0))
+			var cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
 			var executable := state.stone >= cost
 			cards.append(_card(state, {
 				"id": "shop.%s" % str(offer["card_key"]),
@@ -395,6 +395,24 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 				"expected_gain": ["获得%s。" % DisplayText.gu(str(offer["gu_id"]))],
 				"remedy_hints": ["可先恢复寿元，或改用元石购买其他蛊虫。"] if not executable else [],
 				"command": {"type": "shop_lifespan_deal", "offer_id": str(offer["id"])},
+			}))
+		"wash_notoriety":
+			var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+			var wash_cost := int(effects.get("wash_lifespan_cost", 10))
+			var reduce := int(effects.get("wash_reduce", 2))
+			var kept := int(state.cultivator.get("lifespan", 0)) - wash_cost
+			var has_notoriety := Resolver.notoriety(state) > 0
+			var executable := has_notoriety and kept >= 1
+			cards.append(_card(state, {
+				"id": "shop.%s" % str(offer["card_key"]),
+				"title": "洗去恶名",
+				"summary": "献上寿元，抚平恶名；修行路的眼线会按人情办事。",
+				"executable": executable,
+				"block_reason": "暂无恶名可洗。" if not has_notoriety else "支付后寿元将耗尽（剩余 %d），交易被禁止。" % kept,
+				"cost": {"lifespan": wash_cost},
+				"known_risk": ["支付 %d 寿元（支付后剩余 %d）。" % [wash_cost, kept]],
+				"expected_gain": ["恶名减少 %d。" % reduce],
+				"command": {"type": "wash_notoriety"},
 			}))
 		"barter":
 			var inputs: Array = offer.get("input_gu_ids", [])

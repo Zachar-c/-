@@ -17,9 +17,14 @@ static func start(node: Dictionary) -> Dictionary:
 	}
 
 
-static func begin(state: RunState, node: Dictionary) -> Dictionary:
+static func begin(state: RunState, node: Dictionary, catalog: Dictionary = {}) -> Dictionary:
 	var session := start(node)
 	var feed := ResultFeedScript.entry("enter_node", "node_entered", {}, [])
+	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+	var hostile_pct := int(effects.get("hostile_chance_pct_per_point", 15)) * Resolver.notoriety(state)
+	if hostile_pct > 0 and Resolver.roll_chance(state, hostile_pct, "reputation_hostile"):
+		session["flags"]["reputation_hostile"] = true
+		feed = ResultFeedScript.entry("enter_node", "reputation_hostile_stance", {}, [])
 	var next := _record_session_state(state, session, feed, "encounter_started", true)
 	return {"state": next, "session": session, "feed": feed, "result": {"ok": true}}
 
@@ -83,11 +88,15 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 	}, catalog)
 	if not bool(completed["result"].get("ok", false)):
 		return _rejected(state, session, str(completed["result"].get("reason", "cannot_leave_node")))
+	var left_state: RunState = completed["state"]
+	if left_state.known_facts.has("caravan_favor_debt"):
+		var gains: Dictionary = catalog.get("reputation", {}).get("gains", {})
+		left_state = Resolver.gain_notoriety(left_state, int(gains.get("broken_trust", 1)), "broken_trust")
 	var next_session := session.duplicate(true)
 	next_session["completed"] = true
 	next_session["completion_reason"] = "player_left"
 	var feed := ResultFeedScript.entry("leave_node", "node_left", {}, [])
-	var next := _record_session_state(completed["state"], next_session, feed, "encounter_left")
+	var next := _record_session_state(left_state, next_session, feed, "encounter_left")
 	return {
 		"state": next,
 		"session": next_session,

@@ -18,6 +18,7 @@ static func load_all() -> Dictionary:
 	var relics := _load_array("res://data/relics.json")
 	var events: Array = _load_object("res://data/events.json").get("events", [])
 	var shop_offers: Array = _load_object("res://data/shops.json").get("offers", [])
+	var reputation := _load_object("res://data/reputation.json")
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
@@ -36,6 +37,7 @@ static func load_all() -> Dictionary:
 		"event_by_id": _index_by_id(events),
 		"shop_offers": shop_offers,
 		"shop_offer_by_id": _index_by_id(shop_offers),
+		"reputation": reputation,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -106,6 +108,12 @@ static func validate(catalog: Dictionary) -> Array[String]:
 				errors.append("shop offer %s rewards missing gu %s" % [offer["id"], reward["gu_id"]])
 			if reward.has("relic_id") and not relic_by_id.has(str(reward["relic_id"])):
 				errors.append("shop offer %s rewards missing relic %s" % [offer["id"], reward["relic_id"]])
+	var reputation: Dictionary = catalog.get("reputation", {})
+	for group_name in ["gains", "effects"]:
+		for key_value in reputation.get(group_name, {}):
+			var value: Variant = reputation[group_name][key_value]
+			if not _is_integral(value) or int(value) < 0:
+				errors.append("reputation %s.%s must be a non-negative integer" % [group_name, key_value])
 	return errors
 
 

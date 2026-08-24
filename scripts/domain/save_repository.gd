@@ -173,6 +173,7 @@ static func _state_from_save_data(data: Dictionary) -> Variant:
 		"soul": 4,
 		"soul_max": 4,
 		"soul_control_limit": 2,
+		"notorious": 0,
 		"statuses": {},
 	}).duplicate(true)
 	state.cave_aperture = data.get("cave_aperture", {

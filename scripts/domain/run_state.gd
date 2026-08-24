@@ -60,6 +60,7 @@ static func new_run(run_seed: int) -> RunState:
 		"soul": 4,
 		"soul_max": 4,
 		"soul_control_limit": 2,
+		"notorious": 0,
 		"statuses": {},
 	}
 	state.cave_aperture = {

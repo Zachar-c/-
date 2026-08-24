@@ -88,6 +88,10 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _shop_lifespan_deal(state, command, catalog)
 		"shop_barter":
 			return _shop_barter(state, command, catalog)
+		"record_neutral_npc_kill":
+			return _record_neutral_npc_kill(state, catalog)
+		"wash_notoriety":
+			return _wash_notoriety(state, catalog)
 		"accept_event":
 			return _accept_event(state, command, catalog)
 		_:
@@ -155,7 +159,7 @@ static func _buy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -
 	var offer := _offer(catalog, str(command.get("offer_id", "")), "buy")
 	if offer.is_empty():
 		return _rejected(state, "unknown_buy_offer")
-	var cost := int(offer.get("stone_cost", 0))
+	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, [], "caravan_bought_gu")
@@ -190,7 +194,7 @@ static func _exchange_gu(state: RunState, command: Dictionary, catalog: Dictiona
 	var inputs: Array = offer.get("input_gu_ids", [])
 	if not _has_all_gu(state.refined_gu_ids, inputs):
 		return _rejected(state, "missing_exchange_input")
-	var cost := int(offer.get("stone_cost", 0))
+	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, inputs, "caravan_exchanged_gu")
@@ -715,7 +719,7 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
 	if str(offer.get("kind", "")) != "purchase":
 		return _rejected(state, "unknown_shop_offer")
-	var cost := int(offer.get("stone_cost", 0))
+	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var instances := state.gu_instances.duplicate(true)
@@ -1246,6 +1250,78 @@ static func _event(
 		"source": "resolver",
 		"targets": targets,
 	}
+
+
+static func notoriety(state: RunState) -> int:
+	return int(state.cultivator.get("notorious", 0))
+
+
+static func roll_chance(state: RunState, pct: int, salt: String) -> bool:
+	var bound := clampi(pct, 0, 100)
+	if bound <= 0:
+		return false
+	if bound >= 100:
+		return true
+	var salt_hash := 0
+	for character in salt:
+		salt_hash = salt_hash * 31 + character.unicode_at(0)
+	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
+	return rng.next_index(100) < bound
+
+
+static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
+	if notoriety(state) <= 0:
+		return maxi(0, base)
+	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+	var pct := int(effects.get("price_pct_per_point", 10))
+	var cap := int(effects.get("price_cap_pct", 60))
+	var uplift := mini(cap, pct * notoriety(state))
+	return ceili(float(base) * (1.0 + float(uplift) / 100.0))
+
+
+static func gain_notoriety(state: RunState, amount: int, reason_key: String) -> RunState:
+	if amount <= 0:
+		return state
+	var cultivator := state.cultivator.duplicate(true)
+	cultivator["notorious"] = int(cultivator.get("notorious", 0)) + amount
+	return state.append_event(_event(
+		state,
+		"gain_notoriety",
+		{"cultivator": state.cultivator},
+		{"cultivator": cultivator},
+		"notoriety_gained",
+		state.current_node_id,
+		[reason_key]
+	))
+
+
+static func _record_neutral_npc_kill(state: RunState, catalog: Dictionary) -> Dictionary:
+	var gains: Dictionary = catalog.get("reputation", {}).get("gains", {})
+	return _accepted(gain_notoriety(state, int(gains.get("kill_neutral_npc", 0)), "kill_neutral_npc"))
+
+
+static func _wash_notoriety(state: RunState, catalog: Dictionary) -> Dictionary:
+	if notoriety(state) <= 0:
+		return _rejected(state, "nothing_to_wash")
+	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+	var cost := int(effects.get("wash_lifespan_cost", 10))
+	var reduce := int(effects.get("wash_reduce", 2))
+	var lifespan := int(state.cultivator.get("lifespan", 0))
+	if lifespan - cost < 1:
+		return _rejected(state, "lifespan_trade_warning")
+	var cultivator := state.cultivator.duplicate(true)
+	cultivator["lifespan"] = lifespan - cost
+	cultivator["notorious"] = maxi(0, notoriety(state) - reduce)
+	var next := state.append_event(_event(
+		state,
+		"wash_notoriety",
+		{"cultivator": state.cultivator},
+		{"cultivator": cultivator},
+		"notoriety_washed",
+		state.current_node_id,
+		[]
+	))
+	return _accepted(next)
 
 
 static func _accepted(next: RunState) -> Dictionary:
