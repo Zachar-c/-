@@ -26,11 +26,11 @@ py -3 scripts/check_remote_base.py
 
 ## 目录
 
-- `volumes/`：分卷、分批次精编正文。
-- `working/`：本地原文底稿，不作为最终正文。
-- `outlines/detail/`：每个 30 节批次的功能细纲。
-- `notes/`：全书审查、卷级裁决及战力、资源、信息、时间、人物台账。
-- `scripts/`：拆分、建档和验证脚本。
+- `volumes/`：分卷精编正文；卷一卷二已冻结，实验产物在 `volumes/_archive/`。
+- `outlines/detail/`：批次细纲。
+- `notes/`：唯一台账 `ledger.md` + 事实争议队列 + 工具索引 CSV；历史台账在 `notes/archive/`。
+- `scripts/`：极简线核心工具；退役脚本在 `scripts/_archive/`。
+- `docs/knowledge-base/`：世界观与审查知识库；`docs/archive/`：历史规范与实验设计。
 
 ## 提效工具
 
@@ -51,10 +51,6 @@ py -3 scripts/gen_brief.py -Volume vol2
 
 参数：`-Volume` 卷 id（vol1/vol2），`-Batch` 与 `config/editorial-volumes.json` 中 `range` 一致的节范围，`-WriteState` 生成 `working/batch-state-<卷id>-<范围>.md` 状态卡模板，`-BriefOut` 简报写盘。
 
-### 批内状态卡 `working/batch-state-<卷id>-<范围>.md`
-
-批次进行中的临时状态记录（人物修为/蛊组/伤势、资源、身份位置、信息边界、每节结束状态）。批次中间换会话或上下文压缩时，先读状态卡恢复进度。批末内容并入正式台账后删除，不随批次提交。
-
 ### 批次审阅简报 `scripts/gen_report.py`
 
 批末交付给用户审阅的报告生成器（只读 + 运行验证），自动采集本批改动范围、关联提交、台账命中与落账情况、validate 和 `git diff --check` 结果：
@@ -66,10 +62,6 @@ py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -SkipValidate
 ```
 
 "关键裁决及理由"和"遗留问题"两节由编辑会话填写后交付审阅；审阅通过后按批次提交（commit message 含批次范围 + 裁决要点 + 审阅状态）。
-
-### 台账追加式维护
-
-所有 `notes/vol*-*.md` 台账第 2 行为状态行（`> 台账状态行：最后落地批次…`）；新批记录只追加到文件底部，不重写中部历史行；修正历史裁决时在底部加"勘误"行并注明原行 ID。批末更新状态行的"最后落地批次"与"最后更新"。
 
 ### 全卷源文净化 `scripts/clean_full_source.py`
 
@@ -84,27 +76,7 @@ py -3 scripts/clean_full_source.py -SourcePath 蛊真人.txt -OutputPath 蛊真�
 - **上下文敏感项只出候选**：漠尘/漠北、王大/王二、拼音残留（sè→色 等 OCR 形态）、英文残留等写入 `working/source-clean-candidates.tsv`，仅供人工/LLM 逐条审阅，脚本不自动改。
 - 重跑是幂等的；`gen_brief.py` 已优先指向净版（行号不变），校验白名单含 `蛊真人-clean.txt`。
 
-## 多对话并行
-
-OpenCode 可同时启动多个 DeepSeek 对话，但每个正文会话只能领取一个互不重叠的 30 节批次，例如：
-
-```text
-会话 A：第001—030节
-会话 B：第031—060节
-会话 C：第061—090节
-会话 D：第091—120节
-```
-
-并行时遵守以下边界：
-
-1. 一个正文文件同时只允许一个会话修改。
-2. 正文会话只修改获配的 `volumes/...edited.txt` 和对应 `outlines/detail/*.md`。
-3. `AGENTS.md`、卷级 `decision-register` 和共享专项台账由单独的总编会话维护，正文会话只提交更新建议。
-4. 相邻批次开工前读取前一批结尾状态和后一批细纲，禁止改变跨批伏笔、人物终局或信息释放顺序。
-5. 发现全书级冲突时标为待裁决，不在单个正文会话中自行创造设定。
-6. 每批独立校验、独立审阅、独立提交；未通过审阅的批次不得作为后续冻结依据。
-
-同一工作区并行写文件仍可能产生覆盖。实际并行开发应让每个对话使用独立 Git 分支或 worktree，最后由总编会话按批次合并。
+单人单批次串行推进；并行协作规则已在 2026-08-24 极简线重构中移除，如需恢复见 docs/archive/AGENTS-v2-full-2026-08-24.md。
 
 ## 会话启动模板
 

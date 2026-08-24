@@ -34,10 +34,7 @@
 | --- | --- | --- |
 | `validate_editorial_assets.ps1` | 全资产校验（UTF-8、噪声标记、细纲覆盖 1-199、批次数、链接、CSV、源文不入库） | `-Phase baseline/outline/detail/final` |
 | `extract_batch.ps1` | 从源文按行抽取 CP936 底稿 | `-SourcePath -StartLine -EndLine -OutputPath` |
-| `create_edited_baseline.ps1` | 由底稿生成精编基线稿 | 见脚本注释 |
-| `split_volume_boundary.ps1` | 分卷切割（第一卷 199 / 第二卷起点） | 见脚本注释 |
 | `build_index.ps1` | 从源文构建原始标题索引 | `-SourcePath -OutputDirectory` |
-| `normalize_source_index.ps1` | 归一化索引、生成审计报告 | `-SourcePath -RawIndexPath -OutputDirectory` |
 | `build_epub.ps1` | 从精编正文构建 EPUB（支持多文件合并、BookId 参数） | `-SourcePath @(…) -OutputPath -BookId` |
 
 ## 工作流
