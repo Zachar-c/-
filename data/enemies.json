@@ -34,5 +34,41 @@
         "label": "反口撕咬"
       }
     ]
+  },
+  {
+    "id": "ridge_elite_scout",
+    "tier": "elite",
+    "hp": 6,
+    "essence": 4,
+    "clues": ["high_ground", "steady_breath"],
+    "intent": {"id": "swift_crossbow", "label": "弩箭上弦", "damage": 3},
+    "reactions": [
+      {
+        "id": "elusive_step",
+        "clue": "high_ground",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "高处闪避"
+      }
+    ]
+  },
+  {
+    "id": "miasma_vein_lord",
+    "tier": "boss",
+    "hp": 9,
+    "essence": 6,
+    "clues": ["wilting_aura", "slow_gaits"],
+    "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4},
+    "reactions": [
+      {
+        "id": "corrosive_mist",
+        "clue": "wilting_aura",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "guarded",
+        "label": "蚀气反激"
+      }
+    ]
   }
 ]

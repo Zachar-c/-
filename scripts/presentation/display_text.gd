@@ -111,6 +111,8 @@ const ENEMIES := {
 	"resolute_elite": "悍勇强敌",
 	"neutral_stone_wanderer": "石甲散修",
 	"ridge_hound": "山脊猎犬",
+	"ridge_elite_scout": "山脊悍客",
+	"miasma_vein_lord": "瘴脉蛊主",
 }
 
 const FACTS := {

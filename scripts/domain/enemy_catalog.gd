@@ -14,6 +14,9 @@ static func validate(entries: Array) -> Array[String]:
 	var errors: Array[String] = []
 	for entry in entries:
 		var enemy_id := str(entry.get("id", "unknown"))
+		var tier := str(entry.get("tier", "common"))
+		if not tier in ["common", "elite", "boss"]:
+			errors.append("enemy %s has invalid tier %s" % [enemy_id, tier])
 		var reactions: Array = entry.get("reactions", [])
 		for index in reactions.size():
 			var reaction: Dictionary = reactions[index]
