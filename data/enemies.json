@@ -5,7 +5,7 @@
     "hp": 4,
     "essence": 3,
     "clues": ["stone_dust", "steady_stance"],
-    "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2},
+    "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2, "speed": 1},
     "reactions": [
       {
         "id": "stone_shell",
@@ -23,7 +23,7 @@
     "hp": 3,
     "essence": 0,
     "clues": ["lowered_shoulders", "wet_fang"],
-    "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 3},
+    "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 3, "speed": 0},
     "reactions": [
       {
         "id": "counter_bite",
@@ -41,7 +41,7 @@
     "hp": 6,
     "essence": 4,
     "clues": ["high_ground", "steady_breath"],
-    "intent": {"id": "swift_crossbow", "label": "弩箭上弦", "damage": 3},
+    "intent": {"id": "swift_crossbow", "label": "弩箭上弦", "damage": 3, "speed": 3},
     "reactions": [
       {
         "id": "elusive_step",
@@ -59,7 +59,7 @@
     "hp": 9,
     "essence": 6,
     "clues": ["wilting_aura", "slow_gaits"],
-    "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4},
+    "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4, "speed": 4},
     "reactions": [
       {
         "id": "corrosive_mist",

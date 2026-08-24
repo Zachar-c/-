@@ -17,10 +17,10 @@ const APTITUDE_BACKLASH_FACTORS := {
 }
 
 const LEGACY_ENEMIES := {
-	"beast_swarm": {"hp": 3, "control": 0, "intent": {"id": "bite", "label": "兽群逼近", "damage": 1}},
-	"greedy_wanderer": {"hp": 4, "control": 0, "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2}},
-	"faction_guard": {"hp": 3, "control": 1, "intent": {"id": "guard_strike", "label": "守卫压步", "damage": 2}},
-	"resolute_elite": {"hp": 5, "control": 2, "intent": {"id": "heavy_blow", "label": "重手蓄势", "damage": 3}},
+	"beast_swarm": {"hp": 3, "control": 0, "intent": {"id": "bite", "label": "兽群逼近", "damage": 1, "speed": 0}},
+	"greedy_wanderer": {"hp": 4, "control": 0, "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2, "speed": 1}},
+	"faction_guard": {"hp": 3, "control": 1, "intent": {"id": "guard_strike", "label": "守卫压步", "damage": 2, "speed": 1}},
+	"resolute_elite": {"hp": 5, "control": 2, "intent": {"id": "heavy_blow", "label": "重手蓄势", "damage": 3, "speed": 2}},
 }
 
 
@@ -117,6 +117,10 @@ static func apply_action_card(battle: Dictionary, state: RunState, command: Dict
 		return _end_turn(next, state, catalog)
 	if action_id == "battle.retreat":
 		return _retreat(next, state)
+	if action_id == "battle.basic.punch":
+		return _basic_attack(next, state, catalog)
+	if action_id == "battle.basic.dodge":
+		return _basic_dodge(next, state)
 	var card_index := _hand_card_index(next, action_id)
 	if card_index < 0:
 		return _rejected_turn(next, state, "battle_action_unavailable")
@@ -190,6 +194,8 @@ static func take_turn(
 	match str(action.get("type", "")):
 		"use_gu": return _use_gu(next, action, state, catalog)
 		"use_inheritance": return _use_inheritance(next, action, state, catalog)
+		"basic_attack": return _basic_attack(next, state, catalog)
+		"basic_dodge": return _basic_dodge(next, state)
 		"end_turn": return _end_turn(next, state, catalog)
 		"retreat": return _retreat(next, state)
 		_: return _result(next, state, false, "ongoing", ["unsupported_battle_action"])
@@ -216,6 +222,31 @@ static func _command_for_card_instance(card: Dictionary, catalog: Dictionary) ->
 	if source_definition_ids.is_empty():
 		return {}
 	return {"type": "use_gu", "gu_id": str(source_definition_ids[0]), "mode": str(definition.get("mode", ""))}
+
+
+static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	var punch_damage := 1 + int(state.cultivator.get("force_power", 0))
+	var log_entry := {"id": "basic_punch", "damage": punch_damage}
+	var reaction := _reaction_for(battle, "direct_strike")
+	if not reaction.is_empty() and not _reaction_countered(battle, reaction):
+		_reveal_reaction(battle, reaction)
+		log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
+	else:
+		battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - punch_damage)
+	battle["log"].append(log_entry)
+	var next_state := state.append_event(_event(state, "battle_basic_attack", {}, {}, "battle_basic_attack", []))
+	return _with_objective_result(battle, next_state)
+
+
+static func _basic_dodge(battle: Dictionary, state: RunState) -> Dictionary:
+	_add_flag(battle, "dodging")
+	battle["log"].append({"id": "basic_dodge"})
+	var next_state := state.append_event(_event(state, "battle_basic_dodge", {}, {}, "battle_basic_dodge", []))
+	return _result(battle, next_state, false, "ongoing", ["dodge_readied"])
+
+
+static func _player_dodge_speed(state: RunState) -> int:
+	return int(state.cultivator.get("speed", 2))
 
 
 static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
@@ -325,12 +356,18 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 		damage = maxi(0, damage - 2)
 	if battle["flags"].has("targeting_obscured"):
 		damage = maxi(0, damage - 1)
+	var dodged := false
+	if battle["flags"].has("dodging"):
+		battle["flags"].erase("dodging")
+		if _player_dodge_speed(state) > int(intent.get("speed", 0)):
+			damage = 0
+			dodged = true
 	var damage_hook := RelicHookResolverScript.apply_take_damage(battle, state, catalog, damage)
 	battle = damage_hook["battle"]
 	var next_state: RunState = damage_hook["state"]
 	damage = int(damage_hook["damage"])
 	var next_health := maxi(0, state.health - damage)
-	battle["log"].append({"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy"})
+	battle["log"].append({"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy", "dodged": dodged})
 	if next_health == 0 and damage > 0:
 		battle["final_blow"] = {"id": str(intent.get("id", "enemy_action")), "damage": damage}
 	next_state = next_state.append_event(_event(

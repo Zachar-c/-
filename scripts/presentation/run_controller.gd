@@ -84,7 +84,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		else:
 			_show_battle()
 		return turn
-	if command.get("type", "") in ["use_gu", "use_inheritance", "end_turn", "retreat"] and not current_battle.is_empty():
+	if command.get("type", "") in ["use_gu", "use_inheritance", "end_turn", "retreat", "basic_attack", "basic_dodge"] and not current_battle.is_empty():
 		var turn := BattleResolver.take_turn(
 			current_battle,
 			command,

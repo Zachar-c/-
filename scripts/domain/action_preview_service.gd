@@ -67,6 +67,23 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		if definition.is_empty():
 			continue
 		_append_battle_hand_card(cards, battle, state, catalog, definition, instance)
+	cards.append(_battle_card(battle, state, {
+		"id": "battle.basic.punch",
+		"title": "拳脚",
+		"summary": "零消耗的基础打击，任何战况都可用。",
+		"executable": true,
+		"cost": {},
+		"known_risk": [],
+		"expected_gain": ["造成 1 点基础伤害。"],
+	}))
+	cards.append(_battle_card(battle, state, {
+		"id": "battle.basic.dodge",
+		"title": "闪避",
+		"summary": "零消耗的防守姿态，速度压制慢速攻势。",
+		"executable": true,
+		"cost": {},
+		"known_risk": ["闪避速度高于敌方攻击速度时，完全免伤本轮攻势。"],
+	}))
 	var retreat_cost := 0 if battle.get("flags", []).has("retreat_preserved") else 2
 	var retreat_open := _battle_retreat_open(battle)
 	var retreat_ready := retreat_open and state.stone >= retreat_cost
