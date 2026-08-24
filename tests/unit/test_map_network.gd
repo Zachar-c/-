@@ -69,6 +69,7 @@ func test_hard_anchors_remain_unique_and_terminal() -> void:
 			ids.append(str(node["id"]))
 		assert_eq(ids.count("earth_vein_contest"), 1, "seed %d" % seed)
 		assert_true(ids.has("poison_fog_vein"), "seed %d" % seed)
+		assert_true(ids.has("final_boss_stand"), "seed %d" % seed)
 		assert_true(ids.has("ascension_window"), "seed %d" % seed)
 
 

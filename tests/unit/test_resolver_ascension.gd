@@ -37,6 +37,7 @@ func test_invalid_command_does_not_mutate_state() -> void:
 
 func _prepared_state() -> RunState:
 	var state := RunState.new_run(101)
+	state.node_flags["boss_defeated"] = "true"
 	state.ascension = {
 		"aperture_foundation": true,
 		"heaven_earth_qi": true,

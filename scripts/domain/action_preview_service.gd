@@ -560,6 +560,10 @@ static func _append_standard_card(cards: Array[Dictionary], state: RunState, act
 			gain.append("以当前已备条件冲击升仙，结果将成为本局终局。")
 			risk.append("一旦踏入升仙考验便不可逆转，成败都会留下终局后果。")
 			unknown_note = "天地二气与外扰的最终碰撞只能在考验中见分晓。"
+			if str(state.node_flags.get("boss_defeated", "")) != "true":
+				executable = false
+				reason = "终局强敌未除，升仙窗口尚不安全。"
+				remedies = ["先击破瘴脉蛊主，再谈升仙。"]
 		"claim":
 			gain.append("争取当前机缘，获得后续升仙准备。")
 			risk.append("会暴露争夺意图，可能引来他人干预。")

@@ -93,6 +93,8 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _record_neutral_npc_kill(state, catalog)
 		"wash_notoriety":
 			return _wash_notoriety(state, catalog)
+		"record_boss_defeated":
+			return _record_boss_defeated(state, catalog)
 		"accept_event":
 			return _accept_event(state, command, catalog)
 		_:
@@ -1220,7 +1222,25 @@ static func _retreat(state: RunState) -> Dictionary:
 	return _accepted(next)
 
 
+static func _record_boss_defeated(state: RunState, catalog: Dictionary) -> Dictionary:
+	var flags := state.node_flags.duplicate(true)
+	if not bool(flags.get("boss_defeated", false)):
+		flags["boss_defeated"] = "true"
+	var next := state.append_event(_event(
+		state,
+		"record_boss_defeated",
+		{"node_flags": state.node_flags},
+		{"node_flags": flags},
+		"boss_defeated_recorded",
+		state.current_node_id,
+		[]
+	))
+	return _accepted(next)
+
+
 static func _attempt_ascension(state: RunState, command: Dictionary) -> Dictionary:
+	if str(state.node_flags.get("boss_defeated", "")) != "true":
+		return _rejected(state, "boss_undefeated")
 	if command.get("choice", "") != "now":
 		return _rejected(state, "unsupported_ascension_choice")
 	var conditions := _ascension_conditions(state)

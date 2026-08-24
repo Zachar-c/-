@@ -16,6 +16,7 @@ func test_fixed_scenarios_cover_all_three_outcomes_without_llm() -> void:
 
 func _play_scenario(scenario: String) -> String:
 	var state := RunState.new_run(101)
+	state.node_flags["boss_defeated"] = "true"
 	state.ascension = {
 		"aperture_foundation": true,
 		"heaven_earth_qi": scenario != "missing_qi",

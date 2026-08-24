@@ -46,6 +46,8 @@ static func _generated_stage_picks(seed: int, nodes: Array, node_by_id: Dictiona
 		stage_picks["five"] = []
 	if not stage_picks["five"].has("poison_fog_vein"):
 		stage_picks["five"].append("poison_fog_vein")
+	if not stage_picks["five"].has("final_boss_stand"):
+		stage_picks["five"].append("final_boss_stand")
 	return stage_picks
 
 

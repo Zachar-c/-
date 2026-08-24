@@ -23,6 +23,7 @@
     {"id":"earth_vein_contest","stage":"four","type":"earth_vein","visible":false,"choices":["ally","scheme","fight","retreat"],"time_scale":"days","on_skip":"external_interference","next_ids":[]},
     {"id":"sealed_earth_vein","stage":"four","type":"earth_vein","visible":false,"choices":["scout","open","withdraw"],"time_scale":"days","on_skip":"lose_site","next_ids":[]},
     {"id":"poison_fog_vein","stage":"five","type":"earth_vein","visible":false,"choices":["scout","claim","withdraw"],"time_scale":"days","on_skip":"lose_qi","next_ids":[]},
+    {"id":"final_boss_stand","stage":"five","type":"combat","visible":false,"summary":"瘴脉尽头，蛊主把守升仙窗口。","choices":["fight","retreat"],"time_scale":"days","on_skip":"gain_pursuit","next_ids":[]},
     {"id":"body_imprint_ritual","stage":"one","type":"seclusion","visible":false,"summary":"石壁留有淬体仪式。可稳固根基，也可能留下难以察觉的代价。","choices":["meditate","take_imprint","leave"],"time_scale":"days","on_skip":"lose_foundation","next_ids":["stage_one_ledger"]}
   ],
   "ascension_node": {"id":"ascension_window","stage":"five","type":"ascension","visible":false,"choices":["attempt_ascension","prepare","retreat"],"time_scale":"days","on_skip":"survived_failure","next_ids":[]}

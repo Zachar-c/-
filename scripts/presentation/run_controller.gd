@@ -205,6 +205,8 @@ func _start_battle() -> void:
 		enemy_kind = "neutral_stone_wanderer"
 	elif current_node.get("id", "") == "beast_swarm_pass":
 		enemy_kind = "ridge_hound"
+	elif current_node.get("id", "") == "final_boss_stand":
+		enemy_kind = "miasma_vein_lord"
 	var first_mover := "player"
 	var notorious := Resolver.notoriety(state)
 	if notorious > 0:
@@ -365,6 +367,7 @@ func _return_to_map() -> void:
 
 func _finish_battle_in_session(outcome: String) -> void:
 	var kill_source := str(current_battle.get("kill_source", ""))
+	var enemy_kind := str(current_battle.get("enemy_kind", ""))
 	current_battle = {}
 	current_session = current_session.duplicate(true)
 	current_session["phase"] = "post_battle"
@@ -384,6 +387,8 @@ func _finish_battle_in_session(outcome: String) -> void:
 	})
 	if outcome == "victory" and kill_source == "neutral_npc":
 		state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, catalog)["state"]
+	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
+		state = Resolver.apply(state, {"type": "record_boss_defeated"}, catalog)["state"]
 	_show_encounter()
 
 
