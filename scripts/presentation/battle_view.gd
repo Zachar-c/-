@@ -4,7 +4,9 @@ extends Control
 
 const THEME := preload("res://assets/theme/gu_theme.tres")
 const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+const ResourceIconScript := preload("res://scripts/presentation/resource_icon.gd")
 const HUD_INDICATOR_NAMES := ["真元", "元石", "寿元", "魂魄"]
+const HUD_INDICATOR_KINDS := {"真元": "essence", "元石": "stone", "寿元": "lifespan", "魂魄": "soul"}
 
 
 signal command_submitted(command: Dictionary)
@@ -44,18 +46,33 @@ func _hud_value(kind: String, battle: Dictionary, state: RunState) -> String:
 
 func _append_hud(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
 	var strip := PanelContainer.new()
-	strip.custom_minimum_size = Vector2(0, 46)
+	strip.custom_minimum_size = Vector2(0, 54)
+	strip.name = "HUD"
 	column.add_child(strip)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_BEGIN
 	row.add_theme_constant_override("separation", 18)
 	strip.add_child(row)
 	for kind in HUD_INDICATOR_NAMES:
-		var cell := Label.new()
-		cell.text = "%s  %s" % [kind, _hud_value(kind, battle, state)]
-		cell.add_theme_font_size_override("font_size", 20)
-		cell.add_theme_color_override("font_color", Color("e7c883"))
+		var cell := HBoxContainer.new()
+		cell.add_theme_constant_override("separation", 8)
 		row.add_child(cell)
+		var icon := ResourceIconScript.new()
+		icon.kind = HUD_INDICATOR_KINDS[kind]
+		cell.add_child(icon)
+		var label := Label.new()
+		label.text = "%s  %s" % [kind, _hud_value(kind, battle, state)]
+		label.add_theme_font_size_override("font_size", 20)
+		label.add_theme_color_override("font_color", Color("e7c883"))
+		cell.add_child(label)
+	_animate_hud(strip)
+
+
+func _animate_hud(strip: PanelContainer) -> void:
+	var tween := create_tween()
+	tween.set_loops()
+	tween.tween_property(strip, "modulate:a", 0.75, 1.1)
+	tween.tween_property(strip, "modulate:a", 1.0, 1.1)
 
 
 func _append_field(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:

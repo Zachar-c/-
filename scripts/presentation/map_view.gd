@@ -4,6 +4,7 @@ extends Control
 
 const ROUTE_TREE_CANVAS := preload("res://scripts/presentation/route_tree_canvas.gd")
 const THEME := preload("res://assets/theme/gu_theme.tres")
+const GuOrbScript := preload("res://scripts/presentation/gu_orb.gd")
 
 
 signal node_selected(node_id: String)
@@ -131,6 +132,10 @@ func _append_gu_row(panel: VBoxContainer, state: RunState, catalog: Dictionary, 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	panel.add_child(row)
+	var orb := GuOrbScript.new()
+	orb.gu_id = str(instance.get("definition_id", ""))
+	orb.tooltip_text = DisplayText.gu(str(instance.get("definition_id", "")))
+	row.add_child(orb)
 	var name := Label.new()
 	name.text = DisplayText.gu(str(instance.get("definition_id", "")))
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL

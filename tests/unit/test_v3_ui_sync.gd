@@ -71,6 +71,25 @@ func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	assert_not_null(_find_label_with_text(view, "意图"), "battle view must expose enemy intent")
 
 
+func test_battle_view_hud_uses_programmatic_icons() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	var view: Control = autofree(BattleViewScript.new())
+	add_child(view)
+	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
+	var icons := _collect_typed(view, "ResourceIcon")
+	assert_eq(icons.size(), 4, "battle hud must render four resource icons")
+
+
+func test_gu_orb_renders_for_every_known_gu() -> void:
+	for gu_id in ["small_light_gu", "moonlight_gu", "moon_glow_gu", "phantom_moon_gu", "moon_shadow_gu", "stone_shell_gu", "trail_eye_gu", "thorn_whip_gu", "blood_moss_gu", "mist_step_gu", "venom_thread_gu", "shadow_veil_gu", "pulse_drum_gu"]:
+		var orb: Control = autofree(load("res://scripts/presentation/gu_orb.gd").new())
+		add_child(orb)
+		orb.gu_id = gu_id
+		assert_eq(str(orb.gu_id), gu_id)
+
+
 func test_enemy_catalog_labels_cover_real_enemy_kinds() -> void:
 	assert_eq(DisplayText.enemy("neutral_stone_wanderer"), "石甲散修")
 	assert_eq(DisplayText.enemy("ridge_hound"), "山脊猎犬")
@@ -228,6 +247,17 @@ func _count_typed(root: Node, node_type: Variant) -> int:
 			total += 1
 		stack.append_array(current.get_children())
 	return total
+
+
+func _collect_typed(root: Node, script_name: String) -> Array[Node]:
+	var found: Array[Node] = []
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back()
+		if str(current.get_class()) == script_name or (current.get_script() != null and str(current.get_script().get_global_name()) == script_name):
+			found.append(current)
+		stack.append_array(current.get_children())
+	return found
 
 
 func _find_capped_history(root: Node) -> Node:
