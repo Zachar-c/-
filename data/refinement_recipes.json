@@ -57,6 +57,16 @@
           "lifespan_cost": 1,
           "event_reason": "free_mix_explosion"
         }
+      ],
+      "risk_hints": [
+        {
+          "tags": ["poison"],
+          "text": "炉中隐约腥气，恐催生毒物。"
+        },
+        {
+          "tags": ["moon"],
+          "text": "炉火间月息浮沉，恐炼出暗夜之物。"
+        }
       ]
     }
   ],

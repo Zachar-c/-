@@ -119,6 +119,19 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	var raw_capacity: Variant = catalog.get("deck", {}).get("capacity", -1)
 	if not _is_integral(raw_capacity) or int(raw_capacity) < 1:
 		errors.append("deck capacity must be a positive integer")
+	var gu_tags: Array[String] = []
+	for gu in catalog.get("gu", []):
+		for tag_value in gu.get("tags", []):
+			if not gu_tags.has(str(tag_value)):
+				gu_tags.append(str(tag_value))
+	for recipe in catalog.get("refinement_recipes", []):
+		for rule_value in recipe.get("risk_hints", []):
+			var rule: Dictionary = rule_value
+			for required_tag in rule.get("tags", []):
+				if not gu_tags.has(str(required_tag)):
+					errors.append("recipe %s risk hint references unknown tag %s" % [recipe["id"], required_tag])
+			if str(rule.get("text", "")).is_empty():
+				errors.append("recipe %s risk hint needs non-empty text" % recipe["id"])
 	return errors
 
 

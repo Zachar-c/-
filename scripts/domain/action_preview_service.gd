@@ -274,7 +274,7 @@ static func _append_refinement_cards(cards: Array[Dictionary], state: RunState, 
 	for recipe in catalog.get("refinement_recipes", []):
 		match str(recipe.get("kind", "combine")):
 			"free_mix":
-				_append_free_mix_card(cards, state, recipe, knowledge)
+				_append_free_mix_card(cards, state, recipe, knowledge, catalog)
 			_:
 				_append_recipe_card(cards, state, recipe, catalog)
 	_append_leave_card(cards, state)
@@ -312,16 +312,19 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	}))
 
 
-static func _append_free_mix_card(cards: Array[Dictionary], state: RunState, recipe: Dictionary, knowledge: Dictionary) -> void:
+static func _append_free_mix_card(cards: Array[Dictionary], state: RunState, recipe: Dictionary, knowledge: Dictionary, catalog: Dictionary) -> void:
 	var min_inputs := int(recipe.get("min_inputs", 2))
 	var usable := free_mix_input_instance_ids(state)
 	var enough := usable.size() >= min_inputs
 	var known_risks: Array[String] = []
+	var ominous_hint := ""
 	if knowledge.has(_free_mix_combination_key(state, usable)):
 		for outcome_id_value in knowledge[_free_mix_combination_key(state, usable)]:
 			var line := _known_outcome_line(str(outcome_id_value))
 			if not line.is_empty() and not known_risks.has(line):
 				known_risks.append(line)
+	elif enough:
+		ominous_hint = _free_mix_risk_hint(recipe, state, usable, catalog)
 	cards.append(_card(state, {
 		"id": "refine.%s" % str(recipe["id"]),
 		"title": "乱炼一炉",
@@ -331,7 +334,7 @@ static func _append_free_mix_card(cards: Array[Dictionary], state: RunState, rec
 		"cost": {"time": 1},
 		"known_risk": known_risks,
 		"expected_gain": [],
-		"unknown_note": "" if not known_risks.is_empty() else "乱炼的结果未明：可能蛊虫尽毁、催生畸变，也可能炸炉伤身。",
+		"unknown_note": "" if not known_risks.is_empty() else (ominous_hint if not ominous_hint.is_empty() else "乱炼的结果未明：可能蛊虫尽毁、催生畸变，也可能炸炉伤身。"),
 		"remedy_hints": ["可先通过交易、搜寻或炼制获取更多蛊虫。"] if not enough else [],
 		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"]), "input_instance_ids": usable},
 	}))
@@ -342,6 +345,27 @@ static func free_mix_input_instance_ids(state: RunState) -> Array[String]:
 	for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
 		result.append(str(instance_id_value))
 	return result
+
+
+static func _free_mix_risk_hint(recipe: Dictionary, state: RunState, instance_ids: Array, catalog: Dictionary) -> String:
+	var tags: Array[String] = []
+	for instance_id_value in instance_ids:
+		var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+		var gu: Dictionary = catalog.get("gu_by_id", {}).get(str(instance.get("definition_id", "")), {})
+		for tag_value in gu.get("tags", []):
+			var tag := str(tag_value)
+			if not tags.has(tag):
+				tags.append(tag)
+	for rule_value in recipe.get("risk_hints", []):
+		var rule: Dictionary = rule_value
+		var matched := true
+		for required_tag in rule.get("tags", []):
+			if not tags.has(str(required_tag)):
+				matched = false
+				break
+		if matched:
+			return str(rule.get("text", ""))
+	return ""
 
 
 static func _free_mix_combination_key(state: RunState, instance_ids: Array) -> String:
