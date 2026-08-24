@@ -271,7 +271,8 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		"small_light_gu":
 			_add_flag(battle, "revealed")
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
-			log_entry["id"] = "light_reveal"
+			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 1)
+			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1}
 		"thorn_whip_gu":
 			if mode == "bind":
 				_add_flag(battle, "enemy_bound")

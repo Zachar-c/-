@@ -200,6 +200,7 @@ func _log_line(entry: Dictionary) -> String:
 	match str(entry.get("id", "")):
 		"intent_revealed": return "对方的攻势已显露。"
 		"light_reveal": return "小光蛊照亮了对方的细微异状。"
+		"light_probe": return "小光弹照中敌手，伤敌并照出异状。"
 		"thorn_bind": return "棘鞭缠住了对方的手脚。"
 		"thorn_strike": return "棘鞭抽实，对方气力受损。"
 		"stone_shell": return "石粉聚甲，攻势被挡住。"

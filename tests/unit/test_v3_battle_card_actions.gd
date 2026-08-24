@@ -57,7 +57,7 @@ func test_battle_preview_reads_hand_and_uses_battle_local_version() -> void:
 	assert_eq(hand_card["state_version"], battle["hand_version"])
 	assert_eq(hand_card["command"], {})
 	assert_eq(hand_card["cost"]["spirit"], 1)
-	assert_eq(hand_card["expected_gain"], ["照出敌方异状并推进试探。"])
+	assert_eq(hand_card["expected_gain"], ["小光弹照中敌手，伤敌并照出异状。"])
 
 func test_battle_starts_with_a_limited_hand_and_keeps_remaining_cards_in_draw_pile() -> void:
 	var run := _run_with_three_card_sources()

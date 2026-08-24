@@ -42,7 +42,7 @@ func test_contest_battle_can_end_by_delaying_enemy_without_killing() -> void:
 	var turn := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, state, catalog)
 	assert_true(turn["finished"])
 	assert_eq(turn["result"], "victory")
-	assert_eq(turn["battle"]["enemy_hp"], 3)
+	assert_eq(turn["battle"]["enemy_hp"], 2)
 
 
 func test_declared_irreversible_hazard_is_only_source_of_lethal_result() -> void:

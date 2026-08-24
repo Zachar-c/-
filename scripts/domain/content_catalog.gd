@@ -61,6 +61,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("gu %s missing school" % gu["id"])
 		elif not str(gu["school"]) in ["blood", "qi", "force"]:
 			errors.append("gu %s invalid school %s" % [gu["id"], gu["school"]])
+		if not gu.has("role"):
+			errors.append("gu %s missing role" % gu["id"])
+		elif not str(gu["role"]) in ["attack", "defense", "movement", "healing", "logistics", "recon"]:
+			errors.append("gu %s invalid role %s" % [gu["id"], gu["role"]])
 		for material_id in gu.get("feeding_need", {}):
 			if not material_ids.has(material_id):
 				errors.append("gu %s has unknown feeding material %s" % [gu["id"], material_id])

@@ -28,7 +28,8 @@
       "scout",
       "subtle"
     ],
-    "school": "qi"
+    "school": "qi",
+    "role": "attack"
   },
   {
     "id": "trail_eye_gu",
@@ -56,7 +57,8 @@
       "tracking",
       "reveal"
     ],
-    "school": "qi"
+    "school": "qi",
+    "role": "recon"
   },
   {
     "id": "blood_moss_gu",
@@ -85,7 +87,8 @@
       "healing",
       "wood"
     ],
-    "school": "blood"
+    "school": "blood",
+    "role": "healing"
   },
   {
     "id": "thorn_whip_gu",
@@ -116,7 +119,8 @@
       "attack",
       "control"
     ],
-    "school": "force"
+    "school": "force",
+    "role": "attack"
   },
   {
     "id": "mist_step_gu",
@@ -144,7 +148,8 @@
       "escape",
       "mist"
     ],
-    "school": "force"
+    "school": "force",
+    "role": "movement"
   },
   {
     "id": "venom_thread_gu",
@@ -172,7 +177,8 @@
       "control",
       "escape"
     ],
-    "school": "qi"
+    "school": "qi",
+    "role": "attack"
   },
   {
     "id": "stone_shell_gu",
@@ -202,7 +208,8 @@
       "earth",
       "guard"
     ],
-    "school": "force"
+    "school": "force",
+    "role": "defense"
   },
   {
     "id": "shadow_veil_gu",
@@ -230,7 +237,8 @@
       "escape",
       "shadow"
     ],
-    "school": "qi"
+    "school": "qi",
+    "role": "movement"
   },
   {
     "id": "pulse_drum_gu",
@@ -258,7 +266,8 @@
       "control",
       "sound"
     ],
-    "school": "qi"
+    "school": "qi",
+    "role": "logistics"
   },
   {
     "id": "moonlight_gu",
@@ -286,7 +295,8 @@
       "attack",
       "moon"
     ],
-    "school": "force"
+    "school": "force",
+    "role": "attack"
   },
   {
     "id": "moon_glow_gu",
@@ -315,7 +325,8 @@
       "attack",
       "moon"
     ],
-    "school": "blood"
+    "school": "blood",
+    "role": "attack"
   },
   {
     "id": "phantom_moon_gu",
@@ -344,7 +355,8 @@
       "stealth",
       "moon"
     ],
-    "school": "qi"
+    "school": "qi",
+    "role": "recon"
   },
   {
     "id": "moon_shadow_gu",
@@ -375,6 +387,7 @@
       "movement",
       "moon"
     ],
-    "school": "force"
+    "school": "force",
+    "role": "movement"
   }
 ]
