@@ -22,7 +22,7 @@ git config core.hooksPath .githooks
 py -3 scripts/check_remote_base.py
 ```
 
-完整的处理规则与禁止绕过要求见 `AGENTS.md` 第 12.2 节。
+完整处理规则见 `AGENTS.md`「提交保护」。
 
 ## 目录
 
@@ -80,16 +80,16 @@ py -3 scripts/clean_full_source.py -SourcePath 蛊真人.txt -OutputPath 蛊真�
 
 ## 会话启动模板
 
-给每个正文会话提供以下短提示即可；完整规则由模型自行读取文件：
+给正文会话提供以下短提示即可；完整规则由模型自行读取文件：
 
 ```text
 你负责《蛊真人》精编第XXX—YYY节，只处理这一批。
-先读 AGENTS.md，然后运行 py -3 scripts/gen_brief.py -Volume <卷id> -Batch <节范围> -WriteState 生成批次简报，再按其中台账命中和源文行号指引读取对应文件。
-不得修改其他批次正文或共享裁决文件。先报告范围、冻结裁决、人物/资源/时间起止状态，再开始工作。
-完成后运行 AGENTS.md 规定的验证命令，输出改动摘要、台账更新建议和回归结果。
+先读 AGENTS.md，然后运行 py -3 scripts/gen_brief.py -Volume <卷id> -Batch <节范围> -WriteState 生成批次简报，按其中指引读取细纲、notes/ledger.md 相关小节与源文对应行区间。
+逐节编辑并在批末运行验证：py -3 scripts/validate_editorial_assets.py -Phase detail 与 git diff --check。
+完成后 py -3 scripts/gen_report.py -Volume <卷id> -Batch <节范围> 生成交付报告，补全裁决理由后交用户审阅。
 ```
 
-总编会话负责：裁决跨批冲突、更新共享台账、检查相邻批次衔接、吸收用户审阅意见并决定是否冻结。
+总编会话职责已并入单会话流程；跨批冲突标为待裁决并记入 notes/ledger.md 待核问题，不在单个批次内自行创造设定。
 
 ## 30节交付门槛
 
