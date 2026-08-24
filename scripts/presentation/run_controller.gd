@@ -287,7 +287,13 @@ func _next_gu_instance_id(state: RunState) -> String:
 
 func _start_run_from_title() -> void:
 	if _view_name == "Title":
-		start_new_run(101, _selected_school)
+		start_new_run(roll_seed(), _selected_school)
+
+
+static func roll_seed() -> int:
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	return rng.randi_range(1, 2147483647)
 
 
 func _show_map() -> void:
@@ -360,7 +366,7 @@ func _ensure_views() -> void:
 	_views["Map"].action_submitted.connect(submit_command)
 	_views["Encounter"].command_submitted.connect(submit_command)
 	_views["Battle"].command_submitted.connect(submit_command)
-	_views["Ending"].restart_requested.connect(func(): start_new_run(101))
+	_views["Ending"].restart_requested.connect(func(): start_new_run(roll_seed()))
 
 
 func _add_view(host: Node, name: String, view: Control) -> void:
