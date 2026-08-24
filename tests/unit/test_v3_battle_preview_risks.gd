@@ -13,8 +13,9 @@ func before_each() -> void:
 
 func test_duration_card_preview_exposes_soul_control_overflow_before_submission() -> void:
 	var run := _run_with_stone_shell()
-	run.cultivator["soul_control_limit"] = 0
+	run.cultivator["soul"] = 1
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	battle["active_gu_instance_ids"] = ["gu_003"]
 	var card := _card_by_definition(ActionPreviewServiceScript.preview_battle_actions(battle, run, catalog), battle, "stone_guard")
 
 	assert_string_contains(str(card["known_risk"]), "魂魄")

@@ -4,6 +4,7 @@ extends RefCounted
 const DeckBuilderScript = preload("res://scripts/domain/deck_builder.gd")
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
+const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -59,6 +60,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"pursuit": int(encounter.get("pursuit", state.pursuit)),
 		"enemy_control": int(enemy.get("control", 0)),
 		"available_gu_ids": state.refined_gu_ids.duplicate(),
+		"soul_ops_cap": SoulCapacityScript.battle_ops_cap(state),
 		"flags": [],
 		"revealed_reactions": [],
 		"visible_intent": intent,
@@ -462,8 +464,9 @@ static func _backlash_for_activation(battle: Dictionary, state: RunState, defini
 		health_damage += ceili((1.0 + rank_gap) * float(factors["health_factor"]))
 		soul_damage += ceili((1.0 + rank_gap * 2.0) * float(factors["soul_factor"]))
 	var active_ids: Array = battle.get("active_gu_instance_ids", [])
-	if active_ids.size() > int(state.cultivator.get("soul_control_limit", 0)):
-		soul_damage += active_ids.size() - int(state.cultivator.get("soul_control_limit", 0))
+	var ops_cap := SoulCapacityScript.battle_ops_cap(state)
+	if active_ids.size() > ops_cap:
+		soul_damage += active_ids.size() - ops_cap
 		if rank_gap == 0:
 			return {
 				"after": {

@@ -3,6 +3,7 @@ extends RefCounted
 
 
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
+const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 
 
 const BODY_IMPRINTS := {
@@ -209,6 +210,8 @@ static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary
 
 static func _apply_combine_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
 	var inputs: Array = recipe.get("input_gu_ids", [])
+	if inputs.size() > SoulCapacityScript.craft_cap(state):
+		return _rejected(state, "refinement_capacity_exceeded")
 	if not _has_all_gu(state.refined_gu_ids, inputs):
 		return _rejected(state, "missing_refinement_input")
 	# The result is determined from the run seed and immutable event position.
@@ -234,6 +237,8 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	if bool(recipe.get("locked", false)):
 		return _rejected(state, "refinement_recipe_locked")
 	var inputs: Array = recipe.get("input_gu_ids", [])
+	if inputs.size() > SoulCapacityScript.craft_cap(state):
+		return _rejected(state, "refinement_capacity_exceeded")
 	var selected := _selected_input_instance_ids(state, command, inputs)
 	if selected.is_empty():
 		return _rejected(state, "missing_refinement_input")
@@ -347,6 +352,8 @@ static func _apply_free_mix(state: RunState, command: Dictionary, catalog: Dicti
 				selected.append(instance_id)
 	if selected.size() < min_inputs:
 		return _rejected(state, "missing_refinement_input")
+	if selected.size() > SoulCapacityScript.craft_cap(state):
+		return _rejected(state, "refinement_capacity_exceeded")
 	var outcomes: Array = recipe.get("outcomes", [])
 	if outcomes.is_empty():
 		return _rejected(state, "unknown_refinement_recipe")

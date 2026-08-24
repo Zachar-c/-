@@ -1,6 +1,8 @@
 class_name ActionPreviewService
 extends RefCounted
 
+const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
+
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
 static func preview_actions(state: RunState, node: Dictionary, catalog: Dictionary, knowledge: Dictionary = {}) -> Array[Dictionary]:
@@ -112,7 +114,7 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		for source_instance_id in instance.get("source_gu_instance_ids", []):
 			if not projected.has(source_instance_id):
 				projected.append(source_instance_id)
-		if projected.size() > int(state.cultivator.get("soul_control_limit", 0)):
+		if projected.size() > SoulCapacityScript.battle_ops_cap(state):
 			risk.append("当前魂魄无法承受这次并发催动，会触发魂魄反噬。")
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(instance.get("instance_id", ""))],

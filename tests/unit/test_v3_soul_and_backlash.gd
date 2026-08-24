@@ -30,13 +30,24 @@ func test_duration_effect_releases_its_source_gu_after_end_turn_expiry() -> void
 
 func test_soul_control_overflow_applies_backlash_but_keeps_duration_effect_active() -> void:
 	var run := _run_with_gu(["stone_shell_gu"])
-	run.cultivator["soul_control_limit"] = 0
+	run.cultivator["soul"] = 1
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	battle["active_effect_registry"] = {
+		"effect.setup": {
+			"effect_id": "effect.setup",
+			"source_gu_id": "stone_shell_gu",
+			"source_gu_instance_ids": [],
+			"remaining_turns": 1,
+			"tick_phase": "end_turn",
+			"occupies_soul_slots": true,
+			"soul_occupancy_gu_ids": ["gu_003"],
+		}
+	}
 	var result := BattleResolver.apply_action_card(battle, run, _command_for_definition(battle, "stone_guard"), catalog)
 
 	assert_true(result["accepted"])
 	assert_lt(int(result["state"].cultivator["soul"]), 4)
-	assert_eq(result["battle"]["active_gu_instance_ids"], ["gu_002"])
+	assert_true(result["battle"]["active_gu_instance_ids"].has("gu_002"))
 	assert_true(result["feeds"].has("soul_backlash"))
 
 
