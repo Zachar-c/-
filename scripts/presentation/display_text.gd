@@ -152,6 +152,10 @@ const REACTIONS := {
 
 const MATERIALS := {
 	"feed_points": "饲点",
+	"beast_blood": "兽血",
+	"beast_bone": "兽骨",
+	"venom_sac": "毒囊",
+	"moon_dew": "月华露",
 }
 
 const OUTCOMES := {

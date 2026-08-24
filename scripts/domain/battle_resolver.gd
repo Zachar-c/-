@@ -5,6 +5,7 @@ const DeckBuilderScript = preload("res://scripts/domain/deck_builder.gd")
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
+const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -236,7 +237,7 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 		battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - punch_damage)
 	battle["log"].append(log_entry)
 	var next_state := state.append_event(_event(state, "battle_basic_attack", {}, {}, "battle_basic_attack", []))
-	return _with_objective_result(battle, next_state)
+	return _with_objective_result(battle, next_state, catalog)
 
 
 static func _basic_dodge(battle: Dictionary, state: RunState) -> Dictionary:
@@ -310,7 +311,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			log_entry["id"] = "gu_no_combat_effect"
 	battle["log"].append(log_entry)
 	var next_state := state.append_event(_event(state, "battle_use_gu", {"essence": state.essence}, after, "battle_gu_%s" % gu_id, [gu_id]))
-	return _with_objective_result(battle, next_state)
+	return _with_objective_result(battle, next_state, catalog)
 
 
 static func _use_inheritance(battle: Dictionary, action: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
@@ -326,7 +327,7 @@ static func _use_inheritance(battle: Dictionary, action: Dictionary, state: RunS
 	_add_flag(battle, str(move["special_buff"]))
 	battle["log"].append({"id": "inheritance_used", "move_id": move_id})
 	var next_state := state.append_event(_event(state, "battle_use_inheritance", {}, {}, "battle_inheritance_%s" % move_id, [move_id]))
-	return _with_objective_result(battle, next_state)
+	return _with_objective_result(battle, next_state, catalog)
 
 
 static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
@@ -619,12 +620,19 @@ static func _can_retreat(battle: Dictionary) -> bool:
 	return can_retreat(str(battle["terrain"]), int(battle["pursuit"]), int(battle["enemy_control"]))
 
 
-static func _with_objective_result(battle: Dictionary, state: RunState) -> Dictionary:
+static func _with_objective_result(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	if str(battle["objective"]) == "delay" and int(battle["delay_progress"]) >= int(battle["delay_needed"]):
-		return _result(battle, state, true, "victory", ["objective_delayed"])
+		return _victory_with_loot(battle, state, catalog, ["objective_delayed"])
 	if str(battle["objective"]) == "defeat" and int(battle["enemy_hp"]) <= 0:
-		return _result(battle, state, true, "victory", ["enemy_defeated"])
+		return _victory_with_loot(battle, state, catalog, ["enemy_defeated"])
 	return _result(battle, state, false, "ongoing", [])
+
+
+static func _victory_with_loot(battle: Dictionary, state: RunState, catalog: Dictionary, feeds: Array[String]) -> Dictionary:
+	var settled := LootResolverScript.settle_victory(battle, state, catalog)
+	var with_loot := battle.duplicate(true)
+	with_loot["loot"] = settled["loot"]
+	return _result(with_loot, settled["state"], true, "victory", feeds)
 
 
 static func _event(state: RunState, action: String, before: Dictionary, after: Dictionary, reason: String, targets: Array) -> Dictionary:

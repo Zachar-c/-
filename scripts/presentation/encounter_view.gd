@@ -147,6 +147,7 @@ func _result_text(entry: Dictionary) -> String:
 		"refinement_result": return "炉火已起，炼制结果记入行迹。"
 		"cultivation_result": return "你调整气息，修行所得已稳住。"
 		"lifespan_milestone_gained": return "寿元见长：里程碑入账十载。"
+		"battle_loot": return "此战缴获：%s。" % str(entry.get("changes", {}).get("loot_display", "些许材料"))
 		"action_rejected": return "此举条件不足，局势没有改变。"
 		_: return "行动已留下结果，你仍可继续处置此地。"
 

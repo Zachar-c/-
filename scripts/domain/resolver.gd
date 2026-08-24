@@ -90,6 +90,10 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _shop_lifespan_deal(state, command, catalog)
 		"shop_barter":
 			return _shop_barter(state, command, catalog)
+		"scavenge":
+			return _scavenge(state, command, catalog)
+		"sell_material":
+			return _sell_material(state, command, catalog)
 		"record_neutral_npc_kill":
 			return _record_neutral_npc_kill(state, catalog)
 		"wash_notoriety":
@@ -226,32 +230,72 @@ static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary
 	return _apply_combine_recipe(state, command, catalog, recipe)
 
 
+static func _recipe_material_pieces(material_cost: Dictionary) -> int:
+	var total := 0
+	for material_id in material_cost:
+		total += int(material_cost[material_id])
+	return total
+
+
+static func _has_all_materials(state: RunState, material_cost: Dictionary) -> bool:
+	for material_id in material_cost:
+		if int(state.materials.get(str(material_id), 0)) < int(material_cost[material_id]):
+			return false
+	return true
+
+
+static func _spend_materials(state: RunState, material_cost: Dictionary) -> RunState:
+	if material_cost.is_empty():
+		return state
+	var remaining := state.materials.duplicate(true)
+	var targets: Array[String] = []
+	for material_id_value in material_cost:
+		var material_id := str(material_id_value)
+		remaining[material_id] = int(remaining.get(material_id, 0)) - int(material_cost[material_id_value])
+		targets.append(material_id)
+	var next := state.append_event(_event(
+		state,
+		"refine_gu",
+		{"materials": state.materials},
+		{"materials": remaining},
+		"refinement_materials_spent",
+		state.current_node_id,
+		targets
+	))
+	next.materials = remaining
+	return next
+
+
 static func _apply_combine_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
 	var inputs: Array = recipe.get("input_gu_ids", [])
-	if inputs.size() > SoulCapacityScript.craft_cap(state):
+	var material_cost: Dictionary = recipe.get("materials", {})
+	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
 	if not _has_all_gu(state.refined_gu_ids, inputs):
 		return _rejected(state, "missing_refinement_input")
+	if not _has_all_materials(state, material_cost):
+		return _rejected(state, "missing_refinement_material")
+	var paid := _spend_materials(state, material_cost)
 	# The result is determined from the run seed and immutable event position.
 	# Commands never accept client supplied dice values.
-	var roll := _refinement_roll(state, str(recipe.get("id", "")))
+	var roll := _refinement_roll(paid, str(recipe.get("id", "")))
 	if roll > int(recipe.get("success_roll_max", 100)):
-		var destroyed := _without_gu(state.refined_gu_ids, inputs)
-		var unequipped := _without_gu(state.equipped_gu_ids, inputs)
-		var failed := state.append_event(_event(
-			state,
+		var destroyed := _without_gu(paid.refined_gu_ids, inputs)
+		var unequipped := _without_gu(paid.equipped_gu_ids, inputs)
+		var failed := paid.append_event(_event(
+			paid,
 			"refine_gu",
-			{"gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids},
+			{"gu_ids": paid.gu_ids, "refined_gu_ids": paid.refined_gu_ids},
 			{"gu_ids": destroyed, "refined_gu_ids": destroyed, "equipped_gu_ids": unequipped},
 			"refinement_failed_destroyed_inputs",
-			state.current_node_id,
+			paid.current_node_id,
 			inputs
 		))
 		return _accepted(failed)
-	var blocked := _reject_deck_full(state, catalog, [str(recipe["output_gu_id"])], inputs)
+	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
 	if not blocked.is_empty():
 		return blocked
-	return _add_gu_transaction(state, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])])
+	return _add_gu_transaction(paid, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])])
 
 
 static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
@@ -263,16 +307,20 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	if bool(recipe.get("locked", false)) and not _codex_unlocks_recipe(state, recipe):
 		return _rejected(state, "refinement_recipe_locked")
 	var inputs: Array = recipe.get("input_gu_ids", [])
-	if inputs.size() > SoulCapacityScript.craft_cap(state):
+	var material_cost: Dictionary = recipe.get("materials", {})
+	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
-	var blocked := _reject_deck_full(state, catalog, [str(recipe["output_gu_id"])], inputs)
+	if not _has_all_materials(state, material_cost):
+		return _rejected(state, "missing_refinement_material")
+	var paid := _spend_materials(state, material_cost)
+	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
 	if not blocked.is_empty():
 		return blocked
-	var selected := _selected_input_instance_ids(state, command, inputs)
+	var selected := _selected_input_instance_ids(paid, command, inputs)
 	if selected.is_empty():
-		return _rejected(state, "missing_refinement_input")
-	var instances := state.gu_instances.duplicate(true)
-	var aperture := state.cave_aperture.duplicate(true)
+		return _rejected(paid, "missing_refinement_input")
+	var instances := paid.gu_instances.duplicate(true)
+	var aperture := paid.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
 	for instance_id_value in selected:
 		var instance_id := str(instance_id_value)
@@ -288,13 +336,13 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	}
 	stored.append(output_instance_id)
 	aperture["stored_gu_instance_ids"] = stored
-	var next := state.append_event(_event(
-		state,
+	var next := paid.append_event(_event(
+		paid,
 		"refine_gu",
-		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"gu_instances": paid.gu_instances, "cave_aperture": paid.cave_aperture},
 		{"gu_instances": instances, "cave_aperture": aperture},
 		"refinement_succeeded",
-		state.current_node_id,
+		paid.current_node_id,
 		selected + [output_instance_id, "recipe:%s" % str(recipe["id"])]
 	))
 	next.sync_legacy_gu_projections()
@@ -319,7 +367,9 @@ static func _selected_input_instance_ids(state: RunState, command: Dictionary, i
 		var definitions: Array[String] = []
 		for instance_id_value in selected:
 			definitions.append(str(state.gu_instances[str(instance_id_value)]["definition_id"]))
-		return definitions if _same_multiset(definitions, inputs) else ([] as Array[String])
+		if not _same_multiset(definitions, inputs):
+			return ([] as Array[String])
+		return selected
 	for required_id_value in inputs:
 		var required_id := str(required_id_value)
 		var found := ""
@@ -1403,6 +1453,68 @@ static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 	var cap := int(effects.get("price_cap_pct", 60))
 	var uplift := mini(cap, pct * notoriety(state))
 	return ceili(float(base) * (1.0 + float(uplift) / 100.0))
+
+
+static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> int:
+	var multiplier := 1.0
+	if notoriety(state) > 0:
+		var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+		var pct := int(effects.get("price_pct_per_point", 10))
+		var cap := int(effects.get("price_cap_pct", 60))
+		var uplift := mini(cap, pct * notoriety(state))
+		multiplier = 1.0 - float(uplift) / 100.0
+	return maxi(1, int(floor(float(base) * multiplier)))
+
+
+static func _scavenge(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	if str(state.node_flags.get("boss_defeated", "")) != "true":
+		return _rejected(state, "boss_undefeated")
+	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
+	var recipe_id := str(boss.get("scavenge_recipe", ""))
+	if recipe_id.is_empty() or not catalog.get("refinement_by_id", {}).has(recipe_id):
+		return _rejected(state, "no_scavenge_recipe")
+	if state.global_codex_ids.has(recipe_id):
+		return _rejected(state, "scavenge_already_done")
+	var codex_after: Array[String] = state.global_codex_ids.duplicate()
+	codex_after.append(recipe_id)
+	var next := state.append_event(_event(
+		state,
+		"scavenge",
+		{"global_codex_ids": state.global_codex_ids},
+		{"global_codex_ids": codex_after},
+		"scavenge_recipe_unlocked",
+		state.current_node_id,
+		[recipe_id]
+	))
+	next.global_codex_ids = codex_after
+	return _accepted(next)
+
+
+static func _sell_material(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var material_id := str(command.get("material_id", ""))
+	var materials: Dictionary = catalog.get("loot_tables", {}).get("materials", {})
+	if not materials.has(material_id):
+		return _rejected(state, "unknown_material")
+	var owned := int(state.materials.get(material_id, 0))
+	if owned <= 0:
+		return _rejected(state, "no_material_to_sell")
+	var base := int(materials[material_id].get("value", 1))
+	var price := sell_price_for(catalog, state, base)
+	var stone_after := state.stone + price * owned
+	var remaining := state.materials.duplicate(true)
+	remaining[material_id] = 0
+	var next := state.append_event(_event(
+		state,
+		"sell_material",
+		{"stone": state.stone, "materials": state.materials},
+		{"stone": stone_after, "materials": remaining},
+		"material_sold",
+		state.current_node_id,
+		[material_id]
+	))
+	next.stone = stone_after
+	next.materials = remaining
+	return _accepted(next)
 
 
 static func _reject_deck_full(state: RunState, catalog: Dictionary, added_gu_ids: Array, removed_gu_ids: Array) -> Dictionary:

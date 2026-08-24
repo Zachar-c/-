@@ -408,11 +408,21 @@ func _return_to_map() -> void:
 func _finish_battle_in_session(outcome: String) -> void:
 	var kill_source := str(current_battle.get("kill_source", ""))
 	var enemy_kind := str(current_battle.get("enemy_kind", ""))
+	var battle_loot: Dictionary = current_battle.get("loot", {})
 	current_battle = {}
 	current_session = current_session.duplicate(true)
 	current_session["phase"] = "post_battle"
 	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
 	var results := state.encounter_results.duplicate(true)
+	if outcome == "victory" and not battle_loot.is_empty():
+		var loot_labels: Array[String] = []
+		for material_value in battle_loot.get("material_ids", []):
+			loot_labels.append(DisplayText.material(str(material_value)))
+		var loot_gu := str(battle_loot.get("gu_id", ""))
+		if not loot_gu.is_empty():
+			loot_labels.append(DisplayText.gu(loot_gu))
+		if not loot_labels.is_empty():
+			results.append(ResultFeedScript.entry("battle", "battle_loot", {"loot_display": "、".join(loot_labels)}, []))
 	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
 		results.append(ResultFeedScript.entry("battle", "lifespan_milestone_gained", {}, []))
 	results.append(feed)

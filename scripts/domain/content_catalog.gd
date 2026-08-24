@@ -23,12 +23,19 @@ static func load_all() -> Dictionary:
 	var pacing := _load_object("res://data/pacing.json")
 	var aptitude := _load_object("res://data/aptitude.json")
 	var schools := _load_object("res://data/schools.json")
+	var loot_tables := _load_object("res://data/loot_tables.json")
+	var loot_materials: Dictionary = loot_tables.get("materials", {})
+	var material_ids: Array[String] = ["feed_points"]
+	for material_id in loot_materials:
+		material_ids.append(str(material_id))
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
 		"cards": cards,
 		"card_by_id": _index_by_id(cards),
-		"material_ids": ["feed_points"],
+		"material_ids": material_ids,
+		"loot_tables": loot_tables,
+		"material_by_id": loot_tables.get("materials", {}),
 		"inheritances": inheritances,
 		"npcs": _load_array("res://data/npcs.json"),
 		"refinement_recipes": recipes,
@@ -173,6 +180,27 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("recipe %s risk hint references unknown tag %s" % [recipe["id"], required_tag])
 			if str(rule.get("text", "")).is_empty():
 				errors.append("recipe %s risk hint needs non-empty text" % recipe["id"])
+	var loot_tables: Dictionary = catalog.get("loot_tables", {})
+	var materials: Dictionary = loot_tables.get("materials", {})
+	for material_id in materials:
+		if int(materials[material_id].get("value", 0)) < 1:
+			errors.append("material %s needs a positive value" % material_id)
+	for tier_key in loot_tables.get("loot", {}):
+		var tier: Dictionary = loot_tables["loot"][tier_key]
+		if int(tier.get("material_count", 0)) < 0:
+			errors.append("loot tier %s has a negative material count" % tier_key)
+		var chance := int(tier.get("gu_chance_pct", 0))
+		if chance < 0 or chance > 100:
+			errors.append("loot tier %s has invalid gu chance %d" % [tier_key, chance])
+		for material_id_value in tier.get("material_pool", []):
+			if not materials.has(str(material_id_value)):
+				errors.append("loot tier %s references unknown material %s" % [tier_key, material_id_value])
+		for gu_id_value in tier.get("gu_pool", []):
+			if not gu_by_id.has(str(gu_id_value)):
+				errors.append("loot tier %s references unknown gu %s" % [tier_key, gu_id_value])
+		var scavenge_recipe := str(tier.get("scavenge_recipe", ""))
+		if not scavenge_recipe.is_empty() and not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
+			errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
 	return errors
 
 

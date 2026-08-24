@@ -3,6 +3,7 @@ extends RefCounted
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
+const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -10,6 +11,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 	var cards: Array[Dictionary] = []
 	if state.is_terminal():
 		return cards
+	_append_scavenge_card_if_due(cards, state, node, catalog)
 	if str(node.get("id", "")) == "caravan_missing_goods":
 		_append_caravan_dispute_cards(cards, state)
 		_append_leave_card(cards, state)
@@ -408,6 +410,7 @@ static func _known_outcome_line(outcome_id: String) -> String:
 static func _append_shop_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
 	for offer in catalog.get("shop_offers", []):
 		_append_shop_offer_card(cards, state, catalog, offer)
+	_append_material_sell_cards(cards, state, catalog)
 	_append_leave_card(cards, state)
 
 
@@ -665,6 +668,47 @@ static func _append_standard_card(cards: Array[Dictionary], state: RunState, act
 		"remedy_hints": remedies,
 		"command": _command_for_standard(node, action_id),
 	}))
+
+
+static func _append_scavenge_card_if_due(cards: Array[Dictionary], state: RunState, node: Dictionary, catalog: Dictionary) -> void:
+	if str(node.get("id", "")) != "final_boss_stand":
+		return
+	if str(state.node_flags.get("boss_defeated", "")) != "true":
+		return
+	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
+	var recipe_id := str(boss.get("scavenge_recipe", ""))
+	if recipe_id.is_empty() or state.global_codex_ids.has(recipe_id):
+		return
+	cards.append(_card(state, {
+		"id": "scavenge",
+		"title": "搜刮尸骸",
+		"summary": "翻检尊主遗骸，或可寻得蛊方。",
+		"executable": true,
+		"known_risk": [],
+		"expected_gain": ["获得蛊方（录入全局图鉴）。"],
+		"command": {"type": "scavenge", "node_id": str(state.current_node_id)},
+	}))
+
+
+static func _append_material_sell_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
+	var materials: Dictionary = state.materials
+	for material_id in materials:
+		var owned := int(materials[material_id])
+		if owned <= 0:
+			continue
+		var value := int(catalog.get("material_by_id", {}).get(material_id, {}).get("value", 0))
+		if value <= 0:
+			continue
+		var price := ResolverScript.sell_price_for(catalog, state, value)
+		cards.append(_card(state, {
+			"id": "sell.%s" % material_id,
+			"title": "变卖%s" % DisplayText.material(str(material_id)),
+			"summary": "钱货两讫，%d 份尽数出手。" % owned,
+			"executable": true,
+			"known_risk": [],
+			"expected_gain": ["元石 %d" % (price * owned)],
+			"command": {"type": "sell_material", "material_id": str(material_id)},
+		}))
 
 
 static func _append_leave_card(cards: Array[Dictionary], state: RunState) -> void:
