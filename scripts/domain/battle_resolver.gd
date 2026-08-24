@@ -62,6 +62,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"available_gu_ids": state.refined_gu_ids.duplicate(),
 		"soul_ops_cap": SoulCapacityScript.battle_ops_cap(state),
 		"first_mover": str(encounter.get("first_mover", "player")),
+		"blood_stacks": 0,
 		"flags": [],
 		"revealed_reactions": [],
 		"visible_intent": intent,

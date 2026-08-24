@@ -43,6 +43,7 @@ var materials: Dictionary = {}
 var relic_ids: Array[String] = []
 var terminal_state: String = "active"
 var global_codex_ids: Array[String] = []
+var school: String = ""
 
 
 static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
@@ -63,6 +64,8 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"soul_control_limit": 2,
 		"notorious": 0,
 		"speed": 2,
+		"force_power": 0,
+		"force_imprints": [],
 		"statuses": {},
 	}
 	state.cave_aperture = {
@@ -209,6 +212,7 @@ func to_save_data() -> Dictionary:
 		"materials": materials.duplicate(true),
 		"relic_ids": relic_ids.duplicate(),
 		"global_codex_ids": global_codex_ids.duplicate(),
+		"school": school,
 		"terminal_state": terminal_state,
 	}
 
@@ -272,6 +276,7 @@ func _copy() -> RunState:
 	copy.materials = materials.duplicate(true)
 	copy.relic_ids = relic_ids.duplicate()
 	copy.global_codex_ids = global_codex_ids.duplicate()
+	copy.school = school
 	copy.terminal_state = terminal_state
 	return copy
 
@@ -299,7 +304,7 @@ func _apply_after(after: Dictionary) -> void:
 			"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
 			"relations", "pursuit", "ascension", "known_facts", "current_node_id",
 			"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos",
-			"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials", "relic_ids", "global_codex_ids", "terminal_state",
+			"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials", "relic_ids", "global_codex_ids", "school", "terminal_state",
 		]:
 			set(key, _copy_value(after[key]))
 

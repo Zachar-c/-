@@ -27,7 +27,8 @@
       "light",
       "scout",
       "subtle"
-    ]
+    ],
+    "school": "qi"
   },
   {
     "id": "trail_eye_gu",
@@ -54,7 +55,8 @@
       "scout",
       "tracking",
       "reveal"
-    ]
+    ],
+    "school": "qi"
   },
   {
     "id": "blood_moss_gu",
@@ -82,7 +84,8 @@
       "blood",
       "healing",
       "wood"
-    ]
+    ],
+    "school": "blood"
   },
   {
     "id": "thorn_whip_gu",
@@ -112,7 +115,8 @@
       "wood",
       "attack",
       "control"
-    ]
+    ],
+    "school": "force"
   },
   {
     "id": "mist_step_gu",
@@ -139,7 +143,8 @@
       "movement",
       "escape",
       "mist"
-    ]
+    ],
+    "school": "force"
   },
   {
     "id": "venom_thread_gu",
@@ -166,7 +171,8 @@
       "poison",
       "control",
       "escape"
-    ]
+    ],
+    "school": "qi"
   },
   {
     "id": "stone_shell_gu",
@@ -195,7 +201,8 @@
       "defense",
       "earth",
       "guard"
-    ]
+    ],
+    "school": "force"
   },
   {
     "id": "shadow_veil_gu",
@@ -222,7 +229,8 @@
       "stealth",
       "escape",
       "shadow"
-    ]
+    ],
+    "school": "qi"
   },
   {
     "id": "pulse_drum_gu",
@@ -249,7 +257,8 @@
       "tempo",
       "control",
       "sound"
-    ]
+    ],
+    "school": "qi"
   },
   {
     "id": "moonlight_gu",
@@ -276,7 +285,8 @@
       "light",
       "attack",
       "moon"
-    ]
+    ],
+    "school": "force"
   },
   {
     "id": "moon_glow_gu",
@@ -304,7 +314,8 @@
       "light",
       "attack",
       "moon"
-    ]
+    ],
+    "school": "blood"
   },
   {
     "id": "phantom_moon_gu",
@@ -332,7 +343,8 @@
       "light",
       "stealth",
       "moon"
-    ]
+    ],
+    "school": "qi"
   },
   {
     "id": "moon_shadow_gu",
@@ -362,6 +374,7 @@
       "shadow",
       "movement",
       "moon"
-    ]
+    ],
+    "school": "force"
   }
 ]

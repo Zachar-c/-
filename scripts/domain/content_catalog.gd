@@ -22,6 +22,7 @@ static func load_all() -> Dictionary:
 	var deck := _load_object("res://data/deck.json")
 	var pacing := _load_object("res://data/pacing.json")
 	var aptitude := _load_object("res://data/aptitude.json")
+	var schools := _load_object("res://data/schools.json")
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
@@ -44,6 +45,7 @@ static func load_all() -> Dictionary:
 		"deck": deck,
 		"pacing": pacing,
 		"aptitude": aptitude,
+		"schools": schools,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -55,6 +57,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	var card_by_id: Dictionary = catalog.get("card_by_id", {})
 	var material_ids: Array = catalog.get("material_ids", [])
 	for gu in catalog.get("gu", []):
+		if not gu.has("school"):
+			errors.append("gu %s missing school" % gu["id"])
+		elif not str(gu["school"]) in ["blood", "qi", "force"]:
+			errors.append("gu %s invalid school %s" % [gu["id"], gu["school"]])
 		for material_id in gu.get("feeding_need", {}):
 			if not material_ids.has(material_id):
 				errors.append("gu %s has unknown feeding material %s" % [gu["id"], material_id])
@@ -142,6 +148,14 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	for rank_value in aptitude_data.get("rank_tier", {}).values():
 		if not base_map.has(str(rank_value)):
 			errors.append("aptitude rank_tier references unknown tier %s" % rank_value)
+	var schools_data: Dictionary = catalog.get("schools", {})
+	for school_id in schools_data:
+		var starters: Array = schools_data[school_id].get("starter_gu_ids", [])
+		if starters.is_empty():
+			errors.append("school %s needs starter gu ids" % school_id)
+		for starter in starters:
+			if not gu_by_id.has(str(starter)):
+				errors.append("school %s starter references missing gu %s" % [school_id, starter])
 	var gu_tags: Array[String] = []
 	for gu in catalog.get("gu", []):
 		for tag_value in gu.get("tags", []):

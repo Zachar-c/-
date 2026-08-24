@@ -27,6 +27,7 @@ var dialogue_replies: Array[Dictionary] = []
 var last_feedback := ""
 var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
+var _selected_school := "force"
 var _views: Dictionary = {}
 
 
@@ -39,13 +40,14 @@ func _initialize_view_flow() -> void:
 	_show_title()
 
 
-func start_new_run(seed: int) -> void:
+func start_new_run(seed: int, school: String = "") -> void:
 	catalog = ContentCatalog.load_all()
 	meta = SaveRepository.load_meta_file()
 	if meta == null:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
 	state = RunState.new_run(seed, meta)
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
+	_inject_school_starters(school)
 	route = MapGenerator.build(seed, seed == 101)
 	current_node = {}
 	current_battle = {}
@@ -254,9 +256,38 @@ func _show_title() -> void:
 		_show_only("Title")
 
 
+func _inject_school_starters(school: String) -> void:
+	if school.is_empty():
+		return
+	state.school = school
+	var schools: Dictionary = catalog.get("schools", {})
+	var starters: Array = schools.get(school, {}).get("starter_gu_ids", [])
+	for starter_value in starters:
+		var gu_id := str(starter_value)
+		if state.refined_gu_ids.has(gu_id):
+			continue
+		var instance_id := _next_gu_instance_id(state)
+		state.gu_instances[instance_id] = {
+			"instance_id": instance_id,
+			"definition_id": gu_id,
+			"state": "refined",
+		}
+		state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+		state.sync_legacy_gu_projections()
+
+
+func _next_gu_instance_id(state: RunState) -> String:
+	var highest := 0
+	for key_value in state.gu_instances:
+		var text := str(key_value)
+		if text.begins_with("gu_"):
+			highest = maxi(highest, int(text.trim_prefix("gu_")))
+	return "gu_%03d" % (highest + 1)
+
+
 func _start_run_from_title() -> void:
 	if _view_name == "Title":
-		start_new_run(101)
+		start_new_run(101, _selected_school)
 
 
 func _show_map() -> void:
@@ -324,6 +355,7 @@ func _ensure_views() -> void:
 	_add_view(host, "Battle", BATTLE_SCENE.instantiate())
 	_add_view(host, "Ending", ENDING_SCENE.instantiate())
 	title.start_requested.connect(_start_run_from_title)
+	title.school_selected.connect(func(school: String): _selected_school = school)
 	_views["Map"].node_selected.connect(func(node_id: String): submit_command({"type": "travel", "node_id": node_id}))
 	_views["Map"].action_submitted.connect(submit_command)
 	_views["Encounter"].command_submitted.connect(submit_command)

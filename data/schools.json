@@ -1,0 +1,17 @@
+{
+  "blood": {
+    "name": "血道",
+    "summary": "低阶堆叠、气血博弈；低阶血道蛊可累加炼成高阶。",
+    "starter_gu_ids": ["small_light_gu", "blood_moss_gu"]
+  },
+  "qi": {
+    "name": "气道",
+    "summary": "材料化用、工具爆发；耗材换效果，用完即销毁。",
+    "starter_gu_ids": ["small_light_gu", "trail_eye_gu"]
+  },
+  "force": {
+    "name": "力道",
+    "summary": "低费高频、永久增强；肉身增益永久绑定角色。",
+    "starter_gu_ids": ["small_light_gu", "stone_shell_gu"]
+  }
+}

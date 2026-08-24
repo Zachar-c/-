@@ -98,6 +98,8 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _record_boss_defeated(state, catalog)
 		"rest":
 			return _rest(state, catalog)
+		"gain_force_power":
+			return _gain_force_power(state, command, catalog)
 		"accept_event":
 			return _accept_event(state, command, catalog)
 		_:
@@ -1248,6 +1250,29 @@ static func _grant_lifespan_milestone(state: RunState, catalog: Dictionary, mile
 		state.current_node_id,
 		[milestone_id]
 	))
+
+
+static func _gain_force_power(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var source_id := str(command.get("source_id", ""))
+	if source_id.is_empty():
+		return _rejected(state, "missing_force_source")
+	var cultivator := state.cultivator.duplicate(true)
+	var imprints: Array = cultivator.get("force_imprints", []).duplicate()
+	if imprints.has(source_id):
+		return _rejected(state, "force_imprint_repeated")
+	imprints.append(source_id)
+	cultivator["force_imprints"] = imprints
+	cultivator["force_power"] = int(cultivator.get("force_power", 0)) + int(command.get("amount", 1))
+	var next := state.append_event(_event(
+		state,
+		"gain_force_power",
+		{"cultivator": state.cultivator},
+		{"cultivator": cultivator},
+		"force_power_gained",
+		state.current_node_id,
+		[source_id]
+	))
+	return _accepted(next)
 
 
 static func _rest(state: RunState, catalog: Dictionary) -> Dictionary:
