@@ -46,6 +46,7 @@ static func load_all() -> Dictionary:
 		"relic_by_id": _index_by_id(relics),
 		"events": events,
 		"event_by_id": _index_by_id(events),
+		"nodes": _load_object("res://data/nodes.json").get("nodes", []),
 		"shop_offers": shop_offers,
 		"shop_offer_by_id": _index_by_id(shop_offers),
 		"reputation": reputation,

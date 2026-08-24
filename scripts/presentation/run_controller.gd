@@ -200,17 +200,7 @@ func _travel_to(node_id: String) -> Dictionary:
 
 
 func _start_battle() -> void:
-	var enemy_kind := "beast_swarm"
-	if current_node.get("id", "") == "neutral_wanderer" or current_node.get("id", "") == "greedy_wanderer":
-		enemy_kind = "greedy_wanderer"
-	elif current_node.get("id", "") == "faction_guard_checkpoint" or current_node.get("id", "") == "caravan_missing_goods":
-		enemy_kind = "faction_guard"
-	if current_node.get("id", "") == "neutral_wanderer":
-		enemy_kind = "neutral_stone_wanderer"
-	elif current_node.get("id", "") == "beast_swarm_pass":
-		enemy_kind = "ridge_hound"
-	elif current_node.get("id", "") == "final_boss_stand":
-		enemy_kind = "miasma_vein_lord"
+	var enemy_kind := str(current_node.get("enemy_kind", "beast_swarm"))
 	var first_mover := "player"
 	var notorious := Resolver.notoriety(state)
 	if notorious > 0:
@@ -296,6 +286,13 @@ static func roll_seed() -> int:
 	return rng.randi_range(1, 2147483647)
 
 
+static func _run_end_outcome(outcome: String) -> String:
+	match outcome:
+		"success": return "won"
+		"risky_success": return "risky"
+	return "dead"
+
+
 func _show_map() -> void:
 	_view_name = "Map"
 	if _views.has("Map"):
@@ -326,7 +323,7 @@ func _show_battle() -> void:
 
 
 func _show_ending(outcome: Dictionary) -> void:
-	_record_run_end("won" if str(outcome.get("outcome", "")) == "success" else "dead")
+	_record_run_end(_run_end_outcome(str(outcome.get("outcome", ""))))
 	_view_name = "Ending"
 	if _views.has("Ending"):
 		_show_only("Ending")

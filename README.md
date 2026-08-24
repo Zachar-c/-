@@ -23,10 +23,10 @@
 
 ## 运行原型
 
-南疆冒烟版是一个本地可复现的 Godot 原型。固定种子 `101` 会生成包含商队纠纷、地脉争夺和升仙窗口的验证路线；没有网络或云端服务时，交涉仍使用本地模板继续。
+南疆冒烟版是一个本地可复现的 Godot 原型。每次开局自动生成新种子，路线、掉落与事件随种子分化；种子 `101` 保留为固定演示/回归路线（含商队纠纷、地脉争夺和升仙窗口）。没有网络或云端服务时，交涉仍使用本地模板继续。
 
-- 目标引擎：Godot `4.6.2`。
-- 测试框架：仓库已包含 GUT `9.x` 于 `addons/gut/`。
+- 目标引擎：Godot `4.7.2`。
+- 测试框架：仓库已包含 GUT `9.6.1` 于 `addons/gut/`。
 - 启动：`powershell -ExecutionPolicy Bypass -File tools/play.ps1`。
 - 单元测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite unit`。
 - 集成测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite integration`。

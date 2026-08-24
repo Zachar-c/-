@@ -97,6 +97,12 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	name.text = "我 · 南疆散修"
 	name.add_theme_font_size_override("font_size", 26)
 	column.add_child(name)
+	if _is_first_battle(state):
+		var tip := Label.new()
+		tip.text = "初战指引：出手次数上限=魂魄；每回合回复真元；速度高于敌招时可凭「闪避」豁免。"
+		tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		tip.add_theme_color_override("font_color", Color("e7c883"))
+		column.add_child(tip)
 	var life := ProgressBar.new()
 	life.max_value = maxi(1, int(state.max_health))
 	life.value = int(state.health)
@@ -126,12 +132,22 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	clues.add_theme_color_override("font_color", Color("c6d3cf"))
 	column.add_child(clues)
 	if not battle.get("log", []).is_empty():
+		var log_scroll := ScrollContainer.new()
+		log_scroll.custom_minimum_size = Vector2(0, 110)
+		log_scroll.custom_maximum_size = Vector2(0, 190)
+		column.add_child(log_scroll)
 		var log := RichTextLabel.new()
 		log.bbcode_enabled = true
 		log.fit_content = true
-		log.custom_minimum_size = Vector2(0, 110)
 		log.text = _battle_log(battle.get("log", []))
-		column.add_child(log)
+		log_scroll.add_child(log)
+
+
+func _is_first_battle(state: RunState) -> bool:
+	for entry in state.event_log:
+		if str(entry.get("action", "")) == "battle_finished":
+			return false
+	return true
 
 
 func _append_enemy_block(column: VBoxContainer, battle: Dictionary) -> void:
@@ -141,11 +157,13 @@ func _append_enemy_block(column: VBoxContainer, battle: Dictionary) -> void:
 	name.add_theme_color_override("font_color", Color("e8b4a4"))
 	column.add_child(name)
 	var intent := Label.new()
-	var label := str(battle.get("visible_intent", {}).get("label", "正在观察"))
-	intent.text = "意图：%s" % label
+	var intent_data: Dictionary = battle.get("visible_intent", {})
+	var intent_label := str(intent_data.get("label", "正在观察"))
+	var intent_speed := int(intent_data.get("speed", 0))
+	intent.text = "意图：%s · 速 %d" % [intent_label, intent_speed] if intent_speed > 0 else "意图：%s" % intent_label
 	intent.add_theme_font_size_override("font_size", 22)
 	intent.add_theme_color_override("font_color", Color("e8b4a4"))
-	intent.tooltip_text = "敌方已露出的攻势倾向，仍可能藏有后手。"
+	intent.tooltip_text = "敌方已露出的攻势倾向（速=出手速度）；速度低于我方闪避出手时，可凭基础动作「闪避」豁免此招。"
 	column.add_child(intent)
 	var life := ProgressBar.new()
 	life.max_value = maxi(1, int(battle.get("enemy_max_hp", 1)))

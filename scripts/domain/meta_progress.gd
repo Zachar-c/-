@@ -10,6 +10,7 @@ var unlocked_random_outcomes: Dictionary = {}
 var statistics: Dictionary = {
 	"runs_started": 0,
 	"runs_won": 0,
+	"runs_risky": 0,
 	"deaths": 0,
 }
 
@@ -25,16 +26,23 @@ func record_run_end(run: RunState, outcome: String) -> RefCounted:
 		if not next.gu_codex_ids.has(gu_id):
 			next.gu_codex_ids.append(gu_id)
 	for event in run.event_log:
-		if str(event.get("reason", "")) != "refinement_succeeded":
-			continue
-		for target_value in event.get("targets", []):
-			var target := str(target_value)
-			if target.begins_with("recipe:"):
-				var recipe_id := target.trim_prefix("recipe:")
-				if not next.recipe_codex_ids.has(recipe_id):
-					next.recipe_codex_ids.append(recipe_id)
+		var reason := str(event.get("reason", ""))
+		if reason == "refinement_succeeded":
+			for target_value in event.get("targets", []):
+				var target := str(target_value)
+				if target.begins_with("recipe:"):
+					var recipe_id := target.trim_prefix("recipe:")
+					if not next.recipe_codex_ids.has(recipe_id):
+						next.recipe_codex_ids.append(recipe_id)
+		elif reason == "scavenge_recipe_unlocked":
+			for target_value in event.get("targets", []):
+				var scavenged_recipe := str(target_value)
+				if not next.recipe_codex_ids.has(scavenged_recipe):
+					next.recipe_codex_ids.append(scavenged_recipe)
 	if outcome == "won":
 		next.statistics["runs_won"] = int(next.statistics.get("runs_won", 0)) + 1
+	elif outcome == "risky":
+		next.statistics["runs_risky"] = int(next.statistics.get("runs_risky", 0)) + 1
 	elif outcome == "dead":
 		next.statistics["deaths"] = int(next.statistics.get("deaths", 0)) + 1
 	return next
