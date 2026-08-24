@@ -20,6 +20,7 @@ static func load_all() -> Dictionary:
 	var shop_offers: Array = _load_object("res://data/shops.json").get("offers", [])
 	var reputation := _load_object("res://data/reputation.json")
 	var deck := _load_object("res://data/deck.json")
+	var pacing := _load_object("res://data/pacing.json")
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
@@ -40,6 +41,7 @@ static func load_all() -> Dictionary:
 		"shop_offer_by_id": _index_by_id(shop_offers),
 		"reputation": reputation,
 		"deck": deck,
+		"pacing": pacing,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -119,6 +121,11 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	var raw_capacity: Variant = catalog.get("deck", {}).get("capacity", -1)
 	if not _is_integral(raw_capacity) or int(raw_capacity) < 1:
 		errors.append("deck capacity must be a positive integer")
+	var milestones: Dictionary = catalog.get("pacing", {}).get("lifespan_milestones", {})
+	for milestone_id in milestones:
+		var milestone_value: Variant = milestones[milestone_id]
+		if not _is_integral(milestone_value) or int(milestone_value) < 0:
+			errors.append("pacing lifespan_milestones.%s must be a non-negative integer" % milestone_id)
 	var gu_tags: Array[String] = []
 	for gu in catalog.get("gu", []):
 		for tag_value in gu.get("tags", []):

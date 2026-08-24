@@ -644,6 +644,7 @@ static func _settle_feeding(state: RunState, catalog: Dictionary) -> Dictionary:
 	if state.stone < cost:
 		return _rejected(state, "feeding_shortfall")
 	var flags := state.node_flags.duplicate(true)
+	var already_paid := str(flags.get("stage_one_ledger", "")) == "paid"
 	flags["stage_one_ledger"] = "paid"
 	var next := state.append_event(_event(
 		state,
@@ -653,6 +654,8 @@ static func _settle_feeding(state: RunState, catalog: Dictionary) -> Dictionary:
 		"stage_one_feeding_paid",
 		state.current_node_id
 	))
+	if not already_paid:
+		next = _grant_lifespan_milestone(next, catalog, "stage_one_ledger")
 	return _accepted(next)
 
 
@@ -1224,6 +1227,26 @@ static func _retreat(state: RunState) -> Dictionary:
 	return _accepted(next)
 
 
+static func _grant_lifespan_milestone(state: RunState, catalog: Dictionary, milestone_id: String) -> RunState:
+	var milestones: Dictionary = catalog.get("pacing", {}).get("lifespan_milestones", {})
+	if not milestones.has(milestone_id):
+		return state
+	var amount := int(milestones[milestone_id])
+	if amount <= 0:
+		return state
+	var cultivator := state.cultivator.duplicate(true)
+	cultivator["lifespan"] = int(cultivator.get("lifespan", 0)) + amount
+	return state.append_event(_event(
+		state,
+		"lifespan_milestone",
+		{"cultivator": state.cultivator},
+		{"cultivator": cultivator},
+		"lifespan_milestone_gained",
+		state.current_node_id,
+		[milestone_id]
+	))
+
+
 static func _rest(state: RunState, catalog: Dictionary) -> Dictionary:
 	if state.current_node_id != "rest_hollow":
 		return _rejected(state, "not_rest_node")
@@ -1248,7 +1271,8 @@ static func _rest(state: RunState, catalog: Dictionary) -> Dictionary:
 
 static func _record_boss_defeated(state: RunState, catalog: Dictionary) -> Dictionary:
 	var flags := state.node_flags.duplicate(true)
-	if str(flags.get("boss_defeated", "")) != "true":
+	var already_defeated := str(flags.get("boss_defeated", "")) == "true"
+	if not already_defeated:
 		flags["boss_defeated"] = "true"
 	var next := state.append_event(_event(
 		state,
@@ -1259,6 +1283,8 @@ static func _record_boss_defeated(state: RunState, catalog: Dictionary) -> Dicti
 		state.current_node_id,
 		[]
 	))
+	if not already_defeated:
+		next = _grant_lifespan_milestone(next, catalog, "boss_defeated")
 	return _accepted(next)
 
 
