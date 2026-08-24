@@ -15,6 +15,7 @@ const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dia
 
 var catalog: Dictionary
 var state: RunState
+var meta  # MetaProgress instance loaded from save, untyped for property access
 var route: Array[Dictionary] = []
 var current_node: Dictionary = {}
 var current_battle: Dictionary = {}
@@ -38,6 +39,9 @@ func _initialize_view_flow() -> void:
 func start_new_run(seed: int) -> void:
 	catalog = ContentCatalog.load_all()
 	state = RunState.new_run(seed)
+	meta = SaveRepository.load_meta_file()
+	if meta == null:
+		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
 	route = MapGenerator.build(seed, seed == 101)
 	current_node = {}
 	current_battle = {}
@@ -207,20 +211,21 @@ func _show_map() -> void:
 	_view_name = "Map"
 	if _views.has("Map"):
 		_show_only("Map")
-		_views["Map"].render(route, state)
+		_views["Map"].render(route, state, catalog, meta)
 
 
 func _show_encounter() -> void:
 	_view_name = "Encounter"
 	if _views.has("Encounter"):
 		_show_only("Encounter")
+		var knowledge: Dictionary = meta.unlocked_random_outcomes if meta != null else {}
 		_views["Encounter"].render_session(
 			current_node,
 			state,
 			current_session,
 			state.encounter_results,
 			last_result,
-			ActionPreviewServiceScript.preview_actions(state, current_node, catalog)
+			ActionPreviewServiceScript.preview_actions(state, current_node, catalog, knowledge)
 		)
 
 
@@ -232,6 +237,7 @@ func _show_battle() -> void:
 
 
 func _show_ending(outcome: Dictionary) -> void:
+	_record_run_end("won" if str(outcome.get("outcome", "")) == "success" else "dead")
 	_view_name = "Ending"
 	if _views.has("Ending"):
 		_show_only("Ending")
@@ -239,10 +245,18 @@ func _show_ending(outcome: Dictionary) -> void:
 
 
 func _show_death(report: Dictionary) -> void:
+	_record_run_end("dead")
 	_view_name = "Ending"
 	if _views.has("Ending"):
 		_show_only("Ending")
 		_views["Ending"].show_death(report)
+
+
+func _record_run_end(outcome: String) -> void:
+	if meta == null:
+		return
+	meta = meta.record_run_end(state, outcome)
+	SaveRepository.save_meta_file(meta)
 
 
 func _ensure_views() -> void:
@@ -256,6 +270,7 @@ func _ensure_views() -> void:
 	_add_view(host, "Battle", BATTLE_SCENE.instantiate())
 	_add_view(host, "Ending", ENDING_SCENE.instantiate())
 	_views["Map"].node_selected.connect(func(node_id: String): submit_command({"type": "travel", "node_id": node_id}))
+	_views["Map"].action_submitted.connect(submit_command)
 	_views["Encounter"].command_submitted.connect(submit_command)
 	_views["Battle"].command_submitted.connect(submit_command)
 	_views["Ending"].restart_requested.connect(func(): start_new_run(101))

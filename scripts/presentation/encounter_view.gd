@@ -15,7 +15,8 @@ func render_session(
 	session: Dictionary,
 	results: Array[Dictionary],
 	result: Dictionary,
-	action_cards: Array[Dictionary]
+	action_cards: Array[Dictionary],
+	catalog: Dictionary = {}
 ) -> void:
 	_clear()
 	var panel := _panel()
@@ -62,6 +63,39 @@ func render_session(
 	column.add_child(actions)
 	for card in action_cards:
 		_add_action_card(actions, card)
+	_append_feeding_footer(column, state, catalog)
+
+
+func _append_feeding_footer(column: VBoxContainer, state: RunState, catalog: Dictionary) -> void:
+	if catalog.is_empty():
+		return
+	var needed: Dictionary = state.estimate_feeding_materials(catalog)
+	var shortage := false
+	for material_id in needed:
+		if int(state.materials.get(str(material_id), 0)) < int(needed[material_id]):
+			shortage = true
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	column.add_child(row)
+	var label := Label.new()
+	label.text = "本节点养护：%s" % _feeding_text(needed, state.materials)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	row.add_child(label)
+	var button := Button.new()
+	button.text = "结清养护"
+	button.custom_minimum_size = Vector2(140, 34)
+	button.disabled = not shortage
+	button.tooltip_text = "以现有材料结清本节点蛊虫养护；材料不足时蛊虫会虚弱甚至死亡。" if shortage else "当前材料足以覆盖养护。"
+	button.pressed.connect(func(): command_submitted.emit({"type": "settle_node_feeding"}))
+	row.add_child(button)
+
+
+func _feeding_text(needed: Dictionary, owned: Dictionary) -> String:
+	var parts: Array[String] = []
+	for material_id in needed:
+		parts.append("%s %d/%d" % [DisplayText.material(str(material_id)), int(owned.get(str(material_id), 0)), int(needed[material_id])])
+	return "、".join(parts) if not parts.is_empty() else "无"
 
 
 func _panel() -> MarginContainer:

@@ -4,6 +4,8 @@ extends RefCounted
 
 const SAVE_PATH := "user://nanjiang_smoke_save.json"
 const TEMP_PATH := "user://nanjiang_smoke_save.json.tmp"
+const META_PATH := "user://nanjiang_smoke_meta.json"
+const META_TEMP_PATH := "user://nanjiang_smoke_meta.json.tmp"
 const SAVE_VERSION := 2
 
 
@@ -47,6 +49,10 @@ static func load_run() -> Dictionary:
 	return load_run_from_data(json.data)
 
 
+static func _is_integral(value: Variant) -> bool:
+	return value is int or (value is float and is_equal_approx(value, floor(value)))
+
+
 static func load_run_from_data(data: Dictionary) -> Dictionary:
 	if int(data.get("version", -1)) != SAVE_VERSION:
 		return {}
@@ -54,7 +60,7 @@ static func load_run_from_data(data: Dictionary) -> Dictionary:
 		return {}
 	if not data.get("route", null) is Array:
 		return {}
-	if not data.get("_checksum", null) is int:
+	if not _is_integral(data.get("_checksum", null)):
 		return {}
 	if int(data["_checksum"]) != _state_checksum(data["state"]):
 		return {}
@@ -83,7 +89,7 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 		return null
 	if not data.get("meta", null) is Dictionary:
 		return null
-	if not data.get("_checksum", null) is int:
+	if not _is_integral(data.get("_checksum", null)):
 		return null
 	var meta_data: Dictionary = data["meta"]
 	if int(data["_checksum"]) != _state_checksum(meta_data):
@@ -100,6 +106,31 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 		"deaths": 0,
 	}).duplicate(true)
 	return meta
+
+
+static func save_meta_file(meta: RefCounted) -> Error:
+	var payload := serialize_meta(meta)
+	var file := FileAccess.open(META_TEMP_PATH, FileAccess.WRITE)
+	if file == null:
+		return FileAccess.get_open_error()
+	file.store_string(JSON.stringify(payload))
+	file = null
+	if FileAccess.file_exists(META_PATH):
+		DirAccess.remove_absolute(META_PATH)
+	if DirAccess.rename_absolute(META_TEMP_PATH, META_PATH) != OK:
+		return FAILED
+	return OK
+
+
+static func load_meta_file() -> RefCounted:
+	if not FileAccess.file_exists(META_PATH):
+		return null
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(META_PATH)) != OK:
+		return null
+	if not json.data is Dictionary:
+		return null
+	return load_meta_from_data(json.data)
 
 
 static func _state_from_save_data(data: Dictionary) -> Variant:
@@ -131,7 +162,7 @@ static func _state_from_save_data(data: Dictionary) -> Variant:
 	state.encounter_session = data.get("encounter_session", {}).duplicate(true)
 	state.encounter_results = _dictionary_array(data.get("encounter_results", []))
 	state.saved_combos = _dictionary_array(data.get("saved_combos", []))
-	state.event_log = data.get("event_log", []).duplicate(true)
+	state.event_log = _dictionary_array(data.get("event_log", []))
 	state.cultivator = data.get("cultivator", {
 		"reincarnation": state.cultivation,
 		"stage": 0,
@@ -185,6 +216,8 @@ static func _state_checksum(state_data: Dictionary) -> int:
 
 static func _checksum_value(value: Variant) -> int:
 	if value is int:
+		return int(value)
+	if value is float and is_equal_approx(value, floor(value)):
 		return int(value)
 	if value is Array:
 		var array_checksum := 0

@@ -146,6 +146,10 @@ const REACTIONS := {
 	"guarded": "对方已提高戒备。",
 }
 
+const MATERIALS := {
+	"feed_points": "饲点",
+}
+
 const OUTCOMES := {
 	"success": "功成升仙",
 	"risky_success": "险中功成",
@@ -220,6 +224,10 @@ static func inheritance(id: String) -> String:
 
 static func enemy(id: String) -> String:
 	return str(ENEMIES.get(id, "未知敌手"))
+
+
+static func material(id: String) -> String:
+	return str(MATERIALS.get(id, "养料"))
 
 
 static func fact(id: String) -> String:
