@@ -111,6 +111,11 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	armor.text = "真元 %d/%d  伤势 %d" % [state.essence, state.essence_capacity, state.injury]
 	armor.add_theme_color_override("font_color", Color("c6d3cf"))
 	column.add_child(armor)
+	if int(battle.get("first_turn_energy", 0)) > 0:
+		var first_turn := Label.new()
+		first_turn.text = "首回合额外真元 +%d" % int(battle.get("first_turn_energy", 0))
+		first_turn.add_theme_color_override("font_color", Color("e7c883"))
+		column.add_child(first_turn)
 	var clues := Label.new()
 	clues.text = "可见征兆：%s" % _clue_text(battle.get("clues", []))
 	clues.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

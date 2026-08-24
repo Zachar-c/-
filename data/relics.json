@@ -1,10 +1,26 @@
 [
   {
     "id": "jade_cicada_shell",
-    "first_turn_energy": 1
+    "hooks": [
+      {
+        "trigger": "on_battle_start",
+        "effect": {
+          "kind": "grant_first_turn_energy",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "hungry_vine_token",
-    "extra_upkeep_feed_points": 1
+    "hooks": [
+      {
+        "trigger": "on_estimate_feeding",
+        "effect": {
+          "kind": "add_feeding_points",
+          "amount": 1
+        }
+      }
+    ]
   }
 ]

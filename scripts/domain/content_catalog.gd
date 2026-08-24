@@ -4,6 +4,7 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
+const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
 
 static func load_all() -> Dictionary:
@@ -84,8 +85,16 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
 	var relic_by_id: Dictionary = catalog.get("relic_by_id", {})
 	for relic in catalog.get("relics", []):
-		if int(relic.get("extra_upkeep_feed_points", 0)) > 0 and not material_ids.has("feed_points"):
-			errors.append("relic %s references unknown upkeep material feed_points" % relic["id"])
+		for hook in relic.get("hooks", []):
+			var trigger := str(hook.get("trigger", ""))
+			if not RelicHookResolverScript.TRIGGERS.has(trigger):
+				errors.append("relic %s references unknown trigger %s" % [relic["id"], trigger])
+			var effect: Dictionary = hook.get("effect", {})
+			var kind := str(effect.get("kind", ""))
+			if not RelicHookResolverScript.EFFECT_KINDS.has(kind):
+				errors.append("relic %s references unknown effect kind %s" % [relic["id"], kind])
+			if not _is_integral(effect.get("amount", -1)) or int(effect.get("amount", -1)) < 0:
+				errors.append("relic %s effect amount must be a non-negative integer" % relic["id"])
 	for offer in catalog.get("shop_offers", []):
 		if str(offer.get("kind", "")) in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
 			errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
@@ -123,3 +132,7 @@ static func _index_by_id(entries: Array) -> Dictionary:
 	for entry in entries:
 		indexed[entry["id"]] = entry
 	return indexed
+
+
+static func _is_integral(value: Variant) -> bool:
+	return value is int or (value is float and is_equal_approx(value, floor(value)))

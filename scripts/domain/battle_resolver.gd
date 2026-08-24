@@ -3,6 +3,7 @@ extends RefCounted
 
 const DeckBuilderScript = preload("res://scripts/domain/deck_builder.gd")
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
+const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -37,10 +38,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var draw_pile := _shuffled_cards(deck_cache, _battle_rng_seed(state, 0))
 	var hand: Array = []
 	_draw_into_hand(draw_pile, hand, BATTLE_HAND_SIZE)
-	var first_turn_energy := 0
-	for relic_id in state.relic_ids:
-		first_turn_energy += int(catalog.get("relic_by_id", {}).get(str(relic_id), {}).get("first_turn_energy", 0))
-	return {
+	var battle := {
 		"battle_id": "%d-%d" % [state.seed, state.event_log.size()],
 		"deck_generation_hash": deck_generation_hash,
 		"deck_cache": deck_cache.duplicate(true),
@@ -67,7 +65,8 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"clues": enemy.get("clues", []).duplicate(),
 		"log": [{"id": "intent_revealed", "text_key": "intent_revealed", "intent": intent.get("id", "")}],
 		"inheritance_uses": {},
-		"first_turn_energy": first_turn_energy,
+		"first_turn_energy": 0,
+		"action_energy": 0,
 		"turn": 1,
 		"phase": "player",
 		"final_blow": {},
@@ -76,6 +75,30 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"pending_kill_move_state": {},
 		"context": OpenRpgAdapter.create_battle_context({"enemy_kind": enemy_id}),
 	}
+	var battle_start := RelicHookResolverScript.apply_battle_start(battle, state, catalog)
+	battle = battle_start["battle"]
+	# Initial draw may be enlarged by on_draw_card hooks; the extra cards are
+	# drawn with the same seeded pile so the deck order stays deterministic.
+	_draw_from_hooks(battle, state, catalog)
+	return battle
+
+
+static func _draw_from_hooks(battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
+	var result := RelicHookResolverScript.apply_draw_card(battle, state, catalog)
+	var extra := int(result.get("draw_extra", 0))
+	if extra <= 0:
+		return
+	var hand: Array = battle.get("hand", [])
+	var draw_pile: Array = battle.get("draw_pile", [])
+	var before := hand.size()
+	for _index in extra:
+		if draw_pile.is_empty():
+			break
+		hand.append(draw_pile.pop_back())
+	battle["hand"] = hand
+	battle["draw_pile"] = draw_pile
+	if hand.size() != before:
+		battle["hand_version"] = int(battle.get("hand_version", 0)) + 1
 
 
 static func apply_action_card(battle: Dictionary, state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
@@ -88,7 +111,7 @@ static func apply_action_card(battle: Dictionary, state: RunState, command: Dict
 		return _rejected_turn(next, state, "not_player_phase")
 	var action_id := str(command.get("action_id", ""))
 	if action_id == "battle.end_turn":
-		return _end_turn(next, state)
+		return _end_turn(next, state, catalog)
 	if action_id == "battle.retreat":
 		return _retreat(next, state)
 	var card_index := _hand_card_index(next, action_id)
@@ -114,6 +137,10 @@ static func _resolve_card_instance(battle: Dictionary, state: RunState, card: Di
 	var next_battle: Dictionary = resolved["battle"]
 	var next_state: RunState = resolved["state"]
 	var feeds: Array = resolved["feeds"].duplicate()
+	var play_hook := RelicHookResolverScript.apply_play_card(next_battle, next_state, catalog, definition)
+	next_battle = play_hook["battle"]
+	next_state = play_hook["state"]
+	feeds.append_array(play_hook["feeds"])
 	_apply_kill_move_sequence(next_battle, definition, card, catalog)
 	if int(definition.get("duration_turns", 0)) > 0:
 		_register_duration_effect(next_battle, definition, card)
@@ -160,7 +187,7 @@ static func take_turn(
 	match str(action.get("type", "")):
 		"use_gu": return _use_gu(next, action, state, catalog)
 		"use_inheritance": return _use_inheritance(next, action, state, catalog)
-		"end_turn": return _end_turn(next, state)
+		"end_turn": return _end_turn(next, state, catalog)
 		"retreat": return _retreat(next, state)
 		_: return _result(next, state, false, "ongoing", ["unsupported_battle_action"])
 
@@ -196,9 +223,13 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	if gu.is_empty():
 		return _result(battle, state, false, "ongoing", ["unknown_gu"])
 	var essence_cost := int(gu.get("essence_cost", 0))
-	if state.essence < essence_cost:
+	var action_energy := int(battle.get("action_energy", 0))
+	if state.essence + action_energy < essence_cost:
 		return _result(battle, state, false, "ongoing", ["insufficient_essence"])
-	var after := {"essence": state.essence - essence_cost}
+	var paid_from_energy := mini(essence_cost, action_energy)
+	var paid_from_essence := essence_cost - paid_from_energy
+	battle["action_energy"] = action_energy - paid_from_energy
+	var after := {"essence": state.essence - paid_from_essence}
 	var mode := str(action.get("mode", ""))
 	var log_entry := {"id": "gu_used", "gu_id": gu_id, "mode": mode}
 	match gu_id:
@@ -262,7 +293,7 @@ static func _use_inheritance(battle: Dictionary, action: Dictionary, state: RunS
 	return _with_objective_result(battle, next_state)
 
 
-static func _end_turn(battle: Dictionary, state: RunState) -> Dictionary:
+static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var intent: Dictionary = battle.get("visible_intent", {})
 	var damage := int(intent.get("damage", 0))
 	if battle["flags"].has("enemy_interrupted"):
@@ -274,20 +305,25 @@ static func _end_turn(battle: Dictionary, state: RunState) -> Dictionary:
 		damage = maxi(0, damage - 2)
 	if battle["flags"].has("targeting_obscured"):
 		damage = maxi(0, damage - 1)
+	var damage_hook := RelicHookResolverScript.apply_take_damage(battle, state, catalog, damage)
+	battle = damage_hook["battle"]
+	var next_state: RunState = damage_hook["state"]
+	damage = int(damage_hook["damage"])
 	var next_health := maxi(0, state.health - damage)
 	battle["turn"] = int(battle["turn"]) + 1
+	battle["action_energy"] = 0
 	battle["flags"].erase("guarded")
 	battle["flags"].erase("targeting_obscured")
 	battle["log"].append({"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy"})
 	if next_health == 0 and damage > 0:
 		battle["final_blow"] = {"id": str(intent.get("id", "enemy_action")), "damage": damage}
-	var next_state := state.append_event(_event(state, "battle_enemy_intent", {"health": state.health}, {"health": next_health}, "battle_enemy_%s" % str(intent.get("id", "action")), [str(intent.get("id", "action"))]))
+	next_state = next_state.append_event(_event(next_state, "battle_enemy_intent", {"health": state.health}, {"health": next_health}, "battle_enemy_%s" % str(intent.get("id", "action")), [str(intent.get("id", "action"))]))
 	if next_health == 0:
 		return _result(battle, next_state.finalize_death(), true, "death", ["player_dead"])
 	_expire_effects(battle, "end_turn")
 	if not battle.get("pending_kill_move_state", {}).is_empty():
 		battle["pending_kill_move_state"] = {}
-	_refill_hand_after_turn(battle, next_state)
+	_refill_hand_after_turn(battle, next_state, catalog)
 	return _result(battle, next_state, false, "ongoing", ["enemy_intent_resolved"])
 
 
@@ -313,7 +349,7 @@ static func _draw_into_hand(draw_pile: Array, hand: Array, count: int) -> void:
 		hand.append(draw_pile.pop_back())
 
 
-static func _refill_hand_after_turn(battle: Dictionary, state: RunState) -> void:
+static func _refill_hand_after_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
 	var hand: Array = battle.get("hand", [])
 	var discard: Array = battle.get("discard_pile", [])
 	var had_cards := not hand.is_empty()
@@ -332,6 +368,7 @@ static func _refill_hand_after_turn(battle: Dictionary, state: RunState) -> void
 	battle["hand"] = hand
 	if had_cards or not hand.is_empty():
 		battle["hand_version"] = int(battle.get("hand_version", 0)) + 1
+	_draw_from_hooks(battle, state, catalog)
 
 
 static func _register_duration_effect(battle: Dictionary, definition: Dictionary, card: Dictionary) -> void:

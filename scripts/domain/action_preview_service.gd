@@ -95,7 +95,8 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		return
 	var source_gu_id := str(source_gu_ids[0])
 	var card_mode := str(definition.get("mode", ""))
-	var executable := state.essence >= essence_cost
+	var affordable_essence := state.essence + int(battle.get("action_energy", 0))
+	var executable := affordable_essence >= essence_cost
 	var risk: Array[String] = []
 	if source_gu_id == "thorn_whip_gu" and battle.get("clues", []).has("stone_dust"):
 		risk.append("对方脚下石粉未散，直接攻伐可能遭遇已知的护身反制。")
@@ -118,7 +119,7 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		"title": DisplayText.gu(source_gu_id),
 		"summary": _battle_effect(source_gu_id, card_mode),
 		"executable": executable,
-		"block_reason": "真元不足：需要 %d 点，当前仅有 %d 点。" % [essence_cost, state.essence] if not executable else "",
+		"block_reason": "真元不足：需要 %d 点，当前仅有 %d 点。" % [essence_cost, affordable_essence] if not executable else "",
 		"cost": {"spirit": essence_cost},
 		"known_risk": risk,
 		"expected_gain": [_battle_effect(source_gu_id, card_mode)],
