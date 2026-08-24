@@ -95,6 +95,8 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _wash_notoriety(state, catalog)
 		"record_boss_defeated":
 			return _record_boss_defeated(state, catalog)
+		"rest":
+			return _rest(state, catalog)
 		"accept_event":
 			return _accept_event(state, command, catalog)
 		_:
@@ -1222,9 +1224,31 @@ static func _retreat(state: RunState) -> Dictionary:
 	return _accepted(next)
 
 
+static func _rest(state: RunState, catalog: Dictionary) -> Dictionary:
+	if state.current_node_id != "rest_hollow":
+		return _rejected(state, "not_rest_node")
+	if str(state.node_flags.get("rest_hollow", "")) == "used":
+		return _rejected(state, "rest_already_used")
+	var flags := state.node_flags.duplicate(true)
+	flags["rest_hollow"] = "used"
+	var next_health := mini(state.max_health, state.health + 2)
+	var essence_max := int(state.cave_aperture.get("essence_max", 4))
+	var next_essence := mini(essence_max, state.essence + 2)
+	var next := state.append_event(_event(
+		state,
+		"rest",
+		{"health": state.health, "essence": state.essence, "node_flags": state.node_flags},
+		{"health": next_health, "essence": next_essence, "node_flags": flags},
+		"rest_recovered",
+		state.current_node_id,
+		[]
+	))
+	return _accepted(next)
+
+
 static func _record_boss_defeated(state: RunState, catalog: Dictionary) -> Dictionary:
 	var flags := state.node_flags.duplicate(true)
-	if not bool(flags.get("boss_defeated", false)):
+	if str(flags.get("boss_defeated", "")) != "true":
 		flags["boss_defeated"] = "true"
 	var next := state.append_event(_event(
 		state,

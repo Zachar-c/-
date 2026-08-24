@@ -27,9 +27,11 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 				_append_shop_cards(cards, state, catalog)
 			"event":
 				_append_event_cards(cards, state, catalog)
+			"rest":
+				_append_rest_cards(cards, state, node)
 			_:
 				_append_standard_cards(cards, state, node)
-		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event"]:
+		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event", "rest"]:
 			_append_leave_card(cards, state)
 	_mark_consumed_cards(cards, state)
 	_assert_unique_ids(cards)
@@ -461,6 +463,23 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 				"remedy_hints": _gu_remedies(missing),
 				"command": {"type": "shop_barter", "offer_id": str(offer["id"])},
 			}))
+
+
+static func _append_rest_cards(cards: Array[Dictionary], state: RunState, node: Dictionary) -> void:
+	var used := str(state.node_flags.get(str(node.get("id", "")), "")) == "used"
+	cards.append(_card(state, {
+		"id": "node.rest",
+		"title": "歇脚恢复",
+		"summary": str(node.get("summary", "")),
+		"executable": not used,
+		"block_reason": "此处已歇过脚。" if used else "",
+		"cost": {},
+		"known_risk": [],
+		"expected_gain": ["恢复气血 2 点。", "恢复真元 2 点。"],
+		"unknown_note": "",
+		"remedy_hints": [],
+		"command": {"type": "rest"},
+	}))
 
 
 static func _append_event_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
