@@ -26,7 +26,7 @@ func test_record_boss_defeated_sets_flag_and_logs_event() -> void:
 
 	assert_true(result["result"]["ok"])
 	assert_eq(str(result["state"].node_flags.get("boss_defeated", "")), "true")
-	assert_eq(result["state"].event_log.back()["reason"], "boss_defeated_recorded")
+	assert_eq(result["state"].event_log[result["state"].event_log.size() - 2]["reason"], "boss_defeated_recorded")
 
 
 func test_ascension_allowed_after_boss_defeated() -> void:
