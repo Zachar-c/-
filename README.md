@@ -19,7 +19,7 @@
 | 分支 | 用途 |
 | --- | --- |
 | `master` | 原始资料、设计文档和项目入口。 |
-| `codex/nanjiang-smoke-prototype` | 南疆冒烟版的游戏原型工作分支。 |
+| `task1-vendor-open-rpg` | 《蛊路求生》游戏原型工作分支（工作树 `.worktrees/task1-vendor-open-rpg`）。 |
 
 ## 当前状态
 
