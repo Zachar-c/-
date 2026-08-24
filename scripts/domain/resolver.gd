@@ -4,6 +4,7 @@ extends RefCounted
 
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
+const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 
 
 const BODY_IMPRINTS := {
@@ -162,6 +163,9 @@ static func _buy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
+	var blocked := _reject_deck_full(state, catalog, [str(offer["output_gu_id"])], [])
+	if not blocked.is_empty():
+		return blocked
 	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, [], "caravan_bought_gu")
 
 
@@ -197,6 +201,9 @@ static func _exchange_gu(state: RunState, command: Dictionary, catalog: Dictiona
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
+	var blocked := _reject_deck_full(state, catalog, [str(offer["output_gu_id"])], inputs)
+	if not blocked.is_empty():
+		return blocked
 	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, inputs, "caravan_exchanged_gu")
 
 
@@ -234,6 +241,9 @@ static func _apply_combine_recipe(state: RunState, command: Dictionary, catalog:
 			inputs
 		))
 		return _accepted(failed)
+	var blocked := _reject_deck_full(state, catalog, [str(recipe["output_gu_id"])], inputs)
+	if not blocked.is_empty():
+		return blocked
 	return _add_gu_transaction(state, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])])
 
 
@@ -248,6 +258,9 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	if inputs.size() > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
+	var blocked := _reject_deck_full(state, catalog, [str(recipe["output_gu_id"])], inputs)
+	if not blocked.is_empty():
+		return blocked
 	var selected := _selected_input_instance_ids(state, command, inputs)
 	if selected.is_empty():
 		return _rejected(state, "missing_refinement_input")
@@ -724,6 +737,9 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
 	if str(offer.get("kind", "")) != "purchase":
 		return _rejected(state, "unknown_shop_offer")
+	var blocked := _reject_deck_full(state, catalog, [str(offer["gu_id"])], [])
+	if not blocked.is_empty():
+		return blocked
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
@@ -798,6 +814,13 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 		cursor += maxi(1, int(reward_value.get("weight", 1)))
 		if roll <= cursor:
 			break
+	if chosen.has("gu_id"):
+		var removed_defs: Array[String] = []
+		for instance_id_value in selected:
+			removed_defs.append(str(state.gu_instances[str(instance_id_value)].get("definition_id", "")))
+		var blocked := _reject_deck_full(state, catalog, [str(chosen["gu_id"])], removed_defs)
+		if not blocked.is_empty():
+			return blocked
 	var instances := state.gu_instances.duplicate(true)
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
@@ -1282,6 +1305,12 @@ static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 	var cap := int(effects.get("price_cap_pct", 60))
 	var uplift := mini(cap, pct * notoriety(state))
 	return ceili(float(base) * (1.0 + float(uplift) / 100.0))
+
+
+static func _reject_deck_full(state: RunState, catalog: Dictionary, added_gu_ids: Array, removed_gu_ids: Array) -> Dictionary:
+	if DeckCapacityScript.projected_count(state, catalog, added_gu_ids, removed_gu_ids) > DeckCapacityScript.capacity(catalog):
+		return _rejected(state, "deck_capacity_exceeded")
+	return {}
 
 
 static func gain_notoriety(state: RunState, amount: int, reason_key: String) -> RunState:

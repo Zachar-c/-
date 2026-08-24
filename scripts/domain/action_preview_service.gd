@@ -2,6 +2,7 @@ class_name ActionPreviewService
 extends RefCounted
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
+const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -275,20 +276,23 @@ static func _append_refinement_cards(cards: Array[Dictionary], state: RunState, 
 			"free_mix":
 				_append_free_mix_card(cards, state, recipe, knowledge)
 			_:
-				_append_recipe_card(cards, state, recipe)
+				_append_recipe_card(cards, state, recipe, catalog)
 	_append_leave_card(cards, state)
 
 
-static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recipe: Dictionary) -> void:
+static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recipe: Dictionary, catalog: Dictionary) -> void:
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var missing := _missing_gu(state.refined_gu_ids, inputs)
 	var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
 	var locked := bool(recipe.get("locked", false))
 	var codex_unlocked := state.global_codex_ids.has(str(recipe.get("id", ""))) or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
+	var deck_full := DeckCapacityScript.projected_count(state, catalog, [str(recipe.get("output_gu_id", ""))], inputs) > DeckCapacityScript.capacity(catalog)
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
-	var executable := missing.is_empty() and (not locked or codex_unlocked)
+	var executable := missing.is_empty() and (not locked or codex_unlocked) and not deck_full
 	var reason := ""
-	if locked and not codex_unlocked:
+	if deck_full:
+		reason = "牌组已满（%d/%d），炼成后无法容纳新蛊。" % [DeckCapacityScript.card_count(state, catalog), DeckCapacityScript.capacity(catalog)]
+	elif locked and not codex_unlocked:
 		reason = str(recipe.get("locked_reason", "尚未获得对应的炼制传承，无法按固定配方合炼。"))
 	elif not missing.is_empty():
 		reason = "缺少%s。" % _gu_names(missing)
@@ -368,13 +372,14 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 	match str(offer.get("kind", "")):
 		"purchase":
 			var cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
-			var executable := state.stone >= cost
+			var deck_full := DeckCapacityScript.would_exceed(state, catalog, 1)
+			var executable := state.stone >= cost and not deck_full
 			cards.append(_card(state, {
 				"id": "shop.%s" % str(offer["card_key"]),
 				"title": "购入%s" % DisplayText.gu(str(offer["gu_id"])),
 				"summary": "黑市明码标价，钱货两讫。",
 				"executable": executable,
-				"block_reason": "元石不足：需要 %d 枚，当前仅有 %d 枚。" % [cost, state.stone] if not executable else "",
+				"block_reason": "牌组已满（%d/%d），请先弃蛊或出售。" % [DeckCapacityScript.card_count(state, catalog), DeckCapacityScript.capacity(catalog)] if deck_full else "元石不足：需要 %d 枚，当前仅有 %d 枚。" % [cost, state.stone] if not executable else "",
 				"cost": {"stone": cost},
 				"expected_gain": ["获得%s。" % DisplayText.gu(str(offer["gu_id"]))],
 				"remedy_hints": _stone_remedies(cost - state.stone) if not executable else [],

@@ -19,6 +19,7 @@ static func load_all() -> Dictionary:
 	var events: Array = _load_object("res://data/events.json").get("events", [])
 	var shop_offers: Array = _load_object("res://data/shops.json").get("offers", [])
 	var reputation := _load_object("res://data/reputation.json")
+	var deck := _load_object("res://data/deck.json")
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
@@ -38,6 +39,7 @@ static func load_all() -> Dictionary:
 		"shop_offers": shop_offers,
 		"shop_offer_by_id": _index_by_id(shop_offers),
 		"reputation": reputation,
+		"deck": deck,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -114,6 +116,9 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var value: Variant = reputation[group_name][key_value]
 			if not _is_integral(value) or int(value) < 0:
 				errors.append("reputation %s.%s must be a non-negative integer" % [group_name, key_value])
+	var raw_capacity: Variant = catalog.get("deck", {}).get("capacity", -1)
+	if not _is_integral(raw_capacity) or int(raw_capacity) < 1:
+		errors.append("deck capacity must be a positive integer")
 	return errors
 
 
