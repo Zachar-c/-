@@ -8,6 +8,7 @@ const BATTLE_SCENE := preload("res://scenes/battle.tscn")
 const ENDING_SCENE := preload("res://scenes/ending.tscn")
 const TITLE_VIEW_SCRIPT := preload("res://scripts/presentation/title_view.gd")
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
+const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
@@ -44,6 +45,7 @@ func start_new_run(seed: int) -> void:
 	if meta == null:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
 	state = RunState.new_run(seed, meta)
+	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
 	route = MapGenerator.build(seed, seed == 101)
 	current_node = {}
 	current_battle = {}

@@ -1,0 +1,21 @@
+{
+  "stage_essence_base": {
+    "low": 4,
+    "mid": 6,
+    "high": 9,
+    "peak": 12
+  },
+  "rank_tier": {
+    "1": "low",
+    "2": "mid",
+    "3": "high",
+    "4": "peak"
+  },
+  "aptitude_pct": {
+    "jia": 140,
+    "yi": 120,
+    "bing": 100,
+    "ding": 80,
+    "wu": 60
+  }
+}

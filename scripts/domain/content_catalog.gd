@@ -21,6 +21,7 @@ static func load_all() -> Dictionary:
 	var reputation := _load_object("res://data/reputation.json")
 	var deck := _load_object("res://data/deck.json")
 	var pacing := _load_object("res://data/pacing.json")
+	var aptitude := _load_object("res://data/aptitude.json")
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
@@ -42,6 +43,7 @@ static func load_all() -> Dictionary:
 		"reputation": reputation,
 		"deck": deck,
 		"pacing": pacing,
+		"aptitude": aptitude,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -126,6 +128,20 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var milestone_value: Variant = milestones[milestone_id]
 		if not _is_integral(milestone_value) or int(milestone_value) < 0:
 			errors.append("pacing lifespan_milestones.%s must be a non-negative integer" % milestone_id)
+	var aptitude_data: Dictionary = catalog.get("aptitude", {})
+	var base_map: Dictionary = aptitude_data.get("stage_essence_base", {})
+	for tier_id in base_map:
+		var tier_value: Variant = base_map[tier_id]
+		if not _is_integral(tier_value) or int(tier_value) < 1:
+			errors.append("aptitude stage_essence_base.%s must be a positive integer" % tier_id)
+	var pct_map: Dictionary = aptitude_data.get("aptitude_pct", {})
+	for aptitude_id in pct_map:
+		var pct_value: Variant = pct_map[aptitude_id]
+		if not _is_integral(pct_value) or int(pct_value) < 0:
+			errors.append("aptitude aptitude_pct.%s must be a non-negative integer" % aptitude_id)
+	for rank_value in aptitude_data.get("rank_tier", {}).values():
+		if not base_map.has(str(rank_value)):
+			errors.append("aptitude rank_tier references unknown tier %s" % rank_value)
 	var gu_tags: Array[String] = []
 	for gu in catalog.get("gu", []):
 		for tag_value in gu.get("tags", []):

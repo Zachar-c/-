@@ -5,6 +5,7 @@ extends RefCounted
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
+const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 
 
 const BODY_IMPRINTS := {
@@ -52,7 +53,7 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 		"refine_gu":
 			return _refine_gu(state, command, catalog)
 		"cultivate_rank_two":
-			return _cultivate_rank_two(state)
+			return _cultivate_rank_two(state, catalog)
 		"settle_feeding":
 			return _settle_feeding(state, catalog)
 		"settle_node_feeding":
@@ -462,18 +463,20 @@ static func _free_mix_seed(state: RunState, instance_ids: Array[String]) -> int:
 	return int(state.seed) * 1000003 + state.event_log.size() * 97 + hash
 
 
-static func _cultivate_rank_two(state: RunState) -> Dictionary:
+static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
 	if state.current_node_id != "cultivation_spring":
 		return _rejected(state, "not_cultivation_window")
 	if state.cultivation >= 2:
 		return _rejected(state, "cultivation_already_rank_two")
 	if state.stone < 5:
 		return _rejected(state, "insufficient_stone")
+	var aperture := state.cave_aperture.duplicate(true)
+	aperture["essence_max"] = EssenceCapacityScript.essence_max_for(state, catalog, 2)
 	var next := state.append_event(_event(
 		state,
 		"cultivate_rank_two",
-		{"cultivation": state.cultivation, "stone": state.stone, "essence": state.essence},
-		{"cultivation": 2, "stone": state.stone - 5, "essence": state.essence_capacity},
+		{"cultivation": state.cultivation, "stone": state.stone, "essence": state.essence, "cave_aperture": state.cave_aperture},
+		{"cultivation": 2, "stone": state.stone - 5, "essence": state.essence_capacity, "cave_aperture": aperture},
 		"rank_two_breakthrough",
 		state.current_node_id
 	))
