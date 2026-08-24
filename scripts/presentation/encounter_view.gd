@@ -37,8 +37,9 @@ func render_session(
 	title.text = "遭遇：%s" % DisplayText.node(str(node.get("id", "")))
 	title.add_theme_font_size_override("font_size", 26)
 	column.add_child(title)
+	var notorious := int(state.cultivator.get("notorious", 0))
 	var facts := Label.new()
-	facts.text = "真元 %d  元石 %d  已知：%s" % [state.essence, state.stone, DisplayText.facts(state.known_facts)]
+	facts.text = "真元 %d  元石 %d%s已知：%s" % [state.essence, state.stone, ("恶名 %d  " % notorious) if notorious > 0 else "", DisplayText.facts(state.known_facts)]
 	facts.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(facts)
 	var summary := str(node.get("summary", ""))
@@ -145,6 +146,7 @@ func _result_text(entry: Dictionary) -> String:
 		"caravan_exchange_result": return "双方的蛊虫完成交换，关系还未结束。"
 		"refinement_result": return "炉火已起，炼制结果记入行迹。"
 		"cultivation_result": return "你调整气息，修行所得已稳住。"
+		"lifespan_milestone_gained": return "寿元见长：里程碑入账十载。"
 		"action_rejected": return "此举条件不足，局势没有改变。"
 		_: return "行动已留下结果，你仍可继续处置此地。"
 

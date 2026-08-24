@@ -82,6 +82,63 @@ func test_battle_view_hud_uses_programmatic_icons() -> void:
 	assert_eq(icons.size(), 4, "battle hud must render four resource icons")
 
 
+func test_battle_hud_shows_formula_essence_max() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	state.cave_aperture["essence_max"] = 6
+	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	var view: Control = autofree(BattleViewScript.new())
+	add_child(view)
+	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
+	var hud := _find_label_with_text(view, "真元")
+	assert_not_null(hud, "essence hud must stay")
+	assert_true(str(hud.text).contains("3/6"), "hud must use formula essence_max")
+
+
+func test_battle_hud_shows_multitasking_capacity() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	var view: Control = autofree(BattleViewScript.new())
+	add_child(view)
+	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
+	var ops := _find_label_with_text(view, "出手")
+	assert_not_null(ops, "multitasking capacity must be visible")
+	assert_true(str(ops.text).contains("0/4"))
+
+
+func test_encounter_view_shows_notoriety_when_present() -> void:
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	state.cultivator["notorious"] = 2
+	var node := {"id": "neutral_wanderer", "type": "contact"}
+	var empty_results: Array[Dictionary] = []
+	var empty_cards: Array[Dictionary] = []
+	var view: Control = autofree(preload("res://scripts/presentation/encounter_view.gd").new())
+	add_child(view)
+	view.render_session(node, state, EncounterSessionResolverScript.start(node), empty_results, {}, empty_cards, catalog)
+	var label := _find_label_with_text(view, "恶名")
+	assert_not_null(label, "notoriety must be visible")
+	assert_true(str(label.text).contains("2"))
+
+	var clean_view: Control = autofree(preload("res://scripts/presentation/encounter_view.gd").new())
+	add_child(clean_view)
+	clean_view.render_session(node, RunState.new_run(101), EncounterSessionResolverScript.start(node), empty_results, {}, empty_cards, catalog)
+	assert_null(_find_label_with_text(clean_view, "恶名"), "zero notoriety stays hidden")
+
+
+func test_map_view_shows_cross_run_codex_unlock_count() -> void:
+	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
+	controller.start_new_run(101)
+	controller.state.global_codex_ids.assign(["phantom_moon_locked"])
+	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
+	add_child(view)
+	view.render(controller.route, controller.state, controller.catalog, controller.meta)
+	var codex := _find_label_with_text(view, "跨局解锁")
+	assert_not_null(codex, "codex unlock count must be visible")
+	assert_true(str(codex.text).contains("1 种"))
+
+
 func test_gu_orb_renders_for_every_known_gu() -> void:
 	for gu_id in ["small_light_gu", "moonlight_gu", "moon_glow_gu", "phantom_moon_gu", "moon_shadow_gu", "stone_shell_gu", "trail_eye_gu", "thorn_whip_gu", "blood_moss_gu", "mist_step_gu", "venom_thread_gu", "shadow_veil_gu", "pulse_drum_gu"]:
 		var orb: Control = autofree(load("res://scripts/presentation/gu_orb.gd").new())

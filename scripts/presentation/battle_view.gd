@@ -37,7 +37,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_car
 
 func _hud_value(kind: String, battle: Dictionary, state: RunState) -> String:
 	match kind:
-		"真元": return "%d/%d" % [state.essence, state.essence_capacity]
+		"真元": return "%d/%d" % [state.essence, int(state.cave_aperture.get("essence_max", state.essence_capacity))]
 		"元石": return "%d" % state.stone
 		"寿元": return "%d" % int(state.cultivator.get("lifespan", 0))
 		"魂魄": return "%d/%d" % [int(state.cultivator.get("soul", 0)), int(state.cultivator.get("soul_max", 0))]
@@ -108,9 +108,13 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	life_label.add_theme_color_override("font_color", Color("b8d5cc"))
 	column.add_child(life_label)
 	var armor := Label.new()
-	armor.text = "真元 %d/%d  伤势 %d" % [state.essence, state.essence_capacity, state.injury]
+	armor.text = "真元 %d/%d  伤势 %d" % [state.essence, int(state.cave_aperture.get("essence_max", state.essence_capacity)), state.injury]
 	armor.add_theme_color_override("font_color", Color("c6d3cf"))
 	column.add_child(armor)
+	var ops := Label.new()
+	ops.text = "一心多用  出手 %d/%d" % [int(battle.get("active_gu_instance_ids", []).size()), int(battle.get("soul_ops_cap", 1))]
+	ops.add_theme_color_override("font_color", Color("c6d3cf"))
+	column.add_child(ops)
 	if int(battle.get("first_turn_energy", 0)) > 0:
 		var first_turn := Label.new()
 		first_turn.text = "首回合额外真元 +%d" % int(battle.get("first_turn_energy", 0))

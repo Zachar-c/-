@@ -87,6 +87,7 @@ func _append_panel(parent: HBoxContainer, state: RunState, catalog: Dictionary, 
 	var knowledge: Dictionary = meta_data.get("unlocked_random_outcomes", {})
 	_append_panel_title(panel, "图鉴")
 	_append_line(panel, "已见蛊虫 %d 种" % codex.size())
+	_append_line(panel, "跨局解锁 %d 种" % state.global_codex_ids.size())
 	if not knowledge.is_empty():
 		_append_line(panel, "乱炼见闻 %d 条" % knowledge.size())
 	return panel

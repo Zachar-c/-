@@ -375,6 +375,8 @@ func _finish_battle_in_session(outcome: String) -> void:
 	current_session["phase"] = "post_battle"
 	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
 	var results := state.encounter_results.duplicate(true)
+	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
+		results.append(ResultFeedScript.entry("battle", "lifespan_milestone_gained", {}, []))
 	results.append(feed)
 	state = state.append_event({
 		"stage": state.stage,
