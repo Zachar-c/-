@@ -34,3 +34,4 @@ Thumbs.db
 
 # Local working directory (never committed)
 working/
+.superpowers/
