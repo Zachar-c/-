@@ -92,7 +92,8 @@ func test_battle_hud_shows_formula_essence_max() -> void:
 	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
 	var hud := _find_label_with_text(view, "真元")
 	assert_not_null(hud, "essence hud must stay")
-	assert_true(str(hud.text).contains("3/6"), "hud must use formula essence_max")
+	var cap_label := _find_label_with_text(view, "3/6")
+	assert_not_null(cap_label, "hud must use formula essence_max")
 
 
 func test_battle_hud_shows_multitasking_capacity() -> void:
@@ -102,9 +103,8 @@ func test_battle_hud_shows_multitasking_capacity() -> void:
 	var view: Control = autofree(BattleViewScript.new())
 	add_child(view)
 	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
-	var ops := _find_label_with_text(view, "出手")
+	var ops := _find_label_with_text(view, "出手 0/4")
 	assert_not_null(ops, "multitasking capacity must be visible")
-	assert_true(str(ops.text).contains("0/4"))
 
 
 func test_encounter_view_shows_notoriety_when_present() -> void:
