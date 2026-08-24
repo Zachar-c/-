@@ -2,9 +2,9 @@
 """批次审阅简报生成器：批末为 AI 与用户生成审阅报告，浓缩改动范围、决策、台账、验证与遗留问题。
 对齐 gen_report.ps1。用法：
   py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120
-  py -3 scripts/gen_report.py -Volume vol2 -Batch 151-180 -OutFile notes/batch-report.md
+  py -3 scripts/gen_report.py -Volume vol2 -Batch 151-180 -OutFile working/batch-report.md
   py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -SkipValidate
-注意：-OutFile 缺省时写入 notes\\batch-report.md（每批覆盖）；关键裁决与遗留问题两节必须由编辑会话或总编会话填写。"""
+注意：-OutFile 缺省时写入 working\\batch-report.md（每批覆盖）；关键裁决与遗留问题两节必须由编辑会话或总编会话填写。"""
 import csv
 import io
 import json
@@ -16,16 +16,6 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gu_tools import PsArgs, REPO_ROOT, git_silent, git_status_short, git_log_oneline, print_console
-
-REGISTER_NAMES = [
-    'decision-register',
-    'combat-ledger',
-    'resource-audit',
-    'information-ledger',
-    'chronology-geography',
-    'character-state-ledger',
-    'structural-surgery',
-]
 
 
 def main():
@@ -137,19 +127,19 @@ def main():
     report('')
     range_search = re.sub(r'-', r'\\s*[-—–]\\s*', batch)
     any_hit = False
-    for name in REGISTER_NAMES:
-        file_path = repo_path(u'notes\\{0}-{1}.md'.format(vol_cfg['id'], name))
-        if not os.path.isfile(file_path):
-            continue
-        with io.open(file_path, 'r', encoding='utf-8-sig', newline='') as fh:
-            all_lines = fh.read().splitlines()
-        matched_lines = [ln for ln in all_lines if re.search(range_search, ln)]
-        if matched_lines:
+    ledger_path = repo_path(u'notes\\ledger.md')
+    if os.path.isfile(ledger_path):
+        with io.open(ledger_path, 'r', encoding='utf-8-sig', newline='') as fh:
+            ledger_lines = fh.read().splitlines()
+        for line_match in ledger_lines:
+            if not re.match(r'^\s*- \[来源[:：]', line_match):
+                continue
+            if not re.search(range_search, line_match):
+                continue
             any_hit = True
-            for line_match in matched_lines:
-                trimmed = line_match.strip()
-                if trimmed:
-                    report(u'- 台账命中（{0}）：{1}'.format(get_relative(file_path), trimmed))
+            trimmed = line_match.strip()
+            if trimmed:
+                report(u'- 台账命中（{0}）：{1}'.format(get_relative(ledger_path), trimmed))
     if not any_hit:
         report('- （台账未命中本批号；如本批有裁决请手工登记到台账并回填此处）')
     report('')
@@ -161,15 +151,14 @@ def main():
     report('| --- | --- | --- |')
     notes_status = [s for s in status_short if re.search(r'notes/', s)]
     notes_touched = len(notes_status) > 0
-    for name in REGISTER_NAMES:
-        file_path = repo_path(u'notes\\{0}-{1}.md'.format(vol_cfg['id'], name))
-        if not os.path.isfile(file_path):
-            report(u'| {0} | 无此文件 | — |'.format(name))
-            continue
-        with io.open(file_path, 'r', encoding='utf-8-sig', newline='') as fh:
+    ledger_path = repo_path(u'notes\\ledger.md')
+    if not os.path.isfile(ledger_path):
+        report('| ledger.md | 无此文件 | — |')
+    else:
+        with io.open(ledger_path, 'r', encoding='utf-8-sig', newline='') as fh:
             all_lines = fh.read().splitlines()
         hit_count = sum(1 for ln in all_lines if re.search(range_search, ln))
-        touched = [s for s in notes_status if name in s]
+        touched = [s for s in notes_status if 'ledger.md' in s]
         if hit_count > 0:
             status_text = u'已落账（命中 {0} 行）'.format(hit_count)
         elif touched:
@@ -181,7 +170,7 @@ def main():
             status_line_text = re.sub(r'^\s*>\s*台账状态行[:：]\s*', '', status_line).strip()
         else:
             status_line_text = '（缺状态行，见台账维护规范）'
-        report(u'| {0} | {1} | {2}'.format(name, status_text, status_line_text))
+        report(u'| ledger.md | {0} | {1}'.format(status_text, status_line_text))
     report('')
     if notes_touched:
         report('- 说明：notes/ 有未提交改动，请按台账约定（顶部状态行 + 底部追加式维护）核对。')
@@ -257,7 +246,7 @@ def main():
             report(u'- 审计表已生成：{0} 条，错误/漏检 {1}/{2}'.format(len(audit_rows), wrong, miss))
 
     report_text = os.linesep.join(lines)
-    target = out_file if out_file else 'notes\\batch-report.md'
+    target = out_file if out_file else 'working\\batch-report.md'
     out_path = repo_path(target)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with io.open(out_path, 'w', encoding='utf-8', newline='') as fh:

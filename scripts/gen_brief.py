@@ -16,16 +16,6 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gu_tools import PsArgs, REPO_ROOT, git_silent, git_status_short, git_log_oneline, print_console
 
-REGISTER_NAMES = [
-    'decision-register',
-    'combat-ledger',
-    'resource-audit',
-    'information-ledger',
-    'chronology-geography',
-    'character-state-ledger',
-    'structural-surgery',
-]
-
 STATE_TEMPLATE = u'''# 批内状态卡：{0}-sec{1}
 
 > 本文件在批内维持：换会话、上下文压缩或间隔较久后，先读它恢复中间状态。
@@ -244,19 +234,18 @@ def main():
     brief('## 4. 台账命中（与批次号直接相关的记录）')
     brief('')
     range_search = re.sub(r'-', r'\\s*[-—–]\\s*', batch)
-    for name in REGISTER_NAMES:
-        file_path = repo_path(u'notes\\{0}-{1}.md'.format(vol_cfg['id'], name))
-        if not os.path.isfile(file_path):
-            continue
-        with io.open(file_path, 'r', encoding='utf-8-sig', newline='') as fh:
+    ledger_path = repo_path(u'notes\\ledger.md')
+    if os.path.isfile(ledger_path):
+        with io.open(ledger_path, 'r', encoding='utf-8-sig', newline='') as fh:
             all_lines = fh.read().splitlines()
-        mtime = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime('%m-%d')
-        brief(u'- {0}（{1} 行，改于 {2}）：'.format(get_relative(file_path), len(all_lines), mtime))
+        mtime = datetime.fromtimestamp(os.path.getmtime(ledger_path)).strftime('%m-%d')
+        brief(u'- {0}（{1} 行，改于 {2}）：'.format(get_relative(ledger_path), len(all_lines), mtime))
         status_line = next((ln for ln in all_lines if re.match(r'^\s*>\s*台账状态行', ln)), None)
         if status_line:
             status_text = re.sub(r'^\s*>\s*台账状态行[:：]\s*', '', status_line).strip()
             brief(u'  - 状态行：' + status_text)
-        matched_lines = [ln for ln in all_lines if re.search(range_search, ln)]
+        entry_lines = [ln for ln in all_lines if re.match(r'^\s*- \[来源[:：]', ln)]
+        matched_lines = [ln for ln in entry_lines if re.search(range_search, ln)]
         exact_matched = [ln for ln in matched_lines if re.search(re.escape(batch), ln)]
         show_lines = exact_matched if exact_matched else matched_lines
         if show_lines:
@@ -272,8 +261,8 @@ def main():
             if len(show_lines) > 6:
                 brief(u'  - …（另 {0} 行命中）'.format(len(show_lines) - 6))
         else:
-            brief('  （无直接命中；涉及人物/资源续态仍须读该文件相关章节）')
-    brief(u'- 说明：命中行以「ID [类型] 范围：裁决/项目摘要（状态）」收窄展示；须读全文时按 ID 在对应台账中检索。')
+            brief('  （无直接命中；涉及人物/资源续态仍须读 notes/ledger.md 相关小节）')
+    brief(u'- 说明：命中行为唯一台账 notes/ledger.md 的条目行（`[来源:` 前缀）；须读全文时按来源 ID 在台账中检索，历史原文在 notes/archive/。')
     brief('')
 
     brief('## 5. 工作区与 Git')
