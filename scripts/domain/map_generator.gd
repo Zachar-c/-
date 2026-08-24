@@ -6,39 +6,154 @@ static func build(seed: int, first_run: bool) -> Array[Dictionary]:
 	var data := _load_json("res://data/nodes.json")
 	var node_by_id := _index_nodes(data["nodes"])
 	node_by_id[data["ascension_node"]["id"]] = data["ascension_node"]
-	var route_ids: Array
 	if first_run:
-		route_ids = _load_json("res://data/first_run.json")["route_ids"]
-	else:
-		route_ids = _generated_route_ids(seed, data["nodes"])
-	return _route_from_ids(route_ids, node_by_id)
+		var route_ids: Array = _load_json("res://data/first_run.json")["route_ids"]
+		return _route_from_ids(route_ids, node_by_id)
+	var stage_picks := _generated_stage_picks(seed, data["nodes"], node_by_id)
+	return _route_with_network(stage_picks, node_by_id, seed)
 
 
-static func _generated_route_ids(seed: int, nodes: Array) -> Array:
+static func _generated_stage_picks(seed: int, nodes: Array, node_by_id: Dictionary) -> Dictionary:
 	var by_stage := {}
 	for node in nodes:
 		if not by_stage.has(node["stage"]):
 			by_stage[node["stage"]] = []
 		by_stage[node["stage"]].append(node["id"])
 	var rng := SeededRng.new(seed)
-	var route_ids: Array = []
+	var stage_picks := {}
 	for stage in ["one", "three", "four", "five"]:
 		if not by_stage.has(stage):
 			continue
 		var candidates: Array = by_stage[stage].duplicate()
 		if stage == "four":
 			candidates.erase("earth_vein_contest")
-		if candidates.is_empty():
+		var picks: Array = []
+		var pick_count := mini(3, candidates.size())
+		while picks.size() < pick_count and not candidates.is_empty():
+			var pick_id := str(candidates[rng.next_index(candidates.size())])
+			candidates.erase(pick_id)
+			picks.append(pick_id)
+		if stage == "one":
+			for node_id_value in by_stage["one"]:
+				var start_id := str(node_id_value)
+				if bool(node_by_id.get(start_id, {}).get("start", false)) and not picks.has(start_id):
+					picks.append(start_id)
+		stage_picks[stage] = picks
+	_guarantee_anchor_types(stage_picks, by_stage, node_by_id)
+	if by_stage.has("four") and not stage_picks.get("four", []).has("earth_vein_contest"):
+		stage_picks["four"].append("earth_vein_contest")
+	if not stage_picks.has("five"):
+		stage_picks["five"] = []
+	if not stage_picks["five"].has("poison_fog_vein"):
+		stage_picks["five"].append("poison_fog_vein")
+	return stage_picks
+
+
+static func _guarantee_anchor_types(stage_picks: Dictionary, by_stage: Dictionary, node_by_id: Dictionary) -> void:
+	for required_type in ["shop", "refinement", "inheritance"]:
+		var present := false
+		for stage in stage_picks:
+			if present:
+				break
+			for node_id_value in stage_picks[stage]:
+				var node_id := str(node_id_value)
+				if str(node_by_id.get(node_id, {}).get("type", "")) == required_type:
+					present = true
+					break
+		if present:
 			continue
-		var picks := mini(2, candidates.size())
-		for _pick in picks:
-			route_ids.append(candidates[rng.next_index(candidates.size())])
-	if by_stage.has("four") and not route_ids.has("earth_vein_contest"):
-		route_ids.append("earth_vein_contest")
-	if by_stage.has("five") and not route_ids.has("poison_fog_vein"):
-		route_ids.append("poison_fog_vein")
-	route_ids.append("ascension_window")
-	return route_ids
+		for stage in ["one", "three", "four", "five"]:
+			if present or not by_stage.has(stage):
+				continue
+			for node_id_value in by_stage[stage]:
+				var node_id := str(node_id_value)
+				if not stage_picks.get(stage, []).has(node_id) and str(node_by_id.get(node_id, {}).get("type", "")) == required_type:
+					stage_picks[stage].append(node_id)
+					present = true
+					break
+
+
+static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary, seed: int) -> Array[Dictionary]:
+	var stage_order: Array[String] = ["one", "three", "four", "five"]
+	var stage_one_starts: Array = []
+	var stage_one_rest: Array = []
+	for node_id_value in stage_picks.get("one", []):
+		var pick_id := str(node_id_value)
+		if bool(node_by_id.get(pick_id, {}).get("start", false)):
+			stage_one_starts.append(pick_id)
+		else:
+			stage_one_rest.append(pick_id)
+	stage_picks["one"] = stage_one_starts + stage_one_rest
+	var flat_ids: Array = []
+	for stage in stage_order:
+		for node_id_value in stage_picks.get(stage, []):
+			flat_ids.append(str(node_id_value))
+	flat_ids.append("ascension_window")
+	var by_stage_ids := {}
+	for index in flat_ids.size():
+		var node_id := str(flat_ids[index])
+		var stage := str(node_by_id.get(node_id, {}).get("stage", "one"))
+		if not by_stage_ids.has(stage):
+			by_stage_ids[stage] = []
+		by_stage_ids[stage].append(node_id)
+	var outgoing := {}
+	var incoming_count := {}
+	for node_id in flat_ids:
+		outgoing[node_id] = []
+		incoming_count[node_id] = 0
+	for stage_index in range(stage_order.size() - 1):
+		var this_stage := stage_order[stage_index]
+		var next_stage := stage_order[stage_index + 1]
+		var from_ids: Array = by_stage_ids.get(this_stage, [])
+		var to_ids: Array = by_stage_ids.get(next_stage, [])
+		if from_ids.is_empty() or to_ids.is_empty():
+			continue
+		for from_id_value in from_ids:
+			var from_id := str(from_id_value)
+			var rng := _node_rng(seed, from_id)
+			var links := mini(2, to_ids.size())
+			var pool: Array = to_ids.duplicate()
+			for _link in links:
+				outgoing[from_id].append(str(pool[rng.next_index(pool.size())]))
+				incoming_count[str(outgoing[from_id].back())] = int(incoming_count.get(str(outgoing[from_id].back()), 0)) + 1
+			# Cross-branch jump: a minority of nodes also reach into the stage after next.
+			if stage_index + 2 < stage_order.size() and rng.next_index(100) < 30:
+				var jump_ids: Array = by_stage_ids.get(stage_order[stage_index + 2], [])
+				if not jump_ids.is_empty():
+					var jump_id := str(jump_ids[rng.next_index(jump_ids.size())])
+					outgoing[from_id].append(jump_id)
+					incoming_count[jump_id] = int(incoming_count.get(jump_id, 0)) + 1
+	# Multiple-entry guarantee: every non-start node keeps at least one incoming
+	# edge, donated deterministically by an earlier node (start nodes lead the flat order).
+	for index in range(1, flat_ids.size()):
+		var node_id := str(flat_ids[index])
+		if int(incoming_count.get(node_id, 0)) > 0:
+			continue
+		if bool(node_by_id.get(node_id, {}).get("start", false)):
+			continue
+		var donor := str(flat_ids[_node_rng(seed, node_id).next_index(index)])
+		outgoing[donor].append(node_id)
+		incoming_count[node_id] = 1
+	# Every stage-five node converges onto the ascension window.
+	for node_id_value in by_stage_ids.get("five", []):
+		var node_id := str(node_id_value)
+		if not outgoing[node_id].has("ascension_window"):
+			outgoing[node_id].append("ascension_window")
+	var route: Array[Dictionary] = []
+	for index in flat_ids.size():
+		var node_id := str(flat_ids[index])
+		var node: Dictionary = node_by_id[node_id].duplicate(true)
+		node["visible"] = index <= 1
+		node["next_ids"] = outgoing[node_id]
+		route.append(node)
+	return route
+
+
+static func _node_rng(seed: int, node_id: String) -> SeededRng:
+	var hash := 0
+	for character in node_id:
+		hash = hash * 31 + character.unicode_at(0)
+	return SeededRng.new(int(seed) * 1000003 + hash)
 
 
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:
