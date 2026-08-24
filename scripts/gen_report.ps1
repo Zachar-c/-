@@ -9,9 +9,9 @@
 # 批次审阅简报生成器：批末为 AI 与用户生成审阅报告，浓缩改动范围、决策、台账、验证与遗留问题。
 # 用法：
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gen_report.ps1 -Volume vol2 -Batch 091-120
-#   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gen_report.ps1 -Volume vol2 -Batch 151-180 -OutFile notes\batch-report.md
+#   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gen_report.ps1 -Volume vol2 -Batch 151-180 -OutFile working\batch-report.md
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gen_report.ps1 -Volume vol2 -Batch 091-120 -SkipValidate
-# 注意：-OutFile 缺省时写入 notes\batch-report.md（每批覆盖）；关键裁决与遗留问题两节必须由编辑会话或总编会话填写，脚本只给骨架、自动采集与验证结果。
+# 注意：-OutFile 缺省时写入 working\batch-report.md（每批覆盖）；关键裁决与遗留问题两节必须由编辑会话或总编会话填写，脚本只给骨架、自动采集与验证结果。
 
 $ErrorActionPreference = 'Stop'
 $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
@@ -122,26 +122,16 @@ Write-ReportLine ''
 Write-ReportLine '> 批末由编辑会话填写；每条注明台账 ID、正文落地节号与理由。脚本只附台账命中。'
 Write-ReportLine ''
 $rangeSearch = $Batch -replace '-', '\s*[-—–]\s*'
-$registerNames = @(
-    'decision-register',
-    'combat-ledger',
-    'resource-audit',
-    'information-ledger',
-    'chronology-geography',
-    'character-state-ledger',
-    'structural-surgery'
-)
+$filePath = Get-RepoPath 'notes\ledger.md'
 $anyHit = $false
-foreach ($name in $registerNames) {
-    $filePath = Get-RepoPath ('notes\{0}-{1}.md' -f $volCfg.id, $name)
-    if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) { continue }
-    $matchedLines = @(Get-Content -LiteralPath $filePath -Encoding UTF8 | Where-Object { $_ -match $rangeSearch })
-    if ($matchedLines.Count -gt 0) {
+if (Test-Path -LiteralPath $filePath -PathType Leaf) {
+    $allLedgerLines = @(Get-Content -LiteralPath $filePath -Encoding UTF8)
+    foreach ($lineMatch in $allLedgerLines) {
+        if ($lineMatch -notmatch '^\s*-\s*\[来源[:：]') { continue }
+        if ($lineMatch -notmatch $rangeSearch) { continue }
         $anyHit = $true
-        foreach ($lineMatch in $matchedLines) {
-            $trimmed = $lineMatch.Trim()
-            if ($trimmed -ne '') { Write-ReportLine ('- 台账命中（{0}）：{1}' -f (Get-Relative $filePath), $trimmed) }
-        }
+        $trimmed = $lineMatch.Trim()
+        if ($trimmed -ne '') { Write-ReportLine ('- 台账命中（{0}）：{1}' -f (Get-Relative $filePath), $trimmed) }
     }
 }
 if (-not $anyHit) {
@@ -156,15 +146,13 @@ Write-ReportLine '| 台账 | 本批落账情况 | 顶部状态行 |'
 Write-ReportLine '| --- | --- | --- |'
 $notesStatus = @($statusShort | Where-Object { $_ -match 'notes/' })
 $notesTouched = ($notesStatus.Count -gt 0)
-foreach ($name in $registerNames) {
-    $filePath = Get-RepoPath ('notes\{0}-{1}.md' -f $volCfg.id, $name)
-    if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) {
-        Write-ReportLine ('| {1} | 无此文件 | — |' -f 'x', $name)
-        continue
-    }
+$filePath = Get-RepoPath 'notes\ledger.md'
+if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) {
+    Write-ReportLine '| ledger.md | 无此文件 | — |'
+} else {
     $allLines = @(Get-Content -LiteralPath $filePath -Encoding UTF8)
     $hitCount = @($allLines | Where-Object { $_ -match $rangeSearch }).Count
-    $touched = @($notesStatus | Where-Object { $_ -like ('*{0}*' -f $name) })
+    $touched = @($notesStatus | Where-Object { $_ -like '*ledger.md*' })
     if ($hitCount -gt 0) {
         $statusText = '已落账（命中 {0} 行）' -f $hitCount
     } elseif ($touched.Count -gt 0) {
@@ -178,7 +166,7 @@ foreach ($name in $registerNames) {
     } else {
         $statusLineText = '（缺状态行，见台账维护规范）'
     }
-    Write-ReportLine ('| {0} | {1} | {2}' -f $name, $statusText, $statusLineText)
+    Write-ReportLine ('| ledger.md | {0} | {1}' -f $statusText, $statusLineText)
 }
 Write-ReportLine ''
 if ($notesTouched) {
@@ -235,7 +223,7 @@ Write-ReportLine '> 由编辑会话填写：本批未决的 P2/P3、待核算口
 Write-ReportLine '- '
 
 $report = $lines -join [Environment]::NewLine
-$target = if ($OutFile) { $OutFile } else { 'notes\batch-report.md' }
+$target = if ($OutFile) { $OutFile } else { 'working\batch-report.md' }
 $outPath = Get-RepoPath $target
 $outDir = Split-Path -Parent $outPath
 if (-not (Test-Path -LiteralPath $outDir)) { [void](New-Item -ItemType Directory -Path $outDir -Force) }

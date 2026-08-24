@@ -128,6 +128,40 @@ class BriefReportCandidatesTests(unittest.TestCase):
         self.assertNotIn(u'候选总数', text)
         self.assertIn(u'## 6. 候选与审计（附）', text)
 
+    # ---------------- 唯一台账 ledger.md 接线 ----------------
+
+    LEDGER_TEXT = (
+        u'> 台账状态行：最后落地批次：测试批次；最后更新：2026-08-24。\n'
+        u'\n'
+        u'# 唯一台账\n'
+        u'\n'
+        u'## 1. 冻结裁决与勘误\n'
+        u'\n'
+        u'- [来源: tvol-decision-register#DEC-001] 卷界（已实施）：第151—180节为审阅检查点，边界不得跨批。\n'
+        u'- [来源: tvol-decision-register#DEC-002] 无关记录：第001—030节的裁决。\n'
+    )
+
+    def write_ledger(self):
+        notes_dir = os.path.join(self.repo_root, 'notes')
+        os.makedirs(notes_dir, exist_ok=True)
+        with io.open(os.path.join(notes_dir, 'ledger.md'), 'w', encoding='utf-8', newline='') as fh:
+            fh.write(self.LEDGER_TEXT)
+
+    def test_brief_ledger_hits_from_single_ledger(self):
+        self.write_ledger()
+        text = self.run_script('gen_brief.py', '-Volume', 'tvol', '-Batch', '151-180')
+        self.assertIn(u'## 4. 台账命中', text)
+        self.assertIn(u'DEC-001', text)
+        self.assertNotIn(u'DEC-002', text)
+
+    def test_report_ledger_hits_and_landing_table(self):
+        self.write_ledger()
+        text = self.run_script('gen_report.py', '-Volume', 'tvol', '-Batch', '151-180', '-SkipValidate')
+        self.assertIn(u'- 台账命中（notes', text)
+        self.assertIn(u'DEC-001', text)
+        self.assertNotIn(u'DEC-002', text)
+        self.assertIn(u'| ledger.md | 已落账（命中 1 行） | 最后落地批次：测试批次；最后更新：2026-08-24。', text)
+
 
 if __name__ == '__main__':
     unittest.main()

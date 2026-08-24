@@ -181,19 +181,9 @@ if ($detailOutline) {
 # 4. 台账命中
 Write-BriefLine '## 4. 台账命中（与批次号直接相关的记录）'
 Write-BriefLine ''
-$registerNames = @(
-    'decision-register',
-    'combat-ledger',
-    'resource-audit',
-    'information-ledger',
-    'chronology-geography',
-    'character-state-ledger',
-    'structural-surgery'
-)
 $rangeSearch = $Batch -replace '-', '\s*[-—–]\s*'
-foreach ($name in $registerNames) {
-    $filePath = Get-RepoPath ('notes\{0}-{1}.md' -f $volCfg.id, $name)
-    if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) { continue }
+$filePath = Get-RepoPath 'notes\ledger.md'
+if (Test-Path -LiteralPath $filePath -PathType Leaf) {
     $file = Get-Item -LiteralPath $filePath
     $allLines = @(Get-Content -LiteralPath $filePath -Encoding UTF8)
     $lineCount = $allLines.Count
@@ -203,7 +193,8 @@ foreach ($name in $registerNames) {
         $statusLineText = ($statusLine[0] -replace '^\s*>\s*台账状态行[:：]\s*', '').Trim()
         Write-BriefLine ('  - 状态行：' + $statusLineText)
     }
-    $matchedLines = @($allLines | Where-Object { $_ -match $rangeSearch })
+    $entryLines = @($allLines | Where-Object { $_ -match '^\s*-\s*\[来源[:：]' })
+    $matchedLines = @($entryLines | Where-Object { $_ -match $rangeSearch })
     $exactMatched = @($matchedLines | Where-Object { $_ -match ([regex]::Escape($Batch)) })
     $showLines = if ($exactMatched.Count -gt 0) { $exactMatched } else { $matchedLines }
     if ($showLines.Count -gt 0) {
@@ -219,9 +210,10 @@ foreach ($name in $registerNames) {
             Write-BriefLine ('  - …（另 ' + ($showLines.Count - 6) + ' 行命中）')
         }
     } else {
-        Write-BriefLine '  （无直接命中；涉及人物/资源续态仍须读该文件相关章节）'
+        Write-BriefLine '  （无直接命中；涉及人物/资源续态仍须读 notes/ledger.md 相关小节）'
     }
 }
+Write-BriefLine '- 说明：命中行为唯一台账 notes/ledger.md 的条目行（`[来源:` 前缀）；须读全文时按来源 ID 在台账中检索，历史原文在 notes/archive/。'
 Write-BriefLine ''
 
 # 5. 工作区与 Git

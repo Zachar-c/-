@@ -3,7 +3,7 @@
 
 幂等：已包含「## 本批主线」或「## 关联冻结裁决」的文件跳过。内容自动提取：
 - 主线：由各节标题串成节链（节标题即主线骨架）
-- 冻结裁决：从 notes/<vol>-decision-register.md 表格行提取实施批次/范围与本批重合的裁决
+- 冻结裁决：从 notes/ledger.md 条目行（`[来源:` 前缀）中提取与本批范围相关的记录
 
 用法：
   py -3 scripts/add_batch_summary.py            # 全部卷
@@ -43,45 +43,26 @@ def collect_headings(detail_path):
     return text, headings
 
 
-def collect_decisions(repo_root, vol_id):
-    register_path = os.path.join(repo_root, 'notes', u'{0}-decision-register.md'.format(vol_id))
-    if not os.path.isfile(register_path):
+def collect_ledger_entries(repo_root):
+    ledger_path = os.path.join(repo_root, 'notes', 'ledger.md')
+    if not os.path.isfile(ledger_path):
         return []
-    text = read_utf8_preserve(register_path)
-    rows = []
+    text = read_utf8_preserve(ledger_path)
+    entries = []
     for line in text.splitlines():
         stripped = line.strip()
-        if stripped.startswith('|') and stripped.endswith('|'):
-            cells = [c.strip() for c in stripped.strip('|').split('|')]
-        elif stripped.startswith('- DEC-'):
-            cells = [c.strip() for c in re.sub(r'^-\s*', '', stripped).split('|')]
-        else:
-            continue
-        if not cells or not re.match(r'^DEC-\d+', cells[0]):
-            continue
-        rows.append(cells)
-    return rows
+        if re.match(r'^-\s*\[来源[:：]', stripped):
+            entries.append(re.sub(r'^-\s*', '', stripped))
+    return entries
 
 
-def row_matches_batch(cells, rng):
-    if len(cells) >= 9:
-        implement = cells[-2]
-        scope = cells[3]
-    else:
-        implement = u''
-        scope = cells[1] if len(cells) >= 2 else u''
-    if u'全卷' in implement or u'全书' in implement:
+def entry_matches_batch(entry, rng):
+    if u'全卷' in entry or u'全书' in entry:
         return True
-    if rng in implement or rng in scope:
-        return True
-    first, sep, last = rng.partition('-')
-    if not sep:
-        return False
-    return (re.search(re.escape(first), implement) or re.search(re.escape(last), implement)
-            or re.search(re.escape(first), scope) or re.search(re.escape(last), scope))
+    return bool(re.search(re.sub(r'-', r'\\s*[-—–]\\s*', rng), entry))
 
 
-def render_block(vol_id, rng, headings, rows, eol):
+def render_block(vol_id, rng, headings, entries, eol):
     lines = []
     lines.append(SUMMARY_HEADING)
     lines.append('')
@@ -98,22 +79,13 @@ def render_block(vol_id, rng, headings, rows, eol):
     lines.append('')
     lines.append(DECISION_HEADING)
     lines.append('')
-    if rows:
-        for cells in rows:
-            if len(cells) >= 8:
-                verdict = cells[6]
-                kind = cells[2]
-            elif len(cells) >= 5:
-                verdict = cells[4]
-                kind = cells[2] if len(cells) >= 3 else u''
-            else:
-                verdict = cells[-1]
-                kind = u''
-            cut = verdict[:60] + (u'…' if len(verdict) > 60 else u'')
-            lines.append(u'- {0}（{1}）：{2}'.format(cells[0], kind, cut))
+    if entries:
+        for entry in entries:
+            cut = entry[:60] + (u'…' if len(entry) > 60 else u'')
+            lines.append(u'- ' + cut)
     else:
-        lines.append(u'- 本批暂无冻结裁决；相关记录见 {0}-decision-register.md 尾部执行结论段。'.format(vol_id))
-    lines.append(u'- 裁决全文与证据等级以 notes/{0}-decision-register.md 为准。'.format(vol_id))
+        lines.append(u'- 本批暂无直接命中的冻结裁决；活约束统一见 notes/ledger.md。')
+    lines.append(u'- 裁决全文与溯源 ID 以 notes/ledger.md 为准（历史原文在 notes/archive/）。')
     return eol.join(lines)
 
 
@@ -142,8 +114,8 @@ def main():
             if SUMMARY_HEADING in text or DECISION_HEADING in text:
                 continue
             eol = u'\r\n' if u'\r\n' in text else u'\n'
-            rows = [c for c in collect_decisions(repo_root, vol_cfg['id']) if row_matches_batch(c, rng)]
-            block = render_block(vol_cfg['id'], rng, headings, rows, eol)
+            entries = [e for e in collect_ledger_entries(repo_root) if entry_matches_batch(e, rng)]
+            block = render_block(vol_cfg['id'], rng, headings, entries, eol)
             had_bom = text.startswith(u'\ufeff')
             body = text[1:] if had_bom else text
             marker = re.search(r'\n#{2,3}\s+第\s*(\d+)\s*节', body)
