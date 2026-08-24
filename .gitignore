@@ -31,3 +31,6 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local working directory (never committed)
+working/
