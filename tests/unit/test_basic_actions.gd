@@ -11,7 +11,8 @@ func before_each() -> void:
 func test_punch_works_with_zero_essence_and_empty_hand() -> void:
 	var run := RunState.new_run(101)
 	run.essence = 0
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, run, catalog)
+	# "wild_boar" falls back to the reaction-free legacy enemy table.
+	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, run, catalog)
 	battle["hand"] = []
 	var result := BattleResolver.take_turn(battle, {"type": "basic_attack"}, run, catalog)
 
