@@ -10,6 +10,11 @@
 The upstream source is vendored as an unmodified source tree. Its MIT license
 is retained in `vendor/godot-open-rpg/LICENSE`.
 
+UI theme textures under `assets/theme/` are copied from the same pinned commit:
+`src/combat/ui/action_menu/*.png` and `src/combat/ui/battler_entry/*.png`,
+licensed under the upstream MIT license and modified only by renaming for the
+local `gu_theme.tres`.
+
 ## GUT
 
 - Source URL: https://github.com/bitwes/Gut

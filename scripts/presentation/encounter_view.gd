@@ -2,11 +2,16 @@ class_name EncounterView
 extends Control
 
 
+const THEME := preload("res://assets/theme/gu_theme.tres")
+const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+
+
 signal command_submitted(command: Dictionary)
 
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	theme = THEME
 
 
 func render_session(
@@ -62,7 +67,9 @@ func render_session(
 	actions.add_theme_constant_override("separation", 8)
 	column.add_child(actions)
 	for card in action_cards:
-		_add_action_card(actions, card)
+		var row := ActionCardRowScript.build(card)
+		row.command_submitted.connect(func(cmd: Dictionary): command_submitted.emit(cmd))
+		actions.add_child(row)
 	_append_feeding_footer(column, state, catalog)
 
 
@@ -134,76 +141,6 @@ func _result_text(entry: Dictionary) -> String:
 		"cultivation_result": return "你调整气息，修行所得已稳住。"
 		"action_rejected": return "此举条件不足，局势没有改变。"
 		_: return "行动已留下结果，你仍可继续处置此地。"
-
-
-func _add_action_card(container: VBoxContainer, card: Dictionary) -> void:
-	var row := VBoxContainer.new()
-	row.add_theme_constant_override("separation", 3)
-	container.add_child(row)
-	var button := Button.new()
-	button.text = str(card.get("title", "行动"))
-	button.custom_minimum_size = Vector2(360, 42)
-	button.disabled = not bool(card.get("executable", false))
-	button.tooltip_text = _card_tooltip(card)
-	button.pressed.connect(func(): command_submitted.emit({
-		"type": "action_card",
-		"action_id": str(card["id"]),
-		"state_version": int(card["state_version"]),
-	}))
-	row.add_child(button)
-	var details := Label.new()
-	details.text = _card_details(card)
-	details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	details.add_theme_font_size_override("font_size", 14)
-	details.add_theme_color_override("font_color", Color("d7c6a1") if bool(card.get("executable", false)) else Color("c28f8f"))
-	row.add_child(details)
-
-
-func _card_details(card: Dictionary) -> String:
-	var lines: Array[String] = []
-	var cost := _cost_text(card.get("cost", {}))
-	if not cost.is_empty():
-		lines.append("代价：%s" % cost)
-	if card.get("success_rate", null) != null:
-		lines.append("成功率：%d%%" % int(card["success_rate"]))
-	for gain in card.get("expected_gain", []):
-		lines.append("收益：%s" % str(gain))
-	for risk in card.get("known_risk", []):
-		lines.append("风险：%s" % str(risk))
-	if not str(card.get("unknown_note", "")).is_empty():
-		lines.append("未知：%s" % str(card["unknown_note"]))
-	if not bool(card.get("executable", false)):
-		lines.append("受阻：%s" % str(card.get("block_reason", "条件不足。")))
-		for hint in card.get("remedy_hints", []):
-			lines.append("途径：%s" % str(hint))
-	return "\n".join(lines)
-
-
-func _card_tooltip(card: Dictionary) -> String:
-	if bool(card.get("executable", false)):
-		return _card_details(card)
-	var hints: Array = card.get("remedy_hints", [])
-	return "%s\n%s" % [str(card.get("block_reason", "条件不足。")), "\n".join(hints)]
-
-
-func _cost_text(cost: Dictionary) -> String:
-	var items: Array[String] = []
-	if cost.has("stone"):
-		items.append("元石 %d" % int(cost["stone"]))
-	if cost.has("spirit"):
-		items.append("真元 %d" % int(cost["spirit"]))
-	if cost.has("time"):
-		items.append("时机 %d" % int(cost["time"]))
-	if cost.has("lifespan"):
-		items.append("寿元 %d" % int(cost["lifespan"]))
-	if cost.has("hp"):
-		items.append("气血 %d" % int(cost["hp"]))
-	if cost.has("gu_ids"):
-		var gu_names: Array[String] = []
-		for gu_id in cost["gu_ids"]:
-			gu_names.append(DisplayText.gu(str(gu_id)))
-		items.append("输入蛊 %s" % "、".join(gu_names))
-	return "、".join(items)
 
 
 func _actual_change_text(changes: Array) -> String:

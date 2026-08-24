@@ -2,11 +2,16 @@ class_name BattleView
 extends Control
 
 
+const THEME := preload("res://assets/theme/gu_theme.tres")
+const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+
+
 signal command_submitted(command: Dictionary)
 
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	theme = THEME
 
 
 func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_cards: Array[Dictionary]) -> void:
@@ -48,42 +53,14 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_car
 	action_row.add_theme_constant_override("separation", 8)
 	column.add_child(action_row)
 	for card in action_cards:
-		_add_action_button(action_row, card)
+		var row := ActionCardRowScript.build(card, 320)
+		row.command_submitted.connect(func(cmd: Dictionary): command_submitted.emit(cmd))
+		action_row.add_child(row)
 
 
 func _clear() -> void:
 	for child in get_children():
 		child.queue_free()
-
-
-func _add_action_button(row: VBoxContainer, card: Dictionary) -> void:
-	var button := Button.new()
-	button.text = str(card.get("title", "行动"))
-	button.custom_minimum_size = Vector2(280, 42)
-	button.disabled = not bool(card.get("executable", false))
-	button.tooltip_text = _card_tooltip(card)
-	button.pressed.connect(func(): command_submitted.emit({"type": "action_card", "action_id": card["id"], "state_version": card["state_version"]}))
-	row.add_child(button)
-	var details := Label.new()
-	details.text = _card_tooltip(card)
-	details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	details.add_theme_font_size_override("font_size", 14)
-	row.add_child(details)
-
-
-func _card_tooltip(card: Dictionary) -> String:
-	var lines: Array[String] = []
-	if card.get("cost", {}).has("spirit"):
-		lines.append("消耗真元 %d" % int(card["cost"]["spirit"]))
-	for gain in card.get("expected_gain", []):
-		lines.append("效果：%s" % str(gain))
-	for risk in card.get("known_risk", []):
-		lines.append("风险：%s" % str(risk))
-	if not str(card.get("unknown_note", "")).is_empty():
-		lines.append("未知：%s" % str(card["unknown_note"]))
-	if not bool(card.get("executable", false)):
-		lines.append("受阻：%s" % str(card.get("block_reason", "条件不足。")))
-	return "\n".join(lines)
 
 
 func _clue_text(clues: Array) -> String:

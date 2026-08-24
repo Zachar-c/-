@@ -3,6 +3,7 @@ extends Control
 
 
 const ROUTE_TREE_CANVAS := preload("res://scripts/presentation/route_tree_canvas.gd")
+const THEME := preload("res://assets/theme/gu_theme.tres")
 
 
 signal node_selected(node_id: String)
@@ -11,6 +12,7 @@ signal action_submitted(command: Dictionary)
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	theme = THEME
 
 
 func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta: RefCounted = null) -> void:

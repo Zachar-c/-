@@ -48,12 +48,11 @@ func test_result_summary_never_shows_non_chinese_dialogue_text() -> void:
 
 
 func test_cost_text_translates_gu_ids_for_player_display() -> void:
-	var view := EncounterView.new()
-	var cost := view._cost_text({"gu_ids": ["small_light_gu", "trail_eye_gu"]})
+	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+	var cost := ActionCardRowScript._cost_text({"gu_ids": ["small_light_gu", "trail_eye_gu"]})
 
 	assert_eq(cost, "输入蛊 小光蛊、寻迹眼蛊")
 	assert_false(cost.contains("small_light_gu"))
-	view.free()
 
 
 func test_actual_change_text_uses_same_bbcode_color_as_result_history() -> void:
