@@ -12,11 +12,12 @@ func before_each() -> void:
 	catalog = ContentCatalog.load_all()
 
 
-func test_lifespan_market_deal_shows_known_cost_before_click_and_can_kill() -> void:
+func test_lifespan_market_deal_shows_known_cost_and_blocks_death_trade() -> void:
 	var run := RunState.new_run(101)
 	run.cultivator["lifespan"] = 1
 	var card := _card(ActionPreviewServiceScript.preview_actions(run, _shop_node(), catalog), "shop.lifespan.pulse_drum")
 	assert_eq(int(card["cost"]["lifespan"]), 1)
+	assert_false(bool(card["executable"]))
 	var result := EncounterSessionResolverScript.apply(
 		run,
 		EncounterSessionResolverScript.start(_shop_node()),
@@ -24,7 +25,8 @@ func test_lifespan_market_deal_shows_known_cost_before_click_and_can_kill() -> v
 		catalog,
 		_shop_node()
 	)
-	assert_eq(str(result["state"].terminal_state), "dead")
+	assert_eq(str(result["state"].terminal_state), "active")
+	assert_eq(int(result["state"].cultivator["lifespan"]), 1)
 
 
 func test_barter_preview_keeps_reward_unknown_but_shows_observable_trader_clue() -> void:

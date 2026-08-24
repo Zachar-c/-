@@ -747,10 +747,12 @@ static func _shop_lifespan_deal(state: RunState, command: Dictionary, catalog: D
 	if str(offer.get("kind", "")) != "lifespan_deal":
 		return _rejected(state, "unknown_shop_offer")
 	var cost := int(offer.get("lifespan_cost", 0))
-	if int(state.cultivator.get("lifespan", 0)) < cost:
-		return _rejected(state, "insufficient_lifespan")
+	var lifespan := int(state.cultivator.get("lifespan", 0))
+	# Trade deaths must be predictable: paying to zero is rejected up front.
+	if lifespan - cost < 1:
+		return _rejected(state, "lifespan_trade_warning")
 	var cultivator := state.cultivator.duplicate(true)
-	cultivator["lifespan"] = maxi(0, int(cultivator.get("lifespan", 0)) - cost)
+	cultivator["lifespan"] = lifespan - cost
 	var next := state.append_event(_event(
 		state,
 		"shop_lifespan_deal",

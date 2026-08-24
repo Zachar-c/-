@@ -381,17 +381,19 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 			}))
 		"lifespan_deal":
 			var lifespan_cost := int(offer.get("lifespan_cost", 0))
-			var enough_life := int(state.cultivator.get("lifespan", 0)) >= lifespan_cost
+			var lifespan := int(state.cultivator.get("lifespan", 0))
+			var kept := lifespan - lifespan_cost
+			var executable := kept >= 1
 			cards.append(_card(state, {
 				"id": "shop.%s" % str(offer["card_key"]),
 				"title": "以寿元换%s" % DisplayText.gu(str(offer["gu_id"])),
 				"summary": "商人只收寿元，不收元石。",
-				"executable": enough_life,
-				"block_reason": "剩余寿元不足以支付这笔交易。" if not enough_life else "",
+				"executable": executable,
+				"block_reason": "支付后寿元将耗尽（剩余 %d），交易被禁止。" % kept if not executable else "",
 				"cost": {"lifespan": lifespan_cost},
-				"known_risk": ["支付寿元会让寿元上限逼近枯竭，寿元归零会当场死亡。"],
+				"known_risk": ["支付 %d 寿元（支付后剩余 %d）；寿元归零会当场死亡。" % [lifespan_cost, kept]],
 				"expected_gain": ["获得%s。" % DisplayText.gu(str(offer["gu_id"]))],
-				"remedy_hints": ["可改用元石购买其他蛊虫。"] if not enough_life else [],
+				"remedy_hints": ["可先恢复寿元，或改用元石购买其他蛊虫。"] if not executable else [],
 				"command": {"type": "shop_lifespan_deal", "offer_id": str(offer["id"])},
 			}))
 		"barter":
