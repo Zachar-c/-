@@ -555,12 +555,11 @@ static func _battle_refine(battle: Dictionary, action: Dictionary, state: RunSta
 	var next_state := paid.append_event(_event(
 		paid,
 		"battle_synthesize",
-		{"materials": state.materials, "synthesis_fail_streak": streak},
+		{"materials": paid.materials, "synthesis_fail_streak": int(paid.synthesis_fail_streak)},
 		{"materials": paid.materials, "synthesis_fail_streak": next_streak},
 		"battle_synthesis_succeeded" if succeeded else "battle_synthesis_failed",
 		cost.keys() as Array
 	))
-	next_state.synthesis_fail_streak = next_streak
 	var next_battle := battle.duplicate(true)
 	var temp_card_id := ""
 	if succeeded:

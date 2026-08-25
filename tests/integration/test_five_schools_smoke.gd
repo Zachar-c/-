@@ -37,7 +37,8 @@ func test_every_school_runs_the_minimal_closed_loop() -> void:
 					"%s seed %d: basic action accepted" % [school_id, run_seed])
 			# Leg 3: victory loot resolves on the school-pool filter.
 			var looted := LootResolverScript.settle_victory(battle, controller.state, catalog)
-			assert_true(not looted["loot"].is_empty(),
+			var loot_ids: Array = looted["loot"].get("material_ids", [])
+			assert_true(not loot_ids.is_empty() or str(looted["loot"].get("gu_id", "")) != "",
 					"%s seed %d: loot resolves" % [school_id, run_seed])
 			# Leg 4: refine school can synthesize in battle with materials.
 			if school_id == "refine":
