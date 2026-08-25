@@ -96,6 +96,13 @@ const GU := {
 	"moon_glow_gu": "月华蛊",
 	"phantom_moon_gu": "幻月蛊",
 	"moon_shadow_gu": "月影蛊",
+	"blood_droplet_gu": "血滴子蛊",
+	"blood_bat_gu": "幽血蝙蝠蛊",
+	"blood_wing_gu": "血翼蛊",
+	"blood_farewell_gu": "爱别离蛊",
+	"force_gu": "力量蛊",
+	"bear_strength_gu": "熊力蛊",
+	"qi_wall_gu": "气墙蛊",
 }
 
 const INHERITANCES := {

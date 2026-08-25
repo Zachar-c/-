@@ -194,6 +194,13 @@ static func _battle_effect(gu_id: String, mode: String) -> String:
 		"venom_thread_gu": return "拖慢敌人攻势。"
 		"pulse_drum_gu": return "打断敌方本轮攻势。"
 		"shadow_veil_gu": return "扰乱敌方锁定，削减伤害。"
+		"blood_droplet_gu": return "血滴如刃，对敌人造成 2 点伤害。"
+		"blood_bat_gu": return "蝙蝠噬血：恢复 1 点伤势并造成 1 点伤害。"
+		"blood_wing_gu": return "展开血翼，保留撤离机会。"
+		"blood_farewell_gu": return "爱别离之毒缚住敌人，拖慢本回合攻势。"
+		"force_gu": return "力量蛊爆发，对敌人造成 2 点伤害。"
+		"bear_strength_gu": return "熊力贯体，恢复 1 点伤势。"
+		"qi_wall_gu": return "竖起无形气墙，护住周身。"
 	return "催发蛊虫效果。"
 
 

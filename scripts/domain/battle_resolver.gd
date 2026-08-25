@@ -307,6 +307,29 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		"shadow_veil_gu":
 			_add_flag(battle, "targeting_obscured")
 			log_entry["id"] = "shadow_veil"
+		"blood_droplet_gu":
+			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 2)
+			log_entry["id"] = "blood_droplet_shot"
+		"blood_bat_gu":
+			after["injury"] = maxi(0, state.injury - 1)
+			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 1)
+			log_entry["id"] = "blood_bat_bite"
+		"blood_wing_gu":
+			_add_flag(battle, "retreat_preserved")
+			log_entry["id"] = "blood_wing_escape"
+		"blood_farewell_gu":
+			_add_flag(battle, "enemy_bound")
+			battle["delay_progress"] = int(battle["delay_progress"]) + 1
+			log_entry["id"] = "farewell_grip"
+		"force_gu":
+			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 2)
+			log_entry["id"] = "power_blow"
+		"bear_strength_gu":
+			after["injury"] = maxi(0, state.injury - 1)
+			log_entry["id"] = "bear_vitality"
+		"qi_wall_gu":
+			_add_flag(battle, "guarded")
+			log_entry["id"] = "qi_bulwark"
 		_:
 			log_entry["id"] = "gu_no_combat_effect"
 	battle["log"].append(log_entry)

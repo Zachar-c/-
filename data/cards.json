@@ -32,7 +32,8 @@
   {
     "id": "moonlight_strike",
     "source_gu_ids": [
-      "moonlight_gu"
+      "moonlight_gu",
+      "moon_glow_gu"
     ],
     "cost": {
       "essence": 1
@@ -111,5 +112,111 @@
     "duration_turns": 1,
     "occupies_soul_slots": true,
     "public_text_key": "thorn_bind"
+  },
+  {
+    "id": "blood_droplet_shot",
+    "source_gu_ids": [
+      "blood_droplet_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_droplet_shot"
+  },
+  {
+    "id": "blood_bat_bite",
+    "source_gu_ids": [
+      "blood_bat_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_and_strike"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_bat_bite"
+  },
+  {
+    "id": "blood_wing_escape",
+    "source_gu_ids": [
+      "blood_wing_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_wing_escape"
+  },
+  {
+    "id": "farewell_grip",
+    "source_gu_ids": [
+      "blood_farewell_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "bind_enemy"
+    ],
+    "mode": "bind",
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "farewell_grip"
+  },
+  {
+    "id": "power_blow",
+    "source_gu_ids": [
+      "force_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "power_blow"
+  },
+  {
+    "id": "bear_vitality",
+    "source_gu_ids": [
+      "bear_strength_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_and_strike"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "bear_vitality"
+  },
+  {
+    "id": "qi_bulwark",
+    "source_gu_ids": [
+      "qi_wall_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "gain_guard"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "qi_bulwark"
   }
 ]

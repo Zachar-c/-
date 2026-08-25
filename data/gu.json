@@ -389,5 +389,222 @@
     ],
     "school": "force",
     "role": "movement"
+  },
+  {
+    "id": "blood_droplet_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_droplet_shot"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "strike",
+      "threaten"
+    ],
+    "synergy_hooks": [
+      "light_combo",
+      "blood_stacks_combo"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack"
+  },
+  {
+    "id": "blood_bat_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_bat_bite"
+    ],
+    "value": 6,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "drain_strike",
+    "field_actions": [
+      "strike",
+      "tend_wound"
+    ],
+    "synergy_hooks": [
+      "heal_then_strike",
+      "injury_relief"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "blood",
+      "attack",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "attack"
+  },
+  {
+    "id": "blood_wing_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_wing_escape"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "shift_position",
+    "field_actions": [
+      "withdraw",
+      "hide"
+    ],
+    "synergy_hooks": [
+      "support_retreat",
+      "avoid_control"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement"
+  },
+  {
+    "id": "blood_farewell_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "farewell_grip"
+    ],
+    "value": 6,
+    "essence_cost": 1,
+    "slot_role": "control",
+    "combat": "poison_and_slow",
+    "field_actions": [
+      "set_snare",
+      "threaten"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "support_retreat"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "blood",
+      "attack",
+      "poison"
+    ],
+    "school": "blood",
+    "role": "attack"
+  },
+  {
+    "id": "force_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "power_blow"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "strike",
+      "brace"
+    ],
+    "synergy_hooks": [
+      "light_combo",
+      "force_power_synergy"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "force",
+      "attack",
+      "power"
+    ],
+    "school": "force",
+    "role": "attack"
+  },
+  {
+    "id": "bear_strength_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "bear_vitality"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_and_bleed",
+    "field_actions": [
+      "tend_wound",
+      "brace"
+    ],
+    "synergy_hooks": [
+      "heal_then_strike",
+      "injury_relief"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "force",
+      "healing",
+      "beast"
+    ],
+    "school": "force",
+    "role": "healing"
+  },
+  {
+    "id": "qi_wall_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "qi_bulwark"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "guard_against_hit",
+    "field_actions": [
+      "brace",
+      "hold_passage"
+    ],
+    "synergy_hooks": [
+      "guard_ally",
+      "resist_hazard"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "qi",
+      "defense",
+      "air"
+    ],
+    "school": "qi",
+    "role": "defense"
   }
 ]

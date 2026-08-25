@@ -50,7 +50,7 @@ func test_known_outcomes_override_rule_hints() -> void:
 
 func test_validation_rejects_unknown_risk_hint_tag() -> void:
 	var tuned := catalog.duplicate(true)
-	var hint := {"tags": ["beast"], "text": "兽性躁动。"}
+	var hint := {"tags": ["wyvern"], "text": "兽性躁动。"}
 	for recipe in tuned["refinement_recipes"]:
 		if recipe["id"] == "free_mix":
 			recipe["risk_hints"] = [hint]
@@ -61,7 +61,7 @@ func test_validation_rejects_unknown_risk_hint_tag() -> void:
 	var errors: Array[String] = ContentCatalogScript.validate(tuned)
 	var hit := false
 	for error in errors:
-		if error.contains("risk hint references unknown tag beast"):
+		if error.contains("risk hint references unknown tag wyvern"):
 			hit = true
 	assert_true(hit)
 
