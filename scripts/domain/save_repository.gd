@@ -136,70 +136,28 @@ static func load_meta_file() -> RefCounted:
 
 static func _state_from_save_data(data: Dictionary) -> Variant:
 	var state := RunState.new()
-	state.seed = int(data.get("seed", 0))
-	state.stage = str(data.get("stage", "one"))
-	state.cultivation = int(data.get("cultivation", 1))
-	state.essence = int(data.get("essence", 3))
-	state.essence_capacity = int(data.get("essence_capacity", 4))
-	state.health = int(data.get("health", 6))
-	state.max_health = int(data.get("max_health", 6))
-	state.aptitude = str(data.get("aptitude", "bing"))
-	state.injury = int(data.get("injury", 0))
-	state.lifespan_debt = int(data.get("lifespan_debt", 0))
-	state.stone = int(data.get("stone", 12))
-	state.loot_pity = int(data.get("loot_pity", 0))
-	state.gu_ids = _string_array(data.get("gu_ids", []))
-	state.refined_gu_ids = _string_array(data.get("refined_gu_ids", state.gu_ids))
-	state.equipped_gu_ids = _string_array(data.get("equipped_gu_ids", []))
-	state.inheritance_ids = _string_array(data.get("inheritance_ids", []))
-	state.body_imprints = _string_array(data.get("body_imprints", []))
-	state.clues = _string_array(data.get("clues", []))
-	state.relations = data.get("relations", {}).duplicate(true)
-	state.pursuit = int(data.get("pursuit", 0))
-	state.ascension = data.get("ascension", {}).duplicate(true)
-	state.known_facts = _string_array(data.get("known_facts", []))
-	state.current_node_id = str(data.get("current_node_id", "awakening"))
-	state.route_progress = _string_array(data.get("route_progress", []))
-	state.node_flags = data.get("node_flags", {}).duplicate(true)
-	state.encounter_session = data.get("encounter_session", {}).duplicate(true)
-	state.encounter_results = _dictionary_array(data.get("encounter_results", []))
-	state.global_codex_ids = _string_array(data.get("global_codex_ids", []))
-	state.school = str(data.get("school", ""))
-	state.saved_combos = _dictionary_array(data.get("saved_combos", []))
-	state.event_log = _dictionary_array(data.get("event_log", []))
-	state.cultivator = data.get("cultivator", {
-		"reincarnation": state.cultivation,
-		"stage": 0,
-		"aptitude": state.aptitude,
-		"health": state.health,
-		"max_health": state.max_health,
-		"lifespan": 60,
-		"soul": 4,
-		"soul_max": 4,
-		"soul_control_limit": 2,
-		"notorious": 0,
-		"speed": 2,
-		"force_power": 0,
-		"force_imprints": [],
-		"statuses": {},
-	}).duplicate(true)
-	state.cave_aperture = data.get("cave_aperture", {
-		"essence": state.essence,
-		"essence_max": state.essence_capacity,
-		"essence_regen_per_turn": 2,
-		"integrity": 6,
-		"integrity_max": 6,
-		"stored_gu_instance_ids": [],
-	}).duplicate(true)
-	state.gu_instances = data.get("gu_instances", {}).duplicate(true)
-	state.gu_card_overrides = data.get("gu_card_overrides", {}).duplicate(true)
-	state.materials = data.get("materials", {"feed_points": 0}).duplicate(true)
-	state.relic_ids = _string_array(data.get("relic_ids", []))
-	state.meta_rules = data.get("meta_rules", {}).duplicate(true)
-	state.terminal_state = str(data.get("terminal_state", "active"))
+	for field in RunState.STATE_FIELDS:
+		if not data.has(field):
+			continue
+		state.set(field, _coerce_state_field(field, data[field]))
 	if not _has_valid_event_log(state):
 		return null
 	return state
+
+
+static func _coerce_state_field(field: String, value: Variant) -> Variant:
+	if value is Dictionary:
+		return value.duplicate(true)
+	var string_list_fields := [
+		"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints",
+		"clues", "known_facts", "route_progress", "relic_ids", "global_codex_ids",
+	]
+	var dictionary_list_fields := ["encounter_results", "saved_combos", "event_log"]
+	if string_list_fields.has(field):
+		return _string_array(value)
+	if dictionary_list_fields.has(field):
+		return _dictionary_array(value)
+	return value
 
 
 static func _has_valid_event_log(state: RunState) -> bool:

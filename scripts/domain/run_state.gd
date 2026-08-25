@@ -48,6 +48,20 @@ var global_codex_ids: Array[String] = []
 var school: String = ""
 
 
+# Single source of truth for persisted/copied fields. Adding a field means:
+# declare it above and add it here; _copy/to_save_data/load all follow.
+# event_log and seed are deliberately excluded from event after-applies.
+const STATE_FIELDS: Array[String] = [
+	"seed", "stage", "cultivation", "essence", "essence_capacity", "health", "max_health",
+	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity",
+	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
+	"relations", "pursuit", "ascension", "known_facts", "current_node_id",
+	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",
+	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",
+	"relic_ids", "meta_rules", "global_codex_ids", "school", "terminal_state",
+]
+
+
 static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 	var state := RunState.new()
 	state.seed = run_seed
@@ -188,47 +202,10 @@ func estimate_feeding(catalog: Dictionary) -> int:
 
 
 func to_save_data() -> Dictionary:
-	return {
-		"seed": seed,
-		"stage": stage,
-		"cultivation": cultivation,
-		"essence": essence,
-		"essence_capacity": essence_capacity,
-		"health": health,
-		"max_health": max_health,
-		"aptitude": aptitude,
-		"injury": injury,
-		"lifespan_debt": lifespan_debt,
-		"stone": stone,
-		"loot_pity": loot_pity,
-		"gu_ids": gu_ids.duplicate(),
-		"refined_gu_ids": refined_gu_ids.duplicate(),
-		"equipped_gu_ids": equipped_gu_ids.duplicate(),
-		"inheritance_ids": inheritance_ids.duplicate(),
-		"body_imprints": body_imprints.duplicate(),
-		"clues": clues.duplicate(),
-		"relations": relations.duplicate(true),
-		"pursuit": pursuit,
-		"ascension": ascension.duplicate(true),
-		"known_facts": known_facts.duplicate(),
-		"current_node_id": current_node_id,
-		"route_progress": route_progress.duplicate(),
-		"node_flags": node_flags.duplicate(true),
-		"encounter_session": encounter_session.duplicate(true),
-		"encounter_results": encounter_results.duplicate(true),
-		"saved_combos": saved_combos.duplicate(true),
-		"event_log": event_log.duplicate(true),
-		"cultivator": cultivator.duplicate(true),
-		"cave_aperture": cave_aperture.duplicate(true),
-		"gu_instances": gu_instances.duplicate(true),
-		"gu_card_overrides": gu_card_overrides.duplicate(true),
-		"materials": materials.duplicate(true),
-		"relic_ids": relic_ids.duplicate(),
-		"meta_rules": meta_rules.duplicate(true),
-		"global_codex_ids": global_codex_ids.duplicate(),
-		"school": school,
-		"terminal_state": terminal_state,
-	}
+	var data := {}
+	for field in STATE_FIELDS:
+		data[field] = _copy_value(get(field))
+	return data
 
 
 func _initial_event() -> Dictionary:
@@ -255,45 +232,8 @@ func _initial_event() -> Dictionary:
 
 func _copy() -> RunState:
 	var copy := RunState.new()
-	copy.seed = seed
-	copy.stage = stage
-	copy.cultivation = cultivation
-	copy.essence = essence
-	copy.essence_capacity = essence_capacity
-	copy.health = health
-	copy.max_health = max_health
-	copy.aptitude = aptitude
-	copy.injury = injury
-	copy.lifespan_debt = lifespan_debt
-	copy.stone = stone
-	copy.loot_pity = loot_pity
-	copy.gu_ids = gu_ids.duplicate()
-	copy.refined_gu_ids = refined_gu_ids.duplicate()
-	copy.equipped_gu_ids = equipped_gu_ids.duplicate()
-	copy.inheritance_ids = inheritance_ids.duplicate()
-	copy.body_imprints = body_imprints.duplicate()
-	copy.clues = clues.duplicate()
-	copy.relations = relations.duplicate(true)
-	copy.pursuit = pursuit
-	copy.ascension = ascension.duplicate(true)
-	copy.known_facts = known_facts.duplicate()
-	copy.current_node_id = current_node_id
-	copy.route_progress = route_progress.duplicate()
-	copy.node_flags = node_flags.duplicate(true)
-	copy.encounter_session = encounter_session.duplicate(true)
-	copy.encounter_results = encounter_results.duplicate(true)
-	copy.saved_combos = saved_combos.duplicate(true)
-	copy.event_log = event_log.duplicate(true)
-	copy.cultivator = cultivator.duplicate(true)
-	copy.cave_aperture = cave_aperture.duplicate(true)
-	copy.gu_instances = gu_instances.duplicate(true)
-	copy.gu_card_overrides = gu_card_overrides.duplicate(true)
-	copy.materials = materials.duplicate(true)
-	copy.relic_ids = relic_ids.duplicate()
-	copy.meta_rules = meta_rules.duplicate(true)
-	copy.global_codex_ids = global_codex_ids.duplicate()
-	copy.school = school
-	copy.terminal_state = terminal_state
+	for field in STATE_FIELDS:
+		copy.set(field, _copy_value(get(field)))
 	return copy
 
 
@@ -315,15 +255,11 @@ func _normalized_event(event: Dictionary, index: int) -> Dictionary:
 
 func _apply_after(after: Dictionary) -> void:
 	for key in after:
-		if key in [
-			"stage", "cultivation", "essence", "essence_capacity", "health", "max_health", "aptitude", "injury", "lifespan_debt", "stone",
-			"loot_pity",
-			"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
-			"relations", "pursuit", "ascension", "known_facts", "current_node_id",
-			"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos",
-			"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials", "relic_ids", "meta_rules", "global_codex_ids", "school", "terminal_state",
-		]:
-			set(key, _copy_value(after[key]))
+		if not STATE_FIELDS.has(key) or key == "event_log" or key == "seed":
+			# event_log is append-only and seed is immutable once set; event
+			# after-payloads must never touch either.
+			continue
+		set(key, _copy_value(after[key]))
 
 
 func _copy_value(value: Variant) -> Variant:
