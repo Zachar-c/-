@@ -50,87 +50,59 @@ const STANDARD_ACTIONS := [
 static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	if state.is_terminal():
 		return _rejected(state, "terminal_run")
-	match command.get("type", ""):
-		"travel":
-			return _travel(state, command)
-		"resolve_contact":
-			return _resolve_contact(state, command)
-		"complete_node":
-			return _complete_node(state, command)
-		"buy_gu":
-			return _buy_gu(state, command, catalog)
-		"sell_gu":
-			return _sell_gu(state, command, catalog)
-		"exchange_gu":
-			return _exchange_gu(state, command, catalog)
-		"refine_gu":
-			return _refine_gu(state, command, catalog)
-		"cultivate_rank_two":
-			return _cultivate_rank_two(state, catalog)
-		"settle_feeding":
-			return _settle_feeding(state, catalog)
-		"settle_node_feeding":
-			return _settle_node_feeding(state, catalog)
-		"disable_card":
-			return _disable_card(state, command)
-		"upgrade_card":
-			return _upgrade_card(state, command)
-		"copy_card":
-			return _copy_card(state, command)
-		"destroy_gu":
-			return _destroy_gu(state, command, catalog)
-		"remove_card":
-			return _remove_card_command(state, command, catalog)
-		"remove_imprint":
-			return _remove_imprint_command(state, command, catalog)
-		"spend_lifespan":
-			return _spend_lifespan(state, command)
-		"accept_debt":
-			return _accept_debt(state, catalog)
-		"use_gu":
-			return _use_gu(state, command, catalog)
-		"buy_opportunity":
-			return _buy_opportunity(state, command)
-		"take_body_imprint":
-			return _take_body_imprint(state, command)
-		"choose_action":
-			return _choose_action(state, command, catalog)
-		"retreat":
-			return _retreat(state)
-		"attempt_ascension":
-			return _attempt_ascension(state, command)
-		"gain_relic":
-			return _gain_relic(state, command, catalog)
-		"shop_purchase":
-			return _shop_purchase(state, command, catalog)
-		"shop_lifespan_deal":
-			return _shop_lifespan_deal(state, command, catalog)
-		"shop_barter":
-			return _shop_barter(state, command, catalog)
-		"scavenge":
-			return _scavenge(state, command, catalog)
-		"sell_material":
-			return _sell_material(state, command, catalog)
-		"raise_aptitude":
-			return _raise_aptitude(state, command, catalog)
-		"record_neutral_npc_kill":
-			return _record_neutral_npc_kill(state, catalog)
-		"wash_notoriety":
-			return _wash_notoriety(state, catalog)
-		"record_boss_defeated":
-			return _record_boss_defeated(state, catalog)
-		"rest":
-			return _rest(state, command, catalog)
-		"gain_force_power":
-			return _gain_force_power(state, command, catalog)
-		"accept_event":
-			return _accept_event(state, command, catalog)
-		"gain_curse":
-			return _gain_curse_command(state, command, catalog)
-		"remove_curse":
-			return _remove_curse_command(state, command, catalog)
-		_:
-			return _rejected(state, "unsupported_command")
+	var handler: Variant = _handler_for(str(command.get("type", "")))
+	if handler == null:
+		return _rejected(state, "unsupported_command")
+	return handler.call(state, command, catalog)
+
+
+static var _dispatch: Dictionary = {}
+
+
+static func _handler_for(command_type: String) -> Variant:
+	if _dispatch.is_empty():
+		_dispatch = {
+			"travel": func(state, command, catalog): return _travel(state, command),
+			"resolve_contact": func(state, command, catalog): return _resolve_contact(state, command),
+			"complete_node": func(state, command, catalog): return _complete_node(state, command),
+			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
+			"sell_gu": func(state, command, catalog): return _sell_gu(state, command, catalog),
+			"exchange_gu": func(state, command, catalog): return _exchange_gu(state, command, catalog),
+			"refine_gu": func(state, command, catalog): return _refine_gu(state, command, catalog),
+			"cultivate_rank_two": func(state, command, catalog): return _cultivate_rank_two(state, catalog),
+			"settle_feeding": func(state, command, catalog): return _settle_feeding(state, catalog),
+			"settle_node_feeding": func(state, command, catalog): return _settle_node_feeding(state, catalog),
+			"disable_card": func(state, command, catalog): return _disable_card(state, command),
+			"upgrade_card": func(state, command, catalog): return _upgrade_card(state, command),
+			"copy_card": func(state, command, catalog): return _copy_card(state, command),
+			"destroy_gu": func(state, command, catalog): return _destroy_gu(state, command, catalog),
+			"remove_card": func(state, command, catalog): return _remove_card_command(state, command, catalog),
+			"remove_imprint": func(state, command, catalog): return _remove_imprint_command(state, command, catalog),
+			"spend_lifespan": func(state, command, catalog): return _spend_lifespan(state, command),
+			"accept_debt": func(state, command, catalog): return _accept_debt(state, catalog),
+			"use_gu": func(state, command, catalog): return _use_gu(state, command, catalog),
+			"buy_opportunity": func(state, command, catalog): return _buy_opportunity(state, command),
+			"take_body_imprint": func(state, command, catalog): return _take_body_imprint(state, command),
+			"choose_action": func(state, command, catalog): return _choose_action(state, command, catalog),
+			"retreat": func(state, command, catalog): return _retreat(state),
+			"attempt_ascension": func(state, command, catalog): return _attempt_ascension(state, command),
+			"gain_relic": func(state, command, catalog): return _gain_relic(state, command, catalog),
+			"shop_purchase": func(state, command, catalog): return _shop_purchase(state, command, catalog),
+			"shop_lifespan_deal": func(state, command, catalog): return _shop_lifespan_deal(state, command, catalog),
+			"shop_barter": func(state, command, catalog): return _shop_barter(state, command, catalog),
+			"scavenge": func(state, command, catalog): return _scavenge(state, command, catalog),
+			"sell_material": func(state, command, catalog): return _sell_material(state, command, catalog),
+			"raise_aptitude": func(state, command, catalog): return _raise_aptitude(state, command, catalog),
+			"record_neutral_npc_kill": func(state, command, catalog): return _record_neutral_npc_kill(state, catalog),
+			"wash_notoriety": func(state, command, catalog): return _wash_notoriety(state, catalog),
+			"record_boss_defeated": func(state, command, catalog): return _record_boss_defeated(state, catalog),
+			"rest": func(state, command, catalog): return _rest(state, command, catalog),
+			"gain_force_power": func(state, command, catalog): return _gain_force_power(state, command, catalog),
+			"accept_event": func(state, command, catalog): return _accept_event(state, command, catalog),
+			"gain_curse": func(state, command, catalog): return _gain_curse_command(state, command, catalog),
+			"remove_curse": func(state, command, catalog): return _remove_curse_command(state, command, catalog),
+		}
+	return _dispatch.get(command_type, null)
 
 
 static func _resolve_contact(state: RunState, command: Dictionary) -> Dictionary:
