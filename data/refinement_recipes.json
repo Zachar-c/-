@@ -39,7 +39,8 @@
           "id": "destroyed",
           "weight": 5,
           "effect": "destroy_inputs",
-          "event_reason": "free_mix_destroyed"
+          "event_reason": "free_mix_destroyed",
+          "fail_curse_id": "gu_erosion"
         },
         {
           "id": "mutation_venom",

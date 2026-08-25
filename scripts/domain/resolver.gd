@@ -6,6 +6,7 @@ const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
+const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 
 
 const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
@@ -111,6 +112,10 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _gain_force_power(state, command, catalog)
 		"accept_event":
 			return _accept_event(state, command, catalog)
+		"gain_curse":
+			return _gain_curse_command(state, command, catalog)
+		"remove_curse":
+			return _remove_curse_command(state, command, catalog)
 		_:
 			return _rejected(state, "unsupported_command")
 
@@ -509,6 +514,11 @@ static func _apply_free_mix(state: RunState, command: Dictionary, catalog: Dicti
 		selected
 	))
 	next.sync_legacy_gu_projections()
+	# R9.1 free-mix failure entry point: junk outcomes (anything but a
+	# mutation) may carry an optional fail_curse_id backlash attachment.
+	var fail_curse_id := str(chosen.get("fail_curse_id", ""))
+	if not fail_curse_id.is_empty() and str(chosen.get("effect", "")) != "mutate_to":
+		next = CurseRegistryScript.gain_curse(next, fail_curse_id, "free_mix_failure:%s" % str(chosen.get("id", "")))
 	return _finalize_if_dead(next)
 
 
@@ -1022,7 +1032,42 @@ static func _accept_event(state: RunState, command: Dictionary, catalog: Diction
 		state.current_node_id,
 		[str(event["id"])]
 	))
+	var curse_id := str(event.get("curse_id", ""))
+	if not curse_id.is_empty():
+		next = CurseRegistryScript.gain_curse(next, curse_id, "event:%s" % str(event.get("id", "")))
 	return _accepted(next)
+
+
+static func _gain_curse_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var curse_id := str(command.get("curse_id", ""))
+	if not catalog.get("curse_by_id", {}).has(curse_id):
+		return _rejected(state, "unknown_curse")
+	var source := str(command.get("source", "command"))
+	return _accepted(CurseRegistryScript.gain_curse(state, curse_id, source))
+
+
+# R9.3: the only removal channel is this explicit paid service. Pricing uses
+# the shared M5 uplift so notoriety and revisit pressure apply as elsewhere.
+static func _remove_curse_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var curse_id := str(command.get("curse_id", ""))
+	if not catalog.get("curse_by_id", {}).has(curse_id):
+		return _rejected(state, "unknown_curse")
+	if CurseRegistryScript.layers_of(state, curse_id) <= 0:
+		return _rejected(state, "curse_not_present")
+	var base := int(catalog["curse_by_id"][curse_id].get("removal_base_cost", 1))
+	var cost := price_for(catalog, state, base)
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var paid := state.append_event(_event(
+		state,
+		"remove_curse",
+		{"stone": state.stone},
+		{"stone": state.stone - cost},
+		"curse_removal_paid",
+		state.current_node_id,
+		[curse_id]
+	))
+	return _accepted(CurseRegistryScript.remove_curse(paid, curse_id))
 
 
 static func _travel(state: RunState, command: Dictionary) -> Dictionary:

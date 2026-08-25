@@ -4,6 +4,7 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
+const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
@@ -17,6 +18,7 @@ static func load_all() -> Dictionary:
 	var caravan_offers: Array = refinement.get("caravan_offers", [])
 	var enemy_catalog := EnemyCatalogScript.load_all()
 	var relics := _load_array("res://data/relics.json")
+	var curses := _load_array("res://data/curse.json")
 	var events: Array = _load_object("res://data/events.json").get("events", [])
 	var shop_offers: Array = _load_object("res://data/shops.json").get("offers", [])
 	var reputation := _load_object("res://data/reputation.json")
@@ -45,6 +47,8 @@ static func load_all() -> Dictionary:
 		"caravan_offer_by_id": _index_by_id(caravan_offers),
 		"relics": relics,
 		"relic_by_id": _index_by_id(relics),
+		"curses": curses,
+		"curse_by_id": _index_by_id(curses),
 		"events": events,
 		"event_by_id": _index_by_id(events),
 		"nodes": _load_object("res://data/nodes.json").get("nodes", []),
@@ -134,6 +138,19 @@ static func validate(catalog: Dictionary) -> Array[String]:
 				errors.append("relic %s references unknown effect kind %s" % [relic["id"], kind])
 			if not _is_integral(effect.get("amount", -1)) or int(effect.get("amount", -1)) < 0:
 				errors.append("relic %s effect amount must be a non-negative integer" % relic["id"])
+	var curse_by_id: Dictionary = catalog.get("curse_by_id", {})
+	for curse in catalog.get("curses", []):
+		for field in ["id", "name_zh", "effect"]:
+			if str(curse.get(field, "")).is_empty():
+				errors.append("curse %s missing %s" % [curse.get("id", ""), field])
+		if not CURSE_EFFECT_IDS.has(str(curse.get("effect", ""))):
+			errors.append("curse %s unknown effect %s" % [curse.get("id", ""), curse.get("effect", "")])
+		if not _is_integral(curse.get("base_intensity", null)) or int(curse.get("base_intensity", 0)) < 1:
+			errors.append("curse %s base_intensity must be a positive integer" % curse.get("id", ""))
+		if not _is_integral(curse.get("escalation_per_stage", null)) or int(curse.get("escalation_per_stage", 0)) < 0:
+			errors.append("curse %s escalation_per_stage must be a non-negative integer" % curse.get("id", ""))
+		if not _is_integral(curse.get("removal_base_cost", null)) or int(curse.get("removal_base_cost", 0)) < 1:
+			errors.append("curse %s removal_base_cost must be a positive integer" % curse.get("id", ""))
 	for offer in catalog.get("shop_offers", []):
 		if str(offer.get("kind", "")) in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
 			errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
@@ -194,6 +211,14 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("recipe %s risk hint references unknown tag %s" % [recipe["id"], required_tag])
 			if str(rule.get("text", "")).is_empty():
 				errors.append("recipe %s risk hint needs non-empty text" % recipe["id"])
+		for outcome_value in recipe.get("outcomes", []):
+			var fail_curse_id := str(outcome_value.get("fail_curse_id", ""))
+			if not fail_curse_id.is_empty() and not curse_by_id.has(fail_curse_id):
+				errors.append("recipe %s failure references unknown curse %s" % [recipe["id"], fail_curse_id])
+	for event_entry in catalog.get("events", []):
+		var event_curse_id := str(event_entry.get("curse_id", ""))
+		if not event_curse_id.is_empty() and not curse_by_id.has(event_curse_id):
+			errors.append("event %s references unknown curse %s" % [event_entry.get("id", ""), event_curse_id])
 	var loot_tables: Dictionary = catalog.get("loot_tables", {})
 	var materials: Dictionary = loot_tables.get("materials", {})
 	for material_id in materials:

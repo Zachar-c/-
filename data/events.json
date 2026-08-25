@@ -6,6 +6,14 @@
       "health_cost": 1,
       "delayed_soul_cost": 1,
       "delayed_trigger": "next_travel"
+    },
+    {
+      "id": "gu_rot_pact",
+      "kind": "curse_bargain",
+      "health_cost": 1,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "curse_id": "essence_bloat"
     }
   ]
 }

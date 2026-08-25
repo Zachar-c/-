@@ -6,6 +6,7 @@ const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
+const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -37,9 +38,23 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var hp := int(encounter.get("enemy_hp", enemy.get("hp", 3)))
 	var deck_generation_hash := DeckBuilderScript.deck_hash(state, catalog)
 	var deck_cache := DeckBuilderScript.build_card_cache(state, catalog)
+	# R9.x slot_seal: curses are run-scoped in RunState; battles only project
+	# them at start. Sealed gu cards never enter any battle pile.
+	var curse_projections := CurseRegistryScript.project_battle_curses(state, catalog)
+	var sealed_definition_ids := CurseRegistryScript.sealed_definition_ids(state, curse_projections)
+	var sealed_instance_ids := _sealed_instance_ids(state, sealed_definition_ids)
+	if not sealed_instance_ids.is_empty():
+		var playable: Array[Dictionary] = []
+		for card in deck_cache:
+			if not _card_is_sealed(card, sealed_instance_ids):
+				playable.append(card)
+		deck_cache = playable
 	var draw_pile := _shuffled_cards(deck_cache, _battle_rng_seed(state, 0))
 	var hand: Array = []
 	_draw_into_hand(draw_pile, hand, BATTLE_HAND_SIZE)
+	var available_gu_ids := state.refined_gu_ids.duplicate()
+	for sealed_definition_id in sealed_definition_ids:
+		available_gu_ids.erase(sealed_definition_id)
 	var battle := {
 		"battle_id": "%d-%d" % [state.seed, state.event_log.size()],
 		"deck_generation_hash": deck_generation_hash,
@@ -60,7 +75,12 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"terrain": str(encounter.get("terrain", "path")),
 		"pursuit": int(encounter.get("pursuit", state.pursuit)),
 		"enemy_control": int(enemy.get("control", 0)),
-		"available_gu_ids": state.refined_gu_ids.duplicate(),
+		"available_gu_ids": available_gu_ids,
+		"curses": curse_projections,
+		"banished_cards": [],
+		"pending_curse_damage": 0,
+		"sealed_gu_definition_ids": sealed_definition_ids,
+		"sealed_gu_instance_ids": sealed_instance_ids,
 		"soul_ops_cap": SoulCapacityScript.battle_ops_cap(state),
 		"first_mover": str(encounter.get("first_mover", "player")),
 		"blood_stacks": 0,
@@ -240,9 +260,79 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 	return _with_objective_result(battle, next_state, catalog)
 
 
-static func _strike(battle: Dictionary, amount: int) -> void:
+# R9.2/R5.15 dual-channel damage. Channel "attack" keeps the historical
+# behavior exactly: enemy-facing damage plus any intel weakness bonus.
+# Channel "curse" ignores every mitigation layer (guarded/dodging act as the
+# run's shield equivalent) and accumulates onto pending_curse_damage, which
+# _settle_curse_damage writes straight onto RunState.health at end of turn.
+static func _strike(battle: Dictionary, amount: int, channel := "attack") -> void:
+	if channel == "curse":
+		battle["pending_curse_damage"] = int(battle.get("pending_curse_damage", 0)) + amount
+		return
 	var total := int(battle.get("intel_bonus", 0)) + amount
 	battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - total)
+
+
+static func _sealed_instance_ids(state: RunState, sealed_definition_ids: Array[String]) -> Array[String]:
+	var instance_ids: Array[String] = []
+	if sealed_definition_ids.is_empty():
+		return instance_ids
+	for instance in state.refined_instances():
+		if sealed_definition_ids.has(str(instance.get("definition_id", ""))):
+			instance_ids.append(str(instance.get("instance_id", "")))
+	# Legacy projection parity with DeckBuilder._refined_instances_with_legacy_fallback.
+	if instance_ids.is_empty():
+		for index in state.refined_gu_ids.size():
+			if sealed_definition_ids.has(str(state.refined_gu_ids[index])):
+				instance_ids.append("legacy_%03d" % index)
+	return instance_ids
+
+
+static func _card_is_sealed(card: Dictionary, sealed_instance_ids: Array[String]) -> bool:
+	for source_id_value in card.get("source_gu_instance_ids", []):
+		if sealed_instance_ids.has(str(source_id_value)):
+			return true
+	return false
+
+
+# R9.2 concrete backlash rule (the single curse-damage rule of this task):
+# at end of player turn each draw_pollution curse banishes
+# min(intensity, remaining pile) cards off the top of the draw pile before
+# the player draws AND deals its combined intensity as player damage through
+# the "curse" channel.
+static func _apply_draw_pollution(battle: Dictionary) -> String:
+	var pollution := CurseRegistryScript.total_intensity(battle.get("curses", []), "draw_pollution")
+	if pollution <= 0:
+		return ""
+	var draw_pile: Array = battle.get("draw_pile", [])
+	var banished: Array = battle.get("banished_cards", [])
+	var removed := mini(pollution, draw_pile.size())
+	for _index in removed:
+		banished.append(draw_pile.pop_back())
+	battle["draw_pile"] = draw_pile
+	battle["banished_cards"] = banished
+	_strike(battle, pollution, "curse")
+	battle["log"].append({"id": "draw_pollution", "banished": removed, "damage": pollution})
+	return "draw_pollution"
+
+
+static func _settle_curse_damage(battle: Dictionary, state: RunState) -> RunState:
+	var damage := int(battle.get("pending_curse_damage", 0))
+	battle["pending_curse_damage"] = 0
+	if damage <= 0:
+		return state
+	var next_health := maxi(0, state.health - damage)
+	if next_health == 0:
+		battle["final_blow"] = {"id": "backlash_curse", "damage": damage}
+	battle["log"].append({"id": "backlash_curse", "damage": damage, "source": "curse"})
+	return state.append_event(_event(
+		state,
+		"battle_curse_strike",
+		{"health": state.health},
+		{"health": next_health},
+		"backlash_curse_damage",
+		[]
+	))
 
 
 static func _basic_dodge(battle: Dictionary, state: RunState) -> Dictionary:
@@ -263,7 +353,10 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 	if gu.is_empty():
 		return _result(battle, state, false, "ongoing", ["unknown_gu"])
-	var essence_cost := int(gu.get("essence_cost", 0))
+	# R9.2 essence_surcharge: each intensity point beyond the free allowance
+	# of 2 adds +1 to every play; unpaid plays take the existing rejection.
+	var surcharge := CurseRegistryScript.essence_surcharge(battle.get("curses", []))
+	var essence_cost := int(gu.get("essence_cost", 0)) + surcharge
 	var action_energy := int(battle.get("action_energy", 0))
 	if state.essence + action_energy < essence_cost:
 		return _result(battle, state, false, "ongoing", ["insufficient_essence"])
@@ -381,8 +474,15 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	_expire_effects(next_battle, "end_turn")
 	if not next_battle.get("pending_kill_move_state", {}).is_empty():
 		next_battle["pending_kill_move_state"] = {}
+	var feeds: Array[String] = ["enemy_intent_resolved"]
+	var pollution_feed := _apply_draw_pollution(next_battle)
+	if not pollution_feed.is_empty():
+		feeds.append(pollution_feed)
+	next_state = _settle_curse_damage(next_battle, next_state)
+	if _depleted(next_state):
+		return _result(next_battle, next_state.finalize_death(), true, "death", ["player_dead"])
 	_refill_hand_after_turn(next_battle, next_state, catalog)
-	return _result(next_battle, next_state, false, "ongoing", ["enemy_intent_resolved"])
+	return _result(next_battle, next_state, false, "ongoing", feeds)
 
 
 static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
