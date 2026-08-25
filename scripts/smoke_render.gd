@@ -10,6 +10,9 @@ const ROOT := "res://"
 
 const WIDGET_DIR := "res://ui/widgets"
 
+func _noop(_x) -> void:
+	pass
+
 
 func _compile_file(rel_path: String) -> bool:
 	var src := FileAccess.get_file_as_string(rel_path)
@@ -106,13 +109,13 @@ func _initialize() -> void:
 	var b := _sample_button()
 
 	_assert_widget("GuButton", "res://ui/widgets/gu_button.gd", {"label": "测试", "on_press": func(): pass})
-	_assert_widget("GuResourceChip", "res://ui/widgets/gu_resource_chip.gd", {"kind": "yuanstone", "value": 12})
+	_assert_widget("GuResourceChip", "res://ui/widgets/gu_resource_chip.gd", {"kind": "yuanstone", "value": 12, "on_click": Callable(self, "_noop")})
 	_assert_widget("GuStatBar", "res://ui/widgets/gu_stat_bar.gd",
-		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": func(): pass})
+		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": Callable(self, "_noop")})
 	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
 	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
 	_assert_widget("GuDeathLineWarning", "res://ui/widgets/gu_death_line_warning.gd",
-		{"lines": [{"name": "寿元", "value": 55, "threshold": 60}, {"name": "魂魄", "value": 4, "threshold": 4}]})
+		{"lines": [{"name": "寿元", "value": 55, "threshold": 60}, {"name": "魂魄", "value": 4, "threshold": 4}], "on_view": Callable(self, "_noop")})
 	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
 		{
 			"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
@@ -121,8 +124,8 @@ func _initialize() -> void:
 			"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
 			"on_menu": func(): pass,
 		})
-	_assert_widget("GuTooltip", "res://ui/widgets/gu_tooltip.gd",
-		{"title": "火蛊", "quality": "稀有", "effect": "造成灼烧", "curse_warning": true, "on_detail": func(): pass})
+	_assert_widget("GuTooltipView", "res://ui/widgets/gu_tooltip_view.gd",
+		{"title": "火蛊", "quality": "稀有", "effect": "造成灼烧", "curse_warning": true, "on_detail": Callable(self, "_noop")})
 	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认执行？", "on_confirm": func(): pass, "on_cancel": func(): pass})
 	_assert_widget("GuScrollBox", "res://ui/widgets/gu_scroll_box.gd", {}, [b])
