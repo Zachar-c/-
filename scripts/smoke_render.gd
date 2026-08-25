@@ -264,4 +264,40 @@ func _initialize() -> void:
 		quit(1)
 	print("OK BattleScreen buttons=%d" % bc)
 
+	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；两种用例）
+	# 命名 EndingScreen 以避开旧 scripts/presentation/ending_view.gd 的全局类 EndingView。
+	var ending_cmds := {
+		"to_hall": Callable(self, "_noop"),
+		"to_codex": Callable(self, "_noop"),
+	}
+	var ending_success := {
+		"title": "险中求胜",
+		"ending_type": "success",
+		"key_decisions": ["放弃强攻，改为诈降", "以魂魄强行镇压反噬"],
+		"gains_losses": "夺得《血道真解》残卷，损耗寿元 8",
+		"resource_balance": {"yuanstone": 20, "shouyuan": 52},
+		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
+		"aftermath": "可于大厅图鉴查阅本次所得",
+	}
+	var esc := _mount("res://ui/screens/ending_screen.gd", "render", {"state": ending_success, "commands": ending_cmds})
+	if esc < 1:
+		push_error("结算(成功)按钮数 %d < 1" % esc)
+		quit(1)
+	print("OK EndingScreen buttons=%d" % esc)
+
+	var ending_death := {
+		"title": "命丧密林",
+		"ending_type": "death",
+		"key_decisions": ["孤身追猎未探虚实"],
+		"gains_losses": "反噬爆发，真元枯竭而亡",
+		"resource_balance": {"yuanstone": 0, "shouyuan": 0},
+		"unlocks": [],
+		"aftermath": "残魂归于大地，修行札记已留存",
+	}
+	var edc := _mount("res://ui/screens/ending_screen.gd", "render", {"state": ending_death, "commands": ending_cmds})
+	if edc < 1:
+		push_error("结算(死亡)按钮数 %d < 1" % edc)
+		quit(1)
+	print("OK EndingScreen buttons=%d" % edc)
+
 	quit()

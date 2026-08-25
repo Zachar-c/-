@@ -1,0 +1,120 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuResourceChip } from "~/ui/widgets/gu_resource_chip"
+
+# EndingScreen —— 统一结算模块（由 ending_type 驱动，§16.6 / §16.10）
+# 契约：props.state 只读快照（title / ending_type / key_decisions / gains_losses /
+#       resource_balance / unlocks / aftermath）；props.commands 动作名 -> Callable
+#       （to_hall / to_codex）。屏内零业务读写，仅在 on_press 经 commands 触发。
+# 六要素复盘顺序固定：结局类型·重大决策·关键得失·资源结余·解锁手记·后续。
+# 无读档按钮（§16.6）：只有「返回大厅」与「查看图鉴」。
+
+export EndingScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var title = state.get("title", "—")
+  var ending_type = state.get("ending_type", "")
+
+  var type_names = {
+    "success": "成功",
+    "death": "死亡",
+    "gu_fall": "蛊化坠落",
+    "risky": "险成",
+    "retreat": "中途遁走",
+    "true_ending": "真结局",
+  }
+  var type_label = type_names.get(ending_type, "未知结局")
+
+  var type_colors = {
+    "success": GuStyle.JADE,
+    "death": GuStyle.DANGER,
+    "gu_fall": GuStyle.DANGER,
+    "risky": GuStyle.GOLD,
+    "retreat": GuStyle.BONE_DIM,
+    "true_ending": GuStyle.JADE,
+  }
+  var badge_color = type_colors.get(ending_type, GuStyle.BONE)
+
+  var key_decisions = state.get("key_decisions", [])
+  var gains_losses = state.get("gains_losses", "—")
+  var resource_balance = state.get("resource_balance", {})
+  var unlocks = state.get("unlocks", [])
+  var aftermath = state.get("aftermath", "—")
+
+  var fire = func(key: String):
+    if commands.has(key):
+      commands[key].call()
+
+  var decision_rows = []
+  for d in key_decisions:
+    decision_rows.append(<Label text={ "· " + str(d) } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
+
+  var unlock_rows = []
+  for u in unlocks:
+    unlock_rows.append(<Label text={ "★ " + str(u) } style={ {"font_color": GuStyle.JADE, "font_size": 15} } />)
+
+  var res_chips = []
+  for k in resource_balance.keys():
+    res_chips.append(<GuResourceChip kind={ str(k) } value={ int(resource_balance[k]) } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 14} }>
+      <CenterContainer>
+        <VBoxContainer style={ {"separation": 6} }>
+          <Label text={ str(title) } style={ {"font_color": GuStyle.GOLD, "font_size": 40} } />
+          <Label text={ "结局类型 · " + type_label } style={ {"font_color": badge_color, "font_size": 22} } />
+        </VBoxContainer>
+      </CenterContainer>
+
+      <GuPanel title="一 · 结局类型">
+        <Label text={ type_label } style={ {"font_color": badge_color, "font_size": 16} } />
+      </GuPanel>
+
+      <GuPanel title="二 · 重大决策">
+        @for (r in decision_rows) {
+          return r
+        }
+        @if (key_decisions.is_empty()) {
+          return ( <Label text="（无重大抉择记录）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+        }
+      </GuPanel>
+
+      <GuPanel title="三 · 关键得失">
+        <Label text={ str(gains_losses) } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
+      </GuPanel>
+
+      <GuPanel title="四 · 资源结余">
+        <HBoxContainer style={ {"separation": 10} }>
+          @for (c in res_chips) {
+            return c
+          }
+        </HBoxContainer>
+        @if (resource_balance.is_empty()) {
+          return ( <Label text="（资源已随本局清空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+        }
+      </GuPanel>
+
+      <GuPanel title="五 · 解锁手记">
+        @for (r in unlock_rows) {
+          return r
+        }
+        @if (unlocks.is_empty()) {
+          return ( <Label text="（本次无新解锁，仅作复盘）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+        }
+      </GuPanel>
+
+      <GuPanel title="六 · 后续">
+        <Label text={ str(aftermath) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 15} } />
+      </GuPanel>
+
+      <CenterContainer>
+        <HBoxContainer style={ {"separation": 16} }>
+          <GuButton label="返回大厅" on_press={ func(): fire.call("to_hall") } />
+          <GuButton label="查看图鉴" on_press={ func(): fire.call("to_codex") } />
+        </HBoxContainer>
+      </CenterContainer>
+    </VBoxContainer>
+  )
+}
