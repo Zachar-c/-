@@ -235,8 +235,21 @@ static func action(id: String) -> String:
 	return str(ACTIONS.get(id, "未知行动"))
 
 
+static var _extra_gu_names := {}
+static var _extra_gu_names_loaded := false
+
+
 static func gu(id: String) -> String:
-	return str(GU.get(id, "未知蛊虫"))
+	if GU.has(id):
+		return str(GU[id])
+	if not _extra_gu_names_loaded:
+		_extra_gu_names_loaded = true
+		var file := FileAccess.open("res://data/gu_names.json", FileAccess.READ)
+		if file != null:
+			var parsed: Variant = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary:
+				_extra_gu_names = parsed
+	return str(_extra_gu_names.get(id, "未知蛊虫"))
 
 
 static func inheritance(id: String) -> String:

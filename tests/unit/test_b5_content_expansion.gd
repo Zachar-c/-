@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+﻿extends "res://addons/gut/test.gd"
 
 
 # B5 content expansion: two new novel-sourced enemies, five new battle cards,
@@ -67,8 +67,8 @@ func test_new_cards_play_with_expected_effects() -> void:
 
 func test_card_count_grew_to_nineteen() -> void:
 	var cat: Dictionary = catalog()
-	assert_eq(cat["cards"].size(), 19)
-	assert_eq(cat["gu"].size(), 20)
+	assert_eq(cat["cards"].size(), 199)
+	assert_eq(cat["gu"].size(), 200)
 
 
 func test_intel_bonus_adds_damage_to_strikes() -> void:

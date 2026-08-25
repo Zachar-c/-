@@ -4,6 +4,7 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
+const SCHOOL_IDS := ["blood", "qi", "force", "soul", "refine"]
 const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
@@ -71,10 +72,15 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	var gu_by_id: Dictionary = catalog["gu_by_id"]
 	var card_by_id: Dictionary = catalog.get("card_by_id", {})
 	var material_ids: Array = catalog.get("material_ids", [])
+	var seen_gu_ids := {}
+	var seen_card_ids := {}
 	for gu in catalog.get("gu", []):
+		if seen_gu_ids.has(gu["id"]):
+			errors.append("duplicate gu id %s" % gu["id"])
+		seen_gu_ids[gu["id"]] = true
 		if not gu.has("school"):
 			errors.append("gu %s missing school" % gu["id"])
-		elif not str(gu["school"]) in ["blood", "qi", "force"]:
+		elif not SCHOOL_IDS.has(str(gu["school"])):
 			errors.append("gu %s invalid school %s" % [gu["id"], gu["school"]])
 		if not gu.has("rarity"):
 			errors.append("gu %s missing rarity" % gu["id"])
@@ -90,9 +96,17 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for card_id in gu.get("card_blueprint_ids", []):
 			if not card_by_id.has(card_id):
 				errors.append("gu %s references missing card %s" % [gu["id"], card_id])
+		if gu.has("combat_effects"):
+			if (gu.get("card_blueprint_ids", []) as Array).size() != 1:
+				errors.append("gu %s data-driven entries need exactly one blueprint" % gu["id"])
+			elif not _is_data_driven_card_linked(gu, catalog.get("cards", [])):
+				errors.append("gu %s blueprint does not back-reference it" % gu["id"])
 		if gu.has("can_direct_drop") and not (gu["can_direct_drop"] is bool):
 			errors.append("gu %s can_direct_drop must be a boolean" % gu["id"])
 	for card in catalog.get("cards", []):
+		if seen_card_ids.has(card["id"]):
+			errors.append("duplicate card id %s" % card["id"])
+		seen_card_ids[card["id"]] = true
 		if not card.has("rarity"):
 			errors.append("card %s missing rarity" % card["id"])
 		elif not RARITY_IDS.has(str(card["rarity"])):
@@ -289,6 +303,14 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not scavenge_recipe.is_empty() and not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
 			errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
 	return errors
+
+
+static func _is_data_driven_card_linked(gu: Dictionary, cards: Array) -> bool:
+	for card in cards:
+		if str(card.get("id", "")) == str(gu.get("card_blueprint_ids", [])[0]) \
+				and (card.get("source_gu_ids", []) as Array).has(gu["id"]):
+			return true
+	return false
 
 
 static func _load_array(path: String) -> Array:

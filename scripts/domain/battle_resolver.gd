@@ -451,7 +451,22 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
 			log_entry["id"] = "scout_eye"
 		_:
-			log_entry["id"] = "gu_no_combat_effect"
+			var data_effects: Array = gu.get("combat_effects", [])
+			if data_effects.is_empty():
+				log_entry["id"] = "gu_no_combat_effect"
+			else:
+				for effect_value in data_effects:
+					var effect: Dictionary = effect_value
+					match str(effect.get("kind", "")):
+						"strike":
+							_strike(battle, maxi(1, int(effect.get("amount", 1))))
+						"heal_injury":
+							after["injury"] = maxi(0, state.injury - maxi(1, int(effect.get("amount", 1))))
+						"add_flag":
+							_add_flag(battle, str(effect.get("flag", "")))
+						"delay_progress":
+							battle["delay_progress"] = int(battle["delay_progress"]) + maxi(0, int(effect.get("amount", 1)))
+				log_entry = {"id": str(gu.get("combat", "data_pattern")), "gu_id": gu_id}
 	battle["log"].append(log_entry)
 	var next_state := state.append_event(_event(state, "battle_use_gu", {"essence": state.essence}, after, "battle_gu_%s" % gu_id, [gu_id]))
 	return _with_objective_result(battle, next_state, catalog)
