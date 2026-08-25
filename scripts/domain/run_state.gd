@@ -147,6 +147,15 @@ func sync_legacy_gu_projections() -> void:
 	refined_gu_ids = projected_ids
 
 
+static func next_gu_instance_id(instances: Dictionary) -> String:
+	var highest := 0
+	for key_value in instances:
+		var text := str(key_value)
+		if text.begins_with("gu_"):
+			highest = maxi(highest, int(text.trim_prefix("gu_")))
+	return "gu_%03d" % (highest + 1)
+
+
 func append_event(event: Dictionary) -> RunState:
 	# Returns a new RunState; applies event.after and records a normalized event without mutating this instance.
 	var next := _copy()

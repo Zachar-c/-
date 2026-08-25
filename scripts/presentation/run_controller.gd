@@ -274,9 +274,15 @@ func _show_title() -> void:
 func _inject_school_starters(school: String) -> void:
 	if school.is_empty():
 		return
+	var before := {
+		"school": str(state.school),
+		"gu_instances": state.gu_instances.duplicate(true),
+		"cave_aperture": state.cave_aperture.duplicate(true),
+	}
 	state.school = school
 	var schools: Dictionary = catalog.get("schools", {})
 	var starters: Array = schools.get(school, {}).get("starter_gu_ids", [])
+	var injected: Array[String] = []
 	for starter_value in starters:
 		var gu_id := str(starter_value)
 		if state.refined_gu_ids.has(gu_id):
@@ -288,16 +294,30 @@ func _inject_school_starters(school: String) -> void:
 			"state": "refined",
 		}
 		state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+		injected.append(str(gu_id))
 		state.sync_legacy_gu_projections()
+	var after := {
+		"school": str(state.school),
+		"gu_instances": state.gu_instances.duplicate(true),
+		"cave_aperture": state.cave_aperture.duplicate(true),
+	}
+	var next := state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "school_selected",
+		"before": before,
+		"after": after,
+		"reason": "school_starters_injected",
+		"source": "run_controller",
+		"targets": injected,
+	})
+	next.sync_legacy_gu_projections()
+	state = next
 
 
 func _next_gu_instance_id(state: RunState) -> String:
-	var highest := 0
-	for key_value in state.gu_instances:
-		var text := str(key_value)
-		if text.begins_with("gu_"):
-			highest = maxi(highest, int(text.trim_prefix("gu_")))
-	return "gu_%03d" % (highest + 1)
+	return RunState.next_gu_instance_id(state.gu_instances)
 
 
 func _start_run_from_title() -> void:

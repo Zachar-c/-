@@ -137,6 +137,7 @@ static func apply_play_card(battle: Dictionary, state: RunState, catalog: Dictio
 	if gain > 0:
 		state = state.append_event({
 			"stage": state.stage,
+			"time": state.event_log.size(),
 			"node_id": state.current_node_id,
 			"action": "relic_essence_gain",
 			"before": {"essence": state.essence},

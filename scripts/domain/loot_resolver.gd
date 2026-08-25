@@ -173,9 +173,4 @@ static func _gain_gu(state: RunState, gu_id: String, catalog: Dictionary, new_lo
 
 
 static func _next_instance_id(instances: Dictionary) -> String:
-	var highest := 0
-	for key_value in instances:
-		var text := str(key_value)
-		if text.begins_with("gu_"):
-			highest = maxi(highest, int(text.trim_prefix("gu_")))
-	return "gu_%03d" % (highest + 1)
+	return RunState.next_gu_instance_id(instances)
