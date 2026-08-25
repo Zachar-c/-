@@ -62,6 +62,7 @@ static func load_all() -> Dictionary:
 		"pacing": pacing,
 		"aptitude": aptitude,
 		"schools": schools,
+		"school_pools": _load_object("res://data/school_pools.json"),
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -241,8 +242,16 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not base_map.has(str(rank_value)):
 			errors.append("aptitude rank_tier references unknown tier %s" % rank_value)
 	var schools_data: Dictionary = catalog.get("schools", {})
+	for school_id in SCHOOL_IDS:
+		if not schools_data.has(school_id):
+			errors.append("schools missing %s" % school_id)
 	for school_id in schools_data:
-		var starters: Array = schools_data[school_id].get("starter_gu_ids", [])
+		var school_entry: Dictionary = schools_data[school_id]
+		if str(school_entry.get("name", "")).is_empty():
+			errors.append("school %s needs display name" % school_id)
+		if str(school_entry.get("summary", "")).is_empty():
+			errors.append("school %s needs summary" % school_id)
+		var starters: Array = school_entry.get("starter_gu_ids", [])
 		if starters.is_empty():
 			errors.append("school %s needs starter gu ids" % school_id)
 		for starter in starters:

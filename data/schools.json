@@ -33,7 +33,7 @@
     ]
   },
   "soul": {
-    "name_zh": "魂道",
+    "name": "魂道",
     "summary": "魂魄为薪、超额释蛊；反噬转战力，明示透支必有代价。",
     "starter_gu_ids": [
       "gen_soul_attack_106_gu",
@@ -41,6 +41,17 @@
       "gen_soul_movement_102_gu",
       "gen_soul_healing_103_gu",
       "gen_soul_recon_104_gu"
+    ]
+  },
+  "refine": {
+    "name": "炼道",
+    "summary": "炉火炼蛊、战地取材；简易炼蛊以材换力，炸炉反噬风险自担。",
+    "starter_gu_ids": [
+      "gen_refine_attack_141_gu",
+      "gen_refine_defense_143_gu",
+      "gen_refine_movement_144_gu",
+      "gen_refine_healing_145_gu",
+      "gen_refine_recon_146_gu"
     ]
   }
 }
