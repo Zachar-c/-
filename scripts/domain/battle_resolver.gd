@@ -52,7 +52,8 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		deck_cache = playable
 	var draw_pile := _shuffled_cards(deck_cache, _battle_rng_seed(state, 0))
 	var hand: Array = []
-	_draw_into_hand(draw_pile, hand, BATTLE_HAND_SIZE)
+	var hand_size := int(catalog.get("deck", {}).get("hand_size", BATTLE_HAND_SIZE))
+	_draw_into_hand(draw_pile, hand, hand_size)
 	var available_gu_ids := state.refined_gu_ids.duplicate()
 	for sealed_definition_id in sealed_definition_ids:
 		available_gu_ids.erase(sealed_definition_id)
@@ -610,7 +611,8 @@ static func _refill_hand_after_turn(battle: Dictionary, state: RunState, catalog
 	discard.append_array(hand)
 	hand.clear()
 	var draw_pile: Array = battle.get("draw_pile", [])
-	while hand.size() < BATTLE_HAND_SIZE:
+	var hand_size := int(catalog.get("deck", {}).get("hand_size", BATTLE_HAND_SIZE))
+	while hand.size() < hand_size:
 		if draw_pile.is_empty():
 			if discard.is_empty():
 				break

@@ -1,5 +1,5 @@
 [
   {"id": "gu_erosion", "name_zh": "蛊蚀", "effect": "draw_pollution", "base_intensity": 1, "escalation_per_stage": 1, "removal_base_cost": 6},
-  {"id": "essence_bloat", "name_zh": "元石滞胀", "effect": "essence_surcharge", "base_intensity": 2, "escalation_per_stage": 1, "removal_base_cost": 5},
+  {"id": "essence_bloat", "name_zh": "元石滞胀", "effect": "essence_surcharge", "base_intensity": 2, "escalation_per_stage": 1, "removal_base_cost": 5, "free_allowance": 2},
   {"id": "meridian_seal", "name_zh": "经脉封蛊", "effect": "slot_seal", "base_intensity": 1, "escalation_per_stage": 0, "removal_base_cost": 8}
 ]

@@ -1,4 +1,8 @@
 {
+  "pity": {
+    "threshold": 3,
+    "clearing_rarities": ["rare", "epic", "legendary"]
+  },
   "materials": {
     "beast_blood": { "name_zh": "兽血", "value": 2 },
     "beast_bone": { "name_zh": "兽骨", "value": 1 },

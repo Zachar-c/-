@@ -196,7 +196,7 @@ func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() 
 	var run := _run_with_gu(["small_light_gu", "thorn_whip_gu"])
 	run = CurseRegistry.gain_curse(run, "gu_erosion", "test")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
-	assert_eq(battle["curses"], [{"id": "gu_erosion", "effect": "draw_pollution", "intensity": 1}])
+	assert_eq(battle["curses"], [{"id": "gu_erosion", "effect": "draw_pollution", "intensity": 1, "free": 2}])
 	# Deck is 4 cards (two light_probe, thorn_strike, thorn_bind); hand holds
 	# 2 so the draw pile starts with 2 cards.
 	assert_eq(battle["draw_pile"].size(), 2)

@@ -90,6 +90,7 @@ static func project_battle_curses(state: RunState, catalog: Dictionary) -> Array
 			"id": curse_id,
 			"effect": str(curse.get("effect", "")),
 			"intensity": intensity(state, curse),
+			"free": int(curse.get("free_allowance", SURCHARGE_FREE_ALLOWANCE)),
 		})
 	return projections
 
@@ -109,7 +110,7 @@ static func essence_surcharge(projections: Array) -> int:
 		var projection: Dictionary = projection_value
 		if str(projection.get("effect", "")) != "essence_surcharge":
 			continue
-		total += maxi(0, int(projection.get("intensity", 0)) - SURCHARGE_FREE_ALLOWANCE)
+		total += maxi(0, int(projection.get("intensity", 0)) - int(projection.get("free", SURCHARGE_FREE_ALLOWANCE)))
 	return total
 
 

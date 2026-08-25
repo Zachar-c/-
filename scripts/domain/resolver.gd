@@ -11,12 +11,9 @@ const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 
 const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
 
-# R4.8: meta-rule grade imprints are rule changers; a run may hold at most two.
-const META_RULE_CAP := 2
+# R4.8: meta-rule grade imprints are rule changers; cap per run lives in deck.json.
+# Removal service base prices (Task 5, R6.8) live in deck.json.
 
-# Task 5 removal services (R6.8): base stone prices before uplift.
-const REMOVE_CARD_BASE_COST := 120
-const REMOVE_IMPRINT_BASE_COST := 150
 # Forced drop of a can_direct_drop=false gu attaches this configured curse.
 const FORCED_DROP_CURSE_ID := "gu_erosion"
 # Per-run usage counters live in node_flags as string values ("1", "2", ...).
@@ -709,7 +706,7 @@ static func _remove_card_command(state: RunState, command: Dictionary, catalog: 
 		return blocked
 	if service_use_count(state, "remove_card") >= service_limit(catalog, "remove_card"):
 		return _rejected(state, "service_limit_exceeded")
-	var cost := service_price_for(catalog, state, "remove_card", REMOVE_CARD_BASE_COST)
+	var cost := service_price_for(catalog, state, "remove_card", int(catalog.get("deck", {}).get("remove_card_cost", 120)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var flags := state.node_flags.duplicate(true)
@@ -750,7 +747,7 @@ static func _remove_imprint_command(state: RunState, command: Dictionary, catalo
 		return _rejected(state, "meta_rule_not_removable")
 	if service_use_count(state, "remove_imprint") >= service_limit(catalog, "remove_imprint"):
 		return _rejected(state, "service_limit_exceeded")
-	var cost := service_price_for(catalog, state, "remove_imprint", REMOVE_IMPRINT_BASE_COST)
+	var cost := service_price_for(catalog, state, "remove_imprint", int(catalog.get("deck", {}).get("remove_imprint_cost", 150)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var flags := state.node_flags.duplicate(true)
@@ -947,7 +944,7 @@ static func _can_gain_relic(state: RunState, catalog: Dictionary, relic_id: Stri
 	if state.relic_ids.size() >= DeckCapacityScript.imprint_capacity(catalog):
 		return "imprint_capacity_exceeded"
 	# Order locked by brief: capacity rejection wins before the meta cap (R4.8).
-	if str(relic.get("grade", "")) == "meta_rule" and state.meta_rules.size() >= META_RULE_CAP:
+	if str(relic.get("grade", "")) == "meta_rule" and state.meta_rules.size() >= int(catalog.get("deck", {}).get("meta_rule_cap", 2)):
 		return "meta_rule_cap_reached"
 	return ""
 

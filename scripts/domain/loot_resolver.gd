@@ -21,13 +21,14 @@ const PITY_CLEARING_RARITIES := ["rare", "epic", "legendary"]
 static func settle_victory(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
 	var table: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
+	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
 	var material_ids := _roll_materials(table, state, tier)
-	var gu_roll := _roll_gu(table, state, tier)
+	var gu_roll := _roll_gu(table, state, tier, pity_cfg)
 	var gu_id := str(gu_roll.get("gu_id", ""))
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
 	var next := state
 	if not material_ids.is_empty() or not gu_id.is_empty():
-		var next_pity := _next_loot_pity(int(state.loot_pity), str(gu_roll.get("rarity", "")))
+		var next_pity := _next_loot_pity(int(state.loot_pity), str(gu_roll.get("rarity", "")), pity_cfg)
 		next = _apply_loot(state, loot, catalog, next_pity)
 	return {"state": next, "loot": loot}
 
@@ -52,7 +53,7 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String) ->
 
 # Shop purchases are fixed offers and never call _roll_gu, so they bypass
 # the R13.1 adventure-drop pity counter by construction.
-static func _roll_gu(table: Dictionary, state: RunState, tier: String) -> Dictionary:
+static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}) -> Dictionary:
 	var chance := int(table.get("gu_chance_pct", 0))
 	var pool: Dictionary = table.get("gu_pool", {})
 	var weights: Dictionary = pool.get("weights", {})
@@ -63,7 +64,7 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String) -> Dictio
 		return {"gu_id": "", "rarity": ""}
 	var effective_weights := weights
 	var rarity_salt := "loot.gu.rarity.%s" % tier
-	if state.loot_pity >= PITY_THRESHOLD:
+	if state.loot_pity >= int(pity_cfg.get("threshold", PITY_THRESHOLD)):
 		var forced := {}
 		var forced_total := 0
 		for rarity_id_value in weights:
@@ -99,8 +100,9 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String) -> Dictio
 	}
 
 
-static func _next_loot_pity(current: int, rarity: String) -> int:
-	if PITY_CLEARING_RARITIES.has(rarity):
+static func _next_loot_pity(current: int, rarity: String, pity_cfg: Dictionary = {}) -> int:
+	var clearing: Array = pity_cfg.get("clearing_rarities", PITY_CLEARING_RARITIES)
+	if (clearing as Array).has(rarity):
 		return 0
 	if rarity == "common":
 		return current + 1
