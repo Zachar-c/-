@@ -185,15 +185,21 @@ func save_current_run() -> Error:
 
 
 func load_saved_run() -> bool:
-	var loaded := SaveRepository.load_run()
+	return _restore_game(SaveRepository.load_run())
+
+
+func _restore_game(loaded: Dictionary) -> bool:
 	if loaded.is_empty():
 		return false
 	state = loaded["state"]
-	route = loaded["route"]
-	dialogue_replies = loaded["replies"]
+	if loaded.has("route"):
+		route = loaded["route"].duplicate(true)
 	current_node = _node_by_id(state.current_node_id)
 	current_battle = {}
 	current_session = state.encounter_session.duplicate(true)
+	dialogue_replies = loaded.get("replies", [])
+	if meta == null and FileAccess.file_exists(SaveRepositoryScript.META_PATH):
+		meta = SaveRepositoryScript.load_meta_file()
 	_show_map()
 	return true
 
@@ -356,25 +362,8 @@ func _show_battle() -> void:
 func _continue_saved_run() -> void:
 	if not FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH):
 		return
-	var data := SaveRepositoryScript.load_run()
-	if data == null or data.is_empty():
+	if not _restore_game(SaveRepositoryScript.load_run()):
 		_show_title()
-		return
-	if not data.has("state") or not (data["state"] is RunState):
-		_show_title()
-		return
-	state = data["state"]
-	if data.has("route"):
-		route = data["route"].duplicate(true)
-	if FileAccess.file_exists(SaveRepositoryScript.META_PATH):
-		meta = SaveRepositoryScript.load_meta_file()
-	else:
-		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
-	current_node = _node_by_id(state.current_node_id)
-	current_battle = {}
-	current_session = state.encounter_session.duplicate(true)
-	dialogue_replies = data.get("replies", [])
-	_show_map()
 
 
 func _show_ending(outcome: Dictionary) -> void:
