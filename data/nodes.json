@@ -18,7 +18,7 @@
     {"id":"caravan_missing_goods","stage":"three","type":"caravan","enemy_kind":"faction_guard","visible":false,"choices":["probe","trade","leave","fight"],"time_scale":"days","on_skip":"gain_suspicion","next_ids":[]},
     {"id":"herbalist_commission","stage":"four","type":"commission","visible":false,"choices":["accept","trade","leave"],"time_scale":"days","on_skip":"lose_favor","next_ids":[]},
     {"id":"beast_swarm_pass","stage":"one","type":"combat","enemy_kind":"ridge_hound","visible":false,"summary":"兽群堵住窄隘，击退它们可收取材料，撤退则必须改道。","choices":["fight","retreat","lure"],"time_scale":"hours","on_skip":"gain_injury","next_ids":["toxic_mountain_path","blood_moss_grove"]},
-    {"id":"greedy_wanderer","stage":"three","type":"pursuit","enemy_kind":"greedy_wanderer","visible":false,"choices":["fight","trade","retreat"],"time_scale":"hours","on_skip":"lose_stone","next_ids":[]},
+    {"id":"greedy_wanderer","stage":"three","type":"pursuit","enemy_kind":"thunder_crown_wolf","visible":false,"choices":["fight","trade","retreat"],"time_scale":"hours","on_skip":"lose_stone","next_ids":[]},
     {"id":"faction_guard_checkpoint","stage":"four","type":"combat","enemy_kind":"faction_guard","visible":false,"choices":["fight","deceive","retreat"],"time_scale":"hours","on_skip":"gain_pursuit","next_ids":[]},
     {"id":"earth_vein_contest","stage":"four","type":"earth_vein","enemy_kind":"beast_swarm","visible":false,"choices":["ally","scheme","fight","retreat"],"time_scale":"days","on_skip":"external_interference","next_ids":[]},
     {"id":"sealed_earth_vein","stage":"four","type":"earth_vein","visible":false,"choices":["scout","open","withdraw"],"time_scale":"days","on_skip":"lose_site","next_ids":[]},

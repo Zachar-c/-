@@ -218,5 +218,80 @@
     "duration_turns": 1,
     "occupies_soul_slots": true,
     "public_text_key": "qi_bulwark"
+  },
+  {
+    "id": "scout_eye",
+    "source_gu_ids": [
+      "trail_eye_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "scout_eye"
+  },
+  {
+    "id": "venom_snare",
+    "source_gu_ids": [
+      "venom_thread_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "venom_snare"
+  },
+  {
+    "id": "pulse_wave",
+    "source_gu_ids": [
+      "pulse_drum_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "pulse_wave"
+  },
+  {
+    "id": "shadow_haze",
+    "source_gu_ids": [
+      "shadow_veil_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "shadow_haze"
+  },
+  {
+    "id": "moon_glow_flare",
+    "source_gu_ids": [
+      "moon_glow_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "moon_glow_flare"
   }
 ]

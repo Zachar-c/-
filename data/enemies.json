@@ -70,5 +70,41 @@
         "label": "蚀气反激"
       }
     ]
+  },
+  {
+    "id": "iron_hide_boar",
+    "tier": "common",
+    "hp": 5,
+    "essence": 0,
+    "clues": ["mud_caked", "worn_tusks"],
+    "intent": {"id": "tusk_drive", "label": "獠牙冲撞", "damage": 2, "speed": 1},
+    "reactions": [
+      {
+        "id": "bristle_turn",
+        "clue": "mud_caked",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "厚皮硬受"
+      }
+    ]
+  },
+  {
+    "id": "thunder_crown_wolf",
+    "tier": "elite",
+    "hp": 7,
+    "essence": 4,
+    "clues": ["crackling_fur", "hunched_gait"],
+    "intent": {"id": "thunder_bite", "label": "雷冠撕咬", "damage": 3, "speed": 3},
+    "reactions": [
+      {
+        "id": "thunder_reflex",
+        "clue": "crackling_fur",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "sparked",
+        "label": "雷甲反噬"
+      }
+    ]
   }
 ]

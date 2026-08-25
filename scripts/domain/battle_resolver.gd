@@ -234,10 +234,15 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 		_reveal_reaction(battle, reaction)
 		log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
 	else:
-		battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - punch_damage)
+		_strike(battle, punch_damage)
 	battle["log"].append(log_entry)
 	var next_state := state.append_event(_event(state, "battle_basic_attack", {}, {}, "battle_basic_attack", []))
 	return _with_objective_result(battle, next_state, catalog)
+
+
+static func _strike(battle: Dictionary, amount: int) -> void:
+	var total := int(battle.get("intel_bonus", 0)) + amount
+	battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - total)
 
 
 static func _basic_dodge(battle: Dictionary, state: RunState) -> Dictionary:
@@ -272,7 +277,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		"small_light_gu":
 			_add_flag(battle, "revealed")
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
-			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 1)
+			_strike(battle, 1)
 			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1}
 		"thorn_whip_gu":
 			if mode == "bind":
@@ -284,7 +289,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					_reveal_reaction(battle, reaction)
 					log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
 				else:
-					battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 2)
+					_strike(battle, 2)
 					log_entry["id"] = "thorn_strike"
 		"stone_shell_gu":
 			_add_flag(battle, "guarded")
@@ -294,7 +299,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			log_entry["id"] = "mist_step"
 		"blood_moss_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 1)
+			_strike(battle, 1)
 			log_entry["id"] = "blood_moss_relief"
 		"venom_thread_gu":
 			_add_flag(battle, "enemy_slowed")
@@ -308,11 +313,11 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "targeting_obscured")
 			log_entry["id"] = "shadow_veil"
 		"blood_droplet_gu":
-			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 2)
+			_strike(battle, 2)
 			log_entry["id"] = "blood_droplet_shot"
 		"blood_bat_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 1)
+			_strike(battle, 1)
 			log_entry["id"] = "blood_bat_bite"
 		"blood_wing_gu":
 			_add_flag(battle, "retreat_preserved")
@@ -322,7 +327,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
 			log_entry["id"] = "farewell_grip"
 		"force_gu":
-			battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - 2)
+			_strike(battle, 2)
 			log_entry["id"] = "power_blow"
 		"bear_strength_gu":
 			after["injury"] = maxi(0, state.injury - 1)
@@ -330,6 +335,16 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		"qi_wall_gu":
 			_add_flag(battle, "guarded")
 			log_entry["id"] = "qi_bulwark"
+		"moonlight_gu":
+			_strike(battle, 2)
+			log_entry["id"] = "moonlight_strike"
+		"moon_glow_gu":
+			_strike(battle, 3)
+			log_entry["id"] = "moon_glow_flare"
+		"trail_eye_gu":
+			_add_flag(battle, "revealed")
+			battle["delay_progress"] = int(battle["delay_progress"]) + 1
+			log_entry["id"] = "scout_eye"
 		_:
 			log_entry["id"] = "gu_no_combat_effect"
 	battle["log"].append(log_entry)

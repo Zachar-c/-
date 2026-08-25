@@ -38,7 +38,9 @@
     "feeding_need": {
       "feed_points": 1
     },
-    "card_blueprint_ids": [],
+    "card_blueprint_ids": [
+      "scout_eye"
+    ],
     "value": 4,
     "essence_cost": 1,
     "slot_role": "scout",
@@ -158,7 +160,9 @@
     "feeding_need": {
       "feed_points": 2
     },
-    "card_blueprint_ids": [],
+    "card_blueprint_ids": [
+      "venom_snare"
+    ],
     "value": 6,
     "essence_cost": 1,
     "slot_role": "control",
@@ -218,7 +222,9 @@
     "feeding_need": {
       "feed_points": 2
     },
-    "card_blueprint_ids": [],
+    "card_blueprint_ids": [
+      "shadow_haze"
+    ],
     "value": 6,
     "essence_cost": 1,
     "slot_role": "disguise",
@@ -247,7 +253,9 @@
     "feeding_need": {
       "feed_points": 2
     },
-    "card_blueprint_ids": [],
+    "card_blueprint_ids": [
+      "pulse_wave"
+    ],
     "value": 5,
     "essence_cost": 1,
     "slot_role": "tempo",
@@ -306,7 +314,7 @@
       "feed_points": 2
     },
     "card_blueprint_ids": [
-      "moonlight_strike"
+      "moon_glow_flare"
     ],
     "value": 9,
     "essence_cost": 2,
