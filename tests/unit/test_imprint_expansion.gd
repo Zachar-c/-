@@ -233,6 +233,88 @@ func test_record_run_end_unlocks_relic_codex_and_round_trips() -> void:
 	assert_true(loaded.relic_codex_ids.has("jade_cicada_shell"))
 
 
+func test_barter_relic_reward_blocked_at_full_imprint_capacity_resolves_without_relic() -> void:
+	var tuned := catalog.duplicate(true)
+	for index in range(5):
+		_add_test_relic(tuned, {"id": "filler_relic_%d" % index, "hooks": [], "rarity": "common"})
+	_add_test_relic(tuned, {"id": "meta_overflow_relic", "grade": "meta_rule", "hooks": [], "rarity": "epic"})
+	_add_test_barter_offer(tuned, "barter_relic_offer", {"id": "reward_filler_4", "relic_id": "filler_relic_4", "weight": 1})
+	_add_test_barter_offer(tuned, "barter_meta_overflow", {"id": "reward_meta_overflow", "relic_id": "meta_overflow_relic", "weight": 1})
+
+	var run := _run_with_gu(["trail_eye_gu"])
+	run.relic_ids = ["filler_relic_0", "filler_relic_1", "filler_relic_2", "filler_relic_3"]
+
+	var blocked := Resolver.apply(run, {"type": "shop_barter", "offer_id": "barter_relic_offer"}, tuned)
+	assert_true(blocked["result"]["ok"])
+	assert_eq(blocked["state"].relic_ids.size(), 4)
+	assert_false(blocked["state"].relic_ids.has("filler_relic_4"))
+	assert_eq(int(_count_events(blocked["state"], "shop_barter_resolved")), 1)
+	assert_eq(str(blocked["state"].gu_instances["gu_002"]["state"]), "dead")
+	var feeds: Array = blocked["result"].get("feeds", [])
+	assert_true(feeds.has("relic_reward_blocked_imprint_capacity_exceeded"), str(feeds))
+
+	# Capacity was the binding gate above; the meta cap must also block barter
+	# once two meta rules are held.
+	var capped_run := _run_with_gu(["trail_eye_gu"])
+	capped_run.relic_ids = ["filler_relic_0"]
+	capped_run.meta_rules = {"meta_a": true, "meta_b": true}
+	var capped := Resolver.apply(capped_run, {"type": "shop_barter", "offer_id": "barter_meta_overflow"}, tuned)
+	assert_true(capped["result"]["ok"])
+	assert_eq(capped["state"].meta_rules.size(), 2)
+	assert_false(capped["state"].relic_ids.has("meta_overflow_relic"))
+	var capped_feeds: Array = capped["result"].get("feeds", [])
+	assert_true(capped_feeds.has("relic_reward_blocked_meta_rule_cap_reached"), str(capped_feeds))
+
+
+func test_barter_granting_meta_rule_relic_records_meta_rules_and_feed() -> void:
+	var tuned := catalog.duplicate(true)
+	_add_test_relic(tuned, {"id": "meta_barter_relic", "grade": "meta_rule", "hooks": [], "rarity": "epic"})
+	_add_test_barter_offer(tuned, "barter_meta_offer", {"id": "reward_meta_barter", "relic_id": "meta_barter_relic", "weight": 1})
+	var run := _run_with_gu(["trail_eye_gu"])
+
+	var granted := Resolver.apply(run, {"type": "shop_barter", "offer_id": "barter_meta_offer"}, tuned)
+	assert_true(granted["result"]["ok"])
+	assert_true(granted["state"].relic_ids.has("meta_barter_relic"))
+	assert_eq(granted["state"].meta_rules, {"meta_barter_relic": true})
+	var last_event: Dictionary = granted["state"].event_log.back()
+	assert_eq(last_event.get("after", {}).get("meta_rules", {}), {"meta_barter_relic": true})
+	var feeds: Array = granted["result"].get("feeds", [])
+	assert_true(feeds.has("meta_rule_recorded"), str(feeds))
+	assert_false(feeds.any(func(feed): return str(feed).begins_with("relic_reward_blocked")))
+
+
+func test_meta_rule_result_feed_appends_instead_of_overwrites() -> void:
+	var resolver_script: Variant = load("res://scripts/domain/resolver.gd")
+	var seeded := {"state": null, "result": {"ok": true, "feeds": ["prior_feed"]}}
+	var merged: Variant = resolver_script.call("_append_result_feed", seeded, "meta_rule_recorded")
+	assert_true(merged["result"]["feeds"].has("prior_feed"))
+	assert_true(merged["result"]["feeds"].has("meta_rule_recorded"))
+
+	var tuned := catalog.duplicate(true)
+	_add_test_relic(tuned, {"id": "meta_relic_append", "grade": "meta_rule", "hooks": [], "rarity": "epic"})
+	var gained := Resolver.apply(RunState.new_run(101), {"type": "gain_relic", "relic_id": "meta_relic_append"}, tuned)
+	assert_true(gained["result"]["ok"])
+	assert_eq(gained["result"]["feeds"], ["meta_rule_recorded"])
+
+
+func test_record_run_end_skips_relic_targets_missing_from_catalog_when_provided() -> void:
+	var run := RunState.new_run(101)
+	run.event_log.append({
+		"action": "gain_relic",
+		"reason": "relic_gained",
+		"before": {},
+		"after": {},
+		"targets": ["ghost_relic_not_in_catalog"],
+	})
+	var meta: RefCounted = MetaProgress.new_empty()
+	var filtered: RefCounted = meta.record_run_end(run, "dead", catalog)
+	assert_false(filtered.relic_codex_ids.has("ghost_relic_not_in_catalog"))
+
+	# Without the catalog argument the historical permissive scan stays intact.
+	var unfiltered: RefCounted = meta.record_run_end(run, "dead")
+	assert_true(unfiltered.relic_codex_ids.has("ghost_relic_not_in_catalog"))
+
+
 func _zero_enemy_damage(tuned: Dictionary) -> Dictionary:
 	tuned["enemy_by_id"]["ridge_hound"]["intent"]["damage"] = 0
 	return tuned
@@ -241,6 +323,15 @@ func _zero_enemy_damage(tuned: Dictionary) -> Dictionary:
 func _add_test_relic(target: Dictionary, relic: Dictionary) -> void:
 	target["relics"].append(relic)
 	target["relic_by_id"][str(relic["id"])] = relic
+
+
+func _add_test_barter_offer(target: Dictionary, offer_id: String, reward: Dictionary) -> void:
+	target["shop_offer_by_id"][offer_id] = {
+		"id": offer_id,
+		"kind": "barter",
+		"input_gu_ids": ["trail_eye_gu"],
+		"rewards": [reward],
+	}
 
 
 func _run_with_gu(definition_ids: Array[String]) -> RunState:

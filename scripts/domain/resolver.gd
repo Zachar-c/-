@@ -793,21 +793,31 @@ static func _without_gu(owned: Array[String], removed: Array) -> Array[String]:
 	return next
 
 
-static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var relic_id := str(command.get("relic_id", ""))
+static func _can_gain_relic(state: RunState, catalog: Dictionary, relic_id: String) -> String:
+	# Shared gate for every relic-granting path (direct gain and shop barter).
+	# Returns "" when the relic may be gained, else the rejection reason.
 	var relic: Dictionary = catalog.get("relic_by_id", {}).get(relic_id, {})
 	if relic.is_empty():
-		return _rejected(state, "unknown_relic")
+		return "unknown_relic"
 	if state.relic_ids.has(relic_id):
-		return _rejected(state, "relic_already_owned")
-	# R4.9 imprint slots: the hard cap forces build trade-offs; rejection is a
-	# pure no-op so callers can offer swaps without losing state.
+		return "relic_already_owned"
+	# R4.9 imprint slots: the hard cap forces build trade-offs.
 	if state.relic_ids.size() >= DeckCapacityScript.imprint_capacity(catalog):
-		return _rejected(state, "imprint_capacity_exceeded")
-	# Order locked by brief: capacity rejection wins before the meta cap.
-	var meta_grade := str(relic.get("grade", "")) == "meta_rule"
-	if meta_grade and state.meta_rules.size() >= META_RULE_CAP:
-		return _rejected(state, "meta_rule_cap_reached")
+		return "imprint_capacity_exceeded"
+	# Order locked by brief: capacity rejection wins before the meta cap (R4.8).
+	if str(relic.get("grade", "")) == "meta_rule" and state.meta_rules.size() >= META_RULE_CAP:
+		return "meta_rule_cap_reached"
+	return ""
+
+
+static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var relic_id := str(command.get("relic_id", ""))
+	var blocked_reason := _can_gain_relic(state, catalog, relic_id)
+	# R4.9 rejection is a pure no-op so callers can offer swaps without losing
+	# state.
+	if not blocked_reason.is_empty():
+		return _rejected(state, blocked_reason)
+	var meta_grade := str(catalog["relic_by_id"][relic_id].get("grade", "")) == "meta_rule"
 	var relics := state.relic_ids.duplicate()
 	relics.append(relic_id)
 	var before := {"relic_ids": state.relic_ids}
@@ -828,7 +838,7 @@ static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionar
 	))
 	var result := _accepted(next)
 	if meta_grade:
-		result["result"]["feeds"] = ["meta_rule_recorded"]
+		result = _append_result_feed(result, "meta_rule_recorded")
 	return result
 
 
@@ -1002,6 +1012,8 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 		instances[consumed_id] = consumed
 		stored.erase(consumed_id)
 	var relics := state.relic_ids.duplicate()
+	var meta_rules := state.meta_rules.duplicate(true)
+	var result_feeds: Array = []
 	if chosen.has("gu_id"):
 		var instance_id := _next_gu_instance_id(instances)
 		instances[instance_id] = {
@@ -1010,22 +1022,37 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 			"state": "refined",
 		}
 		stored.append(instance_id)
-	elif chosen.has("relic_id") and not relics.has(str(chosen["relic_id"])):
-		relics.append(str(chosen["relic_id"]))
+	elif chosen.has("relic_id"):
+		# Relic rewards ride the same gate as direct gains (R4.9/R4.8); a
+		# blocked reward resolves the barter without it instead of failing.
+		var relic_id := str(chosen["relic_id"])
+		var blocked_reason := _can_gain_relic(state, catalog, relic_id)
+		if blocked_reason.is_empty():
+			relics.append(relic_id)
+			if str(catalog.get("relic_by_id", {}).get(relic_id, {}).get("grade", "")) == "meta_rule":
+				meta_rules[relic_id] = true
+				result_feeds.append("meta_rule_recorded")
+		else:
+			result_feeds.append("relic_reward_blocked_%s" % blocked_reason)
 	aperture["stored_gu_instance_ids"] = stored
+	var before := {
+		"gu_instances": state.gu_instances,
+		"cave_aperture": state.cave_aperture,
+		"relic_ids": state.relic_ids,
+	}
+	var after := {
+		"gu_instances": instances,
+		"cave_aperture": aperture,
+		"relic_ids": relics,
+	}
+	if meta_rules != state.meta_rules:
+		before["meta_rules"] = state.meta_rules
+		after["meta_rules"] = meta_rules
 	var next := state.append_event(_event(
 		state,
 		"shop_barter",
-		{
-			"gu_instances": state.gu_instances,
-			"cave_aperture": state.cave_aperture,
-			"relic_ids": state.relic_ids,
-		},
-		{
-			"gu_instances": instances,
-			"cave_aperture": aperture,
-			"relic_ids": relics,
-		},
+		before,
+		after,
 		"shop_barter_resolved",
 		state.current_node_id,
 		[str(chosen.get("id", ""))]
@@ -1033,6 +1060,8 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 	next.sync_legacy_gu_projections()
 	var result := _accepted(next)
 	result["outcome"] = str(chosen.get("id", ""))
+	for feed_value in result_feeds:
+		result = _append_result_feed(result, str(feed_value))
 	return result
 
 
@@ -1729,6 +1758,19 @@ static func _wash_notoriety(state: RunState, catalog: Dictionary) -> Dictionary:
 
 static func _accepted(next: RunState) -> Dictionary:
 	return {"state": next, "result": {"ok": true}}
+
+
+static func _append_result_feed(result: Dictionary, feed: String) -> Dictionary:
+	# Append semantics: feeds already on the result must survive alongside the
+	# new entry instead of being overwritten.
+	var inner: Dictionary = result.get("result", {})
+	var feeds: Array = inner.get("feeds", [])
+	feeds = feeds.duplicate()
+	if not feeds.has(feed):
+		feeds.append(feed)
+	inner["feeds"] = feeds
+	result["result"] = inner
+	return result
 
 
 static func _rejected(state: RunState, reason: String) -> Dictionary:

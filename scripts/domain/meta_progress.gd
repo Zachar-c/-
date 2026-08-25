@@ -21,7 +21,7 @@ static func new_empty() -> RefCounted:
 	return load("res://scripts/domain/meta_progress.gd").new()
 
 
-func record_run_end(run: RunState, outcome: String) -> RefCounted:
+func record_run_end(run: RunState, outcome: String, catalog: Dictionary = {}) -> RefCounted:
 	var next := _copy()
 	for gu_id in run.refined_gu_ids:
 		if not next.gu_codex_ids.has(gu_id):
@@ -43,8 +43,11 @@ func record_run_end(run: RunState, outcome: String) -> RefCounted:
 		elif reason == "relic_gained":
 			# R11.7 encountering a relic unlocks its codex entry; the relic id
 			# rides the gain event's targets exactly like recipe unlocks.
+			# When a catalog is supplied, stray ids absent from it are skipped.
 			for target_value in event.get("targets", []):
 				var relic_id := str(target_value)
+				if not catalog.is_empty() and not catalog.get("relic_by_id", {}).has(relic_id):
+					continue
 				if not next.relic_codex_ids.has(relic_id):
 					next.relic_codex_ids.append(relic_id)
 	if outcome == "won":
