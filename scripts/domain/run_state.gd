@@ -16,6 +16,7 @@ var aptitude: String = "bing"
 var injury: int = 0
 var lifespan_debt: int = 0
 var stone: int = 12
+var loot_pity: int = 0
 var gu_ids: Array[String] = []
 var refined_gu_ids: Array[String] = []
 var equipped_gu_ids: Array[String] = []
@@ -188,6 +189,7 @@ func to_save_data() -> Dictionary:
 		"injury": injury,
 		"lifespan_debt": lifespan_debt,
 		"stone": stone,
+		"loot_pity": loot_pity,
 		"gu_ids": gu_ids.duplicate(),
 		"refined_gu_ids": refined_gu_ids.duplicate(),
 		"equipped_gu_ids": equipped_gu_ids.duplicate(),
@@ -252,6 +254,7 @@ func _copy() -> RunState:
 	copy.injury = injury
 	copy.lifespan_debt = lifespan_debt
 	copy.stone = stone
+	copy.loot_pity = loot_pity
 	copy.gu_ids = gu_ids.duplicate()
 	copy.refined_gu_ids = refined_gu_ids.duplicate()
 	copy.equipped_gu_ids = equipped_gu_ids.duplicate()
@@ -301,6 +304,7 @@ func _apply_after(after: Dictionary) -> void:
 	for key in after:
 		if key in [
 			"stage", "cultivation", "essence", "essence_capacity", "health", "max_health", "aptitude", "injury", "lifespan_debt", "stone",
+			"loot_pity",
 			"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
 			"relations", "pursuit", "ascension", "known_facts", "current_node_id",
 			"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos",

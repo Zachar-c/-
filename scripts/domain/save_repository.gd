@@ -146,6 +146,7 @@ static func _state_from_save_data(data: Dictionary) -> Variant:
 	state.injury = int(data.get("injury", 0))
 	state.lifespan_debt = int(data.get("lifespan_debt", 0))
 	state.stone = int(data.get("stone", 12))
+	state.loot_pity = int(data.get("loot_pity", 0))
 	state.gu_ids = _string_array(data.get("gu_ids", []))
 	state.refined_gu_ids = _string_array(data.get("refined_gu_ids", state.gu_ids))
 	state.equipped_gu_ids = _string_array(data.get("equipped_gu_ids", []))
