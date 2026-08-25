@@ -1,0 +1,16 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuDeathLineWarning() -> RuitkVNode {
+  var lines = props.get("lines", [])
+  var triggered = []
+  for ln in lines:
+    if int(ln.get("value", 0)) >= int(ln.get("threshold", 0)):
+      triggered.append(ln)
+  return (
+    <HBoxContainer style={ {"separation": 6} }>
+      @for (ln in triggered) {
+        return ( <Button text={ "⚠ %s 逼近上限" % ln.get("name", "") } flat={ true } onPressed={ func(): pass } style={ {"font_color": GuStyle.DANGER, "font_size": 13, "min_height": 26} } key={ ln.get("name", "") } /> )
+      }
+    </HBoxContainer>
+  )
+}

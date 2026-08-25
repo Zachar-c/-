@@ -1,0 +1,25 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuResourceChip() -> RuitkVNode {
+  var kind = props.get("kind", "material")
+  var value = props.get("value", 0)
+  var color = GuStyle.GOLD
+  if kind == "shouyuan":
+    color = GuStyle.BONE
+  elif kind == "hunpo":
+    color = GuStyle.JADE
+  elif kind == "material":
+    color = Color("9fd6a0")
+  elif kind == "meta":
+    color = GuStyle.BONE_DIM
+  var names = {"yuanstone": "元石", "shouyuan": "寿元", "hunpo": "魂魄", "material": "材料", "meta": "异变"}
+  var name = names.get(kind, kind)
+  return (
+    <Button
+      text={ "%s: %d" % [name, value] }
+      flat={ true }
+      onPressed={ func(): pass }
+      style={ {"font_color": color, "font_size": 14, "min_width": 80, "min_height": 28} }
+    />
+  )
+}
