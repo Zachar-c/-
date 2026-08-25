@@ -37,30 +37,8 @@ func _compile_file(rel_path: String) -> bool:
 	return true
 
 
-# 同 _compile_file，但允许指定生成类名（class_base）与输出路径，避免与既有全局类重名。
-func _compile_named(rel_path: String, class_base: String, out_gd: String) -> bool:
-	var src := FileAccess.get_file_as_string(rel_path)
-	if src.is_empty():
-		push_error("读不到 %s" % rel_path)
-		return false
-	var res := Guitkx.compile(src, class_base, [], {}, rel_path, ROOT)
-	if res.get("env_error", false):
-		push_error("RUI 环境未就绪（词汇表未加载）: %s" % rel_path)
-		return false
-	if not res.get("ok", false):
-		push_error("编译失败 %s: %s" % [rel_path, str(res.get("diagnostics", []))])
-		return false
-	var gd_text: String = res["gd"]
-	# 规避与旧 scripts/presentation/encounter_view.gd 的全局类 EncounterView 重名（该旧类被单测引用，不可删）。
-	gd_text = gd_text.replace("class_name EncounterView", "class_name EncounterViewScreen")
-	var f := FileAccess.open(out_gd, FileAccess.WRITE)
-	if f == null:
-		push_error("写不出 %s" % out_gd)
-		return false
-	f.store_string(gd_text)
-	f.close()
-	return true
-
+# 新屏统一以 Screen 后缀命名（如 EncounterScreen），
+# 避开 scripts/presentation/*_view.gd 的 XxxView 类；无需改写生成产物类名。
 
 func _mount(rel_gd: String, component: String, props: Dictionary) -> int:
 	var fn = VLib.comp(rel_gd, component)
@@ -189,10 +167,7 @@ func _initialize() -> void:
 		print("OK HallView buttons=%d" % cnt)
 
 	# 6) 遭遇屏断言（含空 action 兜底离开按钮）
-	# 注意：旧 scripts/presentation/encounter_view.gd 仍注册全局类 EncounterView（被单测引用，不可删），
-	# 故 RUI 编译产物改用非冲突类名 EncounterViewScreen，避免 hidding 报错；.guitkx 源文件名不变。
-	if not _compile_named("res://ui/screens/encounter_view.guitkx", "encounter_view_screen", "res://ui/screens/encounter_view.gd"):
-		quit(1)
+	# 命名 EncounterScreen 以避开旧 scripts/presentation/encounter_view.gd 的全局类 EncounterView（被单测引用）。
 	var enc_cmds := {
 		"choose_option": Callable(self, "_noop"),
 		"confirm_danger": Callable(self, "_noop"),
@@ -211,11 +186,11 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	var ec := _mount("res://ui/screens/encounter_view.gd", "render", {"state": enc_state, "commands": enc_cmds})
+	var ec := _mount("res://ui/screens/encounter_screen.gd", "render", {"state": enc_state, "commands": enc_cmds})
 	if ec < 1:
 		push_error("遭遇按钮数 %d < 1" % ec)
 		quit(1)
-	print("OK EncounterView buttons=%d" % ec)
+	print("OK EncounterScreen buttons=%d" % ec)
 
 	var enc_empty := {
 		"node": {"title": "空径", "desc": "无甚异常。", "type": "rest"},
@@ -226,10 +201,10 @@ func _initialize() -> void:
 		"anomalies": [],
 		"death_lines": {},
 	}
-	var ece := _mount("res://ui/screens/encounter_view.gd", "render", {"state": enc_empty, "commands": enc_cmds})
+	var ece := _mount("res://ui/screens/encounter_screen.gd", "render", {"state": enc_empty, "commands": enc_cmds})
 	if ece < 1:
 		push_error("遭遇空列表按钮数 %d < 1" % ece)
 		quit(1)
-	print("OK EncounterViewEmpty buttons=%d" % ece)
+	print("OK EncounterScreenEmpty buttons=%d" % ece)
 
 	quit()
