@@ -9,8 +9,9 @@ const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd"
 const ROOT := "res://"
 
 const WIDGET_DIR := "res://ui/widgets"
+const SCREEN_DIR := "res://ui/screens"
 
-func _noop(_x) -> void:
+func _noop(_x = null) -> void:
 	pass
 
 
@@ -129,5 +130,37 @@ func _initialize() -> void:
 	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认执行？", "on_confirm": func(): pass, "on_cancel": func(): pass})
 	_assert_widget("GuScrollBox", "res://ui/widgets/gu_scroll_box.gd", {}, [b])
+
+	# 4) 编译 ui/screens 下全部 .guitkx（widgets 已先编译，import 可解析）
+	var sdir := DirAccess.open(SCREEN_DIR)
+	if sdir == null:
+		push_error("打不开 %s" % SCREEN_DIR)
+		quit(1)
+	sdir.list_dir_begin()
+	var sname := sdir.get_next()
+	while sname != "":
+		if sname.get_extension() == "guitkx":
+			if not _compile_file(SCREEN_DIR.path_join(sname)):
+				quit(1)
+		sname = sdir.get_next()
+	sdir.list_dir_end()
+
+	# 5) 大厅屏断言：四分支至少 4 个按钮；有存档时含「继续」共 5 个
+	var cmds := {
+		"continue_run": Callable(self, "_noop"),
+		"new_run": Callable(self, "_noop"),
+		"open_codex": Callable(self, "_noop"),
+		"open_settings": Callable(self, "_noop"),
+	}
+	var hall_states = [
+		{"has_save": true, "available_schools": ["血道", "气道", "力道", "魂道", "炼道"], "contracts": ["自苦·血祭", "节流·魂敛"], "meta_stats": {"runs": 3, "endings": 1}},
+		{"has_save": false, "available_schools": ["血道"], "contracts": [], "meta_stats": {}},
+	]
+	for hs in hall_states:
+		var cnt := _mount("res://ui/screens/hall_view.gd", "render", {"state": hs, "commands": cmds})
+		if cnt < 4:
+			push_error("大厅按钮数 %d < 4 (state=%s)" % [cnt, str(hs)])
+			quit(1)
+		print("OK HallView buttons=%d" % cnt)
 
 	quit()
