@@ -11,6 +11,13 @@ static func capacity(catalog: Dictionary) -> int:
 	return int(catalog.get("deck", {}).get("capacity", 12))
 
 
+# R4.9 imprint slots cap owned relics (imprints); separate from card capacity.
+# Validation enforces the field exists, so this default only guards tuned
+# in-memory catalogs built by tests.
+static func imprint_capacity(catalog: Dictionary) -> int:
+	return int(catalog.get("deck", {}).get("imprint_capacity", 4))
+
+
 static func card_count(state: RunState, catalog: Dictionary) -> int:
 	return DeckBuilderScript.build_card_cache(state, catalog).size()
 

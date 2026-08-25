@@ -1,6 +1,8 @@
 class_name RelicHookResolver
 extends RefCounted
 
+const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
+
 # Data-driven enumerable relic hooks. Each relic in relics.json declares
 # `hooks: [{ trigger, effect: { kind, amount } }]`. This resolver is pure
 # domain logic: it never touches UI, never calls RNG, and only mutates the
@@ -14,6 +16,8 @@ const TRIGGERS := [
 	"on_play_card",
 	"on_take_damage",
 	"on_estimate_feeding",
+	"on_backlash_gained",
+	"on_battle_end",
 ]
 
 const EFFECT_KINDS := [
@@ -22,6 +26,9 @@ const EFFECT_KINDS := [
 	"gain_essence_on_play",
 	"reduce_incoming_damage",
 	"add_feeding_points",
+	"convert_backlash_to_draw",
+	"reduce_curse_intensity",
+	"grant_stone_on_battle_end",
 ]
 
 
@@ -37,6 +44,72 @@ static func apply_battle_start(battle: Dictionary, state: RunState, catalog: Dic
 	var feeds: Array[String] = []
 	if energy > 0:
 		feeds.append("relic_first_turn_energy")
+	# R4.x reduce_curse_intensity: battle-local curse projections lose
+	# `amount` intensity each (floor 0); run-scoped statuses stay untouched
+	# because battles only ever project curses.
+	var reduction := 0
+	for hook in _hooks(state, catalog, "on_battle_start"):
+		if str(hook.get("effect", {}).get("kind", "")) == "reduce_curse_intensity":
+			reduction += _amount(hook)
+	if reduction > 0:
+		battle["curses"] = _intensity_reduced(battle.get("curses", []), reduction)
+		feeds.append("relic_curse_reduced")
+	return {"battle": battle, "state": state, "feeds": feeds}
+
+
+static func _intensity_reduced(projections: Array, reduction: int) -> Array:
+	var reduced: Array = projections.duplicate(true)
+	for index in reduced.size():
+		var projection: Dictionary = reduced[index]
+		projection["intensity"] = maxi(0, int(projection.get("intensity", 0)) - reduction)
+		reduced[index] = projection
+	return reduced
+
+
+# R4.x on_backlash_gained: fires once per curse layer that becomes known to an
+# ACTIVE battle (projection at battle start today; any later battle-dict curse
+# update would route through here too). Run-scoped gains outside battles never
+# reach this resolver, so they never fire hooks. convert_backlash_to_draw
+# queues bonus cards for the NEXT refill draw; battle_resolver consumes and
+# clears battle["pending_extra_draws"] exactly once.
+static func apply_backlash_gained(battle: Dictionary, state: RunState, catalog: Dictionary, layers_gained: int) -> Dictionary:
+	var queued := 0
+	for hook in _hooks(state, catalog, "on_backlash_gained"):
+		if str(hook.get("effect", {}).get("kind", "")) == "convert_backlash_to_draw":
+			queued += _amount(hook) * maxi(0, layers_gained)
+	# R4.7 soul anchor: soul school converts backlash to draw at double rate.
+	if SchoolRulesScript.is_soul(state):
+		queued *= 2
+	var feeds: Array[String] = []
+	if queued > 0:
+		battle["pending_extra_draws"] = int(battle.get("pending_extra_draws", 0)) + queued
+		feeds.append("relic_backlash_converted")
+	return {"battle": battle, "state": state, "feeds": feeds}
+
+
+# R4.x on_battle_end: fired from battle_resolver's single finalization funnel
+# (victory / retreat / death) so grant_stone_on_battle_end appends ONE immutable
+# stone event per finished battle no matter which path ends it.
+static func apply_battle_end(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	var stone_gain := 0
+	for hook in _hooks(state, catalog, "on_battle_end"):
+		if str(hook.get("effect", {}).get("kind", "")) == "grant_stone_on_battle_end":
+			stone_gain += _amount(hook)
+	var feeds: Array[String] = []
+	if stone_gain <= 0:
+		return {"battle": battle, "state": state, "feeds": feeds}
+	state = state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "relic_stone_gain",
+		"before": {"stone": state.stone},
+		"after": {"stone": state.stone + stone_gain},
+		"reason": "relic_stone_on_battle_end",
+		"source": "relic_hook_resolver",
+		"targets": [],
+	})
+	feeds.append("relic_battle_stone")
 	return {"battle": battle, "state": state, "feeds": feeds}
 
 

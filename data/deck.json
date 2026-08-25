@@ -1,3 +1,9 @@
 {
-  "capacity": 12
+  "capacity": 12,
+  "imprint_capacity": 4,
+  "service_limits": {
+    "remove_card": 2,
+    "remove_imprint": 2,
+    "remove_curse": 2
+  }
 }

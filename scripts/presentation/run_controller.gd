@@ -382,7 +382,7 @@ func _show_death(report: Dictionary) -> void:
 func _record_run_end(outcome: String) -> void:
 	if meta == null:
 		return
-	meta = meta.record_run_end(state, outcome)
+	meta = meta.record_run_end(state, outcome, catalog)
 	SaveRepository.save_meta_file(meta)
 
 

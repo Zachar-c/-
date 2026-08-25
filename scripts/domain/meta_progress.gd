@@ -4,6 +4,7 @@ extends RefCounted
 
 var gu_codex_ids: Array[String] = []
 var recipe_codex_ids: Array[String] = []
+var relic_codex_ids: Array[String] = []
 var inheritance_codex_ids: Array[String] = []
 var unlocked_content_ids: Array[String] = []
 var unlocked_random_outcomes: Dictionary = {}
@@ -20,7 +21,7 @@ static func new_empty() -> RefCounted:
 	return load("res://scripts/domain/meta_progress.gd").new()
 
 
-func record_run_end(run: RunState, outcome: String) -> RefCounted:
+func record_run_end(run: RunState, outcome: String, catalog: Dictionary = {}) -> RefCounted:
 	var next := _copy()
 	for gu_id in run.refined_gu_ids:
 		if not next.gu_codex_ids.has(gu_id):
@@ -39,6 +40,16 @@ func record_run_end(run: RunState, outcome: String) -> RefCounted:
 				var scavenged_recipe := str(target_value)
 				if not next.recipe_codex_ids.has(scavenged_recipe):
 					next.recipe_codex_ids.append(scavenged_recipe)
+		elif reason == "relic_gained":
+			# R11.7 encountering a relic unlocks its codex entry; the relic id
+			# rides the gain event's targets exactly like recipe unlocks.
+			# When a catalog is supplied, stray ids absent from it are skipped.
+			for target_value in event.get("targets", []):
+				var relic_id := str(target_value)
+				if not catalog.is_empty() and not catalog.get("relic_by_id", {}).has(relic_id):
+					continue
+				if not next.relic_codex_ids.has(relic_id):
+					next.relic_codex_ids.append(relic_id)
 	if outcome == "won":
 		next.statistics["runs_won"] = int(next.statistics.get("runs_won", 0)) + 1
 	elif outcome == "risky":
@@ -61,6 +72,7 @@ func to_save_data() -> Dictionary:
 	return {
 		"gu_codex_ids": gu_codex_ids.duplicate(),
 		"recipe_codex_ids": recipe_codex_ids.duplicate(),
+		"relic_codex_ids": relic_codex_ids.duplicate(),
 		"inheritance_codex_ids": inheritance_codex_ids.duplicate(),
 		"unlocked_content_ids": unlocked_content_ids.duplicate(),
 		"unlocked_random_outcomes": unlocked_random_outcomes.duplicate(true),
@@ -72,6 +84,7 @@ func _copy() -> RefCounted:
 	var copy = get_script().new()
 	copy.gu_codex_ids = gu_codex_ids.duplicate()
 	copy.recipe_codex_ids = recipe_codex_ids.duplicate()
+	copy.relic_codex_ids = relic_codex_ids.duplicate()
 	copy.inheritance_codex_ids = inheritance_codex_ids.duplicate()
 	copy.unlocked_content_ids = unlocked_content_ids.duplicate()
 	copy.unlocked_random_outcomes = unlocked_random_outcomes.duplicate(true)
