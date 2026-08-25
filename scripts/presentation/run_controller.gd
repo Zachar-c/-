@@ -13,6 +13,8 @@ const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
+const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
+const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
 
 const SCREEN_PATHS := {
 	"Title": "res://ui/screens/hall_view.gd",
@@ -368,7 +370,7 @@ func _continue_saved_run() -> void:
 
 func _show_ending(outcome: Dictionary) -> void:
 	_record_run_end(_run_end_outcome(str(outcome.get("outcome", ""))))
-	_ending_state = _build_ending_state(outcome, JournalBuilder.build(state, outcome), state.to_save_data())
+	_ending_state = RunSnapshotBuilderScript.ending(self, outcome, JournalBuilder.build(state, outcome), state.to_save_data())
 	_view_name = "Ending"
 	_render()
 
@@ -378,8 +380,8 @@ func _show_death(report: Dictionary) -> void:
 	_ending_state = {
 		"title": "身死道消",
 		"ending_type": "death",
-		"key_decisions": ["最后一击：%s" % _blow_text(str(report.get("final_blow", "")))],
-		"gains_losses": "最后一击：%s（%d 点伤害）" % [_blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))],
+		"key_decisions": ["最后一击：%s" % RunSnapshotBuilderScript.blow_text(str(report.get("final_blow", "")))],
+		"gains_losses": "最后一击：%s（%d 点伤害）" % [RunSnapshotBuilderScript.blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))],
 		"resource_balance": {"yuanstone": int(state.stone), "shouyuan": int(state.cultivator.get("lifespan", 0))},
 		"unlocks": [],
 		"aftermath": "残魂归于大地，修行札记已留存。",
@@ -500,303 +502,11 @@ func _render() -> void:
 
 
 func _snapshot_for(screen: String) -> Dictionary:
-	match screen:
-		"Title": return _snapshot_hall()
-		"Map": return _snapshot_map()
-		"Encounter": return _snapshot_encounter()
-		"Battle": return _snapshot_battle()
-	return {}
+	return RunSnapshotBuilderScript.for_screen(screen, self)
 
 
 func _build_commands(screen: String) -> Dictionary:
-	match screen:
-		"Title":
-			return {
-				"continue_run": func(): submit_command({"type": "load_run"}),
-				"select_school": func(school: String): _selected_school = school,
-				"new_run": func(): start_new_run(roll_seed(), _selected_school),
-				"open_codex": func(): pass,
-				"open_settings": func(): pass,
-			}
-		"Encounter":
-			return {
-				"choose_option": func(id): submit_command({"type": "action_card", "action_id": str(id)}),
-				"confirm_danger": func(id): submit_command({"type": "action_card", "action_id": str(id)}),
-				"leave": func(): submit_command({"type": "leave_encounter"}),
-			}
-		"Map":
-			return {
-				"travel": func(id): submit_command({"type": "travel", "node_id": str(id)}),
-				"view_node": func(id): submit_command({"type": "view_node", "node_id": str(id)}),
-			}
-		"Battle":
-			return {
-				"play_card": func(cid, tid): submit_command({"type": "action_card", "card_id": str(cid), "target_id": str(tid)}),
-				"end_turn": func(): submit_command({"type": "end_turn"}),
-				"ultimate": func(): submit_command({"type": "ultimate"}),
-				"refine": func(): submit_command({"type": "refine"}),
-				"flee": func(): submit_command({"type": "retreat"}),
-			}
-		"Ending":
-			return {
-				"to_hall": func(): _show_title(),
-				"to_codex": func(): pass,
-			}
-	return {}
+	return RunCommandBuilderScript.for_screen(screen, self)
 
 
-func _snapshot_hall() -> Dictionary:
-	var schools: Dictionary = catalog.get("schools", {}) if catalog != null else {}
-	var school_list: Array[Dictionary] = []
-	for school_id in schools:
-		school_list.append({
-			"id": str(school_id),
-			"name": str(schools[school_id].get("name", str(school_id))),
-		})
-	var runs := 0
-	var endings := 0
-	if meta != null:
-		runs = int(meta.statistics.get("runs_started", 0))
-		endings = meta.gu_codex_ids.size() + meta.recipe_codex_ids.size() + meta.inheritance_codex_ids.size()
-	return {
-		"has_save": FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH),
-		"available_schools": school_list,
-		"contracts": [],
-		"meta_stats": {"runs": runs, "endings": endings},
-	}
 
-
-func _snapshot_map() -> Dictionary:
-	var nodes: Array[Dictionary] = []
-	for n in MapGenerator.visible_nodes(route, state, 2):
-		nodes.append({
-			"id": str(n.get("id", "")),
-			"type": str(n.get("type", "")),
-			"label": _node_label(n),
-			"layer": int(n.get("layer", 0)),
-		})
-	var reach: Array[String] = []
-	for n in MapGenerator.reachable_nodes(route, state):
-		reach.append(str(n["id"]))
-	return {
-		"nodes": nodes,
-		"current_node_id": str(state.current_node_id),
-		"reachable_ids": reach,
-		"resources": _resources(),
-		"contracts": _contracts(),
-		"anomalies": [],
-		"death_lines": _death_lines(),
-	}
-
-
-func _snapshot_encounter() -> Dictionary:
-	var knowledge: Dictionary = {}
-	if meta != null:
-		knowledge = meta.unlocked_random_outcomes
-	var actions: Array[Dictionary] = []
-	for c in ActionPreviewServiceScript.preview_actions(state, current_node, catalog, knowledge):
-		actions.append(_enc_action(c))
-	var intel: Dictionary = {}
-	if state.known_facts.has("procured_weakness"):
-		intel = {"weakness": "已探明弱点，战斗增伤", "cost": "情报"}
-	return {
-		"node": {
-			"title": _node_label(current_node),
-			"desc": str(current_node.get("summary", current_node.get("desc", ""))),
-			"type": str(current_node.get("type", "")),
-		},
-		"actions": actions,
-		"intel": intel,
-		"resources": _resources(),
-		"contracts": _contracts(),
-		"anomalies": [],
-		"death_lines": _death_lines(),
-	}
-
-
-func _snapshot_battle() -> Dictionary:
-	var enemy_kind := str(current_battle.get("enemy_kind", ""))
-	var flags: Array = current_battle.get("flags", [])
-	var guarded: bool = flags.has("guarded")
-	var enemies: Array[Dictionary] = [{
-		"id": str(current_battle.get("battle_id", "")),
-		"name": DisplayText.enemy(enemy_kind),
-		"hp": int(current_battle.get("enemy_hp", 0)),
-		"max_hp": maxi(1, int(current_battle.get("enemy_max_hp", 1))),
-		"shield": 2 if guarded else 0,
-		"intent": _intent_to_screen(current_battle.get("visible_intent", {})),
-	}]
-	var cult: Dictionary = state.cultivator
-	var player := {
-		"hp": int(cult.get("health", state.health)),
-		"max_hp": maxi(1, int(cult.get("max_health", state.max_health))),
-		"shield": 2 if guarded else 0,
-		"primordial": int(state.essence),
-		"soul": int(cult.get("soul", 0)),
-		"statuses": _statuses_to_list(cult.get("statuses", {})),
-	}
-	var hand: Array[Dictionary] = []
-	for c in ActionPreviewServiceScript.preview_battle_actions(current_battle, state, catalog):
-		hand.append(_battle_card(c))
-	return {
-		"enemies": enemies,
-		"player": player,
-		"hand": hand,
-		"can_ultimate": false,
-		"resources": _resources(),
-		"contracts": _contracts(),
-		"anomalies": [],
-		"death_lines": _death_lines(),
-	}
-
-
-func _enc_action(c: Dictionary) -> Dictionary:
-	return {
-		"id": str(c.get("id", "")),
-		"label": str(c.get("title", "")),
-		"detail": str(c.get("summary", "")),
-		"dangerous": _is_dangerous(c),
-		"quality": "",
-		"effect": str(c.get("summary", "")),
-		"cost": c.get("cost", {}),
-		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
-	}
-
-
-func _battle_card(c: Dictionary) -> Dictionary:
-	var cost_dict: Dictionary = c.get("cost", {})
-	var cost_num := 0
-	for key in cost_dict:
-		cost_num += int(cost_dict[key])
-	return {
-		"id": str(c.get("id", "")),
-		"name": str(c.get("title", "")),
-		"cost": cost_num,
-		"cost_ex": "",
-		"effect": str(c.get("summary", "")),
-		"quality": "普通",
-		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
-	}
-
-
-func _intent_to_screen(i: Dictionary) -> Dictionary:
-	var dmg := int(i.get("damage", 0))
-	var def := int(i.get("defense", 0))
-	if dmg > 0:
-		return {"type": "attack", "value": dmg, "detail": str(i.get("label", "造成物理伤害"))}
-	if def > 0:
-		return {"type": "defend", "value": def, "detail": str(i.get("label", "凝防御"))}
-	return {"type": "charge", "value": 0, "detail": "蓄势待发"}
-
-
-func _statuses_to_list(statuses: Dictionary) -> Array[Dictionary]:
-	var out: Array[Dictionary] = []
-	for curse_id in statuses:
-		var entry = statuses[curse_id]
-		var layers := 0
-		if entry is Dictionary:
-			layers = int(entry.get("layers", 0))
-		else:
-			layers = int(entry)
-		out.append({"name": DisplayText.fact(str(curse_id)), "stacks": layers})
-	return out
-
-
-func _is_dangerous(card: Dictionary) -> bool:
-	var cost: Dictionary = card.get("cost", {})
-	if int(cost.get("lifespan", 0)) > 0:
-		return true
-	if int(cost.get("soul", 0)) > 0:
-		return true
-	var risk := str(card.get("known_risk", ""))
-	return "反噬" in risk or "魂魄" in risk or "寿元" in risk
-
-
-func _resources() -> Dictionary:
-	var cult: Dictionary = state.cultivator if state != null else {}
-	var mat := 0
-	if state != null and state.materials is Dictionary:
-		for key in state.materials:
-			mat += int(state.materials[key])
-	return {
-		"yuanstone": int(state.stone) if state != null else 0,
-		"shouyuan": int(cult.get("lifespan", 0)),
-		"hunpo": int(cult.get("soul", 0)),
-		"material": mat,
-	}
-
-
-func _contracts() -> Array:
-	var out: Array = []
-	if state != null and state.body_imprints is Array:
-		for x in state.body_imprints:
-			out.append(DisplayText.fact(str(x)))
-	return out
-
-
-func _death_lines() -> Dictionary:
-	var cult: Dictionary = state.cultivator if state != null else {}
-	var life := int(cult.get("lifespan", 0))
-	var soul := int(cult.get("soul", 0))
-	var life_max := int(cult.get("lifespan_max", life))
-	if life_max <= 0:
-		life_max = maxi(life, 1)
-	var soul_max := int(cult.get("soul_max", soul))
-	if soul_max <= 0:
-		soul_max = maxi(soul, 1)
-	var backlash := 0
-	var statuses: Dictionary = cult.get("statuses", {})
-	for cid in statuses:
-		var e = statuses[cid]
-		backlash += int(e.get("layers", 0)) if e is Dictionary else int(e)
-	return {
-		"shouyuan": {"value": life, "threshold": life_max},
-		"hunpo": {"value": soul, "threshold": soul_max},
-		"backlash": {"value": backlash, "threshold": 3},
-	}
-
-
-func _node_label(n: Dictionary) -> String:
-	return str(n.get("label", DisplayText.node(str(n.get("id", "")))))
-
-
-func _build_ending_state(outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary) -> Dictionary:
-	var otype := str(outcome.get("outcome", "survived_failure"))
-	var etype := "retreat"
-	match otype:
-		"success": etype = "success"
-		"risky_success": etype = "risky"
-		"survived_failure": etype = "retreat"
-		"death": etype = "death"
-		"gu_fall": etype = "gu_fall"
-		"true_ending": etype = "true_ending"
-	var decisions: Array[String] = []
-	for entry in journal:
-		decisions.append(DisplayText.journal_heading(str(entry.get("heading", ""))))
-	var gains := "最高修为/转数：%s/%s；流派：%s；资产结余：元石 %d" % [
-		str(run_data.get("cultivation", "-")),
-		str(run_data.get("stage", "-")),
-		str(run_data.get("school", "未定")),
-		int(run_data.get("stone", 0)),
-	]
-	var codex: Array = run_data.get("global_codex_ids", [])
-	var unlocks: Array[String] = []
-	for x in codex:
-		unlocks.append("图鉴：%s" % str(x))
-	var cult: Dictionary = state.cultivator if state != null else {}
-	return {
-		"title": DisplayText.outcome(otype),
-		"ending_type": etype,
-		"key_decisions": decisions,
-		"gains_losses": gains,
-		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
-		"unlocks": unlocks,
-		"aftermath": "修行札记已留存，可于大厅图鉴查阅本次所得。",
-	}
-
-
-func _blow_text(id: String) -> String:
-	match id:
-		"stone_palm": return "石掌"
-		"pounce": return "伏身扑咬"
-		_: return "敌手攻势"
