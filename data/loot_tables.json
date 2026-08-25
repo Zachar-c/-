@@ -1,7 +1,11 @@
 {
   "pity": {
     "threshold": 3,
-    "clearing_rarities": ["rare", "epic", "legendary"]
+    "clearing_rarities": ["rare", "epic", "legendary"],
+    "material_pity": {
+      "threshold": 3,
+      "target_material_ids": ["venom_sac", "moon_dew"]
+    }
   },
   "materials": {
     "beast_blood": { "name_zh": "兽血", "value": 2 },

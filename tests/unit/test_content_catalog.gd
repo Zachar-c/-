@@ -60,3 +60,10 @@ func test_validation_rejects_missing_exclusive_pool() -> void:
 	var catalog := ContentCatalog.load_all()
 	(catalog["school_pools"] as Dictionary).erase("force")
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "exclusive pool"))
+
+
+func test_material_pity_config_is_validated() -> void:
+	var catalog := ContentCatalog.load_all()
+	var pity: Dictionary = catalog["loot_tables"]["pity"]["material_pity"]
+	pity["target_material_ids"].append("missing_material_x")
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown material"))

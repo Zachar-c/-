@@ -304,6 +304,13 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	for material_id in materials:
 		if int(materials[material_id].get("value", 0)) < 1:
 			errors.append("material %s needs a positive value" % material_id)
+	var material_pity: Dictionary = loot_tables.get("pity", {}).get("material_pity", {})
+	if not material_pity.is_empty():
+		if not _is_integral(material_pity.get("threshold", null)) or int(material_pity.get("threshold", 0)) < 1:
+			errors.append("loot material_pity threshold must be a positive integer")
+		for target_value in material_pity.get("target_material_ids", []):
+			if not materials.has(str(target_value)):
+				errors.append("loot material_pity references unknown material %s" % target_value)
 	for tier_key in loot_tables.get("loot", {}):
 		var tier: Dictionary = loot_tables["loot"][tier_key]
 		if int(tier.get("material_count", 0)) < 0:

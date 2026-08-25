@@ -165,3 +165,46 @@ func test_same_seed_replays_identical_loot_and_pity_sequence() -> void:
 				})
 			runs.append({"sequence": sequence, "event_log": state.event_log})
 		assert_eq_deep(runs[0], runs[1])
+
+
+# ---- material pity (S3: qi-aligned material guarantee) ----
+
+func test_material_pity_forces_qi_target_on_threshold() -> void:
+	var cat := catalog()
+	var pity: Dictionary = cat["loot_tables"]["pity"]["material_pity"]
+	var state: RunState = make_state(11)
+	state.material_pity = int(pity["threshold"])
+	var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
+	var ids: Array = rolled["loot"]["material_ids"]
+	assert_true(ids.has("venom_sac"), "elite pool must supply the forced qi target venom_sac")
+	assert_eq(int(rolled["state"].material_pity), 0, "forced target pick resets the counter")
+
+
+func test_material_pity_resets_when_target_naturally_picked() -> void:
+	var cat := catalog()
+	var state: RunState = make_state(7)
+	state.material_pity = 1
+	var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
+	# The elite pool can draw venom_sac naturally for some seeds: when it does
+	# the counter resets, otherwise it advances by one.
+	var ids: Array = rolled["loot"]["material_ids"]
+	var expected := 0 if ids.has("venom_sac") else 2
+	assert_eq(int(rolled["state"].material_pity), expected)
+
+
+func test_material_pity_advances_on_material_loot_without_target() -> void:
+	var cat := catalog()
+	var state: RunState = make_state(3)
+	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
+	assert_eq(int(rolled["state"].material_pity), 1, "common tier has no qi target material")
+
+
+func test_material_pity_cannot_invent_off_pool_targets() -> void:
+	var cat := catalog()
+	var pity: Dictionary = cat["loot_tables"]["pity"]["material_pity"]
+	var state: RunState = make_state(9)
+	state.material_pity = int(pity["threshold"])
+	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
+	var ids: Array = rolled["loot"]["material_ids"]
+	assert_eq(ids.size(), 1, "no forced material beyond what the tier pool declares")
+	assert_eq(int(rolled["state"].material_pity), int(pity["threshold"]) + 1)

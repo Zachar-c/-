@@ -22,14 +22,17 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
 	var table: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
 	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
-	var material_ids := _roll_materials(table, state, tier)
+	var material_ids := _roll_materials(table, state, tier, pity_cfg)
 	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
 	var next := state
 	if not material_ids.is_empty() or not gu_id.is_empty():
 		var next_pity := _next_loot_pity(int(state.loot_pity), str(gu_roll.get("rarity", "")), pity_cfg)
-		next = _apply_loot(state, loot, catalog, next_pity)
+		var next_material_pity := int(state.material_pity)
+		if not material_ids.is_empty():
+			next_material_pity = _next_material_pity(int(state.material_pity), material_ids, pity_cfg)
+		next = _apply_loot(state, loot, catalog, next_pity, next_material_pity)
 	return {"state": next, "loot": loot}
 
 
@@ -40,7 +43,7 @@ static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
 	return "common"
 
 
-static func _roll_materials(table: Dictionary, state: RunState, tier: String) -> Array[String]:
+static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}) -> Array[String]:
 	var pool: Array = (table.get("material_pool", []) as Array).duplicate()
 	var count := int(table.get("material_count", 0))
 	var picked: Array[String] = []
@@ -48,7 +51,38 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String) ->
 		var index := _pick_from(pool.size(), state, "loot.material.%s" % tier)
 		picked.append(str(pool[index]))
 		pool.remove_at(index)
+	var m_pity: Dictionary = pity_cfg.get("material_pity", {})
+	var threshold := int(m_pity.get("threshold", 0))
+	var targets: Array = m_pity.get("target_material_ids", [])
+	if threshold > 0 and int(state.material_pity) >= threshold and not targets.is_empty():
+		var has_target := false
+		for material_value in picked:
+			if targets.has(str(material_value)):
+				has_target = true
+				break
+		if not has_target:
+			# Only force what the tier pool actually declares; a guarantee can
+			# never invent a material the table does not offer.
+			var forced_pool: Array = []
+			var table_pool: Array = table.get("material_pool", [])
+			for target_value in targets:
+				var target_id := str(target_value)
+				if table_pool.has(target_id):
+					forced_pool.append(target_id)
+			if not forced_pool.is_empty():
+				var forced_id := str(forced_pool[_pick_from(forced_pool.size(), state, "loot.material.forced.%s" % tier)])
+				picked.append(forced_id)
 	return picked
+
+
+static func _next_material_pity(current: int, material_ids: Array, pity_cfg: Dictionary = {}) -> int:
+	var targets: Array = pity_cfg.get("material_pity", {}).get("target_material_ids", [])
+	if targets.is_empty():
+		return current
+	for material_value in material_ids:
+		if targets.has(str(material_value)):
+			return 0
+	return current + 1
 
 
 # Shop purchases are fixed offers and never call _roll_gu, so they bypass
@@ -127,7 +161,7 @@ static func _pick_from(bound: int, state: RunState, salt: String) -> int:
 	return rng.next_index(bound)
 
 
-static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, new_loot_pity: int) -> RunState:
+static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, new_loot_pity: int, new_material_pity: int) -> RunState:
 	var next := state
 	var material_ids: Array = loot.get("material_ids", [])
 	if not material_ids.is_empty():
@@ -140,13 +174,14 @@ static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, 
 			"time": state.event_log.size(),
 			"node_id": state.current_node_id,
 			"action": "battle_loot",
-			"before": {"materials": state.materials},
-			"after": {"materials": after},
+			"before": {"materials": state.materials, "material_pity": state.material_pity},
+			"after": {"materials": after, "material_pity": new_material_pity},
 			"reason": "loot_materials_gained",
 			"source": "loot_resolver",
 			"targets": material_ids,
 		})
 		next.materials = after
+		next.material_pity = new_material_pity
 	var gu_id := str(loot.get("gu_id", ""))
 	if not gu_id.is_empty():
 		next = _gain_gu(next, gu_id, catalog, new_loot_pity)
