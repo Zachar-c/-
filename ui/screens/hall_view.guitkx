@@ -14,10 +14,17 @@ export HallView() -> RuitkVNode {
   var fire = func(key: String):
     if commands.has(key):
       commands[key].call()
+  var select = func(id: String):
+    if commands.has("select_school"):
+      commands["select_school"].call(id)
 
   var school_rows = []
   for s in schools:
-    school_rows.append(<Label text={ "· " + str(s) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 15} } />)
+    var sid = str(s.get("id", ""))
+    var sname = str(s.get("name", str(s)))
+    school_rows.append((
+      <GuButton label={ sname } on_press={ func(): select.call(sid) } />
+    ))
 
   var contract_rows = []
   for c in contracts:

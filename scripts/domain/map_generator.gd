@@ -21,6 +21,9 @@ static func _generated_stage_picks(seed: int, nodes: Array, node_by_id: Dictiona
 		by_stage[node["stage"]].append(node["id"])
 	var rng := SeededRng.new(seed)
 	var stage_picks := {}
+	# Stage order omits "two" intentionally: nodes.json currently carries no
+	# stage-two nodes, so the picker is data-driven and would pick them as soon
+	# as any appear. Topological order stays one -> three -> four -> five.
 	for stage in ["one", "three", "four", "five"]:
 		if not by_stage.has(stage):
 			continue

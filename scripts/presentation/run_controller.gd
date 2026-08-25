@@ -524,6 +524,7 @@ func _build_commands(screen: String) -> Dictionary:
 		"Title":
 			return {
 				"continue_run": func(): submit_command({"type": "load_run"}),
+				"select_school": func(school: String): _selected_school = school,
 				"new_run": func(): start_new_run(roll_seed(), _selected_school),
 				"open_codex": func(): pass,
 				"open_settings": func(): pass,
@@ -557,6 +558,12 @@ func _build_commands(screen: String) -> Dictionary:
 
 func _snapshot_hall() -> Dictionary:
 	var schools: Dictionary = catalog.get("schools", {}) if catalog != null else {}
+	var school_list: Array[Dictionary] = []
+	for school_id in schools:
+		school_list.append({
+			"id": str(school_id),
+			"name": str(schools[school_id].get("name", str(school_id))),
+		})
 	var runs := 0
 	var endings := 0
 	if meta != null:
@@ -564,7 +571,7 @@ func _snapshot_hall() -> Dictionary:
 		endings = meta.gu_codex_ids.size() + meta.recipe_codex_ids.size() + meta.inheritance_codex_ids.size()
 	return {
 		"has_save": FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH),
-		"available_schools": schools.keys(),
+		"available_schools": school_list,
 		"contracts": [],
 		"meta_stats": {"runs": runs, "endings": endings},
 	}

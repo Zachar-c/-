@@ -69,6 +69,20 @@ static func load_all() -> Dictionary:
 
 static func validate(catalog: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
+	var entry_tables := {
+		"gu": catalog.get("gu", []),
+		"cards": catalog.get("cards", []),
+		"refinement_recipes": catalog.get("refinement_recipes", []),
+		"caravan_offers": catalog.get("caravan_offers", []),
+		"relics": catalog.get("relics", []),
+		"shop_offers": catalog.get("shop_offers", []),
+		"nodes": catalog.get("nodes", []),
+		"enemies": catalog.get("enemies", []),
+	}
+	for table_name in entry_tables:
+		for entry in entry_tables[table_name]:
+			if str(entry.get("id", "")).is_empty():
+				errors.append("%s entry missing id" % table_name)
 	var gu_by_id: Dictionary = catalog["gu_by_id"]
 	var card_by_id: Dictionary = catalog.get("card_by_id", {})
 	var material_ids: Array = catalog.get("material_ids", [])
