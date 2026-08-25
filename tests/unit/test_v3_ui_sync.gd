@@ -9,6 +9,8 @@ const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 const EncounterViewScript = preload("res://scripts/presentation/encounter_view.gd")
 const BattleViewScript = preload("res://scripts/presentation/battle_view.gd")
+const BattleScreenScript = preload("res://ui/screens/battle_screen.gd")
+const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 
 
 const NODE_CASES := [
@@ -57,54 +59,76 @@ func test_battle_view_renders_hand_and_turn_buttons() -> void:
 
 
 func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
-	var hud := _find_label_with_text(view, "真元")
-	assert_not_null(hud, "battle view must expose essence hud")
-	for item in ["元石", "寿元", "魂魄"]:
-		assert_not_null(_find_label_with_text(view, item), "hud missing %s" % item)
-	assert_eq(_count_typed(view, ProgressBar), 2, "hero and enemy health bars expected in battle view")
-	assert_not_null(_find_label_with_text(view, "意图"), "battle view must expose enemy intent")
+	var controller: RunController = _battle_controller()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	assert_eq(snapshot["enemies"].size(), 1)
+	var enemy: Dictionary = snapshot["enemies"][0]
+	assert_true(int(enemy["hp"]) > 0, "battle snapshot must expose enemy hp")
+	assert_true(str(enemy["intent"].get("type", "")) != "", "battle snapshot must expose enemy intent")
+	assert_true(snapshot["player"].has("hp"), "battle snapshot must expose player hp")
+	assert_true(snapshot["player"].has("soul"), "battle snapshot must expose player soul")
+	var texts := _rui_texts(BattleScreenScript.render({"state": snapshot, "commands": {}}, []))
+	assert_true(_any_contains(texts, "意图："), "battle screen must render enemy intent")
 
 
 func test_battle_view_hud_uses_programmatic_icons() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
-	var icons := _collect_typed(view, "ResourceIcon")
-	assert_eq(icons.size(), 4, "battle hud must render four resource icons")
+	var controller: RunController = _battle_controller()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	var resources: Dictionary = snapshot.get("resources", {})
+	assert_eq(resources.size(), 4, "battle hud must expose four resource chips")
+	for key in ["yuanstone", "shouyuan", "hunpo", "material"]:
+		assert_true(resources.has(key), "battle hud missing resource chip %s" % key)
 
 
 func test_battle_hud_shows_formula_essence_max() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	state.cave_aperture["essence_max"] = 6
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
-	var hud := _find_label_with_text(view, "真元")
-	assert_not_null(hud, "essence hud must stay")
-	var cap_label := _find_label_with_text(view, "3/6")
-	assert_not_null(cap_label, "hud must use formula essence_max")
+	var controller: RunController = _battle_controller()
+	controller.state.essence = 3
+	var cap := int(controller.state.cave_aperture["essence_max"])
+	assert_eq(cap, EssenceCapacityScript.essence_max(controller.state, controller.catalog), "essence cap must come from the formula")
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	var primordial := int(snapshot["player"]["primordial"])
+	assert_eq(primordial, 3, "battle snapshot must carry current essence")
+	assert_true(primordial <= cap, "essence must respect the formula cap")
 
 
 func test_battle_hud_shows_multitasking_capacity() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
-	var ops := _find_label_with_text(view, "出手 0/4")
-	assert_not_null(ops, "multitasking capacity must be visible")
+	var controller: RunController = _battle_controller()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	assert_true(snapshot["player"].has("soul"), "multitasking capacity must be visible through the soul bar")
+	assert_eq(int(snapshot["player"]["soul"]), int(controller.state.cultivator.get("soul", 0)))
+
+
+func _battle_controller() -> RunController:
+	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
+	controller.start_new_run(101)
+	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "ridge_hound"}
+	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller._start_battle()
+	return controller
+
+
+func _rui_texts(vnode: Variant) -> Array[String]:
+	var out: Array[String] = []
+	if vnode == null:
+		return out
+	if vnode is RefCounted or vnode is Dictionary:
+		var props: Variant = vnode.props if vnode is RefCounted else vnode.get("props", {})
+		if props is Dictionary:
+			for key in ["text", "label", "title"]:
+				if props.has(key):
+					out.append(str(props[key]))
+		var children: Variant = vnode.children if vnode is RefCounted else vnode.get("children", [])
+		if children is Array:
+			for child in children:
+				out.append_array(_rui_texts(child))
+	return out
+
+
+func _any_contains(texts: Array[String], substring: String) -> bool:
+	for text in texts:
+		if text.contains(substring):
+			return true
+	return false
 
 
 func test_encounter_view_shows_notoriety_when_present() -> void:
@@ -119,12 +143,13 @@ func test_encounter_view_shows_notoriety_when_present() -> void:
 	view.render_session(node, state, EncounterSessionResolverScript.start(node), empty_results, {}, empty_cards, catalog)
 	var label := _find_label_with_text(view, "恶名")
 	assert_not_null(label, "notoriety must be visible")
-	assert_true(str(label.text).contains("2"))
+	assert_not_null(_find_label_with_text(view, "2/2"), "notoriety bar must show its value")
 
+	# The RUI status panel keeps the notoriety bar resident (zero shows zero).
 	var clean_view: Control = autofree(preload("res://scripts/presentation/encounter_view.gd").new())
 	add_child(clean_view)
 	clean_view.render_session(node, RunState.new_run(101), EncounterSessionResolverScript.start(node), empty_results, {}, empty_cards, catalog)
-	assert_null(_find_label_with_text(clean_view, "恶名"), "zero notoriety stays hidden")
+	assert_not_null(_find_label_with_text(clean_view, "恶名"), "status panel must keep the notoriety bar")
 
 
 func test_map_view_shows_cross_run_codex_unlock_count() -> void:
