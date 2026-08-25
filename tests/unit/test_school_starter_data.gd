@@ -10,7 +10,7 @@ const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
 
 
-const SCHOOLS := ["blood", "qi", "force"]
+const SCHOOLS := ["blood", "qi", "force", "soul", "refine"]
 const ROLES := ["attack", "defense", "movement", "healing", "logistics", "recon"]
 
 
@@ -22,7 +22,7 @@ func make_state(run_seed: int = 2026) -> RunState:
 	return RunStateScript.new_run(run_seed, null)
 
 
-func test_three_schools_each_have_five_starters() -> void:
+func test_each_school_has_five_starters() -> void:
 	var cat: Dictionary = catalog()
 	for school_id in SCHOOLS:
 		var starters: Array = cat["schools"][school_id].get("starter_gu_ids", [])
@@ -33,6 +33,16 @@ func test_three_schools_each_have_five_starters() -> void:
 			assert_true(cat["gu_by_id"].has(gu_id), "%s starter missing gu %s" % [school_id, gu_id])
 			assert_false(seen.has(gu_id), "%s starter list has duplicates" % school_id)
 			seen[gu_id] = true
+
+
+func test_every_school_has_display_name_and_summary() -> void:
+	var cat: Dictionary = catalog()
+	assert_eq((cat["schools"] as Dictionary).size(), 5, "five schools must be declared")
+	for school_id in SCHOOLS:
+		var entry: Dictionary = cat["schools"].get(school_id, {})
+		assert_false(entry.is_empty(), "school %s must be declared" % school_id)
+		assert_false(str(entry.get("name", "")).is_empty(), "school %s needs a display name" % school_id)
+		assert_false(str(entry.get("summary", "")).is_empty(), "school %s needs a summary" % school_id)
 
 
 func test_starters_belong_to_their_school() -> void:
@@ -83,6 +93,44 @@ func test_starter_injection_grants_five_gu() -> void:
 	assert_eq(controller.state.refined_gu_ids.size(), 6)
 	for starter in ["blood_moss_gu", "blood_droplet_gu", "blood_bat_gu", "blood_wing_gu", "blood_farewell_gu"]:
 		assert_true(controller.state.refined_gu_ids.has(starter))
+
+
+func test_refine_starter_injection_grants_five_gu() -> void:
+	var controller = preload("res://scripts/presentation/run_controller.gd").new()
+	add_child_autofree(controller)
+	controller.start_new_run(2026, "refine")
+	# Default run carries the novice small_light_gu plus the five school starters.
+	assert_eq(controller.state.refined_gu_ids.size(), 6)
+	for starter in catalog()["schools"]["refine"]["starter_gu_ids"]:
+		assert_true(controller.state.refined_gu_ids.has(str(starter)), "refine run must start with %s" % str(starter))
+
+
+func test_school_pools_are_isolated_and_school_matched() -> void:
+	var cat: Dictionary = catalog()
+	var pools: Dictionary = cat.get("school_pools", {})
+	var seen_globally := {}
+	for school_id in SCHOOLS:
+		var pool: Array = pools.get(school_id, [])
+		assert_false(pool.is_empty(), "%s must declare a non-empty exclusive pool" % school_id)
+		for gu_id_value in pool:
+			var gu_id := str(gu_id_value)
+			assert_true(cat["gu_by_id"].has(gu_id), "%s pool references missing gu %s" % [school_id, gu_id])
+			assert_eq(str(cat["gu_by_id"][gu_id]["school"]), school_id, "%s pool must not contain other-school gu %s" % [school_id, gu_id])
+			assert_false(seen_globally.has(gu_id), "gu %s appears in more than one school pool" % gu_id)
+			seen_globally[gu_id] = true
+
+
+func test_school_pool_entries_have_display_names() -> void:
+	var cat: Dictionary = catalog()
+	var pools: Dictionary = cat.get("school_pools", {})
+	var gu_names: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/gu_names.json"))
+	var legacy: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/names.json"))
+	var legacy_gu: Dictionary = legacy.get("gu", {})
+	for school_id in pools:
+		for gu_id_value in pools[school_id]:
+			var gu_id := str(gu_id_value)
+			var named := gu_names.has(gu_id) or legacy_gu.has(gu_id)
+			assert_true(named, "pool gu %s needs a Chinese display name" % gu_id)
 
 
 func test_new_starter_battle_effects_resolve() -> void:
