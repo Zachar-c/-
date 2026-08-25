@@ -23,7 +23,7 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	var table: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
 	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
 	var material_ids := _roll_materials(table, state, tier)
-	var gu_roll := _roll_gu(table, state, tier, pity_cfg)
+	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
 	var next := state
@@ -53,7 +53,7 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String) ->
 
 # Shop purchases are fixed offers and never call _roll_gu, so they bypass
 # the R13.1 adventure-drop pity counter by construction.
-static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}) -> Dictionary:
+static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, school_pools: Dictionary = {}) -> Dictionary:
 	var chance := int(table.get("gu_chance_pct", 0))
 	var pool: Dictionary = table.get("gu_pool", {})
 	var weights: Dictionary = pool.get("weights", {})
@@ -94,8 +94,16 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg:
 	var bucket: Array = (pool.get("by_rarity", {}).get(picked_rarity, []) as Array).duplicate()
 	if bucket.is_empty():
 		return {"gu_id": "", "rarity": ""}
+	var school_exclusive: Array = school_pools.get(str(state.school), [])
+	var school_members: Array = []
+	if not school_exclusive.is_empty():
+		for bucket_gu_value in bucket:
+			var bucket_gu_id := str(bucket_gu_value)
+			if school_exclusive.has(bucket_gu_id):
+				school_members.append(bucket_gu_id)
+	var pick_pool: Array = school_members if not school_members.is_empty() else bucket
 	return {
-		"gu_id": str(bucket[_pick_from(bucket.size(), state, "loot.gu.pick.%s.%s" % [tier, picked_rarity])]),
+		"gu_id": str(pick_pool[_pick_from(pick_pool.size(), state, "loot.gu.pick.%s.%s" % [tier, picked_rarity])]),
 		"rarity": picked_rarity,
 	}
 
