@@ -1,15 +1,20 @@
-class_name EndingView
+﻿class_name EndingView
 extends Control
 
 
+const THEME := preload("res://assets/theme/gu_theme.tres")
+
+
 signal restart_requested
+signal return_to_hall_requested
 
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	theme = THEME
 
 
-func show_ending(outcome: Dictionary, journal: Array[Dictionary]) -> void:
+func show_ending(outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary = {}) -> void:
 	_clear()
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -19,28 +24,23 @@ func show_ending(outcome: Dictionary, journal: Array[Dictionary]) -> void:
 	margin.add_theme_constant_override("margin_bottom", 48)
 	add_child(margin)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 14)
+	column.add_theme_constant_override("separation", 12)
 	margin.add_child(column)
-	var title := Label.new()
-	title.text = "修行札记"
-	title.add_theme_font_size_override("font_size", 30)
+	var title := UiTheme.label("修行札记", 30, Color("e7c883"))
 	column.add_child(title)
-	var result := Label.new()
-	result.text = "结局：%s" % DisplayText.outcome(str(outcome.get("outcome", "survived_failure")))
-	result.add_theme_color_override("font_color", Color("e7c883"))
-	column.add_child(result)
+	column.add_child(UiTheme.label("结局：%s" % DisplayText.outcome(str(outcome.get("outcome", "survived_failure"))), 18, Color("e7c883")))
+	_add_recap(column, run_data)
 	var record := RichTextLabel.new()
 	record.bbcode_enabled = true
 	record.fit_content = true
-	record.custom_minimum_size = Vector2(0, 260)
+	record.custom_minimum_size = Vector2(0, 220)
 	record.text = _journal_text(journal)
 	column.add_child(record)
-	var restart := Button.new()
-	restart.text = "重开种子 101"
-	restart.custom_minimum_size = Vector2(156, 44)
-	restart.tooltip_text = "重新开始固定验证路线"
-	restart.pressed.connect(func(): restart_requested.emit())
-	column.add_child(restart)
+	var back := UiTheme.button("返回大厅", true)
+	back.custom_minimum_size = Vector2(200, 44)
+	back.tooltip_text = "回到大厅，可继续上次冒险或开启新局。"
+	back.pressed.connect(func(): return_to_hall_requested.emit())
+	column.add_child(back)
 
 
 func show_death(report: Dictionary) -> void:
@@ -53,31 +53,46 @@ func show_death(report: Dictionary) -> void:
 	margin.add_theme_constant_override("margin_bottom", 48)
 	add_child(margin)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 14)
+	column.add_theme_constant_override("separation", 12)
 	margin.add_child(column)
-	var title := Label.new()
-	title.text = "身死道消"
-	title.add_theme_font_size_override("font_size", 30)
+	var title := UiTheme.label("身死道消", 30, Color("e7c883"))
 	column.add_child(title)
-	var blow := Label.new()
-	blow.text = "最后一击：%s（%d 点伤害）" % [_blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))]
-	blow.add_theme_color_override("font_color", Color("e7c883"))
+	var blow := UiTheme.label("最后一击：%s（%d 点伤害）" % [_blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))], 16, Color("e7c883"))
 	column.add_child(blow)
-	var facts := Label.new()
-	facts.text = "你已看见：%s" % _facts_text(report.get("known_facts", []))
+	var facts := UiTheme.label("你已看见：%s" % _facts_text(report.get("known_facts", [])), 16, Color("b8d5cc"))
 	facts.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(facts)
-	var taunt := Label.new()
-	taunt.text = "“%s”" % str(report.get("taunt", ""))
+	var taunt := UiTheme.label("“%s”" % str(report.get("taunt", "")), 16, Color("b8d5cc"))
 	taunt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	taunt.add_theme_color_override("font_color", Color("b8d5cc"))
 	column.add_child(taunt)
-	var restart := Button.new()
-	restart.text = "重开种子 101"
-	restart.custom_minimum_size = Vector2(156, 44)
-	restart.tooltip_text = "重新开始固定验证路线"
-	restart.pressed.connect(func(): restart_requested.emit())
-	column.add_child(restart)
+	var back := UiTheme.button("返回大厅", true)
+	back.custom_minimum_size = Vector2(200, 44)
+	back.tooltip_text = "回到大厅，可继续上次冒险或开启新局。"
+	back.pressed.connect(func(): return_to_hall_requested.emit())
+	column.add_child(back)
+
+
+func _add_recap(column: VBoxContainer, run_data: Dictionary) -> void:
+	var items: Array[String] = []
+	items.append("最高修为 / 转数：%s / %s" % [str(run_data.get("cultivation", "-")), str(run_data.get("stage", "-"))])
+	items.append("流派：%s" % str(run_data.get("school", "未定")))
+	items.append("关键节点轨迹：%s" % _route_text(run_data.get("route_progress", [])))
+	var stone := int(run_data.get("stone", 0))
+	var codex: Array = run_data.get("global_codex_ids", [])
+	items.append("资产结余：元石 %d · 图鉴解锁 %d" % [stone, codex.size()])
+	for item in items:
+		var lbl := UiTheme.label(item, 15, Color("b8d5cc"))
+		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		column.add_child(lbl)
+
+
+func _route_text(route_progress: Array) -> String:
+	if route_progress.is_empty():
+		return "无"
+	var names: Array[String] = []
+	for node_id in route_progress:
+		names.append(DisplayText.node(str(node_id)))
+	return " → ".join(names)
 
 
 func _clear() -> void:

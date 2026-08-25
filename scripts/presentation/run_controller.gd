@@ -13,6 +13,7 @@ const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_s
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
+const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 
 
 var catalog: Dictionary
@@ -326,12 +327,36 @@ func _show_battle() -> void:
 		_views["Battle"].render(current_battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(current_battle, state, catalog))
 
 
+func _continue_saved_run() -> void:
+	if not FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH):
+		return
+	var data := SaveRepositoryScript.load_run()
+	if data == null or data.is_empty():
+		_show_title()
+		return
+	if not data.has("state") or not (data["state"] is RunState):
+		_show_title()
+		return
+	state = data["state"]
+	if data.has("route"):
+		route = data["route"].duplicate(true)
+	if FileAccess.file_exists(SaveRepositoryScript.META_PATH):
+		meta = SaveRepositoryScript.load_meta_file()
+	else:
+		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
+	current_node = _node_by_id(state.current_node_id)
+	current_battle = {}
+	current_session = state.encounter_session.duplicate(true)
+	dialogue_replies = data.get("replies", [])
+	_show_map()
+
+
 func _show_ending(outcome: Dictionary) -> void:
 	_record_run_end(_run_end_outcome(str(outcome.get("outcome", ""))))
 	_view_name = "Ending"
 	if _views.has("Ending"):
 		_show_only("Ending")
-		_views["Ending"].show_ending(outcome, JournalBuilder.build(state, outcome))
+		_views["Ending"].show_ending(outcome, JournalBuilder.build(state, outcome), state.to_save_data())
 
 
 func _show_death(report: Dictionary) -> void:
@@ -363,11 +388,13 @@ func _ensure_views() -> void:
 	_add_view(host, "Ending", ENDING_SCENE.instantiate())
 	title.start_requested.connect(_start_run_from_title)
 	title.school_selected.connect(func(school: String): _selected_school = school)
+	title.continue_requested.connect(_continue_saved_run)
 	_views["Map"].node_selected.connect(func(node_id: String): submit_command({"type": "travel", "node_id": node_id}))
 	_views["Map"].action_submitted.connect(submit_command)
 	_views["Encounter"].command_submitted.connect(submit_command)
 	_views["Battle"].command_submitted.connect(submit_command)
-	_views["Ending"].restart_requested.connect(func(): start_new_run(roll_seed()))
+	_views["Ending"].return_to_hall_requested.connect(_show_title)
+	_views["Ending"].return_to_hall_requested.connect(_show_title)
 
 
 func _add_view(host: Node, name: String, view: Control) -> void:

@@ -3,11 +3,19 @@ extends Control
 
 
 const THEME := preload("res://assets/theme/gu_theme.tres")
+const SaveRepositoryScript := preload("res://scripts/domain/save_repository.gd")
 
 
 signal start_requested
 signal quit_requested
 signal school_selected(school: String)
+signal continue_requested
+signal codex_requested
+signal settings_requested
+signal contract_placeholder_requested
+
+
+var _stub_panel: PanelContainer
 
 
 func _ready() -> void:
@@ -27,15 +35,9 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation", 16)
 	margin.add_child(column)
 
-	var title := Label.new()
-	title.text = "蛊 路 求 生"
-	title.add_theme_font_size_override("font_size", 64)
-	title.add_theme_color_override("font_color", Color("e7c883"))
+	var title := UiTheme.label("蛊 路 求 生", 64, Color("e7c883"))
 	column.add_child(title)
-	var subtitle := Label.new()
-	subtitle.text = "夜入密林，蛊路求生 · 南疆篇"
-	subtitle.add_theme_font_size_override("font_size", 24)
-	subtitle.add_theme_color_override("font_color", Color("b8d5cc"))
+	var subtitle := UiTheme.label("夜入密林，蛊路求生 · 南疆篇", 24, Color("b8d5cc"))
 	column.add_child(subtitle)
 
 	var spacer := Control.new()
@@ -45,27 +47,50 @@ func _ready() -> void:
 	var school_row := HBoxContainer.new()
 	school_row.add_theme_constant_override("separation", 10)
 	column.add_child(school_row)
-	var school_hint := Label.new()
-	school_hint.text = "流派"
-	school_hint.add_theme_font_size_override("font_size", 18)
-	school_hint.add_theme_color_override("font_color", Color("b8d5cc"))
+	var school_hint := UiTheme.label("流派", 18, Color("b8d5cc"))
 	school_row.add_child(school_hint)
 	for school in ["血道", "气道", "力道"]:
-		var school_button := Button.new()
-		school_button.text = school
+		var school_button := UiTheme.button(school, true)
 		school_button.custom_minimum_size = Vector2(120, 40)
 		school_button.tooltip_text = _school_hint(school)
 		school_button.pressed.connect(func(choice: String = school): school_selected.emit(choice))
 		school_row.add_child(school_button)
 
+	var contract_button := UiTheme.button("契约（未启用）", true)
+	contract_button.custom_minimum_size = Vector2(170, 36)
+	contract_button.tooltip_text = "开局全局规则修改器：收益与对等代价成对，本局尚未接入。"
+	contract_button.pressed.connect(func(): _toggle_stub("契约：本局 0 / 6 条（待接入）"))
+	school_row.add_child(contract_button)
+
 	var menu := VBoxContainer.new()
 	menu.add_theme_constant_override("separation", 10)
 	column.add_child(menu)
-	_append_menu_button(menu, "开始游戏", true)
-	_append_menu_button(menu, "图鉴", false)
-	_append_menu_button(menu, "统计内容", false)
-	_append_menu_button(menu, "设定", false)
-	_append_menu_button(menu, "退出", true)
+
+	var has_save := FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH)
+	_append_menu_button(menu, "继续上次冒险", has_save, "无进行中的冒险存档。")
+	_append_menu_button(menu, "开始游戏", true, "")
+	_append_menu_button(menu, "图鉴", true, "")
+	_append_menu_button(menu, "设定", true, "")
+	_append_menu_button(menu, "统计内容", false, "尚未开放：先完成南疆篇冒烟切片。")
+	_append_menu_button(menu, "退出", true, "")
+
+
+func _toggle_stub(text: String) -> void:
+	contract_placeholder_requested.emit()
+	if is_instance_valid(_stub_panel) and is_instance_valid(_stub_panel.get_parent()):
+		_stub_panel.queue_free()
+		_stub_panel = null
+		return
+	var panel := PanelContainer.new()
+	panel.add_theme_constant_override("margin_left", 16)
+	panel.add_theme_constant_override("margin_right", 16)
+	panel.add_theme_constant_override("margin_top", 10)
+	panel.add_theme_constant_override("margin_bottom", 10)
+	var lbl := UiTheme.label(text, 16, Color("b8d5cc"))
+	panel.add_child(lbl)
+	panel.position = Vector2(150, 300)
+	add_child(panel)
+	_stub_panel = panel
 
 
 func _school_hint(school: String) -> String:
@@ -76,16 +101,24 @@ func _school_hint(school: String) -> String:
 	return ""
 
 
-func _append_menu_button(menu: VBoxContainer, text: String, enabled: bool) -> void:
-	var button := Button.new()
-	button.text = text
+func _append_menu_button(menu: VBoxContainer, text: String, enabled: bool, hint: String) -> void:
+	var button := UiTheme.button(text, enabled)
 	button.custom_minimum_size = Vector2(260, 44)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	if text == "开始游戏":
-		button.pressed.connect(func(): start_requested.emit())
-	elif text == "退出":
-		button.pressed.connect(func(): quit_requested.emit())
-	else:
-		button.disabled = true
-		button.tooltip_text = "尚未开放：先完成南疆篇冒烟切片。"
+	match text:
+		"开始游戏":
+			button.pressed.connect(func(): start_requested.emit())
+		"退出":
+			button.pressed.connect(func(): quit_requested.emit())
+		"继续上次冒险":
+			if not enabled:
+				button.tooltip_text = hint
+			button.pressed.connect(func(): continue_requested.emit())
+		"图鉴":
+			button.pressed.connect(func(): codex_requested.emit(); _toggle_stub("图鉴：建设中（遭遇即解锁，大厅只读）"))
+		"设定":
+			button.pressed.connect(func(): settings_requested.emit(); _toggle_stub("设定：建设中"))
+		_:
+			button.disabled = true
+			button.tooltip_text = hint
 	menu.add_child(button)

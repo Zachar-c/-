@@ -27,6 +27,15 @@
 - 引入 GDQuest Open RPG 时保留 MIT 许可证、上游 URL 和固定提交号；未经审计不要直接耦合或修改 `vendor/godot-open-rpg/`。
 - 不提交本地工作树、下载缓存、构建产物、密钥或未完成的第三方克隆。
 
+### UI 前端约定（2026-08-25 用户裁定）
+
+- 1. 所有 UI 脚本只读取外部游戏状态，禁止修改战斗、卡牌、遗物等业务数据；状态变更一律经信号提交领域层。
+- 2. 所有控件必须挂载 `res://assets/theme/gu_theme.tres`，统一样式；公共组件自建节点也须挂同一主题。
+- 3. 优先复用公共 UI 组件（`scripts/presentation/components/ui_theme.gd` 工厂、`scenes/ui/gu_tooltip.tscn`、`stat_bar.tscn`、`top_status_bar.tscn`），禁止重复实现按钮、卡牌容器、提示框。
+- 4. 信号连接统一使用 Callable；节点销毁（`queue_free`）时须断开信号，防止内存泄漏（Godot 4 在发射/接收端释放时自动断开，列表重建须整体 `queue_free`）。
+- 5. 卡牌列表、遗物列表使用 `ItemList` / `ScrollContainer` 容器，适配动态数量卡牌。
+- 6. 输出 UI 代码后，须简要标注：需要哪些输入数据、依赖哪些公共组件。
+
 ## 工作流程
 
 1. 开始前阅读相关设计与当前 `git status`，保留用户已有的未提交改动。

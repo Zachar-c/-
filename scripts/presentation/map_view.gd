@@ -4,6 +4,7 @@ extends Control
 
 const ROUTE_TREE_CANVAS := preload("res://scripts/presentation/route_tree_canvas.gd")
 const THEME := preload("res://assets/theme/gu_theme.tres")
+const TOOLTIP_SCENE := preload("res://scenes/ui/gu_tooltip.tscn")
 const GuOrbScript := preload("res://scripts/presentation/gu_orb.gd")
 
 
@@ -11,9 +12,31 @@ signal node_selected(node_id: String)
 signal action_submitted(command: Dictionary)
 
 
+const TOAST_FADE_SECONDS := 1.6
+
+
+var _toast: Label
+var _tooltip: GuTooltip
+
+
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	theme = THEME
+	_toast = Label.new()
+	_toast.name = "map_toast"
+	_toast.visible = false
+	_toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.add_theme_color_override("font_color", Color("e7c883"))
+	_toast.add_theme_font_size_override("font_size", 18)
+	_toast.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	_toast.offset_top = 12.0
+	add_child(_toast)
+	# One shared tooltip host for the whole map view. It follows the mouse and
+	# is protected from _clear so it survives re-renders (freed with the view).
+	_tooltip = TOOLTIP_SCENE.instantiate()
+	_tooltip.z_index = 100
+	add_child(_tooltip)
 
 
 func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta: RefCounted = null, feedback: String = "") -> void:
@@ -62,9 +85,20 @@ func _append_route(parent: HBoxContainer, route: Array[Dictionary], state: RunSt
 	center.add_child(scroll)
 	var tree: Control = ROUTE_TREE_CANVAS.new()
 	scroll.add_child(tree)
+	tree.tooltip = _tooltip
 	tree.node_selected.connect(func(node_id: String): node_selected.emit(node_id))
-	tree.configure(route, state)
+	tree.configure(route, state, _empty_pool_ids(route, state))
 	return center
+
+
+func _empty_pool_ids(route: Array[Dictionary], state: RunState) -> Array[String]:
+	var ids: Array[String] = []
+	for node in route:
+		var node_id := str(node["id"])
+		var flag: Variant = state.node_flags.get(node_id, null)
+		if flag is Dictionary and bool(flag.get("empty_pool", false)):
+			ids.append(node_id)
+	return ids
 
 
 func _append_panel(parent: HBoxContainer, state: RunState, catalog: Dictionary, meta: RefCounted = null) -> VBoxContainer:
@@ -145,9 +179,26 @@ func _append_gu_row(panel: VBoxContainer, state: RunState, catalog: Dictionary, 
 	destroy.text = "销毁"
 	destroy.custom_minimum_size = Vector2(64, 30)
 	destroy.disabled = state.gu_instances.size() <= 1
-	destroy.tooltip_text = "销毁后不再占用养护，但该蛊的卡牌一并失去。"
-	destroy.pressed.connect(func(): action_submitted.emit({"type": "destroy_gu", "instance_id": str(instance.get("instance_id", ""))}))
+	destroy.tooltip_text = "封印销毁后不再占用养护，但该蛊的卡牌一并失去。"
+	var instance_id := str(instance.get("instance_id", ""))
+	destroy.pressed.connect(func(): _request_seal(instance_id))
 	row.add_child(destroy)
+
+
+func _request_seal(instance_id: String) -> void:
+	show_toast("蛊已封印")
+	action_submitted.emit({"type": "destroy_gu", "instance_id": instance_id})
+
+
+func show_toast(text: String) -> void:
+	if _toast == null:
+		return
+	_toast.text = text
+	_toast.modulate.a = 1.0
+	_toast.visible = true
+	var tween := create_tween()
+	tween.tween_property(_toast, "modulate:a", 0.0, TOAST_FADE_SECONDS)
+	tween.tween_callback(func(): _toast.visible = false)
 
 
 func _append_command_button(container: HBoxContainer, text: String, command: Dictionary) -> void:
@@ -160,4 +211,6 @@ func _append_command_button(container: HBoxContainer, text: String, command: Dic
 
 func _clear() -> void:
 	for child in get_children():
+		if child == _toast or child == _tooltip:
+			continue
 		child.queue_free()

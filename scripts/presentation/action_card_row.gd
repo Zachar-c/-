@@ -12,14 +12,18 @@ const SELF_SCRIPT := preload("res://scripts/presentation/action_card_row.gd")
 signal command_submitted(command: Dictionary)
 
 
-static func build(card: Dictionary, minimum_width: int = 360) -> ActionCardRow:
+static func build(card: Dictionary, minimum_width: int = 360, tooltip: GuTooltip = null) -> ActionCardRow:
 	var row := SELF_SCRIPT.new()
 	row.add_theme_constant_override("separation", 4)
 	var button := Button.new()
 	button.text = str(card.get("title", "行动"))
 	button.custom_minimum_size = Vector2(minimum_width, 46)
 	button.disabled = not bool(card.get("executable", false))
-	button.tooltip_text = _tooltip(card)
+	if tooltip != null:
+		button.mouse_entered.connect(func(): tooltip.show_for(_tooltip_data(card)))
+		button.mouse_exited.connect(func(): tooltip.hide_tooltip())
+	else:
+		button.tooltip_text = _tooltip(card)
 	button.pressed.connect(func():
 		button.disabled = true
 		row.command_submitted.emit({
@@ -102,3 +106,21 @@ static func _tooltip(card: Dictionary) -> String:
 		return _details(card)
 	var hints: Array = card.get("remedy_hints", [])
 	return "%s\n%s" % [str(card.get("block_reason", "条件不足。")), "\n".join(hints)]
+
+
+# Rule #3: shared GuTooltip payload. Explicit 寿元/元石 numbers come from
+# _cost_text (cost field); curse line only when the option triggers 反噬.
+static func _tooltip_data(card: Dictionary) -> Dictionary:
+	var curse := ""
+	for risk in card.get("known_risk", []):
+		if str(risk).contains("反噬"):
+			curse = "本选择将触发反噬结算，可能损伤气血与魂魄。"
+			break
+	return {
+		"title": str(card.get("title", "行动")),
+		"rarity": "",
+		"effect": _details(card),
+		"linkage": "",
+		"cost": _cost_text(card.get("cost", {})),
+		"curse": curse,
+	}
