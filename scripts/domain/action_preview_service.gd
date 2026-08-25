@@ -879,4 +879,3 @@ static func _assert_unique_ids(cards: Array[Dictionary]) -> void:
 		var id := str(card["id"])
 		assert(not seen.has(id), "Duplicate action card id: %s" % id)
 		seen[id] = true
-
