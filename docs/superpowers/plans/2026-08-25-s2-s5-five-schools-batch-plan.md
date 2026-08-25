@@ -2,9 +2,17 @@
 
 - 日期：2026-08-25
 - 分支/工作树：`task1-vendor-open-rpg` 就地执行（用户裁定不另开分支），仓库工作树 `.worktrees/task1-vendor-open-rpg`，基线 `bb0b46f`
-- 优先级顺序：**S5 → S3 → S2 → S4(领域侧) → 全局冒烟 (T5)**
+- 优先级顺序：**S5 → S3 → S2 → 全局冒烟 (T5)**（S4 领域侧已由用户 `1c9d3ec` 交付：三死线常驻预警+危险高亮+精准死因+结算归因面板，本批不再实施）
 - 执行方式：子代理逐任务（fresh implementer + task reviewer），控制器沿 `.superpowers/sdd/progress.md` 记账
 - 目标：五流派（血/气/力/魂/炼）内容与机制收口，冒烟矩阵全绿
+
+## 运行中更新（2026-08-25）
+
+- 用户并行交付 `1c9d3ec`（S4）：`run_snapshot_builder.gd`、`display_text.gd`、`data/names.json`、`ui/screens/battle_screen.guitkx`/`encounter_screen.guitkx`/`ending_screen.guitkx`、`ui/widgets/gu_death_line_warning.guitkx`、`smoke_render.gd`。**尚未推远端**（远端仍 `bb0b46f`）。
+- **T1 首轮实现者失败**：遗留 3 个测试文件的 S5 规格测试（RED，未提交），失败点=在内存 tuned 的 loot 表把 `gu_pool.weights` 设为 `{"common":1}` 后，部分种子仍卷出 rare 桶 → 续跑必须定位 `loot_resolver.gd` 真实的稀有度来源并正确强制 common-only；未产生任何数据/实现改动。RED 规格测试已提交 @ <以提交时为准>。
+- 保护文件增补 `scripts/domain/map_generator.gd`（用户并行改动，1c9d3ec 未含）。
+- 编辑器刷新产生的 `addons/**/*.import`、`assets/**/*.import` 为噪音，永不 stage。
+- **T1 两次实现者失败后拆解（2026-08-25）**：T1a 数据+校验（refine 系加入、soul `name_zh`→`name`、五系存在+display-name 校验）→ T1b 专属池表 `school_pools.json` + 池校验（4 条 hint）→ T1c loot 学院过滤。**loot 真因已定位**：`loot_resolver.gd` `_roll_gu` L94–99 纯种子选桶、无学院维度（非稀有度问题）；修复=按 `state.school` 专属池与桶取交集，无交集回退全桶（qi 用例）。
 
 ## 全局约束（每个任务都绑定）
 
@@ -13,7 +21,7 @@
    - `ui/widgets/gu_resource_chip.guitkx`
    - `ui/widgets/gu_top_bar.guitkx`
    - `scripts/domain/map_generator.gd`（2026-08-25 复核发现新增）
-   - 禁止 `git add -A` / `git add .` / `git commit -a` / `git checkout` / `git reset --hard` / `git clean`。只对**自己新增/修改的文件**显式 `git add <path>` 后提交。commit 后 `git status` 必须仍显示那 3 个 `ui/` 文件为未提交修改。
+   - 禁止 `git add -A` / `git add .` / `git commit -a` / `git checkout` / `git reset --hard` / `git clean`。只对**自己新增/修改的文件**显式 `git add <path>` 后提交。commit 后 `git status` 必须仍显示这些保护文件为未提交修改。
 2. **标识符 ASCII**：JSON 键、`id`、测试名、commit message 一律 ASCII；玩家可见中文仅放 UTF-8 文本表（`names.json`/`gu_names.json`）。
 3. **数据驱动**：蛊、节点、NPC、敌人、商店、配方、专属池一律 JSON 配置；数值/配置 JSON 是唯一真值来源，经 `content_catalog.gd` 类 Schema 校验拦截。
 4. **TDD**：先写可失败测试，再最小实现；测试可纯 GDScript 领域逻辑，UI 不直接改状态。
