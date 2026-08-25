@@ -162,9 +162,14 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 	for x in codex:
 		unlocks.append("图鉴：%s" % str(x))
 	var cult: Dictionary = state.cultivator if state != null else {}
+	var death_cause_id := ""
+	if otype == "death":
+		death_cause_id = _death_cause_from_state(state)
 	return {
 		"title": DisplayText.outcome(otype),
 		"ending_type": etype,
+		"death_cause_id": death_cause_id,
+		"death_cause": DisplayText.death_cause(death_cause_id),
 		"key_decisions": decisions,
 		"gains_losses": gains,
 		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
@@ -279,11 +284,69 @@ static func _death_lines(state) -> Dictionary:
 	for cid in statuses:
 		var e = statuses[cid]
 		backlash += int(e.get("layers", 0)) if e is Dictionary else int(e)
+	var backlash_max := 3
+	# 进度语义：value=朝死亡推进量（寿元/魂魄用「已消耗」，反噬用「层数」）；
+	# threshold=危险临界，value>=threshold 即预警。寿元/魂魄剩余越低越危险。
+	var life_floor := 5
+	var soul_floor := 2
+	var life_consumed := maxi(0, life_max - life)
+	var soul_consumed := maxi(0, soul_max - soul)
+	var life_danger := life <= life_floor
+	var soul_danger := soul <= soul_floor
+	var backlash_danger := backlash >= backlash_max
 	return {
-		"shouyuan": {"value": life, "threshold": life_max},
-		"hunpo": {"value": soul, "threshold": soul_max},
-		"backlash": {"value": backlash, "threshold": 3},
+		"shouyuan": {
+			"id": "shouyuan",
+			"name": DisplayText.death_line("shouyuan"),
+			"value": life_consumed,
+			"threshold": life_max - life_floor,
+			"remaining": life,
+			"max": life_max,
+			"danger": life_danger,
+			"cause_id": "death_cause_lifespan",
+			"detail": DisplayText.death_line_detail("shouyuan"),
+		},
+		"hunpo": {
+			"id": "hunpo",
+			"name": DisplayText.death_line("hunpo"),
+			"value": soul_consumed,
+			"threshold": soul_max - soul_floor,
+			"remaining": soul,
+			"max": soul_max,
+			"danger": soul_danger,
+			"cause_id": "death_cause_soul",
+			"detail": DisplayText.death_line_detail("hunpo"),
+		},
+		"backlash": {
+			"id": "backlash",
+			"name": DisplayText.death_line("backlash"),
+			"value": backlash,
+			"threshold": backlash_max,
+			"remaining": backlash,
+			"max": backlash_max,
+			"danger": backlash_danger,
+			"cause_id": "death_cause_backlash",
+			"detail": DisplayText.death_line_detail("backlash"),
+		},
 	}
+
+
+static func _death_cause_from_state(state) -> String:
+	var cult: Dictionary = state.cultivator if state != null else {}
+	var life := int(cult.get("lifespan", 0))
+	var soul := int(cult.get("soul", 0))
+	var backlash := 0
+	var statuses: Dictionary = cult.get("statuses", {})
+	for cid in statuses:
+		var e = statuses[cid]
+		backlash += int(e.get("layers", 0)) if e is Dictionary else int(e)
+	if life <= 0:
+		return "death_cause_lifespan"
+	if soul <= 0:
+		return "death_cause_soul"
+	if backlash >= 3:
+		return "death_cause_backlash"
+	return "death_cause_battle"
 
 
 static func _node_label(n: Dictionary) -> String:

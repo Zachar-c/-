@@ -6,6 +6,7 @@ import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuDeathLineWarning } from "~/ui/widgets/gu_death_line_warning"
 
 # EncounterView —— 遭遇屏（修复「没按钮 / 危险选项无二次确认」）
 # 契约：props.state 只读快照（含 node/actions/intel/resources/contracts/anomalies/death_lines）
@@ -94,6 +95,7 @@ export EncounterScreen() -> RuitkVNode {
   return (
     <VBoxContainer style={ {"separation": 12} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <GuDeathLineWarning death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
 
       <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
         <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />

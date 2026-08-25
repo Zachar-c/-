@@ -201,5 +201,21 @@
     "Caravan relationship": "商队关系",
     "Key turning point": "关键转折",
     "Outcome": "最终结局"
+  },
+  "death_lines": {
+    "shouyuan": "寿元",
+    "hunpo": "魂魄",
+    "backlash": "反噬"
+  },
+  "death_line_details": {
+    "shouyuan": "寿元耗尽即死；剩余越接近 0 越危险。任何消耗寿元的交易或代价执行前都会预检提示。",
+    "hunpo": "魂魄耗尽即死；剩余越接近 0 越危险。超额催动蛊虫会触发反噬并扣减魂魄。",
+    "backlash": "反噬层数达上限即死；越接近上限越危险。盲盒炸炉、精英代价、事件抉择都可能累积反噬。"
+  },
+  "death_causes": {
+    "death_cause_lifespan": "寿元枯竭而亡——本局所余寿元已归零。",
+    "death_cause_soul": "魂魄耗尽而亡——心神透支过度，魂飞魄散。",
+    "death_cause_backlash": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
+    "death_cause_battle": "战局失利而亡——气血先一步断绝于敌手之下。"
   }
 }

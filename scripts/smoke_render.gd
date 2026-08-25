@@ -119,7 +119,11 @@ func _initialize() -> void:
 	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
 	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
 	_assert_widget("GuDeathLineWarning", "res://ui/widgets/gu_death_line_warning.gd",
-		{"lines": [{"name": "寿元", "value": 55, "threshold": 60}, {"name": "魂魄", "value": 4, "threshold": 4}], "on_view": Callable(self, "_noop")})
+		{"death_lines": {
+			"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "detail": "寿元将尽", "cause_id": "death_cause_lifespan"},
+			"hunpo": {"name": "魂魄", "remaining": 1, "max": 10, "danger": true, "detail": "魂魄将尽", "cause_id": "death_cause_soul"},
+			"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "detail": "反噬临界", "cause_id": "death_cause_backlash"}
+		}, "on_view": Callable(self, "_noop")})
 	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
 		{
 			"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
@@ -288,6 +292,7 @@ func _initialize() -> void:
 	var ending_death := {
 		"title": "命丧密林",
 		"ending_type": "death",
+		"death_cause": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
 		"key_decisions": ["孤身追猎未探虚实"],
 		"gains_losses": "反噬爆发，真元枯竭而亡",
 		"resource_balance": {"yuanstone": 0, "shouyuan": 0},

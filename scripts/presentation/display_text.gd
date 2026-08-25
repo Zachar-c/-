@@ -311,6 +311,18 @@ static func battle_result(id: String) -> String:
 	return _lookup("battle_results", id, BATTLE_RESULTS.get(id, "交锋结果未明。"))
 
 
+static func death_line(id: String) -> String:
+	return _lookup("death_lines", id, id)
+
+
+static func death_line_detail(id: String) -> String:
+	return _lookup("death_line_details", id, "")
+
+
+static func death_cause(id: String) -> String:
+	return _lookup("death_causes", id, "死因未明")
+
+
 static func result(payload: Dictionary) -> String:
 	if not bool(payload.get("ok", true)):
 		return "行动未能完成。"

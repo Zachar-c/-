@@ -6,6 +6,7 @@ import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuDeathLineWarning } from "~/ui/widgets/gu_death_line_warning"
 
 # BattleScreen —— 战斗屏（纯表现层，只读 state，仅经 commands 触发）
 # 契约：props.state 只读快照（enemies / player / hand / can_ultimate / resources / contracts / anomalies / death_lines）
@@ -22,9 +23,12 @@ export BattleScreen() -> RuitkVNode {
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
 
-  var fire = func(key: String):
+  var fire = func(key: String, arg = null):
     if commands.has(key):
-      commands[key].call()
+      if arg != null:
+        commands[key].call(arg)
+      else:
+        commands[key].call()
 
   # ---- 敌人区 ----
   var enemies = state.get("enemies", [])
@@ -123,6 +127,7 @@ export BattleScreen() -> RuitkVNode {
   return (
     <VBoxContainer style={ {"separation": 12} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <GuDeathLineWarning death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
 
       <GuPanel title="敌方">
         <HBoxContainer style={ {"separation": 16} }>

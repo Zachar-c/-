@@ -72,6 +72,14 @@ export EndingScreen() -> RuitkVNode {
         <Label text={ type_label } style={ {"font_color": badge_color, "font_size": 16} } />
       </GuPanel>
 
+      @if (ending_type == "death") {
+        return (
+          <GuPanel title="精准死因">
+            <Label text={ str(state.get("death_cause", "")) } style={ {"font_color": GuStyle.DANGER, "font_size": 16} } />
+          </GuPanel>
+        )
+      }
+
       <GuPanel title="二 · 重大决策">
         @for (r in decision_rows) {
           return r
