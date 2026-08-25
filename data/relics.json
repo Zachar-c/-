@@ -1,6 +1,7 @@
 [
   {
     "id": "jade_cicada_shell",
+    "grade": "meta_rule",
     "hooks": [
       {
         "trigger": "on_battle_start",

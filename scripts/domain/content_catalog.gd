@@ -4,6 +4,7 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
+const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
@@ -128,6 +129,9 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("relic %s missing rarity" % relic["id"])
 		elif not RARITY_IDS.has(str(relic["rarity"])):
 			errors.append("relic %s invalid rarity %s" % [relic["id"], relic["rarity"]])
+		var grade := str(relic.get("grade", ""))
+		if not grade.is_empty() and not RELIC_GRADES.has(grade):
+			errors.append("relic %s has unknown grade %s" % [relic["id"], grade])
 		for hook in relic.get("hooks", []):
 			var trigger := str(hook.get("trigger", ""))
 			if not RelicHookResolverScript.TRIGGERS.has(trigger):
@@ -171,6 +175,9 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	var raw_capacity: Variant = catalog.get("deck", {}).get("capacity", -1)
 	if not _is_integral(raw_capacity) or int(raw_capacity) < 1:
 		errors.append("deck capacity must be a positive integer")
+	var raw_imprint_capacity: Variant = catalog.get("deck", {}).get("imprint_capacity", -1)
+	if not _is_integral(raw_imprint_capacity) or int(raw_imprint_capacity) < 1:
+		errors.append("deck imprint_capacity must be a positive integer")
 	var milestones: Dictionary = catalog.get("pacing", {}).get("lifespan_milestones", {})
 	for milestone_id in milestones:
 		var milestone_value: Variant = milestones[milestone_id]

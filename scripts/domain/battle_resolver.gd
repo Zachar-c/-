@@ -102,6 +102,14 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	}
 	var battle_start := RelicHookResolverScript.apply_battle_start(battle, state, catalog)
 	battle = battle_start["battle"]
+	# R4.x on_backlash_gained: the moment curse layers become known to this
+	# battle (the projection above) fires the hook once per layer; conversion
+	# queues bonus cards for the next refill draw.
+	var known_curse_layers := 0
+	for status_value in state.cultivator.get("statuses", {}).values():
+		known_curse_layers += maxi(0, int(status_value.get("layers", 0)))
+	var backlash_start := RelicHookResolverScript.apply_backlash_gained(battle, state, catalog, known_curse_layers)
+	battle = backlash_start["battle"]
 	# Initial draw may be enlarged by on_draw_card hooks; the extra cards are
 	# drawn with the same seeded pile so the deck order stays deterministic.
 	_draw_from_hooks(battle, state, catalog)
@@ -138,7 +146,7 @@ static func apply_action_card(battle: Dictionary, state: RunState, command: Dict
 	if action_id == "battle.end_turn":
 		return _end_turn(next, state, catalog)
 	if action_id == "battle.retreat":
-		return _retreat(next, state)
+		return _retreat(next, state, catalog)
 	if action_id == "battle.basic.punch":
 		return _basic_attack(next, state, catalog)
 	if action_id == "battle.basic.dodge":
@@ -185,7 +193,11 @@ static func _resolve_card_instance(battle: Dictionary, state: RunState, card: Di
 		))
 		feeds.append(str(backlash["feed"]))
 	if not next_state.is_terminal() and _depleted(next_state):
-		next_state = next_state.finalize_death()
+		var depleted_end := RelicHookResolverScript.apply_battle_end(next_battle, next_state, catalog)
+		next_battle = depleted_end["battle"]
+		next_state = depleted_end["state"].finalize_death()
+		var depleted_feeds: Array[String] = depleted_end["feeds"]
+		feeds.append_array(depleted_feeds)
 	resolved["battle"] = next_battle
 	resolved["state"] = next_state
 	resolved["feeds"] = feeds
@@ -219,7 +231,7 @@ static func take_turn(
 		"basic_attack": return _basic_attack(next, state, catalog)
 		"basic_dodge": return _basic_dodge(next, state)
 		"end_turn": return _end_turn(next, state, catalog)
-		"retreat": return _retreat(next, state)
+		"retreat": return _retreat(next, state, catalog)
 		_: return _result(next, state, false, "ongoing", ["unsupported_battle_action"])
 
 
@@ -470,7 +482,7 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	next_battle["flags"].erase("guarded")
 	next_battle["flags"].erase("targeting_obscured")
 	if bool(enemy["death"]):
-		return _result(next_battle, next_state.finalize_death(), true, "death", ["player_dead"])
+		return _death_over(next_battle, next_state, catalog, ["player_dead"])
 	_expire_effects(next_battle, "end_turn")
 	if not next_battle.get("pending_kill_move_state", {}).is_empty():
 		next_battle["pending_kill_move_state"] = {}
@@ -480,7 +492,7 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 		feeds.append(pollution_feed)
 	next_state = _settle_curse_damage(next_battle, next_state)
 	if _depleted(next_state):
-		return _result(next_battle, next_state.finalize_death(), true, "death", ["player_dead"])
+		return _death_over(next_battle, next_state, catalog, ["player_dead"])
 	_refill_hand_after_turn(next_battle, next_state, catalog)
 	return _result(next_battle, next_state, false, "ongoing", feeds)
 
@@ -525,7 +537,7 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var enemy := _apply_enemy_intents(battle, state, catalog)
 	if bool(enemy["death"]):
-		return _result(enemy["battle"], enemy["state"].finalize_death(), true, "death", ["player_dead"])
+		return _death_over(enemy["battle"], enemy["state"], catalog, ["player_dead"])
 	return _result(enemy["battle"], enemy["state"], false, "ongoing", ["enemy_first_move"])
 
 
@@ -565,9 +577,25 @@ static func _refill_hand_after_turn(battle: Dictionary, state: RunState, catalog
 			draw_pile = _shuffled_cards(discard, _battle_rng_seed(state, int(battle.get("turn", 0)) + int(battle.get("hand_version", 0))))
 			discard.clear()
 		_draw_into_hand(draw_pile, hand, 1)
+	# R4.x convert_backlash_to_draw consumption: queued bonus cards are drawn
+	# exactly once at the next refill; leftovers vanish if both piles run dry.
+	var queued_extra := int(battle.get("pending_extra_draws", 0))
+	battle["pending_extra_draws"] = 0
+	var drawn_extra := 0
+	while drawn_extra < queued_extra:
+		if draw_pile.is_empty():
+			if discard.is_empty():
+				break
+			draw_pile = _shuffled_cards(discard, _battle_rng_seed(state, int(battle.get("turn", 0)) + int(battle.get("hand_version", 0)) + drawn_extra))
+			discard.clear()
+		hand.append(draw_pile.pop_back())
+		drawn_extra += 1
 	battle["draw_pile"] = draw_pile
 	battle["discard_pile"] = discard
 	battle["hand"] = hand
+	if drawn_extra > 0:
+		battle["log"].append({"id": "relic_backlash_draw", "extra": drawn_extra})
+		battle["hand_version"] = int(battle.get("hand_version", 0)) + 1
 	if had_cards or not hand.is_empty():
 		battle["hand_version"] = int(battle.get("hand_version", 0)) + 1
 	_draw_from_hooks(battle, state, catalog)
@@ -693,7 +721,7 @@ static func _cultivator_after_backlash(state: RunState, _health_damage: int, sou
 	var cultivator: Dictionary = state.cultivator.duplicate(true)
 	cultivator["soul"] = maxi(0, int(cultivator.get("soul", 0)) - soul_damage)
 	return cultivator
-static func _retreat(battle: Dictionary, state: RunState) -> Dictionary:
+static func _retreat(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	if not _can_retreat(battle):
 		return _result(battle, state, false, "ongoing", ["retreat_blocked"])
 	var cost := 0 if battle["flags"].has("retreat_preserved") else 2
@@ -701,7 +729,7 @@ static func _retreat(battle: Dictionary, state: RunState) -> Dictionary:
 		return _result(battle, state, false, "ongoing", ["insufficient_stone"])
 	var next_state := state.append_event(_event(state, "battle_retreat", {"stone": state.stone}, {"stone": state.stone - cost}, "battle_retreat_stone_cost", []))
 	battle["log"].append({"id": "retreated"})
-	return _result(battle, next_state, true, "retreated", ["retreat_success"])
+	return _battle_over(battle, next_state, catalog, true, "retreated", ["retreat_success"])
 
 
 static func _enemy_definition(enemy_id: String, catalog: Dictionary) -> Dictionary:
@@ -770,11 +798,31 @@ static func _victory_with_loot(battle: Dictionary, state: RunState, catalog: Dic
 	var settled := LootResolverScript.settle_victory(battle, state, catalog)
 	var with_loot := battle.duplicate(true)
 	with_loot["loot"] = settled["loot"]
-	return _result(with_loot, settled["state"], true, "victory", feeds)
+	return _battle_over(with_loot, settled["state"], catalog, true, "victory", feeds)
 
 
 static func _event(state: RunState, action: String, before: Dictionary, after: Dictionary, reason: String, targets: Array) -> Dictionary:
 	return {"stage": state.stage, "time": state.event_log.size(), "node_id": state.current_node_id, "action": action, "before": before, "after": after, "reason": reason, "source": "battle_resolver", "targets": targets}
+
+
+# R4.x single battle-finalization funnel: victory, retreat and death paths all
+# pass through here exactly once so on_battle_end relic hooks fire once per
+# finished battle regardless of how it ended.
+static func _battle_over(battle: Dictionary, state: RunState, catalog: Dictionary, finished: bool, result_kind: String, feeds: Array[String]) -> Dictionary:
+	var end_hook := RelicHookResolverScript.apply_battle_end(battle, state, catalog)
+	var hook_feeds: Array[String] = end_hook["feeds"]
+	feeds.append_array(hook_feeds)
+	return _result(end_hook["battle"], end_hook["state"], finished, result_kind, feeds)
+
+
+# Death variant: hooks MUST evaluate on the pre-finalization state because
+# finalize_death() clears run collections (including relic_ids); the stone
+# grant event lands while the run is alive, then run_ended closes it out.
+static func _death_over(battle: Dictionary, state: RunState, catalog: Dictionary, feeds: Array[String]) -> Dictionary:
+	var end_hook := RelicHookResolverScript.apply_battle_end(battle, state, catalog)
+	var hook_feeds: Array[String] = end_hook["feeds"]
+	feeds.append_array(hook_feeds)
+	return _result(end_hook["battle"], end_hook["state"].finalize_death(), true, "death", feeds)
 
 
 static func _result(battle: Dictionary, state: RunState, finished: bool, result: String, feeds: Array[String]) -> Dictionary:

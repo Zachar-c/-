@@ -11,6 +11,9 @@ const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 
 const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
 
+# R4.8: meta-rule grade imprints are rule changers; a run may hold at most two.
+const META_RULE_CAP := 2
+
 
 const BODY_IMPRINTS := {
 	"iron_bone": {
@@ -792,22 +795,41 @@ static func _without_gu(owned: Array[String], removed: Array) -> Array[String]:
 
 static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var relic_id := str(command.get("relic_id", ""))
-	if not catalog.get("relic_by_id", {}).has(relic_id):
+	var relic: Dictionary = catalog.get("relic_by_id", {}).get(relic_id, {})
+	if relic.is_empty():
 		return _rejected(state, "unknown_relic")
 	if state.relic_ids.has(relic_id):
 		return _rejected(state, "relic_already_owned")
+	# R4.9 imprint slots: the hard cap forces build trade-offs; rejection is a
+	# pure no-op so callers can offer swaps without losing state.
+	if state.relic_ids.size() >= DeckCapacityScript.imprint_capacity(catalog):
+		return _rejected(state, "imprint_capacity_exceeded")
+	# Order locked by brief: capacity rejection wins before the meta cap.
+	var meta_grade := str(relic.get("grade", "")) == "meta_rule"
+	if meta_grade and state.meta_rules.size() >= META_RULE_CAP:
+		return _rejected(state, "meta_rule_cap_reached")
 	var relics := state.relic_ids.duplicate()
 	relics.append(relic_id)
+	var before := {"relic_ids": state.relic_ids}
+	var after := {"relic_ids": relics}
+	if meta_grade:
+		var meta_rules := state.meta_rules.duplicate(true)
+		meta_rules[relic_id] = true
+		before["meta_rules"] = state.meta_rules
+		after["meta_rules"] = meta_rules
 	var next := state.append_event(_event(
 		state,
 		"gain_relic",
-		{"relic_ids": state.relic_ids},
-		{"relic_ids": relics},
+		before,
+		after,
 		"relic_gained",
 		state.current_node_id,
 		[relic_id]
 	))
-	return _accepted(next)
+	var result := _accepted(next)
+	if meta_grade:
+		result["result"]["feeds"] = ["meta_rule_recorded"]
+	return result
 
 
 static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:

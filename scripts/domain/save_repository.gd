@@ -97,6 +97,7 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 	var meta = load("res://scripts/domain/meta_progress.gd").new()
 	meta.gu_codex_ids = _string_array(meta_data.get("gu_codex_ids", []))
 	meta.recipe_codex_ids = _string_array(meta_data.get("recipe_codex_ids", []))
+	meta.relic_codex_ids = _string_array(meta_data.get("relic_codex_ids", []))
 	meta.inheritance_codex_ids = _string_array(meta_data.get("inheritance_codex_ids", []))
 	meta.unlocked_content_ids = _string_array(meta_data.get("unlocked_content_ids", []))
 	meta.unlocked_random_outcomes = meta_data.get("unlocked_random_outcomes", {}).duplicate(true)
@@ -194,6 +195,7 @@ static func _state_from_save_data(data: Dictionary) -> Variant:
 	state.gu_card_overrides = data.get("gu_card_overrides", {}).duplicate(true)
 	state.materials = data.get("materials", {"feed_points": 0}).duplicate(true)
 	state.relic_ids = _string_array(data.get("relic_ids", []))
+	state.meta_rules = data.get("meta_rules", {}).duplicate(true)
 	state.terminal_state = str(data.get("terminal_state", "active"))
 	if not _has_valid_event_log(state):
 		return null
