@@ -207,4 +207,30 @@ func _initialize() -> void:
 		quit(1)
 	print("OK EncounterScreenEmpty buttons=%d" % ece)
 
+	# 7) 地图屏断言（网状收敛地图，按层分组；至少 1 个节点按钮）
+	# 命名 MapScreen 以避开旧 scripts/presentation/map_view.gd 的全局类 MapView（被单测引用）。
+	var map_cmds := {
+		"travel": Callable(self, "_noop"),
+		"view_node": Callable(self, "_noop"),
+	}
+	var map_state := {
+		"nodes": [
+			{"id": "n1", "type": "start", "label": "起始", "layer": 0},
+			{"id": "n2", "type": "combat", "label": "战", "layer": 1},
+			{"id": "n3", "type": "event", "label": "事件", "layer": 1},
+			{"id": "n4", "type": "boss", "label": "突破", "layer": 3},
+		],
+		"current_node_id": "n1",
+		"reachable_ids": ["n2", "n3"],
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+	}
+	var mc := _mount("res://ui/screens/map_screen.gd", "render", {"state": map_state, "commands": map_cmds})
+	if mc < 1:
+		push_error("地图按钮数 %d < 1" % mc)
+		quit(1)
+	print("OK MapScreen buttons=%d" % mc)
+
 	quit()
