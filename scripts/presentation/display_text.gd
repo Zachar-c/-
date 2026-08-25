@@ -2,6 +2,12 @@ class_name DisplayText
 extends RefCounted
 
 
+# Task 5 removal wording (R4.3): deleting a card from the satchel must never be
+# confused with pool exclusion, which is a future feature and not implemented.
+const REMOVAL_LABEL := "移除（从蛊囊删除这只）"
+const POOL_EXCLUSION_LABEL := "池排除（本局不再刷出，尚未实装）"
+
+
 const NODES := {
 	"neutral_wanderer": "中立散修",
 	"ridge_caravan": "山脊商队",

@@ -537,7 +537,8 @@
     ],
     "school": "blood",
     "role": "attack",
-    "rarity": "epic"
+    "rarity": "epic",
+    "can_direct_drop": false
   },
   {
     "id": "force_gu",

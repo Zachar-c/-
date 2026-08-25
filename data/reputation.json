@@ -13,6 +13,8 @@
     "flip_hostile_chance_pct": 20,
     "extreme_stance_pct_per_point": 5,
     "revisit_price_pct_per_visit": 25,
-    "revisit_price_cap_pct": 100
+    "revisit_price_cap_pct": 100,
+    "service_use_price_pct_per_use": 25,
+    "service_use_price_cap_pct": 100
   }
 }

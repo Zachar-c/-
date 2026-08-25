@@ -14,6 +14,15 @@ const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
 # R4.8: meta-rule grade imprints are rule changers; a run may hold at most two.
 const META_RULE_CAP := 2
 
+# Task 5 removal services (R6.8): base stone prices before uplift.
+const REMOVE_CARD_BASE_COST := 120
+const REMOVE_IMPRINT_BASE_COST := 150
+# Forced drop of a can_direct_drop=false gu attaches this configured curse.
+const FORCED_DROP_CURSE_ID := "gu_erosion"
+# Per-run usage counters live in node_flags as string values ("1", "2", ...).
+const SERVICE_USE_FLAG_PREFIX := "svc_used_"
+const REST_REMOVAL_MODES := ["remove_card", "remove_imprint", "remove_curse"]
+
 
 const BODY_IMPRINTS := {
 	"iron_bone": {
@@ -72,7 +81,11 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 		"copy_card":
 			return _copy_card(state, command)
 		"destroy_gu":
-			return _destroy_gu(state, command)
+			return _destroy_gu(state, command, catalog)
+		"remove_card":
+			return _remove_card_command(state, command, catalog)
+		"remove_imprint":
+			return _remove_imprint_command(state, command, catalog)
 		"spend_lifespan":
 			return _spend_lifespan(state, command)
 		"accept_debt":
@@ -110,7 +123,7 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 		"record_boss_defeated":
 			return _record_boss_defeated(state, catalog)
 		"rest":
-			return _rest(state, catalog)
+			return _rest(state, command, catalog)
 		"gain_force_power":
 			return _gain_force_power(state, command, catalog)
 		"accept_event":
@@ -613,29 +626,163 @@ static func _copy_card(state: RunState, command: Dictionary) -> Dictionary:
 	return _accepted(next)
 
 
-static func _destroy_gu(state: RunState, command: Dictionary) -> Dictionary:
+static func _destroy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var instance_id := str(command.get("instance_id", ""))
 	var existing: Dictionary = state.gu_instances.get(instance_id, {})
 	if existing.is_empty() or str(existing.get("state", "")) == "dead":
 		return _rejected(state, "gu_instance_unavailable")
+	var blocked := _cursed_drop_block(state, catalog, str(existing.get("definition_id", "")))
+	if not blocked.is_empty():
+		return blocked
+	var payload := _destroyed_gu_payload(state, instance_id)
+	var next := state.append_event(_event(
+		state,
+		"destroy_gu",
+		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"gu_instances": payload["instances"], "cave_aperture": payload["aperture"]},
+		"gu_destroyed",
+		state.current_node_id,
+		[instance_id]
+	))
+	next.sync_legacy_gu_projections()
+	return _accepted(next)
+
+
+# Section 16.15: a can_direct_drop=false gu refuses every direct destroy path.
+# The refusal still appends a backlash consequence (one gu_erosion layer) so it
+# is never silent; the returned rejection carries the curse-gained state.
+static func _cursed_drop_block(state: RunState, catalog: Dictionary, definition_id: String) -> Dictionary:
+	var definition: Dictionary = catalog.get("gu_by_id", {}).get(definition_id, {})
+	if bool(definition.get("can_direct_drop", true)):
+		return {}
+	return _rejected(
+		CurseRegistryScript.gain_curse(state, FORCED_DROP_CURSE_ID, "forced_drop"),
+		"cursed_gu_not_directly_droppable"
+	)
+
+
+static func _destroyed_gu_payload(state: RunState, instance_id: String) -> Dictionary:
 	var instances := state.gu_instances.duplicate(true)
-	var destroyed := existing.duplicate(true)
+	var destroyed: Dictionary = instances.get(instance_id, {}).duplicate(true)
 	destroyed["state"] = "dead"
 	instances[instance_id] = destroyed
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
 	stored.erase(instance_id)
 	aperture["stored_gu_instance_ids"] = stored
+	return {"instances": instances, "aperture": aperture}
+
+
+# Task 5 black-market removal services share one accounting family: per-run
+# usage counters in node_flags, escalating price per prior use of the SAME
+# service, hard per-run limits. Rest-node removal bypasses both (R8.1).
+static func service_use_count(state: RunState, service_id: String) -> int:
+	return int(str(state.node_flags.get(SERVICE_USE_FLAG_PREFIX + service_id, "0")))
+
+
+static func service_limit(catalog: Dictionary, service_id: String) -> int:
+	# Shipped data validates the limits exist; the default only keeps tuned
+	# in-memory catalogs built by tests playable.
+	var limits: Dictionary = catalog.get("deck", {}).get("service_limits", {})
+	return int(limits.get(service_id, 2))
+
+
+static func service_price_for(catalog: Dictionary, state: RunState, service_id: String, base: int) -> int:
+	var price := price_for(catalog, state, base)
+	var uses := service_use_count(state, service_id)
+	if uses <= 0:
+		return price
+	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+	var per := int(effects.get("service_use_price_pct_per_use", 25))
+	var cap := int(effects.get("service_use_price_cap_pct", 100))
+	var lift := mini(cap, uses * per)
+	return maxi(0, ceili(float(price) * (1.0 + float(lift) / 100.0)))
+
+
+static func _bump_service_flag(flags: Dictionary, service_id: String) -> void:
+	var key := SERVICE_USE_FLAG_PREFIX + service_id
+	flags[key] = str(int(str(flags.get(key, "0"))) + 1)
+
+
+static func _remove_card_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var instance_id := str(command.get("instance_id", ""))
+	var existing: Dictionary = state.gu_instances.get(instance_id, {})
+	if existing.is_empty() or str(existing.get("state", "")) == "dead":
+		return _rejected(state, "gu_instance_unavailable")
+	var blocked := _cursed_drop_block(state, catalog, str(existing.get("definition_id", "")))
+	if not blocked.is_empty():
+		return blocked
+	if service_use_count(state, "remove_card") >= service_limit(catalog, "remove_card"):
+		return _rejected(state, "service_limit_exceeded")
+	var cost := service_price_for(catalog, state, "remove_card", REMOVE_CARD_BASE_COST)
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var flags := state.node_flags.duplicate(true)
+	_bump_service_flag(flags, "remove_card")
+	var payload := _destroyed_gu_payload(state, instance_id)
 	var next := state.append_event(_event(
 		state,
-		"destroy_gu",
-		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
-		{"gu_instances": instances, "cave_aperture": aperture},
-		"gu_destroyed",
+		"svc_remove_card",
+		{
+			"stone": state.stone,
+			"gu_instances": state.gu_instances,
+			"cave_aperture": state.cave_aperture,
+			"node_flags": state.node_flags,
+		},
+		{
+			"stone": state.stone - cost,
+			"gu_instances": payload["instances"],
+			"cave_aperture": payload["aperture"],
+			"node_flags": flags,
+		},
+		"gu_removed_by_service",
 		state.current_node_id,
 		[instance_id]
 	))
 	next.sync_legacy_gu_projections()
+	return _accepted(next)
+
+
+# R4.8 contracts-tier meta rules are rule changers, not droppable items, so
+# they can never be removed through this service.
+static func _remove_imprint_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var relic_id := str(command.get("relic_id", ""))
+	if not catalog.get("relic_by_id", {}).has(relic_id):
+		return _rejected(state, "unknown_relic")
+	if not state.relic_ids.has(relic_id):
+		return _rejected(state, "relic_not_owned")
+	if str(catalog["relic_by_id"][relic_id].get("grade", "")) == "meta_rule":
+		return _rejected(state, "meta_rule_not_removable")
+	if service_use_count(state, "remove_imprint") >= service_limit(catalog, "remove_imprint"):
+		return _rejected(state, "service_limit_exceeded")
+	var cost := service_price_for(catalog, state, "remove_imprint", REMOVE_IMPRINT_BASE_COST)
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var flags := state.node_flags.duplicate(true)
+	_bump_service_flag(flags, "remove_imprint")
+	var relics := state.relic_ids.duplicate()
+	relics.erase(relic_id)
+	var meta_rules := state.meta_rules.duplicate(true)
+	meta_rules.erase(relic_id)
+	var next := state.append_event(_event(
+		state,
+		"svc_remove_imprint",
+		{
+			"stone": state.stone,
+			"relic_ids": state.relic_ids,
+			"meta_rules": state.meta_rules,
+			"node_flags": state.node_flags,
+		},
+		{
+			"stone": state.stone - cost,
+			"relic_ids": relics,
+			"meta_rules": meta_rules,
+			"node_flags": flags,
+		},
+		"imprint_removed_by_service",
+		state.current_node_id,
+		[relic_id]
+	))
 	return _accepted(next)
 
 
@@ -1097,23 +1244,28 @@ static func _gain_curse_command(state: RunState, command: Dictionary, catalog: D
 	return _accepted(CurseRegistryScript.gain_curse(state, curse_id, source))
 
 
-# R9.3: the only removal channel is this explicit paid service. Pricing uses
-# the shared M5 uplift so notoriety and revisit pressure apply as elsewhere.
+# R9.3: the black-market paid service. Pricing uses the shared M5 uplift plus
+# the Task 5 per-service use escalation, and consumes the same limit pool as
+# remove_card/remove_imprint so all three services share one accounting family.
 static func _remove_curse_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var curse_id := str(command.get("curse_id", ""))
 	if not catalog.get("curse_by_id", {}).has(curse_id):
 		return _rejected(state, "unknown_curse")
 	if CurseRegistryScript.layers_of(state, curse_id) <= 0:
 		return _rejected(state, "curse_not_present")
+	if service_use_count(state, "remove_curse") >= service_limit(catalog, "remove_curse"):
+		return _rejected(state, "service_limit_exceeded")
 	var base := int(catalog["curse_by_id"][curse_id].get("removal_base_cost", 1))
-	var cost := price_for(catalog, state, base)
+	var cost := service_price_for(catalog, state, "remove_curse", base)
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
+	var flags := state.node_flags.duplicate(true)
+	_bump_service_flag(flags, "remove_curse")
 	var paid := state.append_event(_event(
 		state,
-		"remove_curse",
-		{"stone": state.stone},
-		{"stone": state.stone - cost},
+		"svc_remove_curse",
+		{"stone": state.stone, "node_flags": state.node_flags},
+		{"stone": state.stone - cost, "node_flags": flags},
 		"curse_removal_paid",
 		state.current_node_id,
 		[curse_id]
@@ -1500,9 +1652,16 @@ static func _gain_force_power(state: RunState, command: Dictionary, catalog: Dic
 	return _accepted(next)
 
 
-static func _rest(state: RunState, catalog: Dictionary) -> Dictionary:
+static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	if state.current_node_id != "rest_hollow":
 		return _rejected(state, "not_rest_node")
+	var mode := str(command.get("mode", "heal"))
+	if mode == "heal":
+		return _rest_heal(state)
+	return _rest_removal(state, command, catalog, mode)
+
+
+static func _rest_heal(state: RunState) -> Dictionary:
 	if str(state.node_flags.get("rest_hollow", "")) == "used":
 		return _rejected(state, "rest_already_used")
 	var flags := state.node_flags.duplicate(true)
@@ -1520,6 +1679,97 @@ static func _rest(state: RunState, catalog: Dictionary) -> Dictionary:
 		[]
 	))
 	return _accepted(next)
+
+
+# R8.1 rest removal is free but consumes the visit (opportunity cost instead
+# of money). It never touches the black-market service counters and allows a
+# single removal mode per node.
+static func _rest_removal(state: RunState, command: Dictionary, catalog: Dictionary, mode: String) -> Dictionary:
+	if not REST_REMOVAL_MODES.has(mode):
+		return _rejected(state, "unsupported_rest_mode")
+	if str(state.node_flags.get("rest_mode_used", "")) == "true":
+		return _rejected(state, "rest_mode_already_used")
+	if str(state.node_flags.get("rest_hollow", "")) == "used":
+		return _rejected(state, "rest_already_used")
+	var consumed := _consume_rest_visit(state)
+	match mode:
+		"remove_card":
+			return _rest_remove_card(state, command, catalog, consumed)
+		"remove_imprint":
+			return _rest_remove_imprint(state, command, catalog, consumed)
+		"remove_curse":
+			return _rest_remove_curse(state, command, catalog, consumed)
+	return _rejected(state, "unsupported_rest_mode")
+
+
+static func _consume_rest_visit(state: RunState) -> RunState:
+	var flags := state.node_flags.duplicate(true)
+	flags["rest_hollow"] = "used"
+	flags["rest_mode_used"] = "true"
+	return state.append_event(_event(
+		state,
+		"rest",
+		{"node_flags": state.node_flags},
+		{"node_flags": flags},
+		"rest_visit_consumed",
+		state.current_node_id,
+		[]
+	))
+
+
+static func _rest_remove_card(state: RunState, command: Dictionary, catalog: Dictionary, consumed: RunState) -> Dictionary:
+	var instance_id := str(command.get("instance_id", ""))
+	var existing: Dictionary = state.gu_instances.get(instance_id, {})
+	if existing.is_empty() or str(existing.get("state", "")) == "dead":
+		return _rejected(state, "gu_instance_unavailable")
+	var blocked := _cursed_drop_block(state, catalog, str(existing.get("definition_id", "")))
+	if not blocked.is_empty():
+		return blocked
+	var payload := _destroyed_gu_payload(state, instance_id)
+	var next := consumed.append_event(_event(
+		consumed,
+		"rest",
+		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"gu_instances": payload["instances"], "cave_aperture": payload["aperture"]},
+		"rest_removed_gu",
+		state.current_node_id,
+		[instance_id]
+	))
+	next.sync_legacy_gu_projections()
+	return _accepted(next)
+
+
+static func _rest_remove_imprint(state: RunState, command: Dictionary, catalog: Dictionary, consumed: RunState) -> Dictionary:
+	var relic_id := str(command.get("relic_id", ""))
+	if not catalog.get("relic_by_id", {}).has(relic_id):
+		return _rejected(state, "unknown_relic")
+	if not state.relic_ids.has(relic_id):
+		return _rejected(state, "relic_not_owned")
+	if str(catalog["relic_by_id"][relic_id].get("grade", "")) == "meta_rule":
+		return _rejected(state, "meta_rule_not_removable")
+	var relics := state.relic_ids.duplicate()
+	relics.erase(relic_id)
+	var meta_rules := state.meta_rules.duplicate(true)
+	meta_rules.erase(relic_id)
+	var next := consumed.append_event(_event(
+		consumed,
+		"rest",
+		{"relic_ids": state.relic_ids, "meta_rules": state.meta_rules},
+		{"relic_ids": relics, "meta_rules": meta_rules},
+		"rest_removed_imprint",
+		state.current_node_id,
+		[relic_id]
+	))
+	return _accepted(next)
+
+
+static func _rest_remove_curse(state: RunState, command: Dictionary, catalog: Dictionary, consumed: RunState) -> Dictionary:
+	var curse_id := str(command.get("curse_id", ""))
+	if not catalog.get("curse_by_id", {}).has(curse_id):
+		return _rejected(state, "unknown_curse")
+	if CurseRegistryScript.layers_of(state, curse_id) <= 0:
+		return _rejected(state, "curse_not_present")
+	return _accepted(CurseRegistryScript.remove_curse(consumed, curse_id))
 
 
 static func _record_boss_defeated(state: RunState, catalog: Dictionary) -> Dictionary:

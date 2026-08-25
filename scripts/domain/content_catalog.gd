@@ -6,6 +6,7 @@ const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
 const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
+const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
@@ -89,6 +90,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for card_id in gu.get("card_blueprint_ids", []):
 			if not card_by_id.has(card_id):
 				errors.append("gu %s references missing card %s" % [gu["id"], card_id])
+		if gu.has("can_direct_drop") and not (gu["can_direct_drop"] is bool):
+			errors.append("gu %s can_direct_drop must be a boolean" % gu["id"])
 	for card in catalog.get("cards", []):
 		if not card.has("rarity"):
 			errors.append("card %s missing rarity" % card["id"])
@@ -178,6 +181,18 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	var raw_imprint_capacity: Variant = catalog.get("deck", {}).get("imprint_capacity", -1)
 	if not _is_integral(raw_imprint_capacity) or int(raw_imprint_capacity) < 1:
 		errors.append("deck imprint_capacity must be a positive integer")
+	var raw_service_limits: Variant = catalog.get("deck", {}).get("service_limits", null)
+	if not raw_service_limits is Dictionary:
+		errors.append("deck service_limits must be an object")
+	else:
+		for service_id_value in DECK_SERVICE_IDS:
+			var service_id := str(service_id_value)
+			if not (raw_service_limits as Dictionary).has(service_id):
+				errors.append("deck service_limits missing %s" % service_id)
+				continue
+			var limit_value: Variant = (raw_service_limits as Dictionary)[service_id]
+			if not _is_integral(limit_value) or int(limit_value) < 1:
+				errors.append("deck service_limits.%s must be a positive integer" % service_id)
 	var milestones: Dictionary = catalog.get("pacing", {}).get("lifespan_milestones", {})
 	for milestone_id in milestones:
 		var milestone_value: Variant = milestones[milestone_id]
