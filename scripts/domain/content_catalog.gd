@@ -3,6 +3,7 @@ extends RefCounted
 
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
+const RARITY_IDS := ["common", "rare", "epic", "legendary"]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
@@ -69,6 +70,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("gu %s missing school" % gu["id"])
 		elif not str(gu["school"]) in ["blood", "qi", "force"]:
 			errors.append("gu %s invalid school %s" % [gu["id"], gu["school"]])
+		if not gu.has("rarity"):
+			errors.append("gu %s missing rarity" % gu["id"])
+		elif not RARITY_IDS.has(str(gu["rarity"])):
+			errors.append("gu %s invalid rarity %s" % [gu["id"], gu["rarity"]])
 		if not gu.has("role"):
 			errors.append("gu %s missing role" % gu["id"])
 		elif not str(gu["role"]) in ["attack", "defense", "movement", "healing", "logistics", "recon"]:
@@ -80,6 +85,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			if not card_by_id.has(card_id):
 				errors.append("gu %s references missing card %s" % [gu["id"], card_id])
 	for card in catalog.get("cards", []):
+		if not card.has("rarity"):
+			errors.append("card %s missing rarity" % card["id"])
+		elif not RARITY_IDS.has(str(card["rarity"])):
+			errors.append("card %s invalid rarity %s" % [card["id"], card["rarity"]])
 		for source_gu_id in card.get("source_gu_ids", []):
 			if not gu_by_id.has(source_gu_id):
 				errors.append("card %s references missing source gu %s" % [card["id"], source_gu_id])
@@ -111,6 +120,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
 	var relic_by_id: Dictionary = catalog.get("relic_by_id", {})
 	for relic in catalog.get("relics", []):
+		if not relic.has("rarity"):
+			errors.append("relic %s missing rarity" % relic["id"])
+		elif not RARITY_IDS.has(str(relic["rarity"])):
+			errors.append("relic %s invalid rarity %s" % [relic["id"], relic["rarity"]])
 		for hook in relic.get("hooks", []):
 			var trigger := str(hook.get("trigger", ""))
 			if not RelicHookResolverScript.TRIGGERS.has(trigger):
@@ -196,9 +209,35 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for material_id_value in tier.get("material_pool", []):
 			if not materials.has(str(material_id_value)):
 				errors.append("loot tier %s references unknown material %s" % [tier_key, material_id_value])
-		for gu_id_value in tier.get("gu_pool", []):
-			if not gu_by_id.has(str(gu_id_value)):
-				errors.append("loot tier %s references unknown gu %s" % [tier_key, gu_id_value])
+		var gu_pool: Dictionary = tier.get("gu_pool", {})
+		var weights: Dictionary = gu_pool.get("weights", {})
+		var by_rarity: Dictionary = gu_pool.get("by_rarity", {})
+		var has_positive_weight := false
+		for rarity_id_value in weights:
+			var weighted_rarity := str(rarity_id_value)
+			if not RARITY_IDS.has(weighted_rarity):
+				errors.append("loot tier %s weight uses unknown rarity %s" % [tier_key, weighted_rarity])
+				continue
+			if not _is_integral(weights[rarity_id_value]) or int(weights[rarity_id_value]) < 0:
+				errors.append("loot tier %s weight %s must be a non-negative integer" % [tier_key, weighted_rarity])
+				continue
+			if int(weights[rarity_id_value]) > 0:
+				has_positive_weight = true
+				var weighted_bucket: Array = by_rarity.get(weighted_rarity, [])
+				if weighted_bucket.is_empty():
+					errors.append("loot tier %s weight %s sits on an empty bucket" % [tier_key, weighted_rarity])
+		if not weights.is_empty() and not has_positive_weight:
+			errors.append("loot tier %s gu_pool needs at least one positive weight" % tier_key)
+		for rarity_id_value in by_rarity:
+			var bucket_rarity := str(rarity_id_value)
+			if not RARITY_IDS.has(bucket_rarity):
+				errors.append("loot tier %s bucket uses unknown rarity %s" % [tier_key, bucket_rarity])
+			for gu_id_value in by_rarity[rarity_id_value]:
+				var pool_gu_id := str(gu_id_value)
+				if not gu_by_id.has(pool_gu_id):
+					errors.append("loot tier %s references unknown gu %s" % [tier_key, pool_gu_id])
+				elif str(gu_by_id[pool_gu_id].get("rarity", "")) != bucket_rarity:
+					errors.append("loot tier %s gu %s rarity mismatch with bucket %s" % [tier_key, pool_gu_id, bucket_rarity])
 		var scavenge_recipe := str(tier.get("scavenge_recipe", ""))
 		if not scavenge_recipe.is_empty() and not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
 			errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])

@@ -41,13 +41,31 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String) ->
 
 static func _roll_gu(table: Dictionary, state: RunState, tier: String) -> String:
 	var chance := int(table.get("gu_chance_pct", 0))
-	var pool: Array = table.get("gu_pool", [])
-	if chance <= 0 or pool.is_empty():
+	var pool: Dictionary = table.get("gu_pool", {})
+	var weights: Dictionary = pool.get("weights", {})
+	if chance <= 0 or weights.is_empty():
 		return ""
 	var bound := clampi(chance, 0, 100)
-	if bound >= 100 or _pick_from(100, state, "loot.gu.%s" % tier) < bound:
-		return str(pool[_pick_from(pool.size(), state, "loot.gu.pick.%s" % tier)])
-	return ""
+	if bound < 100 and _pick_from(100, state, "loot.gu.%s" % tier) >= bound:
+		return ""
+	var total_weight := 0
+	for rarity_id_value in weights:
+		total_weight += maxi(0, int(weights[rarity_id_value]))
+	if total_weight <= 0:
+		return ""
+	var rarity_roll := _pick_from(total_weight, state, "loot.gu.rarity.%s" % tier)
+	var picked_rarity := ""
+	for rarity_id_value in weights:
+		rarity_roll -= maxi(0, int(weights[rarity_id_value]))
+		if rarity_roll < 0:
+			picked_rarity = str(rarity_id_value)
+			break
+	if picked_rarity.is_empty():
+		return ""
+	var bucket: Array = (pool.get("by_rarity", {}).get(picked_rarity, []) as Array).duplicate()
+	if bucket.is_empty():
+		return ""
+	return str(bucket[_pick_from(bucket.size(), state, "loot.gu.pick.%s.%s" % [tier, picked_rarity])])
 
 
 static func _pick_from(bound: int, state: RunState, salt: String) -> int:

@@ -29,7 +29,8 @@
       "subtle"
     ],
     "school": "qi",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "common"
   },
   {
     "id": "trail_eye_gu",
@@ -60,7 +61,8 @@
       "reveal"
     ],
     "school": "qi",
-    "role": "recon"
+    "role": "recon",
+    "rarity": "common"
   },
   {
     "id": "blood_moss_gu",
@@ -90,7 +92,8 @@
       "wood"
     ],
     "school": "blood",
-    "role": "healing"
+    "role": "healing",
+    "rarity": "common"
   },
   {
     "id": "thorn_whip_gu",
@@ -122,7 +125,8 @@
       "control"
     ],
     "school": "force",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "common"
   },
   {
     "id": "mist_step_gu",
@@ -151,7 +155,8 @@
       "mist"
     ],
     "school": "force",
-    "role": "movement"
+    "role": "movement",
+    "rarity": "rare"
   },
   {
     "id": "venom_thread_gu",
@@ -182,7 +187,8 @@
       "escape"
     ],
     "school": "qi",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "common"
   },
   {
     "id": "stone_shell_gu",
@@ -213,7 +219,8 @@
       "guard"
     ],
     "school": "force",
-    "role": "defense"
+    "role": "defense",
+    "rarity": "common"
   },
   {
     "id": "shadow_veil_gu",
@@ -244,7 +251,8 @@
       "shadow"
     ],
     "school": "qi",
-    "role": "movement"
+    "role": "movement",
+    "rarity": "rare"
   },
   {
     "id": "pulse_drum_gu",
@@ -275,7 +283,8 @@
       "sound"
     ],
     "school": "qi",
-    "role": "logistics"
+    "role": "logistics",
+    "rarity": "common"
   },
   {
     "id": "moonlight_gu",
@@ -304,7 +313,8 @@
       "moon"
     ],
     "school": "force",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "epic"
   },
   {
     "id": "moon_glow_gu",
@@ -334,7 +344,8 @@
       "moon"
     ],
     "school": "blood",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "rare"
   },
   {
     "id": "phantom_moon_gu",
@@ -364,7 +375,8 @@
       "moon"
     ],
     "school": "qi",
-    "role": "recon"
+    "role": "recon",
+    "rarity": "epic"
   },
   {
     "id": "moon_shadow_gu",
@@ -396,7 +408,8 @@
       "moon"
     ],
     "school": "force",
-    "role": "movement"
+    "role": "movement",
+    "rarity": "rare"
   },
   {
     "id": "blood_droplet_gu",
@@ -427,7 +440,8 @@
       "projectile"
     ],
     "school": "blood",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "common"
   },
   {
     "id": "blood_bat_gu",
@@ -458,7 +472,8 @@
       "drain"
     ],
     "school": "blood",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "rare"
   },
   {
     "id": "blood_wing_gu",
@@ -489,7 +504,8 @@
       "escape"
     ],
     "school": "blood",
-    "role": "movement"
+    "role": "movement",
+    "rarity": "epic"
   },
   {
     "id": "blood_farewell_gu",
@@ -520,7 +536,8 @@
       "poison"
     ],
     "school": "blood",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "epic"
   },
   {
     "id": "force_gu",
@@ -551,7 +568,8 @@
       "power"
     ],
     "school": "force",
-    "role": "attack"
+    "role": "attack",
+    "rarity": "common"
   },
   {
     "id": "bear_strength_gu",
@@ -582,7 +600,8 @@
       "beast"
     ],
     "school": "force",
-    "role": "healing"
+    "role": "healing",
+    "rarity": "rare"
   },
   {
     "id": "qi_wall_gu",
@@ -613,6 +632,7 @@
       "air"
     ],
     "school": "qi",
-    "role": "defense"
+    "role": "defense",
+    "rarity": "common"
   }
 ]

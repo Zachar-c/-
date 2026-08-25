@@ -49,7 +49,12 @@ func test_elite_loot_grants_material_and_may_be_gu() -> void:
 	assert_eq(loot.get("material_ids", []).size(), int(table.get("material_count", 0)))
 	var gu_id := str(loot.get("gu_id", ""))
 	if not gu_id.is_empty():
-		assert_true((table.get("gu_pool", []) as Array).has(gu_id))
+		var pool: Dictionary = table.get("gu_pool", {})
+		var found := false
+		for rarity_id in pool.get("by_rarity", {}):
+			if (pool["by_rarity"][rarity_id] as Array).has(gu_id):
+				found = true
+		assert_true(found, "rolled gu %s belongs to a declared bucket" % gu_id)
 
 
 func test_boss_loot_grants_two_materials_no_gu() -> void:

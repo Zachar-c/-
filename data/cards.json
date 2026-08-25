@@ -12,7 +12,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "light_probe"
+    "public_text_key": "light_probe",
+    "rarity": "common"
   },
   {
     "id": "stone_guard",
@@ -27,7 +28,8 @@
     ],
     "duration_turns": 1,
     "occupies_soul_slots": true,
-    "public_text_key": "stone_guard"
+    "public_text_key": "stone_guard",
+    "rarity": "common"
   },
   {
     "id": "moonlight_strike",
@@ -43,7 +45,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "moonlight_strike"
+    "public_text_key": "moonlight_strike",
+    "rarity": "epic"
   },
   {
     "id": "moonlight_return",
@@ -65,7 +68,8 @@
       "small_light_gu"
     ],
     "sequence_window": "same_turn",
-    "sequence_timeout_action": "clear"
+    "sequence_timeout_action": "clear",
+    "rarity": "epic"
   },
   {
     "id": "blood_moss_relief",
@@ -80,7 +84,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "blood_moss_relief"
+    "public_text_key": "blood_moss_relief",
+    "rarity": "common"
   },
   {
     "id": "thorn_strike",
@@ -95,7 +100,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "thorn_strike"
+    "public_text_key": "thorn_strike",
+    "rarity": "common"
   },
   {
     "id": "thorn_bind",
@@ -111,7 +117,8 @@
     "mode": "bind",
     "duration_turns": 1,
     "occupies_soul_slots": true,
-    "public_text_key": "thorn_bind"
+    "public_text_key": "thorn_bind",
+    "rarity": "common"
   },
   {
     "id": "blood_droplet_shot",
@@ -126,7 +133,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "blood_droplet_shot"
+    "public_text_key": "blood_droplet_shot",
+    "rarity": "common"
   },
   {
     "id": "blood_bat_bite",
@@ -141,7 +149,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "blood_bat_bite"
+    "public_text_key": "blood_bat_bite",
+    "rarity": "rare"
   },
   {
     "id": "blood_wing_escape",
@@ -156,7 +165,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "blood_wing_escape"
+    "public_text_key": "blood_wing_escape",
+    "rarity": "epic"
   },
   {
     "id": "farewell_grip",
@@ -172,7 +182,8 @@
     "mode": "bind",
     "duration_turns": 1,
     "occupies_soul_slots": true,
-    "public_text_key": "farewell_grip"
+    "public_text_key": "farewell_grip",
+    "rarity": "epic"
   },
   {
     "id": "power_blow",
@@ -187,7 +198,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "power_blow"
+    "public_text_key": "power_blow",
+    "rarity": "common"
   },
   {
     "id": "bear_vitality",
@@ -202,7 +214,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "bear_vitality"
+    "public_text_key": "bear_vitality",
+    "rarity": "rare"
   },
   {
     "id": "qi_bulwark",
@@ -217,7 +230,8 @@
     ],
     "duration_turns": 1,
     "occupies_soul_slots": true,
-    "public_text_key": "qi_bulwark"
+    "public_text_key": "qi_bulwark",
+    "rarity": "common"
   },
   {
     "id": "scout_eye",
@@ -232,7 +246,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "scout_eye"
+    "public_text_key": "scout_eye",
+    "rarity": "common"
   },
   {
     "id": "venom_snare",
@@ -247,7 +262,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "venom_snare"
+    "public_text_key": "venom_snare",
+    "rarity": "common"
   },
   {
     "id": "pulse_wave",
@@ -262,7 +278,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "pulse_wave"
+    "public_text_key": "pulse_wave",
+    "rarity": "common"
   },
   {
     "id": "shadow_haze",
@@ -277,7 +294,8 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "shadow_haze"
+    "public_text_key": "shadow_haze",
+    "rarity": "rare"
   },
   {
     "id": "moon_glow_flare",
@@ -292,6 +310,7 @@
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,
-    "public_text_key": "moon_glow_flare"
+    "public_text_key": "moon_glow_flare",
+    "rarity": "rare"
   }
 ]
