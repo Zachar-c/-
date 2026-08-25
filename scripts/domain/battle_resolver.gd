@@ -7,6 +7,7 @@ const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolve
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -372,6 +373,15 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	var action_energy := int(battle.get("action_energy", 0))
 	if state.essence + action_energy < essence_cost:
 		return _result(battle, state, false, "ongoing", ["insufficient_essence"])
+	var overchannel := {}
+	if SchoolRulesScript.is_soul(state):
+		var oc_level := int(action.get("overchannel", 0))
+		if oc_level > 0:
+			overchannel = SchoolRulesScript.apply_overchannel_soul(
+					state.cultivator, clampi(oc_level, 1, 3),
+					not battle.get("flags", {}).has("soul_mercy_used"))
+			if overchannel.is_empty():
+				return _rejected_turn(battle, state, "soul_exhausted")
 	var paid_from_energy := mini(essence_cost, action_energy)
 	var paid_from_essence := essence_cost - paid_from_energy
 	battle["action_energy"] = action_energy - paid_from_energy
@@ -467,6 +477,21 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 						"delay_progress":
 							battle["delay_progress"] = int(battle["delay_progress"]) + maxi(0, int(effect.get("amount", 1)))
 				log_entry = {"id": str(gu.get("combat", "data_pattern")), "gu_id": gu_id}
+	if not overchannel.is_empty():
+		var oc_level := int(action.get("overchannel", 0))
+		var benefit := SchoolRulesScript.overchannel_benefit(oc_level)
+		_strike(battle, int(benefit.get("damage", 0)))
+		battle["pending_extra_draws"] = int(battle.get("pending_extra_draws", 0)) \
+				+ int(benefit.get("draws", 0))
+		if bool(benefit.get("bound", false)):
+			_add_flag(battle, "enemy_bound")
+		if bool(overchannel["mercy_used"]):
+			_add_flag(battle, "soul_mercy_used")
+			log_entry["mercy"] = true
+		log_entry["overchannel"] = oc_level
+		var soulful := state.cultivator.duplicate(true)
+		soulful["soul"] = int(overchannel["soul"])
+		after["cultivator"] = soulful
 	battle["log"].append(log_entry)
 	var next_state := state.append_event(_event(state, "battle_use_gu", {"essence": state.essence}, after, "battle_gu_%s" % gu_id, [gu_id]))
 	return _with_objective_result(battle, next_state, catalog)

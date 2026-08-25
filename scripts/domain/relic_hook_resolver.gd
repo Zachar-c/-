@@ -1,6 +1,8 @@
 class_name RelicHookResolver
 extends RefCounted
 
+const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
+
 # Data-driven enumerable relic hooks. Each relic in relics.json declares
 # `hooks: [{ trigger, effect: { kind, amount } }]`. This resolver is pure
 # domain logic: it never touches UI, never calls RNG, and only mutates the
@@ -75,6 +77,9 @@ static func apply_backlash_gained(battle: Dictionary, state: RunState, catalog: 
 	for hook in _hooks(state, catalog, "on_backlash_gained"):
 		if str(hook.get("effect", {}).get("kind", "")) == "convert_backlash_to_draw":
 			queued += _amount(hook) * maxi(0, layers_gained)
+	# R4.7 soul anchor: soul school converts backlash to draw at double rate.
+	if SchoolRulesScript.is_soul(state):
+		queued *= 2
 	var feeds: Array[String] = []
 	if queued > 0:
 		battle["pending_extra_draws"] = int(battle.get("pending_extra_draws", 0)) + queued
