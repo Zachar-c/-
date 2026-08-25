@@ -498,4 +498,36 @@ git commit -m "feat(ui): rewire RunController to RuitkRoot, drop legacy views, p
 
 1. **Spec 覆盖**：§1 范围（5 屏+控件+切换）— Task 2-7+8 覆盖；§2 引入/许可证 — Task 1 Step 1/UPSTREAM.md；§3 设计系统 — Task 1 Step 3 `gu_style.gd`；§4 架构 — Task 8；§5 各屏顺序 — Task 3-7；§6 遭遇修复 — Task 4；§7/§8 测试与导出前置 — Task 1 Step 6（gitignore）+ Task 8 Step 5（GUT+冒烟）+ 导出前编译说明在 Task 1 Step 5 注释。无遗漏。
 2. **占位扫描**：`gu_style.gd` 的 `sheet()` 内有一处 `assert(false, "按 Task 1 Step 2 锁定的 API 实现")` —— 这是**故意的占位断言**，因 RUI 确切 `RUIStyleSheet` 构造器在 Task 1 Step 2 读 examples 后才知；Task 1 Step 3 要求实现者锁定 API 后替换为真实代码，且 Step 5 运行会暴露未实现。不属于「TODO 留待以后」类占位。其余步骤均含实际代码/命令。
+
+---
+
+## Locked API Reference（Task 1 已锁定，后续 Task 严格遵照）
+
+> Task 1 探查自 `ruitk-godot@4fe6927`（examples + `addons/reactive_ui_toolkit/core`）。**计划正文中的伪代码（`component Name(props):` / `V.button(...)` 等）是错的，以本节为准。**
+
+### 文件与编译
+- 源文件 `ui/**/*.guitkx`；编译产物 `ui/**/*.gd` 已被 `.gitignore` 忽略（只提交源）。
+- 组件文件头可挂主题：`@theme "res://assets/theme/gu_theme.tres"`。
+- 跨文件组件引用：`import { GuButton } from "~/ui/widgets/gu_button"`（`~` = 项目根 `res://`）。值/常量导入同理：`import { JADE } from "~/ui/gu_style"`（见下）。
+- **无头编译（CI/冒烟）**：`RuitkGuitkx.compile(source, basename, [], {}, self_path, "res://")` 返回 `{ ok, gd, env_error, diagnostics }`；把 `gd` 写入同级 `.gd`，再用 `load("res://ui/x.gd")` 加载。完整样例见 `scripts/smoke_render.gd`（已验证 `buttons=2`）。
+- 编辑器开发：启用两个插件（Project Settings > Plugins）后，文件监视器自动把 `.guitkx` 编译为同级 `.gd`。
+
+### 组件形态（关键）
+- `.guitkx` 中 `export Foo(props) -> RuitkVNode { return ( <.../> ) }` 编译为 `class_name Foo extends RefCounted` + `static func render(props: Dictionary, children: Array) -> RuitkVNode`。
+- 宿主控件即标签：`<Button text=.../>`、`<Label/>`、`<VBoxContainer/>`、`<CenterContainer/>`、`<MarginContainer/>`、`<HSeparator/>` 等（Godot 节点 PascalCase）。属性用 `prop={ value }` 或 `prop="str"`。
+- props 映射到组件函数形参名（如 `DemoBox(title: String)` 接收 `<DemoBox title="...">`）。子节点用 `{ children }` 展开。
+- 取组件 Callable 用 `V.comp("res://ui/x.gd", "render")`；挂载 `RuitkRoot.create(container, V.fc(component_callable, props))`。**`V`/`RuitkRoot`/`Hooks` 是 addon 全局类，addon 禁用时头less 不可用——驱动脚本须显式 `preload` 它们**（见 smoke_render.gd）。项目内自建 `class_name`（如 `GuStyle`）头less 正常注册。
+
+### 状态与信号
+- `var v = useState(40.0)` 返回 `[值, setter]` 元组；读 `v[0]`，写 `v[1].call(new_val)`。
+- 信号标签：`onValueChanged={ func(x): v[1].call(x) }`（去 `on` + 驼峰）。按钮点击用 `onPressed={ func(): ... }`。
+- 子组件命令上抛：父传 `onCommand={ func(cmd): emit_signal("command_submitted", cmd) }`，子按钮 `onPressed={ func(): onCommand.call(...) }`。
+
+### 样式
+- 内联 `style={ {"font_size": 28, "font_color": GuStyle.GOLD, "min_width": 200, "separation": 12} }` = 覆盖 Godot 节点属性。
+- 全局配色放 `scripts/presentation/gu_style.gd`（`class_name GuStyle`，常量 `BG/JADE/GOLD/DANGER/BONE/BONE_DIM`），标记内用 `GuStyle.JADE` 直接引用（无需 import）。
+- 组件统一 `@theme` 挂 `gu_theme.tres` 后，主题默认样式生效；`style={}` 做局部覆盖/点缀。
+
+### 冒烟约定
+- `scripts/smoke_render.gd`：`_compile_file` + `_mount(path,"render",props)` + `_count_buttons(container)` 递归数 `Button`。每屏 Task 完成后往此脚本加一条 `_mount` 断言（期望 `buttons>=1` + 关键控件存在）。
 3. **类型一致性**：后续任务统一引用 `GuStyle.sheet()`、`GuButton`/`ActionCardRow` 等 props 契约（在 Task 2 Interfaces 定义），屏任务 props 与 Task 2 一致；`command_submitted` 命令结构沿用旧 `RunController` 既有约定。挂载入口 `RuitkRoot.mount(component, props)` 在 Task 1 锁定并在 Task 2-8 一致使用。
