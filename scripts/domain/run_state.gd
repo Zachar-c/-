@@ -18,6 +18,7 @@ var lifespan_debt: int = 0
 var stone: int = 12
 var loot_pity: int = 0
 var material_pity: int = 0
+var synthesis_fail_streak: int = 0
 var gu_ids: Array[String] = []
 var refined_gu_ids: Array[String] = []
 var equipped_gu_ids: Array[String] = []
@@ -54,7 +55,7 @@ var school: String = ""
 # event_log and seed are deliberately excluded from event after-applies.
 const STATE_FIELDS: Array[String] = [
 	"seed", "stage", "cultivation", "essence", "essence_capacity", "health", "max_health",
-	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity",
+	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity", "synthesis_fail_streak",
 	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
 	"relations", "pursuit", "ascension", "known_facts", "current_node_id",
 	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",

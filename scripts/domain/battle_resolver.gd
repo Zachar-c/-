@@ -234,6 +234,7 @@ static func take_turn(
 		"basic_dodge": return _basic_dodge(next, state)
 		"end_turn": return _end_turn(next, state, catalog)
 		"retreat": return _retreat(next, state, catalog)
+		"refine": return _battle_refine(next, action, state, catalog)
 		_: return _result(next, state, false, "ongoing", ["unsupported_battle_action"])
 
 
@@ -512,6 +513,125 @@ static func _use_inheritance(battle: Dictionary, action: Dictionary, state: RunS
 	battle["log"].append({"id": "inheritance_used", "move_id": move_id})
 	var next_state := state.append_event(_event(state, "battle_use_inheritance", {}, {}, "battle_inheritance_%s" % move_id, [move_id]))
 	return _with_objective_result(battle, next_state, catalog)
+
+
+static func _battle_refine(battle: Dictionary, action: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	# S2 refine-school trait: battle-local light synthesis. Fixed recipes turn
+	# materials into a temp card; the blind box rolls a random temp card and
+	# explodes into a curse on failure. Consecutive failures add a capped
+	# success bonus that never reaches 100 and dies with the run.
+	var synthesis: Dictionary = catalog.get("synthesis", {})
+	if synthesis.is_empty():
+		return _rejected_turn(battle, state, "synthesis_unavailable")
+	if state.school != "refine":
+		return _rejected_turn(battle, state, "synthesis_requires_refine_school")
+	var blind := bool(action.get("blind", false)) or str(action.get("recipe_id", "")) == "battle_blind"
+	var recipe := {}
+	if blind:
+		recipe = synthesis.get("battle_blind", {})
+	else:
+		for entry_value in synthesis.get("battle_recipes", []):
+			if str(entry_value.get("id", "")) == str(action.get("recipe_id", "")):
+				recipe = entry_value
+				break
+	if recipe.is_empty():
+		return _rejected_turn(battle, state, "synthesis_recipe_required")
+	var cost: Dictionary = recipe.get("material_cost", {})
+	if not _has_materials(state, cost):
+		return _rejected_turn(battle, state, "missing_synthesis_materials")
+	var cfg: Dictionary = synthesis.get("battle", {})
+	var base := clampi(int(cfg.get("success_base_pct", 60)), 0, 99)
+	var per_fail := maxi(1, int(cfg.get("per_fail_bonus_pct", 10)))
+	var max_bonus := clampi(int(cfg.get("max_bonus_pct", 30)), 0, 99)
+	var penalty := clampi(int(cfg.get("blind_penalty_pct", 20)), 0, base) if blind else 0
+	var bonus := mini(int(state.synthesis_fail_streak) * per_fail, max_bonus)
+	var chance := clampi(base + bonus - penalty, 0, 99)
+	var roll_seed := _battle_rng_seed(state, 1213 if blind else 1109)
+	var rng := SeededRngScript.new(roll_seed)
+	var succeeded := rng.next_index(100) < chance
+	var paid := _spend_battle_materials(state, cost)
+	var streak := int(state.synthesis_fail_streak)
+	var next_streak := 0 if succeeded else streak + 1
+	var next_state := paid.append_event(_event(
+		paid,
+		"battle_synthesize",
+		{"materials": state.materials, "synthesis_fail_streak": streak},
+		{"materials": paid.materials, "synthesis_fail_streak": next_streak},
+		"battle_synthesis_succeeded" if succeeded else "battle_synthesis_failed",
+		cost.keys() as Array
+	))
+	next_state.synthesis_fail_streak = next_streak
+	var next_battle := battle.duplicate(true)
+	var temp_card_id := ""
+	if succeeded:
+		temp_card_id = str(recipe.get("temp_card_id", ""))
+		if blind:
+			var blind_pool: Array = recipe.get("blind_pool", [])
+			if not blind_pool.is_empty():
+				temp_card_id = str(blind_pool[rng.next_index(blind_pool.size())])
+		if not temp_card_id.is_empty():
+			next_battle = _gain_temp_card(next_battle, next_state, temp_card_id, catalog)
+	if blind and not succeeded:
+		var curse_id := str(cfg.get("blind_fail_curse_id", ""))
+		if not curse_id.is_empty():
+			next_state = CurseRegistryScript.gain_curse(next_state, curse_id, "battle_blind_synthesis")
+	next_battle["log"].append({
+		"id": "battle_synthesis",
+		"kind": "blind" if blind else "fixed",
+		"success": succeeded,
+		"chance": chance,
+		"card": temp_card_id,
+	})
+	return _with_objective_result(next_battle, next_state, catalog)
+
+
+static func _has_materials(state: RunState, cost: Dictionary) -> bool:
+	if cost.is_empty():
+		return false
+	for material_id_value in cost:
+		if int(state.materials.get(str(material_id_value), 0)) < int(cost[material_id_value]):
+			return false
+	return true
+
+
+static func _spend_battle_materials(state: RunState, cost: Dictionary) -> RunState:
+	var remaining := state.materials.duplicate(true)
+	for material_id_value in cost:
+		var material_id := str(material_id_value)
+		remaining[material_id] = maxi(0, int(remaining.get(material_id, 0)) - int(cost[material_id_value]))
+	var targets: Array = []
+	for material_id_value in cost:
+		targets.append(str(material_id_value))
+	var next := state.append_event(_event(
+		state,
+		"battle_synthesize",
+		{"materials": state.materials},
+		{"materials": remaining},
+		"battle_synthesis_materials_spent",
+		targets
+	))
+	next.materials = remaining
+	return next
+
+
+static func _gain_temp_card(battle: Dictionary, state: RunState, temp_card_id: String, catalog: Dictionary) -> Dictionary:
+	var hand: Array = battle.get("hand", []).duplicate()
+	var discard: Array = battle.get("discard_pile", []).duplicate()
+	var card := {
+		"instance_id": "synth.%s.%d" % [str(temp_card_id), state.event_log.size()],
+		"definition_id": temp_card_id,
+		"temp": true,
+	}
+	var hand_size := int(catalog.get("deck", {}).get("hand_size", BATTLE_HAND_SIZE))
+	if hand.size() < hand_size:
+		hand.append(card)
+	else:
+		discard.append(card)
+	var next := battle.duplicate(true)
+	next["hand"] = hand
+	next["discard_pile"] = discard
+	next["hand_version"] = int(next.get("hand_version", 0)) + 1
+	return next
 
 
 static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:

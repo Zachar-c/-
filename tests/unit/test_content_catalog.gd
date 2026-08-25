@@ -67,3 +67,10 @@ func test_material_pity_config_is_validated() -> void:
 	var pity: Dictionary = catalog["loot_tables"]["pity"]["material_pity"]
 	pity["target_material_ids"].append("missing_material_x")
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown material"))
+
+
+func test_synthesis_config_is_validated() -> void:
+	var catalog := ContentCatalog.load_all()
+	var recipes: Array = catalog["synthesis"]["battle_recipes"]
+	(recipes[0] as Dictionary)["material_cost"] = {"missing_material_x": 1}
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown material"))

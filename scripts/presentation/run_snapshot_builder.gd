@@ -129,6 +129,7 @@ static func battle(controller) -> Dictionary:
 		"enemies": enemies,
 		"player": player,
 		"hand": hand,
+		"synthesis": _synthesis_options(state, catalog),
 		"can_ultimate": false,
 		"resources": _resources(state),
 		"contracts": _contracts(state),
@@ -245,6 +246,45 @@ static func _is_dangerous(card: Dictionary) -> bool:
 		return true
 	var risk := str(card.get("known_risk", ""))
 	return "反噬" in risk or "魂魄" in risk or "寿元" in risk
+
+
+static func _synthesis_options(state, catalog: Dictionary) -> Array[Dictionary]:
+	var options: Array[Dictionary] = []
+	if str(state.school) != "refine":
+		return options
+	var synthesis: Dictionary = catalog.get("synthesis", {})
+	if synthesis.is_empty():
+		return options
+	var cfg: Dictionary = synthesis.get("battle", {})
+	var streak := int(state.synthesis_fail_streak)
+	for entry_value in synthesis.get("battle_recipes", []):
+		var entry: Dictionary = entry_value
+		options.append(_synthesis_option(entry, cfg, streak, state, catalog, false))
+	if synthesis.has("battle_blind"):
+		options.append(_synthesis_option(synthesis.get("battle_blind", {}), cfg, streak, state, catalog, true))
+	return options
+
+
+static func _synthesis_option(recipe: Dictionary, cfg: Dictionary, streak: int, state, catalog: Dictionary, blind: bool) -> Dictionary:
+	var cost: Dictionary = recipe.get("material_cost", {})
+	var affordable := true
+	for material_id_value in cost:
+		if int(state.materials.get(str(material_id_value), 0)) < int(cost[material_id_value]):
+			affordable = false
+			break
+	var base := clampi(int(cfg.get("success_base_pct", 60)), 0, 99)
+	var per_fail := maxi(1, int(cfg.get("per_fail_bonus_pct", 10)))
+	var max_bonus := clampi(int(cfg.get("max_bonus_pct", 30)), 0, 99)
+	var penalty := clampi(int(cfg.get("blind_penalty_pct", 20)), 0, base) if blind else 0
+	var chance := clampi(base + mini(streak * per_fail, max_bonus) - penalty, 0, 99)
+	return {
+		"id": str(recipe.get("id", "battle_blind")),
+		"blind": blind,
+		"cost": cost,
+		"chance": chance,
+		"affordable": affordable,
+		"temp_card": str(recipe.get("temp_card_id", "")),
+	}
 
 
 static func _resources(state) -> Dictionary:

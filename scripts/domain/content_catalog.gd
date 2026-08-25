@@ -28,6 +28,7 @@ static func load_all() -> Dictionary:
 	var deck := _load_object("res://data/deck.json")
 	var pacing := _load_object("res://data/pacing.json")
 	var aptitude := _load_object("res://data/aptitude.json")
+	var synthesis := _load_object("res://data/synthesis.json")
 	var schools := _load_object("res://data/schools.json")
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
@@ -61,6 +62,7 @@ static func load_all() -> Dictionary:
 		"deck": deck,
 		"pacing": pacing,
 		"aptitude": aptitude,
+		"synthesis": synthesis,
 		"schools": schools,
 		"school_pools": _load_object("res://data/school_pools.json"),
 		"enemies": enemy_catalog["enemies"],
@@ -311,6 +313,38 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for target_value in material_pity.get("target_material_ids", []):
 			if not materials.has(str(target_value)):
 				errors.append("loot material_pity references unknown material %s" % target_value)
+	var synthesis: Dictionary = catalog.get("synthesis", {})
+	if not synthesis.is_empty():
+		var battle_cfg: Dictionary = synthesis.get("battle", {})
+		if not _is_integral(battle_cfg.get("success_base_pct", null)) or int(battle_cfg.get("success_base_pct", 0)) < 1 or int(battle_cfg.get("success_base_pct", 0)) > 99:
+			errors.append("synthesis battle success_base_pct must be 1..99")
+		if not _is_integral(battle_cfg.get("per_fail_bonus_pct", null)) or int(battle_cfg.get("per_fail_bonus_pct", 0)) < 1:
+			errors.append("synthesis battle per_fail_bonus_pct must be positive")
+		if not _is_integral(battle_cfg.get("max_bonus_pct", null)) or int(battle_cfg.get("max_bonus_pct", 0)) < 1 or int(battle_cfg.get("max_bonus_pct", 0)) > 99:
+			errors.append("synthesis battle max_bonus_pct must be 1..99")
+		if not _is_integral(battle_cfg.get("blind_penalty_pct", null)) or int(battle_cfg.get("blind_penalty_pct", 0)) < 0:
+			errors.append("synthesis battle blind_penalty_pct must be non-negative")
+		var blind_curse := str(battle_cfg.get("blind_fail_curse_id", ""))
+		if not blind_curse.is_empty() and not curse_by_id.has(blind_curse):
+			errors.append("synthesis blind failure references unknown curse %s" % blind_curse)
+		for recipe_value in synthesis.get("battle_recipes", []):
+			var recipe: Dictionary = recipe_value
+			if str(recipe.get("id", "")).is_empty():
+				errors.append("synthesis recipe missing id")
+			for material_id_value in recipe.get("material_cost", {}):
+				if not materials.has(str(material_id_value)):
+					errors.append("synthesis recipe %s references unknown material %s" % [recipe.get("id", ""), material_id_value])
+			var temp_card := str(recipe.get("temp_card_id", ""))
+			if not temp_card.is_empty() and not card_by_id.has(temp_card):
+				errors.append("synthesis recipe %s references missing card %s" % [recipe.get("id", ""), temp_card])
+		var blind_cfg: Dictionary = synthesis.get("battle_blind", {})
+		if not blind_cfg.is_empty():
+			for material_id_value in blind_cfg.get("material_cost", {}):
+				if not materials.has(str(material_id_value)):
+					errors.append("synthesis blind references unknown material %s" % material_id_value)
+			for card_value in blind_cfg.get("blind_pool", []):
+				if not card_by_id.has(str(card_value)):
+					errors.append("synthesis blind references missing card %s" % card_value)
 	for tier_key in loot_tables.get("loot", {}):
 		var tier: Dictionary = loot_tables["loot"][tier_key]
 		if int(tier.get("material_count", 0)) < 0:

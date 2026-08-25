@@ -32,7 +32,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"play_card": func(cid, tid): controller.submit_command({"type": "action_card", "card_id": str(cid), "target_id": str(tid)}),
 				"end_turn": func(): controller.submit_command({"type": "end_turn"}),
 				"ultimate": func(): controller.submit_command({"type": "ultimate"}),
-				"refine": func(): controller.submit_command({"type": "refine"}),
+				"refine": func(id = ""): controller.submit_command({"type": "refine", "recipe_id": str(id)}),
 				"flee": func(): controller.submit_command({"type": "retreat"}),
 			}
 		"Ending":
