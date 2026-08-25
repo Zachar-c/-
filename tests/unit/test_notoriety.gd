@@ -67,10 +67,12 @@ func test_hostile_stance_roll_is_guaranteed_at_high_notoriety_and_absent_at_zero
 	var run := RunState.new_run(101)
 	run.cultivator["notorious"] = 7
 	var begun := EncounterSessionResolverScript.begin(run, {"id": "neutral_wanderer", "type": "contact"}, catalog)
-	assert_true(bool(begun["session"]["flags"].get("reputation_hostile", false)))
+	# High notoriety guarantees a hostile or extreme stance (never neutral).
+	assert_true(bool(begun["session"]["flags"].get("reputation_hostile", false)) or bool(begun["session"]["flags"].get("reputation_extreme", false)))
 
 	var clean := EncounterSessionResolverScript.begin(RunState.new_run(101), {"id": "neutral_wanderer", "type": "contact"}, catalog)
 	assert_false(bool(clean["session"]["flags"].get("reputation_hostile", false)))
+	assert_false(bool(clean["session"]["flags"].get("reputation_extreme", false)))
 
 
 func test_battle_marks_first_mover_and_enemy_strikes_first() -> void:

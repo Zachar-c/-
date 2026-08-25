@@ -17,5 +17,16 @@
     "bing": 100,
     "ding": 80,
     "wu": 60
-  }
+  },
+  "paths": [
+    {
+      "id": "essence_refinement",
+      "name_zh": "洗髓换骨",
+      "desc": "以十年寿元为引，重塑根骨，资质提升一档。",
+      "cost_lifespan": 10,
+      "cost_stone": 8,
+      "limit_per_run": 1,
+      "node_kinds": ["seclusion", "inheritance"]
+    }
+  ]
 }

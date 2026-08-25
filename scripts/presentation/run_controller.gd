@@ -203,8 +203,9 @@ func _start_battle() -> void:
 	var enemy_kind := str(current_node.get("enemy_kind", "beast_swarm"))
 	var first_mover := "player"
 	var notorious := Resolver.notoriety(state)
-	if notorious > 0:
-		var hostile_flag := bool(current_session.get("flags", {}).get("reputation_hostile", false))
+	var stance := str(current_session.get("stance", "neutral"))
+	var hostile_flag := stance in ["hostile", "extreme_hostile"] or bool(current_session.get("flags", {}).get("reputation_hostile", false))
+	if notorious > 0 or hostile_flag:
 		if hostile_flag:
 			first_mover = "enemy"
 		else:
@@ -221,6 +222,9 @@ func _start_battle() -> void:
 		"first_mover": first_mover,
 		"kill_source": kill_source,
 	}, state, catalog)
+	# N6: weaknesses procured through probe carry into the battle as bonus damage.
+	if state.known_facts.has("procured_weakness"):
+		current_battle["intel_bonus"] = 1
 	if first_mover == "enemy":
 		var pre := BattleResolver.apply_enemy_pre_turn(current_battle, state, catalog)
 		state = pre["state"]

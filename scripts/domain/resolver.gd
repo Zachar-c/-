@@ -8,6 +8,9 @@ const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 
 
+const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
+
+
 const BODY_IMPRINTS := {
 	"iron_bone": {
 		"facts": ["iron_bone_defense", "iron_bone_stealth_drawback"],
@@ -94,6 +97,8 @@ static func apply(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 			return _scavenge(state, command, catalog)
 		"sell_material":
 			return _sell_material(state, command, catalog)
+		"raise_aptitude":
+			return _raise_aptitude(state, command, catalog)
 		"record_neutral_npc_kill":
 			return _record_neutral_npc_kill(state, catalog)
 		"wash_notoriety":
@@ -797,6 +802,9 @@ static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionar
 
 static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
+	var kind := str(offer.get("kind", ""))
+	if kind == "soul_boost":
+		return _shop_soul_boost(state, command, catalog, offer)
 	if str(offer.get("kind", "")) != "purchase":
 		return _rejected(state, "unknown_shop_offer")
 	var blocked := _reject_deck_full(state, catalog, [str(offer["gu_id"])], [])
@@ -826,6 +834,75 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 		[str(offer["gu_id"])]
 	))
 	next.sync_legacy_gu_projections()
+	return _accepted(next)
+
+
+static func _shop_soul_boost(state: RunState, command: Dictionary, catalog: Dictionary, offer: Dictionary) -> Dictionary:
+	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var soul := int(state.cultivator.get("soul", 0))
+	var soul_max := int(state.cultivator.get("soul_max", soul))
+	if soul >= soul_max:
+		return _rejected(state, "soul_at_max")
+	var soul_after := soul + int(offer.get("soul_gain", 1))
+	var next := state.append_event(_event(
+		state,
+		"shop_purchase",
+		{"stone": state.stone, "soul": soul},
+		{"stone": state.stone - cost, "soul": soul_after},
+		"shop_soul_pill",
+		state.current_node_id,
+		["soul_pill"]
+	))
+	next.stone = state.stone - cost
+	next.cultivator["soul"] = soul_after
+	return _accepted(next)
+
+
+static func _raise_aptitude(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var paths: Array = catalog.get("aptitude", {}).get("paths", [])
+	if paths.is_empty():
+		return _rejected(state, "no_aptitude_path")
+	var path: Dictionary = paths[0]
+	var node_id := str(command.get("node_id", state.current_node_id))
+	var node_kind := ""
+	for node in catalog.get("nodes", []):
+		if str(node.get("id", "")) == node_id:
+			node_kind = str(node.get("type", ""))
+			break
+	if not (path.get("node_kinds", []) as Array).has(node_kind):
+		return _rejected(state, "aptitude_path_unavailable")
+	if str(state.node_flags.get("aptitude_raised", "")) == "true":
+		return _rejected(state, "aptitude_raised_once")
+	if str(state.aptitude) == "jia":
+		return _rejected(state, "aptitude_at_peak")
+	var lifespan_cost := int(path.get("cost_lifespan", 0))
+	var stone_cost := int(path.get("cost_stone", 0))
+	var lifespan := int(state.cultivator.get("lifespan", 0))
+	# Deaths must stay predictable: paying lifespan down to zero is rejected.
+	if lifespan - lifespan_cost < 1:
+		return _rejected(state, "lifespan_trade_warning")
+	if state.stone < stone_cost:
+		return _rejected(state, "insufficient_stone")
+	var ladder: Array = APTITUDE_LADDER
+	var index := ladder.find(str(state.aptitude))
+	var raised := str(ladder[mini(ladder.size() - 1, index + 1)])
+	var flags := state.node_flags.duplicate(true)
+	flags["aptitude_raised"] = "true"
+	var next := state.append_event(_event(
+		state,
+		"raise_aptitude",
+		{"aptitude": state.aptitude, "lifespan": lifespan, "stone": state.stone},
+		{"aptitude": raised, "lifespan": lifespan - lifespan_cost, "stone": state.stone - stone_cost},
+		"aptitude_raised",
+		node_id,
+		[raised]
+	))
+	next.aptitude = raised
+	next.cultivator["lifespan"] = lifespan - lifespan_cost
+	next.node_flags = flags
+	next.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(next, catalog)
 	return _accepted(next)
 
 
@@ -1211,6 +1288,8 @@ static func apply_social_action(state: RunState, command: Dictionary, catalog: D
 			if not social["evidence"].has("ledger_evidence") and known_facts.has("ledger_evidence"):
 				social["evidence"].append("ledger_evidence")
 			social["npc_disposition"] = "examining"
+			if not known_facts.has("procured_weakness"):
+				known_facts.append("procured_weakness")
 		"trade":
 			if command.get("offer", "") == "ledger_evidence" and social["evidence"].has("ledger_evidence"):
 				social["stance"] = "helpful"
@@ -1446,13 +1525,19 @@ static func roll_chance(state: RunState, pct: int, salt: String) -> bool:
 
 
 static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
-	if notoriety(state) <= 0:
-		return maxi(0, base)
 	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
-	var pct := int(effects.get("price_pct_per_point", 10))
-	var cap := int(effects.get("price_cap_pct", 60))
-	var uplift := mini(cap, pct * notoriety(state))
-	return ceili(float(base) * (1.0 + float(uplift) / 100.0))
+	var notoriety_lift := 0
+	if notoriety(state) > 0:
+		var pct := int(effects.get("price_pct_per_point", 10))
+		var cap := int(effects.get("price_cap_pct", 60))
+		notoriety_lift = mini(cap, pct * notoriety(state))
+	var revisit_lift := 0
+	var visits := int(state.node_flags.get("shop_visits", 0))
+	if visits > 1:
+		var per := int(effects.get("revisit_price_pct_per_visit", 0))
+		var revisit_cap := int(effects.get("revisit_price_cap_pct", 100))
+		revisit_lift = mini(revisit_cap, (visits - 1) * per)
+	return maxi(0, ceili(float(base) * (1.0 + float(notoriety_lift) / 100.0) * (1.0 + float(revisit_lift) / 100.0)))
 
 
 static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> int:
@@ -1463,6 +1548,13 @@ static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> i
 		var cap := int(effects.get("price_cap_pct", 60))
 		var uplift := mini(cap, pct * notoriety(state))
 		multiplier = 1.0 - float(uplift) / 100.0
+	var visits := int(state.node_flags.get("shop_visits", 0))
+	if visits > 1:
+		var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+		var per := int(effects.get("revisit_price_pct_per_visit", 0))
+		var revisit_cap := int(effects.get("revisit_price_cap_pct", 100))
+		var discount := mini(revisit_cap, (visits - 1) * per)
+		multiplier *= 1.0 - float(discount) / 100.0
 	return maxi(1, int(floor(float(base) * multiplier)))
 
 

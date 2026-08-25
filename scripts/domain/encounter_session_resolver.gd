@@ -21,11 +21,27 @@ static func begin(state: RunState, node: Dictionary, catalog: Dictionary = {}) -
 	var session := start(node)
 	var feed := ResultFeedScript.entry("enter_node", "node_entered", {}, [])
 	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
-	var hostile_pct := int(effects.get("hostile_chance_pct_per_point", 15)) * Resolver.notoriety(state)
-	if hostile_pct > 0 and Resolver.roll_chance(state, hostile_pct, "reputation_hostile"):
+	var notorious := Resolver.notoriety(state)
+	var hostile_pct := int(effects.get("hostile_chance_pct_per_point", 15)) * notorious
+	var extreme_pct := mini(30, int(effects.get("extreme_stance_pct_per_point", 5)) * notorious)
+	var stance := "neutral"
+	if extreme_pct > 0 and Resolver.roll_chance(state, extreme_pct, "reputation_extreme"):
+		stance = "extreme_hostile"
+		session["flags"]["reputation_extreme"] = true
+		feed = ResultFeedScript.entry("enter_node", "reputation_extreme_stance", {}, [])
+	elif hostile_pct > 0 and Resolver.roll_chance(state, hostile_pct, "reputation_hostile"):
+		stance = "hostile"
 		session["flags"]["reputation_hostile"] = true
 		feed = ResultFeedScript.entry("enter_node", "reputation_hostile_stance", {}, [])
-	var next := _record_session_state(state, session, feed, "encounter_started", true)
+	session["stance"] = stance
+	# M5 anti-farming: every market/shop visit is counted, later visits pay more.
+	var shop_visits := int(state.node_flags.get("shop_visits", 0))
+	if str(node.get("type", "")) in ["shop", "market"]:
+		shop_visits += 1
+	var node_flags := state.node_flags.duplicate(true)
+	node_flags["shop_visits"] = shop_visits
+	var next := _record_session_state(state, session, feed, "encounter_started", true, node_flags)
+	next.node_flags = node_flags
 	return {"state": next, "session": session, "feed": feed, "result": {"ok": true}}
 
 
@@ -38,6 +54,13 @@ static func apply(state: RunState, session: Dictionary, command: Dictionary, cat
 		return _leave(state, session, catalog)
 	var resolved := Resolver.apply(state, command, catalog)
 	var next_session := session.duplicate(true)
+	if not bool(resolved["result"].get("ok", false)):
+		var acting := str(command.get("action_id", str(command.get("type", "action"))))
+		var stance := str(next_session.get("stance", "neutral"))
+		if acting in ["deceive", "trade"] and stance == "neutral" and _flip_hostile_roll(state, catalog, next_session):
+			next_session["stance"] = "hostile"
+			next_session["flags"]["reputation_hostile"] = true
+			resolved["result"]["flipped_hostile"] = true
 	var feed := _feed_for(command, state, resolved["state"], resolved["result"])
 	var next := _record_session_state(resolved["state"], next_session, feed, "encounter_action")
 	return {
@@ -46,6 +69,14 @@ static func apply(state: RunState, session: Dictionary, command: Dictionary, cat
 		"feed": feed,
 		"result": _with_resolution(resolved["result"], state, next, node, catalog),
 	}
+
+
+static func _flip_hostile_roll(state: RunState, catalog: Dictionary, session: Dictionary) -> bool:
+	var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
+	var pct := int(effects.get("flip_hostile_chance_pct", 0))
+	if pct <= 0:
+		return false
+	return Resolver.roll_chance(state, pct, "npc_flip_%s" % str(session.get("node_id", "node")))
 
 
 static func _apply_action_card(
@@ -81,6 +112,8 @@ static func _card_rejected(state: RunState, session: Dictionary, node: Dictionar
 
 
 static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) -> Dictionary:
+	if str(session.get("stance", "neutral")) == "extreme_hostile":
+		return _rejected(state, session, "feud_no_escape")
 	var completed := Resolver.apply(state, {
 		"type": "complete_node",
 		"node_id": session["node_id"],
@@ -110,20 +143,24 @@ static func _record_session_state(
 	session: Dictionary,
 	feed: Dictionary,
 	reason: String,
-	replace_results: bool = false
+	replace_results: bool = false,
+	node_flags: Dictionary = {}
 ) -> RunState:
 	var feeds: Array[Dictionary] = []
 	if not replace_results:
 		for existing_feed in state.encounter_results:
 			feeds.append(existing_feed.duplicate(true))
 	feeds.append(feed.duplicate(true))
+	var after := {"encounter_session": session, "encounter_results": feeds}
+	if not node_flags.is_empty():
+		after["node_flags"] = node_flags
 	return state.append_event({
 		"stage": state.stage,
 		"time": state.event_log.size(),
 		"node_id": session["node_id"],
 		"action": "encounter_session",
 		"before": {"encounter_session": state.encounter_session, "encounter_results": state.encounter_results},
-		"after": {"encounter_session": session, "encounter_results": feeds},
+		"after": after,
 		"reason": reason,
 		"source": "encounter_session_resolver",
 		"targets": [],
@@ -133,6 +170,8 @@ static func _record_session_state(
 static func _feed_for(command: Dictionary, before: RunState, after: RunState, result: Dictionary) -> Dictionary:
 	var action := str(command.get("approach", command.get("action_id", command.get("type", "action"))))
 	if not bool(result.get("ok", false)):
+		if bool(result.get("flipped_hostile", false)):
+			return ResultFeedScript.entry(action, "stance_flipped_hostile", {}, [])
 		return ResultFeedScript.entry(action, "action_rejected", {}, [])
 	var changes := {}
 	if after.stone != before.stone:

@@ -138,6 +138,8 @@ func _result_text(entry: Dictionary) -> String:
 	match str(entry.get("text_key", "")):
 		"node_entered": return "你踏入此地，局势尚未收束。"
 		"node_left": return "你主动收手，离开了此处。"
+		"reputation_hostile_stance": return "对方神情不善，敌意已难以遮掩。"
+		"reputation_extreme_stance": return "对方与你已是不共戴天，唯有死战。"
 		"contact_deceive_success": return "你的说辞暂时骗过了散修，得手两枚元石。"
 		"contact_negotiate_result": return "散修松了口风，透露商队愿意给熟人让价。"
 		"contact_fight_started": return "对方没有再听你说话，已经摆出斗蛊架势。"
@@ -147,6 +149,8 @@ func _result_text(entry: Dictionary) -> String:
 		"refinement_result": return "炉火已起，炼制结果记入行迹。"
 		"cultivation_result": return "你调整气息，修行所得已稳住。"
 		"lifespan_milestone_gained": return "寿元见长：里程碑入账十载。"
+		"stance_flipped_hostile": return "交涉失败，对方翻脸成仇。"
+		"aptitude_raised": return "洗髓功成，根骨重塑。"
 		"battle_loot": return "此战缴获：%s。" % str(entry.get("changes", {}).get("loot_display", "些许材料"))
 		"action_rejected": return "此举条件不足，局势没有改变。"
 		_: return "行动已留下结果，你仍可继续处置此地。"

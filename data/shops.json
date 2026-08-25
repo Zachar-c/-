@@ -1,6 +1,13 @@
 {
   "offers": [
     {
+      "id": "soul_pill",
+      "kind": "soul_boost",
+      "card_key": "soul_pill",
+      "stone_cost": 6,
+      "soul_gain": 1
+    },
+    {
       "id": "purchase_stone_shell",
       "kind": "purchase",
       "card_key": "purchase.stone_shell",

@@ -12,6 +12,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 	if state.is_terminal():
 		return cards
 	_append_scavenge_card_if_due(cards, state, node, catalog)
+	_append_aptitude_card_if_available(cards, state, node, catalog)
 	if str(node.get("id", "")) == "caravan_missing_goods":
 		_append_caravan_dispute_cards(cards, state)
 		_append_leave_card(cards, state)
@@ -35,9 +36,28 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 				_append_standard_cards(cards, state, node)
 		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event", "rest"]:
 			_append_leave_card(cards, state)
+	_apply_stance_card_filter(cards, state)
 	_mark_consumed_cards(cards, state)
 	_assert_unique_ids(cards)
 	return cards
+
+
+static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState) -> void:
+	if str(state.encounter_session.get("stance", "neutral")) != "extreme_hostile":
+		return
+	var kept: Array[Dictionary] = []
+	for card in cards:
+		var command: Dictionary = card.get("command", {})
+		if str(command.get("action_id", "")) == "fight" or str(command.get("type", "")) == "leave_node":
+			kept.append(card)
+		else:
+			card["executable"] = false
+			card["block_reason"] = "对方已血仇上脸，非战不可。"
+			card["remedy_hints"] = []
+			kept.append(card)
+	cards.clear()
+	for card in kept:
+		cards.append(card)
 
 
 static func _mark_consumed_cards(cards: Array[Dictionary], state: RunState) -> void:
@@ -426,6 +446,23 @@ static func _append_shop_cards(cards: Array[Dictionary], state: RunState, catalo
 
 static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, catalog: Dictionary, offer: Dictionary) -> void:
 	match str(offer.get("kind", "")):
+		"soul_boost":
+			var pill_cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
+			var soul := int(state.cultivator.get("soul", 0))
+			var soul_max := int(state.cultivator.get("soul_max", soul))
+			var can_boost := soul < soul_max
+			var executable := state.stone >= pill_cost and can_boost
+			cards.append(_card(state, {
+				"id": "shop.%s" % str(offer["card_key"]),
+				"title": "购得魂丹",
+				"summary": "补益魂魄，暂缓心神损耗。",
+				"executable": executable,
+				"block_reason": "魂魄已满，丹力无从安放。" if not can_boost else "元石不足：需要 %d 枚，当前仅有 %d 枚。" % [pill_cost, state.stone] if not executable else "",
+				"cost": {"stone": pill_cost},
+				"expected_gain": ["魂魄 +%d" % int(offer.get("soul_gain", 1))],
+				"remedy_hints": _stone_remedies(pill_cost - state.stone) if not executable and can_boost else [],
+				"command": {"type": "shop_purchase", "offer_id": str(offer["id"])},
+			}))
 		"purchase":
 			var cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
 			var deck_full := DeckCapacityScript.would_exceed(state, catalog, 1)
@@ -677,6 +714,31 @@ static func _append_standard_card(cards: Array[Dictionary], state: RunState, act
 		"unknown_note": unknown_note,
 		"remedy_hints": remedies,
 		"command": _command_for_standard(node, action_id),
+	}))
+
+
+static func _append_aptitude_card_if_available(cards: Array[Dictionary], state: RunState, node: Dictionary, catalog: Dictionary) -> void:
+	var paths: Array = catalog.get("aptitude", {}).get("paths", [])
+	if paths.is_empty() or str(state.node_flags.get("aptitude_raised", "")) == "true":
+		return
+	var node_kind := str(node.get("type", ""))
+	var path: Dictionary = paths[0]
+	if not (path.get("node_kinds", []) as Array).has(node_kind):
+		return
+	var lifespan_cost := int(path.get("cost_lifespan", 0))
+	var stone_cost := int(path.get("cost_stone", 0))
+	var aptitude := str(state.aptitude)
+	var keeps_living := int(state.cultivator.get("lifespan", 0)) - lifespan_cost >= 1
+	var executable := aptitude != "jia" and keeps_living and state.stone >= stone_cost
+	cards.append(_card(state, {
+		"id": "raise_aptitude",
+		"title": "洗髓换骨",
+		"summary": "以十年寿元为引，重塑根骨，资质提升一档。",
+		"executable": executable,
+		"block_reason": "资质已至巅峰。" if aptitude == "jia" else "寿元或元石不足，无法承受洗髓代价。" if not executable else "",
+		"cost": {"stone": stone_cost, "lifespan": lifespan_cost},
+		"expected_gain": ["资质提升一档（真元上限随之变化）"],
+		"command": {"type": "raise_aptitude", "node_id": str(state.current_node_id)},
 	}))
 
 
