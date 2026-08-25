@@ -233,4 +233,35 @@ func _initialize() -> void:
 		quit(1)
 	print("OK MapScreen buttons=%d" % mc)
 
+	# 8) 战斗屏断言（敌方意图数值+效果、生命护盾分条、手牌 tooltip、操作按钮）
+	# 命名 BattleScreen 以避开旧 scripts/presentation/battle_view.gd 的全局类 BattleView（被单测引用）。
+	var battle_cmds := {
+		"play_card": Callable(self, "_noop"),
+		"end_turn": Callable(self, "_noop"),
+		"ultimate": Callable(self, "_noop"),
+		"refine": Callable(self, "_noop"),
+		"flee": Callable(self, "_noop"),
+	}
+	var battle_state := {
+		"enemies": [
+			{"id": "e1", "name": "铁皮山猪", "hp": 20, "max_hp": 30, "shield": 4, "intent": {"type": "attack", "value": 12, "detail": "造成物理伤害"}},
+			{"id": "e2", "name": "雷冠头狼", "hp": 15, "max_hp": 15, "intent": {"type": "charge", "value": 0, "detail": "蓄力"}},
+		],
+		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4, "statuses": [{"name": "灼烧", "stacks": 2}]},
+		"hand": [
+			{"id": "c1", "name": "火蛊", "cost": 1, "effect": "灼烧", "quality": "普通", "curse_warning": false},
+			{"id": "c2", "name": "血祭蛊", "cost": 2, "cost_ex": "消耗3寿元", "effect": "吸血", "quality": "稀有", "curse_warning": true},
+		],
+		"can_ultimate": true,
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
+	}
+	var bc := _mount("res://ui/screens/battle_screen.gd", "render", {"state": battle_state, "commands": battle_cmds})
+	if bc < 1:
+		push_error("战斗按钮数 %d < 1" % bc)
+		quit(1)
+	print("OK BattleScreen buttons=%d" % bc)
+
 	quit()

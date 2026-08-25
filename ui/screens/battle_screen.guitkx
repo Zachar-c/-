@@ -1,0 +1,167 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
+import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
+import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+
+# BattleScreen —— 战斗屏（纯表现层，只读 state，仅经 commands 触发）
+# 契约：props.state 只读快照（enemies / player / hand / can_ultimate / resources / contracts / anomalies / death_lines）
+#       props.commands 动作名 -> Callable（play_card(card_id, target_id) / end_turn / ultimate / refine / flee）
+# 屏内零业务读写；仅在 on_press 回调中经 commands 触发。
+# §16.5 落实：敌人意图含数值+效果文字；生命与护盾分条；卡牌 tooltip 固定格式（品质/效果/联动/代价/诅咒警示）。
+
+export BattleScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
+
+  var fire = func(key: String):
+    if commands.has(key):
+      commands[key].call()
+
+  # ---- 敌人区 ----
+  var enemies = state.get("enemies", [])
+  var enemy_cards = []
+  for e in enemies:
+    var ename = str(e.get("name", ""))
+    var ehp = int(e.get("hp", 0))
+    var emax = maxi(int(e.get("max_hp", 1)), 1)
+    var eshield = int(e.get("shield", 0))
+    var intent = e.get("intent", {})
+    var itype = str(intent.get("type", ""))
+    var ival = int(intent.get("value", 0))
+    var idetail = str(intent.get("detail", ""))
+    var itext = "意图："
+    if itype == "attack":
+      itext = "意图：攻击 %d（%s）" % [ival, idetail]
+    elif itype == "charge":
+      itext = "意图：蓄力"
+    elif itype == "defend" or itype == "guard":
+      itext = "意图：防御 %d（%s）" % [ival, idetail]
+    else:
+      itext = "意图：%s %d" % [itype, ival]
+    var intent_color = GuStyle.DANGER if itype == "attack" else GuStyle.GOLD
+    var card = (
+      <GuPanel title={ ename }>
+        <GuStatBar label="气力" value={ ehp } max_value={ emax } color={ GuStyle.DANGER } shield={ eshield } />
+        <Label text={ itext } style={ {"font_color": intent_color, "font_size": 16} } />
+      </GuPanel>
+    )
+    enemy_cards.append(card)
+
+  # ---- 玩家区 ----
+  var player = state.get("player", {})
+  var php = int(player.get("hp", 0))
+  var pmax = maxi(int(player.get("max_hp", 1)), 1)
+  var pshield = int(player.get("shield", 0))
+  var pprim = int(player.get("primordial", 0))
+  var psoul = int(player.get("soul", 0))
+  var statuses = player.get("statuses", [])
+  var status_labels = []
+  for s in statuses:
+    var sname = str(s.get("name", ""))
+    var sstacks = int(s.get("stacks", 0))
+    status_labels.append(
+      <Label text={ "%s %d 层" % [sname, sstacks] } style={ {"font_color": GuStyle.DANGER, "font_size": 14} } />
+    )
+
+  # ---- 手牌区 ----
+  var hand = state.get("hand", [])
+  var hand_rows = []
+  for c in hand:
+    var cid = str(c.get("id", ""))
+    var cname = str(c.get("name", ""))
+    var ccost = int(c.get("cost", 0))
+    var ceff = str(c.get("effect", ""))
+    var cqual = str(c.get("quality", ""))
+    var ccurse = bool(c.get("curse_warning", false))
+    var cost_ex = str(c.get("cost_ex", ""))
+    var cost_str = cost_ex if cost_ex != "" else ("消耗 %d" % ccost)
+    var on_play = func():
+      var tgt = str(state.get("default_target_id", ""))
+      if tgt == "" and enemies.size() > 0:
+        tgt = str(enemies[0].get("id", ""))
+      if commands.has("play_card"):
+        commands["play_card"].call(cid, tgt)
+    var tip = (
+      <GuTooltipView
+        title={ cname }
+        quality={ cqual }
+        effect={ ceff }
+        synergy={ "" }
+        cost={ cost_str }
+        curse_warning={ ccurse }
+      />
+    )
+    var row = (
+      <GuCard title={ cname } danger={ ccurse }>
+        <Label text={ cost_str } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+        <Label text={ "效果：" + ceff } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        { tip }
+        <GuButton label="出牌" danger={ ccurse } on_press={ on_play } />
+      </GuCard>
+    )
+    hand_rows.append(row)
+
+  # ---- 操作区 ----
+  var ops = []
+  ops.append(<GuButton label="结束回合" on_press={ func(): fire.call("end_turn") } />)
+  if bool(state.get("can_ultimate", false)):
+    ops.append(<GuButton label="杀招" danger={ true } on_press={ func(): fire.call("ultimate") } />)
+  if commands.has("refine"):
+    ops.append(<GuButton label="炼蛊" on_press={ func(): fire.call("refine") } />)
+  if commands.has("flee"):
+    ops.append(<GuButton label="撤退" on_press={ func(): fire.call("flee") } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 12} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+
+      <GuPanel title="敌方">
+        <HBoxContainer style={ {"separation": 16} }>
+          @for (ec in enemy_cards) {
+            return ec
+          }
+          @if (enemy_cards.is_empty()) {
+            return (<Label text="（无敌人）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+          }
+        </HBoxContainer>
+      </GuPanel>
+
+      <GuPanel title="我方">
+        <VBoxContainer style={ {"separation": 6} }>
+          <GuStatBar label="生命" value={ php } max_value={ pmax } color={ GuStyle.JADE } shield={ pshield } />
+          <GuStatBar label="真元" value={ pprim } max_value={ maxi(pprim, 1) } color={ GuStyle.GOLD } />
+          <GuStatBar label="魂魄" value={ psoul } max_value={ maxi(psoul, 1) } color={ GuStyle.JADE } />
+          @for (sl in status_labels) {
+            return sl
+          }
+        </VBoxContainer>
+      </GuPanel>
+
+      <GuPanel title="手牌">
+        <GuScrollBox>
+          @for (hr in hand_rows) {
+            return hr
+          }
+          @if (hand_rows.is_empty()) {
+            return (<Label text="（无手牌）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+          }
+        </GuScrollBox>
+      </GuPanel>
+
+      <HBoxContainer style={ {"separation": 12} }>
+        @for (o in ops) {
+          return o
+        }
+      </HBoxContainer>
+    </VBoxContainer>
+  )
+}
