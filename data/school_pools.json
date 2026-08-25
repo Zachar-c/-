@@ -1,0 +1,7 @@
+{
+  "blood": ["blood_moss_gu", "blood_droplet_gu", "blood_bat_gu", "blood_wing_gu", "gen_blood_attack_001_gu"],
+  "qi": ["small_light_gu", "trail_eye_gu", "venom_thread_gu", "shadow_veil_gu", "qi_wall_gu"],
+  "force": ["thorn_whip_gu", "stone_shell_gu", "force_gu", "bear_strength_gu", "mist_step_gu"],
+  "soul": ["gen_soul_defense_101_gu", "gen_soul_movement_102_gu", "gen_soul_healing_103_gu", "gen_soul_recon_104_gu", "gen_soul_attack_106_gu"],
+  "refine": ["gen_refine_attack_141_gu", "gen_refine_defense_143_gu", "gen_refine_movement_144_gu", "gen_refine_healing_145_gu", "gen_refine_recon_146_gu"]
+}

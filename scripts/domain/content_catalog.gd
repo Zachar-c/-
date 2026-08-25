@@ -257,6 +257,27 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for starter in starters:
 			if not gu_by_id.has(str(starter)):
 				errors.append("school %s starter references missing gu %s" % [school_id, starter])
+	var school_pools: Dictionary = catalog.get("school_pools", {})
+	var pool_gu_seen := {}
+	for school_id in SCHOOL_IDS:
+		if not school_pools.has(school_id):
+			errors.append("school %s needs exclusive pool" % school_id)
+			continue
+		var pool: Array = school_pools[school_id]
+		if pool.is_empty():
+			errors.append("school %s exclusive pool is empty" % school_id)
+			continue
+		for pool_gu_value in pool:
+			var pool_gu_id := str(pool_gu_value)
+			if not gu_by_id.has(pool_gu_id):
+				errors.append("school %s pool references missing gu %s" % [school_id, pool_gu_id])
+				continue
+			if pool_gu_seen.has(pool_gu_id):
+				errors.append("gu %s appears in multiple school pools" % pool_gu_id)
+				continue
+			pool_gu_seen[pool_gu_id] = school_id
+			if str(gu_by_id[pool_gu_id].get("school", "")) != school_id:
+				errors.append("school %s pool gu %s belongs to school %s" % [school_id, pool_gu_id, gu_by_id[pool_gu_id].get("school", "")])
 	var gu_tags: Array[String] = []
 	for gu in catalog.get("gu", []):
 		for tag_value in gu.get("tags", []):
