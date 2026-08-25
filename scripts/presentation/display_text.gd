@@ -223,16 +223,39 @@ const JOURNAL_HEADINGS := {
 }
 
 
+static var _names: Dictionary = {}
+static var _names_loaded := false
+
+
+static func _load_names() -> Dictionary:
+	if _names_loaded:
+		return _names
+	_names_loaded = true
+	if not FileAccess.file_exists("res://data/names.json"):
+		return {}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/names.json"))
+	if parsed is Dictionary:
+		_names = parsed
+	return _names
+
+
+static func _lookup(table_key: String, id: String, fallback: Variant) -> String:
+	var table: Variant = _load_names().get(table_key, {})
+	if table is Dictionary and (table as Dictionary).has(id):
+		return str(table[id])
+	return str(fallback)
+
+
 static func node(id: String) -> String:
-	return str(NODES.get(id, "未知地点"))
+	return _lookup("nodes", id, NODES.get(id, "未知地点"))
 
 
 static func type(id: String) -> String:
-	return str(TYPES.get(id, "未知类型"))
+	return _lookup("types", id, TYPES.get(id, "未知类型"))
 
 
 static func action(id: String) -> String:
-	return str(ACTIONS.get(id, "未知行动"))
+	return _lookup("actions", id, ACTIONS.get(id, "未知行动"))
 
 
 static var _extra_gu_names := {}
@@ -240,6 +263,11 @@ static var _extra_gu_names_loaded := false
 
 
 static func gu(id: String) -> String:
+	if not _names_loaded:
+		_load_names()
+	var gu_names: Variant = _names.get("gu", {})
+	if gu_names is Dictionary and (gu_names as Dictionary).has(id):
+		return str(gu_names[id])
 	if GU.has(id):
 		return str(GU[id])
 	if not _extra_gu_names_loaded:
@@ -253,19 +281,19 @@ static func gu(id: String) -> String:
 
 
 static func inheritance(id: String) -> String:
-	return str(INHERITANCES.get(id, "未知杀招"))
+	return _lookup("inheritances", id, INHERITANCES.get(id, "未知杀招"))
 
 
 static func enemy(id: String) -> String:
-	return str(ENEMIES.get(id, "未知敌手"))
+	return _lookup("enemies", id, ENEMIES.get(id, "未知敌手"))
 
 
 static func material(id: String) -> String:
-	return str(MATERIALS.get(id, "养料"))
+	return _lookup("materials", id, MATERIALS.get(id, "养料"))
 
 
 static func fact(id: String) -> String:
-	return str(FACTS.get(id, "未知情报"))
+	return _lookup("facts", id, FACTS.get(id, "未知情报"))
 
 
 static func facts(ids: Array[String]) -> String:
@@ -276,11 +304,11 @@ static func facts(ids: Array[String]) -> String:
 
 
 static func outcome(id: String) -> String:
-	return str(OUTCOMES.get(id, "未知结果"))
+	return _lookup("outcomes", id, OUTCOMES.get(id, "未知结果"))
 
 
 static func battle_result(id: String) -> String:
-	return str(BATTLE_RESULTS.get(id, "交锋结果未明。"))
+	return _lookup("battle_results", id, BATTLE_RESULTS.get(id, "交锋结果未明。"))
 
 
 static func result(payload: Dictionary) -> String:
@@ -291,18 +319,18 @@ static func result(payload: Dictionary) -> String:
 	if payload.has("battle_result"):
 		return battle_result(str(payload["battle_result"]))
 	var action_id := str(payload.get("action_id", ""))
-	if ACTION_RESULTS.has(action_id):
-		return str(ACTION_RESULTS[action_id])
+	if ACTION_RESULTS.has(action_id) or (_load_names().get("action_results", {}) is Dictionary and (_load_names()["action_results"] as Dictionary).has(action_id)):
+		return _lookup("action_results", action_id, ACTION_RESULTS.get(action_id, "行动已经落实。"))
 	var dialogue_text := _dialogue_text(payload)
 	if not dialogue_text.is_empty():
 		return dialogue_text
 	if payload.has("npc_reaction"):
-		return str(REACTIONS.get(str(payload["npc_reaction"]), "对方的态度难以判断。"))
+		return _lookup("reactions", str(payload["npc_reaction"]), "对方的态度难以判断。")
 	return "行动已经落实。"
 
 
 static func journal_heading(heading: String) -> String:
-	return str(JOURNAL_HEADINGS.get(heading, "修行记录"))
+	return _lookup("journal_headings", heading, JOURNAL_HEADINGS.get(heading, "修行记录"))
 
 
 static func journal_body(entry: Dictionary) -> String:
