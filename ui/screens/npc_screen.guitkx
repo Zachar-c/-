@@ -1,0 +1,154 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+
+# NpcScreen —— NPC 交涉屏（规格 v3 §7 C8 / R6.1）
+# 三立场徽章（中立/敌视/极度仇恨，高恶名必触发其一）；交涉失败种子化翻转敌视提示；
+# 恶名高亮（威慑/关闭路径）；极度仇恨禁逃；交易项 + 以物易物 + 交涉选项。
+# state 只读；talk / buy / barter / flee / leave 经 commands。
+
+export NpcScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
+  var npc_name = str(state.get("npc_name", "无名散修"))
+  var stance = str(state.get("stance", "中立"))
+  var stance_note = str(state.get("stance_note", ""))
+  var notoriety = int(state.get("notoriety", 0))
+  var notoriety_note = str(state.get("notoriety_note", ""))
+  var can_flee = bool(state.get("can_flee", true))
+
+  var stance_color = GuStyle.JADE
+  if stance == "敌视":
+    stance_color = GuStyle.ANOMALY_AMBER
+  elif stance == "极度仇恨":
+    stance_color = GuStyle.DANGER
+
+  var fire = func(key: String, arg = null):
+    if commands.has(key):
+      if arg != null:
+        commands[key].call(arg)
+      else:
+        commands[key].call()
+
+  # 交易项
+  var offers = state.get("offers", [])
+  var offer_rows = []
+  for o in offers:
+    var oname = str(o.get("name", ""))
+    var oprice = str(o.get("price", ""))
+    var odesc = str(o.get("desc", ""))
+    var oid = str(o.get("id", ""))
+    offer_rows.append((
+      <GuPanel expand_h={ true }>
+        <HBoxContainer style={ {"separation": 8} }>
+          <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": 3} }>
+            <Label text={ oname } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
+            <Label text={ odesc } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+            <Label text={ "价格：" + oprice } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+          </VBoxContainer>
+          <GuButton label="交易" on_press={ func(): fire.call("buy", oid) } />
+        </HBoxContainer>
+      </GuPanel>
+    ))
+  var offer_empty = []
+  if offer_rows.is_empty():
+    offer_empty.append(<Label text="（无交易项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  # 以物易物
+  var barter = state.get("barter", [])
+  var barter_rows = []
+  for b in barter:
+    var bname = str(b.get("name", ""))
+    var bgive = str(b.get("give", ""))
+    var btake = str(b.get("take", ""))
+    var bnote = str(b.get("note", ""))
+    var bid = str(b.get("id", ""))
+    barter_rows.append((
+      <GuPanel expand_h={ true }>
+        <HBoxContainer style={ {"separation": 8} }>
+          <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": 3} }>
+            <Label text={ "%s 换 %s" % [bgive, btake] } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
+            <Label text={ bnote } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+          </VBoxContainer>
+          <GuButton label="交换" on_press={ func(): fire.call("barter", bid) } />
+        </HBoxContainer>
+      </GuPanel>
+    ))
+  var barter_empty = []
+  if barter_rows.is_empty():
+    barter_empty.append(<Label text="（无易物项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  # 交涉选项
+  var talk_options = state.get("talk_options", [])
+  var talk_rows = []
+  for t in talk_options:
+    var tlabel = str(t.get("label", ""))
+    var tdetail = str(t.get("detail", ""))
+    var tdanger = bool(t.get("danger", false))
+    var tid = str(t.get("id", ""))
+    talk_rows.append((
+      <GuCard title={ tlabel } danger={ tdanger } expand_h={ true }>
+        <Label text={ tdetail } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
+        <GuButton label="交涉" danger={ tdanger } on_press={ func(): fire.call("talk", tid) } />
+      </GuCard>
+    ))
+  var talk_empty = []
+  if talk_rows.is_empty():
+    talk_empty.append(<Label text="（无交涉选项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 10} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <HBoxContainer style={ {"separation": 12} }>
+        <Label text={ npc_name } style={ {"font_color": GuStyle.BONE, "font_size": 22} } />
+        <Label text={ "立场·" + stance } style={ {"font_color": stance_color, "font_size": 16} } />
+        <Label text={ stance_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        <Label text={ "恶名 " + str(notoriety) } style={ {"font_color": GuStyle.DANGER, "font_size": 16} } />
+        <Label text={ notoriety_note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+      </HBoxContainer>
+
+      <HBoxContainer style={ {"separation": 14} }>
+        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
+          <GuPanel title="交易">
+            <GuScrollBox height={ 250 }>
+              <VBoxContainer style={ {"separation": 6} }>
+                { offer_rows }
+                { offer_empty }
+              </VBoxContainer>
+            </GuScrollBox>
+          </GuPanel>
+          <GuPanel title="以物易物">
+            <GuScrollBox height={ 220 }>
+              <VBoxContainer style={ {"separation": 6} }>
+                { barter_rows }
+                { barter_empty }
+              </VBoxContainer>
+            </GuScrollBox>
+          </GuPanel>
+        </VBoxContainer>
+        <VBoxContainer style={ {"separation": 8, "min_width": 380} }>
+          <GuPanel title="交涉">
+            <GuScrollBox height={ 420 }>
+              <VBoxContainer style={ {"separation": 8} }>
+                { talk_rows }
+                { talk_empty }
+              </VBoxContainer>
+            </GuScrollBox>
+          </GuPanel>
+          @if (can_flee) {
+            return ( <GuButton label="撤退" on_press={ func(): fire.call("flee") } /> )
+          }
+          <GuButton label="离开" on_press={ func(): fire.call("leave") } />
+        </VBoxContainer>
+      </HBoxContainer>
+    </VBoxContainer>
+  )
+}

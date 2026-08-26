@@ -44,4 +44,43 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"to_hall": func(): controller._show_title(),
 				"to_codex": func(): pass,
 			}
+		"Shop":
+			return {
+				"buy": func(id = ""): controller.submit_command({"type": "shop_buy", "offer_id": str(id)}),
+				"block": func(id = ""): controller.submit_command({"type": "shop_block_pool", "offer_id": str(id)}),
+				"use_service": func(id = ""): controller.submit_command({"type": "shop_service", "service_id": str(id)}),
+				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
+		"Rest":
+			return {
+				"choose": func(id = ""): controller.submit_command({"type": "rest_choose", "choice_id": str(id)}),
+				"confirm_wash": func(): controller.submit_command({"type": "rest_wash_confirm"}),
+				"cancel_confirm": func(): controller.submit_command({"type": "rest_wash_cancel"}),
+				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
+		"Refine":
+			return {
+				"set_channel": func(id = ""): controller.submit_command({"type": "refine_channel", "channel_id": str(id)}),
+				"refine": func(id = ""): controller.submit_command({"type": "refine", "recipe_id": str(id)}),
+				"toggle_input": func(id = ""): controller.submit_command({"type": "refine_toggle_input", "gu_id": str(id)}),
+				"dismantle": func(id = ""): controller.submit_command({"type": "refine_dismantle", "gu_id": str(id)}),
+				"confirm": func(): controller.submit_command({"type": "refine_confirm"}),
+				"cancel_confirm": func(): controller.submit_command({"type": "refine_cancel"}),
+				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
+		"Reward":
+			return {
+				"take": func(i): controller.submit_command({"type": "reward_take", "index": int(i)}),
+				"replace_and_take": func(i): controller.submit_command({"type": "reward_replace", "index": int(i)}),
+				"skip": func(): controller.submit_command({"type": "reward_skip"}),
+				"close": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
+		"Npc":
+			return {
+				"talk": func(id = ""): controller.submit_command({"type": "npc_talk", "option_id": str(id)}),
+				"buy": func(id = ""): controller.submit_command({"type": "npc_buy", "offer_id": str(id)}),
+				"barter": func(id = ""): controller.submit_command({"type": "npc_barter", "barter_id": str(id)}),
+				"flee": func(): controller.submit_command({"type": "npc_flee"}),
+				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
 	return {}

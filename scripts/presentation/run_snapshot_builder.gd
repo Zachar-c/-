@@ -17,7 +17,206 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Map": return map(controller)
 		"Encounter": return encounter(controller)
 		"Battle": return battle(controller)
+		"Shop": return shop(controller)
+		"Rest": return rest(controller)
+		"Refine": return refine(controller)
+		"Reward": return reward(controller)
+		"Npc": return npc(controller)
 	return {}
+
+
+## 局内节点屏公共骨架（顶栏资源/契约/异变/死线）。
+static func _gui_state(controller) -> Dictionary:
+	var state = controller.state
+	return {
+		"resources": _resources(state),
+		"contracts": _contracts(state),
+		"anomalies": [],
+		"death_lines": _death_lines(state),
+	}
+
+
+## C3 黑市 / 商店屏快照（数据表 shops.json + 黑市服务）。
+static func shop(controller) -> Dictionary:
+	var out := _gui_state(controller)
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var raw: Array = []
+	var shops_data = catalog.get("shops", {})
+	if shops_data is Dictionary:
+		raw = shops_data.get("offers", [])
+	var offers: Array[Dictionary] = []
+	for o in raw:
+		var gid := str(o.get("gu_id", ""))
+		var name := DisplayText.gu(gid) if gid != "" else str(o.get("card_key", "货物"))
+		var price := str(o.get("stone_cost", 0)) + " 元石"
+		var kind := str(o.get("kind", ""))
+		if o.has("lifespan_cost"):
+			price = str(o.get("lifespan_cost", 0)) + " 寿元"
+		offers.append({
+			"id": str(o.get("id", "")),
+			"name": name,
+			"kind": kind,
+			"price": price,
+			"desc": str(o.get("clue", o.get("card_key", ""))),
+			"quality": "史诗" if kind == "soul_boost" else ("稀有" if kind in ["purchase", "barter"] else "普通"),
+			"curse_warning": kind == "lifespan_deal",
+		})
+	out["title"] = "黑市 · 寨市"
+	out["npc_name"] = "地脉游商"
+	out["npc_stance"] = "中立"
+	out["inflation_note"] = "层数提升物价微涨 · 二次访问 +25%/次 封顶 +100%"
+	out["offers"] = offers
+	out["services"] = [
+		{"id": "refresh", "name": "刷新货架", "cost": "120 元石", "remaining": 2, "note": "本局剩余 2 次 · 通胀叠加"},
+		{"id": "remove_gu", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
+		{"id": "pool_block", "name": "池屏蔽", "cost": "200 元石", "remaining": 1, "note": "本局剩余 1 次 · 移除≠池排除"},
+		{"id": "wash", "name": "洗炼", "cost": "80 元石", "remaining": 3, "note": "重骰一条被动"},
+		{"id": "calm", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
+		{"id": "soul_pill", "name": "魂丹", "cost": "6 元石", "remaining": 1, "note": "黑市高回报商品 · 魂魄 +1"},
+	]
+	out["emergency_note"] = "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
+	return out
+
+
+## C5 休整 / 闭关屏快照（aptitude.json.paths 洗髓换骨）。
+static func rest(controller) -> Dictionary:
+	var out := _gui_state(controller)
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var apt: Dictionary = catalog.get("aptitude", {})
+	var paths: Array = apt.get("paths", []) if apt is Dictionary else []
+	var state = controller.state
+	var used_wash := false
+	if state != null:
+		used_wash = bool(state.cultivator.get("wash_used", false)) if state.cultivator is Dictionary else false
+	out["title"] = "闭关 · 休整"
+	out["note"] = "强制二选一，不可全拿"
+	out["choices"] = [
+		{"id": "heal", "label": "调息回血", "detail": "回复 30 气血", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
+		{"id": "nurture", "label": "温养一蛊", "detail": "强化一张卡 / 移除负面", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
+	]
+	var wash_id := ""
+	for p in paths:
+		wash_id = str(p.get("id", "wash"))
+		var cost := str(p.get("cost_lifespan", 10)) + " 寿元 + " + str(p.get("cost_stone", 8)) + " 元石"
+		out["choices"].append({
+			"id": wash_id,
+			"label": "洗髓换骨",
+			"detail": "真元上限 +1（实时刷新）",
+			"cost": cost,
+			"disabled": used_wash,
+			"reason": "一局一次" if used_wash else "一局一次 · 执行前预检寿元",
+			"curse_warning": false,
+		})
+	out["is_ascension"] = false
+	out["growth"] = [
+		{"id": "attr", "label": "基础属性", "detail": "修为成长", "cost": "+1 属性点"},
+		{"id": "slot", "label": "蛊槽扩容", "detail": "蛊囊上限 +1", "cost": "+1 槽位"},
+		{"id": "gu", "label": "随机蛊", "detail": "随机获得一蛊（附躁动）", "cost": "+躁动"},
+		{"id": "material", "label": "元石材料", "detail": "元石 + 材料", "cost": "+元石"},
+	]
+	return out
+
+
+## C6 炼蛊 / 合成屏快照（refinement_recipes.json + 盲盒）。
+static func refine(controller) -> Dictionary:
+	var out := _gui_state(controller)
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var recipes: Array = catalog.get("refinement_recipes", [])
+	var rec_rows: Array[Dictionary] = []
+	for r in recipes:
+		var inputs: Array = r.get("input_gu_ids", [])
+		var in_names: Array[String] = []
+		for iid in inputs:
+			in_names.append(DisplayText.gu(str(iid)))
+		var output := DisplayText.gu(str(r.get("output_gu_id", "")))
+		var fail := "成功配方"
+		if r.has("success_roll_max"):
+			fail = "失败率 %d%%" % (100 - int(r.get("success_roll_max", 100)))
+		rec_rows.append({
+			"id": str(r.get("id", "")),
+			"name": " + ".join(in_names) + " → " + output,
+			"output": output,
+			"quality": "稀有",
+			"fail_chance": fail,
+			"backlash": "躁动 +1" if str(r.get("kind", "")) == "combine" else "无躁动",
+			"curse": "",
+			"unlocked": not bool(r.get("locked", false)),
+		})
+	rec_rows.append({"id": "blind", "name": "盲盒（随机）", "output": "未知蛊", "quality": "随机", "fail_chance": "失败率 50% · 毁材", "backlash": "躁动 +2", "curse": "诅咒继承⚠", "unlocked": true})
+	out["title"] = "炼蛊台"
+	out["channels"] = [
+		{"id": "fixed", "label": "定向配方"},
+		{"id": "combine", "label": "组合标签"},
+		{"id": "blind", "label": "盲盒随机"},
+	]
+	out["active_channel"] = "fixed"
+	out["inputs"] = ["月光蛊", "小光蛊"]
+	out["slot_ok"] = true
+	out["recipes"] = rec_rows
+	out["dismantle_slots"] = ["石甲蛊"]
+	out["streak_note"] = "连续失败第 2 次，下次成功率 +5%（Run 内清零，永不到 100%）"
+	return out
+
+
+## C2 奖励 / 战利品屏快照（三选一 + 保底/回退小字）。
+static func reward(controller) -> Dictionary:
+	var out := _gui_state(controller)
+	out["title"] = "战利品"
+	out["rewards"] = [
+		{"id": "r1", "name": "月光蛊", "kind": "蛊 · 战斗奖励", "quality": "稀有", "effect": "造成月光伤害并附加「月息」层", "cost": "获取即入蛊囊", "curse_warning": false},
+		{"id": "r2", "name": "石甲蛊", "kind": "蛊 · 精英奖励", "quality": "史诗", "effect": "护盾 +8", "cost": "代价：躁动 +1", "curse_warning": false},
+		{"id": "r3", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
+	]
+	out["full_satchel"] = false
+	out["pool_fallback_note"] = "（空池回退：已切至基础池）"
+	out["pity_note"] = "（保底：连续普通后，下次掉落品质有较大概率提升）"
+	return out
+
+
+## C8 NPC 交涉屏快照（npcs.json + 立场/恶名）。
+static func npc(controller) -> Dictionary:
+	var out := _gui_state(controller)
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var npcs: Array = catalog.get("npcs", [])
+	var npc_id := str(controller.current_node.get("npc_id", ""))
+	if npc_id == "" and npcs.size() > 0:
+		npc_id = str(npcs[0].get("id", ""))
+	var nd: Dictionary = {}
+	for n in npcs:
+		if str(n.get("id", "")) == npc_id:
+			nd = n
+	var npc_name := "无名散修"
+	if npc_id == "caravan_steward":
+		npc_name = "商队执事"
+	elif npc_id == "earth_vein_scout":
+		npc_name = "地脉斥候"
+	elif npc_id == "wandering_healer":
+		npc_name = "游方医修"
+	elif npc_id == "ridge_extortionist":
+		npc_name = "山岭索贿者"
+	var state = controller.state
+	var notoriety := 0
+	if state != null:
+		notoriety = int(state.get("notoriety", 0))
+	out["npc_name"] = npc_name
+	out["stance"] = "中立"
+	out["stance_note"] = "交涉失败将种子化翻转敌视"
+	out["notoriety"] = notoriety
+	out["notoriety_note"] = "恶名高亮：威慑部分路线 / 关闭部分交易"
+	out["offers"] = [
+		{"id": "o1", "name": "回购货物", "price": "5 元石", "desc": "出手一批闲置物资"},
+		{"id": "o2", "name": "情报买卖", "price": "3 元石", "desc": "换取下一片区域线索"},
+	]
+	out["barter"] = [
+		{"id": "b1", "name": "迹眼蛊 换 雾步蛊", "give": "迹眼蛊", "take": "雾步蛊", "note": "以物易物 · 需空位校验"},
+	]
+	out["talk_options"] = [
+		{"id": "t1", "label": "友善攀谈", "detail": "了解情报与需求", "danger": false},
+		{"id": "t2", "label": "以物易物试探", "detail": "低风险试探底线", "danger": false},
+		{"id": "t3", "label": "威胁勒索", "detail": "恶名威慑 · 可能翻脸", "danger": true},
+	]
+	out["can_flee"] = true
+	return out
 
 
 static func hall(controller) -> Dictionary:

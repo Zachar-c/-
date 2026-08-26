@@ -22,6 +22,11 @@ const SCREEN_PATHS := {
 	"Encounter": "res://ui/screens/encounter_screen.gd",
 	"Battle": "res://ui/screens/battle_screen.gd",
 	"Ending": "res://ui/screens/ending_screen.gd",
+	"Shop": "res://ui/screens/shop_screen.gd",
+	"Rest": "res://ui/screens/rest_screen.gd",
+	"Refine": "res://ui/screens/refine_screen.gd",
+	"Reward": "res://ui/screens/reward_screen.gd",
+	"Npc": "res://ui/screens/npc_screen.gd",
 }
 
 
@@ -360,6 +365,31 @@ func _show_map() -> void:
 
 func _show_encounter() -> void:
 	_view_name = "Encounter"
+	_render()
+
+
+func _show_shop() -> void:
+	_view_name = "Shop"
+	_render()
+
+
+func _show_rest() -> void:
+	_view_name = "Rest"
+	_render()
+
+
+func _show_refine() -> void:
+	_view_name = "Refine"
+	_render()
+
+
+func _show_reward() -> void:
+	_view_name = "Reward"
+	_render()
+
+
+func _show_npc() -> void:
+	_view_name = "Npc"
 	_render()
 
 

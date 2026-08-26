@@ -79,9 +79,10 @@ func _snap(component: String, props: Dictionary) -> void:
 	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	svp.add_child(inner)
 	RuiRoot.create(inner, VLib.fc(fn, props))
-	# 等 6 帧让 RUI 完成挂载与布局
+	# 等逻辑帧确保 RUI 完成挂载与布局，再强制同步渲染一帧（不依赖窗口可见性，不会挂死）
 	for i in range(6):
 		await process_frame
+	RenderingServer.force_draw()
 	await process_frame
 	var img := svp.get_texture().get_image()
 	_cur += 1
@@ -200,6 +201,124 @@ func _initialize() -> void:
 		"aftermath": "可于大厅图鉴查阅本次所得",
 	}
 	await _snap("ending_screen", {"state": ending_state, "commands": ending_cmds})
+
+	# ---- 黑市（C3）----
+	var gui_state := {
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+	}
+	var shop_cmds := {"buy": func(_id): pass, "block": func(_id): pass, "use_service": func(_id): pass, "leave": func(): pass}
+	var shop_state := gui_state.duplicate()
+	shop_state.merge({
+		"title": "黑市 · 寨市",
+		"npc_name": "地脉游商",
+		"npc_stance": "中立",
+		"inflation_note": "层数提升物价微涨 · 二次访问 +25%/次",
+		"offers": [
+			{"id": "o1", "name": "石甲蛊", "kind": "purchase", "price": "6 元石", "desc": "护盾 +8 · 防御型蛊", "quality": "稀有", "curse_warning": false},
+			{"id": "o2", "name": "魂丹", "kind": "soul_boost", "price": "6 元石", "desc": "魂魄 +1 · 黑市高回报", "quality": "史诗", "curse_warning": false},
+			{"id": "o3", "name": "寿元·脉冲鼓", "kind": "lifespan_deal", "price": "1 寿元", "desc": "代价交易 · 预检寿元", "quality": "稀有", "curse_warning": true},
+			{"id": "o4", "name": "以物易物·迹眼", "kind": "barter", "price": "迹眼蛊", "desc": "换雾步蛊", "quality": "稀有", "curse_warning": false},
+			{"id": "o5", "name": "洗刷恶名", "kind": "wash_notoriety", "price": "按声望", "desc": "降低恶名", "quality": "普通", "curse_warning": false},
+		],
+		"services": [
+			{"id": "s1", "name": "刷新货架", "cost": "120 元石", "remaining": 2, "note": "本局剩余 2 次 · 通胀叠加"},
+			{"id": "s2", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
+			{"id": "s3", "name": "池屏蔽", "cost": "200 元石", "remaining": 1, "note": "本局剩余 1 次 · 移除≠池排除"},
+			{"id": "s4", "name": "洗炼", "cost": "80 元石", "remaining": 3, "note": "重骰一条被动"},
+			{"id": "s5", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
+			{"id": "s6", "name": "魂丹", "cost": "6 元石", "remaining": 1, "note": "魂魄 +1"},
+		],
+		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）",
+	})
+	await _snap("shop_screen", {"state": shop_state, "commands": shop_cmds})
+
+	# ---- 休整（C5）----
+	var rest_cmds := {"choose": func(_id): pass, "confirm_wash": func(): pass, "cancel_confirm": func(): pass, "leave": func(): pass}
+	var rest_state := gui_state.duplicate()
+	rest_state.merge({
+		"title": "闭关 · 休整",
+		"note": "强制二选一，不可全拿",
+		"choices": [
+			{"id": "heal", "label": "调息回血", "detail": "回复 30 气血，恢复 2 真元", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
+			{"id": "nurture", "label": "温养一蛊", "detail": "强化一张卡 / 移除一张负面卡", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
+			{"id": "wash", "label": "洗髓换骨", "detail": "真元上限 +1（实时刷新）", "cost": "10 寿元 + 8 元石", "disabled": false, "reason": "一局一次 · 执行前预检寿元", "curse_warning": false},
+		],
+		"is_ascension": false,
+		"growth": [],
+		"confirming": "",
+		"confirm_msg": "",
+	})
+	await _snap("rest_screen", {"state": rest_state, "commands": rest_cmds})
+
+	# ---- 炼蛊台（C6）----
+	var refine_cmds := {"set_channel": func(_id): pass, "refine": func(_id): pass, "toggle_input": func(_id): pass, "dismantle": func(_id): pass, "confirm": func(): pass, "cancel_confirm": func(): pass, "leave": func(): pass}
+	var refine_state := gui_state.duplicate()
+	refine_state.merge({
+		"title": "炼蛊台",
+		"channels": [
+			{"id": "fixed", "label": "定向配方"},
+			{"id": "combine", "label": "组合标签"},
+			{"id": "blind", "label": "盲盒随机"},
+		],
+		"active_channel": "fixed",
+		"inputs": ["月光蛊", "小光蛊"],
+		"slot_ok": true,
+		"recipes": [
+			{"id": "r1", "name": "月光蛊 + 小光蛊 → 月辉蛊", "output": "月辉蛊", "quality": "稀有", "fail_chance": "成功配方", "backlash": "无躁动", "curse": "", "unlocked": true},
+			{"id": "r2", "name": "小光蛊 + 迹眼蛊 → 脉冲鼓", "output": "脉冲鼓", "quality": "稀有", "fail_chance": "失败率 30%", "backlash": "失败毁材 · 躁动 +1", "curse": "", "unlocked": true},
+			{"id": "r3", "name": "盲盒（随机）", "output": "未知蛊", "quality": "随机", "fail_chance": "失败率 50% · 毁材", "backlash": "躁动 +2", "curse": "诅咒继承⚠", "unlocked": true},
+		],
+		"dismantle_slots": ["石甲蛊"],
+		"streak_note": "连续失败第 2 次，下次成功率 +5%（Run 内清零，永不到 100%）",
+		"confirming": "",
+		"confirm_msg": "",
+	})
+	await _snap("refine_screen", {"state": refine_state, "commands": refine_cmds})
+
+	# ---- 奖励（C2）----
+	var reward_cmds := {"take": func(_i): pass, "replace_and_take": func(_i): pass, "skip": func(): pass, "close": func(): pass}
+	var reward_state := gui_state.duplicate()
+	reward_state.merge({
+		"title": "战利品 · 三选一",
+		"rewards": [
+			{"id": "r1", "name": "月光蛊", "kind": "蛊 · 战斗奖励", "quality": "稀有", "effect": "造成月光伤害并附加「月息」层", "cost": "获取即入蛊囊", "curse_warning": false},
+			{"id": "r2", "name": "石甲蛊", "kind": "蛊 · 精英奖励", "quality": "史诗", "effect": "护盾 +8", "cost": "代价：躁动 +1", "curse_warning": false},
+			{"id": "r3", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
+		],
+		"full_satchel": false,
+		"pool_fallback_note": "（空池回退：已切至基础池）",
+		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
+	})
+	await _snap("reward_screen", {"state": reward_state, "commands": reward_cmds})
+
+	# ---- NPC 交涉（C8）----
+	var npc_cmds := {"talk": func(_id): pass, "buy": func(_id): pass, "barter": func(_id): pass, "flee": func(): pass, "leave": func(): pass}
+	var npc_state := gui_state.duplicate()
+	npc_state.merge({
+		"npc_name": "游方医修",
+		"stance": "中立",
+		"stance_note": "交涉失败将种子化翻转敌视",
+		"notoriety": 12,
+		"notoriety_note": "恶名高亮：威慑部分路线",
+		"offers": [
+			{"id": "o1", "name": "回购货物", "price": "5 元石", "desc": "出手一批闲置物资"},
+			{"id": "o2", "name": "情报买卖", "price": "3 元石", "desc": "换取下一片区域线索"},
+		],
+		"barter": [
+			{"id": "b1", "name": "迹眼蛊 换 雾步蛊", "give": "迹眼蛊", "take": "雾步蛊", "note": "以物易物 · 需空位校验"},
+			{"id": "b2", "name": "血苔 换 疗伤蛊", "give": "血苔 ×2", "take": "疗伤蛊", "note": "治疗系交易"},
+		],
+		"talk_options": [
+			{"id": "t1", "label": "友善攀谈", "detail": "了解情报与需求", "danger": false},
+			{"id": "t2", "label": "以物易物试探", "detail": "低风险试探底线", "danger": false},
+			{"id": "t3", "label": "威胁勒索", "detail": "恶名威慑 · 可能翻脸", "danger": true},
+		],
+		"can_flee": true,
+	})
+	await _snap("npc_screen", {"state": npc_state, "commands": npc_cmds})
 
 	print("ALL SNAPS DONE")
 	quit()
