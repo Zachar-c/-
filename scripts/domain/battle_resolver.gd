@@ -130,6 +130,12 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"contract_mods": contract_mods,
 		"context": OpenRpgAdapter.create_battle_context({"enemy_kind": enemy_id}),
 	}
+	# R14.6⑦ boss-local: precompute the counter intent once (the hall toggle is
+	# run-fixed); selection prioritizes it whenever the active phase pool makes
+	# it eligible. Battle-scoped: dies with the dict, never hits the run state.
+	var boss_counter := DdaResolverScript.boss_counter_intent(battle, state, catalog)
+	if not boss_counter.is_empty():
+		battle["dda_boss_counter_id"] = boss_counter
 	var battle_start := RelicHookResolverScript.apply_battle_start(battle, state, catalog)
 	battle = battle_start["battle"]
 	# R4.x on_backlash_gained: the moment curse layers become known to this
@@ -1091,6 +1097,21 @@ static func _select_enemy_intent(battle: Dictionary, state: RunState, exec_turn:
 	if available.is_empty():
 		battle["visible_intent"] = COOLDOWN_WAIT_INTENT.duplicate(true)
 		return
+	# R14.6⑦ (night batch): boss-local adapt — when the precomputed counter
+# intent is eligible it IS the pick (intent switch, seeded draw still
+# consumed via index(1) so the stream stays stable); battle-scoped flag/hint
+# die with the battle dict (never leak into the run or the map layer).
+	var counter_intent := str(battle.get("dda_boss_counter_id", ""))
+	if not counter_intent.is_empty():
+		for index in available.size():
+			if str(available[index].get("id", "")) == counter_intent:
+				var prioritized: Dictionary = available[index]
+				available.remove_at(index)
+				battle["visible_intent"] = prioritized.duplicate(true)
+				battle["dda_boss_adapted"] = true
+				battle["dda_boss_hint"] = "boss_senses_gu_power"
+				_seeded_index(1, state, "boss.intent")
+				return
 	var picked: Dictionary = available[_seeded_index(available.size(), state, "boss.intent")]
 	battle["visible_intent"] = picked.duplicate(true)
 

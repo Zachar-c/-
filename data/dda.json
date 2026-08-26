@@ -15,5 +15,8 @@
   "enemy_swap_pools": {
     "sys:dda_peril": ["thunder_crown_wolf", "ridge_hound", "iron_hide_boar"],
     "sys:dda_decay": ["thunder_crown_wolf", "ridge_elite_scout"]
-  }
+  },
+  "boss_local": [
+    {"when": "many_curses", "intent_id": "essence_scorch"}
+  ]
 }

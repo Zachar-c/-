@@ -218,6 +218,55 @@ func test_validation_rejects_bad_dda_config() -> void:
 	assert_true(_has(errors, "weights"))
 
 
+func test_boss_local_adapt_prioritizes_counter_intent_when_build_matches() -> void:
+	var state := _peril_state()
+	state.current_node_id = "final_boss_stand"
+	# Canonical phase-2 setup per test_boss_phases: both intents eligible.
+	var battle := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord"}, state, catalog)
+	battle["enemy_phase_index"] = 1
+	battle["turn"] = 4
+	BattleResolverScript._select_enemy_intent(battle, state, 4)
+	# The counter intent (essence_scorch) is forced when the build matches.
+	assert_true(bool(battle.get("dda_boss_adapted", false)))
+	assert_eq(str(battle.get("dda_boss_hint", "")), "boss_senses_gu_power")
+	assert_eq(str(battle["visible_intent"]["id"]), "essence_scorch")
+
+	var taken := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, state, catalog)
+	# State-adaptive marker IS legitimately written (the run is in peril); the
+	# boss-local artifacts must stay battle-scoped: a follow-up non-boss battle
+	# carries neither the counter id nor the adapt flags.
+	assert_true(taken["state"].meta_rules.has("sys:dda_peril"))
+	var followup := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, taken["state"], catalog)
+	assert_false(followup.has("dda_boss_counter_id"))
+	assert_false(bool(followup.get("dda_boss_adapted", false)))
+
+
+func test_boss_local_never_fires_for_common_enemies() -> void:
+	var state := _peril_state()
+	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, state, catalog)
+	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, state, catalog)
+	assert_false(bool(turn["battle"].get("dda_boss_adapted", false)))
+
+
+func test_boss_local_obeys_hall_toggle_and_validation() -> void:
+	var state := _peril_state()
+	state.dda_state_adaptive_enabled = false
+	var battle := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord"}, state, catalog)
+	battle["enemy_phase_index"] = 1
+	battle["turn"] = 4
+	BattleResolverScript._select_enemy_intent(battle, state, 4)
+	assert_false(bool(battle.get("dda_boss_adapted", false)))
+
+	var tuned := catalog.duplicate(true)
+	var bad := (catalog["dda"] as Dictionary).duplicate(true)
+	bad["boss_local"] = [{"when": "moon_phase", "intent_id": "essence_scorch"}]
+	tuned["dda"] = bad
+	assert_true(_has(ContentCatalogScript.validate(tuned), "unknown condition"))
+	bad["boss_local"] = [{"when": "many_curses", "intent_id": "not_an_intent"}]
+	tuned["dda"] = bad
+	assert_true(_has(ContentCatalogScript.validate(tuned), "not in any boss phase pool"))
+
+
 func test_swaps_are_deterministic() -> void:
 	var pool: Array = catalog["dda"]["enemy_swap_pools"]["sys:dda_peril"]
 	var first_state := _peril_state(424242)

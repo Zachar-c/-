@@ -26,6 +26,14 @@ static func active_marker(state: RunState) -> String:
 	return ""
 
 
+static func active_curse_count(state: RunState) -> int:
+	var count := 0
+	for status_value in state.cultivator.get("statuses", {}).values():
+		var status: Dictionary = status_value
+		count += 1 if int(status.get("layers", 0)) > 0 else 0
+	return count
+
+
 static func player_rule_count(meta_rules: Dictionary) -> int:
 	var count := 0
 	for key in meta_rules:
@@ -46,11 +54,7 @@ static func evaluate(state: RunState, catalog: Dictionary) -> Dictionary:
 		ratio = float(state.health) / float(state.max_health)
 	if ratio <= 0.34:
 		score += int(weights.get("low_health", 0))
-	var curse_count := 0
-	for status_value in state.cultivator.get("statuses", {}).values():
-		var status: Dictionary = status_value
-		curse_count += 1 if int(status.get("layers", 0)) > 0 else 0
-	if curse_count >= 2:
+	if active_curse_count(state) >= 2:
 		score += int(weights.get("many_curses", 0))
 	if int(state.stone) < 6:
 		score += int(weights.get("low_stone", 0))
@@ -152,3 +156,20 @@ static func marker_label(marker: String, catalog: Dictionary) -> String:
 		if str(band.get("marker", "")) == marker:
 			return str(band.get("label", ""))
 	return marker
+
+
+# R14.6⑦ (night batch): boss-local adaptation — when a configured condition
+# matches the player's current-run build, return the counter intent id to
+# prioritize (only within the boss's own phase pool; see _select_enemy_intent).
+static func boss_counter_intent(battle: Dictionary, state: RunState, catalog: Dictionary) -> String:
+	var kind := str(battle.get("enemy_kind", ""))
+	var definition: Dictionary = catalog.get("enemy_by_id", {}).get(kind, {})
+	if str(definition.get("tier", "")) != "boss":
+		return ""
+	if not state.dda_state_adaptive_enabled:
+		return ""
+	for rule_value in catalog.get("dda", {}).get("boss_local", []):
+		var rule: Dictionary = rule_value
+		if str(rule.get("when", "")) == "many_curses" and active_curse_count(state) >= 2:
+			return str(rule.get("intent_id", ""))
+	return ""

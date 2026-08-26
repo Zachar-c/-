@@ -48,6 +48,7 @@ static func load_all() -> Dictionary:
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var contracts_cfg := _load_object("res://data/contracts.json")
 	var journal_cfg := _load_object("res://data/journal.json")
+	var dda_cfg := _load_object("res://data/dda.json")
 	var debug_cfg := _load_object("res://data/debug.json")
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
 	var material_ids: Array[String] = ["feed_points"]
@@ -87,6 +88,7 @@ static func load_all() -> Dictionary:
 		"contract_entry_by_id": _index_by_id(contracts_cfg.get("entries", [])),
 		"journal": journal_cfg,
 		"journal_entry_by_id": _index_by_id(journal_cfg.get("entries", [])),
+		"dda": dda_cfg,
 		"debug": debug_cfg,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
@@ -372,6 +374,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
 	if catalog.has("npcs"):
 		errors.append_array(_validate_npcs(catalog.get("npcs", []), catalog.get("shop_offer_by_id", {})))
+	if catalog.has("dda"):
+		errors.append_array(_validate_dda(catalog.get("dda", {}), catalog.get("enemy_by_id", {})))
 	if catalog.has("journal"):
 		errors.append_array(_validate_journal(catalog.get("journal", {})))
 	if catalog.has("debug"):
@@ -481,6 +485,63 @@ static func _validate_npcs(npcs: Array, shop_offer_by_id: Dictionary) -> Array[S
 			var kind := str(offer.get("kind", ""))
 			if not kind in ["purchase", "soul_boost", "lifespan_deal", "barter"]:
 				errors.append("npc %s stock offer %s has unsupported kind %s" % [npc_id, offer_id, kind])
+	return errors
+
+
+# R14.5/R14.6 (night batch) schema guard: ascending score bands within
+# [0, max_score], sys:-prefixed markers, known enemy ids in swap pools,
+# positive integer weights.
+static func _validate_dda(cfg: Dictionary, enemy_by_id: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var max_score := int(cfg.get("max_score", 10))
+	if max_score < 1:
+		errors.append("dda max_score must be a positive integer")
+	var previous := -1
+	var bands: Array = cfg.get("bands", [])
+	for band_index in bands.size():
+		var band: Dictionary = bands[band_index]
+		var min_score := int(band.get("min_score", 0))
+		if min_score < 0 or min_score > max_score:
+			errors.append("dda band %d min_score %d outside [0, %d]" % [band_index, min_score, max_score])
+		if min_score <= previous:
+			errors.append("dda band %d min_score must ascend strictly" % band_index)
+		previous = min_score
+		var marker := str(band.get("marker", ""))
+		if not marker.is_empty() and not marker.begins_with("sys:"):
+			errors.append("dda band %d marker %s must start with sys:" % [band_index, marker])
+	var pools: Dictionary = cfg.get("enemy_swap_pools", {})
+	for marker_value in pools:
+		var marker := str(marker_value)
+		if not marker.begins_with("sys:"):
+			errors.append("dda swap pool key %s must start with sys:" % marker)
+		for enemy_id_value in pools[marker]:
+			if not enemy_by_id.has(str(enemy_id_value)):
+				errors.append("dda swap pool %s references unknown enemy %s" % [marker, enemy_id_value])
+	var weights: Dictionary = cfg.get("weights", {})
+	for weight_value in weights.values():
+		if not _is_integral(weight_value) or int(weight_value) < 1:
+			errors.append("dda weights must be positive integers")
+	# R14.6⑦ boss-local rules: known condition keys; intent must exist in some
+	# boss enemy's phase pool (a rule pointing nowhere is a silent no-op).
+	var boss_intent_ids := {}
+	var boss_checked := false
+	for enemy_value in enemy_by_id.values():
+		var enemy: Dictionary = enemy_value
+		if str(enemy.get("tier", "")) != "boss":
+			continue
+		boss_checked = true
+		for phase_value in enemy.get("phases", []):
+			var phase: Dictionary = phase_value
+			for intent_value in phase.get("intents", []):
+				boss_intent_ids[str((intent_value as Dictionary).get("id", ""))] = true
+	for rule_value in cfg.get("boss_local", []):
+		var rule: Dictionary = rule_value
+		var when := str(rule.get("when", ""))
+		if when != "many_curses":
+			errors.append("dda boss_local rule has unknown condition %s" % when)
+		var intent_id := str(rule.get("intent_id", ""))
+		if boss_checked and not boss_intent_ids.has(intent_id):
+			errors.append("dda boss_local intent %s not in any boss phase pool" % intent_id)
 	return errors
 
 
