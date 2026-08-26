@@ -38,10 +38,11 @@
 
 ## 分支与工作树
 
-- **master**：集成主线（2026-08-26 起新功能批直接落 master：临时 worktree 开发→审查→合并推送；UI 会话合入点 4681d01/c1187da）。
-- **ui-sts-redesign**（并行会话活跃）：UI 重设计分支（StS token 体系 10 屏），主工作树检出中；其未提交改动勿动，完成批经 merge 吸收回 master 后由 UI 会话自行收尾。
+- **master**：集成主线（2026-08-26 起新功能批直接落 master：临时 worktree 开发→审查→合并推送；UI 会话合入点 4681d01/c1187da/0c760d7）。
+- **ui-sts-redesign**（并行会话活跃）：UI 重设计分支（StS token 体系 10 屏），主工作树检出中；其未提交改动勿动，完成批经 merge 吸收回 master 后由 UI 会话自行收尾（剩余批已吸收 @ `0c760d7`，分支本体保留）。
 - **c1min-impl**：为避免干扰 master 而创建的临时分支，已完成使命。
-- **.worktrees/game-impl**：存在用户并行 UI 未提交改动与 `stash@{0}` 快照，勿动；合并策略待用户裁定。
+- **.worktrees/game-impl**：存在用户并行 UI 未提交改动与快照，勿动；合并策略待用户裁定。
+- **2026-08-26 收敛执行**：`task1-vendor-open-rpg`、`s4-three-death-lines-ui` 本地与远端分支已删除（内容均已在 master）；task1 工作树已移除，其中用户 WIP（`map_generator.gd` + 3 个 `.guitkx`）已存入共享仓库 stash（msg `converge-2026-08-26: user WIP from task1 worktree`），需要时 `git stash list` 找回对照。
 
 ## 当前状态（2026-08-26）
 
