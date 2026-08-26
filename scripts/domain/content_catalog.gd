@@ -358,6 +358,35 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var gu_pool: Dictionary = tier.get("gu_pool", {})
 		var weights: Dictionary = gu_pool.get("weights", {})
 		var by_rarity: Dictionary = gu_pool.get("by_rarity", {})
+		var forced_rarity := str(tier.get("forced_rarity", ""))
+		if not forced_rarity.is_empty():
+			if not RARITY_IDS.has(forced_rarity):
+				errors.append("loot tier %s has invalid forced rarity %s" % [tier_key, forced_rarity])
+			elif (by_rarity.get(forced_rarity, []) as Array).is_empty():
+				errors.append("loot tier %s forced rarity %s sits on an empty bucket" % [tier_key, forced_rarity])
+		var cost_pool: Array = tier.get("cost_pool", [])
+		var cost_positive_weight := false
+		for cost_value in cost_pool:
+			var cost: Dictionary = cost_value
+			if not _is_integral(cost.get("weight", 1)) or int(cost.get("weight", 1)) < 0:
+				errors.append("loot tier %s cost weight must be a non-negative integer" % tier_key)
+				continue
+			if int(cost.get("weight", 1)) > 0:
+				cost_positive_weight = true
+			match str(cost.get("kind", "")):
+				"backlash":
+					var curse_id := str(cost.get("curse_id", ""))
+					if not curse_by_id.has(curse_id):
+						errors.append("loot tier %s cost references unknown curse %s" % [tier_key, curse_id])
+					if not _is_integral(cost.get("layers", 0)) or int(cost.get("layers", 0)) < 1:
+						errors.append("loot tier %s backlash cost needs positive layers" % tier_key)
+				"notoriety":
+					if not _is_integral(cost.get("amount", 0)) or int(cost.get("amount", 0)) < 1:
+						errors.append("loot tier %s notoriety cost needs a positive amount" % tier_key)
+				_:
+					errors.append("loot tier %s cost uses unknown cost kind %s" % [tier_key, cost.get("kind", "")])
+		if not cost_pool.is_empty() and not cost_positive_weight:
+			errors.append("loot tier %s cost_pool needs at least one positive weight" % tier_key)
 		var has_positive_weight := false
 		for rarity_id_value in weights:
 			var weighted_rarity := str(rarity_id_value)

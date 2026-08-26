@@ -39,6 +39,11 @@ func _rarity_of(cat: Dictionary, gu_id: String) -> String:
 
 func test_fourth_consecutive_common_drop_is_forced_rare_or_better() -> void:
 	var cat := catalog()
+	# The shipped elite table forces epic (R5.2), so ladder semantics are
+	# exercised on an unforced copy of it; pity only governs unforced sources.
+	var elite: Dictionary = elite_table(cat)
+	elite.erase("forced_rarity")
+	elite["gu_chance_pct"] = 100
 	var forced_observations := 0
 	for run_seed in range(2026, 2046):
 		var state: RunState = make_state(run_seed)
@@ -65,9 +70,11 @@ func test_fourth_consecutive_common_drop_is_forced_rare_or_better() -> void:
 func test_forced_rarity_roll_excludes_common_bucket() -> void:
 	var cat := catalog()
 	# Gate raised to 100 so every seed reaches the forced rarity roll instead
-	# of being filtered by the elite 30% drop gate.
+	# of being filtered by the elite 30% drop gate. The R5.2 forced epic is
+	# erased so the R13.1 pity forcing itself stays under test here.
 	var table: Dictionary = elite_table(cat).duplicate(true)
 	table["gu_chance_pct"] = 100
+	table.erase("forced_rarity")
 	var seen := {}
 	for run_seed in range(1, 41):
 		var state: RunState = make_state(run_seed)
@@ -119,28 +126,28 @@ func test_gu_loot_event_payload_carries_new_pity() -> void:
 	var state: RunState = make_state(2026)
 	var observed := false
 	for _fight in range(40):
+		var log_size_before := state.event_log.size()
 		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
 		var had_gu := not str(rolled["loot"].get("gu_id", "")).is_empty()
 		state = rolled["state"]
 		if had_gu:
-			var entry: Dictionary = state.event_log.back()
-			assert_eq(str(entry.get("reason", "")), "loot_gu_gained")
-			assert_eq(int(entry["after"].get("loot_pity", -1)), int(state.loot_pity),
-					"replays must reproduce pity from the event payload")
-			observed = true
+			# The elite cost event may land after the loot events; scan this
+			# victory's appended entries for the loot payload.
+			for index in range(log_size_before, state.event_log.size()):
+				var entry: Dictionary = state.event_log[index]
+				if str(entry.get("reason", "")) == "loot_gu_gained":
+					assert_eq(int(entry["after"].get("loot_pity", -1)), int(state.loot_pity),
+							"replays must reproduce pity from the event payload")
+					observed = true
 			break
 	assert_true(observed, "seed 2026 must produce a gated gu drop within 40 elite fights")
 
 
 func test_loot_pity_survives_save_round_trip() -> void:
-	var cat := catalog()
 	var state: RunState = make_state(777)
-	for _fight in range(40):
-		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
-		state = rolled["state"]
-		if int(state.loot_pity) > 0:
-			break
-	assert_true(int(state.loot_pity) > 0, "seed 777 must raise the counter within 40 elite fights")
+	# The shipped elite table forces epic, which never advances the ladder; the
+	# counter value is planted directly since persistence is what is under test.
+	state.loot_pity = 2
 	var data := SaveRepositoryScript.serialize_run(state, [], [])
 	var loaded: Dictionary = SaveRepositoryScript.load_run_from_data(data)
 	assert_false(loaded.is_empty(), "round trip must load")
