@@ -6,7 +6,6 @@ import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
-import { GuDeathLineWarning } from "~/ui/widgets/gu_death_line_warning"
 
 # BattleScreen —— 战斗屏三区语法（规格 v3 §7 C1）
 # 顶 HUD（顶栏+死线）→ 中战场（左我右敌、意图符文⚔🛡☾+数值+效果）→ 底操作（真元+手牌卡带+回合控制）。
@@ -134,8 +133,7 @@ export BattleScreen() -> RuitkVNode {
 
   return (
     <VBoxContainer style={ {"separation": 10} }>
-      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
-      <GuDeathLineWarning death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
 
       <HBoxContainer style={ {"separation": 14} }>
         <GuPanel title="我方">

@@ -2,7 +2,7 @@
 
 # GuResourceChip —— 资源徽章（规格 §9 / §16.5 双资源隔离）
 # 局内资源：深墨底 + 宣纸环；解锁素材（meta/见闻）：宣纸底 + 专属前缀，与局内资源严格区分。
-# props：kind / value / on_click
+# 实现注：全程 GDScript 构建 vnode，不用 @if/@else（guitkx 解析不稳）。
 
 export GuResourceChip() -> RuitkVNode {
   var kind = props.get("kind", "material")
@@ -27,14 +27,15 @@ export GuResourceChip() -> RuitkVNode {
     "border_width_all": 1,
     "border_color": GuStyle.PAPER,
   }
+  var content = []
+  if on_click != null:
+    content.append(<Button text={ text } onPressed={ func(): on_click.call() } style={ {"font_color": color, "font_size": 14} } />)
+  else:
+    content.append(<Label text={ text } style={ {"font_color": color, "font_size": 14} } />)
   return (
     <PanelContainer style={ chip_style }>
       <MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 3, "margin_bottom": 3} }>
-        @if (on_click != null) {
-          return ( <Button text={ text } onPressed={ func(): on_click.call() } style={ {"font_color": color, "font_size": 14} } /> )
-        } else {
-          return ( <Label text={ text } style={ {"font_color": color, "font_size": 14} } /> )
-        }
+        { content }
       </MarginContainer>
     </PanelContainer>
   )

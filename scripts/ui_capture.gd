@@ -1,0 +1,200 @@
+extends SceneTree
+
+# GUI 实跑截图：真实渲染器（非 headless）下逐屏挂载 RUI 屏组件，等布局帧后保存 PNG。
+# 用法：& <godot_gui.exe> --path . -s res://scripts/ui_capture.gd
+# 输出：.superpowers/ui_captures/*.png（不污染仓库，.superpowers 已忽略）
+
+const Guitkx = preload("res://addons/reactive_ui_toolkit/guitkx/guitkx.gd")
+const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
+const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
+const ROOT := "res://"
+const OUT_DIR := "C:/Users/Zachary/DevEnv/06_个人项目/gu-zhenren/gu-zhenren-editor/.superpowers/ui_captures"
+
+const WIDGET_DIR := "res://ui/widgets"
+const SCREEN_DIR := "res://ui/screens"
+
+var _cur := 0
+
+func _compile_file(rel_path: String) -> bool:
+	var src := FileAccess.get_file_as_string(rel_path)
+	if src.is_empty():
+		push_error("读不到 %s" % rel_path)
+		return false
+	var res := Guitkx.compile(src, rel_path.get_file().get_basename(), [], {}, rel_path, ROOT)
+	if res.get("env_error", false):
+		push_error("RUI 环境未就绪: %s" % rel_path)
+		return false
+	if not res.get("ok", false):
+		push_error("编译失败 %s: %s" % [rel_path, str(res.get("diagnostics", []))])
+		return false
+	var gd_path := rel_path.get_basename() + ".gd"
+	var f := FileAccess.open(gd_path, FileAccess.WRITE)
+	if f == null:
+		push_error("写不出 %s" % gd_path)
+		return false
+	f.store_string(res["gd"])
+	f.close()
+	return true
+
+
+func _compile_dir(dir_path: String) -> bool:
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		push_error("打不开 %s" % dir_path)
+		return false
+	dir.list_dir_begin()
+	var fname := dir.get_next()
+	while fname != "":
+		if fname.get_extension() == "guitkx":
+			if not _compile_file(dir_path.path_join(fname)):
+				return false
+		fname = dir.get_next()
+	dir.list_dir_end()
+	return true
+
+
+func _snap(component: String, props: Dictionary) -> void:
+	var fn = VLib.comp("res://ui/screens/%s.gd" % component, "render")
+	if not (fn is Callable):
+		push_error("无组件 %s" % component)
+		return
+	# 每屏独立容器，避免复用 RUI host 状态串扰
+	var container := Control.new()
+	container.size = Vector2(1280, 720)
+	container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(container)
+	# 墨青夜色全屏底
+	var bg := ColorRect.new()
+	bg.color = Color("0b0f14")
+	bg.size = Vector2(1280, 720)
+	container.add_child(bg)
+	var inner := Control.new()
+	inner.set_anchors_preset(Control.PRESET_FULL_RECT)
+	inner.size = Vector2(1280, 720)
+	container.add_child(inner)
+	RuiRoot.create(inner, VLib.fc(fn, props))
+	# 等 6 帧让 RUI 完成挂载与布局
+	for i in range(6):
+		await process_frame
+	await process_frame
+	var img := root.get_texture().get_image()
+	_cur += 1
+	var p := OUT_DIR.path_join("%02d_%s.png" % [_cur, component])
+	img.save_png(p)
+	print("SNAP %s -> %s" % [component, p])
+	container.queue_free()
+	await process_frame
+
+
+func _initialize() -> void:
+	DirAccess.make_dir_recursive_absolute(OUT_DIR)
+	root.size = Vector2i(1280, 720)
+
+	if not _compile_file("res://ui/_sample.guitkx"):
+		quit(1)
+	if not _compile_dir(WIDGET_DIR):
+		quit(1)
+	if not _compile_dir(SCREEN_DIR):
+		quit(1)
+
+	# ---- 大厅主菜单（含存档）----
+	var hall_cmds := {
+		"continue_run": func(): pass, "new_run": func(): pass,
+		"open_schools": func(): pass, "open_contracts": func(): pass,
+		"open_codex": func(): pass, "open_settings": func(): pass,
+		"open_journal": func(): pass, "back_to_hall": func(): pass,
+	}
+	var hall_state := {
+		"hall_subview": "main",
+		"has_save": true,
+		"available_schools": [
+			{"id": "blood", "name": "血道", "summary": "以血饲蛊，愈伤愈强", "starter_gu_names": ["血牙蛊", "噬血蛊"]},
+			{"id": "qi", "name": "气道", "summary": "以气驭蛊，绵长持久"},
+			{"id": "force", "name": "力道", "summary": "以力破蛊，刚猛直进"},
+			{"id": "soul", "name": "魂道", "summary": "以魂驭蛊，反噬转战力"},
+			{"id": "refine", "name": "炼道", "summary": "临阵炼蛊，以变应敌"},
+		],
+		"contracts": ["自苦·血祭", "节流·魂敛"],
+		"meta_stats": {"runs": 3, "endings": 1},
+	}
+	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds})
+
+	# ---- 地图 ----
+	var map_cmds := {"travel": func(_id): pass, "view_node": func(_id): pass}
+	var map_state := {
+		"nodes": [
+			{"id": "n1", "type": "start", "label": "起始", "layer": 0},
+			{"id": "n2", "type": "combat", "label": "野蛊盘踞", "layer": 1},
+			{"id": "n3", "type": "event", "label": "残碑异响", "layer": 1},
+			{"id": "n4", "type": "rest", "label": "山涧静修", "layer": 2},
+			{"id": "n5", "type": "shop", "label": "黑市", "layer": 2},
+			{"id": "n6", "type": "combat", "label": "铁皮山猪", "layer": 3},
+			{"id": "n7", "type": "boss", "label": "雷冠头狼", "layer": 4},
+		],
+		"current_node_id": "n1",
+		"reachable_ids": ["n2", "n3"],
+		"gu_satchel": [{"id": "g1", "name": "血牙蛊"}, {"id": "g2", "name": "噬血蛊"}],
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+	}
+	await _snap("map_screen", {"state": map_state, "commands": map_cmds})
+
+	# ---- 战斗三区 ----
+	var battle_cmds := {
+		"play_card": func(_c, _t): pass, "end_turn": func(): pass,
+		"ultimate": func(): pass, "refine": func(): pass, "flee": func(): pass,
+	}
+	var battle_state := {
+		"enemies": [
+			{"id": "e1", "name": "铁皮山猪", "hp": 20, "max_hp": 30, "shield": 4, "intent": {"type": "attack", "value": 12, "detail": "造成物理伤害"}},
+			{"id": "e2", "name": "雷冠头狼", "hp": 15, "max_hp": 15, "shield": 0, "intent": {"type": "charge", "value": 0, "detail": "蓄力"}},
+		],
+		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4, "statuses": [{"name": "灼烧", "stacks": 2}]},
+		"hand": [
+			{"id": "c1", "name": "血牙蛊", "cost": 1, "effect": "造成 6 伤害", "quality": "普通", "curse_warning": false},
+			{"id": "c2", "name": "噬血蛊", "cost": 2, "effect": "造成 4 伤害并吸血 3", "quality": "稀有", "curse_warning": false},
+			{"id": "c3", "name": "血祭蛊", "cost": 2, "cost_ex": "消耗3寿元", "effect": "对自身反噬 1 层，造成 18 伤害", "quality": "稀有", "curse_warning": true},
+		],
+		"can_ultimate": true,
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
+	}
+	await _snap("battle_screen", {"state": battle_state, "commands": battle_cmds})
+
+	# ---- 遭遇（含侧边状态）----
+	var enc_cmds := {"choose_option": func(_id): pass, "confirm_danger": func(): pass, "leave": func(): pass}
+	var enc_state := {
+		"node": {"title": "幽林残碑", "desc": "林中残碑现出「以血饲蛊」四字，一股凶煞之气扑面而来。", "type": "event"},
+		"actions": [
+			{"id": "a1", "label": "细读碑文", "detail": "获得情报：此处曾为血道强者陨落之地。", "dangerous": false},
+			{"id": "a2", "label": "以血祭碑", "detail": "消耗 5 寿元，夺取残碑蛊方，触发反噬 1 层。", "dangerous": true},
+			{"id": "a3", "label": "转身离去", "detail": "不沾因果，就此离开。", "dangerous": false},
+		],
+		"intel": {"weakness": "敌人：铁皮山猪 · 弱点火弱", "cost": "已探查"},
+		"player": {"hp": 24, "max_hp": 30, "primordial": 3, "soul": 4, "stone": 12, "gu_names": ["血牙蛊", "噬血蛊"]},
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+	}
+	await _snap("encounter_screen", {"state": enc_state, "commands": enc_cmds})
+
+	# ---- 结算 ----
+	var ending_cmds := {"to_hall": func(): pass, "to_codex": func(): pass}
+	var ending_state := {
+		"title": "险中求胜",
+		"ending_type": "success",
+		"key_decisions": ["放弃强攻，改为诈降", "以魂魄强行镇压反噬"],
+		"gains_losses": "夺得《血道真解》残卷，损耗寿元 8",
+		"resource_balance": {"yuanstone": 20, "shouyuan": 52},
+		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
+		"aftermath": "可于大厅图鉴查阅本次所得",
+	}
+	await _snap("ending_screen", {"state": ending_state, "commands": ending_cmds})
+
+	print("ALL SNAPS DONE")
+	quit()
