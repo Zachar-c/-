@@ -21,7 +21,9 @@ const FORCED_DROP_CURSE_ID := "gu_erosion"
 const SERVICE_USE_FLAG_PREFIX := "svc_used_"
 const REST_REMOVAL_MODES := ["remove_card", "remove_imprint", "remove_curse"]
 # P2a B: rest visit/mode flags are scoped per node id ("<id>_used"/"<id>_mode")
-# so nodes.json may declare more than one rest node.
+# so nodes.json may declare more than one rest node. Every consumed visit also
+# refreshes the bare "<id>" visited marker (_complete_node idempotency +
+# MapGenerator.reachable_nodes, matching every other completed node).
 const REST_NODE_TYPE := "rest"
 
 
@@ -1749,6 +1751,9 @@ static func _rest_heal(state: RunState) -> Dictionary:
 		return _rejected(state, "rest_already_used")
 	var flags := state.node_flags.duplicate(true)
 	flags[_rest_visit_key(state.current_node_id)] = "used"
+	# Bare-id marker rides along so _complete_node stays an idempotent no-op
+	# when leaving (keeps the seeded event stream aligned with the baseline).
+	flags[state.current_node_id] = "used"
 	var next_health := mini(state.max_health, state.health + 2)
 	var essence_max := int(state.cave_aperture.get("essence_max", 4))
 	var next_essence := mini(essence_max, state.essence + 2)
@@ -1789,6 +1794,8 @@ static func _consume_rest_visit(state: RunState) -> RunState:
 	var flags := state.node_flags.duplicate(true)
 	flags[_rest_visit_key(state.current_node_id)] = "used"
 	flags[_rest_mode_key(state.current_node_id)] = "true"
+	# Same bare-id marker contract as _rest_heal (see comment there).
+	flags[state.current_node_id] = "used"
 	return state.append_event(_event(
 		state,
 		"rest",

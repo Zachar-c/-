@@ -109,6 +109,79 @@ func test_rest_nodes_never_cross_pollinate_flags() -> void:
 	assert_eq(str(hollow_rest["state"].node_flags.get("rest_hollow_used", "")), "used")
 
 
+# ---- bare completion marker: baseline event-stream parity ----
+
+func _events_with_reason(state: RunState, reason: String) -> Array:
+	var matches: Array = []
+	for entry in state.event_log:
+		if str(entry.get("reason", "")) == reason:
+			matches.append(entry)
+	return matches
+
+
+func test_heal_leave_stream_stays_aligned_with_pre_scoped_baseline() -> void:
+	# Pre-scoped baseline wrote the bare node id as the visited marker, so the
+	# leave-time complete_node was a silent idempotent no-op: heal->leave
+	# appended exactly one event and every later event kept its absolute tick
+	# (seeded rolls derive from event_log.size()). Scoped keys must ride
+	# alongside that marker or the whole random stream shifts.
+	var run := RunState.new_run(101)
+	run.current_node_id = "rest_shrine"
+	run.health = 3
+	run.essence = 1
+	var base_size := run.event_log.size()
+
+	var healed := ResolverScript.apply(run, {"type": "rest"}, catalog)
+	assert_true(bool(healed["result"]["ok"]))
+	assert_eq(str(healed["state"].node_flags.get("rest_shrine_used", "")), "used")
+	assert_eq(str(healed["state"].node_flags.get("rest_shrine", "")), "used")
+
+	var left := ResolverScript.apply(healed["state"], {
+		"type": "complete_node", "node_id": "rest_shrine", "outcome": "abandoned",
+	}, catalog)
+	assert_true(bool(left["result"]["ok"]))
+	# The parity lock itself: leave adds nothing beyond the heal entry.
+	assert_eq(left["state"].event_log.size(), base_size + 1)
+	assert_eq(_events_with_reason(left["state"], "node_completed").size(), 0)
+
+	var appended_ids: Array = []
+	for index in range(base_size, left["state"].event_log.size()):
+		appended_ids.append(str(left["state"].event_log[index]["id"]))
+	assert_eq(appended_ids, ["event_%04d" % base_size])
+
+	# Repeated completion stays equally silent.
+	var again := ResolverScript.apply(left["state"], {
+		"type": "complete_node", "node_id": "rest_shrine", "outcome": "abandoned",
+	}, catalog)
+	assert_eq(again["state"].event_log.size(), base_size + 1)
+
+
+func test_upgrade_and_removal_bare_markers_keep_mode_flags_isolated_across_nodes() -> void:
+	# Review NOTE gap: upgrade/removal consume their visit through
+	# _consume_rest_visit too, so the bare marker they now also write must not
+	# turn one node's mode flag into another node's gate.
+	var upgraded := ResolverScript.apply(_run_at("rest_shrine"), {
+		"type": "rest", "mode": "upgrade_card", "card_key": "light_probe",
+	}, catalog)
+	assert_true(bool(upgraded["result"]["ok"]))
+	assert_eq(str(upgraded["state"].node_flags.get("rest_shrine_mode", "")), "true")
+	assert_eq(str(upgraded["state"].node_flags.get("rest_shrine", "")), "used")
+
+	var travel := ResolverScript.apply(upgraded["state"], {"type": "travel", "node_id": "rest_hollow"}, catalog)
+	assert_true(bool(travel["result"]["ok"]))
+
+	var removed := ResolverScript.apply(travel["state"], {
+		"type": "rest", "mode": "remove_card", "instance_id": "gu_001",
+	}, catalog)
+	assert_true(bool(removed["result"]["ok"]), str(removed["result"].get("reason", "")))
+	assert_eq(str(removed["state"].gu_instances["gu_001"]["state"]), "dead")
+	assert_eq(str(removed["state"].node_flags.get("rest_hollow_mode", "")), "true")
+	assert_eq(str(removed["state"].node_flags.get("rest_hollow", "")), "used")
+	# The shrine's scoped mode flag survives untouched by the hollow's removal.
+	assert_eq(str(removed["state"].node_flags.get("rest_shrine_mode", "")), "true")
+	assert_eq(_events_with_reason(removed["state"], "node_completed").size(), 0)
+
+
 # ---- legacy save migration (add-only) ----
 
 func _legacy_payload(flags: Dictionary) -> Dictionary:
