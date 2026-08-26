@@ -26,6 +26,23 @@ static func for_screen(screen: String, controller) -> Dictionary:
 	return {}
 
 
+## T5-D 调试面板只读段（§16.22）：保底计数 / 池排除列表 / 当前种子 / 事件数 / DDA 分位。
+## 仅由 debug_panel 渲染，绝不反向写入状态。池排除列表域内尚未落地（DisplayText
+## 标注「尚未实装」）、DDA 未实装——两者恒空占位，诚实呈现不编造。
+static func debug(controller) -> Dictionary:
+	var state = controller.state
+	if state == null:
+		return {}
+	return {
+		"loot_pity": int(state.loot_pity),
+		"material_pity": int(state.material_pity),
+		"pool_excluded_ids": [] as Array[String],
+		"seed": int(state.seed),
+		"event_count": state.event_log.size(),
+		"dda_percentile": "",
+	}
+
+
 ## 局内节点屏公共骨架（顶栏资源/契约/异变/死线）。
 static func _gui_state(controller) -> Dictionary:
 	var state = controller.state
@@ -54,6 +71,9 @@ static func shop(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	# R6.7 应急支付预览（只读推导）：元石定价高于持有元石的货架项将触发应急支付，
+	# UI 据此弹 D1 确认；寿元定价项（无 stone_cost）不参与该判定。
+	var stones := int(controller.state.stone)
 	var offers: Array[Dictionary] = []
 	for offer_key in offer_by_id:
 		var o: Dictionary = offer_by_id[offer_key]
@@ -71,6 +91,7 @@ static func shop(controller) -> Dictionary:
 			"desc": str(o.get("clue", o.get("card_key", ""))),
 			"quality": "史诗" if kind == "soul_boost" else ("稀有" if kind in ["purchase", "barter"] else "普通"),
 			"curse_warning": kind == "lifespan_deal",
+			"will_emergency_pay": int(o.get("stone_cost", 0)) > stones,
 		})
 	var node_type := str(controller.current_node.get("type", ""))
 	out["title"] = "黑市 · 寨市" if node_type == "shop" else ("商队开市" if node_type == "caravan" else "临时寨市")
@@ -85,6 +106,9 @@ static func shop(controller) -> Dictionary:
 		{"id": "calm", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
 	]
 	out["emergency_note"] = "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
+	# T6-E 空池回退显示槽位：商店侧暂无可推导的回退信号（货架非奖励池），恒空占位；
+	# 领域侧落地 fallback 标记后在此注入（报告已披露该数据源缺口）。
+	out["pool_fallback_note"] = ""
 	return out
 
 
@@ -204,9 +228,18 @@ static func reward(controller) -> Dictionary:
 		{"id": "r3", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
 	]
 	out["full_satchel"] = false
-	out["pool_fallback_note"] = "（空池回退：已切至基础池）"
 	out["pity_note"] = "（保底：连续普通后，下次掉落品质有较大概率提升）"
+	# T6-E 空池回退小字：领域暂无回退标记，按简报裁定以既有「奖励列表为空」信号
+	# 只读推导；非空不展示，杜绝常驻假提示。领域侧落地 fallback 标记后替换此推导。
+	out["pool_fallback_note"] = _reward_fallback_note(out["rewards"])
 	return out
+
+
+## 空池回退小字推导（只读）：奖励列表为空视作空池回退信号，否则不展示。
+static func _reward_fallback_note(rewards: Array) -> String:
+	if rewards.is_empty():
+		return "（空池回退：已切至基础池）"
+	return ""
 
 
 ## C8 NPC 交涉屏快照（contact 节点真实交涉选项 + 立场/恶名）。
@@ -562,14 +595,15 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 	for x in codex:
 		unlocks.append("图鉴：%s" % str(x))
 	var cult: Dictionary = state.cultivator if state != null else {}
-	var death_cause_id := ""
+	var cause := {"id": "", "short": "", "text": ""}
 	if otype == "death":
-		death_cause_id = _death_cause_from_state(state)
-	return {
+		cause = death_cause_fields(state)
+	var out := {
 		"title": DisplayText.outcome(otype),
 		"ending_type": etype,
-		"death_cause_id": death_cause_id,
-		"death_cause": DisplayText.death_cause(death_cause_id),
+		"death_cause_id": str(cause["id"]),
+		"death_cause": str(cause["text"]),
+		"death_cause_short": str(cause["short"]),
 		"key_decisions": decisions,
 		"gains_losses": gains,
 		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
@@ -578,6 +612,94 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"contracts_sworn_count": _contracts_sworn_count(state),
 		"aftermath": str(catalog.get("journal", {}).get("ending_texts", {}).get(etype, "修行札记已留存，可于大厅图鉴查阅本次所得。")),
 	}
+	out.merge(settlement_extras(controller))
+	out["achievement"] = DisplayText.ending_achievement(etype)
+	return out
+
+
+## T5-C 结算复盘只读投影（路线缩略图 / 本局记录 / 最高转数）。
+## builder `ending()` 与战斗死亡 `_show_death` 内联结算共用，保证两条路径同形。
+## 只读扫描 route/node_flags/event_log；不重算任何领域结果。
+static func settlement_extras(controller) -> Dictionary:
+	return {
+		"route_summary": _route_summary(controller),
+		"run_record": _run_record(controller),
+		"max_rank": _max_rank(controller),
+	}
+
+
+## 路线缩略图：按 stage 分组已访问节点（state.node_flags 标记），types 为中文
+## 类型短标；boss=该层含 catalog 中 tier=boss 敌人的节点，供 EMBER 高亮。
+static func _route_summary(controller) -> Array[Dictionary]:
+	var state = controller.state
+	var route = controller.get("route") if controller != null else null
+	if state == null or state.node_flags == null or route == null:
+		return []
+	var boss_enemies: Dictionary = {}
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	for enemy_id in catalog.get("enemy_by_id", {}):
+		var entry: Dictionary = catalog["enemy_by_id"][enemy_id]
+		if str(entry.get("tier", "")) == "boss":
+			boss_enemies[str(enemy_id)] = true
+	var groups: Array[Dictionary] = []
+	for node_value in route:
+		var node: Dictionary = node_value
+		var node_id := str(node.get("id", ""))
+		if not state.node_flags.has(node_id):
+			continue
+		var stage := str(node.get("stage", ""))
+		var type_label := DisplayText.type(str(node.get("type", "")))
+		var is_boss := boss_enemies.has(str(node.get("enemy_kind", "")))
+		if not groups.is_empty() and str(groups[-1]["stage"]) == stage:
+			groups[-1]["types"].append(type_label)
+			groups[-1]["boss"] = bool(groups[-1]["boss"]) or is_boss
+		else:
+			groups.append({"stage": stage, "types": [type_label], "boss": is_boss})
+	var out: Array[Dictionary] = []
+	for index in groups.size():
+		out.append({
+			"layer": index + 1,
+			"types": groups[index]["types"],
+			"boss": bool(groups[index]["boss"]),
+		})
+	return out
+
+
+## 本局记录：event_log 只读计数。合成按结果 reason 计数（材料扣减簿记事件
+## battle_synthesis_materials_spent 不计为尝试）；DDA 未实装，恒 0 占位。
+## 保底触发：事件日志无任何含 pity 的 action（pity 仅以 before/after 数值随
+## battle_loot 位移），无法在不重算领域结果的前提下确认口径，故本批不渲染该行。
+static func _run_record(controller) -> Dictionary:
+	var record := {
+		"synthesis_attempts": 0,
+		"synthesis_ok": 0,
+		"synthesis_fail": 0,
+		"boss_phase_shifts": 0,
+		"dda_triggers": 0,
+	}
+	var state = controller.state
+	if state == null:
+		return record
+	for event in state.event_log:
+		match str(event.get("action", "")):
+			"battle_synthesize":
+				match str(event.get("reason", "")):
+					"battle_synthesis_succeeded":
+						record["synthesis_attempts"] += 1
+						record["synthesis_ok"] += 1
+					"battle_synthesis_failed":
+						record["synthesis_attempts"] += 1
+						record["synthesis_fail"] += 1
+			"boss_phase_shift":
+				record["boss_phase_shifts"] += 1
+	return record
+
+
+## §16.17 结算统计行：最高转数取自 cultivator.reincarnation（转数轨唯一成长轴）。
+static func _max_rank(controller) -> int:
+	var state = controller.state
+	var cult: Dictionary = state.cultivator if state != null else {}
+	return maxi(1, int(cult.get("reincarnation", 1)))
 
 
 # P2a §16.13/§16.5 ending recap: sworn contracts only, in state.contracts
@@ -633,9 +755,29 @@ static func _enc_action(c: Dictionary) -> Dictionary:
 		"dangerous": _is_dangerous(c),
 		"quality": "",
 		"effect": str(c.get("summary", "")),
-		"cost": c.get("cost", {}),
+		# T6-E tooltip 一致性（§16.5 缺段隐藏）：cost 段以玩家可读短文输出，
+		# 空代价输出空串让段落隐藏；绝不把原始 Dictionary str 进文案。
+		"cost": _cost_note(c.get("cost", {})),
 		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
 	}
+
+
+## T6-E：行动代价字典 → 固定数值短文（§16.5 数值写死禁模糊）；空代价返回空串。
+static func _cost_note(cost: Dictionary) -> String:
+	if cost.is_empty():
+		return ""
+	var parts: Array[String] = []
+	var labels := {"stone": "元石", "lifespan": "寿元", "spirit": "真元", "hp": "气血", "time": "时辰"}
+	for key in labels:
+		if int(cost.get(str(key), 0)) > 0:
+			parts.append("%s ×%d" % [str(labels[key]), int(cost[str(key)])])
+	if cost.has("gu_ids"):
+		var gu_names: Array[String] = []
+		for gid_value in cost["gu_ids"]:
+			gu_names.append(DisplayText.gu(str(gid_value)))
+		if not gu_names.is_empty():
+			parts.append("耗蛊：" + "、".join(gu_names))
+	return " · ".join(parts)
 
 
 static func _battle_card(c: Dictionary) -> Dictionary:
@@ -831,6 +973,19 @@ static func _death_cause_from_state(state) -> String:
 	if backlash >= 3:
 		return "death_cause_backlash"
 	return "death_cause_battle"
+
+
+## 精准死因只读三字段（T5-B 结算联动）：id / 结算徽章短句 / 完整成因文案。
+## 数据源为 state 终局字段（finalize_death 只落 terminal 标记，不记死因），
+## 只读扫描，不改写任何状态；恒返回非空 id（战斗兜底）。非死亡结局由调用方
+## 传空（见 ending()）。
+static func death_cause_fields(state) -> Dictionary:
+	var id := _death_cause_from_state(state)
+	return {
+		"id": id,
+		"short": DisplayText.death_cause_short(id),
+		"text": DisplayText.death_cause(id),
+	}
 
 
 static func _node_label(n: Dictionary) -> String:

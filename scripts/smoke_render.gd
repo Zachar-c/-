@@ -81,6 +81,61 @@ func _find_button_by_text(node: Node, wanted: String) -> Button:
 	return null
 
 
+func _host_has_label_text(node: Node, wanted: String) -> bool:
+	if node is Label and str(node.text).contains(wanted):
+		return true
+	for c in node.get_children():
+		if _host_has_label_text(c, wanted):
+			return true
+	return false
+
+
+# T5-C：精确匹配标签（供配色断言取回具体 Label 节点）。
+func _find_label_exact(node: Node, wanted: String) -> Label:
+	if node is Label and str(node.text) == wanted:
+		return node
+	for c in node.get_children():
+		var found := _find_label_exact(c, wanted)
+		if found != null:
+			return found
+	return null
+
+
+# T6-E：取子树第一个 PanelContainer（读 stylebox 断言底色/描边用）。
+func _find_first_panel(node: Node) -> PanelContainer:
+	if node is PanelContainer:
+		return node
+	for c in node.get_children():
+		var found := _find_first_panel(c)
+		if found != null:
+			return found
+	return null
+
+
+func _collect_labels(node: Node, out_labels: Array) -> void:
+	if node is Label:
+		out_labels.append(node)
+	for c in node.get_children():
+		_collect_labels(c, out_labels)
+
+
+func _index_with_prefix(texts: Array[String], prefix: String) -> int:
+	for i in texts.size():
+		if texts[i].begins_with(prefix):
+			return i
+	return -1
+
+
+# T6-E：从角标字符向上爬到最近的 PanelContainer 祖先（角标实底容器）。
+func _nearest_panel_ancestor(node: Node) -> PanelContainer:
+	var cur := node.get_parent()
+	while cur != null:
+		if cur is PanelContainer:
+			return cur
+		cur = cur.get_parent()
+	return null
+
+
 func _mount_component(rel_gd: String, component: String, props: Dictionary) -> Control:
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
@@ -139,12 +194,76 @@ func _initialize() -> void:
 		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": Callable(self, "_noop")})
 	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
 	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
-	_assert_widget("GuDeathLineWarning", "res://ui/widgets/gu_death_line_warning.gd",
-		{"death_lines": {
-			"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "detail": "寿元将尽", "cause_id": "death_cause_lifespan"},
-			"hunpo": {"name": "魂魄", "remaining": 1, "max": 10, "danger": true, "detail": "魂魄将尽", "cause_id": "death_cause_soul"},
-			"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "detail": "反噬临界", "cause_id": "death_cause_backlash"}
-		}, "on_view": Callable(self, "_noop")})
+	# T6-E：危险蛊强红变体——「咒」角标必须 DANGER 底 BONE 字（R4.10），描边 DANGER 加粗。
+	var gc_danger := _mount_component("res://ui/widgets/gu_card.gd", "render",
+		{"title": "血祭蛊", "curse_warning": true})
+	var curse_glyph := _find_label_exact(gc_danger, "咒")
+	if curse_glyph == null:
+		push_error("GuCard 危险变体缺少「咒」角标")
+		quit(1)
+	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.BONE):
+		push_error("GuCard「咒」角标字符必须 BONE 色")
+		quit(1)
+	var curse_chip := _nearest_panel_ancestor(curse_glyph)
+	if curse_chip == null:
+		push_error("GuCard「咒」角标必须是实底角标容器（PanelContainer）")
+		quit(1)
+	var curse_sb := curse_chip.get_theme_stylebox("panel") as StyleBoxFlat
+	if curse_sb == null or not curse_sb.bg_color.is_equal_approx(GuStyle.DANGER):
+		push_error("GuCard「咒」角标底色必须 DANGER 强红")
+		quit(1)
+	var gc_danger_panel := _find_first_panel(gc_danger)
+	var danger_card_sb := gc_danger_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if danger_card_sb == null or not danger_card_sb.border_color.is_equal_approx(GuStyle.DANGER):
+		push_error("GuCard 危险变体描边必须 DANGER")
+		quit(1)
+	print("OK GuCardDanger buttons=%d" % _count_buttons(gc_danger))
+	# T6-E：封印态——保留「锁」标 + 整卡暗淡。
+	var gc_sealed := _mount_component("res://ui/widgets/gu_card.gd", "render",
+		{"title": "石甲蛊", "sealed": true})
+	if _find_label_exact(gc_sealed, "锁") == null:
+		push_error("GuCard 封印态缺少「锁」标")
+		quit(1)
+	if not is_equal_approx(_find_first_panel(gc_sealed).modulate.a, 0.55):
+		push_error("GuCard 封印态必须整卡暗淡（modulate a=0.55）")
+		quit(1)
+	print("OK GuCardSealed buttons=%d" % _count_buttons(gc_sealed))
+	# T5-B D2：死线预警危险行强化（☠ 前缀 + 加大字号 + 半透明血锈底条 + 整行可点）。
+	# 混合用例：寿元/反噬危险（可点），魂魄安全（纯文本）。
+	var dlw_lines := {
+		"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "detail": "寿元将尽", "cause_id": "death_cause_lifespan"},
+		"hunpo": {"name": "魂魄", "remaining": 9, "max": 10, "danger": false},
+		"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "detail": "反噬临界", "cause_id": "death_cause_backlash"},
+	}
+	var dlw := _mount_component("res://ui/widgets/gu_death_line_warning.gd", "render",
+		{"death_lines": dlw_lines, "on_view": Callable(self, "_noop")})
+	var skull_btn := _find_button_by_text(dlw, "☠ 寿元 3/60")
+	if skull_btn == null:
+		push_error("GuDeathLineWarning 危险行缺少 ☠ 前缀整行按钮")
+		quit(1)
+	var dl_sb := skull_btn.get_theme_stylebox("normal") as StyleBoxFlat
+	if dl_sb == null or not dl_sb.bg_color.is_equal_approx(Color(0.55, 0.18, 0.15, 0.25)):
+		push_error("GuDeathLineWarning 危险行缺少半透明血锈底条样式键 bg_color")
+		quit(1)
+	if not skull_btn.has_theme_font_size_override("font_size") or skull_btn.get_theme_font_size("font_size") != 15:
+		push_error("GuDeathLineWarning 危险行字号必须为 15（基础 13 + 2）")
+		quit(1)
+	if _count_buttons(dlw) != 2:
+		push_error("GuDeathLineWarning 只有 danger 行可点，期望 2 个按钮，实得 %d" % _count_buttons(dlw))
+		quit(1)
+	if not _host_has_label_text(dlw, "· 魂魄 9/10"):
+		push_error("GuDeathLineWarning 安全行应保留 · 前缀纯文本")
+		quit(1)
+	print("OK GuDeathLineWarning buttons=%d" % _count_buttons(dlw))
+	# 未接线 on_view 的宿主（map/shop 等）：危险行降级为静态底条，不出按钮。
+	var dlw_bare := _mount_component("res://ui/widgets/gu_death_line_warning.gd", "render", {"death_lines": dlw_lines})
+	if _count_buttons(dlw_bare) != 0:
+		push_error("GuDeathLineWarning 未接线时不应出现任何按钮")
+		quit(1)
+	if not _host_has_label_text(dlw_bare, "☠ 寿元 3/60"):
+		push_error("GuDeathLineWarning 未接线时危险行仍须显示 ☠ 标记")
+		quit(1)
+	print("OK GuDeathLineWarningBare buttons=%d" % _count_buttons(dlw_bare))
 	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
 		{
 			"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
@@ -155,12 +274,54 @@ func _initialize() -> void:
 		})
 	_assert_widget("GuTooltipView", "res://ui/widgets/gu_tooltip_view.gd",
 		{"title": "火蛊", "quality": "稀有", "effect": "造成灼烧", "curse_warning": true, "on_detail": Callable(self, "_noop")})
+	# T6-E：tooltip 宣纸卷轴底（PAPER）+ 深字 INK + 五段固定顺序（§16.5）。
+	var tip := _mount_component("res://ui/widgets/gu_tooltip_view.gd", "render",
+		{"title": "血祭蛊", "quality": "稀有", "effect": "吸取气血", "synergy": "与血道蛊联动",
+			"cost": "消耗 3 寿元", "curse_warning": true})
+	var tip_panel := _find_first_panel(tip)
+	var tip_sb := tip_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if tip_sb == null or not tip_sb.bg_color.is_equal_approx(GuStyle.PAPER):
+		push_error("GuTooltipView 底色必须 PAPER 卷轴感（禁深底金字回潮）")
+		quit(1)
+	var tip_labels: Array = []
+	_collect_labels(tip_panel, tip_labels)
+	var tip_texts: Array[String] = []
+	for tl in tip_labels:
+		tip_texts.append(str((tl as Label).text))
+	var idx_effect := _index_with_prefix(tip_texts, "效果：")
+	var idx_synergy := _index_with_prefix(tip_texts, "联动：")
+	var idx_cost := _index_with_prefix(tip_texts, "代价：")
+	var idx_curse := _index_with_prefix(tip_texts, "诅咒警示：")
+	if idx_effect < 0 or not (idx_effect < idx_synergy and idx_synergy < idx_cost and idx_cost < idx_curse):
+		push_error("GuTooltipView 五段顺序必须恒定：效果→联动→代价→诅咒警示")
+		quit(1)
+	if not (tip_labels[idx_effect] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.INK):
+		push_error("GuTooltipView 正文必须 INK 深字")
+		quit(1)
+	if not (tip_labels[idx_curse] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.DANGER):
+		push_error("GuTooltipView 诅咒警示行必须 DANGER 红字")
+		quit(1)
+	print("OK GuTooltipPaper labels=%d" % tip_texts.size())
 	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认执行？", "on_confirm": func(): pass, "on_cancel": func(): pass})
 	# T5-A D1：带语义化 title / warning_note 的确认弹窗变体
 	_assert_widget("GuConfirmDialogTitled", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认洗髓换骨？", "title": "⚠ 危险行动", "warning_note": "代价：10 寿元 + 8 元石 · 执行前预检寿元",
 		"on_confirm": func(): pass, "on_cancel": func(): pass})
+	# T5-B D2：死因查看浮层（L2 信息浮层，非确认语义；右上「关闭」；Fix1 移除余量行）
+	var dco := _mount_component("res://ui/widgets/gu_death_cause_overlay.gd", "render",
+		{"line": {"name": "寿元", "current": 12, "max": 60, "detail": "寿元耗尽即死。"}, "on_close": func(): pass})
+	if _find_button_by_text(dco, "关闭") == null:
+		push_error("GuDeathCauseOverlay 缺少「关闭」按钮")
+		quit(1)
+	if not (_host_has_label_text(dco, "死因 · 寿元") and _host_has_label_text(dco, "当前值：12 / 上限：60")
+			and _host_has_label_text(dco, "成因：寿元耗尽即死。")):
+		push_error("GuDeathCauseOverlay 缺少 名称/当前值/上限/成因 文案行")
+		quit(1)
+	if _host_has_label_text(dco, "距离死线余量"):
+		push_error("GuDeathCauseOverlay 不应再渲染「距离死线余量」行（恒为 0）")
+		quit(1)
+	print("OK GuDeathCauseOverlay buttons=%d" % _count_buttons(dco))
 	# T5-A D4：GuToast 纯展示组件（buttons>=0，控件必须存在）
 	var toast_info := _mount_component("res://ui/widgets/gu_toast.gd", "render",
 		{"text": "进度已保存 · 关闭游戏后可继续本次冒险", "tone": "info"})
@@ -226,11 +387,20 @@ func _initialize() -> void:
 		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
 		"contracts": ["自苦·血祭"],
 		"anomalies": ["衰运"],
-		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+		# T5-B：快照死线条目全形（value/threshold 进度语义 + remaining/max 实际值 + detail 成因）；
+		# 危险判定与顶栏一致（value>=threshold），此处寿元已触线。
+		"death_lines": {
+			"shouyuan": {"id": "shouyuan", "name": "寿元", "value": 60, "threshold": 60,
+				"remaining": 0, "max": 60, "danger": true, "cause_id": "death_cause_lifespan", "detail": "寿元耗尽即死。"},
+		},
 	}
-	var ec := _mount("res://ui/screens/encounter_screen.gd", "render", {"state": enc_state, "commands": enc_cmds})
+	var ec_container := _mount_component("res://ui/screens/encounter_screen.gd", "render", {"state": enc_state, "commands": enc_cmds})
+	var ec := _count_buttons(ec_container)
 	if ec < 1:
 		push_error("遭遇按钮数 %d < 1" % ec)
+		quit(1)
+	if _find_button_by_text(ec_container, "☠ 寿元 60/60") == null:
+		push_error("遭遇屏危险死线行应整行可点（☠ 前缀按钮）")
 		quit(1)
 	print("OK EncounterScreen buttons=%d" % ec)
 
@@ -304,15 +474,31 @@ func _initialize() -> void:
 		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
 		"contracts": ["自苦·血祭"],
 		"anomalies": ["衰运"],
-		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
+		# T5-B：快照死线条目全形（同遭遇屏）；魂魄触线为危险行，其余两行安全行。
+		"death_lines": {
+			"shouyuan": {"id": "shouyuan", "name": "寿元", "value": 55, "threshold": 60,
+				"remaining": 5, "max": 60, "danger": false, "cause_id": "death_cause_lifespan", "detail": "寿元耗尽即死。"},
+			"hunpo": {"id": "hunpo", "name": "魂魄", "value": 4, "threshold": 4,
+				"remaining": 1, "max": 6, "danger": true, "cause_id": "death_cause_soul", "detail": "魂魄耗尽即死。"},
+			"backlash": {"id": "backlash", "name": "反噬", "value": 2, "threshold": 3,
+				"remaining": 2, "max": 3, "danger": false, "cause_id": "death_cause_backlash", "detail": "反噬达上限即死。"},
+		},
 	}
-	var bc := _mount("res://ui/screens/battle_screen.gd", "render", {"state": battle_state, "commands": battle_cmds})
+	var bc_container := _mount_component("res://ui/screens/battle_screen.gd", "render", {"state": battle_state, "commands": battle_cmds})
+	var bc := _count_buttons(bc_container)
 	if bc < 1:
 		push_error("战斗按钮数 %d < 1" % bc)
 		quit(1)
+	if _find_button_by_text(bc_container, "☠ 魂魄 4/4") == null:
+		push_error("战斗屏危险死线行应整行可点（☠ 前缀按钮）")
+		quit(1)
+	# T6-E：手牌诅咒蛊必须出现「咒」强红角标（R4.10，走 GuCard danger+curse_warning）。
+	if _find_label_exact(bc_container, "咒") == null:
+		push_error("战斗手牌诅咒蛊缺少「咒」角标")
+		quit(1)
 	print("OK BattleScreen buttons=%d" % bc)
 
-	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；两种用例）
+	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；T5-C 三变体：普通胜利 / 死亡 / 无记录极简）
 	# 命名 EndingScreen 以避开旧 scripts/presentation/ending_view.gd 的全局类 EndingView。
 	var ending_cmds := {
 		"to_hall": Callable(self, "_noop"),
@@ -321,33 +507,108 @@ func _initialize() -> void:
 	var ending_success := {
 		"title": "险中求胜",
 		"ending_type": "success",
+		"achievement": "五转功成，渡劫飞升，完整走完晋升之路",
+		"max_rank": 2,
+		"route_summary": [
+			{"layer": 1, "types": ["接触", "黑市"], "boss": false},
+			{"layer": 2, "types": ["交锋"], "boss": true},
+		],
+		"run_record": {"synthesis_attempts": 2, "synthesis_ok": 1, "synthesis_fail": 1, "boss_phase_shifts": 1, "dda_triggers": 0},
 		"key_decisions": ["放弃强攻，改为诈降", "以魂魄强行镇压反噬"],
 		"gains_losses": "夺得《血道真解》残卷，损耗寿元 8",
 		"resource_balance": {"yuanstone": 20, "shouyuan": 52},
 		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
 		"aftermath": "可于大厅图鉴查阅本次所得",
 	}
-	var esc := _mount("res://ui/screens/ending_screen.gd", "render", {"state": ending_success, "commands": ending_cmds})
+	var esc_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_success, "commands": ending_cmds})
+	var esc := _count_buttons(esc_container)
 	if esc < 1:
 		push_error("结算(成功)按钮数 %d < 1" % esc)
+		quit(1)
+	if _host_has_label_text(esc_container, "死因 · "):
+		push_error("非死亡结局不得渲染死因徽章")
+		quit(1)
+	if not _host_has_label_text(esc_container, "达成：" + str(ending_success["achievement"])):
+		push_error("结算屏缺少达成条件链行")
+		quit(1)
+	if not (_host_has_label_text(esc_container, "第1层 接触·黑市") and _host_has_label_text(esc_container, "第2层 交锋")):
+		push_error("结算屏路线缩略图缺少分层短标")
+		quit(1)
+	var boss_chip := _find_label_exact(esc_container, "第2层 交锋")
+	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.EMBER):
+		push_error("路线缩略图 Boss 层必须 EMBER 高亮")
+		quit(1)
+	if not _host_has_label_text(esc_container, "战斗合成：2 次 · 成 1 / 败 1"):
+		push_error("结算本局记录缺少合成计数行")
+		quit(1)
+	if not _host_has_label_text(esc_container, "Boss 阶段切换：1 次"):
+		push_error("结算本局记录缺少 Boss 阶段切换行")
+		quit(1)
+	if _host_has_label_text(esc_container, "DDA 触发"):
+		push_error("DDA 预留位无数据时必须整行隐藏")
+		quit(1)
+	var new_chip := _find_label_exact(esc_container, "★新 图鉴：火蛊")
+	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.GOLD):
+		push_error("解锁列表项必须带 ★新 前缀（GOLD）")
+		quit(1)
+	if not _host_has_label_text(esc_container, "离局清零"):
+		push_error("资源结余面板缺少「离局清零」小字标注")
 		quit(1)
 	print("OK EndingScreen buttons=%d" % esc)
 
 	var ending_death := {
 		"title": "命丧密林",
 		"ending_type": "death",
+		"death_cause_id": "death_cause_backlash",
 		"death_cause": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
+		"death_cause_short": "反噬爆发",
+		"achievement": "寿元、魂魄或反噬一线归零，身死道消",
 		"key_decisions": ["孤身追猎未探虚实"],
 		"gains_losses": "反噬爆发，真元枯竭而亡",
 		"resource_balance": {"yuanstone": 0, "shouyuan": 0},
 		"unlocks": [],
 		"aftermath": "残魂归于大地，修行札记已留存",
 	}
-	var edc := _mount("res://ui/screens/ending_screen.gd", "render", {"state": ending_death, "commands": ending_cmds})
+	var edc_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_death, "commands": ending_cmds})
+	var edc := _count_buttons(edc_container)
 	if edc < 1:
 		push_error("结算(死亡)按钮数 %d < 1" % edc)
 		quit(1)
-	print("OK EndingScreen buttons=%d" % edc)
+	if not _host_has_label_text(edc_container, "死因 · 反噬爆发"):
+		push_error("死亡结局应在结局类型面板顶部并列死因徽章（BLOOD 色）")
+		quit(1)
+	if not _host_has_label_text(edc_container, "达成：" + str(ending_death["achievement"])):
+		push_error("死亡结局同样渲染达成条件链")
+		quit(1)
+	print("OK EndingScreenDeath buttons=%d" % edc)
+
+	# T5-C 无记录极简 run：无 route_summary/run_record 字段 → 路线与本局记录整块隐藏，
+	# 但达成条件链照常；结算仍只有 返回大厅 / 查看图鉴 两个动作（§16.6 无读档回溯）。
+	var ending_minimal := {
+		"title": "保命而退",
+		"ending_type": "retreat",
+		"achievement": "机缘未至而主动抽身，保命另寻出路",
+		"key_decisions": [],
+		"gains_losses": "",
+		"resource_balance": {},
+		"unlocks": [],
+		"aftermath": "",
+	}
+	var emn_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_minimal, "commands": ending_cmds})
+	var emn := _count_buttons(emn_container)
+	if emn != 2:
+		push_error("极简结算应只有 返回大厅/查看图鉴 两个按钮，实得 %d" % emn)
+		quit(1)
+	if _find_button_by_text(emn_container, "返回大厅") == null or _find_button_by_text(emn_container, "查看图鉴") == null:
+		push_error("结算动作必须是 返回大厅 与 查看图鉴（不得出现读档/回溯）")
+		quit(1)
+	if _host_has_label_text(emn_container, "路线") or _host_has_label_text(emn_container, "本局记录"):
+		push_error("无记录极简 run 不得渲染路线条与本局记录块")
+		quit(1)
+	if not _host_has_label_text(emn_container, "达成：" + str(ending_minimal["achievement"])):
+		push_error("极简结算仍须渲染达成条件链")
+		quit(1)
+	print("OK EndingScreenMinimal buttons=%d" % emn)
 
 	# 10) T4 剩余节点屏断言（C2 奖励 / C3 黑市 / C5 休整 / C6 炼蛊 / C8 NPC）
 	var gui_state := {
@@ -375,9 +636,24 @@ func _initialize() -> void:
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付",
 	})
 	var shop_cmds := {"buy": Callable(self, "_noop"), "block": Callable(self, "_noop"), "use_service": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
-	var shc := _mount("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
+	var shc_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
+	var shc := _count_buttons(shc_container)
 	if shc < 1:
 		push_error("黑市按钮数 %d < 1" % shc)
+		quit(1)
+	# T6-E：空池回退小字为条件槽位——未标记不渲染，标记后按 13px BONE_DIM 小字出现。
+	if _host_has_label_text(shc_container, "已切换至基础池"):
+		push_error("黑市未标记回退时不得渲染回退小字")
+		quit(1)
+	var shop_marked := shop_state.duplicate(true)
+	shop_marked["pool_fallback_note"] = "（空池回退：已切至基础池）"
+	var shm_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_marked, "commands": shop_cmds})
+	var shop_note := _find_label_exact(shm_container, "（空池回退：已切至基础池）")
+	if shop_note == null:
+		push_error("黑市标记回退后必须渲染小字槽位")
+		quit(1)
+	if shop_note.get_theme_font_size("font_size") != 13 or not shop_note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM):
+		push_error("黑市回退小字必须 BONE_DIM 13px")
 		quit(1)
 	print("OK ShopScreen buttons=%d" % shc)
 
@@ -435,15 +711,36 @@ func _initialize() -> void:
 		"rewards": [
 			{"id": "r1", "name": "月光蛊", "kind": "蛊 · 战斗奖励", "quality": "稀有", "effect": "造成月光伤害并附加「月息」层", "cost": "获取即入蛊囊", "curse_warning": false},
 			{"id": "r2", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
+			{"id": "r3", "name": "血祭蛊", "kind": "蛊 · 诅咒蛊", "quality": "稀有", "effect": "吸取气血", "cost": "每次使用反噬 +1", "curse_warning": true},
 		],
 		"full_satchel": false,
 		"pool_fallback_note": "（空池回退：已切至基础池）",
 		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
 	})
 	var reward_cmds := {"take": Callable(self, "_noop"), "replace_and_take": Callable(self, "_noop"), "skip": Callable(self, "_noop"), "close": Callable(self, "_noop")}
-	var rwc := _mount("res://ui/screens/reward_screen.gd", "render", {"state": reward_state, "commands": reward_cmds})
+	var rwc_container := _mount_component("res://ui/screens/reward_screen.gd", "render", {"state": reward_state, "commands": reward_cmds})
+	var rwc := _count_buttons(rwc_container)
 	if rwc < 1:
 		push_error("奖励按钮数 %d < 1" % rwc)
+		quit(1)
+	# T6-E：奖励三选一中的诅咒蛊同样走 GuCard 强红角标（R4.10）。
+	if _find_label_exact(rwc_container, "咒") == null:
+		push_error("奖励诅咒蛊缺少「咒」角标")
+		quit(1)
+	# T6-E：带 pool_fallback_note 的奖励屏渲染回退小字（13px BONE_DIM）。
+	var reward_note := _find_label_exact(rwc_container, "（空池回退：已切至基础池）")
+	if reward_note == null:
+		push_error("奖励屏标记回退后必须渲染小字")
+		quit(1)
+	if reward_note.get_theme_font_size("font_size") != 13 or not reward_note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM):
+		push_error("奖励屏回退小字必须 BONE_DIM 13px")
+		quit(1)
+	# 未标记时不得出现常驻假提示。
+	var reward_clean := reward_state.duplicate(true)
+	reward_clean.erase("pool_fallback_note")
+	var rwn_container := _mount_component("res://ui/screens/reward_screen.gd", "render", {"state": reward_clean, "commands": reward_cmds})
+	if _host_has_label_text(rwn_container, "已切换至基础池"):
+		push_error("奖励屏未标记回退时不得渲染回退小字")
 		quit(1)
 	print("OK RewardScreen buttons=%d" % rwc)
 
@@ -472,5 +769,67 @@ func _initialize() -> void:
 		push_error("NPC 按钮数 %d < 1" % npc)
 		quit(1)
 	print("OK NpcScreen buttons=%d" % npc)
+
+	# 11) T5-D D5：开发者调试面板（直接 mount 组件，不走控制器门控）。
+	# 展开态：红字「调试」角标 + 加蛊/资源/跳层/池情报/快照打印；折叠态：只剩把手条。
+	var dp_cmds := {
+		"toggle_open": Callable(self, "_noop"),
+		"set_gu_input": Callable(self, "_noop"),
+		"add_gu": Callable(self, "_noop"),
+		"set_res_kind": Callable(self, "_noop"),
+		"set_res_value": Callable(self, "_noop"),
+		"apply_resource": Callable(self, "_noop"),
+		"set_travel_node": Callable(self, "_noop"),
+		"travel": Callable(self, "_noop"),
+		"snapshot_dump": Callable(self, "_noop"),
+	}
+	var dp_info := {"loot_pity": 2, "material_pity": 1, "pool_excluded_ids": [], "seed": 101, "event_count": 7, "dda_percentile": ""}
+	var dp_open := {
+		"open": true,
+		"feedback": "",
+		"info": dp_info,
+		"gu_input": "",
+		"res_kind": "yuanstone",
+		"res_value": "",
+		"travel_options": [{"id": "n1", "label": "[n1] 拦路散修"}],
+		"travel_selected": "",
+		"commands": dp_cmds,
+	}
+	var dpc := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_open)
+	if _find_label_exact(dpc, "调试") == null:
+		push_error("DebugPanel 缺少红字「调试」角标")
+		quit(1)
+	var dp_badge := _find_label_exact(dpc, "调试")
+	if not dp_badge.get_theme_color("font_color").is_equal_approx(GuStyle.DANGER):
+		push_error("DebugPanel「调试」角标必须 DANGER 红字（§16.22 视觉区分）")
+		quit(1)
+	for wanted in ["加蛊", "应用", "跳", "打印 RunData 快照"]:
+		if _find_button_by_text(dpc, wanted) == null:
+			push_error("DebugPanel 展开态缺少按钮 %s" % wanted)
+			quit(1)
+	if not _host_has_label_text(dpc, "保底计数 · 蛊 2 / 材料 1"):
+		push_error("DebugPanel 池情报缺少保底计数行")
+		quit(1)
+	if not _host_has_label_text(dpc, "当前种子 101 · 事件数 7"):
+		push_error("DebugPanel 缺少种子/事件数行")
+		quit(1)
+	print("OK DebugPanelOpen buttons=%d" % _count_buttons(dpc))
+	var dp_closed := dp_open.duplicate(true)
+	dp_closed["open"] = false
+	var dpcc := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_closed)
+	if _count_buttons(dpcc) != 1:
+		push_error("DebugPanel 折叠态只剩把手条，期望 1 个按钮，实得 %d" % _count_buttons(dpcc))
+		quit(1)
+	if not _host_has_label_text(dpcc, "DEV ONLY"):
+		push_error("DebugPanel 折叠态把手条须保留 DEV 标识")
+		quit(1)
+	print("OK DebugPanelCollapsed buttons=%d" % _count_buttons(dpcc))
+	var dp_feedback := dp_open.duplicate(true)
+	dp_feedback["feedback"] = "调试失败：蛊囊已满（12/12），无法加入 月光蛊"
+	var dpcf := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_feedback)
+	if not _host_has_label_text(dpcf, "蛊囊已满"):
+		push_error("DebugPanel 操作反馈必须经 Toast 行展示")
+		quit(1)
+	print("OK DebugPanelFeedback buttons=%d" % _count_buttons(dpcf))
 
 	quit()

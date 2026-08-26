@@ -51,7 +51,7 @@ export RewardScreen() -> RuitkVNode {
     if full_satchel:
       btns.append(<GuButton label="替换" danger={ true } on_press={ func(): set_replace_idx.call({"replace_idx": idx}) } />)
     reward_cards.append((
-      <GuCard title={ rname } quality={ rqual } danger={ rcursed } expand_h={ true }>
+      <GuCard title={ rname } quality={ rqual } danger={ rcursed } curse_warning={ rcursed } expand_h={ true }>
         <Label text={ rkind } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
         <Label text={ reff } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
         <Label text={ rcost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
@@ -89,7 +89,9 @@ export RewardScreen() -> RuitkVNode {
       </GuPanel>
 
       <VBoxContainer style={ {"separation": 4} }>
-        <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+        @if (pool_fallback_note != "") {
+          return ( <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } /> )
+        }
         <Label text={ pity_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
       </VBoxContainer>
 

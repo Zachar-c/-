@@ -4,11 +4,13 @@ import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuResourceChip } from "~/ui/widgets/gu_resource_chip"
 
 # EndingScreen —— 统一结算模块（由 ending_type 驱动，§16.6 / §16.10）
-# 契约：props.state 只读快照（title / ending_type / key_decisions / gains_losses /
+# 契约：props.state 只读快照（title / ending_type / death_cause_* / achievement /
+#       max_rank / route_summary / run_record / key_decisions / gains_losses /
 #       resource_balance / unlocks / aftermath）；props.commands 动作名 -> Callable
 #       （to_hall / to_codex）。屏内零业务读写，仅在 on_press 经 commands 触发。
-# 六要素复盘顺序固定：结局类型·重大决策·关键得失·资源结余·解锁手记·后续。
+# 复盘顺序固定：结局类型·路线·重大决策·关键得失·资源结余·本局记录·解锁手记·后续。
 # 无读档按钮（§16.6）：只有「返回大厅」与「查看图鉴」。
+# T5-C：达成条件链 / 路线缩略图（Boss 层 EMBER）/ 本局记录块 / 解锁 ★新（GOLD）。
 
 export EndingScreen() -> RuitkVNode {
   var state = props.get("state", {})
@@ -42,6 +44,20 @@ export EndingScreen() -> RuitkVNode {
   var resource_balance = state.get("resource_balance", {})
   var unlocks = state.get("unlocks", [])
   var aftermath = state.get("aftermath", "—")
+  # T5-C 结算复盘只读字段（settlement_extras 投影；缺失时面板整体隐藏）。
+  var achievement = str(state.get("achievement", ""))
+  var max_rank = int(state.get("max_rank", 0))
+  var route_summary = state.get("route_summary", [])
+  var record = state.get("run_record", {})
+  # T5-B 结算联动：死亡结局在「结局类型」面板顶部并列死因徽章（BLOOD 色，不与类型徽章混色）。
+  var death_cause_short = str(state.get("death_cause_short", ""))
+  var show_cause_badge = (ending_type == "death" and death_cause_short != "")
+  var badge_box = {"bg_color": GuStyle.BG_RAISED, "corner_radius_all": 4,
+    "content_margin_left": 8, "content_margin_right": 8,
+    "content_margin_top": 2, "content_margin_bottom": 2}
+  var cause_box = {"bg_color": Color(0.55, 0.18, 0.15, 0.25), "corner_radius_all": 4,
+    "content_margin_left": 8, "content_margin_right": 8,
+    "content_margin_top": 2, "content_margin_bottom": 2}
 
   var fire = func(key: String):
     if commands.has(key):
@@ -51,13 +67,33 @@ export EndingScreen() -> RuitkVNode {
   for d in key_decisions:
     decision_rows.append(<Label text={ "· " + str(d) } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
 
+  # T5-C 新解锁红点：本次结算 unlock 即标新（跨局已读状态由 meta 掌管，本批不做已读持久化）。
   var unlock_rows = []
   for u in unlocks:
-    unlock_rows.append(<Label text={ "★ " + str(u) } style={ {"font_color": GuStyle.JADE, "font_size": 15} } />)
+    unlock_rows.append(<Label text={ "★新 " + str(u) } style={ {"font_color": GuStyle.GOLD, "font_size": 15} } />)
 
   var res_chips = []
   for k in resource_balance.keys():
     res_chips.append(<GuResourceChip kind={ str(k) } value={ int(resource_balance[k]) } />)
+
+  # 路线缩略图窄条：每层一枚短标芯片，Boss 层 EMBER 高亮。
+  var route_chips = []
+  for layer_info in route_summary:
+    var layer_text = "第%d层 %s" % [int(layer_info.get("layer", 0)), "·".join(layer_info.get("types", []))]
+    var layer_color = GuStyle.EMBER if bool(layer_info.get("boss", false)) else GuStyle.BONE_DIM
+    route_chips.append(<Label text={ layer_text } style={ {"font_color": layer_color, "font_size": 14} } />)
+
+  # 本局记录行：event_log 只读计数投影；DDA 预留位无数据时整行隐藏。
+  var record_rows = []
+  var attempts := int(record.get("synthesis_attempts", 0))
+  if attempts > 0:
+    record_rows.append(<Label text={ "战斗合成：%d 次 · 成 %d / 败 %d" % [attempts, int(record.get("synthesis_ok", 0)), int(record.get("synthesis_fail", 0))] } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
+  var shifts := int(record.get("boss_phase_shifts", 0))
+  if shifts > 0:
+    record_rows.append(<Label text={ "Boss 阶段切换：%d 次" % shifts } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
+  var dda_triggers := int(record.get("dda_triggers", 0))
+  if dda_triggers > 0:
+    record_rows.append(<Label text={ "DDA 触发：%d 次" % dda_triggers } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 15} } />)
 
   return (
     <VBoxContainer style={ {"separation": 14} }>
@@ -69,7 +105,24 @@ export EndingScreen() -> RuitkVNode {
       </CenterContainer>
 
       <GuPanel title="一 · 结局类型">
-        <Label text={ type_label } style={ {"font_color": badge_color, "font_size": 16} } />
+        <HBoxContainer style={ {"separation": 8} }>
+          <PanelContainer style={ badge_box }>
+            <Label text={ type_label } style={ {"font_color": badge_color, "font_size": 16} } />
+          </PanelContainer>
+          @if (show_cause_badge) {
+            return (
+              <PanelContainer style={ cause_box }>
+                <Label text={ "死因 · " + death_cause_short } style={ {"font_color": GuStyle.BLOOD, "font_size": 16} } />
+              </PanelContainer>
+            )
+          }
+        </HBoxContainer>
+        @if (achievement != "") {
+          return ( <Label text={ "达成：" + achievement } style={ {"font_color": GuStyle.BONE, "font_size": 14} } /> )
+        }
+        @if (max_rank > 0) {
+          return ( <Label text={ "最高转数：%d 转" % max_rank } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } /> )
+        }
       </GuPanel>
 
       @if (ending_type == "death") {
@@ -80,7 +133,19 @@ export EndingScreen() -> RuitkVNode {
         )
       }
 
-      <GuPanel title="二 · 重大决策">
+      @if (not route_chips.is_empty()) {
+        return (
+          <GuPanel title="二 · 路线">
+            <HBoxContainer style={ {"separation": 10} }>
+              @for (chip in route_chips) {
+                return chip
+              }
+            </HBoxContainer>
+          </GuPanel>
+        )
+      }
+
+      <GuPanel title="三 · 重大决策">
         @for (r in decision_rows) {
           return r
         }
@@ -89,11 +154,11 @@ export EndingScreen() -> RuitkVNode {
         }
       </GuPanel>
 
-      <GuPanel title="三 · 关键得失">
+      <GuPanel title="四 · 关键得失">
         <Label text={ str(gains_losses) } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
       </GuPanel>
 
-      <GuPanel title="四 · 资源结余">
+      <GuPanel title="五 · 资源结余">
         <HBoxContainer style={ {"separation": 10} }>
           @for (c in res_chips) {
             return c
@@ -102,9 +167,20 @@ export EndingScreen() -> RuitkVNode {
         @if (resource_balance.is_empty()) {
           return ( <Label text="（资源已随本局清空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
         }
+        <Label text="所有资源离局清零 · 解锁与手记留存大厅（§16.16 / R12.2）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
       </GuPanel>
 
-      <GuPanel title="五 · 解锁手记">
+      @if (not record_rows.is_empty()) {
+        return (
+          <GuPanel title="六 · 本局记录">
+            @for (r in record_rows) {
+              return r
+            }
+          </GuPanel>
+        )
+      }
+
+      <GuPanel title="七 · 解锁手记">
         @for (r in unlock_rows) {
           return r
         }
@@ -113,7 +189,7 @@ export EndingScreen() -> RuitkVNode {
         }
       </GuPanel>
 
-      <GuPanel title="六 · 后续">
+      <GuPanel title="八 · 后续">
         <Label text={ str(aftermath) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 15} } />
       </GuPanel>
 

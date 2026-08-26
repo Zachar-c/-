@@ -11,6 +11,9 @@ const EncounterViewScript = preload("res://scripts/presentation/encounter_view.g
 const BattleViewScript = preload("res://scripts/presentation/battle_view.gd")
 const BattleScreenScript = preload("res://ui/screens/battle_screen.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
+# T5-B：RUI 屏含 hooks（useState），必须经 reactive root 挂载，不能直接调 render。
+const RuiVLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
+const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 
 
 const NODE_CASES := [
@@ -67,7 +70,7 @@ func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	assert_true(str(enemy["intent"].get("type", "")) != "", "battle snapshot must expose enemy intent")
 	assert_true(snapshot["player"].has("hp"), "battle snapshot must expose player hp")
 	assert_true(snapshot["player"].has("soul"), "battle snapshot must expose player soul")
-	var texts := _rui_texts(BattleScreenScript.render({"state": snapshot, "commands": {}}, []))
+	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
 	assert_true(_any_contains(texts, "意图："), "battle screen must render enemy intent")
 
 
@@ -122,6 +125,25 @@ func _rui_texts(vnode: Variant) -> Array[String]:
 			for child in children:
 				out.append_array(_rui_texts(child))
 	return out
+
+
+## T5-B：经 reactive root 同步挂载 RUI 屏并收集已渲染 Label 文本
+## （hooks 组件不允许绕过 RuiRoot 直接 render）。
+func _rui_screen_texts(screen_script: GDScript, props: Dictionary) -> Array[String]:
+	assert_true(screen_script.render is Callable, "%s must expose render" % str(screen_script.resource_path))
+	var host := Control.new()
+	add_child_autofree(host)
+	RuiRoot.create(host, RuiVLib.fc(screen_script.render, props))
+	var out: Array[String] = []
+	_collect_label_texts(host, out)
+	return out
+
+
+func _collect_label_texts(node: Node, out: Array[String]) -> void:
+	if node is Label:
+		out.append(str(node.text))
+	for c in node.get_children():
+		_collect_label_texts(c, out)
 
 
 func _any_contains(texts: Array[String], substring: String) -> bool:
