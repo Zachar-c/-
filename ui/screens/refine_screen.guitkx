@@ -1,0 +1,132 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
+
+# RefineScreen —— 炼蛊 / 合成屏（规格 v3 §7 C6 / §16.18 / R10）
+# 三通道 Tab（定向/组合/盲盒）+ 拆解；输入槽 + 空位校验；完整风险预览（产物/失败率/躁动/诅咒继承）；
+# 二次确认；失败补偿计数（永不到 100%）；契约修改成功率入 meta_rules。
+# state 只读；set_channel / refine / toggle_input / dismantle / leave 经 commands。
+
+export RefineScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
+  var title = str(state.get("title", "炼蛊台"))
+  var active_channel = str(state.get("active_channel", "fixed"))
+  var slot_ok = bool(state.get("slot_ok", false))
+  var confirming = str(state.get("confirming", ""))
+  var confirm_msg = str(state.get("confirm_msg", ""))
+
+  var fire = func(key: String, arg = null):
+    if commands.has(key):
+      if arg != null:
+        commands[key].call(arg)
+      else:
+        commands[key].call()
+
+  # 通道 Tab
+  var channels = state.get("channels", [])
+  var tab_row = []
+  for ch in channels:
+    var cid = str(ch.get("id", ""))
+    var clabel = str(ch.get("label", ""))
+    var active = (cid == active_channel)
+    tab_row.append(<GuButton label={ clabel } danger={ active } on_press={ func(): fire.call("set_channel", cid) } />)
+
+  # 输入槽
+  var inputs = state.get("inputs", [])
+  var input_slots = []
+  for inp in inputs:
+    input_slots.append(<GuCard title={ str(inp) } expand_h={ true }><GuButton label="撤下" on_press={ func(): fire.call("toggle_input", str(inp)) } /></GuCard>)
+  var slot_status = "空位校验：已就绪" if slot_ok else "空位校验：不足（至少 2 蛊或材料）"
+  var slot_color = GuStyle.JADE_BRIGHT if slot_ok else GuStyle.DANGER
+
+  # 配方 / 预览
+  var recipes = state.get("recipes", [])
+  var recipe_rows = []
+  for r in recipes:
+    var rid = str(r.get("id", ""))
+    var rname = str(r.get("name", ""))
+    var rout = str(r.get("output", ""))
+    var rqual = str(r.get("quality", ""))
+    var rfail = str(r.get("fail_chance", ""))
+    var rbacklash = str(r.get("backlash", ""))
+    var rcurse = str(r.get("curse", ""))
+    var runlocked = bool(r.get("unlocked", true))
+    var preview = []
+    preview.append(<Label text={ "产物：" + rout } style={ {"font_color": GuStyle.GOLD, "font_size": 15} } />)
+    preview.append(<Label text={ rfail } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
+    preview.append(<Label text={ rbacklash } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
+    if rcurse != "":
+      preview.append(<Label text={ rcurse } style={ {"font_color": GuStyle.DANGER, "font_size": 13} } />)
+    recipe_rows.append((
+      <GuCard title={ rname } quality={ rqual } expand_h={ true }>
+        <VBoxContainer style={ {"separation": 3} }>
+          { preview }
+        </VBoxContainer>
+        <GuButton label="确认炼蛊" disabled={ not slot_ok or runlocked } on_press={ func(): fire.call("refine", rid) } />
+      </GuCard>
+    ))
+  var recipe_empty = []
+  if recipe_rows.is_empty():
+    recipe_empty.append(<Label text="（无可用配方）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  # 拆解
+  var dismantle_slots = state.get("dismantle_slots", [])
+  var dismantle_rows = []
+  for g in dismantle_slots:
+    dismantle_rows.append(<GuButton label={ "拆解 " + str(g) } on_press={ func(): fire.call("dismantle", str(g)) } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 10} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <HBoxContainer style={ {"separation": 12} }>
+        <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
+        { tab_row }
+      </HBoxContainer>
+
+      <HBoxContainer style={ {"separation": 14} }>
+        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
+          <GuPanel title="输入区">
+            <HBoxContainer style={ {"separation": 8} }>
+              { input_slots }
+            </HBoxContainer>
+            <Label text={ slot_status } style={ {"font_color": slot_color, "font_size": 13} } />
+          </GuPanel>
+          <GuPanel title="配方 / 预览">
+            <GuScrollBox height={ 330 }>
+              <VBoxContainer style={ {"separation": 10} }>
+                { recipe_rows }
+                { recipe_empty }
+              </VBoxContainer>
+            </GuScrollBox>
+          </GuPanel>
+          <Label text={ str(state.get("streak_note", "")) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        </VBoxContainer>
+        <VBoxContainer style={ {"separation": 8, "min_width": 260} }>
+          <GuPanel title="拆解化材">
+            <VBoxContainer style={ {"separation": 6} }>
+              { dismantle_rows }
+            </VBoxContainer>
+            <Label text="被拆解蛊直接消失换材料（仅炼蛊台/事件节点）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+          </GuPanel>
+          <GuButton label="离开炼蛊台" on_press={ func(): fire.call("leave") } />
+        </VBoxContainer>
+      </HBoxContainer>
+
+      @if (confirming != "") {
+        return (
+          <GuConfirmDialog message={ confirm_msg } on_confirm={ func(): fire.call("confirm") } on_cancel={ func(): fire.call("cancel_confirm") } />
+        )
+      }
+    </VBoxContainer>
+  )
+}

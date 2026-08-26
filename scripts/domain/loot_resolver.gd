@@ -1,4 +1,4 @@
-class_name LootResolver
+﻿class_name LootResolver
 extends RefCounted
 
 
@@ -278,7 +278,7 @@ static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, 
 	return next
 
 
-static func _gain_gu(state: RunState, gu_id: String, catalog: Dictionary, new_loot_pity: int) -> RunState:
+static func _gain_gu(state: RunState, gu_id: String, _catalog: Dictionary, new_loot_pity: int) -> RunState:
 	var instances := state.gu_instances.duplicate(true)
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()

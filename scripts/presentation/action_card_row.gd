@@ -9,6 +9,7 @@ const SELF_SCRIPT := preload("res://scripts/presentation/action_card_row.gd")
 # card's command through command_submitted. Never mutates state.
 
 
+@warning_ignore("unused_signal")
 signal command_submitted(command: Dictionary)
 
 

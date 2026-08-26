@@ -1,12 +1,12 @@
-class_name SeededRng
+﻿class_name SeededRng
 extends RefCounted
 
 
 var _state: int
 
 
-func _init(seed: int) -> void:
-	_state = abs(seed) % 2147483647
+func _init(seed_value: int) -> void:
+	_state = abs(seed_value) % 2147483647
 	if _state == 0:
 		_state = 1
 

@@ -1,17 +1,32 @@
 @theme "res://assets/theme/gu_theme.tres"
 
+# GuButton —— 主/次两档按钮（规格 §9）
+# props：label / disabled / danger / on_press / size("normal"|"large")
+
 export GuButton() -> RuitkVNode {
   var label = props.get("label", "按钮")
   var disabled = props.get("disabled", false)
   var danger = props.get("danger", false)
   var on_press = props.get("on_press", func(): pass)
+  var size = props.get("size", "normal")
   var color = GuStyle.DANGER if danger else GuStyle.JADE
+  var min_h = 48 if size == "large" else 32
+  var style = {
+    "font_color": color,
+    "min_width": 120,
+    "min_height": min_h,
+    "font_size": 16 if size == "large" else 14,
+    "bg_color": GuStyle.BG_PANEL,
+    "corner_radius_all": 6,
+    "border_width_all": 1,
+    "border_color": color,
+  }
   return (
     <Button
       text={ label }
       disabled={ disabled }
       onPressed={ func(): on_press.call() }
-      style={ {"font_color": color, "min_width": 120, "min_height": 32} }
+      style={ style }
     />
   )
 }

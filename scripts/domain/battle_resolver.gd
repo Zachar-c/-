@@ -764,6 +764,7 @@ static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: D
 	return _result(enemy["battle"], enemy["state"], false, "ongoing", ["enemy_first_move"])
 
 
+@warning_ignore("shadowed_global_identifier")
 static func _shuffled_cards(cards: Array, seed: int) -> Array:
 	var shuffled: Array = cards.duplicate(true)
 	var rng := SeededRngScript.new(seed)

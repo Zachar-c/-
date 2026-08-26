@@ -305,4 +305,128 @@ func _initialize() -> void:
 		quit(1)
 	print("OK EndingScreen buttons=%d" % edc)
 
+	# 10) T4 剩余节点屏断言（C2 奖励 / C3 黑市 / C5 休整 / C6 炼蛊 / C8 NPC）
+	var gui_state := {
+		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
+		"contracts": ["自苦·血祭"],
+		"anomalies": ["衰运"],
+		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+	}
+
+	var shop_state := gui_state.duplicate()
+	shop_state.merge({
+		"title": "黑市 · 寨市",
+		"npc_name": "地脉游商",
+		"npc_stance": "中立",
+		"inflation_note": "层数提升物价微涨 · 二次访问 +25%/次",
+		"offers": [
+			{"id": "o1", "name": "石甲蛊", "kind": "purchase", "price": "6 元石", "desc": "护盾 +8", "quality": "稀有", "curse_warning": false},
+			{"id": "o2", "name": "魂丹", "kind": "soul_boost", "price": "6 元石", "desc": "魂魄 +1", "quality": "史诗", "curse_warning": false},
+			{"id": "o3", "name": "寿元·脉冲鼓", "kind": "lifespan_deal", "price": "1 寿元", "desc": "高回报代价交易", "quality": "稀有", "curse_warning": true},
+		],
+		"services": [
+			{"id": "s1", "name": "刷新货架", "cost": "120 元石", "remaining": 2, "note": "本局剩余 2 次 · 通胀叠加"},
+			{"id": "s2", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
+		],
+		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付",
+	})
+	var shop_cmds := {"buy": Callable(self, "_noop"), "block": Callable(self, "_noop"), "use_service": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
+	var shc := _mount("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
+	if shc < 1:
+		push_error("黑市按钮数 %d < 1" % shc)
+		quit(1)
+	print("OK ShopScreen buttons=%d" % shc)
+
+	var rest_state := gui_state.duplicate()
+	rest_state.merge({
+		"title": "闭关 · 休整",
+		"note": "强制二选一，不可全拿",
+		"choices": [
+			{"id": "heal", "label": "调息回血", "detail": "回复 30 气血", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
+			{"id": "nurture", "label": "温养一蛊", "detail": "强化一张卡 / 移除负面", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
+			{"id": "wash", "label": "洗髓换骨", "detail": "真元上限 +1（实时刷新）", "cost": "10 寿元 + 8 元石", "disabled": false, "reason": "一局一次 · 执行前预检寿元", "curse_warning": false},
+		],
+		"is_ascension": false,
+		"growth": [],
+		"confirming": "",
+		"confirm_msg": "",
+	})
+	var rest_cmds := {"choose": Callable(self, "_noop"), "confirm_wash": Callable(self, "_noop"), "cancel_confirm": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
+	var rsc := _mount("res://ui/screens/rest_screen.gd", "render", {"state": rest_state, "commands": rest_cmds})
+	if rsc < 1:
+		push_error("休整按钮数 %d < 1" % rsc)
+		quit(1)
+	print("OK RestScreen buttons=%d" % rsc)
+
+	var refine_state := gui_state.duplicate()
+	refine_state.merge({
+		"title": "炼蛊台",
+		"channels": [
+			{"id": "fixed", "label": "定向配方"},
+			{"id": "combine", "label": "组合标签"},
+			{"id": "blind", "label": "盲盒随机"},
+		],
+		"active_channel": "fixed",
+		"inputs": ["月光蛊", "小光蛊"],
+		"slot_ok": true,
+		"recipes": [
+			{"id": "r1", "name": "月光蛊 + 小光蛊 → 月辉蛊", "output": "月辉蛊", "quality": "稀有", "fail_chance": "成功配方", "backlash": "无躁动", "curse": "", "unlocked": true},
+			{"id": "r2", "name": "盲盒（随机）", "output": "未知蛊", "quality": "随机", "fail_chance": "失败率 50% · 毁材", "backlash": "躁动 +2", "curse": "诅咒继承⚠", "unlocked": true},
+		],
+		"dismantle_slots": ["石甲蛊"],
+		"streak_note": "连续失败第 2 次，下次成功率 +5%",
+		"confirming": "",
+		"confirm_msg": "",
+	})
+	var refine_cmds := {"set_channel": Callable(self, "_noop"), "refine": Callable(self, "_noop"), "toggle_input": Callable(self, "_noop"), "dismantle": Callable(self, "_noop"), "confirm": Callable(self, "_noop"), "cancel_confirm": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
+	var rfc := _mount("res://ui/screens/refine_screen.gd", "render", {"state": refine_state, "commands": refine_cmds})
+	if rfc < 1:
+		push_error("炼蛊按钮数 %d < 1" % rfc)
+		quit(1)
+	print("OK RefineScreen buttons=%d" % rfc)
+
+	var reward_state := gui_state.duplicate()
+	reward_state.merge({
+		"title": "战利品",
+		"rewards": [
+			{"id": "r1", "name": "月光蛊", "kind": "蛊 · 战斗奖励", "quality": "稀有", "effect": "造成月光伤害并附加「月息」层", "cost": "获取即入蛊囊", "curse_warning": false},
+			{"id": "r2", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
+		],
+		"full_satchel": false,
+		"pool_fallback_note": "（空池回退：已切至基础池）",
+		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
+	})
+	var reward_cmds := {"take": Callable(self, "_noop"), "replace_and_take": Callable(self, "_noop"), "skip": Callable(self, "_noop"), "close": Callable(self, "_noop")}
+	var rwc := _mount("res://ui/screens/reward_screen.gd", "render", {"state": reward_state, "commands": reward_cmds})
+	if rwc < 1:
+		push_error("奖励按钮数 %d < 1" % rwc)
+		quit(1)
+	print("OK RewardScreen buttons=%d" % rwc)
+
+	var npc_state := gui_state.duplicate()
+	npc_state.merge({
+		"npc_name": "游方医修",
+		"stance": "中立",
+		"stance_note": "交涉失败将种子化翻转敌视",
+		"notoriety": 12,
+		"notoriety_note": "恶名高亮：威慑部分路线",
+		"offers": [
+			{"id": "o1", "name": "回购货物", "price": "5 元石", "desc": "出手一批闲置物资"},
+		],
+		"barter": [
+			{"id": "b1", "name": "迹眼蛊 换 雾步蛊", "give": "迹眼蛊", "take": "雾步蛊", "note": "以物易物 · 需空位校验"},
+		],
+		"talk_options": [
+			{"id": "t1", "label": "友善攀谈", "detail": "了解情报与需求", "danger": false},
+			{"id": "t3", "label": "威胁勒索", "detail": "恶名威慑 · 可能翻脸", "danger": true},
+		],
+		"can_flee": true,
+	})
+	var npc_cmds := {"talk": Callable(self, "_noop"), "buy": Callable(self, "_noop"), "barter": Callable(self, "_noop"), "flee": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
+	var npc := _mount("res://ui/screens/npc_screen.gd", "render", {"state": npc_state, "commands": npc_cmds})
+	if npc < 1:
+		push_error("NPC 按钮数 %d < 1" % npc)
+		quit(1)
+	print("OK NpcScreen buttons=%d" % npc)
+
 	quit()

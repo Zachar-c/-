@@ -1,0 +1,86 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+
+# RewardScreen —— 奖励 / 战利品屏（规格 v3 §7 C2 / R4 / §16.4）
+# 三选一权重池 + 保底；槽满取舍弹窗禁静默覆盖；空池回退 + 保底暗示小字；来源隔离。
+# state 只读；take / replace_and_take / skip / close 经 commands。
+
+export RewardScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
+  var title = str(state.get("title", "战利品"))
+  var full_satchel = bool(state.get("full_satchel", false))
+  var pool_fallback_note = str(state.get("pool_fallback_note", ""))
+  var pity_note = str(state.get("pity_note", ""))
+
+  var fire = func(key: String, arg = null):
+    if commands.has(key):
+      if arg != null:
+        commands[key].call(arg)
+      else:
+        commands[key].call()
+
+  var rewards = state.get("rewards", [])
+  var reward_cards = []
+  for i in range(rewards.size()):
+    var r = rewards[i]
+    var rname = str(r.get("name", ""))
+    var rkind = str(r.get("kind", ""))
+    var rqual = str(r.get("quality", ""))
+    var reff = str(r.get("effect", ""))
+    var rcost = str(r.get("cost", ""))
+    var rcursed = bool(r.get("curse_warning", false))
+    var idx = i
+    var btns = []
+    btns.append(<GuButton label="拾取" danger={ rcursed } on_press={ func(): fire.call("take", idx) } />)
+    if full_satchel:
+      btns.append(<GuButton label="替换" on_press={ func(): fire.call("replace_and_take", idx) } />)
+    reward_cards.append((
+      <GuCard title={ rname } quality={ rqual } danger={ rcursed } expand_h={ true }>
+        <Label text={ rkind } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+        <Label text={ reff } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+        <Label text={ rcost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+        <HBoxContainer style={ {"separation": 6} }>
+          { btns }
+        </HBoxContainer>
+      </GuCard>
+    ))
+  var reward_empty = []
+  if reward_cards.is_empty():
+    reward_empty.append(<Label text="（本次无战利品）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 10} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <HBoxContainer style={ {"separation": 12} }>
+        <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
+        <Label text={ "三选一 · 权重池 + 保底" } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+      </HBoxContainer>
+
+      <GuPanel title="奖励选项">
+        <HBoxContainer style={ {"separation": 12} }>
+          { reward_cards }
+          { reward_empty }
+        </HBoxContainer>
+      </GuPanel>
+
+      <VBoxContainer style={ {"separation": 4} }>
+        <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+        <Label text={ pity_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+      </VBoxContainer>
+
+      <HBoxContainer style={ {"separation": 10} }>
+        <GuButton label="放弃本次奖励" on_press={ func(): fire.call("skip") } />
+        <GuButton label="关闭" on_press={ func(): fire.call("close") } />
+      </HBoxContainer>
+    </VBoxContainer>
+  )
+}

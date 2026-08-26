@@ -6,7 +6,6 @@ import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
-import { GuDeathLineWarning } from "~/ui/widgets/gu_death_line_warning"
 
 # EncounterView —— 遭遇屏（修复「没按钮 / 危险选项无二次确认」）
 # 契约：props.state 只读快照（含 node/actions/intel/resources/contracts/anomalies/death_lines）
@@ -36,6 +35,20 @@ export EncounterScreen() -> RuitkVNode {
         commands[key].call(arg)
       else:
         commands[key].call()
+
+  # ---- C4 侧边自身状态面板（§16.5）----
+  var player = state.get("player", {})
+  var php = int(player.get("hp", 0))
+  var pmax = maxi(int(player.get("max_hp", 1)), 1)
+  var pprim = int(player.get("primordial", 0))
+  var psoul = int(player.get("soul", 0))
+  var pstone = int(player.get("stone", 0))
+  var gu_names = player.get("gu_names", [])
+  var gu_rows = []
+  for g in gu_names:
+    gu_rows.append(<Label text={ "· " + str(g) } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />)
+  if gu_rows.is_empty():
+    gu_rows.append(<Label text="（蛊囊空空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
 
   var confirm_action = {}
   for a in actions:
@@ -94,36 +107,55 @@ export EncounterScreen() -> RuitkVNode {
 
   return (
     <VBoxContainer style={ {"separation": 12} }>
-      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
-      <GuDeathLineWarning death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
 
-      <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
-        <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
-        <Label text={ str(node.get("desc", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
-        @if (not intel.is_empty()) {
-          return (
-            <GuTooltipView
-              title="情报 / 弱点"
-              effect={ str(intel.get("weakness", "")) }
-              cost={ str(intel.get("cost", "")) }
-              curse_warning={ bool(intel.get("curse_warning", false)) }
-            />
-          )
-        }
-      </GuPanel>
+      <HBoxContainer style={ {"separation": 14} }>
+        <VBoxContainer style={ {"separation": 12, "size_flags_horizontal": 3} }>
+          <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
+            <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
+            <Label text={ str(node.get("desc", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+            @if (not intel.is_empty()) {
+              return (
+                <GuTooltipView
+                  title="情报 / 弱点"
+                  effect={ str(intel.get("weakness", "")) }
+                  cost={ str(intel.get("cost", "")) }
+                  curse_warning={ bool(intel.get("curse_warning", false)) }
+                />
+              )
+            }
+          </GuPanel>
 
-      <GuScrollBox>
-        @for (r in action_rows) {
-          return r
-        }
-        @if (actions.is_empty()) {
-          return (<Label text="（当前无可用行动）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
-        }
-      </GuScrollBox>
+          <GuScrollBox>
+            @for (r in action_rows) {
+              return r
+            }
+            @if (actions.is_empty()) {
+              return (<Label text="（当前无可用行动）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+            }
+          </GuScrollBox>
 
-      @if (not has_leave) {
-        return (<GuButton label="离开" on_press={ func(): fire.call("leave") } />)
-      }
+          @if (not has_leave) {
+            return (<GuButton label="离开" on_press={ func(): fire.call("leave") } />)
+          }
+        </VBoxContainer>
+
+        <VBoxContainer style={ {"separation": 10, "min_width": 220} }>
+          <GuPanel title="自身状态">
+            <VBoxContainer style={ {"separation": 5} }>
+              <Label text={ "气血 %d/%d" % [php, pmax] } style={ {"font_color": GuStyle.JADE, "font_size": 14} } />
+              <Label text={ "魂魄 %d" % psoul } style={ {"font_color": GuStyle.JADE, "font_size": 14} } />
+              <Label text={ "真元 %d" % pprim } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
+              <Label text={ "元石 %d" % pstone } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
+            </VBoxContainer>
+          </GuPanel>
+          <GuPanel title="蛊囊">
+            <VBoxContainer style={ {"separation": 4} }>
+              { gu_rows }
+            </VBoxContainer>
+          </GuPanel>
+        </VBoxContainer>
+      </HBoxContainer>
 
       @if (confirming != "") {
         return (

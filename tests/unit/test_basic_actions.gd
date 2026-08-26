@@ -1,4 +1,4 @@
-extends GutTest
+﻿extends GutTest
 
 
 var catalog: Dictionary
@@ -44,11 +44,11 @@ func test_dodge_exempts_slower_attack_and_is_consumed() -> void:
 	var run := RunState.new_run(101)
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
 	battle["hand"] = []
-	var ready := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
-	assert_true(ready["accepted"])
-	assert_true(ready["battle"]["flags"].has("dodging"))
+	var dodged := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
+	assert_true(dodged["accepted"])
+	assert_true(dodged["battle"]["flags"].has("dodging"))
 
-	var turn := BattleResolver.take_turn(ready["battle"], {"type": "end_turn"}, ready["state"], catalog)
+	var turn := BattleResolver.take_turn(dodged["battle"], {"type": "end_turn"}, dodged["state"], catalog)
 	assert_eq(int(turn["state"].health), 6)
 	assert_false(turn["battle"]["flags"].has("dodging"))
 	assert_true(bool(turn["battle"]["log"].back().get("dodged", false)))
@@ -58,8 +58,8 @@ func test_dodge_fails_against_faster_attack() -> void:
 	var run := RunState.new_run(101)
 	var battle := BattleResolver.start({"enemy_kind": "ridge_elite_scout"}, run, catalog)
 	battle["hand"] = []
-	var ready := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
-	var turn := BattleResolver.take_turn(ready["battle"], {"type": "end_turn"}, ready["state"], catalog)
+	var dodged := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
+	var turn := BattleResolver.take_turn(dodged["battle"], {"type": "end_turn"}, dodged["state"], catalog)
 
 	assert_eq(int(turn["state"].health), 3)
 	assert_false(bool(turn["battle"]["log"].back().get("dodged", false)))
@@ -69,8 +69,8 @@ func test_dodge_flag_is_consumed_by_the_next_attack_only() -> void:
 	var run := RunState.new_run(101)
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
 	battle["hand"] = []
-	var ready := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
-	var first := BattleResolver.take_turn(ready["battle"], {"type": "end_turn"}, ready["state"], catalog)
+	var dodged := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
+	var first := BattleResolver.take_turn(dodged["battle"], {"type": "end_turn"}, dodged["state"], catalog)
 	# The flag is gone: a second end turn takes full damage again.
 	var second := BattleResolver.take_turn(first["battle"], {"type": "end_turn"}, first["state"], catalog)
 	assert_eq(int(second["state"].health), 3)

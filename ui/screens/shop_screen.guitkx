@@ -1,0 +1,127 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+
+# ShopScreen —— 黑市 / 商店屏（规格 v3 §7 C3 / §16.5 / §16.16）
+# 商品板块（蛊/消耗品/材料/元石，价格） + 服务板块（剩余次数 + 通胀说明）。
+# 「购买此蛊」与「付费屏蔽此蛊」文案严格区分（R13.4）；应急支付通道；NPC 立场徽章。
+# state 只读；buy / block / use_service / leave 经 commands。
+
+export ShopScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
+  var title = str(state.get("title", "黑市"))
+  var npc_name = str(state.get("npc_name", ""))
+  var npc_stance = str(state.get("npc_stance", "中立"))
+  var inflation_note = str(state.get("inflation_note", ""))
+  var emergency_note = str(state.get("emergency_note", ""))
+
+  var stance_color = GuStyle.JADE
+  if npc_stance == "敌视":
+    stance_color = GuStyle.ANOMALY_AMBER
+  elif npc_stance == "极度仇恨":
+    stance_color = GuStyle.DANGER
+
+  var fire = func(key: String, arg = null):
+    if commands.has(key):
+      if arg != null:
+        commands[key].call(arg)
+      else:
+        commands[key].call()
+
+  # ---- 商品板块 ----
+  var offers = state.get("offers", [])
+  var offer_cards = []
+  for o in offers:
+    var oname = str(o.get("name", ""))
+    var oprice = str(o.get("price", ""))
+    var odesc = str(o.get("desc", ""))
+    var oqual = str(o.get("quality", ""))
+    var ocursed = bool(o.get("curse_warning", false))
+    var oid = str(o.get("id", ""))
+    var btn_row = []
+    btn_row.append(<GuButton label="购买此蛊" danger={ ocursed } on_press={ func(): fire.call("buy", oid) } />)
+    btn_row.append(<GuButton label="付费屏蔽此蛊" on_press={ func(): fire.call("block", oid) } />)
+    offer_cards.append((
+      <GuCard title={ oname } quality={ oqual } danger={ ocursed } expand_h={ true }>
+        <Label text={ odesc } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        <Label text={ "价格：" + oprice } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
+        <HBoxContainer style={ {"separation": 6} }>
+          { btn_row }
+        </HBoxContainer>
+      </GuCard>
+    ))
+  var offer_empty = []
+  if offer_cards.is_empty():
+    offer_empty.append(<Label text="（货架空空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  # ---- 服务板块 ----
+  var services = state.get("services", [])
+  var service_rows = []
+  for s in services:
+    var sname = str(s.get("name", ""))
+    var scost = str(s.get("cost", ""))
+    var sremaining = int(s.get("remaining", 0))
+    var snote = str(s.get("note", ""))
+    var sid = str(s.get("id", ""))
+    service_rows.append((
+      <GuPanel expand_h={ true }>
+        <HBoxContainer style={ {"separation": 8} }>
+          <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": 3} }>
+            <Label text={ sname } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
+            <Label text={ "%s · 剩 %d 次" % [scost, sremaining] } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+            <Label text={ snote } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+          </VBoxContainer>
+          <GuButton label="使用" on_press={ func(): fire.call("use_service", sid) } />
+        </HBoxContainer>
+      </GuPanel>
+    ))
+  var service_empty = []
+  if service_rows.is_empty():
+    service_empty.append(<Label text="（暂无服务）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 10} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <HBoxContainer style={ {"separation": 12} }>
+        <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
+        <Label text={ inflation_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        <Label text={ "NPC：" + npc_name } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
+        <Label text={ "立场·" + npc_stance } style={ {"font_color": stance_color, "font_size": 15} } />
+      </HBoxContainer>
+
+      <HBoxContainer style={ {"separation": 14} }>
+        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
+          <GuPanel title="蛊虫 / 货物">
+            <GuScrollBox height={ 420 }>
+              <VBoxContainer style={ {"separation": 8} }>
+                { offer_cards }
+                { offer_empty }
+              </VBoxContainer>
+            </GuScrollBox>
+          </GuPanel>
+          <Label text={ emergency_note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+        </VBoxContainer>
+        <VBoxContainer style={ {"separation": 8, "min_width": 360} }>
+          <GuPanel title="服务">
+            <GuScrollBox height={ 470 }>
+              <VBoxContainer style={ {"separation": 8} }>
+                { service_rows }
+                { service_empty }
+              </VBoxContainer>
+            </GuScrollBox>
+          </GuPanel>
+          <GuButton label="离开黑市" on_press={ func(): fire.call("leave") } />
+        </VBoxContainer>
+      </HBoxContainer>
+    </VBoxContainer>
+  )
+}

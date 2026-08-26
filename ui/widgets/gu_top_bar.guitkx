@@ -2,44 +2,87 @@
 import { GuResourceChip } from "./gu_resource_chip"
 import { GuDeathLineWarning } from "./gu_death_line_warning"
 
+# GuTopBar —— 局内全局顶栏（规格 §9 / §16.5）
+# 资源 chip + 契约（蓝系 CONTRACT_BLUE）+ 异变/DDA（黄红系）+ 三死线预警。
+# props：resources / contracts / anomalies / death_lines / on_menu / on_view(cause_id) / layer(可选)
+# 契约与异变 UI 分区展示（§16.13），颜色语义锁死。
+# 实现注：全程 GDScript 构建 vnode，不用 @if/@for/@else（guitkx 解析不稳）。
+
 export GuTopBar() -> RuitkVNode {
   var resources = props.get("resources", {})
   var contracts = props.get("contracts", [])
   var anomalies = props.get("anomalies", [])
   var death_lines = props.get("death_lines", {})
   var on_menu = props.get("on_menu", null)
+  var on_view = props.get("on_view", null)
+  var layer = props.get("layer", -1)
 
   var kinds = ["yuanstone", "shouyuan", "hunpo", "material"]
   var chip_items = []
   for kind in kinds:
     if resources.has(kind):
-      chip_items.append({"kind": kind, "value": int(resources[kind])})
+      chip_items.append(<GuResourceChip kind={ kind } value={ int(resources[kind]) } key={ kind } />)
 
-  var dl = []
+  var kind_names = {"shouyuan": "寿元", "hunpo": "魂魄", "backlash": "反噬"}
+  var dl = {}
   for key in ["shouyuan", "hunpo", "backlash"]:
     if death_lines.has(key):
       var d = death_lines[key]
-      dl.append({"name": key, "value": int(d.get("value", 0)), "threshold": int(d.get("threshold", 0))})
+      dl[key] = {
+        "name": kind_names.get(key, key),
+        "remaining": int(d.get("value", 0)),
+        "max": int(d.get("threshold", 0)),
+        "danger": int(d.get("value", 0)) >= int(d.get("threshold", 0)),
+        "cause_id": str(d.get("cause_id", "")),
+      }
+
+  var meta_panels = []
+  for c in contracts:
+    meta_panels.append((
+      <PanelContainer style={ {"bg_color": Color(0.3, 0.4, 0.5, 0.25), "corner_radius_all": 4} } key={ c }>
+        <MarginContainer style={ {"margin_left": 6, "margin_right": 6, "margin_top": 2, "margin_bottom": 2} }>
+          <Label text={ "契约·%s" % c } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 13} } />
+        </MarginContainer>
+      </PanelContainer>
+    ))
+  for a in anomalies:
+    meta_panels.append((
+      <PanelContainer style={ {"bg_color": Color(0.5, 0.35, 0.15, 0.25), "corner_radius_all": 4} } key={ a }>
+        <MarginContainer style={ {"margin_left": 6, "margin_right": 6, "margin_top": 2, "margin_bottom": 2} }>
+          <Label text={ "异变·%s" % a } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+        </MarginContainer>
+      </PanelContainer>
+    ))
+
+  var bar_style = {"bg_color": GuStyle.BG_PANEL, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.BG_RAISED}
+
+  var left_items = []
+  if layer >= 0:
+    left_items.append(<Label text={ "第 %d 转" % layer } style={ {"font_color": GuStyle.GOLD, "font_size": 16, "min_width": 70} } />)
+  left_items.append((
+    <HBoxContainer style={ {"separation": 6, "size_flags_horizontal": 3} }>
+      { chip_items }
+    </HBoxContainer>
+  ))
+
+  var right_items = []
+  right_items.append((
+    <HBoxContainer style={ {"separation": 6} }>
+      { meta_panels }
+    </HBoxContainer>
+  ))
+  right_items.append(<GuDeathLineWarning death_lines={ dl } on_view={ on_view } />)
+  if on_menu != null:
+    right_items.append(<Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.BONE, "min_width": 32, "min_height": 32} } />)
 
   return (
-    <HBoxContainer style={ {"separation": 14} }>
-      <HBoxContainer style={ {"separation": 6} }>
-        @for (item in chip_items) {
-          return ( <GuResourceChip kind={ item["kind"] } value={ item["value"] } key={ item["kind"] } /> )
-        }
-      </HBoxContainer>
-      <HBoxContainer style={ {"separation": 6} }>
-        @for (c in contracts) {
-          return ( <Label text={ "契约: %s" % c } style={ {"font_color": GuStyle.JADE, "font_size": 13} } key={ c } /> )
-        }
-        @for (a in anomalies) {
-          return ( <Label text={ "异变: %s" % a } style={ {"font_color": GuStyle.DANGER, "font_size": 13} } key={ a } /> )
-        }
-      </HBoxContainer>
-      <GuDeathLineWarning lines={ dl } />
-      @if (on_menu != null) {
-        return ( <Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.BONE, "min_width": 32, "min_height": 32} } /> )
-      }
-    </HBoxContainer>
+    <PanelContainer style={ bar_style }>
+      <MarginContainer style={ {"margin_left": 10, "margin_right": 10, "margin_top": 6, "margin_bottom": 6} }>
+        <HBoxContainer style={ {"separation": 14} }>
+          { left_items }
+          { right_items }
+        </HBoxContainer>
+      </MarginContainer>
+    </PanelContainer>
   )
 }

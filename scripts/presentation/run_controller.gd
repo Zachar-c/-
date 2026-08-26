@@ -22,6 +22,11 @@ const SCREEN_PATHS := {
 	"Encounter": "res://ui/screens/encounter_screen.gd",
 	"Battle": "res://ui/screens/battle_screen.gd",
 	"Ending": "res://ui/screens/ending_screen.gd",
+	"Shop": "res://ui/screens/shop_screen.gd",
+	"Rest": "res://ui/screens/rest_screen.gd",
+	"Refine": "res://ui/screens/refine_screen.gd",
+	"Reward": "res://ui/screens/reward_screen.gd",
+	"Npc": "res://ui/screens/npc_screen.gd",
 }
 
 
@@ -37,6 +42,7 @@ var dialogue_replies: Array[Dictionary] = []
 var last_feedback := ""
 var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
+var _hall_subview := "main"
 var _selected_school := "force"
 
 var _rui_host: Control
@@ -64,16 +70,16 @@ func _initialize_view_flow() -> void:
 	_show_title()
 
 
-func start_new_run(seed: int, school: String = "", contract_ids: Array = []) -> void:
+func start_new_run(seed_value: int, school: String = "", contract_ids: Array = []) -> void:
 	catalog = ContentCatalog.load_all()
 	meta = SaveRepository.load_meta_file()
 	if meta == null:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
-	state = RunState.new_run(seed, meta)
+	state = RunState.new_run(seed_value, meta)
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
 	_inject_school_starters(school)
 	_swear_opening_contracts(contract_ids)
-	route = MapGenerator.build(seed, seed == 101)
+	route = MapGenerator.build(seed_value, seed_value == 101)
 	current_node = {}
 	current_battle = {}
 	current_session = {}
@@ -144,7 +150,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		if bool(current_session.get("completed", false)):
 			_return_to_map()
 		else:
-			_show_encounter()
+			_re_show_current_screen()
 		return session_result
 	var resolved := Resolver.apply(state, command, catalog)
 	state = resolved["state"]
@@ -225,6 +231,14 @@ func _travel_to(node_id: String) -> Dictionary:
 	last_result = resolved["result"]
 	if node["type"] in ["combat", "pursuit"]:
 		_start_battle()
+	elif node["type"] in ["shop", "market", "caravan"]:
+		_show_shop()
+	elif node["type"] == "rest":
+		_show_rest()
+	elif node["type"] == "refinement":
+		_show_refine()
+	elif node["type"] == "contact":
+		_show_npc()
 	else:
 		_show_encounter()
 	return resolved["result"]
@@ -277,6 +291,16 @@ func _battle_terrain() -> String:
 
 func _show_title() -> void:
 	_view_name = "Title"
+	_hall_subview = "main"
+	_render()
+
+
+## 大厅内部子视图切换（A3 流派 / A4 契约 / A5 图鉴 / A6 设置 / A7 手记）。
+## 仅改展示层 `_hall_subview`，不触碰领域状态；A2 主界面为默认根。
+func _show_hall_subview(subview: String) -> void:
+	if _view_name != "Title":
+		return
+	_hall_subview = subview
 	_render()
 
 
@@ -321,8 +345,8 @@ func _inject_school_starters(school: String) -> void:
 	state = next
 
 
-func _next_gu_instance_id(state: RunState) -> String:
-	return RunState.next_gu_instance_id(state.gu_instances)
+func _next_gu_instance_id(state_ref: RunState) -> String:
+	return RunState.next_gu_instance_id(state_ref.gu_instances)
 
 
 # C1-min §16.13: opening swears ride the same Resolver.apply path as every
@@ -372,6 +396,41 @@ func _show_map() -> void:
 func _show_encounter() -> void:
 	_view_name = "Encounter"
 	_render()
+
+
+func _show_shop() -> void:
+	_view_name = "Shop"
+	_render()
+
+
+func _show_rest() -> void:
+	_view_name = "Rest"
+	_render()
+
+
+func _show_refine() -> void:
+	_view_name = "Refine"
+	_render()
+
+
+func _show_reward() -> void:
+	_view_name = "Reward"
+	_render()
+
+
+func _show_npc() -> void:
+	_view_name = "Npc"
+	_render()
+
+
+## 会话未完成时按当前屏留在原地（T4 节点屏替代 Encounter 通用展示）。
+func _re_show_current_screen() -> void:
+	match _view_name:
+		"Shop": _show_shop()
+		"Rest": _show_rest()
+		"Refine": _show_refine()
+		"Npc": _show_npc()
+		_: _show_encounter()
 
 
 func _show_battle() -> void:

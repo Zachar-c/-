@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+﻿extends "res://addons/gut/test.gd"
 
 
 # B1 rulings: every new run rolls a fresh seed automatically (no UI entry,
@@ -29,8 +29,8 @@ func test_same_seed_produces_identical_routes() -> void:
 
 
 func test_roll_seed_returns_positive_int() -> void:
-	var seed: int = RunControllerScript.roll_seed()
-	assert_gt(seed, 0, "auto-rolled seeds must be positive integers")
+	var rolled: int = RunControllerScript.roll_seed()
+	assert_gt(rolled, 0, "auto-rolled seeds must be positive integers")
 
 
 func test_roll_seed_advances_over_calls() -> void:

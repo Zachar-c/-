@@ -2,9 +2,15 @@
 
 export GuPanel() -> RuitkVNode {
   var title = props.get("title", "")
-  var style_name = props.get("style_name", "")
+  var expand_h = props.get("expand_h", false)
+  var expand_v = props.get("expand_v", false)
+  var root_style = {}
+  if expand_h:
+    root_style["size_flags_horizontal"] = 3
+  if expand_v:
+    root_style["size_flags_vertical"] = 3
   return (
-    <PanelContainer>
+    <PanelContainer style={ root_style }>
       <MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 12, "margin_bottom": 12} }>
         <VBoxContainer style={ {"separation": 8} }>
           @if (title != "") {

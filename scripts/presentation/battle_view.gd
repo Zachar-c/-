@@ -159,7 +159,7 @@ func _pity_hint(state: RunState) -> Control:
 	return cell
 
 
-func _hud_value(kind: String, battle: Dictionary, state: RunState) -> String:
+func _hud_value(kind: String, _battle: Dictionary, state: RunState) -> String:
 	var cave: Dictionary = state.cave_aperture
 	var cultivator: Dictionary = state.cultivator
 	match kind:
@@ -198,10 +198,10 @@ func _append_field(column: VBoxContainer, battle: Dictionary, state: RunState) -
 
 
 func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
-	var name := Label.new()
-	name.text = "我 · 南疆散修"
-	name.add_theme_font_size_override("font_size", 26)
-	column.add_child(name)
+	var name_label := Label.new()
+	name_label.text = "我 · 南疆散修"
+	name_label.add_theme_font_size_override("font_size", 26)
+	column.add_child(name_label)
 	if _is_first_battle(state):
 		var tip := Label.new()
 		tip.text = "初战指引：出手次数上限=魂魄；每回合回复真元；速度高于敌招时可凭「闪避」豁免。"
@@ -273,11 +273,11 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 		log_scroll.custom_minimum_size = Vector2(0, 110)
 		log_scroll.custom_maximum_size = Vector2(0, 190)
 		column.add_child(log_scroll)
-		var log := RichTextLabel.new()
-		log.bbcode_enabled = true
-		log.fit_content = true
-		log.text = _battle_log(battle.get("log", []))
-		log_scroll.add_child(log)
+		var log_view := RichTextLabel.new()
+		log_view.bbcode_enabled = true
+		log_view.fit_content = true
+		log_view.text = _battle_log(battle.get("log", []))
+		log_scroll.add_child(log_view)
 
 
 func _player_shield(battle: Dictionary) -> int:
@@ -299,11 +299,11 @@ func _total_curse_layers(state: RunState) -> int:
 
 
 func _append_enemy_block(column: VBoxContainer, battle: Dictionary) -> void:
-	var name := Label.new()
-	name.text = "敌 · %s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
-	name.add_theme_font_size_override("font_size", 26)
-	name.add_theme_color_override("font_color", Color("e8b4a4"))
-	column.add_child(name)
+	var name_label := Label.new()
+	name_label.text = "敌 · %s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
+	name_label.add_theme_font_size_override("font_size", 26)
+	name_label.add_theme_color_override("font_color", Color("e8b4a4"))
+	column.add_child(name_label)
 
 	# §16.5.2 enemy intent must carry an explicit number AND effect word.
 	for intent in _enemy_intents(battle):
@@ -486,7 +486,7 @@ func _curse_wrapper(row: Control) -> VBoxContainer:
 # --------------------------------------------------------------------------- #
 # Relic list — ItemList handles dynamic counts (Rule #5).
 # --------------------------------------------------------------------------- #
-func _append_relics(column: VBoxContainer, state: RunState, catalog: Dictionary) -> void:
+func _append_relics(column: VBoxContainer, state: RunState, _catalog: Dictionary) -> void:
 	var panel := UiThemeScript.panel()
 	panel.custom_minimum_size = Vector2(0, 90)
 	column.add_child(panel)

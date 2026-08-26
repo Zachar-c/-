@@ -1,25 +1,25 @@
-class_name MapGenerator
+﻿class_name MapGenerator
 extends RefCounted
 
 
-static func build(seed: int, first_run: bool) -> Array[Dictionary]:
+static func build(seed_value: int, first_run: bool) -> Array[Dictionary]:
 	var data := _load_json("res://data/nodes.json")
 	var node_by_id := _index_nodes(data["nodes"])
 	node_by_id[data["ascension_node"]["id"]] = data["ascension_node"]
 	if first_run:
 		var route_ids: Array = _load_json("res://data/first_run.json")["route_ids"]
 		return _route_from_ids(route_ids, node_by_id)
-	var stage_picks := _generated_stage_picks(seed, data["nodes"], node_by_id)
-	return _route_with_network(stage_picks, node_by_id, seed)
+	var stage_picks := _generated_stage_picks(seed_value, data["nodes"], node_by_id)
+	return _route_with_network(stage_picks, node_by_id, seed_value)
 
 
-static func _generated_stage_picks(seed: int, nodes: Array, node_by_id: Dictionary) -> Dictionary:
+static func _generated_stage_picks(seed_value: int, nodes: Array, node_by_id: Dictionary) -> Dictionary:
 	var by_stage := {}
 	for node in nodes:
 		if not by_stage.has(node["stage"]):
 			by_stage[node["stage"]] = []
 		by_stage[node["stage"]].append(node["id"])
-	var rng := SeededRng.new(seed)
+	var rng := SeededRng.new(seed_value)
 	var stage_picks := {}
 	# Stage order omits "two" intentionally: nodes.json currently carries no
 	# stage-two nodes, so the picker is data-driven and would pick them as soon
@@ -78,7 +78,7 @@ static func _guarantee_anchor_types(stage_picks: Dictionary, by_stage: Dictionar
 					break
 
 
-static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary, seed: int) -> Array[Dictionary]:
+static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary, seed_value: int) -> Array[Dictionary]:
 	var stage_order: Array[String] = ["one", "three", "four", "five"]
 	var stage_one_starts: Array = []
 	var stage_one_rest: Array = []
@@ -115,7 +115,7 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 			continue
 		for from_id_value in from_ids:
 			var from_id := str(from_id_value)
-			var rng := _node_rng(seed, from_id)
+			var rng := _node_rng(seed_value, from_id)
 			var links := mini(2, to_ids.size())
 			var pool: Array = to_ids.duplicate()
 			for _link in links:
@@ -136,7 +136,7 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 			continue
 		if bool(node_by_id.get(node_id, {}).get("start", false)):
 			continue
-		var donor := str(flat_ids[_node_rng(seed, node_id).next_index(index)])
+		var donor := str(flat_ids[_node_rng(seed_value, node_id).next_index(index)])
 		outgoing[donor].append(node_id)
 		incoming_count[node_id] = 1
 	# Every stage-five node converges onto the ascension window.
@@ -154,11 +154,11 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 	return route
 
 
-static func _node_rng(seed: int, node_id: String) -> SeededRng:
-	var hash := 0
+static func _node_rng(seed_value: int, node_id: String) -> SeededRng:
+	var digest := 0
 	for character in node_id:
-		hash = hash * 31 + character.unicode_at(0)
-	return SeededRng.new(int(seed) * 1000003 + hash)
+		digest = digest * 31 + character.unicode_at(0)
+	return SeededRng.new(int(seed_value) * 1000003 + digest)
 
 
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:

@@ -1,4 +1,4 @@
-extends GutTest
+﻿extends GutTest
 
 
 func test_first_run_contains_required_anchor_nodes() -> void:
@@ -18,10 +18,10 @@ func test_same_seed_builds_same_non_first_route() -> void:
 
 
 func test_generated_route_does_not_repeat_required_contest() -> void:
-	for seed in range(1, 40):
-		var route := MapGenerator.build(seed, false)
+	for seed_value in range(1, 40):
+		var route := MapGenerator.build(seed_value, false)
 		var contest_count := route.filter(func(node: Dictionary): return node["id"] == "earth_vein_contest").size()
-		assert_eq(contest_count, 1, "seed %s repeats earth vein contest" % seed)
+		assert_eq(contest_count, 1, "seed %s repeats earth vein contest" % seed_value)
 
 
 func test_first_run_only_reveals_current_and_next_node() -> void:
