@@ -61,6 +61,17 @@
 - **日志瘦身+长局性能**（2026-08-26，master `ff7a66a`）：
   - 浅共享优化（5000 append 73s→0.52s）、scaling+soak 测试
 
+### 当前状态（2026-08-26 四批流水线收官）
+
+- **四批已全部落地 master 并推 gitee**（子代理流水线：摸底→实现→审查→修复→亲跑验证）：
+  - ①日志瘦身+长局性能 @`ff7a66a`（5000 append 73s→0.52s；`_`旁路键；soak 640 节点守卫）
+  - ②P0 遗留三件 @`6be5b6f`（休整 rest_choice_required 双门禁/精英 forced epic+必绑代价/Boss 数据驱动双阶段+冷却语义）
+  - ③契约系统最小版 @`d20d24d`（contracts.json 四契约、swear 门禁九类拒绝、meta_rules 首批按 key 消费端、大厅解锁+素材倍率累计）
+  - ④大厅手记库 @`526450c`（journal.json 8 条+结局短句、route/ending 解锁账本、快照双形状兼容 UI 会话消费端）
+- **UI 重设计已由并行会话合入主线**（merge 4681d01）：StS token 体系 10 屏进入 master；后续单分支开发。
+- 测试基线：**512 unit + 9 integration 全绿**。
+- 待办候选：结算页契约复盘区块（§16.13 顺延）、多休整节点字面量泛化、_seeded_index 公式抽助手、调试面板、NPC 个人库存、DDA。
+
 ### 当前进行中
 - **UI 重设计**（分支 `ui-sts-redesign`）：
   - StS 风格 token 体系（GuStyle 设计 token）
