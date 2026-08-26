@@ -42,6 +42,15 @@ export EndingScreen() -> RuitkVNode {
   var resource_balance = state.get("resource_balance", {})
   var unlocks = state.get("unlocks", [])
   var aftermath = state.get("aftermath", "—")
+  # T5-B 结算联动：死亡结局在「结局类型」面板顶部并列死因徽章（BLOOD 色，不与类型徽章混色）。
+  var death_cause_short = str(state.get("death_cause_short", ""))
+  var show_cause_badge = (ending_type == "death" and death_cause_short != "")
+  var badge_box = {"bg_color": GuStyle.BG_RAISED, "corner_radius_all": 4,
+    "content_margin_left": 8, "content_margin_right": 8,
+    "content_margin_top": 2, "content_margin_bottom": 2}
+  var cause_box = {"bg_color": Color(0.55, 0.18, 0.15, 0.25), "corner_radius_all": 4,
+    "content_margin_left": 8, "content_margin_right": 8,
+    "content_margin_top": 2, "content_margin_bottom": 2}
 
   var fire = func(key: String):
     if commands.has(key):
@@ -69,7 +78,18 @@ export EndingScreen() -> RuitkVNode {
       </CenterContainer>
 
       <GuPanel title="一 · 结局类型">
-        <Label text={ type_label } style={ {"font_color": badge_color, "font_size": 16} } />
+        <HBoxContainer style={ {"separation": 8} }>
+          <PanelContainer style={ badge_box }>
+            <Label text={ type_label } style={ {"font_color": badge_color, "font_size": 16} } />
+          </PanelContainer>
+          @if (show_cause_badge) {
+            return (
+              <PanelContainer style={ cause_box }>
+                <Label text={ "死因 · " + death_cause_short } style={ {"font_color": GuStyle.BLOOD, "font_size": 16} } />
+              </PanelContainer>
+            )
+          }
+        </HBoxContainer>
       </GuPanel>
 
       @if (ending_type == "death") {

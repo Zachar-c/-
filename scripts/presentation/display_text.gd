@@ -344,6 +344,20 @@ static func death_cause(id: String) -> String:
 	return _lookup("death_causes", id, "死因未明")
 
 
+# T5-B 结算死因徽章用短句（「死因 · 寿元枯竭」）；names.json 长文案的固定缩写，
+# presentation 层只读映射（data/*.json 冻结，不改写）。
+const DEATH_CAUSE_SHORT := {
+	"death_cause_lifespan": "寿元枯竭",
+	"death_cause_soul": "魂魄耗尽",
+	"death_cause_backlash": "反噬爆发",
+	"death_cause_battle": "战局失利",
+}
+
+
+static func death_cause_short(id: String) -> String:
+	return str(DEATH_CAUSE_SHORT.get(id, ""))
+
+
 static func result(payload: Dictionary) -> String:
 	if not bool(payload.get("ok", true)):
 		return "行动未能完成。"

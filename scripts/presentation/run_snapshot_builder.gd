@@ -541,14 +541,15 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 	for x in codex:
 		unlocks.append("图鉴：%s" % str(x))
 	var cult: Dictionary = state.cultivator if state != null else {}
-	var death_cause_id := ""
+	var cause := {"id": "", "short": "", "text": ""}
 	if otype == "death":
-		death_cause_id = _death_cause_from_state(state)
+		cause = death_cause_fields(state)
 	return {
 		"title": DisplayText.outcome(otype),
 		"ending_type": etype,
-		"death_cause_id": death_cause_id,
-		"death_cause": DisplayText.death_cause(death_cause_id),
+		"death_cause_id": str(cause["id"]),
+		"death_cause": str(cause["text"]),
+		"death_cause_short": str(cause["short"]),
 		"key_decisions": decisions,
 		"gains_losses": gains,
 		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
@@ -765,6 +766,20 @@ static func _death_cause_from_state(state) -> String:
 	if backlash >= 3:
 		return "death_cause_backlash"
 	return "death_cause_battle"
+
+
+## 精准死因只读三字段（T5-B 结算联动）：id / 结算徽章短句 / 完整成因文案。
+## 数据源为 state 终局字段（finalize_death 只落 terminal 标记，不记死因），
+## 只读扫描，不改写任何状态。非死亡结局由调用方传空（见 ending()）。
+static func death_cause_fields(state) -> Dictionary:
+	var id := _death_cause_from_state(state)
+	if id == "":
+		return {"id": "", "short": "", "text": ""}
+	return {
+		"id": id,
+		"short": DisplayText.death_cause_short(id),
+		"text": DisplayText.death_cause(id),
+	}
 
 
 static func _node_label(n: Dictionary) -> String:

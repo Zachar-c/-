@@ -81,6 +81,15 @@ func _find_button_by_text(node: Node, wanted: String) -> Button:
 	return null
 
 
+func _host_has_label_text(node: Node, wanted: String) -> bool:
+	if node is Label and str(node.text).contains(wanted):
+		return true
+	for c in node.get_children():
+		if _host_has_label_text(c, wanted):
+			return true
+	return false
+
+
 func _mount_component(rel_gd: String, component: String, props: Dictionary) -> Control:
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
@@ -139,12 +148,42 @@ func _initialize() -> void:
 		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": Callable(self, "_noop")})
 	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
 	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
-	_assert_widget("GuDeathLineWarning", "res://ui/widgets/gu_death_line_warning.gd",
-		{"death_lines": {
-			"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "detail": "寿元将尽", "cause_id": "death_cause_lifespan"},
-			"hunpo": {"name": "魂魄", "remaining": 1, "max": 10, "danger": true, "detail": "魂魄将尽", "cause_id": "death_cause_soul"},
-			"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "detail": "反噬临界", "cause_id": "death_cause_backlash"}
-		}, "on_view": Callable(self, "_noop")})
+	# T5-B D2：死线预警危险行强化（☠ 前缀 + 加大字号 + 半透明血锈底条 + 整行可点）。
+	# 混合用例：寿元/反噬危险（可点），魂魄安全（纯文本）。
+	var dlw_lines := {
+		"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "detail": "寿元将尽", "cause_id": "death_cause_lifespan"},
+		"hunpo": {"name": "魂魄", "remaining": 9, "max": 10, "danger": false},
+		"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "detail": "反噬临界", "cause_id": "death_cause_backlash"},
+	}
+	var dlw := _mount_component("res://ui/widgets/gu_death_line_warning.gd", "render",
+		{"death_lines": dlw_lines, "on_view": Callable(self, "_noop")})
+	var skull_btn := _find_button_by_text(dlw, "☠ 寿元 3/60")
+	if skull_btn == null:
+		push_error("GuDeathLineWarning 危险行缺少 ☠ 前缀整行按钮")
+		quit(1)
+	var dl_sb := skull_btn.get_theme_stylebox("normal") as StyleBoxFlat
+	if dl_sb == null or not dl_sb.bg_color.is_equal_approx(Color(0.55, 0.18, 0.15, 0.25)):
+		push_error("GuDeathLineWarning 危险行缺少半透明血锈底条样式键 bg_color")
+		quit(1)
+	if not skull_btn.has_theme_font_size_override("font_size") or skull_btn.get_theme_font_size("font_size") != 15:
+		push_error("GuDeathLineWarning 危险行字号必须为 15（基础 13 + 2）")
+		quit(1)
+	if _count_buttons(dlw) != 2:
+		push_error("GuDeathLineWarning 只有 danger 行可点，期望 2 个按钮，实得 %d" % _count_buttons(dlw))
+		quit(1)
+	if not _host_has_label_text(dlw, "· 魂魄 9/10"):
+		push_error("GuDeathLineWarning 安全行应保留 · 前缀纯文本")
+		quit(1)
+	print("OK GuDeathLineWarning buttons=%d" % _count_buttons(dlw))
+	# 未接线 on_view 的宿主（map/shop 等）：危险行降级为静态底条，不出按钮。
+	var dlw_bare := _mount_component("res://ui/widgets/gu_death_line_warning.gd", "render", {"death_lines": dlw_lines})
+	if _count_buttons(dlw_bare) != 0:
+		push_error("GuDeathLineWarning 未接线时不应出现任何按钮")
+		quit(1)
+	if not _host_has_label_text(dlw_bare, "☠ 寿元 3/60"):
+		push_error("GuDeathLineWarning 未接线时危险行仍须显示 ☠ 标记")
+		quit(1)
+	print("OK GuDeathLineWarningBare buttons=%d" % _count_buttons(dlw_bare))
 	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
 		{
 			"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
@@ -161,6 +200,17 @@ func _initialize() -> void:
 	_assert_widget("GuConfirmDialogTitled", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认洗髓换骨？", "title": "⚠ 危险行动", "warning_note": "代价：10 寿元 + 8 元石 · 执行前预检寿元",
 		"on_confirm": func(): pass, "on_cancel": func(): pass})
+	# T5-B D2：死因查看浮层（L2 信息浮层，非确认语义；右上「关闭」）
+	var dco := _mount_component("res://ui/widgets/gu_death_cause_overlay.gd", "render",
+		{"line": {"name": "寿元", "current": 12, "max": 60, "margin": 7, "detail": "寿元耗尽即死。"}, "on_close": func(): pass})
+	if _find_button_by_text(dco, "关闭") == null:
+		push_error("GuDeathCauseOverlay 缺少「关闭」按钮")
+		quit(1)
+	if not (_host_has_label_text(dco, "死因 · 寿元") and _host_has_label_text(dco, "当前值：12 / 上限：60")
+			and _host_has_label_text(dco, "距离死线余量：7") and _host_has_label_text(dco, "成因：寿元耗尽即死。")):
+		push_error("GuDeathCauseOverlay 缺少 名称/当前值/上限/距离死线余量/成因 文案行")
+		quit(1)
+	print("OK GuDeathCauseOverlay buttons=%d" % _count_buttons(dco))
 	# T5-A D4：GuToast 纯展示组件（buttons>=0，控件必须存在）
 	var toast_info := _mount_component("res://ui/widgets/gu_toast.gd", "render",
 		{"text": "进度已保存 · 关闭游戏后可继续本次冒险", "tone": "info"})
@@ -226,11 +276,20 @@ func _initialize() -> void:
 		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
 		"contracts": ["自苦·血祭"],
 		"anomalies": ["衰运"],
-		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
+		# T5-B：快照死线条目全形（value/threshold 进度语义 + remaining/max 实际值 + detail 成因）；
+		# 危险判定与顶栏一致（value>=threshold），此处寿元已触线。
+		"death_lines": {
+			"shouyuan": {"id": "shouyuan", "name": "寿元", "value": 60, "threshold": 60,
+				"remaining": 0, "max": 60, "danger": true, "cause_id": "death_cause_lifespan", "detail": "寿元耗尽即死。"},
+		},
 	}
-	var ec := _mount("res://ui/screens/encounter_screen.gd", "render", {"state": enc_state, "commands": enc_cmds})
+	var ec_container := _mount_component("res://ui/screens/encounter_screen.gd", "render", {"state": enc_state, "commands": enc_cmds})
+	var ec := _count_buttons(ec_container)
 	if ec < 1:
 		push_error("遭遇按钮数 %d < 1" % ec)
+		quit(1)
+	if _find_button_by_text(ec_container, "☠ 寿元 60/60") == null:
+		push_error("遭遇屏危险死线行应整行可点（☠ 前缀按钮）")
 		quit(1)
 	print("OK EncounterScreen buttons=%d" % ec)
 
@@ -304,11 +363,23 @@ func _initialize() -> void:
 		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
 		"contracts": ["自苦·血祭"],
 		"anomalies": ["衰运"],
-		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
+		# T5-B：快照死线条目全形（同遭遇屏）；魂魄触线为危险行，其余两行安全行。
+		"death_lines": {
+			"shouyuan": {"id": "shouyuan", "name": "寿元", "value": 55, "threshold": 60,
+				"remaining": 5, "max": 60, "danger": false, "cause_id": "death_cause_lifespan", "detail": "寿元耗尽即死。"},
+			"hunpo": {"id": "hunpo", "name": "魂魄", "value": 4, "threshold": 4,
+				"remaining": 1, "max": 6, "danger": true, "cause_id": "death_cause_soul", "detail": "魂魄耗尽即死。"},
+			"backlash": {"id": "backlash", "name": "反噬", "value": 2, "threshold": 3,
+				"remaining": 2, "max": 3, "danger": false, "cause_id": "death_cause_backlash", "detail": "反噬达上限即死。"},
+		},
 	}
-	var bc := _mount("res://ui/screens/battle_screen.gd", "render", {"state": battle_state, "commands": battle_cmds})
+	var bc_container := _mount_component("res://ui/screens/battle_screen.gd", "render", {"state": battle_state, "commands": battle_cmds})
+	var bc := _count_buttons(bc_container)
 	if bc < 1:
 		push_error("战斗按钮数 %d < 1" % bc)
+		quit(1)
+	if _find_button_by_text(bc_container, "☠ 魂魄 4/4") == null:
+		push_error("战斗屏危险死线行应整行可点（☠ 前缀按钮）")
 		quit(1)
 	print("OK BattleScreen buttons=%d" % bc)
 
@@ -327,25 +398,35 @@ func _initialize() -> void:
 		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
 		"aftermath": "可于大厅图鉴查阅本次所得",
 	}
-	var esc := _mount("res://ui/screens/ending_screen.gd", "render", {"state": ending_success, "commands": ending_cmds})
+	var esc_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_success, "commands": ending_cmds})
+	var esc := _count_buttons(esc_container)
 	if esc < 1:
 		push_error("结算(成功)按钮数 %d < 1" % esc)
+		quit(1)
+	if _host_has_label_text(esc_container, "死因 · "):
+		push_error("非死亡结局不得渲染死因徽章")
 		quit(1)
 	print("OK EndingScreen buttons=%d" % esc)
 
 	var ending_death := {
 		"title": "命丧密林",
 		"ending_type": "death",
+		"death_cause_id": "death_cause_backlash",
 		"death_cause": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
+		"death_cause_short": "反噬爆发",
 		"key_decisions": ["孤身追猎未探虚实"],
 		"gains_losses": "反噬爆发，真元枯竭而亡",
 		"resource_balance": {"yuanstone": 0, "shouyuan": 0},
 		"unlocks": [],
 		"aftermath": "残魂归于大地，修行札记已留存",
 	}
-	var edc := _mount("res://ui/screens/ending_screen.gd", "render", {"state": ending_death, "commands": ending_cmds})
+	var edc_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_death, "commands": ending_cmds})
+	var edc := _count_buttons(edc_container)
 	if edc < 1:
 		push_error("结算(死亡)按钮数 %d < 1" % edc)
+		quit(1)
+	if not _host_has_label_text(edc_container, "死因 · 反噬爆发"):
+		push_error("死亡结局应在结局类型面板顶部并列死因徽章（BLOOD 色）")
 		quit(1)
 	print("OK EndingScreen buttons=%d" % edc)
 

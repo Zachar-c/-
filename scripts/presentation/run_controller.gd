@@ -434,9 +434,14 @@ func _show_ending(outcome: Dictionary) -> void:
 
 func _show_death(report: Dictionary) -> void:
 	_record_run_end("dead")
+	# T5-B 结算联动：战斗死亡与 builder 路径共用精准死因三字段（只读扫描终局字段）。
+	var cause: Dictionary = RunSnapshotBuilderScript.death_cause_fields(state)
 	_ending_state = {
 		"title": "身死道消",
 		"ending_type": "death",
+		"death_cause_id": str(cause["id"]),
+		"death_cause": str(cause["text"]),
+		"death_cause_short": str(cause["short"]),
 		"key_decisions": ["最后一击：%s" % RunSnapshotBuilderScript.blow_text(str(report.get("final_blow", "")))],
 		"gains_losses": "最后一击：%s（%d 点伤害）" % [RunSnapshotBuilderScript.blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))],
 		"resource_balance": {"yuanstone": int(state.stone), "shouyuan": int(state.cultivator.get("lifespan", 0))},

@@ -6,20 +6,40 @@ import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuDeathCauseOverlay } from "~/ui/widgets/gu_death_cause_overlay"
 
 # BattleScreen —— 战斗屏三区语法（规格 v3 §7 C1）
 # 顶 HUD（顶栏+死线）→ 中战场（左我右敌、意图符文⚔🛡☾+数值+效果）→ 底操作（真元+手牌卡带+回合控制）。
 # state 只读；play_card/end_turn/ultimate/refine/flee 经 commands。
 # 意图攻击=红、防御=金；生命护盾分条（§16.5）；卡牌 tooltip 固定格式。
+# T5-B D2：危险死线行点击 → 死因查看浮层；纯 UI 态（useState 显隐），不过控制器。
 
 export BattleScreen() -> RuitkVNode {
   var state = props.get("state", {})
   var commands = props.get("commands", {})
 
+  var ui = useState({"cause_view": ""})
+  var cause_view = str(ui[0].get("cause_view", ""))
+  var set_ui = ui[1]
+
   var resources = state.get("resources", {})
   var contracts = state.get("contracts", [])
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
+
+  # 死因浮层取数：按 cause_id 回查本屏快照里的原始死线条目（只读）。
+  var cause_line = {}
+  for kind in death_lines.keys():
+    var dl = death_lines[kind]
+    if str(dl.get("cause_id", "")) == cause_view and bool(dl.get("danger", false)):
+      cause_line = {
+        "name": str(dl.get("name", kind)),
+        "current": int(dl.get("remaining", 0)),
+        "max": int(dl.get("max", 0)),
+        "margin": maxi(0, int(dl.get("threshold", 0)) - int(dl.get("value", 0))),
+        "detail": str(dl.get("detail", "")),
+      }
+      break
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -133,7 +153,7 @@ export BattleScreen() -> RuitkVNode {
 
   return (
     <VBoxContainer style={ {"separation": 10} }>
-      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_ui.call({"cause_view": str(cid)}) } />
 
       <HBoxContainer style={ {"separation": 14} }>
         <GuPanel title="我方" expand_h={ true }>
@@ -168,6 +188,12 @@ export BattleScreen() -> RuitkVNode {
           { ops }
         </HBoxContainer>
       </CenterContainer>
+
+      @if (not cause_line.is_empty()) {
+        return (
+          <GuDeathCauseOverlay line={ cause_line } on_close={ func(): set_ui.call({"cause_view": ""}) } />
+        )
+      }
     </VBoxContainer>
   )
 }
