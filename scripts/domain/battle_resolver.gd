@@ -10,6 +10,7 @@ const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
+const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -34,9 +35,12 @@ static func can_retreat(terrain: String, pursuit: int, enemy_control: int) -> bo
 
 
 static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
+	# R14.5 lever 1 (night batch): the active DDA marker may swap the enemy
+	# kind (never bosses/final boss) before the definition is resolved.
 	var requested_id := str(encounter.get("enemy_kind", "beast_swarm"))
-	var enemy := _enemy_definition(requested_id, catalog)
-	var enemy_id := str(enemy.get("id", requested_id))
+	var swapped_kind := DdaResolverScript.battle_enemy_kind(state, requested_id, catalog)
+	var enemy := _enemy_definition(swapped_kind, catalog)
+	var enemy_id := str(enemy.get("id", swapped_kind))
 	var intent: Dictionary = enemy.get("intent", {}).duplicate(true)
 	# R5.7 boss phases: optional data-driven stage list keyed by until_hp_ratio.
 	# Enemies without phases keep the single-intent legacy shape untouched.
@@ -87,6 +91,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"enemy_kind": enemy_id,
 		"enemy_hp": hp,
 		"enemy_max_hp": hp,
+		"dda_swapped_from": requested_id if enemy_id != requested_id else "",
 		"enemy_essence": int(enemy.get("essence", 0)),
 		"enemy_definition": enemy,
 		"objective": str(encounter.get("objective", "defeat")),
@@ -256,15 +261,17 @@ static func take_turn(
 		return _rejected_turn(next, state, "battle_phase_stale")
 	if str(next.get("phase", "player")) != "player":
 		return _rejected_turn(next, state, "not_player_phase")
+	var out: Dictionary = {}
 	match str(action.get("type", "")):
-		"use_gu": return _use_gu(next, action, state, catalog)
-		"use_inheritance": return _use_inheritance(next, action, state, catalog)
-		"basic_attack": return _basic_attack(next, state, catalog)
-		"basic_dodge": return _basic_dodge(next, state)
-		"end_turn": return _end_turn(next, state, catalog)
-		"retreat": return _retreat(next, state, catalog)
-		"refine": return _battle_refine(next, action, state, catalog)
-		_: return _result(next, state, false, "ongoing", ["unsupported_battle_action"])
+		"use_gu": out = _use_gu(next, action, state, catalog)
+		"use_inheritance": out = _use_inheritance(next, action, state, catalog)
+		"basic_attack": out = _basic_attack(next, state, catalog)
+		"basic_dodge": out = _basic_dodge(next, state)
+		"end_turn": out = _end_turn(next, state, catalog)
+		"retreat": out = _retreat(next, state, catalog)
+		"refine": out = _battle_refine(next, action, state, catalog)
+		_: out = _result(next, state, false, "ongoing", ["unsupported_battle_action"])
+	return _dda_refresh(out, catalog)
 
 
 static func _hand_card_index(battle: Dictionary, action_id: String) -> int:
@@ -765,7 +772,32 @@ static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: D
 	var enemy := _apply_enemy_intents(battle, state, catalog)
 	if bool(enemy["death"]):
 		return _death_over(enemy["battle"], enemy["state"], catalog, ["player_dead"])
-	return _result(enemy["battle"], enemy["state"], false, "ongoing", ["enemy_first_move"])
+	return _dda_refresh(_result(enemy["battle"], enemy["state"], false, "ongoing", ["enemy_first_move"]), catalog)
+
+
+# R14.6 (night batch): DDA marker lifecycle. Evaluates the run's band on the
+# state this turn produced and appends a dda_marker event whenever the active
+# sys: marker changes (at most one; newest replaces older — R14.6②).
+# Evaluation is pure (DdaResolver); only the event append happens here.
+static func _dda_refresh(out: Dictionary, catalog: Dictionary) -> Dictionary:
+	if not out.has("state"):
+		return out
+	var next: RunState = out["state"]
+	if next.is_terminal():
+		return out
+	var refresh := DdaResolverScript.refresh(next, catalog)
+	if refresh.is_empty():
+		return out
+	var next_state := next.append_event(_event(
+		next,
+		"dda_marker",
+		{"meta_rules": next.meta_rules},
+		{"meta_rules": refresh["after"]},
+		str(refresh["reason"]),
+		[str(refresh["marker"])]
+	))
+	out["state"] = next_state
+	return out
 
 
 @warning_ignore("shadowed_global_identifier")

@@ -1,4 +1,4 @@
-﻿class_name Resolver
+class_name Resolver
 extends RefCounted
 
 
@@ -8,6 +8,7 @@ const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
+const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 
 const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
@@ -912,7 +913,9 @@ static func _can_gain_relic(state: RunState, catalog: Dictionary, relic_id: Stri
 	if state.relic_ids.size() >= DeckCapacityScript.imprint_capacity(catalog):
 		return "imprint_capacity_exceeded"
 	# Order locked by brief: capacity rejection wins before the meta cap (R4.8).
-	if str(relic.get("grade", "")) == "meta_rule" and state.meta_rules.size() >= int(catalog.get("deck", {}).get("meta_rule_cap", 2)):
+	# R14.6 (night batch): system DDA markers (sys: keys) never count against
+	# the player meta-rule cap.
+	if str(relic.get("grade", "")) == "meta_rule" and DdaResolverScript.player_rule_count(state.meta_rules) >= int(catalog.get("deck", {}).get("meta_rule_cap", 2)):
 		return "meta_rule_cap_reached"
 	return ""
 

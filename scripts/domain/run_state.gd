@@ -47,6 +47,9 @@ var gu_card_overrides: Dictionary = {}
 var materials: Dictionary = {}
 var relic_ids: Array[String] = []
 var meta_rules: Dictionary = {}
+# R14.6⑧ (night batch): hall toggle snapshot copied into the run at birth;
+# DDA state-adaptive evaluation is inert while false (fixed progress only).
+var dda_state_adaptive_enabled: bool = true
 var terminal_state: String = "active"
 var global_codex_ids: Array[String] = []
 var school: String = ""
@@ -63,6 +66,7 @@ const STATE_FIELDS: Array[String] = [
 	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",
 	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",
 	"relic_ids", "meta_rules", "global_codex_ids", "school", "terminal_state",
+	"dda_state_adaptive_enabled",
 ]
 
 
@@ -112,6 +116,8 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		for codex_id in meta.recipe_codex_ids + meta.gu_codex_ids:
 			if not state.global_codex_ids.has(str(codex_id)):
 				state.global_codex_ids.append(str(codex_id))
+		if "dda_state_adaptive_enabled" in meta:
+			state.dda_state_adaptive_enabled = bool(meta["dda_state_adaptive_enabled"])
 	state.current_node_id = "trailhead"
 	state.event_log = [state._initial_event()]
 	return state
