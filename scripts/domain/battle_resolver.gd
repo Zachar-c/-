@@ -36,6 +36,15 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var enemy := _enemy_definition(requested_id, catalog)
 	var enemy_id := str(enemy.get("id", requested_id))
 	var intent: Dictionary = enemy.get("intent", {}).duplicate(true)
+	# R5.7 boss phases: optional data-driven stage list keyed by until_hp_ratio.
+	# Enemies without phases keep the single-intent legacy shape untouched.
+	var phases: Array = enemy.get("phases", []).duplicate(true)
+	var initial_reactions: Array = enemy.get("reactions", []).duplicate(true)
+	if not phases.is_empty():
+		intent = ((phases[0] as Dictionary).get("intents", [{}])[0] as Dictionary).duplicate(true)
+		var phase_reactions: Array = (phases[0] as Dictionary).get("reactions", [])
+		if not phase_reactions.is_empty():
+			initial_reactions = phase_reactions.duplicate(true)
 	var hp := int(encounter.get("enemy_hp", enemy.get("hp", 3)))
 	var deck_generation_hash := DeckBuilderScript.deck_hash(state, catalog)
 	var deck_cache := DeckBuilderScript.build_card_cache(state, catalog)
@@ -89,6 +98,10 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"flags": [],
 		"revealed_reactions": [],
 		"visible_intent": intent,
+		"enemy_phases": phases,
+		"enemy_phase_index": 0,
+		"intent_cooldowns": {},
+		"enemy_reactions": initial_reactions,
 		"clues": enemy.get("clues", []).duplicate(),
 		"log": [{"id": "intent_revealed", "text_key": "intent_revealed", "intent": intent.get("id", "")}],
 		"inheritance_uses": {},
@@ -188,7 +201,13 @@ static func _resolve_card_instance(battle: Dictionary, state: RunState, card: Di
 		next_state = next_state.append_event(_event(
 			next_state,
 			"battle_backlash",
-			{"health": next_state.health, "cultivator": next_state.cultivator},
+			# Scalar anchors only (L1 MINOR): the full cultivator deep snapshot
+			# bloated every backlash event; after still lands the new cultivator.
+			{
+				"health": next_state.health,
+				"soul": int(next_state.cultivator.get("soul", 0)),
+				"curse_layers": _total_curse_layers(next_state),
+			},
 			backlash["after"],
 			str(backlash["reason"]),
 			backlash["targets"]
@@ -637,7 +656,11 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	var enemy := _apply_enemy_intents(battle, state, catalog)
 	var next_battle: Dictionary = enemy["battle"]
 	var next_state: RunState = enemy["state"]
+	# R5.7 phase machinery: the executed intent starts its cooldown window,
+	# then the next turn's visible intent is drawn from the active phase set.
+	_register_intent_cooldown(next_battle, next_battle.get("visible_intent", {}), int(next_battle["turn"]))
 	next_battle["turn"] = int(next_battle["turn"]) + 1
+	_select_enemy_intent(next_battle, next_state, int(next_battle["turn"]))
 	next_battle["action_energy"] = 0
 	next_battle["flags"].erase("guarded")
 	next_battle["flags"].erase("targeting_obscured")
@@ -659,9 +682,13 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 
 static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var intent: Dictionary = battle.get("visible_intent", {})
+	# R5.7 essence_burn drains player essence directly; an interrupted intent
+	# cancels both its damage and its burn.
+	var burn := maxi(0, int(intent.get("essence_burn", 0)))
 	var damage := int(intent.get("damage", 0))
 	if battle["flags"].has("enemy_interrupted"):
 		damage = 0
+		burn = 0
 		battle["flags"].erase("enemy_interrupted")
 	elif battle["flags"].has("enemy_slowed"):
 		damage = maxi(0, damage - 1)
@@ -680,14 +707,19 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 	var next_state: RunState = damage_hook["state"]
 	damage = int(damage_hook["damage"])
 	var next_health := maxi(0, state.health - damage)
-	battle["log"].append({"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy", "dodged": dodged})
+	var log_entry := {"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy", "dodged": dodged}
+	var after_payload := {"health": next_health}
+	if burn > 0:
+		after_payload["essence"] = maxi(0, state.essence - burn)
+		log_entry["burned"] = burn
+	battle["log"].append(log_entry)
 	if next_health == 0 and damage > 0:
 		battle["final_blow"] = {"id": str(intent.get("id", "enemy_action")), "damage": damage}
 	next_state = next_state.append_event(_event(
 		next_state,
 		"battle_enemy_intent",
 		{"health": state.health},
-		{"health": next_health},
+		after_payload,
 		"battle_enemy_%s" % str(intent.get("id", "action")),
 		[str(intent.get("id", "action"))]
 	))
@@ -882,6 +914,13 @@ static func _cultivator_after_backlash(state: RunState, _health_damage: int, sou
 	var cultivator: Dictionary = state.cultivator.duplicate(true)
 	cultivator["soul"] = maxi(0, int(cultivator.get("soul", 0)) - soul_damage)
 	return cultivator
+
+
+static func _total_curse_layers(state: RunState) -> int:
+	var layers := 0
+	for status_value in state.cultivator.get("statuses", {}).values():
+		layers += maxi(0, int((status_value as Dictionary).get("layers", 0)))
+	return layers
 static func _retreat(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	if not _can_retreat(battle):
 		return _result(battle, state, false, "ongoing", ["retreat_blocked"])
@@ -909,11 +948,110 @@ static func _enemy_definition(enemy_id: String, catalog: Dictionary) -> Dictiona
 
 
 static func _reaction_for(battle: Dictionary, trigger: String) -> Dictionary:
-	var definition: Dictionary = battle.get("enemy_definition", {})
-	for reaction in definition.get("reactions", []):
+	# Phase-aware source: a boss's active phase may swap its reaction set.
+	var source: Array = battle.get("enemy_reactions", [])
+	if source.is_empty():
+		source = battle.get("enemy_definition", {}).get("reactions", [])
+	for reaction_value in source:
+		var reaction: Dictionary = reaction_value
 		if str(reaction.get("window", "")) == "before_damage" and str(reaction.get("trigger", "")) == trigger:
 			return reaction.duplicate(true)
 	return {}
+
+
+# ---- R5.7 boss phase machinery ----
+
+static func _active_phase(battle: Dictionary) -> Dictionary:
+	var phases: Array = battle.get("enemy_phases", [])
+	if phases.is_empty():
+		return {}
+	var index := clampi(int(battle.get("enemy_phase_index", 0)), 0, phases.size() - 1)
+	return phases[index]
+
+
+static func _phase_index_for_ratio(ratio: float, phases: Array) -> int:
+	for index in range(phases.size() - 1, -1, -1):
+		var threshold := float((phases[index] as Dictionary).get("until_hp_ratio", 1.0))
+		if ratio <= threshold:
+			return index
+	return 0
+
+
+# Forward-only phase sync; called wherever enemy hp may have just changed.
+# Crossing a threshold appends exactly one boss_phase_shift event whose after
+# payload carries only _from/_to info keys, then redraws the visible intent
+# from the new phase set (respecting cooldowns).
+static func _sync_boss_phases(battle: Dictionary, state: RunState) -> RunState:
+	var phases: Array = battle.get("enemy_phases", [])
+	if phases.is_empty():
+		return state
+	var ratio := float(int(battle["enemy_hp"])) / float(maxi(1, int(battle["enemy_max_hp"])))
+	var desired := _phase_index_for_ratio(ratio, phases)
+	var current := int(battle.get("enemy_phase_index", 0))
+	if desired <= current:
+		return state
+	battle["enemy_phase_index"] = desired
+	var phase_reactions: Array = (phases[desired] as Dictionary).get("reactions", [])
+	if not phase_reactions.is_empty():
+		battle["enemy_reactions"] = phase_reactions.duplicate(true)
+	var shifted := state.append_event(_event(
+		state,
+		"boss_phase_shift",
+		{},
+		{"_from": current, "_to": desired},
+		"boss_phase_shift",
+		[str(battle.get("enemy_kind", ""))]
+	))
+	_select_enemy_intent(battle, shifted, int(battle.get("turn", 1)))
+	return shifted
+
+
+# Picks the next visible intent from the active phase set. Intents whose
+# cooldown anchor has not been reached are excluded; when everything is still
+# cooling the soonest-release intent is used so single-intent phases keep
+# their historical cadence instead of stalling. Selection is seeded.
+static func _select_enemy_intent(battle: Dictionary, state: RunState, exec_turn: int) -> void:
+	var intents: Array = (_active_phase(battle).get("intents", []) as Array)
+	if intents.is_empty():
+		return
+	var cooldowns: Dictionary = battle.get("intent_cooldowns", {})
+	var available: Array = []
+	for intent_value in intents:
+		var intent: Dictionary = intent_value
+		if int(cooldowns.get(str(intent.get("id", "")), 0)) < exec_turn:
+			available.append(intent)
+	if available.is_empty():
+		var best: Dictionary = intents[0]
+		var best_release := int(cooldowns.get(str((best as Dictionary).get("id", "")), 0))
+		for intent_value in intents:
+			var intent: Dictionary = intent_value
+			var release := int(cooldowns.get(str(intent.get("id", "")), 0))
+			if release < best_release:
+				best = intent
+				best_release = release
+		available = [best]
+	var picked: Dictionary = available[_seeded_index(available.size(), state, "boss.intent")]
+	battle["visible_intent"] = picked.duplicate(true)
+
+
+# A fired intent with "cooldown":n becomes unavailable for the next n turns.
+static func _register_intent_cooldown(battle: Dictionary, intent: Dictionary, exec_turn: int) -> void:
+	var cooldown := maxi(0, int(intent.get("cooldown", 0)))
+	if cooldown <= 0:
+		return
+	var cooldowns: Dictionary = battle.get("intent_cooldowns", {}).duplicate()
+	cooldowns[str(intent.get("id", ""))] = exec_turn + cooldown
+	battle["intent_cooldowns"] = cooldowns
+
+
+static func _seeded_index(bound: int, state: RunState, salt: String) -> int:
+	if bound <= 1:
+		return 0
+	var salt_hash := 0
+	for character in salt:
+		salt_hash = salt_hash * 31 + character.unicode_at(0)
+	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
+	return rng.next_index(bound)
 
 
 static func _reaction_countered(battle: Dictionary, reaction: Dictionary) -> bool:
@@ -948,6 +1086,12 @@ static func _can_retreat(battle: Dictionary) -> bool:
 
 
 static func _with_objective_result(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	# R5.7 phase re-evaluation happens the moment enemy hp changed but only
+	# while the battle can continue (no shift events for a dying boss).
+	var enemy_down := str(battle["objective"]) == "defeat" and int(battle["enemy_hp"]) <= 0
+	var delayed := str(battle["objective"]) == "delay" and int(battle["delay_progress"]) >= int(battle["delay_needed"])
+	if not enemy_down and not delayed:
+		state = _sync_boss_phases(battle, state)
 	if str(battle["objective"]) == "delay" and int(battle["delay_progress"]) >= int(battle["delay_needed"]):
 		return _victory_with_loot(battle, state, catalog, ["objective_delayed"])
 	if str(battle["objective"]) == "defeat" and int(battle["enemy_hp"]) <= 0:
