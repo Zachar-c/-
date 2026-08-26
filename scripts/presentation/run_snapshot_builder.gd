@@ -572,8 +572,35 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"gains_losses": gains,
 		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
 		"unlocks": unlocks,
+		"contracts_recap": _contracts_recap(state, catalog),
+		"contracts_sworn_count": _contracts_sworn_count(state),
 		"aftermath": str(catalog.get("journal", {}).get("ending_texts", {}).get(etype, "修行札记已留存，可于大厅图鉴查阅本次所得。")),
 	}
+
+
+# P2a §16.13/§16.5 ending recap: sworn contracts only, in state.contracts
+# order; desc already carries hard-coded numbers and is passed through.
+static func _contracts_recap(state, catalog: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if state == null or not (state.contracts is Array):
+		return out
+	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
+	for x in state.contracts:
+		var id := str(x)
+		var entry: Dictionary = by_id.get(id, {})
+		out.append({
+			"id": id,
+			"label": str(entry.get("label", id)),
+			"desc": str(entry.get("desc", "")),
+			"rules": (entry.get("rules", []) as Array).duplicate(true),
+		})
+	return out
+
+
+static func _contracts_sworn_count(state) -> int:
+	if state == null or not (state.contracts is Array):
+		return 0
+	return (state.contracts as Array).size()
 
 
 # Shared outcome→ending-type vocabulary (snapshot display and MetaProgress
