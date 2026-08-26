@@ -308,7 +308,8 @@ static func hall(controller) -> Dictionary:
 		"contracts": _available_contracts(meta, catalog),
 		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},
 		"codex": _codex(catalog, meta),
-		"journal": _journal(meta),
+		"journal": _journal(meta, catalog),
+		"journal_locked_count": _journal_locked_count(meta, catalog),
 	}
 
 
@@ -389,21 +390,23 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 	}
 
 
-## A7 手记库（§16.9 叙事沉淀）。当前 meta 仅统计战绩；手记条目在后续结算沉淀时
-## 写入，现展示空态 + 轮回概览占位（诚实呈现，不编造叙事）。
-static func _journal(meta) -> Dictionary:
-	var entries: Array[Dictionary] = []
+## A7 手记库（§16.9 叙事沉淀）：只渲染已解锁条目；ending 页结局短句优先取
+## journal.json ending_texts（缺 key 回退硬编码）；解锁判定在 MetaProgress。
+static func _journal(meta, catalog: Dictionary) -> Array:
+	var by_id: Dictionary = catalog.get("journal_entry_by_id", {})
+	var out: Array = []
 	if meta != null:
-		var stats: Dictionary = meta.statistics
-		entries.append({
-			"title": "轮回纪要",
-			"body": "开悟 %d 局 · 通关 %d · 身死 %d。碎片手记将在此沉淀。" % [
-				int(stats.get("runs_started", 0)),
-				int(stats.get("runs_won", 0)),
-				int(stats.get("deaths", 0)),
-			],
-		})
-	return {"entries": entries, "count": entries.size()}
+		for jid in meta.journal_unlocked:
+			var entry: Dictionary = by_id.get(str(jid), {})
+			if not entry.is_empty():
+				out.append({"id": str(jid), "title": str(entry.get("title", "")), "text": str(entry.get("text", ""))})
+	return out
+
+
+static func _journal_locked_count(meta, catalog: Dictionary) -> int:
+	var total := (catalog.get("journal", {}).get("entries", []) as Array).size()
+	var unlocked := (meta.journal_unlocked as Array).size() if meta != null else 0
+	return maxi(0, total - unlocked)
 
 
 static func map(controller) -> Dictionary:
@@ -529,6 +532,7 @@ static func battle(controller) -> Dictionary:
 
 static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary) -> Dictionary:
 	var state = controller.state
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var otype := str(outcome.get("outcome", "survived_failure"))
 	var etype := ending_type_for(otype)
 	var decisions: Array[String] = []
@@ -557,7 +561,7 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"gains_losses": gains,
 		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
 		"unlocks": unlocks,
-		"aftermath": "修行札记已留存，可于大厅图鉴查阅本次所得。",
+		"aftermath": str(catalog.get("journal", {}).get("ending_texts", {}).get(etype, "修行札记已留存，可于大厅图鉴查阅本次所得。")),
 	}
 
 

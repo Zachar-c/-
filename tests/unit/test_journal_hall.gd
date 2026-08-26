@@ -208,3 +208,51 @@ func test_meta_save_round_trip_carries_journal_and_defaults_old_saves() -> void:
 	assert_not_null(legacy)
 	assert_eq(legacy.journal_unlocked, [])
 
+
+
+# ---- D3 snapshot exposure ----
+
+class StubController:
+	var state
+	var catalog
+	var meta
+	var _hall_subview := "main"
+	var _selected_school := ""
+
+
+func _stub(state, meta) -> StubController:
+	var stub := StubController.new()
+	stub.state = state
+	stub.catalog = catalog
+	stub.meta = meta
+	return stub
+
+
+func test_hall_snapshot_exposes_unlocked_journal_and_locked_count() -> void:
+	var meta := MetaProgress.new_empty()
+	meta = meta.record_run_end(RunState.new_run(3), "risky", catalog, "risky")
+
+	var snapshot: Dictionary = RunSnapshotBuilderScript.hall(_stub(RunState.new_run(4), meta))
+	var journal: Array = snapshot["journal"]
+	assert_eq(journal.size(), 1)
+	assert_eq(str(journal[0]["id"]), "journal_risky_arrival")
+	assert_eq(int(snapshot["journal_locked_count"]), 7)
+	assert_false(str(journal[0]["title"]).is_empty())
+	assert_false(str(journal[0]["text"]).is_empty())
+
+	var fresh: Dictionary = RunSnapshotBuilderScript.hall(_stub(RunState.new_run(5), MetaProgress.new_empty()))
+	assert_eq((fresh["journal"] as Array).size(), 0)
+	assert_eq(int(fresh["journal_locked_count"]), 8)
+
+
+func test_ending_snapshot_prefers_journal_ending_texts_with_hardcoded_fallback() -> void:
+	var controller := _stub(RunState.new_run(6), MetaProgress.new_empty())
+	var outcome := {"outcome": "success"}
+	var ending: Dictionary = RunSnapshotBuilderScript.ending(controller, outcome, [], {})
+	assert_eq(str(ending["aftermath"]),
+			str(catalog["journal"]["ending_texts"]["success"]))
+
+	var bare := _stub(RunState.new_run(7), MetaProgress.new_empty())
+	bare.catalog = {}
+	var fallback: Dictionary = RunSnapshotBuilderScript.ending(bare, outcome, [], {})
+	assert_eq(str(fallback["aftermath"]), "修行札记已留存，可于大厅图鉴查阅本次所得。")
