@@ -48,6 +48,7 @@ static func load_all() -> Dictionary:
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var contracts_cfg := _load_object("res://data/contracts.json")
 	var journal_cfg := _load_object("res://data/journal.json")
+	var debug_cfg := _load_object("res://data/debug.json")
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
 	var material_ids: Array[String] = ["feed_points"]
 	for material_id in loot_materials:
@@ -86,6 +87,7 @@ static func load_all() -> Dictionary:
 		"contract_entry_by_id": _index_by_id(contracts_cfg.get("entries", [])),
 		"journal": journal_cfg,
 		"journal_entry_by_id": _index_by_id(journal_cfg.get("entries", [])),
+		"debug": debug_cfg,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -370,6 +372,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
 	if catalog.has("journal"):
 		errors.append_array(_validate_journal(catalog.get("journal", {})))
+	if catalog.has("debug"):
+		var enabled_value: Variant = catalog.get("debug", {}).get("enabled", null)
+		if not (enabled_value is bool):
+			errors.append("debug.enabled must be a boolean")
 	for tier_key in loot_tables.get("loot", {}):
 		var tier: Dictionary = loot_tables["loot"][tier_key]
 		if int(tier.get("material_count", 0)) < 0:
