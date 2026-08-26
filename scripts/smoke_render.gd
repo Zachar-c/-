@@ -71,6 +71,27 @@ func _count_buttons(node: Node) -> int:
 	return n
 
 
+func _find_button_by_text(node: Node, wanted: String) -> Button:
+	if node is Button and node.text == wanted:
+		return node
+	for c in node.get_children():
+		var found := _find_button_by_text(c, wanted)
+		if found != null:
+			return found
+	return null
+
+
+func _mount_component(rel_gd: String, component: String, props: Dictionary) -> Control:
+	var fn = VLib.comp(rel_gd, component)
+	if not (fn is Callable):
+		push_error("%s 无组件 %s" % [rel_gd, component])
+		quit(1)
+	var container := Control.new()
+	root.add_child(container)
+	RuiRoot.create(container, VLib.fc(fn, props))
+	return container
+
+
 func _assert_widget(name: String, rel_gd: String, props: Dictionary, children := []) -> void:
 	var count := 0
 	if children.is_empty():
@@ -136,6 +157,23 @@ func _initialize() -> void:
 		{"title": "火蛊", "quality": "稀有", "effect": "造成灼烧", "curse_warning": true, "on_detail": Callable(self, "_noop")})
 	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认执行？", "on_confirm": func(): pass, "on_cancel": func(): pass})
+	# T5-A D1：带语义化 title / warning_note 的确认弹窗变体
+	_assert_widget("GuConfirmDialogTitled", "res://ui/widgets/gu_confirm_dialog.gd",
+		{"message": "确认洗髓换骨？", "title": "⚠ 危险行动", "warning_note": "代价：10 寿元 + 8 元石 · 执行前预检寿元",
+		"on_confirm": func(): pass, "on_cancel": func(): pass})
+	# T5-A D4：GuToast 纯展示组件（buttons>=0，控件必须存在）
+	var toast_info := _mount_component("res://ui/widgets/gu_toast.gd", "render",
+		{"text": "进度已保存 · 关闭游戏后可继续本次冒险", "tone": "info"})
+	if toast_info.get_child_count() == 0:
+		push_error("GuToast(info) 未渲染出任何控件")
+		quit(1)
+	print("OK GuToast buttons=%d" % _count_buttons(toast_info))
+	var toast_warn := _mount_component("res://ui/widgets/gu_toast.gd", "render",
+		{"text": "大厅存档版本差异较大，建议在设置中清除后重新开始", "tone": "warn"})
+	if toast_warn.get_child_count() == 0:
+		push_error("GuToast(warn) 未渲染出任何控件")
+		quit(1)
+	print("OK GuToastWarn buttons=%d" % _count_buttons(toast_warn))
 	_assert_widget("GuScrollBox", "res://ui/widgets/gu_scroll_box.gd", {}, [b])
 
 	# 4) 编译 ui/screens 下全部 .guitkx（widgets 已先编译，import 可解析）
@@ -211,11 +249,12 @@ func _initialize() -> void:
 		quit(1)
 	print("OK EncounterScreenEmpty buttons=%d" % ece)
 
-	# 7) 地图屏断言（网状收敛地图，按层分组；至少 1 个节点按钮）
+	# 7) 地图屏断言（网状收敛地图，按层分组；至少 1 个节点按钮；T5-A：含存档按钮 + Toast 行）
 	# 命名 MapScreen 以避开旧 scripts/presentation/map_view.gd 的全局类 MapView（被单测引用）。
 	var map_cmds := {
 		"travel": Callable(self, "_noop"),
 		"view_node": Callable(self, "_noop"),
+		"save_run": Callable(self, "_noop"),
 	}
 	var map_state := {
 		"nodes": [
@@ -226,14 +265,19 @@ func _initialize() -> void:
 		],
 		"current_node_id": "n1",
 		"reachable_ids": ["n2", "n3"],
+		"toast": "进度已保存 · 关闭游戏后可继续本次冒险",
 		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
 		"contracts": ["自苦·血祭"],
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	var mc := _mount("res://ui/screens/map_screen.gd", "render", {"state": map_state, "commands": map_cmds})
+	var map_container := _mount_component("res://ui/screens/map_screen.gd", "render", {"state": map_state, "commands": map_cmds})
+	var mc := _count_buttons(map_container)
 	if mc < 1:
 		push_error("地图按钮数 %d < 1" % mc)
+		quit(1)
+	if _find_button_by_text(map_container, "存档") == null:
+		push_error("地图屏缺少「存档」按钮")
 		quit(1)
 	print("OK MapScreen buttons=%d" % mc)
 

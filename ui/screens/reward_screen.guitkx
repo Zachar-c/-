@@ -3,9 +3,11 @@ import { GuButton } from "~/ui/widgets/gu_button"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 
 # RewardScreen —— 奖励 / 战利品屏（规格 v3 §7 C2 / R4 / §16.4）
 # 三选一权重池 + 保底；槽满取舍弹窗禁静默覆盖；空池回退 + 保底暗示小字；来源隔离。
+# 槽满时「替换」走 D1 确认弹窗（R4.9 禁静默覆盖）。
 # state 只读；take / replace_and_take / skip / close 经 commands。
 
 export RewardScreen() -> RuitkVNode {
@@ -20,6 +22,11 @@ export RewardScreen() -> RuitkVNode {
   var full_satchel = bool(state.get("full_satchel", false))
   var pool_fallback_note = str(state.get("pool_fallback_note", ""))
   var pity_note = str(state.get("pity_note", ""))
+
+  # 槽满取舍二次确认（R4.9）；屏内 useState 驱动显隐。
+  var st = useState({"replace_idx": -1})
+  var replace_idx = int(st[0].get("replace_idx", -1))
+  var set_replace_idx = st[1]
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -42,7 +49,7 @@ export RewardScreen() -> RuitkVNode {
     var btns = []
     btns.append(<GuButton label="拾取" danger={ rcursed } on_press={ func(): fire.call("take", idx) } />)
     if full_satchel:
-      btns.append(<GuButton label="替换" on_press={ func(): fire.call("replace_and_take", idx) } />)
+      btns.append(<GuButton label="替换" danger={ true } on_press={ func(): set_replace_idx.call({"replace_idx": idx}) } />)
     reward_cards.append((
       <GuCard title={ rname } quality={ rqual } danger={ rcursed } expand_h={ true }>
         <Label text={ rkind } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
@@ -56,6 +63,15 @@ export RewardScreen() -> RuitkVNode {
   var reward_empty = []
   if reward_cards.is_empty():
     reward_empty.append(<Label text="（本次无战利品）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  var replace_name = ""
+  if replace_idx >= 0 and replace_idx < rewards.size():
+    replace_name = str(rewards[replace_idx].get("name", ""))
+  var do_replace_cancel = func():
+    set_replace_idx.call({"replace_idx": -1})
+  var do_replace_confirm = func():
+    set_replace_idx.call({"replace_idx": -1})
+    fire.call("replace_and_take", replace_idx)
 
   return (
     <VBoxContainer style={ {"separation": 10} }>
@@ -81,6 +97,19 @@ export RewardScreen() -> RuitkVNode {
         <GuButton label="放弃本次奖励" on_press={ func(): fire.call("skip") } />
         <GuButton label="关闭" on_press={ func(): fire.call("close") } />
       </HBoxContainer>
+
+      @if (replace_idx >= 0) {
+        return (
+          <GuConfirmDialog
+            title="槽满取舍"
+            message={ "蛊囊已满：拾取「" + replace_name + "」需替换弃置一张既有蛊虫。" }
+            warning_note="被替换的蛊直接消失，无法找回；也可选择「放弃本次奖励」保留现状。"
+            confirm_label="拾取并替换"
+            on_confirm={ do_replace_confirm }
+            on_cancel={ do_replace_cancel }
+          />
+        )
+      }
     </VBoxContainer>
   )
 }

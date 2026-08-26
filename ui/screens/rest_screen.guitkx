@@ -21,8 +21,11 @@ export RestScreen() -> RuitkVNode {
   var title = str(state.get("title", "闭关 · 休整"))
   var note = str(state.get("note", "强制二选一，不可全拿"))
   var is_ascension = bool(state.get("is_ascension", false))
-  var confirming = str(state.get("confirming", ""))
-  var confirm_msg = str(state.get("confirm_msg", ""))
+
+  # 洗髓换骨（寿元代价）二次确认走 D1 弹窗族（R2.3 死亡可预见）；屏内 useState 驱动显隐。
+  var st = useState({"wash_confirm": ""})
+  var wash_confirm = str(st[0].get("wash_confirm", ""))
+  var set_wash_confirm = st[1]
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -42,9 +45,10 @@ export RestScreen() -> RuitkVNode {
     var cdisabled = bool(c.get("disabled", false))
     var creason = str(c.get("reason", ""))
     var cdanger = bool(c.get("curse_warning", false))
+    var is_wash = (cid == "wash")
     var on_choose = func():
-      if confirming == "":
-        fire.call("choose", cid)
+      if is_wash:
+        set_wash_confirm.call({"wash_confirm": cid})
       else:
         fire.call("choose", cid)
     choice_cards.append((
@@ -52,12 +56,22 @@ export RestScreen() -> RuitkVNode {
         <Label text={ cdetail } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
         <Label text={ ccost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
         <Label text={ creason } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 12} } />
-        <GuButton label="选择" disabled={ cdisabled } on_press={ on_choose } />
+        <GuButton label="选择" disabled={ cdisabled } danger={ is_wash } on_press={ on_choose } />
       </GuCard>
     ))
   var choice_empty = []
   if choice_cards.is_empty():
     choice_empty.append(<Label text="（当前无休整选项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+
+  var wash_choice = {}
+  for c in choices:
+    if str(c.get("id", "")) == wash_confirm:
+      wash_choice = c
+  var do_wash_cancel = func():
+    set_wash_confirm.call({"wash_confirm": ""})
+  var do_wash_confirm = func():
+    set_wash_confirm.call({"wash_confirm": ""})
+    fire.call("confirm_wash")
 
   # 成长奖励（仅突破）
   var growth = state.get("growth", [])
@@ -98,9 +112,16 @@ export RestScreen() -> RuitkVNode {
 
       <GuButton label="离开" on_press={ func(): fire.call("leave") } />
 
-      @if (confirming != "") {
+      @if (wash_confirm != "") {
         return (
-          <GuConfirmDialog message={ confirm_msg } on_confirm={ func(): fire.call("confirm_wash") } on_cancel={ func(): fire.call("cancel_confirm") } />
+          <GuConfirmDialog
+            title="洗髓换骨 · 寿元支付"
+            message={ str(wash_choice.get("detail", "")) }
+            warning_note={ "代价：" + str(wash_choice.get("cost", "")) + " · 一局一次 · 执行前预检寿元" }
+            confirm_label="确认支付"
+            on_confirm={ do_wash_confirm }
+            on_cancel={ do_wash_cancel }
+          />
         )
       }
     </VBoxContainer>

@@ -4,9 +4,11 @@ import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuToast } from "~/ui/widgets/gu_toast"
 
 # MapScreen —— 地图屏（规格 v3 §6 B2）：网状收敛、节点图标化、三态（当前/已走/可达/不可达）、
-# 图例卷轴、侧边蛊囊。state 只读；travel / view_node 经 commands。
+# 图例卷轴、侧边蛊囊。state 只读；travel / view_node / save_run 经 commands。
+# D4：顶部 Toast 展示存档反馈（显隐由控制器 last_feedback 驱动）；底部命令栏含「存档」。
 # 实现注：真实路网连线绘制已由 scripts/presentation/route_tree_canvas.gd 承载（后续打磨候选）；
 # 本屏以 RUI 容器布局落地图标化三态 + 图例 + 蛊囊。
 
@@ -22,8 +24,18 @@ export MapScreen() -> RuitkVNode {
   var contracts = state.get("contracts", [])
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
+  var toast_text = str(state.get("toast", ""))
 
   var has_view = commands.has("view_node")
+  var has_save = commands.has("save_run")
+
+  var toast_row = []
+  if toast_text != "":
+    toast_row.append(<GuToast text={ toast_text } tone="info" />)
+
+  var save_bar = []
+  if has_save:
+    save_bar.append(<GuButton label="存档" on_press={ func(): commands["save_run"].call() } />)
 
   # 节点类型 -> 图标 / 语义色（与 route_tree_canvas NODE_STYLE 对齐）
   var NODE_STYLE = {
@@ -122,6 +134,7 @@ export MapScreen() -> RuitkVNode {
 
   return (
     <VBoxContainer style={ {"separation": 12} }>
+      { toast_row }
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
         <VBoxContainer style={ {"separation": 10, "size_flags_horizontal": 3} }>
@@ -145,6 +158,9 @@ export MapScreen() -> RuitkVNode {
             </VBoxContainer>
           </GuPanel>
         </VBoxContainer>
+      </HBoxContainer>
+      <HBoxContainer style={ {"separation": 12} }>
+        { save_bar }
       </HBoxContainer>
     </VBoxContainer>
   )

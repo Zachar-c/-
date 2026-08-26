@@ -22,8 +22,11 @@ export RefineScreen() -> RuitkVNode {
   var title = str(state.get("title", "炼蛊台"))
   var active_channel = str(state.get("active_channel", "fixed"))
   var slot_ok = bool(state.get("slot_ok", false))
-  var confirming = str(state.get("confirming", ""))
-  var confirm_msg = str(state.get("confirm_msg", ""))
+
+  # 合成执行二次确认（R10.9：失败率/躁动/诅咒继承全预览）；屏内 useState 驱动显隐。
+  var st = useState({"confirm_recipe": ""})
+  var confirm_recipe = str(st[0].get("confirm_recipe", ""))
+  var set_confirm_recipe = st[1]
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -67,12 +70,14 @@ export RefineScreen() -> RuitkVNode {
     preview.append(<Label text={ rbacklash } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
     if rcurse != "":
       preview.append(<Label text={ rcurse } style={ {"font_color": GuStyle.DANGER, "font_size": 13} } />)
+    var ask_refine = func():
+      set_confirm_recipe.call({"confirm_recipe": rid})
     recipe_rows.append((
       <GuCard title={ rname } quality={ rqual } expand_h={ true }>
         <VBoxContainer style={ {"separation": 3} }>
           { preview }
         </VBoxContainer>
-        <GuButton label="确认炼蛊" disabled={ not slot_ok or runlocked } on_press={ func(): fire.call("refine", rid) } />
+        <GuButton label="确认炼蛊" disabled={ not slot_ok or not runlocked } danger={ rcurse != "" or rbacklash != "无躁动" } on_press={ ask_refine } />
       </GuCard>
     ))
   var recipe_empty = []
@@ -84,6 +89,22 @@ export RefineScreen() -> RuitkVNode {
   var dismantle_rows = []
   for g in dismantle_slots:
     dismantle_rows.append(<GuButton label={ "拆解 " + str(g) } on_press={ func(): fire.call("dismantle", str(g)) } />)
+
+  var confirm_risk = ""
+  var confirm_output = ""
+  for r in recipes:
+    if str(r.get("id", "")) == confirm_recipe:
+      confirm_output = str(r.get("name", ""))
+      var risk_parts = []
+      for part in [str(r.get("fail_chance", "")), str(r.get("backlash", "")), str(r.get("curse", ""))]:
+        if part != "":
+          risk_parts.append(part)
+      confirm_risk = " · ".join(risk_parts)
+  var do_refine_cancel = func():
+    set_confirm_recipe.call({"confirm_recipe": ""})
+  var do_refine_confirm = func():
+    set_confirm_recipe.call({"confirm_recipe": ""})
+    fire.call("refine", confirm_recipe)
 
   return (
     <VBoxContainer style={ {"separation": 10} }>
@@ -122,9 +143,16 @@ export RefineScreen() -> RuitkVNode {
         </VBoxContainer>
       </HBoxContainer>
 
-      @if (confirming != "") {
+      @if (confirm_recipe != "") {
         return (
-          <GuConfirmDialog message={ confirm_msg } on_confirm={ func(): fire.call("confirm") } on_cancel={ func(): fire.call("cancel_confirm") } />
+          <GuConfirmDialog
+            title="合成执行"
+            message={ "配方：" + confirm_output }
+            warning_note={ confirm_risk }
+            confirm_label="确认合成"
+            on_confirm={ do_refine_confirm }
+            on_cancel={ do_refine_cancel }
+          />
         )
       }
     </VBoxContainer>

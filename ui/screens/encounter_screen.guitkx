@@ -54,7 +54,8 @@ export EncounterScreen() -> RuitkVNode {
   for a in actions:
     if str(a.get("id", "")) == confirming:
       confirm_action = a
-  var confirm_msg = "⚠ 危险选项，确认前请知悉代价：\n" + str(confirm_action.get("detail", ""))
+  var confirm_msg = str(confirm_action.get("detail", ""))
+  var confirm_note = "危险行动可能损耗寿元 / 魂魄 / 触发反噬，执行前请确认余量。"
 
   var do_confirm = func():
     fire.call("confirm_danger", confirming)
@@ -159,7 +160,7 @@ export EncounterScreen() -> RuitkVNode {
 
       @if (confirming != "") {
         return (
-          <GuConfirmDialog message={ confirm_msg } on_confirm={ do_confirm } on_cancel={ do_cancel } />
+          <GuConfirmDialog title="⚠ 危险行动" message={ confirm_msg } warning_note={ confirm_note } on_confirm={ do_confirm } on_cancel={ do_cancel } />
         )
       }
     </VBoxContainer>

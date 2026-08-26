@@ -3,6 +3,7 @@ import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuToast } from "~/ui/widgets/gu_toast"
 
 # HallView —— 大厅家族（规格 v3 §4.2/§5）：A2 主界面三栏 + A3 流派 + A4 契约占位
 # + A5 图鉴 + A6 设置 + A7 手记，由 state.hall_subview 驱动（权威源）。
@@ -20,6 +21,7 @@ export HallView() -> RuitkVNode {
   var meta = state.get("meta_stats", {})
   var codex = state.get("codex", {})
   var journal = state.get("journal", {"entries": []})
+  var version_warning = str(state.get("hall_version_warning", ""))
 
   var fire = func(key: String):
     if commands.has(key):
@@ -91,8 +93,12 @@ export HallView() -> RuitkVNode {
 
   # ── A6 设置 ─────────────────────────────────────────────
   if subview == "settings":
+    var version_rows = []
+    if version_warning != "":
+      version_rows.append(<GuToast text={ version_warning } tone="warn" />)
     return (
       <VBoxContainer style={ {"separation": 12} }>
+        { version_rows }
         <Label text="设置" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
         <GuPanel title="显示与声音">
           <Label text="音量：待接入" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
