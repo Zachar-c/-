@@ -70,7 +70,8 @@
   - ④大厅手记库 @`526450c`（journal.json 8 条+结局短句、route/ending 解锁账本、快照双形状兼容 UI 会话消费端）
 - **UI 重设计已由并行会话合入主线**（merge 4681d01）：StS token 体系 10 屏进入 master；后续单分支开发。
 - 测试基线：**512 unit + 9 integration 全绿**。
-- 待办候选：结算页契约复盘区块（§16.13 顺延）、多休整节点字面量泛化、_seeded_index 公式抽助手、调试面板、NPC 个人库存、DDA。
+- **P2a 打磨批已落地**（master @`078670d`，531 unit + 9 integration）：结算页契约复盘区块、休整节点 type 驱动泛化＋按节点作用域 flag（旧档只增迁移）、SeededRoll 公式收敛。
+- 待办候选：调试面板（§16.22）、NPC 个人库存、DDA、其余种子公式变体收敛（resolver.gd:406/515/1952、battle_resolver.gd:784）、ContentCatalog 契约 desc 含数值校验。
 
 ### 当前进行中
 - **UI 重设计**（分支 `ui-sts-redesign`）：
