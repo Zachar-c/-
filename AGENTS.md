@@ -27,6 +27,7 @@
 - 事件日志条目自 append 起全局不可变（浅共享后原地改写会污染所有祖先/后代状态视图）；信息性旁路键用 `_` 前缀（不落状态、存档校验跳过）。
 - 引入 GDQuest Open RPG 时保留 MIT 许可证、上游 URL 和固定提交号；未经审计不要直接耦合或修改 `vendor/godot-open-rpg/`。
 - 不提交本地工作树、下载缓存、构建产物、密钥或未完成的第三方克隆。
+- 禁止用 Read 工具读取二进制/图片文件（.png/.jpg/.svg/.ico/.ttf/.otf/.wav/.ogg/.mp3/.import/.res/.tres/.scn/.ctex/.suo 等）；当前模型不支持图像输入，读取会报错。需要查看图片时用 `ls`/`glob` 确认文件存在即可。
 
 ## 工作流程
 
@@ -73,13 +74,19 @@
 - 测试基线：**512 unit + 9 integration 全绿**。
 - **P2a 打磨批已落地**（master @`078670d`，531 unit + 9 integration）：结算页契约复盘区块、休整节点 type 驱动泛化＋按节点作用域 flag（旧档只增迁移）、SeededRoll 公式收敛。
 - **调试台融合裁定**（2026-08-26）：领域权威=DebugActions 服务（master @`1cd79ea`：五 op 白名单、DeckCapacity 同门禁、事件日志审计含拒绝、jump 落地标记防软锁、essence 双取钳制）；面板 UI 归 UI 会话 T5-D（.guitkx）接线，对接简报已入库：`docs/superpowers/sdd-archive/task-dbg-fusion-brief.md`。我方 overlay 废弃。
-- 待办候选：NPC 个人库存、DDA、其余种子公式变体收敛（resolver.gd:406/515/1952、battle_resolver.gd:784）、ContentCatalog 契约 desc 含数值校验。
+- 待办候选：NPC 个人库存、DDA、map_generator.gd:161 种子变体（挂观察下批）。
 
 ### 当前进行中
 - **UI 重设计**（分支 `ui-sts-redesign`）：
   - StS 风格 token 体系（GuStyle 设计 token）
   - 10 个主屏幕已实现，当前 T5/T6 批次
   - 测试状态：475 unit + 9 integration（progress.md 记录，AI 生成）
+
+### 质量收敛批（2026-08-26 排上，已落地 master 并推 gitee）
+- ① 死码清扫：全仓孤儿扫描（49 个 scripts 全量引用统计）→ 零引用仅 3 个独立 `-s` 工具脚本（smoke_render/integration_smoke/ui_capture），均被并行 UI 会话或 RUI 手册（UPSTREAM.md）使用，判定非死码**保留**；legacy views 被 34 处单测引用亦不删。结论：scripts/ 无真孤儿可删，只是工具债（ui_capture 硬编码他机路径）挂观察。
+- ② 种子公式变体收敛 @`b5d8f1f`：resolver 三处手抄公式（_refinement_roll/_free_mix_seed/roll_chance）收进 `SeededRoll.index`（数值逐位不变，独立公式守卫全绿）；battle_resolver `_battle_rng_seed` 的 int-salt 变体收进 `SeededRoll.mixed_seed_int`（193 乘子保留、序列不变）；清 resolver/loot_resolver 死 SeededRngScript preload。map_generator.gd:161 同类变体不在本批范围（用户 WIP 地界），挂观察下批。
+- ③ ContentCatalog 契约 desc 数值校验 @`65aa532`：desc 独立数字令牌须覆盖每条 rule 的 |value|（防文案数值与配置漂移，多余数字允许）。
+- 收尾：**540 unit + 9 integration 全绿**（新增 9 守卫测试），check.ps1 全过。测试基线由 531 升至 540。
 
 ### 剩余候选
 - 怪物/卡池继续扩充
