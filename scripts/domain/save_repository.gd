@@ -103,6 +103,8 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 	meta.unlocked_random_outcomes = meta_data.get("unlocked_random_outcomes", {}).duplicate(true)
 	# C1-min §16.13: fields added after v2 ship; old saves default to empty.
 	meta.contracts_unlocked = _string_array(meta_data.get("contracts_unlocked", []))
+	# N1 §16.9: journal ledger ships after v2; old saves default to empty.
+	meta.journal_unlocked = _string_array(meta_data.get("journal_unlocked", []))
 	meta.hall_material_bonus_accrued = int(meta_data.get("hall_material_bonus_accrued", 0))
 	meta.statistics = meta_data.get("statistics", {
 		"runs_started": 0,

@@ -16,6 +16,13 @@ const CONTRACT_RULE_KEYS := [
 	"hp_max_penalty", "hall_material_bonus_pct",
 ]
 const ENDING_TYPE_IDS := ["success", "risky", "retreat", "death", "gu_fall", "true_ending"]
+# N1 §16.9: journal layers are a closed enum and route markers must name real
+# event-log signals produced by MetaProgress._run_markers (single mapping).
+const JOURNAL_LAYER_IDS := ["hall"]
+const JOURNAL_MARKER_IDS := [
+	"boss_defeated", "sworn_contracts", "ascension_attempted",
+	"notoriety_gte_5", "shop_barter", "rest_curse_removed",
+]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
@@ -40,6 +47,7 @@ static func load_all() -> Dictionary:
 	var schools := _load_object("res://data/schools.json")
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var contracts_cfg := _load_object("res://data/contracts.json")
+	var journal_cfg := _load_object("res://data/journal.json")
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
 	var material_ids: Array[String] = ["feed_points"]
 	for material_id in loot_materials:
@@ -76,6 +84,8 @@ static func load_all() -> Dictionary:
 		"school_pools": _load_object("res://data/school_pools.json"),
 		"contracts": contracts_cfg,
 		"contract_entry_by_id": _index_by_id(contracts_cfg.get("entries", [])),
+		"journal": journal_cfg,
+		"journal_entry_by_id": _index_by_id(journal_cfg.get("entries", [])),
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -358,6 +368,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("synthesis blind references missing card %s" % card_value)
 	if catalog.has("contracts"):
 		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
+	if catalog.has("journal"):
+		errors.append_array(_validate_journal(catalog.get("journal", {})))
 	for tier_key in loot_tables.get("loot", {}):
 		var tier: Dictionary = loot_tables["loot"][tier_key]
 		if int(tier.get("material_count", 0)) < 0:
@@ -489,6 +501,51 @@ static func _validate_contracts(cfg: Dictionary) -> Array[String]:
 				errors.append("contract %s mutual_exclusive must not reference itself" % entry_id)
 			elif not seen_ids.has(excluded):
 				errors.append("contract %s mutual_exclusive references unknown id %s" % [entry_id, excluded])
+	return errors
+
+
+# N1 §16.9 schema guard: unique ids, hall-layer enum, unlock shape and a
+# closed route-marker whitelist aligned with MetaProgress._run_markers.
+static func _validate_journal(cfg: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var seen_ids := {}
+	for entry_value in cfg.get("entries", []):
+		var entry: Dictionary = entry_value
+		var entry_id := str(entry.get("id", ""))
+		if entry_id.is_empty():
+			errors.append("journal entry missing id")
+			continue
+		if seen_ids.has(entry_id):
+			errors.append("duplicate journal id %s" % entry_id)
+		seen_ids[entry_id] = true
+		for field in ["title", "text"]:
+			if str(entry.get(field, "")).is_empty():
+				errors.append("journal %s missing %s" % [entry_id, field])
+		if not JOURNAL_LAYER_IDS.has(str(entry.get("layer", ""))):
+			errors.append("journal %s has unknown layer %s" % [entry_id, entry.get("layer", "")])
+		var unlock: Dictionary = entry.get("unlock", {})
+		var kind := str(unlock.get("kind", ""))
+		if kind != "always" and kind != "ending" and kind != "route":
+			errors.append("journal %s has unknown unlock kind %s" % [entry_id, kind])
+		elif kind == "ending":
+			var endings: Array = unlock.get("endings", [])
+			if endings.is_empty():
+				errors.append("journal %s ending unlock needs endings" % entry_id)
+			else:
+				for ending_value in endings:
+					if not ENDING_TYPE_IDS.has(str(ending_value)):
+						errors.append("journal %s ending unlock lists unknown ending %s" % [entry_id, ending_value])
+		elif kind == "route":
+			var markers: Array = unlock.get("markers", [])
+			if markers.is_empty():
+				errors.append("journal %s route unlock needs markers" % entry_id)
+			else:
+				for marker_value in markers:
+					if not JOURNAL_MARKER_IDS.has(str(marker_value)):
+						errors.append("journal %s route unlock lists unknown marker %s" % [entry_id, marker_value])
+	for ending_key in cfg.get("ending_texts", {}):
+		if not ENDING_TYPE_IDS.has(str(ending_key)):
+			errors.append("journal ending_texts lists unknown ending %s" % ending_key)
 	return errors
 
 
