@@ -60,6 +60,7 @@
     "essence": 6,
     "clues": ["wilting_aura", "slow_gaits"],
     "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4, "speed": 4},
+    "_phases_note": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
     "reactions": [
       {
         "id": "corrosive_mist",
@@ -68,6 +69,41 @@
         "trigger": "direct_strike",
         "counter_status": "guarded",
         "label": "蚀气反激"
+      }
+    ],
+    "phases": [
+      {
+        "until_hp_ratio": 1.0,
+        "intents": [
+          {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4, "speed": 4, "cooldown": 2}
+        ],
+        "reactions": [
+          {
+            "id": "corrosive_mist",
+            "clue": "wilting_aura",
+            "window": "before_damage",
+            "trigger": "direct_strike",
+            "counter_status": "guarded",
+            "label": "蚀气反激"
+          }
+        ]
+      },
+      {
+        "until_hp_ratio": 0.5,
+        "intents": [
+          {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4, "speed": 4, "cooldown": 2},
+          {"id": "essence_scorch", "label": "蚀脉扰元", "damage": 0, "speed": 2, "essence_burn": 2, "cooldown": 2}
+        ],
+        "reactions": [
+          {
+            "id": "corrosive_mist",
+            "clue": "wilting_aura",
+            "window": "before_damage",
+            "trigger": "direct_strike",
+            "counter_status": "guarded",
+            "label": "蚀气反激"
+          }
+        ]
       }
     ]
   },

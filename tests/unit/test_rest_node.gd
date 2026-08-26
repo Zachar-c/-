@@ -53,14 +53,14 @@ func test_rest_preview_shows_card_and_blocks_after_use() -> void:
 	state.health = 4
 	state.current_node_id = "rest_hollow"
 	var cards: Array = ActionPreviewServiceScript.preview_actions(state, node, catalog)
-	var card := _card(cards, "node.rest")
+	var card := _card(cards, "node.rest_heal")
 
 	assert_true(bool(card["executable"]))
 	assert_eq(str(card["block_reason"]), "")
 
 	var used: RunState = ResolverScript.apply(state, {"type": "rest"}, catalog)["state"]
 	var after_cards: Array = ActionPreviewServiceScript.preview_actions(used, node, catalog)
-	assert_false(bool(_card(after_cards, "node.rest")["executable"]))
+	assert_false(bool(_card(after_cards, "node.rest_heal")["executable"]))
 
 
 func _card(cards: Array, id: String) -> Dictionary:

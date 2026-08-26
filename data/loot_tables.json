@@ -27,6 +27,7 @@
       "material_count": 1,
       "material_pool": ["beast_blood", "beast_bone", "venom_sac"],
       "gu_chance_pct": 30,
+      "forced_rarity": "epic",
       "gu_pool": {
         "weights": { "common": 60, "rare": 35, "epic": 5 },
         "by_rarity": {
@@ -34,7 +35,11 @@
           "rare": ["mist_step_gu"],
           "epic": ["moonlight_gu"]
         }
-      }
+      },
+      "cost_pool": [
+        { "kind": "backlash", "curse_id": "gu_erosion", "layers": 1, "weight": 1 },
+        { "kind": "notoriety", "amount": 2, "weight": 1 }
+      ]
     },
     "boss": {
       "material_count": 2,

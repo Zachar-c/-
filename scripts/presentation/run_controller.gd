@@ -481,6 +481,7 @@ func _finish_battle_in_session(outcome: String) -> void:
 	var kill_source := str(current_battle.get("kill_source", ""))
 	var enemy_kind := str(current_battle.get("enemy_kind", ""))
 	var battle_loot: Dictionary = current_battle.get("loot", {})
+	var battle_cost: Dictionary = current_battle.get("cost", {})
 	current_battle = {}
 	current_session = current_session.duplicate(true)
 	current_session["phase"] = "post_battle"
@@ -495,6 +496,14 @@ func _finish_battle_in_session(outcome: String) -> void:
 			loot_labels.append(DisplayText.gu(loot_gu))
 		if not loot_labels.is_empty():
 			results.append(ResultFeedScript.entry("battle", "battle_loot", {"loot_display": "、".join(loot_labels)}, []))
+	# R5.2 elite cost transparency: the bound cost is shown with exact numbers.
+	if outcome == "victory" and not battle_cost.is_empty():
+		results.append(ResultFeedScript.entry(
+			"battle",
+			"elite_cost_applied",
+			{"cost_display": DisplayText.elite_cost(battle_cost), "cost_kind": str(battle_cost.get("kind", ""))},
+			[]
+		))
 	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
 		results.append(ResultFeedScript.entry("battle", "lifespan_milestone_gained", {}, []))
 	results.append(feed)

@@ -74,3 +74,60 @@ func test_synthesis_config_is_validated() -> void:
 	var recipes: Array = catalog["synthesis"]["battle_recipes"]
 	(recipes[0] as Dictionary)["material_cost"] = {"missing_material_x": 1}
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown material"))
+
+
+func _enemy(catalog: Dictionary, enemy_id: String) -> Dictionary:
+	for entry in catalog["enemies"]:
+		if str(entry["id"]) == enemy_id:
+			return entry
+	push_error("missing enemy %s" % enemy_id)
+	return {}
+
+
+func test_shipped_phase_tables_pass_validation() -> void:
+	assert_eq(ContentCatalog.validate(ContentCatalog.load_all()), [])
+
+
+func test_validation_rejects_phase_threshold_outside_open_unit_range() -> void:
+	var catalog := ContentCatalog.load_all()
+	_enemy(catalog, "miasma_vein_lord")["phases"][1]["until_hp_ratio"] = 1.5
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "outside (0, 1]"))
+
+	var zeroed := ContentCatalog.load_all()
+	_enemy(zeroed, "miasma_vein_lord")["phases"][1]["until_hp_ratio"] = 0
+	assert_true(_has_hint(ContentCatalog.validate(zeroed), "outside (0, 1]"))
+
+
+func test_validation_rejects_unordered_phase_thresholds() -> void:
+	var catalog := ContentCatalog.load_all()
+	_enemy(catalog, "miasma_vein_lord")["phases"][0]["until_hp_ratio"] = 0.4
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "descend strictly"))
+
+
+func test_validation_rejects_empty_phase_intents() -> void:
+	var catalog := ContentCatalog.load_all()
+	_enemy(catalog, "miasma_vein_lord")["phases"][0]["intents"] = []
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "non-empty intents array"))
+
+
+func test_validation_rejects_bad_intent_cooldowns() -> void:
+	var catalog := ContentCatalog.load_all()
+	_enemy(catalog, "miasma_vein_lord")["phases"][0]["intents"][0]["cooldown"] = -1
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "non-negative integer"))
+
+	var fractional := ContentCatalog.load_all()
+	_enemy(fractional, "miasma_vein_lord")["phases"][0]["intents"][0]["cooldown"] = 1.5
+	assert_true(_has_hint(ContentCatalog.validate(fractional), "non-negative integer"))
+
+
+func test_battle_start_survives_a_degenerate_empty_intents_phase() -> void:
+	var catalog := ContentCatalog.load_all()
+	_enemy(catalog, "miasma_vein_lord")["phases"][0]["intents"] = []
+	var run := RunState.new_run(101)
+
+	var battle := BattleResolver.start({"enemy_kind": "miasma_vein_lord"}, run, catalog)
+
+	# Validation is the gate for bad tables; at runtime the legacy intent keeps
+	# the engine from indexing into an empty array.
+	assert_eq(str(battle["visible_intent"].get("id", "")), "miasma_burst")
+	assert_eq(int(battle["enemy_hp"]), int(battle["enemy_max_hp"]))

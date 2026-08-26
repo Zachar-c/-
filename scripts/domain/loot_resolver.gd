@@ -3,6 +3,8 @@ extends RefCounted
 
 
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
+const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 
 
 # R13.1 rare pity threshold: after this many consecutive common-producing
@@ -33,7 +35,77 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 		if not material_ids.is_empty():
 			next_material_pity = _next_material_pity(int(state.material_pity), material_ids, pity_cfg)
 		next = _apply_loot(state, loot, catalog, next_pity, next_material_pity)
-	return {"state": next, "loot": loot}
+	var result := {"state": next, "loot": loot}
+	# R5.2/R6.9/R13.1 elite victories always bind exactly one seeded cost.
+	if tier == "elite":
+		var costed := _apply_elite_cost(next, catalog)
+		result["state"] = costed["state"]
+		result["cost"] = costed["cost"]
+	return result
+
+
+# Elite cost binding (R5.2/R6.9): the cost is drawn seeded from the table's
+# cost_pool; backlash entries attach curse layers via CurseRegistry and
+# notoriety entries go through the shared gain_notoriety funnel. The chosen
+# cost rides a single elite_cost_applied event whose "_cost" key is log-only
+# information and never lands in live state. Curses never kill directly here,
+# so no silent death can originate from this path.
+static func _apply_elite_cost(state: RunState, catalog: Dictionary) -> Dictionary:
+	var pool: Array = catalog.get("loot_tables", {}).get("loot", {}).get("elite", {}).get("cost_pool", [])
+	if pool.is_empty():
+		return {"state": state, "cost": {}}
+	var chosen := _pick_weighted(pool, state, "elite.cost")
+	var next := state
+	match str(chosen.get("kind", "")):
+		"backlash":
+			for _layer in maxi(1, int(chosen.get("layers", 1))):
+				next = CurseRegistryScript.gain_curse(next, str(chosen.get("curse_id", "")), "elite_cost")
+		"notoriety":
+			next = ResolverScript.gain_notoriety(next, maxi(1, int(chosen.get("amount", 1))), "elite_cost")
+		_:
+			return {"state": state, "cost": {}}
+	next = next.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "elite_cost_applied",
+		"before": {},
+		"after": {"_cost": chosen.duplicate(true)},
+		"reason": "elite_cost_applied",
+		"source": "loot_resolver",
+		"targets": [str(chosen.get("kind", ""))],
+	})
+	return {"state": next, "cost": _normalized_cost(chosen)}
+
+
+# Player-facing settlement contract: every cost carries "kind" plus either
+# "layers" (backlash, with its curse_id) or "amount" (notoriety). Table-only
+# keys such as "weight" never leave the resolver.
+static func _normalized_cost(chosen: Dictionary) -> Dictionary:
+	var cost := {"kind": str(chosen.get("kind", ""))}
+	match cost["kind"]:
+		"backlash":
+			cost["curse_id"] = str(chosen.get("curse_id", ""))
+			cost["layers"] = maxi(1, int(chosen.get("layers", 1)))
+		"notoriety":
+			cost["amount"] = maxi(1, int(chosen.get("amount", 1)))
+	return cost
+
+
+static func _pick_weighted(entries: Array, state: RunState, salt: String) -> Dictionary:
+	var total := 0
+	for entry_value in entries:
+		total += maxi(0, int((entry_value as Dictionary).get("weight", 1)))
+	if total <= 0:
+		return {}
+	var roll := _pick_from(total, state, salt)
+	var cursor := 0
+	for entry_value in entries:
+		var entry: Dictionary = entry_value
+		cursor += maxi(0, int(entry.get("weight", 1)))
+		if roll < cursor:
+			return entry
+	return {}
 
 
 static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
@@ -87,6 +159,11 @@ static func _next_material_pity(current: int, material_ids: Array, pity_cfg: Dic
 
 # Shop purchases are fixed offers and never call _roll_gu, so they bypass
 # the R13.1 adventure-drop pity counter by construction.
+#
+# A table-declared "forced_rarity" (R5.2 elite guarantee) overrides both the
+# declared weights and the pity forcing: the rarity is fixed before any roll.
+# Forced results therefore never advance the ladder, and the resulting
+# non-common rarity clears it exactly like a natural drop would.
 static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, school_pools: Dictionary = {}) -> Dictionary:
 	var chance := int(table.get("gu_chance_pct", 0))
 	var pool: Dictionary = table.get("gu_pool", {})
@@ -96,6 +173,10 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg:
 	var bound := clampi(chance, 0, 100)
 	if bound < 100 and _pick_from(100, state, "loot.gu.%s" % tier) >= bound:
 		return {"gu_id": "", "rarity": ""}
+	var by_rarity: Dictionary = pool.get("by_rarity", {})
+	var forced_rarity := str(table.get("forced_rarity", ""))
+	if not forced_rarity.is_empty() and not (by_rarity.get(forced_rarity, []) as Array).is_empty():
+		return _pick_from_bucket(str(forced_rarity), by_rarity[forced_rarity], state, tier, school_pools)
 	var effective_weights := weights
 	var rarity_salt := "loot.gu.rarity.%s" % tier
 	if state.loot_pity >= int(pity_cfg.get("threshold", PITY_THRESHOLD)):
@@ -125,7 +206,11 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg:
 			break
 	if picked_rarity.is_empty():
 		return {"gu_id": "", "rarity": ""}
-	var bucket: Array = (pool.get("by_rarity", {}).get(picked_rarity, []) as Array).duplicate()
+	return _pick_from_bucket(picked_rarity, by_rarity.get(picked_rarity, []), state, tier, school_pools)
+
+
+static func _pick_from_bucket(rarity: String, bucket_value: Variant, state: RunState, tier: String, school_pools: Dictionary) -> Dictionary:
+	var bucket: Array = (bucket_value as Array).duplicate()
 	if bucket.is_empty():
 		return {"gu_id": "", "rarity": ""}
 	var school_exclusive: Array = school_pools.get(str(state.school), [])
@@ -137,8 +222,8 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg:
 				school_members.append(bucket_gu_id)
 	var pick_pool: Array = school_members if not school_members.is_empty() else bucket
 	return {
-		"gu_id": str(pick_pool[_pick_from(pick_pool.size(), state, "loot.gu.pick.%s.%s" % [tier, picked_rarity])]),
-		"rarity": picked_rarity,
+		"gu_id": str(pick_pool[_pick_from(pick_pool.size(), state, "loot.gu.pick.%s.%s" % [tier, rarity])]),
+		"rarity": rarity,
 	}
 
 

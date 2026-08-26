@@ -63,6 +63,7 @@ func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
 	var cat := catalog()
 	var tables: Dictionary = cat["loot_tables"]
 	var elite: Dictionary = tables["loot"]["elite"]
+	elite.erase("forced_rarity")
 	elite["gu_chance_pct"] = 100
 	elite["gu_pool"]["weights"] = {"common": 1}
 	elite["gu_pool"]["by_rarity"] = {"common": ["stone_shell_gu", "gen_blood_attack_001_gu"]}
@@ -84,6 +85,7 @@ func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
 	# qi has no member in this bucket, so its rolls keep using the full bucket.
 	var cat := catalog()
 	var elite: Dictionary = cat["loot_tables"]["loot"]["elite"]
+	elite.erase("forced_rarity")
 	elite["gu_chance_pct"] = 100
 	elite["gu_pool"]["weights"] = {"common": 1}
 	elite["gu_pool"]["by_rarity"] = {"common": ["stone_shell_gu", "gen_blood_attack_001_gu"]}

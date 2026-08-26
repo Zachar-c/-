@@ -1241,6 +1241,11 @@ static func _travel(state: RunState, command: Dictionary) -> Dictionary:
 	var node_id := str(command.get("node_id", ""))
 	if node_id.is_empty():
 		return _rejected(state, "missing_node_id")
+	# R8.1 hard choice: entering rest_hollow commits the player to exactly one
+	# benefit; leaving without consuming the visit is refused (skip only means
+	# never entering the node).
+	if state.current_node_id == "rest_hollow" and str(state.node_flags.get("rest_hollow", "")) != "used":
+		return _rejected(state, "rest_choice_required")
 	var next := state.append_event(_event(
 		state,
 		"travel",
@@ -1622,7 +1627,24 @@ static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 	var mode := str(command.get("mode", "heal"))
 	if mode == "heal":
 		return _rest_heal(state)
+	if mode == "upgrade_card":
+		return _rest_upgrade(state, command)
 	return _rest_removal(state, command, catalog, mode)
+
+
+# R8.1 hard choice adds the upgrade option to the rest menu: it reuses the
+# standalone upgrade accounting (which is free) and pays with the visit
+# instead. Target validation happens before the visit is consumed.
+static func _rest_upgrade(state: RunState, command: Dictionary) -> Dictionary:
+	var card_key := str(command.get("card_key", ""))
+	if card_key.is_empty():
+		return _rejected(state, "missing_card_key")
+	if str(state.node_flags.get("rest_mode_used", "")) == "true":
+		return _rejected(state, "rest_mode_already_used")
+	if str(state.node_flags.get("rest_hollow", "")) == "used":
+		return _rejected(state, "rest_already_used")
+	var consumed := _consume_rest_visit(state)
+	return _upgrade_card(consumed, {"card_key": card_key})
 
 
 static func _rest_heal(state: RunState) -> Dictionary:
