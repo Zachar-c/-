@@ -6,6 +6,7 @@ const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
+const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 
 
 # R13.1 rare pity threshold: after this many consecutive common-producing
@@ -242,13 +243,8 @@ static func _next_loot_pity(current: int, rarity: String, pity_cfg: Dictionary =
 
 
 static func _pick_from(bound: int, state: RunState, salt: String) -> int:
-	if bound <= 1:
-		return 0
-	var salt_hash := 0
-	for character in salt:
-		salt_hash = salt_hash * 31 + character.unicode_at(0)
-	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
-	return rng.next_index(bound)
+	# P2a C: formula lives in SeededRoll; salt strings and call order unchanged.
+	return SeededRollScript.index(bound, int(state.seed), salt, state.event_log.size())
 
 
 static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, new_loot_pity: int, new_material_pity: int) -> RunState:

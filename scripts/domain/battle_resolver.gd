@@ -9,6 +9,7 @@ const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
+const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -1082,13 +1083,8 @@ static func _register_intent_cooldown(battle: Dictionary, intent: Dictionary, ex
 
 
 static func _seeded_index(bound: int, state: RunState, salt: String) -> int:
-	if bound <= 1:
-		return 0
-	var salt_hash := 0
-	for character in salt:
-		salt_hash = salt_hash * 31 + character.unicode_at(0)
-	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
-	return rng.next_index(bound)
+	# P2a C: formula lives in SeededRoll; salt strings and call order unchanged.
+	return SeededRollScript.index(bound, int(state.seed), salt, state.event_log.size())
 
 
 static func _reaction_countered(battle: Dictionary, reaction: Dictionary) -> bool:
