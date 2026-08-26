@@ -540,7 +540,8 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 # executability mirrors the domain preconditions; commands that need a target
 # carry "expects_target" so the UI knows to attach it on submission.
 static func _append_rest_cards(cards: Array[Dictionary], state: RunState, node: Dictionary, catalog: Dictionary) -> void:
-	var used := str(state.node_flags.get(str(node.get("id", "")), "")) == "used"
+	# P2a B: visit flags are scoped per node id ("<id>_used").
+	var used := str(state.node_flags.get("%s_used" % str(node.get("id", "")), "")) == "used"
 	var summary := str(node.get("summary", ""))
 	_append_rest_option(cards, state, used, {
 		"id": "node.rest_heal",

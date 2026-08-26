@@ -107,7 +107,7 @@ func _initialize_view_flow() -> void:
 		_mount_debug_panel()
 
 
-func start_new_run(seed_value: int, school: String = "") -> void:
+func start_new_run(seed_value: int, school: String = "", contract_ids: Array = []) -> void:
 	catalog = ContentCatalog.load_all()
 	meta = SaveRepository.load_meta_file()
 	if meta == null:
@@ -115,6 +115,7 @@ func start_new_run(seed_value: int, school: String = "") -> void:
 	state = RunState.new_run(seed_value, meta)
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
 	_inject_school_starters(school)
+	_swear_opening_contracts(contract_ids)
 	route = MapGenerator.build(seed_value, seed_value == 101)
 	current_node = {}
 	current_battle = {}
@@ -653,6 +654,27 @@ func _next_gu_instance_id(state_ref: RunState) -> String:
 	return RunState.next_gu_instance_id(state_ref.gu_instances)
 
 
+# C1-min §16.13: opening swears ride the same Resolver.apply path as every
+# other command; the allowed whitelist comes from the hall save so locked
+# contracts are refused with an explicit reason feed.
+func _swear_opening_contracts(contract_ids: Array) -> void:
+	if contract_ids.is_empty():
+		return
+	var allowed: Array = []
+	if meta != null and meta.has_method("unlocked_contracts"):
+		allowed = meta.unlocked_contracts(catalog)
+	var resolved := Resolver.apply(state, {
+		"type": "swear_contracts",
+		"ids": contract_ids,
+		"allowed_ids": allowed,
+	}, catalog)
+	state = resolved["state"]
+	if bool(resolved["result"].get("ok", false)):
+		last_feedback = "已立誓契约。"
+	else:
+		last_feedback = "契约被拒：%s。" % str(resolved["result"].get("reason", ""))
+
+
 func _start_run_from_title() -> void:
 	if _view_name == "Title":
 		start_new_run(roll_seed(), _selected_school)
@@ -729,14 +751,15 @@ func _continue_saved_run() -> void:
 
 
 func _show_ending(outcome: Dictionary) -> void:
-	_record_run_end(_run_end_outcome(str(outcome.get("outcome", ""))))
+	var otype := str(outcome.get("outcome", ""))
+	_record_run_end(_run_end_outcome(otype), RunSnapshotBuilderScript.ending_type_for(otype))
 	_ending_state = RunSnapshotBuilderScript.ending(self, outcome, JournalBuilder.build(state, outcome), state.to_save_data())
 	_view_name = "Ending"
 	_render()
 
 
 func _show_death(report: Dictionary) -> void:
-	_record_run_end("dead")
+	_record_run_end("dead", "death")
 	# T5-B 结算联动：战斗死亡与 builder 路径共用精准死因三字段（只读扫描终局字段）。
 	var cause: Dictionary = RunSnapshotBuilderScript.death_cause_fields(state)
 	# T5-C 结算复盘：战斗死亡内联结算与 builder ending() 同形（路线/记录/最高转数/达成链）。
@@ -759,10 +782,10 @@ func _show_death(report: Dictionary) -> void:
 	_render()
 
 
-func _record_run_end(outcome: String) -> void:
+func _record_run_end(outcome: String, ending_type := "") -> void:
 	if meta == null:
 		return
-	meta = meta.record_run_end(state, outcome, catalog)
+	meta = meta.record_run_end(state, outcome, catalog if catalog != null else {}, ending_type)
 	SaveRepository.save_meta_file(meta)
 
 

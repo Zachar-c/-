@@ -38,8 +38,7 @@ func test_travel_without_choice_is_rejected_and_state_unchanged() -> void:
 	assert_eq(str(result["result"]["reason"]), "rest_choice_required")
 	assert_eq(result["state"].event_log.size(), run.event_log.size())
 	assert_eq(str(result["state"].current_node_id), "rest_hollow")
-	assert_false(result["state"].node_flags.has("rest_hollow"))
-
+	assert_false(result["state"].node_flags.has("rest_hollow_used"))
 
 func test_travel_after_heal_is_allowed() -> void:
 	var run := _run_at_rest()
@@ -62,8 +61,8 @@ func test_rest_upgrade_mode_upgrades_card_for_free_and_consumes_visit() -> void:
 	var override: Dictionary = next.gu_card_overrides.get("light_probe", {})
 	assert_eq(int(override.get("upgrade_level", 0)), 1)
 	assert_eq(int(next.stone), stone_before)
-	assert_eq(str(next.node_flags.get("rest_hollow", "")), "used")
-	assert_eq(str(next.node_flags.get("rest_mode_used", "")), "true")
+	assert_eq(str(next.node_flags.get("rest_hollow_used", "")), "used")
+	assert_eq(str(next.node_flags.get("rest_hollow_mode", "")), "true")
 	assert_eq(str(next.event_log.back()["reason"]), "battle_card_upgraded")
 
 
@@ -85,8 +84,8 @@ func test_rest_upgrade_requires_card_key_without_consuming_visit() -> void:
 
 	assert_false(result["result"]["ok"])
 	assert_eq(str(result["result"]["reason"]), "missing_card_key")
-	assert_eq(str(result["state"].node_flags.get("rest_hollow", "")), "")
-	assert_eq(str(result["state"].node_flags.get("rest_mode_used", "")), "")
+	assert_eq(str(result["state"].node_flags.get("rest_hollow_used", "")), "")
+	assert_eq(str(result["state"].node_flags.get("rest_hollow_mode", "")), "")
 
 
 func test_each_mode_consumes_the_single_visit_exactly_once() -> void:
@@ -154,7 +153,7 @@ func test_session_leave_without_choice_is_rejected_and_nothing_changes() -> void
 	assert_false(result["session"]["completed"])
 	assert_eq(str(result["session"]["completion_reason"]), "")
 	assert_eq(int(result["state"].event_log.size()), int(run.event_log.size()))
-	assert_false(result["state"].node_flags.has("rest_hollow"))
+	assert_false(result["state"].node_flags.has("rest_hollow_used"))
 	assert_eq(str(result["state"].current_node_id), "rest_hollow")
 
 

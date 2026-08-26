@@ -67,6 +67,11 @@ static func load_run_from_data(data: Dictionary) -> Dictionary:
 	var state: Variant = _state_from_save_data(data["state"])
 	if state == null:
 		return {}
+	# P2a B: v2 saves keyed rest visit/mode by the bare node id and a global
+	# literal; the per-node scheme derives "<id>_used"/"<id>_mode". Add-only
+	# because the bare-id key doubles as the visited marker (_complete_node
+	# idempotency + MapGenerator.reachable_nodes).
+	_migrate_legacy_rest_flags(state.node_flags)
 	var replies := _validated_replies(data.get("replies", []))
 	return {
 		"state": state,
@@ -101,6 +106,11 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 	meta.inheritance_codex_ids = _string_array(meta_data.get("inheritance_codex_ids", []))
 	meta.unlocked_content_ids = _string_array(meta_data.get("unlocked_content_ids", []))
 	meta.unlocked_random_outcomes = meta_data.get("unlocked_random_outcomes", {}).duplicate(true)
+	# C1-min §16.13: fields added after v2 ship; old saves default to empty.
+	meta.contracts_unlocked = _string_array(meta_data.get("contracts_unlocked", []))
+	# N1 §16.9: journal ledger ships after v2; old saves default to empty.
+	meta.journal_unlocked = _string_array(meta_data.get("journal_unlocked", []))
+	meta.hall_material_bonus_accrued = int(meta_data.get("hall_material_bonus_accrued", 0))
 	meta.statistics = meta_data.get("statistics", {
 		"runs_started": 0,
 		"runs_won": 0,
@@ -134,6 +144,14 @@ static func load_meta_file() -> RefCounted:
 	return load_meta_from_data(json.data)
 
 
+# P2a B: derive per-node rest flags from the legacy bare-id/global literals.
+static func _migrate_legacy_rest_flags(flags: Dictionary) -> void:
+	if not flags.has("rest_hollow_used") and flags.has("rest_hollow"):
+		flags["rest_hollow_used"] = str(flags["rest_hollow"])
+	if not flags.has("rest_hollow_mode") and str(flags.get("rest_mode_used", "")) != "":
+		flags["rest_hollow_mode"] = str(flags["rest_mode_used"])
+
+
 static func _state_from_save_data(data: Dictionary) -> Variant:
 	var state := RunState.new()
 	for field in RunState.STATE_FIELDS:
@@ -150,7 +168,7 @@ static func _coerce_state_field(field: String, value: Variant) -> Variant:
 		return value.duplicate(true)
 	var string_list_fields := [
 		"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints",
-		"clues", "known_facts", "route_progress", "relic_ids", "global_codex_ids",
+		"contracts", "clues", "known_facts", "route_progress", "relic_ids", "global_codex_ids",
 	]
 	var dictionary_list_fields := ["encounter_results", "saved_combos", "event_log"]
 	if string_list_fields.has(field):

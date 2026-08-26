@@ -25,6 +25,7 @@ var refined_gu_ids: Array[String] = []
 var equipped_gu_ids: Array[String] = []
 var inheritance_ids: Array[String] = []
 var body_imprints: Array[String] = []
+var contracts: Array[String] = []
 var clues: Array[String] = []
 var relations: Dictionary = {}
 var pursuit: int = 0
@@ -57,7 +58,7 @@ var school: String = ""
 const STATE_FIELDS: Array[String] = [
 	"seed", "stage", "cultivation", "essence", "essence_capacity", "health", "max_health",
 	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity", "synthesis_fail_streak",
-	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
+	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "contracts", "clues",
 	"relations", "pursuit", "ascension", "known_facts", "current_node_id",
 	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",
 	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",

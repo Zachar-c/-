@@ -118,8 +118,10 @@ static func rest(controller) -> Dictionary:
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var state = controller.state
 	var node_flags: Dictionary = state.node_flags if state != null else {}
-	var rest_used := str(node_flags.get("rest_hollow", "")) == "used"
-	var rest_mode_used := str(node_flags.get("rest_mode_used", "")) == "true"
+	# P2a B: visit/mode flags are scoped per node id, not a hard-coded literal.
+	var rest_node_id := str(controller.current_node.get("id", ""))
+	var rest_used := str(node_flags.get("%s_used" % rest_node_id, "")) == "used"
+	var rest_mode_used := str(node_flags.get("%s_mode" % rest_node_id, "")) == "true"
 	var aptitude_raised := str(node_flags.get("aptitude_raised", "")) == "true"
 
 	var choices: Array[Dictionary] = []
@@ -338,14 +340,33 @@ static func hall(controller) -> Dictionary:
 		"hall_subview": str(controller._hall_subview),
 		"selected_school": str(controller._selected_school),
 		"available_schools": school_list,
-		"contracts": [],
+		"contracts": _available_contracts(meta, catalog),
 		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},
 		# D4 预留（§16.22）：SaveRepository.load_meta_file 在版本不符时返回 null，与无档/损坏
 		# 不可区分；待领域侧暴露版本冲突标记后在此注入提示文案，hall_view 已预留 warn Toast 槽位。
 		"hall_version_warning": "",
 		"codex": _codex(catalog, meta),
-		"journal": _journal(meta),
+		"journal": _journal(meta, catalog),
 	}
+
+
+# C1-min §16.13: the hall lists every contract with its exact numbers;
+# ending-locked entries are marked so the UI can gate its checkboxes.
+static func _available_contracts(meta, catalog: Dictionary) -> Array:
+	var unlocked: Array[String] = []
+	if meta != null and meta.has_method("unlocked_contracts"):
+		unlocked = meta.unlocked_contracts(catalog)
+	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
+	var out: Array = []
+	for id in unlocked:
+		var entry: Dictionary = by_id.get(str(id), {})
+		out.append("%s：%s" % [str(entry.get("label", str(id))), str(entry.get("desc", ""))])
+	for entry_id in by_id:
+		if unlocked.has(str(entry_id)):
+			continue
+		var locked_entry: Dictionary = by_id[entry_id]
+		out.append("%s（未解锁）" % str(locked_entry.get("label", str(entry_id))))
+	return out
 
 
 ## A5 图鉴数据（只读）：蛊 / 敌人 / 配方 / 传承 / 遗物 五类，每类带 unlocked 标记。
@@ -406,26 +427,36 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 	}
 
 
-## A7 手记库（§16.9 叙事沉淀）。当前 meta 仅统计战绩；手记条目在后续结算沉淀时
-## 写入，现展示空态 + 轮回概览占位（诚实呈现，不编造叙事）。
-static func _journal(meta) -> Dictionary:
+## A7 手记库（§16.9 叙事沉淀）：只渲染已解锁条目；ending 页结局短句优先取
+## journal.json ending_texts（缺 key 回退硬编码）；解锁判定在 MetaProgress。
+## 外层 dict 兼容新旧两代消费端：entries 内每条同时携带新端键
+## id/title/text 与旧端键 title/body（body 为 text 的同值别名）。
+static func _journal(meta, catalog: Dictionary) -> Dictionary:
+	var by_id: Dictionary = catalog.get("journal_entry_by_id", {})
 	var entries: Array[Dictionary] = []
 	if meta != null:
-		var stats: Dictionary = meta.statistics
-		entries.append({
-			"title": "轮回纪要",
-			"body": "开悟 %d 局 · 通关 %d · 身死 %d。碎片手记将在此沉淀。" % [
-				int(stats.get("runs_started", 0)),
-				int(stats.get("runs_won", 0)),
-				int(stats.get("deaths", 0)),
-			],
-		})
-	return {"entries": entries, "count": entries.size()}
+		for jid in meta.journal_unlocked:
+			var entry: Dictionary = by_id.get(str(jid), {})
+			if not entry.is_empty():
+				var text := str(entry.get("text", ""))
+				entries.append({
+					"id": str(jid),
+					"title": str(entry.get("title", "")),
+					"text": text,
+					"body": text,
+				})
+	var total := (catalog.get("journal", {}).get("entries", []) as Array).size()
+	return {
+		"entries": entries,
+		"count": entries.size(),
+		"journal_locked_count": maxi(0, total - entries.size()),
+	}
 
 
 static func map(controller) -> Dictionary:
 	var state = controller.state
 	var route: Array = controller.route
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var nodes: Array[Dictionary] = []
 	for n in MapGeneratorScript.visible_nodes(route, state, 2):
 		nodes.append({
@@ -452,7 +483,7 @@ static func map(controller) -> Dictionary:
 		# D4 存档 Toast（R1.5）：文本来自控制器反馈，空串则不渲染。
 		"toast": str(controller.last_feedback),
 		"resources": _resources(state),
-		"contracts": _contracts(state),
+		"contracts": _contracts(state, catalog),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
 	}
@@ -482,7 +513,7 @@ static func encounter(controller) -> Dictionary:
 		"intel": intel,
 		"player": _player_panel(state),
 		"resources": _resources(state),
-		"contracts": _contracts(state),
+		"contracts": _contracts(state, catalog),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
 	}
@@ -539,7 +570,7 @@ static func battle(controller) -> Dictionary:
 		"synthesis": _synthesis_options(state, catalog),
 		"can_ultimate": false,
 		"resources": _resources(state),
-		"contracts": _contracts(state),
+		"contracts": _contracts(state, catalog),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
 	}
@@ -547,15 +578,9 @@ static func battle(controller) -> Dictionary:
 
 static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary) -> Dictionary:
 	var state = controller.state
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var otype := str(outcome.get("outcome", "survived_failure"))
-	var etype := "retreat"
-	match otype:
-		"success": etype = "success"
-		"risky_success": etype = "risky"
-		"survived_failure": etype = "retreat"
-		"death": etype = "death"
-		"gu_fall": etype = "gu_fall"
-		"true_ending": etype = "true_ending"
+	var etype := ending_type_for(otype)
 	var decisions: Array[String] = []
 	for entry in journal:
 		decisions.append(DisplayText.journal_heading(str(entry.get("heading", ""))))
@@ -583,7 +608,9 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"gains_losses": gains,
 		"resource_balance": {"yuanstone": int(state.stone) if state != null else 0, "shouyuan": int(cult.get("lifespan", 0))},
 		"unlocks": unlocks,
-		"aftermath": "修行札记已留存，可于大厅图鉴查阅本次所得。",
+		"contracts_recap": _contracts_recap(state, catalog),
+		"contracts_sworn_count": _contracts_sworn_count(state),
+		"aftermath": str(catalog.get("journal", {}).get("ending_texts", {}).get(etype, "修行札记已留存，可于大厅图鉴查阅本次所得。")),
 	}
 	out.merge(settlement_extras(controller))
 	out["achievement"] = DisplayText.ending_achievement(etype)
@@ -672,6 +699,44 @@ static func _max_rank(controller) -> int:
 	var state = controller.state
 	var cult: Dictionary = state.cultivator if state != null else {}
 	return maxi(1, int(cult.get("reincarnation", 1)))
+
+
+# P2a §16.13/§16.5 ending recap: sworn contracts only, in state.contracts
+# order; desc already carries hard-coded numbers and is passed through.
+static func _contracts_recap(state, catalog: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if state == null or not (state.contracts is Array):
+		return out
+	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
+	for x in state.contracts:
+		var id := str(x)
+		var entry: Dictionary = by_id.get(id, {})
+		out.append({
+			"id": id,
+			"label": str(entry.get("label", id)),
+			"desc": str(entry.get("desc", "")),
+			"rules": (entry.get("rules", []) as Array).duplicate(true),
+		})
+	return out
+
+
+static func _contracts_sworn_count(state) -> int:
+	if state == null or not (state.contracts is Array):
+		return 0
+	return (state.contracts as Array).size()
+
+
+# Shared outcome→ending-type vocabulary (snapshot display and MetaProgress
+# contract unlocks must agree on the same ids).
+static func ending_type_for(outcome_name: String) -> String:
+	match outcome_name:
+		"success": return "success"
+		"risky_success": return "risky"
+		"survived_failure": return "retreat"
+		"death": return "death"
+		"gu_fall": return "gu_fall"
+		"true_ending": return "true_ending"
+	return "retreat"
 
 
 static func blow_text(id: String) -> String:
@@ -816,11 +881,16 @@ static func _resources(state) -> Dictionary:
 	}
 
 
-static func _contracts(state) -> Array:
+# C1-min §16.13: real sworn contracts (labels via the catalog) instead of the
+# old body-imprint placeholder.
+static func _contracts(state, catalog: Dictionary = {}) -> Array:
 	var out: Array = []
-	if state != null and state.body_imprints is Array:
-		for x in state.body_imprints:
-			out.append(DisplayText.fact(str(x)))
+	if state == null or not (state.contracts is Array):
+		return out
+	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
+	for x in state.contracts:
+		var id := str(x)
+		out.append(str(by_id.get(id, {}).get("label", id)))
 	return out
 
 

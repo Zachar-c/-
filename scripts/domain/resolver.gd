@@ -7,6 +7,7 @@ const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 
 
 const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
@@ -19,6 +20,11 @@ const FORCED_DROP_CURSE_ID := "gu_erosion"
 # Per-run usage counters live in node_flags as string values ("1", "2", ...).
 const SERVICE_USE_FLAG_PREFIX := "svc_used_"
 const REST_REMOVAL_MODES := ["remove_card", "remove_imprint", "remove_curse"]
+# P2a B: rest visit/mode flags are scoped per node id ("<id>_used"/"<id>_mode")
+# so nodes.json may declare more than one rest node. Every consumed visit also
+# refreshes the bare "<id>" visited marker (_complete_node idempotency +
+# MapGenerator.reachable_nodes, matching every other completed node).
+const REST_NODE_TYPE := "rest"
 
 
 const BODY_IMPRINTS := {
@@ -62,7 +68,7 @@ static var _dispatch: Dictionary = {}
 static func _handler_for(command_type: String) -> Variant:
 	if _dispatch.is_empty():
 		_dispatch = {
-			"travel": func(state, command, _catalog): return _travel(state, command),
+			"travel": func(state, command, catalog): return _travel(state, command, catalog),
 			"resolve_contact": func(state, command, _catalog): return _resolve_contact(state, command),
 			"complete_node": func(state, command, _catalog): return _complete_node(state, command),
 			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
@@ -101,6 +107,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"accept_event": func(state, command, catalog): return _accept_event(state, command, catalog),
 			"gain_curse": func(state, command, catalog): return _gain_curse_command(state, command, catalog),
 			"remove_curse": func(state, command, catalog): return _remove_curse_command(state, command, catalog),
+			"swear_contracts": func(state, command, catalog): return _swear_contracts(state, command, catalog),
 		}
 	return _dispatch.get(command_type, null)
 
@@ -1208,6 +1215,78 @@ static func _gain_curse_command(state: RunState, command: Dictionary, catalog: D
 	return _accepted(CurseRegistryScript.gain_curse(state, curse_id, source))
 
 
+# C1-min §16.13: opening contracts are global rule modifiers sworn exactly
+# once, at the trailhead. The controller passes allowed_ids from the hall
+# save; the domain validates shape (unknown/duplicate/cap/mutual exclusion)
+# and applies the immediate hp_max cost behind a lethal precheck so swearing
+# can never kill.
+static func _swear_contracts(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	if str(state.current_node_id) != "trailhead":
+		return _rejected(state, "contracts_trailhead_only")
+	if str(state.node_flags.get("contracts_sworn", "")) == "true":
+		return _rejected(state, "contracts_already_sworn")
+	var requested: Array[String] = []
+	for value in command.get("ids", []):
+		var id := str(value)
+		if requested.has(id):
+			return _rejected(state, "duplicate_contract")
+		requested.append(id)
+	if requested.is_empty():
+		return _rejected(state, "no_contracts_selected")
+	var cfg: Dictionary = catalog.get("contracts", {})
+	var entry_by_id := _contract_entry_by_id(cfg)
+	var allowed: Array = command.get("allowed_ids", [])
+	for id in requested:
+		if not entry_by_id.has(id):
+			return _rejected(state, "unknown_contract")
+		if not allowed.has(id):
+			return _rejected(state, "contract_locked")
+	if requested.size() > int(cfg.get("contract_cap", 0)):
+		return _rejected(state, "contract_cap_exceeded")
+	for id in requested:
+		for excluded_value in entry_by_id[id].get("mutual_exclusive", []):
+			if requested.has(str(excluded_value)):
+				return _rejected(state, "contract_mutual_exclusive")
+	var hp_delta := 0
+	for id in requested:
+		for rule_value in entry_by_id[id].get("rules", []):
+			var rule: Dictionary = rule_value
+			if str(rule.get("key", "")) == "hp_max_penalty":
+				hp_delta += int(rule.get("value", 0))
+	if state.max_health + hp_delta < 1:
+		return _rejected(state, "contract_hp_max_lethal")
+	var flags := state.node_flags.duplicate(true)
+	flags["contracts_sworn"] = "true"
+	var after := {"contracts": requested.duplicate(), "node_flags": flags}
+	if hp_delta != 0:
+		var new_max := state.max_health + hp_delta
+		var cultivator := state.cultivator.duplicate(true)
+		cultivator["max_health"] = new_max
+		after["max_health"] = new_max
+		# Clamping keeps health <= max and can never reach 0 because of the
+		# lethal precheck above (new_max >= 1).
+		after["health"] = mini(state.health, new_max)
+		after["cultivator"] = cultivator
+	var next := state.append_event(_event(
+		state,
+		"contracts_sworn",
+		{"node_flags": state.node_flags},
+		after,
+		"contracts_sworn",
+		state.current_node_id,
+		requested.duplicate()
+	))
+	return _accepted(next)
+
+
+static func _contract_entry_by_id(cfg: Dictionary) -> Dictionary:
+	var indexed := {}
+	for entry_value in cfg.get("entries", []):
+		var entry: Dictionary = entry_value
+		indexed[str(entry.get("id", ""))] = entry
+	return indexed
+
+
 # R9.3: the black-market paid service. Pricing uses the shared M5 uplift plus
 # the Task 5 per-service use escalation, and consumes the same limit pool as
 # remove_card/remove_imprint so all three services share one accounting family.
@@ -1237,14 +1316,34 @@ static func _remove_curse_command(state: RunState, command: Dictionary, catalog:
 	return _accepted(CurseRegistryScript.remove_curse(paid, curse_id))
 
 
-static func _travel(state: RunState, command: Dictionary) -> Dictionary:
+static func _is_rest_node(catalog: Dictionary, node_id: String) -> bool:
+	for node_value in catalog.get("nodes", []):
+		var node: Dictionary = node_value
+		if str(node.get("id", "")) == node_id and str(node.get("type", "")) == REST_NODE_TYPE:
+			return true
+	return false
+
+
+static func _rest_visit_key(node_id: String) -> String:
+	return "%s_used" % node_id
+
+
+static func _rest_mode_key(node_id: String) -> String:
+	return "%s_mode" % node_id
+
+
+static func _rest_visit_consumed(state: RunState) -> bool:
+	return str(state.node_flags.get(_rest_visit_key(state.current_node_id), "")) == "used"
+
+
+static func _travel(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var node_id := str(command.get("node_id", ""))
 	if node_id.is_empty():
 		return _rejected(state, "missing_node_id")
-	# R8.1 hard choice: entering rest_hollow commits the player to exactly one
-	# benefit; leaving without consuming the visit is refused (skip only means
-	# never entering the node).
-	if state.current_node_id == "rest_hollow" and str(state.node_flags.get("rest_hollow", "")) != "used":
+	# R8.1 hard choice (P2a B generalized to every type=="rest" node): entering
+	# a rest node commits the player to exactly one benefit; leaving without
+	# consuming the visit is refused (skip only means never entering the node).
+	if _is_rest_node(catalog, state.current_node_id) and not _rest_visit_consumed(state):
 		return _rejected(state, "rest_choice_required")
 	var next := state.append_event(_event(
 		state,
@@ -1622,7 +1721,7 @@ static func _gain_force_power(state: RunState, command: Dictionary, _catalog: Di
 
 
 static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	if state.current_node_id != "rest_hollow":
+	if not _is_rest_node(catalog, state.current_node_id):
 		return _rejected(state, "not_rest_node")
 	var mode := str(command.get("mode", "heal"))
 	if mode == "heal":
@@ -1639,19 +1738,22 @@ static func _rest_upgrade(state: RunState, command: Dictionary) -> Dictionary:
 	var card_key := str(command.get("card_key", ""))
 	if card_key.is_empty():
 		return _rejected(state, "missing_card_key")
-	if str(state.node_flags.get("rest_mode_used", "")) == "true":
+	if str(state.node_flags.get(_rest_mode_key(state.current_node_id), "")) == "true":
 		return _rejected(state, "rest_mode_already_used")
-	if str(state.node_flags.get("rest_hollow", "")) == "used":
+	if _rest_visit_consumed(state):
 		return _rejected(state, "rest_already_used")
 	var consumed := _consume_rest_visit(state)
 	return _upgrade_card(consumed, {"card_key": card_key})
 
 
 static func _rest_heal(state: RunState) -> Dictionary:
-	if str(state.node_flags.get("rest_hollow", "")) == "used":
+	if _rest_visit_consumed(state):
 		return _rejected(state, "rest_already_used")
 	var flags := state.node_flags.duplicate(true)
-	flags["rest_hollow"] = "used"
+	flags[_rest_visit_key(state.current_node_id)] = "used"
+	# Bare-id marker rides along so _complete_node stays an idempotent no-op
+	# when leaving (keeps the seeded event stream aligned with the baseline).
+	flags[state.current_node_id] = "used"
 	var next_health := mini(state.max_health, state.health + 2)
 	var essence_max := int(state.cave_aperture.get("essence_max", 4))
 	var next_essence := mini(essence_max, state.essence + 2)
@@ -1673,9 +1775,9 @@ static func _rest_heal(state: RunState) -> Dictionary:
 static func _rest_removal(state: RunState, command: Dictionary, catalog: Dictionary, mode: String) -> Dictionary:
 	if not REST_REMOVAL_MODES.has(mode):
 		return _rejected(state, "unsupported_rest_mode")
-	if str(state.node_flags.get("rest_mode_used", "")) == "true":
+	if str(state.node_flags.get(_rest_mode_key(state.current_node_id), "")) == "true":
 		return _rejected(state, "rest_mode_already_used")
-	if str(state.node_flags.get("rest_hollow", "")) == "used":
+	if _rest_visit_consumed(state):
 		return _rejected(state, "rest_already_used")
 	var consumed := _consume_rest_visit(state)
 	match mode:
@@ -1690,8 +1792,10 @@ static func _rest_removal(state: RunState, command: Dictionary, catalog: Diction
 
 static func _consume_rest_visit(state: RunState) -> RunState:
 	var flags := state.node_flags.duplicate(true)
-	flags["rest_hollow"] = "used"
-	flags["rest_mode_used"] = "true"
+	flags[_rest_visit_key(state.current_node_id)] = "used"
+	flags[_rest_mode_key(state.current_node_id)] = "true"
+	# Same bare-id marker contract as _rest_heal (see comment there).
+	flags[state.current_node_id] = "used"
 	return state.append_event(_event(
 		state,
 		"rest",
@@ -1869,7 +1973,13 @@ static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 		var per := int(effects.get("revisit_price_pct_per_visit", 0))
 		var revisit_cap := int(effects.get("revisit_price_cap_pct", 100))
 		revisit_lift = mini(revisit_cap, (visits - 1) * per)
-	return maxi(0, ceili(float(base) * (1.0 + float(notoriety_lift) / 100.0) * (1.0 + float(revisit_lift) / 100.0)))
+	# C1-min §16.13: sworn contracts lift buy prices multiplicatively with the
+	# existing inflations; sell prices stay untouched.
+	# N1 §16.13 MINOR: the maxi(0, ...) clamp keeps negative (discount) rule
+	# values inert on purpose — forward-compatible until §16.13 grows explicit
+	# discount keys, then this clamp opens up deliberately.
+	var contract_pct := maxi(0, int(ContractRulesScript.aggregate(state, catalog).get("shop_price_pct", 0)))
+	return maxi(0, ceili(float(base) * (1.0 + float(notoriety_lift) / 100.0) * (1.0 + float(revisit_lift) / 100.0) * (1.0 + float(contract_pct) / 100.0)))
 
 
 static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> int:
