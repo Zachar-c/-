@@ -60,7 +60,7 @@ export GuTopBar() -> RuitkVNode {
   if layer >= 0:
     left_items.append(<Label text={ "第 %d 转" % layer } style={ {"font_color": GuStyle.GOLD, "font_size": 16, "min_width": 70} } />)
   left_items.append((
-    <HBoxContainer style={ {"separation": 6} }>
+    <HBoxContainer style={ {"separation": 6, "size_flags_horizontal": 3} }>
       { chip_items }
     </HBoxContainer>
   ))

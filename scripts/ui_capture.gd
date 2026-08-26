@@ -73,8 +73,10 @@ func _snap(component: String, props: Dictionary) -> void:
 	bg.color = Color("0b0f14")
 	bg.size = Vector2(SHOT_W, SHOT_H)
 	svp.add_child(bg)
-	var inner := Control.new()
+	# PanelContainer 强制唯一子（RUI 根）填满画幅，避免内容按最小尺寸收缩在左上角
+	var inner := PanelContainer.new()
 	inner.size = Vector2(SHOT_W, SHOT_H)
+	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	svp.add_child(inner)
 	RuiRoot.create(inner, VLib.fc(fn, props))
 	# 等 6 帧让 RUI 完成挂载与布局

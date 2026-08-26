@@ -8,7 +8,7 @@ export GuScrollBox() -> RuitkVNode {
   return (
     <PanelContainer style={ {"bg_color": GuStyle.BG_PANEL, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.BG_RAISED} }>
       <ScrollContainer style={ {"min_height": height} }>
-        <MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 8, "margin_bottom": 8} }>
+        <MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 8, "margin_bottom": 8, "size_flags_horizontal": 3} }>
           <VBoxContainer style={ {"separation": 6} }>
             { children }
           </VBoxContainer>

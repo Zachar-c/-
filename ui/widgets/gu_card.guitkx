@@ -12,6 +12,7 @@ export GuCard() -> RuitkVNode {
   var cost = props.get("cost", "")
   var curse_warning = props.get("curse_warning", false)
   var sealed = props.get("sealed", false)
+  var expand_h = props.get("expand_h", false)
 
   var QUAL_COLORS = {"普通": GuStyle.BONE_DIM, "稀有": GuStyle.GOLD, "史诗": GuStyle.EMBER, "传说": GuStyle.PAPER, "common": GuStyle.BONE_DIM, "rare": GuStyle.GOLD, "epic": GuStyle.EMBER, "legendary": GuStyle.PAPER}
   var quality_color = QUAL_COLORS.get(quality, GuStyle.BONE_DIM)
@@ -25,6 +26,8 @@ export GuCard() -> RuitkVNode {
   }
   if sealed:
     card_style["modulate"] = Color(1, 1, 1, 0.55)
+  if expand_h:
+    card_style["size_flags_horizontal"] = 3
 
   return (
     <PanelContainer style={ card_style }>

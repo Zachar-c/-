@@ -56,7 +56,7 @@ export BattleScreen() -> RuitkVNode {
       itext = "蓄势待发"
       intent_color = GuStyle.SILVER
     enemy_cards.append((
-      <GuCard title={ ename }>
+      <GuCard title={ ename } expand_h={ true }>
         <GuStatBar label="气力" value={ ehp } max_value={ emax } color={ GuStyle.DANGER } shield={ eshield } />
         <Label text={ rune } style={ {"font_color": intent_color, "font_size": 18} } />
         <Label text={ itext } style={ {"font_color": intent_color, "font_size": 13} } />
@@ -110,7 +110,7 @@ export BattleScreen() -> RuitkVNode {
       />
     )
     hand_rows.append((
-      <GuCard title={ cname } danger={ ccurse }>
+      <GuCard title={ cname } danger={ ccurse } expand_h={ true }>
         <Label text={ cost_str } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
         <Label text={ "效果：" + ceff } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
         { tip }
@@ -136,7 +136,7 @@ export BattleScreen() -> RuitkVNode {
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
 
       <HBoxContainer style={ {"separation": 14} }>
-        <GuPanel title="我方">
+        <GuPanel title="我方" expand_h={ true }>
           <VBoxContainer style={ {"separation": 6} }>
             <GuStatBar label="生命" value={ php } max_value={ pmax } color={ GuStyle.JADE } shield={ pshield } />
             <GuStatBar label="真元" value={ pprim } max_value={ maxi(pprim, 1) } color={ GuStyle.GOLD } />
@@ -145,7 +145,7 @@ export BattleScreen() -> RuitkVNode {
           </VBoxContainer>
         </GuPanel>
 
-        <GuPanel title="敌方">
+        <GuPanel title="敌方" expand_h={ true }>
           <HBoxContainer style={ {"separation": 12} }>
             { enemy_cards }
             { enemy_empty }
@@ -162,10 +162,12 @@ export BattleScreen() -> RuitkVNode {
         </GuScrollBox>
       </GuPanel>
 
-      <HBoxContainer style={ {"separation": 12} }>
-        <Label text={ "真元 " + str(pprim) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
-        { ops }
-      </HBoxContainer>
+      <CenterContainer style={ {"size_flags_horizontal": 3} }>
+        <HBoxContainer style={ {"separation": 12} }>
+          <Label text={ "真元 " + str(pprim) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
+          { ops }
+        </HBoxContainer>
+      </CenterContainer>
     </VBoxContainer>
   )
 }
