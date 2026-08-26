@@ -544,7 +544,7 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 	var cause := {"id": "", "short": "", "text": ""}
 	if otype == "death":
 		cause = death_cause_fields(state)
-	return {
+	var out := {
 		"title": DisplayText.outcome(otype),
 		"ending_type": etype,
 		"death_cause_id": str(cause["id"]),
@@ -556,6 +556,93 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"unlocks": unlocks,
 		"aftermath": "修行札记已留存，可于大厅图鉴查阅本次所得。",
 	}
+	out.merge(settlement_extras(controller))
+	out["achievement"] = DisplayText.ending_achievement(etype)
+	return out
+
+
+## T5-C 结算复盘只读投影（路线缩略图 / 本局记录 / 最高转数）。
+## builder `ending()` 与战斗死亡 `_show_death` 内联结算共用，保证两条路径同形。
+## 只读扫描 route/node_flags/event_log；不重算任何领域结果。
+static func settlement_extras(controller) -> Dictionary:
+	return {
+		"route_summary": _route_summary(controller),
+		"run_record": _run_record(controller),
+		"max_rank": _max_rank(controller),
+	}
+
+
+## 路线缩略图：按 stage 分组已访问节点（state.node_flags 标记），types 为中文
+## 类型短标；boss=该层含 catalog 中 tier=boss 敌人的节点，供 EMBER 高亮。
+static func _route_summary(controller) -> Array[Dictionary]:
+	var state = controller.state
+	if state == null or state.node_flags == null or controller.route == null:
+		return []
+	var boss_enemies: Dictionary = {}
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	for enemy_id in catalog.get("enemy_by_id", {}):
+		var entry: Dictionary = catalog["enemy_by_id"][enemy_id]
+		if str(entry.get("tier", "")) == "boss":
+			boss_enemies[str(enemy_id)] = true
+	var groups: Array[Dictionary] = []
+	for node_value in controller.route:
+		var node: Dictionary = node_value
+		var node_id := str(node.get("id", ""))
+		if not state.node_flags.has(node_id):
+			continue
+		var stage := str(node.get("stage", ""))
+		var type_label := DisplayText.type(str(node.get("type", "")))
+		var is_boss := boss_enemies.has(str(node.get("enemy_kind", "")))
+		if not groups.is_empty() and str(groups[-1]["stage"]) == stage:
+			groups[-1]["types"].append(type_label)
+			groups[-1]["boss"] = bool(groups[-1]["boss"]) or is_boss
+		else:
+			groups.append({"stage": stage, "types": [type_label], "boss": is_boss})
+	var out: Array[Dictionary] = []
+	for index in groups.size():
+		out.append({
+			"layer": index + 1,
+			"types": groups[index]["types"],
+			"boss": bool(groups[index]["boss"]),
+		})
+	return out
+
+
+## 本局记录：event_log 只读计数。合成按结果 reason 计数（材料扣减簿记事件
+## battle_synthesis_materials_spent 不计为尝试）；DDA 未实装，恒 0 占位。
+## 保底触发：事件日志无任何含 pity 的 action（pity 仅以 before/after 数值随
+## battle_loot 位移），无法在不重算领域结果的前提下确认口径，故本批不渲染该行。
+static func _run_record(controller) -> Dictionary:
+	var record := {
+		"synthesis_attempts": 0,
+		"synthesis_ok": 0,
+		"synthesis_fail": 0,
+		"boss_phase_shifts": 0,
+		"dda_triggers": 0,
+	}
+	var state = controller.state
+	if state == null:
+		return record
+	for event in state.event_log:
+		match str(event.get("action", "")):
+			"battle_synthesize":
+				match str(event.get("reason", "")):
+					"battle_synthesis_succeeded":
+						record["synthesis_attempts"] += 1
+						record["synthesis_ok"] += 1
+					"battle_synthesis_failed":
+						record["synthesis_attempts"] += 1
+						record["synthesis_fail"] += 1
+			"boss_phase_shift":
+				record["boss_phase_shifts"] += 1
+	return record
+
+
+## §16.17 结算统计行：最高转数取自 cultivator.reincarnation（转数轨唯一成长轴）。
+static func _max_rank(controller) -> int:
+	var state = controller.state
+	var cult: Dictionary = state.cultivator if state != null else {}
+	return maxi(1, int(cult.get("reincarnation", 1)))
 
 
 static func blow_text(id: String) -> String:

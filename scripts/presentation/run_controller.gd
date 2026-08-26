@@ -436,7 +436,8 @@ func _show_death(report: Dictionary) -> void:
 	_record_run_end("dead")
 	# T5-B 结算联动：战斗死亡与 builder 路径共用精准死因三字段（只读扫描终局字段）。
 	var cause: Dictionary = RunSnapshotBuilderScript.death_cause_fields(state)
-	_ending_state = {
+	# T5-C 结算复盘：战斗死亡内联结算与 builder ending() 同形（路线/记录/最高转数/达成链）。
+	var death_state := {
 		"title": "身死道消",
 		"ending_type": "death",
 		"death_cause_id": str(cause["id"]),
@@ -448,6 +449,9 @@ func _show_death(report: Dictionary) -> void:
 		"unlocks": [],
 		"aftermath": "残魂归于大地，修行札记已留存。",
 	}
+	death_state.merge(RunSnapshotBuilderScript.settlement_extras(self))
+	death_state["achievement"] = DisplayText.ending_achievement("death")
+	_ending_state = death_state
 	_view_name = "Ending"
 	_render()
 

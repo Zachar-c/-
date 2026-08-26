@@ -358,6 +358,22 @@ static func death_cause_short(id: String) -> String:
 	return str(DEATH_CAUSE_SHORT.get(id, ""))
 
 
+# T5-C 结算达成条件链（§16.10 收益排序措辞依据）：ending_type -> 一句达成描述。
+# 纯展示映射；未知类型返回空串，由结算屏隐藏该行。
+const ENDING_ACHIEVEMENT := {
+	"success": "五转功成，渡劫飞升，完整走完晋升之路",
+	"death": "寿元、魂魄或反噬一线归零，身死道消",
+	"gu_fall": "反噬彻底吞噬人身，蛊化坠落为蛊",
+	"risky": "携险渡劫成功，代价留身而路已通",
+	"retreat": "机缘未至而主动抽身，保命另寻出路",
+	"true_ending": "窥破轮回真相，走出真正属于自己的路",
+}
+
+
+static func ending_achievement(ending_type: String) -> String:
+	return str(ENDING_ACHIEVEMENT.get(ending_type, ""))
+
+
 static func result(payload: Dictionary) -> String:
 	if not bool(payload.get("ok", true)):
 		return "行动未能完成。"

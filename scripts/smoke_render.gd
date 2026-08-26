@@ -90,6 +90,17 @@ func _host_has_label_text(node: Node, wanted: String) -> bool:
 	return false
 
 
+# T5-C：精确匹配标签（供配色断言取回具体 Label 节点）。
+func _find_label_exact(node: Node, wanted: String) -> Label:
+	if node is Label and str(node.text) == wanted:
+		return node
+	for c in node.get_children():
+		var found := _find_label_exact(c, wanted)
+		if found != null:
+			return found
+	return null
+
+
 func _mount_component(rel_gd: String, component: String, props: Dictionary) -> Control:
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
@@ -386,7 +397,7 @@ func _initialize() -> void:
 		quit(1)
 	print("OK BattleScreen buttons=%d" % bc)
 
-	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；两种用例）
+	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；T5-C 三变体：普通胜利 / 死亡 / 无记录极简）
 	# 命名 EndingScreen 以避开旧 scripts/presentation/ending_view.gd 的全局类 EndingView。
 	var ending_cmds := {
 		"to_hall": Callable(self, "_noop"),
@@ -395,6 +406,13 @@ func _initialize() -> void:
 	var ending_success := {
 		"title": "险中求胜",
 		"ending_type": "success",
+		"achievement": "五转功成，渡劫飞升，完整走完晋升之路",
+		"max_rank": 2,
+		"route_summary": [
+			{"layer": 1, "types": ["接触", "黑市"], "boss": false},
+			{"layer": 2, "types": ["交锋"], "boss": true},
+		],
+		"run_record": {"synthesis_attempts": 2, "synthesis_ok": 1, "synthesis_fail": 1, "boss_phase_shifts": 1, "dda_triggers": 0},
 		"key_decisions": ["放弃强攻，改为诈降", "以魂魄强行镇压反噬"],
 		"gains_losses": "夺得《血道真解》残卷，损耗寿元 8",
 		"resource_balance": {"yuanstone": 20, "shouyuan": 52},
@@ -409,6 +427,32 @@ func _initialize() -> void:
 	if _host_has_label_text(esc_container, "死因 · "):
 		push_error("非死亡结局不得渲染死因徽章")
 		quit(1)
+	if not _host_has_label_text(esc_container, "达成：" + str(ending_success["achievement"])):
+		push_error("结算屏缺少达成条件链行")
+		quit(1)
+	if not (_host_has_label_text(esc_container, "第1层 接触·黑市") and _host_has_label_text(esc_container, "第2层 交锋")):
+		push_error("结算屏路线缩略图缺少分层短标")
+		quit(1)
+	var boss_chip := _find_label_exact(esc_container, "第2层 交锋")
+	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.EMBER):
+		push_error("路线缩略图 Boss 层必须 EMBER 高亮")
+		quit(1)
+	if not _host_has_label_text(esc_container, "战斗合成：2 次 · 成 1 / 败 1"):
+		push_error("结算本局记录缺少合成计数行")
+		quit(1)
+	if not _host_has_label_text(esc_container, "Boss 阶段切换：1 次"):
+		push_error("结算本局记录缺少 Boss 阶段切换行")
+		quit(1)
+	if _host_has_label_text(esc_container, "DDA 触发"):
+		push_error("DDA 预留位无数据时必须整行隐藏")
+		quit(1)
+	var new_chip := _find_label_exact(esc_container, "★新 图鉴：火蛊")
+	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.GOLD):
+		push_error("解锁列表项必须带 ★新 前缀（GOLD）")
+		quit(1)
+	if not _host_has_label_text(esc_container, "离局清零"):
+		push_error("资源结余面板缺少「离局清零」小字标注")
+		quit(1)
 	print("OK EndingScreen buttons=%d" % esc)
 
 	var ending_death := {
@@ -417,6 +461,7 @@ func _initialize() -> void:
 		"death_cause_id": "death_cause_backlash",
 		"death_cause": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
 		"death_cause_short": "反噬爆发",
+		"achievement": "寿元、魂魄或反噬一线归零，身死道消",
 		"key_decisions": ["孤身追猎未探虚实"],
 		"gains_losses": "反噬爆发，真元枯竭而亡",
 		"resource_balance": {"yuanstone": 0, "shouyuan": 0},
@@ -431,7 +476,38 @@ func _initialize() -> void:
 	if not _host_has_label_text(edc_container, "死因 · 反噬爆发"):
 		push_error("死亡结局应在结局类型面板顶部并列死因徽章（BLOOD 色）")
 		quit(1)
-	print("OK EndingScreen buttons=%d" % edc)
+	if not _host_has_label_text(edc_container, "达成：" + str(ending_death["achievement"])):
+		push_error("死亡结局同样渲染达成条件链")
+		quit(1)
+	print("OK EndingScreenDeath buttons=%d" % edc)
+
+	# T5-C 无记录极简 run：无 route_summary/run_record 字段 → 路线与本局记录整块隐藏，
+	# 但达成条件链照常；结算仍只有 返回大厅 / 查看图鉴 两个动作（§16.6 无读档回溯）。
+	var ending_minimal := {
+		"title": "保命而退",
+		"ending_type": "retreat",
+		"achievement": "机缘未至而主动抽身，保命另寻出路",
+		"key_decisions": [],
+		"gains_losses": "",
+		"resource_balance": {},
+		"unlocks": [],
+		"aftermath": "",
+	}
+	var emn_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_minimal, "commands": ending_cmds})
+	var emn := _count_buttons(emn_container)
+	if emn != 2:
+		push_error("极简结算应只有 返回大厅/查看图鉴 两个按钮，实得 %d" % emn)
+		quit(1)
+	if _find_button_by_text(emn_container, "返回大厅") == null or _find_button_by_text(emn_container, "查看图鉴") == null:
+		push_error("结算动作必须是 返回大厅 与 查看图鉴（不得出现读档/回溯）")
+		quit(1)
+	if _host_has_label_text(emn_container, "路线") or _host_has_label_text(emn_container, "本局记录"):
+		push_error("无记录极简 run 不得渲染路线条与本局记录块")
+		quit(1)
+	if not _host_has_label_text(emn_container, "达成：" + str(ending_minimal["achievement"])):
+		push_error("极简结算仍须渲染达成条件链")
+		quit(1)
+	print("OK EndingScreenMinimal buttons=%d" % emn)
 
 	# 10) T4 剩余节点屏断言（C2 奖励 / C3 黑市 / C5 休整 / C6 炼蛊 / C8 NPC）
 	var gui_state := {
