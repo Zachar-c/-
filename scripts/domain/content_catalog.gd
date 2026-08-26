@@ -370,6 +370,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("synthesis blind references missing card %s" % card_value)
 	if catalog.has("contracts"):
 		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
+	if catalog.has("npcs"):
+		errors.append_array(_validate_npcs(catalog.get("npcs", []), catalog.get("shop_offer_by_id", {})))
 	if catalog.has("journal"):
 		errors.append_array(_validate_journal(catalog.get("journal", {})))
 	if catalog.has("debug"):
@@ -456,6 +458,30 @@ static func _is_data_driven_card_linked(gu: Dictionary, cards: Array) -> bool:
 				and (card.get("source_gu_ids", []) as Array).has(gu["id"]):
 			return true
 	return false
+
+
+# N-candidate (night batch): NPC personal inventory schema guard — stock ids
+# must resolve to real shop offers of a supported kind, without duplicates.
+static func _validate_npcs(npcs: Array, shop_offer_by_id: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	for npc_value in npcs:
+		var npc: Dictionary = npc_value
+		var npc_id := str(npc.get("id", ""))
+		var stock: Array = npc.get("stock", [])
+		var seen := {}
+		for offer_id_value in stock:
+			var offer_id := str(offer_id_value)
+			if seen.has(offer_id):
+				errors.append("npc %s stock duplicates offer %s" % [npc_id, offer_id])
+			seen[offer_id] = true
+			var offer: Dictionary = shop_offer_by_id.get(offer_id, {})
+			if offer.is_empty():
+				errors.append("npc %s stock references unknown offer %s" % [npc_id, offer_id])
+				continue
+			var kind := str(offer.get("kind", ""))
+			if not kind in ["purchase", "soul_boost", "lifespan_deal", "barter"]:
+				errors.append("npc %s stock offer %s has unsupported kind %s" % [npc_id, offer_id, kind])
+	return errors
 
 
 # C1-min §16.13 schema guard: id uniqueness, closed rule-key whitelist,

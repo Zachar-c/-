@@ -96,6 +96,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"shop_purchase": func(state, command, catalog): return _shop_purchase(state, command, catalog),
 			"shop_lifespan_deal": func(state, command, catalog): return _shop_lifespan_deal(state, command, catalog),
 			"shop_barter": func(state, command, catalog): return _shop_barter(state, command, catalog),
+			"npc_trade": func(state, command, catalog): return _npc_trade(state, command, catalog),
 			"scavenge": func(state, command, catalog): return _scavenge(state, command, catalog),
 			"sell_material": func(state, command, catalog): return _sell_material(state, command, catalog),
 			"raise_aptitude": func(state, command, catalog): return _raise_aptitude(state, command, catalog),
@@ -1645,6 +1646,43 @@ static func _npc_by_id(catalog: Dictionary, npc_id: String) -> Dictionary:
 		if npc["id"] == npc_id:
 			return npc
 	return {}
+
+
+# N-candidate (night batch): NPC personal inventories. npc_trade reuses the
+# shop handlers verbatim after the NPC-scoped gates, so prices (price_for:
+# inflation/contracts/notoriety), deck capacity, soul/lifespan deals and the
+# seeded barter roll stay byte-identical with shop purchases.
+static func _npc_trade(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var npc := _npc_by_id(catalog, str(command.get("npc_id", "")))
+	if npc.is_empty():
+		return _rejected(state, "unknown_npc")
+	var offer_id := str(command.get("offer_id", ""))
+	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(offer_id, {})
+	if offer.is_empty():
+		return _rejected(state, "unknown_shop_offer")
+	var stock: Array = npc.get("stock", [])
+	if not stock.has(offer_id):
+		return _rejected(state, "npc_stock_missing")
+	if not _current_node_declares_npc(state, catalog, str(npc.get("id", "unknown"))):
+		return _rejected(state, "npc_not_present")
+	match str(offer.get("kind", "")):
+		"purchase":
+			return _shop_purchase(state, {"offer_id": offer_id}, catalog)
+		"soul_boost":
+			return _shop_soul_boost(state, {}, catalog, offer)
+		"lifespan_deal":
+			return _shop_lifespan_deal(state, {"offer_id": offer_id}, catalog)
+		"barter":
+			return _shop_barter(state, {"offer_id": offer_id, "input_instance_ids": command.get("input_instance_ids", [])}, catalog)
+		_:
+			return _rejected(state, "unknown_shop_offer")
+
+
+static func _current_node_declares_npc(state: RunState, catalog: Dictionary, npc_id: String) -> bool:
+	for node in catalog.get("nodes", []):
+		if str(node.get("id", "")) == state.current_node_id:
+			return str(node.get("npc_id", "")) == npc_id
+	return false
 
 
 static func _npc_reaction(state: RunState, npc: Dictionary) -> String:

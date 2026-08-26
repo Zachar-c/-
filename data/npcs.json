@@ -7,7 +7,8 @@
     "known_facts": ["missing_goods", "injured_guard"],
     "retreat": "trade_safe_passage",
     "reinforcements": "three_day_patrol",
-    "injury_reaction": "exploit"
+    "injury_reaction": "exploit",
+    "stock": ["purchase_stone_shell", "purchase_moonlight", "soul_pill"]
   },
   {
     "id": "earth_vein_scout",
@@ -27,7 +28,8 @@
     "known_facts": ["blood_moss_growth"],
     "retreat": "offer_safe_treatment",
     "reinforcements": "none",
-    "injury_reaction": "sympathy"
+    "injury_reaction": "sympathy",
+    "stock": ["soul_pill"]
   },
   {
     "id": "ridge_extortionist",
@@ -37,6 +39,7 @@
     "known_facts": ["alternate_ridge_path"],
     "retreat": "accept_stone_and_withdraw",
     "reinforcements": "beast_swarm_lure",
-    "injury_reaction": "contempt"
+    "injury_reaction": "contempt",
+    "stock": ["lifespan_pulse_drum"]
   }
 ]
