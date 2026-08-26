@@ -20,6 +20,9 @@ const FORCED_DROP_CURSE_ID := "gu_erosion"
 # Per-run usage counters live in node_flags as string values ("1", "2", ...).
 const SERVICE_USE_FLAG_PREFIX := "svc_used_"
 const REST_REMOVAL_MODES := ["remove_card", "remove_imprint", "remove_curse"]
+# P2a B: rest visit/mode flags are scoped per node id ("<id>_used"/"<id>_mode")
+# so nodes.json may declare more than one rest node.
+const REST_NODE_TYPE := "rest"
 
 
 const BODY_IMPRINTS := {
@@ -63,7 +66,7 @@ static var _dispatch: Dictionary = {}
 static func _handler_for(command_type: String) -> Variant:
 	if _dispatch.is_empty():
 		_dispatch = {
-			"travel": func(state, command, _catalog): return _travel(state, command),
+			"travel": func(state, command, catalog): return _travel(state, command, catalog),
 			"resolve_contact": func(state, command, _catalog): return _resolve_contact(state, command),
 			"complete_node": func(state, command, _catalog): return _complete_node(state, command),
 			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
@@ -1311,14 +1314,34 @@ static func _remove_curse_command(state: RunState, command: Dictionary, catalog:
 	return _accepted(CurseRegistryScript.remove_curse(paid, curse_id))
 
 
-static func _travel(state: RunState, command: Dictionary) -> Dictionary:
+static func _is_rest_node(catalog: Dictionary, node_id: String) -> bool:
+	for node_value in catalog.get("nodes", []):
+		var node: Dictionary = node_value
+		if str(node.get("id", "")) == node_id and str(node.get("type", "")) == REST_NODE_TYPE:
+			return true
+	return false
+
+
+static func _rest_visit_key(node_id: String) -> String:
+	return "%s_used" % node_id
+
+
+static func _rest_mode_key(node_id: String) -> String:
+	return "%s_mode" % node_id
+
+
+static func _rest_visit_consumed(state: RunState) -> bool:
+	return str(state.node_flags.get(_rest_visit_key(state.current_node_id), "")) == "used"
+
+
+static func _travel(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var node_id := str(command.get("node_id", ""))
 	if node_id.is_empty():
 		return _rejected(state, "missing_node_id")
-	# R8.1 hard choice: entering rest_hollow commits the player to exactly one
-	# benefit; leaving without consuming the visit is refused (skip only means
-	# never entering the node).
-	if state.current_node_id == "rest_hollow" and str(state.node_flags.get("rest_hollow", "")) != "used":
+	# R8.1 hard choice (P2a B generalized to every type=="rest" node): entering
+	# a rest node commits the player to exactly one benefit; leaving without
+	# consuming the visit is refused (skip only means never entering the node).
+	if _is_rest_node(catalog, state.current_node_id) and not _rest_visit_consumed(state):
 		return _rejected(state, "rest_choice_required")
 	var next := state.append_event(_event(
 		state,
@@ -1696,7 +1719,7 @@ static func _gain_force_power(state: RunState, command: Dictionary, _catalog: Di
 
 
 static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	if state.current_node_id != "rest_hollow":
+	if not _is_rest_node(catalog, state.current_node_id):
 		return _rejected(state, "not_rest_node")
 	var mode := str(command.get("mode", "heal"))
 	if mode == "heal":
@@ -1713,19 +1736,19 @@ static func _rest_upgrade(state: RunState, command: Dictionary) -> Dictionary:
 	var card_key := str(command.get("card_key", ""))
 	if card_key.is_empty():
 		return _rejected(state, "missing_card_key")
-	if str(state.node_flags.get("rest_mode_used", "")) == "true":
+	if str(state.node_flags.get(_rest_mode_key(state.current_node_id), "")) == "true":
 		return _rejected(state, "rest_mode_already_used")
-	if str(state.node_flags.get("rest_hollow", "")) == "used":
+	if _rest_visit_consumed(state):
 		return _rejected(state, "rest_already_used")
 	var consumed := _consume_rest_visit(state)
 	return _upgrade_card(consumed, {"card_key": card_key})
 
 
 static func _rest_heal(state: RunState) -> Dictionary:
-	if str(state.node_flags.get("rest_hollow", "")) == "used":
+	if _rest_visit_consumed(state):
 		return _rejected(state, "rest_already_used")
 	var flags := state.node_flags.duplicate(true)
-	flags["rest_hollow"] = "used"
+	flags[_rest_visit_key(state.current_node_id)] = "used"
 	var next_health := mini(state.max_health, state.health + 2)
 	var essence_max := int(state.cave_aperture.get("essence_max", 4))
 	var next_essence := mini(essence_max, state.essence + 2)
@@ -1747,9 +1770,9 @@ static func _rest_heal(state: RunState) -> Dictionary:
 static func _rest_removal(state: RunState, command: Dictionary, catalog: Dictionary, mode: String) -> Dictionary:
 	if not REST_REMOVAL_MODES.has(mode):
 		return _rejected(state, "unsupported_rest_mode")
-	if str(state.node_flags.get("rest_mode_used", "")) == "true":
+	if str(state.node_flags.get(_rest_mode_key(state.current_node_id), "")) == "true":
 		return _rejected(state, "rest_mode_already_used")
-	if str(state.node_flags.get("rest_hollow", "")) == "used":
+	if _rest_visit_consumed(state):
 		return _rejected(state, "rest_already_used")
 	var consumed := _consume_rest_visit(state)
 	match mode:
@@ -1764,8 +1787,8 @@ static func _rest_removal(state: RunState, command: Dictionary, catalog: Diction
 
 static func _consume_rest_visit(state: RunState) -> RunState:
 	var flags := state.node_flags.duplicate(true)
-	flags["rest_hollow"] = "used"
-	flags["rest_mode_used"] = "true"
+	flags[_rest_visit_key(state.current_node_id)] = "used"
+	flags[_rest_mode_key(state.current_node_id)] = "true"
 	return state.append_event(_event(
 		state,
 		"rest",

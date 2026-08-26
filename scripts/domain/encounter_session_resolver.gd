@@ -112,10 +112,10 @@ static func _card_rejected(state: RunState, session: Dictionary, node: Dictionar
 
 
 static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) -> Dictionary:
-	# R8.1 hard choice mirrors Resolver._travel: walking out of rest_hollow
+	# R8.1 hard choice mirrors Resolver._travel: walking out of a rest node
 	# without consuming the visit is refused and the session stays open so the
 	# player can still pick heal/upgrade/one of the removals.
-	if _rest_choice_pending(state, session):
+	if _rest_choice_pending(state, session, catalog):
 		return _rejected(state, session, "rest_choice_required")
 	if str(session.get("stance", "neutral")) == "extreme_hostile":
 		return _rejected(state, session, "feud_no_escape")
@@ -143,9 +143,11 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 	}
 
 
-static func _rest_choice_pending(state: RunState, session: Dictionary) -> bool:
-	return str(session.get("node_id", "")) == "rest_hollow" \
-			and str(state.node_flags.get("rest_hollow", "")) != "used"
+static func _rest_choice_pending(state: RunState, session: Dictionary, catalog: Dictionary) -> bool:
+	var node_id := str(session.get("node_id", ""))
+	if not Resolver._is_rest_node(catalog, node_id):
+		return false
+	return str(state.node_flags.get("%s_used" % node_id, "")) != "used"
 
 
 static func _record_session_state(

@@ -134,8 +134,8 @@ func test_rest_mode_removes_gu_free_and_consumes_visit() -> void:
 	assert_eq(int(next.health), 4)
 	assert_eq(int(next.essence), 2)
 	assert_false(next.node_flags.has("svc_used_remove_card"))
-	assert_eq(str(next.node_flags.get("rest_hollow", "")), "used")
-	assert_eq(str(next.node_flags.get("rest_mode_used", "")), "true")
+	assert_eq(str(next.node_flags.get("rest_hollow_used", "")), "used")
+	assert_eq(str(next.node_flags.get("rest_hollow_mode", "")), "true")
 	assert_eq(str(next.event_log[-1]["reason"]), "rest_removed_gu")
 
 	var second_mode := ResolverScript.apply(next, {"type": "rest", "mode": "remove_card", "instance_id": "gu_001"}, catalog)
@@ -179,7 +179,7 @@ func test_rest_mode_validates_targets_before_consuming_visit() -> void:
 	var missing_curse := ResolverScript.apply(run, {"type": "rest", "mode": "remove_curse", "curse_id": "essence_bloat"}, catalog)
 	assert_false(missing_curse["result"]["ok"])
 	assert_eq(str(missing_curse["result"]["reason"]), "curse_not_present")
-	assert_eq(str(missing_curse["state"].node_flags.get("rest_hollow", "")), "")
+	assert_eq(str(missing_curse["state"].node_flags.get("rest_hollow_used", "")), "")
 
 	var bad_mode := ResolverScript.apply(run, {"type": "rest", "mode": "teleport"}, catalog)
 	assert_false(bad_mode["result"]["ok"])

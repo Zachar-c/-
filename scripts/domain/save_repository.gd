@@ -67,6 +67,11 @@ static func load_run_from_data(data: Dictionary) -> Dictionary:
 	var state: Variant = _state_from_save_data(data["state"])
 	if state == null:
 		return {}
+	# P2a B: v2 saves keyed rest visit/mode by the bare node id and a global
+	# literal; the per-node scheme derives "<id>_used"/"<id>_mode". Add-only
+	# because the bare-id key doubles as the visited marker (_complete_node
+	# idempotency + MapGenerator.reachable_nodes).
+	_migrate_legacy_rest_flags(state.node_flags)
 	var replies := _validated_replies(data.get("replies", []))
 	return {
 		"state": state,
@@ -137,6 +142,14 @@ static func load_meta_file() -> RefCounted:
 	if not json.data is Dictionary:
 		return null
 	return load_meta_from_data(json.data)
+
+
+# P2a B: derive per-node rest flags from the legacy bare-id/global literals.
+static func _migrate_legacy_rest_flags(flags: Dictionary) -> void:
+	if not flags.has("rest_hollow_used") and flags.has("rest_hollow"):
+		flags["rest_hollow_used"] = str(flags["rest_hollow"])
+	if not flags.has("rest_hollow_mode") and str(flags.get("rest_mode_used", "")) != "":
+		flags["rest_hollow_mode"] = str(flags["rest_mode_used"])
 
 
 static func _state_from_save_data(data: Dictionary) -> Variant:

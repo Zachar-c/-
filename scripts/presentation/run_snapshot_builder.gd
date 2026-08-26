@@ -94,8 +94,10 @@ static func rest(controller) -> Dictionary:
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var state = controller.state
 	var node_flags: Dictionary = state.node_flags if state != null else {}
-	var rest_used := str(node_flags.get("rest_hollow", "")) == "used"
-	var rest_mode_used := str(node_flags.get("rest_mode_used", "")) == "true"
+	# P2a B: visit/mode flags are scoped per node id, not a hard-coded literal.
+	var rest_node_id := str(controller.current_node.get("id", ""))
+	var rest_used := str(node_flags.get("%s_used" % rest_node_id, "")) == "used"
+	var rest_mode_used := str(node_flags.get("%s_mode" % rest_node_id, "")) == "true"
 	var aptitude_raised := str(node_flags.get("aptitude_raised", "")) == "true"
 
 	var choices: Array[Dictionary] = []
