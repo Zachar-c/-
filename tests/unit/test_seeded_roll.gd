@@ -10,6 +10,7 @@ extends GutTest
 
 const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
+const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 
@@ -127,3 +128,47 @@ func test_free_mix_salt_convention_pinned_after_helper_removal() -> void:
 	for character in joined:
 		digest = digest * 31 + character.unicode_at(0)
 	assert_eq(int(SeededRollScript.mixed_seed(101, joined, 4)), 101 * 1000003 + 4 * 97 + digest)
+
+
+# Night batch: map generator _node_rng converged onto SeededRoll (tick=0).
+
+
+func test_map_node_rng_matches_old_inline_seed_formula() -> void:
+	var pairs := [
+		[101, "ridge_caravan"],
+		[0, "trailhead"],
+		[424242, "final_boss_stand"],
+		[7, "ascension_window"],
+	]
+	for pair in pairs:
+		var seed_value: int = pair[0]
+		var node_id: String = pair[1]
+		var old_digest := 0
+		for character in node_id:
+			old_digest = old_digest * 31 + character.unicode_at(0)
+		var old_seed := int(seed_value) * 1000003 + old_digest
+		var expected := SeededRng.new(old_seed)
+		var actual := MapGeneratorScript._node_rng(seed_value, node_id)
+		for draw_index in range(3):
+			var actual_draw := actual.next_index(13)
+			var expected_draw := expected.next_index(13)
+			assert_eq(actual_draw, expected_draw,
+					"map node rng drift seed=%d node=%s draw=%d" % [seed_value, node_id, draw_index])
+
+
+func test_map_node_rng_seed_equals_mixed_seed_with_zero_tick() -> void:
+	var pairs := [
+		[101, "ridge_caravan"],
+		[0, "trailhead"],
+		[424242, "final_boss_stand"],
+		[7, "ascension_window"],
+	]
+	for pair in pairs:
+		var seed_value: int = pair[0]
+		var node_id: String = pair[1]
+		var old_digest := 0
+		for character in node_id:
+			old_digest = old_digest * 31 + character.unicode_at(0)
+		var old_seed := int(seed_value) * 1000003 + old_digest
+		assert_eq(int(SeededRollScript.mixed_seed(seed_value, node_id, 0)), old_seed,
+				"mixed seed zero tick drift seed=%d node=%s" % [seed_value, node_id])

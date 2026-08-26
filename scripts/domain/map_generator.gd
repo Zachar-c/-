@@ -2,6 +2,9 @@
 extends RefCounted
 
 
+const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
+
+
 static func build(seed_value: int, first_run: bool) -> Array[Dictionary]:
 	var data := _load_json("res://data/nodes.json")
 	var node_by_id := _index_nodes(data["nodes"])
@@ -155,10 +158,7 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 
 
 static func _node_rng(seed_value: int, node_id: String) -> SeededRng:
-	var digest := 0
-	for character in node_id:
-		digest = digest * 31 + character.unicode_at(0)
-	return SeededRng.new(int(seed_value) * 1000003 + digest)
+	return SeededRng.new(SeededRollScript.mixed_seed(seed_value, node_id, 0))
 
 
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:
