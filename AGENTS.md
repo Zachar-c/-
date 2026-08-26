@@ -73,7 +73,7 @@
 - 测试基线：**512 unit + 9 integration 全绿**。
 - **P2a 打磨批已落地**（master @`078670d`，531 unit + 9 integration）：结算页契约复盘区块、休整节点 type 驱动泛化＋按节点作用域 flag（旧档只增迁移）、SeededRoll 公式收敛。
 - **调试台融合裁定**（2026-08-26）：领域权威=DebugActions 服务（master @`1cd79ea`：五 op 白名单、DeckCapacity 同门禁、事件日志审计含拒绝、jump 落地标记防软锁、essence 双取钳制）；面板 UI 归 UI 会话 T5-D（.guitkx）接线，对接简报已入库：`docs/superpowers/sdd-archive/task-dbg-fusion-brief.md`。我方 overlay 废弃。
-- 待办候选：NPC 个人库存、DDA、map_generator.gd:161 种子变体（挂观察下批）。
+- 待办候选：敌人意图池动态化（R5.6）、中途续玩存档（R1.5）、怪物/卡池扩充、更多资质途径。
 
 ### 当前进行中
 - **UI 重设计**（分支 `ui-sts-redesign`）：
@@ -87,9 +87,16 @@
 - ③ ContentCatalog 契约 desc 数值校验 @`65aa532`：desc 独立数字令牌须覆盖每条 rule 的 |value|（防文案数值与配置漂移，多余数字允许）。
 - 收尾：**540 unit + 9 integration 全绿**（新增 9 守卫测试），check.ps1 全过。测试基线由 531 升至 540。
 
+### 夜间批（2026-08-26 深夜，用户入睡后自主完工，四件全落地 master 并推 gitee）
+- ① map_generator 种子变体收敛 @`7001927`：`_node_rng` → `SeededRoll.mixed_seed(seed, node_id, 0)`（tick=0 逐位不变 + 独立公式守卫）；② ui_capture 路径债 @`46300e2`：OUT_DIR 改 `res://.superpowers/ui_captures`（两处 globalize）。
+- ③ NPC 个人库存 @`0a51296`+`c9ceab0`：`npcs.json` 增 stock、`nodes.json` 增 npc_id 归属、resolver `npc_trade`（门禁：NPC 存在→offer 存在→在库→节点声明→委托 shop 语义零漂移）、快照 npc() 真库存替换硬编码假货架（价格走 price_for）、ContentCatalog stock Schema 校验（未知 offer/重复/非法 kind）。
+- ④ DDA 状态自适应（R14.5/14.6/§16.11）@`16dc2e1`+`5204480`+`0899fe7`：`DdaResolver` 纯模块（0–10 分带评估：低血/双诅咒/贫石/连败/炼蛊连续失败；`sys:` 标记互斥至多一条、新替旧；SeededRoll 换敌池=手段优先级第一档，Boss/最终 Boss 永不被换、不直赠战力、零乘算；Boss 局部=R14.6⑦ essence_scorch 定向换招且战斗域内自清；大厅开关 `dda_state_adaptive_enabled` 入大厅档并随新 run 快照；快照三处实装：anomalies 顶栏标记、debug 评估分位、结算复盘 dda_triggers/dda_markers；系统标记豁免玩家 meta ≤2 上限；`dda.json` Schema 校验（分带升序/sys: 前缀/池引用真实敌人/权重正整/boss_local 意图存在性）。
+- 测试基线 **628 unit + 10 integration 全绿**（check.ps1 全过）。自 610/9 基线（含 1 既有 risky "Did not assert"，与任务无关）。
+- UI 会话待接线（挂账）：`boss_senses_gu_power` 文案、险象/衰运顶栏徽章（黄红系，与契约蓝系分区）、大厅设置 DDA 开关、NPC stock 交易面板消费快照 offers/barter。
+- 过程教训（本机）：① 子代理实现/审阅角色在本环境多次静默停滞（长时无输出、无树变更）→ 夜间改为控制器直实现 + 子代理审阅尝试；② Godot 裸启（不带 `--headless`，如直接跑 tools/godot.ps1）会 GUI 挂死不退出——一律经 tools/test.ps1 / tools/check.ps1；③ 孤儿 Godot 进程会占项目锁导致后续测试挂起，超时无输出先杀进程再重试。
+
 ### 剩余候选
 - 怪物/卡池继续扩充
-- NPC 个人库存（N-候选）
 - 更多资质途径（数据口已开）
 
 ## 约束系统（§16.x 待实现清单）
