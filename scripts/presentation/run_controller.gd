@@ -13,6 +13,7 @@ const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
+const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
 
@@ -49,6 +50,34 @@ var _rui_host: Control
 var _rui_root
 var _ending_state: Dictionary = {}
 
+# ----------------------------------------------------------------------------
+# §16.22 D5 开发者调试（仅开发构建）：整条链路以 is_debug_build 门控，Release 下
+# 面板零节点存在、方法全部早退。调试写操作只落本局 RunData、绝不触碰大厅存档；
+# 加蛊走与 Resolver 同源的 DeckCapacity 正式容量校验；资源钳制到合法区间；
+# 全部操作 print 带 [debug] 前缀可追溯。按简报裁定：调试操作不写事件日志。
+# ----------------------------------------------------------------------------
+const DEBUG_PANEL_PATH := "res://ui/screens/debug_panel.gd"
+## 元石调试硬上限（经济供给上限未在数据表落地前的展示层安全界）。
+const DEBUG_STONE_CAP := 99999
+const DEBUG_RESOURCE_LABELS := {
+	"yuanstone": "元石",
+	"health": "生命",
+	"lifespan": "寿元",
+	"soul": "魂魄",
+	"essence": "真元",
+}
+
+## 测试注入开关：默认跟随构建类型（GUT/编辑器为 true，Release 导出为 false）。
+var _debug_enabled_for_test: bool = OS.is_debug_build()
+var _debug_panel_open := false
+var _debug_rui_root: RuitkRoot = null
+var _debug_host: Control = null
+var _debug_gu_input := ""
+var _debug_res_kind := "yuanstone"
+var _debug_res_value := ""
+var _debug_travel_node := ""
+var _debug_feedback := ""
+
 
 func _ready() -> void:
 	ensure_ui()
@@ -68,6 +97,8 @@ func _initialize_view_flow() -> void:
 	add_child(_rui_host)
 	_rui_root = RuiRoot.create(_rui_host, VLib.fc(VLib.comp(SCREEN_PATHS["Title"], "render"), {}))
 	_show_title()
+	if _debug_enabled():
+		_mount_debug_panel()
 
 
 func start_new_run(seed_value: int, school: String = "") -> void:
@@ -243,6 +274,272 @@ func _travel_to(node_id: String) -> Dictionary:
 	else:
 		_show_encounter()
 	return resolved["result"]
+
+
+# ----------------------------------------------------------------------------
+# §16.22 D5 调试方法族（全部 is_debug_build 门控早退；只写本局 RunData；
+# 不写事件日志、不碰大厅存档；print 带 [debug] 前缀可追溯）。
+# ----------------------------------------------------------------------------
+
+func _debug_enabled() -> bool:
+	return _debug_enabled_for_test
+
+
+func debug_panel_mounted() -> bool:
+	return _debug_rui_root != null
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not _debug_enabled():
+		return
+	var key := event as InputEventKey
+	if key == null or not key.pressed or key.echo:
+		return
+	if key.keycode != KEY_F12:
+		return
+	_toggle_debug_panel()
+
+
+func debug_add_gu(gu_id: String) -> Dictionary:
+	if not _debug_enabled():
+		return {"ok": false, "reason": "debug_disabled"}
+	if state == null or catalog == null or catalog.is_empty():
+		return _debug_fail("no_active_run")
+	var target := str(gu_id).strip_edges()
+	if not catalog.get("gu_by_id", {}).has(target):
+		return _debug_fail_with("unknown_gu", "调试失败：未知蛊 id（%s）" % target)
+	# §16.22：与 Resolver._reject_deck_full 同源同阈值的正式容量校验，绝不绕过。
+	var card_count := DeckCapacityScript.card_count(state, catalog)
+	var capacity := DeckCapacityScript.capacity(catalog)
+	if DeckCapacityScript.projected_count(state, catalog, [target], []) > capacity:
+		return _debug_fail_with(
+			"deck_capacity_exceeded",
+			"调试失败：蛊囊已满（%d/%d），无法加入 %s" % [card_count, capacity, DisplayText.gu(target)]
+		)
+	# 正式获得通道的实例形态（同 loot_resolver._gain_gu）：实例入册 + 蛊槽占位 +
+	# 旧投影同步。按简报裁定不追加事件日志（避免污染存档校验与札记归因）。
+	var instances := state.gu_instances.duplicate(true)
+	var aperture := state.cave_aperture.duplicate(true)
+	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+	var instance_id := RunState.next_gu_instance_id(instances)
+	instances[instance_id] = {
+		"instance_id": instance_id,
+		"definition_id": target,
+		"state": "refined",
+	}
+	stored.append(instance_id)
+	aperture["stored_gu_instance_ids"] = stored
+	state.gu_instances = instances
+	state.cave_aperture = aperture
+	state.sync_legacy_gu_projections()
+	print("[debug] add_gu %s as %s (deck %d/%d)" % [target, instance_id, card_count + 1, capacity])
+	var added := _debug_ok("调试：已加入 %s（实例 %s）" % [DisplayText.gu(target), instance_id])
+	added["instance_id"] = instance_id
+	return added
+
+
+func debug_set_resource(kind: String, value) -> Dictionary:
+	if not _debug_enabled():
+		return {"ok": false, "reason": "debug_disabled"}
+	if state == null:
+		return _debug_fail("no_active_run")
+	var amount := 0
+	if value is int or value is float:
+		amount = int(value)
+	elif value is String:
+		var text_value := str(value).strip_edges()
+		if not text_value.is_valid_int():
+			return _debug_fail_with("invalid_number", "调试失败：数值必须是整数（收到 %s）" % text_value)
+		amount = int(text_value)
+	else:
+		return _debug_fail_with("invalid_number", "调试失败：数值类型不支持")
+	var applied := 0
+	var cult: Dictionary = state.cultivator
+	match str(kind):
+		"yuanstone":
+			applied = clampi(amount, 0, DEBUG_STONE_CAP)
+			state.stone = applied
+		"health":
+			var max_hp := maxi(1, int(cult.get("max_health", state.max_health)))
+			applied = clampi(amount, 1, max_hp)
+			cult["health"] = applied
+			state.health = applied
+		"lifespan":
+			var life_cap := int(cult.get("lifespan_max", 0))
+			if life_cap <= 0:
+				life_cap = maxi(amount, int(cult.get("lifespan", 0)))
+			applied = clampi(amount, 1, life_cap)
+			cult["lifespan"] = applied
+		"soul":
+			var soul_cap := int(cult.get("soul_max", 0))
+			if soul_cap <= 0:
+				soul_cap = maxi(amount, int(cult.get("soul", 0)))
+			applied = clampi(amount, 1, soul_cap)
+			cult["soul"] = applied
+		"essence":
+			var essence_cap := maxi(int(state.essence_capacity), int(state.cave_aperture.get("essence_max", 0)))
+			applied = clampi(amount, 0, maxi(essence_cap, 0))
+			state.essence = applied
+		_:
+			return _debug_fail_with("unknown_kind", "调试失败：未知资源类别（%s）" % str(kind))
+	print("[debug] set_resource %s -> %d" % [str(kind), applied])
+	var result := _debug_ok("调试：%s 已设为 %d" % [str(DEBUG_RESOURCE_LABELS.get(str(kind), str(kind))), applied])
+	result["applied"] = applied
+	return result
+
+
+func debug_travel(node_id: String) -> Dictionary:
+	if not _debug_enabled():
+		return {"ok": false, "reason": "debug_disabled"}
+	if state == null or route.is_empty():
+		return _debug_fail("no_active_run")
+	if not current_battle.is_empty():
+		return _debug_fail_with("battle_in_progress", "调试失败：战斗进行中，禁止跳层")
+	var target := str(node_id).strip_edges()
+	var visible_ids: Array[String] = []
+	for visible_node in visible_route_nodes():
+		visible_ids.append(str(visible_node.get("id", "")))
+	if not visible_ids.has(target):
+		return _debug_fail_with("invisible_node", "调试失败：目标节点不在当前可见范围（%s）" % target)
+	var result := _travel_to(target)
+	if not bool(result.get("ok", true)):
+		return _debug_fail_with(str(result.get("reason", "travel_failed")), "调试失败：跳层被拒（%s）" % str(result.get("reason", "")))
+	_debug_travel_node = target
+	print("[debug] travel -> %s" % target)
+	return _debug_ok("调试：已跳至 %s" % target)
+
+
+func debug_snapshot_dump() -> String:
+	if not _debug_enabled():
+		return ""
+	if state == null:
+		return ""
+	var cult: Dictionary = state.cultivator
+	var dump := {
+		"seed": int(state.seed),
+		"stage": str(state.stage),
+		"school": str(state.school),
+		"cultivation": int(state.cultivation),
+		"current_node_id": str(state.current_node_id),
+		"view": current_view_name(),
+		"stone": int(state.stone),
+		"health": int(state.health),
+		"essence": int(state.essence),
+		"lifespan": int(cult.get("lifespan", 0)),
+		"soul": int(cult.get("soul", 0)),
+		"gu_instance_count": state.gu_instances.size(),
+		"loot_pity": int(state.loot_pity),
+		"material_pity": int(state.material_pity),
+		"event_count": state.event_log.size(),
+	}
+	var dumped := JSON.stringify(dump)
+	print("[debug] snapshot ", dumped)
+	_debug_feedback = "调试：RunData 快照已打印到 stdout"
+	_render_debug_panel()
+	return dumped
+
+
+## 调试面板跳层下拉选项：仅当前可见节点（防越层破坏地图不变量）。
+func _debug_travel_options() -> Array[Dictionary]:
+	var options: Array[Dictionary] = []
+	if state == null or route.is_empty():
+		return options
+	for node in visible_route_nodes():
+		var nid := str(node.get("id", ""))
+		options.append({
+			"id": nid,
+			"label": "[%s] %s" % [nid, str(node.get("label", DisplayText.node(nid)))],
+		})
+	return options
+
+
+func _debug_props() -> Dictionary:
+	var info: Dictionary = {}
+	if state != null:
+		info = RunSnapshotBuilderScript.debug(self)
+	return {
+		"open": _debug_panel_open,
+		"feedback": _debug_feedback,
+		"info": info,
+		"gu_input": _debug_gu_input,
+		"res_kind": _debug_res_kind,
+		"res_value": _debug_res_value,
+		"travel_options": _debug_travel_options(),
+		"travel_selected": _debug_travel_node,
+		"commands": {
+			"toggle_open": func(): _toggle_debug_panel(),
+			"set_gu_input": func(text_value: String): _set_debug_gu_input(text_value),
+			"add_gu": func(): debug_add_gu(_debug_gu_input),
+			"set_res_kind": func(kind_value: String): _set_debug_res_kind(kind_value),
+			"set_res_value": func(num_text: String): _set_debug_res_value(num_text),
+			"apply_resource": func(): debug_set_resource(_debug_res_kind, _debug_res_value),
+			"set_travel_node": func(node_value: String): _set_debug_travel_node(node_value),
+			"travel": func(): debug_travel(_debug_travel_node),
+			"snapshot_dump": func(): debug_snapshot_dump(),
+		},
+	}
+
+
+func _set_debug_gu_input(value: String) -> void:
+	_debug_gu_input = value
+
+
+func _set_debug_res_kind(value: String) -> void:
+	_debug_res_kind = value
+
+
+func _set_debug_res_value(value: String) -> void:
+	_debug_res_value = value
+
+
+func _set_debug_travel_node(value: String) -> void:
+	_debug_travel_node = value
+
+
+func _toggle_debug_panel() -> void:
+	_debug_panel_open = not _debug_panel_open
+	_render_debug_panel()
+
+
+func _mount_debug_panel() -> void:
+	if _debug_rui_root != null:
+		return
+	var comp = VLib.comp(DEBUG_PANEL_PATH, "render")
+	if not (comp is Callable):
+		print("[debug] debug_panel 组件缺失（未编译？），面板未挂载")
+		return
+	_debug_host = Control.new()
+	_debug_host.name = "DebugPanelHost"
+	_debug_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_debug_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_debug_host)
+	_debug_rui_root = RuiRoot.create(_debug_host, VLib.fc(comp, _debug_props()))
+
+
+func _render_debug_panel() -> void:
+	if _debug_rui_root == null:
+		return
+	var comp = VLib.comp(DEBUG_PANEL_PATH, "render")
+	if not (comp is Callable):
+		return
+	_debug_rui_root.set_root(VLib.fc(comp, _debug_props()))
+
+
+func _debug_ok(feedback: String) -> Dictionary:
+	_debug_feedback = feedback
+	# 主屏重渲染末尾已联动刷新调试面板（_render -> _render_debug_panel）。
+	_render()
+	return {"ok": true}
+
+
+func _debug_fail(reason: String) -> Dictionary:
+	return {"ok": false, "reason": reason}
+
+
+func _debug_fail_with(reason: String, feedback: String) -> Dictionary:
+	_debug_feedback = feedback
+	_render_debug_panel()
+	return {"ok": false, "reason": reason}
 
 
 func _start_battle() -> void:
@@ -574,6 +871,7 @@ func _render() -> void:
 	else:
 		snapshot = _snapshot_for(_view_name)
 	_rui_root.set_root(VLib.fc(comp, {"state": snapshot, "commands": _build_commands(_view_name)}))
+	_render_debug_panel()
 
 
 func _snapshot_for(screen: String) -> Dictionary:

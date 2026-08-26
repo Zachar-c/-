@@ -26,6 +26,23 @@ static func for_screen(screen: String, controller) -> Dictionary:
 	return {}
 
 
+## T5-D 调试面板只读段（§16.22）：保底计数 / 池排除列表 / 当前种子 / 事件数 / DDA 分位。
+## 仅由 debug_panel 渲染，绝不反向写入状态。池排除列表域内尚未落地（DisplayText
+## 标注「尚未实装」）、DDA 未实装——两者恒空占位，诚实呈现不编造。
+static func debug(controller) -> Dictionary:
+	var state = controller.state
+	if state == null:
+		return {}
+	return {
+		"loot_pity": int(state.loot_pity),
+		"material_pity": int(state.material_pity),
+		"pool_excluded_ids": [] as Array[String],
+		"seed": int(state.seed),
+		"event_count": state.event_log.size(),
+		"dda_percentile": "",
+	}
+
+
 ## 局内节点屏公共骨架（顶栏资源/契约/异变/死线）。
 static func _gui_state(controller) -> Dictionary:
 	var state = controller.state

@@ -633,4 +633,66 @@ func _initialize() -> void:
 		quit(1)
 	print("OK NpcScreen buttons=%d" % npc)
 
+	# 11) T5-D D5：开发者调试面板（直接 mount 组件，不走控制器门控）。
+	# 展开态：红字「调试」角标 + 加蛊/资源/跳层/池情报/快照打印；折叠态：只剩把手条。
+	var dp_cmds := {
+		"toggle_open": Callable(self, "_noop"),
+		"set_gu_input": Callable(self, "_noop"),
+		"add_gu": Callable(self, "_noop"),
+		"set_res_kind": Callable(self, "_noop"),
+		"set_res_value": Callable(self, "_noop"),
+		"apply_resource": Callable(self, "_noop"),
+		"set_travel_node": Callable(self, "_noop"),
+		"travel": Callable(self, "_noop"),
+		"snapshot_dump": Callable(self, "_noop"),
+	}
+	var dp_info := {"loot_pity": 2, "material_pity": 1, "pool_excluded_ids": [], "seed": 101, "event_count": 7, "dda_percentile": ""}
+	var dp_open := {
+		"open": true,
+		"feedback": "",
+		"info": dp_info,
+		"gu_input": "",
+		"res_kind": "yuanstone",
+		"res_value": "",
+		"travel_options": [{"id": "n1", "label": "[n1] 拦路散修"}],
+		"travel_selected": "",
+		"commands": dp_cmds,
+	}
+	var dpc := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_open)
+	if _find_label_exact(dpc, "调试") == null:
+		push_error("DebugPanel 缺少红字「调试」角标")
+		quit(1)
+	var dp_badge := _find_label_exact(dpc, "调试")
+	if not dp_badge.get_theme_color("font_color").is_equal_approx(GuStyle.DANGER):
+		push_error("DebugPanel「调试」角标必须 DANGER 红字（§16.22 视觉区分）")
+		quit(1)
+	for wanted in ["加蛊", "应用", "跳", "打印 RunData 快照"]:
+		if _find_button_by_text(dpc, wanted) == null:
+			push_error("DebugPanel 展开态缺少按钮 %s" % wanted)
+			quit(1)
+	if not _host_has_label_text(dpc, "保底计数 · 蛊 2 / 材料 1"):
+		push_error("DebugPanel 池情报缺少保底计数行")
+		quit(1)
+	if not _host_has_label_text(dpc, "当前种子 101 · 事件数 7"):
+		push_error("DebugPanel 缺少种子/事件数行")
+		quit(1)
+	print("OK DebugPanelOpen buttons=%d" % _count_buttons(dpc))
+	var dp_closed := dp_open.duplicate(true)
+	dp_closed["open"] = false
+	var dpcc := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_closed)
+	if _count_buttons(dpcc) != 1:
+		push_error("DebugPanel 折叠态只剩把手条，期望 1 个按钮，实得 %d" % _count_buttons(dpcc))
+		quit(1)
+	if not _host_has_label_text(dpcc, "DEV ONLY"):
+		push_error("DebugPanel 折叠态把手条须保留 DEV 标识")
+		quit(1)
+	print("OK DebugPanelCollapsed buttons=%d" % _count_buttons(dpcc))
+	var dp_feedback := dp_open.duplicate(true)
+	dp_feedback["feedback"] = "调试失败：蛊囊已满（12/12），无法加入 月光蛊"
+	var dpcf := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_feedback)
+	if not _host_has_label_text(dpcf, "蛊囊已满"):
+		push_error("DebugPanel 操作反馈必须经 Toast 行展示")
+		quit(1)
+	print("OK DebugPanelFeedback buttons=%d" % _count_buttons(dpcf))
+
 	quit()
