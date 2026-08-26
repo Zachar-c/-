@@ -31,7 +31,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 			"event":
 				_append_event_cards(cards, state, catalog)
 			"rest":
-				_append_rest_cards(cards, state, node)
+				_append_rest_cards(cards, state, node, catalog)
 			_:
 				_append_standard_cards(cards, state, node)
 		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event", "rest"]:
@@ -532,21 +532,128 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 			}))
 
 
-static func _append_rest_cards(cards: Array[Dictionary], state: RunState, node: Dictionary) -> void:
+# R8.1 hard choice: the rest node offers exactly one benefit per visit and
+# the leave card stays locked until one option consumes the visit. Option
+# executability mirrors the domain preconditions; commands that need a target
+# carry "expects_target" so the UI knows to attach it on submission.
+static func _append_rest_cards(cards: Array[Dictionary], state: RunState, node: Dictionary, catalog: Dictionary) -> void:
 	var used := str(state.node_flags.get(str(node.get("id", "")), "")) == "used"
-	cards.append(_card(state, {
-		"id": "node.rest",
+	var summary := str(node.get("summary", ""))
+	_append_rest_option(cards, state, used, {
+		"id": "node.rest_heal",
 		"title": "歇脚恢复",
-		"summary": str(node.get("summary", "")),
-		"executable": not used,
-		"block_reason": "此处已歇过脚。" if used else "",
+		"summary": summary,
+		"available": true,
+		"unavailable_reason": "",
+		"expected_gain": ["恢复气血 2 点。", "恢复真元 2 点。"],
+		"command": {"type": "rest"},
+	})
+	_append_rest_option(cards, state, used, {
+		"id": "node.rest_upgrade",
+		"title": "强化一张蛊卡",
+		"summary": summary,
+		"available": _any_upgradable_card(state),
+		"unavailable_reason": "没有可强化的蛊卡。",
+		"expected_gain": ["选定一张蛊卡，永久提升一级强化。"],
+		"command": {"type": "rest", "mode": "upgrade_card"},
+		"expects_target": "card_key",
+	})
+	_append_rest_option(cards, state, used, {
+		"id": "node.rest_remove_card",
+		"title": "移除一只蛊",
+		"summary": summary,
+		"available": _any_removable_instance(state, catalog),
+		"unavailable_reason": "没有可移除的蛊虫（受诅咒的蛊拒绝直接丢弃）。",
+		"expected_gain": ["选定一只蛊，将其从蛊囊中移除。"],
+		"command": {"type": "rest", "mode": "remove_card"},
+		"expects_target": "instance_id",
+	})
+	_append_rest_option(cards, state, used, {
+		"id": "node.rest_remove_imprint",
+		"title": "抹除一枚印记",
+		"summary": summary,
+		"available": _any_removable_relic(state, catalog),
+		"unavailable_reason": "没有可抹除的印记。",
+		"expected_gain": ["选定一枚非规则类印记，将其抹除。"],
+		"command": {"type": "rest", "mode": "remove_imprint"},
+		"expects_target": "relic_id",
+	})
+	_append_rest_option(cards, state, used, {
+		"id": "node.rest_remove_curse",
+		"title": "拔除一层反噬",
+		"summary": summary,
+		"available": _any_removable_curse(state, catalog),
+		"unavailable_reason": "身上没有可拔除的反噬诅咒。",
+		"expected_gain": ["选定一种反噬诅咒，整条拔除。"],
+		"command": {"type": "rest", "mode": "remove_curse"},
+		"expects_target": "curse_id",
+	})
+	cards.append(_card(state, {
+		"id": "node.leave",
+		"title": "离开休整",
+		"summary": "结束休整，返回地图选择下一条路线。",
+		"executable": used,
+		"block_reason": "" if used else "休整抉择未定：须先选择恢复、强化或移除其一，才能离开。",
+		"cost": {},
+		"expected_gain": ["结束当前遭遇。"],
+		"command": {"type": "leave_node"},
+	}))
+
+
+static func _append_rest_option(
+	cards: Array[Dictionary],
+	state: RunState,
+	used: bool,
+	option: Dictionary
+) -> void:
+	var available := bool(option["available"])
+	cards.append(_card(state, {
+		"id": str(option["id"]),
+		"title": str(option["title"]),
+		"summary": str(option["summary"]),
+		"executable": not used and available,
+		"block_reason": "本次休整已处置完毕。" if used else str(option["unavailable_reason"]) if not available else "",
 		"cost": {},
 		"known_risk": [],
-		"expected_gain": ["恢复气血 2 点。", "恢复真元 2 点。"],
+		"expected_gain": option.get("expected_gain", []),
 		"unknown_note": "",
 		"remedy_hints": [],
-		"command": {"type": "rest"},
+		"command": option.get("command", {}).duplicate(true),
+		"expects_target": str(option.get("expects_target", "")),
 	}))
+
+
+static func _any_upgradable_card(state: RunState) -> bool:
+	return not state.refined_gu_ids.is_empty()
+
+
+static func _any_removable_instance(state: RunState, catalog: Dictionary) -> bool:
+	for instance in state.refined_instances():
+		if _cursed_drop_block_reason(catalog, str(instance.get("definition_id", ""))).is_empty():
+			return true
+	return false
+
+
+static func _any_removable_relic(state: RunState, catalog: Dictionary) -> bool:
+	for relic_id in state.relic_ids:
+		var grade := str(catalog.get("relic_by_id", {}).get(str(relic_id), {}).get("grade", ""))
+		if grade != "meta_rule":
+			return true
+	return false
+
+
+static func _any_removable_curse(state: RunState, catalog: Dictionary) -> bool:
+	for curse_id_value in catalog.get("curse_by_id", {}):
+		if CurseRegistry.layers_of(state, str(curse_id_value)) > 0:
+			return true
+	return false
+
+
+static func _cursed_drop_block_reason(catalog: Dictionary, definition_id: String) -> String:
+	var definition: Dictionary = catalog.get("gu_by_id", {}).get(definition_id, {})
+	if definition.is_empty() or bool(definition.get("can_direct_drop", true)):
+		return ""
+	return "cursed_gu_not_directly_droppable"
 
 
 static func _append_event_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
