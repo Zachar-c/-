@@ -1,41 +1,219 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+
+# HallView —— 大厅家族（规格 v3 §4.2/§5）：A2 主界面三栏 + A3 流派 + A4 契约占位
+# + A5 图鉴 + A6 设置 + A7 手记，由 state.hall_subview 驱动（权威源）。
+# 契约：state 只读快照；commands 动作名 -> Callable；屏内零业务读写。
+# 测试约束保持：main 子视图须含「蛊路求生 / 开始新冒险 / 图鉴 / 继续上次冒险 / 流派名」。
+# 实现注：为规避 guitkx @directive 解析限制，全部用 GDScript 构建 vnode 数组 + {array} 展开。
 
 export HallView() -> RuitkVNode {
   var state = props.get("state", {})
   var commands = props.get("commands", {})
   var has_save = bool(state.get("has_save", false))
+  var subview = str(state.get("hall_subview", "main"))
+  var selected_school = str(state.get("selected_school", ""))
   var schools = state.get("available_schools", [])
-  var contracts = state.get("contracts", [])
   var meta = state.get("meta_stats", {})
+  var codex = state.get("codex", {})
+  var journal = state.get("journal", {"entries": []})
 
-  var noop = func(): pass
   var fire = func(key: String):
     if commands.has(key):
       commands[key].call()
-  var select = func(id: String):
-    if commands.has("select_school"):
-      commands["select_school"].call(id)
 
+  # 注：本组件不使用 useState hooks —— 直接 render() 调用（单测/冒烟）时 hooks 无法
+  # 在脱离 RUI 框架的环境初始化，会返回 null。图鉴采用五类分节只读列表（§16.20 只读查阅）。
+
+  # ── A5 图鉴（五类分节，纯只读）────────────────────────────
+  if subview == "codex":
+    var tab_names = {"gu": "蛊", "enemies": "敌人", "recipes": "配方", "inheritances": "传承", "relics": "遗物"}
+    var tab_keys = ["gu", "enemies", "recipes", "inheritances", "relics"]
+    var section_rows = []
+    var total_entries = 0
+    var total_unlocked = 0
+    for k in tab_keys:
+      var kk = k
+      var sec_entries = codex.get(kk, [])
+      var sec_cards = []
+      for e in sec_entries:
+        total_entries += 1
+        var eunlocked = bool(e.get("unlocked", false))
+        if eunlocked:
+          total_unlocked += 1
+        var ename = str(e.get("name", str(e.get("id", "?"))))
+        var eschool = str(e.get("school", ""))
+        var erarity = str(e.get("rarity", ""))
+        var eid = str(e.get("id", ""))
+        var school_line = ("流派：" + eschool) if eschool != "" else eid
+        if eunlocked:
+          sec_cards.append((
+            <GuCard title={ ename } quality={ erarity }>
+              <Label text={ school_line } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+            </GuCard>
+          ))
+        else:
+          sec_cards.append((
+            <GuCard title={ ename } sealed={ true }>
+              <Label text="尚未遭遇 · 剪影" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+            </GuCard>
+          ))
+      var sec_title = str(tab_names.get(kk, kk))
+      var sec_empty = []
+      if sec_cards.is_empty():
+        sec_empty.append(<Label text="（本类暂无条目）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+      section_rows.append((
+        <GuPanel title={ sec_title }>
+          <VBoxContainer style={ {"separation": 8} }>
+            { sec_cards }
+            { sec_empty }
+          </VBoxContainer>
+        </GuPanel>
+      ))
+    var completion = "%d/%d" % [total_unlocked, total_entries]
+    return (
+      <VBoxContainer style={ {"separation": 12} }>
+        <HBoxContainer style={ {"separation": 8} }>
+          <Label text="百蛊录 · 图鉴" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
+          <Label text={ "完成度 " + completion } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+        </HBoxContainer>
+        <GuScrollBox height={ 440 }>
+          <VBoxContainer style={ {"separation": 10} }>
+            { section_rows }
+          </VBoxContainer>
+        </GuScrollBox>
+        <GuButton label="返回大厅" on_press={ func(): fire.call("back_to_hall") } />
+      </VBoxContainer>
+    )
+
+  # ── A6 设置 ─────────────────────────────────────────────
+  if subview == "settings":
+    return (
+      <VBoxContainer style={ {"separation": 12} }>
+        <Label text="设置" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
+        <GuPanel title="显示与声音">
+          <Label text="音量：待接入" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+          <Label text="分辨率：待接入" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+          <Label text="本局状态自适应难度：待接入（规格 R14.6）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+        </GuPanel>
+        <GuPanel title="存档">
+          <Label text="清除大厅存档需二次确认（规格 §16.22）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+        </GuPanel>
+        <GuButton label="返回大厅" on_press={ func(): fire.call("back_to_hall") } />
+      </VBoxContainer>
+    )
+
+  # ── A7 手记库 ───────────────────────────────────────────
+  if subview == "journal":
+    var j_entries = journal.get("entries", [])
+    var j_rows = []
+    for je in j_entries:
+      j_rows.append((
+        <GuPanel title={ str(je.get("title", "")) }>
+          <Label text={ str(je.get("body", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+        </GuPanel>
+      ))
+    var journal_empty = []
+    if j_rows.is_empty():
+      journal_empty.append(<Label text="（尚无手记。轮回碎片将在结算后沉淀于此。）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+    return (
+      <VBoxContainer style={ {"separation": 12} }>
+        <Label text="手记库" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
+        <GuScrollBox height={ 420 }>
+          <VBoxContainer style={ {"separation": 8} }>
+            { j_rows }
+            { journal_empty }
+          </VBoxContainer>
+        </GuScrollBox>
+        <GuButton label="返回大厅" on_press={ func(): fire.call("back_to_hall") } />
+      </VBoxContainer>
+    )
+
+  # ── A3 流派选择 ─────────────────────────────────────────
+  if subview == "schools":
+    var school_cards = []
+    for s in schools:
+      var sid = ""
+      var sname = str(s)
+      var ssum = ""
+      var sstarters = []
+      if s is Dictionary:
+        sid = str(s.get("id", ""))
+        sname = str(s.get("name", sname))
+        ssum = str(s.get("summary", ""))
+        sstarters = s.get("starter_gu_names", [])
+      var is_sel = (sid == selected_school)
+      var sel_label = "选中 · " + sname if is_sel else "选择"
+      var starter_line = "初始蛊：" + "、".join(sstarters) if sstarters.size() > 0 else ""
+      var starter_rows = []
+      if sstarters.size() > 0:
+        starter_rows.append(<Label text={ starter_line } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />)
+      school_cards.append((
+        <GuCard title={ sname } highlight={ is_sel }>
+          <Label text={ ssum } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+          { starter_rows }
+          <Button text={ sel_label } onPressed={ func(): fire.call("select_school", sid) } style={ {"font_color": GuStyle.JADE_BRIGHT if is_sel else GuStyle.JADE, "font_size": 14} } />
+        </GuCard>
+      ))
+    var selected_label = "当前选中：" + selected_school
+    return (
+      <VBoxContainer style={ {"separation": 12} }>
+        <Label text="流派选择" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
+        <Label text={ selected_label } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+        <GuScrollBox height={ 400 }>
+          <VBoxContainer style={ {"separation": 10} }>
+            { school_cards }
+          </VBoxContainer>
+        </GuScrollBox>
+        <HBoxContainer style={ {"separation": 12} }>
+          <GuButton label="确认流派 → 契约" on_press={ func(): fire.call("open_contracts") } />
+          <GuButton label="返回" on_press={ func(): fire.call("back_to_hall") } />
+        </HBoxContainer>
+      </VBoxContainer>
+    )
+
+  # ── A4 契约选择（P2 预留占位）────────────────────────────
+  if subview == "contracts":
+    return (
+      <VBoxContainer style={ {"separation": 12} }>
+        <Label text="难度契约" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
+        <GuPanel title="契约（P2 实装前占位）">
+          <Label text="开局全局规则修改器：收益与对等代价成对存在；软上限 5–6 条；契约蓝系标识（规格 §15/§16.13）。" style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 14} } />
+          <Label text="当前无可用契约数据，直接以所选流派开始冒险。" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        </GuPanel>
+        <HBoxContainer style={ {"separation": 12} }>
+          <GuButton label="开始冒险" on_press={ func(): fire.call("new_run") } size="large" />
+          <GuButton label="返回流派" on_press={ func(): fire.call("open_schools") } />
+        </HBoxContainer>
+      </VBoxContainer>
+    )
+
+  # ── A2 主界面（默认根，三栏）────────────────────────────
   var school_rows = []
   for s in schools:
-    var sid = str(s.get("id", "")) if (s is Dictionary) else ""
-    var sname = str(s.get("name", str(s))) if (s is Dictionary) else str(s)
+    var sid = ""
+    var sname = str(s)
+    if s is Dictionary:
+      sid = str(s.get("id", ""))
+      sname = str(s.get("name", sname))
+    var is_sel = (sid == selected_school)
+    var school_btn_label = ("❖ " + sname) if is_sel else sname
     school_rows.append((
-      <GuButton label={ sname } on_press={ func(): select.call(sid) } />
+      <Button text={ school_btn_label } onPressed={ func(): fire.call("select_school", sid) } style={ {"font_color": GuStyle.JADE_BRIGHT if is_sel else GuStyle.JADE, "font_size": 15, "min_width": 150, "min_height": 34} } />
     ))
-
-  var contract_rows = []
-  for c in contracts:
-    contract_rows.append(<Label text={ "契约: %s" % str(c) } style={ {"font_color": GuStyle.JADE, "font_size": 14} } />)
 
   var meta_rows = []
   for k in meta.keys():
-    meta_rows.append(<Label text={ "%s: %s" % [str(k), str(meta[k])] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
+    meta_rows.append(<Label text={ "%s：%s" % [str(k), str(meta[k])] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
+  var meta_empty = []
+  if meta_rows.is_empty():
+    meta_empty.append(<Label text="（暂无轮回记录）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
 
   return (
-    <VBoxContainer style={ {"separation": 14} }>
+    <VBoxContainer style={ {"separation": 16} }>
       <CenterContainer>
         <VBoxContainer style={ {"separation": 6} }>
           <Label text="蛊路求生" style={ {"font_color": GuStyle.GOLD, "font_size": 48} } />
@@ -43,39 +221,33 @@ export HallView() -> RuitkVNode {
         </VBoxContainer>
       </CenterContainer>
 
-      <GuButton label="继续上次冒险" disabled={ not has_save } on_press={ func(): fire.call("continue_run") } />
+      <HBoxContainer style={ {"separation": 16} }>
+        <GuPanel title="流派">
+          <VBoxContainer style={ {"separation": 6} }>
+            { school_rows }
+            <GuButton label="难度契约" on_press={ func(): fire.call("open_contracts") } />
+          </VBoxContainer>
+        </GuPanel>
 
-      <GuButton label="开始新冒险（流派 / 契约）" on_press={ func(): fire.call("new_run") } />
-      <GuButton label="图鉴" on_press={ func(): fire.call("open_codex") } />
-      <GuButton label="设置" on_press={ func(): fire.call("open_settings") } />
+        <GuPanel title="行程">
+          <VBoxContainer style={ {"separation": 8} }>
+            <GuButton label="继续上次冒险" disabled={ not has_save } on_press={ func(): fire.call("continue_run") } />
+            <GuButton label="开始新冒险（流派 / 契约）" size="large" on_press={ func(): fire.call("open_schools") } />
+            <GuButton label="手记库" on_press={ func(): fire.call("open_journal") } />
+            <GuButton label="图鉴" on_press={ func(): fire.call("open_codex") } />
+            <GuButton label="设置" on_press={ func(): fire.call("open_settings") } />
+          </VBoxContainer>
+        </GuPanel>
 
-      <GuPanel title="流派选择">
-        @for (r in school_rows) {
-          return r
-        }
-        @if (schools.is_empty()) {
-          return ( <Label text="（暂无可选流派）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
-        }
-      </GuPanel>
+        <GuPanel title="轮回统计">
+          <VBoxContainer style={ {"separation": 6} }>
+            { meta_rows }
+            { meta_empty }
+          </VBoxContainer>
+        </GuPanel>
+      </HBoxContainer>
 
-      <GuPanel title="契约（占位）">
-        @for (r in contract_rows) {
-          return r
-        }
-        @if (contracts.is_empty()) {
-          return ( <Label text="（本局尚未绑定契约）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
-        }
-      </GuPanel>
-
-      @if (not meta.is_empty()) {
-        return (
-          <GuPanel title="修行纪要">
-            @for (r in meta_rows) {
-              return r
-            }
-          </GuPanel>
-        )
-      }
+      <Label text="v0.4 · 南疆篇" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
     </VBoxContainer>
   )
 }

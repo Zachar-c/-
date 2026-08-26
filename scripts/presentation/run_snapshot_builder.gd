@@ -27,21 +27,112 @@ static func hall(controller) -> Dictionary:
 	var schools: Dictionary = catalog.get("schools", {})
 	var school_list: Array[Dictionary] = []
 	for school_id in schools:
+		var sdata: Dictionary = schools[school_id]
+		var starters: Array = sdata.get("starter_gu_ids", [])
+		var starter_names: Array[String] = []
+		for sid in starters:
+			starter_names.append(DisplayText.gu(str(sid)))
 		school_list.append({
 			"id": str(school_id),
-			"name": str(schools[school_id].get("name", str(school_id))),
+			"name": str(sdata.get("name", str(school_id))),
+			"summary": str(sdata.get("summary", "")),
+			"starter_gu_ids": starters,
+			"starter_gu_names": starter_names,
 		})
 	var runs := 0
 	var endings := 0
+	var won := 0
+	var deaths := 0
 	if meta != null:
 		runs = int(meta.statistics.get("runs_started", 0))
 		endings = meta.gu_codex_ids.size() + meta.recipe_codex_ids.size() + meta.inheritance_codex_ids.size()
+		won = int(meta.statistics.get("runs_won", 0))
+		deaths = int(meta.statistics.get("deaths", 0))
 	return {
 		"has_save": FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH),
+		"hall_subview": str(controller._hall_subview),
+		"selected_school": str(controller._selected_school),
 		"available_schools": school_list,
 		"contracts": [],
-		"meta_stats": {"runs": runs, "endings": endings},
+		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},
+		"codex": _codex(catalog, meta),
+		"journal": _journal(meta),
 	}
+
+
+## A5 图鉴数据（只读）：蛊 / 敌人 / 配方 / 传承 / 遗物 五类，每类带 unlocked 标记。
+## 遭遇即解锁（meta.codex ids）；未解锁只显剪影（§16.20）。
+static func _codex(catalog: Dictionary, meta) -> Dictionary:
+	var unlocked_gu: Array = meta.gu_codex_ids if meta != null else []
+	var unlocked_recipes: Array = meta.recipe_codex_ids if meta != null else []
+	var unlocked_relics: Array = meta.relic_codex_ids if meta != null else []
+	var unlocked_inheritance: Array = meta.inheritance_codex_ids if meta != null else []
+
+	var gu_entries: Array[Dictionary] = []
+	for g in catalog.get("gu", []):
+		var gid := str(g.get("id", ""))
+		gu_entries.append({
+			"id": gid,
+			"name": DisplayText.gu(gid),
+			"school": str(g.get("school", "")),
+			"rarity": str(g.get("rarity", "common")),
+			"unlocked": unlocked_gu.has(gid),
+		})
+
+	var enemy_entries: Array[Dictionary] = []
+	for e in catalog.get("enemies", []):
+		var eid := str(e.get("id", ""))
+		enemy_entries.append({
+			"id": eid,
+			"name": eid,
+			"tier": str(e.get("tier", "")),
+			"unlocked": unlocked_gu.has(eid),
+		})
+
+	var recipe_entries: Array[Dictionary] = []
+	for r in catalog.get("refinement", {}).get("recipes", []):
+		var rid := str(r.get("id", ""))
+		recipe_entries.append({
+			"id": rid,
+			"kind": str(r.get("kind", "")),
+			"output_gu": DisplayText.gu(str(r.get("output_gu_id", ""))),
+			"unlocked": unlocked_recipes.has(rid),
+		})
+
+	var relic_entries: Array[Dictionary] = []
+	for r in catalog.get("relics", []):
+		var rid := str(r.get("id", ""))
+		relic_entries.append({"id": rid, "name": rid, "unlocked": unlocked_relics.has(rid)})
+
+	var inheritance_entries: Array[Dictionary] = []
+	for ih in catalog.get("inheritances", []):
+		var iid := str(ih.get("id", ""))
+		inheritance_entries.append({"id": iid, "name": iid, "unlocked": unlocked_inheritance.has(iid)})
+
+	return {
+		"gu": gu_entries,
+		"enemies": enemy_entries,
+		"recipes": recipe_entries,
+		"relics": relic_entries,
+		"inheritances": inheritance_entries,
+	}
+
+
+## A7 手记库（§16.9 叙事沉淀）。当前 meta 仅统计战绩；手记条目在后续结算沉淀时
+## 写入，现展示空态 + 轮回概览占位（诚实呈现，不编造叙事）。
+static func _journal(meta) -> Dictionary:
+	var entries: Array[Dictionary] = []
+	if meta != null:
+		var stats: Dictionary = meta.statistics
+		entries.append({
+			"title": "轮回纪要",
+			"body": "开悟 %d 局 · 通关 %d · 身死 %d。碎片手记将在此沉淀。" % [
+				int(stats.get("runs_started", 0)),
+				int(stats.get("runs_won", 0)),
+				int(stats.get("deaths", 0)),
+			],
+		})
+	return {"entries": entries, "count": entries.size()}
 
 
 static func map(controller) -> Dictionary:

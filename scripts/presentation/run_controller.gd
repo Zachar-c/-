@@ -37,6 +37,7 @@ var dialogue_replies: Array[Dictionary] = []
 var last_feedback := ""
 var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
+var _hall_subview := "main"
 var _selected_school := "force"
 
 var _rui_host: Control
@@ -276,6 +277,16 @@ func _battle_terrain() -> String:
 
 func _show_title() -> void:
 	_view_name = "Title"
+	_hall_subview = "main"
+	_render()
+
+
+## 大厅内部子视图切换（A3 流派 / A4 契约 / A5 图鉴 / A6 设置 / A7 手记）。
+## 仅改展示层 `_hall_subview`，不触碰领域状态；A2 主界面为默认根。
+func _show_hall_subview(subview: String) -> void:
+	if _view_name != "Title":
+		return
+	_hall_subview = subview
 	_render()
 
 

@@ -13,7 +13,7 @@ export GuCard() -> RuitkVNode {
   var curse_warning = props.get("curse_warning", false)
   var sealed = props.get("sealed", false)
 
-  var QUAL_COLORS = {"普通": GuStyle.BONE_DIM, "稀有": GuStyle.GOLD, "史诗": GuStyle.EMBER, "传说": GuStyle.PAPER}
+  var QUAL_COLORS = {"普通": GuStyle.BONE_DIM, "稀有": GuStyle.GOLD, "史诗": GuStyle.EMBER, "传说": GuStyle.PAPER, "common": GuStyle.BONE_DIM, "rare": GuStyle.GOLD, "epic": GuStyle.EMBER, "legendary": GuStyle.PAPER}
   var quality_color = QUAL_COLORS.get(quality, GuStyle.BONE_DIM)
   var is_danger = danger or curse_warning
   var border_color = GuStyle.DANGER if is_danger else (GuStyle.JADE_BRIGHT if highlight else (quality_color if quality != "" else GuStyle.GOLD_DIM))
