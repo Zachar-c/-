@@ -129,7 +129,7 @@ export BattleScreen() -> RuitkVNode {
       />
     )
     hand_rows.append((
-      <GuCard title={ cname } danger={ ccurse } expand_h={ true }>
+      <GuCard title={ cname } danger={ ccurse } curse_warning={ ccurse } expand_h={ true }>
         <Label text={ cost_str } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
         <Label text={ "效果：" + ceff } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
         { tip }

@@ -50,6 +50,12 @@ var _rui_host: Control
 var _rui_root
 var _ending_state: Dictionary = {}
 
+# T6-E 跨屏过渡（§3.4 动效预算）：一次性淡入时长；无常驻循环动画。
+# 仅在 _view_name 变化（屏切换）时淡入，同屏命令重渲染不闪屏。
+const SCREEN_FADE_SECONDS := 0.14
+var _screen_tween: Tween
+var _faded_view := ""
+
 # ----------------------------------------------------------------------------
 # §16.22 D5 开发者调试（仅开发构建）：整条链路以 is_debug_build 门控，Release 下
 # 面板零节点存在、方法全部早退。调试写操作只落本局 RunData、绝不触碰大厅存档；
@@ -871,7 +877,24 @@ func _render() -> void:
 	else:
 		snapshot = _snapshot_for(_view_name)
 	_rui_root.set_root(VLib.fc(comp, {"state": snapshot, "commands": _build_commands(_view_name)}))
+	if _view_name != _faded_view:
+		_faded_view = _view_name
+		_play_screen_fade()
 	_render_debug_panel()
+
+
+## T6-E 跨屏过渡：屏切换（含死亡返大厅）时对新挂载根做 140ms 一次性淡入
+## （modulate 0→1）；同屏重渲染不触发，战斗/商店等连续操作零闪烁。
+## 快速连切先杀上一条 Tween 防叠加；有限 Tween 播完即失效，无循环残留。
+## RuitkRoot 无内置过渡 API，按简报裁定落在表现层控制器。
+func _play_screen_fade() -> void:
+	if _rui_host == null:
+		return
+	if _screen_tween != null and _screen_tween.is_valid():
+		_screen_tween.kill()
+	_rui_host.modulate.a = 0.0
+	_screen_tween = create_tween()
+	_screen_tween.tween_property(_rui_host, "modulate:a", 1.0, SCREEN_FADE_SECONDS)
 
 
 func _snapshot_for(screen: String) -> Dictionary:

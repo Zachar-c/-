@@ -25,6 +25,7 @@ export ShopScreen() -> RuitkVNode {
   var npc_stance = str(state.get("npc_stance", "中立"))
   var inflation_note = str(state.get("inflation_note", ""))
   var emergency_note = str(state.get("emergency_note", ""))
+  var pool_fallback_note = str(state.get("pool_fallback_note", ""))
 
   # 危险交易（寿元代付等）二次确认；屏内 useState 驱动显隐。
   var st = useState({"confirm_offer": ""})
@@ -64,7 +65,7 @@ export ShopScreen() -> RuitkVNode {
     btn_row.append(<GuButton label="购买此蛊" danger={ ocursed } on_press={ ask_buy } />)
     btn_row.append(<GuButton label="付费屏蔽此蛊" on_press={ func(): fire.call("block", oid) } />)
     offer_cards.append((
-      <GuCard title={ oname } quality={ oqual } danger={ ocursed } expand_h={ true }>
+      <GuCard title={ oname } quality={ oqual } danger={ ocursed } curse_warning={ ocursed } expand_h={ true }>
         <Label text={ odesc } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
         <Label text={ "价格：" + oprice } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
         <HBoxContainer style={ {"separation": 6} }>
@@ -139,6 +140,9 @@ export ShopScreen() -> RuitkVNode {
             </GuScrollBox>
           </GuPanel>
           <Label text={ emergency_note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+          @if (pool_fallback_note != "") {
+            return ( <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } /> )
+          }
         </VBoxContainer>
         <VBoxContainer style={ {"separation": 8, "min_width": 360} }>
           <GuPanel title="服务">

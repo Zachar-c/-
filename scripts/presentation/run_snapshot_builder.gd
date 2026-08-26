@@ -106,6 +106,9 @@ static func shop(controller) -> Dictionary:
 		{"id": "calm", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
 	]
 	out["emergency_note"] = "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
+	# T6-E 空池回退显示槽位：商店侧暂无可推导的回退信号（货架非奖励池），恒空占位；
+	# 领域侧落地 fallback 标记后在此注入（报告已披露该数据源缺口）。
+	out["pool_fallback_note"] = ""
 	return out
 
 
@@ -223,9 +226,18 @@ static func reward(controller) -> Dictionary:
 		{"id": "r3", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
 	]
 	out["full_satchel"] = false
-	out["pool_fallback_note"] = "（空池回退：已切至基础池）"
 	out["pity_note"] = "（保底：连续普通后，下次掉落品质有较大概率提升）"
+	# T6-E 空池回退小字：领域暂无回退标记，按简报裁定以既有「奖励列表为空」信号
+	# 只读推导；非空不展示，杜绝常驻假提示。领域侧落地 fallback 标记后替换此推导。
+	out["pool_fallback_note"] = _reward_fallback_note(out["rewards"])
 	return out
+
+
+## 空池回退小字推导（只读）：奖励列表为空视作空池回退信号，否则不展示。
+static func _reward_fallback_note(rewards: Array) -> String:
+	if rewards.is_empty():
+		return "（空池回退：已切至基础池）"
+	return ""
 
 
 ## C8 NPC 交涉屏快照（contact 节点真实交涉选项 + 立场/恶名）。
@@ -677,9 +689,29 @@ static func _enc_action(c: Dictionary) -> Dictionary:
 		"dangerous": _is_dangerous(c),
 		"quality": "",
 		"effect": str(c.get("summary", "")),
-		"cost": c.get("cost", {}),
+		# T6-E tooltip 一致性（§16.5 缺段隐藏）：cost 段以玩家可读短文输出，
+		# 空代价输出空串让段落隐藏；绝不把原始 Dictionary str 进文案。
+		"cost": _cost_note(c.get("cost", {})),
 		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
 	}
+
+
+## T6-E：行动代价字典 → 固定数值短文（§16.5 数值写死禁模糊）；空代价返回空串。
+static func _cost_note(cost: Dictionary) -> String:
+	if cost.is_empty():
+		return ""
+	var parts: Array[String] = []
+	var labels := {"stone": "元石", "lifespan": "寿元", "spirit": "真元", "hp": "气血", "time": "时辰"}
+	for key in labels:
+		if int(cost.get(str(key), 0)) > 0:
+			parts.append("%s ×%d" % [str(labels[key]), int(cost[str(key)])])
+	if cost.has("gu_ids"):
+		var gu_names: Array[String] = []
+		for gid_value in cost["gu_ids"]:
+			gu_names.append(DisplayText.gu(str(gid_value)))
+		if not gu_names.is_empty():
+			parts.append("耗蛊：" + "、".join(gu_names))
+	return " · ".join(parts)
 
 
 static func _battle_card(c: Dictionary) -> Dictionary:

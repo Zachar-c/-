@@ -101,6 +101,41 @@ func _find_label_exact(node: Node, wanted: String) -> Label:
 	return null
 
 
+# T6-E：取子树第一个 PanelContainer（读 stylebox 断言底色/描边用）。
+func _find_first_panel(node: Node) -> PanelContainer:
+	if node is PanelContainer:
+		return node
+	for c in node.get_children():
+		var found := _find_first_panel(c)
+		if found != null:
+			return found
+	return null
+
+
+func _collect_labels(node: Node, out_labels: Array) -> void:
+	if node is Label:
+		out_labels.append(node)
+	for c in node.get_children():
+		_collect_labels(c, out_labels)
+
+
+func _index_with_prefix(texts: Array[String], prefix: String) -> int:
+	for i in texts.size():
+		if texts[i].begins_with(prefix):
+			return i
+	return -1
+
+
+# T6-E：从角标字符向上爬到最近的 PanelContainer 祖先（角标实底容器）。
+func _nearest_panel_ancestor(node: Node) -> PanelContainer:
+	var cur := node.get_parent()
+	while cur != null:
+		if cur is PanelContainer:
+			return cur
+		cur = cur.get_parent()
+	return null
+
+
 func _mount_component(rel_gd: String, component: String, props: Dictionary) -> Control:
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
@@ -159,6 +194,40 @@ func _initialize() -> void:
 		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": Callable(self, "_noop")})
 	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
 	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
+	# T6-E：危险蛊强红变体——「咒」角标必须 DANGER 底 BONE 字（R4.10），描边 DANGER 加粗。
+	var gc_danger := _mount_component("res://ui/widgets/gu_card.gd", "render",
+		{"title": "血祭蛊", "curse_warning": true})
+	var curse_glyph := _find_label_exact(gc_danger, "咒")
+	if curse_glyph == null:
+		push_error("GuCard 危险变体缺少「咒」角标")
+		quit(1)
+	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.BONE):
+		push_error("GuCard「咒」角标字符必须 BONE 色")
+		quit(1)
+	var curse_chip := _nearest_panel_ancestor(curse_glyph)
+	if curse_chip == null:
+		push_error("GuCard「咒」角标必须是实底角标容器（PanelContainer）")
+		quit(1)
+	var curse_sb := curse_chip.get_theme_stylebox("panel") as StyleBoxFlat
+	if curse_sb == null or not curse_sb.bg_color.is_equal_approx(GuStyle.DANGER):
+		push_error("GuCard「咒」角标底色必须 DANGER 强红")
+		quit(1)
+	var gc_danger_panel := _find_first_panel(gc_danger)
+	var danger_card_sb := gc_danger_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if danger_card_sb == null or not danger_card_sb.border_color.is_equal_approx(GuStyle.DANGER):
+		push_error("GuCard 危险变体描边必须 DANGER")
+		quit(1)
+	print("OK GuCardDanger buttons=%d" % _count_buttons(gc_danger))
+	# T6-E：封印态——保留「锁」标 + 整卡暗淡。
+	var gc_sealed := _mount_component("res://ui/widgets/gu_card.gd", "render",
+		{"title": "石甲蛊", "sealed": true})
+	if _find_label_exact(gc_sealed, "锁") == null:
+		push_error("GuCard 封印态缺少「锁」标")
+		quit(1)
+	if not is_equal_approx(_find_first_panel(gc_sealed).modulate.a, 0.55):
+		push_error("GuCard 封印态必须整卡暗淡（modulate a=0.55）")
+		quit(1)
+	print("OK GuCardSealed buttons=%d" % _count_buttons(gc_sealed))
 	# T5-B D2：死线预警危险行强化（☠ 前缀 + 加大字号 + 半透明血锈底条 + 整行可点）。
 	# 混合用例：寿元/反噬危险（可点），魂魄安全（纯文本）。
 	var dlw_lines := {
@@ -205,6 +274,34 @@ func _initialize() -> void:
 		})
 	_assert_widget("GuTooltipView", "res://ui/widgets/gu_tooltip_view.gd",
 		{"title": "火蛊", "quality": "稀有", "effect": "造成灼烧", "curse_warning": true, "on_detail": Callable(self, "_noop")})
+	# T6-E：tooltip 宣纸卷轴底（PAPER）+ 深字 INK + 五段固定顺序（§16.5）。
+	var tip := _mount_component("res://ui/widgets/gu_tooltip_view.gd", "render",
+		{"title": "血祭蛊", "quality": "稀有", "effect": "吸取气血", "synergy": "与血道蛊联动",
+			"cost": "消耗 3 寿元", "curse_warning": true})
+	var tip_panel := _find_first_panel(tip)
+	var tip_sb := tip_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if tip_sb == null or not tip_sb.bg_color.is_equal_approx(GuStyle.PAPER):
+		push_error("GuTooltipView 底色必须 PAPER 卷轴感（禁深底金字回潮）")
+		quit(1)
+	var tip_labels: Array = []
+	_collect_labels(tip_panel, tip_labels)
+	var tip_texts: Array[String] = []
+	for tl in tip_labels:
+		tip_texts.append(str((tl as Label).text))
+	var idx_effect := _index_with_prefix(tip_texts, "效果：")
+	var idx_synergy := _index_with_prefix(tip_texts, "联动：")
+	var idx_cost := _index_with_prefix(tip_texts, "代价：")
+	var idx_curse := _index_with_prefix(tip_texts, "诅咒警示：")
+	if idx_effect < 0 or not (idx_effect < idx_synergy and idx_synergy < idx_cost and idx_cost < idx_curse):
+		push_error("GuTooltipView 五段顺序必须恒定：效果→联动→代价→诅咒警示")
+		quit(1)
+	if not (tip_labels[idx_effect] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.INK):
+		push_error("GuTooltipView 正文必须 INK 深字")
+		quit(1)
+	if not (tip_labels[idx_curse] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.DANGER):
+		push_error("GuTooltipView 诅咒警示行必须 DANGER 红字")
+		quit(1)
+	print("OK GuTooltipPaper labels=%d" % tip_texts.size())
 	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认执行？", "on_confirm": func(): pass, "on_cancel": func(): pass})
 	# T5-A D1：带语义化 title / warning_note 的确认弹窗变体
@@ -395,6 +492,10 @@ func _initialize() -> void:
 	if _find_button_by_text(bc_container, "☠ 魂魄 4/4") == null:
 		push_error("战斗屏危险死线行应整行可点（☠ 前缀按钮）")
 		quit(1)
+	# T6-E：手牌诅咒蛊必须出现「咒」强红角标（R4.10，走 GuCard danger+curse_warning）。
+	if _find_label_exact(bc_container, "咒") == null:
+		push_error("战斗手牌诅咒蛊缺少「咒」角标")
+		quit(1)
 	print("OK BattleScreen buttons=%d" % bc)
 
 	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；T5-C 三变体：普通胜利 / 死亡 / 无记录极简）
@@ -535,9 +636,24 @@ func _initialize() -> void:
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付",
 	})
 	var shop_cmds := {"buy": Callable(self, "_noop"), "block": Callable(self, "_noop"), "use_service": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
-	var shc := _mount("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
+	var shc_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
+	var shc := _count_buttons(shc_container)
 	if shc < 1:
 		push_error("黑市按钮数 %d < 1" % shc)
+		quit(1)
+	# T6-E：空池回退小字为条件槽位——未标记不渲染，标记后按 13px BONE_DIM 小字出现。
+	if _host_has_label_text(shc_container, "已切换至基础池"):
+		push_error("黑市未标记回退时不得渲染回退小字")
+		quit(1)
+	var shop_marked := shop_state.duplicate(true)
+	shop_marked["pool_fallback_note"] = "（空池回退：已切至基础池）"
+	var shm_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_marked, "commands": shop_cmds})
+	var shop_note := _find_label_exact(shm_container, "（空池回退：已切至基础池）")
+	if shop_note == null:
+		push_error("黑市标记回退后必须渲染小字槽位")
+		quit(1)
+	if shop_note.get_theme_font_size("font_size") != 13 or not shop_note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM):
+		push_error("黑市回退小字必须 BONE_DIM 13px")
 		quit(1)
 	print("OK ShopScreen buttons=%d" % shc)
 
@@ -595,15 +711,36 @@ func _initialize() -> void:
 		"rewards": [
 			{"id": "r1", "name": "月光蛊", "kind": "蛊 · 战斗奖励", "quality": "稀有", "effect": "造成月光伤害并附加「月息」层", "cost": "获取即入蛊囊", "curse_warning": false},
 			{"id": "r2", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
+			{"id": "r3", "name": "血祭蛊", "kind": "蛊 · 诅咒蛊", "quality": "稀有", "effect": "吸取气血", "cost": "每次使用反噬 +1", "curse_warning": true},
 		],
 		"full_satchel": false,
 		"pool_fallback_note": "（空池回退：已切至基础池）",
 		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
 	})
 	var reward_cmds := {"take": Callable(self, "_noop"), "replace_and_take": Callable(self, "_noop"), "skip": Callable(self, "_noop"), "close": Callable(self, "_noop")}
-	var rwc := _mount("res://ui/screens/reward_screen.gd", "render", {"state": reward_state, "commands": reward_cmds})
+	var rwc_container := _mount_component("res://ui/screens/reward_screen.gd", "render", {"state": reward_state, "commands": reward_cmds})
+	var rwc := _count_buttons(rwc_container)
 	if rwc < 1:
 		push_error("奖励按钮数 %d < 1" % rwc)
+		quit(1)
+	# T6-E：奖励三选一中的诅咒蛊同样走 GuCard 强红角标（R4.10）。
+	if _find_label_exact(rwc_container, "咒") == null:
+		push_error("奖励诅咒蛊缺少「咒」角标")
+		quit(1)
+	# T6-E：带 pool_fallback_note 的奖励屏渲染回退小字（13px BONE_DIM）。
+	var reward_note := _find_label_exact(rwc_container, "（空池回退：已切至基础池）")
+	if reward_note == null:
+		push_error("奖励屏标记回退后必须渲染小字")
+		quit(1)
+	if reward_note.get_theme_font_size("font_size") != 13 or not reward_note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM):
+		push_error("奖励屏回退小字必须 BONE_DIM 13px")
+		quit(1)
+	# 未标记时不得出现常驻假提示。
+	var reward_clean := reward_state.duplicate(true)
+	reward_clean.erase("pool_fallback_note")
+	var rwn_container := _mount_component("res://ui/screens/reward_screen.gd", "render", {"state": reward_clean, "commands": reward_cmds})
+	if _host_has_label_text(rwn_container, "已切换至基础池"):
+		push_error("奖励屏未标记回退时不得渲染回退小字")
 		quit(1)
 	print("OK RewardScreen buttons=%d" % rwc)
 
