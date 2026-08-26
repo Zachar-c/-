@@ -8,6 +8,8 @@ extends GutTest
 
 
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
+const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
@@ -280,6 +282,50 @@ func test_material_bonus_and_penalty_adjust_loot_counts_with_zero_clamp() -> voi
 	cut_state.contracts = penalty_ids
 	var cut := LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, cut_state, catalog)
 	assert_eq((cut["loot"]["material_ids"] as Array).size(), 0)
+
+
+# N1 §16.13 MINOR closeout: the enemy-damage boost must never multiply the
+# backlash channel, the essence tide must respect the aperture cap, and the
+# shop lift stays clamped at zero until §16.13 grows discount rule keys.
+func test_blood_pact_declares_backlash_channel_exemption() -> void:
+	assert_true(str(catalog["contract_entry_by_id"]["blood_pact"]["desc"]).contains("反噬直扣不受此加成"))
+
+
+func test_enemy_damage_pct_never_multiplies_curse_channel() -> void:
+	var cursed := RunState.new_run(7)
+	cursed.health = 20
+	cursed.max_health = 20
+	cursed = CurseRegistryScript.gain_curse(cursed, "gu_erosion", "test_source")
+	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, cursed, catalog)
+	battle["contract_mods"] = {"enemy_damage_pct": 50}
+	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, cursed, catalog)
+	# Intent damage 3 -> floor(3 * 1.5) = 4; gu_erosion stage-one intensity 1
+	# rides the backlash channel and stays exactly 1.
+	assert_eq(int(turn["state"].health), 15)
+
+
+func test_essence_tide_clamps_to_aperture_cap_and_declares_it() -> void:
+	assert_true(str(catalog["contract_entry_by_id"]["essence_tide"]["desc"]).contains("不超过真元上限"))
+
+	var run := RunState.new_run(11)
+	var cap := int(run.cave_aperture["essence_max"])
+	run.essence = cap
+	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	battle["contract_mods"] = {"turn_essence_bonus": 1}
+	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, run, catalog)
+	assert_eq(int(turn["state"].essence), cap)
+
+
+func test_shop_price_pct_negative_values_stay_clamped_at_zero() -> void:
+	var tuned := catalog.duplicate(true)
+	tuned["contract_entry_by_id"] = catalog["contract_entry_by_id"].duplicate(true)
+	var miser: Dictionary = (catalog["contract_entry_by_id"]["miser_pact"] as Dictionary).duplicate(true)
+	miser["rules"] = [{"key": "shop_price_pct", "value": -25}]
+	tuned["contract_entry_by_id"]["miser_pact"] = miser
+	var shopper := RunState.new_run(101)
+	var typed: Array[String] = ["miser_pact"]
+	shopper.contracts = typed
+	assert_eq(ResolverScript.price_for(tuned, shopper, 100), 100)
 
 
 func test_run_save_round_trip_preserves_sworn_contracts() -> void:

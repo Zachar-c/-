@@ -694,11 +694,14 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	# resources untouched so opening hand math stays stable.
 	var tide := int(next_battle.get("contract_mods", {}).get("turn_essence_bonus", 0))
 	if tide > 0:
+		# N1 §16.13 MINOR: the tide may never push essence past the cave
+		# aperture cap; overfill is silently clipped at the cap.
+		var capped := mini(next_state.essence + tide, maxi(0, int(next_state.cave_aperture.get("essence_max", next_state.essence + tide))))
 		next_state = next_state.append_event(_event(
 			next_state,
 			"contract_essence_tide",
 			{"essence": next_state.essence},
-			{"essence": next_state.essence + tide},
+			{"essence": capped},
 			"contract_turn_essence",
 			[]
 		))

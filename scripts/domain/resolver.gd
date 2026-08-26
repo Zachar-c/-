@@ -1945,6 +1945,9 @@ static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 		revisit_lift = mini(revisit_cap, (visits - 1) * per)
 	# C1-min §16.13: sworn contracts lift buy prices multiplicatively with the
 	# existing inflations; sell prices stay untouched.
+	# N1 §16.13 MINOR: the maxi(0, ...) clamp keeps negative (discount) rule
+	# values inert on purpose — forward-compatible until §16.13 grows explicit
+	# discount keys, then this clamp opens up deliberately.
 	var contract_pct := maxi(0, int(ContractRulesScript.aggregate(state, catalog).get("shop_price_pct", 0)))
 	return maxi(0, ceili(float(base) * (1.0 + float(notoriety_lift) / 100.0) * (1.0 + float(revisit_lift) / 100.0) * (1.0 + float(contract_pct) / 100.0)))
 

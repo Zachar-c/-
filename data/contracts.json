@@ -4,7 +4,7 @@
     {
       "id": "blood_pact",
       "label": "血契",
-      "desc": "打击伤害+30%，敌方意图伤害+20%。",
+      "desc": "打击伤害+30%，敌方意图伤害+20%（反噬直扣不受此加成）。",
       "rules": [
         {"key": "strike_damage_pct", "value": 30},
         {"key": "enemy_damage_pct", "value": 20}
@@ -26,7 +26,7 @@
     {
       "id": "essence_tide",
       "label": "真元潮契",
-      "desc": "每回合开始真元+1；立誓时生命上限-2。",
+      "desc": "每回合开始真元+1（不超过真元上限）；立誓时生命上限-2。",
       "rules": [
         {"key": "turn_essence_bonus", "value": 1},
         {"key": "hp_max_penalty", "value": -2}
