@@ -60,6 +60,7 @@
     "essence": 6,
     "clues": ["wilting_aura", "slow_gaits"],
     "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4, "speed": 4},
+    "_phases_note": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
     "reactions": [
       {
         "id": "corrosive_mist",

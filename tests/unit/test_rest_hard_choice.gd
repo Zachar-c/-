@@ -10,6 +10,7 @@ extends GutTest
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 
 
 var catalog: Dictionary
@@ -132,6 +133,57 @@ func test_travel_gate_rejects_after_entering_via_removal_target_validation() -> 
 
 
 const REST_NODE := {"id": "rest_hollow", "type": "rest", "choices": ["rest", "leave"]}
+
+
+func _session_at_rest(run_seed: int = 101) -> Dictionary:
+	var run := RunState.new_run(run_seed)
+	run.current_node_id = "rest_hollow"
+	var session: Dictionary = EncounterSessionResolverScript.start({"id": "rest_hollow", "type": "rest"})
+	return {"run": run, "session": session}
+
+
+func test_session_leave_without_choice_is_rejected_and_nothing_changes() -> void:
+	var setup := _session_at_rest()
+	var run: RunState = setup["run"]
+	var result: Dictionary = EncounterSessionResolverScript.apply(
+		run, setup["session"], {"type": "leave_node"}, catalog)
+
+	assert_false(result["result"]["ok"])
+	assert_eq(str(result["result"]["reason"]), "rest_choice_required")
+	# The session stays open and the state is untouched: the player can still choose.
+	assert_false(result["session"]["completed"])
+	assert_eq(str(result["session"]["completion_reason"]), "")
+	assert_eq(int(result["state"].event_log.size()), int(run.event_log.size()))
+	assert_false(result["state"].node_flags.has("rest_hollow"))
+	assert_eq(str(result["state"].current_node_id), "rest_hollow")
+
+
+func test_session_leave_after_consuming_the_visit_succeeds() -> void:
+	var setup := _session_at_rest()
+	var rested: Dictionary = EncounterSessionResolverScript.apply(
+		setup["run"], setup["session"], {"type": "rest"}, catalog)
+	assert_true(rested["result"]["ok"])
+
+	var left: Dictionary = EncounterSessionResolverScript.apply(
+		rested["state"], rested["session"], {"type": "leave_node"}, catalog)
+
+	assert_true(left["result"]["ok"])
+	assert_true(left["session"]["completed"])
+	assert_eq(str(left["session"]["completion_reason"]), "player_left")
+
+
+func test_preview_cards_carry_expects_target_for_targeted_options() -> void:
+	var run := _run_at_rest()
+	var cards: Array = ActionPreviewServiceScript.preview_actions(run, REST_NODE, catalog)
+
+	assert_true(cards.all(func(card: Dictionary) -> bool: return card.has("expects_target")),
+			"every action card exposes the expects_target key")
+	assert_eq(str(_card(cards, "node.rest_upgrade")["expects_target"]), "card_key")
+	assert_eq(str(_card(cards, "node.rest_remove_card")["expects_target"]), "instance_id")
+	assert_eq(str(_card(cards, "node.rest_remove_imprint")["expects_target"]), "relic_id")
+	assert_eq(str(_card(cards, "node.rest_remove_curse")["expects_target"]), "curse_id")
+	assert_eq(str(_card(cards, "node.rest_heal")["expects_target"]), "")
+	assert_eq(str(_card(cards, "node.leave")["expects_target"]), "")
 
 
 func test_preview_blocks_leave_until_a_choice_is_made() -> void:

@@ -75,7 +75,21 @@ static func _apply_elite_cost(state: RunState, catalog: Dictionary) -> Dictionar
 		"source": "loot_resolver",
 		"targets": [str(chosen.get("kind", ""))],
 	})
-	return {"state": next, "cost": chosen}
+	return {"state": next, "cost": _normalized_cost(chosen)}
+
+
+# Player-facing settlement contract: every cost carries "kind" plus either
+# "layers" (backlash, with its curse_id) or "amount" (notoriety). Table-only
+# keys such as "weight" never leave the resolver.
+static func _normalized_cost(chosen: Dictionary) -> Dictionary:
+	var cost := {"kind": str(chosen.get("kind", ""))}
+	match cost["kind"]:
+		"backlash":
+			cost["curse_id"] = str(chosen.get("curse_id", ""))
+			cost["layers"] = maxi(1, int(chosen.get("layers", 1)))
+		"notoriety":
+			cost["amount"] = maxi(1, int(chosen.get("amount", 1)))
+	return cost
 
 
 static func _pick_weighted(entries: Array, state: RunState, salt: String) -> Dictionary:

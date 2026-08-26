@@ -41,7 +41,11 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var phases: Array = enemy.get("phases", []).duplicate(true)
 	var initial_reactions: Array = enemy.get("reactions", []).duplicate(true)
 	if not phases.is_empty():
-		intent = ((phases[0] as Dictionary).get("intents", [{}])[0] as Dictionary).duplicate(true)
+		# Catalog validation intercepts bad phase tables; this guard only keeps
+		# a degenerate empty intents array from indexing out of bounds.
+		var initial_intents: Array = (phases[0] as Dictionary).get("intents", [])
+		if not initial_intents.is_empty():
+			intent = (initial_intents[0] as Dictionary).duplicate(true)
 		var phase_reactions: Array = (phases[0] as Dictionary).get("reactions", [])
 		if not phase_reactions.is_empty():
 			initial_reactions = phase_reactions.duplicate(true)
@@ -718,7 +722,7 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 	next_state = next_state.append_event(_event(
 		next_state,
 		"battle_enemy_intent",
-		{"health": state.health},
+		{"health": state.health, "essence": state.essence},
 		after_payload,
 		"battle_enemy_%s" % str(intent.get("id", "action")),
 		[str(intent.get("id", "action"))]
@@ -1006,10 +1010,10 @@ static func _sync_boss_phases(battle: Dictionary, state: RunState) -> RunState:
 	return shifted
 
 
-# Picks the next visible intent from the active phase set. Intents whose
-# cooldown anchor has not been reached are excluded; when everything is still
-# cooling the soonest-release intent is used so single-intent phases keep
-# their historical cadence instead of stalling. Selection is seeded.
+# Picks the next visible intent from the active phase set. An intent fired on
+# turn T with "cooldown":n is next selectable from turn T+n+1; while every
+# intent of the phase is resting, the boss shows a harmless cooldown_wait and
+# attacks nothing that turn (no earliest-release fallback). Selection is seeded.
 static func _select_enemy_intent(battle: Dictionary, state: RunState, exec_turn: int) -> void:
 	var intents: Array = (_active_phase(battle).get("intents", []) as Array)
 	if intents.is_empty():
@@ -1018,29 +1022,31 @@ static func _select_enemy_intent(battle: Dictionary, state: RunState, exec_turn:
 	var available: Array = []
 	for intent_value in intents:
 		var intent: Dictionary = intent_value
-		if int(cooldowns.get(str(intent.get("id", "")), 0)) < exec_turn:
+		if int(cooldowns.get(str(intent.get("id", "")), 0)) <= exec_turn:
 			available.append(intent)
 	if available.is_empty():
-		var best: Dictionary = intents[0]
-		var best_release := int(cooldowns.get(str((best as Dictionary).get("id", "")), 0))
-		for intent_value in intents:
-			var intent: Dictionary = intent_value
-			var release := int(cooldowns.get(str(intent.get("id", "")), 0))
-			if release < best_release:
-				best = intent
-				best_release = release
-		available = [best]
+		battle["visible_intent"] = COOLDOWN_WAIT_INTENT.duplicate(true)
+		return
 	var picked: Dictionary = available[_seeded_index(available.size(), state, "boss.intent")]
 	battle["visible_intent"] = picked.duplicate(true)
 
 
-# A fired intent with "cooldown":n becomes unavailable for the next n turns.
+const COOLDOWN_WAIT_INTENT := {
+	"id": "cooldown_wait",
+	"label": "蛰伏回气",
+	"damage": 0,
+	"speed": 0,
+}
+
+
+# A fired intent with "cooldown":n stores its next usable turn (execution
+# turn + window + 1), so the gap always covers exactly n full turns.
 static func _register_intent_cooldown(battle: Dictionary, intent: Dictionary, exec_turn: int) -> void:
 	var cooldown := maxi(0, int(intent.get("cooldown", 0)))
 	if cooldown <= 0:
 		return
 	var cooldowns: Dictionary = battle.get("intent_cooldowns", {}).duplicate()
-	cooldowns[str(intent.get("id", ""))] = exec_turn + cooldown
+	cooldowns[str(intent.get("id", ""))] = exec_turn + cooldown + 1
 	battle["intent_cooldowns"] = cooldowns
 
 
@@ -1103,6 +1109,10 @@ static func _victory_with_loot(battle: Dictionary, state: RunState, catalog: Dic
 	var settled := LootResolverScript.settle_victory(battle, state, catalog)
 	var with_loot := battle.duplicate(true)
 	with_loot["loot"] = settled["loot"]
+	# Elite victories bind a cost; it rides the finished battle so the
+	# presentation layer can surface it to the player.
+	if not (settled.get("cost", {}) as Dictionary).is_empty():
+		with_loot["cost"] = (settled["cost"] as Dictionary).duplicate(true)
 	return _battle_over(with_loot, settled["state"], catalog, true, "victory", feeds)
 
 

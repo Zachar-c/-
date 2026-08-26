@@ -923,6 +923,7 @@ static func _card(state: RunState, values: Dictionary) -> Dictionary:
 		"unknown_note": str(values.get("unknown_note", "")),
 		"remedy_hints": values.get("remedy_hints", []).duplicate(),
 		"success_rate": values.get("success_rate", null),
+		"expects_target": str(values.get("expects_target", "")),
 		"command": values.get("command", {}).duplicate(true),
 		"state_version": state.event_log.size(),
 	}

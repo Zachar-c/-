@@ -171,6 +171,12 @@ const MATERIALS := {
 	"moon_dew": "月华露",
 }
 
+const CURSES := {
+	"gu_erosion": "蛊蚀",
+	"essence_bloat": "元石滞胀",
+	"meridian_seal": "经脉封蛊",
+}
+
 const OUTCOMES := {
 	"success": "功成升仙",
 	"risky_success": "险中功成",
@@ -290,6 +296,21 @@ static func enemy(id: String) -> String:
 
 static func material(id: String) -> String:
 	return _lookup("materials", id, MATERIALS.get(id, "养料"))
+
+
+static func curse(id: String) -> String:
+	return _lookup("curses", id, CURSES.get(id, "未知反噬"))
+
+
+# R5.2 elite cost transparency (UI 信息透明约束): the numbers are printed
+# verbatim — no vague copy for backlash layers or notoriety stacks.
+static func elite_cost(cost: Dictionary) -> String:
+	match str(cost.get("kind", "")):
+		"backlash":
+			return "精英代价：反噬加深，「%s」叠加 %d 层。" % [curse(str(cost.get("curse_id", ""))), int(cost.get("layers", 1))]
+		"notoriety":
+			return "精英代价：恶名增加 %d 点。" % int(cost.get("amount", 1))
+	return ""
 
 
 static func fact(id: String) -> String:

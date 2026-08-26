@@ -16,6 +16,7 @@ const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
 const LootResolverScript := preload("res://scripts/domain/loot_resolver.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
 const CurseRegistryScript := preload("res://scripts/domain/curse_registry.gd")
+const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 
 const ELITE_BATTLE := {"enemy_kind": "ridge_elite_scout"}
 
@@ -205,3 +206,58 @@ func test_elite_costs_apply_on_real_battle_victories() -> void:
 	assert_eq(str(turn.get("result", "")), "victory")
 	assert_eq(_cost_events(turn["state"]).size(), 1,
 			"one elite victory binds exactly one cost through the battle funnel")
+
+
+func test_settled_cost_contract_carries_kind_and_layers_or_amount() -> void:
+	var cat := catalog()
+	for run_seed in range(2026, 2066):
+		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, make_state(run_seed), cat)
+		var cost: Dictionary = rolled.get("cost", {})
+		assert_false(cost.is_empty(), "seed %d must bind a cost" % run_seed)
+		assert_true(["backlash", "notoriety"].has(str(cost["kind"])),
+				"seed %d: normalized cost kind" % run_seed)
+		match str(cost["kind"]):
+			"backlash":
+				assert_true(cost.has("layers"), "seed %d: backlash exposes layers" % run_seed)
+				assert_true(cost.has("curse_id"), "seed %d: backlash names its curse" % run_seed)
+			"notoriety":
+				assert_true(cost.has("amount"), "seed %d: notoriety exposes amount" % run_seed)
+
+
+func test_finished_victory_battle_carries_cost_and_controller_feeds_it_to_the_player() -> void:
+	var cat := catalog()
+	var run := make_state(2026)
+	run.health = maxi(int(run.health), 30)
+	run.current_node_id = "elite_ambush"
+	var battle := BattleResolver.start({"enemy_kind": "ridge_elite_scout"}, run, cat)
+	battle["enemy_hp"] = 1
+	battle["flags"] = ["enemy_bound"]
+	var turn := BattleResolver.take_turn(battle, {"type": "basic_attack"}, run, cat)
+	assert_eq(str(turn.get("result", "")), "victory")
+	var bound_cost: Dictionary = turn["battle"].get("cost", {})
+	assert_false(bound_cost.is_empty(), "the finished victory battle carries the bound cost")
+
+	# Equivalent controller invocation (off-tree): the settlement funnel must
+	# surface the cost as a player-visible feed with exact numbers.
+	var controller: Node = autofree(RunControllerScript.new())
+	controller.catalog = cat
+	controller.state = turn["state"]
+	controller.current_battle = turn["battle"]
+	controller.current_session = {"node_id": "elite_ambush", "kind": "combat", "phase": "active"}
+	controller._finish_battle_in_session("victory")
+
+	var surfaced := false
+	for feed_value in controller.state.encounter_results:
+		var feed: Dictionary = feed_value
+		if str(feed.get("text_key", "")) != "elite_cost_applied":
+			continue
+		surfaced = true
+		var text := str((feed["changes"] as Dictionary).get("cost_display", ""))
+		assert_ne(text, "", "the cost feed carries concrete wording")
+		match str(bound_cost["kind"]):
+			"backlash":
+				assert_true(text.contains("蛊蚀"), text)
+				assert_true(text.contains("1 层"), text)
+			"notoriety":
+				assert_true(text.contains("恶名增加 2 点"), text)
+	assert_true(surfaced, "the controller must append a visible elite cost feed")

@@ -5,9 +5,12 @@ extends GutTest
 # - enemies.json may declare optional "phases" keyed by until_hp_ratio; the
 #   battle engine picks the active intent set from current hp/max_hp;
 # - crossing a threshold appends exactly one boss_phase_shift event carrying
-#   _from/_to info keys;
-# - intents may declare "cooldown":n (unavailable for n turns after firing)
-#   and "essence_burn":n (direct essence drain through the enemy channel);
+#   _from/_to info keys (exactly 50% counts as crossed);
+# - intents may declare "cooldown":n — fired on turn T they are next
+#   selectable from turn T+n+1; while every phase intent rests the boss shows
+#   a harmless cooldown_wait instead of attacking (no earliest-release
+#   fallback) — and "essence_burn":n (direct essence drain through the enemy
+#   channel);
 # - enemies without phases behave byte-for-byte like before.
 
 
@@ -104,7 +107,8 @@ func test_full_health_boss_never_shifts_or_rotates_out_of_phase_one() -> void:
 
 	assert_eq(_shift_events(turned["state"]).size(), 0)
 	assert_eq(int(turned["battle"]["enemy_phase_index"]), 0)
-	assert_eq(str(turned["battle"]["visible_intent"]["id"]), "miasma_burst")
+	# The fired burst rests for two turns; the boss idles instead of attacking.
+	assert_eq(str(turned["battle"]["visible_intent"]["id"]), "cooldown_wait")
 
 
 func test_essence_burn_drains_player_essence_through_the_enemy_channel() -> void:
@@ -154,8 +158,12 @@ func test_cooldown_blocks_recently_fired_intents() -> void:
 
 	battle["intent_cooldowns"] = {"miasma_burst": 6, "essence_scorch": 6}
 	BattleResolver._select_enemy_intent(battle, run, 4)
-	assert_true(["miasma_burst", "essence_scorch"].has(str(battle["visible_intent"]["id"])),
-			"all-cooled phases fall back to the soonest release instead of stalling")
+	assert_eq(str(battle["visible_intent"]["id"]), "cooldown_wait",
+			"all-cooled phases idle on cooldown_wait instead of falling back to an attack")
+
+	var waited: Dictionary = BattleResolver.take_turn(battle.duplicate(true), {"type": "end_turn"}, run, catalog)
+	assert_eq(int(waited["state"].health), int(run.health),
+			"a cooldown_wait turn deals no damage")
 
 
 func test_executed_high_danger_intent_starts_its_cooldown() -> void:
@@ -169,13 +177,13 @@ func test_executed_high_danger_intent_starts_its_cooldown() -> void:
 	if int(catalog["enemy_by_id"]["miasma_vein_lord"]["phases"][0]["intents"][0].get("cooldown", 0)) > 0:
 		assert_true(cooldowns.has(executed_id),
 				"fired intent %s must enter cooldown bookkeeping" % executed_id)
-		assert_eq(int(cooldowns[executed_id]), int(setup["battle"]["turn"]) + 2,
-				"cooldown anchors to the execution turn plus the declared window")
+		assert_eq(int(cooldowns[executed_id]), int(setup["battle"]["turn"]) + 2 + 1,
+				"cooldown anchors to execution turn + window + 1 (next usable turn)")
 	# The very next selection must refuse the cooled intent whenever its phase
-	# offers an alternative; single-intent phases fall back to keep cadence.
+	# offers an alternative.
 	turned["battle"]["enemy_phase_index"] = 1
 	BattleResolver._select_enemy_intent(turned["battle"], turned["state"], int(turned["battle"]["turn"]))
-	if cooldowns.has(executed_id) and int(cooldowns[executed_id]) >= int(turned["battle"]["turn"]):
+	if cooldowns.has(executed_id) and int(cooldowns[executed_id]) > int(turned["battle"]["turn"]):
 		assert_ne(str(turned["battle"]["visible_intent"]["id"]), executed_id,
 				"cooled intent cannot be re-picked while its partner is free")
 
@@ -214,3 +222,112 @@ func test_pre_turn_first_move_still_deals_legacy_burst_damage() -> void:
 	assert_false(bool(pre["finished"]))
 	assert_eq(int(pre["state"].health), 2)
 	assert_eq(int(pre["battle"]["log"].back()["damage"]), 4)
+
+
+func _enemy_log_entries(log: Array, from_index: int) -> Array:
+	var entries: Array = []
+	for index in range(from_index, log.size()):
+		var entry: Dictionary = log[index]
+		if str(entry.get("source", "")) == "enemy":
+			entries.append(entry)
+	return entries
+
+
+func test_p2_double_intent_refires_keep_at_least_two_gap_turns() -> void:
+	var setup := _boss_battle(2026)
+	var run: RunState = setup["run"]
+	var battle: Dictionary = setup["battle"]
+	battle["enemy_phase_index"] = 1
+	run.health = maxi(int(run.health), 60)
+	var last_fire := {}
+	var saw_scorch := false
+	var saw_burst := false
+	var saw_wait := false
+
+	for _round in range(10):
+		battle["flags"] = ["guarded"]
+		var exec_turn := int(battle["turn"])
+		var prev_len := int((battle["log"] as Array).size())
+		var turned := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
+		assert_false(bool(turned.get("finished", false)), "the soak run must survive")
+		for entry in _enemy_log_entries(turned["battle"]["log"], prev_len):
+			var intent_id := str(entry["id"])
+			match intent_id:
+				"miasma_burst": saw_burst = true
+				"essence_scorch": saw_scorch = true
+				"cooldown_wait":
+					saw_wait = true
+					assert_eq(int(entry["damage"]), 0, "cooldown_wait never deals damage")
+					continue
+			if last_fire.has(intent_id):
+				assert_gt(exec_turn - int(last_fire[intent_id]), 2,
+						"%s refires with at least two full gap turns (cooldown 2)" % intent_id)
+			last_fire[intent_id] = exec_turn
+		battle = turned["battle"]
+		run = turned["state"]
+
+	assert_true(saw_burst and saw_scorch, "both phase-two intents must fire during the soak")
+	assert_true(saw_wait, "alternating two-turn cooldowns must produce idle gap turns")
+
+
+func test_single_intent_cooldown_phase_shows_gap_turns_then_resumes() -> void:
+	var setup := _boss_battle(101)
+	var run: RunState = setup["run"]
+	var battle: Dictionary = setup["battle"]
+	# Turn 1 fires the only phase-one intent (cooldown 2); turns 2 and 3 idle.
+	var fired := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
+	assert_eq(str(fired["battle"]["visible_intent"]["id"]), "cooldown_wait",
+			"the single resting intent forces a visible gap turn")
+
+	var health_before := int(fired["state"].health)
+	var idle := BattleResolver.take_turn(fired["battle"], {"type": "end_turn"}, fired["state"], catalog)
+	assert_eq(int(idle["state"].health), health_before, "gap turns deal no damage")
+	assert_eq(str(idle["battle"]["log"].back()["id"]), "cooldown_wait")
+	assert_eq(int(idle["battle"]["log"].back()["damage"]), 0)
+	assert_eq(str(idle["battle"]["visible_intent"]["id"]), "cooldown_wait",
+			"turn three is still inside the two-turn rest window")
+
+	var resumed := BattleResolver.take_turn(idle["battle"], {"type": "end_turn"}, idle["state"], catalog)
+	assert_eq(str(resumed["battle"]["visible_intent"]["id"]), "miasma_burst",
+			"after exactly n=2 gap turns the intent is selectable again")
+
+
+func test_exactly_fifty_percent_hp_ratio_enters_the_deeper_phase() -> void:
+	var setup := _boss_battle(77)
+	var run: RunState = setup["run"]
+	var battle: Dictionary = setup["battle"]
+	battle["enemy_max_hp"] = 10
+	battle["enemy_hp"] = 6
+
+	BattleResolver._sync_boss_phases(battle, run)
+	assert_eq(int(battle["enemy_phase_index"]), 0, "60% stays in phase one")
+
+	battle["enemy_hp"] = 5
+	var crossed := BattleResolver._sync_boss_phases(battle, run)
+	assert_eq(int(battle["enemy_phase_index"]), 1, "exactly 50% crosses into phase two")
+	assert_eq(_shift_events(crossed).size(), 1)
+
+
+func test_enemy_intent_event_anchors_essence_symmetrically_in_before() -> void:
+	var setup := _boss_battle()
+	var run: RunState = setup["run"]
+	var battle: Dictionary = setup["battle"]
+	battle["visible_intent"] = {
+		"id": "essence_scorch", "label": "蚀脉扰元", "damage": 0,
+		"speed": 2, "essence_burn": 2,
+	}
+
+	var turned := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
+
+	var found := false
+	for entry in turned["state"].event_log:
+		if str(entry.get("action", "")) != "battle_enemy_intent":
+			continue
+		if str(entry.get("reason", "")) != "battle_enemy_essence_scorch":
+			continue
+		found = true
+		var before: Dictionary = entry["before"]
+		assert_true(before.has("essence"), "before anchors essence like it anchors health")
+		assert_eq(int(before["essence"]), int(run.essence))
+		assert_true((entry["after"] as Dictionary).has("essence"))
+	assert_true(found, "the scorch turn must emit a battle_enemy_intent event")
