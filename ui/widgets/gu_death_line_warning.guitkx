@@ -1,5 +1,9 @@
 @theme "res://assets/theme/gu_theme.tres"
 
+# GuDeathLineWarning —— 三死线预警（规格 §9 / §16.10 死亡可预见）
+# 危险行 BLOOD 血锈色 + 「!」前缀；安全行 BONE_DIM 常规前缀。
+# props：death_lines{kind:{name,remaining,max,danger,cause_id}} / on_view(cause_id)
+
 export GuDeathLineWarning() -> RuitkVNode {
   var death_lines = props.get("death_lines", {})
   var on_view = props.get("on_view", null)
@@ -12,12 +16,17 @@ export GuDeathLineWarning() -> RuitkVNode {
     var maxv = int(d.get("max", 0))
     var danger = bool(d.get("danger", false))
     var cause_id = str(d.get("cause_id", ""))
-    var color = GuStyle.DANGER if danger else GuStyle.BONE_DIM
-    var prefix = "⚠ " if danger else "· "
+    var color = GuStyle.BLOOD if danger else GuStyle.BONE_DIM
+    var prefix = "! " if danger else "· "
     var text = "%s%s %d/%d" % [prefix, nm, remaining, maxv]
-    var row_children = [V.Label({"text": text, "style": {"font_color": color, "font_size": 13}})]
+    var row_style = {"font_color": color, "font_size": 13}
+    if danger:
+      row_style["font_size"] = 14
+      row_style["outline_size"] = 2
+      row_style["font_outline_color"] = Color(0.1, 0.05, 0.04, 0.9)
+    var row_children = [V.Label({"text": text, "style": row_style})]
     if on_view != null and danger:
-      row_children.append(V.Button({"text": "?", "flat": true, "onPressed": func(): on_view.call(cause_id), "style": {"font_color": color, "font_size": 13, "min_width": 22, "min_height": 22}}))
+      row_children.append(V.Button({"text": "?", "onPressed": func(): on_view.call(cause_id), "style": {"font_color": color, "font_size": 13, "min_width": 22, "min_height": 22}}))
     rows.append(V.HBoxContainer({"separation": 4}, row_children))
 
   return (

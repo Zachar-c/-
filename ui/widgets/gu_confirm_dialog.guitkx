@@ -1,5 +1,9 @@
 @theme "res://assets/theme/gu_theme.tres"
 
+# GuConfirmDialog —— 统一确认弹窗（规格 §9 / D1 弹窗族）
+# 顶部 DANGER 警示条 + 后果预览；危险色锁死。
+# props：message / confirm_label / cancel_label / on_confirm / on_cancel
+
 export GuConfirmDialog() -> RuitkVNode {
   var message = props.get("message", "")
   var confirm_label = props.get("confirm_label", "确认")
@@ -7,16 +11,23 @@ export GuConfirmDialog() -> RuitkVNode {
   var on_confirm = props.get("on_confirm", func(): pass)
   var on_cancel = props.get("on_cancel", func(): pass)
   return (
-    <PanelContainer>
-      <MarginContainer style={ {"margin_left": 16, "margin_right": 16, "margin_top": 16, "margin_bottom": 16} }>
-        <VBoxContainer style={ {"separation": 12} }>
-          <Label text={ message } style={ {"font_color": GuStyle.BONE, "font_size": 16} } />
-          <HBoxContainer style={ {"separation": 12} }>
-            <Button text={ cancel_label } onPressed={ func(): on_cancel.call() } style={ {"font_color": GuStyle.BONE_DIM, "min_width": 120, "min_height": 36} } />
-            <Button text={ confirm_label } onPressed={ func(): on_confirm.call() } style={ {"font_color": GuStyle.DANGER, "min_width": 120, "min_height": 36} } />
-          </HBoxContainer>
-        </VBoxContainer>
-      </MarginContainer>
+    <PanelContainer style={ {"bg_color": GuStyle.BG_PANEL, "corner_radius_all": 8, "border_width_all": 2, "border_color": GuStyle.DANGER} }>
+      <VBoxContainer>
+        <PanelContainer style={ {"bg_color": Color(0.5, 0.12, 0.1, 0.85) } }>
+          <MarginContainer style={ {"margin_left": 14, "margin_right": 14, "margin_top": 8, "margin_bottom": 8} }>
+            <Label text="⚠ 确认" style={ {"font_color": Color(1, 0.9, 0.85, 1), "font_size": 16} } />
+          </MarginContainer>
+        </PanelContainer>
+        <MarginContainer style={ {"margin_left": 16, "margin_right": 16, "margin_top": 14, "margin_bottom": 14} }>
+          <VBoxContainer style={ {"separation": 12} }>
+            <Label text={ message } style={ {"font_color": GuStyle.BONE, "font_size": 16} } />
+            <HBoxContainer style={ {"separation": 12} }>
+              <Button text={ cancel_label } onPressed={ func(): on_cancel.call() } style={ {"font_color": GuStyle.BONE_DIM, "min_width": 120, "min_height": 36} } />
+              <Button text={ confirm_label } onPressed={ func(): on_confirm.call() } style={ {"font_color": GuStyle.DANGER, "min_width": 120, "min_height": 36} } />
+            </HBoxContainer>
+          </VBoxContainer>
+        </MarginContainer>
+      </VBoxContainer>
     </PanelContainer>
   )
 }

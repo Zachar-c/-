@@ -1,5 +1,9 @@
 @theme "res://assets/theme/gu_theme.tres"
 
+# GuResourceChip —— 资源徽章（规格 §9 / §16.5 双资源隔离）
+# 局内资源：深墨底 + 宣纸环；解锁素材（meta/见闻）：宣纸底 + 专属前缀，与局内资源严格区分。
+# props：kind / value / on_click
+
 export GuResourceChip() -> RuitkVNode {
   var kind = props.get("kind", "material")
   var value = props.get("value", 0)
@@ -12,17 +16,26 @@ export GuResourceChip() -> RuitkVNode {
   elif kind == "material":
     color = Color("9fd6a0")
   elif kind == "meta":
-    color = GuStyle.BONE_DIM
-  var names = {"yuanstone": "元石", "shouyuan": "寿元", "hunpo": "魂魄", "material": "材料", "meta": "异变"}
+    color = GuStyle.PAPER
+  var names = {"yuanstone": "元石", "shouyuan": "寿元", "hunpo": "魂魄", "material": "材料", "meta": "见闻"}
   var name = names.get(kind, kind)
   var text = "%s: %d" % [name, value]
+  var is_meta = (kind == "meta")
+  var chip_style = {
+    "bg_color": GuStyle.PAPER if is_meta else GuStyle.INK,
+    "corner_radius_all": 10,
+    "border_width_all": 1,
+    "border_color": GuStyle.PAPER,
+  }
   return (
-    <HBoxContainer style={ {"separation": 0} }>
-      @if (on_click != null) {
-        return ( <Button text={ text } onPressed={ func(): on_click.call() } style={ {"font_color": color, "font_size": 14, "min_width": 80, "min_height": 28} } /> )
-      } else {
-        return ( <PanelContainer><MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 3, "margin_bottom": 3} }><Label text={ text } style={ {"font_color": color, "font_size": 14} } /></MarginContainer></PanelContainer> )
-      }
-    </HBoxContainer>
+    <PanelContainer style={ chip_style }>
+      <MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 3, "margin_bottom": 3} }>
+        @if (on_click != null) {
+          return ( <Button text={ text } onPressed={ func(): on_click.call() } style={ {"font_color": color, "font_size": 14} } /> )
+        } else {
+          return ( <Label text={ text } style={ {"font_color": color, "font_size": 14} } /> )
+        }
+      </MarginContainer>
+    </PanelContainer>
   )
 }
