@@ -4,10 +4,12 @@ import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 
 # ShopScreen —— 黑市 / 商店屏（规格 v3 §7 C3 / §16.5 / §16.16）
 # 商品板块（蛊/消耗品/材料/元石，价格） + 服务板块（剩余次数 + 通胀说明）。
 # 「购买此蛊」与「付费屏蔽此蛊」文案严格区分（R13.4）；应急支付通道；NPC 立场徽章。
+# 寿元代价交易（curse_warning）购买前走 D1 确认弹窗（R2.2 死亡可预见）。
 # state 只读；buy / block / use_service / leave 经 commands。
 
 export ShopScreen() -> RuitkVNode {
@@ -23,6 +25,11 @@ export ShopScreen() -> RuitkVNode {
   var npc_stance = str(state.get("npc_stance", "中立"))
   var inflation_note = str(state.get("inflation_note", ""))
   var emergency_note = str(state.get("emergency_note", ""))
+
+  # 危险交易（寿元代付等）二次确认；屏内 useState 驱动显隐。
+  var st = useState({"confirm_offer": ""})
+  var confirm_offer = str(st[0].get("confirm_offer", ""))
+  var set_confirm_offer = st[1]
 
   var stance_color = GuStyle.JADE
   if npc_stance == "敌视":
@@ -47,8 +54,13 @@ export ShopScreen() -> RuitkVNode {
     var oqual = str(o.get("quality", ""))
     var ocursed = bool(o.get("curse_warning", false))
     var oid = str(o.get("id", ""))
+    var ask_buy = func():
+      if ocursed:
+        set_confirm_offer.call({"confirm_offer": oid})
+      else:
+        fire.call("buy", oid)
     var btn_row = []
-    btn_row.append(<GuButton label="购买此蛊" danger={ ocursed } on_press={ func(): fire.call("buy", oid) } />)
+    btn_row.append(<GuButton label="购买此蛊" danger={ ocursed } on_press={ ask_buy } />)
     btn_row.append(<GuButton label="付费屏蔽此蛊" on_press={ func(): fire.call("block", oid) } />)
     offer_cards.append((
       <GuCard title={ oname } quality={ oqual } danger={ ocursed } expand_h={ true }>
@@ -88,6 +100,17 @@ export ShopScreen() -> RuitkVNode {
   if service_rows.is_empty():
     service_empty.append(<Label text="（暂无服务）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
 
+  # 危险交易确认弹窗数据（按 confirm_offer 定位货架行）
+  var confirm_data = {}
+  for o in offers:
+    if str(o.get("id", "")) == confirm_offer:
+      confirm_data = o
+  var do_buy_cancel = func():
+    set_confirm_offer.call({"confirm_offer": ""})
+  var do_buy_confirm = func():
+    set_confirm_offer.call({"confirm_offer": ""})
+    fire.call("buy", confirm_offer)
+
   return (
     <VBoxContainer style={ {"separation": 10} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
@@ -122,6 +145,19 @@ export ShopScreen() -> RuitkVNode {
           <GuButton label="离开黑市" on_press={ func(): fire.call("leave") } />
         </VBoxContainer>
       </HBoxContainer>
+
+      @if (confirm_offer != "") {
+        return (
+          <GuConfirmDialog
+            title="⚠ 危险交易 · 寿元代付"
+            message={ str(confirm_data.get("name", "")) + "：" + str(confirm_data.get("desc", "")) }
+            warning_note={ "价格：" + str(confirm_data.get("price", "")) + " · 以寿元支付，执行前请确认寿元余量" }
+            confirm_label="确认支付"
+            on_confirm={ do_buy_confirm }
+            on_cancel={ do_buy_cancel }
+          />
+        )
+      }
     </VBoxContainer>
   )
 }
