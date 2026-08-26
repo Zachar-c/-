@@ -9,7 +9,7 @@ const Guitkx = preload("res://addons/reactive_ui_toolkit/guitkx/guitkx.gd")
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const ROOT := "res://"
-const OUT_DIR := "C:/Users/Zachary/DevEnv/06_个人项目/gu-zhenren/gu-zhenren-editor/.superpowers/ui_captures"
+const OUT_DIR := "res://.superpowers/ui_captures"
 
 const SHOT_W := 1920
 const SHOT_H := 1080
@@ -86,7 +86,7 @@ func _snap(component: String, props: Dictionary) -> void:
 	await process_frame
 	var img := svp.get_texture().get_image()
 	_cur += 1
-	var p := OUT_DIR.path_join("%02d_%s.png" % [_cur, component])
+	var p := ProjectSettings.globalize_path(OUT_DIR).path_join("%02d_%s.png" % [_cur, component])
 	img.save_png(p)
 	print("SNAP %s -> %s" % [component, p])
 	svp.queue_free()
@@ -94,7 +94,7 @@ func _snap(component: String, props: Dictionary) -> void:
 
 
 func _initialize() -> void:
-	DirAccess.make_dir_recursive_absolute(OUT_DIR)
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
 
 	if not _compile_file("res://ui/_sample.guitkx"):
 		quit(1)
