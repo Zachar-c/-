@@ -18,6 +18,9 @@ var journal_unlocked: Array[String] = []
 # Display-only ledger of accrued hall material bonus percentages (never
 # grants in-run power).
 var hall_material_bonus_accrued: int = 0
+# R14.6⑧ (night batch): OFF = fixed progress difficulty only (no state
+# adaptive markers). Copied into each new run at birth.
+var dda_state_adaptive_enabled: bool = true
 var statistics: Dictionary = {
 	"runs_started": 0,
 	"runs_won": 0,
@@ -188,6 +191,7 @@ func to_save_data() -> Dictionary:
 		"contracts_unlocked": contracts_unlocked.duplicate(),
 		"journal_unlocked": journal_unlocked.duplicate(),
 		"hall_material_bonus_accrued": hall_material_bonus_accrued,
+		"dda_state_adaptive_enabled": dda_state_adaptive_enabled,
 		"statistics": statistics.duplicate(true),
 	}
 
@@ -203,5 +207,6 @@ func _copy() -> RefCounted:
 	copy.contracts_unlocked = contracts_unlocked.duplicate()
 	copy.journal_unlocked = journal_unlocked.duplicate()
 	copy.hall_material_bonus_accrued = hall_material_bonus_accrued
+	copy.dda_state_adaptive_enabled = dda_state_adaptive_enabled
 	copy.statistics = statistics.duplicate(true)
 	return copy

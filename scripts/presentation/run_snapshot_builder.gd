@@ -9,6 +9,7 @@ extends RefCounted
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
+const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
@@ -33,23 +34,27 @@ static func debug(controller) -> Dictionary:
 	var state = controller.state
 	if state == null:
 		return {}
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	return {
 		"loot_pity": int(state.loot_pity),
 		"material_pity": int(state.material_pity),
 		"pool_excluded_ids": [] as Array[String],
 		"seed": int(state.seed),
 		"event_count": state.event_log.size(),
-		"dda_percentile": "",
+		# R14.6⑧ (night batch): DDA 评估分数实装, e.g. "6/10 险象".
+		"dda_percentile": DdaResolverScript.score_label(state, catalog),
 	}
 
 
 ## 局内节点屏公共骨架（顶栏资源/契约/异变/死线）。
 static func _gui_state(controller) -> Dictionary:
 	var state = controller.state
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	return {
 		"resources": _resources(state),
 		"contracts": _contracts(state),
-		"anomalies": [],
+		# R14.6① (night batch): DDA 系统标记与契约分区（黄红系），由 UI 会话渲染。
+		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
 	}
 
@@ -645,6 +650,9 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"unlocks": unlocks,
 		"contracts_recap": _contracts_recap(state, catalog),
 		"contracts_sworn_count": _contracts_sworn_count(state),
+		# R14.6⑧ (night batch): DDA 触发记录（事件日志为唯一真值源, 去重保序）。
+		"dda_triggers": _dda_trigger_count(state),
+		"dda_markers": _dda_marker_recap(state, catalog),
 		"aftermath": str(catalog.get("journal", {}).get("ending_texts", {}).get(etype, "修行札记已留存，可于大厅图鉴查阅本次所得。")),
 	}
 	out.merge(settlement_extras(controller))
@@ -760,6 +768,35 @@ static func _contracts_sworn_count(state) -> int:
 	if state == null or not (state.contracts is Array):
 		return 0
 	return (state.contracts as Array).size()
+
+
+# R14.6⑧ (night batch): DDA recap — event log is the single source of truth
+# for marker triggers; markers keep appearance order, deduped.
+static func _dda_trigger_count(state) -> int:
+	if state == null or state.event_log == null:
+		return 0
+	var count := 0
+	for event in state.event_log:
+		if str(event.get("action", "")) == "dda_marker":
+			count += 1
+	return count
+
+
+static func _dda_marker_recap(state, catalog: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if state == null or state.event_log == null:
+		return out
+	var seen := {}
+	for event in state.event_log:
+		if str(event.get("action", "")) != "dda_marker":
+			continue
+		for marker_value in event.get("targets", []):
+			var marker := str(marker_value)
+			if seen.has(marker):
+				continue
+			seen[marker] = true
+			out.append({"id": marker, "label": DdaResolverScript.marker_label(marker, catalog)})
+	return out
 
 
 # Shared outcome→ending-type vocabulary (snapshot display and MetaProgress

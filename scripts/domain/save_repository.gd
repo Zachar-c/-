@@ -111,6 +111,7 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 	# N1 §16.9: journal ledger ships after v2; old saves default to empty.
 	meta.journal_unlocked = _string_array(meta_data.get("journal_unlocked", []))
 	meta.hall_material_bonus_accrued = int(meta_data.get("hall_material_bonus_accrued", 0))
+	meta.dda_state_adaptive_enabled = bool(meta_data.get("dda_state_adaptive_enabled", true))
 	meta.statistics = meta_data.get("statistics", {
 		"runs_started": 0,
 		"runs_won": 0,

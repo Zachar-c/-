@@ -22,6 +22,7 @@ const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const ControllerScript = preload("res://scripts/presentation/run_controller.gd")
+const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
@@ -281,7 +282,9 @@ func test_snapshot_builder_exposes_readonly_debug_section() -> void:
 	assert_eq(int(section["event_count"]), controller.state.event_log.size())
 	var excluded: Array = section["pool_excluded_ids"]
 	assert_eq(excluded.size(), 0, "pool exclusion is not landed in domain yet - honest empty")
-	assert_eq(str(section["dda_percentile"]), "", "DDA is not implemented yet - honest empty")
+	# Night batch R14.6⑧: DDA 评估分数已实装（score/max + band label）。
+	var evaluated := DdaResolverScript.evaluate(controller.state, controller.catalog)
+	assert_eq(str(section["dda_percentile"]), "%d/%d %s" % [int(evaluated["score"]), 10, str(evaluated["label"])])
 
 
 func test_snapshot_builder_debug_section_survives_missing_state() -> void:
