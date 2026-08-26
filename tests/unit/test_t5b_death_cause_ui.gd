@@ -16,6 +16,7 @@ const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const DisplayTextScript = preload("res://scripts/presentation/display_text.gd")
+const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
@@ -93,6 +94,16 @@ func _host_has_text(host: Node, wanted: String) -> bool:
 		if str(l.text).contains(wanted):
 			return true
 	return false
+
+
+func _find_label_exact(node: Node, wanted: String) -> Label:
+	if node is Label and str(node.text) == wanted:
+		return node
+	for c in node.get_children():
+		var found := _find_label_exact(c, wanted)
+		if found != null:
+			return found
+	return null
 
 
 func test_display_text_maps_precise_death_cause_shorts() -> void:
@@ -186,13 +197,13 @@ func test_battle_screen_danger_row_opens_and_closes_death_cause_overlay() -> voi
 		await get_tree().process_frame
 	assert_true(_host_has_text(host, "死因 · 寿元"), "overlay header names the line")
 	assert_true(_host_has_text(host, "当前值：5 / 上限：60"), "overlay shows current vs cap")
-	assert_true(_host_has_text(host, "距离死线余量：0"), "an active warning sits at the line: margin clamps to 0")
+	assert_false(_host_has_text(host, "距离死线余量"), "Fix1: constant-zero margin line removed entirely")
 	assert_true(_host_has_text(host, "成因：寿元耗尽即死。"), "overlay explains the cause")
 	assert_false(_host_has_text(host, "⚠ 确认"), "the overlay must not reuse confirm-dialog semantics")
 	assert_true(_press_button(host, "关闭"), "overlay offers a close action")
 	for i in 3:
 		await get_tree().process_frame
-	assert_false(_host_has_text(host, "距离死线余量：0"), "closing hides the overlay")
+	assert_false(_host_has_text(host, "成因：寿元耗尽即死。"), "closing hides the overlay")
 	assert_true(_press_button(host, "结束回合"), "screen remains interactive after close")
 
 
@@ -220,12 +231,12 @@ func test_encounter_screen_danger_row_opens_death_cause_overlay() -> void:
 	assert_true(_press_button(host, "☠ 魂魄 4/4"), "danger row opens the cause overlay")
 	for i in 3:
 		await get_tree().process_frame
-	assert_true(_host_has_text(host, "距离死线余量：0"), "exhausted-margin edge renders as 0")
+	assert_false(_host_has_text(host, "距离死线余量"), "Fix1: no margin line on the encounter overlay either")
 	assert_true(_host_has_text(host, "成因：魂魄耗尽即死。"))
 	assert_true(_press_button(host, "关闭"))
 	for i in 3:
 		await get_tree().process_frame
-	assert_false(_host_has_text(host, "距离死线余量：0"))
+	assert_false(_host_has_text(host, "成因：魂魄耗尽即死。"))
 
 
 func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
@@ -245,6 +256,11 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 	for i in 3:
 		await get_tree().process_frame
 	assert_true(_host_has_text(death_host, "死因 · 战局失利"), "death endings show the cause badge next to the type badge")
+	var badge := _find_label_exact(death_host, "死因 · 战局失利")
+	assert_true(badge != null, "badge must render as its own label for color checks")
+	if badge != null:
+		assert_true(badge.get_theme_color("font_color").is_equal_approx(GuStyle.BLOOD),
+				"Fix M4: the death-cause badge text must be BLOOD (not blended with the type-badge color)")
 	var retreat_state := death_state.duplicate(true)
 	retreat_state["ending_type"] = "retreat"
 	retreat_state.erase("death_cause")
@@ -253,3 +269,45 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 	for i in 3:
 		await get_tree().process_frame
 	assert_false(_host_has_text(retreat_host, "死因 · "), "non-death endings show no cause badge")
+
+
+## Fix2：快照→浮层端到端契约。真实 RunState 逼近死线 → 屏幕实际消费的
+## 快照路径（controller._snapshot_for("Battle")，即 _render() 所喂）→
+## RuiRoot 挂载 battle_screen → 点 ☠ 行 → 断言 builder 原值逐字到达浮层。
+func test_real_snapshot_death_lines_feed_battle_overlay_end_to_end() -> void:
+	var controller := _new_controller()
+	controller.state.cultivator["lifespan"] = 2
+	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "ridge_hound"}
+	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller._start_battle()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	# Producer side: the real builder must flag 寿元 as a danger line with full shape.
+	assert_true(snapshot.has("death_lines"), "battle snapshot must carry death_lines")
+	var shouyuan: Dictionary = snapshot["death_lines"].get("shouyuan", {})
+	assert_eq(str(shouyuan.get("cause_id", "")), "death_cause_lifespan")
+	assert_true(bool(shouyuan.get("danger", false)), "lifespan 2 (<= floor 5) must be flagged danger by the builder")
+	assert_gt(int(shouyuan.get("value", 0)), int(shouyuan.get("threshold", 0)), "danger row sits at/past the threshold")
+	var want_name := str(shouyuan["name"])
+	var want_current := int(shouyuan["remaining"])
+	var want_max := int(shouyuan["max"])
+	var want_detail := str(shouyuan["detail"])
+	assert_ne(want_name, "", "builder must supply the display name")
+	assert_ne(want_detail, "", "builder must supply the cause detail")
+
+	# Consumer side: mount the real screen with the real snapshot.
+	var commands := {
+		"play_card": func(_cid = "", _tgt = ""): pass,
+		"end_turn": func(): pass,
+	}
+	var host := _mount_screen("res://ui/screens/battle_screen.gd", {"state": snapshot, "commands": commands})
+	for i in 3:
+		await get_tree().process_frame
+	var row_text := "☠ %s %d/%d" % [want_name, int(shouyuan["value"]), int(shouyuan["threshold"])]
+	assert_true(_press_button(host, row_text), "builder-produced danger row must be clickable under its mapped text")
+	for i in 3:
+		await get_tree().process_frame
+	assert_true(_host_has_text(host, "死因 · " + want_name), "name flows from builder to overlay header")
+	assert_true(_host_has_text(host, "当前值：%d / 上限：%d" % [want_current, want_max]),
+			"remaining/max flow from builder to the current-vs-cap line")
+	assert_true(_host_has_text(host, "成因：" + want_detail), "detail flows verbatim from builder to overlay")
+	assert_false(_host_has_text(host, "距离死线余量"), "no margin line anywhere in the end-to-end path")

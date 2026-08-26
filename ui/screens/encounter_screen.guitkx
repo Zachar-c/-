@@ -39,12 +39,11 @@ export EncounterScreen() -> RuitkVNode {
   var cause_line = {}
   for kind in death_lines.keys():
     var dl = death_lines[kind]
-    if str(dl.get("cause_id", "")) == cause_view and bool(dl.get("danger", false)):
+    if cause_view != "" and str(dl.get("cause_id", "")) == cause_view and bool(dl.get("danger", false)):
       cause_line = {
         "name": str(dl.get("name", kind)),
         "current": int(dl.get("remaining", 0)),
         "max": int(dl.get("max", 0)),
-        "margin": maxi(0, int(dl.get("threshold", 0)) - int(dl.get("value", 0))),
         "detail": str(dl.get("detail", "")),
       }
       break

@@ -770,11 +770,10 @@ static func _death_cause_from_state(state) -> String:
 
 ## 精准死因只读三字段（T5-B 结算联动）：id / 结算徽章短句 / 完整成因文案。
 ## 数据源为 state 终局字段（finalize_death 只落 terminal 标记，不记死因），
-## 只读扫描，不改写任何状态。非死亡结局由调用方传空（见 ending()）。
+## 只读扫描，不改写任何状态；恒返回非空 id（战斗兜底）。非死亡结局由调用方
+## 传空（见 ending()）。
 static func death_cause_fields(state) -> Dictionary:
 	var id := _death_cause_from_state(state)
-	if id == "":
-		return {"id": "", "short": "", "text": ""}
 	return {
 		"id": id,
 		"short": DisplayText.death_cause_short(id),

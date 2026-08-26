@@ -200,15 +200,18 @@ func _initialize() -> void:
 	_assert_widget("GuConfirmDialogTitled", "res://ui/widgets/gu_confirm_dialog.gd",
 		{"message": "确认洗髓换骨？", "title": "⚠ 危险行动", "warning_note": "代价：10 寿元 + 8 元石 · 执行前预检寿元",
 		"on_confirm": func(): pass, "on_cancel": func(): pass})
-	# T5-B D2：死因查看浮层（L2 信息浮层，非确认语义；右上「关闭」）
+	# T5-B D2：死因查看浮层（L2 信息浮层，非确认语义；右上「关闭」；Fix1 移除余量行）
 	var dco := _mount_component("res://ui/widgets/gu_death_cause_overlay.gd", "render",
-		{"line": {"name": "寿元", "current": 12, "max": 60, "margin": 7, "detail": "寿元耗尽即死。"}, "on_close": func(): pass})
+		{"line": {"name": "寿元", "current": 12, "max": 60, "detail": "寿元耗尽即死。"}, "on_close": func(): pass})
 	if _find_button_by_text(dco, "关闭") == null:
 		push_error("GuDeathCauseOverlay 缺少「关闭」按钮")
 		quit(1)
 	if not (_host_has_label_text(dco, "死因 · 寿元") and _host_has_label_text(dco, "当前值：12 / 上限：60")
-			and _host_has_label_text(dco, "距离死线余量：7") and _host_has_label_text(dco, "成因：寿元耗尽即死。")):
-		push_error("GuDeathCauseOverlay 缺少 名称/当前值/上限/距离死线余量/成因 文案行")
+			and _host_has_label_text(dco, "成因：寿元耗尽即死。")):
+		push_error("GuDeathCauseOverlay 缺少 名称/当前值/上限/成因 文案行")
+		quit(1)
+	if _host_has_label_text(dco, "距离死线余量"):
+		push_error("GuDeathCauseOverlay 不应再渲染「距离死线余量」行（恒为 0）")
 		quit(1)
 	print("OK GuDeathCauseOverlay buttons=%d" % _count_buttons(dco))
 	# T5-A D4：GuToast 纯展示组件（buttons>=0，控件必须存在）
