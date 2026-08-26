@@ -296,13 +296,48 @@ static func npc(controller) -> Dictionary:
 	out["stance_note"] = "交涉失败将种子化翻转敌视" if stance == "中立" else ("高恶名使对方戒备" if stance == "敌视" else "极度仇恨：无法撤退")
 	out["notoriety"] = notoriety
 	out["notoriety_note"] = "恶名高亮：威慑部分路线 / 关闭部分交易"
-	out["offers"] = [
-		{"id": "o1", "name": "回购货物", "price": "5 元石", "desc": "出手一批闲置物资"},
-		{"id": "o2", "name": "情报买卖", "price": "3 元石", "desc": "换取下一片区域线索"},
-	]
-	out["barter"] = [
-		{"id": "b1", "name": "迹眼蛊 换 雾步蛊", "give": "迹眼蛊", "take": "雾步蛊", "note": "以物易物 · 需空位校验"},
-	]
+	# N-candidate (night batch): real per-NPC stock from npcs.json "stock",
+	# projected in the offer/barter shapes the UI already consumes. Prices use
+	# Resolver.price_for so inflation/contracts/notoriety show honestly.
+	out["offers"] = []
+	out["barter"] = []
+	var stock: Array = []
+	for npc_value in npcs:
+		if str(npc_value.get("id", "")) == npc_id:
+			stock = npc_value.get("stock", [])
+			break
+	for offer_id_value in stock:
+		var oid := str(offer_id_value)
+		var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(oid, {})
+		if offer.is_empty():
+			continue
+		var kind := str(offer.get("kind", ""))
+		if kind == "barter":
+			var inputs: Array = offer.get("input_gu_ids", [])
+			var take_id := ""
+			for reward_value in offer.get("rewards", []):
+				var reward: Dictionary = reward_value
+				if reward.has("gu_id"):
+					take_id = str(reward["gu_id"])
+					break
+			out["barter"].append({
+				"id": oid,
+				"name": DisplayText.gu(take_id) if not take_id.is_empty() else str(offer.get("card_key", oid)),
+				"give": DisplayText.gu(str(inputs[0])) if not inputs.is_empty() else "一物",
+				"take": DisplayText.gu(take_id) if not take_id.is_empty() else "一物",
+				"note": "以物易物 · 需空位校验",
+			})
+		else:
+			var raw_cost := int(offer.get("stone_cost", 0))
+			var price := "%d 元石" % (ResolverScript.price_for(catalog, state, raw_cost) if state != null else raw_cost)
+			if offer.has("lifespan_cost"):
+				price = str(offer.get("lifespan_cost", 0)) + " 寿元"
+			out["offers"].append({
+				"id": oid,
+				"name": DisplayText.gu(str(offer.get("gu_id", ""))),
+				"price": price,
+				"desc": str(offer.get("clue", offer.get("card_key", ""))),
+			})
 	out["talk_options"] = talk_options
 	out["can_flee"] = stance != "极度仇恨"
 	return out
