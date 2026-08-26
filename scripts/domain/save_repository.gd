@@ -101,6 +101,9 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 	meta.inheritance_codex_ids = _string_array(meta_data.get("inheritance_codex_ids", []))
 	meta.unlocked_content_ids = _string_array(meta_data.get("unlocked_content_ids", []))
 	meta.unlocked_random_outcomes = meta_data.get("unlocked_random_outcomes", {}).duplicate(true)
+	# C1-min §16.13: fields added after v2 ship; old saves default to empty.
+	meta.contracts_unlocked = _string_array(meta_data.get("contracts_unlocked", []))
+	meta.hall_material_bonus_accrued = int(meta_data.get("hall_material_bonus_accrued", 0))
 	meta.statistics = meta_data.get("statistics", {
 		"runs_started": 0,
 		"runs_won": 0,

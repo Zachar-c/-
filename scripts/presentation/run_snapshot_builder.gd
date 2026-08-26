@@ -39,14 +39,34 @@ static func hall(controller) -> Dictionary:
 	return {
 		"has_save": FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH),
 		"available_schools": school_list,
-		"contracts": [],
+		"contracts": _available_contracts(meta, catalog),
 		"meta_stats": {"runs": runs, "endings": endings},
 	}
+
+
+# C1-min §16.13: the hall lists every contract with its exact numbers;
+# ending-locked entries are marked so the UI can gate its checkboxes.
+static func _available_contracts(meta, catalog: Dictionary) -> Array:
+	var unlocked: Array[String] = []
+	if meta != null and meta.has_method("unlocked_contracts"):
+		unlocked = meta.unlocked_contracts(catalog)
+	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
+	var out: Array = []
+	for id in unlocked:
+		var entry: Dictionary = by_id.get(str(id), {})
+		out.append("%s：%s" % [str(entry.get("label", str(id))), str(entry.get("desc", ""))])
+	for entry_id in by_id:
+		if unlocked.has(str(entry_id)):
+			continue
+		var locked_entry: Dictionary = by_id[entry_id]
+		out.append("%s（未解锁）" % str(locked_entry.get("label", str(entry_id))))
+	return out
 
 
 static func map(controller) -> Dictionary:
 	var state = controller.state
 	var route: Array = controller.route
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var nodes: Array[Dictionary] = []
 	for n in MapGeneratorScript.visible_nodes(route, state, 2):
 		nodes.append({
@@ -63,7 +83,7 @@ static func map(controller) -> Dictionary:
 		"current_node_id": str(state.current_node_id),
 		"reachable_ids": reach,
 		"resources": _resources(state),
-		"contracts": _contracts(state),
+		"contracts": _contracts(state, catalog),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
 	}
@@ -92,7 +112,7 @@ static func encounter(controller) -> Dictionary:
 		"actions": actions,
 		"intel": intel,
 		"resources": _resources(state),
-		"contracts": _contracts(state),
+		"contracts": _contracts(state, catalog),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
 	}
@@ -132,7 +152,7 @@ static func battle(controller) -> Dictionary:
 		"synthesis": _synthesis_options(state, catalog),
 		"can_ultimate": false,
 		"resources": _resources(state),
-		"contracts": _contracts(state),
+		"contracts": _contracts(state, catalog),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
 	}
@@ -141,14 +161,7 @@ static func battle(controller) -> Dictionary:
 static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary) -> Dictionary:
 	var state = controller.state
 	var otype := str(outcome.get("outcome", "survived_failure"))
-	var etype := "retreat"
-	match otype:
-		"success": etype = "success"
-		"risky_success": etype = "risky"
-		"survived_failure": etype = "retreat"
-		"death": etype = "death"
-		"gu_fall": etype = "gu_fall"
-		"true_ending": etype = "true_ending"
+	var etype := ending_type_for(otype)
 	var decisions: Array[String] = []
 	for entry in journal:
 		decisions.append(DisplayText.journal_heading(str(entry.get("heading", ""))))
@@ -177,6 +190,19 @@ static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], 
 		"unlocks": unlocks,
 		"aftermath": "修行札记已留存，可于大厅图鉴查阅本次所得。",
 	}
+
+
+# Shared outcome→ending-type vocabulary (snapshot display and MetaProgress
+# contract unlocks must agree on the same ids).
+static func ending_type_for(outcome_name: String) -> String:
+	match outcome_name:
+		"success": return "success"
+		"risky_success": return "risky"
+		"survived_failure": return "retreat"
+		"death": return "death"
+		"gu_fall": return "gu_fall"
+		"true_ending": return "true_ending"
+	return "retreat"
 
 
 static func blow_text(id: String) -> String:
@@ -301,11 +327,16 @@ static func _resources(state) -> Dictionary:
 	}
 
 
-static func _contracts(state) -> Array:
+# C1-min §16.13: real sworn contracts (labels via the catalog) instead of the
+# old body-imprint placeholder.
+static func _contracts(state, catalog: Dictionary = {}) -> Array:
 	var out: Array = []
-	if state != null and state.body_imprints is Array:
-		for x in state.body_imprints:
-			out.append(DisplayText.fact(str(x)))
+	if state == null or not (state.contracts is Array):
+		return out
+	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
+	for x in state.contracts:
+		var id := str(x)
+		out.append(str(by_id.get(id, {}).get("label", id)))
 	return out
 
 
