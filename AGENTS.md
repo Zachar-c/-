@@ -38,8 +38,8 @@
 
 ## 分支与工作树
 
-- **master**：稳定主线，已合并 P1a 批次（休整硬约束、精英代价、Boss 阶段）。
-- **ui-sts-redesign**（当前活跃）：UI 重设计分支，采用 StS 风格 token 体系。已实现 10 个主屏幕（hall、battle、map、encounter、shop、rest、reward、ending、refine、npc），当前进行 T5/T6 批次（confirm-dialog、deathline、ending、debug-panel、polish）。
+- **master**：集成主线（2026-08-26 起新功能批直接落 master：临时 worktree 开发→审查→合并推送；UI 会话合入点 4681d01/c1187da）。
+- **ui-sts-redesign**（并行会话活跃）：UI 重设计分支（StS token 体系 10 屏），主工作树检出中；其未提交改动勿动，完成批经 merge 吸收回 master 后由 UI 会话自行收尾。
 - **c1min-impl**：为避免干扰 master 而创建的临时分支，已完成使命。
 - **.worktrees/game-impl**：存在用户并行 UI 未提交改动与 `stash@{0}` 快照，勿动；合并策略待用户裁定。
 
