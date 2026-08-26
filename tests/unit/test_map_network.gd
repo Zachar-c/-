@@ -1,4 +1,4 @@
-extends GutTest
+﻿extends GutTest
 
 
 var nodes: Array
@@ -10,28 +10,28 @@ func before_each() -> void:
 
 
 func test_same_seed_builds_identical_network_including_next_ids() -> void:
-	for seed in range(1, 6):
-		var first := MapGenerator.build(seed, false)
-		var second := MapGenerator.build(seed, false)
+	for seed_value in range(1, 6):
+		var first := MapGenerator.build(seed_value, false)
+		var second := MapGenerator.build(seed_value, false)
 		assert_eq_deep(first, second)
 
 
 func test_every_generated_node_can_reach_ascension_window() -> void:
-	for seed in range(1, 21):
-		var route := MapGenerator.build(seed, false)
+	for seed_value in range(1, 21):
+		var route := MapGenerator.build(seed_value, false)
 		var by_id := {}
 		for node in route:
 			by_id[str(node["id"])] = node
 		for node in route:
 			assert_true(
 				_can_reach(by_id, str(node["id"]), "ascension_window"),
-				"seed %d node %s must converge to ascension_window" % [seed, node["id"]]
+				"seed %d node %s must converge to ascension_window" % [seed_value, node["id"]]
 			)
 
 
 func test_every_non_start_node_has_at_least_one_incoming_edge() -> void:
-	for seed in range(1, 21):
-		var route := MapGenerator.build(seed, false)
+	for seed_value in range(1, 21):
+		var route := MapGenerator.build(seed_value, false)
 		var incoming := {}
 		for node in route:
 			incoming[str(node["id"])] = 0
@@ -46,31 +46,31 @@ func test_every_non_start_node_has_at_least_one_incoming_edge() -> void:
 				continue
 			assert_gt(
 				int(incoming.get(node_id, 0)), 0,
-				"seed %d node %s must have multiple entries" % [seed, node_id]
+				"seed %d node %s must have multiple entries" % [seed_value, node_id]
 			)
 
 
 func test_anchor_types_are_guaranteed_every_run() -> void:
-	for seed in range(1, 21):
-		var route := MapGenerator.build(seed, false)
+	for seed_value in range(1, 21):
+		var route := MapGenerator.build(seed_value, false)
 		var types: Array[String] = []
 		for node in route:
 			types.append(str(node.get("type", "")))
-		assert_true(types.has("shop"), "seed %d must include a shop node" % seed)
-		assert_true(types.has("refinement"), "seed %d must include a refinement node" % seed)
-		assert_true(types.has("inheritance"), "seed %d must include an inheritance node" % seed)
+		assert_true(types.has("shop"), "seed %d must include a shop node" % seed_value)
+		assert_true(types.has("refinement"), "seed %d must include a refinement node" % seed_value)
+		assert_true(types.has("inheritance"), "seed %d must include an inheritance node" % seed_value)
 
 
 func test_hard_anchors_remain_unique_and_terminal() -> void:
-	for seed in range(1, 11):
-		var route := MapGenerator.build(seed, false)
+	for seed_value in range(1, 11):
+		var route := MapGenerator.build(seed_value, false)
 		var ids: Array[String] = []
 		for node in route:
 			ids.append(str(node["id"]))
-		assert_eq(ids.count("earth_vein_contest"), 1, "seed %d" % seed)
-		assert_true(ids.has("poison_fog_vein"), "seed %d" % seed)
-		assert_true(ids.has("final_boss_stand"), "seed %d" % seed)
-		assert_true(ids.has("ascension_window"), "seed %d" % seed)
+		assert_eq(ids.count("earth_vein_contest"), 1, "seed %d" % seed_value)
+		assert_true(ids.has("poison_fog_vein"), "seed %d" % seed_value)
+		assert_true(ids.has("final_boss_stand"), "seed %d" % seed_value)
+		assert_true(ids.has("ascension_window"), "seed %d" % seed_value)
 
 
 func test_first_run_route_stays_fixed() -> void:

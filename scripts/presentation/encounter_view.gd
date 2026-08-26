@@ -25,7 +25,7 @@ func _ready() -> void:
 func render_session(
 	node: Dictionary,
 	state: RunState,
-	session: Dictionary,
+	_session: Dictionary,
 	results: Array[Dictionary],
 	result: Dictionary,
 	action_cards: Array[Dictionary],

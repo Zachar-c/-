@@ -2,7 +2,6 @@
 
 export GuPanel() -> RuitkVNode {
   var title = props.get("title", "")
-  var style_name = props.get("style_name", "")
   var expand_h = props.get("expand_h", false)
   var expand_v = props.get("expand_v", false)
   var root_style = {}

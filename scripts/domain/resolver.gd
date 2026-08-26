@@ -1,4 +1,4 @@
-class_name Resolver
+﻿class_name Resolver
 extends RefCounted
 
 
@@ -62,30 +62,30 @@ static var _dispatch: Dictionary = {}
 static func _handler_for(command_type: String) -> Variant:
 	if _dispatch.is_empty():
 		_dispatch = {
-			"travel": func(state, command, catalog): return _travel(state, command),
-			"resolve_contact": func(state, command, catalog): return _resolve_contact(state, command),
-			"complete_node": func(state, command, catalog): return _complete_node(state, command),
+			"travel": func(state, command, _catalog): return _travel(state, command),
+			"resolve_contact": func(state, command, _catalog): return _resolve_contact(state, command),
+			"complete_node": func(state, command, _catalog): return _complete_node(state, command),
 			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
 			"sell_gu": func(state, command, catalog): return _sell_gu(state, command, catalog),
 			"exchange_gu": func(state, command, catalog): return _exchange_gu(state, command, catalog),
 			"refine_gu": func(state, command, catalog): return _refine_gu(state, command, catalog),
-			"cultivate_rank_two": func(state, command, catalog): return _cultivate_rank_two(state, catalog),
-			"settle_feeding": func(state, command, catalog): return _settle_feeding(state, catalog),
-			"settle_node_feeding": func(state, command, catalog): return _settle_node_feeding(state, catalog),
-			"disable_card": func(state, command, catalog): return _disable_card(state, command),
-			"upgrade_card": func(state, command, catalog): return _upgrade_card(state, command),
-			"copy_card": func(state, command, catalog): return _copy_card(state, command),
+			"cultivate_rank_two": func(state, _command, catalog): return _cultivate_rank_two(state, catalog),
+			"settle_feeding": func(state, _command, catalog): return _settle_feeding(state, catalog),
+			"settle_node_feeding": func(state, _command, catalog): return _settle_node_feeding(state, catalog),
+			"disable_card": func(state, command, _catalog): return _disable_card(state, command),
+			"upgrade_card": func(state, command, _catalog): return _upgrade_card(state, command),
+			"copy_card": func(state, command, _catalog): return _copy_card(state, command),
 			"destroy_gu": func(state, command, catalog): return _destroy_gu(state, command, catalog),
 			"remove_card": func(state, command, catalog): return _remove_card_command(state, command, catalog),
 			"remove_imprint": func(state, command, catalog): return _remove_imprint_command(state, command, catalog),
-			"spend_lifespan": func(state, command, catalog): return _spend_lifespan(state, command),
-			"accept_debt": func(state, command, catalog): return _accept_debt(state, catalog),
+			"spend_lifespan": func(state, command, _catalog): return _spend_lifespan(state, command),
+			"accept_debt": func(state, _command, catalog): return _accept_debt(state, catalog),
 			"use_gu": func(state, command, catalog): return _use_gu(state, command, catalog),
-			"buy_opportunity": func(state, command, catalog): return _buy_opportunity(state, command),
-			"take_body_imprint": func(state, command, catalog): return _take_body_imprint(state, command),
+			"buy_opportunity": func(state, command, _catalog): return _buy_opportunity(state, command),
+			"take_body_imprint": func(state, command, _catalog): return _take_body_imprint(state, command),
 			"choose_action": func(state, command, catalog): return _choose_action(state, command, catalog),
-			"retreat": func(state, command, catalog): return _retreat(state),
-			"attempt_ascension": func(state, command, catalog): return _attempt_ascension(state, command),
+			"retreat": func(state, _command, _catalog): return _retreat(state),
+			"attempt_ascension": func(state, command, _catalog): return _attempt_ascension(state, command),
 			"gain_relic": func(state, command, catalog): return _gain_relic(state, command, catalog),
 			"shop_purchase": func(state, command, catalog): return _shop_purchase(state, command, catalog),
 			"shop_lifespan_deal": func(state, command, catalog): return _shop_lifespan_deal(state, command, catalog),
@@ -93,9 +93,9 @@ static func _handler_for(command_type: String) -> Variant:
 			"scavenge": func(state, command, catalog): return _scavenge(state, command, catalog),
 			"sell_material": func(state, command, catalog): return _sell_material(state, command, catalog),
 			"raise_aptitude": func(state, command, catalog): return _raise_aptitude(state, command, catalog),
-			"record_neutral_npc_kill": func(state, command, catalog): return _record_neutral_npc_kill(state, catalog),
-			"wash_notoriety": func(state, command, catalog): return _wash_notoriety(state, catalog),
-			"record_boss_defeated": func(state, command, catalog): return _record_boss_defeated(state, catalog),
+			"record_neutral_npc_kill": func(state, _command, catalog): return _record_neutral_npc_kill(state, catalog),
+			"wash_notoriety": func(state, _command, catalog): return _wash_notoriety(state, catalog),
+			"record_boss_defeated": func(state, _command, catalog): return _record_boss_defeated(state, catalog),
 			"rest": func(state, command, catalog): return _rest(state, command, catalog),
 			"gain_force_power": func(state, command, catalog): return _gain_force_power(state, command, catalog),
 			"accept_event": func(state, command, catalog): return _accept_event(state, command, catalog),
@@ -261,7 +261,7 @@ static func _spend_materials(state: RunState, material_cost: Dictionary) -> RunS
 	return next
 
 
-static func _apply_combine_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var material_cost: Dictionary = recipe.get("materials", {})
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
@@ -402,7 +402,7 @@ static func _refinement_roll(state: RunState, recipe_id: String) -> int:
 	return rng.next_index(100) + 1
 
 
-static func _apply_free_mix(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dictionary, recipe: Dictionary) -> Dictionary:
 	var min_inputs := int(recipe.get("min_inputs", 2))
 	var requested: Array = command.get("input_instance_ids", [])
 	var selected: Array[String] = []
@@ -504,10 +504,10 @@ static func _apply_free_mix(state: RunState, command: Dictionary, catalog: Dicti
 
 static func _free_mix_seed(state: RunState, instance_ids: Array[String]) -> int:
 	var text := "+".join(instance_ids)
-	var hash := 0
+	var digest := 0
 	for character in text:
-		hash = hash * 31 + character.unicode_at(0)
-	return int(state.seed) * 1000003 + state.event_log.size() * 97 + hash
+		digest = digest * 31 + character.unicode_at(0)
+	return int(state.seed) * 1000003 + state.event_log.size() * 97 + digest
 
 
 static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
@@ -843,7 +843,7 @@ static func _settle_feeding(state: RunState, catalog: Dictionary) -> Dictionary:
 	return _accepted(next)
 
 
-static func _accept_debt(state: RunState, catalog: Dictionary) -> Dictionary:
+static func _accept_debt(state: RunState, _catalog: Dictionary) -> Dictionary:
 	if state.current_node_id != "stage_one_ledger":
 		return _rejected(state, "not_stage_ledger")
 	if state.known_facts.has("caravan_favor_debt"):
@@ -990,7 +990,7 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	return _accepted(next)
 
 
-static func _shop_soul_boost(state: RunState, command: Dictionary, catalog: Dictionary, offer: Dictionary) -> Dictionary:
+static func _shop_soul_boost(state: RunState, _command: Dictionary, catalog: Dictionary, offer: Dictionary) -> Dictionary:
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
@@ -1593,7 +1593,7 @@ static func _grant_lifespan_milestone(state: RunState, catalog: Dictionary, mile
 	))
 
 
-static func _gain_force_power(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+static func _gain_force_power(state: RunState, command: Dictionary, _catalog: Dictionary) -> Dictionary:
 	var source_id := str(command.get("source_id", ""))
 	if source_id.is_empty():
 		return _rejected(state, "missing_force_source")
@@ -1868,7 +1868,7 @@ static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> i
 	return maxi(1, int(floor(float(base) * multiplier)))
 
 
-static func _scavenge(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary) -> Dictionary:
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return _rejected(state, "boss_undefeated")
 	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})

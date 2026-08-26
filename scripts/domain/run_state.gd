@@ -5,6 +5,7 @@ extends RefCounted
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
 
+@warning_ignore("shadowed_global_identifier")
 var seed: int = 0
 var stage: String = "one"
 var cultivation: int = 1

@@ -57,19 +57,19 @@ func render(route: Array[Dictionary], state: RunState, catalog: Dictionary, meta
 	body.add_theme_constant_override("separation", 18)
 	column.add_child(body)
 	_append_brand(column, state)
-	var center := _append_route(body, route, state)
+	_append_route(body, route, state)
 	var panel := _append_panel(body, state, catalog, meta)
 	_append_command_bar(column, panel, feedback)
 
 
-func _append_header(column: VBoxContainer, state: RunState) -> void:
+func _append_header(column: VBoxContainer, _state: RunState) -> void:
 	var title := Label.new()
 	title.text = "南疆行程"
 	title.add_theme_font_size_override("font_size", 30)
 	column.add_child(title)
 
 
-func _append_brand(column: VBoxContainer, state: RunState) -> void:
+func _append_brand(_column: VBoxContainer, _state: RunState) -> void:
 	return
 
 
@@ -163,7 +163,7 @@ func _append_line(panel: VBoxContainer, text: String) -> void:
 	panel.add_child(label)
 
 
-func _append_gu_row(panel: VBoxContainer, state: RunState, catalog: Dictionary, instance: Dictionary) -> void:
+func _append_gu_row(panel: VBoxContainer, state: RunState, _catalog: Dictionary, instance: Dictionary) -> void:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	panel.add_child(row)
@@ -171,10 +171,10 @@ func _append_gu_row(panel: VBoxContainer, state: RunState, catalog: Dictionary, 
 	orb.gu_id = str(instance.get("definition_id", ""))
 	orb.tooltip_text = DisplayText.gu(str(instance.get("definition_id", "")))
 	row.add_child(orb)
-	var name := Label.new()
-	name.text = DisplayText.gu(str(instance.get("definition_id", "")))
-	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(name)
+	var name_label := Label.new()
+	name_label.text = DisplayText.gu(str(instance.get("definition_id", "")))
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(name_label)
 	var destroy := Button.new()
 	destroy.text = "销毁"
 	destroy.custom_minimum_size = Vector2(64, 30)

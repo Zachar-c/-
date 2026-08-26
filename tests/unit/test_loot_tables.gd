@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+﻿extends "res://addons/gut/test.gd"
 
 
 # B2 loot loop: victory drops (materials/gu), boss scavenge unlocks the
@@ -67,17 +67,17 @@ func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
 	elite["gu_pool"]["weights"] = {"common": 1}
 	elite["gu_pool"]["by_rarity"] = {"common": ["stone_shell_gu", "gen_blood_attack_001_gu"]}
 	var battle := {"enemy_kind": "ridge_elite_scout"}
-	for seed in range(1, 13):
-		var force_state := make_state(seed)
+	for seed_value in range(1, 13):
+		var force_state := make_state(seed_value)
 		force_state.school = "force"
 		var force_roll: Dictionary = LootResolverScript.settle_victory(battle, force_state, cat)
 		assert_eq(str(force_roll["loot"].get("gu_id", "")), "stone_shell_gu",
-				"force school seed %d must draw its exclusive pool entry" % seed)
-		var blood_state := make_state(seed)
+				"force school seed %d must draw its exclusive pool entry" % seed_value)
+		var blood_state := make_state(seed_value)
 		blood_state.school = "blood"
 		var blood_roll: Dictionary = LootResolverScript.settle_victory(battle, blood_state, cat)
 		assert_eq(str(blood_roll["loot"].get("gu_id", "")), "gen_blood_attack_001_gu",
-				"blood school seed %d must draw its exclusive pool entry" % seed)
+				"blood school seed %d must draw its exclusive pool entry" % seed_value)
 
 
 func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:

@@ -128,11 +128,11 @@ func _follow_mouse() -> void:
 	if viewport == null:
 		return
 	var vp_size := viewport.get_visible_rect().size
-	var size := _panel.get_combined_minimum_size()
-	_panel.size = size
+	var panel_size := _panel.get_combined_minimum_size()
+	_panel.size = panel_size
 	var pos := get_global_mouse_position() + Vector2(18, 18)
-	pos.x = mini(pos.x, vp_size.x - size.x - 4.0)
-	pos.y = mini(pos.y, vp_size.y - size.y - 4.0)
+	pos.x = minf(pos.x, vp_size.x - panel_size.x - 4.0)
+	pos.y = minf(pos.y, vp_size.y - panel_size.y - 4.0)
 	pos = pos.max(Vector2(4.0, 4.0))
 	global_position = pos
 

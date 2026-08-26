@@ -66,7 +66,6 @@ export NpcScreen() -> RuitkVNode {
   var barter = state.get("barter", [])
   var barter_rows = []
   for b in barter:
-    var bname = str(b.get("name", ""))
     var bgive = str(b.get("give", ""))
     var btake = str(b.get("take", ""))
     var bnote = str(b.get("note", ""))

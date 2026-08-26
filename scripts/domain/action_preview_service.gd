@@ -339,6 +339,9 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	var codex_unlocked := state.global_codex_ids.has(str(recipe.get("id", ""))) or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
 	var deck_full := DeckCapacityScript.projected_count(state, catalog, [str(recipe.get("output_gu_id", ""))], inputs) > DeckCapacityScript.capacity(catalog)
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
+	var success_rate: Variant = null
+	if not is_fixed:
+		success_rate = int(recipe.get("success_roll_max", 0))
 	var executable := missing.is_empty() and (not locked or codex_unlocked) and not deck_full
 	var reason := ""
 	if deck_full:
@@ -357,7 +360,7 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 		"known_risk": ["失败会损毁输入蛊虫：%s。" % _gu_names(inputs)] if destroys_inputs else [],
 		"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
 		"unknown_note": "" if is_fixed else "炼制成败未定。",
-		"success_rate": null if is_fixed else int(recipe.get("success_roll_max", 0)),
+		"success_rate": success_rate,
 		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if locked and not codex_unlocked else _gu_remedies(missing),
 		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"])},
 	}))

@@ -193,7 +193,6 @@ func test_map_view_uses_reference_layout_regions() -> void:
 func test_map_view_exposes_gu_management_and_save_commands() -> void:
 	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
 	controller.start_new_run(101)
-	var gu_by_id: Dictionary = controller.catalog.get("gu_by_id", {})
 	controller.state.gu_instances["gu_002"] = {
 		"instance_id": "gu_002",
 		"definition_id": "stone_shell_gu",
