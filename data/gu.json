@@ -1,0 +1,7475 @@
+[
+  {
+    "id": "small_light_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "light_probe"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "scout",
+    "combat": "reveal_hidden_bonus",
+    "field_actions": [
+      "scout",
+      "signal",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden",
+      "support_retreat"
+    ],
+    "replace_value": 3,
+    "tags": [
+      "light",
+      "scout",
+      "subtle"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common"
+  },
+  {
+    "id": "trail_eye_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "scout_eye"
+    ],
+    "value": 4,
+    "essence_cost": 1,
+    "slot_role": "scout",
+    "combat": "mark_enemy_route",
+    "field_actions": [
+      "trace",
+      "inspect"
+    ],
+    "synergy_hooks": [
+      "track_target",
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "scout",
+      "tracking",
+      "reveal"
+    ],
+    "school": "qi",
+    "role": "recon",
+    "rarity": "common"
+  },
+  {
+    "id": "blood_moss_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_moss_relief"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_and_bleed",
+    "field_actions": [
+      "tend_wound"
+    ],
+    "synergy_hooks": [
+      "heal_then_strike",
+      "injury_relief"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "blood",
+      "healing",
+      "wood"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "common"
+  },
+  {
+    "id": "thorn_whip_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "thorn_strike",
+      "thorn_bind"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "bind_and_strike",
+    "field_actions": [
+      "climb",
+      "restrain"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "heal_then_strike"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "wood",
+      "attack",
+      "control"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common"
+  },
+  {
+    "id": "mist_step_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "shift_position",
+    "field_actions": [
+      "cross_gap",
+      "withdraw"
+    ],
+    "synergy_hooks": [
+      "support_retreat",
+      "avoid_control"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "movement",
+      "escape",
+      "mist"
+    ],
+    "school": "force",
+    "role": "movement",
+    "rarity": "rare"
+  },
+  {
+    "id": "venom_thread_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "venom_snare"
+    ],
+    "value": 6,
+    "essence_cost": 1,
+    "slot_role": "control",
+    "combat": "poison_and_slow",
+    "field_actions": [
+      "set_snare",
+      "threaten"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "support_retreat"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "poison",
+      "control",
+      "escape"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common"
+  },
+  {
+    "id": "stone_shell_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "stone_guard"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "guard_against_hit",
+    "field_actions": [
+      "brace",
+      "hold_passage"
+    ],
+    "synergy_hooks": [
+      "guard_ally",
+      "resist_hazard"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "defense",
+      "earth",
+      "guard"
+    ],
+    "school": "force",
+    "role": "defense",
+    "rarity": "common"
+  },
+  {
+    "id": "shadow_veil_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "shadow_haze"
+    ],
+    "value": 6,
+    "essence_cost": 1,
+    "slot_role": "disguise",
+    "combat": "obscure_targeting",
+    "field_actions": [
+      "hide",
+      "impersonate"
+    ],
+    "synergy_hooks": [
+      "avoid_control",
+      "support_retreat"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "stealth",
+      "escape",
+      "shadow"
+    ],
+    "school": "qi",
+    "role": "movement",
+    "rarity": "rare"
+  },
+  {
+    "id": "pulse_drum_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "pulse_wave"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "tempo",
+    "combat": "interrupt_enemy",
+    "field_actions": [
+      "distract",
+      "rally"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "turn_order_shift"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "tempo",
+      "control",
+      "sound"
+    ],
+    "school": "qi",
+    "role": "logistics",
+    "rarity": "common"
+  },
+  {
+    "id": "moonlight_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "moonlight_strike"
+    ],
+    "value": 4,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "illuminate"
+    ],
+    "synergy_hooks": [
+      "light_combo"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "light",
+      "attack",
+      "moon"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "epic"
+  },
+  {
+    "id": "moon_glow_gu",
+    "rank": 2,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "moon_glow_flare"
+    ],
+    "value": 9,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "illuminate",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "light_combo"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "light",
+      "attack",
+      "moon"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "rare"
+  },
+  {
+    "id": "phantom_moon_gu",
+    "rank": 2,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 12,
+    "essence_cost": 2,
+    "slot_role": "disguise",
+    "combat": "obscure_targeting",
+    "field_actions": [
+      "hide",
+      "impersonate",
+      "illuminate"
+    ],
+    "synergy_hooks": [
+      "avoid_control",
+      "light_combo"
+    ],
+    "replace_value": 8,
+    "tags": [
+      "light",
+      "stealth",
+      "moon"
+    ],
+    "school": "qi",
+    "role": "recon",
+    "rarity": "epic"
+  },
+  {
+    "id": "moon_shadow_gu",
+    "rank": 3,
+    "feeding_cost": 3,
+    "feeding_need": {
+      "feed_points": 3
+    },
+    "card_blueprint_ids": [],
+    "value": 16,
+    "essence_cost": 3,
+    "slot_role": "movement",
+    "combat": "shift_position",
+    "field_actions": [
+      "hide",
+      "cross_gap",
+      "withdraw"
+    ],
+    "synergy_hooks": [
+      "support_retreat",
+      "avoid_control",
+      "light_combo"
+    ],
+    "replace_value": 11,
+    "tags": [
+      "light",
+      "shadow",
+      "movement",
+      "moon"
+    ],
+    "school": "force",
+    "role": "movement",
+    "rarity": "rare"
+  },
+  {
+    "id": "blood_droplet_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_droplet_shot"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "strike",
+      "threaten"
+    ],
+    "synergy_hooks": [
+      "light_combo",
+      "blood_stacks_combo"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common"
+  },
+  {
+    "id": "blood_bat_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_bat_bite"
+    ],
+    "value": 6,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "drain_strike",
+    "field_actions": [
+      "strike",
+      "tend_wound"
+    ],
+    "synergy_hooks": [
+      "heal_then_strike",
+      "injury_relief"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "blood",
+      "attack",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "rare"
+  },
+  {
+    "id": "blood_wing_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "blood_wing_escape"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "shift_position",
+    "field_actions": [
+      "withdraw",
+      "hide"
+    ],
+    "synergy_hooks": [
+      "support_retreat",
+      "avoid_control"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement",
+    "rarity": "epic"
+  },
+  {
+    "id": "blood_farewell_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "farewell_grip"
+    ],
+    "value": 6,
+    "essence_cost": 1,
+    "slot_role": "control",
+    "combat": "poison_and_slow",
+    "field_actions": [
+      "set_snare",
+      "threaten"
+    ],
+    "synergy_hooks": [
+      "control_follow_up",
+      "support_retreat"
+    ],
+    "replace_value": 6,
+    "tags": [
+      "blood",
+      "attack",
+      "poison"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "epic",
+    "can_direct_drop": false
+  },
+  {
+    "id": "force_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "power_blow"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "strike",
+      "brace"
+    ],
+    "synergy_hooks": [
+      "light_combo",
+      "force_power_synergy"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "force",
+      "attack",
+      "power"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common"
+  },
+  {
+    "id": "bear_strength_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "bear_vitality"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_and_bleed",
+    "field_actions": [
+      "tend_wound",
+      "brace"
+    ],
+    "synergy_hooks": [
+      "heal_then_strike",
+      "injury_relief"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "force",
+      "healing",
+      "beast"
+    ],
+    "school": "force",
+    "role": "healing",
+    "rarity": "rare"
+  },
+  {
+    "id": "qi_wall_gu",
+    "rank": 1,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [
+      "qi_bulwark"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "guard_against_hit",
+    "field_actions": [
+      "brace",
+      "hold_passage"
+    ],
+    "synergy_hooks": [
+      "guard_ally",
+      "resist_hazard"
+    ],
+    "replace_value": 5,
+    "tags": [
+      "qi",
+      "defense",
+      "air"
+    ],
+    "school": "qi",
+    "role": "defense",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_001_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_001_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_002_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_002_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_defense_003_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_defense_003_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "blood_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "defense",
+      "guard"
+    ],
+    "school": "blood",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_movement_004_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_movement_004_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "blood_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_healing_005_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_healing_005_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "blood_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "healing",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_recon_006_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_recon_006_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "blood_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "scout",
+      "reveal"
+    ],
+    "school": "blood",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_logistics_007_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_logistics_007_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "blood_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "tempo",
+      "subtle"
+    ],
+    "school": "blood",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_008_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_008_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_009_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_009_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_defense_010_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_defense_010_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "blood_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "defense",
+      "guard"
+    ],
+    "school": "blood",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_movement_011_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_movement_011_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "blood_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_healing_012_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_healing_012_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "blood_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "healing",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_recon_013_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_recon_013_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "blood_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "scout",
+      "reveal"
+    ],
+    "school": "blood",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_logistics_014_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_logistics_014_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "blood_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "tempo",
+      "subtle"
+    ],
+    "school": "blood",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_015_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_015_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_016_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_016_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_defense_017_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_defense_017_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "blood_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "defense",
+      "guard"
+    ],
+    "school": "blood",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_movement_018_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_movement_018_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "blood_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_healing_019_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_healing_019_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "blood_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "healing",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_recon_020_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_recon_020_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "blood_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "scout",
+      "reveal"
+    ],
+    "school": "blood",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_logistics_021_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_logistics_021_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "blood_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "tempo",
+      "subtle"
+    ],
+    "school": "blood",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_022_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_022_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_023_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_023_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_defense_024_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_defense_024_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "blood_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "defense",
+      "guard"
+    ],
+    "school": "blood",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_movement_025_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_movement_025_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "blood_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_healing_026_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_healing_026_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "blood_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "healing",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_recon_027_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_recon_027_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "blood_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "scout",
+      "reveal"
+    ],
+    "school": "blood",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_logistics_028_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_logistics_028_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "blood_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "tempo",
+      "subtle"
+    ],
+    "school": "blood",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_029_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_029_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_attack_030_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_attack_030_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "blood_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "attack",
+      "projectile"
+    ],
+    "school": "blood",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_defense_031_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_defense_031_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "blood_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "defense",
+      "guard"
+    ],
+    "school": "blood",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_movement_032_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_movement_032_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "blood_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "blood",
+      "movement",
+      "escape"
+    ],
+    "school": "blood",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_healing_033_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_healing_033_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "healing",
+    "combat": "blood_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "blood",
+      "healing",
+      "drain"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_blood_recon_034_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_blood_recon_034_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "recon",
+    "combat": "blood_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "blood",
+      "scout",
+      "reveal"
+    ],
+    "school": "blood",
+    "role": "recon",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_logistics_035_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_logistics_035_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "qi_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "tempo",
+      "subtle"
+    ],
+    "school": "qi",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_036_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_036_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_037_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_037_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_defense_038_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_defense_038_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "qi_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "defense",
+      "guard"
+    ],
+    "school": "qi",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_movement_039_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_movement_039_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "qi_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "movement",
+      "escape"
+    ],
+    "school": "qi",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_healing_040_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_healing_040_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "qi_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "healing",
+      "drain"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_recon_041_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_recon_041_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "qi_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "scout",
+      "reveal"
+    ],
+    "school": "qi",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_logistics_042_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_logistics_042_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "qi_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "tempo",
+      "subtle"
+    ],
+    "school": "qi",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_043_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_043_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_044_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_044_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_defense_045_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_defense_045_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "qi_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "defense",
+      "guard"
+    ],
+    "school": "qi",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_movement_046_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_movement_046_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "qi_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "movement",
+      "escape"
+    ],
+    "school": "qi",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_healing_047_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_healing_047_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "qi_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "healing",
+      "drain"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_recon_048_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_recon_048_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "qi_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "scout",
+      "reveal"
+    ],
+    "school": "qi",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_logistics_049_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_logistics_049_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "qi_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "tempo",
+      "subtle"
+    ],
+    "school": "qi",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_050_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_050_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_051_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_051_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_defense_052_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_defense_052_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "qi_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "defense",
+      "guard"
+    ],
+    "school": "qi",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_movement_053_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_movement_053_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "qi_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "qi",
+      "movement",
+      "escape"
+    ],
+    "school": "qi",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_healing_054_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_healing_054_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "qi_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "healing",
+      "drain"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_recon_055_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_recon_055_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "qi_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "scout",
+      "reveal"
+    ],
+    "school": "qi",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_logistics_056_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_logistics_056_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "qi_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "tempo",
+      "subtle"
+    ],
+    "school": "qi",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_057_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_057_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_058_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_058_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_defense_059_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_defense_059_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "qi_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "defense",
+      "guard"
+    ],
+    "school": "qi",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_movement_060_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_movement_060_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "qi_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "movement",
+      "escape"
+    ],
+    "school": "qi",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_healing_061_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_healing_061_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "qi_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "healing",
+      "drain"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_recon_062_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_recon_062_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "qi_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "scout",
+      "reveal"
+    ],
+    "school": "qi",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_logistics_063_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_logistics_063_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "qi_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "tempo",
+      "subtle"
+    ],
+    "school": "qi",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_064_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_064_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_attack_065_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_attack_065_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "qi_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "qi",
+      "attack",
+      "projectile"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 3
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_defense_066_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_defense_066_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "defense",
+    "combat": "qi_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "qi",
+      "defense",
+      "guard"
+    ],
+    "school": "qi",
+    "role": "defense",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_qi_movement_067_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_qi_movement_067_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "movement",
+    "combat": "qi_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "qi",
+      "movement",
+      "escape"
+    ],
+    "school": "qi",
+    "role": "movement",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_healing_068_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_healing_068_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "force_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "healing",
+      "drain"
+    ],
+    "school": "force",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_recon_069_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_recon_069_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "force_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "scout",
+      "reveal"
+    ],
+    "school": "force",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_logistics_070_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_logistics_070_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "force_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "tempo",
+      "subtle"
+    ],
+    "school": "force",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_071_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_071_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_072_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_072_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_defense_073_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_defense_073_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "force_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "defense",
+      "guard"
+    ],
+    "school": "force",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_movement_074_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_movement_074_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "force_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "movement",
+      "escape"
+    ],
+    "school": "force",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_healing_075_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_healing_075_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "force_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "healing",
+      "drain"
+    ],
+    "school": "force",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_recon_076_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_recon_076_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "force_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "scout",
+      "reveal"
+    ],
+    "school": "force",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_logistics_077_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_logistics_077_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "force_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "tempo",
+      "subtle"
+    ],
+    "school": "force",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_078_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_078_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_079_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_079_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_defense_080_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_defense_080_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "force_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "defense",
+      "guard"
+    ],
+    "school": "force",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_movement_081_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_movement_081_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "force_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "movement",
+      "escape"
+    ],
+    "school": "force",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_healing_082_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_healing_082_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "force_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "healing",
+      "drain"
+    ],
+    "school": "force",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_recon_083_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_recon_083_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "force_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "scout",
+      "reveal"
+    ],
+    "school": "force",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_logistics_084_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_logistics_084_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "force_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "tempo",
+      "subtle"
+    ],
+    "school": "force",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_085_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_085_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_086_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_086_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_defense_087_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_defense_087_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "force_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "defense",
+      "guard"
+    ],
+    "school": "force",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_movement_088_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_movement_088_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "force_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "force",
+      "movement",
+      "escape"
+    ],
+    "school": "force",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_healing_089_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_healing_089_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "force_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "healing",
+      "drain"
+    ],
+    "school": "force",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_recon_090_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_recon_090_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "force_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "scout",
+      "reveal"
+    ],
+    "school": "force",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_logistics_091_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_logistics_091_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "force_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "tempo",
+      "subtle"
+    ],
+    "school": "force",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_092_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_092_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_093_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_093_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_defense_094_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_defense_094_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "force_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "defense",
+      "guard"
+    ],
+    "school": "force",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_movement_095_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_movement_095_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "force_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "movement",
+      "escape"
+    ],
+    "school": "force",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_healing_096_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_healing_096_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "force_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "healing",
+      "drain"
+    ],
+    "school": "force",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_recon_097_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_recon_097_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "force_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "force",
+      "scout",
+      "reveal"
+    ],
+    "school": "force",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_logistics_098_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_logistics_098_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "logistics",
+    "combat": "force_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "force",
+      "tempo",
+      "subtle"
+    ],
+    "school": "force",
+    "role": "logistics",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_099_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_099_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 3
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_force_attack_100_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_force_attack_100_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "force_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "force",
+      "attack",
+      "projectile"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 3
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_defense_101_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_defense_101_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "soul_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "defense",
+      "guard"
+    ],
+    "school": "soul",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_movement_102_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_movement_102_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "soul_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "movement",
+      "escape"
+    ],
+    "school": "soul",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_healing_103_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_healing_103_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "soul_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "healing",
+      "drain"
+    ],
+    "school": "soul",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_recon_104_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_recon_104_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "soul_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "scout",
+      "reveal"
+    ],
+    "school": "soul",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_logistics_105_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_logistics_105_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "soul_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "tempo",
+      "subtle"
+    ],
+    "school": "soul",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_106_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_106_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_107_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_107_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_defense_108_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_defense_108_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "soul_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "defense",
+      "guard"
+    ],
+    "school": "soul",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_movement_109_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_movement_109_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "soul_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "movement",
+      "escape"
+    ],
+    "school": "soul",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_healing_110_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_healing_110_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "soul_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "healing",
+      "drain"
+    ],
+    "school": "soul",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_recon_111_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_recon_111_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "soul_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "scout",
+      "reveal"
+    ],
+    "school": "soul",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_logistics_112_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_logistics_112_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "soul_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "tempo",
+      "subtle"
+    ],
+    "school": "soul",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_113_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_113_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_114_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_114_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_defense_115_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_defense_115_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "soul_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "defense",
+      "guard"
+    ],
+    "school": "soul",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_movement_116_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_movement_116_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "soul_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "movement",
+      "escape"
+    ],
+    "school": "soul",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_healing_117_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_healing_117_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "soul_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "healing",
+      "drain"
+    ],
+    "school": "soul",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_recon_118_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_recon_118_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "soul_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "scout",
+      "reveal"
+    ],
+    "school": "soul",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_logistics_119_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_logistics_119_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "soul_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "tempo",
+      "subtle"
+    ],
+    "school": "soul",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_120_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_120_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_121_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_121_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_defense_122_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_defense_122_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "soul_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "defense",
+      "guard"
+    ],
+    "school": "soul",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_movement_123_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_movement_123_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "soul_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "movement",
+      "escape"
+    ],
+    "school": "soul",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_healing_124_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_healing_124_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "soul_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "soul",
+      "healing",
+      "drain"
+    ],
+    "school": "soul",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_recon_125_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_recon_125_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "soul_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "scout",
+      "reveal"
+    ],
+    "school": "soul",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_logistics_126_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_logistics_126_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "soul_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "tempo",
+      "subtle"
+    ],
+    "school": "soul",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_127_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_127_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_128_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_128_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_defense_129_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_defense_129_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "soul_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "defense",
+      "guard"
+    ],
+    "school": "soul",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_movement_130_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_movement_130_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "soul_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "movement",
+      "escape"
+    ],
+    "school": "soul",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_healing_131_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_healing_131_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "soul_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "healing",
+      "drain"
+    ],
+    "school": "soul",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_recon_132_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_recon_132_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "soul_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "scout",
+      "reveal"
+    ],
+    "school": "soul",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_logistics_133_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_logistics_133_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "soul_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "tempo",
+      "subtle"
+    ],
+    "school": "soul",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_134_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_134_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_attack_135_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_attack_135_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "soul_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "attack",
+      "projectile"
+    ],
+    "school": "soul",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_defense_136_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_defense_136_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "soul_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "soul",
+      "defense",
+      "guard"
+    ],
+    "school": "soul",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_movement_137_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_movement_137_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "movement",
+    "combat": "soul_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "soul",
+      "movement",
+      "escape"
+    ],
+    "school": "soul",
+    "role": "movement",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_healing_138_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_healing_138_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "healing",
+    "combat": "soul_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "soul",
+      "healing",
+      "drain"
+    ],
+    "school": "soul",
+    "role": "healing",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_recon_139_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_recon_139_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "recon",
+    "combat": "soul_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "soul",
+      "scout",
+      "reveal"
+    ],
+    "school": "soul",
+    "role": "recon",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_soul_logistics_140_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_soul_logistics_140_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "logistics",
+    "combat": "soul_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "soul",
+      "tempo",
+      "subtle"
+    ],
+    "school": "soul",
+    "role": "logistics",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_141_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_141_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_142_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_142_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_defense_143_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_defense_143_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "refine_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "defense",
+      "guard"
+    ],
+    "school": "refine",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_movement_144_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_movement_144_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "refine_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "movement",
+      "escape"
+    ],
+    "school": "refine",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_healing_145_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_healing_145_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "refine_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "healing",
+      "drain"
+    ],
+    "school": "refine",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_recon_146_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_recon_146_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "refine_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "scout",
+      "reveal"
+    ],
+    "school": "refine",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_logistics_147_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_logistics_147_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "refine_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "tempo",
+      "subtle"
+    ],
+    "school": "refine",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_148_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_148_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_149_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_149_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_defense_150_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_defense_150_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "refine_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "defense",
+      "guard"
+    ],
+    "school": "refine",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_movement_151_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_movement_151_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "refine_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "movement",
+      "escape"
+    ],
+    "school": "refine",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_healing_152_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_healing_152_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "refine_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "healing",
+      "drain"
+    ],
+    "school": "refine",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_recon_153_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_recon_153_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "refine_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "scout",
+      "reveal"
+    ],
+    "school": "refine",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_logistics_154_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_logistics_154_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "refine_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "tempo",
+      "subtle"
+    ],
+    "school": "refine",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_155_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_155_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_156_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_156_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_defense_157_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_defense_157_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "refine_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "defense",
+      "guard"
+    ],
+    "school": "refine",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_movement_158_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_movement_158_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "refine_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "movement",
+      "escape"
+    ],
+    "school": "refine",
+    "role": "movement",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_healing_159_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_healing_159_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "refine_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "healing",
+      "drain"
+    ],
+    "school": "refine",
+    "role": "healing",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_recon_160_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_recon_160_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "refine_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "scout",
+      "reveal"
+    ],
+    "school": "refine",
+    "role": "recon",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_logistics_161_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_logistics_161_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "refine_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "tempo",
+      "subtle"
+    ],
+    "school": "refine",
+    "role": "logistics",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_162_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_162_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_163_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_163_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_defense_164_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_defense_164_card"
+    ],
+    "value": 3,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "refine_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "refine",
+      "defense",
+      "guard"
+    ],
+    "school": "refine",
+    "role": "defense",
+    "rarity": "common",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_movement_165_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_movement_165_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "refine_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "movement",
+      "escape"
+    ],
+    "school": "refine",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_healing_166_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_healing_166_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "refine_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "healing",
+      "drain"
+    ],
+    "school": "refine",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_recon_167_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_recon_167_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "refine_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "scout",
+      "reveal"
+    ],
+    "school": "refine",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_logistics_168_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_logistics_168_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "refine_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "tempo",
+      "subtle"
+    ],
+    "school": "refine",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_169_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_169_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_170_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_170_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_defense_171_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_defense_171_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "defense",
+    "combat": "refine_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "defense",
+      "guard"
+    ],
+    "school": "refine",
+    "role": "defense",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_movement_172_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_movement_172_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "movement",
+    "combat": "refine_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "movement",
+      "escape"
+    ],
+    "school": "refine",
+    "role": "movement",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_healing_173_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_healing_173_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "refine_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "healing",
+      "drain"
+    ],
+    "school": "refine",
+    "role": "healing",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_recon_174_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_recon_174_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "recon",
+    "combat": "refine_recon_pattern",
+    "field_actions": [
+      "scout",
+      "disguise"
+    ],
+    "synergy_hooks": [
+      "reveal_hidden"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "scout",
+      "reveal"
+    ],
+    "school": "refine",
+    "role": "recon",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "revealed"
+      },
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_logistics_175_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_logistics_175_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "logistics",
+    "combat": "refine_logistics_pattern",
+    "field_actions": [
+      "feed",
+      "store"
+    ],
+    "synergy_hooks": [
+      "slow_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "tempo",
+      "subtle"
+    ],
+    "school": "refine",
+    "role": "logistics",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "delay_progress",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_176_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_176_card"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 4,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "rare",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 2
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_attack_177_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_bone": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_attack_177_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "refine_attack_pattern",
+    "field_actions": [
+      "attack"
+    ],
+    "synergy_hooks": [
+      "strike_enemy"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "refine",
+      "attack",
+      "projectile"
+    ],
+    "school": "refine",
+    "role": "attack",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "strike",
+        "amount": 3
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_defense_178_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "venom_sac": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_defense_178_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "defense",
+    "combat": "refine_defense_pattern",
+    "field_actions": [
+      "guard"
+    ],
+    "synergy_hooks": [
+      "guard_self"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "refine",
+      "defense",
+      "guard"
+    ],
+    "school": "refine",
+    "role": "defense",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "guarded"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_movement_179_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "moon_dew": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_movement_179_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "movement",
+    "combat": "refine_movement_pattern",
+    "field_actions": [
+      "escape",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "preserve_retreat"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "refine",
+      "movement",
+      "escape"
+    ],
+    "school": "refine",
+    "role": "movement",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "add_flag",
+        "flag": "retreat_preserved"
+      }
+    ],
+    "source": "game_new"
+  },
+  {
+    "id": "gen_refine_healing_180_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "beast_blood": 1
+    },
+    "card_blueprint_ids": [
+      "gen_refine_healing_180_card"
+    ],
+    "value": 8,
+    "essence_cost": 2,
+    "slot_role": "healing",
+    "combat": "refine_healing_pattern",
+    "field_actions": [
+      "heal"
+    ],
+    "synergy_hooks": [
+      "relief_injury"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "refine",
+      "healing",
+      "drain"
+    ],
+    "school": "refine",
+    "role": "healing",
+    "rarity": "epic",
+    "combat_effects": [
+      {
+        "kind": "heal_injury",
+        "amount": 1
+      }
+    ],
+    "source": "game_new"
+  }
+]

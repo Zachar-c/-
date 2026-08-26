@@ -1,0 +1,135 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
+import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
+import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuDeathLineWarning } from "~/ui/widgets/gu_death_line_warning"
+
+# EncounterView —— 遭遇屏（修复「没按钮 / 危险选项无二次确认」）
+# 契约：props.state 只读快照（含 node/actions/intel/resources/contracts/anomalies/death_lines）
+#       props.commands 动作名 -> Callable（choose_option / confirm_danger / leave）
+# 屏内零业务读写；仅在 on_press / on_confirm 回调中经 commands 触发。
+# 严禁在组件体 / 渲染过程中发射任何命令。
+
+export EncounterScreen() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+
+  var st = useState({"confirming": ""})
+  var confirming = st[0].get("confirming", "")
+  var set_confirm = st[1]
+
+  var node = state.get("node", {})
+  var actions = state.get("actions", [])
+  var intel = state.get("intel", {})
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
+
+  var fire = func(key: String, arg = null):
+    if commands.has(key):
+      if arg != null:
+        commands[key].call(arg)
+      else:
+        commands[key].call()
+
+  var confirm_action = {}
+  for a in actions:
+    if str(a.get("id", "")) == confirming:
+      confirm_action = a
+  var confirm_msg = "⚠ 危险选项，确认前请知悉代价：\n" + str(confirm_action.get("detail", ""))
+
+  var do_confirm = func():
+    fire.call("confirm_danger", confirming)
+    set_confirm.call({"confirming": ""})
+  var do_cancel = func():
+    set_confirm.call({"confirming": ""})
+
+  var has_leave = false
+  var action_rows = []
+  for a in actions:
+    var aid = str(a.get("id", ""))
+    var dangerous = bool(a.get("dangerous", false))
+    var is_leave = (aid == "leave")
+    if is_leave:
+      has_leave = true
+    var label = str(a.get("label", ""))
+    var detail = str(a.get("detail", ""))
+    var btn_label = "离开" if is_leave else ("确认此危险行动" if dangerous else "选择")
+
+    var on_press_fn = func():
+      if dangerous:
+        set_confirm.call({"confirming": aid})
+      else:
+        if is_leave:
+          fire.call("leave")
+        else:
+          fire.call("choose_option", aid)
+
+    var tip = (
+      <GuTooltipView
+        title={ str(a.get("quality", "")) }
+        quality={ str(a.get("quality", "")) }
+        effect={ str(a.get("effect", "")) }
+        synergy={ str(a.get("synergy", "")) }
+        cost={ str(a.get("cost", "")) }
+        curse_warning={ bool(a.get("curse_warning", false)) }
+      />
+    )
+
+    var card = (
+      <GuCard title={ label } danger={ dangerous }>
+        <Label text={ detail } style={ {"font_color": GuStyle.DANGER if dangerous else GuStyle.BONE_DIM, "font_size": 14} } />
+        @if (a.has("quality") or a.has("effect") or a.has("synergy") or a.has("cost") or bool(a.get("curse_warning", false))) {
+          return tip
+        }
+        <GuButton label={ btn_label } danger={ dangerous } on_press={ on_press_fn } />
+      </GuCard>
+    )
+    action_rows.append(card)
+
+  return (
+    <VBoxContainer style={ {"separation": 12} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      <GuDeathLineWarning death_lines={ death_lines } on_view={ func(cid): fire.call("view_death_cause", cid) } />
+
+      <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
+        <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
+        <Label text={ str(node.get("desc", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+        @if (not intel.is_empty()) {
+          return (
+            <GuTooltipView
+              title="情报 / 弱点"
+              effect={ str(intel.get("weakness", "")) }
+              cost={ str(intel.get("cost", "")) }
+              curse_warning={ bool(intel.get("curse_warning", false)) }
+            />
+          )
+        }
+      </GuPanel>
+
+      <GuScrollBox>
+        @for (r in action_rows) {
+          return r
+        }
+        @if (actions.is_empty()) {
+          return (<Label text="（当前无可用行动）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+        }
+      </GuScrollBox>
+
+      @if (not has_leave) {
+        return (<GuButton label="离开" on_press={ func(): fire.call("leave") } />)
+      }
+
+      @if (confirming != "") {
+        return (
+          <GuConfirmDialog message={ confirm_msg } on_confirm={ do_confirm } on_cancel={ do_cancel } />
+        )
+      }
+    </VBoxContainer>
+  )
+}

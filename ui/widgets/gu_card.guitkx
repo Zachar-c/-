@@ -1,0 +1,23 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuCard() -> RuitkVNode {
+  var title = props.get("title", "")
+  var highlight = props.get("highlight", false)
+  var danger = props.get("danger", false)
+  var accent = GuStyle.GOLD if highlight else (GuStyle.DANGER if danger else null)
+  return (
+    <PanelContainer>
+      <MarginContainer style={ {"margin_left": 10, "margin_right": 10, "margin_top": 10, "margin_bottom": 10} }>
+        <VBoxContainer style={ {"separation": 6} }>
+          @if (title != "") {
+            return ( <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 16} } /> )
+          }
+          @if (accent != null) {
+            return ( <HSeparator style={ {"modulate": accent} } /> )
+          }
+          { children }
+        </VBoxContainer>
+      </MarginContainer>
+    </PanelContainer>
+  )
+}

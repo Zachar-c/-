@@ -1,0 +1,18 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuPanel() -> RuitkVNode {
+  var title = props.get("title", "")
+  var style_name = props.get("style_name", "")
+  return (
+    <PanelContainer>
+      <MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 12, "margin_bottom": 12} }>
+        <VBoxContainer style={ {"separation": 8} }>
+          @if (title != "") {
+            return ( <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } /> )
+          }
+          { children }
+        </VBoxContainer>
+      </MarginContainer>
+    </PanelContainer>
+  )
+}

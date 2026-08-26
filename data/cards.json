@@ -1,0 +1,3196 @@
+[
+  {
+    "id": "light_probe",
+    "source_gu_ids": [
+      "small_light_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "light_probe",
+    "rarity": "common"
+  },
+  {
+    "id": "stone_guard",
+    "source_gu_ids": [
+      "stone_shell_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "gain_guard"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "stone_guard",
+    "rarity": "common"
+  },
+  {
+    "id": "moonlight_strike",
+    "source_gu_ids": [
+      "moonlight_gu",
+      "moon_glow_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "moonlight_strike",
+    "rarity": "epic"
+  },
+  {
+    "id": "moonlight_return",
+    "source_gu_ids": [
+      "moonlight_gu",
+      "small_light_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "returning_moonlight"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "moonlight_return",
+    "kill_move_sequence": [
+      "moonlight_gu",
+      "small_light_gu"
+    ],
+    "sequence_window": "same_turn",
+    "sequence_timeout_action": "clear",
+    "rarity": "epic"
+  },
+  {
+    "id": "blood_moss_relief",
+    "source_gu_ids": [
+      "blood_moss_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_and_strike"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_moss_relief",
+    "rarity": "common"
+  },
+  {
+    "id": "thorn_strike",
+    "source_gu_ids": [
+      "thorn_whip_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "thorn_strike",
+    "rarity": "common"
+  },
+  {
+    "id": "thorn_bind",
+    "source_gu_ids": [
+      "thorn_whip_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "bind_enemy"
+    ],
+    "mode": "bind",
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "thorn_bind",
+    "rarity": "common"
+  },
+  {
+    "id": "blood_droplet_shot",
+    "source_gu_ids": [
+      "blood_droplet_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_droplet_shot",
+    "rarity": "common"
+  },
+  {
+    "id": "blood_bat_bite",
+    "source_gu_ids": [
+      "blood_bat_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_and_strike"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_bat_bite",
+    "rarity": "rare"
+  },
+  {
+    "id": "blood_wing_escape",
+    "source_gu_ids": [
+      "blood_wing_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "blood_wing_escape",
+    "rarity": "epic"
+  },
+  {
+    "id": "farewell_grip",
+    "source_gu_ids": [
+      "blood_farewell_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "bind_enemy"
+    ],
+    "mode": "bind",
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "farewell_grip",
+    "rarity": "epic"
+  },
+  {
+    "id": "power_blow",
+    "source_gu_ids": [
+      "force_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "power_blow",
+    "rarity": "common"
+  },
+  {
+    "id": "bear_vitality",
+    "source_gu_ids": [
+      "bear_strength_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_and_strike"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "bear_vitality",
+    "rarity": "rare"
+  },
+  {
+    "id": "qi_bulwark",
+    "source_gu_ids": [
+      "qi_wall_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "gain_guard"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": true,
+    "public_text_key": "qi_bulwark",
+    "rarity": "common"
+  },
+  {
+    "id": "scout_eye",
+    "source_gu_ids": [
+      "trail_eye_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "scout_eye",
+    "rarity": "common"
+  },
+  {
+    "id": "venom_snare",
+    "source_gu_ids": [
+      "venom_thread_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "venom_snare",
+    "rarity": "common"
+  },
+  {
+    "id": "pulse_wave",
+    "source_gu_ids": [
+      "pulse_drum_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "pulse_wave",
+    "rarity": "common"
+  },
+  {
+    "id": "shadow_haze",
+    "source_gu_ids": [
+      "shadow_veil_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "control_escape"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "shadow_haze",
+    "rarity": "rare"
+  },
+  {
+    "id": "moon_glow_flare",
+    "source_gu_ids": [
+      "moon_glow_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "deal_damage"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "moon_glow_flare",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_attack_001_card",
+    "source_gu_ids": [
+      "gen_blood_attack_001_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_001_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_002_card",
+    "source_gu_ids": [
+      "gen_blood_attack_002_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_002_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_defense_003_card",
+    "source_gu_ids": [
+      "gen_blood_defense_003_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_defense_003_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_movement_004_card",
+    "source_gu_ids": [
+      "gen_blood_movement_004_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_movement_004_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_healing_005_card",
+    "source_gu_ids": [
+      "gen_blood_healing_005_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_healing_005_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_recon_006_card",
+    "source_gu_ids": [
+      "gen_blood_recon_006_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_recon_006_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_logistics_007_card",
+    "source_gu_ids": [
+      "gen_blood_logistics_007_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_logistics_007_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_008_card",
+    "source_gu_ids": [
+      "gen_blood_attack_008_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_008_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_009_card",
+    "source_gu_ids": [
+      "gen_blood_attack_009_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_009_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_defense_010_card",
+    "source_gu_ids": [
+      "gen_blood_defense_010_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_defense_010_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_movement_011_card",
+    "source_gu_ids": [
+      "gen_blood_movement_011_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_movement_011_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_healing_012_card",
+    "source_gu_ids": [
+      "gen_blood_healing_012_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_healing_012_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_recon_013_card",
+    "source_gu_ids": [
+      "gen_blood_recon_013_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_recon_013_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_logistics_014_card",
+    "source_gu_ids": [
+      "gen_blood_logistics_014_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_logistics_014_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_015_card",
+    "source_gu_ids": [
+      "gen_blood_attack_015_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_015_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_016_card",
+    "source_gu_ids": [
+      "gen_blood_attack_016_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_016_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_defense_017_card",
+    "source_gu_ids": [
+      "gen_blood_defense_017_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_defense_017_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_movement_018_card",
+    "source_gu_ids": [
+      "gen_blood_movement_018_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_movement_018_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_healing_019_card",
+    "source_gu_ids": [
+      "gen_blood_healing_019_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_healing_019_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_recon_020_card",
+    "source_gu_ids": [
+      "gen_blood_recon_020_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_recon_020_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_logistics_021_card",
+    "source_gu_ids": [
+      "gen_blood_logistics_021_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_logistics_021_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_022_card",
+    "source_gu_ids": [
+      "gen_blood_attack_022_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_022_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_blood_attack_023_card",
+    "source_gu_ids": [
+      "gen_blood_attack_023_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_023_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_defense_024_card",
+    "source_gu_ids": [
+      "gen_blood_defense_024_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_defense_024_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_movement_025_card",
+    "source_gu_ids": [
+      "gen_blood_movement_025_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_movement_025_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_healing_026_card",
+    "source_gu_ids": [
+      "gen_blood_healing_026_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_healing_026_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_recon_027_card",
+    "source_gu_ids": [
+      "gen_blood_recon_027_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_recon_027_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_logistics_028_card",
+    "source_gu_ids": [
+      "gen_blood_logistics_028_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_logistics_028_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_attack_029_card",
+    "source_gu_ids": [
+      "gen_blood_attack_029_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_029_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_attack_030_card",
+    "source_gu_ids": [
+      "gen_blood_attack_030_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_attack_030_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_defense_031_card",
+    "source_gu_ids": [
+      "gen_blood_defense_031_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_defense_031_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_movement_032_card",
+    "source_gu_ids": [
+      "gen_blood_movement_032_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_movement_032_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_blood_healing_033_card",
+    "source_gu_ids": [
+      "gen_blood_healing_033_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_healing_033_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_blood_recon_034_card",
+    "source_gu_ids": [
+      "gen_blood_recon_034_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_blood_recon_034_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_qi_logistics_035_card",
+    "source_gu_ids": [
+      "gen_qi_logistics_035_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_logistics_035_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_attack_036_card",
+    "source_gu_ids": [
+      "gen_qi_attack_036_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_036_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_attack_037_card",
+    "source_gu_ids": [
+      "gen_qi_attack_037_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_037_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_defense_038_card",
+    "source_gu_ids": [
+      "gen_qi_defense_038_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_defense_038_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_movement_039_card",
+    "source_gu_ids": [
+      "gen_qi_movement_039_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_movement_039_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_healing_040_card",
+    "source_gu_ids": [
+      "gen_qi_healing_040_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_healing_040_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_recon_041_card",
+    "source_gu_ids": [
+      "gen_qi_recon_041_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_recon_041_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_logistics_042_card",
+    "source_gu_ids": [
+      "gen_qi_logistics_042_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_logistics_042_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_attack_043_card",
+    "source_gu_ids": [
+      "gen_qi_attack_043_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_043_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_attack_044_card",
+    "source_gu_ids": [
+      "gen_qi_attack_044_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_044_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_defense_045_card",
+    "source_gu_ids": [
+      "gen_qi_defense_045_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_defense_045_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_movement_046_card",
+    "source_gu_ids": [
+      "gen_qi_movement_046_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_movement_046_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_healing_047_card",
+    "source_gu_ids": [
+      "gen_qi_healing_047_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_healing_047_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_recon_048_card",
+    "source_gu_ids": [
+      "gen_qi_recon_048_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_recon_048_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_logistics_049_card",
+    "source_gu_ids": [
+      "gen_qi_logistics_049_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_logistics_049_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_attack_050_card",
+    "source_gu_ids": [
+      "gen_qi_attack_050_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_050_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_attack_051_card",
+    "source_gu_ids": [
+      "gen_qi_attack_051_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_051_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_defense_052_card",
+    "source_gu_ids": [
+      "gen_qi_defense_052_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_defense_052_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_movement_053_card",
+    "source_gu_ids": [
+      "gen_qi_movement_053_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_movement_053_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_qi_healing_054_card",
+    "source_gu_ids": [
+      "gen_qi_healing_054_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_healing_054_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_recon_055_card",
+    "source_gu_ids": [
+      "gen_qi_recon_055_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_recon_055_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_logistics_056_card",
+    "source_gu_ids": [
+      "gen_qi_logistics_056_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_logistics_056_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_attack_057_card",
+    "source_gu_ids": [
+      "gen_qi_attack_057_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_057_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_attack_058_card",
+    "source_gu_ids": [
+      "gen_qi_attack_058_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_058_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_defense_059_card",
+    "source_gu_ids": [
+      "gen_qi_defense_059_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_defense_059_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_movement_060_card",
+    "source_gu_ids": [
+      "gen_qi_movement_060_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_movement_060_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_healing_061_card",
+    "source_gu_ids": [
+      "gen_qi_healing_061_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_healing_061_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_recon_062_card",
+    "source_gu_ids": [
+      "gen_qi_recon_062_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_recon_062_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_logistics_063_card",
+    "source_gu_ids": [
+      "gen_qi_logistics_063_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_logistics_063_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_attack_064_card",
+    "source_gu_ids": [
+      "gen_qi_attack_064_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_064_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_qi_attack_065_card",
+    "source_gu_ids": [
+      "gen_qi_attack_065_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_attack_065_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_qi_defense_066_card",
+    "source_gu_ids": [
+      "gen_qi_defense_066_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_defense_066_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_qi_movement_067_card",
+    "source_gu_ids": [
+      "gen_qi_movement_067_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_qi_movement_067_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_force_healing_068_card",
+    "source_gu_ids": [
+      "gen_force_healing_068_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_healing_068_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_recon_069_card",
+    "source_gu_ids": [
+      "gen_force_recon_069_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_recon_069_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_logistics_070_card",
+    "source_gu_ids": [
+      "gen_force_logistics_070_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_logistics_070_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_attack_071_card",
+    "source_gu_ids": [
+      "gen_force_attack_071_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_071_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_attack_072_card",
+    "source_gu_ids": [
+      "gen_force_attack_072_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_072_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_defense_073_card",
+    "source_gu_ids": [
+      "gen_force_defense_073_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_defense_073_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_movement_074_card",
+    "source_gu_ids": [
+      "gen_force_movement_074_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_movement_074_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_healing_075_card",
+    "source_gu_ids": [
+      "gen_force_healing_075_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_healing_075_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_recon_076_card",
+    "source_gu_ids": [
+      "gen_force_recon_076_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_recon_076_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_logistics_077_card",
+    "source_gu_ids": [
+      "gen_force_logistics_077_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_logistics_077_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_attack_078_card",
+    "source_gu_ids": [
+      "gen_force_attack_078_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_078_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_attack_079_card",
+    "source_gu_ids": [
+      "gen_force_attack_079_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_079_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_defense_080_card",
+    "source_gu_ids": [
+      "gen_force_defense_080_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_defense_080_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_movement_081_card",
+    "source_gu_ids": [
+      "gen_force_movement_081_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_movement_081_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_healing_082_card",
+    "source_gu_ids": [
+      "gen_force_healing_082_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_healing_082_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_recon_083_card",
+    "source_gu_ids": [
+      "gen_force_recon_083_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_recon_083_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_logistics_084_card",
+    "source_gu_ids": [
+      "gen_force_logistics_084_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_logistics_084_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_attack_085_card",
+    "source_gu_ids": [
+      "gen_force_attack_085_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_085_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_attack_086_card",
+    "source_gu_ids": [
+      "gen_force_attack_086_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_086_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_defense_087_card",
+    "source_gu_ids": [
+      "gen_force_defense_087_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_defense_087_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_movement_088_card",
+    "source_gu_ids": [
+      "gen_force_movement_088_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_movement_088_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_force_healing_089_card",
+    "source_gu_ids": [
+      "gen_force_healing_089_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_healing_089_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_recon_090_card",
+    "source_gu_ids": [
+      "gen_force_recon_090_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_recon_090_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_logistics_091_card",
+    "source_gu_ids": [
+      "gen_force_logistics_091_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_logistics_091_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_attack_092_card",
+    "source_gu_ids": [
+      "gen_force_attack_092_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_092_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_attack_093_card",
+    "source_gu_ids": [
+      "gen_force_attack_093_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_093_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_defense_094_card",
+    "source_gu_ids": [
+      "gen_force_defense_094_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_defense_094_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_movement_095_card",
+    "source_gu_ids": [
+      "gen_force_movement_095_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_movement_095_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_healing_096_card",
+    "source_gu_ids": [
+      "gen_force_healing_096_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_healing_096_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_recon_097_card",
+    "source_gu_ids": [
+      "gen_force_recon_097_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_recon_097_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_force_logistics_098_card",
+    "source_gu_ids": [
+      "gen_force_logistics_098_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_logistics_098_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_force_attack_099_card",
+    "source_gu_ids": [
+      "gen_force_attack_099_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_099_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_force_attack_100_card",
+    "source_gu_ids": [
+      "gen_force_attack_100_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_force_attack_100_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_soul_defense_101_card",
+    "source_gu_ids": [
+      "gen_soul_defense_101_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_defense_101_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_movement_102_card",
+    "source_gu_ids": [
+      "gen_soul_movement_102_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_movement_102_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_healing_103_card",
+    "source_gu_ids": [
+      "gen_soul_healing_103_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_healing_103_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_recon_104_card",
+    "source_gu_ids": [
+      "gen_soul_recon_104_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_recon_104_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_logistics_105_card",
+    "source_gu_ids": [
+      "gen_soul_logistics_105_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_logistics_105_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_attack_106_card",
+    "source_gu_ids": [
+      "gen_soul_attack_106_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_106_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_attack_107_card",
+    "source_gu_ids": [
+      "gen_soul_attack_107_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_107_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_defense_108_card",
+    "source_gu_ids": [
+      "gen_soul_defense_108_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_defense_108_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_movement_109_card",
+    "source_gu_ids": [
+      "gen_soul_movement_109_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_movement_109_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_healing_110_card",
+    "source_gu_ids": [
+      "gen_soul_healing_110_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_healing_110_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_recon_111_card",
+    "source_gu_ids": [
+      "gen_soul_recon_111_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_recon_111_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_logistics_112_card",
+    "source_gu_ids": [
+      "gen_soul_logistics_112_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_logistics_112_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_attack_113_card",
+    "source_gu_ids": [
+      "gen_soul_attack_113_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_113_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_attack_114_card",
+    "source_gu_ids": [
+      "gen_soul_attack_114_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_114_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_defense_115_card",
+    "source_gu_ids": [
+      "gen_soul_defense_115_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_defense_115_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_movement_116_card",
+    "source_gu_ids": [
+      "gen_soul_movement_116_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_movement_116_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_healing_117_card",
+    "source_gu_ids": [
+      "gen_soul_healing_117_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_healing_117_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_recon_118_card",
+    "source_gu_ids": [
+      "gen_soul_recon_118_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_recon_118_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_logistics_119_card",
+    "source_gu_ids": [
+      "gen_soul_logistics_119_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_logistics_119_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_attack_120_card",
+    "source_gu_ids": [
+      "gen_soul_attack_120_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_120_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_attack_121_card",
+    "source_gu_ids": [
+      "gen_soul_attack_121_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_121_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_defense_122_card",
+    "source_gu_ids": [
+      "gen_soul_defense_122_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_defense_122_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_movement_123_card",
+    "source_gu_ids": [
+      "gen_soul_movement_123_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_movement_123_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_healing_124_card",
+    "source_gu_ids": [
+      "gen_soul_healing_124_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_healing_124_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_soul_recon_125_card",
+    "source_gu_ids": [
+      "gen_soul_recon_125_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_recon_125_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_logistics_126_card",
+    "source_gu_ids": [
+      "gen_soul_logistics_126_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_logistics_126_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_attack_127_card",
+    "source_gu_ids": [
+      "gen_soul_attack_127_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_127_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_attack_128_card",
+    "source_gu_ids": [
+      "gen_soul_attack_128_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_128_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_defense_129_card",
+    "source_gu_ids": [
+      "gen_soul_defense_129_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_defense_129_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_movement_130_card",
+    "source_gu_ids": [
+      "gen_soul_movement_130_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_movement_130_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_healing_131_card",
+    "source_gu_ids": [
+      "gen_soul_healing_131_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_healing_131_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_recon_132_card",
+    "source_gu_ids": [
+      "gen_soul_recon_132_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_recon_132_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_logistics_133_card",
+    "source_gu_ids": [
+      "gen_soul_logistics_133_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_logistics_133_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_attack_134_card",
+    "source_gu_ids": [
+      "gen_soul_attack_134_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_134_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_attack_135_card",
+    "source_gu_ids": [
+      "gen_soul_attack_135_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_attack_135_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_defense_136_card",
+    "source_gu_ids": [
+      "gen_soul_defense_136_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_defense_136_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_soul_movement_137_card",
+    "source_gu_ids": [
+      "gen_soul_movement_137_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_movement_137_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_soul_healing_138_card",
+    "source_gu_ids": [
+      "gen_soul_healing_138_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_healing_138_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_soul_recon_139_card",
+    "source_gu_ids": [
+      "gen_soul_recon_139_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_recon_139_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_soul_logistics_140_card",
+    "source_gu_ids": [
+      "gen_soul_logistics_140_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_soul_logistics_140_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_refine_attack_141_card",
+    "source_gu_ids": [
+      "gen_refine_attack_141_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_141_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_142_card",
+    "source_gu_ids": [
+      "gen_refine_attack_142_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_142_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_defense_143_card",
+    "source_gu_ids": [
+      "gen_refine_defense_143_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_defense_143_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_movement_144_card",
+    "source_gu_ids": [
+      "gen_refine_movement_144_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_movement_144_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_healing_145_card",
+    "source_gu_ids": [
+      "gen_refine_healing_145_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_healing_145_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_recon_146_card",
+    "source_gu_ids": [
+      "gen_refine_recon_146_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_recon_146_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_logistics_147_card",
+    "source_gu_ids": [
+      "gen_refine_logistics_147_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_logistics_147_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_148_card",
+    "source_gu_ids": [
+      "gen_refine_attack_148_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_148_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_149_card",
+    "source_gu_ids": [
+      "gen_refine_attack_149_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_149_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_defense_150_card",
+    "source_gu_ids": [
+      "gen_refine_defense_150_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_defense_150_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_movement_151_card",
+    "source_gu_ids": [
+      "gen_refine_movement_151_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_movement_151_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_healing_152_card",
+    "source_gu_ids": [
+      "gen_refine_healing_152_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_healing_152_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_recon_153_card",
+    "source_gu_ids": [
+      "gen_refine_recon_153_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_recon_153_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_logistics_154_card",
+    "source_gu_ids": [
+      "gen_refine_logistics_154_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_logistics_154_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_155_card",
+    "source_gu_ids": [
+      "gen_refine_attack_155_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_155_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_156_card",
+    "source_gu_ids": [
+      "gen_refine_attack_156_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_156_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_defense_157_card",
+    "source_gu_ids": [
+      "gen_refine_defense_157_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_defense_157_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_movement_158_card",
+    "source_gu_ids": [
+      "gen_refine_movement_158_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_movement_158_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_healing_159_card",
+    "source_gu_ids": [
+      "gen_refine_healing_159_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_healing_159_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_recon_160_card",
+    "source_gu_ids": [
+      "gen_refine_recon_160_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_recon_160_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_logistics_161_card",
+    "source_gu_ids": [
+      "gen_refine_logistics_161_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_logistics_161_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_162_card",
+    "source_gu_ids": [
+      "gen_refine_attack_162_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_162_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_attack_163_card",
+    "source_gu_ids": [
+      "gen_refine_attack_163_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_163_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_defense_164_card",
+    "source_gu_ids": [
+      "gen_refine_defense_164_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_defense_164_card",
+    "rarity": "common"
+  },
+  {
+    "id": "gen_refine_movement_165_card",
+    "source_gu_ids": [
+      "gen_refine_movement_165_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_movement_165_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_healing_166_card",
+    "source_gu_ids": [
+      "gen_refine_healing_166_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_healing_166_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_recon_167_card",
+    "source_gu_ids": [
+      "gen_refine_recon_167_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_recon_167_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_logistics_168_card",
+    "source_gu_ids": [
+      "gen_refine_logistics_168_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_logistics_168_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_attack_169_card",
+    "source_gu_ids": [
+      "gen_refine_attack_169_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_169_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_attack_170_card",
+    "source_gu_ids": [
+      "gen_refine_attack_170_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_170_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_defense_171_card",
+    "source_gu_ids": [
+      "gen_refine_defense_171_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_defense_171_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_movement_172_card",
+    "source_gu_ids": [
+      "gen_refine_movement_172_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_movement_172_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_healing_173_card",
+    "source_gu_ids": [
+      "gen_refine_healing_173_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_healing_173_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_recon_174_card",
+    "source_gu_ids": [
+      "gen_refine_recon_174_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "reveal_hidden"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_recon_174_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_logistics_175_card",
+    "source_gu_ids": [
+      "gen_refine_logistics_175_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "slow_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_logistics_175_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_attack_176_card",
+    "source_gu_ids": [
+      "gen_refine_attack_176_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_176_card",
+    "rarity": "rare"
+  },
+  {
+    "id": "gen_refine_attack_177_card",
+    "source_gu_ids": [
+      "gen_refine_attack_177_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "strike_enemy"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_attack_177_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_refine_defense_178_card",
+    "source_gu_ids": [
+      "gen_refine_defense_178_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "guard_self"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_defense_178_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_refine_movement_179_card",
+    "source_gu_ids": [
+      "gen_refine_movement_179_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "preserve_retreat"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_movement_179_card",
+    "rarity": "epic"
+  },
+  {
+    "id": "gen_refine_healing_180_card",
+    "source_gu_ids": [
+      "gen_refine_healing_180_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "relief_injury"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "gen_refine_healing_180_card",
+    "rarity": "epic"
+  }
+]

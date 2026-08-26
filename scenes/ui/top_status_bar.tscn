@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/top_status_bar.gd" id="1_topbar"]
+
+[node name="TopStatusBar" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 0.0
+grow_horizontal = 2
+script = ExtResource("1_topbar")

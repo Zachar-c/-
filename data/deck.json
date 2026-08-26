@@ -1,0 +1,13 @@
+{
+  "capacity": 12,
+  "imprint_capacity": 4,
+  "hand_size": 2,
+  "meta_rule_cap": 2,
+  "remove_card_cost": 120,
+  "remove_imprint_cost": 150,
+  "service_limits": {
+    "remove_card": 2,
+    "remove_imprint": 2,
+    "remove_curse": 2
+  }
+}

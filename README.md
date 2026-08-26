@@ -4,7 +4,7 @@
 
 仓库同时保存两类内容：
 
-- 原文精编、记忆库与游戏设计原始数据。
+- 原文语料与设定提炼物（`分支：六卷精编版/`）与游戏设计原始数据（`肉鸽设计-原始数据/`）。
 - 南疆凡人修行肉鸽的设计、实施计划与后续 Godot 原型代码。
 
 ## 从这里开始
@@ -19,14 +19,25 @@
 | 分支 | 用途 |
 | --- | --- |
 | `master` | 原始资料、设计文档和项目入口。 |
-| `task1-vendor-open-rpg` | 《蛊路求生》游戏原型工作分支（工作树 `.worktrees/task1-vendor-open-rpg`）。 |
+| `task1-vendor-open-rpg` | 《蛊路求生》游戏原型工作分支（本工作树）。 |
 
-## 当前状态
+## 运行原型
 
-- 原文语料与设定提炼物（`分支：六卷精编版/`）与肉鸽设计原始数据（`肉鸽设计-原始数据/`）已收敛整理进 `master`。
-- 2026-08-25：六卷精编工程产物（`豆包/`、`旧稿归档_不采用/`、`重写稿/`、`正文/`、`细纲/`、总纲与部分记忆库等）已从工作区与 git 历史整体移除并强制同步至 gitee；保留上述语料与设定提炼物。
-- 南疆冒烟版的设计和实施计划已经确认，尚未完成 Godot 可玩原型。
-- GDQuest Open RPG 的 MIT 底座计划作为后续 Task 1 引入；此前的网络拉取未完成，因此仓库中没有假装完整的第三方底座副本。
+南疆冒烟版是一个本地可复现的 Godot 原型。每次开局自动生成新种子，路线、掉落与事件随种子分化；种子 `101` 保留为固定演示/回归路线（含商队纠纷、地脉争夺和升仙窗口）。没有网络或云端服务时，交涉仍使用本地模板继续。
+
+- 目标引擎：Godot `4.7.2`。
+- 测试框架：仓库已包含 GUT `9.6.1` 于 `addons/gut/`。
+- 启动：`powershell -ExecutionPolicy Bypass -File tools/play.ps1`。
+- 单元测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite unit`。
+- 集成测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite integration`。
+- 蛊卡纵向切片验收（迷雾路线、原子提交、死亡重开）：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Test tests/integration/test_v3_roguelike_vertical_slice.gd`。
+- 全量检查（测试、无窗口启动、空白错误）：`powershell -ExecutionPolicy Bypass -File tools/check.ps1`。
+
+`tools/godot.ps1` 统一定位 Godot 控制台程序：优先使用环境变量 `GODOT_CONSOLE_PATH`，其次使用 WinGet 的本机安装路径。`tools/play.ps1` 同样支持用 `GODOT_PATH` 覆盖图形版 Godot 路径。这样 CI、终端和手工验收共用同一入口，不依赖编辑器生成的脚本缓存。
+
+可选云端对话适配器只读取环境变量 `NANJIANG_CLOUD_DIALOGUE_KEY`，不将密钥写入存档。当前适配器不配置网络传输时必定回退到 `data/dialogue_templates.json` 中的本地文本；读档复用已校验的对话回复，不重新请求云端。
+
+首版玩家界面与离线对话均为中文，不提供语言切换；节点 ID、规则键、事件日志和存档字段仍保持 ASCII，以维持数据与存档的稳定性。调试窗口标题 `Nanjiang Smoke (DEBUG)` 保持不变。
 
 ## 范围说明
 

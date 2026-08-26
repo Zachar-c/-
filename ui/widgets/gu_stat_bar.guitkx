@@ -1,0 +1,28 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuStatBar() -> RuitkVNode {
+  var label = props.get("label", "")
+  var value = props.get("value", 0)
+  var max_value = props.get("max_value", 1)
+  var color = props.get("color", GuStyle.JADE)
+  var shield = props.get("shield", 0)
+  var on_inspect = props.get("on_inspect", null)
+  return (
+    <VBoxContainer style={ {"separation": 2} }>
+      <HBoxContainer style={ {"separation": 8} }>
+        <Label text={ label } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14, "min_width": 56} } />
+        <Label text={ "%d / %d" % [value, max_value] } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+        @if (shield > 0) {
+          return ( <Label text={ "(盾 %d)" % shield } style={ {"font_color": GuStyle.JADE, "font_size": 14} } /> )
+        }
+        @if (on_inspect != null) {
+          return ( <Button text="?" onPressed={ func(): on_inspect.call() } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14, "min_width": 24, "min_height": 24} } /> )
+        }
+      </HBoxContainer>
+      <ProgressBar value={ value } max_value={ max_value } style={ {"modulate": color, "min_height": 14} } />
+      @if (shield > 0) {
+        return ( <ProgressBar value={ shield } max_value={ max_value } style={ {"modulate": GuStyle.JADE, "min_height": 8} } /> )
+      }
+    </VBoxContainer>
+  )
+}

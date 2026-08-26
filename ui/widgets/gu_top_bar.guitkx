@@ -1,0 +1,45 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuResourceChip } from "./gu_resource_chip"
+import { GuDeathLineWarning } from "./gu_death_line_warning"
+
+export GuTopBar() -> RuitkVNode {
+  var resources = props.get("resources", {})
+  var contracts = props.get("contracts", [])
+  var anomalies = props.get("anomalies", [])
+  var death_lines = props.get("death_lines", {})
+  var on_menu = props.get("on_menu", null)
+
+  var kinds = ["yuanstone", "shouyuan", "hunpo", "material"]
+  var chip_items = []
+  for kind in kinds:
+    if resources.has(kind):
+      chip_items.append({"kind": kind, "value": int(resources[kind])})
+
+  var dl = []
+  for key in ["shouyuan", "hunpo", "backlash"]:
+    if death_lines.has(key):
+      var d = death_lines[key]
+      dl.append({"name": key, "value": int(d.get("value", 0)), "threshold": int(d.get("threshold", 0))})
+
+  return (
+    <HBoxContainer style={ {"separation": 14} }>
+      <HBoxContainer style={ {"separation": 6} }>
+        @for (item in chip_items) {
+          return ( <GuResourceChip kind={ item["kind"] } value={ item["value"] } key={ item["kind"] } /> )
+        }
+      </HBoxContainer>
+      <HBoxContainer style={ {"separation": 6} }>
+        @for (c in contracts) {
+          return ( <Label text={ "契约: %s" % c } style={ {"font_color": GuStyle.JADE, "font_size": 13} } key={ c } /> )
+        }
+        @for (a in anomalies) {
+          return ( <Label text={ "异变: %s" % a } style={ {"font_color": GuStyle.DANGER, "font_size": 13} } key={ a } /> )
+        }
+      </HBoxContainer>
+      <GuDeathLineWarning lines={ dl } />
+      @if (on_menu != null) {
+        return ( <Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.BONE, "min_width": 32, "min_height": 32} } /> )
+      }
+    </HBoxContainer>
+  )
+}

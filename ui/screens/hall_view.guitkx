@@ -1,0 +1,81 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+
+export HallView() -> RuitkVNode {
+  var state = props.get("state", {})
+  var commands = props.get("commands", {})
+  var has_save = bool(state.get("has_save", false))
+  var schools = state.get("available_schools", [])
+  var contracts = state.get("contracts", [])
+  var meta = state.get("meta_stats", {})
+
+  var noop = func(): pass
+  var fire = func(key: String):
+    if commands.has(key):
+      commands[key].call()
+  var select = func(id: String):
+    if commands.has("select_school"):
+      commands["select_school"].call(id)
+
+  var school_rows = []
+  for s in schools:
+    var sid = str(s.get("id", ""))
+    var sname = str(s.get("name", str(s)))
+    school_rows.append((
+      <GuButton label={ sname } on_press={ func(): select.call(sid) } />
+    ))
+
+  var contract_rows = []
+  for c in contracts:
+    contract_rows.append(<Label text={ "契约: %s" % str(c) } style={ {"font_color": GuStyle.JADE, "font_size": 14} } />)
+
+  var meta_rows = []
+  for k in meta.keys():
+    meta_rows.append(<Label text={ "%s: %s" % [str(k), str(meta[k])] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
+
+  return (
+    <VBoxContainer style={ {"separation": 14} }>
+      <CenterContainer>
+        <VBoxContainer style={ {"separation": 6} }>
+          <Label text="蛊路求生" style={ {"font_color": GuStyle.GOLD, "font_size": 48} } />
+          <Label text="夜入密林，蛊路求生 · 南疆篇" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 18} } />
+        </VBoxContainer>
+      </CenterContainer>
+
+      <GuButton label="继续上次冒险" disabled={ not has_save } on_press={ func(): fire.call("continue_run") } />
+
+      <GuButton label="开始新冒险（流派 / 契约）" on_press={ func(): fire.call("new_run") } />
+      <GuButton label="图鉴" on_press={ func(): fire.call("open_codex") } />
+      <GuButton label="设置" on_press={ func(): fire.call("open_settings") } />
+
+      <GuPanel title="流派选择">
+        @for (r in school_rows) {
+          return r
+        }
+        @if (schools.is_empty()) {
+          return ( <Label text="（暂无可选流派）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+        }
+      </GuPanel>
+
+      <GuPanel title="契约（占位）">
+        @for (r in contract_rows) {
+          return r
+        }
+        @if (contracts.is_empty()) {
+          return ( <Label text="（本局尚未绑定契约）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+        }
+      </GuPanel>
+
+      @if (not meta.is_empty()) {
+        return (
+          <GuPanel title="修行纪要">
+            @for (r in meta_rows) {
+              return r
+            }
+          </GuPanel>
+        )
+      }
+    </VBoxContainer>
+  )
+}

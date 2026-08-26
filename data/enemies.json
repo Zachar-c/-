@@ -1,0 +1,110 @@
+[
+  {
+    "id": "neutral_stone_wanderer",
+    "tier": "common",
+    "hp": 4,
+    "essence": 3,
+    "clues": ["stone_dust", "steady_stance"],
+    "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2, "speed": 1},
+    "reactions": [
+      {
+        "id": "stone_shell",
+        "clue": "stone_dust",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "石甲护身"
+      }
+    ]
+  },
+  {
+    "id": "ridge_hound",
+    "tier": "common",
+    "hp": 3,
+    "essence": 0,
+    "clues": ["lowered_shoulders", "wet_fang"],
+    "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 3, "speed": 0},
+    "reactions": [
+      {
+        "id": "counter_bite",
+        "clue": "lowered_shoulders",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "guarded",
+        "label": "反口撕咬"
+      }
+    ]
+  },
+  {
+    "id": "ridge_elite_scout",
+    "tier": "elite",
+    "hp": 6,
+    "essence": 4,
+    "clues": ["high_ground", "steady_breath"],
+    "intent": {"id": "swift_crossbow", "label": "弩箭上弦", "damage": 3, "speed": 3},
+    "reactions": [
+      {
+        "id": "elusive_step",
+        "clue": "high_ground",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "高处闪避"
+      }
+    ]
+  },
+  {
+    "id": "miasma_vein_lord",
+    "tier": "boss",
+    "hp": 9,
+    "essence": 6,
+    "clues": ["wilting_aura", "slow_gaits"],
+    "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 4, "speed": 4},
+    "reactions": [
+      {
+        "id": "corrosive_mist",
+        "clue": "wilting_aura",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "guarded",
+        "label": "蚀气反激"
+      }
+    ]
+  },
+  {
+    "id": "iron_hide_boar",
+    "tier": "common",
+    "hp": 5,
+    "essence": 0,
+    "clues": ["mud_caked", "worn_tusks"],
+    "intent": {"id": "tusk_drive", "label": "獠牙冲撞", "damage": 2, "speed": 1},
+    "reactions": [
+      {
+        "id": "bristle_turn",
+        "clue": "mud_caked",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "厚皮硬受"
+      }
+    ]
+  },
+  {
+    "id": "thunder_crown_wolf",
+    "tier": "elite",
+    "hp": 7,
+    "essence": 4,
+    "clues": ["crackling_fur", "hunched_gait"],
+    "intent": {"id": "thunder_bite", "label": "雷冠撕咬", "damage": 3, "speed": 3},
+    "reactions": [
+      {
+        "id": "thunder_reflex",
+        "clue": "crackling_fur",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "sparked",
+        "label": "雷甲反噬"
+      }
+    ]
+  }
+]

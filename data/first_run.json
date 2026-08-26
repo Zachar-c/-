@@ -1,0 +1,20 @@
+{
+  "seed": 101,
+  "route_ids": [
+    "neutral_wanderer",
+    "ridge_caravan",
+    "beast_swarm_pass",
+    "moonlit_trail",
+    "refinement_hollow",
+    "cultivation_spring",
+    "village_short_work",
+    "ridge_black_market",
+    "toxic_mountain_path",
+    "flooded_cave",
+    "echo_cave",
+    "ridge_market",
+    "blood_moss_grove",
+    "body_imprint_ritual",
+    "stage_one_ledger"
+  ]
+}

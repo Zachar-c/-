@@ -1,0 +1,89 @@
+{
+  "recipes": [
+    {
+      "id": "bright_thread_risk",
+      "kind": "combine",
+      "input_gu_ids": ["small_light_gu", "trail_eye_gu"],
+      "output_gu_id": "pulse_drum_gu",
+      "success_roll_max": 70,
+      "failure": "destroy_inputs"
+    },
+    {
+      "id": "moon_glow_fixed",
+      "kind": "fixed",
+      "input_gu_ids": ["moonlight_gu", "small_light_gu", "small_light_gu"],
+      "output_gu_id": "moon_glow_gu"
+    },
+    {
+      "id": "phantom_moon_locked",
+      "kind": "fixed",
+      "locked": true,
+      "requires_legacy_knowledge_id": "phantom_moon_recipe",
+      "input_gu_ids": ["moon_glow_gu", "shadow_veil_gu"],
+      "output_gu_id": "phantom_moon_gu"
+    },
+    {
+      "id": "moon_shadow_locked",
+      "kind": "fixed",
+      "locked": true,
+      "requires_legacy_knowledge_id": "moon_shadow_recipe",
+      "input_gu_ids": ["moon_glow_gu", "mist_step_gu"],
+      "output_gu_id": "moon_shadow_gu"
+    },
+    {
+      "id": "free_mix",
+      "kind": "free_mix",
+      "min_inputs": 2,
+      "outcomes": [
+        {
+          "id": "destroyed",
+          "weight": 5,
+          "effect": "destroy_inputs",
+          "event_reason": "free_mix_destroyed",
+          "fail_curse_id": "gu_erosion"
+        },
+        {
+          "id": "mutation_venom",
+          "weight": 4,
+          "effect": "mutate_to",
+          "target_gu_id": "venom_thread_gu",
+          "event_reason": "free_mix_mutation"
+        },
+        {
+          "id": "explosion",
+          "weight": 1,
+          "effect": "explosion",
+          "health_cost": 2,
+          "soul_cost": 1,
+          "lifespan_cost": 1,
+          "event_reason": "free_mix_explosion"
+        }
+      ],
+      "risk_hints": [
+        {
+          "tags": ["poison"],
+          "text": "炉中隐约腥气，恐催生毒物。"
+        },
+        {
+          "tags": ["moon"],
+          "text": "炉火间月息浮沉，恐炼出暗夜之物。"
+        }
+      ]
+    }
+  ],
+  "caravan_offers": [
+    {
+      "id": "caravan_thorn_offer",
+      "kind": "buy",
+      "output_gu_id": "thorn_whip_gu",
+      "stone_cost": 5
+    },
+    {
+      "id": "caravan_mist_exchange",
+      "kind": "exchange",
+      "input_gu_ids": ["trail_eye_gu", "stone_shell_gu"],
+      "output_gu_id": "mist_step_gu",
+      "stone_cost": 0
+    }
+  ]
+}

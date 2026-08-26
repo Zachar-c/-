@@ -1,0 +1,29 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuDeathLineWarning() -> RuitkVNode {
+  var death_lines = props.get("death_lines", {})
+  var on_view = props.get("on_view", null)
+
+  var rows = []
+  for kind in death_lines.keys():
+    var d = death_lines[kind]
+    var nm = str(d.get("name", kind))
+    var remaining = int(d.get("remaining", 0))
+    var maxv = int(d.get("max", 0))
+    var danger = bool(d.get("danger", false))
+    var cause_id = str(d.get("cause_id", ""))
+    var color = GuStyle.DANGER if danger else GuStyle.BONE_DIM
+    var prefix = "⚠ " if danger else "· "
+    var text = "%s%s %d/%d" % [prefix, nm, remaining, maxv]
+    var row_children = [V.Label({"text": text, "style": {"font_color": color, "font_size": 13}})]
+    if on_view != null and danger:
+      row_children.append(V.Button({"text": "?", "flat": true, "onPressed": func(): on_view.call(cause_id), "style": {"font_color": color, "font_size": 13, "min_width": 22, "min_height": 22}}))
+    rows.append(V.HBoxContainer({"separation": 4}, row_children))
+
+  return (
+    <VBoxContainer style={ {"separation": 4} }>
+      <Label text="三死线" style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
+      { rows }
+    </VBoxContainer>
+  )
+}

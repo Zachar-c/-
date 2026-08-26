@@ -1,0 +1,50 @@
+{
+  "pity": {
+    "threshold": 3,
+    "clearing_rarities": ["rare", "epic", "legendary"],
+    "material_pity": {
+      "threshold": 3,
+      "target_material_ids": ["venom_sac", "moon_dew"]
+    }
+  },
+  "materials": {
+    "beast_blood": { "name_zh": "兽血", "value": 2 },
+    "beast_bone": { "name_zh": "兽骨", "value": 1 },
+    "venom_sac": { "name_zh": "毒囊", "value": 3 },
+    "moon_dew": { "name_zh": "月华露", "value": 4 }
+  },
+  "loot": {
+    "common": {
+      "material_count": 1,
+      "material_pool": ["beast_blood", "beast_bone"],
+      "gu_chance_pct": 0,
+      "gu_pool": {
+        "weights": {},
+        "by_rarity": {}
+      }
+    },
+    "elite": {
+      "material_count": 1,
+      "material_pool": ["beast_blood", "beast_bone", "venom_sac"],
+      "gu_chance_pct": 30,
+      "gu_pool": {
+        "weights": { "common": 60, "rare": 35, "epic": 5 },
+        "by_rarity": {
+          "common": ["stone_shell_gu"],
+          "rare": ["mist_step_gu"],
+          "epic": ["moonlight_gu"]
+        }
+      }
+    },
+    "boss": {
+      "material_count": 2,
+      "material_pool": ["beast_blood", "beast_bone", "venom_sac", "moon_dew"],
+      "gu_chance_pct": 0,
+      "gu_pool": {
+        "weights": {},
+        "by_rarity": {}
+      },
+      "scavenge_recipe": "phantom_moon_locked"
+    }
+  }
+}

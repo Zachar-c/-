@@ -1,0 +1,13 @@
+@theme "res://assets/theme/gu_theme.tres"
+
+export GuScrollBox() -> RuitkVNode {
+  return (
+    <ScrollContainer style={ {"min_height": 200} }>
+      <MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 8, "margin_bottom": 8} }>
+        <VBoxContainer style={ {"separation": 6} }>
+          { children }
+        </VBoxContainer>
+      </MarginContainer>
+    </ScrollContainer>
+  )
+}

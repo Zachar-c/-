@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/gu_tooltip.gd" id="1_tooltip"]
+
+[node name="GuTooltip" type="Control"]
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+mouse_filter = 2
+script = ExtResource("1_tooltip")
