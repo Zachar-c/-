@@ -309,7 +309,6 @@ static func hall(controller) -> Dictionary:
 		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},
 		"codex": _codex(catalog, meta),
 		"journal": _journal(meta, catalog),
-		"journal_locked_count": _journal_locked_count(meta, catalog),
 	}
 
 
@@ -392,21 +391,28 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 
 ## A7 手记库（§16.9 叙事沉淀）：只渲染已解锁条目；ending 页结局短句优先取
 ## journal.json ending_texts（缺 key 回退硬编码）；解锁判定在 MetaProgress。
-static func _journal(meta, catalog: Dictionary) -> Array:
+## 外层 dict 兼容新旧两代消费端：entries 内每条同时携带新端键
+## id/title/text 与旧端键 title/body（body 为 text 的同值别名）。
+static func _journal(meta, catalog: Dictionary) -> Dictionary:
 	var by_id: Dictionary = catalog.get("journal_entry_by_id", {})
-	var out: Array = []
+	var entries: Array[Dictionary] = []
 	if meta != null:
 		for jid in meta.journal_unlocked:
 			var entry: Dictionary = by_id.get(str(jid), {})
 			if not entry.is_empty():
-				out.append({"id": str(jid), "title": str(entry.get("title", "")), "text": str(entry.get("text", ""))})
-	return out
-
-
-static func _journal_locked_count(meta, catalog: Dictionary) -> int:
+				var text := str(entry.get("text", ""))
+				entries.append({
+					"id": str(jid),
+					"title": str(entry.get("title", "")),
+					"text": text,
+					"body": text,
+				})
 	var total := (catalog.get("journal", {}).get("entries", []) as Array).size()
-	var unlocked := (meta.journal_unlocked as Array).size() if meta != null else 0
-	return maxi(0, total - unlocked)
+	return {
+		"entries": entries,
+		"count": entries.size(),
+		"journal_locked_count": maxi(0, total - entries.size()),
+	}
 
 
 static func map(controller) -> Dictionary:

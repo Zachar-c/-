@@ -137,7 +137,15 @@ static func _run_markers(run: RunState) -> Array[String]:
 			"shop_barter":
 				_push_marker(markers, "shop_barter")
 			"gain_notoriety":
-				var notorious := int(event.get("after", {}).get("cultivator", {}).get("notorious", 0))
+				# Malformed payloads (after/cultivator not Dictionary) skip the
+				# event instead of crashing the marker scan.
+				var after_value: Variant = event.get("after", {})
+				if not (after_value is Dictionary):
+					continue
+				var cultivator_value: Variant = after_value.get("cultivator", {})
+				if not (cultivator_value is Dictionary):
+					continue
+				var notorious := int(cultivator_value.get("notorious", 0))
 				if notorious >= 5:
 					_push_marker(markers, "notoriety_gte_5")
 			"curse_removed":

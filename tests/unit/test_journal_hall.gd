@@ -162,6 +162,18 @@ func test_low_notoriety_does_not_unlock_notoriety_journal() -> void:
 	assert_false(meta.journal_unlocked.has("journal_notorious"))
 
 
+func test_run_markers_skip_malformed_notoriety_payloads() -> void:
+	var run := RunState.new_run(13)
+	run.event_log.append({"action": "gain_notoriety", "reason": "broken_trust", "after": "not_a_dict"})
+	run.event_log.append({"action": "gain_notoriety", "reason": "broken_trust", "after": {"cultivator": 42}})
+	run.event_log.append({"action": "gain_notoriety", "reason": "broken_trust", "after": {}})
+	assert_false(MetaProgress._run_markers(run).has("notoriety_gte_5"))
+
+	# A well-formed payload still produces the marker after the malformed ones.
+	run.event_log.append({"action": "gain_notoriety", "reason": "broken_trust", "after": {"cultivator": {"notorious": 6}}})
+	assert_true(MetaProgress._run_markers(run).has("notoriety_gte_5"))
+
+
 func test_paid_curse_removal_does_not_unlock_rest_journal() -> void:
 	var run := CurseRegistryScript.gain_curse(RunState.new_run(5), "gu_erosion", "test_source")
 	var paid := ResolverScript.apply(
@@ -233,16 +245,35 @@ func test_hall_snapshot_exposes_unlocked_journal_and_locked_count() -> void:
 	meta = meta.record_run_end(RunState.new_run(3), "risky", catalog, "risky")
 
 	var snapshot: Dictionary = RunSnapshotBuilderScript.hall(_stub(RunState.new_run(4), meta))
-	var journal: Array = snapshot["journal"]
-	assert_eq(journal.size(), 1)
-	assert_eq(str(journal[0]["id"]), "journal_risky_arrival")
-	assert_eq(int(snapshot["journal_locked_count"]), 7)
-	assert_false(str(journal[0]["title"]).is_empty())
-	assert_false(str(journal[0]["text"]).is_empty())
+	var journal: Dictionary = snapshot["journal"]
+	assert_eq(int(journal["count"]), 1)
+	assert_eq(int(journal["journal_locked_count"]), 7)
+	var entries: Array = journal["entries"]
+	assert_eq(entries.size(), 1)
+	var first: Dictionary = entries[0]
+	assert_eq(str(first["id"]), "journal_risky_arrival")
+	assert_false(str(first["title"]).is_empty())
+	assert_false(str(first["text"]).is_empty())
 
 	var fresh: Dictionary = RunSnapshotBuilderScript.hall(_stub(RunState.new_run(5), MetaProgress.new_empty()))
-	assert_eq((fresh["journal"] as Array).size(), 0)
-	assert_eq(int(fresh["journal_locked_count"]), 8)
+	var fresh_journal: Dictionary = fresh["journal"]
+	assert_eq(int(fresh_journal["count"]), 0)
+	assert_eq((fresh_journal["entries"] as Array).size(), 0)
+	assert_eq(int(fresh_journal["journal_locked_count"]), 8)
+
+
+func test_journal_snapshot_entries_carry_dual_shape_keys() -> void:
+	var meta := MetaProgress.new_empty()
+	meta = meta.record_run_end(RunState.new_run(11), "risky", catalog, "risky")
+	var snapshot: Dictionary = RunSnapshotBuilderScript.hall(_stub(RunState.new_run(12), meta))
+	var entry: Dictionary = ((snapshot["journal"] as Dictionary)["entries"] as Array)[0]
+	# Old consumer keys (hall_view): title + body.
+	assert_true(entry.has_all(["title", "body"]))
+	# New consumer keys: id + title + text.
+	assert_true(entry.has_all(["id", "title", "text"]))
+	# body is a same-value alias of text.
+	assert_eq(str(entry["body"]), str(entry["text"]))
+	assert_false(str(entry["body"]).is_empty())
 
 
 func test_ending_snapshot_prefers_journal_ending_texts_with_hardcoded_fallback() -> void:
