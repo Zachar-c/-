@@ -1,17 +1,14 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuCard } from "~/ui/widgets/gu_card"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 
-# MapScreen —— 地图屏（网状收敛地图、八类节点、统一结算入口）
-# 契约：props.state 只读快照（含 nodes/current_node_id/reachable_ids/resources/contracts/anomalies/death_lines）
-#       props.commands 动作名 -> Callable（travel / view_node）
-# 屏内零业务读写；仅在 on_press 回调中经 commands 触发。
-#   commands["travel"].call(id)        前往可达节点
-#   commands["view_node"].call(id)     查看节点详情（可选）
-# nodes 项字段：{ id, type, label, layer, ... }
-# 布局：按 layer 分组（每层一个面板），层数递增、节点递减即体现「网状收敛」。
+# MapScreen —— 地图屏（规格 v3 §6 B2）：网状收敛、节点图标化、三态（当前/已走/可达/不可达）、
+# 图例卷轴、侧边蛊囊。state 只读；travel / view_node 经 commands。
+# 实现注：真实路网连线绘制已由 scripts/presentation/route_tree_canvas.gd 承载（后续打磨候选）；
+# 本屏以 RUI 容器布局落地图标化三态 + 图例 + 蛊囊。
 
 export MapScreen() -> RuitkVNode {
   var state = props.get("state", {})
@@ -20,6 +17,7 @@ export MapScreen() -> RuitkVNode {
   var nodes = state.get("nodes", [])
   var current_id = state.get("current_node_id", "")
   var reachable = state.get("reachable_ids", [])
+  var gu_satchel = state.get("gu_satchel", [])
   var resources = state.get("resources", {})
   var contracts = state.get("contracts", [])
   var anomalies = state.get("anomalies", [])
@@ -27,75 +25,127 @@ export MapScreen() -> RuitkVNode {
 
   var has_view = commands.has("view_node")
 
-  # 按 layer 分组节点 -> layer(int) : Array[RuitkVNode]
+  # 节点类型 -> 图标 / 语义色（与 route_tree_canvas NODE_STYLE 对齐）
+  var NODE_STYLE = {
+    "start": {"label": "起", "text": "起始", "color": GuStyle.SILVER},
+    "combat": {"label": "战", "text": "战斗", "color": GuStyle.DANGER},
+    "pursuit": {"label": "追", "text": "追击", "color": GuStyle.DANGER},
+    "event": {"label": "事", "text": "事件", "color": GuStyle.JADE_BRIGHT},
+    "shop": {"label": "黑", "text": "黑市", "color": GuStyle.DANGER},
+    "market": {"label": "市", "text": "市集", "color": GuStyle.CONTRACT_BLUE},
+    "rest": {"label": "息", "text": "休整", "color": GuStyle.JADE},
+    "seclusion": {"label": "息", "text": "静修", "color": GuStyle.JADE},
+    "cultivation": {"label": "修", "text": "修行", "color": GuStyle.JADE},
+    "ascension": {"label": "仙", "text": "突破", "color": GuStyle.GOLD},
+    "refinement": {"label": "炼", "text": "炼蛊", "color": GuStyle.EMBER},
+    "inheritance": {"label": "承", "text": "传承", "color": Color("c9a0dc")},
+    "caravan": {"label": "队", "text": "商队", "color": GuStyle.CONTRACT_BLUE},
+    "wild_gu": {"label": "野", "text": "野蛊", "color": Color("c2b280")},
+  }
+
+  var current_layer = -1
+  for n in nodes:
+    if str(n.get("id", "")) == current_id:
+      current_layer = int(n.get("layer", -1))
+
   var by_layer = {}
   var layer_keys = []
   for n in nodes:
     var layer = int(n.get("layer", 0))
-    var id = str(n.get("id", ""))
-    var label = str(n.get("label", ""))
-    if label == "":
-      label = str(n.get("type", "节点"))
-    var ntype = str(n.get("type", ""))
-    var is_current = (id == current_id)
-    var is_reach = reachable.has(id)
-    var disabled = not is_reach
-
-    var travel_fn = func():
-      if commands.has("travel"):
-        commands["travel"].call(id)
-
-    var node_children = []
-    if is_current:
-      node_children.append(<Label text="（当前所在）" style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
-    var btn_label = "前往" if (is_reach and not is_current) else ("当前" if is_current else "不可达")
-    node_children.append(<GuButton label={ btn_label } disabled={ disabled } on_press={ travel_fn } />)
-    if has_view:
-      var view_fn = func():
-        commands["view_node"].call(id)
-      node_children.append(<GuButton label="详情" disabled={ disabled } on_press={ view_fn } />)
-
-    var node_panel = (
-      <GuPanel title={ "%s · %s" % [label, ntype] }>
-        @for (c in node_children) {
-          return c
-        }
-      </GuPanel>
-    )
-
     if not by_layer.has(layer):
       by_layer[layer] = []
       layer_keys.append(layer)
-    by_layer[layer].append(node_panel)
-
+    by_layer[layer].append(n)
   layer_keys.sort()
 
   var layer_panels = []
   for layer in layer_keys:
     var count = by_layer[layer].size()
-    var row = (
-      <GuPanel title={ "第 %d 层（%d 节点）" % [layer, count] }>
-        <VBoxContainer style={ {"separation": 8} }>
-          @for (np in by_layer[layer]) {
-            return np
-          }
-        </VBoxContainer>
+    var node_cards = []
+    for n in by_layer[layer]:
+      var id = str(n.get("id", ""))
+      var label = str(n.get("label", ""))
+      if label == "":
+        label = str(n.get("type", "节点"))
+      var ntype = str(n.get("type", ""))
+      var nstyle = NODE_STYLE.get(ntype, {"label": "?", "text": "未知", "color": GuStyle.BONE_DIM})
+      var is_current = (id == current_id)
+      var is_reach = reachable.has(id)
+      var is_past = (layer < current_layer and not is_current)
+      var icon_text = str(nstyle["label"])
+      var type_text = str(nstyle["text"])
+      var node_color = nstyle["color"]
+
+      var btns = []
+      if is_reach and not is_current:
+        btns.append(<GuButton label="前往" on_press={ func(): commands["travel"].call(id) } />)
+      if has_view:
+        var view_fn = func():
+          commands["view_node"].call(id)
+        btns.append(<GuButton label="详情" disabled={ not is_reach } on_press={ view_fn } />)
+
+      var status_label = "（当前）" if is_current else ("（已走）" if is_past else ("（可达）" if is_reach else "（不可达）"))
+      var status_color = GuStyle.GOLD if is_current else (GuStyle.GOLD_DIM if is_past else (GuStyle.JADE_BRIGHT if is_reach else GuStyle.BONE_DIM))
+      var sealed_flag = (not is_reach and not is_current and not is_past)
+
+      node_cards.append((
+        <GuCard title={ label } highlight={ is_current or is_reach } sealed={ sealed_flag }>
+          <Label text={ icon_text + " " + type_text } style={ {"font_color": node_color, "font_size": 14} } />
+          <Label text={ status_label } style={ {"font_color": status_color, "font_size": 12} } />
+          <HBoxContainer style={ {"separation": 6} }>
+            { btns }
+          </HBoxContainer>
+        </GuCard>
+      ))
+    layer_panels.append((
+      <GuPanel title={ "第 %d 层 · %d 节点" % [layer, count] }>
+        <HBoxContainer style={ {"separation": 10} }>
+          { node_cards }
+        </HBoxContainer>
       </GuPanel>
-    )
-    layer_panels.append(row)
+    ))
+
+  var legend_items = []
+  for k in NODE_STYLE.keys():
+    var s = NODE_STYLE[k]
+    legend_items.append(<Label text={ "%s %s" % [s["label"], s["text"]] } style={ {"font_color": s["color"], "font_size": 12} } />)
+
+  var satchel_rows = []
+  for g in gu_satchel:
+    satchel_rows.append(<Label text={ "· " + str(g.get("name", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />)
+  if satchel_rows.is_empty():
+    satchel_rows.append(<Label text="（蛊囊空空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
+
+  var map_empty = []
+  if nodes.is_empty():
+    map_empty.append(<Label text="（地图为空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
 
   return (
     <VBoxContainer style={ {"separation": 12} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
-      <Label text="网状收敛地图" style={ {"font_color": GuStyle.GOLD, "font_size": 20} } />
-      <GuScrollBox>
-        @for (lp in layer_panels) {
-          return lp
-        }
-        @if (nodes.is_empty()) {
-          return (<Label text="（地图为空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
-        }
-      </GuScrollBox>
+      <HBoxContainer style={ {"separation": 12} }>
+        <VBoxContainer style={ {"separation": 10, "size_flags_horizontal": 3} }>
+          <Label text="南疆行程 · 网状收敛" style={ {"font_color": GuStyle.GOLD, "font_size": 20} } />
+          <GuScrollBox height={ 420 }>
+            <VBoxContainer style={ {"separation": 10} }>
+              { layer_panels }
+              { map_empty }
+            </VBoxContainer>
+          </GuScrollBox>
+        </VBoxContainer>
+        <VBoxContainer style={ {"separation": 10, "min_width": 200} }>
+          <GuPanel title="图例">
+            <VBoxContainer style={ {"separation": 4} }>
+              { legend_items }
+            </VBoxContainer>
+          </GuPanel>
+          <GuPanel title="蛊囊">
+            <VBoxContainer style={ {"separation": 4} }>
+              { satchel_rows }
+            </VBoxContainer>
+          </GuPanel>
+        </VBoxContainer>
+      </HBoxContainer>
     </VBoxContainer>
   )
 }

@@ -149,10 +149,18 @@ static func map(controller) -> Dictionary:
 	var reach: Array[String] = []
 	for n in MapGeneratorScript.reachable_nodes(route, state):
 		reach.append(str(n["id"]))
+	var gu_satchel: Array[Dictionary] = []
+	for inst_key in state.gu_instances:
+		var inst: Dictionary = state.gu_instances[inst_key]
+		gu_satchel.append({
+			"id": str(inst_key),
+			"name": DisplayText.gu(str(inst.get("definition_id", ""))),
+		})
 	return {
 		"nodes": nodes,
 		"current_node_id": str(state.current_node_id),
 		"reachable_ids": reach,
+		"gu_satchel": gu_satchel,
 		"resources": _resources(state),
 		"contracts": _contracts(state),
 		"anomalies": [],
