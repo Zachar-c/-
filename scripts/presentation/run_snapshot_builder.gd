@@ -190,10 +190,28 @@ static func encounter(controller) -> Dictionary:
 		},
 		"actions": actions,
 		"intel": intel,
+		"player": _player_panel(state),
 		"resources": _resources(state),
 		"contracts": _contracts(state),
 		"anomalies": [],
 		"death_lines": _death_lines(state),
+	}
+
+
+## C4 侧边自身状态面板（§16.5 事件侧边快捷查看气血/魂魄/元石/蛊虫）。
+static func _player_panel(state) -> Dictionary:
+	var cult: Dictionary = state.cultivator
+	var gu_names: Array[String] = []
+	for inst_key in state.gu_instances:
+		var inst: Dictionary = state.gu_instances[inst_key]
+		gu_names.append(DisplayText.gu(str(inst.get("definition_id", ""))))
+	return {
+		"hp": int(cult.get("health", state.health)),
+		"max_hp": maxi(1, int(cult.get("max_health", state.max_health))),
+		"primordial": int(state.essence),
+		"soul": int(cult.get("soul", 0)),
+		"stone": int(state.stone),
+		"gu_names": gu_names,
 	}
 
 
