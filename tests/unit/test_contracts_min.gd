@@ -94,6 +94,50 @@ func test_contract_validation_rejects_bad_schema() -> void:
 	assert_true(_has(errors, "duplicate contract id"))
 
 
+# Quality batch ③: every player-facing contract desc must state its rule
+# numbers, so the text cannot drift away from the configured values.
+func test_contract_validation_rejects_desc_numeral_drift() -> void:
+	var tuned := catalog.duplicate(true)
+	tuned["contracts"] = catalog["contracts"].duplicate(true)
+	tuned["contracts"]["entries"] = [catalog["contract_entry_by_id"]["blood_pact"].duplicate(true)]
+	tuned["contracts"]["entries"][0]["desc"] = "打击伤害+40%，敌方意图伤害+20%。"
+
+	var errors := ContentCatalog.validate(tuned)
+	assert_true(_has(errors, "lacks numeral 30"))
+	assert_true(_has(errors, "strike_damage_pct"))
+	assert_false(_has(errors, "lacks numeral 20"))
+
+	tuned["contracts"]["entries"][0]["rules"] = [
+		{"key": "strike_damage_pct", "value": 40},
+		{"key": "enemy_damage_pct", "value": 20},
+	]
+	assert_true(ContentCatalog.validate(tuned).is_empty(),
+			str(ContentCatalog.validate(tuned)))
+
+
+func test_contract_validation_desc_numeral_must_be_standalone_token() -> void:
+	var entry := {
+		"id": "token_probe",
+		"label": "令牌探针",
+		"desc": "数值为 130 与 2，条目合计 1300。",
+		"rules": [
+			{"key": "material_bonus", "value": 2},
+			{"key": "material_penalty", "value": -30},
+		],
+		"mutual_exclusive": [],
+		"unlock": {"kind": "always"},
+	}
+	var tuned := catalog.duplicate(true)
+	tuned["contracts"] = {"contract_cap": 6, "entries": [entry]}
+	var errors := ContentCatalog.validate(tuned)
+	assert_true(_has(errors, "lacks numeral 30"), "digit runs inside 130/1300 must not satisfy 30")
+	assert_false(_has(errors, "lacks numeral 2"))
+
+	entry["desc"] = "数值为 30 与 2，条目合计 1300。"
+	assert_true(ContentCatalog.validate(tuned).is_empty(),
+			"extra numerals are allowed once every rule value is stated")
+
+
 func test_swear_writes_contracts_flag_and_event_once_at_trailhead() -> void:
 	var run := RunState.new_run(101)
 	var result := _swear(run, ["blood_pact", "miser_pact"])

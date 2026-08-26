@@ -484,6 +484,24 @@ static func _validate_contracts(cfg: Dictionary) -> Array[String]:
 				errors.append("contract %s uses unknown rule key %s" % [entry_id, rule.get("key", "")])
 			if not _is_integral(rule.get("value", null)):
 				errors.append("contract %s rule %s value must be an integer" % [entry_id, rule.get("key", "")])
+		# Quality batch ③: player-visible desc numerals must state every rule
+		# value (by magnitude), so the copy cannot drift from the config.
+		# Numerals are standalone digit tokens: runs inside longer numbers
+		# (e.g. "30" inside "130") do not count; extra numerals are allowed.
+		var desc := str(entry.get("desc", ""))
+		if not desc.is_empty():
+			var token_regex := RegEx.new()
+			token_regex.compile("(?<![0-9])[0-9]+(?![0-9])")
+			var stated := {}
+			for token_match in token_regex.search_all(desc):
+				stated[int(token_match.get_string())] = true
+			for rule_value in entry.get("rules", []):
+				var rule: Dictionary = rule_value
+				if not _is_integral(rule.get("value", null)):
+					continue
+				var magnitude := absi(int(rule["value"]))
+				if not stated.has(magnitude):
+					errors.append("contract %s desc lacks numeral %d for rule %s" % [entry_id, magnitude, rule.get("key", "")])
 		var unlock: Dictionary = entry.get("unlock", {})
 		var kind := str(unlock.get("kind", ""))
 		if kind != "always" and kind != "ending":
