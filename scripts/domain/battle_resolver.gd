@@ -781,7 +781,7 @@ static func _shuffled_cards(cards: Array, seed: int) -> Array:
 
 
 static func _battle_rng_seed(state: RunState, salt: int) -> int:
-	return int(state.seed) * 1000003 + state.event_log.size() * 97 + salt * 193
+	return SeededRollScript.mixed_seed_int(int(state.seed), salt, state.event_log.size())
 
 
 static func _draw_into_hand(draw_pile: Array, hand: Array, count: int) -> void:

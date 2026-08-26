@@ -9,6 +9,10 @@ const RngScript = preload("res://scripts/domain/rng.gd")
 # hand-copied in BattleResolver._seeded_index and LootResolver._pick_from.
 # Callers keep their own tick semantics (event-log length for loot/contact
 # rolls) and own their salt strings; neither salts nor call order may change.
+# Quality batch ②: the last hand-rolled copies (Resolver._refinement_roll,
+# _free_mix_seed, roll_chance and BattleResolver._battle_rng_seed) converged
+# here; the battle shuffle seed keeps its numeric-salt form (mixed_seed_int)
+# so deck draw order stays byte-identical after convergence.
 
 
 static func salt_hash(salt: String) -> int:
@@ -20,6 +24,13 @@ static func salt_hash(salt: String) -> int:
 
 static func mixed_seed(seed: int, salt: String, tick: int) -> int:
 	return int(seed) * 1000003 + int(tick) * 97 + salt_hash(salt)
+
+
+# Numeric-salt form: battle seeds use an integer salt scaled by 193 instead of
+# a string hash. Kept as a documented second form; do not fold it into the
+# string form or every battle draw order changes for identical seeds/tick.
+static func mixed_seed_int(seed: int, salt: int, tick: int) -> int:
+	return int(seed) * 1000003 + int(tick) * 97 + int(salt) * 193
 
 
 static func index(bound: int, seed: int, salt: String, tick: int) -> int:

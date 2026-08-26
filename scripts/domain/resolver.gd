@@ -2,7 +2,7 @@
 extends RefCounted
 
 
-const SeededRngScript = preload("res://scripts/domain/rng.gd")
+const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
@@ -402,11 +402,7 @@ static func _next_gu_instance_id(instances: Dictionary) -> String:
 
 
 static func _refinement_roll(state: RunState, recipe_id: String) -> int:
-	var recipe_hash := 0
-	for character in recipe_id:
-		recipe_hash = recipe_hash * 31 + character.unicode_at(0)
-	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + recipe_hash)
-	return rng.next_index(100) + 1
+	return SeededRollScript.index(100, int(state.seed), recipe_id, state.event_log.size()) + 1
 
 
 static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dictionary, recipe: Dictionary) -> Dictionary:
@@ -438,7 +434,7 @@ static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dict
 	var total := 0
 	for outcome_value in outcomes:
 		total += maxi(1, int(outcome_value.get("weight", 1)))
-	var roll := SeededRngScript.new(_free_mix_seed(state, selected)).next_index(total) + 1
+	var roll := SeededRollScript.index(total, int(state.seed), "+".join(selected), state.event_log.size()) + 1
 	var chosen: Dictionary = {}
 	var cursor := 0
 	for outcome_value in outcomes:
@@ -507,14 +503,6 @@ static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dict
 	if not fail_curse_id.is_empty() and str(chosen.get("effect", "")) != "mutate_to":
 		next = CurseRegistryScript.gain_curse(next, fail_curse_id, "free_mix_failure:%s" % str(chosen.get("id", "")))
 	return _finalize_if_dead(next)
-
-
-static func _free_mix_seed(state: RunState, instance_ids: Array[String]) -> int:
-	var text := "+".join(instance_ids)
-	var digest := 0
-	for character in text:
-		digest = digest * 31 + character.unicode_at(0)
-	return int(state.seed) * 1000003 + state.event_log.size() * 97 + digest
 
 
 static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
@@ -1105,7 +1093,7 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 	var total := 0
 	for reward_value in rewards:
 		total += maxi(1, int(reward_value.get("weight", 1)))
-	var roll := SeededRngScript.new(_free_mix_seed(state, selected)).next_index(total) + 1
+	var roll := SeededRollScript.index(total, int(state.seed), "+".join(selected), state.event_log.size()) + 1
 	var chosen: Dictionary = {}
 	var cursor := 0
 	for reward_value in rewards:
@@ -1953,11 +1941,7 @@ static func roll_chance(state: RunState, pct: int, salt: String) -> bool:
 		return false
 	if bound >= 100:
 		return true
-	var salt_hash := 0
-	for character in salt:
-		salt_hash = salt_hash * 31 + character.unicode_at(0)
-	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
-	return rng.next_index(100) < bound
+	return SeededRollScript.index(100, int(state.seed), salt, state.event_log.size()) < bound
 
 
 static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:

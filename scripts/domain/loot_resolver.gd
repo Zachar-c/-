@@ -2,7 +2,6 @@
 extends RefCounted
 
 
-const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
