@@ -71,7 +71,8 @@
 - **UI 重设计已由并行会话合入主线**（merge 4681d01）：StS token 体系 10 屏进入 master；后续单分支开发。
 - 测试基线：**512 unit + 9 integration 全绿**。
 - **P2a 打磨批已落地**（master @`078670d`，531 unit + 9 integration）：结算页契约复盘区块、休整节点 type 驱动泛化＋按节点作用域 flag（旧档只增迁移）、SeededRoll 公式收敛。
-- 待办候选：调试面板（§16.22）、NPC 个人库存、DDA、其余种子公式变体收敛（resolver.gd:406/515/1952、battle_resolver.gd:784）、ContentCatalog 契约 desc 含数值校验。
+- **调试台融合裁定**（2026-08-26）：领域权威=DebugActions 服务（master @`1cd79ea`：五 op 白名单、DeckCapacity 同门禁、事件日志审计含拒绝、jump 落地标记防软锁、essence 双取钳制）；面板 UI 归 UI 会话 T5-D（.guitkx）接线，对接简报已入库：`docs/superpowers/sdd-archive/task-dbg-fusion-brief.md`。我方 overlay 废弃。
+- 待办候选：NPC 个人库存、DDA、其余种子公式变体收敛（resolver.gd:406/515/1952、battle_resolver.gd:784）、ContentCatalog 契约 desc 含数值校验。
 
 ### 当前进行中
 - **UI 重设计**（分支 `ui-sts-redesign`）：
