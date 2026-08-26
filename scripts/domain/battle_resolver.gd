@@ -555,7 +555,7 @@ static func _battle_refine(battle: Dictionary, action: Dictionary, state: RunSta
 	var next_state := paid.append_event(_event(
 		paid,
 		"battle_synthesize",
-		{"materials": paid.materials, "synthesis_fail_streak": int(paid.synthesis_fail_streak)},
+		{"synthesis_fail_streak": int(paid.synthesis_fail_streak)},
 		{"materials": paid.materials, "synthesis_fail_streak": next_streak},
 		"battle_synthesis_succeeded" if succeeded else "battle_synthesis_failed",
 		cost.keys() as Array
@@ -604,7 +604,7 @@ static func _spend_battle_materials(state: RunState, cost: Dictionary) -> RunSta
 	var next := state.append_event(_event(
 		state,
 		"battle_synthesize",
-		{"materials": state.materials},
+		{},
 		{"materials": remaining},
 		"battle_synthesis_materials_spent",
 		targets

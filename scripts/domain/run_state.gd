@@ -235,6 +235,12 @@ func _initial_event() -> Dictionary:
 func _copy() -> RunState:
 	var copy := RunState.new()
 	for field in STATE_FIELDS:
+		if field == "event_log":
+			# Entries are append-only and never mutated after append, so copies
+			# may share entry dictionaries; duplicating the array itself keeps
+			# later appends invisible to older states.
+			copy.event_log = event_log.duplicate()
+			continue
 		copy.set(field, _copy_value(get(field)))
 	return copy
 
@@ -257,6 +263,10 @@ func _normalized_event(event: Dictionary, index: int) -> Dictionary:
 
 func _apply_after(after: Dictionary) -> void:
 	for key in after:
+		if str(key).begins_with("_"):
+			# "_"-prefixed info keys ride the log for offline attribution only;
+			# they must never reach live state fields.
+			continue
 		if not STATE_FIELDS.has(key) or key == "event_log" or key == "seed":
 			# event_log is append-only and seed is immutable once set; event
 			# after-payloads must never touch either.

@@ -1693,7 +1693,7 @@ static func _rest_remove_card(state: RunState, command: Dictionary, catalog: Dic
 	var next := consumed.append_event(_event(
 		consumed,
 		"rest",
-		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{},
 		{"gu_instances": payload["instances"], "cave_aperture": payload["aperture"]},
 		"rest_removed_gu",
 		state.current_node_id,
