@@ -632,7 +632,8 @@ static func settlement_extras(controller) -> Dictionary:
 ## 类型短标；boss=该层含 catalog 中 tier=boss 敌人的节点，供 EMBER 高亮。
 static func _route_summary(controller) -> Array[Dictionary]:
 	var state = controller.state
-	if state == null or state.node_flags == null or controller.route == null:
+	var route = controller.get("route") if controller != null else null
+	if state == null or state.node_flags == null or route == null:
 		return []
 	var boss_enemies: Dictionary = {}
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
@@ -641,7 +642,7 @@ static func _route_summary(controller) -> Array[Dictionary]:
 		if str(entry.get("tier", "")) == "boss":
 			boss_enemies[str(enemy_id)] = true
 	var groups: Array[Dictionary] = []
-	for node_value in controller.route:
+	for node_value in route:
 		var node: Dictionary = node_value
 		var node_id := str(node.get("id", ""))
 		if not state.node_flags.has(node_id):
