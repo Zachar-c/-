@@ -9,7 +9,7 @@ import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 # ShopScreen —— 黑市 / 商店屏（规格 v3 §7 C3 / §16.5 / §16.16）
 # 商品板块（蛊/消耗品/材料/元石，价格） + 服务板块（剩余次数 + 通胀说明）。
 # 「购买此蛊」与「付费屏蔽此蛊」文案严格区分（R13.4）；应急支付通道；NPC 立场徽章。
-# 寿元代价交易（curse_warning）购买前走 D1 确认弹窗（R2.2 死亡可预见）。
+# 寿元代价交易（curse_warning）与元石不足触发的应急支付（R6.7）购买前走 D1 确认弹窗。
 # state 只读；buy / block / use_service / leave 经 commands。
 
 export ShopScreen() -> RuitkVNode {
@@ -54,8 +54,9 @@ export ShopScreen() -> RuitkVNode {
     var oqual = str(o.get("quality", ""))
     var ocursed = bool(o.get("curse_warning", false))
     var oid = str(o.get("id", ""))
+    var oemergency = bool(o.get("will_emergency_pay", false))
     var ask_buy = func():
-      if ocursed:
+      if ocursed or oemergency:
         set_confirm_offer.call({"confirm_offer": oid})
       else:
         fire.call("buy", oid)
@@ -100,11 +101,17 @@ export ShopScreen() -> RuitkVNode {
   if service_rows.is_empty():
     service_empty.append(<Label text="（暂无服务）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
 
-  # 危险交易确认弹窗数据（按 confirm_offer 定位货架行）
+  # 危险交易确认弹窗数据（按 confirm_offer 定位货架行）；应急支付与寿元代付文案分轨。
   var confirm_data = {}
   for o in offers:
     if str(o.get("id", "")) == confirm_offer:
       confirm_data = o
+  var confirm_cursed = bool(confirm_data.get("curse_warning", false))
+  var dialog_title = "⚠ 危险交易 · 寿元代付"
+  var dialog_note = "价格：" + str(confirm_data.get("price", "")) + " · 以寿元支付，执行前请确认寿元余量"
+  if not confirm_cursed and bool(confirm_data.get("will_emergency_pay", false)):
+    dialog_title = "⚠ 应急支付"
+    dialog_note = str(confirm_data.get("price", "")) + " · 元石不足，将以气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
   var do_buy_cancel = func():
     set_confirm_offer.call({"confirm_offer": ""})
   var do_buy_confirm = func():
@@ -149,9 +156,9 @@ export ShopScreen() -> RuitkVNode {
       @if (confirm_offer != "") {
         return (
           <GuConfirmDialog
-            title="⚠ 危险交易 · 寿元代付"
+            title={ dialog_title }
             message={ str(confirm_data.get("name", "")) + "：" + str(confirm_data.get("desc", "")) }
-            warning_note={ "价格：" + str(confirm_data.get("price", "")) + " · 以寿元支付，执行前请确认寿元余量" }
+            warning_note={ dialog_note }
             confirm_label="确认支付"
             on_confirm={ do_buy_confirm }
             on_cancel={ do_buy_cancel }

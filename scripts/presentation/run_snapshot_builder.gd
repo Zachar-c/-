@@ -54,6 +54,9 @@ static func shop(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	# R6.7 应急支付预览（只读推导）：元石定价高于持有元石的货架项将触发应急支付，
+	# UI 据此弹 D1 确认；寿元定价项（无 stone_cost）不参与该判定。
+	var stones := int(controller.state.stone)
 	var offers: Array[Dictionary] = []
 	for offer_key in offer_by_id:
 		var o: Dictionary = offer_by_id[offer_key]
@@ -71,6 +74,7 @@ static func shop(controller) -> Dictionary:
 			"desc": str(o.get("clue", o.get("card_key", ""))),
 			"quality": "史诗" if kind == "soul_boost" else ("稀有" if kind in ["purchase", "barter"] else "普通"),
 			"curse_warning": kind == "lifespan_deal",
+			"will_emergency_pay": int(o.get("stone_cost", 0)) > stones,
 		})
 	var node_type := str(controller.current_node.get("type", ""))
 	out["title"] = "黑市 · 寨市" if node_type == "shop" else ("商队开市" if node_type == "caravan" else "临时寨市")
