@@ -89,14 +89,16 @@ func start_new_run(seed_value: int, school: String = "") -> void:
 
 
 func submit_command(command: Dictionary) -> Dictionary:
+	# D4 Toast：反馈只在产生它的那次命令后可见；下一条命令即清空（无计时器，确定性显隐）。
+	last_feedback = ""
 	if command.get("type", "") == "save_run":
 		var save_error := save_current_run()
-		last_feedback = "已存档。" if save_error == OK else "存档失败（错误码 %d）。" % save_error
+		last_feedback = "进度已保存 · 关闭游戏后可继续本次冒险" if save_error == OK else "存档失败（错误码 %d）。" % save_error
 		_show_map()
 		return {"ok": save_error == OK, "feedback": last_feedback}
 	if command.get("type", "") == "load_run":
 		var loaded := load_saved_run()
-		last_feedback = "已读档：回到最近保存的行程。" if loaded else "没有可读的存档，先「存档」一次。"
+		last_feedback = "已返回上次保存的行程。" if loaded else "暂无可继续的冒险：先在地图「存档」一次。"
 		_show_map()
 		return {"ok": loaded, "feedback": last_feedback}
 	if command.get("type", "") == "travel":

@@ -307,6 +307,9 @@ static func hall(controller) -> Dictionary:
 		"available_schools": school_list,
 		"contracts": [],
 		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},
+		# D4 预留（§16.22）：SaveRepository.load_meta_file 在版本不符时返回 null，与无档/损坏
+		# 不可区分；待领域侧暴露版本冲突标记后在此注入提示文案，hall_view 已预留 warn Toast 槽位。
+		"hall_version_warning": "",
 		"codex": _codex(catalog, meta),
 		"journal": _journal(meta),
 	}
@@ -413,6 +416,8 @@ static func map(controller) -> Dictionary:
 		"current_node_id": str(state.current_node_id),
 		"reachable_ids": reach,
 		"gu_satchel": gu_satchel,
+		# D4 存档 Toast（R1.5）：文本来自控制器反馈，空串则不渲染。
+		"toast": str(controller.last_feedback),
 		"resources": _resources(state),
 		"contracts": _contracts(state),
 		"anomalies": [],
