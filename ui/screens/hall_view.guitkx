@@ -20,8 +20,8 @@ export HallView() -> RuitkVNode {
 
   var school_rows = []
   for s in schools:
-    var sid = str(s.get("id", ""))
-    var sname = str(s.get("name", str(s)))
+    var sid = str(s.get("id", "")) if (s is Dictionary) else ""
+    var sname = str(s.get("name", str(s))) if (s is Dictionary) else str(s)
     school_rows.append((
       <GuButton label={ sname } on_press={ func(): select.call(sid) } />
     ))
