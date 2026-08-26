@@ -282,11 +282,7 @@ func _show_title() -> void:
 func _inject_school_starters(school: String) -> void:
 	if school.is_empty():
 		return
-	var before := {
-		"school": str(state.school),
-		"gu_instances": state.gu_instances.duplicate(true),
-		"cave_aperture": state.cave_aperture.duplicate(true),
-	}
+	var before := {"school": str(state.school)}
 	state.school = school
 	var schools: Dictionary = catalog.get("schools", {})
 	var starters: Array = schools.get(school, {}).get("starter_gu_ids", [])
@@ -448,7 +444,7 @@ func _finish_battle_in_session(outcome: String) -> void:
 		"time": state.event_log.size(),
 		"node_id": state.current_node_id,
 		"action": "battle_finished",
-		"before": {"encounter_session": state.encounter_session, "encounter_results": state.encounter_results},
+		"before": {},
 		"after": {"encounter_session": current_session, "encounter_results": results},
 		"reason": "battle_%s" % outcome,
 		"source": "run_controller",

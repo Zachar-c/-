@@ -82,7 +82,7 @@ func test_gain_curse_stores_layers_source_and_snapshot_event() -> void:
 
 	var gained_event: Dictionary = second.event_log.back()
 	assert_eq(str(gained_event["action"]), "curse_gained")
-	assert_eq(int(gained_event["before"]["cultivator"]["statuses"]["gu_erosion"]["layers"]), 1)
+	assert_eq(int(gained_event["before"]["layers"]), 1)
 	assert_eq(int(gained_event["after"]["cultivator"]["statuses"]["gu_erosion"]["layers"]), 2)
 	# Immutable state: original run object untouched.
 	assert_true(run.cultivator["statuses"].is_empty())
@@ -95,7 +95,7 @@ func test_remove_curse_erases_entry_and_writes_snapshot_event() -> void:
 	assert_true(removed.cultivator["statuses"].is_empty())
 	var removed_event: Dictionary = removed.event_log.back()
 	assert_eq(str(removed_event["action"]), "curse_removed")
-	assert_eq(int(removed_event["before"]["cultivator"]["statuses"]["meridian_seal"]["layers"]), 1)
+	assert_eq(int(removed_event["before"]["layers"]), 1)
 	assert_true(removed_event["after"]["cultivator"]["statuses"].is_empty())
 
 

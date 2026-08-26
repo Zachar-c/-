@@ -159,7 +159,7 @@ static func _record_session_state(
 		"time": state.event_log.size(),
 		"node_id": session["node_id"],
 		"action": "encounter_session",
-		"before": {"encounter_session": state.encounter_session, "encounter_results": state.encounter_results},
+		"before": {},
 		"after": after,
 		"reason": reason,
 		"source": "encounter_session_resolver",

@@ -172,6 +172,9 @@ static func _has_valid_event_log(state: RunState) -> bool:
 	if not after is Dictionary:
 		return false
 	for key in after:
+		if str(key).begins_with("_"):
+			# "_"-prefixed info keys are attribution metadata, not state fields.
+			continue
 		if not key in state or state.get(key) != after[key]:
 			return false
 	return true

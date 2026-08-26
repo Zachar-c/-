@@ -19,7 +19,8 @@ static func gain_curse(state: RunState, curse_id: String, source: String) -> Run
 	var cultivator: Dictionary = state.cultivator.duplicate(true)
 	var statuses: Dictionary = cultivator.get("statuses", {}).duplicate(true)
 	var entry: Dictionary = statuses.get(curse_id, {}).duplicate(true)
-	entry["layers"] = int(entry.get("layers", 0)) + 1
+	var previous_layers := int(entry.get("layers", 0))
+	entry["layers"] = previous_layers + 1
 	if str(entry.get("source", "")).is_empty():
 		entry["source"] = source
 	statuses[curse_id] = entry
@@ -29,7 +30,7 @@ static func gain_curse(state: RunState, curse_id: String, source: String) -> Run
 		"time": state.event_log.size(),
 		"node_id": state.current_node_id,
 		"action": "curse_gained",
-		"before": {"cultivator": state.cultivator},
+		"before": {"layers": previous_layers},
 		"after": {"cultivator": cultivator},
 		"reason": "backlash_curse_gained",
 		"source": "curse_registry",
@@ -39,6 +40,7 @@ static func gain_curse(state: RunState, curse_id: String, source: String) -> Run
 
 static func remove_curse(state: RunState, curse_id: String) -> RunState:
 	# R9.3 removal is full removal only; no partial de-layering.
+	var removed_layers := int(state.cultivator.get("statuses", {}).get(curse_id, {}).get("layers", 0))
 	var cultivator: Dictionary = state.cultivator.duplicate(true)
 	var statuses: Dictionary = cultivator.get("statuses", {}).duplicate(true)
 	statuses.erase(curse_id)
@@ -48,7 +50,7 @@ static func remove_curse(state: RunState, curse_id: String) -> RunState:
 		"time": state.event_log.size(),
 		"node_id": state.current_node_id,
 		"action": "curse_removed",
-		"before": {"cultivator": state.cultivator},
+		"before": {"layers": removed_layers},
 		"after": {"cultivator": cultivator},
 		"reason": "backlash_curse_removed",
 		"source": "curse_registry",
