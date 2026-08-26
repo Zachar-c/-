@@ -7,6 +7,7 @@ const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 
 
 const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
@@ -101,6 +102,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"accept_event": func(state, command, catalog): return _accept_event(state, command, catalog),
 			"gain_curse": func(state, command, catalog): return _gain_curse_command(state, command, catalog),
 			"remove_curse": func(state, command, catalog): return _remove_curse_command(state, command, catalog),
+			"swear_contracts": func(state, command, catalog): return _swear_contracts(state, command, catalog),
 		}
 	return _dispatch.get(command_type, null)
 
@@ -1208,6 +1210,78 @@ static func _gain_curse_command(state: RunState, command: Dictionary, catalog: D
 	return _accepted(CurseRegistryScript.gain_curse(state, curse_id, source))
 
 
+# C1-min §16.13: opening contracts are global rule modifiers sworn exactly
+# once, at the trailhead. The controller passes allowed_ids from the hall
+# save; the domain validates shape (unknown/duplicate/cap/mutual exclusion)
+# and applies the immediate hp_max cost behind a lethal precheck so swearing
+# can never kill.
+static func _swear_contracts(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	if str(state.current_node_id) != "trailhead":
+		return _rejected(state, "contracts_trailhead_only")
+	if str(state.node_flags.get("contracts_sworn", "")) == "true":
+		return _rejected(state, "contracts_already_sworn")
+	var requested: Array[String] = []
+	for value in command.get("ids", []):
+		var id := str(value)
+		if requested.has(id):
+			return _rejected(state, "duplicate_contract")
+		requested.append(id)
+	if requested.is_empty():
+		return _rejected(state, "no_contracts_selected")
+	var cfg: Dictionary = catalog.get("contracts", {})
+	var entry_by_id := _contract_entry_by_id(cfg)
+	var allowed: Array = command.get("allowed_ids", [])
+	for id in requested:
+		if not entry_by_id.has(id):
+			return _rejected(state, "unknown_contract")
+		if not allowed.has(id):
+			return _rejected(state, "contract_locked")
+	if requested.size() > int(cfg.get("contract_cap", 0)):
+		return _rejected(state, "contract_cap_exceeded")
+	for id in requested:
+		for excluded_value in entry_by_id[id].get("mutual_exclusive", []):
+			if requested.has(str(excluded_value)):
+				return _rejected(state, "contract_mutual_exclusive")
+	var hp_delta := 0
+	for id in requested:
+		for rule_value in entry_by_id[id].get("rules", []):
+			var rule: Dictionary = rule_value
+			if str(rule.get("key", "")) == "hp_max_penalty":
+				hp_delta += int(rule.get("value", 0))
+	if state.max_health + hp_delta < 1:
+		return _rejected(state, "contract_hp_max_lethal")
+	var flags := state.node_flags.duplicate(true)
+	flags["contracts_sworn"] = "true"
+	var after := {"contracts": requested.duplicate(), "node_flags": flags}
+	if hp_delta != 0:
+		var new_max := state.max_health + hp_delta
+		var cultivator := state.cultivator.duplicate(true)
+		cultivator["max_health"] = new_max
+		after["max_health"] = new_max
+		# Clamping keeps health <= max and can never reach 0 because of the
+		# lethal precheck above (new_max >= 1).
+		after["health"] = mini(state.health, new_max)
+		after["cultivator"] = cultivator
+	var next := state.append_event(_event(
+		state,
+		"contracts_sworn",
+		{"node_flags": state.node_flags},
+		after,
+		"contracts_sworn",
+		state.current_node_id,
+		requested.duplicate()
+	))
+	return _accepted(next)
+
+
+static func _contract_entry_by_id(cfg: Dictionary) -> Dictionary:
+	var indexed := {}
+	for entry_value in cfg.get("entries", []):
+		var entry: Dictionary = entry_value
+		indexed[str(entry.get("id", ""))] = entry
+	return indexed
+
+
 # R9.3: the black-market paid service. Pricing uses the shared M5 uplift plus
 # the Task 5 per-service use escalation, and consumes the same limit pool as
 # remove_card/remove_imprint so all three services share one accounting family.
@@ -1869,7 +1943,10 @@ static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 		var per := int(effects.get("revisit_price_pct_per_visit", 0))
 		var revisit_cap := int(effects.get("revisit_price_cap_pct", 100))
 		revisit_lift = mini(revisit_cap, (visits - 1) * per)
-	return maxi(0, ceili(float(base) * (1.0 + float(notoriety_lift) / 100.0) * (1.0 + float(revisit_lift) / 100.0)))
+	# C1-min §16.13: sworn contracts lift buy prices multiplicatively with the
+	# existing inflations; sell prices stay untouched.
+	var contract_pct := maxi(0, int(ContractRulesScript.aggregate(state, catalog).get("shop_price_pct", 0)))
+	return maxi(0, ceili(float(base) * (1.0 + float(notoriety_lift) / 100.0) * (1.0 + float(revisit_lift) / 100.0) * (1.0 + float(contract_pct) / 100.0)))
 
 
 static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> int:

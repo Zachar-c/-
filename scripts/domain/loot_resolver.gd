@@ -5,6 +5,7 @@ extends RefCounted
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 
 
 # R13.1 rare pity threshold: after this many consecutive common-producing
@@ -24,7 +25,11 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
 	var table: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
 	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
-	var material_ids := _roll_materials(table, state, tier, pity_cfg)
+	# C1-min §16.13: material_bonus/-penalty shift the rolled material count,
+	# clamped at >= 0 so a penalty can never invert the roll.
+	var mods := ContractRulesScript.aggregate(state, catalog)
+	var count_adjustment := int(mods.get("material_bonus", 0)) + int(mods.get("material_penalty", 0))
+	var material_ids := _roll_materials(table, state, tier, pity_cfg, count_adjustment)
 	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
@@ -115,9 +120,9 @@ static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
 	return "common"
 
 
-static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}) -> Array[String]:
+static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, count_adjustment: int = 0) -> Array[String]:
 	var pool: Array = (table.get("material_pool", []) as Array).duplicate()
-	var count := int(table.get("material_count", 0))
+	var count := maxi(0, int(table.get("material_count", 0)) + count_adjustment)
 	var picked: Array[String] = []
 	while picked.size() < count and not pool.is_empty():
 		var index := _pick_from(pool.size(), state, "loot.material.%s" % tier)

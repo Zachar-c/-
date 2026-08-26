@@ -8,6 +8,14 @@ const SCHOOL_IDS := ["blood", "qi", "force", "soul", "refine"]
 const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
+# C1-min §16.13: contract rule keys are a closed whitelist; the ending ids
+# mirror the snapshot builder's ending_type vocabulary.
+const CONTRACT_RULE_KEYS := [
+	"strike_damage_pct", "enemy_damage_pct", "shop_price_pct",
+	"material_bonus", "material_penalty", "turn_essence_bonus",
+	"hp_max_penalty", "hall_material_bonus_pct",
+]
+const ENDING_TYPE_IDS := ["success", "risky", "retreat", "death", "gu_fall", "true_ending"]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 
@@ -31,6 +39,7 @@ static func load_all() -> Dictionary:
 	var synthesis := _load_object("res://data/synthesis.json")
 	var schools := _load_object("res://data/schools.json")
 	var loot_tables := _load_object("res://data/loot_tables.json")
+	var contracts_cfg := _load_object("res://data/contracts.json")
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
 	var material_ids: Array[String] = ["feed_points"]
 	for material_id in loot_materials:
@@ -65,6 +74,8 @@ static func load_all() -> Dictionary:
 		"synthesis": synthesis,
 		"schools": schools,
 		"school_pools": _load_object("res://data/school_pools.json"),
+		"contracts": contracts_cfg,
+		"contract_entry_by_id": _index_by_id(contracts_cfg.get("entries", [])),
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -345,6 +356,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			for card_value in blind_cfg.get("blind_pool", []):
 				if not card_by_id.has(str(card_value)):
 					errors.append("synthesis blind references missing card %s" % card_value)
+	if catalog.has("contracts"):
+		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
 	for tier_key in loot_tables.get("loot", {}):
 		var tier: Dictionary = loot_tables["loot"][tier_key]
 		if int(tier.get("material_count", 0)) < 0:
@@ -425,6 +438,58 @@ static func _is_data_driven_card_linked(gu: Dictionary, cards: Array) -> bool:
 				and (card.get("source_gu_ids", []) as Array).has(gu["id"]):
 			return true
 	return false
+
+
+# C1-min §16.13 schema guard: id uniqueness, closed rule-key whitelist,
+# mutual-exclusion references, unlock shape and a positive contract cap.
+static func _validate_contracts(cfg: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	if not _is_integral(cfg.get("contract_cap", null)) or int(cfg.get("contract_cap", 0)) < 1:
+		errors.append("contracts contract_cap must be a positive integer")
+	var entries: Array = cfg.get("entries", [])
+	var seen_ids := {}
+	for entry_value in entries:
+		var entry: Dictionary = entry_value
+		var entry_id := str(entry.get("id", ""))
+		if entry_id.is_empty():
+			errors.append("contract entry missing id")
+			continue
+		if seen_ids.has(entry_id):
+			errors.append("duplicate contract id %s" % entry_id)
+		seen_ids[entry_id] = true
+		for field in ["label", "desc"]:
+			if str(entry.get(field, "")).is_empty():
+				errors.append("contract %s missing %s" % [entry_id, field])
+		for rule_value in entry.get("rules", []):
+			var rule: Dictionary = rule_value
+			if not CONTRACT_RULE_KEYS.has(str(rule.get("key", ""))):
+				errors.append("contract %s uses unknown rule key %s" % [entry_id, rule.get("key", "")])
+			if not _is_integral(rule.get("value", null)):
+				errors.append("contract %s rule %s value must be an integer" % [entry_id, rule.get("key", "")])
+		var unlock: Dictionary = entry.get("unlock", {})
+		var kind := str(unlock.get("kind", ""))
+		if kind != "always" and kind != "ending":
+			errors.append("contract %s has unknown unlock kind %s" % [entry_id, kind])
+		elif kind == "ending":
+			var endings: Array = unlock.get("endings", [])
+			if endings.is_empty():
+				errors.append("contract %s ending unlock needs endings" % entry_id)
+			else:
+				for ending_value in endings:
+					if not ENDING_TYPE_IDS.has(str(ending_value)):
+						errors.append("contract %s ending unlock lists unknown ending %s" % [entry_id, ending_value])
+	for entry_value in entries:
+		var entry: Dictionary = entry_value
+		var entry_id := str(entry.get("id", ""))
+		if entry_id.is_empty():
+			continue
+		for excluded_value in entry.get("mutual_exclusive", []):
+			var excluded := str(excluded_value)
+			if excluded == entry_id:
+				errors.append("contract %s mutual_exclusive must not reference itself" % entry_id)
+			elif not seen_ids.has(excluded):
+				errors.append("contract %s mutual_exclusive references unknown id %s" % [entry_id, excluded])
+	return errors
 
 
 static func _load_array(path: String) -> Array:

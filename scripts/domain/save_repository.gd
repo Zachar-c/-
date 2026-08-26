@@ -150,7 +150,7 @@ static func _coerce_state_field(field: String, value: Variant) -> Variant:
 		return value.duplicate(true)
 	var string_list_fields := [
 		"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints",
-		"clues", "known_facts", "route_progress", "relic_ids", "global_codex_ids",
+		"contracts", "clues", "known_facts", "route_progress", "relic_ids", "global_codex_ids",
 	]
 	var dictionary_list_fields := ["encounter_results", "saved_combos", "event_log"]
 	if string_list_fields.has(field):

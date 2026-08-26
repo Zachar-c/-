@@ -8,6 +8,7 @@ const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
+const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 
 const BATTLE_HAND_SIZE := 2
 
@@ -70,6 +71,9 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var available_gu_ids := state.refined_gu_ids.duplicate()
 	for sealed_definition_id in sealed_definition_ids:
 		available_gu_ids.erase(sealed_definition_id)
+	# C1-min §16.13: contract aggregates are frozen at battle start; swearing
+	# only happens at the trailhead so mid-battle drift is impossible.
+	var contract_mods := ContractRulesScript.aggregate(state, catalog)
 	var battle := {
 		"battle_id": "%d-%d" % [state.seed, state.event_log.size()],
 		"deck_generation_hash": deck_generation_hash,
@@ -117,6 +121,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"active_gu_instance_ids": [],
 		"active_effect_registry": {},
 		"pending_kill_move_state": {},
+		"contract_mods": contract_mods,
 		"context": OpenRpgAdapter.create_battle_context({"enemy_kind": enemy_id}),
 	}
 	var battle_start := RelicHookResolverScript.apply_battle_start(battle, state, catalog)
@@ -303,11 +308,15 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 # Channel "curse" ignores every mitigation layer (guarded/dodging act as the
 # run's shield equivalent) and accumulates onto pending_curse_damage, which
 # _settle_curse_damage writes straight onto RunState.health at end of turn.
+# C1-min: strike_damage_pct scales only the attack channel, floored at >= 0;
+# the intel bonus stays a flat additive on top.
 static func _strike(battle: Dictionary, amount: int, channel := "attack") -> void:
 	if channel == "curse":
 		battle["pending_curse_damage"] = int(battle.get("pending_curse_damage", 0)) + amount
 		return
-	var total := int(battle.get("intel_bonus", 0)) + amount
+	var pct := int(battle.get("contract_mods", {}).get("strike_damage_pct", 0))
+	var scaled := maxi(0, int(floor(float(amount) * (1.0 + float(pct) / 100.0))))
+	var total := int(battle.get("intel_bonus", 0)) + scaled
 	battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - total)
 
 
@@ -680,6 +689,19 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	next_state = _settle_curse_damage(next_battle, next_state)
 	if _depleted(next_state):
 		return _death_over(next_battle, next_state, catalog, ["player_dead"])
+	# C1-min §16.13: turn_essence_bonus grants its essence at every player
+	# turn start (the transition out of end turn); turn 1 keeps battle-start
+	# resources untouched so opening hand math stays stable.
+	var tide := int(next_battle.get("contract_mods", {}).get("turn_essence_bonus", 0))
+	if tide > 0:
+		next_state = next_state.append_event(_event(
+			next_state,
+			"contract_essence_tide",
+			{"essence": next_state.essence},
+			{"essence": next_state.essence + tide},
+			"contract_turn_essence",
+			[]
+		))
 	_refill_hand_after_turn(next_battle, next_state, catalog)
 	return _result(next_battle, next_state, false, "ongoing", feeds)
 
@@ -710,6 +732,11 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 	battle = damage_hook["battle"]
 	var next_state: RunState = damage_hook["state"]
 	damage = int(damage_hook["damage"])
+	# C1-min §16.13: enemy_damage_pct scales the final post-mitigation intent
+	# damage (floored at >= 0), so dodge/guard reductions keep their weight.
+	var enemy_pct := int(battle.get("contract_mods", {}).get("enemy_damage_pct", 0))
+	if enemy_pct != 0:
+		damage = maxi(0, int(floor(float(damage) * (1.0 + float(enemy_pct) / 100.0))))
 	var next_health := maxi(0, state.health - damage)
 	var log_entry := {"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy", "dodged": dodged}
 	var after_payload := {"health": next_health}
