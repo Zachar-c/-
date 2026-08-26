@@ -600,6 +600,22 @@ func _show_title() -> void:
 	_render()
 
 
+# 退出流程（A6 设置 → 退出游戏）：request_quit 只置标志（可测），
+# quit_game 在真实运行树下追加 SceneTree.quit；headless/GUT 下树为空或
+# 为编辑器提示时安全跳过，避免测试进程被终止。
+var quit_requested := false
+
+
+func request_quit() -> void:
+	quit_requested = true
+
+
+func quit_game() -> void:
+	request_quit()
+	if is_inside_tree() and not Engine.is_editor_hint():
+		get_tree().quit()
+
+
 ## 大厅内部子视图切换（A3 流派 / A4 契约 / A5 图鉴 / A6 设置 / A7 手记）。
 ## 仅改展示层 `_hall_subview`，不触碰领域状态；A2 主界面为默认根。
 func _show_hall_subview(subview: String) -> void:

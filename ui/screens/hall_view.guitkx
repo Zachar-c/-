@@ -109,6 +109,7 @@ export HallView() -> RuitkVNode {
           <Label text="清除大厅存档需二次确认（规格 §16.22）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
         </GuPanel>
         <GuButton label="返回大厅" on_press={ func(): fire.call("back_to_hall") } />
+        <GuButton label="退出游戏" on_press={ func(): fire.call("quit") } tone="danger" />
       </VBoxContainer>
     )
 
