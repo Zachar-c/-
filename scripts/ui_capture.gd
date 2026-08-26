@@ -1,6 +1,7 @@
 extends SceneTree
 
 # GUI 实跑截图：真实渲染器（非 headless）下逐屏挂载 RUI 屏组件，等布局帧后保存 PNG。
+# 分辨率：1920x1080（16:9）。用离屏 SubViewport 精确控制输出尺寸，不受 Windows DPI 缩放影响。
 # 用法：& <godot_gui.exe> --path . -s res://scripts/ui_capture.gd
 # 输出：.superpowers/ui_captures/*.png（不污染仓库，.superpowers 已忽略）
 
@@ -9,6 +10,9 @@ const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const ROOT := "res://"
 const OUT_DIR := "C:/Users/Zachary/DevEnv/06_个人项目/gu-zhenren/gu-zhenren-editor/.superpowers/ui_captures"
+
+const SHOT_W := 1920
+const SHOT_H := 1080
 
 const WIDGET_DIR := "res://ui/widgets"
 const SCREEN_DIR := "res://ui/screens"
@@ -58,37 +62,36 @@ func _snap(component: String, props: Dictionary) -> void:
 	if not (fn is Callable):
 		push_error("无组件 %s" % component)
 		return
-	# 每屏独立容器，避免复用 RUI host 状态串扰
-	var container := Control.new()
-	container.size = Vector2(1280, 720)
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_child(container)
+	# 离屏 SubViewport：固定 1920x1080，精确控制输出，不受窗口/DPI 影响
+	var svp := SubViewport.new()
+	svp.size = Vector2i(SHOT_W, SHOT_H)
+	svp.transparent_bg = false
+	svp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	root.add_child(svp)
 	# 墨青夜色全屏底
 	var bg := ColorRect.new()
 	bg.color = Color("0b0f14")
-	bg.size = Vector2(1280, 720)
-	container.add_child(bg)
+	bg.size = Vector2(SHOT_W, SHOT_H)
+	svp.add_child(bg)
 	var inner := Control.new()
-	inner.set_anchors_preset(Control.PRESET_FULL_RECT)
-	inner.size = Vector2(1280, 720)
-	container.add_child(inner)
+	inner.size = Vector2(SHOT_W, SHOT_H)
+	svp.add_child(inner)
 	RuiRoot.create(inner, VLib.fc(fn, props))
 	# 等 6 帧让 RUI 完成挂载与布局
 	for i in range(6):
 		await process_frame
 	await process_frame
-	var img := root.get_texture().get_image()
+	var img := svp.get_texture().get_image()
 	_cur += 1
 	var p := OUT_DIR.path_join("%02d_%s.png" % [_cur, component])
 	img.save_png(p)
 	print("SNAP %s -> %s" % [component, p])
-	container.queue_free()
+	svp.queue_free()
 	await process_frame
 
 
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(OUT_DIR)
-	root.size = Vector2i(1280, 720)
 
 	if not _compile_file("res://ui/_sample.guitkx"):
 		quit(1)

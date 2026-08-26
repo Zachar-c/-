@@ -13,6 +13,13 @@ enabled=PackedStringArray("res://addons/reactive_ui_toolkit/plugin.cfg", "res://
 config/name="Nanjiang Smoke"
 run/main_scene="res://scenes/main.tscn"
 
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
