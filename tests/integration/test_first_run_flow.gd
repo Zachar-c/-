@@ -9,7 +9,7 @@ func test_fixed_run_reaches_stage_one_ledger_after_a_full_caravan_branch() -> vo
 	controller.start_new_run(101)
 	assert_eq(controller.current_view_name(), "Map")
 	controller.submit_command({"type": "travel", "node_id": "ridge_caravan"})
-	assert_eq(controller.current_view_name(), "Encounter")
+	assert_eq(controller.current_view_name(), "Shop")
 	controller.submit_command({"type": "buy_gu", "offer_id": "caravan_thorn_offer"})
 	controller.submit_command({"type": "leave_node"})
 	controller.submit_command({"type": "travel", "node_id": "refinement_hollow"})

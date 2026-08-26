@@ -70,15 +70,15 @@ func _initialize_view_flow() -> void:
 	_show_title()
 
 
-func start_new_run(seed: int, school: String = "") -> void:
+func start_new_run(seed_value: int, school: String = "") -> void:
 	catalog = ContentCatalog.load_all()
 	meta = SaveRepository.load_meta_file()
 	if meta == null:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
-	state = RunState.new_run(seed, meta)
+	state = RunState.new_run(seed_value, meta)
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
 	_inject_school_starters(school)
-	route = MapGenerator.build(seed, seed == 101)
+	route = MapGenerator.build(seed_value, seed_value == 101)
 	current_node = {}
 	current_battle = {}
 	current_session = {}
@@ -149,7 +149,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		if bool(current_session.get("completed", false)):
 			_return_to_map()
 		else:
-			_show_encounter()
+			_re_show_current_screen()
 		return session_result
 	var resolved := Resolver.apply(state, command, catalog)
 	state = resolved["state"]
@@ -230,6 +230,14 @@ func _travel_to(node_id: String) -> Dictionary:
 	last_result = resolved["result"]
 	if node["type"] in ["combat", "pursuit"]:
 		_start_battle()
+	elif node["type"] in ["shop", "market", "caravan"]:
+		_show_shop()
+	elif node["type"] == "rest":
+		_show_rest()
+	elif node["type"] == "refinement":
+		_show_refine()
+	elif node["type"] == "contact":
+		_show_npc()
 	else:
 		_show_encounter()
 	return resolved["result"]
@@ -336,8 +344,8 @@ func _inject_school_starters(school: String) -> void:
 	state = next
 
 
-func _next_gu_instance_id(state: RunState) -> String:
-	return RunState.next_gu_instance_id(state.gu_instances)
+func _next_gu_instance_id(state_ref: RunState) -> String:
+	return RunState.next_gu_instance_id(state_ref.gu_instances)
 
 
 func _start_run_from_title() -> void:
@@ -391,6 +399,16 @@ func _show_reward() -> void:
 func _show_npc() -> void:
 	_view_name = "Npc"
 	_render()
+
+
+## 会话未完成时按当前屏留在原地（T4 节点屏替代 Encounter 通用展示）。
+func _re_show_current_screen() -> void:
+	match _view_name:
+		"Shop": _show_shop()
+		"Rest": _show_rest()
+		"Refine": _show_refine()
+		"Npc": _show_npc()
+		_: _show_encounter()
 
 
 func _show_battle() -> void:

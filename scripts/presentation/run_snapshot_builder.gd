@@ -9,6 +9,7 @@ extends RefCounted
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
+const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
@@ -36,16 +37,26 @@ static func _gui_state(controller) -> Dictionary:
 	}
 
 
-## C3 黑市 / 商店屏快照（数据表 shops.json + 黑市服务）。
+## 真实节点可行动作（复用 Encounter 屏的 preview_actions，保证数据一致）。
+static func _node_actions(controller) -> Array[Dictionary]:
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var knowledge: Dictionary = {}
+	if controller.meta != null:
+		knowledge = controller.meta.unlocked_random_outcomes
+	var actions: Array[Dictionary] = []
+	for c in ActionPreviewServiceScript.preview_actions(controller.state, controller.current_node, catalog, knowledge):
+		actions.append(_enc_action(c))
+	return actions
+
+
+## C3 黑市 / 商店屏快照（数据表 shops.json 真实货架 + 黑市服务）。
 static func shop(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
-	var raw: Array = []
-	var shops_data = catalog.get("shops", {})
-	if shops_data is Dictionary:
-		raw = shops_data.get("offers", [])
+	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
 	var offers: Array[Dictionary] = []
-	for o in raw:
+	for offer_key in offer_by_id:
+		var o: Dictionary = offer_by_id[offer_key]
 		var gid := str(o.get("gu_id", ""))
 		var name := DisplayText.gu(gid) if gid != "" else str(o.get("card_key", "货物"))
 		var price := str(o.get("stone_cost", 0)) + " 元石"
@@ -53,7 +64,7 @@ static func shop(controller) -> Dictionary:
 		if o.has("lifespan_cost"):
 			price = str(o.get("lifespan_cost", 0)) + " 寿元"
 		offers.append({
-			"id": str(o.get("id", "")),
+			"id": str(offer_key),
 			"name": name,
 			"kind": kind,
 			"price": price,
@@ -61,69 +72,92 @@ static func shop(controller) -> Dictionary:
 			"quality": "史诗" if kind == "soul_boost" else ("稀有" if kind in ["purchase", "barter"] else "普通"),
 			"curse_warning": kind == "lifespan_deal",
 		})
-	out["title"] = "黑市 · 寨市"
-	out["npc_name"] = "地脉游商"
+	var node_type := str(controller.current_node.get("type", ""))
+	out["title"] = "黑市 · 寨市" if node_type == "shop" else ("商队开市" if node_type == "caravan" else "临时寨市")
+	out["npc_name"] = "地脉游商" if node_type != "caravan" else "商队执事"
 	out["npc_stance"] = "中立"
 	out["inflation_note"] = "层数提升物价微涨 · 二次访问 +25%/次 封顶 +100%"
 	out["offers"] = offers
 	out["services"] = [
-		{"id": "refresh", "name": "刷新货架", "cost": "120 元石", "remaining": 2, "note": "本局剩余 2 次 · 通胀叠加"},
 		{"id": "remove_gu", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
 		{"id": "pool_block", "name": "池屏蔽", "cost": "200 元石", "remaining": 1, "note": "本局剩余 1 次 · 移除≠池排除"},
 		{"id": "wash", "name": "洗炼", "cost": "80 元石", "remaining": 3, "note": "重骰一条被动"},
 		{"id": "calm", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
-		{"id": "soul_pill", "name": "魂丹", "cost": "6 元石", "remaining": 1, "note": "黑市高回报商品 · 魂魄 +1"},
 	]
 	out["emergency_note"] = "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
 	return out
 
 
-## C5 休整 / 闭关屏快照（aptitude.json.paths 洗髓换骨）。
+## C5 休整 / 闭关屏快照（rest_hollow 真实休整 + aptitude 洗髓换骨）。
 static func rest(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var state = controller.state
+	var node_flags: Dictionary = state.node_flags if state != null else {}
+	var rest_used := str(node_flags.get("rest_hollow", "")) == "used"
+	var rest_mode_used := str(node_flags.get("rest_mode_used", "")) == "true"
+	var aptitude_raised := str(node_flags.get("aptitude_raised", "")) == "true"
+
+	var choices: Array[Dictionary] = []
+	# 调息回血：rest 节点真实命令（rest mode=heal），用后禁用。
+	choices.append({
+		"id": "heal",
+		"label": "调息回血",
+		"detail": "回复气血与真元，消耗本次休整",
+		"cost": "",
+		"disabled": rest_used,
+		"reason": "本次已休整" if rest_used else "",
+		"curse_warning": false,
+	})
+	# 温养一蛊：移除负面卡（领域需选蛊实例，UI 暂为占位）。
+	choices.append({
+		"id": "remove",
+		"label": "温养一蛊",
+		"detail": "移除一张负面卡 / 免费移除",
+		"cost": "",
+		"disabled": rest_used or rest_mode_used,
+		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else "休整二选一"),
+		"curse_warning": false,
+	})
+	# 洗髓换骨：仅闭关/传承节点可用（aptitude.json paths.node_kinds）。
+	var node_kind := str(controller.current_node.get("type", ""))
 	var apt: Dictionary = catalog.get("aptitude", {})
 	var paths: Array = apt.get("paths", []) if apt is Dictionary else []
-	var state = controller.state
-	var used_wash := false
-	if state != null:
-		used_wash = bool(state.cultivator.get("wash_used", false)) if state.cultivator is Dictionary else false
-	out["title"] = "闭关 · 休整"
-	out["note"] = "强制二选一，不可全拿"
-	out["choices"] = [
-		{"id": "heal", "label": "调息回血", "detail": "回复 30 气血", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
-		{"id": "nurture", "label": "温养一蛊", "detail": "强化一张卡 / 移除负面", "cost": "", "disabled": false, "reason": "", "curse_warning": false},
-	]
-	var wash_id := ""
-	for p in paths:
-		wash_id = str(p.get("id", "wash"))
-		var cost := str(p.get("cost_lifespan", 10)) + " 寿元 + " + str(p.get("cost_stone", 8)) + " 元石"
-		out["choices"].append({
-			"id": wash_id,
+	var wash_available := false
+	var wash_cost := ""
+	if paths.size() > 0:
+		var p: Dictionary = paths[0]
+		var kinds: Array = p.get("node_kinds", [])
+		if kinds.has(node_kind):
+			wash_available = true
+			wash_cost = str(p.get("cost_lifespan", 10)) + " 寿元 + " + str(p.get("cost_stone", 8)) + " 元石"
+	if wash_available:
+		var at_peak := str(state.aptitude) == "jia" if state != null else false
+		choices.append({
+			"id": "wash",
 			"label": "洗髓换骨",
 			"detail": "真元上限 +1（实时刷新）",
-			"cost": cost,
-			"disabled": used_wash,
-			"reason": "一局一次" if used_wash else "一局一次 · 执行前预检寿元",
+			"cost": wash_cost,
+			"disabled": aptitude_raised or at_peak,
+			"reason": "一局一次 · 已使用" if aptitude_raised else ("资质已至巅峰" if at_peak else "一局一次 · 执行前预检寿元"),
 			"curse_warning": false,
 		})
+	out["title"] = "闭关 · 休整"
+	out["note"] = "强制二选一，不可全拿"
+	out["choices"] = choices
 	out["is_ascension"] = false
-	out["growth"] = [
-		{"id": "attr", "label": "基础属性", "detail": "修为成长", "cost": "+1 属性点"},
-		{"id": "slot", "label": "蛊槽扩容", "detail": "蛊囊上限 +1", "cost": "+1 槽位"},
-		{"id": "gu", "label": "随机蛊", "detail": "随机获得一蛊（附躁动）", "cost": "+躁动"},
-		{"id": "material", "label": "元石材料", "detail": "元石 + 材料", "cost": "+元石"},
-	]
+	out["growth"] = []
 	return out
 
 
-## C6 炼蛊 / 合成屏快照（refinement_recipes.json + 盲盒）。
+## C6 炼蛊 / 合成屏快照（refinement_by_id 真实配方 + 盲盒）。
 static func refine(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
-	var recipes: Array = catalog.get("refinement_recipes", [])
+	var recipe_by_id: Dictionary = catalog.get("refinement_by_id", {})
 	var rec_rows: Array[Dictionary] = []
-	for r in recipes:
+	for recipe_key in recipe_by_id:
+		var r: Dictionary = recipe_by_id[recipe_key]
 		var inputs: Array = r.get("input_gu_ids", [])
 		var in_names: Array[String] = []
 		for iid in inputs:
@@ -133,12 +167,12 @@ static func refine(controller) -> Dictionary:
 		if r.has("success_roll_max"):
 			fail = "失败率 %d%%" % (100 - int(r.get("success_roll_max", 100)))
 		rec_rows.append({
-			"id": str(r.get("id", "")),
+			"id": str(recipe_key),
 			"name": " + ".join(in_names) + " → " + output,
 			"output": output,
 			"quality": "稀有",
 			"fail_chance": fail,
-			"backlash": "躁动 +1" if str(r.get("kind", "")) == "combine" else "无躁动",
+			"backlash": "失败毁材 · 躁动 +1" if str(r.get("kind", "")) == "combine" else "无躁动",
 			"curse": "",
 			"unlocked": not bool(r.get("locked", false)),
 		})
@@ -150,11 +184,11 @@ static func refine(controller) -> Dictionary:
 		{"id": "blind", "label": "盲盒随机"},
 	]
 	out["active_channel"] = "fixed"
-	out["inputs"] = ["月光蛊", "小光蛊"]
-	out["slot_ok"] = true
+	out["inputs"] = []
+	out["slot_ok"] = false
 	out["recipes"] = rec_rows
-	out["dismantle_slots"] = ["石甲蛊"]
-	out["streak_note"] = "连续失败第 2 次，下次成功率 +5%（Run 内清零，永不到 100%）"
+	out["dismantle_slots"] = []
+	out["streak_note"] = "连续失败计数 Run 内清零，成功率加成永不到 100%"
 	return out
 
 
@@ -173,7 +207,7 @@ static func reward(controller) -> Dictionary:
 	return out
 
 
-## C8 NPC 交涉屏快照（npcs.json + 立场/恶名）。
+## C8 NPC 交涉屏快照（contact 节点真实交涉选项 + 立场/恶名）。
 static func npc(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
@@ -181,10 +215,6 @@ static func npc(controller) -> Dictionary:
 	var npc_id := str(controller.current_node.get("npc_id", ""))
 	if npc_id == "" and npcs.size() > 0:
 		npc_id = str(npcs[0].get("id", ""))
-	var nd: Dictionary = {}
-	for n in npcs:
-		if str(n.get("id", "")) == npc_id:
-			nd = n
 	var npc_name := "无名散修"
 	if npc_id == "caravan_steward":
 		npc_name = "商队执事"
@@ -194,13 +224,41 @@ static func npc(controller) -> Dictionary:
 		npc_name = "游方医修"
 	elif npc_id == "ridge_extortionist":
 		npc_name = "山岭索贿者"
+	elif str(controller.current_node.get("type", "")) == "contact":
+		npc_name = "拦路散修"
 	var state = controller.state
 	var notoriety := 0
 	if state != null:
-		notoriety = int(state.get("notoriety", 0))
+		notoriety = ResolverScript.notoriety(state)
+	var stance := "中立"
+	if state != null and state.node_flags != null:
+		if str(state.node_flags.get("reputation_extreme_stance", "")) == "true":
+			stance = "极度仇恨"
+		elif str(state.node_flags.get("reputation_hostile", "")) == "true":
+			stance = "敌视"
+	# 真实交涉选项：contact 节点 neutral_wanderer 的 negotiate/deceive/fight/retreat
+	var talk_options: Array[Dictionary] = []
+	for a in _node_actions(controller):
+		var aid := str(a.get("id", ""))
+		if aid in ["leave", "fight", "retreat", "negotiate", "deceive"]:
+			var label := str(a.get("label", aid))
+			var detail := str(a.get("detail", ""))
+			talk_options.append({
+				"id": aid,
+				"label": label,
+				"detail": detail,
+				"danger": aid in ["fight", "deceive"],
+			})
+	if talk_options.is_empty():
+		talk_options = [
+			{"id": "negotiate", "label": "友善攀谈", "detail": "了解情报与需求", "danger": false},
+			{"id": "deceive", "label": "诈言诓骗", "detail": "恶名威慑 · 可能翻脸", "danger": true},
+			{"id": "fight", "label": "出手试探", "detail": "直接开战", "danger": true},
+			{"id": "retreat", "label": "退避三舍", "detail": "花 1 元石改道", "danger": false},
+		]
 	out["npc_name"] = npc_name
-	out["stance"] = "中立"
-	out["stance_note"] = "交涉失败将种子化翻转敌视"
+	out["stance"] = stance
+	out["stance_note"] = "交涉失败将种子化翻转敌视" if stance == "中立" else ("高恶名使对方戒备" if stance == "敌视" else "极度仇恨：无法撤退")
 	out["notoriety"] = notoriety
 	out["notoriety_note"] = "恶名高亮：威慑部分路线 / 关闭部分交易"
 	out["offers"] = [
@@ -210,17 +268,12 @@ static func npc(controller) -> Dictionary:
 	out["barter"] = [
 		{"id": "b1", "name": "迹眼蛊 换 雾步蛊", "give": "迹眼蛊", "take": "雾步蛊", "note": "以物易物 · 需空位校验"},
 	]
-	out["talk_options"] = [
-		{"id": "t1", "label": "友善攀谈", "detail": "了解情报与需求", "danger": false},
-		{"id": "t2", "label": "以物易物试探", "detail": "低风险试探底线", "danger": false},
-		{"id": "t3", "label": "威胁勒索", "detail": "恶名威慑 · 可能翻脸", "danger": true},
-	]
-	out["can_flee"] = true
+	out["talk_options"] = talk_options
+	out["can_flee"] = stance != "极度仇恨"
 	return out
 
 
 static func hall(controller) -> Dictionary:
-	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var meta = controller.meta
 	var schools: Dictionary = catalog.get("schools", {})
@@ -581,7 +634,7 @@ static func _synthesis_options(state, catalog: Dictionary) -> Array[Dictionary]:
 	return options
 
 
-static func _synthesis_option(recipe: Dictionary, cfg: Dictionary, streak: int, state, catalog: Dictionary, blind: bool) -> Dictionary:
+static func _synthesis_option(recipe: Dictionary, cfg: Dictionary, streak: int, state, _catalog: Dictionary, blind: bool) -> Dictionary:
 	var cost: Dictionary = recipe.get("material_cost", {})
 	var affordable := true
 	for material_id_value in cost:
