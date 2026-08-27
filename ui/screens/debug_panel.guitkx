@@ -71,12 +71,16 @@ export DebugPanel() -> RuitkVNode {
       )
     else:
       body_rows.append(<Label text="（无可跳节点）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />)
-    # —— 池情报（只读）——
+    # —— 池情报（只读，形状对齐 query_loot_state）——
     body_rows.append(<Label text="池情报 · 只读" style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+    var pity = info.get("pity", {})
     body_rows.append(
-      <Label text={ "保底计数 · 蛊 %d / 材料 %d" % [int(info.get("loot_pity", 0)), int(info.get("material_pity", 0))] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+      <Label text={ "保底计数 · 蛊 %d / 材料 %d" % [int(pity.get("loot_pity", 0)), int(pity.get("material_pity", 0))] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
     )
-    var excluded_items = info.get("pool_excluded_ids", [])
+    body_rows.append(
+      <Label text={ "合成连败 %d" % int(pity.get("synthesis_fail_streak", 0)) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+    )
+    var excluded_items = info.get("excluded", [])
     var excluded_text = "（无）"
     if excluded_items.size() > 0:
       var parts = []

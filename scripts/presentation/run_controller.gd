@@ -16,6 +16,7 @@ const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
+const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 
 const SCREEN_PATHS := {
 	"Title": "res://ui/screens/hall_view.gd",
@@ -313,36 +314,17 @@ func debug_add_gu(gu_id: String) -> Dictionary:
 	if state == null or catalog == null or catalog.is_empty():
 		return _debug_fail("no_active_run")
 	var target := str(gu_id).strip_edges()
-	if not catalog.get("gu_by_id", {}).has(target):
-		return _debug_fail_with("unknown_gu", "调试失败：未知蛊 id（%s）" % target)
-	# §16.22：与 Resolver._reject_deck_full 同源同阈值的正式容量校验，绝不绕过。
-	var card_count := DeckCapacityScript.card_count(state, catalog)
-	var capacity := DeckCapacityScript.capacity(catalog)
-	if DeckCapacityScript.projected_count(state, catalog, [target], []) > capacity:
-		return _debug_fail_with(
-			"deck_capacity_exceeded",
-			"调试失败：蛊囊已满（%d/%d），无法加入 %s" % [card_count, capacity, DisplayText.gu(target)]
-		)
-	# 正式获得通道的实例形态（同 loot_resolver._gain_gu）：实例入册 + 蛊槽占位 +
-	# 旧投影同步。按简报裁定不追加事件日志（避免污染存档校验与札记归因）。
-	var instances := state.gu_instances.duplicate(true)
-	var aperture := state.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	var instance_id := RunState.next_gu_instance_id(instances)
-	instances[instance_id] = {
-		"instance_id": instance_id,
-		"definition_id": target,
-		"state": "refined",
-	}
-	stored.append(instance_id)
-	aperture["stored_gu_instance_ids"] = stored
-	state.gu_instances = instances
-	state.cave_aperture = aperture
-	state.sync_legacy_gu_projections()
-	print("[debug] add_gu %s as %s (deck %d/%d)" % [target, instance_id, card_count + 1, capacity])
-	var added := _debug_ok("调试：已加入 %s（实例 %s）" % [DisplayText.gu(target), instance_id])
-	added["instance_id"] = instance_id
-	return added
+	var result := DebugActionsScript.apply(state, catalog,
+			{"op": "add_gu", "definition_id": target}, _debug_enabled())
+	state = result["state"]
+	if not bool(result.get("ok", false)):
+		var reason := str(result.get("result", {}).get("reason", ""))
+		return _debug_fail_with(reason, "调试失败：%s" % reason)
+	var instance_id := str(result.get("result", {}).get("instance_id", ""))
+	_debug_feedback = "调试：已加入 %s（实例 %s）" % [DisplayText.gu(target), instance_id]
+	print("[debug] add_gu %s as %s" % [target, instance_id])
+	_render()
+	return {"ok": true, "instance_id": instance_id}
 
 
 func debug_set_resource(kind: String, value) -> Dictionary:
@@ -360,39 +342,36 @@ func debug_set_resource(kind: String, value) -> Dictionary:
 		amount = int(text_value)
 	else:
 		return _debug_fail_with("invalid_number", "调试失败：数值类型不支持")
-	var applied := 0
-	var cult: Dictionary = state.cultivator
-	match str(kind):
-		"yuanstone":
-			applied = clampi(amount, 0, DEBUG_STONE_CAP)
-			state.stone = applied
-		"health":
-			var max_hp := maxi(1, int(cult.get("max_health", state.max_health)))
-			applied = clampi(amount, 1, max_hp)
-			cult["health"] = applied
-			state.health = applied
-		"lifespan":
-			var life_cap := int(cult.get("lifespan_max", 0))
-			if life_cap <= 0:
-				life_cap = maxi(amount, int(cult.get("lifespan", 0)))
-			applied = clampi(amount, 1, life_cap)
-			cult["lifespan"] = applied
-		"soul":
-			var soul_cap := int(cult.get("soul_max", 0))
-			if soul_cap <= 0:
-				soul_cap = maxi(amount, int(cult.get("soul", 0)))
-			applied = clampi(amount, 1, soul_cap)
-			cult["soul"] = applied
-		"essence":
-			var essence_cap := maxi(int(state.essence_capacity), int(state.cave_aperture.get("essence_max", 0)))
-			applied = clampi(amount, 0, maxi(essence_cap, 0))
-			state.essence = applied
-		_:
-			return _debug_fail_with("unknown_kind", "调试失败：未知资源类别（%s）" % str(kind))
+	# UI-layer clamp: stones uncapped in domain but panel shows 99999 cap.
+	var api_kind := str(kind)
+	if api_kind == "yuanstone" or api_kind == "stones":
+		amount = clampi(amount, 0, DEBUG_STONE_CAP)
+		api_kind = "stones"
+	elif api_kind == "lifespan":
+		return _debug_fail_with("unknown_kind", "调试失败：未知资源类别（%s）" % str(kind))
+	elif api_kind not in ["stones", "health", "soul", "essence"]:
+		return _debug_fail_with("unknown_kind", "调试失败：未知资源类别（%s）" % str(kind))
+	var action := {"op": "set_resources"}
+	action[api_kind] = amount
+	var result := DebugActionsScript.apply(state, catalog, action, _debug_enabled())
+	state = result["state"]
+	
+	if not bool(result.get("ok", false)):
+		var reason := str(result.get("result", {}).get("reason", ""))
+		return _debug_fail_with(reason, "调试失败：%s" % reason)
+	var applied := amount
+	if api_kind == "essence":
+		applied = int(result.get("result", {}).get("essence", amount))
+	elif api_kind == "stones":
+		applied = int(result.get("result", {}).get("stones", amount))
+	elif api_kind == "health":
+		applied = int(result.get("result", {}).get("health", amount))
+	elif api_kind == "soul":
+		applied = int(result.get("result", {}).get("soul", amount))
 	print("[debug] set_resource %s -> %d" % [str(kind), applied])
-	var result := _debug_ok("调试：%s 已设为 %d" % [str(DEBUG_RESOURCE_LABELS.get(str(kind), str(kind))), applied])
-	result["applied"] = applied
-	return result
+	_debug_feedback = "调试：%s 已设为 %d" % [str(DEBUG_RESOURCE_LABELS.get(str(kind), str(kind))), applied]
+	_render()
+	return {"ok": true, "applied": applied}
 
 
 func debug_travel(node_id: String) -> Dictionary:
@@ -408,42 +387,36 @@ func debug_travel(node_id: String) -> Dictionary:
 		visible_ids.append(str(visible_node.get("id", "")))
 	if not visible_ids.has(target):
 		return _debug_fail_with("invisible_node", "调试失败：目标节点不在当前可见范围（%s）" % target)
-	var result := _travel_to(target)
-	if not bool(result.get("ok", true)):
-		return _debug_fail_with(str(result.get("reason", "travel_failed")), "调试失败：跳层被拒（%s）" % str(result.get("reason", "")))
+	var result := DebugActionsScript.apply(state, catalog,
+			{"op": "jump_to_node", "node_id": target}, _debug_enabled(), route)
+	state = result["state"]
+	
+	if not bool(result.get("ok", false)):
+		var reason := str(result.get("result", {}).get("reason", ""))
+		return _debug_fail_with(reason, "调试失败：跳层被拒（%s）" % reason)
 	_debug_travel_node = target
+	_view_name = "Map"
+	_show_map()
 	print("[debug] travel -> %s" % target)
-	return _debug_ok("调试：已跳至 %s" % target)
+	_debug_feedback = "调试：已跳至 %s" % target
+	_render()
+	return {"ok": true}
 
 
-func debug_snapshot_dump() -> String:
+func debug_snapshot_dump() -> Dictionary:
 	if not _debug_enabled():
-		return ""
+		return {}
 	if state == null:
-		return ""
-	var cult: Dictionary = state.cultivator
-	var dump := {
-		"seed": int(state.seed),
-		"stage": str(state.stage),
-		"school": str(state.school),
-		"cultivation": int(state.cultivation),
-		"current_node_id": str(state.current_node_id),
-		"view": current_view_name(),
-		"stone": int(state.stone),
-		"health": int(state.health),
-		"essence": int(state.essence),
-		"lifespan": int(cult.get("lifespan", 0)),
-		"soul": int(cult.get("soul", 0)),
-		"gu_instance_count": state.gu_instances.size(),
-		"loot_pity": int(state.loot_pity),
-		"material_pity": int(state.material_pity),
-		"event_count": state.event_log.size(),
-	}
-	var dumped := JSON.stringify(dump)
-	print("[debug] snapshot ", dumped)
+		return {}
+	var result := DebugActionsScript.apply(state, catalog,
+			{"op": "dump_snapshot"}, _debug_enabled())
+	state = result["state"]
+	
+	var snapshot: Dictionary = result.get("result", {}).get("snapshot", {})
+	print("[debug] snapshot ", JSON.stringify(snapshot))
 	_debug_feedback = "调试：RunData 快照已打印到 stdout"
 	_render_debug_panel()
-	return dumped
+	return snapshot
 
 
 ## 调试面板跳层下拉选项：仅当前可见节点（防越层破坏地图不变量）。

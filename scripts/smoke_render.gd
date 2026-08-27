@@ -783,7 +783,7 @@ func _initialize() -> void:
 		"travel": Callable(self, "_noop"),
 		"snapshot_dump": Callable(self, "_noop"),
 	}
-	var dp_info := {"loot_pity": 2, "material_pity": 1, "pool_excluded_ids": [], "seed": 101, "event_count": 7, "dda_percentile": ""}
+	var dp_info := {"pity": {"loot_pity": 2, "material_pity": 1, "synthesis_fail_streak": 0}, "excluded": [], "seed": 101, "event_count": 7, "dda_percentile": ""}
 	var dp_open := {
 		"open": true,
 		"feedback": "",
