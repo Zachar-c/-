@@ -1337,6 +1337,11 @@ static func _travel(state: RunState, command: Dictionary, catalog: Dictionary) -
 	# consuming the visit is refused (skip only means never entering the node).
 	if _is_rest_node(catalog, state.current_node_id) and not _rest_visit_consumed(state):
 		return _rejected(state, "rest_choice_required")
+	# R-layering hard gate: the ascension window only opens after the final
+	# layer's boss falls. Topology already funnels it behind final_boss_stand;
+	# this guard keeps the rule true even against out-of-band travel commands.
+	if node_id == "ascension_window" and str(state.node_flags.get("boss_defeated", "")) != "true":
+		return _rejected(state, "boss_undefeated")
 	var next := state.append_event(_event(
 		state,
 		"travel",

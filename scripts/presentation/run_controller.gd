@@ -607,13 +607,27 @@ func _show_hall_subview(subview: String) -> void:
 	_render()
 
 
+# R-opening-fairness 2026-08-27: runs started without a school pick used to
+# enter the guaranteed layer-one combat with a one-card deck (novice only),
+# which was unwinnable against reaction-guarded enemies. The wanderer pack
+# (bind/guard/heal/scout/mobility) makes the opening fight winnable without
+# visiting a shop first. Pools stay school-agnostic: state.school remains "".
+const WANDERER_STARTER_GU_IDS := [
+	"thorn_whip_gu",
+	"stone_shell_gu",
+	"bear_strength_gu",
+	"trail_eye_gu",
+	"mist_step_gu",
+]
+
+
 func _inject_school_starters(school: String) -> void:
-	if school.is_empty():
-		return
-	var before := {"school": str(state.school)}
-	state.school = school
 	var schools: Dictionary = catalog.get("schools", {})
-	var starters: Array = schools.get(school, {}).get("starter_gu_ids", [])
+	var starters: Array = WANDERER_STARTER_GU_IDS if school.is_empty() \
+		else (schools.get(school, {}).get("starter_gu_ids", []) as Array)
+	var before := {"school": str(state.school)}
+	if not school.is_empty():
+		state.school = school
 	var injected: Array[String] = []
 	for starter_value in starters:
 		var gu_id := str(starter_value)

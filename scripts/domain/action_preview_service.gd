@@ -268,7 +268,14 @@ static func _append_caravan_cards(cards: Array[Dictionary], state: RunState, cat
 					"remedy_hints": _gu_remedies(missing) + (_stone_remedies(stone_cost - state.stone) if state.stone < stone_cost else []),
 					"command": {"type": "exchange_gu", "offer_id": str(offer["id"])},
 				}))
+	# R-instance-dup 2026-08-27: owning several instances of one definition
+	# must not emit duplicate card ids; one sell card per definition and the
+	# next visit (or replay) moves the remaining copies.
+	var sell_seen := {}
 	for gu_id in state.refined_gu_ids:
+		if sell_seen.has(gu_id):
+			continue
+		sell_seen[gu_id] = true
 		var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 		if gu.is_empty():
 			continue

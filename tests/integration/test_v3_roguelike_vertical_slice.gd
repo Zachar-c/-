@@ -44,7 +44,10 @@ func test_first_vertical_slice_travels_fogged_route_to_boss_and_resets_after_dea
 	controller.force_death_for_test("test_blow")
 	assert_eq(str(controller.state.terminal_state), "dead")
 	controller.start_new_run(101)
-	assert_eq(controller.state.refined_gu_ids, ["small_light_gu"])
+	# R-opening-fairness: school-less runs now inject the wanderer pack on top
+	# of the novice so the guaranteed layer-one combat stays winnable.
+	var expected_pack := ["small_light_gu", "thorn_whip_gu", "stone_shell_gu", "bear_strength_gu", "trail_eye_gu", "mist_step_gu"]
+	assert_eq(controller.state.refined_gu_ids, expected_pack)
 
 
 func _work_node() -> Dictionary:

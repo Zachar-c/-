@@ -226,19 +226,18 @@ func test_legacy_unvisited_rest_save_still_gates_travel() -> void:
 	assert_eq(str(result["result"]["reason"]), "rest_choice_required")
 
 
-# ---- data declaration & pool isolation ----
+# ---- data declaration & layer-two participation ----
+# R-layering 2026-08-27: the five-layer ruling puts rest_shrine into the
+# generation pool (layer two). The old "kept out of the generated map"
+# contract is superseded; whether this specific node appears on a given
+# seed is up to the picker, so only declaration + catalog validity are
+# pinned here. Layer topology lives in test_five_layer_map_contract.gd.
 
-func test_nodes_json_declares_second_rest_node_without_entering_generation_pool() -> void:
+func test_nodes_json_declares_second_rest_node_now_in_generation_pool() -> void:
 	var nodes: Array = catalog["nodes"]
 	assert_true(nodes.any(func(node: Dictionary) -> bool:
 		return str(node.get("id", "")) == "rest_shrine" and str(node.get("type", "")) == "rest"))
 	assert_eq(ContentCatalog.validate(catalog).size(), 0)
-
-	for seed_value in [1, 2, 7, 18, 42, 99, 1234]:
-		var route: Array = MapGeneratorScript.build(seed_value, false)
-		assert_false((route as Array).any(func(node: Dictionary) -> bool:
-			return str(node.get("id", "")) == "rest_shrine"),
-			"rest_shrine must stay out of the generated map for seed %d" % seed_value)
 
 
 # ---- preview layer mirrors the generic rule ----

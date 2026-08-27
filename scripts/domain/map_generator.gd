@@ -4,6 +4,17 @@ extends RefCounted
 
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 
+# R-layering 2026-08-27: a run is exactly five layers (one..five). The last
+# layer funnels through final_boss_stand; ascension_window is only reachable
+# from the boss stand, so beating the boss is the sole path to ascend.
+const LAYER_ORDER: Array[String] = ["one", "two", "three", "four", "five"]
+const BOSS_NODE_ID := "final_boss_stand"
+const ASCENSION_NODE_ID := "ascension_window"
+
+
+static func layer_index(stage: String) -> int:
+	return LAYER_ORDER.find(str(stage)) + 1
+
 
 static func build(seed_value: int, first_run: bool) -> Array[Dictionary]:
 	var data := _load_json("res://data/nodes.json")
@@ -24,10 +35,9 @@ static func _generated_stage_picks(seed_value: int, nodes: Array, node_by_id: Di
 		by_stage[node["stage"]].append(node["id"])
 	var rng := SeededRng.new(seed_value)
 	var stage_picks := {}
-	# Stage order omits "two" intentionally: nodes.json currently carries no
-	# stage-two nodes, so the picker is data-driven and would pick them as soon
-	# as any appear. Topological order stays one -> three -> four -> five.
-	for stage in ["one", "three", "four", "five"]:
+	# R-layering: picks run the full five-layer order; every layer with
+	# candidates contributes 1-3 nodes so all five layers stay populated.
+	for stage in LAYER_ORDER:
 		if not by_stage.has(stage):
 			continue
 		var candidates: Array = by_stage[stage].duplicate()
@@ -52,8 +62,8 @@ static func _generated_stage_picks(seed_value: int, nodes: Array, node_by_id: Di
 		stage_picks["five"] = []
 	if not stage_picks["five"].has("poison_fog_vein"):
 		stage_picks["five"].append("poison_fog_vein")
-	if not stage_picks["five"].has("final_boss_stand"):
-		stage_picks["five"].append("final_boss_stand")
+	if not stage_picks["five"].has(BOSS_NODE_ID):
+		stage_picks["five"].append(BOSS_NODE_ID)
 	return stage_picks
 
 
@@ -70,7 +80,7 @@ static func _guarantee_anchor_types(stage_picks: Dictionary, by_stage: Dictionar
 					break
 		if present:
 			continue
-		for stage in ["one", "three", "four", "five"]:
+		for stage in LAYER_ORDER:
 			if present or not by_stage.has(stage):
 				continue
 			for node_id_value in by_stage[stage]:
@@ -82,7 +92,9 @@ static func _guarantee_anchor_types(stage_picks: Dictionary, by_stage: Dictionar
 
 
 static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary, seed_value: int) -> Array[Dictionary]:
-	var stage_order: Array[String] = ["one", "three", "four", "five"]
+	var stage_order: Array[String] = []
+	for stage in LAYER_ORDER:
+		stage_order.append(stage)
 	var stage_one_starts: Array = []
 	var stage_one_rest: Array = []
 	for node_id_value in stage_picks.get("one", []):
@@ -96,7 +108,8 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 	for stage in stage_order:
 		for node_id_value in stage_picks.get(stage, []):
 			flat_ids.append(str(node_id_value))
-	flat_ids.append("ascension_window")
+	# R-layering: ascension_window is wired ONLY from the boss stand and is
+	# therefore excluded from every generic edge pool below.
 	var by_stage_ids := {}
 	for index in flat_ids.size():
 		var node_id := str(flat_ids[index])
@@ -142,11 +155,17 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 		var donor := str(flat_ids[_node_rng(seed_value, node_id).next_index(index)])
 		outgoing[donor].append(node_id)
 		incoming_count[node_id] = 1
-	# Every stage-five node converges onto the ascension window.
+	# R-layering last-layer funnel: every non-boss five node leads into the
+	# boss stand, and only the boss stand opens the ascension window. Reaching
+	# the window therefore always requires passing (and beating) the boss.
 	for node_id_value in by_stage_ids.get("five", []):
 		var node_id := str(node_id_value)
-		if not outgoing[node_id].has("ascension_window"):
-			outgoing[node_id].append("ascension_window")
+		if node_id == BOSS_NODE_ID:
+			continue
+		if not outgoing[node_id].has(BOSS_NODE_ID):
+			outgoing[node_id].append(BOSS_NODE_ID)
+			incoming_count[BOSS_NODE_ID] = int(incoming_count.get(BOSS_NODE_ID, 0)) + 1
+	outgoing[BOSS_NODE_ID].append(ASCENSION_NODE_ID)
 	var route: Array[Dictionary] = []
 	for index in flat_ids.size():
 		var node_id := str(flat_ids[index])
@@ -154,6 +173,10 @@ static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary,
 		node["visible"] = index <= 1
 		node["next_ids"] = outgoing[node_id]
 		route.append(node)
+	var window: Dictionary = node_by_id[ASCENSION_NODE_ID].duplicate(true)
+	window["visible"] = false
+	window["next_ids"] = []
+	route.append(window)
 	return route
 
 
@@ -200,13 +223,19 @@ static func visible_nodes(route: Array[Dictionary], state: RunState, forward_lay
 	for node in route:
 		by_id[str(node["id"])] = node
 	var visible_ids := {}
+	var reachable_ids := {}
 	for node in route:
 		var node_id := str(node["id"])
 		if bool(node.get("start", false)) or state.node_flags.has(node_id):
 			visible_ids[node_id] = true
 	var frontier: Array[Dictionary] = reachable_nodes(route, state)
 	for node in frontier:
-		visible_ids[str(node["id"])] = true
+		var frontier_id := str(node["id"])
+		visible_ids[frontier_id] = true
+		# R-map-visibility 2026-08-27: only immediate neighbors are travelable;
+		# deeper lookahead stays advisory so the map can dim what is out of
+		# reach instead of inviting rejected travel commands.
+		reachable_ids[frontier_id] = true
 	for _layer in forward_layers:
 		var next_frontier: Array[Dictionary] = []
 		for node in frontier:
@@ -220,7 +249,9 @@ static func visible_nodes(route: Array[Dictionary], state: RunState, forward_lay
 	var visible: Array[Dictionary] = []
 	for node in route:
 		if visible_ids.has(str(node["id"])):
-			visible.append(node.duplicate(true))
+			var shown := node.duplicate(true)
+			shown["reachable"] = reachable_ids.has(str(node["id"]))
+			visible.append(shown)
 	return visible
 
 
