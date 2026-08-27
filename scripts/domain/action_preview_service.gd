@@ -33,7 +33,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 			"rest":
 				_append_rest_cards(cards, state, node, catalog)
 			_:
-				_append_standard_cards(cards, state, node)
+				_append_standard_cards(cards, state, node, catalog)
 		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event", "rest"]:
 			_append_leave_card(cards, state)
 	_apply_stance_card_filter(cards, state)
@@ -734,13 +734,13 @@ static func _append_ledger_cards(cards: Array[Dictionary], state: RunState, cata
 	_append_leave_card(cards, state)
 
 
-static func _append_standard_cards(cards: Array[Dictionary], state: RunState, node: Dictionary) -> void:
+static func _append_standard_cards(cards: Array[Dictionary], state: RunState, node: Dictionary, catalog: Dictionary = {}) -> void:
 	for action_id in node.get("choices", []):
 		if str(action_id) != "leave":
-			_append_standard_card(cards, state, str(action_id), node)
+			_append_standard_card(cards, state, str(action_id), node, catalog)
 
 
-static func _append_standard_card(cards: Array[Dictionary], state: RunState, action_id: String, node: Dictionary = {}) -> void:
+static func _append_standard_card(cards: Array[Dictionary], state: RunState, action_id: String, node: Dictionary = {}, catalog: Dictionary = {}) -> void:
 	var executable := true
 	var reason := ""
 	var cost := {}
@@ -787,6 +787,25 @@ static func _append_standard_card(cards: Array[Dictionary], state: RunState, act
 			unknown_note = "对方是否完全相信，取决于其尚未暴露的判断。"
 		"harvest":
 			gain.append("获得元石 2 枚。")
+		"fight":
+			gain.append("正面击破当前威胁，战利品归胜者。")
+			var enemy: Dictionary = catalog.get("enemy_by_id", {}).get(str(node.get("enemy_kind", "")), {})
+			if not enemy.is_empty():
+				var intent: Dictionary = enemy.get("intent", {})
+				var intent_damage := int(intent.get("damage", 0))
+				if intent_damage > 0:
+					risk.append("敌手招式「%s」伤害 %d 点。" % [str(intent.get("label", "未知")), intent_damage])
+				if intent_damage >= 3:
+					risk.append("伤害可观：气血或手段不足时优先考虑撤离。")
+					remedies.append("可先购入攻防蛊虫、恢复气血，或选择撤离绕开。")
+				var reactions: Array = enemy.get("reactions", [])
+				if not reactions.is_empty():
+					var labels: Array[String] = []
+					for reaction_value in reactions:
+						var reaction: Dictionary = reaction_value
+						labels.append(str(reaction.get("label", "临阵反制")))
+					risk.append("敌手有临阵反制（%s）：零消耗拳脚会被其吞下。" % "、".join(labels))
+					remedies.append("需要绑定/守护类蛊虫配合破解，否则普攻不造成伤害。")
 		"inspect":
 			gain.append("获得一条地点线索。")
 		"lure":

@@ -33,6 +33,35 @@ func test_higher_rank_card_preview_exposes_known_rank_backlash_before_submission
 	assert_string_contains(str(card["known_risk"]), "反噬")
 
 
+func test_combat_fight_card_warns_about_enemy_reaction_and_damage_numbers() -> void:
+	# §16.5 敌意透明：开战预览必须提前暴露反制与伤害数值，防止玩家
+	# 毫无防备走进"拳脚全被吞"的必败战斗。
+	var node: Dictionary = {}
+	for entry_value in catalog.get("nodes", []):
+		if str((entry_value as Dictionary).get("id", "")) == "beast_swarm_pass":
+			node = entry_value
+			break
+	assert_false(node.is_empty(), "beast_swarm_pass exists in catalog")
+	var run := RunState.new_run(101)
+	var cards := ActionPreviewServiceScript.preview_actions(run, node, catalog)
+	var fight := {}
+	for card in cards:
+		if str(card.get("id", "")) == "node.fight":
+			fight = card
+			break
+	assert_false(fight.is_empty(), "node.fight preview card exists")
+	var risks := ""
+	for risk in fight.get("known_risk", []):
+		risks += str(risk)
+	assert_string_contains(risks, "反制")
+	assert_string_contains(risks, "拳脚")
+	assert_string_contains(risks, "3 点")
+	var remedies := ""
+	for remedy in fight.get("remedy_hints", []):
+		remedies += str(remedy)
+	assert_string_contains(remedies, "蛊")
+
+
 func _run_with_stone_shell() -> RunState:
 	var run := RunState.new_run(101)
 	run.gu_instances["gu_002"] = {
