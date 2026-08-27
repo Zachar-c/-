@@ -126,7 +126,7 @@ export EncounterScreen() -> RuitkVNode {
     action_rows.append(card)
 
   return (
-    <VBoxContainer style={ {"separation": 12} }>
+    <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_cause_view.call({"cause_view": str(cid)}) } />
 
       <HBoxContainer style={ {"separation": 14} }>

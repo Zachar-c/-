@@ -96,7 +96,7 @@ export EndingScreen() -> RuitkVNode {
     record_rows.append(<Label text={ "DDA 触发：%d 次" % dda_triggers } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 15} } />)
 
   return (
-    <VBoxContainer style={ {"separation": 14} }>
+    <VBoxContainer style={ {"separation": 14, "anchors_preset": "PRESET_FULL_RECT"} }>
       <CenterContainer>
         <VBoxContainer style={ {"separation": 6} }>
           <Label text={ str(title) } style={ {"font_color": GuStyle.GOLD, "font_size": 40} } />

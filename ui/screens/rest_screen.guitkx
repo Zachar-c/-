@@ -94,7 +94,7 @@ export RestScreen() -> RuitkVNode {
     growth_section.append(<GuPanel title="突破成长 · 多选一" expand_v={ true }><HBoxContainer style={ {"separation": 10} }>{ growth_rows }</HBoxContainer></GuPanel>)
 
   return (
-    <VBoxContainer style={ {"separation": 10} }>
+    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
         <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />

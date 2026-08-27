@@ -133,7 +133,7 @@ export MapScreen() -> RuitkVNode {
     map_empty.append(<Label text="（地图为空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
 
   return (
-    <VBoxContainer style={ {"separation": 12} }>
+    <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
       { toast_row }
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>

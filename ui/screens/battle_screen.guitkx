@@ -151,7 +151,7 @@ export BattleScreen() -> RuitkVNode {
     ops.append(<GuButton label="撤退" on_press={ func(): fire.call("flee") } />)
 
   return (
-    <VBoxContainer style={ {"separation": 10} }>
+    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_ui.call({"cause_view": str(cid)}) } />
 
       <HBoxContainer style={ {"separation": 14} }>

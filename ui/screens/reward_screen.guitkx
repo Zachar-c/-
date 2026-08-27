@@ -74,7 +74,7 @@ export RewardScreen() -> RuitkVNode {
     fire.call("replace_and_take", replace_idx)
 
   return (
-    <VBoxContainer style={ {"separation": 10} }>
+    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
         <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />

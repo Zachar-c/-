@@ -77,7 +77,7 @@ export HallView() -> RuitkVNode {
       ))
     var completion = "%d/%d" % [total_unlocked, total_entries]
     return (
-      <VBoxContainer style={ {"separation": 12} }>
+      <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <HBoxContainer style={ {"separation": 8} }>
           <Label text="百蛊录 · 图鉴" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
           <Label text={ "完成度 " + completion } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
@@ -97,7 +97,7 @@ export HallView() -> RuitkVNode {
     if version_warning != "":
       version_rows.append(<GuToast text={ version_warning } tone="warn" />)
     return (
-      <VBoxContainer style={ {"separation": 12} }>
+      <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         { version_rows }
         <Label text="设置" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
         <GuPanel title="显示与声音">
@@ -127,7 +127,7 @@ export HallView() -> RuitkVNode {
     if j_rows.is_empty():
       journal_empty.append(<Label text="（尚无手记。轮回碎片将在结算后沉淀于此。）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
     return (
-      <VBoxContainer style={ {"separation": 12} }>
+      <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <Label text="手记库" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
         <GuScrollBox height={ 420 }>
           <VBoxContainer style={ {"separation": 8} }>
@@ -167,7 +167,7 @@ export HallView() -> RuitkVNode {
       ))
     var selected_label = "当前选中：" + selected_school
     return (
-      <VBoxContainer style={ {"separation": 12} }>
+      <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <Label text="流派选择" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
         <Label text={ selected_label } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
         <GuScrollBox height={ 400 }>
@@ -185,7 +185,7 @@ export HallView() -> RuitkVNode {
   # ── A4 契约选择（P2 预留占位）────────────────────────────
   if subview == "contracts":
     return (
-      <VBoxContainer style={ {"separation": 12} }>
+      <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <Label text="难度契约" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
         <GuPanel title="契约（P2 实装前占位）">
           <Label text="开局全局规则修改器：收益与对等代价成对存在；软上限 5–6 条；契约蓝系标识（规格 §15/§16.13）。" style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 14} } />
@@ -220,7 +220,7 @@ export HallView() -> RuitkVNode {
     meta_empty.append(<Label text="（暂无轮回记录）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
 
   return (
-    <VBoxContainer style={ {"separation": 16} }>
+    <VBoxContainer style={ {"separation": 16, "anchors_preset": "PRESET_FULL_RECT"} }>
       <CenterContainer>
         <VBoxContainer style={ {"separation": 6} }>
           <Label text="蛊路求生" style={ {"font_color": GuStyle.GOLD, "font_size": 48} } />

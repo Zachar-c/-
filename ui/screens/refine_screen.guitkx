@@ -107,7 +107,7 @@ export RefineScreen() -> RuitkVNode {
     fire.call("refine", confirm_recipe)
 
   return (
-    <VBoxContainer style={ {"separation": 10} }>
+    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
         <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
@@ -124,7 +124,7 @@ export RefineScreen() -> RuitkVNode {
           </GuPanel>
           <GuPanel title="配方 / 预览">
             <GuScrollBox height={ 330 }>
-              <VBoxContainer style={ {"separation": 10} }>
+    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
                 { recipe_rows }
                 { recipe_empty }
               </VBoxContainer>
