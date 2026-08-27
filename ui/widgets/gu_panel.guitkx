@@ -1,5 +1,8 @@
 @theme "res://assets/theme/gu_theme.tres"
 
+# GuPanel —— 内容边界容器（問眞极简视觉）
+# 仅提供发丝线边界与留白，无阴影、无厚边框、无嵌套卡片。
+
 export GuPanel() -> RuitkVNode {
   var title = props.get("title", "")
   var expand_h = props.get("expand_h", false)
@@ -11,10 +14,10 @@ export GuPanel() -> RuitkVNode {
     root_style["size_flags_vertical"] = 3
   return (
     <PanelContainer style={ root_style }>
-      <MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 12, "margin_bottom": 12} }>
-        <VBoxContainer style={ {"separation": 8} }>
+      <MarginContainer style={ {"margin_left": GuStyle.SPACE_3, "margin_right": GuStyle.SPACE_3, "margin_top": GuStyle.SPACE_3, "margin_bottom": GuStyle.SPACE_3} }>
+        <VBoxContainer style={ {"separation": GuStyle.SPACE_2} }>
           @if (title != "") {
-            return ( <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } /> )
+            return ( <Label text={ title } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } /> )
           }
           { children }
         </VBoxContainer>

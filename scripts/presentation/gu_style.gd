@@ -1,35 +1,69 @@
 class_name GuStyle
 extends RefCounted
 
-# 统一设计系统配色（自 gu_theme.tres 迁移 + 规格书 2026-08-26-ui-sts-redesign-design §3.1 全 token）。
-# RUI 的 .guitkx 组件在 style={...} 中以 GuStyle.JADE 等内联引用全局类常量。
-# 整屏主题统一通过 @theme "res://assets/theme/gu_theme.tres" 挂载（见各组件文件头）。
+# ── Wen Zhen (問眞) Visual Tokens ──────────────────────────────────────
+# Semantic source of truth for the minimal light UI redesign.
+# Old dark-theme aliases kept at bottom for gradual migration; screens
+# should consume the new tokens directly.
 
-# —— 底色层级（夜色墨青）——
-const BG_DEEP := Color("0f1418")      # 全局最底层
-const BG_PANEL := Color("1c2326")     # 面板 / 卡片底
-const BG_RAISED := Color("263034")    # 凸起元素 / 卡面
-const INK := Color("1c1b17")          # 墨（描边 / 深色块）
+# —— Paper / background ——
+const PAPER_BG     := Color("fbfaf5")       # 主表面、宣纸白
+const PAPER_RAISED := Color("f4f1e8")       # 次级纸面、轻微下沉/禁用层
+const PAPER_DEEP   := Color("ddd8cc")       # 禁用层、轻分区
 
-# —— 语义主色 ——
-const JADE := Color("7fae9b")         # 主 / 正向 / 玉
-const JADE_BRIGHT := Color("a8d4c0")  # 蛊虫青白微光（高亮 / 选中）
-const GOLD := Color("d7c6a1")         # 资源 / 元石 / 点缀
-const GOLD_DIM := Color("a8946f")     # 资源次级 / 禁用金
-const SILVER := Color("c9d4d8")       # 月光银（第二光源 / 冷强调）
-const EMBER := Color("d98e4a")        # 烛火橙（暖点缀 / 稀有）
+# —— Ink / text ——
+const INK_PRIMARY  := Color("171713")       # 近黑墨色（主文字 / 主结构线）
+const INK_SOFT     := Color("686960")       # 次要文字、已知但不紧急
+const INK_MUTED    := Color("68675f")       # 介于 INK_PRIMARY 与 PAPER_BG
 
-# —— 危险 / 诅咒 / 反噬 ——
-const DANGER := Color("c0392b")       # 诅咒 / 反噬 / 危险
-const BLOOD := Color("8e2f28")        # 血锈深（死亡线 / 极端危险）
+# —— Hairline / rule ——
+const HAIRLINE_COLOR := Color("2d2c27", 0.22)  # 发丝分隔线色（含透明度）
+const HAIRLINE     := 1                        # 发丝线宽 1px
 
-# —— 文字与承载 ——
-const BONE := Color("d8d2c4")         # 正文
-const BONE_DIM := Color("c6d3cf")     # 次要文字
-const PAPER := Color("e8dcc0")        # 宣纸米黄（图标底 / 文字承载）
-const PAPER_DIM := Color("c9bda0")    # 宣纸暗（图例 / 卷轴）
+# —— Semantic accent ——
+const CINNABAR     := Color("a52b24")       # 朱砂：危险 / 不可逆 / 死亡线
+const CONTRACT_BLUE := Color("356b8c")      # 契约规则
+const ANOMALY_YELLOW := Color("a36f16")     # DDA / 异变 / 险象
+const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
 
-# —— 元机制分区（§16.13 契约蓝 / 异变黄红）——
-const CONTRACT_BLUE := Color("7aa7c9")   # 契约标识（蓝系）
-const ANOMALY_AMBER := Color("c9a24a")   # 本局异变 / DDA 险象（黄红系）
-const ANOMALY_RED := Color("b5523a")     # DDA 衰运（黄红系）
+# —— Spacing ——
+const SPACE_1 := 4
+const SPACE_2 := 8
+const SPACE_3 := 12
+const SPACE_4 := 16
+const SPACE_5 := 24
+const SPACE_6 := 32
+
+# —— Radius ——
+const RADIUS_SMALL := 4
+
+# ── Backward-compatible aliases (old dark-theme names) ──────────────────
+# These keep existing screens compiling during migration.
+# Gradually replace references with the new tokens above.
+
+# Backgrounds
+const BG_DEEP   := PAPER_BG        # was dark → now paper
+const BG_PANEL  := PAPER_RAISED    # was dark panel → now raised paper
+const BG_RAISED := Color("e8e4d8") # intermediate raised surface
+
+# Ink / text (old names)
+const INK       := INK_PRIMARY
+
+# Primary text (old name "BONE" → now INK_PRIMARY for dark-on-light)
+const BONE      := INK_PRIMARY
+const BONE_DIM  := INK_SOFT
+
+# Accent colors (old names)
+const PAPER     := PAPER_BG
+const PAPER_DIM := PAPER_DEEP
+
+# Old semantic palette → Wen Zhen equivalents
+const JADE_BRIGHT := Color("5d9680")  # was light jade → now slightly brighter jade
+const GOLD      := Color("8c7a52")    # muted gold / resource accent
+const GOLD_DIM  := Color("a8946f")    # dimmer gold
+const SILVER    := Color("8a9196")    # cool accent
+const EMBER     := Color("b87333")    # warm accent
+const DANGER    := CINNABAR           # alias: old DANGER → new CINNABAR
+const BLOOD     := Color("8e2f28")    # 深血锈（死亡线极端危险）
+const ANOMALY_AMBER := ANOMALY_YELLOW # alias: old name → new ANOMALY_YELLOW
+const ANOMALY_RED   := Color("b5523a") # DDA 衰运（黄红系，保留兼容）
