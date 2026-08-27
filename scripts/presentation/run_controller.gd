@@ -46,6 +46,8 @@ var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
 var _hall_subview := "main"
 var _selected_school := "force"
+## 大厅勾选的开局契约（§15/§16.13）；new_run 时经 swear 门禁正式立誓。
+var _selected_contracts: Array[String] = []
 
 var _rui_host: Control
 var _rui_root
@@ -97,6 +99,9 @@ func ensure_ui() -> void:
 
 
 func _initialize_view_flow() -> void:
+	# 大厅子视图（流派/契约/图鉴）只读快照依赖 catalog；启动即加载内容表，
+	# 否则选流派前列表恒为空（2026-08-27 实机走查断点）。
+	catalog = ContentCatalog.load_all()
 	_rui_host = Control.new()
 	_rui_host.name = "RUIHost"
 	_rui_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -117,6 +122,7 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
 	_inject_school_starters(school)
 	_swear_opening_contracts(contract_ids)
+	_selected_contracts.clear()
 	route = MapGenerator.build(seed_value, seed_value == 101)
 	current_node = {}
 	current_battle = {}
@@ -192,6 +198,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		last_result = session_result["result"]
 		_attach_social_dialogue(last_result)
 		_record_dialogue_reply(last_result)
+		_apply_command_feedback(last_result)
 		if bool(last_result.get("start_battle", false)) or str(last_result.get("action_id", "")) == "fight":
 			_start_battle()
 			return last_result
@@ -205,6 +212,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 	last_result = resolved["result"]
 	_attach_social_dialogue(last_result)
 	_record_dialogue_reply(last_result)
+	_apply_command_feedback(resolved["result"])
 	if bool(last_result.get("start_battle", false)):
 		_start_battle()
 		return last_result
@@ -218,8 +226,78 @@ func submit_command(command: Dictionary) -> Dictionary:
 	return resolved
 
 
+## B 批反馈基建（§16.5 信息透明）：命令结果必须可见——被拒走 rejection_text 中文，
+## 成功且无人为反馈时拼接 actual_changes 的结构化中文（"元石减少 6。"等）。
+## 战斗回合分支（take_turn/apply_action_card 直返）不经此函数，反馈由战斗屏自身呈现。
+func _apply_command_feedback(result: Dictionary) -> void:
+	if not bool(result.get("ok", true)):
+		if last_feedback.is_empty():
+			last_feedback = rejection_text(str(result.get("reason", "unknown")))
+	elif last_feedback.is_empty():
+		last_feedback = _summarize_changes(result.get("actual_changes", []))
+
+
 func current_view_name() -> String:
 	return _view_name
+
+
+## 成功命令的反馈摘要：拼接 actual_changes 的 message（领域侧已中文化）。
+## 空变化（如纯查询命令）返回空串，toast 不显示。
+func _summarize_changes(changes) -> String:
+	if changes == null or not (changes is Array):
+		return ""
+	var parts: Array[String] = []
+	for c in changes:
+		var msg := str(c.get("message", "")) if c is Dictionary else ""
+		if not msg.is_empty():
+			parts.append(msg)
+	return "、".join(parts)
+
+
+## B 批反馈基建：resolver 拒绝 reason → 玩家可见中文文案（§16.5 数值明确、不模糊）。
+## 未收录的 reason 走通用兜底并保留原始键（可追溯，不静默）。
+func rejection_text(reason: String) -> String:
+	if reason.is_empty() or reason == "unknown":
+		return "该操作暂时无法执行。"
+	return _REJECTION_TEXT.get(reason, "无法执行：%s" % reason)
+
+
+## 高频拒绝 reason 的玩家文案。新增拒绝理由时在此登记，漏网走兜底显示原始键。
+const _REJECTION_TEXT := {
+	"insufficient_stone": "元石不足。",
+	"insufficient_lifespan": "寿元不足。",
+	"insufficient_soul": "魂魄不足。",
+	"insufficient_material": "材料不足。",
+	"unknown_shop_offer": "该商品不在货架上。",
+	"npc_stock_missing": "该货物已被买空。",
+	"npc_not_present": "对方不在此地。",
+	"unknown_npc": "这里没有可交易的人。",
+	"npc_missing": "这里没有可交易的人。",
+	"contract_locked": "该契约尚未解锁。",
+	"contract_sworn": "该契约已立誓。",
+	"contract_soft_cap": "契约数量已达上限。",
+	"deck_capacity": "蛊囊已满，无法再装入。",
+	"gu_slot_full": "蛊槽已满，请先取舍。",
+	"refine_input_missing": "炼蛊材料不足：先投入至少两味材料。",
+	"refine_slot_invalid": "炼蛊空位校验未通过。",
+	"refine_recipe_locked": "该配方尚未解锁。",
+	"retreat_forbidden": "此战不可撤退。",
+	"invalid_action": "当前阶段不能执行该操作。",
+	"invalid_action_card": "这张牌当前不能打出。",
+	"stale_state_version": "局面已变化，操作已过期，请重试。",
+	"not_enough_essence": "真元不足。",
+	"not_enough_hp": "生命不足，不能支付该代价。",
+	"lifespan_trade_warning": "这笔交易将耗尽寿元，被拒绝。",
+	"already_completed": "该节点已完成。",
+	"invalid_node_completion": "节点状态已变化。",
+	"unknown_contact": "此人无可交涉的选项。",
+	"invalid_contact_approach": "该交涉方式不可用。",
+	"unknown_command": "未知指令。",
+	"unknown_gu": "没有这只蛊。",
+	"unknown_card": "没有这张卡。",
+	"unknown_node": "无法前往该地点。",
+	"node_not_reachable": "该地点与当前位置不连通。",
+}
 
 
 func force_complete_for_test() -> void:

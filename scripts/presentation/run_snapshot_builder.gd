@@ -58,6 +58,9 @@ static func _gui_state(controller) -> Dictionary:
 		# R14.6① (night batch): DDA 系统标记与契约分区（黄红系），由 UI 会话渲染。
 		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
+		# B 批反馈基建：last_feedback 由 submit_command 统一维护（命令后一拍可见，
+		# 下一条命令即清空）；快照只读搬运，各屏 toast 槽消费。
+		"feedback": str(controller.last_feedback) if controller.get("last_feedback") != null else "",
 	}
 
 
@@ -250,13 +253,14 @@ static func _reward_fallback_note(rewards: Array) -> String:
 
 
 ## C8 NPC 交涉屏快照（contact 节点真实交涉选项 + 立场/恶名）。
+## C 批修复：节点未声明 npc_id 时不兜底 npcs[0]（旧逻辑把散修节点伪装成商队货架，
+## buy 发空 npc_id 必被拒——「这里没有可交易的人」误报根因）；无 NPC 则空货架+提示。
 static func npc(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var npcs: Array = catalog.get("npcs", [])
 	var npc_id := str(controller.current_node.get("npc_id", ""))
-	if npc_id == "" and npcs.size() > 0:
-		npc_id = str(npcs[0].get("id", ""))
+	var has_npc := not npc_id.is_empty()
 	var npc_name := "无名散修"
 	if npc_id == "caravan_steward":
 		npc_name = "商队执事"
@@ -279,24 +283,38 @@ static func npc(controller) -> Dictionary:
 		elif str(state.node_flags.get("reputation_hostile", "")) == "true":
 			stance = "敌视"
 	# 真实交涉选项：contact 节点 neutral_wanderer 的 negotiate/deceive/fight/retreat
+	# C 批修复：talk_options 直接镜像领域动作卡（含完整 command 与 state_version），
+	# UI 发 choose_action 同遭遇屏通道——不再构造领域不存在的 negotiate/deceive 裸 id
+	# （resolve_contact 只认 neutral_wanderer，商队发它 100% 静默被拒，走查断点）。
+	# 标题中文化（§16.5）：动作卡 id 的动词段映射中文，裸 id 不漏给玩家。
+	var _talk_labels := {
+		"node.negotiate": "友善攀谈", "node.deceive": "诈言诓骗", "node.fight": "出手试探",
+		"node.retreat": "退避三舍", "node.leave": "离开",
+		"node.probe": "打探消息", "node.trade": "交易服务", "node.work": "帮工换石",
+		"node.harvest": "采撷元石", "node.buy_information": "购买情报", "node.cross": "强行穿越",
+		"node.meditate": "吐纳调息", "node.open": "开启险地", "node.prepare": "布局防护",
+		"node.scheme": "暗中标算", "node.claim": "争取机缘", "node.accept": "接下委托",
+		"node.ally": "结临时盟", "node.attempt_ascension": "冲击升仙",
+	}
 	var talk_options: Array[Dictionary] = []
 	for a in _node_actions(controller):
 		var aid := str(a.get("id", ""))
-		if aid in ["leave", "fight", "retreat", "negotiate", "deceive"]:
-			var label := str(a.get("label", aid))
-			var detail := str(a.get("detail", ""))
-			talk_options.append({
-				"id": aid,
-				"label": label,
-				"detail": detail,
-				"danger": aid in ["fight", "deceive"],
-			})
+		if aid in ["leave", "node.leave"]:
+			continue
+		var label := str(_talk_labels.get(aid, str(a.get("title", aid))))
+		talk_options.append({
+			"id": aid,
+			"label": label,
+			"detail": str(a.get("summary", "")),
+			"danger": aid.contains("fight") or aid.contains("deceive") or not str(a.get("block_reason", "")).is_empty(),
+			"executable": bool(a.get("executable", true)),
+			"block_reason": str(a.get("block_reason", "")),
+			"command": a.get("command", {}),
+			"state_version": int(a.get("state_version", -1)),
+		})
 	if talk_options.is_empty():
 		talk_options = [
-			{"id": "negotiate", "label": "友善攀谈", "detail": "了解情报与需求", "danger": false},
-			{"id": "deceive", "label": "诈言诓骗", "detail": "恶名威慑 · 可能翻脸", "danger": true},
-			{"id": "fight", "label": "出手试探", "detail": "直接开战", "danger": true},
-			{"id": "retreat", "label": "退避三舍", "detail": "花 1 元石改道", "danger": false},
+			{"id": "node.leave", "label": "离开", "detail": "结束当前遭遇", "danger": false, "executable": true, "block_reason": "", "command": {"type": "leave_node"}, "state_version": -1},
 		]
 	out["npc_name"] = npc_name
 	out["stance"] = stance
@@ -306,13 +324,17 @@ static func npc(controller) -> Dictionary:
 	# N-candidate (night batch): real per-NPC stock from npcs.json "stock",
 	# projected in the offer/barter shapes the UI already consumes. Prices use
 	# Resolver.price_for so inflation/contracts/notoriety show honestly.
+	# C 批：无 NPC 节点（如拦路散修）不给货架，UI 显提示而非空面板。
+	out["has_npc"] = has_npc
+	out["no_npc_note"] = "" if has_npc else "此人没有可交易的货物，试试交涉选项。"
 	out["offers"] = []
 	out["barter"] = []
 	var stock: Array = []
-	for npc_value in npcs:
-		if str(npc_value.get("id", "")) == npc_id:
-			stock = npc_value.get("stock", [])
-			break
+	if has_npc:
+		for npc_value in npcs:
+			if str(npc_value.get("id", "")) == npc_id:
+				stock = npc_value.get("stock", [])
+				break
 	for offer_id_value in stock:
 		var oid := str(offer_id_value)
 		var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(oid, {})
@@ -339,11 +361,15 @@ static func npc(controller) -> Dictionary:
 			var price := "%d 元石" % (ResolverScript.price_for(catalog, state, raw_cost) if state != null else raw_cost)
 			if offer.has("lifespan_cost"):
 				price = str(offer.get("lifespan_cost", 0)) + " 寿元"
+			var offer_desc := str(offer.get("clue", ""))
+			if offer_desc.is_empty() or offer_desc.contains(".") or offer_desc.contains("_"):
+				# card_key/裸 ID 不漏给玩家（§16.5）：无 clue 时给通用货名。
+				offer_desc = "商队公开出售的蛊虫。"
 			out["offers"].append({
 				"id": oid,
 				"name": DisplayText.gu(str(offer.get("gu_id", ""))),
 				"price": price,
-				"desc": str(offer.get("clue", offer.get("card_key", ""))),
+				"desc": offer_desc,
 			})
 	out["talk_options"] = talk_options
 	out["can_flee"] = stance != "极度仇恨"
@@ -382,7 +408,8 @@ static func hall(controller) -> Dictionary:
 		"hall_subview": str(controller._hall_subview),
 		"selected_school": str(controller._selected_school),
 		"available_schools": school_list,
-		"contracts": _available_contracts(meta, catalog),
+		"contracts": _available_contracts(meta, catalog, _contract_selection_state(controller)),
+		"selected_school_name": _school_display_name(catalog, str(controller._selected_school)),
 		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},
 		# D4 预留（§16.22）：SaveRepository.load_meta_file 在版本不符时返回 null，与无档/损坏
 		# 不可区分；待领域侧暴露版本冲突标记后在此注入提示文案，hall_view 已预留 warn Toast 槽位。
@@ -393,22 +420,53 @@ static func hall(controller) -> Dictionary:
 	}
 
 
+## 流派显示名（只读）：大厅选中态展示中文名，禁止裸 ID 漏给玩家。
+static func _school_display_name(catalog: Dictionary, school_id: String) -> String:
+	if school_id.is_empty():
+		return "无（散修开局）"
+	var entry: Dictionary = catalog.get("schools", {}).get(school_id, {})
+	return str(entry.get("name", school_id))
+
+
+## 勾选草稿 ∪ 已立誓（去重）：契约 selected 态的单一真值来源。
+## StubController（测试）可能缺字段，逐项防御读取；注意 RunState 覆写了 get()，
+## 不能对 state 调 .get("contracts")，须直接属性访问。
+static func _contract_selection_state(controller) -> Array:
+	var merged: Array = []
+	var draft: Variant = controller.get("_selected_contracts")
+	if draft != null:
+		for v in draft:
+			if not merged.has(str(v)):
+				merged.append(str(v))
+	var run_state: Variant = controller.get("state")
+	if run_state != null and "contracts" in run_state:
+		for v in run_state.contracts:
+			if not merged.has(str(v)):
+				merged.append(str(v))
+	return merged
+
+
 # C1-min §16.13: the hall lists every contract with its exact numbers;
 # ending-locked entries are marked so the UI can gate its checkboxes.
-static func _available_contracts(meta, catalog: Dictionary) -> Array:
+# Structured rows (id/name/desc/locked/selected) drive hall_view checkboxes;
+# `selected` mirrors the controller's pre-run checkbox state.
+static func _available_contracts(meta, catalog: Dictionary, selected: Array = []) -> Array:
+	## selected 语义 = 大厅勾选草稿 ∪ 本局已立誓（state.contracts），由调用方合并传入；
+	## Run 结束后草稿清空，仅剩已立誓 id 供结算/复盘对照。
 	var unlocked: Array[String] = []
 	if meta != null and meta.has_method("unlocked_contracts"):
 		unlocked = meta.unlocked_contracts(catalog)
 	var by_id: Dictionary = catalog.get("contract_entry_by_id", {})
 	var out: Array = []
-	for id in unlocked:
-		var entry: Dictionary = by_id.get(str(id), {})
-		out.append("%s：%s" % [str(entry.get("label", str(id))), str(entry.get("desc", ""))])
 	for entry_id in by_id:
-		if unlocked.has(str(entry_id)):
-			continue
-		var locked_entry: Dictionary = by_id[entry_id]
-		out.append("%s（未解锁）" % str(locked_entry.get("label", str(entry_id))))
+		var entry: Dictionary = by_id[entry_id]
+		out.append({
+			"id": str(entry_id),
+			"name": str(entry.get("label", str(entry_id))),
+			"desc": str(entry.get("desc", "")),
+			"locked": not unlocked.has(str(entry_id)),
+			"selected": selected.has(str(entry_id)),
+		})
 	return out
 
 

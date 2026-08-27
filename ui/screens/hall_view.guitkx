@@ -17,7 +17,9 @@ export HallView() -> RuitkVNode {
   var has_save = bool(state.get("has_save", false))
   var subview = str(state.get("hall_subview", "main"))
   var selected_school = str(state.get("selected_school", ""))
+  var selected_school_name = str(state.get("selected_school_name", selected_school))
   var schools = state.get("available_schools", [])
+  var contracts = state.get("contracts", [])
   var meta = state.get("meta_stats", {})
   var codex = state.get("codex", {})
   var journal = state.get("journal", {"entries": []})
@@ -27,6 +29,11 @@ export HallView() -> RuitkVNode {
   var fire = func(key: String):
     if commands.has(key):
       commands[key].call()
+
+  # 带参动作派发（契约勾选等）：commands[key].call(arg)。
+  var fire1 = func(key: String, arg):
+    if commands.has(key):
+      commands[key].call(arg)
 
   # 注：本组件不使用 useState hooks —— 直接 render() 调用（单测/冒烟）时 hooks 无法
   # 在脱离 RUI 框架的环境初始化，会返回 null。图鉴采用五类分节只读列表（§16.20 只读查阅）。
@@ -172,7 +179,7 @@ export HallView() -> RuitkVNode {
           <Button text={ sel_label } onPressed={ func(): fire.call("select_school", sid) } style={ {"font_color": GuStyle.JADE_BRIGHT if is_sel else GuStyle.JADE, "font_size": 14} } />
         </GuCard>
       ))
-    var selected_label = "当前选中：" + selected_school
+    var selected_label = "当前选中：" + selected_school_name
     return (
       <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <Label text="流派选择" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
@@ -189,15 +196,34 @@ export HallView() -> RuitkVNode {
       </VBoxContainer>
     )
 
-  # ── A4 契约选择（P2 预留占位）────────────────────────────
+  # ── A4 契约选择（§15/§16.13 实装）────────────────────────
+  # contracts 来自快照结构化列表（id/name/desc/locked/selected）；
+  # 勾选经 toggle_contract 进入开局立誓（swear 门禁在领域侧，九类拒绝）。
   if subview == "contracts":
+    var contract_cards = []
+    for c in contracts:
+      var cid = str(c.get("id", ""))
+      var cname = str(c.get("name", cid))
+      var cdesc = str(c.get("desc", ""))
+      var clocked = bool(c.get("locked", false))
+      var csel = bool(c.get("selected", false))
+      var toggle_label = "已勾选 · 点击取消" if csel else ("未解锁" if clocked else "勾选")
+      contract_cards.append((
+        <GuCard title={ cname } highlight={ csel }>
+          <Label text={ cdesc } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 13} } />
+          <Button text={ toggle_label } disabled={ clocked } onPressed={ func(): fire1.call("toggle_contract", cid) } style={ {"font_color": GuStyle.BONE_DIM if clocked else (GuStyle.GOLD if csel else GuStyle.JADE), "font_size": 14} } />
+        </GuCard>
+      ))
+    var contract_note = "勾选将于开局立誓生效；同时启用软上限 5–6 条，普通手段不可撤销。" if contract_cards.size() > 0 else "当前无可用契约数据，直接以所选流派开始冒险。"
     return (
       <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <Label text="难度契约" style={ {"font_color": GuStyle.GOLD, "font_size": 26} } />
-        <GuPanel title="契约（P2 实装前占位）">
-          <Label text="开局全局规则修改器：收益与对等代价成对存在；软上限 5–6 条；契约蓝系标识（规格 §15/§16.13）。" style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 14} } />
-          <Label text="当前无可用契约数据，直接以所选流派开始冒险。" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
-        </GuPanel>
+        <Label text={ contract_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+        <GuScrollBox height={ 400 }>
+          <VBoxContainer style={ {"separation": 10} }>
+            { contract_cards }
+          </VBoxContainer>
+        </GuScrollBox>
         <HBoxContainer style={ {"separation": 12} }>
           <GuButton label="开始冒险" on_press={ func(): fire.call("new_run") } size="large" />
           <GuButton label="返回流派" on_press={ func(): fire.call("open_schools") } />

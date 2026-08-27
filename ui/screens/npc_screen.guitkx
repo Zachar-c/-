@@ -4,6 +4,7 @@ import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuToast } from "~/ui/widgets/gu_toast"
 
 # NpcScreen —— NPC 交涉屏（规格 v3 §7 C8 / R6.1）
 # 三立场徽章（中立/敌视/极度仇恨，高恶名必触发其一）；交涉失败种子化翻转敌视提示；
@@ -85,7 +86,7 @@ export NpcScreen() -> RuitkVNode {
   if barter_rows.is_empty():
     barter_empty.append(<Label text="（无易物项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
 
-  # 交涉选项
+  # 交涉选项（C 批：镜像领域动作卡，executable/block_reason 直出，不可用禁点）
   var talk_options = state.get("talk_options", [])
   var talk_rows = []
   for t in talk_options:
@@ -93,19 +94,51 @@ export NpcScreen() -> RuitkVNode {
     var tdetail = str(t.get("detail", ""))
     var tdanger = bool(t.get("danger", false))
     var tid = str(t.get("id", ""))
+    var texec = bool(t.get("executable", true))
+    var tblock = str(t.get("block_reason", ""))
+    var talk_btn_label = "交涉" if tblock == "" else ("不可用 · " + tblock)
     talk_rows.append((
       <GuCard title={ tlabel } danger={ tdanger } expand_h={ true }>
         <Label text={ tdetail } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
-        <GuButton label="交涉" danger={ tdanger } on_press={ func(): fire.call("talk", tid) } />
+        <GuButton label={ talk_btn_label } disabled={ not texec } danger={ tdanger } on_press={ func(): fire.call("talk", tid) } />
       </GuCard>
     ))
   var talk_empty = []
   if talk_rows.is_empty():
     talk_empty.append(<Label text="（无交涉选项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+  var feedback = str(state.get("feedback", ""))
+  var feedback_row = []
+  if feedback != "":
+    feedback_row.append(<GuToast text={ feedback } tone="warn" />)
+  var has_npc = bool(state.get("has_npc", true))
+  var no_npc_note = str(state.get("no_npc_note", ""))
+  var trade_section = []
+  if has_npc:
+    trade_section.append(<GuPanel title="交易">
+      <GuScrollBox height={ 250 }>
+        <VBoxContainer style={ {"separation": 6} }>
+          { offer_rows }
+          { offer_empty }
+        </VBoxContainer>
+      </GuScrollBox>
+    </GuPanel>)
+    trade_section.append(<GuPanel title="以物易物">
+      <GuScrollBox height={ 220 }>
+        <VBoxContainer style={ {"separation": 6} }>
+          { barter_rows }
+          { barter_empty }
+        </VBoxContainer>
+      </GuScrollBox>
+    </GuPanel>)
+  else:
+    trade_section.append(<GuPanel title="交易">
+      <Label text={ no_npc_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+    </GuPanel>)
 
   return (
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      { feedback_row }
       <HBoxContainer style={ {"separation": 12} }>
         <Label text={ npc_name } style={ {"font_color": GuStyle.BONE, "font_size": 22} } />
         <Label text={ "立场·" + stance } style={ {"font_color": stance_color, "font_size": 16} } />
@@ -116,22 +149,7 @@ export NpcScreen() -> RuitkVNode {
 
       <HBoxContainer style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
-          <GuPanel title="交易">
-            <GuScrollBox height={ 250 }>
-              <VBoxContainer style={ {"separation": 6} }>
-                { offer_rows }
-                { offer_empty }
-              </VBoxContainer>
-            </GuScrollBox>
-          </GuPanel>
-          <GuPanel title="以物易物">
-            <GuScrollBox height={ 220 }>
-              <VBoxContainer style={ {"separation": 6} }>
-                { barter_rows }
-                { barter_empty }
-              </VBoxContainer>
-            </GuScrollBox>
-          </GuPanel>
+          { trade_section }
         </VBoxContainer>
         <VBoxContainer style={ {"separation": 8, "min_width": 380} }>
           <GuPanel title="交涉">

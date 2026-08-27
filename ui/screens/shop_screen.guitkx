@@ -5,6 +5,7 @@ import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
+import { GuToast } from "~/ui/widgets/gu_toast"
 
 # ShopScreen —— 黑市 / 商店屏（规格 v3 §7 C3 / §16.5 / §16.16）
 # 商品板块（蛊/消耗品/材料/元石，价格） + 服务板块（剩余次数 + 通胀说明）。
@@ -119,9 +120,15 @@ export ShopScreen() -> RuitkVNode {
     set_confirm_offer.call({"confirm_offer": ""})
     fire.call("buy", confirm_offer)
 
+  var feedback = str(state.get("feedback", ""))
+  var feedback_row = []
+  if feedback != "":
+    feedback_row.append(<GuToast text={ feedback } tone="warn" />)
+
   return (
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
+      { feedback_row }
       <HBoxContainer style={ {"separation": 12} }>
         <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
         <Label text={ inflation_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />

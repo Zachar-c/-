@@ -7,6 +7,7 @@ import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuDeathCauseOverlay } from "~/ui/widgets/gu_death_cause_overlay"
+import { GuToast } from "~/ui/widgets/gu_toast"
 
 # BattleScreen —— 战斗屏三区语法（规格 v3 §7 C1）
 # 顶 HUD（顶栏+死线）→ 中战场（左我右敌、意图符文⚔🛡☾+数值+效果）→ 底操作（真元+手牌卡带+回合控制）。
@@ -154,10 +155,15 @@ export BattleScreen() -> RuitkVNode {
   var boss_hint_row = []
   if boss_hint == "boss_senses_gu_power":
     boss_hint_row.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
+  var feedback = str(state.get("feedback", ""))
+  var feedback_row = []
+  if feedback != "":
+    feedback_row.append(<GuToast text={ feedback } tone="warn" />)
 
   return (
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_ui.call({"cause_view": str(cid)}) } />
+      { feedback_row }
 
       <HBoxContainer style={ {"separation": 14} }>
         <GuPanel title="我方" expand_h={ true }>

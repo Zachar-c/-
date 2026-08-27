@@ -7,6 +7,7 @@ import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuDeathCauseOverlay } from "~/ui/widgets/gu_death_cause_overlay"
+import { GuToast } from "~/ui/widgets/gu_toast"
 
 # EncounterView —— 遭遇屏（修复「没按钮 / 危险选项无二次确认」）
 # 契约：props.state 只读快照（含 node/actions/intel/resources/contracts/anomalies/death_lines）
@@ -125,9 +126,15 @@ export EncounterScreen() -> RuitkVNode {
     )
     action_rows.append(card)
 
+  var feedback = str(state.get("feedback", ""))
+  var feedback_row = []
+  if feedback != "":
+    feedback_row.append(<GuToast text={ feedback } tone="warn" />)
+
   return (
     <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_cause_view.call({"cause_view": str(cid)}) } />
+      { feedback_row }
 
       <HBoxContainer style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 12, "size_flags_horizontal": 3} }>

@@ -34,10 +34,15 @@ static func _rest_choose_command(controller, id: String) -> Dictionary:
 
 
 static func _npc_talk_command(controller, id: String) -> Dictionary:
+	# C 批修复：talk_option 携带领域动作卡完整信息（快照 talk_options[].command 为
+	# 领域动作卡 command + state_version）。发 action_card 走遭遇会话通道
+	# （与遭遇屏 choose_action 同源），find_card 按 id 匹配动作卡后消费；
+	# state_version 取当前事件日志长度，防过期操作。
+	# 旧 resolve_contact 仅 neutral_wanderer 专用，其余节点 100% 静默被拒。
 	return {
-		"type": "resolve_contact",
-		"node_id": str(controller.current_node.get("id", "")),
-		"approach": str(id),
+		"type": "action_card",
+		"action_id": str(id),
+		"state_version": controller.state.event_log.size() if controller.state != null else -1,
 	}
 
 
@@ -47,7 +52,13 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			return {
 				"continue_run": func(): controller.submit_command({"type": "load_run"}),
 				"select_school": func(school: String): controller._selected_school = school,
-				"new_run": func(): controller.start_new_run(controller.roll_seed(), controller._selected_school),
+				"toggle_contract": func(id: String):
+					var cid := str(id)
+					if controller._selected_contracts.has(cid):
+						controller._selected_contracts.erase(cid)
+					else:
+						controller._selected_contracts.append(cid),
+				"new_run": func(): controller.start_new_run(controller.roll_seed(), controller._selected_school, Array(controller._selected_contracts)),
 				"open_schools": func(): controller._show_hall_subview("schools"),
 				"open_contracts": func(): controller._show_hall_subview("contracts"),
 				"open_codex": func(): controller._show_hall_subview("codex"),

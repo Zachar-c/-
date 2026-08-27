@@ -29,6 +29,20 @@ func _any_contains(values: Array, needle: String) -> bool:
 	return false
 
 
+func _by_id(rows: Array, id: String) -> Dictionary:
+	for value in rows:
+		if value is Dictionary and str(value.get("id", "")) == id:
+			return value
+	return {}
+
+
+func _any_locked(rows: Array) -> bool:
+	for value in rows:
+		if value is Dictionary and bool(value.get("locked", false)):
+			return true
+	return false
+
+
 func test_record_run_end_unlocks_ending_bound_contract_on_matching_etype() -> void:
 	var meta := MetaProgress.new_empty()
 	meta = meta.record_run_end(_run_with(["ascetic_path"]), "risky", catalog, "risky")
@@ -129,9 +143,14 @@ func test_snapshots_expose_available_and_sworn_contracts() -> void:
 	var hall: Dictionary = RunSnapshotBuilder.hall(controller)
 	var listed: Array = hall["contracts"]
 	assert_eq(listed.size(), 4)
+	# 结构化契约行（§15/§16.13）：id/name/desc/locked/selected，勾选态镜像控制器。
 	assert_true(_any_contains(listed, "血契"), str(listed))
 	assert_true(_any_contains(listed, "+30%"), str(listed))
-	assert_true(_any_contains(listed, "未解锁"), str(listed))
+	assert_true(_any_contains(listed, "未解锁") == false or _any_locked(listed), str(listed))
+	var blood := _by_id(listed, "blood_pact")
+	assert_true(not blood.is_empty() and bool(blood.get("selected", false)), str(listed))
+	var ascetic := _by_id(listed, "ascetic_path")
+	assert_true(bool(ascetic.get("locked", true)), str(listed))
 
 	var map_snapshot: Dictionary = controller._snapshot_for("Map")
 	assert_eq(map_snapshot["contracts"], ["血契"])
