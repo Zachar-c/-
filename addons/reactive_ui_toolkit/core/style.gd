@@ -251,7 +251,14 @@ static func _apply_key(node: Control, key: String, value) -> void:
 		"anchors_preset":
 			# Godot's anchor preset (inspector "Anchors Preset" / set_anchors_preset). Applied
 			# with offsets so the preset takes effect immediately, like the editor does.
-			node.set_anchors_and_offsets_preset(_enum_val(value, "PRESET_", _ANCHOR_PRESETS, Control.PRESET_TOP_LEFT))
+			# set_anchors_and_offsets_preset sizes offsets from the CURRENT minimum size — at
+			# first style application that is zero, so an edge/corner preset would keep growing
+			# toward the screen edge and end up fully outside the viewport once content arrives.
+			# Grow directions are pinned so the control grows back INTO the parent instead.
+			var preset := _enum_val(value, "PRESET_", _ANCHOR_PRESETS, Control.PRESET_TOP_LEFT)
+			node.set_anchors_and_offsets_preset(preset)
+			node.grow_horizontal = _anchor_grow_horizontal(preset)
+			node.grow_vertical = _anchor_grow_vertical(preset)
 		"size_flags_horizontal": node.size_flags_horizontal = _enum_val(value, "SIZE_", _SIZE_FLAGS, Control.SIZE_FILL)
 		"size_flags_vertical": node.size_flags_vertical = _enum_val(value, "SIZE_", _SIZE_FLAGS, Control.SIZE_FILL)
 		"modulate": node.modulate = value
@@ -328,6 +335,23 @@ const _ANCHOR_PRESETS := {
 	"PRESET_CENTER": 8, "PRESET_LEFT_WIDE": 9, "PRESET_TOP_WIDE": 10, "PRESET_RIGHT_WIDE": 11,
 	"PRESET_BOTTOM_WIDE": 12, "PRESET_VCENTER_WIDE": 13, "PRESET_HCENTER_WIDE": 14, "PRESET_FULL_RECT": 15,
 }
+
+## Grow direction matching Godot's editor behavior for each anchor preset: controls anchored to an
+## edge/corner must grow back into the parent when their minimum size exceeds the preset's offsets.
+static func _anchor_grow_horizontal(preset: int) -> int:
+	if preset in [Control.PRESET_TOP_LEFT, Control.PRESET_BOTTOM_LEFT, Control.PRESET_CENTER_LEFT, Control.PRESET_LEFT_WIDE]:
+		return Control.GROW_DIRECTION_END
+	if preset in [Control.PRESET_TOP_RIGHT, Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_RIGHT, Control.PRESET_RIGHT_WIDE]:
+		return Control.GROW_DIRECTION_BEGIN
+	return Control.GROW_DIRECTION_BOTH
+
+
+static func _anchor_grow_vertical(preset: int) -> int:
+	if preset in [Control.PRESET_TOP_LEFT, Control.PRESET_TOP_RIGHT, Control.PRESET_CENTER_TOP, Control.PRESET_TOP_WIDE]:
+		return Control.GROW_DIRECTION_END
+	if preset in [Control.PRESET_BOTTOM_LEFT, Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_BOTTOM, Control.PRESET_BOTTOM_WIDE]:
+		return Control.GROW_DIRECTION_BEGIN
+	return Control.GROW_DIRECTION_BOTH
 
 ## Resolve an enum-valued style value: ints (and Godot constants, which ARE ints) pass through;
 ## strings must be the exact Godot constant name, case-insensitive, prefix optional
