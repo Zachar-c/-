@@ -238,9 +238,10 @@ func test_snapshot_defaults_are_honest_about_fallback() -> void:
 	assert_eq(str(reward_snap.get("pool_fallback_note")), "",
 			"builder must not ship an always-on fake fallback note")
 	assert_ne(str(reward_snap.get("pity_note")), "", "pity hint stays as the existing nudge")
-	assert_eq(SnapshotBuilder._reward_fallback_note([]), "（空池回退：已切至基础池）",
-			"empty reward list is the sanctioned proxy signal")
-	assert_eq(SnapshotBuilder._reward_fallback_note([{"id": "r1"}]), "")
+	# D3: reward snapshot is real-battle-loot driven; the fake pick-three rows
+	# and the fallback proxy helper are gone.
+	assert_eq((reward_snap.get("rewards", []) as Array).size(), 0,
+			"no battle fought -> no fake loot rows")
 	var shop_snap: Dictionary = SnapshotBuilder.shop(controller)
 	assert_true(shop_snap.has("pool_fallback_note"), "shop snapshot carries the display slot")
 	assert_eq(str(shop_snap["pool_fallback_note"]), "", "shop slot starts empty (no domain marker yet)")

@@ -69,7 +69,8 @@
     ],
     "sequence_window": "same_turn",
     "sequence_timeout_action": "clear",
-    "rarity": "epic"
+    "rarity": "epic",
+    "name": "月华归"
   },
   {
     "id": "blood_moss_relief",

@@ -144,12 +144,25 @@ export BattleScreen() -> RuitkVNode {
   # ---- 底操作区 ----
   var ops = []
   ops.append(<GuButton label="结束回合" on_press={ func(): fire.call("end_turn") } />)
-  if bool(state.get("can_ultimate", false)):
-    ops.append(<GuButton label="杀招" danger={ true } on_press={ func(): fire.call("ultimate") } />)
   if commands.has("refine"):
     ops.append(<GuButton label="炼蛊" on_press={ func(): fire.call("refine") } />)
   if commands.has("flee") and bool(state.get("flee_available", true)):
     ops.append(<GuButton label="撤退" on_press={ func(): fire.call("flee") } />)
+
+  # R5.21 杀招：条件触发式（组合序列），无独立按钮。展示各杀招序列进度，
+  # 玩家按序打出对应蛊即自动触发（领域 _apply_kill_move_sequence 消费）。
+  var kill_moves: Array = state.get("kill_moves", [])
+  var kill_rows = []
+  for km in kill_moves:
+    var km_name = str(km.get("name", ""))
+    var km_line = str(km.get("sequence_display", ""))
+    var km_done = int(km.get("progress", 0))
+    var km_total = int(km.get("total", 0))
+    var km_status = "序列已就绪：下张打出即触发！" if km_done >= km_total else ("进度 " + str(km_done) + "/" + str(km_total) + " · 下一手：" + str(km.get("next_name", "")))
+    kill_rows.append(<GuCard title={ "杀招 · " + km_name } danger={ km_done > 0 } expand_h={ true }>
+      <Label text={ km_line } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
+      <Label text={ km_status } style={ {"font_color": GuStyle.GOLD if km_done >= km_total else GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+    </GuCard>)
 
   var boss_hint = str(state.get("dda_boss_hint", ""))
   var boss_hint_row = []
@@ -193,6 +206,8 @@ export BattleScreen() -> RuitkVNode {
           </HBoxContainer>
         </GuScrollBox>
       </GuPanel>
+
+      { kill_rows }
 
       <CenterContainer style={ {"size_flags_horizontal": 3} }>
         <HBoxContainer style={ {"separation": 12} }>

@@ -181,6 +181,7 @@ const OUTCOMES := {
 	"success": "功成升仙",
 	"risky_success": "险中功成",
 	"survived_failure": "保命而退",
+	"surrendered": "主动收势 · 弃局而退",
 }
 
 const BATTLE_RESULTS := {

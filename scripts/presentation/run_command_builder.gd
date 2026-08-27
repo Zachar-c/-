@@ -79,6 +79,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"travel": func(id): controller.submit_command({"type": "travel", "node_id": str(id)}),
 				"view_node": func(id): controller.submit_command({"type": "view_node", "node_id": str(id)}),
 				"save_run": func(): controller.submit_command({"type": "save_run"}),
+				"surrender": func(): controller.surrender_run(),
 			}
 		"Battle":
 			return {

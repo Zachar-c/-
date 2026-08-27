@@ -39,6 +39,9 @@ var route: Array[Dictionary] = []
 var current_node: Dictionary = {}
 var current_battle: Dictionary = {}
 var current_session: Dictionary = {}
+## D3 战利品弹窗数据源：最近一场胜利的 loot/elite cost（只读快照消费）。
+var last_battle_loot: Dictionary = {}
+var last_battle_cost: Dictionary = {}
 var last_result: Dictionary = {}
 var dialogue_replies: Array[Dictionary] = []
 var last_feedback := ""
@@ -788,6 +791,7 @@ static func _run_end_outcome(outcome: String) -> String:
 	match outcome:
 		"success": return "won"
 		"risky_success": return "risky"
+		"surrendered": return "abandoned"
 	return "dead"
 
 
@@ -846,6 +850,22 @@ func _continue_saved_run() -> void:
 		return
 	if not _restore_game(SaveRepositoryScript.load_run()):
 		_show_title()
+
+
+## 批 E：主动投降（流程图 Z3 三类出口之一）。二次确认由地图屏确认框承担；
+## 走统一结算模块（ending_type: abandoned），Run 存档随结算删除。
+func surrender_run() -> void:
+	if state == null or state.is_terminal():
+		return
+	current_battle = {}
+	current_session = {}
+	last_battle_loot = {}
+	last_battle_cost = {}
+	_record_run_end("surrendered", "abandoned")
+	_show_ending({
+		"outcome": "surrendered",
+		"conditions": {},
+	})
 
 
 func _show_ending(outcome: Dictionary) -> void:
@@ -957,6 +977,13 @@ func _finish_battle_in_session(outcome: String) -> void:
 		state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, catalog)["state"]
 	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
 		state = Resolver.apply(state, {"type": "record_boss_defeated"}, catalog)["state"]
+	# D3 战利品弹窗（流程图 G3）：有真实战利品或精英绑定时走 Reward 屏确认，
+	# 纯文本 feed 仍保留在遭遇结果流（两处同源，不双份入账）。
+	last_battle_loot = battle_loot
+	last_battle_cost = battle_cost if outcome == "victory" else {}
+	if outcome == "victory" and (not battle_loot.is_empty() or not last_battle_cost.is_empty()):
+		_show_reward()
+		return
 	_show_encounter()
 
 

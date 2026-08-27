@@ -228,28 +228,52 @@ static func refine(controller) -> Dictionary:
 	return out
 
 
-## C2 奖励 / 战利品屏快照（三选一 + 保底/回退小字）。
+## C2/D3 战利品确认屏快照：真实已入账 loot（settle_victory 结果）+ 精英绑定代价
+## + 真实保底计数。规格口径：战后战利品自动入账（§16.4 来源隔离由 loot_tables 承担），
+## 本屏为确认展示而非再抽取——假三选一快照已删除。
 static func reward(controller) -> Dictionary:
 	var out := _gui_state(controller)
+	var state = controller.state
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var loot: Dictionary = controller.get("last_battle_loot") if controller.get("last_battle_loot") != null else {}
+	var elite_cost: Dictionary = controller.get("last_battle_cost") if controller.get("last_battle_cost") != null else {}
 	out["title"] = "战利品"
-	out["rewards"] = [
-		{"id": "r1", "name": "月光蛊", "kind": "蛊 · 战斗奖励", "quality": "稀有", "effect": "造成月光伤害并附加「月息」层", "cost": "获取即入蛊囊", "curse_warning": false},
-		{"id": "r2", "name": "石甲蛊", "kind": "蛊 · 精英奖励", "quality": "史诗", "effect": "护盾 +8", "cost": "代价：躁动 +1", "curse_warning": false},
-		{"id": "r3", "name": "元石 +15", "kind": "货币", "quality": "普通", "effect": "直接入账", "cost": "", "curse_warning": false},
-	]
+	var rows: Array[Dictionary] = []
+	for material_value in loot.get("material_ids", []):
+		rows.append({
+			"name": DisplayText.material(str(material_value)),
+			"kind": "素材 · 已入账",
+			"quality": "普通",
+			"effect": "本局材料 +1，用于炼蛊与事件支付。",
+			"cost": "",
+		})
+	var loot_gu := str(loot.get("gu_id", ""))
+	if not loot_gu.is_empty():
+		var gu_entry: Dictionary = catalog.get("gu_by_id", {}).get(loot_gu, {})
+		rows.append({
+			"name": DisplayText.gu(loot_gu),
+			"kind": "蛊 · 已入蛊囊",
+			"quality": str(gu_entry.get("rarity", "普通")),
+			"effect": str(gu_entry.get("summary", "获得蛊虫，可在炼蛊台合成。")),
+			"cost": "",
+		})
+	if not elite_cost.is_empty():
+		rows.append({
+			"name": "精英代价（强制绑定）",
+			"kind": "代价 · 已生效",
+			"quality": "史诗",
+			"effect": DisplayText.elite_cost(elite_cost),
+			"cost": "",
+			"curse_warning": true,
+		})
+	out["rewards"] = rows
 	out["full_satchel"] = false
-	out["pity_note"] = "（保底：连续普通后，下次掉落品质有较大概率提升）"
-	# T6-E 空池回退小字：领域暂无回退标记，按简报裁定以既有「奖励列表为空」信号
-	# 只读推导；非空不展示，杜绝常驻假提示。领域侧落地 fallback 标记后替换此推导。
-	out["pool_fallback_note"] = _reward_fallback_note(out["rewards"])
+	out["pity_note"] = "蛊掉落保底计数：%d · 材料保底计数：%d" % [int(state.loot_pity), int(state.material_pity)]
+	# T6-E 空池回退小字：真实 loot 为空即空池回退信号。
+	# T6-E 空池回退小字：仅在真实结算过的战斗（loot 字典非空）且未掉落任何条目时
+	# 展示；未开战（loot 为空字典）不发常驻假提示。
+	out["pool_fallback_note"] = "（空池回退：本场未掉落战利品）" if (not loot.is_empty() and rows.is_empty()) else ""
 	return out
-
-
-## 空池回退小字推导（只读）：奖励列表为空视作空池回退信号，否则不展示。
-static func _reward_fallback_note(rewards: Array) -> String:
-	if rewards.is_empty():
-		return "（空池回退：已切至基础池）"
-	return ""
 
 
 ## C8 NPC 交涉屏快照（contact 节点真实交涉选项 + 立场/恶名）。
@@ -377,6 +401,7 @@ static func npc(controller) -> Dictionary:
 
 
 static func hall(controller) -> Dictionary:
+	var state = controller.get("state")
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var meta = controller.meta
 	var schools: Dictionary = catalog.get("schools", {})
@@ -403,7 +428,7 @@ static func hall(controller) -> Dictionary:
 		endings = meta.gu_codex_ids.size() + meta.recipe_codex_ids.size() + meta.inheritance_codex_ids.size()
 		won = int(meta.statistics.get("runs_won", 0))
 		deaths = int(meta.statistics.get("deaths", 0))
-	return {
+	var out := {
 		"has_save": FileAccess.file_exists(SaveRepositoryScript.SAVE_PATH),
 		"hall_subview": str(controller._hall_subview),
 		"selected_school": str(controller._selected_school),
@@ -418,6 +443,14 @@ static func hall(controller) -> Dictionary:
 		"journal": _journal(meta, catalog),
 		"dda_state_adaptive_enabled": bool(meta.dda_state_adaptive_enabled) if meta != null else true,
 	}
+	out["brand_title"] = "問眞"
+	out["primary_action"] = "continue_run" if out["has_save"] else "open_schools"
+	out["run_summary"] = {
+		"route": str(state.current_node_id) if state != null else "",
+		"rank": int(state.cultivation) if state != null else 0,
+		"hp": int(state.health) if state != null else 0,
+	}
+	return out
 
 
 ## 流派显示名（只读）：大厅选中态展示中文名，禁止裸 ID 漏给玩家。
@@ -560,11 +593,17 @@ static func map(controller) -> Dictionary:
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var nodes: Array[Dictionary] = []
 	for n in MapGeneratorScript.visible_nodes(route, state, 2):
+		var node_id := str(n.get("id", ""))
 		nodes.append({
-			"id": str(n.get("id", "")),
+			"id": node_id,
 			"type": str(n.get("type", "")),
 			"label": _node_label(n),
 			"layer": int(n.get("layer", 0)),
+			"next_ids": Array(n.get("next_ids", [])).duplicate(),
+			"reachable": bool(n.get("reachable", false)),
+			"visited": state.node_flags.has(node_id),
+			"current": node_id == str(state.current_node_id),
+			"visibility": _map_visibility(n, state),
 		})
 	var reach: Array[String] = []
 	for n in MapGeneratorScript.reachable_nodes(route, state):
@@ -588,6 +627,17 @@ static func map(controller) -> Dictionary:
 		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
 	}
+
+
+static func _map_visibility(node: Dictionary, state) -> String:
+	var node_id := str(node.get("id", ""))
+	if node_id == str(state.current_node_id):
+		return "current"
+	if state.node_flags.has(node_id):
+		return "past"
+	if bool(node.get("reachable", false)):
+		return "reachable"
+	return "lookahead"
 
 
 static func encounter(controller) -> Dictionary:
@@ -664,10 +714,39 @@ static func battle(controller) -> Dictionary:
 	var hand: Array[Dictionary] = []
 	for c in ActionPreviewServiceScript.preview_battle_actions(battle_data, state, catalog):
 		hand.append(_battle_card(c))
+	# R5.21 杀招（条件触发式）：进度=组合序列已按序打出的段数；available=序列全部
+	# 就绪（本次出牌即触发）。快照只读镜像 pending_kill_move_state + 卡表定义，
+	# 显示串（序列中文/下一手）在此拼好，UI 不做 id 翻译。
+	var kill_moves: Array[Dictionary] = []
+	var pending_km: Dictionary = battle_data.get("pending_kill_move_state", {})
+	for card_value in catalog.get("card_by_id", {}).values():
+		var seq: Array = card_value.get("kill_move_sequence", [])
+		if seq.size() < 2:
+			continue
+		var km_id := str(card_value.get("id", ""))
+		var done := 0
+		if str(pending_km.get("move_id", "")) == km_id:
+			done = clampi(int(pending_km.get("next_sequence_index", 0)), 0, seq.size())
+		var seq_names: Array[String] = []
+		for seq_gu in seq:
+			seq_names.append(DisplayText.gu(str(seq_gu)))
+		var km_name := str(card_value.get("name", ""))
+		if km_name.is_empty():
+			km_name = "、".join(seq_names)
+		kill_moves.append({
+			"id": km_id,
+			"name": km_name,
+			"sequence_display": " → ".join(seq_names),
+			"progress": done,
+			"next_name": DisplayText.gu(str(seq[done])) if done < seq.size() else "",
+			"total": seq.size(),
+			"cost": str(card_value.get("summary", "")),
+		})
 	return {
 		"enemies": enemies,
 		"player": player,
 		"hand": hand,
+		"kill_moves": kill_moves,
 		# R-boss-no-retreat: the flee button disappears entirely on boss-tier
 		# battles (resolver refuses the command anyway; UI mirrors it).
 		"flee_available": not battle_data.has("enemy_definition") \

@@ -6,19 +6,13 @@ import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuToast } from "~/ui/widgets/gu_toast"
 
-# MapScreen —— 地图屏（规格 v3 §6 B2）：网状收敛、节点图标化、三态（当前/已走/可达/不可达）、
-# 图例卷轴、侧边蛊囊。state 只读；travel / view_node / save_run 经 commands。
-# D4：顶部 Toast 展示存档反馈（显隐由控制器 last_feedback 驱动）；底部命令栏含「存档」。
-# 实现注：真实路网连线绘制已由 scripts/presentation/route_tree_canvas.gd 承载（后续打磨候选）；
-# 本屏以 RUI 容器布局落地图标化三态 + 图例 + 蛊囊。
+# MapScreen —— 聚焦分支地图母版。只读 snapshot；travel/view_node/save_run 都经 commands。
 
 export MapScreen() -> RuitkVNode {
   var state = props.get("state", {})
   var commands = props.get("commands", {})
 
   var nodes = state.get("nodes", [])
-  var current_id = state.get("current_node_id", "")
-  var reachable = state.get("reachable_ids", [])
   var gu_satchel = state.get("gu_satchel", [])
   var resources = state.get("resources", {})
   var contracts = state.get("contracts", [])
@@ -26,7 +20,6 @@ export MapScreen() -> RuitkVNode {
   var death_lines = state.get("death_lines", {})
   var toast_text = str(state.get("toast", ""))
 
-  var has_view = commands.has("view_node")
   var has_save = commands.has("save_run")
 
   var toast_row = []
@@ -55,11 +48,6 @@ export MapScreen() -> RuitkVNode {
     "wild_gu": {"label": "野", "text": "野蛊", "color": Color("c2b280")},
   }
 
-  var current_layer = -1
-  for n in nodes:
-    if str(n.get("id", "")) == current_id:
-      current_layer = int(n.get("layer", -1))
-
   var by_layer = {}
   var layer_keys = []
   for n in nodes:
@@ -69,6 +57,15 @@ export MapScreen() -> RuitkVNode {
       layer_keys.append(layer)
     by_layer[layer].append(n)
   layer_keys.sort()
+
+  var history_count = 0
+  for n in nodes:
+    if str(n.get("visibility", "")) == "past":
+      history_count += 1
+
+  var history_summary = []
+  if history_count > 0:
+    history_summary.append(<Label text={ "已行之路 · %d 处已结算" % history_count } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } />)
 
   var layer_panels = []
   for layer in layer_keys:
@@ -81,9 +78,11 @@ export MapScreen() -> RuitkVNode {
         label = str(n.get("type", "节点"))
       var ntype = str(n.get("type", ""))
       var nstyle = NODE_STYLE.get(ntype, {"label": "?", "text": "未知", "color": GuStyle.BONE_DIM})
-      var is_current = (id == current_id)
-      var is_reach = reachable.has(id)
-      var is_past = (layer < current_layer and not is_current)
+      var visibility = str(n.get("visibility", "lookahead"))
+      if visibility == "past":
+        continue
+      var is_current = visibility == "current"
+      var is_reach = bool(n.get("reachable", false))
       var icon_text = str(nstyle["label"])
       var type_text = str(nstyle["text"])
       var node_color = nstyle["color"]
@@ -91,14 +90,14 @@ export MapScreen() -> RuitkVNode {
       var btns = []
       if is_reach and not is_current:
         btns.append(<GuButton label="前往" on_press={ func(): commands["travel"].call(id) } />)
-      if has_view:
+      if commands.has("view_node"):
         var view_fn = func():
           commands["view_node"].call(id)
-        btns.append(<GuButton label="详情" disabled={ not is_reach } on_press={ view_fn } />)
+        btns.append(<GuButton label="详情" on_press={ view_fn } />)
 
-      var status_label = "（当前）" if is_current else ("（已走）" if is_past else ("（可达）" if is_reach else "（不可达）"))
-      var status_color = GuStyle.GOLD if is_current else (GuStyle.GOLD_DIM if is_past else (GuStyle.JADE_BRIGHT if is_reach else GuStyle.BONE_DIM))
-      var sealed_flag = (not is_reach and not is_current and not is_past)
+      var status_label = "当前决策" if is_current else ("可达" if is_reach else "前瞻")
+      var status_color = GuStyle.INK_PRIMARY if is_current else (GuStyle.CONTRACT_BLUE if is_reach else GuStyle.INK_MUTED)
+      var sealed_flag = visibility == "lookahead"
 
       node_cards.append((
         <GuCard title={ label } highlight={ is_current or is_reach } sealed={ sealed_flag }>
@@ -109,13 +108,15 @@ export MapScreen() -> RuitkVNode {
           </HBoxContainer>
         </GuCard>
       ))
-    layer_panels.append((
-      <GuPanel title={ "第 %d 层 · %d 节点" % [layer, count] }>
-        <HBoxContainer style={ {"separation": 10} }>
-          { node_cards }
-        </HBoxContainer>
-      </GuPanel>
-    ))
+    if not node_cards.is_empty():
+      layer_panels.append((
+        <VBoxContainer style={ {"separation": 8} }>
+          <Label text={ "第 %d 层 · %d 处" % [layer, count] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 12} } />
+          <HBoxContainer style={ {"separation": 10} }>
+            { node_cards }
+          </HBoxContainer>
+        </VBoxContainer>
+      ))
 
   var legend_items = []
   for k in NODE_STYLE.keys():
@@ -138,9 +139,10 @@ export MapScreen() -> RuitkVNode {
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
         <VBoxContainer style={ {"separation": 10, "size_flags_horizontal": 3} }>
-          <Label text="南疆行程 · 网状收敛" style={ {"font_color": GuStyle.GOLD, "font_size": 20} } />
+          <Label text="行程" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 20} } />
           <GuScrollBox height={ 420 }>
             <VBoxContainer style={ {"separation": 10} }>
+              { history_summary }
               { layer_panels }
               { map_empty }
             </VBoxContainer>
