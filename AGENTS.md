@@ -45,7 +45,7 @@
 - **.worktrees/game-impl**：历史快照，勿动。
 - **2026-08-26 收敛执行**：`task1-vendor-open-rpg`、`s4-three-death-lines-ui` 本地与远端分支已删除（内容均已在 master）；task1 工作树已移除，其中用户 WIP（`map_generator.gd` + 3 个 `.guitkx`）已存入共享仓库 stash（msg `converge-2026-08-26: user WIP from task1 worktree`），需要时 `git stash list` 找回对照。
 
-## 当前状态（2026-08-26）
+## 当前状态（2026-08-27）
 
 ### 项目状态：待发布（2026-08-27 用户裁定）
 > 开发可玩、核心闭环经玩家视角试玩验证（含试玩发现的战斗入口缺陷已修复）；进入**待发布流程**，发布前须清完下方缺口清单（未清不发布）。
@@ -66,7 +66,7 @@
 | 设置界面（音量/分辨率/DDA 开关） | ⚠️ 待接线 | UI 会话设计完成；领域侧 DDA 开关已可用 |
 | 新手引导/教程 | ❌ 缺口 | 未实现 |
 | 音频/音乐 | ❌ 缺口 | 未实现音效体系 |
-| 美术 | ⚠️ 部分 | 程序化占位为主；StS token 体系 10 屏已合入 master |
+| 美术 | ⚠️ 部分 | 程序化占位为主；StS token 体系 10 屏已合入 master；问眞极简 UI token 层（Task 1）@`6687945` 已合入 `codex/demo1` |
 | 平衡性/内容量 | ⚠️ 部分 | 卡池 200 蛊 ✅；敌人/事件/叙事量偏少 |
 | 发布构建（导出/Release 裁剪调试面板） | ✅ | 2026-08-27：`export_presets.cfg` + `tools/export.ps1` 落地，Release/Debug 包实测（黑名单零命中、F12 门禁双包验证），见下方 2026-08-27 批 |
 | 崩溃恢复 | ⚠️ 部分 | 存档校验拒篡改；进程级恢复未测 |
@@ -80,7 +80,7 @@
 - **打包链路** @`38f810e`：`export_presets.cfg`（Windows Desktop、embed_pck、输出 `build/win/`、exclude_filter 挡语料/vendor/gut/docs/tests——产物 grep 零命中）、`tools/export.ps1`（无头 `--export-release`）、`.gitignore` 排除 `build/`、项目名 `Nanjiang Smoke`→《蛊真人`》。
 - **RUITK 锚点修复** @`c2111c4`：`style.gd` 应用 `anchors_preset` 未补生长方向，角预设（如 debug_panel 的 `PRESET_BOTTOM_RIGHT`）在内容长出最小尺寸后被整体顶出视口（探针实证 gp=(1920,1080)）；修复后按预设语义补 `grow_horizontal/vertical`（右/下边缘向内生长），守卫测试 `test_ruitk_anchor_grow.gd` 3 用例。**注意：该文件属 RUITK 上游，后续升级 addon 必须保留此修复。**
 - **导出实测**：Debug 包把手条可见 + F12 展开完整面板；Release 包 F12 无任何调试痕迹（§16.22 门禁通过）。产物：`build/win/gu-zhenren.exe`（110MB，其中模板本体约 104MB）。
-- 测试基线：**652 unit（651 过 + 1 既有 risky）+ 10 integration**。
+- 测试基线：**657 unit（656 过 + 1 既有 risky）+ 10 integration**。
 - `tools/godot.ps1` 补 `DevEnv\tools` 控制台 exe 候选；`export.ps1` 同源逻辑。
 
 ### 已完成的核心系统
@@ -115,6 +115,14 @@
 ### 当前进行中
 - 无并行会话（2026-08-27 核实）。StS token 体系 10 屏已全部合入 master；后续开发直接落 master（工作树检出的 `ui-sts-redesign` 仅为分支名遗留，见「分支与工作树」）。
 - 发布前剩余阻断项：新手引导、音频、设置 UI 接线（见上方核对表）。
+
+### 问眞极简 UI 重设计（2026-08-27，`codex/demo1`）
+- **Task 1 已完成** @`6687945`：问眞浅色 token 层落地
+  - `gu_style.gd` 重写：纸质/墨迹/朱砂/发丝 token 体系，向后兼容旧暗色常量别名
+  - `gu_button.guitkx`：发丝边框、纸质凸起背景、低圆角
+  - `gu_panel.guitkx`：间距 token、墨色标题
+  - `test_wenzhen_visual_tokens.gd`：5 个浅色主题视觉测试
+- 测试基线：**657 unit（656 过 + 1 既有 risky）+ 10 integration**。
 
 ### 质量收敛批（2026-08-26 排上，已落地 master 并推 gitee）
 - ① 死码清扫：全仓孤儿扫描（49 个 scripts 全量引用统计）→ 零引用仅 3 个独立 `-s` 工具脚本（smoke_render/integration_smoke/ui_capture），均被并行 UI 会话或 RUI 手册（UPSTREAM.md）使用，判定非死码**保留**；legacy views 被 34 处单测引用亦不删。结论：scripts/ 无真孤儿可删，只是工具债（ui_capture 硬编码他机路径）挂观察。
