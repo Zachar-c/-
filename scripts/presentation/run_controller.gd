@@ -145,7 +145,15 @@ func submit_command(command: Dictionary) -> Dictionary:
 	if command.get("type", "") == "leave_encounter":
 		command = {"type": "leave_node"}
 	if command.get("type", "") == "action_card" and not current_battle.is_empty():
-		var turn := BattleResolver.apply_action_card(current_battle, state, command, catalog)
+		# Legacy UI shape {"card_id": instance} rides along for resolver lookup.
+		var turn: Dictionary
+		var card_id := str(command.get("card_id", ""))
+		if not card_id.is_empty():
+			current_battle["_ui_card_id"] = card_id
+			turn = BattleResolver.apply_action_card(current_battle, state, command, catalog)
+			current_battle.erase("_ui_card_id")
+		else:
+			turn = BattleResolver.apply_action_card(current_battle, state, command, catalog)
 		state = turn["state"]
 		current_battle = turn["battle"]
 		last_result = {"battle_result": turn["result"], "feeds": turn["feeds"]}

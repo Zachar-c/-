@@ -34,6 +34,14 @@ static func can_retreat(terrain: String, pursuit: int, enemy_control: int) -> bo
 	return terrain in ["path", "ridge", "marsh"] and pursuit <= 1 and enemy_control <= 1
 
 
+# R-boss-no-retreat 2026-08-27 user ruling: the last-layer boss stand is a
+# fight-to-the-death funnel — retreating would strand the run before a window
+# it can no longer reach. Boss-tier enemies (enemies.json "tier": "boss")
+# close the retreat action entirely.
+static func boss_blocks_retreat(battle: Dictionary) -> bool:
+	return str((battle.get("enemy_definition", {}) as Dictionary).get("tier", "")) == "boss"
+
+
 static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
 	# R14.5 lever 1 (night batch): the active DDA marker may swap the enemy
 	# kind (never bosses/final boss) before the definition is resolved.
@@ -283,7 +291,11 @@ static func take_turn(
 static func _hand_card_index(battle: Dictionary, action_id: String) -> int:
 	var prefix := "battle.%s." % str(battle.get("battle_id", ""))
 	if not action_id.begins_with(prefix):
-		return -1
+		# Legacy shape (run_command_builder "play_card"): {"card_id": instance}.
+		var legacy_id := str(battle.get("_ui_card_id", ""))
+		if legacy_id.is_empty():
+			return -1
+		action_id = "%s%s" % [prefix, legacy_id]
 	var card_instance_id := action_id.trim_prefix(prefix)
 	var hand: Array = battle.get("hand", [])
 	for index in hand.size():
@@ -1168,6 +1180,8 @@ static func _add_flag(battle: Dictionary, flag: String) -> void:
 
 
 static func _can_retreat(battle: Dictionary) -> bool:
+	if boss_blocks_retreat(battle):
+		return false
 	return can_retreat(str(battle["terrain"]), int(battle["pursuit"]), int(battle["enemy_control"]))
 
 

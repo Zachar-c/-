@@ -101,6 +101,17 @@ func test_battle_hud_shows_multitasking_capacity() -> void:
 	assert_eq(int(snapshot["player"]["soul"]), int(controller.state.cultivator.get("soul", 0)))
 
 
+func test_battle_snapshot_hides_flee_on_boss_tier_battles() -> void:
+	# R-boss-no-retreat: boss battles must not offer the flee button at all.
+	var common: RunController = _battle_controller()
+	assert_eq(bool(common._snapshot_for("Battle").get("flee_available", true)), true,
+			"common battle keeps the retreat button")
+	var boss: RunController = _battle_controller()
+	boss.current_battle["enemy_definition"] = {"tier": "boss"}
+	assert_eq(bool(boss._snapshot_for("Battle").get("flee_available", true)), false,
+			"boss battle hides the retreat button")
+
+
 func _battle_controller() -> RunController:
 	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
 	controller.start_new_run(101)

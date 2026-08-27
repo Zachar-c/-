@@ -8,6 +8,7 @@ extends SceneTree
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 
 
 var _log: Array[String] = []
@@ -268,15 +269,17 @@ func _step_battle(controller) -> String:
 	var intent_damage := int(intent.get("damage", 0))
 	var hand: Array = battle.get("hand", [])
 	var command: Dictionary
-	if int(controller.state.health) <= 2 or _stuck_count >= 4:
-		# 玩家止损：残血或长期打不动敌血就抽身；地形禁撤时只能死战。
+	if not BattleResolverScript.boss_blocks_retreat(battle) \
+			and (int(controller.state.health) <= 2 or _stuck_count >= 4):
+		# 玩家止损：残血或长期打不动敌血就抽身；Boss 局无路可退只能死战。
 		command = {"type": "retreat"}
-	elif intent_damage > 0 and int(controller.state.health) <= intent_damage:
-		# 敌方下一口能咬死人时优先闪避保命。
+	elif intent_damage > 0 and int(controller.state.health) <= intent_damage \
+			and not battle.get("flags", []).has("dodging"):
+		# 敌方下一口能咬死人时优先闪避保命（dodging 已挂时闪避无效，转攻）。
 		command = {"type": "basic_dodge"}
 	else:
 		if hand.is_empty():
-			# 手牌打空必须收势：不结束回合就永远抽不到下一张牌（曾致 400 步假死锁）。
+			# 手牌打空必须收势：不结束回合就永远抽不到下一张牌。
 			command = {"type": "end_turn"}
 		else:
 			var card: Dictionary = hand[0]
@@ -299,8 +302,9 @@ func _step_battle(controller) -> String:
 		command = {"type": "basic_attack"}
 		result = controller.submit_command(command)
 		if not bool(result.get("accepted", false)):
-			var fallback: Dictionary = controller.submit_command({"type": "end_turn"})
-			if not bool(fallback.get("accepted", false)):
+			command = {"type": "end_turn"}
+			result = controller.submit_command(command)
+			if not bool(result.get("accepted", false)):
 				_tell("战斗阻塞：%s" % str(result.get("feeds", result)))
 	return "ongoing"
 

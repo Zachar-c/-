@@ -147,7 +147,7 @@ export BattleScreen() -> RuitkVNode {
     ops.append(<GuButton label="杀招" danger={ true } on_press={ func(): fire.call("ultimate") } />)
   if commands.has("refine"):
     ops.append(<GuButton label="炼蛊" on_press={ func(): fire.call("refine") } />)
-  if commands.has("flee"):
+  if commands.has("flee") and bool(state.get("flee_available", true)):
     ops.append(<GuButton label="撤退" on_press={ func(): fire.call("flee") } />)
 
   var boss_hint = str(state.get("dda_boss_hint", ""))

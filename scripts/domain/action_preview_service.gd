@@ -4,6 +4,8 @@ extends RefCounted
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+# BattleResolver is a global class_name; referenced directly (no preload) to
+# avoid a cyclic preload with battle_resolver.gd which previews battles too.
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -108,16 +110,24 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	}))
 	var retreat_cost := 0 if battle.get("flags", []).has("retreat_preserved") else 2
 	var retreat_open := _battle_retreat_open(battle)
+	# R-boss-no-retreat: the window only exists behind this fight, so boss-tier
+	# enemies close it for good — shown with the reason, never silently.
+	var boss_no_retreat: bool = BattleResolver.boss_blocks_retreat(battle)
+	if boss_no_retreat:
+		retreat_open = false
 	var retreat_ready := retreat_open and state.stone >= retreat_cost
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.retreat",
 		"title": "撤离",
 		"summary": "趁交锋间隙抽身。",
 		"executable": retreat_ready,
-		"block_reason": "当前地形、追击或敌方控制不允许撤离。" if not retreat_open else "元石不足：需要 %d 枚。" % retreat_cost if state.stone < retreat_cost else "",
+		"block_reason": "敌方为首领：此战退无可退。" if boss_no_retreat \
+			else "当前地形、追击或敌方控制不允许撤离。" if not retreat_open \
+			else "元石不足：需要 %d 枚。" % retreat_cost if state.stone < retreat_cost else "",
 		"cost": {"stone": retreat_cost} if retreat_cost > 0 else {},
 		"known_risk": ["撤离成功后会放弃本次战利品。"],
-		"remedy_hints": ["可先催发雾步蛊保留撤离机会。"] if not retreat_open else _stone_remedies(retreat_cost - state.stone),
+		"remedy_hints": [] if boss_no_retreat else (
+			["可先催发雾步蛊保留撤离机会。"] if not retreat_open else _stone_remedies(retreat_cost - state.stone)),
 	}))
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.end_turn",
@@ -228,6 +238,8 @@ static func _battle_effect(gu_id: String, mode: String) -> String:
 
 
 static func _battle_retreat_open(battle: Dictionary) -> bool:
+	if BattleResolver.boss_blocks_retreat(battle):
+		return false
 	return BattleResolver.can_retreat(
 		str(battle.get("terrain", "")),
 		int(battle.get("pursuit", 0)),

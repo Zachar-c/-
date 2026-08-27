@@ -610,6 +610,10 @@ static func battle(controller) -> Dictionary:
 		"enemies": enemies,
 		"player": player,
 		"hand": hand,
+		# R-boss-no-retreat: the flee button disappears entirely on boss-tier
+		# battles (resolver refuses the command anyway; UI mirrors it).
+		"flee_available": not battle_data.has("enemy_definition") \
+			or str((battle_data.get("enemy_definition", {}) as Dictionary).get("tier", "")) != "boss",
 		"synthesis": _synthesis_options(state, catalog),
 		"can_ultimate": false,
 		"resources": _resources(state),

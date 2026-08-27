@@ -107,6 +107,35 @@ func test_visible_nodes_annotate_reachable_vs_advisory() -> void:
 				node_id, str(node.get("reachable")), str(is_start)])
 
 
+func test_boss_battle_closes_retreat_for_good() -> void:
+	# R-boss-no-retreat 2026-08-27: the window only exists behind this fight,
+	# so boss-tier battles refuse retreat at resolver level and the preview
+	# card is disabled with an explicit reason (SS16.5, no silent blocks).
+	var run := RunState.new_run(101)
+	var boss := BattleResolver.start({"enemy_kind": "miasma_vein_lord"}, run, catalog)
+	assert_true(BattleResolver.boss_blocks_retreat(boss))
+	var refused := BattleResolver.take_turn(boss, {"type": "retreat"}, run, catalog)
+	assert_false(bool(refused.get("finished", false)),
+			"retreat must not resolve in a boss battle")
+	assert_eq(str(refused.get("result", "")), "ongoing")
+	assert_eq(int(refused["battle"].get("enemy_hp", -1)), int(boss.get("enemy_hp", 0)),
+			"refused retreat leaves the battle untouched")
+
+	var common := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	assert_false(BattleResolver.boss_blocks_retreat(common))
+
+	var preview := ActionPreviewService.preview_battle_actions(boss, run, catalog)
+	var retreat_card := {}
+	for card in preview:
+		if str(card.get("id", "")) == "battle.retreat":
+			retreat_card = card
+			break
+	assert_false(retreat_card.is_empty())
+	assert_false(bool(retreat_card.get("executable", true)),
+			"boss battle preview shows retreat as blocked")
+	assert_string_contains(str(retreat_card.get("block_reason", "")), "退无可退")
+
+
 func test_wanderer_pack_injected_when_no_school_picked() -> void:
 	# The controller injects via its private path; here we pin the contract on
 	# RunState directly by replaying what the hall does for school="" runs.
