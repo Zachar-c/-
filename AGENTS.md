@@ -38,10 +38,11 @@
 
 ## 分支与工作树
 
-- **master**：集成主线（2026-08-26 起新功能批直接落 master：临时 worktree 开发→审查→合并推送；UI 会话合入点 4681d01/c1187da/0c760d7）。
-- **ui-sts-redesign**（并行会话活跃）：UI 重设计分支（StS token 体系 10 屏），主工作树检出中；其未提交改动勿动，完成批经 merge 吸收回 master 后由 UI 会话自行收尾（剩余批已吸收 @ `0c760d7`，分支本体保留）。
-- **c1min-impl**：为避免干扰 master 而创建的临时分支，已完成使命。
-- **.worktrees/game-impl**：存在用户并行 UI 未提交改动与快照，勿动；合并策略待用户裁定。
+- **master**：集成主线与实际开发线（新功能批直接落 master 并推 gitee）。
+- **ui-sts-redesign**：UI 重设计分支的历史名号，内容已全部吸收进 master（2026-08-27 起 master 与其同点 `c2111c4`，零分叉）；主工作树仍检出该分支名，属历史遗留，后续直接在检出分支提交并快进 master 即可。
+- **工作树成批「M」状态 = autocrlf 行尾噪声**（2026-08-27 实证：651 个 M 文件经 `git diff --ignore-cr-at-eol` 对比零内容差异），**不是未提交工作**；判断真实改动用 `git diff --ignore-cr-at-eol`。根治办法是加 `.gitattributes` 归一次仓（待用户裁定）。
+- **c1min-impl**：临时分支，已完成使命。
+- **.worktrees/game-impl**：历史快照，勿动。
 - **2026-08-26 收敛执行**：`task1-vendor-open-rpg`、`s4-three-death-lines-ui` 本地与远端分支已删除（内容均已在 master）；task1 工作树已移除，其中用户 WIP（`map_generator.gd` + 3 个 `.guitkx`）已存入共享仓库 stash（msg `converge-2026-08-26: user WIP from task1 worktree`），需要时 `git stash list` 找回对照。
 
 ## 当前状态（2026-08-26）
@@ -65,14 +66,22 @@
 | 设置界面（音量/分辨率/DDA 开关） | ⚠️ 待接线 | UI 会话设计完成；领域侧 DDA 开关已可用 |
 | 新手引导/教程 | ❌ 缺口 | 未实现 |
 | 音频/音乐 | ❌ 缺口 | 未实现音效体系 |
-| 美术 | ⚠️ 部分 | 程序化占位为主；StS token 体系由 UI 会话推进 |
+| 美术 | ⚠️ 部分 | 程序化占位为主；StS token 体系 10 屏已合入 master |
 | 平衡性/内容量 | ⚠️ 部分 | 卡池 200 蛊 ✅；敌人/事件/叙事量偏少 |
-| 发布构建（导出/Release 裁剪调试面板） | ❌ 缺口 | §16.22 要求未做导出验证 |
+| 发布构建（导出/Release 裁剪调试面板） | ✅ | 2026-08-27：`export_presets.cfg` + `tools/export.ps1` 落地，Release/Debug 包实测（黑名单零命中、F12 门禁双包验证），见下方 2026-08-27 批 |
 | 崩溃恢复 | ⚠️ 部分 | 存档校验拒篡改；进程级恢复未测 |
 | 本地化 | ✅ | 中文单语（目标市场） |
 | 无网络依赖/LLM 边界 | ✅ | 全本地种子化，LLM 仅受控文本且离线模板降级 |
 
-**待发布前缺口（发布阻断项）**：新手引导、音频、Release 导出验证（含调试面板裁剪）、设置 UI 接线；平衡性内容扩容为发布后迭代项。
+**待发布前缺口（发布阻断项）**：新手引导、音频、设置 UI 接线；平衡性内容扩容为发布后迭代项。
+
+### 2026-08-27 打包与 RUITK 修复批（master @`c2111c4`）
+
+- **打包链路** @`38f810e`：`export_presets.cfg`（Windows Desktop、embed_pck、输出 `build/win/`、exclude_filter 挡语料/vendor/gut/docs/tests——产物 grep 零命中）、`tools/export.ps1`（无头 `--export-release`）、`.gitignore` 排除 `build/`、项目名 `Nanjiang Smoke`→《蛊真人`》。
+- **RUITK 锚点修复** @`c2111c4`：`style.gd` 应用 `anchors_preset` 未补生长方向，角预设（如 debug_panel 的 `PRESET_BOTTOM_RIGHT`）在内容长出最小尺寸后被整体顶出视口（探针实证 gp=(1920,1080)）；修复后按预设语义补 `grow_horizontal/vertical`（右/下边缘向内生长），守卫测试 `test_ruitk_anchor_grow.gd` 3 用例。**注意：该文件属 RUITK 上游，后续升级 addon 必须保留此修复。**
+- **导出实测**：Debug 包把手条可见 + F12 展开完整面板；Release 包 F12 无任何调试痕迹（§16.22 门禁通过）。产物：`build/win/gu-zhenren.exe`（110MB，其中模板本体约 104MB）。
+- 测试基线：**652 unit（651 过 + 1 既有 risky）+ 10 integration**。
+- `tools/godot.ps1` 补 `DevEnv\tools` 控制台 exe 候选；`export.ps1` 同源逻辑。
 
 ### 已完成的核心系统
 - **P0 全部落地**（2026-08-25，分支 `p0-batch-continuation`）：
@@ -104,10 +113,8 @@
 - 待办候选：敌人意图池动态化（R5.6）、中途续玩存档（R1.5）、怪物/卡池扩充、更多资质途径。
 
 ### 当前进行中
-- **UI 重设计**（分支 `ui-sts-redesign`）：
-  - StS 风格 token 体系（GuStyle 设计 token）
-  - 10 个主屏幕已实现，当前 T5/T6 批次
-  - 测试状态：475 unit + 9 integration（progress.md 记录，AI 生成）
+- 无并行会话（2026-08-27 核实）。StS token 体系 10 屏已全部合入 master；后续开发直接落 master（工作树检出的 `ui-sts-redesign` 仅为分支名遗留，见「分支与工作树」）。
+- 发布前剩余阻断项：新手引导、音频、设置 UI 接线（见上方核对表）。
 
 ### 质量收敛批（2026-08-26 排上，已落地 master 并推 gitee）
 - ① 死码清扫：全仓孤儿扫描（49 个 scripts 全量引用统计）→ 零引用仅 3 个独立 `-s` 工具脚本（smoke_render/integration_smoke/ui_capture），均被并行 UI 会话或 RUI 手册（UPSTREAM.md）使用，判定非死码**保留**；legacy views 被 34 处单测引用亦不删。结论：scripts/ 无真孤儿可删，只是工具债（ui_capture 硬编码他机路径）挂观察。
