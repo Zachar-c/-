@@ -3,6 +3,9 @@
 .superpowers/
 *.uid
 
+# 导出构建产物（Release 包不入库）
+build/
+
 # Reactive UI Toolkit 编译产物（源为 .guitkx，仅提交源；手写的 .gd 放在 scripts/ 下不被忽略）
 ui/**/*.gd
 *.diags.json
