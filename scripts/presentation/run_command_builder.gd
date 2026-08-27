@@ -116,8 +116,8 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Npc":
 			return {
 				"talk": func(id = ""): controller.submit_command(_npc_talk_command(controller, str(id))),
-				"buy": func(id = ""): controller.submit_command({"type": "shop_purchase", "offer_id": str(id)}),
-				"barter": func(id = ""): controller.submit_command({"type": "shop_barter", "offer_id": str(id)}),
+				"buy": func(id = ""): controller.submit_command({"type": "npc_trade", "npc_id": str(controller.current_node.get("npc_id", "")), "offer_id": str(id)}),
+				"barter": func(id = ""): controller.submit_command({"type": "npc_trade", "npc_id": str(controller.current_node.get("npc_id", "")), "offer_id": str(id), "input_instance_ids": []}),
 				"flee": func(): controller.submit_command({"type": "retreat"}),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
