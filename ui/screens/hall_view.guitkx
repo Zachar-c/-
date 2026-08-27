@@ -22,6 +22,7 @@ export HallView() -> RuitkVNode {
   var codex = state.get("codex", {})
   var journal = state.get("journal", {"entries": []})
   var version_warning = str(state.get("hall_version_warning", ""))
+  var dda_state_adaptive_enabled = bool(state.get("dda_state_adaptive_enabled", true))
 
   var fire = func(key: String):
     if commands.has(key):
@@ -103,7 +104,13 @@ export HallView() -> RuitkVNode {
         <GuPanel title="显示与声音">
           <Label text="音量：待接入" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
           <Label text="分辨率：待接入" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
-          <Label text="本局状态自适应难度：待接入（规格 R14.6）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+        </GuPanel>
+        <GuPanel title="难度">
+          <Label text="本局状态自适应难度（R14.6）" style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+          <GuButton
+            label={ "当前：" + ("开启" if dda_state_adaptive_enabled else "关闭") }
+            on_press={ func(): fire.call("toggle_dda") }
+          />
         </GuPanel>
         <GuPanel title="存档">
           <Label text="清除大厅存档需二次确认（规格 §16.22）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />

@@ -616,6 +616,15 @@ func quit_game() -> void:
 		get_tree().quit()
 
 
+## A6 设置 → 状态自适应难度开关（R14.6⑧）：翻转大厅档布尔值并即时存档。
+func toggle_dda() -> void:
+	if meta == null:
+		return
+	meta.dda_state_adaptive_enabled = not meta.dda_state_adaptive_enabled
+	SaveRepository.save_meta_file(meta)
+	_render()
+
+
 ## 大厅内部子视图切换（A3 流派 / A4 契约 / A5 图鉴 / A6 设置 / A7 手记）。
 ## 仅改展示层 `_hall_subview`，不触碰领域状态；A2 主界面为默认根。
 func _show_hall_subview(subview: String) -> void:

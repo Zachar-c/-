@@ -387,6 +387,7 @@ static func hall(controller) -> Dictionary:
 		"hall_version_warning": "",
 		"codex": _codex(catalog, meta),
 		"journal": _journal(meta, catalog),
+		"dda_state_adaptive_enabled": bool(meta.dda_state_adaptive_enabled) if meta != null else true,
 	}
 
 

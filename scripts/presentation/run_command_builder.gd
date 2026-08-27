@@ -53,8 +53,9 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"open_codex": func(): controller._show_hall_subview("codex"),
 				"open_settings": func(): controller._show_hall_subview("settings"),
 				"open_journal": func(): controller._show_hall_subview("journal"),
-				"back_to_hall": func(): controller._show_hall_subview("main"),
-				"quit": func(): controller.quit_game(),
+			"back_to_hall": func(): controller._show_hall_subview("main"),
+			"toggle_dda": func(): controller.toggle_dda(),
+			"quit": func(): controller.quit_game(),
 			}
 		"Encounter":
 			return {
