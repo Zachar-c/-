@@ -48,7 +48,7 @@ const BODY_IMPRINTS := {
 const OPPORTUNITY_TYPES := ["gu", "information", "service", "favor", "escape_condition"]
 
 const STANDARD_ACTIONS := [
-	"accept", "ally", "buy_information", "claim", "cross", "deceive", "harvest",
+	"accept", "ally", "buy_information", "claim", "cross", "deceive", "fight", "harvest",
 	"inspect", "leave", "lure", "meditate", "open", "prepare", "retreat", "scout",
 	"scheme", "take_imprint", "trade", "withdraw", "work",
 ]
@@ -1456,13 +1456,19 @@ static func _choose_action(state: RunState, command: Dictionary, catalog: Dictio
 		str(transition["reason"]),
 		state.current_node_id
 	))
+	var result := {
+		"ok": true,
+		"action_id": action_id,
+		"effect_id": str(transition["effect_id"]),
+	}
+	# Playthrough finding (night batch): generic combat nodes (no npc_id) could
+	# never start a battle because "fight" was only wired for social actions.
+	# The standard fight transition signals the controller to open the battle.
+	if bool(transition.get("start_battle", false)):
+		result["start_battle"] = true
 	return {
 		"state": next,
-		"result": {
-			"ok": true,
-			"action_id": action_id,
-			"effect_id": str(transition["effect_id"]),
-		},
+		"result": result,
 	}
 
 
@@ -1472,6 +1478,17 @@ static func _standard_action_transition(state: RunState, action_id: String) -> D
 			return _resource_transition(state, "stone", 3, "action_work_paid")
 		"harvest":
 			return _resource_transition(state, "stone", 2, "action_harvest_stone")
+		"fight":
+			# Generic combat-node fight: no resource exchange, just the battle
+			# trigger; the controller opens BattleResolver via start_battle.
+			return {
+				"ok": true,
+				"before": {},
+				"after": {},
+				"reason": "node_fight_started",
+				"effect_id": "fight",
+				"start_battle": true,
+			}
 		"buy_information":
 			return _spend_stone_for_fact(state, "bought_information", "action_bought_information")
 		"trade":
