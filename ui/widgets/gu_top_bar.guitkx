@@ -46,10 +46,11 @@ export GuTopBar() -> RuitkVNode {
       </PanelContainer>
     ))
   for a in anomalies:
+    var label_text = str(a.get("label", a)) if a is Dictionary else str(a)
     meta_panels.append((
       <PanelContainer style={ {"bg_color": Color(0.5, 0.35, 0.15, 0.25), "corner_radius_all": 4} } key={ a }>
         <MarginContainer style={ {"margin_left": 6, "margin_right": 6, "margin_top": 2, "margin_bottom": 2} }>
-          <Label text={ "异变·%s" % a } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+          <Label text={ "异变·%s" % label_text } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
         </MarginContainer>
       </PanelContainer>
     ))

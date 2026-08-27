@@ -150,6 +150,11 @@ export BattleScreen() -> RuitkVNode {
   if commands.has("flee"):
     ops.append(<GuButton label="撤退" on_press={ func(): fire.call("flee") } />)
 
+  var boss_hint = str(state.get("dda_boss_hint", ""))
+  var boss_hint_row = []
+  if boss_hint == "boss_senses_gu_power":
+    boss_hint_row.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
+
   return (
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_ui.call({"cause_view": str(cid)}) } />
@@ -171,6 +176,8 @@ export BattleScreen() -> RuitkVNode {
           </HBoxContainer>
         </GuPanel>
       </HBoxContainer>
+
+      { boss_hint_row }
 
       <GuPanel title="手牌">
         <GuScrollBox height={ 260 }>

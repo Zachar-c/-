@@ -527,7 +527,7 @@ static func map(controller) -> Dictionary:
 		"toast": str(controller.last_feedback),
 		"resources": _resources(state),
 		"contracts": _contracts(state, catalog),
-		"anomalies": [],
+		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
 	}
 
@@ -557,7 +557,7 @@ static func encounter(controller) -> Dictionary:
 		"player": _player_panel(state),
 		"resources": _resources(state),
 		"contracts": _contracts(state, catalog),
-		"anomalies": [],
+		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
 	}
 
@@ -614,7 +614,8 @@ static func battle(controller) -> Dictionary:
 		"can_ultimate": false,
 		"resources": _resources(state),
 		"contracts": _contracts(state, catalog),
-		"anomalies": [],
+		"anomalies": DdaResolverScript.marker_meta(state, catalog),
+		"dda_boss_hint": str(battle_data.get("dda_boss_hint", "")),
 		"death_lines": _death_lines(state),
 	}
 
