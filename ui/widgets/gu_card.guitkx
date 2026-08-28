@@ -3,6 +3,7 @@
 # GuCard —— 卡牌容器（规格 §9，2026-08-26-ui-sts-redesign-design）
 # 品质色轨 / 代价圆标 / 危险「咒」角标（DANGER 底 BONE 字，左上首位）/ 封印「锁」态 / 圆角描边。
 # props（全部可选，向后兼容）：title / highlight / danger / quality / cost / curse_warning / sealed
+# interaction_mode / disabled / selected 只表达宿主的本地交互反馈；卡牌不拥有战斗 FSM。
 
 export GuCard() -> RuitkVNode {
   var title = props.get("title", "")
@@ -13,11 +14,14 @@ export GuCard() -> RuitkVNode {
   var curse_warning = props.get("curse_warning", false)
   var sealed = props.get("sealed", false)
   var expand_h = props.get("expand_h", false)
+  var interaction_mode = str(props.get("interaction_mode", "idle"))
+  var disabled = bool(props.get("disabled", false))
+  var selected = bool(props.get("selected", false))
 
   var QUAL_COLORS = {"普通": GuStyle.BONE_DIM, "稀有": GuStyle.GOLD, "史诗": GuStyle.EMBER, "传说": GuStyle.PAPER, "common": GuStyle.BONE_DIM, "rare": GuStyle.GOLD, "epic": GuStyle.EMBER, "legendary": GuStyle.PAPER}
   var quality_color = QUAL_COLORS.get(quality, GuStyle.BONE_DIM)
   var is_danger = danger or curse_warning
-  var border_color = GuStyle.DANGER if is_danger else (GuStyle.JADE_BRIGHT if highlight else (quality_color if quality != "" else GuStyle.GOLD_DIM))
+  var border_color = GuStyle.DANGER if is_danger else (GuStyle.JADE_BRIGHT if highlight or selected else (quality_color if quality != "" else GuStyle.GOLD_DIM))
   var card_style = {
     "bg_color": GuStyle.BG_RAISED,
     "corner_radius_all": 10,
@@ -26,6 +30,10 @@ export GuCard() -> RuitkVNode {
   }
   if sealed:
     card_style["modulate"] = Color(1, 1, 1, 0.55)
+  elif disabled:
+    card_style["modulate"] = Color(1, 1, 1, 0.55)
+  elif interaction_mode == "dragging":
+    card_style["modulate"] = Color(1, 1, 1, 0.82)
   if expand_h:
     card_style["size_flags_horizontal"] = 3
 

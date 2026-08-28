@@ -1,0 +1,27 @@
+@theme "res://assets/theme/gu_theme.tres"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
+
+# This hand only reports local gestures; it never submits domain commands.
+export GuBattleHand() -> RuitkVNode {
+  var cards = props.get("cards", [])
+  var interaction = props.get("interaction", {})
+  var on_press = props.get("on_press", func(_card = {}): pass)
+  var on_hover = props.get("on_hover", func(_card = {}): pass)
+  var on_drag = props.get("on_drag", func(_card = {}): pass)
+  var on_release = props.get("on_release", func(_card = {}): pass)
+  var on_cancel = props.get("on_cancel", func(): pass)
+  var card_rows = []
+  for card in cards:
+    var executable = bool(card.get("executable", true))
+    var card_name = str(card.get("name", "蛊虫"))
+    var is_active = str(interaction.get("card_id", "")) == str(card.get("id", ""))
+    card_rows.append(<GuCard title={ card_name } cost={ str(card.get("cost", 0)) } quality={ str(card.get("quality", "")) } danger={ bool(card.get("curse_warning", false)) } curse_warning={ bool(card.get("curse_warning", false)) } interaction_mode={ str(interaction.get("mode", "idle")) } disabled={ not executable } selected={ is_active } expand_h={ true }><Label text={ str(card.get("effect", "")) } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } /><GuTooltipView title={ card_name } quality={ str(card.get("quality", "")) } effect={ str(card.get("effect", "")) } cost={ str(card.get("cost_ex", "消耗 %s" % str(card.get("cost", 0)))) } curse_warning={ bool(card.get("curse_warning", false)) } /><Button text={ card_name } disabled={ not executable } onMouseEntered={ func(): on_hover.call(card) } onGuiInput={ func(event): if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed) or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed): on_cancel.call() } onPressed={ func(): on_press.call(card) } style={ {"font_color": GuStyle.INK_PRIMARY, "min_height": 30} } /></GuCard>)
+  if card_rows.is_empty():
+    card_rows.append(<Label text="（无手牌）" style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } />)
+  var cancel_rows = []
+  if str(interaction.get("mode", "idle")) == "target_select":
+    cancel_rows.append(<GuButton label="取消目标" on_press={ on_cancel } />)
+  return (<VBoxContainer style={ {"separation": 6} }><HBoxContainer style={ {"separation": 8} }>{ card_rows }</HBoxContainer>{ cancel_rows }</VBoxContainer>)
+}

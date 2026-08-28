@@ -1,226 +1,106 @@
 @theme "res://assets/theme/gu_theme.tres"
+import { GuBattleHand } from "~/ui/widgets/gu_battle_hand"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuCard } from "~/ui/widgets/gu_card"
-import { GuPanel } from "~/ui/widgets/gu_panel"
-import { GuTopBar } from "~/ui/widgets/gu_top_bar"
-import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
-import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
-import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 import { GuDeathCauseOverlay } from "~/ui/widgets/gu_death_cause_overlay"
+import { GuEnemyActor } from "~/ui/widgets/gu_enemy_actor"
+import { GuPanel } from "~/ui/widgets/gu_panel"
+import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuToast } from "~/ui/widgets/gu_toast"
 
-# BattleScreen —— 战斗屏三区语法（规格 v3 §7 C1）
-# 顶 HUD（顶栏+死线）→ 中战场（左我右敌、意图符文⚔🛡☾+数值+效果）→ 底操作（真元+手牌卡带+回合控制）。
-# state 只读；play_card/end_turn/ultimate/refine/flee 经 commands。
-# 意图攻击=红、防御=金；生命护盾分条（§16.5）；卡牌 tooltip 固定格式。
-# T5-B D2：危险死线行点击 → 死因查看浮层；纯 UI 态（useState 显隐），不过控制器。
-
+# Battle state is snapshot-only. interaction is local presentation state and is
+# intentionally the sole place that decides when a card command may be submitted.
 export BattleScreen() -> RuitkVNode {
   var state = props.get("state", {})
   var commands = props.get("commands", {})
-
-  var ui = useState({"cause_view": ""})
-  var cause_view = str(ui[0].get("cause_view", ""))
-  var set_ui = ui[1]
-
-  var resources = state.get("resources", {})
-  var contracts = state.get("contracts", [])
-  var anomalies = state.get("anomalies", [])
-  var death_lines = state.get("death_lines", {})
-
-  # 死因浮层取数：按 cause_id 回查本屏快照里的原始死线条目（只读）。
-  var cause_line = {}
-  for kind in death_lines.keys():
-    var dl = death_lines[kind]
-    if cause_view != "" and str(dl.get("cause_id", "")) == cause_view and bool(dl.get("danger", false)):
-      cause_line = {
-        "name": str(dl.get("name", kind)),
-        "current": int(dl.get("remaining", 0)),
-        "max": int(dl.get("max", 0)),
-        "detail": str(dl.get("detail", "")),
-      }
-      break
-
-  var fire = func(key: String, arg = null):
-    if commands.has(key):
-      if arg != null:
-        commands[key].call(arg)
-      else:
-        commands[key].call()
-
-  # ---- 敌方战场区（意图符文 + 数值 + 效果）----
+  var ui_state = useState({"mode": "idle", "card": {}, "card_id": "", "target_id": "", "confirming": false, "cause_view": "", "expanded_enemies": false})
+  var interaction = ui_state[0]
+  var set_interaction = ui_state[1]
+  var mode = str(interaction.get("mode", "idle"))
+  var active_card = interaction.get("card", {})
+  var cause_view = str(interaction.get("cause_view", ""))
+  var valid_targets = active_card.get("valid_target_ids", [])
   var enemies = state.get("enemies", [])
-  var enemy_cards = []
-  for e in enemies:
-    var ename = str(e.get("name", ""))
-    var ehp = int(e.get("hp", 0))
-    var emax = maxi(int(e.get("max_hp", 1)), 1)
-    var eshield = int(e.get("shield", 0))
-    var intent = e.get("intent", {})
-    var itype = str(intent.get("type", ""))
-    var ival = int(intent.get("value", 0))
-    var idetail = str(intent.get("detail", ""))
-    var rune = "意图：施咒"
-    var itext = "蓄势待发"
-    var intent_color = GuStyle.BONE_DIM
-    if itype == "attack":
-      rune = "意图：⚔ 攻击"
-      itext = "%d · %s" % [ival, idetail]
-      intent_color = GuStyle.DANGER
-    elif itype == "defend" or itype == "guard":
-      rune = "意图：🛡 防御"
-      itext = "%d · %s" % [ival, idetail]
-      intent_color = GuStyle.GOLD
-    elif itype == "charge":
-      rune = "意图：☾ 蓄力"
-      itext = "蓄势待发"
-      intent_color = GuStyle.SILVER
-    enemy_cards.append((
-      <GuCard title={ ename } expand_h={ true }>
-        <GuStatBar label="气力" value={ ehp } max_value={ emax } color={ GuStyle.DANGER } shield={ eshield } />
-        <Label text={ rune } style={ {"font_color": intent_color, "font_size": 18} } />
-        <Label text={ itext } style={ {"font_color": intent_color, "font_size": 13} } />
-      </GuCard>
-    ))
-  var enemy_empty = []
-  if enemy_cards.is_empty():
-    enemy_empty.append(<Label text="（无敌人）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+  var visible_enemies = enemies.slice(0, mini(3, enemies.size()))
+  var remainder = enemies.slice(3)
+  if bool(interaction.get("expanded_enemies", false)):
+    visible_enemies = enemies
+    remainder = []
 
-  # ---- 我方战场区 ----
+  var reset_interaction = func(): set_interaction.call({"mode": "idle", "card": {}, "card_id": "", "target_id": "", "confirming": false, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
+  var set_mode = func(next_mode, card = active_card): set_interaction.call({"mode": next_mode, "card": card, "card_id": str(card.get("id", "")), "target_id": "", "confirming": false, "cause_view": cause_view, "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
+  var submit_card = func(card, target_id):
+    if commands.has("play_card"):
+      commands["play_card"].call(str(card.get("id", "")), target_id)
+    set_interaction.call({"mode": "play_success", "card": card, "card_id": str(card.get("id", "")), "target_id": target_id, "confirming": false, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
+  var play_card = func(card):
+    if not bool(card.get("executable", true)):
+      return
+    set_mode.call("drag_start", card)
+    if str(card.get("target_type", "none")) == "single_enemy":
+      set_mode.call("target_select", card)
+    else:
+      if bool(card.get("known_risk", false)) or bool(card.get("dangerous", false)):
+        set_interaction.call({"mode": "dragging", "card": card, "card_id": str(card.get("id", "")), "target_id": "", "confirming": true, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
+      else:
+        submit_card.call(card, "")
+  var select_enemy = func(enemy_id):
+    if mode != "target_select" or not valid_targets.has(enemy_id):
+      return
+    if bool(active_card.get("known_risk", false)) or bool(active_card.get("dangerous", false)):
+      set_interaction.call({"mode": "target_select", "card": active_card, "card_id": str(active_card.get("id", "")), "target_id": enemy_id, "confirming": true, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
+    else:
+      submit_card.call(active_card, enemy_id)
+
+  var enemy_rows = []
+  for enemy in visible_enemies:
+    var enemy_id = str(enemy.get("id", ""))
+    enemy_rows.append(<GuEnemyActor enemy={ enemy } selected={ str(interaction.get("target_id", "")) == enemy_id } selectable={ mode == "target_select" and valid_targets.has(enemy_id) } on_select={ select_enemy } />)
+  if not remainder.is_empty():
+    enemy_rows.append(<Button name="enemy_remainder" text={ "余敌 %d" % remainder.size() } onPressed={ func(): set_interaction.call({"mode": mode, "card": active_card, "card_id": str(active_card.get("id", "")), "target_id": str(interaction.get("target_id", "")), "confirming": bool(interaction.get("confirming", false)), "cause_view": cause_view, "expanded_enemies": true}) } style={ {"font_color": GuStyle.INK_PRIMARY, "min_height": 32} } />)
+
   var player = state.get("player", {})
-  var php = int(player.get("hp", 0))
-  var pmax = maxi(int(player.get("max_hp", 1)), 1)
-  var pshield = int(player.get("shield", 0))
-  var pprim = int(player.get("primordial", 0))
-  var psoul = int(player.get("soul", 0))
-  var statuses = player.get("statuses", [])
-  var status_labels = []
-  for s in statuses:
-    var sname = str(s.get("name", ""))
-    var sstacks = int(s.get("stacks", 0))
-    status_labels.append(
-      <Label text={ "%s %d 层" % [sname, sstacks] } style={ {"font_color": GuStyle.DANGER, "font_size": 14} } />
-    )
+  var piles = state.get("piles", {})
+  var soul_ops = state.get("soul_ops", {})
+  var cause_line = {}
+  for kind in state.get("death_lines", {}).keys():
+    var line = state["death_lines"][kind]
+    if str(line.get("cause_id", "")) == cause_view and bool(line.get("danger", false)):
+      cause_line = {"name": str(line.get("name", kind)), "current": int(line.get("remaining", 0)), "max": int(line.get("max", 0)), "detail": str(line.get("detail", ""))}
 
-  # ---- 手牌卡带 ----
-  var hand = state.get("hand", [])
-  var hand_rows = []
-  for c in hand:
-    var cid = str(c.get("id", ""))
-    var cname = str(c.get("name", ""))
-    var ccost = int(c.get("cost", 0))
-    var ceff = str(c.get("effect", ""))
-    var cqual = str(c.get("quality", ""))
-    var ccurse = bool(c.get("curse_warning", false))
-    var cost_ex = str(c.get("cost_ex", ""))
-    var cost_str = cost_ex if cost_ex != "" else ("消耗 %d" % ccost)
-    var on_play = func():
-      var tgt = str(state.get("default_target_id", ""))
-      if tgt == "" and enemies.size() > 0:
-        tgt = str(enemies[0].get("id", ""))
-      if commands.has("play_card"):
-        commands["play_card"].call(cid, tgt)
-    var tip = (
-      <GuTooltipView
-        title={ cname }
-        quality={ cqual }
-        effect={ ceff }
-        cost={ cost_str }
-        curse_warning={ ccurse }
-      />
-    )
-    hand_rows.append((
-      <GuCard title={ cname } danger={ ccurse } curse_warning={ ccurse } expand_h={ true }>
-        <Label text={ cost_str } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
-        <Label text={ "效果：" + ceff } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
-        { tip }
-        <GuButton label="出牌" danger={ ccurse } on_press={ on_play } />
-      </GuCard>
-    ))
-  var hand_empty = []
-  if hand_rows.is_empty():
-    hand_empty.append(<Label text="（无手牌）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
-
-  # ---- 底操作区 ----
   var ops = []
-  ops.append(<GuButton label="结束回合" on_press={ func(): fire.call("end_turn") } />)
+  ops.append(<GuButton label="结束回合" on_press={ func(): if commands.has("end_turn"): commands["end_turn"].call() } />)
+  if commands.has("ultimate"):
+    ops.append(<GuButton label="杀招" on_press={ func(): commands["ultimate"].call() } />)
   if commands.has("refine"):
-    ops.append(<GuButton label="炼蛊" on_press={ func(): fire.call("refine") } />)
+    ops.append(<GuButton label="炼蛊" on_press={ func(): commands["refine"].call() } />)
   if commands.has("flee") and bool(state.get("flee_available", true)):
-    ops.append(<GuButton label="撤退" on_press={ func(): fire.call("flee") } />)
-
-  # R5.21 杀招：条件触发式（组合序列），无独立按钮。展示各杀招序列进度，
-  # 玩家按序打出对应蛊即自动触发（领域 _apply_kill_move_sequence 消费）。
-  var kill_moves: Array = state.get("kill_moves", [])
+    ops.append(<GuButton label="撤退" on_press={ func(): commands["flee"].call() } />)
   var kill_rows = []
-  for km in kill_moves:
-    var km_name = str(km.get("name", ""))
-    var km_line = str(km.get("sequence_display", ""))
-    var km_done = int(km.get("progress", 0))
-    var km_total = int(km.get("total", 0))
-    var km_status = "序列已就绪：下张打出即触发！" if km_done >= km_total else ("进度 " + str(km_done) + "/" + str(km_total) + " · 下一手：" + str(km.get("next_name", "")))
-    kill_rows.append(<GuCard title={ "杀招 · " + km_name } danger={ km_done > 0 } expand_h={ true }>
-      <Label text={ km_line } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
-      <Label text={ km_status } style={ {"font_color": GuStyle.GOLD if km_done >= km_total else GuStyle.ANOMALY_AMBER, "font_size": 13} } />
-    </GuCard>)
+  for kill_move in state.get("kill_moves", []):
+    kill_rows.append(<Label text={ "杀招 · %s · %s" % [str(kill_move.get("name", "")), str(kill_move.get("sequence_display", ""))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } />)
+  var hint_rows = []
+  if str(state.get("dda_boss_hint", "")) == "boss_senses_gu_power":
+    hint_rows.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
+  var feedback_rows = []
+  if str(state.get("feedback", "")) != "":
+    feedback_rows.append(<GuToast text={ str(state.get("feedback", "")) } tone="warn" />)
+  var confirm_row = []
+  if bool(interaction.get("confirming", false)):
+    confirm_row.append(<GuConfirmDialog title="⚠ 危险行动" message={ str(active_card.get("name", "此行动")) + " 将执行已预览的不可逆代价。" } warning_note={ str(active_card.get("known_risk", "")) } on_confirm={ func(): submit_card.call(active_card, str(interaction.get("target_id", ""))) } on_cancel={ func(): set_mode.call("drag_cancel", active_card) } />)
 
-  var boss_hint = str(state.get("dda_boss_hint", ""))
-  var boss_hint_row = []
-  if boss_hint == "boss_senses_gu_power":
-    boss_hint_row.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
-  var feedback = str(state.get("feedback", ""))
-  var feedback_row = []
-  if feedback != "":
-    feedback_row.append(<GuToast text={ feedback } tone="warn" />)
-
-  return (
-    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
-      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_ui.call({"cause_view": str(cid)}) } />
-      { feedback_row }
-
-      <HBoxContainer style={ {"separation": 14} }>
-        <GuPanel title="我方" expand_h={ true }>
-          <VBoxContainer style={ {"separation": 6} }>
-            <GuStatBar label="生命" value={ php } max_value={ pmax } color={ GuStyle.JADE } shield={ pshield } />
-            <GuStatBar label="真元" value={ pprim } max_value={ maxi(pprim, 1) } color={ GuStyle.GOLD } />
-            <GuStatBar label="魂魄" value={ psoul } max_value={ maxi(psoul, 1) } color={ GuStyle.JADE } />
-            { status_labels }
-          </VBoxContainer>
-        </GuPanel>
-
-        <GuPanel title="敌方" expand_h={ true }>
-          <HBoxContainer style={ {"separation": 12} }>
-            { enemy_cards }
-            { enemy_empty }
-          </HBoxContainer>
-        </GuPanel>
-      </HBoxContainer>
-
-      { boss_hint_row }
-
-      <GuPanel title="手牌">
-        <GuScrollBox height={ 260 }>
-          <HBoxContainer style={ {"separation": 10} }>
-            { hand_rows }
-            { hand_empty }
-          </HBoxContainer>
-        </GuScrollBox>
-      </GuPanel>
-
-      { kill_rows }
-
-      <CenterContainer style={ {"size_flags_horizontal": 3} }>
-        <HBoxContainer style={ {"separation": 12} }>
-          <Label text={ "真元 " + str(pprim) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
-          { ops }
-        </HBoxContainer>
-      </CenterContainer>
-
-      @if (not cause_line.is_empty()) {
-        return (
-          <GuDeathCauseOverlay line={ cause_line } on_close={ func(): set_ui.call({"cause_view": ""}) } />
-        )
-      }
-    </VBoxContainer>
-  )
+  return (<VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
+    <VBoxContainer name="battle_hud"><GuTopBar resources={ state.get("resources", {}) } contracts={ state.get("contracts", []) } anomalies={ state.get("anomalies", []) } death_lines={ state.get("death_lines", {}) } on_view={ func(cid): set_interaction.call({"mode": mode, "card": active_card, "target_id": "", "cause_view": str(cid)}) } /></VBoxContainer>
+    <HBoxContainer name="battle_field" style={ {"separation": 20, "size_flags_vertical": 3} }>
+      <GuPanel title="我方" expand_h={ true }><VBoxContainer name="player_actor" style={ {"separation": 6} }><GuStatBar label="生命" value={ int(player.get("hp", 0)) } max_value={ maxi(1, int(player.get("max_hp", 1))) } color={ GuStyle.JADE } shield={ int(player.get("shield", 0)) } /><GuStatBar label="真元" value={ int(player.get("primordial", 0)) } max_value={ maxi(1, int(player.get("primordial", 1))) } color={ GuStyle.GOLD } /><Label text={ "魂魄并发 %d/%d" % [int(soul_ops.get("used", 0)), int(soul_ops.get("cap", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></VBoxContainer></GuPanel>
+      <GuPanel title="敌方" expand_h={ true }><HBoxContainer name="enemy_group" style={ {"separation": 10} }>{ enemy_rows }</HBoxContainer></GuPanel>
+    </HBoxContainer>
+    { feedback_rows }
+    { hint_rows }
+    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_mode.call("hover", card) } on_drag={ func(card): set_mode.call("dragging", card) } on_release={ play_card } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
+    <Label name={ "battle_" + mode } text="" />
+    { confirm_row }
+    @if (not cause_line.is_empty()) { return (<GuDeathCauseOverlay line={ cause_line } on_close={ reset_interaction } />) }
+  </VBoxContainer>)
 }
