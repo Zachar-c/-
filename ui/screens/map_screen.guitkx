@@ -11,6 +11,12 @@ export MapScreen() -> RuitkVNode {
   var resources = state.get("resources", {})
   var contracts = state.get("contracts", [])
   var anomalies = state.get("anomalies", [])
+  # R14.6：险象/衰运徽章只露玩家可读 label；anomalies 条目是 {id,label} 字典，
+  # 裸 str() 会把字典结构漏给玩家（§16.5）。
+  var anomaly_label = "无"
+  if not anomalies.is_empty():
+    var first_anomaly = anomalies[0]
+    anomaly_label = str(first_anomaly.get("label", first_anomaly.get("id", "险象"))) if first_anomaly is Dictionary else str(first_anomaly)
   var death_lines = state.get("death_lines", {})
   var toast_text = str(state.get("toast", ""))
 
@@ -220,7 +226,7 @@ export MapScreen() -> RuitkVNode {
       </HBoxContainer>
       <HBoxContainer name="map_markers" position={ Vector2(31, 80) } style={ {"separation": 13} }>
         <Label text={ "契约 · " + (str(contracts[0]) if not contracts.is_empty() else "无") } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.CONTRACT_BLUE, "content_margin_left": 7} } />
-        <Label text={ "异变 · " + (str(anomalies[0]) if not anomalies.is_empty() else "无") } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.ANOMALY_YELLOW, "content_margin_left": 7} } />
+        <Label text={ "异变 · " + anomaly_label } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.ANOMALY_YELLOW, "content_margin_left": 7} } />
       </HBoxContainer>
       <HBoxContainer name="map_title" anchor_left={ 0.055 } anchor_right={ 0.945 } offset_top={ 110.0 } offset_bottom={ 142.0 }>
         <Label text="青茅山外圍" style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_MAP, "font_size": 28} } />

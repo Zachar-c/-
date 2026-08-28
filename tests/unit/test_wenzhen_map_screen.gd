@@ -189,6 +189,27 @@ func test_map_master_visible_text_uses_its_local_palette() -> void:
 		_assert_label_color(host, icon_name, Color("1b1c19"))
 
 
+func test_map_anomaly_badge_renders_label_not_raw_dict() -> void:
+	# R14.6 险象/衰运徽章：真实快照的 anomalies 是 {id,label} 字典，map 主屏
+	# 只能露玩家可读 label；sys: id 与字典结构都不得泄漏（§16.5）。
+	var snapshot := _route_snapshot()
+	snapshot["anomalies"] = [{"id": "sys:dda_peril", "label": "险象"}]
+	var host := _mount(snapshot)
+	for _frame in 3:
+		await get_tree().process_frame
+	assert_true(_has_text(host, "异变 · 险象"), "anomaly badge must render the readable label")
+	assert_false(_has_text(host, "sys:dda_peril"), "marker id must never leak to the map")
+	assert_false(_has_text(host, "{"), "raw dict structure must never leak to the map")
+
+	# 字符串形态（旧快照/测试桩）保持兼容。
+	var string_snapshot := _route_snapshot()
+	string_snapshot["anomalies"] = ["衰运"]
+	var string_host := _mount(string_snapshot)
+	for _frame in 3:
+		await get_tree().process_frame
+	assert_true(_has_text(string_host, "异变 · 衰运"))
+
+
 func _route_snapshot() -> Dictionary:
 	return {
 		"nodes": [

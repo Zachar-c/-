@@ -65,7 +65,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_car
 	column.add_theme_constant_override("separation", 12)
 	root.add_child(column)
 
-	_append_top_status(column, battle, state)
+	_append_top_status(column, battle, state, catalog)
 	_append_hud(column, battle, state)
 	_append_field(column, battle, state)
 	_append_action_cards(column, battle, action_cards, catalog)
@@ -76,7 +76,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_car
 # §16.5.3  Persistent top strip via shared TopStatusBar:
 # 契约 (blue) + debuff/异变 (yellow/red) chips. Read-only from state.
 # --------------------------------------------------------------------------- #
-func _append_top_status(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
+func _append_top_status(column: VBoxContainer, battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
 	var contracts: Array[String] = []
 	for imprint in state.body_imprints:
 		contracts.append(DisplayText.fact(str(imprint)))
@@ -89,9 +89,15 @@ func _append_top_status(column: VBoxContainer, battle: Dictionary, state: RunSta
 	var notorious := int(cultivator.get("notorious", 0))
 	if notorious > 0:
 		debuffs.append("恶名 %d" % notorious)
-	# DDA 异变徽章（黄系，与契约蓝系分区）：battle 字典只携带稳定 id，
-	# 玩家可见文案统一走 DisplayText.dda_hint；未知 id 不渲染占位行。
+	# DDA 异变徽章（黄系，与契约蓝系分区）：险象/衰运 run 级 marker 在前，
+	# boss hint 战斗局部提示在后；battle/state 只携带稳定 id，玩家可见文案
+	# 分别走 marker_meta 与 DisplayText.dda_hint，未知 id 不渲染占位行。
 	var dda_markers: Array[String] = []
+	for anomaly_value in DdaResolver.marker_meta(state, catalog):
+		var anomaly: Dictionary = anomaly_value
+		var marker_label := str(anomaly.get("label", ""))
+		if not marker_label.is_empty():
+			dda_markers.append(marker_label)
 	var hint := DisplayText.dda_hint(str(battle.get("dda_boss_hint", "")))
 	if not hint.is_empty():
 		dda_markers.append(hint)

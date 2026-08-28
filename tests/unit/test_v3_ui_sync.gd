@@ -99,6 +99,40 @@ func test_battle_views_surface_dda_boss_hint() -> void:
 			"no DDA hint row may render without a hint id")
 
 
+func test_battle_view_surfaces_dda_anomaly_marker() -> void:
+	# 险象/衰运顶栏徽章（R14.6）：run 级 sys marker 经 marker_meta 进 legacy
+	# 顶栏异变区；label 走 dda.json，平稳带（无 sys 标记）不渲染。
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	state.dda_state_adaptive_enabled = true
+	state.health = 2
+	state.cultivator["statuses"] = {
+		"gu_erosion": {"layers": 1}, "essence_bloat": {"layers": 2},
+	}
+	state.meta_rules = {"sys:dda_peril": true}
+	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
+
+	var view: Control = autofree(BattleViewScript.new())
+	add_child(view)
+	var empty_cards: Array[Dictionary] = []
+	view.render(battle, state, catalog, empty_cards)
+	var texts: Array[String] = []
+	_collect_label_texts(view, texts)
+	assert_true(_any_contains(texts, "险象"),
+			"battle view top strip must surface the DDA anomaly marker")
+	assert_false(_any_contains(texts, "sys:dda_peril"),
+			"marker id must never leak to the top strip")
+
+	state.meta_rules = {}
+	var calm_view: Control = autofree(BattleViewScript.new())
+	add_child(calm_view)
+	calm_view.render(battle, state, catalog, empty_cards)
+	var calm_texts: Array[String] = []
+	_collect_label_texts(calm_view, calm_texts)
+	assert_false(_any_contains(calm_texts, "险象"),
+			"no anomaly badge without an active sys marker")
+
+
 func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
