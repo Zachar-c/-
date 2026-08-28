@@ -169,7 +169,7 @@
 - ③ NPC 个人库存 @`0a51296`+`c9ceab0`：`npcs.json` 增 stock、`nodes.json` 增 npc_id 归属、resolver `npc_trade`（门禁：NPC 存在→offer 存在→在库→节点声明→委托 shop 语义零漂移）、快照 npc() 真库存替换硬编码假货架（价格走 price_for）、ContentCatalog stock Schema 校验（未知 offer/重复/非法 kind）。
 - ④ DDA 状态自适应（R14.5/14.6/§16.11）@`16dc2e1`+`5204480`+`0899fe7`：`DdaResolver` 纯模块（0–10 分带评估：低血/双诅咒/贫石/连败/炼蛊连续失败；`sys:` 标记互斥至多一条、新替旧；SeededRoll 换敌池=手段优先级第一档，Boss/最终 Boss 永不被换、不直赠战力、零乘算；Boss 局部=R14.6⑦ essence_scorch 定向换招且战斗域内自清；大厅开关 `dda_state_adaptive_enabled` 入大厅档并随新 run 快照；快照三处实装：anomalies 顶栏标记、debug 评估分位、结算复盘 dda_triggers/dda_markers；系统标记豁免玩家 meta ≤2 上限；`dda.json` Schema 校验（分带升序/sys: 前缀/池引用真实敌人/权重正整/boss_local 意图存在性）。
 - 测试基线 **628 unit + 10 integration 全绿**（check.ps1 全过）。自 610/9 基线（含 1 既有 risky "Did not assert"，与任务无关）。
-- UI 会话待接线（挂账）：`boss_senses_gu_power` 文案、险象/衰运顶栏徽章（黄红系，与契约蓝系分区）、大厅设置 DDA 开关（已接 @`bc8419d`）、NPC stock 交易面板消费快照 offers/barter。
+- UI 会话待接线（挂账）：`boss_senses_gu_power` 文案（已接 @`dc17336`：legacy battle_view 顶栏异变徽章 + RUI battle_screen 双端渲染，文案收敛 `DisplayText.dda_hint`，未知 id 不出占位行）、险象/衰运顶栏徽章（黄红系，与契约蓝系分区）、大厅设置 DDA 开关（已接 @`bc8419d`）、NPC stock 交易面板消费快照 offers/barter。
 - 过程教训（本机）：① 子代理实现/审阅角色在本环境多次静默停滞（长时无输出、无树变更）→ 夜间改为控制器直实现 + 子代理审阅尝试；② Godot 裸启（不带 `--headless`，如直接跑 tools/godot.ps1）会 GUI 挂死不退出——一律经 tools/test.ps1 / tools/check.ps1；③ 孤儿 Godot 进程会占项目锁导致后续测试挂起，超时无输出先杀进程再重试。
 
 ### 剩余候选
