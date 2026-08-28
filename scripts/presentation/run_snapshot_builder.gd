@@ -109,9 +109,15 @@ static func shop(controller) -> Dictionary:
 			"will_emergency_pay": int(o.get("stone_cost", 0)) > stones,
 		})
 	var node_type := str(controller.current_node.get("type", ""))
+	var shop_npc_id := str(controller.current_node.get("npc_id", ""))
 	out["title"] = "黑市 · 寨市" if node_type == "shop" else ("商队开市" if node_type == "caravan" else "临时寨市")
-	out["npc_name"] = "地脉游商" if node_type != "caravan" else "商队执事"
-	out["npc_stance"] = "中立"
+	# Shop 屏与 Npc 屏共用 NPC 名/立场推导；无 npc_id 的寨市回落通用游商名。
+	if shop_npc_id.is_empty():
+		out["npc_name"] = "地脉游商" if node_type != "caravan" else "商队执事"
+		out["npc_stance"] = "中立"
+	else:
+		out["npc_name"] = _npc_display_name(shop_npc_id, node_type)
+		out["npc_stance"] = _npc_stance(controller.state)
 	out["inflation_note"] = "层数提升物价微涨 · 二次访问 +25%/次 封顶 +100%"
 	out["offers"] = offers
 	out["services"] = [
@@ -290,27 +296,12 @@ static func npc(controller) -> Dictionary:
 	var npcs: Array = catalog.get("npcs", [])
 	var npc_id := str(controller.current_node.get("npc_id", ""))
 	var has_npc := not npc_id.is_empty()
-	var npc_name := "无名散修"
-	if npc_id == "caravan_steward":
-		npc_name = "商队执事"
-	elif npc_id == "earth_vein_scout":
-		npc_name = "地脉斥候"
-	elif npc_id == "wandering_healer":
-		npc_name = "游方医修"
-	elif npc_id == "ridge_extortionist":
-		npc_name = "山岭索贿者"
-	elif str(controller.current_node.get("type", "")) == "contact":
-		npc_name = "拦路散修"
+	var npc_name := _npc_display_name(npc_id, str(controller.current_node.get("type", "")))
 	var state = controller.state
 	var notoriety := 0
 	if state != null:
 		notoriety = ResolverScript.notoriety(state)
-	var stance := "中立"
-	if state != null and state.node_flags != null:
-		if str(state.node_flags.get("reputation_extreme_stance", "")) == "true":
-			stance = "极度仇恨"
-		elif str(state.node_flags.get("reputation_hostile", "")) == "true":
-			stance = "敌视"
+	var stance := _npc_stance(state)
 	# 真实交涉选项：contact 节点 neutral_wanderer 的 negotiate/deceive/fight/retreat
 	# C 批修复：talk_options 直接镜像领域动作卡（含完整 command 与 state_version），
 	# UI 发 choose_action 同遭遇屏通道——不再构造领域不存在的 negotiate/deceive 裸 id
@@ -439,6 +430,32 @@ static func npc(controller) -> Dictionary:
 	out["talk_options"] = talk_options
 	out["can_flee"] = stance != "极度仇恨"
 	return out
+
+
+# NPC 展示名与立场的单一来源：Npc 屏与 Shop 屏共用，玩家在两屏看到的
+# 必须是同一个人（§16.5 一致性）；无 npc_id 的节点回落各自的通用名。
+static func _npc_display_name(npc_id: String, node_type: String) -> String:
+	match npc_id:
+		"caravan_steward":
+			return "商队执事"
+		"earth_vein_scout":
+			return "地脉斥候"
+		"wandering_healer":
+			return "游方医修"
+		"ridge_extortionist":
+			return "山岭索贿者"
+		"wandering_peddler":
+			return "散修货郎"
+	return "拦路散修" if node_type == "contact" else "无名散修"
+
+
+static func _npc_stance(state: Variant) -> String:
+	if state != null and state.node_flags != null:
+		if str(state.node_flags.get("reputation_extreme_stance", "")) == "true":
+			return "极度仇恨"
+		if str(state.node_flags.get("reputation_hostile", "")) == "true":
+			return "敌视"
+	return "中立"
 
 
 static func hall(controller) -> Dictionary:

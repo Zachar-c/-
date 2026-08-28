@@ -271,6 +271,31 @@ func test_snapshot_npc_barter_owned_preview() -> void:
 	assert_eq(str(holding_barter[0]["block_reason"]), "")
 
 
+## Shop 屏与 Npc 屏共用 NPC 名/立场推导：同一个 NPC 在两屏必须同名。
+func test_shop_snapshot_shows_real_npc_identity() -> void:
+	var state := _state_at("ridge_black_market")
+	state.node_flags["reputation_hostile"] = "true"
+	var market: Dictionary = RunSnapshotBuilderScript.shop({
+		"current_node": {"id": "ridge_black_market", "type": "shop", "npc_id": "ridge_extortionist", "choices": []},
+		"state": state, "meta": null, "catalog": catalog,
+	})
+	assert_eq(str(market["npc_name"]), "山岭索贿者")
+	assert_eq(str(market["npc_stance"]), "敌视")
+
+	var generic: Dictionary = RunSnapshotBuilderScript.shop({
+		"current_node": {"id": "ridge_market", "type": "market", "choices": ["trade"]},
+		"state": state, "meta": null, "catalog": catalog,
+	})
+	assert_eq(str(generic["npc_name"]), "地脉游商")
+	assert_eq(str(generic["npc_stance"]), "中立")
+
+	var peddler: Dictionary = RunSnapshotBuilderScript.npc({
+		"current_node": {"id": "wandering_peddler", "type": "contact", "npc_id": "wandering_peddler", "choices": []},
+		"state": state, "meta": null, "catalog": catalog,
+	})
+	assert_eq(str(peddler["npc_name"]), "散修货郎")
+
+
 ## 散修货郎（2026-08-28 挂账落地）：contact 模板携带 npc_id 后，Npc 交易面板
 ## 的个人货架首次真实可达——resolve_contact 门禁放宽到 contact 模板全族。
 func test_peddler_contact_node_carries_tradeable_stock() -> void:
