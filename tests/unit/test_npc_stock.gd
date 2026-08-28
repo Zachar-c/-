@@ -296,6 +296,39 @@ func test_shop_snapshot_shows_real_npc_identity() -> void:
 	assert_eq(str(peddler["npc_name"]), "散修货郎")
 
 
+## 2026-08-28 验收批：黑市服务面板由领域真值导出——价格走 service_price_for
+## （含次数递增），剩余走 service_limit - service_use_count，目标候选排除
+## can_direct_drop=false 诅咒蛊与规则型印记；池屏蔽/净化躁动不再出现。
+func test_shop_services_come_from_domain_truth() -> void:
+	var state := _state_at("ridge_black_market")
+	state.gu_instances = {
+		"gu_001": {"instance_id": "gu_001", "definition_id": "stone_shell_gu", "state": "refined"},
+	}
+	state.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
+	state.node_flags["svc_used_remove_card"] = "1"
+	var snaps: Dictionary = RunSnapshotBuilderScript.shop({
+		"current_node": {"id": "ridge_black_market", "type": "shop", "npc_id": "ridge_extortionist", "choices": []},
+		"state": state, "meta": null, "catalog": catalog,
+	})
+	var by_id := {}
+	for service_value in (snaps["services"] as Array):
+		var service: Dictionary = service_value
+		by_id[str(service["id"])] = service
+	assert_false(by_id.has("pool_block"), "pool exclusion has no domain support and must not appear")
+	assert_false(by_id.has("calm"), "restlessness service has no domain support and must not appear")
+
+	var remove_card: Dictionary = by_id["remove_card"]
+	# 已用 1 次 → 递增价：base 120 × price_for × (1 + 25%)
+	var escalated := ResolverScript.service_price_for(catalog, state, "remove_card", int(catalog["deck"]["remove_card_cost"]))
+	assert_eq(str(remove_card["price"]), "%d 元石" % escalated)
+	assert_eq(int(remove_card["remaining"]), 1)
+	assert_true(bool(remove_card["executable"]))
+	assert_eq(((remove_card["candidates"] as Array)[0] as Dictionary)["id"], "gu_001")
+
+	var wash: Dictionary = by_id["wash_notoriety"]
+	assert_true(str(wash["price"]).contains("寿元"), "wash_notoriety is priced in lifespan per resolver")
+
+
 ## 散修货郎（2026-08-28 挂账落地）：contact 模板携带 npc_id 后，Npc 交易面板
 ## 的个人货架首次真实可达——resolve_contact 门禁放宽到 contact 模板全族。
 func test_peddler_contact_node_carries_tradeable_stock() -> void:

@@ -450,7 +450,7 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	var shop_cmds := {"buy": func(_id): pass, "block": func(_id): pass, "use_service": func(_id): pass, "leave": func(): pass}
+	var shop_cmds := {"buy": func(_id): pass, "service": func(_sid = "", _tid = ""): pass, "leave": func(): pass}
 	var shop_state := gui_state.duplicate()
 	shop_state.merge({
 		"title": "黑市 · 寨市",
@@ -465,12 +465,9 @@ func _initialize() -> void:
 			{"id": "o5", "name": "洗刷恶名", "kind": "wash_notoriety", "price": "按声望", "desc": "降低恶名", "quality": "普通", "curse_warning": false},
 		],
 		"services": [
-			{"id": "s1", "name": "刷新货架", "cost": "120 元石", "remaining": 2, "note": "本局剩余 2 次 · 通胀叠加"},
-			{"id": "s2", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
-			{"id": "s3", "name": "池屏蔽", "cost": "200 元石", "remaining": 1, "note": "本局剩余 1 次 · 移除≠池排除"},
-			{"id": "s4", "name": "洗炼", "cost": "80 元石", "remaining": 3, "note": "重骰一条被动"},
-			{"id": "s5", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
-			{"id": "s6", "name": "魂丹", "cost": "6 元石", "remaining": 1, "note": "魂魄 +1"},
+			{"id": "remove_card", "name": "移除蛊虫", "price": "120 元石", "remaining": 2, "note": "从蛊囊删除一只蛊 · 本局剩 2/2 次 · 每次使用涨价", "candidates": [{"id": "gi_1", "name": "石甲蛊", "price": ""}], "target_label": "选择要移除的蛊虫", "executable": true, "block_reason": ""},
+			{"id": "remove_curse", "name": "净化诅咒", "price": "按诅咒定价", "remaining": 2, "note": "清除一层诅咒 · 本局剩 2/2 次 · 每次使用涨价", "candidates": [{"id": "gu_erosion", "name": "蛊蚀 ×1", "price": "40 元石"}], "target_label": "选择要净化的诅咒", "executable": true, "block_reason": ""},
+			{"id": "wash_notoriety", "name": "洗刷恶名", "price": "10 寿元", "remaining": -1, "note": "恶名 -2 · 消耗寿元 · 无次数上限", "candidates": [], "target_label": "", "executable": true, "block_reason": ""},
 		],
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）",
 	})

@@ -120,16 +120,121 @@ static func shop(controller) -> Dictionary:
 		out["npc_stance"] = _npc_stance(controller.state)
 	out["inflation_note"] = "层数提升物价微涨 · 二次访问 +25%/次 封顶 +100%"
 	out["offers"] = offers
-	out["services"] = [
-		{"id": "remove_gu", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
-		{"id": "pool_block", "name": "池屏蔽", "cost": "200 元石", "remaining": 1, "note": "本局剩余 1 次 · 移除≠池排除"},
-		{"id": "wash", "name": "洗炼", "cost": "80 元石", "remaining": 3, "note": "重骰一条被动"},
-		{"id": "calm", "name": "净化躁动", "cost": "40 元石", "remaining": 3, "note": "清除蛊躁动"},
-	]
+	# 2026-08-28 验收批：服务面板改由领域真值导出（旧表 4 条假服务与领域
+	# 计价/限额全对不上，且 block/use_service 命令在 resolver 无 handler）。
+	out["services"] = _shop_services(controller)
 	out["emergency_note"] = "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
 	# T6-E 空池回退显示槽位：商店侧暂无可推导的回退信号（货架非奖励池），恒空占位；
 	# 领域侧落地 fallback 标记后在此注入（报告已披露该数据源缺口）。
 	out["pool_fallback_note"] = ""
+	return out
+
+
+## 2026-08-28 验收批：黑市服务面板领域导出。价格/剩余次数全部来自
+## service_price_for/service_limit/service_use_count（与 resolver 扣费同源），
+## 移除类服务携带 candidates 目标清单供屏内选择；无领域支持的服务（池屏蔽、
+## 净化躁动）不再出现——宁可少一项，不出死按钮。
+static func _shop_services(controller) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var state = controller.state
+	if state == null:
+		return out
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var deck: Dictionary = catalog.get("deck", {})
+	var removal_specs := [
+		{"id": "remove_card", "name": "移除蛊虫", "base": int(deck.get("remove_card_cost", 120)), "note": "从蛊囊删除一只蛊", "target_label": "选择要移除的蛊虫"},
+		{"id": "remove_imprint", "name": "移除印记", "base": int(deck.get("remove_imprint_cost", 150)), "note": "移除一枚遗物印记（规则型印记不可移除）", "target_label": "选择要移除的印记"},
+	]
+	for spec_value in removal_specs:
+		var spec: Dictionary = spec_value
+		var sid := str(spec["id"])
+		var limit := ResolverScript.service_limit(catalog, sid)
+		var remaining := maxi(0, limit - ResolverScript.service_use_count(state, sid))
+		var candidates: Array[Dictionary] = []
+		if sid == "remove_card":
+			for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+				var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+				if instance.is_empty() or str(instance.get("state", "")) == "dead":
+					continue
+				var candidate_gu: Dictionary = catalog.get("gu_by_id", {}).get(str(instance.get("definition_id", "")), {})
+				if not bool(candidate_gu.get("can_direct_drop", true)):
+					continue
+				candidates.append({"id": str(instance_id_value), "name": DisplayText.gu(str(instance.get("definition_id", ""))), "price": ""})
+		else:
+			for relic_id_value in state.relic_ids:
+				var relic: Dictionary = catalog.get("relic_by_id", {}).get(str(relic_id_value), {})
+				if str(relic.get("grade", "")) == "meta_rule":
+					continue
+				candidates.append({"id": str(relic_id_value), "name": str(relic.get("name_zh", str(relic_id_value))), "price": ""})
+		var block_reason := ""
+		if remaining <= 0:
+			block_reason = "本局次数已用完"
+		elif candidates.is_empty():
+			block_reason = "没有可移除的目标"
+		out.append({
+			"id": sid,
+			"name": str(spec["name"]),
+			"price": "%d 元石" % ResolverScript.service_price_for(catalog, state, sid, int(spec["base"])),
+			"remaining": remaining,
+			"note": "%s · 本局剩 %d/%d 次 · 每次使用涨价" % [str(spec["note"]), remaining, limit],
+			"candidates": candidates,
+			"target_label": str(spec["target_label"]),
+			"executable": block_reason.is_empty(),
+			"block_reason": block_reason,
+		})
+	# 诅咒净化：按各诅咒 removal_base_cost 分别计价。
+	var curse_candidates: Array[Dictionary] = []
+	var statuses: Dictionary = state.cultivator.get("statuses", {})
+	for curse_id_value in statuses:
+		var curse_id := str(curse_id_value)
+		var layers := int((statuses[curse_id] as Dictionary).get("layers", 0))
+		if layers <= 0:
+			continue
+		var curse: Dictionary = catalog.get("curse_by_id", {}).get(curse_id, {})
+		curse_candidates.append({
+			"id": curse_id,
+			"name": "%s ×%d" % [DisplayText.curse(curse_id), layers],
+			"price": "%d 元石" % ResolverScript.service_price_for(catalog, state, "remove_curse", int(curse.get("removal_base_cost", 1))),
+		})
+	var curse_limit := ResolverScript.service_limit(catalog, "remove_curse")
+	var curse_remaining := maxi(0, curse_limit - ResolverScript.service_use_count(state, "remove_curse"))
+	var curse_block := ""
+	if curse_remaining <= 0:
+		curse_block = "本局次数已用完"
+	elif curse_candidates.is_empty():
+		curse_block = "没有可净化的诅咒"
+	out.append({
+		"id": "remove_curse",
+		"name": "净化诅咒",
+		"price": "按诅咒定价",
+		"remaining": curse_remaining,
+		"note": "清除一层诅咒 · 本局剩 %d/%d 次 · 每次使用涨价" % [curse_remaining, curse_limit],
+		"candidates": curse_candidates,
+		"target_label": "选择要净化的诅咒",
+		"executable": curse_block.is_empty(),
+		"block_reason": curse_block,
+	})
+	# 洗刷恶名：真实命令 wash_notoriety（寿元计价，无次数上限）。
+	var reputation: Dictionary = catalog.get("reputation", {}).get("effects", {})
+	var wash_cost := int(reputation.get("wash_lifespan_cost", 10))
+	var wash_reduce := int(reputation.get("wash_reduce", 2))
+	var lifespan := int(state.cultivator.get("lifespan", 0))
+	var wash_block := ""
+	if ResolverScript.notoriety(state) <= 0:
+		wash_block = "当前没有恶名可洗"
+	elif lifespan - wash_cost < 1:
+		wash_block = "寿元不足（预检拒绝）"
+	out.append({
+		"id": "wash_notoriety",
+		"name": "洗刷恶名",
+		"price": "%d 寿元" % wash_cost,
+		"remaining": -1,
+		"note": "恶名 -%d · 消耗寿元 · 无次数上限" % wash_reduce,
+		"candidates": [],
+		"target_label": "",
+		"executable": wash_block.is_empty(),
+		"block_reason": wash_block,
+	})
 	return out
 
 
@@ -198,13 +303,19 @@ static func rest(controller) -> Dictionary:
 
 
 ## C6 炼蛊 / 合成屏快照（refinement_by_id 真实配方 + 盲盒）。
+## 2026-08-28 验收批：配方行带 channel 标签供屏内过滤（通道切换是展示层状态，
+## 不再发幽灵命令 refine_channel）；slot_ok 用 DeckCapacity 真实空位校验
+## （旧值恒 false，确认按钮永久禁用）；拆解槽列真实蛊囊（destroy_gu）；
+## 盲盒通道即 free_mix 真实配方（空选择时领域自动投入全部已炼成蛊）。
 static func refine(controller) -> Dictionary:
 	var out := _gui_state(controller)
+	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var recipe_by_id: Dictionary = catalog.get("refinement_by_id", {})
 	var rec_rows: Array[Dictionary] = []
 	for recipe_key in recipe_by_id:
 		var r: Dictionary = recipe_by_id[recipe_key]
+		var kind := str(r.get("kind", "combine"))
 		var inputs: Array = r.get("input_gu_ids", [])
 		var in_names: Array[String] = []
 		for iid in inputs:
@@ -215,26 +326,51 @@ static func refine(controller) -> Dictionary:
 			fail = "失败率 %d%%" % (100 - int(r.get("success_roll_max", 100)))
 		rec_rows.append({
 			"id": str(recipe_key),
+			"channel": "combine" if kind == "combine" else "fixed",
 			"name": " + ".join(in_names) + " → " + output,
 			"output": output,
 			"quality": "稀有",
 			"fail_chance": fail,
-			"backlash": "失败毁材 · 躁动 +1" if str(r.get("kind", "")) == "combine" else "无躁动",
+			"backlash": "失败毁材 · 躁动 +1" if kind == "combine" else "无躁动",
 			"curse": "",
 			"unlocked": not bool(r.get("locked", false)),
 		})
-	rec_rows.append({"id": "blind", "name": "盲盒（随机）", "output": "未知蛊", "quality": "随机", "fail_chance": "失败率 50% · 毁材", "backlash": "躁动 +2", "curse": "诅咒继承⚠", "unlocked": true})
+	var free_mix: Dictionary = recipe_by_id.get("free_mix", {})
+	if not free_mix.is_empty():
+		var blind_fail := "成功配方"
+		if free_mix.has("success_roll_max"):
+			blind_fail = "失败率 %d%%" % (100 - int(free_mix.get("success_roll_max", 100)))
+		rec_rows.append({
+			"id": "free_mix",
+			"channel": "blind",
+			"name": "盲盒 · 自由组合（随机产物）",
+			"output": "未知蛊",
+			"quality": "随机",
+			"fail_chance": blind_fail,
+			"backlash": "炸炉按结果表结算（气血/魂魄/寿元）",
+			"curse": "诅咒继承⚠",
+			"unlocked": true,
+		})
 	out["title"] = "炼蛊台"
 	out["channels"] = [
 		{"id": "fixed", "label": "定向配方"},
 		{"id": "combine", "label": "组合标签"},
 		{"id": "blind", "label": "盲盒随机"},
 	]
-	out["active_channel"] = "fixed"
-	out["inputs"] = []
-	out["slot_ok"] = false
+	out["slot_ok"] = not DeckCapacity.would_exceed(state, catalog, 1)
+	out["blind_note"] = "盲盒自动投入全部已炼成蛊虫（至少 %d 只），产物与炸炉代价按种子结算。" % int(free_mix.get("min_inputs", 2))
 	out["recipes"] = rec_rows
-	out["dismantle_slots"] = []
+	var dismantle_slots: Array[Dictionary] = []
+	if state != null:
+		for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+			var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+			if instance.is_empty() or str(instance.get("state", "")) == "dead":
+				continue
+			var dismantle_gu: Dictionary = catalog.get("gu_by_id", {}).get(str(instance.get("definition_id", "")), {})
+			if not bool(dismantle_gu.get("can_direct_drop", true)):
+				continue
+			dismantle_slots.append({"id": str(instance_id_value), "name": DisplayText.gu(str(instance.get("definition_id", "")))})
+	out["dismantle_slots"] = dismantle_slots
 	out["streak_note"] = "连续失败计数 Run 内清零，成功率加成永不到 100%"
 	return out
 

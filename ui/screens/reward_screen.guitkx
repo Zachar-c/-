@@ -1,12 +1,12 @@
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
-import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 
-# RewardScreen —— 奖励 / 战利品屏（规格 v3 §7 C2 / R4 / §16.4）
-# 三选一权重池 + 保底；槽满取舍弹窗禁静默覆盖；空池回退 + 保底暗示小字；来源隔离。
-# 槽满时「替换」走 D1 确认弹窗（R4.9 禁静默覆盖）。
-# state 只读；take / replace_and_take / skip / close 经 commands。
+# RewardScreen —— 战利品确认屏（规格 v3 §7 C2 / R4 / §16.4）
+# 2026-08-28 验收批：战利品已由 settle_victory 自动入账（§16.4 来源隔离由
+# loot_tables 承担），本屏为确认展示而非再抽取——旧的拾取/替换/放弃按钮
+# 发的是领域不存在的 reward_take/replace/skip 幽灵命令，全部移除。
+# state 只读；close 经 commands。
 
 export RewardScreen() -> RuitkVNode {
   var state = props.get("state", {})
@@ -17,14 +17,8 @@ export RewardScreen() -> RuitkVNode {
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
   var title = str(state.get("title", "战利品"))
-  var full_satchel = bool(state.get("full_satchel", false))
   var pool_fallback_note = str(state.get("pool_fallback_note", ""))
   var pity_note = str(state.get("pity_note", ""))
-
-  # 槽满取舍二次确认（R4.9）；屏内 useState 驱动显隐。
-  var st = useState({"replace_idx": -1})
-  var replace_idx = int(st[0].get("replace_idx", -1))
-  var set_replace_idx = st[1]
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -35,52 +29,34 @@ export RewardScreen() -> RuitkVNode {
 
   var rewards = state.get("rewards", [])
   var reward_cards = []
-  for i in range(rewards.size()):
-    var r = rewards[i]
+  for r in rewards:
     var rname = str(r.get("name", ""))
     var rkind = str(r.get("kind", ""))
     var rqual = str(r.get("quality", ""))
     var reff = str(r.get("effect", ""))
     var rcost = str(r.get("cost", ""))
     var rcursed = bool(r.get("curse_warning", false))
-    var idx = i
-    var btns = []
-    btns.append(<GuButton label="拾取" danger={ rcursed } on_press={ func(): fire.call("take", idx) } />)
-    if full_satchel:
-      btns.append(<GuButton label="替换" danger={ true } on_press={ func(): set_replace_idx.call({"replace_idx": idx}) } />)
     reward_cards.append((
       <GuCard title={ rname } quality={ rqual } danger={ rcursed } curse_warning={ rcursed } expand_h={ true }>
         <Label text={ rkind } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
         <Label text={ reff } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
         <Label text={ rcost } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
-        <HBoxContainer style={ {"separation": 6} }>
-          { btns }
-        </HBoxContainer>
       </GuCard>
     ))
   var reward_empty = []
   if reward_cards.is_empty():
     reward_empty.append(<Label text="（本次无战利品）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
-  var replace_name = ""
-  if replace_idx >= 0 and replace_idx < rewards.size():
-    replace_name = str(rewards[replace_idx].get("name", ""))
-  var do_replace_cancel = func():
-    set_replace_idx.call({"replace_idx": -1})
-  var do_replace_confirm = func():
-    set_replace_idx.call({"replace_idx": -1})
-    fire.call("replace_and_take", replace_idx)
-
   return (
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
         <Label text={ title } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 22} } />
-        <Label text={ "三选一 · 权重池 + 保底" } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
+        <Label text="战利品已入账 · 本屏为确认展示" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
       </HBoxContainer>
 
       <VBoxContainer name="primary_decision_surface" style={ {"separation": 8} }>
-        <Label text="奖励选项" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />
+        <Label text="本场所得" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />
         <HBoxContainer style={ {"separation": 12} }>
           { reward_cards }
           { reward_empty }
@@ -95,22 +71,8 @@ export RewardScreen() -> RuitkVNode {
       </VBoxContainer>
 
       <HBoxContainer style={ {"separation": 10} }>
-        <GuButton label="放弃本次奖励" on_press={ func(): fire.call("skip") } />
-        <GuButton label="关闭" on_press={ func(): fire.call("close") } />
+        <GuButton label="继续旅程" on_press={ func(): fire.call("close") } />
       </HBoxContainer>
-
-      @if (replace_idx >= 0) {
-        return (
-          <GuConfirmDialog
-            title="槽满取舍"
-            message={ "蛊囊已满：拾取「" + replace_name + "」需替换弃置一张既有蛊虫。" }
-            warning_note="被替换的蛊直接消失，无法找回；也可选择「放弃本次奖励」保留现状。"
-            confirm_label="拾取并替换"
-            on_confirm={ do_replace_confirm }
-            on_cancel={ do_replace_cancel }
-          />
-        )
-      }
     </VBoxContainer>
   )
 }

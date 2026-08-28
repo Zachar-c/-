@@ -67,8 +67,6 @@ export BattleScreen() -> RuitkVNode {
 
   var ops = []
   ops.append(<GuButton label="结束回合" on_press={ func(): if commands.has("end_turn"): commands["end_turn"].call() } />)
-  if commands.has("ultimate"):
-    ops.append(<GuButton label="杀招" on_press={ func(): commands["ultimate"].call() } />)
   if commands.has("refine"):
     ops.append(<GuButton label="炼蛊" on_press={ func(): commands["refine"].call() } />)
   if commands.has("flee") and bool(state.get("flee_available", true)):

@@ -22,6 +22,21 @@ static func _shop_buy_command(controller, id: String) -> Dictionary:
 	return {"type": "shop_purchase", "offer_id": str(id)}
 
 
+static func _shop_service_command(controller, service_id: String, target_id: String) -> Dictionary:
+	# 2026-08-28 验收批：use_service 改映射真实领域命令；目标 id 由 Shop 屏
+	# 内目标选择提供（快照 services[].candidates）。池屏蔽无领域支持，不发。
+	match service_id:
+		"remove_card":
+			return {"type": "remove_card", "instance_id": target_id}
+		"remove_imprint":
+			return {"type": "remove_imprint", "relic_id": target_id}
+		"remove_curse":
+			return {"type": "remove_curse", "curse_id": target_id}
+		"wash_notoriety":
+			return {"type": "wash_notoriety"}
+	return {}
+
+
 static func _rest_choose_command(controller, id: String) -> Dictionary:
 	match str(id):
 		"heal":
@@ -90,7 +105,6 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Map":
 			return {
 				"travel": func(id): controller.submit_command({"type": "travel", "node_id": str(id)}),
-				"view_node": func(id): controller.submit_command({"type": "view_node", "node_id": str(id)}),
 				"save_run": func(): controller.submit_command({"type": "save_run"}),
 				"surrender": func(): controller.surrender_run(),
 			}
@@ -98,7 +112,6 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			return {
 				"play_card": func(action_id, target_id): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id))),
 				"end_turn": func(): controller.submit_command({"type": "end_turn"}),
-				"ultimate": func(): controller.submit_command({"type": "ultimate"}),
 				"refine": func(id = ""): controller.submit_command({"type": "refine", "recipe_id": str(id)}),
 				"flee": func(): controller.submit_command({"type": "retreat"}),
 			}
@@ -110,8 +123,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Shop":
 			return {
 				"buy": func(id = ""): controller.submit_command(_shop_buy_command(controller, str(id))),
-				"block": func(id = ""): controller.submit_command({"type": "shop_block_pool", "offer_id": str(id)}),
-				"use_service": func(id = ""): controller.submit_command({"type": "shop_service", "service_id": str(id)}),
+				"service": func(service_id = "", target_id = ""): controller.submit_command(_shop_service_command(controller, str(service_id), str(target_id))),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Rest":
@@ -123,19 +135,14 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			}
 		"Refine":
 			return {
-				"set_channel": func(id = ""): controller.submit_command({"type": "refine_channel", "channel_id": str(id)}),
+				# 通道切换是屏内展示状态（快照配方带 channel 标签），不发命令。
 				"refine": func(id = ""): controller.submit_command({"type": "refine_gu", "recipe_id": str(id)}),
-				"toggle_input": func(id = ""): controller.submit_command({"type": "refine_toggle_input", "gu_id": str(id)}),
 				"dismantle": func(id = ""): controller.submit_command({"type": "destroy_gu", "instance_id": str(id)}),
-				"confirm": func(): controller.submit_command({"type": "refine_confirm"}),
-				"cancel_confirm": func(): pass,
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Reward":
 			return {
-				"take": func(i): controller.submit_command({"type": "reward_take", "index": int(i)}),
-				"replace_and_take": func(i): controller.submit_command({"type": "reward_replace", "index": int(i)}),
-				"skip": func(): controller.submit_command({"type": "reward_skip"}),
+				# 战利品已由 settle_victory 自动入账，本屏纯确认展示（D3）。
 				"close": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Npc":

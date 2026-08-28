@@ -167,8 +167,6 @@ export MapScreen() -> RuitkVNode {
       var node_action = func():
         if reachable and commands.has("travel"):
           commands["travel"].call(id)
-        elif commands.has("view_node"):
-          commands["view_node"].call(id)
       node_controls.append((
         <Button name={ "map_node_" + id } text="" position={ position } onPressed={ node_action } style={ node_style }>
           <VBoxContainer style={ {"separation": 2} }>

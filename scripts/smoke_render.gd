@@ -630,12 +630,12 @@ func _initialize() -> void:
 			{"id": "o3", "name": "寿元·脉冲鼓", "kind": "lifespan_deal", "price": "1 寿元", "desc": "高回报代价交易", "quality": "稀有", "curse_warning": true},
 		],
 		"services": [
-			{"id": "s1", "name": "刷新货架", "cost": "120 元石", "remaining": 2, "note": "本局剩余 2 次 · 通胀叠加"},
-			{"id": "s2", "name": "移除蛊虫", "cost": "150 元石", "remaining": 2, "note": "本局剩余 2 次 · 价格递增"},
+			{"id": "remove_card", "name": "移除蛊虫", "price": "120 元石", "remaining": 2, "note": "从蛊囊删除一只蛊 · 本局剩 2/2 次 · 每次使用涨价", "candidates": [], "target_label": "选择要移除的蛊虫", "executable": false, "block_reason": "没有可移除的目标"},
+			{"id": "wash_notoriety", "name": "洗刷恶名", "price": "10 寿元", "remaining": -1, "note": "恶名 -2 · 消耗寿元 · 无次数上限", "candidates": [], "target_label": "", "executable": false, "block_reason": "当前没有恶名可洗"},
 		],
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付",
 	})
-	var shop_cmds := {"buy": Callable(self, "_noop"), "block": Callable(self, "_noop"), "use_service": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
+	var shop_cmds := {"buy": Callable(self, "_noop"), "service": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
 	var shc_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
 	var shc := _count_buttons(shc_container)
 	if shc < 1:

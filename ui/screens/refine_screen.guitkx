@@ -5,9 +5,11 @@ import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 
 # RefineScreen —— 炼蛊 / 合成屏（规格 v3 §7 C6 / §16.18 / R10）
-# 三通道 Tab（定向/组合/盲盒）+ 拆解；输入槽 + 空位校验；完整风险预览（产物/失败率/躁动/诅咒继承）；
-# 二次确认；失败补偿计数（永不到 100%）；契约修改成功率入 meta_rules。
-# state 只读；set_channel / refine / toggle_input / dismantle / leave 经 commands。
+# 三通道 Tab（定向/组合/盲盒，屏内 useState 过滤，不发命令）+ 拆解 + 空位校验 +
+# 完整风险预览（产物/失败率/躁动/诅咒继承）+ 二次确认；失败补偿计数永不到 100%。
+# 2026-08-28 验收批：set_channel/toggle_input/confirm 幽灵命令移除——通道切换
+# 改为屏内展示状态（快照配方带 channel 标签），盲盒通道接真实 free_mix 配方。
+# state 只读；refine / dismantle / leave 经 commands。
 
 export RefineScreen() -> RuitkVNode {
   var state = props.get("state", {})
@@ -18,13 +20,15 @@ export RefineScreen() -> RuitkVNode {
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
   var title = str(state.get("title", "炼蛊台"))
-  var active_channel = str(state.get("active_channel", "fixed"))
   var slot_ok = bool(state.get("slot_ok", false))
+  var blind_note = str(state.get("blind_note", ""))
 
-  # 合成执行二次确认（R10.9：失败率/躁动/诅咒继承全预览）；屏内 useState 驱动显隐。
-  var st = useState({"confirm_recipe": ""})
+  # 通道选择 + 合成执行二次确认（R10.9：失败率/躁动/诅咒继承全预览）；屏内 useState。
+  var st = useState({"confirm_recipe": "", "channel": "fixed"})
   var confirm_recipe = str(st[0].get("confirm_recipe", ""))
   var set_confirm_recipe = st[1]
+  var active_channel = str(st[0].get("channel", "fixed"))
+  var set_channel = st[1]
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -33,27 +37,25 @@ export RefineScreen() -> RuitkVNode {
       else:
         commands[key].call()
 
-  # 通道 Tab
+  # 通道 Tab（屏内 useState 过滤，不发命令）
   var channels = state.get("channels", [])
   var tab_row = []
   for ch in channels:
     var cid = str(ch.get("id", ""))
     var clabel = str(ch.get("label", ""))
     var active = (cid == active_channel)
-    tab_row.append(<GuButton label={ clabel } danger={ active } on_press={ func(): fire.call("set_channel", cid) } />)
+    tab_row.append(<GuButton label={ clabel } danger={ active } on_press={ func(): set_channel.call({"channel": cid}) } />)
 
-  # 输入槽
-  var inputs = state.get("inputs", [])
-  var input_slots = []
-  for inp in inputs:
-    input_slots.append(<GuPanel title={ str(inp) } expand_h={ true }><GuButton label="撤下" on_press={ func(): fire.call("toggle_input", str(inp)) } /></GuPanel>)
-  var slot_status = "空位校验：已就绪" if slot_ok else "空位校验：不足（至少 2 蛊或材料）"
+  # 空位校验（DeckCapacity 真实推导；不足时禁点并说明）
+  var slot_status = "空位校验：已就绪" if slot_ok else "空位校验：蛊囊已满，需先移除或拆解一只蛊"
   var slot_color = GuStyle.JADE if slot_ok else GuStyle.CINNABAR
 
-  # 配方 / 预览
+  # 配方 / 预览（按当前通道过滤）
   var recipes = state.get("recipes", [])
   var recipe_rows = []
   for r in recipes:
+    if str(r.get("channel", "fixed")) != active_channel:
+      continue
     var rid = str(r.get("id", ""))
     var rname = str(r.get("name", ""))
     var rout = str(r.get("output", ""))
@@ -68,6 +70,8 @@ export RefineScreen() -> RuitkVNode {
     preview.append(<Label text={ rbacklash } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
     if rcurse != "":
       preview.append(<Label text={ rcurse } style={ {"font_color": GuStyle.CINNABAR, "font_size": 13} } />)
+    if active_channel == "blind" and blind_note != "":
+      preview.append(<Label text={ blind_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />)
     var ask_refine = func():
       set_confirm_recipe.call({"confirm_recipe": rid})
     recipe_rows.append((
@@ -82,11 +86,16 @@ export RefineScreen() -> RuitkVNode {
   if recipe_rows.is_empty():
     recipe_empty.append(<Label text="（无可用配方）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
-  # 拆解
+  # 拆解（真实蛊囊清单；can_direct_drop=false 的诅咒蛊不出现在候选中）
   var dismantle_slots = state.get("dismantle_slots", [])
   var dismantle_rows = []
   for g in dismantle_slots:
-    dismantle_rows.append(<GuButton label={ "拆解 " + str(g) } on_press={ func(): fire.call("dismantle", str(g)) } />)
+    var did = str(g.get("id", "")) if g is Dictionary else str(g)
+    var dname = str(g.get("name", did)) if g is Dictionary else str(g)
+    dismantle_rows.append(<GuButton label={ "拆解 " + dname } on_press={ func(): fire.call("dismantle", did) } />)
+  var dismantle_empty = []
+  if dismantle_rows.is_empty():
+    dismantle_empty.append(<Label text="（蛊囊中没有可拆解的蛊虫）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />)
 
   var confirm_risk = ""
   var confirm_output = ""
@@ -114,12 +123,7 @@ export RefineScreen() -> RuitkVNode {
 
       <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
-          <GuPanel title="输入区">
-            <HBoxContainer style={ {"separation": 8} }>
-              { input_slots }
-            </HBoxContainer>
-            <Label text={ slot_status } style={ {"font_color": slot_color, "font_size": 13} } />
-          </GuPanel>
+          <Label text={ slot_status } style={ {"font_color": slot_color, "font_size": 13} } />
           <GuPanel title="配方 / 预览">
             <GuScrollBox height={ 330 }>
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
@@ -134,6 +138,7 @@ export RefineScreen() -> RuitkVNode {
           <GuPanel title="拆解化材">
             <VBoxContainer style={ {"separation": 6} }>
               { dismantle_rows }
+              { dismantle_empty }
             </VBoxContainer>
             <Label text="被拆解蛊直接消失换材料（仅炼蛊台/事件节点）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
           </GuPanel>
