@@ -90,7 +90,7 @@
 - 测试基线：**657 unit + 10 integration**（同打包批，ActionCardRow 冲突 56 失败非本批引入）。
 - 已知遗留：
   - **ActionCardRow 全局类名冲突（已解决 @`df21db9`，2026-08-28 补记）**：遗留 `scripts/presentation/action_card_row.gd`（VBoxContainer）与 `ui/widgets/action_card_row.guitkx`（RefCounted）撞名，曾导致全量单测 56 失败；已按「给 widget 改名」路线处理——旧 builder 更名 `action_card_row_builder.gd`（class `ActionCardRowBuilder`），并新增迁移守卫 `tests/unit/test_action_card_row_migration.gd`（断言 `action_card_row.gd` 不存在、格式化助手归 `DisplayText`）。
-  - **战斗平衡**：开局 6 血 vs 山脊猎犬「伏肩扑咬 3 伤/回合」+counter 无预告；`first_turn_energy=0` 导致首回合无法出牌。属数值/信息透明问题，列入待办。
+  - **战斗平衡（已解决 @`eab1c94`，2026-08-28）**：山脊猎犬伏肩扑咬 3→2 伤；战斗起点保底 1 点首回合能量（真元 0 也可出一张牌，relic 钩子在其上叠加）；战斗内拳脚/荆藤击卡牌预检现会预告在场的直接攻伐反制（§16.5）。
 
 ### 2026-08-27 打包与 RUITK 修复批（master @`c2111c4`）
 
