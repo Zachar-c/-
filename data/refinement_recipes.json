@@ -94,7 +94,9 @@
         "small_light_gu"
       ],
       "output_gu_id": "small_light_gu",
-      "materials": {},
+      "materials": {
+        "beast_blood": 1
+      },
       "stone_cost": 6
     },
     {
@@ -104,7 +106,9 @@
         "thorn_whip_gu"
       ],
       "output_gu_id": "thorn_whip_gu",
-      "materials": {},
+      "materials": {
+        "beast_bone": 1
+      },
       "stone_cost": 6
     },
     {
@@ -114,7 +118,9 @@
         "stone_shell_gu"
       ],
       "output_gu_id": "stone_shell_gu",
-      "materials": {},
+      "materials": {
+        "beast_bone": 2
+      },
       "stone_cost": 6
     },
     {
@@ -124,7 +130,9 @@
         "moonlight_gu"
       ],
       "output_gu_id": "moonlight_gu",
-      "materials": {},
+      "materials": {
+        "moon_dew": 1
+      },
       "stone_cost": 6
     },
     {
@@ -134,8 +142,19 @@
         "blood_moss_gu"
       ],
       "output_gu_id": "blood_moss_gu",
-      "materials": {},
+      "materials": {
+        "beast_blood": 2
+      },
       "stone_cost": 6
+    },
+    {
+      "id": "stone_shell_bone_forge",
+      "kind": "fixed",
+      "input_gu_ids": [],
+      "materials": {
+        "beast_bone": 2
+      },
+      "output_gu_id": "stone_shell_gu"
     }
   ],
   "caravan_offers": [

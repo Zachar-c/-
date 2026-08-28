@@ -310,6 +310,10 @@ const _REJECTION_TEXT := {
 	"unknown_card": "没有这张卡。",
 	"unknown_node": "无法前往该地点。",
 	"node_not_reachable": "该地点与当前位置不连通。",
+	"unknown_material": "没有这种材料。",
+	"material_not_usable": "这种材料不能直接使用。",
+	"no_material_to_use": "身上没有这种材料。",
+	"material_use_lethal": "直接使用会耗尽气血，被拒绝。",
 }
 
 

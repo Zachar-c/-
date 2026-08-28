@@ -68,6 +68,9 @@ export RefineScreen() -> RuitkVNode {
     preview.append(<Label text={ "产物：" + rout } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 15} } />)
     preview.append(<Label text={ rfail } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
     preview.append(<Label text={ rbacklash } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
+    var rrank = str(r.get("rank_note", ""))
+    if rrank != "":
+      preview.append(<Label text={ rrank } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />)
     if rcurse != "":
       preview.append(<Label text={ rcurse } style={ {"font_color": GuStyle.CINNABAR, "font_size": 13} } />)
     if active_channel == "blind" and blind_note != "":

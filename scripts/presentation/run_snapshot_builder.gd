@@ -324,11 +324,20 @@ static func refine(controller) -> Dictionary:
 		var fail := "成功配方"
 		if r.has("success_roll_max"):
 			fail = "失败率 %d%%" % (100 - int(r.get("success_roll_max", 100)))
+		# 产出转数标注：advance 跟输入蛊走（+1 封顶五转），其余跟产出蛊本体定义。
+		var rank_note := ""
+		if kind == "advance":
+			rank_note = "产出转数 = 输入转数 + 1（封顶五转）"
+		else:
+			var output_gu: Dictionary = catalog.get("gu_by_id", {}).get(str(r.get("output_gu_id", "")), {})
+			if not output_gu.is_empty():
+				rank_note = "产出 %s" % _rank_label(int(output_gu.get("rank", 1)))
 		rec_rows.append({
 			"id": str(recipe_key),
 			"channel": "combine" if kind == "combine" else "fixed",
 			"name": " + ".join(in_names) + " → " + output,
 			"output": output,
+			"rank_note": rank_note,
 			"quality": "稀有",
 			"fail_chance": fail,
 			"backlash": "失败毁材 · 躁动 +1" if kind == "combine" else "无躁动",
@@ -1121,6 +1130,11 @@ static func _max_rank(controller) -> int:
 	var state = controller.state
 	var cult: Dictionary = state.cultivator if state != null else {}
 	return maxi(1, int(cult.get("reincarnation", 1)))
+
+
+static func _rank_label(rank: int) -> String:
+	var names := ["一转", "二转", "三转", "四转", "五转"]
+	return names[clampi(rank, 1, 5) - 1]
 
 
 # P2a §16.13/§16.5 ending recap: sworn contracts only, in state.contracts

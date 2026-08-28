@@ -8,7 +8,8 @@
       "essence": 1
     },
     "effects": [
-      "reveal_hidden"
+      "reveal_hidden",
+      "deal_damage"
     ],
     "duration_turns": 0,
     "occupies_soul_slots": false,

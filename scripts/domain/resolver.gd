@@ -100,6 +100,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"npc_trade": func(state, command, catalog): return _npc_trade(state, command, catalog),
 			"scavenge": func(state, command, catalog): return _scavenge(state, command, catalog),
 			"sell_material": func(state, command, catalog): return _sell_material(state, command, catalog),
+			"use_material": func(state, command, catalog): return _use_material(state, command, catalog),
 			"raise_aptitude": func(state, command, catalog): return _raise_aptitude(state, command, catalog),
 			"record_neutral_npc_kill": func(state, _command, catalog): return _record_neutral_npc_kill(state, catalog),
 			"wash_notoriety": func(state, _command, catalog): return _wash_notoriety(state, catalog),
@@ -170,14 +171,18 @@ static func _complete_node(state: RunState, command: Dictionary) -> Dictionary:
 		return _accepted(state)
 	var flags := state.node_flags.duplicate(true)
 	flags[node_id] = str(command.get("outcome", "completed"))
+	# 真元是节点内资源（2026-08-28 设计点）：节点完成即回满——跨节点不
+	# 携带消耗，真元永远是「本节点的预算」。
 	var next := state.append_event(_event(
 		state,
 		"complete_node",
-		{"node_flags": state.node_flags},
-		{"node_flags": flags},
+		{"node_flags": state.node_flags, "essence": state.essence},
+		{"node_flags": flags, "essence": state.essence_capacity},
 		"node_completed",
 		node_id
 	))
+	next.essence = next.essence_capacity
+	next.cave_aperture["essence"] = next.essence_capacity
 	return _accepted(next)
 
 
@@ -292,6 +297,8 @@ static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog
 	var paid := _spend_materials(state, material_cost)
 	# The result is determined from the run seed and immutable event position.
 	# Commands never accept client supplied dice values.
+	# 2026-08-28 设计修正：蛊方的「转数」只由产出蛊的转数表达（advance 链
+	# 与产出 rank），与炼蛊成功率无直接关系。
 	var roll := _refinement_roll(paid, str(recipe.get("id", "")))
 	if roll > int(recipe.get("success_roll_max", 100)):
 		var destroyed := _without_gu(paid.refined_gu_ids, inputs)
@@ -337,7 +344,8 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	if not blocked.is_empty():
 		return blocked
 	var selected := _selected_input_instance_ids(paid, command, inputs)
-	if selected.is_empty():
+	# 纯材料配方（input_gu_ids 为空）允许无蛊投入——蛊虫=材料+蛊虫两条炼制路。
+	if selected.is_empty() and not inputs.is_empty():
 		return _rejected(paid, "missing_refinement_input")
 	var instances := paid.gu_instances.duplicate(true)
 	var aperture := paid.cave_aperture.duplicate(true)
@@ -544,7 +552,9 @@ static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Diction
 	var aperture := state.cave_aperture.duplicate(true)
 	aperture["essence_max"] = EssenceCapacityScript.essence_max_for(state, catalog, 2)
 	# 玩家等级曲线（2026-08-29 设计点）：转数只抬真元总量上限，不加 HP/攻击。
-	var next_capacity := maxi(state.essence_capacity, 3 + 2)
+	# 2026-08-28 验收批：上限值从公式取（aptitude.json tier 表唯一真值），
+	# 不再硬编码 3 + 2。
+	var next_capacity := maxi(state.essence_capacity, EssenceCapacityScript.essence_max_for(state, catalog, 2))
 	var next := state.append_event(_event(
 		state,
 		"cultivate_rank_two",
@@ -1880,7 +1890,10 @@ static func _gain_force_power(state: RunState, command: Dictionary, _catalog: Di
 
 
 static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	if not _is_rest_node(catalog, state.current_node_id):
+	# 地图实例 id（L1R1N0）与目录模板 id 不同——休整门禁必须双查：
+	# 实例 id 直命中，或实例的 template_id 指向休整模板。
+	if not _is_rest_node(catalog, state.current_node_id) \
+			and not _is_rest_node(catalog, str(state.current_node_template_id)):
 		return _rejected(state, "not_rest_node")
 	var mode := str(command.get("mode", "heal"))
 	if mode == "heal":
@@ -2216,6 +2229,42 @@ static func _sell_material(state: RunState, command: Dictionary, catalog: Dictio
 		[material_id]
 	))
 	next.stone = stone_after
+	next.materials = remaining
+	return _accepted(next)
+
+
+static func _use_material(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	# 材料第四通路「直接使用」：数据侧 loot_tables.materials.*.use 声明
+	# health/essence 增量与文案；负向增量受死亡可预见红线约束（执行前预检）。
+	var material_id := str(command.get("material_id", ""))
+	var materials: Dictionary = catalog.get("loot_tables", {}).get("materials", {})
+	if not materials.has(material_id):
+		return _rejected(state, "unknown_material")
+	var use: Dictionary = materials[material_id].get("use", {})
+	if use.is_empty():
+		return _rejected(state, "material_not_usable")
+	var owned := int(state.materials.get(material_id, 0))
+	if owned <= 0:
+		return _rejected(state, "no_material_to_use")
+	var health_delta := int(use.get("health", 0))
+	var essence_delta := int(use.get("essence", 0))
+	if health_delta < 0 and state.health + health_delta <= 0:
+		return _rejected(state, "material_use_lethal")
+	var health_after := mini(state.max_health, maxi(0, state.health + health_delta)) if health_delta != 0 else state.health
+	var essence_after := mini(state.essence_capacity, maxi(0, state.essence + essence_delta)) if essence_delta != 0 else state.essence
+	var remaining := state.materials.duplicate(true)
+	remaining[material_id] = owned - 1
+	var next := state.append_event(_event(
+		state,
+		"use_material",
+		{"health": state.health, "essence": state.essence, "materials": state.materials},
+		{"health": health_after, "essence": essence_after, "materials": remaining},
+		"material_used",
+		state.current_node_id,
+		[material_id]
+	))
+	next.health = health_after
+	next.essence = essence_after
 	next.materials = remaining
 	return _accepted(next)
 

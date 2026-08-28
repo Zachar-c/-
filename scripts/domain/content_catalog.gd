@@ -370,6 +370,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	for material_id in materials:
 		if int(materials[material_id].get("value", 0)) < 1:
 			errors.append("material %s needs a positive value" % material_id)
+	for recipe in catalog.get("refinement_recipes", []):
+		for material_id_value in recipe.get("materials", {}):
+			if not materials.has(str(material_id_value)):
+				errors.append("recipe %s references unknown material %s" % [recipe.get("id", ""), material_id_value])
 	var material_pity: Dictionary = loot_tables.get("pity", {}).get("material_pity", {})
 	if not material_pity.is_empty():
 		if not _is_integral(material_pity.get("threshold", null)) or int(material_pity.get("threshold", 0)) < 1:

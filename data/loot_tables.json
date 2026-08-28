@@ -8,10 +8,10 @@
     }
   },
   "materials": {
-    "beast_blood": { "name_zh": "兽血", "value": 2 },
-    "beast_bone": { "name_zh": "兽骨", "value": 1 },
-    "venom_sac": { "name_zh": "毒囊", "value": 3 },
-    "moon_dew": { "name_zh": "月华露", "value": 4 }
+    "beast_blood": { "name_zh": "兽血", "value": 2, "use": { "health": 2, "text": "生饮兽血，气血回复 2。" } },
+    "beast_bone": { "name_zh": "兽骨", "value": 1, "use": { "health": 1, "text": "嚼碎兽骨，气血回复 1。" } },
+    "venom_sac": { "name_zh": "毒囊", "value": 3, "use": { "health": -1, "text": "吞服毒囊蚀伤脏腑，气血 -1。" } },
+    "moon_dew": { "name_zh": "月华露", "value": 4, "use": { "essence": 2, "text": "含服月华露，真元回复 2。" } }
   },
   "loot": {
     "common": {
