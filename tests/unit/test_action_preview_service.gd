@@ -97,6 +97,7 @@ func test_battle_preview_blocks_gu_when_essence_is_insufficient() -> void:
 	var state := RunState.new_run(101)
 	state.essence = 0
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, state, catalog)
+	battle["action_energy"] = 0  # opening-fairness base grant removed to test the block path
 	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
 	var light := _battle_card_by_definition(cards, battle, "light_probe")
 

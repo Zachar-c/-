@@ -266,7 +266,7 @@ func test_enemy_damage_pct_scales_enemy_intent_damage() -> void:
 	var control := BattleResolver.apply_enemy_pre_turn(
 			BattleResolver.start({"enemy_kind": "ridge_hound", "first_mover": "enemy"}, plain, catalog),
 			plain, catalog)
-	assert_eq(int(control["state"].health), 17)
+	assert_eq(int(control["state"].health), 18)
 
 	var sworn := RunState.new_run(7)
 	sworn.health = 20
@@ -274,7 +274,8 @@ func test_enemy_damage_pct_scales_enemy_intent_damage() -> void:
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound", "first_mover": "enemy"}, sworn, catalog)
 	battle["contract_mods"] = {"enemy_damage_pct": 50}
 	var boosted := BattleResolver.apply_enemy_pre_turn(battle, sworn, catalog)
-	assert_eq(int(boosted["state"].health), 16)
+	# Pounce deals 2 since the opening-fairness retune: floor(2 * 1.5) = 3.
+	assert_eq(int(boosted["state"].health), 17)
 
 
 func test_turn_essence_bonus_grants_essence_at_player_turn_start() -> void:
@@ -343,9 +344,9 @@ func test_enemy_damage_pct_never_multiplies_curse_channel() -> void:
 	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, cursed, catalog)
 	battle["contract_mods"] = {"enemy_damage_pct": 50}
 	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, cursed, catalog)
-	# Intent damage 3 -> floor(3 * 1.5) = 4; gu_erosion stage-one intensity 1
+	# Intent damage 2 -> floor(2 * 1.5) = 3; gu_erosion stage-one intensity 1
 	# rides the backlash channel and stays exactly 1.
-	assert_eq(int(turn["state"].health), 15)
+	assert_eq(int(turn["state"].health), 16)
 
 
 func test_essence_tide_clamps_to_aperture_cap_and_declares_it() -> void:

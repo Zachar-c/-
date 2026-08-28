@@ -55,7 +55,7 @@ func test_combat_fight_card_warns_about_enemy_reaction_and_damage_numbers() -> v
 		risks += str(risk)
 	assert_string_contains(risks, "反制")
 	assert_string_contains(risks, "拳脚")
-	assert_string_contains(risks, "3 点")
+	assert_string_contains(risks, "2 点")
 	var remedies := ""
 	for remedy in fight.get("remedy_hints", []):
 		remedies += str(remedy)

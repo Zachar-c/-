@@ -135,8 +135,12 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"clues": enemy.get("clues", []).duplicate(),
 		"log": [{"id": "intent_revealed", "text_key": "intent_revealed", "intent": intent.get("id", "")}],
 		"inheritance_uses": {},
-		"first_turn_energy": 0,
-		"action_energy": 0,
+		# Opening fairness: a base first-turn grant guarantees the player can
+		# play one card even entering the fight at 0 essence (otherwise the
+		# opener degenerates into meditate-and-die vs a counter-holding enemy).
+		# Relic grant_first_turn_energy hooks stack on top of this base.
+		"first_turn_energy": 1,
+		"action_energy": 1,
 		"turn": 1,
 		"phase": "player",
 		"final_blow": {},

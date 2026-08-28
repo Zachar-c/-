@@ -97,7 +97,7 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		"summary": "零消耗的基础打击，任何战况都可用。",
 		"executable": true,
 		"cost": {},
-		"known_risk": [],
+		"known_risk": _counter_swallow_risk(battle),
 		"expected_gain": ["造成 1 点基础伤害。"],
 		"target_type": "single_enemy",
 		"valid_target_ids": _living_enemy_ids(battle),
@@ -156,6 +156,10 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 	var risk: Array[String] = []
 	if source_gu_id == "thorn_whip_gu" and battle.get("clues", []).has("stone_dust"):
 		risk.append("对方脚下石粉未散，直接攻伐可能遭遇已知的护身反制。")
+	# Thorn strike shares the punch's swallow path in the resolver; the probe
+	# (small_light_gu) bypasses reactions and must not claim this risk.
+	if source_gu_id == "thorn_whip_gu" and card_mode != "bind":
+		risk.append_array(_counter_swallow_risk(battle))
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
 	var highest_rank := 1
 	for gu_id_value in source_gu_ids:
@@ -219,6 +223,39 @@ static func _living_intent_labels(battle: Dictionary) -> String:
 	return "、".join(labels) if not labels.is_empty() else "已公开意图"
 
 
+## §16.5 counter forewarning: labels of live direct-strike reactions the
+## resolver would actually swallow. Mirrors BattleResolver._reaction_countered
+## flag semantics (bound -> enemy_bound, guarded -> guarded); a countered or
+## already-bound enemy clears the warning. Only strike paths the resolver
+## checks (basic punch, thorn whip strike) may present this risk.
+static func _live_counter_labels(battle: Dictionary) -> Array[String]:
+	var labels: Array[String] = []
+	var flags: Array = battle.get("flags", [])
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if not bool(enemy.get("alive", false)) or int(enemy.get("hp", 0)) <= 0:
+			continue
+		for reaction_value in enemy.get("reactions", []):
+			var reaction: Dictionary = reaction_value
+			if str(reaction.get("trigger", "")) != "direct_strike" or str(reaction.get("window", "")) != "before_damage":
+				continue
+			var status := str(reaction.get("counter_status", ""))
+			if status == "bound" and flags.has("enemy_bound"):
+				continue
+			if status == "guarded" and flags.has("guarded"):
+				continue
+			labels.append(str(reaction.get("label", "临阵反制")))
+	return labels
+
+
+static func _counter_swallow_risk(battle: Dictionary) -> Array[String]:
+	var risk: Array[String] = []
+	var labels := _live_counter_labels(battle)
+	if not labels.is_empty():
+		risk.append("敌方蓄势「%s」：这次的直接攻伐会被吞下，不造成伤害；可先以束缚/守护类蛊虫破解。" % "、".join(labels))
+	return risk
+
+
 static func _target_type_for_gu(gu_id: String, definition: Dictionary) -> String:
 	if gu_id in ["small_light_gu", "thorn_whip_gu", "blood_moss_gu", "blood_droplet_gu", "blood_bat_gu", "force_gu", "moonlight_gu", "moon_glow_gu"]:
 		return "single_enemy"
@@ -237,6 +274,8 @@ static func _append_battle_gu_card(cards: Array[Dictionary], battle: Dictionary,
 	var risk: Array[String] = []
 	if gu_id == "thorn_whip_gu" and mode == "strike" and battle.get("clues", []).has("stone_dust"):
 		risk.append("对方脚下石粉未散，直接攻伐可能遭遇已知的护身反制。")
+	if gu_id == "thorn_whip_gu" and mode != "bind":
+		risk.append_array(_counter_swallow_risk(battle))
 	cards.append(_card(state, {
 		"id": "battle.gu.%s.%s" % [gu_id, mode if not mode.is_empty() else "activate"],
 		"title": "%s%s" % [DisplayText.gu(gu_id), title_suffix],

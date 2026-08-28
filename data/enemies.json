@@ -23,7 +23,7 @@
     "hp": 3,
     "essence": 0,
     "clues": ["lowered_shoulders", "wet_fang"],
-    "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 3, "speed": 0},
+    "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 2, "speed": 0},
     "reactions": [
       {
         "id": "counter_bite",

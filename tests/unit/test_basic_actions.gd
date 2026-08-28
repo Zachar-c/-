@@ -71,9 +71,10 @@ func test_dodge_flag_is_consumed_by_the_next_attack_only() -> void:
 	battle["hand"] = []
 	var dodged := BattleResolver.take_turn(battle, {"type": "basic_dodge"}, run, catalog)
 	var first := BattleResolver.take_turn(dodged["battle"], {"type": "end_turn"}, dodged["state"], catalog)
-	# The flag is gone: a second end turn takes full damage again.
+	# The flag is gone: a second end turn takes full damage again
+	# (pounce deals 2 since the opening-fairness retune).
 	var second := BattleResolver.take_turn(first["battle"], {"type": "end_turn"}, first["state"], catalog)
-	assert_eq(int(second["state"].health), 3)
+	assert_eq(int(second["state"].health), 4)
 
 
 func test_dodge_can_be_readied_repeatedly_without_cost() -> void:

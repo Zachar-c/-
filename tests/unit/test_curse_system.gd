@@ -246,6 +246,7 @@ func test_essence_surcharge_adds_extra_cost_beyond_free_allowance_of_two() -> vo
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
+	battle["action_energy"] = 0  # isolate surcharge math from the base first-turn grant
 	var command := _command_for_definition(battle, "thorn_strike")
 
 	run.essence = 2
@@ -265,6 +266,7 @@ func test_low_intensity_essence_surcharge_stays_within_free_allowance() -> void:
 	var run := _run_with_gu(["thorn_whip_gu"])
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
+	battle["action_energy"] = 0  # isolate surcharge math from the base first-turn grant
 	var command := _command_for_definition(battle, "thorn_strike")
 	run.essence = 1
 	var played := BattleResolver.apply_action_card(battle, run, command, _zero_enemy_damage(catalog.duplicate(true)))

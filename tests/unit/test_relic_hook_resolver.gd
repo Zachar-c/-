@@ -15,8 +15,10 @@ func test_no_relics_makes_battle_and_feeding_noops() -> void:
 	var run := RunState.new_run(101)
 	assert_eq(RelicHookResolverScript.feeding_extra(run, catalog), 0)
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle.get("first_turn_energy", 0)), 0)
-	assert_eq(int(battle.get("action_energy", 0)), 0)
+	# Opening fairness: every battle starts with a BASE first-turn grant of 1;
+	# with no relics the hooks must add nothing on top of that base.
+	assert_eq(int(battle.get("first_turn_energy", 0)), 1)
+	assert_eq(int(battle.get("action_energy", 0)), 1)
 
 
 func test_real_relics_pass_catalog_validation() -> void:
@@ -34,14 +36,15 @@ func test_battle_start_grant_first_turn_energy_sets_real_energy_pool() -> void:
 	var run := RunState.new_run(101)
 	run.relic_ids = ["jade_cicada_shell"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle["first_turn_energy"]), 1)
-	assert_eq(int(battle["action_energy"]), 1)
+	assert_eq(int(battle["first_turn_energy"]), 2, "relic grant stacks on the base 1")
+	assert_eq(int(battle["action_energy"]), 2)
 
 
 func test_first_turn_energy_lets_player_spend_one_card_beyond_essence_then_blocks() -> void:
+	# With the base grant this scenario no longer needs a relic: an essence-0
+	# player can act exactly once on turn 1, then costs need real essence.
 	var run := RunState.new_run(101)
 	run.essence = 0
-	run.relic_ids = ["jade_cicada_shell"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
 	var first := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, run, catalog)
 	assert_eq(first["result"], "ongoing")
@@ -88,7 +91,7 @@ func test_play_card_gain_essence_hook_refunds_through_event_log() -> void:
 		{"action_id": card_id, "state_version": int(battle["hand_version"])},
 		catalog
 	)
-	assert_eq(int(turn["state"].essence), 4)
+	assert_eq(int(turn["state"].essence), 5, "cost 1 is paid from the base energy first, so essence 3 stays and the +2 refund lands")
 	assert_eq(str(turn["state"].event_log.back()["reason"]), "relic_gain_essence_on_play")
 
 
@@ -123,7 +126,7 @@ func test_multiple_relics_accumulate_in_stable_relic_order() -> void:
 	})
 	run.relic_ids = ["zzz_relic", "aaa_relic"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle["first_turn_energy"]), 2)
+	assert_eq(int(battle["first_turn_energy"]), 3, "base 1 + two stacked relic grants")
 
 
 func test_validate_rejects_unknown_trigger_and_effect_kind() -> void:
