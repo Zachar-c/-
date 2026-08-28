@@ -81,7 +81,7 @@
 
 - **P0-1/P0-2 死按钮与假服务** @`c14464b`（本批已修）：shop services 领域真值导出（价格/限额/候选目标与 resolver 同源），use_service → remove_card/remove_imprint/remove_curse/wash_notoriety 真实命令 + 屏内目标选择；池屏蔽/净化躁动死按钮删除（无领域支持）；Reward 屏回归纯确认展示（拾取/替换/放弃幽灵删除）；Refine 通道改屏内过滤、`slot_ok` 接 DeckCapacity（**旧值恒 false，确认按钮永久禁用**——验收新发现）、盲盒接真实 `free_mix`、拆解列真实蛊囊；Battle 杀招按钮与 Map 查看此路（幽令）删除。**守卫测试 `test_command_contract.gd`**：源扫描 builder 全部 type 字面量 + `unsupported_command` 行为探针 + 历史幽令清单钉死，复发即红。
 - **P0-3 完整通关待复验**（见核对表）：bot 策略升级或平衡重标定，未修。
-- **P0-4 map 屏硬编码假状态**（青茅山外圍/深度 62·四轉初階/62-65 刻度/masthead 死文案、层标签错位 248px）：未修，待快照补 zone/depth/realm 字段。
+- **P0-4 map 屏硬编码假状态** @`74c1fa7`（本批已修）：map 快照导出 `zone_title`（pacing.layers 新增五层地名：青茅山外圍/落瘴岭/血蟒涧/万蛊窟/瘴脉深處）/`depth_label`（当前大层）/`realm_label`（cultivation 转数），屏面绑定真实值，缺失即空值隐藏；深度刻度死数字（65/64/63/62）改为可见带真实层号动态标签；层标签错位（下一程/此刻 偏上 248px）对齐行带；契约徽章 join 全部契约。
 - **P1 遗留**：run_controller 第二 resolver（战斗编排绕命令面+直写状态）；legacy 双 UI（4 死 .tscn + 测试锚住的旧视图，资源词典已漂移）；resolver.gd 上帝文件（2292 行/42 命令）与 preview 镜像维护；NPC 名/动作标签双表漂移；save 非 v3 静默拒载 + Meta 字段双份手抄；map 屏无 GuTopBar/微缩字/不渲染三死线。
 - **P2 遗留**：toast 双 tone 同色、hall 选中态同色、确认弹窗深色块非 token、quality/rarity 传说双色、`ContentCatalog.validate` 生产零调用、events/pacing/aptitude/first_run/dialogue/names 六表无 Schema 校验、资源键三套词典。
 - 测试基线 **761 unit（760 过 + 1 既有 risky）+ 11 integration 全绿**；验收批后试玩确定性逐字节一致（82 步/160 事件同拍）。
