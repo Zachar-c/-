@@ -206,3 +206,64 @@ func test_shop_emergency_offer_opens_dialog_and_affordable_buys_directly() -> vo
 	assert_true(bought.has(affordable_id), "affordable plain offer must buy directly")
 	# The dialog TITLE is unique; 「元石不足」 alone also matches the standing R6.7 note.
 	assert_false(_host_has_text(rich_host, "⚠ 应急支付"), "no emergency dialog for affordable offers")
+
+
+## NPC 交易面板（2026-08-28 挂账）：寿元交易必须经预检确认；禁买/易物未持有
+## 由快照 executable/block_reason 驱动禁点并直出原因。
+func test_npc_screen_lifespan_confirm_and_disabled_reasons() -> void:
+	var bought: Array = []
+	var commands := {
+		"buy": func(id = ""): bought.append(str(id)),
+		"barter": func(_a = ""): pass,
+		"talk": func(_a = ""): pass,
+		"flee": func(): pass,
+		"leave": func(): pass,
+	}
+	var snapshot := {
+		"npc_name": "山岭索贿者", "stance": "中立", "stance_note": "", "notoriety": 0,
+		"notoriety_note": "", "can_flee": true, "has_npc": true, "no_npc_note": "",
+		"feedback": "", "resources": {}, "contracts": [], "anomalies": [], "death_lines": {},
+		"offers": [
+			{
+				"id": "lifespan_pulse_drum", "name": "脉鼓", "kind": "lifespan_deal",
+				"quality": "普通", "price": "5 寿元", "desc": "以寿元支付。",
+				"executable": true, "block_reason": "", "curse_warning": true,
+				"precheck": "当前寿元 80 · 支付 5 后余 75；寿元不足将被拒绝。",
+			},
+			{
+				"id": "purchase_moonlight", "name": "月华蛊", "kind": "purchase",
+				"quality": "稀有", "price": "12 元石", "desc": "商队公开出售的蛊虫。",
+				"executable": false, "block_reason": "货阶超出当前大层", "curse_warning": false,
+			},
+		],
+		"barter": [
+			{
+				"id": "barter_unknown_gu", "name": "雾行蛊", "give": "谍眼蛊", "take": "雾行蛊",
+				"note": "消耗 谍眼蛊×1 · 需蛊位空位", "owned": 0, "executable": false,
+				"block_reason": "未持有可交付的谍眼蛊",
+			},
+		],
+		"talk_options": [],
+	}
+	var host := _mount_screen("res://ui/screens/npc_screen.gd", {"state": snapshot, "commands": commands})
+	for _i in 3:
+		await get_tree().process_frame
+
+	# 寿元交易：点击先弹预检确认框，确认前不发 buy 命令。
+	assert_true(_press_button(host, "交易", 0), "executable lifespan offer must be pressable")
+	for _i in 3:
+		await get_tree().process_frame
+	assert_true(_host_has_text(host, "⚠ 寿元交易 · 预检"), "lifespan deal must open the precheck dialog")
+	assert_true(_host_has_text(host, "当前寿元 80"), "precheck copy must surface the lifespan math")
+	assert_false(bought.has("lifespan_pulse_drum"), "no buy command before confirmation")
+	assert_true(_press_button(host, "确认支付"), "dialog confirm button must exist")
+	for _i in 3:
+		await get_tree().process_frame
+	assert_true(bought.has("lifespan_pulse_drum"), "confirm must fire buy for the lifespan offer")
+
+	# 禁买项与未持有易物：按钮禁点、原因直出。
+	assert_true(_host_has_text(host, "不可用 · 货阶超出当前大层"))
+	assert_true(_host_has_text(host, "持有可交付：0"))
+	assert_true(_host_has_text(host, "不可用 · 未持有可交付的谍眼蛊"))
+	assert_false(_press_button(host, "交易", 1), "tier-locked offer button must be disabled")
+	assert_false(_press_button(host, "交换"), "barter button must be disabled without inputs")

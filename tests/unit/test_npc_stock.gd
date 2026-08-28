@@ -176,8 +176,13 @@ func test_snapshot_npc_offers_come_from_real_stock() -> void:
 		var offer: Dictionary = offer_value
 		ids.append(str(offer["id"]))
 		if str(offer["id"]) == "purchase_stone_shell":
-			assert_eq(str(offer["price"]), "%d 元石" % ResolverScript.price_for(catalog, state, 6))
+			# 展示价必须等于实收价：purchase 与 _shop_purchase 同走 shop_layer_price。
+			assert_eq(str(offer["price"]), "%d 元石" % ResolverScript.shop_layer_price(catalog, state, 6))
 			assert_eq(str(offer["name"]), DisplayText.gu("stone_shell_gu"))
+			assert_eq(str(offer["kind"]), "purchase")
+			assert_eq(str(offer["quality"]), "稀有")
+			assert_true(bool(offer["executable"]))
+			assert_eq(str(offer["block_reason"]), "")
 	assert_true(ids.has("purchase_stone_shell"))
 	assert_true(ids.has("purchase_moonlight"))
 	assert_true(ids.has("soul_pill"))
@@ -195,6 +200,75 @@ func test_snapshot_npc_offers_come_from_real_stock() -> void:
 	var empty_snaps: Dictionary = RunSnapshotBuilderScript.npc(empty_stub)
 	assert_eq((empty_snaps["offers"] as Array).size(), 0)
 	assert_eq((empty_snaps["barter"] as Array).size(), 0)
+
+
+## §16.5 透明度：货阶超层的货保留展示但禁点并给原因；寿元交易带预检文案。
+func test_snapshot_npc_offers_surface_tier_block_and_lifespan_precheck() -> void:
+	var state := _state_at("ridge_caravan")
+	var stub := {
+		"current_node": {
+			"id": "ridge_caravan", "type": "caravan", "npc_id": "caravan_steward",
+			"choices": ["buy", "sell", "exchange", "leave"],
+		},
+		"state": state,
+		"meta": null,
+		"catalog": catalog,
+	}
+	var by_id := {}
+	for offer_value in (RunSnapshotBuilderScript.npc(stub)["offers"] as Array):
+		var offer: Dictionary = offer_value
+		by_id[str(offer["id"])] = offer
+	# 一大层的货阶上限为 1：t1 可买，t2/t3 禁点并给原因。
+	assert_eq(str(by_id["purchase_moonlight"]["block_reason"]), "货阶超出当前大层")
+	assert_false(bool(by_id["purchase_moonlight"]["executable"]))
+	assert_false(bool(by_id["soul_pill"]["executable"]))
+
+	var extortionist_stub := {
+		"current_node": {
+			"id": "ridge_black_market", "type": "shop", "npc_id": "ridge_extortionist",
+			"choices": [],
+		},
+		"state": state,
+		"meta": null,
+		"catalog": catalog,
+	}
+	var market_offers: Array = RunSnapshotBuilderScript.npc(extortionist_stub)["offers"]
+	assert_eq(market_offers.size(), 1)
+	var drum: Dictionary = market_offers[0]
+	assert_true(bool(drum["curse_warning"]))
+	assert_true(str(drum["price"]).contains("寿元"))
+	assert_true(str(drum["precheck"]).contains("当前寿元"), "lifespan deals must carry a precheck line")
+
+
+## §16.5 后果预览：易物条目标注持有量；未持有可交付蛊时禁点并给原因。
+func test_snapshot_npc_barter_owned_preview() -> void:
+	var peddler_node := {
+		"id": "wandering_peddler", "type": "contact", "npc_id": "wandering_peddler",
+		"choices": ["negotiate", "deceive", "fight", "retreat"],
+	}
+	var empty_state := _state_at("wandering_peddler")
+	var empty_snaps: Dictionary = RunSnapshotBuilderScript.npc({
+		"current_node": peddler_node, "state": empty_state, "meta": null, "catalog": catalog,
+	})
+	var empty_barter: Array = empty_snaps["barter"]
+	assert_eq(empty_barter.size(), 1)
+	assert_eq(int(empty_barter[0]["owned"]), 0)
+	assert_false(bool(empty_barter[0]["executable"]))
+	assert_true(str(empty_barter[0]["block_reason"]).contains("未持有"))
+	assert_true(str(empty_barter[0]["note"]).contains("消耗"))
+
+	var holding := _state_at("wandering_peddler")
+	holding.gu_instances = {
+		"gu_001": {"instance_id": "gu_001", "definition_id": "trail_eye_gu", "state": "refined"},
+	}
+	holding.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
+	var holding_snaps: Dictionary = RunSnapshotBuilderScript.npc({
+		"current_node": peddler_node, "state": holding, "meta": null, "catalog": catalog,
+	})
+	var holding_barter: Array = holding_snaps["barter"]
+	assert_eq(int(holding_barter[0]["owned"]), 1)
+	assert_true(bool(holding_barter[0]["executable"]))
+	assert_eq(str(holding_barter[0]["block_reason"]), "")
 
 
 ## 散修货郎（2026-08-28 挂账落地）：contact 模板携带 npc_id 后，Npc 交易面板

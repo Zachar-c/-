@@ -378,28 +378,64 @@ static func npc(controller) -> Dictionary:
 				if reward.has("gu_id"):
 					take_id = str(reward["gu_id"])
 					break
+			var give_id := str(inputs[0]) if not inputs.is_empty() else ""
+			var give_name := DisplayText.gu(give_id) if not give_id.is_empty() else "一物"
+			# §16.5 后果预览：面板标注玩家持有的可交付数量，未持有即禁点，
+			# 不等 resolver 的 missing_barter_input 拒绝才知道。
+			var owned := 0
+			if state != null and not give_id.is_empty():
+				for instance_value in state.gu_instances.values():
+					var instance: Dictionary = instance_value
+					if str(instance.get("definition_id", "")) == give_id and str(instance.get("state", "")) == "refined":
+						owned += 1
 			out["barter"].append({
 				"id": oid,
 				"name": DisplayText.gu(take_id) if not take_id.is_empty() else str(offer.get("card_key", oid)),
-				"give": DisplayText.gu(str(inputs[0])) if not inputs.is_empty() else "一物",
+				"give": give_name,
 				"take": DisplayText.gu(take_id) if not take_id.is_empty() else "一物",
-				"note": "以物易物 · 需空位校验",
+				"note": "消耗 %s×1 · 需蛊位空位" % give_name,
+				"owned": owned,
+				"executable": owned > 0,
+				"block_reason": "" if owned > 0 else "未持有可交付的%s" % give_name,
 			})
 		else:
 			var raw_cost := int(offer.get("stone_cost", 0))
-			var price := "%d 元石" % (ResolverScript.price_for(catalog, state, raw_cost) if state != null else raw_cost)
+			var price := ""
+			# 展示价必须等于实收价：purchase 与 _shop_purchase 同走
+			# shop_layer_price（层加价），soul_boost 与 _shop_soul_boost 同走
+			# price_for，lifespan_deal 直接标寿元——三条分支逐字对齐。
 			if offer.has("lifespan_cost"):
 				price = str(offer.get("lifespan_cost", 0)) + " 寿元"
+			elif kind == "purchase":
+				price = "%d 元石" % (ResolverScript.shop_layer_price(catalog, state, raw_cost) if state != null else raw_cost)
+			else:
+				price = "%d 元石" % (ResolverScript.price_for(catalog, state, raw_cost) if state != null else raw_cost)
+			# 黑市分层上架（§16.4）：货阶高于当前大层的货保留展示但禁点，
+			# 给出原因而不是让玩家点了才知道 shop_tier_locked。
+			var block_reason := ""
+			if state != null and int(offer.get("tier", 1)) > ResolverScript.shop_max_tier(state, catalog):
+				block_reason = "货阶超出当前大层"
 			var offer_desc := str(offer.get("clue", ""))
 			if offer_desc.is_empty() or offer_desc.contains(".") or offer_desc.contains("_"):
 				# card_key/裸 ID 不漏给玩家（§16.5）：无 clue 时给通用货名。
 				offer_desc = "商队公开出售的蛊虫。"
-			out["offers"].append({
+			var offer_entry := {
 				"id": oid,
 				"name": DisplayText.gu(str(offer.get("gu_id", ""))),
+				"kind": kind,
+				"quality": "史诗" if kind == "soul_boost" else ("稀有" if kind == "purchase" else "普通"),
 				"price": price,
 				"desc": offer_desc,
-			})
+				"executable": block_reason.is_empty(),
+				"block_reason": block_reason,
+				"curse_warning": kind == "lifespan_deal",
+			}
+			if kind == "lifespan_deal":
+				# 红线：消耗寿元的交易执行前必须预检并给出明确文案。
+				var lifespan_cost := int(offer.get("lifespan_cost", 0))
+				var lifespan_now := int(state.cultivator.get("lifespan", 0)) if state != null else 0
+				offer_entry["precheck"] = "当前寿元 %d · 支付 %d 后余 %d；寿元不足将被拒绝。" % [lifespan_now, lifespan_cost, lifespan_now - lifespan_cost]
+			out["offers"].append(offer_entry)
 	out["talk_options"] = talk_options
 	out["can_flee"] = stance != "极度仇恨"
 	return out

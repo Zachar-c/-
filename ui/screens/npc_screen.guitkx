@@ -1,4 +1,5 @@
 import { GuButton } from "~/ui/widgets/gu_button"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
@@ -37,7 +38,12 @@ export NpcScreen() -> RuitkVNode {
       else:
         commands[key].call()
 
-  # 交易项
+  # 危险交易（寿元预检）二次确认；屏内 useState 驱动显隐（镜像 shop_screen）。
+  var st = useState({"confirm_offer": ""})
+  var confirm_offer = str(st[0].get("confirm_offer", ""))
+  var set_confirm_offer = st[1]
+
+  # 交易项（§16.5）：货阶/库存原因禁点直出；寿元代价走二次确认。
   var offers = state.get("offers", [])
   var offer_rows = []
   for o in offers:
@@ -45,6 +51,17 @@ export NpcScreen() -> RuitkVNode {
     var oprice = str(o.get("price", ""))
     var odesc = str(o.get("desc", ""))
     var oid = str(o.get("id", ""))
+    var oexec = bool(o.get("executable", true))
+    var oblock = str(o.get("block_reason", ""))
+    var ocursed = bool(o.get("curse_warning", false))
+    var ask_buy = func():
+      if ocursed and oexec:
+        set_confirm_offer.call({"confirm_offer": oid})
+      elif oexec:
+        fire.call("buy", oid)
+    var block_rows = []
+    if oblock != "":
+      block_rows.append(<Label text={ "不可用 · " + oblock } style={ {"font_color": GuStyle.CINNABAR, "font_size": 12} } />)
     offer_rows.append((
       <GuPanel expand_h={ true }>
         <HBoxContainer style={ {"separation": 8} }>
@@ -52,8 +69,9 @@ export NpcScreen() -> RuitkVNode {
             <Label text={ oname } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />
             <Label text={ odesc } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
             <Label text={ "价格：" + oprice } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
+            { block_rows }
           </VBoxContainer>
-          <GuButton label="交易" on_press={ func(): fire.call("buy", oid) } />
+          <GuButton label="交易" danger={ ocursed } disabled={ not oexec } on_press={ ask_buy } />
         </HBoxContainer>
       </GuPanel>
     ))
@@ -61,7 +79,7 @@ export NpcScreen() -> RuitkVNode {
   if offer_rows.is_empty():
     offer_empty.append(<Label text="（无交易项）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
-  # 以物易物
+  # 以物易物（§16.5 后果预览）：标注持有量，未持有可交付蛊时禁点并给原因。
   var barter = state.get("barter", [])
   var barter_rows = []
   for b in barter:
@@ -69,14 +87,22 @@ export NpcScreen() -> RuitkVNode {
     var btake = str(b.get("take", ""))
     var bnote = str(b.get("note", ""))
     var bid = str(b.get("id", ""))
+    var bexec = bool(b.get("executable", true))
+    var bblock = str(b.get("block_reason", ""))
+    var bowned = int(b.get("owned", 0))
+    var barter_block_rows = []
+    if bblock != "":
+      barter_block_rows.append(<Label text={ "不可用 · " + bblock } style={ {"font_color": GuStyle.CINNABAR, "font_size": 12} } />)
     barter_rows.append((
       <GuPanel expand_h={ true }>
         <HBoxContainer style={ {"separation": 8} }>
           <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": 3} }>
             <Label text={ "%s 换 %s" % [bgive, btake] } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 14} } />
             <Label text={ bnote } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
+            <Label text={ "持有可交付：%d" % bowned } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
+            { barter_block_rows }
           </VBoxContainer>
-          <GuButton label="交换" on_press={ func(): fire.call("barter", bid) } />
+          <GuButton label="交换" disabled={ not bexec } on_press={ func(): fire.call("barter", bid) } />
         </HBoxContainer>
       </GuPanel>
     ))
@@ -164,6 +190,26 @@ export NpcScreen() -> RuitkVNode {
           <GuButton label="离开" on_press={ func(): fire.call("leave") } />
         </VBoxContainer>
       </HBoxContainer>
+
+      @if (confirm_offer != "") {
+        var confirm_data = {}
+        for o in offers:
+          if str(o.get("id", "")) == confirm_offer:
+            confirm_data = o
+        var precheck = str(confirm_data.get("precheck", ""))
+        if precheck == "":
+          precheck = "价格：" + str(confirm_data.get("price", "")) + " · 执行前请确认余量"
+        return (
+          <GuConfirmDialog
+            title="⚠ 寿元交易 · 预检"
+            message={ str(confirm_data.get("name", "")) + "：" + str(confirm_data.get("desc", "")) }
+            warning_note={ precheck }
+            confirm_label="确认支付"
+            on_confirm={ func(): set_confirm_offer.call({"confirm_offer": ""}); fire.call("buy", confirm_offer) }
+            on_cancel={ func(): set_confirm_offer.call({"confirm_offer": ""}) }
+          />
+        )
+      }
     </VBoxContainer>
   )
 }
