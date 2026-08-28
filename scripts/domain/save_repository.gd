@@ -6,7 +6,7 @@ const SAVE_PATH := "user://nanjiang_smoke_save.json"
 const TEMP_PATH := "user://nanjiang_smoke_save.json.tmp"
 const META_PATH := "user://nanjiang_smoke_meta.json"
 const META_TEMP_PATH := "user://nanjiang_smoke_meta.json.tmp"
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 
 
 static func save_run(state: RunState, route: Array, replies: Array) -> Error:

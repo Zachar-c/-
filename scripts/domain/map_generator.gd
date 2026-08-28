@@ -23,168 +23,166 @@ static func build(seed_value: int, first_run: bool) -> Array[Dictionary]:
 	if first_run:
 		var route_ids: Array = _load_json("res://data/first_run.json")["route_ids"]
 		return _route_from_ids(route_ids, node_by_id)
-	var stage_picks := _generated_stage_picks(seed_value, data["nodes"], node_by_id)
-	return _route_with_network(stage_picks, node_by_id, seed_value)
+	return _generate_instance_route(seed_value, node_by_id)
 
 
-static func _generated_stage_picks(seed_value: int, nodes: Array, node_by_id: Dictionary) -> Dictionary:
-	var by_stage := {}
-	for node in nodes:
-		if not by_stage.has(node["stage"]):
-			by_stage[node["stage"]] = []
-		by_stage[node["stage"]].append(node["id"])
+## v2 拓扑（2026-08-29 裁定）：五大层扇形收敛图。每大层 8–11 行 ×
+## 每行 2–6 节点（首行 1–2 入口、末行 1 个关底 Boss），行进边只连
+## 下一行 1–2 个节点且下行每节点 ≥1 入边；关底 Boss 击败后解锁
+## 下一大层。层形状/锚点/模板池来自 pacing.json 的 layers 裁定表。
+static func _generate_instance_route(seed_value: int, node_by_id: Dictionary) -> Array[Dictionary]:
+	var pacing: Dictionary = _load_json("res://data/pacing.json")
+	var layers_cfg: Dictionary = pacing.get("layers", {})
 	var rng := SeededRng.new(seed_value)
-	var stage_picks := {}
-	# R-layering: picks run the full five-layer order; every layer with
-	# candidates contributes 1-3 nodes so all five layers stay populated.
-	for stage in LAYER_ORDER:
-		if not by_stage.has(stage):
-			continue
-		var candidates: Array = by_stage[stage].duplicate()
-		if stage == "four":
-			candidates.erase("earth_vein_contest")
-		var picks: Array = []
-		var pick_count := mini(3, candidates.size())
-		while picks.size() < pick_count and not candidates.is_empty():
-			var pick_id := str(candidates[rng.next_index(candidates.size())])
-			candidates.erase(pick_id)
-			picks.append(pick_id)
-		if stage == "one":
-			for node_id_value in by_stage["one"]:
-				var start_id := str(node_id_value)
-				if bool(node_by_id.get(start_id, {}).get("start", false)) and not picks.has(start_id):
-					picks.append(start_id)
-		stage_picks[stage] = picks
-	_guarantee_anchor_types(stage_picks, by_stage, node_by_id)
-	if by_stage.has("four") and not stage_picks.get("four", []).has("earth_vein_contest"):
-		stage_picks["four"].append("earth_vein_contest")
-	# 升仙五项授予源必须可及：外扰由地脉争夺清除、天地二气由毒瘴地脉授予
-	# （两者已保证）；空窍底蕴出自闭关仪式、地点出自封印地脉——缺源则任何
-	# 路线的飞升都不可能凑齐条件，端到端通关不存在。
-	if by_stage.has("one") and not stage_picks.get("one", []).has("body_imprint_ritual"):
-		stage_picks["one"].append("body_imprint_ritual")
-	if by_stage.has("four") and not stage_picks.get("four", []).has("sealed_earth_vein"):
-		stage_picks["four"].append("sealed_earth_vein")
-	if not stage_picks.has("five"):
-		stage_picks["five"] = []
-	if not stage_picks["five"].has("poison_fog_vein"):
-		stage_picks["five"].append("poison_fog_vein")
-	if not stage_picks["five"].has(BOSS_NODE_ID):
-		stage_picks["five"].append(BOSS_NODE_ID)
-	return stage_picks
-
-
-static func _guarantee_anchor_types(stage_picks: Dictionary, by_stage: Dictionary, node_by_id: Dictionary) -> void:
-	for required_type in ["shop", "refinement", "inheritance"]:
-		var present := false
-		for stage in stage_picks:
-			if present:
-				break
-			for node_id_value in stage_picks[stage]:
-				var node_id := str(node_id_value)
-				if str(node_by_id.get(node_id, {}).get("type", "")) == required_type:
-					present = true
-					break
-		if present:
-			continue
-		for stage in LAYER_ORDER:
-			if present or not by_stage.has(stage):
-				continue
-			for node_id_value in by_stage[stage]:
-				var node_id := str(node_id_value)
-				if not stage_picks.get(stage, []).has(node_id) and str(node_by_id.get(node_id, {}).get("type", "")) == required_type:
-					stage_picks[stage].append(node_id)
-					present = true
-					break
-
-
-static func _route_with_network(stage_picks: Dictionary, node_by_id: Dictionary, seed_value: int) -> Array[Dictionary]:
-	var stage_order: Array[String] = []
-	for stage in LAYER_ORDER:
-		stage_order.append(stage)
-	var stage_one_starts: Array = []
-	var stage_one_rest: Array = []
-	for node_id_value in stage_picks.get("one", []):
-		var pick_id := str(node_id_value)
-		if bool(node_by_id.get(pick_id, {}).get("start", false)):
-			stage_one_starts.append(pick_id)
-		else:
-			stage_one_rest.append(pick_id)
-	stage_picks["one"] = stage_one_starts + stage_one_rest
-	var flat_ids: Array = []
-	for stage in stage_order:
-		for node_id_value in stage_picks.get(stage, []):
-			flat_ids.append(str(node_id_value))
-	# R-layering: ascension_window is wired ONLY from the boss stand and is
-	# therefore excluded from every generic edge pool below.
-	var by_stage_ids := {}
-	for index in flat_ids.size():
-		var node_id := str(flat_ids[index])
-		var stage := str(node_by_id.get(node_id, {}).get("stage", "one"))
-		if not by_stage_ids.has(stage):
-			by_stage_ids[stage] = []
-		by_stage_ids[stage].append(node_id)
-	var outgoing := {}
-	var incoming_count := {}
-	for node_id in flat_ids:
-		outgoing[node_id] = []
-		incoming_count[node_id] = 0
-	for stage_index in range(stage_order.size() - 1):
-		var this_stage := stage_order[stage_index]
-		var next_stage := stage_order[stage_index + 1]
-		var from_ids: Array = by_stage_ids.get(this_stage, [])
-		var to_ids: Array = by_stage_ids.get(next_stage, [])
-		if from_ids.is_empty() or to_ids.is_empty():
-			continue
-		for from_id_value in from_ids:
-			var from_id := str(from_id_value)
-			var rng := _node_rng(seed_value, from_id)
-			var links := mini(2, to_ids.size())
-			var pool: Array = to_ids.duplicate()
-			for _link in links:
-				outgoing[from_id].append(str(pool[rng.next_index(pool.size())]))
-				incoming_count[str(outgoing[from_id].back())] = int(incoming_count.get(str(outgoing[from_id].back()), 0)) + 1
-			# Cross-branch jump: a minority of nodes also reach into the stage after next.
-			if stage_index + 2 < stage_order.size() and rng.next_index(100) < 30:
-				var jump_ids: Array = by_stage_ids.get(stage_order[stage_index + 2], [])
-				if not jump_ids.is_empty():
-					var jump_id := str(jump_ids[rng.next_index(jump_ids.size())])
-					outgoing[from_id].append(jump_id)
-					incoming_count[jump_id] = int(incoming_count.get(jump_id, 0)) + 1
-	# Multiple-entry guarantee: every non-start node keeps at least one incoming
-	# edge, donated deterministically by an earlier node (start nodes lead the flat order).
-	for index in range(1, flat_ids.size()):
-		var node_id := str(flat_ids[index])
-		if int(incoming_count.get(node_id, 0)) > 0:
-			continue
-		if bool(node_by_id.get(node_id, {}).get("start", false)):
-			continue
-		var donor := str(flat_ids[_node_rng(seed_value, node_id).next_index(index)])
-		outgoing[donor].append(node_id)
-		incoming_count[node_id] = 1
-	# R-layering last-layer funnel: every non-boss five node leads into the
-	# boss stand, and only the boss stand opens the ascension window. Reaching
-	# the window therefore always requires passing (and beating) the boss.
-	for node_id_value in by_stage_ids.get("five", []):
-		var node_id := str(node_id_value)
-		if node_id == BOSS_NODE_ID:
-			continue
-		if not outgoing[node_id].has(BOSS_NODE_ID):
-			outgoing[node_id].append(BOSS_NODE_ID)
-			incoming_count[BOSS_NODE_ID] = int(incoming_count.get(BOSS_NODE_ID, 0)) + 1
-	outgoing[BOSS_NODE_ID].append(ASCENSION_NODE_ID)
 	var route: Array[Dictionary] = []
-	for index in flat_ids.size():
-		var node_id := str(flat_ids[index])
-		var node: Dictionary = node_by_id[node_id].duplicate(true)
-		node["visible"] = index <= 1
-		node["next_ids"] = outgoing[node_id]
-		route.append(node)
+	var prev_boss_node: Dictionary = {}
+	for layer_number in range(1, 6):
+		var cfg: Dictionary = layers_cfg.get(str(layer_number), {})
+		var row_bounds: Array = cfg.get("rows", [8, 11])
+		var row_count := int(row_bounds[0]) + rng.next_index(maxi(1, int(row_bounds[1]) - int(row_bounds[0]) + 1))
+		var anchor_rows := _anchor_rows(cfg, row_count, rng)
+		var rows: Array = []
+		for row in range(row_count):
+			var count := _row_node_count(rng, cfg, row, row_count)
+			var anchor_queue: Array = anchor_rows.get(row, [])
+			var row_nodes: Array = []
+			var used_in_row: Array = []
+			for index in range(count):
+				var template_id := ""
+				if row == row_count - 1:
+					template_id = BOSS_NODE_ID if layer_number == 5 else "layer_boss_stand_%d" % layer_number
+				elif not anchor_queue.is_empty():
+					template_id = str(anchor_queue.pop_front())
+				else:
+					template_id = _pick_pool_template(rng, cfg.get("pool", []), used_in_row)
+				used_in_row.append(template_id)
+				var template: Dictionary = node_by_id.get(template_id, {})
+				var instance: Dictionary = template.duplicate(true)
+				instance["id"] = instance_id_for(layer_number, row, index)
+				instance["template_id"] = template_id
+				instance["layer"] = layer_number
+				instance["row"] = row
+				instance["visible"] = false
+				instance["next_ids"] = []
+				if layer_number == 1 and row == 0:
+					instance["start"] = true
+				row_nodes.append(instance)
+			rows.append(row_nodes)
+		# 行进边：每节点连下一行 1–2 个；下行每节点 ≥1 入边（确定性捐赠）。
+		for row in range(row_count - 1):
+			var current_row: Array = rows[row]
+			var next_row: Array = rows[row + 1]
+			for node_value in current_row:
+				var node: Dictionary = node_value
+				var links := 1
+				if next_row.size() > 1 and rng.next_index(100) < 50:
+					links = 2
+				var picked := {}
+				for _link in range(links):
+					var pick := rng.next_index(next_row.size())
+					while picked.has(pick) and picked.size() < next_row.size():
+						pick = (pick + 1) % next_row.size()
+					picked[pick] = true
+				for pick_key in picked.keys():
+					var target_id := str((next_row[int(pick_key)] as Dictionary)["id"])
+					if not (node["next_ids"] as Array).has(target_id):
+						node["next_ids"].append(target_id)
+			for target_value in next_row:
+				var target: Dictionary = target_value
+				var target_id := str(target["id"])
+				var fed := false
+				for source_value in current_row:
+					if ((source_value as Dictionary)["next_ids"] as Array).has(target_id):
+						fed = true
+						break
+				if not fed and not current_row.is_empty():
+					var donor: Dictionary = current_row[_node_rng(seed_value, target_id).next_index(current_row.size())]
+					(donor["next_ids"] as Array).append(target_id)
+		# 大层接缝：关底 Boss → 下一大层入口行（boss_defeated 门禁在可达层）。
+		var boss_node: Dictionary = rows[row_count - 1][0]
+		if not prev_boss_node.is_empty():
+			for entry_value in rows[0]:
+				prev_boss_node["next_ids"].append(str((entry_value as Dictionary)["id"]))
+		if layer_number == 5:
+			boss_node["next_ids"].append(ASCENSION_NODE_ID)
+		prev_boss_node = boss_node
+		for row in rows:
+			for node_value in row:
+				route.append(node_value)
 	var window: Dictionary = node_by_id[ASCENSION_NODE_ID].duplicate(true)
 	window["visible"] = false
 	window["next_ids"] = []
+	window["layer"] = 5
 	route.append(window)
 	return route
+
+
+static func instance_id_for(layer_number: int, row: int, index: int) -> String:
+	return "L%dR%dN%d" % [layer_number, row, index]
+
+
+static func _rand_between(rng: SeededRng, bounds: Array) -> int:
+	var low := int(bounds[0]) if bounds.size() > 0 else 8
+	var high := int(bounds[1]) if bounds.size() > 1 else low
+	return low + rng.next_index(maxi(1, high - low + 1))
+
+
+static func _row_node_count(rng: SeededRng, cfg: Dictionary, row: int, row_count: int) -> int:
+	if row == row_count - 1:
+		return 1
+	if row == 0:
+		return _rand_between(rng, cfg.get("entry_nodes", [1, 2]))
+	return _rand_between(rng, cfg.get("row_nodes", [2, 6]))
+
+
+## 锚点行分配：裁定表 anchors + 每大层一处黑市 + 每大层一处休整。
+## row 语义："mid"=中段行，"pre_boss"=关底 Boss 前一行。
+static func _anchor_rows(cfg: Dictionary, row_count: int, rng: SeededRng) -> Dictionary:
+	var anchor_rows := {}
+	var shop_present := false
+	for anchor_value in cfg.get("anchors", []):
+		var anchor: Dictionary = anchor_value
+		var template_id := str(anchor.get("template", ""))
+		if template_id == "ridge_black_market":
+			shop_present = true
+		var row := _anchor_row_index(str(anchor.get("row", "mid")), row_count)
+		if not anchor_rows.has(row):
+			anchor_rows[row] = []
+		(anchor_rows[row] as Array).append(template_id)
+	if not shop_present:
+		var row := _anchor_row_index("mid", row_count)
+		if not anchor_rows.has(row):
+			anchor_rows[row] = []
+		(anchor_rows[row] as Array).append("ridge_black_market")
+	# 每大层一处休整（第二行），交错取两张休整模板。
+	var rest_row := 1 if row_count > 3 else 0
+	var rest_template := "rest_hollow" if rng.next_index(100) < 50 else "rest_shrine"
+	if not anchor_rows.has(rest_row):
+		anchor_rows[rest_row] = []
+	(anchor_rows[rest_row] as Array).append(rest_template)
+	return anchor_rows
+
+
+static func _anchor_row_index(slot: String, row_count: int) -> int:
+	match slot:
+		"pre_boss":
+			return maxi(1, row_count - 2)
+		"mid", _:
+			return maxi(1, row_count / 2)
+
+
+## 层内模板池抽取；同层内避免重复（池不小于行宽时）。
+static func _pick_pool_template(rng: SeededRng, pool: Array, used_in_row: Array) -> String:
+	if pool.is_empty():
+		return "echo_cave"
+	var candidates: Array = []
+	for candidate_value in pool:
+		var candidate := str(candidate_value)
+		if not used_in_row.has(candidate):
+			candidates.append(candidate)
+	if candidates.is_empty():
+		candidates = pool
+	return str(candidates[rng.next_index(candidates.size())])
 
 
 static func _node_rng(seed_value: int, node_id: String) -> SeededRng:
@@ -196,6 +194,9 @@ static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[D
 	for index in route_ids.size():
 		var node: Dictionary = node_by_id[route_ids[index]].duplicate(true)
 		node["visible"] = index <= 1
+		node["template_id"] = str(route_ids[index])
+		node["layer"] = layer_index(str(node.get("stage", "one")))
+		node["row"] = index
 		if not node.has("next_ids") or node["next_ids"].is_empty():
 			if index < route_ids.size() - 1:
 				node["next_ids"] = [route_ids[index + 1]]
@@ -217,6 +218,12 @@ static func reachable_nodes(route: Array[Dictionary], state: RunState) -> Array[
 	if not by_id.has(origin_id):
 		return []
 	if not state.node_flags.has(origin_id):
+		return []
+	# 关底 Boss 门禁：boss_defeated_L{n} 未落账前，Boss 台无路可走
+	# （撤退完成节点也不放行——进入下一大层必须真胜）。
+	var current_node: Dictionary = by_id[origin_id]
+	var layer_boss := int(current_node.get("layer_boss", 0))
+	if layer_boss > 0 and not state.node_flags.has("boss_defeated_L%d" % layer_boss):
 		return []
 	var reachable: Array[Dictionary] = []
 	for next_id in by_id[origin_id].get("next_ids", []):

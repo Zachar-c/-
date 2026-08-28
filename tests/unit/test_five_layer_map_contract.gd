@@ -52,12 +52,16 @@ func test_ascension_window_only_reachable_through_boss_stand() -> void:
 		var route: Array = MapGeneratorScript.build(seed_value, false)
 		var window := _node_by_id(route, WINDOW_ID)
 		assert_false(window.is_empty(), "seed %d has window" % seed_value)
-		var boss := _node_by_id(route, BOSS_ID)
+		var boss := {}
+		for node in route:
+			if int(node.get("layer_boss", 0)) == 5:
+				boss = node
+		assert_false(boss.is_empty(), "seed %d has the final boss stand" % seed_value)
 		assert_true((boss.get("next_ids", []) as Array).has(WINDOW_ID),
 			"seed %d: boss leads to window" % seed_value)
 		for node in route:
 			var node_id := str(node.get("id", ""))
-			if node_id in [BOSS_ID, WINDOW_ID]:
+			if node_id == WINDOW_ID or int(node.get("layer_boss", 0)) == 5:
 				continue
 			assert_false((node.get("next_ids", []) as Array).has(WINDOW_ID),
 				"seed %d: %s must not bypass the boss to the window" % [seed_value, node_id])
@@ -66,14 +70,33 @@ func test_ascension_window_only_reachable_through_boss_stand() -> void:
 func test_every_last_layer_node_leads_into_boss_stand() -> void:
 	for seed_value in [1, 2, 7, 42, 20260927]:
 		var route: Array = MapGeneratorScript.build(seed_value, false)
+		var by_id := {}
 		for node in route:
-			if str(node.get("stage", "")) != "five":
+			by_id[str(node.get("id", ""))] = node
+		var boss := {}
+		for node in route:
+			if int(node.get("layer_boss", 0)) == 5:
+				boss = node
+		var boss_id := str(boss.get("id", ""))
+		for node in route:
+			if int(node.get("layer", 0)) != 5 or str(node.get("id", "")) in [boss_id, WINDOW_ID]:
 				continue
-			var node_id := str(node.get("id", ""))
-			if node_id in [BOSS_ID, WINDOW_ID]:
-				continue
-			assert_true((node.get("next_ids", []) as Array).has(BOSS_ID),
-				"seed %d: last-layer %s funnels into boss" % [seed_value, node_id])
+			# v2 漏斗语义：第五大层每个节点沿前向边可达关底 Boss。
+			var seen := {}
+			var queue: Array[String] = [str(node.get("id", ""))]
+			var reached := false
+			while not queue.is_empty():
+				var current: String = queue.pop_front()
+				if seen.has(current):
+					continue
+				seen[current] = true
+				if current == boss_id:
+					reached = true
+					break
+				for next_id in by_id.get(current, {}).get("next_ids", []):
+					queue.append(str(next_id))
+			assert_true(reached,
+				"seed %d: last-layer %s converges into the boss" % [seed_value, str(node.get("id", ""))])
 
 
 func test_travel_into_window_refused_until_boss_defeated() -> void:

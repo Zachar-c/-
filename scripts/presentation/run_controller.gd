@@ -243,6 +243,13 @@ func _apply_command_feedback(result: Dictionary) -> void:
 		last_feedback = _summarize_changes(result.get("actual_changes", []))
 
 
+## 拓扑 v2：把当前实例的模板 id 与大层盖到 RunState，供领域侧
+## （升仙授予查模板、掉落/黑市按层裁定）读取；存档随行。
+func _stamp_current_node(run_state, node: Dictionary) -> void:
+	run_state.current_node_template_id = str(node.get("template_id", node.get("id", "")))
+	run_state.current_node_layer = int(node.get("layer", 0))
+
+
 func current_view_name() -> String:
 	return _view_name
 
@@ -336,6 +343,13 @@ func _restore_game(loaded: Dictionary) -> bool:
 	if loaded.has("route"):
 		route = loaded["route"].duplicate(true)
 	current_node = _node_by_id(state.current_node_id)
+	if current_node.is_empty() and not route.is_empty():
+		for node_value in route:
+			var node_item: Dictionary = node_value
+			if str(node_item.get("id", "")) == state.current_node_id:
+				current_node = node_item
+				break
+	_stamp_current_node(state, current_node)
 	current_battle = {}
 	current_session = state.encounter_session.duplicate(true)
 	dialogue_replies = loaded.get("replies", [])
@@ -357,6 +371,7 @@ func _travel_to(node_id: String) -> Dictionary:
 	var resolved := Resolver.apply(state, {"type": "travel", "node_id": node_id}, catalog)
 	state = resolved["state"]
 	current_node = node
+	_stamp_current_node(state, node)
 	var session_started := EncounterSessionResolverScript.begin(state, node)
 	state = session_started["state"]
 	current_session = session_started["session"]
@@ -632,7 +647,8 @@ func _start_battle() -> void:
 	if str(current_session.get("kind", "")) in ["contact", "caravan", "market", "shop", "wild_gu"]:
 		kill_source = "neutral_npc"
 	var encounter := {
-		"turn": MapGenerator.layer_index(str(current_node.get("stage", ""))),
+		"turn": int(current_node.get("layer", MapGenerator.layer_index(str(current_node.get("stage", ""))))),
+		"layer": int(current_node.get("layer", 1)),
 		"terrain": _battle_terrain(),
 		"first_mover": first_mover,
 		"kill_source": kill_source,
@@ -1028,8 +1044,14 @@ func _finish_battle_in_session(outcome: String) -> void:
 	})
 	if outcome == "victory" and kill_source == "neutral_npc":
 		state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, catalog)["state"]
-	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
-		state = Resolver.apply(state, {"type": "record_boss_defeated"}, catalog)["state"]
+	# 拓扑 v2：关底 Boss 按层落旗标（boss_defeated_L{n} 是下一大层的行进门禁）；
+	# 大层五的瘴脉之主同时保留全局 boss_defeated（升仙窗门禁，语义不变）。
+	if outcome == "victory":
+		var layer_boss := int(current_node.get("layer_boss", 0))
+		if layer_boss > 0:
+			state = Resolver.apply(state, {"type": "record_layer_boss_defeated", "layer": layer_boss}, catalog)["state"]
+		if enemy_kind == "miasma_vein_lord":
+			state = Resolver.apply(state, {"type": "record_boss_defeated"}, catalog)["state"]
 	# D3 战利品弹窗（流程图 G3）：有真实战利品或精英绑定时走 Reward 屏确认，
 	# 纯文本 feed 仍保留在遭遇结果流（两处同源，不双份入账）。
 	last_battle_loot = battle_loot

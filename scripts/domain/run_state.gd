@@ -50,6 +50,9 @@ var meta_rules: Dictionary = {}
 # R14.6⑧ (night batch): hall toggle snapshot copied into the run at birth;
 # DDA state-adaptive evaluation is inert while false (fixed progress only).
 var dda_state_adaptive_enabled: bool = true
+## 当前节点实例的模板 id 与大层（拓扑 v2）：领域侧按模板查表、按层裁定。
+var current_node_template_id: String = ""
+var current_node_layer: int = 0
 var terminal_state: String = "active"
 var global_codex_ids: Array[String] = []
 var school: String = ""
@@ -63,6 +66,7 @@ const STATE_FIELDS: Array[String] = [
 	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity", "synthesis_fail_streak",
 	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "contracts", "clues",
 	"relations", "pursuit", "ascension", "known_facts", "current_node_id",
+	"current_node_template_id", "current_node_layer",
 	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",
 	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",
 	"relic_ids", "meta_rules", "global_codex_ids", "school", "terminal_state",

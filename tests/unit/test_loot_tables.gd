@@ -97,12 +97,17 @@ func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
 			"school without pool overlap keeps the unfiltered bucket")
 
 
-func test_boss_loot_grants_two_materials_no_gu() -> void:
-	var battle := {"enemy_kind": "miasma_vein_lord"}
-	var rolled: Dictionary = LootResolverScript.settle_victory(battle, make_state(), catalog())
-	var loot: Dictionary = rolled["loot"]
-	assert_eq(loot.get("material_ids", []).size(), 2)
-	assert_eq(str(loot.get("gu_id", "")), "")
+func test_boss_loot_follows_the_layer_ruling() -> void:
+	# 统一裁定表：Boss 掉落材料数按大层（L1=1，L5=3），依旧不出蛊。
+	var battle_l1 := {"enemy_kind": "miasma_vein_lord", "layer": 1}
+	var rolled_l1: Dictionary = LootResolverScript.settle_victory(battle_l1, make_state(), catalog())
+	assert_eq(rolled_l1["loot"].get("material_ids", []).size(), 1)
+	assert_eq(str(rolled_l1["loot"].get("gu_id", "")), "")
+
+	var battle_l5 := {"enemy_kind": "miasma_vein_lord", "layer": 5}
+	var rolled_l5: Dictionary = LootResolverScript.settle_victory(battle_l5, make_state(), catalog())
+	assert_eq(rolled_l5["loot"].get("material_ids", []).size(), 3)
+	assert_eq(str(rolled_l5["loot"].get("gu_id", "")), "")
 
 
 func test_loot_materials_are_added_to_state_and_logged() -> void:

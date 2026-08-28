@@ -85,12 +85,16 @@ static func shop(controller) -> Dictionary:
 	# R6.7 应急支付预览（只读推导）：元石定价高于持有元石的货架项将触发应急支付，
 	# UI 据此弹 D1 确认；寿元定价项（无 stone_cost）不参与该判定。
 	var stones := int(controller.state.stone)
+	var max_tier := ResolverScript.shop_max_tier(controller.state, catalog)
 	var offers: Array[Dictionary] = []
 	for offer_key in offer_by_id:
 		var o: Dictionary = offer_by_id[offer_key]
+		# 黑市分层上架：货阶高于当前大层的货不露面（层越深货越贵且稀有）。
+		if int(o.get("tier", 1)) > max_tier:
+			continue
 		var gid := str(o.get("gu_id", ""))
 		var name := DisplayText.gu(gid) if gid != "" else str(o.get("card_key", "货物"))
-		var price := str(o.get("stone_cost", 0)) + " 元石"
+		var price := str(ResolverScript.shop_layer_price(catalog, controller.state, int(o.get("stone_cost", 0)))) + " 元石"
 		var kind := str(o.get("kind", ""))
 		if o.has("lifespan_cost"):
 			price = str(o.get("lifespan_cost", 0)) + " 寿元"

@@ -23,7 +23,7 @@ const PITY_CLEARING_RARITIES := ["rare", "epic", "legendary"]
 
 static func settle_victory(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
-	var table: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
+	var table: Dictionary = _layer_table(catalog, tier, int(battle.get("layer", 1)))
 	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
 	# C1-min §16.13: material_bonus/-penalty shift the rolled material count,
 	# clamped at >= 0 so a penalty can never invert the roll.
@@ -111,6 +111,31 @@ static func _pick_weighted(entries: Array, state: RunState, salt: String) -> Dic
 		if roll < cursor:
 			return entry
 	return {}
+
+
+## 统一数值裁定表（pacing.json layers）：大层的材料数与稀有度权重优先，
+## 敌人 tier 表提供材料池/by_rarity 桶；未声明的稀有度桶不进入权重。
+static func _layer_table(catalog: Dictionary, tier: String, layer: int) -> Dictionary:
+	var base: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
+	var layers_cfg: Dictionary = catalog.get("pacing", {}).get("layers", {})
+	var layer_cfg: Dictionary = layers_cfg.get(str(clampi(layer, 1, 5)), {})
+	var loot_cfg: Dictionary = layer_cfg.get("loot", {})
+	if loot_cfg.is_empty() or base.is_empty():
+		return base
+	var table := base.duplicate(true)
+	if loot_cfg.has("material_count"):
+		table["material_count"] = int(loot_cfg["material_count"])
+	var weights: Dictionary = loot_cfg.get("weights", {})
+	if not weights.is_empty():
+		var by_rarity: Dictionary = table.get("gu_pool", {}).get("by_rarity", {})
+		var effective: Dictionary = {}
+		for rarity_id_value in weights:
+			var rarity_id := str(rarity_id_value)
+			if int(weights[rarity_id_value]) > 0 and not (by_rarity.get(rarity_id, []) as Array).is_empty():
+				effective[rarity_id] = int(weights[rarity_id_value])
+		if not effective.is_empty():
+			(table["gu_pool"] as Dictionary)["weights"] = effective
+	return table
 
 
 static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:

@@ -20,7 +20,7 @@ func test_same_seed_builds_same_non_first_route() -> void:
 func test_generated_route_does_not_repeat_required_contest() -> void:
 	for seed_value in range(1, 40):
 		var route := MapGenerator.build(seed_value, false)
-		var contest_count := route.filter(func(node: Dictionary): return node["id"] == "earth_vein_contest").size()
+		var contest_count := route.filter(func(node: Dictionary): return node.get("template_id", "") == "earth_vein_contest").size()
 		assert_eq(contest_count, 1, "seed %s repeats earth vein contest" % seed_value)
 
 

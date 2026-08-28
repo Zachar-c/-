@@ -104,6 +104,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"record_neutral_npc_kill": func(state, _command, catalog): return _record_neutral_npc_kill(state, catalog),
 			"wash_notoriety": func(state, _command, catalog): return _wash_notoriety(state, catalog),
 			"record_boss_defeated": func(state, _command, catalog): return _record_boss_defeated(state, catalog),
+			"record_layer_boss_defeated": func(state, command, catalog): return _record_layer_boss_defeated(state, command, catalog),
 			"rest": func(state, command, catalog): return _rest(state, command, catalog),
 			"gain_force_power": func(state, command, catalog): return _gain_force_power(state, command, catalog),
 			"accept_event": func(state, command, catalog): return _accept_event(state, command, catalog),
@@ -971,6 +972,29 @@ static func _gain_relic(state: RunState, command: Dictionary, catalog: Dictionar
 	return result
 
 
+## 统一裁定表：当前大层的黑市参数（货阶上限 / 价格乘数%）。
+static func _current_shop_layer(state: RunState, catalog: Dictionary) -> int:
+	var layer := clampi(int(state.current_node_layer), 1, 5)
+	var layers_cfg: Dictionary = catalog.get("pacing", {}).get("layers", {})
+	if layer == 0 or not layers_cfg.has(str(layer)):
+		return 1
+	return layer
+
+
+static func shop_layer_price(catalog: Dictionary, state: RunState, base: int) -> int:
+	var price := price_for(catalog, state, base)
+	var layers_cfg: Dictionary = catalog.get("pacing", {}).get("layers", {})
+	var layer_cfg: Dictionary = layers_cfg.get(str(_current_shop_layer(state, catalog)), {})
+	var pct := int(layer_cfg.get("shop_price_pct", 0))
+	return price + int(price * pct / 100.0)
+
+
+static func shop_max_tier(state: RunState, catalog: Dictionary) -> int:
+	var layers_cfg: Dictionary = catalog.get("pacing", {}).get("layers", {})
+	var layer_cfg: Dictionary = layers_cfg.get(str(_current_shop_layer(state, catalog)), {})
+	return int(layer_cfg.get("shop_max_tier", 1))
+
+
 static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
 	var kind := str(offer.get("kind", ""))
@@ -981,7 +1005,10 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	var blocked := _reject_deck_full(state, catalog, [str(offer["gu_id"])], [])
 	if not blocked.is_empty():
 		return blocked
-	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
+	# 黑市分层上架：货阶高于当前大层时拒绝（层越深货越贵且稀有度越高）。
+	if int(offer.get("tier", 1)) > _current_shop_layer(state, catalog):
+		return _rejected(state, "shop_tier_locked")
+	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var instances := state.gu_instances.duplicate(true)
@@ -1609,8 +1636,27 @@ const ASCENSION_CONDITION_KEYS := [
 ]
 
 
+static func _record_layer_boss_defeated(state: RunState, command: Dictionary, _catalog: Dictionary) -> Dictionary:
+	var layer := int(command.get("layer", 0))
+	if layer < 1 or layer > 5:
+		return _rejected(state, "invalid_layer_boss")
+	var flags := state.node_flags.duplicate(true)
+	flags["boss_defeated_L%d" % layer] = "true"
+	var next := state.append_event(_event(
+		state,
+		"record_layer_boss_defeated",
+		{"node_flags": state.node_flags},
+		{"node_flags": flags},
+		"layer_boss_%d_defeated" % layer,
+		state.current_node_id
+	))
+	next.node_flags = flags
+	return _accepted(next)
+
+
 static func _ascension_grant_for(state: RunState, action_id: String, catalog: Dictionary) -> String:
-	var node_id := str(state.current_node_id)
+	# 拓扑 v2：实例 id 与模板 id 分离；旧实例（first_run/测试）回退用节点 id。
+	var node_id := str(state.current_node_template_id) if not str(state.current_node_template_id).is_empty() else str(state.current_node_id)
 	for node_value in catalog.get("nodes", []):
 		var node: Dictionary = node_value
 		if str(node.get("id", "")) != node_id:

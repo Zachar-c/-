@@ -6,5 +6,222 @@
   "turn_scaling": {
     "hp_add_per_turn": 2,
     "damage_add_per_turn": 1
+  },
+  "layers": {
+    "1": {
+      "rows": [
+        8,
+        11
+      ],
+      "row_nodes": [
+        2,
+        6
+      ],
+      "entry_nodes": [
+        1,
+        2
+      ],
+      "enemy_turn": 1,
+      "loot": {
+        "material_count": 1,
+        "weights": {
+          "common": 90,
+          "rare": 10,
+          "epic": 0
+        }
+      },
+      "shop_price_pct": 0,
+      "shop_max_tier": 1,
+      "anchors": [
+        {
+          "template": "body_imprint_ritual",
+          "row": "mid"
+        },
+        {
+          "template": "stage_one_ledger",
+          "row": "pre_boss"
+        }
+      ],
+      "pool": [
+        "beast_swarm_pass",
+        "toxic_mountain_path",
+        "flooded_cave",
+        "neutral_wanderer",
+        "ridge_market",
+        "village_short_work",
+        "moonlit_trail",
+        "cultivation_spring"
+      ]
+    },
+    "2": {
+      "rows": [
+        8,
+        11
+      ],
+      "row_nodes": [
+        2,
+        6
+      ],
+      "entry_nodes": [
+        1,
+        2
+      ],
+      "enemy_turn": 2,
+      "loot": {
+        "material_count": 1,
+        "weights": {
+          "common": 80,
+          "rare": 18,
+          "epic": 2
+        }
+      },
+      "shop_price_pct": 10,
+      "shop_max_tier": 2,
+      "anchors": [
+        {
+          "template": "ridge_black_market",
+          "row": "mid"
+        },
+        {
+          "template": "refinement_hollow",
+          "row": "mid"
+        }
+      ],
+      "pool": [
+        "refinement_hollow",
+        "beast_swarm_pass",
+        "black_mud_marsh",
+        "flooded_cave",
+        "echo_cave",
+        "blood_moss_grove",
+        "greedy_wanderer",
+        "caravan_missing_goods",
+        "toxic_mountain_path",
+        "neutral_wanderer"
+      ]
+    },
+    "3": {
+      "rows": [
+        8,
+        11
+      ],
+      "row_nodes": [
+        2,
+        6
+      ],
+      "entry_nodes": [
+        1,
+        2
+      ],
+      "enemy_turn": 3,
+      "loot": {
+        "material_count": 2,
+        "weights": {
+          "common": 70,
+          "rare": 24,
+          "epic": 6
+        }
+      },
+      "shop_price_pct": 20,
+      "shop_max_tier": 3,
+      "anchors": [
+        {
+          "template": "ridge_black_market",
+          "row": "mid"
+        }
+      ],
+      "pool": [
+        "faction_guard_checkpoint",
+        "black_mud_marsh",
+        "caravan_missing_goods",
+        "greedy_wanderer",
+        "echo_cave",
+        "blood_moss_grove",
+        "herbalist_commission"
+      ]
+    },
+    "4": {
+      "rows": [
+        8,
+        11
+      ],
+      "row_nodes": [
+        2,
+        6
+      ],
+      "entry_nodes": [
+        1,
+        2
+      ],
+      "enemy_turn": 4,
+      "loot": {
+        "material_count": 2,
+        "weights": {
+          "common": 60,
+          "rare": 28,
+          "epic": 12
+        }
+      },
+      "shop_price_pct": 35,
+      "shop_max_tier": 4,
+      "anchors": [
+        {
+          "template": "earth_vein_contest",
+          "row": "mid"
+        },
+        {
+          "template": "sealed_earth_vein",
+          "row": "mid"
+        },
+        {
+          "template": "mist_shrine",
+          "row": "mid"
+        }
+      ],
+      "pool": [
+        "faction_guard_checkpoint",
+        "herbalist_commission",
+        "black_mud_marsh",
+        "echo_cave",
+        "greedy_wanderer"
+      ]
+    },
+    "5": {
+      "rows": [
+        8,
+        11
+      ],
+      "row_nodes": [
+        2,
+        6
+      ],
+      "entry_nodes": [
+        1,
+        2
+      ],
+      "enemy_turn": 5,
+      "loot": {
+        "material_count": 3,
+        "weights": {
+          "common": 50,
+          "rare": 30,
+          "epic": 20
+        }
+      },
+      "shop_price_pct": 50,
+      "shop_max_tier": 5,
+      "anchors": [
+        {
+          "template": "poison_fog_vein",
+          "row": "pre_boss"
+        }
+      ],
+      "pool": [
+        "faction_guard_checkpoint",
+        "black_mud_marsh",
+        "greedy_wanderer",
+        "blood_moss_grove"
+      ]
+    }
   }
 }

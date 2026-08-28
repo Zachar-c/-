@@ -97,6 +97,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var contract_mods := ContractRulesScript.aggregate(state, catalog)
 	var battle := {
 		"battle_id": battle_id,
+		"layer": clampi(int(encounter.get("layer", 1)), 1, 5),
 		"enemies": enemies,
 		"deck_generation_hash": deck_generation_hash,
 		"deck_cache": deck_cache.duplicate(true),

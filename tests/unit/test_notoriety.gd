@@ -46,19 +46,19 @@ func test_clean_leave_gains_no_notoriety() -> void:
 func test_price_rises_ten_percent_per_point_capped_at_sixty_percent() -> void:
 	var two := RunState.new_run(101)
 	two.cultivator["notorious"] = 2
-	var purchase := ResolverScript.apply(two, {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, catalog)
+	var purchase := ResolverScript.apply(two, {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, catalog)
 	assert_true(purchase["result"]["ok"])
 	assert_eq(purchase["state"].stone, 12 - 8)
 
 	var six := RunState.new_run(101)
 	six.cultivator["notorious"] = 6
-	var capped := ResolverScript.apply(six, {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, catalog)
+	var capped := ResolverScript.apply(six, {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, catalog)
 	assert_true(capped["result"]["ok"])
 	assert_eq(capped["state"].stone, 12 - 10)
 
 	var eight := RunState.new_run(101)
 	eight.cultivator["notorious"] = 8
-	var hard_capped := ResolverScript.apply(eight, {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, catalog)
+	var hard_capped := ResolverScript.apply(eight, {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, catalog)
 	assert_true(hard_capped["result"]["ok"])
 	assert_eq(hard_capped["state"].stone, 12 - 10)
 

@@ -25,7 +25,7 @@ func test_buying_at_capacity_is_rejected_without_state_change() -> void:
 	var run := _run_with_n_instances(3, "small_light_gu")
 	assert_eq(DeckCapacityScript.card_count(run, tuned), 3)
 
-	var result := ResolverScript.apply(run, {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, tuned)
+	var result := ResolverScript.apply(run, {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, tuned)
 	assert_false(result["result"]["ok"])
 	assert_eq(result["result"]["reason"], "deck_capacity_exceeded")
 	assert_eq(result["state"].refined_gu_ids, run.refined_gu_ids)
@@ -34,9 +34,9 @@ func test_buying_at_capacity_is_rejected_without_state_change() -> void:
 func test_buying_below_capacity_is_accepted() -> void:
 	var tuned := _capacity_three()
 	var run := _run_with_n_instances(2, "small_light_gu")
-	var result := ResolverScript.apply(run, {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, tuned)
+	var result := ResolverScript.apply(run, {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, tuned)
 	assert_true(result["result"]["ok"])
-	assert_true(result["state"].refined_gu_ids.has("moonlight_gu"))
+	assert_true(result["state"].refined_gu_ids.has("stone_shell_gu"))
 
 
 func test_consume_type_recipe_stays_allowed_at_capacity_net_delta() -> void:
@@ -56,9 +56,9 @@ func test_destroying_a_gu_frees_capacity_for_buying() -> void:
 	var run := _run_with_n_instances(3, "small_light_gu")
 	var destroyed := ResolverScript.apply(run, {"type": "destroy_gu", "instance_id": "gu_001"}, tuned)
 	assert_true(destroyed["result"]["ok"])
-	var bought := ResolverScript.apply(destroyed["state"], {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, tuned)
+	var bought := ResolverScript.apply(destroyed["state"], {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, tuned)
 	assert_true(bought["result"]["ok"])
-	assert_true(bought["state"].refined_gu_ids.has("moonlight_gu"))
+	assert_true(bought["state"].refined_gu_ids.has("stone_shell_gu"))
 
 
 func test_preview_blocks_purchase_card_when_deck_is_full() -> void:

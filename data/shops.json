@@ -5,34 +5,40 @@
       "kind": "soul_boost",
       "card_key": "soul_pill",
       "stone_cost": 6,
-      "soul_gain": 1
+      "soul_gain": 1,
+      "tier": 2
     },
     {
       "id": "purchase_stone_shell",
       "kind": "purchase",
       "card_key": "purchase.stone_shell",
       "gu_id": "stone_shell_gu",
-      "stone_cost": 6
+      "stone_cost": 6,
+      "tier": 1
     },
     {
       "id": "purchase_moonlight",
       "kind": "purchase",
       "card_key": "purchase.moonlight",
       "gu_id": "moonlight_gu",
-      "stone_cost": 6
+      "stone_cost": 6,
+      "tier": 3
     },
     {
       "id": "lifespan_pulse_drum",
       "kind": "lifespan_deal",
       "card_key": "lifespan.pulse_drum",
       "gu_id": "pulse_drum_gu",
-      "lifespan_cost": 1
+      "lifespan_cost": 1,
+      "tier": 2
     },
     {
       "id": "barter_unknown_gu",
       "kind": "barter",
       "card_key": "barter.unknown_gu",
-      "input_gu_ids": ["trail_eye_gu"],
+      "input_gu_ids": [
+        "trail_eye_gu"
+      ],
       "clue": "merchant_sealed_cage",
       "rewards": [
         {
@@ -49,12 +55,30 @@
           "id": "reward_empty_cage",
           "weight": 1
         }
-      ]
+      ],
+      "tier": 3
     },
     {
       "id": "wash_notoriety",
       "kind": "wash_notoriety",
-      "card_key": "wash.notoriety"
+      "card_key": "wash.notoriety",
+      "tier": 1
+    },
+    {
+      "id": "purchase_thunder_ward",
+      "kind": "purchase",
+      "card_key": "purchase.thunder_ward",
+      "gu_id": "venom_thread_gu",
+      "stone_cost": 9,
+      "tier": 4
+    },
+    {
+      "id": "purchase_moon_glow",
+      "kind": "purchase",
+      "card_key": "purchase.moon_glow",
+      "gu_id": "moon_glow_gu",
+      "stone_cost": 12,
+      "tier": 5
     }
   ]
 }
