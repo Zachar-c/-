@@ -1,11 +1,11 @@
 # 蛊祖
 
-《蛊真人》同人单机卡牌肉鸽《蛊路求生》——以《蛊真人》世界规则为素材的修行肉鸽原型项目。
+《蛊真人》同人单机卡牌肉鸽《問眞》（前称《蛊路求生》/旧名 Nanjiang Smoke）——以《蛊真人》世界规则为素材的修行肉鸽原型项目。仓库不提供 `GDD.md`；权威基线 = [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)。
 
 仓库同时保存两类内容：
 
 - 原文语料与设定提炼物（`分支：六卷精编版/`）与游戏设计原始数据（`肉鸽设计-原始数据/`）。
-- 《蛊路求生》的设计、实施计划与 Godot 4.7.2 原型代码。
+- 《問眞》的设计、实施计划与 Godot 4.7.2 原型代码。
 
 ## 从这里开始
 
@@ -13,6 +13,7 @@
 - [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)：**权威基线**——核心玩法循环/资源/流派/地图/战斗/交互/肉鸽规则。
 - [南疆冒烟版设计](docs/superpowers/specs/2026-08-21-nanjiang-roguelite-smoke-design.md)：旧基线，仅作参考。
 - [协作约定](AGENTS.md)：人工与代理继续编辑本仓库时应遵循的规则。
+- [文档体系标准与维护规范](docs/superpowers/specs/2026-08-28-doc-system-standard-design.md)：文档分层、命名、作品名口径、维护检查表。
 
 ## 分支
 
