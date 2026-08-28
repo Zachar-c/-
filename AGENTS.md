@@ -69,7 +69,7 @@
 | 美术 | ⚠️ 部分 | 程序化占位为主；StS token 体系 10 屏已合入 master；问眞极简 UI token 层（Task 1）@`6687945` 已合入 `codex/demo1` |
 | 平衡性/内容量 | ⚠️ 部分 | 卡池 200 蛊 ✅；敌人/事件/叙事量偏少 |
 | 发布构建（导出/Release 裁剪调试面板） | ✅ | 2026-08-27：`export_presets.cfg` + `tools/export.ps1` 落地，Release/Debug 包实测（黑名单零命中、F12 门禁双包验证），见下方 2026-08-27 批 |
-| 崩溃恢复 | ⚠️ 部分 | 存档校验拒篡改；进程级恢复未测 |
+| 崩溃恢复 | ✅ 已验证 | 2026-08-29 `tools/crash_recovery_check.ps1`：真实进程游玩+循环存档后 **Stop-Process 硬杀**→新进程校验和恢复+断点吻合+可续玩+篡改拒绝+tmp 残留容忍，RESULT: PASS |
 | 本地化 | ✅ | 中文单语（目标市场） |
 | 无网络依赖/LLM 边界 | ✅ | 全本地种子化，LLM 仅受控文本且离线模板降级 |
 
@@ -91,6 +91,12 @@
 - 已知遗留：
   - **ActionCardRow 全局类名冲突（已解决 @`df21db9`，2026-08-28 补记）**：遗留 `scripts/presentation/action_card_row.gd`（VBoxContainer）与 `ui/widgets/action_card_row.guitkx`（RefCounted）撞名，曾导致全量单测 56 失败；已按「给 widget 改名」路线处理——旧 builder 更名 `action_card_row_builder.gd`（class `ActionCardRowBuilder`），并新增迁移守卫 `tests/unit/test_action_card_row_migration.gd`（断言 `action_card_row.gd` 不存在、格式化助手归 `DisplayText`）。
   - **战斗平衡（已解决 @`eab1c94`，2026-08-28）**：山脊猎犬伏肩扑咬 3→2 伤；战斗起点保底 1 点首回合能量（真元 0 也可出一张牌，relic 钩子在其上叠加）；战斗内拳脚/荆藤击卡牌预检现会预告在场的直接攻伐反制（§16.5）。
+
+### 2026-08-29 节点拓扑 v2 批（master，2026-08-29 用户裁定）
+
+**大层×行×节点实例拓扑**（`4ee36c6`）：一局 5 大层；每大层 8–11 行 × 每行 2–6 节点（32–44 节点，首行 1–2 入口、末行关底 Boss）→ 一局约 160–220 实例。route 节点=实例（`L{层}R{行}N{序}` + template_id/layer/row），node_flags 按实例键控，Run 存档 SAVE_VERSION 3。4 个新大层 Boss（转 1–4，authored turn=层号），`boss_defeated_L{n}` 门禁下一大层；大层五瘴脉之主保留全局旗标门禁升仙窗。锚点（升仙五项源/黑市/休整）每局唯一定放；first_run 手工网保留（instance=template）。
+**统一数值裁定表**：`pacing.json` `layers`（行数/行宽/敌转/掉落材料数/稀有度权重/黑市价格乘数/货阶上限）为唯一真值；loot 层表优先 tier 表回退；黑市分层上架（tier≤层号）+ 层价格乘数与恶名/复访乘算并存——层越深货越贵且稀有。
+**进程级崩溃恢复验证**：`tools/crash_recovery_check.ps1` PASS（硬杀→校验和恢复→可续玩→篡改拒绝→tmp 容忍）。
 
 ### 2026-08-29 战斗平衡与升仙评价批（master，2026-08-28/29 用户裁定）
 
