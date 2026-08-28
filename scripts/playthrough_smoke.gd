@@ -9,6 +9,7 @@ extends SceneTree
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
+const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
 var _log: Array[String] = []
@@ -41,7 +42,8 @@ func _initialize() -> void:
 
 	var steps := 0
 	var outcome := "ongoing"
-	while steps < 400 and outcome == "ongoing":
+	# 拓扑 v2 一局 160–220 节点（含每层 Boss 台），400 步预算必然中途截断。
+	while steps < 900 and outcome == "ongoing":
 		steps += 1
 		outcome = _step(controller)
 		if controller.state != null and controller.state.is_terminal():
@@ -60,7 +62,7 @@ func _initialize() -> void:
 		if str(event.get("action", "")) == "dda_marker":
 			dda_triggers += 1
 	_tell("DDA 标记触发: %d 次" % dda_triggers)
-	_tell("中途进程: %s" % ["失败(无进展)" if steps >= 400 else "正常"])
+	_tell("中途进程: %s" % ["失败(无进展)" if steps >= 900 else "正常"])
 	controller.free()
 	quit(0)
 
@@ -152,48 +154,71 @@ func _step_via_cards(controller, label: String) -> String:
 
 
 func _step_map(controller) -> String:
+	# 玩家生存本能：带伤先吃粮（材料「直接使用」通路），气血不满才优先休整。
+	if int(controller.state.health) < int(controller.state.max_health):
+		for mat_id in ["beast_blood", "beast_bone"]:
+			if int(controller.state.materials.get(mat_id, 0)) > 0:
+				var eaten: Dictionary = controller.submit_command({"type": "use_material", "material_id": mat_id})
+				if bool(eaten.get("ok", false)):
+					_tell("服用 %s 调理气血（气血=%d）" % [mat_id, int(controller.state.health)])
+					return "ongoing"
 	var visible: Array = controller.visible_route_nodes(2)
 	var visited: Dictionary = controller.state.node_flags
 	# 候选顺序：默认玩家策略为「攒实力、Boss 放最后」——先清其余节点，
-	# 气血不足一半也不碰 Boss；仅当别无可走时才硬闯（或用
-	# PLAYTHROUGH_BOSS_FIRST=1 还原旧的 Boss 优先可达性试探）。
+	# 气血不足六成或战力未成型也不碰任何关底 Boss（拓扑 v2 每大层都有
+	# layer_boss_stand_N 关底台，旧逻辑只认 final_boss_stand 全局门）；
+	# 仅当别无可走时才硬闯（或用 PLAYTHROUGH_BOSS_FIRST=1 还原旧的 Boss 优先）。
 	# 可见 ≠ 可达，逐个尝试直到成功。
 	var boss_first := OS.get_environment("PLAYTHROUGH_BOSS_FIRST") == "1"
-	var boss_ready := int(controller.state.health) * 2 >= int(controller.state.max_health)
+	var hurt := int(controller.state.health) * 10 < int(controller.state.max_health) * 6
+	var strong_enough := (controller.state.gu_instances as Dictionary).size() >= 2 \
+		or int(controller.state.stone) >= 10
+	var boss_ready := (not hurt) and strong_enough
 	var candidates: Array[Dictionary] = []
+	var reposition: Array[Dictionary] = []
 	var boss_node := {}
-	if str(visited.get("boss_defeated", "")) != "true":
-		for node in visible:
-			if visited.has(str(node.get("id", ""))):
-				continue
-			if str(node.get("id", "")) == "final_boss_stand":
-				boss_node = node
-				break
 	for node in visible:
 		var node_id := str(node.get("id", ""))
-		if visited.has(node_id):
+		if _is_boss_stand(node):
+			boss_node = node
 			continue
-		if str(node_id) == "final_boss_stand":
+		if visited.has(node_id):
+			# 领域允许沿前向边重走已访问节点：困在无 Boss 边的行末时可
+			# 绕行到有 Boss 边的节点——兜底重定位目标，优先级最低。
+			reposition.append(node)
 			continue
 		candidates.append(node)
-	# 冲仙五项收集优先（玩家策略：升仙前集齐条件节点），其余节点随后。
+	# 冲仙五项收集优先（玩家策略：升仙前集齐条件节点）；气血不满就主动
+	# 补休整（防带伤抵达 Boss 台后无路可退），其余节点随后。
 	var sources := ["body_imprint_ritual", "earth_vein_contest", "sealed_earth_vein", "mist_shrine", "poison_fog_vein"]
 	var prioritized: Array[Dictionary] = []
+	var rest_first: Array[Dictionary] = []
 	var others: Array[Dictionary] = []
 	for candidate in candidates:
-		if sources.has(str(candidate.get("id", ""))):
+		var node_id := str(candidate.get("id", ""))
+		if sources.has(node_id):
 			prioritized.append(candidate)
+		elif int(controller.state.health) < int(controller.state.max_health) and str(candidate.get("type", "")) == "rest":
+			rest_first.append(candidate)
 		else:
 			others.append(candidate)
 	candidates = prioritized
+	for rest_node in rest_first:
+		candidates.append(rest_node)
 	for other in others:
 		candidates.append(other)
+	# 未访问节点全部走完后，允许沿前向边重走已访问节点（领域不拒 visited），
+	# 绕到有 Boss 边的节点——单向链上不再困死。
+	if candidates.is_empty():
+		for rep in reposition:
+			candidates.append(rep)
 	if not boss_node.is_empty():
 		if boss_first or boss_ready or candidates.is_empty():
 			if boss_first:
 				candidates.push_front(boss_node)
 			else:
 				candidates.append(boss_node)
+	var traveled := false
 	for target in candidates:
 		var node_id := str(target.get("id", ""))
 		var result: Dictionary = controller.submit_command({"type": "travel", "node_id": node_id})
@@ -202,45 +227,98 @@ func _step_map(controller) -> String:
 				node_id, str(target.get("type", "")),
 				int(controller.state.stone), int(controller.state.health),
 			])
-			return "ongoing"
+			traveled = true
+			break
 		_tell("行至被拒 %s：%s" % [node_id, str(result.get("reason", "unknown"))])
-	_tell("地图无新节点可走（路线尽头）")
-	return "no_route"
+	# 兜底：候选里全是不可达的未访问节点（如下一大层被 Boss 门禁锁住）
+	# 时，Boss 台仍在当前可达集内——硬着头皮也要试（困死比战败更糟）。
+	if not traveled and not boss_node.is_empty():
+		var boss_id := str(boss_node.get("id", ""))
+		var boss_travel: Dictionary = controller.submit_command({"type": "travel", "node_id": boss_id})
+		if bool(boss_travel.get("ok", false)):
+			_tell("行至 %s (boss)：元石=%d 气血=%d" % [
+				boss_id, int(controller.state.stone), int(controller.state.health),
+			])
+			return "ongoing"
+		_tell("行至被拒 %s：%s" % [boss_id, str(boss_travel.get("reason", "unknown"))])
+	if not traveled:
+		_tell("地图无新节点可走（路线尽头）")
+		return "no_route"
+	return "ongoing"
+
+
+func _is_boss_stand(node: Dictionary) -> bool:
+	# 关底 Boss 台：拓扑 v2 层 Boss（template_id=layer_boss_stand_N，实例 id
+	# 是 L{层}R{行}N{序}）+ 五层终局 final_boss_stand。
+	var node_id := str(node.get("id", ""))
+	if node_id == "final_boss_stand":
+		return true
+	return str(node.get("template_id", "")).begins_with("layer_boss_stand")
+
+
+const STONE_RESERVE := 1
+
+
+func _owned_count(state, gid: String) -> int:
+	var count := 0
+	for inst in state.gu_instances.values():
+		if str(inst.get("definition_id", "")) == gid:
+			count += 1
+	return count
 
 
 func _step_shop(controller) -> String:
-	# 玩家视角：按货架买一件买得起且未持有的货，然后离店。
+	# 玩家视角：把元石花成战力——优先未持有的战力蛊，已持有的同名卡再买
+	# 也有价值（多一张手牌 + 同名升阶的原料）；灵魂丹在魂魄不满时补；
+	# 货阶高于当前大层的不碰（shop_tier_locked 必拒）。留 2 元石应急。
 	var node_type := str(controller.current_node.get("type", ""))
 	var state = controller.state
+	var max_tier: int = ResolverScript.shop_max_tier(state, controller.catalog)
 	if node_type == "caravan":
+		var caravan_offers: Array[Dictionary] = []
 		for offer_value in controller.catalog.get("caravan_offer_by_id", {}).values():
 			var offer: Dictionary = offer_value
-			var gid := str(offer.get("gu_id", ""))
-			if state.gu_instances.values().any(func(inst): return str(inst.get("definition_id", "")) == gid):
+			if str(offer.get("kind", "")) != "purchase":
 				continue
+			caravan_offers.append(offer)
+		caravan_offers.sort_custom(func(a, b): return int(a.get("stone_cost", 0)) < int(b.get("stone_cost", 0)))
+		for offer in caravan_offers:
 			var price := int(offer.get("stone_cost", 0))
-			if int(state.stone) >= price:
+			if int(state.stone) - price >= STONE_RESERVE:
 				var bought: Dictionary = controller.submit_command({"type": "buy_gu", "offer_id": str(offer.get("id", ""))})
-				if bool(bought.get("ok", false)):
-					_tell("商队购入 %s（%d 元石）" % [gid, price])
-					break
+				var bought_payload: Dictionary = bought.get("result", bought) as Dictionary
+				if bool(bought_payload.get("ok", false)):
+					_tell("商队购入 %s（%d 元石）" % [str(offer.get("gu_id", "")), price])
 		controller.submit_command({"type": "leave_node"})
 		return "ongoing"
+	var shop_offers: Array[Dictionary] = []
 	for offer_value in controller.catalog.get("shop_offer_by_id", {}).values():
 		var offer: Dictionary = offer_value
-		# 玩家优先级：先买战力蛊（purchase），灵丹等辅助货让位——否则
-		# 货架顺序里排在前面的 soul_pill 会吃掉全部预算。
-		if str(offer.get("kind", "")) != "purchase":
+		var kind := str(offer.get("kind", ""))
+		var tier := int(offer.get("tier", 1))
+		if tier > max_tier:
 			continue
-		var gid := str(offer.get("gu_id", ""))
-		if state.gu_instances.values().any(func(inst): return str(inst.get("definition_id", "")) == gid):
-			continue
+		# 玩家优先级：战力蛊（purchase）> 魂丹（soul_boost，魂魄不满才买）。
+		if kind == "purchase":
+			shop_offers.append(offer)
+		elif kind == "soul_boost" and int(state.cultivator.get("soul", 0)) < int(state.cultivator.get("soul_max", 0)):
+			shop_offers.append(offer)
+	shop_offers.sort_custom(func(a, b):
+		var a_owned := _owned_count(state, str(a.get("gu_id", "")))
+		var b_owned := _owned_count(state, str(b.get("gu_id", "")))
+		if a_owned != b_owned:
+			return a_owned < b_owned
+		return int(a.get("stone_cost", 0)) < int(b.get("stone_cost", 0)))
+	for offer in shop_offers:
 		var price := int(offer.get("stone_cost", 0))
-		if int(state.stone) >= price:
-			var bought: Dictionary = controller.submit_command({"type": "shop_purchase", "offer_id": str(offer.get("id", ""))})
-			if bool(bought.get("ok", false)):
-				_tell("黑市购入 %s（%d 元石）" % [gid, price])
-				break
+		if price <= 0 or int(state.stone) - price < STONE_RESERVE:
+			continue
+		var bought: Dictionary = controller.submit_command({"type": "shop_purchase", "offer_id": str(offer.get("id", ""))})
+		var bought_payload: Dictionary = bought.get("result", bought) as Dictionary
+		if bool(bought_payload.get("ok", false)):
+			_tell("黑市购入 %s（%d 元石）" % [str(offer.get("gu_id", "")), price])
+		else:
+			_tell("黑市购入被拒：%s（%s）" % [str(offer.get("id", "")), str(bought_payload.get("reason", "unknown"))])
 	controller.submit_command({"type": "leave_node"})
 	return "ongoing"
 
@@ -313,36 +391,68 @@ func _step_battle(controller) -> String:
 	var hand: Array = battle.get("hand", [])
 	var command: Dictionary
 	var guarded: bool = (battle.get("flags", []) as Array).has("guarded")
-	# 玩家式出牌优先级：守护挡大口 → 可执行攻击卡（含束缚）→ 闪避保命 → 收势。
-	var action_id := ""
-	if intent_damage >= 2 and not guarded:
-		action_id = _pick_hand_card(battle, controller, ["stone_shell_gu"])
-	if action_id.is_empty():
-		action_id = _pick_hand_card(battle, controller, [])
-	if not BattleResolverScript.boss_blocks_retreat(battle) \
-			and (int(controller.state.health) <= 2 or _stuck_count >= 4):
-		# 玩家止损：残血或长期打不动敌血就抽身；Boss 局无路可退只能死战。
+	var can_flee: bool = not BattleResolverScript.boss_blocks_retreat(battle)
+	var hp := int(controller.state.health)
+	var max_hp := int(controller.state.max_health)
+	# 按卡蓝谱 effects 选牌（真值来源）：输出/守护/祛伤各取一张可执行手牌。
+	# 旧 slot_role 反查会把侦察/增益蛊当成攻击（trail_eye 当攻击牌打了整局）。
+	var attack_id := _pick_card_by_effect(battle, controller, ["strike_enemy", "deal_damage"])
+	var heal_id := _pick_card_by_effect(battle, controller, ["relief_injury"])
+	var guard_id := _pick_card_by_effect(battle, controller, ["gain_guard", "guard_self"])
+	var lethal := intent_damage > 0 and hp <= intent_damage
+	var dodging: bool = (battle.get("flags", []) as Array).has("dodging")
+	if can_flee and (hp <= 1 or intent_damage >= hp or _stuck_count >= 6):
+		# 玩家止损：下一口齐射能咬死（围攻节点 4 伤/回合）或打不动敌血时
+		# 抽身——早期小怪可打赢换战利品，但双敌围攻对开局套路是死局，撤为上策。
 		command = {"type": "retreat"}
-	elif intent_damage > 0 and int(controller.state.health) <= intent_damage \
-			and not battle.get("flags", []).has("dodging") \
-			and not (BattleResolverScript.boss_blocks_retreat(battle) and _stuck_count >= 4):
-		# 敌方下一口能咬死人时优先闪避保命（dodging 已挂时闪避无效，转攻）；
-		# Boss 死战局被卡时不再无限闪避——退无可退就持续进攻找胜机。
+	elif lethal and not dodging and guard_id.is_empty() \
+			and (attack_id.is_empty() or _total_enemy_hp(living_enemies) > 4):
+		# 敌方下一口能咬死人且手里没有守护牌：闪避保命——除非敌方血量已薄
+		#（≤4）且手里有攻击牌，那是搏命收头的窗口，闪避死守只会无限拖延。
 		command = {"type": "basic_dodge"}
-	elif not action_id.is_empty():
-		var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
-		command = {
-			"type": "action_card",
-			"action_id": "battle.%s.%s" % [str(battle.get("battle_id", "")), action_id],
-			"card_id": action_id,
-			"target_id": target_id,
-			"state_version": int(battle.get("hand_version", 0)),
-		}
-	elif hand.is_empty():
-		# 手牌打空必须收势：不结束回合就永远抽不到下一张牌。
-		command = {"type": "end_turn"}
+	elif not can_flee:
+		# Boss 死战节奏：守护旗标只挡一口，攻击与垫挡必须交替。血量进入
+		# 危险线（两口内死）才垫挡（守护优先、闪避兜底）；敌方血量 ≤4 是
+		# 收头窗口——先手结算意味着搏命连砍也能在反打前终结战斗；僵局 4 步
+		# 强制恢复进攻（死也要打死，绝不无限闪避拖延）。
+		var attack_usable := not attack_id.is_empty() and not attack_id.contains("bind")
+		var heal_usable := not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0
+		var kill_window := _total_enemy_hp(living_enemies) <= 4
+		var danger := hp <= intent_damage * 2
+		var must_attack := attack_usable and (not danger or kill_window or _stuck_count >= 4)
+		if must_attack:
+			command = _play_card_command(battle, attack_id, living_enemies)
+		elif danger and not guarded:
+			if not guard_id.is_empty():
+				command = _play_card_command(battle, guard_id, living_enemies)
+			else:
+				command = {"type": "basic_dodge"}
+		elif heal_usable:
+			command = _play_card_command(battle, heal_id, living_enemies)
+		elif not guard_id.is_empty():
+			command = _play_card_command(battle, guard_id, living_enemies)
+		else:
+			var punch_result: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))
+			if not bool(punch_result.get("finished", false)):
+				# 拳脚门（basic_attack_used）只在收势时清除——被拒就收势换牌，
+				# 收势同时回气 3/回合并补手牌，绝不能无限闪避空转。
+				controller.submit_command({"type": "end_turn"})
+			return "ongoing"
 	else:
-		command = {"type": "end_turn"}
+		# 常规战：大口守护 → 攻击 → 带伤祛伤 → 僵局收势换牌。
+		if intent_damage >= 2 and not guarded and not guard_id.is_empty():
+			command = _play_card_command(battle, guard_id, living_enemies)
+		elif not attack_id.is_empty():
+			command = _play_card_command(battle, attack_id, living_enemies)
+		elif not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0:
+			command = _play_card_command(battle, heal_id, living_enemies)
+		elif _stuck_count >= 2:
+			command = {"type": "end_turn"}
+		elif hand.is_empty():
+			command = {"type": "end_turn"}
+		else:
+			command = {"type": "end_turn"}
+	var pre_hp := int(controller.state.health)
 	var result: Dictionary = controller.submit_command(command)
 	if bool(result.get("finished", false)):
 		_tell("战斗结束：%s（我方气血 %d/%d）" % [
@@ -353,16 +463,60 @@ func _step_battle(controller) -> String:
 			controller.submit_command({"type": "leave_node"})
 			_tell("止损撤离，离开该节点")
 		return "ongoing"
-		if not bool(result.get("accepted", false)):
-			var fallback_target := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
-			command = {"type": "action_card", "action_id": "battle.basic.punch", "target_id": fallback_target, "state_version": int(battle.get("hand_version", 0))}
-			result = controller.submit_command(command)
-		if not bool(result.get("accepted", false)):
-			command = {"type": "end_turn"}
-			result = controller.submit_command(command)
-			if not bool(result.get("accepted", false)):
-				_tell("战斗阻塞：%s" % str(result.get("feeds", result)))
+	# 拒绝回退（旧实现放在 return 之后永远不可达）：命令被拒不推进时依次
+	# 回退 普攻 → 收势，避免原地空转耗尽步数。
+	if int(controller.state.health) == pre_hp and _stuck_count >= 1:
+		var punch: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))
+		if not bool(punch.get("finished", false)) and int(controller.state.health) == pre_hp:
+			controller.submit_command({"type": "end_turn"})
 	return "ongoing"
+
+
+func _pick_card_by_effect(battle: Dictionary, controller, wanted: Array) -> String:
+	# 按卡蓝谱 effects 挑可执行手牌——slot_role 反查会把侦察/增益蛊当成攻击，
+	# effects 是唯一真值（strike_enemy/deal_damage=输出，gain_guard=守护）。
+	var prefix := "battle.%s." % str(battle.get("battle_id", ""))
+	var cards: Array[Dictionary] = ActionPreviewServiceScript.preview_battle_actions(
+		battle, controller.state, controller.catalog)
+	var executable := {}
+	for card_value in cards:
+		var card: Dictionary = card_value
+		var card_id := str(card.get("id", ""))
+		if card_id.begins_with(prefix) and bool(card.get("executable", false)):
+			executable[card_id.trim_prefix(prefix)] = true
+	for hand_value in battle.get("hand", []):
+		var hand_card: Dictionary = hand_value
+		var instance_id := str(hand_card.get("instance_id", ""))
+		if not executable.has(instance_id):
+			continue
+		var definition: Dictionary = controller.catalog.get("card_by_id", {}).get(
+			str(hand_card.get("definition_id", "")), {})
+		for effect_value in definition.get("effects", []):
+			if str(effect_value) in wanted:
+				return instance_id
+	return ""
+
+
+func _play_card_command(battle: Dictionary, action_id: String, living_enemies: Array[Dictionary]) -> Dictionary:
+	var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
+	return {
+		"type": "action_card",
+		"action_id": "battle.%s.%s" % [str(battle.get("battle_id", "")), action_id],
+		"card_id": action_id,
+		"target_id": target_id,
+		"state_version": int(battle.get("hand_version", 0)),
+	}
+
+
+func _punch_command(battle: Dictionary, living_enemies: Array[Dictionary]) -> Dictionary:
+	var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
+	return {
+		"type": "action_card",
+		"action_id": "battle.%s.basic.punch" % str(battle.get("battle_id", "")),
+		"card_id": "basic.punch",
+		"target_id": target_id,
+		"state_version": int(battle.get("hand_version", 0)),
+	}
 
 
 func _pick_hand_card(battle: Dictionary, controller, wanted_defs: Array) -> String:
