@@ -5,8 +5,8 @@ extends Control
 const SIZE := 34.0
 const CENTER := 17.0
 const RING := 13.0
-const INK := Color("191c20")
-const INK_RING := Color("333a42")
+const INK := GuStyle.INK_PRIMARY
+const INK_RING := GuStyle.INK_SOFT
 
 const ACCENTS := {
 	"stone": Color("5f9d8a"),

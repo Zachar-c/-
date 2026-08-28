@@ -300,7 +300,7 @@ func _append_enemy_block(column: VBoxContainer, battle: Dictionary) -> void:
 	var name_label := Label.new()
 	name_label.text = "敌 · %s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
 	name_label.add_theme_font_size_override("font_size", 26)
-	name_label.add_theme_color_override("font_color", Color("e8b4a4"))
+	name_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
 	column.add_child(name_label)
 
 	# §16.5.2 enemy intent must carry an explicit number AND effect word.

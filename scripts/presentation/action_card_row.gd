@@ -37,7 +37,7 @@ static func build(card: Dictionary, minimum_width: int = 360, tooltip: GuTooltip
 	details.text = _details(card)
 	details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	details.add_theme_font_size_override("font_size", 14)
-	details.add_theme_color_override("font_color", Color("d7c6a1") if bool(card.get("executable", false)) else Color("c28f8f"))
+	details.add_theme_color_override("font_color", GuStyle.JADE if bool(card.get("executable", false)) else GuStyle.CINNABAR)
 	row.add_child(details)
 	return row
 

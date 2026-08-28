@@ -26,7 +26,7 @@ func _ready() -> void:
 	_toast.visible = false
 	_toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_toast.add_theme_color_override("font_color", Color("e7c883"))
+	_toast.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	_toast.add_theme_font_size_override("font_size", 18)
 	_toast.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	_toast.offset_top = 12.0
@@ -143,7 +143,7 @@ func _append_command_bar(column: VBoxContainer, panel: VBoxContainer, feedback: 
 		var feedback_label := Label.new()
 		feedback_label.text = feedback
 		feedback_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		feedback_label.add_theme_color_override("font_color", Color("b8d5cc"))
+		feedback_label.add_theme_color_override("font_color", GuStyle.JADE)
 		bar.add_child(feedback_label)
 
 
@@ -151,7 +151,7 @@ func _append_panel_title(panel: VBoxContainer, text: String) -> void:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_size_override("font_size", 20)
-	label.add_theme_color_override("font_color", Color("e7c883"))
+	label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	panel.add_child(label)
 
 

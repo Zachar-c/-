@@ -66,7 +66,7 @@ func render_session(
 		var summary_label := Label.new()
 		summary_label.text = summary
 		summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		summary_label.add_theme_color_override("font_color", Color("c6d3cf"))
+		summary_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 		left.add_child(summary_label)
 	if not results.is_empty():
 		var history := RichTextLabel.new()
@@ -81,7 +81,7 @@ func render_session(
 		var outcome := Label.new()
 		outcome.text = "结果：%s" % DisplayText.result(result)
 		outcome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		outcome.add_theme_color_override("font_color", Color("b8d5cc"))
+		outcome.add_theme_color_override("font_color", GuStyle.JADE)
 		left.add_child(outcome)
 	if not result.get("actual_changes", []).is_empty():
 		var changes := RichTextLabel.new()

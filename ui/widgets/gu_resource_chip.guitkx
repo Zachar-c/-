@@ -13,7 +13,7 @@ export GuResourceChip() -> RuitkVNode {
   elif kind == "hunpo":
     color = GuStyle.JADE
   elif kind == "material":
-    color = Color("9fd6a0")
+    color = GuStyle.JADE
   elif kind == "meta":
     color = GuStyle.PAPER_BG
   var names = {"yuanstone": "元石", "shouyuan": "寿元", "hunpo": "魂魄", "material": "材料", "meta": "见闻"}
