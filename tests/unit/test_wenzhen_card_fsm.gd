@@ -24,6 +24,7 @@ func test_single_target_card_waits_for_enemy_and_can_cancel() -> void:
 	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]))
 	assert_true(_press(host, "月光蛊"))
 	await get_tree().process_frame
+	await get_tree().process_frame
 	assert_not_null(_named(host, "battle_target_select"))
 	assert_true(played.is_empty(), "choosing a card cannot submit before a target exists")
 	assert_true(_press(host, "取消目标"))

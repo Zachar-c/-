@@ -1,8 +1,8 @@
-import { GuCard } from "~/ui/widgets/gu_card"
+@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 
-# This hand only reports local gestures; it never submits domain commands.
+# P0-2: one compact card body per hand card. Detailed information is shown
+# by BattleScreen's shared tooltip only while the card is hovered or selected.
 export GuBattleHand() -> RuitkVNode {
   var cards = props.get("cards", [])
   var interaction = props.get("interaction", {})
@@ -13,12 +13,39 @@ export GuBattleHand() -> RuitkVNode {
   var on_cancel = props.get("on_cancel", func(): pass)
   var card_rows = []
   for card in cards:
-    var executable = bool(card.get("executable", true))
-    var card_name = str(card.get("name", "蛊虫"))
-    var is_active = str(interaction.get("card_id", "")) == str(card.get("id", ""))
-    card_rows.append(<GuCard title={ card_name } cost={ str(card.get("cost", 0)) } quality={ str(card.get("quality", "")) } danger={ bool(card.get("curse_warning", false)) } curse_warning={ bool(card.get("curse_warning", false)) } interaction_mode={ str(interaction.get("mode", "idle")) } disabled={ not executable } selected={ is_active } expand_h={ true }><Label text={ str(card.get("effect", "")) } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } /><GuTooltipView title={ card_name } quality={ str(card.get("quality", "")) } effect={ str(card.get("effect", "")) } cost={ str(card.get("cost_ex", "消耗 %s" % str(card.get("cost", 0)))) } curse_warning={ bool(card.get("curse_warning", false)) } /><Button text={ card_name } disabled={ not executable } onMouseEntered={ func(): on_hover.call(card) } onGuiInput={ func(event): if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed) or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed): on_cancel.call() } onPressed={ func(): on_press.call(card) } style={ {"font_color": GuStyle.INK_PRIMARY, "min_height": 30} } /></GuCard>)
+    var executable := bool(card.get("executable", true))
+    var card_id := str(card.get("id", ""))
+    var card_name := str(card.get("name", "蛊虫"))
+    var quality := str(card.get("quality", ""))
+    var cost_label := str(card.get("cost", ""))
+    var effect_text := str(card.get("effect", ""))
+    var block_reason := str(card.get("block_reason", ""))
+    var curse_warning := bool(card.get("curse_warning", false))
+    var is_active := str(interaction.get("card_id", "")) == card_id
+    var header_rows = []
+    if curse_warning:
+      header_rows.append(<PanelContainer style={ {"bg_color": GuStyle.CINNABAR, "corner_radius_all": 4} }><MarginContainer style={ {"margin_left": 5, "margin_right": 5, "margin_top": 1, "margin_bottom": 1} }><Label text="咒" style={ {"font_color": GuStyle.PAPER_BG, "font_size": 12} } /></MarginContainer></PanelContainer>)
+    if quality != "":
+      header_rows.append(<Label text={ quality } style={ {"font_color": GuStyle.GOLD, "font_size": 12} } />)
+    var detail_rows = []
+    if effect_text != "":
+      detail_rows.append(<Label text={ effect_text } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />)
+    if not executable and block_reason != "":
+      detail_rows.append(<Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.CINNABAR, "font_size": 12} } />)
+    if cost_label != "":
+      detail_rows.append(<Label text={ "◆ " + cost_label } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+    var body_style := {
+      "bg_color": GuStyle.PAPER_RAISED if is_active else GuStyle.PAPER_BG,
+      "corner_radius_all": 8,
+      "border_width_all": 2 if is_active else 1,
+      "border_color": GuStyle.JADE if is_active else GuStyle.HAIRLINE_COLOR,
+      "min_height": 96,
+      "size_flags_horizontal": 3,
+      "modulate": Color(1, 1, 1, 0.55) if not executable else Color(1, 1, 1, 1.0),
+    }
+    card_rows.append(<Button name={ "card_body_" + card_id } text={ card_name } disabled={ false } onMouseEntered={ func(): on_hover.call(card) } onGuiInput={ func(event): if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed) or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed): on_cancel.call() } onPressed={ func(): if executable: on_press.call(card) } style={ body_style }><MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 10, "margin_bottom": 10} }><VBoxContainer style={ {"separation": 6} }>{ header_rows }{ detail_rows }</VBoxContainer></MarginContainer></Button>)
   if card_rows.is_empty():
-    card_rows.append(<Label text="（无手牌）" style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } />)
+    card_rows.append(<Label text="（无手牌）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
   var cancel_rows = []
   if str(interaction.get("mode", "idle")) == "target_select":
     cancel_rows.append(<GuButton label="取消目标" on_press={ on_cancel } />)

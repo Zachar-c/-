@@ -3,7 +3,7 @@
 # 固定格式：品质 / 效果 / 联动 / 代价 / 诅咒警示；缺段隐藏、顺序恒定。
 # 底色 PAPER 卷轴 + 深字 INK；DANGER 只保留给诅咒警示行，不与正文混用。
 # 品质色轨取宣纸上可读的深色暖阶（GOLD_DIM→ANOMALY_AMBER→EMBER→BLOOD）。
-# props：title / quality / effect / synergy / cost / curse_warning / on_detail
+# props：title / quality / effect / synergy / cost / block_reason / curse_warning / on_detail
 
 export GuTooltipView() -> RuitkVNode {
   var title = props.get("title", "")
@@ -11,6 +11,7 @@ export GuTooltipView() -> RuitkVNode {
   var effect = props.get("effect", "")
   var synergy = props.get("synergy", "")
   var cost = props.get("cost", "")
+  var block_reason = props.get("block_reason", "")
   var curse_warning = props.get("curse_warning", false)
   var on_detail = props.get("on_detail", null)
 
@@ -37,6 +38,9 @@ export GuTooltipView() -> RuitkVNode {
           }
           @if (cost != "") {
             return ( <Label text={ "代价：" + cost } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } /> )
+          }
+          @if (block_reason != "") {
+            return ( <Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.DANGER, "font_size": 14} } /> )
           }
           @if (curse_warning) {
             return ( <Label text={ "诅咒警示：" + effect } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
