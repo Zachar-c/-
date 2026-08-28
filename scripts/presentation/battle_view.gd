@@ -3,7 +3,7 @@ extends Control
 
 
 
-const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+const ActionCardRowScript := preload("res://scripts/presentation/action_card_row_builder.gd")
 const ResourceIconScript := preload("res://scripts/presentation/resource_icon.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 

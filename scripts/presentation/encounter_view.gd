@@ -3,7 +3,7 @@ extends Control
 
 
 
-const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+const ActionCardRowScript := preload("res://scripts/presentation/action_card_row_builder.gd")
 
 
 # Shared tooltip instance (Rule #3): created once at top level per render and
