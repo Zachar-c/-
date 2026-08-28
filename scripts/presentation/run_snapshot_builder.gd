@@ -790,8 +790,14 @@ static func map(controller) -> Dictionary:
 	var route: Array = controller.route
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var nodes: Array[Dictionary] = []
+	# 2026-08-28 验收批 P0-4：地带/深度/境界改由真实状态导出（旧屏面是
+	# 「青茅山外圍 / 深度 62 · 四轉初階」硬编码谎言）。zone_title 取
+	# pacing.layers[当前层].title，缺失为空串由屏面隐藏。
+	var current_layer := 0
 	for n in MapGeneratorScript.visible_nodes(route, state, 2):
 		var node_id := str(n.get("id", ""))
+		if node_id == str(state.current_node_id):
+			current_layer = int(n.get("layer", 0))
 		nodes.append({
 			"id": node_id,
 			"type": str(n.get("type", "")),
@@ -813,11 +819,23 @@ static func map(controller) -> Dictionary:
 			"id": str(inst_key),
 			"name": DisplayText.gu(str(inst.get("definition_id", ""))),
 		})
+	var zone_title := ""
+	var depth_label := ""
+	if current_layer > 0:
+		zone_title = str(catalog.get("pacing", {}).get("layers", {}).get(str(current_layer), {}).get("title", ""))
+		depth_label = "第 %d 大层" % current_layer
+	var realm_label := ""
+	var cultivation := int(state.cultivation) if state != null else 0
+	if cultivation >= 1 and cultivation <= 5:
+		realm_label = "%s转" % ["一", "二", "三", "四", "五"][cultivation - 1]
 	return {
 		"nodes": nodes,
 		"current_node_id": str(state.current_node_id),
 		"reachable_ids": reach,
 		"gu_satchel": gu_satchel,
+		"zone_title": zone_title,
+		"depth_label": depth_label,
+		"realm_label": realm_label,
 		# D4 存档 Toast（R1.5）：文本来自控制器反馈，空串则不渲染。
 		"toast": str(controller.last_feedback),
 		"resources": _resources(state),

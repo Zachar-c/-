@@ -17,6 +17,16 @@ export MapScreen() -> RuitkVNode {
   if not anomalies.is_empty():
     var first_anomaly = anomalies[0]
     anomaly_label = str(first_anomaly.get("label", first_anomaly.get("id", "险象"))) if first_anomaly is Dictionary else str(first_anomaly)
+  # 2026-08-28 验收批 P0-4：地带/深度/境界绑定真实快照（旧为硬编码假状态）。
+  var zone_title = str(state.get("zone_title", ""))
+  var depth_label = str(state.get("depth_label", ""))
+  var realm_label = str(state.get("realm_label", ""))
+  var subtitle_parts = []
+  if depth_label != "":
+    subtitle_parts.append(depth_label)
+  if realm_label != "":
+    subtitle_parts.append(realm_label)
+  var map_subtitle = " · ".join(subtitle_parts)
   var death_lines = state.get("death_lines", {})
   var toast_text = str(state.get("toast", ""))
 
@@ -64,6 +74,15 @@ export MapScreen() -> RuitkVNode {
   visible_layers.sort()
   if visible_layers.size() > 3:
     visible_layers = visible_layers.slice(0, 3)
+
+  # P0-4：深度刻度绑定真实层号——底带=当前层、中带=下一层、顶带=+2 层；
+  # 无对应带则不渲染（替代旧的 65/64/63/62 死数字）。
+  var depth_rail_rows = []
+  var depth_band_y = [678.0, 348.0, 18.0]
+  var depth_band_names = ["now", "near", "far"]
+  for band_index in visible_layers.size():
+    var band_layer = int(visible_layers[band_index])
+    depth_rail_rows.append(<Label name={ "map_depth_label_" + str(depth_band_names[band_index]) } text={ str(band_layer) } anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ depth_band_y[band_index] } offset_bottom={ depth_band_y[band_index] + 18.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />)
 
   var nodes_by_layer = {}
   for layer in visible_layers:
@@ -223,26 +242,23 @@ export MapScreen() -> RuitkVNode {
         <HBoxContainer name="map_resources" style={ {"separation": 19} }>{ resource_rows }</HBoxContainer>
       </HBoxContainer>
       <HBoxContainer name="map_markers" position={ Vector2(31, 80) } style={ {"separation": 13} }>
-        <Label text={ "契约 · " + (str(contracts[0]) if not contracts.is_empty() else "无") } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.CONTRACT_BLUE, "content_margin_left": 7} } />
+        <Label text={ "契约 · " + ("、".join(contracts) if not contracts.is_empty() else "无") } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.CONTRACT_BLUE, "content_margin_left": 7} } />
         <Label text={ "异变 · " + anomaly_label } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.ANOMALY_YELLOW, "content_margin_left": 7} } />
       </HBoxContainer>
       <HBoxContainer name="map_title" anchor_left={ 0.055 } anchor_right={ 0.945 } offset_top={ 110.0 } offset_bottom={ 142.0 }>
-        <Label text="青茅山外圍" style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_MAP, "font_size": 28} } />
-        <Label text="深度 62 · 四轉初階" style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "content_margin_left": 12} } />
+        <Label text={ zone_title } style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_MAP, "font_size": 28} } />
+        <Label text={ map_subtitle } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "content_margin_left": 12} } />
       </HBoxContainer>
       <Control name="map_camera" clip_contents={ true } anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_bottom={ 1.0 } offset_top={ 158.0 } offset_bottom={ -92.0 }>
         <Panel name="map_camera_backdrop" mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "border_width_top": 1, "border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR, "bg_color": GuStyle.PAPER_MAP} } />
         <Control name="map_depth" mouse_filter={ Control.MOUSE_FILTER_IGNORE } anchor_top={ 0.0 } anchor_bottom={ 1.0 } offset_top={ 0.0 } offset_bottom={ 0.0 } offset_right={ 58.0 } style={ {"border_width_right": 1, "border_color": GuStyle.HAIRLINE_COLOR, "z_index": 3} }>
-          <Label name="map_depth_65" text="65" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 18.0 } offset_bottom={ 36.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
-          <Label name="map_depth_64" text="64" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 248.0 } offset_bottom={ 266.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
-          <Label name="map_depth_63" text="63" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 478.0 } offset_bottom={ 496.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
-          <Label name="map_depth_62" text="62" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 708.0 } offset_bottom={ 726.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
+          { depth_rail_rows }
         </Control>
         <Control name="map_world" anchor_right={ 1.0 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -970.0 }>
           <Control name="map_routes" anchor_left={ 0.0 } anchor_right={ 1.0 } anchor_bottom={ 1.0 } offset_left={ 70.0 }>
             <Label name="map_layer_label_far" text="再前一程" position={ Vector2(0, 4) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
-            <Label name="map_layer_label_near" text="下一程" position={ Vector2(0, 234) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
-            <Label name="map_layer_label_now" text="此刻" position={ Vector2(0, 464) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
+            <Label name="map_layer_label_near" text="下一程" position={ Vector2(0, 452) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
+            <Label name="map_layer_label_now" text="此刻" position={ Vector2(0, 682) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
             <Control name="map_paths" mouse_filter={ Control.MOUSE_FILTER_IGNORE } draw_fn={ path_draw } redraw_key={ path_geometry } style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 1} }>{ path_segments }</Control>
             <Control mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 2} }>{ node_controls }</Control>
           </Control>

@@ -177,7 +177,7 @@ func test_map_master_visible_text_uses_its_local_palette() -> void:
 	var host := _mount_with_commands(_route_snapshot(), {"travel": func(_id): pass, "view_node": func(_id): pass})
 	for _frame in 3:
 		await get_tree().process_frame
-	_assert_label_color(host, "map_depth_65", Color("8b8d85"))
+	_assert_label_color(host, "map_depth_label_now", Color("8b8d85"))
 	_assert_label_color(host, "map_layer_label_far", Color("92948d"))
 	_assert_label_color(host, "map_layer_label_near", Color("92948d"))
 	_assert_label_color(host, "map_layer_label_now", Color("92948d"))
@@ -208,6 +208,48 @@ func test_map_anomaly_badge_renders_label_not_raw_dict() -> void:
 	for _frame in 3:
 		await get_tree().process_frame
 	assert_true(_has_text(string_host, "异变 · 衰运"))
+
+
+func test_map_title_binds_real_zone_depth_realm() -> void:
+	# P0-4 谎言回归拦截：屏面地带/深度/境界必须来自快照（pacing.layers.title +
+	# 当前层 + cultivation），快照没给就不渲染——旧硬编码「青茅山外圍 /
+	# 深度 62 · 四轉初階」不得再出现。
+	var snapshot := _route_snapshot()
+	snapshot["zone_title"] = "落瘴岭"
+	snapshot["depth_label"] = "第 2 大层"
+	snapshot["realm_label"] = "二转"
+	var host := _mount(snapshot)
+	for _frame in 3:
+		await get_tree().process_frame
+	assert_true(_has_text(host, "落瘴岭"), "zone title must come from the snapshot")
+	assert_true(_has_text(host, "第 2 大层 · 二转"), "depth and realm must render from the snapshot")
+	assert_false(_has_text(host, "深度 62"), "hardcoded fake depth must never return")
+	assert_false(_has_text(host, "四轉初階"), "hardcoded fake realm must never return")
+
+	var bare := _route_snapshot()
+	var bare_host := _mount(bare)
+	for _frame in 3:
+		await get_tree().process_frame
+	assert_false(_has_text(bare_host, "青茅山外圍"), "no zone title may render when the snapshot ships none")
+	assert_false(_has_text(bare_host, "map_depth_65"), "legacy depth numerals must stay gone")
+
+
+func test_map_depth_rail_binds_visible_layer_numbers() -> void:
+	# 刻度显示快照里的真实层号（底带=当前层 62、中带=下一层 63、顶带=64）；
+	# 旧 65/64/63/62 死数字不再出现。
+	var snapshot := _route_snapshot()
+	var host := _mount(snapshot)
+	for _frame in 3:
+		await get_tree().process_frame
+	var now_label := _named(host, "map_depth_label_now")
+	var near_label := _named(host, "map_depth_label_near")
+	var far_label := _named(host, "map_depth_label_far")
+	assert_true(now_label != null and str((now_label as Label).text) == "62",
+			"bottom rail numeral must be the current layer number from the snapshot")
+	assert_true(near_label != null and str((near_label as Label).text) == "63",
+			"middle rail numeral must be the next layer number")
+	assert_true(far_label != null and str((far_label as Label).text) == "64",
+			"top rail numeral must be the far layer number")
 
 
 func _route_snapshot() -> Dictionary:

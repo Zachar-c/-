@@ -51,7 +51,8 @@
         "village_short_work",
         "moonlit_trail",
         "cultivation_spring"
-      ]
+      ],
+      "title": "青茅山外圍"
     },
     "2": {
       "rows": [
@@ -98,7 +99,8 @@
         "caravan_missing_goods",
         "toxic_mountain_path",
         "neutral_wanderer"
-      ]
+      ],
+      "title": "落瘴岭"
     },
     "3": {
       "rows": [
@@ -138,7 +140,8 @@
         "echo_cave",
         "blood_moss_grove",
         "herbalist_commission"
-      ]
+      ],
+      "title": "血蟒涧"
     },
     "4": {
       "rows": [
@@ -184,7 +187,8 @@
         "black_mud_marsh",
         "echo_cave",
         "greedy_wanderer"
-      ]
+      ],
+      "title": "万蛊窟"
     },
     "5": {
       "rows": [
@@ -221,7 +225,8 @@
         "black_mud_marsh",
         "greedy_wanderer",
         "blood_moss_grove"
-      ]
+      ],
+      "title": "瘴脉深處"
     }
   }
 }
