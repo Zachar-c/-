@@ -58,6 +58,13 @@ static func _generated_stage_picks(seed_value: int, nodes: Array, node_by_id: Di
 	_guarantee_anchor_types(stage_picks, by_stage, node_by_id)
 	if by_stage.has("four") and not stage_picks.get("four", []).has("earth_vein_contest"):
 		stage_picks["four"].append("earth_vein_contest")
+	# 升仙五项授予源必须可及：外扰由地脉争夺清除、天地二气由毒瘴地脉授予
+	# （两者已保证）；空窍底蕴出自闭关仪式、地点出自封印地脉——缺源则任何
+	# 路线的飞升都不可能凑齐条件，端到端通关不存在。
+	if by_stage.has("one") and not stage_picks.get("one", []).has("body_imprint_ritual"):
+		stage_picks["one"].append("body_imprint_ritual")
+	if by_stage.has("four") and not stage_picks.get("four", []).has("sealed_earth_vein"):
+		stage_picks["four"].append("sealed_earth_vein")
 	if not stage_picks.has("five"):
 		stage_picks["five"] = []
 	if not stage_picks["five"].has("poison_fog_vein"):

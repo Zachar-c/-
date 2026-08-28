@@ -6,11 +6,18 @@ extends GutTest
 # for old saves, controller wiring for opening swears and snapshot exposure.
 
 
+const META_SAVE_PATH := "user://nanjiang_smoke_meta.json"
+
 var catalog: Dictionary
 
 
 func before_each() -> void:
 	catalog = ContentCatalog.load_all()
+	# Hermetic meta: ending-bound contract unlocks recorded by other suites
+	# (integration ending flows) must not leak into these swearing assertions.
+	var meta_path := ProjectSettings.globalize_path(META_SAVE_PATH)
+	if FileAccess.file_exists(META_SAVE_PATH):
+		DirAccess.remove_absolute(meta_path)
 
 
 func _run_with(ids: Array) -> RunState:

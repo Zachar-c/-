@@ -970,9 +970,9 @@ static func _dda_marker_recap(state, catalog: Dictionary) -> Array[Dictionary]:
 # contract unlocks must agree on the same ids).
 static func ending_type_for(outcome_name: String) -> String:
 	match outcome_name:
-		"success": return "success"
-		"risky_success": return "risky"
-		"survived_failure": return "retreat"
+		"success", "ascension_special", "ascension_high": return "success"
+		"risky_success", "ascension_medium": return "risky"
+		"survived_failure", "ascension_low": return "retreat"
 		"death": return "death"
 		"gu_fall": return "gu_fall"
 		"true_ending": return "true_ending"

@@ -181,6 +181,10 @@ const OUTCOMES := {
 	"success": "功成升仙",
 	"risky_success": "险中功成",
 	"survived_failure": "保命而退",
+	"ascension_special": "冲仙 · 特等",
+	"ascension_high": "冲仙 · 上等",
+	"ascension_medium": "冲仙 · 中等",
+	"ascension_low": "冲仙 · 下等",
 	"surrendered": "主动收势 · 弃局而退",
 }
 
