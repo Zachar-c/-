@@ -217,8 +217,8 @@ func test_set_resources_clamp_via_the_service_and_append_one_audit_entry() -> vo
 	var controller := _new_controller(true)
 	var events_before: int = controller.state.event_log.size()
 
-	assert_eq(int(controller.debug_set_resource("health", 999)["applied"]), 6, "health caps at max_health")
-	assert_eq(int(controller.state.health), 6)
+	assert_eq(int(controller.debug_set_resource("health", 999)["applied"]), 8, "health caps at max_health")
+	assert_eq(int(controller.state.health), 8)
 	assert_eq(int(controller.debug_set_resource("health", -5)["applied"]), 1, "health floors at 1 (no silent death)")
 
 	assert_eq(int(controller.debug_set_resource("stones", 100000)["applied"]),

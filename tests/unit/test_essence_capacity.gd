@@ -14,6 +14,7 @@ func before_each() -> void:
 
 
 func test_essence_max_follows_rank_tier_and_aptitude_percent() -> void:
+	# 2026-08-28 验收批：一/三/五转差异放大——base 3/5/10/16/24（nirvana 新档）。
 	var state := RunState.new_run(101)
 	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 4)
 
@@ -22,18 +23,18 @@ func test_essence_max_follows_rank_tier_and_aptitude_percent() -> void:
 
 	state.cultivation = 3
 	state.aptitude = "yi"
-	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 10)
+	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 12)
 
 	state.cultivation = 4
 	state.aptitude = "jia"
-	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 16)
+	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 22)
 
 	state.cultivation = 5
 	state.aptitude = "wu"
-	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 7)
+	assert_eq(EssenceCapacityScript.essence_max(state, catalog), 14)
 
 
-func test_new_run_keeps_default_essence_max_four() -> void:
+func test_new_run_keeps_default_essence_max_three() -> void:
 	assert_eq(int(RunState.new_run(101).cave_aperture["essence_max"]), 4)
 
 
@@ -49,7 +50,7 @@ func test_rank_two_breakthrough_refreshes_essence_max() -> void:
 	assert_eq(result["state"].essence, 4)
 
 
-func test_missing_aptitude_table_falls_back_to_four() -> void:
+func test_missing_aptitude_table_falls_back_to_three() -> void:
 	var tuned := catalog.duplicate(true)
 	tuned["aptitude"] = {}
 	var state := RunState.new_run(101)

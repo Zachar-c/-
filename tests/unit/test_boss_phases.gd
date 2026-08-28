@@ -124,7 +124,7 @@ func test_essence_burn_drains_player_essence_through_the_enemy_channel() -> void
 	var turned := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
 
 	# 收势回气 (regen 2, cap 4) lands the same end turn, offsetting the burn.
-	assert_eq(int(turned["state"].essence), mini(essence_before - 2 + 2, 4))
+	assert_eq(int(turned["state"].essence), mini(essence_before - 2 + 3, 4))
 	assert_eq(int(turned["state"].health), int(run.health))
 	assert_eq(int(turned["battle"]["log"].back().get("burned", 0)), 2)
 
@@ -141,7 +141,7 @@ func test_interrupted_intent_cancels_damage_and_burn() -> void:
 
 	var turned := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
 
-	assert_eq(int(turned["state"].essence), mini(int(run.essence) + 2, 4))
+	assert_eq(int(turned["state"].essence), mini(int(run.essence) + 3, 4))
 	assert_eq(int(turned["battle"]["log"].back().get("burned", 0)), 0)
 
 
@@ -221,7 +221,7 @@ func test_pre_turn_first_move_still_deals_legacy_burst_damage() -> void:
 	var pre := BattleResolver.apply_enemy_pre_turn(battle, setup["run"], catalog)
 
 	assert_false(bool(pre["finished"]))
-	assert_eq(int(pre["state"].health), 4)
+	assert_eq(int(pre["state"].health), 6)
 	assert_eq(int(pre["battle"]["log"].back()["damage"]), 2)
 
 

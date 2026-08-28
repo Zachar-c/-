@@ -354,7 +354,7 @@ static func _resolve_card_instance(battle: Dictionary, state: RunState, card: Di
 	next_battle = play_hook["battle"]
 	next_state = play_hook["state"]
 	feeds.append_array(play_hook["feeds"])
-	_apply_kill_move_sequence(next_battle, definition, card, catalog)
+	_apply_kill_move_sequence(next_battle, definition, card, catalog, next_state)
 	if int(definition.get("duration_turns", 0)) > 0:
 		_register_duration_effect(next_battle, definition, card)
 	var backlash := {} if next_state.is_terminal() else _backlash_for_activation(next_battle, next_state, definition, card, catalog)
@@ -459,6 +459,12 @@ static func _target_type_for_card(card: Dictionary, catalog: Dictionary) -> Stri
 
 
 static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictionary, target_id := "") -> Dictionary:
+	# 拳脚定位（2026-08-28 设计点）：基础 1 伤的兜底输出，每回合一次；
+	# 力道加成（force_power）是力道流派的核心构筑——堆力道让拳脚成为
+	# 主武器，不挤占蛊虫卡的输出生态位。
+	if (battle.get("flags", []) as Array).has("basic_attack_used"):
+		return _result(battle, state, false, "ongoing", ["basic_attack_exhausted"])
+	_add_flag(battle, "basic_attack_used")
 	var punch_damage := 1 + int(state.cultivator.get("force_power", 0))
 	var log_entry := {"id": "basic_punch", "damage": punch_damage}
 	if target_id.is_empty() and not _living_enemies(battle).is_empty():
@@ -597,7 +603,11 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	# R9.2 essence_surcharge: each intensity point beyond the free allowance
 	# of 2 adds +1 to every play; unpaid plays take the existing rejection.
 	# 同名蛊阶费：蛊虫每进一阶，催动消耗的真元 +1（质量取舍）。
-	var rank_bonus := maxi(0, state.highest_owned_rank(gu_id) - 1)
+	# 2026-08-28 验收批：阶加成改 pacing.advance_bonus_by_rank 阶梯表
+	# （0/1/3/6/10，超线性——一/三/五转蛊师战力差异放大）；缺档回退 rank-1。
+	var owned_rank := state.highest_owned_rank(gu_id)
+	var bonus_table: Dictionary = catalog.get("pacing", {}).get("advance_bonus_by_rank", {})
+	var rank_bonus := int(bonus_table.get(str(owned_rank), maxi(0, owned_rank - 1)))
 	var surcharge := CurseRegistryScript.essence_surcharge(battle.get("curses", []))
 	var essence_cost := int(gu.get("essence_cost", 0)) + surcharge + rank_bonus
 	var action_energy := int(battle.get("action_energy", 0))
@@ -877,6 +887,7 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	next_battle["action_energy"] = 0
 	next_battle["soul_ops_used"] = 0
 	next_battle["flags"].erase("guarded")
+	next_battle["flags"].erase("basic_attack_used")
 	next_battle["flags"].erase("targeting_obscured")
 	if bool(enemy["death"]):
 		return _death_over(next_battle, next_state, catalog, ["player_dead"])
@@ -894,7 +905,10 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	# into battle pacing. Without it a long fight (final boss) stalls: the
 	# basic attack is swallowed by reactions and probe budget runs dry, so a
 	# floor build can neither win nor retreat -- the turn loop never ends.
-	var regen := maxi(0, int(next_state.cave_aperture.get("essence_regen_per_turn", 0)))
+	# 2026-08-28 设计点：节点内回真元手段随转数放大——收势回气 = 配置基值
+	# 2 + (转数-1)，长 Boss 战在高转可持续施法。
+	var regen := maxi(0, int(next_state.cave_aperture.get("essence_regen_per_turn", 0))) \
+		+ maxi(0, int(next_state.cultivation) - 1)
 	if regen > 0:
 		var regen_cap := maxi(int(next_state.essence), int(next_state.essence_capacity))
 		var recovered := mini(next_state.essence + regen, regen_cap)
@@ -1125,7 +1139,7 @@ static func _recompute_active_gu_instances(battle: Dictionary) -> void:
 	battle["active_gu_instance_ids"] = occupied
 
 
-static func _apply_kill_move_sequence(battle: Dictionary, definition: Dictionary, card: Dictionary, catalog: Dictionary) -> void:
+static func _apply_kill_move_sequence(battle: Dictionary, definition: Dictionary, card: Dictionary, catalog: Dictionary, state: RunState) -> void:
 	var source_gu_ids: Array = definition.get("source_gu_ids", [])
 	if source_gu_ids.is_empty():
 		return
@@ -1139,6 +1153,16 @@ static func _apply_kill_move_sequence(battle: Dictionary, definition: Dictionary
 			if next_index >= sequence.size():
 				_add_flag(battle, "kill_move_%s" % str(pending.get("move_id", "")))
 				battle["pending_kill_move_state"] = {}
+				# 杀招完成结算（2026-08-28 设计点）：杀招是真实的终结技，
+				# 重击伤害吃转阶加成——五转蛊链的杀招是一转不可比的爆发。
+				var kill_rank := 1
+				for source_id in card.get("source_gu_instance_ids", []):
+					kill_rank = maxi(kill_rank, int((state.gu_instances.get(str(source_id), {}) as Dictionary).get("rank", 1)))
+				var bonus_table: Dictionary = catalog.get("pacing", {}).get("advance_bonus_by_rank", {})
+				var kill_damage := 3 + int(bonus_table.get(str(kill_rank), maxi(0, kill_rank - 1)))
+				var kill_target := str(_living_enemies(battle)[0].get("enemy_id", "")) if not _living_enemies(battle).is_empty() else ""
+				_strike(battle, kill_damage, "attack", kill_target)
+				battle["log"].append({"id": "kill_move_strike", "move": str(pending.get("move_id", "")), "damage": kill_damage})
 			else:
 				pending["next_sequence_index"] = next_index
 				battle["pending_kill_move_state"] = pending

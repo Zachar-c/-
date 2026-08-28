@@ -59,7 +59,7 @@ func test_low_rank_cultivator_using_higher_rank_gu_applies_defined_backlash_fact
 	var result := BattleResolver.apply_action_card(battle, run, _command_for_definition(battle, "light_probe"), tuned_catalog)
 
 	assert_true(result["accepted"])
-	assert_eq(result["state"].health, 4)
+	assert_eq(result["state"].health, 6)
 	assert_eq(result["state"].cultivator["soul"], 1)
 	assert_true(result["feeds"].has("rank_backlash"))
 

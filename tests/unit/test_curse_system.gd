@@ -209,7 +209,7 @@ func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() 
 	}, _zero_enemy_damage(catalog.duplicate(true)))
 
 	assert_true(ended["accepted"])
-	assert_eq(int(ended["state"].health), 5)
+	assert_eq(int(ended["state"].health), 7)
 	assert_true(ended["feeds"].has("draw_pollution"))
 	assert_eq(ended["battle"]["banished_cards"], [top_card])
 	assert_eq(ended["battle"]["hand"].size(), 2)
@@ -218,7 +218,7 @@ func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() 
 	for entry in ended["state"].event_log:
 		if str(entry.get("reason", "")) == "backlash_curse_damage":
 			found_damage_event = true
-			assert_eq(int(entry["after"]["health"]), 5)
+			assert_eq(int(entry["after"]["health"]), 7)
 	assert_true(found_damage_event)
 
 
@@ -326,7 +326,7 @@ func test_event_outcome_option_attaches_curse_on_accept() -> void:
 	assert_true(accepted["result"]["ok"])
 	assert_eq(int(accepted["state"].cultivator["statuses"]["essence_bloat"]["layers"]), 1)
 	assert_eq(str(accepted["state"].cultivator["statuses"]["essence_bloat"]["source"]), "event:gu_rot_pact")
-	assert_eq(int(accepted["state"].health), 5)
+	assert_eq(int(accepted["state"].health), 7)
 
 
 func _run_with_gu(definition_ids: Array[String]) -> RunState:

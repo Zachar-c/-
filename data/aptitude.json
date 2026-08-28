@@ -2,14 +2,16 @@
   "stage_essence_base": {
     "low": 4,
     "mid": 6,
-    "high": 9,
-    "peak": 12
+    "high": 10,
+    "peak": 16,
+    "nirvana": 24
   },
   "rank_tier": {
     "1": "low",
     "2": "mid",
     "3": "high",
-    "4": "peak"
+    "4": "peak",
+    "5": "nirvana"
   },
   "aptitude_pct": {
     "jia": 140,
@@ -26,7 +28,10 @@
       "cost_lifespan": 10,
       "cost_stone": 8,
       "limit_per_run": 1,
-      "node_kinds": ["seclusion", "inheritance"]
+      "node_kinds": [
+        "seclusion",
+        "inheritance"
+      ]
     }
   ]
 }

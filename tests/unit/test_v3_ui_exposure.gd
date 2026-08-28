@@ -14,15 +14,21 @@ func before_each() -> void:
 func test_bind_card_enables_kill_of_stone_wanderer_through_action_cards() -> void:
 	var state := _run_with_gu(["thorn_whip_gu", "stone_shell_gu"])
 	var current := {"battle": BattleResolver.start({"enemy_kind": "neutral_stone_wanderer", "objective": "defeat"}, state, catalog), "state": state}
-	var bind_played := false
 	var strikes_landed := 0
-	for _cycle in range(8):
+	# thorn_bind 的束缚只持续一回合（effect 过期后敌方石甲反应恢复，直接
+	# 打击重新被挡）——补 bind 的判据是「敌方当前未被束缚」，不是只绑一次。
+	for _cycle in range(12):
 		var preview := ActionPreviewServiceScript.preview_battle_actions(current["battle"], current["state"], catalog)
+		var enemy_bound := (current["battle"].get("flags", []) as Array).has("enemy_bound")
 		var target := ""
-		if not bind_played:
+		if not enemy_bound:
 			target = _hand_card_id(preview, "thorn_bind")
 		if target.is_empty() and strikes_landed < 2:
 			target = _hand_card_id(preview, "thorn_strike")
+		if target.is_empty():
+			# 手牌满时 refill 不抽新牌：打出一张可执行牌（守护）让手牌轮转，
+			# 否则抽牌堆里的打击牌永远出不来。
+			target = _hand_card_id(preview, "stone_guard")
 		var turn: Dictionary
 		if target.is_empty():
 			turn = BattleResolver.apply_action_card(current["battle"], current["state"], {
@@ -35,9 +41,7 @@ func test_bind_card_enables_kill_of_stone_wanderer_through_action_cards() -> voi
 				"state_version": int(current["battle"]["hand_version"]),
 			}, catalog)
 			assert_true(bool(turn["accepted"]), str(turn))
-			if str(target).ends_with(":thorn_bind:0"):
-				bind_played = true
-			elif str(target).ends_with(":thorn_strike:0"):
+			if str(target).ends_with(":thorn_strike:0"):
 				strikes_landed += 1
 				assert_eq(int(turn["battle"]["enemy_hp"]), 4 - 2 * strikes_landed)
 				if strikes_landed == 2:

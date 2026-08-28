@@ -7,8 +7,8 @@ extends GutTest
 #   only) from pacing.json's turn_scaling. Direct test battles without a
 #   turn stay at authored numbers.
 # - Same-name gu advance: an instance rises one rank at the refinement node
-#   (stone cost, cap 5); rank adds +1 strike damage and +1 essence cost so
-#   quality trades against the soul-limited per-turn play budget.
+#   (stone + material cost, cap 5); rank adds +1 strike damage and +1 essence
+#   cost so quality trades against the soul-limited per-turn play budget.
 
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
 const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
@@ -42,7 +42,7 @@ func test_no_scaling_below_or_at_authored_turn() -> void:
 	assert_eq(int(battle["enemy_hp"]), 3)
 	# boss authored at turn 4: a stage-five encounter (turn 5) adds exactly one step.
 	var boss_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "miasma_vein_lord", "turn": 5}, run, catalog)
-	assert_eq(int(boss_battle["enemy_hp"]), 8)
+	assert_eq(int(boss_battle["enemy_hp"]), 12)
 	assert_eq(int((boss_battle["visible_intent"] as Dictionary).get("damage", 0)), 3)
 
 
@@ -58,10 +58,12 @@ func test_zero_damage_intents_never_gain_damage_from_scaling() -> void:
 func test_advance_recipe_raises_rank_and_costs_stone() -> void:
 	var run = RunStateScript.new_run(101)
 	run.stone = 6
+	run.materials["beast_blood"] = 1
 	var result := ResolverScript.apply(run, {"type": "refine_gu", "recipe_id": "advance_small_light_gu"}, catalog)
 	assert_true(result["result"]["ok"], str(result["result"]))
 	assert_eq(int(result["state"].highest_owned_rank("small_light_gu")), 2)
 	assert_eq(int(result["state"].stone), 0, "advance charges the declared stone cost")
+	assert_eq(int(result["state"].materials.get("beast_blood", 0)), 0, "advance consumes the declared materials")
 
 
 func test_advance_rejects_when_stone_is_missing() -> void:
@@ -75,6 +77,7 @@ func test_advance_rejects_when_stone_is_missing() -> void:
 func test_rank_raises_strike_damage_and_essence_cost() -> void:
 	var run = RunStateScript.new_run(101)
 	run.stone = 12
+	run.materials["beast_blood"] = 2
 	var first := ResolverScript.apply(run, {"type": "refine_gu", "recipe_id": "advance_small_light_gu"}, catalog)
 	var second := ResolverScript.apply(first["state"], {"type": "refine_gu", "recipe_id": "advance_small_light_gu"}, catalog)
 	assert_eq(int(second["state"].highest_owned_rank("small_light_gu")), 3)

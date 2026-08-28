@@ -28,7 +28,9 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	# C1-min §16.13: material_bonus/-penalty shift the rolled material count,
 	# clamped at >= 0 so a penalty can never invert the roll.
 	var mods := ContractRulesScript.aggregate(state, catalog)
-	var count_adjustment := int(mods.get("material_bonus", 0)) + int(mods.get("material_penalty", 0))
+	# 2026-08-28 设计点：材料也有转阶差异——修为越高收获越丰（每高
+	# 一转多收 1 份材料），一转与五转的采集效率不可同日而语。
+	var count_adjustment := int(mods.get("material_bonus", 0)) + int(mods.get("material_penalty", 0)) 		+ maxi(0, int(state.cultivation) - 1)
 	var material_ids := _roll_materials(table, state, tier, pity_cfg, count_adjustment)
 	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))

@@ -8,7 +8,7 @@ func test_new_run_serializes_bing_cultivator_and_unbounded_aperture() -> void:
 	assert_true(saved.has("cultivator"))
 	assert_eq(saved["cultivator"]["aptitude"], "bing")
 	assert_eq(saved["cave_aperture"]["essence_max"], 4)
-	assert_eq(saved["cave_aperture"]["essence_regen_per_turn"], 2)
+	assert_eq(saved["cave_aperture"]["essence_regen_per_turn"], 3)
 	assert_false(saved["cave_aperture"].has("gu_capacity"))
 	assert_false(saved["cave_aperture"].has("gu_slot_limit"))
 

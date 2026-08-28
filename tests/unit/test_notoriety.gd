@@ -83,7 +83,7 @@ func test_battle_marks_first_mover_and_enemy_strikes_first() -> void:
 	var pre := BattleResolver.apply_enemy_pre_turn(battle, run, catalog)
 	assert_false(pre["finished"])
 	assert_true(pre["feeds"].has("enemy_first_move"))
-	assert_lt(int(pre["state"].health), 6)
+	assert_lt(int(pre["state"].health), 8)
 	assert_eq(pre["battle"]["log"].back()["source"], "enemy")
 
 	var normal := BattleResolver.start({"enemy_kind": "ridge_hound"}, RunState.new_run(101), catalog)
