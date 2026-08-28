@@ -87,7 +87,7 @@ func _append_top_status(column: VBoxContainer, state: RunState) -> void:
 	var statuses: Dictionary = cultivator.get("statuses", {})
 	for curse_id in statuses:
 		var entry: Dictionary = statuses[curse_id]
-	debuffs.append("%s 诅咒 %d" % [GuStyle.CURSE_GLYPH, int(entry.get("layers", 1))])
+		debuffs.append("%s 诅咒 %d" % [GuStyle.CURSE_GLYPH, int(entry.get("layers", 1))])
 	var notorious := int(cultivator.get("notorious", 0))
 	if notorious > 0:
 		debuffs.append("恶名 %d" % notorious)
@@ -257,7 +257,7 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	var curse_layers := _total_curse_layers(state)
 	if curse_layers > 0:
 		var curse := Label.new()
-	curse.text = "%s 身负诅咒 %d 层" % [GuStyle.CURSE_GLYPH, curse_layers]
+		curse.text = "%s 身负诅咒 %d 层" % [GuStyle.CURSE_GLYPH, curse_layers]
 		curse.add_theme_color_override("font_color", COLOR_CURSE)
 		column.add_child(curse)
 

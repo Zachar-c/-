@@ -18,9 +18,6 @@ const FOCUSED_FORWARD_LAYERS := 2
 var tooltip: GuTooltip
 
 
-func _ready() -> void:
-
-
 var _route: Array[Dictionary] = []
 var _state: RunState
 var _positions: Dictionary = {}
