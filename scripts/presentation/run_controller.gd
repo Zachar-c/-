@@ -203,6 +203,11 @@ func submit_command(command: Dictionary) -> Dictionary:
 		if bool(last_result.get("start_battle", false)) or str(last_result.get("action_id", "")) == "fight":
 			_start_battle()
 			return last_result
+		# 统一结算路由（§16.6/§16.10）：升仙窗口内的冲仙无论档位成败，
+		# 都必须切入 Ending 结算页，而不是停留在遭遇会话里。
+		if str(command.get("type", "")) == "attempt_ascension" and bool(last_result.get("ok", false)):
+			_show_ending(last_result)
+			return session_result
 		if bool(current_session.get("completed", false)):
 			_return_to_map()
 		else:
@@ -627,6 +632,7 @@ func _start_battle() -> void:
 	if str(current_session.get("kind", "")) in ["contact", "caravan", "market", "shop", "wild_gu"]:
 		kill_source = "neutral_npc"
 	var encounter := {
+		"turn": MapGenerator.layer_index(str(current_node.get("stage", ""))),
 		"terrain": _battle_terrain(),
 		"first_mover": first_mover,
 		"kill_source": kill_source,
@@ -835,7 +841,8 @@ static func roll_seed() -> int:
 
 static func _run_end_outcome(outcome: String) -> String:
 	match outcome:
-		"success": return "won"
+		"success", "ascension_special", "ascension_high", "ascension_medium", "ascension_low":
+			return "won"
 		"risky_success": return "risky"
 		"surrendered": return "abandoned"
 	return "dead"

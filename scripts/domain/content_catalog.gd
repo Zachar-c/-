@@ -182,9 +182,27 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not EFFECT_IDS.has(inheritance["effect_id"]):
 			errors.append("inheritance %s has invalid effect %s" % [inheritance["id"], inheritance["effect_id"]])
 	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
+	for enemy_value in catalog.get("enemies", []):
+		var enemy_entry: Dictionary = enemy_value
+		var enemy_turn := int(enemy_entry.get("turn", 1))
+		if enemy_turn < 1 or enemy_turn > 5:
+			errors.append("enemy %s turn must be within 1..5" % enemy_entry.get("id", ""))
 	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
 	for node_value in catalog.get("nodes", []):
 		var node: Dictionary = node_value
+		# 同名/单数引用同样校验：战斗节点 enemy_kind 必须真实存在。
+		var singular_kind := str(node.get("enemy_kind", ""))
+		if not singular_kind.is_empty() and not (catalog.get("enemy_by_id", {}) as Dictionary).has(singular_kind):
+			errors.append("node %s references unknown enemy %s" % [node.get("id", ""), singular_kind])
+		var grants: Dictionary = node.get("ascension_grants", {})
+		for grant_action_value in grants.keys():
+			var grant_action := str(grant_action_value)
+			var grant_flag := str(grants[grant_action_value])
+			if not grant_flag in ["aperture_foundation", "heaven_earth_qi", "site", "protection", "external_interference"]:
+				errors.append("node %s grants unknown ascension condition %s" % [node.get("id", ""), grant_flag])
+			var choices: Array = node.get("choices", [])
+			if not choices.has(grant_action):
+				errors.append("node %s grants ascension condition on unknown action %s" % [node.get("id", ""), grant_action])
 		if not node.has("enemy_kinds"):
 			continue
 		var enemy_kinds_value: Variant = node.get("enemy_kinds", [])
@@ -328,6 +346,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			if not gu_tags.has(str(tag_value)):
 				gu_tags.append(str(tag_value))
 	for recipe in catalog.get("refinement_recipes", []):
+		if str(recipe.get("kind", "")) == "advance":
+			var adv_inputs: Array = recipe.get("input_gu_ids", [])
+			if adv_inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(adv_inputs[0]):
+				errors.append("advance recipe %s must map one same-name gu onto itself" % recipe.get("id", ""))
 		for rule_value in recipe.get("risk_hints", []):
 			var rule: Dictionary = rule_value
 			for required_tag in rule.get("tags", []):

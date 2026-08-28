@@ -285,13 +285,15 @@ func test_turn_essence_bonus_grants_essence_at_player_turn_start() -> void:
 	var before := int(run.essence)
 	var turn := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
 	assert_false(bool(turn["finished"]))
-	assert_eq(int(turn["state"].essence), before + 1)
+	# 收势回气 (regen 2) lands before the tide; essence caps at capacity 4.
+	assert_eq(int(turn["state"].essence), mini(before + 3, 4))
 	assert_eq(str(turn["state"].event_log.back()["action"]), "contract_essence_tide")
 
 	var clean := RunState.new_run(11)
 	var plain := BattleResolver.start({"enemy_kind": "ridge_hound"}, clean, catalog)
 	var unchanged := BattleResolver.take_turn(plain, {"type": "end_turn"}, clean, catalog)
-	assert_eq(int(unchanged["state"].essence), int(clean.essence))
+	# 无潮汐时仍有收势回气 (regen 2, cap 4)。
+	assert_eq(int(unchanged["state"].essence), mini(int(clean.essence) + 2, 4))
 
 
 func test_shop_price_pct_lifts_buy_prices_only() -> void:

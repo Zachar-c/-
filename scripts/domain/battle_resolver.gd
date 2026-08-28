@@ -52,7 +52,8 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	var requested_id := str(requested_kinds[0])
 	var swapped_kind := DdaResolverScript.battle_enemy_kind(state, requested_id, catalog)
 	requested_kinds[0] = swapped_kind
-	var enemy := _enemy_definition(swapped_kind, catalog)
+	var encounter_turn := int(encounter.get("turn", 0))
+	var enemy := _enemy_definition(swapped_kind, catalog, encounter_turn)
 	var enemy_id := str(enemy.get("id", swapped_kind))
 	var intent: Dictionary = enemy.get("intent", {}).duplicate(true)
 	# R5.7 boss phases: optional data-driven stage list keyed by until_hp_ratio.
@@ -123,6 +124,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"sealed_gu_definition_ids": sealed_definition_ids,
 		"sealed_gu_instance_ids": sealed_instance_ids,
 		"soul_ops_cap": SoulCapacityScript.battle_ops_cap(state),
+		"soul_ops_used": 0,
 		"first_mover": str(encounter.get("first_mover", "player")),
 		"blood_stacks": 0,
 		"flags": [],
@@ -186,8 +188,9 @@ static func _requested_enemy_kinds(encounter: Dictionary) -> Array[String]:
 
 static func _create_enemies(battle_id: String, kinds: Array[String], encounter: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
 	var enemies: Array[Dictionary] = []
+	var encounter_turn := int(encounter.get("turn", 0))
 	for index in kinds.size():
-		var definition := _enemy_definition(str(kinds[index]), catalog)
+		var definition := _enemy_definition(str(kinds[index]), catalog, encounter_turn)
 		var kind := str(definition.get("id", kinds[index]))
 		var hp := int(encounter.get("enemy_hp", definition.get("hp", 3))) if index == 0 else int(definition.get("hp", 3))
 		var intent: Dictionary = definition.get("intent", {}).duplicate(true)
@@ -584,10 +587,18 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 	if gu.is_empty():
 		return _result(battle, state, false, "ongoing", ["unknown_gu"])
+	# 魂魄并发预算：每回合打出的蛊虫数受 soul_ops_cap 限制（数量取舍）。
+	# 魂道超载（overchannel）豁免预算门——它由燃魂的 mercy 逻辑自行结算。
+	var soul_ops_used := int(battle.get("soul_ops_used", 0))
+	var overchannel_claim := SchoolRulesScript.is_soul(state) and int(action.get("overchannel", 0)) > 0
+	if soul_ops_used >= int(battle.get("soul_ops_cap", 1)) and not overchannel_claim:
+		return _result(battle, state, false, "ongoing", ["soul_ops_exhausted"])
 	# R9.2 essence_surcharge: each intensity point beyond the free allowance
 	# of 2 adds +1 to every play; unpaid plays take the existing rejection.
+	# 同名蛊阶费：蛊虫每进一阶，催动消耗的真元 +1（质量取舍）。
+	var rank_bonus := maxi(0, state.highest_owned_rank(gu_id) - 1)
 	var surcharge := CurseRegistryScript.essence_surcharge(battle.get("curses", []))
-	var essence_cost := int(gu.get("essence_cost", 0)) + surcharge
+	var essence_cost := int(gu.get("essence_cost", 0)) + surcharge + rank_bonus
 	var action_energy := int(battle.get("action_energy", 0))
 	if state.essence + action_energy < essence_cost:
 		return _result(battle, state, false, "ongoing", ["insufficient_essence"])
@@ -603,6 +614,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	var paid_from_energy := mini(essence_cost, action_energy)
 	var paid_from_essence := essence_cost - paid_from_energy
 	battle["action_energy"] = action_energy - paid_from_energy
+	battle["soul_ops_used"] = soul_ops_used + 1
 	var after := {"essence": state.essence - paid_from_essence}
 	var mode := str(action.get("mode", ""))
 	var log_entry := {"id": "gu_used", "gu_id": gu_id, "mode": mode}
@@ -610,8 +622,8 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		"small_light_gu":
 			_add_flag(battle, "revealed")
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
-			_strike(battle, 1, "attack", target_id)
-			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1}
+			_strike(battle, 1 + rank_bonus, "attack", target_id)
+			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1 + rank_bonus}
 		"thorn_whip_gu":
 			if mode == "bind":
 				_add_flag(battle, "enemy_bound")
@@ -622,7 +634,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					_reveal_reaction(battle, reaction, target_id)
 					log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
 				else:
-					_strike(battle, 2, "attack", target_id)
+					_strike(battle, 2 + rank_bonus, "attack", target_id)
 					log_entry["id"] = "thorn_strike"
 		"stone_shell_gu":
 			_add_flag(battle, "guarded")
@@ -632,7 +644,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			log_entry["id"] = "mist_step"
 		"blood_moss_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			_strike(battle, 1, "attack", target_id)
+			_strike(battle, 1 + rank_bonus, "attack", target_id)
 			log_entry["id"] = "blood_moss_relief"
 		"venom_thread_gu":
 			_add_flag(battle, "enemy_slowed")
@@ -646,11 +658,11 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "targeting_obscured")
 			log_entry["id"] = "shadow_veil"
 		"blood_droplet_gu":
-			_strike(battle, 2, "attack", target_id)
+			_strike(battle, 2 + rank_bonus, "attack", target_id)
 			log_entry["id"] = "blood_droplet_shot"
 		"blood_bat_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			_strike(battle, 1, "attack", target_id)
+			_strike(battle, 1 + rank_bonus, "attack", target_id)
 			log_entry["id"] = "blood_bat_bite"
 		"blood_wing_gu":
 			_add_flag(battle, "retreat_preserved")
@@ -660,7 +672,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
 			log_entry["id"] = "farewell_grip"
 		"force_gu":
-			_strike(battle, 2, "attack", target_id)
+			_strike(battle, 2 + rank_bonus, "attack", target_id)
 			log_entry["id"] = "power_blow"
 		"bear_strength_gu":
 			after["injury"] = maxi(0, state.injury - 1)
@@ -669,10 +681,10 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "guarded")
 			log_entry["id"] = "qi_bulwark"
 		"moonlight_gu":
-			_strike(battle, 2, "attack", target_id)
+			_strike(battle, 2 + rank_bonus, "attack", target_id)
 			log_entry["id"] = "moonlight_strike"
 		"moon_glow_gu":
-			_strike(battle, 3, "attack", target_id)
+			_strike(battle, 3 + rank_bonus, "attack", target_id)
 			log_entry["id"] = "moon_glow_flare"
 		"trail_eye_gu":
 			_add_flag(battle, "revealed")
@@ -687,7 +699,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					var effect: Dictionary = effect_value
 					match str(effect.get("kind", "")):
 						"strike":
-							_strike(battle, maxi(1, int(effect.get("amount", 1))), "attack", target_id)
+							_strike(battle, maxi(1, int(effect.get("amount", 1))) + rank_bonus, "attack", target_id)
 						"heal_injury":
 							after["injury"] = maxi(0, state.injury - maxi(1, int(effect.get("amount", 1))))
 						"add_flag":
@@ -862,6 +874,7 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 		_select_enemy_intent_for(enemy_value, next_battle, next_state, int(next_battle["turn"]))
 	_sync_legacy_enemy_projection(next_battle)
 	next_battle["action_energy"] = 0
+	next_battle["soul_ops_used"] = 0
 	next_battle["flags"].erase("guarded")
 	next_battle["flags"].erase("targeting_obscured")
 	if bool(enemy["death"]):
@@ -876,6 +889,23 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	next_state = _settle_curse_damage(next_battle, next_state)
 	if _depleted(next_state):
 		return _death_over(next_battle, next_state, catalog, ["player_dead"])
+	# 收势回气：wire the previously dead cave_aperture.essence_regen_per_turn
+	# into battle pacing. Without it a long fight (final boss) stalls: the
+	# basic attack is swallowed by reactions and probe budget runs dry, so a
+	# floor build can neither win nor retreat -- the turn loop never ends.
+	var regen := maxi(0, int(next_state.cave_aperture.get("essence_regen_per_turn", 0)))
+	if regen > 0:
+		var regen_cap := maxi(int(next_state.essence), int(next_state.essence_capacity))
+		var recovered := mini(next_state.essence + regen, regen_cap)
+		if recovered != next_state.essence:
+			next_state = next_state.append_event(_event(
+				next_state,
+				"battle_essence_regen",
+				{"essence": next_state.essence},
+				{"essence": recovered},
+				"battle_essence_regen",
+				[]
+			))
 	# C1-min §16.13: turn_essence_bonus grants its essence at every player
 	# turn start (the transition out of end turn); turn 1 keeps battle-start
 	# resources untouched so opening hand math stays stable.
@@ -1192,7 +1222,29 @@ static func _retreat(battle: Dictionary, state: RunState, catalog: Dictionary) -
 	return _battle_over(battle, next_state, catalog, true, "retreated", ["retreat_success"])
 
 
-static func _enemy_definition(enemy_id: String, catalog: Dictionary) -> Dictionary:
+static func _enemy_definition(enemy_id: String, catalog: Dictionary, encounter_turn := 0) -> Dictionary:
+	var definition := _base_enemy_definition(enemy_id, catalog)
+	# 五转梯度：遭遇层转数高于敌人基准转数时按 pacing 曲线抬升 HP 与意图伤害。
+	var delta := encounter_turn - int(definition.get("turn", 1))
+	if delta > 0:
+		var scaling: Dictionary = catalog.get("pacing", {}).get("turn_scaling", {})
+		var hp_add := int(scaling.get("hp_add_per_turn", 2)) * delta
+		var damage_add := int(scaling.get("damage_add_per_turn", 1)) * delta
+		definition["hp"] = int(definition.get("hp", 3)) + hp_add
+		var base_intent: Dictionary = definition.get("intent", {})
+		if int(base_intent.get("damage", 0)) > 0:
+			base_intent["damage"] = int(base_intent["damage"]) + damage_add
+			definition["intent"] = base_intent
+		for phase_value in definition.get("phases", []):
+			var phase: Dictionary = phase_value
+			for phase_intent_value in phase.get("intents", []):
+				var phase_intent: Dictionary = phase_intent_value
+				if int(phase_intent.get("damage", 0)) > 0:
+					phase_intent["damage"] = int(phase_intent["damage"]) + damage_add
+	return definition
+
+
+static func _base_enemy_definition(enemy_id: String, catalog: Dictionary) -> Dictionary:
 	var indexed: Dictionary = catalog.get("enemy_by_id", {})
 	if indexed.has(enemy_id):
 		return indexed[enemy_id].duplicate(true)

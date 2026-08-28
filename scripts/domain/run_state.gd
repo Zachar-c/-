@@ -189,6 +189,19 @@ func append_event(event: Dictionary) -> RunState:
 	return next
 
 
+## 同名蛊阶（2026-08-29）：实例可经炼蛊台同名升阶，取该定义名下最高阶；
+## 未记录 rank 的旧实例视为一阶。
+func highest_owned_rank(gu_id: String) -> int:
+	var rank := 1
+	for instance in gu_instances.values():
+		if str(instance.get("definition_id", "")) != str(gu_id):
+			continue
+		if str(instance.get("state", "")) != "refined":
+			continue
+		rank = maxi(rank, int(instance.get("rank", 1)))
+	return rank
+
+
 func estimate_feeding_materials(catalog: Dictionary) -> Dictionary:
 	var totals: Dictionary = {}
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})

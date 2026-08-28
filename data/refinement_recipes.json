@@ -3,7 +3,10 @@
     {
       "id": "bright_thread_risk",
       "kind": "combine",
-      "input_gu_ids": ["small_light_gu", "trail_eye_gu"],
+      "input_gu_ids": [
+        "small_light_gu",
+        "trail_eye_gu"
+      ],
       "output_gu_id": "pulse_drum_gu",
       "success_roll_max": 70,
       "failure": "destroy_inputs"
@@ -11,7 +14,11 @@
     {
       "id": "moon_glow_fixed",
       "kind": "fixed",
-      "input_gu_ids": ["moonlight_gu", "small_light_gu", "small_light_gu"],
+      "input_gu_ids": [
+        "moonlight_gu",
+        "small_light_gu",
+        "small_light_gu"
+      ],
       "output_gu_id": "moon_glow_gu"
     },
     {
@@ -19,7 +26,10 @@
       "kind": "fixed",
       "locked": true,
       "requires_legacy_knowledge_id": "phantom_moon_recipe",
-      "input_gu_ids": ["moon_glow_gu", "shadow_veil_gu"],
+      "input_gu_ids": [
+        "moon_glow_gu",
+        "shadow_veil_gu"
+      ],
       "output_gu_id": "phantom_moon_gu"
     },
     {
@@ -27,7 +37,10 @@
       "kind": "fixed",
       "locked": true,
       "requires_legacy_knowledge_id": "moon_shadow_recipe",
-      "input_gu_ids": ["moon_glow_gu", "mist_step_gu"],
+      "input_gu_ids": [
+        "moon_glow_gu",
+        "mist_step_gu"
+      ],
       "output_gu_id": "moon_shadow_gu"
     },
     {
@@ -61,14 +74,68 @@
       ],
       "risk_hints": [
         {
-          "tags": ["poison"],
+          "tags": [
+            "poison"
+          ],
           "text": "炉中隐约腥气，恐催生毒物。"
         },
         {
-          "tags": ["moon"],
+          "tags": [
+            "moon"
+          ],
           "text": "炉火间月息浮沉，恐炼出暗夜之物。"
         }
       ]
+    },
+    {
+      "id": "advance_small_light_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "small_light_gu"
+      ],
+      "output_gu_id": "small_light_gu",
+      "materials": {},
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_thorn_whip_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "thorn_whip_gu"
+      ],
+      "output_gu_id": "thorn_whip_gu",
+      "materials": {},
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_stone_shell_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "stone_shell_gu"
+      ],
+      "output_gu_id": "stone_shell_gu",
+      "materials": {},
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_moonlight_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "moonlight_gu"
+      ],
+      "output_gu_id": "moonlight_gu",
+      "materials": {},
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_blood_moss_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "blood_moss_gu"
+      ],
+      "output_gu_id": "blood_moss_gu",
+      "materials": {},
+      "stone_cost": 6
     }
   ],
   "caravan_offers": [
@@ -81,7 +148,10 @@
     {
       "id": "caravan_mist_exchange",
       "kind": "exchange",
-      "input_gu_ids": ["trail_eye_gu", "stone_shell_gu"],
+      "input_gu_ids": [
+        "trail_eye_gu",
+        "stone_shell_gu"
+      ],
       "output_gu_id": "mist_step_gu",
       "stone_cost": 0
     }

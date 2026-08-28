@@ -151,6 +151,9 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		return
 	var source_gu_id := str(source_gu_ids[0])
 	var card_mode := str(definition.get("mode", ""))
+	# 同名蛊阶费：预览与结算同源（每阶 +1 真元），信息透明 §16.5。
+	var rank_bonus := maxi(0, state.highest_owned_rank(source_gu_id) - 1)
+	essence_cost += rank_bonus
 	var affordable_essence := state.essence + int(battle.get("action_energy", 0))
 	var executable := affordable_essence >= essence_cost
 	var risk: Array[String] = []
@@ -178,6 +181,9 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 	var valid_target_ids: Array[String] = []
 	if target_type == "single_enemy":
 		valid_target_ids.append_array(_living_enemy_ids(battle))
+	var expected: Array[String] = [_battle_effect(source_gu_id, card_mode)]
+	if rank_bonus > 0 and target_type == "single_enemy":
+		expected.append("同名蛊已进阶至 %d 阶：攻击伤害 +%d，催动真元 +%d。" % [1 + rank_bonus, rank_bonus, rank_bonus])
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(instance.get("instance_id", ""))],
 		"title": DisplayText.gu(source_gu_id),
@@ -186,7 +192,7 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		"block_reason": "真元不足：需要 %d 点，当前仅有 %d 点。" % [essence_cost, affordable_essence] if not executable else "",
 		"cost": {"spirit": essence_cost},
 		"known_risk": risk,
-		"expected_gain": [_battle_effect(source_gu_id, card_mode)],
+		"expected_gain": expected,
 		"unknown_note": "部分效果会受敌方状态和未暴露后手影响。" if not risk.is_empty() else "",
 		"remedy_hints": ["可先收势恢复判断，或改用真元消耗更低的蛊虫。"] if not executable else [],
 		"target_type": target_type,

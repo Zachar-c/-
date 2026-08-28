@@ -35,7 +35,8 @@ func test_ascension_allowed_after_boss_defeated() -> void:
 	var result := ResolverScript.apply(state, {"type": "attempt_ascension", "choice": "now"}, catalog)
 
 	assert_true(result["result"]["ok"])
-	assert_true(str(result["result"]["outcome"]) in ["success", "risky_success", "survived_failure"])
+	assert_true(str(result["result"]["outcome"]) in [
+		"ascension_special", "ascension_high", "ascension_medium", "ascension_low"])
 
 
 func test_preview_blocks_ascension_card_without_boss() -> void:

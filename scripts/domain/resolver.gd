@@ -227,7 +227,7 @@ static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary
 	if recipe.is_empty():
 		return _rejected(state, "unknown_refinement_recipe")
 	match str(recipe.get("kind", "combine")):
-		"fixed":
+		"fixed", "advance":
 			return _apply_fixed_recipe(state, command, catalog, recipe)
 		"free_mix":
 			return _apply_free_mix(state, command, catalog, recipe)
@@ -310,7 +310,13 @@ static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
 static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
 	if bool(recipe.get("locked", false)) and not _codex_unlocks_recipe(state, recipe):
 		return _rejected(state, "refinement_recipe_locked")
+	var is_advance := str(recipe.get("kind", "")) == "advance"
 	var inputs: Array = recipe.get("input_gu_ids", [])
+	if is_advance and (inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(inputs[0])):
+		return _rejected(state, "invalid_advance_recipe")
+	var stone_cost := int(recipe.get("stone_cost", 0))
+	if stone_cost > 0 and state.stone < stone_cost:
+		return _rejected(state, "insufficient_stone")
 	var material_cost: Dictionary = recipe.get("materials", {})
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
@@ -333,23 +339,34 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		instances[instance_id] = consumed
 		stored.erase(instance_id)
 	var output_instance_id := _next_gu_instance_id(instances)
-	instances[output_instance_id] = {
+	var output_instance := {
 		"instance_id": output_instance_id,
 		"definition_id": str(recipe["output_gu_id"]),
 		"state": "refined",
 	}
+	if is_advance:
+		# 同名升阶：本体进阶不换名，阶数 +1（封顶五转）；是否可达由
+		# 转数/阶顶决定，否则拒绝而不烧材料。
+		var consumed_rank := int(instances[str(selected[0])].get("rank", 1))
+		var new_rank := mini(consumed_rank + 1, 5)
+		if new_rank <= consumed_rank:
+			return _rejected(paid, "advance_capped")
+		output_instance["rank"] = new_rank
+	instances[output_instance_id] = output_instance
 	stored.append(output_instance_id)
 	aperture["stored_gu_instance_ids"] = stored
 	var next := paid.append_event(_event(
 		paid,
 		"refine_gu",
-		{"gu_instances": paid.gu_instances, "cave_aperture": paid.cave_aperture},
-		{"gu_instances": instances, "cave_aperture": aperture},
+		{"stone": paid.stone, "gu_instances": paid.gu_instances, "cave_aperture": paid.cave_aperture},
+		{"stone": paid.stone - stone_cost, "gu_instances": instances, "cave_aperture": aperture},
 		"refinement_succeeded",
 		paid.current_node_id,
 		selected + [output_instance_id, "recipe:%s" % str(recipe["id"])]
 	))
 	next.sync_legacy_gu_projections()
+	if stone_cost > 0:
+		next.stone = paid.stone - stone_cost
 	return _accepted(next)
 
 
@@ -516,11 +533,13 @@ static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Diction
 		return _rejected(state, "insufficient_stone")
 	var aperture := state.cave_aperture.duplicate(true)
 	aperture["essence_max"] = EssenceCapacityScript.essence_max_for(state, catalog, 2)
+	# 玩家等级曲线（2026-08-29 设计点）：转数只抬真元总量上限，不加 HP/攻击。
+	var next_capacity := maxi(state.essence_capacity, 3 + 2)
 	var next := state.append_event(_event(
 		state,
 		"cultivate_rank_two",
 		{"cultivation": state.cultivation, "stone": state.stone, "essence": state.essence, "cave_aperture": state.cave_aperture},
-		{"cultivation": 2, "stone": state.stone - 5, "essence": state.essence_capacity, "cave_aperture": aperture},
+		{"cultivation": 2, "stone": state.stone - 5, "essence": state.essence_capacity, "essence_capacity": next_capacity, "cave_aperture": aperture},
 		"rank_two_breakthrough",
 		state.current_node_id
 	))
@@ -1461,6 +1480,22 @@ static func _choose_action(state: RunState, command: Dictionary, catalog: Dictio
 		str(transition["reason"]),
 		state.current_node_id
 	))
+	# Ascension grants (升仙五项): a node may declare that performing one of
+	# its actions secures one of the five ascension conditions. The mapping
+	# lives on the node in nodes.json (ascension_grants); without it the two
+	# flow-granted conditions (heaven_earth_qi, aperture_foundation) had no
+	# source and ascension could never succeed outside of tests.
+	var grant_flag := _ascension_grant_for(state, action_id, catalog)
+	if not grant_flag.is_empty():
+		var grant := _ascension_transition(state, grant_flag, true, "ascension_grant_%s" % grant_flag)
+		next = next.append_event(_event(
+			next,
+			"choose_action",
+			grant["before"],
+			grant["after"],
+			str(grant["reason"]),
+			state.current_node_id
+		))
 	var result := {
 		"ok": true,
 		"action_id": action_id,
@@ -1566,6 +1601,24 @@ static func _ascension_transition(state: RunState, key: String, value: bool, eff
 		"reason": effect_id,
 		"effect_id": effect_id,
 	}
+
+
+## The five ascension conditions of the smoke design's 终局资格 ledger.
+const ASCENSION_CONDITION_KEYS := [
+	"aperture_foundation", "heaven_earth_qi", "site", "protection", "external_interference",
+]
+
+
+static func _ascension_grant_for(state: RunState, action_id: String, catalog: Dictionary) -> String:
+	var node_id := str(state.current_node_id)
+	for node_value in catalog.get("nodes", []):
+		var node: Dictionary = node_value
+		if str(node.get("id", "")) != node_id:
+			continue
+		var grants: Dictionary = node.get("ascension_grants", {})
+		var flag := str(grants.get(action_id, ""))
+		return flag if flag in ASCENSION_CONDITION_KEYS else ""
+	return ""
 
 
 static func _fact_transition(state: RunState, fact_id: String, effect_id: String) -> Dictionary:
@@ -1938,19 +1991,33 @@ static func _attempt_ascension(state: RunState, command: Dictionary) -> Dictiona
 	if command.get("choice", "") != "now":
 		return _rejected(state, "unsupported_ascension_choice")
 	var conditions := _ascension_conditions(state)
-	var all_ready := true
+	var met := 0
 	for condition in conditions.values():
-		if not condition:
-			all_ready = false
+		if condition:
+			met += 1
 	var risk := state.pursuit + state.injury + state.lifespan_debt
-	var outcome := "survived_failure"
-	if all_ready and risk <= 1:
-		outcome = "success"
-	elif all_ready and risk <= 3:
-		outcome = "risky_success"
+	# 升仙评价制（2026-08-28 裁定）：五项准备不再是一票否决的硬门槛，而是与
+	# 风险共同折算四等评价。score = 达成条件数 - 风险罚分（risk<=1: 0，
+	# risk<=3: 1，risk>3: 3）——5 特等 / 4 上等 / 2-3 中等 / 其余下等。
+	# Boss 获胜仍是硬前置；冲仙本身不再因缺条件而失败。
+	var penalty := 0
+	if risk > 3:
+		penalty = 3
+	elif risk > 1:
+		penalty = 1
+	var score := met - penalty
+	var outcome := "ascension_low"
+	if score >= 5:
+		outcome = "ascension_special"
+	elif score == 4:
+		outcome = "ascension_high"
+	elif score >= 2:
+		outcome = "ascension_medium"
 	var ascension := state.ascension.duplicate(true)
 	ascension["outcome"] = outcome
 	ascension["conditions"] = conditions.duplicate(true)
+	ascension["conditions_met"] = met
+	ascension["risk"] = risk
 	var next := state.append_event(_event(
 		state,
 		"attempt_ascension",
@@ -1959,7 +2026,7 @@ static func _attempt_ascension(state: RunState, command: Dictionary) -> Dictiona
 		"ascension_%s" % outcome,
 		"ascension_window"
 	))
-	return {"state": next, "result": {"ok": true, "outcome": outcome, "conditions": conditions, "risk": risk}}
+	return {"state": next, "result": {"ok": true, "outcome": outcome, "conditions": conditions, "conditions_met": met, "risk": risk}}
 
 
 static func _ascension_conditions(state: RunState) -> Dictionary:

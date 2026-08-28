@@ -2,5 +2,9 @@
   "lifespan_milestones": {
     "stage_one_ledger": 10,
     "boss_defeated": 10
+  },
+  "turn_scaling": {
+    "hp_add_per_turn": 2,
+    "damage_add_per_turn": 1
   }
 }
