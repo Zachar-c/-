@@ -112,13 +112,23 @@ export HallView() -> RuitkVNode {
     var version_rows = []
     if version_warning != "":
       version_rows.append(<GuToast text={ version_warning } tone="warn" />)
+    var master_volume = int(state.get("master_volume", 100))
+    var resolution_options = state.get("resolution_options", ["全屏", "1920×1080 · 窗口", "1600×900 · 窗口", "1280×720 · 窗口"])
+    var resolution_index = int(state.get("resolution_index", 0))
+    var resolution_label = str(resolution_options[resolution_index]) if resolution_index >= 0 and resolution_index < resolution_options.size() else "全屏"
     return (
       <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         { version_rows }
         <Label text="设置" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 26} } />
         <GuPanel title="显示与声音">
-          <Label text="音量：待接入" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
-          <Label text="分辨率：待接入" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
+          <HBoxContainer style={ {"separation": 12} }>
+            <Label name="settings_volume_label" text={ "音量 %d%%" % master_volume } style={ {"font_color": GuStyle.INK_HALL, "font_size": 14} } />
+            <GuButton label="−10" on_press={ func(): fire1.call("step_volume", -10) } />
+            <GuButton label="+10" on_press={ func(): fire1.call("step_volume", 10) } />
+          </HBoxContainer>
+          <Label text="音量作用于全局主音轨；0 即静音。" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
+          <GuButton label={ "分辨率：" + resolution_label + " ›" } on_press={ func(): fire.call("cycle_resolution") } />
+          <Label text="切换立即生效；全屏与窗口尺寸随上一档记忆。" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
         </GuPanel>
         <GuPanel title="难度">
           <Label text="本局状态自适应难度（R14.6）" style={ {"font_color": GuStyle.INK_HALL, "font_size": 14} } />

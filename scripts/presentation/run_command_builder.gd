@@ -77,6 +77,8 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"open_journal": func(): controller._show_hall_subview("journal"),
 			"back_to_hall": func(): controller._show_hall_subview("main"),
 			"toggle_dda": func(): controller.toggle_dda(),
+			"step_volume": func(delta): controller.step_master_volume(int(delta)),
+			"cycle_resolution": func(): controller.cycle_resolution(),
 			"quit": func(): controller.quit_game(),
 			}
 		"Encounter":

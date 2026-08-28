@@ -16,6 +16,7 @@ const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
 const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
+const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 
 const SCREEN_PATHS := {
 	"Title": "res://ui/screens/hall_view.gd",
@@ -34,6 +35,8 @@ const SCREEN_PATHS := {
 var catalog: Dictionary
 var state: RunState
 var meta  # MetaProgress instance loaded from save, untyped for property access
+## 客户端偏好（音量/显示，§16.22）：独立 ConfigFile，绝不进 RunData 或大厅档。
+var app_settings  # AppSettings instance, untyped so tests can stub it with null
 var route: Array[Dictionary] = []
 var current_node: Dictionary = {}
 var current_battle: Dictionary = {}
@@ -104,6 +107,11 @@ func _initialize_view_flow() -> void:
 	# 大厅子视图（流派/契约/图鉴）只读快照依赖 catalog；启动即加载内容表，
 	# 否则选流派前列表恒为空（2026-08-27 实机走查断点）。
 	catalog = ContentCatalog.load_all()
+	app_settings = AppSettingsScript.load_settings()
+	# 仅在玩家显式保存过偏好时才施加引擎副作用，首跑保持项目默认窗口。
+	if AppSettingsScript.has_saved_file():
+		_apply_master_volume()
+		_apply_window_mode()
 	_rui_host = Control.new()
 	_rui_host.name = "RUIHost"
 	_rui_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -679,6 +687,50 @@ func toggle_dda() -> void:
 	meta.dda_state_adaptive_enabled = not meta.dda_state_adaptive_enabled
 	SaveRepository.save_meta_file(meta)
 	_render()
+
+
+## A6 设置 → 主音量步进（±delta，钳制 0–100），立即作用于 Master 总线并持久化。
+func step_master_volume(delta: int) -> void:
+	if app_settings == null:
+		return
+	app_settings.master_volume = AppSettingsScript.clamp_volume(int(app_settings.master_volume) + delta)
+	AppSettingsScript.save_settings(app_settings)
+	_apply_master_volume()
+	_render()
+
+
+## A6 设置 → 分辨率循环切换（全屏 ↔ 各窗口档），立即作用于窗口并持久化。
+func cycle_resolution() -> void:
+	if app_settings == null:
+		return
+	app_settings.resolution_index = AppSettingsScript.next_resolution_index(int(app_settings.resolution_index))
+	AppSettingsScript.save_settings(app_settings)
+	_apply_window_mode()
+	_render()
+
+
+func _apply_master_volume() -> void:
+	var percent := AppSettingsScript.clamp_volume(int(app_settings.master_volume)) if app_settings != null else 100
+	if AudioServer.get_bus_count() < 1:
+		return
+	var bus := 0
+	AudioServer.set_bus_mute(bus, percent <= 0)
+	if percent > 0:
+		AudioServer.set_bus_volume_db(bus, linear_to_db(float(percent) / 100.0))
+
+
+func _apply_window_mode() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	var option: Dictionary = AppSettingsScript.resolution_at(int(app_settings.resolution_index)) if app_settings != null else {}
+	if option.is_empty():
+		return
+	if bool(option.get("fullscreen", false)):
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		var size: Vector2i = option.get("size", Vector2i(1920, 1080))
+		DisplayServer.window_set_size(size)
 
 
 ## 大厅内部子视图切换（A3 流派 / A4 契约 / A5 图鉴 / A6 设置 / A7 手记）。

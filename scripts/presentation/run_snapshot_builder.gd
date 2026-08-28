@@ -11,6 +11,7 @@ const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
@@ -442,6 +443,10 @@ static func hall(controller) -> Dictionary:
 		"codex": _codex(catalog, meta),
 		"journal": _journal(meta, catalog),
 		"dda_state_adaptive_enabled": bool(meta.dda_state_adaptive_enabled) if meta != null else true,
+		# A6 设置接线：客户端偏好只投影数值与选项标签，绝不写回（只读快照）。
+		"master_volume": AppSettingsScript.clamp_volume(int(controller.app_settings.master_volume)) if controller.get("app_settings") != null else 100,
+		"resolution_index": int(controller.app_settings.resolution_index) if controller.get("app_settings") != null else 0,
+		"resolution_options": AppSettingsScript.resolution_labels(),
 	}
 	out["brand_title"] = "問眞"
 	out["primary_action"] = "continue_run" if out["has_save"] else "open_schools"
