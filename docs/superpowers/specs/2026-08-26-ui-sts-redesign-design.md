@@ -1,9 +1,10 @@
-# 《蛊路求生》UI 视觉设计规格 —— Slay the Spire 式界面全景（v3）
+# 《問眞》UI 视觉设计规格 —— Slay the Spire 式界面全景（v3，已归档）
 
 - 日期：2026-08-26
-- 状态：待评审（先规划后生成）
+- 状态：已归档（被 [2026-08-27-minimal-ui-redesign-design.md](./2026-08-27-minimal-ui-redesign-design.md) 与 [2026-08-28-p0-1-wenzhen-theme-migration-design.md](./2026-08-28-p0-1-wenzhen-theme-migration-design.md) 取代；保留作历史与覆盖矩阵追踪，不接受新引用）
 - 分支：`ui-sts-redesign`
 - 范围：表现层**全部需要玩家界面的功能** + **各界面状态与流转**（进入 / 调整 / 退出 / 返回），按界面家族全景设计；落地到现有 RUI（`.guitkx`）组件体系
+- 替代关系：H1 与品牌段落已被 27/28 批取代；本页 §0–§4 覆盖矩阵与状态机仍作历史档案保留
 - 关联约束：`docs/visual-reference-index.md`（视觉裁决版 §2–§5）、`2026-08-25-ui-rui-overhaul-design.md`（RUI 重构）、`2026-08-25-mechanics-first-lockdown-design.md`（规格书 §16.5/§16.6/§16.7/§16.22）、AGENTS.md
 
 > v3 相对 v2：新增 **§4 状态与流转设计**（全局状态机 / 节点流转 / 22 屏进入·调整·退出·返回 / 弹窗叠层 / 中断恢复），这是本次的重点；原 §4–§10 顺延为 §5–§11。
