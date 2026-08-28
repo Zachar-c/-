@@ -118,7 +118,7 @@ func test_tooltip_paper_bg_ink_text_and_fixed_segment_order() -> void:
 	if panel == null:
 		return
 	var sb := panel.get_theme_stylebox("panel") as StyleBoxFlat
-	assert_true(sb != null and sb.bg_color.is_equal_approx(GuStyle.PAPER),
+	assert_true(sb != null and sb.bg_color.is_equal_approx(GuStyle.PAPER_BG),
 			"tooltip background must be PAPER scroll tone, not the old dark panel")
 	var labels: Array = []
 	_collect_labels(panel, labels)
@@ -131,10 +131,10 @@ func test_tooltip_paper_bg_ink_text_and_fixed_segment_order() -> void:
 	assert_gt(idx_cost, idx_synergy, "cost follows synergy (fixed order)")
 	assert_gt(idx_curse, idx_cost, "curse warning is the last segment")
 	var effect_label: Label = labels[idx_effect]
-	assert_true(effect_label.get_theme_color("font_color").is_equal_approx(GuStyle.INK),
+	assert_true(effect_label.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY),
 			"body text must switch to deep ink on paper")
 	var curse_label: Label = labels[idx_curse]
-	assert_true(curse_label.get_theme_color("font_color").is_equal_approx(GuStyle.DANGER),
+	assert_true(curse_label.get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR),
 			"DANGER stays reserved for the curse warning line")
 
 
@@ -153,28 +153,28 @@ func test_tooltip_hides_empty_segments_but_keeps_order_slots() -> void:
 
 # ---- 2. 危险蛊强红角标 / 封印锁态 ----
 
-func test_gu_card_danger_curse_badge_uses_danger_bg_bone_glyph() -> void:
+func test_gu_card_danger_curse_badge_uses_cinnabar_bg_primary_ink_glyph() -> void:
 	var host := _mount_screen("res://ui/widgets/gu_card.gd", {"title": "血祭蛊", "curse_warning": true})
 	var glyph := _find_label_exact(host, "咒")
 	assert_true(glyph != null, "danger card must carry the 咒 corner badge")
 	if glyph == null:
 		return
-	assert_true(glyph.get_theme_color("font_color").is_equal_approx(GuStyle.BONE),
-			"badge glyph must be BONE on the danger fill")
+	assert_true(glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY),
+			"badge glyph must use primary ink on the cinnabar fill")
 	var chip := _nearest_panel_ancestor(glyph)
 	assert_true(chip != null, "badge must be a filled chip, not a bare colored label")
 	if chip != null:
 		var sb := chip.get_theme_stylebox("panel") as StyleBoxFlat
-		assert_true(sb != null and sb.bg_color.is_equal_approx(GuStyle.DANGER),
-				"badge fill must be strong DANGER red")
+		assert_true(sb != null and sb.bg_color.is_equal_approx(GuStyle.CINNABAR),
+				"badge fill must be cinnabar")
 	var outer := _first_panel(host)
 	assert_true(outer != null)
 	if outer != null:
 		var osb := outer.get_theme_stylebox("panel") as StyleBoxFlat
 		assert_true(osb != null and osb.border_width_left == 2,
 				"danger cards keep the thick border treatment")
-		assert_true(osb.border_color.is_equal_approx(GuStyle.DANGER),
-				"danger border color must be DANGER")
+		assert_true(osb.border_color.is_equal_approx(GuStyle.CINNABAR),
+			"danger border color must be cinnabar")
 
 
 func test_gu_card_sealed_state_keeps_lock_glyph_and_dimming() -> void:
@@ -209,7 +209,7 @@ func test_reward_screen_renders_fallback_smallprint_only_when_marked() -> void:
 	assert_true(note != null, "marked fallback renders the small-print slot")
 	if note != null:
 		assert_true(note.get_theme_font_size("font_size") == 13, "fallback small print is 13px")
-		assert_true(note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM),
+		assert_true(note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT),
 				"fallback small print uses BONE_DIM")
 
 

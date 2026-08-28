@@ -192,17 +192,17 @@ func test_ending_screen_renders_route_strip_record_block_and_new_badges() -> voi
 	var boss_chip := _find_label_exact(host, "第2层 交锋")
 	assert_true(boss_chip != null, "boss layer keeps its own chip")
 	if boss_chip != null:
-		assert_true(boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.EMBER), "boss layer highlight uses EMBER")
+		assert_true(boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.RARITY_EPIC), "boss layer highlight uses epic accent")
 	var plain_chip := _find_label_exact(host, "第1层 接触·黑市")
 	if plain_chip != null:
-		assert_false(plain_chip.get_theme_color("font_color").is_equal_approx(GuStyle.EMBER), "non-boss layers stay dim")
+		assert_false(plain_chip.get_theme_color("font_color").is_equal_approx(GuStyle.RARITY_EPIC), "non-boss layers stay dim")
 	assert_true(_host_has_text(host, "战斗合成：2 次 · 成 1 / 败 1"), "record block counts attempts by outcome")
 	assert_true(_host_has_text(host, "Boss 阶段切换：1 次"))
 	assert_false(_host_has_text(host, "DDA"), "reserved DDA row stays hidden while empty")
 	var unlock_row := _find_label_exact(host, "★新 图鉴：火蛊")
 	assert_true(unlock_row != null, "settlement unlocks are marked unread-new")
 	if unlock_row != null:
-		assert_true(unlock_row.get_theme_color("font_color").is_equal_approx(GuStyle.GOLD), "★新 prefix renders in GOLD")
+		assert_true(unlock_row.get_theme_color("font_color").is_equal_approx(GuStyle.ANOMALY_YELLOW), "★新 prefix renders in anomaly accent")
 	assert_true(_host_has_text(host, "离局清零"), "resource panel carries the leave-run wipe small print")
 
 

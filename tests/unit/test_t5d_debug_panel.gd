@@ -371,7 +371,7 @@ func test_panel_expanded_renders_dev_badge_and_operation_buttons() -> void:
 	var badge_color_matched := false
 	for l in _labels_of(host):
 		if str(l.text) == "调试":
-			badge_color_matched = l.get_theme_color("font_color").is_equal_approx(GuStyle.DANGER)
+			badge_color_matched = l.get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR)
 	assert_true(badge_color_matched, "DEV badge must render in DANGER red")
 
 	for wanted in ["加蛊", "应用", "跳", "打印 RunData 快照", "收起"]:

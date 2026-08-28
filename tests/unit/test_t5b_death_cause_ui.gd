@@ -259,7 +259,7 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 	var badge := _find_label_exact(death_host, "死因 · 战局失利")
 	assert_true(badge != null, "badge must render as its own label for color checks")
 	if badge != null:
-		assert_true(badge.get_theme_color("font_color").is_equal_approx(GuStyle.BLOOD),
+		assert_true(badge.get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR),
 				"Fix M4: the death-cause badge text must be BLOOD (not blended with the type-badge color)")
 	var retreat_state := death_state.duplicate(true)
 	retreat_state["ending_type"] = "retreat"
