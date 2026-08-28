@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
@@ -49,7 +48,7 @@ export ActionCardRow() -> RuitkVNode {
       on_command.call(card)
 
   var btn_label = "确认执行" if danger else "选择"
-  var detail_color = GuStyle.DANGER if not executable else GuStyle.BONE_DIM
+  var detail_color = GuStyle.CINNABAR if not executable else GuStyle.INK_SOFT
 
   return (
     <VBoxContainer style={ {"separation": 4} }>

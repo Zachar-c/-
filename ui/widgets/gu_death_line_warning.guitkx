@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 
 # GuDeathLineWarning —— 三死线预警（规格 §9 / §16.10 死亡可预见 / D2 强化）
 # 危险行：「☠」前缀 + 加大字号（15 = 基础 13 + 2）+ 半透明血锈底条，
@@ -25,7 +24,7 @@ export GuDeathLineWarning() -> RuitkVNode {
     var cause_id = str(d.get("cause_id", ""))
     if danger:
       var text = "☠ %s %d/%d" % [nm, remaining, maxv]
-      var font_style = {"font_color": GuStyle.BLOOD, "font_size": 15}
+      var font_style = {"font_color": GuStyle.CINNABAR, "font_size": 15}
       if on_view != null:
         var row_style = {}
         for k in bar_box:
@@ -37,11 +36,11 @@ export GuDeathLineWarning() -> RuitkVNode {
         rows.append(V.PanelContainer(bar_box, [V.Label({"text": text, "style": font_style})]))
     else:
       var text = "· %s %d/%d" % [nm, remaining, maxv]
-      rows.append(V.Label({"text": text, "style": {"font_color": GuStyle.BONE_DIM, "font_size": 13}}))
+      rows.append(V.Label({"text": text, "style": {"font_color": GuStyle.INK_SOFT, "font_size": 13}}))
 
   return (
     <VBoxContainer style={ {"separation": 4} }>
-      <Label text="三死线" style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
+      <Label text="三死线" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />
       { rows }
     </VBoxContainer>
   )

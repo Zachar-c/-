@@ -8,8 +8,7 @@ extends Control
 # and this component only renders them. Wraps with an HFlowContainer when crowded.
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
-const UiThemeScript := preload("res://scripts/presentation/components/ui_theme.gd")
+const GuStyleScript := preload("res://scripts/presentation/gu_style.gd")
 
 
 var _contracts: Array = []
@@ -18,11 +17,9 @@ var _dda: Array = []
 
 
 func _ready() -> void:
-	theme = THEME
 	set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	custom_minimum_size = Vector2(0, 44)
 	var flow := HFlowContainer.new()
-	flow.theme = THEME
 	flow.name = "Flow"
 	flow.add_theme_constant_override("h_separation", 8)
 	flow.add_theme_constant_override("v_separation", 4)
@@ -58,24 +55,23 @@ func _rebuild() -> void:
 		child.queue_free()
 
 	if not _contracts.is_empty():
-		flow.add_child(_section_label("契约", UiThemeScript.CONTRACT))
+		flow.add_child(_section_label("契约", GuStyleScript.CONTRACT_BLUE))
 		for item in _contracts:
-			flow.add_child(_chip(_text(item), UiThemeScript.CONTRACT, UiThemeScript.CONTRACT_GLYPH))
+			flow.add_child(_chip(_text(item), GuStyleScript.CONTRACT_BLUE, GuStyleScript.CONTRACT_GLYPH))
 
 	if not _dda.is_empty():
-		flow.add_child(_section_label("异变", UiThemeScript.DDA_YELLOW))
+		flow.add_child(_section_label("异变", GuStyleScript.ANOMALY_YELLOW))
 		for item in _dda:
-			flow.add_child(_chip(_text(item), UiThemeScript.DDA_YELLOW, UiThemeScript.DDA_GLYPH))
+			flow.add_child(_chip(_text(item), GuStyleScript.ANOMALY_YELLOW, GuStyleScript.DDA_GLYPH))
 
 	if not _debuffs.is_empty():
-		flow.add_child(_section_label("减益", UiThemeScript.DANGER))
+		flow.add_child(_section_label("减益", GuStyleScript.CINNABAR))
 		for item in _debuffs:
-			flow.add_child(_chip(_text(item), UiThemeScript.DANGER, "!"))
+			flow.add_child(_chip(_text(item), GuStyleScript.CINNABAR, GuStyleScript.CURSE_GLYPH))
 
 
 func _section_label(text: String, color: Color) -> Label:
 	var lbl := Label.new()
-	lbl.theme = THEME
 	lbl.text = text
 	lbl.add_theme_font_size_override("font_size", 14)
 	lbl.add_theme_color_override("font_color", color)
@@ -84,14 +80,12 @@ func _section_label(text: String, color: Color) -> Label:
 
 func _chip(text: String, color: Color, glyph: String) -> PanelContainer:
 	var chip := PanelContainer.new()
-	chip.theme = THEME
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = color.darkened(0.62)
 	sb.set_corner_radius_all(4)
 	sb.set_content_margin_all(6)
 	chip.add_theme_stylebox_override("panel", sb)
 	var lbl := Label.new()
-	lbl.theme = THEME
 	lbl.text = "%s %s" % [glyph, text] if not glyph.is_empty() else text
 	lbl.add_theme_font_size_override("font_size", 14)
 	lbl.add_theme_color_override("font_color", color)

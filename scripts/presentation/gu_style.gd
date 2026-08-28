@@ -3,22 +3,31 @@ extends RefCounted
 
 # ── Wen Zhen (問眞) Visual Tokens ──────────────────────────────────────
 # Semantic source of truth for the minimal light UI redesign.
-# Old dark-theme aliases kept at bottom for gradual migration; screens
-# should consume the new tokens directly.
+# Formal UI token source. Screens and components consume these names directly.
 
 # —— Paper / background ——
 const PAPER_BG     := Color("ece9df")       # 主表面、宣纸白
-const PAPER_RAISED := Color("f4f1e8")       # 次级纸面、轻微下沉/禁用层
+const PAPER_RAISED := Color("e6e2d7")       # 次级纸面、轻微下沉/禁用层
 const PAPER_DEEP   := Color("ddd8cc")       # 禁用层、轻分区
+const PAPER_HALL   := Color("e5e2d7")       # 大厅 HTML 主纸面
+const PAPER_MAP    := Color("e7e4da")       # 地图 HTML 主纸面
 
 # —— Ink / text ——
 const INK_PRIMARY  := Color("171814")       # 近黑墨色（主文字 / 主结构线）
 const INK_SOFT     := Color("686960")       # 次要文字、已知但不紧急
 const INK_MUTED    := Color("68675f")       # 介于 INK_PRIMARY 与 PAPER_BG
+const INK_HALL     := Color("171817")       # 大厅 HTML 主文字
+const INK_MAP      := Color("1b1c19")       # 地图 HTML 主文字
+const INK_MAP_NOTE := Color("64665f")       # 地图 HTML 注释文字
+const INK_MAP_FAINT := Color("8b8d85")      # 地图 HTML 深度刻度
+const INK_MAP_LABEL := Color("92948d")      # 地图 HTML 层级标签
+const INK_MAP_VALUE := Color("252624")      # 地图 HTML 资源数值
+const INK_MAP_NAME  := Color("666861")      # 地图 HTML 资源名称
 
 # —— Hairline / rule ——
 const RULE := Color("aaa89f")
 const HAIRLINE_COLOR := Color("aaa89f")        # 发丝分隔线色
+const RULE_HALL := Color("b8b6aa")             # 大厅 HTML 发丝线
 const HAIRLINE     := 1                        # 发丝线宽 1px
 
 # —— Semantic accent ——
@@ -26,6 +35,16 @@ const CINNABAR     := Color("9c332d")       # 朱砂：危险 / 不可逆 / 死�
 const CONTRACT_BLUE := Color("315f73")      # 契约规则
 const ANOMALY_YELLOW := Color("936f1e")     # DDA / 异变 / 险象
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
+
+# Rarity remains an identification accent, not a surface color.
+const RARITY_COMMON := INK_SOFT
+const RARITY_RARE := CONTRACT_BLUE
+const RARITY_EPIC := Color("76528f")
+const RARITY_LEGENDARY := Color("8c6b25")
+
+const CURSE_GLYPH := "⚠"
+const CONTRACT_GLYPH := "契"
+const DDA_GLYPH := "异"
 
 # The only packaged font is owner-authorized for this noncommercial build.
 # Body copy deliberately uses Godot's default until a separately cleared body face arrives.
@@ -45,33 +64,66 @@ const SPACE_6 := 32
 # —— Radius ——
 const RADIUS_SMALL := 4
 
-# ── Backward-compatible aliases (old dark-theme names) ──────────────────
-# These keep existing screens compiling during migration.
-# Gradually replace references with the new tokens above.
+static func rarity_color(rarity: String) -> Color:
+	match str(rarity):
+		"rare": return RARITY_RARE
+		"epic": return RARITY_EPIC
+		"legendary": return RARITY_LEGENDARY
+		_: return RARITY_COMMON
 
-# Backgrounds
-const BG_DEEP   := PAPER_BG        # was dark → now paper
-const BG_PANEL  := PAPER_RAISED    # was dark panel → now raised paper
-const BG_RAISED := Color("e8e4d8") # intermediate raised surface
 
-# Ink / text (old names)
-const INK       := INK_PRIMARY
+static func contract_color() -> Color:
+	return CONTRACT_BLUE
 
-# Primary text (old name "BONE" → now INK_PRIMARY for dark-on-light)
-const BONE      := INK_PRIMARY
-const BONE_DIM  := INK_SOFT
 
-# Accent colors (old names)
-const PAPER     := PAPER_BG
-const PAPER_DIM := PAPER_DEEP
+static func curse_color() -> Color:
+	return CINNABAR
 
-# Old semantic palette → Wen Zhen equivalents
-const JADE_BRIGHT := Color("5d9680")  # was light jade → now slightly brighter jade
-const GOLD      := Color("8c7a52")    # muted gold / resource accent
-const GOLD_DIM  := Color("a8946f")    # dimmer gold
-const SILVER    := Color("8a9196")    # cool accent
-const EMBER     := Color("b87333")    # warm accent
-const DANGER    := CINNABAR           # alias: old DANGER → new CINNABAR
-const BLOOD     := Color("8e2f28")    # 深血锈（死亡线极端危险）
-const ANOMALY_AMBER := ANOMALY_YELLOW # alias: old name → new ANOMALY_YELLOW
-const ANOMALY_RED   := Color("b5523a") # DDA 衰运（黄红系，保留兼容）
+
+static func dda_color() -> Color:
+	return ANOMALY_YELLOW
+
+
+static func _panel_stylebox() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = PAPER_RAISED
+	sb.border_color = HAIRLINE_COLOR
+	sb.set_border_width_all(HAIRLINE)
+	sb.set_corner_radius_all(RADIUS_SMALL)
+	sb.set_content_margin_all(SPACE_2)
+	return sb
+
+
+static func panel() -> PanelContainer:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", _panel_stylebox())
+	return p
+
+
+static func button(text: String, enabled: bool) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.disabled = not enabled
+	b.add_theme_font_size_override("font_size", 16)
+	b.add_theme_color_override("font_color", INK_PRIMARY)
+	b.add_theme_color_override("font_disabled_color", INK_MUTED)
+	b.add_theme_color_override("font_hover_color", INK_PRIMARY)
+	b.add_theme_color_override("font_pressed_color", CINNABAR)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = PAPER_RAISED
+	normal.border_color = HAIRLINE_COLOR
+	normal.set_border_width_all(HAIRLINE)
+	normal.set_corner_radius_all(RADIUS_SMALL)
+	b.add_theme_stylebox_override("normal", normal)
+	var disabled := normal.duplicate()
+	disabled.bg_color = PAPER_DEEP
+	b.add_theme_stylebox_override("disabled", disabled)
+	return b
+
+
+static func label(text: String, size: int, color: Color) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", color)
+	return l

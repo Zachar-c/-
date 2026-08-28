@@ -2,9 +2,8 @@ class_name BattleView
 extends Control
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
-const UiThemeScript := preload("res://scripts/presentation/components/ui_theme.gd")
-const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+
+const ActionCardRowScript := preload("res://scripts/presentation/action_card_row_builder.gd")
 const ResourceIconScript := preload("res://scripts/presentation/resource_icon.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 
@@ -18,15 +17,15 @@ const HUD_INDICATOR_KINDS := {"真元": "essence", "元石": "stone", "寿元": 
 # Pity (保底) is only ever hinted, never shown as a raw number.
 const PITY_HINT_CAP := 8
 
-# Palette mirrors gu_theme / UiTheme conventions.
-const COLOR_GOLD := Color("e7c883")
-const COLOR_JADE := Color("b8d5cc")
-const COLOR_DANGER := Color("ff5a4d")
-const COLOR_CONTRACT := Color("5a8bd6")
-const COLOR_CURSE := Color("c0152f")
-const COLOR_DDA_YELLOW := Color("ffcc55")
-const COLOR_DDA_RED := Color("ff7766")
-const COLOR_SHIELD := Color("9fd6c0")
+# Semantic colors stay centralized in GuStyle.
+const COLOR_GOLD := GuStyle.ANOMALY_YELLOW
+const COLOR_JADE := GuStyle.JADE
+const COLOR_DANGER := GuStyle.CINNABAR
+const COLOR_CONTRACT := GuStyle.CONTRACT_BLUE
+const COLOR_CURSE := GuStyle.CINNABAR
+const COLOR_DDA_YELLOW := GuStyle.ANOMALY_YELLOW
+const COLOR_DDA_RED := GuStyle.CINNABAR
+const COLOR_SHIELD := GuStyle.JADE
 
 
 # Primary command channel consumed by RunController.command_submitted.
@@ -43,7 +42,6 @@ var _content_root: Control
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	theme = THEME
 	_ensure_tooltip()
 
 
@@ -89,7 +87,7 @@ func _append_top_status(column: VBoxContainer, state: RunState) -> void:
 	var statuses: Dictionary = cultivator.get("statuses", {})
 	for curse_id in statuses:
 		var entry: Dictionary = statuses[curse_id]
-		debuffs.append("%s 诅咒 %d" % [UiThemeScript.CURSE_GLYPH, int(entry.get("layers", 1))])
+	debuffs.append("%s 诅咒 %d" % [GuStyle.CURSE_GLYPH, int(entry.get("layers", 1))])
 	var notorious := int(cultivator.get("notorious", 0))
 	if notorious > 0:
 		debuffs.append("恶名 %d" % notorious)
@@ -230,7 +228,7 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	if int(battle.get("action_energy", 0)) > 0:
 		essence_label += "（临时 +%d）" % int(battle.get("action_energy", 0))
 	var essence_bar: StatBar = StatBarScene.instantiate()
-	essence_bar.configure(essence_label, essence, essence_max, UiThemeScript.rarity_color("rare"))
+	essence_bar.configure(essence_label, essence, essence_max, GuStyle.rarity_color("rare"))
 	# Re-assert the value (configure already sets it; kept for clarity on update).
 	essence_bar.set_value(essence, essence_max)
 	column.add_child(essence_bar)
@@ -259,7 +257,7 @@ func _append_hero_block(column: VBoxContainer, battle: Dictionary, state: RunSta
 	var curse_layers := _total_curse_layers(state)
 	if curse_layers > 0:
 		var curse := Label.new()
-		curse.text = "%s 身负诅咒 %d 层" % [UiThemeScript.CURSE_GLYPH, curse_layers]
+	curse.text = "%s 身负诅咒 %d 层" % [GuStyle.CURSE_GLYPH, curse_layers]
 		curse.add_theme_color_override("font_color", COLOR_CURSE)
 		column.add_child(curse)
 
@@ -302,7 +300,7 @@ func _append_enemy_block(column: VBoxContainer, battle: Dictionary) -> void:
 	var name_label := Label.new()
 	name_label.text = "敌 · %s" % DisplayText.enemy(str(battle.get("enemy_kind", "")))
 	name_label.add_theme_font_size_override("font_size", 26)
-	name_label.add_theme_color_override("font_color", Color("e8b4a4"))
+	name_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
 	column.add_child(name_label)
 
 	# §16.5.2 enemy intent must carry an explicit number AND effect word.
@@ -466,7 +464,7 @@ func _curse_wrapper(row: Control) -> VBoxContainer:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 2)
 	var warn := Label.new()
-	warn.text = "%s 诅咒" % UiThemeScript.CURSE_GLYPH
+	warn.text = "%s 诅咒" % GuStyle.CURSE_GLYPH
 	warn.add_theme_font_size_override("font_size", 14)
 	warn.add_theme_color_override("font_color", COLOR_CURSE)
 	box.add_child(warn)
@@ -487,12 +485,12 @@ func _curse_wrapper(row: Control) -> VBoxContainer:
 # Relic list — ItemList handles dynamic counts (Rule #5).
 # --------------------------------------------------------------------------- #
 func _append_relics(column: VBoxContainer, state: RunState, _catalog: Dictionary) -> void:
-	var panel := UiThemeScript.panel()
+	var panel := GuStyle.panel()
 	panel.custom_minimum_size = Vector2(0, 90)
 	column.add_child(panel)
 	var pcol := VBoxContainer.new()
 	panel.add_child(pcol)
-	pcol.add_child(UiThemeScript.label("遗物", 18, UiThemeScript.GOLD))
+	pcol.add_child(GuStyle.label("遗物", 18, GuStyle.ANOMALY_YELLOW))
 	var list := ItemList.new()
 	list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	list.custom_minimum_size = Vector2(0, 60)

@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
@@ -65,9 +64,9 @@ export EncounterScreen() -> RuitkVNode {
   var gu_names = player.get("gu_names", [])
   var gu_rows = []
   for g in gu_names:
-    gu_rows.append(<Label text={ "· " + str(g) } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />)
+    gu_rows.append(<Label text={ "· " + str(g) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />)
   if gu_rows.is_empty():
-    gu_rows.append(<Label text="（蛊囊空空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
+    gu_rows.append(<Label text="（蛊囊空空）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />)
 
   var confirm_action = {}
   for a in actions:
@@ -116,7 +115,7 @@ export EncounterScreen() -> RuitkVNode {
 
     var card = (
       <GuPanel title={ label }>
-        <Label text={ detail } style={ {"font_color": GuStyle.DANGER if dangerous else GuStyle.BONE_DIM, "font_size": 14} } />
+        <Label text={ detail } style={ {"font_color": GuStyle.CINNABAR if dangerous else GuStyle.INK_SOFT, "font_size": 14} } />
         @if (a.has("quality") or a.has("effect") or a.has("synergy") or a.has("cost") or bool(a.get("curse_warning", false))) {
           return tip
         }
@@ -138,8 +137,8 @@ export EncounterScreen() -> RuitkVNode {
       <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 12, "size_flags_horizontal": 3} }>
           <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
-            <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />
-            <Label text={ str(node.get("desc", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
+            <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 18} } />
+            <Label text={ str(node.get("desc", "")) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
             @if (not intel.is_empty()) {
               return (
                 <GuTooltipView
@@ -157,7 +156,7 @@ export EncounterScreen() -> RuitkVNode {
               return r
             }
             @if (actions.is_empty()) {
-              return (<Label text="（当前无可用行动）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+              return (<Label text="（当前无可用行动）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
             }
           </GuScrollBox>
 
@@ -171,8 +170,8 @@ export EncounterScreen() -> RuitkVNode {
             <VBoxContainer style={ {"separation": 5} }>
               <Label text={ "气血 %d/%d" % [php, pmax] } style={ {"font_color": GuStyle.JADE, "font_size": 14} } />
               <Label text={ "魂魄 %d" % psoul } style={ {"font_color": GuStyle.JADE, "font_size": 14} } />
-              <Label text={ "真元 %d" % pprim } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
-              <Label text={ "元石 %d" % pstone } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
+              <Label text={ "真元 %d" % pprim } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 14} } />
+              <Label text={ "元石 %d" % pstone } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 14} } />
             </VBoxContainer>
           </GuPanel>
           <GuPanel title="蛊囊">

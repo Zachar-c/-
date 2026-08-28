@@ -4,7 +4,6 @@ extends Node
 
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-const THEME := preload("res://assets/theme/gu_theme.tres")
 
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
@@ -108,7 +107,6 @@ func _initialize_view_flow() -> void:
 	_rui_host = Control.new()
 	_rui_host.name = "RUIHost"
 	_rui_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_rui_host.theme = THEME
 	add_child(_rui_host)
 	_rui_root = RuiRoot.create(_rui_host, VLib.fc(VLib.comp(SCREEN_PATHS["Title"], "render"), {}))
 	_show_title()

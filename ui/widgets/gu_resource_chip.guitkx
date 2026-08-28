@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 
 # GuResourceChip —— 资源徽章（规格 §9 / §16.5 双资源隔离）
 # 局内资源：深墨底 + 宣纸环；解锁素材（meta/见闻）：宣纸底 + 专属前缀，与局内资源严格区分。
@@ -8,24 +7,24 @@ export GuResourceChip() -> RuitkVNode {
   var kind = props.get("kind", "material")
   var value = props.get("value", 0)
   var on_click = props.get("on_click", null)
-  var color = GuStyle.GOLD
+  var color = GuStyle.ANOMALY_YELLOW
   if kind == "shouyuan":
-    color = GuStyle.BONE
+    color = GuStyle.INK_PRIMARY
   elif kind == "hunpo":
     color = GuStyle.JADE
   elif kind == "material":
-    color = Color("9fd6a0")
+    color = GuStyle.JADE
   elif kind == "meta":
-    color = GuStyle.PAPER
+    color = GuStyle.PAPER_BG
   var names = {"yuanstone": "元石", "shouyuan": "寿元", "hunpo": "魂魄", "material": "材料", "meta": "见闻"}
   var name = names.get(kind, kind)
   var text = "%s: %d" % [name, value]
   var is_meta = (kind == "meta")
   var chip_style = {
-    "bg_color": GuStyle.PAPER if is_meta else GuStyle.INK,
+    "bg_color": GuStyle.PAPER_BG if is_meta else GuStyle.INK_PRIMARY,
     "corner_radius_all": 10,
     "border_width_all": 1,
-    "border_color": GuStyle.PAPER,
+    "border_color": GuStyle.PAPER_BG,
   }
   var content = []
   if on_click != null:

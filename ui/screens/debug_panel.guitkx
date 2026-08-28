@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuToast } from "~/ui/widgets/gu_toast"
 
@@ -37,7 +36,7 @@ export DebugPanel() -> RuitkVNode {
   var body_rows = []
   if open_flag:
     # —— 加蛊（走控制器正式容量校验）——
-    body_rows.append(<Label text="加蛊" style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+    body_rows.append(<Label text="加蛊" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
     body_rows.append(
       <HBoxContainer style={ {"separation": 6} }>
         <LineEdit text={ gu_input } placeholder_text="gu_id 例: small_light_gu" custom_minimum_size={ Vector2(180, 0) } onTextChanged={ func(v): fire1.call("set_gu_input", v) } />
@@ -45,7 +44,7 @@ export DebugPanel() -> RuitkVNode {
       </HBoxContainer>
     )
     # —— 资源设置（控制器侧钳制到合法区间）——
-    body_rows.append(<Label text="资源设置" style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+    body_rows.append(<Label text="资源设置" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
     body_rows.append(
       <HBoxContainer style={ {"separation": 6} }>
         <OptionButton items={ kind_labels } selected={ kind_index } onItemSelected={ func(idx): fire1.call("set_res_kind", kind_items[int(idx)]) } />
@@ -54,7 +53,7 @@ export DebugPanel() -> RuitkVNode {
       </HBoxContainer>
     )
     # —— 跳层（仅当前可见节点，防越层破坏地图不变量）——
-    body_rows.append(<Label text="跳层 · 仅可见节点" style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+    body_rows.append(<Label text="跳层 · 仅可见节点" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
     if travel_options.size() > 0:
       var opt_labels = []
       var selected_index = 0
@@ -70,15 +69,15 @@ export DebugPanel() -> RuitkVNode {
         </HBoxContainer>
       )
     else:
-      body_rows.append(<Label text="（无可跳节点）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />)
+      body_rows.append(<Label text="（无可跳节点）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />)
     # —— 池情报（只读，形状对齐 query_loot_state）——
-    body_rows.append(<Label text="池情报 · 只读" style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+    body_rows.append(<Label text="池情报 · 只读" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
     var pity = info.get("pity", {})
     body_rows.append(
-      <Label text={ "保底计数 · 蛊 %d / 材料 %d" % [int(pity.get("loot_pity", 0)), int(pity.get("material_pity", 0))] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+      <Label text={ "保底计数 · 蛊 %d / 材料 %d" % [int(pity.get("loot_pity", 0)), int(pity.get("material_pity", 0))] } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
     )
     body_rows.append(
-      <Label text={ "合成连败 %d" % int(pity.get("synthesis_fail_streak", 0)) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+      <Label text={ "合成连败 %d" % int(pity.get("synthesis_fail_streak", 0)) } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
     )
     var excluded_items = info.get("excluded", [])
     var excluded_text = "（无）"
@@ -88,14 +87,14 @@ export DebugPanel() -> RuitkVNode {
         parts.append(str(ex))
       excluded_text = ", ".join(parts)
     body_rows.append(
-      <Label text={ "池排除列表：" + excluded_text } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+      <Label text={ "池排除列表：" + excluded_text } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
     )
     body_rows.append(
-      <Label text={ "当前种子 %d · 事件数 %d" % [int(info.get("seed", 0)), int(info.get("event_count", 0))] } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+      <Label text={ "当前种子 %d · 事件数 %d" % [int(info.get("seed", 0)), int(info.get("event_count", 0))] } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
     )
     if str(info.get("dda_percentile", "")) != "":
       body_rows.append(
-        <Label text={ "DDA 分位：" + str(info.get("dda_percentile", "")) } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 12} } />
+        <Label text={ "DDA 分位：" + str(info.get("dda_percentile", "")) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 12} } />
       )
     # —— 快照打印 ——
     body_rows.append(<GuButton label="打印 RunData 快照" on_press={ func(): fire0.call("snapshot_dump") } />)
@@ -105,12 +104,12 @@ export DebugPanel() -> RuitkVNode {
     feedback_row.append(<GuToast text={ feedback } tone="warn" />)
 
   return (
-    <PanelContainer style={ {"anchors_preset": "PRESET_BOTTOM_RIGHT", "bg_color": Color(GuStyle.BG_DEEP, 0.9), "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.DANGER} }>
+    <PanelContainer style={ {"anchors_preset": "PRESET_BOTTOM_RIGHT", "bg_color": Color(GuStyle.PAPER_BG, 0.9), "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.CINNABAR} }>
       <MarginContainer style={ {"margin_left": 10, "margin_right": 10, "margin_top": 8, "margin_bottom": 8} }>
         <VBoxContainer style={ {"separation": 6} }>
           <HBoxContainer style={ {"separation": 10} }>
-            <Label text="调试" style={ {"font_color": GuStyle.DANGER, "font_size": 15} } />
-            <Label text="DEV ONLY · F12" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 11} } />
+            <Label text="调试" style={ {"font_color": GuStyle.CINNABAR, "font_size": 15} } />
+            <Label text="DEV ONLY · F12" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 11} } />
             <GuButton label={ toggle_label } on_press={ func(): fire0.call("toggle_open") } />
           </HBoxContainer>
           { body_rows }

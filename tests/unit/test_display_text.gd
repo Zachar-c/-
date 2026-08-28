@@ -48,7 +48,7 @@ func test_result_summary_never_shows_non_chinese_dialogue_text() -> void:
 
 
 func test_cost_text_translates_gu_ids_for_player_display() -> void:
-	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row_builder.gd")
 	var cost := ActionCardRowScript._cost_text({"gu_ids": ["small_light_gu", "trail_eye_gu"]})
 
 	assert_eq(cost, "输入蛊 小光蛊、寻迹眼蛊")
@@ -56,7 +56,7 @@ func test_cost_text_translates_gu_ids_for_player_display() -> void:
 
 
 func test_risk_badge_derives_from_known_risk_count() -> void:
-	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row_builder.gd")
 	assert_eq(ActionCardRowScript.risk_badge({"known_risk": []}), "低")
 	assert_eq(ActionCardRowScript.risk_badge({"known_risk": ["一条反制"]}), "中")
 	assert_eq(ActionCardRowScript.risk_badge({"known_risk": ["一条反制", "第二条"]}), "中")
@@ -64,7 +64,7 @@ func test_risk_badge_derives_from_known_risk_count() -> void:
 
 
 func test_battle_card_row_hides_success_rate_when_absent() -> void:
-	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
+	const ActionCardRowScript := preload("res://scripts/presentation/action_card_row_builder.gd")
 	var details := ActionCardRowScript._details({
 		"id": "battle.test.1",
 		"title": "小光蛊",

@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
@@ -52,15 +51,15 @@ export RestScreen() -> RuitkVNode {
         fire.call("choose", cid)
     choice_cards.append((
       <GuPanel title={ clabel } expand_h={ true }>
-        <Label text={ cdetail } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
-        <Label text={ ccost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
-        <Label text={ creason } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 12} } />
+        <Label text={ cdetail } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
+        <Label text={ ccost } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
+        <Label text={ creason } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 12} } />
         <GuButton label="选择" disabled={ cdisabled } danger={ is_wash } on_press={ on_choose } />
       </GuPanel>
     ))
   var choice_empty = []
   if choice_cards.is_empty():
-    choice_empty.append(<Label text="（当前无休整选项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+    choice_empty.append(<Label text="（当前无休整选项）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
   var wash_choice = {}
   for c in choices:
@@ -82,8 +81,8 @@ export RestScreen() -> RuitkVNode {
     var gcost = str(g.get("cost", ""))
     growth_rows.append((
       <GuPanel title={ glabel } expand_h={ true }>
-        <Label text={ gdetail } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
-        <Label text={ gcost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+        <Label text={ gdetail } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
+        <Label text={ gcost } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
         <GuButton label="选择" on_press={ func(): fire.call("choose", gid) } />
       </GuPanel>
     ))
@@ -96,8 +95,8 @@ export RestScreen() -> RuitkVNode {
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
-        <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
-        <Label text={ note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 14} } />
+        <Label text={ title } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 22} } />
+        <Label text={ note } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 14} } />
       </HBoxContainer>
 
       <GuPanel name="primary_decision_surface" title="休整选项">

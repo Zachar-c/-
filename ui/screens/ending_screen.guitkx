@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuResourceChip } from "~/ui/widgets/gu_resource_chip"
@@ -36,13 +35,13 @@ export EndingScreen() -> RuitkVNode {
 
   var type_colors = {
     "success": GuStyle.JADE,
-    "death": GuStyle.DANGER,
-    "gu_fall": GuStyle.DANGER,
-    "risky": GuStyle.GOLD,
-    "retreat": GuStyle.BONE_DIM,
+    "death": GuStyle.CINNABAR,
+    "gu_fall": GuStyle.CINNABAR,
+    "risky": GuStyle.ANOMALY_YELLOW,
+    "retreat": GuStyle.INK_SOFT,
     "true_ending": GuStyle.JADE,
   }
-  var badge_color = type_colors.get(ending_type, GuStyle.BONE)
+  var badge_color = type_colors.get(ending_type, GuStyle.INK_PRIMARY)
 
   var key_decisions = state.get("key_decisions", [])
   var gains_losses = state.get("gains_losses", "—")
@@ -57,7 +56,7 @@ export EndingScreen() -> RuitkVNode {
   # T5-B 结算联动：死亡结局在「结局类型」面板顶部并列死因徽章（BLOOD 色，不与类型徽章混色）。
   var death_cause_short = str(state.get("death_cause_short", ""))
   var show_cause_badge = (ending_type == "death" and death_cause_short != "")
-  var badge_box = {"bg_color": GuStyle.BG_RAISED, "corner_radius_all": 4,
+  var badge_box = {"bg_color": GuStyle.PAPER_DEEP, "corner_radius_all": 4,
     "content_margin_left": 8, "content_margin_right": 8,
     "content_margin_top": 2, "content_margin_bottom": 2}
   var cause_box = {"bg_color": Color(0.55, 0.18, 0.15, 0.25), "corner_radius_all": 4,
@@ -70,12 +69,12 @@ export EndingScreen() -> RuitkVNode {
 
   var decision_rows = []
   for d in key_decisions:
-    decision_rows.append(<Label text={ "· " + str(d) } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
+    decision_rows.append(<Label text={ "· " + str(d) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />)
 
   # T5-C 新解锁红点：本次结算 unlock 即标新（跨局已读状态由 meta 掌管，本批不做已读持久化）。
   var unlock_rows = []
   for u in unlocks:
-    unlock_rows.append(<Label text={ "★新 " + str(u) } style={ {"font_color": GuStyle.GOLD, "font_size": 15} } />)
+    unlock_rows.append(<Label text={ "★新 " + str(u) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 15} } />)
 
   var res_chips = []
   for k in resource_balance.keys():
@@ -85,27 +84,27 @@ export EndingScreen() -> RuitkVNode {
   var route_chips = []
   for layer_info in route_summary:
     var layer_text = "第%d层 %s" % [int(layer_info.get("layer", 0)), "·".join(layer_info.get("types", []))]
-    var layer_color = GuStyle.EMBER if bool(layer_info.get("boss", false)) else GuStyle.BONE_DIM
+    var layer_color = GuStyle.RARITY_EPIC if bool(layer_info.get("boss", false)) else GuStyle.INK_SOFT
     route_chips.append(<Label text={ layer_text } style={ {"font_color": layer_color, "font_size": 14} } />)
 
   # 本局记录行：event_log 只读计数投影；DDA 预留位无数据时整行隐藏。
   var record_rows = []
   var attempts := int(record.get("synthesis_attempts", 0))
   if attempts > 0:
-    record_rows.append(<Label text={ "战斗合成：%d 次 · 成 %d / 败 %d" % [attempts, int(record.get("synthesis_ok", 0)), int(record.get("synthesis_fail", 0))] } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
+    record_rows.append(<Label text={ "战斗合成：%d 次 · 成 %d / 败 %d" % [attempts, int(record.get("synthesis_ok", 0)), int(record.get("synthesis_fail", 0))] } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />)
   var shifts := int(record.get("boss_phase_shifts", 0))
   if shifts > 0:
-    record_rows.append(<Label text={ "Boss 阶段切换：%d 次" % shifts } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />)
+    record_rows.append(<Label text={ "Boss 阶段切换：%d 次" % shifts } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />)
   var dda_triggers := int(record.get("dda_triggers", 0))
   if dda_triggers > 0:
-    record_rows.append(<Label text={ "DDA 触发：%d 次" % dda_triggers } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 15} } />)
+    record_rows.append(<Label text={ "DDA 触发：%d 次" % dda_triggers } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 15} } />)
 
   return (
     <VBoxContainer name="primary_decision_surface" style={ {"separation": 14, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <CenterContainer>
         <VBoxContainer style={ {"separation": 6} }>
-          <Label text={ str(title) } style={ {"font_color": GuStyle.GOLD, "font_size": 40} } />
+          <Label text={ str(title) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 40} } />
           <Label text={ "结局类型 · " + type_label } style={ {"font_color": badge_color, "font_size": 22} } />
         </VBoxContainer>
       </CenterContainer>
@@ -118,23 +117,23 @@ export EndingScreen() -> RuitkVNode {
           @if (show_cause_badge) {
             return (
               <PanelContainer style={ cause_box }>
-                <Label text={ "死因 · " + death_cause_short } style={ {"font_color": GuStyle.BLOOD, "font_size": 16} } />
+                <Label text={ "死因 · " + death_cause_short } style={ {"font_color": GuStyle.CINNABAR, "font_size": 16} } />
               </PanelContainer>
             )
           }
         </HBoxContainer>
         @if (achievement != "") {
-          return ( <Label text={ "达成：" + achievement } style={ {"font_color": GuStyle.BONE, "font_size": 14} } /> )
+          return ( <Label text={ "达成：" + achievement } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } /> )
         }
         @if (max_rank > 0) {
-          return ( <Label text={ "最高转数：%d 转" % max_rank } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } /> )
+          return ( <Label text={ "最高转数：%d 转" % max_rank } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } /> )
         }
       </GuPanel>
 
       @if (ending_type == "death") {
         return (
           <GuPanel title="精准死因">
-            <Label text={ str(state.get("death_cause", "")) } style={ {"font_color": GuStyle.DANGER, "font_size": 16} } />
+            <Label text={ str(state.get("death_cause", "")) } style={ {"font_color": GuStyle.CINNABAR, "font_size": 16} } />
           </GuPanel>
         )
       }
@@ -156,12 +155,12 @@ export EndingScreen() -> RuitkVNode {
           return r
         }
         @if (key_decisions.is_empty()) {
-          return ( <Label text="（无重大抉择记录）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+          return ( <Label text="（无重大抉择记录）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } /> )
         }
       </GuPanel>
 
       <GuPanel title="四 · 关键得失">
-        <Label text={ str(gains_losses) } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
+        <Label text={ str(gains_losses) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />
       </GuPanel>
 
       <GuPanel title="五 · 资源结余">
@@ -171,9 +170,9 @@ export EndingScreen() -> RuitkVNode {
           }
         </HBoxContainer>
         @if (resource_balance.is_empty()) {
-          return ( <Label text="（资源已随本局清空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+          return ( <Label text="（资源已随本局清空）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } /> )
         }
-        <Label text="所有资源离局清零 · 解锁与手记留存大厅（§16.16 / R12.2）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+        <Label text="所有资源离局清零 · 解锁与手记留存大厅（§16.16 / R12.2）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
       </GuPanel>
 
       @if (not record_rows.is_empty()) {
@@ -191,12 +190,12 @@ export EndingScreen() -> RuitkVNode {
           return r
         }
         @if (unlocks.is_empty()) {
-          return ( <Label text="（本次无新解锁，仅作复盘）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } /> )
+          return ( <Label text="（本次无新解锁，仅作复盘）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } /> )
         }
       </GuPanel>
 
       <GuPanel title="八 · 后续">
-        <Label text={ str(aftermath) } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 15} } />
+        <Label text={ str(aftermath) } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 15} } />
       </GuPanel>
 
       <CenterContainer>

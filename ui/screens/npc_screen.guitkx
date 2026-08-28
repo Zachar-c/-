@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
@@ -27,9 +26,9 @@ export NpcScreen() -> RuitkVNode {
 
   var stance_color = GuStyle.JADE
   if stance == "敌视":
-    stance_color = GuStyle.ANOMALY_AMBER
+    stance_color = GuStyle.ANOMALY_YELLOW
   elif stance == "极度仇恨":
-    stance_color = GuStyle.DANGER
+    stance_color = GuStyle.CINNABAR
 
   var fire = func(key: String, arg = null):
     if commands.has(key):
@@ -50,9 +49,9 @@ export NpcScreen() -> RuitkVNode {
       <GuPanel expand_h={ true }>
         <HBoxContainer style={ {"separation": 8} }>
           <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": 3} }>
-            <Label text={ oname } style={ {"font_color": GuStyle.BONE, "font_size": 15} } />
-            <Label text={ odesc } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
-            <Label text={ "价格：" + oprice } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+            <Label text={ oname } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />
+            <Label text={ odesc } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
+            <Label text={ "价格：" + oprice } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
           </VBoxContainer>
           <GuButton label="交易" on_press={ func(): fire.call("buy", oid) } />
         </HBoxContainer>
@@ -60,7 +59,7 @@ export NpcScreen() -> RuitkVNode {
     ))
   var offer_empty = []
   if offer_rows.is_empty():
-    offer_empty.append(<Label text="（无交易项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+    offer_empty.append(<Label text="（无交易项）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
   # 以物易物
   var barter = state.get("barter", [])
@@ -74,8 +73,8 @@ export NpcScreen() -> RuitkVNode {
       <GuPanel expand_h={ true }>
         <HBoxContainer style={ {"separation": 8} }>
           <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": 3} }>
-            <Label text={ "%s 换 %s" % [bgive, btake] } style={ {"font_color": GuStyle.GOLD, "font_size": 14} } />
-            <Label text={ bnote } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+            <Label text={ "%s 换 %s" % [bgive, btake] } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 14} } />
+            <Label text={ bnote } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
           </VBoxContainer>
           <GuButton label="交换" on_press={ func(): fire.call("barter", bid) } />
         </HBoxContainer>
@@ -83,7 +82,7 @@ export NpcScreen() -> RuitkVNode {
     ))
   var barter_empty = []
   if barter_rows.is_empty():
-    barter_empty.append(<Label text="（无易物项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+    barter_empty.append(<Label text="（无易物项）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
   # 交涉选项（C 批：镜像领域动作卡，executable/block_reason 直出，不可用禁点）
   var talk_options = state.get("talk_options", [])
@@ -98,13 +97,13 @@ export NpcScreen() -> RuitkVNode {
     var talk_btn_label = "交涉" if tblock == "" else ("不可用 · " + tblock)
     talk_rows.append((
       <GuPanel title={ tlabel } expand_h={ true }>
-        <Label text={ tdetail } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
+        <Label text={ tdetail } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />
         <GuButton label={ talk_btn_label } disabled={ not texec } danger={ tdanger } on_press={ func(): fire.call("talk", tid) } />
       </GuPanel>
     ))
   var talk_empty = []
   if talk_rows.is_empty():
-    talk_empty.append(<Label text="（无交涉选项）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+    talk_empty.append(<Label text="（无交涉选项）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
   var feedback = str(state.get("feedback", ""))
   var feedback_row = []
   if feedback != "":
@@ -131,7 +130,7 @@ export NpcScreen() -> RuitkVNode {
     </GuPanel>)
   else:
     trade_section.append(<GuPanel title="交易">
-      <Label text={ no_npc_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
+      <Label text={ no_npc_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />
     </GuPanel>)
 
   return (
@@ -139,11 +138,11 @@ export NpcScreen() -> RuitkVNode {
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       { feedback_row }
       <HBoxContainer style={ {"separation": 12} }>
-        <Label text={ npc_name } style={ {"font_color": GuStyle.BONE, "font_size": 22} } />
+        <Label text={ npc_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 22} } />
         <Label text={ "立场·" + stance } style={ {"font_color": stance_color, "font_size": 16} } />
-        <Label text={ stance_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />
-        <Label text={ "恶名 " + str(notoriety) } style={ {"font_color": GuStyle.DANGER, "font_size": 16} } />
-        <Label text={ notoriety_note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+        <Label text={ stance_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />
+        <Label text={ "恶名 " + str(notoriety) } style={ {"font_color": GuStyle.CINNABAR, "font_size": 16} } />
+        <Label text={ notoriety_note } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
       </HBoxContainer>
 
       <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>

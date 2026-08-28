@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 
 # GuCard —— 卡牌容器（规格 §9，2026-08-26-ui-sts-redesign-design）
 # 品质色轨 / 代价圆标 / 危险「咒」角标（DANGER 底 BONE 字，左上首位）/ 封印「锁」态 / 圆角描边。
@@ -18,12 +17,12 @@ export GuCard() -> RuitkVNode {
   var disabled = bool(props.get("disabled", false))
   var selected = bool(props.get("selected", false))
 
-  var QUAL_COLORS = {"普通": GuStyle.BONE_DIM, "稀有": GuStyle.GOLD, "史诗": GuStyle.EMBER, "传说": GuStyle.PAPER, "common": GuStyle.BONE_DIM, "rare": GuStyle.GOLD, "epic": GuStyle.EMBER, "legendary": GuStyle.PAPER}
-  var quality_color = QUAL_COLORS.get(quality, GuStyle.BONE_DIM)
+  var QUAL_COLORS = {"普通": GuStyle.INK_SOFT, "稀有": GuStyle.ANOMALY_YELLOW, "史诗": GuStyle.RARITY_EPIC, "传说": GuStyle.PAPER_BG, "common": GuStyle.INK_SOFT, "rare": GuStyle.ANOMALY_YELLOW, "epic": GuStyle.RARITY_EPIC, "legendary": GuStyle.PAPER_BG}
+  var quality_color = QUAL_COLORS.get(quality, GuStyle.INK_SOFT)
   var is_danger = danger or curse_warning
-  var border_color = GuStyle.DANGER if is_danger else (GuStyle.JADE_BRIGHT if highlight or selected else (quality_color if quality != "" else GuStyle.GOLD_DIM))
+  var border_color = GuStyle.CINNABAR if is_danger else (GuStyle.JADE if highlight or selected else (quality_color if quality != "" else GuStyle.INK_SOFT))
   var card_style = {
-    "bg_color": GuStyle.BG_RAISED,
+    "bg_color": GuStyle.PAPER_DEEP,
     "corner_radius_all": 10,
     "border_width_all": 2 if is_danger else 1,
     "border_color": border_color,
@@ -44,24 +43,24 @@ export GuCard() -> RuitkVNode {
           <HBoxContainer style={ {"separation": 8} }>
             @if (curse_warning) {
               return (
-                <PanelContainer style={ {"bg_color": GuStyle.DANGER, "corner_radius_all": 4} }>
+                <PanelContainer style={ {"bg_color": GuStyle.CINNABAR, "corner_radius_all": 4} }>
                   <MarginContainer style={ {"margin_left": 5, "margin_right": 5, "margin_top": 1, "margin_bottom": 1} }>
-                    <Label text="咒" style={ {"font_color": GuStyle.BONE, "font_size": 12} } />
+                    <Label text="咒" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 12} } />
                   </MarginContainer>
                 </PanelContainer>
               )
             }
             @if (sealed) {
               return (
-                <PanelContainer style={ {"bg_color": GuStyle.BG_PANEL, "corner_radius_all": 4, "border_width_all": 1, "border_color": GuStyle.GOLD_DIM} }>
+                <PanelContainer style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 4, "border_width_all": 1, "border_color": GuStyle.INK_SOFT} }>
                   <MarginContainer style={ {"margin_left": 5, "margin_right": 5, "margin_top": 1, "margin_bottom": 1} }>
-                    <Label text="锁" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+                    <Label text="锁" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
                   </MarginContainer>
                 </PanelContainer>
               )
             }
             @if (title != "") {
-              return ( <Label text={ title } style={ {"font_color": GuStyle.BONE, "font_size": 16} } /> )
+              return ( <Label text={ title } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } /> )
             }
             @if (quality != "") {
               return ( <Label text={ quality } style={ {"font_color": quality_color, "font_size": 12} } /> )
@@ -69,7 +68,7 @@ export GuCard() -> RuitkVNode {
           </HBoxContainer>
           { children }
           @if (cost != "") {
-            return ( <Label text={ "◆ " + cost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } /> )
+            return ( <Label text={ "◆ " + cost } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } /> )
           }
         </VBoxContainer>
       </MarginContainer>

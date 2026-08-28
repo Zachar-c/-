@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"

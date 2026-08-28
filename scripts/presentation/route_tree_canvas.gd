@@ -5,7 +5,7 @@ extends Control
 signal node_selected(node_id: String)
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
+
 
 const NODE_SIZE := Vector2(184, 84)
 const HORIZONTAL_GAP := 72.0
@@ -19,7 +19,6 @@ var tooltip: GuTooltip
 
 
 func _ready() -> void:
-	theme = THEME
 
 
 var _route: Array[Dictionary] = []
@@ -157,7 +156,7 @@ func _build_buttons() -> void:
 			hint.size = Vector2(NODE_SIZE.x, 18)
 			hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			hint.text = "（空池·已回退）"
-			hint.add_theme_color_override("font_color", Color("8a8a8a"))
+			hint.add_theme_color_override("font_color", GuStyle.INK_MUTED)
 			hint.add_theme_font_size_override("font_size", 12)
 			add_child(hint)
 
@@ -213,9 +212,9 @@ func _draw() -> void:
 			if not _visible_ids.has(next_id) or not _positions.has(next_id):
 				continue
 			var is_open := _state.node_flags.has(origin_id)
-			var color := Color("5a6966")
+			var color := GuStyle.RULE
 			if is_open:
-				color = Color("80b8a1")
+				color = GuStyle.JADE
 			var origin_position: Vector2 = _positions[origin_id]
 			var next_position: Vector2 = _positions[next_id]
 			var from: Vector2 = origin_position + Vector2(NODE_SIZE.x, NODE_SIZE.y * 0.5)

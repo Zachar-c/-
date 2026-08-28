@@ -359,6 +359,78 @@ static func death_cause_short(id: String) -> String:
 	return str(DEATH_CAUSE_SHORT.get(id, ""))
 
 
+static func action_card_details(card: Dictionary) -> String:
+	var lines: Array[String] = []
+	var cost := action_card_cost_text(card.get("cost", {}))
+	if not cost.is_empty():
+		lines.append("代价：%s" % cost)
+	if card.get("success_rate", null) != null:
+		lines.append("成功率：%d%%" % int(card["success_rate"]))
+	for gain in card.get("expected_gain", []):
+		lines.append("收益：%s" % str(gain))
+	var risks: Array = card.get("known_risk", [])
+	if not risks.is_empty():
+		lines.append("风险[%s]：%s" % [action_card_risk_badge(card), "；".join(_stringify_action_card_values(risks))])
+	if not str(card.get("unknown_note", "")).is_empty():
+		lines.append("未知：%s" % str(card["unknown_note"]))
+	if not bool(card.get("executable", false)):
+		lines.append("受阻：%s" % str(card.get("block_reason", "条件不足。")))
+		for hint in card.get("remedy_hints", []):
+			lines.append("途径：%s" % str(hint))
+	return "\n".join(lines)
+
+
+static func action_card_risk_badge(card: Dictionary) -> String:
+	return action_card_risk_badge_for_count(int((card.get("known_risk", []) as Array).size()))
+
+
+static func action_card_risk_badge_for_count(count: int) -> String:
+	if count <= 0:
+		return "低"
+	if count <= 2:
+		return "中"
+	return "高"
+
+
+static func _stringify_action_card_values(values: Array) -> Array[String]:
+	var result: Array[String] = []
+	for value in values:
+		result.append(str(value))
+	return result
+
+
+static func action_card_cost_text(cost: Dictionary) -> String:
+	var items: Array[String] = []
+	if cost.has("stone"):
+		items.append("元石 %d" % int(cost["stone"]))
+	if cost.has("spirit"):
+		items.append("真元 %d" % int(cost["spirit"]))
+	if cost.has("time"):
+		items.append("时机 %d" % int(cost["time"]))
+	if cost.has("lifespan"):
+		items.append("寿元 %d" % int(cost["lifespan"]))
+	if cost.has("hp"):
+		items.append("气血 %d" % int(cost["hp"]))
+	if cost.has("gu_ids"):
+		var names: Array[String] = []
+		for gu_id in cost["gu_ids"]:
+			names.append(gu(str(gu_id)))
+		items.append("输入蛊 %s" % "、".join(names))
+	return "、".join(items)
+
+
+static func cost_text(cost: Dictionary) -> String:
+	return action_card_cost_text(cost)
+
+
+static func details(card: Dictionary) -> String:
+	return action_card_details(card)
+
+
+static func risk_badge(card: Dictionary) -> String:
+	return action_card_risk_badge(card)
+
+
 # T5-C 结算达成条件链（§16.10 收益排序措辞依据）：ending_type -> 一句达成描述。
 # 纯展示映射；未知类型返回空串，由结算屏隐藏该行。
 const ENDING_ACHIEVEMENT := {
