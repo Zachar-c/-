@@ -8,6 +8,7 @@ import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuToast } from "~/ui/widgets/gu_toast"
+import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
 
 # Battle state is snapshot-only. interaction is local presentation state and is
 # intentionally the sole place that decides when a card command may be submitted.
@@ -35,16 +36,12 @@ export BattleScreen() -> RuitkVNode {
       commands["play_card"].call(str(card.get("id", "")), target_id)
     set_interaction.call({"mode": "play_success", "card": card, "card_id": str(card.get("id", "")), "target_id": target_id, "confirming": false, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
   var play_card = func(card):
-    if not bool(card.get("executable", true)):
-      return
-    set_mode.call("drag_start", card)
     if str(card.get("target_type", "none")) == "single_enemy":
-      set_mode.call("target_select", card)
+      set_interaction.call({"mode": "target_select", "card": card, "card_id": str(card.get("id", "")), "target_id": "", "confirming": false, "cause_view": cause_view, "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
+    elif bool(card.get("known_risk", false)) or bool(card.get("dangerous", false)):
+      set_interaction.call({"mode": "dragging", "card": card, "card_id": str(card.get("id", "")), "target_id": "", "confirming": true, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
     else:
-      if bool(card.get("known_risk", false)) or bool(card.get("dangerous", false)):
-        set_interaction.call({"mode": "dragging", "card": card, "card_id": str(card.get("id", "")), "target_id": "", "confirming": true, "cause_view": "", "expanded_enemies": bool(interaction.get("expanded_enemies", false))})
-      else:
-        submit_card.call(card, "")
+      submit_card.call(card, "")
   var select_enemy = func(enemy_id):
     if mode != "target_select" or not valid_targets.has(enemy_id):
       return
@@ -89,6 +86,33 @@ export BattleScreen() -> RuitkVNode {
   var confirm_row = []
   if bool(interaction.get("confirming", false)):
     confirm_row.append(<GuConfirmDialog title="⚠ 危险行动" message={ str(active_card.get("name", "此行动")) + " 将执行已预览的不可逆代价。" } warning_note={ str(active_card.get("known_risk", "")) } on_confirm={ func(): submit_card.call(active_card, str(interaction.get("target_id", ""))) } on_cancel={ func(): set_mode.call("drag_cancel", active_card) } />)
+  var hand_tooltip_rows = []
+  if mode == "hover" or mode == "target_select":
+    var hovered_card = active_card
+    if not hovered_card.is_empty():
+      var hovered_name = str(hovered_card.get("name", "蛊虫"))
+      var hovered_quality = str(hovered_card.get("quality", ""))
+      var hovered_effect = str(hovered_card.get("effect", ""))
+      var hovered_cost = str(hovered_card.get("cost_ex", str(hovered_card.get("cost", ""))))
+      var hovered_block = str(hovered_card.get("block_reason", ""))
+      var hovered_curse = bool(hovered_card.get("curse_warning", false))
+      var hovered_executable = bool(hovered_card.get("executable", true))
+      var synergy = str(hovered_card.get("synergy", ""))
+      var segments = []
+      segments.append(<Label name="hand_tooltip_title" text={ hovered_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } />)
+      if hovered_quality != "":
+        segments.append(<Label text={ "品质：" + hovered_quality } style={ {"font_color": GuStyle.GOLD, "font_size": 12} } />)
+      if hovered_effect != "":
+        segments.append(<Label text={ "效果：" + hovered_effect } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
+      if synergy != "":
+        segments.append(<Label text={ "联动：" + synergy } style={ {"font_color": GuStyle.GOLD_DIM, "font_size": 14} } />)
+      if hovered_cost != "":
+        segments.append(<Label text={ "代价：" + hovered_cost } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />)
+      if not hovered_executable and hovered_block != "":
+        segments.append(<Label text={ "不可用：" + hovered_block } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } />)
+      if hovered_curse:
+        segments.append(<Label text="诅咒警示：执行即受反噬。" style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } />)
+      hand_tooltip_rows.append(<PanelContainer name="battle_hand_tooltip_host" style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 8, "border_width_all": 1, "border_color": GuStyle.HAIRLINE_COLOR} }><MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 10, "margin_bottom": 10} }><VBoxContainer style={ {"separation": 4} }><Label name="hand_tooltip_title" text={ hovered_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } /><GuTooltipView title="" quality={ hovered_quality } effect={ hovered_effect } synergy={ str(hovered_card.get("synergy", "")) } cost={ str(hovered_card.get("cost_ex", str(hovered_card.get("cost", "")))) } block_reason={ hovered_block if not hovered_executable else "" } curse_warning={ hovered_curse } /></VBoxContainer></MarginContainer></PanelContainer>)
 
   return (<VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
     <VBoxContainer name="battle_hud"><GuTopBar resources={ state.get("resources", {}) } contracts={ state.get("contracts", []) } anomalies={ state.get("anomalies", []) } death_lines={ state.get("death_lines", {}) } on_view={ func(cid): set_interaction.call({"mode": mode, "card": active_card, "target_id": "", "cause_view": str(cid)}) } /></VBoxContainer>
@@ -98,9 +122,10 @@ export BattleScreen() -> RuitkVNode {
     </HBoxContainer>
     { feedback_rows }
     { hint_rows }
-    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_mode.call("hover", card) } on_drag={ func(card): set_mode.call("dragging", card) } on_release={ play_card } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
+    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_interaction.call({"mode": "target_select" if mode == "target_select" else "hover", "card": card, "card_id": str(card.get("id", "")), "target_id": str(interaction.get("target_id", "")), "confirming": bool(interaction.get("confirming", false)), "cause_view": cause_view, "expanded_enemies": bool(interaction.get("expanded_enemies", false))}) } on_drag={ func(card): set_mode.call("dragging", card) } on_release={ play_card } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
     <Label name={ "battle_" + mode } text="" />
     { confirm_row }
+    { hand_tooltip_rows }
     @if (not cause_line.is_empty()) { return (<GuDeathCauseOverlay line={ cause_line } on_close={ reset_interaction } />) }
   </VBoxContainer>)
 }
