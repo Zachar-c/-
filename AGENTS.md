@@ -40,7 +40,7 @@
 
 - **master**：集成主线与实际开发线（新功能批直接落 master 并推 gitee）。
 - **ui-sts-redesign**：UI 重设计分支的历史名号，内容已全部吸收进 master（2026-08-27 起 master 与其同点 `c2111c4`，零分叉）；主工作树仍检出该分支名，属历史遗留，后续直接在检出分支提交并快进 master 即可。
-- **工作树成批「M」状态 = autocrlf 行尾噪声**（2026-08-27 实证：651 个 M 文件经 `git diff --ignore-cr-at-eol` 对比零内容差异），**不是未提交工作**；判断真实改动用 `git diff --ignore-cr-at-eol`。根治办法是加 `.gitattributes` 归一次仓（待用户裁定）。
+- **工作树成批「M」状态 = autocrlf 行尾噪声**（2026-08-27 实证）→ **已根治**（2026-08-29 用户裁定执行）：`.gitattributes`（`* text=auto eol=lf` + 二进制豁免，@`42c9fc0`）+ `git add --renormalize .`（索引已全 LF，零暂存）+ 工作树 532 个 CRLF 文件强制重写为 LF。`分支：六卷精编版/` 语料 39 个文件按只读约束**有意保留**工作树 CRLF（git 视角已静默）。判断真实改动用 `git diff --ignore-cr-at-eol` 的习惯可废止。
 - **c1min-impl**：临时分支，已完成使命。
 - **.worktrees/game-impl**：历史快照，勿动。
 - **2026-08-26 收敛执行**：`task1-vendor-open-rpg`、`s4-three-death-lines-ui` 本地与远端分支已删除（内容均已在 master）；task1 工作树已移除，其中用户 WIP（`map_generator.gd` + 3 个 `.guitkx`）已存入共享仓库 stash（msg `converge-2026-08-26: user WIP from task1 worktree`），需要时 `git stash list` 找回对照。
