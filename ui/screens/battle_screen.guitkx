@@ -100,11 +100,11 @@ export BattleScreen() -> RuitkVNode {
       var segments = []
       segments.append(<Label name="hand_tooltip_title" text={ hovered_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } />)
       if hovered_quality != "":
-        segments.append(<Label text={ "品质：" + hovered_quality } style={ {"font_color": GuStyle.GOLD, "font_size": 12} } />)
+        segments.append(<Label text={ "品质：" + hovered_quality } style={ {"font_color": GuStyle.quality_color(hovered_quality), "font_size": 12} } />)
       if hovered_effect != "":
         segments.append(<Label text={ "效果：" + hovered_effect } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
       if synergy != "":
-        segments.append(<Label text={ "联动：" + synergy } style={ {"font_color": GuStyle.GOLD_DIM, "font_size": 14} } />)
+        segments.append(<Label text={ "联动：" + synergy } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
       if hovered_cost != "":
         segments.append(<Label text={ "代价：" + hovered_cost } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />)
       if not hovered_executable and hovered_block != "":

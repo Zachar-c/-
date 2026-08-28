@@ -15,8 +15,7 @@ export GuTooltipView() -> RuitkVNode {
   var curse_warning = props.get("curse_warning", false)
   var on_detail = props.get("on_detail", null)
 
-  var QUAL_COLORS = {"普通": GuStyle.INK_SOFT, "稀有": GuStyle.ANOMALY_YELLOW, "史诗": GuStyle.RARITY_EPIC, "传说": GuStyle.CINNABAR, "common": GuStyle.INK_SOFT, "rare": GuStyle.ANOMALY_YELLOW, "epic": GuStyle.RARITY_EPIC, "legendary": GuStyle.CINNABAR}
-  var quality_color = QUAL_COLORS.get(quality, GuStyle.INK_SOFT)
+  var quality_color = GuStyle.quality_color(quality)
 
   return (
     <PanelContainer style={ {"bg_color": GuStyle.PAPER_BG, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.PAPER_DEEP} }>
@@ -40,7 +39,7 @@ export GuTooltipView() -> RuitkVNode {
             return ( <Label text={ "代价：" + cost } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } /> )
           }
           @if (block_reason != "") {
-            return ( <Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.DANGER, "font_size": 14} } /> )
+            return ( <Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
           }
           @if (curse_warning) {
             return ( <Label text={ "诅咒警示：" + effect } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )

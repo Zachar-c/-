@@ -72,6 +72,15 @@ static func rarity_color(rarity: String) -> Color:
 		_: return RARITY_COMMON
 
 
+# Quality is presented as a Chinese display string on cards ("普通/稀有/史诗/传说").
+static func quality_color(quality: String) -> Color:
+	match str(quality):
+		"稀有", "rare": return ANOMALY_YELLOW
+		"史诗", "epic": return RARITY_EPIC
+		"传说", "legendary": return CINNABAR
+		_: return INK_SOFT
+
+
 static func contract_color() -> Color:
 	return CONTRACT_BLUE
 

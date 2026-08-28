@@ -26,14 +26,14 @@ export GuBattleHand() -> RuitkVNode {
     if curse_warning:
       header_rows.append(<PanelContainer style={ {"bg_color": GuStyle.CINNABAR, "corner_radius_all": 4} }><MarginContainer style={ {"margin_left": 5, "margin_right": 5, "margin_top": 1, "margin_bottom": 1} }><Label text="咒" style={ {"font_color": GuStyle.PAPER_BG, "font_size": 12} } /></MarginContainer></PanelContainer>)
     if quality != "":
-      header_rows.append(<Label text={ quality } style={ {"font_color": GuStyle.GOLD, "font_size": 12} } />)
+      header_rows.append(<Label text={ quality } style={ {"font_color": GuStyle.quality_color(quality), "font_size": 12} } />)
     var detail_rows = []
     if effect_text != "":
       detail_rows.append(<Label text={ effect_text } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />)
     if not executable and block_reason != "":
       detail_rows.append(<Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.CINNABAR, "font_size": 12} } />)
     if cost_label != "":
-      detail_rows.append(<Label text={ "◆ " + cost_label } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />)
+      detail_rows.append(<Label text={ "◆ " + cost_label } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />)
     var body_style := {
       "bg_color": GuStyle.PAPER_RAISED if is_active else GuStyle.PAPER_BG,
       "corner_radius_all": 8,
