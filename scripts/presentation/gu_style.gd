@@ -9,15 +9,25 @@ extends RefCounted
 const PAPER_BG     := Color("ece9df")       # 主表面、宣纸白
 const PAPER_RAISED := Color("e6e2d7")       # 次级纸面、轻微下沉/禁用层
 const PAPER_DEEP   := Color("ddd8cc")       # 禁用层、轻分区
+const PAPER_HALL   := Color("e5e2d7")       # 大厅 HTML 主纸面
+const PAPER_MAP    := Color("e7e4da")       # 地图 HTML 主纸面
 
 # —— Ink / text ——
 const INK_PRIMARY  := Color("171814")       # 近黑墨色（主文字 / 主结构线）
 const INK_SOFT     := Color("686960")       # 次要文字、已知但不紧急
 const INK_MUTED    := Color("68675f")       # 介于 INK_PRIMARY 与 PAPER_BG
+const INK_HALL     := Color("171817")       # 大厅 HTML 主文字
+const INK_MAP      := Color("1b1c19")       # 地图 HTML 主文字
+const INK_MAP_NOTE := Color("64665f")       # 地图 HTML 注释文字
+const INK_MAP_FAINT := Color("8b8d85")      # 地图 HTML 深度刻度
+const INK_MAP_LABEL := Color("92948d")      # 地图 HTML 层级标签
+const INK_MAP_VALUE := Color("252624")      # 地图 HTML 资源数值
+const INK_MAP_NAME  := Color("666861")      # 地图 HTML 资源名称
 
 # —— Hairline / rule ——
 const RULE := Color("aaa89f")
 const HAIRLINE_COLOR := Color("aaa89f")        # 发丝分隔线色
+const RULE_HALL := Color("b8b6aa")             # 大厅 HTML 发丝线
 const HAIRLINE     := 1                        # 发丝线宽 1px
 
 # —— Semantic accent ——

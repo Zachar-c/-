@@ -21,18 +21,18 @@ export MapScreen() -> RuitkVNode {
 
 
   var NODE_STYLE = {
-    "start": {"mark": "起", "kind": "起始", "color": GuStyle.INK_MUTED},
-    "combat": {"mark": "鬥", "kind": "战斗", "color": GuStyle.INK_PRIMARY},
-    "pursuit": {"mark": "鬥", "kind": "追击", "color": GuStyle.INK_PRIMARY},
-    "event": {"mark": "？", "kind": "异闻", "color": GuStyle.INK_PRIMARY},
-    "shop": {"mark": "市", "kind": "黑市", "color": GuStyle.INK_PRIMARY},
-    "market": {"mark": "市", "kind": "商队", "color": GuStyle.INK_PRIMARY},
-    "caravan": {"mark": "市", "kind": "商队", "color": GuStyle.INK_PRIMARY},
-    "rest": {"mark": "息", "kind": "休整", "color": GuStyle.INK_PRIMARY},
-    "seclusion": {"mark": "息", "kind": "静修", "color": GuStyle.INK_PRIMARY},
-    "cultivation": {"mark": "息", "kind": "修行", "color": GuStyle.INK_PRIMARY},
-    "refinement": {"mark": "市", "kind": "炼蛊", "color": GuStyle.INK_PRIMARY},
-    "ascension": {"mark": "險", "kind": "突破", "color": GuStyle.INK_PRIMARY},
+    "start": {"mark": "起", "kind": "起始", "color": GuStyle.INK_MAP_FAINT},
+    "combat": {"mark": "鬥", "kind": "战斗", "color": GuStyle.INK_MAP},
+    "pursuit": {"mark": "鬥", "kind": "追击", "color": GuStyle.INK_MAP},
+    "event": {"mark": "？", "kind": "异闻", "color": GuStyle.INK_MAP},
+    "shop": {"mark": "市", "kind": "黑市", "color": GuStyle.INK_MAP},
+    "market": {"mark": "市", "kind": "商队", "color": GuStyle.INK_MAP},
+    "caravan": {"mark": "市", "kind": "商队", "color": GuStyle.INK_MAP},
+    "rest": {"mark": "息", "kind": "休整", "color": GuStyle.INK_MAP},
+    "seclusion": {"mark": "息", "kind": "静修", "color": GuStyle.INK_MAP},
+    "cultivation": {"mark": "息", "kind": "修行", "color": GuStyle.INK_MAP},
+    "refinement": {"mark": "市", "kind": "炼蛊", "color": GuStyle.INK_MAP},
+    "ascension": {"mark": "險", "kind": "突破", "color": GuStyle.INK_MAP},
   }
   const NODE_SIZE = Vector2(192, 126)
   const FUTURE_NODE_SIZE = Vector2(168, 108)
@@ -135,9 +135,9 @@ export MapScreen() -> RuitkVNode {
       var id = str(node.get("id", ""))
       var label = str(node.get("label", node.get("type", "节点")))
       var ntype = str(node.get("type", ""))
-      var visual = NODE_STYLE.get(ntype, {"mark": "?", "kind": "未知", "color": GuStyle.INK_MUTED})
+      var visual = NODE_STYLE.get(ntype, {"mark": "?", "kind": "未知", "color": GuStyle.INK_MAP_FAINT})
       if ntype == "combat" and str(node.get("enemy_kind", "")).contains("elite"):
-        visual = {"mark": "險", "kind": "精英", "color": GuStyle.INK_PRIMARY}
+        visual = {"mark": "險", "kind": "精英", "color": GuStyle.INK_MAP}
       var reachable = bool(node.get("reachable", false))
       var is_current = str(node.get("visibility", "")) == "current" or bool(node.get("current", false))
       var is_selected = id == selected_id
@@ -147,10 +147,10 @@ export MapScreen() -> RuitkVNode {
       var detail = "可提交行路" if reachable else ("上一层未选道路已隐去" if is_current else "后继可查看")
       var node_style = {
         "custom_minimum_size": node_size,
-        "bg_color": GuStyle.PAPER_RAISED if not is_current else Color(0, 0, 0, 0),
+        "bg_color": GuStyle.PAPER_MAP if not is_current else Color(0, 0, 0, 0),
         "border_width_all": GuStyle.HAIRLINE,
         "border_width_left": 4 if (is_current or is_selected) else GuStyle.HAIRLINE,
-        "border_color": GuStyle.CINNABAR if (is_current or is_selected) else GuStyle.INK_MUTED,
+        "border_color": GuStyle.CINNABAR if (is_current or is_selected) else GuStyle.INK_MAP_FAINT,
         "content_margin_left": 12,
         "content_margin_right": 10,
         "content_margin_top": 9,
@@ -168,10 +168,10 @@ export MapScreen() -> RuitkVNode {
           <VBoxContainer style={ {"separation": 2} }>
             <HBoxContainer style={ {"separation": 9} }>
               <PanelContainer name={ "map_node_mark_" + id } custom_minimum_size={ Vector2(30, 30) } style={ {"bg_color": Color(0, 0, 0, 0), "border_width_all": 1, "border_color": visual["color"], "corner_radius_all": 15} }><CenterContainer><Label name={ "map_node_mark_label_" + id } text={ str(visual["mark"]) } horizontal_alignment={ HORIZONTAL_ALIGNMENT_CENTER } vertical_alignment={ VERTICAL_ALIGNMENT_CENTER } style={ {"font_color": visual["color"], "font_size": 12} } /></CenterContainer></PanelContainer>
-              <Label text={ label } vertical_alignment={ VERTICAL_ALIGNMENT_CENTER } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 20 if layer_index < 2 else 17} } />
+              <Label text={ label } vertical_alignment={ VERTICAL_ALIGNMENT_CENTER } style={ {"font_color": GuStyle.INK_MAP, "font_size": 20 if layer_index < 2 else 17} } />
             </HBoxContainer>
-            <Label text={ str(visual["kind"]) + " · " + status } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10} } />
-            <Label text={ detail } style={ {"font_color": GuStyle.CINNABAR if reachable else GuStyle.INK_MUTED, "font_size": 9} } />
+            <Label text={ str(visual["kind"]) + " · " + status } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10} } />
+            <Label text={ detail } style={ {"font_color": GuStyle.CINNABAR if reachable else GuStyle.INK_MAP_FAINT, "font_size": 9} } />
           </VBoxContainer>
         </Button>
       ))
@@ -205,17 +205,17 @@ export MapScreen() -> RuitkVNode {
     if resources.has(resource_id):
       resource_rows.append(
         <HBoxContainer style={ {"separation": 4} } key={ resource_id }>
-          <Label name={ "map_resource_value_" + resource_id } text={ str(resources[resource_id]) + str(spec["suffix"]) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />
-          <Label name={ "map_resource_name_" + resource_id } text={ str(spec["name"]) } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 10} } />
+          <Label name={ "map_resource_value_" + resource_id } text={ str(resources[resource_id]) + str(spec["suffix"]) } style={ {"font_color": GuStyle.INK_MAP_VALUE, "font_size": 13} } />
+          <Label name={ "map_resource_name_" + resource_id } text={ str(spec["name"]) } style={ {"font_color": GuStyle.INK_MAP_NAME, "font_size": 10} } />
         </HBoxContainer>
       )
 
   return (
     <Control style={ {"anchors_preset": "PRESET_FULL_RECT"} }>
-      <ColorRect name="map_paper" color={ GuStyle.PAPER_RAISED } mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
+      <ColorRect name="map_paper" color={ GuStyle.PAPER_MAP } mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
       { toast_row }
       <HBoxContainer name="map_mast" anchor_left={ 0.0 } anchor_right={ 1.0 } offset_left={ 30.0 } offset_right={ -30.0 } offset_top={ 20.0 } offset_bottom={ 68.0 } style={ {"border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR} }>
-        <Label text="問眞　/　命蠱第六十三卷　/　南疆" style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10, "size_flags_horizontal": "SIZE_EXPAND_FILL"} } />
+        <Label text="問眞　/　命蠱第六十三卷　/　南疆" style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "size_flags_horizontal": "SIZE_EXPAND_FILL"} } />
         <HBoxContainer name="map_resources" style={ {"separation": 19} }>{ resource_rows }</HBoxContainer>
       </HBoxContainer>
       <HBoxContainer name="map_markers" position={ Vector2(31, 80) } style={ {"separation": 13} }>
@@ -223,22 +223,22 @@ export MapScreen() -> RuitkVNode {
         <Label text={ "异变 · " + (str(anomalies[0]) if not anomalies.is_empty() else "无") } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 9, "border_width_left": 2, "border_color": GuStyle.ANOMALY_YELLOW, "content_margin_left": 7} } />
       </HBoxContainer>
       <HBoxContainer name="map_title" anchor_left={ 0.055 } anchor_right={ 0.945 } offset_top={ 110.0 } offset_bottom={ 142.0 }>
-        <Label text="青茅山外圍" style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_PRIMARY, "font_size": 28} } />
-        <Label text="深度 62 · 四轉初階" style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10, "content_margin_left": 12} } />
+        <Label text="青茅山外圍" style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_MAP, "font_size": 28} } />
+        <Label text="深度 62 · 四轉初階" style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "content_margin_left": 12} } />
       </HBoxContainer>
       <Control name="map_camera" clip_contents={ true } anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_bottom={ 1.0 } offset_top={ 158.0 } offset_bottom={ -92.0 }>
-        <Panel name="map_camera_backdrop" mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "border_width_top": 1, "border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR, "bg_color": GuStyle.PAPER_RAISED} } />
+        <Panel name="map_camera_backdrop" mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "border_width_top": 1, "border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR, "bg_color": GuStyle.PAPER_MAP} } />
         <Control name="map_depth" mouse_filter={ Control.MOUSE_FILTER_IGNORE } anchor_top={ 0.0 } anchor_bottom={ 1.0 } offset_top={ 0.0 } offset_bottom={ 0.0 } offset_right={ 58.0 } style={ {"border_width_right": 1, "border_color": GuStyle.HAIRLINE_COLOR, "z_index": 3} }>
-          <Label name="map_depth_65" text="65" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 18.0 } offset_bottom={ 36.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 9} } />
-          <Label name="map_depth_64" text="64" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 248.0 } offset_bottom={ 266.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 9} } />
-          <Label name="map_depth_63" text="63" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 478.0 } offset_bottom={ 496.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 9} } />
-          <Label name="map_depth_62" text="62" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 708.0 } offset_bottom={ 726.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 9} } />
+          <Label name="map_depth_65" text="65" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 18.0 } offset_bottom={ 36.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
+          <Label name="map_depth_64" text="64" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 248.0 } offset_bottom={ 266.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
+          <Label name="map_depth_63" text="63" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 478.0 } offset_bottom={ 496.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
+          <Label name="map_depth_62" text="62" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 708.0 } offset_bottom={ 726.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />
         </Control>
         <Control name="map_world" anchor_right={ 1.0 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -970.0 }>
           <Control name="map_routes" anchor_left={ 0.0 } anchor_right={ 1.0 } anchor_bottom={ 1.0 } offset_left={ 70.0 }>
-            <Label name="map_layer_label_far" text="再前一程" position={ Vector2(0, 4) } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10} } />
-            <Label name="map_layer_label_near" text="下一程" position={ Vector2(0, 234) } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10} } />
-            <Label name="map_layer_label_now" text="此刻" position={ Vector2(0, 464) } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10} } />
+            <Label name="map_layer_label_far" text="再前一程" position={ Vector2(0, 4) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
+            <Label name="map_layer_label_near" text="下一程" position={ Vector2(0, 234) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
+            <Label name="map_layer_label_now" text="此刻" position={ Vector2(0, 464) } style={ {"font_color": GuStyle.INK_MAP_LABEL, "font_size": 10} } />
             <Control name="map_paths" mouse_filter={ Control.MOUSE_FILTER_IGNORE } draw_fn={ path_draw } redraw_key={ path_geometry } style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 1} }>{ path_segments }</Control>
             <Control mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 2} }>{ node_controls }</Control>
           </Control>
@@ -246,8 +246,8 @@ export MapScreen() -> RuitkVNode {
       </Control>
       <HBoxContainer name="map_inspector" anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -72.0 } offset_bottom={ -24.0 } style={ {"separation": 18} }>
           <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": "SIZE_EXPAND_FILL"} }>
-            <Label name="map_inspection_name" text={ inspection_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />
-            <Label name="map_inspection_note" text={ inspection_type + " · " + inspection_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 11} } />
+            <Label name="map_inspection_name" text={ inspection_name } style={ {"font_color": GuStyle.INK_MAP, "font_size": 18} } />
+            <Label name="map_inspection_note" text={ inspection_type + " · " + inspection_note } style={ {"font_color": GuStyle.INK_MAP_NOTE, "font_size": 11} } />
           </VBoxContainer>
           { inspector_action }
           { save_row }

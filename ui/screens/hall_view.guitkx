@@ -121,7 +121,7 @@ export HallView() -> RuitkVNode {
           <Label text="分辨率：待接入" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
         </GuPanel>
         <GuPanel title="难度">
-          <Label text="本局状态自适应难度（R14.6）" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
+          <Label text="本局状态自适应难度（R14.6）" style={ {"font_color": GuStyle.INK_HALL, "font_size": 14} } />
           <GuButton
             label={ "当前：" + ("开启" if dda_state_adaptive_enabled else "关闭") }
             on_press={ func(): fire.call("toggle_dda") }
@@ -142,7 +142,7 @@ export HallView() -> RuitkVNode {
     for je in j_entries:
       j_rows.append((
         <GuPanel title={ str(je.get("title", "")) }>
-          <Label text={ str(je.get("body", "")) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
+          <Label text={ str(je.get("body", "")) } style={ {"font_color": GuStyle.INK_HALL, "font_size": 14} } />
         </GuPanel>
       ))
     var journal_empty = []
@@ -179,7 +179,7 @@ export HallView() -> RuitkVNode {
       var starter_line = "初始蛊：" + "、".join(sstarters) if sstarters.size() > 0 else ""
       var starter_rows = []
       if sstarters.size() > 0:
-        starter_rows.append(<Label text={ starter_line } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />)
+        starter_rows.append(<Label text={ starter_line } style={ {"font_color": GuStyle.INK_HALL, "font_size": 13} } />)
       school_cards.append((
         <GuCard title={ sname } highlight={ is_sel }>
           <Label text={ ssum } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />
@@ -191,7 +191,7 @@ export HallView() -> RuitkVNode {
     return (
       <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
         <Label text="流派选择" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 26} } />
-        <Label text={ selected_label } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
+        <Label text={ selected_label } style={ {"font_color": GuStyle.INK_HALL, "font_size": 14} } />
         <GuScrollBox height={ 400 }>
           <VBoxContainer style={ {"separation": 10} }>
             { school_cards }
@@ -243,9 +243,9 @@ export HallView() -> RuitkVNode {
   var primary_label = "续入此世" if primary_action == "continue_run" else "开始此世"
   var summary_rows = []
   if has_save:
-    summary_rows.append(<Label name="hall_summary_route" text={ "行路\n" + str(run_summary.get("route", "未载入行路")) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />)
-    summary_rows.append(<Label name="hall_summary_rank" text={ "修为\n" + str(run_summary.get("rank", 0)) + " 转" } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />)
-    summary_rows.append(<Label name="hall_summary_hp" text={ "气血\n" + str(run_summary.get("hp", 0)) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />)
+    summary_rows.append(<Label name="hall_summary_route" text={ "行路\n" + str(run_summary.get("route", "未载入行路")) } style={ {"font_color": GuStyle.INK_HALL, "font_size": 15} } />)
+    summary_rows.append(<Label name="hall_summary_rank" text={ "修为\n" + str(run_summary.get("rank", 0)) + " 转" } style={ {"font_color": GuStyle.INK_HALL, "font_size": 15} } />)
+    summary_rows.append(<Label name="hall_summary_hp" text={ "气血\n" + str(run_summary.get("hp", 0)) } style={ {"font_color": GuStyle.INK_HALL, "font_size": 15} } />)
 
   var meta_rows = []
   for contract in state.get("contracts", []):
@@ -261,7 +261,7 @@ export HallView() -> RuitkVNode {
 
   return (
     <Control style={ {"anchors_preset": "PRESET_FULL_RECT"} }>
-      <ColorRect name="hall_paper" color={ GuStyle.PAPER_RAISED } mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
+      <ColorRect name="hall_paper" color={ GuStyle.PAPER_HALL } mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
       <Label name="hall_folio" text="逐道 · 南疆" position={ Vector2(29, 25) } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 10} } />
       <PanelContainer name="hall_seal" anchor_left={ 1.0 } anchor_right={ 1.0 } offset_left={ -75.0 } offset_right={ -30.0 } offset_top={ 27.0 } offset_bottom={ 72.0 } style={ {"bg_color": Color(0, 0, 0, 0), "border_width_all": 1, "border_color": GuStyle.CINNABAR} }>
         <CenterContainer><Label text="真性\n自持" horizontal_alignment={ HORIZONTAL_ALIGNMENT_CENTER } style={ {"font_color": GuStyle.CINNABAR, "font_size": 12} } /></CenterContainer>
@@ -270,17 +270,17 @@ export HallView() -> RuitkVNode {
         <VBoxContainer name="hall_identity" anchor_right={ 0.38 } anchor_bottom={ 1.0 } style={ {"separation": GuStyle.SPACE_4} }>
           <Control style={ {"size_flags_vertical": "SIZE_EXPAND_FILL"} } />
           <Label text="蠱為術，道為途，我自問眞" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />
-          <Label name="hall_title" text={ brand_title } style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_PRIMARY, "font_size": 96} } />
+          <Label name="hall_title" text={ brand_title } style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_HALL, "font_size": 96} } />
           <ColorRect color={ GuStyle.CINNABAR } custom_minimum_size={ Vector2(58, 3) } />
           <Label text="上一世止於：青茅山 · 三轉\n此世命題：命蠱相爭，眞性自持" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
           <Control style={ {"size_flags_vertical": "SIZE_EXPAND_FILL"} } />
         </VBoxContainer>
 
-        <ColorRect name="hall_primary_rule" color={ GuStyle.HAIRLINE_COLOR } anchor_left={ 0.44 } anchor_right={ 0.44 } anchor_bottom={ 1.0 } offset_right={ 1.0 } />
+        <ColorRect name="hall_primary_rule" color={ GuStyle.RULE_HALL } anchor_left={ 0.44 } anchor_right={ 0.44 } anchor_bottom={ 1.0 } offset_right={ 1.0 } />
         <VBoxContainer name="hall_primary" anchor_left={ 0.44 } anchor_right={ 0.80 } anchor_bottom={ 1.0 } offset_left={ 50.0 } style={ {"separation": GuStyle.SPACE_4} }>
             <Control style={ {"size_flags_vertical": "SIZE_EXPAND_FILL"} } />
             <Label text={ "命蠱 · 第 %s 卷" % ("六十三" if has_save else "新") } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } />
-            <Button name="hall_primary_action" role="primary" text={ primary_label + " ›" } onPressed={ func(): fire.call(primary_action) } style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_PRIMARY, "font_size": 30, "min_height": 64, "bg_color": Color(0, 0, 0, 0), "border_width_left": 3, "border_color": GuStyle.CINNABAR, "content_margin_left": GuStyle.SPACE_3, "focus": {"border_width_all": 1, "border_color": GuStyle.CINNABAR} } } />
+            <Button name="hall_primary_action" role="primary" text={ primary_label + " ›" } onPressed={ func(): fire.call(primary_action) } style={ {"font": GuStyle.TITLE_FONT, "font_color": GuStyle.INK_HALL, "font_size": 30, "min_height": 64, "bg_color": Color(0, 0, 0, 0), "border_width_left": 3, "border_color": GuStyle.CINNABAR, "content_margin_left": GuStyle.SPACE_3, "focus": {"border_width_all": 1, "border_color": GuStyle.CINNABAR} } } />
             <Label text={ "将从 " + str(run_summary.get("route", "流派选择")) + (" 继续。此世没有回溯。" if has_save else " 开始，随后进入南疆。") } autowrap_mode={ TextServer.AUTOWRAP_WORD_SMART } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />
             { no_save_rows }
             <HBoxContainer style={ {"separation": GuStyle.SPACE_5} }>{ summary_rows }</HBoxContainer>
@@ -288,11 +288,11 @@ export HallView() -> RuitkVNode {
             <Control style={ {"size_flags_vertical": "SIZE_EXPAND_FILL"} } />
         </VBoxContainer>
 
-        <ColorRect name="hall_archive_rule" color={ GuStyle.HAIRLINE_COLOR } anchor_left={ 0.85 } anchor_right={ 0.85 } anchor_bottom={ 1.0 } offset_right={ 1.0 } />
+        <ColorRect name="hall_archive_rule" color={ GuStyle.RULE_HALL } anchor_left={ 0.85 } anchor_right={ 0.85 } anchor_bottom={ 1.0 } offset_right={ 1.0 } />
         <VBoxContainer name="hall_archive" anchor_left={ 0.85 } anchor_right={ 1.0 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_left={ 26.0 } offset_top={ -180.0 } style={ {"separation": GuStyle.SPACE_2} }>
-          <Button text="手记库" onPressed={ func(): fire.call("open_journal") } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13, "bg_color": Color(0, 0, 0, 0), "border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR} } />
-          <Button text="图鉴" onPressed={ func(): fire.call("open_codex") } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13, "bg_color": Color(0, 0, 0, 0), "border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR} } />
-          <Button text="设置" onPressed={ func(): fire.call("open_settings") } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13, "bg_color": Color(0, 0, 0, 0), "border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR} } />
+          <Button text="手记库" onPressed={ func(): fire.call("open_journal") } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13, "bg_color": Color(0, 0, 0, 0), "border_width_bottom": 1, "border_color": GuStyle.RULE_HALL} } />
+          <Button text="图鉴" onPressed={ func(): fire.call("open_codex") } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13, "bg_color": Color(0, 0, 0, 0), "border_width_bottom": 1, "border_color": GuStyle.RULE_HALL} } />
+          <Button text="设置" onPressed={ func(): fire.call("open_settings") } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13, "bg_color": Color(0, 0, 0, 0), "border_width_bottom": 1, "border_color": GuStyle.RULE_HALL} } />
         </VBoxContainer>
       </Control>
     </Control>
