@@ -2,9 +2,8 @@ class_name EncounterView
 extends Control
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
+
 const ActionCardRowScript := preload("res://scripts/presentation/action_card_row.gd")
-const UiThemeScript := preload("res://scripts/presentation/components/ui_theme.gd")
 
 
 # Shared tooltip instance (Rule #3): created once at top level per render and
@@ -19,7 +18,6 @@ signal dangerous_option_confirmed(option_id: String)
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	theme = THEME
 
 
 func render_session(
@@ -159,20 +157,20 @@ func _build_status_panel(state: RunState) -> VBoxContainer:
 	var header := Label.new()
 	header.text = "自身状态"
 	header.add_theme_font_size_override("font_size", 20)
-	header.add_theme_color_override("font_color", UiThemeScript.GOLD)
+	header.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	panel.add_child(header)
 	var health := int(state.cultivator.get("health", state.health))
 	var max_health := int(state.cultivator.get("max_health", state.max_health))
-	_add_stat_bar(panel, "生命", health, max_health, UiThemeScript.JADE)
-	_add_stat_bar(panel, "真元", state.essence, state.essence_capacity, UiThemeScript.JADE)
+	_add_stat_bar(panel, "生命", health, max_health, GuStyle.JADE)
+	_add_stat_bar(panel, "真元", state.essence, state.essence_capacity, GuStyle.JADE)
 	var lifespan := int(state.cultivator.get("lifespan", 0))
-	_add_stat_bar(panel, "寿元", lifespan, maxi(lifespan, 1), UiThemeScript.GOLD)
+	_add_stat_bar(panel, "寿元", lifespan, maxi(lifespan, 1), GuStyle.ANOMALY_YELLOW)
 	var soul := int(state.cultivator.get("soul", 0))
 	var soul_max := int(state.cultivator.get("soul_max", soul))
-	_add_stat_bar(panel, "魂魄", soul, maxi(soul_max, 1), UiThemeScript.JADE)
-	_add_stat_bar(panel, "元石", int(state.stone), maxi(int(state.stone), 1), UiThemeScript.GOLD)
+	_add_stat_bar(panel, "魂魄", soul, maxi(soul_max, 1), GuStyle.JADE)
+	_add_stat_bar(panel, "元石", int(state.stone), maxi(int(state.stone), 1), GuStyle.ANOMALY_YELLOW)
 	var notorious := int(state.cultivator.get("notorious", 0))
-	_add_stat_bar(panel, "恶名", notorious, maxi(notorious, 1), UiThemeScript.DANGER if notorious > 0 else UiThemeScript.JADE)
+	_add_stat_bar(panel, "恶名", notorious, maxi(notorious, 1), GuStyle.CINNABAR if notorious > 0 else GuStyle.JADE)
 	return panel
 
 

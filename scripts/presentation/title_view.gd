@@ -2,7 +2,7 @@ class_name TitleView
 extends Control
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
+
 const SaveRepositoryScript := preload("res://scripts/domain/save_repository.gd")
 
 
@@ -20,7 +20,6 @@ var _stub_panel: PanelContainer
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	theme = THEME
 	modulate.a = 0.0
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, 0.7)
@@ -35,9 +34,9 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation", 16)
 	margin.add_child(column)
 
-	var title := UiTheme.label("蛊 路 求 生", 64, Color("e7c883"))
+	var title := GuStyle.label("蛊 路 求 生", 64, GuStyle.ANOMALY_YELLOW)
 	column.add_child(title)
-	var subtitle := UiTheme.label("夜入密林，蛊路求生 · 南疆篇", 24, Color("b8d5cc"))
+	var subtitle := GuStyle.label("夜入密林，蛊路求生 · 南疆篇", 24, GuStyle.JADE)
 	column.add_child(subtitle)
 
 	var spacer := Control.new()
@@ -47,16 +46,16 @@ func _ready() -> void:
 	var school_row := HBoxContainer.new()
 	school_row.add_theme_constant_override("separation", 10)
 	column.add_child(school_row)
-	var school_hint := UiTheme.label("流派", 18, Color("b8d5cc"))
+	var school_hint := GuStyle.label("流派", 18, GuStyle.JADE)
 	school_row.add_child(school_hint)
 	for school in ["血道", "气道", "力道"]:
-		var school_button := UiTheme.button(school, true)
+		var school_button := GuStyle.button(school, true)
 		school_button.custom_minimum_size = Vector2(120, 40)
 		school_button.tooltip_text = _school_hint(school)
 		school_button.pressed.connect(func(choice: String = school): school_selected.emit(choice))
 		school_row.add_child(school_button)
 
-	var contract_button := UiTheme.button("契约（未启用）", true)
+	var contract_button := GuStyle.button("契约（未启用）", true)
 	contract_button.custom_minimum_size = Vector2(170, 36)
 	contract_button.tooltip_text = "开局全局规则修改器：收益与对等代价成对，本局尚未接入。"
 	contract_button.pressed.connect(func(): _toggle_stub("契约：本局 0 / 6 条（待接入）"))
@@ -86,7 +85,7 @@ func _toggle_stub(text: String) -> void:
 	panel.add_theme_constant_override("margin_right", 16)
 	panel.add_theme_constant_override("margin_top", 10)
 	panel.add_theme_constant_override("margin_bottom", 10)
-	var lbl := UiTheme.label(text, 16, Color("b8d5cc"))
+	var lbl := GuStyle.label(text, 16, GuStyle.JADE)
 	panel.add_child(lbl)
 	panel.position = Vector2(150, 300)
 	add_child(panel)
@@ -102,7 +101,7 @@ func _school_hint(school: String) -> String:
 
 
 func _append_menu_button(menu: VBoxContainer, text: String, enabled: bool, hint: String) -> void:
-	var button := UiTheme.button(text, enabled)
+	var button := GuStyle.button(text, enabled)
 	button.custom_minimum_size = Vector2(260, 44)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	match text:

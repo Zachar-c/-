@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuCard } from "~/ui/widgets/gu_card"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
@@ -51,9 +50,9 @@ export RewardScreen() -> RuitkVNode {
       btns.append(<GuButton label="替换" danger={ true } on_press={ func(): set_replace_idx.call({"replace_idx": idx}) } />)
     reward_cards.append((
       <GuCard title={ rname } quality={ rqual } danger={ rcursed } curse_warning={ rcursed } expand_h={ true }>
-        <Label text={ rkind } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
-        <Label text={ reff } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
-        <Label text={ rcost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
+        <Label text={ rkind } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
+        <Label text={ reff } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } />
+        <Label text={ rcost } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
         <HBoxContainer style={ {"separation": 6} }>
           { btns }
         </HBoxContainer>
@@ -61,7 +60,7 @@ export RewardScreen() -> RuitkVNode {
     ))
   var reward_empty = []
   if reward_cards.is_empty():
-    reward_empty.append(<Label text="（本次无战利品）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+    reward_empty.append(<Label text="（本次无战利品）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
   var replace_name = ""
   if replace_idx >= 0 and replace_idx < rewards.size():
@@ -76,8 +75,8 @@ export RewardScreen() -> RuitkVNode {
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
-        <Label text={ title } style={ {"font_color": GuStyle.GOLD, "font_size": 22} } />
-        <Label text={ "三选一 · 权重池 + 保底" } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
+        <Label text={ title } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 22} } />
+        <Label text={ "三选一 · 权重池 + 保底" } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
       </HBoxContainer>
 
       <VBoxContainer name="primary_decision_surface" style={ {"separation": 8} }>
@@ -90,9 +89,9 @@ export RewardScreen() -> RuitkVNode {
 
       <VBoxContainer style={ {"separation": 4} }>
         @if (pool_fallback_note != "") {
-          return ( <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } /> )
+          return ( <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } /> )
         }
-        <Label text={ pity_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 12} } />
+        <Label text={ pity_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
       </VBoxContainer>
 
       <HBoxContainer style={ {"separation": 10} }>

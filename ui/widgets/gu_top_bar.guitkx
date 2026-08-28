@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuResourceChip } from "./gu_resource_chip"
 import { GuDeathLineWarning } from "./gu_death_line_warning"
 
@@ -50,7 +49,7 @@ export GuTopBar() -> RuitkVNode {
     meta_panels.append((
       <PanelContainer style={ {"bg_color": Color(0.5, 0.35, 0.15, 0.25), "corner_radius_all": 4} } key={ a }>
         <MarginContainer style={ {"margin_left": 6, "margin_right": 6, "margin_top": 2, "margin_bottom": 2} }>
-          <Label text={ "异变·%s" % label_text } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
+          <Label text={ "异变·%s" % label_text } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
         </MarginContainer>
       </PanelContainer>
     ))
@@ -59,7 +58,7 @@ export GuTopBar() -> RuitkVNode {
 
   var left_items = []
   if layer >= 0:
-    left_items.append(<Label text={ "第 %d 转" % layer } style={ {"font_color": GuStyle.GOLD, "font_size": 16, "min_width": 70} } />)
+    left_items.append(<Label text={ "第 %d 转" % layer } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 16, "min_width": 70} } />)
   left_items.append((
     <HBoxContainer style={ {"separation": 6, "size_flags_horizontal": 3} }>
       { chip_items }
@@ -74,7 +73,7 @@ export GuTopBar() -> RuitkVNode {
   ))
   right_items.append(<GuDeathLineWarning death_lines={ dl } on_view={ on_view } />)
   if on_menu != null:
-    right_items.append(<Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.BONE, "min_width": 32, "min_height": 32} } />)
+    right_items.append(<Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.INK_PRIMARY, "min_width": 32, "min_height": 32} } />)
 
   return (
     <PanelContainer style={ bar_style }>

@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 import { GuBattleHand } from "~/ui/widgets/gu_battle_hand"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
@@ -82,7 +81,7 @@ export BattleScreen() -> RuitkVNode {
     kill_rows.append(<Label text={ "杀招 · %s · %s" % [str(kill_move.get("name", "")), str(kill_move.get("sequence_display", ""))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } />)
   var hint_rows = []
   if str(state.get("dda_boss_hint", "")) == "boss_senses_gu_power":
-    hint_rows.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />)
+    hint_rows.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
   var feedback_rows = []
   if str(state.get("feedback", "")) != "":
     feedback_rows.append(<GuToast text={ str(state.get("feedback", "")) } tone="warn" />)
@@ -93,12 +92,12 @@ export BattleScreen() -> RuitkVNode {
   return (<VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
     <VBoxContainer name="battle_hud"><GuTopBar resources={ state.get("resources", {}) } contracts={ state.get("contracts", []) } anomalies={ state.get("anomalies", []) } death_lines={ state.get("death_lines", {}) } on_view={ func(cid): set_interaction.call({"mode": mode, "card": active_card, "target_id": "", "cause_view": str(cid)}) } /></VBoxContainer>
     <HBoxContainer name="battle_field" style={ {"separation": 20, "size_flags_vertical": 3} }>
-      <GuPanel title="我方" expand_h={ true }><VBoxContainer name="player_actor" style={ {"separation": 6} }><GuStatBar label="生命" value={ int(player.get("hp", 0)) } max_value={ maxi(1, int(player.get("max_hp", 1))) } color={ GuStyle.JADE } shield={ int(player.get("shield", 0)) } /><GuStatBar label="真元" value={ int(player.get("primordial", 0)) } max_value={ maxi(1, int(player.get("primordial", 1))) } color={ GuStyle.GOLD } /><Label text={ "魂魄并发 %d/%d" % [int(soul_ops.get("used", 0)), int(soul_ops.get("cap", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></VBoxContainer></GuPanel>
+      <GuPanel title="我方" expand_h={ true }><VBoxContainer name="player_actor" style={ {"separation": 6} }><GuStatBar label="生命" value={ int(player.get("hp", 0)) } max_value={ maxi(1, int(player.get("max_hp", 1))) } color={ GuStyle.JADE } shield={ int(player.get("shield", 0)) } /><GuStatBar label="真元" value={ int(player.get("primordial", 0)) } max_value={ maxi(1, int(player.get("primordial", 1))) } color={ GuStyle.ANOMALY_YELLOW } /><Label text={ "魂魄并发 %d/%d" % [int(soul_ops.get("used", 0)), int(soul_ops.get("cap", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></VBoxContainer></GuPanel>
       <GuPanel title="敌方" expand_h={ true }><HBoxContainer name="enemy_group" style={ {"separation": 10} }>{ enemy_rows }</HBoxContainer></GuPanel>
     </HBoxContainer>
     { feedback_rows }
     { hint_rows }
-    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_mode.call("hover", card) } on_drag={ func(card): set_mode.call("dragging", card) } on_release={ play_card } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
+    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_mode.call("hover", card) } on_drag={ func(card): set_mode.call("dragging", card) } on_release={ play_card } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
     <Label name={ "battle_" + mode } text="" />
     { confirm_row }
     @if (not cause_line.is_empty()) { return (<GuDeathCauseOverlay line={ cause_line } on_close={ reset_interaction } />) }

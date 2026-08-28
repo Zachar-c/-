@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 
 # GuPanel —— 内容边界容器（問眞极简视觉）
 # 仅提供发丝线边界与留白，无阴影、无厚边框、无嵌套卡片。

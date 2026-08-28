@@ -1,8 +1,8 @@
-﻿class_name EndingView
+class_name EndingView
 extends Control
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
+
 
 
 signal restart_requested
@@ -11,7 +11,6 @@ signal return_to_hall_requested
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	theme = THEME
 
 
 func show_ending(outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary = {}) -> void:
@@ -26,9 +25,9 @@ func show_ending(outcome: Dictionary, journal: Array[Dictionary], run_data: Dict
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 12)
 	margin.add_child(column)
-	var title := UiTheme.label("修行札记", 30, Color("e7c883"))
+	var title := GuStyle.label("修行札记", 30, GuStyle.ANOMALY_YELLOW)
 	column.add_child(title)
-	column.add_child(UiTheme.label("结局：%s" % DisplayText.outcome(str(outcome.get("outcome", "survived_failure"))), 18, Color("e7c883")))
+	column.add_child(GuStyle.label("结局：%s" % DisplayText.outcome(str(outcome.get("outcome", "survived_failure"))), 18, GuStyle.ANOMALY_YELLOW))
 	_add_recap(column, run_data)
 	var record := RichTextLabel.new()
 	record.bbcode_enabled = true
@@ -36,7 +35,7 @@ func show_ending(outcome: Dictionary, journal: Array[Dictionary], run_data: Dict
 	record.custom_minimum_size = Vector2(0, 220)
 	record.text = _journal_text(journal)
 	column.add_child(record)
-	var back := UiTheme.button("返回大厅", true)
+	var back := GuStyle.button("返回大厅", true)
 	back.custom_minimum_size = Vector2(200, 44)
 	back.tooltip_text = "回到大厅，可继续上次冒险或开启新局。"
 	back.pressed.connect(func(): return_to_hall_requested.emit())
@@ -55,17 +54,17 @@ func show_death(report: Dictionary) -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 12)
 	margin.add_child(column)
-	var title := UiTheme.label("身死道消", 30, Color("e7c883"))
+	var title := GuStyle.label("身死道消", 30, GuStyle.ANOMALY_YELLOW)
 	column.add_child(title)
-	var blow := UiTheme.label("最后一击：%s（%d 点伤害）" % [_blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))], 16, Color("e7c883"))
+	var blow := GuStyle.label("最后一击：%s（%d 点伤害）" % [_blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))], 16, GuStyle.ANOMALY_YELLOW)
 	column.add_child(blow)
-	var facts := UiTheme.label("你已看见：%s" % _facts_text(report.get("known_facts", [])), 16, Color("b8d5cc"))
+	var facts := GuStyle.label("你已看见：%s" % _facts_text(report.get("known_facts", [])), 16, GuStyle.JADE)
 	facts.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(facts)
-	var taunt := UiTheme.label("“%s”" % str(report.get("taunt", "")), 16, Color("b8d5cc"))
+	var taunt := GuStyle.label("“%s”" % str(report.get("taunt", "")), 16, GuStyle.JADE)
 	taunt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(taunt)
-	var back := UiTheme.button("返回大厅", true)
+	var back := GuStyle.button("返回大厅", true)
 	back.custom_minimum_size = Vector2(200, 44)
 	back.tooltip_text = "回到大厅，可继续上次冒险或开启新局。"
 	back.pressed.connect(func(): return_to_hall_requested.emit())
@@ -81,7 +80,7 @@ func _add_recap(column: VBoxContainer, run_data: Dictionary) -> void:
 	var codex: Array = run_data.get("global_codex_ids", [])
 	items.append("资产结余：元石 %d · 图鉴解锁 %d" % [stone, codex.size()])
 	for item in items:
-		var lbl := UiTheme.label(item, 15, Color("b8d5cc"))
+		var lbl := GuStyle.label(item, 15, GuStyle.JADE)
 		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		column.add_child(lbl)
 

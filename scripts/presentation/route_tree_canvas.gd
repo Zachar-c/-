@@ -5,7 +5,7 @@ extends Control
 signal node_selected(node_id: String)
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
+
 
 const NODE_SIZE := Vector2(184, 84)
 const HORIZONTAL_GAP := 72.0
@@ -19,7 +19,6 @@ var tooltip: GuTooltip
 
 
 func _ready() -> void:
-	theme = THEME
 
 
 var _route: Array[Dictionary] = []

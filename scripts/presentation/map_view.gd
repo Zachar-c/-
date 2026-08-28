@@ -3,7 +3,7 @@ extends Control
 
 
 const ROUTE_TREE_CANVAS := preload("res://scripts/presentation/route_tree_canvas.gd")
-const THEME := preload("res://assets/theme/gu_theme.tres")
+
 const TOOLTIP_SCENE := preload("res://scenes/ui/gu_tooltip.tscn")
 const GuOrbScript := preload("res://scripts/presentation/gu_orb.gd")
 
@@ -21,7 +21,6 @@ var _tooltip: GuTooltip
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	theme = THEME
 	_toast = Label.new()
 	_toast.name = "map_toast"
 	_toast.visible = false

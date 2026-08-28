@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 
 # GuScrollBox —— 滚动容器（规格 §9）
 # 圆角面板底 + 可调高度。props：height(默认 200)
@@ -6,7 +5,7 @@
 export GuScrollBox() -> RuitkVNode {
   var height = props.get("height", 200)
   return (
-    <PanelContainer style={ {"bg_color": GuStyle.BG_PANEL, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.BG_RAISED} }>
+    <PanelContainer style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.PAPER_DEEP} }>
       <ScrollContainer style={ {"min_height": height} }>
         <MarginContainer style={ {"margin_left": 8, "margin_right": 8, "margin_top": 8, "margin_bottom": 8, "size_flags_horizontal": 3} }>
           <VBoxContainer style={ {"separation": 6} }>

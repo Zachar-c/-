@@ -201,7 +201,7 @@ func _initialize() -> void:
 	if curse_glyph == null:
 		push_error("GuCard 危险变体缺少「咒」角标")
 		quit(1)
-	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.BONE):
+	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT):
 		push_error("GuCard「咒」角标字符必须 BONE 色")
 		quit(1)
 	var curse_chip := _nearest_panel_ancestor(curse_glyph)
@@ -209,12 +209,12 @@ func _initialize() -> void:
 		push_error("GuCard「咒」角标必须是实底角标容器（PanelContainer）")
 		quit(1)
 	var curse_sb := curse_chip.get_theme_stylebox("panel") as StyleBoxFlat
-	if curse_sb == null or not curse_sb.bg_color.is_equal_approx(GuStyle.DANGER):
+	if curse_sb == null or not curse_sb.bg_color.is_equal_approx(GuStyle.CINNABAR):
 		push_error("GuCard「咒」角标底色必须 DANGER 强红")
 		quit(1)
 	var gc_danger_panel := _find_first_panel(gc_danger)
 	var danger_card_sb := gc_danger_panel.get_theme_stylebox("panel") as StyleBoxFlat
-	if danger_card_sb == null or not danger_card_sb.border_color.is_equal_approx(GuStyle.DANGER):
+	if danger_card_sb == null or not danger_card_sb.border_color.is_equal_approx(GuStyle.CINNABAR):
 		push_error("GuCard 危险变体描边必须 DANGER")
 		quit(1)
 	print("OK GuCardDanger buttons=%d" % _count_buttons(gc_danger))
@@ -280,7 +280,7 @@ func _initialize() -> void:
 			"cost": "消耗 3 寿元", "curse_warning": true})
 	var tip_panel := _find_first_panel(tip)
 	var tip_sb := tip_panel.get_theme_stylebox("panel") as StyleBoxFlat
-	if tip_sb == null or not tip_sb.bg_color.is_equal_approx(GuStyle.PAPER):
+	if tip_sb == null or not tip_sb.bg_color.is_equal_approx(GuStyle.PAPER_BG):
 		push_error("GuTooltipView 底色必须 PAPER 卷轴感（禁深底金字回潮）")
 		quit(1)
 	var tip_labels: Array = []
@@ -295,10 +295,10 @@ func _initialize() -> void:
 	if idx_effect < 0 or not (idx_effect < idx_synergy and idx_synergy < idx_cost and idx_cost < idx_curse):
 		push_error("GuTooltipView 五段顺序必须恒定：效果→联动→代价→诅咒警示")
 		quit(1)
-	if not (tip_labels[idx_effect] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.INK):
+	if not (tip_labels[idx_effect] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY):
 		push_error("GuTooltipView 正文必须 INK 深字")
 		quit(1)
-	if not (tip_labels[idx_curse] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.DANGER):
+	if not (tip_labels[idx_curse] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR):
 		push_error("GuTooltipView 诅咒警示行必须 DANGER 红字")
 		quit(1)
 	print("OK GuTooltipPaper labels=%d" % tip_texts.size())
@@ -535,7 +535,7 @@ func _initialize() -> void:
 		push_error("结算屏路线缩略图缺少分层短标")
 		quit(1)
 	var boss_chip := _find_label_exact(esc_container, "第2层 交锋")
-	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.EMBER):
+	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.RARITY_EPIC):
 		push_error("路线缩略图 Boss 层必须 EMBER 高亮")
 		quit(1)
 	if not _host_has_label_text(esc_container, "战斗合成：2 次 · 成 1 / 败 1"):
@@ -548,7 +548,7 @@ func _initialize() -> void:
 		push_error("DDA 预留位无数据时必须整行隐藏")
 		quit(1)
 	var new_chip := _find_label_exact(esc_container, "★新 图鉴：火蛊")
-	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.GOLD):
+	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.ANOMALY_YELLOW):
 		push_error("解锁列表项必须带 ★新 前缀（GOLD）")
 		quit(1)
 	if not _host_has_label_text(esc_container, "离局清零"):
@@ -652,7 +652,7 @@ func _initialize() -> void:
 	if shop_note == null:
 		push_error("黑市标记回退后必须渲染小字槽位")
 		quit(1)
-	if shop_note.get_theme_font_size("font_size") != 13 or not shop_note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM):
+	if shop_note.get_theme_font_size("font_size") != 13 or not shop_note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT):
 		push_error("黑市回退小字必须 BONE_DIM 13px")
 		quit(1)
 	print("OK ShopScreen buttons=%d" % shc)
@@ -732,7 +732,7 @@ func _initialize() -> void:
 	if reward_note == null:
 		push_error("奖励屏标记回退后必须渲染小字")
 		quit(1)
-	if reward_note.get_theme_font_size("font_size") != 13 or not reward_note.get_theme_color("font_color").is_equal_approx(GuStyle.BONE_DIM):
+	if reward_note.get_theme_font_size("font_size") != 13 or not reward_note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT):
 		push_error("奖励屏回退小字必须 BONE_DIM 13px")
 		quit(1)
 	# 未标记时不得出现常驻假提示。
@@ -800,7 +800,7 @@ func _initialize() -> void:
 		push_error("DebugPanel 缺少红字「调试」角标")
 		quit(1)
 	var dp_badge := _find_label_exact(dpc, "调试")
-	if not dp_badge.get_theme_color("font_color").is_equal_approx(GuStyle.DANGER):
+	if not dp_badge.get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR):
 		push_error("DebugPanel「调试」角标必须 DANGER 红字（§16.22 视觉区分）")
 		quit(1)
 	for wanted in ["加蛊", "应用", "跳", "打印 RunData 快照"]:

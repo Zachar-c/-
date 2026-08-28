@@ -8,8 +8,7 @@ extends Control
 # (jade) or essence (gold) without separate scenes.
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
-const UiThemeScript := preload("res://scripts/presentation/components/ui_theme.gd")
+const GuStyleScript := preload("res://scripts/presentation/gu_style.gd")
 
 
 var _label: Label
@@ -19,23 +18,17 @@ var _pending: Dictionary = {}
 
 
 func _ready() -> void:
-	theme = THEME
 	var vbox := VBoxContainer.new()
-	vbox.theme = THEME
 	vbox.add_theme_constant_override("separation", 2)
 	add_child(vbox)
 	var top := HBoxContainer.new()
-	top.theme = THEME
 	top.add_theme_constant_override("separation", 8)
 	vbox.add_child(top)
 	_label = Label.new()
-	_label.theme = THEME
 	top.add_child(_label)
 	_value_label = Label.new()
-	_value_label.theme = THEME
 	top.add_child(_value_label)
 	_bar = ProgressBar.new()
-	_bar.theme = THEME
 	_bar.show_percentage = false
 	_bar.custom_minimum_size = Vector2(0, 18)
 	vbox.add_child(_bar)
@@ -65,7 +58,7 @@ func set_value(current: int, maximum: int) -> void:
 	_bar.value = clampi(current, 0, mx)
 	_value_label.text = "%d/%d" % [current, maximum]
 	_value_label.add_theme_font_size_override("font_size", 14)
-	_value_label.add_theme_color_override("font_color", UiThemeScript.JADE)
+	_value_label.add_theme_color_override("font_color", GuStyleScript.JADE)
 
 
 static func _fill_style(color: Color) -> StyleBoxFlat:
@@ -77,6 +70,6 @@ static func _fill_style(color: Color) -> StyleBoxFlat:
 
 static func _bg_style() -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = UiThemeScript.BG_DEEP
+	sb.bg_color = GuStyleScript.PAPER_DEEP
 	sb.set_corner_radius_all(3)
 	return sb

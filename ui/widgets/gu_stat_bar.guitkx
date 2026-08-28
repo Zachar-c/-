@@ -1,4 +1,3 @@
-@theme "res://assets/theme/gu_theme.tres"
 
 # GuStatBar —— 状态条（规格 §9 / R5.15）
 # 生命/真元/魂魄/寿元等语义色由 color 驱动；护盾独立分条（月光银 SILVER，护盾蓝语义）。
@@ -14,18 +13,18 @@ export GuStatBar() -> RuitkVNode {
   return (
     <VBoxContainer style={ {"separation": 2} }>
       <HBoxContainer style={ {"separation": 8} }>
-        <Label text={ label } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14, "min_width": 56} } />
+        <Label text={ label } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14, "min_width": 56} } />
         <Label text={ "%d / %d" % [value, max_value] } style={ {"font_color": color, "font_size": 14} } />
         @if (shield > 0) {
-          return ( <Label text={ "(盾 %d)" % shield } style={ {"font_color": GuStyle.SILVER, "font_size": 14} } /> )
+          return ( <Label text={ "(盾 %d)" % shield } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } /> )
         }
         @if (on_inspect != null) {
-          return ( <Button text="?" onPressed={ func(): on_inspect.call() } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14, "min_width": 24, "min_height": 24} } /> )
+          return ( <Button text="?" onPressed={ func(): on_inspect.call() } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14, "min_width": 24, "min_height": 24} } /> )
         }
       </HBoxContainer>
       <ProgressBar value={ value } max_value={ max_value } style={ {"modulate": color, "min_height": 14} } />
       @if (shield > 0) {
-        return ( <ProgressBar value={ shield } max_value={ max_value } style={ {"modulate": GuStyle.SILVER, "min_height": 8} } /> )
+        return ( <ProgressBar value={ shield } max_value={ max_value } style={ {"modulate": GuStyle.INK_SOFT, "min_height": 8} } /> )
       }
     </VBoxContainer>
   )

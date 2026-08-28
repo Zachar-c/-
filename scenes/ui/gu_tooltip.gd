@@ -16,8 +16,7 @@ extends Control
 #   curse   : String  non-empty => strong-red warning line with glyph
 
 
-const THEME := preload("res://assets/theme/gu_theme.tres")
-const UiThemeScript := preload("res://scripts/presentation/components/ui_theme.gd")
+const GuStyleScript := preload("res://scripts/presentation/gu_style.gd")
 
 
 var _panel: PanelContainer
@@ -27,14 +26,11 @@ var _pending_data: Dictionary = {}
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = false
-	theme = THEME
 	_panel = PanelContainer.new()
-	_panel.theme = THEME
 	_panel.add_theme_stylebox_override("panel", _tooltip_stylebox())
 	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_panel)
 	var column := VBoxContainer.new()
-	column.theme = THEME
 	column.name = "Column"
 	column.add_theme_constant_override("separation", 6)
 	column.add_theme_constant_override("margin_left", 10)
@@ -63,28 +59,28 @@ func show_for(data: Dictionary) -> void:
 		child.queue_free()
 
 	if data.has("title") and not str(data["title"]).is_empty():
-		var title := UiThemeScript.label(str(data["title"]), 18, UiThemeScript.GOLD)
+		var title := GuStyleScript.label(str(data["title"]), 18, GuStyleScript.ANOMALY_YELLOW)
 		title.add_theme_font_size_override("font_size", 18)
 		column.add_child(title)
 
 	if data.has("rarity") and not str(data["rarity"]).is_empty():
 		var rarity: String = str(data["rarity"])
-		column.add_child(_row("品质", str(rarity), UiThemeScript.rarity_color(rarity)))
+		column.add_child(_row("品质", str(rarity), GuStyleScript.rarity_color(rarity)))
 
 	if data.has("effect") and not str(data["effect"]).is_empty():
-		column.add_child(_row("效果", str(data["effect"]), UiThemeScript.JADE))
+		column.add_child(_row("效果", str(data["effect"]), GuStyleScript.JADE))
 
 	if data.has("linkage") and not str(data["linkage"]).is_empty():
-		column.add_child(_row("联动", str(data["linkage"]), UiThemeScript.JADE))
+		column.add_child(_row("联动", str(data["linkage"]), GuStyleScript.JADE))
 
 	if data.has("cost") and not str(data["cost"]).is_empty():
-		column.add_child(_row("代价", str(data["cost"]), UiThemeScript.GOLD))
+		column.add_child(_row("代价", str(data["cost"]), GuStyleScript.ANOMALY_YELLOW))
 
 	if data.has("curse") and not str(data["curse"]).is_empty():
-		var curse := UiThemeScript.label(
-			"%s %s" % [UiThemeScript.CURSE_GLYPH, str(data["curse"])],
+		var curse := GuStyleScript.label(
+			"%s %s" % [GuStyleScript.CURSE_GLYPH, str(data["curse"])],
 			15,
-			UiThemeScript.CURSE
+			GuStyleScript.CINNABAR
 		)
 		curse.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		column.add_child(curse)
@@ -105,16 +101,13 @@ func _exit_tree() -> void:
 
 func _row(label_text: String, value: String, color: Color) -> VBoxContainer:
 	var row := VBoxContainer.new()
-	row.theme = THEME
 	row.add_theme_constant_override("separation", 2)
 	var key := Label.new()
-	key.theme = THEME
 	key.text = label_text
 	key.add_theme_font_size_override("font_size", 13)
-	key.add_theme_color_override("font_color", UiThemeScript.JADE.darkened(0.25))
+	key.add_theme_color_override("font_color", GuStyleScript.JADE.darkened(0.25))
 	row.add_child(key)
 	var val := Label.new()
-	val.theme = THEME
 	val.text = value
 	val.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	val.add_theme_font_size_override("font_size", 15)
@@ -139,8 +132,8 @@ func _follow_mouse() -> void:
 
 static func _tooltip_stylebox() -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = UiThemeScript.BG_DEEP
-	sb.border_color = UiThemeScript.GOLD
+	sb.bg_color = GuStyleScript.PAPER_BG
+	sb.border_color = GuStyleScript.ANOMALY_YELLOW
 	sb.set_border_width_all(1)
 	sb.set_corner_radius_all(6)
 	sb.set_content_margin_all(0)
