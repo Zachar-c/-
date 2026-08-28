@@ -1,5 +1,7 @@
 # 南疆凡人修行肉鸽冒烟版 Implementation Plan
 
+> 产品与玩法规则以 [GDD](../../GDD.md) 为唯一事实来源。本文件只定义工程实现顺序、接口和验证步骤。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Adapt the MIT-licensed GDQuest Godot Open RPG into a deterministic, local-first prototype in which a fixed-seed Nanjiang novice progresses through a 10–14-node run, resolves stone, essence, social, combat, and opportunity choices, and reaches one of three ascension outcomes.
