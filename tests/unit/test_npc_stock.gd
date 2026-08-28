@@ -195,3 +195,69 @@ func test_snapshot_npc_offers_come_from_real_stock() -> void:
 	var empty_snaps: Dictionary = RunSnapshotBuilderScript.npc(empty_stub)
 	assert_eq((empty_snaps["offers"] as Array).size(), 0)
 	assert_eq((empty_snaps["barter"] as Array).size(), 0)
+
+
+## 散修货郎（2026-08-28 挂账落地）：contact 模板携带 npc_id 后，Npc 交易面板
+## 的个人货架首次真实可达——resolve_contact 门禁放宽到 contact 模板全族。
+func test_peddler_contact_node_carries_tradeable_stock() -> void:
+	var peddler := {}
+	for node_value in catalog["nodes"]:
+		if str((node_value as Dictionary).get("id", "")) == "wandering_peddler":
+			peddler = node_value
+	assert_eq(str(peddler.get("type", "")), "contact")
+	assert_eq(str(peddler.get("npc_id", "")), "wandering_peddler")
+
+	var state := _state_at("wandering_peddler")
+	var cost := ResolverScript.shop_layer_price(catalog, state, 6)
+	var result := ResolverScript.apply(state, {
+		"type": "npc_trade", "npc_id": "wandering_peddler", "offer_id": "purchase_stone_shell",
+	}, catalog)
+	assert_true(bool(result["result"]["ok"]), str(result["result"]))
+	assert_eq(int(result["state"].stone), 12 - cost)
+
+	var barter_state := _state_at("wandering_peddler")
+	barter_state.gu_instances = {
+		"gu_001": {"instance_id": "gu_001", "definition_id": "trail_eye_gu", "state": "refined"},
+	}
+	barter_state.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
+	barter_state.refined_gu_ids = ["trail_eye_gu"]
+	barter_state.gu_ids = ["trail_eye_gu"]
+	var barter := ResolverScript.apply(barter_state, {
+		"type": "npc_trade", "npc_id": "wandering_peddler", "offer_id": "barter_unknown_gu",
+		"input_instance_ids": ["gu_001"],
+	}, catalog)
+	assert_true(bool(barter["result"]["ok"]), str(barter["result"]))
+	assert_eq(str((barter["state"].gu_instances["gu_001"] as Dictionary).get("state", "")), "dead")
+
+
+func test_peddler_contact_approaches_match_wanderer_contract() -> void:
+	var fight_result: Dictionary = ResolverScript.apply(_state_at("wandering_peddler"), {
+		"type": "resolve_contact", "node_id": "wandering_peddler", "approach": "fight",
+	}, catalog)
+	assert_true(bool(fight_result["result"]["ok"]))
+	assert_true(bool(fight_result["result"].get("start_battle", false)))
+
+	var deceive := _state_at("wandering_peddler")
+	var deceive_result: Dictionary = ResolverScript.apply(deceive, {
+		"type": "resolve_contact", "node_id": "wandering_peddler", "approach": "deceive",
+	}, catalog)
+	assert_true(bool(deceive_result["result"]["ok"]))
+	assert_eq(int(deceive_result["state"].stone), 14)
+	assert_eq(str(deceive_result["state"].event_log.back()["reason"]), "wandering_peddler_deceive")
+
+	var retreat := _state_at("wandering_peddler")
+	var retreat_result: Dictionary = ResolverScript.apply(retreat, {
+		"type": "resolve_contact", "node_id": "wandering_peddler", "approach": "retreat",
+	}, catalog)
+	assert_true(bool(retreat_result["result"]["ok"]))
+	assert_eq(int(retreat_result["state"].stone), 11)
+
+	var negotiate_result: Dictionary = ResolverScript.apply(_state_at("wandering_peddler"), {
+		"type": "resolve_contact", "node_id": "wandering_peddler", "approach": "negotiate",
+	}, catalog)
+	assert_true(bool(negotiate_result["result"]["ok"]))
+	assert_eq(str(negotiate_result["result"].get("reward", "")), "caravan_discount")
+
+	assert_eq(str(ResolverScript.apply(_state_at("refinement_hollow"), {
+		"type": "resolve_contact", "node_id": "refinement_hollow", "approach": "negotiate",
+	}, catalog)["result"]["reason"]), "unknown_contact")

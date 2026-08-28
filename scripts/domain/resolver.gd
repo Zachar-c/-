@@ -70,7 +70,7 @@ static func _handler_for(command_type: String) -> Variant:
 	if _dispatch.is_empty():
 		_dispatch = {
 			"travel": func(state, command, catalog): return _travel(state, command, catalog),
-			"resolve_contact": func(state, command, _catalog): return _resolve_contact(state, command),
+			"resolve_contact": func(state, command, catalog): return _resolve_contact(state, command, catalog),
 			"complete_node": func(state, command, _catalog): return _complete_node(state, command),
 			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
 			"sell_gu": func(state, command, catalog): return _sell_gu(state, command, catalog),
@@ -115,8 +115,17 @@ static func _handler_for(command_type: String) -> Variant:
 	return _dispatch.get(command_type, null)
 
 
-static func _resolve_contact(state: RunState, command: Dictionary) -> Dictionary:
-	if str(command.get("node_id", "")) != "neutral_wanderer":
+static func _resolve_contact(state: RunState, command: Dictionary, catalog: Dictionary = {}) -> Dictionary:
+	var node_id := str(command.get("node_id", ""))
+	# Contact approaches are node-generic: any contact template may be
+	# approached; fight drills the node's own enemy_kind via start_battle.
+	# neutral_wanderer keeps its legacy effect set unchanged (pinned by tests).
+	var node_type := ""
+	for node_value in catalog.get("nodes", []):
+		if str((node_value as Dictionary).get("id", "")) == node_id:
+			node_type = str((node_value as Dictionary).get("type", ""))
+			break
+	if node_id != "neutral_wanderer" and node_type != "contact":
 		return _rejected(state, "unknown_contact")
 	var approach := str(command.get("approach", ""))
 	var known_facts := state.known_facts.duplicate()
@@ -147,8 +156,8 @@ static func _resolve_contact(state: RunState, command: Dictionary) -> Dictionary
 		"contact_%s" % approach,
 		before,
 		after,
-		"neutral_wanderer_%s" % approach,
-		"neutral_wanderer"
+		"%s_%s" % [node_id, approach],
+		node_id
 	))
 	return {"state": next, "result": result}
 

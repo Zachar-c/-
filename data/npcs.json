@@ -41,5 +41,16 @@
     "reinforcements": "beast_swarm_lure",
     "injury_reaction": "contempt",
     "stock": ["lifespan_pulse_drum"]
+  },
+  {
+    "id": "wandering_peddler",
+    "goals": ["move_goods_safely", "profit_from_barter"],
+    "bottom_line": "will_not_trade_under_threat",
+    "will": 2,
+    "known_facts": ["ridge_market_prices"],
+    "retreat": "pack_up_and_leave",
+    "reinforcements": "none",
+    "injury_reaction": "caution",
+    "stock": ["purchase_stone_shell", "purchase_moonlight", "barter_unknown_gu"]
   }
 ]
