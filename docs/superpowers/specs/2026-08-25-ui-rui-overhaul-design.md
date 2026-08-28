@@ -1,4 +1,11 @@
-# UI/UX 全面重构设计（引入 Reactive UI Toolkit）
+# 《問眞》UI/UX 全面重构设计（引入 Reactive UI Toolkit，已归档）
+
+> 日期：2026-08-25
+> 状态：已归档
+> 范围：Reactive UI Toolkit 初版表现层重构设计；保留用于历史实现追踪。
+> 权威基线：[机制先行锁死规格书](./2026-08-25-mechanics-first-lockdown-design.md)
+> 替代关系：视觉品牌与布局由《問眞》极简 UI 重设计规格取代；RUI 技术约束仍可作参考。
+
 
 - 日期：2026-08-25
 - 状态：待评审

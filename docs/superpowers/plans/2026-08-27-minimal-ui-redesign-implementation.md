@@ -1,5 +1,12 @@
 # 《問眞》极简 UI 重设计实施计划
 
+> 日期：2026-08-27
+> 状态：已归档
+> 范围：《問眞》极简 UI 重设计实施计划；保留用于实现追踪。
+> 基线：`branch=master @ 418683c`；该计划最终变更以此提交为准。
+> 替代关系：视觉母版批次已合入当前主线；后续以现行验收计划为准。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 将已批准的大厅、地图、战斗三张母版生产化，以《問眞》的宣纸白、墨色、发丝线与克制语义色建立完整且可操作的极简 UI，并由三张母版推导其余游戏界面。

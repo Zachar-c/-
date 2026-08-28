@@ -1,5 +1,12 @@
 # 《問眞》UI Visual Acceptance
 
+- 日期：2026-08-28
+- 状态：CHANGES_REQUESTED（用户视觉签核未通过）
+- 范围：记录《問眞》大厅、地图、战斗及子界面视觉验收证据。
+- 计划：[《問眞》UI 视觉验收修复实施计划](../plans/2026-08-28-wenzhen-ui-visual-acceptance-repair.md)
+- 基线：`branch=master @ 418683c`
+
+
 This is the sole visual-acceptance ledger for the 2026-08-28 repair plan. Automated checks and executor review cannot replace an explicit user approval for any batch.
 
 ## Known Failed Baseline

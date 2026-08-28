@@ -1,5 +1,12 @@
 # 《問眞》UI 视觉验收修复实施计划
 
+> 日期：2026-08-28
+> 状态：进行中
+> 范围：按用户签核推进《問眞》大厅、地图、战斗核心母版及其视觉验收。
+> 基线：`branch=master @ 418683c`；本计划依赖该 UI 验收基线。
+> 权威基线：[机制先行锁死规格书](../specs/2026-08-25-mechanics-first-lockdown-design.md)
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 逐一重建并由用户签核大厅、地图、战斗三张核心母版，再用已签核母版推导全部子界面，使 Godot 实机画面达到用户认可的构图、信息密度和《問眞》视觉语言。

@@ -1,5 +1,12 @@
 # 南疆凡人 V2 首个纵向切片 Implementation Plan
 
+> 日期：2026-08-22
+> 状态：已归档
+> 范围：南疆 V2 首个纵向切片实施计划；保留用于实现追踪。
+> 基线：`branch=master @ 2e850dd`；该计划最终变更以此提交为准。
+> 替代关系：相关实现已合入当前原型。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 交付一个固定种子、可手工游玩的第一阶段闭环：在分叉路线中选择，处理一场中立蛊师遭遇，战斗或脱身，完成商队调整、炼蛊或二转突破，并结算一次养蛊总账。

@@ -1,5 +1,12 @@
 # 首版中文单语界面 Implementation Plan
 
+> 日期：2026-08-22
+> 状态：已归档
+> 范围：首版中文单语界面实施计划；保留用于实现追踪。
+> 基线：`branch=master @ 5249436`；该计划最终变更以此提交为准。
+> 替代关系：相关实现已合入当前展示层。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 让南疆冒烟版的全部玩家可见界面和离线对话只显示中文，同时保持规则、存档和内部标识符的 ASCII 稳定性。

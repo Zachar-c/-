@@ -1,5 +1,12 @@
 # Gu Card Roguelike Plan Amendment
 
+> 日期：2026-08-23
+> 状态：已归档
+> 范围：蛊虫构筑与战斗卡组计划的历史修订附录；保留用于实现追踪。
+> 基线：`branch=master @ 2e850dd`；该计划最终变更以此提交为准。
+> 替代关系：相关改动已合入当前卡牌与战斗实现。
+
+
 This amendment is part of [the implementation plan](2026-08-23-gu-card-roguelike-implementation.md). It replaces the pseudocode block in **Task 4, Step 3**. Apply this block verbatim; it has no deferred placeholder.
 
 ```gdscript

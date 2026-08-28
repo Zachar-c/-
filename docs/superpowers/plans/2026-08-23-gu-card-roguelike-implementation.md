@@ -1,5 +1,12 @@
 # Gu Construction and Battle Card Deck Implementation Plan
 
+> 日期：2026-08-23
+> 状态：已归档
+> 范围：蛊虫构筑与战斗行动卡组历史实施计划；保留用于实现追踪。
+> 基线：`branch=master @ c9875c6`；该计划最终变更以此提交为准。
+> 替代关系：相关实现已合入当前卡牌与战斗实现。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Incrementally turn the current South Border prototype into a deterministic, single-run Roguelike vertical slice where long-lived Gu assets generate temporary Slay-the-Spire-style battle decks, while events, black-market deals, refinement, feeding, and death remain on the existing Preview -> ActionCard -> Resolver boundary.

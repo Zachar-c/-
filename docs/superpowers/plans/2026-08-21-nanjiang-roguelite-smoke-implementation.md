@@ -1,5 +1,12 @@
 # 南疆凡人修行肉鸽冒烟版 Implementation Plan
 
+> 日期：2026-08-21
+> 状态：已归档
+> 范围：历史南疆肉鸽冒烟版实施计划；保留用于实现追踪。
+> 基线：`branch=master @ 762cfe0`；该计划最终变更以此提交为准。
+> 替代关系：当前工程实现以现行 master 与生效规格为准.
+
+
 > 产品与玩法规则以 [GDD](../../GDD.md) 为唯一事实来源。本文件只定义工程实现顺序、接口和验证步骤。
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

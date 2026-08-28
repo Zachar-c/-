@@ -1,5 +1,12 @@
 # P0 Lockdown Batch Implementation Plan (T2–T5)
 
+> 日期：2026-08-25
+> 状态：已归档
+> 范围：P0 锁定批历史实施计划；保留用于批次追踪。
+> 基线：`branch=master @ 55e86a4`；该计划最终变更以此提交为准。
+> 替代关系：P0 批次已完成并合入当前主线。
+
+
 Branch: `task1-vendor-open-rpg` (worktree `.worktrees/game-impl`). Baseline: T1 rarity model landed at `fee0cf7` (329 unit + 6 integration green).
 
 ## Global Constraints (bind every task)

@@ -1,5 +1,12 @@
 # UI/UX 全面重构（引入 Reactive UI Toolkit）实施计划
 
+> 日期：2026-08-25
+> 状态：已归档
+> 范围：Reactive UI Toolkit 初版重构实施计划；保留用于实现追踪。
+> 基线：`branch=master @ 9f6872d`；该计划最终变更以此提交为准。
+> 替代关系：视觉品牌与布局由《問眞》现行 UI 规格取代；RUI 技术约束仍可作参考。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 用 Reactive UI Toolkit（`guitkx`）把 5 个表现层界面与公共控件整体重写为统一组件体系，带统一主题与克制动效，并修掉遭遇界面「没按钮 / 危险选项无二次确认」缺陷。

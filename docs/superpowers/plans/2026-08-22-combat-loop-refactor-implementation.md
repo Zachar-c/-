@@ -1,5 +1,12 @@
 # 南疆凡人 V2 战斗循环重构 Implementation Plan
 
+> 日期：2026-08-22
+> 状态：已归档
+> 范围：连续节点与交锋循环重构实施计划；保留用于实现追踪。
+> 基线：`branch=master @ 2e850dd`；该计划最终变更以此提交为准。
+> 替代关系：相关实现已合入当前战斗与节点流程。
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 固定种子 `101` 下交付连续节点会话、敌我交互、可胜可死可复盘的战斗闭环；炼蛊和连招留在节点现场而不自动跳图。

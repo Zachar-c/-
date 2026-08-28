@@ -1,5 +1,12 @@
 # Five-School Expansion Batch Plan (五流派扩展批)
 
+> 日期：2026-08-25
+> 状态：已归档
+> 范围：五流派扩展批历史实施计划；保留用于批次追踪。
+> 基线：`branch=master @ 0d6fc8e`；该计划最终变更以此提交为准。
+> 替代关系：五流派内容已合入当前机制与数据实现。
+
+
 Branch: `p0-batch-continuation`. Baseline: P0 complete @ `1e5d2c5` (382 unit + 6 integration green).
 User rulings in force: total gu count expands to **200** (from 20); run budget 3–5h / 200–300 nodes (R1.4).
 
