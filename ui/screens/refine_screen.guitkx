@@ -1,6 +1,5 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
@@ -48,7 +47,7 @@ export RefineScreen() -> RuitkVNode {
   var inputs = state.get("inputs", [])
   var input_slots = []
   for inp in inputs:
-    input_slots.append(<GuCard title={ str(inp) } expand_h={ true }><GuButton label="撤下" on_press={ func(): fire.call("toggle_input", str(inp)) } /></GuCard>)
+    input_slots.append(<GuPanel title={ str(inp) } expand_h={ true }><GuButton label="撤下" on_press={ func(): fire.call("toggle_input", str(inp)) } /></GuPanel>)
   var slot_status = "空位校验：已就绪" if slot_ok else "空位校验：不足（至少 2 蛊或材料）"
   var slot_color = GuStyle.JADE_BRIGHT if slot_ok else GuStyle.DANGER
 
@@ -73,12 +72,12 @@ export RefineScreen() -> RuitkVNode {
     var ask_refine = func():
       set_confirm_recipe.call({"confirm_recipe": rid})
     recipe_rows.append((
-      <GuCard title={ rname } quality={ rqual } expand_h={ true }>
+      <GuPanel title={ rname } expand_h={ true }>
         <VBoxContainer style={ {"separation": 3} }>
           { preview }
         </VBoxContainer>
         <GuButton label="确认炼蛊" disabled={ not slot_ok or not runlocked } danger={ rcurse != "" or rbacklash != "无躁动" } on_press={ ask_refine } />
-      </GuCard>
+      </GuPanel>
     ))
   var recipe_empty = []
   if recipe_rows.is_empty():
@@ -114,7 +113,7 @@ export RefineScreen() -> RuitkVNode {
         { tab_row }
       </HBoxContainer>
 
-      <HBoxContainer style={ {"separation": 14} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
           <GuPanel title="输入区">
             <HBoxContainer style={ {"separation": 8} }>

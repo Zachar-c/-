@@ -39,14 +39,19 @@ static func can_retreat(terrain: String, pursuit: int, enemy_control: int) -> bo
 # it can no longer reach. Boss-tier enemies (enemies.json "tier": "boss")
 # close the retreat action entirely.
 static func boss_blocks_retreat(battle: Dictionary) -> bool:
+	for enemy in _living_enemies(battle):
+		if str((enemy.get("definition", {}) as Dictionary).get("tier", "")) == "boss":
+			return true
 	return str((battle.get("enemy_definition", {}) as Dictionary).get("tier", "")) == "boss"
 
 
 static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
 	# R14.5 lever 1 (night batch): the active DDA marker may swap the enemy
 	# kind (never bosses/final boss) before the definition is resolved.
-	var requested_id := str(encounter.get("enemy_kind", "beast_swarm"))
+	var requested_kinds := _requested_enemy_kinds(encounter)
+	var requested_id := str(requested_kinds[0])
 	var swapped_kind := DdaResolverScript.battle_enemy_kind(state, requested_id, catalog)
+	requested_kinds[0] = swapped_kind
 	var enemy := _enemy_definition(swapped_kind, catalog)
 	var enemy_id := str(enemy.get("id", swapped_kind))
 	var intent: Dictionary = enemy.get("intent", {}).duplicate(true)
@@ -64,6 +69,8 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		if not phase_reactions.is_empty():
 			initial_reactions = phase_reactions.duplicate(true)
 	var hp := int(encounter.get("enemy_hp", enemy.get("hp", 3)))
+	var battle_id := "%d-%d" % [state.seed, state.event_log.size()]
+	var enemies := _create_enemies(battle_id, requested_kinds, encounter, catalog)
 	var deck_generation_hash := DeckBuilderScript.deck_hash(state, catalog)
 	var deck_cache := DeckBuilderScript.build_card_cache(state, catalog)
 	# R9.x slot_seal: curses are run-scoped in RunState; battles only project
@@ -88,7 +95,8 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	# only happens at the trailhead so mid-battle drift is impossible.
 	var contract_mods := ContractRulesScript.aggregate(state, catalog)
 	var battle := {
-		"battle_id": "%d-%d" % [state.seed, state.event_log.size()],
+		"battle_id": battle_id,
+		"enemies": enemies,
 		"deck_generation_hash": deck_generation_hash,
 		"deck_cache": deck_cache.duplicate(true),
 		"draw_pile": draw_pile,
@@ -157,7 +165,108 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	# Initial draw may be enlarged by on_draw_card hooks; the extra cards are
 	# drawn with the same seeded pile so the deck order stays deterministic.
 	_draw_from_hooks(battle, state, catalog)
+	_sync_legacy_enemy_projection(battle)
 	return battle
+
+
+static func _requested_enemy_kinds(encounter: Dictionary) -> Array[String]:
+	var kinds: Array[String] = []
+	for kind_value in encounter.get("enemy_kinds", []):
+		var kind := str(kind_value)
+		if not kind.is_empty():
+			kinds.append(kind)
+	if kinds.is_empty():
+		kinds.append(str(encounter.get("enemy_kind", "beast_swarm")))
+	return kinds
+
+
+static func _create_enemies(battle_id: String, kinds: Array[String], encounter: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+	var enemies: Array[Dictionary] = []
+	for index in kinds.size():
+		var definition := _enemy_definition(str(kinds[index]), catalog)
+		var kind := str(definition.get("id", kinds[index]))
+		var hp := int(encounter.get("enemy_hp", definition.get("hp", 3))) if index == 0 else int(definition.get("hp", 3))
+		var intent: Dictionary = definition.get("intent", {}).duplicate(true)
+		var phases: Array = definition.get("phases", []).duplicate(true)
+		var reactions: Array = definition.get("reactions", []).duplicate(true)
+		if not phases.is_empty():
+			var first_phase: Dictionary = phases[0]
+			var phase_intents: Array = first_phase.get("intents", [])
+			if not phase_intents.is_empty():
+				intent = (phase_intents[0] as Dictionary).duplicate(true)
+			var phase_reactions: Array = first_phase.get("reactions", [])
+			if not phase_reactions.is_empty():
+				reactions = phase_reactions.duplicate(true)
+		enemies.append({
+			"enemy_id": "%s:e%d" % [battle_id, index],
+			"kind": kind,
+			"name": DisplayText.enemy(kind),
+			"hp": hp,
+			"max_hp": hp,
+			"shield": 0,
+			"statuses": {},
+			"visible_intent": intent,
+			"alive": hp > 0,
+			"definition": definition,
+			"phases": phases,
+			"phase_index": 0,
+			"intent_cooldowns": {},
+			"reactions": reactions,
+		})
+	return enemies
+
+
+static func _living_enemies(battle: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			out.append(enemy)
+	return out
+
+
+static func _sync_legacy_enemy_projection(battle: Dictionary) -> void:
+	var living := _living_enemies(battle)
+	var primary: Dictionary = living[0] if not living.is_empty() else (battle.get("enemies", [{}])[0] as Dictionary)
+	battle["enemy_kind"] = str(primary.get("kind", battle.get("enemy_kind", "")))
+	battle["enemy_hp"] = int(primary.get("hp", 0))
+	battle["enemy_max_hp"] = int(primary.get("max_hp", 1))
+	battle["enemy_definition"] = primary.get("definition", battle.get("enemy_definition", {})).duplicate(true)
+	battle["visible_intent"] = primary.get("visible_intent", {}).duplicate(true)
+	battle["enemy_phases"] = primary.get("phases", []).duplicate(true)
+	battle["enemy_phase_index"] = int(primary.get("phase_index", 0))
+	battle["intent_cooldowns"] = primary.get("intent_cooldowns", {}).duplicate(true)
+	battle["enemy_reactions"] = primary.get("reactions", []).duplicate(true)
+
+
+# Older test and tool callers still write the former scalar battle fields.
+# Accept those inputs only for a genuine single-enemy battle at the domain
+# boundary, then continue with `enemies` as the sole internal authority.
+static func _sync_legacy_single_enemy_inputs(battle: Dictionary) -> void:
+	if battle.get("enemies", []).size() != 1:
+		return
+	var enemy: Dictionary = battle["enemies"][0]
+	if battle.has("enemy_hp"):
+		enemy["hp"] = maxi(0, int(battle["enemy_hp"]))
+		enemy["alive"] = int(enemy["hp"]) > 0
+	if battle.has("enemy_max_hp"):
+		enemy["max_hp"] = maxi(1, int(battle["enemy_max_hp"]))
+	if battle.has("visible_intent"):
+		enemy["visible_intent"] = (battle["visible_intent"] as Dictionary).duplicate(true)
+	if battle.has("enemy_phase_index"):
+		enemy["phase_index"] = int(battle["enemy_phase_index"])
+	if battle.has("intent_cooldowns"):
+		enemy["intent_cooldowns"] = (battle["intent_cooldowns"] as Dictionary).duplicate(true)
+	if battle.has("enemy_reactions"):
+		enemy["reactions"] = (battle["enemy_reactions"] as Array).duplicate(true)
+
+
+static func _enemy_by_target_id(battle: Dictionary, target_id: String) -> Dictionary:
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if str(enemy.get("enemy_id", "")) == target_id:
+			return enemy
+	return {}
 
 
 static func _draw_from_hooks(battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
@@ -180,6 +289,7 @@ static func _draw_from_hooks(battle: Dictionary, state: RunState, catalog: Dicti
 
 static func apply_action_card(battle: Dictionary, state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var next := battle.duplicate(true)
+	_sync_legacy_single_enemy_inputs(next)
 	if state.is_terminal():
 		return _rejected_turn(next, state, "terminal_run")
 	if int(command.get("state_version", -1)) != int(next.get("hand_version", -2)):
@@ -187,12 +297,17 @@ static func apply_action_card(battle: Dictionary, state: RunState, command: Dict
 	if str(next.get("phase", "player")) != "player":
 		return _rejected_turn(next, state, "not_player_phase")
 	var action_id := str(command.get("action_id", ""))
+	if action_id.is_empty() and not str(command.get("card_id", "")).is_empty():
+		action_id = "battle.%s.%s" % [str(next.get("battle_id", "")), str(command["card_id"])]
 	if action_id == "battle.end_turn":
 		return _end_turn(next, state, catalog)
 	if action_id == "battle.retreat":
 		return _retreat(next, state, catalog)
 	if action_id == "battle.basic.punch":
-		return _basic_attack(next, state, catalog)
+		var punch_target_id := str(command.get("target_id", ""))
+		if not _is_living_target(next, punch_target_id):
+			return _rejected_turn(next, state, "battle_target_invalid")
+		return _basic_attack(next, state, catalog, punch_target_id)
 	if action_id == "battle.basic.dodge":
 		return _basic_dodge(next, state)
 	var card_index := _hand_card_index(next, action_id)
@@ -202,6 +317,15 @@ static func apply_action_card(battle: Dictionary, state: RunState, command: Dict
 	var internal := _command_for_card_instance(card, catalog)
 	if internal.is_empty():
 		return _rejected_turn(next, state, "battle_action_unavailable")
+	var target_type := _target_type_for_card(card, catalog)
+	var target_id := str(command.get("target_id", ""))
+	if target_type == "single_enemy":
+		if target_id.is_empty() and not command.has("card_id") and _living_enemies(next).size() == 1:
+			target_id = str(_living_enemies(next)[0].get("enemy_id", ""))
+		var target := _enemy_by_target_id(next, target_id)
+		if not _is_living_target(next, target_id):
+			return _rejected_turn(next, state, "battle_target_invalid")
+	internal["target_id"] = target_id
 	next["hand"].remove_at(card_index)
 	next["discard_pile"].append(card)
 	next["hand_version"] = int(next["hand_version"]) + 1
@@ -269,6 +393,7 @@ static func take_turn(
 	_expected_phase: String = ""
 ) -> Dictionary:
 	var next := battle.duplicate(true)
+	_sync_legacy_single_enemy_inputs(next)
 	if _expected_state_version >= 0 and _expected_state_version != state.event_log.size():
 		return _rejected_turn(next, state, "battle_action_stale")
 	if not _expected_phase.is_empty() and _expected_phase != str(next.get("phase", "")):
@@ -291,11 +416,7 @@ static func take_turn(
 static func _hand_card_index(battle: Dictionary, action_id: String) -> int:
 	var prefix := "battle.%s." % str(battle.get("battle_id", ""))
 	if not action_id.begins_with(prefix):
-		# Legacy shape (run_command_builder "play_card"): {"card_id": instance}.
-		var legacy_id := str(battle.get("_ui_card_id", ""))
-		if legacy_id.is_empty():
-			return -1
-		action_id = "%s%s" % [prefix, legacy_id]
+		return -1
 	var card_instance_id := action_id.trim_prefix(prefix)
 	var hand: Array = battle.get("hand", [])
 	for index in hand.size():
@@ -315,15 +436,31 @@ static func _command_for_card_instance(card: Dictionary, catalog: Dictionary) ->
 	return {"type": "use_gu", "gu_id": str(source_definition_ids[0]), "mode": str(definition.get("mode", ""))}
 
 
-static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+static func _target_type_for_card(card: Dictionary, catalog: Dictionary) -> String:
+	var definition: Dictionary = catalog.get("card_by_id", {}).get(str(card.get("definition_id", "")), {})
+	var source_gu_ids: Array = definition.get("source_gu_ids", [])
+	if source_gu_ids.is_empty():
+		return "none"
+	var gu_id := str(source_gu_ids[0])
+	if gu_id in ["small_light_gu", "thorn_whip_gu", "blood_moss_gu", "blood_droplet_gu", "blood_bat_gu", "force_gu", "moonlight_gu", "moon_glow_gu"]:
+		return "single_enemy"
+	for effect_value in definition.get("combat_effects", []):
+		if str((effect_value as Dictionary).get("kind", "")) == "strike":
+			return "single_enemy"
+	return "self" if not source_gu_ids.is_empty() else "none"
+
+
+static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictionary, target_id := "") -> Dictionary:
 	var punch_damage := 1 + int(state.cultivator.get("force_power", 0))
 	var log_entry := {"id": "basic_punch", "damage": punch_damage}
-	var reaction := _reaction_for(battle, "direct_strike")
+	if target_id.is_empty() and not _living_enemies(battle).is_empty():
+		target_id = str(_living_enemies(battle)[0].get("enemy_id", ""))
+	var reaction := _reaction_for(battle, "direct_strike", target_id)
 	if not reaction.is_empty() and not _reaction_countered(battle, reaction):
-		_reveal_reaction(battle, reaction)
+		_reveal_reaction(battle, reaction, target_id)
 		log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
 	else:
-		_strike(battle, punch_damage)
+		_strike(battle, punch_damage, "attack", target_id)
 	battle["log"].append(log_entry)
 	var next_state := state.append_event(_event(state, "battle_basic_attack", {}, {}, "battle_basic_attack", []))
 	return _with_objective_result(battle, next_state, catalog)
@@ -336,14 +473,30 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 # _settle_curse_damage writes straight onto RunState.health at end of turn.
 # C1-min: strike_damage_pct scales only the attack channel, floored at >= 0;
 # the intel bonus stays a flat additive on top.
-static func _strike(battle: Dictionary, amount: int, channel := "attack") -> void:
+static func _strike(battle: Dictionary, amount: int, channel := "attack", target_id := "") -> void:
 	if channel == "curse":
 		battle["pending_curse_damage"] = int(battle.get("pending_curse_damage", 0)) + amount
 		return
 	var pct := int(battle.get("contract_mods", {}).get("strike_damage_pct", 0))
 	var scaled := maxi(0, int(floor(float(amount) * (1.0 + float(pct) / 100.0))))
 	var total := int(battle.get("intel_bonus", 0)) + scaled
-	battle["enemy_hp"] = maxi(0, int(battle["enemy_hp"]) - total)
+	if not battle.has("enemies"):
+		battle["enemy_hp"] = maxi(0, int(battle.get("enemy_hp", 0)) - total)
+		return
+	var targets: Array = _living_enemies(battle)
+	if not target_id.is_empty():
+		var target := _enemy_by_target_id(battle, target_id)
+		targets = [target] if not target.is_empty() else []
+	for target_value in targets:
+		var target: Dictionary = target_value
+		target["hp"] = maxi(0, int(target.get("hp", 0)) - total)
+		target["alive"] = int(target["hp"]) > 0
+	_sync_legacy_enemy_projection(battle)
+
+
+static func _is_living_target(battle: Dictionary, target_id: String) -> bool:
+	var target := _enemy_by_target_id(battle, target_id)
+	return not target.is_empty() and bool(target.get("alive", false)) and int(target.get("hp", 0)) > 0
 
 
 static func _sealed_instance_ids(state: RunState, sealed_definition_ids: Array[String]) -> Array[String]:
@@ -421,6 +574,7 @@ static func _player_dodge_speed(state: RunState) -> int:
 
 static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var gu_id := str(action.get("gu_id", ""))
+	var target_id := str(action.get("target_id", ""))
 	if not battle.get("available_gu_ids", []).has(gu_id) or not state.refined_gu_ids.has(gu_id):
 		return _result(battle, state, false, "ongoing", ["gu_not_available"])
 	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
@@ -452,19 +606,19 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		"small_light_gu":
 			_add_flag(battle, "revealed")
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
-			_strike(battle, 1)
+			_strike(battle, 1, "attack", target_id)
 			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1}
 		"thorn_whip_gu":
 			if mode == "bind":
 				_add_flag(battle, "enemy_bound")
 				log_entry["id"] = "thorn_bind"
 			else:
-				var reaction := _reaction_for(battle, "direct_strike")
+				var reaction := _reaction_for(battle, "direct_strike", target_id)
 				if not reaction.is_empty() and not _reaction_countered(battle, reaction):
-					_reveal_reaction(battle, reaction)
+					_reveal_reaction(battle, reaction, target_id)
 					log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
 				else:
-					_strike(battle, 2)
+					_strike(battle, 2, "attack", target_id)
 					log_entry["id"] = "thorn_strike"
 		"stone_shell_gu":
 			_add_flag(battle, "guarded")
@@ -474,7 +628,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			log_entry["id"] = "mist_step"
 		"blood_moss_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			_strike(battle, 1)
+			_strike(battle, 1, "attack", target_id)
 			log_entry["id"] = "blood_moss_relief"
 		"venom_thread_gu":
 			_add_flag(battle, "enemy_slowed")
@@ -488,11 +642,11 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "targeting_obscured")
 			log_entry["id"] = "shadow_veil"
 		"blood_droplet_gu":
-			_strike(battle, 2)
+			_strike(battle, 2, "attack", target_id)
 			log_entry["id"] = "blood_droplet_shot"
 		"blood_bat_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			_strike(battle, 1)
+			_strike(battle, 1, "attack", target_id)
 			log_entry["id"] = "blood_bat_bite"
 		"blood_wing_gu":
 			_add_flag(battle, "retreat_preserved")
@@ -502,7 +656,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
 			log_entry["id"] = "farewell_grip"
 		"force_gu":
-			_strike(battle, 2)
+			_strike(battle, 2, "attack", target_id)
 			log_entry["id"] = "power_blow"
 		"bear_strength_gu":
 			after["injury"] = maxi(0, state.injury - 1)
@@ -511,10 +665,10 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "guarded")
 			log_entry["id"] = "qi_bulwark"
 		"moonlight_gu":
-			_strike(battle, 2)
+			_strike(battle, 2, "attack", target_id)
 			log_entry["id"] = "moonlight_strike"
 		"moon_glow_gu":
-			_strike(battle, 3)
+			_strike(battle, 3, "attack", target_id)
 			log_entry["id"] = "moon_glow_flare"
 		"trail_eye_gu":
 			_add_flag(battle, "revealed")
@@ -529,7 +683,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					var effect: Dictionary = effect_value
 					match str(effect.get("kind", "")):
 						"strike":
-							_strike(battle, maxi(1, int(effect.get("amount", 1))))
+							_strike(battle, maxi(1, int(effect.get("amount", 1))), "attack", target_id)
 						"heal_injury":
 							after["injury"] = maxi(0, state.injury - maxi(1, int(effect.get("amount", 1))))
 						"add_flag":
@@ -540,7 +694,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	if not overchannel.is_empty():
 		var oc_level := int(action.get("overchannel", 0))
 		var benefit := SchoolRulesScript.overchannel_benefit(oc_level)
-		_strike(battle, int(benefit.get("damage", 0)))
+		_strike(battle, int(benefit.get("damage", 0)), "attack", target_id)
 		battle["pending_extra_draws"] = int(battle.get("pending_extra_draws", 0)) \
 				+ int(benefit.get("draws", 0))
 		if bool(benefit.get("bound", false)):
@@ -695,11 +849,14 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	var enemy := _apply_enemy_intents(battle, state, catalog)
 	var next_battle: Dictionary = enemy["battle"]
 	var next_state: RunState = enemy["state"]
-	# R5.7 phase machinery: the executed intent starts its cooldown window,
-	# then the next turn's visible intent is drawn from the active phase set.
-	_register_intent_cooldown(next_battle, next_battle.get("visible_intent", {}), int(next_battle["turn"]))
+	# Every living enemy owns its intent cooldown and the next deterministic pick.
+	for enemy_value in _living_enemies(next_battle):
+		var enemy_data: Dictionary = enemy_value
+		_register_enemy_intent_cooldown(enemy_data, enemy_data.get("visible_intent", {}), int(next_battle["turn"]))
 	next_battle["turn"] = int(next_battle["turn"]) + 1
-	_select_enemy_intent(next_battle, next_state, int(next_battle["turn"]))
+	for enemy_value in _living_enemies(next_battle):
+		_select_enemy_intent_for(enemy_value, next_battle, next_state, int(next_battle["turn"]))
+	_sync_legacy_enemy_projection(next_battle)
 	next_battle["action_energy"] = 0
 	next_battle["flags"].erase("guarded")
 	next_battle["flags"].erase("targeting_obscured")
@@ -736,7 +893,20 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 
 
 static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
-	var intent: Dictionary = battle.get("visible_intent", {})
+	var next_battle := battle
+	var next_state := state
+	for enemy_value in _living_enemies(next_battle):
+		var enemy: Dictionary = enemy_value
+		var resolved := _apply_enemy_intent(next_battle, next_state, catalog, enemy)
+		next_battle = resolved["battle"]
+		next_state = resolved["state"]
+		if bool(resolved["death"]):
+			return {"battle": next_battle, "state": next_state, "death": true}
+	return {"battle": next_battle, "state": next_state, "death": false}
+
+
+static func _apply_enemy_intent(battle: Dictionary, state: RunState, catalog: Dictionary, enemy: Dictionary) -> Dictionary:
+	var intent: Dictionary = enemy.get("visible_intent", {})
 	# R5.7 essence_burn drains player essence directly; an interrupted intent
 	# cancels both its damage and its burn.
 	var burn := maxi(0, int(intent.get("essence_burn", 0)))
@@ -766,11 +936,11 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 	var enemy_pct := int(battle.get("contract_mods", {}).get("enemy_damage_pct", 0))
 	if enemy_pct != 0:
 		damage = maxi(0, int(floor(float(damage) * (1.0 + float(enemy_pct) / 100.0))))
-	var next_health := maxi(0, state.health - damage)
-	var log_entry := {"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy", "dodged": dodged}
+	var next_health := maxi(0, next_state.health - damage)
+	var log_entry := {"id": str(intent.get("id", "enemy_action")), "damage": damage, "source": "enemy", "enemy_id": str(enemy.get("enemy_id", "")), "dodged": dodged}
 	var after_payload := {"health": next_health}
 	if burn > 0:
-		after_payload["essence"] = maxi(0, state.essence - burn)
+		after_payload["essence"] = maxi(0, next_state.essence - burn)
 		log_entry["burned"] = burn
 	battle["log"].append(log_entry)
 	if next_health == 0 and damage > 0:
@@ -778,7 +948,7 @@ static func _apply_enemy_intents(battle: Dictionary, state: RunState, catalog: D
 	next_state = next_state.append_event(_event(
 		next_state,
 		"battle_enemy_intent",
-		{"health": state.health, "essence": state.essence},
+		{"health": next_state.health, "essence": next_state.essence},
 		after_payload,
 		"battle_enemy_%s" % str(intent.get("id", "action")),
 		[str(intent.get("id", "action"))]
@@ -1033,11 +1203,14 @@ static func _enemy_definition(enemy_id: String, catalog: Dictionary) -> Dictiona
 	return legacy
 
 
-static func _reaction_for(battle: Dictionary, trigger: String) -> Dictionary:
+static func _reaction_for(battle: Dictionary, trigger: String, target_id := "") -> Dictionary:
+	var enemy := _enemy_by_target_id(battle, target_id)
+	if enemy.is_empty() and not _living_enemies(battle).is_empty():
+		enemy = _living_enemies(battle)[0]
 	# Phase-aware source: a boss's active phase may swap its reaction set.
-	var source: Array = battle.get("enemy_reactions", [])
+	var source: Array = enemy.get("reactions", [])
 	if source.is_empty():
-		source = battle.get("enemy_definition", {}).get("reactions", [])
+		source = (enemy.get("definition", {}) as Dictionary).get("reactions", [])
 	for reaction_value in source:
 		var reaction: Dictionary = reaction_value
 		if str(reaction.get("window", "")) == "before_damage" and str(reaction.get("trigger", "")) == trigger:
@@ -1048,10 +1221,16 @@ static func _reaction_for(battle: Dictionary, trigger: String) -> Dictionary:
 # ---- R5.7 boss phase machinery ----
 
 static func _active_phase(battle: Dictionary) -> Dictionary:
-	var phases: Array = battle.get("enemy_phases", [])
+	if _living_enemies(battle).is_empty():
+		return {}
+	return _active_enemy_phase(_living_enemies(battle)[0])
+
+
+static func _active_enemy_phase(enemy: Dictionary) -> Dictionary:
+	var phases: Array = enemy.get("phases", [])
 	if phases.is_empty():
 		return {}
-	var index := clampi(int(battle.get("enemy_phase_index", 0)), 0, phases.size() - 1)
+	var index := clampi(int(enemy.get("phase_index", 0)), 0, phases.size() - 1)
 	return phases[index]
 
 
@@ -1068,27 +1247,36 @@ static func _phase_index_for_ratio(ratio: float, phases: Array) -> int:
 # payload carries only _from/_to info keys, then redraws the visible intent
 # from the new phase set (respecting cooldowns).
 static func _sync_boss_phases(battle: Dictionary, state: RunState) -> RunState:
-	var phases: Array = battle.get("enemy_phases", [])
+	_sync_legacy_single_enemy_inputs(battle)
+	var next_state := state
+	for enemy_value in _living_enemies(battle):
+		next_state = _sync_enemy_phase(enemy_value as Dictionary, battle, next_state)
+	_sync_legacy_enemy_projection(battle)
+	return next_state
+
+
+static func _sync_enemy_phase(enemy: Dictionary, battle: Dictionary, state: RunState) -> RunState:
+	var phases: Array = enemy.get("phases", [])
 	if phases.is_empty():
 		return state
-	var ratio := float(int(battle["enemy_hp"])) / float(maxi(1, int(battle["enemy_max_hp"])))
+	var ratio := float(int(enemy.get("hp", 0))) / float(maxi(1, int(enemy.get("max_hp", 1))))
 	var desired := _phase_index_for_ratio(ratio, phases)
-	var current := int(battle.get("enemy_phase_index", 0))
+	var current := int(enemy.get("phase_index", 0))
 	if desired <= current:
 		return state
-	battle["enemy_phase_index"] = desired
+	enemy["phase_index"] = desired
 	var phase_reactions: Array = (phases[desired] as Dictionary).get("reactions", [])
 	if not phase_reactions.is_empty():
-		battle["enemy_reactions"] = phase_reactions.duplicate(true)
+		enemy["reactions"] = phase_reactions.duplicate(true)
 	var shifted := state.append_event(_event(
 		state,
 		"boss_phase_shift",
 		{},
 		{"_from": current, "_to": desired},
 		"boss_phase_shift",
-		[str(battle.get("enemy_kind", ""))]
+		[str(enemy.get("kind", ""))]
 	))
-	_select_enemy_intent(battle, shifted, int(battle.get("turn", 1)))
+	_select_enemy_intent_for(enemy, battle, shifted, int(battle.get("turn", 1)))
 	return shifted
 
 
@@ -1097,35 +1285,50 @@ static func _sync_boss_phases(battle: Dictionary, state: RunState) -> RunState:
 # intent of the phase is resting, the boss shows a harmless cooldown_wait and
 # attacks nothing that turn (no earliest-release fallback). Selection is seeded.
 static func _select_enemy_intent(battle: Dictionary, state: RunState, exec_turn: int) -> void:
-	var intents: Array = (_active_phase(battle).get("intents", []) as Array)
+	_sync_legacy_single_enemy_inputs(battle)
+	if _living_enemies(battle).is_empty():
+		return
+	_select_enemy_intent_for(_living_enemies(battle)[0], battle, state, exec_turn)
+	_sync_legacy_enemy_projection(battle)
+
+
+static func _select_enemy_intent_for(enemy: Dictionary, battle: Dictionary, state: RunState, exec_turn: int) -> void:
+	var intents: Array = (_active_enemy_phase(enemy).get("intents", []) as Array)
+	if intents.is_empty():
+		intents = (enemy.get("definition", {}) as Dictionary).get("intents", [])
+	if intents.is_empty():
+		var singular_intent: Dictionary = (enemy.get("definition", {}) as Dictionary).get("intent", {})
+		if not singular_intent.is_empty():
+			intents = [singular_intent]
 	if intents.is_empty():
 		return
-	var cooldowns: Dictionary = battle.get("intent_cooldowns", {})
+	var cooldowns: Dictionary = enemy.get("intent_cooldowns", {})
 	var available: Array = []
 	for intent_value in intents:
 		var intent: Dictionary = intent_value
 		if int(cooldowns.get(str(intent.get("id", "")), 0)) <= exec_turn:
 			available.append(intent)
 	if available.is_empty():
-		battle["visible_intent"] = COOLDOWN_WAIT_INTENT.duplicate(true)
+		enemy["visible_intent"] = COOLDOWN_WAIT_INTENT.duplicate(true)
 		return
 	# R14.6⑦ (night batch): boss-local adapt — when the precomputed counter
 # intent is eligible it IS the pick (intent switch, seeded draw still
 # consumed via index(1) so the stream stays stable); battle-scoped flag/hint
 # die with the battle dict (never leak into the run or the map layer).
-	var counter_intent := str(battle.get("dda_boss_counter_id", ""))
+	var counter_intent := str(battle.get("dda_boss_counter_id", "")) if str(enemy.get("enemy_id", "")).ends_with(":e0") else ""
 	if not counter_intent.is_empty():
 		for index in available.size():
 			if str(available[index].get("id", "")) == counter_intent:
 				var prioritized: Dictionary = available[index]
 				available.remove_at(index)
-				battle["visible_intent"] = prioritized.duplicate(true)
+				enemy["visible_intent"] = prioritized.duplicate(true)
 				battle["dda_boss_adapted"] = true
 				battle["dda_boss_hint"] = "boss_senses_gu_power"
 				_seeded_index(1, state, "boss.intent")
 				return
-	var picked: Dictionary = available[_seeded_index(available.size(), state, "boss.intent")]
-	battle["visible_intent"] = picked.duplicate(true)
+	var salt := "boss.intent" if str(enemy.get("enemy_id", "")).ends_with(":e0") else "boss.intent.%s" % str(enemy.get("enemy_id", ""))
+	var picked: Dictionary = available[_seeded_index(available.size(), state, salt)]
+	enemy["visible_intent"] = picked.duplicate(true)
 
 
 const COOLDOWN_WAIT_INTENT := {
@@ -1139,12 +1342,19 @@ const COOLDOWN_WAIT_INTENT := {
 # A fired intent with "cooldown":n stores its next usable turn (execution
 # turn + window + 1), so the gap always covers exactly n full turns.
 static func _register_intent_cooldown(battle: Dictionary, intent: Dictionary, exec_turn: int) -> void:
+	if _living_enemies(battle).is_empty():
+		return
+	_register_enemy_intent_cooldown(_living_enemies(battle)[0], intent, exec_turn)
+	_sync_legacy_enemy_projection(battle)
+
+
+static func _register_enemy_intent_cooldown(enemy: Dictionary, intent: Dictionary, exec_turn: int) -> void:
 	var cooldown := maxi(0, int(intent.get("cooldown", 0)))
 	if cooldown <= 0:
 		return
-	var cooldowns: Dictionary = battle.get("intent_cooldowns", {}).duplicate()
+	var cooldowns: Dictionary = enemy.get("intent_cooldowns", {}).duplicate()
 	cooldowns[str(intent.get("id", ""))] = exec_turn + cooldown + 1
-	battle["intent_cooldowns"] = cooldowns
+	enemy["intent_cooldowns"] = cooldowns
 
 
 static func _seeded_index(bound: int, state: RunState, salt: String) -> int:
@@ -1161,8 +1371,10 @@ static func _reaction_countered(battle: Dictionary, reaction: Dictionary) -> boo
 	return false
 
 
-static func _reveal_reaction(battle: Dictionary, reaction: Dictionary) -> void:
+static func _reveal_reaction(battle: Dictionary, reaction: Dictionary, target_id := "") -> void:
 	var reaction_id := str(reaction.get("id", "reaction"))
+	if not target_id.is_empty() and battle.get("enemies", []).size() > 1:
+		reaction_id = "%s:%s" % [target_id, reaction_id]
 	if not battle["revealed_reactions"].has(reaction_id):
 		battle["revealed_reactions"].append(reaction_id)
 
@@ -1188,13 +1400,14 @@ static func _can_retreat(battle: Dictionary) -> bool:
 static func _with_objective_result(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	# R5.7 phase re-evaluation happens the moment enemy hp changed but only
 	# while the battle can continue (no shift events for a dying boss).
-	var enemy_down := str(battle["objective"]) == "defeat" and int(battle["enemy_hp"]) <= 0
+	_sync_legacy_enemy_projection(battle)
+	var enemy_down := str(battle["objective"]) == "defeat" and _living_enemies(battle).is_empty()
 	var delayed := str(battle["objective"]) == "delay" and int(battle["delay_progress"]) >= int(battle["delay_needed"])
 	if not enemy_down and not delayed:
 		state = _sync_boss_phases(battle, state)
 	if str(battle["objective"]) == "delay" and int(battle["delay_progress"]) >= int(battle["delay_needed"]):
 		return _victory_with_loot(battle, state, catalog, ["objective_delayed"])
-	if str(battle["objective"]) == "defeat" and int(battle["enemy_hp"]) <= 0:
+	if str(battle["objective"]) == "defeat" and _living_enemies(battle).is_empty():
 		return _victory_with_loot(battle, state, catalog, ["enemy_defeated"])
 	return _result(battle, state, false, "ongoing", [])
 

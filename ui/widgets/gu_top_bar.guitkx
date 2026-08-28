@@ -55,7 +55,7 @@ export GuTopBar() -> RuitkVNode {
       </PanelContainer>
     ))
 
-  var bar_style = {"bg_color": GuStyle.BG_PANEL, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.BG_RAISED}
+  var bar_style = {"bg_color": GuStyle.PAPER_BG, "border_width_all": GuStyle.HAIRLINE, "border_color": GuStyle.HAIRLINE_COLOR, "min_height": GuStyle.TOP_BAR_HEIGHT}
 
   var left_items = []
   if layer >= 0:

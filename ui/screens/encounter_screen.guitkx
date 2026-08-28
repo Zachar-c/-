@@ -1,6 +1,5 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuTooltipView } from "~/ui/widgets/gu_tooltip_view"
@@ -116,13 +115,13 @@ export EncounterScreen() -> RuitkVNode {
     )
 
     var card = (
-      <GuCard title={ label } danger={ dangerous }>
+      <GuPanel title={ label }>
         <Label text={ detail } style={ {"font_color": GuStyle.DANGER if dangerous else GuStyle.BONE_DIM, "font_size": 14} } />
         @if (a.has("quality") or a.has("effect") or a.has("synergy") or a.has("cost") or bool(a.get("curse_warning", false))) {
           return tip
         }
         <GuButton label={ btn_label } danger={ dangerous } on_press={ on_press_fn } />
-      </GuCard>
+      </GuPanel>
     )
     action_rows.append(card)
 
@@ -136,7 +135,7 @@ export EncounterScreen() -> RuitkVNode {
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_cause_view.call({"cause_view": str(cid)}) } />
       { feedback_row }
 
-      <HBoxContainer style={ {"separation": 14} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 12, "size_flags_horizontal": 3} }>
           <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
             <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.GOLD, "font_size": 18} } />

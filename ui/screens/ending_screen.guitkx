@@ -2,6 +2,7 @@
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuResourceChip } from "~/ui/widgets/gu_resource_chip"
+import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 
 # EndingScreen —— 统一结算模块（由 ending_type 驱动，§16.6 / §16.10）
 # 契约：props.state 只读快照（title / ending_type / death_cause_* / achievement /
@@ -18,6 +19,10 @@ export EndingScreen() -> RuitkVNode {
 
   var title = state.get("title", "—")
   var ending_type = state.get("ending_type", "")
+  var resources = state.get("resources", {})
+  var contracts = state.get("contracts", [])
+  var anomalies = state.get("anomalies", [])
+  var death_lines = state.get("death_lines", {})
 
   var type_names = {
     "success": "成功",
@@ -96,7 +101,8 @@ export EndingScreen() -> RuitkVNode {
     record_rows.append(<Label text={ "DDA 触发：%d 次" % dda_triggers } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 15} } />)
 
   return (
-    <VBoxContainer style={ {"separation": 14, "anchors_preset": "PRESET_FULL_RECT"} }>
+    <VBoxContainer name="primary_decision_surface" style={ {"separation": 14, "anchors_preset": "PRESET_FULL_RECT"} }>
+      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <CenterContainer>
         <VBoxContainer style={ {"separation": 6} }>
           <Label text={ str(title) } style={ {"font_color": GuStyle.GOLD, "font_size": 40} } />

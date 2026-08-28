@@ -74,6 +74,23 @@ func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	assert_true(_any_contains(texts, "意图："), "battle screen must render enemy intent")
 
 
+func test_battle_snapshot_projects_multiple_enemies_piles_and_soul_ops() -> void:
+	var controller := _battle_controller()
+	controller.current_battle = BattleResolver.start({
+		"enemy_kinds": ["ridge_hound", "neutral_stone_wanderer"],
+	}, controller.state, controller.catalog)
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+
+	assert_eq(snapshot["enemies"].size(), 2)
+	assert_eq(snapshot["default_target_id"], snapshot["enemies"][0]["id"])
+	assert_true(snapshot["enemies"][1].has("statuses"))
+	assert_true(snapshot["piles"].has("draw"))
+	assert_true(snapshot["piles"].has("discard"))
+	assert_true(snapshot["piles"].has("exhausted"))
+	assert_true(snapshot["soul_ops"].has("cap"))
+	assert_true(snapshot["soul_ops"].has("used"))
+
+
 func test_battle_view_hud_uses_programmatic_icons() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")

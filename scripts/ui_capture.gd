@@ -1,23 +1,55 @@
 extends SceneTree
 
 # GUI 实跑截图：真实渲染器（非 headless）下逐屏挂载 RUI 屏组件，等布局帧后保存 PNG。
-# 分辨率：1920x1080（16:9）。用离屏 SubViewport 精确控制输出尺寸，不受 Windows DPI 缩放影响。
+# 分辨率：1920x1080、1366x768、1280x720。用独立 SubViewport 精确控制输出尺寸。
 # 用法：& <godot_gui.exe> --path . -s res://scripts/ui_capture.gd
-# 输出：.superpowers/ui_captures/*.png（不污染仓库，.superpowers 已忽略）
+# 输出：.superpowers/ui_captures/wenzhen/*.png（不污染仓库，.superpowers 已忽略）
 
 const Guitkx = preload("res://addons/reactive_ui_toolkit/guitkx/guitkx.gd")
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const ROOT := "res://"
-const OUT_DIR := "res://.superpowers/ui_captures"
-
-const SHOT_W := 1920
-const SHOT_H := 1080
+const OUT_DIR := "res://.superpowers/ui_captures/wenzhen"
+const VIEWPORTS := [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)]
+const CAPTURE_MATRIX := {
+	"hall": ["running", "no_save", "long_summary", "keyboard_focus"],
+	"map": ["current", "candidate_a_focus", "candidate_b_focus", "future_camera", "collapsed_history", "long_label"],
+	"battle": ["1_enemy_5_hand", "2_enemies", "3_enemies", "4_enemies_7_hand"],
+	"encounter": ["default", "danger_confirmation"],
+	"npc": ["default", "empty_stock"],
+	"shop": ["default", "max_shelf", "danger_payment"],
+	"rest": ["default", "required_choice"],
+	"refine": ["default", "curse_inheritance", "danger_confirmation"],
+	"reward": ["default", "full_satchel", "empty_pool"],
+	"school": ["default", "locked"],
+	"contract": ["default", "mutually_exclusive"],
+	"codex": ["list", "detail"],
+	"journal": ["list", "detail"],
+	"settings": ["default", "extreme"],
+	"ending": ["default", "long_route"],
+}
 
 const WIDGET_DIR := "res://ui/widgets"
 const SCREEN_DIR := "res://ui/screens"
 
 var _cur := 0
+
+
+static func capture_ids() -> Array:
+	return CAPTURE_MATRIX.keys()
+
+
+static func viewport_sizes() -> Array:
+	return VIEWPORTS.duplicate()
+
+
+static func batch_from_args(user_args: Array, command_line_args: Array) -> String:
+	var args: Array = user_args if user_args.has("--batch") else command_line_args
+	var batch_index := args.find("--batch")
+	if batch_index >= 0 and batch_index + 1 < args.size():
+		return str(args[batch_index + 1])
+	return ""
+
 
 func _compile_file(rel_path: String) -> bool:
 	var src := FileAccess.get_file_as_string(rel_path)
@@ -57,40 +89,211 @@ func _compile_dir(dir_path: String) -> bool:
 	return true
 
 
-func _snap(component: String, props: Dictionary) -> void:
+func _snap(component: String, props: Dictionary, slug: String = "", presses: Array[String] = [], focus_text: String = "") -> void:
+	for viewport_size in VIEWPORTS:
+		await _snap_at_size(component, props, slug, presses, focus_text, viewport_size)
+
+
+func _snap_at_size(component: String, props: Dictionary, slug: String, presses: Array[String], focus_text: String, viewport_size: Vector2i) -> void:
 	var fn = VLib.comp("res://ui/screens/%s.gd" % component, "render")
 	if not (fn is Callable):
 		push_error("无组件 %s" % component)
 		return
-	# 离屏 SubViewport：固定 1920x1080，精确控制输出，不受窗口/DPI 影响
-	var svp := SubViewport.new()
-	svp.size = Vector2i(SHOT_W, SHOT_H)
-	svp.transparent_bg = false
-	svp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	root.add_child(svp)
-	# 墨青夜色全屏底
+	if component == "map_screen" and viewport_size == VIEWPORTS[0]:
+		_print_map_capture_identity(fn)
+	var viewport := SubViewport.new()
+	viewport.size = viewport_size
+	viewport.transparent_bg = false
+	viewport.render_target_clear_mode = SubViewport.CLEAR_MODE_ALWAYS
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	root.add_child(viewport)
+	# Paper background remains visible wherever a screen intentionally leaves breathing room.
 	var bg := ColorRect.new()
-	bg.color = Color("0b0f14")
-	bg.size = Vector2(SHOT_W, SHOT_H)
-	svp.add_child(bg)
+	bg.color = Color("eee9df")
+	bg.size = Vector2(viewport_size)
+	viewport.add_child(bg)
 	# PanelContainer 强制唯一子（RUI 根）填满画幅，避免内容按最小尺寸收缩在左上角
 	var inner := PanelContainer.new()
-	inner.size = Vector2(SHOT_W, SHOT_H)
+	inner.size = Vector2(viewport_size)
 	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	svp.add_child(inner)
-	RuiRoot.create(inner, VLib.fc(fn, props))
+	viewport.add_child(inner)
+	var rui_root = RuiRoot.create(inner, VLib.fc(fn, props))
 	# 等逻辑帧确保 RUI 完成挂载与布局，再强制同步渲染一帧（不依赖窗口可见性，不会挂死）
 	for i in range(6):
 		await process_frame
+	if component == "map_screen" and viewport_size == VIEWPORTS[0] and slug == "core_map_current":
+		_print_map_render_state(inner)
+	for button_text in presses:
+		if not _press_button(inner, button_text):
+			push_error("找不到交互按钮 %s (%s)" % [button_text, component])
+		for i in range(4):
+			await process_frame
+	if not focus_text.is_empty():
+		var focus_button := _find_button(inner, focus_text)
+		if focus_button == null:
+			push_error("找不到焦点按钮 %s (%s)" % [focus_text, component])
+		else:
+			focus_button.grab_focus()
+			await process_frame
 	RenderingServer.force_draw()
-	await process_frame
-	var img := svp.get_texture().get_image()
+	await RenderingServer.frame_post_draw
 	_cur += 1
-	var p := ProjectSettings.globalize_path(OUT_DIR).path_join("%02d_%s.png" % [_cur, component])
-	img.save_png(p)
+	var shot_name := slug if not slug.is_empty() else component
+	var p := ProjectSettings.globalize_path(OUT_DIR).path_join("%02d_%s_%dx%d.png" % [_cur, shot_name, viewport_size.x, viewport_size.y])
+	var image := viewport.get_texture().get_image()
+	if image == null or image.is_empty() or image.save_png(p) != OK:
+		push_error("窗口捕获失败: %s" % p)
 	print("SNAP %s -> %s" % [component, p])
-	svp.queue_free()
+	rui_root.unmount()
+	rui_root = null
+	viewport.free()
 	await process_frame
+
+
+func _print_map_capture_identity(fn: Callable) -> void:
+	var script_resource: Variant = fn.get_object()
+	var source_path: String = "<not a script>"
+	var source_code: String = ""
+	if script_resource is Script:
+		source_path = script_resource.resource_path
+	if script_resource is GDScript:
+		source_code = script_resource.source_code
+	print("MAP CAPTURE IDENTITY path=%s has_paper=%s has_legacy_trip=%s" % [
+		source_path,
+		source_code.contains("map_paper"),
+		source_code.contains("南疆行程") or source_code.contains("蛊囊") or source_code.contains("图例"),
+	])
+
+
+func _print_map_render_state(root_node: Node) -> void:
+	for node_name in ["map_camera", "map_camera_backdrop", "map_world", "map_routes", "map_paths", "map_node_current", "map_node_elite"]:
+		var node := root_node.find_child(node_name, true, false) as CanvasItem
+		if node == null:
+			print("MAP RENDER STATE name=%s missing=true" % node_name)
+			continue
+		var rect := node.get_global_transform_with_canvas().get_origin()
+		var control := node as Control
+		var size := control.size if control != null else Vector2.ZERO
+		print("MAP RENDER STATE name=%s visible=%s modulate=%s z=%s pos=%s size=%s" % [
+			node_name, node.is_visible_in_tree(), node.modulate, node.z_index, rect, size,
+		])
+
+func _press_button(node: Node, button_text: String) -> bool:
+	for child in node.find_children("*", "Button", true, false):
+		var button := child as Button
+		if button != null and button.text == button_text and not button.disabled:
+			button.pressed.emit()
+			return true
+	return false
+
+
+func _find_button(node: Node, button_text: String) -> Button:
+	for child in node.find_children("*", "Button", true, false):
+		var button := child as Button
+		if button != null and button.text == button_text:
+			return button
+	return null
+
+
+func _capture_hall_batch() -> void:
+	var hall_cmds := {
+		"continue_run": func(): pass, "new_run": func(): pass,
+		"open_schools": func(): pass, "open_contracts": func(): pass,
+		"open_codex": func(): pass, "open_settings": func(): pass,
+		"open_journal": func(): pass, "back_to_hall": func(): pass,
+	}
+	var hall_state := {
+		"hall_subview": "main",
+		"has_save": true,
+		"brand_title": "問眞",
+		"primary_action": "continue_run",
+		"run_summary": {"route": "黑市交易后的山道", "rank": 4, "hp": 27},
+		"contracts": ["孤注"],
+		"anomalies": ["衰运"],
+		"meta_stats": {"runs": 3, "endings": 1},
+	}
+	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds}, "core_hall_running")
+	var new_hall_state := hall_state.duplicate(true)
+	new_hall_state["has_save"] = false
+	new_hall_state["primary_action"] = "open_schools"
+	new_hall_state["run_summary"] = {"route": "", "rank": 0, "hp": 0}
+	new_hall_state["contracts"] = []
+	new_hall_state["anomalies"] = []
+	await _snap("hall_view", {"state": new_hall_state, "commands": hall_cmds}, "core_hall_no_save")
+	var long_summary_state := hall_state.duplicate(true)
+	long_summary_state["run_summary"] = {"route": "南疆青茅山黑市交易后，经由旧寨石阶折返的第六十三处节点", "rank": 5, "hp": 1}
+	long_summary_state["contracts"] = ["孤注 · 元石供给受限"]
+	long_summary_state["anomalies"] = ["衰运 · 敌方危险意图更频繁"]
+	await _snap("hall_view", {"state": long_summary_state, "commands": hall_cmds}, "core_hall_long_summary")
+	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds}, "core_hall_keyboard_focus", [], "续入此世 ›")
+
+
+func _map_commands() -> Dictionary:
+	return {"travel": func(_id): pass, "view_node": func(_id): pass, "save_run": func(): pass}
+
+
+func _map_state() -> Dictionary:
+	return {
+		"nodes": [
+			{"id": "past", "type": "event", "label": "旧寨石阶", "layer": 61, "next_ids": ["current"], "visibility": "past"},
+			{"id": "current", "type": "combat", "label": "当前所在", "layer": 62, "next_ids": ["market", "elite", "event"], "visibility": "current", "current": true},
+			{"id": "market", "type": "market", "label": "黑市商队", "layer": 63, "next_ids": ["rest"], "visibility": "reachable", "reachable": true},
+			{"id": "elite", "type": "combat", "label": "雷泽伏杀", "layer": 63, "next_ids": ["rest", "shop"], "visibility": "reachable", "reachable": true},
+			{"id": "event", "type": "event", "label": "无名异闻", "layer": 63, "next_ids": ["shop"], "visibility": "reachable", "reachable": true},
+			{"id": "rest", "type": "rest", "label": "荒寺休整", "layer": 64, "next_ids": [], "visibility": "lookahead"},
+			{"id": "shop", "type": "shop", "label": "百虫黑市", "layer": 64, "next_ids": [], "visibility": "lookahead"},
+		],
+		"resources": {"yuanstone": 128, "shouyuan": 41, "hunpo": 7},
+		"contracts": ["孤注"], "anomalies": ["衰运"], "death_lines": {}, "toast": "",
+	}
+
+
+func _capture_map_batch() -> void:
+	var map_state := _map_state()
+	await _snap("map_screen", {"state": map_state, "commands": _map_commands()}, "core_map_current")
+	var candidate_a_state := map_state.duplicate(true)
+	for node in candidate_a_state["nodes"]:
+		if str(node.get("id", "")) != "market":
+			node["reachable"] = false
+	await _snap("map_screen", {"state": candidate_a_state, "commands": _map_commands()}, "core_map_candidate_a_focus")
+	var candidate_b_state := map_state.duplicate(true)
+	for node in candidate_b_state["nodes"]:
+		if str(node.get("id", "")) != "elite":
+			node["reachable"] = false
+	await _snap("map_screen", {"state": candidate_b_state, "commands": _map_commands()}, "core_map_candidate_b_focus")
+	var future_state := map_state.duplicate(true)
+	for node in future_state["nodes"]:
+		var id := str(node.get("id", ""))
+		if id == "past" or id == "current":
+			node["visibility"] = "past"
+			node["current"] = false
+			node["reachable"] = false
+		elif id == "market":
+			node["visibility"] = "current"
+			node["current"] = true
+			node["reachable"] = false
+		elif id == "rest" or id == "shop":
+			node["reachable"] = true
+	await _snap("map_screen", {"state": future_state, "commands": _map_commands()}, "core_map_future_camera")
+	var history_state := map_state.duplicate(true)
+	for node in history_state["nodes"]:
+		if int(node.get("layer", 0)) <= 62:
+			node["visibility"] = "past"
+			node["current"] = false
+		elif str(node.get("id", "")) == "market":
+			node["visibility"] = "current"
+			node["reachable"] = false
+			node["current"] = true
+	await _snap("map_screen", {"state": history_state, "commands": _map_commands()}, "core_map_collapsed_history")
+	var long_label_state := map_state.duplicate(true)
+	for node in long_label_state["nodes"]:
+		if str(node.get("id", "")) == "event":
+			node["label"] = "雾瘴深处传来的无名蛊鸣与残碑异响"
+			node["reachable"] = false
+		elif str(node.get("id", "")) == "elite":
+			node["label"] = "雷泽伏杀"
+			node["reachable"] = true
+	await _snap("map_screen", {"state": long_label_state, "commands": _map_commands()}, "core_map_long_label")
 
 
 func _initialize() -> void:
@@ -102,6 +305,21 @@ func _initialize() -> void:
 		quit(1)
 	if not _compile_dir(SCREEN_DIR):
 		quit(1)
+	var batch := batch_from_args(OS.get_cmdline_user_args(), OS.get_cmdline_args())
+	if batch == "hall":
+		await _capture_hall_batch()
+		print("HALL SNAPS DONE")
+		quit()
+		return
+	if batch == "map":
+		await _capture_map_batch()
+		print("MAP SNAPS DONE")
+		quit()
+		return
+	if not batch.is_empty():
+		push_error("未知截图批次: %s" % batch)
+		quit(1)
+		return
 
 	# ---- 大厅主菜单（含存档）----
 	var hall_cmds := {
@@ -123,19 +341,23 @@ func _initialize() -> void:
 		"contracts": ["自苦·血祭", "节流·魂敛"],
 		"meta_stats": {"runs": 3, "endings": 1},
 	}
-	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds})
+	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds}, "hall_with_save")
+	var new_hall_state := hall_state.duplicate(true)
+	new_hall_state["has_save"] = false
+	new_hall_state["primary_action"] = "open_schools"
+	await _snap("hall_view", {"state": new_hall_state, "commands": hall_cmds}, "hall_without_save")
 
 	# ---- 地图 ----
 	var map_cmds := {"travel": func(_id): pass, "view_node": func(_id): pass}
 	var map_state := {
 		"nodes": [
-			{"id": "n1", "type": "start", "label": "起始", "layer": 0},
-			{"id": "n2", "type": "combat", "label": "野蛊盘踞", "layer": 1},
-			{"id": "n3", "type": "event", "label": "残碑异响", "layer": 1},
-			{"id": "n4", "type": "rest", "label": "山涧静修", "layer": 2},
-			{"id": "n5", "type": "shop", "label": "黑市", "layer": 2},
-			{"id": "n6", "type": "combat", "label": "铁皮山猪", "layer": 3},
-			{"id": "n7", "type": "boss", "label": "雷冠头狼", "layer": 4},
+			{"id": "n1", "type": "start", "label": "起始", "layer": 0, "visibility": "past"},
+			{"id": "n2", "type": "combat", "label": "野蛊盘踞", "layer": 1, "visibility": "current"},
+			{"id": "n3", "type": "event", "label": "残碑异响", "layer": 1, "visibility": "current"},
+			{"id": "n4", "type": "rest", "label": "山涧静修", "layer": 2, "visibility": "lookahead", "reachable": true},
+			{"id": "n5", "type": "shop", "label": "黑市", "layer": 2, "visibility": "lookahead", "reachable": true},
+			{"id": "n6", "type": "combat", "label": "铁皮山猪", "layer": 3, "visibility": "lookahead"},
+			{"id": "n7", "type": "boss", "label": "雷冠头狼", "layer": 4, "visibility": "lookahead"},
 		],
 		"current_node_id": "n1",
 		"reachable_ids": ["n2", "n3"],
@@ -145,7 +367,21 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	await _snap("map_screen", {"state": map_state, "commands": map_cmds})
+	await _snap("map_screen", {"state": map_state, "commands": map_cmds}, "map_current")
+	var future_map_state := map_state.duplicate(true)
+	future_map_state["current_node_id"] = "n4"
+	for node in future_map_state["nodes"]:
+		if str(node.get("id", "")) == "n2" or str(node.get("id", "")) == "n3":
+			node["visibility"] = "past"
+		elif str(node.get("id", "")) == "n4":
+			node["visibility"] = "current"
+			node["reachable"] = false
+	await _snap("map_screen", {"state": future_map_state, "commands": map_cmds}, "map_future")
+	var history_map_state := future_map_state.duplicate(true)
+	for node in history_map_state["nodes"]:
+		if int(node.get("layer", 0)) < 3:
+			node["visibility"] = "past"
+	await _snap("map_screen", {"state": history_map_state, "commands": map_cmds}, "map_collapsed_history")
 
 	# ---- 战斗三区 ----
 	var battle_cmds := {
@@ -154,12 +390,13 @@ func _initialize() -> void:
 	}
 	var battle_state := {
 		"enemies": [
-			{"id": "e1", "name": "铁皮山猪", "hp": 20, "max_hp": 30, "shield": 4, "intent": {"type": "attack", "value": 12, "detail": "造成物理伤害"}},
-			{"id": "e2", "name": "雷冠头狼", "hp": 15, "max_hp": 15, "shield": 0, "intent": {"type": "charge", "value": 0, "detail": "蓄力"}},
+			{"id": "e1", "name": "铁皮山猪", "hp": 20, "max_hp": 30, "shield": 4, "statuses": [{"name": "破绽", "stacks": 1}], "intent": {"type": "attack", "value": 12, "detail": "造成物理伤害"}},
+			{"id": "e2", "name": "雷冠头狼", "hp": 15, "max_hp": 15, "shield": 0, "statuses": [], "intent": {"type": "charge", "value": 0, "detail": "蓄力"}},
+			{"id": "e3", "name": "腐沼毒蝎", "hp": 12, "max_hp": 18, "shield": 2, "statuses": [{"name": "毒", "stacks": 2}], "intent": {"type": "defend", "value": 6, "detail": "为同伴护持"}},
 		],
 		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4, "statuses": [{"name": "灼烧", "stacks": 2}]},
 		"hand": [
-			{"id": "c1", "name": "血牙蛊", "cost": 1, "effect": "造成 6 伤害", "quality": "普通", "curse_warning": false},
+			{"id": "c1", "name": "血牙蛊", "cost": 1, "effect": "造成 6 伤害", "quality": "普通", "curse_warning": false, "executable": true, "target_type": "single_enemy", "valid_target_ids": ["e1", "e2", "e3"]},
 			{"id": "c2", "name": "噬血蛊", "cost": 2, "effect": "造成 4 伤害并吸血 3", "quality": "稀有", "curse_warning": false},
 			{"id": "c3", "name": "血祭蛊", "cost": 2, "cost_ex": "消耗3寿元", "effect": "对自身反噬 1 层，造成 18 伤害", "quality": "稀有", "curse_warning": true},
 		],
@@ -169,7 +406,11 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
 	}
-	await _snap("battle_screen", {"state": battle_state, "commands": battle_cmds})
+	for enemy_count in [1, 2, 3]:
+		var count_state := battle_state.duplicate(true)
+		count_state["enemies"] = battle_state["enemies"].slice(0, enemy_count)
+		await _snap("battle_screen", {"state": count_state, "commands": battle_cmds}, "battle_%d_enemies" % enemy_count)
+	await _snap("battle_screen", {"state": battle_state, "commands": battle_cmds}, "battle_target_selection", ["血牙蛊"])
 
 	# ---- 遭遇（含侧边状态）----
 	var enc_cmds := {"choose_option": func(_id): pass, "confirm_danger": func(): pass, "leave": func(): pass}
@@ -187,7 +428,7 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	await _snap("encounter_screen", {"state": enc_state, "commands": enc_cmds})
+	await _snap("encounter_screen", {"state": enc_state, "commands": enc_cmds}, "dangerous_confirmation", ["确认此危险行动"])
 
 	# ---- 结算 ----
 	var ending_cmds := {"to_hall": func(): pass, "to_codex": func(): pass}
@@ -200,7 +441,7 @@ func _initialize() -> void:
 		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
 		"aftermath": "可于大厅图鉴查阅本次所得",
 	}
-	await _snap("ending_screen", {"state": ending_state, "commands": ending_cmds})
+	await _snap("ending_screen", {"state": ending_state, "commands": ending_cmds}, "ending")
 
 	# ---- 黑市（C3）----
 	var gui_state := {
@@ -233,7 +474,7 @@ func _initialize() -> void:
 		],
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）",
 	})
-	await _snap("shop_screen", {"state": shop_state, "commands": shop_cmds})
+	await _snap("shop_screen", {"state": shop_state, "commands": shop_cmds}, "shop")
 
 	# ---- 休整（C5）----
 	var rest_cmds := {"choose": func(_id): pass, "confirm_wash": func(): pass, "cancel_confirm": func(): pass, "leave": func(): pass}
@@ -251,7 +492,7 @@ func _initialize() -> void:
 		"confirming": "",
 		"confirm_msg": "",
 	})
-	await _snap("rest_screen", {"state": rest_state, "commands": rest_cmds})
+	await _snap("rest_screen", {"state": rest_state, "commands": rest_cmds}, "rest")
 
 	# ---- 炼蛊台（C6）----
 	var refine_cmds := {"set_channel": func(_id): pass, "refine": func(_id): pass, "toggle_input": func(_id): pass, "dismantle": func(_id): pass, "confirm": func(): pass, "cancel_confirm": func(): pass, "leave": func(): pass}
@@ -276,7 +517,7 @@ func _initialize() -> void:
 		"confirming": "",
 		"confirm_msg": "",
 	})
-	await _snap("refine_screen", {"state": refine_state, "commands": refine_cmds})
+	await _snap("refine_screen", {"state": refine_state, "commands": refine_cmds}, "refine")
 
 	# ---- 奖励（C2）----
 	var reward_cmds := {"take": func(_i): pass, "replace_and_take": func(_i): pass, "skip": func(): pass, "close": func(): pass}
@@ -292,7 +533,7 @@ func _initialize() -> void:
 		"pool_fallback_note": "（空池回退：已切至基础池）",
 		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
 	})
-	await _snap("reward_screen", {"state": reward_state, "commands": reward_cmds})
+	await _snap("reward_screen", {"state": reward_state, "commands": reward_cmds}, "reward")
 
 	# ---- NPC 交涉（C8）----
 	var npc_cmds := {"talk": func(_id): pass, "buy": func(_id): pass, "barter": func(_id): pass, "flee": func(): pass, "leave": func(): pass}
@@ -318,7 +559,7 @@ func _initialize() -> void:
 		],
 		"can_flee": true,
 	})
-	await _snap("npc_screen", {"state": npc_state, "commands": npc_cmds})
+	await _snap("npc_screen", {"state": npc_state, "commands": npc_cmds}, "npc")
 
 	print("ALL SNAPS DONE")
 	quit()

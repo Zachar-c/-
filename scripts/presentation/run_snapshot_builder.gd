@@ -691,17 +691,21 @@ static func battle(controller) -> Dictionary:
 	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var battle_data: Dictionary = controller.current_battle
-	var enemy_kind := str(battle_data.get("enemy_kind", ""))
 	var flags: Array = battle_data.get("flags", [])
 	var guarded: bool = flags.has("guarded")
-	var enemies: Array[Dictionary] = [{
-		"id": str(battle_data.get("battle_id", "")),
-		"name": DisplayText.enemy(enemy_kind),
-		"hp": int(battle_data.get("enemy_hp", 0)),
-		"max_hp": maxi(1, int(battle_data.get("enemy_max_hp", 1))),
-		"shield": 2 if guarded else 0,
-		"intent": _intent_to_screen(battle_data.get("visible_intent", {})),
-	}]
+	var enemies: Array[Dictionary] = []
+	for enemy_value in battle_data.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		enemies.append({
+			"id": str(enemy.get("enemy_id", "")),
+			"name": str(enemy.get("name", DisplayText.enemy(str(enemy.get("kind", ""))))),
+			"hp": int(enemy.get("hp", 0)),
+			"max_hp": maxi(1, int(enemy.get("max_hp", 1))),
+			"shield": int(enemy.get("shield", 0)),
+			"statuses": _statuses_to_list(enemy.get("statuses", {})),
+			"intent": _intent_to_screen(enemy.get("visible_intent", {})),
+			"alive": bool(enemy.get("alive", false)),
+		})
 	var cult: Dictionary = state.cultivator
 	var player := {
 		"hp": int(cult.get("health", state.health)),
@@ -746,11 +750,17 @@ static func battle(controller) -> Dictionary:
 		"enemies": enemies,
 		"player": player,
 		"hand": hand,
+		"piles": {
+			"draw": (battle_data.get("draw_pile", []) as Array).size(),
+			"discard": (battle_data.get("discard_pile", []) as Array).size(),
+			"exhausted": (battle_data.get("exhausted_cards", []) as Array).size(),
+		},
+		"soul_ops": {"cap": int(battle_data.get("soul_ops_cap", 0)), "used": (battle_data.get("active_gu_instance_ids", []) as Array).size()},
+		"default_target_id": _first_living_enemy_id(enemies),
 		"kill_moves": kill_moves,
 		# R-boss-no-retreat: the flee button disappears entirely on boss-tier
 		# battles (resolver refuses the command anyway; UI mirrors it).
-		"flee_available": not battle_data.has("enemy_definition") \
-			or str((battle_data.get("enemy_definition", {}) as Dictionary).get("tier", "")) != "boss",
+		"flee_available": not BattleResolver.boss_blocks_retreat(battle_data),
 		"synthesis": _synthesis_options(state, catalog),
 		"can_ultimate": false,
 		"resources": _resources(state),
@@ -759,6 +769,13 @@ static func battle(controller) -> Dictionary:
 		"dda_boss_hint": str(battle_data.get("dda_boss_hint", "")),
 		"death_lines": _death_lines(state),
 	}
+
+
+static func _first_living_enemy_id(enemies: Array[Dictionary]) -> String:
+	for enemy in enemies:
+		if bool(enemy.get("alive", false)):
+			return str(enemy.get("id", ""))
+	return ""
 
 
 static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary) -> Dictionary:

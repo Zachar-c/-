@@ -1,4 +1,4 @@
-class_name ActionCardRow
+class_name LegacyActionCardRow
 extends VBoxContainer
 
 
@@ -13,7 +13,7 @@ const SELF_SCRIPT := preload("res://scripts/presentation/action_card_row.gd")
 signal command_submitted(command: Dictionary)
 
 
-static func build(card: Dictionary, minimum_width: int = 360, tooltip: GuTooltip = null) -> ActionCardRow:
+static func build(card: Dictionary, minimum_width: int = 360, tooltip: GuTooltip = null) -> LegacyActionCardRow:
 	var row := SELF_SCRIPT.new()
 	row.add_theme_constant_override("separation", 4)
 	var button := Button.new()

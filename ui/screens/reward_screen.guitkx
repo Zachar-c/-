@@ -1,7 +1,6 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuCard } from "~/ui/widgets/gu_card"
-import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
 
@@ -81,12 +80,13 @@ export RewardScreen() -> RuitkVNode {
         <Label text={ "三选一 · 权重池 + 保底" } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />
       </HBoxContainer>
 
-      <GuPanel title="奖励选项">
+      <VBoxContainer name="primary_decision_surface" style={ {"separation": 8} }>
+        <Label text="奖励选项" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />
         <HBoxContainer style={ {"separation": 12} }>
           { reward_cards }
           { reward_empty }
         </HBoxContainer>
-      </GuPanel>
+      </VBoxContainer>
 
       <VBoxContainer style={ {"separation": 4} }>
         @if (pool_fallback_note != "") {

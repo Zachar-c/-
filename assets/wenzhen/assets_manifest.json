@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "usage_notice": "Assets marked user_authorized_noncommercial were explicitly approved by the project owner on 2026-08-28 for this noncommercial project build. Preserve existing visible watermarks and do not reuse or redistribute outside that scope without a separate rights review.",
+  "assets": [
+    {
+      "id": "title_font_xiawu_zhisong",
+      "path": "assets/wenzhen/fonts/LXGWZhiSongCL-Regular.ttf",
+      "kind": "font_title",
+      "source": "https://zf.sc.chinaz.com/Files/DownLoad/upload/2024/0410/xiawuzhisong.ttf",
+      "license": "user_authorized_noncommercial",
+      "author": "LXGW ZhiSong CL; user-provided download on 2026-08-28",
+      "facing": "not_applicable",
+      "sha256": "8C507BBED3668558632F013DE7A6ED185EE5B21298D47274C2EB3A1DBE71AC6F"
+    },
+    {
+      "id": "hall_first_life_character",
+      "path": "assets/wenzhen/hall/first-life-character.png",
+      "kind": "hall_character",
+      "source": "user-provided Doubao AI image: 东方修真青年男性主角大厅主视觉图生成.png",
+      "license": "user_authorized_noncommercial",
+      "author": "Doubao AI generated; project owner approved on 2026-08-28",
+      "facing": "right",
+      "watermark": "visible_doubao_ai_generation_mark_preserved"
+    },
+    {
+      "id": "hall_qing_mao_mountain",
+      "path": "assets/wenzhen/hall/qing-mao-mountain.png",
+      "kind": "hall_place",
+      "source": "user-provided Doubao AI image: 东方修真青年男性主角大厅主视觉图生成 (1).png",
+      "license": "user_authorized_noncommercial",
+      "author": "Doubao AI generated; project owner approved on 2026-08-28",
+      "facing": "not_applicable",
+      "watermark": "visible_doubao_ai_generation_mark_preserved"
+    }
+  ]
+}

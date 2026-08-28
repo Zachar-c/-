@@ -99,6 +99,8 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		"cost": {},
 		"known_risk": [],
 		"expected_gain": ["造成 1 点基础伤害。"],
+		"target_type": "single_enemy",
+		"valid_target_ids": _living_enemy_ids(battle),
 	}))
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.basic.dodge",
@@ -135,7 +137,7 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		"summary": "结束本轮，敌方将执行已公开意图。",
 		"executable": true,
 		"cost": {},
-		"known_risk": ["敌方将执行：%s。" % str(battle.get("visible_intent", {}).get("label", "已公开意图"))],
+		"known_risk": ["敌方将执行：%s。" % _living_intent_labels(battle)],
 	}))
 	_assert_unique_ids(cards)
 	return cards
@@ -168,6 +170,10 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 				projected.append(source_instance_id)
 		if projected.size() > SoulCapacityScript.battle_ops_cap(state):
 			risk.append("当前魂魄无法承受这次并发催动，会触发魂魄反噬。")
+	var target_type := _target_type_for_gu(source_gu_id, definition)
+	var valid_target_ids: Array[String] = []
+	if target_type == "single_enemy":
+		valid_target_ids.append_array(_living_enemy_ids(battle))
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(instance.get("instance_id", ""))],
 		"title": DisplayText.gu(source_gu_id),
@@ -179,6 +185,8 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		"expected_gain": [_battle_effect(source_gu_id, card_mode)],
 		"unknown_note": "部分效果会受敌方状态和未暴露后手影响。" if not risk.is_empty() else "",
 		"remedy_hints": ["可先收势恢复判断，或改用真元消耗更低的蛊虫。"] if not executable else [],
+		"target_type": target_type,
+		"valid_target_ids": valid_target_ids,
 	}))
 
 
@@ -186,7 +194,38 @@ static func _battle_card(battle: Dictionary, state: RunState, values: Dictionary
 	var card := _card(state, values)
 	card["state_version"] = int(battle.get("hand_version", 0))
 	card["command"] = {}
+	if not card.has("target_type"):
+		card["target_type"] = "none"
+	if not card.has("valid_target_ids"):
+		card["valid_target_ids"] = []
 	return card
+
+
+static func _living_enemy_ids(battle: Dictionary) -> Array[String]:
+	var ids: Array[String] = []
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
+			ids.append(str(enemy.get("enemy_id", "")))
+	return ids
+
+
+static func _living_intent_labels(battle: Dictionary) -> String:
+	var labels: Array[String] = []
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
+			labels.append(str((enemy.get("visible_intent", {}) as Dictionary).get("label", "已公开意图")))
+	return "、".join(labels) if not labels.is_empty() else "已公开意图"
+
+
+static func _target_type_for_gu(gu_id: String, definition: Dictionary) -> String:
+	if gu_id in ["small_light_gu", "thorn_whip_gu", "blood_moss_gu", "blood_droplet_gu", "blood_bat_gu", "force_gu", "moonlight_gu", "moon_glow_gu"]:
+		return "single_enemy"
+	for effect_value in definition.get("combat_effects", []):
+		if str((effect_value as Dictionary).get("kind", "")) == "strike":
+			return "single_enemy"
+	return "self"
 
 static func _append_battle_gu_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, gu: Dictionary, gu_id: String, mode: String) -> void:
 	var essence_cost := int(gu.get("essence_cost", 0))
@@ -966,6 +1005,8 @@ static func _card(state: RunState, values: Dictionary) -> Dictionary:
 		"remedy_hints": values.get("remedy_hints", []).duplicate(),
 		"success_rate": values.get("success_rate", null),
 		"expects_target": str(values.get("expects_target", "")),
+		"target_type": str(values.get("target_type", "none")),
+		"valid_target_ids": values.get("valid_target_ids", []).duplicate(),
 		"command": values.get("command", {}).duplicate(true),
 		"state_version": state.event_log.size(),
 	}

@@ -1,6 +1,5 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
@@ -52,12 +51,12 @@ export RestScreen() -> RuitkVNode {
       else:
         fire.call("choose", cid)
     choice_cards.append((
-      <GuCard title={ clabel } danger={ cdanger } expand_h={ true }>
+      <GuPanel title={ clabel } expand_h={ true }>
         <Label text={ cdetail } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
         <Label text={ ccost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
         <Label text={ creason } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 12} } />
         <GuButton label="选择" disabled={ cdisabled } danger={ is_wash } on_press={ on_choose } />
-      </GuCard>
+      </GuPanel>
     ))
   var choice_empty = []
   if choice_cards.is_empty():
@@ -82,11 +81,11 @@ export RestScreen() -> RuitkVNode {
     var gdetail = str(g.get("detail", ""))
     var gcost = str(g.get("cost", ""))
     growth_rows.append((
-      <GuCard title={ glabel } expand_h={ true }>
+      <GuPanel title={ glabel } expand_h={ true }>
         <Label text={ gdetail } style={ {"font_color": GuStyle.BONE, "font_size": 14} } />
         <Label text={ gcost } style={ {"font_color": GuStyle.GOLD, "font_size": 13} } />
         <GuButton label="选择" on_press={ func(): fire.call("choose", gid) } />
-      </GuCard>
+      </GuPanel>
     ))
 
   var growth_section = []
@@ -101,7 +100,7 @@ export RestScreen() -> RuitkVNode {
         <Label text={ note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 14} } />
       </HBoxContainer>
 
-      <GuPanel title="休整选项">
+      <GuPanel name="primary_decision_surface" title="休整选项">
         <HBoxContainer style={ {"separation": 10} }>
           { choice_cards }
           { choice_empty }

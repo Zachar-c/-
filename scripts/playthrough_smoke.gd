@@ -255,7 +255,8 @@ func _step_battle(controller) -> String:
 		])
 		return "ongoing"
 	var battle_id := str(battle.get("battle_id", ""))
-	var enemy_hp := int(battle.get("enemy_hp", -1))
+	var living_enemies := _living_enemies(battle)
+	var enemy_hp := _total_enemy_hp(living_enemies)
 	if battle_id != _stuck_battle_id:
 		_stuck_battle_id = battle_id
 		_stuck_count = 0
@@ -265,8 +266,7 @@ func _step_battle(controller) -> String:
 	else:
 		_stuck_count = 0
 		_stuck_enemy_hp = enemy_hp
-	var intent: Dictionary = battle.get("visible_intent", {}) as Dictionary
-	var intent_damage := int(intent.get("damage", 0))
+	var intent_damage := _incoming_damage(living_enemies)
 	var hand: Array = battle.get("hand", [])
 	var command: Dictionary
 	if not BattleResolverScript.boss_blocks_retreat(battle) \
@@ -283,9 +283,12 @@ func _step_battle(controller) -> String:
 			command = {"type": "end_turn"}
 		else:
 			var card: Dictionary = hand[0]
+			var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
 			command = {
 				"type": "action_card",
 				"action_id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(card.get("instance_id", ""))],
+				"card_id": str(card.get("instance_id", "")),
+				"target_id": target_id,
 				"state_version": int(battle.get("hand_version", 0)),
 			}
 	var result: Dictionary = controller.submit_command(command)
@@ -298,15 +301,39 @@ func _step_battle(controller) -> String:
 			controller.submit_command({"type": "leave_node"})
 			_tell("止损撤离，离开该节点")
 		return "ongoing"
-	if not bool(result.get("accepted", false)):
-		command = {"type": "basic_attack"}
-		result = controller.submit_command(command)
+		if not bool(result.get("accepted", false)):
+			var fallback_target := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
+			command = {"type": "action_card", "action_id": "battle.basic.punch", "target_id": fallback_target, "state_version": int(battle.get("hand_version", 0))}
+			result = controller.submit_command(command)
 		if not bool(result.get("accepted", false)):
 			command = {"type": "end_turn"}
 			result = controller.submit_command(command)
 			if not bool(result.get("accepted", false)):
 				_tell("战斗阻塞：%s" % str(result.get("feeds", result)))
 	return "ongoing"
+
+
+func _living_enemies(battle: Dictionary) -> Array[Dictionary]:
+	var living: Array[Dictionary] = []
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", int(enemy.get("hp", 0)) > 0)):
+			living.append(enemy)
+	return living
+
+
+func _total_enemy_hp(enemies: Array[Dictionary]) -> int:
+	var total := 0
+	for enemy in enemies:
+		total += maxi(0, int(enemy.get("hp", 0)))
+	return total
+
+
+func _incoming_damage(enemies: Array[Dictionary]) -> int:
+	var total := 0
+	for enemy in enemies:
+		total += maxi(0, int((enemy.get("visible_intent", {}) as Dictionary).get("damage", 0)))
+	return total
 
 
 func _tell(text: String) -> void:

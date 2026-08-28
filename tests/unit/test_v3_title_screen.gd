@@ -16,9 +16,12 @@ func test_controller_shows_title_before_run_then_starts_on_command() -> void:
 	assert_not_null(controller.state)
 
 
-func test_hall_view_exposes_game_name_and_menu() -> void:
+func test_hall_view_exposes_wenzhen_brand_and_quiet_menu() -> void:
 	var snapshot := {
 		"has_save": false,
+		"brand_title": "問眞",
+		"primary_action": "open_schools",
+		"run_summary": {"route": "", "rank": 0, "hp": 0},
 		"available_schools": [
 			{"id": "blood", "name": "血道"},
 			{"id": "qi", "name": "气道"},
@@ -30,11 +33,11 @@ func test_hall_view_exposes_game_name_and_menu() -> void:
 	var root: Variant = load("res://ui/screens/hall_view.gd").render({"state": snapshot, "commands": {}}, [])
 	assert_not_null(root)
 	var texts := _rui_texts(root)
-	assert_true(texts.has("蛊路求生"), "hall must keep the game name")
-	assert_true(_any_contains(texts, "开始新冒险"), "hall must offer a new run entry")
+	assert_true(texts.has("問眞"), "hall must show the formal brand")
+	assert_true(_any_contains(texts, "开始此世"), "hall must offer its sole new-run entry")
 	assert_true(_any_contains(texts, "图鉴"), "hall must expose codex")
-	assert_true(_any_contains(texts, "继续上次冒险"), "hall must expose continue-run")
-	assert_true(_any_contains(texts, "血道"), "hall must list school choices")
+	assert_true(_any_contains(texts, "手记库"), "hall must expose journal")
+	assert_false(_any_contains(texts, "继续上次冒险"), "hall must not expose the old secondary continue action")
 
 
 func test_hall_snapshot_carries_save_flag_and_schools() -> void:

@@ -58,6 +58,8 @@ func test_battle_preview_reads_hand_and_uses_battle_local_version() -> void:
 	assert_eq(hand_card["command"], {})
 	assert_eq(hand_card["cost"]["spirit"], 1)
 	assert_eq(hand_card["expected_gain"], ["小光弹照中敌手，伤敌并照出异状。"])
+	assert_eq(hand_card["target_type"], "single_enemy")
+	assert_eq(hand_card["valid_target_ids"], [str(battle["enemies"][0]["enemy_id"])])
 
 func test_battle_starts_with_a_limited_hand_and_keeps_remaining_cards_in_draw_pile() -> void:
 	var run := _run_with_three_card_sources()
@@ -101,6 +103,7 @@ func _first_card_command(battle: Dictionary) -> Dictionary:
 	return {
 		"type": "action_card",
 		"action_id": "battle.%s.%s" % [str(battle["battle_id"]), str(card["instance_id"])],
+		"target_id": str(battle["enemies"][0]["enemy_id"]),
 		"state_version": int(battle["hand_version"]),
 	}
 
@@ -110,7 +113,6 @@ func _card(cards: Array, id: String) -> Dictionary:
 			return card
 	push_error("Missing battle action card: %s" % id)
 	return {}
-
 
 
 

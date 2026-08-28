@@ -154,15 +154,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 	if command.get("type", "") == "leave_encounter":
 		command = {"type": "leave_node"}
 	if command.get("type", "") == "action_card" and not current_battle.is_empty():
-		# Legacy UI shape {"card_id": instance} rides along for resolver lookup.
-		var turn: Dictionary
-		var card_id := str(command.get("card_id", ""))
-		if not card_id.is_empty():
-			current_battle["_ui_card_id"] = card_id
-			turn = BattleResolver.apply_action_card(current_battle, state, command, catalog)
-			current_battle.erase("_ui_card_id")
-		else:
-			turn = BattleResolver.apply_action_card(current_battle, state, command, catalog)
+		var turn := BattleResolver.apply_action_card(current_battle, state, command, catalog)
 		state = turn["state"]
 		current_battle = turn["battle"]
 		last_result = {"battle_result": turn["result"], "feeds": turn["feeds"]}
@@ -628,12 +620,16 @@ func _start_battle() -> void:
 	var kill_source := ""
 	if str(current_session.get("kind", "")) in ["contact", "caravan", "market", "shop", "wild_gu"]:
 		kill_source = "neutral_npc"
-	current_battle = BattleResolver.start({
-		"enemy_kind": enemy_kind,
+	var encounter := {
 		"terrain": _battle_terrain(),
 		"first_mover": first_mover,
 		"kill_source": kill_source,
-	}, state, catalog)
+	}
+	if current_node.has("enemy_kinds"):
+		encounter["enemy_kinds"] = (current_node.get("enemy_kinds", []) as Array).duplicate()
+	else:
+		encounter["enemy_kind"] = enemy_kind
+	current_battle = BattleResolver.start(encounter, state, catalog)
 	# N6: weaknesses procured through probe carry into the battle as bonus damage.
 	if state.known_facts.has("procured_weakness"):
 		current_battle["intel_bonus"] = 1
@@ -1051,6 +1047,4 @@ func _snapshot_for(screen: String) -> Dictionary:
 
 func _build_commands(screen: String) -> Dictionary:
 	return RunCommandBuilderScript.for_screen(screen, self)
-
-
 

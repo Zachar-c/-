@@ -131,3 +131,21 @@ func test_battle_start_survives_a_degenerate_empty_intents_phase() -> void:
 	# the engine from indexing into an empty array.
 	assert_eq(str(battle["visible_intent"].get("id", "")), "miasma_burst")
 	assert_eq(int(battle["enemy_hp"]), int(battle["enemy_max_hp"]))
+
+
+func test_validation_rejects_unknown_or_duplicate_multi_enemy_node_members() -> void:
+	var unknown := ContentCatalog.load_all()
+	_node(unknown, "beast_swarm_pass")["enemy_kinds"] = ["ridge_hound", "missing_enemy"]
+	assert_true(_has_hint(ContentCatalog.validate(unknown), "unknown enemy"))
+
+	var duplicate := ContentCatalog.load_all()
+	_node(duplicate, "beast_swarm_pass")["enemy_kinds"] = ["ridge_hound", "ridge_hound"]
+	assert_true(_has_hint(ContentCatalog.validate(duplicate), "duplicate enemy"))
+
+
+func _node(catalog: Dictionary, node_id: String) -> Dictionary:
+	for entry in catalog["nodes"]:
+		if str(entry["id"]) == node_id:
+			return entry
+	push_error("missing node %s" % node_id)
+	return {}

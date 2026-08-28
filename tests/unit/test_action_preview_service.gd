@@ -104,6 +104,21 @@ func test_battle_preview_blocks_gu_when_essence_is_insufficient() -> void:
 	assert_string_contains(str(light["block_reason"]), "真元不足")
 
 
+func test_battle_preview_projects_single_enemy_target_contract() -> void:
+	var state := RunState.new_run(101)
+	var battle := BattleResolver.start({
+		"enemy_kinds": ["ridge_hound", "neutral_stone_wanderer"],
+	}, state, catalog)
+	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
+	var light := _battle_card_by_definition(cards, battle, "light_probe")
+
+	assert_eq(light["target_type"], "single_enemy")
+	assert_eq(light["valid_target_ids"], [
+		str(battle["enemies"][0]["enemy_id"]),
+		str(battle["enemies"][1]["enemy_id"]),
+	])
+
+
 func test_preview_uses_display_text_as_the_single_name_source() -> void:
 	var state := _state_with_refined_gu("blood_moss_gu", "gu_002")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, state, catalog)
@@ -239,5 +254,4 @@ func _has_card(cards: Array, id: String) -> bool:
 		if str(card.get("id", "")) == id:
 			return true
 	return false
-
 

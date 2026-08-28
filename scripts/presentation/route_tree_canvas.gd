@@ -11,6 +11,7 @@ const NODE_SIZE := Vector2(184, 84)
 const HORIZONTAL_GAP := 72.0
 const VERTICAL_GAP := 30.0
 const PADDING := Vector2(34, 32)
+const FOCUSED_FORWARD_LAYERS := 2
 
 # Shared tooltip host injected by MapView. On hover we call show_for/hide_tooltip
 # on it instead of building a bespoke String tooltip (Rule #3).
@@ -36,6 +37,12 @@ func configure(route: Array[Dictionary], state: RunState, empty_pool_ids: Array[
 	_positions = _layout_positions(MapGenerator.tree_columns(route))
 	_build_buttons()
 	queue_redraw()
+
+
+func focused_visible_nodes() -> Array[Dictionary]:
+	# The RUI map master consumes this same read-only projection. Keep the
+	# legacy canvas aligned without changing map reachability or route state.
+	return MapGenerator.visible_nodes(_route, _state, FOCUSED_FORWARD_LAYERS)
 
 
 func _layout_positions(columns: Array[Array]) -> Dictionary:

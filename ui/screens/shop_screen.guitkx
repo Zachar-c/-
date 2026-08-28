@@ -136,16 +136,15 @@ export ShopScreen() -> RuitkVNode {
         <Label text={ "立场·" + npc_stance } style={ {"font_color": stance_color, "font_size": 15} } />
       </HBoxContainer>
 
-      <HBoxContainer style={ {"separation": 14} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
-          <GuPanel title="蛊虫 / 货物">
-            <GuScrollBox height={ 420 }>
-              <VBoxContainer style={ {"separation": 8} }>
-                { offer_cards }
-                { offer_empty }
-              </VBoxContainer>
-            </GuScrollBox>
-          </GuPanel>
+          <Label text="蛊虫 / 货物" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />
+          <GuScrollBox height={ 420 }>
+            <VBoxContainer style={ {"separation": 8} }>
+              { offer_cards }
+              { offer_empty }
+            </VBoxContainer>
+          </GuScrollBox>
           <Label text={ emergency_note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
           @if (pool_fallback_note != "") {
             return ( <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } /> )

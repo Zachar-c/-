@@ -46,6 +46,17 @@ static func _npc_talk_command(controller, id: String) -> Dictionary:
 	}
 
 
+static func _battle_card_command(controller, action_id: String, target_id: String) -> Dictionary:
+	var card_id := action_id.trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", "")))
+	return {
+		"type": "action_card",
+		"action_id": action_id,
+		"card_id": card_id,
+		"target_id": target_id,
+		"state_version": int(controller.current_battle.get("hand_version", -1)),
+	}
+
+
 static func for_screen(screen: String, controller) -> Dictionary:
 	match screen:
 		"Title":
@@ -83,7 +94,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			}
 		"Battle":
 			return {
-				"play_card": func(cid, tid): controller.submit_command({"type": "action_card", "card_id": str(cid), "target_id": str(tid)}),
+				"play_card": func(action_id, target_id): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id))),
 				"end_turn": func(): controller.submit_command({"type": "end_turn"}),
 				"ultimate": func(): controller.submit_command({"type": "ultimate"}),
 				"refine": func(id = ""): controller.submit_command({"type": "refine", "recipe_id": str(id)}),

@@ -182,6 +182,23 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not EFFECT_IDS.has(inheritance["effect_id"]):
 			errors.append("inheritance %s has invalid effect %s" % [inheritance["id"], inheritance["effect_id"]])
 	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	for node_value in catalog.get("nodes", []):
+		var node: Dictionary = node_value
+		if not node.has("enemy_kinds"):
+			continue
+		var enemy_kinds_value: Variant = node.get("enemy_kinds", [])
+		if not enemy_kinds_value is Array or (enemy_kinds_value as Array).is_empty():
+			errors.append("node %s enemy_kinds must be a non-empty array" % node.get("id", ""))
+			continue
+		var seen_enemy_ids := {}
+		for enemy_id_value in enemy_kinds_value:
+			var enemy_id := str(enemy_id_value)
+			if not enemy_by_id.has(enemy_id):
+				errors.append("node %s references unknown enemy %s" % [node.get("id", ""), enemy_id])
+			if seen_enemy_ids.has(enemy_id):
+				errors.append("node %s has duplicate enemy %s" % [node.get("id", ""), enemy_id])
+			seen_enemy_ids[enemy_id] = true
 	var relic_by_id: Dictionary = catalog.get("relic_by_id", {})
 	for relic in catalog.get("relics", []):
 		if not relic.has("rarity"):

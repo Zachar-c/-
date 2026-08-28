@@ -1,169 +1,259 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuPanel } from "~/ui/widgets/gu_panel"
-import { GuCard } from "~/ui/widgets/gu_card"
-import { GuTopBar } from "~/ui/widgets/gu_top_bar"
-import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuToast } from "~/ui/widgets/gu_toast"
 
-# MapScreen —— 聚焦分支地图母版。只读 snapshot；travel/view_node/save_run 都经 commands。
+# MapScreen projects the domain-owned topology into a focused route camera.
+# Positions are presentation-only: nodes, edges, reachability, and commands remain snapshot-owned.
 
 export MapScreen() -> RuitkVNode {
   var state = props.get("state", {})
   var commands = props.get("commands", {})
-
   var nodes = state.get("nodes", [])
-  var gu_satchel = state.get("gu_satchel", [])
   var resources = state.get("resources", {})
   var contracts = state.get("contracts", [])
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
   var toast_text = str(state.get("toast", ""))
+  const MAP_PAPER = Color("e7e4da")
+  const MAP_INK = Color("1b1c19")
+  const MAP_MUTED = Color("70726b")
+  const MAP_RULE = Color("b8b6ab")
+  const MAP_RED = Color("a33d34")
+  const MAP_BLUE = Color("416f82")
+  const MAP_YELLOW = Color("987425")
 
-  var has_save = commands.has("save_run")
+  var NODE_STYLE = {
+    "start": {"mark": "起", "kind": "起始", "color": MAP_MUTED},
+    "combat": {"mark": "鬥", "kind": "战斗", "color": MAP_INK},
+    "pursuit": {"mark": "鬥", "kind": "追击", "color": MAP_INK},
+    "event": {"mark": "？", "kind": "异闻", "color": MAP_INK},
+    "shop": {"mark": "市", "kind": "黑市", "color": MAP_INK},
+    "market": {"mark": "市", "kind": "商队", "color": MAP_INK},
+    "caravan": {"mark": "市", "kind": "商队", "color": MAP_INK},
+    "rest": {"mark": "息", "kind": "休整", "color": MAP_INK},
+    "seclusion": {"mark": "息", "kind": "静修", "color": MAP_INK},
+    "cultivation": {"mark": "息", "kind": "修行", "color": MAP_INK},
+    "refinement": {"mark": "市", "kind": "炼蛊", "color": MAP_INK},
+    "ascension": {"mark": "險", "kind": "突破", "color": MAP_INK},
+  }
+  const NODE_SIZE = Vector2(192, 126)
+  const FUTURE_NODE_SIZE = Vector2(168, 108)
+  const CURRENT_POSITION = Vector2(626, 712)
+  const CANDIDATE_Y = 482.0
+  const FUTURE_Y = 31.0
+  const CANDIDATE_X = [96.0, 626.0, 1156.0]
+  const FUTURE_X = [50.0, 403.0, 756.0, 1109.0]
+
+  var current_node = {}
+  var history_count = 0
+  var visible_layers = []
+  for node in nodes:
+    var visibility = str(node.get("visibility", "lookahead"))
+    if visibility == "past":
+      history_count += 1
+      continue
+    var layer = int(node.get("layer", 0))
+    if not visible_layers.has(layer):
+      visible_layers.append(layer)
+    if visibility == "current" or bool(node.get("current", false)):
+      current_node = node
+  visible_layers.sort()
+  if visible_layers.size() > 3:
+    visible_layers = visible_layers.slice(0, 3)
+
+  var nodes_by_layer = {}
+  for layer in visible_layers:
+    nodes_by_layer[layer] = []
+  for node in nodes:
+    var layer = int(node.get("layer", 0))
+    if nodes_by_layer.has(layer) and str(node.get("visibility", "lookahead")) != "past":
+      nodes_by_layer[layer].append(node)
+
+  var selected = {}
+  for layer in visible_layers:
+    for node in nodes_by_layer[layer]:
+      if bool(node.get("reachable", false)):
+        selected = node
+        break
+    if not selected.is_empty():
+      break
+  if selected.is_empty():
+    selected = current_node
+  var selected_id = str(selected.get("id", ""))
+
+  var node_positions = {}
+  var node_sizes = {}
+  for layer_index in visible_layers.size():
+    var layer = visible_layers[layer_index]
+    var layer_nodes = nodes_by_layer[layer]
+    for node_index in layer_nodes.size():
+      var node = layer_nodes[node_index]
+      var id = str(node.get("id", ""))
+      if layer_index == 0:
+        node_positions[id] = CURRENT_POSITION
+        node_sizes[id] = NODE_SIZE
+      elif layer_index == 1:
+        node_positions[id] = Vector2(CANDIDATE_X[mini(node_index, CANDIDATE_X.size() - 1)], CANDIDATE_Y)
+        node_sizes[id] = NODE_SIZE
+      else:
+        node_positions[id] = Vector2(FUTURE_X[mini(node_index, FUTURE_X.size() - 1)], FUTURE_Y)
+        node_sizes[id] = FUTURE_NODE_SIZE
+
+  var visible_ids = {}
+  for node in nodes:
+    var id = str(node.get("id", ""))
+    if node_positions.has(id):
+      visible_ids[id] = true
+
+  var path_segments = []
+  var path_geometry = []
+  for node in nodes:
+    var origin_id = str(node.get("id", ""))
+    if not visible_ids.has(origin_id):
+      continue
+    for next_id_value in node.get("next_ids", []):
+      var next_id = str(next_id_value)
+      if not visible_ids.has(next_id):
+        continue
+      var is_selected_branch = origin_id == selected_id or next_id == selected_id
+      var segment_name = "map_path_segment_%s_%s" % [origin_id, next_id]
+      path_segments.append(<Control name={ segment_name } mouse_filter={ Control.MOUSE_FILTER_IGNORE } />)
+      path_geometry.append({
+        "from": node_positions[origin_id] + Vector2(node_sizes[origin_id].x * 0.5, 0),
+        "to": node_positions[next_id] + Vector2(node_sizes[next_id].x * 0.5, node_sizes[next_id].y),
+        "hot": is_selected_branch,
+      })
+
+  var path_draw = func(canvas):
+    for segment in path_geometry:
+      var color = MAP_RED if bool(segment["hot"]) else MAP_RULE
+      var width = 2.0 if bool(segment["hot"]) else 1.0
+      canvas.draw_line(segment["from"], segment["to"], color, width, true)
+
+  var node_controls = []
+  for layer_index in visible_layers.size():
+    var layer = visible_layers[layer_index]
+    for node in nodes_by_layer[layer]:
+      var id = str(node.get("id", ""))
+      var label = str(node.get("label", node.get("type", "节点")))
+      var ntype = str(node.get("type", ""))
+      var visual = NODE_STYLE.get(ntype, {"mark": "?", "kind": "未知", "color": MAP_MUTED})
+      if ntype == "combat" and str(node.get("enemy_kind", "")).contains("elite"):
+        visual = {"mark": "險", "kind": "精英", "color": MAP_INK}
+      var reachable = bool(node.get("reachable", false))
+      var is_current = str(node.get("visibility", "")) == "current" or bool(node.get("current", false))
+      var is_selected = id == selected_id
+      var position = node_positions[id]
+      var node_size = node_sizes[id]
+      var status = "当前所在" if is_current else ("可前往" if reachable else "已知前路")
+      var detail = "可提交行路" if reachable else ("上一层未选道路已隐去" if is_current else "后继可查看")
+      var node_style = {
+        "custom_minimum_size": node_size,
+        "bg_color": Color("e7e4daf2") if not is_current else Color(0, 0, 0, 0),
+        "border_width_all": GuStyle.HAIRLINE,
+        "border_width_left": 4 if (is_current or is_selected) else GuStyle.HAIRLINE,
+        "border_color": MAP_RED if (is_current or is_selected) else Color("7c7d76"),
+        "content_margin_left": 12,
+        "content_margin_right": 10,
+        "content_margin_top": 9,
+        "content_margin_bottom": 7,
+        "modulate": Color(1, 1, 1, 1) if (is_current or reachable or is_selected) else Color(1, 1, 1, 0.58),
+        "focus": {"border_width_all": 2, "border_color": MAP_RED},
+      }
+      var node_action = func():
+        if reachable and commands.has("travel"):
+          commands["travel"].call(id)
+        elif commands.has("view_node"):
+          commands["view_node"].call(id)
+      node_controls.append((
+        <Button name={ "map_node_" + id } text="" position={ position } onPressed={ node_action } style={ node_style }>
+          <VBoxContainer style={ {"separation": 2} }>
+            <HBoxContainer style={ {"separation": 9} }>
+              <PanelContainer name={ "map_node_mark_" + id } custom_minimum_size={ Vector2(30, 30) } style={ {"bg_color": Color(0, 0, 0, 0), "border_width_all": 1, "border_color": visual["color"], "corner_radius_all": 15} }><CenterContainer><Label name={ "map_node_mark_label_" + id } text={ str(visual["mark"]) } horizontal_alignment={ HORIZONTAL_ALIGNMENT_CENTER } vertical_alignment={ VERTICAL_ALIGNMENT_CENTER } style={ {"font_color": visual["color"], "font_size": 12} } /></CenterContainer></PanelContainer>
+              <Label text={ label } vertical_alignment={ VERTICAL_ALIGNMENT_CENTER } style={ {"font_color": MAP_INK, "font_size": 20 if layer_index < 2 else 17} } />
+            </HBoxContainer>
+            <Label text={ str(visual["kind"]) + " · " + status } style={ {"font_color": MAP_MUTED, "font_size": 10} } />
+            <Label text={ detail } style={ {"font_color": MAP_RED if reachable else MAP_MUTED, "font_size": 9} } />
+          </VBoxContainer>
+        </Button>
+      ))
+
+  var inspection_name = str(selected.get("label", "尚未选择路线"))
+  var inspection_type = str(selected.get("type", ""))
+  var inspection_reachable = bool(selected.get("reachable", false))
+  var inspection_note = "此节点可进入，提交前由领域校验行路状态。" if inspection_reachable else "查看路线信息；不可达节点不会提交行路命令。"
+  var inspector_action = []
+  if inspection_reachable and commands.has("travel"):
+    inspector_action.append(<GuButton label="前往此路 ›" on_press={ func(): commands["travel"].call(selected_id) } size="large" />)
+  elif commands.has("view_node") and not selected.is_empty():
+    inspector_action.append(<GuButton label="查看此路" on_press={ func(): commands["view_node"].call(selected_id) } />)
 
   var toast_row = []
   if toast_text != "":
     toast_row.append(<GuToast text={ toast_text } tone="info" />)
+  var save_row = []
+  if commands.has("save_run"):
+    save_row.append(<GuButton label="存档" on_press={ func(): commands["save_run"].call() } />)
 
-  var save_bar = []
-  if has_save:
-    save_bar.append(<GuButton label="存档" on_press={ func(): commands["save_run"].call() } />)
-
-  # 节点类型 -> 图标 / 语义色（与 route_tree_canvas NODE_STYLE 对齐）
-  var NODE_STYLE = {
-    "start": {"label": "起", "text": "起始", "color": GuStyle.SILVER},
-    "combat": {"label": "战", "text": "战斗", "color": GuStyle.DANGER},
-    "pursuit": {"label": "追", "text": "追击", "color": GuStyle.DANGER},
-    "event": {"label": "事", "text": "事件", "color": GuStyle.JADE_BRIGHT},
-    "shop": {"label": "黑", "text": "黑市", "color": GuStyle.DANGER},
-    "market": {"label": "市", "text": "市集", "color": GuStyle.CONTRACT_BLUE},
-    "rest": {"label": "息", "text": "休整", "color": GuStyle.JADE},
-    "seclusion": {"label": "息", "text": "静修", "color": GuStyle.JADE},
-    "cultivation": {"label": "修", "text": "修行", "color": GuStyle.JADE},
-    "ascension": {"label": "仙", "text": "突破", "color": GuStyle.GOLD},
-    "refinement": {"label": "炼", "text": "炼蛊", "color": GuStyle.EMBER},
-    "inheritance": {"label": "承", "text": "传承", "color": Color("c9a0dc")},
-    "caravan": {"label": "队", "text": "商队", "color": GuStyle.CONTRACT_BLUE},
-    "wild_gu": {"label": "野", "text": "野蛊", "color": Color("c2b280")},
-  }
-
-  var by_layer = {}
-  var layer_keys = []
-  for n in nodes:
-    var layer = int(n.get("layer", 0))
-    if not by_layer.has(layer):
-      by_layer[layer] = []
-      layer_keys.append(layer)
-    by_layer[layer].append(n)
-  layer_keys.sort()
-
-  var history_count = 0
-  for n in nodes:
-    if str(n.get("visibility", "")) == "past":
-      history_count += 1
-
-  var history_summary = []
-  if history_count > 0:
-    history_summary.append(<Label text={ "已行之路 · %d 处已结算" % history_count } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } />)
-
-  var layer_panels = []
-  for layer in layer_keys:
-    var count = by_layer[layer].size()
-    var node_cards = []
-    for n in by_layer[layer]:
-      var id = str(n.get("id", ""))
-      var label = str(n.get("label", ""))
-      if label == "":
-        label = str(n.get("type", "节点"))
-      var ntype = str(n.get("type", ""))
-      var nstyle = NODE_STYLE.get(ntype, {"label": "?", "text": "未知", "color": GuStyle.BONE_DIM})
-      var visibility = str(n.get("visibility", "lookahead"))
-      if visibility == "past":
-        continue
-      var is_current = visibility == "current"
-      var is_reach = bool(n.get("reachable", false))
-      var icon_text = str(nstyle["label"])
-      var type_text = str(nstyle["text"])
-      var node_color = nstyle["color"]
-
-      var btns = []
-      if is_reach and not is_current:
-        btns.append(<GuButton label="前往" on_press={ func(): commands["travel"].call(id) } />)
-      if commands.has("view_node"):
-        var view_fn = func():
-          commands["view_node"].call(id)
-        btns.append(<GuButton label="详情" on_press={ view_fn } />)
-
-      var status_label = "当前决策" if is_current else ("可达" if is_reach else "前瞻")
-      var status_color = GuStyle.INK_PRIMARY if is_current else (GuStyle.CONTRACT_BLUE if is_reach else GuStyle.INK_MUTED)
-      var sealed_flag = visibility == "lookahead"
-
-      node_cards.append((
-        <GuCard title={ label } highlight={ is_current or is_reach } sealed={ sealed_flag }>
-          <Label text={ icon_text + " " + type_text } style={ {"font_color": node_color, "font_size": 14} } />
-          <Label text={ status_label } style={ {"font_color": status_color, "font_size": 12} } />
-          <HBoxContainer style={ {"separation": 6} }>
-            { btns }
-          </HBoxContainer>
-        </GuCard>
-      ))
-    if not node_cards.is_empty():
-      layer_panels.append((
-        <VBoxContainer style={ {"separation": 8} }>
-          <Label text={ "第 %d 层 · %d 处" % [layer, count] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 12} } />
-          <HBoxContainer style={ {"separation": 10} }>
-            { node_cards }
-          </HBoxContainer>
-        </VBoxContainer>
-      ))
-
-  var legend_items = []
-  for k in NODE_STYLE.keys():
-    var s = NODE_STYLE[k]
-    legend_items.append(<Label text={ "%s %s" % [s["label"], s["text"]] } style={ {"font_color": s["color"], "font_size": 12} } />)
-
-  var satchel_rows = []
-  for g in gu_satchel:
-    satchel_rows.append(<Label text={ "· " + str(g.get("name", "")) } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />)
-  if satchel_rows.is_empty():
-    satchel_rows.append(<Label text="（蛊囊空空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 13} } />)
-
-  var map_empty = []
-  if nodes.is_empty():
-    map_empty.append(<Label text="（地图为空）" style={ {"font_color": GuStyle.BONE_DIM, "font_size": 14} } />)
+  var resource_rows = []
+  var resource_specs = [
+    {"id": "yuanstone", "name": "元石", "suffix": ""},
+    {"id": "shouyuan", "name": "寿元", "suffix": " 年"},
+    {"id": "hunpo", "name": "魂魄", "suffix": ""},
+    {"id": "material", "name": "材料", "suffix": ""},
+  ]
+  for spec in resource_specs:
+    var resource_id = str(spec["id"])
+    if resources.has(resource_id):
+      resource_rows.append(
+        <HBoxContainer style={ {"separation": 4} } key={ resource_id }>
+          <Label name={ "map_resource_value_" + resource_id } text={ str(resources[resource_id]) + str(spec["suffix"]) } style={ {"font_color": Color("252624"), "font_size": 13} } />
+          <Label name={ "map_resource_name_" + resource_id } text={ str(spec["name"]) } style={ {"font_color": Color("666861"), "font_size": 10} } />
+        </HBoxContainer>
+      )
 
   return (
-    <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
+    <Control style={ {"anchors_preset": "PRESET_FULL_RECT"} }>
+      <ColorRect name="map_paper" color={ MAP_PAPER } mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
       { toast_row }
-      <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
-      <HBoxContainer style={ {"separation": 12} }>
-        <VBoxContainer style={ {"separation": 10, "size_flags_horizontal": 3} }>
-          <Label text="行程" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 20} } />
-          <GuScrollBox height={ 420 }>
-            <VBoxContainer style={ {"separation": 10} }>
-              { history_summary }
-              { layer_panels }
-              { map_empty }
-            </VBoxContainer>
-          </GuScrollBox>
-        </VBoxContainer>
-        <VBoxContainer style={ {"separation": 10, "min_width": 200} }>
-          <GuPanel title="图例">
-            <VBoxContainer style={ {"separation": 4} }>
-              { legend_items }
-            </VBoxContainer>
-          </GuPanel>
-          <GuPanel title="蛊囊">
-            <VBoxContainer style={ {"separation": 4} }>
-              { satchel_rows }
-            </VBoxContainer>
-          </GuPanel>
-        </VBoxContainer>
+      <HBoxContainer name="map_mast" anchor_left={ 0.0 } anchor_right={ 1.0 } offset_left={ 30.0 } offset_right={ -30.0 } offset_top={ 20.0 } offset_bottom={ 68.0 } style={ {"border_width_bottom": 1, "border_color": MAP_RULE} }>
+        <Label text="問眞　/　命蠱第六十三卷　/　南疆" style={ {"font_color": MAP_MUTED, "font_size": 10, "size_flags_horizontal": "SIZE_EXPAND_FILL"} } />
+        <HBoxContainer name="map_resources" style={ {"separation": 19} }>{ resource_rows }</HBoxContainer>
       </HBoxContainer>
-      <HBoxContainer style={ {"separation": 12} }>
-        { save_bar }
+      <HBoxContainer name="map_markers" position={ Vector2(31, 80) } style={ {"separation": 13} }>
+        <Label text={ "契约 · " + (str(contracts[0]) if not contracts.is_empty() else "无") } style={ {"font_color": MAP_BLUE, "font_size": 9, "border_width_left": 2, "border_color": MAP_BLUE, "content_margin_left": 7} } />
+        <Label text={ "异变 · " + (str(anomalies[0]) if not anomalies.is_empty() else "无") } style={ {"font_color": MAP_YELLOW, "font_size": 9, "border_width_left": 2, "border_color": MAP_YELLOW, "content_margin_left": 7} } />
       </HBoxContainer>
-    </VBoxContainer>
+      <HBoxContainer name="map_title" anchor_left={ 0.055 } anchor_right={ 0.945 } offset_top={ 110.0 } offset_bottom={ 142.0 }>
+        <Label text="青茅山外圍" style={ {"font": GuStyle.TITLE_FONT, "font_color": MAP_INK, "font_size": 28} } />
+        <Label text="深度 62 · 四轉初階" style={ {"font_color": MAP_MUTED, "font_size": 10, "content_margin_left": 12} } />
+      </HBoxContainer>
+      <Control name="map_camera" clip_contents={ true } anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_bottom={ 1.0 } offset_top={ 158.0 } offset_bottom={ -92.0 }>
+        <Panel name="map_camera_backdrop" mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "border_width_top": 1, "border_width_bottom": 1, "border_color": Color("cbc9bd"), "bg_color": MAP_PAPER} } />
+        <Control name="map_depth" mouse_filter={ Control.MOUSE_FILTER_IGNORE } anchor_top={ 0.0 } anchor_bottom={ 1.0 } offset_top={ 0.0 } offset_bottom={ 0.0 } offset_right={ 58.0 } style={ {"border_width_right": 1, "border_color": Color("c8c5ba"), "z_index": 3} }>
+          <Label name="map_depth_65" text="65" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 18.0 } offset_bottom={ 36.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": Color("8b8d85"), "font_size": 9} } />
+          <Label name="map_depth_64" text="64" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 248.0 } offset_bottom={ 266.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": Color("8b8d85"), "font_size": 9} } />
+          <Label name="map_depth_63" text="63" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 478.0 } offset_bottom={ 496.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": Color("8b8d85"), "font_size": 9} } />
+          <Label name="map_depth_62" text="62" anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ 708.0 } offset_bottom={ 726.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": Color("8b8d85"), "font_size": 9} } />
+        </Control>
+        <Control name="map_world" anchor_right={ 1.0 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -970.0 }>
+          <Control name="map_routes" anchor_left={ 0.0 } anchor_right={ 1.0 } anchor_bottom={ 1.0 } offset_left={ 70.0 }>
+            <Label name="map_layer_label_far" text="再前一程" position={ Vector2(0, 4) } style={ {"font_color": Color("92948d"), "font_size": 10} } />
+            <Label name="map_layer_label_near" text="下一程" position={ Vector2(0, 234) } style={ {"font_color": Color("92948d"), "font_size": 10} } />
+            <Label name="map_layer_label_now" text="此刻" position={ Vector2(0, 464) } style={ {"font_color": Color("92948d"), "font_size": 10} } />
+            <Control name="map_paths" mouse_filter={ Control.MOUSE_FILTER_IGNORE } draw_fn={ path_draw } redraw_key={ path_geometry } style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 1} }>{ path_segments }</Control>
+            <Control mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 2} }>{ node_controls }</Control>
+          </Control>
+        </Control>
+      </Control>
+      <HBoxContainer name="map_inspector" anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -72.0 } offset_bottom={ -24.0 } style={ {"separation": 18} }>
+          <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": "SIZE_EXPAND_FILL"} }>
+            <Label name="map_inspection_name" text={ inspection_name } style={ {"font_color": MAP_INK, "font_size": 18} } />
+            <Label name="map_inspection_note" text={ inspection_type + " · " + inspection_note } style={ {"font_color": Color("64665f"), "font_size": 11} } />
+          </VBoxContainer>
+          { inspector_action }
+          { save_row }
+      </HBoxContainer>
+    </Control>
   )
 }

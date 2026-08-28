@@ -75,6 +75,23 @@
 
 **待发布前缺口（发布阻断项）**：新手引导、音频、设置 UI 接线；平衡性内容扩容为发布后迭代项。
 
+### 2026-08-27/28 UI 流程打通批（批 A–E，master @`f8c2d60`）
+
+五批覆盖 StS 流程设计文档的开局→交互→战斗→结算→出口全链路：
+
+| 批次 | 范围 | 核心改动 |
+|------|------|----------|
+| A 开局 | 流派/契约屏真实渲染 | `run_controller` init 加载 catalog；学校屏显示 5 流派中文名；契约屏结构化条目+勾选门禁+无解锁时无按钮 |
+| B 反馈基建 | 命令结果 toast | 所有 4 屏（NPC/商店/战斗/遭遇）接入 GuToast；`_REJECTION_TEXT` 35+ 条中文拒绝原因映射 |
+| C 商队 | NPC 交易/交涉/出售 | `resolve_contact` → `action_card` 修复散修节点全拒；散修无货架提示；裸 ID 商店名/交涉名清理 |
+| D 战斗 | 杀招进度+真实战利品弹窗 | 杀招条件进度卡（月光蛊→小光蛊序列）；胜利路由 `Reward` 弹窗（真 material/gu_id/elite_cost）；`ultimate` 死按钮移除 |
+| E 出口 | 投降+统一结算 | 地图「放弃本局」+二次确认框（§16.10）→ `主动收势 · 弃局而退` 统一结算流 |
+
+- 测试基线：**657 unit + 10 integration**（同打包批，ActionCardRow 冲突 56 失败非本批引入）。
+- 已知遗留：
+  - **ActionCardRow 全局类名冲突**：遗留 `scripts/presentation/action_card_row.gd`（VBoxContainer）与 `ui/widgets/action_card_row.guitkx`（RefCounted）撞名，导致全量单测 56 失败；归属 UI 会话未提交文件，待 codex 处理（二选一：删旧 view 或给 widget 改名）。
+  - **战斗平衡**：开局 6 血 vs 山脊猎犬「伏肩扑咬 3 伤/回合」+counter 无预告；`first_turn_energy=0` 导致首回合无法出牌。属数值/信息透明问题，列入待办。
+
 ### 2026-08-27 打包与 RUITK 修复批（master @`c2111c4`）
 
 - **打包链路** @`38f810e`：`export_presets.cfg`（Windows Desktop、embed_pck、输出 `build/win/`、exclude_filter 挡语料/vendor/gut/docs/tests——产物 grep 零命中）、`tools/export.ps1`（无头 `--export-release`）、`.gitignore` 排除 `build/`、项目名 `Nanjiang Smoke`→《蛊真人`》。

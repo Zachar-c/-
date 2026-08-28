@@ -1,6 +1,5 @@
 @theme "res://assets/theme/gu_theme.tres"
 import { GuButton } from "~/ui/widgets/gu_button"
-import { GuCard } from "~/ui/widgets/gu_card"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuTopBar } from "~/ui/widgets/gu_top_bar"
 import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
@@ -98,10 +97,10 @@ export NpcScreen() -> RuitkVNode {
     var tblock = str(t.get("block_reason", ""))
     var talk_btn_label = "交涉" if tblock == "" else ("不可用 · " + tblock)
     talk_rows.append((
-      <GuCard title={ tlabel } danger={ tdanger } expand_h={ true }>
+      <GuPanel title={ tlabel } expand_h={ true }>
         <Label text={ tdetail } style={ {"font_color": GuStyle.BONE, "font_size": 13} } />
         <GuButton label={ talk_btn_label } disabled={ not texec } danger={ tdanger } on_press={ func(): fire.call("talk", tid) } />
-      </GuCard>
+      </GuPanel>
     ))
   var talk_empty = []
   if talk_rows.is_empty():
@@ -147,7 +146,7 @@ export NpcScreen() -> RuitkVNode {
         <Label text={ notoriety_note } style={ {"font_color": GuStyle.ANOMALY_AMBER, "font_size": 13} } />
       </HBoxContainer>
 
-      <HBoxContainer style={ {"separation": 14} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
         <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
           { trade_section }
         </VBoxContainer>
