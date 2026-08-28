@@ -177,6 +177,12 @@ const CURSES := {
 	"meridian_seal": "经脉封蛊",
 }
 
+# DDA 元机制提示文案（§16.5 黄系异变，与契约蓝系分区）。battle 字典里的
+# dda_boss_hint 只携带稳定 id，玩家可见文案统一走本表。
+const DDA_HINTS := {
+	"boss_senses_gu_power": "蛊躁动·Boss 感应到了你的蛊虫气息",
+}
+
 const OUTCOMES := {
 	"success": "功成升仙",
 	"risky_success": "险中功成",
@@ -305,6 +311,12 @@ static func material(id: String) -> String:
 
 static func curse(id: String) -> String:
 	return _lookup("curses", id, CURSES.get(id, "未知反噬"))
+
+
+# Unknown hint ids return "" so callers can skip rendering instead of
+# showing a placeholder row for data they do not understand.
+static func dda_hint(hint_id: String) -> String:
+	return str(DDA_HINTS.get(hint_id, ""))
 
 
 # R5.2 elite cost transparency (UI 信息透明约束): the numbers are printed

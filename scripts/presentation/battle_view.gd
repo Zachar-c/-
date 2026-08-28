@@ -23,8 +23,6 @@ const COLOR_JADE := GuStyle.JADE
 const COLOR_DANGER := GuStyle.CINNABAR
 const COLOR_CONTRACT := GuStyle.CONTRACT_BLUE
 const COLOR_CURSE := GuStyle.CINNABAR
-const COLOR_DDA_YELLOW := GuStyle.ANOMALY_YELLOW
-const COLOR_DDA_RED := GuStyle.CINNABAR
 const COLOR_SHIELD := GuStyle.JADE
 
 
@@ -67,7 +65,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_car
 	column.add_theme_constant_override("separation", 12)
 	root.add_child(column)
 
-	_append_top_status(column, state)
+	_append_top_status(column, battle, state)
 	_append_hud(column, battle, state)
 	_append_field(column, battle, state)
 	_append_action_cards(column, battle, action_cards, catalog)
@@ -78,7 +76,7 @@ func render(battle: Dictionary, state: RunState, catalog: Dictionary, action_car
 # §16.5.3  Persistent top strip via shared TopStatusBar:
 # 契约 (blue) + debuff/异变 (yellow/red) chips. Read-only from state.
 # --------------------------------------------------------------------------- #
-func _append_top_status(column: VBoxContainer, state: RunState) -> void:
+func _append_top_status(column: VBoxContainer, battle: Dictionary, state: RunState) -> void:
 	var contracts: Array[String] = []
 	for imprint in state.body_imprints:
 		contracts.append(DisplayText.fact(str(imprint)))
@@ -91,8 +89,14 @@ func _append_top_status(column: VBoxContainer, state: RunState) -> void:
 	var notorious := int(cultivator.get("notorious", 0))
 	if notorious > 0:
 		debuffs.append("恶名 %d" % notorious)
+	# DDA 异变徽章（黄系，与契约蓝系分区）：battle 字典只携带稳定 id，
+	# 玩家可见文案统一走 DisplayText.dda_hint；未知 id 不渲染占位行。
+	var dda_markers: Array[String] = []
+	var hint := DisplayText.dda_hint(str(battle.get("dda_boss_hint", "")))
+	if not hint.is_empty():
+		dda_markers.append(hint)
 
-	if contracts.is_empty() and debuffs.is_empty():
+	if contracts.is_empty() and debuffs.is_empty() and dda_markers.is_empty():
 		var calm := Label.new()
 		calm.text = "状态平稳"
 		calm.add_theme_font_size_override("font_size", 16)
@@ -103,9 +107,7 @@ func _append_top_status(column: VBoxContainer, state: RunState) -> void:
 	var bar: TopStatusBar = TopStatusBarScene.instantiate()
 	bar.set_contracts(contracts)
 	bar.set_debuffs(debuffs)
-	# DDA / 异变 markers are not yet carried on RunState; pass empty until the
-	# domain exposes them (read-only, no invented data).
-	bar.set_dda([])
+	bar.set_dda(dda_markers)
 	column.add_child(bar)
 
 

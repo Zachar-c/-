@@ -77,8 +77,9 @@ export BattleScreen() -> RuitkVNode {
   for kill_move in state.get("kill_moves", []):
     kill_rows.append(<Label text={ "杀招 · %s · %s" % [str(kill_move.get("name", "")), str(kill_move.get("sequence_display", ""))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 13} } />)
   var hint_rows = []
-  if str(state.get("dda_boss_hint", "")) == "boss_senses_gu_power":
-    hint_rows.append(<Label text="蛊躁动·Boss 感应到了你的蛊虫气息" style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
+  var boss_hint = DisplayText.dda_hint(str(state.get("dda_boss_hint", "")))
+  if boss_hint != "":
+    hint_rows.append(<Label text={ boss_hint } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
   var feedback_rows = []
   if str(state.get("feedback", "")) != "":
     feedback_rows.append(<GuToast text={ str(state.get("feedback", "")) } tone="warn" />)

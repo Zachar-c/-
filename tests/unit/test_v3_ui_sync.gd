@@ -61,6 +61,44 @@ func test_battle_view_renders_hand_and_turn_buttons() -> void:
 	assert_gt(_count_buttons(view), 1)
 
 
+func test_battle_views_surface_dda_boss_hint() -> void:
+	# boss_senses_gu_power 文案接线：battle 字典只携带稳定 id，玩家可见文案
+	# 统一走 DisplayText.dda_hint；无提示 id 时两条渲染路径都不出占位行。
+	var hint_text := DisplayText.dda_hint("boss_senses_gu_power")
+	assert_eq(hint_text, "蛊躁动·Boss 感应到了你的蛊虫气息")
+	assert_eq(DisplayText.dda_hint("unknown_hint_id"), "")
+
+	var catalog := ContentCatalog.load_all()
+	var state := RunState.new_run(101)
+	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	battle["dda_boss_hint"] = "boss_senses_gu_power"
+
+	var view: Control = autofree(BattleViewScript.new())
+	add_child(view)
+	var empty_cards: Array[Dictionary] = []
+	view.render(battle, state, catalog, empty_cards)
+	var legacy_texts: Array[String] = []
+	_collect_label_texts(view, legacy_texts)
+	assert_true(_any_contains(legacy_texts, hint_text),
+			"legacy battle view must surface the DDA boss hint marker")
+
+	var controller: RunController = _battle_controller()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	snapshot["dda_boss_hint"] = "boss_senses_gu_power"
+	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
+	assert_true(_any_contains(texts, hint_text),
+			"RUI battle screen must surface the DDA boss hint marker")
+
+	battle.erase("dda_boss_hint")
+	var calm_view: Control = autofree(BattleViewScript.new())
+	add_child(calm_view)
+	calm_view.render(battle, state, catalog, empty_cards)
+	var calm_texts: Array[String] = []
+	_collect_label_texts(calm_view, calm_texts)
+	assert_false(_any_contains(calm_texts, "蛊躁动"),
+			"no DDA hint row may render without a hint id")
+
+
 func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
