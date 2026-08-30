@@ -3,6 +3,7 @@ extends "res://addons/gut/test.gd"
 
 # Task C1: gu catalog expanded to 200 total (40 per school), data-driven
 # combat effects for every generated entry, deterministic generator rerun.
+# 2026-08-30: designer-added moon_ray_gu (月芒蛊, force/rare) makes it 201.
 
 
 const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
@@ -11,22 +12,25 @@ const RunStateScript := preload("res://scripts/domain/run_state.gd")
 
 const SCHOOLS := ["blood", "qi", "force", "soul", "refine"]
 const RARITY_TARGETS := {"common": 24, "rare": 12, "epic": 4}
+# Per-school overrides on top of RARITY_TARGETS (2026-08-30 moon_ray_gu).
+const RARITY_OVERRIDES := {"force|rare": 13}
+const SCHOOL_COUNTS := {"blood": 40, "qi": 40, "force": 41, "soul": 40, "refine": 40}
 
 
 func catalog() -> Dictionary:
 	return ContentCatalogScript.load_all()
 
 
-func test_total_gu_is_200() -> void:
-	assert_eq(catalog()["gu"].size(), 200)
+func test_total_gu_is_201() -> void:
+	assert_eq(catalog()["gu"].size(), 201)
 
 
-func test_each_school_has_40_gu() -> void:
+func test_each_school_count_matches_lock() -> void:
 	var counts := {}
 	for gu in catalog()["gu"]:
 		counts[gu["school"]] = int(counts.get(gu["school"], 0)) + 1
 	for school in SCHOOLS:
-		assert_eq(int(counts.get(school, 0)), 40, "school %s" % school)
+		assert_eq(int(counts.get(school, 0)), SCHOOL_COUNTS[school], "school %s" % school)
 
 
 func test_per_school_rarity_targets_met() -> void:
@@ -36,8 +40,9 @@ func test_per_school_rarity_targets_met() -> void:
 		counts[key] = int(counts.get(key, 0)) + 1
 	for school in SCHOOLS:
 		for rarity in RARITY_TARGETS:
-			assert_eq(int(counts.get("%s|%s" % [school, rarity], 0)),
-					RARITY_TARGETS[rarity], "%s %s" % [school, rarity])
+			var key := "%s|%s" % [school, rarity]
+			var target := int(RARITY_OVERRIDES.get(key, RARITY_TARGETS[rarity]))
+			assert_eq(int(counts.get(key, 0)), target, "%s %s" % [school, rarity])
 
 
 func test_no_duplicate_ids_in_real_catalog() -> void:

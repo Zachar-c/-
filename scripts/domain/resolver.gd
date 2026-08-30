@@ -337,16 +337,23 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	var material_cost: Dictionary = recipe.get("materials", {})
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
+	var selected := _selected_input_instance_ids(state, command, inputs)
+	# 纯材料配方（input_gu_ids 为空）允许无蛊投入——蛊虫=材料+蛊虫两条炼制路。
+	if selected.is_empty() and not inputs.is_empty():
+		return _rejected(state, "missing_refinement_input")
+	# 输入转数门禁（如二转月芒蛊+二转血气蛊）：不足直接拒绝，不烧材料。
+	var min_rank := int(recipe.get("input_min_rank", 1))
+	if min_rank > 1:
+		for instance_id_value in selected:
+			var instance_rank := int(state.gu_instances[str(instance_id_value)].get("rank", 1))
+			if instance_rank < min_rank:
+				return _rejected(state, "refinement_input_rank_insufficient")
 	if not _has_all_materials(state, material_cost):
 		return _rejected(state, "missing_refinement_material")
 	var paid := _spend_materials(state, material_cost)
 	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
 	if not blocked.is_empty():
 		return blocked
-	var selected := _selected_input_instance_ids(paid, command, inputs)
-	# 纯材料配方（input_gu_ids 为空）允许无蛊投入——蛊虫=材料+蛊虫两条炼制路。
-	if selected.is_empty() and not inputs.is_empty():
-		return _rejected(paid, "missing_refinement_input")
 	var instances := paid.gu_instances.duplicate(true)
 	var aperture := paid.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
@@ -362,6 +369,9 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		"definition_id": str(recipe["output_gu_id"]),
 		"state": "refined",
 	}
+	# 蛊方转数=产出蛊转数（2026-08-28 裁定）：fixed 配方可用 output_rank 声明产出阶。
+	if recipe.has("output_rank"):
+		output_instance["rank"] = int(recipe["output_rank"])
 	if is_advance:
 		# 同名升阶：本体进阶不换名，阶数 +1（封顶五转）；是否可达由
 		# 转数/阶顶决定，否则拒绝而不烧材料。

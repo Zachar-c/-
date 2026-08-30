@@ -22,6 +22,39 @@
       "output_gu_id": "moon_glow_gu"
     },
     {
+      "id": "moon_ray_forged",
+      "kind": "fixed",
+      "input_gu_ids": [
+        "moonlight_gu",
+        "small_light_gu"
+      ],
+      "output_gu_id": "moon_ray_gu",
+      "output_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_attack_009_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_009_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_009_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "blood_moon_forged",
+      "kind": "fixed",
+      "input_gu_ids": [
+        "moon_ray_gu",
+        "gen_blood_attack_009_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_002_gu",
+      "output_rank": 3,
+      "input_min_rank": 2
+    },
+    {
       "id": "phantom_moon_locked",
       "kind": "fixed",
       "locked": true,

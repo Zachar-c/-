@@ -547,6 +547,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var adv_inputs: Array = recipe.get("input_gu_ids", [])
 			if adv_inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(adv_inputs[0]):
 				errors.append("advance recipe %s must map one same-name gu onto itself" % recipe.get("id", ""))
+		for rank_field in ["output_rank", "input_min_rank"]:
+			var rank_value = recipe.get(rank_field, null)
+			if rank_value != null and (not _is_integral(rank_value) or int(rank_value) < 1 or int(rank_value) > 5):
+				errors.append("recipe %s %s must be an integer in 1..5" % [recipe.get("id", ""), rank_field])
 		for rule_value in recipe.get("risk_hints", []):
 			var rule: Dictionary = rule_value
 			for required_tag in rule.get("tags", []):

@@ -348,6 +348,35 @@
     "rarity": "rare"
   },
   {
+    "id": "moon_ray_gu",
+    "rank": 2,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 10,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "illuminate",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "light_combo"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "light",
+      "attack",
+      "moon"
+    ],
+    "school": "force",
+    "role": "attack",
+    "rarity": "rare"
+  },
+  {
     "id": "phantom_moon_gu",
     "rank": 2,
     "feeding_cost": 2,
