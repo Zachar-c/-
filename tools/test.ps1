@@ -8,6 +8,12 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $godot = Join-Path $PSScriptRoot 'godot.ps1'
+$guitkxBuild = Join-Path $PSScriptRoot 'guitkx_build.ps1'
+
+& $guitkxBuild
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 
 if ($Test) {
     & $godot --headless --path $projectRoot -s addons/gut/gut_cmdln.gd "-gtest=res://$Test" -gexit -glog=2
