@@ -8,6 +8,7 @@ const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd"
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
@@ -17,6 +18,7 @@ const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapsho
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
 const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
+const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
 
 const SCREEN_PATHS := {
 	"Title": "res://ui/screens/hall_view.gd",
@@ -29,10 +31,17 @@ const SCREEN_PATHS := {
 	"Refine": "res://ui/screens/refine_screen.gd",
 	"Reward": "res://ui/screens/reward_screen.gd",
 	"Npc": "res://ui/screens/npc_screen.gd",
+	"ContentError": "res://ui/screens/content_error_screen.gd",
+}
+const MASTER_SCENE_PATHS := {
+	"Title": "res://scenes/ui_masters/wenzhen_hall_master.tscn",
+	"Map": "res://scenes/ui_masters/wenzhen_map_master.tscn",
+	"Battle": "res://scenes/ui_masters/wenzhen_battle_master.tscn",
 }
 
 
 var catalog: Dictionary
+var _content_errors: Array[String] = []
 var state: RunState
 var meta  # MetaProgress instance loaded from save, untyped for property access
 ## 客户端偏好（音量/显示，§16.22）：独立 ConfigFile，绝不进 RunData 或大厅档。
@@ -45,6 +54,7 @@ var current_session: Dictionary = {}
 var last_battle_loot: Dictionary = {}
 var last_battle_cost: Dictionary = {}
 var last_result: Dictionary = {}
+var last_load_diagnosis: Dictionary = {}
 var dialogue_replies: Array[Dictionary] = []
 var last_feedback := ""
 var _dialogue_gateway: DialogueGateway
@@ -56,6 +66,8 @@ var _selected_contracts: Array[String] = []
 
 var _rui_host: Control
 var _rui_root
+var _mounted_screen := ""
+var _master_instance: Control
 var _ending_state: Dictionary = {}
 
 # T6-E 跨屏过渡（§3.4 动效预算）：一次性淡入时长；无常驻循环动画。
@@ -73,12 +85,12 @@ var _faded_view := ""
 const DEBUG_PANEL_PATH := "res://ui/screens/debug_panel.gd"
 ## 元石调试硬上限（经济供给上限未在数据表落地前的展示层安全界）。
 const DEBUG_STONE_CAP := 99999
-const DEBUG_RESOURCE_LABELS := {
-	"yuanstone": "元石",
+var DEBUG_RESOURCE_LABELS := {
+	"yuanstone": ResourceVocabularyScript.label("yuanstone"),
 	"health": "生命",
-	"lifespan": "寿元",
-	"soul": "魂魄",
-	"essence": "真元",
+	"lifespan": ResourceVocabularyScript.label("lifespan"),
+	"soul": ResourceVocabularyScript.label("soul"),
+	"essence": ResourceVocabularyScript.label("essence"),
 }
 
 ## 测试注入开关：默认跟随构建类型（GUT/编辑器为 true，Release 导出为 false）。
@@ -91,6 +103,9 @@ var _debug_res_kind := "yuanstone"
 var _debug_res_value := ""
 var _debug_travel_node := ""
 var _debug_feedback := ""
+var _map_leave_confirm := false
+var _feedback_timer: Timer = null
+const FEEDBACK_TOAST_SECONDS := 2.5
 
 
 func _ready() -> void:
@@ -107,6 +122,7 @@ func _initialize_view_flow() -> void:
 	# 大厅子视图（流派/契约/图鉴）只读快照依赖 catalog；启动即加载内容表，
 	# 否则选流派前列表恒为空（2026-08-27 实机走查断点）。
 	catalog = ContentCatalog.load_all()
+	_content_errors = ContentCatalog.validate(catalog)
 	app_settings = AppSettingsScript.load_settings()
 	# 仅在玩家显式保存过偏好时才施加引擎副作用，首跑保持项目默认窗口。
 	if AppSettingsScript.has_saved_file():
@@ -116,14 +132,26 @@ func _initialize_view_flow() -> void:
 	_rui_host.name = "RUIHost"
 	_rui_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_rui_host)
-	_rui_root = RuiRoot.create(_rui_host, VLib.fc(VLib.comp(SCREEN_PATHS["Title"], "render"), {}))
+	_feedback_timer = Timer.new()
+	_feedback_timer.name = "FeedbackToastTimer"
+	_feedback_timer.one_shot = true
+	_feedback_timer.timeout.connect(_on_feedback_timer_timeout)
+	add_child(_feedback_timer)
+	if not _content_errors.is_empty():
+		_show_content_error()
+		return
 	_show_title()
 	if _debug_enabled():
 		_mount_debug_panel()
 
 
 func start_new_run(seed_value: int, school: String = "", contract_ids: Array = []) -> void:
-	catalog = ContentCatalog.load_all()
+	var loaded := ContentCatalog.load_and_validate_all()
+	catalog = loaded.get("catalog", {})
+	_content_errors = loaded.get("errors", [])
+	if not _content_errors.is_empty():
+		_show_content_error()
+		return
 	meta = SaveRepository.load_meta_file()
 	if meta == null:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
@@ -132,7 +160,7 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	_inject_school_starters(school)
 	_swear_opening_contracts(contract_ids)
 	_selected_contracts.clear()
-	route = MapGenerator.build(seed_value, seed_value == 101)
+	route = MapGenerator.build(seed_value, seed_value == 101, catalog)
 	current_node = {}
 	current_battle = {}
 	current_session = {}
@@ -143,6 +171,9 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 
 
 func submit_command(command: Dictionary) -> Dictionary:
+	if not _content_errors.is_empty() and command.get("type", "") != "quit":
+		_show_content_error()
+		return {"ok": false, "reason": "content_invalid", "feedback": "内容配置无法加载。"}
 	# D4 Toast：反馈只在产生它的那次命令后可见；下一条命令即清空（无计时器，确定性显隐）。
 	last_feedback = ""
 	if command.get("type", "") == "save_run":
@@ -152,46 +183,20 @@ func submit_command(command: Dictionary) -> Dictionary:
 		return {"ok": save_error == OK, "feedback": last_feedback}
 	if command.get("type", "") == "load_run":
 		var loaded := load_saved_run()
-		last_feedback = "已返回上次保存的行程。" if loaded else "暂无可继续的冒险：先在地图「存档」一次。"
+		last_feedback = "已返回上次保存的行程。" if loaded else _save_load_feedback(last_load_diagnosis)
 		_show_map()
 		return {"ok": loaded, "feedback": last_feedback}
+
+
+
 	if command.get("type", "") == "travel":
 		return _travel_to(str(command.get("node_id", "")))
 	if command.get("type", "") == "leave_encounter":
 		command = {"type": "leave_node"}
 	if command.get("type", "") == "action_card" and not current_battle.is_empty():
-		var turn := BattleResolver.apply_action_card(current_battle, state, command, catalog)
-		state = turn["state"]
-		current_battle = turn["battle"]
-		last_result = {"battle_result": turn["result"], "feeds": turn["feeds"]}
-		if turn["finished"]:
-			if str(turn["result"]) == "death":
-				_show_death(DeathReportBuilderScript.build(current_battle, state))
-			else:
-				_finish_battle_in_session(str(turn["result"]))
-		else:
-			_show_battle()
-		return turn
+		return _submit_battle_command(command)
 	if command.get("type", "") in ["use_gu", "use_inheritance", "end_turn", "retreat", "basic_attack", "basic_dodge", "refine"] and not current_battle.is_empty():
-		var turn := BattleResolver.take_turn(
-			current_battle,
-			command,
-			state,
-			catalog,
-			int(command.get("state_version", -1)),
-			str(command.get("expected_phase", ""))
-		)
-		state = turn["state"]
-		current_battle = turn["battle"]
-		last_result = {"battle_result": turn["result"]}
-		if turn["finished"]:
-			if str(turn["result"]) == "death":
-				_show_death(DeathReportBuilderScript.build(current_battle, state))
-			else:
-				_finish_battle_in_session(str(turn["result"]))
-		else:
-			_show_battle()
-		return turn
+		return _submit_battle_command(command)
 	if not current_node.is_empty():
 		var session_result := EncounterSessionResolverScript.apply(state, current_session, command, catalog, current_node)
 		state = session_result["state"]
@@ -213,6 +218,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		else:
 			_re_show_current_screen()
 		return session_result
+
 	var resolved := Resolver.apply(state, command, catalog)
 	state = resolved["state"]
 	last_result = resolved["result"]
@@ -230,6 +236,21 @@ func submit_command(command: Dictionary) -> Dictionary:
 	elif not current_node.is_empty():
 		_show_encounter()
 	return resolved
+
+
+func _submit_battle_command(command: Dictionary) -> Dictionary:
+	var turn: Dictionary = BattleCommandFacadeScript.apply_turn(current_battle, state, command, catalog)
+	state = turn["state"]
+	current_battle = turn["battle"]
+	last_result = {"battle_result": turn.get("result", "ongoing"), "feeds": turn.get("feeds", [])}
+	if bool(turn.get("finished", false)):
+		if str(turn.get("result", "")) == "death":
+			_show_death(DeathReportBuilderScript.build(current_battle, state))
+		else:
+			_finish_battle_in_session(str(turn.get("result", "")))
+	else:
+		_show_battle()
+	return turn
 
 
 ## B 批反馈基建（§16.5 信息透明）：命令结果必须可见——被拒走 rejection_text 中文，
@@ -252,6 +273,12 @@ func _stamp_current_node(run_state, node: Dictionary) -> void:
 
 func current_view_name() -> String:
 	return _view_name
+
+
+func _show_content_error() -> void:
+	_view_name = "ContentError"
+	_ending_state = {}
+	_render()
 
 
 ## 成功命令的反馈摘要：拼接 actual_changes 的 message（领域侧已中文化）。
@@ -332,12 +359,62 @@ func force_death_for_test(final_blow_id: String) -> void:
 	_show_death(report)
 
 
+func request_map_leave() -> void:
+	if _view_name == "Map" and state != null and not state.is_terminal():
+		_map_leave_confirm = true
+		_render()
+
+
+func cancel_map_leave() -> void:
+	_map_leave_confirm = false
+	_render()
+
+
+func save_and_leave_map() -> void:
+	if _view_name != "Map" or state == null:
+		return
+	var save_error := save_current_run()
+	if save_error == OK:
+		last_feedback = "进度已保存 · 已返回大厅"
+		_map_leave_confirm = false
+		_show_title()
+	else:
+		last_feedback = "存档失败（错误码 %d），仍留在地图。" % save_error
+		_render()
+
+
+func leave_map_without_save() -> void:
+	if _view_name != "Map":
+		return
+	_map_leave_confirm = false
+	last_feedback = "未保存本次变化 · 返回大厅后仍可继续上次存档"
+	_show_title()
+
+
+
+
 func save_current_run() -> Error:
 	return SaveRepository.save_run(state, route, dialogue_replies)
 
 
 func load_saved_run() -> bool:
-	return _restore_game(SaveRepository.load_run())
+	last_load_diagnosis = SaveRepositoryScript.diagnose_run_file()
+	if not bool(last_load_diagnosis.get("ok", false)):
+		return false
+	return _restore_game(SaveRepositoryScript.load_run())
+
+
+func _save_load_feedback(diagnosis: Dictionary) -> String:
+	match str(diagnosis.get("kind", "missing")):
+		"unsupported_version":
+			return "上次冒险存档版本不受支持（v%d）。" % int(diagnosis.get("version", -1))
+		"checksum_missing", "checksum_mismatch":
+			return "上次冒险存档校验失败，已拒绝载入。"
+		"invalid_json":
+			return "上次冒险存档格式损坏，已拒绝载入。"
+		"invalid_state", "invalid_route", "invalid_event_log":
+			return "上次冒险存档内容损坏，已拒绝载入。"
+		_: return "暂无可继续的冒险：先在地图「存档」一次。"
 
 
 func _restore_game(loaded: Dictionary) -> bool:
@@ -601,15 +678,24 @@ func _mount_debug_panel() -> void:
 		return
 	_debug_host = Control.new()
 	_debug_host.name = "DebugPanelHost"
-	_debug_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_debug_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_debug_host.position = Vector2(20, 80)
+	_debug_host.custom_minimum_size = Vector2(260, 44)
+	_debug_host.size = _debug_host_size()
+	_debug_host.mouse_filter = Control.MOUSE_FILTER_PASS
+	_debug_host.set_script(preload("res://scripts/presentation/debug_panel_drag.gd"))
 	add_child(_debug_host)
 	_debug_rui_root = RuiRoot.create(_debug_host, VLib.fc(comp, _debug_props()))
+
+
+func _debug_host_size() -> Vector2:
+	return Vector2(260, 360) if _debug_panel_open else Vector2(260, 44)
 
 
 func _render_debug_panel() -> void:
 	if _debug_rui_root == null:
 		return
+	if _debug_host != null:
+		_debug_host.size = _debug_host_size()
 	var comp = VLib.comp(DEBUG_PANEL_PATH, "render")
 	if not (comp is Callable):
 		return
@@ -661,12 +747,12 @@ func _start_battle() -> void:
 		encounter["enemy_kinds"] = (current_node.get("enemy_kinds", []) as Array).duplicate()
 	else:
 		encounter["enemy_kind"] = enemy_kind
-	current_battle = BattleResolver.start(encounter, state, catalog)
+	current_battle = BattleCommandFacadeScript.start(encounter, state, catalog)
 	# N6: weaknesses procured through probe carry into the battle as bonus damage.
 	if state.known_facts.has("procured_weakness"):
 		current_battle["intel_bonus"] = 1
 	if first_mover == "enemy":
-		var pre := BattleResolver.apply_enemy_pre_turn(current_battle, state, catalog)
+		var pre := BattleCommandFacadeScript.apply_enemy_pre_turn(current_battle, state, catalog)
 		state = pre["state"]
 		current_battle = pre["battle"]
 		if bool(pre["finished"]):
@@ -756,7 +842,11 @@ func _apply_window_mode() -> void:
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 		var size: Vector2i = option.get("size", Vector2i(1920, 1080))
-		DisplayServer.window_set_size(size)
+		call_deferred("_deferred_set_window_size", size)
+
+
+func _deferred_set_window_size(size: Vector2i) -> void:
+	DisplayServer.window_set_size(size)
 
 
 ## 大厅内部子视图切换（A3 流派 / A4 契约 / A5 图鉴 / A6 设置 / A7 手记）。
@@ -1091,23 +1181,79 @@ func _attach_social_dialogue(result: Dictionary) -> void:
 # RUI 渲染层：单根挂载，按 _view_name 渲染对应屏；仅经 commands 提交领域命令。
 # ----------------------------------------------------------------------------
 
+func _on_feedback_timer_timeout() -> void:
+	last_feedback = ""
+	_render_debug_panel()
+	if _view_name in ["Map", "Title"]:
+		_render()
+
+
+func _restart_feedback_timer() -> void:
+	if _feedback_timer == null:
+		return
+	_feedback_timer.stop()
+	if last_feedback != "":
+		_feedback_timer.start(FEEDBACK_TOAST_SECONDS)
+
+
 func _render() -> void:
-	if _rui_root == null:
+	if _rui_host == null:
 		return
-	var comp := VLib.comp(SCREEN_PATHS.get(_view_name, SCREEN_PATHS["Title"]), "render")
-	if not (comp is Callable):
-		push_error("RUI 组件缺失: %s" % _view_name)
-		return
-	var snapshot: Dictionary
-	if _view_name == "Ending":
-		snapshot = _ending_state
-	else:
-		snapshot = _snapshot_for(_view_name)
-	_rui_root.set_root(VLib.fc(comp, {"state": snapshot, "commands": _build_commands(_view_name)}))
+	_restart_feedback_timer()
+	if not SCREEN_PATHS.has(_view_name):
+		push_error("未知视图名: %s" % _view_name)
+		_view_name = "ContentError"
+	var snapshot: Dictionary = _ending_state if _view_name == "Ending" else _snapshot_for(_view_name)
+	_mount_screen(_view_name, snapshot, _build_commands(_view_name))
 	if _view_name != _faded_view:
 		_faded_view = _view_name
 		_play_screen_fade()
 	_render_debug_panel()
+
+
+func _mount_screen(screen: String, snapshot: Dictionary, commands: Dictionary) -> void:
+	var master_path := str(MASTER_SCENE_PATHS.get(screen, ""))
+	if master_path != "":
+		if _master_instance == null or not is_instance_valid(_master_instance) or _mounted_screen != screen:
+			_unmount_rui_root()
+			if _master_instance != null and is_instance_valid(_master_instance):
+				_master_instance.queue_free()
+			_master_instance = (load(master_path) as PackedScene).instantiate()
+			_master_instance.name = "Wenzhen%sMaster" % screen
+			_rui_host.add_child(_master_instance)
+			_mounted_screen = screen
+		if _master_instance.has_method("mount_snapshot"):
+			_master_instance.mount_snapshot(snapshot, commands)
+		return
+	_unmount_master_instance()
+	var comp := VLib.comp(SCREEN_PATHS[screen], "render")
+	if not (comp is Callable):
+		push_error("RUI 组件缺失: %s" % screen)
+		return
+	if _rui_root == null:
+		_rui_root = RuiRoot.create(_rui_host, VLib.fc(comp, {"state": snapshot, "commands": commands}))
+	else:
+		_rui_root.set_root(VLib.fc(comp, {"state": snapshot, "commands": commands}))
+	_mounted_screen = screen
+
+
+func _unmount_rui_root() -> void:
+	if _rui_root != null and _rui_root.has_method("unmount"):
+		_rui_root.unmount()
+	_rui_root = null
+
+
+func _unmount_master_instance() -> void:
+	if _master_instance != null and is_instance_valid(_master_instance):
+		_master_instance.queue_free()
+	_master_instance = null
+	if _mounted_screen in MASTER_SCENE_PATHS:
+		_mounted_screen = ""
+
+
+func _exit_tree() -> void:
+	_unmount_rui_root()
+	_unmount_master_instance()
 
 
 ## T6-E 跨屏过渡：屏切换（含死亡返大厅）时对新挂载根做 140ms 一次性淡入

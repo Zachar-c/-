@@ -25,6 +25,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Refine": return refine(controller)
 		"Reward": return reward(controller)
 		"Npc": return npc(controller)
+		"ContentError": return content_error(controller)
 	return {}
 
 
@@ -72,8 +73,20 @@ static func _node_actions(controller) -> Array[Dictionary]:
 	if controller.meta != null:
 		knowledge = controller.meta.unlocked_random_outcomes
 	var actions: Array[Dictionary] = []
+	var node_id := str(controller.current_node.get("id", ""))
+	var session_node_id := node_id
+	var current_session: Variant = controller.get("current_session") if controller != null else null
+	if current_session is Dictionary and not (current_session as Dictionary).is_empty():
+		session_node_id = str((current_session as Dictionary).get("node_id", node_id))
 	for c in ActionPreviewServiceScript.preview_actions(controller.state, controller.current_node, catalog, knowledge):
-		actions.append(_enc_action(c))
+		var enriched := c.duplicate(true)
+		enriched["node_id"] = node_id
+		enriched["session_node_id"] = session_node_id
+		if enriched.get("command", {}) is Dictionary and not (enriched["command"] as Dictionary).is_empty():
+			enriched["command"]["state_version"] = int(enriched.get("state_version", controller.state.event_log.size()))
+			enriched["command"]["node_id"] = node_id
+			enriched["command"]["session_node_id"] = session_node_id
+		actions.append(_enc_action(enriched))
 	return actions
 
 
@@ -261,16 +274,35 @@ static func rest(controller) -> Dictionary:
 		"reason": "本次已休整" if rest_used else "",
 		"curse_warning": false,
 	})
-	# 温养一蛊：移除负面卡（领域需选蛊实例，UI 暂为占位）。
+	# 温养一蛊：免费移除一只蛊（领域 rest remove_card 需选实例）。
+	# 目标列与炼蛊拆解同源：活蛊且非 can_direct_drop=false 的诅咒禁删蛊。
+	var remove_targets: Array[Dictionary] = []
+	if state != null:
+		for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+			var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+			if instance.is_empty() or str(instance.get("state", "")) == "dead":
+				continue
+			var remove_def: Dictionary = catalog.get("gu_by_id", {}).get(str(instance.get("definition_id", "")), {})
+			var remove_blocked := ""
+			if not bool(remove_def.get("can_direct_drop", true)):
+				remove_blocked = "诅咒蛊不可直接移除"
+			remove_targets.append({
+				"id": str(instance_id_value),
+				"name": DisplayText.gu(str(instance.get("definition_id", ""))),
+				"blocked": remove_blocked != "",
+				"reason": remove_blocked,
+			})
 	choices.append({
 		"id": "remove",
 		"label": "温养一蛊",
-		"detail": "移除一张负面卡 / 免费移除",
+		"detail": "移除一只蛊（免费 · 消耗本次休整）",
 		"cost": "",
-		"disabled": rest_used or rest_mode_used,
-		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else "休整二选一"),
+		"disabled": rest_used or rest_mode_used or remove_targets.is_empty(),
+		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else ("蛊囊无可移除之蛊" if remove_targets.is_empty() else "选中后经领域校验")),
 		"curse_warning": false,
 	})
+	# UI 目标选择只展示领域可接受的活蛊实例；被诅咒直接丢弃限制的实例带原因并禁用。
+	out["remove_targets"] = remove_targets
 	# 洗髓换骨：仅闭关/传承节点可用（aptitude.json paths.node_kinds）。
 	var node_kind := str(controller.current_node.get("type", ""))
 	var apt: Dictionary = catalog.get("aptitude", {})
@@ -653,14 +685,39 @@ static func hall(controller) -> Dictionary:
 	out["brand_title"] = "問眞"
 	out["primary_action"] = "continue_run" if out["has_save"] else "open_schools"
 	out["run_summary"] = {
-		"route": str(state.current_node_id) if state != null else "",
-		"rank": int(state.cultivation) if state != null else 0,
-		"hp": int(state.health) if state != null else 0,
+		"route": _run_route_label(controller),
+		"rank": "%d 转" % int(state.cultivation) if state != null else "0 转",
+		"hp": "%d" % int(state.health) if state != null else "0",
 	}
+
+
 	return out
 
 
-## 流派显示名（只读）：大厅选中态展示中文名，禁止裸 ID 漏给玩家。
+static func _run_route_label(controller) -> String:
+	var state = controller.state
+	if state == null:
+		return "未载入"
+	var node_id := str(state.current_node_id)
+	if node_id.is_empty():
+		return "流派选择"
+	var node: Dictionary = controller._node_by_id(node_id) if controller.has_method("_node_by_id") else {}
+	var template_id := str(state.current_node_template_id)
+	if template_id.is_empty() and not node.is_empty():
+		template_id = str(node.get("template_id", ""))
+	if template_id.is_empty():
+		template_id = node_id
+	var catalog_node: Dictionary = controller.catalog.get("node_by_id", {}).get(template_id, {}) if controller.catalog != null else {}
+	if not catalog_node.is_empty():
+		var display_name := DisplayText.node(template_id)
+		if display_name == "未知地点":
+			display_name = DisplayText.type(str(catalog_node.get("type", "")))
+		return display_name
+	if not node.is_empty():
+		return str(node.get("label", DisplayText.node(template_id)))
+	return DisplayText.node(template_id)
+
+
 static func _school_display_name(catalog: Dictionary, school_id: String) -> String:
 	if school_id.is_empty():
 		return "无（散修开局）"
@@ -794,6 +851,15 @@ static func _journal(meta, catalog: Dictionary) -> Dictionary:
 	}
 
 
+static func content_error(controller) -> Dictionary:
+	var errors: Array = controller.get("_content_errors") if controller != null else []
+	return {
+		"title": "内容配置无法加载",
+		"error_count": errors.size(),
+		"errors": errors.duplicate(),
+	}
+
+
 static func map(controller) -> Dictionary:
 	var state = controller.state
 	var route: Array = controller.route
@@ -802,22 +868,35 @@ static func map(controller) -> Dictionary:
 	# 2026-08-28 验收批 P0-4：地带/深度/境界改由真实状态导出（旧屏面是
 	# 「青茅山外圍 / 深度 62 · 四轉初階」硬编码谎言）。zone_title 取
 	# pacing.layers[当前层].title，缺失为空串由屏面隐藏。
+	var current_id := str(state.current_node_id)
 	var current_layer := 0
+	var visible_by_id := {}
 	for n in MapGeneratorScript.visible_nodes(route, state, 2):
-		var node_id := str(n.get("id", ""))
-		if node_id == str(state.current_node_id):
+		visible_by_id[str(n.get("id", ""))] = n
+	# 当前节点可能尚未完成、不在 visited 中，确保它始终进入快照。
+	if not visible_by_id.has(current_id):
+		for route_node in route:
+			if str(route_node.get("id", "")) == current_id:
+				visible_by_id[current_id] = route_node.duplicate(true)
+				visible_by_id[current_id]["reachable"] = false
+				break
+	for node_id in visible_by_id:
+		var n: Dictionary = visible_by_id[node_id]
+		if node_id == current_id:
 			current_layer = int(n.get("layer", 0))
 		nodes.append({
 			"id": node_id,
 			"type": str(n.get("type", "")),
 			"label": _node_label(n),
 			"layer": int(n.get("layer", 0)),
+			"row": int(n.get("row", 0)),
 			"next_ids": Array(n.get("next_ids", [])).duplicate(),
 			"reachable": bool(n.get("reachable", false)),
 			"visited": state.node_flags.has(node_id),
-			"current": node_id == str(state.current_node_id),
+			"current": node_id == current_id,
 			"visibility": _map_visibility(n, state),
 		})
+	nodes.sort_custom(func(a, b): return int(a.get("layer", 0)) * 1000 + int(a.get("row", 0)) < int(b.get("layer", 0)) * 1000 + int(b.get("row", 0)))
 	var reach: Array[String] = []
 	for n in MapGeneratorScript.reachable_nodes(route, state):
 		reach.append(str(n["id"]))
@@ -844,13 +923,15 @@ static func map(controller) -> Dictionary:
 		"gu_satchel": gu_satchel,
 		"zone_title": zone_title,
 		"depth_label": depth_label,
-		"realm_label": realm_label,
-		# D4 存档 Toast（R1.5）：文本来自控制器反馈，空串则不渲染。
-		"toast": str(controller.last_feedback),
-		"resources": _resources(state),
-		"contracts": _contracts(state, catalog),
-		"anomalies": DdaResolverScript.marker_meta(state, catalog),
-		"death_lines": _death_lines(state),
+			"realm_label": realm_label,
+			# D4 存档 Toast（R1.5）：文本来自控制器反馈，空串则不渲染。
+			"toast": str(controller.last_feedback),
+			"resources": _resources(state),
+			"contracts": _contracts(state, catalog),
+			"anomalies": DdaResolverScript.marker_meta(state, catalog),
+			"death_lines": _death_lines(state),
+			"leave_confirm": bool(controller.get("_map_leave_confirm")) if controller != null else false,
+
 	}
 
 
@@ -873,9 +954,7 @@ static func encounter(controller) -> Dictionary:
 	var knowledge: Dictionary = {}
 	if meta != null:
 		knowledge = meta.unlocked_random_outcomes
-	var actions: Array[Dictionary] = []
-	for c in ActionPreviewServiceScript.preview_actions(state, current_node, catalog, knowledge):
-		actions.append(_enc_action(c))
+	var actions: Array[Dictionary] = _node_actions(controller)
 	var intel: Dictionary = {}
 	if state.known_facts.has("procured_weakness"):
 		intel = {"weakness": "已探明弱点，战斗增伤", "cost": "情报"}
@@ -992,6 +1071,7 @@ static func battle(controller) -> Dictionary:
 		"contracts": _contracts(state, catalog),
 		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"dda_boss_hint": str(battle_data.get("dda_boss_hint", "")),
+		"first_battle": not state.event_log.any(func(event): return str(event.get("action", "")) == "battle_finished"),
 		"death_lines": _death_lines(state),
 	}
 
@@ -1212,17 +1292,35 @@ static func blow_text(id: String) -> String:
 
 
 static func _enc_action(c: Dictionary) -> Dictionary:
+	var command: Dictionary = c.get("command", {}).duplicate(true)
+	var state_version := int(c.get("state_version", -1))
+	var node_id := str(c.get("node_id", command.get("node_id", "")))
+	var session_node_id := str(c.get("session_node_id", command.get("session_node_id", node_id)))
+	if not command.is_empty() and str(command.get("type", "")) == "action_card":
+		command["state_version"] = state_version
+		command["node_id"] = node_id
+		command["session_node_id"] = session_node_id
 	return {
 		"id": str(c.get("id", "")),
 		"label": str(c.get("title", "")),
 		"detail": str(c.get("summary", "")),
 		"dangerous": _is_dangerous(c),
-		"quality": "",
+		"quality": str(c.get("quality", "")),
 		"effect": str(c.get("summary", "")),
 		# T6-E tooltip 一致性（§16.5 缺段隐藏）：cost 段以玩家可读短文输出，
 		# 空代价输出空串让段落隐藏；绝不把原始 Dictionary str 进文案。
 		"cost": _cost_note(c.get("cost", {})),
 		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
+		"executable": bool(c.get("executable", true)),
+		"block_reason": str(c.get("block_reason", "")),
+		"expected_gain": c.get("expected_gain", []).duplicate(),
+		"known_risk": c.get("known_risk", []).duplicate(),
+		"unknown_note": str(c.get("unknown_note", "")),
+		"remedy_hints": c.get("remedy_hints", []).duplicate(),
+		"command": command,
+		"state_version": state_version,
+		"node_id": node_id,
+		"session_node_id": session_node_id,
 	}
 
 
@@ -1257,6 +1355,14 @@ static func _battle_card(c: Dictionary) -> Dictionary:
 		"effect": str(c.get("summary", "")),
 		"quality": "普通",
 		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
+		"executable": bool(c.get("executable", true)),
+		"block_reason": str(c.get("block_reason", "")),
+		"expected_gain": c.get("expected_gain", []).duplicate(),
+		"known_risk": c.get("known_risk", []).duplicate(),
+		"unknown_note": str(c.get("unknown_note", "")),
+		"remedy_hints": c.get("remedy_hints", []).duplicate(),
+		"state_version": int(c.get("state_version", 0)),
+		"expected_phase": str(c.get("expected_phase", "player")),
 	}
 
 
@@ -1264,10 +1370,10 @@ static func _intent_to_screen(i: Dictionary) -> Dictionary:
 	var dmg := int(i.get("damage", 0))
 	var def := int(i.get("defense", 0))
 	if dmg > 0:
-		return {"type": "attack", "value": dmg, "detail": str(i.get("label", "造成物理伤害"))}
+		return {"type": "attack", "value": dmg, "detail": str(i.get("label", "造成物理伤害")), "speed": int(i.get("speed", 0))}
 	if def > 0:
-		return {"type": "defend", "value": def, "detail": str(i.get("label", "凝防御"))}
-	return {"type": "charge", "value": 0, "detail": "蓄势待发"}
+		return {"type": "defend", "value": def, "detail": str(i.get("label", "凝防御")), "speed": int(i.get("speed", 0))}
+	return {"type": "charge", "value": 0, "detail": "蓄势待发", "speed": int(i.get("speed", 0))}
 
 
 static func _statuses_to_list(statuses: Dictionary) -> Array[Dictionary]:

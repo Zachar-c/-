@@ -2,14 +2,7 @@ class_name RunCommandBuilder
 extends RefCounted
 
 
-# Builds the RUI command surface for each screen. Callbacks close over the
-# RunController so the controller keeps owning flow and submit_command.
-# 约束：lambda 一律单行，避免 Godot 多行 lambda 的缩进解析问题；多分支
-# 命令逻辑抽成 static helper。
-
-
 static func _shop_buy_command(controller, id: String) -> Dictionary:
-	# 按货架 offer 的 kind 映射到真实领域命令。
 	var kind := ""
 	if controller.catalog != null:
 		kind = str(controller.catalog.get("shop_offer_by_id", {}).get(str(id), {}).get("kind", ""))
@@ -23,41 +16,29 @@ static func _shop_buy_command(controller, id: String) -> Dictionary:
 
 
 static func _shop_service_command(controller, service_id: String, target_id: String) -> Dictionary:
-	# 2026-08-28 验收批：use_service 改映射真实领域命令；目标 id 由 Shop 屏
-	# 内目标选择提供（快照 services[].candidates）。池屏蔽无领域支持，不发。
 	match service_id:
-		"remove_card":
-			return {"type": "remove_card", "instance_id": target_id}
-		"remove_imprint":
-			return {"type": "remove_imprint", "relic_id": target_id}
-		"remove_curse":
-			return {"type": "remove_curse", "curse_id": target_id}
-		"wash_notoriety":
-			return {"type": "wash_notoriety"}
+		"remove_card": return {"type": "remove_card", "instance_id": target_id}
+		"remove_imprint": return {"type": "remove_imprint", "relic_id": target_id}
+		"remove_curse": return {"type": "remove_curse", "curse_id": target_id}
+		"wash_notoriety": return {"type": "wash_notoriety"}
 	return {}
 
 
-static func _rest_choose_command(controller, id: String) -> Dictionary:
+static func _rest_choose_command(controller, id: String, target_id: String = "") -> Dictionary:
 	match str(id):
-		"heal":
-			return {"type": "rest", "mode": "heal"}
-		"remove":
-			return {"type": "rest", "mode": "remove_card"}
-		"wash":
-			return {"type": "raise_aptitude", "node_id": str(controller.current_node.get("id", ""))}
+		"heal": return {"type": "rest", "mode": "heal"}
+		"remove": return {"type": "rest", "mode": "remove_card", "instance_id": target_id}
+		"wash": return {"type": "raise_aptitude", "node_id": str(controller.current_node.get("id", ""))}
 	return {"type": "leave_encounter"}
 
 
 static func _npc_talk_command(controller, id: String) -> Dictionary:
-	# C 批修复：talk_option 携带领域动作卡完整信息（快照 talk_options[].command 为
-	# 领域动作卡 command + state_version）。发 action_card 走遭遇会话通道
-	# （与遭遇屏 choose_action 同源），find_card 按 id 匹配动作卡后消费；
-	# state_version 取当前事件日志长度，防过期操作。
-	# 旧 resolve_contact 仅 neutral_wanderer 专用，其余节点 100% 静默被拒。
 	return {
 		"type": "action_card",
 		"action_id": str(id),
 		"state_version": controller.state.event_log.size() if controller.state != null else -1,
+		"node_id": str(controller.current_node.get("id", "")),
+		"session_node_id": str(controller.current_session.get("node_id", controller.current_node.get("id", ""))) if controller.current_session != null else str(controller.current_node.get("id", "")),
 	}
 
 
@@ -69,7 +50,24 @@ static func _battle_card_command(controller, action_id: String, target_id: Strin
 		"card_id": card_id,
 		"target_id": target_id,
 		"state_version": int(controller.current_battle.get("hand_version", -1)),
+		"expected_phase": str(controller.current_battle.get("phase", "")),
 	}
+
+
+static func _encounter_action_command(controller, action_id: String) -> Dictionary:
+	var state_version: int = controller.state.event_log.size() if controller.state != null else -1
+	var node_id := str(controller.current_node.get("id", ""))
+	var session_node_id := node_id
+	if controller.current_session != null and not controller.current_session.is_empty():
+		session_node_id = str(controller.current_session.get("node_id", node_id))
+	return {"type": "action_card", "action_id": action_id, "state_version": state_version, "node_id": node_id, "session_node_id": session_node_id}
+
+
+static func _battle_turn_command(controller, command_type: String, extra: Dictionary = {}) -> Dictionary:
+	var command := {"type": command_type, "state_version": controller.state.event_log.size() if controller.state != null else -1, "expected_phase": str(controller.current_battle.get("phase", ""))}
+	for key in extra:
+		command[str(key)] = extra[key]
+	return command
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
@@ -90,35 +88,41 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"open_codex": func(): controller._show_hall_subview("codex"),
 				"open_settings": func(): controller._show_hall_subview("settings"),
 				"open_journal": func(): controller._show_hall_subview("journal"),
-			"back_to_hall": func(): controller._show_hall_subview("main"),
-			"toggle_dda": func(): controller.toggle_dda(),
-			"step_volume": func(delta): controller.step_master_volume(int(delta)),
-			"cycle_resolution": func(): controller.cycle_resolution(),
-			"quit": func(): controller.quit_game(),
+				"back_to_hall": func(): controller._show_hall_subview("main"),
+				"toggle_dda": func(): controller.toggle_dda(),
+				"step_volume": func(delta): controller.step_master_volume(int(delta)),
+				"cycle_resolution": func(): controller.cycle_resolution(),
+				"quit": func(): controller.quit_game(),
 			}
 		"Encounter":
 			return {
-				"choose_option": func(id): controller.submit_command({"type": "action_card", "action_id": str(id)}),
-				"confirm_danger": func(id): controller.submit_command({"type": "action_card", "action_id": str(id)}),
+				"choose_option": func(id): controller.submit_command(_encounter_action_command(controller, str(id))),
+				"confirm_danger": func(id): controller.submit_command(_encounter_action_command(controller, str(id))),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Map":
 			return {
 				"travel": func(id): controller.submit_command({"type": "travel", "node_id": str(id)}),
 				"save_run": func(): controller.submit_command({"type": "save_run"}),
+				"to_hall": func(): controller.request_map_leave(),
+				"save_and_to_hall": func(): controller.save_and_leave_map(),
+				"leave_without_save": func(): controller.leave_map_without_save(),
+				"cancel_to_hall": func(): controller.cancel_map_leave(),
 				"surrender": func(): controller.surrender_run(),
 			}
 		"Battle":
 			return {
 				"play_card": func(action_id, target_id): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id))),
-				"end_turn": func(): controller.submit_command({"type": "end_turn"}),
-				"refine": func(id = ""): controller.submit_command({"type": "refine", "recipe_id": str(id)}),
-				"flee": func(): controller.submit_command({"type": "retreat"}),
+				"end_turn": func(): controller.submit_command(_battle_turn_command(controller, "end_turn")),
+				"refine": func(id = ""): controller.submit_command(_battle_turn_command(controller, "refine", {"recipe_id": str(id)})),
+				"flee": func(): controller.submit_command(_battle_turn_command(controller, "retreat")),
 			}
 		"Ending":
 			return {
 				"to_hall": func(): controller._show_title(),
-				"to_codex": func(): pass,
+				"to_codex": func():
+					controller._show_title()
+					controller._show_hall_subview("codex"),
 			}
 		"Shop":
 			return {
@@ -128,23 +132,19 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			}
 		"Rest":
 			return {
-				"choose": func(id = ""): controller.submit_command(_rest_choose_command(controller, str(id))),
+				"choose": func(id = "", target_id = ""): controller.submit_command(_rest_choose_command(controller, str(id), str(target_id))),
 				"confirm_wash": func(): controller.submit_command({"type": "raise_aptitude", "node_id": str(controller.current_node.get("id", ""))}),
 				"cancel_confirm": func(): pass,
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Refine":
 			return {
-				# 通道切换是屏内展示状态（快照配方带 channel 标签），不发命令。
 				"refine": func(id = ""): controller.submit_command({"type": "refine_gu", "recipe_id": str(id)}),
 				"dismantle": func(id = ""): controller.submit_command({"type": "destroy_gu", "instance_id": str(id)}),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Reward":
-			return {
-				# 战利品已由 settle_victory 自动入账，本屏纯确认展示（D3）。
-				"close": func(): controller.submit_command({"type": "leave_encounter"}),
-			}
+			return {"close": func(): controller.submit_command({"type": "leave_encounter"})}
 		"Npc":
 			return {
 				"talk": func(id = ""): controller.submit_command(_npc_talk_command(controller, str(id))),
@@ -153,4 +153,6 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"flee": func(): controller.submit_command({"type": "retreat"}),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
+		"ContentError":
+			return {"quit": func(): controller.quit_game()}
 	return {}

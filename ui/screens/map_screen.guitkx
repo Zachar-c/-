@@ -29,12 +29,8 @@ export MapScreen() -> RuitkVNode {
   var map_subtitle = " · ".join(subtitle_parts)
   var death_lines = state.get("death_lines", {})
   var toast_text = str(state.get("toast", ""))
-
-
-
-
-
-
+  var leave_confirm: bool = state.has("leave_confirm") and state["leave_confirm"] == true
+  var toast_row = []
 
   var NODE_STYLE = {
     "start": {"mark": "起", "kind": "起始", "color": GuStyle.INK_MAP_FAINT},
@@ -55,8 +51,8 @@ export MapScreen() -> RuitkVNode {
   const CURRENT_POSITION = Vector2(626, 712)
   const CANDIDATE_Y = 482.0
   const FUTURE_Y = 31.0
-  const CANDIDATE_X = [96.0, 626.0, 1156.0]
-  const FUTURE_X = [50.0, 403.0, 756.0, 1109.0]
+  const LAYER_X_MARGIN = 12.0
+  const LAYER_X_GAP = 18.0
 
   var current_node = {}
   var history_count = 0
@@ -69,7 +65,7 @@ export MapScreen() -> RuitkVNode {
     var layer = int(node.get("layer", 0))
     if not visible_layers.has(layer):
       visible_layers.append(layer)
-    if visibility == "current" or bool(node.get("current", false)):
+    if visibility == "current" or (node.get("current", false)):
       current_node = node
   visible_layers.sort()
   if visible_layers.size() > 3:
@@ -84,6 +80,21 @@ export MapScreen() -> RuitkVNode {
     var band_layer = int(visible_layers[band_index])
     depth_rail_rows.append(<Label name={ "map_depth_label_" + str(depth_band_names[band_index]) } text={ str(band_layer) } anchor_right={ 1.0 } offset_right={ -13.0 } offset_top={ depth_band_y[band_index] } offset_bottom={ depth_band_y[band_index] + 18.0 } horizontal_alignment={ HORIZONTAL_ALIGNMENT_RIGHT } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 9} } />)
 
+  var visible_rows = []
+  var nodes_by_row = {}
+  for node in nodes:
+    var visibility = str(node.get("visibility", "lookahead"))
+    if visibility == "past":
+      continue
+    var row_key := int(node.get("layer", 0)) * 1000 + int(node.get("row", 0))
+    if not nodes_by_row.has(row_key):
+      nodes_by_row[row_key] = []
+      visible_rows.append(row_key)
+    nodes_by_row[row_key].append(node)
+  visible_rows.sort()
+  if visible_rows.size() > 3:
+    visible_rows = visible_rows.slice(0, 3)
+
   var nodes_by_layer = {}
   for layer in visible_layers:
     nodes_by_layer[layer] = []
@@ -95,7 +106,7 @@ export MapScreen() -> RuitkVNode {
   var selected = {}
   for layer in visible_layers:
     for node in nodes_by_layer[layer]:
-      if bool(node.get("reachable", false)):
+      if (node.get("reachable", false)):
         selected = node
         break
     if not selected.is_empty():
@@ -106,21 +117,19 @@ export MapScreen() -> RuitkVNode {
 
   var node_positions = {}
   var node_sizes = {}
-  for layer_index in visible_layers.size():
-    var layer = visible_layers[layer_index]
-    var layer_nodes = nodes_by_layer[layer]
-    for node_index in layer_nodes.size():
-      var node = layer_nodes[node_index]
-      var id = str(node.get("id", ""))
-      if layer_index == 0:
-        node_positions[id] = CURRENT_POSITION
-        node_sizes[id] = NODE_SIZE
-      elif layer_index == 1:
-        node_positions[id] = Vector2(CANDIDATE_X[mini(node_index, CANDIDATE_X.size() - 1)], CANDIDATE_Y)
-        node_sizes[id] = NODE_SIZE
-      else:
-        node_positions[id] = Vector2(FUTURE_X[mini(node_index, FUTURE_X.size() - 1)], FUTURE_Y)
-        node_sizes[id] = FUTURE_NODE_SIZE
+  for row_index in visible_rows.size():
+    var row_key: int = visible_rows[row_index]
+    var row_nodes: Array = nodes_by_row[row_key]
+    var future_row := row_index >= 2
+    var row_size := FUTURE_NODE_SIZE if future_row else NODE_SIZE
+    var total_width := row_nodes.size() * row_size.x + maxi(0, row_nodes.size() - 1) * LAYER_X_GAP
+    var start_x := maxi(LAYER_X_MARGIN, (1280.0 - total_width) * 0.5)
+    var y := FUTURE_Y if future_row else (CANDIDATE_Y if row_index == 1 else CURRENT_POSITION.y)
+    for node_index in row_nodes.size():
+      var node: Dictionary = row_nodes[node_index]
+      var id := str(node.get("id", ""))
+      node_positions[id] = Vector2(start_x + node_index * (row_size.x + LAYER_X_GAP), y)
+      node_sizes[id] = row_size
 
   var visible_ids = {}
   for node in nodes:
@@ -149,22 +158,22 @@ export MapScreen() -> RuitkVNode {
 
   var path_draw = func(canvas):
     for segment in path_geometry:
-      var color = GuStyle.CINNABAR if bool(segment["hot"]) else GuStyle.HAIRLINE_COLOR
-      var width = 2.0 if bool(segment["hot"]) else 1.0
+      var color = GuStyle.CINNABAR if (segment["hot"]) else GuStyle.HAIRLINE_COLOR
+      var width = 2.0 if (segment["hot"]) else 1.0
       canvas.draw_line(segment["from"], segment["to"], color, width, true)
 
   var node_controls = []
-  for layer_index in visible_layers.size():
-    var layer = visible_layers[layer_index]
-    for node in nodes_by_layer[layer]:
-      var id = str(node.get("id", ""))
+  for node in nodes:
+    var id = str(node.get("id", ""))
+    if node_positions.has(id):
+      var layer_index := visible_rows.find(int(node.get("layer", 0)) * 1000 + int(node.get("row", 0)))
       var label = str(node.get("label", node.get("type", "节点")))
       var ntype = str(node.get("type", ""))
       var visual = NODE_STYLE.get(ntype, {"mark": "?", "kind": "未知", "color": GuStyle.INK_MAP_FAINT})
       if ntype == "combat" and str(node.get("enemy_kind", "")).contains("elite"):
         visual = {"mark": "險", "kind": "精英", "color": GuStyle.INK_MAP}
-      var reachable = bool(node.get("reachable", false))
-      var is_current = str(node.get("visibility", "")) == "current" or bool(node.get("current", false))
+      var reachable = (node.get("reachable", false))
+      var is_current = str(node.get("visibility", "")) == "current" or (node.get("current", false))
       var is_selected = id == selected_id
       var position = node_positions[id]
       var node_size = node_sizes[id]
@@ -180,7 +189,7 @@ export MapScreen() -> RuitkVNode {
         "content_margin_right": 10,
         "content_margin_top": 9,
         "content_margin_bottom": 7,
-        "modulate": Color(1, 1, 1, 1) if (is_current or reachable or is_selected) else Color(1, 1, 1, 0.58),
+        "role": "node_current" if is_current else ("node_reachable" if reachable else "node_future"),
         "focus": {"border_width_all": 2, "border_color": GuStyle.CINNABAR},
       }
       var node_action = func():
@@ -201,15 +210,38 @@ export MapScreen() -> RuitkVNode {
 
   var inspection_name = str(selected.get("label", "尚未选择路线"))
   var inspection_type = str(selected.get("type", ""))
-  var inspection_reachable = bool(selected.get("reachable", false))
+  var inspection_reachable = (selected.get("reachable", false))
   var inspection_note = "此节点可进入，提交前由领域校验行路状态。" if inspection_reachable else "查看路线信息；不可达节点不会提交行路命令。"
   var inspector_action = []
   if inspection_reachable and commands.has("travel"):
     inspector_action.append(<GuButton label="前往此路 ›" on_press={ func(): commands["travel"].call(selected_id) } size="large" />)
-  elif commands.has("view_node") and not selected.is_empty():
-    inspector_action.append(<GuButton label="查看此路" on_press={ func(): commands["view_node"].call(selected_id) } />)
+  var return_action = []
+  if commands.has("to_hall"):
+    return_action.append(<GuButton label="返回大厅" role="archive" on_press={ func(): commands["to_hall"].call() } />)
 
-  var toast_row = []
+  var leave_dialog = []
+  if leave_confirm:
+    leave_dialog.append(
+      <Control name="map_leave_confirm_host" style={ {"anchors_preset": "PRESET_FULL_RECT", "z_index": 10} }>
+        <ColorRect color={ Color(0, 0, 0, 0.35) } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
+        <CenterContainer style={ {"anchors_preset": "PRESET_FULL_RECT"} }>
+          <PanelContainer name="map_leave_confirm" style={ {"bg_color": GuStyle.PAPER_BG, "border_width_all": 2, "border_color": GuStyle.CINNABAR, "corner_radius_all": 8} }>
+            <MarginContainer style={ {"margin_left": 28, "margin_right": 28, "margin_top": 22, "margin_bottom": 22} }>
+              <VBoxContainer style={ {"separation": 14} }>
+                <Label text="返回大厅" style={ {"font_color": GuStyle.INK_MAP, "font_size": 24} } />
+                <Label text="是否保存当前行程？保存后可在大厅点击「继续游戏」恢复本局。" autowrap_mode={ TextServer.AUTOWRAP_WORD_SMART } style={ {"font_color": GuStyle.INK_MAP_NOTE, "font_size": 14} } />
+                <HBoxContainer style={ {"separation": 12} }>
+                  <GuButton label="保存并返回" role="primary" on_press={ func(): commands["save_and_to_hall"].call() } />
+                  <GuButton label="不保存返回" role="action" on_press={ func(): commands["leave_without_save"].call() } />
+                  <GuButton label="取消" role="cancel" on_press={ func(): commands["cancel_to_hall"].call() } />
+                </HBoxContainer>
+              </VBoxContainer>
+            </MarginContainer>
+          </PanelContainer>
+        </CenterContainer>
+      </Control>
+    )
+
   if toast_text != "":
     toast_row.append(<GuToast text={ toast_text } tone="info" />)
   var save_row = []
@@ -219,9 +251,8 @@ export MapScreen() -> RuitkVNode {
   var resource_rows = []
   var resource_specs = [
     {"id": "yuanstone", "name": "元石", "suffix": ""},
-    {"id": "shouyuan", "name": "寿元", "suffix": " 年"},
+    {"id": "shouyuan", "name": "寿元", "suffix": ""},
     {"id": "hunpo", "name": "魂魄", "suffix": ""},
-    {"id": "material", "name": "材料", "suffix": ""},
   ]
   for spec in resource_specs:
     var resource_id = str(spec["id"])
@@ -236,7 +267,9 @@ export MapScreen() -> RuitkVNode {
   return (
     <Control style={ {"anchors_preset": "PRESET_FULL_RECT"} }>
       <ColorRect name="map_paper" color={ GuStyle.PAPER_MAP } mouse_filter={ Control.MOUSE_FILTER_IGNORE } style={ {"anchors_preset": "PRESET_FULL_RECT"} } />
-      { toast_row }
+      <CenterContainer name="map_toast_host" anchor_left={ 0.0 } anchor_right={ 1.0 } offset_top={ 72.0 } offset_bottom={ 120.0 } mouse_filter={ Control.MOUSE_FILTER_IGNORE }>
+        { toast_row }
+      </CenterContainer>
       <HBoxContainer name="map_mast" anchor_left={ 0.0 } anchor_right={ 1.0 } offset_left={ 30.0 } offset_right={ -30.0 } offset_top={ 20.0 } offset_bottom={ 68.0 } style={ {"border_width_bottom": 1, "border_color": GuStyle.HAIRLINE_COLOR} }>
         <Label text="問眞　/　命蠱第六十三卷　/　南疆" style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "size_flags_horizontal": "SIZE_EXPAND_FILL"} } />
         <HBoxContainer name="map_resources" style={ {"separation": 19} }>{ resource_rows }</HBoxContainer>
@@ -264,14 +297,16 @@ export MapScreen() -> RuitkVNode {
           </Control>
         </Control>
       </Control>
-      <HBoxContainer name="map_inspector" anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -72.0 } offset_bottom={ -24.0 } style={ {"separation": 18} }>
+      { leave_dialog }
+    <HBoxContainer name="map_inspector" anchor_left={ 0.055 } anchor_right={ 0.945 } anchor_top={ 1.0 } anchor_bottom={ 1.0 } offset_top={ -72.0 } offset_bottom={ -24.0 } style={ {"separation": 18} }>
           <VBoxContainer style={ {"separation": 2, "size_flags_horizontal": "SIZE_EXPAND_FILL"} }>
             <Label name="map_inspection_name" text={ inspection_name } style={ {"font_color": GuStyle.INK_MAP, "font_size": 18} } />
             <Label name="map_inspection_note" text={ inspection_type + " · " + inspection_note } style={ {"font_color": GuStyle.INK_MAP_NOTE, "font_size": 11} } />
           </VBoxContainer>
           { inspector_action }
           { save_row }
-      </HBoxContainer>
+          { return_action }
+    </HBoxContainer>
     </Control>
   )
 }
