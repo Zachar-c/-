@@ -7,8 +7,9 @@
 - License: MIT License
 - License retained at: `vendor/godot-open-rpg/LICENSE`
 
-The upstream source is vendored as an unmodified source tree. Its MIT license
-is retained in `vendor/godot-open-rpg/LICENSE`.
+The upstream source was audited at the pinned commit but is not shipped as a
+runtime dependency. The repository retains the MIT license and attribution
+because local theme assets were derived from that source.
 
 UI theme textures under `assets/theme/` are copied from the same pinned commit:
 `src/combat/ui/action_menu/*.png` and `src/combat/ui/battler_entry/*.png`,
