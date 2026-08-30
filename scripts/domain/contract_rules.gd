@@ -19,6 +19,12 @@ static func aggregate(state: RunState, catalog: Dictionary) -> Dictionary:
 	return totals
 
 
+static func enemy_hp(base_hp: int, state: RunState, catalog: Dictionary) -> int:
+	var pct := int(aggregate(state, catalog).get("enemy_hp_pct", 0))
+	var scaled := int(floor(float(maxi(1, base_hp)) * (1.0 + float(pct) / 100.0)))
+	return maxi(1, scaled)
+
+
 static func _entry_by_id(catalog: Dictionary) -> Dictionary:
 	var indexed: Dictionary = catalog.get("contract_entry_by_id", {})
 	if not indexed.is_empty():

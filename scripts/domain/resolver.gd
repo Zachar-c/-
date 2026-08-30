@@ -1400,7 +1400,7 @@ static func _travel(state: RunState, command: Dictionary, catalog: Dictionary) -
 	# R8.1 hard choice (P2a B generalized to every type=="rest" node): entering
 	# a rest node commits the player to exactly one benefit; leaving without
 	# consuming the visit is refused (skip only means never entering the node).
-	if _is_rest_node(catalog, state.current_node_id) and not _rest_visit_consumed(state):
+	if (_is_rest_node(catalog, state.current_node_id) or _is_rest_node(catalog, str(state.current_node_template_id))) and not _rest_visit_consumed(state):
 		return _rejected(state, "rest_choice_required")
 	# R-layering hard gate: the ascension window only opens after the final
 	# layer's boss falls. Topology already funnels it behind final_boss_stand;
@@ -1926,7 +1926,7 @@ static func _rest_heal(state: RunState) -> Dictionary:
 	# Bare-id marker rides along so _complete_node stays an idempotent no-op
 	# when leaving (keeps the seeded event stream aligned with the baseline).
 	flags[state.current_node_id] = "used"
-	var next_health := mini(state.max_health, state.health + 2)
+	var next_health := mini(state.max_health, state.health + maxi(1, int(floor(float(state.max_health) * 0.30))))
 	var essence_max := int(state.cave_aperture.get("essence_max", 4))
 	var next_essence := mini(essence_max, state.essence + 2)
 	var next := state.append_event(_event(

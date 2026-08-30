@@ -39,30 +39,48 @@ static func serialize_run(state: RunState, route: Array, replies: Array) -> Dict
 
 
 static func load_run() -> Dictionary:
-	if not FileAccess.file_exists(SAVE_PATH):
+	var diagnosis := diagnose_run_file()
+	if not bool(diagnosis.get("ok", false)):
 		return {}
 	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(SAVE_PATH)) != OK:
-		return {}
-	if not json.data is Dictionary:
+	if json.parse(FileAccess.get_file_as_string(SAVE_PATH)) != OK or not json.data is Dictionary:
 		return {}
 	return load_run_from_data(json.data)
+
+
+static func diagnose_run_file() -> Dictionary:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return {"ok": false, "kind": "missing"}
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(SAVE_PATH)) != OK or not json.data is Dictionary:
+		return {"ok": false, "kind": "invalid_json"}
+	return diagnose_run_data(json.data)
 
 
 static func _is_integral(value: Variant) -> bool:
 	return value is int or (value is float and is_equal_approx(value, floor(value)))
 
 
-static func load_run_from_data(data: Dictionary) -> Dictionary:
-	if int(data.get("version", -1)) != SAVE_VERSION:
-		return {}
+static func diagnose_run_data(data: Dictionary) -> Dictionary:
+	var version_value: Variant = data.get("version", null)
+	if not _is_integral(version_value) or int(version_value) != SAVE_VERSION:
+		return {"ok": false, "kind": "unsupported_version", "version": int(version_value) if _is_integral(version_value) else -1}
 	if not data.get("state", null) is Dictionary:
-		return {}
+		return {"ok": false, "kind": "invalid_state"}
 	if not data.get("route", null) is Array:
-		return {}
+		return {"ok": false, "kind": "invalid_route"}
 	if not _is_integral(data.get("_checksum", null)):
-		return {}
+		return {"ok": false, "kind": "checksum_missing"}
 	if int(data["_checksum"]) != _state_checksum(data["state"]):
+		return {"ok": false, "kind": "checksum_mismatch"}
+	if _state_from_save_data(data["state"]) == null:
+		return {"ok": false, "kind": "invalid_event_log"}
+	return {"ok": true, "kind": "ok", "version": SAVE_VERSION}
+
+
+static func load_run_from_data(data: Dictionary) -> Dictionary:
+	var diagnosis := diagnose_run_data(data)
+	if not bool(diagnosis.get("ok", false)):
 		return {}
 	var state: Variant = _state_from_save_data(data["state"])
 	if state == null:
@@ -99,25 +117,7 @@ static func load_meta_from_data(data: Dictionary) -> RefCounted:
 	var meta_data: Dictionary = data["meta"]
 	if int(data["_checksum"]) != _state_checksum(meta_data):
 		return null
-	var meta = load("res://scripts/domain/meta_progress.gd").new()
-	meta.gu_codex_ids = _string_array(meta_data.get("gu_codex_ids", []))
-	meta.recipe_codex_ids = _string_array(meta_data.get("recipe_codex_ids", []))
-	meta.relic_codex_ids = _string_array(meta_data.get("relic_codex_ids", []))
-	meta.inheritance_codex_ids = _string_array(meta_data.get("inheritance_codex_ids", []))
-	meta.unlocked_content_ids = _string_array(meta_data.get("unlocked_content_ids", []))
-	meta.unlocked_random_outcomes = meta_data.get("unlocked_random_outcomes", {}).duplicate(true)
-	# C1-min §16.13: fields added after v2 ship; old saves default to empty.
-	meta.contracts_unlocked = _string_array(meta_data.get("contracts_unlocked", []))
-	# N1 §16.9: journal ledger ships after v2; old saves default to empty.
-	meta.journal_unlocked = _string_array(meta_data.get("journal_unlocked", []))
-	meta.hall_material_bonus_accrued = int(meta_data.get("hall_material_bonus_accrued", 0))
-	meta.dda_state_adaptive_enabled = bool(meta_data.get("dda_state_adaptive_enabled", true))
-	meta.statistics = meta_data.get("statistics", {
-		"runs_started": 0,
-		"runs_won": 0,
-		"deaths": 0,
-	}).duplicate(true)
-	return meta
+	return MetaProgress.from_save_data(meta_data)
 
 
 static func save_meta_file(meta: RefCounted) -> Error:

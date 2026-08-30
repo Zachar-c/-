@@ -39,6 +39,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event", "rest"]:
 			_append_leave_card(cards, state)
 	_apply_stance_card_filter(cards, state)
+	_inject_encounter_context(cards, state, node)
 	_mark_consumed_cards(cards, state)
 	_assert_unique_ids(cards)
 	return cards
@@ -203,6 +204,7 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 static func _battle_card(battle: Dictionary, state: RunState, values: Dictionary) -> Dictionary:
 	var card := _card(state, values)
 	card["state_version"] = int(battle.get("hand_version", 0))
+	card["expected_phase"] = str(battle.get("phase", "player"))
 	card["command"] = {}
 	if not card.has("target_type"):
 		card["target_type"] = "none"
@@ -1115,3 +1117,17 @@ static func _assert_unique_ids(cards: Array[Dictionary]) -> void:
 		var id := str(card["id"])
 		assert(not seen.has(id), "Duplicate action card id: %s" % id)
 		seen[id] = true
+
+
+static func _inject_encounter_context(cards: Array[Dictionary], state: RunState, node: Dictionary) -> void:
+	var node_id := str(node.get("id", state.current_node_id))
+	var session_node_id := str(state.encounter_session.get("node_id", node_id))
+	for card in cards:
+		var command: Variant = card.get("command", {})
+		if not command is Dictionary or (command as Dictionary).is_empty():
+			continue
+		var envelope: Dictionary = (command as Dictionary).duplicate(true)
+		envelope["state_version"] = state.event_log.size()
+		envelope["node_id"] = node_id
+		envelope["session_node_id"] = session_node_id
+		card["command"] = envelope

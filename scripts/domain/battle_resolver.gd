@@ -71,7 +71,7 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 			initial_reactions = phase_reactions.duplicate(true)
 	var hp := int(encounter.get("enemy_hp", enemy.get("hp", 3)))
 	var battle_id := "%d-%d" % [state.seed, state.event_log.size()]
-	var enemies := _create_enemies(battle_id, requested_kinds, encounter, catalog)
+	var enemies := _create_enemies(battle_id, requested_kinds, encounter, state, catalog)
 	var deck_generation_hash := DeckBuilderScript.deck_hash(state, catalog)
 	var deck_cache := DeckBuilderScript.build_card_cache(state, catalog)
 	# R9.x slot_seal: curses are run-scoped in RunState; battles only project
@@ -151,7 +151,10 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"active_effect_registry": {},
 		"pending_kill_move_state": {},
 		"contract_mods": contract_mods,
-		"context": OpenRpgAdapter.create_battle_context({"enemy_kind": enemy_id}),
+		"context": {
+			"enemy_kind": enemy_id,
+			"turn_order": ["player", "enemy"],
+		},
 	}
 	# R14.6⑦ boss-local: precompute the counter intent once (the hall toggle is
 	# run-fixed); selection prioritizes it whenever the active phase pool makes
@@ -187,13 +190,13 @@ static func _requested_enemy_kinds(encounter: Dictionary) -> Array[String]:
 	return kinds
 
 
-static func _create_enemies(battle_id: String, kinds: Array[String], encounter: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+static func _create_enemies(battle_id: String, kinds: Array[String], encounter: Dictionary, state: RunState, catalog: Dictionary) -> Array[Dictionary]:
 	var enemies: Array[Dictionary] = []
 	var encounter_turn := int(encounter.get("turn", 0))
 	for index in kinds.size():
 		var definition := _enemy_definition(str(kinds[index]), catalog, encounter_turn)
 		var kind := str(definition.get("id", kinds[index]))
-		var hp := int(encounter.get("enemy_hp", definition.get("hp", 3))) if index == 0 else int(definition.get("hp", 3))
+		var hp := ContractRulesScript.enemy_hp(int(encounter.get("enemy_hp", definition.get("hp", 3))), state, catalog) if index == 0 else ContractRulesScript.enemy_hp(int(definition.get("hp", 3)), state, catalog)
 		var intent: Dictionary = definition.get("intent", {}).duplicate(true)
 		var phases: Array = definition.get("phases", []).duplicate(true)
 		var reactions: Array = definition.get("reactions", []).duplicate(true)
@@ -307,6 +310,15 @@ static func apply_action_card(battle: Dictionary, state: RunState, command: Dict
 	var action_id := str(command.get("action_id", ""))
 	if action_id.is_empty() and not str(command.get("card_id", "")).is_empty():
 		action_id = "battle.%s.%s" % [str(next.get("battle_id", "")), str(command["card_id"])]
+	var action_suffix := action_id.trim_prefix("battle.%s." % str(next.get("battle_id", "")))
+	if action_suffix == "basic.punch":
+		action_id = "battle.basic.punch"
+	elif action_suffix == "basic.dodge":
+		action_id = "battle.basic.dodge"
+	elif action_suffix == "end_turn":
+		action_id = "battle.end_turn"
+	elif action_suffix == "retreat":
+		action_id = "battle.retreat"
 	if action_id == "battle.end_turn":
 		return _end_turn(next, state, catalog)
 	if action_id == "battle.retreat":

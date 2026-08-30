@@ -44,6 +44,16 @@
       ],
       "mutual_exclusive": [],
       "unlock": {"kind": "ending", "endings": ["risky"]}
+    },
+    {
+      "id": "enemy_vitality_trial",
+      "label": "枯敌试炼",
+      "desc": "敌方生命降低 90%。仅用于验证完整流程，其他数值不变。",
+      "rules": [
+        {"key": "enemy_hp_pct", "value": -90}
+      ],
+      "mutual_exclusive": [],
+      "unlock": {"kind": "always"}
     }
   ]
 }

@@ -4,6 +4,7 @@ extends RefCounted
 
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
 
 
 static func start(node: Dictionary) -> Dictionary:
@@ -88,8 +89,9 @@ static func _apply_action_card(
 ) -> Dictionary:
 	if node.is_empty():
 		return _card_rejected(state, session, node, catalog, "missing_action_node")
-	if int(command.get("state_version", -1)) != state.event_log.size():
-		return _card_rejected(state, session, node, catalog, "action_preview_stale")
+	var preflight: Dictionary = CommandSpecRegistryScript.preflight("encounter.action_card", state, {}, session, command, catalog, node)
+	if not bool(preflight.get("ok", false)):
+		return _card_rejected(state, session, node, catalog, str(preflight.get("reason", "action_preview_stale")))
 	var card := ActionPreviewServiceScript.find_card(state, node, str(command.get("action_id", "")), catalog)
 	if card.is_empty():
 		return _card_rejected(state, session, node, catalog, "unknown_action_card")
@@ -145,7 +147,8 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 
 static func _rest_choice_pending(state: RunState, session: Dictionary, catalog: Dictionary) -> bool:
 	var node_id := str(session.get("node_id", ""))
-	if not Resolver._is_rest_node(catalog, node_id):
+	var template_id := str(state.current_node_template_id)
+	if not Resolver._is_rest_node(catalog, node_id) and not Resolver._is_rest_node(catalog, template_id):
 		return false
 	return str(state.node_flags.get("%s_used" % node_id, "")) != "used"
 

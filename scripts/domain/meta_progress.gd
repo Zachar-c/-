@@ -3,6 +3,12 @@ extends RefCounted
 
 
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
+const SAVE_FIELDS := [
+	"gu_codex_ids", "recipe_codex_ids", "relic_codex_ids", "inheritance_codex_ids",
+	"unlocked_content_ids", "unlocked_random_outcomes", "contracts_unlocked",
+	"journal_unlocked", "hall_material_bonus_accrued", "dda_state_adaptive_enabled",
+	"statistics",
+]
 
 
 var gu_codex_ids: Array[String] = []
@@ -30,8 +36,35 @@ var statistics: Dictionary = {
 
 
 
-static func new_empty() -> RefCounted:
-	return load("res://scripts/domain/meta_progress.gd").new()
+static func new_empty() -> MetaProgress:
+	return MetaProgress.new()
+
+
+static func from_save_data(data: Dictionary) -> MetaProgress:
+	var meta = new_empty()
+	meta.gu_codex_ids = _string_array(data.get("gu_codex_ids", []))
+	meta.recipe_codex_ids = _string_array(data.get("recipe_codex_ids", []))
+	meta.relic_codex_ids = _string_array(data.get("relic_codex_ids", []))
+	meta.inheritance_codex_ids = _string_array(data.get("inheritance_codex_ids", []))
+	meta.unlocked_content_ids = _string_array(data.get("unlocked_content_ids", []))
+	var outcomes: Variant = data.get("unlocked_random_outcomes", {})
+	meta.unlocked_random_outcomes = outcomes.duplicate(true) if outcomes is Dictionary else {}
+	meta.contracts_unlocked = _string_array(data.get("contracts_unlocked", []))
+	meta.journal_unlocked = _string_array(data.get("journal_unlocked", []))
+	meta.hall_material_bonus_accrued = int(data.get("hall_material_bonus_accrued", 0))
+	meta.dda_state_adaptive_enabled = bool(data.get("dda_state_adaptive_enabled", true))
+	var stats: Variant = data.get("statistics", {})
+	if stats is Dictionary:
+		meta.statistics = meta.statistics.merged(stats, true)
+	return meta
+
+
+static func _string_array(value: Variant) -> Array[String]:
+	var result: Array[String] = []
+	if value is Array:
+		for item in value:
+			result.append(str(item))
+	return result
 
 
 func record_run_end(run: RunState, outcome: String, catalog: Dictionary = {}, ending_type: String = "") -> RefCounted:
@@ -197,16 +230,4 @@ func to_save_data() -> Dictionary:
 
 
 func _copy() -> RefCounted:
-	var copy = get_script().new()
-	copy.gu_codex_ids = gu_codex_ids.duplicate()
-	copy.recipe_codex_ids = recipe_codex_ids.duplicate()
-	copy.relic_codex_ids = relic_codex_ids.duplicate()
-	copy.inheritance_codex_ids = inheritance_codex_ids.duplicate()
-	copy.unlocked_content_ids = unlocked_content_ids.duplicate()
-	copy.unlocked_random_outcomes = unlocked_random_outcomes.duplicate(true)
-	copy.contracts_unlocked = contracts_unlocked.duplicate()
-	copy.journal_unlocked = journal_unlocked.duplicate()
-	copy.hall_material_bonus_accrued = hall_material_bonus_accrued
-	copy.dda_state_adaptive_enabled = dda_state_adaptive_enabled
-	copy.statistics = statistics.duplicate(true)
-	return copy
+	return MetaProgress.from_save_data(to_save_data())

@@ -8,12 +8,15 @@ const SCHOOL_IDS := ["blood", "qi", "force", "soul", "refine"]
 const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
+const EVENT_KIND_IDS := ["delayed_cost", "curse_bargain"]
+const DIALOGUE_INTENT_IDS := ["probe", "trade", "pressure", "leave", "clarify"]
+const NODE_KIND_IDS := ["start", "combat", "pursuit", "event", "shop", "market", "rest", "seclusion", "cultivation", "ascension", "refinement", "inheritance", "caravan", "wild_gu", "contact", "hazard", "earth_vein", "ledger"]
 # C1-min §16.13: contract rule keys are a closed whitelist; the ending ids
 # mirror the snapshot builder's ending_type vocabulary.
 const CONTRACT_RULE_KEYS := [
 	"strike_damage_pct", "enemy_damage_pct", "shop_price_pct",
 	"material_bonus", "material_penalty", "turn_essence_bonus",
-	"hp_max_penalty", "hall_material_bonus_pct",
+	"hp_max_penalty", "hall_material_bonus_pct", "enemy_hp_pct",
 ]
 const ENDING_TYPE_IDS := ["success", "risky", "retreat", "death", "gu_fall", "true_ending"]
 # N1 §16.9: journal layers are a closed enum and route markers must name real
@@ -25,6 +28,7 @@ const JOURNAL_MARKER_IDS := [
 ]
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
+const DialogueGatewayScript = preload("res://scripts/domain/dialogue_gateway.gd")
 
 
 static func load_all() -> Dictionary:
@@ -50,6 +54,11 @@ static func load_all() -> Dictionary:
 	var journal_cfg := _load_object("res://data/journal.json")
 	var dda_cfg := _load_object("res://data/dda.json")
 	var debug_cfg := _load_object("res://data/debug.json")
+	var first_run_cfg := _load_object("res://data/first_run.json")
+	var dialogue_templates_cfg := _load_object("res://data/dialogue_templates.json")
+	var names_cfg := _load_object("res://data/names.json")
+	var nodes_data := _load_object("res://data/nodes.json")
+	var nodes: Array = nodes_data.get("nodes", [])
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
 	var material_ids: Array[String] = ["feed_points"]
 	for material_id in loot_materials:
@@ -74,7 +83,9 @@ static func load_all() -> Dictionary:
 		"curse_by_id": _index_by_id(curses),
 		"events": events,
 		"event_by_id": _index_by_id(events),
-		"nodes": _load_object("res://data/nodes.json").get("nodes", []),
+		"nodes": nodes,
+		"node_by_id": _index_by_id(nodes),
+		"nodes_data": nodes_data,
 		"shop_offers": shop_offers,
 		"shop_offer_by_id": _index_by_id(shop_offers),
 		"reputation": reputation,
@@ -90,13 +101,199 @@ static func load_all() -> Dictionary:
 		"journal_entry_by_id": _index_by_id(journal_cfg.get("entries", [])),
 		"dda": dda_cfg,
 		"debug": debug_cfg,
+		"first_run": first_run_cfg,
+		"dialogue_templates": dialogue_templates_cfg,
+		"names": names_cfg,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
 
 
+static func load_and_validate_all() -> Dictionary:
+	var catalog := load_all()
+	var errors := validate(catalog)
+	return {"catalog": catalog, "errors": errors}
+
+
+static func _validate_events(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var seen := {}
+	for entry_value in catalog.get("events", []):
+		if not entry_value is Dictionary:
+			errors.append("events entry must be an object")
+			continue
+		var entry: Dictionary = entry_value
+		var event_id := str(entry.get("id", ""))
+		if event_id.is_empty():
+			errors.append("event entry missing id")
+		elif seen.has(event_id):
+			errors.append("duplicate event id %s" % event_id)
+		seen[event_id] = true
+		var kind := str(entry.get("kind", ""))
+		if entry.has("kind") and not EVENT_KIND_IDS.has(kind):
+			errors.append("event %s has unknown kind %s" % [event_id, kind])
+		for field in ["health_cost", "delayed_soul_cost"]:
+			if entry.has(field) and (not _is_integral(entry.get(field)) or int(entry.get(field)) < 0):
+				errors.append("event %s.%s must be a non-negative integer" % [event_id, field])
+		var trigger := str(entry.get("delayed_trigger", ""))
+		if entry.has("delayed_trigger") and trigger != "next_travel":
+			errors.append("event %s.delayed_trigger has unknown value %s" % [event_id, trigger])
+		if entry.has("kind") and kind == "curse_bargain" and str(entry.get("curse_id", "")).is_empty():
+			errors.append("event %s curse_bargain needs curse_id" % event_id)
+		var curse_id := str(entry.get("curse_id", ""))
+		if not curse_id.is_empty() and not catalog.get("curse_by_id", {}).has(curse_id):
+			errors.append("event %s references unknown curse %s" % [event_id, curse_id])
+	return errors
+
+
+static func _validate_pacing(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var pacing: Dictionary = catalog.get("pacing", {})
+	var scaling: Dictionary = pacing.get("turn_scaling", {})
+	for field in ["hp_add_per_turn", "damage_add_per_turn"]:
+		if not _is_integral(scaling.get(field, null)) or int(scaling.get(field, 0)) < 0:
+			errors.append("pacing turn_scaling.%s must be a non-negative integer" % field)
+	var layers: Dictionary = pacing.get("layers", {})
+	for layer_number in range(1, 6):
+		var layer_id := str(layer_number)
+		if not layers.has(layer_id):
+			errors.append("pacing layers missing %s" % layer_id)
+			continue
+		var layer: Dictionary = layers[layer_id]
+		for range_field in ["rows", "row_nodes", "entry_nodes"]:
+			var bounds: Variant = layer.get(range_field, null)
+			if not bounds is Array or (bounds as Array).size() != 2:
+				errors.append("pacing layer %s.%s must be a two-item array" % [layer_id, range_field])
+				continue
+			if not _is_integral(bounds[0]) or not _is_integral(bounds[1]) or int(bounds[0]) < 1 or int(bounds[1]) < int(bounds[0]):
+				errors.append("pacing layer %s.%s has invalid bounds" % [layer_id, range_field])
+			var loot: Dictionary = layer.get("loot", {})
+			if not _is_integral(loot.get("material_count", null)) or int(loot.get("material_count", -1)) < 0:
+				errors.append("pacing layer %s loot.material_count must be non-negative" % layer_id)
+			var weights: Dictionary = loot.get("weights", {})
+			var has_weight := false
+			for rarity_value in weights:
+				var rarity := str(rarity_value)
+				if not RARITY_IDS.has(rarity):
+					errors.append("pacing layer %s loot.weights uses unknown rarity %s" % [layer_id, rarity])
+				if not _is_integral(weights[rarity_value]) or int(weights[rarity_value]) < 0:
+					errors.append("pacing layer %s loot.weights.%s must be non-negative" % [layer_id, rarity])
+				elif int(weights[rarity_value]) > 0:
+					has_weight = true
+			if not weights.is_empty() and not has_weight:
+				errors.append("pacing layer %s loot.weights needs a positive weight" % layer_id)
+			var enemy_turn := int(layer.get("enemy_turn", 0))
+			if enemy_turn < 1 or enemy_turn > 5:
+				errors.append("pacing layer %s enemy_turn must be within 1..5" % layer_id)
+			var price := int(layer.get("shop_price_pct", -1))
+			if price < 0:
+				errors.append("pacing layer %s shop_price_pct must be non-negative" % layer_id)
+			var max_tier := int(layer.get("shop_max_tier", 0))
+			if max_tier < 1 or max_tier > 5:
+				errors.append("pacing layer %s shop_max_tier must be within 1..5" % layer_id)
+			for anchor_value in layer.get("anchors", []):
+				var anchor: Dictionary = anchor_value
+				var template_id := str(anchor.get("template", ""))
+				if not catalog.get("node_by_id", {}).has(template_id):
+					errors.append("pacing layer %s anchor references unknown node %s" % [layer_id, template_id])
+				if str(anchor.get("row", "")) not in ["mid", "pre_boss"]:
+					errors.append("pacing layer %s anchor %s has unknown row" % [layer_id, template_id])
+			for template_id_value in layer.get("pool", []):
+				var pool_id := str(template_id_value)
+				if not catalog.get("node_by_id", {}).has(pool_id):
+					errors.append("pacing layer %s pool references unknown node %s" % [layer_id, pool_id])
+	return errors
+
+
+static func _validate_aptitude(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var data: Dictionary = catalog.get("aptitude", {})
+	var base_map: Dictionary = data.get("stage_essence_base", {})
+	for tier in ["low", "mid", "high", "peak", "nirvana"]:
+		if not base_map.has(tier):
+			errors.append("aptitude stage_essence_base missing %s" % tier)
+	var pct_map: Dictionary = data.get("aptitude_pct", {})
+	for aptitude_id in ["jia", "yi", "bing", "ding", "wu"]:
+		if not pct_map.has(aptitude_id):
+			errors.append("aptitude aptitude_pct missing %s" % aptitude_id)
+	var rank_map: Dictionary = data.get("rank_tier", {})
+	for rank in ["1", "2", "3", "4", "5"]:
+		if not rank_map.has(rank):
+			errors.append("aptitude rank_tier missing %s" % rank)
+		elif not base_map.has(str(rank_map[rank])):
+			errors.append("aptitude rank_tier references unknown tier %s" % rank_map[rank])
+	for path_value in data.get("paths", []):
+		var path: Dictionary = path_value
+		var path_id := str(path.get("id", ""))
+		if path_id.is_empty():
+			errors.append("aptitude path missing id")
+		for field in ["cost_lifespan", "cost_stone", "limit_per_run"]:
+			if not _is_integral(path.get(field, null)) or int(path.get(field, 0)) < 1:
+				errors.append("aptitude path %s.%s must be a positive integer" % [path_id, field])
+		for node_kind_value in path.get("node_kinds", []):
+			if not NODE_KIND_IDS.has(str(node_kind_value)):
+				errors.append("aptitude path %s references unknown node kind %s" % [path_id, node_kind_value])
+	return errors
+
+
+static func _validate_first_run(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var cfg: Dictionary = catalog.get("first_run", {})
+	if not _is_integral(cfg.get("seed", null)):
+		errors.append("first_run seed must be an integer")
+	var seen := {}
+	for route_id_value in cfg.get("route_ids", []):
+		var route_id := str(route_id_value)
+		if seen.has(route_id):
+			errors.append("first_run route_ids duplicates %s" % route_id)
+		seen[route_id] = true
+		if not catalog.get("node_by_id", {}).has(route_id):
+			errors.append("first_run route_ids references missing node %s" % route_id)
+	return errors
+
+
+static func _validate_dialogue_templates(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var cfg: Dictionary = catalog.get("dialogue_templates", {})
+	var responses: Variant = cfg.get("responses", null)
+	if not responses is Dictionary:
+		return ["dialogue_templates responses must be an object"]
+	if not (responses as Dictionary).has("clarify"):
+		errors.append("dialogue_templates responses missing clarify fallback")
+	for intent_value in responses:
+		var intent := str(intent_value)
+		if not DIALOGUE_INTENT_IDS.has(intent):
+			errors.append("dialogue_templates has unknown intent %s" % intent)
+			continue
+		var response: Variant = responses[intent_value]
+		if not response is Dictionary or not DialogueGatewayScript.is_valid_response(response):
+			errors.append("dialogue_templates response %s has invalid shape" % intent)
+		elif str(response.get("intent", "")) != intent:
+			errors.append("dialogue_templates response %s intent mismatch" % intent)
+	return errors
+
+
+static func _validate_names(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var names: Variant = catalog.get("names", null)
+	if not names is Dictionary:
+		return ["names must be an object"]
+	for table_value in names:
+		var table_name := str(table_value)
+		var table: Variant = names[table_value]
+		if not table is Dictionary:
+			errors.append("names.%s must be an object" % table_name)
+			continue
+		for key_value in table:
+			if str(key_value).is_empty() or not table[key_value] is String or str(table[key_value]).is_empty():
+				errors.append("names.%s.%s must be a non-empty string" % [table_name, key_value])
+
+	return errors
+
+
 static func validate(catalog: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
+
 	var entry_tables := {
 		"gu": catalog.get("gu", []),
 		"cards": catalog.get("cards", []),
@@ -361,10 +558,6 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var fail_curse_id := str(outcome_value.get("fail_curse_id", ""))
 			if not fail_curse_id.is_empty() and not curse_by_id.has(fail_curse_id):
 				errors.append("recipe %s failure references unknown curse %s" % [recipe["id"], fail_curse_id])
-	for event_entry in catalog.get("events", []):
-		var event_curse_id := str(event_entry.get("curse_id", ""))
-		if not event_curse_id.is_empty() and not curse_by_id.has(event_curse_id):
-			errors.append("event %s references unknown curse %s" % [event_entry.get("id", ""), event_curse_id])
 	var loot_tables: Dictionary = catalog.get("loot_tables", {})
 	var materials: Dictionary = loot_tables.get("materials", {})
 	for material_id in materials:
@@ -425,6 +618,16 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var enabled_value: Variant = catalog.get("debug", {}).get("enabled", null)
 		if not (enabled_value is bool):
 			errors.append("debug.enabled must be a boolean")
+	if catalog.has("first_run"):
+		errors.append_array(_validate_first_run(catalog))
+	if catalog.has("dialogue_templates"):
+		errors.append_array(_validate_dialogue_templates(catalog))
+	if catalog.has("names"):
+		errors.append_array(_validate_names(catalog))
+	errors.append_array(_validate_events(catalog))
+	errors.append_array(_validate_pacing(catalog))
+	errors.append_array(_validate_aptitude(catalog))
+
 	for tier_key in loot_tables.get("loot", {}):
 		var tier: Dictionary = loot_tables["loot"][tier_key]
 		if int(tier.get("material_count", 0)) < 0:

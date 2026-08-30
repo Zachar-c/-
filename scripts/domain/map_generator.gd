@@ -1,4 +1,4 @@
-﻿class_name MapGenerator
+class_name MapGenerator
 extends RefCounted
 
 
@@ -16,22 +16,25 @@ static func layer_index(stage: String) -> int:
 	return LAYER_ORDER.find(str(stage)) + 1
 
 
-static func build(seed_value: int, first_run: bool) -> Array[Dictionary]:
-	var data := _load_json("res://data/nodes.json")
-	var node_by_id := _index_nodes(data["nodes"])
-	node_by_id[data["ascension_node"]["id"]] = data["ascension_node"]
+static func build(seed_value: int, first_run: bool, catalog: Dictionary = {}) -> Array[Dictionary]:
+	var data: Dictionary = catalog.get("nodes_data", {}) if not catalog.is_empty() else _load_json("res://data/nodes.json")
+	var node_by_id := _index_nodes(data.get("nodes", []))
+	var ascension_node: Dictionary = data.get("ascension_node", {})
+	if not ascension_node.is_empty():
+		node_by_id[ascension_node.get("id", "")] = ascension_node
 	if first_run:
-		var route_ids: Array = _load_json("res://data/first_run.json")["route_ids"]
+		var first_run_cfg: Dictionary = catalog.get("first_run", {}) if not catalog.is_empty() else _load_json("res://data/first_run.json")
+		var route_ids: Array = first_run_cfg.get("route_ids", [])
 		return _route_from_ids(route_ids, node_by_id)
-	return _generate_instance_route(seed_value, node_by_id)
+	return _generate_instance_route(seed_value, node_by_id, catalog.get("pacing", {}) if not catalog.is_empty() else {})
 
 
 ## v2 拓扑（2026-08-29 裁定）：五大层扇形收敛图。每大层 8–11 行 ×
 ## 每行 2–6 节点（首行 1–2 入口、末行 1 个关底 Boss），行进边只连
 ## 下一行 1–2 个节点且下行每节点 ≥1 入边；关底 Boss 击败后解锁
 ## 下一大层。层形状/锚点/模板池来自 pacing.json 的 layers 裁定表。
-static func _generate_instance_route(seed_value: int, node_by_id: Dictionary) -> Array[Dictionary]:
-	var pacing: Dictionary = _load_json("res://data/pacing.json")
+static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pacing_override: Dictionary = {}) -> Array[Dictionary]:
+	var pacing: Dictionary = pacing_override if not pacing_override.is_empty() else _load_json("res://data/pacing.json")
 	var layers_cfg: Dictionary = pacing.get("layers", {})
 	var rng := SeededRng.new(seed_value)
 	var route: Array[Dictionary] = []
@@ -41,10 +44,17 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary) ->
 		var row_bounds: Array = cfg.get("rows", [8, 11])
 		var row_count := int(row_bounds[0]) + rng.next_index(maxi(1, int(row_bounds[1]) - int(row_bounds[0]) + 1))
 		var anchor_rows := _anchor_rows(cfg, row_count, rng)
+		var reserved_templates: Array = []
+		for anchor_queue_value in anchor_rows.values():
+			for template_value in anchor_queue_value:
+				var reserved_template := str(template_value)
+				if not reserved_templates.has(reserved_template):
+					reserved_templates.append(reserved_template)
 		var rows: Array = []
 		for row in range(row_count):
 			var count := _row_node_count(rng, cfg, row, row_count)
 			var anchor_queue: Array = anchor_rows.get(row, [])
+			count = maxi(count, anchor_queue.size())
 			var row_nodes: Array = []
 			var used_in_row: Array = []
 			for index in range(count):
@@ -54,7 +64,7 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary) ->
 				elif not anchor_queue.is_empty():
 					template_id = str(anchor_queue.pop_front())
 				else:
-					template_id = _pick_pool_template(rng, cfg.get("pool", []), used_in_row)
+					template_id = _pick_pool_template(rng, cfg.get("pool", []), used_in_row, reserved_templates)
 				used_in_row.append(template_id)
 				var template: Dictionary = node_by_id.get(template_id, {})
 				var instance: Dictionary = template.duplicate(true)
@@ -154,12 +164,15 @@ static func _anchor_rows(cfg: Dictionary, row_count: int, rng: SeededRng) -> Dic
 		if not anchor_rows.has(row):
 			anchor_rows[row] = []
 		(anchor_rows[row] as Array).append("ridge_black_market")
-	# 每大层一处休整（第二行），交错取两张休整模板。
-	var rest_row := 1 if row_count > 3 else 0
-	var rest_template := "rest_hollow" if rng.next_index(100) < 50 else "rest_shrine"
-	if not anchor_rows.has(rest_row):
-		anchor_rows[rest_row] = []
-	(anchor_rows[rest_row] as Array).append(rest_template)
+	# 每三行一处休整（第 1、4、7… 行），不占用末端 Boss 行。
+	# 同层交错取两张休整模板，保证长层也有续航节点。
+	var rest_index := 0
+	for rest_row in range(1, row_count - 1, 3):
+		var rest_template := "rest_hollow" if rest_index % 2 == 0 else "rest_shrine"
+		rest_index += 1
+		if not anchor_rows.has(rest_row):
+			anchor_rows[rest_row] = []
+		(anchor_rows[rest_row] as Array).append(rest_template)
 	return anchor_rows
 
 
@@ -172,14 +185,19 @@ static func _anchor_row_index(slot: String, row_count: int) -> int:
 
 
 ## 层内模板池抽取；同层内避免重复（池不小于行宽时）。
-static func _pick_pool_template(rng: SeededRng, pool: Array, used_in_row: Array) -> String:
+static func _pick_pool_template(rng: SeededRng, pool: Array, used_in_row: Array, reserved_templates: Array = []) -> String:
 	if pool.is_empty():
 		return "echo_cave"
 	var candidates: Array = []
 	for candidate_value in pool:
 		var candidate := str(candidate_value)
-		if not used_in_row.has(candidate):
+		if not used_in_row.has(candidate) and not reserved_templates.has(candidate):
 			candidates.append(candidate)
+	if candidates.is_empty():
+		for candidate_value in pool:
+			var candidate := str(candidate_value)
+			if not reserved_templates.has(candidate):
+				candidates.append(candidate)
 	if candidates.is_empty():
 		candidates = pool
 	return str(candidates[rng.next_index(candidates.size())])
