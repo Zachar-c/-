@@ -356,14 +356,25 @@ static func refine(controller) -> Dictionary:
 		var fail := "成功配方"
 		if r.has("success_roll_max"):
 			fail = "失败率 %d%%" % (100 - int(r.get("success_roll_max", 100)))
-		# 产出转数标注：advance 跟输入蛊走（+1 封顶五转），其余跟产出蛊本体定义。
+		# 产出转数标注：advance 跟输入蛊走（+1 封顶五转）；fixed/combine 优先
+		# 蛊方声明的 output_rank，缺省回落到产出蛊本体定义。
 		var rank_note := ""
 		if kind == "advance":
 			rank_note = "产出转数 = 输入转数 + 1（封顶五转）"
+		elif r.has("output_rank"):
+			rank_note = "产出 %s" % _rank_label(int(r["output_rank"]))
 		else:
 			var output_gu: Dictionary = catalog.get("gu_by_id", {}).get(str(r.get("output_gu_id", "")), {})
 			if not output_gu.is_empty():
 				rank_note = "产出 %s" % _rank_label(int(output_gu.get("rank", 1)))
+		# 蛊方图鉴门禁（2026-08-30）：advance 恒可用，default_unlocked 初始持有，
+		# 其余 fixed/combine 须全局图鉴已解锁（持有配方 id 或产出蛊）。
+		var codex_ok := false
+		if kind == "advance" or bool(r.get("default_unlocked", false)):
+			codex_ok = true
+		elif state != null and (state.global_codex_ids.has(str(r.get("id", ""))) \
+				or state.global_codex_ids.has(str(r.get("output_gu_id", "")))):
+			codex_ok = true
 		rec_rows.append({
 			"id": str(recipe_key),
 			"channel": "combine" if kind == "combine" else "fixed",
@@ -374,7 +385,7 @@ static func refine(controller) -> Dictionary:
 			"fail_chance": fail,
 			"backlash": "失败毁材 · 躁动 +1" if kind == "combine" else "无躁动",
 			"curse": "",
-			"unlocked": not bool(r.get("locked", false)),
+			"unlocked": codex_ok,
 		})
 	var free_mix: Dictionary = recipe_by_id.get("free_mix", {})
 	if not free_mix.is_empty():
@@ -797,13 +808,15 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 		})
 
 	var recipe_entries: Array[Dictionary] = []
-	for r in catalog.get("refinement", {}).get("recipes", []):
+	for r in catalog.get("refinement_recipes", []):
 		var rid := str(r.get("id", ""))
 		recipe_entries.append({
 			"id": rid,
 			"kind": str(r.get("kind", "")),
 			"output_gu": DisplayText.gu(str(r.get("output_gu_id", ""))),
-			"unlocked": unlocked_recipes.has(rid),
+			"rank": int(r.get("output_rank", catalog.get("gu_by_id", {}).get(str(r.get("output_gu_id", "")), {}).get("rank", 1))),
+			# default_unlocked 配方初始持有，图鉴视为已解锁。
+			"unlocked": unlocked_recipes.has(rid) or bool(r.get("default_unlocked", false)),
 		})
 
 	var relic_entries: Array[Dictionary] = []

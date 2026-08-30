@@ -551,6 +551,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var rank_value = recipe.get(rank_field, null)
 			if rank_value != null and (not _is_integral(rank_value) or int(rank_value) < 1 or int(rank_value) > 5):
 				errors.append("recipe %s %s must be an integer in 1..5" % [recipe.get("id", ""), rank_field])
+		if recipe.has("default_unlocked") and not (recipe["default_unlocked"] is bool):
+			errors.append("recipe %s default_unlocked must be a boolean" % recipe.get("id", ""))
 		for rule_value in recipe.get("risk_hints", []):
 			var rule: Dictionary = rule_value
 			for required_tag in rule.get("tags", []):

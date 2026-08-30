@@ -49,7 +49,7 @@
         "weights": {},
         "by_rarity": {}
       },
-      "scavenge_recipe": "phantom_moon_locked"
+      "scavenge_recipe": ["phantom_moon_locked", "blood_moon_forged"]
     }
   }
 }

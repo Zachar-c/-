@@ -16,7 +16,7 @@ extends RefCounted
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 
-const OPS := ["add_gu", "set_resources", "jump_to_node", "query_loot_state", "dump_snapshot"]
+const OPS := ["add_gu", "set_resources", "jump_to_node", "query_loot_state", "dump_snapshot", "grant_recipe"]
 
 
 # Returns the resolver-style shape {ok/result/state/feeds}. `route` is the
@@ -41,6 +41,8 @@ static func apply(
 			return _set_resources(state, action)
 		"jump_to_node":
 			return _jump_to_node(state, action, route)
+		"grant_recipe":
+			return _grant_recipe(state, catalog, action)
 		_:
 			return _read_only(state, action)
 
@@ -71,6 +73,23 @@ static func _add_gu(state: RunState, catalog: Dictionary, action: Dictionary) ->
 	next.sync_legacy_gu_projections()
 	return _accepted(next, {"instance_id": instance_id, "definition_id": gu_id},
 			_feed("debug_gu_added", {"gu": gu_id}))
+
+
+# 蛊方图鉴调试授方（2026-08-30）：把配方 id 写入全局图鉴，供验收门禁与
+# 跨局保留链路。首次获得即永久（Meta 回收链路照常生效）。
+static func _grant_recipe(state: RunState, catalog: Dictionary, action: Dictionary) -> Dictionary:
+	var recipe_id := str(action.get("recipe_id", ""))
+	if not catalog.get("refinement_by_id", {}).has(recipe_id):
+		return _rejected(state, action, "unknown_refinement_recipe")
+	if state.is_terminal():
+		return _rejected(state, action, "terminal_run")
+	if state.global_codex_ids.has(recipe_id):
+		return _rejected(state, action, "recipe_already_owned")
+	var codex_after: Array[String] = state.global_codex_ids.duplicate()
+	codex_after.append(recipe_id)
+	var next := _debug_event(state, {"global_codex_ids": codex_after}, action, [recipe_id])
+	next.global_codex_ids = codex_after
+	return _accepted(next, {"recipe_id": recipe_id}, _feed("debug_recipe_granted", {"recipe": recipe_id}))
 
 
 # Absolute writes clamped into legal bounds; health/soul floor at 1 so the

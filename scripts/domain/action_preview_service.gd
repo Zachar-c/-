@@ -440,19 +440,22 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var missing := _missing_gu(state.refined_gu_ids, inputs)
 	var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
-	var locked := bool(recipe.get("locked", false))
 	var codex_unlocked := state.global_codex_ids.has(str(recipe.get("id", ""))) or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
+	# 蛊方图鉴门禁（2026-08-30）：fixed/combine 须持有蛊方，advance 豁免，
+	# default_unlocked 配方初始持有。
+	var gated := str(recipe.get("kind", "combine")) != "advance"
+	var codex_ok := not gated or bool(recipe.get("default_unlocked", false)) or codex_unlocked
 	var deck_full := DeckCapacityScript.projected_count(state, catalog, [str(recipe.get("output_gu_id", ""))], inputs) > DeckCapacityScript.capacity(catalog)
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
 	var success_rate: Variant = null
 	if not is_fixed:
 		success_rate = int(recipe.get("success_roll_max", 0))
-	var executable := missing.is_empty() and (not locked or codex_unlocked) and not deck_full
+	var executable := missing.is_empty() and codex_ok and not deck_full
 	var reason := ""
 	if deck_full:
 		reason = "牌组已满（%d/%d），炼成后无法容纳新蛊。" % [DeckCapacityScript.card_count(state, catalog), DeckCapacityScript.capacity(catalog)]
-	elif locked and not codex_unlocked:
-		reason = str(recipe.get("locked_reason", "尚未获得对应的炼制传承，无法按固定配方合炼。"))
+	elif not codex_ok:
+		reason = str(recipe.get("locked_reason", "尚未获得该蛊方，无法按此配方合炼。"))
 	elif not missing.is_empty():
 		reason = "缺少%s。" % _gu_names(missing)
 	cards.append(_card(state, {
@@ -466,7 +469,7 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 		"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
 		"unknown_note": "" if is_fixed else "炼制成败未定。",
 		"success_rate": success_rate,
-		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if locked and not codex_unlocked else _gu_remedies(missing),
+		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if not codex_ok else _gu_remedies(missing),
 		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"])},
 	}))
 

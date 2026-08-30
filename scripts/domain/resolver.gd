@@ -286,6 +286,10 @@ static func _spend_materials(state: RunState, material_cost: Dictionary) -> RunS
 
 
 static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+	# 蛊方图鉴门禁（2026-08-30）：合成配方须持有蛊方（default_unlocked 初始
+	# 持有 / 全局图鉴已解锁），advance 同名升阶与 free_mix 盲盒不设门禁。
+	if not _recipe_codex_ok(state, recipe):
+		return _rejected(state, "refinement_recipe_locked")
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var material_cost: Dictionary = recipe.get("materials", {})
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
@@ -324,8 +328,19 @@ static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
 		or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
 
 
+## 蛊方持有门禁：default_unlocked 配方人人初始持有；其余 fixed/combine 须
+## 全局图鉴已解锁（持有配方 id 或曾拥有产出蛊）。advance 不受门禁。
+static func _recipe_codex_ok(state: RunState, recipe: Dictionary) -> bool:
+	var kind := str(recipe.get("kind", "combine"))
+	if kind == "advance":
+		return true
+	if bool(recipe.get("default_unlocked", false)):
+		return true
+	return _codex_unlocks_recipe(state, recipe)
+
+
 static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	if bool(recipe.get("locked", false)) and not _codex_unlocks_recipe(state, recipe):
+	if not _recipe_codex_ok(state, recipe):
 		return _rejected(state, "refinement_recipe_locked")
 	var is_advance := str(recipe.get("kind", "")) == "advance"
 	var inputs: Array = recipe.get("input_gu_ids", [])
@@ -2196,13 +2211,26 @@ static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return _rejected(state, "boss_undefeated")
 	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	var recipe_id := str(boss.get("scavenge_recipe", ""))
-	if recipe_id.is_empty() or not catalog.get("refinement_by_id", {}).has(recipe_id):
-		return _rejected(state, "no_scavenge_recipe")
-	if state.global_codex_ids.has(recipe_id):
+	# 蛊方搜刮（2026-08-30）：scavenge_recipe 兼容单串与数组，逐个授予尚未
+	# 持有的蛊方；全部已持有才拒绝重复搜刮。
+	var boss_recipes: Array[String] = []
+	var raw_recipe: Variant = boss.get("scavenge_recipe", "")
+	if raw_recipe is Array:
+		for value in raw_recipe:
+			boss_recipes.append(str(value))
+	elif not str(raw_recipe).is_empty():
+		boss_recipes.append(str(raw_recipe))
+	var pending: Array[String] = []
+	for recipe_id in boss_recipes:
+		if not catalog.get("refinement_by_id", {}).has(recipe_id):
+			return _rejected(state, "no_scavenge_recipe")
+		if not state.global_codex_ids.has(recipe_id):
+			pending.append(recipe_id)
+	if pending.is_empty():
 		return _rejected(state, "scavenge_already_done")
 	var codex_after: Array[String] = state.global_codex_ids.duplicate()
-	codex_after.append(recipe_id)
+	for recipe_id in pending:
+		codex_after.append(recipe_id)
 	var next := state.append_event(_event(
 		state,
 		"scavenge",
@@ -2210,7 +2238,7 @@ static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary
 		{"global_codex_ids": codex_after},
 		"scavenge_recipe_unlocked",
 		state.current_node_id,
-		[recipe_id]
+		pending
 	))
 	next.global_codex_ids = codex_after
 	return _accepted(next)
