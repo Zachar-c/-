@@ -7,8 +7,7 @@ extends "res://addons/gut/test.gd"
 
 
 const BattleResolverScript := preload("res://scripts/domain/battle_resolver.gd")
-const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
-const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
+const BattleScreenScript := preload("res://ui/screens/battle_screen.gd")
 const RuiVLib := preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot := preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
@@ -70,9 +69,7 @@ func test_battle_screen_shows_intent_speed() -> void:
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
 	var host := Control.new()
 	add_child_autofree(host)
-	# 战斗屏已迁到 Godot 官方 .tscn。
-	host.add_child(TscnMountHelper.instantiate(
-		BATTLE_SCREEN_TSCN, snapshot, {}))
+	RuiRoot.create(host, RuiVLib.fc(BattleScreenScript.render, {"state": snapshot, "commands": {}}))
 	await get_tree().process_frame
 	assert_true(_any_label_contains(host, "速 1"), "intent speed must be visible on the battle screen")
 
@@ -86,9 +83,7 @@ func test_battle_screen_shows_first_battle_tip_once() -> void:
 	var first_snapshot: Dictionary = controller._snapshot_for("Battle")
 	var first_host := Control.new()
 	add_child_autofree(first_host)
-	# 战斗屏已迁到 Godot 官方 .tscn。
-	first_host.add_child(TscnMountHelper.instantiate(
-		BATTLE_SCREEN_TSCN, first_snapshot, {}))
+	RuiRoot.create(first_host, RuiVLib.fc(BattleScreenScript.render, {"state": first_snapshot, "commands": {}}))
 	await get_tree().process_frame
 	assert_true(_any_label_contains(first_host, "初战指引"), "first battle must show guidance")
 
@@ -96,9 +91,7 @@ func test_battle_screen_shows_first_battle_tip_once() -> void:
 	var second_snapshot: Dictionary = controller._snapshot_for("Battle")
 	var second_host := Control.new()
 	add_child_autofree(second_host)
-	# 战斗屏已迁到 Godot 官方 .tscn。
-	second_host.add_child(TscnMountHelper.instantiate(
-		BATTLE_SCREEN_TSCN, second_snapshot, {}))
+	RuiRoot.create(second_host, RuiVLib.fc(BattleScreenScript.render, {"state": second_snapshot, "commands": {}}))
 	await get_tree().process_frame
 	assert_false(_any_label_contains(second_host, "初战指引"), "later battles must not repeat guidance")
 
