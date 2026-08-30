@@ -11,13 +11,13 @@ export ActionCardRow() -> RuitkVNode {
   var card = props.get("card", {})
   var on_command = props.get("on_command", func(c): pass)
 
-  var executable = bool(card.get("executable", false))
+  var executable = (card.get("executable", false))
   var cost = card.get("cost", {})
   var risk = str(card.get("known_risk", ""))
   var danger = (int(cost.get("lifespan", 0)) > 0 or int(cost.get("soul", 0)) > 0) or ("反噬" in risk or "魂魄" in risk or "寿元" in risk)
 
   var st = useState({"confirming": false})
-  var confirming = bool(st[0].get("confirming", false))
+  var confirming = (st[0].get("confirming", false))
   var set_confirming = st[1]
 
   var title = str(card.get("title", "行动"))

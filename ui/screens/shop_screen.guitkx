@@ -60,9 +60,9 @@ export ShopScreen() -> RuitkVNode {
     var oprice = str(o.get("price", ""))
     var odesc = str(o.get("desc", ""))
     var oqual = str(o.get("quality", ""))
-    var ocursed = bool(o.get("curse_warning", false))
+    var ocursed = (o.get("curse_warning", false))
     var oid = str(o.get("id", ""))
-    var oemergency = bool(o.get("will_emergency_pay", false))
+    var oemergency = (o.get("will_emergency_pay", false))
     var ask_buy = func():
       if ocursed or oemergency:
         set_confirm_offer.call({"confirm_offer": oid})
@@ -92,7 +92,7 @@ export ShopScreen() -> RuitkVNode {
     var sremaining = int(s.get("remaining", 0))
     var snote = str(s.get("note", ""))
     var sid = str(s.get("id", ""))
-    var sexec = bool(s.get("executable", true))
+    var sexec = (s.get("executable", true))
     var sblock = str(s.get("block_reason", ""))
     var starget_label = str(s.get("target_label", ""))
     var candidates = s.get("candidates", [])
@@ -127,10 +127,10 @@ export ShopScreen() -> RuitkVNode {
   for o in offers:
     if str(o.get("id", "")) == confirm_offer:
       confirm_data = o
-  var confirm_cursed = bool(confirm_data.get("curse_warning", false))
+  var confirm_cursed = (confirm_data.get("curse_warning", false))
   var dialog_title = "⚠ 危险交易 · 寿元代付"
   var dialog_note = "价格：" + str(confirm_data.get("price", "")) + " · 以寿元支付，执行前请确认寿元余量"
-  if not confirm_cursed and bool(confirm_data.get("will_emergency_pay", false)):
+  if not confirm_cursed and (confirm_data.get("will_emergency_pay", false)):
     dialog_title = "⚠ 应急支付"
     dialog_note = str(confirm_data.get("price", "")) + " · 元石不足，将以气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）"
   var do_buy_cancel = func():
@@ -152,6 +152,7 @@ export ShopScreen() -> RuitkVNode {
   var service_candidates = active_service_data.get("candidates", [])
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       { feedback_row }
@@ -162,10 +163,10 @@ export ShopScreen() -> RuitkVNode {
         <Label text={ "立场·" + npc_stance } style={ {"font_color": stance_color, "font_size": 15} } />
       </HBoxContainer>
 
-      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
-        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14, "size_flags_vertical": 3} }>
+        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3, "size_flags_vertical": 3} }>
           <Label text="蛊虫 / 货物" style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />
-          <GuScrollBox height={ 420 }>
+          <GuScrollBox>
             <VBoxContainer style={ {"separation": 8} }>
               { offer_cards }
               { offer_empty }
@@ -176,9 +177,9 @@ export ShopScreen() -> RuitkVNode {
             return ( <Label text={ pool_fallback_note } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } /> )
           }
         </VBoxContainer>
-        <VBoxContainer style={ {"separation": 8, "min_width": 360} }>
-          <GuPanel title="服务">
-            <GuScrollBox height={ 470 }>
+        <VBoxContainer style={ {"separation": 8, "min_width": 360, "size_flags_vertical": 3} }>
+          <GuPanel title="服务" expand_v={ true }>
+            <GuScrollBox>
               <VBoxContainer style={ {"separation": 8} }>
                 { service_rows }
                 { service_empty }
@@ -202,7 +203,7 @@ export ShopScreen() -> RuitkVNode {
       target_rows.append(<GuButton label={ "选定 " + cand_label } on_press={ pick } />)
     return (
       <GuPanel title={ str(active_service_data.get("target_label", "选择目标")) }>
-        <GuScrollBox height={ 320 }>
+        <GuScrollBox>
           <VBoxContainer style={ {"separation": 6} }>
             { target_rows }
             <GuButton label="取消" on_press={ func(): set_service.call({"service_id": ""}) } />
@@ -225,5 +226,6 @@ export ShopScreen() -> RuitkVNode {
     )
   }
     </VBoxContainer>
+    </MarginContainer>
   )
 }

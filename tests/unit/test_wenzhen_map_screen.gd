@@ -144,6 +144,38 @@ func test_map_node_rects_match_the_approved_html_icon_layout() -> void:
 	assert_almost_eq(future_node.get_global_rect().size, Vector2(168, 108), Vector2(1, 1), "future node must retain the HTML height that centers its icon row")
 
 
+func test_map_visible_nodes_in_same_layer_do_not_overlap() -> void:
+	var snapshot := _route_snapshot()
+	snapshot["nodes"].append_array([
+		{"id": "elite_b", "type": "combat", "label": "第二精英", "layer": 63, "next_ids": [], "reachable": true, "visibility": "reachable"},
+		{"id": "elite_c", "type": "combat", "label": "第三精英", "layer": 63, "next_ids": [], "reachable": true, "visibility": "reachable"},
+	])
+	var host := _mount_with_commands(snapshot, {"travel": func(_id): pass})
+	for _frame in 3:
+		await get_tree().process_frame
+	var nodes: Array[Control] = []
+	for id in ["market", "elite", "event", "elite_b", "elite_c"]:
+		var node := _named(host, "map_node_" + id)
+		assert_not_null(node, "same-layer node must render: %s" % id)
+		if node != null:
+			nodes.append(node)
+	for i in nodes.size():
+		for j in range(i + 1, nodes.size()):
+			assert_false(nodes[i].get_global_rect().intersects(nodes[j].get_global_rect()), "same-layer map nodes must not overlap")
+
+
+func test_map_reachable_node_click_submits_travel_command() -> void:
+	var submitted: Array[String] = []
+	var host := _mount_with_commands(_route_snapshot(), {"travel": func(id): submitted.append(str(id))})
+	for _frame in 3:
+		await get_tree().process_frame
+	var node := _named(host, "map_node_elite") as Button
+	assert_not_null(node)
+	if node != null:
+		node.pressed.emit()
+	assert_eq(submitted, ["elite"])
+
+
 func test_map_routes_fill_the_route_world_at_runtime() -> void:
 	var host := _mount_with_commands(_route_snapshot(), {"travel": func(_id): pass, "view_node": func(_id): pass})
 	for _frame in 3:

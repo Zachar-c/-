@@ -18,11 +18,12 @@ export RestScreen() -> RuitkVNode {
   var death_lines = state.get("death_lines", {})
   var title = str(state.get("title", "闭关 · 休整"))
   var note = str(state.get("note", "强制二选一，不可全拿"))
-  var is_ascension = bool(state.get("is_ascension", false))
+  var is_ascension = (state.get("is_ascension", false))
 
   # 洗髓换骨（寿元代价）二次确认走 D1 弹窗族（R2.3 死亡可预见）；屏内 useState 驱动显隐。
-  var st = useState({"wash_confirm": ""})
+  var st = useState({"wash_confirm": "", "remove_select": false})
   var wash_confirm = str(st[0].get("wash_confirm", ""))
+  var remove_select = (st[0].get("remove_select", false))
   var set_wash_confirm = st[1]
 
   var fire = func(key: String, arg = null):
@@ -32,21 +33,35 @@ export RestScreen() -> RuitkVNode {
       else:
         commands[key].call()
 
-  # 休整选项
   var choices = state.get("choices", [])
+  var remove_targets = state.get("remove_targets", [])
+  var remove_rows = []
+  if remove_select:
+    for target in remove_targets:
+      var target_id = str(target.get("id", ""))
+      var target_name = str(target.get("name", target_id))
+      var target_blocked = (target.get("blocked", false))
+      var target_reason = str(target.get("reason", ""))
+      remove_rows.append(<GuButton label={ target_name + (" · " + target_reason if target_blocked else "") } disabled={ target_blocked } on_press={ func(): fire.call("choose", "remove", target_id) } />)
+  var remove_section = []
+  if remove_select:
+    remove_section.append(<GuPanel title="选择要移除的蛊" expand_h={ true }><VBoxContainer style={ {"separation": 6} }>{ remove_rows }</VBoxContainer><GuButton label="取消选择" on_press={ func(): set_wash_confirm.call({"wash_confirm": wash_confirm, "remove_select": false}) } /></GuPanel>)
+
   var choice_cards = []
   for c in choices:
     var cid = str(c.get("id", ""))
     var clabel = str(c.get("label", ""))
     var cdetail = str(c.get("detail", ""))
     var ccost = str(c.get("cost", ""))
-    var cdisabled = bool(c.get("disabled", false))
+    var cdisabled = (c.get("disabled", false))
     var creason = str(c.get("reason", ""))
-    var cdanger = bool(c.get("curse_warning", false))
+    var cdanger = (c.get("curse_warning", false))
     var is_wash = (cid == "wash")
     var on_choose = func():
       if is_wash:
-        set_wash_confirm.call({"wash_confirm": cid})
+        set_wash_confirm.call({"wash_confirm": cid, "remove_select": false})
+      elif cid == "remove":
+        set_wash_confirm.call({"wash_confirm": "", "remove_select": true})
       else:
         fire.call("choose", cid)
     choice_cards.append((
@@ -92,6 +107,7 @@ export RestScreen() -> RuitkVNode {
     growth_section.append(<GuPanel title="突破成长 · 多选一" expand_v={ true }><HBoxContainer style={ {"separation": 10} }>{ growth_rows }</HBoxContainer></GuPanel>)
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
@@ -106,6 +122,7 @@ export RestScreen() -> RuitkVNode {
         </HBoxContainer>
       </GuPanel>
 
+      { remove_section }
       { growth_section }
 
       <GuButton label="离开" on_press={ func(): fire.call("leave") } />
@@ -123,5 +140,6 @@ export RestScreen() -> RuitkVNode {
         )
       }
     </VBoxContainer>
+    </MarginContainer>
   )
 }

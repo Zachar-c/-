@@ -12,20 +12,21 @@ export GuCard() -> RuitkVNode {
   var cost = props.get("cost", "")
   var curse_warning = props.get("curse_warning", false)
   var sealed = props.get("sealed", false)
-  var expand_h = props.get("expand_h", false)
   var interaction_mode = str(props.get("interaction_mode", "idle"))
-  var disabled = bool(props.get("disabled", false))
-  var selected = bool(props.get("selected", false))
+  var disabled = (props.get("disabled", false))
+  var selected = (props.get("selected", false))
 
-  var QUAL_COLORS = {"普通": GuStyle.INK_SOFT, "稀有": GuStyle.ANOMALY_YELLOW, "史诗": GuStyle.RARITY_EPIC, "传说": GuStyle.PAPER_BG, "common": GuStyle.INK_SOFT, "rare": GuStyle.ANOMALY_YELLOW, "epic": GuStyle.RARITY_EPIC, "legendary": GuStyle.PAPER_BG}
+  var QUAL_COLORS = {"普通": GuStyle.INK_SOFT, "稀有": GuStyle.ANOMALY_YELLOW, "史诗": GuStyle.RARITY_EPIC, "传说": GuStyle.RARITY_LEGENDARY, "common": GuStyle.INK_SOFT, "rare": GuStyle.ANOMALY_YELLOW, "epic": GuStyle.RARITY_EPIC, "legendary": GuStyle.RARITY_LEGENDARY}
   var quality_color = QUAL_COLORS.get(quality, GuStyle.INK_SOFT)
   var is_danger = danger or curse_warning
   var border_color = GuStyle.CINNABAR if is_danger else (GuStyle.JADE if highlight or selected else (quality_color if quality != "" else GuStyle.INK_SOFT))
   var card_style = {
-    "bg_color": GuStyle.PAPER_DEEP,
-    "corner_radius_all": 10,
+    # PAPER_DEEP 是禁用层 token，不做卡牌底色；层级靠 1px 发丝线与留白表达。
+    "bg_color": GuStyle.PAPER_BG,
+    "corner_radius_all": 8,
     "border_width_all": 2 if is_danger else 1,
     "border_color": border_color,
+    "size_flags_horizontal": 3,
   }
   if sealed:
     card_style["modulate"] = Color(1, 1, 1, 0.55)
@@ -33,8 +34,6 @@ export GuCard() -> RuitkVNode {
     card_style["modulate"] = Color(1, 1, 1, 0.55)
   elif interaction_mode == "dragging":
     card_style["modulate"] = Color(1, 1, 1, 0.82)
-  if expand_h:
-    card_style["size_flags_horizontal"] = 3
 
   return (
     <PanelContainer style={ card_style }>

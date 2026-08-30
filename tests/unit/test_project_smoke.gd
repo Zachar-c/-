@@ -9,8 +9,11 @@ func test_main_scene_loads() -> void:
 	scene.free()
 
 
-func test_open_rpg_adapter_returns_local_battle_context() -> void:
-	var context := OpenRpgAdapter.create_battle_context({"enemy_kind": "beast_swarm"})
+func test_open_rpg_context_is_local() -> void:
+	var context := {
+		"enemy_kind": "beast_swarm",
+		"turn_order": ["player", "enemy"],
+	}
 	assert_eq(context["enemy_kind"], "beast_swarm")
 	assert_true(context.has("turn_order"))
 

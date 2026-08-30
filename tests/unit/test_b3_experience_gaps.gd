@@ -7,7 +7,9 @@ extends "res://addons/gut/test.gd"
 
 
 const BattleResolverScript := preload("res://scripts/domain/battle_resolver.gd")
-const BattleViewScript := preload("res://scripts/presentation/battle_view.gd")
+const BattleScreenScript := preload("res://ui/screens/battle_screen.gd")
+const RuiVLib := preload("res://addons/reactive_ui_toolkit/core/v.gd")
+const RuiRoot := preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
 const MetaProgressScript := preload("res://scripts/domain/meta_progress.gd")
 const ActionPreviewServiceScript := preload("res://scripts/domain/action_preview_service.gd")
@@ -57,34 +59,42 @@ func test_combat_nodes_carry_valid_enemy_kind() -> void:
 			)
 
 
-func test_battle_view_shows_intent_speed() -> void:
-	var catalog: Dictionary = ContentCatalogScript.load_all()
-	var battle := BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, make_state(), catalog)
-	var texts := _battle_view_texts(battle, make_state(), catalog)
-	var found := false
-	for text in texts:
-		if text.find("速 1") >= 0:
-			found = true
-	assert_true(found, "intent speed must be visible on the battle view")
+func test_battle_screen_shows_intent_speed() -> void:
+	var catalog := ContentCatalogScript.load_all()
+	var controller: RunController = autofree(RunControllerScript.new())
+	add_child(controller)
+	controller.start_new_run(2026)
+	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "neutral_stone_wanderer"}
+	controller._start_battle()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	var host := Control.new()
+	add_child_autofree(host)
+	RuiRoot.create(host, RuiVLib.fc(BattleScreenScript.render, {"state": snapshot, "commands": {}}))
+	await get_tree().process_frame
+	assert_true(_any_label_contains(host, "速 1"), "intent speed must be visible on the battle screen")
 
 
-func test_battle_view_shows_first_battle_tip_once() -> void:
-	var catalog: Dictionary = ContentCatalogScript.load_all()
-	var battle := BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, make_state(), catalog)
-	var first_texts := _battle_view_texts(battle, make_state(), catalog)
-	var found_first := false
-	for text in first_texts:
-		if text.begins_with("初战指引"):
-			found_first = true
-	assert_true(found_first, "first battle must show guidance")
-	var state := make_state()
-	state.event_log.append({"action": "battle_finished", "reason": "battle_victory"})
-	var second_texts := _battle_view_texts(battle, state, catalog)
-	var found_second := false
-	for text in second_texts:
-		if text.begins_with("初战指引"):
-			found_second = true
-	assert_false(found_second, "later battles must not repeat guidance")
+func test_battle_screen_shows_first_battle_tip_once() -> void:
+	var controller: RunController = autofree(RunControllerScript.new())
+	add_child(controller)
+	controller.start_new_run(2026)
+	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "neutral_stone_wanderer"}
+	controller._start_battle()
+	var first_snapshot: Dictionary = controller._snapshot_for("Battle")
+	var first_host := Control.new()
+	add_child_autofree(first_host)
+	RuiRoot.create(first_host, RuiVLib.fc(BattleScreenScript.render, {"state": first_snapshot, "commands": {}}))
+	await get_tree().process_frame
+	assert_true(_any_label_contains(first_host, "初战指引"), "first battle must show guidance")
+
+	controller.state = controller.state.append_event({"action": "battle_finished", "reason": "battle_victory"})
+	var second_snapshot: Dictionary = controller._snapshot_for("Battle")
+	var second_host := Control.new()
+	add_child_autofree(second_host)
+	RuiRoot.create(second_host, RuiVLib.fc(BattleScreenScript.render, {"state": second_snapshot, "commands": {}}))
+	await get_tree().process_frame
+	assert_false(_any_label_contains(second_host, "初战指引"), "later battles must not repeat guidance")
+
 
 
 func test_shop_preview_offers_material_sell_cards() -> void:
@@ -130,19 +140,10 @@ func _card_ids(cards: Array[Dictionary]) -> Array[String]:
 	return ids
 
 
-func _battle_view_texts(battle: Dictionary, state: RunState, catalog: Dictionary) -> Array[String]:
-	var view = BattleViewScript.new()
-	add_child_autofree(view)
-	view.render(battle, state, catalog, [])
-	var texts: Array[String] = []
-	for node in _collect(view):
-		if node is Label:
-			texts.append(str(node.text))
-	return texts
-
-
-func _collect(node: Node) -> Array[Node]:
-	var found: Array[Node] = [node]
-	for child in node.get_children():
-		found.append_array(_collect(child))
-	return found
+func _any_label_contains(root: Node, text: String) -> bool:
+	if root is Label and str(root.text).contains(text):
+		return true
+	for child in root.get_children():
+		if _any_label_contains(child, text):
+			return true
+	return false

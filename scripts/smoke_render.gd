@@ -369,8 +369,8 @@ func _initialize() -> void:
 			quit(1)
 		print("OK HallView buttons=%d" % cnt)
 
-	# 6) 遭遇屏断言（含空 action 兜底离开按钮）
-	# 命名 EncounterScreen 以避开旧 scripts/presentation/encounter_view.gd 的全局类 EncounterView（被单测引用）。
+		# 遭遇屏断言（含空 action 兜底离开按钮）。当前实现为 RUI EncounterScreen。
+
 	var enc_cmds := {
 		"choose_option": Callable(self, "_noop"),
 		"confirm_danger": Callable(self, "_noop"),
@@ -419,8 +419,8 @@ func _initialize() -> void:
 		quit(1)
 	print("OK EncounterScreenEmpty buttons=%d" % ece)
 
-	# 7) 地图屏断言（网状收敛地图，按层分组；至少 1 个节点按钮；T5-A：含存档按钮 + Toast 行）
-	# 命名 MapScreen 以避开旧 scripts/presentation/map_view.gd 的全局类 MapView（被单测引用）。
+		# 地图屏断言（网状收敛地图，按层分组；至少 1 个节点按钮；含存档按钮 + Toast 行）。
+
 	var map_cmds := {
 		"travel": Callable(self, "_noop"),
 		"view_node": Callable(self, "_noop"),
@@ -451,8 +451,8 @@ func _initialize() -> void:
 		quit(1)
 	print("OK MapScreen buttons=%d" % mc)
 
-	# 8) 战斗屏断言（敌方意图数值+效果、生命护盾分条、手牌 tooltip、操作按钮）
-	# 命名 BattleScreen 以避开旧 scripts/presentation/battle_view.gd 的全局类 BattleView（被单测引用）。
+		# 战斗屏断言（敌方意图数值+效果、生命护盾分条、手牌 tooltip、操作按钮）。
+
 	var battle_cmds := {
 		"play_card": Callable(self, "_noop"),
 		"end_turn": Callable(self, "_noop"),
@@ -498,8 +498,8 @@ func _initialize() -> void:
 		quit(1)
 	print("OK BattleScreen buttons=%d" % bc)
 
-	# 9) 结算屏断言（统一结算模块，由 ending_type 驱动；T5-C 三变体：普通胜利 / 死亡 / 无记录极简）
-	# 命名 EndingScreen 以避开旧 scripts/presentation/ending_view.gd 的全局类 EndingView。
+		# 结算屏断言（统一结算模块，由 ending_type 驱动；三种结局数据形态）。
+
 	var ending_cmds := {
 		"to_hall": Callable(self, "_noop"),
 		"to_codex": Callable(self, "_noop"),

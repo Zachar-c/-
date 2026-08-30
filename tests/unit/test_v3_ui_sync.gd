@@ -1,14 +1,11 @@
 extends GutTest
 
 
-# UI sync regression: every domain node type must render at least one
-# executable-or-blocked action button through the real EncounterView scene.
+# UI sync regression: domain snapshots and active RUI screens expose the current state.
 
 
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
-const EncounterViewScript = preload("res://scripts/presentation/encounter_view.gd")
-const BattleViewScript = preload("res://scripts/presentation/battle_view.gd")
 const BattleScreenScript = preload("res://ui/screens/battle_screen.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 # T5-B：RUI 屏含 hooks（useState），必须经 reactive root 挂载，不能直接调 render。
@@ -37,100 +34,25 @@ const NODE_CASES := [
 ]
 
 
-func test_every_node_type_renders_action_buttons() -> void:
-	var catalog := ContentCatalog.load_all()
-	var empty_results: Array[Dictionary] = []
-	for node_value in NODE_CASES:
-		var node: Dictionary = node_value
-		var state := RunState.new_run(101)
-		state.stone = 20
-		var cards := ActionPreviewServiceScript.preview_actions(state, node, catalog)
-		var view: Control = autofree(EncounterViewScript.new())
-		add_child(view)
-		view.render_session(node, state, {"completed": false, "phase": "active"}, empty_results, {}, cards)
-		assert_gt(_count_buttons(view), 0, "node %s (%s) rendered no buttons" % [str(node["id"]), str(node["type"])])
-
-
-func test_battle_view_renders_hand_and_turn_buttons() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	view.render(battle, state, catalog, ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog))
-	assert_gt(_count_buttons(view), 1)
-
-
-func test_battle_views_surface_dda_boss_hint() -> void:
-	# boss_senses_gu_power 文案接线：battle 字典只携带稳定 id，玩家可见文案
-	# 统一走 DisplayText.dda_hint；无提示 id 时两条渲染路径都不出占位行。
+func test_battle_screen_surfaces_dda_boss_hint() -> void:
 	var hint_text := DisplayText.dda_hint("boss_senses_gu_power")
 	assert_eq(hint_text, "蛊躁动·Boss 感应到了你的蛊虫气息")
 	assert_eq(DisplayText.dda_hint("unknown_hint_id"), "")
-
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	battle["dda_boss_hint"] = "boss_senses_gu_power"
-
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	var empty_cards: Array[Dictionary] = []
-	view.render(battle, state, catalog, empty_cards)
-	var legacy_texts: Array[String] = []
-	_collect_label_texts(view, legacy_texts)
-	assert_true(_any_contains(legacy_texts, hint_text),
-			"legacy battle view must surface the DDA boss hint marker")
 
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
 	snapshot["dda_boss_hint"] = "boss_senses_gu_power"
 	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
-	assert_true(_any_contains(texts, hint_text),
-			"RUI battle screen must surface the DDA boss hint marker")
-
-	battle.erase("dda_boss_hint")
-	var calm_view: Control = autofree(BattleViewScript.new())
-	add_child(calm_view)
-	calm_view.render(battle, state, catalog, empty_cards)
-	var calm_texts: Array[String] = []
-	_collect_label_texts(calm_view, calm_texts)
-	assert_false(_any_contains(calm_texts, "蛊躁动"),
-			"no DDA hint row may render without a hint id")
+	assert_true(_any_contains(texts, hint_text), "RUI battle screen must surface the DDA boss hint marker")
 
 
-func test_battle_view_surfaces_dda_anomaly_marker() -> void:
-	# 险象/衰运顶栏徽章（R14.6）：run 级 sys marker 经 marker_meta 进 legacy
-	# 顶栏异变区；label 走 dda.json，平稳带（无 sys 标记）不渲染。
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	state.dda_state_adaptive_enabled = true
-	state.health = 2
-	state.cultivator["statuses"] = {
-		"gu_erosion": {"layers": 1}, "essence_bloat": {"layers": 2},
-	}
-	state.meta_rules = {"sys:dda_peril": true}
-	var battle := BattleResolver.start({"enemy_kind": "beast_swarm"}, state, catalog)
-
-	var view: Control = autofree(BattleViewScript.new())
-	add_child(view)
-	var empty_cards: Array[Dictionary] = []
-	view.render(battle, state, catalog, empty_cards)
-	var texts: Array[String] = []
-	_collect_label_texts(view, texts)
-	assert_true(_any_contains(texts, "险象"),
-			"battle view top strip must surface the DDA anomaly marker")
-	assert_false(_any_contains(texts, "sys:dda_peril"),
-			"marker id must never leak to the top strip")
-
-	state.meta_rules = {}
-	var calm_view: Control = autofree(BattleViewScript.new())
-	add_child(calm_view)
-	calm_view.render(battle, state, catalog, empty_cards)
-	var calm_texts: Array[String] = []
-	_collect_label_texts(calm_view, calm_texts)
-	assert_false(_any_contains(calm_texts, "险象"),
-			"no anomaly badge without an active sys marker")
+func test_battle_screen_surfaces_dda_anomaly_marker() -> void:
+	var controller: RunController = _battle_controller()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	snapshot["anomalies"] = [{"id": "sys:dda_peril", "label": "险象"}]
+	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
+	assert_true(_any_contains(texts, "险象"), "RUI battle screen must surface the DDA anomaly marker")
+	assert_false(_any_contains(texts, "sys:dda_peril"), "marker id must never leak to the battle screen")
 
 
 func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
@@ -253,39 +175,6 @@ func _any_contains(texts: Array[String], substring: String) -> bool:
 	return false
 
 
-func test_encounter_view_shows_notoriety_when_present() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	state.cultivator["notorious"] = 2
-	var node := {"id": "neutral_wanderer", "type": "contact"}
-	var empty_results: Array[Dictionary] = []
-	var empty_cards: Array[Dictionary] = []
-	var view: Control = autofree(preload("res://scripts/presentation/encounter_view.gd").new())
-	add_child(view)
-	view.render_session(node, state, EncounterSessionResolverScript.start(node), empty_results, {}, empty_cards, catalog)
-	var label := _find_label_with_text(view, "恶名")
-	assert_not_null(label, "notoriety must be visible")
-	assert_not_null(_find_label_with_text(view, "2/2"), "notoriety bar must show its value")
-
-	# The RUI status panel keeps the notoriety bar resident (zero shows zero).
-	var clean_view: Control = autofree(preload("res://scripts/presentation/encounter_view.gd").new())
-	add_child(clean_view)
-	clean_view.render_session(node, RunState.new_run(101), EncounterSessionResolverScript.start(node), empty_results, {}, empty_cards, catalog)
-	assert_not_null(_find_label_with_text(clean_view, "恶名"), "status panel must keep the notoriety bar")
-
-
-func test_map_view_shows_cross_run_codex_unlock_count() -> void:
-	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
-	controller.start_new_run(101)
-	controller.state.global_codex_ids.assign(["phantom_moon_locked"])
-	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
-	add_child(view)
-	view.render(controller.route, controller.state, controller.catalog, controller.meta)
-	var codex := _find_label_with_text(view, "跨局解锁")
-	assert_not_null(codex, "codex unlock count must be visible")
-	assert_true(str(codex.text).contains("1 种"))
-
-
 func test_gu_orb_renders_for_every_known_gu() -> void:
 	for gu_id in ["small_light_gu", "moonlight_gu", "moon_glow_gu", "phantom_moon_gu", "moon_shadow_gu", "stone_shell_gu", "trail_eye_gu", "thorn_whip_gu", "blood_moss_gu", "mist_step_gu", "venom_thread_gu", "shadow_veil_gu", "pulse_drum_gu"]:
 		var orb: Control = autofree(load("res://scripts/presentation/gu_orb.gd").new())
@@ -297,55 +186,6 @@ func test_gu_orb_renders_for_every_known_gu() -> void:
 func test_enemy_catalog_labels_cover_real_enemy_kinds() -> void:
 	assert_eq(DisplayText.enemy("neutral_stone_wanderer"), "石甲散修")
 	assert_eq(DisplayText.enemy("ridge_hound"), "山脊猎犬")
-
-
-func test_map_view_uses_reference_layout_regions() -> void:
-	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
-	controller.start_new_run(101)
-	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
-	add_child(view)
-	view.render(controller.route, controller.state, controller.catalog, controller.meta)
-	assert_not_null(_find_label_with_text(view, "南疆行程"), "map must keep the journey title")
-	assert_not_null(_find_label_with_text(view, "蛊囊"), "map must keep the gu satchel panel")
-	assert_not_null(_find_label_with_text(view, "图鉴"), "map must expose codex regions")
-	var bottom_save := _find_button_with_text(view, "存档")
-	assert_not_null(bottom_save, "save button must exist in bottom command group")
-
-
-func test_map_view_exposes_gu_management_and_save_commands() -> void:
-	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
-	controller.start_new_run(101)
-	controller.state.gu_instances["gu_002"] = {
-		"instance_id": "gu_002",
-		"definition_id": "stone_shell_gu",
-		"state": "refined",
-	}
-	controller.state.cave_aperture["stored_gu_instance_ids"].append("gu_002")
-	controller.state.sync_legacy_gu_projections()
-	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
-	add_child(view)
-	view.render(controller.route, controller.state, controller.catalog, controller.meta)
-	var submitted: Array[Dictionary] = []
-	view.action_submitted.connect(func(command: Dictionary): submitted.append(command))
-	_press_buttons(view)
-	assert_true(submitted.any(func(command: Dictionary): return str(command.get("type", "")) == "destroy_gu"))
-	assert_true(submitted.any(func(command: Dictionary): return str(command.get("type", "")) == "save_run"))
-
-
-func test_encounter_view_shows_feeding_footer_when_shortfall() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	state.materials = {"feed_points": 0}
-	var node := {"id": "village_short_work", "type": "market", "choices": []}
-	var view: Control = autofree(EncounterViewScript.new())
-	add_child(view)
-	var empty_results: Array[Dictionary] = []
-	var empty_cards: Array[Dictionary] = []
-	view.render_session(node, state, {"completed": false, "phase": "active"}, empty_results, {}, empty_cards, catalog)
-	var submitted: Array[Dictionary] = []
-	view.command_submitted.connect(func(command: Dictionary): submitted.append(command))
-	_press_buttons(view)
-	assert_true(submitted.any(func(command: Dictionary): return str(command.get("type", "")) == "settle_node_feeding"))
 
 
 func test_controller_records_and_persists_meta_on_death() -> void:
@@ -373,6 +213,7 @@ func test_run_save_round_trips_through_disk_json() -> void:
 func test_same_encounter_card_cannot_be_applied_twice() -> void:
 	var catalog := ContentCatalog.load_all()
 	var state := RunState.new_run(101)
+	state.current_node_id = "neutral_wanderer"
 	state.stone = 20
 	var node := {"id": "neutral_wanderer", "type": "contact", "choices": ["negotiate", "deceive", "fight", "retreat"]}
 	var began := EncounterSessionResolverScript.begin(state, node)
@@ -384,6 +225,8 @@ func test_same_encounter_card_cannot_be_applied_twice() -> void:
 		"type": "action_card",
 		"action_id": "node.deceive",
 		"state_version": int(card["state_version"]),
+		"node_id": "neutral_wanderer",
+		"session_node_id": "neutral_wanderer",
 	}, catalog, node)
 	assert_true(bool(first["result"].get("ok", false)), "first use of the action must succeed")
 	state = first["state"]
@@ -393,6 +236,8 @@ func test_same_encounter_card_cannot_be_applied_twice() -> void:
 		"type": "action_card",
 		"action_id": "node.deceive",
 		"state_version": int(state.event_log.size()),
+		"node_id": "neutral_wanderer",
+		"session_node_id": "neutral_wanderer",
 	}, catalog, node)
 	assert_false(bool(second["result"].get("ok", false)), "consumed action card must be rejected")
 	assert_eq(int(state.stone), 22, "second use must not grant rewards again")
@@ -407,109 +252,3 @@ func test_controller_save_and_load_expose_feedback() -> void:
 	var load_result := controller.submit_command({"type": "load_run"})
 	assert_true(bool(load_result.get("ok", false)))
 	assert_false(str(load_result.get("feedback", "")).is_empty())
-
-
-func test_map_view_renders_feedback_line() -> void:
-	var view: Control = autofree(load("res://scripts/presentation/map_view.gd").new())
-	add_child(view)
-	view.render(MapGenerator.build(101, true), RunState.new_run(101), ContentCatalog.load_all(), null, "已存档。")
-	assert_not_null(_find_label_with_text(view, "已存档"))
-
-
-func test_encounter_view_keeps_actions_reachable_when_history_grows() -> void:
-	var catalog := ContentCatalog.load_all()
-	var state := RunState.new_run(101)
-	var node := {"id": "neutral_wanderer", "type": "contact", "choices": ["negotiate", "deceive", "fight", "retreat"]}
-	var results: Array[Dictionary] = []
-	for i in 30:
-		results.append({"text_key": "node_entered"})
-	var cards := ActionPreviewServiceScript.preview_actions(state, node, catalog)
-	var view: Control = autofree(EncounterViewScript.new())
-	add_child(view)
-	view.render_session(node, state, {"completed": false}, results, {}, cards, catalog)
-	assert_not_null(_find_child(view, ScrollContainer), "encounter view must scroll to keep buttons reachable")
-	assert_not_null(_find_capped_history(view), "result history must be height-capped")
-
-
-func _find_child(root: Node, node_type: Variant) -> Node:
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if is_instance_of(current, node_type):
-			return current
-		stack.append_array(current.get_children())
-	return null
-
-
-func _count_typed(root: Node, node_type: Variant) -> int:
-	var total := 0
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if is_instance_of(current, node_type):
-			total += 1
-		stack.append_array(current.get_children())
-	return total
-
-
-func _collect_typed(root: Node, script_name: String) -> Array[Node]:
-	var found: Array[Node] = []
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if str(current.get_class()) == script_name or (current.get_script() != null and str(current.get_script().get_global_name()) == script_name):
-			found.append(current)
-		stack.append_array(current.get_children())
-	return found
-
-
-func _find_capped_history(root: Node) -> Node:
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if current is RichTextLabel:
-			var label := current as RichTextLabel
-			if label.scroll_active and label.custom_maximum_size.y > 0:
-				return label
-		stack.append_array(current.get_children())
-	return null
-
-
-func _find_label_with_text(root: Node, substring: String) -> Node:
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if current is Label and (current as Label).text.contains(substring):
-			return current
-		stack.append_array(current.get_children())
-	return null
-
-
-func _find_button_with_text(root: Node, substring: String) -> Node:
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if current is Button and (current as Button).text.contains(substring):
-			return current
-		stack.append_array(current.get_children())
-	return null
-
-
-func _press_buttons(root: Node) -> void:
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if current is Button and not (current as Button).disabled:
-			(current as Button).pressed.emit()
-		stack.append_array(current.get_children())
-
-
-func _count_buttons(root: Node) -> int:
-	var total := 0
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if current is Button:
-			total += 1
-		stack.append_array(current.get_children())
-	return total

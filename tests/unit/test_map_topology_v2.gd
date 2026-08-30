@@ -158,6 +158,23 @@ func test_instances_carry_template_layer_and_row() -> void:
 		assert_eq(count, 1, "anchor %s must appear exactly once per run" % anchor)
 
 
+func test_all_configured_anchors_materialize_for_many_seeds() -> void:
+	var catalog := ContentCatalog.load_all()
+	var pacing: Dictionary = catalog["pacing"]
+	for seed_value in range(1, 101):
+		var generated: Array[Dictionary] = MapGeneratorScript.build(seed_value, false, catalog)
+		for layer_key in pacing.get("layers", {}).keys():
+			var layer_cfg: Dictionary = pacing["layers"][layer_key]
+			for anchor_value in layer_cfg.get("anchors", []):
+				var anchor: Dictionary = anchor_value
+				var template_id := str(anchor.get("template", ""))
+				var matches := 0
+				for node in generated:
+					if str(node.get("template_id", "")) == template_id and str(node.get("layer", "")) == str(layer_key):
+						matches += 1
+				assert_eq(matches, 1, "seed %d layer %s anchor %s must materialize exactly once" % [seed_value, layer_key, template_id])
+
+
 func test_layer_bosses_exist_in_all_five_layers() -> void:
 	for layer in range(1, 6):
 		var boss := _boss_of_layer(layer)

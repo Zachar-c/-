@@ -20,7 +20,7 @@ export GuDeathLineWarning() -> RuitkVNode {
     var nm = str(d.get("name", kind))
     var remaining = int(d.get("remaining", 0))
     var maxv = int(d.get("max", 0))
-    var danger = bool(d.get("danger", false))
+    var danger = (d.get("danger", false))
     var cause_id = str(d.get("cause_id", ""))
     if danger:
       var text = "☠ %s %d/%d" % [nm, remaining, maxv]

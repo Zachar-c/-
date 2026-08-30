@@ -84,11 +84,3 @@ func test_battle_card_row_hides_success_rate_when_absent() -> void:
 		"success_rate": 65,
 	})
 	assert_true(details_with_rate.contains("成功率：65%"))
-
-
-func test_actual_change_text_uses_same_bbcode_color_as_result_history() -> void:
-	var view := EncounterView.new()
-	var text := view._actual_change_text([{"message": "元石增加 2。"}])
-
-	assert_eq(text, "[color=#b8d5cc]结算：元石增加 2。[/color]")
-	view.free()

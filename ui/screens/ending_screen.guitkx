@@ -84,7 +84,7 @@ export EndingScreen() -> RuitkVNode {
   var route_chips = []
   for layer_info in route_summary:
     var layer_text = "第%d层 %s" % [int(layer_info.get("layer", 0)), "·".join(layer_info.get("types", []))]
-    var layer_color = GuStyle.RARITY_EPIC if bool(layer_info.get("boss", false)) else GuStyle.INK_SOFT
+    var layer_color = GuStyle.RARITY_EPIC if (layer_info.get("boss", false)) else GuStyle.INK_SOFT
     route_chips.append(<Label text={ layer_text } style={ {"font_color": layer_color, "font_size": 14} } />)
 
   # 本局记录行：event_log 只读计数投影；DDA 预留位无数据时整行隐藏。
@@ -100,6 +100,7 @@ export EndingScreen() -> RuitkVNode {
     record_rows.append(<Label text={ "DDA 触发：%d 次" % dda_triggers } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 15} } />)
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer name="primary_decision_surface" style={ {"separation": 14, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <CenterContainer>
@@ -205,5 +206,6 @@ export EndingScreen() -> RuitkVNode {
         </HBoxContainer>
       </CenterContainer>
     </VBoxContainer>
+    </MarginContainer>
   )
 }

@@ -8,7 +8,7 @@ const SELF_SCRIPT := preload("res://scripts/presentation/action_card_row_builder
 signal command_submitted(command: Dictionary)
 
 
-static func build(card: Dictionary, minimum_width: int = 360, tooltip: GuTooltip = null) -> ActionCardRowBuilder:
+static func build(card: Dictionary, minimum_width: int = 360, tooltip: Node = null) -> ActionCardRowBuilder:
 	var row := SELF_SCRIPT.new()
 	row.add_theme_constant_override("separation", 4)
 	var button := Button.new()
@@ -16,8 +16,11 @@ static func build(card: Dictionary, minimum_width: int = 360, tooltip: GuTooltip
 	button.custom_minimum_size = Vector2(minimum_width, 46)
 	button.disabled = not bool(card.get("executable", false))
 	if tooltip != null:
-		button.mouse_entered.connect(func(): tooltip.show_for(_tooltip_data(card)))
-		button.mouse_exited.connect(func(): tooltip.hide_tooltip())
+		if tooltip.has_method("show_for"):
+			button.mouse_entered.connect(func(): tooltip.show_for(_tooltip_data(card)))
+		if tooltip.has_method("hide_tooltip"):
+			button.mouse_exited.connect(func(): tooltip.hide_tooltip())
+
 	else:
 		button.tooltip_text = _tooltip(card)
 	button.pressed.connect(func():

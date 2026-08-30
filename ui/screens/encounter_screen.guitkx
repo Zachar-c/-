@@ -7,7 +7,7 @@ import { GuScrollBox } from "~/ui/widgets/gu_scroll_box"
 import { GuDeathCauseOverlay } from "~/ui/widgets/gu_death_cause_overlay"
 import { GuToast } from "~/ui/widgets/gu_toast"
 
-# EncounterView —— 遭遇屏（修复「没按钮 / 危险选项无二次确认」）
+# EncounterScreen —— 遭遇屏（修复「没按钮 / 危险选项无二次确认」）
 # 契约：props.state 只读快照（含 node/actions/intel/resources/contracts/anomalies/death_lines）
 #       props.commands 动作名 -> Callable（choose_option / confirm_danger / leave）
 # 屏内零业务读写；仅在 on_press / on_confirm 回调中经 commands 触发。
@@ -38,7 +38,7 @@ export EncounterScreen() -> RuitkVNode {
   var cause_line = {}
   for kind in death_lines.keys():
     var dl = death_lines[kind]
-    if cause_view != "" and str(dl.get("cause_id", "")) == cause_view and bool(dl.get("danger", false)):
+    if cause_view != "" and str(dl.get("cause_id", "")) == cause_view and (dl.get("danger", false)):
       cause_line = {
         "name": str(dl.get("name", kind)),
         "current": int(dl.get("remaining", 0)),
@@ -85,7 +85,7 @@ export EncounterScreen() -> RuitkVNode {
   var action_rows = []
   for a in actions:
     var aid = str(a.get("id", ""))
-    var dangerous = bool(a.get("dangerous", false))
+    var dangerous = (a.get("dangerous", false))
     var is_leave = (aid == "leave")
     if is_leave:
       has_leave = true
@@ -109,14 +109,14 @@ export EncounterScreen() -> RuitkVNode {
         effect={ str(a.get("effect", "")) }
         synergy={ str(a.get("synergy", "")) }
         cost={ str(a.get("cost", "")) }
-        curse_warning={ bool(a.get("curse_warning", false)) }
+        curse_warning={ (a.get("curse_warning", false)) }
       />
     )
 
     var card = (
       <GuPanel title={ label }>
         <Label text={ detail } style={ {"font_color": GuStyle.CINNABAR if dangerous else GuStyle.INK_SOFT, "font_size": 14} } />
-        @if (a.has("quality") or a.has("effect") or a.has("synergy") or a.has("cost") or bool(a.get("curse_warning", false))) {
+        @if (a.has("quality") or a.has("effect") or a.has("synergy") or a.has("cost") or (a.get("curse_warning", false))) {
           return tip
         }
         <GuButton label={ btn_label } danger={ dangerous } on_press={ on_press_fn } />
@@ -130,11 +130,12 @@ export EncounterScreen() -> RuitkVNode {
     feedback_row.append(<GuToast text={ feedback } tone="warn" />)
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer style={ {"separation": 12, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } on_view={ func(cid): set_cause_view.call({"cause_view": str(cid)}) } />
       { feedback_row }
 
-      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14, "size_flags_vertical": 3} }>
         <VBoxContainer style={ {"separation": 12, "size_flags_horizontal": 3} }>
           <GuPanel title={ "遭遇 · %s" % str(node.get("type", "")) }>
             <Label text={ str(node.get("title", "")) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 18} } />
@@ -145,7 +146,7 @@ export EncounterScreen() -> RuitkVNode {
                   title="情报 / 弱点"
                   effect={ str(intel.get("weakness", "")) }
                   cost={ str(intel.get("cost", "")) }
-                  curse_warning={ bool(intel.get("curse_warning", false)) }
+                  curse_warning={ (intel.get("curse_warning", false)) }
                 />
               )
             }
@@ -194,5 +195,6 @@ export EncounterScreen() -> RuitkVNode {
         )
       }
     </VBoxContainer>
+    </MarginContainer>
   )
 }

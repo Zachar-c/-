@@ -7,17 +7,7 @@ const CENTER := 17.0
 const RING := 13.0
 const INK := GuStyle.INK_PRIMARY
 const INK_RING := GuStyle.INK_SOFT
-
-const ACCENTS := {
-	"stone": Color("5f9d8a"),
-	"essence": Color("7fd0c0"),
-	"lifespan": Color("d9b56a"),
-	"soul": Color("7fa5d8"),
-	"injury": Color("c0523e"),
-	"material": Color("8aa85c"),
-	"intel": Color("c9a35a"),
-	"relic": Color("9a7fb5"),
-}
+const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
 
 
 var kind := "stone":
@@ -34,13 +24,14 @@ func _ready() -> void:
 func _draw() -> void:
 	draw_circle(Vector2(CENTER, CENTER), RING + 1.5, INK)
 	draw_circle(Vector2(CENTER, CENTER), RING, INK_RING)
-	var accent: Color = ACCENTS.get(kind, Color.WHITE)
+	var canonical_kind := ResourceVocabularyScript.normalize(kind)
+	var accent: Color = GuStyle.resource_color(canonical_kind)
 	_draw_glyph(accent)
 
 
 func _draw_glyph(accent: Color) -> void:
-	match kind:
-		"stone":
+	match ResourceVocabularyScript.normalize(kind):
+		"yuanstone":
 			draw_circle(Vector2(CENTER, CENTER), 6.5, accent)
 			draw_circle(Vector2(CENTER - 2.2, CENTER - 2.2), 1.8, Color(1, 1, 1, 0.55))
 		"essence":

@@ -29,6 +29,8 @@ func _travel_to_combat(controller: RunController) -> void:
 		"type": "action_card",
 		"action_id": "node.negotiate",
 		"state_version": controller.state.event_log.size(),
+		"node_id": str(controller.current_node.get("id", "")),
+		"session_node_id": str(controller.current_session.get("node_id", "")),
 	})
 	assert_true(bool(negotiated.get("result", {}).get("ok", false)), "opening contact action must resolve")
 	var left := controller.submit_command({"type": "leave_node"})
@@ -43,7 +45,11 @@ func _play_valid_target_card(controller: RunController, snapshot: Dictionary) ->
 	var version_before := controller.state.event_log.size()
 	var cards := ACTION_PREVIEW_SERVICE.preview_battle_actions(controller.current_battle, controller.state, controller.catalog)
 	if not _has_playable_target_card(cards, target_id):
-		var ended := controller.submit_command({"type": "end_turn"})
+		var ended := controller.submit_command({
+			"type": "end_turn",
+			"state_version": controller.state.event_log.size(),
+			"expected_phase": str(controller.current_battle.get("phase", "")),
+		})
 		assert_true(bool(ended.get("accepted", false)), "first-turn resource guard must advance through the formal end-turn command")
 		snapshot = controller._snapshot_for("Battle")
 		cards = ACTION_PREVIEW_SERVICE.preview_battle_actions(controller.current_battle, controller.state, controller.catalog)
@@ -62,6 +68,7 @@ func _play_valid_target_card(controller: RunController, snapshot: Dictionary) ->
 		"card_id": str(chosen.get("id", "")).trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", ""))),
 		"target_id": target_id,
 		"state_version": int(chosen.get("state_version", -1)),
+		"expected_phase": str(controller.current_battle.get("phase", "")),
 	})
 	assert_true(bool(result.get("accepted", false)), "targeted card command must be accepted")
 	var after: Dictionary = controller._snapshot_for("Battle")
@@ -79,7 +86,11 @@ func _has_playable_target_card(cards: Array, target_id: String) -> bool:
 
 
 func _finish_battle_and_resolve_ending(controller: RunController) -> void:
-	var retreated := controller.submit_command({"type": "retreat"})
+	var retreated := controller.submit_command({
+		"type": "retreat",
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "")),
+	})
 	assert_true(bool(retreated.get("accepted", false)), "ordinary combat must allow a formal retreat")
 	assert_eq(controller.current_view_name(), "Encounter")
 	var left := controller.submit_command({"type": "leave_node"})

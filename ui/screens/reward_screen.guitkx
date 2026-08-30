@@ -35,7 +35,7 @@ export RewardScreen() -> RuitkVNode {
     var rqual = str(r.get("quality", ""))
     var reff = str(r.get("effect", ""))
     var rcost = str(r.get("cost", ""))
-    var rcursed = bool(r.get("curse_warning", false))
+    var rcursed = (r.get("curse_warning", false))
     reward_cards.append((
       <GuCard title={ rname } quality={ rqual } danger={ rcursed } curse_warning={ rcursed } expand_h={ true }>
         <Label text={ rkind } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 12} } />
@@ -48,6 +48,7 @@ export RewardScreen() -> RuitkVNode {
     reward_empty.append(<Label text="（本次无战利品）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
@@ -74,5 +75,6 @@ export RewardScreen() -> RuitkVNode {
         <GuButton label="继续旅程" on_press={ func(): fire.call("close") } />
       </HBoxContainer>
     </VBoxContainer>
+    </MarginContainer>
   )
 }

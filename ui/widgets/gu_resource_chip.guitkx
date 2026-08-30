@@ -1,24 +1,16 @@
-
-# GuResourceChip —— 资源徽章（规格 §9 / §16.5 双资源隔离）
-# 局内资源：深墨底 + 宣纸环；解锁素材（meta/见闻）：宣纸底 + 专属前缀，与局内资源严格区分。
-# 实现注：全程 GDScript 构建 vnode，不用 @if/@else（guitkx 解析不稳）。
+# GuResourceChip - resource badge
+# Runtime resource labels and aliases come from ResourceVocabulary through GuStyle.
 
 export GuResourceChip() -> RuitkVNode {
   var kind = props.get("kind", "material")
   var value = props.get("value", 0)
   var on_click = props.get("on_click", null)
-  var color = GuStyle.ANOMALY_YELLOW
-  if kind == "shouyuan":
-    color = GuStyle.INK_PRIMARY
-  elif kind == "hunpo":
-    color = GuStyle.JADE
-  elif kind == "material":
-    color = GuStyle.JADE
-  elif kind == "meta":
+  var canonical_kind = GuStyle.resource_normalize(str(kind))
+  var name = "见闻" if str(kind) == "meta" else GuStyle.resource_label(canonical_kind)
+  var text = "%s: %d%s" % [name, value, GuStyle.resource_suffix(canonical_kind)]
+  var color = GuStyle.resource_color(canonical_kind)
+  if kind == "meta":
     color = GuStyle.PAPER_BG
-  var names = {"yuanstone": "元石", "shouyuan": "寿元", "hunpo": "魂魄", "material": "材料", "meta": "见闻"}
-  var name = names.get(kind, kind)
-  var text = "%s: %d" % [name, value]
   var is_meta = (kind == "meta")
   var chip_style = {
     "bg_color": GuStyle.PAPER_BG if is_meta else GuStyle.INK_PRIMARY,

@@ -4,6 +4,9 @@ extends GutTest
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
+const HallViewScript = preload("res://ui/screens/hall_view.gd")
+const RuiVLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
+const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 
 
 var catalog: Dictionary
@@ -86,12 +89,17 @@ func test_blood_stack_and_material_helpers() -> void:
 	assert_eq(SchoolRulesScript.material_fuel(run, catalog), 3)
 
 
-func test_title_view_exposes_three_school_buttons() -> void:
-	var view: Control = autofree(load("res://scripts/presentation/title_view.gd").new())
-	add_child(view)
-	assert_not_null(_find_button_with_text(view, "血道"))
-	assert_not_null(_find_button_with_text(view, "气道"))
-	assert_not_null(_find_button_with_text(view, "力道"))
+func test_hall_exposes_school_choices_in_rui_screen() -> void:
+	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
+	add_child(controller)
+	var snapshot: Dictionary = controller._snapshot_for("Title")
+	snapshot["hall_subview"] = "schools"
+	var host := Control.new()
+	add_child_autofree(host)
+	RuiRoot.create(host, RuiVLib.fc(HallViewScript.render, {"state": snapshot, "commands": {}}))
+	await get_tree().process_frame
+	for school in ["血道", "气道", "力道"]:
+		assert_true(_has_text(host, school), "RUI hall must expose %s" % school)
 
 
 func _start_with_school(school: String) -> RunState:
@@ -100,14 +108,15 @@ func _start_with_school(school: String) -> RunState:
 	return controller.state
 
 
-func _find_button_with_text(root: Node, substring: String) -> Node:
-	var stack: Array[Node] = [root]
-	while not stack.is_empty():
-		var current: Node = stack.pop_back()
-		if current is Button and (current as Button).text.contains(substring):
-			return current
-		stack.append_array(current.get_children())
-	return null
+func _has_text(root: Node, text: String) -> bool:
+	if root is Label and str(root.text).contains(text):
+		return true
+	if root is Button and str((root as Button).text).contains(text):
+		return true
+	for child in root.get_children():
+		if _has_text(child, text):
+			return true
+	return false
 
 
 func _has_hint(errors: Array[String], needle: String) -> bool:

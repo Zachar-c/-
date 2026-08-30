@@ -31,8 +31,10 @@ func _initialize() -> void:
 	if not contract_env.is_empty():
 		for piece in contract_env.split(",", false):
 			contracts.append(piece.strip_edges())
-	# 玩家真实开局路径：大厅选中契约后开新局（controller 内部执行 swearing）。
-	controller.start_new_run(seed_value, "", contracts)
+	var school_env := OS.get_environment("PLAYTHROUGH_SCHOOL")
+	var school := school_env if school_env in ["blood", "qi", "force", "soul", "refine"] else ""
+	# 玩家真实开局路径：大厅选择流派与契约后开新局（controller 内部执行 swearing）。
+	controller.start_new_run(seed_value, school, contracts)
 	_tell("开局 seed=%d | 起点=%s | 元石=%d | 气血=%d/%d | 魂魄=%d | 契约=%s" % [
 		seed_value, controller.state.current_node_id,
 		int(controller.state.stone), int(controller.state.health),
@@ -159,10 +161,13 @@ func _step_map(controller) -> String:
 		for mat_id in ["beast_blood", "beast_bone"]:
 			if int(controller.state.materials.get(mat_id, 0)) > 0:
 				var eaten: Dictionary = controller.submit_command({"type": "use_material", "material_id": mat_id})
-				if bool(eaten.get("ok", false)):
+				var eaten_result: Dictionary = eaten.get("result", eaten) as Dictionary
+				if bool(eaten_result.get("ok", false)):
 					_tell("服用 %s 调理气血（气血=%d）" % [mat_id, int(controller.state.health)])
 					return "ongoing"
+
 	var visible: Array = controller.visible_route_nodes(2)
+
 	var visited: Dictionary = controller.state.node_flags
 	# 候选顺序：默认玩家策略为「攒实力、Boss 放最后」——先清其余节点，
 	# 气血不足六成或战力未成型也不碰任何关底 Boss（拓扑 v2 每大层都有
@@ -182,6 +187,11 @@ func _step_map(controller) -> String:
 		if _is_boss_stand(node):
 			boss_node = node
 			continue
+		# 前瞻节点（reachable=false）会让 travel 必被拒，会浪费步数与刷
+		# unreachable_route_node 噪声；先只收当前可达的候选。Boss/已访
+		# 问节点保留特殊路径在下面单独处理。
+		if not bool(node.get("reachable", false)):
+			continue
 		if visited.has(node_id):
 			# 领域允许沿前向边重走已访问节点：困在无 Boss 边的行末时可
 			# 绕行到有 Boss 边的节点——兜底重定位目标，优先级最低。
@@ -194,12 +204,16 @@ func _step_map(controller) -> String:
 	var prioritized: Array[Dictionary] = []
 	var rest_first: Array[Dictionary] = []
 	var others: Array[Dictionary] = []
+	var optional_combat: Array[Dictionary] = []
 	for candidate in candidates:
 		var node_id := str(candidate.get("id", ""))
-		if sources.has(node_id):
+		var candidate_type := str(candidate.get("type", ""))
+		if _is_ascension_source(candidate, sources):
 			prioritized.append(candidate)
-		elif int(controller.state.health) < int(controller.state.max_health) and str(candidate.get("type", "")) == "rest":
+		elif int(controller.state.health) < int(controller.state.max_health) and candidate_type == "rest":
 			rest_first.append(candidate)
+		elif candidate_type in ["combat", "pursuit"]:
+			optional_combat.append(candidate)
 		else:
 			others.append(candidate)
 	candidates = prioritized
@@ -207,6 +221,8 @@ func _step_map(controller) -> String:
 		candidates.append(rest_node)
 	for other in others:
 		candidates.append(other)
+	for combat_node in optional_combat:
+		candidates.append(combat_node)
 	# 未访问节点全部走完后，允许沿前向边重走已访问节点（领域不拒 visited），
 	# 绕到有 Boss 边的节点——单向链上不再困死。
 	if candidates.is_empty():
@@ -245,6 +261,12 @@ func _step_map(controller) -> String:
 		_tell("地图无新节点可走（路线尽头）")
 		return "no_route"
 	return "ongoing"
+
+
+func _is_ascension_source(node: Dictionary, sources: Array) -> bool:
+	var node_id := str(node.get("id", ""))
+	var template_id := str(node.get("template_id", ""))
+	return sources.has(node_id) or sources.has(template_id)
 
 
 func _is_boss_stand(node: Dictionary) -> bool:
@@ -345,6 +367,7 @@ func _step_encounter(controller) -> String:
 			outcome = str(nested.get("reason", "unknown"))
 		_tell("尝试飞升：%s（条件 %s）" % [outcome, str(nested.get("conditions", {}))])
 		if controller.current_view_name() == "Ending":
+			_tell("已进入统一结算页 Ending")
 			return "ending"
 		_tell("飞升未成（%s），本次旅途结束" % outcome)
 		return "retreat_end"
@@ -400,16 +423,28 @@ func _step_battle(controller) -> String:
 	var heal_id := _pick_card_by_effect(battle, controller, ["relief_injury"])
 	var guard_id := _pick_card_by_effect(battle, controller, ["gain_guard", "guard_self"])
 	var lethal := intent_damage > 0 and hp <= intent_damage
+	var finish_now := enemy_hp <= 1
+	var punch_has_live_reaction := _punch_has_live_reaction(battle, living_enemies)
+	var immediate_kill := finish_now and not attack_id.is_empty()
 	var dodging: bool = (battle.get("flags", []) as Array).has("dodging")
-	if can_flee and (hp <= 1 or intent_damage >= hp or _stuck_count >= 6):
+	var close_guarded_turn := false
+	# 试炼契约将敌方生命压到 1 时，玩家先手应直接收头，不能先守护/收势把
+	# 敌方回合让出来；攻击卡优先，没有卡时用拳脚兜底。
+	if immediate_kill:
+		command = _play_card_command(battle, attack_id, living_enemies)
+	elif can_flee and finish_now and (attack_id.is_empty() or punch_has_live_reaction):
+		# 可撤退战没有能绕过反制的攻击牌时直接止损，不让敌方获得免费出手机会。
+		command = _battle_turn_command(controller, battle, "retreat")
+	elif can_flee and (hp <= 1 or intent_damage >= hp or _stuck_count >= 6):
 		# 玩家止损：下一口齐射能咬死（围攻节点 4 伤/回合）或打不动敌血时
 		# 抽身——早期小怪可打赢换战利品，但双敌围攻对开局套路是死局，撤为上策。
-		command = {"type": "retreat"}
-	elif lethal and not dodging and guard_id.is_empty() \
-			and (attack_id.is_empty() or _total_enemy_hp(living_enemies) > 4):
+		command = _battle_turn_command(controller, battle, "retreat")
+	elif can_flee and lethal and not dodging and guard_id.is_empty() \
+			and (attack_id.is_empty() or _total_enemy_hp(living_enemies) > 4) \
+			and _dodge_is_effective(controller, living_enemies):
 		# 敌方下一口能咬死人且手里没有守护牌：闪避保命——除非敌方血量已薄
 		#（≤4）且手里有攻击牌，那是搏命收头的窗口，闪避死守只会无限拖延。
-		command = {"type": "basic_dodge"}
+		command = _battle_turn_command(controller, battle, "basic_dodge")
 	elif not can_flee:
 		# Boss 死战节奏：守护旗标只挡一口，攻击与垫挡必须交替。血量进入
 		# 危险线（两口内死）才垫挡（守护优先、闪避兜底）；敌方血量 ≤4 是
@@ -419,24 +454,24 @@ func _step_battle(controller) -> String:
 		var heal_usable := not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0
 		var kill_window := _total_enemy_hp(living_enemies) <= 4
 		var danger := hp <= intent_damage * 2
-		var must_attack := attack_usable and (not danger or kill_window or _stuck_count >= 4)
+		var must_attack := attack_usable and (not danger or kill_window or guarded or _stuck_count >= 4)
+		close_guarded_turn = guarded and must_attack
 		if must_attack:
 			command = _play_card_command(battle, attack_id, living_enemies)
-		elif danger and not guarded:
+		elif danger and not guarded and not dodging and _dodge_is_effective(controller, living_enemies):
 			if not guard_id.is_empty():
 				command = _play_card_command(battle, guard_id, living_enemies)
 			else:
-				command = {"type": "basic_dodge"}
+				command = _battle_turn_command(controller, battle, "basic_dodge")
 		elif heal_usable:
 			command = _play_card_command(battle, heal_id, living_enemies)
 		elif not guard_id.is_empty():
 			command = _play_card_command(battle, guard_id, living_enemies)
 		else:
+			# 拳脚兜底：被拒就走收势换牌，避免原地空转耗尽步数。
 			var punch_result: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))
 			if not bool(punch_result.get("finished", false)):
-				# 拳脚门（basic_attack_used）只在收势时清除——被拒就收势换牌，
-				# 收势同时回气 3/回合并补手牌，绝不能无限闪避空转。
-				controller.submit_command({"type": "end_turn"})
+				controller.submit_command(_battle_turn_command(controller, battle, "end_turn"))
 			return "ongoing"
 	else:
 		# 常规战：大口守护 → 攻击 → 带伤祛伤 → 僵局收势换牌。
@@ -446,14 +481,14 @@ func _step_battle(controller) -> String:
 			command = _play_card_command(battle, attack_id, living_enemies)
 		elif not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0:
 			command = _play_card_command(battle, heal_id, living_enemies)
-		elif _stuck_count >= 2:
-			command = {"type": "end_turn"}
-		elif hand.is_empty():
-			command = {"type": "end_turn"}
 		else:
-			command = {"type": "end_turn"}
+			command = _battle_turn_command(controller, battle, "end_turn")
 	var pre_hp := int(controller.state.health)
 	var result: Dictionary = controller.submit_command(command)
+	if close_guarded_turn and bool(result.get("accepted", false)) and not bool(result.get("finished", false)):
+		var current_battle: Dictionary = controller.current_battle
+		controller.submit_command(_battle_turn_command(controller, current_battle, "end_turn"))
+		return "ongoing"
 	if bool(result.get("finished", false)):
 		_tell("战斗结束：%s（我方气血 %d/%d）" % [
 			str(result.get("result", "unknown")),
@@ -463,12 +498,14 @@ func _step_battle(controller) -> String:
 			controller.submit_command({"type": "leave_node"})
 			_tell("止损撤离，离开该节点")
 		return "ongoing"
-	# 拒绝回退（旧实现放在 return 之后永远不可达）：命令被拒不推进时依次
-	# 回退 普攻 → 收势，避免原地空转耗尽步数。
+	# 拒绝回退：命令被拒不推进时依次回退 普攻 → 收势，避免原地空转耗尽步数。
+	# 重新取一次当前战斗快照，回退命令必须带最新 hand_version/phase。
+	var live_battle: Dictionary = controller.current_battle
+	var live_living := _living_enemies(live_battle)
 	if int(controller.state.health) == pre_hp and _stuck_count >= 1:
-		var punch: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))
+		var punch: Dictionary = controller.submit_command(_punch_command(live_battle, live_living))
 		if not bool(punch.get("finished", false)) and int(controller.state.health) == pre_hp:
-			controller.submit_command({"type": "end_turn"})
+			controller.submit_command(_battle_turn_command(controller, live_battle, "end_turn"))
 	return "ongoing"
 
 
@@ -497,6 +534,29 @@ func _pick_card_by_effect(battle: Dictionary, controller, wanted: Array) -> Stri
 	return ""
 
 
+func _punch_has_live_reaction(battle: Dictionary, living_enemies: Array[Dictionary]) -> bool:
+	if living_enemies.is_empty():
+		return false
+	for reaction_value in living_enemies[0].get("reactions", []):
+		var reaction: Dictionary = reaction_value
+		if str(reaction.get("trigger", "")) == "direct_strike" \
+				and str(reaction.get("window", "")) == "before_damage":
+			var counter_status := str(reaction.get("counter_status", ""))
+			var flags: Array = battle.get("flags", [])
+			if counter_status == "guarded" and not flags.has("guarded"):
+				return true
+			if counter_status == "bound" and not flags.has("enemy_bound"):
+				return true
+	return false
+
+
+func _dodge_is_effective(controller, living_enemies: Array[Dictionary]) -> bool:
+	if living_enemies.is_empty():
+		return false
+	var enemy_intent: Dictionary = living_enemies[0].get("visible_intent", {})
+	return int(controller.state.cultivator.get("speed", 2)) > int(enemy_intent.get("speed", 0))
+
+
 func _play_card_command(battle: Dictionary, action_id: String, living_enemies: Array[Dictionary]) -> Dictionary:
 	var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
 	return {
@@ -505,6 +565,7 @@ func _play_card_command(battle: Dictionary, action_id: String, living_enemies: A
 		"card_id": action_id,
 		"target_id": target_id,
 		"state_version": int(battle.get("hand_version", 0)),
+		"expected_phase": str(battle.get("phase", "player")),
 	}
 
 
@@ -516,6 +577,15 @@ func _punch_command(battle: Dictionary, living_enemies: Array[Dictionary]) -> Di
 		"card_id": "basic.punch",
 		"target_id": target_id,
 		"state_version": int(battle.get("hand_version", 0)),
+		"expected_phase": str(battle.get("phase", "player")),
+	}
+
+
+func _battle_turn_command(controller, battle: Dictionary, command_type: String) -> Dictionary:
+	return {
+		"type": command_type,
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(battle.get("phase", "player")),
 	}
 
 

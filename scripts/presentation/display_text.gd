@@ -51,6 +51,7 @@ const TYPES := {
 	"pursuit": "追击",
 	"earth_vein": "地脉",
 	"seclusion": "静修",
+	"rest": "休整",
 	"shop": "黑市",
 	"event": "异象",
 	"ascension": "升仙",

@@ -1,14 +1,11 @@
 extends GutTest
 
 
-func test_new_run_has_small_light_gu_and_initial_resources() -> void:
+func test_new_run_records_aptitude_capacity_and_next_feeding() -> void:
 	var state := RunState.new_run(101)
-	assert_eq(state.gu_ids, ["small_light_gu"])
-	assert_eq(state.equipped_gu_ids, ["small_light_gu"])
-	assert_eq(state.stone, 12)
-	assert_eq(state.essence, 3)
-	assert_eq(state.event_log.size(), 1)
-	assert_eq(state.event_log[0]["id"], "event_0000")
+	assert_eq(state.aptitude, "bing")
+	assert_eq(state.essence_capacity, 4)
+	assert_eq(state.estimate_feeding(ContentCatalog.load_all()), 1)
 
 
 func test_append_event_returns_new_state_without_changing_old_state() -> void:

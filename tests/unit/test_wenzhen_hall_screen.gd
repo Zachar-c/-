@@ -45,7 +45,7 @@ func test_hall_projects_current_run_summary_without_ui_recomputation() -> void:
 	add_child(controller)
 
 	var summary: Dictionary = controller._snapshot_for("Title")["run_summary"]
-	assert_eq(summary, {"route": "rest_hollow", "rank": 3, "hp": 27})
+	assert_eq(summary, {"route": "休整", "rank": "3 转", "hp": "27"})
 
 
 func test_hall_matches_approved_horizontal_composition() -> void:
@@ -136,7 +136,7 @@ func _running_snapshot() -> Dictionary:
 		"has_save": true,
 		"brand_title": "問眞",
 		"primary_action": "continue_run",
-		"run_summary": {"route": "黑市交易后", "rank": 4, "hp": 27},
+		"run_summary": {"route": "黑市交易后", "rank": "4 转", "hp": "27"},
 		"meta_stats": {"runs": 3, "endings": 1},
 	}
 

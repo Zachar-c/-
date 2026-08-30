@@ -5,6 +5,7 @@
 #        title（可选，警示条标题，默认「⚠ 确认」）/ warning_note（可选第二行后果预览小字）
 
 export GuConfirmDialog() -> RuitkVNode {
+  var MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
   var message = props.get("message", "")
   var confirm_label = props.get("confirm_label", "确认")
   var cancel_label = props.get("cancel_label", "取消")
@@ -28,8 +29,8 @@ export GuConfirmDialog() -> RuitkVNode {
             <Label text={ message } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } />
             { note_rows }
             <HBoxContainer style={ {"separation": 12} }>
-              <Button text={ cancel_label } onPressed={ func(): on_cancel.call() } style={ {"font_color": GuStyle.INK_SOFT, "min_width": 120, "min_height": 36} } />
-              <Button text={ confirm_label } onPressed={ func(): on_confirm.call() } style={ {"font_color": GuStyle.CINNABAR, "min_width": 120, "min_height": 36} } />
+              <Button text={ cancel_label } onPressed={ func(): on_cancel.call() } style={ MasterTheme.button_style("cancel") } />
+              <Button text={ confirm_label } onPressed={ func(): on_confirm.call() } style={ MasterTheme.button_style("danger", "large") } />
             </HBoxContainer>
           </VBoxContainer>
         </MarginContainer>

@@ -9,10 +9,6 @@ const SCAN_FILES := [
 	"ui/widgets/gu_resource_chip.gd",
 	"scripts/presentation/gu_orb.gd",
 	"scripts/presentation/resource_icon.gd",
-	"scripts/presentation/battle_view.gd",
-	"scripts/presentation/encounter_view.gd",
-	"scripts/presentation/map_view.gd",
-	"scripts/presentation/route_tree_canvas.gd",
 ]
 const FORBIDDEN_PALETTE_NAMES := [
 	"HALL_PAPER", "HALL_INK", "HALL_SOFT", "HALL_FAINT", "HALL_RULE", "HALL_RED", "HALL_BLUE", "HALL_YELLOW",
@@ -33,4 +29,5 @@ func test_gu_and_resource_identification_palettes_remain_explicit() -> void:
 	var orb := FileAccess.get_file_as_string("res://scripts/presentation/gu_orb.gd")
 	var resource := FileAccess.get_file_as_string("res://scripts/presentation/resource_icon.gd")
 	assert_true(orb.contains("GU_COLORS"))
-	assert_true(resource.contains("ACCENTS"))
+	assert_true(resource.contains("ResourceVocabularyScript"))
+	assert_true(resource.contains("GuStyle.resource_color"))

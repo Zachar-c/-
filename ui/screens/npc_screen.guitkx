@@ -23,7 +23,7 @@ export NpcScreen() -> RuitkVNode {
   var stance_note = str(state.get("stance_note", ""))
   var notoriety = int(state.get("notoriety", 0))
   var notoriety_note = str(state.get("notoriety_note", ""))
-  var can_flee = bool(state.get("can_flee", true))
+  var can_flee = (state.get("can_flee", true))
 
   var stance_color = GuStyle.JADE
   if stance == "敌视":
@@ -51,9 +51,9 @@ export NpcScreen() -> RuitkVNode {
     var oprice = str(o.get("price", ""))
     var odesc = str(o.get("desc", ""))
     var oid = str(o.get("id", ""))
-    var oexec = bool(o.get("executable", true))
+    var oexec = (o.get("executable", true))
     var oblock = str(o.get("block_reason", ""))
-    var ocursed = bool(o.get("curse_warning", false))
+    var ocursed = (o.get("curse_warning", false))
     var ask_buy = func():
       if ocursed and oexec:
         set_confirm_offer.call({"confirm_offer": oid})
@@ -87,7 +87,7 @@ export NpcScreen() -> RuitkVNode {
     var btake = str(b.get("take", ""))
     var bnote = str(b.get("note", ""))
     var bid = str(b.get("id", ""))
-    var bexec = bool(b.get("executable", true))
+    var bexec = (b.get("executable", true))
     var bblock = str(b.get("block_reason", ""))
     var bowned = int(b.get("owned", 0))
     var barter_block_rows = []
@@ -116,9 +116,9 @@ export NpcScreen() -> RuitkVNode {
   for t in talk_options:
     var tlabel = str(t.get("label", ""))
     var tdetail = str(t.get("detail", ""))
-    var tdanger = bool(t.get("danger", false))
+    var tdanger = (t.get("danger", false))
     var tid = str(t.get("id", ""))
-    var texec = bool(t.get("executable", true))
+    var texec = (t.get("executable", true))
     var tblock = str(t.get("block_reason", ""))
     var talk_btn_label = "交涉" if tblock == "" else ("不可用 · " + tblock)
     talk_rows.append((
@@ -134,12 +134,12 @@ export NpcScreen() -> RuitkVNode {
   var feedback_row = []
   if feedback != "":
     feedback_row.append(<GuToast text={ feedback } tone="warn" />)
-  var has_npc = bool(state.get("has_npc", true))
+  var has_npc = (state.get("has_npc", true))
   var no_npc_note = str(state.get("no_npc_note", ""))
   var trade_section = []
   if has_npc:
     trade_section.append(<GuPanel title="交易">
-      <GuScrollBox height={ 250 }>
+      <GuScrollBox>
         <VBoxContainer style={ {"separation": 6} }>
           { offer_rows }
           { offer_empty }
@@ -147,7 +147,7 @@ export NpcScreen() -> RuitkVNode {
       </GuScrollBox>
     </GuPanel>)
     trade_section.append(<GuPanel title="以物易物">
-      <GuScrollBox height={ 220 }>
+      <GuScrollBox>
         <VBoxContainer style={ {"separation": 6} }>
           { barter_rows }
           { barter_empty }
@@ -160,6 +160,7 @@ export NpcScreen() -> RuitkVNode {
     </GuPanel>)
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       { feedback_row }
@@ -171,13 +172,13 @@ export NpcScreen() -> RuitkVNode {
         <Label text={ notoriety_note } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
       </HBoxContainer>
 
-      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
-        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14, "size_flags_vertical": 3} }>
+        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3, "size_flags_vertical": 3} }>
           { trade_section }
         </VBoxContainer>
-        <VBoxContainer style={ {"separation": 8, "min_width": 380} }>
+        <VBoxContainer style={ {"separation": 8, "min_width": 380, "size_flags_vertical": 3} }>
           <GuPanel title="交涉">
-            <GuScrollBox height={ 420 }>
+            <GuScrollBox>
               <VBoxContainer style={ {"separation": 8} }>
                 { talk_rows }
                 { talk_empty }
@@ -211,5 +212,6 @@ export NpcScreen() -> RuitkVNode {
         )
       }
     </VBoxContainer>
+    </MarginContainer>
   )
 }

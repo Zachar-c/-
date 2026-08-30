@@ -20,7 +20,7 @@ export RefineScreen() -> RuitkVNode {
   var anomalies = state.get("anomalies", [])
   var death_lines = state.get("death_lines", {})
   var title = str(state.get("title", "炼蛊台"))
-  var slot_ok = bool(state.get("slot_ok", false))
+  var slot_ok = (state.get("slot_ok", false))
   var blind_note = str(state.get("blind_note", ""))
 
   # 通道选择 + 合成执行二次确认（R10.9：失败率/躁动/诅咒继承全预览）；屏内 useState。
@@ -63,7 +63,7 @@ export RefineScreen() -> RuitkVNode {
     var rfail = str(r.get("fail_chance", ""))
     var rbacklash = str(r.get("backlash", ""))
     var rcurse = str(r.get("curse", ""))
-    var runlocked = bool(r.get("unlocked", true))
+    var runlocked = (r.get("unlocked", true))
     var preview = []
     preview.append(<Label text={ "产物：" + rout } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 15} } />)
     preview.append(<Label text={ rfail } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />)
@@ -117,6 +117,7 @@ export RefineScreen() -> RuitkVNode {
     fire.call("refine", confirm_recipe)
 
   return (
+    <MarginContainer style={ {"anchors_preset": "PRESET_FULL_RECT", "margin_left": GuStyle.SCREEN_MARGIN, "margin_right": GuStyle.SCREEN_MARGIN, "margin_top": 16, "margin_bottom": 24} }>
     <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
       <GuTopBar resources={ resources } contracts={ contracts } anomalies={ anomalies } death_lines={ death_lines } />
       <HBoxContainer style={ {"separation": 12} }>
@@ -124,12 +125,12 @@ export RefineScreen() -> RuitkVNode {
         { tab_row }
       </HBoxContainer>
 
-      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14} }>
-        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3} }>
+      <HBoxContainer name="primary_decision_surface" style={ {"separation": 14, "size_flags_vertical": 3} }>
+        <VBoxContainer style={ {"separation": 8, "size_flags_horizontal": 3, "size_flags_vertical": 3} }>
           <Label text={ slot_status } style={ {"font_color": slot_color, "font_size": 13} } />
-          <GuPanel title="配方 / 预览">
-            <GuScrollBox height={ 330 }>
-    <VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
+          <GuPanel title="配方 / 预览" expand_v={ true }>
+            <GuScrollBox>
+              <VBoxContainer style={ {"separation": 10} }>
                 { recipe_rows }
                 { recipe_empty }
               </VBoxContainer>
@@ -137,7 +138,7 @@ export RefineScreen() -> RuitkVNode {
           </GuPanel>
           <Label text={ str(state.get("streak_note", "")) } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />
         </VBoxContainer>
-        <VBoxContainer style={ {"separation": 8, "min_width": 260} }>
+        <VBoxContainer style={ {"separation": 8, "min_width": 260, "size_flags_vertical": 3} }>
           <GuPanel title="拆解化材">
             <VBoxContainer style={ {"separation": 6} }>
               { dismantle_rows }
@@ -162,5 +163,6 @@ export RefineScreen() -> RuitkVNode {
         )
       }
     </VBoxContainer>
+    </MarginContainer>
   )
 }

@@ -49,7 +49,8 @@ const DDA_GLYPH := "异"
 # The only packaged font is owner-authorized for this noncommercial build.
 # Body copy deliberately uses Godot's default until a separately cleared body face arrives.
 const TITLE_FONT := preload("res://assets/wenzhen/fonts/LXGWZhiSongCL-Regular.ttf")
-const BODY_FONT: Font = null
+# 中文正文必须走同一套宋体：引擎默认回退是无衬线，与宣纸/宋标题断风格。
+const BODY_FONT: Font = TITLE_FONT
 const SCREEN_MARGIN := 32
 const TOP_BAR_HEIGHT := 72
 
@@ -79,6 +80,28 @@ static func quality_color(quality: String) -> Color:
 		"史诗", "epic": return RARITY_EPIC
 		"传说", "legendary": return CINNABAR
 		_: return INK_SOFT
+
+
+static var _resource_vocabulary = preload("res://scripts/presentation/resource_vocabulary.gd")
+
+
+static func resource_normalize(kind: String) -> String:
+	return _resource_vocabulary.normalize(kind)
+
+
+static func resource_label(kind: String) -> String:
+	return _resource_vocabulary.label(kind)
+
+
+static func resource_suffix(kind: String) -> String:
+	return _resource_vocabulary.suffix(kind)
+
+
+static func resource_color(kind: String) -> Color:
+	match _resource_vocabulary.normalize(kind):
+		"lifespan": return INK_PRIMARY
+		"soul", "material": return JADE
+		_: return ANOMALY_YELLOW
 
 
 static func contract_color() -> Color:
