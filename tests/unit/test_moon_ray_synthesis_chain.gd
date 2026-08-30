@@ -55,6 +55,8 @@ func test_blood_moon_forged_rejects_rank_one_inputs() -> void:
 		{"definition_id": MOON_RAY_GU_ID, "rank": 1},
 		{"definition_id": BLOOD_QI_GU_ID, "rank": 1},
 	])
+	# 蛊方图鉴门禁（2026-08-30）：先授血月蛊方，再验证转数门禁本身。
+	run.global_codex_ids = ["blood_moon_forged"]
 
 	var result := Resolver.apply(run, {"type": "refine_gu", "recipe_id": "blood_moon_forged"}, catalog)
 
@@ -87,6 +89,7 @@ func test_blood_moon_forged_combines_rank_two_inputs_into_rank_three_blood_moon(
 		{"definition_id": MOON_RAY_GU_ID, "rank": 2},
 		{"definition_id": BLOOD_QI_GU_ID, "rank": 2},
 	])
+	run.global_codex_ids = ["blood_moon_forged"]
 
 	var result := Resolver.apply(run, {"type": "refine_gu", "recipe_id": "blood_moon_forged"}, catalog)
 	var refined: RunState = result["state"]

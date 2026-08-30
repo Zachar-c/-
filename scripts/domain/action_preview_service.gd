@@ -986,8 +986,16 @@ static func _append_scavenge_card_if_due(cards: Array[Dictionary], state: RunSta
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return
 	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	var recipe_id := str(boss.get("scavenge_recipe", ""))
-	if recipe_id.is_empty() or state.global_codex_ids.has(recipe_id):
+	# 搜刮蛊方（2026-08-30）：兼容单串与数组；还有未持有蛊方即提示可搜刮。
+	var raw_recipe: Variant = boss.get("scavenge_recipe", "")
+	var pending: Array[String] = []
+	if raw_recipe is Array:
+		for value in raw_recipe:
+			if not state.global_codex_ids.has(str(value)):
+				pending.append(str(value))
+	elif not str(raw_recipe).is_empty() and not state.global_codex_ids.has(str(raw_recipe)):
+		pending.append(str(raw_recipe))
+	if pending.is_empty():
 		return
 	cards.append(_card(state, {
 		"id": "scavenge",

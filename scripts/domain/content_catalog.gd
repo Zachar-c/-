@@ -702,9 +702,16 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("loot tier %s references unknown gu %s" % [tier_key, pool_gu_id])
 				elif str(gu_by_id[pool_gu_id].get("rarity", "")) != bucket_rarity:
 					errors.append("loot tier %s gu %s rarity mismatch with bucket %s" % [tier_key, pool_gu_id, bucket_rarity])
-		var scavenge_recipe := str(tier.get("scavenge_recipe", ""))
-		if not scavenge_recipe.is_empty() and not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
-			errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
+		var raw_scavenge: Variant = tier.get("scavenge_recipe", "")
+		var scavenge_ids: Array[String] = []
+		if raw_scavenge is Array:
+			for value in raw_scavenge:
+				scavenge_ids.append(str(value))
+		elif not str(raw_scavenge).is_empty():
+			scavenge_ids.append(str(raw_scavenge))
+		for scavenge_recipe in scavenge_ids:
+			if not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
+				errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
 	return errors
 
 
