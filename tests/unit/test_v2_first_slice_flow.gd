@@ -89,12 +89,16 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 		"type": "action_card",
 		"action_id": "node.fight",
 		"state_version": controller.state.event_log.size(),
+		"node_id": str(controller.current_node.get("id", "")),
+		"session_node_id": str(controller.current_session.get("node_id", "")),
 	})
-	controller.current_battle["enemy_hp"] = 1
-	controller.state.refined_gu_ids.append("thorn_whip_gu")
-	controller.current_battle["available_gu_ids"].append("thorn_whip_gu")
-	var result := controller.submit_command({"type": "use_gu", "gu_id": "thorn_whip_gu", "mode": "bind"})
-	result = controller.submit_command({"type": "use_gu", "gu_id": "thorn_whip_gu", "mode": "strike"})
+	# V1（2026-08-30）：把敌人压到 1 血，一次蛊行动带走。
+	controller.current_battle["enemies"][0]["hp"] = 1
+	var instance_id := str(controller.current_battle["gu_slots"][0]["instance_id"])
+	var result := controller.submit_command({
+		"type": "use_gu",
+		"instance_id": instance_id,
+	})
 
 	assert_eq(result["result"], "victory")
 	# D3 战利品弹窗（流程图 G3）：victory 且有 loot 时进 Reward 屏确认，关闭后回地图。

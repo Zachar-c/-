@@ -43,6 +43,13 @@ static func _npc_talk_command(controller, id: String) -> Dictionary:
 
 
 static func _battle_card_command(controller, action_id: String, target_id: String) -> Dictionary:
+	# V1 蛊行动制：手牌行 id 即 gu.<instance_id>，直接走 use_gu 命令。
+	if action_id.begins_with("gu."):
+		return {
+			"type": "use_gu",
+			"instance_id": str(action_id.trim_prefix("gu.")),
+			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
+		}
 	var card_id := action_id.trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", "")))
 	return {
 		"type": "action_card",

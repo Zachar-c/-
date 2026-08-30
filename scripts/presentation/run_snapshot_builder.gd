@@ -12,6 +12,8 @@ const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
+const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
@@ -1008,76 +1010,99 @@ static func battle(controller) -> Dictionary:
 	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var battle_data: Dictionary = controller.current_battle
-	var flags: Array = battle_data.get("flags", [])
-	var guarded: bool = flags.has("guarded")
 	var enemies: Array[Dictionary] = []
 	for enemy_value in battle_data.get("enemies", []):
 		var enemy: Dictionary = enemy_value
 		enemies.append({
-			"id": str(enemy.get("enemy_id", "")),
-			"name": str(enemy.get("name", DisplayText.enemy(str(enemy.get("kind", ""))))),
+			"id": str(enemy.get("id", "")),
+			"name": str(enemy.get("label", DisplayText.enemy(str(enemy.get("id", ""))))),
 			"hp": int(enemy.get("hp", 0)),
 			"max_hp": maxi(1, int(enemy.get("max_hp", 1))),
 			"shield": int(enemy.get("shield", 0)),
 			"statuses": _statuses_to_list(enemy.get("statuses", {})),
-			"intent": _intent_to_screen(enemy.get("visible_intent", {})),
+			"intent": _intent_to_screen(enemy.get("intent", {})),
 			"alive": bool(enemy.get("alive", false)),
 		})
-	var cult: Dictionary = state.cultivator
+	# V1 玩家面板：真元/念头/魂魄/资质/常驻激活。
+	var pd: Dictionary = battle_data.get("player", {})
 	var player := {
-		"hp": int(cult.get("health", state.health)),
-		"max_hp": maxi(1, int(cult.get("max_health", state.max_health))),
-		"shield": 2 if guarded else 0,
-		"primordial": int(state.essence),
-		"soul": int(cult.get("soul", 0)),
-		"statuses": _statuses_to_list(cult.get("statuses", {})),
+		"hp": int(pd.get("hp", 0)),
+		"max_hp": maxi(1, int(pd.get("max_hp", 1))),
+		"shield": int(pd.get("shield", 0)),
+		"primordial": int(pd.get("true_qi", 0)),
+		"primordial_max": maxi(1, int(pd.get("true_qi_max", 1))),
+		"soul": int(pd.get("soul", 0)),
+		"thoughts": int(pd.get("thoughts", 0)),
+		"aptitude": str(pd.get("aptitude", "")),
+		"buffs": pd.get("buffs", {}),
+		"statuses": [],
 	}
+	# V1 手牌 = 战斗蛊槽（非战斗蛊已在开局过滤）。
 	var hand: Array[Dictionary] = []
-	for c in ActionPreviewServiceScript.preview_battle_actions(battle_data, state, catalog):
-		hand.append(_battle_card(c))
-	# R5.21 杀招（条件触发式）：进度=组合序列已按序打出的段数；available=序列全部
-	# 就绪（本次出牌即触发）。快照只读镜像 pending_kill_move_state + 卡表定义，
-	# 显示串（序列中文/下一手）在此拼好，UI 不做 id 翻译。
+	for i in (battle_data.get("gu_slots", []) as Array).size():
+		var slot: Dictionary = battle_data["gu_slots"][i]
+		var reason := V1BattleResolverScript.can_play_gu(battle_data, i)
+		var permanent := bool(slot.get("is_permanent", false))
+		var mode_text := "瞬发"
+		if permanent:
+			mode_text = {"CONSUME_ON_USE": "常驻·即毁", "TRIGGER_COST": "常驻·受击", "PER_TURN_MAINTAIN": "常驻·维持"}.get(str(slot.get("durability_mode", "")), "常驻")
+		var cost_text := "%d 真元 · %d 念头" % [int(slot.get("true_qi_cost", 0)), int(slot.get("thought_cost", 1))]
+		var effect_text := _v1_slot_effect_text(slot)
+		var block_text := _v1_reason_text(reason)
+		if bool(slot.get("is_sealed", false)):
+			block_text = "被封印 %d 回合" % int(slot.get("seal_turns", 0))
+		hand.append({
+			"id": "gu.%s" % str(slot.get("instance_id", "")),
+			"name": DisplayText.gu(str(slot.get("definition_id", ""))),
+			"cost": cost_text,
+			"cost_ex": mode_text,
+			"effect": effect_text,
+			"quality": "常驻" if permanent else "瞬发",
+			"curse_warning": false,
+			"executable": reason.is_empty(),
+			"block_reason": block_text,
+			"expected_gain": [],
+			"known_risk": [],
+			"unknown_note": "",
+			"remedy_hints": [],
+			"state_version": int(state.event_log.size()) if state != null else -1,
+			"expected_phase": "player",
+		})
+	# V1 预制杀招（方案一：配方）。
 	var kill_moves: Array[Dictionary] = []
-	var pending_km: Dictionary = battle_data.get("pending_kill_move_state", {})
-	for card_value in catalog.get("card_by_id", {}).values():
-		var seq: Array = card_value.get("kill_move_sequence", [])
-		if seq.size() < 2:
-			continue
-		var km_id := str(card_value.get("id", ""))
-		var done := 0
-		if str(pending_km.get("move_id", "")) == km_id:
-			done = clampi(int(pending_km.get("next_sequence_index", 0)), 0, seq.size())
-		var seq_names: Array[String] = []
-		for seq_gu in seq:
-			seq_names.append(DisplayText.gu(str(seq_gu)))
-		var km_name := str(card_value.get("name", ""))
-		if km_name.is_empty():
-			km_name = "、".join(seq_names)
+	for km_value in battle_data.get("kill_moves", []):
+		var km: Dictionary = km_value
+		var recipe_names: Array[String] = []
+		for instance_id in km.get("recipe", []):
+			var def_id := _v1_instance_definition_id(battle_data, str(instance_id))
+			recipe_names.append(DisplayText.gu(def_id))
+		var km_reason := V1BattleResolverScript.kill_move_reason(battle_data, str(km.get("id", "")))
 		kill_moves.append({
-			"id": km_id,
-			"name": km_name,
-			"sequence_display": " → ".join(seq_names),
-			"progress": done,
-			"next_name": DisplayText.gu(str(seq[done])) if done < seq.size() else "",
-			"total": seq.size(),
-			"cost": str(card_value.get("summary", "")),
+			"id": str(km.get("id", "")),
+			"name": str(km.get("label", "")),
+			"sequence_display": " + ".join(recipe_names),
+			"progress": (km.get("recipe", []) as Array).size(),
+			"next_name": "",
+			"total": (km.get("recipe", []) as Array).size(),
+			"cost": "真元 %d · 念头 %d%s" % [int(km.get("true_qi_cost", 0)), int(km.get("thought_cost", 1)), (" · 寿元 %d" % int(km.get("life_cost", 0))) if int(km.get("life_cost", 0)) > 0 else ""],
+			"tag": str(km.get("tag", "")),
+			"executable": km_reason.is_empty(),
+			"block_reason": _v1_reason_text(km_reason),
+			"command": {"type": "play_kill_move", "kill_move_id": str(km.get("id", ""))},
 		})
 	return {
 		"enemies": enemies,
 		"player": player,
 		"hand": hand,
 		"piles": {
-			"draw": (battle_data.get("draw_pile", []) as Array).size(),
-			"discard": (battle_data.get("discard_pile", []) as Array).size(),
-			"exhausted": (battle_data.get("exhausted_cards", []) as Array).size(),
+			"draw": 0,
+			"discard": 0,
+			"exhausted": 0,
 		},
-		"soul_ops": {"cap": int(battle_data.get("soul_ops_cap", 0)), "used": (battle_data.get("active_gu_instance_ids", []) as Array).size()},
+		"soul_ops": {"cap": int(pd.get("soul", 0)), "used": int(pd.get("used_this_turn", 0))},
 		"default_target_id": _first_living_enemy_id(enemies),
 		"kill_moves": kill_moves,
-		# R-boss-no-retreat: the flee button disappears entirely on boss-tier
-		# battles (resolver refuses the command anyway; UI mirrors it).
-		"flee_available": not BattleResolver.boss_blocks_retreat(battle_data),
+		"flee_available": not BattleCommandFacadeScript.boss_blocks_retreat(battle_data),
 		"synthesis": _synthesis_options(state, catalog),
 		"can_ultimate": false,
 		"resources": _resources(state),
@@ -1086,7 +1111,50 @@ static func battle(controller) -> Dictionary:
 		"dda_boss_hint": str(battle_data.get("dda_boss_hint", "")),
 		"first_battle": not state.event_log.any(func(event): return str(event.get("action", "")) == "battle_finished"),
 		"death_lines": _death_lines(state),
+		"turn": int(battle_data.get("turn", 1)),
+		"phase": str(battle_data.get("phase", "")),
+		"active_permanents": (battle_data.get("active_permanents", []) as Array).duplicate(),
 	}
+
+
+static func _v1_slot_effect_text(slot: Dictionary) -> String:
+	var effect: Dictionary = slot.get("effect", {})
+	match str(effect.get("kind", "")):
+		"strike":
+			return "对敌方造成 %d 点伤害。" % int(effect.get("amount", 0))
+		"shield":
+			return "获得 %d 点护盾。" % int(effect.get("amount", 0))
+		"buff":
+			return "%s +%d。" % [str(effect.get("name", "")), int(effect.get("amount", 0))]
+		_:
+			return ""
+
+
+static func _v1_reason_text(reason: String) -> String:
+	match reason:
+		"gu_sealed":
+			return "蛊已被封印。"
+		"gu_used_this_turn":
+			return "本回合已释放过。"
+		"action_limit_reached":
+			return "本回合行动次数已达魂魄上限。"
+		"insufficient_thought":
+			return "念头不足。"
+		"insufficient_true_qi":
+			return "真元不足。"
+		"gu_consumed":
+			return "该蛊已销毁。"
+		"kill_move_recipe_sealed":
+			return "杀招配方蛊被封印。"
+		_:
+			return reason
+
+
+static func _v1_instance_definition_id(battle_data: Dictionary, instance_id: String) -> String:
+	for slot in battle_data.get("gu_slots", []):
+		if str(slot.get("instance_id", "")) == instance_id:
+			return str(slot.get("definition_id", instance_id))
+	return instance_id
 
 
 static func _first_living_enemy_id(enemies: Array[Dictionary]) -> String:

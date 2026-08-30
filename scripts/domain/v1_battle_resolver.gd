@@ -86,6 +86,7 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 				"kind": str(intent.get("kind", "attack")),
 				"damage": int(intent.get("damage", 0)),
 				"label": str(intent.get("label", "蓄力")),
+				"speed": int(intent.get("speed", 0)),
 				"seal_turns": int(intent.get("seal_turns", 0)),
 				"soul_drain": int(intent.get("soul_drain", 0)),
 				"life_cost": int(intent.get("life_cost", 0)),
@@ -397,6 +398,29 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String) -> Dictiona
 		if int(km.get("damage", 0)) > 0:
 			next = _strike_enemy(next, int(km.get("damage", 0)))
 	return _result(next, true, "countered" if countered else "")
+
+
+## 杀招可释放校验（快照/预览复用 play_kill_move 同一套门禁）。
+static func kill_move_reason(battle: Dictionary, kill_move_id: String) -> String:
+	var index := -1
+	for i in (battle.get("kill_moves", []) as Array).size():
+		if str(battle["kill_moves"][i]["id"]) == kill_move_id:
+			index = i
+			break
+	if index < 0:
+		return "unknown_kill_move"
+	var km: Dictionary = battle["kill_moves"][index]
+	for instance_id in km["recipe"]:
+		var slot := _find_slot(battle, str(instance_id))
+		if slot.is_empty() or bool(slot.get("is_sealed", false)):
+			return "kill_move_recipe_sealed"
+	if _thoughts_used_up(battle):
+		return "action_limit_reached"
+	if int(battle["player"]["thoughts"]) < int(km.get("thought_cost", 1)):
+		return "insufficient_thought"
+	if int(battle["player"]["true_qi"]) < int(km.get("true_qi_cost", 0)):
+		return "insufficient_true_qi"
+	return ""
 
 
 # ---------- 回合流转 ----------

@@ -23,20 +23,25 @@ const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vo
 const SCREEN_PATHS := {
 	"Title": "res://ui/screens/hall_view.gd",
 	"Map": "res://ui/screens/map_screen.gd",
-	"Encounter": "res://ui/screens/encounter_screen.gd",
-	"Battle": "res://ui/screens/battle_screen.gd",
-	"Ending": "res://ui/screens/ending_screen.gd",
-	"Shop": "res://ui/screens/shop_screen.gd",
-	"Rest": "res://ui/screens/rest_screen.gd",
-	"Refine": "res://ui/screens/refine_screen.gd",
-	"Reward": "res://ui/screens/reward_screen.gd",
-	"Npc": "res://ui/screens/npc_screen.gd",
-	"ContentError": "res://ui/screens/content_error_screen.gd",
+	# Shop / Rest / Reward / Npc / Encounter / Refine / Ending / Battle 已迁到
+	# MASTER_SCENE_PATHS
+	# （Godot 官方 .tscn），此处不再登记；逐屏迁移完后这张表会整体清空。
 }
 const MASTER_SCENE_PATHS := {
 	"Title": "res://scenes/ui_masters/wenzhen_hall_master.tscn",
 	"Map": "res://scenes/ui_masters/wenzhen_map_master.tscn",
-	"Battle": "res://scenes/ui_masters/wenzhen_battle_master.tscn",
+	"Battle": "res://scenes/ui/screens/battle_screen.tscn",
+	# 过渡期：Shop / Rest / Reward / Npc / Encounter / Refine / Ending / Battle 已转
+	# .tscn 节点树（scenes/ui/screens/），走的是同一套 instantiate + mount_snapshot
+	# 协议，故并入本表；其余屏仍走 .guitkx，逐个转完后这张表就是全部 UI 的路由表。
+	"Shop": "res://scenes/ui/screens/shop_screen.tscn",
+	"Rest": "res://scenes/ui/screens/rest_screen.tscn",
+	"Reward": "res://scenes/ui/screens/reward_screen.tscn",
+	"Npc": "res://scenes/ui/screens/npc_screen.tscn",
+	"Encounter": "res://scenes/ui/screens/encounter_screen.tscn",
+	"Refine": "res://scenes/ui/screens/refine_screen.tscn",
+	"Ending": "res://scenes/ui/screens/ending_screen.tscn",
+	"ContentError": "res://scenes/ui/screens/content_error_screen.tscn",
 }
 
 
@@ -82,7 +87,7 @@ var _faded_view := ""
 # 加蛊走与 Resolver 同源的 DeckCapacity 正式容量校验；资源钳制到合法区间；
 # 全部操作 print 带 [debug] 前缀可追溯。按简报裁定：调试操作不写事件日志。
 # ----------------------------------------------------------------------------
-const DEBUG_PANEL_PATH := "res://ui/screens/debug_panel.gd"
+const DEBUG_PANEL_PATH := "res://scenes/ui/widgets/debug_panel.tscn"
 ## 元石调试硬上限（经济供给上限未在数据表落地前的展示层安全界）。
 const DEBUG_STONE_CAP := 99999
 var DEBUG_RESOURCE_LABELS := {
@@ -96,7 +101,7 @@ var DEBUG_RESOURCE_LABELS := {
 ## 测试注入开关：默认跟随构建类型（GUT/编辑器为 true，Release 导出为 false）。
 var _debug_enabled_for_test: bool = OS.is_debug_build()
 var _debug_panel_open := false
-var _debug_rui_root: RuitkRoot = null
+var _debug_panel: Control = null
 var _debug_host: Control = null
 var _debug_gu_input := ""
 var _debug_res_kind := "yuanstone"
@@ -195,7 +200,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		command = {"type": "leave_node"}
 	if command.get("type", "") == "action_card" and not current_battle.is_empty():
 		return _submit_battle_command(command)
-	if command.get("type", "") in ["use_gu", "use_inheritance", "end_turn", "retreat", "basic_attack", "basic_dodge", "refine"] and not current_battle.is_empty():
+	if command.get("type", "") in ["use_gu", "use_inheritance", "end_turn", "retreat", "basic_attack", "basic_dodge", "refine", "play_kill_move"] and not current_battle.is_empty():
 		return _submit_battle_command(command)
 	if not current_node.is_empty():
 		var session_result := EncounterSessionResolverScript.apply(state, current_session, command, catalog, current_node)
@@ -482,7 +487,7 @@ func _debug_enabled() -> bool:
 
 
 func debug_panel_mounted() -> bool:
-	return _debug_rui_root != null
+	return _debug_panel != null
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -670,11 +675,11 @@ func _toggle_debug_panel() -> void:
 
 
 func _mount_debug_panel() -> void:
-	if _debug_rui_root != null:
+	if _debug_panel != null:
 		return
-	var comp = VLib.comp(DEBUG_PANEL_PATH, "render")
-	if not (comp is Callable):
-		print("[debug] debug_panel 组件缺失（未编译？），面板未挂载")
+	var scene := load(DEBUG_PANEL_PATH) as PackedScene
+	if scene == null:
+		print("[debug] debug_panel 场景缺失，面板未挂载")
 		return
 	_debug_host = Control.new()
 	_debug_host.name = "DebugPanelHost"
@@ -684,7 +689,9 @@ func _mount_debug_panel() -> void:
 	_debug_host.mouse_filter = Control.MOUSE_FILTER_PASS
 	_debug_host.set_script(preload("res://scripts/presentation/debug_panel_drag.gd"))
 	add_child(_debug_host)
-	_debug_rui_root = RuiRoot.create(_debug_host, VLib.fc(comp, _debug_props()))
+	_debug_panel = scene.instantiate()
+	_debug_host.add_child(_debug_panel)
+	_debug_panel.set_props(_debug_props())
 
 
 func _debug_host_size() -> Vector2:
@@ -692,14 +699,11 @@ func _debug_host_size() -> Vector2:
 
 
 func _render_debug_panel() -> void:
-	if _debug_rui_root == null:
+	if _debug_panel == null:
 		return
 	if _debug_host != null:
 		_debug_host.size = _debug_host_size()
-	var comp = VLib.comp(DEBUG_PANEL_PATH, "render")
-	if not (comp is Callable):
-		return
-	_debug_rui_root.set_root(VLib.fc(comp, _debug_props()))
+	_debug_panel.set_props(_debug_props())
 
 
 func _debug_ok(feedback: String) -> Dictionary:
@@ -1200,7 +1204,11 @@ func _render() -> void:
 	if _rui_host == null:
 		return
 	_restart_feedback_timer()
-	if not SCREEN_PATHS.has(_view_name):
+	# 两张路由表都要认：_mount_screen() 是 MASTER_SCENE_PATHS 优先、SCREEN_PATHS 兜底，
+	# 只查 SCREEN_PATHS 会把已迁到 .tscn 的屏全误判成未知视图名并跳 ContentError
+	# （这个 bug 曾让已迁移的 Shop / Rest / Reward / Npc / Encounter / Refine / Ending
+	# 在真实流程里全部降级，而 smoke_render / playthrough / GUT 都没抓到）。
+	if not (SCREEN_PATHS.has(_view_name) or MASTER_SCENE_PATHS.has(_view_name)):
 		push_error("未知视图名: %s" % _view_name)
 		_view_name = "ContentError"
 	var snapshot: Dictionary = _ending_state if _view_name == "Ending" else _snapshot_for(_view_name)
@@ -1276,4 +1284,3 @@ func _snapshot_for(screen: String) -> Dictionary:
 
 func _build_commands(screen: String) -> Dictionary:
 	return RunCommandBuilderScript.for_screen(screen, self)
-
