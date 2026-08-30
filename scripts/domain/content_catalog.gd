@@ -48,6 +48,7 @@ static func load_all() -> Dictionary:
 	var pacing := _load_object("res://data/pacing.json")
 	var aptitude := _load_object("res://data/aptitude.json")
 	var synthesis := _load_object("res://data/synthesis.json")
+	var v1_battle := _load_object("res://data/v1_battle.json")
 	var schools := _load_object("res://data/schools.json")
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var contracts_cfg := _load_object("res://data/contracts.json")
@@ -93,6 +94,7 @@ static func load_all() -> Dictionary:
 		"pacing": pacing,
 		"aptitude": aptitude,
 		"synthesis": synthesis,
+		"v1_battle": v1_battle,
 		"schools": schools,
 		"school_pools": _load_object("res://data/school_pools.json"),
 		"contracts": contracts_cfg,

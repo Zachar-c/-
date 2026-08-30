@@ -11,6 +11,11 @@
     ],
     "value": 3,
     "essence_cost": 1,
+    "true_qi_cost": 1,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 1
+    },
     "slot_role": "scout",
     "combat": "reveal_hidden_bonus",
     "field_actions": [
@@ -298,6 +303,11 @@
     ],
     "value": 4,
     "essence_cost": 1,
+    "true_qi_cost": 2,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 3
+    },
     "slot_role": "attack",
     "combat": "moonlight_strike",
     "field_actions": [
