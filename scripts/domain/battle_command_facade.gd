@@ -33,6 +33,21 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	battle["first_mover"] = str(encounter.get("first_mover", "player"))
 	if encounter.has("enemy_kinds"):
 		battle["enemy_kinds"] = (encounter.get("enemy_kinds", []) as Array).duplicate()
+	# Boss 身份（V1 契约 flags 为 Dictionary）：关底台 layer_boss > 0 或任一敌方
+	# 定义为 tier=="boss" 即禁止撤退。_start_battle 已透传 layer_boss，
+	# 这里再按敌方定义兜底，保证 boss_blocks_retreat() 全链可判定。
+	var boss_layer := int(encounter.get("layer_boss", 0))
+	var boss_tier := false
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if str((enemy_by_id.get(str(enemy.get("id", "")), {}) as Dictionary).get("tier", "")) == "boss":
+			boss_tier = true
+			break
+	if boss_layer > 0 or boss_tier:
+		if not (battle["flags"] is Dictionary):
+			battle["flags"] = {}
+		battle["flags"]["boss_battle"] = true
 	return battle
 
 
@@ -52,7 +67,9 @@ static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
 		var intent: Dictionary = definition.get("intent", {})
 		result.append({
 			"id": kind,
-			"label": str(intent.get("label", kind)),
+			# V1 契约：label 是敌方名称（定义自带 label/name，缺省回退 kind），
+			# 意图文案单独在 intent.label；呈现层对已知 kind 做中文翻译。
+			"label": str(definition.get("label", definition.get("name", kind))),
 			"hp": int(definition.get("hp", 1)),
 			"intent": {
 				"kind": str(intent.get("kind", "attack")),
@@ -98,7 +115,10 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 		"play_kill_move":
 			action = {"type": "play_kill_move", "kill_move_id": str(command.get("kill_move_id", ""))}
 		"retreat":
-			# V1 撤退：直接结算为 retreat（战斗结束路由到结算屏）。
+			# V1 撤退：Boss 战禁止（flags.boss_battle 由 start() 落账）；其余直接
+			# 结算为 retreat（战斗结束路由到结算屏）。
+			if boss_blocks_retreat(battle):
+				return _rejected(battle, state, "retreat_forbidden")
 			return {"battle": battle, "state": state, "result": "retreat", "feeds": [], "finished": true, "accepted": true}
 		_:
 			return _rejected(battle, state, "unsupported_battle_action")

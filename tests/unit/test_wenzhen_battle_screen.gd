@@ -89,9 +89,10 @@ func _snapshot_with_enemies(count: int) -> Dictionary:
 	return {
 		"resources": {}, "contracts": [], "anomalies": [], "death_lines": {},
 		"enemies": enemies,
-		"player": {"hp": 24, "max_hp": 30, "shield": 1, "primordial": 3, "soul": 4, "statuses": []},
-		"hand": [], "piles": {"draw": 6, "discard": 2, "exhausted": 1},
-		"soul_ops": {"cap": 3, "used": 1}, "default_target_id": "e0",
+		"player": {"hp": 24, "max_hp": 30, "shield": 1, "primordial": 3, "soul": 4,
+				"thoughts": 2, "used_this_turn": 0, "statuses": []},
+		"actions": {"max": 2, "left": 2, "used": 0},
+		"hand": [], "piles": {}, "default_target_id": "e0",
 	}
 
 

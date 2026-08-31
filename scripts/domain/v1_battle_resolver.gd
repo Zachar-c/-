@@ -3,12 +3,14 @@ extends RefCounted
 
 # V1 战斗引擎（蛊行动制，2026-08-30 用户裁定全量替换卡牌战斗）。
 # 纯函数式：battle 是普通 Dictionary，每次动作 duplicate(true) 后写回。
-# 规则来源：《蛊真人同人 Roguelike V1 战斗规则完整文档》定稿。
-# 要点：无抽牌/牌库/弃牌堆；行动次数上限=魂魄底蕴；每次行动耗 1 念头；
+# 规则来源：《蛊真人同人 Roguelike V1 战斗规则完整文档》定稿 +
+# 2026-08-31 统一行动点裁定（念头/行动点/一心多用共用 ActionPoints 分档表）。
+# 要点：无抽牌/牌库/弃牌堆；行动次数=魂魄底蕴分档，每次行动耗 1 念头；
 # 真元（上限=境界基础×资质倍率 甲乙丙丁 4:3:2:1）；常驻蛊三模式；封印；
 # 预制杀招（配方+化解标签，隐藏化解受击暴露）；肉体搏斗；全时死亡检测；
 # 非战斗蛊自动过滤。
 
+const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 
 const DEFAULT_PHASE := "player_action"
 
@@ -44,7 +46,7 @@ static func start(run_state, catalog: Dictionary, enemy_entries: Array) -> Dicti
 			"true_qi": true_qi_max,
 			"true_qi_max": true_qi_max,
 			"regen": _ceil_pct(true_qi_max, int(cfg.get("regen_pct", {}).get(aptitude, 25))),
-			"thoughts": soul,
+			"thoughts": ActionPointsScript.per_turn(soul),
 			"used_this_turn": 0,
 			"shield": 0,
 			"buffs": {"force": 0, "yi_zhang": 0},
@@ -195,7 +197,16 @@ static func can_play_gu(battle: Dictionary, slot_index: int) -> String:
 
 
 static func _thoughts_used_up(battle: Dictionary) -> bool:
-	return int(battle["player"]["used_this_turn"]) >= int(battle["player"]["soul"])
+	return int(battle["player"]["used_this_turn"]) >= ActionPointsScript.per_turn(int(battle["player"]["soul"]))
+
+
+## 拳脚可释放校验（快照/预览与 basic_attack 同一套门禁）。
+static func basic_attack_reason(battle: Dictionary) -> String:
+	if _thoughts_used_up(battle):
+		return "action_limit_reached"
+	if int(battle["player"]["thoughts"]) < 1:
+		return "insufficient_thought"
+	return ""
 
 
 # ---------- 玩家动作 ----------
@@ -326,10 +337,9 @@ static func _current_enemy_index(battle: Dictionary) -> int:
 
 ## 肉体搏斗：耗 1 念头、不耗真元、占用一次行动；伤害=基础+力道+仪仗。
 static func basic_attack(battle: Dictionary) -> Dictionary:
-	if _thoughts_used_up(battle):
-		return _result(battle, false, "action_limit_reached")
-	if int(battle["player"]["thoughts"]) < 1:
-		return _result(battle, false, "insufficient_thought")
+	var reason := basic_attack_reason(battle)
+	if not reason.is_empty():
+		return _result(battle, false, reason)
 	var cfg: Dictionary = battle.get("cfg", {})
 	var base := int(cfg.get("fight_damage_base", 1))
 	var force := int(battle["player"]["buffs"].get("force", 0))
@@ -520,14 +530,14 @@ static func _seal_random_gu(battle: Dictionary, turns: int) -> Dictionary:
 
 ## 玩家回合开始（第 1 回合已在 start() 完成，此后每回合调用）：
 ## 1) 真元回复（上限×资质比例，向上取整）并钳制；2) 行动计数清零；
-## 3) 念头=魂魄底蕴；4) 全部蛊解除一次释放限制；5) 封印倒计时；
+## 3) 念头=魂魄底蕴分档行动数；4) 全部蛊解除一次释放限制；5) 封印倒计时；
 ## 6) PER_TURN_MAINTAIN 总维持扣费（不足则全部关闭）。
 static func _start_player_turn(battle: Dictionary) -> Dictionary:
 	var next := _dup(battle)
 	var player: Dictionary = next["player"].duplicate(true)
 	player["true_qi"] = mini(int(player["true_qi_max"]), int(player["true_qi"]) + int(player["regen"]))
 	player["used_this_turn"] = 0
-	player["thoughts"] = int(player["soul"])
+	player["thoughts"] = ActionPointsScript.per_turn(int(player["soul"]))
 	next["player"] = player
 	for i in (next["gu_slots"] as Array).size():
 		var slot: Dictionary = next["gu_slots"][i].duplicate(true)

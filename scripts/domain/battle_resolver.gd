@@ -23,14 +23,12 @@ static func rank_factor(catalog: Dictionary, rank: int) -> int:
 
 # 念头/行动点/一心多用统一（2026-08-31 裁定）：每回合行动次数由魂魄底蕴
 # 分档决定：1/10/100/1000/10000+ → 2/3/4/5/6，超过 10000 不再增加。
-const SOUL_ACTION_TIERS := [[10000, 6], [1000, 5], [100, 4], [10, 3]]
+# 分档表唯一来源：scripts/domain/action_points.gd（V1 蛊行动制共用）。
+const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 
 
 static func actions_per_turn(soul: int) -> int:
-	for tier in SOUL_ACTION_TIERS:
-		if soul >= int(tier[0]):
-			return int(tier[1])
-	return 2
+	return ActionPointsScript.per_turn(soul)
 
 const LEGACY_ENEMIES := {
 	"beast_swarm": {"hp": 3, "control": 0, "intent": {"id": "bite", "label": "兽群逼近", "damage": 1, "speed": 0}},

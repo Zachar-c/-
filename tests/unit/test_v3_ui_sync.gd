@@ -80,11 +80,15 @@ func test_battle_snapshot_projects_multiple_enemies_piles_and_actions() -> void:
 	assert_eq(snapshot["enemies"].size(), 2)
 	assert_eq(snapshot["default_target_id"], snapshot["enemies"][0]["id"])
 	assert_true(snapshot["enemies"][1].has("statuses"))
-	assert_true(snapshot["piles"].has("draw"))
-	assert_true(snapshot["piles"].has("discard"))
-	assert_true(snapshot["piles"].has("exhausted"))
+	# V1 契约：无牌库/弃牌堆，只有行动点（念头分档）与蛊槽。
+	assert_true((snapshot["piles"] as Dictionary).is_empty(), "V1 battle must not expose card piles")
 	assert_true(snapshot["actions"].has("max"))
 	assert_true(snapshot["actions"].has("left"))
+	assert_eq(int(snapshot["actions"]["max"]), 2, "action budget = soul-tier 2 for 底蕴 1")
+	assert_eq(int(snapshot["actions"]["left"]), 2, "actions start full")
+	# V1 敌人 id 直映（非旧卡牌 enemy_id）；意图 kind 直映。
+	assert_eq(str(snapshot["enemies"][0]["id"]), "ridge_hound")
+	assert_eq(str(snapshot["enemies"][0]["intent"]["type"]), "attack")
 
 
 func test_battle_view_hud_uses_programmatic_icons() -> void:

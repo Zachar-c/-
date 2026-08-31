@@ -50,6 +50,19 @@ static func _battle_card_command(controller, action_id: String, target_id: Strin
 			"instance_id": str(action_id.trim_prefix("gu.")),
 			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
 		}
+	# V1 拳脚（肉体搏斗）。
+	if action_id == "basic_attack":
+		return {
+			"type": "basic_attack",
+			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
+		}
+	# V1 预制杀招。
+	if action_id.begins_with("kill_move."):
+		return {
+			"type": "play_kill_move",
+			"kill_move_id": str(action_id.trim_prefix("kill_move.")),
+			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
+		}
 	var card_id := action_id.trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", "")))
 	return {
 		"type": "action_card",

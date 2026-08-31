@@ -7909,6 +7909,10 @@
         "amount": 999
       }
     ],
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 999
+    },
     "field_actions": [],
     "synergy_hooks": [],
     "replace_value": 0,

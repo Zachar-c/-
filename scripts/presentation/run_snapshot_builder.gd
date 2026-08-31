@@ -12,6 +12,9 @@ const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
+const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
+const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
@@ -356,14 +359,22 @@ static func refine(controller) -> Dictionary:
 		var fail := "成功配方"
 		if r.has("success_roll_max"):
 			fail = "失败率 %d%%" % (100 - int(r.get("success_roll_max", 100)))
-		# 产出转数标注：advance 跟输入蛊走（+1 封顶五转），其余跟产出蛊本体定义。
+		# 产出转数标注：advance 跟输入蛊走（+1 封顶五转），其余优先配方
+		# output_rank，缺省回退产出蛊本体定义。
 		var rank_note := ""
 		if kind == "advance":
 			rank_note = "产出转数 = 输入转数 + 1（封顶五转）"
 		else:
 			var output_gu: Dictionary = catalog.get("gu_by_id", {}).get(str(r.get("output_gu_id", "")), {})
-			if not output_gu.is_empty():
-				rank_note = "产出 %s" % _rank_label(int(output_gu.get("rank", 1)))
+			var out_rank := int(r.get("output_rank", int(output_gu.get("rank", 1))))
+			rank_note = "产出 %s" % _rank_label(clampi(out_rank, 1, 5))
+		# 解锁旗标与执行/预览共用 Resolver.recipe_unlocked：fixed/combine 须持有
+		# 蛊方（default_unlocked 豁免，advance/free_mix 不设门禁）。
+		var recipe_unlocked: bool = state != null \
+				and ResolverScript.recipe_unlocked(state, r)
+		if state == null:
+			recipe_unlocked = str(r.get("kind", "combine")) == "advance" \
+					or bool(r.get("default_unlocked", false))
 		rec_rows.append({
 			"id": str(recipe_key),
 			"channel": "combine" if kind == "combine" else "fixed",
@@ -374,7 +385,7 @@ static func refine(controller) -> Dictionary:
 			"fail_chance": fail,
 			"backlash": "失败毁材 · 躁动 +1" if kind == "combine" else "无躁动",
 			"curse": "",
-			"unlocked": not bool(r.get("locked", false)),
+			"unlocked": recipe_unlocked,
 		})
 	var free_mix: Dictionary = recipe_by_id.get("free_mix", {})
 	if not free_mix.is_empty():
@@ -797,13 +808,18 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 		})
 
 	var recipe_entries: Array[Dictionary] = []
-	for r in catalog.get("refinement", {}).get("recipes", []):
+	var recipe_rows: Array = catalog.get("refinement_recipes", [])
+	if recipe_rows.is_empty():
+		recipe_rows = catalog.get("refinement", {}).get("recipes", [])
+	for r_value in recipe_rows:
+		var r: Dictionary = r_value
 		var rid := str(r.get("id", ""))
 		recipe_entries.append({
 			"id": rid,
 			"kind": str(r.get("kind", "")),
 			"output_gu": DisplayText.gu(str(r.get("output_gu_id", ""))),
-			"unlocked": unlocked_recipes.has(rid),
+			# 默认配方（default_unlocked）初始即持有，随 Hall 首屏可见。
+			"unlocked": unlocked_recipes.has(rid) or bool(r.get("default_unlocked", false)),
 		})
 
 	var relic_entries: Array[Dictionary] = []
@@ -991,89 +1007,286 @@ static func _player_panel(state) -> Dictionary:
 	}
 
 
+## 战斗屏快照：唯一 V1 战斗 Schema 投影（BattleCommandFacade → V1BattleResolver）。
+## 领域状态只有 "battle/player/gu_slots/enemies/kill_moves/flags(Dictionary)" 一套，
+## 本函数只做字段搬运与文字拼装，绝不重算领域结果；旧卡牌字段
+## （draw_pile/actions_max/visible_intent/Array flags）一律不再读取。
 static func battle(controller) -> Dictionary:
 	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var battle_data: Dictionary = controller.current_battle
-	var flags: Array = battle_data.get("flags", [])
-	var guarded: bool = flags.has("guarded")
-	var enemies: Array[Dictionary] = []
+	var out := _gui_state(controller)
+	out["enemies"] = _v1_enemies(battle_data)
+	out["player"] = _v1_player(battle_data)
+	out["hand"] = _v1_hand(battle_data, catalog)
+	out["piles"] = {}
+	out["actions"] = _v1_actions(battle_data)
+	out["default_target_id"] = _first_living_enemy_id(out["enemies"])
+	out["kill_moves"] = _v1_kill_moves(battle_data, catalog)
+	# R-boss-no-retreat：门禁以 V1 flags(Dictionary) 判定（facade 与 resolver 同源），
+	# UI 只镜像展示结果，不自行判断敌人定义。
+	out["flee_available"] = not BattleCommandFacadeScript.boss_blocks_retreat(battle_data)
+	out["synthesis"] = _synthesis_options(state, catalog)
+	out["can_ultimate"] = false
+	out["dda_boss_hint"] = str(battle_data.get("dda_boss_hint", ""))
+	out["first_battle"] = not state.event_log.any(func(event): return str(event.get("action", "")) == "battle_finished")
+	return out
+
+
+static func _v1_enemies(battle_data: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
 	for enemy_value in battle_data.get("enemies", []):
 		var enemy: Dictionary = enemy_value
-		enemies.append({
-			"id": str(enemy.get("enemy_id", "")),
-			"name": str(enemy.get("name", DisplayText.enemy(str(enemy.get("kind", ""))))),
+		var raw_label := str(enemy.get("label", ""))
+		var enemy_id := str(enemy.get("id", ""))
+		# label 为原始 kind/缺省时用 DisplayText 翻译；自定义 label 直通。
+		var name := raw_label
+		if raw_label.is_empty() or raw_label == enemy_id:
+			name = DisplayText.enemy(enemy_id)
+		out.append({
+			"id": enemy_id,
+			"name": name,
 			"hp": int(enemy.get("hp", 0)),
 			"max_hp": maxi(1, int(enemy.get("max_hp", 1))),
 			"shield": int(enemy.get("shield", 0)),
 			"statuses": _statuses_to_list(enemy.get("statuses", {})),
-			"intent": _intent_to_screen(enemy.get("visible_intent", {})),
-			"alive": bool(enemy.get("alive", false)),
+			"intent": _v1_intent_to_screen(enemy.get("intent", {})),
+			"alive": bool(enemy.get("alive", true)),
+			"counter_revealed": (enemy.get("counter_revealed", []) as Array).duplicate(),
 		})
-	var cult: Dictionary = state.cultivator
-	var player := {
-		"hp": int(cult.get("health", state.health)),
-		"max_hp": maxi(1, int(cult.get("max_health", state.max_health))),
-		"shield": 2 if guarded else 0,
-		"primordial": int(state.essence),
-		"soul": int(cult.get("soul", 0)),
-		"statuses": _statuses_to_list(cult.get("statuses", {})),
+	return out
+
+
+## V1 敌人意图（kind 直映，不套旧引擎的 damage/defense 推断）。
+static func _v1_intent_to_screen(i: Dictionary) -> Dictionary:
+	var kind := str(i.get("kind", "attack"))
+	var base := {
+		"type": kind,
+		"value": 0,
+		"detail": str(i.get("label", "蓄力")),
+		"speed": int(i.get("speed", 0)),
 	}
-	var hand: Array[Dictionary] = []
-	for c in ActionPreviewServiceScript.preview_battle_actions(battle_data, state, catalog):
-		hand.append(_battle_card(c))
-	# R5.21 杀招（条件触发式）：进度=组合序列已按序打出的段数；available=序列全部
-	# 就绪（本次出牌即触发）。快照只读镜像 pending_kill_move_state + 卡表定义，
-	# 显示串（序列中文/下一手）在此拼好，UI 不做 id 翻译。
-	var kill_moves: Array[Dictionary] = []
-	var pending_km: Dictionary = battle_data.get("pending_kill_move_state", {})
-	for card_value in catalog.get("card_by_id", {}).values():
-		var seq: Array = card_value.get("kill_move_sequence", [])
-		if seq.size() < 2:
-			continue
-		var km_id := str(card_value.get("id", ""))
-		var done := 0
-		if str(pending_km.get("move_id", "")) == km_id:
-			done = clampi(int(pending_km.get("next_sequence_index", 0)), 0, seq.size())
-		var seq_names: Array[String] = []
-		for seq_gu in seq:
-			seq_names.append(DisplayText.gu(str(seq_gu)))
-		var km_name := str(card_value.get("name", ""))
-		if km_name.is_empty():
-			km_name = "、".join(seq_names)
-		kill_moves.append({
-			"id": km_id,
-			"name": km_name,
-			"sequence_display": " → ".join(seq_names),
-			"progress": done,
-			"next_name": DisplayText.gu(str(seq[done])) if done < seq.size() else "",
-			"total": seq.size(),
-			"cost": str(card_value.get("summary", "")),
-		})
+	match kind:
+		"attack":
+			base["value"] = int(i.get("damage", 0))
+		"seal":
+			base["value"] = int(i.get("seal_turns", 0))
+		"soul_drain":
+			base["value"] = int(i.get("soul_drain", 0))
+		"life_cost":
+			base["value"] = int(i.get("life_cost", 0))
+		"counter":
+			base["value"] = 0
+			base["tag"] = str(i.get("counter_tag", ""))
+	return base
+
+
+static func _v1_player(battle_data: Dictionary) -> Dictionary:
+	var p: Dictionary = battle_data.get("player", {})
 	return {
-		"enemies": enemies,
-		"player": player,
-		"hand": hand,
-		"piles": {
-			"draw": (battle_data.get("draw_pile", []) as Array).size(),
-			"discard": (battle_data.get("discard_pile", []) as Array).size(),
-			"exhausted": (battle_data.get("exhausted_cards", []) as Array).size(),
-		},
-		"actions": {"max": int(battle_data.get("actions_max", 0)), "left": int(battle_data.get("actions_left", 0))},
-		"default_target_id": _first_living_enemy_id(enemies),
-		"kill_moves": kill_moves,
-		# R-boss-no-retreat: the flee button disappears entirely on boss-tier
-		# battles (resolver refuses the command anyway; UI mirrors it).
-		"flee_available": not BattleResolver.boss_blocks_retreat(battle_data),
-		"synthesis": _synthesis_options(state, catalog),
-		"can_ultimate": false,
-		"resources": _resources(state),
-		"contracts": _contracts(state, catalog),
-		"anomalies": DdaResolverScript.marker_meta(state, catalog),
-		"dda_boss_hint": str(battle_data.get("dda_boss_hint", "")),
-		"first_battle": not state.event_log.any(func(event): return str(event.get("action", "")) == "battle_finished"),
-		"death_lines": _death_lines(state),
+		"hp": int(p.get("hp", 0)),
+		"max_hp": maxi(1, int(p.get("max_hp", 1))),
+		"shield": int(p.get("shield", 0)),
+		"primordial": int(p.get("true_qi", 0)),
+		"primordial_max": maxi(1, int(p.get("true_qi_max", 1))),
+		"soul": int(p.get("soul", 0)),
+		"life_time": int(p.get("life_time", 0)),
+		"thoughts": int(p.get("thoughts", 0)),
+		"used_this_turn": int(p.get("used_this_turn", 0)),
+		"statuses": _v1_buffs_to_statuses(p.get("buffs", {})),
+		"buffs": (p.get("buffs", {}) as Dictionary).duplicate(true),
 	}
+
+
+## 行动点（V1 念头预算）投影：max=魂魄底蕴分档，left=预算-已用。
+static func _v1_actions(battle_data: Dictionary) -> Dictionary:
+	var p: Dictionary = battle_data.get("player", {})
+	var budget := ActionPointsScript.per_turn(int(p.get("soul", 1)))
+	var used := clampi(int(p.get("used_this_turn", 0)), 0, budget)
+	return {"max": budget, "left": budget - used, "used": used}
+
+
+static func _v1_buffs_to_statuses(buffs: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for key in buffs:
+		var stacks := int(buffs[key])
+		if stacks > 0:
+			out.append({"name": _buff_label(str(key)), "stacks": stacks})
+	return out
+
+
+static func _buff_label(key: String) -> String:
+	match key:
+		"force": return "力道"
+		"yi_zhang": return "仪仗"
+	return key
+
+
+## V1 手牌：每个蛊槽一张卡（id "gu.<instance_id>"）+ 拳脚（肉体搏斗）。
+## 可执行性直接复用 V1 领域门禁 can_play_gu/basic_attack_reason，禁止 UI 自算。
+static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	for i in (battle_data.get("gu_slots", []) as Array).size():
+		var slot: Dictionary = battle_data["gu_slots"][i]
+		var def_id := str(slot.get("definition_id", ""))
+		var definition: Dictionary = gu_by_id.get(def_id, {})
+		var reason := V1BattleResolverScript.can_play_gu(battle_data, i)
+		var note := _v1_slot_note(slot)
+		var effect := _v1_effect_text(slot)
+		var summary := effect if note == "" else "%s（%s）" % [effect, note]
+		if bool(slot.get("is_permanent", false)):
+			summary = "%s · 常驻 %s" % [summary, str(slot.get("durability_mode", ""))]
+		var card := {
+			"id": "gu.%s" % str(slot.get("instance_id", "")),
+			"name": DisplayText.gu(def_id),
+			"summary": summary,
+			"effect": summary,
+			"quality": _gu_quality(definition),
+			"cost": _v1_cost_text(slot, "thought_cost", "true_qi_cost", "life_cost"),
+			"cost_ex": "",
+			"executable": reason.is_empty(),
+			"block_reason": _v1_reject_text(reason),
+			"known_risk": _v1_life_cost_risk(slot),
+			"target_type": "single_enemy" if str(slot.get("effect", {}).get("kind", "")) == "strike" else "none",
+			"valid_target_ids": _living_enemy_ids_v1(battle_data),
+			"curse_warning": false,
+			"state_version": int(battle_data.get("turn", 1)),
+			"expected_phase": str(battle_data.get("phase", "player_action")),
+		}
+		out.append(card)
+	var punch_reason := V1BattleResolverScript.basic_attack_reason(battle_data)
+	var fight_damage := int(battle_data.get("cfg", {}).get("fight_damage_base", 1))
+	out.append({
+		"id": "basic_attack",
+		"name": "拳脚",
+		"summary": "肉体搏斗：基础 %d 伤 + 力道 + 仪仗，耗 1 念头。" % fight_damage,
+		"effect": "基础 %d 伤 + 力道 + 仪仗" % fight_damage,
+		"quality": "普通",
+		"cost": "念头 1",
+		"cost_ex": "",
+		"executable": punch_reason.is_empty(),
+		"block_reason": _v1_reject_text(punch_reason),
+		"known_risk": [],
+		"target_type": "single_enemy",
+		"valid_target_ids": _living_enemy_ids_v1(battle_data),
+		"curse_warning": false,
+		"state_version": int(battle_data.get("turn", 1)),
+		"expected_phase": str(battle_data.get("phase", "player_action")),
+	})
+	return out
+
+
+static func _v1_slot_note(slot: Dictionary) -> String:
+	if bool(slot.get("is_sealed", false)):
+		return "封印 %d 回合" % int(slot.get("seal_turns", 0))
+	if bool(slot.get("consumed", false)):
+		return "已消耗"
+	if bool(slot.get("used_this_turn", false)):
+		return "本回合已用"
+	return ""
+
+
+static func _v1_effect_text(source: Dictionary) -> String:
+	var effect: Dictionary = source.get("effect", {})
+	var kind := str(effect.get("kind", ""))
+	match kind:
+		"strike":
+			return "造成 %d 伤害" % int(effect.get("amount", 0))
+		"shield":
+			return "获得 %d 护盾" % int(effect.get("amount", 0))
+		"buff":
+			return "%s +%d" % [_buff_label(str(effect.get("name", "force"))), int(effect.get("amount", 0))]
+	return "效果未明"
+
+
+static func _v1_cost_text(slot: Dictionary, thought_key: String, qi_key: String, life_key: String) -> String:
+	var parts: Array[String] = []
+	if int(slot.get(qi_key, 0)) > 0:
+		parts.append("真元 %d" % int(slot.get(qi_key, 0)))
+	parts.append("念头 %d" % int(slot.get(thought_key, 1)))
+	if int(slot.get(life_key, 0)) > 0:
+		parts.append("寿元 %d" % int(slot.get(life_key, 0)))
+	return " · ".join(parts)
+
+
+static func _v1_life_cost_risk(slot: Dictionary) -> Array[String]:
+	if int(slot.get("life_cost", 0)) <= 0:
+		return []
+	return ["释放此蛊消耗寿元 %d，寿元归零将当场陨落。" % int(slot.get("life_cost", 0))]
+
+
+static func _gu_quality(definition: Dictionary) -> String:
+	match str(definition.get("rarity", "")):
+		"common": return "普通"
+		"rare": return "稀有"
+		"epic": return "史诗"
+		"legendary", "legacy": return "传说"
+	return ""
+
+
+static func _v1_reject_text(reason: String) -> String:
+	match reason:
+		"unknown_gu": return "未知蛊虫"
+		"gu_consumed": return "此蛊已在战斗中被消耗"
+		"gu_sealed": return "此蛊正被封印"
+		"gu_used_this_turn": return "此蛊本回合已释放"
+		"action_limit_reached": return "本回合行动次数已用完"
+		"insufficient_thought": return "念头不足（每次行动耗 1 念头）"
+		"insufficient_true_qi": return "真元不足"
+		"kill_move_recipe_sealed": return "配方蛊被封印，杀招不可用"
+		"unknown_kill_move": return "未知杀招"
+	return reason
+
+
+## V1 杀招：配方实例 → 蛊名（只读拼装），可释放性复用 kill_move_reason 门禁。
+static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for km_value in battle_data.get("kill_moves", []):
+		var km: Dictionary = km_value
+		var recipe_names: Array[String] = []
+		for instance_id_value in km.get("recipe", []):
+			var slot := _find_v1_slot(battle_data, str(instance_id_value))
+			if not slot.is_empty():
+				recipe_names.append(DisplayText.gu(str(slot.get("definition_id", ""))))
+			else:
+				recipe_names.append(str(instance_id_value))
+		var reason := V1BattleResolverScript.kill_move_reason(battle_data, str(km.get("id", "")))
+		var costs: Array[String] = []
+		if int(km.get("true_qi_cost", 0)) > 0:
+			costs.append("真元 %d" % int(km.get("true_qi_cost", 0)))
+		costs.append("念头 %d" % int(km.get("thought_cost", 1)))
+		if int(km.get("life_cost", 0)) > 0:
+			costs.append("寿元 %d" % int(km.get("life_cost", 0)))
+		out.append({
+			"id": str(km.get("id", "")),
+			"name": str(km.get("label", str(km.get("id", "")))),
+			"sequence_display": " · ".join(recipe_names) if not recipe_names.is_empty() else "配方缺失",
+			"progress": 0,
+			"next_name": "",
+			"total": 0,
+			"cost": " · ".join(costs),
+			"effect": _v1_effect_text(km),
+			"executable": reason.is_empty(),
+			"block_reason": _v1_reject_text(reason),
+		})
+	return out
+
+
+static func _find_v1_slot(battle_data: Dictionary, instance_id: String) -> Dictionary:
+	for slot in battle_data.get("gu_slots", []):
+		if str(slot.get("instance_id", "")) == instance_id:
+			return slot
+	return {}
+
+
+static func _living_enemy_ids_v1(battle_data: Dictionary) -> Array[String]:
+	var ids: Array[String] = []
+	for enemy_value in battle_data.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			ids.append(str(enemy.get("id", "")))
+	return ids
 
 
 static func _first_living_enemy_id(enemies: Array[Dictionary]) -> String:
@@ -1340,40 +1553,6 @@ static func _cost_note(cost: Dictionary) -> String:
 		if not gu_names.is_empty():
 			parts.append("耗蛊：" + "、".join(gu_names))
 	return " · ".join(parts)
-
-
-static func _battle_card(c: Dictionary) -> Dictionary:
-	var cost_dict: Dictionary = c.get("cost", {})
-	var cost_num := 0
-	for key in cost_dict:
-		cost_num += int(cost_dict[key])
-	return {
-		"id": str(c.get("id", "")),
-		"name": str(c.get("title", "")),
-		"cost": cost_num,
-		"cost_ex": "",
-		"effect": str(c.get("summary", "")),
-		"quality": "普通",
-		"curse_warning": ("反噬" in str(c.get("known_risk", ""))) or ("反噬" in str(c.get("summary", ""))),
-		"executable": bool(c.get("executable", true)),
-		"block_reason": str(c.get("block_reason", "")),
-		"expected_gain": c.get("expected_gain", []).duplicate(),
-		"known_risk": c.get("known_risk", []).duplicate(),
-		"unknown_note": str(c.get("unknown_note", "")),
-		"remedy_hints": c.get("remedy_hints", []).duplicate(),
-		"state_version": int(c.get("state_version", 0)),
-		"expected_phase": str(c.get("expected_phase", "player")),
-	}
-
-
-static func _intent_to_screen(i: Dictionary) -> Dictionary:
-	var dmg := int(i.get("damage", 0))
-	var def := int(i.get("defense", 0))
-	if dmg > 0:
-		return {"type": "attack", "value": dmg, "detail": str(i.get("label", "造成物理伤害")), "speed": int(i.get("speed", 0))}
-	if def > 0:
-		return {"type": "defend", "value": def, "detail": str(i.get("label", "凝防御")), "speed": int(i.get("speed", 0))}
-	return {"type": "charge", "value": 0, "detail": "蓄势待发", "speed": int(i.get("speed", 0))}
 
 
 static func _statuses_to_list(statuses: Dictionary) -> Array[Dictionary]:

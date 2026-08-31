@@ -20,10 +20,11 @@ func test_start_builds_player_resources_from_runstate() -> void:
 	var run := _run_with_gu([{"definition_id": "small_light_gu", "rank": 1}])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 2)])
 
-	assert_eq(int(battle["player"]["hp"]), 8)
+	assert_eq(int(battle["player"]["hp"]), 80)
 	assert_eq(int(battle["player"]["life_time"]), 60)
-	assert_eq(int(battle["player"]["soul"]), 4)
-	assert_eq(int(battle["player"]["thoughts"]), 4)
+	assert_eq(int(battle["player"]["soul"]), 1)
+	# 2026-08-31 统一行动点：魂魄底蕴 1 → 每回合 2 行动（念头）。
+	assert_eq(int(battle["player"]["thoughts"]), 2)
 	assert_eq(int(battle["player"]["used_this_turn"]), 0)
 	# 丙等资质（开局）2 倍、一转境界基础 10 → 真元上限 20，回复 ceil(20×25%)=5。
 	assert_eq(int(battle["player"]["true_qi"]), 20)
@@ -63,7 +64,7 @@ func test_instant_gu_cast_spends_true_qi_thought_and_marks_used() -> void:
 
 	assert_true(out["result"]["ok"])
 	assert_eq(int(next["player"]["true_qi"]), 19)
-	assert_eq(int(next["player"]["thoughts"]), 3)
+	assert_eq(int(next["player"]["thoughts"]), 1)
 	assert_eq(int(next["player"]["used_this_turn"]), 1)
 	assert_true(bool(next["gu_slots"][0]["used_this_turn"]))
 	assert_eq(int(next["enemies"][0]["hp"]), 9 - 1)
@@ -88,7 +89,7 @@ func test_gu_cast_rejections_have_distinct_reasons() -> void:
 func test_action_limit_equals_soul_capacity() -> void:
 	var run := _run_with_gu([{"definition_id": "small_light_gu", "rank": 1}])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 0)])
-	battle["player"]["used_this_turn"] = 4  # 魂魄底蕴 4 → 已满
+	battle["player"]["used_this_turn"] = 2  # 底蕴 1 → 每回合 2 行动，已满
 	assert_eq(str(V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["result"]["reason"]), "action_limit_reached")
 	assert_eq(str(V1.player_action(battle, {"type": "basic_attack"})["result"]["reason"]), "action_limit_reached")
 
@@ -121,14 +122,14 @@ func test_trigger_cost_permanent_blocks_once_and_closes_on_broke() -> void:
 
 	# 敌人 5 伤 → 触发扣 1 真元挡 2 → 玩家掉 3 血。
 	battle = V1.end_turn(battle)["battle"]
-	assert_eq(int(battle["player"]["hp"]), 8 - 3)
+	assert_eq(int(battle["player"]["hp"]), 80 - 3)
 
 	# 真元不足时蛊关闭、全额承伤。
 	var broke := V1.start(run, catalog, [_enemy("attack", 5)])
 	broke = V1.player_action(broke, {"type": "play_gu", "slot_index": 1})["battle"]
 	broke["player"]["true_qi"] = 0
 	broke = V1.end_turn(broke)["battle"]
-	assert_eq(int(broke["player"]["hp"]), 8 - 5)
+	assert_eq(int(broke["player"]["hp"]), 80 - 5)
 	assert_eq((broke["active_permanents"] as Array).size(), 0)
 
 
@@ -180,6 +181,7 @@ func test_seal_blocks_gu_and_expires_by_countdown() -> void:
 
 func test_soul_drain_intent_lowers_cap_and_can_kill() -> void:
 	var run := _run_with_gu([])
+	run.cultivator["soul"] = 4  # 显式底蕴 4：抽 3 → 剩 1，行动分档随之降档
 	var battle: Dictionary = V1.start(run, catalog, [_enemy("soul_drain", 3)])
 	battle = V1.end_turn(battle)["battle"]
 	assert_eq(int(battle["player"]["soul"]), 1)
@@ -234,7 +236,7 @@ func test_kill_move_requires_recipe_and_pays_costs() -> void:
 
 	assert_true(out["result"]["ok"])
 	assert_eq(int(next["player"]["true_qi"]), qi_before - 8)
-	assert_eq(int(next["player"]["thoughts"]), 3)
+	assert_eq(int(next["player"]["thoughts"]), 1)
 	# 配方蛊本回合不可再单独释放。
 	assert_true(bool(next["gu_slots"][0]["used_this_turn"]))
 	assert_true(bool(next["gu_slots"][1]["used_this_turn"]))
@@ -294,7 +296,7 @@ func test_basic_attack_costs_thought_and_uses_force_buff() -> void:
 	var next: Dictionary = out["battle"]
 
 	assert_true(out["result"]["ok"])
-	assert_eq(int(next["player"]["thoughts"]), 3)
+	assert_eq(int(next["player"]["thoughts"]), 1)
 	assert_eq(int(next["player"]["used_this_turn"]), 1)
 	# 基础 1 + 力道 2 = 3。
 	assert_eq(int(next["enemies"][0]["hp"]), 9 - 3)
@@ -309,10 +311,10 @@ func test_end_turn_regen_resets_thoughts_and_used() -> void:
 
 	battle = V1.end_turn(battle)["battle"]
 
-	# 敌人 0 伤；回合 +1 后：真元回复 +5（10→15）、念头回满=魂魄、行动清零。
+	# 敌人 0 伤；回合 +1 后：真元回复 +5（10→15）、念头回满=魂魄分档行动数、行动清零。
 	assert_eq(int(battle["turn"]), 2)
 	assert_eq(int(battle["player"]["true_qi"]), 15)
-	assert_eq(int(battle["player"]["thoughts"]), 4)
+	assert_eq(int(battle["player"]["thoughts"]), 2)
 	assert_eq(int(battle["player"]["used_this_turn"]), 0)
 
 

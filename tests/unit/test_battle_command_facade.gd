@@ -57,7 +57,8 @@ func test_action_card_passthrough_basic_punch() -> void:
 	}, catalog)
 
 	assert_eq(result["result"], "ongoing")
-	assert_eq(int(result["battle"]["player"]["thoughts"]), 3)
+	# 底蕴 1 → 每回合 2 念头；拳脚耗 1 → 剩 1。
+	assert_eq(int(result["battle"]["player"]["thoughts"]), 1)
 
 
 func test_unsupported_action_card_and_commands_rejected() -> void:
@@ -97,10 +98,10 @@ func test_end_turn_resolves_enemy_and_reopens_player_turn() -> void:
 	var result: Dictionary = FacadeScript.apply_turn(battle, state, {"type": "end_turn"}, catalog)
 
 	assert_eq(result["result"], "ongoing")
-	# 敌人 2 伤，玩家气血 8→6；真元按回复 +5（20→25 钳制 20 不变，20 满则不变）。
-	assert_eq(int(result["battle"]["player"]["hp"]), 6)
+	# 敌人 2 伤，玩家气血 80→78；真元按回复 +5（20 满则不变）。
+	assert_eq(int(result["battle"]["player"]["hp"]), 78)
 	assert_eq(int(result["battle"]["turn"]), 2)
-	assert_eq(int(result["battle"]["player"]["thoughts"]), 4)
+	assert_eq(int(result["battle"]["player"]["thoughts"]), 2)
 
 
 func test_victory_marks_finished() -> void:
@@ -135,13 +136,33 @@ func test_retreat_finishes_battle() -> void:
 	assert_true(bool(result["finished"]))
 
 
+func test_boss_identity_flows_into_flags_and_blocks_retreat() -> void:
+	var state := RunState.new_run(101)
+	# 敌方定义为 tier=="boss" → start() 自动落 flags.boss_battle。
+	var boss: Dictionary = FacadeScript.start({"enemy_kind": "miasma_vein_lord"}, state, catalog)
+	assert_true(bool(boss["flags"].get("boss_battle", false)),
+			"boss-tier enemy must set flags.boss_battle")
+	var retreat: Dictionary = FacadeScript.apply_turn(boss, state, {"type": "retreat"}, catalog)
+	assert_eq(retreat["result"], "rejected")
+	assert_eq(retreat["feeds"], ["retreat_forbidden"])
+	# 关底台 layer_boss 透传（_start_battle → encounter）→ 同样禁撤。
+	var stand: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound", "layer_boss": 2}, state, catalog)
+	assert_true(bool(stand["flags"].get("boss_battle", false)),
+			"layer_boss stand must set flags.boss_battle")
+	# 普通战斗不落 Boss 旗标、可撤。
+	var common: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound"}, state, catalog)
+	assert_false(bool(common["flags"].get("boss_battle", false)), "trivial fight must not be a boss")
+	var out: Dictionary = FacadeScript.apply_turn(common, state, {"type": "retreat"}, catalog)
+	assert_eq(out["result"], "retreat")
+
+
 func test_enemy_first_mover_resolves_before_player() -> void:
 	var state := RunState.new_run(101)
 	var battle: Dictionary = FacadeScript.start({"enemy_kind": "beast_swarm", "first_mover": "enemy"}, state, catalog)
 
 	var pre: Dictionary = FacadeScript.apply_enemy_pre_turn(battle, state, catalog)
 
-	assert_eq(int(pre["battle"]["player"]["hp"]), 6)
+	assert_eq(int(pre["battle"]["player"]["hp"]), 78)
 	# 敌人先手一次完整回合后，战斗进入第 2 回合（玩家行动阶段）。
 	assert_eq(int(pre["battle"]["turn"]), 2)
 	assert_eq(pre["finished"], false)

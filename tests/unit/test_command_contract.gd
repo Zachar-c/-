@@ -18,6 +18,7 @@ const NON_DISPATCH_TYPES := [
 	"save_run", "load_run", "travel", "leave_encounter", "leave_node",
 	"action_card", "choose_action", "attempt_ascension",
 	"use_gu", "use_inheritance", "end_turn", "retreat", "basic_attack", "basic_dodge", "refine",
+	"play_kill_move",
 ]
 
 
@@ -90,24 +91,25 @@ func test_player_view_playthrough_accepts_the_same_school_choice_as_hall() -> vo
 	assert_true(text.contains("start_new_run(seed_value, school"), "school choice must enter the real start_new_run path")
 
 
-func test_player_view_boss_fallback_uses_punch_when_no_effective_card_exists() -> void:
+func test_player_view_boss_fight_uses_v1_gu_and_attack_fallback() -> void:
 	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
-	assert_true(text.contains("var punch_result: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))"), "boss fallback must reveal reactions with punch")
-	assert_true(text.contains("elif heal_usable:") and text.contains("elif not guard_id.is_empty():"), "boss fallback must preserve healing and guarding priorities")
-	assert_true(text.contains("or guarded"), "a guarded boss turn must open an attack window")
-	assert_true(text.contains("close_guarded_turn"), "a guarded attack must close the boss turn")
-	assert_true(text.contains("enemy_hp <= 1"), "one-health enemies must enter the immediate-kill branch")
-	assert_true(text.contains("finish_now"), "one-health enemies must use an explicit finish-now decision")
-	assert_true(text.contains("elif can_flee and finish_now and (attack_id.is_empty() or punch_has_live_reaction)"), "retreatable one-health fights without a safe attack must retreat")
-	assert_true(text.contains("_punch_has_live_reaction"), "punch fallback must account for live direct-strike reactions")
+	# V1 蛊行动制：Boss 战禁撤退由 facade 门禁判定，收头窗口搏命，攻击/守护交替。
+	assert_true(text.contains("BattleCommandFacadeScript.boss_blocks_retreat(battle)"), "boss retreat gate must come from the V1 facade")
+	assert_true(text.contains("finish_now") and text.contains("immediate_kill"), "one-health enemies must enter the immediate-kill branch")
+	assert_true(text.contains("can_flee and finish_now and attack_gu.is_empty()"), "retreatable one-health fights without a safe attack must retreat")
+	assert_true(text.contains('_pick_effect_gu(battle, ["strike"])'), "boss fight must pick strike gu by V1 effect kind")
+	assert_true(text.contains('_play_gu_command(battle, attack_gu)'), "boss fight must cast the picked gu through use_gu")
+	assert_true(text.contains('_battle_turn_command(controller, "basic_attack")'), "boss fight must fall back to the V1 basic attack")
 
 
-func test_player_view_does_not_repeat_ineffective_boss_dodges() -> void:
+func test_player_view_hard_fights_alternate_guard_and_attack_without_dodge() -> void:
 	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
-	assert_true(text.contains("_dodge_is_effective"), "playthrough must check dodge speed before choosing dodge")
-	assert_true(text.contains("punch_result") and text.contains("_punch_command(battle, living_enemies)"), "ineffective dodge fallback must use punch")
-	assert_true(text.contains("elif danger and not guarded and not dodging"), "boss dodge fallback must not repeat while dodge is already armed")
-	assert_true(text.contains("elif can_flee and lethal"), "lethal dodge branch must be limited to retreatable battles")
+	# V1 无闪避/无 dodge_used 旗标；硬仗节奏 = 守护与攻击交替 + 僵局回退拳脚/收势。
+	assert_false(text.contains("basic_dodge"), "playthrough must not emit the removed dodge command")
+	assert_true(text.contains("kill_window") and text.contains("danger"), "boss fight must weigh kill windows against danger")
+	assert_true(text.contains("must_attack"), "boss fight must close guarded turns by attacking")
+	assert_true(text.contains("_stuck_count"), "stubborn battles must track no-progress rounds")
+	assert_true(text.contains('"use_gu"'), "V1 gu casts must ride the use_gu command")
 
 
 func test_player_view_map_strategy_uses_reachable_nodes_before_travel() -> void:
