@@ -13,7 +13,7 @@ func test_small_light_gu_spends_essence_and_reveals_hidden_enemy_bonus() -> void
 	var battle := _started_battle(state)
 	battle["action_energy"] = 0  # isolate essence math from the base first-turn grant
 	var turn := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, state, catalog)
-	assert_eq(turn["state"].essence, 2)
+	assert_eq(turn["state"].essence, 19)
 	assert_true(turn["battle"]["flags"].has("revealed"))
 	assert_eq(turn["result"], "ongoing")
 

@@ -185,6 +185,70 @@
       "gain_kind": "lifespan",
       "gain_amount": 10,
       "tier": 1
+    },
+    {
+      "id": "purchase_mending_grass",
+      "kind": "purchase",
+      "card_key": "purchase.mending_grass",
+      "gu_id": "mending_grass_gu",
+      "stone_cost": 20,
+      "tier": 1
+    },
+    {
+      "id": "purchase_bone_knit",
+      "kind": "purchase",
+      "card_key": "purchase.bone_knit",
+      "gu_id": "bone_knit_gu",
+      "stone_cost": 50,
+      "tier": 2
+    },
+    {
+      "id": "purchase_moon_glow_120",
+      "kind": "purchase",
+      "card_key": "purchase.moon_glow_120",
+      "gu_id": "moon_glow_gu",
+      "stone_cost": 120,
+      "tier": 2
+    },
+    {
+      "id": "purchase_spring_heart",
+      "kind": "purchase",
+      "card_key": "purchase.spring_heart",
+      "gu_id": "spring_heart_gu",
+      "stone_cost": 150,
+      "tier": 3
+    },
+    {
+      "id": "purchase_moon_shadow_300",
+      "kind": "purchase",
+      "card_key": "purchase.moon_shadow_300",
+      "gu_id": "moon_shadow_gu",
+      "stone_cost": 300,
+      "tier": 3
+    },
+    {
+      "id": "purchase_life_root",
+      "kind": "purchase",
+      "card_key": "purchase.life_root",
+      "gu_id": "life_root_gu",
+      "stone_cost": 400,
+      "tier": 4
+    },
+    {
+      "id": "purchase_undying_vine",
+      "kind": "purchase",
+      "card_key": "purchase.undying_vine",
+      "gu_id": "undying_vine_gu",
+      "stone_cost": 350,
+      "tier": 4
+    },
+    {
+      "id": "purchase_heaven_dew",
+      "kind": "purchase",
+      "card_key": "purchase.heaven_dew",
+      "gu_id": "heaven_dew_gu",
+      "stone_cost": 1000,
+      "tier": 5
     }
   ]
 }

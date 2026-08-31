@@ -7605,5 +7605,253 @@
     "school": "force",
     "role": "defense",
     "rarity": "epic"
+  },
+  {
+    "id": "mending_grass_gu",
+    "rank": 1,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "mend_grass"
+    ],
+    "value": 5,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 3
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 3,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "common"
+  },
+  {
+    "id": "bone_knit_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "bone_knit"
+    ],
+    "value": 8,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 4
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 6,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "common"
+  },
+  {
+    "id": "jade_marrow_gu",
+    "rank": 2,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "jade_marrow"
+    ],
+    "value": 11,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 4
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 8,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "rare"
+  },
+  {
+    "id": "spring_heart_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "spring_heart"
+    ],
+    "value": 18,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 5
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 14,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "rare"
+  },
+  {
+    "id": "phoenix_drop_gu",
+    "rank": 3,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "phoenix_drop"
+    ],
+    "value": 21,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 5
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 17,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "rare"
+  },
+  {
+    "id": "life_root_gu",
+    "rank": 4,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "life_root"
+    ],
+    "value": 43,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 6
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 35,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "epic"
+  },
+  {
+    "id": "undying_vine_gu",
+    "rank": 4,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "undying_vine"
+    ],
+    "value": 38,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 6
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 31,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "blood",
+    "role": "healing",
+    "rarity": "rare"
+  },
+  {
+    "id": "heaven_dew_gu",
+    "rank": 5,
+    "feeding_cost": 1,
+    "feeding_need": {
+      "feed_points": 1
+    },
+    "card_blueprint_ids": [
+      "heaven_dew"
+    ],
+    "value": 103,
+    "essence_cost": 1,
+    "slot_role": "healing",
+    "combat": "heal_health",
+    "combat_effects": [
+      {
+        "kind": "heal_health",
+        "amount": 8
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 85,
+    "tags": [
+      "heal",
+      "vitality"
+    ],
+    "school": "qi",
+    "role": "healing",
+    "rarity": "epic"
   }
 ]

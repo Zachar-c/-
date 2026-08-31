@@ -65,6 +65,7 @@ func test_global_codex_survives_save_data_and_state_copy() -> void:
 
 func test_refine_success_records_recipe_into_meta_codex_at_run_end() -> void:
 	var run := _run_with_gu_definitions(["moonlight_gu", "small_light_gu", "small_light_gu"])
+	run.cultivator["soul"] = 4  # 月芒蛊方 3 件输入，需并发上限 ≥3
 	var result := ResolverScript.apply(run, {"type": "refine_gu", "recipe_id": "moon_glow_fixed"}, catalog)
 	assert_true(result["result"]["ok"])
 	assert_true(result["state"].event_log.back()["targets"].has("recipe:moon_glow_fixed"))

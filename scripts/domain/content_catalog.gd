@@ -209,20 +209,21 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 static func _validate_aptitude(catalog: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
 	var data: Dictionary = catalog.get("aptitude", {})
-	var base_map: Dictionary = data.get("stage_essence_base", {})
-	for tier in ["low", "mid", "high", "peak", "nirvana"]:
-		if not base_map.has(tier):
-			errors.append("aptitude stage_essence_base missing %s" % tier)
-	var pct_map: Dictionary = data.get("aptitude_pct", {})
-	for aptitude_id in ["jia", "yi", "bing", "ding", "wu"]:
-		if not pct_map.has(aptitude_id):
-			errors.append("aptitude aptitude_pct missing %s" % aptitude_id)
-	var rank_map: Dictionary = data.get("rank_tier", {})
+	if not _is_integral(data.get("essence_base", null)) or int(data.get("essence_base", 0)) < 1:
+		errors.append("aptitude essence_base must be a positive integer")
+	var factor_map: Dictionary = data.get("aptitude_factor", {})
+	for aptitude_id in ["jia", "yi", "bing", "ding"]:
+		if not _is_integral(factor_map.get(aptitude_id, null)) or int(factor_map[aptitude_id]) < 1:
+			errors.append("aptitude aptitude_factor missing/invalid %s" % aptitude_id)
+	var cult_map: Dictionary = data.get("cultivation_factor", {})
 	for rank in ["1", "2", "3", "4", "5"]:
-		if not rank_map.has(rank):
-			errors.append("aptitude rank_tier missing %s" % rank)
-		elif not base_map.has(str(rank_map[rank])):
-			errors.append("aptitude rank_tier references unknown tier %s" % rank_map[rank])
+		if not _is_integral(cult_map.get(rank, null)) or int(cult_map[rank]) < 1:
+			errors.append("aptitude cultivation_factor missing/invalid %s" % rank)
+	var regen_map: Dictionary = data.get("regen_pct", {})
+	for aptitude_id in ["jia", "yi", "bing", "ding"]:
+		var regen_value: Variant = regen_map.get(aptitude_id, null)
+		if not _is_integral(regen_value) or int(regen_value) < 1 or int(regen_value) > 100:
+			errors.append("aptitude regen_pct missing/invalid %s" % aptitude_id)
 	for path_value in data.get("paths", []):
 		var path: Dictionary = path_value
 		var path_id := str(path.get("id", ""))
@@ -506,19 +507,21 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not _is_integral(milestone_value) or int(milestone_value) < 0:
 			errors.append("pacing lifespan_milestones.%s must be a non-negative integer" % milestone_id)
 	var aptitude_data: Dictionary = catalog.get("aptitude", {})
-	var base_map: Dictionary = aptitude_data.get("stage_essence_base", {})
-	for tier_id in base_map:
-		var tier_value: Variant = base_map[tier_id]
-		if not _is_integral(tier_value) or int(tier_value) < 1:
-			errors.append("aptitude stage_essence_base.%s must be a positive integer" % tier_id)
-	var pct_map: Dictionary = aptitude_data.get("aptitude_pct", {})
-	for aptitude_id in pct_map:
-		var pct_value: Variant = pct_map[aptitude_id]
-		if not _is_integral(pct_value) or int(pct_value) < 0:
-			errors.append("aptitude aptitude_pct.%s must be a non-negative integer" % aptitude_id)
-	for rank_value in aptitude_data.get("rank_tier", {}).values():
-		if not base_map.has(str(rank_value)):
-			errors.append("aptitude rank_tier references unknown tier %s" % rank_value)
+	var apt_factor_map: Dictionary = aptitude_data.get("aptitude_factor", {})
+	for aptitude_id in apt_factor_map:
+		var factor_value: Variant = apt_factor_map[aptitude_id]
+		if not _is_integral(factor_value) or int(factor_value) < 1:
+			errors.append("aptitude aptitude_factor.%s must be a positive integer" % aptitude_id)
+	var cult_factor_map: Dictionary = aptitude_data.get("cultivation_factor", {})
+	for rank_key in cult_factor_map:
+		var cult_value: Variant = cult_factor_map[rank_key]
+		if not _is_integral(cult_value) or int(cult_value) < 1:
+			errors.append("aptitude cultivation_factor.%s must be a positive integer" % rank_key)
+	var regen_map2: Dictionary = aptitude_data.get("regen_pct", {})
+	for aptitude_id2 in regen_map2:
+		var regen_value2: Variant = regen_map2[aptitude_id2]
+		if not _is_integral(regen_value2) or int(regen_value2) < 0 or int(regen_value2) > 100:
+			errors.append("aptitude regen_pct.%s must be within 0..100" % aptitude_id2)
 	var schools_data: Dictionary = catalog.get("schools", {})
 	for school_id in SCHOOL_IDS:
 		if not schools_data.has(school_id):

@@ -1059,7 +1059,7 @@ static func battle(controller) -> Dictionary:
 			"discard": (battle_data.get("discard_pile", []) as Array).size(),
 			"exhausted": (battle_data.get("exhausted_cards", []) as Array).size(),
 		},
-		"soul_ops": {"cap": int(battle_data.get("soul_ops_cap", 0)), "used": (battle_data.get("active_gu_instance_ids", []) as Array).size()},
+		"actions": {"max": int(battle_data.get("actions_max", 0)), "left": int(battle_data.get("actions_left", 0))},
 		"default_target_id": _first_living_enemy_id(enemies),
 		"kill_moves": kill_moves,
 		# R-boss-no-retreat: the flee button disappears entirely on boss-tier

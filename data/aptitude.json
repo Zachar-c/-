@@ -1,24 +1,23 @@
 {
-  "stage_essence_base": {
-    "low": 4,
-    "mid": 6,
-    "high": 10,
-    "peak": 16,
-    "nirvana": 24
+  "essence_base": 10,
+  "aptitude_factor": {
+    "jia": 4,
+    "yi": 3,
+    "bing": 2,
+    "ding": 1
   },
-  "rank_tier": {
-    "1": "low",
-    "2": "mid",
-    "3": "high",
-    "4": "peak",
-    "5": "nirvana"
+  "cultivation_factor": {
+    "1": 1,
+    "2": 3,
+    "3": 9,
+    "4": 27,
+    "5": 81
   },
-  "aptitude_pct": {
-    "jia": 140,
-    "yi": 120,
-    "bing": 100,
-    "ding": 80,
-    "wu": 60
+  "regen_pct": {
+    "jia": 40,
+    "yi": 30,
+    "bing": 20,
+    "ding": 10
   },
   "paths": [
     {

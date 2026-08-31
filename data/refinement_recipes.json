@@ -187,6 +187,30 @@
       ],
       "stone_cost": 50,
       "output_gu_id": "white_jade_gu"
+    },
+    {
+      "id": "advance_mending_grass_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "mending_grass_gu"
+      ],
+      "output_gu_id": "mending_grass_gu",
+      "materials": {
+        "beast_blood": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_spring_heart_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "spring_heart_gu"
+      ],
+      "output_gu_id": "spring_heart_gu",
+      "materials": {
+        "moon_dew": 1
+      },
+      "stone_cost": 6
     }
   ],
   "caravan_offers": [

@@ -30,22 +30,24 @@ func test_ridge_hound_intent_deals_two_damage() -> void:
 		"pounce damage must be 2 so a 6 HP opener is survivable")
 
 
-func test_battle_starts_with_base_first_turn_energy() -> void:
+func test_battle_starts_with_soul_action_pool() -> void:
 	var run = RunStateScript.new_run(101)
 	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle["first_turn_energy"]), 1, "base grant guarantees an opening action")
-	assert_eq(int(battle["action_energy"]), 1, "base grant is spendable immediately")
+	assert_eq(int(battle["actions_max"]), BattleResolverScript.actions_per_turn(int(run.cultivator.get("soul", 1))), "行动池 = 魂魄底蕴分档")
+	assert_eq(int(battle["actions_left"]), int(battle["actions_max"]), "起手可用")
 
 
-func test_essence_zero_player_can_act_on_turn_one_then_blocks() -> void:
+func test_essence_zero_player_still_acts_via_punch_then_blocks() -> void:
+	# 2026-08-31 统一行动点：真元 0 不能催蛊，但拳脚零真元耗 1 行动，
+	# 一转玩家（魂魄 1 → 2 行动）起手必然可行动。
 	var run = RunStateScript.new_run(101)
 	run.essence = 0
 	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	var first := BattleResolverScript.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, run, catalog)
-	assert_eq(str(first.get("result", "")), "ongoing", "base first-turn energy must fund one card at 0 essence")
-	assert_eq(int(first["battle"]["action_energy"]), 0, "the base grant is consumed")
-	var second := BattleResolverScript.take_turn(first["battle"], {"type": "use_gu", "gu_id": "small_light_gu"}, first["state"], catalog)
-	assert_true(second["feeds"].has("insufficient_essence"), "after the base grant is spent, costs need real essence")
+	var gu_attempt := BattleResolverScript.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, run, catalog)
+	assert_true(gu_attempt["feeds"].has("insufficient_essence"), "零真元催蛊被拒")
+	var punch := BattleResolverScript.take_turn(battle, {"type": "basic_attack"}, run, catalog)
+	assert_true(bool(punch.get("accepted", false)), "拳脚零真元可行动")
+	assert_eq(int(punch["battle"]["actions_left"]), int(battle["actions_max"]) - 1, "拳脚耗 1 行动点")
 
 
 func test_punch_card_warns_about_live_direct_strike_reaction() -> void:

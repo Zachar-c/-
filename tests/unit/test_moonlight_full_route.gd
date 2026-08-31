@@ -194,23 +194,24 @@ func test_full_route_moonlight_to_layer2() -> void:
 	controller.state.max_health = 60
 	controller.state.cultivator["max_health"] = 60
 	controller.state.cultivator["lifespan"] = 100
+	controller.state.cultivator["soul"] = 2
 	controller.state.cultivator["soul_max"] = 6
-	# T2 魂魄→寿元：soul 4→3，寿元 +10
+	# T2 魂魄→寿元：soul 2→1，寿元 +10
 	var r2 := controller.submit_command({"type": "shop_purchase", "offer_id": "black_market_soul_for_lifespan"})
 	assert_true(bool((r2.get("result", r2) as Dictionary).get("ok", false)), "魂魄→寿元 OK")
-	assert_eq(int(controller.state.cultivator["soul"]), 3)
+	assert_eq(int(controller.state.cultivator["soul"]), 1)
 	assert_eq(int(controller.state.cultivator["lifespan"]), 110)
-	# T1 寿元→魂魄：寿元 −20，soul 3→4
+	# T1 寿元→魂魄：寿元 −20，soul 1→2
 	var r1 := controller.submit_command({"type": "shop_purchase", "offer_id": "black_market_lifespan_for_soul"})
 	assert_true(bool((r1.get("result", r1) as Dictionary).get("ok", false)), "寿元→魂魄 OK")
 	assert_eq(int(controller.state.cultivator["lifespan"]), 90)
-	assert_eq(int(controller.state.cultivator["soul"]), 4)
-	# T3 生命→魂魄：生命 60→40，soul 4→5
+	assert_eq(int(controller.state.cultivator["soul"]), 2)
+	# T3 生命→魂魄：生命 60→40，soul 2→3
 	var r3 := controller.submit_command({"type": "shop_purchase", "offer_id": "black_market_health_for_soul"})
 	assert_true(bool((r3.get("result", r3) as Dictionary).get("ok", false)), "生命→魂魄 OK")
 	assert_eq(int(controller.state.health), 40)
-	assert_eq(int(controller.state.cultivator["soul"]), 5)
-	# T4 魂魄→生命：soul 5→4，生命 40→50，上限 60→70
+	assert_eq(int(controller.state.cultivator["soul"]), 3)
+	# T4 魂魄→生命：soul 3→2，生命 40→50，上限 60→70
 	var r4 := controller.submit_command({"type": "shop_purchase", "offer_id": "black_market_soul_for_health"})
 	assert_true(bool((r4.get("result", r4) as Dictionary).get("ok", false)), "魂魄→生命 OK")
 	assert_eq(int(controller.state.health), 50)
@@ -290,52 +291,13 @@ func test_full_route_moonlight_to_layer2() -> void:
 	controller.free()
 
 
-func test_backlash_death_ends_battle_properly() -> void:
-	# 领域守卫（2026-08-31 全链路验收实证）：转阶反噬把魂魄打到 0 时，
-	# 战斗必须以 death 结束（finished=true），不得留下僵尸局。
-	var controller := RunControllerScript.new()
-	controller.catalog = catalog
-	controller.state = RunState.new_run(7)
-	controller.state.cultivator["soul"] = 4
-	controller.state.refined_gu_ids = ["moonlight_gu"]
-	controller.state.gu_ids = ["moonlight_gu"]
-	controller.state.gu_instances = {
-		"gu_002": {"instance_id": "gu_002", "definition_id": "moonlight_gu", "state": "refined"},
-	}
-	controller.state.cave_aperture["stored_gu_instance_ids"] = ["gu_002"]
-	var node := {"id": "boss_probe", "type": "combat", "enemy_kind": "crag_serpent_matriarch", "layer": 1, "choices": ["fight"]}
-	controller.current_node = node
-	controller._start_battle()
+func test_no_backlash_keeps_soul_intact_in_route() -> void:
+	# 2026-08-31 裁定：蛊虫无负面效果——月光道开局打完战斗节点后魂魄无损。
+	var controller := _start_moonlight_run()
+	controller.submit_command({"type": "travel", "node_id": "L1R0N0"})
 	assert_eq(controller.current_view_name(), "Battle")
-	# 固定手牌为一张月光蛊（rank2，反噬 −2 魂魄/次），两发后魂魄归零。
-	controller.current_battle["hand"] = [{
-		"instance_id": "probe_moon_1",
-		"definition_id": "moonlight_strike",
-		"source_gu_instance_ids": ["gu_002"],
-	}]
-	var first := controller.submit_command({
-		"type": "action_card",
-		"action_id": "battle.%s.probe_moon_1" % str(controller.current_battle.get("battle_id", "")),
-		"card_id": "moonlight_strike",
-		"target_id": _living_target_id(controller.current_battle),
-		"state_version": int(controller.current_battle.get("hand_version", 0)),
-		"expected_phase": "player",
-	})
-	assert_true(bool(first.get("accepted", false)), "第一发月光 OK")
-	# 手牌已被消耗，重新塞一张（同一实例 id 模拟第二发）。
-	controller.current_battle["hand"] = [{
-		"instance_id": "probe_moon_2",
-		"definition_id": "moonlight_strike",
-		"source_gu_instance_ids": ["gu_002"],
-	}]
-	controller.submit_command({
-		"type": "action_card",
-		"action_id": "battle.%s.probe_moon_2" % str(controller.current_battle.get("battle_id", "")),
-		"card_id": "moonlight_strike",
-		"target_id": _living_target_id(controller.current_battle),
-		"state_version": int(controller.current_battle.get("hand_version", 0)),
-		"expected_phase": "player",
-	})
-	assert_true(controller.state.is_terminal(), "魂魄归零即死亡")
-	assert_eq(controller.current_view_name(), "Ending", "战斗以死亡结算收场，不留僵尸局")
+	var soul_before := int(controller.state.cultivator["soul"])
+	_fight_to_victory(controller)
+	assert_true(controller.current_view_name() in ["Reward", "Encounter"])
+	assert_eq(int(controller.state.cultivator["soul"]), soul_before, "战斗后魂魄无损")
 	controller.free()

@@ -100,7 +100,15 @@
     "jade_skin_gu": "玉皮蛊",
     "white_boar_strength_gu": "白猪力蛊",
     "white_jade_gu": "白玉蛊",
-    "vitality_grass_gu": "生机草蛊"
+    "vitality_grass_gu": "生机草蛊",
+    "mending_grass_gu": "回春草蛊",
+    "bone_knit_gu": "续骨蛊",
+    "jade_marrow_gu": "玉髓蛊",
+    "spring_heart_gu": "春心蛊",
+    "phoenix_drop_gu": "凤髓滴蛊",
+    "life_root_gu": "生根蛊",
+    "undying_vine_gu": "不死藤蛊",
+    "heaven_dew_gu": "天露蛊"
   },
   "inheritances": {
     "moonlit_trace": "月下寻迹",

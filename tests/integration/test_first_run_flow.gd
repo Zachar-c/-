@@ -66,6 +66,9 @@ func test_generic_battle_action_card_routes_once_and_replay_is_rejected() -> voi
 		"type": "action_card",
 		"action_id": "battle.%s.%s" % [controller.current_battle["battle_id"], source_card["instance_id"]],
 		"state_version": controller.current_battle["hand_version"],
+		"expected_phase": str(controller.current_battle.get("phase", "player")),
+		"node_id": str(controller.state.current_node_id),
+		"session_node_id": str(controller.state.current_node_id),
 	}
 	var first := controller.submit_command(command)
 	var discard_after_first: Array = controller.current_battle["discard_pile"].duplicate(true)

@@ -209,7 +209,7 @@ func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() 
 	}, _zero_enemy_damage(catalog.duplicate(true)))
 
 	assert_true(ended["accepted"])
-	assert_eq(int(ended["state"].health), 7)
+	assert_eq(int(ended["state"].health), 79, "零伤目录下仅抽污反噬扣 1")
 	assert_true(ended["feeds"].has("draw_pollution"))
 	assert_eq(ended["battle"]["banished_cards"], [top_card])
 	assert_eq(ended["battle"]["hand"].size(), 2)
@@ -218,7 +218,7 @@ func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() 
 	for entry in ended["state"].event_log:
 		if str(entry.get("reason", "")) == "backlash_curse_damage":
 			found_damage_event = true
-			assert_eq(int(entry["after"]["health"]), 7)
+			assert_eq(int(entry["after"]["health"]), 79)
 	assert_true(found_damage_event)
 
 
@@ -313,6 +313,8 @@ func test_free_mix_failure_attaches_configured_curse() -> void:
 	}]
 	tuned["refinement_by_id"] = {"cursed_mix": tuned["refinement_recipes"][0]}
 	var run := _run_with_gu(["trail_eye_gu", "thorn_whip_gu"])
+	# 槽内含起始蛊共 3 件，自由合成需魂魄并发上限 ≥3。
+	run.cultivator["soul"] = 4
 
 	var mixed := Resolver.apply(run, {"type": "refine_gu", "recipe_id": "cursed_mix"}, tuned)
 	assert_true(mixed["result"]["ok"])
@@ -326,7 +328,7 @@ func test_event_outcome_option_attaches_curse_on_accept() -> void:
 	assert_true(accepted["result"]["ok"])
 	assert_eq(int(accepted["state"].cultivator["statuses"]["essence_bloat"]["layers"]), 1)
 	assert_eq(str(accepted["state"].cultivator["statuses"]["essence_bloat"]["source"]), "event:gu_rot_pact")
-	assert_eq(int(accepted["state"].health), 7)
+	assert_eq(int(accepted["state"].health), 79, "契约事件代价 -1")
 
 
 func _run_with_gu(definition_ids: Array[String]) -> RunState:

@@ -3258,5 +3258,133 @@
     "occupies_soul_slots": false,
     "public_text_key": "white_jade_form",
     "rarity": "epic"
+  },
+  {
+    "id": "mend_grass",
+    "source_gu_ids": [
+      "mending_grass_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "mend_grass",
+    "rarity": "common"
+  },
+  {
+    "id": "bone_knit",
+    "source_gu_ids": [
+      "bone_knit_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "bone_knit",
+    "rarity": "common"
+  },
+  {
+    "id": "jade_marrow",
+    "source_gu_ids": [
+      "jade_marrow_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "jade_marrow",
+    "rarity": "rare"
+  },
+  {
+    "id": "spring_heart",
+    "source_gu_ids": [
+      "spring_heart_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "spring_heart",
+    "rarity": "rare"
+  },
+  {
+    "id": "phoenix_drop",
+    "source_gu_ids": [
+      "phoenix_drop_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "phoenix_drop",
+    "rarity": "rare"
+  },
+  {
+    "id": "life_root",
+    "source_gu_ids": [
+      "life_root_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "life_root",
+    "rarity": "epic"
+  },
+  {
+    "id": "undying_vine",
+    "source_gu_ids": [
+      "undying_vine_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "undying_vine",
+    "rarity": "rare"
+  },
+  {
+    "id": "heaven_dew",
+    "source_gu_ids": [
+      "heaven_dew_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "heaven_dew",
+    "rarity": "epic"
   }
 ]

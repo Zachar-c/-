@@ -126,14 +126,12 @@ func test_purchase_white_jade_recipe_unlocks_knowledge() -> void:
 
 func test_refine_white_jade_requires_inputs_and_stone() -> void:
 	var state := _state_with_stone(50)
-	state.materials = state.materials.duplicate()
-	state.materials["boar_king_tusk"] = 1
 	state = _seed_gu(state, "jade_skin_gu", "gu_test_jade_001")
 	state = _seed_gu(state, "white_boar_strength_gu", "gu_test_white_001")
-	var out := _refine_with_instances(state, "white_jade_advance", ["gu_test_jade_001", "gu_test_white_001"])
+	# 白玉基础蛊方：玉皮蛊+白猪力蛊+50 元石（默认解锁）；野猪王牙进阶方另需魂魄并发 ≥3。
+	var out := _refine_with_instances(state, "white_jade_basic", ["gu_test_jade_001", "gu_test_white_001"])
 	assert_true(bool(out["result"].get("ok", false)), "炼蛊 OK")
 	assert_true(out["state"].refined_gu_ids.has("white_jade_gu"), "二转白玉蛊入 refined_gu_ids")
-	assert_eq(int(out["state"].materials.get("boar_king_tusk", 0)), 0, "材料消耗")
 	assert_eq(int(out["state"].stone), 0, "扣 50 元石")
 	# 输出蛊被实例化
 	var found := false

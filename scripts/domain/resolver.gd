@@ -11,7 +11,7 @@ const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 
-const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
+const APTITUDE_LADDER := ["ding", "bing", "yi", "jia"]
 
 # R4.8: meta-rule grade imprints are rule changers; cap per run lives in deck.json.
 # Removal service base prices (Task 5, R6.8) live in deck.json.
@@ -335,6 +335,10 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	if stone_cost > 0 and state.stone < stone_cost:
 		return _rejected(state, "insufficient_stone")
 	var material_cost: Dictionary = recipe.get("materials", {})
+	# 缺料先于容量：玩家应先看到"缺什么"，而不是被并发上限挡住。
+	var preselected := _selected_input_instance_ids(state, command, inputs)
+	if preselected.is_empty() and not inputs.is_empty():
+		return _rejected(state, "missing_refinement_input")
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
 	if not _has_all_materials(state, material_cost):
@@ -343,10 +347,7 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
 	if not blocked.is_empty():
 		return blocked
-	var selected := _selected_input_instance_ids(paid, command, inputs)
-	# 纯材料配方（input_gu_ids 为空）允许无蛊投入——蛊虫=材料+蛊虫两条炼制路。
-	if selected.is_empty() and not inputs.is_empty():
-		return _rejected(paid, "missing_refinement_input")
+	var selected := preselected
 	var instances := paid.gu_instances.duplicate(true)
 	var aperture := paid.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()

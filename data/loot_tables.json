@@ -73,8 +73,30 @@
       ],
       "gu_chance_pct": 0,
       "gu_pool": {
-        "weights": {},
-        "by_rarity": {}
+        "weights": {
+          "common": 80,
+          "rare": 18,
+          "epic": 2
+        },
+        "by_rarity": {
+          "common": [
+            "mending_grass_gu",
+            "bone_knit_gu"
+          ],
+          "rare": [
+            "jade_marrow_gu",
+            "spring_heart_gu",
+            "phoenix_drop_gu",
+            "moon_glow_gu",
+            "gen_blood_attack_023_gu"
+          ],
+          "epic": [
+            "life_root_gu",
+            "heaven_dew_gu",
+            "moonlight_gu",
+            "gen_force_attack_099_gu"
+          ]
+        }
       }
     },
     "elite": {
@@ -97,10 +119,15 @@
             "stone_shell_gu"
           ],
           "rare": [
-            "mist_step_gu"
+            "mist_step_gu",
+            "spring_heart_gu",
+            "phoenix_drop_gu",
+            "jade_marrow_gu"
           ],
           "epic": [
-            "moonlight_gu"
+            "moonlight_gu",
+            "life_root_gu",
+            "heaven_dew_gu"
           ]
         }
       },

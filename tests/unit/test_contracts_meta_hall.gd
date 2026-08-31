@@ -87,13 +87,13 @@ func test_hall_material_bonus_accrues_only_on_won_or_risky_runs() -> void:
 
 func test_unlocked_contracts_combine_always_and_ending_unlocks() -> void:
 	var fresh := MetaProgress.new_empty()
-	assert_eq(fresh.unlocked_contracts(catalog), ["blood_pact", "miser_pact", "essence_tide"])
+	assert_eq(fresh.unlocked_contracts(catalog), ["blood_pact", "miser_pact", "essence_tide", "enemy_vitality_trial"])
 
 	var veteran := MetaProgress.new_empty()
 	var unlocked: Array[String] = ["ascetic_path"]
 	veteran.contracts_unlocked = unlocked
 	assert_eq(veteran.unlocked_contracts(catalog),
-			["blood_pact", "miser_pact", "essence_tide", "ascetic_path"])
+			["blood_pact", "miser_pact", "essence_tide", "ascetic_path", "enemy_vitality_trial"])
 
 
 func test_meta_save_round_trip_carries_new_fields_and_defaults_old_saves() -> void:
@@ -149,7 +149,7 @@ func test_snapshots_expose_available_and_sworn_contracts() -> void:
 
 	var hall: Dictionary = RunSnapshotBuilder.hall(controller)
 	var listed: Array = hall["contracts"]
-	assert_eq(listed.size(), 4)
+	assert_eq(listed.size(), 5)
 	# 结构化契约行（§15/§16.13）：id/name/desc/locked/selected，勾选态镜像控制器。
 	assert_true(_any_contains(listed, "血契"), str(listed))
 	assert_true(_any_contains(listed, "+30%"), str(listed))

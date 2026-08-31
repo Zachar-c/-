@@ -22,15 +22,16 @@ func test_duration_card_preview_exposes_soul_control_overflow_before_submission(
 	assert_string_contains(str(card["known_risk"]), "反噬")
 
 
-func test_higher_rank_card_preview_exposes_known_rank_backlash_before_submission() -> void:
+func test_higher_rank_card_preview_exposes_rank_multiplier_cost() -> void:
 	var tuned_catalog := catalog.duplicate(true)
 	tuned_catalog["gu_by_id"]["small_light_gu"]["rank"] = 2
 	var run := RunState.new_run(101)
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, tuned_catalog)
 	var card := _card_by_definition(ActionPreviewServiceScript.preview_battle_actions(battle, run, tuned_catalog), battle, "light_probe")
 
-	assert_string_contains(str(card["known_risk"]), "高转")
-	assert_string_contains(str(card["known_risk"]), "反噬")
+	# §16.5 信息透明：高转蛊的威力与催动真元按转数因子放大，预览必须同源披露。
+	assert_string_contains(str(card["expected_gain"]), "转蛊")
+	assert_string_contains(str(card["expected_gain"]), "×3")
 
 
 func test_combat_fight_card_warns_about_enemy_reaction_and_damage_numbers() -> void:

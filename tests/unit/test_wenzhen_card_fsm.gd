@@ -38,6 +38,7 @@ func test_single_target_card_only_submits_after_valid_enemy_selection() -> void:
 	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]))
 	assert_true(_press(host, "月光蛊"))
 	await get_tree().process_frame
+	await get_tree().process_frame
 	assert_false(_press(host, "敌人1"), "invalid target is not selectable")
 	assert_true(_press(host, "敌人0"))
 	await get_tree().process_frame
@@ -56,6 +57,7 @@ func test_right_click_cancels_target_selection_without_submitting() -> void:
 	event.pressed = true
 	card_button.gui_input.emit(event)
 	await get_tree().process_frame
+	await get_tree().process_frame
 	assert_not_null(_named(host, "battle_idle"))
 	assert_true(played.is_empty())
 
@@ -71,6 +73,7 @@ func test_escape_cancels_target_selection_without_submitting() -> void:
 	event.keycode = KEY_ESCAPE
 	event.pressed = true
 	card_button.gui_input.emit(event)
+	await get_tree().process_frame
 	await get_tree().process_frame
 	assert_not_null(_named(host, "battle_idle"))
 	assert_true(played.is_empty())

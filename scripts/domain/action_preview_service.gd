@@ -152,10 +152,16 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 		return
 	var source_gu_id := str(source_gu_ids[0])
 	var card_mode := str(definition.get("mode", ""))
-	# 同名蛊阶费：预览与结算同源（每阶 +1 真元），信息透明 §16.5。
-	var rank_bonus := maxi(0, state.highest_owned_rank(source_gu_id) - 1)
-	essence_cost += rank_bonus
-	var affordable_essence := state.essence + int(battle.get("action_energy", 0))
+	# 2026-08-31 数值重做：催动真元 = 基础消耗 × 转数因子，预览与结算同源 §16.5。
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	var highest_rank := 1
+	for gu_id_value in source_gu_ids:
+		highest_rank = maxi(highest_rank, int(gu_by_id.get(str(gu_id_value), {}).get("rank", 1)))
+	var owned_rank := state.highest_owned_rank(source_gu_id)
+	var cult_factors: Dictionary = catalog.get("aptitude", {}).get("cultivation_factor", {})
+	var factor := int(cult_factors.get(str(clampi(maxi(highest_rank, owned_rank), 1, 5)), maxi(1, maxi(highest_rank, owned_rank))))
+	essence_cost *= factor
+	var affordable_essence := int(state.essence)
 	var executable := affordable_essence >= essence_cost
 	var risk: Array[String] = []
 	if source_gu_id == "thorn_whip_gu" and battle.get("clues", []).has("stone_dust"):
@@ -164,12 +170,6 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 	# (small_light_gu) bypasses reactions and must not claim this risk.
 	if source_gu_id == "thorn_whip_gu" and card_mode != "bind":
 		risk.append_array(_counter_swallow_risk(battle))
-	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
-	var highest_rank := 1
-	for gu_id_value in source_gu_ids:
-		highest_rank = maxi(highest_rank, int(gu_by_id.get(str(gu_id_value), {}).get("rank", 1)))
-	if highest_rank > int(state.cultivator.get("reincarnation", 1)):
-		risk.append("以低修为催动高转蛊会触发已知反噬，损伤气血与魂魄。")
 	if bool(definition.get("occupies_soul_slots", false)):
 		var occupied: Array = battle.get("active_gu_instance_ids", [])
 		var projected := occupied.duplicate()
@@ -183,8 +183,8 @@ static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionar
 	if target_type == "single_enemy":
 		valid_target_ids.append_array(_living_enemy_ids(battle))
 	var expected: Array[String] = [_battle_effect(source_gu_id, card_mode)]
-	if rank_bonus > 0 and target_type == "single_enemy":
-		expected.append("同名蛊已进阶至 %d 阶：攻击伤害 +%d，催动真元 +%d。" % [1 + rank_bonus, rank_bonus, rank_bonus])
+	if factor > 1 and target_type == "single_enemy":
+		expected.append("%d 转蛊：威力与催动真元均按 ×%d 结算。" % [maxi(highest_rank, owned_rank), factor])
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(instance.get("instance_id", ""))],
 		"title": DisplayText.gu(source_gu_id),

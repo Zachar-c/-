@@ -52,11 +52,15 @@ func test_explicit_leave_is_the_only_normal_completion() -> void:
 func test_action_card_rejects_stale_preview_before_executing_current_command() -> void:
 	var state := RunState.new_run(101)
 	var node := {"id": "ridge_caravan", "type": "caravan"}
+	state.current_node_id = "ridge_caravan"
 	var session := EncounterSessionResolverScript.start(node)
+	state.encounter_session = session.duplicate(true)
 	var result := EncounterSessionResolverScript.apply(state, session, {
 		"type": "action_card",
 		"action_id": "caravan.buy.caravan_thorn_offer",
 		"state_version": state.event_log.size() - 1,
+		"node_id": "ridge_caravan",
+		"session_node_id": "ridge_caravan",
 	}, ContentCatalog.load_all(), node)
 
 	assert_false(result["result"]["ok"])
@@ -69,11 +73,15 @@ func test_action_card_rejects_stale_preview_before_executing_current_command() -
 func test_action_card_executes_current_domain_command_and_returns_changes_and_next_cards() -> void:
 	var state := RunState.new_run(101)
 	var node := {"id": "ridge_caravan", "type": "caravan"}
+	state.current_node_id = "ridge_caravan"
 	var session := EncounterSessionResolverScript.start(node)
+	state.encounter_session = session.duplicate(true)
 	var result := EncounterSessionResolverScript.apply(state, session, {
 		"type": "action_card",
 		"action_id": "caravan.buy.caravan_thorn_offer",
 		"state_version": state.event_log.size(),
+		"node_id": "ridge_caravan",
+		"session_node_id": "ridge_caravan",
 	}, ContentCatalog.load_all(), node)
 
 	assert_true(result["result"]["ok"])
@@ -87,11 +95,15 @@ func test_action_card_changes_use_chinese_gu_names_at_the_player_boundary() -> v
 	state.refined_gu_ids = ["small_light_gu", "trail_eye_gu"]
 	state.gu_ids = state.refined_gu_ids.duplicate()
 	var node := {"id": "refinement_hollow", "type": "refinement"}
+	state.current_node_id = "refinement_hollow"
 	var session := EncounterSessionResolverScript.start(node)
+	state.encounter_session = session.duplicate(true)
 	var result := EncounterSessionResolverScript.apply(state, session, {
 		"type": "action_card",
 		"action_id": "refine.bright_thread_risk",
 		"state_version": state.event_log.size(),
+		"node_id": "refinement_hollow",
+		"session_node_id": "refinement_hollow",
 	}, ContentCatalog.load_all(), node)
 
 	var messages: Array[String] = []

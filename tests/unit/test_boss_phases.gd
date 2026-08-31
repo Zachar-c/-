@@ -123,8 +123,8 @@ func test_essence_burn_drains_player_essence_through_the_enemy_channel() -> void
 
 	var turned := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
 
-	# 收势回气 (regen 2, cap 4) lands the same end turn, offsetting the burn.
-	assert_eq(int(turned["state"].essence), mini(essence_before - 2 + 3, 4))
+	# 2026-08-31 数值重做：收势回气 = 上限×回复比（丙 20%×20 = 4），与灼烧同回合结算。
+	assert_eq(int(turned["state"].essence), mini(essence_before - 2 + 4, int(turned["state"].essence_capacity)))
 	assert_eq(int(turned["state"].health), int(run.health))
 	assert_eq(int(turned["battle"]["log"].back().get("burned", 0)), 2)
 
@@ -141,7 +141,7 @@ func test_interrupted_intent_cancels_damage_and_burn() -> void:
 
 	var turned := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
 
-	assert_eq(int(turned["state"].essence), mini(int(run.essence) + 3, 4))
+	assert_eq(int(turned["state"].essence), mini(int(run.essence) + 4, int(turned["state"].essence_capacity)))
 	assert_eq(int(turned["battle"]["log"].back().get("burned", 0)), 0)
 
 
@@ -189,10 +189,16 @@ func test_executed_high_danger_intent_starts_its_cooldown() -> void:
 				"cooled intent cannot be re-picked while its partner is free")
 
 
-func test_backlash_event_uses_scalar_anchor_snapshot_not_deep_cultivator() -> void:
+func test_rank_gap_play_no_longer_emits_backlash() -> void:
+	# 2026-08-31 裁定：蛊虫无负面效果——转阶差催动不再产生 battle_backlash 事件。
 	var tuned := catalog.duplicate(true)
-	tuned["gu_by_id"]["small_light_gu"]["rank"] = 2
+	tuned["gu_by_id"] = tuned["gu_by_id"].duplicate(true)
+	var tuned_gu: Dictionary = (tuned["gu_by_id"]["small_light_gu"] as Dictionary).duplicate(true)
+	tuned_gu["rank"] = 5
+	tuned["gu_by_id"]["small_light_gu"] = tuned_gu
 	var run := RunState.new_run(101)
+	run.essence = 5000
+	run.essence_capacity = 5000
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, tuned)
 	for instance in battle["hand"]:
 		if str(instance["definition_id"]) == "light_probe":
@@ -203,14 +209,8 @@ func test_backlash_event_uses_scalar_anchor_snapshot_not_deep_cultivator() -> vo
 			}, tuned)
 			assert_true(bool(played.get("accepted", false)))
 			for entry in played["state"].event_log:
-				if str(entry.get("action", "")) == "battle_backlash":
-					var before: Dictionary = entry["before"]
-					assert_false(before.has("cultivator"), "deep cultivator snapshot must be gone")
-					assert_true(before.has("health"))
-					assert_true(before.has("soul"))
-					assert_true(before.has("curse_layers"))
-					return
-			push_error("expected a battle_backlash event after the rank-gap play")
+				assert_false(str(entry.get("action", "")) == "battle_backlash", "反噬事件应绝迹")
+				assert_false(str(entry.get("reason", "")) == "rank_backlash")
 			return
 	push_error("light_probe missing from opening hand")
 
@@ -221,7 +221,7 @@ func test_pre_turn_first_move_still_deals_legacy_burst_damage() -> void:
 	var pre := BattleResolver.apply_enemy_pre_turn(battle, setup["run"], catalog)
 
 	assert_false(bool(pre["finished"]))
-	assert_eq(int(pre["state"].health), 6)
+	assert_eq(int(pre["state"].health), 78, "80 血开局，Boss 先手 2 伤")
 	assert_eq(int(pre["battle"]["log"].back()["damage"]), 2)
 
 
