@@ -48,14 +48,22 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState) -> void:
 	if str(state.encounter_session.get("stance", "neutral")) != "extreme_hostile":
 		return
+	# 血仇必须有对手：节点存在 fight 动作时才允许禁 leave；wild_gu/market/
+	# rest 等没有 fight 动作的节点若也禁 leave，玩家将永远无法离开 = 硬软锁。
+	var has_fight := false
+	for card in cards:
+		if str(card.get("command", {}).get("action_id", "")) == "fight":
+			has_fight = true
+			break
 	var kept: Array[Dictionary] = []
 	for card in cards:
 		var command: Dictionary = card.get("command", {})
-		if str(command.get("action_id", "")) == "fight" or str(command.get("type", "")) == "leave_node":
+		var is_leave := str(command.get("type", "")) == "leave_node"
+		if str(command.get("action_id", "")) == "fight" or (is_leave and not has_fight):
 			kept.append(card)
 		else:
 			card["executable"] = false
-			card["block_reason"] = "对方已血仇上脸，非战不可。"
+			card["block_reason"] = "" if is_leave and not has_fight else "对方已血仇上脸，非战不可。"
 			card["remedy_hints"] = []
 			kept.append(card)
 	cards.clear()
@@ -440,11 +448,9 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var missing := _missing_gu(state.refined_gu_ids, inputs)
 	var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
-	var codex_unlocked := state.global_codex_ids.has(str(recipe.get("id", ""))) or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
-	# 蛊方图鉴门禁（2026-08-30）：fixed/combine 须持有蛊方，advance 豁免，
-	# default_unlocked 配方初始持有。
-	var gated := str(recipe.get("kind", "combine")) != "advance"
-	var codex_ok := not gated or bool(recipe.get("default_unlocked", false)) or codex_unlocked
+	# 蛊方图鉴门禁（2026-08-30）：与执行/快照共用 Resolver.recipe_unlocked，
+	# fixed/combine 须持有蛊方，advance 豁免，default_unlocked 配方初始持有。
+	var codex_ok := ResolverScript.recipe_unlocked(state, recipe)
 	var deck_full := DeckCapacityScript.projected_count(state, catalog, [str(recipe.get("output_gu_id", ""))], inputs) > DeckCapacityScript.capacity(catalog)
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
 	var success_rate: Variant = null
@@ -985,16 +991,9 @@ static func _append_scavenge_card_if_due(cards: Array[Dictionary], state: RunSta
 		return
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return
-	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	# 搜刮蛊方（2026-08-30）：兼容单串与数组；还有未持有蛊方即提示可搜刮。
-	var raw_recipe: Variant = boss.get("scavenge_recipe", "")
-	var pending: Array[String] = []
-	if raw_recipe is Array:
-		for value in raw_recipe:
-			if not state.global_codex_ids.has(str(value)):
-				pending.append(str(value))
-	elif not str(raw_recipe).is_empty() and not state.global_codex_ids.has(str(raw_recipe)):
-		pending.append(str(raw_recipe))
+	# 搜刮蛊方（2026-08-30）：候选选择与执行共用 Resolver.scavenge_pending_recipes
+	# （兼容 scavenge_recipe 单串/数组；已持有即不再提示）。
+	var pending := ResolverScript.scavenge_pending_recipes(state, catalog)
 	if pending.is_empty():
 		return
 	cards.append(_card(state, {

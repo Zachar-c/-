@@ -209,6 +209,7 @@
     {
       "id": "moonlight_glow",
       "kind": "fixed",
+      "default_unlocked": true,
       "input_gu_ids": [
         "moonlight_gu",
         "small_light_gu"
@@ -218,6 +219,7 @@
     {
       "id": "white_jade_basic",
       "kind": "fixed",
+      "default_unlocked": true,
       "input_gu_ids": [
         "jade_skin_gu",
         "white_boar_strength_gu"
