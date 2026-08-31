@@ -327,7 +327,7 @@ const _REJECTION_TEXT := {
 	"invalid_action_card": "这张牌当前不能打出。",
 	"stale_state_version": "局面已变化，操作已过期，请重试。",
 	"not_enough_essence": "真元不足。",
-	"no_actions_left": "行动点已用完，结束回合恢复。",
+	"no_actions_left": "行动值已用完，结束回合恢复。",
 	"dodge_exhausted": "本回合已闪避过。",
 	"not_enough_hp": "生命不足，不能支付该代价。",
 	"lifespan_trade_warning": "这笔交易将耗尽寿元，被拒绝。",

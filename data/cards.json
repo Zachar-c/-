@@ -3386,5 +3386,15 @@
     "occupies_soul_slots": false,
     "public_text_key": "heaven_dew",
     "rarity": "epic"
+  },
+  {
+    "id": "test_slay",
+    "source_gu_ids": ["test_slay_gu"],
+    "cost": {"essence": 0},
+    "effects": ["deal_damage"],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "test_slay",
+    "rarity": "epic"
   }
 ]

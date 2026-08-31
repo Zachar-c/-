@@ -67,8 +67,8 @@ func test_new_cards_play_with_expected_effects() -> void:
 
 func test_card_count_grew_to_nineteen() -> void:
 	var cat: Dictionary = catalog()
-	assert_eq(cat["cards"].size(), 211)
-	assert_eq(cat["gu"].size(), 212)
+	assert_eq(cat["cards"].size(), 212)
+	assert_eq(cat["gu"].size(), 213)
 
 
 func test_intel_bonus_adds_damage_to_strikes() -> void:

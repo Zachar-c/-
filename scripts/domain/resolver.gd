@@ -1762,17 +1762,26 @@ const ASCENSION_CONDITION_KEYS := [
 ]
 
 
-static func _record_layer_boss_defeated(state: RunState, command: Dictionary, _catalog: Dictionary) -> Dictionary:
+static func _record_layer_boss_defeated(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var layer := int(command.get("layer", 0))
 	if layer < 1 or layer > 5:
 		return _rejected(state, "invalid_layer_boss")
 	var flags := state.node_flags.duplicate(true)
 	flags["boss_defeated_L%d" % layer] = "true"
+	# 2026-08-31 用户裁定：击败每大层 Boss 自动升转（"击败敌人获得经验、
+	# 经验自动提升等级"的过渡实现）；转数只抬真元上限并回满，不加 HP/攻击。
+	var target_rank := mini(5, layer + 1)
+	var next_cultivation := maxi(int(state.cultivation), target_rank)
+	var next_capacity := EssenceCapacityScript.essence_max_for(state, catalog, next_cultivation)
+	var aperture := state.cave_aperture.duplicate(true)
+	aperture["essence_max"] = next_capacity
 	var next := state.append_event(_event(
 		state,
 		"record_layer_boss_defeated",
-		{"node_flags": state.node_flags},
-		{"node_flags": flags},
+		{"node_flags": state.node_flags, "cultivation": state.cultivation, "essence": state.essence,
+			"essence_capacity": state.essence_capacity, "cave_aperture": state.cave_aperture},
+		{"node_flags": flags, "cultivation": next_cultivation, "essence": next_capacity,
+			"essence_capacity": next_capacity, "cave_aperture": aperture},
 		"layer_boss_%d_defeated" % layer,
 		state.current_node_id
 	))

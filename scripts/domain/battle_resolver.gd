@@ -723,6 +723,9 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					match str(effect.get("kind", "")):
 						"strike":
 							_strike(battle, maxi(1, int(effect.get("amount", 1))) * factor, "attack", target_id)
+						"aoe_strike":
+							# 群体打击：固定伤害直结全部存活敌人，不乘转数因子。
+							_strike(battle, maxi(1, int(effect.get("amount", 1))), "attack", "")
 						"heal_injury":
 							after["injury"] = maxi(0, state.injury - maxi(1, int(effect.get("amount", 1))))
 						"heal_health":

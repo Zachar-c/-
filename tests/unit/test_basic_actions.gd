@@ -28,7 +28,7 @@ func test_punch_costs_one_action_and_keeps_hand_version() -> void:
 
 	assert_eq(int(result["battle"]["hand_version"]), int(battle["hand_version"]))
 	assert_eq(int(result["state"].cultivator["soul"]), 1, "拳脚不耗魂魄")
-	assert_eq(int(result["battle"]["actions_left"]), int(battle["actions_left"]) - 1, "拳脚耗 1 行动点")
+	assert_eq(int(result["battle"]["actions_left"]), int(battle["actions_left"]) - 1, "拳脚耗 1 行动值")
 
 
 func test_punch_triggers_known_reaction_like_direct_strike() -> void:

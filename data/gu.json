@@ -7853,5 +7853,31 @@
     "school": "qi",
     "role": "healing",
     "rarity": "epic"
+  },
+  {
+    "id": "test_slay_gu",
+    "rank": 10,
+    "feeding_cost": 0,
+    "feeding_need": {},
+    "card_blueprint_ids": ["test_slay"],
+    "value": 0,
+    "essence_cost": 0,
+    "slot_role": "attack",
+    "combat": "aoe_strike",
+    "combat_effects": [
+      {
+        "kind": "aoe_strike",
+        "amount": 999
+      }
+    ],
+    "field_actions": [],
+    "synergy_hooks": [],
+    "replace_value": 0,
+    "tags": [
+      "test"
+    ],
+    "school": "qi",
+    "role": "attack",
+    "rarity": "epic"
   }
 ]
