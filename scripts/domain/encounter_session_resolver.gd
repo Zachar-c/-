@@ -15,6 +15,10 @@ static func start(node: Dictionary) -> Dictionary:
 		"completed": false,
 		"completion_reason": "",
 		"flags": {},
+		# 血仇（extreme_hostile）门禁只对有 fight 动作的节点生效：商队有
+		# 专门的 node.fight 卡（choice 表里没有），其余节点以 choices 为准。
+		"offers_fight": bool("fight" in (node.get("choices", []) as Array)) \
+				or str(node.get("type", "")) == "caravan",
 	}
 
 
@@ -119,7 +123,10 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 	# player can still pick heal/upgrade/one of the removals.
 	if _rest_choice_pending(state, session, catalog):
 		return _rejected(state, session, "rest_choice_required")
-	if str(session.get("stance", "neutral")) == "extreme_hostile":
+	# 血仇立场：有 fight 动作的节点不许不战而逃；无仗可打的节点（wild_gu/
+	# market/rest 等）若也禁 leave 就是硬软锁，必须放行。
+	if str(session.get("stance", "neutral")) == "extreme_hostile" \
+			and bool(session.get("offers_fight", false)):
 		return _rejected(state, session, "feud_no_escape")
 	var completed := Resolver.apply(state, {
 		"type": "complete_node",

@@ -745,6 +745,9 @@ func _start_battle() -> void:
 	var encounter := {
 		"turn": int(current_node.get("layer", MapGenerator.layer_index(str(current_node.get("stage", ""))))),
 		"layer": int(current_node.get("layer", 1)),
+		# Boss 身份透传：关底台（layer_boss_stand_N / final_boss_stand）必须让
+		# facade 知道这是 Boss 战（flags.boss_battle），否则退避门禁与 UI 全失效。
+		"layer_boss": int(current_node.get("layer_boss", 0)),
 		"terrain": _battle_terrain(),
 		"first_mover": first_mover,
 		"kill_source": kill_source,
@@ -1140,6 +1143,13 @@ func _finish_battle_in_session(outcome: String) -> void:
 	current_battle = {}
 	current_session = current_session.duplicate(true)
 	current_session["phase"] = "post_battle"
+	# 胜负已分、对峙结束：战后立场归位。否则 extreme_hostile 遭遇在战斗胜利后
+	# 仍被 _leave 的 feud_no_escape 锁死（打赢 Boss 却永远离不了场 = 软锁）。
+	# feud 门禁只应在战斗前阻止「不战而逃」，不适用于已结算的战斗。
+	current_session["stance"] = "neutral"
+	if current_session.has("flags") and current_session["flags"] is Dictionary:
+		current_session["flags"].erase("reputation_hostile")
+		current_session["flags"].erase("reputation_extreme")
 	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
 	var results := state.encounter_results.duplicate(true)
 	if outcome == "victory" and not battle_loot.is_empty():
