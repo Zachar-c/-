@@ -375,12 +375,15 @@ func _initialize() -> void:
 		{"has_save": true, "available_schools": ["血道", "气道", "力道", "魂道", "炼道"], "contracts": ["自苦·血祭", "节流·魂敛"], "meta_stats": {"runs": 3, "endings": 1}},
 		{"has_save": false, "available_schools": ["血道"], "contracts": [], "meta_stats": {}},
 	]
+	# 大厅已迁到 Godot 官方 .tscn（六个子视图预置在树里靠 visible 切换）。
 	for hs in hall_states:
-		var cnt := _mount("res://ui/screens/hall_view.gd", "render", {"state": hs, "commands": cmds})
+		var hall := _mount_tscn_screen(HALL_SCREEN_TSCN, hs, cmds)
+		await process_frame
+		var cnt := _count_buttons(hall)
 		if cnt < 4:
 			push_error("大厅按钮数 %d < 4 (state=%s)" % [cnt, str(hs)])
 			quit(1)
-		print("OK HallView buttons=%d" % cnt)
+		print("OK TscnHallScreen buttons=%d" % cnt)
 
 		# 遭遇屏断言（含空 action 兜底离开按钮）。当前实现为 RUI EncounterScreen。
 
@@ -456,7 +459,9 @@ func _initialize() -> void:
 			{"id": "e1", "name": "铁皮山猪", "hp": 20, "max_hp": 30, "shield": 4, "intent": {"type": "attack", "value": 12, "detail": "造成物理伤害"}},
 			{"id": "e2", "name": "雷冠头狼", "hp": 15, "max_hp": 15, "intent": {"type": "charge", "value": 0, "detail": "蓄力"}},
 		],
-		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4, "statuses": [{"name": "灼烧", "stacks": 2}]},
+		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4,
+				"thoughts": 2, "used_this_turn": 0, "statuses": [{"name": "灼烧", "stacks": 2}]},
+		"actions": {"max": 2, "left": 2, "used": 0},
 		"hand": [
 			{"id": "c1", "name": "火蛊", "cost": 1, "effect": "灼烧", "quality": "普通", "curse_warning": false},
 			# dangerous：走「弹确认后再下发」分支。
@@ -1112,6 +1117,7 @@ func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> void:
 ## 挂载走 set_props 的 .tscn 组件（调试面板这类非路由组件）。
 ## 与 _mount_tscn_screen 的区别只在注入方式：路由屏是 mount_snapshot，
 ## 调试面板是 set_props（它不是路由屏，由 RunController 直接挂到可拖动宿主上）。
+const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
 const DEBUG_PANEL_TSCN := "res://scenes/ui/widgets/debug_panel.tscn"
 
 func _mount_tscn_props(path: String, props: Dictionary) -> Control:

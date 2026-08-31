@@ -1,6 +1,10 @@
 extends GutTest
 
 
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
+const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
+
+
 # A6 settings display wiring (volume + resolution): the hall settings subview
 # must expose real, persisted client preferences instead of the 待接入
 # placeholders. Domain data lives in AppSettings (ConfigFile-backed, testable);
@@ -116,9 +120,8 @@ func test_settings_screen_renders_real_values_without_placeholders() -> void:
 	}
 	var host := Control.new()
 	add_child_autofree(host)
-	var root := RuiRoot.create(host, VLib.fc(VLib.comp("res://ui/screens/hall_view.gd", "render"),
-		{"state": state, "commands": {}}))
-	_rui_roots.append(root)
+	# 大厅已迁到 Godot 官方 .tscn。
+	host.add_child(TscnMountHelper.instantiate(HALL_SCREEN_TSCN, state, {}))
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var texts: Array = []

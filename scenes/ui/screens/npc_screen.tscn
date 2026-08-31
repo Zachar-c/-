@@ -1,0 +1,100 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/npc_screen_view.gd" id="1_npc"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="4_dialog"]
+
+[node name="NpcScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_npc")
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="FeedbackLabel" type="Label" parent="Root"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="NpcNameLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "无名散修"
+
+[node name="StanceLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "立场·中立"
+
+[node name="StanceNoteLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="NotorietyLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "恶名 0"
+
+[node name="NotorietyNoteLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="primary_decision_surface" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="TradeColumn" type="VBoxContainer" parent="Root/primary_decision_surface"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="TradePanel" parent="Root/primary_decision_surface/TradeColumn" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BarterPanel" parent="Root/primary_decision_surface/TradeColumn" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TalkColumn" type="VBoxContainer" parent="Root/primary_decision_surface"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="TalkPanel" parent="Root/primary_decision_surface/TalkColumn" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FleeButton" type="Button" parent="Root/primary_decision_surface/TalkColumn"]
+layout_mode = 2
+text = "撤退"
+
+[node name="LeaveButton" type="Button" parent="Root/primary_decision_surface/TalkColumn"]
+layout_mode = 2
+text = "离开"
+
+[node name="ConfirmDialog" parent="Root" instance=ExtResource("4_dialog")]
+layout_mode = 2
+visible = false

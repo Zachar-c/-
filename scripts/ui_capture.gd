@@ -11,6 +11,7 @@ const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd"
 const ROOT := "res://"
 const OUT_DIR := "res://.superpowers/ui_captures/wenzhen"
 const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
+const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
 
 const VIEWPORTS := [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)]
 const CAPTURE_MATRIX := {
@@ -163,11 +164,12 @@ func _snap_at_size(component: String, props: Dictionary, slug: String, presses: 
 	await process_frame
 
 
-## 截图 Godot 官方 .tscn 节点树屏。presses 用于截"点了某按钮之后"的状态。
+## 截图 Godot 官方 .tscn 节点树屏。presses 用于截"点了某按钮之后"的状态，
+## focus_text 用于键盘焦点高亮（与 RUITK 版 _snap 的第 5 参同义）。
 func _snap_tscn(tscn_path: String, props: Dictionary, slug: String,
-		presses: Array[String] = []) -> void:
+		presses: Array[String] = [], focus_text: String = "") -> void:
 	for viewport_size in VIEWPORTS:
-		await _snap_at_size(slug, props, slug, presses, "", viewport_size, tscn_path)
+		await _snap_at_size(slug, props, slug, presses, focus_text, viewport_size, tscn_path)
 
 
 func _print_map_capture_identity(fn: Callable) -> void:
@@ -232,20 +234,20 @@ func _capture_hall_batch() -> void:
 		"anomalies": ["衰运"],
 		"meta_stats": {"runs": 3, "endings": 1},
 	}
-	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds}, "core_hall_running")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": hall_state, "commands": hall_cmds}, "core_hall_running")
 	var new_hall_state := hall_state.duplicate(true)
 	new_hall_state["has_save"] = false
 	new_hall_state["primary_action"] = "open_schools"
 	new_hall_state["run_summary"] = {"route": "", "rank": 0, "hp": 0}
 	new_hall_state["contracts"] = []
 	new_hall_state["anomalies"] = []
-	await _snap("hall_view", {"state": new_hall_state, "commands": hall_cmds}, "core_hall_no_save")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": new_hall_state, "commands": hall_cmds}, "core_hall_no_save")
 	var long_summary_state := hall_state.duplicate(true)
 	long_summary_state["run_summary"] = {"route": "南疆青茅山黑市交易后，经由旧寨石阶折返的第六十三处节点", "rank": 5, "hp": 1}
 	long_summary_state["contracts"] = ["孤注 · 元石供给受限"]
 	long_summary_state["anomalies"] = ["衰运 · 敌方危险意图更频繁"]
-	await _snap("hall_view", {"state": long_summary_state, "commands": hall_cmds}, "core_hall_long_summary")
-	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds}, "core_hall_keyboard_focus", [], "续入此世 ›")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": long_summary_state, "commands": hall_cmds}, "core_hall_long_summary")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": hall_state, "commands": hall_cmds}, "core_hall_keyboard_focus", [], "续入此世 ›")
 
 
 func _map_commands() -> Dictionary:
@@ -449,7 +451,9 @@ func _initialize() -> void:
 			{"id": "e2", "name": "雷冠头狼", "hp": 15, "max_hp": 15, "shield": 0, "statuses": [], "intent": {"type": "charge", "value": 0, "detail": "蓄力"}},
 			{"id": "e3", "name": "腐沼毒蝎", "hp": 12, "max_hp": 18, "shield": 2, "statuses": [{"name": "毒", "stacks": 2}], "intent": {"type": "defend", "value": 6, "detail": "为同伴护持"}},
 		],
-		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4, "statuses": [{"name": "灼烧", "stacks": 2}]},
+		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4,
+				"thoughts": 2, "used_this_turn": 0, "statuses": [{"name": "灼烧", "stacks": 2}]},
+		"actions": {"max": 2, "left": 2, "used": 0},
 		"hand": [
 			{"id": "c1", "name": "血牙蛊", "cost": 1, "effect": "造成 6 伤害", "quality": "普通", "curse_warning": false, "executable": true, "target_type": "single_enemy", "valid_target_ids": ["e1", "e2", "e3"]},
 			{"id": "c2", "name": "噬血蛊", "cost": 2, "effect": "造成 4 伤害并吸血 3", "quality": "稀有", "curse_warning": false},

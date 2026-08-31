@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_tooltip_view_view.gd" id="1_tip"]
+
+[node name="GuTooltipView" type="PanelContainer"]
+script = ExtResource("1_tip")
+
+[node name="TipMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TipBody" type="VBoxContainer" parent="TipMargin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TitleRow" type="HBoxContainer" parent="TipMargin/TipBody"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="TipMargin/TipBody/TitleRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+visible = false
+
+[node name="QualityLabel" type="Label" parent="TipMargin/TipBody/TitleRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+visible = false
+
+[node name="EffectLabel" type="Label" parent="TipMargin/TipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="SynergyLabel" type="Label" parent="TipMargin/TipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="CostLabel" type="Label" parent="TipMargin/TipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="BlockLabel" type="Label" parent="TipMargin/TipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="CurseLabel" type="Label" parent="TipMargin/TipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="DetailButton" type="Button" parent="TipMargin/TipBody"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+text = "详情"
+visible = false

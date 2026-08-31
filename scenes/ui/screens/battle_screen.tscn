@@ -1,0 +1,116 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/battle_screen_view.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_stat_bar.tscn" id="4_stat_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_toast.tscn" id="5_toast"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_battle_hand.tscn" id="6_hand"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="7_dialog"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="8_tooltip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_death_cause_overlay.tscn" id="9_cause"]
+
+[node name="BattleScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_script")
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="battle_hud" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+
+[node name="TopBar" parent="Root/battle_hud" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="battle_field" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 20
+size_flags_vertical = 3
+
+[node name="PlayerPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EnemyPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FeedbackToast" parent="Root" instance=ExtResource("5_toast")]
+layout_mode = 2
+visible = false
+
+[node name="HintHost" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="battle_hand" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HandMetaRow" type="HBoxContainer" parent="Root/battle_hand"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PrimordialLabel" type="Label" parent="Root/battle_hand/HandMetaRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "真元 0"
+
+[node name="PilesLabel" type="Label" parent="Root/battle_hand/HandMetaRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "抽 0 · 弃 0 · 耗 0"
+
+[node name="Hand" parent="Root/battle_hand" instance=ExtResource("6_hand")]
+layout_mode = 2
+
+[node name="KillHost" type="VBoxContainer" parent="Root/battle_hand"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="OpsRow" type="HBoxContainer" parent="Root/battle_hand"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ModeHost" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+
+[node name="ConfirmDialog" parent="Root" instance=ExtResource("7_dialog")]
+layout_mode = 2
+visible = false
+
+[node name="battle_hand_tooltip_host" type="PanelContainer" parent="Root"]
+layout_mode = 2
+visible = false
+
+[node name="TooltipMargin" type="MarginContainer" parent="Root/battle_hand_tooltip_host"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TooltipBody" type="VBoxContainer" parent="Root/battle_hand_tooltip_host/TooltipMargin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="hand_tooltip_title" type="Label" parent="Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="TooltipView" parent="Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody" instance=ExtResource("8_tooltip")]
+layout_mode = 2
+
+[node name="CauseOverlay" parent="Root" instance=ExtResource("9_cause")]
+layout_mode = 2
+visible = false

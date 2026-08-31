@@ -4,7 +4,8 @@ extends GutTest
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
-const HallViewScript = preload("res://ui/screens/hall_view.gd")
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
+const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
 const RuiVLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 
@@ -96,7 +97,7 @@ func test_hall_exposes_school_choices_in_rui_screen() -> void:
 	snapshot["hall_subview"] = "schools"
 	var host := Control.new()
 	add_child_autofree(host)
-	RuiRoot.create(host, RuiVLib.fc(HallViewScript.render, {"state": snapshot, "commands": {}}))
+	host.add_child(TscnMountHelper.instantiate(HALL_SCREEN_TSCN, snapshot, {}))
 	await get_tree().process_frame
 	for school in ["血道", "气道", "力道"]:
 		assert_true(_has_text(host, school), "RUI hall must expose %s" % school)
