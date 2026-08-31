@@ -71,6 +71,17 @@ func _count_buttons(node: Node) -> int:
 	return n
 
 
+## 只数**可见**按钮。顶栏把死线行 / 菜单按钮预置在节点树里（靠 visible 控制），
+## _count_buttons 会把这些隐藏节点也算进去，断言"只有 N 个动作"时必须用这个。
+func _count_visible_buttons(node: Node) -> int:
+	var n := 0
+	if node is Button and (node as Button).is_visible_in_tree():
+		n += 1
+	for c in node.get_children():
+		n += _count_visible_buttons(c)
+	return n
+
+
 func _find_button_by_text(node: Node, wanted: String) -> Button:
 	if node is Button and node.text == wanted:
 		return node
@@ -194,15 +205,17 @@ func _initialize() -> void:
 		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": Callable(self, "_noop")})
 	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
 	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
-	# T6-E：危险蛊强红变体——「咒」角标必须 DANGER 底 BONE 字（R4.10），描边 DANGER 加粗。
+	# T6-E：危险蛊强红变体——「咒」角标必须朱砂底 + 墨字（R4.10），描边朱砂加粗。
+	# 术语注：规格旧稿称 BONE / DANGER；这两组别名已随主题迁移移除，
+	# 现分别对应 INK_PRIMARY / CINNABAR（见 test_wenzhen_theme_migration）。
 	var gc_danger := _mount_component("res://ui/widgets/gu_card.gd", "render",
 		{"title": "血祭蛊", "curse_warning": true})
 	var curse_glyph := _find_label_exact(gc_danger, "咒")
 	if curse_glyph == null:
 		push_error("GuCard 危险变体缺少「咒」角标")
 		quit(1)
-	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT):
-		push_error("GuCard「咒」角标字符必须 BONE 色")
+	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY):
+		push_error("GuCard「咒」角标字符必须墨色（朱砂底 + 墨字）")
 		quit(1)
 	var curse_chip := _nearest_panel_ancestor(curse_glyph)
 	if curse_chip == null:
@@ -394,30 +407,8 @@ func _initialize() -> void:
 				"remaining": 0, "max": 60, "danger": true, "cause_id": "death_cause_lifespan", "detail": "寿元耗尽即死。"},
 		},
 	}
-	var ec_container := _mount_component("res://ui/screens/encounter_screen.gd", "render", {"state": enc_state, "commands": enc_cmds})
-	var ec := _count_buttons(ec_container)
-	if ec < 1:
-		push_error("遭遇按钮数 %d < 1" % ec)
-		quit(1)
-	if _find_button_by_text(ec_container, "☠ 寿元 60/60") == null:
-		push_error("遭遇屏危险死线行应整行可点（☠ 前缀按钮）")
-		quit(1)
-	print("OK EncounterScreen buttons=%d" % ec)
-
-	var enc_empty := {
-		"node": {"title": "空径", "desc": "无甚异常。", "type": "rest"},
-		"actions": [],
-		"intel": {},
-		"resources": {},
-		"contracts": [],
-		"anomalies": [],
-		"death_lines": {},
-	}
-	var ece := _mount("res://ui/screens/encounter_screen.gd", "render", {"state": enc_empty, "commands": enc_cmds})
-	if ece < 1:
-		push_error("遭遇空列表按钮数 %d < 1" % ece)
-		quit(1)
-	print("OK EncounterScreenEmpty buttons=%d" % ece)
+	# 遭遇屏已整体迁到 Godot 官方 .tscn（scenes/ui/screens/encounter_screen.tscn），
+	# 旧的 ui/screens/encounter_screen.guitkx 实现已删除。等价断言见 _verify_tscn_encounter()。
 
 		# 地图屏断言（网状收敛地图，按层分组；至少 1 个节点按钮；含存档按钮 + Toast 行）。
 
@@ -468,7 +459,10 @@ func _initialize() -> void:
 		"player": {"hp": 24, "max_hp": 30, "shield": 6, "primordial": 3, "soul": 4, "statuses": [{"name": "灼烧", "stacks": 2}]},
 		"hand": [
 			{"id": "c1", "name": "火蛊", "cost": 1, "effect": "灼烧", "quality": "普通", "curse_warning": false},
-			{"id": "c2", "name": "血祭蛊", "cost": 2, "cost_ex": "消耗3寿元", "effect": "吸血", "quality": "稀有", "curse_warning": true},
+			# dangerous：走「弹确认后再下发」分支。
+			{"id": "c2", "name": "血祭蛊", "cost": 2, "cost_ex": "消耗3寿元", "effect": "吸血", "quality": "稀有", "curse_warning": true, "dangerous": true},
+			# target_type=single_enemy：走「先选敌人再下发」分支。
+			{"id": "c3", "name": "月芒蛊", "cost": 1, "effect": "穿透", "quality": "史诗", "curse_warning": false, "target_type": "single_enemy", "valid_target_ids": ["e1", "e2"]},
 		],
 		"can_ultimate": true,
 		"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
@@ -484,19 +478,8 @@ func _initialize() -> void:
 				"remaining": 2, "max": 3, "danger": false, "cause_id": "death_cause_backlash", "detail": "反噬达上限即死。"},
 		},
 	}
-	var bc_container := _mount_component("res://ui/screens/battle_screen.gd", "render", {"state": battle_state, "commands": battle_cmds})
-	var bc := _count_buttons(bc_container)
-	if bc < 1:
-		push_error("战斗按钮数 %d < 1" % bc)
-		quit(1)
-	if _find_button_by_text(bc_container, "☠ 魂魄 4/4") == null:
-		push_error("战斗屏危险死线行应整行可点（☠ 前缀按钮）")
-		quit(1)
-	# T6-E：手牌诅咒蛊必须出现「咒」强红角标（R4.10，走 GuCard danger+curse_warning）。
-	if _find_label_exact(bc_container, "咒") == null:
-		push_error("战斗手牌诅咒蛊缺少「咒」角标")
-		quit(1)
-	print("OK BattleScreen buttons=%d" % bc)
+	# 战斗屏已整体迁到 Godot 官方 .tscn（scenes/ui/screens/battle_screen.tscn），
+	# 旧的 ui/screens/battle_screen.guitkx 已删除。等价断言见 _verify_tscn_battle()。
 
 		# 结算屏断言（统一结算模块，由 ending_type 驱动；三种结局数据形态）。
 
@@ -520,95 +503,8 @@ func _initialize() -> void:
 		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
 		"aftermath": "可于大厅图鉴查阅本次所得",
 	}
-	var esc_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_success, "commands": ending_cmds})
-	var esc := _count_buttons(esc_container)
-	if esc < 1:
-		push_error("结算(成功)按钮数 %d < 1" % esc)
-		quit(1)
-	if _host_has_label_text(esc_container, "死因 · "):
-		push_error("非死亡结局不得渲染死因徽章")
-		quit(1)
-	if not _host_has_label_text(esc_container, "达成：" + str(ending_success["achievement"])):
-		push_error("结算屏缺少达成条件链行")
-		quit(1)
-	if not (_host_has_label_text(esc_container, "第1层 接触·黑市") and _host_has_label_text(esc_container, "第2层 交锋")):
-		push_error("结算屏路线缩略图缺少分层短标")
-		quit(1)
-	var boss_chip := _find_label_exact(esc_container, "第2层 交锋")
-	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.RARITY_EPIC):
-		push_error("路线缩略图 Boss 层必须 EMBER 高亮")
-		quit(1)
-	if not _host_has_label_text(esc_container, "战斗合成：2 次 · 成 1 / 败 1"):
-		push_error("结算本局记录缺少合成计数行")
-		quit(1)
-	if not _host_has_label_text(esc_container, "Boss 阶段切换：1 次"):
-		push_error("结算本局记录缺少 Boss 阶段切换行")
-		quit(1)
-	if _host_has_label_text(esc_container, "DDA 触发"):
-		push_error("DDA 预留位无数据时必须整行隐藏")
-		quit(1)
-	var new_chip := _find_label_exact(esc_container, "★新 图鉴：火蛊")
-	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.ANOMALY_YELLOW):
-		push_error("解锁列表项必须带 ★新 前缀（GOLD）")
-		quit(1)
-	if not _host_has_label_text(esc_container, "离局清零"):
-		push_error("资源结余面板缺少「离局清零」小字标注")
-		quit(1)
-	print("OK EndingScreen buttons=%d" % esc)
-
-	var ending_death := {
-		"title": "命丧密林",
-		"ending_type": "death",
-		"death_cause_id": "death_cause_backlash",
-		"death_cause": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
-		"death_cause_short": "反噬爆发",
-		"achievement": "寿元、魂魄或反噬一线归零，身死道消",
-		"key_decisions": ["孤身追猎未探虚实"],
-		"gains_losses": "反噬爆发，真元枯竭而亡",
-		"resource_balance": {"yuanstone": 0, "shouyuan": 0},
-		"unlocks": [],
-		"aftermath": "残魂归于大地，修行札记已留存",
-	}
-	var edc_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_death, "commands": ending_cmds})
-	var edc := _count_buttons(edc_container)
-	if edc < 1:
-		push_error("结算(死亡)按钮数 %d < 1" % edc)
-		quit(1)
-	if not _host_has_label_text(edc_container, "死因 · 反噬爆发"):
-		push_error("死亡结局应在结局类型面板顶部并列死因徽章（BLOOD 色）")
-		quit(1)
-	if not _host_has_label_text(edc_container, "达成：" + str(ending_death["achievement"])):
-		push_error("死亡结局同样渲染达成条件链")
-		quit(1)
-	print("OK EndingScreenDeath buttons=%d" % edc)
-
-	# T5-C 无记录极简 run：无 route_summary/run_record 字段 → 路线与本局记录整块隐藏，
-	# 但达成条件链照常；结算仍只有 返回大厅 / 查看图鉴 两个动作（§16.6 无读档回溯）。
-	var ending_minimal := {
-		"title": "保命而退",
-		"ending_type": "retreat",
-		"achievement": "机缘未至而主动抽身，保命另寻出路",
-		"key_decisions": [],
-		"gains_losses": "",
-		"resource_balance": {},
-		"unlocks": [],
-		"aftermath": "",
-	}
-	var emn_container := _mount_component("res://ui/screens/ending_screen.gd", "render", {"state": ending_minimal, "commands": ending_cmds})
-	var emn := _count_buttons(emn_container)
-	if emn != 2:
-		push_error("极简结算应只有 返回大厅/查看图鉴 两个按钮，实得 %d" % emn)
-		quit(1)
-	if _find_button_by_text(emn_container, "返回大厅") == null or _find_button_by_text(emn_container, "查看图鉴") == null:
-		push_error("结算动作必须是 返回大厅 与 查看图鉴（不得出现读档/回溯）")
-		quit(1)
-	if _host_has_label_text(emn_container, "路线") or _host_has_label_text(emn_container, "本局记录"):
-		push_error("无记录极简 run 不得渲染路线条与本局记录块")
-		quit(1)
-	if not _host_has_label_text(emn_container, "达成：" + str(ending_minimal["achievement"])):
-		push_error("极简结算仍须渲染达成条件链")
-		quit(1)
-	print("OK EndingScreenMinimal buttons=%d" % emn)
+	# 结算屏已整体迁到 Godot 官方 .tscn（scenes/ui/screens/ending_screen.tscn），
+	# 旧的 ui/screens/ending_screen.guitkx 实现已删除。等价断言见 _verify_tscn_ending()。
 
 	# 10) T4 剩余节点屏断言（C2 奖励 / C3 黑市 / C5 休整 / C6 炼蛊 / C8 NPC）
 	var gui_state := {
@@ -636,26 +532,8 @@ func _initialize() -> void:
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付",
 	})
 	var shop_cmds := {"buy": Callable(self, "_noop"), "service": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
-	var shc_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_state, "commands": shop_cmds})
-	var shc := _count_buttons(shc_container)
-	if shc < 1:
-		push_error("黑市按钮数 %d < 1" % shc)
-		quit(1)
-	# T6-E：空池回退小字为条件槽位——未标记不渲染，标记后按 13px BONE_DIM 小字出现。
-	if _host_has_label_text(shc_container, "已切换至基础池"):
-		push_error("黑市未标记回退时不得渲染回退小字")
-		quit(1)
-	var shop_marked := shop_state.duplicate(true)
-	shop_marked["pool_fallback_note"] = "（空池回退：已切至基础池）"
-	var shm_container := _mount_component("res://ui/screens/shop_screen.gd", "render", {"state": shop_marked, "commands": shop_cmds})
-	var shop_note := _find_label_exact(shm_container, "（空池回退：已切至基础池）")
-	if shop_note == null:
-		push_error("黑市标记回退后必须渲染小字槽位")
-		quit(1)
-	if shop_note.get_theme_font_size("font_size") != 13 or not shop_note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT):
-		push_error("黑市回退小字必须 BONE_DIM 13px")
-		quit(1)
-	print("OK ShopScreen buttons=%d" % shc)
+	# 黑市已整体迁到 Godot 官方 .tscn（scenes/ui/screens/shop_screen.tscn），
+	# 旧的 ui/screens/shop_screen.guitkx 实现已删除。等价断言见 _verify_tscn_screens()。
 
 	var rest_state := gui_state.duplicate()
 	rest_state.merge({
@@ -672,11 +550,8 @@ func _initialize() -> void:
 		"confirm_msg": "",
 	})
 	var rest_cmds := {"choose": Callable(self, "_noop"), "confirm_wash": Callable(self, "_noop"), "cancel_confirm": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
-	var rsc := _mount("res://ui/screens/rest_screen.gd", "render", {"state": rest_state, "commands": rest_cmds})
-	if rsc < 1:
-		push_error("休整按钮数 %d < 1" % rsc)
-		quit(1)
-	print("OK RestScreen buttons=%d" % rsc)
+	# 休整已整体迁到 Godot 官方 .tscn（scenes/ui/screens/rest_screen.tscn），
+	# 旧的 ui/screens/rest_screen.guitkx 实现已删除。等价断言见 _verify_tscn_screens()。
 
 	var refine_state := gui_state.duplicate()
 	refine_state.merge({
@@ -699,11 +574,8 @@ func _initialize() -> void:
 		"confirm_msg": "",
 	})
 	var refine_cmds := {"set_channel": Callable(self, "_noop"), "refine": Callable(self, "_noop"), "toggle_input": Callable(self, "_noop"), "dismantle": Callable(self, "_noop"), "confirm": Callable(self, "_noop"), "cancel_confirm": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
-	var rfc := _mount("res://ui/screens/refine_screen.gd", "render", {"state": refine_state, "commands": refine_cmds})
-	if rfc < 1:
-		push_error("炼蛊按钮数 %d < 1" % rfc)
-		quit(1)
-	print("OK RefineScreen buttons=%d" % rfc)
+	# 炼蛊屏已整体迁到 Godot 官方 .tscn（scenes/ui/screens/refine_screen.tscn），
+	# 旧的 ui/screens/refine_screen.guitkx 实现已删除。等价断言见 _verify_tscn_refine()。
 
 	var reward_state := gui_state.duplicate()
 	reward_state.merge({
@@ -718,31 +590,8 @@ func _initialize() -> void:
 		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
 	})
 	var reward_cmds := {"take": Callable(self, "_noop"), "replace_and_take": Callable(self, "_noop"), "skip": Callable(self, "_noop"), "close": Callable(self, "_noop")}
-	var rwc_container := _mount_component("res://ui/screens/reward_screen.gd", "render", {"state": reward_state, "commands": reward_cmds})
-	var rwc := _count_buttons(rwc_container)
-	if rwc < 1:
-		push_error("奖励按钮数 %d < 1" % rwc)
-		quit(1)
-	# T6-E：奖励三选一中的诅咒蛊同样走 GuCard 强红角标（R4.10）。
-	if _find_label_exact(rwc_container, "咒") == null:
-		push_error("奖励诅咒蛊缺少「咒」角标")
-		quit(1)
-	# T6-E：带 pool_fallback_note 的奖励屏渲染回退小字（13px BONE_DIM）。
-	var reward_note := _find_label_exact(rwc_container, "（空池回退：已切至基础池）")
-	if reward_note == null:
-		push_error("奖励屏标记回退后必须渲染小字")
-		quit(1)
-	if reward_note.get_theme_font_size("font_size") != 13 or not reward_note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT):
-		push_error("奖励屏回退小字必须 BONE_DIM 13px")
-		quit(1)
-	# 未标记时不得出现常驻假提示。
-	var reward_clean := reward_state.duplicate(true)
-	reward_clean.erase("pool_fallback_note")
-	var rwn_container := _mount_component("res://ui/screens/reward_screen.gd", "render", {"state": reward_clean, "commands": reward_cmds})
-	if _host_has_label_text(rwn_container, "已切换至基础池"):
-		push_error("奖励屏未标记回退时不得渲染回退小字")
-		quit(1)
-	print("OK RewardScreen buttons=%d" % rwc)
+	# 战利品已整体迁到 Godot 官方 .tscn（scenes/ui/screens/reward_screen.tscn），
+	# 旧的 ui/screens/reward_screen.guitkx 实现已删除。等价断言见 _verify_tscn_reward()。
 
 	var npc_state := gui_state.duplicate()
 	npc_state.merge({
@@ -764,11 +613,8 @@ func _initialize() -> void:
 		"can_flee": true,
 	})
 	var npc_cmds := {"talk": Callable(self, "_noop"), "buy": Callable(self, "_noop"), "barter": Callable(self, "_noop"), "flee": Callable(self, "_noop"), "leave": Callable(self, "_noop")}
-	var npc := _mount("res://ui/screens/npc_screen.gd", "render", {"state": npc_state, "commands": npc_cmds})
-	if npc < 1:
-		push_error("NPC 按钮数 %d < 1" % npc)
-		quit(1)
-	print("OK NpcScreen buttons=%d" % npc)
+	# NPC 交涉屏已整体迁到 Godot 官方 .tscn（scenes/ui/screens/npc_screen.tscn），
+	# 旧的 ui/screens/npc_screen.guitkx 实现已删除。等价断言见 _verify_tscn_npc()。
 
 	# 11) T5-D D5：开发者调试面板（直接 mount 组件，不走控制器门控）。
 	# 展开态：红字「调试」角标 + 加蛊/资源/跳层/池情报/快照打印；折叠态：只剩把手条。
@@ -795,7 +641,8 @@ func _initialize() -> void:
 		"travel_selected": "",
 		"commands": dp_cmds,
 	}
-	var dpc := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_open)
+	var dpc := _mount_tscn_props(DEBUG_PANEL_TSCN, dp_open)
+	await process_frame
 	if _find_label_exact(dpc, "调试") == null:
 		push_error("DebugPanel 缺少红字「调试」角标")
 		quit(1)
@@ -816,7 +663,8 @@ func _initialize() -> void:
 	print("OK DebugPanelOpen buttons=%d" % _count_buttons(dpc))
 	var dp_closed := dp_open.duplicate(true)
 	dp_closed["open"] = false
-	var dpcc := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_closed)
+	var dpcc := _mount_tscn_props(DEBUG_PANEL_TSCN, dp_closed)
+	await process_frame
 	if _count_buttons(dpcc) != 1:
 		push_error("DebugPanel 折叠态只剩把手条，期望 1 个按钮，实得 %d" % _count_buttons(dpcc))
 		quit(1)
@@ -826,10 +674,465 @@ func _initialize() -> void:
 	print("OK DebugPanelCollapsed buttons=%d" % _count_buttons(dpcc))
 	var dp_feedback := dp_open.duplicate(true)
 	dp_feedback["feedback"] = "调试失败：蛊囊已满（12/12），无法加入 月光蛊"
-	var dpcf := _mount_component("res://ui/screens/debug_panel.gd", "render", dp_feedback)
+	var dpcf := _mount_tscn_props(DEBUG_PANEL_TSCN, dp_feedback)
+	await process_frame
 	if not _host_has_label_text(dpcf, "蛊囊已满"):
 		push_error("DebugPanel 操作反馈必须经 Toast 行展示")
 		quit(1)
 	print("OK DebugPanelFeedback buttons=%d" % _count_buttons(dpcf))
 
+	# Godot 官方 .tscn 节点树屏（过渡期与 .guitkx 双轨并存，全部转完后合并）。
+	# 表驱动：每个已迁屏给一组 {name: [state, cmds]}，新增屏只加一行。
+	await _verify_tscn_screens({
+		"shop": [shop_state, shop_cmds],
+		"rest": [rest_state, rest_cmds],
+		"reward": [reward_state, reward_cmds],
+		"npc": [npc_state, npc_cmds],
+		"encounter": [enc_state, enc_cmds],
+		"refine": [refine_state, refine_cmds],
+		"ending": [ending_success, ending_cmds],
+		"battle": [battle_state, battle_cmds],
+	})
+
 	quit()
+
+
+## Godot 官方 .tscn 节点树屏的挂载回归。与上方 .guitkx 断言并列，
+## 保证过渡期两套实现都不会悄悄坏掉。
+## cases: { 屏名: [state, commands] }，屏名与 _verify_tscn_<name> 一一对应。
+func _verify_tscn_screens(cases: Dictionary) -> void:
+	var shop_state: Dictionary = cases["shop"][0]
+	var shop_cmds: Dictionary = cases["shop"][1]
+	var shop := _mount_tscn_screen(
+			"res://scenes/ui/screens/shop_screen.tscn", shop_state, shop_cmds)
+	# .tscn 屏靠 @onready 绑定节点，而 -s 模式下 _ready() 推迟到首帧，必须等一帧再断言。
+	await process_frame
+	var buttons := _count_buttons(shop)
+	if buttons < 1:
+		push_error("tscn 黑市按钮数 %d < 1" % buttons)
+		quit(1)
+
+	var offer_list := shop.get_node(
+			"Root/PrimarySurface/OfferColumn/OfferScroll/OfferList")
+	var expected_offers: int = shop_state["offers"].size()
+	if offer_list.get_child_count() != expected_offers:
+		push_error("tscn 黑市货架卡数 %d != %d" % [offer_list.get_child_count(), expected_offers])
+		quit(1)
+
+	# 重复项卡片必须直接挂在货架列表下，不得再套一层带框的决策面板
+	# （旧 test_wenzhen_secondary_screens 的文本断言平移到真实节点树上）。
+	if expected_offers > 0 and offer_list.get_child(0).get_parent() != offer_list:
+		push_error("tscn 黑市货架卡不得嵌套在其他面板里")
+		quit(1)
+
+	var service_path := ("Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin"
+			+ "/ServicePanelBox/ServiceScroll/ServiceList")
+	var service_list := shop.get_node(service_path)
+	var expected_services: int = shop_state["services"].size()
+	if service_list.get_child_count() != expected_services:
+		push_error("tscn 黑市服务行数 %d != %d" % [service_list.get_child_count(), expected_services])
+		quit(1)
+
+	# 初始态不得自行弹出确认弹窗；危险交易要等玩家点购买才弹。
+	var dialog := shop.get_node("Root/ConfirmDialog")
+	if dialog.visible:
+		push_error("tscn 黑市初始不得展示确认弹窗")
+		quit(1)
+
+	# 空池回退小字为条件槽位：未标记不渲染，标记后按 13px INK_SOFT 出现。
+	# 这两条是旧 ui/screens/shop_screen.guitkx 实现删除后平移过来的等价覆盖。
+	var fallback_label: Label = shop.get_node(
+			"Root/PrimarySurface/OfferColumn/PoolFallbackLabel")
+	if fallback_label.visible:
+		push_error("tscn 黑市未标记回退时不得渲染回退小字")
+		quit(1)
+	var marked_state := shop_state.duplicate(true)
+	marked_state["pool_fallback_note"] = "（空池回退：已切至基础池）"
+	var marked := _mount_tscn_screen(
+			"res://scenes/ui/screens/shop_screen.tscn", marked_state, shop_cmds)
+	await process_frame
+	var marked_label: Label = marked.get_node(
+			"Root/PrimarySurface/OfferColumn/PoolFallbackLabel")
+	if not marked_label.visible or marked_label.text != "（空池回退：已切至基础池）":
+		push_error("tscn 黑市标记回退后必须渲染小字槽位")
+		quit(1)
+	if (marked_label.get_theme_font_size("font_size") != 13
+			or not marked_label.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT)):
+		push_error("tscn 黑市回退小字必须 INK_SOFT 13px")
+		quit(1)
+	print("OK TscnShopScreen buttons=%d offers=%d services=%d"
+			% [buttons, expected_offers, expected_services])
+	# 含 await 的函数必须 await 调用：裸调用会在第一个 await 处挂起，
+	# 后面的断言被静默跳过（进程照常退出 0，看不出问题）。
+	await _verify_tscn_rest(cases["rest"][0], cases["rest"][1])
+	await _verify_tscn_reward(cases["reward"][0], cases["reward"][1])
+	await _verify_tscn_npc(cases["npc"][0], cases["npc"][1])
+	await _verify_tscn_encounter(cases["encounter"][0], cases["encounter"][1])
+	await _verify_tscn_refine(cases["refine"][0], cases["refine"][1])
+	await _verify_tscn_ending(cases["ending"][0], cases["ending"][1])
+	await _verify_tscn_battle(cases["battle"][0], cases["battle"][1])
+
+
+
+## 战斗屏（.tscn 版）挂载回归：出牌三分支 + 选敌 + 操作按钮。
+## 出牌判定顺序是核心契约：需选目标 → 进选敌；危险 → 弹确认；其余 → 直接下发。
+func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> void:
+	var log: Array = []
+	var cmds := {
+		"play_card": func(cid = "", tid = ""): log.append("play_card:%s/%s" % [cid, tid]),
+		"end_turn": func(): log.append("end_turn"),
+		"refine": func(): log.append("refine"),
+		"flee": func(): log.append("flee"),
+	}
+	var battle := _mount_tscn_screen(
+			"res://scenes/ui/screens/battle_screen.tscn", battle_state, cmds)
+	await process_frame
+
+	var ops := battle.get_node("Root/battle_hand/OpsRow")
+	if ops.get_child_count() < 3:
+		push_error("tscn 战斗屏操作按钮不足（应有 结束回合 / 炼蛊 / 撤退）")
+		quit(1)
+	# mode 用空 Label 的 name 承载（test_wenzhen_card_fsm 按此定位），初始为 idle。
+	var mode_host := battle.get_node("Root/ModeHost")
+	if mode_host.get_child_count() != 1 or mode_host.get_child(0).name != "battle_idle":
+		push_error("tscn 战斗屏初始 mode 应为 battle_idle")
+		quit(1)
+
+	# 1) 危险卡 → 只弹确认，不下发
+	var danger_btn := _find_button_by_text(battle, "血祭蛊")
+	if danger_btn == null:
+		push_error("tscn 战斗屏手牌未渲染「血祭蛊」")
+		quit(1)
+	danger_btn.pressed.emit()
+	await process_frame
+	if not battle.get_node("Root/ConfirmDialog").visible:
+		push_error("tscn 战斗屏危险卡必须弹确认")
+		quit(1)
+	if not log.is_empty():
+		push_error("tscn 战斗屏危险卡确认前不得下发命令: " + str(log))
+		quit(1)
+	var confirm_btn := _find_button_by_text(battle.get_node("Root/ConfirmDialog"), "确认")
+	if confirm_btn == null:
+		push_error("tscn 战斗屏确认弹窗缺少「确认」")
+		quit(1)
+	confirm_btn.pressed.emit()
+	await process_frame
+	if log != ["play_card:c2/"]:
+		push_error("tscn 战斗屏确认后应下发 play_card:c2/: " + str(log))
+		quit(1)
+
+	# 2) 需选目标的卡 → 进入 target_select，敌人变可选
+	log.clear()
+	var target_btn := _find_button_by_text(battle, "月芒蛊")
+	if target_btn == null:
+		push_error("tscn 战斗屏手牌未渲染「月芒蛊」")
+		quit(1)
+	target_btn.pressed.emit()
+	await process_frame
+	if mode_host.get_child_count() != 1 or mode_host.get_child(0).name != "battle_target_select":
+		push_error("tscn 战斗屏选目标卡应进入 battle_target_select")
+		quit(1)
+	if not log.is_empty():
+		push_error("tscn 战斗屏选敌阶段不得下发命令: " + str(log))
+		quit(1)
+	var enemy_btn := _find_button_by_text(battle, "铁皮山猪")
+	if enemy_btn == null or not enemy_btn.visible:
+		push_error("tscn 战斗屏选敌时敌人应变为可选按钮")
+		quit(1)
+	enemy_btn.pressed.emit()
+	await process_frame
+	if log != ["play_card:c3/e1"]:
+		push_error("tscn 战斗屏选中敌人后应带目标下发: " + str(log))
+		quit(1)
+
+	# 3) 操作按钮
+	log.clear()
+	for t in ["结束回合", "炼蛊", "撤退"]:
+		var b := _find_button_by_text(battle, t)
+		if b != null:
+			b.pressed.emit()
+	if log != ["end_turn", "refine", "flee"]:
+		push_error("tscn 战斗屏操作按钮未全部接线: " + str(log))
+		quit(1)
+	print("OK TscnBattleScreen ops=%d" % ops.get_child_count())
+## 结算屏（.tscn 版）挂载回归：成功 / 死亡 / 极简三种形态。
+## 死亡与极简两份快照只在本函数用到，就地定义以免污染 _initialize。
+func _verify_tscn_ending(ending_success: Dictionary, ending_cmds: Dictionary) -> void:
+	var ending_death := {
+		"title": "命丧密林",
+		"ending_type": "death",
+		"death_cause_id": "death_cause_backlash",
+		"death_cause": "反噬爆发而亡——诅咒层数越过临界，真元与魂魄俱溃。",
+		"death_cause_short": "反噬爆发",
+		"achievement": "寿元、魂魄或反噬一线归零，身死道消",
+		"key_decisions": ["孤身追猎未探虚实"],
+		"gains_losses": "反噬爆发，真元枯竭而亡",
+		"resource_balance": {"yuanstone": 0, "shouyuan": 0},
+		"unlocks": [],
+		"aftermath": "残魂归于大地，修行札记已留存",
+	}
+	var ending_minimal := {
+		"title": "保命而退",
+		"ending_type": "retreat",
+		"achievement": "机缘未至而主动抽身，保命另寻出路",
+		"key_decisions": [],
+		"gains_losses": "",
+		"resource_balance": {},
+		"unlocks": [],
+		"aftermath": "",
+	}
+	var success := _mount_tscn_screen("res://scenes/ui/screens/ending_screen.tscn",
+			ending_success, ending_cmds)
+	await process_frame
+	if _count_visible_buttons(success) < 1:
+		push_error("tscn 结算(成功)按钮数 < 1")
+		quit(1)
+	# 非死亡结局不得出现死因徽章，也不展开精准死因面板。
+	if _host_has_label_text(success, "死因 · "):
+		push_error("tscn 非死亡结局不得渲染死因徽章")
+		quit(1)
+	if success.get_node("primary_decision_surface/DeathCausePanel").visible:
+		push_error("tscn 非死亡结局不得展开精准死因面板")
+		quit(1)
+	if not _host_has_label_text(success, "达成：" + str(ending_success["achievement"])):
+		push_error("tscn 结算缺少达成条件链行")
+		quit(1)
+	# 路线缩略图：Boss 层必须 EMBER 高亮。
+	var boss_chip := _find_label_exact(success, "第2层 交锋")
+	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.RARITY_EPIC):
+		push_error("tscn 路线缩略图 Boss 层必须 EMBER 高亮")
+		quit(1)
+	if not _host_has_label_text(success, "战斗合成：2 次 · 成 1 / 败 1"):
+		push_error("tscn 结算缺少合成计数行")
+		quit(1)
+	if _host_has_label_text(success, "DDA 触发"):
+		push_error("tscn DDA 预留位无数据时必须整行隐藏")
+		quit(1)
+	var new_chip := _find_label_exact(success, "★新 图鉴：火蛊")
+	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.ANOMALY_YELLOW):
+		push_error("tscn 解锁列表项必须带 ★新 前缀")
+		quit(1)
+	if not _host_has_label_text(success, "离局清零"):
+		push_error("tscn 资源结余面板缺少「离局清零」小字")
+		quit(1)
+
+	# 死亡结局：死因徽章并列 + 精准死因面板展开。
+	var death := _mount_tscn_screen("res://scenes/ui/screens/ending_screen.tscn",
+			ending_death, ending_cmds)
+	await process_frame
+	if not _host_has_label_text(death, "死因 · 反噬爆发"):
+		push_error("tscn 死亡结局须并列死因徽章")
+		quit(1)
+	if not death.get_node("primary_decision_surface/DeathCausePanel").visible:
+		push_error("tscn 死亡结局须展开精准死因面板")
+		quit(1)
+
+	# 极简 run：只有两个动作，路线与本局记录整块隐藏。
+	var minimal := _mount_tscn_screen("res://scenes/ui/screens/ending_screen.tscn",
+			ending_minimal, ending_cmds)
+	await process_frame
+	if _count_visible_buttons(minimal) != 2:
+		push_error("tscn 极简结算应只有两个按钮，实得 %d" % _count_visible_buttons(minimal))
+		quit(1)
+	if (_find_button_by_text(minimal, "返回大厅") == null
+			or _find_button_by_text(minimal, "查看图鉴") == null):
+		push_error("tscn 结算动作必须是 返回大厅 与 查看图鉴（无读档回溯）")
+		quit(1)
+	if minimal.get_node("primary_decision_surface/RoutePanel").visible:
+		push_error("tscn 无记录 run 不得渲染路线条")
+		quit(1)
+	if minimal.get_node("primary_decision_surface/RecordPanel").visible:
+		push_error("tscn 无记录 run 不得渲染本局记录块")
+		quit(1)
+	print("OK TscnEndingScreen buttons=%d" % _count_visible_buttons(success))
+
+
+## 炼蛊屏（.tscn 版）挂载回归。
+func _verify_tscn_refine(refine_state: Dictionary, refine_cmds: Dictionary) -> void:
+	var refine := _mount_tscn_screen(
+			"res://scenes/ui/screens/refine_screen.tscn", refine_state, refine_cmds)
+	await process_frame
+	var buttons := _count_buttons(refine)
+	if buttons < 1:
+		push_error("tscn 炼蛊按钮数 %d < 1" % buttons)
+		quit(1)
+	var recipe_list: Node = refine.get_node(
+			"Root/primary_decision_surface/MainColumn/RecipePanel").content_host.get_node(
+			"RecipeScroll/List")
+	var expected: int = refine_state["recipes"].size()
+	if recipe_list.get_child_count() != expected:
+		push_error("tscn 炼蛊配方数 %d != %d" % [recipe_list.get_child_count(), expected])
+		quit(1)
+	# 通道 Tab 是纯屏内过滤：切到「盲盒随机」后配方列表应为空并给出提示。
+	var blind_tab := _find_button_by_text(refine, "盲盒随机")
+	if blind_tab == null:
+		push_error("tscn 炼蛊必须有通道 Tab")
+		quit(1)
+	blind_tab.pressed.emit()
+	await process_frame
+	if not _host_has_label_text(refine, "（无可用配方）"):
+		push_error("tscn 炼蛊切到无配方通道时必须给出空态提示")
+		quit(1)
+	print("OK TscnRefineScreen buttons=%d recipes=%d" % [buttons, expected])
+
+
+## 遭遇屏（.tscn 版）挂载回归。
+func _verify_tscn_encounter(enc_state: Dictionary, enc_cmds: Dictionary) -> void:
+	var enc := _mount_tscn_screen(
+			"res://scenes/ui/screens/encounter_screen.tscn", enc_state, enc_cmds)
+	await process_frame
+	var buttons := _count_buttons(enc)
+	if buttons < 1:
+		push_error("tscn 遭遇按钮数 %d < 1" % buttons)
+		quit(1)
+	# 危险死线行应整行可点（☠ 前缀按钮），而不是纯文本。
+	if _find_button_by_text(enc, "☠ 寿元 60/60") == null:
+		push_error("tscn 遭遇屏危险死线行应整行可点（☠ 前缀按钮）")
+		quit(1)
+	var list: Node = enc.get_node(
+			"Root/primary_decision_surface/MainColumn/ActionScroll/ActionList")
+	if list.get_child_count() != enc_state["actions"].size():
+		push_error("tscn 遭遇行动卡数 %d != %d" % [list.get_child_count(), enc_state["actions"].size()])
+		quit(1)
+	# 空行动列表：仍要给出离开出口（否则玩家卡死在遭遇节点）。
+	var empty_state := {
+		"node": {"title": "空径", "desc": "无甚异常。", "type": "rest"},
+		"actions": [], "intel": {}, "resources": {},
+		"contracts": [], "anomalies": [], "death_lines": {},
+	}
+	var empty := _mount_tscn_screen(
+			"res://scenes/ui/screens/encounter_screen.tscn", empty_state, enc_cmds)
+	await process_frame
+	if _count_buttons(empty) < 1:
+		push_error("tscn 遭遇空列表必须保留离开出口")
+		quit(1)
+	print("OK TscnEncounterScreen buttons=%d actions=%d"
+			% [buttons, enc_state["actions"].size()])
+
+
+## 休整屏（.tscn 版）挂载回归。
+func _verify_tscn_rest(rest_state: Dictionary, rest_cmds: Dictionary) -> void:
+	var rest := _mount_tscn_screen(
+			"res://scenes/ui/screens/rest_screen.tscn", rest_state, rest_cmds)
+	await process_frame
+	var buttons := _count_buttons(rest)
+	if buttons < 1:
+		push_error("tscn 休整按钮数 %d < 1" % buttons)
+		quit(1)
+	var choice_row := rest.get_node(
+			"Root/primary_decision_surface/PanelMargin/PanelBody/ContentHost/ChoiceRow")
+	var expected: int = rest_state["choices"].size()
+	if choice_row.get_child_count() != expected:
+		push_error("tscn 休整选项卡数 %d != %d" % [choice_row.get_child_count(), expected])
+		quit(1)
+	# 移除目标面板是条件槽位，未点「温养一蛊」前不得展开。
+	if rest.get_node("Root/RemovePanel").visible:
+		push_error("tscn 休整初始不得展开移除目标面板")
+		quit(1)
+	print("OK TscnRestScreen buttons=%d choices=%d" % [buttons, expected])
+
+
+## 战利品屏（.tscn 版）挂载回归。
+func _verify_tscn_reward(reward_state: Dictionary, reward_cmds: Dictionary) -> void:
+	var reward := _mount_tscn_screen(
+			"res://scenes/ui/screens/reward_screen.tscn", reward_state, reward_cmds)
+	await process_frame
+	var buttons := _count_buttons(reward)
+	if buttons < 1:
+		push_error("tscn 战利品按钮数 %d < 1" % buttons)
+		quit(1)
+	var row := reward.get_node("Root/primary_decision_surface/RewardRow")
+	var expected: int = reward_state["rewards"].size()
+	if row.get_child_count() != expected:
+		push_error("tscn 战利品卡数 %d != %d" % [row.get_child_count(), expected])
+		quit(1)
+	# 诅咒蛊同样走 GuCard 强红角标（R4.10）。
+	if _find_label_exact(reward, "咒") == null:
+		push_error("tscn 战利品诅咒蛊缺少「咒」角标")
+		quit(1)
+	# 标记回退时渲染 13px INK_SOFT 小字。
+	var note: Label = reward.get_node("Root/NoteRow/PoolFallbackLabel")
+	if not note.visible:
+		push_error("tscn 战利品标记回退后必须渲染小字")
+		quit(1)
+	if (note.get_theme_font_size("font_size") != 13
+			or not note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT)):
+		push_error("tscn 战利品回退小字必须 INK_SOFT 13px")
+		quit(1)
+	# 未标记时不得出现常驻假提示。
+	var clean := reward_state.duplicate(true)
+	clean.erase("pool_fallback_note")
+	var clean_screen := _mount_tscn_screen(
+			"res://scenes/ui/screens/reward_screen.tscn", clean, reward_cmds)
+	await process_frame
+	if clean_screen.get_node("Root/NoteRow/PoolFallbackLabel").visible:
+		push_error("tscn 战利品未标记回退时不得渲染回退小字")
+		quit(1)
+	print("OK TscnRewardScreen buttons=%d rewards=%d" % [buttons, expected])
+
+
+## NPC 交涉屏（.tscn 版）挂载回归。
+func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> void:
+	var npc := _mount_tscn_screen(
+			"res://scenes/ui/screens/npc_screen.tscn", npc_state, npc_cmds)
+	await process_frame
+	var buttons := _count_buttons(npc)
+	if buttons < 1:
+		push_error("tscn NPC 按钮数 %d < 1" % buttons)
+		quit(1)
+	var surface := "Root/primary_decision_surface/"
+	var offer_list: Node = npc.get_node(
+			surface + "TradeColumn/TradePanel").content_host.get_node("OfferScroll/List")
+	var barter_list: Node = npc.get_node(
+			surface + "TradeColumn/BarterPanel").content_host.get_node("BarterScroll/List")
+	var talk_list: Node = npc.get_node(
+			surface + "TalkColumn/TalkPanel").content_host.get_node("TalkScroll/List")
+	if offer_list.get_child_count() != npc_state["offers"].size():
+		push_error("tscn NPC 交易项数 %d != %d" % [offer_list.get_child_count(), npc_state["offers"].size()])
+		quit(1)
+	if barter_list.get_child_count() != npc_state["barter"].size():
+		push_error("tscn NPC 易物项数不符")
+		quit(1)
+	if talk_list.get_child_count() != npc_state["talk_options"].size():
+		push_error("tscn NPC 交涉项数不符")
+		quit(1)
+	# 极度仇恨禁逃：撤退按钮整体隐藏，不留"能点但注定失败"的死按钮。
+	var no_flee := npc_state.duplicate(true)
+	no_flee["can_flee"] = false
+	var caged := _mount_tscn_screen(
+			"res://scenes/ui/screens/npc_screen.tscn", no_flee, npc_cmds)
+	await process_frame
+	if caged.get_node(surface + "TalkColumn/FleeButton").visible:
+		push_error("tscn NPC 禁逃时不得展示撤退按钮")
+		quit(1)
+	print("OK TscnNpcScreen buttons=%d offers=%d talks=%d"
+			% [buttons, npc_state["offers"].size(), npc_state["talk_options"].size()])
+
+
+## 挂载走 set_props 的 .tscn 组件（调试面板这类非路由组件）。
+## 与 _mount_tscn_screen 的区别只在注入方式：路由屏是 mount_snapshot，
+## 调试面板是 set_props（它不是路由屏，由 RunController 直接挂到可拖动宿主上）。
+const DEBUG_PANEL_TSCN := "res://scenes/ui/widgets/debug_panel.tscn"
+
+func _mount_tscn_props(path: String, props: Dictionary) -> Control:
+	var scene: PackedScene = load(path)
+	if scene == null:
+		push_error("tscn 组件无法加载 %s" % path)
+		quit(1)
+	var inst := scene.instantiate()
+	root.add_child(inst)
+	if inst.has_method("set_props"):
+		inst.set_props(props)
+	return inst
+
+
+func _mount_tscn_screen(path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
+	var scene: PackedScene = load(path)
+	if scene == null:
+		push_error("tscn 场景无法加载 %s" % path)
+		quit(1)
+	var inst := scene.instantiate()
+	root.add_child(inst)
+	if inst.has_method("mount_snapshot"):
+		inst.mount_snapshot(snapshot, commands)
+	return inst

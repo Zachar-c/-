@@ -15,7 +15,7 @@ const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 
 
-const ALWAYS_IDS := ["blood_pact", "miser_pact", "essence_tide"]
+const ALWAYS_IDS := ["blood_pact", "miser_pact", "essence_tide", "enemy_vitality_trial"]
 
 var catalog: Dictionary
 
@@ -174,8 +174,9 @@ func test_swear_enforces_configured_cap_and_mutual_exclusion() -> void:
 		"entries": [
 			catalog["contract_entry_by_id"]["blood_pact"],
 			catalog["contract_entry_by_id"]["miser_pact"],
-			catalog["contract_entry_by_id"]["essence_tide"],
-			{
+				catalog["contract_entry_by_id"]["essence_tide"],
+				catalog["contract_entry_by_id"]["enemy_vitality_trial"],
+				{
 				"id": "mutex_a",
 				"label": "互斥甲",
 				"desc": "测试用。",
@@ -194,7 +195,7 @@ func test_swear_enforces_configured_cap_and_mutual_exclusion() -> void:
 		],
 	}
 	var run := RunState.new_run(101)
-	var all_allowed: Array = ["blood_pact", "miser_pact", "essence_tide", "mutex_a", "mutex_b"]
+	var all_allowed: Array = ["blood_pact", "miser_pact", "essence_tide", "enemy_vitality_trial", "mutex_a", "mutex_b"]
 	assert_eq(str(_swear(run, ALWAYS_IDS, tuned, all_allowed)["result"]["reason"]), "contract_cap_exceeded")
 	assert_eq(str(_swear(run, ["mutex_a", "mutex_b"], tuned, all_allowed)["result"]["reason"]), "contract_mutual_exclusive")
 
@@ -239,6 +240,37 @@ func test_aggregate_sums_signed_rule_values_across_sworn_contracts() -> void:
 	assert_eq(int(totals.get("material_penalty", 0)), -1)
 	assert_eq(int(totals.get("shop_price_pct", 0)), 25)
 	assert_eq(int(totals.get("hall_material_bonus_pct", 0)), 50)
+
+
+func test_enemy_hp_pct_contract_scales_regular_and_boss_battles() -> void:
+	var tuned := catalog.duplicate(true)
+	tuned["contracts"] = catalog["contracts"].duplicate(true)
+	tuned["contracts"]["entries"] = catalog["contracts"]["entries"].duplicate(true)
+	var trial := {
+		"id": "enemy_vitality_trial",
+		"label": "枯敌试炼",
+		"desc": "敌方生命降低 90%。",
+		"rules": [{"key": "enemy_hp_pct", "value": -90}],
+		"mutual_exclusive": [],
+		"unlock": {"kind": "always"},
+	}
+	tuned["contracts"]["entries"].append(trial)
+	tuned["contract_entry_by_id"] = {}
+	for entry_value in tuned["contracts"]["entries"]:
+		var entry: Dictionary = entry_value
+		tuned["contract_entry_by_id"][str(entry["id"])] = entry
+
+	var state := RunState.new_run(101)
+	state.contracts = ["enemy_vitality_trial"]
+	assert_eq(int(ContractRulesScript.aggregate(state, tuned).get("enemy_hp_pct", 0)), -90)
+
+	var regular := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, state, tuned)
+	assert_eq(int(regular["enemy_hp"]), 1)
+	assert_eq(int((regular["enemies"][0] as Dictionary)["hp"]), 1)
+
+	var boss := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord", "layer": 5}, state, tuned)
+	assert_eq(int(boss["enemy_hp"]), 1)
+	assert_eq(int((boss["enemies"][0] as Dictionary)["hp"]), 1)
 
 
 func test_strike_damage_pct_scales_player_strikes_not_curse_channel() -> void:

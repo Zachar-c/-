@@ -47,16 +47,14 @@ func after_each() -> void:
 	_rui_hosts.clear()
 
 
+## 结算屏已迁到 Godot 官方 .tscn：props 里的 state / commands 转交 mount_snapshot。
 func _mount_screen(props: Dictionary) -> Control:
-	var fn = VLib.comp("res://ui/screens/ending_screen.gd", "render")
-	assert_true(fn is Callable, "ending_screen must expose render")
-	if not (fn is Callable):
-		return Control.new()
-	var host := Control.new()
-	add_child(host)
-	_rui_hosts.append(host)
-	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
-	return host
+	var inst: Control = (load("res://scenes/ui/screens/ending_screen.tscn") as PackedScene).instantiate()
+	add_child(inst)
+	_rui_hosts.append(inst)
+	if inst.has_method("mount_snapshot"):
+		inst.mount_snapshot(props.get("state", {}), props.get("commands", {}))
+	return inst
 
 
 func _collect_controls(node: Node, out_buttons: Array, out_labels: Array) -> void:

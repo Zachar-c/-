@@ -21,7 +21,7 @@ func test_hall_view_exposes_wenzhen_brand_and_quiet_menu() -> void:
 		"has_save": false,
 		"brand_title": "問眞",
 		"primary_action": "open_schools",
-		"run_summary": {"route": "", "rank": 0, "hp": 0},
+		"run_summary": {"route": "", "rank": "0 转", "hp": "0"},
 		"available_schools": [
 			{"id": "blood", "name": "血道"},
 			{"id": "qi", "name": "气道"},

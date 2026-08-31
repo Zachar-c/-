@@ -8,6 +8,23 @@ func before_each() -> void:
 	catalog = ContentCatalog.load_all()
 
 
+func test_battle_action_card_accepts_namespaced_basic_punch_id() -> void:
+	var run := RunState.new_run(101)
+	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, run, catalog)
+	battle["hand"] = []
+	var command := {
+		"type": "action_card",
+		"action_id": "battle.%s.basic.punch" % str(battle["battle_id"]),
+		"card_id": "basic.punch",
+		"target_id": str(battle["enemies"][0]["enemy_id"]),
+		"state_version": int(battle["hand_version"]),
+		"expected_phase": str(battle["phase"]),
+	}
+	var result := BattleResolver.apply_action_card(battle, run, command, catalog)
+	assert_true(bool(result["accepted"]))
+	assert_eq(int(result["battle"]["enemy_hp"]), int(battle["enemy_hp"]) - 1)
+
+
 func test_punch_works_with_zero_essence_and_empty_hand() -> void:
 	var run := RunState.new_run(101)
 	run.essence = 0

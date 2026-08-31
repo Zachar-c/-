@@ -96,6 +96,7 @@ func test_unlocked_contracts_combine_always_and_ending_unlocks() -> void:
 			["blood_pact", "miser_pact", "essence_tide", "ascetic_path", "enemy_vitality_trial"])
 
 
+
 func test_meta_save_round_trip_carries_new_fields_and_defaults_old_saves() -> void:
 	var meta := MetaProgress.new_empty()
 	var unlocked: Array[String] = ["ascetic_path"]

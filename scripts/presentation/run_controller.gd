@@ -22,14 +22,13 @@ const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
 
 const SCREEN_PATHS := {
-	"Title": "res://ui/screens/hall_view.gd",
 	"Map": "res://ui/screens/map_screen.gd",
 	# Shop / Rest / Reward / Npc / Encounter / Refine / Ending / Battle 已迁到
 	# MASTER_SCENE_PATHS
 	# （Godot 官方 .tscn），此处不再登记；逐屏迁移完后这张表会整体清空。
 }
 const MASTER_SCENE_PATHS := {
-	"Title": "res://scenes/ui_masters/wenzhen_hall_master.tscn",
+	"Title": "res://scenes/ui/screens/hall_screen.tscn",
 	"Map": "res://scenes/ui_masters/wenzhen_map_master.tscn",
 	"Battle": "res://scenes/ui/screens/battle_screen.tscn",
 	# 过渡期：Shop / Rest / Reward / Npc / Encounter / Refine / Ending / Battle 已转

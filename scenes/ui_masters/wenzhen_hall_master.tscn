@@ -23,6 +23,7 @@ mouse_filter = 2
 color = Color(0.898, 0.886, 0.843, 1)
 
 [node name="Folio" type="Label" parent="."]
+visible = false
 offset_left = 29.0
 offset_top = 25.0
 offset_right = 180.0
@@ -30,6 +31,7 @@ offset_bottom = 45.0
 text = "逐道 · 南疆"
 
 [node name="HallSheet" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_left = 0.07

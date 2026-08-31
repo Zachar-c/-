@@ -109,6 +109,61 @@ func test_rest_nodes_never_cross_pollinate_flags() -> void:
 	assert_eq(str(hollow_rest["state"].node_flags.get("rest_hollow_used", "")), "used")
 
 
+func test_instanced_rest_template_gates_travel_before_choice() -> void:
+	var run := _run_at("L2R1N0")
+	run.current_node_template_id = "rest_hollow"
+	var gated := ResolverScript.apply(run, {"type": "travel", "node_id": "L2R2N0"}, catalog)
+	var gated_result: Dictionary = gated.get("result", {})
+	assert_false(bool(gated_result.get("ok", true)))
+	assert_eq(str(gated_result.get("reason", "")), "rest_choice_required")
+
+
+func test_rest_heal_recovers_thirty_percent_of_max_health() -> void:
+	var run := _run_at("rest_shrine")
+	run.health = 1
+	run.max_health = 12
+	var healed := ResolverScript.apply(run, {"type": "rest"}, catalog)
+	assert_eq(int(healed["state"].health), mini(int(run.max_health), int(run.health) + int(floor(float(run.max_health) * 0.30))))
+
+
+func test_rest_heal_never_drops_player_below_current_health() -> void:
+	var run := _run_at("rest_shrine")
+	run.health = 7
+	run.max_health = 8
+	var healed := ResolverScript.apply(run, {"type": "rest"}, catalog)
+	assert_eq(int(healed["state"].health), 8)
+
+
+func test_generated_layers_have_rest_node_every_three_rows() -> void:
+	for seed_value in [101, 4242, 91011]:
+		var route: Array = MapGeneratorScript.build(seed_value, false, catalog)
+		for layer in range(1, 6):
+			var row_indices: Array = []
+			for node in route:
+				if int(node.get("layer", -1)) != layer:
+					continue
+				if str(node.get("template_id", "")) in ["rest_hollow", "rest_shrine"]:
+					row_indices.append(int(node.get("row", -1)))
+			row_indices.sort()
+			var previous_row := -1
+			for row in row_indices:
+				if previous_row >= 0:
+					assert_eq(int(row) - previous_row, 3,
+							"seed %d layer %d rest row %d must sit every 3 rows" % [seed_value, layer, row])
+				previous_row = int(row)
+
+
+func test_instanced_rest_template_session_leave_requires_choice() -> void:
+	var run := _run_at("L2R1N0")
+	run.current_node_template_id = "rest_hollow"
+	var session := {"node_id": "L2R1N0", "completed": false}
+	var left := preload("res://scripts/domain/encounter_session_resolver.gd").apply(
+		run, session, {"type": "leave_node"}, catalog, {"id": "L2R1N0", "template_id": "rest_hollow", "type": "rest"})
+	var left_result: Dictionary = left.get("result", {})
+	assert_false(bool(left_result.get("ok", true)))
+	assert_eq(str(left_result.get("reason", "")), "rest_choice_required")
+
+
 # ---- bare completion marker: baseline event-stream parity ----
 
 func _events_with_reason(state: RunState, reason: String) -> Array:

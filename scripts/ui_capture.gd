@@ -10,6 +10,8 @@ const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const ROOT := "res://"
 const OUT_DIR := "res://.superpowers/ui_captures/wenzhen"
+const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
+
 const VIEWPORTS := [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)]
 const CAPTURE_MATRIX := {
 	"hall": ["running", "no_save", "long_summary", "keyboard_focus"],
@@ -94,11 +96,14 @@ func _snap(component: String, props: Dictionary, slug: String = "", presses: Arr
 		await _snap_at_size(component, props, slug, presses, focus_text, viewport_size)
 
 
-func _snap_at_size(component: String, props: Dictionary, slug: String, presses: Array[String], focus_text: String, viewport_size: Vector2i) -> void:
-	var fn = VLib.comp("res://ui/screens/%s.gd" % component, "render")
-	if not (fn is Callable):
-		push_error("无组件 %s" % component)
-		return
+func _snap_at_size(component: String, props: Dictionary, slug: String, presses: Array[String], focus_text: String, viewport_size: Vector2i, tscn_path: String = "") -> void:
+	# tscn_path 非空时走 Godot 官方 .tscn 节点树（黑市已迁离 RUITK），否则走 .guitkx。
+	var fn = null
+	if tscn_path.is_empty():
+		fn = VLib.comp("res://ui/screens/%s.gd" % component, "render")
+		if not (fn is Callable):
+			push_error("无组件 %s" % component)
+			return
 	if component == "map_screen" and viewport_size == VIEWPORTS[0]:
 		_print_map_capture_identity(fn)
 	var viewport := SubViewport.new()
@@ -117,7 +122,14 @@ func _snap_at_size(component: String, props: Dictionary, slug: String, presses: 
 	inner.size = Vector2(viewport_size)
 	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	viewport.add_child(inner)
-	var rui_root = RuiRoot.create(inner, VLib.fc(fn, props))
+	var rui_root = null
+	if tscn_path.is_empty():
+		rui_root = RuiRoot.create(inner, VLib.fc(fn, props))
+	else:
+		var tscn_inst := (load(tscn_path) as PackedScene).instantiate()
+		inner.add_child(tscn_inst)
+		if tscn_inst.has_method("mount_snapshot"):
+			tscn_inst.mount_snapshot(props.get("state", {}), props.get("commands", {}))
 	# 等逻辑帧确保 RUI 完成挂载与布局，再强制同步渲染一帧（不依赖窗口可见性，不会挂死）
 	for i in range(6):
 		await process_frame
@@ -144,10 +156,18 @@ func _snap_at_size(component: String, props: Dictionary, slug: String, presses: 
 	if image == null or image.is_empty() or image.save_png(p) != OK:
 		push_error("窗口捕获失败: %s" % p)
 	print("SNAP %s -> %s" % [component, p])
-	rui_root.unmount()
-	rui_root = null
+	if rui_root != null:
+		rui_root.unmount()
+		rui_root = null
 	viewport.free()
 	await process_frame
+
+
+## 截图 Godot 官方 .tscn 节点树屏。presses 用于截"点了某按钮之后"的状态。
+func _snap_tscn(tscn_path: String, props: Dictionary, slug: String,
+		presses: Array[String] = []) -> void:
+	for viewport_size in VIEWPORTS:
+		await _snap_at_size(slug, props, slug, presses, "", viewport_size, tscn_path)
 
 
 func _print_map_capture_identity(fn: Callable) -> void:
@@ -331,6 +351,9 @@ func _initialize() -> void:
 	var hall_state := {
 		"hall_subview": "main",
 		"has_save": true,
+		"brand_title": "問眞",
+		"primary_action": "continue_run",
+		"run_summary": {"route": "黑市交易后的山道", "rank": 4, "hp": 27},
 		"available_schools": [
 			{"id": "blood", "name": "血道", "summary": "以血饲蛊，愈伤愈强", "starter_gu_names": ["血牙蛊", "噬血蛊"]},
 			{"id": "qi", "name": "气道", "summary": "以气驭蛊，绵长持久"},
@@ -347,9 +370,35 @@ func _initialize() -> void:
 	new_hall_state["primary_action"] = "open_schools"
 	await _snap("hall_view", {"state": new_hall_state, "commands": hall_cmds}, "hall_without_save")
 
+	# ---- 大厅子视图 ----
+	var settings_state := hall_state.duplicate(true)
+	settings_state["hall_subview"] = "settings"
+	settings_state["master_volume"] = 80
+	settings_state["resolution_index"] = 1
+	settings_state["resolution_options"] = ["全屏", "1920×1080 · 窗口", "1600×900 · 窗口", "1280×720 · 窗口"]
+	settings_state["dda_state_adaptive_enabled"] = true
+	await _snap("hall_view", {"state": settings_state, "commands": hall_cmds}, "hall_settings")
+	var codex_state := hall_state.duplicate(true)
+	codex_state["hall_subview"] = "codex"
+	codex_state["codex"] = {
+		"gu": [
+			{"id": "small_light_gu", "name": "小光蛊", "school": "光", "rarity": "普通", "unlocked": true},
+			{"id": "moonlight_gu", "name": "月光蛊", "school": "光", "rarity": "稀有", "unlocked": false},
+		],
+		"enemies": [], "recipes": [], "inheritances": [], "relics": []
+	}
+	await _snap("hall_view", {"state": codex_state, "commands": hall_cmds}, "hall_codex")
+	var journal_state := hall_state.duplicate(true)
+	journal_state["hall_subview"] = "journal"
+	journal_state["journal"] = {"entries": [{"title": "初到南疆", "body": "青茅山外圍的瘴气比预想更重。"}]}
+	await _snap("hall_view", {"state": journal_state, "commands": hall_cmds}, "hall_journal")
+
 	# ---- 地图 ----
-	var map_cmds := {"travel": func(_id): pass, "view_node": func(_id): pass}
+	var map_cmds := {"travel": func(_id): pass, "view_node": func(_id): pass, "save_run": func(): pass}
 	var map_state := {
+		"zone_title": "青茅山外圍",
+		"depth_label": "第 1 层",
+		"realm_label": "一转",
 		"nodes": [
 			{"id": "n1", "type": "start", "label": "起始", "layer": 0, "visibility": "past"},
 			{"id": "n2", "type": "combat", "label": "野蛊盘踞", "layer": 1, "visibility": "current"},
@@ -368,6 +417,12 @@ func _initialize() -> void:
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
 	await _snap("map_screen", {"state": map_state, "commands": map_cmds}, "map_current")
+	var leave_confirm_state := map_state.duplicate(true)
+	leave_confirm_state["leave_confirm"] = true
+	await _snap("map_screen", {"state": leave_confirm_state, "commands": map_cmds}, "map_leave_confirm")
+	var toast_state := map_state.duplicate(true)
+	toast_state["toast"] = "已返回上次保存的行程。"
+	await _snap("map_screen", {"state": toast_state, "commands": map_cmds}, "map_toast")
 	var future_map_state := map_state.duplicate(true)
 	future_map_state["current_node_id"] = "n4"
 	for node in future_map_state["nodes"]:
@@ -409,8 +464,12 @@ func _initialize() -> void:
 	for enemy_count in [1, 2, 3]:
 		var count_state := battle_state.duplicate(true)
 		count_state["enemies"] = battle_state["enemies"].slice(0, enemy_count)
-		await _snap("battle_screen", {"state": count_state, "commands": battle_cmds}, "battle_%d_enemies" % enemy_count)
-	await _snap("battle_screen", {"state": battle_state, "commands": battle_cmds}, "battle_target_selection", ["血牙蛊"])
+		await _snap_tscn(BATTLE_SCREEN_TSCN,
+				{"state": count_state, "commands": battle_cmds},
+				"battle_%d_enemies" % enemy_count)
+	await _snap_tscn(BATTLE_SCREEN_TSCN,
+			{"state": battle_state, "commands": battle_cmds},
+			"battle_target_selection", ["血牙蛊"])
 
 	# ---- 遭遇（含侧边状态）----
 	var enc_cmds := {"choose_option": func(_id): pass, "confirm_danger": func(): pass, "leave": func(): pass}
@@ -428,7 +487,9 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	await _snap("encounter_screen", {"state": enc_state, "commands": enc_cmds}, "dangerous_confirmation", ["确认此危险行动"])
+	await _snap_tscn("res://scenes/ui/screens/encounter_screen.tscn",
+			{"state": enc_state, "commands": enc_cmds},
+			"dangerous_confirmation", ["确认此危险行动"])
 
 	# ---- 结算 ----
 	var ending_cmds := {"to_hall": func(): pass, "to_codex": func(): pass}
@@ -441,7 +502,8 @@ func _initialize() -> void:
 		"unlocks": ["图鉴：火蛊", "契约：自苦·血祭"],
 		"aftermath": "可于大厅图鉴查阅本次所得",
 	}
-	await _snap("ending_screen", {"state": ending_state, "commands": ending_cmds}, "ending")
+	await _snap_tscn("res://scenes/ui/screens/ending_screen.tscn",
+			{"state": ending_state, "commands": ending_cmds}, "ending")
 
 	# ---- 黑市（C3）----
 	var gui_state := {
@@ -471,7 +533,8 @@ func _initialize() -> void:
 		],
 		"emergency_note": "元石不足可用气血 / 寿元 / 反噬 / 销毁组件应急支付（R6.7）",
 	})
-	await _snap("shop_screen", {"state": shop_state, "commands": shop_cmds}, "shop")
+	await _snap_tscn("res://scenes/ui/screens/shop_screen.tscn",
+			{"state": shop_state, "commands": shop_cmds}, "shop")
 
 	# ---- 休整（C5）----
 	var rest_cmds := {"choose": func(_id): pass, "confirm_wash": func(): pass, "cancel_confirm": func(): pass, "leave": func(): pass}
@@ -489,7 +552,8 @@ func _initialize() -> void:
 		"confirming": "",
 		"confirm_msg": "",
 	})
-	await _snap("rest_screen", {"state": rest_state, "commands": rest_cmds}, "rest")
+	await _snap_tscn("res://scenes/ui/screens/rest_screen.tscn",
+			{"state": rest_state, "commands": rest_cmds}, "rest")
 
 	# ---- 炼蛊台（C6）----
 	var refine_cmds := {"set_channel": func(_id): pass, "refine": func(_id): pass, "toggle_input": func(_id): pass, "dismantle": func(_id): pass, "confirm": func(): pass, "cancel_confirm": func(): pass, "leave": func(): pass}
@@ -514,7 +578,8 @@ func _initialize() -> void:
 		"confirming": "",
 		"confirm_msg": "",
 	})
-	await _snap("refine_screen", {"state": refine_state, "commands": refine_cmds}, "refine")
+	await _snap_tscn("res://scenes/ui/screens/refine_screen.tscn",
+			{"state": refine_state, "commands": refine_cmds}, "refine")
 
 	# ---- 奖励（C2）----
 	var reward_cmds := {"take": func(_i): pass, "replace_and_take": func(_i): pass, "skip": func(): pass, "close": func(): pass}
@@ -530,7 +595,8 @@ func _initialize() -> void:
 		"pool_fallback_note": "（空池回退：已切至基础池）",
 		"pity_note": "（保底：连续普通后，下次掉落品质有较大概率提升）",
 	})
-	await _snap("reward_screen", {"state": reward_state, "commands": reward_cmds}, "reward")
+	await _snap_tscn("res://scenes/ui/screens/reward_screen.tscn",
+			{"state": reward_state, "commands": reward_cmds}, "reward")
 
 	# ---- NPC 交涉（C8）----
 	var npc_cmds := {"talk": func(_id): pass, "buy": func(_id): pass, "barter": func(_id): pass, "flee": func(): pass, "leave": func(): pass}
@@ -556,7 +622,8 @@ func _initialize() -> void:
 		],
 		"can_flee": true,
 	})
-	await _snap("npc_screen", {"state": npc_state, "commands": npc_cmds}, "npc")
+	await _snap_tscn("res://scenes/ui/screens/npc_screen.tscn",
+			{"state": npc_state, "commands": npc_cmds}, "npc")
 
 	print("ALL SNAPS DONE")
 	quit()

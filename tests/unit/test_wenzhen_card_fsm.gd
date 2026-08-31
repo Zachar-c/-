@@ -2,6 +2,9 @@ extends GutTest
 
 
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
+# 显式 preload 而非依赖 class_name 全局注册：后者的注册有时序，
+# 在 GUT 收集脚本阶段可能还没就绪，会让整个测试文件 Parse Error。
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 
 var _roots: Array = []
@@ -80,8 +83,6 @@ func test_escape_cancels_target_selection_without_submitting() -> void:
 
 
 func _mount(on_play: Callable) -> Control:
-	var fn = VLib.comp("res://ui/screens/battle_screen.gd", "render")
-	assert_true(fn is Callable)
 	var host := Control.new()
 	add_child(host)
 	_hosts.append(host)
@@ -95,7 +96,11 @@ func _mount(on_play: Callable) -> Control:
 		"hand": [{"id": "c1", "name": "月光蛊", "cost": 1, "effect": "造成伤害", "executable": true, "target_type": "single_enemy", "valid_target_ids": ["e0"]}],
 		"piles": {"draw": 0, "discard": 0, "exhausted": 0}, "soul_ops": {"cap": 1, "used": 0}, "default_target_id": "e0",
 	}
-	_roots.append(RuiRoot.create(host, VLib.fc(fn, {"state": state, "commands": {"play_card": on_play}})))
+	# 战斗屏已迁到 Godot 官方 .tscn（scenes/ui/screens/battle_screen.tscn）。
+	var inst := TscnMountHelper.instantiate(
+			"res://scenes/ui/screens/battle_screen.tscn",
+			state, {"play_card": on_play})
+	host.add_child(inst)
 	return host
 
 

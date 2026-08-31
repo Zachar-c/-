@@ -18,12 +18,15 @@ func test_lifespan_market_deal_shows_known_cost_and_blocks_death_trade() -> void
 	var card := _card(ActionPreviewServiceScript.preview_actions(run, _shop_node(), catalog), "shop.lifespan.pulse_drum")
 	assert_eq(int(card["cost"]["lifespan"]), 1)
 	assert_false(bool(card["executable"]))
+	var shop_node := _shop_node()
+	run.current_node_id = str(shop_node["id"])
+	var session := EncounterSessionResolverScript.start(shop_node)
 	var result := EncounterSessionResolverScript.apply(
 		run,
-		EncounterSessionResolverScript.start(_shop_node()),
-		{"type": "action_card", "action_id": card["id"], "state_version": card["state_version"]},
+		session,
+		{"type": "action_card", "action_id": card["id"], "state_version": card["state_version"], "node_id": str(shop_node["id"]), "session_node_id": str(session["node_id"])},
 		catalog,
-		_shop_node()
+		shop_node
 	)
 	assert_eq(str(result["state"].terminal_state), "active")
 	assert_eq(int(result["state"].cultivator["lifespan"]), 1)

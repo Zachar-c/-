@@ -1,6 +1,9 @@
 extends GutTest
 
 
+const DEBUG_PANEL_TSCN := "res://scenes/ui/widgets/debug_panel.tscn"
+
+
 # T5-D fusion round: the panel UI stays ours (db5ee21); the domain core is the
 # master DebugActions service (fusion adjudication 2026-08-26). Contract flips
 # versus the first slice:
@@ -50,15 +53,16 @@ func after_each() -> void:
 	_rui_hosts.clear()
 
 
+## 调试面板已迁到 Godot 官方 .tscn，注入方式是 set_props（不是 mount_snapshot，
+## 因为它不是路由屏）。-s/测试环境下 add_child 的 _ready() 推迟到首帧，
+## 所以调用方必须 await 一帧后才断言。
 func _mount_screen(props: Dictionary) -> Control:
-	var fn = VLib.comp("res://ui/screens/debug_panel.gd", "render")
-	assert_true(fn is Callable, "debug_panel must expose render")
-	if not (fn is Callable):
-		return Control.new()
 	var host := Control.new()
 	add_child(host)
 	_rui_hosts.append(host)
-	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
+	var inst := (load(DEBUG_PANEL_TSCN) as PackedScene).instantiate()
+	host.add_child(inst)
+	inst.set_props(props)
 	return host
 
 
@@ -364,6 +368,7 @@ func test_panel_expanded_renders_dev_badge_and_operation_buttons() -> void:
 	var props: Dictionary = controller._debug_props()
 	props["open"] = true
 	var host := _mount_screen(props)
+	await get_tree().process_frame
 	for i in 3:
 		await get_tree().process_frame
 
@@ -387,6 +392,7 @@ func test_panel_collapsed_shows_only_the_handle_bar() -> void:
 	var props: Dictionary = controller._debug_props()
 	props["open"] = false
 	var host := _mount_screen(props)
+	await get_tree().process_frame
 	for i in 3:
 		await get_tree().process_frame
 
@@ -403,6 +409,7 @@ func test_panel_renders_pool_intel_rows_and_feedback_toast() -> void:
 	props["open"] = true
 	props["feedback"] = "调试失败：蛊囊已满（deck_capacity_exceeded）"
 	var host := _mount_screen(props)
+	await get_tree().process_frame
 	for i in 3:
 		await get_tree().process_frame
 

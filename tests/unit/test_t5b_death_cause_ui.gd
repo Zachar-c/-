@@ -20,6 +20,7 @@ const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_s
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
+var _tscn_hosts: Array = []
 
 
 func _new_controller() -> RunController:
@@ -39,6 +40,10 @@ func after_each() -> void:
 		if h != null and is_instance_valid(h):
 			h.free()
 	_rui_hosts.clear()
+	for t in _tscn_hosts:
+		if t != null and is_instance_valid(t):
+			t.free()
+	_tscn_hosts.clear()
 
 
 func _mount_screen(screen_path: String, props: Dictionary) -> Control:
@@ -51,6 +56,17 @@ func _mount_screen(screen_path: String, props: Dictionary) -> Control:
 	_rui_hosts.append(host)
 	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
 	return host
+
+
+## 挂载 Godot 官方 .tscn 节点树屏（遭遇屏已迁离 RUITK）。
+## mount_snapshot 可能早于 _ready()，屏内自行兜底补刷新。
+func _mount_tscn_screen(scene_path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
+	var inst: Control = (load(scene_path) as PackedScene).instantiate()
+	add_child(inst)
+	_tscn_hosts.append(inst)
+	if inst.has_method("mount_snapshot"):
+		inst.mount_snapshot(snapshot, commands)
+	return inst
 
 
 func _collect_controls(node: Node, out_buttons: Array, out_labels: Array) -> void:
@@ -189,7 +205,9 @@ func test_battle_screen_danger_row_opens_and_closes_death_cause_overlay() -> voi
 				"remaining": 5, "max": 60, "danger": true, "cause_id": "death_cause_lifespan", "detail": "寿元耗尽即死。"},
 		},
 	}
-	var host := _mount_screen("res://ui/screens/battle_screen.gd", {"state": state, "commands": commands})
+	# 战斗屏已迁到 Godot 官方 .tscn。
+	var host := _mount_tscn_screen(
+			"res://scenes/ui/screens/battle_screen.tscn", state, commands)
 	for i in 3:
 		await get_tree().process_frame
 	assert_true(_press_button(host, "☠ 寿元 55/55"), "the danger death-line row itself must be clickable")
@@ -225,7 +243,8 @@ func test_encounter_screen_danger_row_opens_death_cause_overlay() -> void:
 				"remaining": 1, "max": 6, "danger": true, "cause_id": "death_cause_soul", "detail": "魂魄耗尽即死。"},
 		},
 	}
-	var host := _mount_screen("res://ui/screens/encounter_screen.gd", {"state": state, "commands": commands})
+	var host := _mount_tscn_screen(
+			"res://scenes/ui/screens/encounter_screen.tscn", state, commands)
 	for i in 3:
 		await get_tree().process_frame
 	assert_true(_press_button(host, "☠ 魂魄 4/4"), "danger row opens the cause overlay")
@@ -252,7 +271,8 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 		"unlocks": [],
 		"aftermath": "",
 	}
-	var death_host := _mount_screen("res://ui/screens/ending_screen.gd", {"state": death_state, "commands": commands})
+	var death_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/ending_screen.tscn", death_state, commands)
 	for i in 3:
 		await get_tree().process_frame
 	assert_true(_host_has_text(death_host, "死因 · 战局失利"), "death endings show the cause badge next to the type badge")
@@ -265,7 +285,8 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 	retreat_state["ending_type"] = "retreat"
 	retreat_state.erase("death_cause")
 	retreat_state.erase("death_cause_short")
-	var retreat_host := _mount_screen("res://ui/screens/ending_screen.gd", {"state": retreat_state, "commands": commands})
+	var retreat_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/ending_screen.tscn", retreat_state, commands)
 	for i in 3:
 		await get_tree().process_frame
 	assert_false(_host_has_text(retreat_host, "死因 · "), "non-death endings show no cause badge")
@@ -299,7 +320,9 @@ func test_real_snapshot_death_lines_feed_battle_overlay_end_to_end() -> void:
 		"play_card": func(_cid = "", _tgt = ""): pass,
 		"end_turn": func(): pass,
 	}
-	var host := _mount_screen("res://ui/screens/battle_screen.gd", {"state": snapshot, "commands": commands})
+	# 战斗屏已迁到 Godot 官方 .tscn。
+	var host := _mount_tscn_screen(
+			"res://scenes/ui/screens/battle_screen.tscn", snapshot, commands)
 	for i in 3:
 		await get_tree().process_frame
 	var row_text := "☠ %s %d/%d" % [want_name, int(shouyuan["value"]), int(shouyuan["threshold"])]

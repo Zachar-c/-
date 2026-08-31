@@ -69,3 +69,59 @@ func test_builder_covers_every_command_surface_key() -> void:
 	var types := _builder_types()
 	for expected in ["shop_purchase", "npc_trade", "refine_gu", "destroy_gu", "remove_card"]:
 		assert_true(types.has(expected), "source scan must see command type %s" % expected)
+
+
+func test_player_view_playthrough_wraps_regular_battle_commands_with_freshness() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
+	for command_type in ["retreat", "basic_dodge", "end_turn"]:
+		assert_false(text.contains('{"type": "%s"}' % command_type), "playthrough must not emit bare battle command: %s" % command_type)
+	assert_true(text.contains("_battle_turn_command"), "playthrough must use the shared battle freshness helper")
+
+
+func test_player_view_prioritizes_instanced_ascension_sources_by_template_id() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
+	assert_true(text.contains("template_id"), "playthrough must match generated node templates")
+	assert_true(text.contains("_is_ascension_source"), "playthrough must use a template-aware source helper")
+
+
+func test_player_view_playthrough_accepts_the_same_school_choice_as_hall() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
+	assert_true(text.contains("PLAYTHROUGH_SCHOOL"), "playthrough must exercise the hall school choice")
+	assert_true(text.contains("start_new_run(seed_value, school"), "school choice must enter the real start_new_run path")
+
+
+func test_player_view_boss_fallback_uses_punch_when_no_effective_card_exists() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
+	assert_true(text.contains("var punch_result: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))"), "boss fallback must reveal reactions with punch")
+	assert_true(text.contains("elif heal_usable:") and text.contains("elif not guard_id.is_empty():"), "boss fallback must preserve healing and guarding priorities")
+	assert_true(text.contains("or guarded"), "a guarded boss turn must open an attack window")
+	assert_true(text.contains("close_guarded_turn"), "a guarded attack must close the boss turn")
+	assert_true(text.contains("enemy_hp <= 1"), "one-health enemies must enter the immediate-kill branch")
+	assert_true(text.contains("finish_now"), "one-health enemies must use an explicit finish-now decision")
+	assert_true(text.contains("elif can_flee and finish_now and (attack_id.is_empty() or punch_has_live_reaction)"), "retreatable one-health fights without a safe attack must retreat")
+	assert_true(text.contains("_punch_has_live_reaction"), "punch fallback must account for live direct-strike reactions")
+
+
+func test_player_view_does_not_repeat_ineffective_boss_dodges() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
+	assert_true(text.contains("_dodge_is_effective"), "playthrough must check dodge speed before choosing dodge")
+	assert_true(text.contains("punch_result") and text.contains("_punch_command(battle, living_enemies)"), "ineffective dodge fallback must use punch")
+	assert_true(text.contains("elif danger and not guarded and not dodging"), "boss dodge fallback must not repeat while dodge is already armed")
+	assert_true(text.contains("elif can_flee and lethal"), "lethal dodge branch must be limited to retreatable battles")
+
+
+func test_player_view_map_strategy_uses_reachable_nodes_before_travel() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/playthrough_smoke.gd")
+	assert_true(text.contains("node.get(\"reachable\", false)"), "playthrough map strategy must skip lookahead nodes")
+	assert_true(text.contains("optional_combat"), "optional combat nodes must be lower priority than safe progress")
+
+
+func test_run_controller_does_not_bypass_battle_command_facade() -> void:
+	var text := FileAccess.get_file_as_string("res://scripts/presentation/run_controller.gd")
+	for direct_call in [
+		"BattleResolver.start",
+		"BattleResolver.take_turn",
+		"BattleResolver.apply_action_card",
+		"BattleResolver.apply_enemy_pre_turn",
+	]:
+		assert_false(text.contains(direct_call), "RunController must delegate battle calls through BattleCommandFacade: %s" % direct_call)

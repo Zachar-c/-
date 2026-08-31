@@ -72,6 +72,7 @@ func test_action_card_rejects_stale_preview_before_executing_current_command() -
 
 func test_action_card_executes_current_domain_command_and_returns_changes_and_next_cards() -> void:
 	var state := RunState.new_run(101)
+	state.current_node_id = "ridge_caravan"
 	var node := {"id": "ridge_caravan", "type": "caravan"}
 	state.current_node_id = "ridge_caravan"
 	var session := EncounterSessionResolverScript.start(node)
@@ -92,6 +93,7 @@ func test_action_card_executes_current_domain_command_and_returns_changes_and_ne
 
 func test_action_card_changes_use_chinese_gu_names_at_the_player_boundary() -> void:
 	var state := RunState.new_run(101)
+	state.current_node_id = "refinement_hollow"
 	state.refined_gu_ids = ["small_light_gu", "trail_eye_gu"]
 	state.gu_ids = state.refined_gu_ids.duplicate()
 	var node := {"id": "refinement_hollow", "type": "refinement"}

@@ -22,6 +22,11 @@ static func _diag_cls() -> GDScript:
 
 ## Clear all prior diagnostic decorations from `gutter` and reset line backgrounds.
 static func clear(code_edit: CodeEdit, gutter: int) -> void:
+	# Guard half-configured editors where the diagnostics gutter has not been allocated yet
+	# (e.g. during scene serialization or plugin reload). A -1 gutter index would crash Godot's
+	# TextEdit with "Index p_gutter = -1 is out of bounds".
+	if gutter < 0 or code_edit == null:
+		return
 	for l in code_edit.get_line_count():
 		code_edit.set_line_gutter_icon(l, gutter, null)
 		code_edit.set_line_gutter_metadata(l, gutter, null)
@@ -32,6 +37,8 @@ static func clear(code_edit: CodeEdit, gutter: int) -> void:
 ## { code, severity ("error"|"warning"|"hint"), message, line (0-based), col (0-based) }.
 static func render(code_edit: CodeEdit, gutter: int, diagnostics: Array,
 		err_icon: Texture2D, warn_icon: Texture2D) -> Array:
+	if gutter < 0 or code_edit == null:
+		return []
 	clear(code_edit, gutter)
 	var text := code_edit.text
 	var line_count := code_edit.get_line_count()
