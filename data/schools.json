@@ -53,5 +53,16 @@
       "gen_refine_healing_145_gu",
       "gen_refine_recon_146_gu"
     ]
+  },
+  "moonlight": {
+    "name": "月光道",
+    "summary": "月光入蛊、光虫同调；以月光连击为核心，辅以小型光术与体壳。",
+    "starter_gu_ids": [
+      "moonlight_gu",
+      "moonlight_gu",
+      "small_light_gu",
+      "stone_shell_gu",
+      "vitality_grass_gu"
+    ]
   }
 }

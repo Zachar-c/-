@@ -1019,6 +1019,12 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	var kind := str(offer.get("kind", ""))
 	if kind == "soul_boost":
 		return _shop_soul_boost(state, command, catalog, offer)
+	if kind == "material_purchase":
+		return _shop_material_purchase(state, offer, catalog)
+	if kind == "recipe_unlock":
+		return _shop_recipe_unlock(state, offer, catalog)
+	if kind == "resource_trade":
+		return _shop_resource_trade(state, offer, catalog)
 	if str(offer.get("kind", "")) != "purchase":
 		return _rejected(state, "unknown_shop_offer")
 	var blocked := _reject_deck_full(state, catalog, [str(offer["gu_id"])], [])
@@ -1054,6 +1060,34 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	return _accepted(next)
 
 
+static func _shop_material_purchase(state: RunState, offer: Dictionary, catalog: Dictionary) -> Dictionary:
+	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var material_id := str(offer.get("material_id", ""))
+	var materials := state.materials.duplicate(true)
+	materials[material_id] = int(materials.get(material_id, 0)) + 1
+	var next := state.append_event(_event(state, "shop_purchase", {"stone": state.stone, "materials": state.materials}, {"stone": state.stone - cost, "materials": materials}, "shop_material_purchase_completed", state.current_node_id, [material_id]))
+	next.stone = state.stone - cost
+	next.materials = materials
+	return _accepted(next)
+
+
+static func _shop_recipe_unlock(state: RunState, offer: Dictionary, catalog: Dictionary) -> Dictionary:
+	var recipe_id := str(offer.get("recipe_id", ""))
+	if state.global_codex_ids.has(recipe_id):
+		return _rejected(state, "recipe_already_unlocked")
+	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var codex := state.global_codex_ids.duplicate()
+	codex.append(recipe_id)
+	var next := state.append_event(_event(state, "shop_recipe_unlocked", {"stone": state.stone, "global_codex_ids": state.global_codex_ids}, {"stone": state.stone - cost, "global_codex_ids": codex}, "shop_recipe_unlock_completed", state.current_node_id, [recipe_id]))
+	next.stone = state.stone - cost
+	next.global_codex_ids = codex
+	return _accepted(next)
+
+
 static func _shop_soul_boost(state: RunState, _command: Dictionary, catalog: Dictionary, offer: Dictionary) -> Dictionary:
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
@@ -1074,6 +1108,78 @@ static func _shop_soul_boost(state: RunState, _command: Dictionary, catalog: Dic
 	))
 	next.stone = state.stone - cost
 	next.cultivator["soul"] = soul_after
+	return _accepted(next)
+
+
+static func _shop_resource_trade(state: RunState, offer: Dictionary, _catalog: Dictionary) -> Dictionary:
+	# 一次门禁：以 offer_id 为 key 写在 node_flags，第二次访问拒且不改 state。
+	var offer_id := str(offer.get("id", ""))
+	if offer_id.is_empty():
+		return _rejected(state, "resource_trade_unknown")
+	if str(state.node_flags.get(offer_id, "")) == "used":
+		return _rejected(state, "resource_trade_already_used")
+	var cost_kind := str(offer.get("cost_kind", ""))
+	var gain_kind := str(offer.get("gain_kind", ""))
+	var cost_amount := int(offer.get("cost_amount", 0))
+	var gain_amount := int(offer.get("gain_amount", 0))
+	var cultivator := state.cultivator.duplicate(true)
+	var before_cultivator := state.cultivator.duplicate(true)
+	var health_after := int(state.health)
+	var max_health_after := int(state.max_health)
+	# 预检并扣减代价
+	if cost_kind == "lifespan":
+		var lifespan := int(cultivator.get("lifespan", 0))
+		if lifespan - cost_amount < 1:
+			return _rejected(state, "insufficient_lifespan")
+		cultivator["lifespan"] = lifespan - cost_amount
+	elif cost_kind == "soul":
+		var soul := int(cultivator.get("soul", 0))
+		if soul - cost_amount < 1:
+			return _rejected(state, "insufficient_soul")
+		cultivator["soul"] = soul - cost_amount
+	elif cost_kind == "health":
+		if int(state.health) - cost_amount <= 0:
+			return _rejected(state, "insufficient_health")
+		health_after = int(state.health) - cost_amount
+	else:
+		return _rejected(state, "resource_trade_unknown")
+	# 收入：lifespan/soul/health（+max_health 同写）
+	var after: Dictionary = {
+		"cultivator": cultivator,
+		"node_flags": state.node_flags.duplicate(true),
+		"health": health_after,
+		"max_health": max_health_after,
+	}
+	var flags: Dictionary = state.node_flags.duplicate(true)
+	flags[offer_id] = "used"
+	after["node_flags"] = flags
+	if gain_kind == "lifespan":
+		cultivator["lifespan"] = int(cultivator.get("lifespan", 0)) + gain_amount
+	elif gain_kind == "soul":
+		var soul := int(cultivator.get("soul", 0))
+		var soul_max := int(cultivator.get("soul_max", soul + gain_amount))
+		cultivator["soul"] = mini(soul + gain_amount, soul_max)
+	elif gain_kind == "health":
+		max_health_after = int(state.max_health) + gain_amount
+		health_after = min(max_health_after, health_after + gain_amount)
+	else:
+		return _rejected(state, "resource_trade_unknown")
+	after["health"] = health_after
+	after["max_health"] = max_health_after
+	after["cultivator"] = cultivator
+	var next := state.append_event(_event(
+		state,
+		"shop_resource_trade",
+		{"cultivator": before_cultivator, "health": int(state.health), "max_health": int(state.max_health), "node_flags": state.node_flags},
+		after,
+		"shop_resource_trade_completed",
+		state.current_node_id,
+		[offer_id]
+	))
+	next.cultivator = cultivator
+	next.health = health_after
+	next.max_health = max_health_after
+	next.node_flags = (after.get("node_flags", {}) as Dictionary).duplicate(true)
 	return _accepted(next)
 
 

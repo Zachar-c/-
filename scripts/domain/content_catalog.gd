@@ -4,7 +4,7 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
-const SCHOOL_IDS := ["blood", "qi", "force", "soul", "refine"]
+const SCHOOL_IDS := ["blood", "qi", "force", "soul", "refine", "moonlight"]
 const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
@@ -17,6 +17,7 @@ const CONTRACT_RULE_KEYS := [
 	"strike_damage_pct", "enemy_damage_pct", "shop_price_pct",
 	"material_bonus", "material_penalty", "turn_essence_bonus",
 	"hp_max_penalty", "hall_material_bonus_pct", "enemy_hp_pct",
+	"starter_stone", "enemy_hp_floor",
 ]
 const ENDING_TYPE_IDS := ["success", "risky", "retreat", "death", "gu_fall", "true_ending"]
 # N1 §16.9: journal layers are a closed enum and route markers must name real
@@ -446,17 +447,35 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("curse %s escalation_per_stage must be a non-negative integer" % curse.get("id", ""))
 		if not _is_integral(curse.get("removal_base_cost", null)) or int(curse.get("removal_base_cost", 0)) < 1:
 			errors.append("curse %s removal_base_cost must be a positive integer" % curse.get("id", ""))
-	for offer in catalog.get("shop_offers", []):
-		if str(offer.get("kind", "")) in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
-			errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
-		for input_gu_id in offer.get("input_gu_ids", []):
-			if not gu_by_id.has(str(input_gu_id)):
-				errors.append("shop offer %s references missing gu %s" % [offer["id"], input_gu_id])
-		for reward in offer.get("rewards", []):
-			if reward.has("gu_id") and not gu_by_id.has(str(reward["gu_id"])):
-				errors.append("shop offer %s rewards missing gu %s" % [offer["id"], reward["gu_id"]])
-			if reward.has("relic_id") and not relic_by_id.has(str(reward["relic_id"])):
-				errors.append("shop offer %s rewards missing relic %s" % [offer["id"], reward["relic_id"]])
+		for offer in catalog.get("shop_offers", []):
+			var offer_kind := str(offer.get("kind", ""))
+			if offer_kind in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
+				errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
+			if offer_kind == "material_purchase" and not material_ids.has(str(offer.get("material_id", ""))):
+				errors.append("shop offer %s references missing material %s" % [offer["id"], offer.get("material_id", "")])
+			if offer_kind == "recipe_unlock" and not catalog.get("refinement_by_id", {}).has(str(offer.get("recipe_id", ""))):
+				errors.append("shop offer %s references missing recipe %s" % [offer["id"], offer.get("recipe_id", "")])
+			if offer_kind in ["purchase", "material_purchase", "recipe_unlock"] and (not _is_integral(offer.get("stone_cost", null)) or int(offer.get("stone_cost", 0)) < 1):
+				errors.append("shop offer %s stone_cost must be positive" % offer["id"])
+			if offer_kind == "resource_trade":
+				var cost_kinds := ["lifespan", "soul", "health"]
+				var gain_kinds := ["lifespan", "soul", "health"]
+				if not str(offer.get("cost_kind", "")) in cost_kinds:
+					errors.append("shop offer %s cost_kind must be one of %s" % [offer["id"], str(cost_kinds)])
+				if not str(offer.get("gain_kind", "")) in gain_kinds:
+					errors.append("shop offer %s gain_kind must be one of %s" % [offer["id"], str(gain_kinds)])
+				if not _is_integral(offer.get("cost_amount", null)) or int(offer.get("cost_amount", 0)) < 1:
+					errors.append("shop offer %s cost_amount must be positive" % offer["id"])
+				if not _is_integral(offer.get("gain_amount", null)) or int(offer.get("gain_amount", 0)) < 1:
+					errors.append("shop offer %s gain_amount must be positive" % offer["id"])
+			for input_gu_id in offer.get("input_gu_ids", []):
+				if not gu_by_id.has(str(input_gu_id)):
+					errors.append("shop offer %s references missing gu %s" % [offer["id"], input_gu_id])
+			for reward in offer.get("rewards", []):
+				if reward.has("gu_id") and not gu_by_id.has(str(reward["gu_id"])):
+					errors.append("shop offer %s rewards missing gu %s" % [offer["id"], reward["gu_id"]])
+				if reward.has("relic_id") and not relic_by_id.has(str(reward["relic_id"])):
+					errors.append("shop offer %s rewards missing relic %s" % [offer["id"], reward["relic_id"]])
 	var reputation: Dictionary = catalog.get("reputation", {})
 	for group_name in ["gains", "effects"]:
 		for key_value in reputation.get(group_name, {}):

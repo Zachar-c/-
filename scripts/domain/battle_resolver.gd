@@ -142,8 +142,8 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		# play one card even entering the fight at 0 essence (otherwise the
 		# opener degenerates into meditate-and-die vs a counter-holding enemy).
 		# Relic grant_first_turn_energy hooks stack on top of this base.
-		"first_turn_energy": 1,
-		"action_energy": 1,
+		"first_turn_energy": 4,
+		"action_energy": 4,
 		"turn": 1,
 		"phase": "player",
 		"final_blow": {},
@@ -196,7 +196,8 @@ static func _create_enemies(battle_id: String, kinds: Array[String], encounter: 
 	for index in kinds.size():
 		var definition := _enemy_definition(str(kinds[index]), catalog, encounter_turn)
 		var kind := str(definition.get("id", kinds[index]))
-		var hp := ContractRulesScript.enemy_hp(int(encounter.get("enemy_hp", definition.get("hp", 3))), state, catalog) if index == 0 else ContractRulesScript.enemy_hp(int(definition.get("hp", 3)), state, catalog)
+		var enemy_tier := str(definition.get("tier", "common"))
+		var hp := ContractRulesScript.enemy_hp(int(encounter.get("enemy_hp", definition.get("hp", 3))), state, catalog, enemy_tier) if index == 0 else ContractRulesScript.enemy_hp(int(definition.get("hp", 3)), state, catalog, enemy_tier)
 		var intent: Dictionary = definition.get("intent", {}).duplicate(true)
 		var phases: Array = definition.get("phases", []).duplicate(true)
 		var reactions: Array = definition.get("reactions", []).duplicate(true)
@@ -392,6 +393,11 @@ static func _resolve_card_instance(battle: Dictionary, state: RunState, card: Di
 		next_state = depleted_end["state"].finalize_death()
 		var depleted_feeds: Array[String] = depleted_end["feeds"]
 		feeds.append_array(depleted_feeds)
+		# 反噬等卡内结算把玩家打入死亡时，必须像 _death_over 一样把
+		# finished/result 传回控制器——否则战斗变僵尸局，后续命令全被
+		# terminal_run 拒绝（2026-08-31 全链路验收实证）。
+		resolved["finished"] = true
+		resolved["result"] = "death"
 	resolved["battle"] = next_battle
 	resolved["state"] = next_state
 	resolved["feeds"] = feeds
@@ -896,7 +902,7 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	for enemy_value in _living_enemies(next_battle):
 		_select_enemy_intent_for(enemy_value, next_battle, next_state, int(next_battle["turn"]))
 	_sync_legacy_enemy_projection(next_battle)
-	next_battle["action_energy"] = 0
+	next_battle["action_energy"] = int(next_battle.get("first_turn_energy", 4))
 	next_battle["soul_ops_used"] = 0
 	next_battle["flags"].erase("guarded")
 	next_battle["flags"].erase("basic_attack_used")
@@ -913,14 +919,14 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	next_state = _settle_curse_damage(next_battle, next_state)
 	if _depleted(next_state):
 		return _death_over(next_battle, next_state, catalog, ["player_dead"])
-	# 收势回气：wire the previously dead cave_aperture.essence_regen_per_turn
-	# into battle pacing. Without it a long fight (final boss) stalls: the
-	# basic attack is swallowed by reactions and probe budget runs dry, so a
-	# floor build can neither win nor retreat -- the turn loop never ends.
-	# 2026-08-28 设计点：节点内回真元手段随转数放大——收势回气 = 配置基值
-	# 2 + (转数-1)，长 Boss 战在高转可持续施法。
-	var regen := maxi(0, int(next_state.cave_aperture.get("essence_regen_per_turn", 0))) \
-		+ maxi(0, int(next_state.cultivation) - 1)
+	# 2026-08-31 行动点：每回合结束 action_energy 重置为 first_turn_energy 上限。
+	# 真元回复（2026-08-31 设计点）：按资质等级 aptitude_pct 比例从 capacity 中
+	# 回复，floor(capacity * aptitude_pct / 100)，并在 essence_capacity 处 clamp。
+	# 替换旧式 2 + cultivation-1 固定回气：让资质差异在多回合战斗中显形。
+	var aptitude_data: Dictionary = catalog.get("aptitude", {})
+	var aptitude_pct := int(aptitude_data.get("aptitude_pct", {}).get(str(next_state.aptitude), 100))
+	var capacity := int(next_state.essence_capacity)
+	var regen := int(floor(float(capacity) * float(aptitude_pct) / 100.0))
 	if regen > 0:
 		var regen_cap := maxi(int(next_state.essence), int(next_state.essence_capacity))
 		var recovered := mini(next_state.essence + regen, regen_cap)

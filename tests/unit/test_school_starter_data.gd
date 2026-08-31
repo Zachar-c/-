@@ -37,7 +37,7 @@ func test_each_school_has_five_starters() -> void:
 
 func test_every_school_has_display_name_and_summary() -> void:
 	var cat: Dictionary = catalog()
-	assert_eq((cat["schools"] as Dictionary).size(), 5, "five schools must be declared")
+	assert_eq((cat["schools"] as Dictionary).size(), 6, "six schools must be declared")
 	for school_id in SCHOOLS:
 		var entry: Dictionary = cat["schools"].get(school_id, {})
 		assert_false(entry.is_empty(), "school %s must be declared" % school_id)

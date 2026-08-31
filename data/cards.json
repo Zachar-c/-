@@ -3194,5 +3194,69 @@
     "occupies_soul_slots": false,
     "public_text_key": "gen_refine_healing_180_card",
     "rarity": "epic"
+  },
+  {
+    "id": "vitality_grass_remedy",
+    "source_gu_ids": [
+      "vitality_grass_gu"
+    ],
+    "cost": {
+      "essence": 0
+    },
+    "effects": [
+      "remedy_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "vitality_grass_remedy",
+    "rarity": "common"
+  },
+  {
+    "id": "jade_skin_guard",
+    "source_gu_ids": [
+      "jade_skin_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "grant_block"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": false,
+    "public_text_key": "jade_skin_guard",
+    "rarity": "rare"
+  },
+  {
+    "id": "white_boar_strength",
+    "source_gu_ids": [
+      "white_boar_strength_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "add_temp_power"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": false,
+    "public_text_key": "white_boar_strength",
+    "rarity": "epic"
+  },
+  {
+    "id": "white_jade_form",
+    "source_gu_ids": [
+      "white_jade_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "grant_block"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": false,
+    "public_text_key": "white_jade_form",
+    "rarity": "epic"
   }
 ]

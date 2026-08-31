@@ -1,22 +1,76 @@
 {
   "pity": {
     "threshold": 3,
-    "clearing_rarities": ["rare", "epic", "legendary"],
+    "clearing_rarities": [
+      "rare",
+      "epic",
+      "legendary"
+    ],
     "material_pity": {
       "threshold": 3,
-      "target_material_ids": ["venom_sac", "moon_dew"]
+      "target_material_ids": [
+        "venom_sac",
+        "moon_dew"
+      ]
     }
   },
   "materials": {
-    "beast_blood": { "name_zh": "兽血", "value": 2, "use": { "health": 2, "text": "生饮兽血，气血回复 2。" } },
-    "beast_bone": { "name_zh": "兽骨", "value": 1, "use": { "health": 1, "text": "嚼碎兽骨，气血回复 1。" } },
-    "venom_sac": { "name_zh": "毒囊", "value": 3, "use": { "health": -1, "text": "吞服毒囊蚀伤脏腑，气血 -1。" } },
-    "moon_dew": { "name_zh": "月华露", "value": 4, "use": { "essence": 2, "text": "含服月华露，真元回复 2。" } }
+    "beast_blood": {
+      "name_zh": "兽血",
+      "value": 2,
+      "use": {
+        "health": 2,
+        "text": "生饮兽血，气血回复 2。"
+      }
+    },
+    "beast_bone": {
+      "name_zh": "兽骨",
+      "value": 1,
+      "use": {
+        "health": 1,
+        "text": "嚼碎兽骨，气血回复 1。"
+      }
+    },
+    "venom_sac": {
+      "name_zh": "毒囊",
+      "value": 3,
+      "use": {
+        "health": -1,
+        "text": "吞服毒囊蚀伤脏腑，气血 -1。"
+      }
+    },
+    "moon_dew": {
+      "name_zh": "月华露",
+      "value": 4,
+      "use": {
+        "essence": 2,
+        "text": "含服月华露，真元回复 2。"
+      }
+    },
+    "moon_blue_petal": {
+      "description": "moon_blue_petal — 验收台账新增材料",
+      "value": 1,
+      "name_zh": "月蓝花瓣",
+      "use": {
+        "text": "月蓝花瓣 入药。"
+      }
+    },
+    "boar_king_tusk": {
+      "description": "boar_king_tusk — 验收台账新增材料",
+      "value": 1,
+      "name_zh": "野猪王牙",
+      "use": {
+        "text": "野猪王牙 入药。"
+      }
+    }
   },
   "loot": {
     "common": {
       "material_count": 1,
-      "material_pool": ["beast_blood", "beast_bone"],
+      "material_pool": [
+        "beast_blood",
+        "beast_bone"
+      ],
       "gu_chance_pct": 0,
       "gu_pool": {
         "weights": {},
@@ -25,25 +79,53 @@
     },
     "elite": {
       "material_count": 1,
-      "material_pool": ["beast_blood", "beast_bone", "venom_sac"],
+      "material_pool": [
+        "beast_blood",
+        "beast_bone",
+        "venom_sac"
+      ],
       "gu_chance_pct": 30,
       "forced_rarity": "epic",
       "gu_pool": {
-        "weights": { "common": 60, "rare": 35, "epic": 5 },
+        "weights": {
+          "common": 60,
+          "rare": 35,
+          "epic": 5
+        },
         "by_rarity": {
-          "common": ["stone_shell_gu"],
-          "rare": ["mist_step_gu"],
-          "epic": ["moonlight_gu"]
+          "common": [
+            "stone_shell_gu"
+          ],
+          "rare": [
+            "mist_step_gu"
+          ],
+          "epic": [
+            "moonlight_gu"
+          ]
         }
       },
       "cost_pool": [
-        { "kind": "backlash", "curse_id": "gu_erosion", "layers": 1, "weight": 1 },
-        { "kind": "notoriety", "amount": 2, "weight": 1 }
+        {
+          "kind": "backlash",
+          "curse_id": "gu_erosion",
+          "layers": 1,
+          "weight": 1
+        },
+        {
+          "kind": "notoriety",
+          "amount": 2,
+          "weight": 1
+        }
       ]
     },
     "boss": {
       "material_count": 2,
-      "material_pool": ["beast_blood", "beast_bone", "venom_sac", "moon_dew"],
+      "material_pool": [
+        "beast_blood",
+        "beast_bone",
+        "venom_sac",
+        "moon_dew"
+      ],
       "gu_chance_pct": 0,
       "gu_pool": {
         "weights": {},
