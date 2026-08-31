@@ -11,6 +11,7 @@ const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_s
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
@@ -331,6 +332,8 @@ const _REJECTION_TEXT := {
 	"invalid_action_card": "这张牌当前不能打出。",
 	"stale_state_version": "局面已变化，操作已过期，请重试。",
 	"not_enough_essence": "真元不足。",
+	"no_actions_left": "行动值已用完，结束回合恢复。",
+	"dodge_exhausted": "本回合已闪避过。",
 	"not_enough_hp": "生命不足，不能支付该代价。",
 	"lifespan_trade_warning": "这笔交易将耗尽寿元，被拒绝。",
 	"already_completed": "该节点已完成。",
@@ -886,7 +889,18 @@ func _inject_school_starters(school: String) -> void:
 	var injected: Array[String] = []
 	for starter_value in starters:
 		var gu_id := str(starter_value)
-		if state.refined_gu_ids.has(gu_id):
+		# Starter packs may intentionally contain duplicates (e.g. two moonlight gu).
+		# Only skip when the existing instance count already satisfies this pack's
+		# requested multiplicity.
+		var existing_count := 0
+		for instance_value in state.gu_instances.values():
+			if str((instance_value as Dictionary).get("definition_id", "")) == gu_id:
+				existing_count += 1
+		var requested_count := 0
+		for prior_value in starters:
+			if str(prior_value) == gu_id:
+				requested_count += 1
+		if existing_count >= requested_count:
 			continue
 		var instance_id := _next_gu_instance_id(state)
 		state.gu_instances[instance_id] = {
@@ -923,7 +937,10 @@ func _next_gu_instance_id(state_ref: RunState) -> String:
 
 # C1-min §16.13: opening swears ride the same Resolver.apply path as every
 # other command; the allowed whitelist comes from the hall save so locked
-# contracts are refused with an explicit reason feed.
+# contracts are refused with an explicit reason feed. After a successful
+# swear the aggregate may include a starter_stone contract; we lift the
+# opening meta stone above that floor and emit one opening_contract_effects
+# event so journal and replay see the same source.
 func _swear_opening_contracts(contract_ids: Array) -> void:
 	if contract_ids.is_empty():
 		return
@@ -935,11 +952,28 @@ func _swear_opening_contracts(contract_ids: Array) -> void:
 		"ids": contract_ids,
 		"allowed_ids": allowed,
 	}, catalog)
+	var succeeded := bool(resolved["result"].get("ok", false))
 	state = resolved["state"]
-	if bool(resolved["result"].get("ok", false)):
-		last_feedback = "已立誓契约。"
-	else:
+	if not succeeded:
 		last_feedback = "契约被拒：%s。" % str(resolved["result"].get("reason", ""))
+		return
+	var totals := ContractRulesScript.aggregate(state, catalog)
+	var starter_floor := int(totals.get("starter_stone", 0))
+	if starter_floor > state.stone:
+		var before := int(state.stone)
+		state = state.append_event({
+			"stage": state.stage,
+			"time": state.event_log.size(),
+			"node_id": state.current_node_id,
+			"action": "opening_contract_effects",
+			"before": {"stone": before},
+			"after": {"stone": starter_floor},
+			"reason": "starter_stone_applied",
+			"source": "run_controller",
+			"targets": contract_ids,
+		})
+		state.stone = starter_floor
+	last_feedback = "已立誓契约。"
 
 
 func _start_run_from_title() -> void:

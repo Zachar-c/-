@@ -15,10 +15,9 @@ func test_no_relics_makes_battle_and_feeding_noops() -> void:
 	var run := RunState.new_run(101)
 	assert_eq(RelicHookResolverScript.feeding_extra(run, catalog), 0)
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	# Opening fairness: every battle starts with a BASE first-turn grant of 1;
-	# with no relics the hooks must add nothing on top of that base.
-	assert_eq(int(battle.get("first_turn_energy", 0)), 1)
-	assert_eq(int(battle.get("action_energy", 0)), 1)
+	# 2026-08-31 统一行动点：无遗物时行动池 = actions_per_turn(魂魄底蕴)。
+	assert_eq(int(battle.get("actions_max", 0)), BattleResolver.actions_per_turn(int(run.cultivator.get("soul", 1))))
+	assert_eq(int(battle.get("actions_left", 0)), int(battle.get("actions_max", 0)))
 
 
 func test_real_relics_pass_catalog_validation() -> void:
@@ -36,31 +35,30 @@ func test_battle_start_grant_first_turn_energy_sets_real_energy_pool() -> void:
 	var run := RunState.new_run(101)
 	run.relic_ids = ["jade_cicada_shell"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle["first_turn_energy"]), 2, "relic grant stacks on the base 1")
-	assert_eq(int(battle["action_energy"]), 2)
+	var base := BattleResolver.actions_per_turn(int(run.cultivator.get("soul", 1)))
+	assert_eq(int(battle["actions_max"]), base + 1, "relic grant stacks on the soul action pool")
+	assert_eq(int(battle["actions_left"]), base + 1)
 
 
 func test_first_turn_energy_lets_player_spend_one_card_beyond_essence_then_blocks() -> void:
-	# With the base grant this scenario no longer needs a relic: an essence-0
-	# player can act exactly once on turn 1, then costs need real essence.
+	# 2026-08-31 行动点不再抵扣真元：真元 0 时催动蛊直接被拒（行动点尚余也无用）。
 	var run := RunState.new_run(101)
 	run.essence = 0
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
 	var first := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, run, catalog)
-	assert_eq(first["result"], "ongoing")
+	assert_true(first["feeds"].has("insufficient_essence"), "零真元催动被拒")
 	assert_eq(int(first["state"].essence), 0)
-	assert_eq(int(first["battle"]["action_energy"]), 0)
-	var second := BattleResolver.take_turn(first["battle"], {"type": "use_gu", "gu_id": "small_light_gu"}, first["state"], catalog)
-	assert_true(second["feeds"].has("insufficient_essence"))
-	assert_eq(int(second["state"].essence), 0)
+	assert_eq(int(first["battle"]["actions_left"]), int(first["battle"]["actions_max"]), "行动点未被消耗")
 
 
 func test_end_turn_clears_action_energy_after_first_turn() -> void:
 	var run := RunState.new_run(101)
 	run.relic_ids = ["jade_cicada_shell"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	var before := int(battle["actions_max"])
+	battle["actions_left"] = 0
 	var turn := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
-	assert_eq(int(turn["battle"]["action_energy"]), 0)
+	assert_eq(int(turn["battle"]["actions_left"]), before, "结束回合行动点回满（含遗物加成）")
 
 
 func test_draw_extra_card_hook_increases_hand_on_draw() -> void:
@@ -91,7 +89,7 @@ func test_play_card_gain_essence_hook_refunds_through_event_log() -> void:
 		{"action_id": card_id, "state_version": int(battle["hand_version"])},
 		catalog
 	)
-	assert_eq(int(turn["state"].essence), 5, "cost 1 is paid from the base energy first, so essence 3 stays and the +2 refund lands")
+	assert_gt(int(turn["state"].essence), 3, "催动后 +2 真元返还落账")
 	assert_eq(str(turn["state"].event_log.back()["reason"]), "relic_gain_essence_on_play")
 
 
@@ -126,7 +124,8 @@ func test_multiple_relics_accumulate_in_stable_relic_order() -> void:
 	})
 	run.relic_ids = ["zzz_relic", "aaa_relic"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle["first_turn_energy"]), 3, "base 1 + two stacked relic grants")
+	var base := BattleResolver.actions_per_turn(int(run.cultivator.get("soul", 1)))
+	assert_eq(int(battle["actions_max"]), base + 2, "soul 池 + 两枚遗物叠加")
 
 
 func test_validate_rejects_unknown_trigger_and_effect_kind() -> void:

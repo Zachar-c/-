@@ -48,9 +48,10 @@
     {
       "id": "enemy_vitality_trial",
       "label": "枯敌试炼",
-      "desc": "敌方生命降低 90%。仅用于验证完整流程，其他数值不变。",
+      "desc": "开局 1000 元石；非 Boss 敌方生命锁定为 1。仅用于验证完整流程。",
       "rules": [
-        {"key": "enemy_hp_pct", "value": -90}
+        {"key": "starter_stone", "value": 1000},
+        {"key": "enemy_hp_floor", "value": 1}
       ],
       "mutual_exclusive": [],
       "unlock": {"kind": "always"}

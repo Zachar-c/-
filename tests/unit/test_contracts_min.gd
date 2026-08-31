@@ -37,12 +37,12 @@ func _has(errors: Array[String], needle: String) -> bool:
 	return false
 
 
-func test_contracts_table_ships_four_entries_and_validates_clean() -> void:
+func test_contracts_table_ships_five_entries_and_validates_clean() -> void:
 	assert_eq(int(catalog["contracts"]["contract_cap"]), 6)
 	var entries: Array = catalog["contracts"]["entries"]
-	assert_eq(entries.size(), 4)
+	assert_eq(entries.size(), 5)
 	var by_id: Dictionary = catalog["contract_entry_by_id"]
-	for id in ["blood_pact", "miser_pact", "essence_tide", "ascetic_path"]:
+	for id in ["blood_pact", "miser_pact", "essence_tide", "ascetic_path", "enemy_vitality_trial"]:
 		assert_true(by_id.has(id), id)
 		assert_false((by_id[id]["rules"] as Array).is_empty(), id)
 		assert_false(str(by_id[id]["desc"]).is_empty(), id)
@@ -204,9 +204,9 @@ func test_essence_tide_applies_hp_max_penalty_with_lethal_precheck() -> void:
 	var result := _swear(run, ["essence_tide"])
 	assert_true(result["result"]["ok"])
 	var next: RunState = result["state"]
-	assert_eq(int(next.max_health), 6)
-	assert_eq(int(next.health), 6)
-	assert_eq(int(next.cultivator["max_health"]), 6)
+	assert_eq(int(next.max_health), 78)
+	assert_eq(int(next.health), 78)
+	assert_eq(int(next.cultivator["max_health"]), 78)
 
 	var tuned := catalog.duplicate(true)
 	tuned["contracts"] = {
@@ -214,8 +214,8 @@ func test_essence_tide_applies_hp_max_penalty_with_lethal_precheck() -> void:
 		"entries": [{
 			"id": "death_wish",
 			"label": "求死之约",
-			"desc": "生命上限-9。",
-			"rules": [{"key": "hp_max_penalty", "value": -9}],
+			"desc": "生命上限-80。",
+			"rules": [{"key": "hp_max_penalty", "value": -80}],
 			"mutual_exclusive": [],
 			"unlock": {"kind": "always"},
 		}],
@@ -225,7 +225,7 @@ func test_essence_tide_applies_hp_max_penalty_with_lethal_precheck() -> void:
 	assert_false(rejected["result"]["ok"])
 	assert_eq(str(rejected["result"]["reason"]), "contract_hp_max_lethal")
 	assert_eq(rejected["state"].contracts, [])
-	assert_eq(int(rejected["state"].max_health), 8)
+	assert_eq(int(rejected["state"].max_health), 80)
 
 
 func test_aggregate_sums_signed_rule_values_across_sworn_contracts() -> void:
@@ -285,15 +285,15 @@ func test_turn_essence_bonus_grants_essence_at_player_turn_start() -> void:
 	var before := int(run.essence)
 	var turn := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
 	assert_false(bool(turn["finished"]))
-	# 收势回气 (regen 3) lands before the tide; essence caps at capacity 4.
-	assert_eq(int(turn["state"].essence), mini(before + 3, 4))
+	# 2026-08-31 数值重做：收势回气 = 上限×回复比（丙 20%×20 = 4），潮汐在其上叠加。
+	assert_eq(int(turn["state"].essence), mini(before + 4, int(turn["state"].essence_capacity)))
 	assert_eq(str(turn["state"].event_log.back()["action"]), "contract_essence_tide")
 
 	var clean := RunState.new_run(11)
 	var plain := BattleResolver.start({"enemy_kind": "ridge_hound"}, clean, catalog)
 	var unchanged := BattleResolver.take_turn(plain, {"type": "end_turn"}, clean, catalog)
-	# 无潮汐时仍有收势回气 (regen 3, cap 4)。
-	assert_eq(int(unchanged["state"].essence), mini(int(clean.essence) + 3, 4))
+	# 无潮汐时仍有收势回气。
+	assert_eq(int(unchanged["state"].essence), mini(int(clean.essence) + 4, int(clean.essence_capacity)))
 
 
 func test_shop_price_pct_lifts_buy_prices_only() -> void:

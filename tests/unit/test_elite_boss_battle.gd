@@ -23,7 +23,7 @@ func test_boss_enemy_pre_turn_deals_intent_damage() -> void:
 
 	var pre := BattleResolver.apply_enemy_pre_turn(battle, run, catalog)
 	assert_false(pre["finished"])
-	assert_eq(int(pre["state"].health), 6)
+	assert_eq(int(pre["state"].health), 78)
 	assert_eq(int(pre["battle"]["log"].back()["damage"]), 2)
 
 

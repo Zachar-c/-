@@ -3194,5 +3194,207 @@
     "occupies_soul_slots": false,
     "public_text_key": "gen_refine_healing_180_card",
     "rarity": "epic"
+  },
+  {
+    "id": "vitality_grass_remedy",
+    "source_gu_ids": [
+      "vitality_grass_gu"
+    ],
+    "cost": {
+      "essence": 0
+    },
+    "effects": [
+      "remedy_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "vitality_grass_remedy",
+    "rarity": "common"
+  },
+  {
+    "id": "jade_skin_guard",
+    "source_gu_ids": [
+      "jade_skin_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "grant_block"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": false,
+    "public_text_key": "jade_skin_guard",
+    "rarity": "rare"
+  },
+  {
+    "id": "white_boar_strength",
+    "source_gu_ids": [
+      "white_boar_strength_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "add_temp_power"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": false,
+    "public_text_key": "white_boar_strength",
+    "rarity": "epic"
+  },
+  {
+    "id": "white_jade_form",
+    "source_gu_ids": [
+      "white_jade_gu"
+    ],
+    "cost": {
+      "essence": 2
+    },
+    "effects": [
+      "grant_block"
+    ],
+    "duration_turns": 1,
+    "occupies_soul_slots": false,
+    "public_text_key": "white_jade_form",
+    "rarity": "epic"
+  },
+  {
+    "id": "mend_grass",
+    "source_gu_ids": [
+      "mending_grass_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "mend_grass",
+    "rarity": "common"
+  },
+  {
+    "id": "bone_knit",
+    "source_gu_ids": [
+      "bone_knit_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "bone_knit",
+    "rarity": "common"
+  },
+  {
+    "id": "jade_marrow",
+    "source_gu_ids": [
+      "jade_marrow_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "jade_marrow",
+    "rarity": "rare"
+  },
+  {
+    "id": "spring_heart",
+    "source_gu_ids": [
+      "spring_heart_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "spring_heart",
+    "rarity": "rare"
+  },
+  {
+    "id": "phoenix_drop",
+    "source_gu_ids": [
+      "phoenix_drop_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "phoenix_drop",
+    "rarity": "rare"
+  },
+  {
+    "id": "life_root",
+    "source_gu_ids": [
+      "life_root_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "life_root",
+    "rarity": "epic"
+  },
+  {
+    "id": "undying_vine",
+    "source_gu_ids": [
+      "undying_vine_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "undying_vine",
+    "rarity": "rare"
+  },
+  {
+    "id": "heaven_dew",
+    "source_gu_ids": [
+      "heaven_dew_gu"
+    ],
+    "cost": {
+      "essence": 1
+    },
+    "effects": [
+      "heal_health"
+    ],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "heaven_dew",
+    "rarity": "epic"
+  },
+  {
+    "id": "test_slay",
+    "source_gu_ids": ["test_slay_gu"],
+    "cost": {"essence": 0},
+    "effects": ["deal_damage"],
+    "duration_turns": 0,
+    "occupies_soul_slots": false,
+    "public_text_key": "test_slay",
+    "rarity": "epic"
   }
 ]

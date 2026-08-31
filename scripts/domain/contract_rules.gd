@@ -19,8 +19,14 @@ static func aggregate(state: RunState, catalog: Dictionary) -> Dictionary:
 	return totals
 
 
-static func enemy_hp(base_hp: int, state: RunState, catalog: Dictionary) -> int:
-	var pct := int(aggregate(state, catalog).get("enemy_hp_pct", 0))
+static func enemy_hp(base_hp: int, state: RunState, catalog: Dictionary, tier: String = "common") -> int:
+	var totals := aggregate(state, catalog)
+	# Floor rule applies only to non-boss tiers; boss HP stays untouched
+	# (so the ascension/ending balance points still hinge on real boss kills).
+	var floor := int(totals.get("enemy_hp_floor", 0))
+	if floor > 0 and tier != "boss":
+		return floor
+	var pct := int(totals.get("enemy_hp_pct", 0))
 	var scaled := int(floor(float(maxi(1, base_hp)) * (1.0 + float(pct) / 100.0)))
 	return maxi(1, scaled)
 

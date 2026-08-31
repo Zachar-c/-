@@ -217,8 +217,8 @@ func test_set_resources_clamp_via_the_service_and_append_one_audit_entry() -> vo
 	var controller := _new_controller(true)
 	var events_before: int = controller.state.event_log.size()
 
-	assert_eq(int(controller.debug_set_resource("health", 999)["applied"]), 8, "health caps at max_health")
-	assert_eq(int(controller.state.health), 8)
+	assert_eq(int(controller.debug_set_resource("health", 999)["applied"]), 80, "health caps at max_health")
+	assert_eq(int(controller.state.health), 80)
 	assert_eq(int(controller.debug_set_resource("health", -5)["applied"]), 1, "health floors at 1 (no silent death)")
 
 	assert_eq(int(controller.debug_set_resource("stones", 100000)["applied"]),
@@ -228,7 +228,7 @@ func test_set_resources_clamp_via_the_service_and_append_one_audit_entry() -> vo
 	assert_eq(int(controller.debug_set_resource("soul", 99)["applied"]), 4, "soul caps at soul_max")
 	assert_eq(int(controller.debug_set_resource("soul", 0)["applied"]), 1, "soul floors at 1")
 
-	assert_eq(int(controller.debug_set_resource("essence", 50)["applied"]), 4, "essence caps at cave capacity")
+	assert_eq(int(controller.debug_set_resource("essence", 50)["applied"]), 20, "essence caps at cave capacity")
 	assert_eq(int(controller.debug_set_resource("essence", -1)["applied"]), 0)
 
 	assert_eq(controller.state.event_log.size(), events_before + 8, "one audit entry per accepted write")

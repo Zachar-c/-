@@ -51,13 +51,13 @@ func test_new_cards_play_with_expected_effects() -> void:
 	var trail_turn: Dictionary = BattleResolverScript.take_turn(trail_battle, {"type": "use_gu", "gu_id": "trail_eye_gu"}, trail, cat)
 	assert_true((trail_turn["battle"]["flags"] as Array).has("revealed"))
 	assert_eq(int(trail_turn["battle"]["delay_progress"]), 1)
-	# moon_glow_flare strikes for three (rank 2 gu, cost 2).
+	# moon_glow_flare：rank2 因子 ×3 → 3×3=9，直接击杀 4 血石游者。
 	var glow := make_state()
 	glow.refined_gu_ids.append("moon_glow_gu")
 	var glow_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, glow, cat)
 	var glow_turn: Dictionary = BattleResolverScript.take_turn(glow_battle, {"type": "use_gu", "gu_id": "moon_glow_gu"}, glow, cat)
-	assert_eq(int(glow_turn["battle"]["enemy_hp"]), 1)
-	# moonlight_gu strikes for two.
+	assert_eq(int(glow_turn["battle"]["enemy_hp"]), 0)
+	# moonlight：rank1 因子 ×1 → 2 伤，石游者余 2 血。
 	var moon := make_state()
 	moon.refined_gu_ids.append("moonlight_gu")
 	var moon_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, moon, cat)
@@ -67,9 +67,8 @@ func test_new_cards_play_with_expected_effects() -> void:
 
 func test_card_count_grew_to_nineteen() -> void:
 	var cat: Dictionary = catalog()
-	assert_eq(cat["cards"].size(), 199)
-	# 2026-08-30: designer-added moon_ray_gu (月芒蛊) makes the pool 201.
-	assert_eq(cat["gu"].size(), 201)
+	assert_eq(cat["cards"].size(), 212)
+	assert_eq(cat["gu"].size(), 213)
 
 
 func test_intel_bonus_adds_damage_to_strikes() -> void:

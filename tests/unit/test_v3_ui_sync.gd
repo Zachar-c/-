@@ -70,7 +70,7 @@ func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	assert_true(_any_contains(texts, "意图："), "battle screen must render enemy intent")
 
 
-func test_battle_snapshot_projects_multiple_enemies_piles_and_soul_ops() -> void:
+func test_battle_snapshot_projects_multiple_enemies_piles_and_actions() -> void:
 	var controller := _battle_controller()
 	controller.current_battle = BattleCommandFacadeScript.start({
 		"enemy_kinds": ["ridge_hound", "neutral_stone_wanderer"],
@@ -83,8 +83,8 @@ func test_battle_snapshot_projects_multiple_enemies_piles_and_soul_ops() -> void
 	assert_true(snapshot["piles"].has("draw"))
 	assert_true(snapshot["piles"].has("discard"))
 	assert_true(snapshot["piles"].has("exhausted"))
-	assert_true(snapshot["soul_ops"].has("cap"))
-	assert_true(snapshot["soul_ops"].has("used"))
+	assert_true(snapshot["actions"].has("max"))
+	assert_true(snapshot["actions"].has("left"))
 
 
 func test_battle_view_hud_uses_programmatic_icons() -> void:

@@ -85,20 +85,59 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
 	controller.start_new_run(101)
 	controller.submit_command({"type": "travel", "node_id": "neutral_wanderer"})
+	# 遭遇命令信封：node.fight 必须携带 node_id/session_node_id（A1 修复后的契约）。
 	controller.submit_command({
 		"type": "action_card",
 		"action_id": "node.fight",
 		"state_version": controller.state.event_log.size(),
-		"node_id": str(controller.current_node.get("id", "")),
-		"session_node_id": str(controller.current_session.get("node_id", "")),
+		"node_id": str(controller.state.current_node_id),
+		"session_node_id": str(controller.state.current_node_id),
 	})
-	# V1（2026-08-30）：把敌人压到 1 血，一次蛊行动带走。
-	controller.current_battle["enemies"][0]["hp"] = 1
-	var instance_id := str(controller.current_battle["gu_slots"][0]["instance_id"])
-	var result := controller.submit_command({
-		"type": "use_gu",
-		"instance_id": instance_id,
-	})
+	# 流程夹具：敌方行 HP 压到 1，任一伤害卡一击致胜；先守护（反制石甲吞招）再攻击。
+	for enemy_row_value in controller.current_battle.get("enemies", []):
+		var enemy_row: Dictionary = enemy_row_value
+		enemy_row["hp"] = 1
+	# 旧投影标量与新行表都要压到 1：回合切换会从标量重建行表。
+	controller.current_battle["enemy_hp"] = 1
+	var played: Array[String] = []
+	var result: Dictionary = {}
+	for _step in 6:
+		if controller.current_view_name() != "Battle":
+			break
+		var battle: Dictionary = controller.current_battle
+		var target_id := ""
+		for enemy_value in battle.get("enemies", []):
+			var enemy: Dictionary = enemy_value
+			if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
+				target_id = str(enemy.get("enemy_id", ""))
+				break
+		result = {}
+		for hand_card_value in battle.get("hand", []):
+			var card: Dictionary = hand_card_value
+			var action_id := "battle.%s.%s" % [str(battle.get("battle_id", "")), str(card.get("instance_id", ""))]
+			if action_id in played:
+				continue
+			var definition: Dictionary = (controller.catalog as Dictionary).get("card_by_id", {}).get(str(card.get("definition_id", "")), {})
+			if (definition.get("source_gu_ids", []) as Array).is_empty():
+				continue
+			result = controller.submit_command({
+				"type": "action_card",
+				"action_id": action_id,
+				"card_id": str(card.get("definition_id", "")),
+				"target_id": target_id,
+				"state_version": int(controller.current_battle.get("hand_version", 0)),
+				"expected_phase": str(controller.current_battle.get("phase", "player")),
+			})
+			played.append(action_id)
+			break
+		if result.is_empty() or not bool(result.get("accepted", false)):
+			# 无牌可出则结束回合重抽
+			controller.submit_command({
+				"type": "end_turn",
+				"state_version": controller.state.event_log.size(),
+				"expected_phase": "player",
+			})
+			played.clear()
 
 	assert_eq(result["result"], "victory")
 	# D3 战利品弹窗（流程图 G3）：victory 且有 loot 时进 Reward 屏确认，关闭后回地图。

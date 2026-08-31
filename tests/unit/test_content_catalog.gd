@@ -3,8 +3,7 @@ extends GutTest
 
 func test_catalog_has_twenty_gu_and_three_inheritances() -> void:
 	var catalog := ContentCatalog.load_all()
-	# 2026-08-30: designer-added moon_ray_gu (月芒蛊) makes the pool 201.
-	assert_eq(catalog["gu"].size(), 201)
+	assert_eq(catalog["gu"].size(), 213)
 	assert_eq(catalog["inheritances"].size(), 3)
 	assert_eq(ContentCatalog.validate(catalog), [])
 

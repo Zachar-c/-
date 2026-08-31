@@ -9,13 +9,12 @@ const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolve
 var seed: int = 0
 var stage: String = "one"
 var cultivation: int = 1
-var essence: int = 3
-var essence_capacity: int = 4
-# 2026-08-28 平衡重标定：Boss 加厚（crag 10 等）+ 拳脚弱化（1+力道）后，
-# 6 点开局气血对一转套路的容错为负（L1 Boss 完美守护循环也差 1 口气）。
-# 开局气血上调至 8，保留 Boss 多回合设计意图。
-var health: int = 8
-var max_health: int = 8
+var essence: int = 20
+var essence_capacity: int = 20
+# 2026-08-31 数值重做：出身丙等满真元 20（10×丙2×一转1）、80 气血、
+# 60 年寿元、魂魄底蕴 1（每回合 2 次行动，底蕴分档抬升）。
+var health: int = 80
+var max_health: int = 80
 var aptitude: String = "bing"
 var injury: int = 0
 var lifespan_debt: int = 0
@@ -87,10 +86,10 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"reincarnation": 1,
 		"stage": 0,
 		"aptitude": "bing",
-		"health": 8,
-		"max_health": 8,
+		"health": 80,
+		"max_health": 80,
 		"lifespan": 60,
-		"soul": 4,
+		"soul": 1,
 		"soul_max": 4,
 		"soul_control_limit": 2,
 		"notorious": 0,
@@ -100,9 +99,9 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"statuses": {},
 	}
 	state.cave_aperture = {
-		"essence": 4,
-		"essence_max": 4,
-		"essence_regen_per_turn": 3,
+		"essence": 20,
+		"essence_max": 20,
+		"essence_regen_per_turn": 4,
 		"integrity": 6,
 		"integrity_max": 6,
 		"stored_gu_instance_ids": ["gu_001"],

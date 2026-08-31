@@ -36,6 +36,8 @@ func _fire_fight(controller: RunController) -> Dictionary:
 		"type": "action_card",
 		"action_id": "node.fight",
 		"state_version": int(card.get("state_version", controller.state.event_log.size())),
+		"node_id": str(controller.current_node.get("id", "")),
+		"session_node_id": str(controller.current_node.get("id", "")),
 	})
 
 

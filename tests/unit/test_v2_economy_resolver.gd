@@ -48,7 +48,7 @@ func test_cultivation_window_spends_stone_and_breaks_through_to_rank_two() -> vo
 	assert_true(result["result"]["ok"])
 	assert_eq(result["state"].cultivation, 2)
 	assert_eq(result["state"].stone, 7)
-	assert_eq(result["state"].essence, 4)
+	assert_eq(result["state"].essence, 20)
 
 
 func test_stage_ledger_blocks_progress_until_paid_or_adjusted() -> void:

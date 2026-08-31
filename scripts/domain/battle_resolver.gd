@@ -4,7 +4,6 @@ extends RefCounted
 const DeckBuilderScript = preload("res://scripts/domain/deck_builder.gd")
 const SeededRngScript = preload("res://scripts/domain/rng.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
-const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
@@ -14,13 +13,24 @@ const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 const BATTLE_HAND_SIZE := 2
 
-const APTITUDE_BACKLASH_FACTORS := {
-	"jia": {"health_factor": 0.60, "soul_factor": 0.50},
-	"yi": {"health_factor": 0.80, "soul_factor": 0.70},
-	"bing": {"health_factor": 1.00, "soul_factor": 1.00},
-	"ding": {"health_factor": 1.30, "soul_factor": 1.40},
-	"wu": {"health_factor": 1.60, "soul_factor": 1.80},
-}
+
+# 2026-08-31 数值重做：真元总量、蛊虫催动消耗、蛊虫伤害同用转数因子
+# 1:3:9:27:81（表在 aptitude.json cultivation_factor；缺档回退线性 rank）。
+static func rank_factor(catalog: Dictionary, rank: int) -> int:
+	var factors: Dictionary = catalog.get("aptitude", {}).get("cultivation_factor", {})
+	return int(factors.get(str(clampi(rank, 1, 5)), maxi(1, rank)))
+
+
+# 念头/行动点/一心多用统一（2026-08-31 裁定）：每回合行动次数由魂魄底蕴
+# 分档决定：1/10/100/1000/10000+ → 2/3/4/5/6，超过 10000 不再增加。
+const SOUL_ACTION_TIERS := [[10000, 6], [1000, 5], [100, 4], [10, 3]]
+
+
+static func actions_per_turn(soul: int) -> int:
+	for tier in SOUL_ACTION_TIERS:
+		if soul >= int(tier[0]):
+			return int(tier[1])
+	return 2
 
 const LEGACY_ENEMIES := {
 	"beast_swarm": {"hp": 3, "control": 0, "intent": {"id": "bite", "label": "兽群逼近", "damage": 1, "speed": 0}},
@@ -124,8 +134,10 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"pending_curse_damage": 0,
 		"sealed_gu_definition_ids": sealed_definition_ids,
 		"sealed_gu_instance_ids": sealed_instance_ids,
-		"soul_ops_cap": SoulCapacityScript.battle_ops_cap(state),
-		"soul_ops_used": 0,
+
+		"temp_power": 0,
+		"temp_block": 0,
+		"player_block": 0,
 		"first_mover": str(encounter.get("first_mover", "player")),
 		"blood_stacks": 0,
 		"flags": [],
@@ -138,12 +150,10 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		"clues": enemy.get("clues", []).duplicate(),
 		"log": [{"id": "intent_revealed", "text_key": "intent_revealed", "intent": intent.get("id", "")}],
 		"inheritance_uses": {},
-		# Opening fairness: a base first-turn grant guarantees the player can
-		# play one card even entering the fight at 0 essence (otherwise the
-		# opener degenerates into meditate-and-die vs a counter-holding enemy).
-		# Relic grant_first_turn_energy hooks stack on top of this base.
-		"first_turn_energy": 1,
-		"action_energy": 1,
+		# 2026-08-31 统一行动点：每回合行动次数 = actions_per_turn(魂魄底蕴)，
+		# 结束回合回满；真元单独结算（行动点不再抵扣真元）。遗物钩子在其上叠加。
+		"actions_max": actions_per_turn(int(state.cultivator.get("soul", 1))),
+		"actions_left": actions_per_turn(int(state.cultivator.get("soul", 1))),
 		"turn": 1,
 		"phase": "player",
 		"final_blow": {},
@@ -196,7 +206,8 @@ static func _create_enemies(battle_id: String, kinds: Array[String], encounter: 
 	for index in kinds.size():
 		var definition := _enemy_definition(str(kinds[index]), catalog, encounter_turn)
 		var kind := str(definition.get("id", kinds[index]))
-		var hp := ContractRulesScript.enemy_hp(int(encounter.get("enemy_hp", definition.get("hp", 3))), state, catalog) if index == 0 else ContractRulesScript.enemy_hp(int(definition.get("hp", 3)), state, catalog)
+		var enemy_tier := str(definition.get("tier", "common"))
+		var hp := ContractRulesScript.enemy_hp(int(encounter.get("enemy_hp", definition.get("hp", 3))), state, catalog, enemy_tier) if index == 0 else ContractRulesScript.enemy_hp(int(definition.get("hp", 3)), state, catalog, enemy_tier)
 		var intent: Dictionary = definition.get("intent", {}).duplicate(true)
 		var phases: Array = definition.get("phases", []).duplicate(true)
 		var reactions: Array = definition.get("reactions", []).duplicate(true)
@@ -369,29 +380,17 @@ static func _resolve_card_instance(battle: Dictionary, state: RunState, card: Di
 	_apply_kill_move_sequence(next_battle, definition, card, catalog, next_state)
 	if int(definition.get("duration_turns", 0)) > 0:
 		_register_duration_effect(next_battle, definition, card)
-	var backlash := {} if next_state.is_terminal() else _backlash_for_activation(next_battle, next_state, definition, card, catalog)
-	if not backlash.is_empty():
-		next_state = next_state.append_event(_event(
-			next_state,
-			"battle_backlash",
-			# Scalar anchors only (L1 MINOR): the full cultivator deep snapshot
-			# bloated every backlash event; after still lands the new cultivator.
-			{
-				"health": next_state.health,
-				"soul": int(next_state.cultivator.get("soul", 0)),
-				"curse_layers": _total_curse_layers(next_state),
-			},
-			backlash["after"],
-			str(backlash["reason"]),
-			backlash["targets"]
-		))
-		feeds.append(str(backlash["feed"]))
 	if not next_state.is_terminal() and _depleted(next_state):
 		var depleted_end := RelicHookResolverScript.apply_battle_end(next_battle, next_state, catalog)
 		next_battle = depleted_end["battle"]
 		next_state = depleted_end["state"].finalize_death()
 		var depleted_feeds: Array[String] = depleted_end["feeds"]
 		feeds.append_array(depleted_feeds)
+		# 反噬等卡内结算把玩家打入死亡时，必须像 _death_over 一样把
+		# finished/result 传回控制器——否则战斗变僵尸局，后续命令全被
+		# terminal_run 拒绝（2026-08-31 全链路验收实证）。
+		resolved["finished"] = true
+		resolved["result"] = "death"
 	resolved["battle"] = next_battle
 	resolved["state"] = next_state
 	resolved["feeds"] = feeds
@@ -476,7 +475,10 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 	# 主武器，不挤占蛊虫卡的输出生态位。
 	if (battle.get("flags", []) as Array).has("basic_attack_used"):
 		return _result(battle, state, false, "ongoing", ["basic_attack_exhausted"])
+	if int(battle.get("actions_left", 0)) < 1:
+		return _result(battle, state, false, "ongoing", ["no_actions_left"])
 	_add_flag(battle, "basic_attack_used")
+	battle["actions_left"] = int(battle.get("actions_left", 0)) - 1
 	var punch_damage := 1 + int(state.cultivator.get("force_power", 0))
 	var log_entry := {"id": "basic_punch", "damage": punch_damage}
 	if target_id.is_empty() and not _living_enemies(battle).is_empty():
@@ -588,14 +590,18 @@ static func _settle_curse_damage(battle: Dictionary, state: RunState) -> RunStat
 
 
 static func _basic_dodge(battle: Dictionary, state: RunState) -> Dictionary:
-	_add_flag(battle, "dodging")
-	battle["log"].append({"id": "basic_dodge"})
+	# 2026-08-31 裁定：闪避 = 临时提升一回合 1 点防御（数值护盾吸收），
+	# 每回合限一次，耗 1 行动点；替代旧的"速度比较免伤"。
+	if (battle.get("flags", []) as Array).has("dodge_used"):
+		return _result(battle, state, false, "ongoing", ["dodge_exhausted"])
+	if int(battle.get("actions_left", 0)) < 1:
+		return _result(battle, state, false, "ongoing", ["no_actions_left"])
+	_add_flag(battle, "dodge_used")
+	battle["actions_left"] = int(battle.get("actions_left", 0)) - 1
+	battle["player_block"] = int(battle.get("player_block", 0)) + 1
+	battle["log"].append({"id": "basic_dodge", "block": 1})
 	var next_state := state.append_event(_event(state, "battle_basic_dodge", {}, {}, "battle_basic_dodge", []))
 	return _result(battle, next_state, false, "ongoing", ["dodge_readied"])
-
-
-static func _player_dodge_speed(state: RunState) -> int:
-	return int(state.cultivator.get("speed", 2))
 
 
 static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
@@ -606,24 +612,21 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 	if gu.is_empty():
 		return _result(battle, state, false, "ongoing", ["unknown_gu"])
-	# 魂魄并发预算：每回合打出的蛊虫数受 soul_ops_cap 限制（数量取舍）。
-	# 魂道超载（overchannel）豁免预算门——它由燃魂的 mercy 逻辑自行结算。
-	var soul_ops_used := int(battle.get("soul_ops_used", 0))
-	var overchannel_claim := SchoolRulesScript.is_soul(state) and int(action.get("overchannel", 0)) > 0
-	if soul_ops_used >= int(battle.get("soul_ops_cap", 1)) and not overchannel_claim:
-		return _result(battle, state, false, "ongoing", ["soul_ops_exhausted"])
+	# 念头/行动点/一心多用统一（2026-08-31 裁定）：每回合行动次数由魂魄底蕴
+	# 分档决定（1/10/100/1000/10000+ → 2/3/4/5/6），每次催动耗 1 行动。
+	var actions_left := int(battle.get("actions_left", 0))
+	if actions_left < 1:
+		return _result(battle, state, false, "ongoing", ["no_actions_left"])
 	# R9.2 essence_surcharge: each intensity point beyond the free allowance
 	# of 2 adds +1 to every play; unpaid plays take the existing rejection.
-	# 同名蛊阶费：蛊虫每进一阶，催动消耗的真元 +1（质量取舍）。
-	# 2026-08-28 验收批：阶加成改 pacing.advance_bonus_by_rank 阶梯表
-	# （0/1/3/6/10，超线性——一/三/五转蛊师战力差异放大）；缺档回退 rank-1。
+	# 2026-08-31 数值重做：蛊虫催动真元 = 基础消耗 × 转数因子（1:3:9:27:81），
+	# 同名蛊升阶取最高阶因子（质量与预算同轨）。
 	var owned_rank := state.highest_owned_rank(gu_id)
-	var bonus_table: Dictionary = catalog.get("pacing", {}).get("advance_bonus_by_rank", {})
-	var rank_bonus := int(bonus_table.get(str(owned_rank), maxi(0, owned_rank - 1)))
+	var gu_rank := maxi(int(gu.get("rank", 1)), owned_rank)
+	var factor := rank_factor(catalog, gu_rank)
 	var surcharge := CurseRegistryScript.essence_surcharge(battle.get("curses", []))
-	var essence_cost := int(gu.get("essence_cost", 0)) + surcharge + rank_bonus
-	var action_energy := int(battle.get("action_energy", 0))
-	if state.essence + action_energy < essence_cost:
+	var essence_cost := int(gu.get("essence_cost", 0)) * factor + surcharge
+	if state.essence < essence_cost:
 		return _result(battle, state, false, "ongoing", ["insufficient_essence"])
 	var overchannel := {}
 	if SchoolRulesScript.is_soul(state):
@@ -634,19 +637,16 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					not battle.get("flags", {}).has("soul_mercy_used"))
 			if overchannel.is_empty():
 				return _rejected_turn(battle, state, "soul_exhausted")
-	var paid_from_energy := mini(essence_cost, action_energy)
-	var paid_from_essence := essence_cost - paid_from_energy
-	battle["action_energy"] = action_energy - paid_from_energy
-	battle["soul_ops_used"] = soul_ops_used + 1
-	var after := {"essence": state.essence - paid_from_essence}
+	battle["actions_left"] = actions_left - 1
+	var after := {"essence": state.essence - essence_cost}
 	var mode := str(action.get("mode", ""))
 	var log_entry := {"id": "gu_used", "gu_id": gu_id, "mode": mode}
 	match gu_id:
 		"small_light_gu":
 			_add_flag(battle, "revealed")
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
-			_strike(battle, 1 + rank_bonus, "attack", target_id)
-			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1 + rank_bonus}
+			_strike(battle, 1 * factor, "attack", target_id)
+			log_entry = {"id": "light_probe", "gu_id": "small_light_gu", "damage": 1 * factor}
 		"thorn_whip_gu":
 			if mode == "bind":
 				_add_flag(battle, "enemy_bound")
@@ -657,7 +657,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					_reveal_reaction(battle, reaction, target_id)
 					log_entry = {"id": str(reaction.get("id", "reaction")), "reaction": true}
 				else:
-					_strike(battle, 2 + rank_bonus, "attack", target_id)
+					_strike(battle, 2 * factor, "attack", target_id)
 					log_entry["id"] = "thorn_strike"
 		"stone_shell_gu":
 			_add_flag(battle, "guarded")
@@ -667,7 +667,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			log_entry["id"] = "mist_step"
 		"blood_moss_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			_strike(battle, 1 + rank_bonus, "attack", target_id)
+			_strike(battle, 1 * factor, "attack", target_id)
 			log_entry["id"] = "blood_moss_relief"
 		"venom_thread_gu":
 			_add_flag(battle, "enemy_slowed")
@@ -681,11 +681,11 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "targeting_obscured")
 			log_entry["id"] = "shadow_veil"
 		"blood_droplet_gu":
-			_strike(battle, 2 + rank_bonus, "attack", target_id)
+			_strike(battle, 2 * factor, "attack", target_id)
 			log_entry["id"] = "blood_droplet_shot"
 		"blood_bat_gu":
 			after["injury"] = maxi(0, state.injury - 1)
-			_strike(battle, 1 + rank_bonus, "attack", target_id)
+			_strike(battle, 1 * factor, "attack", target_id)
 			log_entry["id"] = "blood_bat_bite"
 		"blood_wing_gu":
 			_add_flag(battle, "retreat_preserved")
@@ -695,7 +695,7 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			battle["delay_progress"] = int(battle["delay_progress"]) + 1
 			log_entry["id"] = "farewell_grip"
 		"force_gu":
-			_strike(battle, 2 + rank_bonus, "attack", target_id)
+			_strike(battle, 2 * factor, "attack", target_id)
 			log_entry["id"] = "power_blow"
 		"bear_strength_gu":
 			after["injury"] = maxi(0, state.injury - 1)
@@ -704,10 +704,10 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 			_add_flag(battle, "guarded")
 			log_entry["id"] = "qi_bulwark"
 		"moonlight_gu":
-			_strike(battle, 2 + rank_bonus, "attack", target_id)
+			_strike(battle, 2 * factor, "attack", target_id)
 			log_entry["id"] = "moonlight_strike"
 		"moon_glow_gu":
-			_strike(battle, 3 + rank_bonus, "attack", target_id)
+			_strike(battle, 3 * factor, "attack", target_id)
 			log_entry["id"] = "moon_glow_flare"
 		"trail_eye_gu":
 			_add_flag(battle, "revealed")
@@ -722,9 +722,23 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 					var effect: Dictionary = effect_value
 					match str(effect.get("kind", "")):
 						"strike":
-							_strike(battle, maxi(1, int(effect.get("amount", 1))) + rank_bonus, "attack", target_id)
+							_strike(battle, maxi(1, int(effect.get("amount", 1))) * factor, "attack", target_id)
+						"aoe_strike":
+							# 群体打击：固定伤害直结全部存活敌人，不乘转数因子。
+							_strike(battle, maxi(1, int(effect.get("amount", 1))), "attack", "")
 						"heal_injury":
 							after["injury"] = maxi(0, state.injury - maxi(1, int(effect.get("amount", 1))))
+						"heal_health":
+							var healed := maxi(1, int(effect.get("amount", 1))) * factor
+							after["health"] = mini(state.max_health, state.health + healed)
+							log_entry["heal"] = healed
+						"grant_block":
+							battle["player_block"] = int(battle.get("player_block", 0)) + maxi(0, int(effect.get("amount", 1))) * factor
+							log_entry["block"] = int(effect.get("amount", 1)) * factor
+						"add_temp_stat":
+							if str(effect.get("stat", "")) == "force_power":
+								battle["temp_power"] = int(battle.get("temp_power", 0)) + maxi(0, int(effect.get("amount", 0)))
+								log_entry["temp_power"] = int(effect.get("amount", 0))
 						"add_flag":
 							_add_flag(battle, str(effect.get("flag", "")))
 						"delay_progress":
@@ -896,11 +910,14 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	for enemy_value in _living_enemies(next_battle):
 		_select_enemy_intent_for(enemy_value, next_battle, next_state, int(next_battle["turn"]))
 	_sync_legacy_enemy_projection(next_battle)
-	next_battle["action_energy"] = 0
-	next_battle["soul_ops_used"] = 0
+	next_battle["actions_left"] = int(next_battle.get("actions_max", 2))
 	next_battle["flags"].erase("guarded")
 	next_battle["flags"].erase("basic_attack_used")
+	next_battle["flags"].erase("dodge_used")
 	next_battle["flags"].erase("targeting_obscured")
+	next_battle["temp_power"] = 0
+	next_battle["temp_block"] = 0
+	next_battle["player_block"] = 0
 	if bool(enemy["death"]):
 		return _death_over(next_battle, next_state, catalog, ["player_dead"])
 	_expire_effects(next_battle, "end_turn")
@@ -913,14 +930,11 @@ static func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) 
 	next_state = _settle_curse_damage(next_battle, next_state)
 	if _depleted(next_state):
 		return _death_over(next_battle, next_state, catalog, ["player_dead"])
-	# 收势回气：wire the previously dead cave_aperture.essence_regen_per_turn
-	# into battle pacing. Without it a long fight (final boss) stalls: the
-	# basic attack is swallowed by reactions and probe budget runs dry, so a
-	# floor build can neither win nor retreat -- the turn loop never ends.
-	# 2026-08-28 设计点：节点内回真元手段随转数放大——收势回气 = 配置基值
-	# 2 + (转数-1)，长 Boss 战在高转可持续施法。
-	var regen := maxi(0, int(next_state.cave_aperture.get("essence_regen_per_turn", 0))) \
-		+ maxi(0, int(next_state.cultivation) - 1)
+	# 2026-08-31 数值重做：每回合真元回复 = 真元上限 × 资质回复比
+	# （甲40/乙30/丙20/丁10，表在 aptitude.json regen_pct），上限 clamp。
+	var pct := int(catalog.get("aptitude", {}).get("regen_pct", {}).get(str(next_state.aptitude), 20))
+	var capacity := int(next_state.essence_capacity)
+	var regen := int(floor(float(capacity) * float(pct) / 100.0))
 	if regen > 0:
 		var regen_cap := maxi(int(next_state.essence), int(next_state.essence_capacity))
 		var recovered := mini(next_state.essence + regen, regen_cap)
@@ -982,12 +996,13 @@ static func _apply_enemy_intent(battle: Dictionary, state: RunState, catalog: Di
 		damage = maxi(0, damage - 2)
 	if battle["flags"].has("targeting_obscured"):
 		damage = maxi(0, damage - 1)
+	# 2026-08-31 数值护盾：玩家 player_block 先吸收意图伤害（余量下回合保留前清零）。
+	var player_block := int(battle.get("player_block", 0))
+	if player_block > 0 and damage > 0:
+		var absorbed := mini(player_block, damage)
+		battle["player_block"] = player_block - absorbed
+		damage -= absorbed
 	var dodged := false
-	if battle["flags"].has("dodging"):
-		battle["flags"].erase("dodging")
-		if _player_dodge_speed(state) > int(intent.get("speed", 0)):
-			damage = 0
-			dodged = true
 	var damage_hook := RelicHookResolverScript.apply_take_damage(battle, state, catalog, damage)
 	battle = damage_hook["battle"]
 	var next_state: RunState = damage_hook["state"]
@@ -1170,8 +1185,7 @@ static func _apply_kill_move_sequence(battle: Dictionary, definition: Dictionary
 				var kill_rank := 1
 				for source_id in card.get("source_gu_instance_ids", []):
 					kill_rank = maxi(kill_rank, int((state.gu_instances.get(str(source_id), {}) as Dictionary).get("rank", 1)))
-				var bonus_table: Dictionary = catalog.get("pacing", {}).get("advance_bonus_by_rank", {})
-				var kill_damage := 3 + int(bonus_table.get(str(kill_rank), maxi(0, kill_rank - 1)))
+				var kill_damage := 3 * rank_factor(catalog, kill_rank)
 				var kill_target := str(_living_enemies(battle)[0].get("enemy_id", "")) if not _living_enemies(battle).is_empty() else ""
 				_strike(battle, kill_damage, "attack", kill_target)
 				battle["log"].append({"id": "kill_move_strike", "move": str(pending.get("move_id", "")), "damage": kill_damage})
@@ -1195,59 +1209,6 @@ static func _apply_kill_move_sequence(battle: Dictionary, definition: Dictionary
 		return
 
 
-static func _backlash_for_activation(battle: Dictionary, state: RunState, definition: Dictionary, card: Dictionary, catalog: Dictionary) -> Dictionary:
-	var health_damage := 0
-	var soul_damage := 0
-	var targets: Array[String] = []
-	var source_gu_ids: Array = definition.get("source_gu_ids", [])
-	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
-	var rank := 1
-	for gu_id_value in source_gu_ids:
-		var gu_id := str(gu_id_value)
-		rank = maxi(rank, int(gu_by_id.get(gu_id, {}).get("rank", 1)))
-		targets.append(gu_id)
-	var rank_gap := maxi(0, rank - int(state.cultivator.get("reincarnation", 1)))
-	if rank_gap > 0:
-		var factors: Dictionary = APTITUDE_BACKLASH_FACTORS.get(str(state.cultivator.get("aptitude", "bing")), APTITUDE_BACKLASH_FACTORS["bing"])
-		health_damage += ceili((1.0 + rank_gap) * float(factors["health_factor"]))
-		soul_damage += ceili((1.0 + rank_gap * 2.0) * float(factors["soul_factor"]))
-	var active_ids: Array = battle.get("active_gu_instance_ids", [])
-	var ops_cap := SoulCapacityScript.battle_ops_cap(state)
-	if active_ids.size() > ops_cap:
-		soul_damage += active_ids.size() - ops_cap
-		if rank_gap == 0:
-			return {
-				"after": {
-					"cultivator": _cultivator_after_backlash(state, 0, soul_damage),
-				},
-				"reason": "battle_soul_backlash",
-				"targets": card.get("source_gu_instance_ids", []).duplicate(),
-				"feed": "soul_backlash",
-			}
-	if health_damage <= 0 and soul_damage <= 0:
-		return {}
-	return {
-		"after": {
-			"health": maxi(0, state.health - health_damage),
-			"cultivator": _cultivator_after_backlash(state, health_damage, soul_damage),
-		},
-		"reason": "battle_rank_backlash" if rank_gap > 0 else "battle_soul_backlash",
-		"targets": targets,
-		"feed": "rank_backlash" if rank_gap > 0 else "soul_backlash",
-	}
-
-
-static func _cultivator_after_backlash(state: RunState, _health_damage: int, soul_damage: int) -> Dictionary:
-	var cultivator: Dictionary = state.cultivator.duplicate(true)
-	cultivator["soul"] = maxi(0, int(cultivator.get("soul", 0)) - soul_damage)
-	return cultivator
-
-
-static func _total_curse_layers(state: RunState) -> int:
-	var layers := 0
-	for status_value in state.cultivator.get("statuses", {}).values():
-		layers += maxi(0, int((status_value as Dictionary).get("layers", 0)))
-	return layers
 static func _retreat(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	if not _can_retreat(battle):
 		return _result(battle, state, false, "ongoing", ["retreat_blocked"])

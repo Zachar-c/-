@@ -121,7 +121,8 @@ func test_battle_death_finalizes_run_and_clears_temporary_assets() -> void:
 	assert_eq(rejected["feeds"], ["terminal_run"])
 
 
-func test_rank_backlash_death_also_finalizes_run() -> void:
+func test_high_rank_gu_no_longer_backlashes_at_low_cultivation() -> void:
+	# 2026-08-31 数值重做：反噬系统整体移除，高转蛊在低修为下可以正常催动。
 	var tuned_catalog: Dictionary = catalog.duplicate(true)
 	tuned_catalog["gu_by_id"]["small_light_gu"]["rank"] = 2
 	var run := RunState.new_run(101)
@@ -130,11 +131,9 @@ func test_rank_backlash_death_also_finalizes_run() -> void:
 
 	var result := BattleResolver.apply_action_card(battle, run, _command_for_definition(battle, "light_probe"), tuned_catalog)
 
-	assert_eq(result["state"].health, 0)
-	assert_eq(result["state"].terminal_state, "dead")
-	assert_true(result["state"].gu_instances.is_empty())
-	assert_false(result["state"].event_log.is_empty())
-	assert_eq(result["state"].event_log.back()["reason"], "run_ended")
+	assert_true(bool(result.get("accepted", false)), "高转蛊可催动")
+	assert_eq(result["state"].health, 2)
+	assert_ne(result["state"].terminal_state, "dead")
 
 
 func _command_for_definition(battle: Dictionary, definition_id: String) -> Dictionary:

@@ -90,6 +90,9 @@ func test_observed_outcomes_accumulate_in_meta_progress_without_duplicates() -> 
 
 func _run_with_gu_definitions(definition_ids: Array[String]) -> RunState:
 	var run := RunState.new_run(101)
+	# 2026-08-31 数值重做：魂魄底蕴 1 → 炼蛊并发上限 2；本文件配方需 3 输入，
+	# 夹具抬到魂魄 5（上限 4）以隔离测炼蛊语义本身。
+	run.cultivator["soul"] = 5
 	run.gu_instances.clear()
 	run.cave_aperture["stored_gu_instance_ids"] = []
 	run.gu_ids = []

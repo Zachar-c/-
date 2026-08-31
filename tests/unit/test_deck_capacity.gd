@@ -42,6 +42,7 @@ func test_buying_below_capacity_is_accepted() -> void:
 func test_consume_type_recipe_stays_allowed_at_capacity_net_delta() -> void:
 	var tuned := _capacity_three()
 	var run := _fresh_run()
+	run.cultivator["soul"] = 4  # 月芒蛊方 3 件输入，需并发上限 ≥3
 	_add_refined(run, "gu_001", "small_light_gu")
 	_add_refined(run, "gu_002", "moonlight_gu")
 	_add_refined(run, "gu_003", "small_light_gu")

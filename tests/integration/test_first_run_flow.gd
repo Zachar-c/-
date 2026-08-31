@@ -61,14 +61,22 @@ func test_generic_battle_action_card_routes_once_and_replay_is_rejected() -> voi
 	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
 	controller.submit_command({"type": "choose_action", "action_id": "fight", "npc_id": "caravan_steward"})
 
-	# V1（2026-08-30 全量替换）：战斗蛊行动制，无手牌/弃牌堆。
-	var instance_id := str(controller.current_battle["gu_slots"][0]["instance_id"])
-	var first := controller.submit_command({"type": "use_gu", "instance_id": instance_id})
-	var second := controller.submit_command({"type": "use_gu", "instance_id": instance_id})
+	var source_card: Dictionary = controller.current_battle["hand"][0]
+	var command := {
+		"type": "action_card",
+		"action_id": "battle.%s.%s" % [controller.current_battle["battle_id"], source_card["instance_id"]],
+		"state_version": controller.current_battle["hand_version"],
+		"expected_phase": str(controller.current_battle.get("phase", "player")),
+		"node_id": str(controller.state.current_node_id),
+		"session_node_id": str(controller.state.current_node_id),
+	}
+	var first := controller.submit_command(command)
+	var discard_after_first: Array = controller.current_battle["discard_pile"].duplicate(true)
+	var second := controller.submit_command(command)
 
-	assert_eq(first["result"], "ongoing")
-	assert_eq(first["feeds"], [])
-	# 同回合同一蛊只能释放一次（usedThisTurn）。
-	assert_eq(second["result"], "rejected")
-	assert_eq(second["feeds"], ["gu_used_this_turn"])
+	assert_true(first["accepted"])
+	assert_true(discard_after_first.any(func(card): return card["instance_id"] == source_card["instance_id"]))
+	assert_false(second["accepted"])
+	assert_eq(second["feeds"], ["battle_hand_stale"])
+	assert_eq(controller.current_battle["discard_pile"], discard_after_first)
 	controller.free()

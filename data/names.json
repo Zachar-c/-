@@ -87,7 +87,7 @@
     "shadow_veil_gu": "影幕蛊",
     "pulse_drum_gu": "脉冲鼓蛊",
     "moonlight_gu": "月光蛊",
-    "moon_glow_gu": "月华蛊",
+    "moon_glow_gu": "月芒蛊",
     "phantom_moon_gu": "幻月蛊",
     "moon_shadow_gu": "月影蛊",
     "blood_droplet_gu": "血滴子蛊",
@@ -96,7 +96,20 @@
     "blood_farewell_gu": "爱别离蛊",
     "force_gu": "力量蛊",
     "bear_strength_gu": "熊力蛊",
-    "qi_wall_gu": "气墙蛊"
+    "qi_wall_gu": "气墙蛊",
+    "jade_skin_gu": "玉皮蛊",
+    "white_boar_strength_gu": "白猪力蛊",
+    "white_jade_gu": "白玉蛊",
+    "vitality_grass_gu": "生机草蛊",
+    "mending_grass_gu": "回春草蛊",
+    "bone_knit_gu": "续骨蛊",
+    "jade_marrow_gu": "玉髓蛊",
+    "spring_heart_gu": "春心蛊",
+    "phoenix_drop_gu": "凤髓滴蛊",
+    "life_root_gu": "生根蛊",
+    "undying_vine_gu": "不死藤蛊",
+    "heaven_dew_gu": "天露蛊",
+    "test_slay_gu": "十转杀蛊"
   },
   "inheritances": {
     "moonlit_trace": "月下寻迹",
@@ -153,7 +166,9 @@
     "beast_blood": "兽血",
     "beast_bone": "兽骨",
     "venom_sac": "毒囊",
-    "moon_dew": "月华露"
+    "moon_dew": "月华露",
+    "moon_blue_petal": "月蓝花瓣",
+    "boar_king_tusk": "野猪王牙"
   },
   "outcomes": {
     "success": "功成升仙",

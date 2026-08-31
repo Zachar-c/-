@@ -33,19 +33,18 @@ const EFFECT_KINDS := [
 
 
 static func apply_battle_start(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
-	# Battle-local first-turn energy budget. BattleResolver.start seeds the
-	# base grant (1); each grant_first_turn_energy effect stacks on top of it
-	# in battle["first_turn_energy"] and battle["action_energy"].
-	var base := int(battle.get("first_turn_energy", 0))
+	# 2026-08-31 统一行动点：grant_first_turn_energy 遗物在行动点上限上叠加，
+	# 作用于 battle["actions_max"]/["actions_left"]（起手即生效整场）。
+	var base := int(battle.get("actions_max", 0))
 	var energy := base
 	for hook in _hooks(state, catalog, "on_battle_start"):
 		if str(hook.get("effect", {}).get("kind", "")) == "grant_first_turn_energy":
 			energy += _amount(hook)
-	battle["first_turn_energy"] = energy
-	battle["action_energy"] = energy
+	battle["actions_max"] = energy
+	battle["actions_left"] = energy
 	var feeds: Array[String] = []
 	if energy > base:
-		feeds.append("relic_first_turn_energy")
+		feeds.append("relic_actions_granted")
 	# R4.x reduce_curse_intensity: battle-local curse projections lose
 	# `amount` intensity each (floor 0); run-scoped statuses stay untouched
 	# because battles only ever project curses.

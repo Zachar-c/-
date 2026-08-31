@@ -11,7 +11,7 @@ const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 
-const APTITUDE_LADDER := ["wu", "ding", "bing", "yi", "jia"]
+const APTITUDE_LADDER := ["ding", "bing", "yi", "jia"]
 
 # R4.8: meta-rule grade imprints are rule changers; cap per run lives in deck.json.
 # Removal service base prices (Task 5, R6.8) live in deck.json.
@@ -286,10 +286,6 @@ static func _spend_materials(state: RunState, material_cost: Dictionary) -> RunS
 
 
 static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	# 蛊方图鉴门禁（2026-08-30）：合成配方须持有蛊方（default_unlocked 初始
-	# 持有 / 全局图鉴已解锁），advance 同名升阶与 free_mix 盲盒不设门禁。
-	if not _recipe_codex_ok(state, recipe):
-		return _rejected(state, "refinement_recipe_locked")
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var material_cost: Dictionary = recipe.get("materials", {})
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
@@ -328,19 +324,8 @@ static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
 		or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
 
 
-## 蛊方持有门禁：default_unlocked 配方人人初始持有；其余 fixed/combine 须
-## 全局图鉴已解锁（持有配方 id 或曾拥有产出蛊）。advance 不受门禁。
-static func _recipe_codex_ok(state: RunState, recipe: Dictionary) -> bool:
-	var kind := str(recipe.get("kind", "combine"))
-	if kind == "advance":
-		return true
-	if bool(recipe.get("default_unlocked", false)):
-		return true
-	return _codex_unlocks_recipe(state, recipe)
-
-
 static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	if not _recipe_codex_ok(state, recipe):
+	if bool(recipe.get("locked", false)) and not _codex_unlocks_recipe(state, recipe):
 		return _rejected(state, "refinement_recipe_locked")
 	var is_advance := str(recipe.get("kind", "")) == "advance"
 	var inputs: Array = recipe.get("input_gu_ids", [])
@@ -350,25 +335,19 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	if stone_cost > 0 and state.stone < stone_cost:
 		return _rejected(state, "insufficient_stone")
 	var material_cost: Dictionary = recipe.get("materials", {})
+	# 缺料先于容量：玩家应先看到"缺什么"，而不是被并发上限挡住。
+	var preselected := _selected_input_instance_ids(state, command, inputs)
+	if preselected.is_empty() and not inputs.is_empty():
+		return _rejected(state, "missing_refinement_input")
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
 		return _rejected(state, "refinement_capacity_exceeded")
-	var selected := _selected_input_instance_ids(state, command, inputs)
-	# 纯材料配方（input_gu_ids 为空）允许无蛊投入——蛊虫=材料+蛊虫两条炼制路。
-	if selected.is_empty() and not inputs.is_empty():
-		return _rejected(state, "missing_refinement_input")
-	# 输入转数门禁（如二转月芒蛊+二转血气蛊）：不足直接拒绝，不烧材料。
-	var min_rank := int(recipe.get("input_min_rank", 1))
-	if min_rank > 1:
-		for instance_id_value in selected:
-			var instance_rank := int(state.gu_instances[str(instance_id_value)].get("rank", 1))
-			if instance_rank < min_rank:
-				return _rejected(state, "refinement_input_rank_insufficient")
 	if not _has_all_materials(state, material_cost):
 		return _rejected(state, "missing_refinement_material")
 	var paid := _spend_materials(state, material_cost)
 	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
 	if not blocked.is_empty():
 		return blocked
+	var selected := preselected
 	var instances := paid.gu_instances.duplicate(true)
 	var aperture := paid.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
@@ -384,9 +363,6 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		"definition_id": str(recipe["output_gu_id"]),
 		"state": "refined",
 	}
-	# 蛊方转数=产出蛊转数（2026-08-28 裁定）：fixed 配方可用 output_rank 声明产出阶。
-	if recipe.has("output_rank"):
-		output_instance["rank"] = int(recipe["output_rank"])
 	if is_advance:
 		# 同名升阶：本体进阶不换名，阶数 +1（封顶五转）；是否可达由
 		# 转数/阶顶决定，否则拒绝而不烧材料。
@@ -1044,6 +1020,12 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	var kind := str(offer.get("kind", ""))
 	if kind == "soul_boost":
 		return _shop_soul_boost(state, command, catalog, offer)
+	if kind == "material_purchase":
+		return _shop_material_purchase(state, offer, catalog)
+	if kind == "recipe_unlock":
+		return _shop_recipe_unlock(state, offer, catalog)
+	if kind == "resource_trade":
+		return _shop_resource_trade(state, offer, catalog)
 	if str(offer.get("kind", "")) != "purchase":
 		return _rejected(state, "unknown_shop_offer")
 	var blocked := _reject_deck_full(state, catalog, [str(offer["gu_id"])], [])
@@ -1079,6 +1061,34 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	return _accepted(next)
 
 
+static func _shop_material_purchase(state: RunState, offer: Dictionary, catalog: Dictionary) -> Dictionary:
+	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var material_id := str(offer.get("material_id", ""))
+	var materials := state.materials.duplicate(true)
+	materials[material_id] = int(materials.get(material_id, 0)) + 1
+	var next := state.append_event(_event(state, "shop_purchase", {"stone": state.stone, "materials": state.materials}, {"stone": state.stone - cost, "materials": materials}, "shop_material_purchase_completed", state.current_node_id, [material_id]))
+	next.stone = state.stone - cost
+	next.materials = materials
+	return _accepted(next)
+
+
+static func _shop_recipe_unlock(state: RunState, offer: Dictionary, catalog: Dictionary) -> Dictionary:
+	var recipe_id := str(offer.get("recipe_id", ""))
+	if state.global_codex_ids.has(recipe_id):
+		return _rejected(state, "recipe_already_unlocked")
+	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var codex := state.global_codex_ids.duplicate()
+	codex.append(recipe_id)
+	var next := state.append_event(_event(state, "shop_recipe_unlocked", {"stone": state.stone, "global_codex_ids": state.global_codex_ids}, {"stone": state.stone - cost, "global_codex_ids": codex}, "shop_recipe_unlock_completed", state.current_node_id, [recipe_id]))
+	next.stone = state.stone - cost
+	next.global_codex_ids = codex
+	return _accepted(next)
+
+
 static func _shop_soul_boost(state: RunState, _command: Dictionary, catalog: Dictionary, offer: Dictionary) -> Dictionary:
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
@@ -1099,6 +1109,78 @@ static func _shop_soul_boost(state: RunState, _command: Dictionary, catalog: Dic
 	))
 	next.stone = state.stone - cost
 	next.cultivator["soul"] = soul_after
+	return _accepted(next)
+
+
+static func _shop_resource_trade(state: RunState, offer: Dictionary, _catalog: Dictionary) -> Dictionary:
+	# 一次门禁：以 offer_id 为 key 写在 node_flags，第二次访问拒且不改 state。
+	var offer_id := str(offer.get("id", ""))
+	if offer_id.is_empty():
+		return _rejected(state, "resource_trade_unknown")
+	if str(state.node_flags.get(offer_id, "")) == "used":
+		return _rejected(state, "resource_trade_already_used")
+	var cost_kind := str(offer.get("cost_kind", ""))
+	var gain_kind := str(offer.get("gain_kind", ""))
+	var cost_amount := int(offer.get("cost_amount", 0))
+	var gain_amount := int(offer.get("gain_amount", 0))
+	var cultivator := state.cultivator.duplicate(true)
+	var before_cultivator := state.cultivator.duplicate(true)
+	var health_after := int(state.health)
+	var max_health_after := int(state.max_health)
+	# 预检并扣减代价
+	if cost_kind == "lifespan":
+		var lifespan := int(cultivator.get("lifespan", 0))
+		if lifespan - cost_amount < 1:
+			return _rejected(state, "insufficient_lifespan")
+		cultivator["lifespan"] = lifespan - cost_amount
+	elif cost_kind == "soul":
+		var soul := int(cultivator.get("soul", 0))
+		if soul - cost_amount < 1:
+			return _rejected(state, "insufficient_soul")
+		cultivator["soul"] = soul - cost_amount
+	elif cost_kind == "health":
+		if int(state.health) - cost_amount <= 0:
+			return _rejected(state, "insufficient_health")
+		health_after = int(state.health) - cost_amount
+	else:
+		return _rejected(state, "resource_trade_unknown")
+	# 收入：lifespan/soul/health（+max_health 同写）
+	var after: Dictionary = {
+		"cultivator": cultivator,
+		"node_flags": state.node_flags.duplicate(true),
+		"health": health_after,
+		"max_health": max_health_after,
+	}
+	var flags: Dictionary = state.node_flags.duplicate(true)
+	flags[offer_id] = "used"
+	after["node_flags"] = flags
+	if gain_kind == "lifespan":
+		cultivator["lifespan"] = int(cultivator.get("lifespan", 0)) + gain_amount
+	elif gain_kind == "soul":
+		var soul := int(cultivator.get("soul", 0))
+		var soul_max := int(cultivator.get("soul_max", soul + gain_amount))
+		cultivator["soul"] = mini(soul + gain_amount, soul_max)
+	elif gain_kind == "health":
+		max_health_after = int(state.max_health) + gain_amount
+		health_after = min(max_health_after, health_after + gain_amount)
+	else:
+		return _rejected(state, "resource_trade_unknown")
+	after["health"] = health_after
+	after["max_health"] = max_health_after
+	after["cultivator"] = cultivator
+	var next := state.append_event(_event(
+		state,
+		"shop_resource_trade",
+		{"cultivator": before_cultivator, "health": int(state.health), "max_health": int(state.max_health), "node_flags": state.node_flags},
+		after,
+		"shop_resource_trade_completed",
+		state.current_node_id,
+		[offer_id]
+	))
+	next.cultivator = cultivator
+	next.health = health_after
+	next.max_health = max_health_after
+	next.node_flags = (after.get("node_flags", {}) as Dictionary).duplicate(true)
 	return _accepted(next)
 
 
@@ -1680,17 +1762,26 @@ const ASCENSION_CONDITION_KEYS := [
 ]
 
 
-static func _record_layer_boss_defeated(state: RunState, command: Dictionary, _catalog: Dictionary) -> Dictionary:
+static func _record_layer_boss_defeated(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var layer := int(command.get("layer", 0))
 	if layer < 1 or layer > 5:
 		return _rejected(state, "invalid_layer_boss")
 	var flags := state.node_flags.duplicate(true)
 	flags["boss_defeated_L%d" % layer] = "true"
+	# 2026-08-31 用户裁定：击败每大层 Boss 自动升转（"击败敌人获得经验、
+	# 经验自动提升等级"的过渡实现）；转数只抬真元上限并回满，不加 HP/攻击。
+	var target_rank := mini(5, layer + 1)
+	var next_cultivation := maxi(int(state.cultivation), target_rank)
+	var next_capacity := EssenceCapacityScript.essence_max_for(state, catalog, next_cultivation)
+	var aperture := state.cave_aperture.duplicate(true)
+	aperture["essence_max"] = next_capacity
 	var next := state.append_event(_event(
 		state,
 		"record_layer_boss_defeated",
-		{"node_flags": state.node_flags},
-		{"node_flags": flags},
+		{"node_flags": state.node_flags, "cultivation": state.cultivation, "essence": state.essence,
+			"essence_capacity": state.essence_capacity, "cave_aperture": state.cave_aperture},
+		{"node_flags": flags, "cultivation": next_cultivation, "essence": next_capacity,
+			"essence_capacity": next_capacity, "cave_aperture": aperture},
 		"layer_boss_%d_defeated" % layer,
 		state.current_node_id
 	))
@@ -2211,26 +2302,13 @@ static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return _rejected(state, "boss_undefeated")
 	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	# 蛊方搜刮（2026-08-30）：scavenge_recipe 兼容单串与数组，逐个授予尚未
-	# 持有的蛊方；全部已持有才拒绝重复搜刮。
-	var boss_recipes: Array[String] = []
-	var raw_recipe: Variant = boss.get("scavenge_recipe", "")
-	if raw_recipe is Array:
-		for value in raw_recipe:
-			boss_recipes.append(str(value))
-	elif not str(raw_recipe).is_empty():
-		boss_recipes.append(str(raw_recipe))
-	var pending: Array[String] = []
-	for recipe_id in boss_recipes:
-		if not catalog.get("refinement_by_id", {}).has(recipe_id):
-			return _rejected(state, "no_scavenge_recipe")
-		if not state.global_codex_ids.has(recipe_id):
-			pending.append(recipe_id)
-	if pending.is_empty():
+	var recipe_id := str(boss.get("scavenge_recipe", ""))
+	if recipe_id.is_empty() or not catalog.get("refinement_by_id", {}).has(recipe_id):
+		return _rejected(state, "no_scavenge_recipe")
+	if state.global_codex_ids.has(recipe_id):
 		return _rejected(state, "scavenge_already_done")
 	var codex_after: Array[String] = state.global_codex_ids.duplicate()
-	for recipe_id in pending:
-		codex_after.append(recipe_id)
+	codex_after.append(recipe_id)
 	var next := state.append_event(_event(
 		state,
 		"scavenge",
@@ -2238,7 +2316,7 @@ static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary
 		{"global_codex_ids": codex_after},
 		"scavenge_recipe_unlocked",
 		state.current_node_id,
-		pending
+		[recipe_id]
 	))
 	next.global_codex_ids = codex_after
 	return _accepted(next)
