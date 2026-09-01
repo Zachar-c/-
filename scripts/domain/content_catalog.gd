@@ -886,7 +886,7 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 	var positive_keys := [
 		"rank_step_ratio", "standard_hit_ratio", "human_base_health",
 		"unarmed_damage_ratio", "standard_activation_cost", "light_cost_ratio",
-		"heavy_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_base",
+		"heavy_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
 		"reaction_multiplier", "material_refine_efficiency",
 		"fixed_defense_ratio", "stone_per_t1_material", "public_buyback_ratio",
 		"low_liquidity_ratio", "quick_substitute_cap",
@@ -900,7 +900,7 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 			errors.append("balance %s must be positive" % key)
 	var ratio_keys := [
 		"standard_hit_ratio", "unarmed_damage_ratio", "standard_activation_cost",
-		"light_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_base",
+		"light_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
 		"reaction_multiplier", "material_refine_efficiency",
 		"fixed_defense_ratio", "public_buyback_ratio", "low_liquidity_ratio",
 		"quick_substitute_cap",

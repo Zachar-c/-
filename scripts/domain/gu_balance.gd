@@ -53,11 +53,11 @@ static func actual_cost_percent(native_cost_percent: float, gu_rank: int, cultiv
 
 
 # §11.4 natural recovery RATE keyed by aptitude percent (0-100 scale):
-# aptitude_recovery_base + aptitude_percent / 100, anchors 20/50/100 -> 0.7/1.0/1.5.
+# aptitude_recovery_multiplier + aptitude_percent / 100, anchors 20/50/100 -> 0.7/1.0/1.5.
 # The per-turn recovered fraction = standard_activation_cost
 # * natural_recovery_cost_ratio * this value (~1% at standard aptitude).
 static func natural_recovery(aptitude_percent: float, cat: Dictionary) -> float:
-	return _b(cat, "aptitude_recovery_base", 0.5) + aptitude_percent / 100.0
+	return _b(cat, "aptitude_recovery_multiplier", 0.5) + aptitude_percent / 100.0
 
 
 # §14.2 unarmed raw damage = actual_strength * unarmed_damage_ratio * action_multiplier.

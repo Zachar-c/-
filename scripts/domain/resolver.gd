@@ -19,8 +19,6 @@ const APTITUDE_LADDER := ["ding", "bing", "yi", "jia"]
 
 # Forced drop of a can_direct_drop=false gu attaches this configured curse.
 const FORCED_DROP_CURSE_ID := "gu_erosion"
-# Per-run usage counters live in node_flags as string values ("1", "2", ...).
-const SERVICE_USE_FLAG_PREFIX := "svc_used_"
 const REST_REMOVAL_MODES := ["remove_card", "remove_imprint", "remove_curse"]
 # P2a B: rest visit/mode flags are scoped per node id ("<id>_used"/"<id>_mode")
 # so nodes.json may declare more than one rest node. Every consumed visit also
@@ -712,7 +710,7 @@ static func service_price_for(catalog: Dictionary, state: RunState, service_id: 
 
 
 static func _bump_service_flag(flags: Dictionary, service_id: String) -> void:
-	var key := SERVICE_USE_FLAG_PREFIX + service_id
+	var key := EconomyRulesScript.SERVICE_USE_FLAG_PREFIX + service_id
 	flags[key] = str(int(str(flags.get(key, "0"))) + 1)
 
 

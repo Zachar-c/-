@@ -12,9 +12,9 @@ extends RefCounted
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 
-# Per-run service usage counters live in node_flags as "svc_used_<id>" strings
-# (mirrors Resolver.SERVICE_USE_FLAG_PREFIX; kept here so the module is
-# self-contained and free of a Resolver dependency).
+# Per-run service usage counters live in node_flags as "svc_used_<id>" strings.
+# Single definition point (P0.2): Resolver references this constant instead of
+# re-declaring it, so the prefix cannot drift between the two files.
 const SERVICE_USE_FLAG_PREFIX := "svc_used_"
 
 

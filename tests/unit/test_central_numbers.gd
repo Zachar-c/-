@@ -104,7 +104,7 @@ func test_actual_cost_percent_down_rank_discount() -> void:
 
 
 func test_natural_recovery_rate_by_aptitude() -> void:
-	# §11.4: rate = aptitude_recovery_base + aptitude_percent / 100, anchors at
+	# §11.4: rate = aptitude_recovery_multiplier + aptitude_percent / 100, anchors at
 	# 20% / 50% / 100% aptitude -> 0.7 / 1.0 / 1.5.
 	assert_almost_eq(float(GuBalanceScript.natural_recovery(20.0, catalog)),
 			0.7, 0.0001)
@@ -123,6 +123,6 @@ func test_projections_follow_balance_config_not_hardcoded() -> void:
 	tuned["balance"] = balance
 	assert_almost_eq(float(GuBalanceScript.beast_scale(0, tuned)), 50.0, 0.0001)
 	assert_almost_eq(float(GuBalanceScript.standard_gu_power(1, tuned)), 20.0, 0.0001)
-	balance["aptitude_recovery_base"] = 0.6
+	balance["aptitude_recovery_multiplier"] = 0.6
 	tuned["balance"] = balance
 	assert_almost_eq(float(GuBalanceScript.natural_recovery(20.0, tuned)), 0.8, 0.0001)
