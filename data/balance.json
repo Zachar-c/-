@@ -23,5 +23,6 @@
   "quick_substitute_cap": 0.5,
   "base_speed": 3,
   "speed_min": 1,
-  "speed_max": 5
+  "speed_max": 5,
+  "gu_estimate_ratio": 6.5
 }

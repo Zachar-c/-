@@ -77,9 +77,11 @@ static func gu_recycle_price(gu_rank: int, cat: Dictionary) -> float:
 
 
 # Reference valuation - distinct from any buy/sell price. A valuation never
-# means the gu is buyable with stones.
+# means the gu is buyable with stones. The ratio rides balance.json
+# (gu_estimate_ratio); the 4.0/1.0 multipliers above are the spec 9.3 pinned
+# values (public ~4x / recycle ~1x same-rank material value).
 static func gu_estimate(gu_rank: int, cat: Dictionary) -> float:
-	return rank_standard_price(gu_rank, cat) * 6.5
+	return rank_standard_price(gu_rank, cat) * _b(cat, "gu_estimate_ratio", 6.5)
 
 
 # ---- §3.3 exchange gate -------------------------------------------------

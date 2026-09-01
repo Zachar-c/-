@@ -957,7 +957,7 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"reaction_multiplier", "material_refine_efficiency",
 		"fixed_defense_ratio", "stone_per_t1_material", "public_buyback_ratio",
 		"low_liquidity_ratio", "quick_substitute_cap", "base_speed",
-		"speed_min", "speed_max",
+		"speed_min", "speed_max", "gu_estimate_ratio",
 	]
 	for key in positive_keys:
 		var value: Variant = cfg.get(key, null)

@@ -72,6 +72,13 @@ func test_gu_prices_four_to_one_and_estimate_differs() -> void:
 	var estimate := float(MarketRulesScript.gu_estimate(1, catalog))
 	assert_ne(str(estimate), str(40.0),
 			"estimate must be its own number (valuation != buyable)")
+	# P0.2: the estimate ratio rides balance.json (config-following).
+	var ratio_tuned := catalog.duplicate(true)
+	var ratio_balance := (catalog["balance"] as Dictionary).duplicate(true)
+	ratio_balance["gu_estimate_ratio"] = 5.0
+	ratio_tuned["balance"] = ratio_balance
+	assert_almost_eq(float(MarketRulesScript.gu_estimate(1, ratio_tuned)),
+			50.0, 0.0001)
 
 
 func test_exchange_lists_permanent_losses_and_rejects_natures() -> void:
