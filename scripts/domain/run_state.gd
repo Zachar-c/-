@@ -3,6 +3,7 @@ extends RefCounted
 
 
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
+const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
 
 @warning_ignore("shadowed_global_identifier")
@@ -107,11 +108,7 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"stored_gu_instance_ids": ["gu_001"],
 	}
 	state.gu_instances = {
-		"gu_001": {
-			"instance_id": "gu_001",
-			"definition_id": "small_light_gu",
-			"state": "refined",
-		}
+		"gu_001": GuInstanceScript.new_instance("small_light_gu", "gu_001", {}),
 	}
 	state.gu_card_overrides = {}
 	state.materials = {"feed_points": 0}

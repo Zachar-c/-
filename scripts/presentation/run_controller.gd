@@ -14,6 +14,7 @@ const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
+const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
@@ -945,11 +946,7 @@ func _inject_school_starters(school: String) -> void:
 		if existing_count >= requested_count:
 			continue
 		var instance_id := _next_gu_instance_id(state)
-		state.gu_instances[instance_id] = {
-			"instance_id": instance_id,
-			"definition_id": gu_id,
-			"state": "refined",
-		}
+		state.gu_instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, catalog)
 		state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
 		injected.append(str(gu_id))
 		state.sync_legacy_gu_projections()

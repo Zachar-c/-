@@ -1,4 +1,4 @@
-﻿class_name LootResolver
+class_name LootResolver
 extends RefCounted
 
 
@@ -6,6 +6,7 @@ const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
+const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
 
 # R13.1 rare pity threshold: after this many consecutive common-producing
@@ -305,11 +306,7 @@ static func _gain_gu(state: RunState, gu_id: String, _catalog: Dictionary, new_l
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
 	var instance_id := _next_instance_id(instances)
-	instances[instance_id] = {
-		"instance_id": instance_id,
-		"definition_id": gu_id,
-		"state": "refined",
-	}
+	instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, _catalog)
 	stored.append(instance_id)
 	aperture["stored_gu_instance_ids"] = stored
 	var next := state.append_event({

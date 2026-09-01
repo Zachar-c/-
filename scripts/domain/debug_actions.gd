@@ -15,6 +15,7 @@ extends RefCounted
 
 const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
+const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
 const OPS := ["add_gu", "set_resources", "jump_to_node", "query_loot_state", "dump_snapshot", "grant_recipe"]
 
@@ -61,11 +62,7 @@ static func _add_gu(state: RunState, catalog: Dictionary, action: Dictionary) ->
 	var instances := state.gu_instances.duplicate(true)
 	var aperture := state.cave_aperture.duplicate(true)
 	var instance_id := RunState.next_gu_instance_id(instances)
-	instances[instance_id] = {
-		"instance_id": instance_id,
-		"definition_id": gu_id,
-		"state": "refined",
-	}
+	instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, catalog)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
 	stored.append(instance_id)
 	aperture["stored_gu_instance_ids"] = stored
