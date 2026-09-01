@@ -1224,8 +1224,13 @@ static func _enemy_definition(enemy_id: String, catalog: Dictionary, encounter_t
 	var delta := encounter_turn - int(definition.get("turn", 1))
 	if delta > 0:
 		var scaling: Dictionary = catalog.get("pacing", {}).get("turn_scaling", {})
-		var hp_add := int(scaling.get("hp_add_per_turn", 2)) * delta
-		var damage_add := int(scaling.get("damage_add_per_turn", 1)) * delta
+		# 2026-09-01 平衡封顶：深层层差无限叠加会制造单发即死悬崖（如 L4
+		# pounce 6 伤）。damage_cap_bonus/hp_cap_bonus 封住总加成，浅层（delta
+		# 低于封顶）数值不变。裁定表在 pacing.json，唯一真值。
+		var hp_cap := int(scaling.get("hp_cap_bonus", 999))
+		var damage_cap := int(scaling.get("damage_cap_bonus", 999))
+		var hp_add := mini(hp_cap, int(scaling.get("hp_add_per_turn", 2)) * delta)
+		var damage_add := mini(damage_cap, int(scaling.get("damage_add_per_turn", 1)) * delta)
 		definition["hp"] = int(definition.get("hp", 3)) + hp_add
 		var base_intent: Dictionary = definition.get("intent", {})
 		if int(base_intent.get("damage", 0)) > 0:

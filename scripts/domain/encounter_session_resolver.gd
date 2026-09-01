@@ -123,10 +123,11 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 	# player can still pick heal/upgrade/one of the removals.
 	if _rest_choice_pending(state, session, catalog):
 		return _rejected(state, session, "rest_choice_required")
-	# 血仇立场：有 fight 动作的节点不许不战而逃；无仗可打的节点（wild_gu/
-	# market/rest 等）若也禁 leave 就是硬软锁，必须放行。
+	# 血仇只在节点确有战斗且战斗未决时阻止离场。无战斗节点和战后阶段
+	# 都必须放行，否则会把玩家锁在当前节点。
 	if str(session.get("stance", "neutral")) == "extreme_hostile" \
-			and bool(session.get("offers_fight", false)):
+			and bool(session.get("offers_fight", false)) \
+			and str(session.get("phase", "active")) != "post_battle":
 		return _rejected(state, session, "feud_no_escape")
 	var completed := Resolver.apply(state, {
 		"type": "complete_node",
@@ -143,7 +144,9 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 	next_session["completed"] = true
 	next_session["completion_reason"] = "player_left"
 	var feed := ResultFeedScript.entry("leave_node", "node_left", {}, [])
-	var next := _record_session_state(left_state, next_session, feed, "encounter_left")
+	# 修复 3：带伤离场（气血不满）记入近期败势（DDA 战斗摘要窗口消费该 reason）。
+	var leave_reason := "encounter_left_wounded" if left_state.health < left_state.max_health else "encounter_left"
+	var next := _record_session_state(left_state, next_session, feed, leave_reason)
 	return {
 		"state": next,
 		"session": next_session,

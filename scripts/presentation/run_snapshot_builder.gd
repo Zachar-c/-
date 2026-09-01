@@ -1296,6 +1296,19 @@ static func _first_living_enemy_id(enemies: Array[Dictionary]) -> String:
 	return ""
 
 
+## 2 低血进敌方先手战：致死开场已延后到玩家首个回合结束，把意图伤害与
+## 文案暴露给战斗屏（缺失时返回空 dict，屏面无碎片）。
+static func _lethal_warning(battle_data: Dictionary) -> Dictionary:
+	var flags: Array = battle_data.get("flags", [])
+	if not flags.has("opening_lethal"):
+		return {}
+	var damage := int(battle_data.get("visible_intent", {}).get("damage", 0))
+	return {
+		"damage": damage,
+		"message": "敌方先手一击 %d 点伤害：当前气血会在出手前被击穿，务必在出手前守护、闪避或治疗。" % damage,
+	}
+
+
 static func ending(controller, outcome: Dictionary, journal: Array[Dictionary], run_data: Dictionary) -> Dictionary:
 	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}

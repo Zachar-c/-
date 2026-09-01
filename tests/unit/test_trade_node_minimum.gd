@@ -1,9 +1,10 @@
 extends GutTest
 
 
-# 交易节点最小实现台账（2026-08-31）：
-# - 一转小光蛊 50、 月蓝花瓣 3、 月光蛊 250、 野猪王牙 15、
-#   玉皮蛊 400、 白猪力蛊 500、 二转白玉蛊进阶蛊方 1500
+# 交易节点最小实现台账（2026-08-31；2026-09-01 分层经济重标定批更新价格）：
+# - 一转小光蛊 12、 月蓝花瓣 3、 野猪王牙 10、
+#   玉皮蛊 30、 白猪力蛊 35、 二转白玉蛊进阶蛊方 60
+# - （同蛊双价坑已清：purchase_moonlight_gu_250 随月光蛊 6 元石锚点删除）
 # - 二转白玉蛊进阶 玉皮蛊 + 白猪力蛊 + 野猪王牙 + 50 元石 → 二转白玉蛊
 
 
@@ -57,13 +58,12 @@ func _refine_with_instances(state: RunState, recipe_id: String, instance_ids: Ar
 func test_shop_offers_match_user_price_table() -> void:
 	var by_id: Dictionary = catalog.get("shop_offer_by_id", {})
 	var expected := {
-		"purchase_small_light_gu": 50,
+		"purchase_small_light_gu": 12,
 		"purchase_moon_blue_petal": 3,
-		"purchase_moonlight_gu_250": 250,
-		"purchase_boar_king_tusk": 15,
-		"purchase_jade_skin_gu": 400,
-		"purchase_white_boar_strength_gu": 500,
-		"purchase_white_jade_recipe": 1500,
+		"purchase_boar_king_tusk": 10,
+		"purchase_jade_skin_gu": 30,
+		"purchase_white_boar_strength_gu": 35,
+		"purchase_white_jade_recipe": 60,
 	}
 	for offer_id in expected:
 		assert_true(by_id.has(offer_id), "offer %s 存在" % offer_id)
@@ -71,11 +71,19 @@ func test_shop_offers_match_user_price_table() -> void:
 			"offer %s 价 = %d" % [offer_id, expected[offer_id]])
 
 
+func test_duplicate_gu_price_pit_is_closed() -> void:
+	# 同一蛊只能有一个可购买入口：moonlight_gu 的 250/6 双价坑已清；
+	# moon_glow_gu 的 120/12 双价坑已清。
+	var by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	assert_false(by_id.has("purchase_moonlight_gu_250"), "moonlight_gu 250 双价坑须删除")
+	assert_false(by_id.has("purchase_moon_glow_120"), "moon_glow_gu 120 双价坑须删除")
+
+
 func test_purchase_small_light_gu_deducts_stone_and_adds_gu() -> void:
-	var state := _state_with_stone(50)
+	var state := _state_with_stone(12)
 	var out := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_small_light_gu"}, catalog)
 	assert_true(bool(out["result"].get("ok", false)), "购买 OK")
-	assert_eq(int(out["state"].stone), 0, "扣 50 元石")
+	assert_eq(int(out["state"].stone), 0, "扣 12 元石")
 	assert_true(out["state"].refined_gu_ids.has("small_light_gu"), "入 refined_gu_ids")
 
 
@@ -86,15 +94,8 @@ func test_purchase_moon_blue_petal_credits_materials() -> void:
 	assert_eq(int(out["state"].materials.get("moon_blue_petal", 0)), 1, "材料入袋 1")
 
 
-func test_purchase_moonlight_gu_deducts_stone() -> void:
-	var state := _state_with_stone(250)
-	var out := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_moonlight_gu_250"}, catalog)
-	assert_true(bool(out["result"].get("ok", false)), "购买 OK")
-	assert_eq(int(out["state"].stone), 0, "扣 250")
-
-
 func test_purchase_boar_king_tusk_credits_materials() -> void:
-	var state := _state_with_stone(15)
+	var state := _state_with_stone(10)
 	var out := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_boar_king_tusk"}, catalog)
 	assert_true(bool(out["result"].get("ok", false)), "购买 OK")
 	assert_eq(int(out["state"].materials.get("boar_king_tusk", 0)), 1, "材料入袋 1")
@@ -104,18 +105,19 @@ func test_purchase_jade_skin_and_white_boar_succeeds() -> void:
 	var state := _state_with_stone(1000)
 	var out1 := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_jade_skin_gu"}, catalog)
 	assert_true(bool(out1["result"].get("ok", false)), "玉皮蛊购买 OK")
-	assert_eq(int(out1["state"].stone), 600, "扣 400 → 剩 600")
+	assert_eq(int(out1["state"].stone), 970, "扣 30 → 剩 970")
 	var out2 := ResolverScript.apply(out1["state"], {"type": "shop_purchase", "offer_id": "purchase_white_boar_strength_gu"}, catalog)
-	assert_true(bool(out2["result"].get("ok", false)), "白猪力蛊购买 OK（剩余 600 元石也够）")
+	assert_true(bool(out2["result"].get("ok", false)), "白猪力蛊购买 OK")
+	assert_eq(int(out2["state"].stone), 935, "扣 35 → 剩 935")
 	assert_true(out2["state"].refined_gu_ids.has("jade_skin_gu"))
 	assert_true(out2["state"].refined_gu_ids.has("white_boar_strength_gu"))
 
 
 func test_purchase_white_jade_recipe_unlocks_knowledge() -> void:
-	var state := _state_with_stone(1500)
+	var state := _state_with_stone(60)
 	var out := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_white_jade_recipe"}, catalog)
 	assert_true(bool(out["result"].get("ok", false)), "蛊方购买 OK")
-	assert_eq(int(out["state"].stone), 0, "扣 1500 → 剩 0")
+	assert_eq(int(out["state"].stone), 0, "扣 60 → 剩 0")
 	assert_true(out["state"].global_codex_ids.has("white_jade_advance"),
 		"white_jade_advance 写入 global_codex_ids")
 	# 重复购买应被拒且不扣款

@@ -1,0 +1,121 @@
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://dlc8dcp2q351b"]
+
+[ext_resource type="FontFile" path="res://assets/wenzhen/fonts/LXGWZhiSongCL-Regular.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_disabled"]
+bg_color = Color(0.86667, 0.84706, 0.8, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.66667, 0.65882, 0.62353, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_focus"]
+bg_color = Color(0.92549, 0.91373, 0.87451, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.61176, 0.2, 0.17647, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_hover"]
+bg_color = Color(0.90196, 0.88627, 0.84314, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.61176, 0.2, 0.17647, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_normal"]
+bg_color = Color(0.92549, 0.91373, 0.87451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.66667, 0.65882, 0.62353, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_pressed"]
+bg_color = Color(0.86667, 0.84706, 0.8, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.61176, 0.2, 0.17647, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grabber"]
+bg_color = Color(0.66667, 0.65882, 0.62353, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[resource]
+Body/base_type = &"VBoxContainer"
+Body/constants/separation = 6
+CardView/constants/content_margin_bottom = 0
+CardView/constants/content_margin_left = 0
+CardView/constants/content_margin_right = 0
+CardView/constants/content_margin_top = 0
+CardView/styles/disabled = SubResource("StyleBoxFlat_card_disabled")
+CardView/styles/focus = SubResource("StyleBoxFlat_card_focus")
+CardView/styles/hover = SubResource("StyleBoxFlat_card_hover")
+CardView/styles/normal = SubResource("StyleBoxFlat_card_normal")
+CardView/styles/pressed = SubResource("StyleBoxFlat_card_pressed")
+Content/base_type = &"MarginContainer"
+Content/constants/margin_bottom = 10
+Content/constants/margin_left = 10
+Content/constants/margin_right = 10
+Content/constants/margin_top = 10
+CostLabel/base_type = &"Label"
+CostLabel/colors/font_color = Color(0.19216, 0.37255, 0.45098, 1)
+CostLabel/font_sizes/font_size = 14
+CostLabelDim/base_type = &"CostLabel"
+CostLabelDim/colors/font_color = Color(0.40784, 0.40392, 0.37255, 1)
+CostLabelDim/font_sizes/font_size = 14
+DescLabel/base_type = &"Label"
+DescLabel/colors/font_color = Color(0.40784, 0.41176, 0.37647, 1)
+DescLabel/font_sizes/font_size = 13
+DescLabelDim/base_type = &"DescLabel"
+DescLabelDim/colors/font_color = Color(0.40784, 0.40392, 0.37255, 1)
+DescLabelDim/font_sizes/font_size = 13
+HandBox/base_type = &"HBoxContainer"
+HandBox/constants/separation = 12
+HandScroll/base_type = &"ScrollContainer"
+HandScroll/styles/panel = SubResource("StyleBoxEmpty_panel")
+ScrollBar/styles/grabber = SubResource("StyleBoxFlat_grabber")
+TitleLabel/base_type = &"Label"
+TitleLabel/colors/font_color = Color(0.0902, 0.09412, 0.07843, 1)
+TitleLabel/font_sizes/font_size = 16
+TitleLabelDim/base_type = &"TitleLabel"
+TitleLabelDim/colors/font_color = Color(0.40784, 0.40392, 0.37255, 1)
+TitleLabelDim/font_sizes/font_size = 16
+TypeLabel/base_type = &"Label"
+TypeLabel/colors/font_color = Color(0.40784, 0.40392, 0.37255, 1)
+TypeLabel/font_sizes/font_size = 12
+TypeLabelDim/base_type = &"TypeLabel"
+TypeLabelDim/colors/font_color = Color(0.40784, 0.40392, 0.37255, 1)
+TypeLabelDim/font_sizes/font_size = 12
+default_font = ExtResource("1_font")
+default_font_size = 13

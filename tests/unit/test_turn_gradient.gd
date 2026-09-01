@@ -42,7 +42,7 @@ func test_no_scaling_below_or_at_authored_turn() -> void:
 	assert_eq(int(battle["enemy_hp"]), 3)
 	# boss authored at turn 4: a stage-five encounter (turn 5) adds exactly one step.
 	var boss_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "miasma_vein_lord", "turn": 5}, run, catalog)
-	assert_eq(int(boss_battle["enemy_hp"]), 12)
+	assert_eq(int(boss_battle["enemy_hp"]), 10)
 	assert_eq(int((boss_battle["visible_intent"] as Dictionary).get("damage", 0)), 3)
 
 
@@ -53,6 +53,20 @@ func test_zero_damage_intents_never_gain_damage_from_scaling() -> void:
 	var scorch: Dictionary = (phase_two.get("intents", []) as Array)[1]
 	assert_eq(str(scorch.get("id", "")), "essence_scorch")
 	assert_eq(int(scorch.get("damage", -1)), 0, "a pure burn intent must stay at zero damage")
+
+
+func test_deep_turn_scaling_is_capped_against_one_shot_cliff() -> void:
+	# 2026-09-01 平衡封顶：深层层差不再无限叠加（pounce 曾到 5、thunder_bite 6，
+	# 单发即死）。damage_cap_bonus/hp_cap_bonus 只压 delta≥cap 的深度，浅层不变。
+	var run = RunStateScript.new_run(101)
+	var deep: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound", "turn": 5}, run, catalog)
+	# hound authored turn 1：delta 4 → hp 3+min(6,8)=9，pounce 2+min(2,4)=4（原 6）。
+	assert_eq(int(deep["enemy_hp"]), 9, "deep hp scaling must cap at hp_cap_bonus")
+	assert_eq(int((deep["visible_intent"] as Dictionary).get("damage", 0)), 4, "deep damage scaling must cap at damage_cap_bonus")
+	# 浅层不受封顶影响（对照契约值）：
+	var shallow: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound", "turn": 3}, run, catalog)
+	assert_eq(int(shallow["enemy_hp"]), 7, "hp scaling below cap unchanged")
+	assert_eq(int((shallow["visible_intent"] as Dictionary).get("damage", 0)), 4, "damage scaling below cap unchanged")
 
 
 func test_advance_recipe_raises_rank_and_costs_stone() -> void:

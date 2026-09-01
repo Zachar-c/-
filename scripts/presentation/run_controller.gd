@@ -757,6 +757,22 @@ func _start_battle() -> void:
 	if state.known_facts.has("procured_weakness"):
 		current_battle["intel_bonus"] = 1
 	if first_mover == "enemy":
+		# 敌方本回合全部存活意图的伤害总和（围攻节点多名敌人叠伤，单看
+		# visible_intent 会漏判致死）。
+		var opening_damage := 0
+		for enemy_value in current_battle.get("enemies", []):
+			opening_damage += maxi(0, int((enemy_value as Dictionary).get("visible_intent", {}).get("damage", 0)))
+		# 2 低血进敌方先手战（死亡可预见红线）：先手意图本会在本帧无条件结算，
+		# 低血玩家入屏即死、无从反应。致死开场不自动结算——先亮意图 + 致命
+		# 警告（快照 lethal_warning + 战斗日志），把敌方先手延后到玩家首个回合
+		# 结束；意图与后续掷骰序列不变，全确定性。玩家可守护/闪避/治疗自救；
+		# 未自救仍由常规结算致死并走 final_blow + 统一 DeathReport。
+		var lethal_opening := opening_damage > 0 and state.health <= opening_damage
+		if lethal_opening:
+			(current_battle["flags"] as Array).append("opening_lethal")
+			current_battle["log"].append({"id": "opening_lethal_warning", "damage": opening_damage})
+			_show_battle()
+			return
 		var pre := BattleCommandFacadeScript.apply_enemy_pre_turn(current_battle, state, catalog)
 		state = pre["state"]
 		current_battle = pre["battle"]

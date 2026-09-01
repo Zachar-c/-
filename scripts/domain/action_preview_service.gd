@@ -48,27 +48,26 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState) -> void:
 	if str(state.encounter_session.get("stance", "neutral")) != "extreme_hostile":
 		return
-	# 血仇必须有对手：节点存在 fight 动作时才允许禁 leave；wild_gu/market/
-	# rest 等没有 fight 动作的节点若也禁 leave，玩家将永远无法离开 = 硬软锁。
-	var has_fight := false
-	for card in cards:
-		if str(card.get("command", {}).get("action_id", "")) == "fight":
-			has_fight = true
-			break
 	var kept: Array[Dictionary] = []
 	for card in cards:
 		var command: Dictionary = card.get("command", {})
+		var is_fight := _is_fight_command(command)
 		var is_leave := str(command.get("type", "")) == "leave_node"
-		if str(command.get("action_id", "")) == "fight" or (is_leave and not has_fight):
+		if is_fight or is_leave:
 			kept.append(card)
 		else:
 			card["executable"] = false
-			card["block_reason"] = "" if is_leave and not has_fight else "对方已血仇上脸，非战不可。"
+			card["block_reason"] = "对方已血仇上脸，非战不可。"
 			card["remedy_hints"] = []
 			kept.append(card)
 	cards.clear()
 	for card in kept:
 		cards.append(card)
+
+
+static func _is_fight_command(command: Dictionary) -> bool:
+	return str(command.get("action_id", "")) == "fight" \
+		or (str(command.get("type", "")) == "resolve_contact" and str(command.get("approach", "")) == "fight")
 
 
 static func _mark_consumed_cards(cards: Array[Dictionary], state: RunState) -> void:

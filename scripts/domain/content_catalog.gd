@@ -153,7 +153,7 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
 	var pacing: Dictionary = catalog.get("pacing", {})
 	var scaling: Dictionary = pacing.get("turn_scaling", {})
-	for field in ["hp_add_per_turn", "damage_add_per_turn"]:
+	for field in ["hp_add_per_turn", "damage_add_per_turn", "hp_cap_bonus", "damage_cap_bonus"]:
 		if not _is_integral(scaling.get(field, null)) or int(scaling.get(field, 0)) < 0:
 			errors.append("pacing turn_scaling.%s must be a non-negative integer" % field)
 	var layers: Dictionary = pacing.get("layers", {})
@@ -205,6 +205,27 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 				var pool_id := str(template_id_value)
 				if not catalog.get("node_by_id", {}).has(pool_id):
 					errors.append("pacing layer %s pool references unknown node %s" % [layer_id, pool_id])
+			# 修复 4：层预算（中位收入真值）为正，且该层至少存在一件经层加价后
+			# 不超过预算的同层成长物（purchase/soul_boost/recipe_unlock/material）。
+			var stone_budget := int(layer.get("stone_budget", -1))
+			if stone_budget < 1:
+				errors.append("pacing layer %s stone_budget must be a positive integer" % layer_id)
+			else:
+				var cheapest := -1
+				for offer_value in catalog.get("shop_offer_by_id", {}).values():
+					var shop_offer: Dictionary = offer_value
+					if str(shop_offer.get("kind", "")) not in ["purchase", "soul_boost", "recipe_unlock", "material_purchase"]:
+						continue
+					if int(shop_offer.get("tier", 99)) > layer_number:
+						continue
+					var base_cost := int(shop_offer.get("stone_cost", 0))
+					if base_cost <= 0:
+						continue
+					var layer_cost := base_cost + int(base_cost * price / 100)
+					if cheapest < 0 or layer_cost < cheapest:
+						cheapest = layer_cost
+				if cheapest < 0 or cheapest > stone_budget:
+					errors.append("pacing layer %s has no affordable shop growth offer under stone_budget %d (cheapest %d)" % [layer_id, stone_budget, cheapest])
 	return errors
 
 
@@ -251,7 +272,11 @@ static func _validate_first_run(catalog: Dictionary) -> Array[String]:
 		if seen.has(route_id):
 			errors.append("first_run route_ids duplicates %s" % route_id)
 		seen[route_id] = true
-		if not catalog.get("node_by_id", {}).has(route_id):
+		# ascension_window 在 ascension_node 字段而非 nodes 表；map_generator 局部
+		# 并入 node_by_id。校验器同样认它。
+		var ascension_id := str(catalog.get("nodes_data", {}).get("ascension_node", {}).get("id", ""))
+		var known: bool = catalog.get("node_by_id", {}).has(route_id) or route_id == ascension_id
+		if not known:
 			errors.append("first_run route_ids references missing node %s" % route_id)
 	return errors
 
@@ -804,6 +829,9 @@ static func _validate_dda(cfg: Dictionary, enemy_by_id: Dictionary) -> Array[Str
 	for weight_value in weights.values():
 		if not _is_integral(weight_value) or int(weight_value) < 1:
 			errors.append("dda weights must be positive integers")
+	var recent_window := int(cfg.get("recent_window", 4))
+	if recent_window < 1:
+		errors.append("dda recent_window must be a positive integer")
 	# R14.6⑦ boss-local rules: known condition keys; intent must exist in some
 	# boss enemy's phase pool (a rule pointing nowhere is a silent no-op).
 	var boss_intent_ids := {}

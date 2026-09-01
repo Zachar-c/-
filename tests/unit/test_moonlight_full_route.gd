@@ -218,15 +218,15 @@ func test_full_route_moonlight_to_layer2() -> void:
 	# 抬到 625 超出 1000 预算；重置复访计数让验收按目录基准价实买。
 	controller.state.node_flags["shop_visits"] = 0
 	var buys := [
-		["purchase_jade_skin_gu", 400],
-		["purchase_white_boar_strength_gu", 500],
+		["purchase_jade_skin_gu", 30],
+		["purchase_white_boar_strength_gu", 35],
 		["purchase_moon_blue_petal", 3],
-		["purchase_boar_king_tusk", 15],
+		["purchase_boar_king_tusk", 10],
 	]
 	for row in buys:
 		var res := controller.submit_command({"type": "shop_purchase", "offer_id": str(row[0])})
 		assert_true(bool((res.get("result", res) as Dictionary).get("ok", false)), "购买 %s OK" % str(row[0]))
-	assert_eq(int(controller.state.stone), 82, "1000−918=82")
+	assert_eq(int(controller.state.stone), 922, "1000−78=922")
 	assert_true(controller.state.refined_gu_ids.has("jade_skin_gu"), "玉皮蛊入袋")
 	assert_true(controller.state.refined_gu_ids.has("white_boar_strength_gu"), "白猪力蛊入袋")
 	assert_eq(int(controller.state.materials.get("moon_blue_petal", 0)), 1, "月蓝花瓣入袋")
@@ -242,7 +242,7 @@ func test_full_route_moonlight_to_layer2() -> void:
 	var wj := controller.submit_command({"type": "refine_gu", "recipe_id": "white_jade_basic"})
 	assert_true(bool((wj.get("result", wj) as Dictionary).get("ok", false)), "炼白玉蛊 OK: %s" % str((wj.get("result", wj) as Dictionary).get("reason", "")))
 	assert_true(controller.state.refined_gu_ids.has("white_jade_gu"), "白玉蛊入袋")
-	assert_eq(int(controller.state.stone), 32, "炼白玉蛊扣 50 元石")
+	assert_eq(int(controller.state.stone), 872, "炼白玉蛊扣 50 元石")
 	_leave_to_map(controller)
 
 	# ---- 节点5：休整 → 回复 30% 生命（不超上限）----

@@ -59,10 +59,27 @@ static func evaluate(state: RunState, catalog: Dictionary) -> Dictionary:
 	if int(state.stone) < 6:
 		score += int(weights.get("low_stone", 0))
 	var loss_count := 0
-	for index in range(maxi(0, state.event_log.size() - 6), state.event_log.size()):
+	# 修复 3：近期败势走战斗摘要窗口（recent_window 条战斗相关事件，向后扫）——
+	# 不是“最后 N 条任意事件”：无关事件（购买/服务/事件）不再稀释；撤退与
+	# 带伤离场（encounter_left_wounded）计入连败；最近一场是胜利则窗口重置。
+	var seen_battles := 0
+	var battle_window := int(cfg.get("recent_window", 4))
+	for index in range(state.event_log.size() - 1, -1, -1):
+		if seen_battles >= battle_window:
+			break
 		var event := state.event_log[index]
+		var action := str(event.get("action", ""))
 		var reason := str(event.get("reason", ""))
-		if reason.begins_with("battle_") and (reason.contains("failed") or reason.contains("dead")):
+		var is_summary := action.begins_with("battle_") \
+			or (action == "encounter_session" and reason == "encounter_left_wounded")
+		if not is_summary:
+			continue
+		seen_battles += 1
+		if action == "battle_finished" and reason.contains("victory"):
+			break
+		if reason.contains("failed") or reason.contains("dead") or reason.contains("defeat") \
+				or action == "battle_retreat" or reason.contains("retreat") \
+				or reason == "encounter_left_wounded":
 			loss_count += 1
 	if loss_count >= 2:
 		score += int(weights.get("recent_losses", 0))
