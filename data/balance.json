@@ -20,5 +20,8 @@
   "low_liquidity_ratio": 0.3,
   "demand_price_tiers": [0.8, 1.0, 1.2],
   "dragon_fish_replacement": [50, 70, 80, 90, 95],
-  "quick_substitute_cap": 0.5
+  "quick_substitute_cap": 0.5,
+  "base_speed": 3,
+  "speed_min": 1,
+  "speed_max": 5
 }

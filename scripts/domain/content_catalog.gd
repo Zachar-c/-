@@ -890,7 +890,8 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"heavy_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
 		"reaction_multiplier", "material_refine_efficiency",
 		"fixed_defense_ratio", "stone_per_t1_material", "public_buyback_ratio",
-		"low_liquidity_ratio", "quick_substitute_cap",
+		"low_liquidity_ratio", "quick_substitute_cap", "base_speed",
+		"speed_min", "speed_max",
 	]
 	for key in positive_keys:
 		var value: Variant = cfg.get(key, null)
@@ -899,6 +900,8 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 			continue
 		if float(value) <= 0.0:
 			errors.append("balance %s must be positive" % key)
+	if float(cfg.get("speed_max", 0.0)) < float(cfg.get("speed_min", 0.0)):
+		errors.append("balance speed_max must be >= speed_min")
 	var ratio_keys := [
 		"standard_hit_ratio", "unarmed_damage_ratio", "standard_activation_cost",
 		"light_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
