@@ -55,6 +55,7 @@ static func load_all() -> Dictionary:
 	var contracts_cfg := _load_object("res://data/contracts.json")
 	var journal_cfg := _load_object("res://data/journal.json")
 	var dda_cfg := _load_object("res://data/dda.json")
+	var balance_cfg := _load_object("res://data/balance.json")
 	var debug_cfg := _load_object("res://data/debug.json")
 	var first_run_cfg := _load_object("res://data/first_run.json")
 	var dialogue_templates_cfg := _load_object("res://data/dialogue_templates.json")
@@ -103,6 +104,7 @@ static func load_all() -> Dictionary:
 		"journal": journal_cfg,
 		"journal_entry_by_id": _index_by_id(journal_cfg.get("entries", [])),
 		"dda": dda_cfg,
+		"balance": balance_cfg,
 		"debug": debug_cfg,
 		"first_run": first_run_cfg,
 		"dialogue_templates": dialogue_templates_cfg,
@@ -667,6 +669,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		errors.append_array(_validate_npcs(catalog.get("npcs", []), catalog.get("shop_offer_by_id", {})))
 	if catalog.has("dda"):
 		errors.append_array(_validate_dda(catalog.get("dda", {}), catalog.get("enemy_by_id", {})))
+	if catalog.has("balance"):
+		errors.append_array(_validate_balance(catalog.get("balance", {})))
 	if catalog.has("journal"):
 		errors.append_array(_validate_journal(catalog.get("journal", {})))
 	if catalog.has("debug"):
@@ -854,6 +858,60 @@ static func _validate_dda(cfg: Dictionary, enemy_by_id: Dictionary) -> Array[Str
 		if boss_checked and not boss_intent_ids.has(intent_id):
 			errors.append("dda boss_local intent %s not in any boss phase pool" % intent_id)
 	return errors
+
+
+# Spec-v4 phase-1 (T1.2): central balance schema guard — every §10/§11 key
+# present, positive, in-range, and ascending where the spec defines tiers.
+# Run on every catalog load (terminates the §16.22 production zero-call item).
+static func _validate_balance(cfg: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var positive_keys := [
+		"rank_step_ratio", "standard_hit_ratio", "human_base_health",
+		"unarmed_damage_ratio", "standard_activation_cost", "light_cost_ratio",
+		"heavy_cost_ratio", "natural_recovery_cost_ratio", "material_refine_efficiency",
+		"fixed_defense_ratio", "stone_per_t1_material", "public_buyback_ratio",
+		"low_liquidity_ratio", "quick_substitute_cap",
+	]
+	for key in positive_keys:
+		var value: Variant = cfg.get(key, null)
+		if not (value is int or value is float):
+			errors.append("balance %s must be numeric" % key)
+			continue
+		if float(value) <= 0.0:
+			errors.append("balance %s must be positive" % key)
+	var ratio_keys := [
+		"standard_hit_ratio", "unarmed_damage_ratio", "standard_activation_cost",
+		"light_cost_ratio", "natural_recovery_cost_ratio", "material_refine_efficiency",
+		"fixed_defense_ratio", "public_buyback_ratio", "low_liquidity_ratio",
+		"quick_substitute_cap",
+	]
+	for key in ratio_keys:
+		var value := float(cfg.get(key, 0.0))
+		if value <= 0.0 or value > 1.0:
+			errors.append("balance %s must be in (0, 1]" % key)
+	if not _is_ascending_positive(cfg.get("feed_tier", [])):
+		errors.append("balance feed_tier must be a non-empty ascending positive array")
+	if not _is_ascending_positive(cfg.get("demand_price_tiers", [])):
+		errors.append("balance demand_price_tiers must be a non-empty ascending positive array")
+	var dragon_fish: Array = cfg.get("dragon_fish_replacement", [])
+	for index in dragon_fish.size():
+		var value := int(dragon_fish[index])
+		if value <= 0 or value > 100:
+			errors.append("balance dragon_fish_replacement[%d] outside (0, 100]" % index)
+		if index > 0 and value <= int(dragon_fish[index - 1]):
+			errors.append("balance dragon_fish_replacement must ascend strictly")
+	return errors
+
+
+static func _is_ascending_positive(values: Variant) -> bool:
+	if not values is Array or (values as Array).is_empty():
+		return false
+	var previous := 0.0
+	for value in values:
+		if not (value is int or value is float) or float(value) <= previous:
+			return false
+		previous = float(value)
+	return true
 
 
 # C1-min §16.13 schema guard: id uniqueness, closed rule-key whitelist,
