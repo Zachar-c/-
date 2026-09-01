@@ -41,10 +41,12 @@ static func serialize_run(state: RunState, route: Array, replies: Array) -> Dict
 static func load_run() -> Dictionary:
 	var diagnosis := diagnose_run_file()
 	if not bool(diagnosis.get("ok", false)):
-		return {}
+		# Failure contract is uniform with load_run_from_data: a refusal dict,
+		# never a silent {} — callers must check has("state"), not is_empty().
+		return _run_load_rejection(diagnosis)
 	var json := JSON.new()
 	if json.parse(FileAccess.get_file_as_string(SAVE_PATH)) != OK or not json.data is Dictionary:
-		return {}
+		return _run_load_rejection({"ok": false, "kind": "invalid_json"})
 	return load_run_from_data(json.data)
 
 

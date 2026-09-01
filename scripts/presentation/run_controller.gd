@@ -441,7 +441,9 @@ func _save_load_feedback(diagnosis: Dictionary) -> String:
 
 
 func _restore_game(loaded: Dictionary) -> bool:
-	if loaded.is_empty():
+	# Spec-v4 T1.1: refusal dicts carry ok=false and no "state"; judge by the
+	# presence of state, never by is_empty().
+	if not loaded.has("state"):
 		return false
 	state = loaded["state"]
 	if loaded.has("route"):

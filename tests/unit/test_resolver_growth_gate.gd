@@ -36,30 +36,41 @@ func test_battle_resolver_stays_within_the_line_cap() -> void:
 
 
 func test_rank_multiplier_has_exactly_one_definition_site() -> void:
-	# The 2.0 step ratio and its projection live only in gu_balance.gd (schema
-	# key names in content_catalog.gd are declarations, not definitions);
-	# any other file implementing the formula or naming the parameter is drift.
-	var drift_tokens := ["rank_step_ratio", "standard_gu_power"]
+	# The rank formulas and their parameter names must live only in
+	# gu_balance.gd (schema key names in content_catalog.gd are declarations,
+	# not definitions); any other file implementing them is drift.
+	var drift_tokens := [
+		"rank_step_ratio", "standard_gu_power", "standard_hit_ratio",
+		"human_standard_heal",
+	]
 	var hits: Array[String] = []
 	var allowed := {
 		"res://scripts/domain/gu_balance.gd": true,
 		"res://scripts/domain/content_catalog.gd": true,
 	}
-	for dir_path in ["res://scripts", "res://scripts/domain", "res://scripts/presentation"]:
-		var dir := DirAccess.open(dir_path)
-		if dir == null:
-			continue
-		dir.list_dir_begin()
-		var name := dir.get_next()
-		while name != "":
-			if not dir.current_is_dir() and name.get_extension() == "gd":
-				var full: String = dir_path.path_join(name)
-				var text := FileAccess.get_file_as_string(full)
-				if allowed.has(full):
-					pass
-				elif drift_tokens.any(func(token: String) -> bool: return text.contains(token)):
-					hits.append(full)
-			name = dir.get_next()
-		dir.list_dir_end()
+	var files: Array[String] = []
+	_collect_gd_files("res://scripts", files)
+	for full in files:
+		var text := FileAccess.get_file_as_string(full)
+		if not allowed.has(full) and drift_tokens.any(func(token: String) -> bool: return text.contains(token)):
+			hits.append(full)
 	assert_eq(hits, [] as Array[String],
 			"balance formulas must live only in gu_balance.gd, but found in %s" % str(hits))
+
+
+# Recursive .gd walk so future modules (scripts/domain/battle2/ etc.) cannot
+# smuggle formula copies past the gate.
+func _collect_gd_files(path: String, out: Array[String]) -> void:
+	var dir := DirAccess.open(path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var name := dir.get_next()
+	while name != "":
+		if dir.current_is_dir():
+			if name != "." and name != "..":
+				_collect_gd_files(path.path_join(name), out)
+		elif name.get_extension() == "gd":
+			out.append(path.path_join(name))
+		name = dir.get_next()
+	dir.list_dir_end()

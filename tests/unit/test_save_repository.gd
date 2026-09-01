@@ -39,7 +39,7 @@ func test_load_rejects_save_with_non_contiguous_event_ids() -> void:
 	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
 	saved["state"]["event_log"][0]["id"] = "event_0002"
 
-	assert_true(SaveRepository.load_run_from_data(saved).is_empty())
+	_assert_rejected(SaveRepository.load_run_from_data(saved), "invalid_event_log")
 
 
 func test_load_rejects_save_with_tampered_state_checksum() -> void:
@@ -47,7 +47,7 @@ func test_load_rejects_save_with_tampered_state_checksum() -> void:
 	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
 	saved["state"]["seed"] = int(saved["state"]["seed"]) + 1
 
-	assert_true(SaveRepository.load_run_from_data(saved).is_empty())
+	_assert_rejected(SaveRepository.load_run_from_data(saved), "checksum_mismatch")
 
 
 func test_load_rejects_save_without_checksum() -> void:
@@ -55,7 +55,15 @@ func test_load_rejects_save_without_checksum() -> void:
 	var saved := SaveRepository.serialize_run(state, MapGenerator.build(101, true), [])
 	saved.erase("_checksum")
 
-	assert_true(SaveRepository.load_run_from_data(saved).is_empty())
+	_assert_rejected(SaveRepository.load_run_from_data(saved), "checksum_missing")
+
+
+# Spec-v4 T1.1: rejected loads now carry {"ok": false, "reason": kind,
+# "message": ...} and never a "state" key. This pins the refusal contract.
+func _assert_rejected(loaded: Dictionary, expected_kind: String) -> void:
+	assert_false(loaded.has("state"), "rejected loads must not carry state")
+	assert_false(bool(loaded.get("ok", true)), "rejected loads must carry ok=false")
+	assert_eq(str(loaded.get("reason", "")), expected_kind)
 
 
 class CountingGateway extends DialogueGateway:

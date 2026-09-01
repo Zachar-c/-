@@ -24,6 +24,8 @@ static func standard_gu_power(rank: int, cat: Dictionary) -> float:
 
 
 # §10.4 natural beast body scale at rank (used by beast fixed defense budgets).
+# T2.1: §10.2 beast body scale covers health/strength/capacity anchors
+# (100..3200 scale) — plan signature keeps beast_scale(rank).
 static func beast_scale(rank: int, cat: Dictionary) -> float:
 	return pow(_b(cat, "rank_step_ratio", 2.0), maxi(0, rank))
 
@@ -33,17 +35,21 @@ static func fixed_defense(rank: int, cat: Dictionary) -> float:
 	return standard_gu_power(rank, cat) * _b(cat, "fixed_defense_ratio", 0.2)
 
 
-# §10.x human standard heal: human_base_health * 0.2 * rank.
+# §10.x human standard heal: human_base_health * standard_hit_ratio * rank.
 static func human_standard_heal(rank: int, cat: Dictionary) -> float:
-	return _b(cat, "human_base_health", 100.0) * 0.2 * maxi(0, rank)
+	return _b(cat, "human_base_health", 100.0) * _b(cat, "standard_hit_ratio", 0.2) * maxi(0, rank)
 
 
 # §11 actual activation cost: base percent scaled by the cost weight
 # (light_cost_ratio 0.5 / standard 1.0 / heavy_cost_ratio 2.0).
+# T2.1: §11.2 down-rank discount — plan signature becomes
+# actual_cost_percent(native, gu_rank, cultivator_rank).
 static func actual_cost_percent(base_percent: float, weight: float, cat: Dictionary) -> float:
 	return base_percent * weight
 
 
 # §11 natural recovery cost: standard_activation_cost * natural_recovery_cost_ratio.
+# T2.1: §11.4 natural recovery is a recovery RATE keyed by aptitude (anchors
+# 0.7 / 1.0 / 1.5) — plan signature becomes natural_recovery(aptitude).
 static func natural_recovery(cat: Dictionary) -> float:
 	return _b(cat, "standard_activation_cost", 0.1) * _b(cat, "natural_recovery_cost_ratio", 0.1)
