@@ -445,15 +445,23 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var singular_kind := str(node.get("enemy_kind", ""))
 		if not singular_kind.is_empty() and not (catalog.get("enemy_by_id", {}) as Dictionary).has(singular_kind):
 			errors.append("node %s references unknown enemy %s" % [node.get("id", ""), singular_kind])
-		var grants: Dictionary = node.get("ascension_grants", {})
-		for grant_action_value in grants.keys():
-			var grant_action := str(grant_action_value)
-			var grant_flag := str(grants[grant_action_value])
+		var ascension_grants: Dictionary = node.get("ascension_grants", {})
+		var choices: Array = node.get("choices", [])
+		for grant_action in ascension_grants:
+			var grant_flag := str(ascension_grants[grant_action])
 			if not grant_flag in ["aperture_foundation", "heaven_earth_qi", "site", "protection", "external_interference"]:
 				errors.append("node %s grants unknown ascension condition %s" % [node.get("id", ""), grant_flag])
-			var choices: Array = node.get("choices", [])
 			if not choices.has(grant_action):
 				errors.append("node %s grants ascension condition on unknown action %s" % [node.get("id", ""), grant_action])
+		var core_token: Variant = node.get("core_replacement_token", null)
+		if core_token != null:
+			# T7.2 §1.3: the token key is a non-empty object granted only on
+			# stage two/three major nodes (the guarantee races the node's own
+			# strengthening at the command surface).
+			if not core_token is Dictionary or (core_token as Dictionary).is_empty():
+				errors.append("node %s core_replacement_token must be a non-empty object" % node.get("id", ""))
+			elif not str(node.get("stage", "")) in ["two", "three"]:
+				errors.append("node %s core_replacement_token only on stage two/three major nodes" % node.get("id", ""))
 		if not node.has("enemy_kinds"):
 			continue
 		var enemy_kinds_value: Variant = node.get("enemy_kinds", [])
