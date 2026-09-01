@@ -19,6 +19,14 @@
       "name_zh": "兽血",
       "value": 2,
       "value_tier": 2,
+      "rank": 1,
+      "dao_tags": ["blood"],
+      "diet_tags": ["meat", "blood"],
+      "is_common": true,
+      "is_exclusive": false,
+      "divisible": true,
+      "public_liquidity": 0.8,
+      "reference_value": 10,
       "use": {
         "health": 2,
         "text": "生饮兽血，气血回复 2。"
@@ -28,6 +36,14 @@
       "name_zh": "兽骨",
       "value": 1,
       "value_tier": 1,
+      "rank": 1,
+      "dao_tags": ["force"],
+      "diet_tags": ["meat", "bone"],
+      "is_common": true,
+      "is_exclusive": false,
+      "divisible": false,
+      "public_liquidity": 0.7,
+      "reference_value": 5,
       "use": {
         "health": 1,
         "text": "嚼碎兽骨，气血回复 1。"
@@ -37,6 +53,14 @@
       "name_zh": "毒囊",
       "value": 3,
       "value_tier": 3,
+      "rank": 1,
+      "dao_tags": ["poison"],
+      "diet_tags": ["toxin"],
+      "is_common": false,
+      "is_exclusive": false,
+      "divisible": false,
+      "public_liquidity": 0.3,
+      "reference_value": 15,
       "use": {
         "health": -1,
         "text": "吞服毒囊蚀伤脏腑，气血 -1。"
@@ -46,6 +70,14 @@
       "name_zh": "月华露",
       "value": 4,
       "value_tier": 4,
+      "rank": 1,
+      "dao_tags": ["moon"],
+      "diet_tags": ["herb", "spirit"],
+      "is_common": false,
+      "is_exclusive": false,
+      "divisible": true,
+      "public_liquidity": 0.4,
+      "reference_value": 20,
       "use": {
         "essence": 2,
         "text": "含服月华露，真元回复 2。"
@@ -56,6 +88,14 @@
       "value": 1,
       "name_zh": "月蓝花瓣",
       "value_tier": 1,
+      "rank": 1,
+      "dao_tags": ["moon"],
+      "diet_tags": ["herb"],
+      "is_common": true,
+      "is_exclusive": false,
+      "divisible": true,
+      "public_liquidity": 0.5,
+      "reference_value": 5,
       "use": {
         "text": "月蓝花瓣 入药。"
       }
@@ -65,6 +105,14 @@
       "value": 1,
       "name_zh": "野猪王牙",
       "value_tier": 1,
+      "rank": 1,
+      "dao_tags": ["force"],
+      "diet_tags": ["meat", "bone"],
+      "is_common": false,
+      "is_exclusive": true,
+      "divisible": false,
+      "public_liquidity": 0.2,
+      "reference_value": 15,
       "use": {
         "text": "野猪王牙 入药。"
       }

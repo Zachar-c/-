@@ -633,11 +633,34 @@ static func validate(catalog: Dictionary) -> Array[String]:
 				errors.append("recipe %s failure references unknown curse %s" % [recipe["id"], fail_curse_id])
 	var loot_tables: Dictionary = catalog.get("loot_tables", {})
 	var materials: Dictionary = loot_tables.get("materials", {})
+	# T5.1: the §6.1 unified material table is guarded field by field; the
+	# literal guard keeps on the T2.2 tier discipline - no material may copy a
+	# central rank multiplier projection without an override_reason.
+	var central_rank_multipliers := {}
+	for multiplier_rank in range(1, 10):
+		central_rank_multipliers[int(GuBalanceScript.rank_multiplier(multiplier_rank, catalog))] = true
 	for material_id in materials:
-		if int(materials[material_id].get("value", 0)) < 1:
+		var material_entry: Dictionary = materials[material_id]
+		if int(material_entry.get("value", 0)) < 1:
 			errors.append("material %s needs a positive value" % material_id)
-		if not _is_integral(materials[material_id].get("value_tier", null)) or int(materials[material_id].get("value_tier", 0)) < 1:
+		if not _is_integral(material_entry.get("value_tier", null)) or int(material_entry.get("value_tier", 0)) < 1:
 			errors.append("material %s must declare a positive value_tier" % material_id)
+		if not _is_integral(material_entry.get("rank", null)) or int(material_entry.get("rank", 0)) < 1 or int(material_entry.get("rank", 0)) > 9:
+			errors.append("material %s rank must be an integer in 1..9" % material_id)
+		for list_key in ["dao_tags", "diet_tags"]:
+			if not material_entry.get(list_key, null) is Array:
+				errors.append("material %s %s must be an array" % [material_id, list_key])
+		for bool_key in ["is_common", "is_exclusive", "divisible"]:
+			if not material_entry.get(bool_key, null) is bool:
+				errors.append("material %s %s must be a boolean" % [material_id, bool_key])
+		var liquidity: Variant = material_entry.get("public_liquidity", null)
+		if not (liquidity is int or liquidity is float) or float(liquidity) <= 0.0 or float(liquidity) > 1.0:
+			errors.append("material %s public_liquidity must be in (0, 1]" % material_id)
+		var ref_value: Variant = material_entry.get("reference_value", null)
+		if not _is_integral(ref_value) or int(ref_value) < 1:
+			errors.append("material %s reference_value must be a positive integer" % material_id)
+		elif str(material_entry.get("override_reason", "")).is_empty() and central_rank_multipliers.has(int(ref_value)):
+			errors.append("material %s reference_value %d replicates the central rank multiplier table" % [material_id, int(ref_value)])
 	for recipe in catalog.get("refinement_recipes", []):
 		for material_id_value in recipe.get("materials", {}):
 			if not materials.has(str(material_id_value)):
