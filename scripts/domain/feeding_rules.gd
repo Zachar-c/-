@@ -107,7 +107,8 @@ static func layer_settle(instances: Array, pantry: Dictionary, options: Dictiona
 	for instance_id in feeding_order:
 		if instances_by_id.has(str(instance_id)):
 			var settled_one := _settle_instance(instances_by_id[str(instance_id)], pantry_after, options, catalog)
-			settled.append(settled_one["record"])
+			if not bool(settled_one["record"].get("died", false)):
+				settled.append(settled_one["record"])
 			if not (settled_one["event"] as Dictionary).is_empty():
 				events.append(settled_one["event"])
 			instances_by_id.erase(str(instance_id))
@@ -116,7 +117,8 @@ static func layer_settle(instances: Array, pantry: Dictionary, options: Dictiona
 		if not instances_by_id.has(key):
 			continue
 		var settled_one := _settle_instance(instances_by_id[key], pantry_after, options, catalog)
-		settled.append(settled_one["record"])
+		if not bool(settled_one["record"].get("died", false)):
+			settled.append(settled_one["record"])
 		if not (settled_one["event"] as Dictionary).is_empty():
 			events.append(settled_one["event"])
 	return {"settled": settled, "pantry_after": pantry_after, "events": events}
@@ -159,6 +161,13 @@ static func _settle_instance(instance: Dictionary, pantry_after: Dictionary, opt
 		hunger = 0
 	var updated := instance.duplicate(true)
 	updated["hunger_phase"] = hunger
+	var died := outcome == "starved"
+	if died:
+		# P0.1: death is materialized - the instance leaves the live ledger; the
+		# death record lives entirely in the immutable event (with the full
+		# snapshot for attribution), so no corpse can be re-settled later or
+		# counted as an asset.
+		event["_snapshot"] = updated.duplicate(true)
 	return {
 		"instance": updated,
 		"record": {
@@ -166,6 +175,7 @@ static func _settle_instance(instance: Dictionary, pantry_after: Dictionary, opt
 			"outcome": outcome,
 			"hunger_phase": hunger,
 			"need": need,
+			"died": died,
 		},
 		"event": event,
 	}

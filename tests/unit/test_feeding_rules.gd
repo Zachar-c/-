@@ -94,22 +94,48 @@ func test_emergency_substitution_obeys_the_fifty_percent_cap() -> void:
 func test_two_stage_starvation_writes_a_structured_death_event() -> void:
 	# Acceptance #11: first unpaid layer -> hunger_phase 1; second unpaid
 	# layer -> the gu dies with a precise cause in the event log - never
-	# silently.
+	# silently. P0.1: the dead gu leaves the live ledger entirely (no corpse
+	# that mis-counts as an asset or re-starves).
 	var instances: Array = [_instance("gu_001", "small_light_gu", 1)]
 	var first := FeedingRulesScript.layer_settle(instances, {}, {}, catalog)
 	assert_eq(int(first["settled"][0]["hunger_phase"]), 1)
 	assert_eq(str(first["settled"][0]["outcome"]), "hungry")
+	assert_eq(first["settled"].size(), 1)
 	var second := FeedingRulesScript.layer_settle(
-			[first["settled"][0]], {}, {}, catalog)
-	assert_eq(str(second["settled"][0]["outcome"]), "starved")
+			[first["settled"][0]["instance"]], {}, {}, catalog)
+	assert_eq(second["settled"].size(), 0,
+			"the starved gu no longer appears among the living")
 	var death_events: Array = second["events"]
 	var found := false
 	for event in death_events:
 		if str(event.get("action", "")) == "gu_starved":
 			found = true
 			assert_true(str(event.get("cause", "")).contains("starvation"))
+			assert_true(event.has("_snapshot"),
+					"the death event carries the full instance snapshot for attribution")
 	if not found:
 		push_error("missing starved event")
+	# Idempotence: settling the living set after the death (second["settled"]
+	# no longer contains the starved gu) cannot raise another starved event.
+	var third := FeedingRulesScript.layer_settle(second["settled"], {}, {}, catalog)
+	assert_eq(third["events"].size(), 0,
+			"no repeat starved events for a dead gu")
+
+
+func test_run_state_layer_settle_removes_starved_instances() -> void:
+	# P0.1: after starvation the instance is gone from gu_instances (the
+	# discovery/refined projections shrink with it).
+	var state: RunState = RunStateScript.new_run(13)
+	var first_starving := FeedingRulesScript.layer_settle(
+			[_instance("gu_001", "small_light_gu", 1)], {}, {}, catalog)
+	var after_first := RunStateScript.settle_layer(state, 1, {}, catalog, {})
+	assert_true(after_first.gu_instances.has("gu_001"))
+	# Simulate the hungry gu carrying into the second unpaid layer via a
+	# direct settle over its starved record.
+	var starved_ledger := FeedingRulesScript.layer_settle(
+			[first_starving["settled"][0]["instance"]], {}, {}, catalog)
+	assert_eq(starved_ledger["settled"].size(), 0)
+	assert_true((starved_ledger["events"] as Array).size() >= 1)
 
 
 func test_hungry_gu_cannot_activate_and_recovery_resets() -> void:
