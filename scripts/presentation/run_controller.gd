@@ -21,19 +21,15 @@ const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
 
-const SCREEN_PATHS := {
-	"Map": "res://ui/screens/map_screen.gd",
-	# Shop / Rest / Reward / Npc / Encounter / Refine / Ending / Battle 已迁到
-	# MASTER_SCENE_PATHS
-	# （Godot 官方 .tscn），此处不再登记；逐屏迁移完后这张表会整体清空。
-}
+## 全部屏已迁到 Godot 官方 .tscn 节点树（scenes/ui/screens/），RUITK 路由表
+## 清空：_mount_screen() 只剩 .tscn 一条路径。表留在原位是「RUITK 屏必须为零」
+## 的锚点——非空即代表有屏回退到 .guitkx。
+const SCREEN_PATHS := {}
 const MASTER_SCENE_PATHS := {
 	"Title": "res://scenes/ui/screens/hall_screen.tscn",
-	"Map": "res://scenes/ui_masters/wenzhen_map_master.tscn",
+	"Map": "res://scenes/ui/screens/map_screen.tscn",
 	"Battle": "res://scenes/ui/screens/battle_screen.tscn",
-	# 过渡期：Shop / Rest / Reward / Npc / Encounter / Refine / Ending / Battle 已转
-	# .tscn 节点树（scenes/ui/screens/），走的是同一套 instantiate + mount_snapshot
-	# 协议，故并入本表；其余屏仍走 .guitkx，逐个转完后这张表就是全部 UI 的路由表。
+	# 所有屏走同一套 instantiate + mount_snapshot 协议，本表即唯一路由表。
 	"Shop": "res://scenes/ui/screens/shop_screen.tscn",
 	"Rest": "res://scenes/ui/screens/rest_screen.tscn",
 	"Reward": "res://scenes/ui/screens/reward_screen.tscn",
@@ -1276,16 +1272,10 @@ func _mount_screen(screen: String, snapshot: Dictionary, commands: Dictionary) -
 		if _master_instance.has_method("mount_snapshot"):
 			_master_instance.mount_snapshot(snapshot, commands)
 		return
+	# RUITK 屏已全部迁离：走到这里说明路由表漏登记，直接报错而不是静默白屏。
+	_unmount_rui_root()
 	_unmount_master_instance()
-	var comp := VLib.comp(SCREEN_PATHS[screen], "render")
-	if not (comp is Callable):
-		push_error("RUI 组件缺失: %s" % screen)
-		return
-	if _rui_root == null:
-		_rui_root = RuiRoot.create(_rui_host, VLib.fc(comp, {"state": snapshot, "commands": commands}))
-	else:
-		_rui_root.set_root(VLib.fc(comp, {"state": snapshot, "commands": commands}))
-	_mounted_screen = screen
+	push_error(".tscn 路由表缺少视图 %s（RUITK 兜底已移除）" % screen)
 
 
 func _unmount_rui_root() -> void:

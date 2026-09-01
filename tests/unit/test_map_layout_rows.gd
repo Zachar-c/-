@@ -1,19 +1,14 @@
 extends GutTest
 
 
-const MapScreenScript = preload("res://ui/screens/map_screen.gd")
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
+## 地图已迁到 Godot 官方 .tscn 节点树（scenes/ui/screens/map_screen.tscn），
+## 挂载走 TscnMountHelper.instantiate + mount_snapshot。
+const MAP_SCREEN_TSCN := "res://scenes/ui/screens/map_screen.tscn"
 
-var _roots: Array = []
 var _hosts: Array = []
 
 
 func after_each() -> void:
-	for root in _roots:
-		if root != null and root.has_method("unmount"):
-			root.unmount()
-	_roots.clear()
 	for host in _hosts:
 		if host != null and is_instance_valid(host):
 			host.queue_free()
@@ -36,7 +31,7 @@ func test_real_layer_rows_do_not_overlap_and_each_node_renders_once() -> void:
 	host.size = Vector2(1920, 1080)
 	add_child(host)
 	_hosts.append(host)
-	_roots.append(RuiRoot.create(host, VLib.fc(MapScreenScript.render, {"state": snapshot, "commands": {"travel": func(_id): pass}})))
+	host.add_child(TscnMountHelper.instantiate(MAP_SCREEN_TSCN, snapshot, {"travel": func(_id): pass}))
 	for _i in 3:
 		await get_tree().process_frame
 	var names := ["current", "event_a", "shop_a", "rest_a", "rest_b"]
@@ -69,7 +64,7 @@ func test_reachable_event_button_submits_its_own_id() -> void:
 	host.size = Vector2(1920, 1080)
 	add_child(host)
 	_hosts.append(host)
-	_roots.append(RuiRoot.create(host, VLib.fc(MapScreenScript.render, {"state": snapshot, "commands": {"travel": func(id): submitted.append(str(id))}})))
+	host.add_child(TscnMountHelper.instantiate(MAP_SCREEN_TSCN, snapshot, {"travel": func(id): submitted.append(str(id))}))
 	for _i in 3:
 		await get_tree().process_frame
 	var event_button := _named(host, "map_node_event_a") as Button
@@ -89,7 +84,7 @@ func test_map_hud_hides_material_but_keeps_other_global_resources() -> void:
 	host.size = Vector2(1920, 1080)
 	add_child(host)
 	_hosts.append(host)
-	_roots.append(RuiRoot.create(host, VLib.fc(MapScreenScript.render, {"state": snapshot, "commands": {}})))
+	host.add_child(TscnMountHelper.instantiate(MAP_SCREEN_TSCN, snapshot, {}))
 	for _i in 3:
 		await get_tree().process_frame
 	for id in ["yuanstone", "shouyuan", "hunpo"]:

@@ -435,7 +435,9 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	var map_container := _mount_component("res://ui/screens/map_screen.gd", "render", {"state": map_state, "commands": map_cmds})
+	# 地图已迁到 Godot 官方 .tscn（镜头/拓扑是绝对定位，_ready() 后才有布局）。
+	var map_container := _mount_tscn_screen(MAP_SCREEN_TSCN, map_state, map_cmds)
+	await process_frame
 	var mc := _count_buttons(map_container)
 	if mc < 1:
 		push_error("地图按钮数 %d < 1" % mc)
@@ -443,7 +445,13 @@ func _initialize() -> void:
 	if _find_button_by_text(map_container, "存档") == null:
 		push_error("地图屏缺少「存档」按钮")
 		quit(1)
-	print("OK MapScreen buttons=%d" % mc)
+	var map_node_count := 0
+	for node in map_container.find_children("map_node_*", "Button", true, false):
+		map_node_count += 1
+	if map_node_count != map_state["nodes"].size():
+		push_error("地图节点按钮数 %d != 快照节点数 %d" % [map_node_count, map_state["nodes"].size()])
+		quit(1)
+	print("OK TscnMapScreen buttons=%d nodes=%d" % [mc, map_node_count])
 
 		# 战斗屏断言（敌方意图数值+效果、生命护盾分条、手牌 tooltip、操作按钮）。
 
@@ -1118,6 +1126,7 @@ func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> void:
 ## 与 _mount_tscn_screen 的区别只在注入方式：路由屏是 mount_snapshot，
 ## 调试面板是 set_props（它不是路由屏，由 RunController 直接挂到可拖动宿主上）。
 const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
+const MAP_SCREEN_TSCN := "res://scenes/ui/screens/map_screen.tscn"
 const DEBUG_PANEL_TSCN := "res://scenes/ui/widgets/debug_panel.tscn"
 
 func _mount_tscn_props(path: String, props: Dictionary) -> Control:
