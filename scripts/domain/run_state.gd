@@ -94,6 +94,13 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"soul": 1,
 		"soul_max": 4,
 		"soul_control_limit": 2,
+		# §15.4 five soul quantities (T8.2, new keys; the legacy soul keys
+		# above are T10.1 retirement scope and never feed these).
+		"soul_magnitude": 1.0,
+		"soul_safe_capacity": 4.0,
+		"soul_calm": 60,
+		"soul_nature": "human",
+		"beast_nature": 0.0,
 		"notorious": 0,
 		"speed": 2,
 		"force_power": 0,
