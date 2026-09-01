@@ -279,6 +279,53 @@ func test_swaps_are_deterministic() -> void:
 	assert_true(pool.has(str(first_battle["enemy_kind"])))
 
 
+func test_low_health_plus_poor_stone_reaches_peril() -> void:
+	# 修复 3：低血(3) + 贫石(2) 必须够到险象门槛 5（此前 3+1=4 落回平稳）。
+	var state := _state()
+	state.health = 2
+	state.max_health = 6
+	state.stone = 0
+	var eval_result := DdaResolverScript.evaluate(state, catalog)
+	assert_eq(int(eval_result["score"]), 5, "低血+贫石必须达到险象门槛 5")
+	assert_eq(str(eval_result["marker"]), "sys:dda_peril")
+
+
+func test_retreats_and_wounded_departures_count_as_recent_losses() -> void:
+	# 修复 3：撤退与连续带伤离场计入近期败势（此前只认 battle_ 且 failed/dead）。
+	var state := _state()
+	state = state.append_event({"action": "battle_retreat", "reason": "battle_retreat"})
+	state = state.append_event({"action": "battle_retreat", "reason": "battle_retreat"})
+	state = state.append_event({"action": "encounter_session", "reason": "encounter_left_wounded"})
+	state = state.append_event({"action": "encounter_session", "reason": "encounter_left_wounded"})
+	var eval_result := DdaResolverScript.evaluate(state, catalog)
+	assert_eq(int(eval_result["score"]), int(catalog["dda"]["weights"]["recent_losses"]), "两次败势（撤退/带伤离场）必须触发 recent_losses 权重")
+
+	var single := _state()
+	single = single.append_event({"action": "battle_retreat", "reason": "battle_retreat"})
+	assert_eq(int(DdaResolverScript.evaluate(single, catalog)["score"]), 0, "单次败势不触发")
+
+
+func test_battle_summary_window_ignores_unrelated_events() -> void:
+	# 修复 3：窗口只统计战斗摘要事件——6 条购买事件夹在两条败仗中间，
+	# 旧“最后 6 条任意事件”实现会丢掉连败计数，新窗口不受稀释。
+	var state := _state()
+	for i in range(6):
+		state = state.append_event({"action": "shop_purchase", "reason": "bought_gu"})
+	state = state.append_event({"action": "battle_failed_probe", "reason": "battle_failed_probe"})
+	state = state.append_event({"action": "battle_failed_probe", "reason": "battle_failed_probe"})
+	var eval_result := DdaResolverScript.evaluate(state, catalog)
+	assert_eq(int(eval_result["score"]), int(catalog["dda"]["weights"]["recent_losses"]), "战斗摘要窗口：无关事件不得稀释连败计数")
+
+
+func test_victory_breaks_the_loss_window() -> void:
+	# 修复 3：最近一场战斗是胜利时，败势窗口重置。
+	var state := _state()
+	state = state.append_event({"action": "battle_failed_probe", "reason": "battle_failed_probe"})
+	state = state.append_event({"action": "battle_failed_probe", "reason": "battle_failed_probe"})
+	state = state.append_event({"action": "battle_finished", "reason": "battle_victory"})
+	assert_eq(int(DdaResolverScript.evaluate(state, catalog)["score"]), 0, "最近胜利必须打断连败窗口")
+
+
 func _has(errors: Array[String], needle: String) -> bool:
 	for error in errors:
 		if error.contains(needle):

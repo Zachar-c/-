@@ -51,7 +51,11 @@ static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState)
 	var kept: Array[Dictionary] = []
 	for card in cards:
 		var command: Dictionary = card.get("command", {})
-		if str(command.get("action_id", "")) == "fight" or str(command.get("type", "")) == "leave_node":
+		# 极端敌对 = 非战不可：交锋卡（旧 action_id 形态与 resolve_contact/approach=fight
+		# 散修形态）与离场必须保留可执行；其余动作压暗。
+		var is_fight: bool = str(command.get("action_id", "")) == "fight" \
+			or (str(command.get("type", "")) == "resolve_contact" and str(command.get("approach", "")) == "fight")
+		if is_fight or str(command.get("type", "")) == "leave_node":
 			kept.append(card)
 		else:
 			card["executable"] = false

@@ -59,12 +59,15 @@ func test_extreme_stance_disables_non_fight_cards() -> void:
 	var cards: Array[Dictionary] = ActionPreviewServiceScript.preview_actions(state, {"id": "toxin_test", "type": "contact", "choices": ["probe", "fight"]}, catalog())
 	for card in cards:
 		var command: Dictionary = card.get("command", {})
-		if str(command.get("action_id", "")) == "fight":
+		# 交锋卡两形态（旧 action_id=fight 与散修 resolve_contact/fight）都必须保留。
+		var is_fight: bool = str(command.get("action_id", "")) == "fight" \
+			or (str(command.get("type", "")) == "resolve_contact" and str(command.get("approach", "")) == "fight")
+		if is_fight:
 			assert_true(bool(card.get("executable", false)))
 		elif str(command.get("type", "")) == "leave_node":
 			assert_true(bool(card.get("executable", false)))
 		else:
-			assert_false(bool(card.get("executable", true)), "non-fight card %s must be disabled" % str(card.get("id", "")))
+			assert_false(bool(card.get("executable", true)), "非战卡 %s 必须禁用" % str(card.get("id", "")))
 
 
 func test_probe_procures_weakness_fact() -> void:
