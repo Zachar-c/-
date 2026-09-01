@@ -7,6 +7,14 @@ const STONE_EXHAUSTED_TAUNT := "见光便扑？这点真元，也敢替我试蛊
 
 static func build(battle: Dictionary, state: RunState) -> Dictionary:
 	var final_blow: Dictionary = battle.get("final_blow", {})
+	# V1 契约无 final_blow 状态字段（禁止字段清单）；击杀意图从战斗日志的
+	# enemy_attack 条目导出（enemy attack 入日志见 v1_battle_resolver）。
+	if final_blow.is_empty() and not (battle.get("log", []) as Array).is_empty():
+		for index in range((battle.get("log", []) as Array).size() - 1, -1, -1):
+			var entry: Dictionary = (battle["log"] as Array)[index]
+			if str(entry.get("reason", "")) == "enemy_attack":
+				final_blow = {"id": str(entry.get("target", "")), "damage": 0}
+				break
 	var facts: Array[String] = []
 	for clue in battle.get("clues", []):
 		facts.append(str(clue))

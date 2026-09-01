@@ -219,9 +219,12 @@ func test_ending_screen_settlement_has_no_load_or_backtrack_affordance() -> void
 	var host := _mount_screen({"state": state, "commands": commands})
 	for i in 3:
 		await get_tree().process_frame
+	# 「结算命令唯一」只数结算自己的决策面（TopBar 三死线芯片与 ≡ 菜单
+	# 是全屏共用的信息透明组件，不算结算命令；读档/回溯字面扫描仍查全屏）。
+	var decision_surface: Node = host.get_node_or_null("primary_decision_surface/ActionBlock")
 	var buttons: Array = []
 	var labels: Array = []
-	_collect_controls(host, buttons, labels)
+	_collect_controls(decision_surface if decision_surface != null else host, buttons, labels)
 	assert_eq(buttons.size(), 2, "settlement exposes exactly two commands")
 	var texts: Array[String] = []
 	for b in buttons:

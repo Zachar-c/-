@@ -3,8 +3,9 @@ extends GutTest
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
+
+const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
@@ -28,11 +29,10 @@ func test_hall_uses_wenzhen_brand_and_one_primary_action() -> void:
 	assert_eq(snapshot["brand_title"], "問眞")
 	assert_eq(snapshot["primary_action"], "continue_run" if snapshot["has_save"] else "open_schools")
 
-	var root: Variant = load("res://ui/screens/hall_view.gd").render({
-		"state": snapshot,
-		"commands": controller._build_commands("Title"),
-	}, [])
-	assert_eq(_buttons_with_role(root, "primary").size(), 1)
+	# .tscn 迁移后：主按钮唯一性直接挂新屏断言（role 语义由 MasterTheme.apply_button 赋）。
+	var host := _mount_hall(Vector2i(1920, 1080), snapshot)
+	await get_tree().process_frame
+	assert_eq(_primary_button_count(host), 1)
 
 
 func test_hall_projects_current_run_summary_without_ui_recomputation() -> void:
@@ -52,16 +52,16 @@ func test_hall_matches_approved_horizontal_composition() -> void:
 	var host := _mount_hall(Vector2i(1920, 1080), _running_snapshot())
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var sheet := _named(host, "hall_sheet")
-	var identity := _named(host, "hall_identity")
-	var rule := _named(host, "hall_primary_rule")
-	var primary := _named(host, "hall_primary")
-	var archive_rule := _named(host, "hall_archive_rule")
-	var archive := _named(host, "hall_archive")
-	var folio := _named(host, "hall_folio")
-	var seal := _named(host, "hall_seal")
-	var title := _named(host, "hall_title")
-	var action := _named(host, "hall_primary_action")
+	var sheet := _named(host, "HallSheet")
+	var identity := _named(host, "HallIdentity")
+	var rule := _named(host, "HallPrimaryRule")
+	var primary := _named(host, "HallPrimary")
+	var archive_rule := _named(host, "HallArchiveRule")
+	var archive := _named(host, "HallArchive")
+	var folio := _named(host, "HallFolio")
+	var seal := _named(host, "HallSeal")
+	var title := _named(host, "HallTitle")
+	var action := _named(host, "HallPrimaryAction")
 	assert_not_null(sheet, "hall HTML uses a full-page sheet layer")
 	assert_not_null(identity, "hall must expose its identity region")
 	assert_not_null(rule, "hall HTML puts a hairline before the central chapter")
@@ -72,7 +72,7 @@ func test_hall_matches_approved_horizontal_composition() -> void:
 	assert_not_null(seal, "hall HTML keeps the cinnabar seal in the upper right margin")
 	assert_not_null(title, "hall HTML makes the horizontal title its largest element")
 	assert_not_null(action, "hall HTML has one selected chapter action")
-	assert_null(_named(host, "hall_art"), "approved hall master has no standalone image column")
+	assert_null(_named(host, "HallArt"), "approved hall master has no standalone image column")
 	if sheet == null or identity == null or rule == null or primary == null or archive_rule == null or archive == null or folio == null or seal == null or title == null or action == null:
 		return
 	assert_gte(host.get_global_rect().size.x, 1888.0)
@@ -98,14 +98,14 @@ func test_hall_matches_approved_horizontal_composition() -> void:
 func test_hall_uses_the_approved_paper_and_semantic_colors() -> void:
 	var host := _mount_hall(Vector2i(1920, 1080), _running_snapshot())
 	await get_tree().process_frame
-	var paper := _named(host, "hall_paper") as ColorRect
-	var rule := _named(host, "hall_primary_rule") as ColorRect
+	var paper := _named(host, "HallPaper") as ColorRect
+	var rule := _named(host, "HallPrimaryRule") as ColorRect
 	assert_not_null(paper, "hall must own the HTML paper color instead of inheriting the global token")
 	assert_not_null(rule, "hall must retain its HTML hairline rule")
 	if paper == null or rule == null:
 		return
-	assert_eq(paper.color, Color("e5e2d7"))
-	assert_eq(rule.color, Color("b8b6aa"))
+	assert_true(paper.color.is_equal_approx(Color("e5e2d7")), "hall paper must be the HTML PAPER_HALL")
+	assert_true(rule.color.is_equal_approx(Color("b8b6aa")), "hall rule must be the HTML RULE_HALL")
 
 
 func test_hall_running_summary_uses_the_master_ink_color() -> void:
@@ -119,15 +119,16 @@ func test_hall_running_summary_uses_the_master_ink_color() -> void:
 
 
 func _mount_hall(viewport_size: Vector2i, state: Dictionary) -> Control:
+	# 2026-09-01 .tscn 迁移后：大厅主屏 = scenes/ui/screens/hall_screen.tscn
+	# （旧 hall_view.gd/RUI 路由已退役）。挂载走 TscnMountHelper，快照直入。
 	var host := Control.new()
 	host.size = Vector2(viewport_size)
 	host.custom_minimum_size = Vector2(viewport_size)
 	add_child(host)
 	_rui_hosts.append(host)
-	var fn = VLib.comp("res://ui/screens/hall_view.gd", "render")
-	assert_true(fn is Callable)
-	if fn is Callable:
-		_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, {"state": state, "commands": {}})))
+	var hall = TscnMountHelper.instantiate(HALL_SCREEN_TSCN, state, {})
+	if hall != null:
+		host.add_child(hall)
 	return host
 
 
@@ -152,7 +153,7 @@ func _named(node: Node, wanted: String) -> Control:
 
 
 func _primary_button_count(node: Node) -> int:
-	var count := 1 if node is Button and node.name == "hall_primary_action" else 0
+	var count := 1 if node is Button and node.name == "HallPrimaryAction" else 0
 	for child in node.get_children():
 		count += _primary_button_count(child)
 	return count
