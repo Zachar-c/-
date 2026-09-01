@@ -8,11 +8,9 @@ extends GutTest
 
 const RESOLVER_PATH := "res://scripts/domain/resolver.gd"
 const BATTLE_RESOLVER_PATH := "res://scripts/domain/battle_resolver.gd"
-# NOTE: the phase-1 plan line was 2457, but the 2026-09-01 integration batch
-# pushed resolver to 2502 (split count). The gate pins TODAY's line as the
-# ceiling; the plan line is the phase-10 shrink target, at which point this
-# cap must be lowered back to 2457.
-const RESOLVER_LINE_CAP := 2502
+# NOTE: plan global-invariant line is 2457. The 9/1 batch pushed resolver past
+# it; a pre-phase-2 shrink (economy_rules.gd extraction) brought it back under.
+const RESOLVER_LINE_CAP := 2457
 const BATTLE_RESOLVER_LINE_CAP := 1516
 
 
