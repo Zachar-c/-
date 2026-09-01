@@ -665,6 +665,45 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for material_id_value in recipe.get("materials", {}):
 			if not materials.has(str(material_id_value)):
 				errors.append("recipe %s references unknown material %s" % [recipe.get("id", ""), material_id_value])
+		# T5.2 §5.x recipe declaration guards (optional new sections).
+		for pool_gu_value in recipe.get("candidate_pool", []):
+			if not gu_by_id.has(str(pool_gu_value)):
+				errors.append("recipe %s candidate_pool references unknown gu %s" % [recipe.get("id", ""), pool_gu_value])
+		var product_rule := str(recipe.get("product_rule", ""))
+		if not product_rule.is_empty() and product_rule != "main_gu_transformation":
+			errors.append("recipe %s product_rule must be main_gu_transformation" % recipe.get("id", ""))
+		if recipe.has("aux_core_warning") and not (recipe["aux_core_warning"] is bool):
+			errors.append("recipe %s aux_core_warning must be a boolean" % recipe.get("id", ""))
+		for stage_value in recipe.get("stages", []):
+			var stage: Dictionary = stage_value
+			if not _is_integral(stage.get("thought", null)) or int(stage.get("thought", 0)) < 0:
+				errors.append("recipe %s stage thought must be a non-negative integer" % recipe.get("id", ""))
+			if not _is_integral(stage.get("essence", null)) or int(stage.get("essence", 0)) < 0:
+				errors.append("recipe %s stage essence must be a non-negative integer" % recipe.get("id", ""))
+			if not _is_integral(stage.get("duration", null)) or int(stage.get("duration", 0)) < 1:
+				errors.append("recipe %s stage duration must be a positive integer" % recipe.get("id", ""))
+			if stage.has("interruptible") and not (stage["interruptible"] is bool):
+				errors.append("recipe %s stage interruptible must be a boolean" % recipe.get("id", ""))
+		var identity: Dictionary = recipe.get("identity_requirements", {})
+		for required_gu_value in identity.get("named_gu_ids", []):
+			if not gu_by_id.has(str(required_gu_value)):
+				errors.append("recipe %s identity named gu %s is missing from gu.json" % [recipe.get("id", ""), required_gu_value])
+		for required_material_value in identity.get("named_materials", []):
+			if not materials.has(str(required_material_value)):
+				errors.append("recipe %s identity named material %s is missing" % [recipe.get("id", ""), required_material_value])
+		var identity_min_rank: Variant = identity.get("min_rank", null)
+		if identity_min_rank != null and (not _is_integral(identity_min_rank) or int(identity_min_rank) < 1 or int(identity_min_rank) > 5):
+			errors.append("recipe %s identity min_rank must be an integer in 1..5" % recipe.get("id", ""))
+		var substitute: Dictionary = recipe.get("allow_substitute", {})
+		for from_material_value in substitute.get("materials", {}):
+			var from_material := str(from_material_value)
+			if not materials.has(from_material):
+				errors.append("recipe %s allow_substitute references unknown material %s" % [recipe.get("id", ""), from_material])
+			for to_material_value in substitute["materials"][from_material_value]:
+				if not materials.has(str(to_material_value)):
+					errors.append("recipe %s allow_substitute references unknown material %s" % [recipe.get("id", ""), to_material_value])
+		if recipe.has("success_roll_max") and str(recipe.get("override_reason", "")).is_empty():
+			errors.append("recipe %s cannot declare random failure; add override_reason for the legacy retirement (T10.1-8)" % recipe.get("id", ""))
 	var material_pity: Dictionary = loot_tables.get("pity", {}).get("material_pity", {})
 	if not material_pity.is_empty():
 		if not _is_integral(material_pity.get("threshold", null)) or int(material_pity.get("threshold", 0)) < 1:

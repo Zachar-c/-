@@ -10,7 +10,8 @@
       ],
       "output_gu_id": "pulse_drum_gu",
       "success_roll_max": 70,
-      "failure": "destroy_inputs"
+      "failure": "destroy_inputs",
+      "override_reason": "legacy_random_refine_retired_T10.1-8"
     },
     {
       "id": "moon_glow_fixed",
@@ -250,6 +251,67 @@
         "moon_dew": 1
       },
       "stone_cost": 6
+    },
+    {
+      "id": "tagged_moon_candidates",
+      "kind": "fixed",
+      "default_unlocked": true,
+      "input_gu_ids": [
+        "moonlight_gu",
+        "small_light_gu"
+      ],
+      "candidate_pool": [
+        "phantom_moon_gu",
+        "moon_shadow_gu"
+      ],
+      "output_gu_id": "phantom_moon_gu"
+    },
+    {
+      "id": "essence_thorn_identity",
+      "kind": "fixed",
+      "input_gu_ids": [
+        "thorn_whip_gu"
+      ],
+      "identity_requirements": {
+        "named_materials": [
+          "venom_sac"
+        ],
+        "min_rank": 2
+      },
+      "allow_substitute": {
+        "materials": {
+          "venom_sac": [
+            "moon_blue_petal"
+          ]
+        },
+        "cost_change": {
+          "essence": 2
+        }
+      },
+      "output_gu_id": "venom_thread_gu"
+    },
+    {
+      "id": "moon_ray_staged",
+      "kind": "fixed",
+      "input_gu_ids": [
+        "moon_ray_gu"
+      ],
+      "stages": [
+        {
+          "thought": 1,
+          "essence": 1,
+          "duration": 2,
+          "interruptible": true,
+          "failure_condition": "none"
+        },
+        {
+          "thought": 2,
+          "essence": 2,
+          "duration": 1,
+          "interruptible": false
+        }
+      ],
+      "output_gu_id": "phantom_moon_gu"
     }
   ],
   "caravan_offers": [
