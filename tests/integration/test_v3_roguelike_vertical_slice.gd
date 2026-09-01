@@ -16,22 +16,20 @@ func before_each() -> void:
 func test_duplicate_action_card_submission_is_atomic() -> void:
 	var state := RunState.new_run(101)
 	var node := _work_node()
-	state.current_node_id = str(node["id"])  # 信封预检要求 current_node_id 与命令一致
+	state.current_node_id = str(node["id"])
 	var session := EncounterSessionResolverScript.start(node)
 	var card := _card(ActionPreviewServiceScript.preview_actions(state, node, catalog), "node.work")
 	var first := EncounterSessionResolverScript.apply(
 		state,
 		session,
-		{"type": "action_card", "action_id": card["id"], "state_version": card["state_version"],
-			"node_id": str(node["id"]), "session_node_id": str(node["id"])},
+		{"type": "action_card", "action_id": card["id"], "state_version": card["state_version"], "node_id": str(node["id"]), "session_node_id": str(session["node_id"])},
 		catalog,
 		node
 	)
 	var second := EncounterSessionResolverScript.apply(
 		first["state"],
 		first["session"],
-		{"type": "action_card", "action_id": card["id"], "state_version": card["state_version"],
-			"node_id": str(node["id"]), "session_node_id": str(node["id"])},
+		{"type": "action_card", "action_id": card["id"], "state_version": card["state_version"], "node_id": str(node["id"]), "session_node_id": str(session["node_id"])},
 		catalog,
 		node
 	)

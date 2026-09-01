@@ -36,6 +36,14 @@ const CONTRACT_BLUE := Color("315f73")      # 契约规则
 const ANOMALY_YELLOW := Color("936f1e")     # DDA / 异变 / 险象
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
 
+# 淡染层（TINT_*）：语义色的半透明变体，只做徽章 / 警示条 / 死线行的**底**，
+# 绝不当文字色。半透明是为了让下层纸纹透出来，符合「不搞玻璃卡片」的原则。
+# 这组常量存在的唯一理由：调用点不许再写裸 Color(0.x, 0.x, 0.x, a)。
+const TINT_BLOOD      := Color(0.55, 0.18, 0.15, 0.25)  # 危险死线行、结算危险块
+const TINT_BLOOD_DEEP := Color(0.5, 0.12, 0.1, 0.85)    # 确认弹窗警示条（近实）
+const TINT_CONTRACT   := Color(0.3, 0.4, 0.5, 0.25)     # 契约徽章底
+const TINT_ANOMALY    := Color(0.5, 0.35, 0.15, 0.25)   # 异变 / DDA 徽章底
+
 # Rarity remains an identification accent, not a surface color.
 const RARITY_COMMON := INK_SOFT
 const RARITY_RARE := CONTRACT_BLUE

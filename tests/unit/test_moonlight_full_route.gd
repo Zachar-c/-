@@ -68,32 +68,27 @@ func _living_target_id(battle: Dictionary) -> String:
 	for enemy_value in battle.get("enemies", []):
 		var enemy: Dictionary = enemy_value
 		if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
-			return str(enemy.get("enemy_id", ""))
+			return str(enemy.get("id", ""))
 	return ""
 
 
-func _play_source_gu_card(controller: RunController, battle: Dictionary, skip: Dictionary, gu_ids: Array) -> bool:
-	for card_value in battle.get("hand", []):
-		var card: Dictionary = card_value
-		var action_id := "battle.%s.%s" % [str(battle.get("battle_id", "")), str(card.get("instance_id", ""))]
-		if skip.has(action_id):
+## V1 蛊行动制：按蛊槽 definition_id 挑目标蛊，use_gu 直接施放。
+func _play_source_gu(controller: RunController, battle: Dictionary, skip: Dictionary, gu_ids: Array) -> bool:
+	for slot_value in battle.get("gu_slots", []):
+		var slot: Dictionary = slot_value
+		var instance_id := str(slot.get("instance_id", ""))
+		if skip.has(instance_id):
 			continue
-		var definition: Dictionary = catalog.get("card_by_id", {}).get(str(card.get("definition_id", "")), {})
-		var sources: Array = definition.get("source_gu_ids", [])
-		if sources.is_empty() or not (str(sources[0]) in gu_ids):
+		if not (str(slot.get("definition_id", "")) in gu_ids):
 			continue
 		var res := controller.submit_command({
-			"type": "action_card",
-			"action_id": action_id,
-			"card_id": str(card.get("definition_id", "")),
-			"target_id": _living_target_id(battle),
-			"state_version": int(controller.current_battle.get("hand_version", 0)),
-			"expected_phase": str(controller.current_battle.get("phase", "player")),
+			"type": "use_gu",
+			"instance_id": instance_id,
+			"state_version": controller.state.event_log.size(),
 		})
 		if bool(res.get("accepted", false)):
 			return true
-		skip[action_id] = true
-		return false
+		skip[instance_id] = true
 	return false
 
 
@@ -105,48 +100,38 @@ func _fight_to_victory(controller: RunController, max_steps: int = 40) -> void:
 		steps += 1
 		var battle: Dictionary = controller.current_battle
 		if debug:
-			var hand_desc := []
-			for c in battle.get("hand", []):
-				hand_desc.append(str((c as Dictionary).get("definition_id", "")))
-			print("[fight %d] turn=%s ae=%s ess=%s soul=%s hp=%s target=%s hand=%s flags=%s" % [
-				steps, str(battle.get("turn")), str(battle.get("action_energy")),
-				str(controller.state.essence), str(controller.state.cultivator.get("soul")),
-				str(controller.state.health), str(_living_target_id(battle)),
-				str(hand_desc), str(battle.get("flags"))])
+			var slot_desc := []
+			for slot_value in battle.get("gu_slots", []):
+				slot_desc.append(str((slot_value as Dictionary).get("definition_id", "")))
+			print("[fight %d] turn=%s thoughts=%s used=%s qi=%s hp=%s target=%s slots=%s flags=%s" % [
+				steps, str(battle.get("turn")), str(battle["player"].get("thoughts")),
+				str(battle["player"].get("used_this_turn")), str(battle["player"].get("true_qi")),
+				str(battle["player"].get("hp")), str(_living_target_id(battle)),
+				str(slot_desc), str(battle.get("flags"))])
 		var acted := false
-		# 1) 小光蛊：rank1 光术伤害，绕过敌方反应
-		acted = _play_source_gu_card(controller, battle, skip, LIGHT_GU_IDS)
-		# 2) 守护卡：guarded 反制直击类反应
+		# 1) 小光蛊：rank1 光术伤害，绕过敌方反应（每回合一次）
+		acted = _play_source_gu(controller, battle, skip, LIGHT_GU_IDS)
+		# 2) 守护蛊：护盾/力道上场（V1 常驻或瞬发皆可）
 		if not acted:
-			acted = _play_source_gu_card(controller, battle, skip, GUARD_GU_IDS)
-		# 3) 白猪力蛊：临时力道 +3（本回合未加时才打）
-		if not acted and int(battle.get("temp_power", 0)) == 0:
-			acted = _play_source_gu_card(controller, battle, skip, ["white_boar_strength_gu"])
-		# 4) 拳脚：1 + 临时力道（3）= 4 伤
-		if not acted and not (battle.get("flags", []) as Array).has("basic_attack_used"):
-			var punch_id := "battle.%s.basic.punch" % str(battle.get("battle_id", ""))
-			if not skip.has(punch_id):
-				var res := controller.submit_command({
-					"type": "action_card",
-					"action_id": punch_id,
-					"target_id": _living_target_id(battle),
-					"state_version": int(controller.current_battle.get("hand_version", 0)),
-					"expected_phase": str(controller.current_battle.get("phase", "player")),
-				})
-				if bool(res.get("accepted", false)):
-					acted = true
-				else:
-					skip[punch_id] = true
-		# 5) 结束回合（手牌重抽后清空 skip）
+			acted = _play_source_gu(controller, battle, skip, GUARD_GU_IDS)
+		# 3) 白猪力蛊：力道 +1（每回合一次；V1 无临时力道投影，按 slot 限次即可）
 		if not acted:
-			var hv_before := int(controller.current_battle.get("hand_version", 0))
+			acted = _play_source_gu(controller, battle, skip, ["white_boar_strength_gu"])
+		# 4) 拳脚：基础 1 + 力道/仪仗，耗 1 念头
+		if not acted:
+			var res := controller.submit_command({
+				"type": "basic_attack",
+				"state_version": controller.state.event_log.size(),
+			})
+			if bool(res.get("accepted", false)):
+				acted = true
+		# 5) 收势：敌人回合结算后念头回满，skip 随回合重置
+		if not acted:
 			controller.submit_command({
 				"type": "end_turn",
 				"state_version": controller.state.event_log.size(),
-				"expected_phase": "player",
 			})
-			if int(controller.current_battle.get("hand_version", 0)) != hv_before:
-				skip = {}
+			skip = {}
 
 
 func _leave_to_map(controller: RunController) -> void:

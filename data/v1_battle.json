@@ -1,0 +1,25 @@
+{
+  "aptitude_mult": {
+    "jia": 4,
+    "yi": 3,
+    "bing": 2,
+    "ding": 1
+  },
+  "regen_pct": {
+    "jia": 35,
+    "yi": 30,
+    "bing": 25,
+    "ding": 18
+  },
+  "stage_base": {
+    "one": 10,
+    "two": 30,
+    "three": 60,
+    "four": 100,
+    "five": 150
+  },
+  "thought_cost_default": 1,
+  "true_qi_cost_default": 1,
+  "fight_damage_base": 1,
+  "max_seal_turns": 3
+}

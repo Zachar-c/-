@@ -324,8 +324,18 @@ static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
 		or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
 
 
+## 蛊方图鉴门禁（2026-08-30 裁定，预览/执行/快照共用同一函数）：
+## fixed/combine 须持有蛊方，advance/free_mix 豁免；default_unlocked 初始持有。
+static func recipe_unlocked(state: RunState, recipe: Dictionary) -> bool:
+	if str(recipe.get("kind", "combine")) == "advance":
+		return true
+	if bool(recipe.get("default_unlocked", false)):
+		return true
+	return _codex_unlocks_recipe(state, recipe)
+
+
 static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	if bool(recipe.get("locked", false)) and not _codex_unlocks_recipe(state, recipe):
+	if not recipe_unlocked(state, recipe):
 		return _rejected(state, "refinement_recipe_locked")
 	var is_advance := str(recipe.get("kind", "")) == "advance"
 	var inputs: Array = recipe.get("input_gu_ids", [])
@@ -343,6 +353,13 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		return _rejected(state, "refinement_capacity_exceeded")
 	if not _has_all_materials(state, material_cost):
 		return _rejected(state, "missing_refinement_material")
+	# 转数门禁（2026-08-31）：input_min_rank 校验提前到烧材料前，拒绝不烧。
+	var min_rank := int(recipe.get("input_min_rank", 0))
+	if min_rank > 0:
+		for instance_id_value in preselected:
+			var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
+			if int(instance.get("rank", 1)) < min_rank:
+				return _rejected(state, "refinement_input_rank_insufficient")
 	var paid := _spend_materials(state, material_cost)
 	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
 	if not blocked.is_empty():
@@ -371,6 +388,10 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		if new_rank <= consumed_rank:
 			return _rejected(paid, "advance_capped")
 		output_instance["rank"] = new_rank
+	else:
+		# 定向合炼：产出转数 = 配方 output_rank（缺省回退产出蛊本体定义）。
+		var fallback_rank := int(catalog.get("gu_by_id", {}).get(str(recipe["output_gu_id"]), {}).get("rank", 1))
+		output_instance["rank"] = clampi(int(recipe.get("output_rank", fallback_rank)), 1, 5)
 	instances[output_instance_id] = output_instance
 	stored.append(output_instance_id)
 	aperture["stored_gu_instance_ids"] = stored
@@ -2298,17 +2319,40 @@ static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> i
 	return maxi(1, int(floor(float(base) * multiplier)))
 
 
+## 搜刮候选蛊方（预览与执行共用的唯一配方选择函数，2026-09-01）：
+## scavenge_recipe 兼容单串与数组；过滤出「存在且尚未持有」的配方。
+## 持有判定与图鉴门禁同源：global_codex_ids 命中 recipe id 或产出蛊 id。
+static func scavenge_pending_recipes(state: RunState, catalog: Dictionary) -> Array[String]:
+	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
+	var raw: Variant = boss.get("scavenge_recipe", "")
+	var pending: Array[String] = []
+	var recipe_ids: Array[String] = []
+	if raw is Array:
+		for value in raw:
+			recipe_ids.append(str(value))
+	elif not str(raw).is_empty():
+		recipe_ids.append(str(raw))
+	for recipe_id in recipe_ids:
+		var recipe: Dictionary = catalog.get("refinement_by_id", {}).get(recipe_id, {})
+		if recipe.is_empty():
+			continue
+		if not _codex_unlocks_recipe(state, recipe):
+			pending.append(recipe_id)
+	return pending
+
+
 static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary) -> Dictionary:
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return _rejected(state, "boss_undefeated")
 	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	var recipe_id := str(boss.get("scavenge_recipe", ""))
-	if recipe_id.is_empty() or not catalog.get("refinement_by_id", {}).has(recipe_id):
+	if str(boss.get("scavenge_recipe", "")).is_empty() and not (boss.get("scavenge_recipe", "") is Array):
 		return _rejected(state, "no_scavenge_recipe")
-	if state.global_codex_ids.has(recipe_id):
+	var pending := scavenge_pending_recipes(state, catalog)
+	if pending.is_empty():
 		return _rejected(state, "scavenge_already_done")
 	var codex_after: Array[String] = state.global_codex_ids.duplicate()
-	codex_after.append(recipe_id)
+	for recipe_id in pending:
+		codex_after.append(recipe_id)
 	var next := state.append_event(_event(
 		state,
 		"scavenge",
@@ -2316,7 +2360,7 @@ static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary
 		{"global_codex_ids": codex_after},
 		"scavenge_recipe_unlocked",
 		state.current_node_id,
-		[recipe_id]
+		pending
 	))
 	next.global_codex_ids = codex_after
 	return _accepted(next)

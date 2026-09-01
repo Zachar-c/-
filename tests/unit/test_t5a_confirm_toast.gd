@@ -14,6 +14,7 @@ const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd"
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
+var _tscn_hosts: Array = []
 
 
 func _new_controller() -> RunController:
@@ -32,6 +33,10 @@ func after_each() -> void:
 		if h != null and is_instance_valid(h):
 			h.queue_free()
 	_rui_hosts.clear()
+	for t in _tscn_hosts:
+		if t != null and is_instance_valid(t):
+			t.queue_free()
+	_tscn_hosts.clear()
 
 
 func _mount_screen(screen_path: String, props: Dictionary) -> Control:
@@ -46,6 +51,17 @@ func _mount_screen(screen_path: String, props: Dictionary) -> Control:
 	# stopping scheduled re-renders (RunController keeps its root as a member).
 	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
 	return host
+
+
+## 挂载 Godot 官方 .tscn 节点树屏（黑市已迁离 RUITK）。
+## mount_snapshot 可能早于 _ready()，屏内自行兜底补刷新。
+func _mount_tscn_screen(scene_path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
+	var inst: Control = (load(scene_path) as PackedScene).instantiate()
+	add_child(inst)
+	_tscn_hosts.append(inst)
+	if inst.has_method("mount_snapshot"):
+		inst.mount_snapshot(snapshot, commands)
+	return inst
 
 
 func _collect_controls(node: Node, out_buttons: Array, out_labels: Array) -> void:
@@ -167,7 +183,8 @@ func test_shop_emergency_offer_opens_dialog_and_affordable_buys_directly() -> vo
 	# Mount with ONLY the target offer so exactly one 购买此蛊 button exists.
 	broke_snapshot["offers"] = [emergency_offer]
 	broke_snapshot["services"] = []
-	var broke_host := _mount_screen("res://ui/screens/shop_screen.gd", {"state": broke_snapshot, "commands": commands})
+	var broke_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/shop_screen.tscn", broke_snapshot, commands)
 	for i in 3:
 		await get_tree().process_frame
 	assert_true(_press_button(broke_host, "购买此蛊", 0), "emergency offer buy button must exist")
@@ -197,7 +214,8 @@ func test_shop_emergency_offer_opens_dialog_and_affordable_buys_directly() -> vo
 	var affordable_id := str(affordable_offer.get("id", ""))
 	rich_snapshot["offers"] = [affordable_offer]
 	rich_snapshot["services"] = []
-	var rich_host := _mount_screen("res://ui/screens/shop_screen.gd", {"state": rich_snapshot, "commands": commands})
+	var rich_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/shop_screen.tscn", rich_snapshot, commands)
 	for i in 3:
 		await get_tree().process_frame
 	assert_true(_press_button(rich_host, "购买此蛊", 0), "affordable buy button must exist")
@@ -245,7 +263,7 @@ func test_npc_screen_lifespan_confirm_and_disabled_reasons() -> void:
 		],
 		"talk_options": [],
 	}
-	var host := _mount_screen("res://ui/screens/npc_screen.gd", {"state": snapshot, "commands": commands})
+	var host := _mount_tscn_screen("res://scenes/ui/screens/npc_screen.tscn", snapshot, commands)
 	for _i in 3:
 		await get_tree().process_frame
 

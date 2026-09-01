@@ -8,7 +8,8 @@ extends SceneTree
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
+const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
@@ -435,17 +436,11 @@ func _step_encounter(controller) -> String:
 
 func _step_battle(controller) -> String:
 	var battle: Dictionary = controller.current_battle
-	if bool(battle.get("finished", false)):
-		_tell("战斗结束：%s（我方气血 %d/%d）" % [
-			str(battle.get("result", "unknown")),
-			int(controller.state.health), int(controller.state.max_health),
-		])
-		return "ongoing"
-	var battle_id := str(battle.get("battle_id", ""))
 	var living_enemies := _living_enemies(battle)
 	var enemy_hp := _total_enemy_hp(living_enemies)
-	if battle_id != _stuck_battle_id:
-		_stuck_battle_id = battle_id
+	var node_id := str(controller.current_node.get("id", "battle"))
+	if node_id != _stuck_battle_id:
+		_stuck_battle_id = node_id
 		_stuck_count = 0
 		_stuck_enemy_hp = enemy_hp
 	elif enemy_hp == _stuck_enemy_hp:
@@ -454,222 +449,88 @@ func _step_battle(controller) -> String:
 		_stuck_count = 0
 		_stuck_enemy_hp = enemy_hp
 	var intent_damage := _incoming_damage(living_enemies)
-	var hand: Array = battle.get("hand", [])
-	var command: Dictionary
-	var guarded: bool = (battle.get("flags", []) as Array).has("guarded")
-	var can_flee: bool = not BattleResolverScript.boss_blocks_retreat(battle)
-	var hp := int(controller.state.health)
-	var max_hp := int(controller.state.max_health)
-	# 按卡蓝谱 effects 选牌（真值来源）：输出/守护/祛伤各取一张可执行手牌。
-	# 旧 slot_role 反查会把侦察/增益蛊当成攻击（trail_eye 当攻击牌打了整局）。
-	var attack_id := _pick_card_by_effect(battle, controller, ["strike_enemy", "deal_damage"])
-	var heal_id := _pick_card_by_effect(battle, controller, ["relief_injury"])
-	var guard_id := _pick_card_by_effect(battle, controller, ["gain_guard", "guard_self"])
-	var lethal := intent_damage > 0 and hp <= intent_damage
+	var player: Dictionary = battle.get("player", {})
+	var hp := int(player.get("hp", 0))
+	var max_hp := maxi(1, int(player.get("max_hp", 1)))
+	var can_flee: bool = not BattleCommandFacadeScript.boss_blocks_retreat(battle)
+	# V1 蛊行动制选牌：按 v1_effect 种类挑攻击/守护蛊（瞬发或常驻皆可）。
+	var attack_gu := _pick_effect_gu(battle, ["strike"])
+	var guard_gu := _pick_effect_gu(battle, ["shield", "buff"])
 	var finish_now := enemy_hp <= 1
-	var punch_has_live_reaction := _punch_has_live_reaction(battle, living_enemies)
-	var immediate_kill := finish_now and not attack_id.is_empty()
-	var dodging: bool = (battle.get("flags", []) as Array).has("dodging")
-	var close_guarded_turn := false
-	# 试炼契约将敌方生命压到 1 时，玩家先手应直接收头，不能先守护/收势把
-	# 敌方回合让出来；攻击卡优先，没有卡时用拳脚兜底。
+	var immediate_kill := finish_now and not attack_gu.is_empty()
+	var guarded: bool = int(player.get("shield", 0)) > 0
+	var command: Dictionary
 	if immediate_kill:
-		command = _play_card_command(battle, attack_id, living_enemies)
-	elif can_flee and finish_now and (attack_id.is_empty() or punch_has_live_reaction):
-		# 可撤退战没有能绕过反制的攻击牌时直接止损，不让敌方获得免费出手机会。
-		command = _battle_turn_command(controller, battle, "retreat")
+		command = _play_gu_command(battle, attack_gu)
+	elif can_flee and finish_now and attack_gu.is_empty():
+		command = _battle_turn_command(controller, "retreat")
 	elif can_flee and (hp <= 1 or intent_damage >= hp or _stuck_count >= 6):
-		# 玩家止损：下一口齐射能咬死（围攻节点 4 伤/回合）或打不动敌血时
-		# 抽身——早期小怪可打赢换战利品，但双敌围攻对开局套路是死局，撤为上策。
-		command = _battle_turn_command(controller, battle, "retreat")
-	elif can_flee and lethal and not dodging and guard_id.is_empty() \
-			and (attack_id.is_empty() or _total_enemy_hp(living_enemies) > 4) \
-			and _dodge_is_effective(controller, living_enemies):
-		# 敌方下一口能咬死人且手里没有守护牌：闪避保命——除非敌方血量已薄
-		#（≤4）且手里有攻击牌，那是搏命收头的窗口，闪避死守只会无限拖延。
-		command = _battle_turn_command(controller, battle, "basic_dodge")
+		command = _battle_turn_command(controller, "retreat")
 	elif not can_flee:
-		# Boss 死战节奏：守护旗标只挡一口，攻击与垫挡必须交替。血量进入
-		# 危险线（两口内死）才垫挡（守护优先、闪避兜底）；敌方血量 ≤4 是
-		# 收头窗口——先手结算意味着搏命连砍也能在反打前终结战斗；僵局 4 步
-		# 强制恢复进攻（死也要打死，绝不无限闪避拖延）。
-		var attack_usable := not attack_id.is_empty() and not attack_id.contains("bind")
-		var heal_usable := not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0
-		var kill_window := _total_enemy_hp(living_enemies) <= 4
+		# Boss 死战节奏：攻击与守护交替，危险线守护优先，收头窗口搏命，
+		# 僵局 4 步强制恢复进攻。
+		var kill_window := enemy_hp <= 4
 		var danger := hp <= intent_damage * 2
-		var must_attack := attack_usable and (not danger or kill_window or guarded or _stuck_count >= 4)
-		close_guarded_turn = guarded and must_attack
+		var must_attack := (not attack_gu.is_empty()) and (not danger or kill_window or guarded or _stuck_count >= 4)
 		if must_attack:
-			command = _play_card_command(battle, attack_id, living_enemies)
-		elif danger and not guarded and not dodging and _dodge_is_effective(controller, living_enemies):
-			if not guard_id.is_empty():
-				command = _play_card_command(battle, guard_id, living_enemies)
-			else:
-				command = _battle_turn_command(controller, battle, "basic_dodge")
-		elif heal_usable:
-			command = _play_card_command(battle, heal_id, living_enemies)
-		elif not guard_id.is_empty():
-			command = _play_card_command(battle, guard_id, living_enemies)
+			command = _play_gu_command(battle, attack_gu)
+		elif danger and not guarded and not guard_gu.is_empty():
+			command = _play_gu_command(battle, guard_gu)
+		elif not guard_gu.is_empty() and guard_gu != attack_gu:
+			command = _play_gu_command(battle, guard_gu)
 		else:
-			# 拳脚兜底：被拒就走收势换牌，避免原地空转耗尽步数。
-			var punch_result: Dictionary = controller.submit_command(_punch_command(battle, living_enemies))
-			if not bool(punch_result.get("finished", false)):
-				controller.submit_command(_battle_turn_command(controller, battle, "end_turn"))
-			return "ongoing"
+			command = _battle_turn_command(controller, "basic_attack")
 	else:
-		# 常规战：大口守护 → 攻击 → 带伤祛伤 → 僵局收势换牌。
-		if intent_damage >= 2 and not guarded and not guard_id.is_empty():
-			command = _play_card_command(battle, guard_id, living_enemies)
-		elif not attack_id.is_empty():
-			command = _play_card_command(battle, attack_id, living_enemies)
-		elif not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0:
-			command = _play_card_command(battle, heal_id, living_enemies)
+		# 常规战：敌方大伤害先守护，否则攻击，无牌收势换回合。
+		if intent_damage >= 2 and not guarded and not guard_gu.is_empty():
+			command = _play_gu_command(battle, guard_gu)
+		elif not attack_gu.is_empty():
+			command = _play_gu_command(battle, attack_gu)
 		else:
-			command = _battle_turn_command(controller, battle, "end_turn")
-	var pre_hp := int(controller.state.health)
+			command = _battle_turn_command(controller, "end_turn")
+	var pre_hp := hp
 	var result: Dictionary = controller.submit_command(command)
-	if close_guarded_turn and bool(result.get("accepted", false)) and not bool(result.get("finished", false)):
-		var current_battle: Dictionary = controller.current_battle
-		controller.submit_command(_battle_turn_command(controller, current_battle, "end_turn"))
-		return "ongoing"
 	if bool(result.get("finished", false)):
 		_tell("战斗结束：%s（我方气血 %d/%d）" % [
 			str(result.get("result", "unknown")),
-			int(controller.state.health), int(controller.state.max_health),
+			int(player.get("hp", 0)), max_hp,
 		])
 		if str(result.get("result", "")) == "retreat":
 			if not _leave(controller, "止损撤离"):
 				return "leave_blocked"
 			_tell("止损撤离，离开该节点")
 		return "ongoing"
-	# 拒绝回退：命令被拒不推进时依次回退 普攻 → 收势，避免原地空转耗尽步数。
-	# 重新取一次当前战斗快照，回退命令必须带最新 hand_version/phase。
+	# 拒绝回退：命令被拒不推进时依次回退 肉体搏斗 → 收势，避免原地空转。
 	var live_battle: Dictionary = controller.current_battle
-	var live_living := _living_enemies(live_battle)
-	if int(controller.state.health) == pre_hp and _stuck_count >= 1:
-		var punch: Dictionary = controller.submit_command(_punch_command(live_battle, live_living))
-		if not bool(punch.get("finished", false)) and int(controller.state.health) == pre_hp:
-			controller.submit_command(_battle_turn_command(controller, live_battle, "end_turn"))
+	var live_player: Dictionary = live_battle.get("player", {})
+	if int(live_player.get("hp", 0)) == pre_hp and _stuck_count >= 1:
+		var punch: Dictionary = controller.submit_command(_battle_turn_command(controller, "basic_attack"))
+		if not bool(punch.get("finished", false)) and int(live_battle["player"].get("hp", 0)) == pre_hp:
+			controller.submit_command(_battle_turn_command(controller, "end_turn"))
 	return "ongoing"
 
 
-func _pick_card_by_effect(battle: Dictionary, controller, wanted: Array) -> String:
-	# 按卡蓝谱 effects 挑可执行手牌——slot_role 反查会把侦察/增益蛊当成攻击，
-	# effects 是唯一真值（strike_enemy/deal_damage=输出，gain_guard=守护）。
-	var prefix := "battle.%s." % str(battle.get("battle_id", ""))
-	var cards: Array[Dictionary] = ActionPreviewServiceScript.preview_battle_actions(
-		battle, controller.state, controller.catalog)
-	var executable := {}
-	for card_value in cards:
-		var card: Dictionary = card_value
-		var card_id := str(card.get("id", ""))
-		if card_id.begins_with(prefix) and bool(card.get("executable", false)):
-			executable[card_id.trim_prefix(prefix)] = true
-	for hand_value in battle.get("hand", []):
-		var hand_card: Dictionary = hand_value
-		var instance_id := str(hand_card.get("instance_id", ""))
-		if not executable.has(instance_id):
+func _pick_effect_gu(battle: Dictionary, kinds: Array) -> String:
+	# V1：按 v1_effect 种类挑一张本回合可释放的战斗蛊（瞬发/常驻皆可）。
+	var slots: Array = battle.get("gu_slots", [])
+	for i in slots.size():
+		var slot: Dictionary = slots[i]
+		if bool(slot.get("consumed", false)) or bool(slot.get("is_sealed", false)) or bool(slot.get("used_this_turn", false)):
 			continue
-		var definition: Dictionary = controller.catalog.get("card_by_id", {}).get(
-			str(hand_card.get("definition_id", "")), {})
-		for effect_value in definition.get("effects", []):
-			if str(effect_value) in wanted:
-				return instance_id
+		if str(slot.get("effect", {}).get("kind", "")) not in kinds:
+			continue
+		if V1BattleResolverScript.can_play_gu(battle, i) != "":
+			continue
+		return str(slot.get("instance_id", ""))
 	return ""
 
 
-func _punch_has_live_reaction(battle: Dictionary, living_enemies: Array[Dictionary]) -> bool:
-	if living_enemies.is_empty():
-		return false
-	for reaction_value in living_enemies[0].get("reactions", []):
-		var reaction: Dictionary = reaction_value
-		if str(reaction.get("trigger", "")) == "direct_strike" \
-				and str(reaction.get("window", "")) == "before_damage":
-			var counter_status := str(reaction.get("counter_status", ""))
-			var flags: Array = battle.get("flags", [])
-			if counter_status == "guarded" and not flags.has("guarded"):
-				return true
-			if counter_status == "bound" and not flags.has("enemy_bound"):
-				return true
-	return false
+func _play_gu_command(battle: Dictionary, instance_id: String) -> Dictionary:
+	return {"type": "use_gu", "instance_id": instance_id}
 
 
-func _dodge_is_effective(controller, living_enemies: Array[Dictionary]) -> bool:
-	if living_enemies.is_empty():
-		return false
-	var enemy_intent: Dictionary = living_enemies[0].get("visible_intent", {})
-	return int(controller.state.cultivator.get("speed", 2)) > int(enemy_intent.get("speed", 0))
-
-
-func _play_card_command(battle: Dictionary, action_id: String, living_enemies: Array[Dictionary]) -> Dictionary:
-	var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
-	return {
-		"type": "action_card",
-		"action_id": "battle.%s.%s" % [str(battle.get("battle_id", "")), action_id],
-		"card_id": action_id,
-		"target_id": target_id,
-		"state_version": int(battle.get("hand_version", 0)),
-		"expected_phase": str(battle.get("phase", "player")),
-	}
-
-
-func _punch_command(battle: Dictionary, living_enemies: Array[Dictionary]) -> Dictionary:
-	var target_id := str(living_enemies[0].get("enemy_id", "")) if not living_enemies.is_empty() else ""
-	return {
-		"type": "action_card",
-		"action_id": "battle.%s.basic.punch" % str(battle.get("battle_id", "")),
-		"card_id": "basic.punch",
-		"target_id": target_id,
-		"state_version": int(battle.get("hand_version", 0)),
-		"expected_phase": str(battle.get("phase", "player")),
-	}
-
-
-func _battle_turn_command(controller, battle: Dictionary, command_type: String) -> Dictionary:
-	return {
-		"type": command_type,
-		"state_version": controller.state.event_log.size(),
-		"expected_phase": str(battle.get("phase", "player")),
-	}
-
-
-func _pick_hand_card(battle: Dictionary, controller, wanted_defs: Array) -> String:
-	# 依预览挑一张可执行手牌；wanted_defs 非空时只挑指定蛊（守护类优先策略），
-	# 否则挑第一张可执行的单体/自体动作卡（攻击、束缚均可），手牌顺序即平局裁决。
-	var hand: Array = battle.get("hand", [])
-	if hand.is_empty():
-		return ""
-	var wanted := {}
-	for def_id in wanted_defs:
-		wanted[str(def_id)] = true
-	var prefix := "battle.%s." % str(battle.get("battle_id", ""))
-	var cards: Array[Dictionary] = ActionPreviewServiceScript.preview_battle_actions(
-		battle, controller.state, controller.catalog)
-	var fallback := ""
-	for card_value in cards:
-		var card: Dictionary = card_value
-		var card_id := str(card.get("id", ""))
-		if not card_id.begins_with(prefix):
-			continue
-		var instance_id := card_id.trim_prefix(prefix)
-		if not bool(card.get("executable", false)):
-			continue
-		if instance_id in ["basic.punch", "basic.dodge", "retreat", "end_turn"]:
-			continue
-		var definition_id := _definition_of_instance(hand, instance_id)
-		if wanted.has(definition_id):
-			return instance_id
-		if fallback.is_empty() and str(card.get("target_type", "")) in ["single_enemy", "none", "self"]:
-			fallback = instance_id
-	return fallback
-
-
-func _definition_of_instance(hand: Array, instance_id: String) -> String:
-	for card_value in hand:
-		var card: Dictionary = card_value
-		if str(card.get("instance_id", "")) == instance_id:
-			return str(card.get("definition_id", ""))
-	return ""
+func _battle_turn_command(controller, command_type: String) -> Dictionary:
+	return {"type": command_type}
 
 
 func _living_enemies(battle: Dictionary) -> Array[Dictionary]:
@@ -691,7 +552,7 @@ func _total_enemy_hp(enemies: Array[Dictionary]) -> int:
 func _incoming_damage(enemies: Array[Dictionary]) -> int:
 	var total := 0
 	for enemy in enemies:
-		total += maxi(0, int((enemy.get("visible_intent", {}) as Dictionary).get("damage", 0)))
+		total += maxi(0, int((enemy.get("intent", {}) as Dictionary).get("damage", 0)))
 	return total
 
 

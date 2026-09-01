@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_enemy_actor_view.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_stat_bar.tscn" id="2_stat_bar"]
+
+[node name="GuEnemyActor" type="PanelContainer"]
+script = ExtResource("1_script")
+
+[node name="ActorMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ActorBody" type="VBoxContainer" parent="ActorMargin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+size_flags_horizontal = 3
+
+[node name="IntentLabel" type="Label" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "意图："
+
+[node name="NameButton" type="Button" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+visible = false
+text = "敌人"
+
+[node name="NameLabel" type="Label" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "敌人"
+
+[node name="HpHost" type="VBoxContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+
+[node name="StatBar" parent="ActorMargin/ActorBody/HpHost" instance=ExtResource("2_stat_bar")]
+layout_mode = 2
+
+[node name="ShieldLabel" type="Label" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "护盾 0"
+
+[node name="StatusHost" type="VBoxContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+theme_override_constants/separation = 2

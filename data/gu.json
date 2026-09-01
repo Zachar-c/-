@@ -11,6 +11,11 @@
     ],
     "value": 3,
     "essence_cost": 1,
+    "true_qi_cost": 1,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 1
+    },
     "slot_role": "scout",
     "combat": "reveal_hidden_bonus",
     "field_actions": [
@@ -298,6 +303,11 @@
     ],
     "value": 4,
     "essence_cost": 1,
+    "true_qi_cost": 2,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 3
+    },
     "slot_role": "attack",
     "combat": "moonlight_strike",
     "field_actions": [
@@ -344,6 +354,35 @@
       "moon"
     ],
     "school": "blood",
+    "role": "attack",
+    "rarity": "rare"
+  },
+  {
+    "id": "moon_ray_gu",
+    "rank": 2,
+    "feeding_cost": 2,
+    "feeding_need": {
+      "feed_points": 2
+    },
+    "card_blueprint_ids": [],
+    "value": 10,
+    "essence_cost": 2,
+    "slot_role": "attack",
+    "combat": "moonlight_strike",
+    "field_actions": [
+      "illuminate",
+      "signal"
+    ],
+    "synergy_hooks": [
+      "light_combo"
+    ],
+    "replace_value": 7,
+    "tags": [
+      "light",
+      "attack",
+      "moon"
+    ],
+    "school": "force",
     "role": "attack",
     "rarity": "rare"
   },
@@ -7870,6 +7909,10 @@
         "amount": 999
       }
     ],
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 999
+    },
     "field_actions": [],
     "synergy_hooks": [],
     "replace_value": 0,

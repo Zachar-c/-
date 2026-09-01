@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/content_error_screen_view.gd" id="1_script"]
+
+[node name="ContentErrorScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_script")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="Body" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Center/Body"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "内容配置无法加载"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="Center/Body"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "请修复数据文件后重新启动。"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ErrorHost" type="VBoxContainer" parent="Center/Body"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="QuitButton" type="Button" parent="Center/Body"]
+layout_mode = 2
+text = "退出"

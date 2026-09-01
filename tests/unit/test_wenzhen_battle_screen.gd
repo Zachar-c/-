@@ -1,6 +1,10 @@
 extends GutTest
 
 
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
+const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
+
+
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 
@@ -51,12 +55,11 @@ func test_four_or_more_enemies_keep_first_three_and_expose_remainder() -> void:
 
 func _mount(state: Dictionary) -> Control:
 	_last_state = state
-	var fn = VLib.comp("res://ui/screens/battle_screen.gd", "render")
-	assert_true(fn is Callable)
+	# 战斗屏已迁到 Godot 官方 .tscn（scenes/ui/screens/battle_screen.tscn）。
 	var host := Control.new()
 	add_child(host)
 	_hosts.append(host)
-	_roots.append(RuiRoot.create(host, VLib.fc(fn, {"state": state, "commands": {}})))
+	host.add_child(TscnMountHelper.instantiate(BATTLE_SCREEN_TSCN, state, {}))
 	return host
 
 
@@ -86,9 +89,10 @@ func _snapshot_with_enemies(count: int) -> Dictionary:
 	return {
 		"resources": {}, "contracts": [], "anomalies": [], "death_lines": {},
 		"enemies": enemies,
-		"player": {"hp": 24, "max_hp": 30, "shield": 1, "primordial": 3, "soul": 4, "statuses": []},
-		"hand": [], "piles": {"draw": 6, "discard": 2, "exhausted": 1},
-		"soul_ops": {"cap": 3, "used": 1}, "default_target_id": "e0",
+		"player": {"hp": 24, "max_hp": 30, "shield": 1, "primordial": 3, "soul": 4,
+				"thoughts": 2, "used_this_turn": 0, "statuses": []},
+		"actions": {"max": 2, "left": 2, "used": 0},
+		"hand": [], "piles": {}, "default_target_id": "e0",
 	}
 
 

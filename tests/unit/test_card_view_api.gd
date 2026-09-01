@@ -1,6 +1,6 @@
 extends GutTest
 
-# scenes/ui/card_view.tscn 业务 API 守卫：根节点挂 GuCardView 脚本，提供
+# scenes/ui/card_view.tscn 业务 API 守卫：根节点挂 GuHandCardView 脚本，提供
 # bind_card（快照数据绑定）/ set_affordable（本地 disabled）/ card_pressed 与
 # card_hovered 信号 / card_id() 取回器。键契约按计划：
 # id/name/cost/rank_text/desc/texture/affordable；样式走 gu_theme.tres
@@ -40,7 +40,7 @@ func test_root_carries_gu_card_view_script() -> void:
 	if script == null:
 		return
 	assert_true(script is GDScript, "attached script must be GDScript")
-	assert_eq(script.get_global_name(), "GuCardView", "script class_name must be GuCardView")
+	assert_eq(script.get_global_name(), "GuHandCardView", "script class_name must be GuHandCardView")
 	assert_eq(script, CARD_VIEW_SCRIPT, "attached script must be res://scripts/ui/card_view.gd")
 
 

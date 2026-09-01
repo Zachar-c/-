@@ -49,6 +49,7 @@ static func load_all() -> Dictionary:
 	var pacing := _load_object("res://data/pacing.json")
 	var aptitude := _load_object("res://data/aptitude.json")
 	var synthesis := _load_object("res://data/synthesis.json")
+	var v1_battle := _load_object("res://data/v1_battle.json")
 	var schools := _load_object("res://data/schools.json")
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var contracts_cfg := _load_object("res://data/contracts.json")
@@ -94,6 +95,7 @@ static func load_all() -> Dictionary:
 		"pacing": pacing,
 		"aptitude": aptitude,
 		"synthesis": synthesis,
+		"v1_battle": v1_battle,
 		"schools": schools,
 		"school_pools": _load_object("res://data/school_pools.json"),
 		"contracts": contracts_cfg,
@@ -594,6 +596,12 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var adv_inputs: Array = recipe.get("input_gu_ids", [])
 			if adv_inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(adv_inputs[0]):
 				errors.append("advance recipe %s must map one same-name gu onto itself" % recipe.get("id", ""))
+		for rank_field in ["output_rank", "input_min_rank"]:
+			var rank_value = recipe.get(rank_field, null)
+			if rank_value != null and (not _is_integral(rank_value) or int(rank_value) < 1 or int(rank_value) > 5):
+				errors.append("recipe %s %s must be an integer in 1..5" % [recipe.get("id", ""), rank_field])
+		if recipe.has("default_unlocked") and not (recipe["default_unlocked"] is bool):
+			errors.append("recipe %s default_unlocked must be a boolean" % recipe.get("id", ""))
 		for rule_value in recipe.get("risk_hints", []):
 			var rule: Dictionary = rule_value
 			for required_tag in rule.get("tags", []):
@@ -743,9 +751,16 @@ static func validate(catalog: Dictionary) -> Array[String]:
 					errors.append("loot tier %s references unknown gu %s" % [tier_key, pool_gu_id])
 				elif str(gu_by_id[pool_gu_id].get("rarity", "")) != bucket_rarity:
 					errors.append("loot tier %s gu %s rarity mismatch with bucket %s" % [tier_key, pool_gu_id, bucket_rarity])
-		var scavenge_recipe := str(tier.get("scavenge_recipe", ""))
-		if not scavenge_recipe.is_empty() and not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
-			errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
+		var raw_scavenge: Variant = tier.get("scavenge_recipe", "")
+		var scavenge_ids: Array[String] = []
+		if raw_scavenge is Array:
+			for value in raw_scavenge:
+				scavenge_ids.append(str(value))
+		elif not str(raw_scavenge).is_empty():
+			scavenge_ids.append(str(raw_scavenge))
+		for scavenge_recipe in scavenge_ids:
+			if not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
+				errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
 	return errors
 
 

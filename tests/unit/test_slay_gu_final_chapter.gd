@@ -99,44 +99,35 @@ func _start_run_with_slay_gu() -> RunController:
 	return controller
 
 
-func _slay_card_in_hand(battle: Dictionary) -> Dictionary:
-	for card_value in battle.get("hand", []):
-		var card: Dictionary = card_value
-		var definition: Dictionary = catalog.get("card_by_id", {}).get(str(card.get("definition_id", "")), {})
-		if SLAY_GU_ID in (definition.get("source_gu_ids", []) as Array):
-			return card
+func _slay_slot(battle: Dictionary) -> Dictionary:
+	# V1 契约：战斗蛊在 gu_slots（不再有 hand 卡蓝谱）。
+	for slot_value in battle.get("gu_slots", []):
+		var slot: Dictionary = slot_value
+		if str(slot.get("definition_id", "")) == SLAY_GU_ID:
+			return slot
 	return {}
 
 
 func _fight_to_victory_with_slay(controller: RunController, max_steps: int = 40) -> void:
-	# 每回合优先释放十转杀蛊（999 群体伤害一发清场）；不在手牌则结束回合
-	# 循环抽牌直到上手。弃牌堆循环回抽，40 步内必然凑齐 1 次出手机会。
-	var skip := {}
+	# V1：每回合优先施放十转杀蛊（v1_effect 999 伤害一发清场）；本回合已用
+	# 或念头耗尽则收势换回合。40 步内必然清完单场 Boss。
 	var steps := 0
 	while controller.current_view_name() == "Battle" and steps < max_steps:
 		steps += 1
 		var battle: Dictionary = controller.current_battle
-		var card := _slay_card_in_hand(battle)
-		if not card.is_empty():
-			var action_id := "battle.%s.%s" % [str(battle.get("battle_id", "")), str(card.get("instance_id", ""))]
-			if not skip.has(action_id):
-				var res := controller.submit_command({
-					"type": "action_card",
-					"action_id": action_id,
-					"card_id": str(card.get("definition_id", "")),
-					"target_id": "",
-					"state_version": int(controller.current_battle.get("hand_version", 0)),
-					"expected_phase": str(controller.current_battle.get("phase", "player")),
-				})
-				if bool(res.get("accepted", false)):
-					continue
-				skip[action_id] = true
+		var slot := _slay_slot(battle)
+		if not slot.is_empty() and not bool(slot.get("used_this_turn", false)) and not bool(slot.get("is_sealed", false)):
+			var res := controller.submit_command({
+				"type": "use_gu",
+				"instance_id": str(slot.get("instance_id", "")),
+				"state_version": controller.state.event_log.size(),
+			})
+			if bool(res.get("accepted", false)):
+				continue
 		controller.submit_command({
 			"type": "end_turn",
 			"state_version": controller.state.event_log.size(),
-			"expected_phase": "player",
 		})
-		skip = {}
 
 
 func test_slay_gu_catalog_entry_is_test_only() -> void:

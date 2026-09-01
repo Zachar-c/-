@@ -40,49 +40,28 @@ func _travel_to_combat(controller: RunController) -> void:
 
 
 func _play_valid_target_card(controller: RunController, snapshot: Dictionary) -> void:
-	var enemies: Array = snapshot.get("enemies", [])
-	var target_id := str(enemies[1].get("id", ""))
 	var version_before := controller.state.event_log.size()
-	var cards := ACTION_PREVIEW_SERVICE.preview_battle_actions(controller.current_battle, controller.state, controller.catalog)
-	if not _has_playable_target_card(cards, target_id):
-		var ended := controller.submit_command({
-			"type": "end_turn",
-			"state_version": controller.state.event_log.size(),
-			"expected_phase": str(controller.current_battle.get("phase", "")),
-		})
-		assert_true(bool(ended.get("accepted", false)), "first-turn resource guard must advance through the formal end-turn command")
+	# V1 蛊行动制：手牌即战斗蛊槽（非战斗蛊已过滤），放蛊无目标选择。
+	var chosen: Dictionary = _first_executable_hand(snapshot)
+	if chosen.is_empty():
+		controller.submit_command({"type": "end_turn"})
 		snapshot = controller._snapshot_for("Battle")
-		cards = ACTION_PREVIEW_SERVICE.preview_battle_actions(controller.current_battle, controller.state, controller.catalog)
-	var chosen: Dictionary = {}
-	for card_value in cards:
-		var card: Dictionary = card_value
-		if bool(card.get("executable", false)) and (card.get("valid_target_ids", []) as Array).has(target_id):
-			chosen = card
-			break
-	assert_false(chosen.is_empty(), "battle snapshot must expose a playable card for the selected enemy")
+		chosen = _first_executable_hand(snapshot)
+	assert_false(chosen.is_empty(), "battle snapshot must expose a playable gu")
 	if chosen.is_empty():
 		return
-	var result := controller.submit_command({
-		"type": "action_card",
-		"action_id": str(chosen.get("id", "")),
-		"card_id": str(chosen.get("id", "")).trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", ""))),
-		"target_id": target_id,
-		"state_version": int(chosen.get("state_version", -1)),
-		"expected_phase": str(controller.current_battle.get("phase", "")),
-	})
-	assert_true(bool(result.get("accepted", false)), "targeted card command must be accepted")
-	var after: Dictionary = controller._snapshot_for("Battle")
-	var target_after := _enemy_by_id(after.get("enemies", []), target_id)
-	assert_false(target_after.is_empty(), "selected enemy must remain addressable after a non-lethal card")
-	assert_gt(controller.state.event_log.size(), version_before, "accepted card command must advance state version")
+	var instance_id := str(chosen.get("id", "")).trim_prefix("gu.")
+	var result := controller.submit_command({"type": "use_gu", "instance_id": instance_id})
+	assert_true(bool(result.get("accepted", false)), "gu command must be accepted")
+	assert_gt(controller.state.event_log.size(), version_before, "accepted gu command must advance state version")
 
 
-func _has_playable_target_card(cards: Array, target_id: String) -> bool:
-	for card_value in cards:
+func _first_executable_hand(snapshot: Dictionary) -> Dictionary:
+	for card_value in snapshot.get("hand", []):
 		var card: Dictionary = card_value
-		if bool(card.get("executable", false)) and (card.get("valid_target_ids", []) as Array).has(target_id):
-			return true
-	return false
+		if bool(card.get("executable", false)):
+			return card
+	return {}
 
 
 func _finish_battle_and_resolve_ending(controller: RunController) -> void:

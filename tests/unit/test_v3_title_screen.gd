@@ -1,6 +1,10 @@
 extends GutTest
 
 
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
+const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
+
+
 # Title/Hall flow under the RUI screens: the controller starts on the hall
 # screen, the hall snapshot exposes run entry state, and HallView renders
 # the game name plus the main menu commands.
@@ -21,7 +25,7 @@ func test_hall_view_exposes_wenzhen_brand_and_quiet_menu() -> void:
 		"has_save": false,
 		"brand_title": "問眞",
 		"primary_action": "open_schools",
-		"run_summary": {"route": "", "rank": 0, "hp": 0},
+		"run_summary": {"route": "", "rank": "0 转", "hp": "0"},
 		"available_schools": [
 			{"id": "blood", "name": "血道"},
 			{"id": "qi", "name": "气道"},
@@ -30,9 +34,13 @@ func test_hall_view_exposes_wenzhen_brand_and_quiet_menu() -> void:
 		"contracts": [],
 		"meta_stats": {"runs": 1, "endings": 0},
 	}
-	var root: Variant = load("res://ui/screens/hall_view.gd").render({"state": snapshot, "commands": {}}, [])
-	assert_not_null(root)
-	var texts := _rui_texts(root)
+	# 大厅已迁到 Godot 官方 .tscn：不再有 render 入口。
+	var host := Control.new()
+	add_child_autofree(host)
+	var root := TscnMountHelper.instantiate(HALL_SCREEN_TSCN, snapshot, {})
+	host.add_child(root)
+	await get_tree().process_frame
+	var texts := TscnMountHelper.texts(root)
 	assert_true(texts.has("問眞"), "hall must show the formal brand")
 	assert_true(_any_contains(texts, "开始此世"), "hall must offer its sole new-run entry")
 	assert_true(_any_contains(texts, "图鉴"), "hall must expose codex")

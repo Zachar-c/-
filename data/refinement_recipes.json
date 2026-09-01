@@ -3,6 +3,7 @@
     {
       "id": "bright_thread_risk",
       "kind": "combine",
+      "default_unlocked": true,
       "input_gu_ids": [
         "small_light_gu",
         "trail_eye_gu"
@@ -14,12 +15,47 @@
     {
       "id": "moon_glow_fixed",
       "kind": "fixed",
+      "default_unlocked": true,
       "input_gu_ids": [
         "moonlight_gu",
         "small_light_gu",
         "small_light_gu"
       ],
       "output_gu_id": "moon_glow_gu"
+    },
+    {
+      "id": "moon_ray_forged",
+      "kind": "fixed",
+      "default_unlocked": true,
+      "input_gu_ids": [
+        "moonlight_gu",
+        "small_light_gu"
+      ],
+      "output_gu_id": "moon_ray_gu",
+      "output_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_attack_009_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_009_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_009_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "blood_moon_forged",
+      "kind": "fixed",
+      "input_gu_ids": [
+        "moon_ray_gu",
+        "gen_blood_attack_009_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_002_gu",
+      "output_rank": 3,
+      "input_min_rank": 2
     },
     {
       "id": "phantom_moon_locked",
@@ -150,6 +186,7 @@
     {
       "id": "stone_shell_bone_forge",
       "kind": "fixed",
+      "default_unlocked": true,
       "input_gu_ids": [],
       "materials": {
         "beast_bone": 2
@@ -172,6 +209,7 @@
     {
       "id": "moonlight_glow",
       "kind": "fixed",
+      "default_unlocked": true,
       "input_gu_ids": [
         "moonlight_gu",
         "small_light_gu"
@@ -181,6 +219,7 @@
     {
       "id": "white_jade_basic",
       "kind": "fixed",
+      "default_unlocked": true,
       "input_gu_ids": [
         "jade_skin_gu",
         "white_boar_strength_gu"

@@ -6,8 +6,10 @@ extends GutTest
 
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
-const BattleScreenScript = preload("res://ui/screens/battle_screen.gd")
+const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
+const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 # T5-B：RUI 屏含 hooks（useState），必须经 reactive root 挂载，不能直接调 render。
 const RuiVLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
@@ -42,7 +44,7 @@ func test_battle_screen_surfaces_dda_boss_hint() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
 	snapshot["dda_boss_hint"] = "boss_senses_gu_power"
-	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
+	var texts := _battle_tscn_texts(snapshot)
 	assert_true(_any_contains(texts, hint_text), "RUI battle screen must surface the DDA boss hint marker")
 
 
@@ -50,7 +52,7 @@ func test_battle_screen_surfaces_dda_anomaly_marker() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
 	snapshot["anomalies"] = [{"id": "sys:dda_peril", "label": "险象"}]
-	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
+	var texts := _battle_tscn_texts(snapshot)
 	assert_true(_any_contains(texts, "险象"), "RUI battle screen must surface the DDA anomaly marker")
 	assert_false(_any_contains(texts, "sys:dda_peril"), "marker id must never leak to the battle screen")
 
@@ -64,13 +66,13 @@ func test_battle_view_renders_hud_bars_intent_and_actions() -> void:
 	assert_true(str(enemy["intent"].get("type", "")) != "", "battle snapshot must expose enemy intent")
 	assert_true(snapshot["player"].has("hp"), "battle snapshot must expose player hp")
 	assert_true(snapshot["player"].has("soul"), "battle snapshot must expose player soul")
-	var texts := _rui_screen_texts(BattleScreenScript, {"state": snapshot, "commands": {}})
+	var texts := _battle_tscn_texts(snapshot)
 	assert_true(_any_contains(texts, "意图："), "battle screen must render enemy intent")
 
 
 func test_battle_snapshot_projects_multiple_enemies_piles_and_actions() -> void:
 	var controller := _battle_controller()
-	controller.current_battle = BattleResolver.start({
+	controller.current_battle = BattleCommandFacadeScript.start({
 		"enemy_kinds": ["ridge_hound", "neutral_stone_wanderer"],
 	}, controller.state, controller.catalog)
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
@@ -78,11 +80,15 @@ func test_battle_snapshot_projects_multiple_enemies_piles_and_actions() -> void:
 	assert_eq(snapshot["enemies"].size(), 2)
 	assert_eq(snapshot["default_target_id"], snapshot["enemies"][0]["id"])
 	assert_true(snapshot["enemies"][1].has("statuses"))
-	assert_true(snapshot["piles"].has("draw"))
-	assert_true(snapshot["piles"].has("discard"))
-	assert_true(snapshot["piles"].has("exhausted"))
+	# V1 契约：无牌库/弃牌堆，只有行动点（念头分档）与蛊槽。
+	assert_true((snapshot["piles"] as Dictionary).is_empty(), "V1 battle must not expose card piles")
 	assert_true(snapshot["actions"].has("max"))
 	assert_true(snapshot["actions"].has("left"))
+	assert_eq(int(snapshot["actions"]["max"]), 2, "action budget = soul-tier 2 for 底蕴 1")
+	assert_eq(int(snapshot["actions"]["left"]), 2, "actions start full")
+	# V1 敌人 id 直映（非旧卡牌 enemy_id）；意图 kind 直映。
+	assert_eq(str(snapshot["enemies"][0]["id"]), "ridge_hound")
+	assert_eq(str(snapshot["enemies"][0]["intent"]["type"]), "attack")
 
 
 func test_battle_view_hud_uses_programmatic_icons() -> void:
@@ -94,15 +100,15 @@ func test_battle_view_hud_uses_programmatic_icons() -> void:
 		assert_true(resources.has(key), "battle hud missing resource chip %s" % key)
 
 
-func test_battle_hud_shows_formula_essence_max() -> void:
+func test_battle_hud_shows_formula_true_qi_max() -> void:
 	var controller: RunController = _battle_controller()
-	controller.state.essence = 3
-	var cap := int(controller.state.cave_aperture["essence_max"])
-	assert_eq(cap, EssenceCapacityScript.essence_max(controller.state, controller.catalog), "essence cap must come from the formula")
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	# V1 真元：上限=境界基础(一转10)×资质倍率(丙2)=20，开局满。
 	var primordial := int(snapshot["player"]["primordial"])
-	assert_eq(primordial, 3, "battle snapshot must carry current essence")
-	assert_true(primordial <= cap, "essence must respect the formula cap")
+	var primordial_max := int(snapshot["player"]["primordial_max"])
+	assert_eq(primordial, 20, "battle snapshot must carry current true qi")
+	assert_eq(primordial_max, 20, "true qi must respect the aptitude-staged cap")
+	assert_true(primordial <= primordial_max, "true qi must never exceed the cap")
 
 
 func test_battle_hud_shows_multitasking_capacity() -> void:
@@ -118,7 +124,7 @@ func test_battle_snapshot_hides_flee_on_boss_tier_battles() -> void:
 	assert_eq(bool(common._snapshot_for("Battle").get("flee_available", true)), true,
 			"common battle keeps the retreat button")
 	var boss: RunController = _battle_controller()
-	boss.current_battle["enemy_definition"] = {"tier": "boss"}
+	boss.current_battle["flags"] = {"boss_battle": true}
 	assert_eq(bool(boss._snapshot_for("Battle").get("flee_available", true)), false,
 			"boss battle hides the retreat button")
 
@@ -151,6 +157,16 @@ func _rui_texts(vnode: Variant) -> Array[String]:
 
 ## T5-B：经 reactive root 同步挂载 RUI 屏并收集已渲染 Label 文本
 ## （hooks 组件不允许绕过 RuiRoot 直接 render）。
+## 战斗屏已迁到 Godot 官方 .tscn，不再有 render 入口；
+## 这里走 instantiate + mount_snapshot，文本收集复用 _collect_label_texts。
+func _battle_tscn_texts(snapshot: Dictionary) -> Array[String]:
+	var host := Control.new()
+	add_child_autofree(host)
+	host.add_child(TscnMountHelper.instantiate(BATTLE_SCREEN_TSCN, snapshot, {}))
+	var out: Array[String] = []
+	_collect_label_texts(host, out)
+	return out
+
 func _rui_screen_texts(screen_script: GDScript, props: Dictionary) -> Array[String]:
 	assert_true(screen_script.render is Callable, "%s must expose render" % str(screen_script.resource_path))
 	var host := Control.new()

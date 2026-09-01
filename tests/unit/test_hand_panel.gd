@@ -108,7 +108,7 @@ func test_show_hand_spawns_at_most_max_hand() -> void:
 	await get_tree().process_frame
 	assert_eq(_box().get_child_count(), 10, "show_hand must cap at MAX_HAND=10")
 	var first := _box().get_child(0)
-	assert_eq(first.get_script().get_global_name(), "GuCardView", "spawned children must be GuCardView")
+	assert_eq(first.get_script().get_global_name(), "GuHandCardView", "spawned children must be GuHandCardView")
 	assert_eq(first.call("card_id"), &"gu_00", "children bound with card id")
 	assert_eq(first.theme, CARD_THEME, "spawned cards must carry gu_theme.tres")
 

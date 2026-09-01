@@ -7,9 +7,11 @@ extends GutTest
 #     快速连切先杀旧 Tween；播完自然失效，无常驻循环动画
 #   - §9/§16.5 tooltip 固定五段顺序恒定、缺段隐藏；PAPER 卷轴底 + INK 深字；
 #     DANGER 仅保留给诅咒警示行
-#   - R4.10 危险蛊：DANGER 描边 + 「咒」角标（DANGER 底 BONE 字）；封印态暗淡 + 「锁」标
+#   - R4.10 危险蛊：朱砂描边 + 「咒」角标（朱砂底 + 墨字）；封印态暗淡 + 「锁」标
 #   - 空池回退小字：快照诚实默认（无领域标记不得常驻假提示）；奖励/商店屏
-#     显示槽位接好（13px BONE_DIM），有标记才渲染
+#     显示槽位接好（13px INK_SOFT），有标记才渲染
+# 术语注：规格旧稿的 BONE / DANGER / BONE_DIM 别名已随主题迁移移除，
+# 现分别对应 INK_PRIMARY / CINNABAR / INK_SOFT（见 test_wenzhen_theme_migration）。
 
 
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
@@ -18,6 +20,7 @@ const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
+var _tscn_hosts: Array = []
 
 
 func _new_controller() -> RunController:
@@ -36,6 +39,10 @@ func after_each() -> void:
 		if h != null and is_instance_valid(h):
 			h.free()
 	_rui_hosts.clear()
+	for t in _tscn_hosts:
+		if t != null and is_instance_valid(t):
+			t.free()
+	_tscn_hosts.clear()
 
 
 func _mount_screen(screen_path: String, props: Dictionary) -> Control:
@@ -48,6 +55,17 @@ func _mount_screen(screen_path: String, props: Dictionary) -> Control:
 	_rui_hosts.append(host)
 	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
 	return host
+
+
+## 挂载 Godot 官方 .tscn 节点树屏（黑市已迁离 RUITK）。
+## mount_snapshot 可能早于 _ready()，屏内自行兜底补刷新。
+func _mount_tscn_screen(scene_path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
+	var inst: Control = (load(scene_path) as PackedScene).instantiate()
+	add_child(inst)
+	_tscn_hosts.append(inst)
+	if inst.has_method("mount_snapshot"):
+		inst.mount_snapshot(snapshot, commands)
+	return inst
 
 
 func _collect_labels(node: Node, out_labels: Array) -> void:
@@ -197,20 +215,24 @@ func test_reward_screen_renders_fallback_smallprint_only_when_marked() -> void:
 		"effect": "月光伤害", "cost": "", "curse_warning": false}]
 	with_rewards["full_satchel"] = false
 	with_rewards["pity_note"] = "（保底暗示）"
-	var clean_host := _mount_screen("res://ui/screens/reward_screen.gd", {"state": with_rewards, "commands": cmds})
+	var clean_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/reward_screen.tscn", with_rewards, cmds)
+	await get_tree().process_frame
 	assert_false(_host_or_descendant_has_text(clean_host, "已切换至基础池"),
 			"no fake fallback note when nothing fell back")
 
 	var flagged := with_rewards.duplicate(true)
 	flagged["rewards"] = []
 	flagged["pool_fallback_note"] = "（空池回退：已切至基础池）"
-	var marked_host := _mount_screen("res://ui/screens/reward_screen.gd", {"state": flagged, "commands": cmds})
+	var marked_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/reward_screen.tscn", flagged, cmds)
+	await get_tree().process_frame
 	var note := _find_label_exact(marked_host, "（空池回退：已切至基础池）")
 	assert_true(note != null, "marked fallback renders the small-print slot")
 	if note != null:
 		assert_true(note.get_theme_font_size("font_size") == 13, "fallback small print is 13px")
 		assert_true(note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT),
-				"fallback small print uses BONE_DIM")
+				"fallback small print uses INK_SOFT")
 
 
 func test_shop_screen_carries_conditional_fallback_slot() -> void:
@@ -219,13 +241,18 @@ func test_shop_screen_carries_conditional_fallback_slot() -> void:
 	var plain := _gui_base_state()
 	plain["offers"] = []
 	plain["services"] = []
-	var plain_host := _mount_screen("res://ui/screens/shop_screen.gd", {"state": plain, "commands": cmds})
+	var plain_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/shop_screen.tscn", plain, cmds)
+	# .tscn 屏靠 _ready() 补刷新，需等一帧再断言（RUI 版是同步挂载故原无此行）。
+	await get_tree().process_frame
 	assert_false(_host_or_descendant_has_text(plain_host, "已切换至基础池"),
 			"shop hides the fallback slot when unmarked")
 
 	var flagged := plain.duplicate(true)
 	flagged["pool_fallback_note"] = "（空池回退：已切至基础池）"
-	var marked_host := _mount_screen("res://ui/screens/shop_screen.gd", {"state": flagged, "commands": cmds})
+	var marked_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/shop_screen.tscn", flagged, cmds)
+	await get_tree().process_frame
 	var note := _find_label_exact(marked_host, "（空池回退：已切至基础池）")
 	assert_true(note != null, "shop renders the fallback small print when marked")
 	if note != null:
@@ -276,13 +303,16 @@ func test_encounter_screen_feeds_formatted_cost_and_hides_empty() -> void:
 	st["node"] = {"title": "幽林遭遇", "desc": "林中异响。", "type": "contact"}
 	st["actions"] = [{"id": "a1", "label": "强夺", "detail": "危险行动。", "dangerous": true,
 		"quality": "", "effect": "夺取宝物", "synergy": "", "cost": "寿元 ×5", "curse_warning": true}]
-	var host := _mount_screen("res://ui/screens/encounter_screen.gd", {"state": st, "commands": cmds})
+	var host := _mount_tscn_screen("res://scenes/ui/screens/encounter_screen.tscn", st, cmds)
+	await get_tree().process_frame
 	assert_true(_find_label_exact(host, "代价：寿元 ×5") != null,
 			"formatted cost string feeds the cost segment verbatim")
 	var plain := st.duplicate(true)
 	plain["actions"] = [{"id": "a1", "label": "探查", "detail": "", "dangerous": false,
 		"quality": "", "effect": "查看四周", "synergy": "", "cost": "", "curse_warning": false}]
-	var clean_host := _mount_screen("res://ui/screens/encounter_screen.gd", {"state": plain, "commands": cmds})
+	var clean_host := _mount_tscn_screen(
+			"res://scenes/ui/screens/encounter_screen.tscn", plain, cmds)
+	await get_tree().process_frame
 	assert_true(_find_label_exact(clean_host, "代价：") == null,
 			"empty cost hides its segment (never renders raw dict junk)")
 
@@ -299,7 +329,8 @@ func test_shop_cursed_offer_renders_strong_red_badge() -> void:
 	st["offers"] = [{"id": "o1", "name": "血祭蛊", "kind": "lifespan_deal", "price": "10 寿元",
 		"desc": "以寿元代付", "quality": "普通", "curse_warning": true, "will_emergency_pay": false}]
 	st["services"] = []
-	var host := _mount_screen("res://ui/screens/shop_screen.gd", {"state": st, "commands": cmds})
+	var host := _mount_tscn_screen("res://scenes/ui/screens/shop_screen.tscn", st, cmds)
+	await get_tree().process_frame
 	assert_true(_find_label_exact(host, "咒") != null,
 			"cursed shop offer must render the 咒 badge through GuCard")
 
@@ -337,6 +368,7 @@ func test_reward_cursed_reward_feeds_strong_red_badge() -> void:
 		"effect": "吸取气血", "cost": "每次使用反噬 +1", "curse_warning": true}]
 	st["full_satchel"] = false
 	st["pity_note"] = ""
-	var host := _mount_screen("res://ui/screens/reward_screen.gd", {"state": st, "commands": cmds})
+	var host := _mount_tscn_screen("res://scenes/ui/screens/reward_screen.tscn", st, cmds)
+	await get_tree().process_frame
 	assert_true(_find_label_exact(host, "咒") != null,
 			"cursed reward must render the 咒 badge through GuCard")

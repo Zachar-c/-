@@ -4,10 +4,11 @@ extends GutTest
 const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
+## 大厅与战斗的 master 已停止使用（Title -> hall_screen、Battle -> battle_screen，
+## 两张屏都是 Godot 官方 .tscn），只剩地图 master 仍在路由上。
+## map 转完 .tscn 后本表连同本文件一起作废。
 const MasterScenes := [
-	"res://scenes/ui_masters/wenzhen_hall_master.tscn",
 	"res://scenes/ui_masters/wenzhen_map_master.tscn",
-	"res://scenes/ui_masters/wenzhen_battle_master.tscn",
 ]
 
 var _rui_roots: Array = []
@@ -79,26 +80,6 @@ func test_wenzhen_master_mounts_rendertree() -> void:
 		if screen_host == null:
 			screen_host = instance.get_node_or_null("BattleScreen")
 		assert_not_null(screen_host, "%s must mount a RUI screen host" % scene_path)
-
-
-func test_master_scenarios_keep_static_button_stateboxes() -> void:
-	var hall: Control = (load("res://scenes/ui_masters/wenzhen_hall_master.tscn") as PackedScene).instantiate()
-	add_child(hall)
-	_rui_hosts.append(hall)
-	for _i in 2:
-		await get_tree().process_frame
-	var primary := hall.get_node_or_null("HallSheet/HallColumns/PrimaryRegion/HallPrimaryAction") as Button
-	assert_not_null(primary, "hall master must keep HallPrimaryAction as static Button")
-	if primary != null:
-		assert_not_null(primary.get_theme_stylebox("normal"), "primary button missing normal stylebox")
-		assert_not_null(primary.get_theme_stylebox("hover"), "primary button missing hover stylebox")
-		assert_not_null(primary.get_theme_stylebox("pressed"), "primary button missing pressed stylebox")
-	for link_name in ["JournalLink", "CodexLink", "SettingsLink"]:
-		var link := hall.get_node_or_null("HallSheet/HallColumns/ArchiveRegion/" + link_name) as Button
-		assert_not_null(link, "hall master must keep %s as static archive Button" % link_name)
-		if link != null:
-			assert_not_null(link.get_theme_stylebox("hover"), "%s must have hover stylebox" % link_name)
-
 
 func test_master_battle_keeps_static_turn_action_stateboxes() -> void:
 	var battle: Control = (load("res://scenes/ui_masters/wenzhen_battle_master.tscn") as PackedScene).instantiate()

@@ -51,47 +51,21 @@ func test_registry_distinguishes_encounter_and_battle_stale_versions() -> void:
 		"node_id": state.current_node_id,
 		"session_node_id": state.current_node_id,
 	}, catalog)
-	var battle := BattleScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var battle_result: Dictionary = RegistryScript.preflight("battle.action_card", state, battle, {}, {
-		"type": "action_card",
-		"action_id": "battle.basic.dodge",
-		"state_version": int(battle["hand_version"]) + 1,
-		"expected_phase": "player",
-	}, catalog)
 
 	assert_false(encounter["ok"])
 	assert_eq(encounter["reason"], "action_preview_stale")
 	assert_eq(encounter["freshness"]["expected"], state.event_log.size())
-	assert_eq(battle_result["reason"], "battle_hand_stale")
-	assert_eq(battle_result["freshness"]["kind"], "battle_hand")
 
 
-func test_battle_turn_requires_event_version_and_phase() -> void:
+## V1（2026-08-30 全量替换）：战斗命令不再走 CommandSpecRegistry 的新鲜度
+## 预检（蛊行动制无手牌版本号），旧 battle_hand/battle_action_stale 语义废除。
+func test_battle_facade_does_not_require_freshness_for_v1_turn() -> void:
 	var state := RunState.new_run(101)
-	var battle := BattleScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
-	var stale: Dictionary = RegistryScript.preflight("battle.turn", state, battle, {}, {
-		"type": "end_turn",
-		"state_version": state.event_log.size() + 1,
-		"expected_phase": "player",
-	}, catalog)
-	var phase: Dictionary = RegistryScript.preflight("battle.turn", state, battle, {}, {
-		"type": "end_turn",
-		"state_version": state.event_log.size(),
-		"expected_phase": "enemy",
-	}, catalog)
-
-	assert_eq(stale["reason"], "battle_action_stale")
-	assert_eq(phase["reason"], "battle_phase_stale")
-
-
-func test_battle_facade_rejects_missing_freshness_for_regular_turn() -> void:
-	var state := RunState.new_run(101)
-	var battle := BattleScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
 	var before := state.to_save_data()
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
 	var result: Dictionary = FacadeScript.apply_turn(battle, state, {"type": "end_turn"}, catalog)
 
-	assert_false(result["accepted"])
-	assert_eq(result["feeds"], ["command_context_missing"])
+	assert_eq(result["result"], "ongoing")
 	assert_eq(state.to_save_data(), before)
 
 

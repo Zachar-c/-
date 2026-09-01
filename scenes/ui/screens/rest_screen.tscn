@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/rest_screen_view.gd" id="1_rest"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="4_dialog"]
+
+[node name="RestScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_rest")
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "闭关 · 休整"
+
+[node name="NoteLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "强制二选一，不可全拿"
+
+[node name="primary_decision_surface" parent="Root" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RemovePanel" parent="Root" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+visible = false
+
+[node name="GrowthPanel" parent="Root" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_vertical = 3
+visible = false
+
+[node name="LeaveButton" type="Button" parent="Root"]
+layout_mode = 2
+text = "离开"
+
+[node name="ConfirmDialog" parent="Root" instance=ExtResource("4_dialog")]
+layout_mode = 2
+visible = false

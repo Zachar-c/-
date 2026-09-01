@@ -15,7 +15,7 @@ const THEME: Theme = preload("res://gu_theme.tres")
 
 @onready var _hand_box: HBoxContainer = %HandBox
 
-var _views: Array[GuCardView] = []
+var _views: Array[GuHandCardView] = []
 
 
 func _init() -> void:
@@ -27,7 +27,7 @@ func _init() -> void:
 func show_hand(cards: Array) -> void:
 	_clear()
 	for data: Dictionary in cards.slice(0, MAX_HAND):
-		var view: GuCardView = CARD_SCENE.instantiate()
+		var view: GuHandCardView = CARD_SCENE.instantiate()
 		_hand_box.add_child(view)
 		view.bind_card(data)
 		view.card_pressed.connect(func(id: StringName) -> void: card_played.emit(id))

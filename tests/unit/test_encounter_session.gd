@@ -77,44 +77,10 @@ func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 		var enemy_row: Dictionary = enemy_row_value
 		enemy_row["hp"] = 1
 	controller.current_battle["enemy_hp"] = 1
-	var played: Array[String] = []
-	var result: Dictionary = {}
-	for _step in 8:
-		if controller.current_view_name() != "Battle":
-			break
-		var battle: Dictionary = controller.current_battle
-		var target_id := ""
-		for enemy_value in battle.get("enemies", []):
-			var enemy: Dictionary = enemy_value
-			if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
-				target_id = str(enemy.get("enemy_id", ""))
-				break
-		result = {}
-		for hand_card_value in battle.get("hand", []):
-			var card: Dictionary = hand_card_value
-			var action_id := "battle.%s.%s" % [str(battle.get("battle_id", "")), str(card.get("instance_id", ""))]
-			if action_id in played:
-				continue
-			var definition: Dictionary = (controller.catalog as Dictionary).get("card_by_id", {}).get(str(card.get("definition_id", "")), {})
-			if (definition.get("source_gu_ids", []) as Array).is_empty():
-				continue
-			result = controller.submit_command({
-				"type": "action_card",
-				"action_id": action_id,
-				"card_id": str(card.get("definition_id", "")),
-				"target_id": target_id,
-				"state_version": int(controller.current_battle.get("hand_version", 0)),
-				"expected_phase": str(controller.current_battle.get("phase", "player")),
-			})
-			played.append(action_id)
-			break
-		if result.is_empty() or not bool(result.get("accepted", false)):
-			controller.submit_command({
-				"type": "end_turn",
-				"state_version": controller.state.event_log.size(),
-				"expected_phase": "player",
-			})
-			played.clear()
+	var result: Dictionary = controller.submit_command({
+		"type": "basic_attack",
+		"state_version": controller.state.event_log.size(),
+	})
 	assert_eq(str(result.get("result", "")), "victory", "battle must end in victory")
 	assert_eq(str(controller.current_session.get("phase", "")), "post_battle")
 	# ★ 软锁断言：极端敌对 + 战后阶段必须能离场回地图。

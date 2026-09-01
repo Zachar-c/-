@@ -1,4 +1,4 @@
-class_name GuCardView
+class_name GuHandCardView
 extends Button
 
 ## 单张卡牌视图：只做数据绑定与交互上报，不含任何布局/样式代码。

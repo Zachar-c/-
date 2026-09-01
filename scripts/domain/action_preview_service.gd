@@ -51,11 +51,9 @@ static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState)
 	var kept: Array[Dictionary] = []
 	for card in cards:
 		var command: Dictionary = card.get("command", {})
-		# 极端敌对 = 非战不可：交锋卡（旧 action_id 形态与 resolve_contact/approach=fight
-		# 散修形态）与离场必须保留可执行；其余动作压暗。
-		var is_fight: bool = str(command.get("action_id", "")) == "fight" \
-			or (str(command.get("type", "")) == "resolve_contact" and str(command.get("approach", "")) == "fight")
-		if is_fight or str(command.get("type", "")) == "leave_node":
+		var is_fight := _is_fight_command(command)
+		var is_leave := str(command.get("type", "")) == "leave_node"
+		if is_fight or is_leave:
 			kept.append(card)
 		else:
 			card["executable"] = false
@@ -65,6 +63,11 @@ static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState)
 	cards.clear()
 	for card in kept:
 		cards.append(card)
+
+
+static func _is_fight_command(command: Dictionary) -> bool:
+	return str(command.get("action_id", "")) == "fight" \
+		or (str(command.get("type", "")) == "resolve_contact" and str(command.get("approach", "")) == "fight")
 
 
 static func _mark_consumed_cards(cards: Array[Dictionary], state: RunState) -> void:
@@ -444,19 +447,20 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var missing := _missing_gu(state.refined_gu_ids, inputs)
 	var destroys_inputs := str(recipe.get("failure", "")) == "destroy_inputs"
-	var locked := bool(recipe.get("locked", false))
-	var codex_unlocked := state.global_codex_ids.has(str(recipe.get("id", ""))) or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
+	# 蛊方图鉴门禁（2026-08-30）：与执行/快照共用 Resolver.recipe_unlocked，
+	# fixed/combine 须持有蛊方，advance 豁免，default_unlocked 配方初始持有。
+	var codex_ok := ResolverScript.recipe_unlocked(state, recipe)
 	var deck_full := DeckCapacityScript.projected_count(state, catalog, [str(recipe.get("output_gu_id", ""))], inputs) > DeckCapacityScript.capacity(catalog)
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
 	var success_rate: Variant = null
 	if not is_fixed:
 		success_rate = int(recipe.get("success_roll_max", 0))
-	var executable := missing.is_empty() and (not locked or codex_unlocked) and not deck_full
+	var executable := missing.is_empty() and codex_ok and not deck_full
 	var reason := ""
 	if deck_full:
 		reason = "牌组已满（%d/%d），炼成后无法容纳新蛊。" % [DeckCapacityScript.card_count(state, catalog), DeckCapacityScript.capacity(catalog)]
-	elif locked and not codex_unlocked:
-		reason = str(recipe.get("locked_reason", "尚未获得对应的炼制传承，无法按固定配方合炼。"))
+	elif not codex_ok:
+		reason = str(recipe.get("locked_reason", "尚未获得该蛊方，无法按此配方合炼。"))
 	elif not missing.is_empty():
 		reason = "缺少%s。" % _gu_names(missing)
 	cards.append(_card(state, {
@@ -470,7 +474,7 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 		"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
 		"unknown_note": "" if is_fixed else "炼制成败未定。",
 		"success_rate": success_rate,
-		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if locked and not codex_unlocked else _gu_remedies(missing),
+		"remedy_hints": ["可在传承或奇遇中获得对应炼制知识。"] if not codex_ok else _gu_remedies(missing),
 		"command": {"type": "refine_gu", "recipe_id": str(recipe["id"])},
 	}))
 
@@ -986,9 +990,10 @@ static func _append_scavenge_card_if_due(cards: Array[Dictionary], state: RunSta
 		return
 	if str(state.node_flags.get("boss_defeated", "")) != "true":
 		return
-	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	var recipe_id := str(boss.get("scavenge_recipe", ""))
-	if recipe_id.is_empty() or state.global_codex_ids.has(recipe_id):
+	# 搜刮蛊方（2026-08-30）：候选选择与执行共用 Resolver.scavenge_pending_recipes
+	# （兼容 scavenge_recipe 单串/数组；已持有即不再提示）。
+	var pending := ResolverScript.scavenge_pending_recipes(state, catalog)
+	if pending.is_empty():
 		return
 	cards.append(_card(state, {
 		"id": "scavenge",
