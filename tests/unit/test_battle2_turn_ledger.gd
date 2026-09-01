@@ -133,8 +133,8 @@ func test_cross_round_actions_claim_next_round_usage() -> void:
 	# must keep receiving their thought or they default to a stop.
 	var ledger := TurnEngineScript.new_turn(5)
 	ledger = TurnEngineScript.add_ongoing(ledger,
-			{"kind": "grapple_hold", "action": "grapple", "instance_id": "gu_001",
-			"thought": 1, "turns_left": 1})
+			{"id": "hold_1", "kind": "grapple_hold", "action": "grapple",
+			"instance_id": "gu_001", "thought": 1, "turns_left": 1})
 	ledger = TurnEngineScript.start_turn(ledger, 5)
 	assert_true(bool(TurnEngineScript.action_used(ledger, "grapple")),
 			"ongoing grapple occupies the grapple usage slot next round")
@@ -142,6 +142,50 @@ func test_cross_round_actions_claim_next_round_usage() -> void:
 			"continuing the hold pays its 1 thought next round")
 	assert_eq(int((ledger["ongoing"] as Array).size()), 1,
 			"the hold stays active while its turns remain")
+
+
+func test_ongoing_not_continued_defaults_to_a_stop() -> void:
+	# §12.5: not paying means the default stop - the entry leaves the ledger;
+	# already-resulted facts stay, unfinished abstract progress clears.
+	var ledger := TurnEngineScript.new_turn(5)
+	ledger = TurnEngineScript.add_ongoing(ledger,
+			{"id": "hold_1", "kind": "grapple_hold", "action": "grapple",
+			"instance_id": "gu_001", "thought": 1, "turns_left": 1})
+	var next := TurnEngineScript.start_turn(ledger, 5, [])
+	assert_eq(int((next["ongoing"] as Array).size()), 0,
+			"an uncontinued ongoing defaults to a stop")
+	assert_false(bool(TurnEngineScript.action_used(next, "grapple")),
+			"the stopped hold claims no usage slot this round")
+
+
+func test_ongoing_is_paid_only_for_the_continued_ids() -> void:
+	# §12.5: only the explicitly continued ongoing entries keep paying; the
+	# others stop even when the pool could afford them.
+	var ledger := TurnEngineScript.new_turn(5)
+	ledger = TurnEngineScript.add_ongoing(ledger,
+			{"id": "hold_1", "kind": "grapple_hold", "action": "grapple",
+			"instance_id": "gu_001", "thought": 1, "turns_left": 1})
+	ledger = TurnEngineScript.add_ongoing(ledger,
+			{"id": "wind_1", "kind": "windup", "action": "strike",
+			"instance_id": "gu_002", "thought": 1, "turns_left": 1})
+	var next := TurnEngineScript.start_turn(ledger, 5, ["hold_1"])
+	assert_eq(int((next["ongoing"] as Array).size()), 1)
+	assert_true(bool(TurnEngineScript.action_used(next, "grapple")))
+	assert_false(bool(TurnEngineScript.action_used(next, "strike")))
+
+
+func test_ongoing_cannot_overdraw_the_thought_pool() -> void:
+	# §12.5 fix (P2): an unpayable ongoing stops instead of pushing the pool
+	# negative - judge first, deduct only when affordable.
+	var ledger := TurnEngineScript.new_turn(0)
+	ledger = TurnEngineScript.add_ongoing(ledger,
+			{"id": "hold_1", "kind": "grapple_hold", "action": "grapple",
+			"instance_id": "gu_001", "thought": 1, "turns_left": 1})
+	var next := TurnEngineScript.start_turn(ledger, 0, ["hold_1"])
+	assert_eq(int(TurnEngineScript.thoughts_left(next)), 0,
+			"the pool must never go negative")
+	assert_eq(int((next["ongoing"] as Array).size()), 0,
+			"an unpayable ongoing stops instead of overdrafting")
 
 
 func test_zero_randomness_audit() -> void:

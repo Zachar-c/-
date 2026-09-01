@@ -62,11 +62,13 @@ static func thought_used(turn: Dictionary) -> int:
 
 
 # §12.1/§12.5: at the round boundary spent thoughts clear and the pool resets;
-# maintenance claims its thought before anything else; ongoing entries keep
-# one turn closer to completion and, while turns remain, keep claiming their
-# thought and their usage slot. Not paying means not maintaining: the caller
-# drops the entry (default stop, §12.5).
-static func start_turn(turn: Dictionary, capacity: int) -> Dictionary:
+# maintenance claims its thought before anything else. Ongoing entries: the
+# player declares which ids continue (continue_ids; null keeps the legacy
+# "all continue" behaviour). Uncontinued entries default to a stop (§12.5 -
+# already-resulted facts stay, unfinished abstract progress clears). A
+# continued entry that the pool cannot afford also stops - the pool is judged
+# first and never goes negative.
+static func start_turn(turn: Dictionary, capacity: int, continue_ids: Variant = null) -> Dictionary:
 	var out := turn.duplicate(true)
 	out["phase"] = PHASE_DECLARE
 	out["thoughts_left"] = maxi(0, capacity)
@@ -79,15 +81,26 @@ static func start_turn(turn: Dictionary, capacity: int) -> Dictionary:
 	out["maintained"] = []
 	for instance_id in turn.get("maintained", []):
 		out = _spend(out, 1)
+	var continuing := {}
+	if continue_ids != null:
+		for id_value in continue_ids:
+			continuing[str(id_value)] = true
 	var remaining: Array = []
 	for entry in turn.get("ongoing", []):
-		var turns_left := int(entry.get("turns_left", 0)) - 1
-		if turns_left >= 0:
-			var kept: Dictionary = (entry as Dictionary).duplicate(true)
-			kept["turns_left"] = turns_left
-			remaining.append(kept)
-			out = _spend(out, int(entry.get("thought", 1)))
-			out = _claim_entry_usage(out, kept)
+		var entry_id := str((entry as Dictionary).get("id", ""))
+		if continue_ids != null and not continuing.has(entry_id):
+			continue
+		var turns_left := int((entry as Dictionary).get("turns_left", 0)) - 1
+		if turns_left < 0:
+			continue
+		var thought := int((entry as Dictionary).get("thought", 1))
+		if int(out.get("thoughts_left", 0)) < thought:
+			continue
+		var kept: Dictionary = (entry as Dictionary).duplicate(true)
+		kept["turns_left"] = turns_left
+		remaining.append(kept)
+		out = _spend(out, thought)
+		out = _claim_entry_usage(out, kept)
 	out["ongoing"] = remaining
 	return out
 
