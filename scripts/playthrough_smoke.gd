@@ -12,6 +12,40 @@ const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
+## 修复 6：非蛊商品（魂丹/材料/配方/服务）不能按 gu_id 取名落成空串。
+static func offer_label(offer: Dictionary) -> String:
+	var gu_id := str(offer.get("gu_id", ""))
+	if not gu_id.is_empty():
+		return DisplayText.gu(gu_id)
+	var output_gu_id := str(offer.get("output_gu_id", ""))
+	if not output_gu_id.is_empty():
+		return DisplayText.gu(output_gu_id)
+	var material_id := str(offer.get("material_id", ""))
+	if not material_id.is_empty():
+		return DisplayText.material(material_id)
+	var card_key := str(offer.get("card_key", ""))
+	if not card_key.is_empty():
+		return card_key
+	return str(offer.get("id", "商品"))
+
+
+## 修复 6：离场命令结果的 ok/reason 检查（会话路径 ok 在嵌套 result 里）。
+static func leave_result_ok(result: Dictionary) -> bool:
+	var payload: Dictionary = result.get("result", result) as Dictionary
+	return bool(payload.get("ok", false))
+
+
+## 修复 6：统一离场——失败即终止冒烟，绝不静默循环重试。
+func _leave(controller, context: String) -> bool:
+	var result: Dictionary = controller.submit_command({"type": "leave_node"})
+	if leave_result_ok(result):
+		_tell("%s：已离场" % context)
+		return true
+	var payload: Dictionary = result.get("result", result) as Dictionary
+	_tell("%s：离场被拒（%s）——终止冒烟以防静默空转" % [context, str(payload.get("reason", "unknown"))])
+	return false
+
+
 var _log: Array[String] = []
 var _last_view := ""
 # 止损检测：同一战斗内敌血持续无变化则认定打不动，尝试撤离。
@@ -96,13 +130,16 @@ func _step(controller) -> String:
 				if bool(result.get("ok", false)) or bool((result.get("result", {}) as Dictionary).get("ok", false)):
 					_tell("炼蛊台：同名升阶 %s" % str(recipe.get("id", "")))
 					return "ongoing"
-			controller.submit_command({"type": "leave_node"})
+			if not _leave(controller, "炼蛊台"):
+				return "leave_blocked"
 			return "ongoing"
 		"Reward":
-			controller.submit_command({"type": "leave_node"})
+			if not _leave(controller, "战利品"):
+				return "leave_blocked"
 			return "ongoing"
 		"Npc":
-			controller.submit_command({"type": "leave_node"})
+			if not _leave(controller, "NPC"):
+				return "leave_blocked"
 			return "ongoing"
 		"Battle":
 			return _step_battle(controller)
@@ -110,7 +147,8 @@ func _step(controller) -> String:
 			return str(view).to_lower()
 		_:
 			_tell("未知视口 %s：尝试离开" % view)
-			controller.submit_command({"type": "leave_node"})
+			if not _leave(controller, "未知视口"):
+				return "leave_blocked"
 			return "ongoing"
 
 
@@ -150,7 +188,8 @@ func _step_via_cards(controller, label: String) -> String:
 			_tell("%s：%s 被拒（%s）" % [label, card_id, str(payload.get("reason", "unknown"))])
 		break
 	if not acted:
-		controller.submit_command({"type": "leave_node"})
+		if not _leave(controller, label):
+			return "leave_blocked"
 		_tell("%s：已无可用动作，离场" % label)
 	return "ongoing"
 
@@ -300,7 +339,7 @@ func _step_shop(controller) -> String:
 		var caravan_offers: Array[Dictionary] = []
 		for offer_value in controller.catalog.get("caravan_offer_by_id", {}).values():
 			var offer: Dictionary = offer_value
-			if str(offer.get("kind", "")) != "purchase":
+			if str(offer.get("kind", "")) != "buy":
 				continue
 			caravan_offers.append(offer)
 		caravan_offers.sort_custom(func(a, b): return int(a.get("stone_cost", 0)) < int(b.get("stone_cost", 0)))
@@ -310,8 +349,9 @@ func _step_shop(controller) -> String:
 				var bought: Dictionary = controller.submit_command({"type": "buy_gu", "offer_id": str(offer.get("id", ""))})
 				var bought_payload: Dictionary = bought.get("result", bought) as Dictionary
 				if bool(bought_payload.get("ok", false)):
-					_tell("商队购入 %s（%d 元石）" % [str(offer.get("gu_id", "")), price])
-		controller.submit_command({"type": "leave_node"})
+					_tell("商队购入 %s（%d 元石）" % [offer_label(offer), price])
+		if not _leave(controller, "商队"):
+			return "leave_blocked"
 		return "ongoing"
 	var shop_offers: Array[Dictionary] = []
 	for offer_value in controller.catalog.get("shop_offer_by_id", {}).values():
@@ -338,10 +378,11 @@ func _step_shop(controller) -> String:
 		var bought: Dictionary = controller.submit_command({"type": "shop_purchase", "offer_id": str(offer.get("id", ""))})
 		var bought_payload: Dictionary = bought.get("result", bought) as Dictionary
 		if bool(bought_payload.get("ok", false)):
-			_tell("黑市购入 %s（%d 元石）" % [str(offer.get("gu_id", "")), price])
+			_tell("黑市购入 %s（%d 元石）" % [offer_label(offer), price])
 		else:
-			_tell("黑市购入被拒：%s（%s）" % [str(offer.get("id", "")), str(bought_payload.get("reason", "unknown"))])
-	controller.submit_command({"type": "leave_node"})
+			_tell("黑市购入被拒：%s（%s）" % [offer_label(offer), str(bought_payload.get("reason", "unknown"))])
+	if not _leave(controller, "黑市"):
+		return "leave_blocked"
 	return "ongoing"
 
 
@@ -350,8 +391,8 @@ func _step_encounter(controller) -> String:
 	var node_type := str(node.get("type", ""))
 	# 战后阶段：胜利后结算再离场（玩家视角的战后处理）。
 	if str(controller.current_session.get("phase", "")) == "post_battle":
-		controller.submit_command({"type": "leave_node"})
-		_tell("战后结算完成，离场")
+		if not _leave(controller, "战后结算"):
+			return "leave_blocked"
 		return "ongoing"
 	# 升仙窗：玩家终局抉择（需先击败 Boss，choice=now 是真实命令契约）。
 	if node_type == "ascension":
@@ -377,14 +418,16 @@ func _step_encounter(controller) -> String:
 		if not bool(settled.get("ok", false)):
 			controller.submit_command({"type": "choose_action", "action_id": "accept_debt"})
 		_tell("总账结清：元石=%d" % int(controller.state.stone))
-		controller.submit_command({"type": "leave_node"})
+		if not _leave(controller, "总账"):
+			return "leave_blocked"
 		return "ongoing"
 	if node_type == "event":
 		var choices: Array = node.get("choices", [])
 		if not choices.is_empty():
 			var taken: Dictionary = controller.submit_command({"type": "choose_action", "action_id": str(choices[0])})
 			_tell("事件选项 %s: %s" % [str(choices[0]), "接受" if bool(taken.get("ok", false)) else "被拒(%s)" % str(taken.get("reason", ""))])
-		controller.submit_command({"type": "leave_node"})
+		if not _leave(controller, "事件"):
+			return "leave_blocked"
 		return "ongoing"
 	# 其余节点（险地/传承/野蛊/地脉/闭关等）：按预览卡逐张处置后离场。
 	return _step_via_cards(controller, "遭遇")
@@ -495,7 +538,8 @@ func _step_battle(controller) -> String:
 			int(controller.state.health), int(controller.state.max_health),
 		])
 		if str(result.get("result", "")) == "retreat":
-			controller.submit_command({"type": "leave_node"})
+			if not _leave(controller, "止损撤离"):
+				return "leave_blocked"
 			_tell("止损撤离，离开该节点")
 		return "ongoing"
 	# 拒绝回退：命令被拒不推进时依次回退 普攻 → 收势，避免原地空转耗尽步数。
