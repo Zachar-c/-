@@ -6,7 +6,7 @@ const SAVE_PATH := "user://nanjiang_smoke_save.json"
 const TEMP_PATH := "user://nanjiang_smoke_save.json.tmp"
 const META_PATH := "user://nanjiang_smoke_meta.json"
 const META_TEMP_PATH := "user://nanjiang_smoke_meta.json.tmp"
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 
 
 static func save_run(state: RunState, route: Array, replies: Array) -> Error:
@@ -81,7 +81,7 @@ static func diagnose_run_data(data: Dictionary) -> Dictionary:
 static func load_run_from_data(data: Dictionary) -> Dictionary:
 	var diagnosis := diagnose_run_data(data)
 	if not bool(diagnosis.get("ok", false)):
-		return {}
+		return _run_load_rejection(diagnosis)
 	var state: Variant = _state_from_save_data(data["state"])
 	if state == null:
 		return {}
@@ -107,8 +107,27 @@ static func serialize_meta(meta: RefCounted) -> Dictionary:
 	}
 
 
+# Spec-v4 (T1.1): refuse incompatible in-progress runs with a player-readable
+# reason instead of a silent empty dict. The hall save is never the victim —
+# codex / recipes / contracts / stats are migrated separately (see load_meta).
+static func _run_load_rejection(diagnosis: Dictionary) -> Dictionary:
+	var kind := str(diagnosis.get("kind", "unknown"))
+	if kind == "unsupported_version" and int(diagnosis.get("version", 0)) == 3:
+		return {
+			"ok": false,
+			"reason": "schema_v4_required",
+			"message": "规则版本已升级，旧进行中冒险无法继续；大厅进度、蛊方图鉴与已解锁信息已保留。",
+		}
+	return {"ok": false, "reason": kind, "message": "存档无法载入（%s）。" % kind}
+
+
 static func load_meta_from_data(data: Dictionary) -> RefCounted:
-	if int(data.get("version", -1)) != SAVE_VERSION:
+	# Spec-v4 (T1.1): a v3 hall save is migrated, never dropped. The checksum
+	# already hashes only the meta fields, so the pre-migration payload stays
+	# verifiable; MetaProgress.from_save_data keeps codex/recipes/contracts/
+	# stats with zero loss.
+	var version_value := int(data.get("version", -1))
+	if version_value != SAVE_VERSION and version_value != 3:
 		return null
 	if not data.get("meta", null) is Dictionary:
 		return null
