@@ -93,12 +93,32 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	if state.is_terminal():
 		return cards
 	var card_by_id: Dictionary = catalog.get("card_by_id", {})
-	for instance_value in battle.get("hand", []):
-		var instance: Dictionary = instance_value
-		var definition: Dictionary = card_by_id.get(str(instance.get("definition_id", "")), {})
-		if definition.is_empty():
-			continue
-		_append_battle_hand_card(cards, battle, state, catalog, definition, instance)
+	# 两代战斗形状兼容（同预览同源，禁止第二套预览形状）：
+	# - V1 契约（v1_battle_resolver）：蛊行动从 gu_slots 投影，hand 是禁止字段；
+	#   已封/已用/已耗的槽位不出预览。
+	# - 旧引擎（battle_resolver 直驱的存量测试与 command_spec 旧信封路径）：
+	#   从 battle.hand 的实例卡投影，行为不变。
+	if battle.has("hand"):
+		for instance_value in battle.get("hand", []):
+			var instance: Dictionary = instance_value
+			var definition: Dictionary = card_by_id.get(str(instance.get("definition_id", "")), {})
+			if definition.is_empty():
+				continue
+			_append_battle_hand_card(cards, battle, state, catalog, definition, instance)
+	else:
+		for slot_value in battle.get("gu_slots", []):
+			var slot: Dictionary = slot_value
+			if bool(slot.get("is_sealed", false)) or bool(slot.get("used_this_turn", false)) or bool(slot.get("consumed", false)):
+				continue
+			var v1_instance: Dictionary = {
+				"instance_id": str(slot.get("instance_id", "")),
+				"definition_id": str(slot.get("definition_id", "")),
+				"is_sealed": false,
+			}
+			var v1_definition: Dictionary = card_by_id.get(str(slot.get("definition_id", "")), {})
+			if v1_definition.is_empty():
+				continue
+			_append_battle_hand_card(cards, battle, state, catalog, v1_definition, v1_instance)
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.basic.punch",
 		"title": "拳脚",
@@ -245,12 +265,13 @@ static func _living_intent_labels(battle: Dictionary) -> String:
 ## checks (basic punch, thorn whip strike) may present this risk.
 static func _live_counter_labels(battle: Dictionary) -> Array[String]:
 	var labels: Array[String] = []
-	var flags: Array = battle.get("flags", [])
+	# flags 兼容两代形状：V1 Dictionary / 旧引擎 Array（has 双向可用）。
+	var flags: Variant = battle.get("flags", [])
 	for enemy_value in battle.get("enemies", []):
 		var enemy: Dictionary = enemy_value
 		if not bool(enemy.get("alive", false)) or int(enemy.get("hp", 0)) <= 0:
 			continue
-		for reaction_value in enemy.get("reactions", []):
+		for reaction_value in enemy.get("counter_revealed", enemy.get("reactions", [])):
 			var reaction: Dictionary = reaction_value
 			if str(reaction.get("trigger", "")) != "direct_strike" or str(reaction.get("window", "")) != "before_damage":
 				continue

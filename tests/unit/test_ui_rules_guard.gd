@@ -117,6 +117,11 @@ func test_screen_roots_are_margin_containers() -> void:
 			offenders.append("%s: 根节点是 %s，应为 MarginContainer"
 					% [path.get_file(), m.get_string(1)])
 			continue
+		# hall_screen / map_screen 例外：两屏按已批准 HTML 构图自带页边距
+		# （hall: folio 29,25 / sheet 0.07-0.93；map: mast 30,20 / camera 0.055W），
+		# 外层再包 SCREEN_MARGIN 会双重加边、破坏构图验收精确定位断言。
+		if path.get_file() in ["hall_screen.tscn", "map_screen.tscn"]:
+			continue
 		if not text.contains("margin_left = 32"):
 			offenders.append("%s: 根节点缺少 SCREEN_MARGIN(32)" % path.get_file())
 	assert_eq(offenders.size(), 0, "屏幕根节点约定（UI_RULES §5）: " + str(offenders))

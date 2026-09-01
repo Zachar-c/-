@@ -61,22 +61,22 @@ func test_generic_battle_action_card_routes_once_and_replay_is_rejected() -> voi
 	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
 	controller.submit_command({"type": "choose_action", "action_id": "fight", "npc_id": "caravan_steward"})
 
-	var source_card: Dictionary = controller.current_battle["hand"][0]
+	# V1 契约（无牌库/手牌/弃牌——禁止字段）：蛊行动按 instance_id 直催；
+	# 「一回合一次」由使用权账本保证——同一蛊同一回合重复提交被拒。
+	var slot: Dictionary = (controller.current_battle["gu_slots"] as Array)[0]
 	var command := {
-		"type": "action_card",
-		"action_id": "battle.%s.%s" % [controller.current_battle["battle_id"], source_card["instance_id"]],
-		"state_version": controller.current_battle["hand_version"],
-		"expected_phase": str(controller.current_battle.get("phase", "player")),
-		"node_id": str(controller.state.current_node_id),
-		"session_node_id": str(controller.state.current_node_id),
+		"type": "use_gu",
+		"instance_id": str(slot["instance_id"]),
+		"state_version": controller.state.event_log.size(),
 	}
 	var first := controller.submit_command(command)
-	var discard_after_first: Array = controller.current_battle["discard_pile"].duplicate(true)
+	var hp_before_fight: int = int((controller.current_battle["player"] as Dictionary)["hp"])
 	var second := controller.submit_command(command)
 
-	assert_true(first["accepted"])
-	assert_true(discard_after_first.any(func(card): return card["instance_id"] == source_card["instance_id"]))
-	assert_false(second["accepted"])
-	assert_eq(second["feeds"], ["battle_hand_stale"])
-	assert_eq(controller.current_battle["discard_pile"], discard_after_first)
+	assert_true(bool(first.get("accepted", false)), "first use_gu must be accepted")
+	# 第一发蛊已结算（敌方被打掉血或玩家动作生效）——同蛊重提不改战场。
+	assert_false(bool(second.get("accepted", false)), "replayed use_gu must be rejected (used_this_turn ledger)")
+	assert_eq(str(second.get("result", "")), "rejected")
+	assert_true((second.get("feeds", []) as Array).size() > 0, "rejection must carry a feed reason")
+	assert_eq(int((controller.current_battle["player"] as Dictionary)["hp"]), hp_before_fight, "rejected replay must not mutate the battle")
 	controller.free()

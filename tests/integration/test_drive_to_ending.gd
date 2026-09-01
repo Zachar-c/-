@@ -291,7 +291,7 @@ func _step_battle(controller) -> String:
 	var intent_damage := _intent_damage(living)
 	var hp := int(controller.state.health)
 	var max_hp := int(controller.state.max_health)
-	var guarded: bool = (battle.get("flags", []) as Array).has("guarded")
+	var guarded: bool = (battle.get("flags", {}) as Dictionary).has("guarded")
 	var battle_id := str(battle.get("battle_id", ""))
 	var retreat_banned := battle_id == _retreat_blocked_battle
 	var can_flee: bool = not BattleResolverScript.boss_blocks_retreat(battle) and not retreat_banned
@@ -304,7 +304,7 @@ func _step_battle(controller) -> String:
 	var finish_now := enemy_hp <= 1
 	var dodge_effective := false
 	if not living.is_empty() and not retreat_banned:
-		var intent_speed := int((living[0].get("visible_intent", {}) as Dictionary).get("speed", 0))
+		var intent_speed := int((living[0].get("intent", {}) as Dictionary).get("speed", 0))
 		dodge_effective = int(controller.state.cultivator.get("speed", 2)) > intent_speed
 	# 集火：优先击杀当前血量最低的敌人，最快削减敌方总出手。
 	var focus := _focus_target(battle)
@@ -425,7 +425,7 @@ func _hp_total(enemies: Array[Dictionary]) -> int:
 func _intent_damage(enemies: Array[Dictionary]) -> int:
 	var total := 0
 	for enemy in enemies:
-		total += maxi(0, int((enemy.get("visible_intent", {}) as Dictionary).get("damage", 0)))
+		total += maxi(0, int((enemy.get("intent", {}) as Dictionary).get("damage", 0)))
 	return total
 
 

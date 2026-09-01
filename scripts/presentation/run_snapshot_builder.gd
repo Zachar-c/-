@@ -998,8 +998,10 @@ static func _player_panel(state) -> Dictionary:
 		var inst: Dictionary = state.gu_instances[inst_key]
 		gu_names.append(DisplayText.gu(str(inst.get("definition_id", ""))))
 	return {
-		"hp": int(cult.get("health", state.health)),
-		"max_hp": maxi(1, int(cult.get("max_health", state.max_health))),
+		# RunState.health 是唯一真值（battle 回合结算后由 run_controller 同步
+		# 写回 state.health + cultivator 镜像；旧路径 shop/rest 也写它）。
+		"hp": int(state.health),
+		"max_hp": maxi(1, int(state.max_health)),
 		"primordial": int(state.essence),
 		"soul": int(cult.get("soul", 0)),
 		"stone": int(state.stone),
@@ -1299,10 +1301,13 @@ static func _first_living_enemy_id(enemies: Array[Dictionary]) -> String:
 ## 2 低血进敌方先手战：致死开场已延后到玩家首个回合结束，把意图伤害与
 ## 文案暴露给战斗屏（缺失时返回空 dict，屏面无碎片）。
 static func _lethal_warning(battle_data: Dictionary) -> Dictionary:
-	var flags: Array = battle_data.get("flags", [])
+	var flags = battle_data.get("flags", {})
+	# V1 契约：flags 是 Dictionary；意图伤害按全部存活敌人求和（围攻叠伤）。
 	if not flags.has("opening_lethal"):
 		return {}
-	var damage := int(battle_data.get("visible_intent", {}).get("damage", 0))
+	var damage := 0
+	for enemy_value in battle_data.get("enemies", []):
+		damage += maxi(0, int(((enemy_value as Dictionary).get("intent", {}) as Dictionary).get("damage", 0)))
 	return {
 		"damage": damage,
 		"message": "敌方先手一击 %d 点伤害：当前气血会在出手前被击穿，务必在出手前守护、闪避或治疗。" % damage,

@@ -168,7 +168,10 @@ func _refresh_main() -> void:
 				continue
 			var prefixes: Dictionary = {"route": "行路：", "rank": "转数：", "hp": "气血："}
 			var prefix := str(prefixes.get(key, ""))
-			_summary_host.add_child(_label(prefix + value, GuStyle.INK_HALL, 15))
+			var summary_label := _label(prefix + value, GuStyle.INK_HALL, 15)
+			# 主可见命名标签：验收按名定位（hall_summary_route/rank/hp）。
+			summary_label.name = "hall_summary_" + key
+			_summary_host.add_child(summary_label)
 
 	_clear(_meta_host)
 	for c in _snapshot.get("contracts", []):

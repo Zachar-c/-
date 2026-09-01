@@ -243,6 +243,7 @@ func _submit_battle_command(command: Dictionary) -> Dictionary:
 	var turn: Dictionary = BattleCommandFacadeScript.apply_turn(current_battle, state, command, catalog)
 	state = turn["state"]
 	current_battle = turn["battle"]
+	_sync_battle_hp_to_state()
 	last_result = {"battle_result": turn.get("result", "ongoing"), "feeds": turn.get("feeds", [])}
 	if bool(turn.get("finished", false)):
 		if str(turn.get("result", "")) == "death":
@@ -252,6 +253,25 @@ func _submit_battle_command(command: Dictionary) -> Dictionary:
 	else:
 		_show_battle()
 	return turn
+
+
+## 战斗内 hp 写回 RunState：RunState.health 是本局气血唯一真值（resolver/shop/
+## rest 全部写它），V1 战斗 hp 只活在 current_battle.player 里——每回合结算后
+## 同步回写（含 cultivator 镜像），避免战后休整/服务读到陈旧 hp。
+func _sync_battle_hp_to_state() -> void:
+	if current_battle.is_empty():
+		return
+	var player: Dictionary = current_battle.get("player", {})
+	if player.is_empty():
+		return
+	var hp := maxi(0, int(player.get("hp", state.health)))
+	var max_hp := maxi(1, int(player.get("max_hp", state.max_health)))
+	state.health = hp
+	state.max_health = max_hp
+	var cultivator: Dictionary = state.cultivator.duplicate(true)
+	cultivator["health"] = hp
+	cultivator["max_health"] = max_hp
+	state.cultivator = cultivator
 
 
 ## B 批反馈基建（§16.5 信息透明）：命令结果必须可见——被拒走 rejection_text 中文，
@@ -758,24 +778,26 @@ func _start_battle() -> void:
 		current_battle["intel_bonus"] = 1
 	if first_mover == "enemy":
 		# 敌方本回合全部存活意图的伤害总和（围攻节点多名敌人叠伤，单看
-		# visible_intent 会漏判致死）。
+		# 单个 intent 会漏判致死）。V1 契约：意图在 enemies[].intent。
 		var opening_damage := 0
 		for enemy_value in current_battle.get("enemies", []):
-			opening_damage += maxi(0, int((enemy_value as Dictionary).get("visible_intent", {}).get("damage", 0)))
+			opening_damage += maxi(0, int(((enemy_value as Dictionary).get("intent", {}) as Dictionary).get("damage", 0)))
 		# 2 低血进敌方先手战（死亡可预见红线）：先手意图本会在本帧无条件结算，
 		# 低血玩家入屏即死、无从反应。致死开场不自动结算——先亮意图 + 致命
 		# 警告（快照 lethal_warning + 战斗日志），把敌方先手延后到玩家首个回合
 		# 结束；意图与后续掷骰序列不变，全确定性。玩家可守护/闪避/治疗自救；
-		# 未自救仍由常规结算致死并走 final_blow + 统一 DeathReport。
+		# 未自救仍由常规结算致死并走统一 DeathReport（击杀意图由战斗日志归因）。
 		var lethal_opening := opening_damage > 0 and state.health <= opening_damage
 		if lethal_opening:
-			(current_battle["flags"] as Array).append("opening_lethal")
+			# V1 flags 是 Dictionary（禁止 Array 型 flags）。
+			(current_battle["flags"] as Dictionary)["opening_lethal"] = true
 			current_battle["log"].append({"id": "opening_lethal_warning", "damage": opening_damage})
 			_show_battle()
 			return
 		var pre := BattleCommandFacadeScript.apply_enemy_pre_turn(current_battle, state, catalog)
 		state = pre["state"]
 		current_battle = pre["battle"]
+		_sync_battle_hp_to_state()
 		if bool(pre["finished"]):
 			if str(pre["result"]) == "death":
 				_show_death(DeathReportBuilderScript.build(current_battle, state))

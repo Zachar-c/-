@@ -36,8 +36,11 @@ static func start(run_state, catalog: Dictionary, enemy_entries: Array) -> Dicti
 		"phase": DEFAULT_PHASE,
 		"cfg": cfg,
 		"player": {
-			"hp": int(player.get("health", run_state.health)),
-			"max_hp": int(player.get("max_health", run_state.max_health)),
+			# RunState.health 是本局气血唯一真值（resolver/shop/rest 全部写它；
+			# cultivator.health 是镜像）。战斗 hp 取 RunState，结算后由
+			# run_controller 同步写回，避免双源漂移。
+			"hp": int(run_state.health),
+			"max_hp": int(run_state.max_health),
 			"life_time": int(player.get("lifespan", 60)),
 			"soul": soul,
 			"aptitude": aptitude,
@@ -468,6 +471,9 @@ static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dicti
 	match kind:
 		"attack":
 			var damage := int(intent.get("damage", 0))
+			# 死亡归因（§17.3）：敌方攻击入战斗日志，DeathReport 由日志导出
+			# 击杀意图（V1 无 final_blow 状态字段）。
+			_log(next, "enemy_attack", str(intent.get("label", str(enemy["id"]))))
 			next = _damage_player(next, damage)
 		"seal":
 			var turns := int(intent.get("seal_turns", 1))
