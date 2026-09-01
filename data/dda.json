@@ -1,5 +1,6 @@
 {
   "max_score": 10,
+  "recent_window": 4,
   "bands": [
     {"min_score": 0, "marker": "", "label": "平稳"},
     {"min_score": 5, "marker": "sys:dda_peril", "label": "险象"},
@@ -8,7 +9,7 @@
   "weights": {
     "low_health": 3,
     "many_curses": 3,
-    "low_stone": 1,
+    "low_stone": 2,
     "recent_losses": 2,
     "synthesis_streak": 1
   },

@@ -85,7 +85,7 @@
       "kind": "purchase",
       "card_key": "purchase.small_light",
       "gu_id": "small_light_gu",
-      "stone_cost": 50,
+      "stone_cost": 12,
       "tier": 1
     },
     {
@@ -97,19 +97,11 @@
       "tier": 1
     },
     {
-      "id": "purchase_moonlight_gu_250",
-      "kind": "purchase",
-      "card_key": "purchase.moonlight_250",
-      "gu_id": "moonlight_gu",
-      "stone_cost": 250,
-      "tier": 1
-    },
-    {
       "id": "purchase_boar_king_tusk",
       "kind": "material_purchase",
       "card_key": "purchase.boar_king_tusk",
       "material_id": "boar_king_tusk",
-      "stone_cost": 15,
+      "stone_cost": 10,
       "tier": 1
     },
     {
@@ -117,7 +109,7 @@
       "kind": "purchase",
       "card_key": "purchase.jade_skin",
       "gu_id": "jade_skin_gu",
-      "stone_cost": 400,
+      "stone_cost": 30,
       "tier": 1
     },
     {
@@ -125,7 +117,7 @@
       "kind": "purchase",
       "card_key": "purchase.white_boar",
       "gu_id": "white_boar_strength_gu",
-      "stone_cost": 500,
+      "stone_cost": 35,
       "tier": 1
     },
     {
@@ -133,7 +125,7 @@
       "kind": "recipe_unlock",
       "card_key": "purchase.white_jade_recipe",
       "recipe_id": "white_jade_advance",
-      "stone_cost": 1500,
+      "stone_cost": 60,
       "tier": 1
     },
     {
@@ -191,7 +183,7 @@
       "kind": "purchase",
       "card_key": "purchase.mending_grass",
       "gu_id": "mending_grass_gu",
-      "stone_cost": 20,
+      "stone_cost": 8,
       "tier": 1
     },
     {
@@ -199,15 +191,7 @@
       "kind": "purchase",
       "card_key": "purchase.bone_knit",
       "gu_id": "bone_knit_gu",
-      "stone_cost": 50,
-      "tier": 2
-    },
-    {
-      "id": "purchase_moon_glow_120",
-      "kind": "purchase",
-      "card_key": "purchase.moon_glow_120",
-      "gu_id": "moon_glow_gu",
-      "stone_cost": 120,
+      "stone_cost": 14,
       "tier": 2
     },
     {
@@ -215,7 +199,7 @@
       "kind": "purchase",
       "card_key": "purchase.spring_heart",
       "gu_id": "spring_heart_gu",
-      "stone_cost": 150,
+      "stone_cost": 18,
       "tier": 3
     },
     {
@@ -223,7 +207,7 @@
       "kind": "purchase",
       "card_key": "purchase.moon_shadow_300",
       "gu_id": "moon_shadow_gu",
-      "stone_cost": 300,
+      "stone_cost": 40,
       "tier": 3
     },
     {
@@ -231,7 +215,7 @@
       "kind": "purchase",
       "card_key": "purchase.life_root",
       "gu_id": "life_root_gu",
-      "stone_cost": 400,
+      "stone_cost": 20,
       "tier": 4
     },
     {
@@ -239,7 +223,7 @@
       "kind": "purchase",
       "card_key": "purchase.undying_vine",
       "gu_id": "undying_vine_gu",
-      "stone_cost": 350,
+      "stone_cost": 20,
       "tier": 4
     },
     {
@@ -247,7 +231,7 @@
       "kind": "purchase",
       "card_key": "purchase.heaven_dew",
       "gu_id": "heaven_dew_gu",
-      "stone_cost": 1000,
+      "stone_cost": 80,
       "tier": 5
     }
   ]

@@ -1,15 +1,18 @@
-﻿extends GutTest
+extends GutTest
 
 
 func test_first_run_contains_required_anchor_nodes() -> void:
 	var route := MapGenerator.build(101, true)
 	var ids := route.map(func(node: Dictionary): return node["id"])
-	assert_eq(route.size(), 15)
+	# 修复 5：手工网从 15 节点断头（止步 stage_one_ledger）迁移为直达
+	# ascension_window 的完整脊柱。
+	assert_eq(route.size(), 31)
 	assert_true(ids.has("ridge_caravan"))
 	assert_true(ids.has("blood_moss_grove"))
 	assert_true(ids.has("ridge_black_market"))
 	assert_true(ids.has("echo_cave"))
-	assert_eq(ids.back(), "stage_one_ledger")
+	assert_true(ids.has("stage_one_ledger"), "台账里程碑节点仍须在列")
+	assert_eq(ids.back(), "ascension_window")
 
 
 func test_same_seed_builds_same_non_first_route() -> void:

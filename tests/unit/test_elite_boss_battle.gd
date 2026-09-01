@@ -19,7 +19,7 @@ func test_elite_enemy_battle_starts_with_data_stats() -> void:
 func test_boss_enemy_pre_turn_deals_intent_damage() -> void:
 	var run := RunState.new_run(101)
 	var battle := BattleResolver.start({"enemy_kind": "miasma_vein_lord"}, run, catalog)
-	assert_eq(int(battle["enemy_hp"]), 10)
+	assert_eq(int(battle["enemy_hp"]), 8)
 
 	var pre := BattleResolver.apply_enemy_pre_turn(battle, run, catalog)
 	assert_false(pre["finished"])

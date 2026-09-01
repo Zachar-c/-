@@ -5,7 +5,9 @@
   },
   "turn_scaling": {
     "hp_add_per_turn": 2,
-    "damage_add_per_turn": 1
+    "damage_add_per_turn": 1,
+    "hp_cap_bonus": 6,
+    "damage_cap_bonus": 2
   },
   "layers": {
     "1": {
@@ -21,6 +23,7 @@
         1,
         2
       ],
+      "stone_budget": 12,
       "enemy_turn": 1,
       "loot": {
         "material_count": 1,
@@ -67,6 +70,7 @@
         1,
         2
       ],
+      "stone_budget": 16,
       "enemy_turn": 2,
       "loot": {
         "material_count": 1,
@@ -115,6 +119,7 @@
         1,
         2
       ],
+      "stone_budget": 22,
       "enemy_turn": 3,
       "loot": {
         "material_count": 2,
@@ -156,6 +161,7 @@
         1,
         2
       ],
+      "stone_budget": 28,
       "enemy_turn": 4,
       "loot": {
         "material_count": 2,
@@ -203,6 +209,7 @@
         1,
         2
       ],
+      "stone_budget": 35,
       "enemy_turn": 5,
       "loot": {
         "material_count": 3,
