@@ -10,8 +10,7 @@ extends RefCounted
 
 
 const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
-
-const DISTANCE_TOUCH := "touch"
+const ConstantsScript = preload("res://scripts/domain/battle2/combat_constants.gd")
 
 
 # ---- §13.6 deterministic dodge ---------------------------------------------
@@ -50,7 +49,7 @@ static func dodge_changes_band() -> bool:
 # strictly stronger - equal strength favours the defender.
 
 static func grapple_preflight(attacker_distance: String, target_distance: String, has_thought: bool) -> Dictionary:
-	if not (attacker_distance == DISTANCE_TOUCH and target_distance == DISTANCE_TOUCH):
+	if not (attacker_distance == ConstantsScript.DISTANCE_TOUCH and target_distance == ConstantsScript.DISTANCE_TOUCH):
 		return {"ok": false, "reason": "not_at_contact"}
 	if not has_thought:
 		return {"ok": false, "reason": "no_thought"}

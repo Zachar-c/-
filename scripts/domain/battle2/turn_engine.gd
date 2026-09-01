@@ -13,8 +13,8 @@ extends RefCounted
 
 const PHASE_DECLARE := "declare"
 const PHASES := ["instant", "quick", "standard", "windup", "end"]
-const BASIC_ACTIONS := ["move", "strike", "dodge", "grapple"]
 const ONGOING_ACTION_KINDS := ["grapple_hold", "windup"]
+const ConstantsScript = preload("res://scripts/domain/battle2/combat_constants.gd")
 
 
 # §12.4 round sequence: 声明 -> 瞬时 -> 快速 -> 标准 -> 蓄势 -> 回合结束.
@@ -192,7 +192,7 @@ static func can_enact(turn: Dictionary, proposal: Dictionary) -> Dictionary:
 			return {"ok": true, "reason": ""}
 		"basic_action":
 			var action := str(proposal.get("action", ""))
-			if not BASIC_ACTIONS.has(action):
+			if not ConstantsScript.BASIC_ACTIONS.has(action):
 				return {"ok": false, "reason": "unknown_action"}
 			if action_used(turn, action):
 				return {"ok": false, "reason": "action_already_used_this_turn"}

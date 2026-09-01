@@ -9,20 +9,7 @@ extends RefCounted
 
 
 const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
-
-# §13.3 four distance bands, outermost first by index.
-const DISTANCES := ["far", "medium", "close", "touch"]
-const DISTANCE_TOUCH := "touch"
-const DISTANCE_CLOSE := "close"
-const DISTANCE_MEDIUM := "medium"
-const DISTANCE_FAR := "far"
-
-# §13.4 legal disengage reactions: grapple, intercept gu, or an attack
-# explicitly declared as a disengage reaction. Ordinary unarmed strike is not.
-const DISENGAGE_REACTIONS := ["grapple", "intercept"]
-
-# §13.1: waiting / cancelling / reserving are round commands, not actions.
-const BASIC_ACTIONS := ["move", "strike", "dodge", "grapple"]
+const ConstantsScript = preload("res://scripts/domain/battle2/combat_constants.gd")
 
 
 static func _b(cat: Dictionary, key: String, fallback: float) -> float:
@@ -32,20 +19,20 @@ static func _b(cat: Dictionary, key: String, fallback: float) -> float:
 # ---- §13.3 distance bands ------------------------------------------------
 
 static func distance_index(distance: String) -> int:
-	return maxi(0, DISTANCES.find(distance))
+	return maxi(0, ConstantsScript.DISTANCES.find(distance))
 
 
 # Basic move changes exactly one band per action; edges stay put.
 static func move_one_band(current: String, direction: String) -> String:
 	var index := distance_index(current)
 	if direction == "closer":
-		return DISTANCES[mini(index + 1, DISTANCES.size() - 1)]
-	return DISTANCES[maxi(index - 1, 0)]
+		return ConstantsScript.DISTANCES[mini(index + 1, ConstantsScript.DISTANCES.size() - 1)]
+	return ConstantsScript.DISTANCES[maxi(index - 1, 0)]
 
 
 # §13.3: an ordinary unarmed strike is only initiated and landed at contact.
 static func strike_possible(attacker_distance: String, target_distance: String) -> bool:
-	return attacker_distance == DISTANCE_TOUCH and target_distance == DISTANCE_TOUCH
+	return attacker_distance == ConstantsScript.DISTANCE_TOUCH and target_distance == ConstantsScript.DISTANCE_TOUCH
 
 
 # §14.2 unarmed raw damage via GuBalance (thin projection).
@@ -73,11 +60,11 @@ static func strike_resolution(target_distance: String, striker_distance: String,
 
 # Moving from touch to close opens exactly one disengage reaction window.
 static func disengage_window(from_distance: String, to_distance: String) -> Dictionary:
-	return {"open": from_distance == DISTANCE_TOUCH and to_distance == DISTANCE_CLOSE}
+	return {"open": from_distance == ConstantsScript.DISTANCE_TOUCH and to_distance == ConstantsScript.DISTANCE_CLOSE}
 
 
 static func is_legal_disengage_reaction(action: String) -> bool:
-	return DISENGAGE_REACTIONS.has(action)
+	return ConstantsScript.DISENGAGE_REACTIONS.has(action)
 
 
 # §13.4: a reaction needs reserved thought AND a legal reaction; there is no
