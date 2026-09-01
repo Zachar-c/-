@@ -13,17 +13,23 @@ const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const DEPTH_COMMON := "common_core"
 const DEPTH_HUB := "hub_core"
 
+# P0.1 layer-semantics ruling: the authoritative layer is nodes.json /
+# RunState.stage ("one".."five"); current_node_layer has no production
+# writer and is never consulted by the confirmation gate. "First-layer
+# midpoint" is implemented as in-layer progress: the run has traversed at
+# least FIRST_LAYER_MIDPOINT_NODES valid nodes (route_progress), which also
+# covers every later stage - the first layer can never lock the core out.
+const FIRST_LAYER_MIDPOINT_NODES := 4
+
 
 # §1.1: one core per run; the gate opens at the first-layer midpoint. The
-# midpoint verdict: the run must have entered layer 1 (the first layer's
-# opening stretch is over); within layer 0 confirmation stays refused.
-# The player may delay freely - the only cost is less tilt duration; there is
-# no default-core path anywhere (confirm is an explicit player action).
+# player may delay freely - the only cost is less tilt duration; there is no
+# default-core path anywhere (confirm is an explicit player action).
 static func can_confirm(state, instance_id: String, catalog: Dictionary) -> Dictionary:
 	var existing := _existing_core(state)
 	if not existing.is_empty():
 		return {"ok": false, "reason": "core_already_confirmed", "detail": existing}
-	if int(state.current_node_layer) < 1:
+	if (state.route_progress as Array).size() < FIRST_LAYER_MIDPOINT_NODES:
 		return {"ok": false, "reason": "too_early_first_layer"}
 	if not (state.gu_instances as Dictionary).has(str(instance_id)):
 		return {"ok": false, "reason": "instance_missing"}
@@ -42,7 +48,7 @@ static func confirm(state, instance_id: String, catalog: Dictionary) -> Dictiona
 			str(instance.get("definition_id", "")), {})
 	var depth := core_depth(definition, catalog)
 	instance["core_state"] = {
-		"confirmed_layer": int(state.current_node_layer),
+		"confirmed_layer": str(state.stage),
 		"depth": depth,
 		"confirmed_at_event": "core_" + str(instance_id),
 	}

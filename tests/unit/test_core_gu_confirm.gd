@@ -22,16 +22,17 @@ func before_each() -> void:
 	catalog = ContentCatalogScript.load_all()
 
 
-func _instance_with(state: RunState, instance_id: String, definition_id: String, rank: int) -> void:
+func _instance_with(state: RunState, instance_id: String, definition_id: String, rank: int, nodes_traversed: int = 4) -> void:
 	state.gu_instances[instance_id] = GuInstanceScript.new_instance(definition_id, instance_id, catalog)
 	state.gu_instances[instance_id]["rank"] = rank
+	for index in range(nodes_traversed):
+		state.route_progress.append("n%02d" % index)
 
 
 func test_any_combat_gu_can_be_confirmed_after_the_first_layer_midpoint() -> void:
-	# Acceptance #1: every combat gu qualifies; confirmation opens from the
-	# first-layer midpoint (layer >= 1).
+	# Acceptance #1: every combat gu qualifies; confirmation opens once the
+	# run has passed the first-layer midpoint (in-layer progress, P0.1).
 	var state: RunState = RunStateScript.new_run(17)
-	state.current_node_layer = 1
 	_instance_with(state, "gu_001", "small_light_gu", 1)
 	var out := CoreGuRulesScript.can_confirm(state, "gu_001", catalog)
 	assert_true(bool(out["ok"]), str(out))
@@ -39,20 +40,27 @@ func test_any_combat_gu_can_be_confirmed_after_the_first_layer_midpoint() -> voi
 
 func test_confirmation_is_refused_before_the_midpoint_and_missing_instances() -> void:
 	var state: RunState = RunStateScript.new_run(17)
-	state.current_node_layer = 0
-	_instance_with(state, "gu_001", "small_light_gu", 1)
+	_instance_with(state, "gu_001", "small_light_gu", 1, 0)
 	var early := CoreGuRulesScript.can_confirm(state, "gu_001", catalog)
 	assert_false(bool(early["ok"]))
 	assert_eq(str(early["reason"]), "too_early_first_layer")
+	var state_two: RunState = RunStateScript.new_run(17)
+	_instance_with(state_two, "gu_001", "small_light_gu", 1, 2)
+	var mid_early := CoreGuRulesScript.can_confirm(state_two, "gu_001", catalog)
+	assert_false(bool(mid_early["ok"]),
+			"two nodes is still before the first-layer midpoint")
 	var missing := CoreGuRulesScript.can_confirm(state, "gu_999", catalog)
 	assert_false(bool(missing["ok"]))
+	var late: RunState = RunStateScript.new_run(17)
+	_instance_with(late, "gu_001", "small_light_gu", 1, 8)
+	assert_true(bool(CoreGuRulesScript.can_confirm(late, "gu_001", catalog)["ok"]),
+			"any later layer is still past the midpoint")
 
 
 func test_one_core_per_run_and_no_automatic_confirmation() -> void:
 	# §1.1: one core at a time; the system never auto-confirms (confirm must
 	# be an explicit call with state).
 	var state: RunState = RunStateScript.new_run(17)
-	state.current_node_layer = 1
 	_instance_with(state, "gu_001", "small_light_gu", 1)
 	_instance_with(state, "gu_002", "moonlight_gu", 2)
 	var first := CoreGuRulesScript.confirm(state, "gu_001", catalog)
@@ -66,7 +74,7 @@ func test_one_core_per_run_and_no_automatic_confirmation() -> void:
 	# The event carries the confirmation facts.
 	var event: Dictionary = first["event"]
 	assert_eq(str(event["action"]), "core_confirmed")
-	assert_eq(int(first["updated_instance"]["core_state"]["confirmed_layer"]), 1)
+	assert_eq(str(first["updated_instance"]["core_state"]["confirmed_layer"]), "one")
 	assert_true(str(event["reason"]).contains("player_confirmed"))
 
 
