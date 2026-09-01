@@ -990,6 +990,10 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 			errors.append("balance dragon_fish_replacement[%d] outside (0, 100]" % index)
 		if index > 0 and value <= int(dragon_fish[index - 1]):
 			errors.append("balance dragon_fish_replacement must ascend strictly")
+	# §9.1: yuanstone is quantity only - quality/face-value keys are refused.
+	for banned_key in ["stone_quality", "stone_face_value"]:
+		if cfg.has(banned_key):
+			errors.append("balance %s is forbidden: yuanstone has quantity only (spec 9.1)" % banned_key)
 	return errors
 
 
