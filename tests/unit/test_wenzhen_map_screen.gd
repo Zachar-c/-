@@ -1,24 +1,19 @@
 extends GutTest
 
 
-const MapScreenScript = preload("res://ui/screens/map_screen.gd")
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
+## 地图已迁到 Godot 官方 .tscn 节点树（scenes/ui/screens/map_screen.tscn），
+## 挂载走 TscnMountHelper.instantiate + mount_snapshot；节点命名沿用
+## HTML 骨架的 snake_case，断言无需改名。
+const MAP_SCREEN_TSCN := "res://scenes/ui/screens/map_screen.tscn"
 
-
-var _rui_roots: Array = []
-var _rui_hosts: Array = []
+var _hosts: Array = []
 
 
 func after_each() -> void:
-	for root in _rui_roots:
-		if root != null and root.has_method("unmount"):
-			root.unmount()
-	_rui_roots.clear()
-	for host in _rui_hosts:
+	for host in _hosts:
 		if host != null and is_instance_valid(host):
 			host.queue_free()
-	_rui_hosts.clear()
+	_hosts.clear()
 
 
 func _controller() -> RunController:
@@ -308,8 +303,8 @@ func _mount_with_commands(snapshot: Dictionary, commands: Dictionary) -> Control
 	var host := Control.new()
 	host.size = Vector2(1920, 1080)
 	add_child(host)
-	_rui_hosts.append(host)
-	_rui_roots.append(RuiRoot.create(host, VLib.fc(MapScreenScript.render, {"state": snapshot, "commands": commands})))
+	_hosts.append(host)
+	host.add_child(TscnMountHelper.instantiate(MAP_SCREEN_TSCN, snapshot, commands))
 	return host
 
 
@@ -350,18 +345,3 @@ func _assert_label_color(host: Control, label_name: String, expected: Color) -> 
 		assert_true(label.get_theme_color("font_color").is_equal_approx(expected), "%s must use its exact map HTML color" % label_name)
 
 
-func _rui_texts(vnode: Variant) -> Array[String]:
-	var out: Array[String] = []
-	if vnode == null:
-		return out
-	if vnode is RefCounted or vnode is Dictionary:
-		var props: Variant = vnode.props if vnode is RefCounted else vnode.get("props", {})
-		if props is Dictionary:
-			for key in ["text", "label", "title"]:
-				if props.has(key):
-					out.append(str(props[key]))
-		var children: Variant = vnode.children if vnode is RefCounted else vnode.get("children", [])
-		if children is Array:
-			for child in children:
-				out.append_array(_rui_texts(child))
-	return out

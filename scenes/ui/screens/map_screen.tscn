@@ -1,0 +1,281 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/map_screen_view.gd" id="1_map"]
+[ext_resource type="Script" path="res://scripts/presentation/widgets/map_path_layer.gd" id="2_paths"]
+
+[node name="MapScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_map")
+
+[node name="map_root" type="Control" parent="."]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="map_paper" type="ColorRect" parent="map_root"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="map_toast_host" type="CenterContainer" parent="map_root"]
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 72.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="map_mast" type="HBoxContainer" parent="map_root"]
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = -30.0
+offset_bottom = 68.0
+grow_horizontal = 2
+theme_override_constants/separation = 19
+
+[node name="map_mast_label" type="Label" parent="map_root/map_mast"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "問眞　/　命蠱第六十三卷　/　南疆"
+theme_override_font_sizes/font_size = 10
+
+[node name="map_resources" type="HBoxContainer" parent="map_root/map_mast"]
+layout_mode = 2
+theme_override_constants/separation = 19
+
+[node name="map_markers" type="HBoxContainer" parent="map_root"]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 80.0
+offset_right = 900.0
+offset_bottom = 104.0
+theme_override_constants/separation = 13
+
+[node name="map_contract_badge" type="Label" parent="map_root/map_markers"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+
+[node name="map_anomaly_badge" type="Label" parent="map_root/map_markers"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+
+[node name="map_title" type="HBoxContainer" parent="map_root"]
+layout_mode = 0
+anchor_left = 0.055
+anchor_right = 0.945
+offset_top = 110.0
+offset_bottom = 142.0
+grow_horizontal = 2
+theme_override_constants/separation = 12
+
+[node name="map_zone_label" type="Label" parent="map_root/map_title"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+
+[node name="map_subtitle_label" type="Label" parent="map_root/map_title"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+
+[node name="map_camera" type="Control" parent="map_root"]
+layout_mode = 0
+anchor_left = 0.055
+anchor_right = 0.945
+anchor_bottom = 1.0
+offset_top = 158.0
+offset_bottom = -92.0
+grow_horizontal = 2
+grow_vertical = 2
+clip_contents = true
+
+[node name="map_camera_backdrop" type="Panel" parent="map_root/map_camera"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="map_depth" type="Panel" parent="map_root/map_camera"]
+layout_mode = 0
+anchor_bottom = 1.0
+offset_right = 58.0
+grow_vertical = 2
+mouse_filter = 2
+z_index = 3
+
+[node name="map_world" type="Control" parent="map_root/map_camera"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -970.0
+grow_horizontal = 2
+
+[node name="map_routes" type="Control" parent="map_root/map_camera/map_world"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 70.0
+grow_horizontal = 2
+
+[node name="map_layer_label_far" type="Label" parent="map_root/map_camera/map_world/map_routes"]
+layout_mode = 0
+offset_top = 4.0
+text = "再前一程"
+theme_override_font_sizes/font_size = 10
+
+[node name="map_layer_label_near" type="Label" parent="map_root/map_camera/map_world/map_routes"]
+layout_mode = 0
+offset_top = 452.0
+text = "下一程"
+theme_override_font_sizes/font_size = 10
+
+[node name="map_layer_label_now" type="Label" parent="map_root/map_camera/map_world/map_routes"]
+layout_mode = 0
+offset_top = 682.0
+text = "此刻"
+theme_override_font_sizes/font_size = 10
+
+[node name="map_paths" type="Control" parent="map_root/map_camera/map_world/map_routes"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 1
+script = ExtResource("2_paths")
+
+[node name="map_nodes" type="Control" parent="map_root/map_camera/map_world/map_routes"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 2
+
+[node name="map_inspector" type="HBoxContainer" parent="map_root"]
+layout_mode = 0
+anchor_left = 0.055
+anchor_right = 0.945
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -72.0
+offset_bottom = -24.0
+grow_horizontal = 2
+theme_override_constants/separation = 18
+
+[node name="map_inspector_info" type="VBoxContainer" parent="map_root/map_inspector"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="map_inspection_name" type="Label" parent="map_root/map_inspector/map_inspector_info"]
+layout_mode = 2
+text = "尚未选择路线"
+theme_override_font_sizes/font_size = 18
+
+[node name="map_inspection_note" type="Label" parent="map_root/map_inspector/map_inspector_info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+
+[node name="map_travel_button" type="Button" parent="map_root/map_inspector"]
+visible = false
+layout_mode = 2
+text = "前往此路 ›"
+
+[node name="map_save_button" type="Button" parent="map_root/map_inspector"]
+visible = false
+layout_mode = 2
+text = "存档"
+
+[node name="map_return_button" type="Button" parent="map_root/map_inspector"]
+visible = false
+layout_mode = 2
+text = "返回大厅"
+
+[node name="map_leave_confirm_host" type="Control" parent="map_root"]
+visible = false
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+z_index = 10
+
+[node name="map_leave_scrim" type="ColorRect" parent="map_root/map_leave_confirm_host"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.35)
+
+[node name="map_leave_center" type="CenterContainer" parent="map_root/map_leave_confirm_host"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="map_leave_confirm" type="PanelContainer" parent="map_root/map_leave_confirm_host/map_leave_center"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_bottom = 22
+
+[node name="VBoxContainer" type="VBoxContainer" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="map_leave_title" type="Label" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "返回大厅"
+theme_override_font_sizes/font_size = 24
+
+[node name="map_leave_body" type="Label" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "是否保存当前行程？保存后可在大厅点击「继续游戏」恢复本局。"
+autowrap_mode = 2
+custom_minimum_size = Vector2(420, 0)
+theme_override_font_sizes/font_size = 14
+
+[node name="map_leave_buttons" type="HBoxContainer" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="map_leave_save_button" type="Button" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer/map_leave_buttons"]
+layout_mode = 2
+text = "保存并返回"
+
+[node name="map_leave_direct_button" type="Button" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer/map_leave_buttons"]
+layout_mode = 2
+text = "不保存返回"
+
+[node name="map_leave_cancel_button" type="Button" parent="map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer/map_leave_buttons"]
+layout_mode = 2
+text = "取消"

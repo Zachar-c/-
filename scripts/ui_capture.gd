@@ -12,6 +12,7 @@ const ROOT := "res://"
 const OUT_DIR := "res://.superpowers/ui_captures/wenzhen"
 const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
 const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
+const MAP_SCREEN_TSCN := "res://scenes/ui/screens/map_screen.tscn"
 
 const VIEWPORTS := [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)]
 const CAPTURE_MATRIX := {
@@ -105,7 +106,7 @@ func _snap_at_size(component: String, props: Dictionary, slug: String, presses: 
 		if not (fn is Callable):
 			push_error("无组件 %s" % component)
 			return
-	if component == "map_screen" and viewport_size == VIEWPORTS[0]:
+	if tscn_path.is_empty() and component == "map_screen" and viewport_size == VIEWPORTS[0]:
 		_print_map_capture_identity(fn)
 	var viewport := SubViewport.new()
 	viewport.size = viewport_size
@@ -134,7 +135,7 @@ func _snap_at_size(component: String, props: Dictionary, slug: String, presses: 
 	# 等逻辑帧确保 RUI 完成挂载与布局，再强制同步渲染一帧（不依赖窗口可见性，不会挂死）
 	for i in range(6):
 		await process_frame
-	if component == "map_screen" and viewport_size == VIEWPORTS[0] and slug == "core_map_current":
+	if tscn_path == MAP_SCREEN_TSCN and viewport_size == VIEWPORTS[0] and slug == "core_map_current":
 		_print_map_render_state(inner)
 	for button_text in presses:
 		if not _press_button(inner, button_text):
@@ -272,17 +273,17 @@ func _map_state() -> Dictionary:
 
 func _capture_map_batch() -> void:
 	var map_state := _map_state()
-	await _snap("map_screen", {"state": map_state, "commands": _map_commands()}, "core_map_current")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": map_state, "commands": _map_commands()}, "core_map_current")
 	var candidate_a_state := map_state.duplicate(true)
 	for node in candidate_a_state["nodes"]:
 		if str(node.get("id", "")) != "market":
 			node["reachable"] = false
-	await _snap("map_screen", {"state": candidate_a_state, "commands": _map_commands()}, "core_map_candidate_a_focus")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": candidate_a_state, "commands": _map_commands()}, "core_map_candidate_a_focus")
 	var candidate_b_state := map_state.duplicate(true)
 	for node in candidate_b_state["nodes"]:
 		if str(node.get("id", "")) != "elite":
 			node["reachable"] = false
-	await _snap("map_screen", {"state": candidate_b_state, "commands": _map_commands()}, "core_map_candidate_b_focus")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": candidate_b_state, "commands": _map_commands()}, "core_map_candidate_b_focus")
 	var future_state := map_state.duplicate(true)
 	for node in future_state["nodes"]:
 		var id := str(node.get("id", ""))
@@ -296,7 +297,7 @@ func _capture_map_batch() -> void:
 			node["reachable"] = false
 		elif id == "rest" or id == "shop":
 			node["reachable"] = true
-	await _snap("map_screen", {"state": future_state, "commands": _map_commands()}, "core_map_future_camera")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": future_state, "commands": _map_commands()}, "core_map_future_camera")
 	var history_state := map_state.duplicate(true)
 	for node in history_state["nodes"]:
 		if int(node.get("layer", 0)) <= 62:
@@ -306,7 +307,7 @@ func _capture_map_batch() -> void:
 			node["visibility"] = "current"
 			node["reachable"] = false
 			node["current"] = true
-	await _snap("map_screen", {"state": history_state, "commands": _map_commands()}, "core_map_collapsed_history")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": history_state, "commands": _map_commands()}, "core_map_collapsed_history")
 	var long_label_state := map_state.duplicate(true)
 	for node in long_label_state["nodes"]:
 		if str(node.get("id", "")) == "event":
@@ -315,7 +316,7 @@ func _capture_map_batch() -> void:
 		elif str(node.get("id", "")) == "elite":
 			node["label"] = "雷泽伏杀"
 			node["reachable"] = true
-	await _snap("map_screen", {"state": long_label_state, "commands": _map_commands()}, "core_map_long_label")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": long_label_state, "commands": _map_commands()}, "core_map_long_label")
 
 
 func _initialize() -> void:
@@ -366,20 +367,15 @@ func _initialize() -> void:
 		"contracts": ["自苦·血祭", "节流·魂敛"],
 		"meta_stats": {"runs": 3, "endings": 1},
 	}
-	await _snap("hall_view", {"state": hall_state, "commands": hall_cmds}, "hall_with_save")
-	var new_hall_state := hall_state.duplicate(true)
-	new_hall_state["has_save"] = false
-	new_hall_state["primary_action"] = "open_schools"
-	await _snap("hall_view", {"state": new_hall_state, "commands": hall_cmds}, "hall_without_save")
-
-	# ---- 大厅子视图 ----
+	# 主菜单的有存档/无存档两态见上方 core_hall_running / core_hall_no_save（已迁 .tscn），
+	# 此处只补子视图快照。
 	var settings_state := hall_state.duplicate(true)
 	settings_state["hall_subview"] = "settings"
 	settings_state["master_volume"] = 80
 	settings_state["resolution_index"] = 1
 	settings_state["resolution_options"] = ["全屏", "1920×1080 · 窗口", "1600×900 · 窗口", "1280×720 · 窗口"]
 	settings_state["dda_state_adaptive_enabled"] = true
-	await _snap("hall_view", {"state": settings_state, "commands": hall_cmds}, "hall_settings")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": settings_state, "commands": hall_cmds}, "core_hall_settings")
 	var codex_state := hall_state.duplicate(true)
 	codex_state["hall_subview"] = "codex"
 	codex_state["codex"] = {
@@ -389,11 +385,11 @@ func _initialize() -> void:
 		],
 		"enemies": [], "recipes": [], "inheritances": [], "relics": []
 	}
-	await _snap("hall_view", {"state": codex_state, "commands": hall_cmds}, "hall_codex")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": codex_state, "commands": hall_cmds}, "core_hall_codex")
 	var journal_state := hall_state.duplicate(true)
 	journal_state["hall_subview"] = "journal"
 	journal_state["journal"] = {"entries": [{"title": "初到南疆", "body": "青茅山外圍的瘴气比预想更重。"}]}
-	await _snap("hall_view", {"state": journal_state, "commands": hall_cmds}, "hall_journal")
+	await _snap_tscn(HALL_SCREEN_TSCN, {"state": journal_state, "commands": hall_cmds}, "core_hall_journal")
 
 	# ---- 地图 ----
 	var map_cmds := {"travel": func(_id): pass, "view_node": func(_id): pass, "save_run": func(): pass}
@@ -418,13 +414,13 @@ func _initialize() -> void:
 		"anomalies": ["衰运"],
 		"death_lines": {"shouyuan": {"value": 55, "threshold": 60}},
 	}
-	await _snap("map_screen", {"state": map_state, "commands": map_cmds}, "map_current")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": map_state, "commands": map_cmds}, "map_current")
 	var leave_confirm_state := map_state.duplicate(true)
 	leave_confirm_state["leave_confirm"] = true
-	await _snap("map_screen", {"state": leave_confirm_state, "commands": map_cmds}, "map_leave_confirm")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": leave_confirm_state, "commands": map_cmds}, "map_leave_confirm")
 	var toast_state := map_state.duplicate(true)
 	toast_state["toast"] = "已返回上次保存的行程。"
-	await _snap("map_screen", {"state": toast_state, "commands": map_cmds}, "map_toast")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": toast_state, "commands": map_cmds}, "map_toast")
 	var future_map_state := map_state.duplicate(true)
 	future_map_state["current_node_id"] = "n4"
 	for node in future_map_state["nodes"]:
@@ -433,12 +429,12 @@ func _initialize() -> void:
 		elif str(node.get("id", "")) == "n4":
 			node["visibility"] = "current"
 			node["reachable"] = false
-	await _snap("map_screen", {"state": future_map_state, "commands": map_cmds}, "map_future")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": future_map_state, "commands": map_cmds}, "map_future")
 	var history_map_state := future_map_state.duplicate(true)
 	for node in history_map_state["nodes"]:
 		if int(node.get("layer", 0)) < 3:
 			node["visibility"] = "past"
-	await _snap("map_screen", {"state": history_map_state, "commands": map_cmds}, "map_collapsed_history")
+	await _snap_tscn(MAP_SCREEN_TSCN, {"state": history_map_state, "commands": map_cmds}, "map_collapsed_history")
 
 	# ---- 战斗三区 ----
 	var battle_cmds := {
