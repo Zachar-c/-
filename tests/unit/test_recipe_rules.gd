@@ -64,17 +64,18 @@ func test_identity_requires_named_materials_by_exact_name() -> void:
 	# substitute unless the recipe declares otherwise.
 	var recipe := _recipe("essence_thorn_identity")
 	var miss := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {}, {}, catalog)
+			recipe, ["thorn_whip_gu"], {}, {}, catalog, [])
 	assert_false(bool(miss["ok"]))
 	assert_eq(str(miss["reason"]), "named_material_missing")
 	# The wrong material (equal value or not) is still a missing identity.
 	var wrong := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {"beast_bone": 5}, {}, catalog)
+			recipe, ["thorn_whip_gu"], {"beast_bone": 5}, {}, catalog, [])
 	assert_false(bool(wrong["ok"]))
 	# The named material satisfies it without substitution records; a 2-turn
-	# input also meets the recipe's min_rank.
+	# input also meets the recipe's min_rank and the named medium is offered.
 	var exact := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2}, catalog)
+			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
+			catalog, ["kael_fire_medium"])
 	assert_true(bool(exact["ok"]), str(exact))
 	assert_true((exact["substitutions"] as Array).is_empty())
 
@@ -84,7 +85,8 @@ func test_declared_substitution_passes_and_reports_cost_changes() -> void:
 	# the swap returns the declared cost/condition/product changes.
 	var recipe := _recipe("essence_thorn_identity")
 	var swapped := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {"moon_blue_petal": 2}, {"thorn_whip_gu": 2}, catalog)
+			recipe, ["thorn_whip_gu"], {"moon_blue_petal": 2}, {"thorn_whip_gu": 2},
+			catalog, ["kael_fire_medium"])
 	assert_true(bool(swapped["ok"]), str(swapped))
 	var subs: Array = swapped["substitutions"]
 	assert_eq(subs.size(), 1)
@@ -94,19 +96,45 @@ func test_declared_substitution_passes_and_reports_cost_changes() -> void:
 			"the declared substitution cost change travels with the recipe")
 	# Undeclared swap relations stay refused.
 	var undeclared := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {"beast_blood": 9}, {}, catalog)
+			recipe, ["thorn_whip_gu"], {"beast_blood": 9}, {}, catalog, [])
 	assert_false(bool(undeclared["ok"]))
 
 
 func test_min_rank_identity_gate() -> void:
 	var recipe := _recipe("essence_thorn_identity")
 	var too_low := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 1}, catalog)
+			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 1},
+			catalog, ["kael_fire_medium"])
 	assert_false(bool(too_low["ok"]))
 	assert_eq(str(too_low["reason"]), "min_rank_not_met")
 	var enough := RecipeRulesScript.check_identity(
-			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2}, catalog)
+			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
+			catalog, ["kael_fire_medium"])
 	assert_true(bool(enough["ok"]), str(enough))
+
+
+func test_named_medium_binds_and_declared_media_substitution_passes() -> void:
+	# P0.1 (§5.4.1): named media must actually be present in the offer; an
+	# allow_substitute.media relation swaps it and travels with cost_change.
+	var recipe := _recipe("essence_thorn_identity")
+	var miss := RecipeRulesScript.check_identity(
+			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
+			catalog, [])
+	assert_false(bool(miss["ok"]))
+	assert_eq(str(miss["reason"]), "named_media_missing")
+	var exact := RecipeRulesScript.check_identity(
+			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
+			catalog, ["kael_fire_medium"])
+	assert_true(bool(exact["ok"]), str(exact))
+	assert_true((exact["substitutions"] as Array).is_empty())
+	var swapped := RecipeRulesScript.check_identity(
+			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
+			catalog, ["essence_bead"])
+	assert_true(bool(swapped["ok"]), str(swapped))
+	var media_subs: Array = swapped["substitutions"]
+	assert_eq(media_subs.size(), 1)
+	assert_eq(str(media_subs[0]["from"]), "kael_fire_medium")
+	assert_eq(str(media_subs[0]["to"]), "essence_bead")
 
 
 func test_stages_declare_per_turn_thought_claims() -> void:

@@ -276,12 +276,20 @@
         "named_materials": [
           "venom_sac"
         ],
+        "named_media": [
+          "kael_fire_medium"
+        ],
         "min_rank": 2
       },
       "allow_substitute": {
         "materials": {
           "venom_sac": [
             "moon_blue_petal"
+          ]
+        },
+        "media": {
+          "kael_fire_medium": [
+            "essence_bead"
           ]
         },
         "cost_change": {

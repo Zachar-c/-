@@ -691,6 +691,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for required_material_value in identity.get("named_materials", []):
 			if not materials.has(str(required_material_value)):
 				errors.append("recipe %s identity named material %s is missing" % [recipe.get("id", ""), required_material_value])
+		if not (identity.get("named_media", []) is Array):
+			errors.append("recipe %s identity named_media must be an array" % recipe.get("id", ""))
 		var identity_min_rank: Variant = identity.get("min_rank", null)
 		if identity_min_rank != null and (not _is_integral(identity_min_rank) or int(identity_min_rank) < 1 or int(identity_min_rank) > 5):
 			errors.append("recipe %s identity min_rank must be an integer in 1..5" % recipe.get("id", ""))
@@ -702,6 +704,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			for to_material_value in substitute["materials"][from_material_value]:
 				if not materials.has(str(to_material_value)):
 					errors.append("recipe %s allow_substitute references unknown material %s" % [recipe.get("id", ""), to_material_value])
+		if not (substitute.get("media", {}) is Dictionary):
+			errors.append("recipe %s allow_substitute media must be an object" % recipe.get("id", ""))
 		if recipe.has("success_roll_max") and str(recipe.get("override_reason", "")).is_empty():
 			errors.append("recipe %s cannot declare random failure; add override_reason for the legacy retirement (T10.1-8)" % recipe.get("id", ""))
 	var material_pity: Dictionary = loot_tables.get("pity", {}).get("material_pity", {})

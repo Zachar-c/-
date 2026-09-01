@@ -42,7 +42,7 @@ static func resolve_candidates(recipe: Dictionary, catalog: Dictionary) -> Array
 # count. Named requirements must be met exactly; an undeclared swap is a
 # rejection; a declared allow_substitute swap passes and reports both the
 # substitution record and the recipe's cost_change.
-static func check_identity(recipe: Dictionary, offered_definitions: Array, offered_materials: Dictionary, offered_ranks: Dictionary, catalog: Dictionary) -> Dictionary:
+static func check_identity(recipe: Dictionary, offered_definitions: Array, offered_materials: Dictionary, offered_ranks: Dictionary, catalog: Dictionary, offered_media: Array = []) -> Dictionary:
 	var identity: Dictionary = recipe.get("identity_requirements", {})
 	var substitutions: Array = []
 	for required_value in identity.get("named_gu_ids", []):
@@ -71,6 +71,20 @@ static func check_identity(recipe: Dictionary, offered_definitions: Array, offer
 		if found.is_empty():
 			return {"ok": false, "reason": "named_material_missing", "detail": required}
 		substitutions.append({"from": required, "to": found})
+	var declared_media: Dictionary = recipe.get("allow_substitute", {}).get("media", {})
+	for required_value in identity.get("named_media", []):
+		var required := str(required_value)
+		if offered_media.has(required):
+			continue
+		var media_alternatives: Array = declared_media.get(required, [])
+		var found_media := ""
+		for alternative_value in media_alternatives:
+			if offered_media.has(str(alternative_value)):
+				found_media = str(alternative_value)
+				break
+		if found_media.is_empty():
+			return {"ok": false, "reason": "named_media_missing", "detail": required}
+		substitutions.append({"from": required, "to": found_media})
 	var min_rank := int(identity.get("min_rank", 0))
 	if min_rank > 0:
 		var highest := 0
