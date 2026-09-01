@@ -68,11 +68,16 @@ func test_standard_gu_power_and_fixed_defense_match_spec() -> void:
 	assert_almost_eq(float(GuBalanceScript.fixed_defense(3, catalog)), 32.0, 0.001)
 
 
-func test_cost_and_recovery_projections_read_the_config() -> void:
+func test_cost_and_recovery_projections_follow_spec() -> void:
+	# §11.2: 10% native cost unchanged at same rank, halved one rank above.
 	assert_almost_eq(float(GuBalanceScript.actual_cost_percent(
-			float(catalog["balance"]["standard_activation_cost"]),
-			float(catalog["balance"]["light_cost_ratio"]), catalog)), 0.05, 0.0001)
-	assert_almost_eq(float(GuBalanceScript.natural_recovery(catalog)), 0.01, 0.0001)
+			float(catalog["balance"]["standard_activation_cost"]), 1, 2, catalog)), 0.05, 0.0001)
+	# §11.4: standard aptitude (50%) recovers at rate 1.0; per-turn fraction =
+	# standard_activation_cost * natural_recovery_cost_ratio * rate = 1%.
+	var rate := float(GuBalanceScript.natural_recovery(50.0, catalog))
+	assert_almost_eq(rate, 1.0, 0.0001)
+	assert_almost_eq(float(catalog["balance"]["standard_activation_cost"])
+			* float(catalog["balance"]["natural_recovery_cost_ratio"]) * rate, 0.01, 0.0001)
 
 
 func _has(errors: Array[String], needle: String) -> bool:
