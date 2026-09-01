@@ -2,6 +2,7 @@
   {
     "id": "neutral_stone_wanderer",
     "tier": "common",
+    "rank": 0,
     "hp": 4,
     "turn": 1,
     "essence": 3,
@@ -21,6 +22,7 @@
   {
     "id": "ridge_hound",
     "tier": "common",
+    "rank": 1,
     "hp": 3,
     "turn": 1,
     "essence": 0,
@@ -40,6 +42,7 @@
   {
     "id": "ridge_elite_scout",
     "tier": "elite",
+    "rank": 2,
     "hp": 6,
     "turn": 1,
     "essence": 4,
@@ -59,6 +62,7 @@
   {
     "id": "miasma_vein_lord",
     "tier": "boss",
+    "rank": 3,
     "hp": 8,
     "turn": 4,
     "essence": 6,
@@ -114,6 +118,7 @@
   {
     "id": "iron_hide_boar",
     "tier": "common",
+    "rank": 2,
     "hp": 5,
     "turn": 1,
     "essence": 0,
@@ -133,6 +138,7 @@
   {
     "id": "thunder_crown_wolf",
     "tier": "elite",
+    "rank": 3,
     "hp": 7,
     "turn": 1,
     "essence": 4,
@@ -152,6 +158,7 @@
   {
     "id": "beast_swarm",
     "tier": "common",
+    "rank": 1,
     "turn": 1,
     "hp": 4,
     "essence": 0,
@@ -162,6 +169,7 @@
   {
     "id": "faction_guard",
     "tier": "elite",
+    "rank": 2,
     "turn": 2,
     "hp": 6,
     "essence": 4,
@@ -172,6 +180,7 @@
   {
     "id": "crag_serpent_matriarch",
     "tier": "boss",
+    "rank": 4,
     "turn": 1,
     "hp": 8,
     "essence": 3,
@@ -182,6 +191,7 @@
   {
     "id": "marrow_gu_adept",
     "tier": "boss",
+    "rank": 4,
     "turn": 2,
     "hp": 9,
     "essence": 4,
@@ -201,6 +211,7 @@
   {
     "id": "thunder_crown_sovereign",
     "tier": "boss",
+    "rank": 5,
     "turn": 3,
     "hp": 10,
     "essence": 5,
@@ -228,6 +239,7 @@
   {
     "id": "blood_vein_bishop",
     "tier": "boss",
+    "rank": 5,
     "turn": 4,
     "hp": 11,
     "essence": 6,

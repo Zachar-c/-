@@ -30,6 +30,7 @@ const JOURNAL_MARKER_IDS := [
 const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 const DialogueGatewayScript = preload("res://scripts/domain/dialogue_gateway.gd")
+const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 
 
 static func load_all() -> Dictionary:
@@ -348,6 +349,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if seen_gu_ids.has(gu["id"]):
 			errors.append("duplicate gu id %s" % gu["id"])
 		seen_gu_ids[gu["id"]] = true
+		if not _is_integral(gu.get("rank", null)) or int(gu.get("rank", 0)) < 1:
+			errors.append("gu %s rank must be a positive integer" % gu["id"])
 		if not gu.has("school"):
 			errors.append("gu %s missing school" % gu["id"])
 		elif not SCHOOL_IDS.has(str(gu["school"])):
@@ -410,11 +413,22 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		if not EFFECT_IDS.has(inheritance["effect_id"]):
 			errors.append("inheritance %s has invalid effect %s" % [inheritance["id"], inheritance["effect_id"]])
 	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
+	var central_beast_hp := {}
+	for beast_rank in range(0, 6):
+		central_beast_hp[int(GuBalanceScript.beast_scale(beast_rank, catalog))] = true
 	for enemy_value in catalog.get("enemies", []):
 		var enemy_entry: Dictionary = enemy_value
+		var enemy_id := str(enemy_entry.get("id", ""))
 		var enemy_turn := int(enemy_entry.get("turn", 1))
 		if enemy_turn < 1 or enemy_turn > 5:
-			errors.append("enemy %s turn must be within 1..5" % enemy_entry.get("id", ""))
+			errors.append("enemy %s turn must be within 1..5" % enemy_id)
+		# T2.2 tier schema (§17.1): enemies declare their beast-model rank; a
+		# non-override entry may not copy a central beast-scale hp literal.
+		if not _is_integral(enemy_entry.get("rank", null)) or int(enemy_entry.get("rank", -1)) < 0 or int(enemy_entry.get("rank", -1)) > 5:
+			errors.append("enemy %s rank must be an integer in 0..5" % enemy_id)
+		var raw_hp: Variant = enemy_entry.get("hp", null)
+		if str(enemy_entry.get("override_reason", "")).is_empty() and raw_hp is int and central_beast_hp.has(int(raw_hp)):
+			errors.append("enemy %s hp %d replicates central beast-scale hp; declare rank and project it, or add override_reason" % [enemy_id, int(raw_hp)])
 	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
 	for node_value in catalog.get("nodes", []):
 		var node: Dictionary = node_value
@@ -479,6 +493,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("curse %s removal_base_cost must be a positive integer" % curse.get("id", ""))
 		for offer in catalog.get("shop_offers", []):
 			var offer_kind := str(offer.get("kind", ""))
+			if not _is_integral(offer.get("tier", null)) or int(offer.get("tier", 0)) < 1 or int(offer.get("tier", 0)) > 5:
+				errors.append("shop offer %s tier must be an integer in 1..5" % offer["id"])
 			if offer_kind in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
 				errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
 			if offer_kind == "material_purchase" and not material_ids.has(str(offer.get("material_id", ""))):
@@ -620,6 +636,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	for material_id in materials:
 		if int(materials[material_id].get("value", 0)) < 1:
 			errors.append("material %s needs a positive value" % material_id)
+		if not _is_integral(materials[material_id].get("value_tier", null)) or int(materials[material_id].get("value_tier", 0)) < 1:
+			errors.append("material %s must declare a positive value_tier" % material_id)
 	for recipe in catalog.get("refinement_recipes", []):
 		for material_id_value in recipe.get("materials", {}):
 			if not materials.has(str(material_id_value)):
