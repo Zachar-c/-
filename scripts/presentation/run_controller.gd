@@ -430,6 +430,10 @@ func load_saved_run() -> bool:
 func _save_load_feedback(diagnosis: Dictionary) -> String:
 	match str(diagnosis.get("kind", "missing")):
 		"unsupported_version":
+			# T1.1: v3 runs are rejected with a domain refusal dict whose message
+			# reassures that hall progress / codex / unlocked recipes survive.
+			if int(diagnosis.get("version", -1)) == 3:
+				return SaveRepositoryScript._run_load_rejection(diagnosis)["message"]
 			return "上次冒险存档版本不受支持（v%d）。" % int(diagnosis.get("version", -1))
 		"checksum_missing", "checksum_mismatch":
 			return "上次冒险存档校验失败，已拒绝载入。"
