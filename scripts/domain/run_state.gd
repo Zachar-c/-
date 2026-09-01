@@ -98,6 +98,12 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"force_power": 0,
 		"force_imprints": [],
 		"statuses": {},
+		# §12.1/§14.1 declared birth anchors (single source: balance.json
+		# projections via CultivatorRules; these keys are declaration defaults
+		# only until the thought/body behavior batches hook them).
+		"thought_capacity": 3,
+		"body_capacity": 100,
+		"strength": 100,
 	}
 	state.cave_aperture = {
 		"essence": 20,

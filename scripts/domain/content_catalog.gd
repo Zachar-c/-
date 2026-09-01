@@ -885,6 +885,7 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
 	var positive_keys := [
 		"rank_step_ratio", "standard_hit_ratio", "human_base_health",
+		"human_base_strength", "human_base_body_capacity", "thought_base_capacity",
 		"unarmed_damage_ratio", "standard_activation_cost", "light_cost_ratio",
 		"heavy_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
 		"reaction_multiplier", "material_refine_efficiency",

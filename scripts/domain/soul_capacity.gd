@@ -1,6 +1,9 @@
 class_name SoulCapacity
 extends RefCounted
 
+# NOTE (T3.2): legacy soul-derived multitasking caps - replaced by the
+# per-turn thought ledger (spec §12.1, §18 item 3) and deleted in T10.1-③.
+# No logic changes here; keep working until the retirement batch.
 # Approved 2026-08-25: soul drives multitasking capacity.
 # Battle ops cap is 1:1 with the soul value (floor 1 while a run is alive);
 # refining input cap follows a step table so the two curves are non-linear.
