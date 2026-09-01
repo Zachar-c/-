@@ -24,5 +24,7 @@
   "base_speed": 3,
   "speed_min": 1,
   "speed_max": 5,
-  "gu_estimate_ratio": 6.5
+  "gu_estimate_ratio": 6.5,
+  "blood_yield_ratio": 0.01,
+  "deep_blood_multiplier": 0.5
 }

@@ -20,7 +20,7 @@
       "value": 2,
       "value_tier": 2,
       "rank": 1,
-      "dao_tags": ["blood"],
+      "dao_tags": ["blood", "qi"],
       "diet_tags": ["meat", "blood"],
       "is_common": true,
       "is_exclusive": false,

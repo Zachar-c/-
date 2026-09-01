@@ -678,6 +678,11 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("material %s reference_value must be a positive integer" % material_id)
 		elif str(material_entry.get("override_reason", "")).is_empty() and central_rank_multipliers.has(int(ref_value)):
 			errors.append("material %s reference_value %d replicates the central rank multiplier table" % [material_id, int(ref_value)])
+		# T8.1 §15.1: a blood+qi dual-tag material is single-stock blood qi and
+		# must be divisible - the two paths spend one shared inventory.
+		var blood_qi_tags: Array = material_entry.get("dao_tags", [])
+		if blood_qi_tags.has("blood") and blood_qi_tags.has("qi") and not bool(material_entry.get("divisible", false)):
+			errors.append("material %s blood+qi dual-tag requires divisible" % material_id)
 	for recipe in catalog.get("refinement_recipes", []):
 		for material_id_value in recipe.get("materials", {}):
 			if not materials.has(str(material_id_value)):
@@ -975,6 +980,7 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"fixed_defense_ratio", "stone_per_t1_material", "public_buyback_ratio",
 		"low_liquidity_ratio", "quick_substitute_cap", "base_speed",
 		"speed_min", "speed_max", "gu_estimate_ratio",
+		"blood_yield_ratio", "deep_blood_multiplier",
 	]
 	for key in positive_keys:
 		var value: Variant = cfg.get(key, null)
