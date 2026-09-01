@@ -4,6 +4,7 @@ extends RefCounted
 
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
+const FeedingRulesScript = preload("res://scripts/domain/feeding_rules.gd")
 
 
 @warning_ignore("shadowed_global_identifier")
@@ -187,6 +188,46 @@ static func next_gu_instance_id(instances: Dictionary) -> String:
 		if text.begins_with("gu_"):
 			highest = maxi(highest, int(text.trim_prefix("gu_")))
 	return "gu_%03d" % (highest + 1)
+
+
+# T6.1: the big-layer switch lives here (spec §7.1). Entering a new layer
+# runs the FeedingRules settlement over every living gu instance, applies the
+# pantry deduction to materials, and appends one immutable layer_feeding
+# event. Same-layer calls are no-ops. The run_controller layer assignment is
+# wired to this entry by the T9.2 command surface; nothing else may mutate
+# the layer.
+static func settle_layer(state: RunState, new_layer: int, pantry: Dictionary, catalog: Dictionary, options: Dictionary = {}) -> RunState:
+	if int(state.current_node_layer) == new_layer:
+		return state
+	var instances: Array = []
+	for instance_id in state.gu_instances:
+		instances.append((state.gu_instances[instance_id] as Dictionary).duplicate(true))
+	var result := FeedingRulesScript.layer_settle(instances, pantry, options, catalog)
+	var updated_instances := {}
+	for entry in result["settled"]:
+		var settled_instance: Dictionary = (entry as Dictionary)["instance"]
+		updated_instances[str(settled_instance.get("instance_id", ""))] = settled_instance
+	var events: Array = result["events"]
+	var after: Dictionary = {
+		"gu_instances": updated_instances,
+		"materials": result["pantry_after"],
+		"current_node_layer": new_layer,
+	}
+	for event in events:
+		after["_feeding_" + str((event as Dictionary).get("instance_id", ""))] = event
+	var next := state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "layer_feeding",
+		"before": {"gu_instances": state.gu_instances.duplicate(true), "materials": state.materials.duplicate(true), "current_node_layer": int(state.current_node_layer)},
+		"after": after,
+		"reason": "layer_settlement",
+		"source": "run_state",
+		"targets": [],
+	})
+	next.sync_legacy_gu_projections()
+	return next
 
 
 func append_event(event: Dictionary) -> RunState:
