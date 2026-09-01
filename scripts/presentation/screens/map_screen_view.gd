@@ -380,7 +380,7 @@ func _build_node_mark(id: String, glyph: String, color: Color) -> PanelContainer
 	box.bg_color = Color(0, 0, 0, 0)
 	box.border_color = color
 	box.set_border_width_all(1)
-	box.set_corner_radius_all(15)
+	box.set_corner_radius_all(8)
 	mark.add_theme_stylebox_override("panel", box)
 	var center := CenterContainer.new()
 	mark.add_child(center)
