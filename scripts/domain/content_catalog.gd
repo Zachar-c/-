@@ -351,6 +351,15 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		seen_gu_ids[gu["id"]] = true
 		if not _is_integral(gu.get("rank", null)) or int(gu.get("rank", 0)) < 1:
 			errors.append("gu %s rank must be a positive integer" % gu["id"])
+		# T7.1 §1.1: a hub-core gu must declare reachable evidence - its
+		# branch recipes / exclusive refining must resolve in the catalog.
+		if str(gu.get("core_depth", "")) == "hub":
+			var hub_branches: Array = gu.get("branch_recipes", [])
+			if hub_branches.is_empty():
+				errors.append("gu %s hub core needs branch_recipes evidence" % gu["id"])
+			for hub_recipe_value in hub_branches:
+				if not (catalog.get("refinement_by_id", {}) as Dictionary).has(str(hub_recipe_value)):
+					errors.append("gu %s hub branch recipe %s is missing" % [gu["id"], hub_recipe_value])
 		if not gu.has("school"):
 			errors.append("gu %s missing school" % gu["id"])
 		elif not SCHOOL_IDS.has(str(gu["school"])):

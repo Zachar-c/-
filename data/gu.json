@@ -389,6 +389,10 @@
   {
     "id": "phantom_moon_gu",
     "rank": 2,
+    "core_depth": "hub",
+    "branch_recipes": [
+      "phantom_moon_locked"
+    ],
     "feeding_cost": 2,
     "feeding_need": {
       "feed_points": 2
