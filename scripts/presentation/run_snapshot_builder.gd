@@ -15,6 +15,16 @@ const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
+const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
+const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
+const CoreGuRulesScript = preload("res://scripts/domain/core_gu_rules.gd")
+const RecipeRulesScript = preload("res://scripts/domain/recipe_rules.gd")
+const FeedingRulesScript = preload("res://scripts/domain/feeding_rules.gd")
+const MarketRulesScript = preload("res://scripts/domain/market_rules.gd")
+const Battle2BodyRulesScript = preload("res://scripts/domain/battle2/body_rules.gd")
+const Battle2ActionResolverScript = preload("res://scripts/domain/battle2/action_resolver.gd")
+const SoulRulesScript = preload("res://scripts/domain/soul_rules.gd")
+const BloodQiRulesScript = preload("res://scripts/domain/blood_qi_rules.gd")
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
@@ -1757,3 +1767,158 @@ static func death_cause_fields(state) -> Dictionary:
 
 static func _node_label(n: Dictionary) -> String:
 	return str(n.get("label", DisplayText.node(str(n.get("id", "")))))
+
+# T9.1: snapshot transparency v2 (spec 17.2, eight groups). Every group
+# projects straight from its owning rule module - the snapshot carries the
+# module's own output, never a copy. The section is strictly read-only: it
+# never assigns into run state and never calls setters. `_`-prefixed info
+# keys never enter a snapshot.
+static func transparency_v2(controller, battle2_ledger: Dictionary = {}, catalog_arg: Dictionary = {}) -> Dictionary:
+	var state = controller.state
+	var cat: Dictionary = catalog_arg if not catalog_arg.is_empty() else (controller.catalog if controller.catalog != null else {})
+	if state == null:
+		return {}
+	return {
+		"group1_gu_ledger": _v2_group1(state, battle2_ledger, cat),
+		"group2_core": _v2_group2(state, cat),
+		"group3_recipes": _v2_group3(cat),
+		"group4_feeding": _v2_group4(state, cat),
+		"group5_market": _v2_group5(cat),
+		"group6_body": _v2_group6(state, cat),
+		"group7_action": _v2_group7(cat),
+		"group8_soul": _v2_group8(state, cat),
+	}
+
+
+# Group 1: gu actual yuan/thoughts/turn-usage/maintenance from the battle2
+# ledger shape (contract 6). An absent battle context projects a fresh
+# ledger at the cultivator's thought capacity - the keys always exist.
+static func _v2_group1(state, ledger_arg: Dictionary, cat: Dictionary) -> Dictionary:
+	var ledger: Dictionary = ledger_arg
+	if ledger.is_empty():
+		ledger = Battle2TurnEngineScript.new_turn(CultivatorRulesScript.thought_capacity(state.cultivator, cat))
+	return {
+		"phase": str(ledger.get("phase", "")),
+		"thoughts_left": int(ledger.get("thoughts_left", 0)),
+		"thought_used": int(ledger.get("thought_used", 0)),
+		"reserved": int(ledger.get("reserved", 0)),
+		"gu_used": (ledger.get("gu_used", {}) as Dictionary).duplicate(true),
+		"actions_used": (ledger.get("actions_used", {}) as Dictionary).duplicate(true),
+		"maintained": (ledger.get("maintained", []) as Array).duplicate(),
+		"ongoing": (ledger.get("ongoing", []) as Array).duplicate(true),
+	}
+
+
+# Group 2: core type / depth / evidence / tilt suggestion / replacement
+# cost sources.
+static func _v2_group2(state, cat: Dictionary) -> Dictionary:
+	var core_definition: Dictionary = {}
+	var core_id := ""
+	for instance_id in state.gu_instances:
+		var instance: Dictionary = state.gu_instances[str(instance_id)]
+		if not (instance.get("core_state", {}) as Dictionary).is_empty():
+			core_id = str(instance_id)
+			core_definition = cat.get("gu_by_id", {}).get(str(instance.get("definition_id", "")), {})
+			break
+	var title := "common_core"
+	var evidence := {}
+	if not core_definition.is_empty():
+		title = CoreGuRulesScript.core_depth(core_definition, cat)
+		evidence = CoreGuRulesScript.hub_evidence(core_definition, cat)
+	var tilt := CoreGuRulesScript.tilt_pool(
+			cat.get("school_pools", {}), {"definition_id": str(core_definition.get("id", ""))}, cat)
+	return {
+		"confirmed_instance": core_id,
+		"depth": title,
+		"hub_evidence": evidence,
+		"tilt_suggestions": tilt.get("suggestions", {}),
+	}
+
+
+# Group 3: recipe identity / stages / candidates / success conditions.
+static func _v2_group3(cat: Dictionary) -> Array:
+	var out: Array = []
+	for recipe in cat.get("refinement_recipes", []):
+		var entry := {
+			"id": str(recipe.get("id", "")),
+			"kind": str(recipe.get("kind", "")),
+			"product_rule": str(recipe.get("product_rule", "")),
+			"aux_core_warning": bool(recipe.get("aux_core_warning", false)),
+		}
+		if recipe.has("identity_requirements"):
+			entry["identity_requirements"] = (recipe["identity_requirements"] as Dictionary).duplicate(true)
+		if recipe.has("allow_substitute"):
+			entry["allow_substitute"] = (recipe["allow_substitute"] as Dictionary).duplicate(true)
+		if recipe.has("stages"):
+			entry["stages"] = (recipe["stages"] as Array).duplicate(true)
+		if recipe.has("candidate_pool"):
+			entry["candidate_pool"] = RecipeRulesScript.resolve_candidates(recipe, cat)
+		out.append(entry)
+	return out
+
+
+# Group 4: feeding need / matching / substitution / hunger & death preview,
+# plus the soft budget report.
+static func _v2_group4(state, cat: Dictionary) -> Dictionary:
+	var instances: Array = []
+	for instance_id in state.gu_instances:
+		instances.append(state.gu_instances[str(instance_id)])
+	var preview := FeedingRulesScript.preview_settle(instances, state.materials, {}, cat)
+	var report := FeedingRulesScript.budget_report(0.0, 0.0, cat)
+	return {"preview": preview, "budget_report": report}
+
+
+# Group 5: market prices / demand / estimates / refusal reasons.
+static func _v2_group5(cat: Dictionary) -> Dictionary:
+	var blood: Dictionary = cat.get("loot_tables", {}).get("materials", {}).get("beast_blood", {})
+	return {
+		"t1_base": float(MarketRulesScript.t1_material_base_price(cat)),
+		"rank3_value": float(MarketRulesScript.rank_standard_price(3, cat)),
+		"resale_50": float(MarketRulesScript.public_resale(10.0, cat)),
+		"low_liquidity_30": float(MarketRulesScript.low_liquidity_resale(10.0, cat)),
+		"demand_quote": float(MarketRulesScript.demand_quote(10.0, 1, 1, cat)["unit_price"]),
+		"gu_public_1": float(MarketRulesScript.gu_public_price(1, cat)),
+		"gu_recycle_1": float(MarketRulesScript.gu_recycle_price(1, cat)),
+		"gu_estimate_1": float(MarketRulesScript.gu_estimate(1, cat)),
+		"blood_trade_public_reason": str(BloodQiRulesScript.trade_gate(blood, "public", cat).get("reason", "")),
+	}
+
+
+# Group 6: safe/actual strength, outward damage, overload self damage and the
+# death warning from the body preflight.
+static func _v2_group6(state, cat: Dictionary) -> Dictionary:
+	var body := CultivatorRulesScript.body(state.cultivator, cat)
+	var strength := float(body["strength"])
+	var capacity := float(body["body_capacity"])
+	var preflight := Battle2BodyRulesScript.strike_preflight(strength, capacity, float(state.health), cat)
+	return {
+		"safe_strength": float(Battle2BodyRulesScript.safe_strength(capacity)),
+		"actual_strength": strength,
+		"outward_damage": float(Battle2BodyRulesScript.unarmed_strike_damage(strength, 1.0, cat)),
+		"overload_self_damage": float(Battle2BodyRulesScript.overload_self_damage(strength, capacity, cat)),
+		"lethal_confirm_required": bool(preflight.get("lethal_confirm_required", false)),
+		"death_cause": str(preflight.get("cause", "")),
+	}
+
+
+# Group 7: enemy intent window / distance bands / speed conflict / reaction
+# readiness (projections over the deterministic action rules).
+static func _v2_group7(cat: Dictionary) -> Dictionary:
+	return {
+		"distances": ["far", "medium", "close", "touch"],
+		"conflict_order": str(Battle2ActionResolverScript.conflict_order("quick", 3, "quick", 3)),
+		"reaction_check": Battle2ActionResolverScript.reaction_allowed(true, "grapple"),
+		"disengage_open": bool(Battle2ActionResolverScript.disengage_window("touch", "close").get("open", false)),
+		"strike_only_at_contact": bool(Battle2ActionResolverScript.strike_possible("touch", "touch")),
+	}
+
+
+# Group 8: soul five quantities and the loss-of-control thresholds.
+static func _v2_group8(state, cat: Dictionary) -> Dictionary:
+	return {
+		"snapshot": SoulRulesScript.snapshot(state.cultivator),
+		"composure": SoulRulesScript.composure_layers(state.cultivator, cat),
+		"beast_sight": SoulRulesScript.beast_sight(state.cultivator, cat),
+		"float_above_capacity": bool(SoulRulesScript.float_above_capacity(state.cultivator)),
+		"growth_forecast": SoulRulesScript.soul_growth_forecast(state.cultivator, 0.0, cat),
+	}
