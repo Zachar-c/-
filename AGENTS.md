@@ -21,6 +21,11 @@
 
 - 总体机制基线：`docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`
 - 蛊系统、经济与战斗最新基线：`docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md`
+- spec-v4 实施计划（10 阶段 20 任务）：`docs/superpowers/plans/2026-09-01-gu-system-economy-combat-implementation.md`
+- 领域-表现层接口契约（UI 允许消费的键与命令全集，活文档）：`docs/contracts/2026-09-02-domain-ui-contract.md`
+- 前端全局约束（UI 设计规范与公共组件约定）：`docs/contracts/2026-09-02-frontend-global-constraints.md`
+- 页面清单与页面需求（逐屏需求单）：`docs/contracts/2026-09-02-page-inventory-requirements.md`
+- UI 改动、快照键扩容或命令面扩容前，必须核对上述三份契约文档；新增键/命令/组件须同步回写契约，防止契约与代码漂移。
 - 项目裁定索引：`docs/项目决策浓缩对话.md`
 - 旧冒烟设计仅供参考：`docs/superpowers/specs/2026-08-21-nanjiang-roguelite-smoke-design.md`
 - 当前实现状态以代码、测试、`git log` 和当前任务文档为准，不在本文件维护历史台账。
