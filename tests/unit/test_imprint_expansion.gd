@@ -285,8 +285,9 @@ func test_barter_granting_meta_rule_relic_records_meta_rules_and_feed() -> void:
 
 func test_meta_rule_result_feed_appends_instead_of_overwrites() -> void:
 	var resolver_script: Variant = load("res://scripts/domain/resolver.gd")
+	var helper_script: Variant = load("res://scripts/domain/resolver_helpers.gd")
 	var seeded := {"state": null, "result": {"ok": true, "feeds": ["prior_feed"]}}
-	var merged: Variant = resolver_script.call("_append_result_feed", seeded, "meta_rule_recorded")
+	var merged: Variant = helper_script.call("append_result_feed", seeded, "meta_rule_recorded")
 	assert_true(merged["result"]["feeds"].has("prior_feed"))
 	assert_true(merged["result"]["feeds"].has("meta_rule_recorded"))
 

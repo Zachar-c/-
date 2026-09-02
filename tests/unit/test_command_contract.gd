@@ -127,3 +127,23 @@ func test_run_controller_does_not_bypass_battle_command_facade() -> void:
 		"BattleResolver.apply_enemy_pre_turn",
 	]:
 		assert_false(text.contains(direct_call), "RunController must delegate battle calls through BattleCommandFacade: %s" % direct_call)
+
+
+func test_v2_command_family_registers_real_handlers() -> void:
+	# T9.2: every v2 command type must have a real handler in the resolver
+	# dispatch (ghost-free) - the probe asserts the reason is never
+	# unsupported_command.
+	var v2_types := [
+		"confirm_core", "replace_core", "feed_instance", "settle_layer",
+		"collect_surviving", "release_gu", "sell_info", "enact", "dodge",
+		"grapple", "respond", "refine_up_material", "bloodlet", "absorb_soul",
+	]
+	var catalog := ContentCatalog.load_all()
+	var unsupported: Array[String] = []
+	for type_name in v2_types:
+		var state := RunState.new_run(101)
+		var result: Dictionary = ResolverScript.apply(state, {"type": type_name}, catalog)
+		var reason := str((result.get("result", {}) as Dictionary).get("reason", ""))
+		if reason == "unsupported_command":
+			unsupported.append(type_name)
+	assert_eq(unsupported, [], "v2 commands without a dispatch handler: %s" % [", ".join(unsupported)])

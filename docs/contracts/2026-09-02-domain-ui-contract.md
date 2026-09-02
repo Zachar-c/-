@@ -71,9 +71,9 @@ UI (scenes + scripts/ui)
 
 统一返回：`{"ok": bool, "reason": str?, "feedback"?: str, ...}`；`ok=false` 时 `reason` 必须能命中 §5 的中文映射。`load_run`/`save_run` 由 controller 层直接处理（v4 拒载契约见 §7）。
 
-`[T9.2 计划]` 新命令全集（每命令三件套：预检 reason 中文映射 -> 执行 -> 事件日志条目；规则体已就位，分派薄委托）：
+`[T9.2 已落地]` 新命令全集（分派于 `resolver.gd _dispatch` → 薄委托 `V2Commands`；`destroy_gu` 保持既有 resolver 实现，`settle_layer` 接通 `RunState.settle_layer` 大层唯一入口，同层幂等）：
 
-`confirm_core`、`replace_core`、`feed_instance`、`settle_layer`、`collect_surviving`、`release_gu`、`destroy_gu`、`sell_info`、`enact`（声明动作/编排串行并行/反应预留，对应 `Battle2TurnEngine.enact`）、`dodge`、`grapple`、`respond`、`refine_up_material`、`bloodlet`、`absorb_soul`（后两个待阶段八模块）。
+`confirm_core`（→`CoreGuRules.confirm`，写回 core_state + `core_confirmed` 事件）、`replace_core`（→`replace_core`，硬上限 `replace_limit_reached`，`node_flags.core_replace_count` 计数，`core_replaced` 事件）、`feed_instance`（→`FeedingRules.layer_settle` 单例结算，`feed_instance` 事件，饿死经 `_feeding_<id>` 旁路键）、`settle_layer`（→`RunState.settle_layer`，`layer_feeding` 事件）、`collect_surviving`（→`LootRules.collect_surviving_gu`，幸存蛊入账 + `gu_collected` 事件）、`release_gu`（→`release_gu`，`gu_released` 事件带 `consequences`）、`sell_info`（→`MarketRules.sell_info`，`info_sold` 事件，买家重复付费 `buyer_already_paid`）、`enact`（→`Battle2TurnEngine.enact`，ledger 由命令携带，`battle2_enact` 事件）、`dodge` / `grapple` / `respond`（→`Battle2BodyRules`+`ActionResolver.reaction_allowed`，`battle2_dodge/battle2_grapple/battle2_respond` 事件）、`refine_up_material`（→`MaterialRules.refine_up`，`material_refined` 事件）、`bloodlet`（→`BloodQiRules.self_bleed`，`bloodlet` 事件；致死返回 `lethal_confirm_required`+`cause:"self_bleed"` 且**不自动执行**）、`absorb_soul`（→`SoulRules.collect_soul`+`strengthen_soul`，`soul_absorbed` 事件；`no_means_declared`/`means_capacity_full`/`soulless_target`/`soul_yield_zero` 拒绝）。
 
 ### 3.2 战斗命令（V1 facade，现状）
 
@@ -88,7 +88,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 | `battle.turn` | `event_log` | `type, state_version, expected_phase` |
 | `battle.enemy_pre_turn` | `internal` | — |
 
-`[T9.2 计划]` battle2 编排命令接入后，战斗命令面按 `Battle2TurnEngine.enact` 的 proposal 形状扩容：`{"kind": "activate_gu"|"basic_action"|"maintain", "instance_id"/"action", "thought", ...}`；拒绝 reason 集合：`maintenance_blocks_activation / gu_already_used_this_turn / insufficient_thought / action_already_used_this_turn / unknown_action / unknown_proposal_kind`；并行组：`parallel_group_repeats_action / parallel_group_repeats_instance`；跨回合续投：`start_turn(turn, capacity, continue_ids)`（ongoing 条目必须携带稳定 `"id"`）。
+`[T9.2 已落地]` battle2 编排命令已接入 `enact`/`dodge`/`grapple`/`respond`（proposal 形状 `{"kind": "activate_gu"|"basic_action"|"maintain", ...}`）；拒绝 reason 集合达产：`maintenance_blocks_activation / gu_already_used_this_turn / insufficient_thought / action_already_used_this_turn / unknown_action / unknown_proposal_kind / parallel_group_repeats_action / parallel_group_repeats_instance / no_thought / window_closed / dodge_not_allowed / grappled_blocks_dodge / bound_blocks_dodge / terrain_restricted / not_at_contact / not_stronger / no_reserved_thought / not_a_legal_reaction`；跨回合续投：`start_turn(turn, capacity, continue_ids)`（ongoing 条目携带稳定 `"id"`）。
 
 ### 3.3 规则模块公开函数（供命令面/快照薄委托；UI 不得绕过命令直调）
 
@@ -126,7 +126,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 }
 ```
 
-已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词。`[T9.2 计划]` §17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）逐项落账后，词表以此为准扩全。
+已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
 
 ## 5. 预检与拒绝契约
 
@@ -140,7 +140,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 
 `insufficient_stone / insufficient_lifespan / insufficient_soul / insufficient_material / unknown_shop_offer / npc_stock_missing / npc_not_present / unknown_npc / npc_missing / contract_locked / contract_sworn / contract_soft_cap / deck_capacity(待废) / gu_slot_full(待废) / refine_input_missing / refine_slot_invalid / refine_recipe_locked / retreat_forbidden / invalid_action / invalid_action_card / stale_state_version / not_enough_essence / no_actions_left / dodge_exhausted / not_enough_hp / lifespan_trade_warning / already_completed / invalid_node_completion / unknown_contact / invalid_contact_approach / unknown_command / unknown_gu / unknown_card / unknown_node / node_not_reachable / unknown_material / material_not_usable / no_material_to_use / material_use_lethal`。
 
-`[T9.2 计划]` 每条新命令至少一条拒绝路径进入该映射（`test_command_rejections_v2` 钉死"拒绝不改状态"）。
+`[T9.2 已落地]` 每条新命令的拒绝路径已入该映射（现役 71 条，含 `too_early_first_layer / core_already_confirmed / instance_missing / replace_limit_reached / guarantee_replaced_with_peer_reward / no_token_on_node / buyer_already_paid / insufficient_thought / gu_already_used_this_turn / maintenance_blocks_activation / action_already_used_this_turn / unknown_action / unknown_proposal_kind / parallel_group_repeats_action / parallel_group_repeats_instance / no_thought / window_closed / dodge_not_allowed / grappled_blocks_dodge / bound_blocks_dodge / terrain_restricted / not_at_contact / not_stronger / no_reserved_thought / not_a_legal_reaction / insufficient_health / bleed_rank_exceeds_cultivator / soulless_target / no_means_declared / means_capacity_full / soul_yield_zero`；`test_command_rejections_v2` 钉死"拒绝不改状态"）。
 
 ## 6. 核心数据形状契约
 
