@@ -159,6 +159,37 @@ func test_map_visible_nodes_in_same_layer_do_not_overlap() -> void:
 			assert_false(nodes[i].get_global_rect().intersects(nodes[j].get_global_rect()), "same-layer map nodes must not overlap")
 
 
+func test_map_anchors_bands_on_current_node_after_skipping_sibling() -> void:
+	# 2026-09-02 地图阻塞报告：玩家跳过同层兄弟起点（如 first_run 脊柱里
+	# 中立散修 / 山脊商队 二选一）后，可见行取「最小三行」会把当前节点挤进
+	# 中部带、真正可达的后继顶进顶部前瞻带——那里被 map_camera
+	# clip_contents 裁掉大半，玩家点不到后继（抵达被阻塞）。
+	# 三条带必须锚定当前节点行：此刻=当前、下一程=可达后继、再前一程=前瞻。
+	var view := preload("res://scripts/presentation/screens/map_screen_view.gd")
+	var snapshot := {
+		"nodes": [
+			{"id": "sibling", "type": "event", "label": "中立散修", "layer": 1, "row": 0, "next_ids": [], "reachable": false, "visited": false, "current": false, "visibility": "lookahead"},
+			{"id": "current", "type": "market", "label": "山脊商队", "layer": 1, "row": 1, "next_ids": ["next"], "reachable": false, "visited": true, "current": true, "visibility": "current"},
+			{"id": "next", "type": "refinement", "label": "炼蛊石穴", "layer": 2, "row": 0, "next_ids": [], "reachable": true, "visited": false, "current": false, "visibility": "reachable"},
+		],
+		"resources": {}, "contracts": [], "anomalies": [], "death_lines": {}, "gu_satchel": [], "toast": "",
+	}
+	var submitted: Array[String] = []
+	var host := _mount_with_commands(snapshot, {"travel": func(id): submitted.append(str(id))})
+	for _frame in 3:
+		await get_tree().process_frame
+	var current_btn := _named(host, "map_node_current")
+	var next_btn := _named(host, "map_node_next") as Button
+	assert_not_null(current_btn, "current node must render")
+	assert_not_null(next_btn, "reachable successor must render")
+	if current_btn == null or next_btn == null:
+		return
+	assert_almost_eq(current_btn.position.y, view.CURRENT_Y, 2.0, "current node must stay in the now band")
+	assert_almost_eq(next_btn.position.y, view.CANDIDATE_Y, 2.0, "reachable successor must stay in the clickable candidate band, not the clipped future band")
+	next_btn.pressed.emit()
+	assert_eq(submitted, ["next"])
+
+
 func test_map_reachable_node_click_submits_travel_command() -> void:
 	var submitted: Array[String] = []
 	var host := _mount_with_commands(_route_snapshot(), {"travel": func(id): submitted.append(str(id))})

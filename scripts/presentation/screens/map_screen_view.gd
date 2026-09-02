@@ -251,13 +251,19 @@ func _refresh_world(nodes: Array) -> void:
 
 
 ## 可见行（layer*1000+row）最多三行：当前、候选、前瞻。
+## 三条带锚定当前节点行：先丢弃早于当前行的非过去行（同层二选一起点
+## 里被跳过的兄弟），否则当前节点被挤进中部带、可达后继顶进镜头裁切带
+## （FUTURE_Y 在 clip_contents 之外，玩家点不到后继——2026-09-02 阻塞报告）。
 func _node_layout(nodes: Array) -> Dictionary:
+	var anchor_key := _anchor_row_key(nodes)
 	var rows: Array = []
 	var by_row: Dictionary = {}
 	for node in nodes:
 		if str(node.get("visibility", "lookahead")) == "past":
 			continue
 		var row_key := int(node.get("layer", 0)) * 1000 + int(node.get("row", 0))
+		if anchor_key >= 0 and row_key < anchor_key:
+			continue
 		if not by_row.has(row_key):
 			by_row[row_key] = []
 			rows.append(row_key)
@@ -449,9 +455,12 @@ func _refresh_leave_confirm() -> void:
 # ------------------------------------------------------------------ 工具
 
 func _visible_layers(nodes: Array) -> Array:
+	var anchor_key := _anchor_row_key(nodes)
 	var layers: Array = []
 	for node in nodes:
 		if str(node.get("visibility", "lookahead")) == "past":
+			continue
+		if anchor_key >= 0 and int(node.get("layer", 0)) * 1000 + int(node.get("row", 0)) < anchor_key:
 			continue
 		var layer := int(node.get("layer", 0))
 		if not layers.has(layer):
@@ -460,6 +469,14 @@ func _visible_layers(nodes: Array) -> Array:
 	if layers.size() > MAX_VISIBLE_ROWS:
 		layers = layers.slice(0, MAX_VISIBLE_ROWS)
 	return layers
+
+
+## 行键锚点：当前节点所在行；无当前节点（trailhead）返回 -1 表示不裁行。
+func _anchor_row_key(nodes: Array) -> int:
+	for node in nodes:
+		if str(node.get("visibility", "")) == "current" or bool(node.get("current", false)):
+			return int(node.get("layer", 0)) * 1000 + int(node.get("row", 0))
+	return -1
 
 
 ## 焦点节点 = 首个可达节点（按可见层序），无可达时回落到当前节点。
