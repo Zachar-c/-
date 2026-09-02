@@ -220,3 +220,30 @@ func test_battle_hand_tooltip_uses_fixed_segments_and_block_reason() -> void:
 	assert_not_null(_find_label_containing(tooltip, "联动："))
 	assert_not_null(_find_label_containing(tooltip, "代价："))
 	assert_not_null(_find_label_containing(tooltip, "不可用："))
+
+
+func test_card_button_children_do_not_eat_mouse_clicks() -> void:
+	var cards: Array = [
+		{"id": "c0", "name": "血牙蛊", "quality": "普通", "cost": "1", "effect": "造成 4 点伤害",
+				"curse_warning": false, "executable": true, "block_reason": ""},
+	]
+	var host := _mount_with_hand(cards)
+	var btn := _named(host, "card_body_c0") as Button
+	assert_not_null(btn)
+	# Every descendant of the card Button must be MOUSE_FILTER_IGNORE so that
+	# the Button itself is the deepest STOP control at the card center — real
+	# mouse clicks must reach the Button's pressed signal.
+	var blockers: Array = _stop_descendants(btn, btn)
+	assert_eq(blockers.size(), 0, "card Button descendants must not be STOP: %s" % str(blockers))
+
+
+func _stop_descendants(root: Control, button: Button) -> Array:
+	var found: Array = []
+	if root != button and root is Control:
+		var c: Control = root
+		if c.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+			found.append(c.name)
+	for child in root.get_children():
+		if child is Control:
+			found.append_array(_stop_descendants(child, button))
+	return found
