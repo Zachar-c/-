@@ -31,3 +31,18 @@ func test_save_data_preserves_event_log_order() -> void:
 	assert_eq(save_data["event_log"].size(), 2)
 	assert_eq(save_data["event_log"][0]["id"], "event_0000")
 	assert_eq(save_data["event_log"][1]["id"], "event_0001")
+
+
+func test_append_event_preserves_battle2_ledger() -> void:
+	var state := RunState.new_run(101)
+	state.battle2_ledger = {"phase": "declare", "thoughts_left": 2}
+	var next := state.append_event({"action": "probe", "after": {"stone": state.stone + 1}})
+	assert_eq_deep(next.battle2_ledger, state.battle2_ledger)
+
+
+func test_battle2_ledger_changes_only_through_event_after() -> void:
+	var state := RunState.new_run(101)
+	var ledger := {"phase": "declare", "thoughts_left": 3}
+	var next := state.append_event({"action": "battle2_turn_started", "after": {"battle2_ledger": ledger}})
+	assert_eq_deep(next.battle2_ledger, ledger)
+	assert_eq_deep(next.event_log.back()["after"]["battle2_ledger"], ledger)

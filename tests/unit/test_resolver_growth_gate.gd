@@ -13,10 +13,12 @@ const BATTLE_RESOLVER_PATH := "res://scripts/domain/battle_resolver.gd"
 # T10.2 terminal values (one-way down from the 2457/1516 plan caps): the
 # phase-10 abolitions ended lower than both pre-deletion baselines (2452/1514).
 const RESOLVER_LINE_CAP := 2430
-# V1 battle2 ledger lifecycle fix: the resolver's hook sits in _battle_over
-# and _death_over so the legacy test fixtures still bind to the funnel; the
-# cap accepts the hook overhead rather than carve the path out.
-const BATTLE_RESOLVER_LINE_CAP := 1548
+# Plan standing cap is 1516 (T1.2). The V1 battle2-ledger lifecycle fix briefly
+# mounted hook calls inside battle_resolver.gd and raised this cap to 1548 to
+# hide the over-limit; that leak was re-extracted (the production facade owns
+# the ledger), so the god file is back at 1515 and the cap returns to the plan
+# value instead of masking growth.
+const BATTLE_RESOLVER_LINE_CAP := 1516
 
 
 func _line_count(path: String) -> int:

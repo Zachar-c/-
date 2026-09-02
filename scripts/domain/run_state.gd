@@ -51,8 +51,9 @@ var gu_card_overrides: Dictionary = {}
 var materials: Dictionary = {}
 # T10.1-6: battle2 ledger owns the discrete-turn combat state in the domain
 # (created at battle start, advanced by start_turn, read-only in snapshots).
-# Runtime field, not persisted (V1 battles live in the controller battle
-# dict; ledger rides the event log via the _battle2_ledger info key).
+# Persisted via STATE_FIELDS; every change enters through event after (never
+# a direct post-event assignment). _battle2_ledger info keys are attribution
+# copies only.
 var battle2_ledger: Dictionary = {}
 # V1 lifecycle hook: a per-battle, per-RunState handle that battle_resolver
 # reads/advances as accepted turns land. Created in _start_battle (sized by
@@ -85,6 +86,7 @@ const STATE_FIELDS: Array[String] = [
 	"current_node_template_id", "current_node_layer",
 	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",
 	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",
+	"battle2_ledger",
 	"relic_ids", "meta_rules", "global_codex_ids", "school", "terminal_state",
 	"dda_state_adaptive_enabled",
 ]

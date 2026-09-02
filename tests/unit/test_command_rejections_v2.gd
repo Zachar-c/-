@@ -107,6 +107,15 @@ func test_enact_rejects_repeat_activation() -> void:
 	assert_eq(out["state"], before)
 
 
+func test_enact_rejects_when_battle2_not_started_unchanged() -> void:
+	var before := _state()
+	var out := _run_on(before, "enact",
+		{"proposal": {"kind": "basic_action", "action": "strike", "thought": 1}})
+	assert_false(bool(out["result"]["ok"]))
+	assert_eq(str(out["result"]["reason"]), "battle2_not_started")
+	assert_eq(out["state"], before, "an empty ledger must not fabricate a fresh turn")
+
+
 func test_dodge_rejects_without_thought() -> void:
 	var out := _run("dodge", {"conditions": {"allow_dodge": true, "window_open": true,
 			"grappled": false, "bound": false, "restricted": false}, "has_thought": false})

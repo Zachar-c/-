@@ -54,6 +54,15 @@ func test_diagnose_reports_old_run_as_unsupported_version() -> void:
 	assert_eq(str(diagnosis.get("kind", "")), "unsupported_version")
 
 
+func test_v4_round_trip_preserves_battle2_ledger() -> void:
+	var run := RunState.new_run(101)
+	run.battle2_ledger = Battle2TurnEngine.new_turn(3)
+	var payload := SaveRepositoryScript.serialize_run(run, [], [])
+	var loaded: Dictionary = SaveRepositoryScript.load_run_from_data(payload)
+	var restored: RunState = loaded["state"]
+	assert_eq_deep(restored.battle2_ledger, run.battle2_ledger)
+
+
 func test_v3_meta_migrates_hall_fields_without_loss() -> void:
 	var meta: MetaProgress = MetaProgressScript.new_empty()
 	meta.gu_codex_ids = ["small_light_gu", "trail_eye_gu"]
