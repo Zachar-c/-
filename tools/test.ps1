@@ -9,6 +9,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $godot = Join-Path $PSScriptRoot 'godot.ps1'
 $guitkxBuild = Join-Path $PSScriptRoot 'guitkx_build.ps1'
+$gutChecked = Join-Path $PSScriptRoot 'run_gut_checked.ps1'
 
 & $guitkxBuild
 if ($LASTEXITCODE -ne 0) {
@@ -16,7 +17,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($Test) {
-    & $godot --headless --path $projectRoot -s addons/gut/gut_cmdln.gd "-gtest=res://$Test" -gexit -glog=2
+    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd','-gtest=res://' + $Test,'-gexit','-glog=2') -ExpectedTestPath ('res://' + $Test)
     exit $LASTEXITCODE
 }
 
@@ -27,7 +28,7 @@ $directories = switch ($Suite) {
 }
 
 foreach ($directory in $directories) {
-    & $godot --headless --path $projectRoot -s addons/gut/gut_cmdln.gd "-gdir=res://$directory" -gexit -glog=2
+    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd','-gdir=res://' + $directory,'-gexit','-glog=2')
     if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
     }

@@ -2,6 +2,7 @@ extends GutTest
 
 
 const DEBUG_PANEL_TSCN := "res://scenes/ui/widgets/debug_panel.tscn"
+const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 
 
 # T5-D fusion round: the panel UI stays ours (db5ee21); the domain core is the
