@@ -130,24 +130,6 @@ func test_rejection_leaves_a_light_audit_trail() -> void:
 	assert_eq(int((entry["targets"] as Array).size()), 0)
 
 
-func test_add_gu_rejected_when_deck_capacity_exceeded() -> void:
-	var cat := enabled_catalog()
-	var state: RunState = RunStateScript.new_run(2026, null)
-	var rejected := {}
-	for _attempt in range(20):
-		var applied := DebugActionsScript.apply(
-				state, cat, {"op": "add_gu", "definition_id": "trail_eye_gu"}, true)
-		if not bool(applied["ok"]):
-			rejected = applied
-			break
-		state = applied["state"]
-	assert_false(rejected.is_empty(), "capacity must reject within 20 debug adds")
-	assert_eq(str(rejected["result"]["reason"]), "deck_capacity_exceeded",
-			"rejection must reuse the formal capacity reason")
-	assert_eq(int(rejected["state"].event_log.size()), int(state.event_log.size()) + 1,
-			"rejected add appends exactly one light audit entry")
-
-
 func test_set_resources_clamps_every_value_into_legal_bounds() -> void:
 	var cat := enabled_catalog()
 	var state: RunState = RunStateScript.new_run(2026, null)

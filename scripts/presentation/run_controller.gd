@@ -15,7 +15,6 @@ const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
-const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
 const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
@@ -338,7 +337,6 @@ const _REJECTION_TEXT := {
 	"contract_locked": "该契约尚未解锁。",
 	"contract_sworn": "该契约已立誓。",
 	"contract_soft_cap": "契约数量已达上限。",
-	"deck_capacity": "蛊囊已满，无法再装入。",
 	"gu_slot_full": "蛊槽已满，请先取舍。",
 	"refine_input_missing": "炼蛊材料不足：先投入至少两味材料。",
 	"refine_slot_invalid": "炼蛊空位校验未通过。",

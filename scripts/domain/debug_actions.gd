@@ -13,7 +13,6 @@ extends RefCounted
 # tests can exercise the rejection path.
 
 
-const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
@@ -57,8 +56,6 @@ static func _add_gu(state: RunState, catalog: Dictionary, action: Dictionary) ->
 		return _rejected(state, action, "unknown_gu")
 	if state.is_terminal():
 		return _rejected(state, action, "terminal_run")
-	if DeckCapacityScript.projected_count(state, catalog, [gu_id], []) > DeckCapacityScript.capacity(catalog):
-		return _rejected(state, action, "deck_capacity_exceeded")
 	var instances := state.gu_instances.duplicate(true)
 	var aperture := state.cave_aperture.duplicate(true)
 	var instance_id := RunState.next_gu_instance_id(instances)

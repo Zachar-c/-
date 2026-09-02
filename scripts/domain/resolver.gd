@@ -4,7 +4,6 @@ extends RefCounted
 
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
-const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
@@ -210,9 +209,6 @@ static func _buy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
-	var blocked := _reject_deck_full(state, catalog, [str(offer["output_gu_id"])], [])
-	if not blocked.is_empty():
-		return blocked
 	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, [], "caravan_bought_gu")
 
 
@@ -248,9 +244,6 @@ static func _exchange_gu(state: RunState, command: Dictionary, catalog: Dictiona
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
-	var blocked := _reject_deck_full(state, catalog, [str(offer["output_gu_id"])], inputs)
-	if not blocked.is_empty():
-		return blocked
 	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, inputs, "caravan_exchanged_gu")
 
 
@@ -330,9 +323,6 @@ static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog
 			inputs
 		))
 		return _accepted(failed)
-	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
-	if not blocked.is_empty():
-		return blocked
 	return _add_gu_transaction(paid, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])])
 
 
@@ -378,9 +368,6 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 			if int(instance.get("rank", 1)) < min_rank:
 				return _rejected(state, "refinement_input_rank_insufficient")
 	var paid := _spend_materials(state, material_cost)
-	var blocked := _reject_deck_full(paid, catalog, [str(recipe["output_gu_id"])], inputs)
-	if not blocked.is_empty():
-		return blocked
 	var selected := preselected
 	var instances := paid.gu_instances.duplicate(true)
 	var aperture := paid.cave_aperture.duplicate(true)
@@ -977,7 +964,7 @@ static func _can_gain_relic(state: RunState, catalog: Dictionary, relic_id: Stri
 	if state.relic_ids.has(relic_id):
 		return "relic_already_owned"
 	# R4.9 imprint slots: the hard cap forces build trade-offs.
-	if state.relic_ids.size() >= DeckCapacityScript.imprint_capacity(catalog):
+	if state.relic_ids.size() >= int(catalog.get("deck", {}).get("imprint_capacity", 4)):
 		return "imprint_capacity_exceeded"
 	# Order locked by brief: capacity rejection wins before the meta cap (R4.8).
 	# R14.6 (night batch): system DDA markers (sys: keys) never count against
@@ -1055,9 +1042,6 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 		return _shop_resource_trade(state, offer, catalog)
 	if str(offer.get("kind", "")) != "purchase":
 		return _rejected(state, "unknown_shop_offer")
-	var blocked := _reject_deck_full(state, catalog, [str(offer["gu_id"])], [])
-	if not blocked.is_empty():
-		return blocked
 	# 黑市分层上架：货阶高于当前大层时拒绝（层越深货越贵且稀有度越高）。
 	if int(offer.get("tier", 1)) > _current_shop_layer(state, catalog):
 		return _rejected(state, "shop_tier_locked")
@@ -1308,9 +1292,6 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 		var removed_defs: Array[String] = []
 		for instance_id_value in selected:
 			removed_defs.append(str(state.gu_instances[str(instance_id_value)].get("definition_id", "")))
-		var blocked := _reject_deck_full(state, catalog, [str(chosen["gu_id"])], removed_defs)
-		if not blocked.is_empty():
-			return blocked
 	var instances := state.gu_instances.duplicate(true)
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
@@ -2391,12 +2372,6 @@ static func _use_material(state: RunState, command: Dictionary, catalog: Diction
 	next.essence = essence_after
 	next.materials = remaining
 	return _accepted(next)
-
-
-static func _reject_deck_full(state: RunState, catalog: Dictionary, added_gu_ids: Array, removed_gu_ids: Array) -> Dictionary:
-	if DeckCapacityScript.projected_count(state, catalog, added_gu_ids, removed_gu_ids) > DeckCapacityScript.capacity(catalog):
-		return _rejected(state, "deck_capacity_exceeded")
-	return {}
 
 
 static func gain_notoriety(state: RunState, amount: int, reason_key: String) -> RunState:

@@ -545,9 +545,6 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var value: Variant = reputation[group_name][key_value]
 			if not _is_integral(value) or int(value) < 0:
 				errors.append("reputation %s.%s must be a non-negative integer" % [group_name, key_value])
-	var raw_capacity: Variant = catalog.get("deck", {}).get("capacity", -1)
-	if not _is_integral(raw_capacity) or int(raw_capacity) < 1:
-		errors.append("deck capacity must be a positive integer")
 	var raw_imprint_capacity: Variant = catalog.get("deck", {}).get("imprint_capacity", -1)
 	if not _is_integral(raw_imprint_capacity) or int(raw_imprint_capacity) < 1:
 		errors.append("deck imprint_capacity must be a positive integer")

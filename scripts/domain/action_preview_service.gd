@@ -2,7 +2,6 @@ class_name ActionPreviewService
 extends RefCounted
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
-const DeckCapacityScript = preload("res://scripts/domain/deck_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 # BattleResolver is a global class_name; referenced directly (no preload) to
 # avoid a cyclic preload with battle_resolver.gd which previews battles too.
@@ -471,16 +470,13 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 	# 蛊方图鉴门禁（2026-08-30）：与执行/快照共用 Resolver.recipe_unlocked，
 	# fixed/combine 须持有蛊方，advance 豁免，default_unlocked 配方初始持有。
 	var codex_ok := ResolverScript.recipe_unlocked(state, recipe)
-	var deck_full := DeckCapacityScript.projected_count(state, catalog, [str(recipe.get("output_gu_id", ""))], inputs) > DeckCapacityScript.capacity(catalog)
 	var is_fixed := str(recipe.get("kind", "combine")) == "fixed"
 	var success_rate: Variant = null
 	if not is_fixed:
 		success_rate = int(recipe.get("success_roll_max", 0))
-	var executable := missing.is_empty() and codex_ok and not deck_full
+	var executable := missing.is_empty() and codex_ok
 	var reason := ""
-	if deck_full:
-		reason = "牌组已满（%d/%d），炼成后无法容纳新蛊。" % [DeckCapacityScript.card_count(state, catalog), DeckCapacityScript.capacity(catalog)]
-	elif not codex_ok:
+	if not codex_ok:
 		reason = str(recipe.get("locked_reason", "尚未获得该蛊方，无法按此配方合炼。"))
 	elif not missing.is_empty():
 		reason = "缺少%s。" % _gu_names(missing)
@@ -602,14 +598,13 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 			}))
 		"purchase":
 			var cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
-			var deck_full := DeckCapacityScript.would_exceed(state, catalog, 1)
-			var executable := state.stone >= cost and not deck_full
+			var executable := state.stone >= cost
 			cards.append(_card(state, {
 				"id": "shop.%s" % str(offer["card_key"]),
 				"title": "购入%s" % DisplayText.gu(str(offer["gu_id"])),
 				"summary": "黑市明码标价，钱货两讫。",
 				"executable": executable,
-				"block_reason": "牌组已满（%d/%d），请先弃蛊或出售。" % [DeckCapacityScript.card_count(state, catalog), DeckCapacityScript.capacity(catalog)] if deck_full else "元石不足：需要 %d 枚，当前仅有 %d 枚。" % [cost, state.stone] if not executable else "",
+				"block_reason": "" if executable else "元石不足：需要 %d 枚，当前仅有 %d 枚。" % [cost, state.stone],
 				"cost": {"stone": cost},
 				"expected_gain": ["获得%s。" % DisplayText.gu(str(offer["gu_id"]))],
 				"remedy_hints": _stone_remedies(cost - state.stone) if not executable else [],

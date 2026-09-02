@@ -419,7 +419,7 @@ static func refine(controller) -> Dictionary:
 		{"id": "combine", "label": "组合标签"},
 		{"id": "blind", "label": "盲盒随机"},
 	]
-	out["slot_ok"] = not DeckCapacity.would_exceed(state, catalog, 1)
+	out["slot_ok"] = true
 	out["blind_note"] = "盲盒自动投入全部已炼成蛊虫（至少 %d 只），产物与炸炉代价按种子结算。" % int(free_mix.get("min_inputs", 2))
 	out["recipes"] = rec_rows
 	var dismantle_slots: Array[Dictionary] = []

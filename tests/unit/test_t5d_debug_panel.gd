@@ -196,23 +196,19 @@ func test_add_gu_rejection_leaves_a_debug_rejected_audit_entry() -> void:
 	assert_eq(controller.state.gu_instances, instances_before, "live instances untouched")
 
 
-func test_add_gu_over_capacity_is_rejected_by_the_service_and_audited() -> void:
+func test_add_gu_has_no_slot_gate_anymore() -> void:
+	# T10.1-1: the gu slot gate is abolished - unlimited holding is the rule
+	# and the debug add never rejects on capacity; the instance lands.
 	var controller := _new_controller(true)
-	controller.catalog["deck"]["capacity"] = 1
-	var events_before: int = controller.state.event_log.size()
-	var instances_before: Dictionary = controller.state.gu_instances.duplicate(true)
-	var aperture_before: Dictionary = controller.state.cave_aperture.duplicate(true)
-
-	var result: Dictionary = controller.debug_add_gu("thorn_whip_gu")
-	assert_false(bool(result.get("ok", true)), "over-capacity gain must be rejected")
-	assert_eq(str(result.get("reason", "")), "deck_capacity_exceeded")
-	assert_eq(controller.state.event_log.size(), events_before + 1, "rejection rides one light audit entry")
-	var entry := _last_entry(controller.state)
-	assert_eq(str(entry["action"]), "debug_rejected")
-	assert_eq(str(entry["reason"]), "deck_capacity_exceeded")
-	assert_eq_deep(entry["after"]["_debug"], {"op": "add_gu", "definition_id": "thorn_whip_gu"})
-	assert_eq(controller.state.gu_instances, instances_before, "capacity rejection leaves instances untouched")
-	assert_eq(controller.state.cave_aperture, aperture_before, "capacity rejection leaves slots untouched")
+	var state: RunState = controller.state
+	var added_id := ""
+	for _attempt in range(20):
+		var applied := DebugActionsScript.apply(state, controller.catalog,
+				{"op": "add_gu", "definition_id": "thorn_whip_gu"}, true)
+		assert_true(bool(applied["ok"]), str(applied))
+		added_id = str(applied["result"].get("instance_id", ""))
+		state = applied["state"]
+	assert_false(added_id.is_empty(), "debug add must succeed without a capacity gate")
 
 
 # ---------------------------------------------------------------- resources
@@ -407,7 +403,7 @@ func test_panel_renders_pool_intel_rows_and_feedback_toast() -> void:
 	var controller := _new_controller(true)
 	var props: Dictionary = controller._debug_props()
 	props["open"] = true
-	props["feedback"] = "调试失败：蛊囊已满（deck_capacity_exceeded）"
+	props["feedback"] = "调试失败：参数越界（invalid_parameter）"
 	var host := _mount_screen(props)
 	await get_tree().process_frame
 	for i in 3:

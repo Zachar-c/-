@@ -161,26 +161,6 @@ static func release_gu(state, command: Dictionary, catalog: Dictionary) -> Dicti
 	return _accept(next, {"consequences": release["consequences"]})
 
 
-static func destroy_gu(state, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var instance_id := str(command.get("instance_id", ""))
-	if not (state.gu_instances as Dictionary).has(instance_id):
-		return _reject(state, "instance_missing")
-	var destroyed := LootRulesScript.destroy_gu(
-			state.gu_instances[instance_id], str(command.get("method", "killed")),
-			str(command.get("means", "generic")), catalog)
-	var instances: Dictionary = state.gu_instances.duplicate(true)
-	instances.erase(instance_id)
-	var materials := (state.materials as Dictionary).duplicate(true)
-	for material_id in destroyed["extracted"]:
-		materials[material_id] = float(materials.get(material_id, 0.0)) + float(destroyed["extracted"][material_id])
-	var next: RunState = state.append_event(_event(state, "gu_destroyed",
-			{"gu_instances": state.gu_instances, "materials": state.materials},
-			{"gu_instances": instances, "materials": materials},
-			"destroyed_by_means", [instance_id]))
-	next.sync_legacy_gu_projections()
-	return _accept(next, {"extracted": destroyed["extracted"]})
-
-
 # market family ---------------------------------------------------------------
 static func sell_info(state, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var sold := MarketRulesScript.sell_info(command.get("info", {}),
