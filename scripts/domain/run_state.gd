@@ -49,6 +49,11 @@ var cave_aperture: Dictionary = {}
 var gu_instances: Dictionary = {}
 var gu_card_overrides: Dictionary = {}
 var materials: Dictionary = {}
+# T10.1-6: battle2 ledger owns the discrete-turn combat state in the domain
+# (created at battle start, advanced by start_turn, read-only in snapshots).
+# Runtime field, not persisted (V1 battles live in the controller battle
+# dict; ledger rides the event log via the _battle2_ledger info key).
+var battle2_ledger: Dictionary = {}
 var relic_ids: Array[String] = []
 var meta_rules: Dictionary = {}
 # R14.6⑧ (night batch): hall toggle snapshot copied into the run at birth;

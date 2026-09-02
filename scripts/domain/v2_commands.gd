@@ -197,13 +197,25 @@ static func sell_info(state, command: Dictionary, catalog: Dictionary) -> Dictio
 
 
 # battle2 orchestration family -------------------------------------------------
-static func enact(_state, command: Dictionary, _catalog: Dictionary) -> Dictionary:
-	var ledger: Dictionary = command.get("ledger", {})
+# battle2 orchestration family ---------------------------------------------
+# T10.1-6 authority: the ledger owns the discrete-turn battle state as a
+# domain field (created at battle start via a fresh turn, advanced by enact,
+# projected read-only in snapshots). The event log carries each transition
+# under the _battle2_ledger info key (stateless, never applied to state).
+static func enact(state, command: Dictionary, _catalog: Dictionary) -> Dictionary:
+	var ledger: Dictionary = state.battle2_ledger
+	if (ledger as Dictionary).is_empty():
+		ledger = Battle2TurnEngineScript.new_turn(5)
 	var proposal: Dictionary = command.get("proposal", {})
 	var out := Battle2TurnEngineScript.enact(ledger, proposal)
 	if not bool(out["ok"]):
-		return _reject(_state, str(out["reason"]))
-	return _accept(_state, {"ok": true, "reason": "", "ledger": out["ledger"]})
+		return _reject(state, str(out["reason"]))
+	var next: RunState = state.append_event(_event(state, "battle2_enact",
+			{"_battle2_ledger": ledger.duplicate(true)},
+			{"_battle2_ledger": out["ledger"].duplicate(true)},
+			"player_enact", []))
+	next.battle2_ledger = out["ledger"]
+	return _accept(next, {"ledger": out["ledger"]})
 
 
 static func dodge(state, command: Dictionary, _catalog: Dictionary) -> Dictionary:

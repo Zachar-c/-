@@ -92,12 +92,16 @@ func test_sell_info_rejects_a_buyer_who_already_paid() -> void:
 
 
 func test_enact_rejects_repeat_activation() -> void:
+	# T10.1-6: the ledger lives in the domain state now - no client-passed
+	# ledger anymore.
 	var before := _state()
-	var out := _run_on(before, "enact", {
-		"ledger": {"phase": "declare", "thoughts_left": 5, "thought_used": 0, "reserved": 0,
-			"gu_used": {"gu_001": true}, "actions_used": {"move": false, "strike": false, "dodge": false, "grapple": false},
-			"maintained": [], "ongoing": []},
-		"proposal": {"kind": "activate_gu", "instance_id": "gu_001", "thought": 1}})
+	before.battle2_ledger = {
+		"phase": "declare", "thoughts_left": 5, "thought_used": 0, "reserved": 0,
+		"gu_used": {"gu_001": true},
+		"actions_used": {"move": false, "strike": false, "dodge": false, "grapple": false},
+		"maintained": [], "ongoing": []}
+	var out := _run_on(before, "enact",
+		{"proposal": {"kind": "activate_gu", "instance_id": "gu_001", "thought": 1}})
 	assert_false(bool(out["result"]["ok"]))
 	assert_eq(str(out["result"]["reason"]), "gu_already_used_this_turn")
 	assert_eq(out["state"], before)
