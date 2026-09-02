@@ -12,6 +12,9 @@ const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 const BATTLE_HAND_SIZE := 2
+# V1 battle2 ledger hook: keep the turn engine reachable from the five
+# accepted-turn sites without re-preloading in each helper.
+const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 
 
 # 2026-08-31 数值重做：真元总量、蛊虫催动消耗、蛊虫伤害同用转数因子
@@ -488,6 +491,9 @@ static func _basic_attack(battle: Dictionary, state: RunState, catalog: Dictiona
 	else:
 		_strike(battle, punch_damage, "attack", target_id)
 	battle["log"].append(log_entry)
+	# V1 battle2 ledger hook: each accepted turn spends one thought on the
+	# per-battle ledger before the event is appended.
+	state.current_battle2_ledger = Battle2TurnEngineScript.consume(state.current_battle2_ledger, 1)
 	var next_state := state.append_event(_event(state, "battle_basic_attack", {}, {}, "battle_basic_attack", []))
 	return _with_objective_result(battle, next_state, catalog)
 
@@ -598,6 +604,8 @@ static func _basic_dodge(battle: Dictionary, state: RunState) -> Dictionary:
 	battle["actions_left"] = int(battle.get("actions_left", 0)) - 1
 	battle["player_block"] = int(battle.get("player_block", 0)) + 1
 	battle["log"].append({"id": "basic_dodge", "block": 1})
+	# V1 battle2 ledger hook: dodge costs one thought, like every accepted turn.
+	state.current_battle2_ledger = Battle2TurnEngineScript.consume(state.current_battle2_ledger, 1)
 	var next_state := state.append_event(_event(state, "battle_basic_dodge", {}, {}, "battle_basic_dodge", []))
 	return _result(battle, next_state, false, "ongoing", ["dodge_readied"])
 
@@ -758,6 +766,9 @@ static func _use_gu(battle: Dictionary, action: Dictionary, state: RunState, cat
 		soulful["soul"] = int(overchannel["soul"])
 		after["cultivator"] = soulful
 	battle["log"].append(log_entry)
+	# V1 battle2 ledger hook: each gu activation spends one thought on the
+	# per-battle ledger before the event is appended.
+	state.current_battle2_ledger = Battle2TurnEngineScript.consume(state.current_battle2_ledger, 1)
 	var next_state := state.append_event(_event(state, "battle_use_gu", {"essence": state.essence}, after, "battle_gu_%s" % gu_id, [gu_id]))
 	return _with_objective_result(battle, next_state, catalog)
 
@@ -774,6 +785,8 @@ static func _use_inheritance(battle: Dictionary, action: Dictionary, state: RunS
 	_add_flag(battle, "revealed")
 	_add_flag(battle, str(move["special_buff"]))
 	battle["log"].append({"id": "inheritance_used", "move_id": move_id})
+	# V1 battle2 ledger hook: each accepted inheritance move spends one thought.
+	state.current_battle2_ledger = Battle2TurnEngineScript.consume(state.current_battle2_ledger, 1)
 	var next_state := state.append_event(_event(state, "battle_use_inheritance", {}, {}, "battle_inheritance_%s" % move_id, [move_id]))
 	return _with_objective_result(battle, next_state, catalog)
 
@@ -1491,7 +1504,17 @@ static func _battle_over(battle: Dictionary, state: RunState, catalog: Dictionar
 	var end_hook := RelicHookResolverScript.apply_battle_end(battle, state, catalog)
 	var hook_feeds: Array[String] = end_hook["feeds"]
 	feeds.append_array(hook_feeds)
-	return _result(end_hook["battle"], end_hook["state"], finished, result_kind, feeds)
+	# V1 battle2 ledger hook: when the per-battle handle carries spend
+	# beyond the producer's frame, snapshot it onto a dedicated info event.
+	# (The V1 facade funnel already attaches the snapshot to the controller's
+	# battle_finished event, so this fallback is only reached by the legacy
+	# BattleResolver.take_turn path; the controller's _finish_battle_in_session
+	# would then dedupe via its ledger_snapshot capture.)
+	var settled: RunState = end_hook["state"]
+	if not settled.current_battle2_ledger.is_empty():
+		settled = settled.append_event(_info_event(settled, {"_battle2_ledger": settled.current_battle2_ledger.duplicate(true)}, "battle2_ledger_finalised"))
+		settled.current_battle2_ledger = {}
+	return _result(end_hook["battle"], settled, finished, result_kind, feeds)
 
 
 # Death variant: hooks MUST evaluate on the pre-finalization state because
@@ -1501,7 +1524,17 @@ static func _death_over(battle: Dictionary, state: RunState, catalog: Dictionary
 	var end_hook := RelicHookResolverScript.apply_battle_end(battle, state, catalog)
 	var hook_feeds: Array[String] = end_hook["feeds"]
 	feeds.append_array(hook_feeds)
-	return _result(end_hook["battle"], end_hook["state"].finalize_death(), true, "death", feeds)
+	# V1 battle2 ledger hook: same finalisation rule as _battle_over; the
+	# ledger snapshot rides the last event before the run terminates.
+	var settled: RunState = end_hook["state"]
+	if not settled.current_battle2_ledger.is_empty():
+		settled = settled.append_event(_info_event(settled, {"_battle2_ledger": settled.current_battle2_ledger.duplicate(true)}, "battle2_ledger_finalised"))
+		settled.current_battle2_ledger = {}
+	return _result(end_hook["battle"], settled.finalize_death(), true, "death", feeds)
+
+
+static func _info_event(state: RunState, info: Dictionary, reason: String) -> Dictionary:
+	return {"stage": state.stage, "time": state.event_log.size(), "node_id": state.current_node_id, "action": "battle_info", "before": {}, "after": {}, "reason": reason, "source": "battle_resolver", "targets": [], "info": info}
 
 
 static func _result(battle: Dictionary, state: RunState, finished: bool, result: String, feeds: Array[String]) -> Dictionary:

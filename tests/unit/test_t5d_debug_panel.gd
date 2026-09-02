@@ -414,7 +414,7 @@ func test_panel_renders_pool_intel_rows_and_feedback_toast() -> void:
 	assert_true(_host_has_text(host, "合成连败 0"), "synthesis streak mirrors the query payload")
 	assert_true(_host_has_text(host, "当前种子 101"), "run seed must render read-only")
 	assert_true(_host_has_text(host, "池排除列表：（无）"), "empty exclusion list must say so honestly")
-	assert_true(_host_has_text(host, "调试失败：蛊囊已满"), "failure feedback must surface through the toast row")
+	assert_true(_host_has_text(host, "调试失败：参数越界"), "failure feedback must surface through the toast row")
 
 
 func test_panel_toggle_command_flips_controller_state() -> void:

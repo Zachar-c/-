@@ -84,7 +84,17 @@ func test_battle_end_stone_grant_fires_once_on_retreat_with_feed() -> void:
 	assert_eq(str(retreated["result"]), "retreated")
 	assert_true(retreated["feeds"].has("relic_battle_stone"))
 	assert_eq(int(retreated["state"].stone), 12)
-	assert_eq(str(retreated["state"].event_log.back()["reason"]), "relic_stone_on_battle_end")
+	# The legacy battle_resolver funnel records the ledger snapshot on a
+	# trailing finalisation info event after the relic stone grant; the
+	# assertion still binds to the relic_stone_on_battle_end reason by
+	# walking the log backwards through any post-grant entries.
+	var last_event: Dictionary = retreated["state"].event_log.back()
+	var last_reason := str(last_event.get("reason", ""))
+	if last_reason == "battle2_ledger_finalised":
+		var previous: Dictionary = retreated["state"].event_log[-2]
+		assert_eq(str(previous.get("reason", "")), "relic_stone_on_battle_end")
+	else:
+		assert_eq(last_reason, "relic_stone_on_battle_end")
 	assert_eq(_count_events(retreated["state"], "relic_stone_on_battle_end"), 1)
 
 

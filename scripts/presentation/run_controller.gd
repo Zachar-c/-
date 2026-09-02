@@ -20,6 +20,12 @@ const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_
 const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
+# V1 battle lifecycle hook: battle2 ledger sits in the RunState for the
+# duration of a single battle. Sized by CultivatorRules.thought_capacity and
+# consumed by battle_resolver's five accepted-turn sites; finalised through
+# the _battle2_ledger info key when the battle exits.
+const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
+const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 
 ## 全部屏已迁到 Godot 官方 .tscn 节点树（scenes/ui/screens/），RUITK 路由表
 ## 清空：_mount_screen() 只剩 .tscn 一条路径。表留在原位是「RUITK 屏必须为零」
@@ -809,6 +815,12 @@ func _start_battle() -> void:
 		encounter["enemy_kinds"] = (current_node.get("enemy_kinds", []) as Array).duplicate()
 	else:
 		encounter["enemy_kind"] = enemy_kind
+	# V1 battle2 ledger hook: seed a fresh per-battle ledger sized by the
+	# current cultivator's thought capacity. battle_resolver advances it at
+	# each accepted turn and finalises it on the exit info key.
+	state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
+		CultivatorRulesScript.thought_capacity(state.cultivator, catalog)
+	)
 	current_battle = BattleCommandFacadeScript.start(encounter, state, catalog)
 	# N6: weaknesses procured through probe carry into the battle as bonus damage.
 	if state.known_facts.has("procured_weakness"):
@@ -1219,6 +1231,14 @@ func _finish_battle_in_session(outcome: String) -> void:
 		current_session["flags"].erase("reputation_extreme")
 	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
 	var results := state.encounter_results.duplicate(true)
+	# V1 battle2 ledger hook: capture the consumed ledger snapshot now and
+	# ride it on the final battle_finished event's info key below (V1
+	# retreat / death / victory bypass the resolver's _battle_over funnel,
+	# so the controller writes the info key itself; battle_resolver's old
+	# _battle2_ledger info events are now redundant but kept for parity).
+	var ledger_snapshot: Dictionary = {}
+	if not state.current_battle2_ledger.is_empty():
+		ledger_snapshot = state.current_battle2_ledger.duplicate(true)
 	if outcome == "victory" and not battle_loot.is_empty():
 		var loot_labels: Array[String] = []
 		for material_value in battle_loot.get("material_ids", []):
@@ -1239,7 +1259,11 @@ func _finish_battle_in_session(outcome: String) -> void:
 	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
 		results.append(ResultFeedScript.entry("battle", "lifespan_milestone_gained", {}, []))
 	results.append(feed)
-	state = state.append_event({
+	# V1 battle2 ledger hook: attach the captured ledger snapshot onto the
+	# final battle_finished event's info key (the V1 battle_resolver funnel
+	# is bypassed for the controller-driven retreat / death / victory exits,
+	# so the controller writes the info key itself).
+	var finished_event: Dictionary = {
 		"stage": state.stage,
 		"time": state.event_log.size(),
 		"node_id": state.current_node_id,
@@ -1249,7 +1273,14 @@ func _finish_battle_in_session(outcome: String) -> void:
 		"reason": "battle_%s" % outcome,
 		"source": "run_controller",
 		"targets": [],
-	})
+	}
+	if not ledger_snapshot.is_empty():
+		finished_event["info"] = {"_battle2_ledger": ledger_snapshot.duplicate(true)}
+	state = state.append_event(finished_event)
+	# V1 battle2 ledger hook: clear the per-battle handle on the surviving
+	# state immediately after the snapshot rides the event. Future calls
+	# into _start_battle reseed.
+	state.current_battle2_ledger = {}
 	if outcome == "victory" and kill_source == "neutral_npc":
 		state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, catalog)["state"]
 	# 拓扑 v2：关底 Boss 按层落旗标（boss_defeated_L{n} 是下一大层的行进门禁）；

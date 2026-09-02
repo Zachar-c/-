@@ -24,7 +24,16 @@ func test_retreat_is_available_but_costs_a_declared_resource() -> void:
 	var turn := BattleResolver.take_turn(_pursuit_battle(state), {"type": "retreat"}, state, catalog)
 	assert_eq(turn["result"], "retreated")
 	assert_eq(turn["state"].stone, 3)
-	assert_eq(turn["state"].event_log.back()["reason"], "battle_retreat_stone_cost")
+	# The legacy battle_resolver funnel now records the ledger snapshot as a
+	# finalisation info event after the retreat event; the test still binds
+	# to the retreat stone-cost reason because the controller-driven V1
+	# facade is the only path that ships the facade's battle_finished event.
+	var last_event: Dictionary = turn["state"].event_log.back()
+	if last_event.get("reason", "") == "battle2_ledger_finalised":
+		var previous: Dictionary = turn["state"].event_log[-2]
+		assert_eq(previous.get("reason", ""), "battle_retreat_stone_cost")
+	else:
+		assert_eq(last_event.get("reason", ""), "battle_retreat_stone_cost")
 
 
 func test_moonlit_trace_requires_equipped_condition_and_applies_reveal_buff() -> void:

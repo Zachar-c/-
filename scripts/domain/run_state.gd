@@ -54,6 +54,13 @@ var materials: Dictionary = {}
 # Runtime field, not persisted (V1 battles live in the controller battle
 # dict; ledger rides the event log via the _battle2_ledger info key).
 var battle2_ledger: Dictionary = {}
+# V1 lifecycle hook: a per-battle, per-RunState handle that battle_resolver
+# reads/advances as accepted turns land. Created in _start_battle (sized by
+# CultivatorRulesScript.thought_capacity), consumed by the five accepted turn
+# sites, and finalised through the _battle2_ledger info key when the battle
+# exits (death / victory / retreat). Runtime only - not in STATE_FIELDS, not
+# serialised.
+var current_battle2_ledger: Dictionary = {}
 var relic_ids: Array[String] = []
 var meta_rules: Dictionary = {}
 # R14.6⑧ (night batch): hall toggle snapshot copied into the run at birth;
@@ -325,10 +332,15 @@ func _copy() -> RunState:
 			copy.event_log = event_log.duplicate()
 			continue
 		copy.set(field, _copy_value(get(field)))
+	# V1 battle2 ledger hook: keep the per-battle handle alive across _copy()
+	# so downstream accepted turns continue advancing the same ledger without
+	# the original reference being mutated.
+	copy.current_battle2_ledger = current_battle2_ledger.duplicate(true)
 	return copy
 
 
 func _normalized_event(event: Dictionary, index: int) -> Dictionary:
+	var info_field: Dictionary = event.get("info", {})
 	return {
 		"id": "event_%04d" % index,
 		"stage": event.get("stage", stage),
@@ -341,6 +353,7 @@ func _normalized_event(event: Dictionary, index: int) -> Dictionary:
 		"reason": event.get("reason", ""),
 		"source": event.get("source", current_node_id),
 		"targets": event.get("targets", []).duplicate(true),
+		"info": (info_field.duplicate(true) if info_field is Dictionary else {}),
 	}
 
 

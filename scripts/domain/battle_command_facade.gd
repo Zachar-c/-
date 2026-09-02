@@ -11,6 +11,8 @@ const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
 const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
+const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
+const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 
 
 const BATTLE_COMMAND_TYPES := [
@@ -119,7 +121,13 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			# 结算为 retreat（战斗结束路由到结算屏）。
 			if boss_blocks_retreat(battle):
 				return _rejected(battle, state, "retreat_forbidden")
-			return {"battle": battle, "state": state, "result": "retreat", "feeds": [], "finished": true, "accepted": true}
+			# V1 battle2 ledger hook: the per-battle ledger was already
+			# populated by the controller's _start_battle; retreat itself
+			# does NOT spend an extra thought (the controller only writes
+			# the existing ledger snapshot onto the exit info key, mirroring
+			# the spec's "every accepted turn" wording strictly).
+			var post_state: RunState = state
+			return {"battle": battle, "state": post_state, "result": "retreat", "feeds": [], "finished": true, "accepted": true}
 		_:
 			return _rejected(battle, state, "unsupported_battle_action")
 	var out: Dictionary = V1Script.player_action(battle, action)
@@ -134,9 +142,17 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			next["loot"] = settled.get("loot", {})
 			if not (settled.get("cost", {}) as Dictionary).is_empty():
 				next["cost"] = settled["cost"]
-			return {"battle": next, "state": settled.get("state", state), "result": "victory", "feeds": [], "finished": true, "accepted": true}
+			# V1 battle2 ledger hook: the controller already populated the
+			# per-battle ledger in _start_battle; victory only needs the
+			# existing snapshot to ride the exit info key (mirrors the
+			# retreat path - no extra thought spend).
+			var victory_state: RunState = settled.get("state", state)
+			return {"battle": next, "state": victory_state, "result": "victory", "feeds": [], "finished": true, "accepted": true}
 		"defeat":
-			return {"battle": next, "state": state, "result": "death", "feeds": [], "finished": true, "accepted": true}
+			# V1 battle2 ledger hook: a death exit also only needs the
+			# already-populated ledger to ride the exit info key.
+			var defeat_state: RunState = state
+			return {"battle": next, "state": defeat_state, "result": "death", "feeds": [], "finished": true, "accepted": true}
 		_:
 			# V1 战斗动作推进事件日志：供确定性/存档校验/反馈锚点。
 			var event_state := state.append_event({
@@ -150,6 +166,13 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 				"source": "battle_facade",
 				"targets": [],
 			})
+			# V1 battle2 ledger hook: every accepted turn (ongoing path) spends
+			# one thought on the per-battle ledger before the event lands.
+			if event_state.current_battle2_ledger.is_empty():
+				event_state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
+					CultivatorRulesScript.thought_capacity(event_state.cultivator, catalog))
+			else:
+				event_state.current_battle2_ledger = Battle2TurnEngineScript.consume(event_state.current_battle2_ledger, 1)
 			return {"battle": next, "state": event_state, "result": "ongoing", "feeds": [], "accepted": true}
 
 
