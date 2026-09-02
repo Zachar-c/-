@@ -981,6 +981,9 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"low_liquidity_ratio", "quick_substitute_cap", "base_speed",
 		"speed_min", "speed_max", "gu_estimate_ratio",
 		"blood_yield_ratio", "deep_blood_multiplier",
+		"soul_burst_capacity_ratio", "soul_calm_emotional_below",
+		"soul_calm_beast_below", "soul_calm_departure_below",
+		"beast_nature_emerging_above", "beast_nature_threshold",
 	]
 	for key in positive_keys:
 		var value: Variant = cfg.get(key, null)
@@ -991,6 +994,15 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 			errors.append("balance %s must be positive" % key)
 	if float(cfg.get("speed_max", 0.0)) < float(cfg.get("speed_min", 0.0)):
 		errors.append("balance speed_max must be >= speed_min")
+	var calm_regions := ["soul_calm_emotional_below", "soul_calm_beast_below", "soul_calm_departure_below"]
+	var previous_calm := 101.0
+	for calm_key in calm_regions:
+		var calm_value := float(cfg.get(calm_key, 0.0))
+		if calm_value <= 0.0 or calm_value > 100.0:
+			errors.append("balance %s must be in (0, 100]" % calm_key)
+		elif calm_value >= previous_calm:
+			errors.append("balance %s must descend below the previous stage" % calm_key)
+		previous_calm = calm_value
 	var ratio_keys := [
 		"standard_hit_ratio", "unarmed_damage_ratio", "standard_activation_cost",
 		"light_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",

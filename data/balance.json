@@ -26,5 +26,11 @@
   "speed_max": 5,
   "gu_estimate_ratio": 6.5,
   "blood_yield_ratio": 0.01,
-  "deep_blood_multiplier": 0.5
+  "deep_blood_multiplier": 0.5,
+  "soul_burst_capacity_ratio": 2.0,
+  "soul_calm_emotional_below": 40,
+  "soul_calm_beast_below": 25,
+  "soul_calm_departure_below": 10,
+  "beast_nature_emerging_above": 0.5,
+  "beast_nature_threshold": 1.0
 }

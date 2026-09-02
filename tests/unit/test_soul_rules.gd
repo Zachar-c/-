@@ -95,23 +95,32 @@ func test_collect_soul_gates_by_soul_and_means() -> void:
 func test_float_above_capacity_allowed_but_burst_death_needs_confirm() -> void:
 	# §15.4: floating above capacity is legal and unstable; an expected
 	# direct burst death carries the second-confirmation marker (soul_burst).
+	# The burst line rides balance.json (P0.1).
 	var cultivator := _cultivator()
 	cultivator["soul_magnitude"] = 6.0
 	assert_true(bool(SoulRulesScript.float_above_capacity(cultivator)))
-	var forecast := SoulRulesScript.soul_growth_forecast(cultivator, 10.0)
+	var forecast := SoulRulesScript.soul_growth_forecast(cultivator, 10.0, catalog)
 	assert_true(bool(forecast["lethal_confirm_required"]))
 	assert_eq(str(forecast["cause"]), "soul_burst")
+	var tuned := catalog.duplicate(true)
+	var balance := (catalog["balance"] as Dictionary).duplicate(true)
+	balance["soul_burst_capacity_ratio"] = 8.0
+	tuned["balance"] = balance
+	var loosened := SoulRulesScript.soul_growth_forecast(cultivator, 10.0, tuned)
+	assert_false(bool(loosened["lethal_confirm_required"]),
+			"a higher ratio must not mark the same growth lethal")
 
 
 func test_calm_stages_and_beast_nature_layer() -> void:
 	# §15.4: low composure layers (emotional -> beast emerging -> soul
 	# departure / loss of control); beast nature accumulates independently;
-	# the raving threshold is exposed with keep/use/purify options.
-	var layered := SoulRulesScript.composure_layers(_cultivator({"soul_calm": 20}))
+	# the raving threshold is exposed with keep/use/purify options. The stage
+	# thresholds ride balance.json (P0.1).
+	var layered := SoulRulesScript.composure_layers(_cultivator({"soul_calm": 20}), catalog)
 	assert_true(layered.has("emotional"))
 	var beast := _cultivator({"soul_calm": 20, "beast_nature": 0.6})
-	assert_true(bool(SoulRulesScript.beast_nature_emerging(beast)))
-	var expose := SoulRulesScript.beast_sight(beast)
+	assert_true(bool(SoulRulesScript.beast_nature_emerging(beast, catalog)))
+	var expose := SoulRulesScript.beast_sight(beast, catalog)
 	assert_true(float(expose["current_beast"]) > 0.0)
 	assert_true((expose["options"] as Array).has("keep"))
 	assert_true((expose["options"] as Array).has("use"))
@@ -122,12 +131,19 @@ func test_bestiality_endpoint_only_marks_never_silently_ends() -> void:
 	# §16.10: reaching the danger condition only returns a trigger marker;
 	# the run never silently terminates on any numeric threshold.
 	var cultivator := _cultivator({"beast_nature": 2.0, "soul_calm": 5})
-	var verdict := SoulRulesScript.bestiality_endpoint_check(cultivator)
+	var verdict := SoulRulesScript.bestiality_endpoint_check(cultivator, catalog)
 	assert_true(bool(verdict["beastiality_triggered"]))
 	assert_true(bool(verdict["confirm_required"]))
 	assert_false(bool(verdict.get("terminal", false)),
 			"a threshold must never silently end the run")
 	assert_eq(str(verdict["endpoint"]), "bestiality")
+	var tuned := catalog.duplicate(true)
+	var balance := (catalog["balance"] as Dictionary).duplicate(true)
+	balance["beast_nature_threshold"] = 4.0
+	tuned["balance"] = balance
+	var softened := SoulRulesScript.bestiality_endpoint_check(cultivator, tuned)
+	assert_false(bool(softened["beastiality_triggered"]),
+			"a raised threshold must un-trigger the same beast nature (config-following)")
 
 
 func test_new_run_declares_the_five_quantities() -> void:
