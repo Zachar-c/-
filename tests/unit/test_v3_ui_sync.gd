@@ -91,6 +91,17 @@ func test_battle_snapshot_projects_multiple_enemies_piles_and_actions() -> void:
 	assert_eq(str(snapshot["enemies"][0]["intent"]["type"]), "attack")
 
 
+func test_battle_snapshot_carries_all_eight_v2_groups() -> void:
+	var controller := _battle_controller()
+	var snapshot: Dictionary = controller._snapshot_for("Battle")
+	for index in range(1, 9):
+		var key := "group%d_%s" % [
+			index, ["gu_ledger", "core", "recipes", "feeding", "market", "body", "action", "soul"][index - 1]]
+		assert_true(snapshot.has(key), "real Battle snapshot must carry %s" % key)
+	assert_eq_deep(snapshot["group1_gu_ledger"]["gu_used"],
+			controller.state.battle2_ledger.get("gu_used", {}))
+
+
 func test_battle_view_hud_uses_programmatic_icons() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")

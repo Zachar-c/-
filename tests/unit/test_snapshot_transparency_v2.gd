@@ -54,8 +54,11 @@ func test_group1_ledger_projection_is_same_source() -> void:
 	ledger = Battle2TurnEngineScript.consume(ledger, 2)
 	ledger = Battle2TurnEngineScript.enact(ledger,
 			{"kind": "activate_gu", "instance_id": "gu_001", "thought": 1})["ledger"]
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), ledger, catalog)
+	var ctrl := _controller()
+	ctrl["state"].battle2_ledger = ledger
+	var snap := RunSnapshotBuilderScript.transparency_v2(ctrl)
 	var group: Dictionary = snap["group1_gu_ledger"]
+	assert_true(bool(group["active"]))
 	assert_eq(int(group["thoughts_left"]), int(ledger["thoughts_left"]))
 	assert_eq(int(group["thought_used"]), int(ledger["thought_used"]))
 	assert_eq(int(group["reserved"]), int(ledger["reserved"]))
@@ -63,8 +66,20 @@ func test_group1_ledger_projection_is_same_source() -> void:
 	assert_eq(str(group["phase"]), str(ledger["phase"]))
 
 
+func test_group1_absent_battle_projects_inactive_not_faked() -> void:
+	var ctrl := _controller()
+	ctrl["state"].battle2_ledger = {}
+	var snap := RunSnapshotBuilderScript.transparency_v2(ctrl)
+	var group: Dictionary = snap["group1_gu_ledger"]
+	assert_false(bool(group["active"]), "no battle must project inactive, not a fresh turn")
+	assert_eq(int(group["thoughts_left"]), 0)
+	assert_eq(str(group["phase"]), "")
+	assert_true((group["gu_used"] as Dictionary).is_empty())
+	assert_true((group["ongoing"] as Array).is_empty())
+
+
 func test_group2_core_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group2_core"]
 	assert_eq(str(group["depth"]),
 			str(CoreGuRulesScript.core_depth(catalog["gu_by_id"]["small_light_gu"], catalog)))
@@ -73,7 +88,7 @@ func test_group2_core_projection_is_same_source() -> void:
 
 
 func test_group3_recipe_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Array = snap["group3_recipes"]
 	var found_identity := false
 	var found_pool := false
@@ -93,7 +108,7 @@ func test_group3_recipe_projection_is_same_source() -> void:
 
 
 func test_group4_feeding_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group4_feeding"]
 	var state: RunState = _controller()["state"]
 	var direct := FeedingRulesScript.preview_settle(
@@ -103,7 +118,7 @@ func test_group4_feeding_projection_is_same_source() -> void:
 
 
 func test_group5_market_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group5_market"]
 	assert_almost_eq(float(group["t1_base"]),
 			float(MarketRulesScript.t1_material_base_price(catalog)), 0.0001)
@@ -115,7 +130,7 @@ func test_group5_market_projection_is_same_source() -> void:
 
 
 func test_group6_body_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group6_body"]
 	var state: RunState = _controller()["state"]
 	var body := CultivatorRulesScript.body(state.cultivator, catalog)
@@ -130,7 +145,7 @@ func test_group6_body_projection_is_same_source() -> void:
 
 
 func test_group7_action_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group7_action"]
 	assert_eq(str(group["conflict_order"]),
 			str(Battle2ActionResolverScript.conflict_order("quick", 3, "quick", 3)))
@@ -141,7 +156,7 @@ func test_group7_action_projection_is_same_source() -> void:
 
 
 func test_group8_soul_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller(), {}, catalog)
+	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group8_soul"]
 	var state: RunState = _controller()["state"]
 	assert_eq(str(group["snapshot"]), str(SoulRulesScript.snapshot(state.cultivator)))

@@ -48,9 +48,9 @@ UI (scenes + scripts/ui)
 | `ContentError` | `content_error()` | 目录校验错误（`ContentCatalog.validate` 非空时的兜底屏） |
 | 调试 | `debug()` | 保底计数/池排除/种子/事件数/DDA 分位（只读，§16.22） |
 
-`[T9.1 已落地]` 快照 v2 按 §17.2 八组扩容（增量键，逐键与规则模块同源，`RunSnapshotBuilder.transparency_v2(controller, battle2_ledger?, catalog?)`，返回八个分组键；`_` 前缀旁路键不进快照）：
+`[T9.1 已落地]` 快照 v2 按 §17.2 八组扩容（增量键，逐键与规则模块同源，`RunSnapshotBuilder.transparency_v2(controller)`，返回八个分组键；`_` 前缀旁路键不进快照）。所有真实 `for_screen(screen, controller)` 快照经 `_with_v2` 保守合并带入八组（同屏键优先）：
 
-1. `group1_gu_ledger`：`phase / thoughts_left / thought_used / reserved / gu_used{} / actions_used{move,strike,dodge,grapple} / maintained[] / ongoing[]`——battle2 ledger 直投影（无战斗上下文时以 `thought_capacity` 起一张 fresh ledger，键恒存在）；
+1. `group1_gu_ledger`：`active / phase / thoughts_left / thought_used / reserved / gu_used{} / actions_used{move,strike,dodge,grapple} / maintained[] / ongoing[]`——**从权威 `RunState.battle2_ledger` 只读直投影**；无战斗（账本为空）时投影 `active:false` 的空惰态形状，**不伪造 fresh 满念头账本**；
 2. `group2_core`：`confirmed_instance / depth(common_core|hub_core) / hub_evidence{branch_recipes,exclusive_refine} / tilt_suggestions{pool->boosted[]}`（`CoreGuRules` 直调用）；
 3. `group3_recipes`：每条配方的 `id/kind/product_rule/aux_core_warning` + 可选 `identity_requirements / allow_substitute / stages / candidate_pool`（`RecipeRules.resolve_candidates` 直投影，声明序）；
 4. `group4_feeding`：`preview{will_hunger,will_die} / budget_report{affordable_gu_count,sustainable_at_half,hard_rejection:false}`（`FeedingRules.preview_settle / budget_report`）；

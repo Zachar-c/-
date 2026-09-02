@@ -15,7 +15,6 @@ const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
-const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 const CoreGuRulesScript = preload("res://scripts/domain/core_gu_rules.gd")
 const RecipeRulesScript = preload("res://scripts/domain/recipe_rules.gd")
@@ -28,18 +27,28 @@ const BloodQiRulesScript = preload("res://scripts/domain/blood_qi_rules.gd")
 
 
 static func for_screen(screen: String, controller) -> Dictionary:
+	var base: Dictionary
 	match screen:
-		"Title": return hall(controller)
-		"Map": return map(controller)
-		"Encounter": return encounter(controller)
-		"Battle": return battle(controller)
-		"Shop": return shop(controller)
-		"Rest": return rest(controller)
-		"Refine": return refine(controller)
-		"Reward": return reward(controller)
-		"Npc": return npc(controller)
-		"ContentError": return content_error(controller)
-	return {}
+		"Title": base = hall(controller)
+		"Map": base = map(controller)
+		"Encounter": base = encounter(controller)
+		"Battle": base = battle(controller)
+		"Shop": base = shop(controller)
+		"Rest": base = rest(controller)
+		"Refine": base = refine(controller)
+		"Reward": base = reward(controller)
+		"Npc": base = npc(controller)
+		"ContentError": base = content_error(controller)
+		_: return {}
+	return _with_v2(base, controller)
+
+
+# Every real screen snapshot carries the eight §17.2 transparency groups as a
+# conservative additive merge (per-screen keys already take precedence).
+static func _with_v2(snapshot: Dictionary, controller) -> Dictionary:
+	var merged := snapshot.duplicate(true)
+	merged.merge(transparency_v2(controller), true)
+	return merged
 
 
 ## T5-D 调试面板只读段（§16.22）：保底计数 / 池排除列表 / 当前种子 / 事件数 / DDA 分位。
@@ -1773,13 +1782,13 @@ static func _node_label(n: Dictionary) -> String:
 # module's own output, never a copy. The section is strictly read-only: it
 # never assigns into run state and never calls setters. `_`-prefixed info
 # keys never enter a snapshot.
-static func transparency_v2(controller, battle2_ledger: Dictionary = {}, catalog_arg: Dictionary = {}) -> Dictionary:
+static func transparency_v2(controller) -> Dictionary:
 	var state = controller.state
-	var cat: Dictionary = catalog_arg if not catalog_arg.is_empty() else (controller.catalog if controller.catalog != null else {})
 	if state == null:
 		return {}
+	var cat: Dictionary = controller.catalog if controller.catalog != null else {}
 	return {
-		"group1_gu_ledger": _v2_group1(state, battle2_ledger, cat),
+		"group1_gu_ledger": _v2_group1(state, cat),
 		"group2_core": _v2_group2(state, cat),
 		"group3_recipes": _v2_group3(cat),
 		"group4_feeding": _v2_group4(state, cat),
@@ -1791,13 +1800,25 @@ static func transparency_v2(controller, battle2_ledger: Dictionary = {}, catalog
 
 
 # Group 1: gu actual yuan/thoughts/turn-usage/maintenance from the battle2
-# ledger shape (contract 6). An absent battle context projects a fresh
-# ledger at the cultivator's thought capacity - the keys always exist.
-static func _v2_group1(state, ledger_arg: Dictionary, cat: Dictionary) -> Dictionary:
-	var ledger: Dictionary = ledger_arg
+# ledger (contract 6). The ledger is read from authoritative RunState; when no
+# battle is active it projects an empty inactive ledger shape - it never
+# fabricates a fresh full-capacity turn.
+static func _v2_group1(state, cat: Dictionary) -> Dictionary:
+	var ledger: Dictionary = state.battle2_ledger
 	if ledger.is_empty():
-		ledger = Battle2TurnEngineScript.new_turn(CultivatorRulesScript.thought_capacity(state.cultivator, cat))
+		return {
+			"active": false,
+			"phase": "",
+			"thoughts_left": 0,
+			"thought_used": 0,
+			"reserved": 0,
+			"gu_used": {},
+			"actions_used": {"move": false, "strike": false, "dodge": false, "grapple": false},
+			"maintained": [],
+			"ongoing": [],
+		}
 	return {
+		"active": true,
 		"phase": str(ledger.get("phase", "")),
 		"thoughts_left": int(ledger.get("thoughts_left", 0)),
 		"thought_used": int(ledger.get("thought_used", 0)),
