@@ -3,7 +3,7 @@
 > 日期：2026-09-02
 > 用途：第九批"接口契约 → UI 规范 → 前端生成"流程的第一步产出。本档从**已完成的后端代码**提取真实暴露面，是后续 UI 规范与前端生成的唯一依据来源；前端不得使用本档之外的状态字段或命令。
 > 提取范围：`master @ 480183a`（阶段一至八合入）。阶段八的 `BloodQiRules` / `SoulRules` 已于本版补齐。
-> 提取纪律：本档只描述后端**已有**的接口；标注 `[T9 计划]` 的条目是权威实施计划（`2026-09-01-gu-system-economy-combat-implementation.md`）承诺的扩容项，尚未实现，前端生成时只允许占位、不得假数据。
+> 提取纪律：本档只描述后端**已有**的接口；`[T9 计划]`/`[T10 计划]` 占位已在阶段九/十全部落地为实际键/命令/映射（2026-09-02 终审清零），前端生成以本档现行为准。
 
 ---
 
@@ -155,12 +155,12 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 - 屏集合：`Title → Map ⇄ Encounter/Battle/Shop/Rest/Refine/Reward/Npc`；`ContentError` 为目录校验失败兜底屏。
 - `RunController` 持有 `state(RunState) / current_battle{} / current_session{} / current_node{} / route[] / last_feedback / last_load_diagnosis`。
 - 载入：`load_saved_run()` -> `diagnose_run_file()` 失败即 `_save_load_feedback`（v3 显示"已保留"文案）；`_restore_game` 以 `has("state")` 判成功。
-- 结局：`terminal_state != "active"` 即终局（`run_ended` 事件清空局内资源）；`[T9 计划]` 非死亡结局与致死确认统一走二次确认命令面。
+- 结局：`terminal_state != "active"` 即终局（`run_ended` 事件清空局内资源）；非死亡结局与致死确认统一走二次确认命令面（已落地：`bloodlet` 致死标记 `lethal_confirm_required`、`SoulRules.soul_growth_forecast`、兽化门 `beastiality_endpoint_check`——标记随命令结果返回，UI 层执行前强制确认）。
 
 ---
 
 ## 8. 本档维护约定
 
 1. ~~阶段八交付后：追加 `BloodQiRules` / `SoulRules` 两节~~ 已完成（2026-09-02）。
-2. 阶段九 T9.1/T9.2 每个提交落地后：把 `[T9 计划]` 占位改写为实际键/命令/映射，本档转为随代码维护的活文档。
+2. ~~阶段九 T9.1/T9.2 每个提交落地后回写占位~~ 已完成（2026-09-02）：T9.1 快照八组、T9.2 命令/词表/拒绝映射、T10.1/10.2 删除族均已回写；本档为随代码维护的活文档。
 3. 前端生成只允许消费本档列出的键与命令；发现需要新键时，走"快照键 + 同源测试"流程，不得在 UI 层拼私有数据。

@@ -10,8 +10,10 @@ const RESOLVER_PATH := "res://scripts/domain/resolver.gd"
 const BATTLE_RESOLVER_PATH := "res://scripts/domain/battle_resolver.gd"
 # NOTE: plan global-invariant line is 2457. The 9/1 batch pushed resolver past
 # it; a pre-phase-2 shrink (economy_rules.gd extraction) brought it back under.
-const RESOLVER_LINE_CAP := 2457
-const BATTLE_RESOLVER_LINE_CAP := 1516
+# T10.2 terminal values (one-way down from the 2457/1516 plan caps): the
+# phase-10 abolitions ended lower than both pre-deletion baselines (2452/1514).
+const RESOLVER_LINE_CAP := 2430
+const BATTLE_RESOLVER_LINE_CAP := 1515
 
 
 func _line_count(path: String) -> int:
