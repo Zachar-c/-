@@ -134,11 +134,12 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 	var next: Dictionary = out["battle"]
 	if not bool(out["result"]["ok"]):
 		return _rejected(next, state, str(out["result"]["reason"]))
+	var event_state := _append_v1_event(state, battle, next, command_type, action)
 	match str(next.get("phase", "")):
 		"victory":
 			# V1 胜利掉落：复用 LootResolver（材料/蛊/精英绑定代价），
 			# 与旧卡牌战斗同一结算口径，保证战利品闭环。
-			var settled := LootResolverScript.settle_victory(next, state, catalog)
+			var settled := LootResolverScript.settle_victory(next, event_state, catalog)
 			next["loot"] = settled.get("loot", {})
 			if not (settled.get("cost", {}) as Dictionary).is_empty():
 				next["cost"] = settled["cost"]
@@ -146,26 +147,13 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			# per-battle ledger in _start_battle; victory only needs the
 			# existing snapshot to ride the exit info key (mirrors the
 			# retreat path - no extra thought spend).
-			var victory_state: RunState = settled.get("state", state)
+			var victory_state: RunState = settled.get("state", event_state)
 			return {"battle": next, "state": victory_state, "result": "victory", "feeds": [], "finished": true, "accepted": true}
 		"defeat":
 			# V1 battle2 ledger hook: a death exit also only needs the
 			# already-populated ledger to ride the exit info key.
-			var defeat_state: RunState = state
-			return {"battle": next, "state": defeat_state, "result": "death", "feeds": [], "finished": true, "accepted": true}
+			return {"battle": next, "state": event_state, "result": "death", "feeds": [], "finished": true, "accepted": true}
 		_:
-			# V1 战斗动作推进事件日志：供确定性/存档校验/反馈锚点。
-			var event_state := state.append_event({
-				"stage": state.stage,
-				"time": state.event_log.size(),
-				"node_id": state.current_node_id,
-				"action": "battle_v1",
-				"before": {},
-				"after": {"battle_turn": int(next.get("turn", 1))},
-				"reason": "battle_v1_%s" % command_type,
-				"source": "battle_facade",
-				"targets": [],
-			})
 			# V1 battle2 ledger hook: every accepted turn (ongoing path) spends
 			# one thought on the per-battle ledger before the event lands.
 			if event_state.current_battle2_ledger.is_empty():
@@ -174,6 +162,33 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			else:
 				event_state.current_battle2_ledger = Battle2TurnEngineScript.consume(event_state.current_battle2_ledger, 1)
 			return {"battle": next, "state": event_state, "result": "ongoing", "feeds": [], "accepted": true}
+
+
+static func _append_v1_event(state: RunState, before: Dictionary, after: Dictionary, command_type: String, action: Dictionary) -> RunState:
+	var info: Dictionary = {"command_type": command_type}
+	if command_type == "use_gu":
+		var slot_index := int(action.get("slot_index", -1))
+		var slots: Array = before.get("gu_slots", [])
+		if slot_index >= 0 and slot_index < slots.size():
+			var slot: Dictionary = slots[slot_index]
+			var effect: Dictionary = slot.get("effect", {})
+			info["effect"] = {
+				"kind": str(effect.get("kind", "")),
+				"amount": int(effect.get("amount", 0)),
+				"target": "enemy" if str(effect.get("kind", "")) in ["strike", "status", "heal_and_strike"] else "player",
+			}
+	return state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "battle_v1",
+		"before": {},
+		"after": {"battle_turn": int(after.get("turn", 1))},
+		"reason": "battle_v1_%s" % command_type,
+		"source": "battle_facade",
+		"targets": [],
+		"info": info,
+	})
 
 
 static func _action_card_passthrough(battle: Dictionary, command: Dictionary) -> String:

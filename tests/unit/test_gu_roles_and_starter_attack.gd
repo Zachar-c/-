@@ -5,6 +5,7 @@ const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
+const SnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 
 
 var catalog: Dictionary
@@ -100,6 +101,39 @@ func test_starter_combat_gu_are_usable_and_have_observable_effects() -> void:
 			"starter gu %s must produce an observable effect" % starter_ids[index])
 		# Reset the per-turn single-use gate while retaining the tested effect.
 		facade_battle = BattleCommandFacadeScript.start({"enemy_kind": "beast_swarm"}, run, catalog)
+
+
+func test_starter_gu_effect_projection_is_chinese_and_exact() -> void:
+	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "status", "name": "marked", "amount": 1}}), "标记 1 层")
+	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "heal_and_strike", "heal": 2, "amount": 1}}), "恢复 2 气血并造成 1 伤害")
+	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "shift", "amount": 1}}), "位移 1 格")
+
+
+func test_starter_gu_costs_and_effect_facts_are_logged() -> void:
+	var run := RunState.new_run(101)
+	run.cave_aperture["stored_gu_instance_ids"] = []
+	run.gu_instances = {}
+	var starter_ids := ["trail_eye_gu", "blood_moss_gu", "thorn_whip_gu", "mist_step_gu", "venom_thread_gu", "stone_shell_gu"]
+	for index in starter_ids.size():
+		var instance_id := "cost_%02d" % index
+		run.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+		run.gu_instances[instance_id] = GuInstanceScript.new_instance(starter_ids[index], instance_id, catalog)
+	var battle := BattleCommandFacadeScript.start({"enemy_kind": "beast_swarm"}, run, catalog)
+	var initial_log_size := run.event_log.size()
+	for index in starter_ids.size():
+		var slot: Dictionary = battle["gu_slots"][index]
+		var before_qi := int(battle["player"]["true_qi"])
+		var before_thoughts := int(battle["player"]["thoughts"])
+		var out := BattleCommandFacadeScript.apply_turn(battle, run, {"type": "use_gu", "instance_id": slot["instance_id"]}, catalog)
+		assert_true(bool(out["accepted"]))
+		assert_eq(int(out["battle"]["player"]["true_qi"]), before_qi - int(slot["true_qi_cost"]))
+		assert_eq(int(out["battle"]["player"]["thoughts"]), before_thoughts - int(slot["thought_cost"]))
+		assert_eq(out["state"].event_log.size(), initial_log_size + 1)
+		var fact: Dictionary = out["state"].event_log[initial_log_size]["info"]["effect"]
+		assert_eq(str(fact["kind"]), str(slot["effect"]["kind"]))
+		assert_eq(int(fact["amount"]), int(slot["effect"].get("amount", 0)))
+		assert_true(not str(fact["target"]).is_empty())
+		battle = BattleCommandFacadeScript.start({"enemy_kind": "beast_swarm"}, run, catalog)
 
 
 func _battle_changed_by_gu(before: Dictionary, after: Dictionary) -> bool:

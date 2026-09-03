@@ -40,3 +40,22 @@ battle rules entry point was added.
 - Full repository validation was not run because the worktree contains broad
   unrelated user changes; the focused battle tests and parser/build checks
   passed.
+
+## Review fixes
+
+- Added Chinese snapshot projections for `status`, `heal`,
+  `heal_and_strike`, and `shift`, with exact unit assertions.
+- Accepted V1 actions now append structured immutable `info.effect` facts via
+  `RunState.append_event()`, including effect kind, amount, and target. The
+  event is appended before victory loot settlement so terminal outcomes retain
+  the action fact.
+- Strengthened starter coverage for exact true-qi/thought costs, event-log
+  increment, and effect-fact values.
+
+Review-fix verification:
+
+- `tools/test.ps1 -Test tests/unit/test_gu_roles_and_starter_attack.gd`: 8/8
+  tests passed, 288 assertions.
+- `tools/test.ps1 -Test tests/unit/test_battle_command_facade.gd`: 11/11
+  tests passed.
+- `git diff --check`: passed.

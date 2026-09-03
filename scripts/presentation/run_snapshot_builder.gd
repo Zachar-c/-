@@ -82,6 +82,7 @@ static func _gui_state(controller) -> Dictionary:
 		# R14.6① (night batch): DDA 系统标记与契约分区（黄红系），由 UI 会话渲染。
 		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
+		"inventory": _inventory(state, catalog),
 		# B 批反馈基建：last_feedback 由 submit_command 统一维护（命令后一拍可见，
 		# 下一条命令即清空）；快照只读搬运，各屏 toast 槽消费。
 		"feedback": str(controller.last_feedback) if controller.get("last_feedback") != null else "",
@@ -956,6 +957,7 @@ static func map(controller) -> Dictionary:
 		"current_node_id": str(state.current_node_id),
 		"reachable_ids": reach,
 		"gu_satchel": gu_satchel,
+		"inventory": _inventory(state, catalog),
 		"zone_title": zone_title,
 		"depth_label": depth_label,
 			"realm_label": realm_label,
@@ -1006,6 +1008,7 @@ static func encounter(controller) -> Dictionary:
 		"contracts": _contracts(state, catalog),
 		"anomalies": DdaResolverScript.marker_meta(state, catalog),
 		"death_lines": _death_lines(state),
+		"inventory": _inventory(state, catalog),
 	}
 
 
@@ -1218,7 +1221,23 @@ static func _v1_effect_text(source: Dictionary) -> String:
 			return "获得 %d 护盾" % int(effect.get("amount", 0))
 		"buff":
 			return "%s +%d" % [_buff_label(str(effect.get("name", "force"))), int(effect.get("amount", 0))]
+		"heal":
+			return "恢复 %d 气血" % int(effect.get("amount", 0))
+		"heal_and_strike":
+			return "恢复 %d 气血并造成 %d 伤害" % [int(effect.get("heal", 0)), int(effect.get("amount", 0))]
+		"status":
+			return "%s %d 层" % [_status_label(str(effect.get("name", ""))), int(effect.get("amount", 0))]
+		"shift":
+			return "位移 %d 格" % int(effect.get("amount", 1))
 	return "效果未明"
+
+
+static func _status_label(status_name: String) -> String:
+	match status_name:
+		"marked": return "标记"
+		"bound": return "束缚"
+		"poison": return "中毒"
+	return status_name if not status_name.is_empty() else "状态"
 
 
 static func _v1_cost_text(slot: Dictionary, thought_key: String, qi_key: String, life_key: String) -> String:
@@ -1656,16 +1675,72 @@ static func _synthesis_option(recipe: Dictionary, cfg: Dictionary, streak: int, 
 
 static func _resources(state) -> Dictionary:
 	var cult: Dictionary = state.cultivator if state != null else {}
-	var mat := 0
-	if state != null and state.materials is Dictionary:
-		for key in state.materials:
-			mat += int(state.materials[key])
 	return {
 		"yuanstone": int(state.stone) if state != null else 0,
 		"shouyuan": int(cult.get("lifespan", 0)),
 		"hunpo": int(cult.get("soul", 0)),
-		"material": mat,
 	}
+
+
+## 局内行囊是 RunState 的只读投影。材料、蛊虫、已结算收获与已知情报在此
+## 统一呈现，避免 HUD 以一个误导性的“材料总数”替代真实库存。
+static func _inventory(state, catalog: Dictionary) -> Dictionary:
+	var materials: Array[Dictionary] = []
+	var material_defs: Dictionary = catalog.get("material_by_id", {})
+	if state != null:
+		for material_id_value in state.materials.keys():
+			var material_id := str(material_id_value)
+			var quantity := int(state.materials[material_id_value])
+			if quantity <= 0:
+				continue
+			var definition: Dictionary = material_defs.get(material_id, {})
+			materials.append({
+				"id": material_id,
+				"name": str(definition.get("name", definition.get("name_zh", DisplayText.material(material_id)))),
+				"quantity": quantity,
+			})
+	materials.sort_custom(func(a, b): return str(a["id"]) < str(b["id"]))
+
+	var gu_instances: Array[Dictionary] = []
+	var gu_defs: Dictionary = catalog.get("gu_by_id", {})
+	if state != null:
+		for instance_id_value in state.gu_instances.keys():
+			var instance_id := str(instance_id_value)
+			var instance: Dictionary = state.gu_instances[instance_id_value]
+			var definition_id := str(instance.get("definition_id", ""))
+			var definition: Dictionary = gu_defs.get(definition_id, {})
+			gu_instances.append({
+				"id": instance_id,
+				"definition_id": definition_id,
+				"name": str(definition.get("name", definition.get("name_zh", DisplayText.gu(definition_id)))),
+				"state": str(instance.get("state", "")),
+				"rank": int(instance.get("rank", definition.get("rank", 0))),
+				"quality": str(instance.get("quality", definition.get("quality", ""))),
+			})
+	gu_instances.sort_custom(func(a, b): return str(a["id"]) < str(b["id"]))
+
+	var loot: Array[Dictionary] = []
+	if state != null:
+		for result_value in state.encounter_results:
+			if not (result_value is Dictionary):
+				continue
+			var result: Dictionary = result_value
+			loot.append({
+				"id": str(result.get("id", result.get("action_id", "result"))),
+				"name": DisplayText.result(result),
+			})
+		if loot.is_empty():
+			for event_value in state.event_log.slice(maxi(0, state.event_log.size() - 8)):
+				if event_value is Dictionary and str((event_value as Dictionary).get("action", "")).contains("loot"):
+					var event: Dictionary = event_value
+					loot.append({"id": str(event.get("action", "loot")), "name": str(event.get("reason", "获得收获"))})
+
+	var intel: Array[Dictionary] = []
+	if state != null:
+		for fact_id_value in state.known_facts:
+			var fact_id := str(fact_id_value)
+			intel.append({"id": fact_id, "name": DisplayText.fact(fact_id)})
+	return {"materials": materials, "gu_instances": gu_instances, "loot": loot, "intel": intel}
 
 
 # C1-min §16.13: real sworn contracts (labels via the catalog) instead of the
@@ -1685,6 +1760,10 @@ static func _death_lines(state) -> Dictionary:
 	var cult: Dictionary = state.cultivator if state != null else {}
 	var life := int(cult.get("lifespan", 0))
 	var soul := int(cult.get("soul", 0))
+	var health := int(state.health) if state != null else 0
+	var health_max := int(state.max_health) if state != null else 0
+	if health_max <= 0:
+		health_max = maxi(health, 1)
 	var life_max := int(cult.get("lifespan_max", life))
 	if life_max <= 0:
 		life_max = maxi(life, 1)
@@ -1705,8 +1784,21 @@ static func _death_lines(state) -> Dictionary:
 	var soul_consumed := maxi(0, soul_max - soul)
 	var life_danger := life <= life_floor
 	var soul_danger := soul <= soul_floor
+	var health_floor := maxi(1, ceili(float(health_max) * 0.25))
+	var health_danger := health <= health_floor
 	var backlash_danger := backlash >= backlash_max
 	return {
+		"health": {
+			"id": "health",
+			"name": "气血",
+			"value": health,
+			"threshold": health_floor,
+			"remaining": health,
+			"max": health_max,
+			"danger": health_danger,
+			"cause_id": "death_cause_battle",
+			"detail": DisplayText.death_cause("death_cause_battle"),
+		},
 		"shouyuan": {
 			"id": "shouyuan",
 			"name": DisplayText.death_line("shouyuan"),
