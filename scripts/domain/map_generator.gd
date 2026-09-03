@@ -209,15 +209,26 @@ static func _node_rng(seed_value: int, node_id: String) -> SeededRng:
 
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:
 	var route: Array[Dictionary] = []
+	var route_id_set := {}
+	for route_id_value in route_ids:
+		route_id_set[str(route_id_value)] = true
 	for index in route_ids.size():
 		var node: Dictionary = node_by_id[route_ids[index]].duplicate(true)
 		node["visible"] = index <= 1
 		node["template_id"] = str(route_ids[index])
 		node["layer"] = layer_index(str(node.get("stage", "one")))
 		node["row"] = index
-		if not node.has("next_ids") or node["next_ids"].is_empty():
-			if index < route_ids.size() - 1:
-				node["next_ids"] = [route_ids[index + 1]]
+		var closed_next_ids: Array = []
+		for next_id_value in node.get("next_ids", []):
+			var next_id := str(next_id_value)
+			if route_id_set.has(next_id) and not closed_next_ids.has(next_id):
+				closed_next_ids.append(next_id)
+		if index < route_ids.size() - 1:
+			if closed_next_ids.is_empty():
+				closed_next_ids.append(str(route_ids[index + 1]))
+			node["next_ids"] = closed_next_ids
+		else:
+			node["next_ids"] = []
 		route.append(node)
 	return route
 
