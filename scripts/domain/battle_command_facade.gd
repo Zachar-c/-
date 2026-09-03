@@ -187,7 +187,9 @@ static func _append_v1_event(state: RunState, before: Dictionary, after: Diction
 			if kind == "heal_and_strike":
 				info["effect"]["heal"] = int(effect.get("heal", 0))
 			if kind in ["strike", "status", "heal_and_strike"]:
-				info["effect"]["target_id"] = target_id
+				# Record the actual resolved target (resolver may fall back to the
+				# first alive enemy when the requested target is empty/invalid).
+				info["effect"]["target_id"] = str(after.get("last_effect_target", target_id))
 	return state.append_event({
 		"stage": state.stage,
 		"time": state.event_log.size(),

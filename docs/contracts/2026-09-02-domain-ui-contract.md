@@ -86,7 +86,7 @@ UI (scenes + scripts/ui)
 controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / basic_dodge / refine / play_kill_move`（`run_controller.gd:200`），经 `BattleCommandFacade.apply_turn` 转为 V1 内部动作（`play_gu(slot_index)/basic_attack/end_turn/play_kill_move`）；敌方回合 `apply_enemy_pre_turn`。撤退门：`boss_blocks_retreat`。
 
 - `use_gu` 命令携带可选 `target_id`（`gu.<instance_id>` 点击的目标敌人 id）；经 facade 的 `play_gu(slot_index, target_id)` 贯穿到 `V1BattleResolver`（`_strike_enemy`/`_apply_enemy_status` 按目标解析，空/无效回退首个存活敌人）。多敌战斗中点选第 N 个敌人必须命中该敌人。
-- `use_gu` 成功结算写入 `battle_v1` 事件；`info.effect` 含 `kind/amount/target`，并按类别补 `name`（status/buff）、`heal`（heal_and_strike）、`target_id`（敌人命中目标）；`amount` 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0）。
+- `use_gu` 成功结算写入 `battle_v1` 事件；`info.effect` 含 `kind/amount/target`，并按类别补 `name`（status/buff）、`heal`（heal_and_strike）、`target_id`（**实际命中敌人 id**：resolver 结算后把命中者写回 battle 的 `last_effect_target`，facade 以它为准——空/无效请求回退首个存活敌人时日志记录真实命中者而非空/原始值）；`amount` 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0）。
 
 预检规格（`CommandSpecRegistry`）：
 
@@ -102,8 +102,10 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 ### 3.3 对话分支命令（Dialogue Gateway，`run_controller` 入口）
 
 - `dialogue_branch`：`{"type":"dialogue_branch","branch_id":"...","state_version":<event_log.size>,"context":{...}}` → `_submit_dialogue_branch` → `DialogueManagerAdapter.apply_branch`（`command_for_branch` 把 `accept/accept_event/take/investigate → accept_event`、`leave/decline/reject → leave_node`，未知返回空并中文拒绝 `unknown_dialogue_branch`；`state_version` 过期拒绝 `action_preview_stale`；`used_action_ids` 去重拒绝 `dialogue_branch_used`）。event 节点的 `action_card` 由 controller 包装为 `dialogue_branch`（branch_id=`action_id`）走同一路径。
+- branch_id 两种形状（`command_for_branch` 均可解析）：点分 `event.echo_cave.accept` / `echo_cave.accept`（模板/测试）；下划线 `echo_cave_accept` / `gu_rot_pact_leave`（Dialogue Manager 插件 title 禁止 `.`，`rfind("_")` 拆 event_id 与分支，`gu_rot_pact_accept` → event_id=`gu_rot_pact`）。
 - `submit_dialogue_selection(title)`：Dialogue Manager balloon 选择桥接公开入口（P1-1）。插件/UI 在标题变化（非入口 title，如 `echo_cave.accept`）时调用，等价于提交 `{"type":"dialogue_branch","branch_id":title,"state_version":event_log.size()}`；空 title 拒绝 `empty_dialogue_selection`。
-- 事件入口 title 路由（P1-2）：`_travel_to` 对 event 节点调 `begin(event_id, node.dialogue_title or "start")`；节点未声明 `dialogue_title` 时打开默认 `start`（echo_cave），声明专属 title（如 `gu_rot_pact`）的事件打开对应入口，不再全部从 start 打开。
+- 运行时接线（P1-B）：`_travel_to` 对 event 节点调 `begin(...)` 后，`DialogueManagerAdapter.set_branch_selection_callback(Callable(self,"submit_dialogue_selection"))`；adapter `begin` 连接 DialogueManager 全局单例的 `passed_title` 信号 → 玩家点 balloon 选项（title 跳转）即回调 `submit_dialogue_selection(title)` 走领域结算。回调为绑定 Callable，controller 释放后自动失效。
+- 事件入口 title 路由（P1-2）：`_travel_to` 对 event 节点调 `begin(event_id, node.dialogue_title or "start")`；节点未声明 `dialogue_title` 时打开默认 `start`（echo_cave），声明专属 title（如 `gu_rot_pact`）的事件打开对应入口，不再全部从 start 打开。数据侧：`nodes.json` 的 event 节点可声明 `event_id`（缺省回退 `id`）与 `dialogue_title`（缺省 `start`）；`data/dialogues/events.dialogue` 的 title 与入口一一对应，选项 `=> title` 跳转的 title 即 branch_id 下划线形式。
 
 ### 3.3 规则模块公开函数（供命令面/快照薄委托；UI 不得绕过命令直调）
 
@@ -141,7 +143,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 }
 ```
 
-已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`、V1 战斗 `battle_v1`、对话分支元事件 `dialogue_branch`（`after{branch_id,event_id,outcome}`，`source=dialogue_manager_adapter`，由 `DialogueManagerAdapter.apply_branch` 成功路径写入，供结局归因/回放）。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
+已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`、V1 战斗 `battle_v1`、对话分支元事件 `dialogue_branch`（`after{branch_id,event_id,outcome}`，`source=dialogue_manager_adapter`，由 `DialogueManagerAdapter.apply_branch` 成功路径写入，供结局归因/回放；`stage`/`time` 不硬编码——省略键由 `RunState._normalized_event` 规范化到当前阶段与事件序号，后期分支不会被误归入 stage `"one"`/time 0）。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
 
 ## 5. 预检与拒绝契约
 

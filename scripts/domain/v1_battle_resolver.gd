@@ -346,6 +346,9 @@ static func _apply_enemy_status(battle: Dictionary, effect: Dictionary, target_k
 	statuses[name] = int(statuses.get(name, 0)) + int(effect.get("amount", 1))
 	enemy["statuses"] = statuses
 	next["enemies"][target_index] = enemy
+	# Actual resolved target: survives empty/invalid fallback so the effect log
+	# can record who really took the status.
+	next["last_effect_target"] = str(enemy["id"])
 	_log(next, "status", str(enemy["id"]))
 	return next
 
@@ -363,6 +366,9 @@ static func _strike_enemy(battle: Dictionary, amount: int, target_key: String = 
 	if int(enemy["hp"]) <= 0:
 		enemy["alive"] = false
 	next["enemies"][target_index] = enemy
+	# Actual resolved target: survives empty/invalid fallback so the effect log
+	# can record who really took the strike.
+	next["last_effect_target"] = str(enemy["id"])
 	_log(next, "struck", str(enemy["id"]))
 	_check_victory(next)
 	return next

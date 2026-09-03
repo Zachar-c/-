@@ -9,10 +9,18 @@ const EventFactoryScript = preload("res://scripts/domain/events.gd")
 const EVENTS_DIALOGUE_PATH := "res://data/dialogues/events.dialogue"
 
 var _fallback: DialogueGateway
+var _selection_callback: Callable = Callable()
 
 
 func _init(fallback: DialogueGateway = null) -> void:
 	_fallback = fallback if fallback != null else TemplateDialogueGatewayScript.new()
+
+
+## 运行时桥接入口（P1-B）：由 controller 在 begin() 后注入，把 Dialogue Manager
+## 的 passed_title 信号（玩家点击 balloon 选项导致的 title 跳转）转成
+## submit_dialogue_selection 的标题，从而走统一命令结算路径。
+func set_branch_selection_callback(callback: Callable) -> void:
+	_selection_callback = callback
 
 
 ## Narrative-only response boundary. Dialogue Manager is optional: this method
@@ -30,6 +38,8 @@ func plugin_available() -> bool:
 
 ## Start a Dialogue Manager balloon when the optional addon is installed. No
 ## RunState or command is passed to the addon; branch application stays below.
+## Once the balloon runs, passed_title signals are forwarded to the injected
+## selection callback (the controller's submit_dialogue_selection).
 func begin(event_id: String, title: String = "start") -> Dictionary:
 	var manager := _dialogue_manager()
 	if manager == null:
@@ -39,13 +49,28 @@ func begin(event_id: String, title: String = "start") -> Dictionary:
 	var resource := load(EVENTS_DIALOGUE_PATH)
 	if resource == null:
 		return {"ok": true, "source": "template", "event_id": event_id, "title": title}
+	if manager.has_signal("passed_title") and not manager.passed_title.is_connected(_on_passed_title):
+		manager.passed_title.connect(_on_passed_title)
 	manager.show_dialogue_balloon(resource, title)
 	return {"ok": true, "source": "dialogue_manager", "event_id": event_id, "title": title}
+
+
+## Dialogue Manager emits this when the balloon jumps to a title, i.e. the
+## player picked one of the authored options. The title encodes the branch
+## (event_id + branch), so it is handed straight to the domain command path.
+func _on_passed_title(title: String) -> void:
+	if _selection_callback.is_valid():
+		_selection_callback.call(str(title))
 
 
 ## Convert authored branch IDs to existing domain commands. Context may carry
 ## an explicit branch_commands map for authored events without adding a new
 ## resolver or a second state owner.
+##
+## Two shapes are accepted:
+##   - dot form (templates/tests): "event.echo_cave.accept" / "echo_cave.accept"
+##   - underscore form (Dialogue Manager plugin title, which forbids "."):
+##     "echo_cave_accept" / "gu_rot_pact_leave"
 func command_for_branch(branch_id: String, context: Dictionary = {}) -> Dictionary:
 	var normalized := branch_id.strip_edges().replace("/", ".")
 	var declared: Variant = context.get("branch_commands", {})
@@ -55,12 +80,25 @@ func command_for_branch(branch_id: String, context: Dictionary = {}) -> Dictiona
 	var parts := normalized.split(".", false)
 	if parts.size() > 1 and str(parts[0]) == "event":
 		parts = parts.slice(1)
-	if parts.size() < 2:
-		return {}
-	var action := str(parts[parts.size() - 1])
-	var event_id := ".".join(parts.slice(0, parts.size() - 1))
-	if event_id.is_empty():
-		return {}
+	if parts.size() >= 2:
+		var action := str(parts[parts.size() - 1])
+		var event_id := ".".join(parts.slice(0, parts.size() - 1))
+		if not event_id.is_empty():
+			var cmd := _match_branch(action, event_id)
+			if not cmd.is_empty():
+				return cmd
+	var last_underscore := normalized.rfind("_")
+	if last_underscore > 0 and last_underscore < normalized.length() - 1:
+		var u_event := normalized.substr(0, last_underscore)
+		var u_branch := normalized.substr(last_underscore + 1)
+		if not u_event.is_empty():
+			var cmd := _match_branch(u_branch, u_event)
+			if not cmd.is_empty():
+				return cmd
+	return {}
+
+
+static func _match_branch(action: String, event_id: String) -> Dictionary:
 	match action:
 		"accept", "accept_event", "take", "investigate":
 			return {"type": "accept_event", "event_id": event_id}

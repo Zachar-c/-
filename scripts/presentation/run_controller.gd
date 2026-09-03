@@ -609,6 +609,12 @@ func _travel_to(node_id: String) -> Dictionary:
 				str(node.get("event_id", node.get("id", ""))),
 				str(node.get("dialogue_title", "start"))
 			)
+			# P1-B 接线：Dialogue Manager 的 passed_title（玩家点选项跳转 title）
+			# 转发到 submit_dialogue_selection，走统一命令结算路径。绑定 Callable
+			# 使 controller 释放后回调自动失效，避免跨测试的信号串扰。
+			if _dialogue_gateway.has_method("set_branch_selection_callback"):
+				_dialogue_gateway.set_branch_selection_callback(
+					Callable(self, "submit_dialogue_selection"))
 		_show_encounter()
 	return resolved["result"]
 

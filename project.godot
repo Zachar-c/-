@@ -16,15 +16,7 @@ config/features=PackedStringArray("4.7")
 
 [autoload]
 
-BeckettRuntime="*uid://dspgi2nxto4e8"
-
-[beckett]
-
-autostart=false
-auto_write_client_config=false
-port=8770
-effort_schema=2
-dock_revealed=true
+DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [debug]
 
@@ -39,7 +31,15 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/reactive_ui_toolkit/plugin.cfg", "res://addons/reactive_ui_toolkit_editor/plugin.cfg", "res://addons/beckett/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/reactive_ui_toolkit/plugin.cfg", "res://addons/reactive_ui_toolkit_editor/plugin.cfg")
+
+[internationalization]
+
+locale/translations_pot_files=PackedStringArray("res://data/dialogues/events.dialogue")
+
+[layer_names]
+
+3d_physics/main_scene="res://scenes/main.tscn"
 
 [rendering]
 

@@ -25,6 +25,9 @@ static func resource_changed(
 ## Narrative metadata emitted by the dialogue adapter. Applying a branch still
 ## goes through Resolver/EncounterSessionResolver; this helper only keeps the
 ## branch selection shape consistent for feeds, replay, and diagnostics.
+## stage/time are intentionally omitted: RunState._normalized_event defaults
+## them to the current stage and the event index, so late-run branches are not
+## mis-attributed to stage "one" / time zero.
 static func dialogue_branch(
 	node_id: String,
 	branch_id: String,
@@ -33,8 +36,6 @@ static func dialogue_branch(
 	reason: String = ""
 ) -> Dictionary:
 	return {
-		"stage": "one",
-		"time": 0,
 		"node_id": node_id,
 		"action": "dialogue_branch",
 		"before": {},

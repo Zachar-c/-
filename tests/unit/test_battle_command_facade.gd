@@ -310,6 +310,29 @@ func test_v1_heal_and_strike_effect_log_carries_heal_and_target() -> void:
 	assert_eq(int(effect["amount"]), 1)
 
 
+## 复审 P3：目标为空/无效时 resolver 回退首个存活敌人，事件日志必须记录
+## 实际命中的敌人 ID，而不是请求中的空目标。
+func test_v1_status_log_records_fallback_target_when_request_empty() -> void:
+	var run := RunState.new_run(101)
+	run.cave_aperture["stored_gu_instance_ids"] = []
+	run.gu_instances = {}
+	var status_id := "st_fb"
+	run.cave_aperture["stored_gu_instance_ids"].append(status_id)
+	run.gu_instances[status_id] = GuInstanceScript.new_instance("venom_thread_gu", status_id, catalog)
+	var battle := FacadeScript.start(
+			{"enemy_kinds": ["beast_swarm", "iron_hide_boar"]}, run, catalog)
+	var out := FacadeScript.apply_turn(
+			battle, run,
+			{"type": "use_gu", "instance_id": status_id}, catalog)
+
+	assert_true(bool(out["accepted"]))
+	var event: Dictionary = out["state"].event_log.back()
+	var effect: Dictionary = event["info"]["effect"]
+	assert_eq(str(effect["kind"]), "status")
+	assert_eq(str(effect["target_id"]), "beast_swarm",
+			"empty requested target must resolve to the actual (first alive) enemy in the log")
+
+
 ## 禁用卡保持可见（卡体仍可悬停），但点按绝不触发 play_card。
 func test_disabled_card_stays_visible_and_never_submits() -> void:
 	var played: Array = []
