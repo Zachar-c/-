@@ -37,9 +37,9 @@ UI (scenes + scripts/ui)
 | screen | 构建函数 | 关键键（现状） |
 | --- | --- | --- |
 | `Title` | `hall()` | 大厅进度/图鉴/开始入口 |
-| `Map` | `map()` | `nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、可达集、当前层 |
+| `Map` | `map()` | `nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、可达集、当前层、`inventory` |
 | `Encounter` | `encounter()` | 遭遇会话、`node_actions[]`（含 `cost/executable/block_reason/remedy_hints`） |
-| `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle` |
+| `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version` |
 | `Shop` | `shop()` | 货架报价、`_shop_services[]` |
 | `Rest` | `rest()` | 休整选项 |
 | `Refine` | `refine()` | 炼蛊台状态、投入位、候选 |
@@ -47,6 +47,12 @@ UI (scenes + scripts/ui)
 | `Npc` | `npc()` | NPC 交涉/交易 |
 | `ContentError` | `content_error()` | 目录校验错误（`ContentCatalog.validate` 非空时的兜底屏） |
 | 调试 | `debug()` | 保底计数/池排除/种子/事件数/DDA 分位（只读，§16.22） |
+
+局内公共快照同时携带以下只读键：
+
+- `inventory{materials[],gu_instances[],loot[],intel[]}`：材料仅含 `id/name/quantity`；蛊虫实例含 `id/definition_id/name/state/rank/quality`；收获与情报仅投影已结算结果和 `known_facts`。UI 不得据此反写库存或推断未知信息。
+- `hand_version`（仅 Battle 屏）：`= event_log.size()`，与 `use_gu` 命令 `state_version` 同源。`battle_screen_view.mount_snapshot` 仅在 `hand_version` 变化时清空已提交卡/目标去重缓存；相同版本重挂载（刷新/重渲染）不得解除防重复提交保护。
+- `death_lines{health,shouyuan,hunpo,backlash}`：用于危险预警、操作预检与死因信息；其中气血、寿元、魂魄任一 `remaining <= 0` 的终局判定仍完全由领域层执行。`death_lines` 不授权常驻独立数值面板。
 
 `[T9.1 已落地]` 快照 v2 按 §17.2 八组扩容（增量键，逐键与规则模块同源，`RunSnapshotBuilder.transparency_v2(controller)`，返回八个分组键；`_` 前缀旁路键不进快照）。所有真实 `for_screen(screen, controller)` 快照经 `_with_v2` 保守合并带入八组（同屏键优先）：
 
@@ -79,6 +85,9 @@ UI (scenes + scripts/ui)
 
 controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / basic_dodge / refine / play_kill_move`（`run_controller.gd:200`），经 `BattleCommandFacade.apply_turn` 转为 V1 内部动作（`play_gu(slot_index)/basic_attack/end_turn/play_kill_move`）；敌方回合 `apply_enemy_pre_turn`。撤退门：`boss_blocks_retreat`。
 
+- `use_gu` 命令携带可选 `target_id`（`gu.<instance_id>` 点击的目标敌人 id）；经 facade 的 `play_gu(slot_index, target_id)` 贯穿到 `V1BattleResolver`（`_strike_enemy`/`_apply_enemy_status` 按目标解析，空/无效回退首个存活敌人）。多敌战斗中点选第 N 个敌人必须命中该敌人。
+- `use_gu` 成功结算写入 `battle_v1` 事件；`info.effect` 含 `kind/amount/target`，并按类别补 `name`（status/buff）、`heal`（heal_and_strike）、`target_id`（敌人命中目标）；`amount` 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0）。
+
 预检规格（`CommandSpecRegistry`）：
 
 | spec_id | freshness_kind | 必填字段 |
@@ -89,6 +98,12 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 | `battle.enemy_pre_turn` | `internal` | — |
 
 `[T9.2 已落地]` battle2 编排命令已接入 `enact`/`dodge`/`grapple`/`respond`（proposal 形状 `{"kind": "activate_gu"|"basic_action"|"maintain", ...}`）；拒绝 reason 集合达产：`maintenance_blocks_activation / gu_already_used_this_turn / insufficient_thought / action_already_used_this_turn / unknown_action / unknown_proposal_kind / parallel_group_repeats_action / parallel_group_repeats_instance / no_thought / window_closed / dodge_not_allowed / grappled_blocks_dodge / bound_blocks_dodge / terrain_restricted / not_at_contact / not_stronger / no_reserved_thought / not_a_legal_reaction`；跨回合续投：`start_turn(turn, capacity, continue_ids)`（ongoing 条目携带稳定 `"id"`）。
+
+### 3.3 对话分支命令（Dialogue Gateway，`run_controller` 入口）
+
+- `dialogue_branch`：`{"type":"dialogue_branch","branch_id":"...","state_version":<event_log.size>,"context":{...}}` → `_submit_dialogue_branch` → `DialogueManagerAdapter.apply_branch`（`command_for_branch` 把 `accept/accept_event/take/investigate → accept_event`、`leave/decline/reject → leave_node`，未知返回空并中文拒绝 `unknown_dialogue_branch`；`state_version` 过期拒绝 `action_preview_stale`；`used_action_ids` 去重拒绝 `dialogue_branch_used`）。event 节点的 `action_card` 由 controller 包装为 `dialogue_branch`（branch_id=`action_id`）走同一路径。
+- `submit_dialogue_selection(title)`：Dialogue Manager balloon 选择桥接公开入口（P1-1）。插件/UI 在标题变化（非入口 title，如 `echo_cave.accept`）时调用，等价于提交 `{"type":"dialogue_branch","branch_id":title,"state_version":event_log.size()}`；空 title 拒绝 `empty_dialogue_selection`。
+- 事件入口 title 路由（P1-2）：`_travel_to` 对 event 节点调 `begin(event_id, node.dialogue_title or "start")`；节点未声明 `dialogue_title` 时打开默认 `start`（echo_cave），声明专属 title（如 `gu_rot_pact`）的事件打开对应入口，不再全部从 start 打开。
 
 ### 3.3 规则模块公开函数（供命令面/快照薄委托；UI 不得绕过命令直调）
 
@@ -126,7 +141,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 }
 ```
 
-已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
+已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`、V1 战斗 `battle_v1`、对话分支元事件 `dialogue_branch`（`after{branch_id,event_id,outcome}`，`source=dialogue_manager_adapter`，由 `DialogueManagerAdapter.apply_branch` 成功路径写入，供结局归因/回放）。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
 
 ## 5. 预检与拒绝契约
 

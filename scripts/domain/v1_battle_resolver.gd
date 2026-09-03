@@ -219,7 +219,7 @@ static func basic_attack_reason(battle: Dictionary) -> String:
 static func player_action(battle: Dictionary, action: Dictionary) -> Dictionary:
 	match str(action.get("type", "")):
 		"play_gu":
-			return play_gu(battle, int(action.get("slot_index", -1)))
+			return play_gu(battle, int(action.get("slot_index", -1)), str(action.get("target_id", "")))
 		"basic_attack":
 			return basic_attack(battle)
 		"play_kill_move":
@@ -231,7 +231,8 @@ static func player_action(battle: Dictionary, action: Dictionary) -> Dictionary:
 
 
 ## 释放蛊（瞬发/常驻通用入口，前置校验一致；效果按模式分派）。
-static func play_gu(battle: Dictionary, slot_index: int) -> Dictionary:
+## target_id 为空或无效时回退当前目标（首个存活敌人），保证向后兼容与确定性。
+static func play_gu(battle: Dictionary, slot_index: int, target_id: String = "") -> Dictionary:
 	var reason := can_play_gu(battle, slot_index)
 	if not reason.is_empty():
 		return _result(battle, false, reason)
@@ -243,9 +244,9 @@ static func play_gu(battle: Dictionary, slot_index: int) -> Dictionary:
 		return _result(_mark_death(paid, "life_cost"), false, "life_cost_depleted")
 	var is_permanent := bool(slot.get("is_permanent", false))
 	if is_permanent:
-		paid = _play_permanent(paid, slot_index)
+		paid = _play_permanent(paid, slot_index, target_id)
 	else:
-		paid = _play_instant(paid, slot_index)
+		paid = _play_instant(paid, slot_index, target_id)
 	return _result(paid, true, "")
 
 
@@ -263,15 +264,15 @@ static func _spend_costs(battle: Dictionary, slot: Dictionary, target: String) -
 	return next
 
 
-static func _play_instant(battle: Dictionary, slot_index: int) -> Dictionary:
+static func _play_instant(battle: Dictionary, slot_index: int, target_key: String = "") -> Dictionary:
 	var next := _dup(battle)
 	var slot: Dictionary = next["gu_slots"][slot_index].duplicate(true)
 	slot["used_this_turn"] = true
 	next["gu_slots"][slot_index] = slot
-	return _apply_effect(next, slot, "strike_current")
+	return _apply_effect(next, slot, target_key)
 
 
-static func _play_permanent(battle: Dictionary, slot_index: int) -> Dictionary:
+static func _play_permanent(battle: Dictionary, slot_index: int, target_key: String = "") -> Dictionary:
 	var next := _dup(battle)
 	var slot: Dictionary = next["gu_slots"][slot_index].duplicate(true)
 	slot["used_this_turn"] = true
@@ -281,12 +282,12 @@ static func _play_permanent(battle: Dictionary, slot_index: int) -> Dictionary:
 		# 释放即销毁：本场战斗临时销毁，施加效果（buff 按 duration_turns 倒计时）。
 		slot["consumed"] = true
 		next["gu_slots"][slot_index] = slot
-		return _apply_effect(next, slot, "strike_current")
+		return _apply_effect(next, slot, target_key)
 	# TRIGGER_COST / PER_TURN_MAINTAIN：进入激活常驻列表。
 	if not (next["active_permanents"] as Array).has(str(slot["instance_id"])):
 		next["active_permanents"] = (next["active_permanents"] as Array).duplicate()
 		(next["active_permanents"] as Array).append(str(slot["instance_id"]))
-	return _apply_effect(next, slot, "strike_current")
+	return _apply_effect(next, slot, target_key)
 
 
 static func _stack_buff(buffs: Dictionary, buff: Dictionary) -> Dictionary:
@@ -297,18 +298,19 @@ static func _stack_buff(buffs: Dictionary, buff: Dictionary) -> Dictionary:
 	return out
 
 
-## 对当前存活敌人应用蛊效果。effect 支持：
+## 对指定目标（target_key 为空/无效时回退首个存活敌人）应用蛊效果。
+## effect 支持：
 ##   {"kind":"strike","amount":N} / {"kind":"shield","amount":N} /
 ##   {"kind":"buff","name":X,"amount":N} / {"kind":"heal","amount":N} /
 ##   {"kind":"heal_and_strike","heal":N,"amount":N} /
 ##   {"kind":"status","name":X,"amount":N} / {"kind":"shift","amount":N}
-static func _apply_effect(battle: Dictionary, slot: Dictionary, _target_key: String) -> Dictionary:
+static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: String) -> Dictionary:
 	var next := _dup(battle)
 	var effect: Dictionary = slot.get("effect", {})
 	var kind := str(effect.get("kind", ""))
 	match kind:
 		"strike":
-			next = _strike_enemy(next, int(effect.get("amount", 0)))
+			next = _strike_enemy(next, int(effect.get("amount", 0)), target_key)
 		"shield":
 			next["player"]["shield"] = int(next["player"]["shield"]) + int(effect.get("amount", 0))
 		"buff":
@@ -317,9 +319,9 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, _target_key: Str
 			next = _heal_player(next, int(effect.get("amount", 0)))
 		"heal_and_strike":
 			next = _heal_player(next, int(effect.get("heal", 0)))
-			next = _strike_enemy(next, int(effect.get("amount", 0)))
+			next = _strike_enemy(next, int(effect.get("amount", 0)), target_key)
 		"status":
-			next = _apply_enemy_status(next, effect)
+			next = _apply_enemy_status(next, effect, target_key)
 		"shift":
 			next["player"]["position"] = int(next["player"].get("position", 0)) + int(effect.get("amount", 1))
 	return next
@@ -333,9 +335,9 @@ static func _heal_player(battle: Dictionary, amount: int) -> Dictionary:
 	return next
 
 
-static func _apply_enemy_status(battle: Dictionary, effect: Dictionary) -> Dictionary:
+static func _apply_enemy_status(battle: Dictionary, effect: Dictionary, target_key: String = "") -> Dictionary:
 	var next := _dup(battle)
-	var target_index := _current_enemy_index(next)
+	var target_index := _enemy_index(next, target_key)
 	if target_index < 0:
 		return next
 	var enemy: Dictionary = next["enemies"][target_index].duplicate(true)
@@ -348,9 +350,9 @@ static func _apply_enemy_status(battle: Dictionary, effect: Dictionary) -> Dicti
 	return next
 
 
-static func _strike_enemy(battle: Dictionary, amount: int) -> Dictionary:
+static func _strike_enemy(battle: Dictionary, amount: int, target_key: String = "") -> Dictionary:
 	var next := _dup(battle)
-	var target_index := _current_enemy_index(next)
+	var target_index := _enemy_index(next, target_key)
 	if target_index < 0:
 		return next
 	var enemy: Dictionary = next["enemies"][target_index].duplicate(true)
@@ -371,6 +373,16 @@ static func _current_enemy_index(battle: Dictionary) -> int:
 		if bool(battle["enemies"][i]["alive"]):
 			return i
 	return -1
+
+
+## 目标解析：target_key 指定且存活则命中该敌人；否则回退首个存活敌人。
+static func _enemy_index(battle: Dictionary, target_key: String) -> int:
+	if not target_key.is_empty():
+		for i in (battle["enemies"] as Array).size():
+			var enemy: Dictionary = battle["enemies"][i]
+			if str(enemy.get("id", "")) == target_key and bool(enemy.get("alive", false)):
+				return i
+	return _current_enemy_index(battle)
 
 
 ## 肉体搏斗：耗 1 念头、不耗真元、占用一次行动；伤害=基础+力道+仪仗。

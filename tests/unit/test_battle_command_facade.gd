@@ -9,6 +9,7 @@ const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
 const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
+const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
 
 var catalog: Dictionary
@@ -222,6 +223,93 @@ func test_repeated_card_target_click_submits_exactly_once() -> void:
 			"a repeated UI signal must not replay play_card against the same snapshot")
 
 
+## 相同 hand_version 重新挂载（刷新/重渲染）不得解除已建立的防重复提交保护。
+func test_remount_same_hand_version_keeps_dedup_guard() -> void:
+	var played: Array = []
+	var host := _mount_battle_screen(func(card_id, target_id): played.append([card_id, target_id]), [
+		{"id": "gu.inst_1", "name": "月光蛊", "executable": true,
+			"target_type": "single_enemy", "valid_target_ids": ["e0"]},
+	])
+	var screen := _screen_of(host)
+	var card: Dictionary = screen._snapshot.get("hand", [])[0]
+
+	screen._submit_card(card, "e0")
+	screen.mount_snapshot(screen._snapshot, {"play_card": func(c, t): played.append([c, t])})
+	screen._submit_card(card, "e0")
+
+	assert_eq(played, [["gu.inst_1", "e0"]],
+			"remounting the same hand_version must not replay play_card against the same snapshot")
+
+
+## 新 hand_version（领域状态推进）重新挂载应允许重新提交同一卡/目标。
+func test_remount_new_hand_version_allows_resubmit() -> void:
+	var played: Array = []
+	var host := _mount_battle_screen(func(card_id, target_id): played.append([card_id, target_id]), [
+		{"id": "gu.inst_1", "name": "月光蛊", "executable": true,
+			"target_type": "single_enemy", "valid_target_ids": ["e0"]},
+	])
+	var screen := _screen_of(host)
+	var card: Dictionary = screen._snapshot.get("hand", [])[0]
+
+	screen._submit_card(card, "e0")
+	var next_snapshot: Dictionary = screen._snapshot.duplicate(true)
+	next_snapshot["hand_version"] = 5
+	screen.mount_snapshot(next_snapshot, {"play_card": func(c, t): played.append([c, t])})
+	screen._submit_card(card, "e0")
+
+	assert_eq(played, [["gu.inst_1", "e0"], ["gu.inst_1", "e0"]],
+			"a new hand_version must allow the same card/target to be submitted again")
+
+
+# ==== Agent B 返工 P2-4：效果事件日志事实字段 ====
+
+## status 蛊的 use_gu 事件日志必须携带状态名与目标敌人 ID，amount 与 resolver 一致。
+func test_v1_status_effect_log_carries_name_amount_and_target() -> void:
+	var run := RunState.new_run(101)
+	run.cave_aperture["stored_gu_instance_ids"] = []
+	run.gu_instances = {}
+	var status_id := "st_00"
+	run.cave_aperture["stored_gu_instance_ids"].append(status_id)
+	run.gu_instances[status_id] = GuInstanceScript.new_instance("venom_thread_gu", status_id, catalog)
+	var battle := FacadeScript.start(
+			{"enemy_kinds": ["beast_swarm", "iron_hide_boar"]}, run, catalog)
+	var out := FacadeScript.apply_turn(
+			battle, run,
+			{"type": "use_gu", "instance_id": status_id, "target_id": "iron_hide_boar"}, catalog)
+
+	assert_true(bool(out["accepted"]))
+	var event: Dictionary = out["state"].event_log.back()
+	var effect: Dictionary = event["info"]["effect"]
+	assert_eq(str(effect["kind"]), "status")
+	assert_eq(str(effect["name"]), "poison", "status effect log must record the status name")
+	assert_eq(int(effect["amount"]), 2, "status amount must match the resolver-applied amount")
+	assert_eq(str(effect["target_id"]), "iron_hide_boar", "status log must record the targeted enemy id")
+
+
+## heal_and_strike 蛊的 use_gu 事件日志必须记录治疗量与目标敌人 ID。
+func test_v1_heal_and_strike_effect_log_carries_heal_and_target() -> void:
+	var run := RunState.new_run(101)
+	run.health = 1
+	run.cave_aperture["stored_gu_instance_ids"] = []
+	run.gu_instances = {}
+	var heal_id := "he_00"
+	run.cave_aperture["stored_gu_instance_ids"].append(heal_id)
+	run.gu_instances[heal_id] = GuInstanceScript.new_instance("blood_moss_gu", heal_id, catalog)
+	var battle := FacadeScript.start(
+			{"enemy_kinds": ["beast_swarm", "iron_hide_boar"]}, run, catalog)
+	var out := FacadeScript.apply_turn(
+			battle, run,
+			{"type": "use_gu", "instance_id": heal_id, "target_id": "iron_hide_boar"}, catalog)
+
+	assert_true(bool(out["accepted"]))
+	var event: Dictionary = out["state"].event_log.back()
+	var effect: Dictionary = event["info"]["effect"]
+	assert_eq(str(effect["kind"]), "heal_and_strike")
+	assert_eq(int(effect["heal"]), 2, "heal_and_strike log must record the heal amount")
+	assert_eq(str(effect["target_id"]), "iron_hide_boar", "heal_and_strike log must record the targeted enemy id")
+	assert_eq(int(effect["amount"]), 1)
+
+
 ## 禁用卡保持可见（卡体仍可悬停），但点按绝不触发 play_card。
 func test_disabled_card_stays_visible_and_never_submits() -> void:
 	var played: Array = []
@@ -269,6 +357,43 @@ func test_stale_battle_hand_is_rejected_by_preflight() -> void:
 
 	assert_false(stale["ok"])
 	assert_eq(stale["reason"], "battle_hand_stale")
+
+
+# ==== Agent B 返工 P1-3：use_gu 目标贯穿 ====
+
+## gu.<instance_id> 点击携带 target_id 时，命令信封必须保留该字段。
+func test_gu_click_command_preserves_selected_target_id() -> void:
+	var state := RunState.new_run(101)
+	var command: Dictionary = RunCommandBuilderScript._battle_card_command(
+			_stub_controller(state), "gu.inst_1", "e1")
+
+	assert_eq(str(command["type"]), "use_gu")
+	assert_eq(str(command["instance_id"]), "inst_1")
+	assert_eq(str(command["target_id"]), "e1")
+
+
+## 多敌战斗中，use_gu 命令指定 target_id 必须命中该敌人，而非首个存活敌人。
+func test_use_gu_hits_the_selected_enemy_not_the_first() -> void:
+	var run := RunState.new_run(101)
+	run.cave_aperture["stored_gu_instance_ids"] = []
+	run.gu_instances = {}
+	var instance_id := "tgt_00"
+	run.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+	run.gu_instances[instance_id] = GuInstanceScript.new_instance("small_light_gu", instance_id, catalog)
+	# 敌人 id 即 kind；beast_swarm hp4 / iron_hide_boar hp5 / thunder_crown_wolf hp7。
+	var battle := FacadeScript.start(
+			{"enemy_kinds": ["beast_swarm", "iron_hide_boar", "thunder_crown_wolf"]},
+			run, catalog)
+	var out := FacadeScript.apply_turn(
+			battle, run,
+			{"type": "use_gu", "instance_id": instance_id, "target_id": "thunder_crown_wolf"},
+			catalog)
+
+	assert_true(bool(out["accepted"]))
+	var enemies: Array = out["battle"]["enemies"]
+	assert_eq(int(enemies[0]["hp"]), 4, "first enemy must be untouched when a later target is chosen")
+	assert_eq(int(enemies[1]["hp"]), 5, "second enemy must be untouched")
+	assert_eq(int(enemies[2]["hp"]), 6, "selected third enemy must take the strike")
 
 
 func _stub_controller(state: RunState, battle: Dictionary = {}) -> Dictionary:

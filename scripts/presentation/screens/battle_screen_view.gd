@@ -45,6 +45,7 @@ var _target_id := ""
 var _confirming := false
 var _expanded_enemies := false
 var _submitted_card_keys: Dictionary = {}
+var _last_hand_version := -1
 
 var _ready_done := false
 
@@ -57,9 +58,14 @@ func _ready() -> void:
 
 ## run_controller 的挂载入口（与各屏同签名）。
 func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
+	# 防重复提交缓存只在快照版本（领域 event_log 推进）变化时清理；
+	# 相同版本的重挂载（刷新/重渲染）不得解除已建立的卡/目标去重保护。
+	var new_hand_version := int(snapshot.get("hand_version", -1))
+	if new_hand_version != _last_hand_version:
+		_submitted_card_keys.clear()
+		_last_hand_version = new_hand_version
 	_snapshot = snapshot
 	_commands = commands
-	_submitted_card_keys.clear()
 	if _ready_done:
 		_refresh()
 

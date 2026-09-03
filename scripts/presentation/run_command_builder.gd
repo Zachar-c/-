@@ -48,6 +48,7 @@ static func _battle_card_command(controller, action_id: String, target_id: Strin
 		return {
 			"type": "use_gu",
 			"instance_id": str(action_id.trim_prefix("gu.")),
+			"target_id": target_id,
 			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
 		}
 	# V1 拳脚（肉体搏斗）。

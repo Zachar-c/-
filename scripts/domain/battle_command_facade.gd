@@ -109,7 +109,7 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			var slot_index := _slot_index(battle, instance_id)
 			if slot_index < 0:
 				return _rejected(battle, state, "unknown_gu")
-			action = {"type": "play_gu", "slot_index": slot_index}
+			action = {"type": "play_gu", "slot_index": slot_index, "target_id": str(command.get("target_id", ""))}
 		"basic_attack":
 			action = {"type": "basic_attack"}
 		"end_turn":
@@ -172,11 +172,22 @@ static func _append_v1_event(state: RunState, before: Dictionary, after: Diction
 		if slot_index >= 0 and slot_index < slots.size():
 			var slot: Dictionary = slots[slot_index]
 			var effect: Dictionary = slot.get("effect", {})
+			var kind := str(effect.get("kind", ""))
+			# amount 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0），
+			# 使日志可重建实际结算数值。
+			var amount_default := 1 if kind in ["buff", "status", "shift"] else 0
+			var target_id := str(action.get("target_id", ""))
 			info["effect"] = {
-				"kind": str(effect.get("kind", "")),
-				"amount": int(effect.get("amount", 0)),
-				"target": "enemy" if str(effect.get("kind", "")) in ["strike", "status", "heal_and_strike"] else "player",
+				"kind": kind,
+				"amount": int(effect.get("amount", amount_default)),
+				"target": "enemy" if kind in ["strike", "status", "heal_and_strike"] else "player",
 			}
+			if kind in ["status", "buff"]:
+				info["effect"]["name"] = str(effect.get("name", ""))
+			if kind == "heal_and_strike":
+				info["effect"]["heal"] = int(effect.get("heal", 0))
+			if kind in ["strike", "status", "heal_and_strike"]:
+				info["effect"]["target_id"] = target_id
 	return state.append_event({
 		"stage": state.stage,
 		"time": state.event_log.size(),

@@ -13,6 +13,7 @@ const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
+const DialogueManagerAdapterScript = preload("res://scripts/domain/dialogue_manager_adapter.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
@@ -173,7 +174,7 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	current_session = {}
 	last_result = {}
 	dialogue_replies = []
-	_dialogue_gateway = TemplateDialogueGatewayScript.new()
+	_dialogue_gateway = DialogueManagerAdapterScript.new()
 	_show_map()
 
 
@@ -198,6 +199,17 @@ func submit_command(command: Dictionary) -> Dictionary:
 
 	if command.get("type", "") == "travel":
 		return _travel_to(str(command.get("node_id", "")))
+	if command.get("type", "") == "dialogue_branch":
+		return _submit_dialogue_branch(command)
+	# Event action cards are authored by ActionPreviewService for compatibility;
+	# route their branch IDs through DialogueManagerAdapter before the generic
+	# encounter-card path so narrative choices cannot silently leave the node.
+	if command.get("type", "") == "action_card" and str(current_node.get("type", "")) == "event":
+		return _submit_dialogue_branch({
+			"type": "dialogue_branch",
+			"branch_id": str(command.get("action_id", "")),
+			"context": command.duplicate(true),
+		})
 	if command.get("type", "") == "leave_encounter":
 		command = {"type": "leave_node"}
 	if command.get("type", "") == "action_card" and not current_battle.is_empty():
@@ -259,6 +271,58 @@ func _submit_battle_command(command: Dictionary) -> Dictionary:
 	else:
 		_show_battle()
 	return turn
+
+
+## Dialogue Manager balloon 选择桥接入口（P1-1）：插件/UI 在标题变化
+## （非入口 title，如 "echo_cave.accept"）时调用本方法，把选择标题转成
+## dialogue_branch 领域命令提交，走与 submit_command 完全相同的结算路径。
+func submit_dialogue_selection(selection_title: String) -> Dictionary:
+	if str(selection_title).is_empty():
+		return {"ok": false, "reason": "empty_dialogue_selection", "state": state}
+	return _submit_dialogue_branch({
+		"type": "dialogue_branch",
+		"branch_id": str(selection_title),
+		"state_version": state.event_log.size(),
+	})
+
+
+func _submit_dialogue_branch(command: Dictionary) -> Dictionary:
+	if _dialogue_gateway == null:
+		_dialogue_gateway = DialogueManagerAdapterScript.new()
+	var branch_id := str(command.get("branch_id", ""))
+	var branch_result: Dictionary = {}
+	var branch_context: Dictionary = command.get("context", {}) if command.get("context", {}) is Dictionary else {}
+	if command.has("state_version"):
+		branch_context["state_version"] = command.get("state_version")
+	if _dialogue_gateway.has_method("apply_branch"):
+		branch_result = _dialogue_gateway.apply_branch(
+			state,
+			current_session,
+			branch_id,
+			catalog,
+			current_node,
+			branch_context
+		)
+	else:
+		branch_result = {
+			"ok": false,
+			"reason": "dialogue_adapter_unavailable",
+			"feedback": "对话暂时无法回应，局面没有改变。",
+			"state": state,
+			"session": current_session.duplicate(true),
+			"result": {"ok": false, "reason": "dialogue_adapter_unavailable"},
+		}
+	state = branch_result.get("state", state)
+	current_session = branch_result.get("session", current_session)
+	last_result = branch_result.get("result", {})
+	last_feedback = str(branch_result.get("feedback", ""))
+	if last_feedback.is_empty() and not bool(branch_result.get("ok", false)):
+		last_feedback = rejection_text(str(branch_result.get("reason", "unknown_dialogue_branch")))
+	if bool(current_session.get("completed", false)):
+		_return_to_map()
+	else:
+		_re_show_current_screen()
+	return branch_result
 
 
 ## 战斗内 hp 写回 RunState：RunState.health 是本局气血唯一真值（resolver/shop/
@@ -361,6 +425,9 @@ const _REJECTION_TEXT := {
 	"unknown_contact": "此人无可交涉的选项。",
 	"invalid_contact_approach": "该交涉方式不可用。",
 	"unknown_command": "未知指令。",
+	"unknown_dialogue_branch": "无法理解这段对话的选择，局面没有改变。",
+	"dialogue_branch_used": "这项对话选择已经处理过了。",
+	"dialogue_adapter_unavailable": "对话暂时无法回应，局面没有改变。",
 	"unknown_gu": "没有这只蛊。",
 	"unknown_card": "没有这张卡。",
 	"unknown_node": "无法前往该地点。",
@@ -500,6 +567,7 @@ func _restore_game(loaded: Dictionary) -> bool:
 	current_battle = {}
 	current_session = state.encounter_session.duplicate(true)
 	dialogue_replies = loaded.get("replies", [])
+	_dialogue_gateway = DialogueManagerAdapterScript.new()
 	if meta == null and FileAccess.file_exists(SaveRepositoryScript.META_PATH):
 		meta = SaveRepositoryScript.load_meta_file()
 	_show_map()
@@ -534,6 +602,13 @@ func _travel_to(node_id: String) -> Dictionary:
 	elif node["type"] == "contact":
 		_show_npc()
 	else:
+		if node["type"] == "event" and _dialogue_gateway != null and _dialogue_gateway.has_method("begin"):
+			# P1-2 路由：事件入口 Dialogue title 由节点声明（dialogue_title），默认 "start"；
+			# gu_rot_pact 等事件使用专属 title，不再全部从 echo_cave 的 start 打开。
+			_dialogue_gateway.begin(
+				str(node.get("event_id", node.get("id", ""))),
+				str(node.get("dialogue_title", "start"))
+			)
 		_show_encounter()
 	return resolved["result"]
 

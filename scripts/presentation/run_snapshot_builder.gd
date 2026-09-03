@@ -1054,6 +1054,9 @@ static func battle(controller) -> Dictionary:
 	out["can_ultimate"] = false
 	out["dda_boss_hint"] = str(battle_data.get("dda_boss_hint", ""))
 	out["first_battle"] = not state.event_log.any(func(event): return str(event.get("action", "")) == "battle_finished")
+	# 手牌版本 = 领域 event_log 大小（与 use_gu 命令 state_version 同源），供 UI 判断
+	# 快照是否推进：相同版本重挂载不清重复提交缓存，避免同命令被重放。
+	out["hand_version"] = int(state.event_log.size())
 	return out
 
 
