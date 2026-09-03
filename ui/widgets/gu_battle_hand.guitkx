@@ -16,31 +16,14 @@ export GuBattleHand() -> RuitkVNode {
     var executable: bool = card.get("executable", true)
     var card_id := str(card.get("id", ""))
     var card_name := str(card.get("name", "蛊虫"))
-    var quality := str(card.get("quality", ""))
-    var cost_label := str(card.get("cost", ""))
-    var effect_text := str(card.get("effect", ""))
-    var block_reason := str(card.get("block_reason", ""))
-    var curse_warning: bool = card.get("curse_warning", false)
     var is_active := str(interaction.get("card_id", "")) == card_id
-    var header_rows = []
-    if curse_warning:
-      header_rows.append(<PanelContainer style={ {"bg_color": GuStyle.CINNABAR, "corner_radius_all": 4} }><MarginContainer style={ {"margin_left": 5, "margin_right": 5, "margin_top": 1, "margin_bottom": 1} }><Label text="咒" style={ {"font_color": GuStyle.PAPER_BG, "font_size": 12} } /></MarginContainer></PanelContainer>)
-    if quality != "":
-      header_rows.append(<Label text={ quality } style={ {"font_color": GuStyle.quality_color(quality), "font_size": 12} } />)
-    var detail_rows = []
-    if effect_text != "":
-      detail_rows.append(<Label text={ effect_text } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />)
-    if not executable and block_reason != "":
-      detail_rows.append(<Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.CINNABAR, "font_size": 12} } />)
-    if cost_label != "":
-      detail_rows.append(<Label text={ "◆ " + cost_label } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 13} } />)
     var body_style := MasterTheme.button_style("card")
     body_style["modulate"] = Color(1, 1, 1, 0.55) if not executable else Color(1, 1, 1, 1.0)
     if is_active:
       body_style["bg_color"] = GuStyle.PAPER_RAISED
       body_style["border_width_all"] = 2
       body_style["border_color"] = GuStyle.JADE
-    card_rows.append(<Button name={ "card_body_" + card_id } text={ card_name } disabled={ false } onMouseEntered={ func(): on_hover.call(card) } onGuiInput={ func(event): if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed) or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed): on_cancel.call() } onPressed={ func(): if executable: on_press.call(card) } style={ body_style }><MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 10, "margin_bottom": 10} }><VBoxContainer style={ {"separation": 6} }>{ header_rows }{ detail_rows }</VBoxContainer></MarginContainer></Button>)
+    card_rows.append(<Button name={ "card_body_" + card_id } text={ card_name } disabled={ false } onMouseEntered={ func(): on_hover.call(card) } onGuiInput={ func(event): if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed) or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed): on_cancel.call() } onPressed={ func(): if executable: on_press.call(card) } style={ body_style } />)
   if card_rows.is_empty():
     card_rows.append(<Label text="（无手牌）" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />)
   var cancel_rows = []

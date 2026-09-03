@@ -17,7 +17,8 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($Test) {
-    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd','-gtest=res://' + $Test,'-gexit','-glog=2') -ExpectedTestPath ('res://' + $Test)
+    $testArg = '-gtest=res://' + $Test
+    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd',$testArg,'-gexit','-glog=2') -ExpectedTestPath ('res://' + $Test)
     exit $LASTEXITCODE
 }
 
@@ -28,7 +29,8 @@ $directories = switch ($Suite) {
 }
 
 foreach ($directory in $directories) {
-    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd','-gdir=res://' + $directory,'-gexit','-glog=2')
+    $dirArg = '-gdir=res://' + $directory
+    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd',$dirArg,'-gexit','-glog=2')
     if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
     }

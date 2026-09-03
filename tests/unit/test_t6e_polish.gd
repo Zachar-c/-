@@ -317,6 +317,22 @@ func test_encounter_screen_feeds_formatted_cost_and_hides_empty() -> void:
 			"empty cost hides its segment (never renders raw dict junk)")
 
 
+func test_encounter_intel_tooltip_builder_leaves_attachment_to_brief_body() -> void:
+	var cmds := {"choose_option": func(_aid = ""): pass, "confirm_danger": func(_aid = ""): pass,
+		"leave": func(): pass}
+	var st := _gui_base_state()
+	st["node"] = {"title": "幽林遭遇", "desc": "林中异响。", "type": "contact"}
+	st["actions"] = [{"id": "leave", "label": "离开", "detail": "", "dangerous": false}]
+	st["intel"] = {"weakness": "铁皮山猪惧火", "cost": "已探明"}
+	var host := _mount_tscn_screen("res://scenes/ui/screens/encounter_screen.tscn", st, cmds)
+	for i in 2:
+		await get_tree().process_frame
+	var draft: Node = host._build_intel_tip(st["intel"])
+	assert_null(draft.get_parent(),
+			"intel tooltip builder must return an unattached node so BriefBody attaches it exactly once")
+	draft.free()
+
+
 func test_shop_cursed_offer_renders_strong_red_badge() -> void:
 	var cmds := {"buy": func(_oid = ""): pass, "block": func(_oid = ""): pass,
 		"use_service": func(_sid = ""): pass, "leave": func(): pass}

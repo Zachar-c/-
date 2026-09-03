@@ -3,7 +3,6 @@ extends MarginContainer
 ## 遭遇屏（Godot 官方 .tscn 节点树版，替代 ui/screens/encounter_screen.guitkx）。
 ##
 ## 只读快照 + commands（choose_option / confirm_danger / leave）；危险行动走二次确认。
-## 死因浮层是纯 UI 态：顶栏危险死线行点击 → 本屏本地显隐，不过控制器。
 ## 静态骨架预置在节点树里，行动卡 / 情报 / 状态 / 蛊囊走代码生成。
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
@@ -18,7 +17,6 @@ const GuTipScene := preload("res://scenes/ui/widgets/gu_tooltip_view.tscn")
 @onready var _status_panel: PanelContainer = $Root/primary_decision_surface/SideColumn/StatusPanel
 @onready var _satchel_panel: PanelContainer = $Root/primary_decision_surface/SideColumn/SatchelPanel
 @onready var _confirm_dialog: PanelContainer = $Root/ConfirmDialog
-@onready var _cause_overlay = $Root/CauseOverlay  # 不标类型：需要调 close()（见 UI_RULES §5）
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -26,8 +24,6 @@ var _commands: Dictionary = {}
 var _ready_done := false
 ## 待确认的危险行动 id；空串表示无。
 var _confirming := ""
-## 死因浮层当前展示的 cause_id；空串表示关闭。
-var _cause_view := ""
 
 
 func _ready() -> void:
@@ -55,7 +51,6 @@ func _refresh() -> void:
 	_refresh_actions()
 	_refresh_side()
 	_refresh_confirm_dialog()
-	_refresh_cause_overlay()
 
 
 func _refresh_top_bar() -> void:
@@ -67,9 +62,6 @@ func _refresh_top_bar() -> void:
 		_snapshot.get("anomalies", []),
 		_snapshot.get("death_lines", {}),
 		int(_snapshot.get("layer", -1)))
-	# 危险死线行点击 → 本屏本地死因浮层，不经过控制器。
-	if _top_bar.has_method("set_on_view"):
-		_top_bar.set_on_view(func(cause_id): _cause_view = str(cause_id); _refresh_cause_overlay())
 
 
 func _refresh_brief() -> void:
@@ -90,12 +82,12 @@ func _refresh_brief() -> void:
 
 func _build_intel_tip(intel: Dictionary) -> Node:
 	var tip := GuTipScene.instantiate()
-	# 先入树再 setup：GuTooltipViewView 的 @onready 需要 _ready() 已跑。
-	_brief_panel.content_host.get_node("BriefBody").add_child(tip)
 	var weakness := str(intel.get("weakness", ""))
 	var intel_cost := str(intel.get("cost", ""))
 	var intel_curse := bool(intel.get("curse_warning", false))
-	tip.setup("情报 / 弱点", "", weakness, "", intel_cost, "", intel_curse)
+	# BriefBody owns attachment. Setup runs after this tooltip's @onready fields exist.
+	tip.ready.connect(func(): tip.setup(
+			"情报 / 弱点", "", weakness, "", intel_cost, "", intel_curse), CONNECT_ONE_SHOT)
 	return tip
 
 
@@ -196,30 +188,6 @@ func _refresh_confirm_dialog() -> void:
 			_confirm_dialog.close(),
 		"⚠ 危险行动",
 		"危险行动可能损耗寿元 / 魂魄 / 触发反噬，执行前请确认余量。")
-
-
-## 死因浮层：按 cause_id 回查快照里的死线条目，只读展示。
-func _refresh_cause_overlay() -> void:
-	if _cause_view == "":
-		_cause_overlay.close()  # 隐藏必须清文本，只设 visible 会残留
-		return
-	var death_lines: Dictionary = _snapshot.get("death_lines", {})
-	var found := {}
-	for kind in death_lines.keys():
-		var dl: Dictionary = death_lines[kind]
-		if str(dl.get("cause_id", "")) == _cause_view and bool(dl.get("danger", false)):
-			found = {
-				"name": str(dl.get("name", kind)),
-				"current": int(dl.get("remaining", 0)),
-				"max": int(dl.get("max", 0)),
-				"detail": str(dl.get("detail", "")),
-			}
-			break
-	if found.is_empty():
-		_cause_overlay.close()  # 隐藏必须清文本，只设 visible 会残留
-		return
-	_cause_overlay.visible = true
-	_cause_overlay.setup(found, func(): _cause_view = ""; _refresh_cause_overlay())
 
 
 # ---------------------------------------------------------------------------

@@ -28,13 +28,17 @@ func _ready() -> void:
 
 ## 写入状态条。护盾为 0 时隐藏护盾分条与文案。
 func setup(label: String, value: int, max_value: int, color: Color,
-		shield: int = 0, on_inspect: Callable = Callable()) -> void:
+		shield: int = 0, on_inspect: Callable = Callable(), danger: bool = false,
+		danger_detail: String = "") -> void:
 	_name_label.text = label
+	_name_label.add_theme_color_override("font_color", GuStyle.CINNABAR if danger else GuStyle.INK_SOFT)
 	_value_label.text = "%d / %d" % [value, max_value]
-	_value_label.add_theme_color_override("font_color", color)
+	var tone := GuStyle.CINNABAR if danger else color
+	_value_label.add_theme_color_override("font_color", tone)
 	_bar.max_value = maxi(1, max_value)
 	_bar.value = value
-	_bar.modulate = color
+	_bar.modulate = tone
+	tooltip_text = danger_detail if danger else ""
 
 	var has_shield: bool = shield > 0
 	_shield_label.visible = has_shield

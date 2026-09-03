@@ -1,9 +1,8 @@
 import { GuResourceChip } from "./gu_resource_chip"
-import { GuDeathLineWarning } from "./gu_death_line_warning"
 
 # GuTopBar —— 局内全局顶栏（规格 §9 / §16.5）
-# 资源 chip + 契约（蓝系 CONTRACT_BLUE）+ 异变/DDA（黄红系）+ 三死线预警。
-# props：resources / contracts / anomalies / death_lines / on_menu / on_view(cause_id) / layer(可选)
+# 资源 chip + 契约（蓝系 CONTRACT_BLUE）+ 异变/DDA（黄红系）。死亡风险由各资源
+# 状态条承载，顶栏不再重复展示“三死线”。
 # 契约与异变 UI 分区展示（§16.13），颜色语义锁死。
 # 实现注：全程 GDScript 构建 vnode，不用 @if/@for/@else（guitkx 解析不稳）。
 
@@ -11,29 +10,14 @@ export GuTopBar() -> RuitkVNode {
   var resources = props.get("resources", {})
   var contracts = props.get("contracts", [])
   var anomalies = props.get("anomalies", [])
-  var death_lines = props.get("death_lines", {})
   var on_menu = props.get("on_menu", null)
-  var on_view = props.get("on_view", null)
   var layer = props.get("layer", -1)
 
-  var kinds = ["yuanstone", "shouyuan", "hunpo", "material"]
+  var kinds = ["yuanstone", "shouyuan", "hunpo"]
   var chip_items = []
   for kind in kinds:
     if resources.has(kind):
       chip_items.append(<GuResourceChip kind={ kind } value={ int(resources[kind]) } key={ kind } />)
-
-  var kind_names = {"shouyuan": "寿元", "hunpo": "魂魄", "backlash": "反噬"}
-  var dl = {}
-  for key in ["shouyuan", "hunpo", "backlash"]:
-    if death_lines.has(key):
-      var d = death_lines[key]
-      dl[key] = {
-        "name": kind_names.get(key, key),
-        "remaining": int(d.get("value", 0)),
-        "max": int(d.get("threshold", 0)),
-        "danger": int(d.get("value", 0)) >= int(d.get("threshold", 0)),
-        "cause_id": str(d.get("cause_id", "")),
-      }
 
   var meta_panels = []
   for c in contracts:
@@ -71,7 +55,6 @@ export GuTopBar() -> RuitkVNode {
       { meta_panels }
     </HBoxContainer>
   ))
-  right_items.append(<GuDeathLineWarning death_lines={ dl } on_view={ on_view } />)
   if on_menu != null:
     right_items.append(<Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.INK_PRIMARY, "min_width": 32, "min_height": 32} } />)
 

@@ -29,7 +29,7 @@
 
 1. **每个数字都来自快照键**：界面上出现的任何数值（成本、概率、替代率、伤害、承载、饥饿预测）必须绑定接口契约列出的快照键；禁止 UI 层计算、估算或拼装数字。找不到键 = 走"快照键 + 同源测试"流程补快照，不是在 UI 里硬算。
 2. **数值文案禁模糊**（§16.5 既有守卫）：成本与风险用精确值（"真元 5%"，不是"消耗少量真元"）；`DisplayText` 负责把 id 转中文名，前端不手写 id 对应文案。
-3. **不可逆与死亡透明**：凡预检返回结构化代价/风险的命令（`cost_sources`、`lethal_confirm_required`、`unfed_value_note`、`permanent_losses`、`release_gu` 后果、饥饿死亡预测），必须**在触发确认之前**完整展示；致死确认必须显示精准死因（`gu_death_cause_overlay` 承载）。
+3. **不可逆与死亡透明**：凡预检返回结构化代价/风险的命令（`cost_sources`、`lethal_confirm_required`、`unfed_value_note`、`permanent_losses`、`release_gu` 后果、饥饿死亡预测），必须**在触发确认之前**完整展示；致死确认必须在确认框中显示精准死因，终局归因才可展开死因说明。
 4. **旁路信息永不渲染**：`_` 前缀键（`_snapshot`、`_feeding_*`）只进事件归因流水，任何屏不得展示。
 5. **拒绝可见**：被拒绝的操作必须把 `_REJECTION_TEXT` 的中文原因展示出来（toast 或就地提示），不允许静默失败。
 
@@ -49,7 +49,7 @@
 
 1. **直接执行**：普通可逆操作（移动、查看、普通交易报价预览）。
 2. **单次确认**：`gu_confirm_dialog`——触发条件来自契约中的结构化信号：永久失去项清单（`exchange_screen.permanent_losses`）、寿元/魂魄类支付（`lifespan_trade_warning`）、灭蛊、释放（展示 `release_gu` 后果）、献炼核心作辅蛊（`aux_core_warning`）、饥饿结算排序提交。确认框内容必须逐项列出失去物，不允许只有"确定/取消"。
-3. **二次确认 + 精准死因**：任何 `lethal_confirm_required=true` 的预检（超载、放血、魂魄膨胀）——第一层确认展示死因与数值，第二层确认才提交；`gu_death_cause_overlay` 承载死因展示。
+3. **二次确认 + 精准死因**：任何 `lethal_confirm_required=true` 的预检（超载、放血、魂魄膨胀）——第一层确认展示死因与数值，第二层确认才提交；不得新增常驻或页面内独立死线层。
 4. **非死亡特殊结局**（兽化等）：阈值达到只出提示标记，终局必须玩家主动二次确认（阶段八接口）。
 5. 系统永远不替玩家做确认级以上的决定；确认框没有"不再询问"。
 
@@ -79,14 +79,15 @@
 
 | 组件 | 路径 | 职责契约 |
 | --- | --- | --- |
-| `GuTopBar`（gu_top_bar） | `scenes/ui/widgets` | 常驻顶栏：资源 chips（走 `gu_resource_chip`）、层/阶段、回合信息；数据源=快照顶栏键 |
+| `GuTopBar`（gu_top_bar） | `scenes/ui/widgets` | 常驻顶栏：仅显示元石、寿元、魂魄 resource chips，以及层/阶段、回合信息；寿元/魂魄危险态直接标在原 chip 的朱砂文字/边框与 tooltip，禁止材料总数和独立三死线面板 |
 | `GuResourceChip` | 同上 | 单资源显示：`GuStyle.resource_label/suffix/color` + 数值；禁止在业务屏手拼资源文本 |
-| `GuStatBar`（gu_stat_bar） | 同上 | 比例条（hp/真元/承载/安分）：必须携带"当前/上限"两个快照键，不允许无上限的单值条 |
+| `GuStatBar`（gu_stat_bar） | 同上 | 比例条（hp/真元/承载/安分）：必须携带"当前/上限"两个快照键，不允许无上限的单值条；气血危险态直接使用朱砂色与 `death_lines.health.detail` tooltip |
 | `GuPanel` | 同上 | 标准分区容器（`GuStyle.panel()`），统一内边距 `SPACE_2` |
 | `GuIcon` | 同上 | 唯一图标入口（注册表制） |
 | `GuToast` | 同上 | 反馈提示；绑定 `_REJECTION_TEXT` 文案或快照 feedback |
 | `GuTooltipView` | 同上 | 悬停详情；**数值必须来自快照键**（§16.5） |
-| `GuConfirmDialog` | 同上 | §1.6 单次确认：必须支持逐项失去物列表 + 结构化代价 + 致死死因模式（复用 `gu_death_cause_overlay`） |
+| `GuInventory`（gu_inventory） | 同上 | 局内只读行囊：按 `inventory{materials,gu_instances,loot,intel}` 分区展示材料、蛊虫、已结算收获与已知情报；所有分区鼠标穿透，禁止命令和 `RunState` 引用 |
+| `GuConfirmDialog` | 同上 | §1.6 单次确认：必须支持逐项失去物列表、结构化代价和致死死因文本 |
 | `GuEnemyActor` | 同上 | 敌人展示：hp/shield/statuses/intent/alive 全量绑定 |
 | `GuCard` / `CardView`(GuHandCardView) / `GuBattleHand` / `HandPanel` | `scenes/ui/widgets` + `scenes/ui` | 卡牌实例视图与手牌区：主题变体 `CardView[Dim]`、`%HandBox` spawn 模式、溢出滚动 |
 | `GuDeathCauseOverlay` | 同上 | 致死/终局死因覆盖层 |

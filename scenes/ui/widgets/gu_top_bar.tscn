@@ -94,28 +94,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "魂魄: 0"
 
-[node name="ChipMaterial" type="PanelContainer" parent="BarMargin/BarRow/ChipHost"]
-layout_mode = 2
-
-[node name="ChipMargin" type="MarginContainer" parent="BarMargin/BarRow/ChipHost/ChipMaterial"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_bottom = 3
-
-[node name="ChipBox" type="HBoxContainer" parent="BarMargin/BarRow/ChipHost/ChipMaterial/ChipMargin"]
-layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="Icon" parent="BarMargin/BarRow/ChipHost/ChipMaterial/ChipMargin/ChipBox" instance=ExtResource("2_icon")]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BarMargin/BarRow/ChipHost/ChipMaterial/ChipMargin/ChipBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "材料: 0"
-
 [node name="Spacer" type="Control" parent="BarMargin/BarRow"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -123,36 +101,6 @@ size_flags_horizontal = 3
 [node name="MetaHost" type="HBoxContainer" parent="BarMargin/BarRow" unique_name_in_owner=true]
 layout_mode = 2
 theme_override_constants/separation = 6
-
-[node name="DeathHost" type="VBoxContainer" parent="BarMargin/BarRow" unique_name_in_owner=true]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="DeathTitle" type="Label" parent="BarMargin/BarRow/DeathHost" unique_name_in_owner=true]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "三死线"
-
-[node name="DeathShouyuan" type="Button" parent="BarMargin/BarRow/DeathHost"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "· 寿元 0/0"
-flat = true
-visible = false
-
-[node name="DeathHunpo" type="Button" parent="BarMargin/BarRow/DeathHost"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "· 魂魄 0/0"
-flat = true
-visible = false
-
-[node name="DeathBacklash" type="Button" parent="BarMargin/BarRow/DeathHost"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "· 反噬 0/0"
-flat = true
-visible = false
 
 [node name="MenuButton" type="Button" parent="BarMargin/BarRow" unique_name_in_owner=true]
 custom_minimum_size = Vector2(32, 32)

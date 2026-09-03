@@ -1,9 +1,9 @@
 
 # GuTooltipView —— 统一 tooltip 模板（规格 §9 / §16.5；T6-E 打磨批按规格落宣纸卷轴感）
-# 固定格式：品质 / 效果 / 联动 / 代价 / 诅咒警示；缺段隐藏、顺序恒定。
+# 固定格式：品质 / 效果 / 联动 / 代价 / 不可用 / 诅咒警示 / 风险；缺段隐藏、顺序恒定。
 # 底色 PAPER 卷轴 + 深字 INK；DANGER 只保留给诅咒警示行，不与正文混用。
 # 品质色轨取宣纸上可读的深色暖阶（GOLD_DIM→ANOMALY_AMBER→EMBER→BLOOD）。
-# props：title / quality / effect / synergy / cost / block_reason / curse_warning / on_detail
+# props：title / quality / effect / synergy / cost / block_reason / curse_warning / risk_warning / on_detail
 
 export GuTooltipView() -> RuitkVNode {
   var title = props.get("title", "")
@@ -13,6 +13,7 @@ export GuTooltipView() -> RuitkVNode {
   var cost = props.get("cost", "")
   var block_reason = props.get("block_reason", "")
   var curse_warning = props.get("curse_warning", false)
+  var risk_warning = props.get("risk_warning", "")
   var on_detail = props.get("on_detail", null)
 
   var quality_color = GuStyle.quality_color(quality)
@@ -43,6 +44,9 @@ export GuTooltipView() -> RuitkVNode {
           }
           @if (curse_warning) {
             return ( <Label text={ "诅咒警示：" + effect } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
+          }
+          @if (risk_warning != "") {
+            return ( <Label text={ "风险：" + risk_warning } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
           }
           @if (on_detail != null) {
             return ( <Button text="详情" onPressed={ func(): on_detail.call() } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14, "min_width": 24, "min_height": 24} } /> )

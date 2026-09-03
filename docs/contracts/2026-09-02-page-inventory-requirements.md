@@ -39,30 +39,30 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 ### P2 Map（`map_screen`，快照 `Map/map()`）
 
 - 定位：路线决策主屏；节点可达性、当前层、节点类型导航。
-- 数据绑定：`nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、当前层、可达集；`[T9]` 大层切换入口（`settle_layer` 预览键）。
+- 数据绑定：`nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、当前层、可达集、`inventory{materials,gu_instances,loot,intel}`；`[T9]` 大层切换入口（`settle_layer` 预览键）。
 - 命令：`travel(node_id)`（可达校验在领域，`node_not_reachable` 拒绝可见）、`complete_node`、离开确认（现役 `_map_leave_confirm` 模式）。
 - 状态与确认：不可达节点禁用 + 原因；`[T9]` 进新大层强制跳 LayerSettle；离开进行中节点走单次确认。
-- 组件：`GuTopBar`、节点图（现役 HTML 合成式地图，遵守自管页边距成文规则）、`GuToast`；`[T9]` `GuHungerBanner`（若下一切层有饥饿预测）。
-- 验收：visited/current/reachable 三态视觉可辨；travel 拒绝文案可见。
+- 组件：`GuTopBar`、`GuInventory`、节点图（现役 HTML 合成式地图，遵守自管页边距成文规则）、`GuToast`；`[T9]` `GuHungerBanner`（若下一切层有饥饿预测）。
+- 验收：visited/current/reachable 三态视觉可辨；每个 `reachable=true` 节点的完整点击区域位于当前可视地图内；同一快照中重复点击同一节点只提交一次 `travel`；travel 拒绝文案可见。
 
 ### P3 Encounter（`encounter_screen`，快照 `Encounter/encounter()`）
 
 - 定位：非战斗遭遇（交涉/事件/险地）；行动卡决策。
 - 数据绑定：`node{title,desc,type}`、`actions[]`（action_id/label/detail/cost/executable/block_reason/remedy_hints）、`intel{weakness,cost}`（已探明才显示）、`player`、`resources`、`contracts`、`anomalies`（DDA 标记）、`death_lines`。
 - 命令：`encounter.action_card`（预检 spec：`state_version + node_id + session_node_id`，全部必填）、`resolve_contact`、`choose_action`、离开。
-- 状态与确认：`executable=false` 的卡必须展示 `block_reason` + `remedy_hints`；死亡风险行（`death_lines`）出现时该行动组升级为确认层级 2/3。
+- 状态与确认：`executable=false` 的卡必须展示 `block_reason` + `remedy_hints`；`death_lines` 仅为既有状态栏风险预警与行动预检数据，风险行动升级为确认层级 2/3，不得渲染独立死线行。
 - 组件：`GuCommandButton`、`GuCostBreakdown`、`GuPanel`、`GuToast`；情报区只显示 `known_facts` 已有项。
 - 验收：每张卡的禁用原因可指出来源键；提交携带完整四字段（缺一即 `command_context_missing`）。
 
 ### P4 Battle（`battle_screen`，快照 `Battle/battle()`）——本批改造重点
 
 - 定位：战斗决策主屏。现状为 V1 连续时间模型；`[T9]` 接入 battle2 离散回合命令面与快照 v2。**双轨期约束**：V1 键与 battle2 键分区渲染，切换由命令面落地进度决定，禁止混用两套数值。
-- 数据绑定（现役）：`enemies[]`（hp/shield/statuses/intent/alive/counter_revealed）、`player`、`hand`、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`。
+- 数据绑定（现役）：`enemies[]`（hp/shield/statuses/intent/alive/counter_revealed）、`player`、`hand`、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`death_lines`、`inventory{materials,gu_instances,loot,intel}`。
 - 数据绑定（`[T9]` v2 占位）：`GuLedgerBadge`（thoughts_left/thought_used/reserved/maintained/gu_used/actions_used）、`GuDistanceBand`、`GuIntentBadge`（反应窗口开放标记）、安全力量/对外伤害/超载自伤/致死警告（`strike_preflight`）、维持状态列表、敌方准备状态。
 - 命令：现役 `use_gu/use_inheritance/end_turn/retreat/basic_attack/basic_dodge/refine/play_kill_move`（全部经 `battle.action_card`/`battle.turn` 预检）；`[T9.2]` 增 `enact`（proposal 三形）、`dodge/grapple/respond`、预留念头。
-- 状态与确认：单敌目标自动补 `target_id`（现役规则）；多敌强制选择；撤退受 `boss_blocks_retreat`；致死预检 → 确认层级 3（死因覆盖层）；超载自伤预计死亡同上。
-- 组件：`GuBattleHand/HandPanel`、`GuEnemyActor`、`GuStatBar`、`GuIntentBadge`、`[T9]` `GuLedgerBadge`、`GuDistanceBand`、`GuCostBreakdown`、`GuDeathCauseOverlay`。
-- 验收：手牌过期（`battle_hand_stale`）触发重建；每个操作按钮可指出预检 spec_id；v2 占位区在未落地时整体隐藏。
+- 状态与确认：单敌目标自动补 `target_id`（现役规则）；多敌强制选择；撤退受 `boss_blocks_retreat`；致死预检 → 确认层级 3，在确认框中展示精准风险；超载自伤预计死亡同上。`death_lines` 不得在战斗页另建数值/死因覆盖层。
+- 组件：`GuBattleHand/HandPanel`、`GuEnemyActor`、`GuStatBar`、`GuInventory`、`GuTooltipView`、`GuIntentBadge`、`[T9]` `GuLedgerBadge`、`GuDistanceBand`、`GuCostBreakdown`。
+- 验收：卡牌详情只经共享 hover tooltip 展示（含风险段），不得另建常驻详情卡；单体卡可经鼠标选择敌人，危险卡先确认再提交，且同一快照内相同卡牌/目标组合最多提交一次；手牌过期（`battle_hand_stale`）触发重建；每个操作按钮可指出预检 spec_id；v2 占位区在未落地时整体隐藏。
 
 ### P5 Shop（`shop_screen`，快照 `Shop/shop()`）
 

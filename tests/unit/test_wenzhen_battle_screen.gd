@@ -44,6 +44,19 @@ func test_three_enemies_keep_individual_intent_hp_shield_and_status() -> void:
 		assert_not_null(_named(host, "enemy_status_" + enemy_id), "status for %s" % enemy_id)
 
 
+func test_dangerous_health_stays_on_existing_player_stat_bar() -> void:
+	var state := _snapshot_with_enemies(1)
+	state["death_lines"] = {
+		"health": {"danger": true, "detail": "气血将竭"},
+	}
+	var host := _mount(state)
+	var player_actor := _named(host, "player_actor")
+	assert_not_null(player_actor)
+	var health_bar: Control = player_actor.get_child(0)
+	assert_eq(health_bar.tooltip_text, "气血将竭")
+	assert_eq(health_bar.get_node("ValueRow/ValueLabel").get_theme_color("font_color"), GuStyle.CINNABAR)
+
+
 func test_four_or_more_enemies_keep_first_three_and_expose_remainder() -> void:
 	var host := _mount(_snapshot_with_enemies(4))
 	assert_not_null(_named(host, "enemy_actor_e0"))
@@ -164,6 +177,12 @@ func test_battle_hand_renders_no_permanent_tooltip_children() -> void:
 	assert_eq(_count_labels_with_text(hand, "血牙蛊"), 0, "card name should live only on the body Button, not as a separate label")
 	assert_eq(_count_buttons_with_text(hand, "血牙蛊"), 1, "card body Button must exist once with the card name")
 	assert_eq(_count_buttons_with_text(hand, "闭息蛊"), 1, "card body Button must exist once with the card name")
+	assert_null(_find_label_containing(hand, "普通"),
+			"quality belongs to the shared hover tooltip, not the clickable card body")
+	assert_null(_find_label_containing(hand, "造成 4 点伤害"),
+			"effect belongs to the shared hover tooltip, not the clickable card body")
+	assert_null(_find_label_containing(hand, "◆ 1"),
+			"cost belongs to the shared hover tooltip, not the clickable card body")
 
 
 func test_battle_hand_blocked_cards_remain_hoverable_and_carry_block_reason() -> void:
@@ -200,6 +219,27 @@ func test_battle_hand_hover_renders_shared_tooltip_host() -> void:
 	assert_not_null(_named(overlay, "hand_tooltip_title"))
 
 
+func test_battle_hand_tooltip_is_a_mouse_ignored_floating_overlay() -> void:
+	var cards: Array = [
+		{"id": "c0", "name": "血牙蛊", "quality": "普通", "cost": "1", "effect": "造成 4 点伤害", "curse_warning": false, "executable": true, "block_reason": ""},
+	]
+	var host := _mount_with_hand(cards)
+	var body := _named(host, "card_body_c0")
+	assert_not_null(body)
+	if body != null and body.has_signal("mouse_entered"):
+		body.emit_signal("mouse_entered")
+	var overlay: Control = null
+	for _i in range(4):
+		await get_tree().process_frame
+		overlay = _named(host, "battle_hand_tooltip_host") as Control
+		if overlay != null:
+			break
+	assert_not_null(overlay)
+	if overlay != null:
+		assert_true(overlay.top_level, "Tooltip must not reserve vertical battle layout space")
+		assert_eq(overlay.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+
+
 func test_battle_hand_tooltip_uses_fixed_segments_and_block_reason() -> void:
 	var cards: Array = [
 		{"id": "c0", "name": "月光蛊", "quality": "史诗", "cost": "3", "cost_ex": "真元 ×3", "effect": "对单体造成 8 点伤害", "synergy": "月华联动", "curse_warning": false, "executable": false, "block_reason": "真元不足。"},
@@ -220,6 +260,25 @@ func test_battle_hand_tooltip_uses_fixed_segments_and_block_reason() -> void:
 	assert_not_null(_find_label_containing(tooltip, "联动："))
 	assert_not_null(_find_label_containing(tooltip, "代价："))
 	assert_not_null(_find_label_containing(tooltip, "不可用："))
+
+
+func test_battle_hand_tooltip_exposes_known_risk_as_a_warning_segment() -> void:
+	var cards: Array = [
+		{"id": "c0", "name": "燃寿蛊", "quality": "稀有", "cost": "1", "effect": "造成 6 点伤害", "curse_warning": false, "executable": true, "known_risk": ["寿元 -1"], "block_reason": ""},
+	]
+	var host := _mount_with_hand(cards)
+	var body := _named(host, "card_body_c0")
+	assert_not_null(body)
+	if body != null and body.has_signal("mouse_entered"):
+		body.emit_signal("mouse_entered")
+	var tooltip: Node = null
+	for _i in range(4):
+		await get_tree().process_frame
+		tooltip = _named(host, "battle_hand_tooltip_host")
+		if tooltip != null:
+			break
+	assert_not_null(tooltip)
+	assert_not_null(_find_label_containing(tooltip, "风险：寿元 -1"))
 
 
 func test_card_button_children_do_not_eat_mouse_clicks() -> void:

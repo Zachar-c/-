@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/screens/encounter_screen_view.gd" id="1_enc"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="4_tip"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="5_dialog"]
-[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_death_cause_overlay.tscn" id="6_overlay"]
 
 [node name="EncounterScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -70,9 +69,5 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="ConfirmDialog" parent="Root" instance=ExtResource("5_dialog")]
-layout_mode = 2
-visible = false
-
-[node name="CauseOverlay" parent="Root" instance=ExtResource("6_overlay")]
 layout_mode = 2
 visible = false

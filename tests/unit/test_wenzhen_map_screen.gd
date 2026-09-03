@@ -12,7 +12,7 @@ var _hosts: Array = []
 func after_each() -> void:
 	for host in _hosts:
 		if host != null and is_instance_valid(host):
-			host.queue_free()
+			host.free()
 	_hosts.clear()
 
 
@@ -199,7 +199,8 @@ func test_map_reachable_node_click_submits_travel_command() -> void:
 	assert_not_null(node)
 	if node != null:
 		node.pressed.emit()
-	assert_eq(submitted, ["elite"])
+		node.pressed.emit()
+	assert_eq(submitted, ["elite"], "one rendered route node must submit travel once per snapshot")
 
 
 func test_map_routes_fill_the_route_world_at_runtime() -> void:
@@ -229,6 +230,44 @@ func test_map_current_and_candidate_nodes_intersect_the_route_camera() -> void:
 		return
 	assert_true(current_node.get_global_rect().intersects(camera.get_global_rect()), "the HTML l62 current node must remain inside the visible route camera")
 	assert_true(candidate_node.get_global_rect().intersects(camera.get_global_rect()), "the HTML l63 candidate node must remain inside the visible route camera")
+
+
+func test_map_all_reachable_nodes_are_fully_visible_at_compact_viewport() -> void:
+	var host := Control.new()
+	host.size = Vector2(1280, 720)
+	add_child(host)
+	_hosts.append(host)
+	host.add_child(TscnMountHelper.instantiate(MAP_SCREEN_TSCN, _route_snapshot(), {"travel": func(_id): pass}))
+	for _frame in 3:
+		await get_tree().process_frame
+	var camera := _named(host, "map_camera")
+	assert_not_null(camera)
+	if camera == null:
+		return
+	for node_name in ["map_node_market", "map_node_elite", "map_node_event"]:
+		var node := _named(host, node_name)
+		assert_not_null(node, "%s must render" % node_name)
+		if node != null:
+			assert_true(camera.get_global_rect().encloses(node.get_global_rect()),
+					"%s must be fully exposed for a real mouse click" % node_name)
+
+
+func test_map_rui_mast_does_not_apply_panel_stylebox_to_hbox() -> void:
+	var source := FileAccess.get_file_as_string("res://ui/screens/map_screen.guitkx")
+	assert_false(source.contains('offset_bottom={ 68.0 } style={'),
+			"map_mast is an HBoxContainer and must not receive Panel-only StyleBox keys")
+
+
+func test_map_rui_labels_do_not_receive_panel_stylebox_keys() -> void:
+	var source := FileAccess.get_file_as_string("res://ui/screens/map_screen.guitkx")
+	assert_false(source.contains('text={ "契约 · " + ("、".join(contracts) if not contracts.is_empty() else "无") } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 9, "border_width_left"'),
+			"map marker Label nodes must not receive Panel-only border keys")
+	assert_false(source.contains('text={ "异变 · " + anomaly_label } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 9, "border_width_left"'),
+			"map marker Label nodes must not receive Panel-only content margin keys")
+	assert_false(source.contains('text={ map_subtitle } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "content_margin_left"'),
+			"map subtitle Label must use layout spacing instead of a StyleBox margin")
+	assert_false(source.contains('<Control name="map_depth"') and source.contains('"border_width_right": 1'),
+			"map depth divider must use a Panel rather than apply StyleBox keys to Control")
 
 
 func test_map_master_visible_text_uses_its_local_palette() -> void:
@@ -374,5 +413,3 @@ func _assert_label_color(host: Control, label_name: String, expected: Color) -> 
 	assert_not_null(label, "map master needs named visible text: %s" % label_name)
 	if label != null:
 		assert_true(label.get_theme_color("font_color").is_equal_approx(expected), "%s must use its exact map HTML color" % label_name)
-
-

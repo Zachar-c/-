@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/screens/map_screen_view.gd" id="1_map"]
 [ext_resource type="Script" path="res://scripts/presentation/widgets/map_path_layer.gd" id="2_paths"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_inventory.tscn" id="3_inventory"]
 
 [node name="MapScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -96,13 +97,22 @@ theme_override_font_sizes/font_size = 10
 [node name="map_camera" type="Control" parent="map_root"]
 layout_mode = 0
 anchor_left = 0.055
-anchor_right = 0.945
+anchor_right = 0.775
 anchor_bottom = 1.0
 offset_top = 158.0
 offset_bottom = -92.0
 grow_horizontal = 2
 grow_vertical = 2
 clip_contents = true
+
+[node name="map_inventory" parent="map_root" instance=ExtResource("3_inventory")]
+layout_mode = 0
+anchor_left = 0.79
+anchor_right = 0.945
+offset_top = 110.0
+offset_bottom = 142.0
+grow_horizontal = 2
+z_index = 4
 
 [node name="map_camera_backdrop" type="Panel" parent="map_root/map_camera"]
 layout_mode = 0
@@ -178,7 +188,7 @@ z_index = 2
 [node name="map_inspector" type="HBoxContainer" parent="map_root"]
 layout_mode = 0
 anchor_left = 0.055
-anchor_right = 0.945
+anchor_right = 0.775
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_top = -72.0

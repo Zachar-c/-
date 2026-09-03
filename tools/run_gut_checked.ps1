@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$CommandPath,
-    [Parameter(Mandatory)][string[]]$CommandArguments,
+    [string[]]$CommandArguments = @(),
     [string]$ExpectedTestPath = ''
 )
 
@@ -11,8 +11,11 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $repoRoot
 
+$savedErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 $lines = @(& $CommandPath @CommandArguments 2>&1 | ForEach-Object { [string]$_ })
 $nativeExit = $LASTEXITCODE
+$ErrorActionPreference = $savedErrorActionPreference
 $lines | Write-Output
 
 $raw = $lines -join "`n"

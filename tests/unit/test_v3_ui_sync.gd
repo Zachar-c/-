@@ -106,9 +106,10 @@ func test_battle_view_hud_uses_programmatic_icons() -> void:
 	var controller: RunController = _battle_controller()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
 	var resources: Dictionary = snapshot.get("resources", {})
-	assert_eq(resources.size(), 4, "battle hud must expose four resource chips")
-	for key in ["yuanstone", "shouyuan", "hunpo", "material"]:
+	assert_eq(resources.size(), 3, "battle hud must expose only the three status resource chips")
+	for key in ["yuanstone", "shouyuan", "hunpo"]:
 		assert_true(resources.has(key), "battle hud missing resource chip %s" % key)
+	assert_false(resources.has("material"), "materials belong in the satchel, not the status bar")
 
 
 func test_battle_hud_shows_formula_true_qi_max() -> void:

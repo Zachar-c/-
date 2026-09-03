@@ -11,6 +11,7 @@ extends PanelContainer
 @onready var _cost_label: Label = $TipMargin/TipBody/CostLabel
 @onready var _block_label: Label = $TipMargin/TipBody/BlockLabel
 @onready var _curse_label: Label = $TipMargin/TipBody/CurseLabel
+@onready var _risk_label: Label = $TipMargin/TipBody/RiskLabel
 @onready var _detail_button: Button = $TipMargin/TipBody/DetailButton
 
 
@@ -19,13 +20,14 @@ func _ready() -> void:
 	_title_label.add_theme_font_size_override("font_size", 16)
 	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_quality_label.add_theme_font_size_override("font_size", 12)
-	for label in [_effect_label, _synergy_label, _cost_label, _block_label, _curse_label]:
+	for label in [_effect_label, _synergy_label, _cost_label, _block_label, _curse_label, _risk_label]:
 		label.add_theme_font_size_override("font_size", 14)
 	_effect_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_synergy_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	_cost_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_block_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
 	_curse_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
+	_risk_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
 	_detail_button.add_theme_font_size_override("font_size", 14)
 	_detail_button.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	hide_all()
@@ -34,7 +36,7 @@ func _ready() -> void:
 ## 写入各段文案并刷新显隐。空段一律隐藏，顺序恒定不变。
 func setup(title: String = "", quality: String = "", effect: String = "",
 		synergy: String = "", cost: String = "", block_reason: String = "",
-		curse_warning: bool = false, on_detail: Callable = Callable()) -> void:
+		curse_warning: bool = false, risk_warning: String = "", on_detail: Callable = Callable()) -> void:
 	_title_label.text = title
 	_title_label.visible = title != ""
 	_quality_label.text = quality
@@ -53,6 +55,8 @@ func setup(title: String = "", quality: String = "", effect: String = "",
 	_block_label.visible = block_reason != ""
 	_curse_label.text = _seg("诅咒警示：", effect if curse_warning else "")
 	_curse_label.visible = curse_warning and effect != ""
+	_risk_label.text = _seg("风险：", risk_warning)
+	_risk_label.visible = risk_warning != ""
 
 	_detail_button.visible = on_detail.is_valid()
 	if on_detail.is_valid():
@@ -67,7 +71,7 @@ func _seg(prefix: String, value: String) -> String:
 
 func hide_all() -> void:
 	for label in [_title_label, _quality_label, _effect_label, _synergy_label,
-			_cost_label, _block_label, _curse_label]:
+			_cost_label, _block_label, _curse_label, _risk_label]:
 		label.visible = false
 	_detail_button.visible = false
 

@@ -48,6 +48,46 @@ func test_single_target_card_only_submits_after_valid_enemy_selection() -> void:
 	assert_eq(played, [["c1", "e0"]])
 
 
+func test_hover_keeps_card_button_instance_clickable() -> void:
+	var played: Array = []
+	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]))
+	var before_hover := _button(host, "月光蛊")
+	assert_not_null(before_hover)
+	before_hover.mouse_entered.emit()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var after_hover := _button(host, "月光蛊")
+	assert_same(after_hover, before_hover,
+			"hover must only update the shared tooltip; rebuilding the Button drops real mouse clicks")
+	after_hover.pressed.emit()
+	await get_tree().process_frame
+	assert_not_null(_named(host, "battle_target_select"))
+	assert_true(played.is_empty(), "single-target cards wait for an enemy after the click")
+
+
+func test_left_mouse_input_after_hover_arms_single_target_card() -> void:
+	var played: Array = []
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(1280, 720)
+	viewport.gui_disable_input = false
+	add_child(viewport)
+	_hosts.append(viewport)
+	var host := _mount_in(viewport, func(card_id, target_id): played.append([card_id, target_id]))
+	host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	await get_tree().process_frame
+	var card_button := _button(host, "月光蛊")
+	assert_not_null(card_button)
+	var position := card_button.get_global_rect().get_center()
+	_viewport_mouse_motion(viewport, position)
+	_viewport_mouse_button(viewport, position, true)
+	_viewport_mouse_button(viewport, position, false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	assert_not_null(_named(host, "battle_target_select"),
+			"a real left click on a hovered card must arm its target selection")
+	assert_true(played.is_empty())
+
+
 func test_right_click_cancels_target_selection_without_submitting() -> void:
 	var played: Array = []
 	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]))
@@ -82,10 +122,49 @@ func test_escape_cancels_target_selection_without_submitting() -> void:
 	assert_true(played.is_empty())
 
 
-func _mount(on_play: Callable) -> Control:
-	var host := Control.new()
-	add_child(host)
+func test_same_card_target_pair_submits_once_per_snapshot() -> void:
+	var played: Array = []
+	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]))
+	var screen := _screen(host)
+	var card: Dictionary = _state_card(screen)
+	screen._submit_card(card, "e0")
+	screen._submit_card(card, "e0")
+	assert_eq(played, [["c1", "e0"]],
+			"a repeated UI signal must not replay play_card against the same snapshot")
+
+
+func test_dangerous_target_card_confirms_after_target_and_cancel_does_not_submit() -> void:
+	var played: Array = []
+	var danger_card := {
+		"id": "c2", "name": "燃寿蛊", "cost": 1, "effect": "造成伤害",
+		"executable": true, "target_type": "single_enemy", "valid_target_ids": ["e0"],
+		"dangerous": true, "known_risk": ["寿元 -1"],
+	}
+	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]), danger_card)
+	assert_true(_press(host, "燃寿蛊"))
+	await get_tree().process_frame
+	var confirm := _named(host, "ConfirmDialog")
+	assert_not_null(confirm)
+	assert_false(confirm.visible, "target selection must precede danger confirmation")
+	assert_true(_press(host, "敌人0"))
+	await get_tree().process_frame
+	assert_true(confirm.visible)
+	assert_true(played.is_empty())
+	assert_true(_press(host, "取消"))
+	await get_tree().process_frame
+	assert_not_null(_named(host, "battle_drag_cancel"))
+	assert_true(played.is_empty())
+
+
+func _mount(on_play: Callable, card: Dictionary = {}) -> Control:
+	var host := _mount_in(self, on_play, card)
 	_hosts.append(host)
+	return host
+
+
+func _mount_in(parent: Node, on_play: Callable, card: Dictionary = {}) -> Control:
+	var host := Control.new()
+	parent.add_child(host)
 	var state := {
 		"resources": {}, "contracts": [], "anomalies": [], "death_lines": {},
 		"enemies": [
@@ -93,7 +172,7 @@ func _mount(on_play: Callable) -> Control:
 			{"id": "e1", "name": "敌人1", "hp": 20, "max_hp": 20, "shield": 0, "statuses": [], "intent": {"type": "attack", "value": 4, "detail": "冲撞"}, "alive": true},
 		],
 		"player": {"hp": 20, "max_hp": 20, "shield": 0, "primordial": 3, "soul": 4, "statuses": []},
-		"hand": [{"id": "c1", "name": "月光蛊", "cost": 1, "effect": "造成伤害", "executable": true, "target_type": "single_enemy", "valid_target_ids": ["e0"]}],
+		"hand": [card if not card.is_empty() else {"id": "c1", "name": "月光蛊", "cost": 1, "effect": "造成伤害", "executable": true, "target_type": "single_enemy", "valid_target_ids": ["e0"]}],
 		"piles": {"draw": 0, "discard": 0, "exhausted": 0}, "soul_ops": {"cap": 1, "used": 0}, "default_target_id": "e0",
 	}
 	# 战斗屏已迁到 Godot 官方 .tscn（scenes/ui/screens/battle_screen.tscn）。
@@ -102,6 +181,33 @@ func _mount(on_play: Callable) -> Control:
 			state, {"play_card": on_play})
 	host.add_child(inst)
 	return host
+
+
+func _screen(host: Node) -> Node:
+	for child in host.get_children():
+		if child is BattleScreenView:
+			return child
+	return null
+
+
+func _state_card(screen: Node) -> Dictionary:
+	return screen._snapshot.get("hand", [])[0]
+
+
+func _viewport_mouse_motion(viewport: SubViewport, position: Vector2) -> void:
+	var event := InputEventMouseMotion.new()
+	event.position = position
+	event.global_position = position
+	viewport.push_input(event)
+
+
+func _viewport_mouse_button(viewport: SubViewport, position: Vector2, pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = pressed
+	event.position = position
+	event.global_position = position
+	viewport.push_input(event)
 
 
 func _press(node: Node, text: String) -> bool:

@@ -15,6 +15,7 @@ $caseDir = Join-Path $RepoRoot 'tests/.run_gut_cases'
 if (Test-Path $caseDir) { Remove-Item -Recurse -Force $caseDir }
 New-Item -ItemType Directory -Path $caseDir | Out-Null
 
+try {
 function New-Stub ($Path, $Body) { Set-Content -Path $Path -Value $Body -Encoding utf8 }
 New-Stub "$caseDir/ok.ps1"          "Write-Output 'Tests           1'`nWrite-Output 'Passing Tests   1'`nexit 0"
 New-Stub "$caseDir/parse.ps1"       "Write-Output 'Parse Error: bad identifier'`nexit 1"
@@ -24,6 +25,7 @@ New-Stub "$caseDir/script_err.ps1"  "Write-Output 'SCRIPT ERROR: something'`nWri
 New-Stub "$caseDir/zero.ps1"        "Write-Output 'Tests           0'`nWrite-Output 'Passing Tests   0'`nexit 0"
 New-Stub "$caseDir/path_match.ps1" "Write-Output 'Tests           1'`nWrite-Output 'res://tests/unit/test_ok.gd'`nexit 0"
 New-Stub "$caseDir/path_miss.ps1"  "Write-Output 'Tests           1'`nexit 0"
+New-Stub "$caseDir/diagnostic.ps1" "[Console]::Error.WriteLine('WARNING: non-fatal teardown diagnostic')`nWrite-Output 'Tests           1'`nWrite-Output 'Passing Tests   1'`nexit 0"
 
 function Invoke-RunnerInline {
     param([string]$CommandPath, [string[]]$CommandArguments, [string]$ExpectedTestPath)
@@ -50,9 +52,8 @@ function Invoke-RunnerInline {
 
 function Assert-Exit {
     param([string]$Stub, [int]$Expected, [string]$Description, [string]$ExpectedPath = '')
-    $lines = @(& pwsh -NoProfile -File $Stub 2>&1 | ForEach-Object { [string]$_ })
-    $plain = $lines -join "`n"
-    if ($ExpectedPath) { $plain += "`n" + $ExpectedPath }
+    $savedErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
     & {
         $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
         $runner = Join-Path (Split-Path -Parent $PSScriptRoot) 'run_gut_checked.ps1'
@@ -62,6 +63,7 @@ function Assert-Exit {
             & pwsh -NoProfile -File $runner -CommandPath $Stub 2>&1 | Out-Null
         }
     } | Out-Null
+    $ErrorActionPreference = $savedErrorActionPreference
     if ($LASTEXITCODE -ne $Expected) {
         Write-Output ("[FAIL] {0}: expected {1}, got {2}" -f $Description, $Expected, $LASTEXITCODE)
         exit 1
@@ -77,6 +79,12 @@ Assert-Exit "$caseDir/script_err.ps1"   1 'SCRIPT ERROR exits 1'
 Assert-Exit "$caseDir/zero.ps1"         1 'zero test count exits 1'
 Assert-Exit "$caseDir/path_match.ps1"  0 'matching ExpectedTestPath exits 0' -ExpectedPath 'res://tests/unit/test_ok.gd'
 Assert-Exit "$caseDir/path_miss.ps1"   1 'mismatched ExpectedTestPath exits 1' -ExpectedPath 'res://tests/unit/test_missing.gd'
+Assert-Exit "$caseDir/diagnostic.ps1"  0 'non-fatal stderr diagnostic preserves successful GUT result'
 
 Write-Output 'all runner self-tests passed'
 exit 0
+} finally {
+    if (Test-Path $caseDir) {
+        Remove-Item -Recurse -Force $caseDir
+    }
+}

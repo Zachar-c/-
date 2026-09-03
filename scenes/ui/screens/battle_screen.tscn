@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/screens/battle_screen_view.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_battle_hand.tscn" id="6_hand"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="7_dialog"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="8_tooltip"]
-[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_death_cause_overlay.tscn" id="9_cause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_inventory.tscn" id="10_inventory"]
 
 [node name="BattleScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -44,6 +44,9 @@ size_flags_horizontal = 3
 [node name="EnemyPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="Inventory" parent="Root/battle_field" instance=ExtResource("10_inventory")]
+layout_mode = 2
 
 [node name="FeedbackToast" parent="Root" instance=ExtResource("5_toast")]
 layout_mode = 2
@@ -91,7 +94,10 @@ visible = false
 
 [node name="battle_hand_tooltip_host" type="PanelContainer" parent="Root"]
 layout_mode = 2
+custom_minimum_size = Vector2(280, 0)
 visible = false
+mouse_filter = 2
+top_level = true
 
 [node name="TooltipMargin" type="MarginContainer" parent="Root/battle_hand_tooltip_host"]
 layout_mode = 2
@@ -110,7 +116,3 @@ theme_override_font_sizes/font_size = 16
 
 [node name="TooltipView" parent="Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody" instance=ExtResource("8_tooltip")]
 layout_mode = 2
-
-[node name="CauseOverlay" parent="Root" instance=ExtResource("9_cause")]
-layout_mode = 2
-visible = false

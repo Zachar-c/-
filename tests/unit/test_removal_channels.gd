@@ -186,6 +186,50 @@ func test_rest_mode_validates_targets_before_consuming_visit() -> void:
 	assert_eq(str(bad_mode["result"]["reason"]), "unsupported_rest_mode")
 
 
+func test_destroy_gu_extracts_declared_death_drops_into_materials() -> void:
+	# P1: a destroy_gu whose definition declares death_drops must refund the
+	# extracted materials through the resolved remove path (via LootRules),
+	# not just mark the instance dead.
+	var tuned := _with_declared_drop_gu()
+	var run := _run_with_instances(["declared_prey_gu"])
+	run.materials["beast_bone"] = 3
+	var result := ResolverScript.apply(run, {"type": "destroy_gu", "instance_id": "gu_002"}, tuned)
+
+	assert_true(result["result"]["ok"])
+	var next: RunState = result["state"]
+	assert_eq(str(next.gu_instances["gu_002"]["state"]), "dead")
+	assert_false(next.cave_aperture["stored_gu_instance_ids"].has("gu_002"))
+	assert_eq(int(next.materials.get("beast_bone", 0)), 5,
+			"declared death_drops are refunded into materials")
+
+	var ev: Dictionary = next.event_log.back()
+	assert_eq(str(ev["action"]), "destroy_gu")
+	assert_eq(int((ev["after"] as Dictionary)["materials"]["beast_bone"]), 5,
+			"one destroy_gu event carries the materials change in its after")
+
+
+func test_destroy_gu_without_declared_drops_changes_no_materials() -> void:
+	# No death_drops declared => no refund (declaration-only, not fixed ratio).
+	var run := _run_with_instances([])
+	run.materials["beast_bone"] = 3
+	var result := ResolverScript.apply(run, {"type": "destroy_gu", "instance_id": "gu_001"}, catalog)
+
+	assert_true(result["result"]["ok"])
+	var next: RunState = result["state"]
+	assert_eq(str(next.gu_instances["gu_001"]["state"]), "dead")
+	assert_eq(int(next.materials.get("beast_bone", 0)), 3,
+			"no declared death_drops => materials unchanged")
+
+
+func _with_declared_drop_gu() -> Dictionary:
+	var tuned := ContentCatalog.load_all()
+	(tuned["gu"] as Array).append({
+		"id": "declared_prey_gu", "rank": 1, "death_drops": {"beast_bone": 2}, "can_direct_drop": true})
+	(tuned["gu_by_id"] as Dictionary)["declared_prey_gu"] = {
+		"id": "declared_prey_gu", "rank": 1, "death_drops": {"beast_bone": 2}, "can_direct_drop": true}
+	return tuned
+
+
 func test_cursed_gu_blocks_destroy_and_gain_backlash_curse() -> void:
 	var run := _run_with_instances(["blood_farewell_gu"])
 	var result := ResolverScript.apply(run, {"type": "destroy_gu", "instance_id": "gu_002"}, catalog)

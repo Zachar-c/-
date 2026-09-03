@@ -1,7 +1,6 @@
 import { GuBattleHand } from "~/ui/widgets/gu_battle_hand"
 import { GuButton } from "~/ui/widgets/gu_button"
 import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
-import { GuDeathCauseOverlay } from "~/ui/widgets/gu_death_cause_overlay"
 import { GuEnemyActor } from "~/ui/widgets/gu_enemy_actor"
 import { GuPanel } from "~/ui/widgets/gu_panel"
 import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
@@ -60,12 +59,6 @@ export BattleScreen() -> RuitkVNode {
   var player = state.get("player", {})
   var piles = state.get("piles", {})
   var soul_ops = state.get("soul_ops", {})
-  var cause_line = {}
-  for kind in state.get("death_lines", {}).keys():
-    var line = state["death_lines"][kind]
-    if str(line.get("cause_id", "")) == cause_view and (line.get("danger", false)):
-      cause_line = {"name": str(line.get("name", kind)), "current": int(line.get("remaining", 0)), "max": int(line.get("max", 0)), "detail": str(line.get("detail", ""))}
-
   var ops = []
   ops.append(<GuButton label="结束回合" on_press={ func(): if commands.has("end_turn"): commands["end_turn"].call() } />)
   if commands.has("refine"):
@@ -113,10 +106,10 @@ export BattleScreen() -> RuitkVNode {
         segments.append(<Label text={ "不可用：" + hovered_block } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } />)
       if hovered_curse:
         segments.append(<Label text="诅咒警示：执行即受反噬。" style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } />)
-      hand_tooltip_rows.append(<PanelContainer name="battle_hand_tooltip_host" style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 8, "border_width_all": 1, "border_color": GuStyle.HAIRLINE_COLOR} }><MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 10, "margin_bottom": 10} }><VBoxContainer style={ {"separation": 4} }><Label name="hand_tooltip_title" text={ hovered_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } /><GuTooltipView title="" quality={ hovered_quality } effect={ hovered_effect } synergy={ str(hovered_card.get("synergy", "")) } cost={ str(hovered_card.get("cost_ex", str(hovered_card.get("cost", "")))) } block_reason={ hovered_block if not hovered_executable else "" } curse_warning={ hovered_curse } /></VBoxContainer></MarginContainer></PanelContainer>)
+      hand_tooltip_rows.append(<PanelContainer name="battle_hand_tooltip_host" style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 8, "border_width_all": 1, "border_color": GuStyle.HAIRLINE_COLOR} }><MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 10, "margin_bottom": 10} }><VBoxContainer style={ {"separation": 4} }><Label name="hand_tooltip_title" text={ hovered_name } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } /><GuTooltipView title="" quality={ hovered_quality } effect={ hovered_effect } synergy={ str(hovered_card.get("synergy", "")) } cost={ str(hovered_card.get("cost_ex", str(hovered_card.get("cost", "")))) } block_reason={ hovered_block if not hovered_executable else "" } curse_warning={ hovered_curse } risk_warning={ "；".join(hovered_card.get("known_risk", [])) } /></VBoxContainer></MarginContainer></PanelContainer>)
 
   return (<VBoxContainer style={ {"separation": 10, "anchors_preset": "PRESET_FULL_RECT"} }>
-    <VBoxContainer name="battle_hud"><GuTopBar resources={ state.get("resources", {}) } contracts={ state.get("contracts", []) } anomalies={ state.get("anomalies", []) } death_lines={ state.get("death_lines", {}) } on_view={ func(cid): set_interaction.call({"mode": mode, "card": active_card, "target_id": "", "cause_view": str(cid)}) } /></VBoxContainer>
+    <VBoxContainer name="battle_hud"><GuTopBar resources={ state.get("resources", {}) } contracts={ state.get("contracts", []) } anomalies={ state.get("anomalies", []) } death_lines={ state.get("death_lines", {}) } /></VBoxContainer>
     <HBoxContainer name="battle_field" style={ {"separation": 20, "size_flags_vertical": 3} }>
       <GuPanel title="我方" expand_h={ true }><VBoxContainer name="player_actor" style={ {"separation": 6} }><GuStatBar label="生命" value={ int(player.get("hp", 0)) } max_value={ maxi(1, int(player.get("max_hp", 1))) } color={ GuStyle.JADE } shield={ int(player.get("shield", 0)) } /><GuStatBar label="真元" value={ int(player.get("primordial", 0)) } max_value={ maxi(1, int(player.get("primordial", 1))) } color={ GuStyle.ANOMALY_YELLOW } /><Label text={ "行动值 %d/%d" % [int(soul_ops.get("left", 0)), int(soul_ops.get("max", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></VBoxContainer></GuPanel>
       <GuPanel title="敌方" expand_h={ true }><HBoxContainer name="enemy_group" style={ {"separation": 10} }>{ enemy_rows }</HBoxContainer></GuPanel>
@@ -127,6 +120,5 @@ export BattleScreen() -> RuitkVNode {
     <Label name={ "battle_" + mode } text="" />
     { confirm_row }
     { hand_tooltip_rows }
-    @if (not cause_line.is_empty()) { return (<GuDeathCauseOverlay line={ cause_line } on_close={ reset_interaction } />) }
   </VBoxContainer>)
 }

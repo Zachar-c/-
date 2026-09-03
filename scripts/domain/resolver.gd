@@ -660,12 +660,12 @@ static func _destroy_gu(state: RunState, command: Dictionary, catalog: Dictionar
 	var blocked := _cursed_drop_block(state, catalog, str(existing.get("definition_id", "")))
 	if not blocked.is_empty():
 		return blocked
-	var payload := _destroyed_gu_payload(state, instance_id)
+	var payload := _destroyed_gu_payload(state, instance_id, LootRules.destroy_gu(existing, str(command.get("method", "")), str(command.get("means", "")), catalog).get("extracted", {}))
 	var next := state.append_event(_event(
 		state,
 		"destroy_gu",
-		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
-		{"gu_instances": payload["instances"], "cave_aperture": payload["aperture"]},
+		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture, "materials": state.materials},
+		{"gu_instances": payload["instances"], "cave_aperture": payload["aperture"], "materials": payload["materials"]},
 		"gu_destroyed",
 		state.current_node_id,
 		[instance_id]
@@ -687,16 +687,18 @@ static func _cursed_drop_block(state: RunState, catalog: Dictionary, definition_
 	)
 
 
-static func _destroyed_gu_payload(state: RunState, instance_id: String) -> Dictionary:
+static func _destroyed_gu_payload(state: RunState, instance_id: String, extracted: Dictionary = {}) -> Dictionary:
 	var instances := state.gu_instances.duplicate(true)
-	var destroyed: Dictionary = instances.get(instance_id, {}).duplicate(true)
-	destroyed["state"] = "dead"
-	instances[instance_id] = destroyed
+	instances[instance_id] = instances.get(instance_id, {}).duplicate(true)
+	instances[instance_id]["state"] = "dead"
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
 	stored.erase(instance_id)
 	aperture["stored_gu_instance_ids"] = stored
-	return {"instances": instances, "aperture": aperture}
+	var materials := state.materials.duplicate(true)
+	for material_id in extracted:
+		materials[str(material_id)] = int(materials.get(str(material_id), 0)) + int(extracted[material_id])
+	return {"instances": instances, "aperture": aperture, "materials": materials}
 
 
 # Task 5 black-market removal services share one accounting family: per-run

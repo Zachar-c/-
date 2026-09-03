@@ -241,42 +241,6 @@ func _initialize() -> void:
 		push_error("GuCard 封印态必须整卡暗淡（modulate a=0.55）")
 		quit(1)
 	print("OK GuCardSealed buttons=%d" % _count_buttons(gc_sealed))
-	# T5-B D2：死线预警危险行强化（☠ 前缀 + 加大字号 + 半透明血锈底条 + 整行可点）。
-	# 混合用例：寿元/反噬危险（可点），魂魄安全（纯文本）。
-	var dlw_lines := {
-		"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "detail": "寿元将尽", "cause_id": "death_cause_lifespan"},
-		"hunpo": {"name": "魂魄", "remaining": 9, "max": 10, "danger": false},
-		"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "detail": "反噬临界", "cause_id": "death_cause_backlash"},
-	}
-	var dlw := _mount_component("res://ui/widgets/gu_death_line_warning.gd", "render",
-		{"death_lines": dlw_lines, "on_view": Callable(self, "_noop")})
-	var skull_btn := _find_button_by_text(dlw, "☠ 寿元 3/60")
-	if skull_btn == null:
-		push_error("GuDeathLineWarning 危险行缺少 ☠ 前缀整行按钮")
-		quit(1)
-	var dl_sb := skull_btn.get_theme_stylebox("normal") as StyleBoxFlat
-	if dl_sb == null or not dl_sb.bg_color.is_equal_approx(Color(0.55, 0.18, 0.15, 0.25)):
-		push_error("GuDeathLineWarning 危险行缺少半透明血锈底条样式键 bg_color")
-		quit(1)
-	if not skull_btn.has_theme_font_size_override("font_size") or skull_btn.get_theme_font_size("font_size") != 15:
-		push_error("GuDeathLineWarning 危险行字号必须为 15（基础 13 + 2）")
-		quit(1)
-	if _count_buttons(dlw) != 2:
-		push_error("GuDeathLineWarning 只有 danger 行可点，期望 2 个按钮，实得 %d" % _count_buttons(dlw))
-		quit(1)
-	if not _host_has_label_text(dlw, "· 魂魄 9/10"):
-		push_error("GuDeathLineWarning 安全行应保留 · 前缀纯文本")
-		quit(1)
-	print("OK GuDeathLineWarning buttons=%d" % _count_buttons(dlw))
-	# 未接线 on_view 的宿主（map/shop 等）：危险行降级为静态底条，不出按钮。
-	var dlw_bare := _mount_component("res://ui/widgets/gu_death_line_warning.gd", "render", {"death_lines": dlw_lines})
-	if _count_buttons(dlw_bare) != 0:
-		push_error("GuDeathLineWarning 未接线时不应出现任何按钮")
-		quit(1)
-	if not _host_has_label_text(dlw_bare, "☠ 寿元 3/60"):
-		push_error("GuDeathLineWarning 未接线时危险行仍须显示 ☠ 标记")
-		quit(1)
-	print("OK GuDeathLineWarningBare buttons=%d" % _count_buttons(dlw_bare))
 	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
 		{
 			"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
@@ -998,9 +962,9 @@ func _verify_tscn_encounter(enc_state: Dictionary, enc_cmds: Dictionary) -> void
 	if buttons < 1:
 		push_error("tscn 遭遇按钮数 %d < 1" % buttons)
 		quit(1)
-	# 危险死线行应整行可点（☠ 前缀按钮），而不是纯文本。
-	if _find_button_by_text(enc, "☠ 寿元 60/60") == null:
-		push_error("tscn 遭遇屏危险死线行应整行可点（☠ 前缀按钮）")
+	# 死线只驱动既有资源栏的风险反馈，不应重建为独立行或死因浮层。
+	if enc.get_node_or_null("Root/CauseOverlay") != null or _host_has_label_text(enc, "☠"):
+		push_error("tscn 遭遇屏不得渲染独立三死线或死因浮层")
 		quit(1)
 	var list: Node = enc.get_node(
 			"Root/primary_decision_surface/MainColumn/ActionScroll/ActionList")

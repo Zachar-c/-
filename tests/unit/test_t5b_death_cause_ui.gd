@@ -158,35 +158,7 @@ func test_battle_death_report_path_injects_death_cause_fields() -> void:
 	assert_ne(str(view.get("death_cause")), "")
 
 
-func test_death_line_widget_rows_clickable_only_when_wired() -> void:
-	var lines := {
-		"shouyuan": {"name": "寿元", "remaining": 3, "max": 60, "danger": true, "cause_id": "death_cause_lifespan"},
-		"hunpo": {"name": "魂魄", "remaining": 9, "max": 10, "danger": false},
-		"backlash": {"name": "反噬", "remaining": 3, "max": 3, "danger": true, "cause_id": "death_cause_backlash"},
-	}
-	var wired_host := _mount_screen("res://ui/widgets/gu_death_line_warning.gd",
-			{"death_lines": lines, "on_view": func(_cid = ""): pass})
-	var buttons: Array = []
-	var labels: Array = []
-	_collect_controls(wired_host, buttons, labels)
-	assert_eq(buttons.size(), 2, "exactly the two danger rows become buttons")
-	assert_true(_has_button_with_text(wired_host, "☠ 寿元"), "danger rows use the ☠ prefix")
-	assert_true(_host_has_text(wired_host, "· 魂魄"), "safe rows keep the plain prefix")
-	for b in buttons:
-		var sb := b.get_theme_stylebox("normal") as StyleBoxFlat
-		assert_true(sb != null and sb.bg_color.is_equal_approx(Color(0.55, 0.18, 0.15, 0.25)),
-				"danger rows carry the translucent blood bar")
-		assert_true(b.has_theme_font_size_override("font_size") and b.get_theme_font_size("font_size") == 15,
-				"danger rows are emphasized (+2 over the 13px base)")
-	var bare_host := _mount_screen("res://ui/widgets/gu_death_line_warning.gd", {"death_lines": lines})
-	var bare_buttons: Array = []
-	var bare_labels: Array = []
-	_collect_controls(bare_host, bare_buttons, bare_labels)
-	assert_eq(bare_buttons.size(), 0, "unwired warning renders no buttons")
-	assert_true(_host_has_text(bare_host, "☠ 寿元"), "unwired danger rows still show the ☠ marker")
-
-
-func test_battle_screen_danger_row_opens_and_closes_death_cause_overlay() -> void:
+func test_battle_screen_keeps_danger_on_existing_top_bar_without_death_line_overlay() -> void:
 	var commands := {
 		"play_card": func(_cid = "", _tgt = ""): pass,
 		"end_turn": func(): pass,
@@ -210,22 +182,19 @@ func test_battle_screen_danger_row_opens_and_closes_death_cause_overlay() -> voi
 			"res://scenes/ui/screens/battle_screen.tscn", state, commands)
 	for i in 3:
 		await get_tree().process_frame
-	assert_true(_press_button(host, "☠ 寿元 55/55"), "the danger death-line row itself must be clickable")
-	for i in 3:
-		await get_tree().process_frame
-	assert_true(_host_has_text(host, "死因 · 寿元"), "overlay header names the line")
-	assert_true(_host_has_text(host, "当前值：5 / 上限：60"), "overlay shows current vs cap")
-	assert_false(_host_has_text(host, "距离死线余量"), "Fix1: constant-zero margin line removed entirely")
-	assert_true(_host_has_text(host, "成因：寿元耗尽即死。"), "overlay explains the cause")
-	assert_false(_host_has_text(host, "⚠ 确认"), "the overlay must not reuse confirm-dialog semantics")
-	assert_true(_press_button(host, "关闭"), "overlay offers a close action")
-	for i in 3:
-		await get_tree().process_frame
-	assert_false(_host_has_text(host, "成因：寿元耗尽即死。"), "closing hides the overlay")
-	assert_true(_press_button(host, "结束回合"), "screen remains interactive after close")
+	assert_null(host.get_node_or_null("Root/CauseOverlay"),
+			"battle may not mount a standalone death-cause overlay")
+	assert_false(_host_has_text(host, "☠"), "battle may not render independent death-line rows")
+	var chip := host.find_child("ChipShouyuan", true, false) as Control
+	assert_not_null(chip, "battle top bar must retain its lifespan resource chip")
+	if chip == null:
+		return
+	assert_eq(chip.tooltip_text, "寿元耗尽即死。",
+			"danger detail belongs to the existing lifespan resource chip")
+	assert_true(_press_button(host, "结束回合"), "screen remains interactive with a danger warning")
 
 
-func test_encounter_screen_danger_row_opens_death_cause_overlay() -> void:
+func test_encounter_screen_keeps_danger_on_existing_top_bar_without_death_line_overlay() -> void:
 	var commands := {
 		"choose_option": func(_a = ""): pass,
 		"confirm_danger": func(_a = ""): pass,
@@ -247,15 +216,15 @@ func test_encounter_screen_danger_row_opens_death_cause_overlay() -> void:
 			"res://scenes/ui/screens/encounter_screen.tscn", state, commands)
 	for i in 3:
 		await get_tree().process_frame
-	assert_true(_press_button(host, "☠ 魂魄 4/4"), "danger row opens the cause overlay")
-	for i in 3:
-		await get_tree().process_frame
-	assert_false(_host_has_text(host, "距离死线余量"), "Fix1: no margin line on the encounter overlay either")
-	assert_true(_host_has_text(host, "成因：魂魄耗尽即死。"))
-	assert_true(_press_button(host, "关闭"))
-	for i in 3:
-		await get_tree().process_frame
-	assert_false(_host_has_text(host, "成因：魂魄耗尽即死。"))
+	assert_null(host.get_node_or_null("Root/CauseOverlay"),
+			"encounter may not mount a standalone death-cause overlay")
+	assert_false(_host_has_text(host, "☠"), "encounter may not render independent death-line rows")
+	var chip := host.find_child("ChipHunpo", true, false) as Control
+	assert_not_null(chip, "encounter top bar must retain its soul resource chip")
+	if chip == null:
+		return
+	assert_eq(chip.tooltip_text, "魂魄耗尽即死。",
+			"danger detail belongs to the existing soul resource chip")
 
 
 func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
@@ -292,10 +261,10 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 	assert_false(_host_has_text(retreat_host, "死因 · "), "non-death endings show no cause badge")
 
 
-## Fix2：快照→浮层端到端契约。真实 RunState 逼近死线 → 屏幕实际消费的
-## 快照路径（controller._snapshot_for("Battle")，即 _render() 所喂）→
-## RuiRoot 挂载 battle_screen → 点 ☠ 行 → 断言 builder 原值逐字到达浮层。
-func test_real_snapshot_death_lines_feed_battle_overlay_end_to_end() -> void:
+## 快照→顶栏端到端契约。真实 RunState 逼近寿元预警 → 屏幕实际消费的
+## 快照路径（controller._snapshot_for("Battle")）→ RuiRoot 挂载 battle_screen →
+## 断言死因说明进入既有寿元资源 chip 的 tooltip，不生成独立面板。
+func test_real_snapshot_death_lines_feed_battle_top_bar_tooltip_end_to_end() -> void:
 	var controller := _new_controller()
 	controller.state.cultivator["lifespan"] = 2
 	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "ridge_hound"}
@@ -308,11 +277,7 @@ func test_real_snapshot_death_lines_feed_battle_overlay_end_to_end() -> void:
 	assert_eq(str(shouyuan.get("cause_id", "")), "death_cause_lifespan")
 	assert_true(bool(shouyuan.get("danger", false)), "lifespan 2 (<= floor 5) must be flagged danger by the builder")
 	assert_gt(int(shouyuan.get("value", 0)), int(shouyuan.get("threshold", 0)), "danger row sits at/past the threshold")
-	var want_name := str(shouyuan["name"])
-	var want_current := int(shouyuan["remaining"])
-	var want_max := int(shouyuan["max"])
 	var want_detail := str(shouyuan["detail"])
-	assert_ne(want_name, "", "builder must supply the display name")
 	assert_ne(want_detail, "", "builder must supply the cause detail")
 
 	# Consumer side: mount the real screen with the real snapshot.
@@ -325,12 +290,11 @@ func test_real_snapshot_death_lines_feed_battle_overlay_end_to_end() -> void:
 			"res://scenes/ui/screens/battle_screen.tscn", snapshot, commands)
 	for i in 3:
 		await get_tree().process_frame
-	var row_text := "☠ %s %d/%d" % [want_name, int(shouyuan["value"]), int(shouyuan["threshold"])]
-	assert_true(_press_button(host, row_text), "builder-produced danger row must be clickable under its mapped text")
-	for i in 3:
-		await get_tree().process_frame
-	assert_true(_host_has_text(host, "死因 · " + want_name), "name flows from builder to overlay header")
-	assert_true(_host_has_text(host, "当前值：%d / 上限：%d" % [want_current, want_max]),
-			"remaining/max flow from builder to the current-vs-cap line")
-	assert_true(_host_has_text(host, "成因：" + want_detail), "detail flows verbatim from builder to overlay")
-	assert_false(_host_has_text(host, "距离死线余量"), "no margin line anywhere in the end-to-end path")
+	assert_null(host.get_node_or_null("Root/CauseOverlay"),
+			"the real screen must not recreate a death-cause overlay")
+	var chip := host.find_child("ChipShouyuan", true, false) as Control
+	assert_not_null(chip, "battle top bar must retain its lifespan resource chip")
+	if chip == null:
+		return
+	assert_eq(chip.tooltip_text, want_detail,
+			"builder detail flows to the existing lifespan chip tooltip")

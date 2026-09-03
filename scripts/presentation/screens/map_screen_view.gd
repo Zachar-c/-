@@ -62,6 +62,7 @@ const RESOURCE_SPECS := ["yuanstone", "shouyuan", "hunpo"]
 @onready var _depth_rail: Panel = $map_root/map_camera/map_depth
 @onready var _map_paths = $map_root/map_camera/map_world/map_routes/map_paths
 @onready var _map_nodes: Control = $map_root/map_camera/map_world/map_routes/map_nodes
+@onready var _inventory = $map_root/map_inventory
 @onready var _inspection_name: Label = $map_root/map_inspector/map_inspector_info/map_inspection_name
 @onready var _inspection_note: Label = $map_root/map_inspector/map_inspector_info/map_inspection_note
 @onready var _travel_button: Button = $map_root/map_inspector/map_travel_button
@@ -80,6 +81,7 @@ var _ready_done := false
 ## 当前聚焦节点 id（首个可达节点，无可达时回落到当前节点）。
 var _selected_id := ""
 var _selected: Dictionary = {}
+var _submitted_travel_ids: Dictionary = {}
 
 
 func _ready() -> void:
@@ -93,6 +95,7 @@ func _ready() -> void:
 func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
 	_snapshot = snapshot
 	_commands = commands
+	_submitted_travel_ids.clear()
 	if _ready_done:
 		_refresh()
 
@@ -146,6 +149,7 @@ func _refresh() -> void:
 	_refresh_resources(_snapshot.get("resources", {}))
 	_refresh_markers(_snapshot.get("contracts", []), _snapshot.get("anomalies", []))
 	_refresh_title(_snapshot)
+	_inventory.setup(_snapshot.get("inventory", {}))
 	_refresh_depth_rail(nodes)
 	_refresh_world(nodes)
 	_refresh_inspector()
@@ -274,13 +278,16 @@ func _node_layout(nodes: Array) -> Dictionary:
 
 	var positions := {}
 	var sizes := {}
+	var route_width := minf(DESIGN_WIDTH, _map_nodes.size.x if _map_nodes.size.x > 0.0 else DESIGN_WIDTH)
+	var camera_height := _camera_backdrop.size.y
+	var world_top := maxf(0.0, 970.0 - camera_height) if camera_height > 0.0 else 0.0
 	for row_index in rows.size():
 		var row_nodes: Array = by_row[rows[row_index]]
 		var future_row := row_index >= 2
 		var row_size := FUTURE_NODE_SIZE if future_row else NODE_SIZE
 		var total_width := row_nodes.size() * row_size.x + maxi(0, row_nodes.size() - 1) * LAYER_X_GAP
-		var start_x := maxf(LAYER_X_MARGIN, (DESIGN_WIDTH - total_width) * 0.5)
-		var y := FUTURE_Y if future_row else (CANDIDATE_Y if row_index == 1 else CURRENT_Y)
+		var start_x := maxf(LAYER_X_MARGIN, (route_width - total_width) * 0.5)
+		var y := FUTURE_Y if future_row else (maxf(CANDIDATE_Y, world_top + 8.0) if row_index == 1 else CURRENT_Y)
 		for node_index in row_nodes.size():
 			var node: Dictionary = row_nodes[node_index]
 			var id := str(node.get("id", ""))
@@ -372,8 +379,8 @@ func _build_node_button(node: Dictionary, id: String, position: Vector2, size: V
 
 	# 不可达节点按 HTML 原样保留可点外观，但按下不提交行路命令。
 	button.pressed.connect(func():
-		if reachable and _commands.has("travel"):
-			_commands["travel"].call(id))
+		if reachable:
+			_fire_travel(id))
 	return button
 
 
@@ -505,8 +512,9 @@ func _fire(command_name: String) -> void:
 
 
 func _fire_travel(node_id: String) -> void:
-	if node_id == "" or not _commands.has("travel"):
+	if node_id == "" or _submitted_travel_ids.has(node_id) or not _commands.has("travel"):
 		return
+	_submitted_travel_ids[node_id] = true
 	_commands["travel"].call(node_id)
 
 

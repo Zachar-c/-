@@ -20,6 +20,7 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _top_bar = $Root/battle_hud/TopBar
 @onready var _player_panel = $Root/battle_field/PlayerPanel
 @onready var _enemy_panel = $Root/battle_field/EnemyPanel
+@onready var _inventory = $Root/battle_field/Inventory
 @onready var _feedback_toast = $Root/FeedbackToast
 @onready var _hint_host: VBoxContainer = $Root/HintHost
 @onready var _primordial_label: Label = $Root/battle_hand/HandMetaRow/PrimordialLabel
@@ -177,6 +178,7 @@ func _refresh() -> void:
 	_refresh_top_bar(state)
 	_refresh_player(state)
 	_refresh_enemies(state)
+	_inventory.setup(state.get("inventory", {}))
 	_refresh_hand(state)
 	_refresh_ops(state)
 	_refresh_kill_moves(state)
