@@ -85,37 +85,6 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 		if executable and _on_press.is_valid():
 			_on_press.call(card))
 
-	var margin := MarginContainer.new()
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 12)
-	margin.add_theme_constant_override("margin_right", 12)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_bottom", 10)
-	btn.add_child(margin)
-	var body := VBoxContainer.new()
-	body.add_theme_constant_override("separation", 6)
-	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_child(body)
-
-	if bool(card.get("curse_warning", false)):
-		body.add_child(_badge("咒", GuStyle.CINNABAR, GuStyle.PAPER_BG))
-	var quality := str(card.get("quality", ""))
-	if quality != "":
-		var q := Label.new()
-		q.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		q.text = quality
-		q.add_theme_font_size_override("font_size", 12)
-		q.add_theme_color_override("font_color", GuStyle.quality_color(quality))
-		body.add_child(q)
-	var effect_text := str(card.get("effect", ""))
-	if effect_text != "":
-		body.add_child(_text(effect_text, GuStyle.INK_SOFT, 13))
-	var block_reason := str(card.get("block_reason", ""))
-	if not executable and block_reason != "":
-		body.add_child(_text("不可用：" + block_reason, GuStyle.CINNABAR, 12))
-	var cost_label := str(card.get("cost", ""))
-	if cost_label != "":
-		body.add_child(_text("◆ " + cost_label, GuStyle.INK_PRIMARY, 13))
 	return btn
 
 
@@ -126,38 +95,6 @@ func _active_box() -> StyleBoxFlat:
 	box.border_color = GuStyle.JADE
 	box.set_corner_radius_all(8)
 	return box
-
-
-func _badge(text: String, bg: Color, font_color: Color) -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var box := StyleBoxFlat.new()
-	box.bg_color = bg
-	box.set_corner_radius_all(4)
-	panel.add_theme_stylebox_override("panel", box)
-	var margin := MarginContainer.new()
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 5)
-	margin.add_theme_constant_override("margin_right", 5)
-	margin.add_theme_constant_override("margin_top", 1)
-	margin.add_theme_constant_override("margin_bottom", 1)
-	panel.add_child(margin)
-	var label := Label.new()
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.text = text
-	label.add_theme_font_size_override("font_size", 12)
-	label.add_theme_color_override("font_color", font_color)
-	margin.add_child(label)
-	return panel
-
-
-func _text(value: String, color: Color, size: int) -> Label:
-	var label := Label.new()
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.text = value
-	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", color)
-	return label
 
 
 func _clear_children(parent: Node) -> void:

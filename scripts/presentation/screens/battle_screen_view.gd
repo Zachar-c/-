@@ -4,7 +4,7 @@ extends MarginContainer
 ## 战斗屏（Godot 官方 .tscn 节点树版，替代 ui/screens/battle_screen.guitkx）。
 ##
 ## 战斗状态是只读快照；**交互态是本屏唯一的本地状态**（mode / card / target_id /
-## confirming / cause_view / expanded_enemies）。转 .tscn 后这些从 RUITK 的 useState
+## confirming / expanded_enemies）。转 .tscn 后这些从 RUITK 的 useState
 ## 变成脚本成员变量——比整树重渲染更好管，也更好调试。
 ##
 ## 出牌判定顺序（与原实现一致，不要改）：
@@ -32,7 +32,6 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _tooltip_host: PanelContainer = $Root/battle_hand_tooltip_host
 @onready var _tooltip_title: Label = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/hand_tooltip_title
 @onready var _tooltip_view = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/TooltipView
-@onready var _cause_overlay = $Root/CauseOverlay
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -40,11 +39,12 @@ var _commands: Dictionary = {}
 # —— 本地交互态 ——
 var _mode := "idle"
 var _active_card: Dictionary = {}
+var _hovered_card: Dictionary = {}
 var _card_id := ""
 var _target_id := ""
 var _confirming := false
-var _cause_view := ""
 var _expanded_enemies := false
+var _submitted_card_keys: Dictionary = {}
 
 var _ready_done := false
 
@@ -59,6 +59,7 @@ func _ready() -> void:
 func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
 	_snapshot = snapshot
 	_commands = commands
+	_submitted_card_keys.clear()
 	if _ready_done:
 		_refresh()
 
@@ -68,7 +69,7 @@ func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
 func _play_card(card: Dictionary) -> void:
 	if str(card.get("target_type", "none")) == "single_enemy":
 		_set_mode("target_select", card)
-	elif bool(card.get("known_risk", false)) or bool(card.get("dangerous", false)):
+	elif _is_dangerous_card(card):
 		_active_card = card
 		_card_id = str(card.get("id", ""))
 		_target_id = ""
@@ -85,7 +86,7 @@ func _select_enemy(enemy_id: String) -> void:
 	var valid: Array = _active_card.get("valid_target_ids", [])
 	if not valid.has(enemy_id):
 		return
-	if bool(_active_card.get("known_risk", false)) or bool(_active_card.get("dangerous", false)):
+	if _is_dangerous_card(_active_card):
 		_target_id = enemy_id
 		_confirming = true
 		_refresh()
@@ -94,15 +95,40 @@ func _select_enemy(enemy_id: String) -> void:
 
 
 func _submit_card(card: Dictionary, target_id: String) -> void:
+	var card_id := str(card.get("id", ""))
+	var request_key := card_id + ":" + target_id
+	if _submitted_card_keys.has(request_key):
+		return
+	_submitted_card_keys[request_key] = true
 	if _commands.has("play_card"):
-		_commands["play_card"].call(str(card.get("id", "")), target_id)
+		_commands["play_card"].call(card_id, target_id)
 	_active_card = card
-	_card_id = str(card.get("id", ""))
+	_card_id = card_id
 	_target_id = target_id
 	_confirming = false
-	_cause_view = ""
 	_mode = "play_success"
 	_refresh()
+
+
+func _is_dangerous_card(card: Dictionary) -> bool:
+	if card.get("dangerous", false) == true:
+		return true
+	var known_risk = card.get("known_risk", [])
+	if known_risk is Array:
+		return not known_risk.is_empty()
+	return str(known_risk) != ""
+
+
+func _known_risk_text(card: Dictionary) -> String:
+	var known_risk = card.get("known_risk", [])
+	if known_risk is Array:
+		var lines: Array[String] = []
+		for line in known_risk:
+			var text := str(line)
+			if text != "":
+				lines.append(text)
+		return "；".join(lines)
+	return str(known_risk)
 
 
 func _set_mode(next_mode: String, card: Dictionary = {}) -> void:
@@ -119,19 +145,21 @@ func _set_mode(next_mode: String, card: Dictionary = {}) -> void:
 func _reset_interaction() -> void:
 	_mode = "idle"
 	_active_card = {}
+	_hovered_card = {}
 	_card_id = ""
 	_target_id = ""
 	_confirming = false
-	_cause_view = ""
 	_refresh()
 
 
 func _on_card_hover(card: Dictionary) -> void:
-	var next_mode := "target_select" if _mode == "target_select" else "hover"
-	_mode = next_mode
-	_active_card = card
-	_card_id = str(card.get("id", ""))
-	_refresh()
+	# Hover is presentation-only. Rebuilding the hand here replaces the Button
+	# under the pointer before its click arrives; it also used to overwrite the
+	# card already armed for a single-target selection.
+	if _mode != "idle" or _confirming:
+		return
+	_hovered_card = card
+	_refresh_tooltip()
 
 
 # ——————————————————————————————— 渲染 ———————————————————————————————
@@ -151,19 +179,15 @@ func _refresh() -> void:
 	_refresh_mode_label()
 	_refresh_confirm()
 	_refresh_tooltip()
-	_refresh_cause_overlay(state)
 
 
 func _refresh_top_bar(state: Dictionary) -> void:
 	_top_bar.set_data(
 			state.get("resources", {}),
 			state.get("contracts", []),
-			state.get("anomalies", []),
-			state.get("death_lines", {}),
-			int(state.get("layer", -1)))
-	_top_bar.set_on_view(func(cid):
-		_cause_view = str(cid)
-		_refresh())
+		state.get("anomalies", []),
+		state.get("death_lines", {}),
+		int(state.get("layer", -1)))
 
 
 func _refresh_player(state: Dictionary) -> void:
@@ -181,8 +205,10 @@ func _refresh_player(state: Dictionary) -> void:
 
 	var hp = StatBarScene().instantiate()
 	box.add_child(hp)
+	var health_line: Dictionary = state.get("death_lines", {}).get("health", {})
 	hp.setup("生命", int(player.get("hp", 0)), maxi(1, int(player.get("max_hp", 1))),
-			GuStyle.JADE, int(player.get("shield", 0)))
+			GuStyle.JADE, int(player.get("shield", 0)), Callable(),
+			bool(health_line.get("danger", false)), str(health_line.get("detail", "")))
 
 	var pri = StatBarScene().instantiate()
 	box.add_child(pri)
@@ -351,44 +377,45 @@ func _refresh_confirm() -> void:
 	_confirm_dialog.open(
 			card_name + " 将执行已预览的不可逆代价。",
 			func(): _submit_card(_active_card, _target_id),
-			func(): _set_mode("drag_cancel", _active_card),
-			"⚠ 危险行动",
-			str(_active_card.get("known_risk", "")))
+		func(): _set_mode("drag_cancel", _active_card),
+		"⚠ 危险行动",
+			_known_risk_text(_active_card))
 
 
 func _refresh_tooltip() -> void:
-	var show_tip := (_mode == "hover" or _mode == "target_select") and not _active_card.is_empty()
+	var show_tip := _mode == "idle" and not _hovered_card.is_empty()
 	_tooltip_host.visible = show_tip
 	if not show_tip:
 		return
-	_tooltip_title.text = str(_active_card.get("name", "蛊虫"))
+	_tooltip_title.text = str(_hovered_card.get("name", "蛊虫"))
 	_tooltip_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	_tooltip_view.setup("", str(_active_card.get("quality", "")),
-			str(_active_card.get("effect", "")),
-			str(_active_card.get("synergy", "")),
-			str(_active_card.get("cost_ex", str(_active_card.get("cost", "")))),
-			str(_active_card.get("block_reason", "")) if not bool(_active_card.get("executable", true)) else "",
-			bool(_active_card.get("curse_warning", false)))
+	_tooltip_view.setup("", str(_hovered_card.get("quality", "")),
+			str(_hovered_card.get("effect", "")),
+			str(_hovered_card.get("synergy", "")),
+			str(_hovered_card.get("cost_ex", str(_hovered_card.get("cost", "")))),
+		str(_hovered_card.get("block_reason", "")) if not bool(_hovered_card.get("executable", true)) else "",
+		bool(_hovered_card.get("curse_warning", false)),
+		_known_risk_text(_hovered_card))
+	call_deferred("_position_tooltip")
 
 
-func _refresh_cause_overlay(state: Dictionary) -> void:
-	var cause_line := {}
-	var death_lines: Dictionary = state.get("death_lines", {})
-	for kind in death_lines.keys():
-		var line: Dictionary = death_lines[kind]
-		if str(line.get("cause_id", "")) == _cause_view and bool(line.get("danger", false)):
-			cause_line = {
-				"name": str(line.get("name", kind)),
-				"current": int(line.get("remaining", 0)),
-				"max": int(line.get("max", 0)),
-				"detail": str(line.get("detail", "")),
-			}
-	_cause_overlay.visible = not cause_line.is_empty()
-	if cause_line.is_empty():
-		_cause_overlay.close()  # 隐藏必须清文本，只设 visible 会残留
+func _position_tooltip() -> void:
+	# 卡体节点名由 gu.<instance_id> 派生，Godot 会把 "." 规范化成 "_"，
+	# 查找时需同步替换，否则 gu 卡悬停 tooltip 定位会落空。
+	var card_id := str(_hovered_card.get("id", "")).replace(".", "_")
+	var card_body := _hand.get_node_or_null("CardRow/card_body_" + card_id) as Control
+	if card_body == null or not _tooltip_host.visible:
 		return
-	if true:
-		_cause_overlay.setup(cause_line, _reset_interaction)
+	var minimum := _tooltip_host.get_combined_minimum_size()
+	var tooltip_size := Vector2(maxf(280.0, minimum.x), minimum.y)
+	var viewport_size := get_viewport_rect().size
+	tooltip_size.x = minf(tooltip_size.x, viewport_size.x - 24.0)
+	_tooltip_host.size = tooltip_size
+	var card_rect := card_body.get_global_rect()
+	var desired := Vector2(card_rect.position.x, card_rect.position.y - tooltip_size.y - 8.0)
+	desired.x = clampf(desired.x, 12.0, maxf(12.0, viewport_size.x - tooltip_size.x - 12.0))
+	desired.y = maxf(12.0, desired.y)
+	_tooltip_host.global_position = desired
 
 
 func _interaction_dict() -> Dictionary:
@@ -398,7 +425,6 @@ func _interaction_dict() -> Dictionary:
 		"card_id": _card_id,
 		"target_id": _target_id,
 		"confirming": _confirming,
-		"cause_view": _cause_view,
 		"expanded_enemies": _expanded_enemies,
 	}
 

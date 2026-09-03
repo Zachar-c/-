@@ -7,13 +7,23 @@ extends GutTest
 
 const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
+const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
+const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
 
 
 var catalog: Dictionary
+var _hosts: Array = []
 
 
 func before_each() -> void:
 	catalog = ContentCatalog.load_all()
+
+
+func after_each() -> void:
+	for host in _hosts:
+		if is_instance_valid(host):
+			host.free()
+	_hosts.clear()
 
 
 func test_start_builds_v1_battle_with_enemy_mapping() -> void:
@@ -170,6 +180,132 @@ func test_enemy_first_mover_resolves_before_player() -> void:
 
 func test_facade_is_deterministic_for_same_seed_and_command_sequence() -> void:
 	assert_eq(_run_sequence(4242), _run_sequence(4242))
+
+
+# ==== Agent B: battle mouse command contract ====
+
+## gu.<instance_id> 点击 → use_gu 命令，state_version 取自当前事件日志长度。
+func test_gu_click_builds_use_gu_command_with_current_log_version() -> void:
+	var state := RunState.new_run(101)
+	var command: Dictionary = RunCommandBuilderScript._battle_card_command(
+			_stub_controller(state), "gu.inst_1", "")
+
+	assert_eq(str(command["type"]), "use_gu")
+	assert_eq(str(command["instance_id"]), "inst_1")
+	assert_eq(int(command["state_version"]), state.event_log.size())
+
+
+## 单目标卡在构造命令前保留 target_id，命令信封内透传。
+func test_single_target_card_retains_target_until_command_construction() -> void:
+	var controller := _stub_controller(RunState.new_run(101), {"battle_id": "v1", "phase": "player"})
+	var command: Dictionary = RunCommandBuilderScript._battle_card_command(
+			controller, "battle.v1.some_card", "e0")
+
+	assert_eq(str(command["target_id"]), "e0")
+	assert_eq(str(command["card_id"]), "some_card")
+
+
+## 同一 card/target 键在呈现边界只允许一次下发，不产生第二个领域命令。
+func test_repeated_card_target_click_submits_exactly_once() -> void:
+	var played: Array = []
+	var host := _mount_battle_screen(func(card_id, target_id): played.append([card_id, target_id]), [
+		{"id": "gu.inst_1", "name": "月光蛊", "executable": true,
+			"target_type": "single_enemy", "valid_target_ids": ["e0"]},
+	])
+	var screen := _screen_of(host)
+	var card: Dictionary = screen._snapshot.get("hand", [])[0]
+
+	screen._submit_card(card, "e0")
+	screen._submit_card(card, "e0")
+
+	assert_eq(played, [["gu.inst_1", "e0"]],
+			"a repeated UI signal must not replay play_card against the same snapshot")
+
+
+## 禁用卡保持可见（卡体仍可悬停），但点按绝不触发 play_card。
+func test_disabled_card_stays_visible_and_never_submits() -> void:
+	var played: Array = []
+	var host := _mount_battle_screen(func(card_id, target_id): played.append([card_id, target_id]), [
+		{"id": "gu.blocked", "name": "封印蛊", "executable": false,
+			"block_reason": "本回合已催动。", "target_type": "none"},
+	])
+	var screen := _screen_of(host)
+	var body := _find_card_body(screen, "gu.blocked")
+	assert_not_null(body, "disabled cards stay visible as a clickable card body")
+	if body == null:
+		return
+	(body as Button).pressed.emit()
+
+	assert_true(played.is_empty())
+	assert_eq(str(screen._snapshot.get("hand", [])[0].get("block_reason", "")), "本回合已催动。")
+
+
+## 过期事件日志版本的战斗回合命令被 preflight 拒绝，且不改动 RunState。
+func test_stale_battle_command_is_rejected_by_preflight_without_mutation() -> void:
+	var state := RunState.new_run(101)
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	var expected := state.event_log.size()
+	var stale: Dictionary = CommandSpecRegistryScript.preflight(
+			"battle.turn", state, battle, {},
+			{"type": "end_turn", "state_version": expected - 1, "expected_phase": "player"},
+			catalog)
+
+	assert_false(stale["ok"])
+	assert_eq(stale["reason"], "battle_action_stale")
+	assert_eq(state.event_log.size(), expected,
+			"preflight rejection must not mutate RunState")
+
+
+## 过期战斗手牌版本（battle_hand）被 preflight 拒绝。
+func test_stale_battle_hand_is_rejected_by_preflight() -> void:
+	var state := RunState.new_run(101)
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	battle["hand_version"] = 2
+	var stale: Dictionary = CommandSpecRegistryScript.preflight(
+			"battle.action_card", state, battle, {},
+			{"type": "action_card", "action_id": "battle.v1.basic.punch",
+				"state_version": 1, "expected_phase": "player"},
+			catalog)
+
+	assert_false(stale["ok"])
+	assert_eq(stale["reason"], "battle_hand_stale")
+
+
+func _stub_controller(state: RunState, battle: Dictionary = {}) -> Dictionary:
+	return {"state": state, "current_battle": battle, "current_node": {}, "current_session": {}}
+
+
+func _mount_battle_screen(on_play: Callable, hand: Array) -> Control:
+	var host := Control.new()
+	add_child(host)
+	_hosts.append(host)
+	var state := {
+		"resources": {}, "contracts": [], "anomalies": [], "death_lines": {},
+		"enemies": [{"id": "e0", "name": "敌人0", "hp": 20, "max_hp": 20, "shield": 0,
+			"statuses": [], "intent": {"type": "attack", "value": 4, "detail": "冲撞"}, "alive": true}],
+		"player": {"hp": 20, "max_hp": 20, "shield": 0, "primordial": 3, "soul": 4, "statuses": []},
+		"hand": hand,
+		"piles": {"draw": 0, "discard": 0, "exhausted": 0}, "soul_ops": {"cap": 1, "used": 0},
+		"default_target_id": "e0",
+	}
+	var inst := TscnMountHelper.instantiate(
+			"res://scenes/ui/screens/battle_screen.tscn",
+			state, {"play_card": on_play})
+	host.add_child(inst)
+	return host
+
+
+func _screen_of(host: Node) -> Node:
+	for child in host.get_children():
+		if child is BattleScreenView:
+			return child
+	return null
+
+
+func _find_card_body(node: Node, card_id: String) -> Node:
+	# Godot 会把节点名里的 "." 规范化成 "_"（card_body_gu.inst_1 → card_body_gu_inst_1）。
+	var sanitized := str(card_id).replace(".", "_")
+	return node.find_child("card_body_" + sanitized, true, false)
 
 
 func _run_sequence(seed_value: int) -> Dictionary:
