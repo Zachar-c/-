@@ -56,6 +56,8 @@ func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 	var controller := RunControllerScript.new()
 	controller.catalog = catalog
 	controller.start_new_run(101)
+	# 教学路线仅作夹具（2026-09-03 裁定：运行路径全随机，无教学种子）。
+	controller.route = MapGenerator.build(101, true)
 	var traveled: Dictionary = controller.submit_command({"type": "travel", "node_id": "neutral_wanderer"})
 	assert_true(bool(traveled.get("ok", false)), "travel must reach the neutral wanderer")
 	# 强行进入极端敌对姿态（领域姿势在 begin 里按声望掷出，这里注入等价状态）。

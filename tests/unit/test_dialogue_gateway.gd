@@ -165,6 +165,7 @@ func test_controller_unknown_dialogue_branch_keeps_encounter_and_unchanged_log()
 func test_travel_to_event_passes_dialogue_title_to_gateway() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
 	controller.start_new_run(101)
+	controller.route = MapGenerator.build(101, true)
 	var spy := SpyDialogueGateway.new()
 	controller._dialogue_gateway = spy
 	for node_id in ["ridge_caravan", "cultivation_spring", "flooded_cave"]:
@@ -253,7 +254,10 @@ func test_apply_branch_appends_dialogue_branch_event_on_success() -> void:
 
 
 func _controller_travel_to_echo_cave(controller) -> void:
-	# seed 101 首跑路线 caravan -> cultivation -> hazard -> event，全程无战斗节点。
+	# 2026-09-03 裁定：运行路径已移除教学种子，start_new_run(101) 走生成式地图。
+	# 手写 first_run 路线仅作夹具保留，此处显式注入以便测试对话/遭遇语义。
+	controller.route = MapGenerator.build(101, true)
+	# seed 101 首跑夹具路线 caravan -> cultivation -> hazard -> event，全程无战斗节点。
 	for node_id in ["ridge_caravan", "cultivation_spring", "flooded_cave"]:
 		controller.submit_command({"type": "travel", "node_id": node_id})
 		controller.submit_command({"type": "leave_encounter"})

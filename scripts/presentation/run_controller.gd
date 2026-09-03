@@ -168,7 +168,10 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	_inject_school_starters(school)
 	_swear_opening_contracts(contract_ids)
 	_selected_contracts.clear()
-	route = MapGenerator.build(seed_value, seed_value == 101, catalog)
+	# R-seed 2026-09-03（垂直切片裁定）：玩家局不设教学种子/固定种子——
+	# 种子 101 不再映射手写 first_run 路线，任何一世都按传入种子生成地图；
+	# first_run 手写图仅保留给 MapGenerator.build(..., true) 的测试夹具。
+	route = MapGenerator.build(seed_value, false, catalog)
 	current_node = {}
 	current_battle = {}
 	current_session = {}
@@ -1264,6 +1267,10 @@ func _show_death(report: Dictionary) -> void:
 
 
 func _record_run_end(outcome: String, ending_type := "") -> void:
+	# 结局即此世终点（AGENTS）：结算时删除进行中 Run 存档，使大厅
+	# 「续入此世」不再回到已结束的旧档；下一世从大厅进入时以全新
+	# 随机种子开局。删除放在 meta 判空前，确保任何结局路径都清理。
+	SaveRepositoryScript.delete_run_save()
 	if meta == null:
 		return
 	meta = meta.record_run_end(state, outcome, catalog if catalog != null else {}, ending_type)

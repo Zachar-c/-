@@ -294,6 +294,9 @@ func test_travel_precheck_refuses_while_a_battle_is_running() -> void:
 
 func test_travel_jump_arrives_via_the_service_with_debug_arrival_flag() -> void:
 	var controller := _new_controller(true)
+	# 教学路线仅作夹具（2026-09-03 裁定）：neutral_wanderer 不在生成式地图上，
+	# 注入 first_run 手写图让可见节点跳转断言保持确定性。
+	controller.route = MapGenerator.build(101, true)
 	var events_before: int = controller.state.event_log.size()
 	var action := {"op": "jump_to_node", "node_id": "neutral_wanderer"}
 

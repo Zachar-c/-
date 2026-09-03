@@ -18,8 +18,8 @@ const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 
 const SLAY_GU_ID := "test_slay_gu"
-# 注意：101 是首轮教学路线（MapGenerator.build(seed, seed == 101) 无 Boss），
-# 五层验收必须用生成式大图种子。
+# 注意：运行路径已不把 101 当教学路线（seed==101 也走生成式大图并含 Boss，
+# 见 test_runtime_seed_policy）；五层验收用显式种子保证生成式大图与多路线覆盖。
 const FIXED_SEED := 20260831
 const MULTI_SEEDS := [4242, 20260831, 77, 9, 5150]
 

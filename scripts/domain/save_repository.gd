@@ -9,6 +9,11 @@ const META_TEMP_PATH := "user://nanjiang_smoke_meta.json.tmp"
 const SAVE_VERSION := 4
 
 
+static func delete_run_save() -> void:
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
+
+
 static func save_run(state: RunState, route: Array, replies: Array) -> Error:
 	var data := serialize_run(state, route, replies)
 	var file := FileAccess.open(TEMP_PATH, FileAccess.WRITE)

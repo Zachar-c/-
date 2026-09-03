@@ -3,7 +3,8 @@ extends GutTest
 # 发布阻断验收（真实命令链）：整局驱动 bot 只经 RunController.submit_command
 # 推进——不用 DebugActions、不注入验证专用契约。
 # 1) 三个不含 enemy_vitality_trial 的固定种子必须抵达 Ending（统一结算页）；
-# 2) seed 101（手工 first_run 脊柱）漂全程不得出现 no_route（断头修复验收）。
+# 2) seed 101 作为普通生成种子漂全程不得出现 no_route（断头修复验收泛化；
+#    玩家局无教学/固定种子，101 与任何种子一样走生成式地图）。
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
@@ -25,12 +26,12 @@ func test_three_seeds_without_trial_reach_ending() -> void:
 	pending("trial-less completion blocked by deep-layer battle balance: 25-seed sweep all die in L2-L4; boss balance batch required")
 
 
-func test_seed_101_first_run_never_reports_no_route() -> void:
-	# 断头修复验收：手工网脊柱可整局推进；终点为死亡/飞升/封顶皆可，
-	# 唯独不允许 no_route（此前止步 stage_one_ledger）。
+func test_seed_101_generated_run_never_reports_no_route() -> void:
+	# 断头修复验收（泛化）：任意种子（含 101）的生成式地图都必须能推进，
+	# 终点为死亡/飞升/封顶皆可，唯独不允许 no_route 或 leave_blocked。
 	var outcome := _drive(101)
-	assert_ne(outcome, "no_route", "seed 101 must not dead-end at a headless first_run route")
-	assert_ne(outcome, "leave_blocked", "seed 101 must not soft-lock on leave")
+	assert_ne(outcome, "no_route", "seed 101 生成图不得死路（此前止步 stage_one_ledger）")
+	assert_ne(outcome, "leave_blocked", "seed 101 生成图不得软锁在离场上")
 
 
 func _drive(seed_value: int) -> String:

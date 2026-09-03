@@ -37,7 +37,7 @@ func test_tree_columns_group_branches_by_graph_depth() -> void:
 
 func test_controller_rejects_travel_to_a_node_outside_current_branch() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
+	_boot_teaching_route(controller)
 	var result := controller.submit_command({"type": "travel", "node_id": "stage_one_ledger"})
 	assert_false(result["ok"])
 	assert_eq(result.get("reason", ""), "unreachable_route_node")
@@ -46,7 +46,7 @@ func test_controller_rejects_travel_to_a_node_outside_current_branch() -> void:
 
 func test_controller_returns_to_map_after_explicit_node_leave() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
+	_boot_teaching_route(controller)
 	controller.submit_command({"type": "travel", "node_id": "ridge_caravan"})
 	var result := controller.submit_command({"type": "leave_node"})
 	assert_true(result["result"]["ok"])
@@ -57,7 +57,7 @@ func test_controller_returns_to_map_after_explicit_node_leave() -> void:
 
 func test_controller_leaving_an_encounter_abandons_the_node_and_keeps_route_playable() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
+	_boot_teaching_route(controller)
 	controller.submit_command({"type": "travel", "node_id": "ridge_caravan"})
 	var result := controller.submit_command({"type": "leave_encounter"})
 	assert_true(result["result"]["ok"])
@@ -69,7 +69,7 @@ func test_controller_leaving_an_encounter_abandons_the_node_and_keeps_route_play
 
 func test_standard_encounter_action_stays_in_the_active_session() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
+	_boot_teaching_route(controller)
 	controller.submit_command({"type": "travel", "node_id": "ridge_caravan"})
 	controller.submit_command({"type": "leave_encounter"})
 	controller.submit_command({"type": "travel", "node_id": "cultivation_spring"})
@@ -83,7 +83,7 @@ func test_standard_encounter_action_stays_in_the_active_session() -> void:
 
 func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
+	_boot_teaching_route(controller)
 	controller.submit_command({"type": "travel", "node_id": "neutral_wanderer"})
 	# 遭遇命令信封：node.fight 必须携带 node_id/session_node_id（A1 修复后的契约）。
 	controller.submit_command({
@@ -144,6 +144,13 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 	controller.submit_command({"type": "leave_encounter"})
 	assert_eq(controller.current_view_name(), "Map")
 	controller.free()
+
+
+## 2026-09-03 裁定后 start_new_run 不再把 101 当教学种子：需要手写教学路线的
+## controller 测试统一走此夹具——先正常开局，再显式注入 MapGenerator.build(101, true)。
+func _boot_teaching_route(controller) -> void:
+	controller.start_new_run(101)
+	controller.route = MapGenerator.build(101, true)
 
 
 func _ids(nodes: Array) -> Array[String]:
