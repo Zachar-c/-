@@ -49,6 +49,11 @@
     ],
     "value": 4,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "status",
+      "name": "marked",
+      "amount": 1
+    },
     "slot_role": "scout",
     "combat": "mark_enemy_route",
     "field_actions": [
@@ -81,6 +86,11 @@
     ],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "heal_and_strike",
+      "heal": 2,
+      "amount": 1
+    },
     "slot_role": "healing",
     "combat": "heal_and_bleed",
     "field_actions": [
@@ -113,6 +123,11 @@
     ],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "status",
+      "name": "bound",
+      "amount": 1
+    },
     "slot_role": "attack",
     "combat": "bind_and_strike",
     "field_actions": [
@@ -143,6 +158,10 @@
     "card_blueprint_ids": [],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "shift",
+      "amount": 1
+    },
     "slot_role": "movement",
     "combat": "shift_position",
     "field_actions": [
@@ -175,6 +194,11 @@
     ],
     "value": 6,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "status",
+      "name": "poison",
+      "amount": 2
+    },
     "slot_role": "control",
     "combat": "poison_and_slow",
     "field_actions": [
@@ -207,6 +231,10 @@
     ],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "shield",
+      "amount": 3
+    },
     "slot_role": "defense",
     "combat": "guard_against_hit",
     "field_actions": [

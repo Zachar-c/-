@@ -53,6 +53,7 @@ static func start(run_state, catalog: Dictionary, enemy_entries: Array) -> Dicti
 			"used_this_turn": 0,
 			"shield": 0,
 			"buffs": {"force": 0, "yi_zhang": 0},
+			"position": 0,
 		},
 		"enemies": _build_enemies(enemy_entries),
 		"gu_slots": _build_gu_slots(run_state, catalog),
@@ -298,7 +299,9 @@ static func _stack_buff(buffs: Dictionary, buff: Dictionary) -> Dictionary:
 
 ## 对当前存活敌人应用蛊效果。effect 支持：
 ##   {"kind":"strike","amount":N} / {"kind":"shield","amount":N} /
-##   {"kind":"buff","name":X,"amount":N}
+##   {"kind":"buff","name":X,"amount":N} / {"kind":"heal","amount":N} /
+##   {"kind":"heal_and_strike","heal":N,"amount":N} /
+##   {"kind":"status","name":X,"amount":N} / {"kind":"shift","amount":N}
 static func _apply_effect(battle: Dictionary, slot: Dictionary, _target_key: String) -> Dictionary:
 	var next := _dup(battle)
 	var effect: Dictionary = slot.get("effect", {})
@@ -310,6 +313,38 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, _target_key: Str
 			next["player"]["shield"] = int(next["player"]["shield"]) + int(effect.get("amount", 0))
 		"buff":
 			next["player"]["buffs"] = _stack_buff(next["player"]["buffs"], effect)
+		"heal":
+			next = _heal_player(next, int(effect.get("amount", 0)))
+		"heal_and_strike":
+			next = _heal_player(next, int(effect.get("heal", 0)))
+			next = _strike_enemy(next, int(effect.get("amount", 0)))
+		"status":
+			next = _apply_enemy_status(next, effect)
+		"shift":
+			next["player"]["position"] = int(next["player"].get("position", 0)) + int(effect.get("amount", 1))
+	return next
+
+
+static func _heal_player(battle: Dictionary, amount: int) -> Dictionary:
+	var next := _dup(battle)
+	var player: Dictionary = next["player"]
+	player["hp"] = mini(int(player["max_hp"]), int(player["hp"]) + maxi(0, amount))
+	next["player"] = player
+	return next
+
+
+static func _apply_enemy_status(battle: Dictionary, effect: Dictionary) -> Dictionary:
+	var next := _dup(battle)
+	var target_index := _current_enemy_index(next)
+	if target_index < 0:
+		return next
+	var enemy: Dictionary = next["enemies"][target_index].duplicate(true)
+	var statuses: Dictionary = enemy.get("statuses", {}).duplicate(true)
+	var name := str(effect.get("name", "marked"))
+	statuses[name] = int(statuses.get(name, 0)) + int(effect.get("amount", 1))
+	enemy["statuses"] = statuses
+	next["enemies"][target_index] = enemy
+	_log(next, "status", str(enemy["id"]))
 	return next
 
 

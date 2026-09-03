@@ -3,6 +3,8 @@ extends GutTest
 
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
+const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
 
 var catalog: Dictionary
@@ -68,6 +70,59 @@ func test_role_validation_rejects_missing_and_unknown_role() -> void:
 	for gu in bad["gu"]:
 		bad["gu_by_id"][gu["id"]] = gu
 	assert_true(_has_hint(ContentCatalogScript.validate(bad), "invalid role"))
+
+
+func test_starter_combat_gu_are_usable_and_have_observable_effects() -> void:
+	var starter_ids := [
+		"small_light_gu", "trail_eye_gu", "blood_moss_gu", "thorn_whip_gu",
+		"mist_step_gu", "venom_thread_gu", "stone_shell_gu",
+	]
+	var run := RunState.new_run(101)
+	run.cave_aperture["stored_gu_instance_ids"] = []
+	run.gu_instances = {}
+	for index in starter_ids.size():
+		var instance_id := "starter_%02d" % index
+		run.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+		run.gu_instances[instance_id] = GuInstanceScript.new_instance(
+		starter_ids[index], instance_id, catalog)
+	var facade_battle := BattleCommandFacadeScript.start({"enemy_kind": "beast_swarm"}, run, catalog)
+	assert_eq((facade_battle["gu_slots"] as Array).size(), starter_ids.size())
+	for index in starter_ids.size():
+		var before := facade_battle.duplicate(true)
+		var slot: Dictionary = before["gu_slots"][index]
+		assert_false((slot.get("effect", {}) as Dictionary).is_empty(),
+			"starter gu %s must define a V1 effect" % starter_ids[index])
+		var result := BattleCommandFacadeScript.apply_turn(
+			facade_battle, run, {"type": "use_gu", "instance_id": slot["instance_id"]}, catalog)
+		assert_true(bool(result["accepted"]), "starter gu %s must be playable" % starter_ids[index])
+		var after: Dictionary = result["battle"]
+		assert_true(_battle_changed_by_gu(before, after),
+			"starter gu %s must produce an observable effect" % starter_ids[index])
+		# Reset the per-turn single-use gate while retaining the tested effect.
+		facade_battle = BattleCommandFacadeScript.start({"enemy_kind": "beast_swarm"}, run, catalog)
+
+
+func _battle_changed_by_gu(before: Dictionary, after: Dictionary) -> bool:
+	var before_player: Dictionary = before["player"]
+	var after_player: Dictionary = after["player"]
+	if int(before_player["hp"]) != int(after_player["hp"]):
+		return true
+	if int(before_player.get("shield", 0)) != int(after_player.get("shield", 0)):
+		return true
+	if before_player.get("buffs", {}) != after_player.get("buffs", {}):
+		return true
+	if before_player.get("statuses", {}) != after_player.get("statuses", {}):
+		return true
+	if before_player.get("position", 0) != after_player.get("position", 0):
+		return true
+	for index in (before["enemies"] as Array).size():
+		var old_enemy: Dictionary = before["enemies"][index]
+		var new_enemy: Dictionary = after["enemies"][index]
+		if int(old_enemy["hp"]) != int(new_enemy["hp"]):
+			return true
+		if old_enemy.get("statuses", {}) != new_enemy.get("statuses", {}):
+			return true
+	return false
 
 
 func _hand_card(battle: Dictionary, definition_id: String) -> Dictionary:
