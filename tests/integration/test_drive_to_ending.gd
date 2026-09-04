@@ -8,7 +8,8 @@ extends GutTest
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
+const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 
 
@@ -45,7 +46,6 @@ func _drive(seed_value: int) -> String:
 	_stuck_enemy_hp = -1
 	_last_reject_reason = ""
 	_cmd_trace = []
-	_retreat_blocked_battle = ""
 	var steps := 0
 	var stall := 0
 	var last_event_count := -1
@@ -57,13 +57,17 @@ func _drive(seed_value: int) -> String:
 			result = "no_state"
 			break
 		if controller.state.is_terminal():
-			var diag := ""
-			var blow: Dictionary = controller.current_battle.get("final_blow", {}) if not controller.current_battle.is_empty() else {}
-			if not blow.is_empty():
-				diag = "%s/%ddmg@%s" % [str(blow.get("id", "?")), int(blow.get("damage", 0)), str(controller.current_battle.get("enemy_kind", "?"))]
-			result = "terminal@%s|hp%d|blow:%s|ess%d|deck%d|rank2:%s" % [
-				str(controller.state.current_node_id), int(controller.state.health), diag,
-				int(controller.state.essence_capacity), (controller.state.gu_instances as Dictionary).size(),
+			var battle: Dictionary = controller.current_battle
+			var battle_result: Dictionary = controller.current_battle["result"] if not controller.current_battle.is_empty() else{}
+			var enemy_ids: Array[String] = []
+			for enemy_value in battle.get("enemies", []):
+				var enemy: Dictionary = enemy_value
+				enemy_ids.append(str(enemy.get("id", "?")))
+			result = "terminal@%s|hp%d|cause:%s|phase:%s|enemy:%s|ess%d|gu%d|rank2:%s" % [
+				str(controller.state.current_node_id), int(controller.state.health),
+				str(battle_result.get("cause", "?")), str(battle.get("phase", "?")),
+				",".join(enemy_ids), int(controller.state.essence_capacity),
+				(controller.state.gu_instances as Dictionary).size(),
 				str(controller.state.cultivator.get("rank", 1)),
 			]
 			break
@@ -285,91 +289,72 @@ func _step_shop(controller) -> String:
 
 func _step_battle(controller) -> String:
 	var battle: Dictionary = controller.current_battle
-	if bool(battle.get("finished", false)):
-		return "ongoing"
 	var living := _living(battle)
 	var enemy_hp := _hp_total(living)
 	var intent_damage := _intent_damage(living)
-	var hp := int(controller.state.health)
-	var max_hp := int(controller.state.max_health)
-	var guarded: bool = (battle.get("flags", {}) as Dictionary).has("guarded")
-	var battle_id := str(battle.get("battle_id", ""))
-	var retreat_banned := battle_id == _retreat_blocked_battle
-	var can_flee: bool = not BattleResolverScript.boss_blocks_retreat(battle) and not retreat_banned
-	var attack_id := _pick_effect(battle, controller, ["strike_enemy", "deal_damage"])
-	var heal_id := _pick_effect(battle, controller, ["relief_injury"])
-	var guard_id := _pick_effect(battle, controller, ["gain_guard", "guard_self"])
-	var execute_any := _pick_effect(battle, controller, ["strike_enemy", "deal_damage", "gain_guard", "guard_self", "relief_injury"])
+	var player: Dictionary = battle["player"]
+	var hp := int(player.get("hp", 0))
+	var max_hp := maxi(1, int(player.get("max_hp", 1)))
+	var guarded := int(player.get("shield", 0)) > 0
+	var can_flee := not BattleCommandFacadeScript.boss_blocks_retreat(battle)
+	var attack_id := _pick_effect_gu(battle, ["strike", "heal_and_strike"])
+	var heal_id := _pick_effect_gu(battle, ["heal", "heal_and_strike"])
+	var guard_id := _pick_effect_gu(battle, ["shield", "buff"])
 	var command: Dictionary
 	var lethal := intent_damage > 0 and hp <= intent_damage
 	var finish_now := enemy_hp <= 1
-	var dodge_effective := false
-	if not living.is_empty() and not retreat_banned:
-		var intent_speed := int((living[0].get("intent", {}) as Dictionary).get("speed", 0))
-		dodge_effective = int(controller.state.cultivator.get("speed", 2)) > intent_speed
+	var stalled := _no_progress(str(controller.state.current_node_id), enemy_hp)
 	# 集火：优先击杀当前血量最低的敌人，最快削减敌方总出手。
 	var focus := _focus_target(battle)
-	var low_hp_heal: bool = hp * 10 <= max_hp * 5 and not heal_id.is_empty() and int(controller.state.injury) > 0
+	var low_hp_heal := hp * 10 <= max_hp * 5 and not heal_id.is_empty()
 	if finish_now and not attack_id.is_empty():
-		command = _card_command(battle, attack_id, living, focus)
-	elif can_flee and (hp <= 1 or lethal or _no_progress(battle, enemy_hp)):
-		command = _turn_command(controller, battle, "retreat")
-	elif can_flee and lethal and not guarded and dodge_effective and (attack_id.is_empty() or enemy_hp > 4):
-		command = _turn_command(controller, battle, "basic_dodge")
+		command = _gu_command(controller, attack_id, focus)
+	elif can_flee and (hp <= 1 or lethal or stalled):
+		command = _turn_command(controller, "retreat")
 	elif not can_flee:
 		var danger := hp <= intent_damage * 2
 		var kill_window := enemy_hp <= 4
-		var big_hit := intent_damage >= 3
-		if not attack_id.is_empty() and (not danger or kill_window or guarded):
-			command = _card_command(battle, attack_id, living, focus)
-		elif big_hit and not guarded and dodge_effective and not guard_id.is_empty() and hp <= intent_damage:
-			command = _turn_command(controller, battle, "basic_dodge")
+		if not attack_id.is_empty() and (not danger or kill_window or guarded or _stuck_count >= 4):
+			command = _gu_command(controller, attack_id, focus)
 		elif danger and not guarded and not guard_id.is_empty():
-			command = _card_command(battle, guard_id, living, focus)
+			command = _gu_command(controller, guard_id, focus)
 		elif low_hp_heal:
-			command = _card_command(battle, heal_id, living, focus)
+			command = _gu_command(controller, heal_id, focus)
 		elif not guard_id.is_empty():
-			command = _card_command(battle, guard_id, living, focus)
+			command = _gu_command(controller, guard_id, focus)
 		else:
-			command = _turn_command(controller, battle, "end_turn")
+			command = _turn_command(controller, "basic_attack")
 	else:
 		if intent_damage >= 2 and not guarded and not guard_id.is_empty():
-			command = _card_command(battle, guard_id, living, focus)
+			command = _gu_command(controller, guard_id, focus)
 		elif low_hp_heal:
-			command = _card_command(battle, heal_id, living, focus)
+			command = _gu_command(controller, heal_id, focus)
 		elif not attack_id.is_empty():
-			command = _card_command(battle, attack_id, living, focus)
-		elif not heal_id.is_empty() and hp < max_hp and int(controller.state.injury) > 0:
-			command = _card_command(battle, heal_id, living, focus)
+			command = _gu_command(controller, attack_id, focus)
+		elif not heal_id.is_empty() and hp < max_hp:
+			command = _gu_command(controller, heal_id, focus)
 		else:
-			command = _turn_command(controller, battle, "end_turn")
-	var ev_before: int = controller.state.event_log.size()
+			command = _turn_command(controller, "end_turn")
+	var event_count: int = controller.state.event_log.size()
 	var result: Dictionary = controller.submit_command(command)
-	_cmd_trace.append("%s/%s" % [str(command.get("type", "")), str(command.get("action_id", ""))])
+	_cmd_trace.append("%s/%s" % [
+		str(command.get("type", "")),
+		str(command.get("instance_id", "")),
+	])
 	if _cmd_trace.size() > 5:
 		_cmd_trace.pop_front()
 	if bool(result.get("finished", false)):
 		return "ongoing"
-	# 撤退/闪避被领域静默挡下（accepted=true 但事件零增长）：本战封禁该逃脱牌，
-	# 直接转攻，避免死循环（血翼保留等合法续战会推进事件，不会误伤）。
-	if str(command.get("type", "")) in ["retreat", "basic_dodge"] and controller.state.event_log.size() == ev_before:
-		_retreat_blocked_battle = battle_id
-		return "ongoing"
-	if not bool(result.get("accepted", true)) and not bool(result.get("ok", true)):
-		_last_reject_reason = str(result.get("feed", result.get("reason", "?")))
-		if execute_any.is_empty():
-			return "battle_no_cards"
-		# 命令被拒（过期/顺序）：退回拳脚，再退回收势，避免僵局。
-		var punch := _punch_command(battle, living)
-		var punched: Dictionary = controller.submit_command(punch)
+	if not bool(result.get("accepted", false)):
+		_last_reject_reason = str(result.get("reason", result.get("feeds", ["?"])))
+		var punched: Dictionary = controller.submit_command(
+			_turn_command(controller, "basic_attack")
+		)
 		if not bool(punched.get("accepted", false)) and not bool(punched.get("finished", false)):
-			controller.submit_command(_turn_command(controller, current_battle_refresh(controller), "end_turn"))
-		return "ongoing"
+			controller.submit_command(_turn_command(controller, "end_turn"))
+	elif controller.state.event_log.size() == event_count:
+		_last_reject_reason = "accepted_without_event"
 	return "ongoing"
-
-
-func current_battle_refresh(controller) -> Dictionary:
-	return controller.current_battle
 
 
 var _stuck_battle_id := ""
@@ -377,11 +362,9 @@ var _stuck_count := 0
 var _stuck_enemy_hp := -1
 var _last_reject_reason := ""
 var _cmd_trace: Array = []
-var _retreat_blocked_battle := ""
 
 
-func _no_progress(battle: Dictionary, enemy_hp: int) -> bool:
-	var battle_id := str(battle.get("battle_id", ""))
+func _no_progress(battle_id: String, enemy_hp: int) -> bool:
 	if battle_id != _stuck_battle_id:
 		_stuck_battle_id = battle_id
 		_stuck_count = 0
@@ -395,23 +378,11 @@ func _no_progress(battle: Dictionary, enemy_hp: int) -> bool:
 	return _stuck_count >= 6
 
 
-func _punch_command(battle: Dictionary, living: Array[Dictionary]) -> Dictionary:
-	var target_id := str(living[0].get("enemy_id", "")) if not living.is_empty() else ""
-	return {
-		"type": "action_card",
-		"action_id": "battle.%s.basic.punch" % str(battle.get("battle_id", "")),
-		"card_id": "basic.punch",
-		"target_id": target_id,
-		"state_version": int(battle.get("hand_version", 0)),
-		"expected_phase": str(battle.get("phase", "player")),
-	}
-
-
 func _living(battle: Dictionary) -> Array[Dictionary]:
 	var living: Array[Dictionary] = []
 	for enemy_value in battle.get("enemies", []):
 		var enemy: Dictionary = enemy_value
-		if bool(enemy.get("alive", false)):
+		if bool(enemy.get("alive", int(enemy.get("hp", 0)) > 0)):
 			living.append(enemy)
 	return living
 
@@ -426,41 +397,30 @@ func _hp_total(enemies: Array[Dictionary]) -> int:
 func _intent_damage(enemies: Array[Dictionary]) -> int:
 	var total := 0
 	for enemy in enemies:
-		total += maxi(0, int((enemy.get("intent", {}) as Dictionary).get("damage", 0)))
+		total += maxi(0, int(enemy["intent"].get("damage", 0)))
 	return total
 
 
-func _pick_effect(battle: Dictionary, controller, wanted: Array) -> String:
-	var prefix := "battle.%s." % str(battle.get("battle_id", ""))
-	var printable := {}
-	for card_value in ActionPreviewServiceScript.preview_battle_actions(battle, controller.state, controller.catalog):
-		var card: Dictionary = card_value
-		var card_id := str(card.get("id", ""))
-		if card_id.begins_with(prefix) and bool(card.get("executable", false)):
-			printable[card_id.trim_prefix(prefix)] = true
-	for hand_value in battle.get("hand", []):
-		var hand_card: Dictionary = hand_value
-		var instance_id := str(hand_card.get("instance_id", ""))
-		if not printable.has(instance_id):
+func _pick_effect_gu(battle: Dictionary, kinds: Array) -> String:
+	var slots: Array = battle.get("gu_slots", [])
+	for i in slots.size():
+		var slot: Dictionary = slots[i]
+		if bool(slot.get("consumed", false)) or bool(slot.get("is_sealed", false)) or bool(slot.get("used_this_turn", false)):
 			continue
-		var definition: Dictionary = (controller.catalog as Dictionary).get("card_by_id", {}).get(str(hand_card.get("definition_id", "")), {})
-		for effect_value in definition.get("effects", []):
-			if str(effect_value) in wanted:
-				return instance_id
+		if str(slot["effect"].get("kind", "")) not in kinds:
+			continue
+		if V1BattleResolverScript.can_play_gu(battle, i) != "":
+			continue
+		return str(slot.get("instance_id", ""))
 	return ""
 
 
-func _card_command(battle: Dictionary, action_id: String, living: Array[Dictionary], target_id_override := "") -> Dictionary:
-	var target_id := target_id_override
-	if target_id.is_empty() and not living.is_empty():
-		target_id = str(living[0].get("enemy_id", ""))
+func _gu_command(controller, instance_id: String, target_id: String) -> Dictionary:
 	return {
-		"type": "action_card",
-		"action_id": "battle.%s.%s" % [str(battle.get("battle_id", "")), action_id],
-		"card_id": action_id,
+		"type": "use_gu",
+		"instance_id": instance_id,
 		"target_id": target_id,
-		"state_version": int(battle.get("hand_version", 0)),
-		"expected_phase": str(battle.get("phase", "player")),
+		"state_version": controller.state.event_log.size(),
 	}
 
 
@@ -469,18 +429,17 @@ func _focus_target(battle: Dictionary) -> String:
 	var best_hp := 2147483647
 	for enemy_value in battle.get("enemies", []):
 		var enemy: Dictionary = enemy_value
-		if not bool(enemy.get("alive", false)):
+		if not bool(enemy.get("alive", int(enemy.get("hp", 0)) > 0)):
 			continue
 		var hp := int(enemy.get("hp", 0))
 		if hp < best_hp:
 			best_hp = hp
-			best = str(enemy.get("enemy_id", ""))
+			best = str(enemy.get("id", ""))
 	return best
 
 
-func _turn_command(controller, battle: Dictionary, command_type: String) -> Dictionary:
+func _turn_command(controller, command_type: String) -> Dictionary:
 	return {
 		"type": command_type,
 		"state_version": controller.state.event_log.size(),
-		"expected_phase": str(battle.get("phase", "player")),
 	}
