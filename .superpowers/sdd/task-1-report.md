@@ -1,47 +1,34 @@
-# Task 1: Route Closure Regression
+# Task 1 Report
 
-## Status
+## Fix
 
-Complete. First-run route edges are now closed to the declared route while preserving valid template-defined branches.
-
-## TDD
-
-### RED
-
-Added `test_first_run_filters_template_edges_outside_declared_route` to mutate a template with an out-of-route edge and assert that the generated route filters it and restores the next declared route node as a fallback. The test failed before the production change because `_route_from_ids()` copied template edges unchanged and preserved terminal template edges.
-
-### GREEN
-
-Updated `_route_from_ids()` to:
-
-- Build a set of declared `route_ids`.
-- Keep only unique `next_ids` that belong to that set.
-- Add the next declared route item when a non-terminal node has no valid remaining successor.
-- Force the terminal node to have an empty `next_ids` array.
-
-The existing first-run test now asserts route closure and non-terminal reachability without requiring a linear route, so branch selection semantics remain intact.
-
-## Files
-
-- `scripts/domain/map_generator.gd`
-- `tests/unit/test_first_run_route.gd`
-- `.superpowers/sdd/task-1-report.md`
+Corrected `tests/unit/test_content_catalog.gd` to use the required
+`slice_bright_thread` mapping, require a non-empty `kill_move_id`, require a
+matching kill move, and require that its recipe includes the output GU. Fixed
+the malformed GDScript declarations and retained explicit `v1_effect` checks.
+The negative tests now mutate the `slice_bright_thread` slice as required.
 
 ## Verification
 
-- `powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Test tests/unit/test_first_run_route.gd` — passed, 2/2 tests, 71 asserts.
-- `powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Test tests/unit/test_map_network.gd` — passed, 6/6 tests, 6376 asserts.
-- `git diff --check` — passed with no output.
+Command:
 
-## Self-review
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_content_catalog.gd`
 
-- No new random calls or state mutation were introduced.
-- Template branch edges that point to another declared route node remain available.
-- Duplicate successors are removed deterministically while preserving source order.
-- Non-terminal route nodes cannot be left without an in-route successor.
-- The final route node is always terminal, preventing leaked template edges after the declared route.
-- No unrelated worktree changes were modified.
+Output summary: `17/21 passed`, `4 failing`, `23/27 asserts`; exit code `1`.
+Failures are the missing shipped `slice_bright_thread` recipe, missing
+`kill_moves` table, and the not-yet-implemented invalid `v1_effect` validation.
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_battle_synthesis.gd`
+
+Output summary: `8/9 passed`, `1 failing`, `21/23 asserts`; exit code `1`.
+The remaining failure is the pre-existing unknown transaction output contract:
+`GuInstance.transaction_ledger()` returns no `error` entry for
+`missing_output_gu`.
 
 ## Concerns
 
-The route builder still assumes every configured `route_id` exists in `node_by_id`; catalog validation is responsible for rejecting unknown IDs before generation.
+The requested production/data contracts are absent from the current worktree,
+and this task permits changes only to this test file and this report. Making
+both suites pass would require modifying files outside that allowed scope.
