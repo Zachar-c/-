@@ -29,6 +29,15 @@ The remaining failure is the pre-existing unknown transaction output contract:
 
 ## Concerns
 
-The requested production/data contracts are absent from the current worktree,
-and this task permits changes only to this test file and this report. Making
-both suites pass would require modifying files outside that allowed scope.
+The requested test-only hardening was applied to `tests/unit/test_content_catalog.gd`: missing `slice_bright_thread`, `v1_battle.kill_moves`, output GU, and `v1_effect` values now use `get` plus type guards, while shipped mapping assertions remain strict.
+
+## Fix Verification
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_content_catalog.gd`
+
+Output summary: `17/21 passed`, `4 failing`, `24/28 asserts`; exit code `1`.
+The four failures are clean assertion failures for absent slice data/validation, with no key-access crashes.
+
+The ledger test already contains `assert_true(result.has("error"))` immediately before reading `result["error"]`; no production files were changed.

@@ -16,30 +16,66 @@ func test_catalog_rejects_missing_inheritance_gu_reference() -> void:
 
 func test_shipped_synthesis_kill_move_contract_is_explicit() -> void:
 	var catalog := ContentCatalog.load_all()
-	var recipe: Dictionary = catalog["refinement_by_id"]["slice_bright_thread"]
+	var refinement_by_id: Dictionary = catalog.get("refinement_by_id", {})
+	var recipe_value = refinement_by_id.get("slice_bright_thread")
+	assert_true(recipe_value is Dictionary)
+	if not recipe_value is Dictionary:
+		return
+	var recipe: Dictionary = recipe_value
 	var kill_move_id := str(recipe.get("kill_move_id", ""))
 	assert_false(kill_move_id.is_empty())
+	var battle_value = catalog.get("v1_battle")
+	assert_true(battle_value is Dictionary)
+	if not battle_value is Dictionary:
+		return
+	var kill_moves_value = (battle_value as Dictionary).get("kill_moves")
+	assert_true(kill_moves_value is Array)
+	if not kill_moves_value is Array:
+		return
 	var kill_move: Dictionary = {}
-	for value in catalog["v1_battle"].get("kill_moves", []):
-		if str((value as Dictionary).get("id", "")) == kill_move_id:
+	for value in kill_moves_value:
+		if value is Dictionary and str((value as Dictionary).get("id", "")) == kill_move_id:
 			kill_move = value
 			break
 	assert_false(kill_move.is_empty())
-	assert_true((kill_move.get("recipe", []) as Array).has(str(recipe["output_gu_id"])))
-	var output: Dictionary = catalog["gu_by_id"][str(recipe["output_gu_id"])]
-	var effect: Dictionary = output["v1_effect"]
+	var output_gu_id := str(recipe.get("output_gu_id", ""))
+	assert_true((kill_move.get("recipe", []) as Array).has(output_gu_id))
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	var output_value = gu_by_id.get(output_gu_id)
+	assert_true(output_value is Dictionary)
+	if not output_value is Dictionary:
+		return
+	var output: Dictionary = output_value
+	var effect_value = output.get("v1_effect")
+	assert_true(effect_value is Dictionary)
+	if not effect_value is Dictionary:
+		return
+	var effect: Dictionary = effect_value
 	assert_true(effect.has("kind"))
 
 
 func test_validation_rejects_unknown_slice_recipe_input() -> void:
 	var catalog := ContentCatalog.load_all()
-	(catalog["refinement_by_id"]["slice_bright_thread"] as Dictionary)["input_gu_ids"] = ["missing_input_gu"]
+	var refinement_by_id: Dictionary = catalog.get("refinement_by_id",{})
+	var recipe_value = refinement_by_id.get("slice_bright_thread")
+	assert_true(recipe_value is Dictionary)
+	if not recipe_value is Dictionary:
+		return
+	(recipe_value as Dictionary)["input_gu_ids"] = ["missing_input_gu"]
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown gu"))
 
 
 func test_validation_rejects_unknown_slice_kill_move_effect() -> void:
 	var catalog := ContentCatalog.load_all()
-	(catalog["v1_battle"]["kill_moves"] as Array).append({"id": "bad_effect_kill_move", "recipe": ["pulse_drum_gu"], "effect": {"kind": "unknown_effect"}})
+	var battle_value = catalog.get("v1_battle")
+	assert_true(battle_value is Dictionary)
+	if not battle_value is Dictionary:
+		return
+	var kill_moves_value = (battle_value as Dictionary).get("kill_moves")
+	assert_true(kill_moves_value is Array)
+	if not kill_moves_value is Array:
+		return
+	(kill_moves_value as Array).append({"id": "bad_effect_kill_move", "recipe": ["pulse_drum_gu"], "effect": {"kind": "unknown_effect"}})
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "effect"))
 
 
