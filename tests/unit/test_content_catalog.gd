@@ -86,7 +86,15 @@ func test_validation_rejects_unknown_slice_kill_move_effect() -> void:
 
 func test_validation_rejects_invalid_slice_v1_effect() -> void:
 	var catalog := ContentCatalog.load_all()
-	(catalog["gu_by_id"]["pulse_drum_gu"] as Dictionary)["v1_effect"] = {"kind": "status", "name": "bound", "amount": -1}
+	var gu_by_id_value = catalog.get("gu_by_id",{})
+	if not gu_by_id_value is Dictionary:
+		assert_true(false)
+		return
+	var pulse_drum_value = (gu_by_id_value as Dictionary).get("pulse_drum_gu")
+	if not pulse_drum_value is Dictionary:
+		assert_true(false)
+		return
+	(pulse_drum_value as Dictionary)["v1_effect"] = {"kind": "status", "name": "bound", "amount": -1}
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "v1_effect"))
 
 

@@ -8,14 +8,17 @@ matching kill move, and require that its recipe includes the output GU. Fixed
 the malformed GDScript declarations and retained explicit `v1_effect` checks.
 The negative tests now mutate the `slice_bright_thread` slice as required.
 
-## Verification
+## Verification (Earlier Pre-Fix Counts)
+
+These are the original red-run counts, before the assertion hardening and
+follow-up fixes were applied.
 
 Command:
 
 `powershell.exe -File tools/test.ps1 -Test tests/unit/test_content_catalog.gd`
 
 Output summary: `17/21 passed`, `4 failing`, `23/27 asserts`; exit code `1`.
-Failures are the missing shipped `slice_bright_thread` recipe, missing
+Failures were the missing shipped `slice_bright_thread` recipe, missing
 `kill_moves` table, and the not-yet-implemented invalid `v1_effect` validation.
 
 Command:
@@ -23,8 +26,8 @@ Command:
 `powershell.exe -File tools/test.ps1 -Test tests/unit/test_battle_synthesis.gd`
 
 Output summary: `8/9 passed`, `1 failing`, `21/23 asserts`; exit code `1`.
-The remaining failure is the pre-existing unknown transaction output contract:
-`GuInstance.transaction_ledger()` returns no `error` entry for
+The remaining failure was the pre-existing unknown transaction output contract:
+`GuInstance.transaction_ledger()` returned no `error` entry for
 `missing_output_gu`.
 
 ## Concerns
@@ -67,3 +70,11 @@ Exact result:
 `Totals: Tests 9, Passing Tests 8, Failing Tests 1, Asserts 21/22, exit code 1.`
 
 The remaining failure is the intended red unknown transaction output assertion; the missing `error` key is now guarded before indexing.
+## Final Exact Counts
+
+The final verification runs after review fixes are explicitly recorded below.
+
+- `test_content_catalog.gd`: `17/21 passed`, `4 failing`, `24/28 asserts` (exit code `1`).
+- `test_battle_synthesis.gd`: `8/9 passed`, `1 failing`, `21/22 asserts` (exit code `1`).
+
+The remaining failures are the intended red contract assertions; the invalid `v1_effect` test now uses safe dictionary/type guards and returns after a clean failed assertion when `pulse_drum_gu` is absent.
