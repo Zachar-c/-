@@ -86,6 +86,60 @@ func test_gu_cast_rejections_have_distinct_reasons() -> void:
 	assert_eq(str(V1.player_action(no_qi, {"type": "play_gu", "slot_index": 0})["result"]["reason"]), "insufficient_true_qi")
 
 
+# spec §11（2026-09-01）：普通低转蛊师不能催动高转蛊——真元质量不足，
+# 不是数量不足；珍稀蛊可用定义声明 low_rank_exception 例外。
+func test_low_rank_cultivator_cannot_drive_higher_rank_gu() -> void:
+	catalog["gu_by_id"]["v1_high_rank_gu"] = {
+		"id": "v1_high_rank_gu", "combat": "strike", "school": "qi", "role": "attack", "rarity": "rare",
+		"rank": 2, "true_qi_cost": 1, "v1_effect": {"kind": "strike", "amount": 3},
+	}
+	var run := _run_with_gu([{"definition_id": "v1_high_rank_gu", "rank": 2}])
+	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 0)])
+
+	assert_eq(int(battle["player"]["cultivation"]), 1)
+	assert_eq(str(V1.can_play_gu(battle, 0)), "insufficient_qi_quality")
+	var out := V1.player_action(battle, {"type": "play_gu", "slot_index": 0})
+	assert_false(out["result"]["ok"])
+	assert_eq(str(out["result"]["reason"]), "insufficient_qi_quality")
+	# 拒绝必须零消耗：真元、念头与行动数不变。
+	assert_eq(int(out["battle"]["player"]["true_qi"]), int(battle["player"]["true_qi"]))
+	assert_eq(int(out["battle"]["player"]["thoughts"]), int(battle["player"]["thoughts"]))
+
+
+func test_rank_gate_uses_instance_rank_not_definition_rank() -> void:
+	# 同名升阶后实例 rank 3、定义 rank 1 → 按实例转数拦截。
+	catalog["gu_by_id"]["v1_advance_base_gu"] = {
+		"id": "v1_advance_base_gu", "combat": "strike", "school": "qi", "role": "attack", "rarity": "rare",
+		"rank": 1, "true_qi_cost": 1, "v1_effect": {"kind": "strike", "amount": 3},
+	}
+	var run := _run_with_gu([{"definition_id": "v1_advance_base_gu", "rank": 3}])
+	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 0)])
+	assert_eq(int(battle["gu_slots"][0]["rank"]), 3)
+	assert_eq(str(V1.can_play_gu(battle, 0)), "insufficient_qi_quality")
+
+
+func test_low_rank_drive_exception_and_higher_cultivation_pass() -> void:
+	catalog["gu_by_id"]["v1_relic_gu"] = {
+		"id": "v1_relic_gu", "combat": "strike", "school": "qi", "role": "attack", "rarity": "epic",
+		"rank": 3, "low_rank_exception": true, "true_qi_cost": 1,
+		"v1_effect": {"kind": "strike", "amount": 3},
+	}
+	var run := _run_with_gu([{"definition_id": "v1_relic_gu", "rank": 3}])
+	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 5)])
+	assert_eq(str(V1.can_play_gu(battle, 0)), "")
+	assert_true(V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["result"]["ok"])
+
+	# 二转蛊师可催动二转蛊。
+	catalog["gu_by_id"]["v1_high_rank_gu"] = {
+		"id": "v1_high_rank_gu", "combat": "strike", "school": "qi", "role": "attack", "rarity": "rare",
+		"rank": 2, "true_qi_cost": 1, "v1_effect": {"kind": "strike", "amount": 3},
+	}
+	var run2 := _run_with_gu([{"definition_id": "v1_high_rank_gu", "rank": 2}])
+	run2.cultivation = 2
+	var battle2: Dictionary = V1.start(run2, catalog, [_enemy("attack", 5)])
+	assert_eq(str(V1.can_play_gu(battle2, 0)), "")
+
+
 func test_action_limit_equals_soul_capacity() -> void:
 	var run := _run_with_gu([{"definition_id": "small_light_gu", "rank": 1}])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 0)])

@@ -99,7 +99,7 @@
 - [ ] 验证卡牌本体可接收鼠标，内部摘要节点保持 `MOUSE_FILTER_IGNORE`；禁用卡牌 hover 仍展示 `block_reason`。
 - [ ] 真实鼠标点击卡牌、选择唯一敌人、打开危险确认并确认，命令仅调用一次；取消后不残留选中态或 tooltip。
 - [ ] 保持共享 tooltip 包含名称、品质、效果、联动、代价、不可用原因和咒/风险提示；删除任何独立详情面板。
-- [ ] 运行 UI focused tests、完整 GUT、`tools/check.ps1`，并用 `tools/play.ps1` 或现有 capture 脚本完成一次固定种子 101 冒烟试玩。
+- [ ] 运行 UI focused tests、完整 GUT、`tools/check.ps1`，并用 `tools/play.ps1` 或现有 capture 脚本完成一次随机种子冒烟试玩（玩家局无教学/固定种子；连续进入的两局地图必须不同，结局结算后大厅回到「开始此世」）。
 
 ## 完成门槛
 

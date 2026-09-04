@@ -320,6 +320,2016 @@
         }
       ],
       "output_gu_id": "phantom_moon_gu"
+    },
+    {
+      "id": "advance_gen_blood_attack_001_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_001_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_001_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_attack_002_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_002_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_002_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_defense_003_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_defense_003_gu"
+      ],
+      "output_gu_id": "gen_blood_defense_003_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_movement_004_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_movement_004_gu"
+      ],
+      "output_gu_id": "gen_blood_movement_004_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_healing_005_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_healing_005_gu"
+      ],
+      "output_gu_id": "gen_blood_healing_005_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_recon_006_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_recon_006_gu"
+      ],
+      "output_gu_id": "gen_blood_recon_006_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_logistics_007_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_logistics_007_gu"
+      ],
+      "output_gu_id": "gen_blood_logistics_007_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_attack_008_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_008_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_008_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_defense_010_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_defense_010_gu"
+      ],
+      "output_gu_id": "gen_blood_defense_010_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_movement_011_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_movement_011_gu"
+      ],
+      "output_gu_id": "gen_blood_movement_011_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_healing_012_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_healing_012_gu"
+      ],
+      "output_gu_id": "gen_blood_healing_012_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_recon_013_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_recon_013_gu"
+      ],
+      "output_gu_id": "gen_blood_recon_013_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_logistics_014_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_logistics_014_gu"
+      ],
+      "output_gu_id": "gen_blood_logistics_014_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_attack_015_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_015_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_015_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_attack_016_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_016_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_016_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_defense_017_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_defense_017_gu"
+      ],
+      "output_gu_id": "gen_blood_defense_017_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_movement_018_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_movement_018_gu"
+      ],
+      "output_gu_id": "gen_blood_movement_018_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_healing_019_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_healing_019_gu"
+      ],
+      "output_gu_id": "gen_blood_healing_019_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_recon_020_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_recon_020_gu"
+      ],
+      "output_gu_id": "gen_blood_recon_020_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_logistics_021_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_logistics_021_gu"
+      ],
+      "output_gu_id": "gen_blood_logistics_021_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_attack_022_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_022_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_022_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_blood_attack_023_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_023_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_023_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_defense_024_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_defense_024_gu"
+      ],
+      "output_gu_id": "gen_blood_defense_024_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_movement_025_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_movement_025_gu"
+      ],
+      "output_gu_id": "gen_blood_movement_025_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_healing_026_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_healing_026_gu"
+      ],
+      "output_gu_id": "gen_blood_healing_026_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_recon_027_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_recon_027_gu"
+      ],
+      "output_gu_id": "gen_blood_recon_027_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_logistics_028_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_logistics_028_gu"
+      ],
+      "output_gu_id": "gen_blood_logistics_028_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_attack_029_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_029_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_029_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_attack_030_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_attack_030_gu"
+      ],
+      "output_gu_id": "gen_blood_attack_030_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_defense_031_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_defense_031_gu"
+      ],
+      "output_gu_id": "gen_blood_defense_031_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_blood_movement_032_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_blood_movement_032_gu"
+      ],
+      "output_gu_id": "gen_blood_movement_032_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_logistics_035_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_logistics_035_gu"
+      ],
+      "output_gu_id": "gen_qi_logistics_035_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_attack_036_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_036_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_036_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_attack_037_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_037_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_037_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_defense_038_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_defense_038_gu"
+      ],
+      "output_gu_id": "gen_qi_defense_038_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_movement_039_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_movement_039_gu"
+      ],
+      "output_gu_id": "gen_qi_movement_039_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_healing_040_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_healing_040_gu"
+      ],
+      "output_gu_id": "gen_qi_healing_040_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_recon_041_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_recon_041_gu"
+      ],
+      "output_gu_id": "gen_qi_recon_041_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_logistics_042_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_logistics_042_gu"
+      ],
+      "output_gu_id": "gen_qi_logistics_042_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_attack_043_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_043_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_043_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_attack_044_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_044_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_044_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_defense_045_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_defense_045_gu"
+      ],
+      "output_gu_id": "gen_qi_defense_045_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_movement_046_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_movement_046_gu"
+      ],
+      "output_gu_id": "gen_qi_movement_046_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_healing_047_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_healing_047_gu"
+      ],
+      "output_gu_id": "gen_qi_healing_047_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_recon_048_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_recon_048_gu"
+      ],
+      "output_gu_id": "gen_qi_recon_048_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_logistics_049_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_logistics_049_gu"
+      ],
+      "output_gu_id": "gen_qi_logistics_049_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_attack_050_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_050_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_050_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_attack_051_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_051_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_051_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_defense_052_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_defense_052_gu"
+      ],
+      "output_gu_id": "gen_qi_defense_052_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_movement_053_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_movement_053_gu"
+      ],
+      "output_gu_id": "gen_qi_movement_053_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_qi_healing_054_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_healing_054_gu"
+      ],
+      "output_gu_id": "gen_qi_healing_054_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_recon_055_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_recon_055_gu"
+      ],
+      "output_gu_id": "gen_qi_recon_055_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_logistics_056_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_logistics_056_gu"
+      ],
+      "output_gu_id": "gen_qi_logistics_056_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_attack_057_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_057_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_057_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_attack_058_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_058_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_058_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_defense_059_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_defense_059_gu"
+      ],
+      "output_gu_id": "gen_qi_defense_059_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_movement_060_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_movement_060_gu"
+      ],
+      "output_gu_id": "gen_qi_movement_060_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_healing_061_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_healing_061_gu"
+      ],
+      "output_gu_id": "gen_qi_healing_061_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_recon_062_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_recon_062_gu"
+      ],
+      "output_gu_id": "gen_qi_recon_062_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_logistics_063_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_logistics_063_gu"
+      ],
+      "output_gu_id": "gen_qi_logistics_063_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_qi_attack_064_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_qi_attack_064_gu"
+      ],
+      "output_gu_id": "gen_qi_attack_064_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_healing_068_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_healing_068_gu"
+      ],
+      "output_gu_id": "gen_force_healing_068_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_recon_069_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_recon_069_gu"
+      ],
+      "output_gu_id": "gen_force_recon_069_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_logistics_070_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_logistics_070_gu"
+      ],
+      "output_gu_id": "gen_force_logistics_070_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_attack_071_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_071_gu"
+      ],
+      "output_gu_id": "gen_force_attack_071_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_attack_072_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_072_gu"
+      ],
+      "output_gu_id": "gen_force_attack_072_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_defense_073_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_defense_073_gu"
+      ],
+      "output_gu_id": "gen_force_defense_073_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_movement_074_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_movement_074_gu"
+      ],
+      "output_gu_id": "gen_force_movement_074_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_healing_075_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_healing_075_gu"
+      ],
+      "output_gu_id": "gen_force_healing_075_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_recon_076_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_recon_076_gu"
+      ],
+      "output_gu_id": "gen_force_recon_076_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_logistics_077_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_logistics_077_gu"
+      ],
+      "output_gu_id": "gen_force_logistics_077_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_attack_078_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_078_gu"
+      ],
+      "output_gu_id": "gen_force_attack_078_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_attack_079_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_079_gu"
+      ],
+      "output_gu_id": "gen_force_attack_079_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_defense_080_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_defense_080_gu"
+      ],
+      "output_gu_id": "gen_force_defense_080_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_movement_081_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_movement_081_gu"
+      ],
+      "output_gu_id": "gen_force_movement_081_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_healing_082_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_healing_082_gu"
+      ],
+      "output_gu_id": "gen_force_healing_082_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_recon_083_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_recon_083_gu"
+      ],
+      "output_gu_id": "gen_force_recon_083_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_logistics_084_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_logistics_084_gu"
+      ],
+      "output_gu_id": "gen_force_logistics_084_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_attack_085_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_085_gu"
+      ],
+      "output_gu_id": "gen_force_attack_085_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_attack_086_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_086_gu"
+      ],
+      "output_gu_id": "gen_force_attack_086_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_defense_087_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_defense_087_gu"
+      ],
+      "output_gu_id": "gen_force_defense_087_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_movement_088_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_movement_088_gu"
+      ],
+      "output_gu_id": "gen_force_movement_088_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_force_healing_089_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_healing_089_gu"
+      ],
+      "output_gu_id": "gen_force_healing_089_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_recon_090_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_recon_090_gu"
+      ],
+      "output_gu_id": "gen_force_recon_090_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_logistics_091_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_logistics_091_gu"
+      ],
+      "output_gu_id": "gen_force_logistics_091_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_attack_092_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_092_gu"
+      ],
+      "output_gu_id": "gen_force_attack_092_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_attack_093_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_attack_093_gu"
+      ],
+      "output_gu_id": "gen_force_attack_093_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_defense_094_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_defense_094_gu"
+      ],
+      "output_gu_id": "gen_force_defense_094_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_movement_095_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_movement_095_gu"
+      ],
+      "output_gu_id": "gen_force_movement_095_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_healing_096_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_healing_096_gu"
+      ],
+      "output_gu_id": "gen_force_healing_096_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_force_recon_097_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_force_recon_097_gu"
+      ],
+      "output_gu_id": "gen_force_recon_097_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_defense_101_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_defense_101_gu"
+      ],
+      "output_gu_id": "gen_soul_defense_101_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_movement_102_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_movement_102_gu"
+      ],
+      "output_gu_id": "gen_soul_movement_102_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_healing_103_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_healing_103_gu"
+      ],
+      "output_gu_id": "gen_soul_healing_103_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_recon_104_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_recon_104_gu"
+      ],
+      "output_gu_id": "gen_soul_recon_104_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_logistics_105_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_logistics_105_gu"
+      ],
+      "output_gu_id": "gen_soul_logistics_105_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_attack_106_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_106_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_106_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_attack_107_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_107_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_107_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_defense_108_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_defense_108_gu"
+      ],
+      "output_gu_id": "gen_soul_defense_108_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_movement_109_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_movement_109_gu"
+      ],
+      "output_gu_id": "gen_soul_movement_109_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_healing_110_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_healing_110_gu"
+      ],
+      "output_gu_id": "gen_soul_healing_110_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_recon_111_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_recon_111_gu"
+      ],
+      "output_gu_id": "gen_soul_recon_111_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_logistics_112_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_logistics_112_gu"
+      ],
+      "output_gu_id": "gen_soul_logistics_112_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_attack_113_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_113_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_113_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_attack_114_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_114_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_114_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_defense_115_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_defense_115_gu"
+      ],
+      "output_gu_id": "gen_soul_defense_115_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_movement_116_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_movement_116_gu"
+      ],
+      "output_gu_id": "gen_soul_movement_116_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_healing_117_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_healing_117_gu"
+      ],
+      "output_gu_id": "gen_soul_healing_117_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_recon_118_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_recon_118_gu"
+      ],
+      "output_gu_id": "gen_soul_recon_118_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_logistics_119_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_logistics_119_gu"
+      ],
+      "output_gu_id": "gen_soul_logistics_119_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_attack_120_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_120_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_120_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_attack_121_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_121_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_121_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_defense_122_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_defense_122_gu"
+      ],
+      "output_gu_id": "gen_soul_defense_122_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_movement_123_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_movement_123_gu"
+      ],
+      "output_gu_id": "gen_soul_movement_123_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_healing_124_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_healing_124_gu"
+      ],
+      "output_gu_id": "gen_soul_healing_124_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_soul_recon_125_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_recon_125_gu"
+      ],
+      "output_gu_id": "gen_soul_recon_125_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_logistics_126_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_logistics_126_gu"
+      ],
+      "output_gu_id": "gen_soul_logistics_126_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_attack_127_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_127_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_127_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_attack_128_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_128_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_128_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_defense_129_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_defense_129_gu"
+      ],
+      "output_gu_id": "gen_soul_defense_129_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_movement_130_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_movement_130_gu"
+      ],
+      "output_gu_id": "gen_soul_movement_130_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_healing_131_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_healing_131_gu"
+      ],
+      "output_gu_id": "gen_soul_healing_131_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_recon_132_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_recon_132_gu"
+      ],
+      "output_gu_id": "gen_soul_recon_132_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_logistics_133_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_logistics_133_gu"
+      ],
+      "output_gu_id": "gen_soul_logistics_133_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_attack_134_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_134_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_134_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_attack_135_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_attack_135_gu"
+      ],
+      "output_gu_id": "gen_soul_attack_135_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_soul_defense_136_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_soul_defense_136_gu"
+      ],
+      "output_gu_id": "gen_soul_defense_136_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_attack_141_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_141_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_141_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_142_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_142_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_142_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_defense_143_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_defense_143_gu"
+      ],
+      "output_gu_id": "gen_refine_defense_143_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_movement_144_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_movement_144_gu"
+      ],
+      "output_gu_id": "gen_refine_movement_144_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_healing_145_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_healing_145_gu"
+      ],
+      "output_gu_id": "gen_refine_healing_145_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_recon_146_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_recon_146_gu"
+      ],
+      "output_gu_id": "gen_refine_recon_146_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_logistics_147_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_logistics_147_gu"
+      ],
+      "output_gu_id": "gen_refine_logistics_147_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_148_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_148_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_148_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_149_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_149_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_149_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_defense_150_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_defense_150_gu"
+      ],
+      "output_gu_id": "gen_refine_defense_150_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_movement_151_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_movement_151_gu"
+      ],
+      "output_gu_id": "gen_refine_movement_151_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_healing_152_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_healing_152_gu"
+      ],
+      "output_gu_id": "gen_refine_healing_152_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_recon_153_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_recon_153_gu"
+      ],
+      "output_gu_id": "gen_refine_recon_153_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_logistics_154_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_logistics_154_gu"
+      ],
+      "output_gu_id": "gen_refine_logistics_154_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_155_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_155_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_155_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_156_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_156_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_156_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_defense_157_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_defense_157_gu"
+      ],
+      "output_gu_id": "gen_refine_defense_157_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_movement_158_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_movement_158_gu"
+      ],
+      "output_gu_id": "gen_refine_movement_158_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_healing_159_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_healing_159_gu"
+      ],
+      "output_gu_id": "gen_refine_healing_159_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_recon_160_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_recon_160_gu"
+      ],
+      "output_gu_id": "gen_refine_recon_160_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_logistics_161_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_logistics_161_gu"
+      ],
+      "output_gu_id": "gen_refine_logistics_161_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_162_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_162_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_162_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_attack_163_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_163_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_163_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_defense_164_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_defense_164_gu"
+      ],
+      "output_gu_id": "gen_refine_defense_164_gu",
+      "materials": {
+        "beast_bone": 1
+      },
+      "stone_cost": 6
+    },
+    {
+      "id": "advance_gen_refine_movement_165_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_movement_165_gu"
+      ],
+      "output_gu_id": "gen_refine_movement_165_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_healing_166_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_healing_166_gu"
+      ],
+      "output_gu_id": "gen_refine_healing_166_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_recon_167_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_recon_167_gu"
+      ],
+      "output_gu_id": "gen_refine_recon_167_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_logistics_168_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_logistics_168_gu"
+      ],
+      "output_gu_id": "gen_refine_logistics_168_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_attack_169_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_169_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_169_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_attack_170_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_170_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_170_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_defense_171_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_defense_171_gu"
+      ],
+      "output_gu_id": "gen_refine_defense_171_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_movement_172_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_movement_172_gu"
+      ],
+      "output_gu_id": "gen_refine_movement_172_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_healing_173_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_healing_173_gu"
+      ],
+      "output_gu_id": "gen_refine_healing_173_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_recon_174_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_recon_174_gu"
+      ],
+      "output_gu_id": "gen_refine_recon_174_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_logistics_175_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_logistics_175_gu"
+      ],
+      "output_gu_id": "gen_refine_logistics_175_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
+    },
+    {
+      "id": "advance_gen_refine_attack_176_gu",
+      "kind": "advance",
+      "input_gu_ids": [
+        "gen_refine_attack_176_gu"
+      ],
+      "output_gu_id": "gen_refine_attack_176_gu",
+      "materials": {
+        "beast_bone": 2
+      },
+      "stone_cost": 10,
+      "input_min_rank": 2
     }
   ],
   "caravan_offers": [

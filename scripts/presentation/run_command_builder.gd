@@ -27,7 +27,12 @@ static func _shop_service_command(controller, service_id: String, target_id: Str
 static func _rest_choose_command(controller, id: String, target_id: String = "") -> Dictionary:
 	match str(id):
 		"heal": return {"type": "rest", "mode": "heal"}
+		"upgrade_card": return {"type": "rest", "mode": "upgrade_card", "card_key": str(target_id)}
 		"remove": return {"type": "rest", "mode": "remove_card", "instance_id": target_id}
+		"remove_card": return {"type": "rest", "mode": "remove_card", "instance_id": str(target_id)}
+		"remove_imprint": return {"type": "rest", "mode": "remove_imprint", "relic_id": str(target_id)}
+		"remove_curse": return {"type": "rest", "mode": "remove_curse", "curse_id": str(target_id)}
+		"skip": return {"type": "rest", "mode": "skip"}
 		"wash": return {"type": "raise_aptitude", "node_id": str(controller.current_node.get("id", ""))}
 	return {"type": "leave_encounter"}
 

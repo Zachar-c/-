@@ -351,6 +351,14 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		seen_gu_ids[gu["id"]] = true
 		if not _is_integral(gu.get("rank", null)) or int(gu.get("rank", 0)) < 1:
 			errors.append("gu %s rank must be a positive integer" % gu["id"])
+		# 2026-09-04 中央数值支配：批量生成的 gen_ 蛊价值必须等于
+		# balance.gu_value_by_rank[rank]，禁止手写跨转字面量；手工蛊
+		# 保留设计字面量（卖出时作 GuBalance.gu_value 的下限）。
+		if str(gu.get("id", "")).begins_with("gen_"):
+			var tier_table: Dictionary = catalog.get("balance", {}).get("gu_value_by_rank", {})
+			var tier_expected: Variant = tier_table.get(str(int(gu.get("rank", 1))), -1)
+			if not _is_integral(tier_expected) or int(gu.get("value", -1)) != int(tier_expected):
+				errors.append("gen gu %s value must equal balance.gu_value_by_rank[rank]" % gu["id"])
 		# T7.1 §1.1: a hub-core gu must declare reachable evidence - its
 		# branch recipes / exclusive refining must resolve in the catalog.
 		if str(gu.get("core_depth", "")) == "hub":
@@ -991,6 +999,17 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 			errors.append("balance %s must be positive" % key)
 	if float(cfg.get("speed_max", 0.0)) < float(cfg.get("speed_min", 0.0)):
 		errors.append("balance speed_max must be >= speed_min")
+	# 2026-09-04 中央蛊虫计价表：1..5 转全覆盖正整数。
+	var gu_value_table: Variant = cfg.get("gu_value_by_rank", null)
+	if gu_value_table is Dictionary:
+		if (gu_value_table as Dictionary).size() != 5:
+			errors.append("balance gu_value_by_rank must cover ranks 1..5")
+		for rank_key in (gu_value_table as Dictionary):
+			var tier_value: Variant = (gu_value_table as Dictionary)[rank_key]
+			if not _is_integral(tier_value) or int(tier_value) < 1:
+				errors.append("balance gu_value_by_rank.%s must be a positive integer" % str(rank_key))
+	elif gu_value_table != null:
+		errors.append("balance gu_value_by_rank must be an object")
 	var calm_regions := ["soul_calm_emotional_below", "soul_calm_beast_below", "soul_calm_departure_below"]
 	var previous_calm := 101.0
 	for calm_key in calm_regions:

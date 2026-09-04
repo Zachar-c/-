@@ -84,6 +84,54 @@ static func refine_state(instance: Dictionary) -> String:
 	return str((instance as Dictionary).get(REFINE_STATE_KEY, "refined"))
 
 
+# 2026-09-04 中央计价辅助：同名蛊全部 refined 实例的最高转数（无实例回退
+# 定义默认 1）。卖出计价用——升阶实例按实例转数取 gu_value_by_rank。
+static func max_refined_rank(instances: Dictionary, gu_id: String) -> int:
+	var rank := 0
+	for instance_value in instances.values():
+		var instance: Dictionary = instance_value
+		if refine_state(instance) == "refined" and str(instance.get("definition_id", "")) == gu_id:
+			rank = maxi(rank, int(instance.get("rank", 1)))
+	return rank
+
+
+# 2026-09-03 修复：炼蛊失败 / 卖出 / 商队兑换的实例销毁记账。实例与洞天
+# stored 列表必须同步变更，否则下次 sync_legacy_gu_projections() 会把
+# 只从 legacy 数组移除的蛊"复活"。多集语义与 resolver._has_all_gu 一致：
+# 每个 definition_id 只消耗洞天中首个 refined 实例。
+static func consume_definition_instances(instances: Dictionary, stored: Array, inputs: Array) -> void:
+	for gu_id_value in inputs:
+		var gu_id := str(gu_id_value)
+		for instance_id_value in stored.duplicate():
+			var instance_id := str(instance_id_value)
+			var instance: Dictionary = instances.get(instance_id, {})
+			if refine_state(instance) != "refined" or str(instance.get("definition_id", "")) != gu_id:
+				continue
+			var consumed: Dictionary = instance.duplicate(true)
+			consumed[REFINE_STATE_KEY] = "consumed"
+			instances[instance_id] = consumed
+			stored.erase(instance_id)
+			break
+
+
+# 2026-09-03 修复：gu_transaction 的实例侧记账（combine 炼蛊 / 商队购买 /
+# 商队兑换共用）。产出蛊必须落到 gu_instances + 洞天，否则 V1 战斗
+# refined_instances() 看不见它，且下次 sync_legacy_gu_projections() 会把
+# 只写 legacy 数组的产出抹掉；输入蛊同步销毁实例。返回新的
+# {instances, aperture}，输入字典不被修改。
+static func transaction_ledger(instances: Dictionary, aperture: Dictionary, output_gu_id: String, catalog: Dictionary, inputs: Array, output_rank: int = 0) -> Dictionary:
+	var next_instances := instances.duplicate(true)
+	var next_aperture := aperture.duplicate(true)
+	var stored: Array = next_aperture.get("stored_gu_instance_ids", []).duplicate()
+	consume_definition_instances(next_instances, stored, inputs)
+	var output_instance_id := RunState.next_gu_instance_id(next_instances)
+	var extra := {"rank": clampi(output_rank, 1, 5)} if output_rank > 0 else {}
+	next_instances[output_instance_id] = new_instance(output_gu_id, output_instance_id, catalog, extra)
+	stored.append(output_instance_id)
+	next_aperture["stored_gu_instance_ids"] = stored
+	return {"instances": next_instances, "aperture": next_aperture}
+
+
 static func validate_instance(instance: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
 	if str(instance.get("instance_id", "")).is_empty():

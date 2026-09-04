@@ -42,6 +42,7 @@
 - `vendor/godot-open-rpg/` 未经审计不得直接耦合或修改。
 - 引入或更新 GDQuest Open RPG 时必须保留 MIT 许可证、上游 URL 和固定提交号。
 - `master` 是集成与实际开发主线；除非用户另有要求，基于当前检出分支工作。
+- **休整节点 UI 必须暴露领域全集**：任何 `type=="rest"` 节点的快照 `choices` 必须覆盖领域层 `rest` 命令的全集（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，含节点允许的 `wash`），不得让"全部选项禁用 + leave_node 被 `rest_choice_required` 门禁"成为软锁；当领域全集在当前状态下全部 `disabled` 时，UI 必须保留 `skip` 入口并落 `rest_skipped` 事件日志。违反此约束的 PR 一律回退。新增 / 修改休整节点命令面、快照键、确认层级时须同步更新 `docs/contracts/2026-09-02-domain-ui-contract.md` 与 `docs/contracts/2026-09-02-page-inventory-requirements.md`。
 
 ## 技术约定
 

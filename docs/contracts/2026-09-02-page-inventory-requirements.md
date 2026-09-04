@@ -75,12 +75,12 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 
 ### P6 Rest（`rest_screen`，快照 `Rest/rest()`）
 
-- 定位：休整节点：回血、调资质、洞天蓄蛊管理（移除蛊）。
-- 数据绑定：`rest_used/rest_mode_used/aptitude_raised`（node_flags 派生）、休整选项（`id/label/detail/cost/disabled/reason/curse_warning`）、`stored_gu_instance_ids` 列表（`name/blocked/reason`）。
-- 命令：`rest`、`raise_aptitude`、`remove_card`（移除蓄蛊）、`disable_card`。
-- 状态与确认：本次已休整禁用 + "本次已休整"；诅咒蛊移除被领域拒绝（`blocked` 原因展示）；`curse_warning=true` 的选项升级确认层级 2。
-- 组件：`GuCommandButton`、`GuCard`、`GuToast`。
-- 验收：一次性消费的禁用态准确（per-node flags）；移除被拒时原因可见。
+- 定位：休整节点：回血、强化蛊卡、移除蛊 / 印记 / 反噬、调资质、放弃收益并离开。
+- 数据绑定：`rest_used/rest_mode_used/aptitude_raised`（node_flags 派生）、休整选项（`id/label/detail/cost/disabled/reason/curse_warning/requires_confirm`，id 全集为 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，`wash` 仅在闭关/传承节点出现）、`upgrade_targets`（每张 `refined_gu_id`）、`remove_card_targets`（每只活蛊实例 + `blocked/reason`）、`imprint_targets`（每枚印记 + `meta_rule` 不可移除原因）、`curse_targets`（每条 `statuses` 诅咒 + 层数）。
+- 命令：`rest`（`heal`/`upgrade_card` + `card_key` / `remove_card` + `instance_id` / `remove_imprint` + `relic_id` / `remove_curse` + `curse_id` / `skip`）、`raise_aptitude`。
+- 状态与确认：本次已休整全选项禁用 + "本次已休整"；`skip` 在未消费时强制二次确认（`requires_confirm=true`）；诅咒蛊移除被领域拒绝（`blocked` 原因展示）；`curse_warning=true` 的选项升级确认层级 2。
+- 组件：`GuCommandButton`、`GuCard`、`GuToast`、`GuConfirmDialog`。
+- 验收：每节点快照必须包含 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集；`skip` 触发后事件日志落 `rest_skipped`；`leave_node` 在任一选项合法或 skip 已确认后必须放行（`rest_choice_required` 不得成为软锁）；种子 `2/6/8/10/13/15/16/18/33/34/41/49` 回归不得出现无合法选项且无法离开的状态。
 
 ### P7 Refine（`refine_screen`，快照 `Refine/refine()`）——本批扩展重点
 

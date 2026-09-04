@@ -41,7 +41,7 @@ UI (scenes + scripts/ui)
 | `Encounter` | `encounter()` | 遭遇会话、`node_actions[]`（含 `cost/executable/block_reason/remedy_hints`） |
 | `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version` |
 | `Shop` | `shop()` | 货架报价、`_shop_services[]` |
-| `Rest` | `rest()` | 休整选项 |
+| `Rest` | `rest()` | `choices[]`（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集，外加节点允许的 `wash`）、`upgrade_targets` / `remove_card_targets` / `imprint_targets` / `curse_targets`、每个 `choice.disabled/reason/curse_warning/requires_confirm` |
 | `Refine` | `refine()` | 炼蛊台状态、投入位、候选 |
 | `Reward` | `reward()` | 战后奖励列表 |
 | `Npc` | `npc()` | NPC 交涉/交易 |
@@ -73,9 +73,11 @@ UI (scenes + scripts/ui)
 
 现役 type 全集（参数见 resolver 对应 `_xxx` 函数；均为 `state, command, catalog` 三元签名）：
 
-`travel(node_id)`、`resolve_contact`、`complete_node`、`buy_gu`、`sell_gu`、`exchange_gu`、`refine_gu`、`cultivate_rank_two`、`settle_feeding`、`settle_node_feeding`、`disable_card`、`upgrade_card`、`copy_card`、`destroy_gu`、`remove_card`、`remove_imprint`、`spend_lifespan`、`accept_debt`、`use_gu`、`buy_opportunity`、`take_body_imprint`、`choose_action`、`retreat`、`attempt_ascension`、`gain_relic`、`shop_purchase`、`shop_lifespan_deal`、`shop_barter`、`npc_trade`、`scavenge`、`sell_material`、`use_material`、`raise_aptitude`、`record_neutral_npc_kill`、`wash_notoriety`、`record_boss_defeated`、`record_layer_boss_defeated`、`rest`、`gain_force_power`、`accept_event`、`gain_curse`、`remove_curse`、`swear_contracts`。
+`travel(node_id)`、`resolve_contact`、`complete_node`、`buy_gu`、`sell_gu`、`exchange_gu`、`refine_gu`、`cultivate_rank_two`、`settle_feeding`、`settle_node_feeding`、`disable_card`、`upgrade_card`、`copy_card`、`destroy_gu`、`remove_card`、`remove_imprint`、`spend_lifespan`、`accept_debt`、`use_gu`、`buy_opportunity`、`take_body_imprint`、`choose_action`、`retreat`、`attempt_ascension`、`gain_relic`、`shop_purchase`、`shop_lifespan_deal`、`shop_barter`、`npc_trade`、`scavenge`、`sell_material`、`use_material`、`raise_aptitude`、`record_neutral_npc_kill`、`wash_notoriety`、`record_boss_defeated`、`record_layer_boss_defeated`、`rest`（`mode ∈ {heal,upgrade_card,remove_card,remove_imprint,remove_curse,skip}`，覆盖 `_rest_skip` 在内的领域全集）、`gain_force_power`、`accept_event`、`gain_curse`、`remove_curse`、`swear_contracts`。
 
 统一返回：`{"ok": bool, "reason": str?, "feedback"?: str, ...}`；`ok=false` 时 `reason` 必须能命中 §5 的中文映射。`load_run`/`save_run` 由 controller 层直接处理（v4 拒载契约见 §7）。
+
+- **卖出中央计价（2026-09-04）**：`sell_gu` 价格 = `GuBalance.gu_value(definition, instance_rank, catalog) = max(定义 value 字面量, balance.gu_value_by_rank[实例转数])`；实例转数取同名全部 refined 实例的最高值（`GuInstance.max_refined_rank`）。`balance.gu_value_by_rank` 为 1..5 转全覆盖正整数表；`gen_*` 批量蛊的 `value` 字面量由 `ContentCatalog.validate` 强制等于表值（手写跨转字面量拒绝），手工蛊字面量保留为下限。
 
 `[T9.2 已落地]` 新命令全集（分派于 `resolver.gd _dispatch` → 薄委托 `V2Commands`；`destroy_gu` 保持既有 resolver 实现，`settle_layer` 接通 `RunState.settle_layer` 大层唯一入口，同层幂等）：
 
@@ -87,6 +89,8 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 
 - `use_gu` 命令携带可选 `target_id`（`gu.<instance_id>` 点击的目标敌人 id）；经 facade 的 `play_gu(slot_index, target_id)` 贯穿到 `V1BattleResolver`（`_strike_enemy`/`_apply_enemy_status` 按目标解析，空/无效回退首个存活敌人）。多敌战斗中点选第 N 个敌人必须命中该敌人。
 - `use_gu` 成功结算写入 `battle_v1` 事件；`info.effect` 含 `kind/amount/target`，并按类别补 `name`（status/buff）、`heal`（heal_and_strike）、`target_id`（**实际命中敌人 id**：resolver 结算后把命中者写回 battle 的 `last_effect_target`，facade 以它为准——空/无效请求回退首个存活敌人时日志记录真实命中者而非空/原始值）；`amount` 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0）。
+- **转数门禁（2026-09-03，spec §11.2）**：`can_play_gu` 前置校验 `CultivatorRules.can_activate(player.cultivation, slot.rank, slot.low_rank_exception)`；拒绝 reason `insufficient_qi_quality`（中文「真元质量不足，无法催动此转数的蛊虫」，走 `_v1_reject_text`）。`gu_slots[]` 新增 `rank`（实例与定义转数取较高者，同名升阶计入）与 `low_rank_exception`（gu 定义可声明 `low_rank_exception: true` 例外，对应 §11.2 珍稀蛊低转催动条款）；`player` 新增 `cultivation`（数值转数）。拒绝零消耗。杀招（`play_kill_move`）暂不做同款校验，与既有行为一致。
+- **转数与效果展示（2026-09-04）**：`hand[]` 蛊卡 `summary` 带转数前缀（`N转·<效果文本>（<状态注记>）`；`basic_attack` 拳脚卡除外）。图鉴（`hall()` → `codex.gu[]`）条目新增 `rank`（整数转数，UI 渲「转数：N转」）与 `effect`（效果中文文本：显式 `v1_effect` 优先，缺省走 `V1BattleResolver.default_v1_effect` role 兜底，与战斗口径一致）。
 
 预检规格（`CommandSpecRegistry`）：
 

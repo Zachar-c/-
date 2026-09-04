@@ -155,7 +155,8 @@
   （choices 含 fight 或 caravan 特例）；extreme_hostile 时预览层与 `_leave`
   同语义：有仗必须打，无仗可打允许离开（修复 wild_gu/market/rest 等节点的硬死锁）。
 - **真实五层验收**：`tests/unit/test_v1_five_layer_clear.gd`——固定种子
-  （20260831，注意 101 是首轮教学图）经真实 MapGenerator route 走完五层：
+  （20260831；运行路径已不设教学/固定种子，101 与其他种子一样走生成式大图，
+  见 2026-09-03 垂直切片「种子策略」）经真实 MapGenerator route 走完五层：
   `boss_defeated_L1..L5` + 自动升转 5 转 + 全局 `boss_defeated` + 升仙窗
   `attempt_ascension` 结局评价 + 统一结算 Ending；多种子（4242/20260831/77/9/5150）
   无软锁且同种子复跑结局/事件数/旗标可复现。

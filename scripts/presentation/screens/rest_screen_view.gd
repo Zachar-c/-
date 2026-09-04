@@ -5,7 +5,7 @@ extends MarginContainer
 ## 强制二选一不可全拿；洗髓换骨走寿元支付二次确认（R2.3 死亡可预见）。
 ## 静态骨架（顶栏、标题行、主决策面、移除面板、成长面板、离开、确认弹窗）预置在节点树里；
 ## 数量不定的内容（休整选项、移除目标、突破成长）走代码生成。
-## 本地交互状态只有两个：待确认的洗髓选项 id、是否正在选移除目标。
+## 本地交互状态只有三个：待确认的洗髓选项 id、待确认的 skip 选项 id、是否正在选目标。
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
@@ -25,6 +25,12 @@ var _commands: Dictionary = {}
 var _ready_done := false
 ## 待确认的洗髓换骨选项 id；空串表示无。
 var _wash_confirm := ""
+## 待确认的放弃收益选项 id；空串表示无。
+var _skip_confirm := ""
+## 当前目标选择面板正在收集的目标类型 id（空串表示无）。
+var _target_cid := ""
+## 当前目标选择面板读取的 snapshot 列表 key（upgrade_targets / remove_card_targets / imprint_targets / curse_targets）。
+var _target_list_key := ""
 ## 是否正在选择要移除的蛊虫。
 var _remove_select := false
 
@@ -89,6 +95,8 @@ func _build_choice_card(row: Node, c: Dictionary) -> void:
 	var cid := str(c.get("id", ""))
 	var disabled := bool(c.get("disabled", false))
 	var is_wash: bool = cid == "wash"
+	var is_skip: bool = cid == "skip"
+	var needs_target: bool = cid in ["upgrade_card", "remove_card", "remove_imprint", "remove_curse"]
 
 	var panel := GuPanelScene.instantiate()
 	# 先入树再配内容：GuPanelView.content_host 是 @onready，add_child 触发 _ready() 后才有值。
@@ -108,46 +116,95 @@ func _build_choice_card(row: Node, c: Dictionary) -> void:
 	var choose := Button.new()
 	choose.text = "选择"
 	choose.disabled = disabled
-	MasterTheme.apply_button(choose, "danger" if is_wash else "action")
+	MasterTheme.apply_button(choose, "danger" if is_wash else ("warning" if is_skip else "action"))
 	choose.pressed.connect(func():
-		# 洗髓换骨走寿元支付二次确认；移除蛊先展开目标选择；其余直接下发。
+		# 洗髓换骨走寿元支付二次确认；skip 走通用确认弹窗；目标类先展开目标选择；其余直接下发。
 		if is_wash:
 			_wash_confirm = cid
+			_skip_confirm = ""
 			_remove_select = false
 			_refresh_confirm_dialog()
-		elif cid == "remove":
+		elif is_skip:
+			_skip_confirm = cid
 			_wash_confirm = ""
-			_remove_select = true
+			_remove_select = false
 			_refresh_confirm_dialog()
-			_refresh_remove_panel()
+		elif needs_target:
+			_wash_confirm = ""
+			_skip_confirm = ""
+			_remove_select = false
+			_open_target_picker(cid)
 		else:
+			_wash_confirm = ""
+			_skip_confirm = ""
 			_fire("choose", cid))
 	panel.content_host.add_child(choose)
+
+
+# Target picker routes each new rest mode to its own snapshot target list.
+# Domain rules (cursed drop block, meta_rule exclusion, curse presence) are
+# already encoded in the snapshot's `disabled`/`reason`/`blocked` fields.
+func _open_target_picker(cid: String) -> void:
+	_target_cid = cid
+	match cid:
+		"upgrade_card": _target_list_key = "upgrade_targets"
+		"remove_card": _target_list_key = "remove_card_targets"
+		"remove_imprint": _target_list_key = "imprint_targets"
+		"remove_curse": _target_list_key = "curse_targets"
+		_: _target_list_key = ""
+	_remove_select = true
+	_refresh_remove_panel()
 
 
 func _refresh_remove_panel() -> void:
 	_remove_panel.visible = _remove_select
 	if not _remove_select:
 		return
+	# Backwards compat: legacy "remove" / "remove_targets" still routes here.
+	var list_key := _target_list_key if _target_list_key != "" else "remove_targets"
+	# Force the legacy remove list to use the new key when removing via the
+	# deprecated "remove" choice id (kept so existing calls keep working).
+	if _target_cid == "remove" and _target_list_key == "":
+		list_key = "remove_card_targets"
+	var header_label := "选择目标"
+	if _target_cid == "remove_card":
+		header_label = "选择要移除的蛊"
+	elif _target_cid == "upgrade_card":
+		header_label = "选择要强化的蛊卡"
+	elif _target_cid == "remove_imprint":
+		header_label = "选择要抹除的印记"
+	elif _target_cid == "remove_curse":
+		header_label = "选择要拔除的反噬"
+	elif _target_cid == "remove":
+		header_label = "选择要移除的蛊"
+	_remove_panel.title = header_label
 	var host := _ensure_content_host(_remove_panel, "RemoveBody")
 	_clear_children(host)
-	for target in _snapshot.get("remove_targets", []):
+	for target in _snapshot.get(list_key, []):
 		if not (target is Dictionary):
 			continue
 		var tid := str(target.get("id", ""))
 		var blocked := bool(target.get("blocked", false))
 		var reason := str(target.get("reason", ""))
+		var label_text := str(target.get("name", tid))
+		var layer_note := ""
+		if _target_cid == "remove_curse":
+			layer_note = " · " + str(int(target.get("layers", 0))) + " 层"
+		if blocked:
+			label_text += " · " + reason
 		var pick := Button.new()
-		pick.text = str(target.get("name", tid)) + (" · " + reason if blocked else "")
+		pick.text = label_text + layer_note
 		pick.disabled = blocked
 		MasterTheme.apply_button(pick, "action")
-		pick.pressed.connect(func(): _fire2("choose", "remove", tid))
+		pick.pressed.connect(func(): _fire2("choose", _target_cid, tid))
 		host.add_child(pick)
 	var cancel := Button.new()
 	cancel.text = "取消选择"
 	MasterTheme.apply_button(cancel, "cancel")
 	cancel.pressed.connect(func():
 		_remove_select = false
+		_target_cid = ""
+		_target_list_key = ""
 		_refresh_remove_panel())
 	host.add_child(cancel)
 
@@ -183,26 +240,40 @@ func _build_growth_card(row: Node, g: Dictionary) -> void:
 
 
 func _refresh_confirm_dialog() -> void:
-	if _wash_confirm == "":
+	if _wash_confirm == "" and _skip_confirm == "":
 		_confirm_dialog.close()
 		return
-	var choice := _choice_by_id(_wash_confirm)
+	var choice := _choice_by_id(_wash_confirm if _wash_confirm != "" else _skip_confirm)
 	if choice.is_empty():
 		_wash_confirm = ""
+		_skip_confirm = ""
 		_confirm_dialog.close()
 		return
+	var is_wash := _wash_confirm != ""
+	var title := "洗髓换骨 · 寿元支付" if is_wash else "放弃本次休整收益"
+	var cost_line := ""
+	if is_wash:
+		cost_line = "代价：" + str(choice.get("cost", "")) + " · 一局一次 · 执行前预检寿元"
+	else:
+		cost_line = "本次休整无收益可用，确认后将记录一次放弃并解锁离场。"
 	_confirm_dialog.open(
 		str(choice.get("detail", "")),
 		func():
-			var cid := _wash_confirm
+			var cid := _wash_confirm if _wash_confirm != "" else _skip_confirm
 			_wash_confirm = ""
-			_fire("confirm_wash"),
+			_skip_confirm = ""
+			if is_wash:
+				_fire("confirm_wash")
+			else:
+				_fire("choose", cid),
 		func():
 			_wash_confirm = ""
+			_skip_confirm = ""
 			_confirm_dialog.close(),
-		"洗髓换骨 · 寿元支付",
-		"代价：" + str(choice.get("cost", "")) + " · 一局一次 · 执行前预检寿元",
-		"确认支付", "取消")
+		title,
+		cost_line,
+		"确认支付" if is_wash else "确认放弃",
+		"取消")
 
 
 # ---------------------------------------------------------------------------

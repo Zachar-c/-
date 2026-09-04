@@ -11,6 +11,7 @@ const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
 const ResolverHelpersScript = preload("res://scripts/domain/resolver_helpers.gd")
 const V2CommandsScript = preload("res://scripts/domain/v2_commands.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
+# GuBalance 为 class_name 静态公式模块，直接按全局类名调用。
 
 
 const APTITUDE_LADDER := ["ding", "bing", "yi", "jia"]
@@ -209,7 +210,7 @@ static func _buy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
-	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, [], "caravan_bought_gu")
+	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, [], "caravan_bought_gu", [], catalog)
 
 
 static func _sell_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
@@ -219,18 +220,28 @@ static func _sell_gu(state: RunState, command: Dictionary, catalog: Dictionary) 
 	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 	if gu.is_empty():
 		return _rejected(state, "unknown_gu")
-	var value := int(gu.get("value", 0))
+	# 2026-09-04 中央计价：升阶实例按实例转数取 gu_value_by_rank。
+	var instance_rank := maxi(int(gu.get("rank", 1)), GuInstance.max_refined_rank(state.gu_instances, gu_id))
+	var value := GuBalance.gu_value(gu, instance_rank, catalog)
+	# 2026-09-03 修复：卖出必须同步销毁实例，否则下次 sync 会把卖掉的蛊
+	# 复活（元石已到手、蛊又回来 → 无限刷钱）。
+	var instances := state.gu_instances.duplicate(true)
+	var aperture := state.cave_aperture.duplicate(true)
+	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+	GuInstance.consume_definition_instances(instances, stored, [gu_id])
+	aperture["stored_gu_instance_ids"] = stored
 	var next_gu := _without_gu(state.refined_gu_ids, [gu_id])
 	var next_equipped := _without_gu(state.equipped_gu_ids, [gu_id])
 	var next := state.append_event(_event(
 		state,
 		"sell_gu",
-		{"stone": state.stone, "gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids},
-		{"stone": state.stone + value, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped},
+		{"stone": state.stone, "gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids, "gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"stone": state.stone + value, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped, "gu_instances": instances, "cave_aperture": aperture},
 		"caravan_sold_gu",
 		state.current_node_id,
 		[gu_id]
 	))
+	next.sync_legacy_gu_projections()
 	return _accepted(next)
 
 
@@ -244,7 +255,7 @@ static func _exchange_gu(state: RunState, command: Dictionary, catalog: Dictiona
 	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
-	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, inputs, "caravan_exchanged_gu")
+	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, inputs, "caravan_exchanged_gu", [], catalog)
 
 
 static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
@@ -296,6 +307,9 @@ static func _spend_materials(state: RunState, material_cost: Dictionary) -> RunS
 
 
 static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+	# 与 fixed/advance 同门禁（2026-08-30 裁定）：蛊方图鉴未持有则拒绝，不烧材料。
+	if not recipe_unlocked(state, recipe):
+		return _rejected(state, "refinement_recipe_locked")
 	var inputs: Array = recipe.get("input_gu_ids", [])
 	var material_cost: Dictionary = recipe.get("materials", {})
 	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
@@ -311,19 +325,26 @@ static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog
 	# 与产出 rank），与炼蛊成功率无直接关系。
 	var roll := _refinement_roll(paid, str(recipe.get("id", "")))
 	if roll > int(recipe.get("success_roll_max", 100)):
+		# 失败摧毁输入：实例与 legacy 投影同步销毁，避免下次 sync 复活。
+		var instances := paid.gu_instances.duplicate(true)
+		var aperture := paid.cave_aperture.duplicate(true)
+		var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+		GuInstance.consume_definition_instances(instances, stored, inputs)
+		aperture["stored_gu_instance_ids"] = stored
 		var destroyed := _without_gu(paid.refined_gu_ids, inputs)
 		var unequipped := _without_gu(paid.equipped_gu_ids, inputs)
 		var failed := paid.append_event(_event(
 			paid,
 			"refine_gu",
-			{"gu_ids": paid.gu_ids, "refined_gu_ids": paid.refined_gu_ids},
-			{"gu_ids": destroyed, "refined_gu_ids": destroyed, "equipped_gu_ids": unequipped},
+			{"gu_ids": paid.gu_ids, "refined_gu_ids": paid.refined_gu_ids, "gu_instances": paid.gu_instances, "cave_aperture": paid.cave_aperture},
+			{"gu_ids": destroyed, "refined_gu_ids": destroyed, "equipped_gu_ids": unequipped, "gu_instances": instances, "cave_aperture": aperture},
 			"refinement_failed_destroyed_inputs",
 			paid.current_node_id,
 			inputs
 		))
+		failed.sync_legacy_gu_projections()
 		return _accepted(failed)
-	return _add_gu_transaction(paid, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])])
+	return _add_gu_transaction(paid, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])], catalog, int(recipe.get("output_rank", 0)))
 
 
 static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
@@ -367,31 +388,32 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 			var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
 			if int(instance.get("rank", 1)) < min_rank:
 				return _rejected(state, "refinement_input_rank_insufficient")
+	# 升阶封顶同属转数门禁，必须同样在烧材料之前判定：材料一旦扣除事件即写入，
+	# 事后拒绝会留下"拒绝却仍消耗"的状态。
+	if is_advance:
+		var advance_rank := int(state.gu_instances.get(str(preselected[0]), {}).get("rank", 1))
+		if mini(advance_rank + 1, 5) <= advance_rank:
+			return _rejected(state, "advance_capped")
 	var paid := _spend_materials(state, material_cost)
-	var selected := preselected
 	var instances := paid.gu_instances.duplicate(true)
 	var aperture := paid.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	for instance_id_value in selected:
+	for instance_id_value in preselected:
 		var instance_id := str(instance_id_value)
 		var consumed: Dictionary = instances[instance_id].duplicate(true)
 		consumed["state"] = "consumed"
 		instances[instance_id] = consumed
 		stored.erase(instance_id)
-	var output_instance_id := _next_gu_instance_id(instances)
+	var output_instance_id := RunState.next_gu_instance_id(instances)
 	var output_instance := {
 		"instance_id": output_instance_id,
 		"definition_id": str(recipe["output_gu_id"]),
 		"state": "refined",
 	}
 	if is_advance:
-		# 同名升阶：本体进阶不换名，阶数 +1（封顶五转）；是否可达由
-		# 转数/阶顶决定，否则拒绝而不烧材料。
-		var consumed_rank := int(instances[str(selected[0])].get("rank", 1))
-		var new_rank := mini(consumed_rank + 1, 5)
-		if new_rank <= consumed_rank:
-			return _rejected(paid, "advance_capped")
-		output_instance["rank"] = new_rank
+		# 同名升阶：本体进阶不换名，阶数 +1（封顶五转）；封顶可达性已在
+		# 烧材料前判定，这里只推进阶数。
+		output_instance["rank"] = mini(int(instances[str(preselected[0])].get("rank", 1)) + 1, 5)
 	else:
 		# 定向合炼：产出转数 = 配方 output_rank（缺省回退产出蛊本体定义）。
 		var fallback_rank := int(catalog.get("gu_by_id", {}).get(str(recipe["output_gu_id"]), {}).get("rank", 1))
@@ -406,7 +428,7 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 		{"stone": paid.stone - stone_cost, "gu_instances": instances, "cave_aperture": aperture},
 		"refinement_succeeded",
 		paid.current_node_id,
-		selected + [output_instance_id, "recipe:%s" % str(recipe["id"])]
+		preselected + [output_instance_id, "recipe:%s" % str(recipe["id"])]
 	))
 	next.sync_legacy_gu_projections()
 	if stone_cost > 0:
@@ -458,10 +480,6 @@ static func _same_multiset(actual: Array[String], expected: Array) -> bool:
 			return false
 		remaining.remove_at(index)
 	return remaining.is_empty()
-
-
-static func _next_gu_instance_id(instances: Dictionary) -> String:
-	return RunState.next_gu_instance_id(instances)
 
 
 static func _refinement_roll(state: RunState, recipe_id: String) -> int:
@@ -922,19 +940,23 @@ static func _offer(catalog: Dictionary, offer_id: String, kind: String) -> Dicti
 	return offer
 
 
-static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String, extra_targets: Array = []) -> Dictionary:
+static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String, extra_targets: Array = [], catalog: Dictionary = {}, output_rank: int = 0) -> Dictionary:
+	# 2026-09-03 修复：实例记账见 GuInstance.transaction_ledger（产出蛊必须
+	# 落 gu_instances + 洞天，否则 V1 战斗看不见且会被下次 sync 抹掉）。
+	var ledger := GuInstance.transaction_ledger(state.gu_instances, state.cave_aperture, output_gu_id, catalog, inputs, output_rank)
 	var next_gu := _without_gu(state.refined_gu_ids, inputs)
 	next_gu.append(output_gu_id)
 	var next_equipped := _without_gu(state.equipped_gu_ids, inputs)
 	var next := state.append_event(_event(
 		state,
 		"gu_transaction",
-		{"stone": state.stone, "gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids},
-		{"stone": state.stone - stone_cost, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped},
+		{"stone": state.stone, "gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids, "gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+		{"stone": state.stone - stone_cost, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped, "gu_instances": ledger["instances"], "cave_aperture": ledger["aperture"]},
 		reason,
 		state.current_node_id,
 		inputs + [output_gu_id] + extra_targets
 	))
+	next.sync_legacy_gu_projections()
 	return _accepted(next)
 
 
@@ -1053,7 +1075,7 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	var instances := state.gu_instances.duplicate(true)
 	var aperture := state.cave_aperture.duplicate(true)
 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	var instance_id := _next_gu_instance_id(instances)
+	var instance_id := RunState.next_gu_instance_id(instances)
 	instances[instance_id] = {
 		"instance_id": instance_id,
 		"definition_id": str(offer["gu_id"]),
@@ -1307,7 +1329,7 @@ static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictiona
 	var meta_rules := state.meta_rules.duplicate(true)
 	var result_feeds: Array = []
 	if chosen.has("gu_id"):
-		var instance_id := _next_gu_instance_id(instances)
+		var instance_id := RunState.next_gu_instance_id(instances)
 		instances[instance_id] = {
 			"instance_id": instance_id,
 			"definition_id": str(chosen["gu_id"]),
@@ -2021,7 +2043,30 @@ static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> 
 		return _rest_heal(state)
 	if mode == "upgrade_card":
 		return _rest_upgrade(state, command)
+	if mode == "skip":
+		return _rest_skip(state)
 	return _rest_removal(state, command, catalog, mode)
+
+
+# BUG-001: a player who cannot or will not take any rest benefit still has to
+# leave the node. _rest_skip consumes the visit (so the leave gate unblocks)
+# and writes a rest_skipped event so the audit log and ending attribution stay
+# intact. Pre-check is identical to every other rest mode: same scoped flag.
+static func _rest_skip(state: RunState) -> Dictionary:
+	if str(state.node_flags.get(_rest_mode_key(state.current_node_id), "")) == "true":
+		return _rejected(state, "rest_mode_already_used")
+	if _rest_visit_consumed(state):
+		return _rejected(state, "rest_already_used")
+	var consumed := _consume_rest_visit(state)
+	return _accepted(consumed.append_event(_event(
+		consumed,
+		"rest",
+		{"node_flags": state.node_flags},
+		{"node_flags": consumed.node_flags},
+		"rest_skipped",
+		state.current_node_id,
+		[]
+	)))
 
 
 # R8.1 hard choice adds the upgrade option to the rest menu: it reuses the

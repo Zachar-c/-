@@ -275,6 +275,10 @@ static func _shop_services(controller) -> Array[Dictionary]:
 
 
 ## C5 休整 / 闭关屏快照（rest_hollow 真实休整 + aptitude 洗髓换骨）。
+# BUG-001 contract: every mode the resolver can consume on a rest node must
+# appear in snapshot.choices with target lists and disabling driven from the
+# domain state. The skip choice stays enabled until the visit is consumed so
+# the leave gate never traps a player with no executable benefit.
 static func rest(controller) -> Dictionary:
 	var out := _gui_state(controller)
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
@@ -297,9 +301,28 @@ static func rest(controller) -> Dictionary:
 		"reason": "本次已休整" if rest_used else "",
 		"curse_warning": false,
 	})
-	# 温养一蛊：免费移除一只蛊（领域 rest remove_card 需选实例）。
+	# 强化蛊卡：rest mode=upgrade_card（领域 _rest_upgrade）；无精炼蛊时禁用。
+	var upgrade_targets: Array[Dictionary] = []
+	if state != null:
+		for card_key in state.refined_gu_ids:
+			upgrade_targets.append({
+				"id": str(card_key),
+				"name": DisplayText.gu(str(card_key)),
+				"blocked": false,
+				"reason": "",
+			})
+	choices.append({
+		"id": "upgrade_card",
+		"label": "强化蛊卡",
+		"detail": "永久提升一张已精炼蛊卡的强化等级（消耗本次休整）",
+		"cost": "",
+		"disabled": rest_used or rest_mode_used or upgrade_targets.is_empty(),
+		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else ("无已精炼蛊卡可强化" if upgrade_targets.is_empty() else "选中后经领域校验")),
+		"curse_warning": false,
+	})
+	# 移除蛊虫实例：rest mode=remove_card。
 	# 目标列与炼蛊拆解同源：活蛊且非 can_direct_drop=false 的诅咒禁删蛊。
-	var remove_targets: Array[Dictionary] = []
+	var remove_card_targets: Array[Dictionary] = []
 	if state != null:
 		for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
 			var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
@@ -309,23 +332,68 @@ static func rest(controller) -> Dictionary:
 			var remove_blocked := ""
 			if not bool(remove_def.get("can_direct_drop", true)):
 				remove_blocked = "诅咒蛊不可直接移除"
-			remove_targets.append({
+			remove_card_targets.append({
 				"id": str(instance_id_value),
 				"name": DisplayText.gu(str(instance.get("definition_id", ""))),
 				"blocked": remove_blocked != "",
 				"reason": remove_blocked,
 			})
 	choices.append({
-		"id": "remove",
+		"id": "remove_card",
 		"label": "温养一蛊",
-		"detail": "移除一只蛊（免费 · 消耗本次休整）",
+		"detail": "移除 1 只蛊虫实例，不返还资源（消耗本次休整）",
 		"cost": "",
-		"disabled": rest_used or rest_mode_used or remove_targets.is_empty(),
-		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else ("蛊囊无可移除之蛊" if remove_targets.is_empty() else "选中后经领域校验")),
+		"disabled": rest_used or rest_mode_used or remove_card_targets.is_empty(),
+		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else ("蛊囊无可移除之蛊" if remove_card_targets.is_empty() else "选中后经领域校验")),
 		"curse_warning": false,
 	})
-	# UI 目标选择只展示领域可接受的活蛊实例；被诅咒直接丢弃限制的实例带原因并禁用。
-	out["remove_targets"] = remove_targets
+	out["remove_card_targets"] = remove_card_targets
+	# 抹除印记：rest mode=remove_imprint。规则类印记不可移除。
+	var imprint_targets: Array[Dictionary] = []
+	if state != null:
+		for relic_id in state.relic_ids:
+			var relic_def: Dictionary = catalog.get("relic_by_id", {}).get(str(relic_id), {})
+			var blocked := str(relic_def.get("grade", "")) == "meta_rule"
+			imprint_targets.append({
+				"id": str(relic_id),
+				"name": DisplayText.gu(str(relic_id)),
+				"blocked": blocked,
+				"reason": "规则类印记不可移除" if blocked else "",
+			})
+	choices.append({
+		"id": "remove_imprint",
+		"label": "抹除印记",
+		"detail": "移除 1 枚非规则类印记（消耗本次休整）",
+		"cost": "",
+		"disabled": rest_used or rest_mode_used or imprint_targets.is_empty(),
+		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else ("身上无可抹除的印记" if imprint_targets.is_empty() else "选中后经领域校验")),
+		"curse_warning": false,
+	})
+	out["imprint_targets"] = imprint_targets
+	# 拔除反噬：rest mode=remove_curse。逐诅咒列出当前层级。
+	var curse_targets: Array[Dictionary] = []
+	if state != null:
+		var curse_defs: Dictionary = catalog.get("curse_by_id", {})
+		for curse_id_value in state.cultivator.get("statuses", {}):
+			var def: Dictionary = curse_defs.get(str(curse_id_value), {})
+			curse_targets.append({
+				"id": str(curse_id_value),
+				"name": str(def.get("name", curse_id_value)),
+				"layers": int(state.cultivator.get("statuses", {}).get(str(curse_id_value), {}).get("layers", 0)),
+				"blocked": false,
+				"reason": "",
+			})
+	choices.append({
+		"id": "remove_curse",
+		"label": "拔除反噬",
+		"detail": "整条拔除一种当前身上的反噬诅咒（消耗本次休整）",
+		"cost": "",
+		"disabled": rest_used or rest_mode_used or curse_targets.is_empty(),
+		"reason": "本次已休整" if rest_used else ("温养已用" if rest_mode_used else ("身上无可拔除的反噬" if curse_targets.is_empty() else "选中后经领域校验")),
+		"curse_warning": true,
+	})
+	out["curse_targets"] = curse_targets
+	out["upgrade_targets"] = upgrade_targets
 	# 洗髓换骨：仅闭关/传承节点可用（aptitude.json paths.node_kinds）。
 	var node_kind := str(controller.current_node.get("type", ""))
 	var apt: Dictionary = catalog.get("aptitude", {})
@@ -349,6 +417,17 @@ static func rest(controller) -> Dictionary:
 			"reason": "一局一次 · 已使用" if aptitude_raised else ("资质已至巅峰" if at_peak else "一局一次 · 执行前预检寿元"),
 			"curse_warning": false,
 		})
+	# 放弃收益并离开：rest mode=skip。休整已消费后禁用；未消费时强制要求确认。
+	choices.append({
+		"id": "skip",
+		"label": "放弃收益并离开",
+		"detail": "本次休整无收益可用，确认后记录一次放弃并解锁离场",
+		"cost": "",
+		"disabled": rest_used,
+		"reason": "本次已休整" if rest_used else "执行前将弹确认：放弃本次休整收益",
+		"requires_confirm": not rest_used,
+		"curse_warning": false,
+	})
 	out["title"] = "闭关 · 休整"
 	out["note"] = "强制二选一，不可全拿"
 	out["choices"] = choices
@@ -809,9 +888,16 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 	var gu_entries: Array[Dictionary] = []
 	for g in catalog.get("gu", []):
 		var gid := str(g.get("id", ""))
+		# 2026-09-04：图鉴透出转数与效果文本（未声明 v1_effect 时走
+		# V1 role 兜底，与战斗口径一致），不再只给流派/品阶剪影。
+		var codex_effect: Dictionary = g.get("v1_effect", {})
+		if codex_effect.is_empty():
+			codex_effect = V1BattleResolverScript.default_v1_effect(g)
 		gu_entries.append({
 			"id": gid,
 			"name": DisplayText.gu(gid),
+			"rank": int(g.get("rank", 1)),
+			"effect": _v1_effect_text({"effect": codex_effect}),
 			"school": str(g.get("school", "")),
 			"rarity": str(g.get("rarity", "common")),
 			"unlocked": unlocked_gu.has(gid),
@@ -1161,7 +1247,9 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 		var reason := V1BattleResolverScript.can_play_gu(battle_data, i)
 		var note := _v1_slot_note(slot)
 		var effect := _v1_effect_text(slot)
-		var summary := effect if note == "" else "%s（%s）" % [effect, note]
+		# 2026-09-04：手牌摘要携带转数前缀，升阶蛊与定义转数一眼可分。
+		var summary := "%d转·%s" % [maxi(1, int(slot.get("rank", 1))), effect]
+		summary = summary if note == "" else "%s（%s）" % [summary, note]
 		if bool(slot.get("is_permanent", false)):
 			summary = "%s · 常驻 %s" % [summary, str(slot.get("durability_mode", ""))]
 		var card := {
@@ -1277,6 +1365,7 @@ static func _v1_reject_text(reason: String) -> String:
 		"action_limit_reached": return "本回合行动次数已用完"
 		"insufficient_thought": return "念头不足（每次行动耗 1 念头）"
 		"insufficient_true_qi": return "真元不足"
+		"insufficient_qi_quality": return "真元质量不足，无法催动此转数的蛊虫"
 		"kill_move_recipe_sealed": return "配方蛊被封印，杀招不可用"
 		"unknown_kill_move": return "未知杀招"
 	return reason

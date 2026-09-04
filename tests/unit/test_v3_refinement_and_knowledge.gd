@@ -39,6 +39,22 @@ func test_fixed_recipe_rejects_without_all_input_instances() -> void:
 	assert_true(result["state"].gu_instances.has("gu_001"))
 
 
+# A rejected refinement must leave the run state untouched: the cap gate sits
+# after _spend_materials, so a rank-5 advance burned its materials and still
+# returned a rejection (BUG: materials lost, no output produced).
+func test_advance_at_rank_cap_rejects_without_consuming_materials() -> void:
+	var run := _run_with_gu_definitions(["small_light_gu"])
+	run.gu_instances["gu_001"]["rank"] = 5
+	run.materials = {"beast_blood": 2}
+
+	var result := Resolver.apply(run, {"type": "refine_gu", "recipe_id": "advance_small_light_gu"}, catalog)
+
+	assert_false(result["result"]["ok"])
+	assert_eq(result["result"]["reason"], "advance_capped")
+	assert_eq(int(result["state"].materials.get("beast_blood", 0)), 2,
+			"a capped advance must not burn its materials")
+
+
 func test_free_mix_preview_is_vague_before_discovery_and_exact_after_discovery() -> void:
 	var run := _run_with_gu_definitions(["small_light_gu", "trail_eye_gu"])
 	var node := {"id": "refinement_den", "type": "refinement", "choices": []}

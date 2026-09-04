@@ -13,6 +13,17 @@ static func _b(cat: Dictionary, key: String, fallback: float) -> float:
 	return float(cat.get("balance", {}).get(key, fallback))
 
 
+## 中央蛊虫计价（2026-09-04 经济支配）：卖出/回购基准 = max(定义字面价值,
+## gu_value_by_rank[实例转数])。同名升阶让实例转数高于定义时，价值随中央
+## 表上浮；表未覆盖的转数回退定义价值。gen_ 批量蛊的价值由 Schema 强制
+## 等于表值（ContentCatalog.validate），手工蛊保留设计字面量为下限。
+static func gu_value(definition: Dictionary, instance_rank: int, cat: Dictionary) -> int:
+	var literal := int(definition.get("value", 0))
+	var table: Dictionary = cat.get("balance", {}).get("gu_value_by_rank", {})
+	var tiered := int(table.get(str(maxi(1, instance_rank)), literal))
+	return maxi(literal, tiered)
+
+
 # §10.1 rank_multiplier(rank) = rank_step_ratio ^ (rank - 1); rank >= 1.
 static func rank_multiplier(rank: int, cat: Dictionary) -> float:
 	return pow(_b(cat, "rank_step_ratio", 2.0), maxi(1, rank) - 1)

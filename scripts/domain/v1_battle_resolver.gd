@@ -14,6 +14,22 @@ const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 
 const DEFAULT_PHASE := "player_action"
 
+# 蛊定义未声明 v1_effect 时的 role 兜底。映射沿用旧栈 combat_effects 已有的
+# 设计意图（attack→strike / defense→guarded→shield / healing→heal /
+# movement→retreat_preserved→shift / recon→revealed→标记 /
+# logistics→delay_progress→束缚），基准值取同名手工蛊的 v1_effect。
+# 数据里显式声明 v1_effect 的蛊一律优先，这里只是补齐 205 只空效果蛊。
+const DEFAULT_EFFECT_BY_ROLE := {
+	"attack": {"kind": "strike", "amount": 2},
+	"defense": {"kind": "shield", "amount": 3},
+	"healing": {"kind": "heal", "amount": 2},
+	"movement": {"kind": "shift", "amount": 1},
+	"recon": {"kind": "status", "name": "marked", "amount": 1},
+	"logistics": {"kind": "status", "name": "bound", "amount": 1},
+}
+# 随转数线性成长的量纲；shift / status 是位置与层数，不随转数放大。
+const RANK_SCALED_KINDS := ["strike", "shield", "heal"]
+
 
 # ---------- 状态构建 ----------
 
@@ -44,6 +60,7 @@ static func start(run_state, catalog: Dictionary, enemy_entries: Array) -> Dicti
 			"life_time": int(player.get("lifespan", 60)),
 			"soul": soul,
 			"aptitude": aptitude,
+			"cultivation": maxi(1, int(run_state.cultivation)),
 			"stage": stage_tier,
 			"stage_base": stage_base,
 			"true_qi": true_qi_max,
@@ -108,6 +125,19 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 
 ## 非战斗蛊过滤：蛊定义缺少 combat 字段或 combat=="none" 视为非战斗蛊，
 ## 不进战斗面板。战斗蛊按 definition 构建槽位（含 V1 三模式与消耗字段）。
+## 蛊定义未声明 v1_effect 时按 role 兜底，避免空效果蛊占槽位、烧真元却无事
+## 发生。显式声明的 v1_effect 永远优先。
+static func default_v1_effect(definition: Dictionary) -> Dictionary:
+	var role := str(definition.get("role", ""))
+	if not DEFAULT_EFFECT_BY_ROLE.has(role):
+		return {}
+	var effect: Dictionary = (DEFAULT_EFFECT_BY_ROLE[role] as Dictionary).duplicate(true)
+	var kind := str(effect.get("kind", ""))
+	if RANK_SCALED_KINDS.has(kind):
+		effect["amount"] = int(effect.get("amount", 1)) + maxi(0, int(definition.get("rank", 1)) - 1)
+	return effect
+
+
 static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]:
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
 	var result: Array[Dictionary] = []
@@ -117,9 +147,14 @@ static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]
 		if combat.is_empty() or combat == "none":
 			continue
 		var effect: Dictionary = definition.get("v1_effect", {})
+		if effect.is_empty():
+			effect = default_v1_effect(definition)
 		result.append({
 			"instance_id": str(instance.get("instance_id", "")),
 			"definition_id": str(instance.get("definition_id", "")),
+			# 同名升阶可让实例转数高于定义：门禁按两者较高者拦截。
+			"rank": maxi(int(instance.get("rank", 1)), int(definition.get("rank", 1))),
+			"low_rank_exception": bool(definition.get("low_rank_exception", false)),
 			"is_sealed": false,
 			"seal_turns": 0,
 			"used_this_turn": false,
@@ -191,6 +226,11 @@ static func can_play_gu(battle: Dictionary, slot_index: int) -> String:
 		return "gu_sealed"
 	if bool(slot.get("used_this_turn", false)):
 		return "gu_used_this_turn"
+	# spec §11.2（CultivatorRules.can_activate 单一实现）：普通低转蛊师不能
+	# 催动高转蛊（真元质量不足）；珍稀蛊可声明 low_rank_exception 例外。
+	# 拒绝零消耗，所以排在一切扣费之前。
+	if not CultivatorRules.can_activate(int(battle["player"].get("cultivation", 1)), int(slot.get("rank", 1)), bool(slot.get("low_rank_exception", false))):
+		return "insufficient_qi_quality"
 	if _thoughts_used_up(battle):
 		return "action_limit_reached"
 	if int(battle["player"]["thoughts"]) < int(slot.get("thought_cost", 1)):

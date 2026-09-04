@@ -7928,6 +7928,7 @@
   {
     "id": "test_slay_gu",
     "rank": 10,
+    "low_rank_exception": true,
     "feeding_cost": 0,
     "feeding_need": {},
     "card_blueprint_ids": ["test_slay"],

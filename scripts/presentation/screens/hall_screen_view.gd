@@ -212,6 +212,14 @@ func _refresh_codex() -> void:
 				var school := str(e.get("school", ""))
 				var eid := str(e.get("id", ""))
 				card.setup(ename, str(e.get("rarity", "")), false, false, false, "")
+				if int(e.get("rank", 0)) > 0:
+					# 2026-09-04：图鉴蛊条目透出转数与效果（数据见 _codex）。
+					var rank_no := int(e.get("rank", 1))
+					var rank_label := "%s转" % ["一", "二", "三", "四", "五"][clampi(rank_no, 1, 5) - 1]
+					card.content_host.add_child(_label("转数：" + rank_label, GuStyle.INK_SOFT, 12))
+					var effect_text := str(e.get("effect", ""))
+					if effect_text != "":
+						card.content_host.add_child(_label("效果：" + effect_text, GuStyle.INK_PRIMARY, 12))
 				card.content_host.add_child(_label(
 						("流派：" + school) if school != "" else eid, GuStyle.INK_SOFT, 12))
 			else:
