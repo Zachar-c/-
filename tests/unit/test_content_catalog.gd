@@ -14,6 +14,39 @@ func test_catalog_rejects_missing_inheritance_gu_reference() -> void:
 	assert_eq(ContentCatalog.validate(catalog).size(), 1)
 
 
+func test_shipped_synthesis_kill_move_contract_is_explicit() -> void:
+	var catalog := ContentCatalog.load_all()
+	var recipe: Dictionary = catalog["refinement_by_id"].get("bright_thread_risk",{}
+	assert_false(recipe.is_empty())
+	var kill_moves: Array = catalog["v1_battle"].get("kill_moves", [])
+	var kill_move: Dictionary ={}
+	for value in kill_moves:
+		if str((value as Dictionary).get("id", "")) == str(recipe.get("kill_move_id", "")):
+			kill_move = value
+			break
+	assert_true(kill_move.is_empty() or (kill_move.get("recipe", []) as Array).has(str(recipe.get("output_gu_id", ""))))
+	var output: Dictionary = catalog["gu_by_id"].get(str(recipe.get("output_gu_id", "")),{}
+	assert_true(output.get("v1_effect",{} is Dictionary
+
+
+func test_validation_rejects_unknown_refinement_recipe_input() -> void:
+	var catalog := ContentCatalog.load_all()
+	(catalog["refinement_by_id"]["bright_thread_risk"] as Dictionary)["input_gu_ids"] = ["missing_input_gu"]
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown gu"))
+
+
+func test_validation_rejects_unknown_kill_move_effect() -> void:
+	var catalog := ContentCatalog.load_all()
+	(catalog["v1_battle"]["kill_moves"] as Array).append({"id": "bad_effect_kill_move", "recipe": ["pulse_drum_gu"], "effect": {"kind": "unknown_effect"}})
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "effect"))
+
+
+func test_validation_rejects_invalid_gu_v1_effect() -> void:
+	var catalog := ContentCatalog.load_all()
+	(catalog["gu_by_id"]["pulse_drum_gu"] as Dictionary)["v1_effect"] = {"kind": "status", "name": "bound", "amount": -1}
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "v1_effect"))
+
+
 func _has_hint(errors: Array[String], needle: String) -> bool:
 	for error in errors:
 		if error.contains(needle):

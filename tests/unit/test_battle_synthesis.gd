@@ -156,3 +156,16 @@ func test_unknown_recipe_is_rejected() -> void:
 
 func test_synthesis_tables_pass_catalog_validation() -> void:
 	assert_eq(ContentCatalogScript.validate(catalog()), [])
+
+
+func test_unknown_transaction_output_is_rejected_before_ledger_mutation() -> void:
+	var state := RunStateScript.new_run(101, null)
+	var cat := catalog()
+	var before_instances := state.gu_instances.duplicate(true)
+	var before_aperture := state.cave_aperture.duplicate(true)
+	var result := GuInstance.transaction_ledger(
+		state.gu_instances, state.cave_aperture, "missing_output_gu", cat, ["small_light_gu"])
+	assert_true(result.has("error"))
+	assert_eq(str(result["error"]), "unknown_gu_definition")
+	assert_eq(state.gu_instances, before_instances)
+	assert_eq(state.cave_aperture, before_aperture)
