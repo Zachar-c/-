@@ -44,6 +44,19 @@
 - `master` 是集成与实际开发主线；除非用户另有要求，基于当前检出分支工作。
 - **休整节点 UI 必须暴露领域全集**：任何 `type=="rest"` 节点的快照 `choices` 必须覆盖领域层 `rest` 命令的全集（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，含节点允许的 `wash`），不得让"全部选项禁用 + leave_node 被 `rest_choice_required` 门禁"成为软锁；当领域全集在当前状态下全部 `disabled` 时，UI 必须保留 `skip` 入口并落 `rest_skipped` 事件日志。违反此约束的 PR 一律回退。新增 / 修改休整节点命令面、快照键、确认层级时须同步更新 `docs/contracts/2026-09-02-domain-ui-contract.md` 与 `docs/contracts/2026-09-02-page-inventory-requirements.md`。
 
+## 当前待办
+
+> 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
+
+1. 将 `tests/integration/test_drive_to_ending.gd` 完整迁移到 V1 战斗契约：领域战斗使用 `gu_slots`，命令统一经 `BattleCommandFacade` 与 `use_gu`，不得恢复旧 deck/hand 领域模型。
+2. 建立固定 25-seed 验收，全程通过 `RunController.submit_command()`；记录每层 Boss 战前数据、逐回合 intent/damage/shield、回合数、结局与死因。
+3. 在 `data/v1_battle.json` 落地 L1--L5 Boss HP/damage 唯一中央倍率，并依据 25-seed 结果调优；不得以散改 `data/enemies.json` Boss 裸数值替代中央倍率。
+4. 使大部分验收运行抵达 L5，且超过一半进入 Ending；层级 Boss 仅作对应一至五转量级的数值匹配考验，不作硬性 cultivation gate。
+5. 统一 V1 battle 与 `EssenceCapacity` 的 essence/capacity 公式。
+6. 修复全量验证遗留：Dialogue Manager invalid UID、`resolver.gd` 行数门限、`test_moonlight_full_route.gd` 的 L1 Boss 失败，以及完整测试进程残余 ObjectDB/RID/resource 泄漏。
+7. 最终运行并通过 `tools/test.ps1 -Suite unit`、`tools/test.ps1 -Suite integration`、`tools/check.ps1`。
+8. 提交时继续排除 `.claude/`、未经验证的 `data/enemies.json` 和无关的 `data/dialogues/events.dialogue` 本地修改。
+
 ## 技术约定
 
 - 技术栈固定为 Godot 4.7.2、GDScript、JSON 数据表和 GUT 测试。
