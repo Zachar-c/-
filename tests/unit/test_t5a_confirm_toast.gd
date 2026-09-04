@@ -268,7 +268,7 @@ func test_npc_screen_lifespan_confirm_and_disabled_reasons() -> void:
 		await get_tree().process_frame
 
 	# 寿元交易：点击先弹预检确认框，确认前不发 buy 命令。
-	assert_true(_press_button(host, "交易", 0), "executable lifespan offer must be pressable")
+	assert_true(_press_button(host, "脉鼓", 0), "executable lifespan offer must be pressable")
 	for _i in 3:
 		await get_tree().process_frame
 	assert_true(_host_has_text(host, "⚠ 寿元交易 · 预检"), "lifespan deal must open the precheck dialog")
@@ -283,5 +283,37 @@ func test_npc_screen_lifespan_confirm_and_disabled_reasons() -> void:
 	assert_true(_host_has_text(host, "不可用 · 货阶超出当前大层"))
 	assert_true(_host_has_text(host, "持有可交付：0"))
 	assert_true(_host_has_text(host, "不可用 · 未持有可交付的谍眼蛊"))
-	assert_false(_press_button(host, "交易", 1), "tier-locked offer button must be disabled")
-	assert_false(_press_button(host, "交换"), "barter button must be disabled without inputs")
+	assert_false(_press_button(host, "月华蛊"), "tier-locked offer button must be disabled")
+	assert_false(_press_button(host, "雾行蛊"), "barter button must be disabled without inputs")
+
+
+func test_npc_talk_buttons_use_snapshot_labels_and_unique_action_ids() -> void:
+	var talked: Array[String] = []
+	var commands := {
+		"buy": func(_id = ""): pass,
+		"barter": func(_id = ""): pass,
+		"talk": func(id = ""): talked.append(str(id)),
+		"flee": func(): pass,
+		"leave": func(): pass,
+	}
+	var snapshot := {
+		"npc_name": "游方散修", "stance": "中立", "stance_note": "", "notoriety": 0,
+		"notoriety_note": "", "can_flee": true, "has_npc": true, "no_npc_note": "",
+		"feedback": "", "resources": {}, "contracts": [], "anomalies": [], "death_lines": {},
+		"offers": [], "barter": [],
+		"talk_options": [
+			{"id": "friendly_chat", "label": "友善攀谈", "detail": "", "executable": true},
+			{"id": "deceive", "label": "诈言诓骗", "detail": "", "executable": true},
+			{"id": "probe", "label": "出手试探", "detail": "", "executable": true},
+			{"id": "withdraw", "label": "退避三舍", "detail": "", "executable": true},
+		],
+	}
+	var host := _mount_tscn_screen("res://scenes/ui/screens/npc_screen.tscn", snapshot, commands)
+	for _i in 3:
+		await get_tree().process_frame
+
+	var labels := ["友善攀谈", "诈言诓骗", "出手试探", "退避三舍"]
+	for label in labels:
+		assert_true(_press_button(host, label), "%s must be a real clickable button" % label)
+	assert_eq(talked, ["friendly_chat", "deceive", "probe", "withdraw"],
+			"each talk label must dispatch its own action_id")

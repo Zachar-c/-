@@ -3,8 +3,9 @@ extends GutTest
 
 ## 五层通关 / Boss 推进 / 升仙链（真实地图，2026-09-01）：
 ## 用真实 MapGenerator route（start_new_run 自带）从开局走到升仙窗，
-## 验证：五层 Boss 逐一落 boss_defeated_L1..L5、自动升转（1→5 转、真元上限公式）、
-## 第五层瘴脉之主落全局 boss_defeated 解锁升仙窗、attempt_ascension 出结局评价、
+## 验证：五层 Boss 逐一落 boss_defeated_L1..L5，通关旗标不直接改变修为，
+## Boss 战斗数值由中央倍率和层级曲线统一投影；
+## 第五层瘴脉之主落全局 boss_defeated 解锁升仙窗，attempt_ascension 出结局评价，
 ## 统一结算 Ending 页。
 ## 多种子复跑验证无软锁（有界步数内必然到达 Ending），且同种子结果可复现
 ## （结局评价/旗标/事件数一致）。
@@ -35,17 +36,19 @@ func test_fixed_seed_clears_five_layers_to_ascension() -> void:
 	var controller := _start_run_with_slay_gu(FIXED_SEED)
 	assert_eq(controller.current_view_name(), "Map", "开局进 Map")
 
+	var initial_cultivation := int(controller.state.cultivation)
 	var outcome := _walk_to_ascension(controller, 1200)
 	assert_true(bool(outcome["done"]), "固定种子 %d 必须走通升仙窗：%s" % [FIXED_SEED, str(outcome.get("reason", ""))])
 	assert_eq(controller.current_view_name(), "Ending", "统一结算 Ending 页（实际=%s）" % controller.current_view_name())
 
-	# 五层 Boss 逐层落账 + 自动升转。
+	# 五层 Boss 逐层落账；通关旗标不替代修为成长。
 	for layer in range(1, 6):
 		assert_eq(str(controller.state.node_flags.get("boss_defeated_L%d" % layer, "")), "true",
 				"boss_defeated_L%d 旗标落账" % layer)
 	assert_eq(str(controller.state.node_flags.get("boss_defeated", "")), "true",
 			"第五层瘴脉之主落全局 boss_defeated（升仙窗门禁）")
-	assert_eq(int(controller.state.cultivation), 5, "自动升转到五转")
+	assert_eq(int(controller.state.cultivation), initial_cultivation,
+			"五层清场旗标不直接改变修为")
 
 	# 升仙评价 + 统一结算快照。
 	var ascend_outcome := str(controller.state.ascension.get("outcome", ""))

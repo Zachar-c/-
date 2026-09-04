@@ -11,6 +11,9 @@ const ROOT := "res://"
 const WIDGET_DIR := "res://ui/widgets"
 const SCREEN_DIR := "res://ui/screens"
 
+var _rui_roots: Array = []
+var _mounted_hosts: Array[Node] = []
+
 func _noop(_x = null) -> void:
 	pass
 
@@ -40,14 +43,35 @@ func _compile_file(rel_path: String) -> bool:
 # 新屏统一以 Screen 后缀命名（如 EncounterScreen），
 # 避开 scripts/presentation/*_view.gd 的 XxxView 类；无需改写生成产物类名。
 
+func _track_host(host: Node) -> void:
+	_mounted_hosts.append(host)
+
+
+func _mount_rui(container: Control, vnode: RuitkVNode) -> void:
+	_track_host(container)
+	_rui_roots.append(RuiRoot.create(container, vnode))
+
+
+func _teardown_mounts() -> void:
+	for mounted_root in _rui_roots:
+		if mounted_root != null and mounted_root.has_method("unmount"):
+			mounted_root.unmount()
+	_rui_roots.clear()
+	for host in _mounted_hosts:
+		if host != null and is_instance_valid(host):
+			host.free()
+	_mounted_hosts.clear()
+
+
 func _mount(rel_gd: String, component: String, props: Dictionary) -> int:
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
 		push_error("%s 无组件 %s" % [rel_gd, component])
+		_teardown_mounts()
 		quit(1)
 	var container := Control.new()
 	root.add_child(container)
-	RuiRoot.create(container, VLib.fc(fn, props))
+	_mount_rui(container, VLib.fc(fn, props))
 	return _count_buttons(container)
 
 
@@ -55,10 +79,11 @@ func _mount_children(rel_gd: String, component: String, props: Dictionary, child
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
 		push_error("%s 无组件 %s" % [rel_gd, component])
+		_teardown_mounts()
 		quit(1)
 	var container := Control.new()
 	root.add_child(container)
-	RuiRoot.create(container, VLib.fc(fn, props, children))
+	_mount_rui(container, VLib.fc(fn, props, children))
 	return _count_buttons(container)
 
 
@@ -151,10 +176,11 @@ func _mount_component(rel_gd: String, component: String, props: Dictionary) -> C
 	var fn = VLib.comp(rel_gd, component)
 	if not (fn is Callable):
 		push_error("%s 无组件 %s" % [rel_gd, component])
+		_teardown_mounts()
 		quit(1)
 	var container := Control.new()
 	root.add_child(container)
-	RuiRoot.create(container, VLib.fc(fn, props))
+	_mount_rui(container, VLib.fc(fn, props))
 	return container
 
 
@@ -166,6 +192,7 @@ func _assert_widget(name: String, rel_gd: String, props: Dictionary, children :=
 		count = _mount_children(rel_gd, "render", props, children)
 	if count < 1:
 		push_error("控件 %s 按钮数 %d < 1" % [name, count])
+		_teardown_mounts()
 		quit(1)
 	print("OK %s buttons=%d" % [name, count])
 
@@ -178,6 +205,7 @@ func _initialize() -> void:
 	# 1) 先编译 _sample（保留既有断言）
 	var sample := "res://ui/_sample.guitkx"
 	if not _compile_file(sample):
+		_teardown_mounts()
 		quit(1)
 	var sc := _mount("res://ui/_sample.gd", "render", {})
 	print("OK SampleApp buttons=%d" % sc)
@@ -186,12 +214,14 @@ func _initialize() -> void:
 	var dir := DirAccess.open(WIDGET_DIR)
 	if dir == null:
 		push_error("打不开 %s" % WIDGET_DIR)
+		_teardown_mounts()
 		quit(1)
 	dir.list_dir_begin()
 	var fname := dir.get_next()
 	while fname != "":
 		if fname.get_extension() == "guitkx":
 			if not _compile_file(WIDGET_DIR.path_join(fname)):
+				_teardown_mounts()
 				quit(1)
 		fname = dir.get_next()
 	dir.list_dir_end()
@@ -213,22 +243,27 @@ func _initialize() -> void:
 	var curse_glyph := _find_label_exact(gc_danger, "咒")
 	if curse_glyph == null:
 		push_error("GuCard 危险变体缺少「咒」角标")
+		_teardown_mounts()
 		quit(1)
 	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY):
 		push_error("GuCard「咒」角标字符必须墨色（朱砂底 + 墨字）")
+		_teardown_mounts()
 		quit(1)
 	var curse_chip := _nearest_panel_ancestor(curse_glyph)
 	if curse_chip == null:
 		push_error("GuCard「咒」角标必须是实底角标容器（PanelContainer）")
+		_teardown_mounts()
 		quit(1)
 	var curse_sb := curse_chip.get_theme_stylebox("panel") as StyleBoxFlat
 	if curse_sb == null or not curse_sb.bg_color.is_equal_approx(GuStyle.CINNABAR):
 		push_error("GuCard「咒」角标底色必须 DANGER 强红")
+		_teardown_mounts()
 		quit(1)
 	var gc_danger_panel := _find_first_panel(gc_danger)
 	var danger_card_sb := gc_danger_panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if danger_card_sb == null or not danger_card_sb.border_color.is_equal_approx(GuStyle.CINNABAR):
 		push_error("GuCard 危险变体描边必须 DANGER")
+		_teardown_mounts()
 		quit(1)
 	print("OK GuCardDanger buttons=%d" % _count_buttons(gc_danger))
 	# T6-E：封印态——保留「锁」标 + 整卡暗淡。
@@ -236,9 +271,11 @@ func _initialize() -> void:
 		{"title": "石甲蛊", "sealed": true})
 	if _find_label_exact(gc_sealed, "锁") == null:
 		push_error("GuCard 封印态缺少「锁」标")
+		_teardown_mounts()
 		quit(1)
 	if not is_equal_approx(_find_first_panel(gc_sealed).modulate.a, 0.55):
 		push_error("GuCard 封印态必须整卡暗淡（modulate a=0.55）")
+		_teardown_mounts()
 		quit(1)
 	print("OK GuCardSealed buttons=%d" % _count_buttons(gc_sealed))
 	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
@@ -259,6 +296,7 @@ func _initialize() -> void:
 	var tip_sb := tip_panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if tip_sb == null or not tip_sb.bg_color.is_equal_approx(GuStyle.PAPER_BG):
 		push_error("GuTooltipView 底色必须 PAPER 卷轴感（禁深底金字回潮）")
+		_teardown_mounts()
 		quit(1)
 	var tip_labels: Array = []
 	_collect_labels(tip_panel, tip_labels)
@@ -271,12 +309,15 @@ func _initialize() -> void:
 	var idx_curse := _index_with_prefix(tip_texts, "诅咒警示：")
 	if idx_effect < 0 or not (idx_effect < idx_synergy and idx_synergy < idx_cost and idx_cost < idx_curse):
 		push_error("GuTooltipView 五段顺序必须恒定：效果→联动→代价→诅咒警示")
+		_teardown_mounts()
 		quit(1)
 	if not (tip_labels[idx_effect] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY):
 		push_error("GuTooltipView 正文必须 INK 深字")
+		_teardown_mounts()
 		quit(1)
 	if not (tip_labels[idx_curse] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR):
 		push_error("GuTooltipView 诅咒警示行必须 DANGER 红字")
+		_teardown_mounts()
 		quit(1)
 	print("OK GuTooltipPaper labels=%d" % tip_texts.size())
 	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
@@ -290,13 +331,16 @@ func _initialize() -> void:
 		{"line": {"name": "寿元", "current": 12, "max": 60, "detail": "寿元耗尽即死。"}, "on_close": func(): pass})
 	if _find_button_by_text(dco, "关闭") == null:
 		push_error("GuDeathCauseOverlay 缺少「关闭」按钮")
+		_teardown_mounts()
 		quit(1)
 	if not (_host_has_label_text(dco, "死因 · 寿元") and _host_has_label_text(dco, "当前值：12 / 上限：60")
 			and _host_has_label_text(dco, "成因：寿元耗尽即死。")):
 		push_error("GuDeathCauseOverlay 缺少 名称/当前值/上限/成因 文案行")
+		_teardown_mounts()
 		quit(1)
 	if _host_has_label_text(dco, "距离死线余量"):
 		push_error("GuDeathCauseOverlay 不应再渲染「距离死线余量」行（恒为 0）")
+		_teardown_mounts()
 		quit(1)
 	print("OK GuDeathCauseOverlay buttons=%d" % _count_buttons(dco))
 	# T5-A D4：GuToast 纯展示组件（buttons>=0，控件必须存在）
@@ -304,12 +348,14 @@ func _initialize() -> void:
 		{"text": "进度已保存 · 关闭游戏后可继续本次冒险", "tone": "info"})
 	if toast_info.get_child_count() == 0:
 		push_error("GuToast(info) 未渲染出任何控件")
+		_teardown_mounts()
 		quit(1)
 	print("OK GuToast buttons=%d" % _count_buttons(toast_info))
 	var toast_warn := _mount_component("res://ui/widgets/gu_toast.gd", "render",
 		{"text": "大厅存档版本差异较大，建议在设置中清除后重新开始", "tone": "warn"})
 	if toast_warn.get_child_count() == 0:
 		push_error("GuToast(warn) 未渲染出任何控件")
+		_teardown_mounts()
 		quit(1)
 	print("OK GuToastWarn buttons=%d" % _count_buttons(toast_warn))
 	_assert_widget("GuScrollBox", "res://ui/widgets/gu_scroll_box.gd", {}, [b])
@@ -318,12 +364,14 @@ func _initialize() -> void:
 	var sdir := DirAccess.open(SCREEN_DIR)
 	if sdir == null:
 		push_error("打不开 %s" % SCREEN_DIR)
+		_teardown_mounts()
 		quit(1)
 	sdir.list_dir_begin()
 	var sname := sdir.get_next()
 	while sname != "":
 		if sname.get_extension() == "guitkx":
 			if not _compile_file(SCREEN_DIR.path_join(sname)):
+				_teardown_mounts()
 				quit(1)
 		sname = sdir.get_next()
 	sdir.list_dir_end()
@@ -346,6 +394,7 @@ func _initialize() -> void:
 		var cnt := _count_buttons(hall)
 		if cnt < 4:
 			push_error("大厅按钮数 %d < 4 (state=%s)" % [cnt, str(hs)])
+			_teardown_mounts()
 			quit(1)
 		print("OK TscnHallScreen buttons=%d" % cnt)
 
@@ -405,15 +454,18 @@ func _initialize() -> void:
 	var mc := _count_buttons(map_container)
 	if mc < 1:
 		push_error("地图按钮数 %d < 1" % mc)
+		_teardown_mounts()
 		quit(1)
 	if _find_button_by_text(map_container, "存档") == null:
 		push_error("地图屏缺少「存档」按钮")
+		_teardown_mounts()
 		quit(1)
 	var map_node_count := 0
 	for node in map_container.find_children("map_node_*", "Button", true, false):
 		map_node_count += 1
 	if map_node_count != map_state["nodes"].size():
 		push_error("地图节点按钮数 %d != 快照节点数 %d" % [map_node_count, map_state["nodes"].size()])
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnMapScreen buttons=%d nodes=%d" % [mc, map_node_count])
 
@@ -622,20 +674,25 @@ func _initialize() -> void:
 	await process_frame
 	if _find_label_exact(dpc, "调试") == null:
 		push_error("DebugPanel 缺少红字「调试」角标")
+		_teardown_mounts()
 		quit(1)
 	var dp_badge := _find_label_exact(dpc, "调试")
 	if not dp_badge.get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR):
 		push_error("DebugPanel「调试」角标必须 DANGER 红字（§16.22 视觉区分）")
+		_teardown_mounts()
 		quit(1)
 	for wanted in ["加蛊", "应用", "跳", "打印 RunData 快照"]:
 		if _find_button_by_text(dpc, wanted) == null:
 			push_error("DebugPanel 展开态缺少按钮 %s" % wanted)
+			_teardown_mounts()
 			quit(1)
 	if not _host_has_label_text(dpc, "保底计数 · 蛊 2 / 材料 1"):
 		push_error("DebugPanel 池情报缺少保底计数行")
+		_teardown_mounts()
 		quit(1)
 	if not _host_has_label_text(dpc, "当前种子 101 · 事件数 7"):
 		push_error("DebugPanel 缺少种子/事件数行")
+		_teardown_mounts()
 		quit(1)
 	print("OK DebugPanelOpen buttons=%d" % _count_buttons(dpc))
 	var dp_closed := dp_open.duplicate(true)
@@ -644,9 +701,11 @@ func _initialize() -> void:
 	await process_frame
 	if _count_buttons(dpcc) != 1:
 		push_error("DebugPanel 折叠态只剩把手条，期望 1 个按钮，实得 %d" % _count_buttons(dpcc))
+		_teardown_mounts()
 		quit(1)
 	if not _host_has_label_text(dpcc, "DEV ONLY"):
 		push_error("DebugPanel 折叠态把手条须保留 DEV 标识")
+		_teardown_mounts()
 		quit(1)
 	print("OK DebugPanelCollapsed buttons=%d" % _count_buttons(dpcc))
 	var dp_feedback := dp_open.duplicate(true)
@@ -655,6 +714,7 @@ func _initialize() -> void:
 	await process_frame
 	if not _host_has_label_text(dpcf, "蛊囊已满"):
 		push_error("DebugPanel 操作反馈必须经 Toast 行展示")
+		_teardown_mounts()
 		quit(1)
 	print("OK DebugPanelFeedback buttons=%d" % _count_buttons(dpcf))
 
@@ -671,6 +731,9 @@ func _initialize() -> void:
 		"battle": [battle_state, battle_cmds],
 	})
 
+	_teardown_mounts()
+	await process_frame
+	await process_frame
 	quit()
 
 
@@ -687,6 +750,7 @@ func _verify_tscn_screens(cases: Dictionary) -> void:
 	var buttons := _count_buttons(shop)
 	if buttons < 1:
 		push_error("tscn 黑市按钮数 %d < 1" % buttons)
+		_teardown_mounts()
 		quit(1)
 
 	var offer_list := shop.get_node(
@@ -694,12 +758,14 @@ func _verify_tscn_screens(cases: Dictionary) -> void:
 	var expected_offers: int = shop_state["offers"].size()
 	if offer_list.get_child_count() != expected_offers:
 		push_error("tscn 黑市货架卡数 %d != %d" % [offer_list.get_child_count(), expected_offers])
+		_teardown_mounts()
 		quit(1)
 
 	# 重复项卡片必须直接挂在货架列表下，不得再套一层带框的决策面板
 	# （旧 test_wenzhen_secondary_screens 的文本断言平移到真实节点树上）。
 	if expected_offers > 0 and offer_list.get_child(0).get_parent() != offer_list:
 		push_error("tscn 黑市货架卡不得嵌套在其他面板里")
+		_teardown_mounts()
 		quit(1)
 
 	var service_path := ("Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin"
@@ -708,12 +774,14 @@ func _verify_tscn_screens(cases: Dictionary) -> void:
 	var expected_services: int = shop_state["services"].size()
 	if service_list.get_child_count() != expected_services:
 		push_error("tscn 黑市服务行数 %d != %d" % [service_list.get_child_count(), expected_services])
+		_teardown_mounts()
 		quit(1)
 
 	# 初始态不得自行弹出确认弹窗；危险交易要等玩家点购买才弹。
 	var dialog := shop.get_node("Root/ConfirmDialog")
 	if dialog.visible:
 		push_error("tscn 黑市初始不得展示确认弹窗")
+		_teardown_mounts()
 		quit(1)
 
 	# 空池回退小字为条件槽位：未标记不渲染，标记后按 13px INK_SOFT 出现。
@@ -722,6 +790,7 @@ func _verify_tscn_screens(cases: Dictionary) -> void:
 			"Root/PrimarySurface/OfferColumn/PoolFallbackLabel")
 	if fallback_label.visible:
 		push_error("tscn 黑市未标记回退时不得渲染回退小字")
+		_teardown_mounts()
 		quit(1)
 	var marked_state := shop_state.duplicate(true)
 	marked_state["pool_fallback_note"] = "（空池回退：已切至基础池）"
@@ -732,10 +801,12 @@ func _verify_tscn_screens(cases: Dictionary) -> void:
 			"Root/PrimarySurface/OfferColumn/PoolFallbackLabel")
 	if not marked_label.visible or marked_label.text != "（空池回退：已切至基础池）":
 		push_error("tscn 黑市标记回退后必须渲染小字槽位")
+		_teardown_mounts()
 		quit(1)
 	if (marked_label.get_theme_font_size("font_size") != 13
 			or not marked_label.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT)):
 		push_error("tscn 黑市回退小字必须 INK_SOFT 13px")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnShopScreen buttons=%d offers=%d services=%d"
 			% [buttons, expected_offers, expected_services])
@@ -768,34 +839,41 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> v
 	var ops := battle.get_node("Root/battle_hand/OpsRow")
 	if ops.get_child_count() < 3:
 		push_error("tscn 战斗屏操作按钮不足（应有 结束回合 / 炼蛊 / 撤退）")
+		_teardown_mounts()
 		quit(1)
 	# mode 用空 Label 的 name 承载（test_wenzhen_card_fsm 按此定位），初始为 idle。
 	var mode_host := battle.get_node("Root/ModeHost")
 	if mode_host.get_child_count() != 1 or mode_host.get_child(0).name != "battle_idle":
 		push_error("tscn 战斗屏初始 mode 应为 battle_idle")
+		_teardown_mounts()
 		quit(1)
 
 	# 1) 危险卡 → 只弹确认，不下发
 	var danger_btn := _find_button_by_text(battle, "血祭蛊")
 	if danger_btn == null:
 		push_error("tscn 战斗屏手牌未渲染「血祭蛊」")
+		_teardown_mounts()
 		quit(1)
 	danger_btn.pressed.emit()
 	await process_frame
 	if not battle.get_node("Root/ConfirmDialog").visible:
 		push_error("tscn 战斗屏危险卡必须弹确认")
+		_teardown_mounts()
 		quit(1)
 	if not log.is_empty():
 		push_error("tscn 战斗屏危险卡确认前不得下发命令: " + str(log))
+		_teardown_mounts()
 		quit(1)
 	var confirm_btn := _find_button_by_text(battle.get_node("Root/ConfirmDialog"), "确认")
 	if confirm_btn == null:
 		push_error("tscn 战斗屏确认弹窗缺少「确认」")
+		_teardown_mounts()
 		quit(1)
 	confirm_btn.pressed.emit()
 	await process_frame
 	if log != ["play_card:c2/"]:
 		push_error("tscn 战斗屏确认后应下发 play_card:c2/: " + str(log))
+		_teardown_mounts()
 		quit(1)
 
 	# 2) 需选目标的卡 → 进入 target_select，敌人变可选
@@ -803,23 +881,28 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> v
 	var target_btn := _find_button_by_text(battle, "月芒蛊")
 	if target_btn == null:
 		push_error("tscn 战斗屏手牌未渲染「月芒蛊」")
+		_teardown_mounts()
 		quit(1)
 	target_btn.pressed.emit()
 	await process_frame
 	if mode_host.get_child_count() != 1 or mode_host.get_child(0).name != "battle_target_select":
 		push_error("tscn 战斗屏选目标卡应进入 battle_target_select")
+		_teardown_mounts()
 		quit(1)
 	if not log.is_empty():
 		push_error("tscn 战斗屏选敌阶段不得下发命令: " + str(log))
+		_teardown_mounts()
 		quit(1)
 	var enemy_btn := _find_button_by_text(battle, "铁皮山猪")
 	if enemy_btn == null or not enemy_btn.visible:
 		push_error("tscn 战斗屏选敌时敌人应变为可选按钮")
+		_teardown_mounts()
 		quit(1)
 	enemy_btn.pressed.emit()
 	await process_frame
 	if log != ["play_card:c3/e1"]:
 		push_error("tscn 战斗屏选中敌人后应带目标下发: " + str(log))
+		_teardown_mounts()
 		quit(1)
 
 	# 3) 操作按钮
@@ -830,6 +913,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> v
 			b.pressed.emit()
 	if log != ["end_turn", "refine", "flee"]:
 		push_error("tscn 战斗屏操作按钮未全部接线: " + str(log))
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnBattleScreen ops=%d" % ops.get_child_count())
 ## 结算屏（.tscn 版）挂载回归：成功 / 死亡 / 极简三种形态。
@@ -863,34 +947,43 @@ func _verify_tscn_ending(ending_success: Dictionary, ending_cmds: Dictionary) ->
 	await process_frame
 	if _count_visible_buttons(success) < 1:
 		push_error("tscn 结算(成功)按钮数 < 1")
+		_teardown_mounts()
 		quit(1)
 	# 非死亡结局不得出现死因徽章，也不展开精准死因面板。
 	if _host_has_label_text(success, "死因 · "):
 		push_error("tscn 非死亡结局不得渲染死因徽章")
+		_teardown_mounts()
 		quit(1)
 	if success.get_node("primary_decision_surface/DeathCausePanel").visible:
 		push_error("tscn 非死亡结局不得展开精准死因面板")
+		_teardown_mounts()
 		quit(1)
 	if not _host_has_label_text(success, "达成：" + str(ending_success["achievement"])):
 		push_error("tscn 结算缺少达成条件链行")
+		_teardown_mounts()
 		quit(1)
 	# 路线缩略图：Boss 层必须 EMBER 高亮。
 	var boss_chip := _find_label_exact(success, "第2层 交锋")
 	if boss_chip == null or not boss_chip.get_theme_color("font_color").is_equal_approx(GuStyle.RARITY_EPIC):
 		push_error("tscn 路线缩略图 Boss 层必须 EMBER 高亮")
+		_teardown_mounts()
 		quit(1)
 	if not _host_has_label_text(success, "战斗合成：2 次 · 成 1 / 败 1"):
 		push_error("tscn 结算缺少合成计数行")
+		_teardown_mounts()
 		quit(1)
 	if _host_has_label_text(success, "DDA 触发"):
 		push_error("tscn DDA 预留位无数据时必须整行隐藏")
+		_teardown_mounts()
 		quit(1)
 	var new_chip := _find_label_exact(success, "★新 图鉴：火蛊")
 	if new_chip == null or not new_chip.get_theme_color("font_color").is_equal_approx(GuStyle.ANOMALY_YELLOW):
 		push_error("tscn 解锁列表项必须带 ★新 前缀")
+		_teardown_mounts()
 		quit(1)
 	if not _host_has_label_text(success, "离局清零"):
 		push_error("tscn 资源结余面板缺少「离局清零」小字")
+		_teardown_mounts()
 		quit(1)
 
 	# 死亡结局：死因徽章并列 + 精准死因面板展开。
@@ -899,9 +992,11 @@ func _verify_tscn_ending(ending_success: Dictionary, ending_cmds: Dictionary) ->
 	await process_frame
 	if not _host_has_label_text(death, "死因 · 反噬爆发"):
 		push_error("tscn 死亡结局须并列死因徽章")
+		_teardown_mounts()
 		quit(1)
 	if not death.get_node("primary_decision_surface/DeathCausePanel").visible:
 		push_error("tscn 死亡结局须展开精准死因面板")
+		_teardown_mounts()
 		quit(1)
 
 	# 极简 run：只有两个动作，路线与本局记录整块隐藏。
@@ -910,16 +1005,20 @@ func _verify_tscn_ending(ending_success: Dictionary, ending_cmds: Dictionary) ->
 	await process_frame
 	if _count_visible_buttons(minimal) != 2:
 		push_error("tscn 极简结算应只有两个按钮，实得 %d" % _count_visible_buttons(minimal))
+		_teardown_mounts()
 		quit(1)
 	if (_find_button_by_text(minimal, "返回大厅") == null
 			or _find_button_by_text(minimal, "查看图鉴") == null):
 		push_error("tscn 结算动作必须是 返回大厅 与 查看图鉴（无读档回溯）")
+		_teardown_mounts()
 		quit(1)
 	if minimal.get_node("primary_decision_surface/RoutePanel").visible:
 		push_error("tscn 无记录 run 不得渲染路线条")
+		_teardown_mounts()
 		quit(1)
 	if minimal.get_node("primary_decision_surface/RecordPanel").visible:
 		push_error("tscn 无记录 run 不得渲染本局记录块")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnEndingScreen buttons=%d" % _count_visible_buttons(success))
 
@@ -932,6 +1031,7 @@ func _verify_tscn_refine(refine_state: Dictionary, refine_cmds: Dictionary) -> v
 	var buttons := _count_buttons(refine)
 	if buttons < 1:
 		push_error("tscn 炼蛊按钮数 %d < 1" % buttons)
+		_teardown_mounts()
 		quit(1)
 	var recipe_list: Node = refine.get_node(
 			"Root/primary_decision_surface/MainColumn/RecipePanel").content_host.get_node(
@@ -939,16 +1039,19 @@ func _verify_tscn_refine(refine_state: Dictionary, refine_cmds: Dictionary) -> v
 	var expected: int = refine_state["recipes"].size()
 	if recipe_list.get_child_count() != expected:
 		push_error("tscn 炼蛊配方数 %d != %d" % [recipe_list.get_child_count(), expected])
+		_teardown_mounts()
 		quit(1)
 	# 通道 Tab 是纯屏内过滤：切到「盲盒随机」后配方列表应为空并给出提示。
 	var blind_tab := _find_button_by_text(refine, "盲盒随机")
 	if blind_tab == null:
 		push_error("tscn 炼蛊必须有通道 Tab")
+		_teardown_mounts()
 		quit(1)
 	blind_tab.pressed.emit()
 	await process_frame
 	if not _host_has_label_text(refine, "（无可用配方）"):
 		push_error("tscn 炼蛊切到无配方通道时必须给出空态提示")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnRefineScreen buttons=%d recipes=%d" % [buttons, expected])
 
@@ -961,15 +1064,18 @@ func _verify_tscn_encounter(enc_state: Dictionary, enc_cmds: Dictionary) -> void
 	var buttons := _count_buttons(enc)
 	if buttons < 1:
 		push_error("tscn 遭遇按钮数 %d < 1" % buttons)
+		_teardown_mounts()
 		quit(1)
 	# 死线只驱动既有资源栏的风险反馈，不应重建为独立行或死因浮层。
 	if enc.get_node_or_null("Root/CauseOverlay") != null or _host_has_label_text(enc, "☠"):
 		push_error("tscn 遭遇屏不得渲染独立三死线或死因浮层")
+		_teardown_mounts()
 		quit(1)
 	var list: Node = enc.get_node(
 			"Root/primary_decision_surface/MainColumn/ActionScroll/ActionList")
 	if list.get_child_count() != enc_state["actions"].size():
 		push_error("tscn 遭遇行动卡数 %d != %d" % [list.get_child_count(), enc_state["actions"].size()])
+		_teardown_mounts()
 		quit(1)
 	# 空行动列表：仍要给出离开出口（否则玩家卡死在遭遇节点）。
 	var empty_state := {
@@ -982,6 +1088,7 @@ func _verify_tscn_encounter(enc_state: Dictionary, enc_cmds: Dictionary) -> void
 	await process_frame
 	if _count_buttons(empty) < 1:
 		push_error("tscn 遭遇空列表必须保留离开出口")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnEncounterScreen buttons=%d actions=%d"
 			% [buttons, enc_state["actions"].size()])
@@ -995,16 +1102,19 @@ func _verify_tscn_rest(rest_state: Dictionary, rest_cmds: Dictionary) -> void:
 	var buttons := _count_buttons(rest)
 	if buttons < 1:
 		push_error("tscn 休整按钮数 %d < 1" % buttons)
+		_teardown_mounts()
 		quit(1)
 	var choice_row := rest.get_node(
 			"Root/primary_decision_surface/PanelMargin/PanelBody/ContentHost/ChoiceRow")
 	var expected: int = rest_state["choices"].size()
 	if choice_row.get_child_count() != expected:
 		push_error("tscn 休整选项卡数 %d != %d" % [choice_row.get_child_count(), expected])
+		_teardown_mounts()
 		quit(1)
 	# 移除目标面板是条件槽位，未点「温养一蛊」前不得展开。
 	if rest.get_node("Root/RemovePanel").visible:
 		push_error("tscn 休整初始不得展开移除目标面板")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnRestScreen buttons=%d choices=%d" % [buttons, expected])
 
@@ -1017,24 +1127,29 @@ func _verify_tscn_reward(reward_state: Dictionary, reward_cmds: Dictionary) -> v
 	var buttons := _count_buttons(reward)
 	if buttons < 1:
 		push_error("tscn 战利品按钮数 %d < 1" % buttons)
+		_teardown_mounts()
 		quit(1)
 	var row := reward.get_node("Root/primary_decision_surface/RewardRow")
 	var expected: int = reward_state["rewards"].size()
 	if row.get_child_count() != expected:
 		push_error("tscn 战利品卡数 %d != %d" % [row.get_child_count(), expected])
+		_teardown_mounts()
 		quit(1)
 	# 诅咒蛊同样走 GuCard 强红角标（R4.10）。
 	if _find_label_exact(reward, "咒") == null:
 		push_error("tscn 战利品诅咒蛊缺少「咒」角标")
+		_teardown_mounts()
 		quit(1)
 	# 标记回退时渲染 13px INK_SOFT 小字。
 	var note: Label = reward.get_node("Root/NoteRow/PoolFallbackLabel")
 	if not note.visible:
 		push_error("tscn 战利品标记回退后必须渲染小字")
+		_teardown_mounts()
 		quit(1)
 	if (note.get_theme_font_size("font_size") != 13
 			or not note.get_theme_color("font_color").is_equal_approx(GuStyle.INK_SOFT)):
 		push_error("tscn 战利品回退小字必须 INK_SOFT 13px")
+		_teardown_mounts()
 		quit(1)
 	# 未标记时不得出现常驻假提示。
 	var clean := reward_state.duplicate(true)
@@ -1044,6 +1159,7 @@ func _verify_tscn_reward(reward_state: Dictionary, reward_cmds: Dictionary) -> v
 	await process_frame
 	if clean_screen.get_node("Root/NoteRow/PoolFallbackLabel").visible:
 		push_error("tscn 战利品未标记回退时不得渲染回退小字")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnRewardScreen buttons=%d rewards=%d" % [buttons, expected])
 
@@ -1056,6 +1172,7 @@ func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> void:
 	var buttons := _count_buttons(npc)
 	if buttons < 1:
 		push_error("tscn NPC 按钮数 %d < 1" % buttons)
+		_teardown_mounts()
 		quit(1)
 	var surface := "Root/primary_decision_surface/"
 	var offer_list: Node = npc.get_node(
@@ -1066,12 +1183,15 @@ func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> void:
 			surface + "TalkColumn/TalkPanel").content_host.get_node("TalkScroll/List")
 	if offer_list.get_child_count() != npc_state["offers"].size():
 		push_error("tscn NPC 交易项数 %d != %d" % [offer_list.get_child_count(), npc_state["offers"].size()])
+		_teardown_mounts()
 		quit(1)
 	if barter_list.get_child_count() != npc_state["barter"].size():
 		push_error("tscn NPC 易物项数不符")
+		_teardown_mounts()
 		quit(1)
 	if talk_list.get_child_count() != npc_state["talk_options"].size():
 		push_error("tscn NPC 交涉项数不符")
+		_teardown_mounts()
 		quit(1)
 	# 极度仇恨禁逃：撤退按钮整体隐藏，不留"能点但注定失败"的死按钮。
 	var no_flee := npc_state.duplicate(true)
@@ -1081,6 +1201,7 @@ func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> void:
 	await process_frame
 	if caged.get_node(surface + "TalkColumn/FleeButton").visible:
 		push_error("tscn NPC 禁逃时不得展示撤退按钮")
+		_teardown_mounts()
 		quit(1)
 	print("OK TscnNpcScreen buttons=%d offers=%d talks=%d"
 			% [buttons, npc_state["offers"].size(), npc_state["talk_options"].size()])
@@ -1097,9 +1218,11 @@ func _mount_tscn_props(path: String, props: Dictionary) -> Control:
 	var scene: PackedScene = load(path)
 	if scene == null:
 		push_error("tscn 组件无法加载 %s" % path)
+		_teardown_mounts()
 		quit(1)
 	var inst := scene.instantiate()
 	root.add_child(inst)
+	_track_host(inst)
 	if inst.has_method("set_props"):
 		inst.set_props(props)
 	return inst
@@ -1109,9 +1232,11 @@ func _mount_tscn_screen(path: String, snapshot: Dictionary, commands: Dictionary
 	var scene: PackedScene = load(path)
 	if scene == null:
 		push_error("tscn 场景无法加载 %s" % path)
+		_teardown_mounts()
 		quit(1)
 	var inst := scene.instantiate()
 	root.add_child(inst)
+	_track_host(inst)
 	if inst.has_method("mount_snapshot"):
 		inst.mount_snapshot(snapshot, commands)
 	return inst

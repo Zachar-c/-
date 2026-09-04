@@ -121,7 +121,7 @@ func _ready() -> void:
 
 
 func ensure_ui() -> void:
-	if _rui_root != null:
+	if _rui_host != null and is_instance_valid(_rui_host):
 		return
 	_initialize_view_flow()
 
@@ -1483,8 +1483,12 @@ func _unmount_master_instance() -> void:
 
 
 func _exit_tree() -> void:
+	if _screen_tween != null and _screen_tween.is_valid():
+		_screen_tween.kill()
+	_screen_tween = null
 	_unmount_rui_root()
-	_unmount_master_instance()
+	_master_instance = null
+	_mounted_screen = ""
 
 
 ## T6-E 跨屏过渡：屏切换（含死亡返大厅）时对新挂载根做 140ms 一次性淡入

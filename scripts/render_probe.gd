@@ -54,7 +54,15 @@ func _initialize() -> void:
 		print("TOP ", rows[i][0], " ", rows[i][1],
 				" ", "%.1f%%" % (100.0 * float(rows[i][1]) / float(total)))
 	print("VERDICT=", "BLANK" if rows.size() <= 1 else "OK")
-	quit(0 if rows.size() > 1 else 1)
+	var exit_code := 0 if rows.size() > 1 else 1
+	# SubViewport owns the instantiated scene and its RenderingServer resources.
+	# Stop updates and release it synchronously before quitting so repeated probes
+	# do not leave ObjectDB/RID state alive at process teardown.
+	vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	vp.free()
+	await process_frame
+	await process_frame
+	quit(exit_code)
 
 
 func _arg(key: String, fallback: String) -> String:

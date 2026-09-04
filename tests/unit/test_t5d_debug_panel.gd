@@ -29,10 +29,12 @@ const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
 var _rui_roots: Array = []
 var _rui_hosts: Array = []
+var _controllers: Array[RunController] = []
 
 
 func _new_controller(enabled: bool) -> RunController:
-	var controller: RunController = autofree(ControllerScript.new())
+	var controller: RunController = ControllerScript.new()
+	_controllers.append(controller)
 	controller._debug_enabled_for_test = enabled
 	add_child(controller)
 	controller.start_new_run(101)
@@ -52,6 +54,12 @@ func after_each() -> void:
 		if h != null and is_instance_valid(h):
 			h.free()
 	_rui_hosts.clear()
+	for controller in _controllers:
+		if controller != null and is_instance_valid(controller):
+			controller.free()
+	_controllers.clear()
+	await get_tree().process_frame
+	await get_tree().process_frame
 
 
 ## 调试面板已迁到 Godot 官方 .tscn，注入方式是 set_props（不是 mount_snapshot，

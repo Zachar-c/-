@@ -3,8 +3,8 @@ extends GutTest
 
 # 十转杀蛊（测试专用）最终章 E2E（2026-08-31 用户验收）：
 # 月光道开局 → 直装十转杀蛊（0 真元、1 行动值、999 点群体伤害、不乘转数因子）→
-# L1→L5 逐大层击败关底 Boss（一发清场）→ 每大层 Boss 击败后自动升转
-# （1→5，真元上限按公式抬升并回满）→ 第五大层瘴脉之主（miasma_vein_lord）
+# L1→L5 逐大层击败关底 Boss（一发清场）→ 每大层 Boss 只记录通关旗标，
+# 不直接改修为或真元 → 第五大层瘴脉之主（miasma_vein_lord）
 # 落全局 boss_defeated 旗标 → 升仙窗解锁 → attempt_ascension 出飞升结局评价。
 #
 # 十转杀蛊仅通过测试夹具入袋，不进任何随机池（§16.4 未解锁内容不入池）；
@@ -152,6 +152,8 @@ func test_slay_gu_one_shots_full_boss_ladder_to_ascension() -> void:
 	var controller := _start_run_with_slay_gu()
 	assert_eq(controller.current_view_name(), "Map", "开局进 Map")
 	assert_eq(int(controller.state.cultivation), 1, "开局一转")
+	var initial_cultivation := int(controller.state.cultivation)
+	var initial_capacity := int(controller.state.essence_capacity)
 
 	for layer in range(1, 6):
 		# ---- 进入本层 Boss 台（第 1 层先过入口战斗节点）----
@@ -170,8 +172,6 @@ func test_slay_gu_one_shots_full_boss_ladder_to_ascension() -> void:
 			controller.submit_command({"type": "leave_encounter"})
 			assert_eq(controller.current_view_name(), "Map")
 
-		var cult_factor: int = int(catalog["aptitude"]["cultivation_factor"][str(mini(5, layer + 1))])
-		var expected_capacity: int = 10 * 2 * cult_factor
 		var travel := controller.submit_command({"type": "travel", "node_id": "L%dR1N0" % layer})
 		assert_eq(controller.current_view_name(), "Battle", "第 %d 层 Boss 台自动开战" % layer)
 		# 流程夹具：Boss 每回合意图伤害累积，杀蛊上牌前先保证不被磨死。
@@ -183,17 +183,17 @@ func test_slay_gu_one_shots_full_boss_ladder_to_ascension() -> void:
 				"第 %d 层 Boss 被十转杀蛊一发清场（实际=%s）" % [layer, controller.current_view_name()])
 		assert_eq(str(controller.state.node_flags.get("boss_defeated_L%d" % layer, "")), "true",
 				"boss_defeated_L%d 旗标落账" % layer)
-		assert_eq(int(controller.state.cultivation), mini(5, layer + 1),
-				"击败第 %d 层 Boss 后自动升转到 %d 转" % [layer, mini(5, layer + 1)])
-		assert_eq(int(controller.state.essence_capacity), expected_capacity,
-				"升转后真元上限 = 10 x 丙等 x %d 转因子" % mini(5, layer + 1))
+		assert_eq(int(controller.state.cultivation), initial_cultivation,
+				"击败第 %d 层 Boss 不直接改变修为" % layer)
+		assert_eq(int(controller.state.essence_capacity), initial_capacity,
+				"击败第 %d 层 Boss 不直接改变真元上限" % layer)
 		controller.submit_command({"type": "leave_encounter"})
 		assert_eq(controller.current_view_name(), "Map")
 
 	# ---- 第五大层 Boss（瘴脉之主）落全局旗标 → 升仙窗解锁 ----
 	assert_eq(str(controller.state.node_flags.get("boss_defeated", "")), "true",
 			"全局 boss_defeated 旗标（miasma_vein_lord）")
-	assert_eq(int(controller.state.cultivation), 5, "已自动升转到五转")
+	assert_eq(int(controller.state.cultivation), initial_cultivation, "五层通关旗标不替代修为成长")
 
 	var gate := controller.submit_command({"type": "travel", "node_id": "ascension_window"})
 	assert_ne(str((gate.get("result", gate) as Dictionary).get("reason", "")), "boss_undefeated",

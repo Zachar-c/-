@@ -28,9 +28,11 @@ static func create(container: Node, root_vnode: RuitkVNode) -> RuitkRoot:
 ## Re-render with a new top-level vnode (e.g. when the host passes new props from
 ## outside the reactive tree). State updates from inside use hooks and don't need this.
 func set_root(root_vnode: RuitkVNode) -> void:
-	_reconciler.render(root_vnode)
+	if _reconciler != null:
+		_reconciler.render(root_vnode)
 
 ## Tear down: run all effect cleanups and free mounted nodes (keeps the container).
 func unmount() -> void:
 	if _reconciler != null:
 		_reconciler.unmount()
+		_reconciler = null

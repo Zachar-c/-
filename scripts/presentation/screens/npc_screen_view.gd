@@ -153,7 +153,7 @@ func _build_offer_row(list: Node, o: Dictionary) -> void:
 		text_col.add_child(_label_of("不可用 · " + block, GuStyle.CINNABAR, 12))
 
 	var trade := Button.new()
-	trade.text = "交易"
+	trade.text = str(o.get("name", "交易"))
 	trade.disabled = not oexec
 	MasterTheme.apply_button(trade, "danger" if ocursed else "action")
 	trade.pressed.connect(func():
@@ -188,7 +188,7 @@ func _build_barter_row(list: Node, b: Dictionary) -> void:
 		text_col.add_child(_label_of("不可用 · " + block, GuStyle.CINNABAR, 12))
 
 	var swap := Button.new()
-	swap.text = "交换"
+	swap.text = str(b.get("name", "交换"))
 	swap.disabled = not bexec
 	MasterTheme.apply_button(swap, "action")
 	swap.pressed.connect(func(): _fire("barter", bid))
@@ -204,8 +204,10 @@ func _build_talk_row(list: Node, t: Dictionary) -> void:
 	list.add_child(panel)
 	panel.setup(str(t.get("label", "")), true, false)
 	panel.content_host.add_child(_label_of(str(t.get("detail", "")), GuStyle.INK_PRIMARY, 13))
+	if tblock != "":
+		panel.content_host.add_child(_label_of("不可用 · " + tblock, GuStyle.CINNABAR, 12))
 	var talk := Button.new()
-	talk.text = "交涉" if tblock == "" else ("不可用 · " + tblock)
+	talk.text = str(t.get("label", "交涉"))
 	talk.disabled = not texec
 	MasterTheme.apply_button(talk, "danger" if tdanger else "action")
 	talk.pressed.connect(func(): _fire("talk", tid))
