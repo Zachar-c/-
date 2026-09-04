@@ -166,6 +166,8 @@ func test_unknown_transaction_output_is_rejected_before_ledger_mutation() -> voi
 	var result := GuInstance.transaction_ledger(
 		state.gu_instances, state.cave_aperture, "missing_output_gu", cat, ["small_light_gu"])
 	assert_true(result.has("error"))
+	if not result.has("error"):
+		return
 	assert_eq(str(result["error"]), "unknown_gu_definition")
 	assert_eq(state.gu_instances, before_instances)
 	assert_eq(state.cave_aperture, before_aperture)

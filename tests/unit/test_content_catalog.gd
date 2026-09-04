@@ -39,7 +39,12 @@ func test_shipped_synthesis_kill_move_contract_is_explicit() -> void:
 			break
 	assert_false(kill_move.is_empty())
 	var output_gu_id := str(recipe.get("output_gu_id", ""))
-	assert_true((kill_move.get("recipe", []) as Array).has(output_gu_id))
+	assert_false(output_gu_id.is_empty())
+	var kill_recipe_value = kill_move.get("recipe", [])
+	assert_true(kill_recipe_value is Array)
+	if not kill_recipe_value is Array:
+		return
+	assert_true((kill_recipe_value as Array).has(output_gu_id))
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
 	var output_value = gu_by_id.get(output_gu_id)
 	assert_true(output_value is Dictionary)
