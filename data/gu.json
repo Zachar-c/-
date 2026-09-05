@@ -299,6 +299,11 @@
     ],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "status",
+      "name": "bound",
+      "amount": 1
+    },
     "slot_role": "tempo",
     "combat": "interrupt_enemy",
     "field_actions": [

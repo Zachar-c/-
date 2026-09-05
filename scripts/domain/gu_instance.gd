@@ -120,6 +120,9 @@ static func consume_definition_instances(instances: Dictionary, stored: Array, i
 # 只写 legacy 数组的产出抹掉；输入蛊同步销毁实例。返回新的
 # {instances, aperture}，输入字典不被修改。
 static func transaction_ledger(instances: Dictionary, aperture: Dictionary, output_gu_id: String, catalog: Dictionary, inputs: Array, output_rank: int = 0) -> Dictionary:
+	var output_error := output_definition_error(output_gu_id, catalog)
+	if not output_error.is_empty():
+		return {"instances": instances, "aperture": aperture, "error": output_error}
 	var next_instances := instances.duplicate(true)
 	var next_aperture := aperture.duplicate(true)
 	var stored: Array = next_aperture.get("stored_gu_instance_ids", []).duplicate()
@@ -129,7 +132,19 @@ static func transaction_ledger(instances: Dictionary, aperture: Dictionary, outp
 	next_instances[output_instance_id] = new_instance(output_gu_id, output_instance_id, catalog, extra)
 	stored.append(output_instance_id)
 	next_aperture["stored_gu_instance_ids"] = stored
-	return {"instances": next_instances, "aperture": next_aperture}
+	return {"instances": next_instances, "aperture": next_aperture, "error": ""}
+
+
+# 2026-09-05 切片护栏：unknown_gu_definition 在原料/原石扣除前抛出，避免下游
+# legacy 投影复活一个根本没定义的产出。返回空字符串表示合法输出。
+static func output_definition_error(output_gu_id: String, catalog: Dictionary) -> String:
+	var trimmed := str(output_gu_id).strip_edges()
+	if trimmed.is_empty():
+		return "unknown_gu_definition"
+	var gu_by_id: Variant = catalog.get("gu_by_id", {})
+	if not (gu_by_id is Dictionary) or not (gu_by_id as Dictionary).has(trimmed):
+		return "unknown_gu_definition"
+	return ""
 
 
 static func validate_instance(instance: Dictionary) -> Array[String]:

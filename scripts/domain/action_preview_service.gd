@@ -3,6 +3,7 @@ extends RefCounted
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
 # BattleResolver is a global class_name; referenced directly (no preload) to
 # avoid a cyclic preload with battle_resolver.gd which previews battles too.
 
@@ -108,6 +109,10 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		for slot_value in battle.get("gu_slots", []):
 			var slot: Dictionary = slot_value
 			if bool(slot.get("is_sealed", false)) or bool(slot.get("used_this_turn", false)) or bool(slot.get("consumed", false)):
+				continue
+			# 2026-09-05 切片护栏：未声明 v1_effect 的 V1 slot 不得出现在预览里，
+			# 与执行同源 effect_reason，避免「预览可点、执行失败」的不一致。
+			if V1BattleResolver.effect_reason(slot.get("effect", {})) != "":
 				continue
 			var v1_instance: Dictionary = {
 				"instance_id": str(slot.get("instance_id", "")),

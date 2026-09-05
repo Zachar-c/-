@@ -876,6 +876,139 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for scavenge_recipe in scavenge_ids:
 			if not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
 				errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
+	errors.append_array(_validate_v1_kill_moves(catalog))
+	errors.append_array(_validate_slice_contract(catalog))
+	return errors
+
+
+## 2026-09-05 随机合成杀招最小闭环：校验 v1_battle.kill_moves 的形状与跨文件
+## 引用，并把 `slice_bright_thread` 的输入/输出/杀招闭包解析出来。
+static func _validate_v1_kill_moves(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var v1_battle: Dictionary = catalog.get("v1_battle", {})
+	var raw: Variant = v1_battle.get("kill_moves", [])
+	if raw is not Array:
+		errors.append("v1_battle.kill_moves must be an array")
+		return errors
+	var seen := {}
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	for km_value in raw:
+		if not (km_value is Dictionary):
+			errors.append("v1_battle.kill_moves entry must be an object")
+			continue
+		var km: Dictionary = km_value
+		var km_id := str(km.get("id", ""))
+		if km_id.is_empty():
+			errors.append("v1_battle.kill_moves entry missing id")
+		elif seen.has(km_id):
+			errors.append("v1_battle.kill_moves duplicate id %s" % km_id)
+		seen[km_id] = true
+		var recipe: Array = km.get("recipe", [])
+		if recipe.is_empty():
+			errors.append("v1 kill move %s needs a non-empty recipe" % km_id)
+		var seen_defs := {}
+		for def_id_value in recipe:
+			var def_id := str(def_id_value)
+			if seen_defs.has(def_id):
+				errors.append("v1 kill move %s recipe duplicates %s" % [km_id, def_id])
+			seen_defs[def_id] = true
+			if not gu_by_id.has(def_id):
+				errors.append("v1 kill move %s recipe references unknown gu %s" % [km_id, def_id])
+		for cost_key in ["true_qi_cost", "thought_cost", "life_cost", "damage"]:
+			var cost_value: Variant = km.get(cost_key, 0)
+			if not _is_integral(cost_value) or int(cost_value) < 0:
+				errors.append("v1 kill move %s %s must be a non-negative integer" % [km_id, cost_key])
+		var effect_value: Variant = km.get("effect", null)
+		if effect_value == null:
+			continue
+		if not (effect_value is Dictionary):
+			errors.append("v1 kill move %s effect must be an object when present" % km_id)
+			continue
+		# 2026-09-05：damage-only 杀招允许空 effect dict；非空才校验形状。
+		if (effect_value as Dictionary).is_empty():
+			continue
+		var effect_errors := _validate_v1_effect(effect_value, "v1 kill move %s effect" % km_id)
+		for err in effect_errors:
+			errors.append(err)
+	return errors
+
+
+## 2026-09-05 切片：slice_bright_thread 必须自洽于 gu/refinement/v1_battle 三个
+## 入口。其它 legacy 配方与旧 Gu 不在本切片的强制范围。
+static func _validate_slice_contract(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var recipe_id := "slice_bright_thread"
+	var refinement: Dictionary = catalog.get("refinement_by_id", {})
+	var recipe: Dictionary = refinement.get(recipe_id, {})
+	if recipe.is_empty():
+		errors.append("slice recipe %s missing" % recipe_id)
+		return errors
+	var kill_move_id := str(recipe.get("kill_move_id", ""))
+	if kill_move_id.is_empty():
+		errors.append("slice recipe %s missing kill_move_id" % recipe_id)
+	var output_gu_id := str(recipe.get("output_gu_id", ""))
+	if output_gu_id.is_empty():
+		errors.append("slice recipe %s missing output_gu_id" % recipe_id)
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	for input_gu_id_value in recipe.get("input_gu_ids", []):
+		var input_gu_id := str(input_gu_id_value)
+		if not gu_by_id.has(input_gu_id):
+			errors.append("slice recipe %s references unknown input gu %s" % [recipe_id, input_gu_id])
+	var output: Dictionary = gu_by_id.get(output_gu_id, {})
+	if output.is_empty():
+		errors.append("slice recipe %s output %s missing from gu.json" % [recipe_id, output_gu_id])
+	else:
+		var effect_value: Variant = output.get("v1_effect", null)
+		if effect_value == null:
+			errors.append("slice recipe %s output %s missing v1_effect" % [recipe_id, output_gu_id])
+		else:
+			for err in _validate_v1_effect(effect_value, "gu %s v1_effect" % output_gu_id):
+				errors.append(err)
+	if not kill_move_id.is_empty():
+		var found_km := false
+		for km_value in catalog.get("v1_battle", {}).get("kill_moves", []):
+			var km: Dictionary = km_value
+			if str(km.get("id", "")) == kill_move_id:
+				found_km = true
+				var km_recipe: Array = km.get("recipe", [])
+				if not km_recipe.has(output_gu_id):
+					errors.append("slice kill move %s recipe must contain %s" % [kill_move_id, output_gu_id])
+				break
+		if not found_km:
+			errors.append("slice kill move %s missing from v1_battle.kill_moves" % kill_move_id)
+	return errors
+
+
+const V1_EFFECT_KIND_IDS := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift"]
+const V1_STATUS_IDS := ["marked", "bound"]
+
+
+static func _validate_v1_effect(effect_value: Variant, owner: String) -> Array[String]:
+	var errors: Array[String] = []
+	if not (effect_value is Dictionary):
+		errors.append("%s must be an object" % owner)
+		return errors
+	var effect: Dictionary = effect_value
+	var kind := str(effect.get("kind", ""))
+	if not V1_EFFECT_KIND_IDS.has(kind):
+		errors.append("%s has unknown kind %s" % [owner, kind])
+		return errors
+	match kind:
+		"strike", "shield", "heal", "shift":
+			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
+				errors.append("%s amount must be a non-negative integer" % owner)
+		"buff", "status":
+			if str(effect.get("name", "")).is_empty():
+				errors.append("%s name must be a non-empty string" % owner)
+			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
+				errors.append("%s amount must be a non-negative integer" % owner)
+			if kind == "status" and not V1_STATUS_IDS.has(str(effect.get("name", ""))):
+				errors.append("%s name %s is not a known status" % [owner, effect.get("name", "")])
+		"heal_and_strike":
+			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
+				errors.append("%s amount must be a non-negative integer" % owner)
+			if not _is_integral(effect.get("heal", null)) or int(effect.get("heal", -1)) < 0:
+				errors.append("%s heal must be a non-negative integer" % owner)
 	return errors
 
 

@@ -277,6 +277,10 @@ static func play_gu(battle: Dictionary, slot_index: int, target_id: String = "")
 	if not reason.is_empty():
 		return _result(battle, false, reason)
 	var slot: Dictionary = battle["gu_slots"][slot_index]
+	# 2026-09-05 切片护栏：声明式 effect_reason 在扣费前拒绝未声明 / 非法 effect。
+	var slot_effect_reason := effect_reason(slot.get("effect", {}))
+	if not slot_effect_reason.is_empty():
+		return _result(battle, false, slot_effect_reason)
 	var paid := _spend_costs(battle, slot, "gu:%s" % str(slot["instance_id"]))
 	var life_cost := int(slot.get("life_cost", 0))
 	if life_cost > 0 and int(paid["player"]["life_time"]) <= 0:
@@ -288,6 +292,21 @@ static func play_gu(battle: Dictionary, slot_index: int, target_id: String = "")
 	else:
 		paid = _play_instant(paid, slot_index, target_id)
 	return _result(paid, true, "")
+
+
+## 2026-09-05 声明式 effect_reason：空 dict 仅允许 damage-only 杀招，gu slot
+## 必须声明一种支持的 effect 类型。返回空字符串表示合法。
+static func effect_reason(effect: Variant) -> String:
+	if not (effect is Dictionary):
+		return "unknown_effect"
+	var data: Dictionary = effect
+	if data.is_empty():
+		return ""
+	var kind := str(data.get("kind", ""))
+	const SUPPORTED := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift"]
+	if not SUPPORTED.has(kind):
+		return "unknown_effect"
+	return ""
 
 
 static func _spend_costs(battle: Dictionary, slot: Dictionary, target: String) -> Dictionary:
@@ -459,6 +478,11 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String) -> Dictiona
 	if index < 0:
 		return _result(battle, false, "unknown_kill_move")
 	var km: Dictionary = battle["kill_moves"][index]
+	# 2026-09-05 切片护栏：effect 字段形状必须在资源扣费前校验，空 effect 只
+	# 允许 damage-only 杀招（例如 km_bright_thread）。
+	var km_effect_reason := effect_reason(km.get("effect", {}))
+	if not km_effect_reason.is_empty():
+		return _result(battle, false, km_effect_reason)
 	for instance_id in km["recipe"]:
 		var slot := _find_slot(battle, str(instance_id))
 		if slot.is_empty() or bool(slot.get("is_sealed", false)):
@@ -516,6 +540,10 @@ static func kill_move_reason(battle: Dictionary, kill_move_id: String) -> String
 	if index < 0:
 		return "unknown_kill_move"
 	var km: Dictionary = battle["kill_moves"][index]
+	# 2026-09-05 切片护栏：快照/预览必须和执行共用同一 effect_reason。
+	var km_effect_reason := effect_reason(km.get("effect", {}))
+	if not km_effect_reason.is_empty():
+		return km_effect_reason
 	for instance_id in km["recipe"]:
 		var slot := _find_slot(battle, str(instance_id))
 		if slot.is_empty() or bool(slot.get("is_sealed", false)):

@@ -944,6 +944,10 @@ static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cos
 	# 2026-09-03 修复：实例记账见 GuInstance.transaction_ledger（产出蛊必须
 	# 落 gu_instances + 洞天，否则 V1 战斗看不见且会被下次 sync 抹掉）。
 	var ledger := GuInstance.transaction_ledger(state.gu_instances, state.cave_aperture, output_gu_id, catalog, inputs, output_rank)
+	# 2026-09-05 切片护栏：未知产出定义在原石/原蛊/事件落地之前直接拒绝，避免
+	# 下游 sync_legacy_gu_projections 把一个不存在的 gu_id 复活进 legacy 投影。
+	if not str(ledger.get("error", "")).is_empty():
+		return _rejected(state, str(ledger["error"]))
 	var next_gu := _without_gu(state.refined_gu_ids, inputs)
 	next_gu.append(output_gu_id)
 	var next_equipped := _without_gu(state.equipped_gu_ids, inputs)

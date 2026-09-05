@@ -67,7 +67,7 @@ func test_validation_rejects_unknown_slice_recipe_input() -> void:
 	if not recipe_value is Dictionary:
 		return
 	(recipe_value as Dictionary)["input_gu_ids"] = ["missing_input_gu"]
-	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown gu"))
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown input gu"))
 
 
 func test_validation_rejects_unknown_slice_kill_move_effect() -> void:

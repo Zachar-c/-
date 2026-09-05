@@ -43,5 +43,18 @@
   "thought_cost_default": 1,
   "true_qi_cost_default": 1,
   "fight_damage_base": 1,
-  "max_seal_turns": 3
+  "max_seal_turns": 3,
+  "kill_moves": [
+    {
+      "id": "km_bright_thread",
+      "label": "明丝合击",
+      "tag": "control",
+      "recipe": ["pulse_drum_gu"],
+      "true_qi_cost": 2,
+      "thought_cost": 1,
+      "life_cost": 0,
+      "damage": 3,
+      "effect": {}
+    }
+  ]
 }
