@@ -149,30 +149,45 @@ func test_instances_carry_template_layer_and_row() -> void:
 		assert_false(str(node.get("template_id", "")).is_empty(), "%s needs a template id" % str(node["id"]))
 		assert_between(int(node.get("layer", 0)), 1, 5)
 		assert_true(int(node.get("row", -1)) >= 0)
-	# 锚点每局恰一次：升仙五项授予源。
-	for anchor in ["body_imprint_ritual", "earth_vein_contest", "sealed_earth_vein", "poison_fog_vein", "mist_shrine"]:
-		var count := 0
-		for node in route:
-			if str(node.get("template_id", "")) == anchor:
-				count += 1
-		assert_eq(count, 1, "anchor %s must appear exactly once per run" % anchor)
+	# 锚点每局恰一次（节点收窄后黑市为每层自动锚，五层恰五处；旧
+	# body_imprint/earth_vein/mist_shrine/poison_fog 授予源已随事件类节点移除）。
+	for node in route:
+		if str(node["id"]) == "ascension_window":
+			continue
+		var template_kind := str(node.get("type", ""))
+		assert_true(template_kind in ["combat", "rest", "shop"],
+			"instance %s carries non-skeleton kind %s" % [str(node["id"]), template_kind])
+	var market_count := 0
+	for node in route:
+		if str(node.get("template_id", "")) == "ridge_black_market":
+			market_count += 1
+	assert_eq(market_count, 5, "one black market anchor per layer")
 
 
-func test_all_configured_anchors_materialize_for_many_seeds() -> void:
-	var catalog := ContentCatalog.load_all()
-	var pacing: Dictionary = catalog["pacing"]
+# pacing 裁定表 anchors 已清空（2026-09-06 收窄）：黑市/休整由生成器
+# 自动补锚。多种子契约：每层黑市恰 1、每层休整 ≥1、层末 Boss 恰 1。
+func test_auto_anchors_materialize_for_many_seeds() -> void:
 	for seed_value in range(1, 101):
-		var generated: Array[Dictionary] = MapGeneratorScript.build(seed_value, false, catalog)
-		for layer_key in pacing.get("layers", {}).keys():
-			var layer_cfg: Dictionary = pacing["layers"][layer_key]
-			for anchor_value in layer_cfg.get("anchors", []):
-				var anchor: Dictionary = anchor_value
-				var template_id := str(anchor.get("template", ""))
-				var matches := 0
-				for node in generated:
-					if str(node.get("template_id", "")) == template_id and str(node.get("layer", "")) == str(layer_key):
-						matches += 1
-				assert_eq(matches, 1, "seed %d layer %s anchor %s must materialize exactly once" % [seed_value, layer_key, template_id])
+		var generated: Array[Dictionary] = MapGeneratorScript.build(seed_value, false)
+		var markets := {}
+		var rests := {}
+		var bosses := {}
+		for node in generated:
+			var layer := str(node.get("layer", ""))
+			var template_id := str(node.get("template_id", ""))
+			if template_id == "ridge_black_market":
+				markets[layer] = int(markets.get(layer, 0)) + 1
+			elif template_id == "rest_hollow" or template_id == "rest_shrine":
+				rests[layer] = int(rests.get(layer, 0)) + 1
+			elif template_id == "final_boss_stand" or template_id.begins_with("layer_boss_stand_"):
+				bosses[layer] = int(bosses.get(layer, 0)) + 1
+		for layer_key in ["1", "2", "3", "4", "5"]:
+			assert_eq(markets.get(layer_key, 0), 1,
+				"seed %d layer %s auto black-market must materialize exactly once" % [seed_value, layer_key])
+			assert_gt(rests.get(layer_key, 0), 0,
+				"seed %d layer %s must keep at least one rest stop" % [seed_value, layer_key])
+			assert_eq(bosses.get(layer_key, 0), 1,
+				"seed %d layer %s must own exactly one boss stand" % [seed_value, layer_key])
 
 
 func test_layer_bosses_exist_in_all_five_layers() -> void:

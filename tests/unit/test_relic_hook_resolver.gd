@@ -67,7 +67,9 @@ func test_draw_extra_card_hook_increases_hand_on_draw() -> void:
 		"id": "test_draw_relic",
 		"hooks": [{"trigger": "on_draw_card", "effect": {"kind": "draw_extra_card", "amount": 1}}],
 	})
-	_add_refined_instance(run, "gu_002", "thorn_whip_gu")
+	_add_refined_instance(run, "gu_002", "stone_shell_gu")
+	_add_refined_instance(run, "gu_003", "force_gu")
+	_add_refined_instance(run, "gu_004", "blood_droplet_gu")
 	run.relic_ids = ["test_draw_relic"]
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
 	assert_eq(battle["hand"].size(), 3)

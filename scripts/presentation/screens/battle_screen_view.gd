@@ -47,6 +47,8 @@ var _confirming := false
 var _expanded_enemies := false
 # 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
 var _enemy_actors: Dictionary = {}
+# 拖拽候选：左键在可执行手牌卡上按下时记录，全局左键抬起时命中敌方卡。
+var _drag_candidate_card: Dictionary = {}
 var _submitted_card_keys: Dictionary = {}
 var _last_hand_version := -1
 
@@ -287,6 +289,12 @@ func _refresh_enemies(state: Dictionary) -> void:
 
 
 func _refresh_hand(state: Dictionary) -> void:
+	# 临时诊断：手牌/战斗数据形状落 user://drag_debug.log，验收后移除。
+	_drag_debug_log("refresh_hand hand=%d enemies=%d keys=%s" % [
+		(state.get("hand", []) as Array).size(),
+		(state.get("enemies", []) as Array).size(),
+		str(state.keys()),
+	])
 	var player: Dictionary = state.get("player", {})
 	var actions: Dictionary = state.get("actions", {})
 	_primordial_label.text = "真元 %d" % int(player.get("primordial", 0))
@@ -299,22 +307,55 @@ func _refresh_hand(state: Dictionary) -> void:
 	# 墨色 token 全按纸面设计会低对比，用 PAPER_BG 浅字。
 	_piles_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
 
-	# Gubattle_hand 接 6 参（press / hover / cancel / release），拖拽命中走
-	# _on_card_release：抬起落点在敌方卡上即按该目标出牌（复用点击状态机，
-	# 危险卡进确认流）；按住期间不重建手牌，避免销毁正在接收输入的按钮。
+	# Gubattle_hand 接 6 参（press / hover / cancel / drag_start）。拖拽命中走
+	# 全局 _input 抬起拦截（_on_card_drop），不依赖按钮捕获的 release 事件；
+	# 按住期间不重建手牌，避免销毁正在接收输入的按钮。
 	_hand.setup(state.get("hand", []), _interaction_dict(),
-			_play_card, _on_card_hover, _reset_interaction, _on_card_release)
+			_play_card, _on_card_hover, _reset_interaction, _on_card_drag_start)
+	var hand_view := _hand as Control
+	drag_log("setup hand_view rect=%s visible=%s row_children=%d hand=%d" % [
+		str(hand_view.get_global_rect()), str(hand_view.is_visible_in_tree()),
+		hand_view._card_row.get_child_count(), (state.get("hand", []) as Array).size()])
 
 
-## 拖拽命中：左键抬起落点命中的存活敌方卡 id；未命中返回空串。
-func _on_card_release(card: Dictionary, global_pos: Vector2) -> void:
-	var enemy_id := _enemy_at(global_pos)
-	if enemy_id == "":
+## 拖拽候选：左键在可执行手牌卡上按下时记录，不触发任何刷新。
+func _on_card_drag_start(card: Dictionary) -> void:
+	_drag_candidate_card = card
+	_drag_debug_log("drag_start card=%s" % str(card.get("id", "")))
+
+
+## 临时诊断：拖拽链路证据落 user://drag_debug.log，验收后移除。
+static func drag_log(line: String) -> void:
+	var f := FileAccess.open("user://drag_debug.log", FileAccess.READ_WRITE if FileAccess.file_exists("user://drag_debug.log") else FileAccess.WRITE)
+	if f == null:
 		return
-	_play_card(card)
-	_select_enemy(enemy_id)
+	f.seek_end()
+	f.store_line(line)
+	f.close()
 
 
+func _drag_debug_log(line: String) -> void:
+	drag_log(line)
+
+
+## 全局左键抬起：候选非空时用画布全局鼠标位命中敌方卡，命中即按该目标出牌
+## （危险卡进确认流）。未命中敌方卡时不清当前输入，让普通点击照常武装。
+func _input(event: InputEvent) -> void:
+	if _drag_candidate_card.is_empty():
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		var card: Dictionary = _drag_candidate_card
+		_drag_candidate_card = {}
+		var mouse := get_global_mouse_position()
+		var enemy_id := _enemy_at(mouse)
+		_drag_debug_log("release candidate=%s mouse=%s enemy=%s" % [str(card.get("id", "")), str(mouse), enemy_id])
+		if enemy_id != "":
+			_play_card(card)
+			_select_enemy(enemy_id)
+			get_viewport().set_input_as_handled()
+
+
+## 拖拽命中：全局鼠标位命中的存活敌方卡 id；未命中返回空串。
 func _enemy_at(global_pos: Vector2) -> String:
 	for enemy_id in _enemy_actors:
 		var actor := _enemy_actors[enemy_id] as Control

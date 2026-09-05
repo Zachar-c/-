@@ -33,8 +33,8 @@ const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd"
 const SCREEN_PATHS := {}
 const MASTER_SCENE_PATHS := {
 	"Title": "res://scenes/ui/screens/hall_screen.tscn",
-	"Map": "res://scenes/ui/screens/map_screen.tscn",
-	"Battle": "res://scenes/ui/screens/battle_screen.tscn",
+	"Map": "res://scenes/ui_masters/wenzhen_map_master.tscn",
+	"Battle": "res://scenes/ui_masters/wenzhen_battle_master.tscn",
 	# 所有屏走同一套 instantiate + mount_snapshot 协议，本表即唯一路由表。
 	"Shop": "res://scenes/ui/screens/shop_screen.tscn",
 	"Rest": "res://scenes/ui/screens/rest_screen.tscn",
@@ -45,6 +45,16 @@ const MASTER_SCENE_PATHS := {
 	"Ending": "res://scenes/ui/screens/ending_screen.tscn",
 	"ContentError": "res://scenes/ui/screens/content_error_screen.tscn",
 }
+
+## 视图 → BGM 曲目映射（key 见 AudioDirector.BGM_PATHS，曲目由
+## tools/generate_music.py 确定性合成）。探索/商店/休整/炼蛊/事件等屏共用 map。
+const BGM_BY_VIEW := {
+	"Title": "hall",
+	"Map": "map",
+	"Battle": "battle",
+	"Ending": "ending",
+}
+const BGM_DEFAULT := "map"
 
 
 var catalog: Dictionary
@@ -765,7 +775,8 @@ func _debug_travel_options() -> Array[Dictionary]:
 		var nid := str(node.get("id", ""))
 		options.append({
 			"id": nid,
-			"label": "[%s] %s" % [nid, str(node.get("label", DisplayText.node(nid)))],
+			# 调试跳层标签带节点类型，便于直接跳进战斗做交互验收。
+			"label": "[%s] %s·%s" % [nid, str(node.get("type", "?")), str(node.get("label", DisplayText.node(nid)))],
 		})
 	return options
 
@@ -904,6 +915,13 @@ func _start_battle() -> void:
 		CultivatorRulesScript.thought_capacity(state.cultivator, catalog)
 	)
 	current_battle = BattleCommandFacadeScript.start(encounter, state, catalog)
+	# 临时诊断：开战时蛊槽数量与 refined 实例数落 user://drag_debug.log。
+	BattleScreenView.drag_log("start_battle kind=%s slots=%d refined=%d enemies=%d" % [
+		str(encounter.get("enemy_kind", "?")),
+		(current_battle.get("gu_slots", []) as Array).size(),
+		state.refined_instances().size(),
+		(current_battle.get("enemies", []) as Array).size(),
+	])
 	# N6: weaknesses procured through probe carry into the battle as bonus damage.
 	if state.known_facts.has("procured_weakness"):
 		current_battle["intel_bonus"] = 1
@@ -1035,14 +1053,18 @@ func _show_hall_subview(subview: String) -> void:
 # R-opening-fairness 2026-08-27: runs started without a school pick used to
 # enter the guaranteed layer-one combat with a one-card deck (novice only),
 # which was unwinnable against reaction-guarded enemies. The wanderer pack
-# (bind/guard/heal/scout/mobility) makes the opening fight winnable without
-# visiting a shop first. Pools stay school-agnostic: state.school remains "".
+# makes the opening fight winnable without visiting a shop first. Pools stay
+# school-agnostic: state.school remains "".
+# 802 catalog 重建后（2026-09-06）原包 thorn_whip/trail_eye/mist_step 已删，
+# 依「机制角色映射」自拟新包（全部 rank1 且 combat 字段非空，V1 槽位可打）：
+#   缚=blood_farewell_gu  守=stone_shell_gu  吸/blood_bat_gu  攻=force_gu  察=small_light_gu
+# legacy deck 契约仍含 stone_guard（stone_shell_gu blueprint）。
 const WANDERER_STARTER_GU_IDS := [
-	"thorn_whip_gu",
+	"blood_farewell_gu",
 	"stone_shell_gu",
-	"bear_strength_gu",
-	"trail_eye_gu",
-	"mist_step_gu",
+	"blood_bat_gu",
+	"force_gu",
+	"small_light_gu",
 ]
 
 
@@ -1440,10 +1462,20 @@ func _render() -> void:
 		_view_name = "ContentError"
 	var snapshot: Dictionary = _ending_state if _view_name == "Ending" else _snapshot_for(_view_name)
 	_mount_screen(_view_name, snapshot, _build_commands(_view_name))
+	_sync_bgm()
 	if _view_name != _faded_view:
 		_faded_view = _view_name
 		_play_screen_fade()
 	_render_debug_panel()
+
+
+## 视图切换时同步 BGM：AudioDirector 缺失（单测直调树）或资源未落地时
+## 静默跳过；同屏命令重渲染时 play_bgm 幂等，不打断正在播放的曲目。
+func _sync_bgm() -> void:
+	var director := get_node_or_null("../AudioDirector")
+	if director == null or not director.has_method("play_bgm"):
+		return
+	director.play_bgm(str(BGM_BY_VIEW.get(_view_name, BGM_DEFAULT)))
 
 
 func _mount_screen(screen: String, snapshot: Dictionary, commands: Dictionary) -> void:

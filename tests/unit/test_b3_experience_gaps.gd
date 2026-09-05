@@ -44,7 +44,7 @@ func test_scavenged_recipe_reaches_global_meta_codex() -> void:
 	var scavenged: Dictionary = ResolverScript.apply(state, {"type": "scavenge", "node_id": "final_boss_stand"}, ContentCatalogScript.load_all())
 	var meta: RefCounted = MetaProgressScript.new_empty()
 	var record: RefCounted = meta.record_run_end(scavenged["state"], "survived_failure")
-	assert_true(record.recipe_codex_ids.has("phantom_moon_locked"))
+	assert_true(record.recipe_codex_ids.has("moon_shadow_locked"))
 
 
 func test_combat_nodes_carry_valid_enemy_kind() -> void:
@@ -129,7 +129,7 @@ func test_preview_scavenge_card_after_boss_defeat() -> void:
 	var after: Array[Dictionary] = ActionPreviewServiceScript.preview_actions(state, node, catalog)
 	assert_true(_card_ids(after).has("scavenge"))
 	# 2026-08-30：Boss 搜刮可掉多张蛊方，须全部持有后卡片才消失。
-	state.global_codex_ids.append("phantom_moon_locked")
+	state.global_codex_ids.append("moon_shadow_locked")
 	state.global_codex_ids.append("blood_moon_forged")
 	var done: Array[Dictionary] = ActionPreviewServiceScript.preview_actions(state, node, catalog)
 	assert_false(_card_ids(done).has("scavenge"))

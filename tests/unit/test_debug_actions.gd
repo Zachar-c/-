@@ -82,7 +82,7 @@ func test_unknown_op_is_rejected() -> void:
 func test_add_gu_success_follows_reward_semantics_into_cave_aperture() -> void:
 	var cat := enabled_catalog()
 	var state: RunState = RunStateScript.new_run(2026, null)
-	var action := {"op": "add_gu", "definition_id": "blood_moss_gu"}
+	var action := {"op": "add_gu", "definition_id": "force_gu"}
 	var applied := DebugActionsScript.apply(state, cat, action, true)
 	assert_true(bool(applied["ok"]), "known gu must be added")
 	var next: RunState = applied["state"]
@@ -91,14 +91,14 @@ func test_add_gu_success_follows_reward_semantics_into_cave_aperture() -> void:
 			int(state.cave_aperture["stored_gu_instance_ids"].size()) + 1,
 			"cave aperture must hold one more instance")
 	var instance: Dictionary = next.gu_instances[str(applied["result"]["instance_id"])]
-	assert_eq(str(instance["definition_id"]), "blood_moss_gu")
+	assert_eq(str(instance["definition_id"]), "force_gu")
 	assert_eq(str(instance["state"]), "refined", "reward semantics refine the instance")
-	assert_true(next.refined_gu_ids.has("blood_moss_gu"), "legacy projection synced")
+	assert_true(next.refined_gu_ids.has("force_gu"), "legacy projection synced")
 	var entry: Dictionary = next.event_log[next.event_log.size() - 1]
 	assert_eq(str(entry["action"]), "debug_add_gu")
 	assert_eq(str(entry["source"]), "debug")
 	assert_eq(str(entry["reason"]), "debug_console")
-	assert_true(entry["targets"].has("blood_moss_gu"))
+	assert_true(entry["targets"].has("force_gu"))
 	assert_eq_deep(entry["after"]["_debug"], action)
 
 
@@ -222,11 +222,13 @@ func test_jump_marks_target_arrival_so_reachability_expands() -> void:
 	var cat := enabled_catalog()
 	var state: RunState = RunStateScript.new_run(2026, null)
 	var route: Array[Dictionary] = MapGeneratorScript.build(2026, true)
-	var action := {"op": "jump_to_node", "node_id": "refinement_hollow"}
+	# 节点收窄后 first_run 骨架无 refinement_hollow；跳转到骨架中段战斗
+	# iron_hide_ambush，其后继 ridge_black_market 验证可达性展开。
+	var action := {"op": "jump_to_node", "node_id": "iron_hide_ambush"}
 	var applied := DebugActionsScript.apply(state, cat, action, true, route)
 	assert_true(bool(applied["ok"]))
 	var next: RunState = applied["state"]
-	assert_eq(str(next.node_flags.get("refinement_hollow", "")), "debug_arrived",
+	assert_eq(str(next.node_flags.get("iron_hide_ambush", "")), "debug_arrived",
 			"arrival mirrors _complete_node's bare-id visited-marker semantics")
 	var reachable := MapGeneratorScript.reachable_nodes(route, next)
 	var ids := []
@@ -234,7 +236,7 @@ func test_jump_marks_target_arrival_so_reachability_expands() -> void:
 		ids.append(str((node_value as Dictionary).get("id", "")))
 	assert_false(reachable.is_empty(),
 			"jumped-to origin must expand successors instead of soft-locking the map")
-	assert_true(ids.has("toxic_mountain_path"),
+	assert_true(ids.has("ridge_black_market"),
 			"successors follow the route's own next_ids")
 
 

@@ -127,12 +127,13 @@ func test_npc_trade_barter_delegation_is_seeded() -> void:
 	})
 	var state := RunState.new_run(101)
 	state.current_node_id = "scout_den"
+	# barter_unknown_gu 的输入蛊随 802 重建从 trail_eye_gu 迁到 qi_rec_2_14_gu。
 	state.gu_instances = {
-		"gu_001": {"instance_id": "gu_001", "definition_id": "trail_eye_gu", "state": "refined"},
+		"gu_001": {"instance_id": "gu_001", "definition_id": "qi_rec_2_14_gu", "state": "refined"},
 	}
 	state.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
-	state.refined_gu_ids = ["trail_eye_gu"]
-	state.gu_ids = ["trail_eye_gu"]
+	state.refined_gu_ids = ["qi_rec_2_14_gu"]
+	state.gu_ids = ["qi_rec_2_14_gu"]
 	var result := ResolverScript.apply(state, {
 		"type": "npc_trade", "npc_id": "earth_vein_scout", "offer_id": "barter_unknown_gu",
 		"input_instance_ids": ["gu_001"],
@@ -259,7 +260,7 @@ func test_snapshot_npc_barter_owned_preview() -> void:
 
 	var holding := _state_at("wandering_peddler")
 	holding.gu_instances = {
-		"gu_001": {"instance_id": "gu_001", "definition_id": "trail_eye_gu", "state": "refined"},
+		"gu_001": {"instance_id": "gu_001", "definition_id": "qi_rec_2_14_gu", "state": "refined"},
 	}
 	holding.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
 	var holding_snaps: Dictionary = RunSnapshotBuilderScript.npc({
@@ -319,7 +320,7 @@ func test_shop_services_come_from_domain_truth() -> void:
 
 	var remove_card: Dictionary = by_id["remove_card"]
 	# 已用 1 次 → 递增价：base 120 × price_for × (1 + 25%)
-	var escalated := ResolverScript.service_price_for(catalog, state, "remove_card", int(catalog["deck"]["remove_card_cost"]))
+	var escalated := ResolverScript.service_price_for(catalog, state, "remove_card", int(catalog["balance"]["remove_card_cost"]))
 	assert_eq(str(remove_card["price"]), "%d 元石" % escalated)
 	assert_eq(int(remove_card["remaining"]), 1)
 	assert_true(bool(remove_card["executable"]))
@@ -349,11 +350,11 @@ func test_peddler_contact_node_carries_tradeable_stock() -> void:
 
 	var barter_state := _state_at("wandering_peddler")
 	barter_state.gu_instances = {
-		"gu_001": {"instance_id": "gu_001", "definition_id": "trail_eye_gu", "state": "refined"},
+		"gu_001": {"instance_id": "gu_001", "definition_id": "qi_rec_2_14_gu", "state": "refined"},
 	}
 	barter_state.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
-	barter_state.refined_gu_ids = ["trail_eye_gu"]
-	barter_state.gu_ids = ["trail_eye_gu"]
+	barter_state.refined_gu_ids = ["qi_rec_2_14_gu"]
+	barter_state.gu_ids = ["qi_rec_2_14_gu"]
 	var barter := ResolverScript.apply(barter_state, {
 		"type": "npc_trade", "npc_id": "wandering_peddler", "offer_id": "barter_unknown_gu",
 		"input_instance_ids": ["gu_001"],

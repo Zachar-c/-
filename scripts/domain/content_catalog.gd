@@ -569,9 +569,14 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var value: Variant = reputation[group_name][key_value]
 			if not _is_integral(value) or int(value) < 0:
 				errors.append("reputation %s.%s must be a non-negative integer" % [group_name, key_value])
-	var raw_imprint_capacity: Variant = catalog.get("deck", {}).get("imprint_capacity", -1)
-	if not _is_integral(raw_imprint_capacity) or int(raw_imprint_capacity) < 1:
-		errors.append("deck imprint_capacity must be a positive integer")
+	var balance: Dictionary = catalog.get("balance", {})
+	for key in ["remove_card_cost", "imprint_capacity", "meta_rule_cap"]:
+		var value: Variant = balance.get(key, null)
+		if not _is_integral(value) or int(value) < 1:
+			errors.append("balance %s must be a positive integer" % key)
+	for migrated_key in ["remove_card_cost", "imprint_capacity", "meta_rule_cap"]:
+		if catalog.get("deck", {}).has(migrated_key):
+			errors.append("deck %s is deprecated; move it to balance" % migrated_key)
 	var raw_service_limits: Variant = catalog.get("deck", {}).get("service_limits", null)
 	if not raw_service_limits is Dictionary:
 		errors.append("deck service_limits must be an object")
@@ -894,8 +899,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 				errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
 	errors.append_array(_validate_v1_kill_moves(catalog))
 	errors.append_array(_validate_slice_contract(catalog))
-	return errors
 	errors.append_array(_validate_v1_battle_boss_scaling(catalog))
+	return errors
 
 
 ## C3 2026-09-05 Boss 量级挂钩：中央倍率表必须覆盖 L1..L5 全部五层键
@@ -928,6 +933,7 @@ static func _validate_v1_battle_boss_scaling(catalog: Dictionary) -> Array[Strin
 		if not _is_integral(stage_value) or int(stage_value) < 1:
 			errors.append("v1_battle.stage_base.%s must be a positive integer" % layer_key)
 	return errors
+
 
 ## 2026-09-05 随机合成杀招最小闭环：校验 v1_battle.kill_moves 的形状与跨文件
 ## 引用，并把 `slice_bright_thread` 的输入/输出/杀招闭包解析出来。
@@ -981,49 +987,49 @@ static func _validate_v1_kill_moves(catalog: Dictionary) -> Array[String]:
 	return errors
 
 
-## 2026-09-05 切片：slice_bright_thread 必须自洽于 gu/refinement/v1_battle 三个
-## 入口。其它 legacy 配方与旧 Gu 不在本切片的强制范围。
+## 2026-09-05 切片：凡 refinement_recipes 声明 kill_move_id 的「合成杀招切片」，
+## 必须自洽于 gu/refinement/v1_battle 三个入口（U3b 重建后内容锚点换血，校验改为
+## 数据驱动：不再硬编码某个已删配方，凡带 kill_move_id 的配方一律闭环检查）。
 static func _validate_slice_contract(catalog: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
-	var recipe_id := "slice_bright_thread"
-	var refinement: Dictionary = catalog.get("refinement_by_id", {})
-	var recipe: Dictionary = refinement.get(recipe_id, {})
-	if recipe.is_empty():
-		errors.append("slice recipe %s missing" % recipe_id)
-		return errors
-	var kill_move_id := str(recipe.get("kill_move_id", ""))
-	if kill_move_id.is_empty():
-		errors.append("slice recipe %s missing kill_move_id" % recipe_id)
-	var output_gu_id := str(recipe.get("output_gu_id", ""))
-	if output_gu_id.is_empty():
-		errors.append("slice recipe %s missing output_gu_id" % recipe_id)
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
-	for input_gu_id_value in recipe.get("input_gu_ids", []):
-		var input_gu_id := str(input_gu_id_value)
-		if not gu_by_id.has(input_gu_id):
-			errors.append("slice recipe %s references unknown input gu %s" % [recipe_id, input_gu_id])
-	var output: Dictionary = gu_by_id.get(output_gu_id, {})
-	if output.is_empty():
-		errors.append("slice recipe %s output %s missing from gu.json" % [recipe_id, output_gu_id])
-	else:
-		var effect_value: Variant = output.get("v1_effect", null)
-		if effect_value == null:
-			errors.append("slice recipe %s output %s missing v1_effect" % [recipe_id, output_gu_id])
+	for recipe_value in catalog.get("refinement_recipes", []):
+		var recipe: Dictionary = recipe_value
+		var recipe_id := str(recipe.get("id", ""))
+		if not recipe.has("kill_move_id"):
+			continue
+		var kill_move_id := str(recipe.get("kill_move_id", ""))
+		if kill_move_id.is_empty():
+			errors.append("slice recipe %s missing kill_move_id" % recipe_id)
+		var output_gu_id := str(recipe.get("output_gu_id", ""))
+		if output_gu_id.is_empty():
+			errors.append("slice recipe %s missing output_gu_id" % recipe_id)
+		for input_gu_id_value in recipe.get("input_gu_ids", []):
+			var input_gu_id := str(input_gu_id_value)
+			if not gu_by_id.has(input_gu_id):
+				errors.append("slice recipe %s references unknown input gu %s" % [recipe_id, input_gu_id])
+		var output: Dictionary = gu_by_id.get(output_gu_id, {})
+		if output.is_empty():
+			errors.append("slice recipe %s output %s missing from gu.json" % [recipe_id, output_gu_id])
 		else:
-			for err in _validate_v1_effect(effect_value, "gu %s v1_effect" % output_gu_id):
-				errors.append(err)
-	if not kill_move_id.is_empty():
-		var found_km := false
-		for km_value in catalog.get("v1_battle", {}).get("kill_moves", []):
-			var km: Dictionary = km_value
-			if str(km.get("id", "")) == kill_move_id:
-				found_km = true
-				var km_recipe: Array = km.get("recipe", [])
-				if not km_recipe.has(output_gu_id):
-					errors.append("slice kill move %s recipe must contain %s" % [kill_move_id, output_gu_id])
-				break
-		if not found_km:
-			errors.append("slice kill move %s missing from v1_battle.kill_moves" % kill_move_id)
+			var effect_value: Variant = output.get("v1_effect", null)
+			if effect_value == null:
+				errors.append("slice recipe %s output %s missing v1_effect" % [recipe_id, output_gu_id])
+			else:
+				for err in _validate_v1_effect(effect_value, "gu %s v1_effect" % output_gu_id):
+					errors.append(err)
+		if not kill_move_id.is_empty():
+			var found_km := false
+			for km_value in catalog.get("v1_battle", {}).get("kill_moves", []):
+				var km: Dictionary = km_value
+				if str(km.get("id", "")) == kill_move_id:
+					found_km = true
+					var km_recipe: Array = km.get("recipe", [])
+					if not km_recipe.has(output_gu_id):
+						errors.append("slice kill move %s recipe must contain %s" % [kill_move_id, output_gu_id])
+					break
+			if not found_km:
+				errors.append("slice kill move %s missing from v1_battle.kill_moves" % kill_move_id)
 	return errors
 
 
@@ -1391,3 +1397,4 @@ static func _gu_rank_exempt(gu: Dictionary) -> bool:
 		return true
 	var tags: Variant = gu.get("tags", [])
 	return tags is Array and tags.has("test")
+

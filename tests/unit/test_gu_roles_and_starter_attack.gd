@@ -75,8 +75,8 @@ func test_role_validation_rejects_missing_and_unknown_role() -> void:
 
 func test_starter_combat_gu_are_usable_and_have_observable_effects() -> void:
 	var starter_ids := [
-		"small_light_gu", "trail_eye_gu", "blood_moss_gu", "thorn_whip_gu",
-		"mist_step_gu", "venom_thread_gu", "stone_shell_gu",
+		"small_light_gu", "moonlight_gu", "force_gu",
+		"white_boar_strength_gu", "stone_shell_gu", "blood_droplet_gu", "blood_bat_gu",
 	]
 	var run := RunState.new_run(101)
 	run.cave_aperture["stored_gu_instance_ids"] = []
@@ -113,7 +113,7 @@ func test_starter_gu_costs_and_effect_facts_are_logged() -> void:
 	var run := RunState.new_run(101)
 	run.cave_aperture["stored_gu_instance_ids"] = []
 	run.gu_instances = {}
-	var starter_ids := ["trail_eye_gu", "blood_moss_gu", "thorn_whip_gu", "mist_step_gu", "venom_thread_gu", "stone_shell_gu"]
+	var starter_ids := ["small_light_gu", "moonlight_gu", "force_gu", "stone_shell_gu", "blood_droplet_gu", "blood_bat_gu"]
 	for index in starter_ids.size():
 		var instance_id := "cost_%02d" % index
 		run.cave_aperture["stored_gu_instance_ids"].append(instance_id)

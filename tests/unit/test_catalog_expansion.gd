@@ -80,12 +80,9 @@ func test_every_generated_gu_is_data_driven_with_one_card() -> void:
 
 func test_generated_attack_gu_deals_damage_in_battle() -> void:
 	var cat := catalog()
-	var attacker := {}
-	for gu in cat["gu"]:
-		if str(gu.get("id", "")).begins_with("gen_") and gu["role"] == "attack":
-			attacker = gu
-			break
-	assert_false(attacker.is_empty(), "generated attack gu exists")
+	# 802 重建后 gen_* 占位蛊已删：攻击蛊以现存战斗蛊为锚（force_gu 力道校 V1 战斗锚）。
+	var attacker: Dictionary = cat["gu_by_id"]["force_gu"]
+	assert_eq(str(attacker["role"]), "attack")
 	var state := RunStateScript.new_run(4242)
 	state.school = str(attacker["school"])
 	state.gu_instances["gu_100"] = {

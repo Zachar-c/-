@@ -19,9 +19,10 @@ func test_stone_wanderer_exposes_intent_and_visible_clues() -> void:
 
 func test_direct_strike_triggers_stone_shell_before_damage() -> void:
 	var state := RunState.new_run(101)
-	state.refined_gu_ids.append("thorn_whip_gu")
 	var battle := BattleResolver.start({"enemy_kind": "neutral_stone_wanderer"}, state, catalog)
-	var turn := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "thorn_whip_gu", "mode": "strike"}, state, catalog)
+	# 802 重建删去 thorn_whip_gu 后，legacy 引擎里只有拳脚(basic_attack)与荆棘
+	# 鞭共享直击吞伤路径：以拳脚锚定石壳反制显现。
+	var turn := BattleResolver.take_turn(battle, {"type": "basic_attack"}, state, catalog)
 
 	assert_eq(turn["battle"]["enemy_hp"], battle["enemy_hp"])
 	assert_true(turn["battle"]["revealed_reactions"].has("stone_shell"))
@@ -30,10 +31,12 @@ func test_direct_strike_triggers_stone_shell_before_damage() -> void:
 
 func test_bind_then_strike_bypasses_stone_shell_and_kills_wounded_enemy() -> void:
 	var state := RunState.new_run(101)
-	state.refined_gu_ids.append("thorn_whip_gu")
+	state.refined_gu_ids.append("blood_farewell_gu")
+	state.refined_gu_ids.append("force_gu")
 	var battle := BattleResolver.start({"enemy_kind": "neutral_stone_wanderer", "enemy_hp": 2}, state, catalog)
-	var bound := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "thorn_whip_gu", "mode": "bind"}, state, catalog)
-	var strike := BattleResolver.take_turn(bound["battle"], {"type": "use_gu", "gu_id": "thorn_whip_gu", "mode": "strike"}, bound["state"], catalog)
+	var bound := BattleResolver.take_turn(battle, {"type": "use_gu", "gu_id": "blood_farewell_gu"}, state, catalog)
+	assert_true(bound["battle"]["flags"].has("enemy_bound"))
+	var strike := BattleResolver.take_turn(bound["battle"], {"type": "use_gu", "gu_id": "force_gu", "mode": "strike"}, bound["state"], catalog)
 
 	assert_true(strike["finished"])
 	assert_eq(strike["result"], "victory")

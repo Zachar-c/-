@@ -270,7 +270,9 @@ func test_v1_status_effect_log_carries_name_amount_and_target() -> void:
 	run.gu_instances = {}
 	var status_id := "st_00"
 	run.cave_aperture["stored_gu_instance_ids"].append(status_id)
-	run.gu_instances[status_id] = GuInstanceScript.new_instance("venom_thread_gu", status_id, catalog)
+	# venom_thread_gu 于 802 重建删去；以现存侦察蛊 light_rec_1_10_gu 的 role 兜底
+	# 状态效果（recon → status marked）锚定同一日志契约。
+	run.gu_instances[status_id] = GuInstanceScript.new_instance("light_rec_1_10_gu", status_id, catalog)
 	var battle := FacadeScript.start(
 			{"enemy_kinds": ["beast_swarm", "iron_hide_boar"]}, run, catalog)
 	var out := FacadeScript.apply_turn(
@@ -281,8 +283,8 @@ func test_v1_status_effect_log_carries_name_amount_and_target() -> void:
 	var event: Dictionary = out["state"].event_log.back()
 	var effect: Dictionary = event["info"]["effect"]
 	assert_eq(str(effect["kind"]), "status")
-	assert_eq(str(effect["name"]), "poison", "status effect log must record the status name")
-	assert_eq(int(effect["amount"]), 2, "status amount must match the resolver-applied amount")
+	assert_eq(str(effect["name"]), "marked", "status effect log must record the status name")
+	assert_eq(int(effect["amount"]), 1, "status amount must match the resolver-applied amount")
 	assert_eq(str(effect["target_id"]), "iron_hide_boar", "status log must record the targeted enemy id")
 
 
@@ -294,7 +296,8 @@ func test_v1_heal_and_strike_effect_log_carries_heal_and_target() -> void:
 	run.gu_instances = {}
 	var heal_id := "he_00"
 	run.cave_aperture["stored_gu_instance_ids"].append(heal_id)
-	run.gu_instances[heal_id] = GuInstanceScript.new_instance("blood_moss_gu", heal_id, catalog)
+	# blood_moss_gu 于 802 重建删去；现存血蝠蛊 blood_bat_gu 是同款 heal_and_strike 锚。
+	run.gu_instances[heal_id] = GuInstanceScript.new_instance("blood_bat_gu", heal_id, catalog)
 	var battle := FacadeScript.start(
 			{"enemy_kinds": ["beast_swarm", "iron_hide_boar"]}, run, catalog)
 	var out := FacadeScript.apply_turn(
@@ -305,7 +308,7 @@ func test_v1_heal_and_strike_effect_log_carries_heal_and_target() -> void:
 	var event: Dictionary = out["state"].event_log.back()
 	var effect: Dictionary = event["info"]["effect"]
 	assert_eq(str(effect["kind"]), "heal_and_strike")
-	assert_eq(int(effect["heal"]), 2, "heal_and_strike log must record the heal amount")
+	assert_eq(int(effect["heal"]), 1, "heal_and_strike log must record the heal amount")
 	assert_eq(str(effect["target_id"]), "iron_hide_boar", "heal_and_strike log must record the targeted enemy id")
 	assert_eq(int(effect["amount"]), 1)
 
@@ -318,7 +321,8 @@ func test_v1_status_log_records_fallback_target_when_request_empty() -> void:
 	run.gu_instances = {}
 	var status_id := "st_fb"
 	run.cave_aperture["stored_gu_instance_ids"].append(status_id)
-	run.gu_instances[status_id] = GuInstanceScript.new_instance("venom_thread_gu", status_id, catalog)
+	# 同上：venom_thread_gu 已删，改以 light_rec_1_10_gu（recon → status marked）为锚。
+	run.gu_instances[status_id] = GuInstanceScript.new_instance("light_rec_1_10_gu", status_id, catalog)
 	var battle := FacadeScript.start(
 			{"enemy_kinds": ["beast_swarm", "iron_hide_boar"]}, run, catalog)
 	var out := FacadeScript.apply_turn(

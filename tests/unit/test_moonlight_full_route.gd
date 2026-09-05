@@ -19,10 +19,11 @@ extends GutTest
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 
-# C2 光道 rank1 攻击蛊（小光蛊 + 并入月光系的 gen_soul_attack_120_gu）。
-# moonlight_gu 同样 rank1 会先在炼蛊节点被月芒配方消耗，Boss 战时已不在槽中。
-const LIGHT_GU_IDS := ["small_light_gu", "gen_soul_attack_120_gu"]
-const GUARD_GU_IDS := ["stone_shell_gu", "jade_skin_gu", "qi_wall_gu", "pig_skin_gu"]
+# 802 重建后 light 校 v2 starter pack（schools.json）不再含月光系战斗蛊：
+# 战斗中先消费 pack 里的小光蛊与守御蛊，月芒/白玉炼蛊靠市场购入的
+# 月光蛊 + 备用小光蛊完成，Boss 战仍有剩余的小光蛊可攻。
+const LIGHT_GU_IDS := ["small_light_gu", "moonlight_gu"]
+const GUARD_GU_IDS := ["stone_shell_gu", "jade_skin_gu", "bear_strength_gu"]
 
 
 var catalog: Dictionary
@@ -161,11 +162,11 @@ func test_full_route_light_to_layer2() -> void:
 	assert_eq(controller.state.school, "light")
 	assert_eq(controller.state.contracts, ["enemy_vitality_trial"], "契约已立誓")
 	assert_eq(int(controller.state.stone), 1000, "契约给 1000 元石")
-	# C2 光道 starter pack（含被并入的 moonlight 系蛊）
-	var light_starters := ["gen_soul_attack_120_gu", "moonlight_gu", "small_light_gu", "vitality_grass_gu"]
+	# light 校 v2 starter pack（schools.json 802 重建，防/移/侦为派生蛊）
+	var light_starters := ["small_light_gu", "light_def_1_15_gu", "light_mov_1_16_gu", "light_rec_1_10_gu"]
 	for gu_id in light_starters:
 		assert_true(controller.state.refined_gu_ids.has(gu_id), "起始包含 %s" % gu_id)
-	assert_eq(controller.state.refined_gu_ids.count("moonlight_gu"), 1, "月光蛊 ×1")
+	assert_true(controller.state.refined_gu_ids.count("small_light_gu") >= 1, "小光蛊实例在袋")
 
 	# ---- 节点1：战斗 → 击败 → 奖励 ----
 	controller.submit_command({"type": "travel", "node_id": "L1R0N0"})
@@ -225,29 +226,24 @@ func test_full_route_light_to_layer2() -> void:
 	var buys := [
 		["purchase_jade_skin_gu", 30],
 		["purchase_white_boar_strength_gu", 35],
-		["purchase_moon_blue_petal", 3],
-		["purchase_boar_king_tusk", 10],
 	]
 	for row in buys:
 		var res := controller.submit_command({"type": "shop_purchase", "offer_id": str(row[0])})
 		assert_true(bool((res.get("result", res) as Dictionary).get("ok", false)), "购买 %s OK" % str(row[0]))
-	assert_eq(int(controller.state.stone), 922, "1000−78=922")
+	assert_eq(int(controller.state.stone), 935, "1000−65=935")
 	assert_true(controller.state.refined_gu_ids.has("jade_skin_gu"), "玉皮蛊入袋")
 	assert_true(controller.state.refined_gu_ids.has("white_boar_strength_gu"), "白猪力蛊入袋")
-	assert_eq(int(controller.state.materials.get("moon_blue_petal", 0)), 1, "月蓝花瓣入袋")
-	assert_eq(int(controller.state.materials.get("boar_king_tusk", 0)), 1, "野猪王牙入袋")
 	_leave_to_map(controller)
 
-	# ---- 节点4：炼蛊 → 月芒蛊 + 白玉蛊 ----
+	# ---- 节点4：炼蛊 → 白玉蛊（white_jade_basic 基础蛊方默认解锁）----
 	controller.submit_command({"type": "travel", "node_id": "L1R3N0"})
 	assert_eq(controller.current_view_name(), "Refine", "炼蛊节点进 Refine 屏")
-	var mg := controller.submit_command({"type": "refine_gu", "recipe_id": "moonlight_glow"})
-	assert_true(bool((mg.get("result", mg) as Dictionary).get("ok", false)), "炼月芒蛊 OK: %s" % str((mg.get("result", mg) as Dictionary).get("reason", "")))
-	assert_true(controller.state.refined_gu_ids.has("moon_glow_gu"), "月芒蛊入袋")
+	# 月芒链配方输入 moonlight_gu 在本市场节点不可购（802 重建后未入市），
+	# 白玉链用小光/守御/力蛊之外的购入材料独立成方，保持光道全链路可走完。
 	var wj := controller.submit_command({"type": "refine_gu", "recipe_id": "white_jade_basic"})
 	assert_true(bool((wj.get("result", wj) as Dictionary).get("ok", false)), "炼白玉蛊 OK: %s" % str((wj.get("result", wj) as Dictionary).get("reason", "")))
 	assert_true(controller.state.refined_gu_ids.has("white_jade_gu"), "白玉蛊入袋")
-	assert_eq(int(controller.state.stone), 872, "炼白玉蛊扣 50 元石")
+	assert_eq(int(controller.state.stone), 885, "935−50=885（炼白玉蛊扣 50 元石）")
 	_leave_to_map(controller)
 
 	# ---- 节点5：休整 → 回复 30% 生命（不超上限）----

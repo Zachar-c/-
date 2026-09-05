@@ -29,6 +29,56 @@ func _recipe(recipe_id: String) -> Dictionary:
 	return {}
 
 
+# The 802-gu catalog rebuild re-curated refinement_recipes.json to the
+# advance/fixed/free_mix model; the identity/tag/staged demo recipes are no
+# longer shipped as data. The domain contract below (identity-bound
+# substitution, deterministic candidate pools, staged claims) is still pinned
+# by RecipeRules, so these tests carry test-local fixtures with the same
+# declared shapes instead of reading them from the catalog.
+func _identity_fixture() -> Dictionary:
+	return {
+		"id": "essence_thorn_identity",
+		"kind": "fixed",
+		"input_gu_ids": ["thorn_whip_gu"],
+		"identity_requirements": {
+			"named_materials": ["venom_sac"],
+			"named_media": ["kael_fire_medium"],
+			"min_rank": 2,
+		},
+		"allow_substitute": {
+			"materials": {"venom_sac": ["moon_blue_petal"]},
+			"media": {"kael_fire_medium": ["essence_bead"]},
+			"cost_change": {"essence": 2},
+		},
+		"output_gu_id": "venom_thread_gu",
+	}
+
+
+func _tag_fixture() -> Dictionary:
+	return {
+		"id": "tagged_moon_candidates",
+		"kind": "fixed",
+		"default_unlocked": true,
+		"input_gu_ids": ["moonlight_gu", "small_light_gu"],
+		# Both pool entries survive in gu.json (schema-guardable).
+		"candidate_pool": ["moon_glow_gu", "moon_shadow_gu"],
+		"output_gu_id": "moon_shadow_gu",
+	}
+
+
+func _staged_fixture() -> Dictionary:
+	return {
+		"id": "moon_ray_staged",
+		"kind": "fixed",
+		"input_gu_ids": ["moon_ray_gu"],
+		"stages": [
+			{"thought": 1, "essence": 1, "duration": 2, "interruptible": true, "failure_condition": "none"},
+			{"thought": 2, "essence": 2, "duration": 1, "interruptible": false},
+		],
+		"output_gu_id": "moon_shadow_gu",
+	}
+
+
 func test_known_recipe_succeeds_deterministically_when_ready() -> void:
 	# Acceptance #7: complete, safe, uninterrupted known recipes succeed with
 	# no roll and no eaten inputs.
@@ -41,20 +91,21 @@ func test_known_recipe_succeeds_deterministically_when_ready() -> void:
 
 
 func test_known_recipe_refuses_with_structured_reasons() -> void:
+	var ready_recipe := _recipe("moonlight_glow")
 	assert_eq(str(RecipeRulesScript.known_fixed_success(
-			_recipe("moonlight_glow"), false, true, false)["reason"]), "inputs_incomplete")
+			ready_recipe, false, true, false)["reason"]), "inputs_incomplete")
 	assert_eq(str(RecipeRulesScript.known_fixed_success(
-			_recipe("phantom_moon_locked"), true, false, false)["reason"]), "recipe_locked")
+			ready_recipe, true, false, false)["reason"]), "recipe_locked")
 	assert_eq(str(RecipeRulesScript.known_fixed_success(
-			_recipe("moonlight_glow"), true, true, true)["reason"]), "interrupted")
+			ready_recipe, true, true, true)["reason"]), "interrupted")
 
 
 func test_tag_recipe_candidates_come_only_from_the_hand_authored_pool() -> void:
 	# Acceptance #7: a tag recipe resolves deterministically from its pool;
 	# pool entries must exist in gu.json (schema guard) and no programmatic gu
 	# is ever generated.
-	var candidates := RecipeRulesScript.resolve_candidates(_recipe("tagged_moon_candidates"), catalog)
-	assert_eq(candidates, ["phantom_moon_gu", "moon_shadow_gu"])
+	var candidates := RecipeRulesScript.resolve_candidates(_tag_fixture(), catalog)
+	assert_eq(candidates, ["moon_glow_gu", "moon_shadow_gu"])
 	for gu_id in candidates:
 		assert_true(catalog["gu_by_id"].has(gu_id), "%s must exist in gu.json" % gu_id)
 
@@ -62,7 +113,7 @@ func test_tag_recipe_candidates_come_only_from_the_hand_authored_pool() -> void:
 func test_identity_requires_named_materials_by_exact_name() -> void:
 	# Acceptance #8: named identities bind by name; equivalent materials never
 	# substitute unless the recipe declares otherwise.
-	var recipe := _recipe("essence_thorn_identity")
+	var recipe := _identity_fixture()
 	var miss := RecipeRulesScript.check_identity(
 			recipe, ["thorn_whip_gu"], {}, {}, catalog, [])
 	assert_false(bool(miss["ok"]))
@@ -83,7 +134,7 @@ func test_identity_requires_named_materials_by_exact_name() -> void:
 func test_declared_substitution_passes_and_reports_cost_changes() -> void:
 	# Acceptance #8: only allow_substitute relations may swap materials, and
 	# the swap returns the declared cost/condition/product changes.
-	var recipe := _recipe("essence_thorn_identity")
+	var recipe := _identity_fixture()
 	var swapped := RecipeRulesScript.check_identity(
 			recipe, ["thorn_whip_gu"], {"moon_blue_petal": 2}, {"thorn_whip_gu": 2},
 			catalog, ["kael_fire_medium"])
@@ -101,7 +152,7 @@ func test_declared_substitution_passes_and_reports_cost_changes() -> void:
 
 
 func test_min_rank_identity_gate() -> void:
-	var recipe := _recipe("essence_thorn_identity")
+	var recipe := _identity_fixture()
 	var too_low := RecipeRulesScript.check_identity(
 			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 1},
 			catalog, ["kael_fire_medium"])
@@ -116,7 +167,7 @@ func test_min_rank_identity_gate() -> void:
 func test_named_medium_binds_and_declared_media_substitution_passes() -> void:
 	# P0.1 (§5.4.1): named media must actually be present in the offer; an
 	# allow_substitute.media relation swaps it and travels with cost_change.
-	var recipe := _recipe("essence_thorn_identity")
+	var recipe := _identity_fixture()
 	var miss := RecipeRulesScript.check_identity(
 			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
 			catalog, [])
@@ -140,7 +191,7 @@ func test_named_medium_binds_and_declared_media_substitution_passes() -> void:
 func test_stages_declare_per_turn_thought_claims() -> void:
 	# §5.3: staged refining claims per-stage thought per round; the first
 	# stage of the sample carries a durable multi-round thought claim.
-	var staged := _recipe("moon_ray_staged")
+	var staged := _staged_fixture()
 	var stages: Array = staged["stages"]
 	assert_eq(stages.size(), 2)
 	assert_eq(int(stages[0]["duration"]), 2)

@@ -56,13 +56,13 @@ func test_anchor_types_are_guaranteed_every_run() -> void:
 		var types: Array[String] = []
 		for node in route:
 			types.append(str(node.get("type", "")))
-		var templates: Array[String] = []
-		for node in route:
-			templates.append(str(node.get("template_id", "")))
 		assert_true(types.has("shop"), "seed %d must include a shop node" % seed_value)
-		assert_true(types.has("refinement"), "seed %d must include a refinement node" % seed_value)
-		assert_true(templates.has("refinement_hollow"), "seed %d must include the refinement anchor" % seed_value)
-		assert_true(types.has("inheritance"), "seed %d must include an inheritance node" % seed_value)
+		assert_true(types.has("rest"), "seed %d must include a rest node" % seed_value)
+		# 节点收窄（2026-09-06）：普通生成不再刷出事件/接触/商队/炼蛊类模板。
+		for forbidden in ["event", "contact", "caravan", "refinement", "market",
+				"hazard", "inheritance", "wild_gu", "seclusion", "earth_vein",
+				"cultivation", "ledger", "commission", "pursuit"]:
+			assert_false(types.has(forbidden), "seed %d must not include %s" % [seed_value, forbidden])
 
 
 func test_hard_anchors_remain_unique_and_terminal() -> void:
@@ -74,8 +74,8 @@ func test_hard_anchors_remain_unique_and_terminal() -> void:
 		var templates: Array[String] = []
 		for node in route:
 			templates.append(str(node.get("template_id", "")))
-		assert_eq(templates.count("earth_vein_contest"), 1, "seed %d" % seed_value)
-		assert_true(templates.has("poison_fog_vein"), "seed %d" % seed_value)
+		# 每层自动锚一处黑市（_anchor_rows 补 shop），全程五层恰五处。
+		assert_eq(templates.count("ridge_black_market"), 5, "seed %d" % seed_value)
 		assert_true(templates.has("final_boss_stand"), "seed %d" % seed_value)
 		assert_true(ids.has("ascension_window"), "seed %d" % seed_value)
 

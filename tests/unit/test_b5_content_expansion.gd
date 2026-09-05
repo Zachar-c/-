@@ -44,11 +44,12 @@ func test_greedy_wanderer_now_faces_thunder_crown_wolf() -> void:
 
 func test_new_cards_play_with_expected_effects() -> void:
 	var cat: Dictionary = catalog()
-	# scout_eye via trail_eye_gu: reveals and slows the enemy.
+	# scout_eye via small_light_gu（trail_eye_gu 已于 802 重建删去，侦察眼语义由
+	# 小光蛊 reveal+delay 兜底）：reveals 并推延敌人。
 	var trail := make_state()
-	trail.refined_gu_ids.append("trail_eye_gu")
+	trail.refined_gu_ids.append("small_light_gu")
 	var trail_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, trail, cat)
-	var trail_turn: Dictionary = BattleResolverScript.take_turn(trail_battle, {"type": "use_gu", "gu_id": "trail_eye_gu"}, trail, cat)
+	var trail_turn: Dictionary = BattleResolverScript.take_turn(trail_battle, {"type": "use_gu", "gu_id": "small_light_gu"}, trail, cat)
 	assert_true((trail_turn["battle"]["flags"] as Array).has("revealed"))
 	assert_eq(int(trail_turn["battle"]["delay_progress"]), 1)
 	# moon_glow_flare：rank2 因子 ×3 → 3×3=9，直接击杀 4 血石游者。
@@ -65,10 +66,11 @@ func test_new_cards_play_with_expected_effects() -> void:
 	assert_eq(int(moon_turn["battle"]["enemy_hp"]), 2)
 
 
-func test_card_count_grew_to_nineteen() -> void:
+func test_catalog_counts_after_802_rebuild() -> void:
 	var cat: Dictionary = catalog()
-	assert_eq(cat["cards"].size(), 212)
-	assert_eq(cat["gu"].size(), 214)
+	# 802 重建：gu.json 802 蛊（20 道×40）+ 现存卡蓝图 15 张。
+	assert_eq(cat["cards"].size(), 15)
+	assert_eq(cat["gu"].size(), 802)
 
 
 func test_intel_bonus_adds_damage_to_strikes() -> void:

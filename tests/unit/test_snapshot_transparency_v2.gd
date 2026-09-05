@@ -88,7 +88,19 @@ func test_group2_core_projection_is_same_source() -> void:
 
 
 func test_group3_recipe_projection_is_same_source() -> void:
-	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
+	# The 802-gu rebuild curates recipes to the advance/fixed/free_mix model,
+	# so identity/tag demo recipes are no longer shipped as data. Inject them
+	# as local fixtures into a catalog copy so the group-3 projection branch
+	# (identity_requirements / candidate_pool) stays same-source tested.
+	var cat: Dictionary = catalog.duplicate(true)
+	var identity_recipe := _identity_fixture()
+	var tag_recipe := _tag_fixture()
+	for recipe in [identity_recipe, tag_recipe]:
+		(cat["refinement_recipes"] as Array).append(recipe)
+		cat["refinement_by_id"][str(recipe["id"])] = recipe
+	var ctrl := _controller()
+	ctrl["catalog"] = cat
+	var snap := RunSnapshotBuilderScript.transparency_v2(ctrl)
 	var group: Array = snap["group3_recipes"]
 	var found_identity := false
 	var found_pool := false
@@ -96,14 +108,14 @@ func test_group3_recipe_projection_is_same_source() -> void:
 		var recipe_id := str(entry["id"])
 		if recipe_id == "essence_thorn_identity":
 			found_identity = true
-			var recipe: Dictionary = catalog["refinement_by_id"]["essence_thorn_identity"]
-			assert_eq(str(entry["identity_requirements"]), str(recipe["identity_requirements"]))
+			assert_eq(str(entry["identity_requirements"]),
+					str(identity_recipe["identity_requirements"]))
 			assert_false(entry.has("candidate_pool"),
 				"identity recipes carry no candidate pool")
 		if recipe_id == "tagged_moon_candidates":
 			found_pool = true
 			assert_eq(str(entry["candidate_pool"]),
-					str(RecipeRulesScript.resolve_candidates(recipe_from_catalog("tagged_moon_candidates"), catalog)))
+					str(RecipeRulesScript.resolve_candidates(tag_recipe, cat)))
 	assert_true(found_identity and found_pool, str(group))
 
 
@@ -178,5 +190,31 @@ func test_builder_has_no_state_writing_path() -> void:
 	assert_false(section.contains("controller.state ="), "no controller state assignment")
 
 
-func recipe_from_catalog(recipe_id: String) -> Dictionary:
-	return catalog["refinement_by_id"][recipe_id]
+func _identity_fixture() -> Dictionary:
+	return {
+		"id": "essence_thorn_identity",
+		"kind": "fixed",
+		"input_gu_ids": ["thorn_whip_gu"],
+		"identity_requirements": {
+			"named_materials": ["venom_sac"],
+			"named_media": ["kael_fire_medium"],
+			"min_rank": 2,
+		},
+		"allow_substitute": {
+			"materials": {"venom_sac": ["moon_blue_petal"]},
+			"media": {"kael_fire_medium": ["essence_bead"]},
+			"cost_change": {"essence": 2},
+		},
+		"output_gu_id": "venom_thread_gu",
+	}
+
+
+func _tag_fixture() -> Dictionary:
+	return {
+		"id": "tagged_moon_candidates",
+		"kind": "fixed",
+		"default_unlocked": true,
+		"input_gu_ids": ["moonlight_gu", "small_light_gu"],
+		"candidate_pool": ["moon_glow_gu", "moon_shadow_gu"],
+		"output_gu_id": "moon_shadow_gu",
+	}

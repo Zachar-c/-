@@ -3,7 +3,7 @@ extends GutTest
 
 func test_inheritance_move_requires_equipped_gu_and_tag_constraints() -> void:
 	var moves := InheritanceResolver.available_moves(
-		["small_light_gu", "trail_eye_gu"],
+		["small_light_gu", "moonlight_gu"],
 		["moonlit_trace"],
 		ContentCatalog.load_all()
 	)

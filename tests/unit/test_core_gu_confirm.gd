@@ -85,7 +85,7 @@ func test_depth_markup_common_and_hub_with_enumerable_evidence() -> void:
 	var common := CoreGuRulesScript.core_depth(
 			catalog["gu_by_id"]["small_light_gu"], catalog)
 	assert_eq(common, "common_core")
-	var hub_definition: Dictionary = catalog["gu_by_id"]["phantom_moon_gu"]
+	var hub_definition: Dictionary = catalog["gu_by_id"]["moon_glow_gu"]
 	assert_eq(CoreGuRulesScript.core_depth(hub_definition, catalog), "hub_core")
 	var evidence := CoreGuRulesScript.hub_evidence(hub_definition, catalog)
 	assert_true((evidence["branch_recipes"] as Array).size() >= 1)
@@ -100,7 +100,7 @@ func test_tilt_only_improves_distribution_and_never_touches_gu_balance() -> void
 	# §1.2 red line: tilt is a distribution suggestion; every GuBalance
 	# projection is bit-identical before and after tilting.
 	var before := _balance_snapshot()
-	var core := {"definition_id": "phantom_moon_gu", "tags": []}
+	var core := {"definition_id": "moon_glow_gu", "tags": []}
 	var tilt := CoreGuRulesScript.tilt_pool(catalog.get("school_pools", {}), core, catalog)
 	assert_true(tilt is Dictionary)
 	assert_true(tilt.has("suggestions"))

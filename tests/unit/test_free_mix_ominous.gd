@@ -13,7 +13,7 @@ func before_each() -> void:
 
 
 func test_poison_combo_shows_rule_hint_when_unknown() -> void:
-	var run := _run_with_gu_definitions(["venom_thread_gu", "small_light_gu"])
+	var run := _run_with_gu_definitions(["blood_farewell_gu", "small_light_gu"])
 	var node := {"id": "refinement_den", "type": "refinement", "choices": []}
 	var cards: Array = ActionPreviewServiceScript.preview_actions(run, node, catalog)
 	var card := _card(cards, "refine.free_mix")
@@ -38,9 +38,9 @@ func test_plain_combo_keeps_default_vague_text() -> void:
 
 
 func test_known_outcomes_override_rule_hints() -> void:
-	var run := _run_with_gu_definitions(["venom_thread_gu", "small_light_gu"])
+	var run := _run_with_gu_definitions(["blood_farewell_gu", "small_light_gu"])
 	var node := {"id": "refinement_den", "type": "refinement", "choices": []}
-	var knowledge := {"small_light_gu+venom_thread_gu": ["mutation_venom"]}
+	var knowledge := {"blood_farewell_gu+small_light_gu": ["mutation_venom"]}
 	var cards: Array = ActionPreviewServiceScript.preview_actions(run, node, catalog, knowledge)
 	var card := _card(cards, "refine.free_mix")
 

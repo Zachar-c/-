@@ -4,11 +4,11 @@ extends GutTest
 func test_seed_101_caravan_branch_requires_a_full_field_route_before_stage_ledger() -> void:
 	var catalog := ContentCatalog.load_all()
 	var state := RunState.new_run(101)
-	var route := MapGenerator.build(101, true)
+	var route := _synthetic_branch_route()
 	assert_eq(_ids(MapGenerator.reachable_nodes(route, state)), ["neutral_wanderer", "ridge_caravan"])
 	state = Resolver.apply(state, {"type": "travel", "node_id": "ridge_caravan"}, catalog)["state"]
 	assert_eq(_ids(MapGenerator.reachable_nodes(route, state)), [])
-	state = Resolver.apply(state, {"type": "buy_gu", "offer_id": "caravan_thorn_offer"}, catalog)["state"]
+	state = Resolver.apply(state, {"type": "buy_gu", "offer_id": "buy_force_blow"}, catalog)["state"]
 	assert_eq(_ids(MapGenerator.reachable_nodes(route, state)), [])
 	state = Resolver.apply(state, {"type": "complete_node", "node_id": "ridge_caravan", "outcome": "abandoned"}, catalog)["state"]
 	assert_eq(_ids(MapGenerator.reachable_nodes(route, state)), ["refinement_hollow", "cultivation_spring", "village_short_work"])
@@ -27,7 +27,7 @@ func test_seed_101_caravan_branch_requires_a_full_field_route_before_stage_ledge
 
 
 func test_tree_columns_group_branches_by_graph_depth() -> void:
-	var route := MapGenerator.build(101, true)
+	var route := _synthetic_branch_route()
 	var columns := MapGenerator.tree_columns(route)
 	assert_eq(_ids(columns[0]), ["neutral_wanderer", "ridge_caravan"])
 	assert_eq(_ids(columns[1]), ["beast_swarm_pass", "moonlit_trail", "refinement_hollow", "cultivation_spring", "village_short_work"])
@@ -146,11 +146,60 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 	controller.free()
 
 
-## 2026-09-03 裁定后 start_new_run 不再把 101 当教学种子：需要手写教学路线的
-## controller 测试统一走此夹具——先正常开局，再显式注入 MapGenerator.build(101, true)。
+## 2026-09-06 节点收窄后 first_run 不再含商队/修习/事件等模板；本文件各用例
+## 测试的是「分支图可达性 / 树列分组 / 离开语义」等纯图契约，与地图内容来源
+## 无关，故统一注入本地合成分支路线（模板由 nodes.json 提供）。
 func _boot_teaching_route(controller) -> void:
 	controller.start_new_run(101)
-	controller.route = MapGenerator.build(101, true)
+	controller.route = _synthetic_branch_route()
+
+
+## 复刻旧教学链的分支拓扑（15 节点 4 列扇形图），仅用 nodes.json 现存模板：
+##  col0  [neutral_wanderer, ridge_caravan]                    （双 start）
+##  col1  [beast_swarm_pass, moonlit_trail, refinement_hollow, cultivation_spring, village_short_work]
+##  col2  [toxic_mountain_path, blood_moss_grove, flooded_cave, ridge_black_market, body_imprint_ritual]
+##  col3  [ridge_market, echo_cave, stage_one_ledger]
+## next_ids 由用例逐步断言驱动（refinement→toxic、toxic→ridge_market、
+## ridge_market→stage_one_ledger 等），重复供入节点不会改变列序。
+func _synthetic_branch_route() -> Array[Dictionary]:
+	var catalog: Dictionary = ContentCatalog.load_all()
+	var by_id := {}
+	for node_value in catalog.get("nodes_data", {}).get("nodes", []):
+		by_id[str((node_value as Dictionary).get("id", ""))] = node_value
+	var order := [
+		"neutral_wanderer", "ridge_caravan",
+		"beast_swarm_pass", "moonlit_trail", "refinement_hollow", "cultivation_spring", "village_short_work",
+		"toxic_mountain_path", "blood_moss_grove", "flooded_cave", "ridge_black_market", "body_imprint_ritual",
+		"ridge_market", "echo_cave", "stage_one_ledger",
+	]
+	var next_by_id := {
+		"neutral_wanderer": ["beast_swarm_pass", "moonlit_trail"],
+		"ridge_caravan": ["refinement_hollow", "cultivation_spring", "village_short_work"],
+		"beast_swarm_pass": ["toxic_mountain_path"],
+		"moonlit_trail": ["blood_moss_grove", "flooded_cave"],
+		"refinement_hollow": ["toxic_mountain_path"],
+		"cultivation_spring": ["ridge_black_market"],
+		"village_short_work": ["body_imprint_ritual"],
+		"toxic_mountain_path": ["ridge_market"],
+		"blood_moss_grove": ["echo_cave"],
+		"flooded_cave": ["stage_one_ledger"],
+		"ridge_black_market": ["stage_one_ledger"],
+		"body_imprint_ritual": ["stage_one_ledger"],
+		"ridge_market": ["stage_one_ledger"],
+		"echo_cave": [],
+		"stage_one_ledger": [],
+	}
+	var route: Array[Dictionary] = []
+	for index in order.size():
+		var node: Dictionary = (by_id[order[index]] as Dictionary).duplicate(true)
+		node["start"] = index < 2
+		node["visible"] = index <= 1
+		node["template_id"] = order[index]
+		node["layer"] = 1
+		node["row"] = index
+		node["next_ids"] = next_by_id.get(order[index], [])
+		route.append(node)
+	return route
 
 
 func _ids(nodes: Array) -> Array[String]:

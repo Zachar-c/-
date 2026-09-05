@@ -58,8 +58,8 @@ func test_fixed_synthesis_success_grants_temp_card_and_spends_materials() -> voi
 		if not bool(entry.get("success", false)):
 			continue
 		saw_success = true
-		assert_true(_cards_with_definition(result["battle"], "thorn_bind").size() > 0,
-				"seed %d: success must place the temp card thorn_bind" % run_seed)
+		assert_true(_cards_with_definition(result["battle"], "farewell_grip").size() > 0,
+				"seed %d: success must place the temp card farewell_grip" % run_seed)
 		assert_eq(int(result["state"].materials.get("venom_sac", 0)), 0, "seed %d: materials spent" % run_seed)
 		assert_eq(int(result["state"].synthesis_fail_streak), 0, "seed %d: streak resets on success" % run_seed)
 		break
@@ -80,7 +80,7 @@ func test_fixed_synthesis_failure_consumes_materials_and_raises_streak() -> void
 		if bool(entry.get("success", false)):
 			continue
 		saw_failure = true
-		assert_eq(_cards_with_definition(result["battle"], "thorn_bind").size(), 0,
+		assert_eq(_cards_with_definition(result["battle"], "farewell_grip").size(), 0,
 				"seed %d: failure must not grant the card" % run_seed)
 		assert_eq(int(result["state"].materials.get("venom_sac", 0)), 0, "seed %d: materials still spent" % run_seed)
 		assert_eq(int(result["state"].synthesis_fail_streak), 1, "seed %d: streak advances on failure" % run_seed)

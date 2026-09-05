@@ -14,7 +14,10 @@
 - 单局目标为 3--5 小时、200--300 个有效节点。
 - 保持规则本地、确定、数据驱动、可测试、可复现。
 - 保持 UI 仅展示状态并提交命令，领域层负责规则与状态转换。
-- 保持资源、情报、人情、交易、撤离、伪装、设局、恶名与战斗均为有效路径。
+- 保持资源、情报、人情、交易、撤离、伪装、设局与战斗均为有效路径；冻结系统保持现状不发展（见当前待办冻结清单）。
+- 核心玩法支柱（用户裁定 2026-09-05）：玩家自由组装杀招与蛊虫海量合成配方；所有游戏目标围绕这两个支柱展开。
+- 存档体验（用户裁定 2026-09-05）：无感自动保存，续玩恢复离开前进度；新开局须提示放弃进行中存档。
+- LLM 文本相关功能永久搁置：仅保留离线模板与接入接口，不开发新需求。
 - 以当前任务的最小完整改动达成规格，并避免无关重构。
 
 ## 权威资料
@@ -48,14 +51,12 @@
 
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 
-1. 将 `tests/integration/test_drive_to_ending.gd` 完整迁移到 V1 战斗契约：领域战斗使用 `gu_slots`，命令统一经 `BattleCommandFacade` 与 `use_gu`，不得恢复旧 deck/hand 领域模型。
-2. 建立固定 25-seed 验收，全程通过 `RunController.submit_command()`；记录每层 Boss 战前数据、逐回合 intent/damage/shield、回合数、结局与死因。
-3. 在 `data/v1_battle.json` 落地 L1--L5 Boss HP/damage 唯一中央倍率，并依据 25-seed 结果调优；不得以散改 `data/enemies.json` Boss 裸数值替代中央倍率。
-4. 使大部分验收运行抵达 L5，且超过一半进入 Ending；层级 Boss 仅作对应一至五转量级的数值匹配考验，不作硬性 cultivation gate。
-5. 统一 V1 battle 与 `EssenceCapacity` 的 essence/capacity 公式。
-6. 修复全量验证遗留：Dialogue Manager invalid UID、`resolver.gd` 行数门限、`test_moonlight_full_route.gd` 的 L1 Boss 失败，以及完整测试进程残余 ObjectDB/RID/resource 泄漏。
-7. 最终运行并通过 `tools/test.ps1 -Suite unit`、`tools/test.ps1 -Suite integration`、`tools/check.ps1`。
-8. 提交时继续排除 `.claude/`、未经验证的 `data/enemies.json` 和无关的 `data/dialogues/events.dialogue` 本地修改。
+1. 架构重构主计划已定稿：`docs/superpowers/plans/2026-09-05-architecture-refactor-master-plan.md`（视觉先行 DAG + 可派发工单 + 用户审订门 U1--U3）。按工单逐张派发执行，完成一项回写一项；工单细节不在本清单重复。
+2. 流派 = 道痕元素体系（用户裁定 2026-09-05）：20+ 道痕各对应一流派（开放集合），蛊虫按流派富含道痕；合炼配方按「流派 + 转阶」表达（例：2转血道蛊 + 2转光道蛊 → 3转血月蛊；1转月光蛊 + 2×1转小光蛊 → 2转月芒蛊）；5 转封顶对应 L1--L5；杀招组合本版推迟、只留数据地基（工单 D3）。
+3. 用户输入依赖：U1 流派清单审订（C1 提炼后）、U2 214 蛊流派映射审订（C2 提议后）、U3 合炼配方源材料（D1 前）。
+4. 冻结清单（不再开发、暂不删除）：F1 恶名、F2 契约、F3 遗物、F4 诅咒、F5 DDA、F6 继承、I1 LLM（仅留接口）；F4 诅咒与合成失败/强弃反噬的既有耦合保持原样。
+5. 验证遗留：`resolver.gd` 行数门限、Dialogue Manager invalid UID、ObjectDB/RID 泄漏；最终 `tools/test.ps1 -Suite unit`、`-Suite integration`、`tools/check.ps1` 全绿（工单 F1 汇总）。
+6. 提交时继续排除 `.claude/`、未经验证的 `data/enemies.json` 和无关的 `data/dialogues/events.dialogue` 本地修改。
 
 ## 技术约定
 

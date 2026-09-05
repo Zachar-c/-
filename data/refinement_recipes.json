@@ -1,2364 +1,4846 @@
 {
-  "recipes": [
-    {
-      "id": "bright_thread_risk",
-      "kind": "combine",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "small_light_gu",
-        "trail_eye_gu"
-      ],
-      "output_gu_id": "pulse_drum_gu",
-      "success_roll_max": 70,
-      "failure": "destroy_inputs",
-      "override_reason": "legacy_random_refine_retired_T10.1-8"
-    },
-    {
-      "id": "slice_bright_thread",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "small_light_gu",
-        "trail_eye_gu"
-      ],
-      "output_gu_id": "pulse_drum_gu",
-      "kill_move_id": "km_bright_thread"
-    },
-    {
-      "id": "moon_glow_fixed",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "moonlight_gu",
-        "small_light_gu",
-        "small_light_gu"
-      ],
-      "output_gu_id": "moon_glow_gu"
-    },
-    {
-      "id": "moon_ray_forged",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "moonlight_gu",
-        "small_light_gu"
-      ],
-      "output_gu_id": "moon_ray_gu",
-      "output_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_attack_009_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_009_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_009_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "blood_moon_forged",
-      "kind": "fixed",
-      "input_gu_ids": [
-        "moon_ray_gu",
-        "gen_blood_attack_009_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_002_gu",
-      "output_rank": 3,
-      "input_min_rank": 2
-    },
-    {
-      "id": "phantom_moon_locked",
-      "kind": "fixed",
-      "locked": true,
-      "requires_legacy_knowledge_id": "phantom_moon_recipe",
-      "input_gu_ids": [
-        "moon_glow_gu",
-        "shadow_veil_gu"
-      ],
-      "output_gu_id": "phantom_moon_gu"
-    },
-    {
-      "id": "moon_shadow_locked",
-      "kind": "fixed",
-      "locked": true,
-      "requires_legacy_knowledge_id": "moon_shadow_recipe",
-      "input_gu_ids": [
-        "moon_glow_gu",
-        "mist_step_gu"
-      ],
-      "output_gu_id": "moon_shadow_gu"
-    },
-    {
-      "id": "free_mix",
-      "kind": "free_mix",
-      "min_inputs": 2,
-      "outcomes": [
-        {
-          "id": "destroyed",
-          "weight": 5,
-          "effect": "destroy_inputs",
-          "event_reason": "free_mix_destroyed",
-          "fail_curse_id": "gu_erosion"
-        },
-        {
-          "id": "mutation_venom",
-          "weight": 4,
-          "effect": "mutate_to",
-          "target_gu_id": "venom_thread_gu",
-          "event_reason": "free_mix_mutation"
-        },
-        {
-          "id": "explosion",
-          "weight": 1,
-          "effect": "explosion",
-          "health_cost": 2,
-          "soul_cost": 1,
-          "lifespan_cost": 1,
-          "event_reason": "free_mix_explosion"
-        }
-      ],
-      "risk_hints": [
-        {
-          "tags": [
-            "poison"
-          ],
-          "text": "炉中隐约腥气，恐催生毒物。"
-        },
-        {
-          "tags": [
-            "moon"
-          ],
-          "text": "炉火间月息浮沉，恐炼出暗夜之物。"
-        }
-      ]
-    },
-    {
-      "id": "advance_small_light_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "small_light_gu"
-      ],
-      "output_gu_id": "small_light_gu",
-      "materials": {
-        "beast_blood": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_thorn_whip_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "thorn_whip_gu"
-      ],
-      "output_gu_id": "thorn_whip_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_stone_shell_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "stone_shell_gu"
-      ],
-      "output_gu_id": "stone_shell_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_moonlight_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "moonlight_gu"
-      ],
-      "output_gu_id": "moonlight_gu",
-      "materials": {
-        "moon_dew": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_blood_moss_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "blood_moss_gu"
-      ],
-      "output_gu_id": "blood_moss_gu",
-      "materials": {
-        "beast_blood": 2
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "stone_shell_bone_forge",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [],
-      "materials": {
-        "beast_bone": 2
-      },
-      "output_gu_id": "stone_shell_gu"
-    },
-    {
-      "id": "white_jade_advance",
-      "kind": "fixed",
-      "input_gu_ids": [
-        "jade_skin_gu",
-        "white_boar_strength_gu"
-      ],
-      "materials": {
-        "boar_king_tusk": 1
-      },
-      "stone_cost": 50,
-      "output_gu_id": "white_jade_gu"
-    },
-    {
-      "id": "moonlight_glow",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "moonlight_gu",
-        "small_light_gu"
-      ],
-      "output_gu_id": "moon_glow_gu"
-    },
-    {
-      "id": "white_jade_basic",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "jade_skin_gu",
-        "white_boar_strength_gu"
-      ],
-      "stone_cost": 50,
-      "output_gu_id": "white_jade_gu"
-    },
-    {
-      "id": "advance_mending_grass_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "mending_grass_gu"
-      ],
-      "output_gu_id": "mending_grass_gu",
-      "materials": {
-        "beast_blood": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_spring_heart_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "spring_heart_gu"
-      ],
-      "output_gu_id": "spring_heart_gu",
-      "materials": {
-        "moon_dew": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "tagged_moon_candidates",
-      "kind": "fixed",
-      "default_unlocked": true,
-      "input_gu_ids": [
-        "moonlight_gu",
-        "small_light_gu"
-      ],
-      "candidate_pool": [
-        "phantom_moon_gu",
-        "moon_shadow_gu"
-      ],
-      "output_gu_id": "phantom_moon_gu"
-    },
-    {
-      "id": "essence_thorn_identity",
-      "kind": "fixed",
-      "input_gu_ids": [
-        "thorn_whip_gu"
-      ],
-      "identity_requirements": {
-        "named_materials": [
-          "venom_sac"
-        ],
-        "named_media": [
-          "kael_fire_medium"
-        ],
-        "min_rank": 2
-      },
-      "allow_substitute": {
-        "materials": {
-          "venom_sac": [
-            "moon_blue_petal"
-          ]
-        },
-        "media": {
-          "kael_fire_medium": [
-            "essence_bead"
-          ]
-        },
-        "cost_change": {
-          "essence": 2
-        }
-      },
-      "output_gu_id": "venom_thread_gu"
-    },
-    {
-      "id": "moon_ray_staged",
-      "kind": "fixed",
-      "input_gu_ids": [
-        "moon_ray_gu"
-      ],
-      "stages": [
-        {
-          "thought": 1,
-          "essence": 1,
-          "duration": 2,
-          "interruptible": true,
-          "failure_condition": "none"
-        },
-        {
-          "thought": 2,
-          "essence": 2,
-          "duration": 1,
-          "interruptible": false
-        }
-      ],
-      "output_gu_id": "phantom_moon_gu"
-    },
-    {
-      "id": "advance_gen_blood_attack_001_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_001_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_001_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_attack_002_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_002_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_002_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_defense_003_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_defense_003_gu"
-      ],
-      "output_gu_id": "gen_blood_defense_003_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_movement_004_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_movement_004_gu"
-      ],
-      "output_gu_id": "gen_blood_movement_004_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_healing_005_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_healing_005_gu"
-      ],
-      "output_gu_id": "gen_blood_healing_005_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_recon_006_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_recon_006_gu"
-      ],
-      "output_gu_id": "gen_blood_recon_006_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_logistics_007_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_logistics_007_gu"
-      ],
-      "output_gu_id": "gen_blood_logistics_007_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_attack_008_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_008_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_008_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_defense_010_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_defense_010_gu"
-      ],
-      "output_gu_id": "gen_blood_defense_010_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_movement_011_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_movement_011_gu"
-      ],
-      "output_gu_id": "gen_blood_movement_011_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_healing_012_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_healing_012_gu"
-      ],
-      "output_gu_id": "gen_blood_healing_012_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_recon_013_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_recon_013_gu"
-      ],
-      "output_gu_id": "gen_blood_recon_013_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_logistics_014_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_logistics_014_gu"
-      ],
-      "output_gu_id": "gen_blood_logistics_014_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_attack_015_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_015_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_015_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_attack_016_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_016_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_016_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_defense_017_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_defense_017_gu"
-      ],
-      "output_gu_id": "gen_blood_defense_017_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_movement_018_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_movement_018_gu"
-      ],
-      "output_gu_id": "gen_blood_movement_018_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_healing_019_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_healing_019_gu"
-      ],
-      "output_gu_id": "gen_blood_healing_019_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_recon_020_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_recon_020_gu"
-      ],
-      "output_gu_id": "gen_blood_recon_020_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_logistics_021_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_logistics_021_gu"
-      ],
-      "output_gu_id": "gen_blood_logistics_021_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_attack_022_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_022_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_022_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_blood_attack_023_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_023_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_023_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_defense_024_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_defense_024_gu"
-      ],
-      "output_gu_id": "gen_blood_defense_024_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_movement_025_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_movement_025_gu"
-      ],
-      "output_gu_id": "gen_blood_movement_025_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_healing_026_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_healing_026_gu"
-      ],
-      "output_gu_id": "gen_blood_healing_026_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_recon_027_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_recon_027_gu"
-      ],
-      "output_gu_id": "gen_blood_recon_027_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_logistics_028_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_logistics_028_gu"
-      ],
-      "output_gu_id": "gen_blood_logistics_028_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_attack_029_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_029_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_029_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_attack_030_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_attack_030_gu"
-      ],
-      "output_gu_id": "gen_blood_attack_030_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_defense_031_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_defense_031_gu"
-      ],
-      "output_gu_id": "gen_blood_defense_031_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_blood_movement_032_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_blood_movement_032_gu"
-      ],
-      "output_gu_id": "gen_blood_movement_032_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_logistics_035_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_logistics_035_gu"
-      ],
-      "output_gu_id": "gen_qi_logistics_035_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_attack_036_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_036_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_036_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_attack_037_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_037_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_037_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_defense_038_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_defense_038_gu"
-      ],
-      "output_gu_id": "gen_qi_defense_038_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_movement_039_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_movement_039_gu"
-      ],
-      "output_gu_id": "gen_qi_movement_039_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_healing_040_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_healing_040_gu"
-      ],
-      "output_gu_id": "gen_qi_healing_040_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_recon_041_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_recon_041_gu"
-      ],
-      "output_gu_id": "gen_qi_recon_041_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_logistics_042_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_logistics_042_gu"
-      ],
-      "output_gu_id": "gen_qi_logistics_042_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_attack_043_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_043_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_043_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_attack_044_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_044_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_044_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_defense_045_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_defense_045_gu"
-      ],
-      "output_gu_id": "gen_qi_defense_045_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_movement_046_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_movement_046_gu"
-      ],
-      "output_gu_id": "gen_qi_movement_046_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_healing_047_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_healing_047_gu"
-      ],
-      "output_gu_id": "gen_qi_healing_047_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_recon_048_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_recon_048_gu"
-      ],
-      "output_gu_id": "gen_qi_recon_048_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_logistics_049_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_logistics_049_gu"
-      ],
-      "output_gu_id": "gen_qi_logistics_049_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_attack_050_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_050_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_050_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_attack_051_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_051_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_051_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_defense_052_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_defense_052_gu"
-      ],
-      "output_gu_id": "gen_qi_defense_052_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_movement_053_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_movement_053_gu"
-      ],
-      "output_gu_id": "gen_qi_movement_053_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_qi_healing_054_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_healing_054_gu"
-      ],
-      "output_gu_id": "gen_qi_healing_054_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_recon_055_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_recon_055_gu"
-      ],
-      "output_gu_id": "gen_qi_recon_055_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_logistics_056_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_logistics_056_gu"
-      ],
-      "output_gu_id": "gen_qi_logistics_056_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_attack_057_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_057_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_057_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_attack_058_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_058_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_058_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_defense_059_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_defense_059_gu"
-      ],
-      "output_gu_id": "gen_qi_defense_059_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_movement_060_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_movement_060_gu"
-      ],
-      "output_gu_id": "gen_qi_movement_060_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_healing_061_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_healing_061_gu"
-      ],
-      "output_gu_id": "gen_qi_healing_061_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_recon_062_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_recon_062_gu"
-      ],
-      "output_gu_id": "gen_qi_recon_062_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_logistics_063_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_logistics_063_gu"
-      ],
-      "output_gu_id": "gen_qi_logistics_063_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_qi_attack_064_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_qi_attack_064_gu"
-      ],
-      "output_gu_id": "gen_qi_attack_064_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_healing_068_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_healing_068_gu"
-      ],
-      "output_gu_id": "gen_force_healing_068_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_recon_069_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_recon_069_gu"
-      ],
-      "output_gu_id": "gen_force_recon_069_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_logistics_070_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_logistics_070_gu"
-      ],
-      "output_gu_id": "gen_force_logistics_070_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_attack_071_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_071_gu"
-      ],
-      "output_gu_id": "gen_force_attack_071_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_attack_072_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_072_gu"
-      ],
-      "output_gu_id": "gen_force_attack_072_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_defense_073_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_defense_073_gu"
-      ],
-      "output_gu_id": "gen_force_defense_073_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_movement_074_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_movement_074_gu"
-      ],
-      "output_gu_id": "gen_force_movement_074_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_healing_075_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_healing_075_gu"
-      ],
-      "output_gu_id": "gen_force_healing_075_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_recon_076_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_recon_076_gu"
-      ],
-      "output_gu_id": "gen_force_recon_076_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_logistics_077_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_logistics_077_gu"
-      ],
-      "output_gu_id": "gen_force_logistics_077_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_attack_078_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_078_gu"
-      ],
-      "output_gu_id": "gen_force_attack_078_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_attack_079_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_079_gu"
-      ],
-      "output_gu_id": "gen_force_attack_079_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_defense_080_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_defense_080_gu"
-      ],
-      "output_gu_id": "gen_force_defense_080_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_movement_081_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_movement_081_gu"
-      ],
-      "output_gu_id": "gen_force_movement_081_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_healing_082_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_healing_082_gu"
-      ],
-      "output_gu_id": "gen_force_healing_082_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_recon_083_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_recon_083_gu"
-      ],
-      "output_gu_id": "gen_force_recon_083_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_logistics_084_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_logistics_084_gu"
-      ],
-      "output_gu_id": "gen_force_logistics_084_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_attack_085_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_085_gu"
-      ],
-      "output_gu_id": "gen_force_attack_085_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_attack_086_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_086_gu"
-      ],
-      "output_gu_id": "gen_force_attack_086_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_defense_087_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_defense_087_gu"
-      ],
-      "output_gu_id": "gen_force_defense_087_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_movement_088_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_movement_088_gu"
-      ],
-      "output_gu_id": "gen_force_movement_088_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_force_healing_089_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_healing_089_gu"
-      ],
-      "output_gu_id": "gen_force_healing_089_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_recon_090_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_recon_090_gu"
-      ],
-      "output_gu_id": "gen_force_recon_090_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_logistics_091_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_logistics_091_gu"
-      ],
-      "output_gu_id": "gen_force_logistics_091_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_attack_092_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_092_gu"
-      ],
-      "output_gu_id": "gen_force_attack_092_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_attack_093_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_attack_093_gu"
-      ],
-      "output_gu_id": "gen_force_attack_093_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_defense_094_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_defense_094_gu"
-      ],
-      "output_gu_id": "gen_force_defense_094_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_movement_095_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_movement_095_gu"
-      ],
-      "output_gu_id": "gen_force_movement_095_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_healing_096_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_healing_096_gu"
-      ],
-      "output_gu_id": "gen_force_healing_096_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_force_recon_097_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_force_recon_097_gu"
-      ],
-      "output_gu_id": "gen_force_recon_097_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_defense_101_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_defense_101_gu"
-      ],
-      "output_gu_id": "gen_soul_defense_101_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_movement_102_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_movement_102_gu"
-      ],
-      "output_gu_id": "gen_soul_movement_102_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_healing_103_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_healing_103_gu"
-      ],
-      "output_gu_id": "gen_soul_healing_103_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_recon_104_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_recon_104_gu"
-      ],
-      "output_gu_id": "gen_soul_recon_104_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_logistics_105_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_logistics_105_gu"
-      ],
-      "output_gu_id": "gen_soul_logistics_105_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_attack_106_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_106_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_106_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_attack_107_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_107_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_107_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_defense_108_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_defense_108_gu"
-      ],
-      "output_gu_id": "gen_soul_defense_108_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_movement_109_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_movement_109_gu"
-      ],
-      "output_gu_id": "gen_soul_movement_109_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_healing_110_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_healing_110_gu"
-      ],
-      "output_gu_id": "gen_soul_healing_110_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_recon_111_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_recon_111_gu"
-      ],
-      "output_gu_id": "gen_soul_recon_111_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_logistics_112_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_logistics_112_gu"
-      ],
-      "output_gu_id": "gen_soul_logistics_112_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_attack_113_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_113_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_113_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_attack_114_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_114_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_114_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_defense_115_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_defense_115_gu"
-      ],
-      "output_gu_id": "gen_soul_defense_115_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_movement_116_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_movement_116_gu"
-      ],
-      "output_gu_id": "gen_soul_movement_116_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_healing_117_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_healing_117_gu"
-      ],
-      "output_gu_id": "gen_soul_healing_117_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_recon_118_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_recon_118_gu"
-      ],
-      "output_gu_id": "gen_soul_recon_118_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_logistics_119_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_logistics_119_gu"
-      ],
-      "output_gu_id": "gen_soul_logistics_119_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_attack_120_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_120_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_120_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_attack_121_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_121_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_121_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_defense_122_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_defense_122_gu"
-      ],
-      "output_gu_id": "gen_soul_defense_122_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_movement_123_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_movement_123_gu"
-      ],
-      "output_gu_id": "gen_soul_movement_123_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_healing_124_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_healing_124_gu"
-      ],
-      "output_gu_id": "gen_soul_healing_124_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_soul_recon_125_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_recon_125_gu"
-      ],
-      "output_gu_id": "gen_soul_recon_125_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_logistics_126_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_logistics_126_gu"
-      ],
-      "output_gu_id": "gen_soul_logistics_126_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_attack_127_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_127_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_127_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_attack_128_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_128_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_128_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_defense_129_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_defense_129_gu"
-      ],
-      "output_gu_id": "gen_soul_defense_129_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_movement_130_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_movement_130_gu"
-      ],
-      "output_gu_id": "gen_soul_movement_130_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_healing_131_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_healing_131_gu"
-      ],
-      "output_gu_id": "gen_soul_healing_131_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_recon_132_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_recon_132_gu"
-      ],
-      "output_gu_id": "gen_soul_recon_132_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_logistics_133_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_logistics_133_gu"
-      ],
-      "output_gu_id": "gen_soul_logistics_133_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_attack_134_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_134_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_134_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_attack_135_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_attack_135_gu"
-      ],
-      "output_gu_id": "gen_soul_attack_135_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_soul_defense_136_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_soul_defense_136_gu"
-      ],
-      "output_gu_id": "gen_soul_defense_136_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_attack_141_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_141_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_141_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_142_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_142_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_142_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_defense_143_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_defense_143_gu"
-      ],
-      "output_gu_id": "gen_refine_defense_143_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_movement_144_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_movement_144_gu"
-      ],
-      "output_gu_id": "gen_refine_movement_144_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_healing_145_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_healing_145_gu"
-      ],
-      "output_gu_id": "gen_refine_healing_145_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_recon_146_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_recon_146_gu"
-      ],
-      "output_gu_id": "gen_refine_recon_146_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_logistics_147_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_logistics_147_gu"
-      ],
-      "output_gu_id": "gen_refine_logistics_147_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_148_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_148_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_148_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_149_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_149_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_149_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_defense_150_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_defense_150_gu"
-      ],
-      "output_gu_id": "gen_refine_defense_150_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_movement_151_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_movement_151_gu"
-      ],
-      "output_gu_id": "gen_refine_movement_151_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_healing_152_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_healing_152_gu"
-      ],
-      "output_gu_id": "gen_refine_healing_152_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_recon_153_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_recon_153_gu"
-      ],
-      "output_gu_id": "gen_refine_recon_153_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_logistics_154_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_logistics_154_gu"
-      ],
-      "output_gu_id": "gen_refine_logistics_154_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_155_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_155_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_155_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_156_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_156_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_156_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_defense_157_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_defense_157_gu"
-      ],
-      "output_gu_id": "gen_refine_defense_157_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_movement_158_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_movement_158_gu"
-      ],
-      "output_gu_id": "gen_refine_movement_158_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_healing_159_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_healing_159_gu"
-      ],
-      "output_gu_id": "gen_refine_healing_159_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_recon_160_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_recon_160_gu"
-      ],
-      "output_gu_id": "gen_refine_recon_160_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_logistics_161_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_logistics_161_gu"
-      ],
-      "output_gu_id": "gen_refine_logistics_161_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_162_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_162_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_162_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_attack_163_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_163_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_163_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_defense_164_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_defense_164_gu"
-      ],
-      "output_gu_id": "gen_refine_defense_164_gu",
-      "materials": {
-        "beast_bone": 1
-      },
-      "stone_cost": 6
-    },
-    {
-      "id": "advance_gen_refine_movement_165_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_movement_165_gu"
-      ],
-      "output_gu_id": "gen_refine_movement_165_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_healing_166_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_healing_166_gu"
-      ],
-      "output_gu_id": "gen_refine_healing_166_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_recon_167_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_recon_167_gu"
-      ],
-      "output_gu_id": "gen_refine_recon_167_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_logistics_168_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_logistics_168_gu"
-      ],
-      "output_gu_id": "gen_refine_logistics_168_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_attack_169_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_169_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_169_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_attack_170_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_170_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_170_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_defense_171_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_defense_171_gu"
-      ],
-      "output_gu_id": "gen_refine_defense_171_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_movement_172_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_movement_172_gu"
-      ],
-      "output_gu_id": "gen_refine_movement_172_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_healing_173_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_healing_173_gu"
-      ],
-      "output_gu_id": "gen_refine_healing_173_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_recon_174_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_recon_174_gu"
-      ],
-      "output_gu_id": "gen_refine_recon_174_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_logistics_175_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_logistics_175_gu"
-      ],
-      "output_gu_id": "gen_refine_logistics_175_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
-    },
-    {
-      "id": "advance_gen_refine_attack_176_gu",
-      "kind": "advance",
-      "input_gu_ids": [
-        "gen_refine_attack_176_gu"
-      ],
-      "output_gu_id": "gen_refine_attack_176_gu",
-      "materials": {
-        "beast_bone": 2
-      },
-      "stone_cost": 10,
-      "input_min_rank": 2
+ "recipes": [
+  {
+   "id": "moon_glow_fixed",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moonlight_gu",
+    "small_light_gu",
+    "small_light_gu"
+   ],
+   "output_gu_id": "moon_glow_gu"
+  },
+  {
+   "id": "moon_ray_forged",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moonlight_gu",
+    "small_light_gu"
+   ],
+   "output_gu_id": "moon_ray_gu",
+   "output_rank": 2
+  },
+  {
+   "id": "advance_small_light_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "small_light_gu"
+   ],
+   "output_gu_id": "small_light_gu",
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_stone_shell_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "stone_shell_gu"
+   ],
+   "output_gu_id": "stone_shell_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_moonlight_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "moonlight_gu"
+   ],
+   "output_gu_id": "moonlight_gu",
+   "materials": {
+    "moon_dew": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "stone_shell_bone_forge",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [],
+   "materials": {
+    "beast_bone": 2
+   },
+   "output_gu_id": "stone_shell_gu"
+  },
+  {
+   "id": "white_jade_advance",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "jade_skin_gu",
+    "white_boar_strength_gu"
+   ],
+   "materials": {
+    "boar_king_tusk": 1
+   },
+   "stone_cost": 50,
+   "output_gu_id": "white_jade_gu"
+  },
+  {
+   "id": "moonlight_glow",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moonlight_gu",
+    "small_light_gu"
+   ],
+   "output_gu_id": "moon_glow_gu"
+  },
+  {
+   "id": "white_jade_basic",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "jade_skin_gu",
+    "white_boar_strength_gu"
+   ],
+   "stone_cost": 50,
+   "output_gu_id": "white_jade_gu"
+  },
+  {
+   "id": "advance_moon_glow_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "moon_glow_gu"
+   ],
+   "output_gu_id": "moon_glow_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_moon_ray_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "moon_ray_gu"
+   ],
+   "output_gu_id": "moon_ray_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_vitality_grass_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "vitality_grass_gu"
+   ],
+   "output_gu_id": "vitality_grass_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_gu"
+   ],
+   "output_gu_id": "force_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bear_strength_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bear_strength_gu"
+   ],
+   "output_gu_id": "bear_strength_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_white_boar_strength_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "white_boar_strength_gu"
+   ],
+   "output_gu_id": "white_boar_strength_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_jade_skin_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "jade_skin_gu"
+   ],
+   "output_gu_id": "jade_skin_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_white_jade_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "white_jade_gu"
+   ],
+   "output_gu_id": "white_jade_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_farewell_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_farewell_gu"
+   ],
+   "output_gu_id": "blood_farewell_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_droplet_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_droplet_gu"
+   ],
+   "output_gu_id": "blood_droplet_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_bat_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_bat_gu"
+   ],
+   "output_gu_id": "blood_bat_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_08_gu"
+   ],
+   "output_gu_id": "blood_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_16_gu"
+   ],
+   "output_gu_id": "blood_atk_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_17_gu"
+   ],
+   "output_gu_id": "blood_atk_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_18_gu"
+   ],
+   "output_gu_id": "blood_atk_1_18_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_19_gu"
+   ],
+   "output_gu_id": "blood_atk_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_20_gu"
+   ],
+   "output_gu_id": "blood_atk_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_def_1_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_def_1_21_gu"
+   ],
+   "output_gu_id": "blood_def_1_21_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_mov_1_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_mov_1_22_gu"
+   ],
+   "output_gu_id": "blood_mov_1_22_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_heal_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_heal_2_23_gu"
+   ],
+   "output_gu_id": "blood_heal_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_rec_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_rec_2_24_gu"
+   ],
+   "output_gu_id": "blood_rec_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_mov_1_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_mov_1_29_gu"
+   ],
+   "output_gu_id": "blood_mov_1_29_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_heal_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_heal_2_30_gu"
+   ],
+   "output_gu_id": "blood_heal_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_rec_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_rec_2_31_gu"
+   ],
+   "output_gu_id": "blood_rec_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_mov_1_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_mov_1_36_gu"
+   ],
+   "output_gu_id": "blood_mov_1_36_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_heal_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_heal_2_37_gu"
+   ],
+   "output_gu_id": "blood_heal_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_def_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_def_1_06_gu"
+   ],
+   "output_gu_id": "bone_def_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_def_2_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_def_2_07_gu"
+   ],
+   "output_gu_id": "bone_def_2_07_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_1_08_gu"
+   ],
+   "output_gu_id": "bone_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_1_09_gu"
+   ],
+   "output_gu_id": "bone_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_def_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_def_1_10_gu"
+   ],
+   "output_gu_id": "bone_def_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_mov_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_mov_1_11_gu"
+   ],
+   "output_gu_id": "bone_mov_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_heal_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_heal_1_12_gu"
+   ],
+   "output_gu_id": "bone_heal_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_rec_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_13_gu"
+   ],
+   "output_gu_id": "bone_rec_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_14_gu"
+   ],
+   "output_gu_id": "bone_log_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_15_gu"
+   ],
+   "output_gu_id": "bone_atk_2_15_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_20_gu"
+   ],
+   "output_gu_id": "bone_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_21_gu"
+   ],
+   "output_gu_id": "bone_log_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_22_gu"
+   ],
+   "output_gu_id": "bone_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_rec_1_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_27_gu"
+   ],
+   "output_gu_id": "bone_rec_1_27_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_28_gu"
+   ],
+   "output_gu_id": "bone_log_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_29_gu"
+   ],
+   "output_gu_id": "bone_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_rec_1_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_34_gu"
+   ],
+   "output_gu_id": "bone_rec_1_34_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_35_gu"
+   ],
+   "output_gu_id": "bone_log_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_36_gu"
+   ],
+   "output_gu_id": "bone_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_04_gu"
+   ],
+   "output_gu_id": "dream_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_05_gu"
+   ],
+   "output_gu_id": "dream_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_08_gu"
+   ],
+   "output_gu_id": "dream_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_09_gu"
+   ],
+   "output_gu_id": "dream_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_def_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_def_1_10_gu"
+   ],
+   "output_gu_id": "dream_def_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_mov_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_mov_1_11_gu"
+   ],
+   "output_gu_id": "dream_mov_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_heal_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_12_gu"
+   ],
+   "output_gu_id": "dream_heal_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_13_gu"
+   ],
+   "output_gu_id": "dream_rec_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_14_gu"
+   ],
+   "output_gu_id": "dream_log_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_19_gu"
+   ],
+   "output_gu_id": "dream_heal_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_20_gu"
+   ],
+   "output_gu_id": "dream_rec_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_21_gu"
+   ],
+   "output_gu_id": "dream_log_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_26_gu"
+   ],
+   "output_gu_id": "dream_heal_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_27_gu"
+   ],
+   "output_gu_id": "dream_rec_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_28_gu"
+   ],
+   "output_gu_id": "dream_log_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_33_gu"
+   ],
+   "output_gu_id": "dream_heal_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_34_gu"
+   ],
+   "output_gu_id": "dream_rec_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_35_gu"
+   ],
+   "output_gu_id": "dream_log_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_40_gu"
+   ],
+   "output_gu_id": "dream_heal_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_04_gu"
+   ],
+   "output_gu_id": "earth_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_05_gu"
+   ],
+   "output_gu_id": "earth_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_06_gu"
+   ],
+   "output_gu_id": "earth_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_07_gu"
+   ],
+   "output_gu_id": "earth_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_def_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_def_1_08_gu"
+   ],
+   "output_gu_id": "earth_def_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_mov_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_mov_1_09_gu"
+   ],
+   "output_gu_id": "earth_mov_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_heal_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_10_gu"
+   ],
+   "output_gu_id": "earth_heal_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_11_gu"
+   ],
+   "output_gu_id": "earth_rec_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_12_gu"
+   ],
+   "output_gu_id": "earth_log_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_heal_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_17_gu"
+   ],
+   "output_gu_id": "earth_heal_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_18_gu"
+   ],
+   "output_gu_id": "earth_rec_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_19_gu"
+   ],
+   "output_gu_id": "earth_log_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_heal_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_24_gu"
+   ],
+   "output_gu_id": "earth_heal_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_25_gu"
+   ],
+   "output_gu_id": "earth_rec_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_26_gu"
+   ],
+   "output_gu_id": "earth_log_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_heal_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_31_gu"
+   ],
+   "output_gu_id": "earth_heal_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_32_gu"
+   ],
+   "output_gu_id": "earth_rec_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_33_gu"
+   ],
+   "output_gu_id": "earth_log_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_01_gu"
+   ],
+   "output_gu_id": "fire_atk_2_01_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_1_04_gu"
+   ],
+   "output_gu_id": "fire_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_1_08_gu"
+   ],
+   "output_gu_id": "fire_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_1_09_gu"
+   ],
+   "output_gu_id": "fire_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_def_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_def_1_10_gu"
+   ],
+   "output_gu_id": "fire_def_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_mov_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_mov_1_11_gu"
+   ],
+   "output_gu_id": "fire_mov_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_heal_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_heal_1_12_gu"
+   ],
+   "output_gu_id": "fire_heal_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_rec_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_13_gu"
+   ],
+   "output_gu_id": "fire_rec_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_14_gu"
+   ],
+   "output_gu_id": "fire_log_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_15_gu"
+   ],
+   "output_gu_id": "fire_atk_2_15_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_20_gu"
+   ],
+   "output_gu_id": "fire_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_21_gu"
+   ],
+   "output_gu_id": "fire_log_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_22_gu"
+   ],
+   "output_gu_id": "fire_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_rec_1_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_27_gu"
+   ],
+   "output_gu_id": "fire_rec_1_27_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_28_gu"
+   ],
+   "output_gu_id": "fire_log_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_29_gu"
+   ],
+   "output_gu_id": "fire_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_rec_1_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_34_gu"
+   ],
+   "output_gu_id": "fire_rec_1_34_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_35_gu"
+   ],
+   "output_gu_id": "fire_log_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_36_gu"
+   ],
+   "output_gu_id": "fire_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_force_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_05_gu"
+   ],
+   "output_gu_id": "force_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_2_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_2_06_gu"
+   ],
+   "output_gu_id": "force_atk_2_06_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_force_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_09_gu"
+   ],
+   "output_gu_id": "force_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_12_gu"
+   ],
+   "output_gu_id": "force_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_13_gu"
+   ],
+   "output_gu_id": "force_atk_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_14_gu"
+   ],
+   "output_gu_id": "force_atk_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_15_gu"
+   ],
+   "output_gu_id": "force_atk_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_24_gu"
+   ],
+   "output_gu_id": "force_atk_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_31_gu"
+   ],
+   "output_gu_id": "force_atk_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_32_gu"
+   ],
+   "output_gu_id": "force_atk_1_32_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_2_33_gu"
+   ],
+   "output_gu_id": "force_atk_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_force_atk_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_2_34_gu"
+   ],
+   "output_gu_id": "force_atk_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_def_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_def_1_07_gu"
+   ],
+   "output_gu_id": "gold_def_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_atk_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_11_gu"
+   ],
+   "output_gu_id": "gold_atk_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_12_gu"
+   ],
+   "output_gu_id": "gold_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_16_gu"
+   ],
+   "output_gu_id": "gold_atk_2_16_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_19_gu"
+   ],
+   "output_gu_id": "gold_atk_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_1_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_1_21_gu"
+   ],
+   "output_gu_id": "gold_atk_1_21_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_atk_1_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_1_22_gu"
+   ],
+   "output_gu_id": "gold_atk_1_22_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_def_1_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_def_1_23_gu"
+   ],
+   "output_gu_id": "gold_def_1_23_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_mov_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_mov_1_24_gu"
+   ],
+   "output_gu_id": "gold_mov_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_heal_1_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_heal_1_25_gu"
+   ],
+   "output_gu_id": "gold_heal_1_25_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_rec_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_rec_1_26_gu"
+   ],
+   "output_gu_id": "gold_rec_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_log_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_log_2_27_gu"
+   ],
+   "output_gu_id": "gold_log_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_28_gu"
+   ],
+   "output_gu_id": "gold_atk_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_rec_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_rec_1_33_gu"
+   ],
+   "output_gu_id": "gold_rec_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_log_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_log_2_34_gu"
+   ],
+   "output_gu_id": "gold_log_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_35_gu"
+   ],
+   "output_gu_id": "gold_atk_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_rec_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_rec_1_40_gu"
+   ],
+   "output_gu_id": "gold_rec_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_11_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_12_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_15_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_16_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_def_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_def_1_17_gu"
+   ],
+   "output_gu_id": "heaven_def_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_mov_1_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_mov_1_18_gu"
+   ],
+   "output_gu_id": "heaven_mov_1_18_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_heal_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_heal_1_19_gu"
+   ],
+   "output_gu_id": "heaven_heal_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_rec_1_20_gu"
+   ],
+   "output_gu_id": "heaven_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_log_1_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_log_1_21_gu"
+   ],
+   "output_gu_id": "heaven_log_1_21_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_22_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_atk_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_23_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_log_1_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_log_1_28_gu"
+   ],
+   "output_gu_id": "heaven_log_1_28_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_29_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_atk_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_30_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_log_1_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_log_1_35_gu"
+   ],
+   "output_gu_id": "heaven_log_1_35_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_36_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_atk_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_37_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_01_gu"
+   ],
+   "output_gu_id": "human_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_rec_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_rec_1_03_gu"
+   ],
+   "output_gu_id": "human_rec_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_04_gu"
+   ],
+   "output_gu_id": "human_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_def_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_def_1_06_gu"
+   ],
+   "output_gu_id": "human_def_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_07_gu"
+   ],
+   "output_gu_id": "human_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_08_gu"
+   ],
+   "output_gu_id": "human_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_12_gu"
+   ],
+   "output_gu_id": "human_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_13_gu"
+   ],
+   "output_gu_id": "human_atk_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_14_gu"
+   ],
+   "output_gu_id": "human_atk_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_20_gu"
+   ],
+   "output_gu_id": "human_atk_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_22_gu"
+   ],
+   "output_gu_id": "human_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_23_gu"
+   ],
+   "output_gu_id": "human_atk_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_1_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_28_gu"
+   ],
+   "output_gu_id": "human_atk_1_28_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_29_gu"
+   ],
+   "output_gu_id": "human_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_30_gu"
+   ],
+   "output_gu_id": "human_atk_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_def_1_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_def_1_32_gu"
+   ],
+   "output_gu_id": "human_def_1_32_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_38_gu"
+   ],
+   "output_gu_id": "human_atk_1_38_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_01_gu"
+   ],
+   "output_gu_id": "light_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_04_gu"
+   ],
+   "output_gu_id": "light_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_06_gu"
+   ],
+   "output_gu_id": "light_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_rec_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_1_10_gu"
+   ],
+   "output_gu_id": "light_rec_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_13_gu"
+   ],
+   "output_gu_id": "light_atk_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_14_gu"
+   ],
+   "output_gu_id": "light_atk_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_def_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_def_1_15_gu"
+   ],
+   "output_gu_id": "light_def_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_mov_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_mov_1_16_gu"
+   ],
+   "output_gu_id": "light_mov_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_heal_2_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_heal_2_17_gu"
+   ],
+   "output_gu_id": "light_heal_2_17_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_rec_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_2_18_gu"
+   ],
+   "output_gu_id": "light_rec_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_mov_1_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_mov_1_23_gu"
+   ],
+   "output_gu_id": "light_mov_1_23_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_heal_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_heal_2_24_gu"
+   ],
+   "output_gu_id": "light_heal_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_rec_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_2_25_gu"
+   ],
+   "output_gu_id": "light_rec_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_mov_1_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_mov_1_30_gu"
+   ],
+   "output_gu_id": "light_mov_1_30_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_heal_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_heal_2_31_gu"
+   ],
+   "output_gu_id": "light_heal_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_rec_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_2_32_gu"
+   ],
+   "output_gu_id": "light_rec_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_atk_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_03_gu"
+   ],
+   "output_gu_id": "luck_atk_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_06_gu"
+   ],
+   "output_gu_id": "luck_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_07_gu"
+   ],
+   "output_gu_id": "luck_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_08_gu"
+   ],
+   "output_gu_id": "luck_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_09_gu"
+   ],
+   "output_gu_id": "luck_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_10_gu"
+   ],
+   "output_gu_id": "luck_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_def_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_def_1_11_gu"
+   ],
+   "output_gu_id": "luck_def_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_mov_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_12_gu"
+   ],
+   "output_gu_id": "luck_mov_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_13_gu"
+   ],
+   "output_gu_id": "luck_heal_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_14_gu"
+   ],
+   "output_gu_id": "luck_rec_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_19_gu"
+   ],
+   "output_gu_id": "luck_mov_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_20_gu"
+   ],
+   "output_gu_id": "luck_heal_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_21_gu"
+   ],
+   "output_gu_id": "luck_rec_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_26_gu"
+   ],
+   "output_gu_id": "luck_mov_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_27_gu"
+   ],
+   "output_gu_id": "luck_heal_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_28_gu"
+   ],
+   "output_gu_id": "luck_rec_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_33_gu"
+   ],
+   "output_gu_id": "luck_mov_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_34_gu"
+   ],
+   "output_gu_id": "luck_heal_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_35_gu"
+   ],
+   "output_gu_id": "luck_rec_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_40_gu"
+   ],
+   "output_gu_id": "luck_mov_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_01_gu"
+   ],
+   "output_gu_id": "qi_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_04_gu"
+   ],
+   "output_gu_id": "qi_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_mov_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_07_gu"
+   ],
+   "output_gu_id": "qi_mov_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_09_gu"
+   ],
+   "output_gu_id": "qi_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_10_gu"
+   ],
+   "output_gu_id": "qi_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_def_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_def_1_11_gu"
+   ],
+   "output_gu_id": "qi_def_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_mov_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_12_gu"
+   ],
+   "output_gu_id": "qi_mov_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_13_gu"
+   ],
+   "output_gu_id": "qi_heal_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_14_gu"
+   ],
+   "output_gu_id": "qi_rec_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_mov_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_19_gu"
+   ],
+   "output_gu_id": "qi_mov_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_20_gu"
+   ],
+   "output_gu_id": "qi_heal_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_21_gu"
+   ],
+   "output_gu_id": "qi_rec_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_mov_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_26_gu"
+   ],
+   "output_gu_id": "qi_mov_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_27_gu"
+   ],
+   "output_gu_id": "qi_heal_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_28_gu"
+   ],
+   "output_gu_id": "qi_rec_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_mov_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_33_gu"
+   ],
+   "output_gu_id": "qi_mov_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_34_gu"
+   ],
+   "output_gu_id": "qi_heal_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_35_gu"
+   ],
+   "output_gu_id": "qi_rec_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_03_gu"
+   ],
+   "output_gu_id": "refine_log_2_03_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_04_gu"
+   ],
+   "output_gu_id": "refine_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_log_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_1_06_gu"
+   ],
+   "output_gu_id": "refine_log_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_08_gu"
+   ],
+   "output_gu_id": "refine_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_09_gu"
+   ],
+   "output_gu_id": "refine_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_10_gu"
+   ],
+   "output_gu_id": "refine_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_def_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_def_1_11_gu"
+   ],
+   "output_gu_id": "refine_def_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_mov_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_mov_1_12_gu"
+   ],
+   "output_gu_id": "refine_mov_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_heal_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_13_gu"
+   ],
+   "output_gu_id": "refine_heal_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_14_gu"
+   ],
+   "output_gu_id": "refine_rec_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_15_gu"
+   ],
+   "output_gu_id": "refine_log_2_15_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_heal_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_20_gu"
+   ],
+   "output_gu_id": "refine_heal_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_21_gu"
+   ],
+   "output_gu_id": "refine_rec_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_22_gu"
+   ],
+   "output_gu_id": "refine_log_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_heal_1_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_27_gu"
+   ],
+   "output_gu_id": "refine_heal_1_27_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_28_gu"
+   ],
+   "output_gu_id": "refine_rec_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_29_gu"
+   ],
+   "output_gu_id": "refine_log_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_heal_1_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_34_gu"
+   ],
+   "output_gu_id": "refine_heal_1_34_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_35_gu"
+   ],
+   "output_gu_id": "refine_rec_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_36_gu"
+   ],
+   "output_gu_id": "refine_log_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_atk_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_03_gu"
+   ],
+   "output_gu_id": "slave_atk_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_06_gu"
+   ],
+   "output_gu_id": "slave_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_07_gu"
+   ],
+   "output_gu_id": "slave_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_08_gu"
+   ],
+   "output_gu_id": "slave_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_09_gu"
+   ],
+   "output_gu_id": "slave_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_10_gu"
+   ],
+   "output_gu_id": "slave_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_11_gu"
+   ],
+   "output_gu_id": "slave_atk_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_def_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_12_gu"
+   ],
+   "output_gu_id": "slave_def_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_13_gu"
+   ],
+   "output_gu_id": "slave_mov_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_14_gu"
+   ],
+   "output_gu_id": "slave_heal_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_19_gu"
+   ],
+   "output_gu_id": "slave_def_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_20_gu"
+   ],
+   "output_gu_id": "slave_mov_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_21_gu"
+   ],
+   "output_gu_id": "slave_heal_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_26_gu"
+   ],
+   "output_gu_id": "slave_def_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_27_gu"
+   ],
+   "output_gu_id": "slave_mov_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_28_gu"
+   ],
+   "output_gu_id": "slave_heal_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_33_gu"
+   ],
+   "output_gu_id": "slave_def_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_34_gu"
+   ],
+   "output_gu_id": "slave_mov_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_35_gu"
+   ],
+   "output_gu_id": "slave_heal_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_40_gu"
+   ],
+   "output_gu_id": "slave_def_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_02_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_02_gu"
+   ],
+   "output_gu_id": "soul_atk_1_02_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_04_gu"
+   ],
+   "output_gu_id": "soul_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_05_gu"
+   ],
+   "output_gu_id": "soul_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_06_gu"
+   ],
+   "output_gu_id": "soul_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_07_gu"
+   ],
+   "output_gu_id": "soul_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_08_gu"
+   ],
+   "output_gu_id": "soul_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_09_gu"
+   ],
+   "output_gu_id": "soul_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_10_gu"
+   ],
+   "output_gu_id": "soul_def_2_10_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_11_gu"
+   ],
+   "output_gu_id": "soul_mov_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_16_gu"
+   ],
+   "output_gu_id": "soul_atk_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_17_gu"
+   ],
+   "output_gu_id": "soul_def_2_17_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_18_gu"
+   ],
+   "output_gu_id": "soul_mov_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_23_gu"
+   ],
+   "output_gu_id": "soul_atk_1_23_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_24_gu"
+   ],
+   "output_gu_id": "soul_def_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_25_gu"
+   ],
+   "output_gu_id": "soul_mov_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_30_gu"
+   ],
+   "output_gu_id": "soul_atk_1_30_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_31_gu"
+   ],
+   "output_gu_id": "soul_def_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_32_gu"
+   ],
+   "output_gu_id": "soul_mov_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_37_gu"
+   ],
+   "output_gu_id": "soul_atk_1_37_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_38_gu"
+   ],
+   "output_gu_id": "soul_def_2_38_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_39_gu"
+   ],
+   "output_gu_id": "soul_mov_2_39_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_1_05_gu"
+   ],
+   "output_gu_id": "sword_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_1_06_gu"
+   ],
+   "output_gu_id": "sword_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_def_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_def_1_07_gu"
+   ],
+   "output_gu_id": "sword_def_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_mov_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_mov_1_08_gu"
+   ],
+   "output_gu_id": "sword_mov_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_heal_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_heal_1_09_gu"
+   ],
+   "output_gu_id": "sword_heal_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_rec_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_rec_1_10_gu"
+   ],
+   "output_gu_id": "sword_rec_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_log_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_11_gu"
+   ],
+   "output_gu_id": "sword_log_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_12_gu"
+   ],
+   "output_gu_id": "sword_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_13_gu"
+   ],
+   "output_gu_id": "sword_atk_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_18_gu"
+   ],
+   "output_gu_id": "sword_log_1_18_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_19_gu"
+   ],
+   "output_gu_id": "sword_atk_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_20_gu"
+   ],
+   "output_gu_id": "sword_atk_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_25_gu"
+   ],
+   "output_gu_id": "sword_log_1_25_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_26_gu"
+   ],
+   "output_gu_id": "sword_atk_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_27_gu"
+   ],
+   "output_gu_id": "sword_atk_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_32_gu"
+   ],
+   "output_gu_id": "sword_log_1_32_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_33_gu"
+   ],
+   "output_gu_id": "sword_atk_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_34_gu"
+   ],
+   "output_gu_id": "sword_atk_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_39_gu"
+   ],
+   "output_gu_id": "sword_log_1_39_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_40_gu"
+   ],
+   "output_gu_id": "sword_atk_2_40_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_08_gu"
+   ],
+   "output_gu_id": "water_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_12_gu"
+   ],
+   "output_gu_id": "water_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_atk_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_13_gu"
+   ],
+   "output_gu_id": "water_atk_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_atk_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_14_gu"
+   ],
+   "output_gu_id": "water_atk_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_def_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_def_1_15_gu"
+   ],
+   "output_gu_id": "water_def_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_mov_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_mov_1_16_gu"
+   ],
+   "output_gu_id": "water_mov_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_heal_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_17_gu"
+   ],
+   "output_gu_id": "water_heal_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_18_gu"
+   ],
+   "output_gu_id": "water_rec_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_19_gu"
+   ],
+   "output_gu_id": "water_log_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_heal_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_24_gu"
+   ],
+   "output_gu_id": "water_heal_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_25_gu"
+   ],
+   "output_gu_id": "water_rec_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_26_gu"
+   ],
+   "output_gu_id": "water_log_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_heal_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_31_gu"
+   ],
+   "output_gu_id": "water_heal_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_32_gu"
+   ],
+   "output_gu_id": "water_rec_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_33_gu"
+   ],
+   "output_gu_id": "water_log_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_heal_1_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_38_gu"
+   ],
+   "output_gu_id": "water_heal_1_38_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_39_gu"
+   ],
+   "output_gu_id": "water_rec_2_39_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_40_gu"
+   ],
+   "output_gu_id": "water_log_2_40_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_1_02_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_1_02_gu"
+   ],
+   "output_gu_id": "wind_atk_1_02_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_03_gu"
+   ],
+   "output_gu_id": "wind_mov_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_05_gu"
+   ],
+   "output_gu_id": "wind_mov_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_1_07_gu"
+   ],
+   "output_gu_id": "wind_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_08_gu"
+   ],
+   "output_gu_id": "wind_mov_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_09_gu"
+   ],
+   "output_gu_id": "wind_mov_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_1_10_gu"
+   ],
+   "output_gu_id": "wind_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_11_gu"
+   ],
+   "output_gu_id": "wind_atk_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_12_gu"
+   ],
+   "output_gu_id": "wind_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_17_gu"
+   ],
+   "output_gu_id": "wind_log_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_18_gu"
+   ],
+   "output_gu_id": "wind_atk_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_19_gu"
+   ],
+   "output_gu_id": "wind_atk_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_24_gu"
+   ],
+   "output_gu_id": "wind_log_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_25_gu"
+   ],
+   "output_gu_id": "wind_atk_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_26_gu"
+   ],
+   "output_gu_id": "wind_atk_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_31_gu"
+   ],
+   "output_gu_id": "wind_log_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_32_gu"
+   ],
+   "output_gu_id": "wind_atk_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_33_gu"
+   ],
+   "output_gu_id": "wind_atk_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_38_gu"
+   ],
+   "output_gu_id": "wind_log_1_38_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_39_gu"
+   ],
+   "output_gu_id": "wind_atk_2_39_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_40_gu"
+   ],
+   "output_gu_id": "wind_atk_2_40_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_01_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_02_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_02_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_02_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_06_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_07_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_08_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_09_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_10_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_11_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_12_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_rec_1_20_gu"
+   ],
+   "output_gu_id": "wisdom_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_22_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_23_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_log_1_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_log_1_28_gu"
+   ],
+   "output_gu_id": "wisdom_log_1_28_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_29_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_30_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_log_1_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_log_1_35_gu"
+   ],
+   "output_gu_id": "wisdom_log_1_35_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_36_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_37_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_atk_1_05_gu"
+   ],
+   "output_gu_id": "wood_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_def_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_def_1_07_gu"
+   ],
+   "output_gu_id": "wood_def_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_atk_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_atk_1_11_gu"
+   ],
+   "output_gu_id": "wood_atk_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_atk_1_12_gu"
+   ],
+   "output_gu_id": "wood_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_def_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_def_1_13_gu"
+   ],
+   "output_gu_id": "wood_def_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_mov_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_mov_1_14_gu"
+   ],
+   "output_gu_id": "wood_mov_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_heal_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_15_gu"
+   ],
+   "output_gu_id": "wood_heal_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_16_gu"
+   ],
+   "output_gu_id": "wood_rec_2_16_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_17_gu"
+   ],
+   "output_gu_id": "wood_log_2_17_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_heal_1_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_22_gu"
+   ],
+   "output_gu_id": "wood_heal_1_22_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_23_gu"
+   ],
+   "output_gu_id": "wood_rec_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_24_gu"
+   ],
+   "output_gu_id": "wood_log_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_heal_1_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_29_gu"
+   ],
+   "output_gu_id": "wood_heal_1_29_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_30_gu"
+   ],
+   "output_gu_id": "wood_rec_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_31_gu"
+   ],
+   "output_gu_id": "wood_log_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_heal_1_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_36_gu"
+   ],
+   "output_gu_id": "wood_heal_1_36_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_37_gu"
+   ],
+   "output_gu_id": "wood_rec_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_38_gu"
+   ],
+   "output_gu_id": "wood_log_2_38_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "free_mix",
+   "kind": "free_mix",
+   "min_inputs": 2,
+   "outcomes": [
+    {
+     "id": "destroyed",
+     "weight": 5,
+     "effect": "destroy_inputs",
+     "event_reason": "free_mix_destroyed",
+     "fail_curse_id": "gu_erosion"
+    },
+    {
+     "id": "mutation_venom",
+     "weight": 4,
+     "effect": "mutate_to",
+     "target_gu_id": "blood_farewell_gu",
+     "event_reason": "free_mix_mutation"
+    },
+    {
+     "id": "explosion",
+     "weight": 1,
+     "effect": "explosion",
+     "health_cost": 2,
+     "soul_cost": 1,
+     "lifespan_cost": 1,
+     "event_reason": "free_mix_explosion"
     }
-  ],
-  "caravan_offers": [
+   ],
+   "risk_hints": [
     {
-      "id": "caravan_thorn_offer",
-      "kind": "buy",
-      "output_gu_id": "thorn_whip_gu",
-      "stone_cost": 5
+     "tags": [
+      "poison"
+     ],
+     "text": "炉中隐约腥气，恐催生毒物。"
     },
     {
-      "id": "caravan_mist_exchange",
-      "kind": "exchange",
-      "input_gu_ids": [
-        "trail_eye_gu",
-        "stone_shell_gu"
-      ],
-      "output_gu_id": "mist_step_gu",
-      "stone_cost": 0
+     "tags": [
+      "moon"
+     ],
+     "text": "炉火间月息浮沉，恐炼出暗夜之物。"
     }
-  ]
+   ]
+  },
+  {
+   "id": "blood_moon_forged",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "moon_ray_gu",
+    "blood_atk_1_08_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_atk_3_11_gu",
+   "output_rank": 3
+  },
+  {
+   "id": "moon_shadow_locked",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "moon_glow_gu",
+    "qi_mov_1_07_gu"
+   ],
+   "output_gu_id": "moon_shadow_gu",
+   "output_rank": 3
+  }
+ ],
+ "caravan_offers": [
+  {
+   "id": "buy_force_blow",
+   "kind": "buy",
+   "stone_cost": 5,
+   "output_gu_id": "force_gu"
+  },
+  {
+   "id": "buy_droplet",
+   "kind": "buy",
+   "stone_cost": 6,
+   "output_gu_id": "blood_droplet_gu"
+  },
+  {
+   "id": "buy_shell",
+   "kind": "buy",
+   "stone_cost": 5,
+   "output_gu_id": "stone_shell_gu"
+  },
+  {
+   "id": "caravan_mist_exchange",
+   "kind": "exchange",
+   "input_gu_ids": [
+    "small_light_gu",
+    "moonlight_gu"
+   ],
+   "stone_cost": 0,
+   "output_gu_id": "qi_mov_1_07_gu"
+  }
+ ]
 }

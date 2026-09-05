@@ -165,7 +165,7 @@ func test_controller_unknown_dialogue_branch_keeps_encounter_and_unchanged_log()
 func test_travel_to_event_passes_dialogue_title_to_gateway() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
 	controller.start_new_run(101)
-	controller.route = MapGenerator.build(101, true)
+	controller.route = _synthetic_teaching_route()
 	var spy := SpyDialogueGateway.new()
 	controller._dialogue_gateway = spy
 	for node_id in ["ridge_caravan", "cultivation_spring", "flooded_cave"]:
@@ -254,15 +254,36 @@ func test_apply_branch_appends_dialogue_branch_event_on_success() -> void:
 
 
 func _controller_travel_to_echo_cave(controller) -> void:
-	# 2026-09-03 裁定：运行路径已移除教学种子，start_new_run(101) 走生成式地图。
-	# 手写 first_run 路线仅作夹具保留，此处显式注入以便测试对话/遭遇语义。
-	controller.route = MapGenerator.build(101, true)
-	# seed 101 首跑夹具路线 caravan -> cultivation -> hazard -> event，全程无战斗节点。
+	# 节点收窄后（2026-09-06）first_run 骨架不再含 event 模板；对话/遭遇语义
+	# 用本地合成路线夹具保护（模板仍由 nodes.json 提供，域支持不变）。
+	controller.route = _synthetic_teaching_route()
+	# 合成夹具路线 caravan -> cultivation -> hazard -> event，全程无战斗节点。
 	for node_id in ["ridge_caravan", "cultivation_spring", "flooded_cave"]:
 		controller.submit_command({"type": "travel", "node_id": node_id})
 		controller.submit_command({"type": "leave_encounter"})
 	controller.submit_command({"type": "travel", "node_id": "echo_cave"})
 	assert_eq(str(controller.current_node.get("type", "")), "event")
+
+
+## 教学/事件对话测试的本地合成路线：由 nodes.json 模板构成事件链，与地图
+## 生成（pacing/first_run，已收窄为战斗/休息/商店）解耦。
+func _synthetic_teaching_route() -> Array[Dictionary]:
+	var catalog: Dictionary = ContentCatalog.load_all()
+	var by_id := {}
+	for node_value in catalog.get("nodes_data", {}).get("nodes", []):
+		by_id[str((node_value as Dictionary).get("id", ""))] = node_value
+	var order := ["ridge_caravan", "cultivation_spring", "flooded_cave", "echo_cave"]
+	var route: Array[Dictionary] = []
+	for index in order.size():
+		var node: Dictionary = (by_id[order[index]] as Dictionary).duplicate(true)
+		node["start"] = index == 0
+		node["visible"] = index <= 1
+		node["template_id"] = order[index]
+		node["layer"] = 1
+		node["row"] = index
+		node["next_ids"] = [order[index + 1]] if index < order.size() - 1 else []
+		route.append(node)
+	return route
 
 
 # ==== 复审 P1-A/P1-B/P1-C/P2：Dialogue Manager 真实接入 ====

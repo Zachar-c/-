@@ -1,9 +1,9 @@
 extends GutTest
 
 
-func test_catalog_has_twenty_gu_and_three_inheritances() -> void:
+func test_catalog_has_gu_and_three_inheritances() -> void:
 	var catalog := ContentCatalog.load_all()
-	assert_eq(catalog["gu"].size(), 214)
+	assert_eq(catalog["gu"].size(), 802)
 	assert_eq(catalog["inheritances"].size(), 3)
 	assert_eq(ContentCatalog.validate(catalog), [])
 
@@ -14,59 +14,27 @@ func test_catalog_rejects_missing_inheritance_gu_reference() -> void:
 	assert_eq(ContentCatalog.validate(catalog).size(), 1)
 
 
-func test_shipped_synthesis_kill_move_contract_is_explicit() -> void:
+func test_shipped_authored_locked_recipes_declare_output_rank_and_living_gu() -> void:
 	var catalog := ContentCatalog.load_all()
-	var refinement_by_id: Dictionary = catalog.get("refinement_by_id", {})
-	var recipe_value = refinement_by_id.get("slice_bright_thread")
-	assert_true(recipe_value is Dictionary)
-	if not recipe_value is Dictionary:
-		return
-	var recipe: Dictionary = recipe_value
-	var kill_move_id := str(recipe.get("kill_move_id", ""))
-	assert_false(kill_move_id.is_empty())
-	var battle_value = catalog.get("v1_battle")
-	assert_true(battle_value is Dictionary)
-	if not battle_value is Dictionary:
-		return
-	var kill_moves_value = (battle_value as Dictionary).get("kill_moves")
-	assert_true(kill_moves_value is Array)
-	if not kill_moves_value is Array:
-		return
-	var kill_move: Dictionary = {}
-	for value in kill_moves_value:
-		if value is Dictionary and str((value as Dictionary).get("id", "")) == kill_move_id:
-			kill_move = value
-			break
-	assert_false(kill_move.is_empty())
-	var output_gu_id := str(recipe.get("output_gu_id", ""))
-	assert_false(output_gu_id.is_empty())
-	var kill_recipe_value = kill_move.get("recipe", [])
-	assert_true(kill_recipe_value is Array)
-	if not kill_recipe_value is Array:
-		return
-	assert_true((kill_recipe_value as Array).has(output_gu_id))
-	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
-	var output_value = gu_by_id.get(output_gu_id)
-	assert_true(output_value is Dictionary)
-	if not output_value is Dictionary:
-		return
-	var output: Dictionary = output_value
-	var effect_value = output.get("v1_effect")
-	assert_true(effect_value is Dictionary)
-	if not effect_value is Dictionary:
-		return
-	var effect: Dictionary = effect_value
-	assert_true(effect.has("kind"))
+	for rid in ["moon_shadow_locked", "blood_moon_forged"]:
+		var recipe: Dictionary = catalog.get("refinement_by_id", {}).get(rid, {})
+		assert_true(not recipe.is_empty(), rid)
+		if recipe.is_empty():
+			continue
+		assert_true(int(recipe.get("output_rank", 0)) >= 2, rid)
+		assert_true(catalog.get("gu_by_id", {}).has(str(recipe.get("output_gu_id", ""))), rid)
 
 
 func test_validation_rejects_unknown_slice_recipe_input() -> void:
 	var catalog := ContentCatalog.load_all()
-	var refinement_by_id: Dictionary = catalog.get("refinement_by_id",{})
-	var recipe_value = refinement_by_id.get("slice_bright_thread")
-	assert_true(recipe_value is Dictionary)
-	if not recipe_value is Dictionary:
-		return
-	(recipe_value as Dictionary)["input_gu_ids"] = ["missing_input_gu"]
+	(catalog["refinement_recipes"] as Array).append({
+		"id": "_probe_unknown_input", "kind": "fixed",
+		"kill_move_id": "km_probe_unknown_input",
+		"input_gu_ids": ["missing_input_gu"], "output_gu_id": "moon_glow_gu",
+	})
+	((catalog["v1_battle"] as Dictionary)["kill_moves"] as Array).append({
+		"id": "km_probe_unknown_input", "recipe": ["moon_glow_gu"],
+	})
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown input gu"))
 
 
@@ -86,15 +54,15 @@ func test_validation_rejects_unknown_slice_kill_move_effect() -> void:
 
 func test_validation_rejects_invalid_slice_v1_effect() -> void:
 	var catalog := ContentCatalog.load_all()
-	var gu_by_id_value = catalog.get("gu_by_id",{})
-	if not gu_by_id_value is Dictionary:
-		assert_true(false)
-		return
-	var pulse_drum_value = (gu_by_id_value as Dictionary).get("pulse_drum_gu")
-	if not pulse_drum_value is Dictionary:
-		assert_true(false)
-		return
-	(pulse_drum_value as Dictionary)["v1_effect"] = {"kind": "status", "name": "bound", "amount": -1}
+	(catalog["refinement_recipes"] as Array).append({
+		"id": "_probe_bad_effect", "kind": "fixed",
+		"kill_move_id": "km_probe_bad_effect",
+		"input_gu_ids": ["moonlight_gu"], "output_gu_id": "moon_glow_gu",
+	})
+	((catalog["v1_battle"] as Dictionary)["kill_moves"] as Array).append({
+		"id": "km_probe_bad_effect", "recipe": ["moon_glow_gu"],
+	})
+	((catalog["gu_by_id"] as Dictionary)["moon_glow_gu"] as Dictionary)["v1_effect"] = {"kind": "status", "name": "bound", "amount": -1}
 	assert_true(_has_hint(ContentCatalog.validate(catalog), "v1_effect"))
 
 

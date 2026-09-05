@@ -1,13 +1,12 @@
 extends GutTest
 
 
-## 月芒蛊合成链（2026-08-30 用户裁定）：
+## 月芒蛊合成链（2026-08-30 用户裁定；2026-09-06 U3b 重建换锚）：
 ## 一转月光蛊 + 一转小光蛊 -> 二转月芒蛊；
-## 二转月芒蛊 + 二转血气蛊 -> 三转血月蛊。
-## 血气蛊二转走同名 advance 配方。
+## 二转月痕蛊 + 二转血神子蛊 -> 三转血月蛊（血神子蛊二转走同名 advance 配方）。
 
-const BLOOD_QI_GU_ID := "gen_blood_attack_009_gu"
-const BLOOD_MOON_GU_ID := "gen_blood_attack_002_gu"
+const BLOOD_QI_GU_ID := "blood_atk_1_08_gu"
+const BLOOD_MOON_GU_ID := "blood_atk_3_11_gu"
 const MOON_RAY_GU_ID := "moon_ray_gu"
 
 
@@ -72,7 +71,7 @@ func test_blood_qi_gu_advances_to_rank_two() -> void:
 
 	var result := Resolver.apply(run, {
 		"type": "refine_gu",
-		"recipe_id": "advance_gen_blood_attack_009_gu",
+		"recipe_id": "advance_blood_atk_1_08_gu",
 	}, catalog)
 	var refined: RunState = result["state"]
 

@@ -91,7 +91,7 @@ func test_seed_101_first_caravan_shelf_is_synergistic() -> void:
 		var gu_id := str(offer.get("output_gu_id", ""))
 		if not gu_id.is_empty():
 			caravan_gu[gu_id] = true
-	assert_true(caravan_gu.has("thorn_whip_gu"), "商队货架须含刺鞭蛊（力道协同+升阶候选）")
+	assert_true(caravan_gu.has("force_gu"), "商队货架须含力道蛊 force_gu（802 重建后替代刺鞭蛊）")
 
 
 func test_shop_purchases_do_not_advance_pity() -> void:

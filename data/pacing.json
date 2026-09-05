@@ -35,25 +35,9 @@
       },
       "shop_price_pct": 0,
       "shop_max_tier": 1,
-      "anchors": [
-        {
-          "template": "body_imprint_ritual",
-          "row": "mid"
-        },
-        {
-          "template": "stage_one_ledger",
-          "row": "pre_boss"
-        }
-      ],
+      "anchors": [],
       "pool": [
-        "beast_swarm_pass",
-        "toxic_mountain_path",
-        "flooded_cave",
-        "neutral_wanderer",
-        "ridge_market",
-        "village_short_work",
-        "moonlit_trail",
-        "cultivation_spring"
+        "beast_swarm_pass"
       ],
       "title": "青茅山外圍"
     },
@@ -82,27 +66,9 @@
       },
       "shop_price_pct": 10,
       "shop_max_tier": 2,
-      "anchors": [
-        {
-          "template": "ridge_black_market",
-          "row": "mid"
-        },
-        {
-          "template": "refinement_hollow",
-          "row": "mid"
-        }
-      ],
+      "anchors": [],
       "pool": [
-        "refinement_hollow",
-        "beast_swarm_pass",
-        "black_mud_marsh",
-        "flooded_cave",
-        "echo_cave",
-        "blood_moss_grove",
-        "greedy_wanderer",
-        "caravan_missing_goods",
-        "toxic_mountain_path",
-        "neutral_wanderer"
+        "iron_hide_ambush"
       ],
       "title": "落瘴岭"
     },
@@ -131,20 +97,9 @@
       },
       "shop_price_pct": 20,
       "shop_max_tier": 3,
-      "anchors": [
-        {
-          "template": "ridge_black_market",
-          "row": "mid"
-        }
-      ],
+      "anchors": [],
       "pool": [
-        "faction_guard_checkpoint",
-        "black_mud_marsh",
-        "caravan_missing_goods",
-        "greedy_wanderer",
-        "echo_cave",
-        "blood_moss_grove",
-        "herbalist_commission"
+        "scout_crossing_raid"
       ],
       "title": "血蟒涧"
     },
@@ -173,26 +128,9 @@
       },
       "shop_price_pct": 35,
       "shop_max_tier": 4,
-      "anchors": [
-        {
-          "template": "earth_vein_contest",
-          "row": "mid"
-        },
-        {
-          "template": "sealed_earth_vein",
-          "row": "mid"
-        },
-        {
-          "template": "mist_shrine",
-          "row": "mid"
-        }
-      ],
+      "anchors": [],
       "pool": [
-        "faction_guard_checkpoint",
-        "herbalist_commission",
-        "black_mud_marsh",
-        "echo_cave",
-        "greedy_wanderer"
+        "faction_guard_checkpoint"
       ],
       "title": "万蛊窟"
     },
@@ -221,17 +159,9 @@
       },
       "shop_price_pct": 50,
       "shop_max_tier": 5,
-      "anchors": [
-        {
-          "template": "poison_fog_vein",
-          "row": "pre_boss"
-        }
-      ],
+      "anchors": [],
       "pool": [
-        "faction_guard_checkpoint",
-        "black_mud_marsh",
-        "greedy_wanderer",
-        "blood_moss_grove"
+        "wolf_pack_trail"
       ],
       "title": "瘴脉深處"
     }

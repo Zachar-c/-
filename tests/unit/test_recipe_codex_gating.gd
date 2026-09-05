@@ -14,8 +14,8 @@ const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 
-const BLOOD_QI_GU_ID := "gen_blood_attack_009_gu"
-const BLOOD_MOON_GU_ID := "gen_blood_attack_002_gu"
+const BLOOD_QI_GU_ID := "blood_atk_1_08_gu"
+const BLOOD_MOON_GU_ID := "blood_atk_3_11_gu"
 const MOON_RAY_GU_ID := "moon_ray_gu"
 
 
@@ -58,7 +58,7 @@ func test_granted_recipe_enables_synthesis_with_per_recipe_granularity() -> void
 		{"definition_id": MOON_RAY_GU_ID, "rank": 2},
 		{"definition_id": BLOOD_QI_GU_ID, "rank": 2},
 		{"definition_id": "moon_glow_gu", "rank": 2},
-		{"definition_id": "shadow_veil_gu", "rank": 2},
+		{"definition_id": "qi_mov_1_07_gu", "rank": 2},
 	])
 
 	var granted := DebugActionsScript.apply(run, catalog, {"op": "grant_recipe", "recipe_id": "blood_moon_forged"}, true)
@@ -69,8 +69,8 @@ func test_granted_recipe_enables_synthesis_with_per_recipe_granularity() -> void
 	var result := ResolverScript.apply(refined, {"type": "refine_gu", "recipe_id": "blood_moon_forged"}, catalog)
 	assert_true(result["result"]["ok"])
 
-	# 同族锁定配方不因持有别的蛊方而串权：幻月配方仍需其自身的蛊方。
-	var legacy := ResolverScript.apply(result["state"], {"type": "refine_gu", "recipe_id": "phantom_moon_locked"}, catalog)
+	# 同族锁定配方不因持有别的蛊方而串权：月影方仍需其自身的蛊方。
+	var legacy := ResolverScript.apply(result["state"], {"type": "refine_gu", "recipe_id": "moon_shadow_locked"}, catalog)
 	assert_false(legacy["result"]["ok"])
 	assert_eq(legacy["result"]["reason"], "refinement_recipe_locked")
 
@@ -83,7 +83,7 @@ func test_scavenge_grants_all_boss_recipes_once() -> void:
 	var scavenged: RunState = result["state"]
 
 	assert_true(result["result"]["ok"])
-	assert_true(scavenged.global_codex_ids.has("phantom_moon_locked"))
+	assert_true(scavenged.global_codex_ids.has("moon_shadow_locked"))
 	assert_true(scavenged.global_codex_ids.has("blood_moon_forged"))
 	assert_eq(scavenged.event_log.back()["reason"], "scavenge_recipe_unlocked")
 

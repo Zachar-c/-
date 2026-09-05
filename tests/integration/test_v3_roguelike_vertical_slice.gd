@@ -47,7 +47,10 @@ func test_first_vertical_slice_travels_fogged_route_to_boss_and_resets_after_dea
 	controller.start_new_run(101)
 	# R-opening-fairness: school-less runs now inject the wanderer pack on top
 	# of the novice so the guaranteed layer-one combat stays winnable.
-	var expected_pack := ["small_light_gu", "thorn_whip_gu", "stone_shell_gu", "bear_strength_gu", "trail_eye_gu", "mist_step_gu"]
+	# 802 catalog 重建后自拟新包（缚/守/吸/攻/察，全 rank1 可入 V1 槽位）。
+	# refined_gu_ids = RunState 默认 gu_001(small_light_gu) + 注入包（包内
+	# small_light_gu 因已有实例去重跳过，顺序以实例投影为准）。
+	var expected_pack := ["small_light_gu", "blood_farewell_gu", "stone_shell_gu", "blood_bat_gu", "force_gu"]
 	assert_eq(controller.state.refined_gu_ids, expected_pack)
 
 

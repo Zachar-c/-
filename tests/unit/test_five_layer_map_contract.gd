@@ -162,7 +162,9 @@ func test_boss_battle_closes_retreat_for_good() -> void:
 func test_wanderer_pack_injected_when_no_school_picked() -> void:
 	# The controller injects via its private path; here we pin the contract on
 	# RunState directly by replaying what the hall does for school="" runs.
-	var pack := ["thorn_whip_gu", "stone_shell_gu", "bear_strength_gu", "trail_eye_gu", "mist_step_gu"]
+	# 802 catalog 重建后（2026-09-06）：包内五蛊全部存活（blood_farewell/
+	# stone_shell/blood_bat/force/small_light），原 thorn/trail/mist 锚已删。
+	var pack := ["blood_farewell_gu", "stone_shell_gu", "blood_bat_gu", "force_gu", "small_light_gu"]
 	var run := RunState.new_run(101)
 	var index := 0
 	for gu_id in pack:
@@ -175,8 +177,8 @@ func test_wanderer_pack_injected_when_no_school_picked() -> void:
 		}
 		run.cave_aperture["stored_gu_instance_ids"].append(instance_id)
 	run.sync_legacy_gu_projections()
-	# Deck built from wanderer pack + novice covers anti-reaction play:
-	# stone_guard grants the guarded flag, thorn bind grants enemy_bound.
+	# Deck built from wanderer pack + novice covers the guard counter: the
+	# stone_guard card (stone_shell_gu blueprint) grants the guarded flag.
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
 	var definition_ids: Array = []
 	for card in battle.get("deck_cache", []):

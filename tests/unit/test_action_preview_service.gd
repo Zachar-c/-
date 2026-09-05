@@ -21,30 +21,28 @@ func test_exchange_preview_keeps_missing_input_visible_without_mutating_state() 
 	var card := _card(cards, "caravan.exchange.caravan_mist_exchange")
 
 	assert_false(card["executable"])
-	assert_string_contains(str(card["block_reason"]), "寻迹眼蛊")
-	assert_eq(card["cost"]["gu_ids"], ["trail_eye_gu", "stone_shell_gu"])
-	assert_eq(card["expected_gain"], ["获得雾步蛊。"])
+	assert_string_contains(str(card["block_reason"]), "月光蛊")
+	assert_eq(card["cost"]["gu_ids"], ["small_light_gu", "moonlight_gu"])
+	assert_eq(card["expected_gain"], ["获得雾蛊。"])
 	assert_false(card.get("remedy_hints", []).is_empty())
 	assert_eq(state.event_log.size(), before_events)
 	assert_eq(state.refined_gu_ids, ["small_light_gu"])
 
 
-func test_refinement_preview_exposes_recipe_rate_and_destroy_risk() -> void:
+func test_refinement_preview_exposes_recipe_cost_and_gain() -> void:
 	var state := RunState.new_run(101)
-	state.refined_gu_ids = ["small_light_gu", "trail_eye_gu"]
+	state.refined_gu_ids = ["small_light_gu", "moonlight_gu"]
 	state.gu_ids = state.refined_gu_ids.duplicate()
 	var cards := ActionPreviewServiceScript.preview_actions(state, {
 		"id": "refinement_hollow",
 		"type": "refinement",
 	}, catalog)
-	var card := _card(cards, "refine.bright_thread_risk")
+	var card := _card(cards, "refine.moon_ray_forged")
 
 	assert_true(card["executable"])
-	assert_eq(card["success_rate"], 70)
-	assert_eq(card["cost"]["gu_ids"], ["small_light_gu", "trail_eye_gu"])
-	assert_eq(card["expected_gain"], ["获得脉冲鼓蛊。"])
-	assert_string_contains(str(card["known_risk"][0]), "损毁")
-	assert_eq(card["unknown_note"], "炼制成败未定。")
+	assert_eq(card["cost"]["gu_ids"], ["moonlight_gu", "small_light_gu"])
+	assert_eq(card["expected_gain"], ["获得月痕蛊。"])
+	assert_eq(str(card["unknown_note"]), "")
 	assert_false(card["command"].has("roll"))
 
 
@@ -81,16 +79,24 @@ func test_ledger_preview_offers_debt_when_payment_is_blocked() -> void:
 	assert_eq(debt["expected_gain"], ["以商队人情结清本阶段养蛊总账。"])
 
 
-func test_battle_preview_shows_known_reaction_risk_without_revealing_hidden_counter() -> void:
-	var state := _state_with_refined_gu("thorn_whip_gu", "gu_002")
+func test_battle_preview_does_not_name_hidden_counter_and_strike_reveals_shell() -> void:
+	# thorn_whip_gu 于 802 重建删去后，legacy 直击吞伤路径只剩拳脚(basic punch)。
+	# 迁移后的护栏：(1) 任何攻击在石壳暴露前都不得点名隐藏反制蛊；
+	# (2) 拳脚直击确实触发石壳显现（吞伤并写 log）。
+	var state := RunState.new_run(101)
 	var battle := BattleResolver.start({"enemy_kind": "neutral_stone_wanderer"}, state, catalog)
 	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
-	var strike := _battle_card_by_definition(cards, battle, "thorn_strike")
+	var punch := _card(cards, "battle.basic.punch")
 
-	assert_eq(strike["cost"]["spirit"], 1)
-	assert_string_contains(str(strike["known_risk"][0]), "石粉")
-	assert_string_contains(str(strike["unknown_note"]), "未暴露")
-	assert_false(str(strike["known_risk"][0]).contains("石甲蛊"))
+	assert_true(punch["executable"])
+	assert_false(str(punch["known_risk"]).contains("石甲蛊"),
+			"hidden counter gu must not be named before it reveals")
+	assert_false(str(punch["expected_gain"]).contains("石甲蛊"))
+	var struck := BattleResolver.take_turn(battle, {"type": "basic_attack"}, state, catalog)
+	assert_true(struck["battle"]["revealed_reactions"].has("stone_shell"),
+			"a direct punch into the counter enemy reveals its shell")
+	assert_eq(int(struck["battle"]["enemy_hp"]), int(battle["enemy_hp"]),
+			"the shell swallows the first direct strike")
 
 
 func test_battle_preview_blocks_gu_when_essence_is_insufficient() -> void:
@@ -121,10 +127,10 @@ func test_battle_preview_projects_single_enemy_target_contract() -> void:
 
 
 func test_preview_uses_display_text_as_the_single_name_source() -> void:
-	var state := _state_with_refined_gu("blood_moss_gu", "gu_002")
+	var state := _state_with_refined_gu("blood_bat_gu", "gu_002")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, state, catalog)
 	var battle_cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
-	var gu_card := _battle_card_by_definition(battle_cards, battle, "blood_moss_relief")
+	var gu_card := _battle_card_by_definition(battle_cards, battle, "blood_bat_bite")
 	var cards := ActionPreviewServiceScript.preview_actions(state, {
 		"id": "moonlit_trail",
 		"type": "hazard",
@@ -132,7 +138,7 @@ func test_preview_uses_display_text_as_the_single_name_source() -> void:
 	}, catalog)
 	var action_card := _card(cards, "node.scout")
 
-	assert_eq(gu_card["title"], DisplayText.gu("blood_moss_gu"))
+	assert_eq(gu_card["title"], DisplayText.gu("blood_bat_gu"))
 	assert_eq(action_card["title"], DisplayText.action("scout"))
 
 

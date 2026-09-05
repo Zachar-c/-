@@ -193,13 +193,13 @@ func _zero_enemy_damage(tuned: Dictionary) -> Dictionary:
 
 
 func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() -> void:
-	var run := _run_with_gu(["small_light_gu", "thorn_whip_gu"])
+	var run := _run_with_gu(["force_gu", "blood_droplet_gu"])
 	run = CurseRegistry.gain_curse(run, "gu_erosion", "test")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
 	assert_eq(battle["curses"], [{"id": "gu_erosion", "effect": "draw_pollution", "intensity": 1, "free": 2}])
-	# Deck is 4 cards (two light_probe, thorn_strike, thorn_bind); hand holds
-	# 2 so the draw pile starts with 2 cards.
-	assert_eq(battle["draw_pile"].size(), 2)
+	# Deck: starter 小光蛊 + our two battle-card gu = 3 cards; hand holds 2
+	# so the draw pile starts with 1 card.
+	assert_eq(battle["draw_pile"].size(), 1)
 	var top_card: Dictionary = battle["draw_pile"].back()
 
 	var ended := BattleResolver.apply_action_card(battle, run, {
@@ -241,13 +241,13 @@ func test_backlash_curse_damage_kills_through_terminal_flow_as_backlash() -> voi
 
 
 func test_essence_surcharge_adds_extra_cost_beyond_free_allowance_of_two() -> void:
-	var run := _run_with_gu(["thorn_whip_gu"])
+	var run := _run_with_gu(["force_gu"])
 	# Two layers -> intensity 4 -> surcharge 2 beyond the free allowance of 2.
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
 	battle["action_energy"] = 0  # isolate surcharge math from the base first-turn grant
-	var command := _command_for_definition(battle, "thorn_strike")
+	var command := _command_for_definition(battle, "power_blow")
 
 	run.essence = 2
 	var denied := BattleResolver.apply_action_card(battle, run, command, _zero_enemy_damage(catalog.duplicate(true)))
@@ -263,11 +263,11 @@ func test_essence_surcharge_adds_extra_cost_beyond_free_allowance_of_two() -> vo
 
 
 func test_low_intensity_essence_surcharge_stays_within_free_allowance() -> void:
-	var run := _run_with_gu(["thorn_whip_gu"])
+	var run := _run_with_gu(["force_gu"])
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
 	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
 	battle["action_energy"] = 0  # isolate surcharge math from the base first-turn grant
-	var command := _command_for_definition(battle, "thorn_strike")
+	var command := _command_for_definition(battle, "power_blow")
 	run.essence = 1
 	var played := BattleResolver.apply_action_card(battle, run, command, _zero_enemy_damage(catalog.duplicate(true)))
 	assert_true(played["accepted"])

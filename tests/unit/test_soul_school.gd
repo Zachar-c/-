@@ -13,7 +13,9 @@ const SchoolRulesScript := preload("res://scripts/domain/school_rules.gd")
 const RelicHookResolverScript := preload("res://scripts/domain/relic_hook_resolver.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
 
-const SOUL_ATTACK_GU := "gen_soul_attack_106_gu"
+# gen_soul_attack_* 占位蛊于 802 重建删去；以血滴蛊（legacy resolver 硬编码
+# 打击 2 的基础锚）承载 overchannel 输入，施放方仍为 soul 校玩家。
+const SOUL_ATTACK_GU := "blood_droplet_gu"
 
 
 func catalog() -> Dictionary:

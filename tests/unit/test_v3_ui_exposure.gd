@@ -11,43 +11,30 @@ func before_each() -> void:
 	catalog = ContentCatalog.load_all()
 
 
-func test_bind_card_enables_kill_of_stone_wanderer_through_action_cards() -> void:
-	var state := _run_with_gu(["thorn_whip_gu", "stone_shell_gu"])
-	var current := {"battle": BattleResolver.start({"enemy_kind": "neutral_stone_wanderer", "objective": "defeat"}, state, catalog), "state": state}
-	var strikes_landed := 0
-	# thorn_bind 的束缚只持续一回合（effect 过期后敌方石甲反应恢复，直接
-	# 打击重新被挡）——补 bind 的判据是「敌方当前未被束缚」，不是只绑一次。
-	for _cycle in range(12):
-		var preview := ActionPreviewServiceScript.preview_battle_actions(current["battle"], current["state"], catalog)
+func test_bind_gu_enables_kill_of_stone_wanderer_through_basic_attacks() -> void:
+	# thorn_whip 于 802 重建删去、荆棘束缚/抽击手牌卡不再产出；改以现存束缚蛊
+	# blood_farewell_gu 锚定同一验收：束缚挡下石甲反制后，拳脚直击可击杀石行者。
+	var state := _run_with_gu(["blood_farewell_gu"])
+	var current := {"battle": BattleResolver.start({"enemy_kind": "neutral_stone_wanderer", "objective": "defeat", "enemy_hp": 2}, state, catalog), "state": state}
+	var hp0 := int(current["battle"]["enemy_hp"])
+	for _cycle in range(16):
 		var enemy_bound := (current["battle"].get("flags", []) as Array).has("enemy_bound")
-		var target := ""
-		if not enemy_bound:
-			target = _hand_card_id(preview, "thorn_bind")
-		if target.is_empty() and strikes_landed < 2:
-			target = _hand_card_id(preview, "thorn_strike")
-		if target.is_empty():
-			# 手牌满时 refill 不抽新牌：打出一张可执行牌（守护）让手牌轮转，
-			# 否则抽牌堆里的打击牌永远出不来。
-			target = _hand_card_id(preview, "stone_guard")
+		var actions_left := int(current["battle"].get("actions_left", 0))
 		var turn: Dictionary
-		if target.is_empty():
-			turn = BattleResolver.apply_action_card(current["battle"], current["state"], {
-				"type": "action_card", "action_id": "battle.end_turn",
-				"state_version": int(current["battle"]["hand_version"]),
-			}, catalog)
+		if not enemy_bound:
+			turn = BattleResolver.take_turn(current["battle"],
+					{"type": "use_gu", "gu_id": "blood_farewell_gu"}, current["state"], catalog)
+			assert_true(bool(turn.get("accepted", false)), "bind must be accepted: %s" % str(turn))
+		elif actions_left < 1:
+			turn = BattleResolver.take_turn(current["battle"],
+					{"type": "end_turn"}, current["state"], catalog)
 		else:
-			turn = BattleResolver.apply_action_card(current["battle"], current["state"], {
-				"type": "action_card", "action_id": target,
-				"state_version": int(current["battle"]["hand_version"]),
-			}, catalog)
-			assert_true(bool(turn["accepted"]), str(turn))
-			if str(target).ends_with(":thorn_strike:0"):
-				strikes_landed += 1
-				assert_eq(int(turn["battle"]["enemy_hp"]), 4 - 2 * strikes_landed)
-				if strikes_landed == 2:
-					assert_true(bool(turn["finished"]))
-					assert_eq(str(turn["result"]), "victory")
-					return
+			turn = BattleResolver.take_turn(current["battle"],
+					{"type": "basic_attack"}, current["state"], catalog)
+		if bool(turn.get("finished", false)):
+			assert_eq(str(turn.get("result", "")), "victory")
+			assert_lt(int(turn["battle"]["enemy_hp"]), hp0)
+			return
 		current = {"battle": turn["battle"], "state": turn["state"]}
 	fail_test("Wanderer was not defeated within the cycle budget")
 
@@ -65,14 +52,16 @@ func test_first_run_route_wires_black_market_and_echo_cave() -> void:
 	var by_id := {}
 	for node in route:
 		by_id[str(node["id"])] = node
-	assert_true(by_id.has("ridge_black_market"))
-	assert_true(by_id.has("echo_cave"))
-	var market_next: Array = by_id["village_short_work"]["next_ids"]
-	assert_true(market_next.has("ridge_black_market"))
-	var cave_next: Array = by_id["flooded_cave"]["next_ids"]
-	assert_true(cave_next.has("echo_cave"))
-	var black_next: Array = by_id["ridge_black_market"]["next_ids"]
-	assert_true(black_next.has("stage_one_ledger"))
+	# 节点收窄（2026-09-06）：骨架链 = 战斗/休息/Boss/商店，黑市仍在列，
+	# 事件类 echo_cave / 台账类 stage_one_ledger 不再由 first_run 生成。
+	assert_true(by_id.has("ridge_black_market"), "骨架链保留商店（黑市）补给点")
+	assert_false(by_id.has("echo_cave"), "事件类模板不再由 first_run 链生成")
+	# 线性骨架：iron_hide_ambush（战斗）→ 黑市（商店）。
+	var ambush_next: Array = by_id["iron_hide_ambush"]["next_ids"]
+	assert_true(ambush_next.has("ridge_black_market"))
+	assert_true(by_id.has("layer_boss_stand_1"), "链中含层关底 Boss 台")
+	assert_true(by_id.has("rest_hollow"), "链中含休息补给点")
+	assert_true(by_id.has("final_boss_stand"), "链终点前为终局 Boss")
 
 
 func test_black_market_offers_moonlight_for_stone() -> void:

@@ -1,60 +1,48 @@
 {
-  "aptitude_mult": {
-    "jia": 4,
-    "yi": 3,
-    "bing": 2,
-    "ding": 1
+ "aptitude_mult": {
+  "jia": 4,
+  "yi": 3,
+  "bing": 2,
+  "ding": 1
+ },
+ "regen_pct": {
+  "jia": 35,
+  "yi": 30,
+  "bing": 25,
+  "ding": 18
+ },
+ "stage_base": {
+  "one": 10,
+  "two": 30,
+  "three": 60,
+  "four": 100,
+  "five": 150
+ },
+ "boss_layer_mult": {
+  "one": {
+   "hp": 1.0,
+   "damage": 1.0
   },
-  "regen_pct": {
-    "jia": 35,
-    "yi": 30,
-    "bing": 25,
-    "ding": 18
+  "two": {
+   "hp": 1.1,
+   "damage": 1.05
   },
-  "stage_base": {
-    "one": 10,
-    "two": 30,
-    "three": 60,
-    "four": 100,
-    "five": 150
+  "three": {
+   "hp": 1.2,
+   "damage": 1.1
   },
-  "boss_layer_mult": {
-    "one": {
-      "hp": 1.0,
-      "damage": 1.0
-    },
-    "two": {
-      "hp": 1.1,
-      "damage": 1.05
-    },
-    "three": {
-      "hp": 1.2,
-      "damage": 1.1
-    },
-    "four": {
-      "hp": 1.35,
-      "damage": 1.15
-    },
-    "five": {
-      "hp": 1.5,
-      "damage": 1.25
-    }
+  "four": {
+   "hp": 1.35,
+   "damage": 1.15
   },
-  "thought_cost_default": 1,
-  "true_qi_cost_default": 1,
-  "fight_damage_base": 1,
-  "max_seal_turns": 3,
-  "kill_moves": [
-    {
-      "id": "km_bright_thread",
-      "label": "明丝合击",
-      "tag": "control",
-      "recipe": ["pulse_drum_gu"],
-      "true_qi_cost": 2,
-      "thought_cost": 1,
-      "life_cost": 0,
-      "damage": 3,
-      "effect": {}
-    }
-  ]
+  "five": {
+   "hp": 1.5,
+   "damage": 1.25
+  }
+ },
+ "thought_cost_default": 1,
+ "true_qi_cost_default": 1,
+ "fight_damage_base": 1,
+ "max_seal_turns": 3,
+ "kill_moves": []
 }

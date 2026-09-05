@@ -8,8 +8,6 @@ extends RefCounted
 
 
 const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
-const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")

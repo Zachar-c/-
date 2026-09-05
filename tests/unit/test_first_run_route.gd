@@ -11,7 +11,9 @@ const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 func test_seed_101_first_run_route_completes_to_ascension() -> void:
 	var catalog := ContentCatalogScript.load_all()
 	var route: Array = MapGeneratorScript.build(101, true, catalog)
-	assert_gt(route.size(), 20, "手工网必须被迁移为足够的脊柱（原 15 节点止于台账断头）")
+	# 节点收窄（2026-09-06）：地图只产 战斗/休息/Boss/商店，教学链收窄为
+	# 13 节点去重骨架（五层各含战斗+关底 Boss，补给穿插），终点仍须通关。
+	assert_gt(route.size(), 10, "教学骨架链必须能一路走到升仙窗口（现 13 节点）")
 	var last_id := str(route.back()["id"])
 	assert_eq(last_id, "ascension_window", "first_run 路线终点必须是 ascension_window，而不是断头台账")
 	# first_run 保留模板定义的分支语义，但边必须闭合在本次路线内。

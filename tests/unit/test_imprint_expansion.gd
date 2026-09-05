@@ -24,7 +24,7 @@ func test_backlash_gained_queues_next_turn_draw_once_per_curse_layer() -> void:
 		"id": "test_backlash_relic",
 		"hooks": [{"trigger": "on_backlash_gained", "effect": {"kind": "convert_backlash_to_draw", "amount": 1}}],
 	})
-	var run := _run_with_gu(["small_light_gu", "thorn_whip_gu", "stone_shell_gu", "mist_step_gu"])
+	var run := _run_with_gu(["small_light_gu", "force_gu", "stone_shell_gu", "blood_droplet_gu"])
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test:a")
 	run = CurseRegistry.gain_curse(run, "essence_bloat", "test:b")
 	run.relic_ids = ["test_backlash_relic"]
@@ -223,7 +223,8 @@ func test_validate_rejects_unknown_grade_and_missing_imprint_capacity() -> void:
 	assert_true("\n".join(errors).contains("unknown grade"), "\n".join(errors))
 
 	var missing_capacity := catalog.duplicate(true)
-	missing_capacity["deck"] = {"capacity": 12}
+	missing_capacity["balance"] = (missing_capacity["balance"] as Dictionary).duplicate(true)
+	(missing_capacity["balance"] as Dictionary).erase("imprint_capacity")
 	errors = ContentCatalog.validate(missing_capacity)
 	assert_true("\n".join(errors).contains("imprint_capacity"), "\n".join(errors))
 

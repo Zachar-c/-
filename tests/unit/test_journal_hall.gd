@@ -130,7 +130,7 @@ func test_record_run_end_route_markers_come_from_real_event_log_actions() -> voi
 	trader.cave_aperture["stored_gu_instance_ids"].append("gu_002")
 	trader.gu_instances["gu_002"] = {
 		"instance_id": "gu_002",
-		"definition_id": "trail_eye_gu",
+		"definition_id": "qi_rec_2_14_gu",
 		"state": "refined",
 	}
 	var barter := ResolverScript.apply(trader, {"type": "shop_barter", "offer_id": "barter_unknown_gu"}, catalog)

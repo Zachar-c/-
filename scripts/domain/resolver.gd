@@ -10,6 +10,7 @@ const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd"
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
+const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
 const ResolverHelpersScript = preload("res://scripts/domain/resolver_helpers.gd")
 const V2CommandsScript = preload("res://scripts/domain/v2_commands.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
@@ -439,49 +440,7 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 
 
 static func _selected_input_instance_ids(state: RunState, command: Dictionary, inputs: Array) -> Array[String]:
-	var remaining: Array[String] = []
-	for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
-		remaining.append(str(instance_id_value))
-	var selected: Array[String] = []
-	var requested: Array = command.get("input_instance_ids", [])
-	if not requested.is_empty():
-		if requested.size() != inputs.size():
-			return []
-		for instance_id_value in requested:
-			var instance_id := str(instance_id_value)
-			if not remaining.has(instance_id):
-				return []
-			selected.append(instance_id)
-			remaining.erase(instance_id)
-		var definitions: Array[String] = []
-		for instance_id_value in selected:
-			definitions.append(str(state.gu_instances[str(instance_id_value)]["definition_id"]))
-		if not _same_multiset(definitions, inputs):
-			return ([] as Array[String])
-		return selected
-	for required_id_value in inputs:
-		var required_id := str(required_id_value)
-		var found := ""
-		for instance_id_value in remaining:
-			var candidate: Dictionary = state.gu_instances.get(str(instance_id_value), {})
-			if str(candidate.get("definition_id", "")) == required_id and str(candidate.get("state", "")) == "refined":
-				found = str(instance_id_value)
-				break
-		if found.is_empty():
-			return []
-		selected.append(found)
-		remaining.erase(found)
-	return selected
-
-
-static func _same_multiset(actual: Array[String], expected: Array) -> bool:
-	var remaining := actual.duplicate()
-	for value in expected:
-		var index := remaining.find(str(value))
-		if index < 0:
-			return false
-		remaining.remove_at(index)
-	return remaining.is_empty()
+	return ShopRulesScript.selected_input_instance_ids(state, command, inputs)
 
 
 static func _refinement_roll(state: RunState, recipe_id: String) -> int:
@@ -751,7 +710,7 @@ static func _remove_card_command(state: RunState, command: Dictionary, catalog: 
 		return blocked
 	if service_use_count(state, "remove_card") >= service_limit(catalog, "remove_card"):
 		return _rejected(state, "service_limit_exceeded")
-	var cost := service_price_for(catalog, state, "remove_card", int(catalog.get("deck", {}).get("remove_card_cost", 120)))
+	var cost := service_price_for(catalog, state, "remove_card", int(catalog.get("balance", {}).get("remove_card_cost", 120)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var flags := state.node_flags.duplicate(true)
@@ -994,12 +953,12 @@ static func _can_gain_relic(state: RunState, catalog: Dictionary, relic_id: Stri
 	if state.relic_ids.has(relic_id):
 		return "relic_already_owned"
 	# R4.9 imprint slots: the hard cap forces build trade-offs.
-	if state.relic_ids.size() >= int(catalog.get("deck", {}).get("imprint_capacity", 4)):
+	if state.relic_ids.size() >= int(catalog.get("balance", {}).get("imprint_capacity", 4)):
 		return "imprint_capacity_exceeded"
 	# Order locked by brief: capacity rejection wins before the meta cap (R4.8).
 	# R14.6 (night batch): system DDA markers (sys: keys) never count against
 	# the player meta-rule cap.
-	if str(relic.get("grade", "")) == "meta_rule" and DdaResolverScript.player_rule_count(state.meta_rules) >= int(catalog.get("deck", {}).get("meta_rule_cap", 2)):
+	if str(relic.get("grade", "")) == "meta_rule" and DdaResolverScript.player_rule_count(state.meta_rules) >= int(catalog.get("balance", {}).get("meta_rule_cap", 2)):
 		return "meta_rule_cap_reached"
 	return ""
 
@@ -1246,91 +1205,27 @@ static func _shop_lifespan_deal(state: RunState, command: Dictionary, catalog: D
 
 static func _shop_barter(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(str(command.get("offer_id", "")), {})
-	if str(offer.get("kind", "")) != "barter":
-		return _rejected(state, "unknown_shop_offer")
-	var inputs: Array = offer.get("input_gu_ids", [])
-	var selected := _selected_input_instance_ids(state, command, inputs)
-	if selected.is_empty():
-		return _rejected(state, "missing_barter_input")
-	var rewards: Array = offer.get("rewards", [])
-	if rewards.is_empty():
-		return _rejected(state, "unknown_shop_offer")
-	# The reward is drawn from the run seed and immutable event position;
-	# commands never carry the reward id from the UI.
-	var total := 0
-	for reward_value in rewards:
-		total += maxi(1, int(reward_value.get("weight", 1)))
-	var roll := SeededRollScript.index(total, int(state.seed), "+".join(selected), state.event_log.size()) + 1
-	var chosen: Dictionary = {}
-	var cursor := 0
-	for reward_value in rewards:
-		chosen = reward_value
-		cursor += maxi(1, int(reward_value.get("weight", 1)))
-		if roll <= cursor:
-			break
-	if chosen.has("gu_id"):
-		var removed_defs: Array[String] = []
-		for instance_id_value in selected:
-			removed_defs.append(str(state.gu_instances[str(instance_id_value)].get("definition_id", "")))
-	var instances := state.gu_instances.duplicate(true)
-	var aperture := state.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	for instance_id_value in selected:
-		var consumed_id := str(instance_id_value)
-		var consumed: Dictionary = instances[consumed_id].duplicate(true)
-		consumed["state"] = "dead"
-		instances[consumed_id] = consumed
-		stored.erase(consumed_id)
-	var relics := state.relic_ids.duplicate()
-	var meta_rules := state.meta_rules.duplicate(true)
-	var result_feeds: Array = []
-	if chosen.has("gu_id"):
-		var instance_id := RunState.next_gu_instance_id(instances)
-		instances[instance_id] = {
-			"instance_id": instance_id,
-			"definition_id": str(chosen["gu_id"]),
-			"state": "refined",
-		}
-		stored.append(instance_id)
-	elif chosen.has("relic_id"):
-		# Relic rewards ride the same gate as direct gains (R4.9/R4.8); a
-		# blocked reward resolves the barter without it instead of failing.
-		var relic_id := str(chosen["relic_id"])
-		var blocked_reason := _can_gain_relic(state, catalog, relic_id)
-		if blocked_reason.is_empty():
-			relics.append(relic_id)
-			if str(catalog.get("relic_by_id", {}).get(relic_id, {}).get("grade", "")) == "meta_rule":
-				meta_rules[relic_id] = true
-				result_feeds.append("meta_rule_recorded")
-		else:
-			result_feeds.append("relic_reward_blocked_%s" % blocked_reason)
-	aperture["stored_gu_instance_ids"] = stored
-	var before := {
-		"gu_instances": state.gu_instances,
-		"cave_aperture": state.cave_aperture,
-		"relic_ids": state.relic_ids,
-	}
-	var after := {
-		"gu_instances": instances,
-		"cave_aperture": aperture,
-		"relic_ids": relics,
-	}
-	if meta_rules != state.meta_rules:
+	var plan := ShopRulesScript.barter_plan(state, command, offer, func(relic_id: String):
+		var reason := _can_gain_relic(state, catalog, relic_id)
+		return {"reason": reason, "grade": str(catalog.get("relic_by_id", {}).get(relic_id, {}).get("grade", ""))})
+	if plan.has("error"):
+		return _rejected(state, str(plan["error"]))
+	var selected: Array = plan["selected"]
+	var chosen: Dictionary = plan["chosen"]
+	var before := {"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture, "relic_ids": state.relic_ids}
+	var after := {"gu_instances": plan["gu_instances"], "cave_aperture": plan["cave_aperture"], "relic_ids": plan["relic_ids"]}
+	if plan["meta_rules"] != state.meta_rules:
 		before["meta_rules"] = state.meta_rules
-		after["meta_rules"] = meta_rules
-	var next := state.append_event(_event(
-		state,
-		"shop_barter",
-		before,
-		after,
-		"shop_barter_resolved",
-		state.current_node_id,
-		[str(chosen.get("id", ""))]
-	))
+		after["meta_rules"] = plan["meta_rules"]
+	var next := state.append_event(_event(state, "shop_barter", before, after, "shop_barter_resolved", state.current_node_id, [str(chosen.get("id", ""))]))
+	next.gu_instances = plan["gu_instances"]
+	next.cave_aperture = plan["cave_aperture"]
+	next.relic_ids = plan["relic_ids"]
+	next.meta_rules = plan["meta_rules"]
 	next.sync_legacy_gu_projections()
 	var result := _accepted(next)
 	result["outcome"] = str(chosen.get("id", ""))
-	for feed_value in result_feeds:
+	for feed_value in plan["result_feeds"]:
 		result = ResolverHelpersScript.append_result_feed(result, str(feed_value))
 	return result
 

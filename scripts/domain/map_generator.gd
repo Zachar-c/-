@@ -215,6 +215,9 @@ static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[D
 	for index in route_ids.size():
 		var node: Dictionary = node_by_id[route_ids[index]].duplicate(true)
 		node["visible"] = index <= 1
+		# 节点收窄后（2026-09-06）教学链为单入口线性链：仅链首作为
+		# trailhead 的 start 节点（旧模板自带双入口 start 契约已移除）。
+		node["start"] = index == 0
 		node["template_id"] = str(route_ids[index])
 		node["layer"] = layer_index(str(node.get("stage", "one")))
 		node["row"] = index

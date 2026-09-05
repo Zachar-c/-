@@ -1,4 +1,7 @@
 {
+  "remove_card_cost": 120,
+  "imprint_capacity": 4,
+  "meta_rule_cap": 2,
   "rank_step_ratio": 2.0,
   "standard_hit_ratio": 0.2,
   "human_base_health": 100,

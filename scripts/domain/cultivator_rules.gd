@@ -51,11 +51,22 @@ static func thought_capacity(_cultivator: Dictionary, catalog: Dictionary) -> in
 	return int(_balance(catalog, "thought_base_capacity", 3.0)) + wisdom_bonus(catalog)
 
 
+# Catalog-rebuild 2026-09: the batch pools tag every school member with the
+# generic {school, role} pair, so counting every wisdom-tagged gu would hand
+# +40 thoughts for a whole wisdom school. The §12.1 bonus is meant for
+# *curated* wisdom insight gu (authored entries whose tags go beyond the
+# generic pair); the batch members stay silent until such gu are authored.
 static func wisdom_bonus(catalog: Dictionary) -> int:
 	var count := 0
 	for gu in catalog.get("gu", []):
-		if (gu.get("tags", []) as Array).has(WISDOM_TAG):
-			count += 1
+		var tags: Array = gu.get("tags", [])
+		if not tags.has(WISDOM_TAG):
+			continue
+		if tags.size() == 2 \
+				and tags.has(str(gu.get("school", ""))) \
+				and tags.has(str(gu.get("role", ""))):
+			continue
+		count += 1
 	return count
 
 

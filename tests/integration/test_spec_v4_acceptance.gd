@@ -46,8 +46,12 @@ func test_acceptance_1_any_combat_gu_can_be_core_and_hub_differs() -> void:
 	var state := _state()
 	var confirmed := _command(state, "confirm_core", {"instance_id": "gu_001"})
 	assert_true(bool(confirmed["result"]["ok"]), str(confirmed))
-	var hub_depth := CoreGuRulesScript.core_depth(catalog["gu_by_id"]["phantom_moon_gu"], catalog)
+	# 802 catalog 重建后唯一 hub 蛊为 moon_glow_gu；普通蛊（gu_001=small_light_gu）
+	# 恒为 common_core，hub 蛊为 hub_core——depth 分级由定义 core_depth 决定。
+	var hub_depth := CoreGuRulesScript.core_depth(catalog["gu_by_id"]["moon_glow_gu"], catalog)
 	assert_eq(hub_depth, "hub_core")
+	var common_depth := CoreGuRulesScript.core_depth(catalog["gu_by_id"]["small_light_gu"], catalog)
+	assert_eq(common_depth, "common_core")
 
 
 func test_acceptance_2_replace_removes_core_mods_keeps_rank() -> void:
@@ -105,13 +109,30 @@ func test_acceptance_7_known_recipe_succeeds_deterministically() -> void:
 
 
 func test_acceptance_8_identity_binds_by_name() -> void:
-	var recipe: Dictionary = catalog["refinement_by_id"]["essence_thorn_identity"]
+	# 802 catalog 重建后 identity 演示配方不再作为数据发布（386 配方=advance/
+	# fixed/free_mix 模型），域契约由本地夹具钉住（同 test_recipe_rules）。
+	var recipe: Dictionary = {
+		"id": "essence_thorn_identity",
+		"kind": "fixed",
+		"input_gu_ids": ["force_gu"],
+		"identity_requirements": {
+			"named_materials": ["venom_sac"],
+			"named_media": ["kael_fire_medium"],
+			"min_rank": 2,
+		},
+		"allow_substitute": {
+			"materials": {"venom_sac": ["moon_blue_petal"]},
+			"media": {"kael_fire_medium": ["essence_bead"]},
+			"cost_change": {"essence": 2},
+		},
+		"output_gu_id": "stone_shell_gu",
+	}
 	var check := preload("res://scripts/domain/recipe_rules.gd").check_identity(
-			recipe, ["thorn_whip_gu"], {"venom_sac": 1}, {"thorn_whip_gu": 2},
+			recipe, ["force_gu"], {"venom_sac": 1}, {"force_gu": 2},
 			catalog, ["kael_fire_medium"])
 	assert_true(bool(check["ok"]), str(check))
 	var substituted := preload("res://scripts/domain/recipe_rules.gd").check_identity(
-			recipe, ["thorn_whip_gu"], {"moon_blue_petal": 2}, {"thorn_whip_gu": 2},
+			recipe, ["force_gu"], {"moon_blue_petal": 2}, {"force_gu": 2},
 			catalog, ["kael_fire_medium"])
 	assert_true(bool(substituted["ok"]), str(substituted))
 

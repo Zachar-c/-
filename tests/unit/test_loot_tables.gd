@@ -59,14 +59,14 @@ func test_elite_loot_grants_material_and_may_be_gu() -> void:
 
 func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
 	# Bucket mixes a force gu (force_gu, in the force pool) with a blood gu
-	# (gen_blood_attack_001, in the blood pool): each school must only draw its own.
+	# (blood_droplet_gu, in the blood pool): each school must only draw its own.
 	var cat := catalog()
 	var tables: Dictionary = cat["loot_tables"]
 	var elite: Dictionary = tables["loot"]["elite"]
 	elite.erase("forced_rarity")
 	elite["gu_chance_pct"] = 100
 	elite["gu_pool"]["weights"] = {"common": 1}
-	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "gen_blood_attack_001_gu"]}
+	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "blood_droplet_gu"]}
 	var battle := {"enemy_kind": "ridge_elite_scout"}
 	for seed_value in range(1, 13):
 		var force_state := make_state(seed_value)
@@ -77,7 +77,7 @@ func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
 		var blood_state := make_state(seed_value)
 		blood_state.school = "blood"
 		var blood_roll: Dictionary = LootResolverScript.settle_victory(battle, blood_state, cat)
-		assert_eq(str(blood_roll["loot"].get("gu_id", "")), "gen_blood_attack_001_gu",
+		assert_eq(str(blood_roll["loot"].get("gu_id", "")), "blood_droplet_gu",
 				"blood school seed %d must draw its exclusive pool entry" % seed_value)
 
 
@@ -88,12 +88,12 @@ func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
 	elite.erase("forced_rarity")
 	elite["gu_chance_pct"] = 100
 	elite["gu_pool"]["weights"] = {"common": 1}
-	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "gen_blood_attack_001_gu"]}
+	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "blood_droplet_gu"]}
 	var battle := {"enemy_kind": "ridge_elite_scout"}
 	var state := make_state(7)
 	state.school = "qi"
 	var rolled: Dictionary = LootResolverScript.settle_victory(battle, state, cat)
-	assert_true(["force_gu", "gen_blood_attack_001_gu"].has(str(rolled["loot"].get("gu_id", ""))),
+	assert_true(["force_gu", "blood_droplet_gu"].has(str(rolled["loot"].get("gu_id", ""))),
 			"school without pool overlap keeps the unfiltered bucket")
 
 
@@ -139,7 +139,8 @@ func test_scavenge_unlocks_recipe_in_global_codex() -> void:
 		catalog()
 	)
 	assert_true(bool(resolved["result"].get("ok", false)))
-	assert_true(resolved["state"].global_codex_ids.has("phantom_moon_locked"))
+	assert_true(resolved["state"].global_codex_ids.has("moon_shadow_locked"))
+	assert_true(resolved["state"].global_codex_ids.has("blood_moon_forged"))
 	assert_eq(str(resolved["state"].event_log.back().get("reason", "")), "scavenge_recipe_unlocked")
 
 

@@ -16,14 +16,14 @@ func test_debug_writes_survive_formal_battle_and_death_settlement() -> void:
 	var controller: RunController = autofree(RUN_CONTROLLER.new())
 	controller.start_new_run(2026)
 	var added := DebugActionsScript.apply(controller.state, controller.catalog,
-			{"op": "add_gu", "definition_id": "blood_moss_gu"}, true, controller.route)
+			{"op": "add_gu", "definition_id": "force_gu"}, true, controller.route)
 	assert_true(bool(added["ok"]), "debug add_gu accepted in a live run")
 	controller.state = added["state"]
 	var tuned := DebugActionsScript.apply(controller.state, controller.catalog,
 			{"op": "set_resources", "stones": 40, "health": 5}, true)
 	assert_true(bool(tuned["ok"]), "debug set_resources accepted in a live run")
 	controller.state = tuned["state"]
-	assert_true(controller.state.refined_gu_ids.has("blood_moss_gu"),
+	assert_true(controller.state.refined_gu_ids.has("force_gu"),
 			"formal legacy projections see the debug gu")
 	assert_eq(int(controller.state.stone), 40, "absolute stone write applied")
 	var battle := BattleResolverScript.start(

@@ -95,18 +95,14 @@ func test_fixed_recipe_over_craft_cap_rejected_then_allowed_at_higher_soul() -> 
 
 
 func test_combine_recipe_over_craft_cap_rejected_before_input_validation() -> void:
-	var tuned := catalog.duplicate(true)
-	var recipe: Dictionary = tuned["refinement_by_id"]["bright_thread_risk"].duplicate(true)
-	var inputs: Array = recipe.get("input_gu_ids", []).duplicate()
-	inputs.append("stone_shell_gu")
-	recipe["input_gu_ids"] = inputs
-	tuned["refinement_by_id"]["bright_thread_risk"] = recipe
-	for candidate in tuned["refinement_recipes"]:
-		if candidate["id"] == "bright_thread_risk":
-			candidate["input_gu_ids"] = inputs
+	# Catalog-rebuild 2026-09: the authored bright_thread_risk (dead-gu) recipe
+	# is gone; moon_glow_fixed anchors the same gate - at soul 2 the craft cap
+	# is 2, so the capacity rejection must preempt the missing-input verdict.
 	var run := RunState.new_run(101)
+	_add_instance(run, "gu_002", "moonlight_gu")
+	_add_instance(run, "gu_003", "small_light_gu")
 	run.cultivator["soul"] = 2
-	var result := ResolverScript.apply(run, {"type": "refine_gu", "recipe_id": "bright_thread_risk"}, tuned)
+	var result := ResolverScript.apply(run, {"type": "refine_gu", "recipe_id": "moon_glow_fixed"}, catalog)
 	assert_false(result["result"]["ok"])
 	assert_eq(result["result"]["reason"], "refinement_capacity_exceeded")
 

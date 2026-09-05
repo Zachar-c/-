@@ -121,7 +121,7 @@ func test_disabled_gates_panel_creation_and_every_debug_method() -> void:
 	var stone_before: int = controller.state.stone
 	var events_before: int = controller.state.event_log.size()
 
-	var added: Dictionary = controller.debug_add_gu("thorn_whip_gu")
+	var added: Dictionary = controller.debug_add_gu("stone_shell_gu")
 	assert_false(bool(added.get("ok", true)), "add_gu must exit early when disabled")
 	assert_eq(str(added.get("reason", "")), "debug_disabled")
 
@@ -167,16 +167,16 @@ func test_f12_toggles_the_panel_only_when_enabled() -> void:
 func test_add_gu_success_appends_debug_audit_and_follows_reward_semantics() -> void:
 	var controller := _new_controller(true)
 	var events_before: int = controller.state.event_log.size()
-	var action := {"op": "add_gu", "definition_id": "thorn_whip_gu"}
+	var action := {"op": "add_gu", "definition_id": "stone_shell_gu"}
 
-	var result: Dictionary = controller.debug_add_gu("thorn_whip_gu")
+	var result: Dictionary = controller.debug_add_gu("stone_shell_gu")
 	assert_true(bool(result.get("ok", false)), "legal gain must succeed")
 	var instance_id := str(result.get("instance_id", ""))
 	assert_ne(instance_id, "", "service must report the new instance")
 	assert_true(controller.state.cave_aperture["stored_gu_instance_ids"].has(instance_id),
 			"gain must occupy a formal satchel slot")
-	assert_eq(str(controller.state.gu_instances[instance_id]["definition_id"]), "thorn_whip_gu")
-	assert_true(controller.state.refined_gu_ids.has("thorn_whip_gu"), "legacy projection synced")
+	assert_eq(str(controller.state.gu_instances[instance_id]["definition_id"]), "stone_shell_gu")
+	assert_true(controller.state.refined_gu_ids.has("stone_shell_gu"), "legacy projection synced")
 	assert_eq(controller.state.event_log.size(), events_before + 1, "exactly one audit entry")
 	var entry := _last_entry(controller.state)
 	assert_eq(str(entry["action"]), "debug_add_gu")
@@ -213,7 +213,7 @@ func test_add_gu_has_no_slot_gate_anymore() -> void:
 	var added_id := ""
 	for _attempt in range(20):
 		var applied := DebugActionsScript.apply(state, controller.catalog,
-				{"op": "add_gu", "definition_id": "thorn_whip_gu"}, true)
+				{"op": "add_gu", "definition_id": "stone_shell_gu"}, true)
 		assert_true(bool(applied["ok"]), str(applied))
 		added_id = str(applied["result"].get("instance_id", ""))
 		state = applied["state"]
@@ -302,16 +302,16 @@ func test_travel_precheck_refuses_while_a_battle_is_running() -> void:
 
 func test_travel_jump_arrives_via_the_service_with_debug_arrival_flag() -> void:
 	var controller := _new_controller(true)
-	# 教学路线仅作夹具（2026-09-03 裁定）：neutral_wanderer 不在生成式地图上，
-	# 注入 first_run 手写图让可见节点跳转断言保持确定性。
+	# 节点收窄后（2026-09-06）first_run 骨架起点为战斗 beast_swarm_pass，
+	# 注入该骨架使可见节点跳转断言保持确定性。
 	controller.route = MapGenerator.build(101, true)
 	var events_before: int = controller.state.event_log.size()
-	var action := {"op": "jump_to_node", "node_id": "neutral_wanderer"}
+	var action := {"op": "jump_to_node", "node_id": "beast_swarm_pass"}
 
-	var result: Dictionary = controller.debug_travel("neutral_wanderer")
+	var result: Dictionary = controller.debug_travel("beast_swarm_pass")
 	assert_true(bool(result.get("ok", false)), "visible-node jump must succeed")
-	assert_eq(str(controller.state.current_node_id), "neutral_wanderer")
-	assert_eq(str(controller.state.node_flags.get("neutral_wanderer", "")), "debug_arrived",
+	assert_eq(str(controller.state.current_node_id), "beast_swarm_pass")
+	assert_eq(str(controller.state.node_flags.get("beast_swarm_pass", "")), "debug_arrived",
 			"arrival flag must let reachability expand successors")
 	assert_eq_deep(controller.state.encounter_session, {})
 	assert_true(controller.state.encounter_session.is_empty(),
@@ -322,7 +322,7 @@ func test_travel_jump_arrives_via_the_service_with_debug_arrival_flag() -> void:
 	assert_eq(str(entry["action"]), "debug_jump_to_node")
 	assert_eq(str(entry["source"]), "debug")
 	assert_eq_deep(entry["after"]["_debug"], action)
-	assert_true(entry["targets"].has("neutral_wanderer"))
+	assert_true(entry["targets"].has("beast_swarm_pass"))
 
 
 
@@ -446,8 +446,8 @@ func test_panel_toggle_command_flips_controller_state() -> void:
 func test_panel_commands_drive_input_state_for_later_ops() -> void:
 	var controller := _new_controller(true)
 	var commands: Dictionary = controller._debug_props()["commands"]
-	commands["set_gu_input"].call("thorn_whip_gu")
-	assert_eq(controller._debug_gu_input, "thorn_whip_gu")
+	commands["set_gu_input"].call("stone_shell_gu")
+	assert_eq(controller._debug_gu_input, "stone_shell_gu")
 	commands["set_res_kind"].call("soul")
 	assert_eq(controller._debug_res_kind, "soul")
 	commands["set_res_value"].call("42")

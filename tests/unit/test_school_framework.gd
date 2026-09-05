@@ -47,7 +47,7 @@ func test_validation_rejects_missing_and_unknown_school() -> void:
 func test_school_starter_injection_on_new_run() -> void:
 	var run := _start_with_school("blood")
 	assert_eq(run.school, "blood")
-	assert_true(run.refined_gu_ids.has("blood_moss_gu"))
+	assert_true(run.refined_gu_ids.has("blood_farewell_gu"))
 	assert_true(run.refined_gu_ids.has("small_light_gu"))
 
 	var force_run := _start_with_school("force")

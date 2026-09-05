@@ -38,8 +38,10 @@ func test_retreat_is_available_but_costs_a_declared_resource() -> void:
 
 func test_moonlit_trace_requires_equipped_condition_and_applies_reveal_buff() -> void:
 	var state := RunState.new_run(101)
-	state.gu_ids.append("trail_eye_gu")
-	state.equipped_gu_ids.append("trail_eye_gu")
+	state.gu_ids.append("small_light_gu")
+	state.gu_ids.append("moonlight_gu")
+	state.equipped_gu_ids.append("small_light_gu")
+	state.equipped_gu_ids.append("moonlight_gu")
 	state.inheritance_ids = ["moonlit_trace"]
 	var turn := BattleResolver.take_turn(_started_battle(state), {"type": "use_inheritance", "move_id": "moonlit_trace"}, state, catalog)
 	assert_true(turn["battle"]["flags"].has("revealed"))
