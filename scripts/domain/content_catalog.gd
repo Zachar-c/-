@@ -4,6 +4,13 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
+# C3 2026-09-05 转阶落表：gu.rank = 转数，语义域 1..5，与地图层 L1..L5 一一对应
+# （每层 Boss 即该转量级考验；中央倍率见 data/v1_battle.json 的 boss_layer_mult 与
+# stage_base，键 one..five 对齐 battle_command_facade.BOSS_LAYER_IDS）。
+# rarity（掉落/价值层次）与转阶（催动门禁/成长）解耦：任一稀有度可出现于任意转
+# （数据实证：epic·1转 与 common·2转 并存）。test-only 蛊（tags 含 "test"，如
+# 十转杀蛊 test_slay_gu）以 low_rank_exception: true 豁免上界，供天梯验收夹具使用。
+const GU_RANK_MAX := 5
 # C2 2026-09-05: dao-mark school set after 214-gu remap (U1 26-list minus the six
 # zero-coverage schools change/star/zhou/thunder/ice/formation; D-stage curation adds them).
 const SCHOOL_IDS := [
@@ -357,6 +364,9 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		seen_gu_ids[gu["id"]] = true
 		if not _is_integral(gu.get("rank", null)) or int(gu.get("rank", 0)) < 1:
 			errors.append("gu %s rank must be a positive integer" % gu["id"])
+		elif int(gu["rank"]) > GU_RANK_MAX and not _gu_rank_exempt(gu):
+			errors.append("gu %s rank %d exceeds the %d-turn cap (test-only gu needs low_rank_exception)"
+					% [gu["id"], int(gu["rank"]), GU_RANK_MAX])
 		# 2026-09-04 中央数值支配：批量生成的 gen_ 蛊价值必须等于
 		# balance.gu_value_by_rank[rank]，禁止手写跨转字面量；手工蛊
 		# 保留设计字面量（卖出时作 GuBalance.gu_value 的下限）。
@@ -885,7 +895,39 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	errors.append_array(_validate_v1_kill_moves(catalog))
 	errors.append_array(_validate_slice_contract(catalog))
 	return errors
+	errors.append_array(_validate_v1_battle_boss_scaling(catalog))
 
+
+## C3 2026-09-05 Boss 量级挂钩：中央倍率表必须覆盖 L1..L5 全部五层键
+## （one..five，与 battle_command_facade.BOSS_LAYER_IDS 的 1..5 → one..five 消费
+## 映射一致），hp/damage 倍率 ≥ 1.0、stage_base 为正整数，校验拒绝缺失/退化层。
+static func _validate_v1_battle_boss_scaling(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var battle: Dictionary = catalog.get("v1_battle", {})
+	var multipliers: Variant = battle.get("boss_layer_mult", {})
+	var stage: Variant = battle.get("stage_base", {})
+	if not multipliers is Dictionary or not stage is Dictionary:
+		errors.append("v1_battle boss_layer_mult and stage_base must be objects")
+		return errors
+	for layer_key in ["one", "two", "three", "four", "five"]:
+		var layer_config: Variant = (multipliers as Dictionary).get(layer_key)
+		if not layer_config is Dictionary:
+			errors.append("v1_battle.boss_layer_mult missing layer %s" % layer_key)
+			continue
+		if not (layer_config as Dictionary).get("hp") is int \
+				and not (layer_config as Dictionary).get("hp") is float:
+			errors.append("v1_battle.boss_layer_mult.%s.hp must be a number" % layer_key)
+		elif float((layer_config as Dictionary).get("hp", 0.0)) < 1.0:
+			errors.append("v1_battle.boss_layer_mult.%s.hp must be >= 1.0" % layer_key)
+		if not (layer_config as Dictionary).get("damage") is int \
+				and not (layer_config as Dictionary).get("damage") is float:
+			errors.append("v1_battle.boss_layer_mult.%s.damage must be a number" % layer_key)
+		elif float((layer_config as Dictionary).get("damage", 0.0)) < 1.0:
+			errors.append("v1_battle.boss_layer_mult.%s.damage must be >= 1.0" % layer_key)
+		var stage_value: Variant = (stage as Dictionary).get(layer_key)
+		if not _is_integral(stage_value) or int(stage_value) < 1:
+			errors.append("v1_battle.stage_base.%s must be a positive integer" % layer_key)
+	return errors
 
 ## 2026-09-05 随机合成杀招最小闭环：校验 v1_battle.kill_moves 的形状与跨文件
 ## 引用，并把 `slice_bright_thread` 的输入/输出/杀招闭包解析出来。
@@ -1340,3 +1382,12 @@ static func _index_by_id(entries: Array) -> Dictionary:
 
 static func _is_integral(value: Variant) -> bool:
 	return value is int or (value is float and is_equal_approx(value, floor(value)))
+
+
+## C3 转阶落表：rank 上界豁免——test-only 蛊（tags 含 "test"，十转杀蛊等夹具）
+## 以 low_rank_exception 显式声明，突破 1..5 转门禁而不污染生产数据语义。
+static func _gu_rank_exempt(gu: Dictionary) -> bool:
+	if bool(gu.get("low_rank_exception", false)):
+		return true
+	var tags: Variant = gu.get("tags", [])
+	return tags is Array and tags.has("test")
