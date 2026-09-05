@@ -101,6 +101,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：`tools/check.ps1` 绿；全仓无死引用。
 
 ### Phase B 地基收敛（A 合入后开工）
+> 状态：⏸ **未开工**（2026-09-06 审计）。A1 已合入，前置满足。已知域债：`battle_resolver._use_gu` 硬编码已删蛊（thorn/mist/blood_moss/venom/pulse/shadow_veil/trail/qi_wall…）成死分支，`action_preview` 仍特判 thorn_whip —— B1 开工时一并清。
 
 **B1 战斗引擎收敛为纯 V1**
 - 目标：`battle_command_facade.gd` 移除 `battle_resolver.gd` 预载与旧信封分发（`start` 始终 V1 已成立）；`resolver.gd` 去 `v2_commands.gd` 引用；删除 `battle_resolver.gd`、`v2_commands.gd`、`battle2/action_resolver.gd`、`body_rules.gd`、`combat_constants.gd`；`turn_engine` 账本用法保留（可内联为 `run_state` 小函数）。顺带统一 V1 与 `EssenceCapacity` 的 essence/capacity 公式。
@@ -137,7 +138,12 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 目标：rank 语义扩为 1--5 转（5 转对 L1--L5），rarity 与转阶解耦说明落 Schema 注释；`content_catalog` 校验 1--5；Boss 量级挂钩核对（中央倍率 `data/v1_battle.json`）。
 - 验收：校验绿 + `test_v1_five_layer_clear` 等层级测试绿。
 
+**C4 蛊虫目录重建（追加工单，2026-09-06 · 门 U3b）**
+> 状态：✅ 2026-09-06 完成并提交 `85150f7`——gu.json 由 214 蛊重建为 **802（20 道 × 40~42）**；`refinement_recipes` = **386**（377 advance + 8 fixed + 1 free_mix）；gen_ 程序填充蛊与发明蛊按审计清册删除（现目录 gen_=0）；白豕蛊/石皮蛊/刀翅血蝠蛊/月痕蛊等正名在 `names.json`（802 条）归位；配方按 `(school, rank)` 表达，Schema 强制 value 表值。开场包 starter、商店/掉落/图鉴测试契约全部换锚到新目录，`unit 1210/1210 + integration 37/37 + 0 risky`。
+- 说明：本工单吸收了 C2 后续「非原文蛊删除」与「<40 扩充」两项诉求（原任务 #22--#24），以重建而非增删的方式落地。保留蛊效果与原文逐只核验（审计清册第二阶段）留作内容策展线，不阻塞后续工单。
+
 ### Phase D 配方体系（阻塞于 U3）
+> U3 已于 2026-09-06 过门。D1 的 Schema v2 与配方落表部分成果已在 C4 完成（386 方落 `refinement_recipes.json`）；剩余为按 `2026-09-06-recipe-source-excerpts-draft.md` 扩充跨流派/高转配方与 `synergy` 预留字段。
 
 **D1 配方源结构化落表 → 数据**
 - 前置：**U3 用户提供配方源材料**（文本/表格/原著摘录均可）。
@@ -204,7 +210,15 @@ F 里程碑验收（切片全流程真实窗口走查）
 |----|------|------|
 | U1 | 20+ 道痕流派清单初稿审订 — ✅ 2026-09-05 用户认可 | C2/C3（已放行） |
 | U2 | 214 蛊流派全量映射审订 — ✅ 2026-09-05 用户认可（按文档建议全收） | C2 落库（已完成 `d8eca60`）/C3/D1 |
-| U3 | 合炼配方源材料提供 | D1/D2 |
+| U3 | 合炼配方源材料提供 | ✅ 2026-09-06 用户审订通过（`2026-09-06-recipe-source-excerpts-draft.md` 定稿，低转合炼源已生效） |
+| U3b | 蛊虫目录重建审订（追加门） | ✅ 2026-09-06 用户审订通过（`2026-09-06-gu-catalog-rebuild-audit-draft.md` 定稿，802 目录已落库） |
+
+**追加裁定（2026-09-06，用户口述，冲突时以本表下方为准）**
+
+- **地图节点收窄**：生成图与 first_run 只保留 combat / rest / shop / layer_boss 四类；事件类（event/encounter/caravan/refinement/cultivation/hazard/inheritance…）从 pacing pools 与 first_run 移除，`nodes.json` 保留全量模板库，事件后续逐个补回。
+- **蛊虫目录重建**：gu.json = 802（20 道 × 40~42），refinement_recipes = 386；每月「非原文蛊删除」与「<40 扩充」的原始诉求已由本次重建一次性落地。
+- **开局包**：wanderer starter = small_light / blood_farewell / stone_shell / blood_bat / force_gu（school-less runs 保持战斗契约）。
+- 上述三项已提交 `85150f7`（unit 1210/1210、integration 37/37、0 risky）。
 
 ## 5. 派发规约（每张工单的 Agent brief 附加规则）
 
