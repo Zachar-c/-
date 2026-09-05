@@ -23,6 +23,14 @@ const BATTLE_COMMAND_TYPES := [
 	"play_kill_move",
 ]
 
+const BOSS_LAYER_IDS := {
+	1: "one",
+	2: "two",
+	3: "three",
+	4: "four",
+	5: "five",
+}
+
 
 static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
 	var enemies := _v1_enemies(encounter, catalog)
@@ -55,8 +63,35 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 
 ## 敌人定义 → V1 敌人条目：意图缺省按 attack 映射，V1 新增意图字段
 ## （kind/seal_turns/soul_drain/life_cost/counter_tag）随数据透传。
+static func _boss_layer_multipliers(encounter: Dictionary, catalog: Dictionary) -> Dictionary:
+	var layer := int(encounter.get("layer_boss", 0))
+	if not BOSS_LAYER_IDS.has(layer):
+		return {"hp": 1.0, "damage": 1.0}
+	var battle_config: Dictionary = catalog.get("v1_battle", {})
+	var multiplier_by_layer: Dictionary = battle_config.get("boss_layer_mult", {})
+	var layer_config: Dictionary = multiplier_by_layer.get(BOSS_LAYER_IDS[layer], {})
+	return {
+		"hp": _positive_multiplier(layer_config.get("hp", 1.0)),
+		"damage": _positive_multiplier(layer_config.get("damage", 1.0)),
+	}
+
+
+static func _positive_multiplier(value: Variant) -> float:
+	if not (value is int or value is float):
+		return 1.0
+	var multiplier := float(value)
+	return multiplier if multiplier > 0.0 else 1.0
+
+
+static func _scale_positive_int(value: int, multiplier: float) -> int:
+	if value <= 0:
+		return value
+	return maxi(1, roundi(float(value) * multiplier))
+
+
 static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
 	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	var multipliers := _boss_layer_multipliers(encounter, catalog)
 	var result: Array = []
 	var kinds: Array = []
 	if encounter.has("enemy_kinds"):
@@ -67,15 +102,18 @@ static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
 		var kind := str(kind_value)
 		var definition: Dictionary = enemy_by_id.get(kind, {})
 		var intent: Dictionary = definition.get("intent", {})
+		var intent_kind := str(intent.get("kind", "attack"))
+		var source_damage := int(intent.get("damage", 0))
+		var mapped_damage := source_damage
+		if intent_kind == "attack":
+			mapped_damage = _scale_positive_int(source_damage, float(multipliers["damage"]))
 		result.append({
 			"id": kind,
-			# V1 契约：label 是敌方名称（定义自带 label/name，缺省回退 kind），
-			# 意图文案单独在 intent.label；呈现层对已知 kind 做中文翻译。
 			"label": str(definition.get("label", definition.get("name", kind))),
-			"hp": int(definition.get("hp", 1)),
+			"hp": _scale_positive_int(int(definition.get("hp", 1)), float(multipliers["hp"])),
 			"intent": {
-				"kind": str(intent.get("kind", "attack")),
-				"damage": int(intent.get("damage", 0)),
+				"kind": intent_kind,
+				"damage": mapped_damage,
 				"label": str(intent.get("label", "蓄力")),
 				"speed": int(intent.get("speed", 0)),
 				"seal_turns": int(intent.get("seal_turns", 0)),

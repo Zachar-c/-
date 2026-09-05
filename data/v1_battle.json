@@ -18,6 +18,28 @@
     "four": 100,
     "five": 150
   },
+  "boss_layer_mult": {
+    "one": {
+      "hp": 1.0,
+      "damage": 1.0
+    },
+    "two": {
+      "hp": 1.1,
+      "damage": 1.05
+    },
+    "three": {
+      "hp": 1.2,
+      "damage": 1.1
+    },
+    "four": {
+      "hp": 1.35,
+      "damage": 1.15
+    },
+    "five": {
+      "hp": 1.5,
+      "damage": 1.25
+    }
+  },
   "thought_cost_default": 1,
   "true_qi_cost_default": 1,
   "fight_damage_base": 1,

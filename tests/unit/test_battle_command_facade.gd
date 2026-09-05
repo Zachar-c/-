@@ -419,6 +419,103 @@ func test_use_gu_hits_the_selected_enemy_not_the_first() -> void:
 	assert_eq(int(enemies[2]["hp"]), 6, "selected third enemy must take the strike")
 
 
+func test_ordinary_encounter_does_not_apply_boss_layer_scaling() -> void:
+	var state := RunState.new_run(101)
+	var test_catalog := _catalog_with_scale_probe()
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "boss_scale_probe"}, state, test_catalog)
+	assert_eq(int(battle["enemies"][0]["hp"]), 20)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 20)
+	assert_true(bool(battle["flags"].get("boss_battle", false)))
+
+
+func test_layer_boss_applies_central_l1_to_l5_hp_and_damage_multipliers() -> void:
+	var state := RunState.new_run(101)
+	var test_catalog := _catalog_with_scale_probe()
+	var cases := [{"layer": 1, "hp": 20, "damage": 20}, {"layer": 2, "hp": 22, "damage": 21}, {"layer": 3, "hp": 24, "damage": 22}, {"layer": 4, "hp": 27, "damage": 23}, {"layer": 5, "hp": 30, "damage": 25}]
+	for case in cases:
+		var battle: Dictionary = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": int(case["layer"])}, state, test_catalog)
+		assert_eq(int(battle["enemies"][0]["hp"]), int(case["hp"]))
+		assert_eq(int(battle["enemies"][0]["intent"]["damage"]), int(case["damage"]))
+
+
+func test_layer_boss_scaling_falls_back_for_missing_invalid_and_nonpositive_values() -> void:
+	var state := RunState.new_run(101)
+	var missing := _catalog_with_scale_probe()
+	missing["v1_battle"] = {}
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 3}, state, missing)
+	assert_eq(int(battle["enemies"][0]["hp"]), 20)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 20)
+	var invalid_layer := _catalog_with_scale_probe()
+	battle = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 6}, state, invalid_layer)
+	assert_eq(int(battle["enemies"][0]["hp"]), 20)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 20)
+	var invalid := _catalog_with_scale_probe()
+	invalid["v1_battle"]["boss_layer_mult"]["three"] = {"hp": "bad", "damage": 0.0}
+	battle = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 3}, state, invalid)
+	assert_eq(int(battle["enemies"][0]["hp"]), 20)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 20)
+
+
+func test_layer_boss_scaling_rounds_floors_and_preserves_nonattack_intents() -> void:
+	var state := RunState.new_run(101)
+	var rounded := _catalog_with_scale_probe(3, 3)
+	rounded["v1_battle"]["boss_layer_mult"]["one"] = {"hp": 1.5, "damage": 1.5}
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 1}, state, rounded)
+	assert_eq(int(battle["enemies"][0]["hp"]), 5)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 5)
+	var zero := _catalog_with_scale_probe(1, 0)
+	zero["v1_battle"]["boss_layer_mult"]["one"] = {"hp": 2.0, "damage": 2.0}
+	battle = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 1}, state, zero)
+	assert_eq(int(battle["enemies"][0]["hp"]), 2)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 0)
+	var floored := _catalog_with_scale_probe(1, 1)
+	floored["v1_battle"]["boss_layer_mult"]["one"] = {"hp": 0.1, "damage": 0.1}
+	battle = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 1}, state, floored)
+	assert_eq(int(battle["enemies"][0]["hp"]), 1)
+	assert_eq(int(battle["enemies"][0]["intent"]["damage"]), 1)
+	var nonattack := _catalog_with_scale_probe(4, 7, "seal")
+	nonattack["v1_battle"]["boss_layer_mult"]["one"] = {"hp": 2.0, "damage": 2.0}
+	battle = FacadeScript.start({"enemy_kind": "boss_scale_probe", "layer_boss": 1}, state, nonattack)
+	assert_eq(int(battle["enemies"][0]["hp"]), 8)
+	var mapped_intent: Dictionary = battle["enemies"][0]["intent"]
+	assert_eq(mapped_intent, {
+		"kind": "seal",
+		"damage": 7,
+		"label": "倍率探针",
+		"speed": 3,
+		"seal_turns": 2,
+		"soul_drain": 4,
+		"life_cost": 5,
+		"counter_tag": "probe_counter",
+	})
+
+
+func test_rank_one_player_can_act_in_layer_five_boss_but_not_use_rank_two_gu() -> void:
+	var state := RunState.new_run(101)
+	state.cultivation = 1
+	state.cave_aperture["stored_gu_instance_ids"] = []
+	state.gu_instances = {}
+	var test_catalog := catalog.duplicate(true)
+	test_catalog["gu_by_id"]["rank_two_probe_gu"] = {"id": "rank_two_probe_gu", "combat": "strike", "school": "qi", "role": "attack", "rarity": "rare", "rank": 2, "true_qi_cost": 1, "v1_effect": {"kind": "strike", "amount": 3}}
+	var instance_id := "rank_two_probe_00"
+	state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+	state.gu_instances[instance_id] = GuInstanceScript.new_instance("rank_two_probe_gu", instance_id, test_catalog)
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound", "layer_boss": 5}, state, test_catalog)
+	assert_eq(int(battle["player"]["cultivation"]), 1)
+	assert_true(bool(battle["flags"].get("boss_battle", false)))
+	var punched: Dictionary = FacadeScript.apply_turn(battle, state, {"type": "basic_attack"}, test_catalog)
+	assert_true(bool(punched.get("accepted", false)))
+	var blocked: Dictionary = FacadeScript.apply_turn(battle, state, {"type": "use_gu", "instance_id": instance_id}, test_catalog)
+	assert_false(bool(blocked.get("accepted", true)))
+	assert_eq(blocked.get("feeds", []), ["insufficient_qi_quality"])
+
+
+func _catalog_with_scale_probe(hp: int = 20, damage: int = 20, intent_kind: String = "attack") -> Dictionary:
+	var test_catalog := catalog.duplicate(true)
+	var enemy_by_id: Dictionary = test_catalog.get("enemy_by_id", {})
+	enemy_by_id["boss_scale_probe"] = {"id": "boss_scale_probe", "tier": "boss", "hp": hp, "intent": {"kind": intent_kind, "damage": damage, "label": "倍率探针", "speed": 3, "seal_turns": 2, "soul_drain": 4, "life_cost": 5, "counter_tag": "probe_counter"}}
+	test_catalog["enemy_by_id"] = enemy_by_id
+	return test_catalog
 func _stub_controller(state: RunState, battle: Dictionary = {}) -> Dictionary:
 	return {"state": state, "current_battle": battle, "current_node": {}, "current_session": {}}
 
