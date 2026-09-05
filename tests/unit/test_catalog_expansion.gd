@@ -1,16 +1,16 @@
 extends "res://addons/gut/test.gd"
 
 
-# Task C1: gu catalog expanded to 200 total (40 per school), data-driven
-# combat effects for every generated entry, deterministic generator rerun.
+# Task C1: gu catalog expanded to 200 total (data-driven combat effects for
+# every generated entry, deterministic generator rerun). C2 (2026-09-05)
+# remapped the 214 gu onto the 20 dao-mark schools; the old 40-gu/rarity-per-
+# school generation quota no longer applies and the invariants below verify
+# the remap stays whole (every school keeps gu, pools == full membership).
 
 
 const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
 const BattleResolverScript := preload("res://scripts/domain/battle_resolver.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
-
-const SCHOOLS := ["blood", "qi", "force", "soul", "refine"]
-const RARITY_TARGETS := {"common": 24, "rare": 12, "epic": 4}
 
 
 func catalog() -> Dictionary:
@@ -21,27 +21,38 @@ func test_total_gu_is_200() -> void:
 	assert_gte(catalog()["gu"].size(), 200)
 
 
-func test_each_school_has_40_gu() -> void:
+func test_every_declared_school_has_gu() -> void:
+	var counts := _school_counts()
+	for school_id in ContentCatalogScript.SCHOOL_IDS:
+		assert_gte(int(counts.get(school_id, 0)), 1,
+			"school %s must keep gu after the C2 remap" % school_id)
+
+
+func test_school_pool_is_exact_school_membership() -> void:
+	var cat := catalog()
+	var counts := _school_counts()
+	for school_id in ContentCatalogScript.SCHOOL_IDS:
+		var pool: Array = cat["school_pools"].get(school_id, [])
+		assert_eq(pool.size(), int(counts.get(school_id, 0)),
+			"%s pool must hold every gu of the school" % school_id)
+
+
+func test_gu_schools_stay_within_declared_set() -> void:
+	for gu in catalog()["gu"]:
+		assert_true(ContentCatalogScript.SCHOOL_IDS.has(str(gu["school"])),
+			"gu %s has undeclared school %s" % [gu.get("id", ""), gu.get("school", "")])
+
+
+func _school_counts() -> Dictionary:
 	var counts := {}
 	for gu in catalog()["gu"]:
 		counts[gu["school"]] = int(counts.get(gu["school"], 0)) + 1
-	for school in SCHOOLS:
-		assert_gte(int(counts.get(school, 0)), 40, "school %s" % school)
-
-
-func test_per_school_rarity_targets_met() -> void:
-	var counts := {}
-	for gu in catalog()["gu"]:
-		var key := "%s|%s" % [gu["school"], gu["rarity"]]
-		counts[key] = int(counts.get(key, 0)) + 1
-	for school in SCHOOLS:
-		for rarity in RARITY_TARGETS:
-			assert_gte(int(counts.get("%s|%s" % [school, rarity], 0)),
-					RARITY_TARGETS[rarity], "%s %s" % [school, rarity])
+	return counts
 
 
 func test_no_duplicate_ids_in_real_catalog() -> void:
 	var errors: Array[String] = ContentCatalogScript.validate(catalog())
+	assert_eq(errors, [], "real catalog must pass schema validation")
 	for error in errors:
 		assert_false(error.contains("duplicate"), error)
 

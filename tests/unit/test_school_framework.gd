@@ -51,7 +51,7 @@ func test_school_starter_injection_on_new_run() -> void:
 	assert_true(run.refined_gu_ids.has("small_light_gu"))
 
 	var force_run := _start_with_school("force")
-	assert_true(force_run.refined_gu_ids.has("stone_shell_gu"))
+	assert_true(force_run.refined_gu_ids.has("force_gu"))
 
 
 func test_school_survives_save_data_and_copy() -> void:

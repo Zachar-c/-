@@ -4,7 +4,13 @@ extends RefCounted
 
 const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
 const RARITY_IDS := ["common", "rare", "epic", "legendary"]
-const SCHOOL_IDS := ["blood", "qi", "force", "soul", "refine", "moonlight"]
+# C2 2026-09-05: dao-mark school set after 214-gu remap (U1 26-list minus the six
+# zero-coverage schools change/star/zhou/thunder/ice/formation; D-stage curation adds them).
+const SCHOOL_IDS := [
+	"blood", "qi", "force", "soul", "refine", "light", "wisdom", "dream", "luck",
+	"sword", "wood", "fire", "water", "wind", "gold", "earth", "slave", "heaven",
+	"human", "bone",
+]
 const RELIC_GRADES := ["meta_rule"]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]

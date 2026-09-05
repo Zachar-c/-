@@ -210,6 +210,7 @@ func _refresh_codex() -> void:
 			box.add_child(card)
 			if unlocked:
 				var school := str(e.get("school", ""))
+				var school_name := str(e.get("school_name", school))
 				var eid := str(e.get("id", ""))
 				card.setup(ename, str(e.get("rarity", "")), false, false, false, "")
 				if int(e.get("rank", 0)) > 0:
@@ -220,8 +221,9 @@ func _refresh_codex() -> void:
 					var effect_text := str(e.get("effect", ""))
 					if effect_text != "":
 						card.content_host.add_child(_label("效果：" + effect_text, GuStyle.INK_PRIMARY, 12))
+				# C2 2026-09-05：图鉴透出中文流派名（schools.json v2）。
 				card.content_host.add_child(_label(
-						("流派：" + school) if school != "" else eid, GuStyle.INK_SOFT, 12))
+						("流派：" + school_name) if school_name != "" else eid, GuStyle.INK_SOFT, 12))
 			else:
 				card.setup(ename, "", false, false, true, "")
 				card.content_host.add_child(_label("尚未遭遇 · 剪影", GuStyle.INK_SOFT, 12))

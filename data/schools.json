@@ -1,68 +1,188 @@
 {
-  "blood": {
-    "name": "血道",
-    "summary": "低阶堆叠、气血博弈；低阶血道蛊可累加炼成高阶。",
-    "starter_gu_ids": [
-      "blood_moss_gu",
-      "blood_droplet_gu",
-      "blood_bat_gu",
-      "blood_wing_gu",
-      "blood_farewell_gu"
-    ]
-  },
-  "qi": {
-    "name": "气道",
-    "summary": "材料化用、工具爆发；耗材换效果，用完即销毁。",
-    "starter_gu_ids": [
-      "small_light_gu",
-      "trail_eye_gu",
-      "venom_thread_gu",
-      "shadow_veil_gu",
-      "qi_wall_gu"
-    ]
-  },
-  "force": {
-    "name": "力道",
-    "summary": "低费高频、永久增强；肉身增益永久绑定角色。",
-    "starter_gu_ids": [
-      "thorn_whip_gu",
-      "stone_shell_gu",
-      "force_gu",
-      "bear_strength_gu",
-      "mist_step_gu"
-    ]
-  },
-  "soul": {
-    "name": "魂道",
-    "summary": "魂魄为薪、超额释蛊；反噬转战力，明示透支必有代价。",
-    "starter_gu_ids": [
-      "gen_soul_attack_106_gu",
-      "gen_soul_defense_101_gu",
-      "gen_soul_movement_102_gu",
-      "gen_soul_healing_103_gu",
-      "gen_soul_recon_104_gu"
-    ]
-  },
-  "refine": {
-    "name": "炼道",
-    "summary": "炉火炼蛊、战地取材；简易炼蛊以材换力，炸炉反噬风险自担。",
-    "starter_gu_ids": [
-      "gen_refine_attack_141_gu",
-      "gen_refine_defense_143_gu",
-      "gen_refine_movement_144_gu",
-      "gen_refine_healing_145_gu",
-      "gen_refine_recon_146_gu"
-    ]
-  },
-  "moonlight": {
-    "name": "月光道",
-    "summary": "月光入蛊、光虫同调；以月光连击为核心，辅以小型光术与体壳。",
-    "starter_gu_ids": [
-      "moonlight_gu",
-      "moonlight_gu",
-      "small_light_gu",
-      "stone_shell_gu",
-      "vitality_grass_gu"
-    ]
-  }
+    "blood": {
+        "name": "血道",
+        "summary": "掌气血生灭与精血饲蛊；以血养蛊、血海不孤，养蛊成本高但易养易传，嗜血凶戾。",
+        "starter_gu_ids": [
+            "blood_bat_gu",
+            "blood_droplet_gu",
+            "blood_farewell_gu",
+            "blood_moss_gu"
+        ]
+    },
+    "qi": {
+        "name": "气道",
+        "summary": "掌气之有无形转化；攻守移形皆可塑气，上古气道鼎盛一度式微，后以气海分身再兴。",
+        "starter_gu_ids": [
+            "gen_blood_logistics_021_gu",
+            "gen_qi_attack_036_gu",
+            "gen_qi_attack_043_gu",
+            "gen_qi_healing_040_gu"
+        ]
+    },
+    "force": {
+        "name": "力道",
+        "summary": "掌肉身蛮力与兽力叠加；借荒兽之力入体，一力降十会，南疆商贾与魔道皆用。",
+        "starter_gu_ids": [
+            "bear_strength_gu",
+            "force_gu",
+            "gen_blood_healing_019_gu",
+            "gen_force_attack_072_gu"
+        ]
+    },
+    "soul": {
+        "name": "魂道",
+        "summary": "掌魂魄之壮养收摄；魂魄为薪、魂兽成群，荡魂山壮魂、落魄谷炼魂，偏阴诡幽暗。",
+        "starter_gu_ids": [
+            "gen_refine_defense_157_gu",
+            "gen_soul_attack_106_gu",
+            "gen_soul_attack_107_gu",
+            "gen_soul_attack_113_gu"
+        ]
+    },
+    "refine": {
+        "name": "炼道",
+        "summary": "掌炼蛊合炼与仙蛊屋营造；炉火炼蛊、以材换力、炸炉反噬，是海量合成配方的地基流派。",
+        "starter_gu_ids": [
+            "gen_refine_attack_141_gu",
+            "gen_refine_attack_142_gu",
+            "gen_refine_attack_148_gu",
+            "gen_refine_attack_155_gu"
+        ]
+    },
+    "light": {
+        "name": "光道",
+        "summary": "掌光之显隐与月华之力；光明/月华系蛊互相成就，光明正大亦擅照明探路（含月光系，moonlight 并入）。",
+        "starter_gu_ids": [
+            "gen_soul_attack_120_gu",
+            "moonlight_gu",
+            "small_light_gu",
+            "vitality_grass_gu"
+        ]
+    },
+    "wisdom": {
+        "name": "智道",
+        "summary": "掌念头思算与攻心推演；念头为兵、算计无形，算命/卜算/读心/惑心。",
+        "starter_gu_ids": [
+            "gen_blood_recon_020_gu",
+            "gen_refine_recon_146_gu"
+        ]
+    },
+    "dream": {
+        "name": "梦道",
+        "summary": "掌梦境虚实与先贤底蕴；入梦历练、梦中百年，梦境汲取情感欲望壮大。",
+        "starter_gu_ids": [
+            "gen_soul_defense_115_gu",
+            "gen_soul_logistics_105_gu",
+            "gen_soul_movement_102_gu",
+            "gen_soul_movement_109_gu"
+        ]
+    },
+    "luck": {
+        "name": "运道",
+        "summary": "掌气运消长与福祸转移；运势如河可借可夺可均，克命改运之变数。",
+        "starter_gu_ids": [
+            "gen_refine_logistics_161_gu"
+        ]
+    },
+    "sword": {
+        "name": "剑道",
+        "summary": "掌剑意锋锐与剑气纵横；剑道道痕有侵蚀性、攻伐第一。",
+        "starter_gu_ids": [
+            "gen_qi_movement_039_gu",
+            "gen_qi_recon_041_gu"
+        ]
+    },
+    "wood": {
+        "name": "木道",
+        "summary": "掌草木生发与树人缠斗；生发缠绕、木牢困敌、树精化身，韧性续航。",
+        "starter_gu_ids": [
+            "gen_soul_defense_122_gu",
+            "mending_grass_gu",
+            "thorn_whip_gu",
+            "life_root_gu"
+        ]
+    },
+    "fire": {
+        "name": "火道",
+        "summary": "掌火之爆烈与焚烧；追求爆炸力量，炎道道痕可焚山涨潮，战斗型主攻。",
+        "starter_gu_ids": [
+            "gen_force_movement_088_gu",
+            "gen_blood_healing_026_gu",
+            "phoenix_drop_gu"
+        ]
+    },
+    "water": {
+        "name": "水道",
+        "summary": "掌水之流动包容；川流防御、水罩困敌，福地洞天落地汲地气之隐喻同源。",
+        "starter_gu_ids": [
+            "heaven_dew_gu"
+        ]
+    },
+    "wind": {
+        "name": "风道",
+        "summary": "掌风之流动疾速；锁风/无限风可移山封道，风道道痕海量消耗换战略级威能。",
+        "starter_gu_ids": [
+            "gen_qi_attack_044_gu",
+            "gen_qi_defense_045_gu",
+            "gen_qi_movement_046_gu",
+            "gen_blood_attack_029_gu"
+        ]
+    },
+    "gold": {
+        "name": "金道",
+        "summary": "掌金锐锋刃与铁甲防护；金道道痕伤口难治、金蜈化剑、金土双修常见。",
+        "starter_gu_ids": [
+            "gen_force_attack_079_gu",
+            "gen_force_recon_083_gu",
+            "gen_qi_attack_050_gu",
+            "gen_qi_defense_038_gu"
+        ]
+    },
+    "earth": {
+        "name": "土道",
+        "summary": "掌土石厚重稳固；防御与山体、炼蛊稳定增益，常与变化/石系兼修。",
+        "starter_gu_ids": [
+            "gen_force_healing_068_gu",
+            "gen_soul_movement_123_gu",
+            "jade_skin_gu",
+            "stone_shell_gu"
+        ]
+    },
+    "slave": {
+        "name": "奴道",
+        "summary": "掌驭兽驱物与兽役契约；以蛊驭兽、兽海战术，犬王传承的试炼道。",
+        "starter_gu_ids": [
+            "gen_soul_logistics_126_gu"
+        ]
+    },
+    "heaven": {
+        "name": "天道",
+        "summary": "掌天地规则与灾劫天意；道痕可化任何流派，宿命/灾劫/寿元皆天道碎片。",
+        "starter_gu_ids": [
+            "gen_refine_attack_149_gu",
+            "gen_refine_defense_164_gu",
+            "gen_refine_healing_173_gu",
+            "gen_refine_attack_177_gu"
+        ]
+    },
+    "human": {
+        "name": "人道",
+        "summary": "掌人心人性与情感愿念；人祖传诸蛊皆人道，以情克命、以愿逆天。",
+        "starter_gu_ids": [
+            "gen_blood_attack_022_gu",
+            "gen_refine_healing_145_gu",
+            "gen_refine_defense_171_gu",
+            "gen_refine_logistics_168_gu"
+        ]
+    },
+    "bone": {
+        "name": "骨道",
+        "summary": "掌骨之坚硬与骨架术；骨甲/骨枪/白骨战车，锻骨成兵，防御反击。",
+        "starter_gu_ids": [
+            "gen_force_attack_071_gu",
+            "gen_force_logistics_084_gu",
+            "gen_force_movement_081_gu",
+            "gen_force_recon_076_gu"
+        ]
+    }
 }

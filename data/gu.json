@@ -33,7 +33,7 @@
       "scout",
       "subtle"
     ],
-    "school": "qi",
+    "school": "light",
     "role": "attack",
     "rarity": "common"
   },
@@ -144,7 +144,7 @@
       "attack",
       "control"
     ],
-    "school": "force",
+    "school": "wood",
     "role": "attack",
     "rarity": "common"
   },
@@ -178,7 +178,7 @@
       "escape",
       "mist"
     ],
-    "school": "force",
+    "school": "qi",
     "role": "movement",
     "rarity": "rare"
   },
@@ -251,7 +251,7 @@
       "earth",
       "guard"
     ],
-    "school": "force",
+    "school": "earth",
     "role": "defense",
     "rarity": "common"
   },
@@ -355,7 +355,7 @@
       "attack",
       "moon"
     ],
-    "school": "force",
+    "school": "light",
     "role": "attack",
     "rarity": "epic"
   },
@@ -371,6 +371,10 @@
     ],
     "value": 9,
     "essence_cost": 2,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 4
+    },
     "slot_role": "attack",
     "combat": "moonlight_strike",
     "field_actions": [
@@ -386,7 +390,7 @@
       "attack",
       "moon"
     ],
-    "school": "blood",
+    "school": "light",
     "role": "attack",
     "rarity": "rare"
   },
@@ -415,7 +419,7 @@
       "attack",
       "moon"
     ],
-    "school": "force",
+    "school": "light",
     "role": "attack",
     "rarity": "rare"
   },
@@ -450,7 +454,7 @@
       "stealth",
       "moon"
     ],
-    "school": "qi",
+    "school": "light",
     "role": "recon",
     "rarity": "epic"
   },
@@ -483,7 +487,7 @@
       "movement",
       "moon"
     ],
-    "school": "force",
+    "school": "light",
     "role": "movement",
     "rarity": "rare"
   },
@@ -499,6 +503,10 @@
     ],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 2
+    },
     "slot_role": "attack",
     "combat": "moonlight_strike",
     "field_actions": [
@@ -531,6 +539,11 @@
     ],
     "value": 6,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "heal_and_strike",
+      "heal": 1,
+      "amount": 1
+    },
     "slot_role": "attack",
     "combat": "drain_strike",
     "field_actions": [
@@ -628,6 +641,10 @@
     ],
     "value": 5,
     "essence_cost": 1,
+    "v1_effect": {
+      "kind": "strike",
+      "amount": 2
+    },
     "slot_role": "attack",
     "combat": "moonlight_strike",
     "field_actions": [
@@ -1419,7 +1436,7 @@
       "healing",
       "drain"
     ],
-    "school": "blood",
+    "school": "force",
     "role": "healing",
     "rarity": "common",
     "combat_effects": [
@@ -1457,7 +1474,7 @@
       "scout",
       "reveal"
     ],
-    "school": "blood",
+    "school": "wisdom",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -1499,7 +1516,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "blood",
+    "school": "qi",
     "role": "logistics",
     "rarity": "common",
     "combat_effects": [
@@ -1536,7 +1553,7 @@
       "attack",
       "projectile"
     ],
-    "school": "blood",
+    "school": "human",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -1573,7 +1590,7 @@
       "attack",
       "projectile"
     ],
-    "school": "blood",
+    "school": "qi",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -1610,7 +1627,7 @@
       "defense",
       "guard"
     ],
-    "school": "blood",
+    "school": "qi",
     "role": "defense",
     "rarity": "rare",
     "combat_effects": [
@@ -1648,7 +1665,7 @@
       "movement",
       "escape"
     ],
-    "school": "blood",
+    "school": "qi",
     "role": "movement",
     "rarity": "rare",
     "combat_effects": [
@@ -1685,7 +1702,7 @@
       "healing",
       "drain"
     ],
-    "school": "blood",
+    "school": "fire",
     "role": "healing",
     "rarity": "rare",
     "combat_effects": [
@@ -1723,7 +1740,7 @@
       "scout",
       "reveal"
     ],
-    "school": "blood",
+    "school": "qi",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -1765,7 +1782,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "blood",
+    "school": "force",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -1802,7 +1819,7 @@
       "attack",
       "projectile"
     ],
-    "school": "blood",
+    "school": "wind",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -1839,7 +1856,7 @@
       "attack",
       "projectile"
     ],
-    "school": "blood",
+    "school": "gold",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -1876,7 +1893,7 @@
       "defense",
       "guard"
     ],
-    "school": "blood",
+    "school": "force",
     "role": "defense",
     "rarity": "rare",
     "combat_effects": [
@@ -1914,7 +1931,7 @@
       "movement",
       "escape"
     ],
-    "school": "blood",
+    "school": "wind",
     "role": "movement",
     "rarity": "rare",
     "combat_effects": [
@@ -1951,7 +1968,7 @@
       "healing",
       "drain"
     ],
-    "school": "blood",
+    "school": "wind",
     "role": "healing",
     "rarity": "epic",
     "combat_effects": [
@@ -1989,7 +2006,7 @@
       "scout",
       "reveal"
     ],
-    "school": "blood",
+    "school": "qi",
     "role": "recon",
     "rarity": "epic",
     "combat_effects": [
@@ -2105,7 +2122,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -2142,7 +2159,7 @@
       "defense",
       "guard"
     ],
-    "school": "qi",
+    "school": "gold",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -2180,7 +2197,7 @@
       "movement",
       "escape"
     ],
-    "school": "qi",
+    "school": "sword",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -2255,7 +2272,7 @@
       "scout",
       "reveal"
     ],
-    "school": "qi",
+    "school": "sword",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -2371,7 +2388,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "wind",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -2408,7 +2425,7 @@
       "defense",
       "guard"
     ],
-    "school": "qi",
+    "school": "wind",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -2446,7 +2463,7 @@
       "movement",
       "escape"
     ],
-    "school": "qi",
+    "school": "wind",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -2483,7 +2500,7 @@
       "healing",
       "drain"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "healing",
     "rarity": "common",
     "combat_effects": [
@@ -2521,7 +2538,7 @@
       "scout",
       "reveal"
     ],
-    "school": "qi",
+    "school": "bone",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -2563,7 +2580,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "logistics",
     "rarity": "common",
     "combat_effects": [
@@ -2600,7 +2617,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "gold",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -2637,7 +2654,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -2674,7 +2691,7 @@
       "defense",
       "guard"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -2712,7 +2729,7 @@
       "movement",
       "escape"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -2749,7 +2766,7 @@
       "healing",
       "drain"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "healing",
     "rarity": "rare",
     "combat_effects": [
@@ -2787,7 +2804,7 @@
       "scout",
       "reveal"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -2829,7 +2846,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "qi",
+    "school": "earth",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -2866,7 +2883,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "bone",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -2903,7 +2920,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -2940,7 +2957,7 @@
       "defense",
       "guard"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "defense",
     "rarity": "rare",
     "combat_effects": [
@@ -2978,7 +2995,7 @@
       "movement",
       "escape"
     ],
-    "school": "qi",
+    "school": "gold",
     "role": "movement",
     "rarity": "rare",
     "combat_effects": [
@@ -3015,7 +3032,7 @@
       "healing",
       "drain"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "healing",
     "rarity": "rare",
     "combat_effects": [
@@ -3053,7 +3070,7 @@
       "scout",
       "reveal"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -3095,7 +3112,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -3132,7 +3149,7 @@
       "attack",
       "projectile"
     ],
-    "school": "qi",
+    "school": "force",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -3281,7 +3298,7 @@
       "healing",
       "drain"
     ],
-    "school": "force",
+    "school": "earth",
     "role": "healing",
     "rarity": "common",
     "combat_effects": [
@@ -3398,7 +3415,7 @@
       "attack",
       "projectile"
     ],
-    "school": "force",
+    "school": "bone",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -3585,7 +3602,7 @@
       "scout",
       "reveal"
     ],
-    "school": "force",
+    "school": "bone",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -3701,7 +3718,7 @@
       "attack",
       "projectile"
     ],
-    "school": "force",
+    "school": "gold",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -3776,7 +3793,7 @@
       "movement",
       "escape"
     ],
-    "school": "force",
+    "school": "bone",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -3851,7 +3868,7 @@
       "scout",
       "reveal"
     ],
-    "school": "force",
+    "school": "gold",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -3893,7 +3910,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "force",
+    "school": "bone",
     "role": "logistics",
     "rarity": "common",
     "combat_effects": [
@@ -4042,7 +4059,7 @@
       "movement",
       "escape"
     ],
-    "school": "force",
+    "school": "fire",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -4079,7 +4096,7 @@
       "healing",
       "drain"
     ],
-    "school": "force",
+    "school": "gold",
     "role": "healing",
     "rarity": "rare",
     "combat_effects": [
@@ -4117,7 +4134,7 @@
       "scout",
       "reveal"
     ],
-    "school": "force",
+    "school": "gold",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -4159,7 +4176,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "force",
+    "school": "gold",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -4196,7 +4213,7 @@
       "attack",
       "projectile"
     ],
-    "school": "force",
+    "school": "gold",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -4233,7 +4250,7 @@
       "attack",
       "projectile"
     ],
-    "school": "force",
+    "school": "earth",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -4383,7 +4400,7 @@
       "scout",
       "reveal"
     ],
-    "school": "force",
+    "school": "earth",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -4574,7 +4591,7 @@
       "movement",
       "escape"
     ],
-    "school": "soul",
+    "school": "dream",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -4691,7 +4708,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "soul",
+    "school": "dream",
     "role": "logistics",
     "rarity": "common",
     "combat_effects": [
@@ -4840,7 +4857,7 @@
       "movement",
       "escape"
     ],
-    "school": "soul",
+    "school": "dream",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -5068,7 +5085,7 @@
       "defense",
       "guard"
     ],
-    "school": "soul",
+    "school": "dream",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -5181,7 +5198,7 @@
       "scout",
       "reveal"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -5223,7 +5240,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "logistics",
     "rarity": "common",
     "combat_effects": [
@@ -5260,7 +5277,7 @@
       "attack",
       "projectile"
     ],
-    "school": "soul",
+    "school": "light",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -5297,7 +5314,7 @@
       "attack",
       "projectile"
     ],
-    "school": "soul",
+    "school": "bone",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -5334,7 +5351,7 @@
       "defense",
       "guard"
     ],
-    "school": "soul",
+    "school": "wood",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -5372,7 +5389,7 @@
       "movement",
       "escape"
     ],
-    "school": "soul",
+    "school": "earth",
     "role": "movement",
     "rarity": "common",
     "combat_effects": [
@@ -5409,7 +5426,7 @@
       "healing",
       "drain"
     ],
-    "school": "soul",
+    "school": "gold",
     "role": "healing",
     "rarity": "common",
     "combat_effects": [
@@ -5447,7 +5464,7 @@
       "scout",
       "reveal"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -5489,7 +5506,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "soul",
+    "school": "slave",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -5526,7 +5543,7 @@
       "attack",
       "projectile"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -5563,7 +5580,7 @@
       "attack",
       "projectile"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -5600,7 +5617,7 @@
       "defense",
       "guard"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "defense",
     "rarity": "rare",
     "combat_effects": [
@@ -5638,7 +5655,7 @@
       "movement",
       "escape"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "movement",
     "rarity": "rare",
     "combat_effects": [
@@ -5675,7 +5692,7 @@
       "healing",
       "drain"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "healing",
     "rarity": "rare",
     "combat_effects": [
@@ -5713,7 +5730,7 @@
       "scout",
       "reveal"
     ],
-    "school": "soul",
+    "school": "gold",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -5755,7 +5772,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "soul",
+    "school": "bone",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -5829,7 +5846,7 @@
       "attack",
       "projectile"
     ],
-    "school": "soul",
+    "school": "earth",
     "role": "attack",
     "rarity": "rare",
     "combat_effects": [
@@ -5866,7 +5883,7 @@
       "defense",
       "guard"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "defense",
     "rarity": "rare",
     "combat_effects": [
@@ -5904,7 +5921,7 @@
       "movement",
       "escape"
     ],
-    "school": "soul",
+    "school": "gold",
     "role": "movement",
     "rarity": "epic",
     "combat_effects": [
@@ -5941,7 +5958,7 @@
       "healing",
       "drain"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "healing",
     "rarity": "epic",
     "combat_effects": [
@@ -5979,7 +5996,7 @@
       "scout",
       "reveal"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "recon",
     "rarity": "epic",
     "combat_effects": [
@@ -6021,7 +6038,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "soul",
+    "school": "force",
     "role": "logistics",
     "rarity": "epic",
     "combat_effects": [
@@ -6207,7 +6224,7 @@
       "healing",
       "drain"
     ],
-    "school": "refine",
+    "school": "human",
     "role": "healing",
     "rarity": "common",
     "combat_effects": [
@@ -6245,7 +6262,7 @@
       "scout",
       "reveal"
     ],
-    "school": "refine",
+    "school": "wisdom",
     "role": "recon",
     "rarity": "common",
     "combat_effects": [
@@ -6361,7 +6378,7 @@
       "attack",
       "projectile"
     ],
-    "school": "refine",
+    "school": "heaven",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -6627,7 +6644,7 @@
       "attack",
       "projectile"
     ],
-    "school": "refine",
+    "school": "qi",
     "role": "attack",
     "rarity": "common",
     "combat_effects": [
@@ -6664,7 +6681,7 @@
       "defense",
       "guard"
     ],
-    "school": "refine",
+    "school": "soul",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -6819,7 +6836,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "refine",
+    "school": "luck",
     "role": "logistics",
     "rarity": "common",
     "combat_effects": [
@@ -6930,7 +6947,7 @@
       "defense",
       "guard"
     ],
-    "school": "refine",
+    "school": "heaven",
     "role": "defense",
     "rarity": "common",
     "combat_effects": [
@@ -7085,7 +7102,7 @@
       "tempo",
       "subtle"
     ],
-    "school": "refine",
+    "school": "human",
     "role": "logistics",
     "rarity": "rare",
     "combat_effects": [
@@ -7196,7 +7213,7 @@
       "defense",
       "guard"
     ],
-    "school": "refine",
+    "school": "human",
     "role": "defense",
     "rarity": "rare",
     "combat_effects": [
@@ -7234,7 +7251,7 @@
       "movement",
       "escape"
     ],
-    "school": "refine",
+    "school": "soul",
     "role": "movement",
     "rarity": "rare",
     "combat_effects": [
@@ -7271,7 +7288,7 @@
       "healing",
       "drain"
     ],
-    "school": "refine",
+    "school": "heaven",
     "role": "healing",
     "rarity": "rare",
     "combat_effects": [
@@ -7309,7 +7326,7 @@
       "scout",
       "reveal"
     ],
-    "school": "refine",
+    "school": "human",
     "role": "recon",
     "rarity": "rare",
     "combat_effects": [
@@ -7425,7 +7442,7 @@
       "attack",
       "projectile"
     ],
-    "school": "refine",
+    "school": "heaven",
     "role": "attack",
     "rarity": "epic",
     "combat_effects": [
@@ -7574,7 +7591,7 @@
       "heal",
       "nature"
     ],
-    "school": "moonlight",
+    "school": "light",
     "role": "logistics",
     "rarity": "common"
   },
@@ -7609,7 +7626,7 @@
       "body",
       "jade"
     ],
-    "school": "force",
+    "school": "earth",
     "role": "defense",
     "rarity": "rare"
   },
@@ -7678,7 +7695,7 @@
       "force",
       "epic"
     ],
-    "school": "force",
+    "school": "earth",
     "role": "defense",
     "rarity": "epic"
   },
@@ -7709,7 +7726,7 @@
       "heal",
       "vitality"
     ],
-    "school": "qi",
+    "school": "wood",
     "role": "healing",
     "rarity": "common"
   },
@@ -7740,7 +7757,7 @@
       "heal",
       "vitality"
     ],
-    "school": "blood",
+    "school": "bone",
     "role": "healing",
     "rarity": "common"
   },
@@ -7771,7 +7788,7 @@
       "heal",
       "vitality"
     ],
-    "school": "qi",
+    "school": "earth",
     "role": "healing",
     "rarity": "rare"
   },
@@ -7802,7 +7819,7 @@
       "heal",
       "vitality"
     ],
-    "school": "qi",
+    "school": "human",
     "role": "healing",
     "rarity": "rare"
   },
@@ -7833,7 +7850,7 @@
       "heal",
       "vitality"
     ],
-    "school": "blood",
+    "school": "fire",
     "role": "healing",
     "rarity": "rare"
   },
@@ -7864,7 +7881,7 @@
       "heal",
       "vitality"
     ],
-    "school": "qi",
+    "school": "wood",
     "role": "healing",
     "rarity": "epic"
   },
@@ -7895,7 +7912,7 @@
       "heal",
       "vitality"
     ],
-    "school": "blood",
+    "school": "wood",
     "role": "healing",
     "rarity": "rare"
   },
@@ -7926,7 +7943,7 @@
       "heal",
       "vitality"
     ],
-    "school": "qi",
+    "school": "water",
     "role": "healing",
     "rarity": "epic"
   },

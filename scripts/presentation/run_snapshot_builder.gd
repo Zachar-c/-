@@ -899,6 +899,8 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 			"rank": int(g.get("rank", 1)),
 			"effect": _v1_effect_text({"effect": codex_effect}),
 			"school": str(g.get("school", "")),
+			# C2 2026-09-05：图鉴透出中文流派名（schools.json v2），UI 不再裸显英文 id。
+			"school_name": _school_display_name(catalog, str(g.get("school", ""))),
 			"rarity": str(g.get("rarity", "common")),
 			"unlocked": unlocked_gu.has(gid),
 		})
@@ -1260,6 +1262,7 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 			"quality": _gu_quality(definition),
 			"cost": _v1_cost_text(slot, "thought_cost", "true_qi_cost", "life_cost"),
 			"cost_ex": "",
+			"school_label": _school_display_name(catalog, str(definition.get("school", ""))),
 			"executable": reason.is_empty(),
 			"block_reason": _v1_reject_text(reason),
 			"known_risk": _v1_life_cost_risk(slot),
@@ -1280,6 +1283,7 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 		"quality": "普通",
 		"cost": "念头 1",
 		"cost_ex": "",
+		"school_label": "",
 		"executable": punch_reason.is_empty(),
 		"block_reason": _v1_reject_text(punch_reason),
 		"known_risk": [],

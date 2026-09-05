@@ -1,8 +1,9 @@
 extends GutTest
 
 
-# 月光道全链路验收（2026-08-31 用户验收台账）：
-# 开局（月光道 + 枯敌试炼契约）→ 战斗节点击败敌人并确认奖励 →
+# 光道全链路验收（2026-08-31 用户验收台账；moonlight 系于 C2 2026-09-05
+# 并入 light，本路由改用光道开局）：
+# 开局（光道 + 枯敌试炼契约）→ 战斗节点击败敌人并确认奖励 →
 # 黑市节点 5 条资源交易全部可换（一次性）→ 交易节点在 1000 元石内
 # 购买蛊虫与材料 → 炼蛊节点炼出月芒蛊（moonlight_glow）与白玉蛊
 # （white_jade_basic 基础蛊方默认解锁）→ 休整节点回复 30% 生命
@@ -13,12 +14,14 @@ extends GutTest
 #
 # 战斗策略：只用无反噬的 rank1 手段——小光蛊（光术绕过敌方反应）、
 # 守护卡（guarded 反制直击反应）、白猪力蛊（临时力道+3）+ 拳脚。
-# 月光/月芒蛊 rank=2，施放触发转阶反噬扣魂魄，验收流程不碰。
+# 月芒蛊 rank=2，施放触发转阶反噬扣魂魄，验收流程不碰。
 
 
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 
-const LIGHT_GU_IDS := ["small_light_gu"]
+# C2 光道 rank1 攻击蛊（小光蛊 + 并入月光系的 gen_soul_attack_120_gu）。
+# moonlight_gu 同样 rank1 会先在炼蛊节点被月芒配方消耗，Boss 战时已不在槽中。
+const LIGHT_GU_IDS := ["small_light_gu", "gen_soul_attack_120_gu"]
 const GUARD_GU_IDS := ["stone_shell_gu", "jade_skin_gu", "qi_wall_gu", "pig_skin_gu"]
 
 
@@ -56,10 +59,10 @@ func _build_route() -> Array[Dictionary]:
 	return route
 
 
-func _start_moonlight_run() -> RunController:
+func _start_light_run() -> RunController:
 	var controller := RunControllerScript.new()
 	controller.catalog = catalog
-	controller.start_new_run(20260831, "moonlight", ["enemy_vitality_trial"])
+	controller.start_new_run(20260831, "light", ["enemy_vitality_trial"])
 	controller.route = _build_route()
 	return controller
 
@@ -150,17 +153,19 @@ func test_white_jade_basic_recipe_default_unlocked_and_display_name() -> void:
 	assert_eq(DisplayText.gu("moon_glow_gu"), "月芒蛊", "moon_glow_gu 显示名为月芒蛊")
 
 
-func test_full_route_moonlight_to_layer2() -> void:
-	var controller := _start_moonlight_run()
+func test_full_route_light_to_layer2() -> void:
+	var controller := _start_light_run()
 
 	# ---- 开局 ----
 	assert_eq(controller.current_view_name(), "Map", "开局进 Map")
-	assert_eq(controller.state.school, "moonlight")
+	assert_eq(controller.state.school, "light")
 	assert_eq(controller.state.contracts, ["enemy_vitality_trial"], "契约已立誓")
 	assert_eq(int(controller.state.stone), 1000, "契约给 1000 元石")
-	for gu_id in ["moonlight_gu", "small_light_gu", "stone_shell_gu", "vitality_grass_gu"]:
+	# C2 光道 starter pack（含被并入的 moonlight 系蛊）
+	var light_starters := ["gen_soul_attack_120_gu", "moonlight_gu", "small_light_gu", "vitality_grass_gu"]
+	for gu_id in light_starters:
 		assert_true(controller.state.refined_gu_ids.has(gu_id), "起始包含 %s" % gu_id)
-	assert_eq(controller.state.refined_gu_ids.count("moonlight_gu"), 2, "月光蛊 ×2")
+	assert_eq(controller.state.refined_gu_ids.count("moonlight_gu"), 1, "月光蛊 ×1")
 
 	# ---- 节点1：战斗 → 击败 → 奖励 ----
 	controller.submit_command({"type": "travel", "node_id": "L1R0N0"})
@@ -277,8 +282,8 @@ func test_full_route_moonlight_to_layer2() -> void:
 
 
 func test_no_backlash_keeps_soul_intact_in_route() -> void:
-	# 2026-08-31 裁定：蛊虫无负面效果——月光道开局打完战斗节点后魂魄无损。
-	var controller := _start_moonlight_run()
+	# 2026-08-31 裁定：蛊虫无负面效果——光道开局打完战斗节点后魂魄无损。
+	var controller := _start_light_run()
 	controller.submit_command({"type": "travel", "node_id": "L1R0N0"})
 	assert_eq(controller.current_view_name(), "Battle")
 	var soul_before := int(controller.state.cultivator["soul"])

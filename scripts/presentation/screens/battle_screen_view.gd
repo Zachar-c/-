@@ -427,6 +427,10 @@ func _refresh_tooltip() -> void:
 	if not show_tip:
 		return
 	_tooltip_title.text = str(_hovered_card.get("name", "蛊虫"))
+	# C2 2026-09-05：蛊卡 tooltip 标题追加流派标签（如「小光蛊 · 光道」）。
+	var school_label := str(_hovered_card.get("school_label", ""))
+	if school_label != "":
+		_tooltip_title.text += " · " + school_label
 	_tooltip_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_tooltip_view.setup("", str(_hovered_card.get("quality", "")),
 			str(_hovered_card.get("effect", "")),

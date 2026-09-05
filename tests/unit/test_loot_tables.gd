@@ -58,7 +58,7 @@ func test_elite_loot_grants_material_and_may_be_gu() -> void:
 
 
 func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
-	# Bucket mixes a force gu (stone_shell, in the force pool) with a blood gu
+	# Bucket mixes a force gu (force_gu, in the force pool) with a blood gu
 	# (gen_blood_attack_001, in the blood pool): each school must only draw its own.
 	var cat := catalog()
 	var tables: Dictionary = cat["loot_tables"]
@@ -66,13 +66,13 @@ func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
 	elite.erase("forced_rarity")
 	elite["gu_chance_pct"] = 100
 	elite["gu_pool"]["weights"] = {"common": 1}
-	elite["gu_pool"]["by_rarity"] = {"common": ["stone_shell_gu", "gen_blood_attack_001_gu"]}
+	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "gen_blood_attack_001_gu"]}
 	var battle := {"enemy_kind": "ridge_elite_scout"}
 	for seed_value in range(1, 13):
 		var force_state := make_state(seed_value)
 		force_state.school = "force"
 		var force_roll: Dictionary = LootResolverScript.settle_victory(battle, force_state, cat)
-		assert_eq(str(force_roll["loot"].get("gu_id", "")), "stone_shell_gu",
+		assert_eq(str(force_roll["loot"].get("gu_id", "")), "force_gu",
 				"force school seed %d must draw its exclusive pool entry" % seed_value)
 		var blood_state := make_state(seed_value)
 		blood_state.school = "blood"
@@ -88,12 +88,12 @@ func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
 	elite.erase("forced_rarity")
 	elite["gu_chance_pct"] = 100
 	elite["gu_pool"]["weights"] = {"common": 1}
-	elite["gu_pool"]["by_rarity"] = {"common": ["stone_shell_gu", "gen_blood_attack_001_gu"]}
+	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "gen_blood_attack_001_gu"]}
 	var battle := {"enemy_kind": "ridge_elite_scout"}
 	var state := make_state(7)
 	state.school = "qi"
 	var rolled: Dictionary = LootResolverScript.settle_victory(battle, state, cat)
-	assert_true(["stone_shell_gu", "gen_blood_attack_001_gu"].has(str(rolled["loot"].get("gu_id", ""))),
+	assert_true(["force_gu", "gen_blood_attack_001_gu"].has(str(rolled["loot"].get("gu_id", ""))),
 			"school without pool overlap keeps the unfiltered bucket")
 
 
