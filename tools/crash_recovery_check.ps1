@@ -19,7 +19,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 
 # Resolve the Godot console executable through the shared tool resolver.
-$godotExe = & (Join-Path $PSScriptRoot 'resolve-godot.ps1') -Console
+$godotExe = & (Join-Path $PSScriptRoot 'godot.ps1') -Console
 
 $userDir = Join-Path $env:APPDATA 'Godot\app_userdata\蛊真人'
 $backupDir = Join-Path $env:TEMP ('crash_recovery_backup_' + (Get-Date -Format 'yyyyMMddHHmmss'))
