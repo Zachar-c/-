@@ -132,6 +132,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：目录校验绿；真实窗口任意蛊卡可见流派标签；wenzhen 系 UI 测试绿。
 
 **C3 转阶落表**
+> 状态：✅ 2026-09-05 完成——`content_catalog` rank 校验 1..5 上界（GU_RANK_MAX，test-only 蛊 low_rank_exception 豁免：十转杀蛊）；rarity 与转阶解耦说明落 Schema 注释（epic·1转/common·2转 数据实证）；新增 Boss 量级校验（boss_layer_mult/stage_base 五层键 one..five 全覆盖，对齐 facade.BOSS_LAYER_IDS）；`tests/unit/test_c3_rank_tier_contract.gd` 5/5 红先行绿。全量 unit 1197 过 / 3 挂（guitkx/imprint/npc_stock 非本工单）。提交 `599c553`。
 - 前置：U2。
 - 目标：rank 语义扩为 1--5 转（5 转对 L1--L5），rarity 与转阶解耦说明落 Schema 注释；`content_catalog` 校验 1--5；Boss 量级挂钩核对（中央倍率 `data/v1_battle.json`）。
 - 验收：校验绿 + `test_v1_five_layer_clear` 等层级测试绿。
