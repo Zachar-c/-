@@ -16,6 +16,8 @@ export BattleScreen() -> RuitkVNode {
   var ui_state = useState({"mode": "idle", "card": {}, "card_id": "", "target_id": "", "confirming": false, "cause_view": "", "expanded_enemies": false})
   var interaction = ui_state[0]
   var set_interaction = ui_state[1]
+  # A1 drag hit-testing: enemy id -> live PanelContainer (ref refreshed each commit).
+  var enemy_nodes = useRef({})
   var mode = str(interaction.get("mode", "idle"))
   var active_card = interaction.get("card", {})
   var cause_view = str(interaction.get("cause_view", ""))
@@ -49,10 +51,42 @@ export BattleScreen() -> RuitkVNode {
     else:
       submit_card.call(active_card, enemy_id)
 
+  # A1 drag-card-onto-enemy: a release over a live enemy actor plays the card with
+  # that target. Semantics mirror the native battle_screen_view release hit path
+  # (_play_card then _select_enemy): single-enemy cards submit/confirm on that
+  # enemy, dangerous cards keep the confirmation gate, invalid drops are no-ops.
+  var enemy_id_at = func(global_pos):
+    for enemy in visible_enemies:
+      var eid = str(enemy.get("id", ""))
+      var n = enemy_nodes["current"].get(eid)
+      if n != null and is_instance_valid(n) and n is Control and (n as Control).is_visible_in_tree() and (n as Control).get_global_rect().has_point(global_pos):
+        return eid
+    return ""
+  var drop_card_on_enemy = func(card, enemy_id):
+    var drop_danger = (card.get("known_risk", false)) or (card.get("dangerous", false))
+    var drop_valid: Array = card.get("valid_target_ids", [])
+    if str(card.get("target_type", "none")) == "single_enemy":
+      if not drop_valid.has(enemy_id):
+        return
+      if drop_danger:
+        set_interaction.call({"mode": "target_select", "card": card, "card_id": str(card.get("id", "")), "target_id": enemy_id, "confirming": true, "cause_view": cause_view, "expanded_enemies": (interaction.get("expanded_enemies", false))})
+      else:
+        submit_card.call(card, enemy_id)
+    elif drop_danger:
+      set_interaction.call({"mode": "dragging", "card": card, "card_id": str(card.get("id", "")), "target_id": "", "confirming": true, "cause_view": cause_view, "expanded_enemies": (interaction.get("expanded_enemies", false))})
+    else:
+      submit_card.call(card, "")
+  var handle_card_release = func(card, global_pos):
+    if not bool(card.get("executable", true)):
+      return
+    var drop_enemy_id = enemy_id_at.call(global_pos)
+    if drop_enemy_id != "":
+      drop_card_on_enemy.call(card, drop_enemy_id)
+
   var enemy_rows = []
   for enemy in visible_enemies:
     var enemy_id = str(enemy.get("id", ""))
-    enemy_rows.append(<GuEnemyActor enemy={ enemy } selected={ str(interaction.get("target_id", "")) == enemy_id } selectable={ mode == "target_select" and valid_targets.has(enemy_id) } on_select={ select_enemy } />)
+    enemy_rows.append(<GuEnemyActor enemy={ enemy } selected={ str(interaction.get("target_id", "")) == enemy_id } selectable={ mode == "target_select" and valid_targets.has(enemy_id) } on_select={ select_enemy } root_ref={ func(n): enemy_nodes["current"][enemy_id] = n } />)
   if not remainder.is_empty():
     enemy_rows.append(<Button name="enemy_remainder" text={ "余敌 %d" % remainder.size() } onPressed={ func(): set_interaction.call({"mode": mode, "card": active_card, "card_id": str(active_card.get("id", "")), "target_id": str(interaction.get("target_id", "")), "confirming": (interaction.get("confirming", false)), "cause_view": cause_view, "expanded_enemies": true}) } style={ MasterTheme.button_style("action") } />)
 
@@ -116,7 +150,7 @@ export BattleScreen() -> RuitkVNode {
     </HBoxContainer>
     { feedback_rows }
     { hint_rows }
-    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_interaction.call({"mode": "target_select" if mode == "target_select" else "hover", "card": card, "card_id": str(card.get("id", "")), "target_id": str(interaction.get("target_id", "")), "confirming": (interaction.get("confirming", false)), "cause_view": cause_view, "expanded_enemies": (interaction.get("expanded_enemies", false))}) } on_drag={ func(card): set_mode.call("dragging", card) } on_release={ play_card } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
+    <VBoxContainer name="battle_hand" style={ {"separation": 8} }><HBoxContainer style={ {"separation": 12} }><Label text={ "真元 %d" % int(player.get("primordial", 0)) } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 18} } /><Label text={ "抽 %d · 弃 %d · 耗 %d" % [int(piles.get("draw", 0)), int(piles.get("discard", 0)), int(piles.get("exhausted", 0))] } style={ {"font_color": GuStyle.INK_MUTED, "font_size": 14} } /></HBoxContainer><GuBattleHand cards={ state.get("hand", []) } interaction={ interaction } on_press={ play_card } on_hover={ func(card): set_interaction.call({"mode": "target_select" if mode == "target_select" else "hover", "card": card, "card_id": str(card.get("id", "")), "target_id": str(interaction.get("target_id", "")), "confirming": (interaction.get("confirming", false)), "cause_view": cause_view, "expanded_enemies": (interaction.get("expanded_enemies", false))}) } on_release={ handle_card_release } on_cancel={ reset_interaction } />{ kill_rows }<HBoxContainer style={ {"separation": 8} }>{ ops }</HBoxContainer></VBoxContainer>
     <Label name={ "battle_" + mode } text="" />
     { confirm_row }
     { hand_tooltip_rows }
