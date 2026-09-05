@@ -126,6 +126,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 完成：初稿交用户审订（门 U1），锁定后 Schema 按开放集合落地。
 
 **C2 存量 214 蛊流派映射 → 门 U2**
+> 状态：阶段一（映射文档）✅ 2026-09-05 完成——产出 `docs/superpowers/specs/2026-09-05-gu-school-mapping-draft.md`（214/214 全覆盖；134 直接建议 + 80 待复核；主冲突 5 条：石皮蛊三向错配、moon_glow/moon_ray 双 id、X力蛊族、月魂/冰魂/梦魂归魂道、gen_refine 占位）。**等待用户审订（门 U2）后落 gu.json + schools.json v2。**
 - 前置：U1 锁定清单。
 - 目标：按蛊名/效果/现有表现生成全量映射表（含 `small_light_gu`→光道 这类修正），输出可审 diff 文档；用户审订（门 U2）后一次性落 `gu.json` + `schools.json` v2，`content_catalog` 校验同步，快照与卡面/tooltip/图鉴透出流派。
 - 验收：目录校验绿；真实窗口任意蛊卡可见流派标签；wenzhen 系 UI 测试绿。
