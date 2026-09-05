@@ -1152,74 +1152,24 @@ static func _shop_soul_boost(state: RunState, _command: Dictionary, catalog: Dic
 
 
 static func _shop_resource_trade(state: RunState, offer: Dictionary, _catalog: Dictionary) -> Dictionary:
-	# 一次门禁：以 offer_id 为 key 写在 node_flags，第二次访问拒且不改 state。
+	# 门禁与数值结算在 EconomyRules.resource_trade_plan（T1.2 行数门限）。
+	var plan := EconomyRulesScript.resource_trade_plan(offer, state.cultivator, int(state.health), int(state.max_health), state.node_flags)
+	if plan.has("error"):
+		return _rejected(state, str(plan["error"]))
 	var offer_id := str(offer.get("id", ""))
-	if offer_id.is_empty():
-		return _rejected(state, "resource_trade_unknown")
-	if str(state.node_flags.get(offer_id, "")) == "used":
-		return _rejected(state, "resource_trade_already_used")
-	var cost_kind := str(offer.get("cost_kind", ""))
-	var gain_kind := str(offer.get("gain_kind", ""))
-	var cost_amount := int(offer.get("cost_amount", 0))
-	var gain_amount := int(offer.get("gain_amount", 0))
-	var cultivator := state.cultivator.duplicate(true)
-	var before_cultivator := state.cultivator.duplicate(true)
-	var health_after := int(state.health)
-	var max_health_after := int(state.max_health)
-	# 预检并扣减代价
-	if cost_kind == "lifespan":
-		var lifespan := int(cultivator.get("lifespan", 0))
-		if lifespan - cost_amount < 1:
-			return _rejected(state, "insufficient_lifespan")
-		cultivator["lifespan"] = lifespan - cost_amount
-	elif cost_kind == "soul":
-		var soul := int(cultivator.get("soul", 0))
-		if soul - cost_amount < 1:
-			return _rejected(state, "insufficient_soul")
-		cultivator["soul"] = soul - cost_amount
-	elif cost_kind == "health":
-		if int(state.health) - cost_amount <= 0:
-			return _rejected(state, "insufficient_health")
-		health_after = int(state.health) - cost_amount
-	else:
-		return _rejected(state, "resource_trade_unknown")
-	# 收入：lifespan/soul/health（+max_health 同写）
-	var after: Dictionary = {
-		"cultivator": cultivator,
-		"node_flags": state.node_flags.duplicate(true),
-		"health": health_after,
-		"max_health": max_health_after,
-	}
-	var flags: Dictionary = state.node_flags.duplicate(true)
-	flags[offer_id] = "used"
-	after["node_flags"] = flags
-	if gain_kind == "lifespan":
-		cultivator["lifespan"] = int(cultivator.get("lifespan", 0)) + gain_amount
-	elif gain_kind == "soul":
-		var soul := int(cultivator.get("soul", 0))
-		var soul_max := int(cultivator.get("soul_max", soul + gain_amount))
-		cultivator["soul"] = mini(soul + gain_amount, soul_max)
-	elif gain_kind == "health":
-		max_health_after = int(state.max_health) + gain_amount
-		health_after = min(max_health_after, health_after + gain_amount)
-	else:
-		return _rejected(state, "resource_trade_unknown")
-	after["health"] = health_after
-	after["max_health"] = max_health_after
-	after["cultivator"] = cultivator
 	var next := state.append_event(_event(
 		state,
 		"shop_resource_trade",
-		{"cultivator": before_cultivator, "health": int(state.health), "max_health": int(state.max_health), "node_flags": state.node_flags},
-		after,
+		{"cultivator": state.cultivator.duplicate(true), "health": int(state.health), "max_health": int(state.max_health), "node_flags": state.node_flags},
+		plan,
 		"shop_resource_trade_completed",
 		state.current_node_id,
 		[offer_id]
 	))
-	next.cultivator = cultivator
-	next.health = health_after
-	next.max_health = max_health_after
-	next.node_flags = (after.get("node_flags", {}) as Dictionary).duplicate(true)
+	next.cultivator = plan["cultivator"]
+	next.health = int(plan["health"])
+	next.max_health = int(plan["max_health"])
+	next.node_flags = (plan["node_flags"] as Dictionary).duplicate(true)
 	return _accepted(next)
 
 

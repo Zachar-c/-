@@ -92,3 +92,52 @@ static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> i
 		var discount := mini(revisit_cap, (visits - 1) * per)
 		multiplier *= 1.0 - float(discount) / 100.0
 	return maxi(1, int(floor(float(base) * multiplier)))
+
+
+# 2026-09-05 从 resolver.gd 迁出的资源交易门禁与数值结算（T1.2 行数门限：
+# 新规则独立模块）。返回 {error} 表示拒绝且不得改动任何状态；成功返回
+# {cultivator, health, max_health, node_flags} 结算后状态（输入不被修改）。
+static func resource_trade_plan(offer: Dictionary, cultivator: Dictionary, health: int, max_health: int, node_flags: Dictionary) -> Dictionary:
+	var offer_id := str(offer.get("id", ""))
+	if offer_id.is_empty():
+		return {"error": "resource_trade_unknown"}
+	# 一次门禁：以 offer_id 为 key 写在 node_flags，第二次访问拒且不改 state。
+	if str(node_flags.get(offer_id, "")) == "used":
+		return {"error": "resource_trade_already_used"}
+	var cost_kind := str(offer.get("cost_kind", ""))
+	var gain_kind := str(offer.get("gain_kind", ""))
+	var cost_amount := int(offer.get("cost_amount", 0))
+	var gain_amount := int(offer.get("gain_amount", 0))
+	var next_cultivator := cultivator.duplicate(true)
+	var health_after := health
+	var max_health_after := max_health
+	if cost_kind == "lifespan":
+		var lifespan := int(next_cultivator.get("lifespan", 0))
+		if lifespan - cost_amount < 1:
+			return {"error": "insufficient_lifespan"}
+		next_cultivator["lifespan"] = lifespan - cost_amount
+	elif cost_kind == "soul":
+		var soul := int(next_cultivator.get("soul", 0))
+		if soul - cost_amount < 1:
+			return {"error": "insufficient_soul"}
+		next_cultivator["soul"] = soul - cost_amount
+	elif cost_kind == "health":
+		if health - cost_amount <= 0:
+			return {"error": "insufficient_health"}
+		health_after = health - cost_amount
+	else:
+		return {"error": "resource_trade_unknown"}
+	var flags := node_flags.duplicate(true)
+	flags[offer_id] = "used"
+	if gain_kind == "lifespan":
+		next_cultivator["lifespan"] = int(next_cultivator.get("lifespan", 0)) + gain_amount
+	elif gain_kind == "soul":
+		var soul := int(next_cultivator.get("soul", 0))
+		var soul_max := int(next_cultivator.get("soul_max", soul + gain_amount))
+		next_cultivator["soul"] = mini(soul + gain_amount, soul_max)
+	elif gain_kind == "health":
+		max_health_after = max_health + gain_amount
+		health_after = min(max_health_after, health_after + gain_amount)
+	else:
+		return {"error": "resource_trade_unknown"}
+	return {"cultivator": next_cultivator, "health": health_after, "max_health": max_health_after, "node_flags": flags}
