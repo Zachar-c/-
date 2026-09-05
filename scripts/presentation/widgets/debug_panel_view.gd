@@ -26,6 +26,27 @@ const KIND_LABELS := ["元石", "生命", "寿元", "魂魄", "真元"]
 var _props: Dictionary = {}
 var _ready_done := false
 
+# 拖拽：面板 STOP 消费自身矩形内的事件，子控件（展开按钮/输入框）各自消费。
+# 标题带（顶部 HEADER_BAND 像素，标签为 IGNORE 事件直达面板）按住即可拖动，
+# 移动的是宿主 Control，整个面板随之走。
+const HEADER_BAND := 44.0
+
+var _dragging := false
+var _drag_offset := Vector2()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		_dragging = event.pressed and event.position.y <= HEADER_BAND
+		if _dragging:
+			var host := get_parent() as Control
+			if host != null:
+				_drag_offset = get_global_mouse_position() - host.global_position
+	elif event is InputEventMouseMotion and _dragging:
+		var host := get_parent() as Control
+		if host != null:
+			host.global_position = get_global_mouse_position() - _drag_offset
+
 
 func _ready() -> void:
 	_ready_done = true

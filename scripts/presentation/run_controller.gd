@@ -831,7 +831,6 @@ func _mount_debug_panel() -> void:
 	_debug_host.custom_minimum_size = Vector2(260, 44)
 	_debug_host.size = _debug_host_size()
 	_debug_host.mouse_filter = Control.MOUSE_FILTER_PASS
-	_debug_host.set_script(preload("res://scripts/presentation/debug_panel_drag.gd"))
 	add_child(_debug_host)
 	_debug_panel = scene.instantiate()
 	_debug_host.add_child(_debug_panel)
