@@ -45,6 +45,8 @@ var _card_id := ""
 var _target_id := ""
 var _confirming := false
 var _expanded_enemies := false
+# 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
+var _enemy_actors: Dictionary = {}
 var _submitted_card_keys: Dictionary = {}
 var _last_hand_version := -1
 
@@ -258,6 +260,7 @@ func _refresh_enemies(state: Dictionary) -> void:
 	host.add_child(group)
 
 	var valid_targets: Array = _active_card.get("valid_target_ids", [])
+	_enemy_actors.clear()
 	for e in visible_enemies:
 		if not (e is Dictionary):
 			continue
@@ -267,6 +270,7 @@ func _refresh_enemies(state: Dictionary) -> void:
 		actor.custom_minimum_size = Vector2(200, 150)
 		# build 函数一律先 add_child：@onready 要等入树后才有值。
 		group.add_child(actor)
+		_enemy_actors[enemy_id] = actor
 		actor.setup(e, _target_id == enemy_id,
 				_mode == "target_select" and valid_targets.has(enemy_id),
 				_select_enemy)
@@ -295,11 +299,28 @@ func _refresh_hand(state: Dictionary) -> void:
 	# 墨色 token 全按纸面设计会低对比，用 PAPER_BG 浅字。
 	_piles_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
 
-	# Gubattle_hand 当前只接 5 参（press / hover / cancel），拖拽（on_drag / on_release）
-	# 在转换时尚未接线——原 .guitkx 有这两个回调。点击出牌链路完整可用。
-	# ponytail: 上限=拖拽未接线、仅点击可用；升级触发=实际需要拖拽交互时给 gu_battle_hand_view 补 _gui_input。
+	# Gubattle_hand 接 6 参（press / hover / cancel / release），拖拽命中走
+	# _on_card_release：抬起落点在敌方卡上即按该目标出牌（复用点击状态机，
+	# 危险卡进确认流）；按住期间不重建手牌，避免销毁正在接收输入的按钮。
 	_hand.setup(state.get("hand", []), _interaction_dict(),
-			_play_card, _on_card_hover, _reset_interaction)
+			_play_card, _on_card_hover, _reset_interaction, _on_card_release)
+
+
+## 拖拽命中：左键抬起落点命中的存活敌方卡 id；未命中返回空串。
+func _on_card_release(card: Dictionary, global_pos: Vector2) -> void:
+	var enemy_id := _enemy_at(global_pos)
+	if enemy_id == "":
+		return
+	_play_card(card)
+	_select_enemy(enemy_id)
+
+
+func _enemy_at(global_pos: Vector2) -> String:
+	for enemy_id in _enemy_actors:
+		var actor := _enemy_actors[enemy_id] as Control
+		if actor != null and actor.is_visible_in_tree() and actor.get_global_rect().has_point(global_pos):
+			return str(enemy_id)
+	return ""
 
 
 func _refresh_ops(state: Dictionary) -> void:

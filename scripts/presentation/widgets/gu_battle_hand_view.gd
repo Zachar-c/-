@@ -14,6 +14,7 @@ var _cards: Array = []
 var _on_press: Callable = Callable()
 var _on_hover: Callable = Callable()
 var _on_cancel: Callable = Callable()
+var _on_release: Callable = Callable()
 
 
 func _ready() -> void:
@@ -22,12 +23,15 @@ func _ready() -> void:
 
 
 ## 写入手牌与回调。target_select 态额外给一个「取消目标」出口。
+## on_release(card, global_pos)：左键在卡上抬起时回传落点，供宿主做
+## 拖拽命中（落到敌方卡上 = 按该目标出牌）；普通点击落点在卡内，宿主可忽略。
 func setup(cards: Array, interaction: Dictionary, on_press: Callable,
-		on_hover: Callable, on_cancel: Callable) -> void:
+		on_hover: Callable, on_cancel: Callable, on_release: Callable = Callable()) -> void:
 	_cards = cards
 	_on_press = on_press
 	_on_hover = on_hover
 	_on_cancel = on_cancel
+	_on_release = on_release
 	_rebuild(interaction)
 
 
@@ -84,7 +88,13 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 						and event.pressed)
 				or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed))
 		if is_cancel and _on_cancel.is_valid():
-			_on_cancel.call())
+			_on_cancel.call()
+			return
+		# 拖拽命中：左键抬起（含拖出卡外的捕获释放）回传全局落点，宿主判定
+		# 是否落在敌方卡上；普通点击落点在卡内，宿主可忽略。
+		if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT
+				and not event.pressed and executable and _on_release.is_valid()):
+			_on_release.call(card, btn.get_global_rect().position + event.position))
 	# 不可执行的卡不触发 press，避免"点了却注定失败"。
 	btn.pressed.connect(func():
 		if executable and _on_press.is_valid():

@@ -88,6 +88,65 @@ func test_left_mouse_input_after_hover_arms_single_target_card() -> void:
 	assert_true(played.is_empty())
 
 
+func test_drag_card_onto_enemy_submits_with_that_target() -> void:
+	var played: Array = []
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(1280, 720)
+	viewport.gui_disable_input = false
+	add_child(viewport)
+	_hosts.append(viewport)
+	var host := _mount_in(viewport, func(card_id, target_id): played.append([card_id, target_id]))
+	host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	await get_tree().process_frame
+	# 先点击武装（敌方名称按钮只在 target_select 态存在），记录敌方矩形。
+	var card_button := _button(host, "月光蛊")
+	assert_not_null(card_button)
+	var click_at := card_button.get_global_rect().get_center()
+	_viewport_mouse_motion(viewport, click_at)
+	_viewport_mouse_button(viewport, click_at, true)
+	_viewport_mouse_button(viewport, click_at, false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var enemy_button := _button(host, "敌人0")
+	assert_not_null(enemy_button)
+	var to := enemy_button.get_global_rect().get_center()
+	# 再做拖拽手势：按住卡牌拖到敌方卡上抬起 → 直接按该目标出牌。
+	var drag_button := _button(host, "月光蛊")
+	assert_not_null(drag_button)
+	var from := drag_button.get_global_rect().get_center()
+	_viewport_mouse_motion(viewport, from)
+	_viewport_mouse_button(viewport, from, true)
+	_viewport_mouse_motion(viewport, to)
+	_viewport_mouse_button(viewport, to, false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	assert_eq(played, [["c1", "e0"]], "drag release over an enemy must play the card on it")
+
+
+func test_drag_release_off_enemies_does_not_submit() -> void:
+	var played: Array = []
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(1280, 720)
+	viewport.gui_disable_input = false
+	add_child(viewport)
+	_hosts.append(viewport)
+	var host := _mount_in(viewport, func(card_id, target_id): played.append([card_id, target_id]))
+	host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	await get_tree().process_frame
+	var card_button := _button(host, "月光蛊")
+	assert_not_null(card_button)
+	var from := card_button.get_global_rect().get_center()
+	var to := from + Vector2(0, -60)
+	_viewport_mouse_motion(viewport, from)
+	_viewport_mouse_button(viewport, from, true)
+	_viewport_mouse_motion(viewport, to)
+	_viewport_mouse_button(viewport, to, false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	# 抬起未命中敌方卡：不得误出牌（失败拖拽 = 无操作，可改用点击武装）。
+	assert_true(played.is_empty(), "drag release off enemies must not submit")
+
+
 func test_right_click_cancels_target_selection_without_submitting() -> void:
 	var played: Array = []
 	var host := _mount(func(card_id, target_id): played.append([card_id, target_id]))
