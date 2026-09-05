@@ -4,27 +4,9 @@ extends GutTest
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 
 
-func test_fixed_run_reaches_stage_one_ledger_after_a_full_caravan_branch() -> void:
-	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
-	assert_eq(controller.current_view_name(), "Map")
-	controller.submit_command({"type": "travel", "node_id": "ridge_caravan"})
-	assert_eq(controller.current_view_name(), "Shop")
-	controller.submit_command({"type": "buy_gu", "offer_id": "caravan_thorn_offer"})
-	controller.submit_command({"type": "leave_node"})
-	controller.submit_command({"type": "travel", "node_id": "refinement_hollow"})
-	controller.submit_command({"type": "choose_action", "action_id": "leave"})
-	controller.submit_command({"type": "leave_node"})
-	controller.submit_command({"type": "travel", "node_id": "toxic_mountain_path"})
-	controller.submit_command({"type": "choose_action", "action_id": "scout"})
-	controller.submit_command({"type": "leave_node"})
-	controller.submit_command({"type": "travel", "node_id": "ridge_market"})
-	controller.submit_command({"type": "choose_action", "action_id": "leave"})
-	controller.submit_command({"type": "leave_node"})
-	controller.submit_command({"type": "travel", "node_id": "stage_one_ledger"})
-	assert_eq(controller.current_view_name(), "Encounter")
-	assert_eq(controller.state.current_node_id, "stage_one_ledger")
-	controller.free()
+# R-seed 2026-09-03 裁定：教学/固定种子路线已退役，固定路线全程遍历验收由
+# test_drive_to_ending 的 25-seed 生成式驱动覆盖（no_route/leave_blocked 门），
+# 原固定路线版本随之删除。
 
 
 func test_caravan_dispute_fight_starts_a_faction_guard_battle() -> void:

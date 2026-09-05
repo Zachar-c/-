@@ -291,7 +291,9 @@ func _refresh_hand(state: Dictionary) -> void:
 	_piles_label.text = "行动 %d/%d · 念头 %d" % [
 			int(actions.get("left", 0)), int(actions.get("max", 0)),
 			int(player.get("thoughts", 0))]
-	_piles_label.add_theme_color_override("font_color", GuStyle.INK_MUTED)
+	# 行动预算是玩家必读资源：此行直接压在页面深色底上（同顶栏资源芯片），
+	# 墨色 token 全按纸面设计会低对比，用 PAPER_BG 浅字。
+	_piles_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
 
 	# Gubattle_hand 当前只接 5 参（press / hover / cancel），拖拽（on_drag / on_release）
 	# 在转换时尚未接线——原 .guitkx 有这两个回调。点击出牌链路完整可用，
