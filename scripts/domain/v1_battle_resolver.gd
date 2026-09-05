@@ -127,6 +127,7 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 ## 不进战斗面板。战斗蛊按 definition 构建槽位（含 V1 三模式与消耗字段）。
 ## 蛊定义未声明 v1_effect 时按 role 兜底，避免空效果蛊占槽位、烧真元却无事
 ## 发生。显式声明的 v1_effect 永远优先。
+## ponytail: 上限=~200 个 legacy 蛊效果朴素且无回合到期语义、但有执行 effect_reason/预览过滤双护栏；升级触发=某个蛊进 slice 或需要精确效果/到期时逐个迁显式 v1_effect。
 static func default_v1_effect(definition: Dictionary) -> Dictionary:
 	var role := str(definition.get("role", ""))
 	if not DEFAULT_EFFECT_BY_ROLE.has(role):

@@ -296,8 +296,8 @@ func _refresh_hand(state: Dictionary) -> void:
 	_piles_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
 
 	# Gubattle_hand 当前只接 5 参（press / hover / cancel），拖拽（on_drag / on_release）
-	# 在转换时尚未接线——原 .guitkx 有这两个回调。点击出牌链路完整可用，
-	# 拖拽作为遗留项，需要时再给 gu_battle_hand_view 补 _gui_input。
+	# 在转换时尚未接线——原 .guitkx 有这两个回调。点击出牌链路完整可用。
+	# ponytail: 上限=拖拽未接线、仅点击可用；升级触发=实际需要拖拽交互时给 gu_battle_hand_view 补 _gui_input。
 	_hand.setup(state.get("hand", []), _interaction_dict(),
 			_play_card, _on_card_hover, _reset_interaction)
 

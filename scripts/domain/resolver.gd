@@ -1,6 +1,8 @@
 class_name Resolver
 extends RefCounted
 
+# ponytail: 上限=行数门限 2430 仅剩个位数余量；升级触发=下一个功能撞门限时把 _shop_barter 或 rest 簇迁入独立模块（先例：resource_trade_plan -> economy_rules.gd）。
+
 
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")

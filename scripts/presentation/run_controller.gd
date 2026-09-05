@@ -12,7 +12,6 @@ const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_f
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
-const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const DialogueManagerAdapterScript = preload("res://scripts/domain/dialogue_manager_adapter.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")

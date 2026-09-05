@@ -1,6 +1,7 @@
 extends SceneTree
 
 # Headless entry point for the generated RUI siblings consumed by GUT and capture scripts.
+# ponytail: 上限=.guitkx 生成层仍服务非战斗屏（战斗已原生 .tscn 化），双渲染路径并存；升级触发=新屏一律 .tscn、旧屏触碰到时逐个退役生成层。
 const Codegen = preload("res://addons/reactive_ui_toolkit/guitkx/guitkx_codegen.gd")
 
 
