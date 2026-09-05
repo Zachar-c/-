@@ -201,10 +201,14 @@ func _print_map_render_state(root_node: Node) -> void:
 			node_name, node.is_visible_in_tree(), node.modulate, node.z_index, rect, size,
 		])
 
+func _button_matches(button: Button, button_text: String) -> bool:
+	return button.text == button_text or button.tooltip_text == button_text
+
+
 func _press_button(node: Node, button_text: String) -> bool:
 	for child in node.find_children("*", "Button", true, false):
 		var button := child as Button
-		if button != null and button.text == button_text and not button.disabled:
+		if button != null and _button_matches(button, button_text) and not button.disabled:
 			button.pressed.emit()
 			return true
 	return false
@@ -213,7 +217,7 @@ func _press_button(node: Node, button_text: String) -> bool:
 func _find_button(node: Node, button_text: String) -> Button:
 	for child in node.find_children("*", "Button", true, false):
 		var button := child as Button
-		if button != null and button.text == button_text:
+		if button != null and _button_matches(button, button_text):
 			return button
 	return null
 

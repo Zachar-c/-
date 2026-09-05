@@ -219,10 +219,20 @@ func _press(node: Node, text: String) -> bool:
 
 
 func _button(node: Node, text: String) -> Button:
-	if node is Button and str((node as Button).text) == text and not (node as Button).disabled:
-		return node
+	# 卡面是多行文案（品质/名称/费用/效果），卡名只作为其中一行出现；先精确
+	# 匹配（「取消」不得命中「取消目标」），找不到再退回 contains 匹配卡面。
+	var exact := _button_match(node, text, true)
+	return exact if exact != null else _button_match(node, text, false)
+
+
+func _button_match(node: Node, text: String, exact: bool) -> Button:
+	if node is Button:
+		var label := str((node as Button).text)
+		var hit := (label == text) if exact else label.contains(text)
+		if hit and not (node as Button).disabled:
+			return node
 	for child in node.get_children():
-		var found := _button(child, text)
+		var found := _button_match(child, text, exact)
 		if found != null:
 			return found
 	return null

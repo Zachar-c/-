@@ -52,17 +52,18 @@ func _refresh_intent(enemy: Dictionary) -> void:
 	var ispeed := int(intent.get("speed", 0))
 	var idetail := str(intent.get("detail", "蓄势待发"))
 
-	var rune := "☾"
+	var intent_label := "蓄势"
 	var color := GuStyle.INK_SOFT
 	if itype == "attack":
-		rune = "⚔"
+		intent_label = "攻击"
 		color = GuStyle.CINNABAR
 	elif itype == "defend" or itype == "guard":
-		rune = "🛡"
+		intent_label = "防御"
 		color = GuStyle.ANOMALY_YELLOW
 
-	_intent_label.text = "意图：%s %d · 速 %d · %s" % [rune, ivalue, ispeed, idetail]
+	_intent_label.text = "意图：%s %d · 速 %d\n%s" % [intent_label, ivalue, ispeed, idetail]
 	_intent_label.tooltip_text = "意图：%s；数值 %d；速度 %d；%s" % [itype, ivalue, ispeed, idetail]
+	_intent_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_intent_label.add_theme_font_size_override("font_size", 14)
 	_intent_label.add_theme_color_override("font_color", color)
 

@@ -145,7 +145,8 @@ func _count_buttons_with_text(node: Node, text: String) -> int:
 	if node == null:
 		return 0
 	var count := 0
-	if node is Button and str((node as Button).text) == text:
+	# 卡面是多行文案（品质/名称/费用/效果），卡名是其中一行，用 contains 匹配。
+	if node is Button and str((node as Button).text).contains(text):
 		count += 1
 	for child in node.get_children():
 		count += _count_buttons_with_text(child, text)

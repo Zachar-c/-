@@ -60,10 +60,15 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 
 	var btn := Button.new()
 	btn.name = "card_body_" + card_id
-	btn.text = str(card.get("name", "蛊虫"))
-	btn.custom_minimum_size = Vector2(120, 110)
-	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.text = _card_face_text(card)
+	btn.clip_text = true
+	btn.autowrap_mode = TextServer.AUTOWRAP_OFF
+	btn.custom_minimum_size = Vector2(150, 110)
+	# 卡保持固定宽不随行扩展：5-7 张时平铺会互相挤压，细节走 tooltip。
+	btn.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	MasterTheme.apply_button(btn, "card")
+	# 四行卡面塞进 110px 高的按钮：主题 16px 必纵向溢出，压到 13px。
+	btn.add_theme_font_size_override("font_size", 13)
 	btn.modulate = Color(1, 1, 1, 1.0) if executable else Color(1, 1, 1, 0.55)
 	if is_active:
 		btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
@@ -88,12 +93,33 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 	return btn
 
 
+## 卡面多行文案：品质 / 名称 / 费用 / 效果摘要（详细说明仍走统一 tooltip）。
+func _card_face_text(card: Dictionary) -> String:
+	var quality := str(card.get("quality", "普通"))
+	var name := str(card.get("name", "蛊虫"))
+	# cost 已是展示文案（如「念头 1」）；cost_ex 仅在数据自带时优先。
+	var cost := str(card.get("cost_ex", ""))
+	if cost.is_empty():
+		cost = str(card.get("cost", ""))
+	# 卡面只放得下一短行效果；长尾（括号注记、封印细节）留给 tooltip。
+	var effect := str(card.get("effect", ""))
+	var paren := effect.find("（")
+	if paren >= 0:
+		effect = effect.substr(0, paren)
+	if effect.length() > 14:
+		effect = effect.substr(0, 14) + "…"
+	var lines: Array[String] = ["〔%s〕" % quality, name, "◆ %s" % cost]
+	if not effect.is_empty():
+		lines.append(effect)
+	return "\n".join(lines)
+
+
 func _active_box() -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = GuStyle.PAPER_RAISED
 	box.set_border_width_all(2)
 	box.border_color = GuStyle.JADE
-	box.set_corner_radius_all(8)
+	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	return box
 
 

@@ -203,12 +203,15 @@ func _refresh_player(state: Dictionary) -> void:
 	var actions: Dictionary = state.get("actions", {})
 	_player_panel.setup("我方", true, false)
 	var host: Node = _player_panel.content_host
+	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
 	for c in host.get_children():
 		c.queue_free()
 
 	var box := VBoxContainer.new()
 	box.name = "player_actor"
-	box.add_theme_constant_override("separation", 6)
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", GuStyle.SPACE_3)
 	host.add_child(box)
 
 	var hp = StatBarScene().instantiate()
@@ -243,12 +246,15 @@ func _refresh_enemies(state: Dictionary) -> void:
 
 	_enemy_panel.setup("敌方", true, false)
 	var host: Node = _enemy_panel.content_host
+	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
 	for c in host.get_children():
 		c.queue_free()
 
 	var group := HBoxContainer.new()
 	group.name = "enemy_group"
-	group.add_theme_constant_override("separation", 10)
+	group.alignment = BoxContainer.ALIGNMENT_CENTER
+	group.add_theme_constant_override("separation", GuStyle.SPACE_3)
 	host.add_child(group)
 
 	var valid_targets: Array = _active_card.get("valid_target_ids", [])
@@ -257,6 +263,8 @@ func _refresh_enemies(state: Dictionary) -> void:
 			continue
 		var enemy_id := str(e.get("id", ""))
 		var actor = GuEnemyActorScene.instantiate()
+		# 敌人卡保持稳定基线，长意图只在卡内折行，不改变横向节奏。
+		actor.custom_minimum_size = Vector2(200, 150)
 		# build 函数一律先 add_child：@onready 要等入树后才有值。
 		group.add_child(actor)
 		actor.setup(e, _target_id == enemy_id,
@@ -420,9 +428,12 @@ func _position_tooltip() -> void:
 	tooltip_size.x = minf(tooltip_size.x, viewport_size.x - 24.0)
 	_tooltip_host.size = tooltip_size
 	var card_rect := card_body.get_global_rect()
-	var desired := Vector2(card_rect.position.x, card_rect.position.y - tooltip_size.y - 8.0)
-	desired.x = clampf(desired.x, 12.0, maxf(12.0, viewport_size.x - tooltip_size.x - 12.0))
-	desired.y = maxf(12.0, desired.y)
+	var hand_rect: Rect2 = _hand.get_global_rect()
+	var desired := Vector2(card_rect.position.x, hand_rect.position.y - tooltip_size.y - GuStyle.SPACE_2)
+	desired.x = clampf(desired.x, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.x - tooltip_size.x - GuStyle.SPACE_3))
+	if desired.y < GuStyle.SPACE_3:
+		# 手牌上方不足时贴在手牌区内部上沿，避免跨回战场内容。
+		desired.y = clampf(hand_rect.position.y + GuStyle.SPACE_2, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.y - tooltip_size.y - GuStyle.SPACE_3))
 	_tooltip_host.global_position = desired
 
 
@@ -442,7 +453,7 @@ func _apply_tooltip_style() -> void:
 	box.bg_color = GuStyle.PAPER_RAISED
 	box.border_color = GuStyle.HAIRLINE_COLOR
 	box.set_border_width_all(GuStyle.HAIRLINE)
-	box.set_corner_radius_all(8)
+	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	_tooltip_host.add_theme_stylebox_override("panel", box)
 
 

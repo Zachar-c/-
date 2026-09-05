@@ -33,20 +33,26 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="battle_field" type="HBoxContainer" parent="Root"]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
-theme_override_constants/separation = 20
 size_flags_vertical = 3
+theme_override_constants/separation = 16
 
 [node name="PlayerPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 2
+size_flags_stretch_ratio = 1.0
 
 [node name="EnemyPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
 
 [node name="Inventory" parent="Root/battle_field" instance=ExtResource("10_inventory")]
+custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_stretch_ratio = 0.0
 
 [node name="FeedbackToast" parent="Root" instance=ExtResource("5_toast")]
 layout_mode = 2
@@ -57,7 +63,9 @@ layout_mode = 2
 theme_override_constants/separation = 3
 
 [node name="battle_hand" type="VBoxContainer" parent="Root"]
+custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
+size_flags_vertical = 0
 theme_override_constants/separation = 8
 
 [node name="HandMetaRow" type="HBoxContainer" parent="Root/battle_hand"]
