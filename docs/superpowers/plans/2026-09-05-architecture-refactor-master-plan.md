@@ -72,6 +72,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 
 **A1 挂载 wenzhen battle/map 双 master，退役对应旧屏**
 > 状态：⛔ 2026-09-05 回退——挂载未适配蛊卡**拖动**既有交互（`drag card onto enemy` 属既有功能，d81e89a），缺真实窗口键鼠验收；已 `git revert` 原验收测试。**待重做**：挂载 + 拖动适配 + 真实窗口走查（AGENTS AI 契约）。
+> 状态：✅ 2026-09-05 重做完成 `3d39704`——RUI battle 屏补齐拖动蛊卡到敌人（drop→use_gu/action_card 带 target），集成测试 6/6 + 真实窗口 Vulkan 拖动复现（末位敌 hp 4→3 首敌无损）+ 回图 + travel 跳层 + 1440 唯一色。拖动适配与真实窗口验收均达。旧屏 .tscn 文件删除留 A5/A6。
 - 前置：无。
 - 目标：`main.tscn`/`run_controller` 的 Battle/Map 视图改挂 `scenes/ui_masters/wenzhen_battle_master.tscn`、`wenzhen_map_master.tscn`（经 `ui/screens/battle_screen.gd`、`map_screen.gd`），数据仍来自 `RunSnapshotBuilder` 快照、命令仍走 `RunController.submit_command()`。
 - 范围：`scripts/presentation/run_controller.gd`、`scenes/ui_masters/*`、`ui/screens/battle_screen.gd`、`ui/screens/map_screen.gd`。
