@@ -5,7 +5,7 @@
 - 产物：`build/win/gu-zhenren.exe`（Windows x64，Release 导出，PCK 内嵌，双击即玩）
 - 重新导出：`powershell -File tools/export.ps1`（预设 `Windows Desktop`，导出路径 `build/win/gu-zhenren.exe`）
 - 排除项：vendor、语料分支、docs、tests、GUT、editor 工具链均不进包
-- 调试入口：双重关闭（Release 无 `OS.is_debug_build()`；`data/debug.json` enabled=false）
+- 调试入口：DBG1 §16.22 门禁，`OS.is_debug_build()` 为假即整链不可达，Release 导出天然关闭
 
 ## 启动
 
@@ -20,7 +20,7 @@
    - 我方手牌：四行卡面（品质/名称/费用/效果），悬停出统一详情 tooltip；
    - 释放蛊虫 → 结束回合看敌方意图结算 → 拳脚/撤退取舍。
 4. **合成杀招（1min，可选）**：走到炼蛊节点，用 `小光蛊 + 迹眼蛊` 合成 `脉冲鼓`，战斗中出现组合杀招「明丝合击」（2 真元 1 念头，3 伤害）。
-5. **结局（30s）**：受击死亡看死因结算页；或地图指令面「自尽/放弃本局」直接进统一结算，演示「结局归因只看事件日志」。
+5. **结局（30s）**：受击死亡看死因结算页；或地图指令面「放弃本局」直接进统一结算，演示「结局归因只看事件日志」。
 
 ## 演示边界（如实说明）
 
