@@ -414,7 +414,16 @@ static func _append_caravan_cards(cards: Array[Dictionary], state: RunState, cat
 			"command": {"type": "sell_gu", "gu_id": gu_id},
 		}))
 	_append_leave_card(cards, state)
-
+	if str(state.encounter_session.get("stance", "neutral")) == "extreme_hostile":
+		cards.append(_card(state, {
+			"id": "node.fight",
+			"title": "斗蛊夺路",
+			"summary": "与商队护卫正面交锋，强行夺取通路。",
+			"executable": true,
+			"cost": {},
+			"known_risk": ["斗蛊失败会当场死亡，本局结束。"],
+			"command": {"type": "choose_action", "action_id": "fight", "npc_id": "caravan_steward"},
+		}))
 
 static func _append_caravan_dispute_cards(cards: Array[Dictionary], state: RunState) -> void:
 	var social: Dictionary = state.relations.get("caravan_steward", {})

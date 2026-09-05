@@ -223,6 +223,54 @@ func test_caravan_dispute_trade_unlocks_after_probe_exposes_evidence() -> void:
 	assert_eq(trade["command"].get("offer", ""), "ledger_evidence")
 
 
+func test_extreme_hostile_caravan_exposes_one_executable_fight_card() -> void:
+	var state := RunState.new_run(101)
+	state.current_node_id = "ridge_caravan"
+	state.encounter_session = {
+		"node_id": "ridge_caravan",
+		"phase": "active",
+		"completed": false,
+		"stance": "extreme_hostile",
+		"offers_fight": true,
+	}
+	var cards := ActionPreviewServiceScript.preview_actions(state, {
+		"id": "ridge_caravan",
+		"type": "caravan",
+	}, catalog)
+	var fight_cards: Array[Dictionary] = []
+	for card_value in cards:
+		var card: Dictionary = card_value
+		var command: Dictionary = card.get("command", Dictionary())
+		if str(command.get("action_id", "")) == "fight":
+			fight_cards.append(card)
+
+	assert_eq(fight_cards.size(), 1)
+	assert_eq(str(fight_cards[0]["id"]), "node.fight")
+	assert_true(bool(fight_cards[0]["executable"]))
+	var fight_command: Dictionary = fight_cards[0]["command"]
+	assert_eq(str(fight_command.get("type", "")), "choose_action")
+	assert_eq(str(fight_command.get("action_id", "")), "fight")
+	assert_eq(str(fight_command.get("npc_id", "")), "caravan_steward")
+
+
+func test_neutral_caravan_does_not_expose_fight_card() -> void:
+	var state := RunState.new_run(101)
+	state.current_node_id = "ridge_caravan"
+	state.encounter_session = {
+		"node_id": "ridge_caravan",
+		"phase": "active",
+		"completed": false,
+		"stance": "neutral",
+		"offers_fight": true,
+	}
+	var cards := ActionPreviewServiceScript.preview_actions(state, {
+		"id": "ridge_caravan",
+		"type": "caravan",
+	}, catalog)
+
+	assert_false(_has_card(cards, "node.fight"))
+
+
 func _state_with_refined_gu(definition_id: String, instance_id: String) -> RunState:
 	var state := RunState.new_run(101)
 	state.gu_instances[instance_id] = {
