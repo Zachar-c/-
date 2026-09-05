@@ -71,7 +71,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 ### Phase A 视觉迁移（旧屏 → wenzhen）
 
 **A1 挂载 wenzhen battle/map 双 master，退役对应旧屏**
-> 状态：✅ 2026-09-05 完成——main 路径已在工作树挂 wenzhen 双 master（控制器核验）；本轮补挂载回归测试 `tests/unit/test_wenzhen_a1_masters_mount.gd`（3/3 绿）+ 全量 unit 1194 过 + 带窗口渲染验证（MAP 460 / BATTLE 1033 唯一色）；真实键鼠走查并入 F1 里程碑。
+> 状态：⛔ 2026-09-05 回退——挂载未适配蛊卡**拖动**既有交互（`drag card onto enemy` 属既有功能，d81e89a），缺真实窗口键鼠验收；已 `git revert` 原验收测试。**待重做**：挂载 + 拖动适配 + 真实窗口走查（AGENTS AI 契约）。
 - 前置：无。
 - 目标：`main.tscn`/`run_controller` 的 Battle/Map 视图改挂 `scenes/ui_masters/wenzhen_battle_master.tscn`、`wenzhen_map_master.tscn`（经 `ui/screens/battle_screen.gd`、`map_screen.gd`），数据仍来自 `RunSnapshotBuilder` 快照、命令仍走 `RunController.submit_command()`。
 - 范围：`scripts/presentation/run_controller.gd`、`scenes/ui_masters/*`、`ui/screens/battle_screen.gd`、`ui/screens/map_screen.gd`。
@@ -119,7 +119,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 ### Phase C 流派体系（C1 可与 A 并行）
 
 **C1 道痕清单提炼（只读） → 门 U1**
-> 状态：✅ 2026-09-05 完成——产出 `docs/superpowers/specs/2026-09-05-dao-mark-school-list-draft.md`：26 条道痕 + 14 条存疑线索；红线六道（血/气/力/魂/炼/光）全覆盖。**等待用户审订（门 U1）后开 C2/C3。**
+> 状态：✅ 2026-09-05 完成——产出 `docs/superpowers/specs/2026-09-05-dao-mark-school-list-draft.md`：26 条道痕 + 14 条存疑线索；红线六道（血/气/力/魂/炼/光）全覆盖。**门 U1：✅ 2026-09-05 用户认可；C2/C3 可开工。**
 - 目标：从 `分支：六卷精编版/` 只读语料提炼 20+ 道痕/流派清单初稿（id、中文名、一句话界定、代表蛊例），整理成 `docs/superpowers/specs/2026-09-XX-dao-mark-school-list-draft.md`。
 - 禁改：语料目录只读；不改任何数据表。
 - 完成：初稿交用户审订（门 U1），锁定后 Schema 按开放集合落地。
@@ -199,7 +199,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 
 | 门 | 内容 | 阻塞 |
 |----|------|------|
-| U1 | 20+ 道痕流派清单初稿审订 | C2/C3 |
+| U1 | 20+ 道痕流派清单初稿审订 — ✅ 2026-09-05 用户认可 | C2/C3（已放行） |
 | U2 | 214 蛊流派全量映射审订 | C2 落库/C3/D1 |
 | U3 | 合炼配方源材料提供 | D1/D2 |
 
