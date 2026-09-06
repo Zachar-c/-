@@ -169,7 +169,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 **A-2 视觉收官项（可与 B/D/S 并行派发）**
 > 状态：HIGH ✅ 2026-09-06（`3c0b12a`：设置→「关于与署名」面板，game-icons.net CC BY 3.0 / OpenGameArt / Kenney 署名+许可链接，hall 套件+smoke 绿）。音效资产实际来源为 **Kenney.nl（CC0）** 非 Freesound（并行 A-F-01 批），已随 2026-09-06 音频批落地。
 - HIGH：游戏内「关于」署名界面（CC BY 3.0 要求游戏内署名，仅 CREDITS.md 不够）。✅ 已实现。
-- 中：音效系统接入（Kenney.nl 开源音效已在 `assets/audio/`，经 `AudioManager`/`AudioDirector` 路由——双系统收敛方向随 AU 裁定）；NPC 立绘开源化（OpenGameArt 等替代 AI 生成）。
+- 中：音效系统接入（Kenney.nl 开源音效已在 `assets/audio/`，经 `AudioManager` 路由——SFX 已接线：battle_screen_view 5 处 + 按钮 ui_click 全局，wenzhen_master_theme 统一触发）。**音频双系统收敛建议（2026-09-06 侦察，待裁定）**：保持正交分工——AudioManager（autoload，SFX 注册表+8 player 池）管短音效；AudioDirector（main.tscn 节点）管 BGM（run_controller 视图切换 play_bgm 已接线）。理由：SFX 需全局短促池化、BGM 需随视图节流切换，生命周期不同；现调用面已按此分工无重叠，合并需重构全部调用点、收益低。残余未接线：master_volume 主音量（hall slider→app_settings）→ 两系统音量落地链路待核。NPC 立绘开源化（OpenGameArt 等替代 AI 生成）。
 - 低：蛊虫插画扩容（按 20 流派代表蛊抽样配图，不为 802 蛊全量）；按钮 hover 缩放动效；页面切换过渡；地图节点类型图标化（战斗→剑、黑市→币等开源图标）。
 - 验收：真实窗口逐项复核；新增开源素材全部回写 `CREDITS.md` 与 `assets_manifest.json`。
 
