@@ -4880,6 +4880,4278 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "mx_blood_atk_3_03",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "blood_heal_2_23_gu",
+    "light_heal_2_17_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_atk_3_03_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R05 血月蛊 光×血 同构（读书笔记 A2b 蛊虫盘）；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊血针蛊×伴蛊晨蛊",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_blood_atk_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "blood_heal_2_30_gu",
+    "light_heal_2_24_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_atk_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R05 血月蛊 光×血 同构（读书笔记 A2b 蛊虫盘）；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊血瘴蛊×伴蛊焕蛊",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_blood_atk_3_26",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "blood_heal_2_37_gu",
+    "light_heal_2_31_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_atk_3_26_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R05 血月蛊 光×血 同构（读书笔记 A2b 蛊虫盘）；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊红绡蛊×伴蛊烛光蛊",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_blood_atk_3_33",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "blood_rec_2_24_gu",
+    "light_rec_2_18_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_atk_3_33_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R05 血月蛊 光×血 同构（读书笔记 A2b 蛊虫盘）；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊血线蛊×伴蛊晞蛊",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_blood_log_3_25",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "blood_rec_2_31_gu",
+    "light_rec_2_25_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_log_3_25_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R05 血月蛊 光×血 同构（读书笔记 A2b 蛊虫盘）；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊血莲蛊×伴蛊熠蛊",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_blood_log_3_32",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "blood_heal_2_23_gu",
+    "light_rec_2_32_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_log_3_32_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R05 血月蛊 光×血 同构（读书笔记 A2b 蛊虫盘）；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊血针蛊×伴蛊萤光蛊",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_atk_3_03",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_15_gu",
+    "force_atk_2_06_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_atk_3_03_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨门蛊×伴蛊十斤之力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_22_gu",
+    "force_atk_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨链蛊×伴蛊力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_atk_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_29_gu",
+    "force_atk_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_atk_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨骨骑蛊×伴蛊劲蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_36_gu",
+    "force_atk_2_06_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨枯骨蛊×伴蛊十斤之力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_atk_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_def_2_07_gu",
+    "force_atk_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_atk_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨盾蛊×伴蛊力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_01",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_log_2_14_gu",
+    "force_atk_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_01_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨船蛊×伴蛊劲蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_02",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_log_2_21_gu",
+    "force_atk_2_06_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_02_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨楔蛊×伴蛊十斤之力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_05",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_log_2_28_gu",
+    "force_atk_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_05_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨骨棺蛊×伴蛊力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_17",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_log_2_35_gu",
+    "force_atk_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_17_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨白骨蛊×伴蛊劲蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_24",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_15_gu",
+    "force_atk_2_06_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_24_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨门蛊×伴蛊十斤之力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_31",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_22_gu",
+    "force_atk_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_31_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨链蛊×伴蛊力蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_bone_def_3_38",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "bone_atk_2_29_gu",
+    "force_atk_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "bone_def_3_38_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 骨承其力；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊骨骨骑蛊×伴蛊劲蛊",
+   "inputs": [
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_log_2_14_gu",
+    "soul_def_2_10_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊酣眠蛊×伴蛊冥蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_log_2_21_gu",
+    "soul_def_2_17_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊梦呓蛊×伴蛊魂火蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_22",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_log_2_28_gu",
+    "soul_def_2_24_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_22_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊梦梦乡蛊×伴蛊战魂蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_log_2_35_gu",
+    "soul_def_2_31_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊梦夜梦蛊×伴蛊魂魅蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_rec_2_13_gu",
+    "soul_def_2_38_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊睡意蛊×伴蛊魂魂影蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_rec_2_20_gu",
+    "soul_mov_2_11_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊梦话蛊×伴蛊阴蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_rec_2_27_gu",
+    "soul_mov_2_18_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊梦梦魇蛊×伴蛊魂丝蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_dream_atk_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "dream_rec_2_34_gu",
+    "soul_mov_2_25_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "dream_atk_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 梦载魂影；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊梦黄粱蛊×伴蛊魂魄蛊",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_13",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_log_2_12_gu",
+    "wood_log_2_17_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_13_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊丘蛊×伴蛊根蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_14",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_log_2_19_gu",
+    "wood_log_2_24_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_14_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊地蛊×伴蛊棘蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_20",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_log_2_26_gu",
+    "wood_log_2_31_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_20_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊谷蛊×伴蛊参天蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_21",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_log_2_33_gu",
+    "wood_log_2_38_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_21_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊土坡蛊×伴蛊木草蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_27",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_rec_2_11_gu",
+    "wood_rec_2_16_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_27_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊岳蛊×伴蛊叶蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_28",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_rec_2_18_gu",
+    "wood_rec_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_28_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊脉蛊×伴蛊灌蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_34",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_rec_2_25_gu",
+    "wood_rec_2_30_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_34_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊岭蛊×伴蛊茁蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_atk_3_35",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "earth_rec_2_32_gu",
+    "wood_rec_2_37_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_atk_3_35_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊土丘蛊×伴蛊木根蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_earth_def_3_01",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "white_jade_gu",
+    "wood_log_2_17_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "earth_def_3_01_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 土养草木；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊白玉蛊×伴蛊根蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_atk_3_03",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_atk_2_01_gu",
+    "water_log_2_19_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_atk_3_03_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊鬼火蛊×伴蛊漪蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_atk_2_15_gu",
+    "water_log_2_26_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊薪蛊×伴蛊沐蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_atk_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_atk_2_22_gu",
+    "water_log_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_atk_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊灯蛊×伴蛊水江蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_atk_2_29_gu",
+    "water_log_2_40_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊火烬蛊×伴蛊水涟蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_atk_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_atk_2_36_gu",
+    "water_rec_2_18_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_atk_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊火炎蛊×伴蛊涟蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_def_3_17",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_log_2_14_gu",
+    "water_rec_2_25_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_def_3_17_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊焚蛊×伴蛊润蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_def_3_24",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_log_2_21_gu",
+    "water_rec_2_32_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_def_3_24_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊硫蛊×伴蛊浸蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_def_3_31",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_log_2_28_gu",
+    "water_rec_2_39_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_def_3_31_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊火焰蛊×伴蛊水潭蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_fire_def_3_38",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "fire_log_2_35_gu",
+    "water_log_2_19_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "fire_def_3_38_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济镜像；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊火燧蛊×伴蛊漪蛊",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_atk_3_01",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_06_gu",
+    "bone_atk_2_15_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_atk_3_01_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊十斤之力蛊×伴蛊骨门蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_atk_3_07",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_33_gu",
+    "bone_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_atk_3_07_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊力蛊×伴蛊骨链蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_atk_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_34_gu",
+    "bone_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_atk_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊劲蛊×伴蛊骨骨骑蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_06_gu",
+    "bone_atk_2_36_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊十斤之力蛊×伴蛊骨枯骨蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_def_3_35",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_33_gu",
+    "bone_def_2_07_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_def_3_35_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊力蛊×伴蛊骨盾蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_heal_3_03",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_34_gu",
+    "bone_log_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_heal_3_03_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊劲蛊×伴蛊骨船蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_force_mov_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "force_atk_2_06_gu",
+    "bone_log_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "force_mov_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 力发筋骨；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊十斤之力蛊×伴蛊骨楔蛊",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "bone",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_atk_3_06",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_11_gu",
+    "sword_atk_2_12_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_atk_3_06_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊赤铁舍利蛊×伴蛊古剑蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_atk_3_13",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_12_gu",
+    "sword_atk_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_atk_3_13_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊青铜舍利蛊×伴蛊断剑蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_atk_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_16_gu",
+    "sword_atk_2_19_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_atk_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊舍利蛊×伴蛊斩剑蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_atk_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_19_gu",
+    "sword_atk_2_20_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_atk_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊铁蛊×伴蛊藏锋蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_def_3_08",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_28_gu",
+    "sword_atk_2_26_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_def_3_08_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊铄蛊×伴蛊剑青锋蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_def_3_09",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_35_gu",
+    "sword_atk_2_27_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_def_3_09_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊锡蛊×伴蛊剑利剑蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_def_3_10",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_log_2_27_gu",
+    "sword_atk_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_def_3_10_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊锐蛊×伴蛊剑匕蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_def_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_log_2_34_gu",
+    "sword_atk_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_def_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊箔蛊×伴蛊剑刺剑蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_gold_def_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "gold_atk_2_11_gu",
+    "sword_atk_2_40_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "gold_def_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 锐金成剑；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊赤铁舍利蛊×伴蛊锋刃蛊",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_atk_3_10",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_22_gu",
+    "luck_heal_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_atk_3_10_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊虹蛊×伴蛊禄蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_atk_3_13",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_23_gu",
+    "luck_heal_2_20_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_atk_3_13_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊霭蛊×伴蛊盛蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_atk_3_14",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_29_gu",
+    "luck_heal_2_27_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_atk_3_14_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊规蛊×伴蛊移蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_def_3_24",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_30_gu",
+    "luck_heal_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_def_3_24_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊矩蛊×伴蛊运瑞蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_def_3_31",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_36_gu",
+    "luck_rec_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_def_3_31_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊乾蛊×伴蛊禧蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_def_3_38",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_37_gu",
+    "luck_rec_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_def_3_38_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊天苍蛊×伴蛊盈蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_mov_3_25",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_22_gu",
+    "luck_rec_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_mov_3_25_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊虹蛊×伴蛊聚蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_mov_3_32",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_23_gu",
+    "luck_rec_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_mov_3_32_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊霭蛊×伴蛊运禄蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_heaven_mov_3_39",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "heaven_atk_2_29_gu",
+    "luck_heal_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "heaven_mov_3_39_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 天命气运；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊规蛊×伴蛊禄蛊",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_atk_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_13_gu",
+    "wisdom_atk_2_11_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_atk_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊才华蛊×伴蛊学习蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_14_gu",
+    "wisdom_atk_2_12_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊认真蛊×伴蛊认真蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_atk_3_19",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_22_gu",
+    "wisdom_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_atk_3_19_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊驯兽师蛊×伴蛊智蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_atk_3_24",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_23_gu",
+    "wisdom_atk_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_atk_3_24_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊丐帮蛊×伴蛊慧蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_atk_3_25",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_29_gu",
+    "wisdom_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_atk_3_25_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊虚情假意蛊×伴蛊巧蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_atk_3_33",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_30_gu",
+    "wisdom_atk_2_30_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_atk_3_33_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊儿女情长蛊×伴蛊算蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_def_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_13_gu",
+    "wisdom_atk_2_36_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_def_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊才华蛊×伴蛊明蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_human_log_3_35",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "human_atk_2_14_gu",
+    "wisdom_atk_2_37_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "human_log_3_35_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 人心生智；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊认真蛊×伴蛊灵蛊",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_atk_3_02",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_heal_2_17_gu",
+    "qi_heal_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_atk_3_02_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊晨蛊×伴蛊氲蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_atk_3_05",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_heal_2_24_gu",
+    "qi_heal_2_20_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_atk_3_05_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊焕蛊×伴蛊纳蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_atk_3_20",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_heal_2_31_gu",
+    "qi_heal_2_27_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_atk_3_20_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊烛光蛊×伴蛊涤蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_atk_3_27",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_rec_2_18_gu",
+    "qi_heal_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_atk_3_27_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊晞蛊×伴蛊气霞蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_atk_3_34",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_rec_2_25_gu",
+    "qi_rec_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_atk_3_34_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊熠蛊×伴蛊霭蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_log_3_19",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_rec_2_32_gu",
+    "qi_rec_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_log_3_19_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊萤光蛊×伴蛊嘘蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_log_3_26",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "moon_glow_gu",
+    "qi_rec_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_log_3_26_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊月芒蛊×伴蛊洗蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_log_3_33",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "moon_ray_gu",
+    "qi_rec_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_log_3_33_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊月痕蛊×伴蛊气氲蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_rec_3_07",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_heal_2_17_gu",
+    "qi_heal_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_rec_3_07_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊晨蛊×伴蛊氲蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_light_rec_3_09",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "light_heal_2_24_gu",
+    "qi_heal_2_20_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "light_rec_3_09_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 月影蛊 光×气 原文锚 clean 17152-17155；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊焕蛊×伴蛊纳蛊",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_heal_2_13_gu",
+    "heaven_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊禄蛊×伴蛊虹蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_atk_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_heal_2_20_gu",
+    "heaven_atk_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_atk_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊盛蛊×伴蛊霭蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_heal_2_27_gu",
+    "heaven_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊移蛊×伴蛊规蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_atk_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_heal_2_34_gu",
+    "heaven_atk_2_30_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_atk_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊运瑞蛊×伴蛊矩蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_log_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_rec_2_14_gu",
+    "heaven_atk_2_36_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_log_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊禧蛊×伴蛊乾蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_log_3_22",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_rec_2_21_gu",
+    "heaven_atk_2_37_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_log_3_22_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊盈蛊×伴蛊天苍蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_log_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_rec_2_28_gu",
+    "heaven_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_log_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊聚蛊×伴蛊虹蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_luck_log_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "luck_rec_2_35_gu",
+    "heaven_atk_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "luck_log_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 运承天时；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊运禄蛊×伴蛊霭蛊",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_heal_2_13_gu",
+    "moon_glow_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊氲蛊×伴蛊月芒蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_atk_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_heal_2_20_gu",
+    "moon_ray_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_atk_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊纳蛊×伴蛊月痕蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_heal_2_27_gu",
+    "light_heal_2_17_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊涤蛊×伴蛊晨蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_atk_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_heal_2_34_gu",
+    "light_heal_2_24_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_atk_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊气霞蛊×伴蛊焕蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_log_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_rec_2_14_gu",
+    "light_heal_2_31_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_log_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊霭蛊×伴蛊烛光蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_log_3_22",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_rec_2_21_gu",
+    "light_rec_2_18_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_log_3_22_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊嘘蛊×伴蛊晞蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_log_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_rec_2_28_gu",
+    "light_rec_2_25_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_log_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊洗蛊×伴蛊熠蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_qi_log_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "qi_rec_2_35_gu",
+    "light_rec_2_32_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "qi_log_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 R04 镜像：气承光耀；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊气氲蛊×伴蛊萤光蛊",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_log_2_03_gu",
+    "fire_atk_2_01_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊合炼蛊×伴蛊鬼火蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_17",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_log_2_15_gu",
+    "fire_atk_2_15_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_17_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊提蛊×伴蛊薪蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_log_2_22_gu",
+    "fire_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊温蛊×伴蛊灯蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_24",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_log_2_29_gu",
+    "fire_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_24_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊配蛊×伴蛊火烬蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_log_2_36_gu",
+    "fire_atk_2_36_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊炼锻蛊×伴蛊火炎蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_31",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_rec_2_14_gu",
+    "fire_log_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_31_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊铸蛊×伴蛊焚蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_rec_2_21_gu",
+    "fire_log_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊养蛊×伴蛊硫蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_refine_atk_3_38",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "refine_rec_2_28_gu",
+    "fire_log_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "refine_atk_3_38_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 炉火炼材；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊调蛊×伴蛊火焰蛊",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_atk_3_04",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_heal_2_14_gu",
+    "human_atk_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_atk_3_04_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊御蛊×伴蛊才华蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_atk_3_05",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_heal_2_21_gu",
+    "human_atk_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_atk_3_05_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊督蛊×伴蛊认真蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_log_3_16",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_heal_2_28_gu",
+    "human_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_log_3_16_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊哨蛊×伴蛊驯兽师蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_log_3_23",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_heal_2_35_gu",
+    "human_atk_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_log_3_23_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊驭牵蛊×伴蛊丐帮蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_log_3_30",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_mov_2_13_gu",
+    "human_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_log_3_30_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊驾蛊×伴蛊虚情假意蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_log_3_37",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_mov_2_20_gu",
+    "human_atk_2_30_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_log_3_37_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊使蛊×伴蛊儿女情长蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_rec_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_mov_2_27_gu",
+    "human_atk_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_rec_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊鞭蛊×伴蛊才华蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_rec_3_22",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_mov_2_34_gu",
+    "human_atk_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_rec_3_22_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊驭役蛊×伴蛊认真蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_rec_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_heal_2_14_gu",
+    "human_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_rec_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊御蛊×伴蛊驯兽师蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_slave_rec_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "slave_heal_2_21_gu",
+    "human_atk_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "slave_rec_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 奴道驭人；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊督蛊×伴蛊丐帮蛊",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_heal_3_12",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_def_2_10_gu",
+    "dream_log_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_heal_3_12_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊冥蛊×伴蛊酣眠蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_heal_3_19",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_def_2_17_gu",
+    "dream_log_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_heal_3_19_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊魂火蛊×伴蛊梦呓蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_heal_3_26",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_def_2_24_gu",
+    "dream_log_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_heal_3_26_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊战魂蛊×伴蛊梦梦乡蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_heal_3_33",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_def_2_31_gu",
+    "dream_log_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_heal_3_33_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊魂魅蛊×伴蛊梦夜梦蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_heal_3_40",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_def_2_38_gu",
+    "dream_rec_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_heal_3_40_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊魂魂影蛊×伴蛊睡意蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_rec_3_13",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_mov_2_11_gu",
+    "dream_rec_2_20_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_rec_3_13_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊阴蛊×伴蛊梦话蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_rec_3_20",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_mov_2_18_gu",
+    "dream_rec_2_27_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_rec_3_20_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊魂丝蛊×伴蛊梦梦魇蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_rec_3_27",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_mov_2_25_gu",
+    "dream_rec_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_rec_3_27_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊魂魄蛊×伴蛊梦黄粱蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_soul_rec_3_34",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "soul_mov_2_32_gu",
+    "dream_log_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "soul_rec_3_34_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 魂梦交感；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊魂煞蛊×伴蛊酣眠蛊",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_def_3_14",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_12_gu",
+    "gold_atk_2_11_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_def_3_14_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊古剑蛊×伴蛊赤铁舍利蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_def_3_21",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_13_gu",
+    "gold_atk_2_12_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_def_3_21_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊断剑蛊×伴蛊青铜舍利蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_def_3_28",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_19_gu",
+    "gold_atk_2_16_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_def_3_28_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊斩剑蛊×伴蛊舍利蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_def_3_35",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_20_gu",
+    "gold_atk_2_19_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_def_3_35_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊藏锋蛊×伴蛊铁蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_mov_3_15",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_26_gu",
+    "gold_atk_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_mov_3_15_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊剑青锋蛊×伴蛊铄蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_mov_3_22",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_27_gu",
+    "gold_atk_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_mov_3_22_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊剑利剑蛊×伴蛊锡蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_mov_3_29",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_33_gu",
+    "gold_log_2_27_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_mov_3_29_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊剑匕蛊×伴蛊锐蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_sword_mov_3_36",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "sword_atk_2_34_gu",
+    "gold_log_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "sword_mov_3_36_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 剑承金气；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊剑刺剑蛊×伴蛊箔蛊",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_05",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_log_2_19_gu",
+    "fire_log_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_05_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊漪蛊×伴蛊火燧蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_06",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_log_2_26_gu",
+    "fire_atk_2_01_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_06_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊沐蛊×伴蛊鬼火蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_07",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_log_2_33_gu",
+    "fire_atk_2_15_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_07_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊水江蛊×伴蛊薪蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_20",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_log_2_40_gu",
+    "fire_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_20_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊水涟蛊×伴蛊灯蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_21",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_rec_2_18_gu",
+    "fire_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_21_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊涟蛊×伴蛊火烬蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_27",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_rec_2_25_gu",
+    "fire_atk_2_36_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_27_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊润蛊×伴蛊火炎蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_28",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_rec_2_32_gu",
+    "fire_log_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_28_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊浸蛊×伴蛊焚蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_34",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_rec_2_39_gu",
+    "fire_log_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_34_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊水潭蛊×伴蛊硫蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_atk_3_35",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_log_2_19_gu",
+    "fire_log_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_atk_3_35_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊漪蛊×伴蛊火焰蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_water_def_3_01",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "water_log_2_26_gu",
+    "fire_log_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "water_def_3_01_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 水火既济；鬼火蛊水火炼法 clean 150990-151208；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊沐蛊×伴蛊火燧蛊",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_def_3_13",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_11_gu",
+    "qi_heal_2_27_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_def_3_13_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊风蛊×伴蛊涤蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_def_3_20",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_12_gu",
+    "qi_heal_2_34_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_def_3_20_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊飓蛊×伴蛊气霞蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_def_3_27",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_18_gu",
+    "qi_rec_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_def_3_27_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊和蛊×伴蛊霭蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_def_3_34",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_19_gu",
+    "qi_rec_2_21_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_def_3_34_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊顺蛊×伴蛊嘘蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_mov_3_14",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_25_gu",
+    "qi_rec_2_28_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_mov_3_14_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊拂蛊×伴蛊洗蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_mov_3_21",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_26_gu",
+    "qi_rec_2_35_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_mov_3_21_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊啸蛊×伴蛊气氲蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_mov_3_28",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_32_gu",
+    "qi_heal_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_mov_3_28_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊凉蛊×伴蛊氲蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wind_mov_3_35",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wind_atk_2_33_gu",
+    "qi_heal_2_20_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wind_mov_3_35_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 风行气随；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊风飓蛊×伴蛊纳蛊",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_atk_3_13",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_11_gu",
+    "human_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_atk_3_13_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊学习蛊×伴蛊虚情假意蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_atk_3_17",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_12_gu",
+    "human_atk_2_30_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_atk_3_17_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊认真蛊×伴蛊儿女情长蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_atk_3_21",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_22_gu",
+    "human_atk_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_atk_3_21_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊智蛊×伴蛊才华蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_def_3_24",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_23_gu",
+    "human_atk_2_14_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_def_3_24_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊慧蛊×伴蛊认真蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_def_3_31",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_29_gu",
+    "human_atk_2_22_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_def_3_31_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊巧蛊×伴蛊驯兽师蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_def_3_38",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_30_gu",
+    "human_atk_2_23_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_def_3_38_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊算蛊×伴蛊丐帮蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_mov_3_25",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_36_gu",
+    "human_atk_2_29_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_mov_3_25_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊明蛊×伴蛊虚情假意蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_mov_3_32",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_37_gu",
+    "human_atk_2_30_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_mov_3_32_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊灵蛊×伴蛊儿女情长蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wisdom_mov_3_39",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wisdom_atk_2_11_gu",
+    "human_atk_2_13_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wisdom_mov_3_39_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 智出人心；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊学习蛊×伴蛊才华蛊",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_01",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_17_gu",
+    "earth_log_2_12_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_01_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊根蛊×伴蛊丘蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_09",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_24_gu",
+    "earth_log_2_19_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_09_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊棘蛊×伴蛊地蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_18",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_31_gu",
+    "earth_log_2_26_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_18_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊参天蛊×伴蛊谷蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_19",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_38_gu",
+    "earth_log_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_19_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊木草蛊×伴蛊土坡蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_25",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_rec_2_16_gu",
+    "earth_rec_2_11_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_25_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊叶蛊×伴蛊岳蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_26",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_rec_2_23_gu",
+    "earth_rec_2_18_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_26_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊灌蛊×伴蛊脉蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_32",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_rec_2_30_gu",
+    "earth_rec_2_25_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_32_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊茁蛊×伴蛊岭蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_33",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_rec_2_37_gu",
+    "earth_rec_2_32_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_33_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊木根蛊×伴蛊土丘蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_39",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_17_gu",
+    "white_jade_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_39_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊根蛊×伴蛊白玉蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_atk_3_40",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_24_gu",
+    "earth_log_2_12_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_atk_3_40_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊棘蛊×伴蛊丘蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_heal_3_03",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_31_gu",
+    "earth_log_2_19_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_heal_3_03_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊参天蛊×伴蛊地蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_heal_3_10",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_log_2_38_gu",
+    "earth_log_2_26_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_heal_3_10_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊木草蛊×伴蛊谷蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "mx_wood_mov_3_02",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "wood_rec_2_16_gu",
+    "earth_log_2_33_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "wood_mov_3_02_gu",
+   "output_rank": 3,
+   "source": "derived:D1b 首批方向 木植于土；3转=2转+2转跨流派（同构月影 光×气 / 血月 光×血）；主蛊叶蛊×伴蛊土坡蛊",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [
