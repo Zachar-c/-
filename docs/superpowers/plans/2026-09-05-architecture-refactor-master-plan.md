@@ -263,7 +263,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 > 状态：⏳ 待派发（内容策展输入依赖）。背景：I-3 侦察发现全库仅 2 条配方产出 rank3+ 蛊（blood_moon_forged / moon_shadow_locked），180 只 rank3 + 244 只 rank4/5 蛊**无任何合炼产出途径**（gen_ 蛊各族独立无同名前身、loot 仅 elite epic 掉 1 只 4 转蛊）——「海量合成配方」核心支柱在 2→3 转断裂。用户裁定开专项补跨流派矩阵。
 - 目标：按 D1 v2 原则（3 转 = 2转+2转 跨流派；4 转 = 3+3；5 转 = 4+4）为全部高转蛊设计合炼链，打通玩家 1→5 转全链。`data/refinement_recipes.json` 增 fixed 方（school/rank/count 表达），Schema v2 已就绪不改。
 - 输入（策展）：逐族的「进阶主蛊 × 跨流派伴蛊」方向与语义锚点，源自 `2026-09-06-recipe-source-excerpts-draft.md` R1-R8 + 各道语料；缺目录蛊（幻月/月霓裳/月旋/雾步/影幕/痕石/旋风等）登记于 `2026-09-06-gu-catalog-rebuild-audit-draft.md` §6.1 审计清册二阶段，落库后补对应配方。
-- 验收：目录校验绿；每只 rank3-5 蛊 ≥1 条产出配方（可达性脚本断言）；source 锚点齐（derived 注明推导规则）；全量 unit/integration 绿。
+- 验收：目录校验绿；**`python tools/verify_recipe_coverage.py` 零不可达 rank3-5 蛊**（工具 `d290b3f`，现 422 缺口基线）；source 锚点齐（derived 注明推导规则）；全量 unit/integration 绿。
 - 边界：不阻塞 D2（D2 流程接线可用现有 2 转配方先打通，D1b 内容后补）；synergy 归杀招系统不在此设计。
 
 ### Phase S 切片内容组装（第一层封闭验证的实体工单）
