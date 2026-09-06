@@ -74,8 +74,8 @@ func test_danger_feedback_stays_on_existing_resource_chips_and_health_bar() -> v
 	host.add_child(health_bar)
 	health_bar.setup("生命", 1, 30, GuStyle.JADE, 0, Callable(), true, "气血将竭")
 	await get_tree().process_frame
-	assert_eq(_named(bar, "ChipShouyuan").tooltip_text, "寿元将尽")
-	assert_eq(_named(bar, "ChipHunpo").tooltip_text, "魂魄将散")
+	assert_eq(_named(bar, "ShouStatus").tooltip_text, "寿元将尽")
+	assert_eq(_named(bar, "HunStatus").tooltip_text, "魂魄将散")
 	assert_eq(health_bar.tooltip_text, "气血将竭")
 	assert_eq(health_bar.get_node("ValueRow/ValueLabel").get_theme_color("font_color"), GuStyle.CINNABAR)
 
