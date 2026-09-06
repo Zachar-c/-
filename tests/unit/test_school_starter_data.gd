@@ -3,9 +3,10 @@ extends "res://addons/gut/test.gd"
 
 # School starter data batch: every dao-mark school declares a starter pack
 # (1..4 rank-one gu, from the C2 2026-09-05 214-gu remap) plus their effects.
+# (The in-battle effect legs of the starters once ran through the legacy
+# engine and died with the V1 convergence, B1 bucket C.)
 
 
-const BattleResolverScript := preload("res://scripts/domain/battle_resolver.gd")
 const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
 
@@ -121,36 +122,3 @@ func test_school_pool_entries_have_display_names() -> void:
 			var gu_id := str(gu_id_value)
 			var named := gu_names.has(gu_id) or legacy_gu.has(gu_id)
 			assert_true(named, "pool gu %s needs a Chinese display name" % gu_id)
-
-
-func test_new_starter_battle_effects_resolve() -> void:
-	var cat: Dictionary = catalog()
-	var cases := [
-		{"gu_id": "blood_droplet_gu", "check": "damage2", "hp_delta": -2, "injury_delta": 0},
-		{"gu_id": "blood_bat_gu", "check": "damage1_heal1", "hp_delta": -1, "injury_delta": -1},
-		{"gu_id": "force_gu", "check": "damage2", "hp_delta": -2, "injury_delta": 0},
-		{"gu_id": "bear_strength_gu", "check": "heal1", "hp_delta": 0, "injury_delta": -1},
-	]
-	for case_value in cases:
-		var case: Dictionary = case_value
-		var state := make_state()
-		state.refined_gu_ids.append(str(case["gu_id"]))
-		state.injury = 2
-		var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, state, cat)
-		var hp_before := int(battle["enemy_hp"])
-		var turn: Dictionary = BattleResolverScript.take_turn(
-			battle, {"type": "use_gu", "gu_id": str(case["gu_id"])}, state, cat
-		)
-		assert_eq(int(turn["battle"]["enemy_hp"]), hp_before + int(case["hp_delta"]), "gu %s damage" % str(case["gu_id"]))
-		assert_eq(int(turn["state"].injury), 2 + int(case["injury_delta"]), "gu %s heal" % str(case["gu_id"]))
-	var qi := make_state()
-	qi.refined_gu_ids.append("stone_shell_gu")
-	var qi_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, qi, cat)
-	var qi_turn: Dictionary = BattleResolverScript.take_turn(qi_battle, {"type": "use_gu", "gu_id": "stone_shell_gu"}, qi, cat)
-	assert_true((qi_turn["battle"]["flags"] as Array).has("guarded"))
-	var farewell := make_state()
-	farewell.refined_gu_ids.append("blood_farewell_gu")
-	var farewell_battle: Dictionary = BattleResolverScript.start({"enemy_kind": "neutral_stone_wanderer"}, farewell, cat)
-	var farewell_turn: Dictionary = BattleResolverScript.take_turn(farewell_battle, {"type": "use_gu", "gu_id": "blood_farewell_gu"}, farewell, cat)
-	assert_true((farewell_turn["battle"]["flags"] as Array).has("enemy_bound"))
-	assert_eq(int(farewell_turn["battle"]["delay_progress"]), 1)
