@@ -42,8 +42,11 @@
    - ✅ V-F-05 页面切换过渡动画：进入战斗快速淡入(100ms/EASE_IN紧张感)，休整/交易/炼蛊慢速淡入(200ms/EASE_OUT放松感)，其他默认(140ms/EASE_IN_OUT)
    - ✅ A-F-06 音量设置界面：大厅设置界面音量从±10按钮改为三滑块（主音量/音效/音乐），实时预览（拖动音效音量滑块播放测试音效），通过AudioManager API直接生效
    - ✅ V-F-12 文字排版优化（部分完成）：GuStyle新增统一字号层级常量（FONT_SIZE_DISPLAY=28/TITLE=20/SUBTITLE=16/BODY=14/CAPTION=12/SMALL=10）和行高常量（LINE_HEIGHT_DISPLAY=1.2/TITLE=1.3/BODY=1.5/CAPTION=1.4）；各屏幕后续逐步替换硬编码数字
-   - ⏳ A-F-05 环境音乐系统 / V-F-08 蛊虫插画扩容 / V-F-09 敌人立绘扩容 / V-F-10 NPC立绘开源化：待后续批次实施
-   - 所有改动通过UI守卫测试7/7全绿
+   - ✅ V-F-08 蛊虫插画扩容：新增5张蛊虫插画（水/火/土/风/雷），总共10张覆盖主要流派；gu_card_view.gd和gu_battle_hand_view.gd匹配逻辑已更新；修复V-F-04按钮hover动画的GDScript lambda闭包编译错误（内联实现）；战斗屏测试11/11全绿
+   - ✅ A-F-05 环境音乐系统（代码框架完成）：AudioManager扩展音乐注册表（9个场景音乐ID）+ 音乐播放器 + play_music/stop_music/crossfade_music方法 + 淡入淡出；run_controller接入_switch_scene_music辅助方法（根据_view_name交叉淡入淡出切换音乐，战斗1.0秒/其他1.5秒）；创建assets/audio/music/目录 + README.md（开源音乐来源推荐：OpenGameArt/Freesound/Kenney/YouTube Audio Library）；UI守卫测试7/7全绿
+   - ⏳ 音乐文件待引入：需通过浏览器从OpenGameArt等开源素材库手动下载9首场景背景音乐（直接下载URL返回404，需从页面获取真实链接）
+   - ⏳ V-F-09 敌人立绘扩容 / V-F-10 NPC立绘开源化：待后续批次实施
+   - 所有改动通过UI守卫测试7/7全绿 + 战斗屏测试11/11全绿
 
 ### 修订后执行队列
 
@@ -172,6 +175,12 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 前置：B1。
 - 目标：设计并落地蓝图层退出：`content_catalog` 校验改写（`_is_data_driven_card_linked` 移除，改为校验 `v1_effect` 完备）；`gu.json` 去 `card_blueprint_ids`（如 UI 需要「操作界面」语义，改由快照按 `v1_effect`/`slot_role` 投影）；删 `cards.json`、`deck_builder.gd`；`deck.json` 的 `remove_card_cost/remove_imprint_cost/imprint_capacity/meta_rule_cap` 迁 `balance.json`；`generate_gu_catalog.py` 去掉出卡逻辑。
 - 验收：目录启动校验绿；`rg "cards.json|deck_builder|card_blueprint" scripts/ tools/` 零命中；相关单测更新绿。
+- **2026-09-06 B2 完成态**（提交 `534d610`，15 files / +41 / -534）：
+  - `content_catalog`：gu 主循环的卡链反查（`_is_data_driven_card_linked` + 恰一蓝图 + card 循环 + `card_by_id`/`seen_card_ids`）整体移除，替换为「gu 显式 `v1_effect` → `_validate_v1_effect` 形状校验」（未声明走 role 兜底，不强制）；synthesis `temp_card_id`/`blind_pool` 的卡存在性校验退役（battle_recipes/battle_blind 死数据本体留待杀招支柱收敛，材料/诅咒校验保留）。
+  - 数据/文件：`data/cards.json`、`scripts/domain/deck_builder.gd`(+uid)、`tests/unit/test_v3_deck_builder.gd`(+uid) 删除；`gu.json` 16 处 `card_blueprint_ids` 键删除（802 蛊保留）；`deck.json` 的 `remove_imprint_cost` 迁 `balance.json`（`content_catalog` 迁移守卫键表同步加列；`resolver.gd` remove_imprint 计价与 `run_snapshot_builder` shop 服务价改读 balance）；`generate_gu_catalog.py` 剥除全部出卡逻辑。
+  - 测试：catalog_expansion/school_starter_data/b5_content_expansion/rarity_data_model/slay_gu_final_chapter 改为 `v1_effect`/V1 combat-shape 守卫；新增合成坏 `v1_effect` 的 validate 红测。定向 9 套件绿（catalog 9、starter 9、b5 4、rarity 10、content_catalog 21、removal 16、imprint 10、npc_stock 13、slay 2）。
+  - 验收线：scripts/ 与 tools/ 对 `cards.json|deck_builder|card_blueprint` 零命中；全量 unit 1093 中 3 红 = 并行视觉会话 in-flight 代码（`gu_panel_view.gd:28` 调用 Godot 不存在的 `VBoxContainer.get_child_index`；map 图标/settings 音量断言），非 B2 面（并行 presentation M 文件不可触碰）。
+  - 遗留：`action_preview_service.gd:93/102/120` 仍以 `catalog.get("card_by_id", {})` 取 V1 槽定义——load_all 已不再输出该键，`.get` 默认空不报错；V1 蛊槽预览投影本应走 `gu_by_id`（B1 移交态即如此），留待预览子系统收敛批次处理。
 
 **B3 冒烟驱动瘦身**
 - 前置：B1（驱动引用的旧路径已清理）。
