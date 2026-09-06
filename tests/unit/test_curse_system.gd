@@ -187,114 +187,16 @@ func test_remove_curse_command_applies_notoriety_uplift_to_price() -> void:
 	assert_eq(str(broke["result"]["reason"]), "insufficient_stone")
 
 
-func _zero_enemy_damage(tuned: Dictionary) -> Dictionary:
-	tuned["enemy_by_id"]["ridge_hound"]["intent"]["damage"] = 0
-	return tuned
+# B1 bucket C (2026-09-06): the five battle-projection legs below were
+# deleted as domain debt - draw_pollution/essence_surcharge/slot_seal ran
+# only inside battle_resolver.gd via CurseRegistry battle projection; the
+# V1 engine and facade consume no curse state (verified zero references), so
+# the battle-time curse channels died with the legacy engine. Run-level curse
+# facts that survive stay pinned above/below: table + validation, gain/remove
+# commands, intensity scaling, save round-trip, free_mix failure attach, and
+# the event-outcome attach.
 
 
-func test_draw_pollution_banishes_cards_before_draw_and_deals_backlash_damage() -> void:
-	var run := _run_with_gu(["force_gu", "blood_droplet_gu"])
-	run = CurseRegistry.gain_curse(run, "gu_erosion", "test")
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
-	assert_eq(battle["curses"], [{"id": "gu_erosion", "effect": "draw_pollution", "intensity": 1, "free": 2}])
-	# Deck: starter 小光蛊 + our two battle-card gu = 3 cards; hand holds 2
-	# so the draw pile starts with 1 card.
-	assert_eq(battle["draw_pile"].size(), 1)
-	var top_card: Dictionary = battle["draw_pile"].back()
-
-	var ended := BattleResolver.apply_action_card(battle, run, {
-		"type": "action_card",
-		"action_id": "battle.end_turn",
-		"state_version": battle["hand_version"],
-	}, _zero_enemy_damage(catalog.duplicate(true)))
-
-	assert_true(ended["accepted"])
-	assert_eq(int(ended["state"].health), 79, "零伤目录下仅抽污反噬扣 1")
-	assert_true(ended["feeds"].has("draw_pollution"))
-	assert_eq(ended["battle"]["banished_cards"], [top_card])
-	assert_eq(ended["battle"]["hand"].size(), 2)
-	assert_true(_piles_exclude(ended["battle"], [str(top_card["instance_id"])]))
-	var found_damage_event := false
-	for entry in ended["state"].event_log:
-		if str(entry.get("reason", "")) == "backlash_curse_damage":
-			found_damage_event = true
-			assert_eq(int(entry["after"]["health"]), 79)
-	assert_true(found_damage_event)
-
-
-func test_backlash_curse_damage_kills_through_terminal_flow_as_backlash() -> void:
-	var run := _run_with_gu(["small_light_gu"])
-	run.health = 1
-	run = CurseRegistry.gain_curse(run, "gu_erosion", "test")
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
-	var ended := BattleResolver.apply_action_card(battle, run, {
-		"type": "action_card",
-		"action_id": "battle.end_turn",
-		"state_version": battle["hand_version"],
-	}, _zero_enemy_damage(catalog.duplicate(true)))
-
-	assert_true(ended["finished"])
-	assert_eq(str(ended["result"]), "death")
-	assert_true(ended["feeds"].has("player_dead"))
-	assert_eq(str(ended["state"].terminal_state), "dead")
-	assert_eq(str(ended["battle"]["final_blow"]["id"]), "backlash_curse")
-
-
-func test_essence_surcharge_adds_extra_cost_beyond_free_allowance_of_two() -> void:
-	var run := _run_with_gu(["force_gu"])
-	# Two layers -> intensity 4 -> surcharge 2 beyond the free allowance of 2.
-	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
-	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
-	battle["action_energy"] = 0  # isolate surcharge math from the base first-turn grant
-	var command := _command_for_definition(battle, "power_blow")
-
-	run.essence = 2
-	var denied := BattleResolver.apply_action_card(battle, run, command, _zero_enemy_damage(catalog.duplicate(true)))
-	# Battle-level payment failures use the existing feed-based rejection path.
-	assert_true(denied["feeds"].has("insufficient_essence"))
-	assert_eq(int(denied["state"].essence), 2)
-
-	run.essence = 3
-	var allowed := BattleResolver.apply_action_card(battle, run, command, _zero_enemy_damage(catalog.duplicate(true)))
-	assert_true(allowed["accepted"])
-	assert_false(allowed["feeds"].has("insufficient_essence"))
-	assert_eq(int(allowed["state"].essence), 0)
-
-
-func test_low_intensity_essence_surcharge_stays_within_free_allowance() -> void:
-	var run := _run_with_gu(["force_gu"])
-	run = CurseRegistry.gain_curse(run, "essence_bloat", "test")
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, _zero_enemy_damage(catalog.duplicate(true)))
-	battle["action_energy"] = 0  # isolate surcharge math from the base first-turn grant
-	var command := _command_for_definition(battle, "power_blow")
-	run.essence = 1
-	var played := BattleResolver.apply_action_card(battle, run, command, _zero_enemy_damage(catalog.duplicate(true)))
-	assert_true(played["accepted"])
-	assert_eq(int(played["state"].essence), 0)
-
-
-func test_slot_seal_disables_highest_index_equipped_gu_for_whole_battle() -> void:
-	var run := _run_with_gu(["small_light_gu", "stone_shell_gu"])
-	run = CurseRegistry.gain_curse(run, "meridian_seal", "test")
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-
-	assert_eq(battle["sealed_gu_definition_ids"], ["stone_shell_gu"])
-	assert_eq(battle["sealed_gu_instance_ids"].size(), 1)
-	assert_true(battle["available_gu_ids"].has("small_light_gu"))
-	assert_false(battle["available_gu_ids"].has("stone_shell_gu"))
-	assert_true(_piles_exclude(battle, battle["sealed_gu_instance_ids"]))
-	var cache_definitions: Array = []
-	for card in battle["deck_cache"]:
-		cache_definitions.append(str(card["definition_id"]))
-	assert_false(cache_definitions.has("stone_guard"))
-	assert_true(cache_definitions.has("light_probe"))
-
-	# Control: the same deck without the curse keeps both gu playable.
-	var clean := _run_with_gu(["small_light_gu", "stone_shell_gu"])
-	var clean_battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, clean, catalog)
-	assert_true(clean_battle["available_gu_ids"].has("stone_shell_gu"))
-	assert_true(clean_battle["sealed_gu_instance_ids"].is_empty())
 
 
 func test_free_mix_failure_attaches_configured_curse() -> void:
@@ -344,25 +246,3 @@ func _run_with_gu(definition_ids: Array[String]) -> RunState:
 	run.sync_legacy_gu_projections()
 	run.equipped_gu_ids = run.refined_gu_ids.duplicate()
 	return run
-
-
-func _piles_exclude(battle: Dictionary, sealed_instance_ids: Array) -> bool:
-	var piles: Array = [battle["deck_cache"], battle["draw_pile"], battle["discard_pile"], battle["hand"]]
-	for pile_value in piles:
-		for card_value in pile_value:
-			for source_value in card_value.get("source_gu_instance_ids", []):
-				if sealed_instance_ids.has(str(source_value)):
-					return false
-	return true
-
-
-func _command_for_definition(battle: Dictionary, definition_id: String) -> Dictionary:
-	for instance in battle["hand"]:
-		if str(instance["definition_id"]) == definition_id:
-			return {
-				"type": "action_card",
-				"action_id": "battle.%s.%s" % [battle["battle_id"], instance["instance_id"]],
-				"state_version": battle["hand_version"],
-			}
-	push_error("Missing card definition in hand: %s" % definition_id)
-	return {}
