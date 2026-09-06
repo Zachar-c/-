@@ -53,22 +53,16 @@
    - ✅ 第三批P2锦上添花（V-F-14+A-F-10）：V-F-14动态背景——战斗/休整/交易三个暗色舞台屏幕添加雾气层（半透明冷灰水平渐变+呼吸动画）和萤火层（5-6个暖黄色光点+随机闪烁漂移），GuStyle新增FIREFLY_COLOR/FIREFLY_COLOR_ON常量；A-F-10音效随机变化——ui_click/battle_hit/battle_card_play各引入5个变体音效，AudioManager新增SFX_VARIANTS注册表，play_sfx方法支持随机选择变体播放；UI守卫测试7/7全绿
    - 所有改动通过UI守卫测试7/7全绿 + 战斗屏测试11/11全绿
 
-### 修订后执行队列
+### 收官修订（2026-09-06 晚间 · 并行会话全停后最终合拢）
 
-```
-AU 音频 BGM 收尾（2026-09-06 审计：5 个单测失败唯一根因——music/*.wav 已删、新曲目为
-   mp3/ogg，但 audio_director.gd BGM_PATHS 仍指 wav、test_audio_director 仍断言
-   AudioStreamWAV；同时裁定 AudioManager(autoload) 与 AudioDirector 双系统收敛方向）
-A-1 视觉批次提交落地（18 批成果已验收、未提交；工作树 188 项按视觉/音频/uid 分批聚焦
-   提交，清 tools/__pycache__ 与 *_screenshot_v*.png/ 目录）
-CT 契约回写（2026-09-06 审计：school_name/school_label 快照键未同步
-   docs/contracts/2026-09-02-domain-ui-contract.md，违反 AGENTS 契约同步红线）
-B2 卡层退役（deck_builder.gd 已删；剩 cards.json/deck.json/16 处蓝图校验链/
-   synthesis.json battle_recipes 段/生成器出卡段）
-D1-剩余（按配方源摘录扩充跨流派/高转方 + synergy 字段全量）→ D2 配方驱动合炼接线
-S1--S6 切片组装（UI 语境 = 官方 .tscn 栈）→ E 自动存档 → F 里程碑验收
-A-2 视觉收官项（游戏内署名 HIGH / 音效 / 立绘开源化 / 动效补全）可与 B/D/S 并行
-```
+> 本节覆盖审计时点（上半日）的状态快照。以下为当日全部收口项的终态，与本仓代码一致；上节审计结论/核验数字为历史快照，仅作审计溯源。
+
+1. **主线已合拢**：B 系 + I-2 + 并行视觉/audio 成果全部并入 `master`（零分叉快进至 `99a1885` 并推送 gitee；全量 unit 1086/1086 + integration 31/31 + smoke 31 OK）。
+2. **终态栈 = 官方 `.tscn` 全屏**（`MASTER_SCENE_PATHS` 即唯一路由表，`SCREEN_PATHS` 空）；`ui_masters/wenzhen_{battle,map}_master` 与 `ui/screens/*_screen.guitkx` 生成层已退役删除（`2fcf22e`）；组件级 `ui/widgets/*.guitkx` 保留（codegen `compile_all` 遍历 + 生成 `.gd` 被 acceptance_driver/preview 引用，删源即断生成链）。
+3. **执行队列当日清空**：AU（BGM 迁 mp3/ogg + 双系统收敛结论=正交分工保留，音量走 AudioServer master bus）/ A-1（分批提交 `c12190b`/`bd1ed75`/`a85f550`/`dfdfa23`/`1a0af42`）/ CT（`a4e701b`）/ B2（`534d610`，卡层零残留）/ A-2 HIGH 署名（`3c0b12a`）全部完成。
+4. **D1 收口**：386 方（无漂移，审计误读）；D2 域层配方驱动已落地；**D1b 跨流派合炼矩阵**专项开工单（422 只 rank3-5 蛊不可达=核心支柱缺口），验收工具 `tools/verify_recipe_coverage.py`（`d290b3f`）就位，待逐族跨流派方向策展输入。
+5. **RUI 死重定论**：审计列 6 个「无导入」组件**不可删**（见 2），非死重。
+6. **遗留复现**：ObjectDB 泄漏 20601 实例（冻结清单内，未开工）。
 
 ### 实施核验（2026-09-06 第二轮审计：测试实跑 + 工作树清点）
 
