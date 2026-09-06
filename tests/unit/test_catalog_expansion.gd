@@ -9,7 +9,7 @@ extends "res://addons/gut/test.gd"
 
 
 const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
-const BattleResolverScript := preload("res://scripts/domain/battle_resolver.gd")
+const FacadeScript := preload("res://scripts/domain/battle_command_facade.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
 
 
@@ -78,7 +78,7 @@ func test_every_generated_gu_is_data_driven_with_one_card() -> void:
 				"card %s back-references gu" % card["id"])
 
 
-func test_generated_attack_gu_deals_damage_in_battle() -> void:
+func test_attack_gu_deals_damage_in_v1_battle() -> void:
 	var cat := catalog()
 	# 802 重建后 gen_* 占位蛊已删：攻击蛊以现存战斗蛊为锚（force_gu 力道校 V1 战斗锚）。
 	var attacker: Dictionary = cat["gu_by_id"]["force_gu"]
@@ -92,12 +92,13 @@ func test_generated_attack_gu_deals_damage_in_battle() -> void:
 	}
 	state.cave_aperture["stored_gu_instance_ids"].append("gu_100")
 	state.sync_legacy_gu_projections()
-	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, state, cat)
-	var enemy_hp_before := int(battle["enemy_hp"])
-	var turn := BattleResolverScript.take_turn(battle,
-			{"type": "use_gu", "gu_id": str(attacker["id"])}, state, cat)
-	assert_eq(str(turn["result"]), "ongoing")
-	assert_lt(int(turn["battle"]["enemy_hp"]), enemy_hp_before)
+	var battle := FacadeScript.start({"enemy_kind": "ridge_hound"}, state, cat)
+	assert_true(not (battle["gu_slots"] as Array).is_empty(), "attack gu must enter a V1 slot")
+	var enemy_hp_before := int(battle["enemies"][0]["hp"])
+	var turn := FacadeScript.apply_turn(battle,
+			state, {"type": "use_gu", "instance_id": "gu_100"}, cat)
+	assert_true(bool(turn.get("accepted", false)), "attack gu use accepted")
+	assert_lt(int((turn.get("battle", battle) as Dictionary)["enemies"][0]["hp"]), enemy_hp_before)
 
 
 func test_generator_rerun_is_idempotent() -> void:
