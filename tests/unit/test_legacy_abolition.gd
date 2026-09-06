@@ -67,7 +67,8 @@ func _collect_gd_texts(dir_path: String, out: Array) -> void:
 func test_abolished_9_legacy_battle_engine_is_gone() -> void:
 	# B1 (master plan Phase B1): the legacy battle engine is converged to V1
 	# only. No legacy file may exist and no production script may reference it
-	# (comments included) - `v1_battle_resolver` is scrubbed before matching.
+	# (comments included). Scrubbed before matching: `v1_battle_resolver`
+	# (file path) and `V1BattleResolver` (preload const name), both live.
 	for path in _B1_DELETED:
 		assert_false(_gd_exists(path), "b1: %s must be deleted" % path)
 	for path in _B1_PRESERVED:
@@ -76,7 +77,21 @@ func test_abolished_9_legacy_battle_engine_is_gone() -> void:
 	_collect_gd_texts("res://scripts", collected)
 	for pair in collected:
 		var path := str(pair[0])
-		var scrubbed := str(pair[1]).replace("v1_battle_resolver", "")
-		for token in ["battle_resolver", "v2_commands", "battle2/action_resolver", "battle2/body_rules"]:
+		# Deleted-family files still on disk are already pinned red by the
+		# existence asserts above; token-scanning their own bodies would only
+		# add noise (they vanish with the deletion commit).
+		if _B1_DELETED.has(path):
+			continue
+		var scrubbed := str(pair[1]) \
+				.replace("V1BattleResolverScript", "") \
+				.replace("V1BattleResolver", "") \
+				.replace("v1_battle_resolver", "")
+		# Token set covers both reference forms: preload paths / file names
+		# (battle_resolver) and the global class_name call surface
+		# (BattleResolver. / BattleResolverScript) that outlived preloads and
+		# slipped the original lowercase scan (2026-09-06 audit).
+		for token in [
+				"battle_resolver", "v2_commands", "battle2/action_resolver",
+				"battle2/body_rules", "BattleResolverScript", "BattleResolver."]:
 			assert_false(scrubbed.contains(token),
 					"b1: %s still references %s" % [path, token])

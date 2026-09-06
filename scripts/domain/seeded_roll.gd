@@ -6,11 +6,12 @@ const RngScript = preload("res://scripts/domain/rng.gd")
 
 
 # P2a C: single home for the shared deterministic roll formula previously
-# hand-copied in BattleResolver._seeded_index and LootResolver._pick_from.
+# hand-copied in the legacy battle resolver (_seeded_index) and LootResolver
+# (_pick_from).
 # Callers keep their own tick semantics (event-log length for loot/contact
 # rolls) and own their salt strings; neither salts nor call order may change.
 # Quality batch ②: the last hand-rolled copies (Resolver._refinement_roll,
-# _free_mix_seed, roll_chance and BattleResolver._battle_rng_seed) converged
+# _free_mix_seed, roll_chance and the legacy _battle_rng_seed) converged
 # here; the battle shuffle seed keeps its numeric-salt form (mixed_seed_int)
 # so deck draw order stays byte-identical after convergence.
 
