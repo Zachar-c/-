@@ -139,7 +139,8 @@ func _wire_static_buttons() -> void:
 	_settings_back.pressed.connect(func(): _fire("back_to_hall"))
 	_settings_quit.pressed.connect(func(): _fire("quit"))
 	_journal_back.pressed.connect(func(): _fire("back_to_hall"))
-	_confirm_school.pressed.connect(func(): _fire("open_contracts"))
+	# S 减法：契约系统冻结，开局流收敛为 流派(+Buff) → 出发；契约屏不再占主路径。
+	_confirm_school.pressed.connect(func(): _fire("new_run"))
 	_schools_back.pressed.connect(func(): _fire("back_to_hall"))
 	_start_run.pressed.connect(func(): _fire("new_run"))
 	_contracts_back.pressed.connect(func(): _fire("open_schools"))
