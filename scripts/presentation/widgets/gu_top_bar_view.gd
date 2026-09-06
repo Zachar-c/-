@@ -96,6 +96,8 @@ func _refresh_status() -> void:
 		var max_value: int = 0
 		var has_data: bool = false
 		var danger: bool = false
+		var danger_detail := ""
+		var resource_key := ""
 
 		if kind == "qi":
 			# 气血从player对象获取
@@ -105,14 +107,16 @@ func _refresh_status() -> void:
 				has_data = true
 				var health_line: Dictionary = _death_lines.get("health", {})
 				danger = bool(health_line.get("danger", false))
+				danger_detail = str(health_line.get("detail", ""))
 		else:
 			# 寿命/魂魄/原石从resources获取
-			var resource_key: String = str(STATUS_ICON_KEYS.get(kind, ""))
+			resource_key = str(STATUS_ICON_KEYS.get(kind, ""))
 			if _resources.has(resource_key):
 				value = int(_resources[resource_key])
 				has_data = true
 				var line: Dictionary = _death_lines.get(resource_key, {})
 				danger = bool(line.get("danger", false))
+				danger_detail = str(line.get("detail", ""))
 
 		var box: HBoxContainer = nodes["box"]
 		box.visible = has_data
@@ -125,8 +129,11 @@ func _refresh_status() -> void:
 		else:
 			label.text = "%d" % value
 
+		# 危险反馈：数值转朱砂红 + hover tooltip 显示精准死因（沿用旧顶栏
+		# chip.tooltip_text 契约——危险必须可感知原因，不允许静默）。
 		var tone := GuStyle.CINNABAR if danger else GuStyle.INK_PRIMARY
 		label.add_theme_color_override("font_color", tone)
+		box.tooltip_text = danger_detail if danger else ""
 
 		var icon: Node = nodes["icon"]
 		if icon != null and icon.has_method("setup"):

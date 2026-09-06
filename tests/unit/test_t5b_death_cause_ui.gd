@@ -185,7 +185,7 @@ func test_battle_screen_keeps_danger_on_existing_top_bar_without_death_line_over
 	assert_null(host.get_node_or_null("Root/CauseOverlay"),
 			"battle may not mount a standalone death-cause overlay")
 	assert_false(_host_has_text(host, "☠"), "battle may not render independent death-line rows")
-	var chip := host.find_child("ChipShouyuan", true, false) as Control
+	var chip := host.find_child("ShouStatus", true, false) as Control
 	assert_not_null(chip, "battle top bar must retain its lifespan resource chip")
 	if chip == null:
 		return
@@ -219,7 +219,7 @@ func test_encounter_screen_keeps_danger_on_existing_top_bar_without_death_line_o
 	assert_null(host.get_node_or_null("Root/CauseOverlay"),
 			"encounter may not mount a standalone death-cause overlay")
 	assert_false(_host_has_text(host, "☠"), "encounter may not render independent death-line rows")
-	var chip := host.find_child("ChipHunpo", true, false) as Control
+	var chip := host.find_child("HunStatus", true, false) as Control
 	assert_not_null(chip, "encounter top bar must retain its soul resource chip")
 	if chip == null:
 		return
@@ -292,7 +292,7 @@ func test_real_snapshot_death_lines_feed_battle_top_bar_tooltip_end_to_end() -> 
 		await get_tree().process_frame
 	assert_null(host.get_node_or_null("Root/CauseOverlay"),
 			"the real screen must not recreate a death-cause overlay")
-	var chip := host.find_child("ChipShouyuan", true, false) as Control
+	var chip := host.find_child("ShouStatus", true, false) as Control
 	assert_not_null(chip, "battle top bar must retain its lifespan resource chip")
 	if chip == null:
 		return

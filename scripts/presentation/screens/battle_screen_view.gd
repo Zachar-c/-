@@ -644,6 +644,12 @@ func _refresh_hints(state: Dictionary) -> void:
 	var boss_hint := DisplayText.dda_hint(str(state.get("dda_boss_hint", "")))
 	if boss_hint != "":
 		_hint_host.add_child(_hint_label(boss_hint, GuStyle.ANOMALY_YELLOW))
+	# 异变徽章：DDA 异变(险象)等逐条随提示区呈现，label 由 data 提供、id 不外泄。
+	for anomaly_value in state.get("anomalies", []):
+		var anomaly: Dictionary = anomaly_value
+		var anomaly_label := str(anomaly.get("label", ""))
+		if anomaly_label != "":
+			_hint_host.add_child(_hint_label(anomaly_label, GuStyle.ANOMALY_YELLOW))
 
 
 func _hint_label(text: String, color: Color) -> Label:
