@@ -17,6 +17,7 @@ const LootResolverScript := preload("res://scripts/domain/loot_resolver.gd")
 const RunStateScript := preload("res://scripts/domain/run_state.gd")
 const CurseRegistryScript := preload("res://scripts/domain/curse_registry.gd")
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 
 const ELITE_BATTLE := {"enemy_kind": "ridge_elite_scout"}
 
@@ -197,15 +198,20 @@ func test_catalog_validates_forced_rarity_and_cost_pool() -> void:
 func test_elite_costs_apply_on_real_battle_victories() -> void:
 	var cat := catalog()
 	var run := make_state(2026)
-	var battle := BattleResolver.start({"enemy_kind": "ridge_elite_scout"}, run, cat)
-	# The scout's before_damage reaction swallows unbound direct strikes, so the
-	# scripted kill binds the enemy first and leaves one hit to finish it.
-	battle["enemy_hp"] = 1
-	battle["flags"] = ["enemy_bound"]
-	var turn := BattleResolver.take_turn(battle, {"type": "basic_attack"}, run, cat)
+	var battle := BattleCommandFacadeScript.start({"enemy_kind": "ridge_elite_scout"}, run, cat)
+	# V1 facade victory branch: a basic_attack on enemies[0].hp=1 strikes kill
+	# and bind one elite cost through settle_victory (same LootResolver
+	# funnel the legacy engine used, so the cost-binding contract is held
+	# in the new path).
+	battle["enemies"][0]["hp"] = 1
+	# V1 basic_attack_reason gates on player.thoughts >= 1 and used_this_turn
+	# below per_turn; seed both so a single strike lands the kill.
+	battle["player"]["thoughts"] = maxi(1, int(battle["player"]["thoughts"]))
+	battle["player"]["used_this_turn"] = 0
+	var turn := BattleCommandFacadeScript.apply_turn(battle, run, {"type": "basic_attack"}, cat)
 	assert_eq(str(turn.get("result", "")), "victory")
 	assert_eq(_cost_events(turn["state"]).size(), 1,
-			"one elite victory binds exactly one cost through the battle funnel")
+			"one elite victory binds exactly one cost through the V1 facade")
 
 
 func test_settled_cost_contract_carries_kind_and_layers_or_amount() -> void:
@@ -229,10 +235,11 @@ func test_finished_victory_battle_carries_cost_and_controller_feeds_it_to_the_pl
 	var run := make_state(2026)
 	run.health = maxi(int(run.health), 30)
 	run.current_node_id = "elite_ambush"
-	var battle := BattleResolver.start({"enemy_kind": "ridge_elite_scout"}, run, cat)
-	battle["enemy_hp"] = 1
-	battle["flags"] = ["enemy_bound"]
-	var turn := BattleResolver.take_turn(battle, {"type": "basic_attack"}, run, cat)
+	var battle := BattleCommandFacadeScript.start({"enemy_kind": "ridge_elite_scout"}, run, cat)
+	battle["enemies"][0]["hp"] = 1
+	battle["player"]["thoughts"] = maxi(1, int(battle["player"]["thoughts"]))
+	battle["player"]["used_this_turn"] = 0
+	var turn := BattleCommandFacadeScript.apply_turn(battle, run, {"type": "basic_attack"}, cat)
 	assert_eq(str(turn.get("result", "")), "victory")
 	var bound_cost: Dictionary = turn["battle"].get("cost", {})
 	assert_false(bound_cost.is_empty(), "the finished victory battle carries the bound cost")
