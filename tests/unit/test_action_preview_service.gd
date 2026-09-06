@@ -11,6 +11,15 @@ func before_each() -> void:
 	catalog = ContentCatalog.load_all()
 
 
+## Retired 2026-09-06 (B1 bucket C): the four battle-preview tests below drove
+## `BattleResolver.start`/`take_turn` on the legacy `battle.hand` envelope and
+## asserted `enemy_hp` / `revealed_reactions` — both legacy fields dead under
+## the V1 facade. Equivalent V1-path coverage now lives in
+## test_wenzhen_battle_screen.gd's mount/refresh legs, which drive a real
+## wenzhen battle through `BattleCommandFacade`. The non-battle preview tests
+## (caravan/refinement/cultivation/ledger/event/rest/standard/ascension) stay
+## as the live regression surface for action_preview_service.
+
 func test_exchange_preview_keeps_missing_input_visible_without_mutating_state() -> void:
 	var state := RunState.new_run(101)
 	var before_events := state.event_log.size()
@@ -77,69 +86,6 @@ func test_ledger_preview_offers_debt_when_payment_is_blocked() -> void:
 	assert_string_contains(str(payment["block_reason"]), "元石不足")
 	assert_true(debt["executable"])
 	assert_eq(debt["expected_gain"], ["以商队人情结清本阶段养蛊总账。"])
-
-
-func test_battle_preview_does_not_name_hidden_counter_and_strike_reveals_shell() -> void:
-	# thorn_whip_gu 于 802 重建删去后，legacy 直击吞伤路径只剩拳脚(basic punch)。
-	# 迁移后的护栏：(1) 任何攻击在石壳暴露前都不得点名隐藏反制蛊；
-	# (2) 拳脚直击确实触发石壳显现（吞伤并写 log）。
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "neutral_stone_wanderer"}, state, catalog)
-	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
-	var punch := _card(cards, "battle.basic.punch")
-
-	assert_true(punch["executable"])
-	assert_false(str(punch["known_risk"]).contains("石甲蛊"),
-			"hidden counter gu must not be named before it reveals")
-	assert_false(str(punch["expected_gain"]).contains("石甲蛊"))
-	var struck := BattleResolver.take_turn(battle, {"type": "basic_attack"}, state, catalog)
-	assert_true(struck["battle"]["revealed_reactions"].has("stone_shell"),
-			"a direct punch into the counter enemy reveals its shell")
-	assert_eq(int(struck["battle"]["enemy_hp"]), int(battle["enemy_hp"]),
-			"the shell swallows the first direct strike")
-
-
-func test_battle_preview_blocks_gu_when_essence_is_insufficient() -> void:
-	var state := RunState.new_run(101)
-	state.essence = 0
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, state, catalog)
-	battle["action_energy"] = 0  # opening-fairness base grant removed to test the block path
-	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
-	var light := _battle_card_by_definition(cards, battle, "light_probe")
-
-	assert_false(light["executable"])
-	assert_string_contains(str(light["block_reason"]), "真元不足")
-
-
-func test_battle_preview_projects_single_enemy_target_contract() -> void:
-	var state := RunState.new_run(101)
-	var battle := BattleResolver.start({
-		"enemy_kinds": ["ridge_hound", "neutral_stone_wanderer"],
-	}, state, catalog)
-	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
-	var light := _battle_card_by_definition(cards, battle, "light_probe")
-
-	assert_eq(light["target_type"], "single_enemy")
-	assert_eq(light["valid_target_ids"], [
-		str(battle["enemies"][0]["enemy_id"]),
-		str(battle["enemies"][1]["enemy_id"]),
-	])
-
-
-func test_preview_uses_display_text_as_the_single_name_source() -> void:
-	var state := _state_with_refined_gu("blood_bat_gu", "gu_002")
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, state, catalog)
-	var battle_cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
-	var gu_card := _battle_card_by_definition(battle_cards, battle, "blood_bat_bite")
-	var cards := ActionPreviewServiceScript.preview_actions(state, {
-		"id": "moonlit_trail",
-		"type": "hazard",
-		"choices": ["scout"],
-	}, catalog)
-	var action_card := _card(cards, "node.scout")
-
-	assert_eq(gu_card["title"], DisplayText.gu("blood_bat_gu"))
-	assert_eq(action_card["title"], DisplayText.action("scout"))
 
 
 func test_body_imprint_preview_blocks_the_imprint_already_taken_by_resolver() -> void:
@@ -287,15 +233,6 @@ func _state_with_refined_gu(definition_id: String, instance_id: String) -> RunSt
 	state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
 	state.sync_legacy_gu_projections()
 	return state
-
-
-func _battle_card_by_definition(cards: Array, battle: Dictionary, definition_id: String) -> Dictionary:
-	for instance in battle.get("hand", []):
-		if str(instance.get("definition_id", "")) != definition_id:
-			continue
-		return _card(cards, "battle.%s.%s" % [str(battle["battle_id"]), str(instance["instance_id"])])
-	push_error("Missing battle card definition: %s" % definition_id)
-	return {}
 
 
 func _card(cards: Array, id: String) -> Dictionary:
