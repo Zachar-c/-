@@ -1,5 +1,6 @@
 {
   "remove_card_cost": 120,
+  "remove_imprint_cost": 150,
   "imprint_capacity": 4,
   "meta_rule_cap": 2,
   "rank_step_ratio": 2.0,

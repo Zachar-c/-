@@ -751,7 +751,7 @@ static func _remove_imprint_command(state: RunState, command: Dictionary, catalo
 		return _rejected(state, "meta_rule_not_removable")
 	if service_use_count(state, "remove_imprint") >= service_limit(catalog, "remove_imprint"):
 		return _rejected(state, "service_limit_exceeded")
-	var cost := service_price_for(catalog, state, "remove_imprint", int(catalog.get("deck", {}).get("remove_imprint_cost", 150)))
+	var cost := service_price_for(catalog, state, "remove_imprint", int(catalog.get("balance", {}).get("remove_imprint_cost", 150)))
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var flags := state.node_flags.duplicate(true)

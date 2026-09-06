@@ -1,7 +1,7 @@
 extends "res://addons/gut/test.gd"
 
 
-# T1 rarity data model: gu/cards/relics declare a four-tier rarity; loot
+# T1 rarity data model: gu/relics declare a four-tier rarity; loot
 # tables roll tiered weighted pools (lockdown spec R4.5/R13.1/16.4:
 # legendary exists as a slot but carries zero weight in early layers).
 # All rolls stay seeded and reproducible from the run seed.
@@ -21,11 +21,6 @@ func catalog() -> Dictionary:
 func test_every_gu_declares_valid_rarity() -> void:
 	for gu in catalog()["gu"]:
 		assert_true(RARITIES.has(str(gu.get("rarity", ""))), "gu %s needs valid rarity" % gu["id"])
-
-
-func test_every_card_declares_valid_rarity() -> void:
-	for card in catalog()["cards"]:
-		assert_true(RARITIES.has(str(card.get("rarity", ""))), "card %s needs valid rarity" % card["id"])
 
 
 func test_every_relic_declares_valid_rarity() -> void:

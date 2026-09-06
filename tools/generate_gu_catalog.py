@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Deterministic gu catalog expander (Task C1).
 
-Reads the curated harvest, appends new gu/card/name entries until every
+Reads the curated harvest, appends new gu/name entries until every
 school reaches QUOTA_PER_SCHOOL total gu, keeping legacy entries untouched.
 Re-running on an already-expanded catalog is a no-op.
 
 Usage (from repo root):  python tools/generate_gu_catalog.py [--harvest PATH]
-Outputs: updated data/gu.json, data/cards.json, data/gu_names.json and a
-counts report on stdout.
+Outputs: updated data/gu.json, data/gu_names.json and a counts report on stdout.
+(B2 2026-09-06: the card-blueprint layer exited; gu entries no longer carry
+card references and no card file is written.)
 """
 import argparse
 import collections
@@ -25,7 +26,6 @@ SCHOOLS = ["blood", "qi", "force", "soul", "refine"]
 QUOTA_PER_SCHOOL = 40
 RARITY_TARGETS = {"common": 24, "rare": 12, "epic": 4}
 LEGACY_GU_COUNT = 20
-LEGACY_CARD_COUNT = 19
 
 BUCKET_PATTERNS = {
     "blood": re.compile(r"血"),
@@ -129,7 +129,6 @@ def main():
 
     harvest_path = os.path.normpath(os.path.join(ROOT, args.harvest))
     gu_entries = load_json(os.path.join(DATA, "gu.json"))
-    cards = load_json(os.path.join(DATA, "cards.json"))
 
     existing_by_school = collections.Counter(g["school"] for g in gu_entries)
     existing_rarity = collections.Counter(
@@ -164,7 +163,7 @@ def main():
         tail_chars = ["纹", "鳞", "芽", "须", "珠", "壳", "须", "蔓", "棘", "茧"]
         return "%s%s蛊" % (base_char, tail_chars[(index // len(chars)) % len(tail_chars)])
 
-    new_gu, new_cards, new_names = [], [], {}
+    new_gu, new_names = [], {}
     seq = 0
     for school in SCHOOLS:
         while existing_by_school[school] < QUOTA_PER_SCHOOL:
@@ -199,14 +198,12 @@ def main():
                 for effect in template:
                     if effect["kind"] == "strike":
                         effect["amount"] += 1
-            card_id = gu_id[: -len("_gu")] + "_card"
             material = MATERIALS[seq % len(MATERIALS)]
             gu_entry = {
                 "id": gu_id,
                 "rank": scale["rank"],
                 "feeding_cost": 1,
                 "feeding_need": {material: 1},
-                "card_blueprint_ids": [card_id],
                 "value": scale["value"],
                 "essence_cost": scale["essence_cost"],
                 "slot_role": role,
@@ -221,27 +218,14 @@ def main():
                 "combat_effects": template,
                 "source": "game_new",
             }
-            card_entry = {
-                "id": card_id,
-                "source_gu_ids": [gu_id],
-                "cost": {"essence": scale["essence_cost"]},
-                "effects": ROLE_EFFECTS[role],
-                "duration_turns": 0,
-                "occupies_soul_slots": False,
-                "public_text_key": card_id,
-                "rarity": rarity,
-            }
             gu_entries.append(gu_entry)
-            cards.append(card_entry)
             new_names[gu_id] = zh_name
             taken_names.add(zh_name)
             existing_by_school[school] += 1
             existing_rarity[(school, rarity)] += 1
             new_gu.append(gu_id)
-            new_cards.append(card_id)
 
     dump_json(os.path.join(DATA, "gu.json"), gu_entries)
-    dump_json(os.path.join(DATA, "cards.json"), cards)
     names_path = os.path.join(DATA, "gu_names.json")
     merged = load_json(names_path) if os.path.exists(names_path) else {}
     merged.update(new_names)
@@ -250,13 +234,13 @@ def main():
     per_school = collections.Counter(g["school"] for g in gu_entries)
     per_rarity = collections.Counter(g["rarity"] for g in gu_entries)
     report_lines = [
-        "new gu: %d, new cards: %d" % (len(new_gu), len(new_cards)),
+        "new gu: %d" % len(new_gu),
         "total gu: %d (target %d)" % (len(gu_entries), LEGACY_GU_COUNT + 180),
         "per-school: %s" % dict(per_school),
         "per-rarity: %s" % dict(per_rarity),
     ]
     print("\n".join(report_lines))
-    if len(gu_entries) != LEGACY_GU_COUNT + 180 or len(cards) < LEGACY_CARD_COUNT + 180:
+    if len(gu_entries) != LEGACY_GU_COUNT + 180:
         sys.exit(1)
 
 

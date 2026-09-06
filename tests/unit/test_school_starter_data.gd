@@ -62,15 +62,16 @@ func test_starter_roles_are_valid() -> void:
 			assert_true(ROLES.has(role), "%s starter %s has invalid role %s" % [school_id, starter, role])
 
 
-func test_starter_blueprints_exist_as_cards() -> void:
+func test_starter_gu_can_enter_v1_battle() -> void:
+	# B2 卡层退役：starter 战斗表达不再依赖卡蓝谱；每个 starter 必须
+	# 是战斗蛊（combat 字段非空且非 none，V1 槽位装载的同一判据）。
 	var cat: Dictionary = catalog()
-	for gu in cat["gu"]:
-		var blueprint_ids: Array = gu.get("card_blueprint_ids", [])
-		for blueprint_value in blueprint_ids:
-			var blueprint := str(blueprint_value)
-			var card: Dictionary = cat["card_by_id"].get(blueprint, {})
-			assert_false(card.is_empty(), "gu %s references missing card %s" % [gu["id"], blueprint])
-			assert_true((card.get("source_gu_ids", []) as Array).has(str(gu["id"])), "card %s must source from gu %s" % [blueprint, gu["id"]])
+	for school_id in SCHOOLS:
+		for starter in cat["schools"][school_id].get("starter_gu_ids", []):
+			var gu: Dictionary = cat["gu_by_id"][str(starter)]
+			var combat := str(gu.get("combat", ""))
+			assert_false(combat.is_empty() or combat == "none",
+					"%s starter %s must be a V1 combat gu" % [school_id, starter])
 
 
 func test_school_starter_injection_grants_novice_plus_pack() -> void:

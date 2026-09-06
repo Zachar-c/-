@@ -1,7 +1,6 @@
 {
   "capacity": 12,
   "hand_size": 2,
-  "remove_imprint_cost": 150,
   "service_limits": {
     "remove_card": 2,
     "remove_imprint": 2,

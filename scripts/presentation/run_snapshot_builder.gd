@@ -177,10 +177,9 @@ static func _shop_services(controller) -> Array[Dictionary]:
 		return out
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var balance: Dictionary = catalog.get("balance", {})
-	var deck: Dictionary = catalog.get("deck", {})
 	var removal_specs := [
 		{"id": "remove_card", "name": "移除蛊虫", "base": int(balance.get("remove_card_cost", 120)), "note": "从蛊囊删除一只蛊", "target_label": "选择要移除的蛊虫"},
-		{"id": "remove_imprint", "name": "移除印记", "base": int(deck.get("remove_imprint_cost", 150)), "note": "移除一枚遗物印记（规则型印记不可移除）", "target_label": "选择要移除的印记"},
+		{"id": "remove_imprint", "name": "移除印记", "base": int(balance.get("remove_imprint_cost", 150)), "note": "移除一枚遗物印记（规则型印记不可移除）", "target_label": "选择要移除的印记"},
 	]
 	for spec_value in removal_specs:
 		var spec: Dictionary = spec_value

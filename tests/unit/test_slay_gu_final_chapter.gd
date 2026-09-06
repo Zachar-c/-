@@ -15,7 +15,6 @@ extends GutTest
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 
 const SLAY_GU_ID := "test_slay_gu"
-const SLAY_CARD_ID := "test_slay"
 const BOSS_KINDS := {
 	1: "crag_serpent_matriarch",
 	2: "marrow_gu_adept",
@@ -138,8 +137,10 @@ func test_slay_gu_catalog_entry_is_test_only() -> void:
 	assert_eq(effects.size(), 1)
 	assert_eq(str((effects[0] as Dictionary).get("kind", "")), "aoe_strike")
 	assert_eq(int((effects[0] as Dictionary).get("amount", 0)), 999, "999 点群体伤害")
-	var card: Dictionary = catalog.get("card_by_id", {}).get(SLAY_CARD_ID, {})
-	assert_false(card.is_empty(), "杀蛊卡蓝谱存在")
+	# B2 卡层退役：杀蛊的 V1 战斗效果由 v1_effect 表达（蓝谱卡已随卡层删除）。
+	var v1: Dictionary = gu.get("v1_effect", {})
+	assert_eq(str(v1.get("kind", "")), "strike")
+	assert_eq(int(v1.get("amount", 0)), 999, "V1 效果 999 点伤害")
 	assert_eq(DisplayText.gu(SLAY_GU_ID), "十转杀蛊", "显示名十转杀蛊")
 	# 不进任何掉落/商店池：仅按 id 直查命中
 	for table_value in catalog.get("loot_tables", {}).values():

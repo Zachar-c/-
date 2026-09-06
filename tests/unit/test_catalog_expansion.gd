@@ -64,18 +64,14 @@ func test_validate_flags_synthetic_duplicate_gu_id() -> void:
 	assert_true(errors.any(func(e: String) -> bool: return e.contains("duplicate gu id")))
 
 
-func test_every_generated_gu_is_data_driven_with_one_card() -> void:
-	var cat := catalog()
-	var card_by_id: Dictionary = cat["card_by_id"]
-	for gu in cat["gu"]:
-		if not gu.has("combat_effects"):
-			continue
-		var blueprints: Array = gu.get("card_blueprint_ids", [])
-		assert_gte(blueprints.size(), 1, "gu %s" % gu["id"])
-		assert_true(card_by_id.has(str(blueprints[0])), "gu %s blueprint exists" % gu["id"])
-		var card: Dictionary = card_by_id[str(blueprints[0])]
-		assert_true((card.get("source_gu_ids", []) as Array).has(gu["id"]),
-				"card %s back-references gu" % card["id"])
+func test_validate_flags_broken_v1_effect_on_gu() -> void:
+	# B2 2026-09-06 卡层退役后的效果完备守卫：gu 显式声明 v1_effect 时
+	# 形状必须通过校验（kind 白名单 + 字段形状），未声明则走 role 兜底。
+	var fake := catalog()
+	(fake["gu"][0] as Dictionary)["v1_effect"] = {"kind": "no_such_kind"}
+	var errors: Array[String] = ContentCatalogScript.validate(fake)
+	assert_true(errors.any(func(e: String) -> bool:
+			return e.contains("v1_effect") and e.contains("unknown kind")))
 
 
 func test_attack_gu_deals_damage_in_v1_battle() -> void:

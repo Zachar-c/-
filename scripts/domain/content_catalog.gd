@@ -48,7 +48,6 @@ const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 
 static func load_all() -> Dictionary:
 	var gu := _load_array("res://data/gu.json")
-	var cards := _load_array("res://data/cards.json")
 	var inheritances := _load_array("res://data/inheritances.json")
 	var refinement := _load_object("res://data/refinement_recipes.json")
 	var recipes: Array = refinement.get("recipes", [])
@@ -83,8 +82,6 @@ static func load_all() -> Dictionary:
 	return {
 		"gu": gu,
 		"gu_by_id": _index_by_id(gu),
-		"cards": cards,
-		"card_by_id": _index_by_id(cards),
 		"material_ids": material_ids,
 		"loot_tables": loot_tables,
 		"material_by_id": loot_tables.get("materials", {}),
@@ -341,7 +338,6 @@ static func validate(catalog: Dictionary) -> Array[String]:
 
 	var entry_tables := {
 		"gu": catalog.get("gu", []),
-		"cards": catalog.get("cards", []),
 		"refinement_recipes": catalog.get("refinement_recipes", []),
 		"caravan_offers": catalog.get("caravan_offers", []),
 		"relics": catalog.get("relics", []),
@@ -354,10 +350,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			if str(entry.get("id", "")).is_empty():
 				errors.append("%s entry missing id" % table_name)
 	var gu_by_id: Dictionary = catalog["gu_by_id"]
-	var card_by_id: Dictionary = catalog.get("card_by_id", {})
 	var material_ids: Array = catalog.get("material_ids", [])
 	var seen_gu_ids := {}
-	var seen_card_ids := {}
 	for gu in catalog.get("gu", []):
 		if seen_gu_ids.has(gu["id"]):
 			errors.append("duplicate gu id %s" % gu["id"])
@@ -399,33 +393,13 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		for material_id in gu.get("feeding_need", {}):
 			if not material_ids.has(material_id):
 				errors.append("gu %s has unknown feeding material %s" % [gu["id"], material_id])
-		for card_id in gu.get("card_blueprint_ids", []):
-			if not card_by_id.has(card_id):
-				errors.append("gu %s references missing card %s" % [gu["id"], card_id])
-		if gu.has("combat_effects"):
-			if (gu.get("card_blueprint_ids", []) as Array).size() != 1:
-				errors.append("gu %s data-driven entries need exactly one blueprint" % gu["id"])
-			elif not _is_data_driven_card_linked(gu, catalog.get("cards", [])):
-				errors.append("gu %s blueprint does not back-reference it" % gu["id"])
+		# B2 2026-09-06 卡层退役：旧蓝图链与卡表文件退出，战斗蛊
+		# 的效果完备性改由显式 v1_effect 的形状校验承担（未声明则走 role 兜底）。
+		if gu.has("v1_effect"):
+			for effect_error in _validate_v1_effect(gu["v1_effect"], "gu %s v1_effect" % gu["id"]):
+				errors.append(effect_error)
 		if gu.has("can_direct_drop") and not (gu["can_direct_drop"] is bool):
 			errors.append("gu %s can_direct_drop must be a boolean" % gu["id"])
-	for card in catalog.get("cards", []):
-		if seen_card_ids.has(card["id"]):
-			errors.append("duplicate card id %s" % card["id"])
-		seen_card_ids[card["id"]] = true
-		if not card.has("rarity"):
-			errors.append("card %s missing rarity" % card["id"])
-		elif not RARITY_IDS.has(str(card["rarity"])):
-			errors.append("card %s invalid rarity %s" % [card["id"], card["rarity"]])
-		for source_gu_id in card.get("source_gu_ids", []):
-			if not gu_by_id.has(source_gu_id):
-				errors.append("card %s references missing source gu %s" % [card["id"], source_gu_id])
-		if int(card.get("duration_turns", -1)) < 0:
-			errors.append("card %s requires integer duration_turns" % card["id"])
-		if card.has("kill_move_sequence"):
-			for source_gu_id in card["kill_move_sequence"]:
-				if not gu_by_id.has(source_gu_id):
-					errors.append("kill move %s references missing gu %s" % [card["id"], source_gu_id])
 
 	for inheritance in catalog["inheritances"]:
 		var required_gu_ids: Array = inheritance["required_gu_ids"]
@@ -570,11 +544,11 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			if not _is_integral(value) or int(value) < 0:
 				errors.append("reputation %s.%s must be a non-negative integer" % [group_name, key_value])
 	var balance: Dictionary = catalog.get("balance", {})
-	for key in ["remove_card_cost", "imprint_capacity", "meta_rule_cap"]:
+	for key in ["remove_card_cost", "remove_imprint_cost", "imprint_capacity", "meta_rule_cap"]:
 		var value: Variant = balance.get(key, null)
 		if not _is_integral(value) or int(value) < 1:
 			errors.append("balance %s must be a positive integer" % key)
-	for migrated_key in ["remove_card_cost", "imprint_capacity", "meta_rule_cap"]:
+	for migrated_key in ["remove_card_cost", "remove_imprint_cost", "imprint_capacity", "meta_rule_cap"]:
 		if catalog.get("deck", {}).has(migrated_key):
 			errors.append("deck %s is deprecated; move it to balance" % migrated_key)
 	var raw_service_limits: Variant = catalog.get("deck", {}).get("service_limits", null)
@@ -805,17 +779,12 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			for material_id_value in recipe.get("material_cost", {}):
 				if not materials.has(str(material_id_value)):
 					errors.append("synthesis recipe %s references unknown material %s" % [recipe.get("id", ""), material_id_value])
-			var temp_card := str(recipe.get("temp_card_id", ""))
-			if not temp_card.is_empty() and not card_by_id.has(temp_card):
-				errors.append("synthesis recipe %s references missing card %s" % [recipe.get("id", ""), temp_card])
+			# B2: 临时卡蓝图引用随卡表文件退役（产物改由杀招支柱收敛）。
 		var blind_cfg: Dictionary = synthesis.get("battle_blind", {})
 		if not blind_cfg.is_empty():
 			for material_id_value in blind_cfg.get("material_cost", {}):
 				if not materials.has(str(material_id_value)):
 					errors.append("synthesis blind references unknown material %s" % material_id_value)
-			for card_value in blind_cfg.get("blind_pool", []):
-				if not card_by_id.has(str(card_value)):
-					errors.append("synthesis blind references missing card %s" % card_value)
 	if catalog.has("contracts"):
 		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
 	if catalog.has("npcs"):
@@ -1085,14 +1054,6 @@ static func _validate_v1_effect(effect_value: Variant, owner: String) -> Array[S
 			if not _is_integral(effect.get("heal", null)) or int(effect.get("heal", -1)) < 0:
 				errors.append("%s heal must be a non-negative integer" % owner)
 	return errors
-
-
-static func _is_data_driven_card_linked(gu: Dictionary, cards: Array) -> bool:
-	for card in cards:
-		if str(card.get("id", "")) == str(gu.get("card_blueprint_ids", [])[0]) \
-				and (card.get("source_gu_ids", []) as Array).has(gu["id"]):
-			return true
-	return false
 
 
 # N-candidate (night batch): NPC personal inventory schema guard — stock ids

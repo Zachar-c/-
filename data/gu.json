@@ -6,9 +6,6 @@
   "feeding_need": {
    "feed_points": 1
   },
-  "card_blueprint_ids": [
-   "light_probe"
-  ],
   "value": 3,
   "essence_cost": 1,
   "true_qi_cost": 1,
@@ -46,9 +43,6 @@
   "feeding_need": {
    "feed_points": 1
   },
-  "card_blueprint_ids": [
-   "moonlight_strike"
-  ],
   "value": 4,
   "essence_cost": 1,
   "true_qi_cost": 2,
@@ -81,9 +75,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "moon_glow_flare"
-  ],
   "value": 9,
   "essence_cost": 2,
   "v1_effect": {
@@ -120,7 +111,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [],
   "value": 10,
   "essence_cost": 2,
   "slot_role": "attack",
@@ -149,7 +139,6 @@
   "feeding_need": {
    "feed_points": 3
   },
-  "card_blueprint_ids": [],
   "value": 16,
   "essence_cost": 3,
   "slot_role": "movement",
@@ -182,9 +171,6 @@
   "feeding_need": {
    "feed_points": 1
   },
-  "card_blueprint_ids": [
-   "vitality_grass_remedy"
-  ],
   "value": 3,
   "essence_cost": 0,
   "slot_role": "logistics",
@@ -212,9 +198,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "power_blow"
-  ],
   "value": 5,
   "essence_cost": 1,
   "v1_effect": {
@@ -248,9 +231,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "bear_vitality"
-  ],
   "value": 5,
   "essence_cost": 1,
   "slot_role": "healing",
@@ -280,9 +260,6 @@
   "feeding_need": {
    "feed_points": 1
   },
-  "card_blueprint_ids": [
-   "white_boar_strength"
-  ],
   "value": 10,
   "essence_cost": 1,
   "slot_role": "power",
@@ -316,9 +293,6 @@
   "feeding_need": {
    "feed_points": 1
   },
-  "card_blueprint_ids": [
-   "jade_skin_guard"
-  ],
   "value": 8,
   "essence_cost": 1,
   "slot_role": "guard",
@@ -351,9 +325,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "white_jade_form"
-  ],
   "value": 30,
   "essence_cost": 2,
   "slot_role": "guard",
@@ -384,9 +355,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "stone_guard"
-  ],
   "value": 5,
   "essence_cost": 1,
   "v1_effect": {
@@ -420,9 +388,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "farewell_grip"
-  ],
   "value": 6,
   "essence_cost": 1,
   "slot_role": "control",
@@ -453,9 +418,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "blood_droplet_shot"
-  ],
   "value": 5,
   "essence_cost": 1,
   "v1_effect": {
@@ -489,9 +451,6 @@
   "feeding_need": {
    "feed_points": 2
   },
-  "card_blueprint_ids": [
-   "blood_bat_bite"
-  ],
   "value": 6,
   "essence_cost": 1,
   "v1_effect": {
@@ -525,9 +484,6 @@
   "low_rank_exception": true,
   "feeding_cost": 0,
   "feeding_need": {},
-  "card_blueprint_ids": [
-   "test_slay"
-  ],
   "value": 0,
   "essence_cost": 0,
   "slot_role": "attack",

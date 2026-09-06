@@ -49,8 +49,7 @@ func test_greedy_wanderer_now_faces_thunder_crown_wolf() -> void:
 
 func test_catalog_counts_after_802_rebuild() -> void:
 	var cat: Dictionary = catalog()
-	# 802 重建：gu.json 802 蛊（20 道×40）+ 现存卡蓝图 15 张。
-	assert_eq(cat["cards"].size(), 15)
+	# 802 重建：gu.json 802 蛊（20 道×40）。B2 卡层退役后不再有卡蓝图。
 	assert_eq(cat["gu"].size(), 802)
 
 
