@@ -153,6 +153,8 @@ static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]
 		result.append({
 			"instance_id": str(instance.get("instance_id", "")),
 			"definition_id": str(instance.get("definition_id", "")),
+			# S4 元素协同：流派随槽位走，供支援加成匹配（本回合同流派 strike +N）。
+			"school": str(definition.get("school", "")),
 			# 同名升阶可让实例转数高于定义：门禁按两者较高者拦截。
 			"rank": maxi(int(instance.get("rank", 1)), int(definition.get("rank", 1))),
 			"low_rank_exception": bool(definition.get("low_rank_exception", false)),
@@ -370,7 +372,10 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 	var kind := str(effect.get("kind", ""))
 	match kind:
 		"strike":
-			next = _strike_enemy(next, int(effect.get("amount", 0)), target_key)
+			var amount := int(effect.get("amount", 0))
+			# S4 元素协同：吃到本回合已登记的同流派支援（透明度：battle.turn_supports）。
+			amount += int((next.get("turn_supports", {}) as Dictionary).get(str(slot.get("school", "")), 0))
+			next = _strike_enemy(next, amount, target_key)
 		"shield":
 			next["player"]["shield"] = int(next["player"]["shield"]) + int(effect.get("amount", 0))
 		"buff":
@@ -384,6 +389,15 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			next = _apply_enemy_status(next, effect, target_key)
 		"shift":
 			next["player"]["position"] = int(next["player"].get("position", 0)) + int(effect.get("amount", 1))
+	# S4 元素协同：支援类子键（随任意 kind 叠加）——登记后本回合内该流派
+	# 后续蛊伤害 +support_bonus；end_turn 统一清零，不跨回合。
+	var support_school := str(effect.get("support_school", ""))
+	var support_bonus := int(effect.get("support_bonus", 0))
+	if not support_school.is_empty() and support_bonus > 0:
+		var supports: Dictionary = (next.get("turn_supports", {}) as Dictionary).duplicate(true)
+		supports[support_school] = int(supports.get(support_school, 0)) + support_bonus
+		next["turn_supports"] = supports
+		_log(next, "support", support_school)
 	return next
 
 
@@ -568,6 +582,8 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 	var next := _dup(battle)
 	next["player"]["thoughts"] = 0
 	next["player"]["used_this_turn"] = 0
+	# S4 元素协同：「本回合」语义在回合边界收口，支援不跨回合。
+	next["turn_supports"] = {}
 	for i in (next["gu_slots"] as Array).size():
 		next["gu_slots"][i] = (next["gu_slots"][i] as Dictionary).duplicate(true)
 		next["gu_slots"][i]["used_this_turn"] = false

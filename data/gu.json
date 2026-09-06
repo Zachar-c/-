@@ -14,7 +14,9 @@
   "true_qi_cost": 1,
   "v1_effect": {
    "kind": "strike",
-   "amount": 1
+   "amount": 1,
+   "support_school": "light",
+   "support_bonus": 2
   },
   "slot_role": "scout",
   "combat": "reveal_hidden_bonus",
