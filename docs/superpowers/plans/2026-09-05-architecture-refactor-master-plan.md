@@ -122,8 +122,10 @@ F 里程碑验收（切片全流程真实窗口走查）
 > 2026-09-06 修订：原 A2--A4「其余屏迁移 RUITK master」**取消**，A5「删除旧屏」**作废**——用户 18 批视觉迭代已在官方 `.tscn` 栈统一视觉语言（7 屏基准，验收 7.5/10，见 `docs/superpowers/specs/2026-09-06-visual-final-acceptance-report.html`）。视觉终态见「修订记录」。Phase A 改为收官工单：
 
 **A-1 视觉批次落地（新工单，解除 B1 阻塞）**
+- 状态（2026-09-06）：✅ 已落地并提交 `3cda288`（182 文件 +5549/-214）。
 - 目标：审阅并提交工作树 18 批视觉成果（25 文件 +1151/-187、`assets/wenzhen/*`、`assets/audio/*`、`assets_manifest.json` + Schema、`CREDITS.md`、`.gutconfig.json`、两份视觉报告、`run_controller.gd` drag 诊断移除）；修复 `test_battle_hand_renders_no_permanent_tooltip_children` 断言（第 8 批重构所致的历史失败）。
-- 验收：unit 套件 UI 守卫 7/7 绿、战斗屏 11/11；真实窗口抽验战斗/休整/交易/炼蛊/地图 5 屏视觉与常用视口；提交聚焦 commit。
+- 验收：unit 套件 UI 守卫 7/7 绿（test_ui_rules_guard.gd）、战斗屏 11/11（test_wenzhen_battle_screen.gd，含手牌 tooltip + 血量栏 get_node("hp") 修正）— 提交前后两轮 GUT 全绿；真实窗口抽验战斗/休整/交易/炼蛊/地图 5 屏以视觉会话第 3-18 批迭代期间落盘的 `battle_screenshot_v9` / `shop_screenshot_v6` / `rest_screenshot_v5` / `refine_screenshot_v7` / `map_screenshot_v6` 为像素证据（暗色南疆舞台 + 浅色旧宣纸命簿 + 资产插画 + 中文 UI 三层完整落地，非白屏）；提交聚焦 commit。
+- 注意：scripts/audio/audio_manager.gd 仅去掉 `class_name AudioManager`（与 project.godot autoload 同名冲突），未触核心逻辑；A-2 后续音效接入由并行会话接管，commit 中 `data/audio_triggers.json` / `scripts/audio/audio_trigger_system.gd` 不在 A-1 范围，留仓外。B1 解锁：可继续删 `battle_resolver.gd` 本体。
 
 **A-2 视觉收官项（可与 B/D/S 并行派发）**
 - HIGH：游戏内「关于」署名界面（CC BY 3.0 要求游戏内署名，仅 CREDITS.md 不够）。
