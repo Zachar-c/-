@@ -6,7 +6,6 @@ extends "res://addons/gut/test.gd"
 # global meta codex, data-driven enemy mapping, and shop material sell cards.
 
 
-const BattleResolverScript := preload("res://scripts/domain/battle_resolver.gd")
 const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
 const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
 const RuiVLib := preload("res://addons/reactive_ui_toolkit/core/v.gd")

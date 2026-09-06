@@ -17,7 +17,6 @@ extends GutTest
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 
 
 func before_each() -> void:

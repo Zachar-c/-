@@ -3,7 +3,6 @@ extends GutTest
 
 const RegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
 const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
-const BattleScript = preload("res://scripts/domain/battle_resolver.gd")
 const PreviewScript = preload("res://scripts/domain/action_preview_service.gd")
 const SnapshotScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const BuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
