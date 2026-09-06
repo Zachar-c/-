@@ -61,6 +61,7 @@
 2. **终态栈 = 官方 `.tscn` 全屏**（`MASTER_SCENE_PATHS` 即唯一路由表，`SCREEN_PATHS` 空）；`ui_masters/wenzhen_{battle,map}_master` 与 `ui/screens/*_screen.guitkx` 生成层已退役删除（`2fcf22e`）；组件级 `ui/widgets/*.guitkx` 保留（codegen `compile_all` 遍历 + 生成 `.gd` 被 acceptance_driver/preview 引用，删源即断生成链）。
 3. **执行队列当日清空**：AU（BGM 迁 mp3/ogg + 双系统收敛结论=正交分工保留，音量走 AudioServer master bus）/ A-1（分批提交 `c12190b`/`bd1ed75`/`a85f550`/`dfdfa23`/`1a0af42`）/ CT（`a4e701b`）/ B2（`534d610`，卡层零残留）/ A-2 HIGH 署名（`3c0b12a`）全部完成。
 4. **D1 收口**：386 方（无漂移，审计误读）；D2 域层配方驱动已落地；**D1b 跨流派合炼矩阵**专项开工单（422 只 rank3-5 蛊不可达=核心支柱缺口），验收工具 `tools/verify_recipe_coverage.py`（`d290b3f`）就位，待逐族跨流派方向策展输入。
+> **2026-09-06 设计演化（用户终审）**：合成改为「古方知识模型」——合成零门槛、古方=产物知识（持有即直知/首炼获得/直购免赌）、产物=配对稳定映射（种子无关）、A3 分层揭示、道痕主次记档不改数据。mx_ 固定方将由配对映射函数取代，rank4/5 无需逐蛊铺方。Spec：`docs/superpowers/specs/2026-09-06-gu-synthesis-design.md`（§8 实现差距清单）。
 5. **RUI 死重定论**：审计列 6 个「无导入」组件**不可删**（见 2），非死重。
 6. **遗留复现**：ObjectDB 泄漏 20601 实例（冻结清单内，未开工）。
 
