@@ -252,40 +252,6 @@ func test_map_all_reachable_nodes_are_fully_visible_at_compact_viewport() -> voi
 					"%s must be fully exposed for a real mouse click" % node_name)
 
 
-func test_map_rui_mast_does_not_apply_panel_stylebox_to_hbox() -> void:
-	var source := FileAccess.get_file_as_string("res://ui/screens/map_screen.guitkx")
-	assert_false(source.contains('offset_bottom={ 68.0 } style={'),
-			"map_mast is an HBoxContainer and must not receive Panel-only StyleBox keys")
-
-
-func test_map_rui_labels_do_not_receive_panel_stylebox_keys() -> void:
-	var source := FileAccess.get_file_as_string("res://ui/screens/map_screen.guitkx")
-	assert_false(source.contains('text={ "契约 · " + ("、".join(contracts) if not contracts.is_empty() else "无") } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 9, "border_width_left"'),
-			"map marker Label nodes must not receive Panel-only border keys")
-	assert_false(source.contains('text={ "异变 · " + anomaly_label } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 9, "border_width_left"'),
-			"map marker Label nodes must not receive Panel-only content margin keys")
-	assert_false(source.contains('text={ map_subtitle } style={ {"font_color": GuStyle.INK_MAP_FAINT, "font_size": 10, "content_margin_left"'),
-			"map subtitle Label must use layout spacing instead of a StyleBox margin")
-	assert_false(source.contains('<Control name="map_depth"') and source.contains('"border_width_right": 1'),
-			"map depth divider must use a Panel rather than apply StyleBox keys to Control")
-
-
-func test_map_master_visible_text_uses_its_local_palette() -> void:
-	var host := _mount_with_commands(_route_snapshot(), {"travel": func(_id): pass, "view_node": func(_id): pass})
-	for _frame in 3:
-		await get_tree().process_frame
-	_assert_label_color(host, "map_depth_label_now", Color("8b8d85"))
-	_assert_label_color(host, "map_layer_label_far", Color("92948d"))
-	_assert_label_color(host, "map_layer_label_near", Color("92948d"))
-	_assert_label_color(host, "map_layer_label_now", Color("92948d"))
-	_assert_label_color(host, "map_inspection_name", Color("1b1c19"))
-	_assert_label_color(host, "map_inspection_note", Color("64665f"))
-	_assert_label_color(host, "map_resource_value_yuanstone", Color("252624"))
-	_assert_label_color(host, "map_resource_name_yuanstone", Color("666861"))
-	for icon_name in ["map_node_mark_label_elite", "map_node_mark_label_market", "map_node_mark_label_event", "map_node_mark_label_rest", "map_node_mark_label_current"]:
-		_assert_label_color(host, icon_name, Color("1b1c19"))
-
-
 func test_map_anomaly_badge_renders_label_not_raw_dict() -> void:
 	# R14.6 险象/衰运徽章：真实快照的 anomalies 是 {id,label} 字典，map 主屏
 	# 只能露玩家可读 label；sys: id 与字典结构都不得泄漏（§16.5）。

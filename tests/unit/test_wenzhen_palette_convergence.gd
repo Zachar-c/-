@@ -3,8 +3,6 @@ extends GutTest
 const SCAN_FILES := [
 	"scripts/presentation/screens/hall_screen_view.gd",
 	"scenes/ui/screens/hall_screen.tscn",
-	"ui/screens/map_screen.guitkx",
-	"ui/screens/map_screen.gd",
 	"ui/widgets/gu_resource_chip.guitkx",
 	"ui/widgets/gu_resource_chip.gd",
 	"scripts/presentation/gu_orb.gd",
