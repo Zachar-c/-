@@ -805,6 +805,19 @@ func _find_button_by_text(node: Node, wanted: String) -> Button:
 	return null
 
 
+# 卡面按钮文本是多行卡面（〔稀有〕\n名字\n◆ 消耗\n效果…），不能用精确匹配；
+# 手牌/敌人这类动态按钮按「文本包含名字」定位（旧 smoke 时期卡面为纯名字，
+# 断言用精确 == 曾静默假绿——battle 屏在旧驱动的 quit 覆盖下从未真正验证过）。
+func _find_button_by_text_contains(node: Node, wanted: String) -> Button:
+	if node is Button and str(node.text).contains(wanted):
+		return node
+	for c in node.get_children():
+		var found := _find_button_by_text_contains(c, wanted)
+		if found != null:
+			return found
+	return null
+
+
 func _host_has_label_text(node: Node, wanted: String) -> bool:
 	if node is Label and str(node.text).contains(wanted):
 		return true
@@ -1007,7 +1020,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 		return false
 
 	# 1) 危险卡 → 只弹确认，不下发
-	var danger_btn := _find_button_by_text(battle, "血祭蛊")
+	var danger_btn := _find_button_by_text_contains(battle, "血祭蛊")
 	if danger_btn == null:
 		push_error("tscn 战斗屏手牌未渲染「血祭蛊」")
 		_teardown_mounts()
@@ -1036,7 +1049,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 
 	# 2) 需选目标的卡 → 进入 target_select，敌人变可选
 	log.clear()
-	var target_btn := _find_button_by_text(battle, "月芒蛊")
+	var target_btn := _find_button_by_text_contains(battle, "月芒蛊")
 	if target_btn == null:
 		push_error("tscn 战斗屏手牌未渲染「月芒蛊」")
 		_teardown_mounts()
@@ -1051,7 +1064,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 		push_error("tscn 战斗屏选敌阶段不得下发命令: " + str(log))
 		_teardown_mounts()
 		return false
-	var enemy_btn := _find_button_by_text(battle, "铁皮山猪")
+	var enemy_btn := _find_button_by_text_contains(battle, "铁皮山猪")
 	if enemy_btn == null or not enemy_btn.visible:
 		push_error("tscn 战斗屏选敌时敌人应变为可选按钮")
 		_teardown_mounts()
