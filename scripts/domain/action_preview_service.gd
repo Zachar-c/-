@@ -335,7 +335,7 @@ static func _battle_effect(gu_id: String, mode: String) -> String:
 	if gu_id == "thorn_whip_gu":
 		return "束缚敌人，使其难以施展护身反制。" if mode == "bind" else "对敌人造成 2 点伤害。"
 	match gu_id:
-		"small_light_gu": return "小光弹照中敌手，伤敌并照出异状。"
+		"small_light_gu": return "小光弹照中敌手，伤敌并照出异状。本回合内后续光道蛊伤害 +2。"
 		"stone_shell_gu": return "获得护身，削减本轮所受伤害。"
 		"mist_step_gu": return "保留撤离机会。"
 		"blood_moss_gu": return "恢复 1 点伤势并造成 1 点伤害。"

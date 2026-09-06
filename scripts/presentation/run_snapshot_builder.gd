@@ -1139,6 +1139,8 @@ static func battle(controller) -> Dictionary:
 	# R-boss-no-retreat：门禁以 V1 flags(Dictionary) 判定（facade 与 resolver 同源），
 	# UI 只镜像展示结果，不自行判断敌人定义。
 	out["flee_available"] = not BattleCommandFacadeScript.boss_blocks_retreat(battle_data)
+	# S4 元素协同：本回合流派支援随快照透出（透明度红线）。
+	out["turn_supports"] = battle_turn_supports(battle_data)
 	out["synthesis"] = _synthesis_options(state, catalog)
 	out["can_ultimate"] = false
 	out["dda_boss_hint"] = str(battle_data.get("dda_boss_hint", ""))
@@ -1147,6 +1149,11 @@ static func battle(controller) -> Dictionary:
 	# 快照是否推进：相同版本重挂载不清重复提交缓存，避免同命令被重放。
 	out["hand_version"] = int(state.event_log.size())
 	return out
+
+
+static func battle_turn_supports(battle_data: Dictionary) -> Dictionary:
+	## S4 元素协同：本回合流派支援（流派 id -> 加成值），供快照与小组件读取。
+	return (battle_data.get("turn_supports", {}) as Dictionary).duplicate(true)
 
 
 static func _v1_enemies(battle_data: Dictionary) -> Array[Dictionary]:
@@ -1250,11 +1257,22 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 		var reason := V1BattleResolverScript.can_play_gu(battle_data, i)
 		var note := _v1_slot_note(slot)
 		var effect := _v1_effect_text(slot)
+		var slot_effect: Dictionary = slot.get("effect", {})
+		var support_school := str(slot_effect.get("support_school", ""))
+		var support_bonus := int(slot_effect.get("support_bonus", 0))
+		if not support_school.is_empty() and support_bonus > 0:
+			# S4 元素协同：支援类效果随卡面声明（静态语义）。
+			effect = "%s；本回合内后续%s蛊伤害 +%d" % [effect, _school_display_name(catalog, support_school), support_bonus]
 		# 2026-09-04：手牌摘要携带转数前缀，升阶蛊与定义转数一眼可分。
 		var summary := "%d转·%s" % [maxi(1, int(slot.get("rank", 1))), effect]
 		summary = summary if note == "" else "%s（%s）" % [summary, note]
 		if bool(slot.get("is_permanent", false)):
 			summary = "%s · 常驻 %s" % [summary, str(slot.get("durability_mode", ""))]
+		var risks := _v1_life_cost_risk(slot)
+		var live_support := int((battle_data.get("turn_supports", {}) as Dictionary).get(str(slot.get("school", "")), 0))
+		if live_support > 0:
+			# S4 元素协同：当前回合已生效的流派支援随卡面透出（透明度红线）。
+			risks.append("当前受%s支援：本回合该流派蛊伤害 +%d。" % [_school_display_name(catalog, str(slot.get("school", ""))), live_support])
 		var card := {
 			"id": "gu.%s" % str(slot.get("instance_id", "")),
 			"name": DisplayText.gu(def_id),
@@ -1266,7 +1284,7 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 			"school_label": _school_display_name(catalog, str(definition.get("school", ""))),
 			"executable": reason.is_empty(),
 			"block_reason": _v1_reject_text(reason),
-			"known_risk": _v1_life_cost_risk(slot),
+			"known_risk": risks,
 			"target_type": "single_enemy" if str(slot.get("effect", {}).get("kind", "")) == "strike" else "none",
 			"valid_target_ids": _living_enemy_ids_v1(battle_data),
 			"curse_warning": false,

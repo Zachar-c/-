@@ -57,7 +57,7 @@ func test_battle_preview_reads_hand_and_uses_battle_local_version() -> void:
 	assert_eq(hand_card["state_version"], battle["hand_version"])
 	assert_eq(hand_card["command"], {})
 	assert_eq(hand_card["cost"]["spirit"], 1)
-	assert_eq(hand_card["expected_gain"], ["小光弹照中敌手，伤敌并照出异状。"])
+	assert_eq(hand_card["expected_gain"], ["小光弹照中敌手，伤敌并照出异状。本回合内后续光道蛊伤害 +2。"])
 	assert_eq(hand_card["target_type"], "single_enemy")
 	assert_eq(hand_card["valid_target_ids"], [str(battle["enemies"][0]["enemy_id"])])
 
