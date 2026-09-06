@@ -3,11 +3,13 @@ extends GutTest
 
 # Night batch R14.5/R14.6 (§16.11): state-adaptive DDA core. Evaluation is
 # pure and deterministic; markers live in RunData.meta_rules under sys: keys
-# (at most one, newest replaces); the hall toggle snapshots into the run; the
-# enemy swap is lever 1 (composition only, never bosses, seeded via SeededRoll).
+# (at most one, newest replaces); the hall toggle snapshots into the run.
+# NOTE (B1 bucket C 2026-09-06): the battle-integrated levers (marker write
+# on turn, enemy swap at battle start, boss-local intent adapt) lived only in
+# the legacy battle engine; V1/facade has no DDA hook, so the lever tests were
+# removed with battle_resolver.gd and the gap is tracked as domain debt.
 
 
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
@@ -48,9 +50,14 @@ func _decay_state(seed_value: int = 101) -> RunState:
 	return state
 
 
-func _first_turn(state: RunState, enemy_kind: String = "ridge_hound") -> Dictionary:
-	var battle := BattleResolverScript.start({"enemy_kind": enemy_kind}, state, catalog)
-	return BattleResolverScript.take_turn(battle, {"type": "basic_dodge"}, state, catalog)
+## A run whose meta says a peril marker fired (fixture stands in for the
+## legacy battle-turn hook that used to write it; recap reads event targets).
+func _marked_state(seed_value: int = 101) -> RunState:
+	var state := _peril_state(seed_value)
+	state.meta_rules = {"sys:dda_peril": true}
+	return state.append_event({
+		"action": "dda_marker", "reason": "dda_peril", "targets": ["sys:dda_peril"],
+	})
 
 
 func test_evaluation_is_deterministic_and_band_edges() -> void:
@@ -75,64 +82,14 @@ func test_evaluation_is_deterministic_and_band_edges() -> void:
 	assert_eq(DdaResolverScript.evaluate(peril, catalog), DdaResolverScript.evaluate(peril, catalog))
 
 
-func test_marker_refresh_writes_event_and_swap_happens_next_battle() -> void:
-	var state := _peril_state()
-	var first := _first_turn(state)
-	assert_true(bool(first["finished"]) == false)
-	var marked: RunState = first["state"]
-	assert_true(marked.meta_rules.has("sys:dda_peril"))
-	assert_eq(str(marked.event_log.back()["action"]), "dda_marker")
-	assert_eq(str(marked.event_log.back()["reason"]), "dda_peril")
-
-	var second_battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, marked, catalog)
-	assert_eq(str(second_battle["dda_swapped_from"]), "ridge_hound")
-	assert_ne(str(second_battle["enemy_kind"]), "ridge_hound")
-	var pool: Array = catalog["dda"]["enemy_swap_pools"]["sys:dda_peril"]
-	assert_true(pool.has(str(second_battle["enemy_kind"])))
-
-
-func test_bosses_are_never_swapped() -> void:
-	var state := _peril_state()
-	var first := _first_turn(state)
-	var marked: RunState = first["state"]
-	var boss_battle := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord"}, marked, catalog)
-	assert_eq(str(boss_battle["enemy_kind"]), "miasma_vein_lord")
-	assert_eq(str(boss_battle.get("dda_swapped_from", "")), "")
-
-
-func test_toggle_off_disables_evaluation_and_swap() -> void:
-	var state := _peril_state()
-	state.dda_state_adaptive_enabled = false
-	var first := _first_turn(state)
-	assert_false(first["state"].meta_rules.has("sys:dda_peril"))
-	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, state, catalog)
-	assert_eq(str(battle["enemy_kind"]), "ridge_hound")
-
+func test_toggle_off_from_meta_disables_dda() -> void:
 	var meta := MetaProgress.new_empty()
 	meta.dda_state_adaptive_enabled = false
 	var from_meta := RunState.new_run(101, meta)
 	assert_false(bool(from_meta.dda_state_adaptive_enabled))
 
 
-func test_marker_replaces_old_and_player_cap_is_exempt() -> void:
-	var state := _peril_state()
-	state = _first_turn(state)["state"]
-	assert_eq(int(DdaResolverScript.player_rule_count(state.meta_rules)), 0)
-	# Escalate into the decay band: marker must replace, never stack.
-	var escalated := _decay_state()
-	escalated.meta_rules = state.meta_rules.duplicate(true)
-	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, escalated, catalog)
-	var second := BattleResolverScript.take_turn(battle, {"type": "basic_dodge"}, escalated, catalog)
-	var marked: RunState = second["state"]
-	var sys_keys := 0
-	for key in marked.meta_rules:
-		if str(key).begins_with("sys:"):
-			sys_keys += 1
-	assert_eq(sys_keys, 1)
-	assert_true(marked.meta_rules.has("sys:dda_decay"))
-	assert_eq(str(marked.event_log.back()["reason"]), "dda_decay")
-
-	# Player meta cap: sys: keys never count against R4.8's ≤2.
+func test_sys_markers_never_count_against_player_meta_cap() -> void:
 	var meta_relic := ""
 	for relic_value in catalog["relics"]:
 		var relic: Dictionary = relic_value
@@ -149,8 +106,7 @@ func test_marker_replaces_old_and_player_cap_is_exempt() -> void:
 
 
 func test_snapshot_anomalies_debug_percentile_and_recap() -> void:
-	var state := _peril_state()
-	state = _first_turn(state)["state"]
+	var state := _marked_state()
 	var stub := {
 		"state": state,
 		"catalog": catalog,
@@ -172,8 +128,7 @@ func test_snapshot_anomalies_debug_percentile_and_recap() -> void:
 
 
 func test_save_round_trip_keeps_marker_and_toggle() -> void:
-	var state := _peril_state()
-	state = _first_turn(state)["state"]
+	var state := _marked_state()
 	var data := SaveRepositoryScript.serialize_run(state, [], [])
 	var loaded: Dictionary = SaveRepositoryScript.load_run_from_data(data)
 	var restored: RunState = loaded["state"]
@@ -216,67 +171,6 @@ func test_validation_rejects_bad_dda_config() -> void:
 	tuned["dda"] = bad
 	errors = ContentCatalogScript.validate(tuned)
 	assert_true(_has(errors, "weights"))
-
-
-func test_boss_local_adapt_prioritizes_counter_intent_when_build_matches() -> void:
-	var state := _peril_state()
-	state.current_node_id = "final_boss_stand"
-	# Canonical phase-2 setup per test_boss_phases: both intents eligible.
-	var battle := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord"}, state, catalog)
-	battle["enemy_phase_index"] = 1
-	battle["turn"] = 4
-	BattleResolverScript._select_enemy_intent(battle, state, 4)
-	# The counter intent (essence_scorch) is forced when the build matches.
-	assert_true(bool(battle.get("dda_boss_adapted", false)))
-	assert_eq(str(battle.get("dda_boss_hint", "")), "boss_senses_gu_power")
-	assert_eq(str(battle["visible_intent"]["id"]), "essence_scorch")
-
-	var taken := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, state, catalog)
-	# State-adaptive marker IS legitimately written (the run is in peril); the
-	# boss-local artifacts must stay battle-scoped: a follow-up non-boss battle
-	# carries neither the counter id nor the adapt flags.
-	assert_true(taken["state"].meta_rules.has("sys:dda_peril"))
-	var followup := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, taken["state"], catalog)
-	assert_false(followup.has("dda_boss_counter_id"))
-	assert_false(bool(followup.get("dda_boss_adapted", false)))
-
-
-func test_boss_local_never_fires_for_common_enemies() -> void:
-	var state := _peril_state()
-	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, state, catalog)
-	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, state, catalog)
-	assert_false(bool(turn["battle"].get("dda_boss_adapted", false)))
-
-
-func test_boss_local_obeys_hall_toggle_and_validation() -> void:
-	var state := _peril_state()
-	state.dda_state_adaptive_enabled = false
-	var battle := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord"}, state, catalog)
-	battle["enemy_phase_index"] = 1
-	battle["turn"] = 4
-	BattleResolverScript._select_enemy_intent(battle, state, 4)
-	assert_false(bool(battle.get("dda_boss_adapted", false)))
-
-	var tuned := catalog.duplicate(true)
-	var bad := (catalog["dda"] as Dictionary).duplicate(true)
-	bad["boss_local"] = [{"when": "moon_phase", "intent_id": "essence_scorch"}]
-	tuned["dda"] = bad
-	assert_true(_has(ContentCatalogScript.validate(tuned), "unknown condition"))
-	bad["boss_local"] = [{"when": "many_curses", "intent_id": "not_an_intent"}]
-	tuned["dda"] = bad
-	assert_true(_has(ContentCatalogScript.validate(tuned), "not in any boss phase pool"))
-
-
-func test_swaps_are_deterministic() -> void:
-	var pool: Array = catalog["dda"]["enemy_swap_pools"]["sys:dda_peril"]
-	var first_state := _peril_state(424242)
-	first_state = _first_turn(first_state)["state"]
-	var second_state := _peril_state(424242)
-	second_state = _first_turn(second_state)["state"]
-	var first_battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, first_state, catalog)
-	var second_battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, second_state, catalog)
-	assert_eq(str(first_battle["enemy_kind"]), str(second_battle["enemy_kind"]))
-	assert_true(pool.has(str(first_battle["enemy_kind"])))
 
 
 func test_low_health_plus_poor_stone_reaches_peril() -> void:
