@@ -247,8 +247,10 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：目录校验绿；每条配方可被领域校验通过。
 
 **D2 合炼玩法接线**
+> 状态：域层已落地（配方驱动，2026-09-06 验证）；剩余 = 真实窗口全流程验收（依赖新炼蛊屏终态，随视觉会话 refine 屏稳定后执行）。
 - 前置：D1 + A3（新炼蛊屏）。
 - 目标：领域合炼命令（现 `refine` 命令面扩展为配方驱动：按配方消耗对应蛊实例与材料，成功/反噬沿用现有结算与预检红线）；新炼蛊屏展示配方、材料齐备度与风险预览。
+- 域层落地证据：`resolver.gd` refine 命令走 recipe（`unknown_refinement_recipe`/`refinement_recipe_locked` 拒绝 → `_add_gu_transaction` 按 `output_gu_id/output_rank` 产出，rank clampi 1..5）；`recipe_rules.gd` 候选/解锁；定向套件全绿——d1_recipe_schema 4 / recipe_codex_gating 8 / recipe_rules 9 / refine_moonlight_glow 3。
 - 验收：真实窗口完成一次「按配方合炼出高转蛊」全流程；不可逆成本预检可见。
 
 **D3 杀招数据地基（不实现玩法）**
