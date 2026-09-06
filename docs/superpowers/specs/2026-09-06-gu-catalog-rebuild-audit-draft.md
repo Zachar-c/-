@@ -101,6 +101,21 @@
 
 对 16 只保留蛊 + 新增真名蛊，逐只输出核验卡：效果/属性/转数 vs 原文段落（clean 行号引用）；合炼古方匹配 → 驱动 D1 v2 recipes（input 转 school/rank/count 表达 + source 锚点）。与 `2026-09-06-recipe-source-excerpts-draft.md` 合并为 D 阶段原料。
 
+### 6.1 R 系列缺蛊登记（2026-09-06 · I-3 侦察 → 内容策展线）
+
+下列蛊在原文有锚点（clean 行号）但 catalog 无对应条目，按用户裁定**归审计清册二阶段策展**（逐只核验后落库，再补配方），不随 D1b 机械生成：
+
+| 蛊 | 用途 | 原文锚点 | 策展要点 |
+|---|---|---|---|
+| phantom_moon_gu 幻月蛊（2转 light） | R4b 输出：moon_glow_gu + shadow_veil_gu | 摘录 2.1 R4b | 效果=月影变体；与 moon_shadow_gu 区分度 |
+| moon_ni_gu 月霓裳蛊（2转 light） | R6 输出：moonlight_gu + jade_skin_gu | clean 15726–15784（终点五转宝月光王蛊） | 罕见路线蛊；终链地位 |
+| moon_spin_gu 月旋蛊（2转 light） | R8 输出：moonlight_gu + cyclone_gu | clean 17154（古月青书线） | 月刃曲线化语义 |
+| mist_step_gu 雾步蛊（qi 移动，转数待裁） | R4 输入（现 v2 以 {qi,1,1} 泛指） | 摘录 2.1 R4；北原后期 | **实际转数裁定**（决定 moon_shadow_locked 输入 rank 精度） |
+| shadow_veil_gu 影幕蛊（qi，转数待裁） | R4b 输入 | 摘录 2.1 R4b | 同上 |
+| stone_mark_gu 痕石蛊 | R7 输入（R7 输出已由 moon_ray=月痕蛊 代表） | clean 17152 | 若补则开月光+痕石→月痕第二路线 |
+| cyclone_gu 旋风蛊 | R8 输入 | clean 17154 | light 无 wind 分支蛊；是否新增 wind 道 |
+| 白豕蛊命名（white_boar_strength_gu 现名白豕蛊） | R3 输入 | clean 15860–15895 | 已用白豕蛊名；核原文白豕蛊语义后确认或改名 |
+
 ## 7. 依存清理与测试影响（预估）
 
 - refinement_recipes.json：176 条 gen_ advance 方随 gen_ 蛊删除；手工方保留并改引用（moon_glow_fixed 等不受影响；white_jade 系输入若涉白豕蛊改名即同步）。
