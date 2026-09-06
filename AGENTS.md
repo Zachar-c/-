@@ -52,7 +52,7 @@
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 
 1. 架构重构主计划（`docs/superpowers/plans/2026-09-05-architecture-refactor-master-plan.md`，2026-09-06 两轮审计修订）：按工单派发执行，完成一项回写一项；工单细节不在本清单重复。第一批迭代排布见 `docs/superpowers/plans/2026-09-06-iteration-1.md`（I-2 遗留收敛已完成，I-1 主线整合完成于 2026-09-06：master 快进至 8c45a48 并推送 gitee）。
-2. 待办（2026-09-06 合拢后）：①CT 契约回写——`school_name`/`school_label` 快照键补进 `docs/contracts/2026-09-02-domain-ui-contract.md`；②RUI 无导入孤儿清理（审计 15 组件中 6 个无导入）；③ui_masters/ 迁移收官——`wenzhen_battle_master.tscn`/`wenzhen_map_master.tscn` 已退出主路由（全屏迁官方 .tscn，`MASTER_SCENE_PATHS` 即唯一路由表），剩余引用（`test_wenzhen_master_theme.gd` map 段等）连同文件清理；④D1-剩余 = 跨流派/高转配方扩充（U3 源已定稿，schema v2 校验已完备；R7 月痕蛊已在目录，R6 月霓裳/R8 月旋蛊归内容策展线）。
+2. 待办（2026-09-06 合拢后）：①CT 契约回写——`school_name`/`school_label` 快照键补进 `docs/contracts/2026-09-02-domain-ui-contract.md`；②RUI 无导入孤儿清理（审计 15 组件中 6 个无导入）；③ui_masters/ 迁移收官——`wenzhen_battle_master.tscn`/`wenzhen_map_master.tscn` 已退出主路由（全屏迁官方 .tscn，`MASTER_SCENE_PATHS` 即唯一路由表），剩余引用（`test_wenzhen_master_theme.gd` map 段等）连同文件清理；④**D1b 跨流派合炼矩阵**（主计划 Phase D 专项工单，2026-09-06 裁定开）——打通 3-5 转合炼链（现仅 2 条配方产出 rank3+），输入=逐族跨流派方向策展；缺目录蛊 8 项登记审计清册 §6.1（审计清册二阶段）。
 3. 审计核验基线（2026-09-06 合拢后）：unit 1093/1093 + integration 31/31 + smoke 31 OK exit 0；`test_audio_director` 5 红已清零（BGM_PATHS 迁 .mp3/.ogg + 断言通用化）；配方对账 ✅（`refinement_recipes.json` = 386 方 + 4 caravan，无 +7 漂移，审计误读）；A1/B1/B2/B3/I-2 声明逐项属实。
 4. 流派 = 道痕元素体系（用户裁定 2026-09-05）：20+ 道痕各对应一流派（开放集合），蛊虫按流派富含道痕；合炼配方按「流派 + 转阶」表达（例：2转血道蛊 + 2转光道蛊 → 3转血月蛊；1转月光蛊 + 2×1转小光蛊 → 2转月芒蛊）；5 转封顶对应 L1--L5；杀招组合已实现为 V1 核心支柱（kill_moves 组装 + play_kill_move + 战斗屏 KillHost），D3 数据地基工单关闭（2026-09-06 用户裁定）。
 5. 用户输入依赖：U1 流派清单审订（✅ 2026-09-05）、U2 214 蛊流派映射审订（✅ 2026-09-05）、U3 配方源材料（✅ 2026-09-06，`2026-09-06-recipe-source-excerpts-draft.md`）。
