@@ -25,47 +25,55 @@ theme_override_constants/separation = 12
 [node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
 layout_mode = 2
 
-[node name="FeedbackLabel" type="Label" parent="Root"]
+[node name="EncounterStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StageContent" type="VBoxContainer" parent="Root/EncounterStage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FeedbackLabel" type="Label" parent="Root/EncounterStage/StageContent"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 visible = false
 
-[node name="primary_decision_surface" type="HBoxContainer" parent="Root"]
+[node name="primary_decision_surface" type="HBoxContainer" parent="Root/EncounterStage/StageContent"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 14
 
-[node name="MainColumn" type="VBoxContainer" parent="Root/primary_decision_surface"]
+[node name="MainColumn" type="VBoxContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="BriefPanel" parent="Root/primary_decision_surface/MainColumn" instance=ExtResource("3_panel")]
+[node name="BriefPanel" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn" instance=ExtResource("3_panel")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ActionScroll" type="ScrollContainer" parent="Root/primary_decision_surface/MainColumn"]
+[node name="ActionScroll" type="ScrollContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ActionList" type="VBoxContainer" parent="Root/primary_decision_surface/MainColumn/ActionScroll"]
+[node name="ActionList" type="VBoxContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn/ActionScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="LeaveButton" type="Button" parent="Root/primary_decision_surface/MainColumn"]
+[node name="LeaveButton" type="Button" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn"]
 layout_mode = 2
 text = "离开"
 
-[node name="SideColumn" type="VBoxContainer" parent="Root/primary_decision_surface"]
+[node name="SideColumn" type="VBoxContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface"]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="StatusPanel" parent="Root/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
+[node name="StatusPanel" parent="Root/EncounterStage/StageContent/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
 layout_mode = 2
 
-[node name="SatchelPanel" parent="Root/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
+[node name="SatchelPanel" parent="Root/EncounterStage/StageContent/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
 layout_mode = 2
 
 [node name="ConfirmDialog" parent="Root" instance=ExtResource("5_dialog")]

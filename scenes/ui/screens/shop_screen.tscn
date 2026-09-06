@@ -29,102 +29,110 @@ theme_override_font_sizes/font_size = 14
 text = "反馈"
 visible = false
 
-[node name="TitleRow" type="HBoxContainer" parent="Root"]
+[node name="ShopStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StageContent" type="VBoxContainer" parent="Root/ShopStage"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="Root/ShopStage/StageContent"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="TitleLabel" type="Label" parent="Root/TitleRow"]
+[node name="TitleLabel" type="Label" parent="Root/ShopStage/StageContent/TitleRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "黑市"
 
-[node name="InflationLabel" type="Label" parent="Root/TitleRow"]
+[node name="InflationLabel" type="Label" parent="Root/ShopStage/StageContent/TitleRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "物价说明"
 
-[node name="NpcLabel" type="Label" parent="Root/TitleRow"]
+[node name="NpcLabel" type="Label" parent="Root/ShopStage/StageContent/TitleRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "NPC："
 
-[node name="StanceLabel" type="Label" parent="Root/TitleRow"]
+[node name="StanceLabel" type="Label" parent="Root/ShopStage/StageContent/TitleRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "立场·中立"
 
-[node name="PrimarySurface" type="HBoxContainer" parent="Root"]
+[node name="PrimarySurface" type="HBoxContainer" parent="Root/ShopStage/StageContent"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 14
 
-[node name="OfferColumn" type="VBoxContainer" parent="Root/PrimarySurface"]
+[node name="OfferColumn" type="VBoxContainer" parent="Root/ShopStage/StageContent/PrimarySurface"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="OfferTitle" type="Label" parent="Root/PrimarySurface/OfferColumn"]
+[node name="OfferTitle" type="Label" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "蛊虫 / 货物"
 
-[node name="OfferScroll" type="ScrollContainer" parent="Root/PrimarySurface/OfferColumn"]
+[node name="OfferScroll" type="ScrollContainer" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OfferList" type="VBoxContainer" parent="Root/PrimarySurface/OfferColumn/OfferScroll"]
+[node name="OfferList" type="VBoxContainer" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn/OfferScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="EmergencyLabel" type="Label" parent="Root/PrimarySurface/OfferColumn"]
+[node name="EmergencyLabel" type="Label" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "应急支付说明"
 
-[node name="PoolFallbackLabel" type="Label" parent="Root/PrimarySurface/OfferColumn"]
+[node name="PoolFallbackLabel" type="Label" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "空池回退"
 visible = false
 
-[node name="ServiceColumn" type="VBoxContainer" parent="Root/PrimarySurface"]
+[node name="ServiceColumn" type="VBoxContainer" parent="Root/ShopStage/StageContent/PrimarySurface"]
 custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="ServicePanel" type="PanelContainer" parent="Root/PrimarySurface/ServiceColumn"]
+[node name="ServicePanel" type="PanelContainer" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ServicePanelMargin" type="MarginContainer" parent="Root/PrimarySurface/ServiceColumn/ServicePanel"]
+[node name="ServicePanelMargin" type="MarginContainer" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="ServicePanelBox" type="VBoxContainer" parent="Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin"]
+[node name="ServicePanelBox" type="VBoxContainer" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ServiceTitle" type="Label" parent="Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox"]
+[node name="ServiceTitle" type="Label" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "服务"
 
-[node name="ServiceScroll" type="ScrollContainer" parent="Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox"]
+[node name="ServiceScroll" type="ScrollContainer" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ServiceList" type="VBoxContainer" parent="Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox/ServiceScroll"]
+[node name="ServiceList" type="VBoxContainer" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox/ServiceScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="LeaveButton" type="Button" parent="Root/PrimarySurface/ServiceColumn"]
+[node name="LeaveButton" type="Button" parent="Root/ShopStage/StageContent/PrimarySurface/ServiceColumn"]
 layout_mode = 2
 text = "离开黑市"
 

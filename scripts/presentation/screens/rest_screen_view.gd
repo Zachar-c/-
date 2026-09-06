@@ -9,14 +9,16 @@ extends MarginContainer
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
+const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
 
 @onready var _top_bar: PanelContainer = $Root/TopBar
-@onready var _title_label: Label = $Root/HeaderRow/TitleLabel
-@onready var _note_label: Label = $Root/HeaderRow/NoteLabel
-@onready var _primary_surface: PanelContainer = $Root/primary_decision_surface
-@onready var _remove_panel: PanelContainer = $Root/RemovePanel
-@onready var _growth_panel: PanelContainer = $Root/GrowthPanel
-@onready var _leave_button: Button = $Root/LeaveButton
+@onready var _rest_stage: PanelContainer = $Root/RestStage
+@onready var _title_label: Label = $Root/RestStage/StageContent/HeaderRow/TitleLabel
+@onready var _note_label: Label = $Root/RestStage/StageContent/HeaderRow/NoteLabel
+@onready var _primary_surface: PanelContainer = $Root/RestStage/StageContent/primary_decision_surface
+@onready var _remove_panel: PanelContainer = $Root/RestStage/StageContent/RemovePanel
+@onready var _growth_panel: PanelContainer = $Root/RestStage/StageContent/GrowthPanel
+@onready var _leave_button: Button = $Root/RestStage/StageContent/LeaveButton
 @onready var _confirm_dialog: PanelContainer = $Root/ConfirmDialog
 
 var _snapshot: Dictionary = {}
@@ -38,6 +40,7 @@ var _remove_select := false
 func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
+	_apply_stage_style()
 	_leave_button.pressed.connect(func(): _fire("leave"))
 	_primary_surface.setup("休整选项", true, false)
 	_remove_panel.setup("选择要移除的蛊", true, false)
@@ -108,7 +111,13 @@ func _build_choice_card(row: Node, c: Dictionary) -> void:
 	panel.content_host.add_child(detail)
 	var cost := str(c.get("cost", ""))
 	if cost != "":
-		panel.content_host.add_child(_body_label(cost, GuStyle.ANOMALY_YELLOW, 13))
+		var cost_row := HBoxContainer.new()
+		cost_row.add_theme_constant_override("separation", 4)
+		var cost_icon := GuIconView.new()
+		cost_icon.setup("gi_coin", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_SMALL)
+		cost_row.add_child(cost_icon)
+		cost_row.add_child(_body_label(cost, GuStyle.ANOMALY_YELLOW, 13))
+		panel.content_host.add_child(cost_row)
 	var reason := str(c.get("reason", ""))
 	if reason != "":
 		panel.content_host.add_child(_body_label(reason, GuStyle.ANOMALY_YELLOW, 12))
@@ -263,6 +272,7 @@ func _refresh_confirm_dialog() -> void:
 			_wash_confirm = ""
 			_skip_confirm = ""
 			if is_wash:
+				_play_seal_stamp()
 				_fire("confirm_wash")
 			else:
 				_fire("choose", cid),
@@ -337,3 +347,68 @@ func _apply_base_fonts() -> void:
 	_title_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	_note_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	MasterTheme.apply_button(_leave_button, "action")
+
+
+## 休整屏暗色舞台：复用战斗屏验证的三层结构（叙事层+规则层+概念层）。
+## 青茅山背景调暗半透明 + 角色立绘闭关姿态 + 朱砂盖印动效（洗髓换骨确认时）。
+func _apply_stage_style() -> void:
+	# 暗色舞台底色
+	var stage_box := StyleBoxFlat.new()
+	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	_rest_stage.add_theme_stylebox_override("panel", stage_box)
+
+	# 青茅山背景层（复用战斗屏素材，调暗半透明）
+	var backdrop := TextureRect.new()
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = -1
+	_rest_stage.add_child(backdrop)
+
+	# 角色立绘：闭关姿态，放在舞台右侧调暗半透明
+	var portrait := TextureRect.new()
+	portrait.texture = PlayerPortrait
+	portrait.custom_minimum_size = Vector2(120, 160)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.modulate = GuStyle.PORTRAIT_DIM
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	portrait.z_index = -1
+	portrait.anchor_right = 1.0
+	portrait.anchor_bottom = 1.0
+	portrait.offset_left = -140
+	portrait.offset_top = 20
+	portrait.offset_right = -20
+	portrait.offset_bottom = -20
+	_rest_stage.add_child(portrait)
+
+	# 朱砂盖印覆盖层（洗髓换骨确认时触发）
+	var seal := ColorRect.new()
+	seal.name = "SealOverlay"
+	seal.color = GuStyle.CINNABAR
+	seal.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	seal.visible = false
+	seal.z_index = 100
+	_rest_stage.add_child(seal)
+
+
+## 朱砂盖印动效：洗髓换骨等危险操作确认时触发，复用战斗屏SealOverlay逻辑。
+func _play_seal_stamp() -> void:
+	var seal: ColorRect = _rest_stage.get_node_or_null("SealOverlay")
+	if seal == null:
+		return
+	seal.visible = true
+	seal.modulate = Color(1, 1, 1, 0)
+	seal.scale = Vector2(1.3, 1.3)
+	seal.rotation = deg_to_rad(-8)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(seal, "modulate:a", 0.18, 0.12).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(seal, "scale", Vector2(1, 1), 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(seal, "rotation", 0.0, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.chain().tween_interval(0.25)
+	tween.tween_property(seal, "modulate:a", 0.0, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func(): seal.visible = false)

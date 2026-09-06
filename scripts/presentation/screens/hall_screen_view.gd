@@ -28,6 +28,10 @@ const CODEX_TAB_NAMES := {
 @onready var _contracts_view: VBoxContainer = $Root/ContractsView
 
 # 主界面
+@onready var _hall_paper: ColorRect = $Root/MainView/HallPaper
+@onready var _title_rule: ColorRect = $Root/MainView/HallSheet/HallIdentity/TitleRule
+@onready var _primary_rule: ColorRect = $Root/MainView/HallSheet/HallPrimaryRule
+@onready var _archive_rule: ColorRect = $Root/MainView/HallSheet/HallArchiveRule
 @onready var _hall_title: Label = $Root/MainView/HallSheet/HallIdentity/HallTitle
 @onready var _volume_label: Label = $Root/MainView/HallSheet/HallPrimary/VolumeLabel
 @onready var _primary_action: Button = $Root/MainView/HallSheet/HallPrimary/HallPrimaryAction
@@ -76,8 +80,17 @@ var _ready_done := false
 
 func _ready() -> void:
 	_ready_done = true
+	_apply_paper_colors()
 	_wire_static_buttons()
 	_refresh()
+
+
+## 大厅场景中 .tscn 硬编码的颜色统一走 GuStyle token（2026-09-06 视觉审计修复）。
+func _apply_paper_colors() -> void:
+	_hall_paper.color = GuStyle.PAPER_HALL
+	_title_rule.color = GuStyle.CINNABAR
+	_primary_rule.color = GuStyle.RULE_HALL
+	_archive_rule.color = GuStyle.RULE_HALL
 
 
 ## run_controller 的挂载入口（与各屏同签名）。
@@ -275,6 +288,10 @@ func _build_display_panel() -> void:
 			func(): _fire("cycle_resolution")))
 	host.add_child(_label("切换立即生效；全屏与窗口尺寸随上一档记忆。", GuStyle.INK_SOFT, 12))
 
+	# 第18批：关于本游戏（开源素材署名，CC BY 3.0 要求游戏内署名）
+	host.add_child(_action_button("关于本游戏 · 开源素材署名 ›",
+			func(): _show_credits_dialog()))
+
 
 func _build_difficulty_panel() -> void:
 	_difficulty_panel.setup("难度", true, false)
@@ -291,6 +308,38 @@ func _build_save_panel() -> void:
 	var host: Node = _save_panel.content_host
 	_clear(host)
 	host.add_child(_label("清除大厅存档需二次确认（规格 §16.22）", GuStyle.INK_SOFT, 14))
+
+
+## 第18批：开源素材署名弹窗（CC BY 3.0 要求游戏内署名）
+func _show_credits_dialog() -> void:
+	var dlg := AcceptDialog.new()
+	dlg.title = "关于本游戏 · 开源素材署名"
+	dlg.dialog_text = """《蛊路求生》基于《蛊真人》IP的肉鸽游戏 Demo。
+
+【开源图标】
+game-icons.net — CC BY 3.0
+来源: https://game-icons.net/
+作者: lorc, delapouite, carl-olsen 等多位作者
+使用: 53个SVG图标，覆盖蛊虫/状态/资源/动作/界面
+
+【自绘图标】
+问眞命簿图标集 — 项目自有
+24个程序化自绘SVG图标（真元石/寿元/魂魄/生命/攻击等）
+
+【美术资产】
+青茅山背景图、主角立绘、5张蛊虫插画、4张敌人立绘
+来源: AI生成（豆包AI / seedream），项目自有
+
+【第三方代码】
+GDQuest Open RPG — MIT
+GUT (Godot Unit Test) — MIT
+
+完整署名见项目根目录 CREDITS.md"""
+	dlg.unresizable = false
+	dlg.min_size = Vector2(520, 480)
+	add_child(dlg)
+	dlg.popup_centered()
+	dlg.confirmed.connect(func(): dlg.queue_free())
 
 
 # ————————————————————————— 手记库 —————————————————————————

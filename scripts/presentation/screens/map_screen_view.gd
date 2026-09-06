@@ -131,6 +131,39 @@ func _apply_static_theme() -> void:
 	MasterTheme.apply_button(_leave_save_button, "primary")
 	MasterTheme.apply_button(_leave_direct_button, "action")
 	MasterTheme.apply_button(_leave_cancel_button, "cancel")
+	_apply_map_atmosphere()
+
+
+## 地图氛围层：淡青茅山背景 + 暗角，增强南疆卷轴感，不影响地图可读性。
+## 地图屏保持浅色命簿纸面（PAPER_MAP），与战斗屏/休整屏的暗色舞台区分。
+func _apply_map_atmosphere() -> void:
+	# 淡青茅山背景：透明度极低（0.1），只作氛围暗示，不抢地图主体
+	var backdrop := TextureRect.new()
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.MAP_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = 0
+	_paper.get_parent().add_child(backdrop)
+	_paper.get_parent().move_child(backdrop, 1)  # 紧接 map_paper 之后，在其他 UI 之下
+
+	# 暗角层：径向渐变，中心透明四角微暗，增强旧卷轴包围感
+	var vignette_grad := Gradient.new()
+	vignette_grad.set_color(0, Color(0, 0, 0, 0))
+	vignette_grad.set_color(1, Color(0, 0, 0, 0.15))
+	var vignette_tex := GradientTexture2D.new()
+	vignette_tex.gradient = vignette_grad
+	vignette_tex.fill = GradientTexture2D.FILL_RADIAL
+	vignette_tex.width = 512
+	vignette_tex.height = 512
+	var vignette := TextureRect.new()
+	vignette.texture = vignette_tex
+	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	vignette.stretch_mode = TextureRect.STRETCH_SCALE
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette.z_index = 10
+	_paper.get_parent().add_child(vignette)
 
 
 func _wire_static_buttons() -> void:
@@ -167,6 +200,9 @@ func _refresh_resources(resources: Dictionary) -> void:
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 4)
 		_map_resources.add_child(row)
+		var res_icon := GuIconView.new()
+		res_icon.setup(resource_id, GuStyle.INK_MAP_VALUE, GuIconView.SIZE_SMALL)
+		row.add_child(res_icon)
 		var value := Label.new()
 		value.name = "map_resource_value_" + resource_id
 		value.text = str(resources[resource_id])

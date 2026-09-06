@@ -37,6 +37,7 @@ var _ready_done := false
 
 func _ready() -> void:
 	_ready_done = true
+	_apply_ending_atmosphere()
 	MasterTheme.apply_button(_to_hall_button, "primary")
 	MasterTheme.apply_button(_to_codex_button, "archive")
 	_to_hall_button.pressed.connect(func(): _fire("to_hall"))
@@ -44,6 +45,48 @@ func _ready() -> void:
 	_title_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	if not _snapshot.is_empty():
 		_refresh()
+
+
+## 结算屏氛围层：浅色命簿纸面 + 淡青茅山背景 + 暗角。
+## 结局是命簿最终章，用浅色纸面风格（与地图屏一致），而非洞窟暗色舞台。
+## 背景层加到 EndingScreen 本身（z_index=-1），不影响 primary_decision_surface 的 VBox 布局。
+func _apply_ending_atmosphere() -> void:
+	var paper := ColorRect.new()
+	paper.color = GuStyle.PAPER_BG
+	paper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	paper.z_index = -1
+	paper.anchor_right = 1.0
+	paper.anchor_bottom = 1.0
+	add_child(paper)
+
+	var backdrop := TextureRect.new()
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.MAP_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = -1
+	backdrop.anchor_right = 1.0
+	backdrop.anchor_bottom = 1.0
+	add_child(backdrop)
+
+	var vignette_grad := Gradient.new()
+	vignette_grad.set_color(0, Color(0, 0, 0, 0))
+	vignette_grad.set_color(1, Color(0, 0, 0, 0.12))
+	var vignette_tex := GradientTexture2D.new()
+	vignette_tex.gradient = vignette_grad
+	vignette_tex.fill = GradientTexture2D.FILL_RADIAL
+	vignette_tex.width = 512
+	vignette_tex.height = 512
+	var vignette := TextureRect.new()
+	vignette.texture = vignette_tex
+	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	vignette.stretch_mode = TextureRect.STRETCH_SCALE
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette.z_index = 10
+	vignette.anchor_right = 1.0
+	vignette.anchor_bottom = 1.0
+	add_child(vignette)
 
 
 ## run_controller 的挂载入口（与各 master 场景同签名）。
@@ -97,7 +140,6 @@ func _refresh_type() -> void:
 	badge_row.add_theme_constant_override("separation", 8)
 	host.add_child(badge_row)
 	badge_row.add_child(_badge(type_label, _type_color(ending_type), GuStyle.PAPER_DEEP))
-	# 死亡结局并列死因徽章（血锈底，不与类型徽章混色）。
 	var death_cause_short := str(_snapshot.get("death_cause_short", ""))
 	if ending_type == "death" and death_cause_short != "":
 		badge_row.add_child(_badge("死因 · " + death_cause_short,
@@ -156,7 +198,13 @@ func _refresh_gains() -> void:
 	_gains_panel.setup("四 · 关键得失", false, false)
 	var host := _content(_gains_panel)
 	_clear_children(host)
-	host.add_child(_label_of(str(_snapshot.get("gains_losses", "—")), GuStyle.INK_PRIMARY, 15))
+	var gains_row := HBoxContainer.new()
+	gains_row.add_theme_constant_override("separation", 4)
+	var gains_icon := GuIconView.new()
+	gains_icon.setup("gi_coin", GuStyle.INK_PRIMARY, GuIconView.SIZE_SMALL)
+	gains_row.add_child(gains_icon)
+	gains_row.add_child(_label_of(str(_snapshot.get("gains_losses", "—")), GuStyle.INK_PRIMARY, 15))
+	host.add_child(gains_row)
 
 
 func _refresh_balance() -> void:
@@ -224,7 +272,6 @@ func _refresh_aftermath() -> void:
 # 工具
 # ---------------------------------------------------------------------------
 
-## 面板内容宿主（GuPanel 的 content_host 本身就是 VBoxContainer，直接复用）。
 func _content(panel: PanelContainer) -> Node:
 	return panel.content_host
 

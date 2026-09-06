@@ -8,15 +8,17 @@ extends MarginContainer
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
+const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
 
 @onready var _top_bar: PanelContainer = $Root/TopBar
-@onready var _title_label: Label = $Root/HeaderRow/TitleLabel
-@onready var _tab_row: HBoxContainer = $Root/HeaderRow/TabRow
-@onready var _slot_label: Label = $Root/primary_decision_surface/MainColumn/SlotStatusLabel
-@onready var _recipe_panel: PanelContainer = $Root/primary_decision_surface/MainColumn/RecipePanel
-@onready var _streak_label: Label = $Root/primary_decision_surface/MainColumn/StreakNoteLabel
-@onready var _dismantle_panel: PanelContainer = $Root/primary_decision_surface/SideColumn/DismantlePanel
-@onready var _leave_button: Button = $Root/primary_decision_surface/SideColumn/LeaveButton
+@onready var _refine_stage: PanelContainer = $Root/RefineStage
+@onready var _title_label: Label = $Root/RefineStage/StageContent/HeaderRow/TitleLabel
+@onready var _tab_row: HBoxContainer = $Root/RefineStage/StageContent/HeaderRow/TabRow
+@onready var _slot_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/SlotStatusLabel
+@onready var _recipe_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/RecipePanel
+@onready var _streak_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/StreakNoteLabel
+@onready var _dismantle_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/SideColumn/DismantlePanel
+@onready var _leave_button: Button = $Root/RefineStage/StageContent/primary_decision_surface/SideColumn/LeaveButton
 @onready var _confirm_dialog: PanelContainer = $Root/ConfirmDialog
 
 var _snapshot: Dictionary = {}
@@ -32,6 +34,7 @@ var _confirm_recipe := ""
 func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
+	_apply_stage_style()
 	_recipe_panel.setup("配方 / 预览", true, true)
 	_dismantle_panel.setup("拆解化材", false, false)
 	_leave_button.pressed.connect(func(): _fire("leave"))
@@ -126,7 +129,13 @@ func _build_recipe_card(list: Node, r: Dictionary, slot_ok: bool, blind_note: St
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 3)
 	panel.content_host.add_child(box)
-	box.add_child(_label_of("产物：" + str(r.get("output", "")), GuStyle.ANOMALY_YELLOW, 15))
+	var output_row := HBoxContainer.new()
+	output_row.add_theme_constant_override("separation", 4)
+	var output_icon := GuIconView.new()
+	output_icon.setup("yuanstone", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_SMALL)
+	output_row.add_child(output_icon)
+	output_row.add_child(_label_of("产物：" + str(r.get("output", "")), GuStyle.ANOMALY_YELLOW, 15))
+	box.add_child(output_row)
 	box.add_child(_label_of(str(r.get("fail_chance", "")), GuStyle.ANOMALY_YELLOW, 13))
 	box.add_child(_label_of(rbacklash, GuStyle.ANOMALY_YELLOW, 13))
 	var rank_note := str(r.get("rank_note", ""))
@@ -264,3 +273,37 @@ func _apply_base_fonts() -> void:
 	_title_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	_streak_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	MasterTheme.apply_button(_leave_button, "action")
+
+
+## 炼蛊台暗色舞台：复用交易屏/休整屏验证的三层结构。
+## 青茅山背景调暗半透明 + 角色立绘炼蛊姿态 + 纸墨UI浮于其上。
+func _apply_stage_style() -> void:
+	var stage_box := StyleBoxFlat.new()
+	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	_refine_stage.add_theme_stylebox_override("panel", stage_box)
+
+	var backdrop := TextureRect.new()
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = -1
+	_refine_stage.add_child(backdrop)
+
+	var portrait := TextureRect.new()
+	portrait.texture = PlayerPortrait
+	portrait.custom_minimum_size = Vector2(120, 160)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.modulate = GuStyle.PORTRAIT_DIM
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	portrait.z_index = -1
+	portrait.anchor_right = 1.0
+	portrait.anchor_bottom = 1.0
+	portrait.offset_left = -140
+	portrait.offset_top = 20
+	portrait.offset_right = -20
+	portrait.offset_bottom = -20
+	_refine_stage.add_child(portrait)

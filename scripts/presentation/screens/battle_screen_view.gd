@@ -14,25 +14,34 @@ extends MarginContainer
 
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuEnemyActorScene := preload("res://scenes/ui/widgets/gu_enemy_actor.tscn")
+const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
+const StageBackdrop := preload("res://assets/wenzhen/hall/qing-mao-mountain.png")
 
 const MAX_VISIBLE_ENEMIES := 3
 
 @onready var _top_bar = $Root/battle_hud/TopBar
-@onready var _player_panel = $Root/battle_field/PlayerPanel
-@onready var _enemy_panel = $Root/battle_field/EnemyPanel
-@onready var _inventory = $Root/battle_field/Inventory
+@onready var _battle_stage: PanelContainer = $Root/BattleStage
+@onready var _player_panel = $Root/BattleStage/battle_field/PlayerPanel
+@onready var _enemy_panel = $Root/BattleStage/battle_field/EnemyPanel
+@onready var _inventory = $Root/BattleStage/battle_field/Inventory
 @onready var _feedback_toast = $Root/FeedbackToast
 @onready var _hint_host: VBoxContainer = $Root/HintHost
-@onready var _primordial_label: Label = $Root/battle_hand/HandMetaRow/PrimordialLabel
-@onready var _piles_label: Label = $Root/battle_hand/HandMetaRow/PilesLabel
-@onready var _hand = $Root/battle_hand/Hand
-@onready var _kill_host: VBoxContainer = $Root/battle_hand/KillHost
-@onready var _ops_row: HBoxContainer = $Root/battle_hand/OpsRow
+@onready var _hand_stage: PanelContainer = $Root/HandStage
+@onready var _primordial_label: Label = $Root/HandStage/battle_hand/HandMetaRow/PrimordialLabel
+@onready var _piles_label: Label = $Root/HandStage/battle_hand/HandMetaRow/PilesLabel
+@onready var _hand = $Root/HandStage/battle_hand/Hand
+@onready var _kill_host: VBoxContainer = $Root/HandStage/battle_hand/KillHost
+@onready var _ops_row: HBoxContainer = $Root/HandStage/battle_hand/OpsRow
 @onready var _mode_host: VBoxContainer = $Root/ModeHost
 @onready var _confirm_dialog = $Root/ConfirmDialog
 @onready var _tooltip_host: PanelContainer = $Root/battle_hand_tooltip_host
 @onready var _tooltip_title: Label = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/hand_tooltip_title
 @onready var _tooltip_view = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/TooltipView
+@onready var _seal_overlay: Control = $Root/SealOverlay
+@onready var _seal_box: PanelContainer = $Root/SealOverlay/SealCenter/SealBox
+@onready var _seal_label: Label = $Root/SealOverlay/SealCenter/SealBox/SealMargin/SealLabel
+@onready var _ink_overlay: Control = $Root/InkOverlay
+@onready var _ink_blob: PanelContainer = $Root/InkOverlay/InkCenter/InkBlob
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -45,6 +54,9 @@ var _card_id := ""
 var _target_id := ""
 var _confirming := false
 var _expanded_enemies := false
+# 动效触发用：记录上一帧敌人 alive 状态和状态名集合，检测死亡/状态施加。
+var _prev_enemy_alive: Dictionary = {}
+var _prev_enemy_statuses: Dictionary = {}
 # 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
 var _enemy_actors: Dictionary = {}
 # 拖拽候选：左键在可执行手牌卡上按下时记录，全局左键抬起时命中敌方卡。
@@ -57,8 +69,148 @@ var _ready_done := false
 
 func _ready() -> void:
 	_ready_done = true
+	_apply_stage_style()
+	_apply_hand_stage_style()
+	_apply_seal_style()
+	_apply_ink_style()
 	_apply_tooltip_style()
 	_refresh()
+
+
+## 叙事层：暗色南疆志怪舞台底色 + 青茅山背景复用。
+## 纸面UI浮在其上形成「命簿记录志怪世界」的层次。
+func _apply_stage_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.STAGE_BG
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(0)
+	_battle_stage.add_theme_stylebox_override("panel", box)
+
+	# 复用青茅山图作为战场背景：裁剪覆盖 + 调暗偏冷 + 半透明，营造南疆山林氛围。
+	var backdrop := TextureRect.new()
+	backdrop.texture = StageBackdrop
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = -1
+	_battle_stage.add_child(backdrop)
+
+	# 暗角层：径向渐变，中心透明四角深，增强洞窟包围感。
+	var vignette_grad := Gradient.new()
+	vignette_grad.set_color(0, Color(0, 0, 0, 0))
+	vignette_grad.set_color(1, GuStyle.STAGE_VIGNETTE)
+	var vignette_tex := GradientTexture2D.new()
+	vignette_tex.gradient = vignette_grad
+	vignette_tex.fill = GradientTexture2D.FILL_RADIAL
+	vignette_tex.width = 512
+	vignette_tex.height = 512
+	var vignette := TextureRect.new()
+	vignette.texture = vignette_tex
+	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	vignette.stretch_mode = TextureRect.STRETCH_SCALE
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette.z_index = -1
+	_battle_stage.add_child(vignette)
+
+	# 雾气层：半透明冷灰水平渐变，模拟南疆湿冷山雾。
+	var fog_grad := Gradient.new()
+	fog_grad.set_color(0, GuStyle.FOG_COLOR_EDGE)
+	fog_grad.set_color(0.5, GuStyle.FOG_COLOR_MID)
+	fog_grad.set_color(1, GuStyle.FOG_COLOR_EDGE)
+	var fog_tex := GradientTexture2D.new()
+	fog_tex.gradient = fog_grad
+	fog_tex.fill = GradientTexture2D.FILL_LINEAR
+	fog_tex.width = 512
+	fog_tex.height = 256
+	var fog := TextureRect.new()
+	fog.texture = fog_tex
+	fog.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fog.stretch_mode = TextureRect.STRETCH_SCALE
+	fog.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fog.z_index = -1
+	_battle_stage.add_child(fog)
+	# 雾气缓慢飘动：透明度呼吸 + 轻微缩放，低频率循环不吸睛。
+	# 设计文档§12：环境氛围（雾气、烛光）允许低频率循环，不持续吸睛。
+	var fog_tween := create_tween()
+	fog_tween.set_loops()
+	fog_tween.tween_property(fog, "modulate:a", 0.15, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fog_tween.tween_property(fog, "scale", Vector2(1.05, 1.02), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fog_tween.tween_property(fog, "modulate:a", 0.08, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fog_tween.tween_property(fog, "scale", Vector2(1.0, 1.0), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+## 规则层：手牌区浅色纸面背景，与整体命簿基调一致。
+func _apply_hand_stage_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.PAPER_BG
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(0)
+	_hand_stage.add_theme_stylebox_override("panel", box)
+
+
+## 概念层：朱砂盖印样式。用于危险确认、不可逆裁定。短、功能性，完成后归于安静。
+func _apply_seal_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.CINNABAR
+	box.border_color = GuStyle.INK_PRIMARY
+	box.set_border_width_all(3)
+	box.set_corner_radius_all(8)
+	_seal_box.add_theme_stylebox_override("panel", box)
+	_seal_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_seal_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
+
+
+## 朱砂盖印动效：从上方盖下，缩放回落 + 旋转回正 + 淡入，停留后淡出。
+func play_cinnabar_seal(text: String = "裁定") -> void:
+	# 第18批：接入朱砂盖印音效
+	AudioManager.play_sfx("concept_seal_stamp")
+	_seal_label.text = text
+	_seal_overlay.visible = true
+	_seal_overlay.modulate = Color(1, 1, 1, 0)
+	_seal_box.scale = Vector2(1.5, 1.5)
+	_seal_box.rotation = deg_to_rad(-12)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	# 盖下：缩放回落 + 旋转回正 + 淡入
+	tween.tween_property(_seal_box, "scale", Vector2(1, 1), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_seal_box, "rotation", 0.0, 0.16).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_seal_overlay, "modulate:a", 1.0, 0.12)
+	# 停留
+	tween.tween_interval(0.28)
+	# 淡出
+	tween.tween_property(_seal_overlay, "modulate:a", 0.0, 0.22)
+	tween.tween_callback(func(): _seal_overlay.visible = false)
+
+
+## 概念层：墨迹扩散样式。用于状态落定、新记录揭示。黑色墨团从中心扩散后消散。
+func _apply_ink_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.INK_PRIMARY
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(8)
+	_ink_blob.add_theme_stylebox_override("panel", box)
+
+
+## 墨迹扩散动效：黑色墨团从中心缩放扩散，半透明淡入后缓慢消散。
+## 用于出牌成功、状态落定等时刻，符合设计文档「墨迹扩散=状态落定」语义。
+func play_ink_spread() -> void:
+	# 第18批：接入墨迹扩散音效
+	AudioManager.play_sfx("concept_ink_spread")
+	_ink_overlay.visible = true
+	_ink_overlay.modulate = Color(1, 1, 1, 0)
+	_ink_blob.scale = Vector2(0.2, 0.2)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	# 扩散：缩放放大 + 淡入
+	tween.tween_property(_ink_blob, "scale", Vector2(1.8, 1.8), 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_ink_overlay, "modulate:a", 0.25, 0.25)
+	# 消散：缓慢淡出
+	tween.tween_interval(0.15)
+	tween.tween_property(_ink_overlay, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func(): _ink_overlay.visible = false)
 
 
 ## run_controller 的挂载入口（与各屏同签名）。
@@ -113,6 +265,10 @@ func _submit_card(card: Dictionary, target_id: String) -> void:
 	_submitted_card_keys[request_key] = true
 	if _commands.has("play_card"):
 		_commands["play_card"].call(card_id, target_id)
+	# 第18批：接入出牌音效
+	AudioManager.play_sfx("battle_card_play")
+	# 概念层：出牌成功触发墨迹扩散（状态落定）
+	play_ink_spread()
 	_active_card = card
 	_card_id = card_id
 	_target_id = target_id
@@ -205,7 +361,7 @@ func _refresh_top_bar(state: Dictionary) -> void:
 func _refresh_player(state: Dictionary) -> void:
 	var player: Dictionary = state.get("player", {})
 	var actions: Dictionary = state.get("actions", {})
-	_player_panel.setup("我方", true, false)
+	_player_panel.setup("我方", true, false, true)
 	var host: Node = _player_panel.content_host
 	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
@@ -218,7 +374,20 @@ func _refresh_player(state: Dictionary) -> void:
 	box.add_theme_constant_override("separation", GuStyle.SPACE_3)
 	host.add_child(box)
 
+	# 叙事层：玩家立绘。调暗偏冷、半透明，融入南疆洞窟舞台，不占据英雄式中央光位。
+	var portrait := TextureRect.new()
+	portrait.name = "player_portrait"
+	portrait.texture = PlayerPortrait
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.custom_minimum_size = Vector2(0, 96)
+	portrait.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# 偏冷调暗 + 半透明，让立绘成为环境中的人物而非UI主体
+	portrait.modulate = GuStyle.PORTRAIT_DIM
+	box.add_child(portrait)
+
 	var hp = StatBarScene().instantiate()
+	hp.name = "hp"
 	box.add_child(hp)
 	var health_line: Dictionary = state.get("death_lines", {}).get("health", {})
 	hp.setup("生命", int(player.get("hp", 0)), maxi(1, int(player.get("max_hp", 1))),
@@ -230,14 +399,21 @@ func _refresh_player(state: Dictionary) -> void:
 	pri.setup("真元", int(player.get("primordial", 0)),
 			maxi(1, int(player.get("primordial_max", 1))), GuStyle.ANOMALY_YELLOW)
 
-	var soul := Label.new()
-	soul.name = "player_actions_label"
-	soul.text = "行动 %d/%d（念头 %d）" % [
+	var actions_row := HBoxContainer.new()
+	actions_row.name = "player_actions_label"
+	actions_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	actions_row.add_theme_constant_override("separation", 4)
+	var actions_icon := GuIconView.new()
+	actions_icon.setup("gi_fist", GuStyle.INK_MUTED, GuIconView.SIZE_SMALL)
+	actions_row.add_child(actions_icon)
+	var actions_text := Label.new()
+	actions_text.text = "行动 %d/%d（念头 %d）" % [
 			int(actions.get("left", 0)), int(actions.get("max", 0)),
 			int(player.get("thoughts", 0))]
-	soul.add_theme_font_size_override("font_size", 14)
-	soul.add_theme_color_override("font_color", GuStyle.INK_MUTED)
-	box.add_child(soul)
+	actions_text.add_theme_font_size_override("font_size", 14)
+	actions_text.add_theme_color_override("font_color", GuStyle.INK_MUTED)
+	actions_row.add_child(actions_text)
+	box.add_child(actions_row)
 
 
 func _refresh_enemies(state: Dictionary) -> void:
@@ -248,7 +424,7 @@ func _refresh_enemies(state: Dictionary) -> void:
 		visible_enemies = enemies.slice(0, MAX_VISIBLE_ENEMIES)
 		remainder = enemies.slice(MAX_VISIBLE_ENEMIES)
 
-	_enemy_panel.setup("敌方", true, false)
+	_enemy_panel.setup("敌方", true, false, true)
 	var host: Node = _enemy_panel.content_host
 	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
@@ -287,14 +463,47 @@ func _refresh_enemies(state: Dictionary) -> void:
 			_refresh())
 		group.add_child(more)
 
+	# 动效触发：检测敌人死亡（alive true→false）和状态施加（新状态名出现）。
+	# 死亡触发墨迹扩散（生命消散），状态施加触发墨迹扩散（蛊毒落定）。
+	var death_triggered := false
+	var status_triggered := false
+	for e in visible_enemies:
+		if not (e is Dictionary):
+			continue
+		var eid := str(e.get("id", ""))
+		var alive: bool = e.get("alive", true)
+		var prev_alive: bool = _prev_enemy_alive.get(eid, true)
+		if prev_alive and not alive:
+			death_triggered = true
+		# 状态施加检测：当前有但上一帧没有的状态名
+		var cur_statuses: Array = e.get("statuses", [])
+		var prev_set: Dictionary = _prev_enemy_statuses.get(eid, {})
+		for s in cur_statuses:
+			if s is Dictionary:
+				var sname := str(s.get("name", ""))
+				if sname != "" and not prev_set.has(sname):
+					status_triggered = true
+	# 更新跟踪状态
+	_prev_enemy_alive.clear()
+	_prev_enemy_statuses.clear()
+	for e in visible_enemies:
+		if not (e is Dictionary):
+			continue
+		var eid := str(e.get("id", ""))
+		_prev_enemy_alive[eid] = e.get("alive", true)
+		var sset := {}
+		for s in e.get("statuses", []):
+			if s is Dictionary:
+				sset[str(s.get("name", ""))] = true
+		_prev_enemy_statuses[eid] = sset
+	# 触发动效（死亡优先，状态施加次之，不重复触发）
+	if death_triggered:
+		play_ink_spread()
+	elif status_triggered:
+		play_ink_spread()
+
 
 func _refresh_hand(state: Dictionary) -> void:
-	# 临时诊断：手牌/战斗数据形状落 user://drag_debug.log，验收后移除。
-	_drag_debug_log("refresh_hand hand=%d enemies=%d keys=%s" % [
-		(state.get("hand", []) as Array).size(),
-		(state.get("enemies", []) as Array).size(),
-		str(state.keys()),
-	])
 	var player: Dictionary = state.get("player", {})
 	var actions: Dictionary = state.get("actions", {})
 	_primordial_label.text = "真元 %d" % int(player.get("primordial", 0))
@@ -303,39 +512,34 @@ func _refresh_hand(state: Dictionary) -> void:
 	_piles_label.text = "行动 %d/%d · 念头 %d" % [
 			int(actions.get("left", 0)), int(actions.get("max", 0)),
 			int(player.get("thoughts", 0))]
-	# 行动预算是玩家必读资源：此行直接压在页面深色底上（同顶栏资源芯片），
-	# 墨色 token 全按纸面设计会低对比，用 PAPER_BG 浅字。
-	_piles_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
+	# 行动预算是玩家必读资源：浅色纸面主题下用墨色保证对比度。
+	_piles_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	# 开源图标：真元用宝石图标，行动点用拳头图标，动态创建一次后复用。
+	var meta_row: HBoxContainer = _primordial_label.get_parent() as HBoxContainer
+	if meta_row != null:
+		if meta_row.get_node_or_null("primordial_icon") == null:
+			var p_icon := GuIconView.new()
+			p_icon.name = "primordial_icon"
+			p_icon.setup("yuanstone", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_BODY)
+			meta_row.add_child(p_icon)
+			meta_row.move_child(p_icon, 0)
+		if meta_row.get_node_or_null("piles_icon") == null:
+			var a_icon := GuIconView.new()
+			a_icon.name = "piles_icon"
+			a_icon.setup("gi_fist", GuStyle.INK_PRIMARY, GuIconView.SIZE_SMALL)
+			meta_row.add_child(a_icon)
+			meta_row.move_child(a_icon, _piles_label.get_index())
 
 	# Gubattle_hand 接 6 参（press / hover / cancel / drag_start）。拖拽命中走
 	# 全局 _input 抬起拦截（_on_card_drop），不依赖按钮捕获的 release 事件；
 	# 按住期间不重建手牌，避免销毁正在接收输入的按钮。
 	_hand.setup(state.get("hand", []), _interaction_dict(),
 			_play_card, _on_card_hover, _reset_interaction, _on_card_drag_start)
-	var hand_view := _hand as Control
-	drag_log("setup hand_view rect=%s visible=%s row_children=%d hand=%d" % [
-		str(hand_view.get_global_rect()), str(hand_view.is_visible_in_tree()),
-		hand_view._card_row.get_child_count(), (state.get("hand", []) as Array).size()])
 
 
 ## 拖拽候选：左键在可执行手牌卡上按下时记录，不触发任何刷新。
 func _on_card_drag_start(card: Dictionary) -> void:
 	_drag_candidate_card = card
-	_drag_debug_log("drag_start card=%s" % str(card.get("id", "")))
-
-
-## 临时诊断：拖拽链路证据落 user://drag_debug.log，验收后移除。
-static func drag_log(line: String) -> void:
-	var f := FileAccess.open("user://drag_debug.log", FileAccess.READ_WRITE if FileAccess.file_exists("user://drag_debug.log") else FileAccess.WRITE)
-	if f == null:
-		return
-	f.seek_end()
-	f.store_line(line)
-	f.close()
-
-
-func _drag_debug_log(line: String) -> void:
-	drag_log(line)
 
 
 ## 全局左键抬起：候选非空时用画布全局鼠标位命中敌方卡，命中即按该目标出牌
@@ -348,7 +552,6 @@ func _input(event: InputEvent) -> void:
 		_drag_candidate_card = {}
 		var mouse := get_global_mouse_position()
 		var enemy_id := _enemy_at(mouse)
-		_drag_debug_log("release candidate=%s mouse=%s enemy=%s" % [str(card.get("id", "")), str(mouse), enemy_id])
 		if enemy_id != "":
 			_play_card(card)
 			_select_enemy(enemy_id)
@@ -456,7 +659,9 @@ func _refresh_confirm() -> void:
 	# GuConfirmDialog 的入口是 open()（不是 setup），签名见 gu_confirm_dialog_view.gd。
 	_confirm_dialog.open(
 			card_name + " 将执行已预览的不可逆代价。",
-			func(): _submit_card(_active_card, _target_id),
+			func():
+				play_cinnabar_seal("裁定")
+				_submit_card(_active_card, _target_id),
 		func(): _set_mode("drag_cancel", _active_card),
 		"⚠ 危险行动",
 			_known_risk_text(_active_card))

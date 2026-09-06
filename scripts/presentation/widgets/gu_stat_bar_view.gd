@@ -24,6 +24,19 @@ func _ready() -> void:
 	_bar.custom_minimum_size = Vector2(0, 14)
 	_shield_bar.custom_minimum_size = Vector2(0, 8)
 	_shield_bar.modulate = GuStyle.INK_SOFT
+	_apply_bar_textures()
+
+
+## 复用 GDQuest 生命条贴图（visual-reference-index §3 裁决）。
+## 填充色靠 ProgressBar.modulate 动态染色（玩家 JADE / 敌人 CINNABAR / 危险 CINNABAR）。
+func _apply_bar_textures() -> void:
+	for bar in [_bar, _shield_bar]:
+		var bg := StyleBoxTexture.new()
+		bg.texture = GuStyle.LIFE_BAR_BG
+		bar.add_theme_stylebox_override("background", bg)
+		var fill := StyleBoxTexture.new()
+		fill.texture = GuStyle.LIFE_BAR_FILL
+		bar.add_theme_stylebox_override("fill", fill)
 
 
 ## 写入状态条。护盾为 0 时隐藏护盾分条与文案。

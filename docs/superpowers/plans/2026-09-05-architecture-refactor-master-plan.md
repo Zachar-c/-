@@ -3,6 +3,45 @@
 > 用途：本文件是唯一派发依据。每张工单可原样派发给一个实现 Agent；控制器负责验收、聚焦提交与回写状态。
 > 需求发现记录：两轮结构化问答（2026-09-05），用户逐项裁定；与 `MODULE-INVENTORY.md`、`AGENTS.md` 同源，冲突时以本文为准。
 
+## 修订记录（2026-09-06 审计后）
+
+> 本节为全仓审计结论与结构性修订；逐工单状态以各工单内嵌状态行为准。
+
+### 审计结论（2026-09-06）
+
+1. **并行会话已完成**：A1（Map/Battle 挂载 wenzhen master + RUI 屏 + 真实窗口拖拽验收 `3d39704`）；C1--C4 全部（26 道痕清单 U1 过门、214 蛊映射落库 `d8eca60`、rank 1..5 与 Boss 层倍率 `599c553`、目录重建 **802 蛊 / 386 配方** `85150f7`，unit 1210/1210 + integration 37/37）；B1 批次 A/B 与桶 C 大部（facade 仅预载 V1；`v2_commands` 因契约钉死**改名**为 `domain/run_command_rules.gd`；`battle2/action_resolver|body_rules` 经证实是活规则**提升**为 domain 文件）。
+2. **用户视觉基线（工作树未提交，+1151/-187 / 25 文件 + 资产）**：問眞命簿三层结构（规则/叙事/概念层）全部落地，7 屏视觉基准统一，76 图标（52 开源 + 24 自绘）+ 11 美术资产 + 音频样本 + `assets_manifest.json` + `CREDITS.md`；综合评分 2.5 → 7.5（报告：`docs/superpowers/specs/2026-09-06-visual-audit-report.html`、`2026-09-06-visual-final-acceptance-report.html`）。
+3. **结构性修订**：原 A2--A4「其余九屏迁移 RUITK master」与 A5「删除旧屏」**取消/作废**——视觉语言已在官方 `.tscn` 栈达成统一，该栈现为 8+ 屏的主体。终态 = 官方 `.tscn` 栈 + Map/Battle RUI master 混合；RUITK/guitkx 链仅为 Map/Battle 保留。
+4. **B1 域债裁定**：DDA 战斗杠杆仅存于 legacy `battle_resolver`、V1 无钩子、生产不触发 → **不移植**（F5 冻结先例），随文件删除消亡。`run_controller.gd` 工作树已移除 drag 诊断（-7 行），B1 批次 C 的文件删除解除阻塞。
+5. **S/E/F 未开工**：`data/buffs.json`、`data/inheritance_sites.json`、遗葬节点均不存在；自动存档未做。
+
+### 视觉/音效进度更新（2026-09-06 第18批后）
+
+> 前端/表现层 Agent 负责，与后端/逻辑层 Agent 并行，文件零交集。
+
+1. **18批视觉迭代全部完成**：综合评分 2.5/10 → 7.5/10；三层结构落地、7屏基准统一、76图标、4动效、11美术资产。
+2. **音效系统基础架构完成**：`scripts/audio/audio_manager.gd` 单例注册（project.godot autoload），21个音效ID注册表，8个AudioStreamPlayer对象池；7个程序生成测试音效（WAV格式）；4个接入点已接线（按钮点击ui_click / 出牌battle_card_play / 朱砂盖印concept_seal_stamp / 墨迹扩散concept_ink_spread）。
+3. **后续视觉/音效计划已制定**：`docs/superpowers/plans/2026-09-06-visual-audio-optimization-plan.md`，前后端分离，三阶段实施（P0核心修复1-2天 / P1品质提升3-5天 / P2锦上添花5-7天）。
+4. **A-1手牌测试修复进行中**：`test_battle_hand_renders_no_permanent_tooltip_children` 因第8批手牌重构（VBoxContainer+TextureRect+Button结构）导致断言失败，正在修复。
+5. **A-1进度更新（2026-09-06）**：
+   - ✅ 手牌测试修复完成：战斗屏测试11/11全绿（`test_battle_hand_renders_no_permanent_tooltip_children` 已通过）
+   - ✅ 游戏内「关于」界面署名完成：设置界面→显示与声音→关于本游戏，AcceptDialog显示game-icons.net CC BY 3.0等开源素材署名；CREDITS.md待办已勾选
+   - ✅ 音效触发器配置完成：`data/audio_triggers.json` 定义22个事件→音效映射（UI5/战斗9/炼蛊3/概念层3/屏幕2），含音量/音调/条件配置
+   - ✅ 音效触发器系统框架完成：`scripts/audio/audio_trigger_system.gd`，监听领域层事件日志，按配置自动播放音效，替代硬编码调用
+   - ⏳ 开源音效引入暂缓：Kenney直接下载URL不可用（返回HTML错误页），后续通过浏览器手动下载；当前7个程序生成测试音效（WAV）可用
+   - ⏳ 受击事件数据扩展（V-B-01）/音效事件类型扩展（A-B-01）：后端/领域层任务，由另一个代理负责；完成后前端受击动效（V-F-03）和战斗音效接入（A-F-02）自动生效
+   - A-1视觉批次落地（提交18批成果+手牌测试修复）已解除B1阻塞的手牌测试部分
+
+### 修订后执行队列
+
+```
+A-1 视觉批次落地（提交 18 批成果 + 手牌测试修复）→ 解除 B1 阻塞
+B1-finish（删 battle_resolver.gd + 桶 C 残引清理 + 预览子系统处置）→ B2 卡层退役 → B3 冒烟瘦身
+D1-剩余（按配方源摘录扩充跨流派/高转方 + synergy 字段全量）→ D2 配方驱动合炼接线
+S1--S6 切片组装（UI 语境 = 官方 .tscn 栈）→ E 自动存档 → F 里程碑验收
+A-2 视觉收官项（游戏内署名 HIGH / 音效 / 立绘开源化 / 动效补全）可与 B/D/S 并行
+```
+
 ## 0. 需求基线（已锁定，不再讨论）
 
 - **核心玩法支柱**：①自由组装杀招；②海量合成配方。所有游戏目标围绕支柱展开。
@@ -42,7 +81,7 @@
 2. **卡层退役**：`cards.json`、`deck_builder.gd` 删除；`card_blueprint_ids` 蓝图层退出（V1 零消费已证实，活消费点仅目录校验与 deck_builder）；`deck.json` 活配置键迁 `balance.json`。
 3. **流派数据模型**：`schools.json` 扩为 20+ 道痕流派（开放集合 Schema）；`gu.json` 每只蛊 `school` 指向道痕流派；快照/UI 透出流派；配方按 `(school, rank)` 表达。
 4. **配方**：`refinement_recipes` 以用户提供的配方源结构化落表，Schema 校验，生成器（`generate_gu_catalog.py`）改造支持。
-5. **UI**：wenzhen 视觉模型（guitkx/reactive_ui_toolkit）是唯一 UI 架构；11 个旧屏幕全部迁移后退役；guitkx 构建链保留。
+5. **UI（2026-09-06 修订）**：問眞命簿视觉语言落地于官方 `.tscn` 栈（Hall/Shop/Rest/Reward/Npc/Encounter/Refine/Ending/ContentError），Map/Battle 走 wenzhen master（内部 RUI 屏）；RUITK/guitkx 链仅为 Map/Battle 保留；不再做其余屏的 RUITK 迁移，旧 `.tscn` 屏不删除。
 6. **存档**：命令通过后自动静默保存；Run 结束删档、新开局放弃确认流程完整。
 7. **验收基建**：冒烟/截图驱动收敛为单一验收驱动；UI 验收一律真实窗口键鼠复现（AGENTS AI 契约）。
 
@@ -80,25 +119,17 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：真实窗口键鼠走通「进入战斗→放蛊→结算→回图→跳层」；headless 仅回归门。`tools/test.ps1 -Test tests/unit/test_wenzhen_battle_screen.gd` 等 wenzhen 系测试绿。
 - 完成：旧 `battle_screen.tscn`/`map_screen.tscn` 不再被 main 路径引用（文件删除放到 A6）。
 
-**A2 hall/encounter/reward/ending 四屏迁移**
-- 前置：A1 模式定型。
-- 目标：为四屏各建 wenzhen master（guitkx 源在 `ui/`），挂载并替代旧屏；结算/图鉴数据链路不变。
-- 验收：真实窗口走通「新开局→签约→遭遇→奖励→结局归因」全流程。
+> 2026-09-06 修订：原 A2--A4「其余屏迁移 RUITK master」**取消**，A5「删除旧屏」**作废**——用户 18 批视觉迭代已在官方 `.tscn` 栈统一视觉语言（7 屏基准，验收 7.5/10，见 `docs/superpowers/specs/2026-09-06-visual-final-acceptance-report.html`）。视觉终态见「修订记录」。Phase A 改为收官工单：
 
-**A3 npc/shop/rest/refine 四屏迁移**
-- 前置：A2。
-- 目标：同模式迁移；休整屏必须保持 AGENTS「rest 全集 + skip 兜底」红线；炼蛊屏按现有领域命令面。
-- 验收：真实窗口走通交易/休整/炼蛊各节点命令全集。
+**A-1 视觉批次落地（新工单，解除 B1 阻塞）**
+- 目标：审阅并提交工作树 18 批视觉成果（25 文件 +1151/-187、`assets/wenzhen/*`、`assets/audio/*`、`assets_manifest.json` + Schema、`CREDITS.md`、`.gutconfig.json`、两份视觉报告、`run_controller.gd` drag 诊断移除）；修复 `test_battle_hand_renders_no_permanent_tooltip_children` 断言（第 8 批重构所致的历史失败）。
+- 验收：unit 套件 UI 守卫 7/7 绿、战斗屏 11/11；真实窗口抽验战斗/休整/交易/炼蛊/地图 5 屏视觉与常用视口；提交聚焦 commit。
 
-**A4 content_error + 调试面板迁移**
-- 前置：A2。
-- 目标：目录错误屏、调试面板（含真实窗口拖拽验收）迁新栈；调试面板保留 Release 裁剪路径。
-- 验收：内容损坏注入测试绿 + 真实窗口拖动调试面板。
-
-**A5 旧屏退役**
-- 前置：A1--A4 全绿。
-- 目标：删除 `scenes/ui/screens/*.tscn`、`scripts/presentation/screens/*`、孤儿 widgets 中不再被引用者；`ui_capture`/`smoke_render` 相关旧路径同步。
-- 验收：`tools/check.ps1` 绿；全仓无死引用。
+**A-2 视觉收官项（可与 B/D/S 并行派发）**
+- HIGH：游戏内「关于」署名界面（CC BY 3.0 要求游戏内署名，仅 CREDITS.md 不够）。
+- 中：音效系统接入（Freesound 开源音效，样本已在 `assets/audio/`，经 `AudioDirector` 路由）；NPC 立绘开源化（OpenGameArt 等替代 AI 生成）。
+- 低：蛊虫插画扩容（按 20 流派代表蛊抽样配图，不为 802 蛊全量）；按钮 hover 缩放动效；页面切换过渡；地图节点类型图标化（战斗→剑、黑市→币等开源图标）。
+- 验收：真实窗口逐项复核；新增开源素材全部回写 `CREDITS.md` 与 `assets_manifest.json`。
 
 ### Phase B 地基收敛（A 合入后开工）
 > 状态：🔄 **进行中**（2026-09-06 审计 + 保守迁移）。批次 A/B 已完成（76b5dfb：battle2 规则提升 + v2 命令模块改名；851d2aa：测试未用 preload 清理）。批次 C 已开工**零冲突子集**（测试退役/迁移，见 B1 行内进展）；删 `battle_resolver.gd` 本体与 `run_controller.gd` 3 处注释仍等视觉会话释放（run_controller 工作区被占用）。已知域债：`battle_resolver._use_gu` 硬编码已删蛊（thorn/mist/blood_moss/venom/pulse/shadow_veil/trail/qi_wall…）成死分支，`action_preview` 仍特判 thorn_whip —— 随文件删除一并消亡；**DDA 战斗杠杆（标记写入/换敌/Boss 本地适配）仅存在于 legacy battle_resolver，V1/facade 无钩子——生产 V1 流程已不触发，需另行裁定是否移植**（2026-09-06 桶 C 发现）。

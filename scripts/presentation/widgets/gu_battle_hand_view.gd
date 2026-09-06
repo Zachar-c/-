@@ -63,17 +63,38 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 	var executable := bool(card.get("executable", true))
 	var is_active: bool = str(interaction.get("card_id", "")) == card_id
 
+	# 卡牌主体：VBoxContainer 包裹蛊虫插画 + 交互按钮
+	var card_box := VBoxContainer.new()
+	card_box.name = "card_box_" + card_id
+	card_box.custom_minimum_size = Vector2(150, 170)
+	card_box.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	card_box.add_theme_constant_override("separation", 2)
+
+	# 蛊虫插画区：异常自然志图鉴风格，按名称关键词匹配
+	var gu_image := TextureRect.new()
+	gu_image.name = "gu_image"
+	gu_image.custom_minimum_size = Vector2(0, 80)
+	gu_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	gu_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var gu_tex := _load_gu_illustration(str(card.get("name", "")))
+	if gu_tex != null:
+		gu_image.texture = gu_tex
+	else:
+		# 无匹配插画时用虫形图标占位
+		var icon_path := GuIconView.ICON_DIR + GuIconView.ICON_PATHS["insect"] + ".svg"
+		gu_image.texture = load(icon_path)
+		gu_image.modulate = GuStyle.INK_SOFT
+	card_box.add_child(gu_image)
+
 	var btn := Button.new()
 	btn.name = "card_body_" + card_id
 	btn.text = _card_face_text(card)
 	btn.clip_text = true
 	btn.autowrap_mode = TextServer.AUTOWRAP_OFF
-	btn.custom_minimum_size = Vector2(150, 110)
-	# 卡保持固定宽不随行扩展：5-7 张时平铺会互相挤压，细节走 tooltip。
-	btn.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	btn.custom_minimum_size = Vector2(150, 85)
+	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	MasterTheme.apply_button(btn, "card")
-	# 四行卡面塞进 110px 高的按钮：主题 16px 必纵向溢出，压到 13px。
-	btn.add_theme_font_size_override("font_size", 13)
+	btn.add_theme_font_size_override("font_size", 12)
 	btn.modulate = Color(1, 1, 1, 1.0) if executable else Color(1, 1, 1, 0.55)
 	if is_active:
 		btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
@@ -83,17 +104,9 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 	btn.mouse_entered.connect(func():
 		if _on_hover.is_valid():
 			_on_hover.call(card))
-	# 左键按下走 Button.button_down：比 gui_input 更稳定，尤其是卡体上方有
-	# tooltip / 其他 Control 时，仍能让宿主记录拖拽候选。
 	if executable and _on_drag_start.is_valid():
 		btn.button_down.connect(func():
-			_on_drag_start.call(card)
-			var dbg := FileAccess.open("user://drag_debug.log", FileAccess.READ_WRITE if FileAccess.file_exists("user://drag_debug.log") else FileAccess.WRITE)
-			if dbg != null:
-				dbg.seek_end()
-				dbg.store_line("hand press card=%s" % str(card.get("id", "")))
-				dbg.close())
-	# 悬停和右键取消仍走 gui_input；左键拖拽候选已由 button_down 处理。
+			_on_drag_start.call(card))
 	btn.gui_input.connect(func(event):
 		var is_cancel: bool = (
 				(event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT
@@ -104,12 +117,34 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 			return
 	)
 
-	# 不可执行的卡不触发 press，避免"点了却注定失败"。
 	btn.pressed.connect(func():
 		if executable and _on_press.is_valid():
 			_on_press.call(card))
 
-	return btn
+	card_box.add_child(btn)
+	return card_box
+
+
+## 蛊虫插画加载：按名称关键词匹配异常自然志图鉴插画，无匹配返回null。
+func _load_gu_illustration(name: String) -> Texture2D:
+	if name.contains("血"):
+		return _load_texture("res://assets/wenzhen/gu/gu_blood.png")
+	elif name.contains("光"):
+		return _load_texture("res://assets/wenzhen/gu/gu_light.png")
+	elif name.contains("骨"):
+		return _load_texture("res://assets/wenzhen/gu/gu_bone.png")
+	elif name.contains("毒"):
+		return _load_texture("res://assets/wenzhen/gu/gu_poison.png")
+	elif name.contains("月"):
+		return _load_texture("res://assets/wenzhen/gu/gu_moon.png")
+	return null
+
+
+func _load_texture(path: String) -> Texture2D:
+	var img := Image.new()
+	if img.load(path) != OK:
+		return null
+	return ImageTexture.create_from_image(img)
 
 
 ## 卡面多行文案：品质 / 名称 / 费用 / 效果摘要（详细说明仍走统一 tooltip）。

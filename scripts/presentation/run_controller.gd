@@ -22,7 +22,7 @@ const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
 # V1 battle lifecycle hook: battle2 ledger sits in the RunState for the
 # duration of a single battle. Sized by CultivatorRules.thought_capacity and
-# consumed by battle_resolver's five accepted-turn sites; finalised through
+# consumed by the battle facade on each accepted turn; finalised through
 # the _battle2_ledger info key when the battle exits.
 const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
@@ -909,19 +909,12 @@ func _start_battle() -> void:
 	else:
 		encounter["enemy_kind"] = enemy_kind
 	# V1 battle2 ledger hook: seed a fresh per-battle ledger sized by the
-	# current cultivator's thought capacity. battle_resolver advances it at
+	# current cultivator's thought capacity. The battle facade advances it on
 	# each accepted turn and finalises it on the exit info key.
 	state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
 		CultivatorRulesScript.thought_capacity(state.cultivator, catalog)
 	)
 	current_battle = BattleCommandFacadeScript.start(encounter, state, catalog)
-	# 临时诊断：开战时蛊槽数量与 refined 实例数落 user://drag_debug.log。
-	BattleScreenView.drag_log("start_battle kind=%s slots=%d refined=%d enemies=%d" % [
-		str(encounter.get("enemy_kind", "?")),
-		(current_battle.get("gu_slots", []) as Array).size(),
-		state.refined_instances().size(),
-		(current_battle.get("enemies", []) as Array).size(),
-	])
 	# N6: weaknesses procured through probe carry into the battle as bonus damage.
 	if state.known_facts.has("procured_weakness"):
 		current_battle["intel_bonus"] = 1
@@ -1341,8 +1334,8 @@ func _finish_battle_in_session(outcome: String) -> void:
 	var results := state.encounter_results.duplicate(true)
 	# V1 battle2 ledger hook: capture the consumed ledger snapshot now and
 	# ride it on the final battle_finished event's info key below (V1
-	# retreat / death / victory bypass the resolver's _battle_over funnel,
-	# so the controller writes the info key itself; battle_resolver's old
+	# retreat / death / victory bypass the engine's _battle_over funnel,
+	# so the controller writes the info key itself; the old per-turn
 	# _battle2_ledger info events are now redundant but kept for parity).
 	var ledger_snapshot: Dictionary = {}
 	if not state.current_battle2_ledger.is_empty():
@@ -1368,8 +1361,8 @@ func _finish_battle_in_session(outcome: String) -> void:
 		results.append(ResultFeedScript.entry("battle", "lifespan_milestone_gained", {}, []))
 	results.append(feed)
 	# V1 battle2 ledger hook: attach the captured ledger snapshot onto the
-	# final battle_finished event's info key (the V1 battle_resolver funnel
-	# is bypassed for the controller-driven retreat / death / victory exits,
+	# final battle_finished event's info key (the V1 engine funnel is
+	# bypassed for the controller-driven retreat / death / victory exits,
 	# so the controller writes the info key itself).
 	var finished_event: Dictionary = {
 		"stage": state.stage,

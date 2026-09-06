@@ -63,6 +63,10 @@ static func apply_button(button: Button, role: String = "action", size: String =
 	button.add_theme_stylebox_override("focus", _box(spec["normal_bg"], GuStyle.CINNABAR, 2, 0, spec["radius"]))
 	button.add_theme_stylebox_override("disabled", _box(GuStyle.PAPER_DEEP, GuStyle.HAIRLINE_COLOR, 1, 0, spec["radius"]))
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	# 第18批：按钮点击音效（用元数据标记避免重复连接）
+	if not button.has_meta("sfx_connected"):
+		button.set_meta("sfx_connected", true)
+		button.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
 
 
 static func _box(bg: Color, border: Color, width: int, left: int, radius: int) -> StyleBoxFlat:

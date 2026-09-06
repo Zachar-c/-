@@ -18,6 +18,18 @@ layout_mode = 2
 theme_override_constants/separation = 5
 size_flags_horizontal = 3
 
+[node name="EnemyIconHost" type="CenterContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 96)
+
+[node name="EnemyPortrait" type="TextureRect" parent="ActorMargin/ActorBody/EnemyIconHost"]
+layout_mode = 2
+custom_minimum_size = Vector2(72, 96)
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+flip_h = true
+
 [node name="IntentLabel" type="Label" parent="ActorMargin/ActorBody"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
@@ -32,6 +44,13 @@ text = "敌人"
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "敌人"
+
+[node name="StrikeLine" type="ColorRect" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 2)
+color = Color(0.61, 0.2, 0.18, 1)
+visible = false
+mouse_filter = 2
 
 [node name="HpHost" type="VBoxContainer" parent="ActorMargin/ActorBody"]
 layout_mode = 2

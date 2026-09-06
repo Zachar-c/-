@@ -24,53 +24,61 @@ theme_override_constants/separation = 10
 [node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
 layout_mode = 2
 
-[node name="HeaderRow" type="HBoxContainer" parent="Root"]
+[node name="RefineStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StageContent" type="VBoxContainer" parent="Root/RefineStage"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root/RefineStage/StageContent"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="TitleLabel" type="Label" parent="Root/HeaderRow"]
+[node name="TitleLabel" type="Label" parent="Root/RefineStage/StageContent/HeaderRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "炼蛊台"
 
-[node name="TabRow" type="HBoxContainer" parent="Root/HeaderRow"]
+[node name="TabRow" type="HBoxContainer" parent="Root/RefineStage/StageContent/HeaderRow"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="primary_decision_surface" type="HBoxContainer" parent="Root"]
+[node name="primary_decision_surface" type="HBoxContainer" parent="Root/RefineStage/StageContent"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 14
 
-[node name="MainColumn" type="VBoxContainer" parent="Root/primary_decision_surface"]
+[node name="MainColumn" type="VBoxContainer" parent="Root/RefineStage/StageContent/primary_decision_surface"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="SlotStatusLabel" type="Label" parent="Root/primary_decision_surface/MainColumn"]
+[node name="SlotStatusLabel" type="Label" parent="Root/RefineStage/StageContent/primary_decision_surface/MainColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "空位校验：已就绪"
 
-[node name="RecipePanel" parent="Root/primary_decision_surface/MainColumn" instance=ExtResource("3_panel")]
+[node name="RecipePanel" parent="Root/RefineStage/StageContent/primary_decision_surface/MainColumn" instance=ExtResource("3_panel")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="StreakNoteLabel" type="Label" parent="Root/primary_decision_surface/MainColumn"]
+[node name="StreakNoteLabel" type="Label" parent="Root/RefineStage/StageContent/primary_decision_surface/MainColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 
-[node name="SideColumn" type="VBoxContainer" parent="Root/primary_decision_surface"]
+[node name="SideColumn" type="VBoxContainer" parent="Root/RefineStage/StageContent/primary_decision_surface"]
 custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="DismantlePanel" parent="Root/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
+[node name="DismantlePanel" parent="Root/RefineStage/StageContent/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
 layout_mode = 2
 
-[node name="LeaveButton" type="Button" parent="Root/primary_decision_surface/SideColumn"]
+[node name="LeaveButton" type="Button" parent="Root/RefineStage/StageContent/primary_decision_surface/SideColumn"]
 layout_mode = 2
 text = "离开炼蛊台"
 

@@ -52,7 +52,11 @@ func test_dangerous_health_stays_on_existing_player_stat_bar() -> void:
 	var host := _mount(state)
 	var player_actor := _named(host, "player_actor")
 	assert_not_null(player_actor)
-	var health_bar: Control = player_actor.get_child(0)
+	# The narrative-layer portrait was added as the actor's first child (A-1
+	# landing, batch 8+); the danger detail lives on the explicitly named hp
+	# stat bar, so reach it by name instead of assuming child index 0.
+	var health_bar: Control = player_actor.get_node("hp")
+	assert_not_null(health_bar)
 	assert_eq(health_bar.tooltip_text, "气血将竭")
 	assert_eq(health_bar.get_node("ValueRow/ValueLabel").get_theme_color("font_color"), GuStyle.CINNABAR)
 

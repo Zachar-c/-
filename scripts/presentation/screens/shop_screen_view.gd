@@ -9,18 +9,29 @@ extends MarginContainer
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuCardScene := preload("res://scenes/ui/widgets/gu_card.tscn")
+const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
+## NPC商人立绘：异常自然志图鉴风格，运行时加载绕过资源导入系统。
+var NpcMerchantPortrait: Texture2D = null
+
+
+func _load_npc_texture(path: String) -> Texture2D:
+	var img := Image.new()
+	if img.load(path) != OK:
+		return null
+	return ImageTexture.create_from_image(img)
 
 @onready var _top_bar: PanelContainer = $Root/TopBar
 @onready var _feedback_label: Label = $Root/FeedbackLabel
-@onready var _title_label: Label = $Root/TitleRow/TitleLabel
-@onready var _inflation_label: Label = $Root/TitleRow/InflationLabel
-@onready var _npc_label: Label = $Root/TitleRow/NpcLabel
-@onready var _stance_label: Label = $Root/TitleRow/StanceLabel
-@onready var _offer_list: VBoxContainer = $Root/PrimarySurface/OfferColumn/OfferScroll/OfferList
-@onready var _emergency_label: Label = $Root/PrimarySurface/OfferColumn/EmergencyLabel
-@onready var _pool_fallback_label: Label = $Root/PrimarySurface/OfferColumn/PoolFallbackLabel
-@onready var _service_list: VBoxContainer = $Root/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox/ServiceScroll/ServiceList
-@onready var _leave_button: Button = $Root/PrimarySurface/ServiceColumn/LeaveButton
+@onready var _shop_stage: PanelContainer = $Root/ShopStage
+@onready var _title_label: Label = $Root/ShopStage/StageContent/TitleRow/TitleLabel
+@onready var _inflation_label: Label = $Root/ShopStage/StageContent/TitleRow/InflationLabel
+@onready var _npc_label: Label = $Root/ShopStage/StageContent/TitleRow/NpcLabel
+@onready var _stance_label: Label = $Root/ShopStage/StageContent/TitleRow/StanceLabel
+@onready var _offer_list: VBoxContainer = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/OfferScroll/OfferList
+@onready var _emergency_label: Label = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/EmergencyLabel
+@onready var _pool_fallback_label: Label = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/PoolFallbackLabel
+@onready var _service_list: VBoxContainer = $Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox/ServiceScroll/ServiceList
+@onready var _leave_button: Button = $Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/LeaveButton
 @onready var _target_panel: PanelContainer = $Root/TargetPanel
 @onready var _target_title: Label = $Root/TargetPanel/TargetMargin/TargetBox/TargetTitle
 @onready var _target_list: VBoxContainer = $Root/TargetPanel/TargetMargin/TargetBox/TargetScroll/TargetList
@@ -40,6 +51,7 @@ var _active_service := ""
 func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
+	_apply_stage_style()
 	_leave_button.pressed.connect(func(): _fire("leave"))
 	if not _snapshot.is_empty():
 		_refresh()
@@ -141,11 +153,17 @@ func _build_offer_card(o: Dictionary) -> void:
 	desc.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	card.content_host.add_child(desc)
 
+	var price_row := HBoxContainer.new()
+	price_row.add_theme_constant_override("separation", 4)
+	var price_icon := GuIconView.new()
+	price_icon.setup("gi_coin", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_SMALL)
+	price_row.add_child(price_icon)
 	var price := Label.new()
 	price.text = "价格：" + str(o.get("price", ""))
 	price.add_theme_font_size_override("font_size", 14)
 	price.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
-	card.content_host.add_child(price)
+	price_row.add_child(price)
+	card.content_host.add_child(price_row)
 
 	var buy := Button.new()
 	buy.text = "购买此蛊"
@@ -369,3 +387,40 @@ func _apply_base_fonts() -> void:
 	_target_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_apply_panel_style(_target_panel)
 	MasterTheme.apply_button(_leave_button, "action")
+
+
+## 黑市暗色舞台：复用休整屏验证的三层结构（叙事层+规则层+概念层）。
+## 青茅山背景调暗半透明 + 角色立绘（黑市交易姿态）+ 纸墨UI浮于其上。
+func _apply_stage_style() -> void:
+	# 暗色舞台底色
+	var stage_box := StyleBoxFlat.new()
+	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	_shop_stage.add_theme_stylebox_override("panel", stage_box)
+
+	# 青茅山背景层（复用战斗屏素材，调暗半透明）
+	var backdrop := TextureRect.new()
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = -1
+	_shop_stage.add_child(backdrop)
+
+	# 角色立绘：黑市交易姿态，放在舞台右侧调暗半透明
+	var portrait := TextureRect.new()
+	portrait.texture = PlayerPortrait
+	portrait.custom_minimum_size = Vector2(120, 160)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.modulate = GuStyle.PORTRAIT_DIM
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	portrait.z_index = -1
+	portrait.anchor_right = 1.0
+	portrait.anchor_bottom = 1.0
+	portrait.offset_left = -140
+	portrait.offset_top = 20
+	portrait.offset_right = -20
+	portrait.offset_bottom = -20
+	_shop_stage.add_child(portrait)

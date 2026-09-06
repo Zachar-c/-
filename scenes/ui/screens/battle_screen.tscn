@@ -32,23 +32,35 @@ layout_mode = 2
 [node name="TopBar" parent="Root/battle_hud" instance=ExtResource("2_top_bar")]
 layout_mode = 2
 
-[node name="battle_field" type="HBoxContainer" parent="Root"]
+[node name="BattleStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="battle_field" type="HBoxContainer" parent="Root/BattleStage"]
 custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
 
-[node name="PlayerPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
+[node name="PlayerPanel" parent="Root/BattleStage/battle_field" instance=ExtResource("3_panel")]
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_stretch_ratio = 1.0
 
-[node name="EnemyPanel" parent="Root/battle_field" instance=ExtResource("3_panel")]
+[node name="EnemyPanel" parent="Root/BattleStage/battle_field" instance=ExtResource("3_panel")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="Inventory" parent="Root/battle_field" instance=ExtResource("10_inventory")]
+[node name="Inventory" parent="Root/BattleStage/battle_field" instance=ExtResource("10_inventory")]
 custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -62,34 +74,38 @@ visible = false
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="battle_hand" type="VBoxContainer" parent="Root"]
+[node name="HandStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="battle_hand" type="VBoxContainer" parent="Root/HandStage"]
 custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="HandMetaRow" type="HBoxContainer" parent="Root/battle_hand"]
+[node name="HandMetaRow" type="HBoxContainer" parent="Root/HandStage/battle_hand"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PrimordialLabel" type="Label" parent="Root/battle_hand/HandMetaRow"]
+[node name="PrimordialLabel" type="Label" parent="Root/HandStage/battle_hand/HandMetaRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "真元 0"
 
-[node name="PilesLabel" type="Label" parent="Root/battle_hand/HandMetaRow"]
+[node name="PilesLabel" type="Label" parent="Root/HandStage/battle_hand/HandMetaRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "抽 0 · 弃 0 · 耗 0"
 
-[node name="Hand" parent="Root/battle_hand" instance=ExtResource("6_hand")]
+[node name="Hand" parent="Root/HandStage/battle_hand" instance=ExtResource("6_hand")]
 layout_mode = 2
 
-[node name="KillHost" type="VBoxContainer" parent="Root/battle_hand"]
+[node name="KillHost" type="VBoxContainer" parent="Root/HandStage/battle_hand"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="OpsRow" type="HBoxContainer" parent="Root/battle_hand"]
+[node name="OpsRow" type="HBoxContainer" parent="Root/HandStage/battle_hand"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -123,4 +139,64 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 
 [node name="TooltipView" parent="Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody" instance=ExtResource("8_tooltip")]
+layout_mode = 2
+
+[node name="SealOverlay" type="Control" parent="Root"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 2
+top_level = true
+
+[node name="SealCenter" type="CenterContainer" parent="Root/SealOverlay"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SealBox" type="PanelContainer" parent="Root/SealOverlay/SealCenter"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="SealMargin" type="MarginContainer" parent="Root/SealOverlay/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="SealLabel" type="Label" parent="Root/SealOverlay/SealCenter/SealBox/SealMargin"]
+layout_mode = 2
+text = "裁定"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="InkOverlay" type="Control" parent="Root"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 2
+top_level = true
+
+[node name="InkCenter" type="CenterContainer" parent="Root/InkOverlay"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InkBlob" type="PanelContainer" parent="Root/InkOverlay/InkCenter"]
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2

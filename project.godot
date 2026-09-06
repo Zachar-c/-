@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.7")
 [autoload]
 
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+AudioManager="*res://scripts/audio/audio_manager.gd"
 
 [debug]
 
@@ -32,6 +33,10 @@ window/stretch/mode="canvas_items"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/reactive_ui_toolkit/plugin.cfg", "res://addons/reactive_ui_toolkit_editor/plugin.cfg")
+
+[gui]
+
+config/theme="res://gu_theme.tres"
 
 [internationalization]
 

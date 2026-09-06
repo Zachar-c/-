@@ -8,14 +8,16 @@ extends MarginContainer
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
 const GuTipScene := preload("res://scenes/ui/widgets/gu_tooltip_view.tscn")
+const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
 
 @onready var _top_bar: PanelContainer = $Root/TopBar
-@onready var _feedback_label: Label = $Root/FeedbackLabel
-@onready var _brief_panel: PanelContainer = $Root/primary_decision_surface/MainColumn/BriefPanel
-@onready var _action_list: VBoxContainer = $Root/primary_decision_surface/MainColumn/ActionScroll/ActionList
-@onready var _leave_button: Button = $Root/primary_decision_surface/MainColumn/LeaveButton
-@onready var _status_panel: PanelContainer = $Root/primary_decision_surface/SideColumn/StatusPanel
-@onready var _satchel_panel: PanelContainer = $Root/primary_decision_surface/SideColumn/SatchelPanel
+@onready var _encounter_stage: PanelContainer = $Root/EncounterStage
+@onready var _feedback_label: Label = $Root/EncounterStage/StageContent/FeedbackLabel
+@onready var _brief_panel: PanelContainer = $Root/EncounterStage/StageContent/primary_decision_surface/MainColumn/BriefPanel
+@onready var _action_list: VBoxContainer = $Root/EncounterStage/StageContent/primary_decision_surface/MainColumn/ActionScroll/ActionList
+@onready var _leave_button: Button = $Root/EncounterStage/StageContent/primary_decision_surface/MainColumn/LeaveButton
+@onready var _status_panel: PanelContainer = $Root/EncounterStage/StageContent/primary_decision_surface/SideColumn/StatusPanel
+@onready var _satchel_panel: PanelContainer = $Root/EncounterStage/StageContent/primary_decision_surface/SideColumn/SatchelPanel
 @onready var _confirm_dialog: PanelContainer = $Root/ConfirmDialog
 
 var _snapshot: Dictionary = {}
@@ -29,6 +31,7 @@ var _confirming := ""
 func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
+	_apply_stage_style()
 	_leave_button.pressed.connect(func(): _fire("leave"))
 	_brief_panel.setup("遭遇", true, false)
 	_status_panel.setup("自身状态", false, false)
@@ -115,9 +118,14 @@ func _build_action_card(a: Dictionary) -> void:
 	_action_list.add_child(panel)
 	panel.setup(str(a.get("label", "")), true, false)
 
-	panel.content_host.add_child(_label_of(
-			str(a.get("detail", "")),
-			GuStyle.CINNABAR if dangerous else GuStyle.INK_SOFT, 14))
+	var detail_color := GuStyle.CINNABAR if dangerous else GuStyle.INK_SOFT
+	var detail_row := HBoxContainer.new()
+	detail_row.add_theme_constant_override("separation", 4)
+	var detail_icon := GuIconView.new()
+	detail_icon.setup("gi_scroll", detail_color, GuIconView.SIZE_SMALL)
+	detail_row.add_child(detail_icon)
+	detail_row.add_child(_label_of(str(a.get("detail", "")), detail_color, 14))
+	panel.content_host.add_child(detail_row)
 
 	var has_tip: bool = (a.has("quality") or a.has("effect") or a.has("synergy")
 			or a.has("cost") or bool(a.get("curse_warning", false)))
@@ -242,3 +250,37 @@ func _apply_base_fonts() -> void:
 	_feedback_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	_feedback_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	MasterTheme.apply_button(_leave_button, "action")
+
+
+## 遭遇屏暗色舞台：复用交易屏/休整屏验证的三层结构。
+## 青茅山背景调暗半透明 + 角色立绘遭遇姿态 + 纸墨UI浮于其上。
+func _apply_stage_style() -> void:
+	var stage_box := StyleBoxFlat.new()
+	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	_encounter_stage.add_theme_stylebox_override("panel", stage_box)
+
+	var backdrop := TextureRect.new()
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.z_index = -1
+	_encounter_stage.add_child(backdrop)
+
+	var portrait := TextureRect.new()
+	portrait.texture = PlayerPortrait
+	portrait.custom_minimum_size = Vector2(120, 160)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.modulate = GuStyle.PORTRAIT_DIM
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	portrait.z_index = -1
+	portrait.anchor_right = 1.0
+	portrait.anchor_bottom = 1.0
+	portrait.offset_left = -140
+	portrait.offset_top = 20
+	portrait.offset_right = -20
+	portrait.offset_bottom = -20
+	_encounter_stage.add_child(portrait)
