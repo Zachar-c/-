@@ -3,6 +3,7 @@ extends GutTest
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 
 
 var catalog: Dictionary
@@ -46,8 +47,11 @@ func test_battle_dict_exposes_soul_ops_cap_for_preview_parity() -> void:
 	# 9/1 batch: the battle dict no longer snapshots soul_ops_cap; preview
 	# capacity is derived live from SoulCapacity.battle_ops_cap(state) in
 	# action_preview_service. Pin the derivable parity instead.
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_false(battle.has("soul_ops_cap"), "legacy snapshot key removed")
+	# B1 bucket C (2026-09-06): the fixture battle is now built on the V1
+	# facade (legacy BattleResolver.start died with battle_resolver.gd); the
+	# no-snapshot-key contract holds for the surviving V1 battle dict.
+	var battle := BattleCommandFacadeScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	assert_false(battle.has("soul_ops_cap"), "V1 battle dict keeps no stale soul_ops_cap snapshot")
 	assert_eq(SoulCapacityScript.battle_ops_cap(run), 1)
 
 

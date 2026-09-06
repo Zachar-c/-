@@ -75,31 +75,12 @@ func test_hostile_stance_roll_is_guaranteed_at_high_notoriety_and_absent_at_zero
 	assert_false(bool(clean["session"]["flags"].get("reputation_extreme", false)))
 
 
-func test_battle_marks_first_mover_and_enemy_strikes_first() -> void:
-	var run := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound", "first_mover": "enemy"}, run, catalog)
-	assert_eq(str(battle["first_mover"]), "enemy")
-
-	var pre := BattleResolver.apply_enemy_pre_turn(battle, run, catalog)
-	assert_false(pre["finished"])
-	assert_true(pre["feeds"].has("enemy_first_move"))
-	assert_lt(int(pre["state"].health), 80)
-	assert_eq(pre["battle"]["log"].back()["source"], "enemy")
-
-	var normal := BattleResolver.start({"enemy_kind": "ridge_hound"}, RunState.new_run(101), catalog)
-	assert_eq(str(normal["first_mover"]), "player")
-
-
-func test_enemy_pre_turn_can_kill_and_finalizes_death() -> void:
-	var run := RunState.new_run(101)
-	run.health = 2
-	var battle := BattleResolver.start({"enemy_kind": "resolute_elite", "first_mover": "enemy"}, run, catalog)
-	var pre := BattleResolver.apply_enemy_pre_turn(battle, run, catalog)
-
-	assert_true(pre["finished"])
-	assert_eq(pre["result"], "death")
-	assert_true(pre["feeds"].has("player_dead"))
-	assert_eq(str(pre["state"].terminal_state), "dead")
+# B1 bucket C (2026-09-06): the two battle legs below were deleted as domain
+# debt - they drove legacy apply_enemy_pre_turn/first_mover internals that
+# died with battle_resolver.gd. Enemy-first-mover resolution is re-homed on
+# the V1 facade (test_battle_command_facade enemy_first_mover test) and
+# lethal enemy intents live in the V1 engine suite; the notoriety uplit that
+# makes encounters hostile stays pinned above by the encounter-session legs.
 
 
 func test_wash_notoriety_pays_lifespan_and_reduces_notoriety() -> void:

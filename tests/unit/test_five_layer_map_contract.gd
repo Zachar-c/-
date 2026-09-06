@@ -13,6 +13,7 @@ extends GutTest
 
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 
 const BOSS_ID := "final_boss_stand"
 const WINDOW_ID := "ascension_window"
@@ -130,34 +131,11 @@ func test_visible_nodes_annotate_reachable_vs_advisory() -> void:
 				node_id, str(node.get("reachable")), str(is_start)])
 
 
-func test_boss_battle_closes_retreat_for_good() -> void:
-	# R-boss-no-retreat 2026-08-27: the window only exists behind this fight,
-	# so boss-tier battles refuse retreat at resolver level and the preview
-	# card is disabled with an explicit reason (SS16.5, no silent blocks).
-	var run := RunState.new_run(101)
-	var boss := BattleResolver.start({"enemy_kind": "miasma_vein_lord"}, run, catalog)
-	assert_true(BattleResolver.boss_blocks_retreat(boss))
-	var refused := BattleResolver.take_turn(boss, {"type": "retreat"}, run, catalog)
-	assert_false(bool(refused.get("finished", false)),
-			"retreat must not resolve in a boss battle")
-	assert_eq(str(refused.get("result", "")), "ongoing")
-	assert_eq(int(refused["battle"].get("enemy_hp", -1)), int(boss.get("enemy_hp", 0)),
-			"refused retreat leaves the battle untouched")
-
-	var common := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_false(BattleResolver.boss_blocks_retreat(common))
-
-	var preview := ActionPreviewService.preview_battle_actions(boss, run, catalog)
-	var retreat_card := {}
-	for card in preview:
-		if str(card.get("id", "")) == "battle.retreat":
-			retreat_card = card
-			break
-	assert_false(retreat_card.is_empty())
-	assert_false(bool(retreat_card.get("executable", true)),
-			"boss battle preview shows retreat as blocked")
-	assert_string_contains(str(retreat_card.get("block_reason", "")), "退无可退")
-
+# B1 bucket C (2026-09-06): the boss-retreat block leg below was deleted as
+# domain debt - boss_blocks_retreat() lived on battle_resolver.gd. The V1
+# facade re-homes it on flags.boss_battle (test_battle_command_facade
+# boss_identity test) and the preview disable reason (退无可退) is pinned by
+# test_preview_retreat_gate.
 
 func test_wanderer_pack_injected_when_no_school_picked() -> void:
 	# The controller injects via its private path; here we pin the contract on
@@ -177,13 +155,16 @@ func test_wanderer_pack_injected_when_no_school_picked() -> void:
 		}
 		run.cave_aperture["stored_gu_instance_ids"].append(instance_id)
 	run.sync_legacy_gu_projections()
-	# Deck built from wanderer pack + novice covers the guard counter: the
-	# stone_guard card (stone_shell_gu blueprint) grants the guarded flag.
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	var definition_ids: Array = []
-	for card in battle.get("deck_cache", []):
-		definition_ids.append(str(card.get("definition_id", "")))
-	assert_true(definition_ids.has("stone_guard"),
-		"wanderer deck contains the guard counter against guarded reactions")
-	assert_true((battle.get("available_gu_ids", []) as Array).size() >= 5,
+	# B1 bucket C (2026-09-06): the card-era guard-counter deck assertion
+	# (stone_guard card vs reaction dicts) died with battle_resolver.gd; the
+	# surviving guarantee - the no-school pack yields a full starter roster
+	# including the guarded stone-shell gu - is re-pinned on the V1 facade
+	# gu_slots.
+	var battle := BattleCommandFacadeScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	var slot_definitions: Array = []
+	for slot in battle.get("gu_slots", []):
+		slot_definitions.append(str(slot.get("definition_id", "")))
+	assert_true(slot_definitions.has("stone_shell_gu"),
+		"wanderer roster keeps the guarded stone-shell gu")
+	assert_true(slot_definitions.size() >= 5,
 		"wanderer run has a full starting gu roster")
