@@ -8,6 +8,8 @@ func test_display_text_translates_known_ids_without_leaking_internal_ids() -> vo
 	assert_eq(DisplayText.gu("small_light_gu"), "小光蛊")
 	assert_eq(DisplayText.inheritance("moonlit_trace"), "月下寻迹")
 	assert_eq(DisplayText.enemy("beast_swarm"), "兽群")
+	assert_eq(DisplayText.enemy("ridge_elite_scout"), "山脊悍客")
+	assert_eq(DisplayText.enemy("miasma_vein_lord"), "瘴脉蛊主")
 	assert_eq(DisplayText.outcome("risky_success"), "险中功成")
 
 

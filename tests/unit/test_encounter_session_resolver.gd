@@ -29,6 +29,7 @@ func test_deceive_stays_in_contact_and_records_visible_result() -> void:
 
 	assert_false(result["session"]["completed"])
 	assert_eq(result["state"].stone, state.stone + 2)
+	assert_true(result["state"].known_facts.has("wanderer_misdirected"))
 	assert_eq(result["feed"]["text_key"], "contact_deceive_success")
 	assert_eq(result["state"].encounter_session["node_id"], "neutral_wanderer")
 
