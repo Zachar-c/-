@@ -32,6 +32,15 @@
    - ⏳ 受击事件数据扩展（V-B-01）/音效事件类型扩展（A-B-01）：后端/领域层任务，由另一个代理负责；完成后前端受击动效（V-F-03）和战斗音效接入（A-F-02）自动生效
    - A-1视觉批次落地（提交18批成果+手牌测试修复）已解除B1阻塞的手牌测试部分
 
+6. **第二批P1品质提升进度（2026-09-06，前端/表现层）**：
+   - ✅ V-F-04 按钮hover缩放动画：所有MasterTheme按钮hover放大1.03倍+pressed缩小0.97倍，Tween平滑过渡（CUBIC/EASE_OUT）
+   - ✅ V-F-06 地图屏节点类型图标化：13种节点类型角标从中文字符（鬥/？/市/息/險）改为开源图标（gi_sword/gi_scroll/gi_coin/gi_potion/ic_flame/gi_beveled_star/ic_check）
+   - ✅ A-F-03 炼蛊音效接入：确认炼蛊时播放refine_success音效（后续后端事件扩展后通过触发器系统区分成功/失败/诅咒）
+   - ⏳ A-F-08 UI音效完善：点击音效已通过MasterTheme统一接入；hover/确认/取消/错误音效待开源音效文件引入后实施（当前仅7个程序生成测试音效）
+   - ✅ V-F-11 面板细节优化：GuPanelView标题栏添加朱砂色1px装饰线，随标题显示/隐藏，增强面板视觉层次
+   - ⏳ V-F-12 文字排版优化 / V-F-07 品质色边框光效 / V-F-05 页面切换过渡动画：待后续批次实施
+   - 所有改动通过UI守卫测试7/7全绿
+
 ### 修订后执行队列
 
 ```
@@ -149,7 +158,7 @@ F 里程碑验收（切片全流程真实窗口走查）
   - **整删（纯 legacy 引擎套件=域债）**：test_battle_resolver / test_battle_loop / test_boss_phases / test_multi_enemy_battle / test_elite_boss_battle / test_v2_battle_resolver（stale-state 拒斥已迁 facade preflight；deceive 腿事实迁 encounter_session）/ test_basic_actions（punch 由 facade passthrough+零真元腿覆盖、dodge 由 battle2 存续）。
   - **迁 V1 facade（保活存续契约）**：test_content_catalog（battle-start 腿）/ test_school_framework（blood-stack 纯 dict fixture；force punch 加成随 legacy 死=域债）/ test_gu_roles_and_starter_attack（删 card-era 腿，starter 保证由 V1 腿钉）/ test_five_layer_map_contract（boss 禁退腿删——facade flags.boss_battle + preview_retreat_gate 已覆盖；wanderer roster 腿改 facade gu_slots 断言）/ test_notoriety（first-mover/预回合腿删——facade enemy_first_mover 已覆盖）/ test_soul_capacity（battle-dict 腿迁 V1 battle，no-stale-snapshot 契约对存续 dict 生效）。
   - **裁 run 级（战斗投影腿=域债，V1/facade 对 curse 与 relic 战斗钩子零消费已证实）**：test_curse_system（删 5 battle-projection 腿）/ test_imprint_expansion（删 5 in-battle relic 钩子腿）/ test_relic_hook_resolver（裁至 run 级 feeding/validate）。
-  - **延迟项**：test_elite_cost_binding 2 个真实战斗腿 → 等 run_controller 落定后迁（facade victory 已内置 settle_victory 成本绑定，见 battle_command_facade.gd:178）；v3 卡牌期/预览集群（test_action_preview_service / test_v3_battle_card_actions / test_v3_battle_preview_risks / test_v3_gu_lifecycle / test_v3_ui_exposure）→ 预览子系统独立工作流。
+  - **延迟项**：test_elite_cost_binding 2 个真实战斗腿 → ✅ 2026-09-06 已迁 V1 facade（提交 `f97bb12`：BattleCommandFacade.start/apply_turn + enemies[0].hp=1 + player thoughts/used_this_turn 注水以过 V1 basic_attack_reason gate；settle_victory 走 facade victory 分支，13/13/545 绿）。v3 卡牌期/预览集群（test_action_preview_service / test_v3_battle_card_actions / test_v3_battle_preview_risks / test_v3_gu_lifecycle / test_v3_ui_exposure）→ **预览子系统独立工作流**（action_preview_service.gd 是 live 生产面：run_controller/run_snapshot_builder/encounter_session/playthrough_smoke/command_spec 5 处消费；与视觉会话的战斗屏预览渲染并行相关，需独立工单处理 V1 fixture 迁移 + opening_fairness 反制预警重定基）。删 `battle_resolver.gd` 本体需待该工单落地后方可零回归执行。
   - 误报确认不动：test_central_gu_economy（V1 子串）、test_command_contract（run_controller 委托守护字符串）、test_legacy_abolition（守护本体）、test_battle_command_facade / test_preview_retreat_gate（注释）。
 
 - 验收：`tools/test.ps1 -Suite unit` 与 `-Suite integration` 全绿；`rg "battle_resolver|v2_commands" scripts/` 零命中（v2_commands token 应已随改名归零）。
