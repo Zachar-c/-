@@ -283,13 +283,13 @@ await _verify_tscn_rest(...)  # 对
 
 | 工具 | 命令 | 用途 |
 |---|---|---|
-| `scripts/render_probe.gd` | `godot --path . -s res://scripts/render_probe.gd -- scene=res://scenes/main.tscn` | 统计渲染像素颜色分布。`UNIQUE <= 1` 判 `BLANK` 并返回 1。主场景基线 **461 色** |
-| `scripts/smoke_render.gd` | `godot --headless --path . -s res://scripts/smoke_render.gd` | 逐屏挂载 + 结构断言（表驱动，见 `_verify_tscn_screens`） |
+| `scripts/acceptance_driver.gd` | `godot --path . -s res://scripts/acceptance_driver.gd -- --mode=render scene=res://scenes/main.tscn` | 统计渲染像素颜色分布（原 render_probe）。`UNIQUE <= 1` 判 `BLANK` 并返回 1。主场景基线 **461 色** |
+| `scripts/acceptance_driver.gd` | `godot --headless --path . -s res://scripts/acceptance_driver.gd -- --mode=smoke` | 逐屏挂载 + 结构断言 + 主场景推进（原 smoke_render + integration_smoke） |
 | GUT 守卫 | `godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gselect=test_ui_rules_guard.gd -gexit` | 规则合规 |
-| `scripts/playthrough_smoke.gd` | `PLAYTHROUGH_SEED=42 godot --headless ... -s res://scripts/playthrough_smoke.gd` | 真实流程 |
+| `scripts/acceptance_driver.gd` | `PLAYTHROUGH_SEED=42 godot --headless ... -s res://scripts/acceptance_driver.gd -- --mode=play` | 真实流程（原 playthrough_smoke） |
 
-**为什么必须有 `render_probe`**：白屏是静默失败——`--quit-after` 退出码 0、
-`smoke_render` 绕过 `main.tscn`、GUT 不加载主场景、`playthrough` 用 `RunController.new()`，
+**为什么必须有 `render` 像素模式**：白屏是静默失败——`--quit-after` 退出码 0、
+旧 smoke 挂载绕开 `main.tscn`、GUT 不加载主场景、play 用 `RunController.new()`，
 四者全绿但游戏是白的。只有像素统计能抓到。
 
 新增 `.tscn` 屏时：在 `_verify_tscn_screens` 的 cases 表里加一行，并写对应的 `_verify_tscn_xxx`。

@@ -1,11 +1,12 @@
 extends GutTest
 
-# 发布阻断修复 6：playthrough_smoke 的非蛊商品名称与离场失败的可观测性。
+# 发布阻断修复 6：acceptance_driver play 模式（B3 并入原 playthrough_smoke 语义）
+# 的非蛊商品名称与离场失败的可观测性。
 # 非 gu 商品（魂丹/材料/配方/服务）此前按 offer.gu_id 取名 → 空串；所有
 # leave_node 调用此前吞掉结果 → 失败后每步原样重试 = 静默空转 900 步。
 # 本测试锁定两个助手的行为；冒烟脚本本身经 _step 返回 leave_blocked 终止。
 
-const SmokeScript = preload("res://scripts/playthrough_smoke.gd")
+const SmokeScript = preload("res://scripts/acceptance_driver.gd")
 
 
 func test_gu_offer_label_prefers_gu_name() -> void:

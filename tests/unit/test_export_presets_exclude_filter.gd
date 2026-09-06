@@ -4,7 +4,7 @@ extends GutTest
 func test_release_excludes_dev_only_wenzhen_files() -> void:
 	var source := FileAccess.get_file_as_string("res://export_presets.cfg")
 	var exclude_filter := _value_for_key(source, "exclude_filter")
-	assert_true(exclude_filter.contains("scripts/ui_capture.gd"))
+	assert_true(exclude_filter.contains("scripts/acceptance_driver.gd"))
 	assert_true(exclude_filter.contains("scripts/guitkx_build.gd"))
 	assert_true(exclude_filter.contains("assets/wenzhen/hall/*"))
 	assert_false(exclude_filter.contains("assets/wenzhen/fonts/*"))

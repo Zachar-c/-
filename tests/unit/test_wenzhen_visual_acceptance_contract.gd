@@ -1,7 +1,7 @@
 extends GutTest
 
 
-const UiCapture = preload("res://scripts/ui_capture.gd")
+const AcceptanceDriver = preload("res://scripts/acceptance_driver.gd")
 
 
 func test_user_approved_hall_assets_are_present_and_declared() -> void:
@@ -24,20 +24,20 @@ func test_user_approved_hall_assets_are_present_and_declared() -> void:
 
 func test_capture_matrix_covers_every_required_screen_and_viewport() -> void:
 	var required := ["hall", "map", "battle", "encounter", "npc", "shop", "rest", "refine", "reward", "school", "contract", "codex", "journal", "settings", "ending"]
-	var capture_ids: Array = UiCapture.capture_ids()
+	var capture_ids: Array = AcceptanceDriver.capture_ids()
 	for scene_name in required:
 		assert_true(capture_ids.has(scene_name), "missing capture: %s" % scene_name)
 	assert_eq(
-		UiCapture.CAPTURE_MATRIX["map"],
+		AcceptanceDriver.CAPTURE_MATRIX["map"],
 		["current", "candidate_a_focus", "candidate_b_focus", "future_camera", "collapsed_history", "long_label"],
 		"map acceptance requires six deterministic snapshot-only states"
 	)
-	assert_eq(UiCapture.viewport_sizes(), [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)])
+	assert_eq(AcceptanceDriver.viewport_sizes(), [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)])
 
 
 func test_capture_batch_reads_full_command_line_when_user_args_are_empty() -> void:
 	assert_eq(
-		UiCapture.batch_from_args([], ["godot", "--path", ".", "-s", "res://scripts/ui_capture.gd", "--", "--batch", "map"]),
+		AcceptanceDriver.batch_from_args([], ["godot", "--path", ".", "-s", "res://scripts/acceptance_driver.gd", "--", "--mode=capture", "--batch", "map"]),
 		"map"
 	)
 

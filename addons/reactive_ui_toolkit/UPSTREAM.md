@@ -9,5 +9,5 @@
 - 引入日期: 2026-08-25
 - 用途: UI 表现层统一组件体系（`V.fc` / `RuitkRoot`）与克制动效。
 - 编译器可无头调用：`RuitkGuitkx.compile(source, basename, [], {}, self_path, "res://")`；
-  本仓库用 `scripts/smoke_render.gd` 在 `--script` 下编译并挂载验证（无需编辑器 GUI）。
+  本仓库用 `scripts/acceptance_driver.gd`（`-- --mode=smoke`）在 `--script` 下编译并挂载验证（无需编辑器 GUI）。
 - 仅提交 `.guitkx` 源；编译产物 `.gd` 由 `.gitignore` 的 `ui/**/*.gd` 忽略，导出前需先编译。

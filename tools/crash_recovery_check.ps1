@@ -37,7 +37,7 @@ function Invoke-Phase {
     $env:CRASH_SAVE_BUDGET = [string]$KillAfterSaves
     $out = Join-Path $backupDir "out_$Phase.log"
     $err = Join-Path $backupDir "err_$Phase.log"
-    return (Start-Process -FilePath $godotExe -ArgumentList @('--headless', '--path', $projectRoot, '-s', 'res://scripts/crash_recovery_driver.gd') -PassThru -NoNewWindow -RedirectStandardOutput $out -RedirectStandardError $err)
+    return (Start-Process -FilePath $godotExe -ArgumentList @('--headless', '--path', $projectRoot, '-s', 'res://scripts/acceptance_driver.gd', '--', '--mode=crash') -PassThru -NoNewWindow -RedirectStandardOutput $out -RedirectStandardError $err)
 }
 
 $failures = @()

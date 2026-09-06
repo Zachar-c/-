@@ -121,7 +121,7 @@ var _footprint: Array = []
 func _drive(seed_value: int) -> Dictionary:
 	var controller := RunControllerScript.new()
 	controller.catalog = ContentCatalog.load_all()
-	# 不入树：与 playthrough_smoke 同款无头驾驶，避免 RUITK 屏幕挂载的引擎
+	# 不入树：与 acceptance_driver 的 play 模式同款无头驾驶，避免 RUITK 屏幕挂载的引擎
 	# set_name 噪音污染 GUT 错误桶。
 	controller.start_new_run(seed_value, "", [])
 	_stuck_battle_id = ""
