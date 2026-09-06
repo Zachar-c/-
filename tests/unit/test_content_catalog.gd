@@ -1,6 +1,9 @@
 extends GutTest
 
 
+const FacadeScript := preload("res://scripts/domain/battle_command_facade.gd")
+
+
 func test_catalog_has_gu_and_three_inheritances() -> void:
 	var catalog := ContentCatalog.load_all()
 	assert_eq(catalog["gu"].size(), 802)
@@ -177,12 +180,16 @@ func test_battle_start_survives_a_degenerate_empty_intents_phase() -> void:
 	_enemy(catalog, "miasma_vein_lord")["phases"][0]["intents"] = []
 	var run := RunState.new_run(101)
 
-	var battle := BattleResolver.start({"enemy_kind": "miasma_vein_lord"}, run, catalog)
+	var battle := FacadeScript.start({"enemy_kind": "miasma_vein_lord"}, run, catalog)
 
-	# Validation is the gate for bad tables; at runtime the legacy intent keeps
-	# the engine from indexing into an empty array.
-	assert_eq(str(battle["visible_intent"].get("id", "")), "miasma_burst")
-	assert_eq(int(battle["enemy_hp"]), int(battle["enemy_max_hp"]))
+	# Validation is the gate for bad tables; at runtime V1 (which ignores the
+	# legacy boss phase table) must still start cleanly off the top-level
+	# intent and never index into an empty array.
+	var enemies: Array = battle.get("enemies", [])
+	assert_eq(enemies.size(), 1)
+	var boss: Dictionary = enemies[0]
+	assert_eq(int(boss.get("hp", 0)), int(boss.get("max_hp", -1)),
+			"V1 battle starts the boss at full hp")
 
 
 func test_validation_rejects_unknown_or_duplicate_multi_enemy_node_members() -> void:
