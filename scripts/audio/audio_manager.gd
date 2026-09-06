@@ -1,4 +1,4 @@
-extends Node
+﻿extends Node
 
 ## 音效管理器（第18批基础架构）
 ##
@@ -16,33 +16,44 @@ extends Node
 ##   AudioManager.set_master_volume(0.5)
 
 ## 音效注册表：音效ID → 文件路径（相对于res://）
-## 实际音效文件待引入（第18批后续优化），当前为架构预留。
+## 第二批A-F-01：从Kenney.nl引入开源音效（CC0），替换程序生成测试音效。
+## 音效文件统一使用OGG格式，放在 `assets/audio/` 目录下，按类别分子目录。
 const SFX_REGISTRY := {
-	# UI 音效
-	"ui_click": "assets/audio/ui/ui_click.wav",
-	"ui_hover": "assets/audio/ui/hover.wav",
-	"ui_confirm": "assets/audio/ui/ui_confirm.wav",
-	"ui_cancel": "assets/audio/ui/cancel.wav",
-	"ui_error": "assets/audio/ui/error.wav",
-	# 战斗音效
-	"battle_hit": "assets/audio/battle/battle_hit.wav",
-	"battle_critical": "assets/audio/battle/critical.wav",
-	"battle_miss": "assets/audio/battle/miss.wav",
-	"battle_death": "assets/audio/battle/death.wav",
-	"battle_card_play": "assets/audio/battle/battle_card_play.wav",
-	"battle_status_apply": "assets/audio/battle/status_apply.wav",
-	# 炼蛊音效
-	"refine_success": "assets/audio/refine/refine_success.wav",
-	"refine_fail": "assets/audio/refine/fail.wav",
-	"refine_curse": "assets/audio/refine/curse.wav",
-	# 环境音效
-	"env_cave_ambient": "assets/audio/env/cave_ambient.wav",
+	# UI 音效（Kenney UI Audio）
+	"ui_click": "assets/audio/ui/ui_click.ogg",
+	"ui_hover": "assets/audio/ui/ui_hover.ogg",
+	"ui_confirm": "assets/audio/ui/ui_confirm.ogg",
+	"ui_cancel": "assets/audio/ui/ui_cancel.ogg",
+	"ui_error": "assets/audio/ui/ui_error.ogg",
+	# 战斗音效（Kenney Impact Sounds）
+	"battle_hit": "assets/audio/battle/battle_hit.ogg",
+	"battle_critical": "assets/audio/battle/battle_critical.ogg",
+	"battle_miss": "assets/audio/battle/battle_miss.ogg",
+	"battle_death": "assets/audio/battle/battle_death.ogg",
+	"battle_card_play": "assets/audio/battle/battle_card_play.ogg",
+	"battle_status_apply": "assets/audio/battle/battle_status_apply.ogg",
+	# 炼蛊音效（Kenney Impact Sounds）
+	"refine_success": "assets/audio/refine/refine_success.ogg",
+	"refine_fail": "assets/audio/refine/refine_fail.ogg",
+	"refine_curse": "assets/audio/refine/refine_curse.ogg",
+	# 环境音效（OpenGameArt CC0）
+	"env_cave_ambient": "assets/audio/env/cave_ambient.ogg",
 	"env_wind": "assets/audio/env/wind.wav",
-	"env_fog": "assets/audio/env/fog.wav",
-	# 概念层音效
-	"concept_seal_stamp": "assets/audio/concept/concept_seal_stamp.wav",
-	"concept_ink_spread": "assets/audio/concept/concept_ink_spread.wav",
-	"concept_text_strike": "assets/audio/concept/text_strike.wav",
+	"env_fog": "assets/audio/env/fog.ogg",
+	# 概念层音效（Kenney Impact Sounds）
+	"concept_seal_stamp": "assets/audio/concept/concept_seal_stamp.ogg",
+	"concept_ink_spread": "assets/audio/concept/concept_ink_spread.ogg",
+	"concept_text_strike": "assets/audio/concept/concept_text_strike.ogg",
+}
+
+
+## 音效多变体表：音效ID → 变体数量（不含基础版）。
+## 第三批A-F-10：同类音效引入多变体，随机选择避免重复感。
+## 变体文件命名规则：{基础文件名}_{1..N}.ogg，与基础版同目录。
+const SFX_VARIANTS := {
+	"ui_click": 5,
+	"battle_hit": 5,
+	"battle_card_play": 5,
 }
 
 ## 音量配置
@@ -83,6 +94,14 @@ static func play_sfx(sfx_id: String, volume_scale: float = 1.0, pitch_scale: flo
 		push_warning("AudioManager: 未知音效ID: %s" % sfx_id)
 		return
 	var path: String = SFX_REGISTRY[sfx_id]
+	# 第三批A-F-10：如果该音效有多变体，随机选择一个变体播放，避免重复感
+	if SFX_VARIANTS.has(sfx_id):
+		var variant_count: int = SFX_VARIANTS[sfx_id]
+		var variant_idx: int = randi() % (variant_count + 1)
+		if variant_idx > 0:
+			var base_path: String = path.get_basename()
+			var ext: String = path.get_extension()
+			path = base_path + "_" + str(variant_idx) + "." + ext
 	var stream := load(path) as AudioStream
 	if stream == null:
 		# 音效文件尚未引入，静默失败（不打断游戏流程）
