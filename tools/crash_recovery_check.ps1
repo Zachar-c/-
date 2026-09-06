@@ -18,6 +18,15 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 
+# Start-Process 把当前进程环境复制进 ProcessStartInfo.Environment（大小写
+# 不敏感字典）；注入环境若同时带 http_proxy 与 HTTP_PROXY 等重复键会抛
+# ArgumentException（PS5.1 的 Env: 驱动器自身也会因重复键崩溃，故不能走
+# Get-Item/Remove-Item，改经 .NET 环境 API 删除——OS 层大小写不敏感，删掉
+# 重复对中的任一个即可）。子进程无需代理。
+foreach ($key in @('http_proxy', 'https_proxy', 'no_proxy', 'all_proxy')) {
+    try { [System.Environment]::SetEnvironmentVariable($key, $null, 'Process') } catch { }
+}
+
 # Resolve the Godot console executable through the shared tool resolver.
 $godotExe = & (Join-Path $PSScriptRoot 'godot.ps1') -Console
 
