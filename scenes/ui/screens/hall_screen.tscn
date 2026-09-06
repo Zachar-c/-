@@ -303,6 +303,9 @@ layout_mode = 2
 [node name="SavePanel" parent="Root/SettingsView" instance=ExtResource("2_panel")]
 layout_mode = 2
 
+[node name="AboutPanel" parent="Root/SettingsView" instance=ExtResource("2_panel")]
+layout_mode = 2
+
 [node name="SettingsBackButton" type="Button" parent="Root/SettingsView"]
 layout_mode = 2
 text = "返回大厅"

@@ -181,3 +181,30 @@ func _buttons_with_role(vnode: Variant, role: String) -> Array:
 			for child in children:
 				out.append_array(_buttons_with_role(child, role))
 	return out
+
+
+func test_settings_about_panel_credits_cc_by_sources() -> void:
+	## A-2 HIGH：CC BY 3.0 要求游戏内署名（game-icons.net 图标等）。
+	## 设置子视图内「关于与署名」面板必须呈现素材来源与许可证链接。
+	var snapshot: Dictionary = _running_snapshot()
+	snapshot["hall_subview"] = "settings"
+	var host := _mount_hall(Vector2i(1920, 1080), snapshot)
+	for i in 3:
+		await get_tree().process_frame
+	var about := _named(host, "AboutPanel")
+	assert_not_null(about, "settings must host the about/credits panel")
+	if about == null:
+		return
+	var texts: Array[String] = []
+	_collect_label_texts(about, texts)
+	var joined := "\n".join(texts)
+	assert_true(joined.contains("game-icons.net"), "about panel must credit game-icons.net")
+	assert_true(joined.contains("CC BY 3.0"), "about panel must show the CC BY 3.0 licence")
+	assert_true(joined.contains("OpenGameArt"), "about panel must credit the music sources")
+
+
+func _collect_label_texts(node: Node, out: Array[String]) -> void:
+	if node is Label:
+		out.append(str((node as Label).text))
+	for child in node.get_children():
+		_collect_label_texts(child, out)

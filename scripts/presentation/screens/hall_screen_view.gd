@@ -53,6 +53,7 @@ const CODEX_TAB_NAMES := {
 @onready var _display_panel = $Root/SettingsView/DisplayPanel
 @onready var _difficulty_panel = $Root/SettingsView/DifficultyPanel
 @onready var _save_panel = $Root/SettingsView/SavePanel
+@onready var _about_panel = $Root/SettingsView/AboutPanel
 @onready var _settings_back: Button = $Root/SettingsView/SettingsBackButton
 @onready var _settings_quit: Button = $Root/SettingsView/SettingsQuitButton
 
@@ -288,8 +289,37 @@ func _refresh_settings() -> void:
 	_build_display_panel()
 	_build_difficulty_panel()
 	_build_save_panel()
+	_build_about_panel()
 	MasterTheme.apply_button(_settings_back, "action")
 	MasterTheme.apply_button(_settings_quit, "danger")
+
+
+## A-2 HIGH：游戏内「关于」署名界面。CC BY 3.0（game-icons.net 图标）要求
+## 游戏内署名，仅 CREDITS.md 不够。静态文本随 SettingsView 呈现，不引入命令。
+func _build_about_panel() -> void:
+	if _about_panel == null:
+		return
+	_about_panel.setup("关于与署名", true, false)
+	var host: Node = _about_panel.content_host
+	_clear(host)
+	host.add_child(_label("© 2026《蛊路求生》· 同人习作（原著《蛊真人》）",
+			GuStyle.INK_HALL, 14))
+	host.add_child(_label("第三方开源素材按各自许可证使用，来源如下：",
+			GuStyle.INK_HALL, 13))
+	host.add_child(_label("· 图标：game-icons.net（CC BY 3.0）——lorc、delapouite、",
+			GuStyle.INK_SOFT, 12))
+	host.add_child(_label("  carl-olsen 等作者，见 assets/wenzhen/icons/game-icons/",
+			GuStyle.INK_SOFT, 12))
+	host.add_child(_label("· 场景音乐：OpenGameArt（CC BY 4.0 / CC BY 3.0 / CC0），",
+			GuStyle.INK_SOFT, 12))
+	host.add_child(_label("  Tri-Tachyon 等作者，见 assets/audio/music/",
+			GuStyle.INK_SOFT, 12))
+	host.add_child(_label("· 音效：Kenney.nl（CC0，无需署名）",
+			GuStyle.INK_SOFT, 12))
+	host.add_child(_label("详细素材署名清单见项目 CREDITS.md。",
+			GuStyle.INK_SOFT, 12))
+	host.add_child(_label("CC BY 3.0：creativecommons.org/licenses/by/3.0/",
+			GuStyle.INK_SOFT, 12))
 
 
 func _build_display_panel() -> void:
