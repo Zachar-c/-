@@ -43,9 +43,9 @@
    - ✅ A-F-06 音量设置界面：大厅设置界面音量从±10按钮改为三滑块（主音量/音效/音乐），实时预览（拖动音效音量滑块播放测试音效），通过AudioManager API直接生效
    - ✅ V-F-12 文字排版优化（部分完成）：GuStyle新增统一字号层级常量（FONT_SIZE_DISPLAY=28/TITLE=20/SUBTITLE=16/BODY=14/CAPTION=12/SMALL=10）和行高常量（LINE_HEIGHT_DISPLAY=1.2/TITLE=1.3/BODY=1.5/CAPTION=1.4）；各屏幕后续逐步替换硬编码数字
    - ✅ V-F-08 蛊虫插画扩容：新增5张蛊虫插画（水/火/土/风/雷），总共10张覆盖主要流派；gu_card_view.gd和gu_battle_hand_view.gd匹配逻辑已更新；修复V-F-04按钮hover动画的GDScript lambda闭包编译错误（内联实现）；战斗屏测试11/11全绿
-   - ✅ A-F-05 环境音乐系统（代码框架完成）：AudioManager扩展音乐注册表（9个场景音乐ID）+ 音乐播放器 + play_music/stop_music/crossfade_music方法 + 淡入淡出；run_controller接入_switch_scene_music辅助方法（根据_view_name交叉淡入淡出切换音乐，战斗1.0秒/其他1.5秒）；创建assets/audio/music/目录 + README.md（开源音乐来源推荐：OpenGameArt/Freesound/Kenney/YouTube Audio Library）；UI守卫测试7/7全绿
-   - ⏳ 音乐文件待引入：需通过浏览器从OpenGameArt等开源素材库手动下载9首场景背景音乐（直接下载URL返回404，需从页面获取真实链接）
-   - ⏳ V-F-09 敌人立绘扩容 / V-F-10 NPC立绘开源化：待后续批次实施
+   - ✅ A-F-05 环境音乐系统（全部完成）：AudioManager扩展音乐注册表（9个场景音乐ID）+ 音乐播放器 + play_music/stop_music/crossfade_music方法 + 淡入淡出；run_controller接入_switch_scene_music辅助方法（根据_view_name交叉淡入淡出切换音乐，战斗1.0秒/其他1.5秒）；从OpenGameArt下载9首开源背景音乐（3首CC0 + 2首CC BY 3.0 + 2首CC BY 4.0 + 2首复用），总大小约96MB；CREDITS.md已记录完整音乐来源和许可证；UI守卫测试7/7全绿
+   - ✅ V-F-09 敌人立绘扩容：新增2张敌人立绘（血蝠/火蝎），总共6张覆盖主要敌人类型；gu_enemy_actor_view.gd匹配逻辑已更新（新增蝠/蝎关键词匹配）；开源怪物立绘稀缺（OpenGameArt多为16x16像素精灵图），采用AI生成补充保持异常自然志图鉴风格统一；战斗屏测试11/11全绿
+   - ✅ V-F-10 NPC立绘开源化：从OpenGameArt搜索开源角色立绘（60 Terrible Character Portraits等），发现多为黑白美漫风格头像特写，不符合古风志怪全身立绘风格；采用AI生成2张NPC立绘（南疆黑市商人/南疆隐士），保持异常自然志图鉴风格统一；CREDITS.md已更新（原暂缓接入的旧版已替换为2张正式版）
    - 所有改动通过UI守卫测试7/7全绿 + 战斗屏测试11/11全绿
 
 ### 修订后执行队列
@@ -186,6 +186,9 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 前置：B1（驱动引用的旧路径已清理）。
 - 目标：`smoke_render/ui_capture/playthrough_smoke/crash_recovery_driver/integration_smoke/render_probe`（~2840 行）收敛为单一 `scripts/acceptance_driver.gd` + 一个入口参数（模式：smoke/capture/soak），保留崩溃恢复检查。
 - 验收：`tools/test.ps1 -Suite integration` 与 `tools/check.ps1` 绿；删除文件无残留引用。
+- **2026-09-06 完成态**（提交 `3951e4b` feat + `6e9afbc` fix）：6 驱动收编为单一 `scripts/acceptance_driver.gd`（2818 行）五模式进程内运行——smoke（含原 integration_smoke 真实主场景段）/ capture（--batch hall|map 保留）/ play（PLAYTHROUGH_* env 保留）/ render（SCENE/UNIQUE/VERDICT 保留）/ crash（CRASH_PHASE 三阶段保留）。`tools/crash_recovery_check.ps1` 改启动 `--mode=crash`；`export_presets.cfg` exclude 改 `scripts/acceptance_driver.gd`；契约测试（command_contract 11 / guards 3 / visual_contract 4 / export_filter 1）全绿。
+  - 顺带修复 legacy 假绿：旧 smoke 断言失败 quit(1) 后被结尾 quit() 覆盖成 exit 0——shop 屏起的 8 屏 verify 从未真正验证过。新实现单点 quit + 返回码穿透，并修正两处断言过期（Stage 包装层路径前缀；battle 手牌多行卡面按钮改 contains 匹配）。smoke headless 全绿 31 OK + INTEGRATION OK exit 0。
+  - 遗留：`.zcode/plan-sess_019430f7` 旧计划文档保留；battle 屏 verify 为真绿首验基线。
 
 ### Phase C 流派体系（C1 可与 A 并行）
 
