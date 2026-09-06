@@ -15,3 +15,8 @@ ui/**/*.gd
 .zcode/
 .godot_gui.log
 godot_gui.log
+
+# 截图捕获产物（验收截图不入库）
+*.png
+!assets/**/*.png
+__pycache__/

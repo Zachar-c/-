@@ -254,7 +254,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：Schema 校验绿；`rg "kill_move" scripts/presentation/` 零命中（确认无越界实现）。
 
 **D1b 跨流派合炼矩阵（打通 3-5 转合炼链）— 专项（2026-09-06 用户裁定开）**
-> 状态：⏳ 待派发（内容策展输入依赖）。背景：I-3 侦察发现全库仅 2 条配方产出 rank3+ 蛊（blood_moon_forged / moon_shadow_locked），180 只 rank3 + 244 只 rank4/5 蛊**无任何合炼产出途径**（gen_ 蛊各族独立无同名前身、loot 仅 elite epic 掉 1 只 4 转蛊）——「海量合成配方」核心支柱在 2→3 转断裂。用户裁定开专项补跨流派矩阵。
+> 状态：🔄 **首批已落（2026-09-06）**——方向矩阵 20 道定稿（`docs/superpowers/specs/2026-09-06-d1b-cross-school-matrix-draft.md`，待用户复核），rank3 层 178 条 `mx_` 方落表（生成器 `tools/generate_cross_school_matrix.py`：v1 `input_gu_ids` + `input_min_rank:2` + `output_rank:3` + v2 镜像 + `derived:` source 全合规，幂等可重跑），覆盖率 422→244 缺口（**rank3 180/180 ✅**）；目录启动校验 4/4 + 全量 unit 1088/1088 绿；待办：用户复核矩阵 → 次批 rank4（97）→ 三批 rank5（147）。背景：I-3 侦察发现全库仅 2 条配方产出 rank3+ 蛊（blood_moon_forged / moon_shadow_locked），180 只 rank3 + 244 只 rank4/5 蛊**无任何合炼产出途径**（gen_ 蛊各族独立无同名前身、loot 仅 elite epic 掉 1 只 4 转蛊）——「海量合成配方」核心支柱在 2→3 转断裂。用户裁定开专项补跨流派矩阵。
 - 目标：按 D1 v2 原则（3 转 = 2转+2转 跨流派；4 转 = 3+3；5 转 = 4+4）为全部高转蛊设计合炼链，打通玩家 1→5 转全链。`data/refinement_recipes.json` 增 fixed 方（school/rank/count 表达），Schema v2 已就绪不改。
 - ⚠️ 技术约束（2026-09-06 侦察钉死）：**fixed 执行只认 v1 `input_gu_ids`（具体蛊 id，`ShopRules.selected_input_instance_ids` 按 definition_id 匹配）；v2 `inputs` 仅是镜像语义层**——v2-only fixed 执行时零蛊消耗=白拿产出（仅产出 1 转基础蛊的 material 方如 stone_shell_bone_forge 除外）。故矩阵每条可执行配方**必须写 v1 输入蛊 id（在目录且语义合理）并附 v2 镜像**；现 8 fixed 全部合规（moon_shadow_locked 雾步以 qi_mov_1_07_gu 代理）。
 - 输入（策展）：逐族的「进阶主蛊 × 跨流派伴蛊」方向与语义锚点，源自 `2026-09-06-recipe-source-excerpts-draft.md` R1-R8 + 各道语料；缺目录蛊（幻月/月霓裳/月旋/雾步/影幕/痕石/旋风等）登记于 `2026-09-06-gu-catalog-rebuild-audit-draft.md` §6.1 审计清册二阶段，落库后补对应配方。
@@ -262,6 +262,8 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 边界：不阻塞 D2（D2 流程接线可用现有 2 转配方先打通，D1b 内容后补）；synergy 归杀招系统不在此设计。
 
 ### Phase S 切片内容组装（第一层封闭验证的实体工单）
+
+> 状态（2026-09-06 首批切片推进）：**S1 ✅**——light starter 换为用户规格四只（月光/小光/石皮/生机草），石皮蛊跨道携带豁免落 `test_school_starter_data`（10/10）；命名冲突已随 C4 消解（`stone_shell_gu`=石皮蛊）。**S4 ✅ 实证**——support_school/support_bonus 结算在 `v1_battle_resolver`（end_turn 清零），`test_s4_support_synergy` 4/4。**S2 ✅**——`data/buffs.json` 三 Buff（凡敌一滴血/十转杀蛊/开局元石）+ 目录校验（BUFF_EFFECTS）+ `RunState.run_buff_ids` + `start_new_run` buff_ids 参结算（grant_stones/grant_gu 落 `run_buffs_applied` 事件）+ facade 非 Boss 敌 hp=1 + V1 strike `aoe` 群伤 + 大厅 Buff 多选 UI + 契约同步；`test_slice_buffs` 4/4。**S5 部分 ✅**——卖出命令既有（sell_gu/sell_material）；传承信物 material + 商店 offer 落表。**S3 ✅**——`data/inheritance_sites.json`（遗葬·荒岭孤坟，1 转，品质权重 残破60/普通30/稀有10）+ 节点 `yizang_ridge` 经 **L1 anchor 保底投放**（`pre_boss` 行；遵守 2026-09-06 节点收窄裁定，不入随机池）+ 三选项门槛（同转阶侦察蛊 role=recon/slot=scout / 传承信物 / 离开）+ 品质种子化产出（残破 1--2 蛊；普通 3--4 蛊+1--2 蛊方；稀有 5--8 蛊+3--4 蛊方；蛊=同等级随机蛊入洞天，方=level+1 转随机 fixed 方入 `global_codex_ids` 局内解锁）+ 防重复继承 + `inheritance_claimed` 不可变事件；结算逻辑独立模块 `scripts/domain/inheritance_claim_rules.gd`（守 resolver 行数门限，现 2328≤2430）；`test_slice_inheritance` 4/4。**S6 ✅**——`pacing.ending_after_stage: "one"`：最终配置层 Boss 落败即全局收官（`_finish_battle_in_session` victory 钩子 → terminal_state=success → 统一结算 Ending，outcome=success→won，Run 存档随结算删除）；`test_slice_ending` 2/2；深层机制测试（moonlight_full_route / slay_gu_final_chapter / v1_five_layer_clear）以 `ending_after_stage=""` 覆写保留多层覆盖；地图骨架测试（map_generator/network/topology_v2）同步锚点契约后全绿。
 
 **S1 流派与初始蛊**
 - 前置：U1（光道入道痕清单）。
