@@ -20,3 +20,12 @@ godot_gui.log
 *.png
 !assets/**/*.png
 __pycache__/
+
+# 根目录截图捕获与 Godot 导入副产物（assets 下的 .import 保留）
+/*.png
+/*.png.import
+# 会话与本地工具痕迹
+MEMORY.md
+memory/
+.claude-drive-sweep.log
+tools/__pycache__/
