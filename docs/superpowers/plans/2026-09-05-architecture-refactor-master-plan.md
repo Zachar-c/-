@@ -167,8 +167,9 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 注意：scripts/audio/audio_manager.gd 仅去掉 `class_name AudioManager`（与 project.godot autoload 同名冲突），未触核心逻辑；A-2 后续音效接入由并行会话接管，commit 中 `data/audio_triggers.json` / `scripts/audio/audio_trigger_system.gd` 不在 A-1 范围，留仓外。B1 解锁：可继续删 `battle_resolver.gd` 本体。
 
 **A-2 视觉收官项（可与 B/D/S 并行派发）**
-- HIGH：游戏内「关于」署名界面（CC BY 3.0 要求游戏内署名，仅 CREDITS.md 不够）。
-- 中：音效系统接入（Freesound 开源音效，样本已在 `assets/audio/`，经 `AudioDirector` 路由）；NPC 立绘开源化（OpenGameArt 等替代 AI 生成）。
+> 状态：HIGH ✅ 2026-09-06（`3c0b12a`：设置→「关于与署名」面板，game-icons.net CC BY 3.0 / OpenGameArt / Kenney 署名+许可链接，hall 套件+smoke 绿）。音效资产实际来源为 **Kenney.nl（CC0）** 非 Freesound（并行 A-F-01 批），已随 2026-09-06 音频批落地。
+- HIGH：游戏内「关于」署名界面（CC BY 3.0 要求游戏内署名，仅 CREDITS.md 不够）。✅ 已实现。
+- 中：音效系统接入（Kenney.nl 开源音效已在 `assets/audio/`，经 `AudioManager`/`AudioDirector` 路由——双系统收敛方向随 AU 裁定）；NPC 立绘开源化（OpenGameArt 等替代 AI 生成）。
 - 低：蛊虫插画扩容（按 20 流派代表蛊抽样配图，不为 802 蛊全量）；按钮 hover 缩放动效；页面切换过渡；地图节点类型图标化（战斗→剑、黑市→币等开源图标）。
 - 验收：真实窗口逐项复核；新增开源素材全部回写 `CREDITS.md` 与 `assets_manifest.json`。
 
