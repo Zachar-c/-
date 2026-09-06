@@ -32,6 +32,33 @@ static func save_run(state: RunState, route: Array, replies: Array) -> Error:
 	)
 
 
+# E0 存档导入导出：把进行中冒险导出为调用方指定路径的 JSON（分享/备份）。
+# 载荷与固定路径存档完全一致（serialize_run：版本 + 校验和 + 路由 + 回复），
+# 导出是副本写入，不触碰 user:// 下的活动存档。
+static func export_run_to_file(state: RunState, route: Array, replies: Array, path: String) -> Error:
+	var payload := serialize_run(state, route, replies)
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return FileAccess.get_open_error()
+	file.store_string(JSON.stringify(payload, "\t"))
+	file.flush()
+	file.close()
+	return OK
+
+
+# 从任意路径导入存档：拒绝契约与 load_run_from_data 一致 —— 返回
+# {"ok": false, "reason", "message"} 拒绝字典（缺失/非法 JSON/版本不符/
+# 校验和不符），成功返回 {"state", "route", "replies"}，绝不静默空字典。
+# 校验复用 diagnose_run_data，因此导入文件与固定存档受同一 schema 版本门。
+static func import_run_from_file(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return _run_load_rejection({"ok": false, "kind": "missing"})
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
+		return _run_load_rejection({"ok": false, "kind": "invalid_json"})
+	return load_run_from_data(json.data)
+
+
 static func serialize_run(state: RunState, route: Array, replies: Array) -> Dictionary:
 	var state_data := state.to_save_data()
 	return {
