@@ -90,37 +90,11 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	var cards: Array[Dictionary] = []
 	if state.is_terminal():
 		return cards
-	var card_by_id: Dictionary = catalog.get("card_by_id", {})
-	# 两代战斗形状兼容（同预览同源，禁止第二套预览形状）：
-	# - V1 契约（v1_battle_resolver）：蛊行动从 gu_slots 投影，hand 是禁止字段；
-	#   已封/已用/已耗的槽位不出预览。
-	# - 旧战斗信封（battle.hand 路径，仅存量测试与 command_spec 旧信封使用）：
-	#   从 battle.hand 的实例卡投影，行为不变。
-	if battle.has("hand"):
-		for instance_value in battle.get("hand", []):
-			var instance: Dictionary = instance_value
-			var definition: Dictionary = card_by_id.get(str(instance.get("definition_id", "")), {})
-			if definition.is_empty():
-				continue
-			_append_battle_hand_card(cards, battle, state, catalog, definition, instance)
-	else:
-		for slot_value in battle.get("gu_slots", []):
-			var slot: Dictionary = slot_value
-			if bool(slot.get("is_sealed", false)) or bool(slot.get("used_this_turn", false)) or bool(slot.get("consumed", false)):
-				continue
-			# 2026-09-05 切片护栏：未声明 v1_effect 的 V1 slot 不得出现在预览里，
-			# 与执行同源 effect_reason，避免「预览可点、执行失败」的不一致。
-			if V1BattleResolver.effect_reason(slot.get("effect", {})) != "":
-				continue
-			var v1_instance: Dictionary = {
-				"instance_id": str(slot.get("instance_id", "")),
-				"definition_id": str(slot.get("definition_id", "")),
-				"is_sealed": false,
-			}
-			var v1_definition: Dictionary = card_by_id.get(str(slot.get("definition_id", "")), {})
-			if v1_definition.is_empty():
-				continue
-			_append_battle_hand_card(cards, battle, state, catalog, v1_definition, v1_instance)
+	# I-2a 收敛（2026-09-06）：蛊行动不再经此投影。V1 蛊行动的手牌行 id 即
+	# gu.<instance_id>，由 run_command_builder 直接构造 use_gu 命令（不经
+	# battle.action_card 信封）；旧卡蓝图层索引已随 B2 退役，原先以它查定义
+	# 的 hand/蛊槽投影恒空、属死代码，一并移除。本函数只服务 battle.action_card
+	# 信封所需的基本动作（拳脚/闪避/撤离等）与旧信封测试。
 	cards.append(_battle_card(battle, state, {
 		"id": "battle.basic.punch",
 		"title": "拳脚",
@@ -171,63 +145,6 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	}))
 	_assert_unique_ids(cards)
 	return cards
-
-
-static func _append_battle_hand_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, catalog: Dictionary, definition: Dictionary, instance: Dictionary) -> void:
-	var cost: Dictionary = definition.get("cost", {})
-	var essence_cost := int(cost.get("essence", 0))
-	var source_gu_ids: Array = definition.get("source_gu_ids", [])
-	if source_gu_ids.is_empty():
-		return
-	var source_gu_id := str(source_gu_ids[0])
-	var card_mode := str(definition.get("mode", ""))
-	# 2026-08-31 数值重做：催动真元 = 基础消耗 × 转数因子，预览与结算同源 §16.5。
-	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
-	var highest_rank := 1
-	for gu_id_value in source_gu_ids:
-		highest_rank = maxi(highest_rank, int(gu_by_id.get(str(gu_id_value), {}).get("rank", 1)))
-	var owned_rank := state.highest_owned_rank(source_gu_id)
-	var cult_factors: Dictionary = catalog.get("aptitude", {}).get("cultivation_factor", {})
-	var factor := int(cult_factors.get(str(clampi(maxi(highest_rank, owned_rank), 1, 5)), maxi(1, maxi(highest_rank, owned_rank))))
-	essence_cost *= factor
-	var affordable_essence := int(state.essence)
-	var executable := affordable_essence >= essence_cost
-	var risk: Array[String] = []
-	if source_gu_id == "thorn_whip_gu" and battle.get("clues", []).has("stone_dust"):
-		risk.append("对方脚下石粉未散，直接攻伐可能遭遇已知的护身反制。")
-	# Thorn strike shares the punch's swallow path in the resolver; the probe
-	# (small_light_gu) bypasses reactions and must not claim this risk.
-	if source_gu_id == "thorn_whip_gu" and card_mode != "bind":
-		risk.append_array(_counter_swallow_risk(battle))
-	if bool(definition.get("occupies_soul_slots", false)):
-		var occupied: Array = battle.get("active_gu_instance_ids", [])
-		var projected := occupied.duplicate()
-		for source_instance_id in instance.get("source_gu_instance_ids", []):
-			if not projected.has(source_instance_id):
-				projected.append(source_instance_id)
-		if projected.size() > SoulCapacityScript.battle_ops_cap(state):
-			risk.append("当前魂魄无法承受这次并发催动，会触发魂魄反噬。")
-	var target_type := _target_type_for_gu(source_gu_id, definition)
-	var valid_target_ids: Array[String] = []
-	if target_type == "single_enemy":
-		valid_target_ids.append_array(_living_enemy_ids(battle))
-	var expected: Array[String] = [_battle_effect(source_gu_id, card_mode)]
-	if factor > 1 and target_type == "single_enemy":
-		expected.append("%d 转蛊：威力与催动真元均按 ×%d 结算。" % [maxi(highest_rank, owned_rank), factor])
-	cards.append(_battle_card(battle, state, {
-		"id": "battle.%s.%s" % [str(battle.get("battle_id", "")), str(instance.get("instance_id", ""))],
-		"title": DisplayText.gu(source_gu_id),
-		"summary": _battle_effect(source_gu_id, card_mode),
-		"executable": executable,
-		"block_reason": "真元不足：需要 %d 点，当前仅有 %d 点。" % [essence_cost, affordable_essence] if not executable else "",
-		"cost": {"spirit": essence_cost},
-		"known_risk": risk,
-		"expected_gain": expected,
-		"unknown_note": "部分效果会受敌方状态和未暴露后手影响。" if not risk.is_empty() else "",
-		"remedy_hints": ["可先收势恢复判断，或改用真元消耗更低的蛊虫。"] if not executable else [],
-		"target_type": target_type,
-		"valid_target_ids": valid_target_ids,
-	}))
 
 
 static func _battle_card(battle: Dictionary, state: RunState, values: Dictionary) -> Dictionary:
