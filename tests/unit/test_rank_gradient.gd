@@ -2,18 +2,18 @@ extends GutTest
 
 
 # 2026-08-31 数值重做：蛊虫消耗/伤害同用转数因子 1:3:9:27:81（双曲线钉死）。
-
-
-const BattleScript = preload("res://scripts/domain/battle_resolver.gd")
+# 表在 data/aptitude.json cultivation_factor；battle_resolver.rank_factor 只是
+# 查表薄封装（2026-09-06 B1 退役），此处直接钉数据表保留同一数值契约。
 
 
 func test_rank_factor_table() -> void:
 	var catalog: Dictionary = ContentCatalog.load_all()
-	assert_eq(BattleScript.rank_factor(catalog, 1), 1)
-	assert_eq(BattleScript.rank_factor(catalog, 2), 3)
-	assert_eq(BattleScript.rank_factor(catalog, 3), 9)
-	assert_eq(BattleScript.rank_factor(catalog, 4), 27)
-	assert_eq(BattleScript.rank_factor(catalog, 5), 81)
+	var factors: Dictionary = catalog.get("aptitude", {}).get("cultivation_factor", {})
+	for rank in [1, 2, 3, 4, 5]:
+		var expected := 1
+		for _i in range(1, rank):
+			expected *= 3
+		assert_eq(int(factors.get(str(rank), -1)), expected, "rank %d factor" % rank)
 
 
 func test_player_capacity_follows_same_curve() -> void:

@@ -8,6 +8,9 @@ extends GutTest
 
 
 const BattleScript = preload("res://scripts/domain/battle_resolver.gd")
+# 分档表唯一真源：action_points.gd（legacy actions_per_turn 只是其薄委托，
+# B1-5 桶 A 2026-09-06：断言直接钉真源）。
+const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 
 
 func _make_battle(aptitude: String, soul: int = 1) -> Dictionary:
@@ -28,14 +31,14 @@ func _end_turn(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dict
 
 
 func test_actions_per_turn_tiers() -> void:
-	assert_eq(BattleScript.actions_per_turn(1), 2)
-	assert_eq(BattleScript.actions_per_turn(9), 2)
-	assert_eq(BattleScript.actions_per_turn(10), 3)
-	assert_eq(BattleScript.actions_per_turn(99), 3)
-	assert_eq(BattleScript.actions_per_turn(100), 4)
-	assert_eq(BattleScript.actions_per_turn(1000), 5)
-	assert_eq(BattleScript.actions_per_turn(10000), 6)
-	assert_eq(BattleScript.actions_per_turn(999999), 6, "超过 10000 不再增加")
+	assert_eq(ActionPointsScript.per_turn(1), 2)
+	assert_eq(ActionPointsScript.per_turn(9), 2)
+	assert_eq(ActionPointsScript.per_turn(10), 3)
+	assert_eq(ActionPointsScript.per_turn(99), 3)
+	assert_eq(ActionPointsScript.per_turn(100), 4)
+	assert_eq(ActionPointsScript.per_turn(1000), 5)
+	assert_eq(ActionPointsScript.per_turn(10000), 6)
+	assert_eq(ActionPointsScript.per_turn(999999), 6, "超过 10000 不再增加")
 
 
 func test_battle_start_seeds_action_pool_by_soul() -> void:
