@@ -266,6 +266,10 @@ F 里程碑验收（切片全流程真实窗口走查）
 
 > 状态（2026-09-06 首批切片推进）：**S1 ✅**——light starter 换为用户规格四只（月光/小光/石皮/生机草），石皮蛊跨道携带豁免落 `test_school_starter_data`（10/10）；命名冲突已随 C4 消解（`stone_shell_gu`=石皮蛊）。**S4 ✅ 实证**——support_school/support_bonus 结算在 `v1_battle_resolver`（end_turn 清零），`test_s4_support_synergy` 4/4。**S2 ✅**——`data/buffs.json` 三 Buff（凡敌一滴血/十转杀蛊/开局元石）+ 目录校验（BUFF_EFFECTS）+ `RunState.run_buff_ids` + `start_new_run` buff_ids 参结算（grant_stones/grant_gu 落 `run_buffs_applied` 事件）+ facade 非 Boss 敌 hp=1 + V1 strike `aoe` 群伤 + 大厅 Buff 多选 UI + 契约同步；`test_slice_buffs` 4/4。**S5 部分 ✅**——卖出命令既有（sell_gu/sell_material）；传承信物 material + 商店 offer 落表。**S3 ✅**——`data/inheritance_sites.json`（遗葬·荒岭孤坟，1 转，品质权重 残破60/普通30/稀有10）+ 节点 `yizang_ridge` 经 **L1 anchor 保底投放**（`pre_boss` 行；遵守 2026-09-06 节点收窄裁定，不入随机池）+ 三选项门槛（同转阶侦察蛊 role=recon/slot=scout / 传承信物 / 离开）+ 品质种子化产出（残破 1--2 蛊；普通 3--4 蛊+1--2 蛊方；稀有 5--8 蛊+3--4 蛊方；蛊=同等级随机蛊入洞天，方=level+1 转随机 fixed 方入 `global_codex_ids` 局内解锁）+ 防重复继承 + `inheritance_claimed` 不可变事件；结算逻辑独立模块 `scripts/domain/inheritance_claim_rules.gd`（守 resolver 行数门限，现 2328≤2430）；`test_slice_inheritance` 4/4。**S6 ✅**——`pacing.ending_after_stage: "one"`：最终配置层 Boss 落败即全局收官（`_finish_battle_in_session` victory 钩子 → terminal_state=success → 统一结算 Ending，outcome=success→won，Run 存档随结算删除）；`test_slice_ending` 2/2；深层机制测试（moonlight_full_route / slay_gu_final_chapter / v1_five_layer_clear）以 `ending_after_stage=""` 覆写保留多层覆盖；地图骨架测试（map_generator/network/topology_v2）同步锚点契约后全绿。
 
+### 环路减法审计（2026-09-06，基准：战斗→资源→商店→合炼→更强敌人→收官）
+
+逐条处置：#1 开局摘除签约（确认即 new_run，契约屏退主路径）✅；#2 战斗资源曝光（视觉会话已收敛）✅；#3 rest 冻结选项文案（条件式直白）✅；#4 装备语义（洞天投影无台阶；equipped_gu_ids 陈旧投影记债随 legacy 清理）✅；#5 冻结泄漏（恶名姿态/合成诅咒保留为佐料）✅；#6 杀招可发现性（预检带出）✅。**新发现并已修**：节点收窄致切片无合炼入口 → `refinement_hollow` 经 L1 anchor（mid 行）保底投放。负担预算：新玩家第一局 5 个概念（打仗/买卖/合炼/遗葬/结算），每步预检文案兜底，冻结系统不进教学面。
+
 **S1 流派与初始蛊**
 - 前置：U1（光道入道痕清单）。
 - 目标：schools.json 调整为每流派 4 只 1 转初始蛊；新增光道流派；落实石皮蛊（名字现被生成蛊 `gen_soul_attack_120_gu` 占用——新建策展条目 `stone_skin_gu` 或改派，冲突在 C2 映射审订同步定校）；开局流派选择仅定倾向与初始蛊，无加成；快照/UI 按新视觉呈现。
