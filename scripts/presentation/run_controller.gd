@@ -33,8 +33,8 @@ const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd"
 const SCREEN_PATHS := {}
 const MASTER_SCENE_PATHS := {
 	"Title": "res://scenes/ui/screens/hall_screen.tscn",
-	"Map": "res://scenes/ui_masters/wenzhen_map_master.tscn",
-	"Battle": "res://scenes/ui_masters/wenzhen_battle_master.tscn",
+	"Map": "res://scenes/ui/screens/map_screen.tscn",
+	"Battle": "res://scenes/ui/screens/battle_screen.tscn",
 	# 所有屏走同一套 instantiate + mount_snapshot 协议，本表即唯一路由表。
 	"Shop": "res://scenes/ui/screens/shop_screen.tscn",
 	"Rest": "res://scenes/ui/screens/rest_screen.tscn",

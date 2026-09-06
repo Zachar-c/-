@@ -32,8 +32,15 @@ const ENEMY_PORTRAIT_CURSE := Color(0.5, 0.4, 0.55, 0.45)
 const FOG_COLOR_EDGE := Color(0.6, 0.65, 0.7, 0.08)
 const FOG_COLOR_MID := Color(0.65, 0.7, 0.75, 0.12)
 
+# 萤火颜色：暖黄色光点，模拟南疆山林夜间萤火（第三批V-F-14动态背景）。
+const FIREFLY_COLOR := Color(1.0, 0.85, 0.4, 0.0)
+const FIREFLY_COLOR_ON := Color(1.0, 0.85, 0.4, 0.8)
+
 # 地图屏背景调变色：淡青茅山氛围，透明度低（0.18），不抢地图主体可读性。
 const MAP_BACKDROP_DIM := Color(0.5, 0.52, 0.55, 0.18)
+
+# 大厅屏背景调变色：极淡青茅山氛围（0.08），命簿背后的山水暗示，不影响可读性。
+const HALL_BACKDROP_DIM := Color(1.0, 1.0, 1.0, 0.08)
 
 # —— Ink / text ——
 const INK_PRIMARY  := Color("171814")       # 近黑墨色（主文字 / 主结构线）
@@ -100,6 +107,40 @@ const SPACE_6 := 32
 
 # —— Radius ——
 const RADIUS_SMALL := 4
+const RADIUS_MEDIUM := 6
+const RADIUS_LARGE := 8
+const RADIUS_PILL := 16
+
+# —— Shadow ——
+# 冷峻旧宣纸风格的阴影系统：低透明度、柔和偏移、不搞厚重投影。
+const SHADOW_SMALL_COLOR := Color(0, 0, 0, 0.06)
+const SHADOW_SMALL_SIZE := 2
+const SHADOW_SMALL_OFFSET := Vector2(0, 1)
+const SHADOW_MEDIUM_COLOR := Color(0, 0, 0, 0.10)
+const SHADOW_MEDIUM_SIZE := 4
+const SHADOW_MEDIUM_OFFSET := Vector2(0, 2)
+const SHADOW_LARGE_COLOR := Color(0, 0, 0, 0.15)
+const SHADOW_LARGE_SIZE := 8
+const SHADOW_LARGE_OFFSET := Vector2(0, 4)
+
+# —— Typography scale ——
+# 字体大小层级：从徽标到注释，统一走常量，不许散落裸数字。
+const FONT_DISPLAY := 96    # 大厅問眞徽标
+const FONT_H1 := 32         # 屏幕主标题
+const FONT_H2 := 24         # 面板标题
+const FONT_H3 := 18         # 卡片标题/小节标题
+const FONT_BODY := 14       # 正文
+const FONT_BODY_SMALL := 13 # 次要正文
+const FONT_CAPTION := 12    # 注释/标签
+const FONT_MICRO := 10      # 角标/极小文字
+
+# —— Decoration ——
+# 朱砂装饰线：标题栏左侧的短竖线，营造命簿批注感。
+const CINNABAR_RULE_WIDTH := 3
+const CINNABAR_RULE_HEIGHT := 18
+# 面板标题栏与内容区的分隔发丝线
+const TITLE_DIVIDER_COLOR := Color("c8c5ba")
+const TITLE_DIVIDER_WIDTH := 1
 
 static func rarity_color(rarity: String) -> Color:
 	match str(rarity):

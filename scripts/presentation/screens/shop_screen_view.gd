@@ -1,4 +1,4 @@
-class_name ShopScreenView
+﻿class_name ShopScreenView
 extends MarginContainer
 ## 黑市 / 商店屏（Godot 官方 .tscn 节点树版，替代 ui/screens/shop_screen.guitkx）。
 ##
@@ -55,6 +55,15 @@ func _ready() -> void:
 	_leave_button.pressed.connect(func(): _fire("leave"))
 	if not _snapshot.is_empty():
 		_refresh()
+
+
+## 加载NPC商人立绘：运行时加载绕过资源导入系统，失败时回退到玩家立绘。
+func _load_npc_merchant_portrait() -> Texture2D:
+	var path := "res://assets/wenzhen/npc/npc_merchant.png"
+	var img := Image.new()
+	if img.load(path) != OK:
+		return null
+	return ImageTexture.create_from_image(img)
 
 
 ## run_controller 的挂载入口（与各 master 场景同签名）。
@@ -156,12 +165,12 @@ func _build_offer_card(o: Dictionary) -> void:
 	var price_row := HBoxContainer.new()
 	price_row.add_theme_constant_override("separation", 4)
 	var price_icon := GuIconView.new()
-	price_icon.setup("gi_coin", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_SMALL)
+	price_icon.setup("gi_coin", GuStyle.INK_PRIMARY, GuIconView.SIZE_SMALL)
 	price_row.add_child(price_icon)
 	var price := Label.new()
 	price.text = "价格：" + str(o.get("price", ""))
 	price.add_theme_font_size_override("font_size", 14)
-	price.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	price.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	price_row.add_child(price)
 	card.content_host.add_child(price_row)
 
@@ -207,7 +216,7 @@ func _build_service_row(s: Dictionary) -> Node:
 	var meta_label := Label.new()
 	meta_label.text = "%s · %s" % [str(s.get("price", "")), remain_text]
 	meta_label.add_theme_font_size_override("font_size", 13)
-	meta_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	meta_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	text_col.add_child(meta_label)
 
 	var note := str(s.get("note", ""))
@@ -370,7 +379,7 @@ func _apply_panel_style(panel: PanelContainer) -> void:
 
 func _apply_base_fonts() -> void:
 	_title_label.add_theme_font_size_override("font_size", 22)
-	_title_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_inflation_label.add_theme_font_size_override("font_size", 13)
 	_inflation_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	_npc_label.add_theme_font_size_override("font_size", 15)
@@ -408,9 +417,57 @@ func _apply_stage_style() -> void:
 	backdrop.z_index = -1
 	_shop_stage.add_child(backdrop)
 
+	# 雾气层：半透明冷灰水平渐变，模拟南疆湿冷山雾。
+	var fog_grad := Gradient.new()
+	fog_grad.set_color(0, GuStyle.FOG_COLOR_EDGE)
+	fog_grad.set_color(0.5, GuStyle.FOG_COLOR_MID)
+	fog_grad.set_color(1, GuStyle.FOG_COLOR_EDGE)
+	var fog_tex := GradientTexture2D.new()
+	fog_tex.gradient = fog_grad
+	fog_tex.fill = GradientTexture2D.FILL_LINEAR
+	fog_tex.width = 512
+	fog_tex.height = 256
+	var fog := TextureRect.new()
+	fog.texture = fog_tex
+	fog.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fog.stretch_mode = TextureRect.STRETCH_SCALE
+	fog.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fog.z_index = -1
+	_shop_stage.add_child(fog)
+	var fog_tween := create_tween()
+	fog_tween.set_loops()
+	fog_tween.tween_property(fog, "modulate:a", 0.15, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fog_tween.tween_property(fog, "scale", Vector2(1.05, 1.02), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fog_tween.tween_property(fog, "modulate:a", 0.08, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fog_tween.tween_property(fog, "scale", Vector2(1.0, 1.0), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	# 萤火层：4-6个暖黄色光点，随机闪烁+缓慢漂移。
+	for i in range(5):
+		var firefly := ColorRect.new()
+		firefly.color = GuStyle.FIREFLY_COLOR
+		firefly.size = Vector2(3, 3)
+		firefly.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		firefly.z_index = -1
+		var sx := randf_range(50.0, 500.0)
+		var sy := randf_range(50.0, 250.0)
+		firefly.position = Vector2(sx, sy)
+		_shop_stage.add_child(firefly)
+		var ft := create_tween()
+		ft.set_loops()
+		var bd := randf_range(2.5, 4.5)
+		var dx := randf_range(-25.0, 25.0)
+		var dy := randf_range(-15.0, 15.0)
+		ft.tween_property(firefly, "color:a", 0.7, bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		ft.tween_property(firefly, "position", Vector2(sx + dx, sy + dy), bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		ft.tween_property(firefly, "color:a", 0.1, bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		ft.tween_property(firefly, "position", Vector2(sx, sy), bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
 	# 角色立绘：黑市交易姿态，放在舞台右侧调暗半透明
+	# NPC商人立绘：优先加载npc_merchant.png，失败时回退到玩家立绘
+	var npc_tex := _load_npc_merchant_portrait()
+	var portrait_tex: Texture2D = npc_tex if npc_tex != null else PlayerPortrait
 	var portrait := TextureRect.new()
-	portrait.texture = PlayerPortrait
+	portrait.texture = portrait_tex
 	portrait.custom_minimum_size = Vector2(120, 160)
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

@@ -122,7 +122,7 @@ func _label_of(text: String, color: Color, size: int) -> Label:
 
 
 func _apply_base_fonts() -> void:
-	_title_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	$Root/HeaderRow/SubtitleLabel.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	$Root/primary_decision_surface/SectionTitle.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_pool_fallback_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)

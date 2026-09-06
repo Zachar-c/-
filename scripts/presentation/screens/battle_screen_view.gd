@@ -1,4 +1,4 @@
-class_name BattleScreenView
+﻿class_name BattleScreenView
 extends MarginContainer
 
 ## 战斗屏（Godot 官方 .tscn 节点树版，替代 ui/screens/battle_screen.guitkx）。
@@ -138,6 +138,31 @@ func _apply_stage_style() -> void:
 	fog_tween.tween_property(fog, "scale", Vector2(1.05, 1.02), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	fog_tween.tween_property(fog, "modulate:a", 0.08, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	fog_tween.tween_property(fog, "scale", Vector2(1.0, 1.0), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	# 萤火层：5-8个暖黄色光点，随机闪烁+缓慢漂移，模拟南疆山林夜间萤火。
+	# 设计文档§12：环境氛围允许低频率循环，不持续吸睛。
+	var firefly_count := 6
+	for i in range(firefly_count):
+		var firefly := ColorRect.new()
+		firefly.color = GuStyle.FIREFLY_COLOR
+		firefly.size = Vector2(3, 3)
+		firefly.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		firefly.z_index = -1
+		# 随机初始位置（舞台范围内）
+		var start_x := randf_range(50.0, 600.0)
+		var start_y := randf_range(50.0, 300.0)
+		firefly.position = Vector2(start_x, start_y)
+		_battle_stage.add_child(firefly)
+		# 萤火闪烁+漂移：透明度呼吸+位置缓慢移动，随机时长避免同步
+		var ft := create_tween()
+		ft.set_loops()
+		var blink_duration := randf_range(2.0, 4.0)
+		var drift_x := randf_range(-30.0, 30.0)
+		var drift_y := randf_range(-20.0, 20.0)
+		ft.tween_property(firefly, "color:a", 0.8, blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		ft.tween_property(firefly, "position", Vector2(start_x + drift_x, start_y + drift_y), blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		ft.tween_property(firefly, "color:a", 0.1, blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		ft.tween_property(firefly, "position", Vector2(start_x, start_y), blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
 ## 规则层：手牌区浅色纸面背景，与整体命簿基调一致。
@@ -496,11 +521,13 @@ func _refresh_enemies(state: Dictionary) -> void:
 			if s is Dictionary:
 				sset[str(s.get("name", ""))] = true
 		_prev_enemy_statuses[eid] = sset
-	# 触发动效（死亡优先，状态施加次之，不重复触发）
+	# 触发动效+音效（死亡优先，状态施加次之，不重复触发）
 	if death_triggered:
 		play_ink_spread()
+		AudioManager.play_sfx("battle_death")
 	elif status_triggered:
 		play_ink_spread()
+		AudioManager.play_sfx("battle_status_apply")
 
 
 func _refresh_hand(state: Dictionary) -> void:

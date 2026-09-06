@@ -86,11 +86,39 @@ func _ready() -> void:
 
 
 ## 大厅场景中 .tscn 硬编码的颜色统一走 GuStyle token（2026-09-06 视觉审计修复）。
+## 同时添加淡青茅山背景层和标题对比度修复。
 func _apply_paper_colors() -> void:
 	_hall_paper.color = GuStyle.PAPER_HALL
 	_title_rule.color = GuStyle.CINNABAR
 	_primary_rule.color = GuStyle.RULE_HALL
 	_archive_rule.color = GuStyle.RULE_HALL
+	# 标题对比度修复：問眞标题使用墨色，避免白色低对比度
+	_hall_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_hall_title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.15))
+	_hall_title.add_theme_constant_override("shadow_offset_x", 1)
+	_hall_title.add_theme_constant_override("shadow_offset_y", 1)
+	# 淡青茅山背景层：半透明，营造命簿背后的南疆山水氛围
+	_apply_hall_backdrop()
+
+
+## 大厅屏淡青茅山背景：在纸面之上添加半透明山水层，营造命簿背后的南疆氛围。
+func _apply_hall_backdrop() -> void:
+	if _hall_paper == null or not is_instance_valid(_hall_paper):
+		return
+	# 检查是否已添加背景层，避免重复
+	if _hall_paper.get_node_or_null("HallBackdrop") != null:
+		return
+	var backdrop := TextureRect.new()
+	backdrop.name = "HallBackdrop"
+	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	# 大厅屏是规则层浅色命簿，背景使用极淡的山水（透明度0.08），不影响可读性
+	backdrop.modulate = GuStyle.HALL_BACKDROP_DIM
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# 作为HallPaper的子节点，显示在纸面之上、UI之下
+	_hall_paper.add_child(backdrop)
 
 
 ## run_controller 的挂载入口（与各屏同签名）。
