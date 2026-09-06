@@ -2,14 +2,17 @@ extends GutTest
 
 
 # Task C1-min §16.13 part 1: contract data table + validation, the swear
-# command gate, rule aggregation and every in-run consumer (battle damage,
-# shop price, loot materials, turn essence, hp max penalty) plus the run-save
-# round trip.
+# command gate, rule aggregation and every in-run consumer (shop price, loot
+# materials, hp max penalty) plus the run-save round trip.
+# NOTE (B1 bucket C 2026-09-06): the battle-time rule keys (strike_damage_pct
+# / enemy_damage_pct / turn_essence_bonus / enemy_hp_pct) were consumed only
+# by the legacy battle engine (strike channel, intent damage, essence tide at
+# turn start, enemy hp at start). V1/facade has no contract hook, so the
+# battle-consumer legs were removed with battle_resolver.gd; the port gap is
+# tracked as domain debt (mirrors the DDA lever retirement, ecd1652).
 
 
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
-const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
@@ -242,7 +245,7 @@ func test_aggregate_sums_signed_rule_values_across_sworn_contracts() -> void:
 	assert_eq(int(totals.get("hall_material_bonus_pct", 0)), 50)
 
 
-func test_enemy_hp_pct_contract_scales_regular_and_boss_battles() -> void:
+func test_enemy_hp_pct_rule_key_is_aggregated() -> void:
 	var tuned := catalog.duplicate(true)
 	tuned["contracts"] = catalog["contracts"].duplicate(true)
 	tuned["contracts"]["entries"] = catalog["contracts"]["entries"].duplicate(true)
@@ -263,69 +266,8 @@ func test_enemy_hp_pct_contract_scales_regular_and_boss_battles() -> void:
 	var state := RunState.new_run(101)
 	state.contracts = ["enemy_vitality_trial"]
 	assert_eq(int(ContractRulesScript.aggregate(state, tuned).get("enemy_hp_pct", 0)), -90)
-
-	var regular := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, state, tuned)
-	assert_eq(int(regular["enemy_hp"]), 1)
-	assert_eq(int((regular["enemies"][0] as Dictionary)["hp"]), 1)
-
-	var boss := BattleResolverScript.start({"enemy_kind": "miasma_vein_lord", "layer": 5}, state, tuned)
-	assert_eq(int(boss["enemy_hp"]), 1)
-	assert_eq(int((boss["enemies"][0] as Dictionary)["hp"]), 1)
-
-
-func test_strike_damage_pct_scales_player_strikes_not_curse_channel() -> void:
-	var battle := {"enemy_hp": 100, "intel_bonus": 0, "contract_mods": {"strike_damage_pct": 30}}
-	BattleResolver._strike(battle, 10)
-	assert_eq(int(battle["enemy_hp"]), 87)
-
-	var floored := {"enemy_hp": 100, "intel_bonus": 0, "contract_mods": {"strike_damage_pct": 25}}
-	BattleResolver._strike(floored, 1)
-	assert_eq(int(floored["enemy_hp"]), 99)
-
-	var intel_flat := {"enemy_hp": 100, "intel_bonus": 2, "contract_mods": {}}
-	BattleResolver._strike(intel_flat, 3)
-	assert_eq(int(intel_flat["enemy_hp"]), 95)
-
-	var cursed := {"pending_curse_damage": 0, "contract_mods": {"strike_damage_pct": 100}}
-	BattleResolver._strike(cursed, 5, "curse")
-	assert_eq(int(cursed["pending_curse_damage"]), 5)
-
-
-func test_enemy_damage_pct_scales_enemy_intent_damage() -> void:
-	var plain := RunState.new_run(7)
-	plain.health = 20
-	plain.max_health = 20
-	var control := BattleResolver.apply_enemy_pre_turn(
-			BattleResolver.start({"enemy_kind": "ridge_hound", "first_mover": "enemy"}, plain, catalog),
-			plain, catalog)
-	assert_eq(int(control["state"].health), 18)
-
-	var sworn := RunState.new_run(7)
-	sworn.health = 20
-	sworn.max_health = 20
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound", "first_mover": "enemy"}, sworn, catalog)
-	battle["contract_mods"] = {"enemy_damage_pct": 50}
-	var boosted := BattleResolver.apply_enemy_pre_turn(battle, sworn, catalog)
-	# Pounce deals 2 since the opening-fairness retune: floor(2 * 1.5) = 3.
-	assert_eq(int(boosted["state"].health), 17)
-
-
-func test_turn_essence_bonus_grants_essence_at_player_turn_start() -> void:
-	var run := RunState.new_run(11)
-	var battle := BattleResolver.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	battle["contract_mods"] = {"turn_essence_bonus": 1}
-	var before := int(run.essence)
-	var turn := BattleResolver.take_turn(battle, {"type": "end_turn"}, run, catalog)
-	assert_false(bool(turn["finished"]))
-	# 2026-08-31 数值重做：收势回气 = 上限×回复比（丙 20%×20 = 4），潮汐在其上叠加。
-	assert_eq(int(turn["state"].essence), mini(before + 4, int(turn["state"].essence_capacity)))
-	assert_eq(str(turn["state"].event_log.back()["action"]), "contract_essence_tide")
-
-	var clean := RunState.new_run(11)
-	var plain := BattleResolver.start({"enemy_kind": "ridge_hound"}, clean, catalog)
-	var unchanged := BattleResolver.take_turn(plain, {"type": "end_turn"}, clean, catalog)
-	# 无潮汐时仍有收势回气。
-	assert_eq(int(unchanged["state"].essence), mini(int(clean.essence) + 4, int(clean.essence_capacity)))
+	# The battle-time scaling of that aggregate (legacy start() reading
+	# enemy_hp_pct) died with battle_resolver.gd - no V1 hook (B1 bucket C).
 
 
 func test_shop_price_pct_lifts_buy_prices_only() -> void:
@@ -363,36 +305,17 @@ func test_material_bonus_and_penalty_adjust_loot_counts_with_zero_clamp() -> voi
 	assert_eq((cut["loot"]["material_ids"] as Array).size(), 0)
 
 
-# N1 §16.13 MINOR closeout: the enemy-damage boost must never multiply the
-# backlash channel, the essence tide must respect the aperture cap, and the
-# shop lift stays clamped at zero until §16.13 grows discount rule keys.
+# N1 §16.13 MINOR closeout survivors: the blood-pact desc names the backlash
+# channel exemption and the essence tide desc names the aperture cap; the shop
+# lift stays clamped at zero until §16.13 grows discount rule keys. The
+# battle-time halves of those guarantees (enemy-damage boost, curse channel,
+# tide clamp) died with battle_resolver.gd - no V1 hook (B1 bucket C).
 func test_blood_pact_declares_backlash_channel_exemption() -> void:
 	assert_true(str(catalog["contract_entry_by_id"]["blood_pact"]["desc"]).contains("反噬直扣不受此加成"))
 
 
-func test_enemy_damage_pct_never_multiplies_curse_channel() -> void:
-	var cursed := RunState.new_run(7)
-	cursed.health = 20
-	cursed.max_health = 20
-	cursed = CurseRegistryScript.gain_curse(cursed, "gu_erosion", "test_source")
-	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, cursed, catalog)
-	battle["contract_mods"] = {"enemy_damage_pct": 50}
-	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, cursed, catalog)
-	# Intent damage 2 -> floor(2 * 1.5) = 3; gu_erosion stage-one intensity 1
-	# rides the backlash channel and stays exactly 1.
-	assert_eq(int(turn["state"].health), 16)
-
-
-func test_essence_tide_clamps_to_aperture_cap_and_declares_it() -> void:
+func test_essence_tide_desc_declares_aperture_cap() -> void:
 	assert_true(str(catalog["contract_entry_by_id"]["essence_tide"]["desc"]).contains("不超过真元上限"))
-
-	var run := RunState.new_run(11)
-	var cap := int(run.cave_aperture["essence_max"])
-	run.essence = cap
-	var battle := BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	battle["contract_mods"] = {"turn_essence_bonus": 1}
-	var turn := BattleResolverScript.take_turn(battle, {"type": "end_turn"}, run, catalog)
-	assert_eq(int(turn["state"].essence), cap)
 
 
 func test_shop_price_pct_negative_values_stay_clamped_at_zero() -> void:

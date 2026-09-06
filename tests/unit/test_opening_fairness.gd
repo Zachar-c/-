@@ -1,19 +1,23 @@
 extends GutTest
 
 
-# Opening fairness regression (2026-08-27 playthrough findings):
-# 1. A broke player (essence 0) could not play a single gu card on turn 1 --
-#    every battle now starts with a base first-turn energy grant of 1.
+# Opening fairness regression (2026-08-27 playthrough findings), re-anchored
+# on the V1 battle (B1 bucket C 2026-09-06):
+# 1. A broke player could not play a single gu card on turn 1. In V1 the fix
+#    is structural: punch costs zero true_qi (one thought only) and thoughts
+#    are seeded from soul at battle start, so a 0-true-qi opener can always
+#    act. Gu casts at 0 true_qi are rejected (insufficient_true_qi).
 # 2. ridge_hound pounce at 3 damage per turn vs 6 opening HP was a forced
-#    loss against a 3 HP enemy; the intent now deals 2.
-# 3. In-battle card previews must surface live direct-strike reactions
-#    (§16.5) on the paths the resolver actually swallows: basic punch and
-#    thorn whip strike. The light probe bypasses reactions and must NOT
-#    claim the risk.
+#    loss against a 3 HP enemy; the intent now deals 2 (data pin below).
+# NOTE: the in-battle preview legs (punch warns about the live counter, the
+# light probe must not claim it, guarding clears it) asserted over the legacy
+# battle envelope (battle.hand + enemy reactions arrays). V1 battles carry no
+# reaction dicts, so those fixtures cannot migrate; re-basing the counter
+# forewarning onto the V1 shape is tracked with the action_preview_service
+# work item (B1 bucket C).
 
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
-const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 
 var catalog: Dictionary
@@ -30,63 +34,30 @@ func test_ridge_hound_intent_deals_two_damage() -> void:
 		"pounce damage must be 2 so a 6 HP opener is survivable")
 
 
-func test_battle_starts_with_soul_action_pool() -> void:
+func test_battle_starts_with_full_action_pool() -> void:
 	var run = RunStateScript.new_run(101)
-	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	assert_eq(int(battle["actions_max"]), BattleResolverScript.actions_per_turn(int(run.cultivator.get("soul", 1))), "行动池 = 魂魄底蕴分档")
-	assert_eq(int(battle["actions_left"]), int(battle["actions_max"]), "起手可用")
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	assert_true(bool(battle.get("player", {}).has("thoughts")), "V1 battle seeds thoughts")
+	var thoughts := int(battle["player"]["thoughts"])
+	assert_gt(thoughts, 0, "起手必有念头可行动")
+	assert_eq(int(battle["player"]["used_this_turn"]), 0, "起手全部念头可用")
+	assert_eq(int(battle["player"]["true_qi"]), int(battle["player"]["true_qi_max"]),
+		"V1 起手真元满（不存在零真元开局卡死）")
 
 
-func test_essence_zero_player_still_acts_via_punch_then_blocks() -> void:
-	# 2026-08-31 统一行动点：真元 0 不能催蛊，但拳脚零真元耗 1 行动，
-	# 一转玩家（魂魄 1 → 2 行动）起手必然可行动。
+func test_zero_true_qi_player_still_acts_via_punch_then_blocks() -> void:
+	# 真元 0 不能催蛊，但拳脚零真元耗 1 念头；魂魄 1 → 2 念头起手必然可行动。
 	var run = RunStateScript.new_run(101)
-	run.essence = 0
-	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	var gu_attempt := BattleResolverScript.take_turn(battle, {"type": "use_gu", "gu_id": "small_light_gu"}, run, catalog)
-	assert_true(gu_attempt["feeds"].has("insufficient_essence"), "零真元催蛊被拒")
-	var punch := BattleResolverScript.take_turn(battle, {"type": "basic_attack"}, run, catalog)
+	var battle: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
+	var slots: Array = battle.get("gu_slots", [])
+	assert_false(slots.is_empty(), "starter gu must be offered in V1 slots")
+	battle["player"]["true_qi"] = 0
+	var instance_id := str((slots[0] as Dictionary).get("instance_id", ""))
+	var gu_attempt := FacadeScript.apply_turn(battle, run, {"type": "use_gu", "instance_id": instance_id}, catalog)
+	assert_false(bool(gu_attempt.get("accepted", true)), "零真元催蛊被拒")
+	assert_eq(gu_attempt.get("feeds", []), ["insufficient_true_qi"])
+	var thoughts_before := int(battle["player"]["thoughts"])
+	var punch := FacadeScript.apply_turn(battle, run, {"type": "basic_attack"}, catalog)
 	assert_true(bool(punch.get("accepted", false)), "拳脚零真元可行动")
-	assert_eq(int(punch["battle"]["actions_left"]), int(battle["actions_max"]) - 1, "拳脚耗 1 行动点")
+	assert_eq(int(punch["battle"]["player"]["thoughts"]), thoughts_before - 1, "拳脚耗 1 念头")
 
-
-func test_punch_card_warns_about_live_direct_strike_reaction() -> void:
-	var run = RunStateScript.new_run(101)
-	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, run, catalog)
-	var punch := {}
-	for card in cards:
-		if str(card.get("id", "")) == "battle.basic.punch":
-			punch = card
-	assert_false(punch.is_empty(), "punch card must be offered")
-	var risk_text := "\n".join(punch.get("known_risk", []))
-	assert_true(risk_text.contains("反口撕咬"), "punch preview must name the live counter")
-	assert_true(risk_text.contains("吞下"), "punch preview must state the consequence")
-
-
-func test_probe_card_does_not_claim_reaction_risk_it_does_not_trigger() -> void:
-	var run = RunStateScript.new_run(101)
-	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, run, catalog)
-	for card in cards:
-		if str(card.get("title", "")) == "小光蛊":
-			var risk_text := "\n".join(card.get("known_risk", []))
-			assert_false(risk_text.contains("反口撕咬"),
-				"the light probe bypasses reactions, its preview must not claim the counter risk")
-			return
-	assert_true(false, "small light gu card must be offered in the opening hand")
-
-
-func test_bound_counter_clears_the_punch_warning() -> void:
-	var run = RunStateScript.new_run(101)
-	var battle: Dictionary = BattleResolverScript.start({"enemy_kind": "ridge_hound"}, run, catalog)
-	# The hound's counter is a "guarded"-status reaction: guarding clears it.
-	battle["flags"].append("guarded")
-	var cards := ActionPreviewServiceScript.preview_battle_actions(battle, run, catalog)
-	for card in cards:
-		if str(card.get("id", "")) == "battle.basic.punch":
-			var risk_text := "\n".join(card.get("known_risk", []))
-			assert_false(risk_text.contains("反口撕咬"),
-				"a bound enemy cannot retaliate, the warning must clear")
-			return
-	assert_true(false, "punch card must be offered")

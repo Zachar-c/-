@@ -1,24 +1,19 @@
 extends GutTest
 
 
-# Spec-v4 phase-1 (T1.2): permanent growth gates. The two god files must not
-# keep growing with new rules (resolver edits and battle edits only shrink or
-# stay flat), and the central rank multiplier must live in exactly one place.
+# Spec-v4 phase-1 (T1.2): permanent growth gates. The god file must not
+# keep growing with new rules (resolver edits only shrink or stay flat), and
+# the central rank multiplier must live in exactly one place.
+# NOTE (B1 bucket C 2026-09-06): the battle_resolver line-cap leg died with
+# battle_resolver.gd (the V1 engine is not a god file).
 
 
 const RESOLVER_PATH := "res://scripts/domain/resolver.gd"
-const BATTLE_RESOLVER_PATH := "res://scripts/domain/battle_resolver.gd"
 # NOTE: plan global-invariant line is 2457. The 9/1 batch pushed resolver past
 # it; a pre-phase-2 shrink (economy_rules.gd extraction) brought it back under.
 # T10.2 terminal values (one-way down from the 2457/1516 plan caps): the
 # phase-10 abolitions ended lower than both pre-deletion baselines (2452/1514).
 const RESOLVER_LINE_CAP := 2430
-# Plan standing cap is 1516 (T1.2). The V1 battle2-ledger lifecycle fix briefly
-# mounted hook calls inside battle_resolver.gd and raised this cap to 1548 to
-# hide the over-limit; that leak was re-extracted (the production facade owns
-# the ledger), so the god file is back at 1515 and the cap returns to the plan
-# value instead of masking growth.
-const BATTLE_RESOLVER_LINE_CAP := 1516
 
 
 func _line_count(path: String) -> int:
@@ -32,12 +27,6 @@ func test_resolver_stays_within_the_line_cap() -> void:
 	var lines := _line_count(RESOLVER_PATH)
 	assert_true(lines <= RESOLVER_LINE_CAP,
 			"resolver.gd must stay <= %d lines (currently %d): new rules live in their own modules" % [RESOLVER_LINE_CAP, lines])
-
-
-func test_battle_resolver_stays_within_the_line_cap() -> void:
-	var lines := _line_count(BATTLE_RESOLVER_PATH)
-	assert_true(lines <= BATTLE_RESOLVER_LINE_CAP,
-			"battle_resolver.gd must stay <= %d lines (currently %d)" % [BATTLE_RESOLVER_LINE_CAP, lines])
 
 
 func test_rank_multiplier_has_exactly_one_definition_site() -> void:
