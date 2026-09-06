@@ -36,10 +36,10 @@ UI (scenes + scripts/ui)
 
 | screen | 构建函数 | 关键键（现状） |
 | --- | --- | --- |
-| `Title` | `hall()` | 大厅进度/图鉴/开始入口 |
+| `Title` | `hall()` | 大厅进度/图鉴/开始入口、`selected_school`/`selected_school_name`（选中流派中文名，`_school_display_name`） |
 | `Map` | `map()` | `nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、可达集、当前层、`inventory` |
 | `Encounter` | `encounter()` | 遭遇会话、`node_actions[]`（含 `cost/executable/block_reason/remedy_hints`） |
-| `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version` |
+| `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`（卡含 `school_label` 中文流派名）、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version` |
 | `Shop` | `shop()` | 货架报价、`_shop_services[]` |
 | `Rest` | `rest()` | `choices[]`（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集，外加节点允许的 `wash`）、`upgrade_targets` / `remove_card_targets` / `imprint_targets` / `curse_targets`、每个 `choice.disabled/reason/curse_warning/requires_confirm` |
 | `Refine` | `refine()` | 炼蛊台状态、投入位、候选 |
@@ -47,6 +47,8 @@ UI (scenes + scripts/ui)
 | `Npc` | `npc()` | NPC 交涉/交易 |
 | `ContentError` | `content_error()` | 目录校验错误（`ContentCatalog.validate` 非空时的兜底屏） |
 | 调试 | `debug()` | 保底计数/池排除/种子/事件数/DDA 分位（只读，§16.22） |
+
+流派中文名透出（C2 2026-09-05 起，UI 不裸显英文 school id；统一 `_school_display_name(catalog, school_id)`，源 `schools.json` v2）：大厅选中流派 `selected_school_name`；图鉴/书库蛊条目与休整升级候选等携带 `school`（英文 id）+ `school_name`（中文）；battle 手牌卡携带 `school_label`（中文，供卡面 tooltip 拼接）。
 
 局内公共快照同时携带以下只读键：
 
