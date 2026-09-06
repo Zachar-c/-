@@ -6,7 +6,7 @@ extends GutTest
 # settlement and the save round-trip — while keeping its audit trail.
 
 
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
+const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const RUN_CONTROLLER = preload("res://scripts/presentation/run_controller.gd")
@@ -26,12 +26,12 @@ func test_debug_writes_survive_formal_battle_and_death_settlement() -> void:
 	assert_true(controller.state.refined_gu_ids.has("force_gu"),
 			"formal legacy projections see the debug gu")
 	assert_eq(int(controller.state.stone), 40, "absolute stone write applied")
-	var battle := BattleResolverScript.start(
-			{"enemy_kind": "ridge_hound", "enemy_hp": 12}, controller.state, controller.catalog)
-	var turned := BattleResolverScript.take_turn(
-			battle, {"type": "basic_attack"}, controller.state, controller.catalog)
+	var battle: Dictionary = FacadeScript.start(
+			{"enemy_kind": "ridge_hound"}, controller.state, controller.catalog)
+	var turned: Dictionary = FacadeScript.apply_turn(
+			battle, controller.state, {"type": "basic_attack"}, controller.catalog)
 	assert_true(bool(turned.get("accepted", false)),
-			"battle accepts actions with debug-gained cards in the deck")
+			"battle accepts actions after debug-gained gu in the run")
 	controller.state = turned["state"]
 	controller.force_death_for_test("debug_probe_blow")
 	assert_eq(str(controller.state.terminal_state), "dead",

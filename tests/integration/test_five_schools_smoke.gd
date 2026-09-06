@@ -2,11 +2,12 @@ extends GutTest
 
 
 # S2-S5 five-school cross-cut smoke: every school must survive the minimal
-# closed loop — starter injection, battle action, victory loot, (refine:
-# battle synthesis), death finalization, hall reset. All rolls are seeded.
+# closed loop — starter injection, battle action, victory loot, death
+# finalization, hall reset. All rolls are seeded. In-battle refine synthesis
+# was legacy-engine-only and died with the V1 convergence (B1 bucket C).
 
 
-const BattleResolverScript = preload("res://scripts/domain/battle_resolver.gd")
+const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const RUN_CONTROLLER = preload("res://scripts/presentation/run_controller.gd")
 
@@ -29,25 +30,26 @@ func test_every_school_runs_the_minimal_closed_loop() -> void:
 			_assert_school_starters(controller.state, school_id,
 					"%s seed %d: starters injected" % [school_id, run_seed])
 			# Leg 2: a battle starts and a basic action is accepted.
-			var battle := BattleResolverScript.start(
-				{"enemy_kind": "ridge_hound", "enemy_hp": 12}, controller.state, catalog)
-			var turned := BattleResolverScript.take_turn(
-				battle, {"type": "basic_attack"}, controller.state, catalog)
+			var battle: Dictionary = FacadeScript.start(
+				{"enemy_kind": "ridge_hound"}, controller.state, catalog)
+			var turned: Dictionary = FacadeScript.apply_turn(
+				battle, controller.state, {"type": "basic_attack"}, catalog)
 			assert_true(bool(turned.get("accepted", false)),
 					"%s seed %d: basic action accepted" % [school_id, run_seed])
-			# Leg 3: victory loot resolves on the school-pool filter.
-			var looted := LootResolverScript.settle_victory(battle, controller.state, catalog)
-			var loot_ids: Array = looted["loot"].get("material_ids", [])
-			assert_true(not loot_ids.is_empty() or str(looted["loot"].get("gu_id", "")) != "",
-					"%s seed %d: loot resolves" % [school_id, run_seed])
-			# Leg 4: refine school can synthesize in battle with materials.
-			if school_id == "refine":
-				var refine_state: RunState = looted["state"]
-				refine_state.materials["venom_sac"] = 1
-				var synth := BattleResolverScript.take_turn(
-					battle, {"type": "refine", "recipe_id": "battle_venom_coat"}, refine_state, catalog)
-				assert_true(bool(synth.get("accepted", false)),
-						"%s seed %d: battle synthesis accepted" % [school_id, run_seed])
+			controller.state = turned["state"]
+			# Leg 3: victory loot resolves. When the basic action already
+			# flipped the fight to victory, the facade auto-settled loot onto
+			# the battle (same LootResolver 口径); otherwise settle explicitly.
+			if str(turned.get("result", "")) == "victory":
+				var loot: Dictionary = (turned.get("battle", {}) as Dictionary).get("loot", {})
+				var auto_ids: Array = loot.get("material_ids", [])
+				assert_true(not auto_ids.is_empty() or str(loot.get("gu_id", "")) != "",
+						"%s seed %d: loot resolves" % [school_id, run_seed])
+			else:
+				var looted := LootResolverScript.settle_victory(turned.get("battle", battle), controller.state, catalog)
+				var loot_ids: Array = looted["loot"].get("material_ids", [])
+				assert_true(not loot_ids.is_empty() or str(looted["loot"].get("gu_id", "")) != "",
+						"%s seed %d: loot resolves" % [school_id, run_seed])
 			# Leg 5: death finalizes; a fresh run re-injects the same starters
 			# (run-end cleanup plus per-run deck rebuild).
 			controller.force_death_for_test("smoke_blow")
