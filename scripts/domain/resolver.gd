@@ -12,7 +12,7 @@ const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
 const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
 const ResolverHelpersScript = preload("res://scripts/domain/resolver_helpers.gd")
-const V2CommandsScript = preload("res://scripts/domain/v2_commands.gd")
+const RunCommandsScript = preload("res://scripts/domain/run_command_rules.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 # GuBalance 为 class_name 静态公式模块，直接按全局类名调用。
 
@@ -116,22 +116,22 @@ static func _handler_for(command_type: String) -> Variant:
 			"gain_curse": func(state, command, catalog): return _gain_curse_command(state, command, catalog),
 			"remove_curse": func(state, command, catalog): return _remove_curse_command(state, command, catalog),
 			"swear_contracts": func(state, command, catalog): return _swear_contracts(state, command, catalog),
-			# T9.2 v2 command family - thin dispatch to V2Commands (rules live
+			# T9.2 v2 command family - thin dispatch to RunCommands (rules live
 			# in the phase 1-8 modules; V1 battle path untouched, switch at T10.1-6).
-			"confirm_core": func(state, command, catalog): return V2CommandsScript.confirm_core(state, command, catalog),
-			"replace_core": func(state, command, catalog): return V2CommandsScript.replace_core(state, command, catalog),
-			"feed_instance": func(state, command, catalog): return V2CommandsScript.feed_instance(state, command, catalog),
-			"settle_layer": func(state, command, catalog): return V2CommandsScript.settle_layer(state, command, catalog),
-			"collect_surviving": func(state, command, catalog): return V2CommandsScript.collect_surviving(state, command, catalog),
-			"release_gu": func(state, command, catalog): return V2CommandsScript.release_gu(state, command, catalog),
-			"sell_info": func(state, command, catalog): return V2CommandsScript.sell_info(state, command, catalog),
-			"enact": func(state, command, catalog): return V2CommandsScript.enact(state, command, catalog),
-			"dodge": func(state, command, catalog): return V2CommandsScript.dodge(state, command, catalog),
-			"grapple": func(state, command, catalog): return V2CommandsScript.grapple(state, command, catalog),
-			"respond": func(state, command, catalog): return V2CommandsScript.respond(state, command, catalog),
-			"refine_up_material": func(state, command, catalog): return V2CommandsScript.refine_up_material(state, command, catalog),
-			"bloodlet": func(state, command, catalog): return V2CommandsScript.bloodlet(state, command, catalog),
-			"absorb_soul": func(state, command, catalog): return V2CommandsScript.absorb_soul(state, command, catalog),
+			"confirm_core": func(state, command, catalog): return RunCommandsScript.confirm_core(state, command, catalog),
+			"replace_core": func(state, command, catalog): return RunCommandsScript.replace_core(state, command, catalog),
+			"feed_instance": func(state, command, catalog): return RunCommandsScript.feed_instance(state, command, catalog),
+			"settle_layer": func(state, command, catalog): return RunCommandsScript.settle_layer(state, command, catalog),
+			"collect_surviving": func(state, command, catalog): return RunCommandsScript.collect_surviving(state, command, catalog),
+			"release_gu": func(state, command, catalog): return RunCommandsScript.release_gu(state, command, catalog),
+			"sell_info": func(state, command, catalog): return RunCommandsScript.sell_info(state, command, catalog),
+			"enact": func(state, command, catalog): return RunCommandsScript.enact(state, command, catalog),
+			"dodge": func(state, command, catalog): return RunCommandsScript.dodge(state, command, catalog),
+			"grapple": func(state, command, catalog): return RunCommandsScript.grapple(state, command, catalog),
+			"respond": func(state, command, catalog): return RunCommandsScript.respond(state, command, catalog),
+			"refine_up_material": func(state, command, catalog): return RunCommandsScript.refine_up_material(state, command, catalog),
+			"bloodlet": func(state, command, catalog): return RunCommandsScript.bloodlet(state, command, catalog),
+			"absorb_soul": func(state, command, catalog): return RunCommandsScript.absorb_soul(state, command, catalog),
 		}
 	return _dispatch.get(command_type, null)
 

@@ -168,7 +168,7 @@ func test_acceptance_12_survivors_never_trimmed_by_budget() -> void:
 
 
 func test_acceptance_13_fixed_defense_to_zero() -> void:
-	var resolved := preload("res://scripts/domain/battle2/action_resolver.gd").resolve_damage(20.0, 0.0, 20.0, 0.0)
+	var resolved := preload("res://scripts/domain/action_resolver.gd").resolve_damage(20.0, 0.0, 20.0, 0.0)
 	assert_almost_eq(float(resolved["damage"]), 0.0, 0.0001)
 
 
@@ -185,10 +185,10 @@ func test_acceptance_15_overload_only_excess() -> void:
 
 
 func test_acceptance_16_dodge_and_speed_discrete() -> void:
-	var dodge := preload("res://scripts/domain/battle2/body_rules.gd").dodge_resolution(
+	var dodge := preload("res://scripts/domain/body_rules.gd").dodge_resolution(
 			{"allow_dodge": true, "window_open": true, "grappled": false, "bound": false, "restricted": false}, true)
 	assert_true(bool(dodge["ok"]))
-	var order := preload("res://scripts/domain/battle2/action_resolver.gd").conflict_order("quick", 3, "quick", 3)
+	var order := preload("res://scripts/domain/action_resolver.gd").conflict_order("quick", 3, "quick", 3)
 	assert_eq(str(order), "simultaneous")
 
 

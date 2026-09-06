@@ -5,7 +5,7 @@ const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
 # BattleResolver is a global class_name; referenced directly (no preload) to
-# avoid a cyclic preload with battle_resolver.gd which previews battles too.
+# avoid a cyclic preload with battle_command_facade.gd which previews battles too.
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -96,7 +96,7 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	# 两代战斗形状兼容（同预览同源，禁止第二套预览形状）：
 	# - V1 契约（v1_battle_resolver）：蛊行动从 gu_slots 投影，hand 是禁止字段；
 	#   已封/已用/已耗的槽位不出预览。
-	# - 旧引擎（battle_resolver 直驱的存量测试与 command_spec 旧信封路径）：
+	# - 旧战斗信封（battle.hand 路径，仅存量测试与 command_spec 旧信封使用）：
 	#   从 battle.hand 的实例卡投影，行为不变。
 	if battle.has("hand"):
 		for instance_value in battle.get("hand", []):

@@ -94,7 +94,7 @@ static func _set_resources(state: RunState, action: Dictionary) -> Dictionary:
 	var after := {}
 	# The live cap lives in cave_aperture.essence_max (ascension raises it past
 	# the legacy essence_capacity scalar); fall back to the scalar when absent,
-	# mirroring battle_resolver's dual-read of the same pair.
+	# mirroring battle_command_facade's dual-read of the same pair.
 	var essence_cap := int(state.cave_aperture.get("essence_max", state.essence_capacity))
 	if action.has("essence"):
 		after["essence"] = clampi(int(action["essence"]), 0, essence_cap)

@@ -55,7 +55,7 @@ var materials: Dictionary = {}
 # a direct post-event assignment). _battle2_ledger info keys are attribution
 # copies only.
 var battle2_ledger: Dictionary = {}
-# V1 lifecycle hook: a per-battle, per-RunState handle that battle_resolver
+# V1 lifecycle hook: a per-battle, per-RunState handle that battle_command_facade
 # reads/advances as accepted turns land. Created in _start_battle (sized by
 # CultivatorRulesScript.thought_capacity), consumed by the five accepted turn
 # sites, and finalised through the _battle2_ledger info key when the battle

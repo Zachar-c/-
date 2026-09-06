@@ -9,7 +9,7 @@ extends GutTest
 # distance / speed / disengage rules - no continuous time units).
 
 
-const ActionResolverScript = preload("res://scripts/domain/battle2/action_resolver.gd")
+const ActionResolverScript = preload("res://scripts/domain/action_resolver.gd")
 const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 

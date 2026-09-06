@@ -1,4 +1,4 @@
-class_name V2Commands
+class_name RunCommands
 extends RefCounted
 
 
@@ -15,8 +15,8 @@ const RunStateScript = preload("res://scripts/domain/run_state.gd")
 const LootRulesScript = preload("res://scripts/domain/loot_rules.gd")
 const MarketRulesScript = preload("res://scripts/domain/market_rules.gd")
 const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
-const Battle2BodyRulesScript = preload("res://scripts/domain/battle2/body_rules.gd")
-const Battle2ActionResolverScript = preload("res://scripts/domain/battle2/action_resolver.gd")
+const BodyRulesScript = preload("res://scripts/domain/body_rules.gd")
+const ActionResolverScript = preload("res://scripts/domain/action_resolver.gd")
 const MaterialRulesScript = preload("res://scripts/domain/material_rules.gd")
 const BloodQiRulesScript = preload("res://scripts/domain/blood_qi_rules.gd")
 const SoulRulesScript = preload("res://scripts/domain/soul_rules.gd")
@@ -199,7 +199,7 @@ static func enact(state, command: Dictionary, _catalog: Dictionary) -> Dictionar
 
 
 static func dodge(state, command: Dictionary, _catalog: Dictionary) -> Dictionary:
-	var out := Battle2BodyRulesScript.dodge_resolution(
+	var out := BodyRulesScript.dodge_resolution(
 			command.get("conditions", {}), bool(command.get("has_thought", false)))
 	if not bool(out["ok"]):
 		return _reject(state, str(out["reason"]))
@@ -208,12 +208,12 @@ static func dodge(state, command: Dictionary, _catalog: Dictionary) -> Dictionar
 
 
 static func grapple(state, command: Dictionary, _catalog: Dictionary) -> Dictionary:
-	var pre := Battle2BodyRulesScript.grapple_preflight(
+	var pre := BodyRulesScript.grapple_preflight(
 			str(command.get("attacker_distance", "")), str(command.get("target_distance", "")),
 			bool(command.get("has_thought", false)))
 	if not bool(pre["ok"]):
 		return _reject(state, str(pre["reason"]))
-	var contest := Battle2BodyRulesScript.grapple_contest(float(command.get("attacker_strength", 0.0)),
+	var contest := BodyRulesScript.grapple_contest(float(command.get("attacker_strength", 0.0)),
 			float(command.get("target_strength", 0.0)), bool(command.get("target_resists", true)))
 	if not bool(contest["ok"]):
 		return _reject(state, str(contest["reason"]))
@@ -222,7 +222,7 @@ static func grapple(state, command: Dictionary, _catalog: Dictionary) -> Diction
 
 
 static func respond(state, command: Dictionary, _catalog: Dictionary) -> Dictionary:
-	var check := Battle2ActionResolverScript.reaction_allowed(
+	var check := ActionResolverScript.reaction_allowed(
 			bool(command.get("has_reserved_thought", false)), str(command.get("action", "")))
 	if not bool(check["ok"]):
 		return _reject(state, str(check["reason"]))

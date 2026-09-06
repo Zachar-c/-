@@ -1,4 +1,4 @@
-class_name Battle2BodyRules
+class_name BodyRules
 extends RefCounted
 
 

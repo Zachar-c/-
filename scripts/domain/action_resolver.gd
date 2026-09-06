@@ -1,4 +1,4 @@
-class_name Battle2ActionResolver
+class_name ActionResolver
 extends RefCounted
 
 

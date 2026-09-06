@@ -71,7 +71,7 @@ static func _intensity_reduced(projections: Array, reduction: int) -> Array:
 # ACTIVE battle (projection at battle start today; any later battle-dict curse
 # update would route through here too). Run-scoped gains outside battles never
 # reach this resolver, so they never fire hooks. convert_backlash_to_draw
-# queues bonus cards for the NEXT refill draw; battle_resolver consumes and
+# queues bonus cards for the NEXT refill draw; battle_command_facade consumes and
 # clears battle["pending_extra_draws"] exactly once.
 static func apply_backlash_gained(battle: Dictionary, state: RunState, catalog: Dictionary, layers_gained: int) -> Dictionary:
 	var queued := 0
@@ -88,7 +88,7 @@ static func apply_backlash_gained(battle: Dictionary, state: RunState, catalog: 
 	return {"battle": battle, "state": state, "feeds": feeds}
 
 
-# R4.x on_battle_end: fired from battle_resolver's single finalization funnel
+# R4.x on_battle_end: fired from battle_command_facade's single finalization funnel
 # (victory / retreat / death) so grant_stone_on_battle_end appends ONE immutable
 # stone event per finished battle no matter which path ends it.
 static func apply_battle_end(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
@@ -115,7 +115,7 @@ static func apply_battle_end(battle: Dictionary, state: RunState, catalog: Dicti
 
 
 static func apply_draw_card(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
-	# Returns an extra-draw count that battle_resolver applies with its own
+	# Returns an extra-draw count that battle_command_facade applies with its own
 	# seeded shuffle so RNG mechanics stay inside the resolver layer.
 	var extra := 0
 	for hook in _hooks(state, catalog, "on_draw_card"):
@@ -153,7 +153,7 @@ static func apply_play_card(battle: Dictionary, state: RunState, catalog: Dictio
 
 static func apply_take_damage(battle: Dictionary, state: RunState, catalog: Dictionary, damage: int) -> Dictionary:
 	# Damage reduction computed here; the final health write stays in
-	# battle_resolver._end_turn so it remains a single immutable event.
+	# battle_command_facade._end_turn so it remains a single immutable event.
 	var reduction := 0
 	for hook in _hooks(state, catalog, "on_take_damage"):
 		if str(hook.get("effect", {}).get("kind", "")) == "reduce_incoming_damage":

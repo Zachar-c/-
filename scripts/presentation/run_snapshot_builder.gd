@@ -20,8 +20,8 @@ const CoreGuRulesScript = preload("res://scripts/domain/core_gu_rules.gd")
 const RecipeRulesScript = preload("res://scripts/domain/recipe_rules.gd")
 const FeedingRulesScript = preload("res://scripts/domain/feeding_rules.gd")
 const MarketRulesScript = preload("res://scripts/domain/market_rules.gd")
-const Battle2BodyRulesScript = preload("res://scripts/domain/battle2/body_rules.gd")
-const Battle2ActionResolverScript = preload("res://scripts/domain/battle2/action_resolver.gd")
+const BodyRulesScript = preload("res://scripts/domain/body_rules.gd")
+const ActionResolverScript = preload("res://scripts/domain/action_resolver.gd")
 const SoulRulesScript = preload("res://scripts/domain/soul_rules.gd")
 const BloodQiRulesScript = preload("res://scripts/domain/blood_qi_rules.gd")
 
@@ -2100,12 +2100,12 @@ static func _v2_group6(state, cat: Dictionary) -> Dictionary:
 	var body := CultivatorRulesScript.body(state.cultivator, cat)
 	var strength := float(body["strength"])
 	var capacity := float(body["body_capacity"])
-	var preflight := Battle2BodyRulesScript.strike_preflight(strength, capacity, float(state.health), cat)
+	var preflight := BodyRulesScript.strike_preflight(strength, capacity, float(state.health), cat)
 	return {
-		"safe_strength": float(Battle2BodyRulesScript.safe_strength(capacity)),
+		"safe_strength": float(BodyRulesScript.safe_strength(capacity)),
 		"actual_strength": strength,
-		"outward_damage": float(Battle2BodyRulesScript.unarmed_strike_damage(strength, 1.0, cat)),
-		"overload_self_damage": float(Battle2BodyRulesScript.overload_self_damage(strength, capacity, cat)),
+		"outward_damage": float(BodyRulesScript.unarmed_strike_damage(strength, 1.0, cat)),
+		"overload_self_damage": float(BodyRulesScript.overload_self_damage(strength, capacity, cat)),
 		"lethal_confirm_required": bool(preflight.get("lethal_confirm_required", false)),
 		"death_cause": str(preflight.get("cause", "")),
 	}
@@ -2116,10 +2116,10 @@ static func _v2_group6(state, cat: Dictionary) -> Dictionary:
 static func _v2_group7(cat: Dictionary) -> Dictionary:
 	return {
 		"distances": ["far", "medium", "close", "touch"],
-		"conflict_order": str(Battle2ActionResolverScript.conflict_order("quick", 3, "quick", 3)),
-		"reaction_check": Battle2ActionResolverScript.reaction_allowed(true, "grapple"),
-		"disengage_open": bool(Battle2ActionResolverScript.disengage_window("touch", "close").get("open", false)),
-		"strike_only_at_contact": bool(Battle2ActionResolverScript.strike_possible("touch", "touch")),
+		"conflict_order": str(ActionResolverScript.conflict_order("quick", 3, "quick", 3)),
+		"reaction_check": ActionResolverScript.reaction_allowed(true, "grapple"),
+		"disengage_open": bool(ActionResolverScript.disengage_window("touch", "close").get("open", false)),
+		"strike_only_at_contact": bool(ActionResolverScript.strike_possible("touch", "touch")),
 	}
 
 

@@ -8,7 +8,7 @@ extends GutTest
 # plain health loss never lowers body/strength/speed) and #16 close-out.
 
 
-const BodyRulesScript = preload("res://scripts/domain/battle2/body_rules.gd")
+const BodyRulesScript = preload("res://scripts/domain/body_rules.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")

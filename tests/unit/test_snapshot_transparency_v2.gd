@@ -17,8 +17,8 @@ const CoreGuRulesScript = preload("res://scripts/domain/core_gu_rules.gd")
 const RecipeRulesScript = preload("res://scripts/domain/recipe_rules.gd")
 const FeedingRulesScript = preload("res://scripts/domain/feeding_rules.gd")
 const MarketRulesScript = preload("res://scripts/domain/market_rules.gd")
-const Battle2BodyRulesScript = preload("res://scripts/domain/battle2/body_rules.gd")
-const Battle2ActionResolverScript = preload("res://scripts/domain/battle2/action_resolver.gd")
+const BodyRulesScript = preload("res://scripts/domain/body_rules.gd")
+const ActionResolverScript = preload("res://scripts/domain/action_resolver.gd")
 const SoulRulesScript = preload("res://scripts/domain/soul_rules.gd")
 
 
@@ -147,11 +147,11 @@ func test_group6_body_projection_is_same_source() -> void:
 	var state: RunState = _controller()["state"]
 	var body := CultivatorRulesScript.body(state.cultivator, catalog)
 	assert_almost_eq(float(group["safe_strength"]),
-			float(Battle2BodyRulesScript.safe_strength(float(body["body_capacity"]))), 0.0001)
-	var preflight := Battle2BodyRulesScript.strike_preflight(
+			float(BodyRulesScript.safe_strength(float(body["body_capacity"]))), 0.0001)
+	var preflight := BodyRulesScript.strike_preflight(
 			float(body["strength"]), float(body["body_capacity"]), float(state.health), catalog)
 	assert_almost_eq(float(group["overload_self_damage"]),
-			float(Battle2BodyRulesScript.overload_self_damage(
+			float(BodyRulesScript.overload_self_damage(
 					float(body["strength"]), float(body["body_capacity"]), catalog)), 0.0001)
 	assert_eq(bool(group["lethal_confirm_required"]), bool(preflight["lethal_confirm_required"]))
 
@@ -160,9 +160,9 @@ func test_group7_action_projection_is_same_source() -> void:
 	var snap := RunSnapshotBuilderScript.transparency_v2(_controller())
 	var group: Dictionary = snap["group7_action"]
 	assert_eq(str(group["conflict_order"]),
-			str(Battle2ActionResolverScript.conflict_order("quick", 3, "quick", 3)))
+			str(ActionResolverScript.conflict_order("quick", 3, "quick", 3)))
 	assert_eq(str(group["reaction_check"]["reason"]),
-			str(Battle2ActionResolverScript.reaction_allowed(true, "grapple")["reason"]))
+			str(ActionResolverScript.reaction_allowed(true, "grapple")["reason"]))
 	assert_eq(str(group["distances"]),
 			str(["far", "medium", "close", "touch"]))
 
