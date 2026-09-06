@@ -66,6 +66,18 @@ const CONTRACT_BLUE := Color("315f73")      # 契约规则
 const ANOMALY_YELLOW := Color("936f1e")     # DDA / 异变 / 险象
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
 
+# —— Button color tokens (shadcn/ui风格：品牌色背景 + 高对比度浅色文字) ——
+# Primary按钮：朱砂色背景 + 白色文字
+const BTN_PRIMARY_BG := CINNABAR
+const BTN_PRIMARY_HOVER := Color("8a2c27")  # 朱砂hover加深
+const BTN_PRIMARY_PRESSED := Color("7a2621") # 朱砂pressed更深
+const BTN_PRIMARY_FG := Color("ffffff")      # 高对比度白色文字
+# Danger按钮：深红背景 + 白色文字
+const BTN_DANGER_BG := Color("a6241e")       # 深红
+const BTN_DANGER_HOVER := Color("8c1e19")    # 深红hover加深
+const BTN_DANGER_PRESSED := Color("731814")  # 深红pressed更深
+const BTN_DANGER_FG := Color("ffffff")        # 高对比度白色文字
+
 # 淡染层（TINT_*）：语义色的半透明变体，只做徽章 / 警示条 / 死线行的**底**，
 # 绝不当文字色。半透明是为了让下层纸纹透出来，符合「不搞玻璃卡片」的原则。
 # 这组常量存在的唯一理由：调用点不许再写裸 Color(0.x, 0.x, 0.x, a)。

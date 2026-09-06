@@ -4,15 +4,17 @@ extends AudioStreamPlayer
 ##
 ## SFX 由自身播放；BGM 由懒创建的子节点 BgmPlayer 播放，两者互不打断。
 ## 音频资源缺失时静默跳过，绝不打断游戏流程。
-## BGM 资源在 tools/generate_music.py 中确定性合成（24kHz mono WAV，无缝循环），
-## 无第三方版权；曲目 key 与 run_controller 的视图 → BGM 映射一致。
+## BGM 资源确定性合成（24kHz mono，无缝循环），无第三方版权；
+## 曲目 key 与 run_controller 的视图 → BGM 映射一致。
+## 2026-09-06 资产更替：music/ 目录由 .wav 换为 .mp3/.ogg（视曲目而定），
+## 循环在播放路径按流类型强制开启（见 _force_loop），import 默认关闭不依赖。
 
 ## 曲目表：key → 资源路径。新增曲目需同时更新本表与 tools/generate_music.py。
 const BGM_PATHS := {
-	"hall": "res://assets/audio/music/hall.wav",
-	"map": "res://assets/audio/music/map.wav",
-	"battle": "res://assets/audio/music/battle.wav",
-	"ending": "res://assets/audio/music/ending.wav",
+	"hall": "res://assets/audio/music/hall.mp3",
+	"map": "res://assets/audio/music/map.ogg",
+	"battle": "res://assets/audio/music/battle.mp3",
+	"ending": "res://assets/audio/music/ending.ogg",
 }
 ## BGM 相对主音量衰减，避免盖过音效提示。
 const BGM_VOLUME_DB := -9.0
@@ -48,6 +50,17 @@ func stop_sfx() -> void:
 	stop()
 
 
+## 循环由代码强制开启：import 侧默认关闭（WAV 用 loop_mode 枚举，
+## MP3/OggVorbis 用 loop 布尔），不依赖具体导入配置。
+static func _force_loop(stream: AudioStream) -> void:
+	if stream is AudioStreamWAV:
+		(stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
+	elif stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	elif stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
+
+
 ## 播放 BGM 曲目（key 见 BGM_PATHS）。未知 key / 资源缺失 / 未入树时静默跳过；
 ## 同曲目已请求/播放时不重启（同屏命令重渲染幂等）。循环由代码强制开启。
 ## 播放器只在 _process（树稳定上下文）创建与启动：Godot 4.7 真实音频驱动下，
@@ -64,8 +77,7 @@ func play_bgm(key: String) -> void:
 		stream = load(path) as AudioStream
 		if stream == null:
 			return
-		if stream is AudioStreamWAV:
-			stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		_force_loop(stream)
 		_cache[path] = stream
 	if not is_inside_tree():
 		return

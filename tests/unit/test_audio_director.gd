@@ -2,8 +2,9 @@ extends GutTest
 
 
 ## BGM 系统测试：资源存在性、播放器行为、视图 -> 曲目映射。
-## 曲目由 tools/generate_music.py 确定性合成；AudioDirector 懒创建 BgmPlayer，
-## 未知 key / 资源缺失 / 未入树均静默跳过，绝不打断游戏流程。
+## 曲目由 tools/generate_music.py 确定性合成（music/ 现为 .mp3/.ogg 资产）；
+## AudioDirector 懒创建 BgmPlayer，未知 key / 资源缺失 / 未入树均静默跳过，
+## 绝不打断游戏流程。
 ##
 ## 播放断言策略：节点已就绪时 play_bgm 同步创建并播放（direct start），测试先
 ## 做同步断言；仅当实际走了 pending/_process 兜底路径时才等待帧推进（GUT
@@ -15,10 +16,10 @@ const RunControllerScript = preload("res://scripts/presentation/run_controller.g
 
 const BGM_KEYS := ["hall", "map", "battle", "ending"]
 const BGM_PATHS := {
-	"hall": "res://assets/audio/music/hall.wav",
-	"map": "res://assets/audio/music/map.wav",
-	"battle": "res://assets/audio/music/battle.wav",
-	"ending": "res://assets/audio/music/ending.wav",
+	"hall": "res://assets/audio/music/hall.mp3",
+	"map": "res://assets/audio/music/map.ogg",
+	"battle": "res://assets/audio/music/battle.mp3",
+	"ending": "res://assets/audio/music/ending.ogg",
 }
 
 var _hosts: Array = []
@@ -61,13 +62,24 @@ func _wait_playing(player: AudioStreamPlayer) -> void:
 		await get_tree().process_frame
 
 
-func test_bgm_assets_exist_and_load_as_wav() -> void:
+func test_bgm_assets_exist_and_load() -> void:
 	for key in BGM_KEYS:
 		var path: String = BGM_PATHS[key]
 		assert_true(ResourceLoader.exists(path), "BGM asset must exist: %s" % path)
 		var stream: Resource = load(path)
 		assert_not_null(stream, "BGM must load: %s" % path)
-		assert_true(stream is AudioStreamWAV, "BGM must be AudioStreamWAV: %s" % path)
+		assert_true(stream is AudioStream, "BGM must be an AudioStream: %s" % path)
+
+
+## 按流类型读循环开关（与 AudioDirector._force_loop 对称）。
+func _loop_enabled(stream: AudioStream) -> bool:
+	if stream is AudioStreamWAV:
+		return (stream as AudioStreamWAV).loop_mode == AudioStreamWAV.LOOP_FORWARD
+	if stream is AudioStreamMP3:
+		return (stream as AudioStreamMP3).loop
+	if stream is AudioStreamOggVorbis:
+		return (stream as AudioStreamOggVorbis).loop
+	return false
 
 
 func test_play_bgm_unknown_key_is_silent() -> void:
@@ -86,8 +98,8 @@ func test_play_bgm_sets_track_and_loop() -> void:
 	assert_not_null(player, "BgmPlayer must be created")
 	await _wait_playing(player)
 	assert_true(player.playing, "BGM must be playing after play_bgm (deferred start)")
-	assert_true(player.stream is AudioStreamWAV, "BgmPlayer stream must be AudioStreamWAV")
-	assert_eq(player.stream.loop_mode, AudioStreamWAV.LOOP_FORWARD,
+	assert_true(player.stream is AudioStream, "BgmPlayer stream must be an AudioStream")
+	assert_true(_loop_enabled(player.stream),
 			"BGM loop must be forced on in code (import default is disabled)")
 
 

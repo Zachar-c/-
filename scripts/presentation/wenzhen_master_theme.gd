@@ -109,28 +109,42 @@ static func _spec(role: String, size: String) -> Dictionary:
 	var pressed_width := 1
 	match role:
 		"primary":
-			normal_bg = GuStyle.PAPER_RAISED
-			normal_border = GuStyle.CINNABAR
-			normal_fg = GuStyle.INK_HALL
-			normal_left = 3
-			pressed_fg = GuStyle.CINNABAR
+			# shadcn/ui default风格：品牌色背景 + 高对比度浅色文字
+			normal_bg = GuStyle.BTN_PRIMARY_BG
+			normal_border = GuStyle.BTN_PRIMARY_BG
+			normal_fg = GuStyle.BTN_PRIMARY_FG
+			hover_bg = GuStyle.BTN_PRIMARY_HOVER
+			hover_border = GuStyle.BTN_PRIMARY_HOVER
+			pressed_bg = GuStyle.BTN_PRIMARY_PRESSED
+			pressed_fg = GuStyle.BTN_PRIMARY_FG
+			normal_left = 0
+			hover_width = 1
+			pressed_width = 1
 		"danger":
-			normal_bg = GuStyle.PAPER_RAISED
-			normal_border = GuStyle.CINNABAR
-			normal_fg = GuStyle.CINNABAR
-			hover_width = 2
-			pressed_bg = GuStyle.CINNABAR
-			pressed_fg = GuStyle.PAPER_BG
+			# shadcn/ui destructive风格：危险色背景 + 高对比度浅色文字
+			normal_bg = GuStyle.BTN_DANGER_BG
+			normal_border = GuStyle.BTN_DANGER_BG
+			normal_fg = GuStyle.BTN_DANGER_FG
+			hover_bg = GuStyle.BTN_DANGER_HOVER
+			hover_border = GuStyle.BTN_DANGER_HOVER
+			pressed_bg = GuStyle.BTN_DANGER_PRESSED
+			pressed_fg = GuStyle.BTN_DANGER_FG
+			hover_width = 1
+			pressed_width = 1
 		"cancel":
-			normal_bg = GuStyle.PAPER_BG
-			normal_fg = GuStyle.INK_SOFT
-			hover_bg = GuStyle.PAPER_RAISED
-		"archive":
+			# shadcn/ui outline风格：透明背景 + 边框 + 深色文字
 			normal_bg = Color(0, 0, 0, 0)
-			normal_border = GuStyle.RULE_HALL
+			normal_border = GuStyle.HAIRLINE_COLOR
 			normal_fg = GuStyle.INK_SOFT
 			hover_bg = GuStyle.PAPER_RAISED
-			radius = 2
+			hover_border = GuStyle.INK_SOFT
+		"archive":
+			# shadcn/ui ghost风格：透明背景 + 软墨色文字
+			normal_bg = Color(0, 0, 0, 0)
+			normal_border = Color(0, 0, 0, 0)
+			normal_fg = GuStyle.INK_SOFT
+			hover_bg = GuStyle.PAPER_RAISED
+			radius = 4
 		"node_current":
 			normal_bg = Color(0, 0, 0, 0)
 			normal_border = GuStyle.CINNABAR

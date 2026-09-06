@@ -44,22 +44,100 @@
 - **使用范围**: `assets/wenzhen/hall/first-life-character.png`
 - **状态**: 项目自有，含 AI 生成水印
 
-### 蛊虫插画（5 张）
+### 蛊虫插画（10 张）
 - **来源**: AI 生成（seedream）
 - **使用范围**: `assets/wenzhen/gu/` 目录
-- **图标列表**: gu_blood（血蛊）, gu_light（光蛊）, gu_bone（骨蛊）, gu_poison（毒蛊）, gu_moon（月蛊）
+- **图标列表**: 
+  - 第一批（5张）: gu_blood（血蛊）, gu_light（光蛊）, gu_bone（骨蛊）, gu_poison（毒蛊）, gu_moon（月蛊）
+  - 第二批V-F-08（5张）: gu_water（水蛊）, gu_fire（火蛊）, gu_earth（土蛊）, gu_wind（风蛊）, gu_thunder（雷蛊）
 - **状态**: 项目自有
 
-### 敌人立绘（4 张）
+### 敌人立绘（6 张）
 - **来源**: AI 生成（seedream）
 - **使用范围**: `assets/wenzhen/enemies/` 目录
-- **图标列表**: enemy_sanxiu（散修）, enemy_toad（毒蟾）, enemy_moth（尸蛾）, enemy_centipede（骨蜈蚣）
+- **图标列表**: 
+  - 第一批（4张）: enemy_sanxiu（散修）, enemy_toad（毒蟾）, enemy_moth（尸蛾）, enemy_centipede（骨蜈蚣）
+  - 第二批V-F-09（2张）: enemy_bat（血蝠）, enemy_scorpion（火蝎）
 - **状态**: 项目自有
 
-### NPC 立绘（1 张，暂缓接入）
+### NPC 立绘（2 张）
 - **来源**: AI 生成（seedream）
-- **使用范围**: `assets/wenzhen/npc/npc_merchant.png`
-- **状态**: 已生成，因用户要求"多使用开源免费库，少使用 AI 生成"而暂缓接入
+- **使用范围**: `assets/wenzhen/npc/` 目录
+- **图标列表**: 
+  - npc_merchant（南疆黑市商人）- 精明圆滑，深色丝绸长袍，钱袋算盘羽毛扇
+  - npc_hermit（南疆隐士）- 白须长发，灰色麻布长袍，竹杖药葫芦竹简
+- **状态**: 项目自有，第二批V-F-10正式接入（原暂缓接入的旧版已替换）
+
+## 音乐素材（第二批A-F-05，9首场景背景音乐）
+
+### 来源汇总
+- **来源平台**: OpenGameArt (https://opengameart.org/)
+- **下载日期**: 2026-09-06
+- **使用范围**: `assets/audio/music/` 目录，9首场景背景音乐
+
+### 音乐清单
+
+| 场景 | 文件名 | 原曲名 | 作者 | 许可证 | 大小 |
+|---|---|---|---|---|---|
+| 大厅 | `hall.mp3` | Clean Guitar #34 - Oriental | Tri-Tachyon | CC BY 4.0 | 1.95 MB |
+| 地图 | `map.ogg` | RPG Exploration (The Lost City) | — | CC BY 3.0 | 1.01 MB |
+| 战斗 | `battle.mp3` | Battle Theme A | — | CC0 | 3.14 MB |
+| BOSS战 | `battle_boss.wav` | Epic Boss Battle [Seamlessly Looping] | Juhani Junkala | CC0 | 20.76 MB |
+| 休整 | `rest.mp3` | Town Theme RPG | — | CC0 | 1.26 MB |
+| 交易 | `shop.mp3` | Town Theme RPG（复用休整音乐） | — | CC0 | 1.26 MB |
+| 炼蛊 | `refine.wav` | Pumpkin Cave | — | CC BY 3.0 | 30.39 MB |
+| 遭遇 | `encounter.wav` | Pumpkin Cave（复用炼蛊音乐） | — | CC BY 3.0 | 30.39 MB |
+| 结算 | `ending.ogg` | Final Hero's Monologue（终局的英雄独白） | — | CC BY 4.0 | 6.13 MB |
+
+### 署名要求
+- **CC0**: 无需署名（Battle Theme A, Town Theme RPG, Epic Boss Battle）
+- **CC BY 3.0**: 需署名作者和来源（RPG Exploration, Pumpkin Cave）
+- **CC BY 4.0**: 需署名作者和来源（Clean Guitar #34 - Oriental by Tri-Tachyon, Final Hero's Monologue）
+- Tri-Tachyon 署名格式："Music by Tri-Tachyon - https://soundcloud.com/tri-tachyon/albums"
+
+## 音效素材（第二批A-F-01，17个开源音效）
+
+### 来源汇总
+- **来源平台**: Kenney.nl (https://kenney.nl/)
+- **下载日期**: 2026-09-06
+- **许可证**: Creative Commons CC0（公共领域，无需署名）
+- **使用范围**: `assets/audio/` 目录下 ui/battle/refine/concept 子目录
+
+### 音效包清单
+
+| 音效包 | 来源URL | 音效数量 | 用途 |
+|---|---|---|---|
+| **Kenney UI Audio** | https://kenney.nl/assets/ui-audio | 50个OGG | UI音效（点击/悬停/确认/取消/错误） |
+| **Kenney Impact Sounds** | https://kenney.nl/assets/impact-sounds | 150+个OGG | 战斗/炼蛊/概念层音效（冲击/拳击/钟声/玻璃/金属/木头） |
+
+### 音效映射清单
+
+| 音效ID | 文件名 | 原音效名 | 来源包 |
+|---|---|---|---|
+| ui_click | `ui/ui_click.ogg` | click1.ogg | UI Audio |
+| ui_hover | `ui/ui_hover.ogg` | rollover1.ogg | UI Audio |
+| ui_confirm | `ui/ui_confirm.ogg` | switch1.ogg | UI Audio |
+| ui_cancel | `ui/ui_cancel.ogg` | switch2.ogg | UI Audio |
+| ui_error | `ui/ui_error.ogg` | switch3.ogg | UI Audio |
+| battle_hit | `battle/battle_hit.ogg` | impactPunch_medium_000.ogg | Impact Sounds |
+| battle_critical | `battle/battle_critical.ogg` | impactPunch_heavy_000.ogg | Impact Sounds |
+| battle_miss | `battle/battle_miss.ogg` | impactSoft_medium_000.ogg | Impact Sounds |
+| battle_death | `battle/battle_death.ogg` | impactBell_heavy_000.ogg | Impact Sounds |
+| battle_card_play | `battle/battle_card_play.ogg` | impactWood_light_000.ogg | Impact Sounds |
+| battle_status_apply | `battle/battle_status_apply.ogg` | impactMetal_light_000.ogg | Impact Sounds |
+| refine_success | `refine/refine_success.ogg` | impactBell_heavy_001.ogg | Impact Sounds |
+| refine_fail | `refine/refine_fail.ogg` | impactGlass_medium_000.ogg | Impact Sounds |
+| refine_curse | `refine/refine_curse.ogg` | impactMetal_medium_000.ogg | Impact Sounds |
+| concept_seal_stamp | `concept/concept_seal_stamp.ogg` | impactWood_heavy_000.ogg | Impact Sounds |
+| concept_ink_spread | `concept/concept_ink_spread.ogg` | impactSoft_heavy_000.ogg | Impact Sounds |
+| concept_text_strike | `concept/concept_text_strike.ogg` | impactTin_medium_000.ogg | Impact Sounds |
+| env_cave_ambient | `env/cave_ambient.ogg` | dungeon_ambient_1.ogg | OpenGameArt Loopable Dungeon Ambience |
+| env_wind | `env/wind.wav` | wind1.wav | OpenGameArt wind1 |
+| env_fog | `env/fog.ogg` | dungeon_ambient_1.ogg（洞窟氛围变体占位） | OpenGameArt Loopable Dungeon Ambience |
+
+### 署名要求
+- **CC0**: 全部17个音效均为Kenney CC0许可证，无需署名，可自由使用、修改和分发
+- 环境音效（env_cave_ambient/env_wind/env_fog）待后续引入
 
 ## 第三方代码
 
