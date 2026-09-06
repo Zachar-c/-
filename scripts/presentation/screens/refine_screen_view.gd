@@ -100,6 +100,9 @@ func _refresh_tabs() -> void:
 func _refresh_recipes() -> void:
 	var list := _ensure_scroll_list(_recipe_panel, "RecipeScroll")
 	_clear_children(list)
+	if _channel == "free_pair":
+		_build_pair_panel(list)
+		return
 	var blind_note := str(_snapshot.get("blind_note", ""))
 	var slot_ok := bool(_snapshot.get("slot_ok", false))
 	var shown := 0
@@ -113,6 +116,61 @@ func _refresh_recipes() -> void:
 		_build_recipe_card(list, r, slot_ok, blind_note)
 	if shown == 0:
 		list.add_child(_label_of("（无可用配方）", GuStyle.INK_SOFT, 14))
+
+
+## D1b 古方知识模型：自由配对面板——选主/辅蛊，产物按知识状态揭示（？？？/实名）。
+func _build_pair_panel(list: Node) -> void:
+	var candidates: Array = _snapshot.get("pair_candidates", [])
+	var main_id := str(_snapshot.get("pair_main", ""))
+	var partner_id := str(_snapshot.get("pair_partner", ""))
+	var preview: Dictionary = _snapshot.get("pair_preview", {})
+
+	var note := _label_of("任何两只同转已炼化蛊都可入炉；产物由这一对决定，同对永远同果。" +
+			"持古方者当场可见产物，未持者见「？？？」，首炼自动授予古方。", GuStyle.INK_SOFT, 13)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	list.add_child(note)
+
+	list.add_child(_label_of("主蛊位（其流派与转数决定产物域）", GuStyle.INK_HALL, 14))
+	for c in candidates:
+		if not (c is Dictionary):
+			continue
+		var cid := str(c.get("id", ""))
+		var btn := Button.new()
+		btn.text = "%s · %d转 · %s%s" % [str(c.get("name", "")), int(c.get("rank", 0)), str(c.get("school", "")), "（主）" if cid == main_id else ""]
+		MasterTheme.apply_button(btn, "danger" if cid == main_id else "action")
+		btn.pressed.connect(func(): _fire("select_pair_main", cid))
+		list.add_child(btn)
+	list.add_child(_label_of("辅蛊位", GuStyle.INK_HALL, 14))
+	for c in candidates:
+		if not (c is Dictionary):
+			continue
+		var cid2 := str(c.get("id", ""))
+		var btn2 := Button.new()
+		btn2.text = "%s · %d转 · %s%s" % [str(c.get("name", "")), int(c.get("rank", 0)), str(c.get("school", "")), "（辅）" if cid2 == partner_id else ""]
+		MasterTheme.apply_button(btn2, "danger" if cid2 == partner_id else "action")
+		btn2.pressed.connect(func(): _fire("select_pair_partner", cid2))
+		list.add_child(btn2)
+
+	list.add_child(_label_of("预检", GuStyle.INK_HALL, 14))
+	if not bool(preview.get("ok", false)) and str(preview.get("reason", "")) != "":
+		list.add_child(_label_of(str(preview.get("reason", "")), GuStyle.CINNABAR, 13))
+	else:
+		var known := bool(preview.get("output_known", false))
+		var output_line := ""
+		if known:
+			output_line = "产物：%s（古方在手，效果见图鉴）" % DisplayText.gu(str(preview.get("output_id", "")))
+		else:
+			output_line = "产物：？？？（首炼自动获得古方）"
+		list.add_child(_label_of("产物域：" + str(preview.get("domain", "")), GuStyle.INK_HALL, 13))
+		list.add_child(_label_of(output_line, GuStyle.ANOMALY_YELLOW if known else GuStyle.INK_SOFT, 14))
+		list.add_child(_label_of("成功率 %d%% · 元石 %d 枚" % [int(preview.get("success_pct", 0)), int(preview.get("stone_cost", 0))], GuStyle.INK_HALL, 13))
+		list.add_child(_label_of("失败：主蛊受伤（休整可愈），元石照耗。", GuStyle.CINNABAR, 12))
+	var go := Button.new()
+	go.text = "确认炼蛊"
+	go.disabled = not (bool(preview.get("ok", false)) and bool(preview.get("executable", false)))
+	MasterTheme.apply_button(go, "danger")
+	go.pressed.connect(func(): _fire("refine_free_pair"))
+	list.add_child(go)
 
 
 func _build_recipe_card(list: Node, r: Dictionary, slot_ok: bool, blind_note: String) -> void:

@@ -236,6 +236,51 @@
    "material_id": "inheritance_token",
    "stone_cost": 60,
    "tier": 2
+  },
+  {
+   "id": "gu_fang_moon_glow_gu",
+   "kind": "gu_fang_unlock",
+   "card_key": "gu_fang.moon_glow_gu",
+   "gu_id": "moon_glow_gu",
+   "stone_cost": 80,
+   "tier": 2,
+   "clue": "古方：持方即知产物，免未知损失。"
+  },
+  {
+   "id": "gu_fang_white_jade_gu",
+   "kind": "gu_fang_unlock",
+   "card_key": "gu_fang.white_jade_gu",
+   "gu_id": "white_jade_gu",
+   "stone_cost": 80,
+   "tier": 2,
+   "clue": "古方：持方即知产物，免未知损失。"
+  },
+  {
+   "id": "gu_fang_blood_heal_2_23_gu",
+   "kind": "gu_fang_unlock",
+   "card_key": "gu_fang.blood_heal_2_23_gu",
+   "gu_id": "blood_heal_2_23_gu",
+   "stone_cost": 80,
+   "tier": 2,
+   "clue": "古方：持方即知产物，免未知损失。"
+  },
+  {
+   "id": "gu_fang_blood_atk_3_03_gu",
+   "kind": "gu_fang_unlock",
+   "card_key": "gu_fang.blood_atk_3_03_gu",
+   "gu_id": "blood_atk_3_03_gu",
+   "stone_cost": 200,
+   "tier": 3,
+   "clue": "古方：持方即知产物，免未知损失。"
+  },
+  {
+   "id": "gu_fang_blood_atk_3_11_gu",
+   "kind": "gu_fang_unlock",
+   "card_key": "gu_fang.blood_atk_3_11_gu",
+   "gu_id": "blood_atk_3_11_gu",
+   "stone_cost": 200,
+   "tier": 3,
+   "clue": "古方：持方即知产物，免未知损失。"
   }
  ]
 }

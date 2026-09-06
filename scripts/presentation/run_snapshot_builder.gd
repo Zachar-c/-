@@ -11,6 +11,7 @@ const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const SynthesisRulesScript = preload("res://scripts/domain/synthesis_rules.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
@@ -506,8 +507,30 @@ static func refine(controller) -> Dictionary:
 	out["channels"] = [
 		{"id": "fixed", "label": "定向配方"},
 		{"id": "combine", "label": "组合标签"},
+		{"id": "free_pair", "label": "自由配对"},
 		{"id": "blind", "label": "盲盒随机"},
 	]
+	# 古方知识模型：自由配对（主+辅，同转）——零门槛试炼，产物按知识状态揭示。
+	var pair_candidates: Array[Dictionary] = []
+	if state != null:
+		for pair_instance_key in state.cave_aperture.get("stored_gu_instance_ids", []):
+			var pair_inst: Dictionary = state.gu_instances.get(str(pair_instance_key), {})
+			var pair_def: Dictionary = catalog.get("gu_by_id", {}).get(str(pair_inst.get("definition_id", "")), {})
+			if pair_def.is_empty() or str(pair_inst.get("state", "")) == "dead":
+				continue
+			pair_candidates.append({
+				"id": str(pair_instance_key),
+				"name": DisplayText.gu(str(pair_inst.get("definition_id", ""))),
+				"rank": int(pair_def.get("rank", 0)),
+				"school": str(pair_def.get("school", "")),
+			})
+	out["pair_candidates"] = pair_candidates
+	out["pair_main"] = str(controller._selected_pair_main)
+	out["pair_partner"] = str(controller._selected_pair_partner)
+	var pair_preview: Dictionary = {}
+	if state != null:
+		pair_preview = SynthesisRulesScript.pair_preview(state, catalog, str(controller._selected_pair_main), str(controller._selected_pair_partner))
+	out["pair_preview"] = pair_preview
 	out["slot_ok"] = true
 	out["blind_note"] = "盲盒自动投入全部已炼成蛊虫（至少 %d 只），产物与炸炉代价按种子结算。" % int(free_mix.get("min_inputs", 2))
 	out["recipes"] = rec_rows

@@ -80,6 +80,9 @@ var _hall_subview := "main"
 var _selected_school := "force"
 # S2 开局 Buff：大厅多选暂存，run 创建时一次性结算。
 var _selected_buffs: Array = []
+# D1b 自由配对：炼蛊洞的主/辅蛊实例选择（屏内决策，经快照回显）。
+var _selected_pair_main := ""
+var _selected_pair_partner := ""
 ## 大厅勾选的开局契约（§15/§16.13）；new_run 时经 swear 门禁正式立誓。
 var _selected_contracts: Array[String] = []
 
@@ -484,6 +487,12 @@ const _REJECTION_TEXT := {
 	"no_means_declared": "没有声明收魂手段。",
 	"means_capacity_full": "收魂手段容量已满。",
 	"soul_yield_zero": "此次收魂没有收益。",
+	# D1b 古方知识模型：自由配对合炼拒绝/失败文案。
+	"free_pair_failed": "合炼失败：主蛊受伤（休整可愈），元石已耗。",
+	"pair_invalid": "这对蛊虫无法入炉（预检未通过）。",
+	"gu_fang_already_unlocked": "你已持有该古方。",
+	"gu_fang_unknown": "没有这张古方对应的蛊。",
+	"refinement_capacity_exceeded": "炼蛊需要至少保留两处空位，当前不足。",
 }
 
 
@@ -1251,8 +1260,27 @@ func _show_rest() -> void:
 
 
 func _show_refine() -> void:
+	# 自由配对的选择自净：被消耗/已死的实例选择直接作废。
+	var alive := {}
+	for keep_id in state.cave_aperture.get("stored_gu_instance_ids", []):
+		alive[str(keep_id)] = true
+	if not alive.has(_selected_pair_main):
+		_selected_pair_main = ""
+	if not alive.has(_selected_pair_partner):
+		_selected_pair_partner = ""
 	_view_name = "Refine"
 	_render()
+
+
+## D1b 自由配对：炼蛊洞屏内选择，只改展示状态，经快照回显。
+func select_pair_main(instance_id: String) -> void:
+	if state != null and state.gu_instances.has(instance_id):
+		_selected_pair_main = instance_id
+
+
+func select_pair_partner(instance_id: String) -> void:
+	if state != null and state.gu_instances.has(instance_id):
+		_selected_pair_partner = instance_id
 
 
 func _show_reward() -> void:

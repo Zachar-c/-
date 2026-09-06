@@ -146,6 +146,8 @@ func test_refine_snapshot_unlock_flags_follow_codex() -> void:
 		"catalog": catalog,
 		"current_node": {"id": "refinement_den", "type": "refinement", "choices": []},
 		"meta": null,
+		"_selected_pair_main": "",
+		"_selected_pair_partner": "",
 	}
 
 	var rows: Array = RunSnapshotBuilderScript.refine(stub)["recipes"]
@@ -160,6 +162,8 @@ func test_refine_snapshot_unlock_flags_follow_codex() -> void:
 		"catalog": catalog,
 		"current_node": {"id": "refinement_den", "type": "refinement", "choices": []},
 		"meta": null,
+		"_selected_pair_main": "",
+		"_selected_pair_partner": "",
 	}
 	assert_true(bool(_row(RunSnapshotBuilderScript.refine(stub2)["recipes"], "blood_moon_forged")["unlocked"]))
 

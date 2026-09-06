@@ -550,6 +550,19 @@ static func _append_shop_offer_card(cards: Array[Dictionary], state: RunState, c
 				"remedy_hints": _stone_remedies(pill_cost - state.stone) if not executable and can_boost else [],
 				"command": {"type": "shop_purchase", "offer_id": str(offer["id"])},
 			}))
+		"gu_fang_unlock":
+			var fang_cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
+			var fang_owned := state.global_codex_ids.has(str(offer.get("gu_id", "")))
+			cards.append(_card(state, {
+				"id": "shop.%s" % str(offer["card_key"]),
+				"title": "购得%s古方" % DisplayText.gu(str(offer["gu_id"])),
+				"summary": "持方即知：以对应输入合炼时，产物当场可视，免未知损失。",
+				"executable": state.stone >= fang_cost and not fang_owned,
+				"block_reason": "你已持有该古方。" if fang_owned else ("元石不足：需要 %d 枚。" % fang_cost if state.stone < fang_cost else ""),
+				"cost": {"stone": fang_cost},
+				"expected_gain": ["获得%s的古方（图鉴永久记录）。" % DisplayText.gu(str(offer["gu_id"]))],
+				"command": {"type": "shop_purchase", "offer_id": str(offer["id"])},
+			}))
 		"purchase":
 			var cost := Resolver.price_for(catalog, state, int(offer.get("stone_cost", 0)))
 			var executable := state.stone >= cost

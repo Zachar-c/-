@@ -523,7 +523,9 @@ static func validate(catalog: Dictionary) -> Array[String]:
 				errors.append("shop offer %s references missing material %s" % [offer["id"], offer.get("material_id", "")])
 			if offer_kind == "recipe_unlock" and not catalog.get("refinement_by_id", {}).has(str(offer.get("recipe_id", ""))):
 				errors.append("shop offer %s references missing recipe %s" % [offer["id"], offer.get("recipe_id", "")])
-			if offer_kind in ["purchase", "material_purchase", "recipe_unlock"] and (not _is_integral(offer.get("stone_cost", null)) or int(offer.get("stone_cost", 0)) < 1):
+			if offer_kind == "gu_fang_unlock" and not catalog.get("gu_by_id", {}).has(str(offer.get("gu_id", ""))):
+				errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
+			if offer_kind in ["purchase", "material_purchase", "recipe_unlock", "gu_fang_unlock"] and (not _is_integral(offer.get("stone_cost", null)) or int(offer.get("stone_cost", 0)) < 1):
 				errors.append("shop offer %s stone_cost must be positive" % offer["id"])
 			if offer_kind == "resource_trade":
 				var cost_kinds := ["lifespan", "soul", "health"]

@@ -230,6 +230,7 @@ class StubController:
 	var meta
 	var _hall_subview := "main"
 	var _selected_school := ""
+	var _selected_buffs: Array = []
 
 
 func _stub(state, meta) -> StubController:

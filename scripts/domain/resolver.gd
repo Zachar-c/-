@@ -9,6 +9,7 @@ const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const InheritanceClaimRulesScript = preload("res://scripts/domain/inheritance_claim_rules.gd")
+const SynthesisRulesScript = preload("res://scripts/domain/synthesis_rules.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
 const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
@@ -82,6 +83,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"sell_gu": func(state, command, catalog): return _sell_gu(state, command, catalog),
 			"exchange_gu": func(state, command, catalog): return _exchange_gu(state, command, catalog),
 			"refine_gu": func(state, command, catalog): return _refine_gu(state, command, catalog),
+			"refine_free_pair": func(state, command, catalog): return SynthesisRulesScript.execute(state, catalog, str(command.get("main_instance_id", "")), str(command.get("partner_instance_id", ""))),
 			"cultivate_rank_two": func(state, _command, catalog): return _cultivate_rank_two(state, catalog),
 			"settle_feeding": func(state, _command, catalog): return _settle_feeding(state, catalog),
 			"settle_node_feeding": func(state, _command, catalog): return _settle_node_feeding(state, catalog),
@@ -1029,6 +1031,8 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 		return _shop_material_purchase(state, offer, catalog)
 	if kind == "recipe_unlock":
 		return _shop_recipe_unlock(state, offer, catalog)
+	if kind == "gu_fang_unlock":
+		return _shop_gu_fang_unlock(state, offer, catalog)
 	if kind == "resource_trade":
 		return _shop_resource_trade(state, offer, catalog)
 	if str(offer.get("kind", "")) != "purchase":
@@ -1073,6 +1077,24 @@ static func _shop_material_purchase(state: RunState, offer: Dictionary, catalog:
 	var next := state.append_event(_event(state, "shop_purchase", {"stone": state.stone, "materials": state.materials}, {"stone": state.stone - cost, "materials": materials}, "shop_material_purchase_completed", state.current_node_id, [material_id]))
 	next.stone = state.stone - cost
 	next.materials = materials
+	return _accepted(next)
+
+
+## D1b 古方直购：持有即知产物（预检揭示），免未知损失。
+static func _shop_gu_fang_unlock(state: RunState, offer: Dictionary, catalog: Dictionary) -> Dictionary:
+	var gu_id := str(offer.get("gu_id", ""))
+	if not catalog.get("gu_by_id", {}).has(gu_id):
+		return _rejected(state, "unknown_gu")
+	if state.global_codex_ids.has(gu_id):
+		return _rejected(state, "gu_fang_already_unlocked")
+	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
+	if state.stone < cost:
+		return _rejected(state, "insufficient_stone")
+	var codex := state.global_codex_ids.duplicate()
+	codex.append(gu_id)
+	var next := state.append_event(_event(state, "shop_gu_fang_unlocked", {"stone": state.stone, "global_codex_ids": state.global_codex_ids}, {"stone": state.stone - cost, "global_codex_ids": codex}, "shop_gu_fang_unlock_completed", state.current_node_id, [gu_id]))
+	next.stone = state.stone - cost
+	next.global_codex_ids = codex
 	return _accepted(next)
 
 

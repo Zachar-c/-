@@ -168,6 +168,9 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			return {
 				"refine": func(id = ""): controller.submit_command({"type": "refine_gu", "recipe_id": str(id)}),
 				"dismantle": func(id = ""): controller.submit_command({"type": "destroy_gu", "instance_id": str(id)}),
+				"select_pair_main": func(id = ""): controller.select_pair_main(str(id)),
+				"select_pair_partner": func(id = ""): controller.select_pair_partner(str(id)),
+				"refine_free_pair": func(): controller.submit_command({"type": "refine_free_pair", "main_instance_id": controller._selected_pair_main, "partner_instance_id": controller._selected_pair_partner}),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Reward":
