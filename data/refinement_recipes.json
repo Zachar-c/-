@@ -9,7 +9,20 @@
     "small_light_gu",
     "small_light_gu"
    ],
-   "output_gu_id": "moon_glow_gu"
+   "output_gu_id": "moon_glow_gu",
+   "source": "蛊真人-clean.txt 17024-17155：月芒蛊=月光蛊x1+小光蛊x2（合炼失败代价示例：小光蛊消亡）",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 1,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 1,
+     "count": 2
+    }
+   ]
   },
   {
    "id": "moon_ray_forged",
@@ -20,7 +33,8 @@
     "small_light_gu"
    ],
    "output_gu_id": "moon_ray_gu",
-   "output_rank": 2
+   "output_rank": 2,
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）"
   },
   {
    "id": "advance_small_light_gu",
@@ -66,7 +80,8 @@
    "materials": {
     "beast_bone": 2
    },
-   "output_gu_id": "stone_shell_gu"
+   "output_gu_id": "stone_shell_gu",
+   "source": "蛊真人-clean.txt：石皮蛊x7 / 石皮x44（皮蛊家族：铜皮/铁皮/石皮/玉皮）；骨道炼法策展"
   },
   {
    "id": "white_jade_advance",
@@ -79,7 +94,20 @@
     "boar_king_tusk": 1
    },
    "stone_cost": 50,
-   "output_gu_id": "white_jade_gu"
+   "output_gu_id": "white_jade_gu",
+   "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊，添头野猪王雪獠牙（后世改良，提高成功率）",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 1,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 1,
+     "count": 1
+    }
+   ]
   },
   {
    "id": "moonlight_glow",
@@ -89,7 +117,8 @@
     "moonlight_gu",
     "small_light_gu"
    ],
-   "output_gu_id": "moon_glow_gu"
+   "output_gu_id": "moon_glow_gu",
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）"
   },
   {
    "id": "white_jade_basic",
@@ -100,7 +129,20 @@
     "white_boar_strength_gu"
    ],
    "stone_cost": 50,
-   "output_gu_id": "white_jade_gu"
+   "output_gu_id": "white_jade_gu",
+   "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 1,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 1,
+     "count": 1
+    }
+   ]
   },
   {
    "id": "advance_moon_glow_gu",
@@ -4789,7 +4831,8 @@
      ],
      "text": "炉火间月息浮沉，恐炼出暗夜之物。"
     }
-   ]
+   ],
+   "source": "蛊真人-clean.txt 15731：合炼定义「将不同的多种蛊虫合并成一只更高级数的蛊虫」；无秘方的自由混合"
   },
   {
    "id": "blood_moon_forged",
@@ -4800,7 +4843,20 @@
    ],
    "input_min_rank": 2,
    "output_gu_id": "blood_atk_3_11_gu",
-   "output_rank": 3
+   "output_rank": 3,
+   "source": "读书笔记 A2b 蛊虫盘：血月蛊=月痕蛊+血道蛊（光x血跨流派，三转）",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "blood",
+     "rank": 1,
+     "count": 1
+    }
+   ]
   },
   {
    "id": "moon_shadow_locked",
@@ -4810,7 +4866,20 @@
     "qi_mov_1_07_gu"
    ],
    "output_gu_id": "moon_shadow_gu",
-   "output_rank": 3
+   "output_rank": 3,
+   "source": "蛊真人-clean.txt 北原后期：月影蛊=月芒蛊+雾步蛊（光x气跨流派，三转）",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 1,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [

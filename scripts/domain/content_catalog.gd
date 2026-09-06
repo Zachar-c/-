@@ -674,6 +674,27 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var fail_curse_id := str(outcome_value.get("fail_curse_id", ""))
 			if not fail_curse_id.is_empty() and not curse_by_id.has(fail_curse_id):
 				errors.append("recipe %s failure references unknown curse %s" % [recipe["id"], fail_curse_id])
+		# D1: curated (hand-authored) recipes must name their novel source; the
+		# generated advance table is derived, so it is exempt.
+		if str(recipe.get("kind", "")) in ["fixed", "free_mix"]:
+			if str(recipe.get("source", "")).strip_edges().is_empty():
+				errors.append("curated recipe %s needs a non-empty source" % recipe.get("id", ""))
+		# D1 v2 schema: inputs:[{school, rank, count}] is optional next to the
+		# legacy input_gu_ids; when present every entry must be well formed.
+		if recipe.has("inputs"):
+			var v2_inputs: Array = recipe.get("inputs", [])
+			if v2_inputs.is_empty():
+				errors.append("recipe %s declares inputs but leaves it empty" % recipe.get("id", ""))
+			for entry_value in v2_inputs:
+				var entry: Dictionary = entry_value
+				var entry_school := str(entry.get("school", ""))
+				if entry_school.is_empty() or not catalog.get("schools", {}).has(entry_school):
+					errors.append("recipe %s v2 input school %s is not a declared dao mark" % [recipe.get("id", ""), entry_school])
+				var entry_rank := int(entry.get("rank", 0))
+				if entry_rank < 1 or entry_rank > 5:
+					errors.append("recipe %s v2 input rank must sit in 1..5" % recipe.get("id", ""))
+				if int(entry.get("count", 0)) < 1:
+					errors.append("recipe %s v2 input count must be positive" % recipe.get("id", ""))
 	var loot_tables: Dictionary = catalog.get("loot_tables", {})
 	var materials: Dictionary = loot_tables.get("materials", {})
 	# T5.1: the §6.1 unified material table is guarded field by field; the
