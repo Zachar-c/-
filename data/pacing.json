@@ -39,6 +39,10 @@
     {
      "template": "yizang_ridge",
      "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
     }
    ],
    "pool": [

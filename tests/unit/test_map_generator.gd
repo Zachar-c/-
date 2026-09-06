@@ -31,7 +31,7 @@ func test_generated_route_places_one_black_market_per_layer_and_no_other_kinds()
 			if str(node.get("id", "")) == "ascension_window":
 				continue
 			var kind := str(node.get("type", ""))
-			assert_true(kind in ["combat", "rest", "shop", "inheritance"],
+			assert_true(kind in ["combat", "rest", "shop", "inheritance", "refinement"],
 				"seed %s node %s has non-skeleton kind %s" % [seed_value, str(node.get("id", "")), kind])
 
 
