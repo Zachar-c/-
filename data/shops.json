@@ -228,6 +228,14 @@
    "gu_id": "water_atk_1_08_gu",
    "stone_cost": 80,
    "tier": 5
+  },
+  {
+   "id": "purchase_inheritance_token",
+   "kind": "material_purchase",
+   "card_key": "purchase.inheritance_token",
+   "material_id": "inheritance_token",
+   "stone_cost": 60,
+   "tier": 2
   }
  ]
 }

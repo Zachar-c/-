@@ -600,7 +600,7 @@ static func npc(controller) -> Dictionary:
 		"node.probe": "打探消息", "node.trade": "交易服务", "node.work": "帮工换石",
 		"node.harvest": "采撷元石", "node.buy_information": "购买情报", "node.cross": "强行穿越",
 		"node.meditate": "吐纳调息", "node.open": "开启险地", "node.prepare": "布局防护",
-		"node.scheme": "暗中标算", "node.claim": "争取机缘", "node.accept": "接下委托",
+		"node.scheme": "暗中标算", "node.claim": "争取机缘", "node.claim_recon": "以侦察蛊探秘", "node.claim_token": "以信物感应", "node.accept": "接下委托",
 		"node.ally": "结临时盟", "node.attempt_ascension": "冲击升仙",
 	}
 	var talk_options: Array[Dictionary] = []
@@ -764,6 +764,15 @@ static func hall(controller) -> Dictionary:
 			"starter_gu_ids": starters,
 			"starter_gu_names": starter_names,
 		})
+	# S2 开局 Buff：目录 buffs 投影为大厅多选列表（只读，toggle 走命令面）。
+	var buff_list: Array[Dictionary] = []
+	for buff_id in catalog.get("buffs", {}):
+		var bdata: Dictionary = catalog["buffs"][buff_id]
+		buff_list.append({
+			"id": str(buff_id),
+			"name": str(bdata.get("name", str(buff_id))),
+			"summary": str(bdata.get("summary", "")),
+		})
 	var runs := 0
 	var endings := 0
 	var won := 0
@@ -778,6 +787,8 @@ static func hall(controller) -> Dictionary:
 		"hall_subview": str(controller._hall_subview),
 		"selected_school": str(controller._selected_school),
 		"available_schools": school_list,
+		"available_buffs": buff_list,
+		"selected_buffs": Array(controller._selected_buffs),
 		"contracts": _available_contracts(meta, catalog, _contract_selection_state(controller)),
 		"selected_school_name": _school_display_name(catalog, str(controller._selected_school)),
 		"meta_stats": {"runs": runs, "endings": endings, "won": won, "deaths": deaths},

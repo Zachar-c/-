@@ -102,13 +102,14 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			return {
 				"continue_run": func(): controller.submit_command({"type": "load_run"}),
 				"select_school": func(school: String): controller._selected_school = school,
+				"toggle_buff": func(id): controller._toggle_buff(str(id)),
 				"toggle_contract": func(id: String):
 					var cid := str(id)
 					if controller._selected_contracts.has(cid):
 						controller._selected_contracts.erase(cid)
 					else:
 						controller._selected_contracts.append(cid),
-				"new_run": func(): controller.start_new_run(controller.roll_seed(), controller._selected_school, Array(controller._selected_contracts)),
+				"new_run": func(): controller.start_new_run(controller.roll_seed(), controller._selected_school, Array(controller._selected_contracts), Array(controller._selected_buffs)),
 				"open_schools": func(): controller._show_hall_subview("schools"),
 				"open_contracts": func(): controller._show_hall_subview("contracts"),
 				"open_codex": func(): controller._show_hall_subview("codex"),

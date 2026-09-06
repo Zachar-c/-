@@ -3,6 +3,7 @@ extends RefCounted
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const InheritanceClaimRulesScript = preload("res://scripts/domain/inheritance_claim_rules.gd")
 const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
 
 
@@ -912,6 +913,32 @@ static func _append_standard_card(cards: Array[Dictionary], state: RunState, act
 		"withdraw":
 			gain.append("安全收手，保留当前资源与情报。")
 			risk.append("放弃此处机缘，之后无法再从当前路线取得。")
+		"claim_recon", "claim_token":
+			var site: Dictionary = catalog.get("inheritance_site_by_id", {}).get(str(node.get("id", "")), {})
+			if site.is_empty():
+				site = catalog.get("inheritance_site_by_id", {}).get(str(node.get("template_id", "")), {})
+			var claimed := str(state.node_flags.get("%s_claimed" % str(node.get("id", "")), "")) == "true"
+			if site.is_empty():
+				executable = false
+				reason = "此处没有可继承的遗葬传承。"
+			elif claimed:
+				executable = false
+				reason = "该遗葬的传承已被继承，另寻他处吧。"
+			else:
+				risk.append("继承结果按遗葬等级随机判定：残破（1--2 只蛊）/普通（3--4 只蛊+1--2 份蛊方）/稀有（5--8 只蛊+3--4 份蛊方）。")
+				if action_id == "claim_recon":
+					var needed := int(site.get("level", 1))
+					gain.append("侦察蛊探得传承秘地，直接继承该遗葬的传承。")
+					if not InheritanceClaimRulesScript.has_scout_gu(state, catalog, needed):
+						executable = false
+						reason = "需要一只 %d 转及以上的侦察蛊，当前没有。" % needed
+						remedies = ["可从商店或野外获取侦察系（recon/scout）蛊虫后再来。"]
+				else:
+					gain.append("传承信物对传承者产生感应，凭信物继承该遗葬。")
+					if int(state.materials.get("inheritance_token", 0)) < 1:
+						executable = false
+						reason = "缺少传承信物：商店有售（60 元石）。"
+						remedies = ["可先到商店购入传承信物，再回此地面感应。"]
 		"work":
 			gain.append("完成短工，获得元石 3 枚。")
 	cards.append(_card(state, {

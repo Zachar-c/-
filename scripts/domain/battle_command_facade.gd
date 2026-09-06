@@ -56,6 +56,14 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 		if not (battle["flags"] is Dictionary):
 			battle["flags"] = {}
 		battle["flags"]["boss_battle"] = true
+	# S2 开局 Buff「凡敌一滴血」：非 Boss 敌人 hp/max_hp 归 1（tier=boss 豁免）。
+	if state.run_buff_ids.has("lesser_one_hp"):
+		for enemy_value in battle.get("enemies", []):
+			var enemy: Dictionary = enemy_value
+			if str((enemy_by_id.get(str(enemy.get("id", "")), {}) as Dictionary).get("tier", "")) == "boss":
+				continue
+			enemy["hp"] = 1
+			enemy["max_hp"] = 1
 	return battle
 
 

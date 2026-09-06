@@ -448,6 +448,18 @@ func _refresh_schools() -> void:
 		var sel_label := ("选中 · " + sname) if is_selected else "选择"
 		card.content_host.add_child(_action_button(sel_label,
 				func(): _fire1("select_school", sid)))
+	# S2 开局 Buff（多选）：目录投影为复选项，toggle 走命令面，UI 不写状态。
+	_schools_list.add_child(_label("开局加成（Buff，可多选）", GuStyle.INK_HALL, 14))
+	var selected_buffs: Array = _snapshot.get("selected_buffs", [])
+	for b in _snapshot.get("available_buffs", []):
+		var bid := str(b.get("id", "")) if b is Dictionary else str(b)
+		var bname := str(b.get("name", bid)) if b is Dictionary else bid
+		var bsum := str(b.get("summary", "")) if b is Dictionary else ""
+		var check := CheckButton.new()
+		check.text = bname + ("：" + bsum if bsum != "" else "")
+		check.set_pressed_no_signal(selected_buffs.has(bid))
+		check.toggled.connect(func(_on: bool): _fire1("toggle_buff", bid))
+		_schools_list.add_child(check)
 	MasterTheme.apply_button(_confirm_school, "action")
 	MasterTheme.apply_button(_schools_back, "action")
 

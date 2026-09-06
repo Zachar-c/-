@@ -591,6 +591,24 @@
    "time_scale": "hours",
    "on_skip": "gain_pursuit",
    "next_ids": []
+  },
+  {
+   "id": "yizang_ridge",
+   "stage": "one",
+   "type": "inheritance",
+   "visible": true,
+   "summary": "荒岭间一座前人遗葬，草木倒伏成环。有传承者遗留的布置仍在运转。",
+   "choices": [
+    "claim_recon",
+    "claim_token",
+    "leave"
+   ],
+   "time_scale": "hours",
+   "on_skip": "none",
+   "next_ids": [
+    "toxic_mountain_path",
+    "blood_moss_grove"
+   ]
   }
  ],
  "ascension_node": {

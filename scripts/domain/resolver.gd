@@ -8,6 +8,7 @@ const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const InheritanceClaimRulesScript = preload("res://scripts/domain/inheritance_claim_rules.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
 const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
@@ -55,6 +56,7 @@ const STANDARD_ACTIONS := [
 	"accept", "ally", "buy_information", "claim", "cross", "deceive", "fight", "harvest",
 	"inspect", "leave", "lure", "meditate", "open", "prepare", "retreat", "scout",
 	"scheme", "take_imprint", "trade", "withdraw", "work",
+	"claim_recon", "claim_token",
 ]
 
 
@@ -1505,6 +1507,9 @@ static func _choose_action(state: RunState, command: Dictionary, catalog: Dictio
 		return _rejected(state, "missing_action_id")
 	if not STANDARD_ACTIONS.has(action_id):
 		return _rejected(state, "unsupported_standard_action")
+	if action_id in ["claim_recon", "claim_token"]:
+		# S3 遗葬传承：需要目录（站点/配方池），走专属处理器。
+		return _claim_inheritance(state, action_id, catalog)
 	var transition := _standard_action_transition(state, action_id)
 	if not bool(transition.get("ok", true)):
 		return _rejected(state, str(transition.get("reason", "action_unavailable")))
@@ -1605,6 +1610,12 @@ static func _standard_action_transition(state: RunState, action_id: String) -> D
 		"scout": return _fact_transition(state, "route_scouted", "action_scout_route")
 		"withdraw": return _fact_transition(state, "withdrawn_safely", "action_withdraw_safely")
 	return {"ok": false, "reason": "unsupported_standard_action"}
+
+
+## S3 遗葬传承：门禁/品质/产出结算见 inheritance_claim_rules.gd
+## （独立模块，守住 resolver 行数门限）。
+static func _claim_inheritance(state: RunState, action_id: String, catalog: Dictionary) -> Dictionary:
+	return InheritanceClaimRulesScript.claim(state, action_id, catalog)
 
 
 static func _resource_transition(state: RunState, key: String, delta: int, effect_id: String) -> Dictionary:

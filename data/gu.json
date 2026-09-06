@@ -496,7 +496,8 @@
   ],
   "v1_effect": {
    "kind": "strike",
-   "amount": 999
+   "amount": 999,
+   "aoe": true
   },
   "field_actions": [],
   "synergy_hooks": [],

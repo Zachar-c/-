@@ -375,7 +375,15 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			var amount := int(effect.get("amount", 0))
 			# S4 元素协同：吃到本回合已登记的同流派支援（透明度：battle.turn_supports）。
 			amount += int((next.get("turn_supports", {}) as Dictionary).get(str(slot.get("school", "")), 0))
-			next = _strike_enemy(next, amount, target_key)
+			if bool(effect.get("aoe", false)):
+				# S2 十转杀蛊：群体打击——对本场全部存活敌人各结算一次。
+				for enemy_value in (next.get("enemies", []) as Array):
+					var aoe_enemy: Dictionary = enemy_value
+					if int(aoe_enemy.get("hp", 0)) > 0:
+						next = _strike_enemy(next, amount, str(aoe_enemy.get("id", "")))
+				_log(next, "strike_aoe", str(amount))
+			else:
+				next = _strike_enemy(next, amount, target_key)
 		"shield":
 			next["player"]["shield"] = int(next["player"]["shield"]) + int(effect.get("amount", 0))
 		"buff":

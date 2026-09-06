@@ -83,6 +83,8 @@ func _start_run_with_slay_gu() -> RunController:
 	var controller := RunControllerScript.new()
 	controller.catalog = catalog
 	controller.start_new_run(4242, "moonlight", ["enemy_vitality_trial"])
+	# 深层机制覆盖：本测试走多层契约，关闭切片收官（S6 默认 L1 Boss 落败即 Ending）。
+	controller.catalog["pacing"]["ending_after_stage"] = ""
 	controller.route = _build_route()
 	# 测试夹具：十转杀蛊直装入袋（不走随机池、不走商店）。
 	var state := controller.state

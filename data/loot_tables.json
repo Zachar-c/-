@@ -145,6 +145,24 @@
    "use": {
     "text": "野猪王牙 入药。"
    }
+  },
+  "inheritance_token": {
+   "name_zh": "传承信物",
+   "value": 30,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "human"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.5,
+   "reference_value": 60,
+   "use": {
+    "text": "前人传承的信物，遗葬之地对它有感应。"
+   }
   }
  },
  "loot": {

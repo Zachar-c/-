@@ -36,6 +36,8 @@ const ENDING_TYPE_IDS := ["success", "risky", "retreat", "death", "gu_fall", "tr
 # N1 §16.9: journal layers are a closed enum and route markers must name real
 # event-log signals produced by MetaProgress._run_markers (single mapping).
 const JOURNAL_LAYER_IDS := ["hall"]
+# S2 开局 Buff 结算种类；每种由对应消费点执行（facade/V1/RunController）。
+const BUFF_EFFECTS := ["enemy_hp_one_except_boss", "grant_gu", "grant_stones"]
 const JOURNAL_MARKER_IDS := [
 	"boss_defeated", "sworn_contracts", "ascension_attempted",
 	"notoriety_gte_5", "shop_barter", "rest_curse_removed",
@@ -64,6 +66,7 @@ static func load_all() -> Dictionary:
 	var synthesis := _load_object("res://data/synthesis.json")
 	var v1_battle := _load_object("res://data/v1_battle.json")
 	var schools := _load_object("res://data/schools.json")
+	var buffs_cfg := _load_object("res://data/buffs.json")
 	var loot_tables := _load_object("res://data/loot_tables.json")
 	var contracts_cfg := _load_object("res://data/contracts.json")
 	var journal_cfg := _load_object("res://data/journal.json")
@@ -74,6 +77,7 @@ static func load_all() -> Dictionary:
 	var dialogue_templates_cfg := _load_object("res://data/dialogue_templates.json")
 	var names_cfg := _load_object("res://data/names.json")
 	var nodes_data := _load_object("res://data/nodes.json")
+	var inheritance_sites_cfg := _load_object("res://data/inheritance_sites.json")
 	var nodes: Array = nodes_data.get("nodes", [])
 	var loot_materials: Dictionary = loot_tables.get("materials", {})
 	var material_ids: Array[String] = ["feed_points"]
@@ -99,9 +103,12 @@ static func load_all() -> Dictionary:
 		"event_by_id": _index_by_id(events),
 		"nodes": nodes,
 		"node_by_id": _index_by_id(nodes),
+		"inheritance_sites": inheritance_sites_cfg.get("sites", []),
+		"inheritance_site_by_id": _index_by_id(inheritance_sites_cfg.get("sites", [])),
 		"nodes_data": nodes_data,
 		"shop_offers": shop_offers,
 		"shop_offer_by_id": _index_by_id(shop_offers),
+		"buffs": buffs_cfg.get("buffs", {}),
 		"reputation": reputation,
 		"deck": deck,
 		"pacing": pacing,
@@ -584,6 +591,31 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var regen_value2: Variant = regen_map2[aptitude_id2]
 		if not _is_integral(regen_value2) or int(regen_value2) < 0 or int(regen_value2) > 100:
 			errors.append("aptitude regen_pct.%s must be within 0..100" % aptitude_id2)
+	# S2 开局 Buff：表驱动校验（名称/描述/效果种类/产物引用）。
+	var buffs_data: Dictionary = catalog.get("buffs", {})
+	for buff_id in buffs_data:
+		var bdata: Dictionary = buffs_data[buff_id]
+		if str(bdata.get("name", "")).is_empty() or str(bdata.get("summary", "")).is_empty():
+			errors.append("buff %s needs name and summary" % str(buff_id))
+		if not BUFF_EFFECTS.has(str(bdata.get("effect", ""))):
+			errors.append("buff %s has unknown effect %s" % [str(buff_id), str(bdata.get("effect", ""))])
+		if str(bdata.get("effect", "")) == "grant_gu" and not catalog.get("gu_by_id", {}).has(str(bdata.get("gu_id", ""))):
+			errors.append("buff %s grants unknown gu %s" % [str(buff_id), str(bdata.get("gu_id", ""))])
+		if str(bdata.get("effect", "")) == "grant_stones" and int(bdata.get("amount", 0)) < 1:
+			errors.append("buff %s grant_stones needs positive amount" % str(buff_id))
+	# S3 遗葬传承站点：名称/等级/品质权重校验。
+	for site_id in catalog.get("inheritance_site_by_id", {}):
+		var site_data: Dictionary = catalog["inheritance_site_by_id"][site_id]
+		if str(site_data.get("name", "")).is_empty() or str(site_data.get("summary", "")).is_empty():
+			errors.append("inheritance site %s needs name and summary" % str(site_id))
+		var site_level := int(site_data.get("level", 0))
+		if site_level < 1 or site_level > 5:
+			errors.append("inheritance site %s level must sit in 1..5" % str(site_id))
+		var site_weight_sum := 0
+		for quality_key in site_data.get("quality_weights", {}):
+			site_weight_sum += int(site_data["quality_weights"][quality_key])
+		if site_weight_sum <= 0:
+			errors.append("inheritance site %s needs positive quality weights" % str(site_id))
 	var schools_data: Dictionary = catalog.get("schools", {})
 	for school_id in SCHOOL_IDS:
 		if not schools_data.has(school_id):

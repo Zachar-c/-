@@ -64,6 +64,8 @@ func _start_light_run() -> RunController:
 	var controller := RunControllerScript.new()
 	controller.catalog = catalog
 	controller.start_new_run(20260831, "light", ["enemy_vitality_trial"])
+	# 深层机制覆盖：本测试走多层契约，关闭切片收官（S6 默认 L1 Boss 落败即 Ending）。
+	controller.catalog["pacing"]["ending_after_stage"] = ""
 	controller.route = _build_route()
 	return controller
 
@@ -163,7 +165,7 @@ func test_full_route_light_to_layer2() -> void:
 	assert_eq(controller.state.contracts, ["enemy_vitality_trial"], "契约已立誓")
 	assert_eq(int(controller.state.stone), 1000, "契约给 1000 元石")
 	# light 校 v2 starter pack（schools.json 802 重建，防/移/侦为派生蛊）
-	var light_starters := ["small_light_gu", "light_def_1_15_gu", "light_mov_1_16_gu", "light_rec_1_10_gu"]
+	var light_starters := ["moonlight_gu", "small_light_gu", "stone_shell_gu", "vitality_grass_gu"]
 	for gu_id in light_starters:
 		assert_true(controller.state.refined_gu_ids.has(gu_id), "起始包含 %s" % gu_id)
 	assert_true(controller.state.refined_gu_ids.count("small_light_gu") >= 1, "小光蛊实例在袋")

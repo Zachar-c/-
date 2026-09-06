@@ -31,13 +31,15 @@ func test_light_school_starter_pack() -> void:
 	var light: Dictionary = schools["light"]
 	assert_eq(str(light.get("name", "")), "光道", "中文名固定")
 	var starters: Array = light.get("starter_gu_ids", [])
-	assert_eq(starters, ["small_light_gu", "light_def_1_15_gu", "light_mov_1_16_gu", "light_rec_1_10_gu"],
+	assert_eq(starters, ["moonlight_gu", "small_light_gu", "stone_shell_gu", "vitality_grass_gu"],
 		"starter pack 顺序/数量符合 802 重建后的 light 校 starter（school v2 派生）")
-	# gu.json 注册且全属 light
+	# gu.json 注册；默认全属 light（用户裁定 2026-09-05：石皮蛊为跨道携带，
+	# 道痕归属保持 earth，豁免清单与 test_school_starter_data 一致）。
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
 	for gid in starters:
 		assert_false(gu_by_id.get(gid, {}).is_empty(), "gu %s 已注册" % gid)
-		assert_eq(str(gu_by_id[gid].get("school", "")), "light", "gu %s 属 light" % gid)
+		if gid != "stone_shell_gu":
+			assert_eq(str(gu_by_id[gid].get("school", "")), "light", "gu %s 属 light" % gid)
 
 
 func test_start_new_run_seeds_light_starter_pack() -> void:
@@ -46,7 +48,7 @@ func test_start_new_run_seeds_light_starter_pack() -> void:
 	controller.catalog = catalog
 	controller.start_new_run(42, "light", [])
 	assert_eq(controller.state.school, "light", "school 已设置")
-	var expected: Array = ["small_light_gu", "light_def_1_15_gu", "light_mov_1_16_gu", "light_rec_1_10_gu"]
+	var expected: Array = ["moonlight_gu", "small_light_gu", "stone_shell_gu", "vitality_grass_gu"]
 	for gid in expected:
 		assert_true(controller.state.refined_gu_ids.has(gid), "refined_gu_ids 包含 %s" % gid)
 	# gu_instances 覆盖全部 starter 定义（gu_001 是默认 small_light_gu，可能被覆盖）

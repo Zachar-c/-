@@ -124,6 +124,8 @@ func _drive(seed_value: int) -> Dictionary:
 	# 不入树：与 acceptance_driver 的 play 模式同款无头驾驶，避免 RUITK 屏幕挂载的引擎
 	# set_name 噪音污染 GUT 错误桶。
 	controller.start_new_run(seed_value, "", [])
+	# 深层走通覆盖：本测试按多层契约驱动，关闭切片收官（S6 默认 L1 Boss 落败即 Ending）。
+	controller.catalog["pacing"]["ending_after_stage"] = ""
 	_stuck_battle_id = ""
 	_stuck_count = 0
 	_stuck_enemy_hp = -1

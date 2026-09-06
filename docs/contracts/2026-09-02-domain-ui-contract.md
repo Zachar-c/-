@@ -50,6 +50,8 @@ UI (scenes + scripts/ui)
 
 流派中文名透出（C2 2026-09-05 起，UI 不裸显英文 school id；统一 `_school_display_name(catalog, school_id)`，源 `schools.json` v2）：大厅选中流派 `selected_school_name`；图鉴/书库蛊条目与休整升级候选等携带 `school`（英文 id）+ `school_name`（中文）；battle 手牌卡携带 `school_label`（中文，供卡面 tooltip 拼接）。
 
+开局 Buff 透出（S2 2026-09-06 起）：大厅快照 `available_buffs`（`id`/`name`/`summary`，源 `data/buffs.json`，目录校验 effect 种类与产物引用）与 `selected_buffs`（已选 id 数组）；命令 `toggle_buff(id)` 切换多选（未知 id 忽略）；`new_run` 增第四参 `buff_ids`，run 创建时一次性结算——`grant_stones` 加元石、`grant_gu` 注入蛊实例入洞天（均落 `run_buffs_applied` 事件）、`enemy_hp_one_except_boss` 由 `BattleCommandFacade.start` 消费（非 Boss 敌 hp/max_hp=1）。
+
 局内公共快照同时携带以下只读键：
 
 - `inventory{materials[],gu_instances[],loot[],intel[]}`：材料仅含 `id/name/quantity`；蛊虫实例含 `id/definition_id/name/state/rank/quality`；收获与情报仅投影已结算结果和 `known_facts`。UI 不得据此反写库存或推断未知信息。

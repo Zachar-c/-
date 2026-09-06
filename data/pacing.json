@@ -1,176 +1,182 @@
 {
-  "lifespan_milestones": {
-    "stage_one_ledger": 10,
-    "boss_defeated": 10
-  },
-  "turn_scaling": {
-    "hp_add_per_turn": 2,
-    "damage_add_per_turn": 1,
-    "hp_cap_bonus": 6,
-    "damage_cap_bonus": 2
-  },
-  "layers": {
-    "1": {
-      "rows": [
-        8,
-        11
-      ],
-      "row_nodes": [
-        2,
-        6
-      ],
-      "entry_nodes": [
-        1,
-        2
-      ],
-      "stone_budget": 12,
-      "enemy_turn": 1,
-      "loot": {
-        "material_count": 1,
-        "weights": {
-          "common": 90,
-          "rare": 10,
-          "epic": 0
-        }
-      },
-      "shop_price_pct": 0,
-      "shop_max_tier": 1,
-      "anchors": [],
-      "pool": [
-        "beast_swarm_pass"
-      ],
-      "title": "青茅山外圍"
-    },
-    "2": {
-      "rows": [
-        8,
-        11
-      ],
-      "row_nodes": [
-        2,
-        6
-      ],
-      "entry_nodes": [
-        1,
-        2
-      ],
-      "stone_budget": 16,
-      "enemy_turn": 2,
-      "loot": {
-        "material_count": 1,
-        "weights": {
-          "common": 80,
-          "rare": 18,
-          "epic": 2
-        }
-      },
-      "shop_price_pct": 10,
-      "shop_max_tier": 2,
-      "anchors": [],
-      "pool": [
-        "iron_hide_ambush"
-      ],
-      "title": "落瘴岭"
-    },
-    "3": {
-      "rows": [
-        8,
-        11
-      ],
-      "row_nodes": [
-        2,
-        6
-      ],
-      "entry_nodes": [
-        1,
-        2
-      ],
-      "stone_budget": 22,
-      "enemy_turn": 3,
-      "loot": {
-        "material_count": 2,
-        "weights": {
-          "common": 70,
-          "rare": 24,
-          "epic": 6
-        }
-      },
-      "shop_price_pct": 20,
-      "shop_max_tier": 3,
-      "anchors": [],
-      "pool": [
-        "scout_crossing_raid"
-      ],
-      "title": "血蟒涧"
-    },
-    "4": {
-      "rows": [
-        8,
-        11
-      ],
-      "row_nodes": [
-        2,
-        6
-      ],
-      "entry_nodes": [
-        1,
-        2
-      ],
-      "stone_budget": 28,
-      "enemy_turn": 4,
-      "loot": {
-        "material_count": 2,
-        "weights": {
-          "common": 60,
-          "rare": 28,
-          "epic": 12
-        }
-      },
-      "shop_price_pct": 35,
-      "shop_max_tier": 4,
-      "anchors": [],
-      "pool": [
-        "faction_guard_checkpoint"
-      ],
-      "title": "万蛊窟"
-    },
-    "5": {
-      "rows": [
-        8,
-        11
-      ],
-      "row_nodes": [
-        2,
-        6
-      ],
-      "entry_nodes": [
-        1,
-        2
-      ],
-      "stone_budget": 35,
-      "enemy_turn": 5,
-      "loot": {
-        "material_count": 3,
-        "weights": {
-          "common": 50,
-          "rare": 30,
-          "epic": 20
-        }
-      },
-      "shop_price_pct": 50,
-      "shop_max_tier": 5,
-      "anchors": [],
-      "pool": [
-        "wolf_pack_trail"
-      ],
-      "title": "瘴脉深處"
+ "lifespan_milestones": {
+  "stage_one_ledger": 10,
+  "boss_defeated": 10
+ },
+ "turn_scaling": {
+  "hp_add_per_turn": 2,
+  "damage_add_per_turn": 1,
+  "hp_cap_bonus": 6,
+  "damage_cap_bonus": 2
+ },
+ "layers": {
+  "1": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 12,
+   "enemy_turn": 1,
+   "loot": {
+    "material_count": 1,
+    "weights": {
+     "common": 90,
+     "rare": 10,
+     "epic": 0
     }
+   },
+   "shop_price_pct": 0,
+   "shop_max_tier": 1,
+   "anchors": [
+    {
+     "template": "yizang_ridge",
+     "row": "pre_boss"
+    }
+   ],
+   "pool": [
+    "beast_swarm_pass"
+   ],
+   "title": "青茅山外圍"
   },
-  "advance_bonus_by_rank": {
-    "1": 0,
-    "2": 1,
-    "3": 3,
-    "4": 6,
-    "5": 10
+  "2": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 16,
+   "enemy_turn": 2,
+   "loot": {
+    "material_count": 1,
+    "weights": {
+     "common": 80,
+     "rare": 18,
+     "epic": 2
+    }
+   },
+   "shop_price_pct": 10,
+   "shop_max_tier": 2,
+   "anchors": [],
+   "pool": [
+    "iron_hide_ambush"
+   ],
+   "title": "落瘴岭"
+  },
+  "3": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 22,
+   "enemy_turn": 3,
+   "loot": {
+    "material_count": 2,
+    "weights": {
+     "common": 70,
+     "rare": 24,
+     "epic": 6
+    }
+   },
+   "shop_price_pct": 20,
+   "shop_max_tier": 3,
+   "anchors": [],
+   "pool": [
+    "scout_crossing_raid"
+   ],
+   "title": "血蟒涧"
+  },
+  "4": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 28,
+   "enemy_turn": 4,
+   "loot": {
+    "material_count": 2,
+    "weights": {
+     "common": 60,
+     "rare": 28,
+     "epic": 12
+    }
+   },
+   "shop_price_pct": 35,
+   "shop_max_tier": 4,
+   "anchors": [],
+   "pool": [
+    "faction_guard_checkpoint"
+   ],
+   "title": "万蛊窟"
+  },
+  "5": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 35,
+   "enemy_turn": 5,
+   "loot": {
+    "material_count": 3,
+    "weights": {
+     "common": 50,
+     "rare": 30,
+     "epic": 20
+    }
+   },
+   "shop_price_pct": 50,
+   "shop_max_tier": 5,
+   "anchors": [],
+   "pool": [
+    "wolf_pack_trail"
+   ],
+   "title": "瘴脉深處"
   }
+ },
+ "advance_bonus_by_rank": {
+  "1": 0,
+  "2": 1,
+  "3": 3,
+  "4": 6,
+  "5": 10
+ },
+ "ending_after_stage": "one"
 }

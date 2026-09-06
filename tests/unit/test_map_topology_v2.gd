@@ -155,7 +155,7 @@ func test_instances_carry_template_layer_and_row() -> void:
 		if str(node["id"]) == "ascension_window":
 			continue
 		var template_kind := str(node.get("type", ""))
-		assert_true(template_kind in ["combat", "rest", "shop"],
+		assert_true(template_kind in ["combat", "rest", "shop", "inheritance"],
 			"instance %s carries non-skeleton kind %s" % [str(node["id"]), template_kind])
 	var market_count := 0
 	for node in route:

@@ -47,11 +47,27 @@ func test_every_school_has_display_name_and_summary() -> void:
 		assert_false(str(entry.get("summary", "")).is_empty(), "school %s needs a summary" % school_id)
 
 
+## 用户裁定 2026-09-05：光道初始四只 = 月光蛊/小光蛊/石皮蛊/生机草蛊。
+## 石皮蛊 (stone_shell_gu) 道痕归属 earth，不改其流派（D1b 合炼矩阵以
+## school 字段为锚），仅作为光道初始包的跨道携带蛊出现在此豁免清单。
+const CROSS_SCHOOL_STARTERS := {
+	"light:stone_shell_gu": true,
+}
+
+
 func test_starters_belong_to_their_school() -> void:
 	var cat: Dictionary = catalog()
 	for school_id in SCHOOLS:
 		for starter in cat["schools"][school_id].get("starter_gu_ids", []):
-			assert_eq(str(cat["gu_by_id"][str(starter)]["school"]), school_id)
+			var starter_school := str(cat["gu_by_id"][str(starter)]["school"])
+			if starter_school == school_id:
+				continue
+			assert_true(
+				CROSS_SCHOOL_STARTERS.has("%s:%s" % [school_id, starter]),
+				"%s starter %s (%s) must match its school or be an exempted cross-school starter" % [
+					school_id, starter, starter_school,
+				]
+			)
 
 
 func test_starter_roles_are_valid() -> void:

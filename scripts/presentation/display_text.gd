@@ -64,6 +64,8 @@ const ACTIONS := {
 	"buy_information": "购买情报",
 	"buy": "买蛊",
 	"claim": "占取",
+	"claim_recon": "以侦察蛊探秘",
+	"claim_token": "以信物感应",
 	"cross": "穿越",
 	"deceive": "欺瞒",
 	"fight": "交锋",

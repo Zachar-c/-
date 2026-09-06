@@ -78,6 +78,8 @@ var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
 var _hall_subview := "main"
 var _selected_school := "force"
+# S2 开局 Buff：大厅多选暂存，run 创建时一次性结算。
+var _selected_buffs: Array = []
 ## 大厅勾选的开局契约（§15/§16.13）；new_run 时经 swear 门禁正式立誓。
 var _selected_contracts: Array[String] = []
 
@@ -162,7 +164,7 @@ func _initialize_view_flow() -> void:
 		_mount_debug_panel()
 
 
-func start_new_run(seed_value: int, school: String = "", contract_ids: Array = []) -> void:
+func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [], buff_ids: Array = []) -> void:
 	var loaded := ContentCatalog.load_and_validate_all()
 	catalog = loaded.get("catalog", {})
 	_content_errors = loaded.get("errors", [])
@@ -176,7 +178,9 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
 	_inject_school_starters(school)
 	_swear_opening_contracts(contract_ids)
+	_apply_run_buffs(buff_ids)
 	_selected_contracts.clear()
+	_selected_buffs.clear()
 	# R-seed 2026-09-03（垂直切片裁定）：玩家局不设教学种子/固定种子——
 	# 种子 101 不再映射手写 first_run 路线，任何一世都按传入种子生成地图；
 	# first_run 手写图仅保留给 MapGenerator.build(..., true) 的测试夹具。
@@ -1061,6 +1065,58 @@ const WANDERER_STARTER_GU_IDS := [
 ]
 
 
+## S2 开局 Buff：选中的 Buff 在 run 创建时一次性结算（多选、本切片无限量）。
+## grant_stones 直接加元石；grant_gu 按实例注入洞天；enemy_hp_one 由
+## BattleCommandFacade.start 在战斗构建时消费（非 Boss 敌 hp=1）。
+func _apply_run_buffs(buff_ids: Array) -> void:
+	var buffs: Dictionary = catalog.get("buffs", {})
+	var applied: Array[String] = []
+	var before := {"stone": int(state.stone), "gu_instances": state.gu_instances.size()}
+	for raw_id in buff_ids:
+		var buff_id := str(raw_id)
+		var bdata: Dictionary = buffs.get(buff_id, {})
+		if bdata.is_empty():
+			continue
+		applied.append(buff_id)
+		state.run_buff_ids.append(buff_id)
+		match str(bdata.get("effect", "")):
+			"grant_stones":
+				state.stone = int(state.stone) + int(bdata.get("amount", 0))
+			"grant_gu":
+				var gu_id := str(bdata.get("gu_id", ""))
+				if not gu_id.is_empty() and catalog.get("gu_by_id", {}).has(gu_id):
+					var instance_id := _next_gu_instance_id(state)
+					state.gu_instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, catalog)
+					state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
+				state.sync_legacy_gu_projections()
+	if applied.is_empty():
+		return
+	state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "run_buffs_applied",
+		"before": before,
+		"after": {
+			"stone": int(state.stone),
+			"gu_instances": state.gu_instances.size(),
+			"run_buff_ids": state.run_buff_ids.duplicate(),
+		},
+		"reason": "opening_buffs_settled",
+		"source": "run_controller",
+	})
+
+
+func _toggle_buff(buff_id: String) -> void:
+	var bid := str(buff_id)
+	if not catalog.get("buffs", {}).has(bid):
+		return
+	if _selected_buffs.has(bid):
+		_selected_buffs.erase(bid)
+	else:
+		_selected_buffs.append(bid)
+
+
 func _inject_school_starters(school: String) -> void:
 	var schools: Dictionary = catalog.get("schools", {})
 	var starters: Array = WANDERER_STARTER_GU_IDS if school.is_empty() \
@@ -1390,6 +1446,16 @@ func _finish_battle_in_session(outcome: String) -> void:
 		var layer_boss := int(current_node.get("layer_boss", 0))
 		if layer_boss > 0:
 			state = Resolver.apply(state, {"type": "record_layer_boss_defeated", "layer": layer_boss}, catalog)["state"]
+			# S6 切片收官：pacing.ending_after_stage 指定的最终层 Boss 落败即
+			# 全局收官（本切片 = 第一层），走统一结算（outcome=success → won），
+			# Run 存档随结算删除；战利品已入账，结算复盘给出整局摘要。
+			var end_stage := str(catalog.get("pacing", {}).get("ending_after_stage", ""))
+			var order: Array = MapGenerator.LAYER_ORDER
+			var boss_stage := str(order[layer_boss - 1]) if layer_boss >= 1 and layer_boss <= order.size() else ""
+			if not end_stage.is_empty() and boss_stage == end_stage:
+				state.terminal_state = "success"
+				_show_ending({"outcome": "success", "conditions": {"layer": layer_boss, "route": "slice_closure"}})
+				return
 		if enemy_kind == "miasma_vein_lord":
 			state = Resolver.apply(state, {"type": "record_boss_defeated"}, catalog)["state"]
 	# D3 战利品弹窗（流程图 G3）：有真实战利品或精英绑定时走 Reward 屏确认，

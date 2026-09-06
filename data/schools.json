@@ -53,10 +53,10 @@
   "name": "光道",
   "summary": "掌光之显隐与月华之力；光明/月华系蛊互相成就，光明正大亦擅照明探路（含月光系，moonlight 并入）。",
   "starter_gu_ids": [
+   "moonlight_gu",
    "small_light_gu",
-   "light_def_1_15_gu",
-   "light_mov_1_16_gu",
-   "light_rec_1_10_gu"
+   "stone_shell_gu",
+   "vitality_grass_gu"
   ]
  },
  "wisdom": {

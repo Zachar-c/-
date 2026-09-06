@@ -21,6 +21,8 @@ var aptitude: String = "bing"
 var injury: int = 0
 var lifespan_debt: int = 0
 var stone: int = 12
+# S2 开局 Buff：本局选中的 Buff id（run 创建时结算，详见 buffs.json）。
+var run_buff_ids: Array = []
 var loot_pity: int = 0
 var material_pity: int = 0
 var synthesis_fail_streak: int = 0
@@ -88,6 +90,7 @@ const STATE_FIELDS: Array[String] = [
 	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",
 	"battle2_ledger",
 	"relic_ids", "meta_rules", "global_codex_ids", "school", "terminal_state",
+	"run_buff_ids",
 	"dda_state_adaptive_enabled",
 ]
 
