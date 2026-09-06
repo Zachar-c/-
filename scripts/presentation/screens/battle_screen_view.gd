@@ -27,11 +27,11 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _feedback_toast = $Root/FeedbackToast
 @onready var _hint_host: VBoxContainer = $Root/HintHost
 @onready var _hand_stage: PanelContainer = $Root/HandStage
-@onready var _primordial_label: Label = $Root/HandStage/battle_hand/HandMetaRow/PrimordialLabel
-@onready var _piles_label: Label = $Root/HandStage/battle_hand/HandMetaRow/PilesLabel
-@onready var _hand = $Root/HandStage/battle_hand/Hand
-@onready var _kill_host: VBoxContainer = $Root/HandStage/battle_hand/KillHost
-@onready var _ops_row: HBoxContainer = $Root/HandStage/battle_hand/OpsRow
+@onready var _primordial_label: Label = $Root/HandStage/battle_hand/LeftMeta/PrimordialRow/PrimordialLabel
+@onready var _piles_label: Label = $Root/HandStage/battle_hand/LeftMeta/PilesRow/PilesLabel
+@onready var _hand = $Root/HandStage/battle_hand/HandArea/Hand
+@onready var _kill_host: VBoxContainer = $Root/HandStage/battle_hand/HandArea/KillHost
+@onready var _ops_row: VBoxContainer = $Root/HandStage/battle_hand/RightOps/OpsRow
 @onready var _mode_host: VBoxContainer = $Root/ModeHost
 @onready var _confirm_dialog = $Root/ConfirmDialog
 @onready var _tooltip_host: PanelContainer = $Root/battle_hand_tooltip_host
@@ -364,6 +364,8 @@ func _refresh() -> void:
 	_refresh_player(state)
 	_refresh_enemies(state)
 	_inventory.setup(state.get("inventory", {}))
+	# 杀戮尖塔风格：隐藏舞台中的背包面板，顶栏右侧已有背包入口按钮，主舞台只保留立绘
+	_inventory.visible = false
 	_refresh_hand(state)
 	_refresh_ops(state)
 	_refresh_kill_moves(state)
@@ -380,16 +382,19 @@ func _refresh_top_bar(state: Dictionary) -> void:
 			state.get("contracts", []),
 		state.get("anomalies", []),
 		state.get("death_lines", {}),
-		int(state.get("layer", -1)))
+		int(state.get("layer", -1)),
+		state.get("player", {}))  # 传递player数据，用于显示气血（hp/max_hp）
 
 
 func _refresh_player(state: Dictionary) -> void:
 	var player: Dictionary = state.get("player", {})
 	var actions: Dictionary = state.get("actions", {})
-	_player_panel.setup("我方", true, false, true)
+	# 杀戮尖塔风格：无标题、完全透明背景，立绘为主体
+	_player_panel.setup("", true, true, true)
+	_make_panel_fully_transparent(_player_panel)
 	var host: Node = _player_panel.content_host
 	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
+	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_END
 	for c in host.get_children():
 		c.queue_free()
 
@@ -399,16 +404,16 @@ func _refresh_player(state: Dictionary) -> void:
 	box.add_theme_constant_override("separation", GuStyle.SPACE_3)
 	host.add_child(box)
 
-	# 叙事层：玩家立绘。调暗偏冷、半透明，融入南疆洞窟舞台，不占据英雄式中央光位。
+	# 叙事层：玩家立绘。杀戮尖塔风格：大而醒目、不透明，占据左侧主要空间
 	var portrait := TextureRect.new()
 	portrait.name = "player_portrait"
 	portrait.texture = PlayerPortrait
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size = Vector2(0, 96)
+	portrait.custom_minimum_size = Vector2(0, 200)
 	portrait.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	# 偏冷调暗 + 半透明，让立绘成为环境中的人物而非UI主体
-	portrait.modulate = GuStyle.PORTRAIT_DIM
+	# 不透明，明亮，让立绘成为舞台主体
+	portrait.modulate = Color(1, 1, 1, 1)
 	box.add_child(portrait)
 
 	var hp = StatBarScene().instantiate()
@@ -419,26 +424,7 @@ func _refresh_player(state: Dictionary) -> void:
 			GuStyle.JADE, int(player.get("shield", 0)), Callable(),
 			bool(health_line.get("danger", false)), str(health_line.get("detail", "")))
 
-	var pri = StatBarScene().instantiate()
-	box.add_child(pri)
-	pri.setup("真元", int(player.get("primordial", 0)),
-			maxi(1, int(player.get("primordial_max", 1))), GuStyle.ANOMALY_YELLOW)
-
-	var actions_row := HBoxContainer.new()
-	actions_row.name = "player_actions_label"
-	actions_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	actions_row.add_theme_constant_override("separation", 4)
-	var actions_icon := GuIconView.new()
-	actions_icon.setup("gi_fist", GuStyle.INK_MUTED, GuIconView.SIZE_SMALL)
-	actions_row.add_child(actions_icon)
-	var actions_text := Label.new()
-	actions_text.text = "行动 %d/%d（念头 %d）" % [
-			int(actions.get("left", 0)), int(actions.get("max", 0)),
-			int(player.get("thoughts", 0))]
-	actions_text.add_theme_font_size_override("font_size", 14)
-	actions_text.add_theme_color_override("font_color", GuStyle.INK_MUTED)
-	actions_row.add_child(actions_text)
-	box.add_child(actions_row)
+	# 杀戮尖塔风格：真元和行动点已在左侧LeftMeta显示，玩家区域只保留立绘+血量条，更简洁
 
 
 func _refresh_enemies(state: Dictionary) -> void:
@@ -449,7 +435,9 @@ func _refresh_enemies(state: Dictionary) -> void:
 		visible_enemies = enemies.slice(0, MAX_VISIBLE_ENEMIES)
 		remainder = enemies.slice(MAX_VISIBLE_ENEMIES)
 
-	_enemy_panel.setup("敌方", true, false, true)
+	# 杀戮尖塔风格：无标题、完全透明背景，立绘为主体
+	_enemy_panel.setup("", true, true, true)
+	_make_panel_fully_transparent(_enemy_panel)
 	var host: Node = _enemy_panel.content_host
 	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
@@ -469,8 +457,8 @@ func _refresh_enemies(state: Dictionary) -> void:
 			continue
 		var enemy_id := str(e.get("id", ""))
 		var actor = GuEnemyActorScene.instantiate()
-		# 敌人卡保持稳定基线，长意图只在卡内折行，不改变横向节奏。
-		actor.custom_minimum_size = Vector2(200, 150)
+		# 杀戮尖塔风格：敌人立绘大而醒目，占据右侧主要空间
+		actor.custom_minimum_size = Vector2(280, 220)
 		# build 函数一律先 add_child：@onready 要等入树后才有值。
 		group.add_child(actor)
 		_enemy_actors[enemy_id] = actor
@@ -542,20 +530,24 @@ func _refresh_hand(state: Dictionary) -> void:
 	# 行动预算是玩家必读资源：浅色纸面主题下用墨色保证对比度。
 	_piles_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	# 开源图标：真元用宝石图标，行动点用拳头图标，动态创建一次后复用。
-	var meta_row: HBoxContainer = _primordial_label.get_parent() as HBoxContainer
-	if meta_row != null:
-		if meta_row.get_node_or_null("primordial_icon") == null:
+	# 真元图标添加到PrimordialRow（真元行）
+	var primordial_row: HBoxContainer = _primordial_label.get_parent() as HBoxContainer
+	if primordial_row != null:
+		if primordial_row.get_node_or_null("primordial_icon") == null:
 			var p_icon := GuIconView.new()
 			p_icon.name = "primordial_icon"
 			p_icon.setup("yuanstone", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_BODY)
-			meta_row.add_child(p_icon)
-			meta_row.move_child(p_icon, 0)
-		if meta_row.get_node_or_null("piles_icon") == null:
+			primordial_row.add_child(p_icon)
+			primordial_row.move_child(p_icon, 0)
+	# 行动点图标添加到PilesRow（行动点行）
+	var piles_row: HBoxContainer = _piles_label.get_parent() as HBoxContainer
+	if piles_row != null:
+		if piles_row.get_node_or_null("piles_icon") == null:
 			var a_icon := GuIconView.new()
 			a_icon.name = "piles_icon"
 			a_icon.setup("gi_fist", GuStyle.INK_PRIMARY, GuIconView.SIZE_SMALL)
-			meta_row.add_child(a_icon)
-			meta_row.move_child(a_icon, _piles_label.get_index())
+			piles_row.add_child(a_icon)
+			piles_row.move_child(a_icon, 0)
 
 	# Gubattle_hand 接 6 参（press / hover / cancel / drag_start）。拖拽命中走
 	# 全局 _input 抬起拦截（_on_card_drop），不依赖按钮捕获的 release 事件；
@@ -597,9 +589,14 @@ func _enemy_at(global_pos: Vector2) -> String:
 func _refresh_ops(state: Dictionary) -> void:
 	for c in _ops_row.get_children():
 		c.queue_free()
-	_ops_row.add_child(_op_button("结束回合", func():
+	# 杀戮尖塔风格：结束回合按钮大而醒目，使用primary样式（朱砂色背景+白色文字）
+	var end_btn := _op_button("结束回合", func():
 		if _commands.has("end_turn"):
-			_commands["end_turn"].call()))
+			_commands["end_turn"].call())
+	MasterTheme.apply_button(end_btn, "primary")
+	end_btn.custom_minimum_size = Vector2(140, 56)
+	end_btn.add_theme_font_size_override("font_size", 18)
+	_ops_row.add_child(end_btn)
 	if _commands.has("refine"):
 		_ops_row.add_child(_op_button("炼蛊", func(): _commands["refine"].call()))
 	if _commands.has("flee") and bool(state.get("flee_available", true)):
@@ -775,3 +772,12 @@ func _clear(host: Node) -> void:
 ## 小工具：本屏动态创建生命 / 真元条。
 static func StatBarScene() -> PackedScene:
 	return preload("res://scenes/ui/widgets/gu_stat_bar.tscn")
+
+## 杀戮尖塔风格：面板完全透明，只显示立绘和血量条，不显示面板背景和边框。
+func _make_panel_fully_transparent(panel: PanelContainer) -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = Color(0, 0, 0, 0)
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(0)
+	panel.add_theme_stylebox_override("panel", box)

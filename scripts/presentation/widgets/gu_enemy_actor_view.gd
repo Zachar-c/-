@@ -212,13 +212,13 @@ func _status_label(text: String) -> Label:
 	return label
 
 
-## 选中态用 JADE 描边（可点目标）+ 立绘提亮，未选中是发丝线 + 立绘调暗。
+## 杀戮尖塔风格：完全透明背景，选中态用 JADE 描边（可点目标）+ 立绘提亮。
 func _apply_actor_style(selected: bool) -> void:
 	var box := StyleBoxFlat.new()
-	box.bg_color = GuStyle.PAPER_RAISED
-	box.border_color = GuStyle.JADE if selected else GuStyle.HAIRLINE_COLOR
-	box.set_border_width_all(GuStyle.HAIRLINE)
+	box.bg_color = Color(0, 0, 0, 0)  # 完全透明背景
+	box.border_color = GuStyle.JADE if selected else Color(0, 0, 0, 0)  # 选中态玉绿描边，未选中无边框
+	box.set_border_width_all(2 if selected else 0)
 	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	add_theme_stylebox_override("panel", box)
 	var current := _enemy_portrait.modulate
-	_enemy_portrait.modulate = Color(current.r, current.g, current.b, 0.6 if selected else current.a)
+	_enemy_portrait.modulate = Color(current.r, current.g, current.b, 1.0 if selected else current.a)

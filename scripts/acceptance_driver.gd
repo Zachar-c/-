@@ -1007,7 +1007,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 			"res://scenes/ui/screens/battle_screen.tscn", battle_state, cmds)
 	await process_frame
 
-	var ops := battle.get_node("Root/HandStage/battle_hand/OpsRow")
+	var ops := battle.get_node("Root/HandStage/battle_hand/RightOps/OpsRow")
 	if ops.get_child_count() < 3:
 		push_error("tscn 战斗屏操作按钮不足（应有 结束回合 / 炼蛊 / 撤退）")
 		_teardown_mounts()
@@ -1177,8 +1177,13 @@ func _verify_tscn_ending(ending_success: Dictionary, ending_cmds: Dictionary) ->
 	var minimal := _mount_tscn_screen("res://scenes/ui/screens/ending_screen.tscn",
 			ending_minimal, ending_cmds)
 	await process_frame
-	if _count_visible_buttons(minimal) != 2:
-		push_error("tscn 极简结算应只有两个按钮，实得 %d" % _count_visible_buttons(minimal))
+	# 动作区按钮数按 ActionRow 统计：2026-09-06 顶栏(背包/设置 icon 按钮)
+	# 已 instance 进全屏，全屏按钮总数含顶栏 2 个，不再是纯动作数。
+	var ending_action_row := minimal.get_node_or_null(
+			"primary_decision_surface/ActionBlock/ActionRow")
+	if ending_action_row == null or _count_visible_buttons(ending_action_row) != 2:
+		push_error("tscn 极简结算动作区应只有两个按钮，实得 %d"
+				% (0 if ending_action_row == null else _count_visible_buttons(ending_action_row)))
 		_teardown_mounts()
 		return false
 	if (_find_button_by_text(minimal, "返回大厅") == null

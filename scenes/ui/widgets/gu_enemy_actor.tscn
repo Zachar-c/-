@@ -15,25 +15,27 @@ theme_override_constants/margin_bottom = 8
 
 [node name="ActorBody" type="VBoxContainer" parent="ActorMargin"]
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 4
 size_flags_horizontal = 3
-
-[node name="EnemyIconHost" type="CenterContainer" parent="ActorMargin/ActorBody"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 96)
-
-[node name="EnemyPortrait" type="TextureRect" parent="ActorMargin/ActorBody/EnemyIconHost"]
-layout_mode = 2
-custom_minimum_size = Vector2(72, 96)
-expand_mode = 1
-stretch_mode = 5
-mouse_filter = 2
-flip_h = true
+alignment = 1
 
 [node name="IntentLabel" type="Label" parent="ActorMargin/ActorBody"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "意图："
+horizontal_alignment = 1
+
+[node name="EnemyIconHost" type="CenterContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 140)
+
+[node name="EnemyPortrait" type="TextureRect" parent="ActorMargin/ActorBody/EnemyIconHost"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 140)
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+flip_h = true
 
 [node name="NameButton" type="Button" parent="ActorMargin/ActorBody"]
 layout_mode = 2
@@ -42,8 +44,9 @@ text = "敌人"
 
 [node name="NameLabel" type="Label" parent="ActorMargin/ActorBody"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 text = "敌人"
+horizontal_alignment = 1
 
 [node name="StrikeLine" type="ColorRect" parent="ActorMargin/ActorBody"]
 layout_mode = 2
@@ -62,6 +65,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "护盾 0"
+horizontal_alignment = 1
 
 [node name="StatusHost" type="VBoxContainer" parent="ActorMargin/ActorBody"]
 layout_mode = 2

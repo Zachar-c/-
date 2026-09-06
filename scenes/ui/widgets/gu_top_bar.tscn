@@ -1,109 +1,121 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/widgets/gu_top_bar_view.gd" id="1_top_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_icon.tscn" id="2_icon"]
 
 [node name="GuTopBar" type="PanelContainer"]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 56)
 script = ExtResource("1_top_bar")
 
 [node name="BarMargin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="BarRow" type="HBoxContainer" parent="BarMargin"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 20
 
-[node name="LayerLabel" type="Label" parent="BarMargin/BarRow" unique_name_in_owner=true]
+[node name="StatusHost" type="HBoxContainer" parent="BarMargin/BarRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "第 0 转"
-visible = false
+theme_override_constants/separation = 20
 
-[node name="ChipHost" type="HBoxContainer" parent="BarMargin/BarRow" unique_name_in_owner=true]
+[node name="QiStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
-[node name="ChipYuanstone" type="PanelContainer" parent="BarMargin/BarRow/ChipHost"]
+[node name="QiIcon" parent="BarMargin/BarRow/StatusHost/QiStatus" instance=ExtResource("2_icon")]
 layout_mode = 2
 
-[node name="ChipMargin" type="MarginContainer" parent="BarMargin/BarRow/ChipHost/ChipYuanstone"]
+[node name="QiLabel" type="Label" parent="BarMargin/BarRow/StatusHost/QiStatus"]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_bottom = 3
+theme_override_font_sizes/font_size = 15
+text = "0/0"
 
-[node name="ChipBox" type="HBoxContainer" parent="BarMargin/BarRow/ChipHost/ChipYuanstone/ChipMargin"]
+[node name="ShouStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 4
 
-[node name="Icon" parent="BarMargin/BarRow/ChipHost/ChipYuanstone/ChipMargin/ChipBox" instance=ExtResource("2_icon")]
+[node name="ShouIcon" parent="BarMargin/BarRow/StatusHost/ShouStatus" instance=ExtResource("2_icon")]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="BarMargin/BarRow/ChipHost/ChipYuanstone/ChipMargin/ChipBox"]
+[node name="ShouLabel" type="Label" parent="BarMargin/BarRow/StatusHost/ShouStatus"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "元石: 0"
+theme_override_font_sizes/font_size = 15
+text = "0/0"
 
-[node name="ChipShouyuan" type="PanelContainer" parent="BarMargin/BarRow/ChipHost"]
+[node name="HunStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="ChipMargin" type="MarginContainer" parent="BarMargin/BarRow/ChipHost/ChipShouyuan"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_bottom = 3
-
-[node name="ChipBox" type="HBoxContainer" parent="BarMargin/BarRow/ChipHost/ChipShouyuan/ChipMargin"]
-layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="Icon" parent="BarMargin/BarRow/ChipHost/ChipShouyuan/ChipMargin/ChipBox" instance=ExtResource("2_icon")]
+[node name="HunIcon" parent="BarMargin/BarRow/StatusHost/HunStatus" instance=ExtResource("2_icon")]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="BarMargin/BarRow/ChipHost/ChipShouyuan/ChipMargin/ChipBox"]
+[node name="HunLabel" type="Label" parent="BarMargin/BarRow/StatusHost/HunStatus"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "寿元: 0"
+theme_override_font_sizes/font_size = 15
+text = "0/0"
 
-[node name="ChipHunpo" type="PanelContainer" parent="BarMargin/BarRow/ChipHost"]
+[node name="YuanStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="ChipMargin" type="MarginContainer" parent="BarMargin/BarRow/ChipHost/ChipHunpo"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_bottom = 3
-
-[node name="ChipBox" type="HBoxContainer" parent="BarMargin/BarRow/ChipHost/ChipHunpo/ChipMargin"]
-layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="Icon" parent="BarMargin/BarRow/ChipHost/ChipHunpo/ChipMargin/ChipBox" instance=ExtResource("2_icon")]
+[node name="YuanIcon" parent="BarMargin/BarRow/StatusHost/YuanStatus" instance=ExtResource("2_icon")]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="BarMargin/BarRow/ChipHost/ChipHunpo/ChipMargin/ChipBox"]
+[node name="YuanLabel" type="Label" parent="BarMargin/BarRow/StatusHost/YuanStatus"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "魂魄: 0"
+theme_override_font_sizes/font_size = 15
+text = "0"
 
 [node name="Spacer" type="Control" parent="BarMargin/BarRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MetaHost" type="HBoxContainer" parent="BarMargin/BarRow" unique_name_in_owner=true]
+[node name="ActionHost" type="HBoxContainer" parent="BarMargin/BarRow"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
-[node name="MenuButton" type="Button" parent="BarMargin/BarRow" unique_name_in_owner=true]
-custom_minimum_size = Vector2(32, 32)
+[node name="BagButton" type="Button" parent="BarMargin/BarRow/ActionHost"]
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-text = "≡"
-visible = false
+flat = true
+focus_mode = 0
+
+[node name="BagIcon" parent="BarMargin/BarRow/ActionHost/BagButton" instance=ExtResource("2_icon")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SettingsButton" type="Button" parent="BarMargin/BarRow/ActionHost"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+flat = true
+focus_mode = 0
+
+[node name="SettingsIcon" parent="BarMargin/BarRow/ActionHost/SettingsButton" instance=ExtResource("2_icon")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

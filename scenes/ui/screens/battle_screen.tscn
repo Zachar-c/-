@@ -40,31 +40,59 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="battle_field" type="HBoxContainer" parent="Root/BattleStage"]
+[node name="battle_field" type="Control" parent="Root/BattleStage"]
 custom_minimum_size = Vector2(0, 0)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 16
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_bottom = 12
 
 [node name="PlayerPanel" parent="Root/BattleStage/battle_field" instance=ExtResource("3_panel")]
-layout_mode = 2
-size_flags_horizontal = 2
-size_flags_stretch_ratio = 1.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_right = 0.32
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -220.0
+offset_right = 0.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="EnemyPanel" parent="Root/BattleStage/battle_field" instance=ExtResource("3_panel")]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.35
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Inventory" parent="Root/BattleStage/battle_field" instance=ExtResource("10_inventory")]
-custom_minimum_size = Vector2(210, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_stretch_ratio = 0.0
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+offset_left = -196.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 0.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="FeedbackToast" parent="Root" instance=ExtResource("5_toast")]
 layout_mode = 2
@@ -78,34 +106,56 @@ theme_override_constants/separation = 3
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="battle_hand" type="VBoxContainer" parent="Root/HandStage"]
+[node name="battle_hand" type="HBoxContainer" parent="Root/HandStage"]
 custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_constants/separation = 16
+
+[node name="LeftMeta" type="VBoxContainer" parent="Root/HandStage/battle_hand"]
+layout_mode = 2
+size_flags_horizontal = 0
 theme_override_constants/separation = 8
 
-[node name="HandMetaRow" type="HBoxContainer" parent="Root/HandStage/battle_hand"]
+[node name="PrimordialRow" type="HBoxContainer" parent="Root/HandStage/battle_hand/LeftMeta"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 6
 
-[node name="PrimordialLabel" type="Label" parent="Root/HandStage/battle_hand/HandMetaRow"]
+[node name="PrimordialLabel" type="Label" parent="Root/HandStage/battle_hand/LeftMeta/PrimordialRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "真元 0"
 
-[node name="PilesLabel" type="Label" parent="Root/HandStage/battle_hand/HandMetaRow"]
+[node name="PilesRow" type="HBoxContainer" parent="Root/HandStage/battle_hand/LeftMeta"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PilesLabel" type="Label" parent="Root/HandStage/battle_hand/LeftMeta/PilesRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "抽 0 · 弃 0 · 耗 0"
 
-[node name="Hand" parent="Root/HandStage/battle_hand" instance=ExtResource("6_hand")]
+[node name="HandArea" type="VBoxContainer" parent="Root/HandStage/battle_hand"]
 layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 8
 
-[node name="KillHost" type="VBoxContainer" parent="Root/HandStage/battle_hand"]
+[node name="Hand" parent="Root/HandStage/battle_hand/HandArea" instance=ExtResource("6_hand")]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="KillHost" type="VBoxContainer" parent="Root/HandStage/battle_hand/HandArea"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="OpsRow" type="HBoxContainer" parent="Root/HandStage/battle_hand"]
+[node name="RightOps" type="VBoxContainer" parent="Root/HandStage/battle_hand"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="OpsRow" type="VBoxContainer" parent="Root/HandStage/battle_hand/RightOps"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
