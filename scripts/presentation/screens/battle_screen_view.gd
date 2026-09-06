@@ -644,10 +644,15 @@ func _refresh_hints(state: Dictionary) -> void:
 	var boss_hint := DisplayText.dda_hint(str(state.get("dda_boss_hint", "")))
 	if boss_hint != "":
 		_hint_host.add_child(_hint_label(boss_hint, GuStyle.ANOMALY_YELLOW))
-	# 异变徽章：DDA 异变(险象)等逐条随提示区呈现，label 由 data 提供、id 不外泄。
+	# 异变徽章：DDA 异变(险象)等逐条随提示区呈现。历史快照 anomalies 曾为
+	# String 标签数组（旧 UI），DDA marker_meta 演进后为 {id,label} 条目；
+	# 两种形状都渲染 label 文本，id 不外泄。
 	for anomaly_value in state.get("anomalies", []):
-		var anomaly: Dictionary = anomaly_value
-		var anomaly_label := str(anomaly.get("label", ""))
+		var anomaly_label := ""
+		if anomaly_value is Dictionary:
+			anomaly_label = str((anomaly_value as Dictionary).get("label", ""))
+		else:
+			anomaly_label = str(anomaly_value)
 		if anomaly_label != "":
 			_hint_host.add_child(_hint_label(anomaly_label, GuStyle.ANOMALY_YELLOW))
 

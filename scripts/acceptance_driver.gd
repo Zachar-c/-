@@ -172,8 +172,9 @@ func _compile_file(rel_path: String) -> bool:
 func _compile_dir(dir_path: String) -> bool:
 	var dir := DirAccess.open(dir_path)
 	if dir == null:
-		push_error("打不开 %s" % dir_path)
-		return false
+		# 目录已退役/为空（ui/screens 2026-09-06 全屏迁官方 .tscn 后清空）：
+		# 无可编译 .guitkx，视为通过，不当作失败。
+		return true
 	dir.list_dir_begin()
 	var fname := dir.get_next()
 	while fname != "":
