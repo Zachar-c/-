@@ -35,7 +35,11 @@ func test_button_style_has_distinct_normal_hover_pressed_states() -> void:
 		assert_ne(normal["bg_color"], hover["bg_color"], "%s must change background on hover" % role)
 		assert_ne(hover.get("bg_color", hover.get("border_color")), pressed.get("bg_color", pressed.get("border_color")), "%s hover/pressed must differ visually" % role)
 		assert_ne(normal["bg_color"], pressed["bg_color"], "%s must change background on press" % role)
-		assert_ne(spec["colors"]["font_color"], spec["colors"]["font_pressed_color"], "%s must change text color on press" % role)
+		# shadcn 实心按钮以背景深浅表达按下态，press 时文字保持高对比白字不变
+		# （fg 必变断言是旧线框按钮的实现细节）。仅当按下态未改背景时才要求
+		# 文字色变化，保证任意实现下按下态都视觉可辨。
+		if normal["bg_color"] == pressed["bg_color"]:
+			assert_ne(spec["colors"]["font_color"], spec["colors"]["font_pressed_color"], "%s must change text color on press" % role)
 		var primary_btn := Button.new()
 		add_child(primary_btn)
 		MasterTheme.apply_button(primary_btn, role)
