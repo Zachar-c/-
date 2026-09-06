@@ -101,12 +101,17 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：`tools/check.ps1` 绿；全仓无死引用。
 
 ### Phase B 地基收敛（A 合入后开工）
-> 状态：⏸ **未开工**（2026-09-06 审计）。A1 已合入，前置满足。已知域债：`battle_resolver._use_gu` 硬编码已删蛊（thorn/mist/blood_moss/venom/pulse/shadow_veil/trail/qi_wall…）成死分支，`action_preview` 仍特判 thorn_whip —— B1 开工时一并清。
+> 状态：🔄 **进行中**（2026-09-06 审计 + 保守迁移）。批次 A/B 已完成（76b5dfb：battle2 规则提升 + v2 命令模块改名；851d2aa：测试未用 preload 清理）。剩余批次 C 删 `battle_resolver.gd`，被视觉会话阻塞（run_controller.gd 占用 + 回归基线），待其收尾开工。已知域债：`battle_resolver._use_gu` 硬编码已删蛊（thorn/mist/blood_moss/venom/pulse/shadow_veil/trail/qi_wall…）成死分支，`action_preview` 仍特判 thorn_whip —— 随文件删除一并消亡。
 
 **B1 战斗引擎收敛为纯 V1**
-- 目标：`battle_command_facade.gd` 移除 `battle_resolver.gd` 预载与旧信封分发（`start` 始终 V1 已成立）；`resolver.gd` 去 `v2_commands.gd` 引用；删除 `battle_resolver.gd`、`v2_commands.gd`、`battle2/action_resolver.gd`、`body_rules.gd`、`combat_constants.gd`；`turn_engine` 账本用法保留（可内联为 `run_state` 小函数）。顺带统一 V1 与 `EssenceCapacity` 的 essence/capacity 公式。
-- 测试迁移：`test_battle_resolver`、`test_v2_*`、`test_battle2_*`（除账本语义）、`test_v3_battle_*`、`test_b3/b4/b5_*`、`test_action_card_row_migration` 等逐个判定：测旧行为→删；测存续行为→迁 V1 契约。`test_legacy_abolition` 改为守护「无旧引擎引用」。
-- 验收：`tools/test.ps1 -Suite unit` 与 `-Suite integration` 全绿；`rg "battle_resolver|v2_commands" scripts/` 零命中。
+- 目标（按 2026-09-06 用户裁定「保守迁移」修正原删除清单）：
+  - ✅ 已完成（批次 A/B）：`v2_commands.gd` 的 14 命令被契约测试钉住（命令清单 + 拒绝原因断言）→ **不可删，改名迁移**为 `domain/run_command_rules.gd`（RunCommands）；`battle2/action_resolver.gd`、`body_rules.gd` 是活规则（run_snapshot_builder 真用 8 函数，V1 无等价）→ **提升**为 `domain/action_resolver.gd`、`domain/body_rules.gd`；3 个测试文件未用旧引擎 preload 已清理（851d2aa）。
+  - ✅ 已完成：`battle_command_facade.gd` 预载仅 `v1_battle_resolver`（旧信封分发已无）；`resolver.gd` 分派已指向 RunCommandsScript。
+  - ⏳ 待做（批次 C）：删除 `battle_resolver.gd`；`run_controller.gd` 3 处注释 token 清理；`test_legacy_abolition` 守护转绿。
+  - ⚠️ 保留项（原计划删除、现确认保留）：`combat_constants.gd`（turn_engine 依赖）；`turn_engine.gd` 账本语义原样保留。
+  - 顺带项：统一 V1 与 `EssenceCapacity` 的 essence/capacity 公式（可随批次 C 一并处理）。
+- 测试迁移：已识别 16 个 preload `battle_resolver.gd` 的测试（test_five_schools_smoke / test_debug_actions_flow / test_battle_synthesis / test_b5_content_expansion / test_contracts_min / test_catalog_expansion / test_rank_gradient / test_dda_resolver / test_per_turn_renewal / test_opening_fairness / test_soul_school / test_seeded_roll / test_school_starter_data / test_turn_gradient / test_v3_soul_and_backlash / test_resolver_growth_gate 等），逐个判定：测旧行为→删（含 growth_gate 行数门限）；测存续行为→迁 V1 契约（`BattleCommandFacade.start/apply_turn` 映射）。`test_legacy_abolition` 已改为守护「无旧引擎引用」（批次 A 落地）。
+- 验收：`tools/test.ps1 -Suite unit` 与 `-Suite integration` 全绿；`rg "battle_resolver|v2_commands" scripts/` 零命中（v2_commands token 应已随改名归零）。
 
 **B2 卡层退役**
 - 前置：B1。
