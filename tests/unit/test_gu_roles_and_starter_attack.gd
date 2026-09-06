@@ -1,8 +1,18 @@
 extends GutTest
 
 
+# gu role taxonomy + starter attack contracts on the V1 facade.
+# NOTE (B1 bucket C 2026-09-06): the card-era legs (small_light "light_probe"
+# hand card dealing damage, reveal flag, delay_progress) asserted over the
+# legacy envelope (battle.hand + BattleResolver._command_for_card_instance)
+# and died with battle_resolver.gd. The surviving starter guarantee - every
+# starter combat gu is playable through the facade with an observable effect
+# and logged costs - is pinned by test_starter_combat_gu_are_usable_and_
+# have_observable_effects / test_starter_gu_costs_and_effect_facts_are_logged
+# below (V1 facade, small_light_gu included). Preview-text re-basing onto the
+# V1 shape is tracked with the action_preview_service work item.
+
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
-const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const SnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
@@ -13,35 +23,6 @@ var catalog: Dictionary
 
 func before_each() -> void:
 	catalog = ContentCatalog.load_all()
-
-
-func test_small_light_starter_deals_attack_damage() -> void:
-	var run := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, run, catalog)
-	var card := _hand_card(battle, "light_probe")
-	var internal := BattleResolver._command_for_card_instance(card, catalog)
-	var result := BattleResolver.take_turn(battle, internal, run, catalog)
-
-	assert_true(result["accepted"])
-	assert_eq(int(result["battle"]["enemy_hp"]), int(battle["enemy_hp"]) - 1)
-
-
-func test_small_light_attack_keeps_reveal_aspect() -> void:
-	var run := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, run, catalog)
-	var card := _hand_card(battle, "light_probe")
-	var result := BattleResolver.take_turn(battle, BattleResolver._command_for_card_instance(card, catalog), run, catalog)
-
-	assert_true(result["battle"]["flags"].has("revealed"))
-	assert_eq(int(result["battle"]["delay_progress"]), 1)
-
-
-func test_small_light_preview_summary_mentions_damage() -> void:
-	var run := RunState.new_run(101)
-	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, run, catalog)
-	var cards: Array = ActionPreviewServiceScript.preview_battle_actions(battle, run, catalog)
-	var card := _preview_card(cards, battle, "light_probe")
-	assert_string_contains(str(card["summary"]), "伤敌")
 
 
 func test_every_gu_carries_one_of_six_roles() -> void:
@@ -157,22 +138,6 @@ func _battle_changed_by_gu(before: Dictionary, after: Dictionary) -> bool:
 		if old_enemy.get("statuses", {}) != new_enemy.get("statuses", {}):
 			return true
 	return false
-
-
-func _hand_card(battle: Dictionary, definition_id: String) -> Dictionary:
-	for card in battle["hand"]:
-		if str(card["definition_id"]) == definition_id:
-			return card
-	push_error("Missing hand card %s" % definition_id)
-	return {}
-
-
-func _preview_card(cards: Array, battle: Dictionary, definition_id: String) -> Dictionary:
-	for card in cards:
-		if str(card["id"]) == "battle.%s.%s" % [battle["battle_id"], _hand_card(battle, definition_id)["instance_id"]]:
-			return card
-	push_error("Missing preview card for %s" % definition_id)
-	return {}
 
 
 func _has_hint(errors: Array[String], needle: String) -> bool:

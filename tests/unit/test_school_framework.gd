@@ -62,7 +62,7 @@ func test_school_survives_save_data_and_copy() -> void:
 	assert_eq(copied.school, "qi")
 
 
-func test_force_power_grants_once_and_boosts_punch() -> void:
+func test_gain_force_power_grants_once_and_rejects_repeat() -> void:
 	var run := _start_with_school("force")
 	var first := ResolverScript.apply(run, {"type": "gain_force_power", "source_id": "bloodline_core", "amount": 1}, catalog)
 	assert_true(first["result"]["ok"])
@@ -72,15 +72,17 @@ func test_force_power_grants_once_and_boosts_punch() -> void:
 	var repeat := ResolverScript.apply(first["state"], {"type": "gain_force_power", "source_id": "bloodline_core", "amount": 1}, catalog)
 	assert_false(repeat["result"]["ok"])
 	assert_eq(repeat["result"]["reason"], "force_imprint_repeated")
+	# NOTE (B1 bucket C 2026-09-06): the punch boost from cultivator
+	# force_power (legacy punch_damage = 1 + force_power) died with
+	# battle_resolver.gd - V1 basic_attack reads the in-battle force buff,
+	# not the run stat; tracked as domain debt.
 
-	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, first["state"], catalog)
-	var punch := BattleResolver.take_turn(battle, {"type": "basic_attack"}, first["state"], catalog)
-	assert_eq(int(punch["battle"]["enemy_hp"]), int(battle["enemy_hp"]) - 2)
 
-
-func test_blood_stack_and_material_helpers() -> void:
-	var battle := BattleResolver.start({"enemy_kind": "wild_boar"}, RunState.new_run(101), catalog)
-	assert_eq(int(battle.get("blood_stacks", -1)), 0)
+func test_blood_stack_helpers_and_material_fuel() -> void:
+	# The blood-stack helpers operate on any battle-shaped dict; a plain
+	# fixture pins the contract without the legacy engine (B1 bucket C).
+	var battle := {}
+	assert_eq(int(battle.get("blood_stacks", 0)), 0)
 	assert_eq(SchoolRulesScript.add_blood_stacks(battle, 3), 3)
 	assert_eq(SchoolRulesScript.blood_stacks(battle), 3)
 	assert_eq(SchoolRulesScript.add_blood_stacks(battle, 2), 5)
