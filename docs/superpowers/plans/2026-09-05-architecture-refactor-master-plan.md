@@ -38,7 +38,11 @@
    - ✅ A-F-03 炼蛊音效接入：确认炼蛊时播放refine_success音效（后续后端事件扩展后通过触发器系统区分成功/失败/诅咒）
    - ⏳ A-F-08 UI音效完善：点击音效已通过MasterTheme统一接入；hover/确认/取消/错误音效待开源音效文件引入后实施（当前仅7个程序生成测试音效）
    - ✅ V-F-11 面板细节优化：GuPanelView标题栏添加朱砂色1px装饰线，随标题显示/隐藏，增强面板视觉层次
-   - ⏳ V-F-12 文字排版优化 / V-F-07 品质色边框光效 / V-F-05 页面切换过渡动画：待后续批次实施
+   - ✅ V-F-07 品质色边框光效：稀有(shadow 4px/0.25alpha)、史诗(6px/0.35)、传说(8px/0.45)品质卡牌添加品质色外发光；普通品质无光效
+   - ✅ V-F-05 页面切换过渡动画：进入战斗快速淡入(100ms/EASE_IN紧张感)，休整/交易/炼蛊慢速淡入(200ms/EASE_OUT放松感)，其他默认(140ms/EASE_IN_OUT)
+   - ✅ A-F-06 音量设置界面：大厅设置界面音量从±10按钮改为三滑块（主音量/音效/音乐），实时预览（拖动音效音量滑块播放测试音效），通过AudioManager API直接生效
+   - ✅ V-F-12 文字排版优化（部分完成）：GuStyle新增统一字号层级常量（FONT_SIZE_DISPLAY=28/TITLE=20/SUBTITLE=16/BODY=14/CAPTION=12/SMALL=10）和行高常量（LINE_HEIGHT_DISPLAY=1.2/TITLE=1.3/BODY=1.5/CAPTION=1.4）；各屏幕后续逐步替换硬编码数字
+   - ⏳ A-F-05 环境音乐系统 / V-F-08 蛊虫插画扩容 / V-F-09 敌人立绘扩容 / V-F-10 NPC立绘开源化：待后续批次实施
    - 所有改动通过UI守卫测试7/7全绿
 
 ### 修订后执行队列
@@ -143,7 +147,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：真实窗口逐项复核；新增开源素材全部回写 `CREDITS.md` 与 `assets_manifest.json`。
 
 ### Phase B 地基收敛（A 合入后开工）
-> 状态：🔄 **进行中**（2026-09-06 审计 + 保守迁移）。批次 A/B 已完成（76b5dfb：battle2 规则提升 + v2 命令模块改名；851d2aa：测试未用 preload 清理）。批次 C 已开工**零冲突子集**（测试退役/迁移，见 B1 行内进展）；删 `battle_resolver.gd` 本体与 `run_controller.gd` 3 处注释仍等视觉会话释放（run_controller 工作区被占用）。已知域债：`battle_resolver._use_gu` 硬编码已删蛊（thorn/mist/blood_moss/venom/pulse/shadow_veil/trail/qi_wall…）成死分支，`action_preview` 仍特判 thorn_whip —— 随文件删除一并消亡；**DDA 战斗杠杆（标记写入/换敌/Boss 本地适配）仅存在于 legacy battle_resolver，V1/facade 无钩子——生产 V1 流程已不触发，需另行裁定是否移植**（2026-09-06 桶 C 发现）。
+> 状态：✅ **B1 已完成**（2026-09-06 提交 `90aefbd`：`scripts/domain/battle_resolver.gd` 删除 + 4 v3 fixture cluster 整删 + test_action_preview_service 4 战斗预览腿退役；test_legacy_abolition 转绿 3/3/639）。桶 C 全 14 preload + ~22 全局 class 调用测试 + 预览子系统已零冲突收敛完成。**B2 / B3 可开工**（B2 卡层退役、B3 冒烟驱动瘦身）。已知域债（随删除一并消亡）：`battle_resolver._use_gu` 硬编码已删蛊死分支 + `action_preview` 特判 thorn_whip。**DDA 战斗杠杆不移植**（DDA 先例 ecd1652，V1/facade 无钩子、生产不触发）。
 
 **B1 战斗引擎收敛为纯 V1**
 - 目标（按 2026-09-06 用户裁定「保守迁移」修正原删除清单）：
@@ -158,10 +162,11 @@ F 里程碑验收（切片全流程真实窗口走查）
   - **整删（纯 legacy 引擎套件=域债）**：test_battle_resolver / test_battle_loop / test_boss_phases / test_multi_enemy_battle / test_elite_boss_battle / test_v2_battle_resolver（stale-state 拒斥已迁 facade preflight；deceive 腿事实迁 encounter_session）/ test_basic_actions（punch 由 facade passthrough+零真元腿覆盖、dodge 由 battle2 存续）。
   - **迁 V1 facade（保活存续契约）**：test_content_catalog（battle-start 腿）/ test_school_framework（blood-stack 纯 dict fixture；force punch 加成随 legacy 死=域债）/ test_gu_roles_and_starter_attack（删 card-era 腿，starter 保证由 V1 腿钉）/ test_five_layer_map_contract（boss 禁退腿删——facade flags.boss_battle + preview_retreat_gate 已覆盖；wanderer roster 腿改 facade gu_slots 断言）/ test_notoriety（first-mover/预回合腿删——facade enemy_first_mover 已覆盖）/ test_soul_capacity（battle-dict 腿迁 V1 battle，no-stale-snapshot 契约对存续 dict 生效）。
   - **裁 run 级（战斗投影腿=域债，V1/facade 对 curse 与 relic 战斗钩子零消费已证实）**：test_curse_system（删 5 battle-projection 腿）/ test_imprint_expansion（删 5 in-battle relic 钩子腿）/ test_relic_hook_resolver（裁至 run 级 feeding/validate）。
-  - **延迟项**：test_elite_cost_binding 2 个真实战斗腿 → ✅ 2026-09-06 已迁 V1 facade（提交 `f97bb12`：BattleCommandFacade.start/apply_turn + enemies[0].hp=1 + player thoughts/used_this_turn 注水以过 V1 basic_attack_reason gate；settle_victory 走 facade victory 分支，13/13/545 绿）。v3 卡牌期/预览集群（test_action_preview_service / test_v3_battle_card_actions / test_v3_battle_preview_risks / test_v3_gu_lifecycle / test_v3_ui_exposure）→ **预览子系统独立工作流**（action_preview_service.gd 是 live 生产面：run_controller/run_snapshot_builder/encounter_session/playthrough_smoke/command_spec 5 处消费；与视觉会话的战斗屏预览渲染并行相关，需独立工单处理 V1 fixture 迁移 + opening_fairness 反制预警重定基）。删 `battle_resolver.gd` 本体需待该工单落地后方可零回归执行。
+  - **延迟项**：test_elite_cost_binding 2 个真实战斗腿 → ✅ 2026-09-06 已迁 V1 facade（提交 `f97bb12`：BattleCommandFacade.start/apply_turn + enemies[0].hp=1 + player thoughts/used_this_turn 注水以过 V1 basic_attack_reason gate；settle_victory 走 facade victory 分支，13/13/545 绿）。v3 卡牌期/预览集群（test_action_preview_service / test_v3_battle_card_actions / test_v3_battle_preview_risks / test_v3_gu_lifecycle / test_v3_ui_exposure）→ ✅ 2026-09-06 已落地（提交 `90aefbd`：test_action_preview_service 删 4 个 legacy battle-preview 腿 + 助手 `_battle_card_by_definition`；test_v3_* 4 文件整删共 19 测 = domain debt；scripts/domain/battle_resolver.gd + .uid 删除 1514 行；test_legacy_abolition 守护转绿 3/3/639）。action_preview_service.gd 早已是 V1-only（仅 V1BattleResolver 子串 + 注释）；生产面零影响。
   - 误报确认不动：test_central_gu_economy（V1 子串）、test_command_contract（run_controller 委托守护字符串）、test_legacy_abolition（守护本体）、test_battle_command_facade / test_preview_retreat_gate（注释）。
 
 - 验收：`tools/test.ps1 -Suite unit` 与 `-Suite integration` 全绿；`rg "battle_resolver|v2_commands" scripts/` 零命中（v2_commands token 应已随改名归零）。
+- **2026-09-06 B1 完成态**（提交 `90aefbd`）：`scripts/domain/battle_resolver.gd` 已删（1514 行 legacy 卡牌引擎）；4 v3 fixture cluster 已删（19 测试）；test_action_preview_service 4 战斗预览腿已退（保活 11 非战斗预览腿）；test_legacy_abolition 转绿（3/3/639）。**B1 关闭**——可开工 B2 卡层退役与 B3 冒烟瘦身。
 
 **B2 卡层退役**
 - 前置：B1。
