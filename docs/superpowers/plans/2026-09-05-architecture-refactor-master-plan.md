@@ -46,17 +46,40 @@
    - ✅ A-F-05 环境音乐系统（全部完成）：AudioManager扩展音乐注册表（9个场景音乐ID）+ 音乐播放器 + play_music/stop_music/crossfade_music方法 + 淡入淡出；run_controller接入_switch_scene_music辅助方法（根据_view_name交叉淡入淡出切换音乐，战斗1.0秒/其他1.5秒）；从OpenGameArt下载9首开源背景音乐（3首CC0 + 2首CC BY 3.0 + 2首CC BY 4.0 + 2首复用），总大小约96MB；CREDITS.md已记录完整音乐来源和许可证；UI守卫测试7/7全绿
    - ✅ V-F-09 敌人立绘扩容：新增2张敌人立绘（血蝠/火蝎），总共6张覆盖主要敌人类型；gu_enemy_actor_view.gd匹配逻辑已更新（新增蝠/蝎关键词匹配）；开源怪物立绘稀缺（OpenGameArt多为16x16像素精灵图），采用AI生成补充保持异常自然志图鉴风格统一；战斗屏测试11/11全绿
    - ✅ V-F-10 NPC立绘开源化：从OpenGameArt搜索开源角色立绘（60 Terrible Character Portraits等），发现多为黑白美漫风格头像特写，不符合古风志怪全身立绘风格；采用AI生成2张NPC立绘（南疆黑市商人/南疆隐士），保持异常自然志图鉴风格统一；CREDITS.md已更新（原暂缓接入的旧版已替换为2张正式版）
+   - ✅ A-F-01 开源音效引入：从Kenney.nl下载2个开源音效包（UI Audio 50个 + Impact Sounds 150+个，均为CC0许可证），选择17个合适的OGG音效替换程序生成测试音效（UI 5 + 战斗 6 + 炼蛊 3 + 概念层 3）；AudioManager SFX_REGISTRY已从.wav更新为.ogg；删除旧的7个WAV测试音效和失效的.import配置；CREDITS.md已记录完整音效映射清单；UI守卫测试7/7全绿
+   - ✅ 环境音效引入：从OpenGameArt下载3个环境音效（Loopable Dungeon Ambience洞窟氛围CC0 + wind1风声CC0 + 氛围幽灵循环CC0），补充SFX_REGISTRY中剩余3个环境音效；雾气音效用洞窟氛围变体作为占位（FLAC格式需ffmpeg转换，系统未安装）；CREDITS.md已记录环境音效来源；UI守卫测试7/7全绿
+   - ✅ NPC立绘接入：交易屏优先加载npc_merchant.png作为NPC商人立绘，失败时回退到玩家立绘；运行时加载绕过资源导入系统；休整屏（玩家自己闭关）和NPC屏（无舞台立绘区域）不需要接入；UI守卫测试7/7全绿
+   - ✅ 战斗音效接入：战斗屏新增battle_death（敌人死亡检测alive true→false）和battle_status_apply（状态施加检测新状态名出现）音效触发；battle_card_play（出牌）已接入；battle_hit/battle_critical/battle_miss（命中/暴击/闪避）待后端A-B-01音效事件类型扩展后接入；战斗屏测试11/11全绿
+   - ✅ 第三批P2锦上添花（V-F-14+A-F-10）：V-F-14动态背景——战斗/休整/交易三个暗色舞台屏幕添加雾气层（半透明冷灰水平渐变+呼吸动画）和萤火层（5-6个暖黄色光点+随机闪烁漂移），GuStyle新增FIREFLY_COLOR/FIREFLY_COLOR_ON常量；A-F-10音效随机变化——ui_click/battle_hit/battle_card_play各引入5个变体音效，AudioManager新增SFX_VARIANTS注册表，play_sfx方法支持随机选择变体播放；UI守卫测试7/7全绿
    - 所有改动通过UI守卫测试7/7全绿 + 战斗屏测试11/11全绿
 
 ### 修订后执行队列
 
 ```
-A-1 视觉批次落地（提交 18 批成果 + 手牌测试修复）→ 解除 B1 阻塞
-B1-finish（删 battle_resolver.gd + 桶 C 残引清理 + 预览子系统处置）→ B2 卡层退役 → B3 冒烟瘦身
+AU 音频 BGM 收尾（2026-09-06 审计：5 个单测失败唯一根因——music/*.wav 已删、新曲目为
+   mp3/ogg，但 audio_director.gd BGM_PATHS 仍指 wav、test_audio_director 仍断言
+   AudioStreamWAV；同时裁定 AudioManager(autoload) 与 AudioDirector 双系统收敛方向）
+A-1 视觉批次提交落地（18 批成果已验收、未提交；工作树 188 项按视觉/音频/uid 分批聚焦
+   提交，清 tools/__pycache__ 与 *_screenshot_v*.png/ 目录）
+CT 契约回写（2026-09-06 审计：school_name/school_label 快照键未同步
+   docs/contracts/2026-09-02-domain-ui-contract.md，违反 AGENTS 契约同步红线）
+B2 卡层退役（deck_builder.gd 已删；剩 cards.json/deck.json/16 处蓝图校验链/
+   synthesis.json battle_recipes 段/生成器出卡段）
 D1-剩余（按配方源摘录扩充跨流派/高转方 + synergy 字段全量）→ D2 配方驱动合炼接线
 S1--S6 切片组装（UI 语境 = 官方 .tscn 栈）→ E 自动存档 → F 里程碑验收
 A-2 视觉收官项（游戏内署名 HIGH / 音效 / 立绘开源化 / 动效补全）可与 B/D/S 并行
 ```
+
+### 实施核验（2026-09-06 第二轮审计：测试实跑 + 工作树清点）
+
+- **测试实证**：unit 1093 用例 1088 过 / 5 失败，失败全部位于 `tests/unit/test_audio_director.gd`，唯一根因即 AU 项（BGM wav 已删、`BGM_PATHS` 与格式断言未跟上）；integration 37/37 绿；`tools/check.ps1` 红灯仅由该音频项引入。`AudioManager` autoload 的 class_name 冲突已被音频会话修复（`extends Node`、无 class_name），SFX .ogg 19/19 就位。
+- **声明核验**：A1（挂载+拖拽真窗验收 `3d39704`）、C1--C4（802 蛊 / 393 方 / SCHOOL_IDS v2 / 快照流派键）、B1 完成（`90aefbd`：`battle_resolver.gd` 已删、`run_command_rules.gd` 在位、守护测试转绿；残余 6 个测试文件引用经查为字符串/注释级）、B3 完成（`3951e4b`/`6e9afbc`：六驱动收编 `acceptance_driver.gd` 单驱动五模式 + legacy 假绿修复）——**逐项属实**。审计初判「B3 瘦身未做」更正为「结构收编完成」。
+- **B2 现状**：部分提前——`deck_builder.gd` 已删；剩 `cards.json`（3400）、`deck.json` 活配置键、gu.json 16 处 `card_blueprint_ids` 校验链、synthesis.json `battle_recipes` 段、生成器出卡段。
+- **流程风险**：工作树 188 项未提交横跨视觉/音频/uid 三路（含 22 个已提交 wav 被删）；`tools/__pycache__`、`*_screenshot_v*.png/` 目录为捕获垃圾。
+- **契约漂移**：`school_name`/`school_label` 快照键未回写契约文档（→ CT）。
+- **对账项**：`refinement_recipes.json` 393 条 vs 计划记录 386，+7 漂移待对账（疑 D1 剩余已部分执行）。
+- **RUI 死重**：`ui/widgets/` 15 组件中 6 个无任何 `.guitkx` 导入（ActionCardRow/GuCard/GuDeathCauseOverlay/GuInventory/GuResourceChip/GuScrollBox），可随 A-1 顺车清理，不影响 Map/Battle 再生成。
+- **遗留复现**：ObjectDB 泄漏 20601 实例（冻结清单内，复测仍在）。
 
 ## 0. 需求基线（已锁定，不再讨论）
 
@@ -172,6 +195,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - **2026-09-06 B1 完成态**（提交 `90aefbd`）：`scripts/domain/battle_resolver.gd` 已删（1514 行 legacy 卡牌引擎）；4 v3 fixture cluster 已删（19 测试）；test_action_preview_service 4 战斗预览腿已退（保活 11 非战斗预览腿）；test_legacy_abolition 转绿（3/3/639）。**B1 关闭**——可开工 B2 卡层退役与 B3 冒烟瘦身。
 
 **B2 卡层退役**
+> 状态：🔄 部分提前（2026-09-06 审计）——`deck_builder.gd` 已删；剩 `cards.json`（3400）、`deck.json` 活配置键、gu.json 16 处 `card_blueprint_ids` 校验链、synthesis.json `battle_recipes` 段、`generate_gu_catalog.py` 出卡段。
 - 前置：B1。
 - 目标：设计并落地蓝图层退出：`content_catalog` 校验改写（`_is_data_driven_card_linked` 移除，改为校验 `v1_effect` 完备）；`gu.json` 去 `card_blueprint_ids`（如 UI 需要「操作界面」语义，改由快照按 `v1_effect`/`slot_role` 投影）；删 `cards.json`、`deck_builder.gd`；`deck.json` 的 `remove_card_cost/remove_imprint_cost/imprint_capacity/meta_rule_cap` 迁 `balance.json`；`generate_gu_catalog.py` 去掉出卡逻辑。
 - 验收：目录启动校验绿；`rg "cards.json|deck_builder|card_blueprint" scripts/ tools/` 零命中；相关单测更新绿。
@@ -228,6 +252,7 @@ F 里程碑验收（切片全流程真实窗口走查）
 - 验收：真实窗口完成一次「按配方合炼出高转蛊」全流程；不可逆成本预检可见。
 
 **D3 杀招数据地基（不实现玩法）**
+> 状态：❌ 2026-09-06 关闭（用户裁定）——原验收线「`rg "kill_move" scripts/presentation/` 零命中」建立在「杀招本版推迟」假设上，但 V1 已实现杀招系统（`v1_battle_resolver` `kill_moves` 组装 + `play_kill_move` 命令 + `data/v1_battle.json` + 战斗屏 KillHost），杀招属核心支柱正当实现，验收线无法满足。月光蛊+小光蛊=2x 组合加成并入正式杀招系统（按 2026-09-01 规格）开发时一并设计，不再设单独数据预留工单。
 - 目标：仅在数据层预留杀招组合描述结构（蛊效果互补的 synergy 键），快照不透出、无 UI、无战斗逻辑；文档记录月光蛊+小光蛊=2x 的目标语义为下一版规格输入。
 - 验收：Schema 校验绿；`rg "kill_move" scripts/presentation/` 零命中（确认无越界实现）。
 
