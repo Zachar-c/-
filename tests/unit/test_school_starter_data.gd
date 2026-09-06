@@ -123,3 +123,24 @@ func test_school_pool_entries_have_display_names() -> void:
 			var gu_id := str(gu_id_value)
 			var named := gu_names.has(gu_id) or legacy_gu.has(gu_id)
 			assert_true(named, "pool gu %s needs a Chinese display name" % gu_id)
+
+
+func test_wanderer_starter_pack_gu_all_exist_and_inject_on_empty_school() -> void:
+	## 散修(空 school)走 run_controller.WANDERER_STARTER_GU_IDS 开局包；
+	## 该常量引用的蛊必须在目录（域债回归钉：曾疑为已删蛊死分支，
+	## 802 重建后核实全部存活——此处锁定，防未来蛊删再回归）。
+	var controller = preload("res://scripts/presentation/run_controller.gd").new()
+	add_child_autofree(controller)
+	var wanderer: Array = controller.WANDERER_STARTER_GU_IDS
+	assert_false(wanderer.is_empty(), "wanderer pack must not be empty")
+	var cat: Dictionary = catalog()
+	for starter in wanderer:
+		assert_true(cat["gu_by_id"].has(str(starter)),
+				"wanderer starter gu %s must exist in the catalog" % str(starter))
+	# 空 school 开局 = 无流派散修：注入 wanderer 包。
+	controller.catalog = cat
+	controller.state = make_state(2026)
+	controller._inject_school_starters("")
+	for starter in wanderer:
+		assert_true(controller.state.refined_gu_ids.has(str(starter)),
+				"wanderer run must start with %s" % str(starter))
