@@ -4,8 +4,6 @@ extends RefCounted
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
-# BattleResolver is a global class_name; referenced directly (no preload) to
-# avoid a cyclic preload with battle_command_facade.gd which previews battles too.
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -146,7 +144,7 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	var retreat_open := _battle_retreat_open(battle)
 	# R-boss-no-retreat: the window only exists behind this fight, so boss-tier
 	# enemies close it for good — shown with the reason, never silently.
-	var boss_no_retreat: bool = BattleResolver.boss_blocks_retreat(battle)
+	var boss_no_retreat: bool = _boss_blocks_retreat(battle)
 	if boss_no_retreat:
 		retreat_open = false
 	var retreat_ready := retreat_open and state.stone >= retreat_cost
@@ -263,7 +261,7 @@ static func _living_intent_labels(battle: Dictionary) -> String:
 
 
 ## §16.5 counter forewarning: labels of live direct-strike reactions the
-## resolver would actually swallow. Mirrors BattleResolver._reaction_countered
+## resolver would actually swallow. Mirrors the legacy _reaction_countered
 ## flag semantics (bound -> enemy_bound, guarded -> guarded); a countered or
 ## already-bound enemy clears the warning. Only strike paths the resolver
 ## checks (basic punch, thorn whip strike) may present this risk.
@@ -356,13 +354,37 @@ static func _battle_effect(gu_id: String, mode: String) -> String:
 
 
 static func _battle_retreat_open(battle: Dictionary) -> bool:
-	if BattleResolver.boss_blocks_retreat(battle):
+	if _boss_blocks_retreat(battle):
 		return false
-	return BattleResolver.can_retreat(
-		str(battle.get("terrain", "")),
-		int(battle.get("pursuit", 0)),
-		int(battle.get("enemy_control", 0))
-	)
+	return _retreat_terrain_open(battle)
+
+
+## 两代战斗形状的 Boss 判定，与 V1 运行时撤退 gate（flags.boss_battle，
+## facade.start 对 tier=="boss" 敌人落账）同源：
+## - V1 形状：flags.boss_battle（Dictionary）。
+## - 旧信封形状（存量测试 battle，敌人可能内嵌 definition/顶层 enemy_definition）：
+##   按敌人 tier=="boss" 兜底。
+## 曾是 legacy class BattleResolver（boss_blocks_retreat 全局名）的调用——旧实现在 V1
+## battle 上查 enemy_definition/enemies[].definition.tier，恒 false，导致预览
+## 错误放行 Boss 战撤退（SS16.5 无静默放行回归，2026-09-06 桶 B 修复）。
+static func _boss_blocks_retreat(battle: Dictionary) -> bool:
+	if (battle.get("flags", {}) is Dictionary) \
+			and bool((battle.get("flags", {}) as Dictionary).get("boss_battle", false)):
+		return true
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			if str((enemy.get("definition", {}) as Dictionary).get("tier", "")) == "boss":
+				return true
+	return str((battle.get("enemy_definition", {}) as Dictionary).get("tier", "")) == "boss"
+
+
+## 旧版 can_retreat(terrain, pursuit, enemy_control) 的本地等价：V1 battle 携带
+## terrain（encounter 透传），pursuit/enemy_control 在 V1 形状缺省为 0。
+static func _retreat_terrain_open(battle: Dictionary) -> bool:
+	return str(battle.get("terrain", "")) in ["path", "ridge", "marsh"] \
+		and int(battle.get("pursuit", 0)) <= 1 \
+		and int(battle.get("enemy_control", 0)) <= 1
 
 
 static func _append_caravan_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
