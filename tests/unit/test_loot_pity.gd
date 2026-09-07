@@ -213,5 +213,13 @@ func test_material_pity_cannot_invent_off_pool_targets() -> void:
 	state.material_pity = int(pity["threshold"])
 	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
 	var ids: Array = rolled["loot"]["material_ids"]
-	assert_eq(ids.size(), 1, "no forced material beyond what the tier pool declares")
+	# 数量随 pacing 的 material_count 走（2026-09-07 由 1 调到 2），别硬编码——
+	# 本用例契约是「怜悯不得凭空造出池外目标」，不是「永远掉 1 个」。
+	var pacing: Dictionary = cat.get("pacing", {})
+	var layers: Dictionary = pacing.get("layers", {})
+	var layer_one: Dictionary = layers.get("1", {})
+	var loot_cfg: Dictionary = layer_one.get("loot", {})
+	var expected_count := maxi(1, int(loot_cfg.get("material_count", 1)))
+	assert_eq(ids.size(), expected_count,
+			"materials follow pacing material_count; pity never invents off-pool targets")
 	assert_eq(int(rolled["state"].material_pity), int(pity["threshold"]) + 1)

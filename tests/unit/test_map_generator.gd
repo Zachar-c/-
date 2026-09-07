@@ -20,13 +20,28 @@ func test_same_seed_builds_same_non_first_route() -> void:
 	assert_false(MapGenerator.build(202, false).is_empty())
 
 
-func test_generated_route_places_one_black_market_per_layer_and_no_other_kinds() -> void:
-	# 节点收窄（2026-09-06）：生成地图只产 combat/rest/shop（黑市自动锚，
-	# 每层 mid 一行一处），不再出现 事件/接触/商队/炼蛊/险境… 模板。
+func test_generated_route_places_black_markets_per_pacing_anchors() -> void:
+	# 节点收窄（2026-09-06）：生成地图只产 combat/rest/shop/layer_boss。
+	# 2026-09-07：黑市由 pacing anchors 显式声明数量（每层 mid + pre_boss 各一），
+	# 期望值从 pacing 读取，别硬编码——否则一调密度就红。
+	var expected := 0
+	var handle := FileAccess.open("res://data/pacing.json", FileAccess.READ)
+	if handle != null:
+		var parsed: Variant = JSON.parse_string(handle.get_as_text())
+		handle.close()
+		if parsed is Dictionary:
+			for layer_value in (parsed as Dictionary).get("layers", {}).values():
+				var declared := 0
+				for anchor_value in (layer_value as Dictionary).get("anchors", []):
+					if str((anchor_value as Dictionary).get("template", "")) == "ridge_black_market":
+						declared += 1
+				expected += maxi(1, declared)
+	if expected == 0:
+		expected = 5
 	for seed_value in range(1, 40):
 		var route := MapGenerator.build(seed_value, false)
 		var black_markets := route.filter(func(node: Dictionary): return node.get("template_id", "") == "ridge_black_market").size()
-		assert_eq(black_markets, 5, "seed %s must place one black market per layer" % seed_value)
+		assert_eq(black_markets, expected, "seed %s must place %d black markets" % [seed_value, expected])
 		for node in route:
 			if str(node.get("id", "")) == "ascension_window":
 				continue

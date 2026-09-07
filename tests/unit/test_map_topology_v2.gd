@@ -11,6 +11,32 @@ extends GutTest
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
 
+static var _pacing_cache: Dictionary = {}
+
+
+static func _pacing_layers() -> Dictionary:
+	if not _pacing_cache.is_empty():
+		return _pacing_cache
+	var handle := FileAccess.open("res://data/pacing.json", FileAccess.READ)
+	if handle == null:
+		return {}
+	var parsed: Variant = JSON.parse_string(handle.get_as_text())
+	handle.close()
+	if parsed is Dictionary:
+		_pacing_cache = (parsed as Dictionary).get("layers", {})
+	return _pacing_cache
+
+
+## 黑市数量以 pacing 为准：anchors 显式声明几个就是几个，未声明则生成器自动补 1。
+## 别把数字硬编码回测试——2026-09-07 把「每层 1 个黑市」调成 2 个时，这里硬编码的 1 全红。
+static func _expected_black_markets(layer_key: String) -> int:
+	var cfg: Dictionary = _pacing_layers().get(layer_key, {})
+	var count := 0
+	for anchor_value in cfg.get("anchors", []):
+		if str((anchor_value as Dictionary).get("template", "")) == "ridge_black_market":
+			count += 1
+	return maxi(1, count)
+
 var route: Array[Dictionary] = []
 
 
@@ -161,11 +187,14 @@ func test_instances_carry_template_layer_and_row() -> void:
 	for node in route:
 		if str(node.get("template_id", "")) == "ridge_black_market":
 			market_count += 1
-	assert_eq(market_count, 5, "one black market anchor per layer")
+	var expected_markets := 0
+	for layer_key in ["1", "2", "3", "4", "5"]:
+		expected_markets += _expected_black_markets(layer_key)
+	assert_eq(market_count, expected_markets, "black markets materialize per pacing anchors")
 
 
-# pacing 裁定表 anchors 已清空（2026-09-06 收窄）：黑市/休整由生成器
-# 自动补锚。多种子契约：每层黑市恰 1、每层休整 ≥1、层末 Boss 恰 1。
+# pacing 的黑市/炼蛊由 anchors 显式声明，休整由生成器自动补锚（每三行一处）。
+# 多种子契约：每层黑市数 == pacing anchors 声明数、每层休整 ≥1、层末 Boss 恰 1。
 func test_auto_anchors_materialize_for_many_seeds() -> void:
 	for seed_value in range(1, 101):
 		var generated: Array[Dictionary] = MapGeneratorScript.build(seed_value, false)
@@ -182,8 +211,8 @@ func test_auto_anchors_materialize_for_many_seeds() -> void:
 			elif template_id == "final_boss_stand" or template_id.begins_with("layer_boss_stand_"):
 				bosses[layer] = int(bosses.get(layer, 0)) + 1
 		for layer_key in ["1", "2", "3", "4", "5"]:
-			assert_eq(markets.get(layer_key, 0), 1,
-				"seed %d layer %s auto black-market must materialize exactly once" % [seed_value, layer_key])
+			assert_eq(markets.get(layer_key, 0), _expected_black_markets(layer_key),
+				"seed %d layer %s black-market count must match pacing anchors" % [seed_value, layer_key])
 			assert_gt(rests.get(layer_key, 0), 0,
 				"seed %d layer %s must keep at least one rest stop" % [seed_value, layer_key])
 			assert_eq(bosses.get(layer_key, 0), 1,

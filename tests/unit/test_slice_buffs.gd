@@ -48,6 +48,12 @@ func test_lesser_one_hp_spares_bosses_only() -> void:
 		assert_eq(int(enemy_value.hp), 1, "common enemy reduced to 1 hp")
 	var boss: Dictionary = FACADE.start(
 			{"enemy_kind": "miasma_vein_lord"}, controller.state, controller.catalog)
+	# Boss 血量以目录为准：数值随 enemies.json 调整，此处的契约是「不受减血 buff 影响」。
+	var boss_hp := -1
+	for enemy_value in (controller.catalog.get("enemies", []) as Array):
+		if str(enemy_value.get("id", "")) == "miasma_vein_lord":
+			boss_hp = int(enemy_value.get("hp", 0))
+	assert_gt(boss_hp, 1, "boss baseline hp must come from the catalog")
 	for enemy_value in boss.get("enemies", []):
 		if str(enemy_value.get("id", "")) == "miasma_vein_lord":
-			assert_eq(int(enemy_value.hp), 8, "boss keeps its own hp")
+			assert_eq(int(enemy_value.hp), boss_hp, "boss keeps its own hp")

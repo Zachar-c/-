@@ -164,10 +164,12 @@ static func _anchor_rows(cfg: Dictionary, row_count: int, rng: SeededRng) -> Dic
 		if not anchor_rows.has(row):
 			anchor_rows[row] = []
 		(anchor_rows[row] as Array).append("ridge_black_market")
-	# 每三行一处休整（第 1、4、7… 行），不占用末端 Boss 行。
+	# 每两行一处休整（第 1、3、5… 行），不占用末端 Boss 行。
+	# 2026-09-08：玩家反馈「重复打怪、没提升、摸不到 Boss」——生成图里战斗占比
+	# 一度高达 82%，续航/补给密度过低。休整由每三行加密到每两行。
 	# 同层交错取两张休整模板，保证长层也有续航节点。
 	var rest_index := 0
-	for rest_row in range(1, row_count - 1, 3):
+	for rest_row in range(1, row_count - 1, 2):
 		var rest_template := "rest_hollow" if rest_index % 2 == 0 else "rest_shrine"
 		rest_index += 1
 		if not anchor_rows.has(rest_row):
@@ -180,6 +182,8 @@ static func _anchor_row_index(slot: String, row_count: int) -> int:
 	match slot:
 		"pre_boss":
 			return maxi(1, row_count - 2)
+		"quarter":
+			return maxi(1, row_count / 4)
 		"mid", _:
 			return maxi(1, row_count / 2)
 

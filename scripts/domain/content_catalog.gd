@@ -219,7 +219,8 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 				var template_id := str(anchor.get("template", ""))
 				if not catalog.get("node_by_id", {}).has(template_id):
 					errors.append("pacing layer %s anchor references unknown node %s" % [layer_id, template_id])
-				if str(anchor.get("row", "")) not in ["mid", "pre_boss"]:
+				# 行位槽位须与 MapGenerator._anchor_row_index 保持一致（quarter 于 2026-09-08 增补）。
+				if str(anchor.get("row", "")) not in ["mid", "pre_boss", "quarter"]:
 					errors.append("pacing layer %s anchor %s has unknown row" % [layer_id, template_id])
 			for template_id_value in layer.get("pool", []):
 				var pool_id := str(template_id_value)

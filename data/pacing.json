@@ -26,7 +26,7 @@
    "stone_budget": 12,
    "enemy_turn": 1,
    "loot": {
-    "material_count": 1,
+    "material_count": 2,
     "weights": {
      "common": 90,
      "rare": 10,
@@ -43,10 +43,24 @@
     {
      "template": "refinement_hollow",
      "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
     }
    ],
    "pool": [
-    "beast_swarm_pass"
+    "beast_swarm_pass",
+    "iron_hide_ambush",
+    "scout_crossing_raid"
    ],
    "title": "青茅山外圍"
   },
@@ -66,7 +80,7 @@
    "stone_budget": 16,
    "enemy_turn": 2,
    "loot": {
-    "material_count": 1,
+    "material_count": 2,
     "weights": {
      "common": 80,
      "rare": 18,
@@ -75,9 +89,28 @@
    },
    "shop_price_pct": 10,
    "shop_max_tier": 2,
-   "anchors": [],
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
    "pool": [
-    "iron_hide_ambush"
+    "iron_hide_ambush",
+    "scout_crossing_raid",
+    "beast_swarm_pass"
    ],
    "title": "落瘴岭"
   },
@@ -97,7 +130,7 @@
    "stone_budget": 22,
    "enemy_turn": 3,
    "loot": {
-    "material_count": 2,
+    "material_count": 3,
     "weights": {
      "common": 70,
      "rare": 24,
@@ -106,9 +139,28 @@
    },
    "shop_price_pct": 20,
    "shop_max_tier": 3,
-   "anchors": [],
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
    "pool": [
-    "scout_crossing_raid"
+    "scout_crossing_raid",
+    "faction_guard_checkpoint",
+    "wolf_pack_trail"
    ],
    "title": "血蟒涧"
   },
@@ -128,7 +180,7 @@
    "stone_budget": 28,
    "enemy_turn": 4,
    "loot": {
-    "material_count": 2,
+    "material_count": 3,
     "weights": {
      "common": 60,
      "rare": 28,
@@ -137,9 +189,28 @@
    },
    "shop_price_pct": 35,
    "shop_max_tier": 4,
-   "anchors": [],
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
    "pool": [
-    "faction_guard_checkpoint"
+    "faction_guard_checkpoint",
+    "wolf_pack_trail",
+    "scout_crossing_raid"
    ],
    "title": "万蛊窟"
   },
@@ -159,7 +230,7 @@
    "stone_budget": 35,
    "enemy_turn": 5,
    "loot": {
-    "material_count": 3,
+    "material_count": 4,
     "weights": {
      "common": 50,
      "rare": 30,
@@ -168,9 +239,28 @@
    },
    "shop_price_pct": 50,
    "shop_max_tier": 5,
-   "anchors": [],
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
    "pool": [
-    "wolf_pack_trail"
+    "wolf_pack_trail",
+    "faction_guard_checkpoint",
+    "iron_hide_ambush"
    ],
    "title": "瘴脉深處"
   }

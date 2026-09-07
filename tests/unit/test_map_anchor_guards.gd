@@ -44,13 +44,27 @@ func test_l1_refinement_hollow_sits_on_mid_row() -> void:
 
 
 func test_every_layer_has_black_market_anchor_for_many_seeds() -> void:
-	# 每大层保底一处黑市（shop）锚点：L1 由 pacing 裁定，其余层由
-	# _anchor_rows 兜底补充。回归期黑市消失直接判红。
+	# 每大层保底一处黑市（shop）锚点。2026-09-07 起黑市数量由 pacing anchors
+	# 显式声明（每层 mid + pre_boss 各一），期望值从配置读取，别硬编码。
+	var expected := 0
+	var handle := FileAccess.open("res://data/pacing.json", FileAccess.READ)
+	if handle != null:
+		var parsed: Variant = JSON.parse_string(handle.get_as_text())
+		handle.close()
+		if parsed is Dictionary:
+			for layer_value in (parsed as Dictionary).get("layers", {}).values():
+				var declared := 0
+				for anchor_value in (layer_value as Dictionary).get("anchors", []):
+					if str((anchor_value as Dictionary).get("template", "")) == "ridge_black_market":
+						declared += 1
+				expected += maxi(1, declared)
+	if expected == 0:
+		expected = 5
 	for seed_value in range(1, 30):
 		var route := MapGenerator.build(seed_value, false)
 		var black_markets := route.filter(func(node: Dictionary): return node.get("template_id", "") == "ridge_black_market")
-		assert_eq(black_markets.size(), 5,
-			"seed %s must place one black market per layer" % seed_value)
+		assert_eq(black_markets.size(), expected,
+			"seed %s must place %d black markets" % [seed_value, expected])
 
 
 func test_every_layer_has_rest_anchor_for_many_seeds() -> void:
