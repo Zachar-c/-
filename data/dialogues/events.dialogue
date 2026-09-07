@@ -1,5 +1,9 @@
+Nathan: Choose a Response...
+- Option 1
+	Nathan: You chose option 1
+- Option 2
+	Nathan: You chose option 2
 ~ start
-旁白: 山风掠过残破的石窟，旧日蛊师的声音在石壁间回响。
 - 接受这段残响
     => echo_cave_accept
 - 拒绝并离开
