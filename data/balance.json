@@ -45,6 +45,8 @@
   "gu_estimate_ratio": 6.5,
   "blood_yield_ratio": 0.01,
   "deep_blood_multiplier": 0.5,
+  "deep_blood_trail": 1,
+  "deep_blood_time_cost": 1,
   "soul_burst_capacity_ratio": 2.0,
   "soul_calm_emotional_below": 40,
   "soul_calm_beast_below": 25,

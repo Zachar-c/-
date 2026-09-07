@@ -38,7 +38,13 @@ static func blood_yield(target_health: float, target_rank: int, death_multiplier
 	var extra := {}
 	if means == "deep":
 		base += base * _b(cat, "deep_blood_multiplier", 0.5)
-		extra = {"time_cost": 1, "tool_required": true, "blood_trail": 1}
+		# 数值走 balance 表（工单 2 数据驱动，默认与旧硬编码一致）；
+		# tool_required 是规则开关不是可调数值，留在代码里。
+		extra = {
+			"time_cost": int(_b(cat, "deep_blood_time_cost", 1)),
+			"tool_required": true,
+			"blood_trail": int(_b(cat, "deep_blood_trail", 1)),
+		}
 	return {"yield": base, "means": means, "extra": extra}
 
 
