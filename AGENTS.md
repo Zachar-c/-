@@ -29,6 +29,7 @@
 - 前端全局约束（UI 设计规范与公共组件约定）：`docs/contracts/2026-09-02-frontend-global-constraints.md`
 - 页面清单与页面需求（逐屏需求单）：`docs/contracts/2026-09-02-page-inventory-requirements.md`
 - UI 改动、快照键扩容或命令面扩容前，必须核对上述三份契约文档；新增键/命令/组件须同步回写契约，防止契约与代码漂移。
+- **核心模块接口约定（Agent 生成代码强制参考，每系统 1 页：输入输出/信号/依赖/强制规则）**：`docs/contracts/module-interfaces/`（README 含索引与数据流总览；01 战斗结算、02 蛊实体与合成、03 地图节点生成、04 内容目录、05 运行状态、06 行动预览、07 领域动作路由、08 表现层命令面）。新增模块或改接口（函数签名/数据键/命令面）前必须先读对应页；依赖方向只允许 表现层 → 领域层 → 数据层，禁止反向依赖与绕过目录直读 JSON。
 - 项目裁定索引：`docs/项目决策浓缩对话.md`
 - 旧冒烟设计仅供参考：`docs/superpowers/specs/2026-08-21-nanjiang-roguelite-smoke-design.md`
 - 当前实现状态以代码、测试、`git log` 和当前任务文档为准，不在本文件维护历史台账。
