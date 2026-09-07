@@ -20,7 +20,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data")
-DEFAULT_HARVEST = os.path.join(ROOT, "..", ".superpowers", "sdd", "gu-name-harvest.txt")
+DEFAULT_HARVEST = os.path.join(ROOT, "scripts", "core", ".superpowers", "sdd", "gu-name-harvest.txt")
 
 SCHOOLS = ["blood", "qi", "force", "soul", "refine"]
 QUOTA_PER_SCHOOL = 40

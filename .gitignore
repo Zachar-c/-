@@ -1,6 +1,6 @@
 .worktrees/
 .godot/
-.superpowers/
+scripts/core/.superpowers/
 *.uid
 
 # 导出构建产物（Release 包不入库）

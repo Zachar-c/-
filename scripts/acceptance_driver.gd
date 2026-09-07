@@ -11,7 +11,7 @@ extends SceneTree
 ##   smoke   godot --headless --path . -s res://scripts/acceptance_driver.gd -- --mode=smoke
 ##           RUITK 编译 + 组件/屏幕结构断言 + 主场景真实开局与推进流程。
 ##   capture godot --path . -s res://scripts/acceptance_driver.gd -- --mode=capture [--batch hall|map]
-##           真实渲染器截图（非 headless），输出 .superpowers/ui_captures/wenzhen/*.png。
+##           真实渲染器截图（非 headless），输出 scripts/core/.superpowers/ui_captures/wenzhen/*.png。
 ##   play    godot --headless --path . -s res://scripts/acceptance_driver.gd -- --mode=play
 ##           确定性整局游玩（PLAYTHROUGH_SEED/CONTRACTS/SCHOOL/BOSS_FIRST 环境变量生效）。
 ##   render  godot --path . -s res://scripts/acceptance_driver.gd -- --mode=render [scene=res://scenes/main.tscn]
@@ -42,7 +42,7 @@ const SCREEN_DIR := "res://ui/screens"
 const SAMPLE := "res://ui/_sample.guitkx"
 
 # ========== 截图 / 捕获契约 ==========
-const OUT_DIR := "res://.superpowers/ui_captures/wenzhen"
+const OUT_DIR := "res://scripts/core/.superpowers/ui_captures/wenzhen"
 const VIEWPORTS := [Vector2i(1920, 1080), Vector2i(1366, 768), Vector2i(1280, 720)]
 const CAPTURE_MATRIX := {
 	"hall": ["running", "no_save", "long_summary", "keyboard_focus"],

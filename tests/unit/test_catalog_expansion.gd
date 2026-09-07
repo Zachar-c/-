@@ -102,7 +102,7 @@ func test_generator_rerun_is_idempotent() -> void:
 			FileAccess.get_file_as_string("res://data/gu.json"))
 	var output := []
 	OS.execute("python", ["tools/generate_gu_catalog.py",
-			"--harvest", "..\\..\\.superpowers\\sdd\\gu-name-harvest.txt"], output, true)
+			"--harvest", "..\\..\\scripts\\core\\.superpowers\\sdd\\gu-name-harvest.txt"], output, true)
 	var after_gu: Array = JSON.parse_string(
 			FileAccess.get_file_as_string("res://data/gu.json"))
 	assert_gte(after_gu.size(), before_gu.size())
