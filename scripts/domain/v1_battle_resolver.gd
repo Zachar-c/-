@@ -260,6 +260,8 @@ static func basic_attack_reason(battle: Dictionary) -> String:
 
 ## 统一入口：返回 {"battle": ..., "result": {"ok": bool, "reason": String, "changes": [...]}}
 static func player_action(battle: Dictionary, action: Dictionary) -> Dictionary:
+	if _is_over(battle):
+		return _result(battle, false, "battle_over")
 	match str(action.get("type", "")):
 		"play_gu":
 			return play_gu(battle, int(action.get("slot_index", -1)), str(action.get("target_id", "")))
