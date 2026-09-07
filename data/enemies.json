@@ -63,9 +63,9 @@
     "id": "miasma_vein_lord",
     "tier": "boss",
     "rank": 3,
-    "hp": 8,
+    "hp": 14,
     "turn": 4,
-    "essence": 6,
+    "essence": 8,
     "clues": ["wilting_aura", "slow_gaits"],
     "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 2, "speed": 1},
     "_phases_note": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
@@ -182,10 +182,10 @@
     "tier": "boss",
     "rank": 4,
     "turn": 1,
-    "hp": 8,
-    "essence": 3,
+    "hp": 15,
+    "essence": 5,
     "clues": ["coiled_shadows"],
-    "intent": {"id": "crush_coil", "label": "绞缠碾压", "damage": 2, "speed": 1},
+    "intent": {"id": "crush_coil", "label": "绞缠碾压", "damage": 3, "speed": 1},
     "reactions": []
   },
   {
@@ -193,10 +193,10 @@
     "tier": "boss",
     "rank": 4,
     "turn": 2,
-    "hp": 9,
-    "essence": 4,
+    "hp": 16,
+    "essence": 6,
     "clues": ["bone_charms"],
-    "intent": {"id": "marrow_lance", "label": "蚀骨骨矛", "damage": 2, "speed": 2},
+    "intent": {"id": "marrow_lance", "label": "蚀骨骨矛", "damage": 3, "speed": 2},
     "reactions": [
       {
         "id": "bone_thorn_shield",
@@ -213,23 +213,23 @@
     "tier": "boss",
     "rank": 5,
     "turn": 3,
-    "hp": 10,
-    "essence": 5,
+    "hp": 18,
+    "essence": 7,
     "clues": ["charged_fur"],
-    "intent": {"id": "crown_bolt", "label": "雷冠贯落", "damage": 3, "speed": 2, "cooldown": 1},
+    "intent": {"id": "crown_bolt", "label": "雷冠贯落", "damage": 4, "speed": 2, "cooldown": 1},
     "reactions": [],
     "phases": [
       {
         "until_hp_ratio": 1.0,
         "intents": [
-          {"id": "crown_bolt", "label": "雷冠贯落", "damage": 3, "speed": 2, "cooldown": 1}
+          {"id": "crown_bolt", "label": "雷冠贯落", "damage": 4, "speed": 2, "cooldown": 1}
         ],
         "reactions": []
       },
       {
         "until_hp_ratio": 0.5,
         "intents": [
-          {"id": "crown_bolt", "label": "雷冠贯落", "damage": 3, "speed": 2, "cooldown": 1},
+          {"id": "crown_bolt", "label": "雷冠贯落", "damage": 4, "speed": 2, "cooldown": 1},
           {"id": "paralyzing_howl", "label": "麻痹长嗥", "damage": 0, "speed": 2, "essence_burn": 2, "cooldown": 2}
         ],
         "reactions": []
@@ -241,10 +241,10 @@
     "tier": "boss",
     "rank": 5,
     "turn": 4,
-    "hp": 11,
-    "essence": 6,
+    "hp": 20,
+    "essence": 8,
     "clues": ["swollen_veins"],
-    "intent": {"id": "vein_whip", "label": "血络鞭挞", "damage": 3, "speed": 3, "cooldown": 1},
+    "intent": {"id": "vein_whip", "label": "血络鞭挞", "damage": 4, "speed": 3, "cooldown": 1},
     "reactions": [
       {
         "id": "blood_siphon",
@@ -259,7 +259,7 @@
       {
         "until_hp_ratio": 1.0,
         "intents": [
-          {"id": "vein_whip", "label": "血络鞭挞", "damage": 3, "speed": 3, "cooldown": 1}
+          {"id": "vein_whip", "label": "血络鞭挞", "damage": 4, "speed": 3, "cooldown": 1}
         ],
         "reactions": [
           {
@@ -275,8 +275,8 @@
       {
         "until_hp_ratio": 0.5,
         "intents": [
-          {"id": "vein_whip", "label": "血络鞭挞", "damage": 3, "speed": 3, "cooldown": 1},
-          {"id": "crimson_feast", "label": "猩红盛餐", "damage": 4, "speed": 2, "cooldown": 2}
+          {"id": "vein_whip", "label": "血络鞭挞", "damage": 4, "speed": 3, "cooldown": 1},
+          {"id": "crimson_feast", "label": "猩红盛餐", "damage": 5, "speed": 2, "cooldown": 2}
         ],
         "reactions": [
           {
