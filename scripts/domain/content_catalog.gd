@@ -1192,6 +1192,7 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"soul_burst_capacity_ratio", "soul_calm_emotional_below",
 		"soul_calm_beast_below", "soul_calm_departure_below",
 		"beast_nature_emerging_above", "beast_nature_threshold",
+		"retreat_stone_cost", "cultivate_rank_two_stone_cost",
 	]
 	for key in positive_keys:
 		var value: Variant = cfg.get(key, null)

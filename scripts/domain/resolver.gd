@@ -556,7 +556,8 @@ static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Diction
 		return _rejected(state, "not_cultivation_window")
 	if state.cultivation >= 2:
 		return _rejected(state, "cultivation_already_rank_two")
-	if state.stone < 5:
+	var rank_two_cost := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
+	if state.stone < rank_two_cost:
 		return _rejected(state, "insufficient_stone")
 	var aperture := state.cave_aperture.duplicate(true)
 	aperture["essence_max"] = EssenceCapacityScript.essence_max_for(state, catalog, 2)
@@ -568,7 +569,7 @@ static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Diction
 		state,
 		"cultivate_rank_two",
 		{"cultivation": state.cultivation, "stone": state.stone, "essence": state.essence, "cave_aperture": state.cave_aperture},
-		{"cultivation": 2, "stone": state.stone - 5, "essence": state.essence_capacity, "essence_capacity": next_capacity, "cave_aperture": aperture},
+		{"cultivation": 2, "stone": state.stone - rank_two_cost, "essence": state.essence_capacity, "essence_capacity": next_capacity, "cave_aperture": aperture},
 		"rank_two_breakthrough",
 		state.current_node_id
 	))

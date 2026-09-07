@@ -24,7 +24,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 			"refinement":
 				_append_refinement_cards(cards, state, catalog, knowledge)
 			"cultivation":
-				_append_cultivation_cards(cards, state)
+				_append_cultivation_cards(cards, state, catalog)
 			"ledger":
 				_append_ledger_cards(cards, state, catalog)
 			"shop":
@@ -115,7 +115,8 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		"cost": {},
 		"known_risk": ["闪避速度高于敌方攻击速度时，完全免伤本轮攻势。"],
 	}))
-	var retreat_cost := 0 if battle.get("flags", []).has("retreat_preserved") else 2
+	var retreat_cost := 0 if battle.get("flags", []).has("retreat_preserved") \
+			else int(catalog.get("balance", {}).get("retreat_stone_cost", 2))
 	var retreat_open := _battle_retreat_open(battle)
 	# R-boss-no-retreat: the window only exists behind this fight, so boss-tier
 	# enemies close it for good — shown with the reason, never silently.
@@ -776,8 +777,8 @@ static func _append_event_cards(cards: Array[Dictionary], state: RunState, catal
 	_append_leave_card(cards, state)
 
 
-static func _append_cultivation_cards(cards: Array[Dictionary], state: RunState) -> void:
-	var required_stone := 5
+static func _append_cultivation_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
+	var required_stone := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
 	var executable := state.cultivation < 2 and state.stone >= required_stone
 	var reason := ""
 	if state.cultivation >= 2:

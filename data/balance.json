@@ -71,5 +71,7 @@
       "4": 150,
       "5": 300
     }
-  }
+  },
+  "retreat_stone_cost": 2,
+  "cultivate_rank_two_stone_cost": 5
 }
