@@ -454,10 +454,13 @@ func _build_node_button(node: Dictionary, id: String, position: Vector2, size: V
 	detail_label.add_theme_color_override("font_color", GuStyle.CINNABAR if (reachable or is_current) else GuStyle.NODE_FUTURE_INK)
 	column.add_child(detail_label)
 
-	# 不可达节点按 HTML 原样保留可点外观，但按下不提交行路命令。
+	# 不可达节点按 HTML 原样保留可点外观，但按下不提交行路命令；
+	# 给本地 toast 反馈，避免"点了没反应像卡死"。
 	button.pressed.connect(func():
 		if reachable:
-			_fire_travel(id))
+			_fire_travel(id)
+		else:
+			_refresh_toast("此路尚未打通，须先通过当前一层"))
 	return button
 
 

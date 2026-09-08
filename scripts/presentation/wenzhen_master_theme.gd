@@ -95,7 +95,9 @@ static func _box(bg: Color, border: Color, width: int, left: int, radius: int, c
 
 ## V-F-04：hover/按下缩放的统一 tween（绑定按钮生命周期，随节点释放自动清理）。
 static func _tween_scale(button: Button, target: float) -> void:
-	var tween: Tween = button.get_meta("scale_tween", null)
+	var tween: Tween = null
+	if button.has_meta("scale_tween"):
+		tween = button.get_meta("scale_tween") as Tween
 	if tween != null and tween.is_valid():
 		tween.kill()
 	tween = button.create_tween()

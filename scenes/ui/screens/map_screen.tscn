@@ -192,6 +192,7 @@ layout_mode = 0
 anchor_right = 1.0
 offset_bottom = 970.0
 grow_horizontal = 2
+mouse_filter = 2
 
 [node name="map_routes" type="Control" parent="map_root/map_camera/map_world"]
 layout_mode = 0
@@ -199,6 +200,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 22.0
 grow_horizontal = 2
+mouse_filter = 2
 
 [node name="map_layer_label_far" type="Label" parent="map_root/map_camera/map_world/map_routes"]
 layout_mode = 0
