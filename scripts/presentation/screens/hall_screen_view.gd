@@ -31,8 +31,8 @@ const CODEX_TAB_NAMES := {
 @onready var _hall_paper: ColorRect = $Root/MainView/HallPaper
 @onready var _hall_title: Label = $Root/MainView/HallSheet/HallIdentity/HallTitle
 @onready var _title_rule: ColorRect = $Root/MainView/HallSheet/HallIdentity/TitleRule
-@onready var _prev_life: Label = $Root/MainView/HallSheet/HallIdentity/HallPrevLife
-@onready var _prev_note: Label = $Root/MainView/HallSheet/HallIdentity/HallPrevNote
+@onready var _prev_life: RichTextLabel = $Root/MainView/HallSheet/HallIdentity/HallPrevLife
+@onready var _prev_note: RichTextLabel = $Root/MainView/HallSheet/HallIdentity/HallPrevNote
 @onready var _epoch: Label = $Root/MainView/HallSheet/HallPrimary/HallEpoch
 @onready var _primary_action: Button = $Root/MainView/HallSheet/HallPrimary/HallPrimaryAction
 @onready var _primary_note: Label = $Root/MainView/HallSheet/HallPrimary/HallPrimaryNote
@@ -95,20 +95,53 @@ func _ready() -> void:
 
 ## 大厅场景中 .tscn 硬编码的颜色统一走 GuStyle token（2026-09-06 视觉审计修复）。
 ## v8（2026-09-07）：纸面 + 网点层 + 标题墨色 + 竖线/印章朱砂系。
+## v10（2026-09-08 审计第一批）：全元素色值对齐基准图采样（副题/右栏/说明/属性名/版本/角落/状态语义色）。
 func _apply_paper_colors() -> void:
 	_hall_paper.color = GuStyle.PAPER_HALL
 	_title_rule.color = Color("82463e")
-	# 标题对比度修复：問眞命簿使用墨色，避免白色低对比度
-	_hall_title.add_theme_color_override("font_color", Color("343430"))
+	# 标题：基准图纯墨黑 #101810（INK_PRIMARY 即近黑墨色）
+	_hall_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_hall_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	_hall_title.add_theme_constant_override("line_spacing", 6)
+	# 左上角（叁宫·南盟）：基准灰绿 #707870
+	var folio: Label = $Root/MainView/HallFolio
+	if folio != null:
+		folio.add_theme_font_override("font", GuStyle.BODY_FONT)
+		folio.add_theme_color_override("font_color", GuStyle.CORNER_TEXT)
+	# 上一世/札记（RichTextLabel）：基准字体
+	for rtl in [_prev_life, _prev_note]:
+		if rtl != null:
+			rtl.add_theme_font_override("normal_font", GuStyle.BODY_FONT)
+	# 说明文字：基准绿灰 #607060
+	if _primary_note != null:
+		_primary_note.add_theme_font_override("font", GuStyle.BODY_FONT)
+		_primary_note.add_theme_font_size_override("font_size", 13)
+		_primary_note.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
+	# 属性名（修为/寿元/蛊囊/节点）：基准绿灰 #606860
+	var stats_labels: Node = $Root/MainView/HallSheet/HallPrimary/HallStatsLabels
+	if stats_labels != null:
+		for child in stats_labels.get_children():
+			if child is Label:
+				child.add_theme_font_override("font", GuStyle.BODY_FONT)
+				child.add_theme_color_override("font_color", GuStyle.STAT_NAME_TEXT)
+	# 版本号：基准灰 #888880
+	if _build_ver != null:
+		_build_ver.add_theme_font_override("font", GuStyle.BODY_FONT)
+		_build_ver.add_theme_color_override("font_color", GuStyle.VER_TEXT)
+	# 状态行三标签：按类型语义色（契约蓝灰 / 异变橄榄黄 / 诅咒砖红）
+	for label in [_status1, _status2, _status3]:
+		if label != null:
+			label.add_theme_font_override("font", GuStyle.BODY_FONT)
+	_sync_status_color(_status1, GuStyle.STATUS_CONTRACT)
+	_sync_status_color(_status2, GuStyle.STATUS_MUTATE)
+	_sync_status_color(_status3, GuStyle.STATUS_CURSE)
 	# 流派屏（线框稿 v1）：纸底 + 竖排標題 + 红线
 	var school_paper: ColorRect = $SchoolsView/SchoolPaper
 	if school_paper != null:
 		school_paper.color = GuStyle.PAPER_HALL
 	var school_title: Label = $SchoolsView/SchoolSide/SchoolTitle
 	if school_title != null:
-		school_title.add_theme_color_override("font_color", Color("343430"))
+		school_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 		school_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	var school_redline: ColorRect = $SchoolsView/SchoolSide/SchoolRedline
 	if school_redline != null:
@@ -116,7 +149,7 @@ func _apply_paper_colors() -> void:
 	# 公用印章组件（v9）：透明底 + 朱砂细框 + 墨字 + 微斜 -3°。
 	GuStyle.apply_seal($Root/MainView/HallSeal)
 	GuStyle.apply_seal($SchoolsView/SchoolSeal)
-	# 副题文字与按钮文字同步（v9）：基准图副题为细宋体墨字。
+	# 副题（v9 同步字体；v10 色值对齐基准 #707060）。
 	_sync_subtitle($Root/MainView/HallSheet/HallIdentity/HallSubtitle)
 	_sync_subtitle($SchoolsView/SchoolSide/SchoolSub)
 	_apply_school_back_style(_schools_back)
@@ -128,26 +161,40 @@ func _apply_paper_colors() -> void:
 	_apply_menu_style(_quit_link)
 
 
-## v9：副题（标题下方一行）与按钮文字同字体同色，消除「标题区与按钮区字体不一致」。
+## v10：状态标签语义色（契约蓝 / 异变橄榄黄 / 诅咒砖红，基准图实测）。
+func _sync_status_color(label: Label, color: Color) -> void:
+	if label == null:
+		return
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_font_size_override("font_size", 13)
+
+
+## v9：副题（标题下方一行）与按钮文字同字体；v10 色值对齐基准 #707060 灰褐。
 func _sync_subtitle(label: Label) -> void:
 	if label == null:
 		return
 	label.add_theme_font_override("font", GuStyle.BODY_FONT)
 	label.add_theme_font_size_override("font_size", 14)
-	label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	label.add_theme_color_override("font_color", GuStyle.SUBTITLE_TEXT)
 
 
-## v9（2026-09-08 Codex 基准图校准）：续入此世按钮 = 透明底（网点透出，无实色块）
-## + 墨色手写文字；hover 文字转朱砂、加淡描边作为可交互暗示。
+## v10（第三批 2026-09-08）：续入此世按钮 = 透明底 + 墨色大字 + 双色描边
+## （基准图实测：黑字芯 + 蓝 #3880b8 描边 + 铁锈橙红 #803810 左投影）；hover 文字转朱砂。
 func _apply_continue_style(btn: Button) -> void:
 	if btn == null:
 		return
-	btn.add_theme_font_size_override("font_size", 14)
+	btn.add_theme_font_size_override("font_size", 22)
 	btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
+	# 双色描边：蓝环绕 + 铁锈橙红左侧投影（近似基准左橙右蓝立体字）
+	btn.add_theme_color_override("font_outline_color", GuStyle.BTN_OUTLINE_BLUE)
+	btn.add_theme_constant_override("outline_size", 1)
+	btn.add_theme_color_override("font_shadow_color", GuStyle.BTN_SHADOW_RUST)
+	btn.add_theme_constant_override("shadow_offset_x", -1)
+	btn.add_theme_constant_override("shadow_offset_y", 0)
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(0, 0, 0, 0)
 	normal.border_color = GuStyle.HAIRLINE_COLOR
@@ -155,8 +202,8 @@ func _apply_continue_style(btn: Button) -> void:
 	normal.set_corner_radius_all(2)
 	normal.content_margin_left = 12
 	normal.content_margin_right = 12
-	normal.content_margin_top = 6
-	normal.content_margin_bottom = 6
+	normal.content_margin_top = 4
+	normal.content_margin_bottom = 4
 	btn.add_theme_stylebox_override("normal", normal)
 	var hover := StyleBoxFlat.new()
 	hover.bg_color = Color(0, 0, 0, 0)
@@ -165,8 +212,8 @@ func _apply_continue_style(btn: Button) -> void:
 	hover.set_corner_radius_all(2)
 	hover.content_margin_left = 12
 	hover.content_margin_right = 12
-	hover.content_margin_top = 6
-	hover.content_margin_bottom = 6
+	hover.content_margin_top = 4
+	hover.content_margin_bottom = 4
 	btn.add_theme_stylebox_override("hover", hover)
 	btn.add_theme_stylebox_override("pressed", hover)
 	var focus := StyleBoxFlat.new()
@@ -178,17 +225,17 @@ func _apply_continue_style(btn: Button) -> void:
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 
-## v9：右栏菜单 = 纯文字（flat），基准图细宋体墨字，hover 转朱砂。
+## v9：右栏菜单 = 纯文字（flat）；v10 色值对齐基准 #505040 灰褐。
 func _apply_menu_style(btn: Button) -> void:
 	if btn == null:
 		return
 	btn.flat = true
 	btn.add_theme_font_size_override("font_size", 14)
 	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
-	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	btn.add_theme_color_override("font_color", GuStyle.NAV_TEXT)
 	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
-	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
+	btn.add_theme_color_override("font_focus_color", GuStyle.NAV_TEXT)
 	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	btn.custom_minimum_size = Vector2(0, 0)
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -297,9 +344,9 @@ func _refresh_main() -> void:
 	_hall_title.text = str(_snapshot.get("brand_title", "問眞")) + "\n命簿"
 	_hall_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
 
-	# 左栏：上一世止于 / 札记新得
-	_prev_life.text = str(_snapshot.get("prev_life", "上一世止于：—"))
-	_prev_note.text = str(_snapshot.get("prev_note", "札记新得：—"))
+	# 左栏：上一世止于 / 札记新得（v10 起 RichText bbcode 分段高亮：地点橙棕·境界蓝灰·札记青蓝）
+	_prev_life.text = _prev_life_bbcode(str(_snapshot.get("prev_life", "上一世止于：—")))
+	_prev_note.text = _prev_note_bbcode(str(_snapshot.get("prev_note", "札记新得：—")))
 
 	# 中栏：今世劫数 + 续入此世
 	_epoch.text = str(_snapshot.get("hall_epoch", "今世·第一劫"))
@@ -325,6 +372,39 @@ func _refresh_main() -> void:
 	_status3.text = "%d只诅咒蛊" % int(run_summary.get("curse_count", 0))
 
 	_build_ver.text = str(run_summary.get("build_label", "BUILD 0.9.0 · LOCAL"))
+
+
+## v10：上一世行 bbcode——前缀墨色；值按「地点·境界」分段：地点橙棕、境界蓝灰；
+## 无数据（—/未载入/空）整段灰。
+func _prev_life_bbcode(raw: String) -> String:
+	var prefix := "上一世止于："
+	var value := raw.trim_prefix(prefix)
+	if value == "" or value == "—" or value == "未载入":
+		return "[color=%s]%s[/color][color=%s]%s[/color]" % [
+			GuStyle.INK_PRIMARY.to_html(false), prefix,
+			GuStyle.INK_SOFT.to_html(false), value if value != "" else "—"]
+	var parts := value.split("·")
+	if parts.size() >= 2:
+		var body := "[color=%s]%s[/color][color=%s]·%s[/color]" % [
+			GuStyle.HILITE_PLACE.to_html(false), parts[0],
+			GuStyle.HILITE_REALM.to_html(false), "·".join(parts.slice(1))]
+		return "[color=%s]%s[/color]%s" % [GuStyle.INK_PRIMARY.to_html(false), prefix, body]
+	return "[color=%s]%s[/color][color=%s]%s[/color]" % [
+		GuStyle.INK_PRIMARY.to_html(false), prefix,
+		GuStyle.HILITE_PLACE.to_html(false), value]
+
+
+## v10：札记行 bbcode——前缀墨色，札记名青蓝；无数据整段灰。
+func _prev_note_bbcode(raw: String) -> String:
+	var prefix := "札记新得："
+	var value := raw.trim_prefix(prefix)
+	if value == "" or value == "—":
+		return "[color=%s]%s[/color][color=%s]%s[/color]" % [
+			GuStyle.INK_PRIMARY.to_html(false), prefix,
+			GuStyle.INK_SOFT.to_html(false), "—"]
+	return "[color=%s]%s[/color][color=%s]%s[/color]" % [
+		GuStyle.INK_PRIMARY.to_html(false), prefix,
+		GuStyle.HILITE_NOTE.to_html(false), value]
 
 
 ## 从条目数组取首个可读名称（Dictionary 取 name/id，String 直接取）。

@@ -87,7 +87,24 @@ const HAIRLINE     := 1                        # 发丝线宽 1px
 const CINNABAR     := Color("9c332d")       # 朱砂：危险 / 不可逆 / 死亡线
 ## 旧朱砂印泥色（2026-09-08 基准图印章区重采样）：框/文字笔画核心 (168,112,104)≈#A87068，
 ## 抗锯齿边缘扩散至 #AC7870~#C09C94——Codex 基准印章为氧化褪色的暗红印泥，非鲜朱砂。
-const SEAL_CINNABAR := Color("a87068")
+## 2026-09-08 审计后加深一档 → #a06058，抵消 1px 细框+小字的抗锯齿变浅。
+const SEAL_CINNABAR := Color("8c5850")
+## 基准图逐元素重采样文本色（2026-09-08 审计，全部来自 Codex 基准图采样）：
+const SUBTITLE_TEXT   := Color("707060")   # 副题（凡人逐道，代价自负）灰褐
+const NAV_TEXT        := Color("505040")   # 右栏 手记/图鉴/设置/退出 灰褐
+const NOTE_TEXT       := Color("607060")   # 说明文字（将从…继续）绿灰
+const STAT_NAME_TEXT  := Color("606860")   # 属性名（修为/寿元/蛊囊/节点）绿灰
+const VER_TEXT        := Color("888880")   # 版本号 灰
+const CORNER_TEXT     := Color("707870")   # 左上角（叁宫·南盟/参考·高级）灰绿
+const STATUS_CONTRACT := Color("506880")   # 状态·契约 蓝灰
+const STATUS_MUTATE   := Color("887830")   # 状态·异变 橄榄黄
+const STATUS_CURSE    := Color("904038")   # 状态·诅咒 砖红
+const HILITE_PLACE    := Color("c89860")   # 上一世地点 橙棕
+const HILITE_REALM    := Color("6898c0")   # 上一世境界 蓝灰
+const HILITE_NOTE     := Color("98c8d8")   # 札记名 青蓝
+## 主按钮「续入此世 >」双色描边（2026-09-08 基准图逐像素确认：黑字芯 + 蓝右描边 + 铁锈橙红左投影）：
+const BTN_OUTLINE_BLUE := Color("3880b8")  # 蓝色描边
+const BTN_SHADOW_RUST  := Color("803810")  # 铁锈橙红 左侧投影
 const CONTRACT_BLUE := Color("315f73")      # 契约规则
 const ANOMALY_YELLOW := Color("936f1e")     # DDA / 异变 / 险象
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
@@ -273,16 +290,16 @@ static func label(text: String, size: int, color: Color) -> Label:
 	return l
 
 
-## 公用印章组件（2026-09-08 基准图重采样校准）：透明底（网点透出）+ 旧朱砂 1px 细框
+## 公用印章组件（2026-09-08 基准图重采样校准 v2）：透明底（网点透出）+ 旧朱砂 2px 细框
 ## + 2×2 竖排旧朱砂印泥字（基准图实测：框与字同为褪色暗红 #A87068 系，非墨色）+ 微斜 -3°。
-static func apply_seal(panel: PanelContainer, tilt_deg: float = -3.0) -> void:
+static func apply_seal(panel: PanelContainer, tilt_deg: float = 3.0) -> void:
 	if panel == null:
 		return
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(0, 0, 0, 0)
 	box.border_color = SEAL_CINNABAR
-	box.set_border_width_all(1)
-	box.set_corner_radius_all(RADIUS_SMALL)
+	box.set_border_width_all(2)
+	box.set_corner_radius_all(0)
 	box.content_margin_left = 10
 	box.content_margin_right = 10
 	box.content_margin_top = 6
@@ -295,5 +312,5 @@ static func apply_seal(panel: PanelContainer, tilt_deg: float = -3.0) -> void:
 		if label == null:
 			continue
 		label.add_theme_font_override("font", TITLE_FONT)
-		label.add_theme_font_size_override("font_size", 11)
+		label.add_theme_font_size_override("font_size", 12)
 		label.add_theme_color_override("font_color", SEAL_CINNABAR)
