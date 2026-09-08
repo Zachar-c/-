@@ -9,6 +9,7 @@ extends MarginContainer
 ## 六个子视图全部预置在节点树里靠 visible 切换（种类固定），
 ## 列表内容才走代码生成（数量不定）。见 UI_RULES §5。
 
+const GameVersionScript := preload("res://scripts/domain/game_version.gd")
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
 const GuCardScene := preload("res://scenes/ui/widgets/gu_card.tscn")
@@ -46,6 +47,7 @@ const CODEX_TAB_NAMES := {
 @onready var _build_ver: Label = $Root/MainView/HallSheet/HallArchive/HallBuildVer
 @onready var _journal_link: Button = $Root/MainView/HallSheet/HallArchive/JournalLink
 @onready var _codex_link: Button = $Root/MainView/HallSheet/HallArchive/CodexLink
+@onready var _kill_link: Button = $Root/MainView/HallSheet/HallArchive/KillLink
 @onready var _settings_link: Button = $Root/MainView/HallSheet/HallArchive/SettingsLink
 @onready var _quit_link: Button = $Root/MainView/HallSheet/HallArchive/QuitLink
 
@@ -157,6 +159,8 @@ func _apply_paper_colors() -> void:
 	_apply_continue_style(_primary_action)
 	_apply_menu_style(_journal_link)
 	_apply_menu_style(_codex_link)
+	_sync_build_ver()
+	_apply_menu_style(_kill_link)
 	_apply_menu_style(_settings_link)
 	_apply_menu_style(_quit_link)
 
@@ -226,6 +230,13 @@ func _apply_continue_style(btn: Button) -> void:
 
 
 ## v9：右栏菜单 = 纯文字（flat）；v10 色值对齐基准 #505040 灰褐。
+## 版本号单源：schools 屏版本标签也读 GameVersion（SemVer 2.0）。
+func _sync_build_ver() -> void:
+	var school_ver: Label = $SchoolsView/SchoolSide/SchoolVer
+	if school_ver != null:
+		school_ver.text = GameVersionScript.display()
+
+
 func _apply_menu_style(btn: Button) -> void:
 	if btn == null:
 		return
@@ -292,6 +303,7 @@ func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
 func _wire_static_buttons() -> void:
 	_journal_link.pressed.connect(func(): _fire("open_journal"))
 	_codex_link.pressed.connect(func(): _fire("open_codex"))
+	_kill_link.pressed.connect(func(): _fire("open_kill"))
 	_settings_link.pressed.connect(func(): _fire("open_settings"))
 	_quit_link.pressed.connect(func(): _fire("quit"))
 	_codex_back.pressed.connect(func(): _fire("back_to_hall"))

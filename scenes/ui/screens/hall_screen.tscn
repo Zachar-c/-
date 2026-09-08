@@ -492,6 +492,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "图鉴"
 
+[node name="KillLink" type="Button" parent="Root/MainView/HallSheet/HallArchive"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "杀招"
+
 [node name="SettingsLink" type="Button" parent="Root/MainView/HallSheet/HallArchive"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11

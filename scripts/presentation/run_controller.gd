@@ -1355,6 +1355,7 @@ func _show_settings() -> void:
 func back_from_overlay() -> void:
 	match _overlay_return_view:
 		"Map": _show_map()
+		"Battle": _show_battle()
 		_:
 			_hall_subview = "main"
 			_show_title()

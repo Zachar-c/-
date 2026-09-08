@@ -144,6 +144,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"end_turn": func(): controller.submit_command(_battle_turn_command(controller, "end_turn")),
 				"refine": func(id = ""): controller.submit_command(_battle_turn_command(controller, "refine", {"recipe_id": str(id)})),
 				"flee": func(): controller.submit_command(_battle_turn_command(controller, "retreat")),
+				"open_settings": func(): controller._show_settings(),
 			}
 		"Ending":
 			return {

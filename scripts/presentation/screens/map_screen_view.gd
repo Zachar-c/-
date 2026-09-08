@@ -10,6 +10,7 @@ extends MarginContainer
 ## 控制；数量不定的内容（节点卡、连线、深度刻度、资源 chip）走代码生成。
 ## 见 docs/ui/UI_RULES.md §5。
 
+const GameVersionScript := preload("res://scripts/domain/game_version.gd")
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuToastScene := preload("res://scenes/ui/widgets/gu_toast.tscn")
 ## 路径连线层用 preload 而非 class_name：无头批量跑测试时全局类缓存不一定
@@ -187,6 +188,7 @@ func _wire_static_buttons() -> void:
 func _refresh() -> void:
 	if not _ready_done:
 		return
+	_build_ver.text = GameVersionScript.display()
 	var nodes: Array = _snapshot.get("nodes", [])
 	_refresh_resources(_snapshot.get("resources", {}))
 	_refresh_markers(_snapshot.get("contracts", []), _snapshot.get("anomalies", []))

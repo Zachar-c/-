@@ -12,6 +12,7 @@ extends MarginContainer
 ##   2. known_risk or dangerous        → 弹确认，确认后才下发
 ##   3. 其余                            → 直接下发
 
+const GameVersionScript := preload("res://scripts/domain/game_version.gd")
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuEnemyActorScene := preload("res://scenes/ui/widgets/gu_enemy_actor.tscn")
 const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
@@ -20,6 +21,7 @@ const MAX_VISIBLE_ENEMIES := 3
 
 @onready var _paper: ColorRect = $BattlePaper
 @onready var _top_bar = $Root/battle_hud/TopBar
+@onready var _settings_button: Button = $Root/BattleStage/battle_field/SettingsButton
 @onready var _battle_stage: PanelContainer = $Root/BattleStage
 @onready var _player_panel = $Root/BattleStage/battle_field/PlayerPanel
 @onready var _enemy_panel = $Root/BattleStage/battle_field/EnemyPanel
@@ -30,6 +32,7 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _primordial_label: Label = $Root/HandStage/HandMargin/LeftMeta/PrimordialRow/PrimordialLabel
 @onready var _piles_label: Label = $Root/HandStage/HandMargin/LeftMeta/PilesRow/PilesLabel
 @onready var _hand = $Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand
+@onready var _build_ver: Label = $Root/HandStage/BuildVer
 @onready var _kill_host: HBoxContainer = $Root/BattleStage/battle_field/BattleInfo/KillRow
 @onready var _ops_row: VBoxContainer = $Root/BattleStage/battle_field/OpsDock/OpsRow
 @onready var _mode_host: VBoxContainer = $Root/BattleStage/battle_field/ModeHost
@@ -76,11 +79,29 @@ func _ready() -> void:
 	_apply_seal_style()
 	_apply_ink_style()
 	_apply_tooltip_style()
+	_build_ver.text = GameVersionScript.display()
+	_settings_button.pressed.connect(func():
+		if _commands.has("open_settings"):
+			_commands["open_settings"].call())
+	_apply_menu_style(_settings_button)
 	_refresh()
 
 
 ## 叙事层：以大厅屏为基准——纸面 + 网点背景由根 Backdrop（BattlePaper + BattleDots）提供，
 ## 舞台本身完全透明，让纸面网点透出全屏；敌人/玩家纸卡墨框浮于其上，命簿语言统一。
+## 入口按钮（右上角「设置」）：透明墨字，hover 转朱砂，与大厅菜单同款。
+func _apply_menu_style(btn: Button) -> void:
+	if btn == null:
+		return
+	btn.flat = true
+	btn.add_theme_font_size_override("font_size", 14)
+	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
+	btn.add_theme_color_override("font_color", GuStyle.NAV_TEXT)
+	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_focus_color", GuStyle.NAV_TEXT)
+
+
 func _apply_stage_style() -> void:
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(0, 0, 0, 0)
