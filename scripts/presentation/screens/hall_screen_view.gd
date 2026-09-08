@@ -505,7 +505,7 @@ func _build_about_panel() -> void:
 	_about_panel.setup("关于与署名", true, false)
 	var host: Node = _about_panel.content_host
 	_clear(host)
-	host.add_child(_label("© 2026《蛊路求生》· 同人习作（原著《蛊真人》）",
+	host.add_child(_label("© 2026《問眞》· 同人习作（原著《蛊真人》）",
 			GuStyle.INK_HALL, 14))
 	host.add_child(_label("第三方开源素材按各自许可证使用，来源如下：",
 			GuStyle.INK_HALL, 13))
@@ -575,7 +575,7 @@ func _build_save_panel() -> void:
 func _show_credits_dialog() -> void:
 	var dlg := AcceptDialog.new()
 	dlg.title = "关于本游戏 · 开源素材署名"
-	dlg.dialog_text = """《蛊路求生》基于《蛊真人》IP的肉鸽游戏 Demo。
+	dlg.dialog_text = """《問眞》基于《蛊真人》IP的肉鸽游戏 Demo。
 
 【开源图标】
 game-icons.net — CC BY 3.0
