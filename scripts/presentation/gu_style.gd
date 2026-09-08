@@ -90,6 +90,7 @@ const CINNABAR     := Color("9c332d")       # 朱砂：危险 / 不可逆 / 死�
 ## 抗锯齿边缘扩散至 #AC7870~#C09C94——Codex 基准印章为氧化褪色的暗红印泥，非鲜朱砂。
 ## 2026-09-08 审计后加深一档 → #a06058，抵消 1px 细框+小字的抗锯齿变浅。
 const SEAL_CINNABAR := Color("8c5850")
+const REDLINE       := Color("82463e")       # 标题下红线（基准图采样）
 ## 基准图逐元素重采样文本色（2026-09-08 审计，全部来自 Codex 基准图采样）：
 const SUBTITLE_TEXT   := Color("707060")   # 副题（凡人逐道，代价自负）灰褐
 const NAV_TEXT        := Color("505040")   # 右栏 手记/图鉴/设置/退出 灰褐
