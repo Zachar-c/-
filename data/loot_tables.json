@@ -170,7 +170,8 @@
    "material_count": 1,
    "material_pool": [
     "beast_blood",
-    "beast_bone"
+    "beast_bone",
+    "moon_blue_petal"
    ],
    "gu_chance_pct": 0,
    "gu_pool": {

@@ -77,10 +77,27 @@ func test_hard_anchors_remain_unique_and_terminal() -> void:
 		var templates: Array[String] = []
 		for node in route:
 			templates.append(str(node.get("template_id", "")))
-		# 每层自动锚一处黑市（_anchor_rows 补 shop），全程五层恰五处。
-		assert_eq(templates.count("ridge_black_market"), 5, "seed %d" % seed_value)
+		# 黑市数由 pacing 的 anchors 决定（2026-09-08 每层 1 -> 3），别写死 5。
+		assert_eq(templates.count("ridge_black_market"), _black_market_anchors_per_run(),
+				"seed %d" % seed_value)
 		assert_true(templates.has("final_boss_stand"), "seed %d" % seed_value)
 		assert_true(ids.has("ascension_window"), "seed %d" % seed_value)
+
+
+## 全程黑市总数 = pacing 各层 anchors 里 ridge_black_market 的声明数之和。
+static func _black_market_anchors_per_run() -> int:
+	var path := "res://data/pacing.json"
+	if not FileAccess.file_exists(path):
+		return 5
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return 5
+	var total := 0
+	for layer_value in (parsed as Dictionary).get("layers", {}).values():
+		for anchor_value in (layer_value as Dictionary).get("anchors", []):
+			if str((anchor_value as Dictionary).get("template", "")) == "ridge_black_market":
+				total += 1
+	return total
 
 
 func test_first_run_route_stays_fixed() -> void:

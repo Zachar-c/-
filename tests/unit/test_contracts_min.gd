@@ -289,20 +289,41 @@ func test_shop_price_pct_lifts_buy_prices_only() -> void:
 
 
 func test_material_bonus_and_penalty_adjust_loot_counts_with_zero_clamp() -> void:
+	var pool: Array = (catalog().get("loot_tables", {}).get("loot", {})
+			.get("common", {}).get("material_pool", []) as Array)
+	var layer_count := _pacing_material_count(1)
+	# _roll_materials 抽完即 remove_at，材料数被池子大小封顶。
+	var base_count := mini(layer_count, pool.size())
+	# 若基数已顶到池子上限，+1 契约会被静默吃掉（2026-09-08 实测踩过），此处钉死余量。
+	assert_gt(pool.size(), layer_count,
+			"material pool must leave headroom for the +1 contract bonus")
+
 	var base := LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, RunState.new_run(424242), catalog)
-	assert_eq((base["loot"]["material_ids"] as Array).size(), 1)
+	assert_eq((base["loot"]["material_ids"] as Array).size(), base_count)
 
 	var boosted_state := RunState.new_run(424242)
 	var bonus_ids: Array[String] = ["miser_pact"]
 	boosted_state.contracts = bonus_ids
 	var boosted := LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, boosted_state, catalog)
-	assert_eq((boosted["loot"]["material_ids"] as Array).size(), 2)
+	assert_eq((boosted["loot"]["material_ids"] as Array).size(), mini(layer_count + 1, pool.size()))
 
 	var cut_state := RunState.new_run(424242)
 	var penalty_ids: Array[String] = ["ascetic_path"]
 	cut_state.contracts = penalty_ids
 	var cut := LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, cut_state, catalog)
-	assert_eq((cut["loot"]["material_ids"] as Array).size(), 0)
+	assert_eq((cut["loot"]["material_ids"] as Array).size(), maxi(0, layer_count - 1))
+
+
+## 材料基数以 pacing 大层裁定表为唯一事实来源（2026-09-08 各层 +1）。
+static func _pacing_material_count(layer: int) -> int:
+	var path := "res://data/pacing.json"
+	if not FileAccess.file_exists(path):
+		return 1
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return 1
+	var layer_cfg: Dictionary = (parsed as Dictionary).get("layers", {}).get(str(layer), {})
+	return maxi(0, int((layer_cfg.get("loot", {}) as Dictionary).get("material_count", 1)))
 
 
 # N1 §16.13 MINOR closeout survivors: the blood-pact desc names the backlash

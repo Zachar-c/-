@@ -20,16 +20,28 @@ func catalog() -> Dictionary:
 	return ContentCatalogScript.load_all()
 
 
+## 材料数由 pacing 大层裁定表说了算（2026-09-08 各层 +1）；测试只跟随，不写死。
+static func _pacing_material_count(layer: int) -> int:
+	var path := "res://data/pacing.json"
+	if not FileAccess.file_exists(path):
+		return 1
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return 1
+	var layer_cfg: Dictionary = (parsed as Dictionary).get("layers", {}).get(str(layer), {})
+	return maxi(0, int((layer_cfg.get("loot", {}) as Dictionary).get("material_count", 1)))
+
+
 func test_real_loot_tables_pass_catalog_validation() -> void:
 	var errors: Array[String] = ContentCatalogScript.validate(catalog())
 	assert_eq(errors, [])
 
 
-func test_common_victory_always_grants_one_material() -> void:
+func test_common_victory_grants_the_layer_material_count() -> void:
 	var battle := {"enemy_kind": "ridge_hound"}
 	var one: Dictionary = LootResolverScript.settle_victory(battle, make_state(), catalog())
 	var two: Dictionary = LootResolverScript.settle_victory(battle, make_state(), catalog())
-	assert_eq(one["loot"].get("material_ids", []).size(), 1)
+	assert_eq(one["loot"].get("material_ids", []).size(), _pacing_material_count(1))
 	assert_eq(str(one["loot"].get("gu_id", "")), "")
 	assert_eq_deep(one["loot"], two["loot"])
 
@@ -46,7 +58,7 @@ func test_elite_loot_grants_material_and_may_be_gu() -> void:
 	var table: Dictionary = catalog().get("loot_tables", {}).get("loot", {}).get("elite", {})
 	var rolled: Dictionary = LootResolverScript.settle_victory(battle, make_state(), catalog())
 	var loot: Dictionary = rolled["loot"]
-	assert_eq(loot.get("material_ids", []).size(), int(table.get("material_count", 0)))
+	assert_eq(loot.get("material_ids", []).size(), _pacing_material_count(1))
 	var gu_id := str(loot.get("gu_id", ""))
 	if not gu_id.is_empty():
 		var pool: Dictionary = table.get("gu_pool", {})
@@ -98,15 +110,15 @@ func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
 
 
 func test_boss_loot_follows_the_layer_ruling() -> void:
-	# 统一裁定表：Boss 掉落材料数按大层（L1=1，L5=3），依旧不出蛊。
+	# 统一裁定表：Boss 掉落材料数按大层走 pacing（L1=2，L5=4），依旧不出蛊。
 	var battle_l1 := {"enemy_kind": "miasma_vein_lord", "layer": 1}
 	var rolled_l1: Dictionary = LootResolverScript.settle_victory(battle_l1, make_state(), catalog())
-	assert_eq(rolled_l1["loot"].get("material_ids", []).size(), 1)
+	assert_eq(rolled_l1["loot"].get("material_ids", []).size(), _pacing_material_count(1))
 	assert_eq(str(rolled_l1["loot"].get("gu_id", "")), "")
 
 	var battle_l5 := {"enemy_kind": "miasma_vein_lord", "layer": 5}
 	var rolled_l5: Dictionary = LootResolverScript.settle_victory(battle_l5, make_state(), catalog())
-	assert_eq(rolled_l5["loot"].get("material_ids", []).size(), 3)
+	assert_eq(rolled_l5["loot"].get("material_ids", []).size(), _pacing_material_count(5))
 	assert_eq(str(rolled_l5["loot"].get("gu_id", "")), "")
 
 
