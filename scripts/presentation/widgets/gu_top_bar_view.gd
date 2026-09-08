@@ -21,7 +21,10 @@ const STATUS_LABELS := {
 }
 
 ## 图标尺寸（使用GuIconView常量，避免魔法数字）。
-const ICON_PX := 16
+## v0.10 校准：16 → 22，状态栏图标加大以匹配 720p 真窗验收。
+const ICON_PX := 22
+## 背包/设置 icon 按钮尺寸（配合 ICON_PX 加大）。
+const ACTION_BTN_PX := 30
 
 @onready var _status_host: HBoxContainer = $BarMargin/BarRow/StatusHost
 @onready var _action_host: HBoxContainer = $BarMargin/BarRow/ActionHost
@@ -168,6 +171,7 @@ func _apply_action_buttons() -> void:
 	_bag_button.add_theme_stylebox_override("normal", bag_style)
 	_bag_button.add_theme_stylebox_override("hover", bag_style)
 	_bag_button.add_theme_stylebox_override("pressed", bag_style)
+	_bag_button.custom_minimum_size = Vector2(ACTION_BTN_PX, ACTION_BTN_PX)
 	if _bag_icon != null and _bag_icon.has_method("setup"):
 		_bag_icon.setup("scroll", GuStyle.INK_PRIMARY, ICON_PX)
 
@@ -178,5 +182,6 @@ func _apply_action_buttons() -> void:
 	_settings_button.add_theme_stylebox_override("normal", settings_style)
 	_settings_button.add_theme_stylebox_override("hover", settings_style)
 	_settings_button.add_theme_stylebox_override("pressed", settings_style)
+	_settings_button.custom_minimum_size = Vector2(ACTION_BTN_PX, ACTION_BTN_PX)
 	if _settings_icon != null and _settings_icon.has_method("setup"):
 		_settings_icon.setup("settings", GuStyle.INK_PRIMARY, ICON_PX)

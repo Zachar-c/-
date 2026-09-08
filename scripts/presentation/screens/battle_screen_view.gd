@@ -21,7 +21,6 @@ const MAX_VISIBLE_ENEMIES := 3
 
 @onready var _paper: ColorRect = $BattlePaper
 @onready var _top_bar = $Root/battle_hud/TopBar
-@onready var _settings_button: Button = $Root/BattleStage/battle_field/SettingsButton
 @onready var _battle_stage: PanelContainer = $Root/BattleStage
 @onready var _player_panel = $Root/BattleStage/battle_field/PlayerPanel
 @onready var _enemy_panel = $Root/BattleStage/battle_field/EnemyPanel
@@ -29,8 +28,8 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _feedback_toast = $Root/FeedbackToast
 @onready var _hint_host: VBoxContainer = $Root/BattleStage/battle_field/HintHost
 @onready var _hand_stage: PanelContainer = $Root/HandStage
-@onready var _primordial_label: Label = $Root/HandStage/HandMargin/LeftMeta/PrimordialRow/PrimordialLabel
-@onready var _piles_label: Label = $Root/HandStage/HandMargin/LeftMeta/PilesRow/PilesLabel
+@onready var _primordial_label: Label = $Root/HandStage/HandMargin/battle_hand/LeftMeta/PrimordialRow/PrimordialLabel
+@onready var _piles_label: Label = $Root/HandStage/HandMargin/battle_hand/LeftMeta/PilesRow/PilesLabel
 @onready var _hand = $Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand
 @onready var _build_ver: Label = $Root/HandStage/BuildVer
 @onready var _kill_host: HBoxContainer = $Root/BattleStage/battle_field/BattleInfo/KillRow
@@ -80,27 +79,15 @@ func _ready() -> void:
 	_apply_ink_style()
 	_apply_tooltip_style()
 	_build_ver.text = GameVersionScript.display()
-	_settings_button.pressed.connect(func():
+	# 设置入口收敛到顶栏状态栏 icon（独立「设置」文字按钮已移除）。
+	_top_bar.set_on_settings(func():
 		if _commands.has("open_settings"):
 			_commands["open_settings"].call())
-	_apply_menu_style(_settings_button)
 	_refresh()
 
 
 ## 叙事层：以大厅屏为基准——纸面 + 网点背景由根 Backdrop（BattlePaper + BattleDots）提供，
 ## 舞台本身完全透明，让纸面网点透出全屏；敌人/玩家纸卡墨框浮于其上，命簿语言统一。
-## 入口按钮（右上角「设置」）：透明墨字，hover 转朱砂，与大厅菜单同款。
-func _apply_menu_style(btn: Button) -> void:
-	if btn == null:
-		return
-	btn.flat = true
-	btn.add_theme_font_size_override("font_size", 14)
-	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
-	btn.add_theme_color_override("font_color", GuStyle.NAV_TEXT)
-	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
-	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
-	btn.add_theme_color_override("font_focus_color", GuStyle.NAV_TEXT)
-
 
 func _apply_stage_style() -> void:
 	var box := StyleBoxFlat.new()
@@ -556,7 +543,7 @@ func _refresh_ops(state: Dictionary) -> void:
 	end_btn.add_theme_font_size_override("font_size", 18)
 	_ops_row.add_child(end_btn)
 	if _commands.has("refine"):
-		var refine_btn := _op_button("炼骨", func(): _commands["refine"].call())
+		var refine_btn := _op_button("炼蛊", func(): _commands["refine"].call())
 		refine_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
 		refine_btn.add_theme_font_size_override("font_size", 15)
 		_ops_row.add_child(refine_btn)
@@ -770,24 +757,22 @@ func _refresh_tooltip() -> void:
 
 
 func _position_tooltip() -> void:
-	# 卡体节点名由 gu.<instance_id> 派生，Godot 会把 "." 规范化成 "_"，
-	# 查找时需同步替换，否则 gu 卡悬停 tooltip 定位会落空。
-	var card_id := str(_hovered_card.get("id", "")).replace(".", "_")
-	var card_body := _hand.get_node_or_null("CardRow/card_body_" + card_id) as Control
-	if card_body == null or not _tooltip_host.visible:
+	# 蛊虫详情跟随鼠标（v0.10 校准）：tooltip 左上角偏移到光标右下 16px，
+	# 越界时回弹到光标左侧/上方，保证完整可见且不遮挡卡牌操作区。
+	if not _tooltip_host.visible:
 		return
 	var minimum := _tooltip_host.get_combined_minimum_size()
 	var tooltip_size := Vector2(maxf(280.0, minimum.x), minimum.y)
 	var viewport_size := get_viewport_rect().size
 	tooltip_size.x = minf(tooltip_size.x, viewport_size.x - 24.0)
 	_tooltip_host.size = tooltip_size
-	var card_rect := card_body.get_global_rect()
-	var hand_rect: Rect2 = _hand.get_global_rect()
-	var desired := Vector2(card_rect.position.x, hand_rect.position.y - tooltip_size.y - GuStyle.SPACE_2)
+	var mouse_pos := get_viewport().get_mouse_position()
+	var desired := Vector2(mouse_pos.x + GuStyle.SPACE_2, mouse_pos.y + GuStyle.SPACE_2)
 	desired.x = clampf(desired.x, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.x - tooltip_size.x - GuStyle.SPACE_3))
-	if desired.y < GuStyle.SPACE_3:
-		# 手牌上方不足时贴在手牌区内部上沿，避免跨回战场内容。
-		desired.y = clampf(hand_rect.position.y + GuStyle.SPACE_2, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.y - tooltip_size.y - GuStyle.SPACE_3))
+	if desired.y + tooltip_size.y > viewport_size.y - GuStyle.SPACE_3:
+		# 下方空间不足时翻到光标上方。
+		desired.y = mouse_pos.y - tooltip_size.y - GuStyle.SPACE_2
+	desired.y = clampf(desired.y, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.y - tooltip_size.y - GuStyle.SPACE_3))
 	_tooltip_host.global_position = desired
 
 

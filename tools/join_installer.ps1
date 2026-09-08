@@ -17,7 +17,7 @@ try {
 } finally {
     $fs.Close()
 }
-$expected = "dda62eabbc1d0204a93e58672e0c05ee0075a717696fc14146f1ddf84c416667"
+$expected = "97262a13cd9834d53e26aa3f8741a77a7c4c9acac8e6e20c73accf394f2228b1"
 $actual = (Get-FileHash -Algorithm SHA256 $out).Hash.ToLowerInvariant()
 if ($actual -ne $expected) {
     throw "SHA256 mismatch: expected $expected got $actual"
