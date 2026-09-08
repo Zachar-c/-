@@ -311,7 +311,6 @@ func _wire_static_buttons() -> void:
 	_settings_quit.pressed.connect(func(): _fire("quit"))
 	_journal_back.pressed.connect(func(): _fire("back_to_hall"))
 	# S 减法：契约系统冻结，开局流收敛为 流派(+Buff) → 出发；契约屏不再占主路径。
-	_confirm_school.pressed.connect(func(): _fire("new_run"))
 	_schools_back.pressed.connect(func(): _fire("back_to_hall"))
 	_schools_op_back.pressed.connect(func(): _fire("back_to_hall"))
 	_start_run.pressed.connect(func(): _fire("new_run"))
@@ -633,8 +632,14 @@ func _refresh_schools() -> void:
 
 	var selected := str(_snapshot.get("selected_school", ""))
 	var selected_name := str(_snapshot.get("selected_school_name", ""))
-	_confirm_school.text = ("以%s入世 >" % selected_name) if selected != "" else "择定流派后入世 >"
+	var has_save := bool(_snapshot.get("has_save", false))
+	if selected != "":
+		_confirm_school.text = ("以%s续入此世 >" % selected_name) if has_save else ("以%s入世 >" % selected_name)
+	else:
+		_confirm_school.text = "择定流派后续入此世 >" if has_save else "择定流派后入世 >"
 	_apply_school_confirm_style(selected != "")
+	# 有存档 = 续入：确认后读档继续；无存档 = 新建：确认后开新一世。
+	_rebind(_confirm_school, func(): _fire("load_run" if has_save else "new_run"))
 
 
 func _build_school_grid() -> void:
