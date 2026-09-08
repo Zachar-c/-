@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="4_dialog"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="5_dots"]
 
 [node name="RefineScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -17,6 +18,27 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_bottom = 24
 script = ExtResource("1_refine")
 
+
+[node name="RefinePaper" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RefineDots" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_dots")
+expand_mode = 1
+stretch_mode = 6
 [node name="Root" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -27,6 +49,21 @@ layout_mode = 2
 [node name="RefineStage" type="PanelContainer" parent="Root"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="SealMargin" type="MarginContainer" parent="Root/RefineStage/SealPanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="SealLabel" type="Label" parent="Root/RefineStage/SealPanelContainer/SealMargin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "炼蛊
+养道"
 
 [node name="StageContent" type="VBoxContainer" parent="Root/RefineStage"]
 layout_mode = 2
@@ -40,6 +77,43 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "炼蛊台"
+
+[node name="SealSpacer" type="Control" parent="Root/RefineStage/StageContent/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SealPanelContainer" type="PanelContainer" parent="Root/RefineStage/StageContent/HeaderRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+
+[node name="SealCenter" type="CenterContainer" parent="Root/RefineStage/StageContent/HeaderRow/SealPanelContainer"]
+layout_mode = 2
+
+[node name="SealBox" type="VBoxContainer" parent="Root/RefineStage/StageContent/HeaderRow/SealPanelContainer/SealCenter"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="SealTop" type="Label" parent="Root/RefineStage/StageContent/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "炼蛊"
+horizontal_alignment = 1
+
+[node name="SealBottom" type="Label" parent="Root/RefineStage/StageContent/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "养道"
+horizontal_alignment = 1
+
+[node name="TitleRule" type="ColorRect" parent="Root/RefineStage/StageContent/HeaderRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(2, 0)
+size_flags_vertical = 3
+
+[node name="SubLabel" type="Label" parent="Root/RefineStage/StageContent/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "以蛊炼蛊 · 化毒为药"
 
 [node name="TabRow" type="HBoxContainer" parent="Root/RefineStage/StageContent/HeaderRow"]
 layout_mode = 2

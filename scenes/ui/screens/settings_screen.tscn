@@ -1,0 +1,156 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/settings_screen_view.gd" id="1_settings"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="4_dots"]
+
+[node name="SettingsScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_settings")
+
+[node name="SettingsPaper" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SettingsDots" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_dots")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "设置"
+
+[node name="TitleRule" type="ColorRect" parent="Root/HeaderRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(2, 0)
+size_flags_vertical = 3
+
+[node name="SubLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "声色之调 · 存于机匣"
+
+[node name="SealSpacer" type="Control" parent="Root/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SealPanelContainer" type="PanelContainer" parent="Root/HeaderRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+
+[node name="SealCenter" type="CenterContainer" parent="Root/HeaderRow/SealPanelContainer"]
+layout_mode = 2
+
+[node name="SealBox" type="VBoxContainer" parent="Root/HeaderRow/SealPanelContainer/SealCenter"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="SealTop" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "设置"
+horizontal_alignment = 1
+
+[node name="SealBottom" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "阁"
+horizontal_alignment = 1
+
+[node name="SettingsStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StageContent" type="VBoxContainer" parent="Root/SettingsStage"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SectionSound" type="Label" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "声音 · 主音量"
+
+[node name="SoundRow" type="HBoxContainer" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="VolumeLabel" type="Label" parent="Root/SettingsStage/StageContent/SoundRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "100"
+
+[node name="MuteButton" type="Button" parent="Root/SettingsStage/StageContent/SoundRow"]
+layout_mode = 2
+text = "静音"
+
+[node name="SoundRule" type="ColorRect" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 1)
+size_flags_horizontal = 3
+color = Color(0.717647, 0.717647, 0.670588, 1)
+
+[node name="SectionDisplay" type="Label" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "显示 · 窗口分辨率"
+
+[node name="ResolutionRow" type="HBoxContainer" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DisplayRule" type="ColorRect" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 1)
+size_flags_horizontal = 3
+color = Color(0.717647, 0.717647, 0.670588, 1)
+
+[node name="SectionSave" type="Label" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "存档 · 本机"
+
+[node name="SaveRow" type="HBoxContainer" parent="Root/SettingsStage/StageContent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SaveButton" type="Button" parent="Root/SettingsStage/StageContent/SaveRow"]
+layout_mode = 2
+text = "保存"
+
+[node name="LoadButton" type="Button" parent="Root/SettingsStage/StageContent/SaveRow"]
+layout_mode = 2
+text = "读档"

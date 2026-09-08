@@ -1,10 +1,11 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/presentation/screens/reward_screen_view.gd" id="1_reward"]
+[ext_resource type="Script" path="res://scripts/presentation/screens/kill_screen_view.gd" id="1_kill"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
-[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="3_dots"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="4_dots"]
 
-[node name="RewardScreen" type="MarginContainer"]
+[node name="KillScreen" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -14,10 +15,9 @@ theme_override_constants/margin_left = 32
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_bottom = 24
-script = ExtResource("1_reward")
+script = ExtResource("1_kill")
 
-
-[node name="RewardPaper" type="ColorRect" parent="."]
+[node name="KillPaper" type="ColorRect" parent="."]
 layout_mode = 0
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,7 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="RewardDots" type="TextureRect" parent="."]
+[node name="KillDots" type="TextureRect" parent="."]
 layout_mode = 0
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,9 +34,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("3_dots")
+texture = ExtResource("4_dots")
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Root" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -51,17 +52,17 @@ theme_override_constants/separation = 12
 [node name="TitleLabel" type="Label" parent="Root/HeaderRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "战利品"
+text = "杀招"
 
 [node name="TitleRule" type="ColorRect" parent="Root/HeaderRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(2, 0)
 size_flags_vertical = 3
 
-[node name="SubtitleLabel" type="Label" parent="Root/HeaderRow"]
+[node name="SubLabel" type="Label" parent="Root/HeaderRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "战利品已入账 · 本屏为确认展示"
+theme_override_font_sizes/font_size = 13
+text = "研习于战 · 一场一用"
 
 [node name="SealSpacer" type="Control" parent="Root/HeaderRow"]
 layout_mode = 2
@@ -81,7 +82,7 @@ theme_override_constants/separation = 1
 [node name="SealTop" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "得胜"
+text = "杀招"
 horizontal_alignment = 1
 
 [node name="SealBottom" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
@@ -90,33 +91,39 @@ theme_override_font_sizes/font_size = 10
 text = "录"
 horizontal_alignment = 1
 
-[node name="primary_decision_surface" type="VBoxContainer" parent="Root"]
+[node name="KillStage" type="PanelContainer" parent="Root"]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_vertical = 3
 
-[node name="SectionTitle" type="Label" parent="Root/primary_decision_surface"]
+[node name="StageContent" type="VBoxContainer" parent="Root/KillStage"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SectionStudy" type="Label" parent="Root/KillStage/StageContent"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "本场所得"
+text = "研习录"
 
-[node name="RewardRow" type="HBoxContainer" parent="Root/primary_decision_surface"]
+[node name="StudyRow" type="HBoxContainer" parent="Root/KillStage/StageContent"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="NoteRow" type="VBoxContainer" parent="Root"]
+[node name="StudyRule" type="ColorRect" parent="Root/KillStage/StageContent"]
 layout_mode = 2
-theme_override_constants/separation = 4
+custom_minimum_size = Vector2(0, 1)
+size_flags_horizontal = 3
+color = Color(0.717647, 0.717647, 0.670588, 1)
 
-[node name="PoolFallbackLabel" type="Label" parent="Root/NoteRow"]
+[node name="SectionSlot" type="Label" parent="Root/KillStage/StageContent"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-visible = false
+theme_override_font_sizes/font_size = 18
+text = "战斗栏位"
 
-[node name="PityLabel" type="Label" parent="Root/NoteRow"]
+[node name="SlotRow" type="HBoxContainer" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FootNote" type="Label" parent="Root/KillStage/StageContent"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-visible = false
-
-[node name="ContinueButton" type="Button" parent="Root"]
-layout_mode = 2
-text = "继续旅程"
+text = "杀招在战斗中以念头施展"

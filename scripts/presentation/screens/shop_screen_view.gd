@@ -23,11 +23,14 @@ func _load_npc_texture(path: String) -> Texture2D:
 @onready var _top_bar: PanelContainer = $Root/TopBar
 @onready var _feedback_label: Label = $Root/FeedbackLabel
 @onready var _shop_stage: PanelContainer = $Root/ShopStage
+@onready var _paper: ColorRect = $ShopPaper
+@onready var _seal_box: PanelContainer = $Root/ShopStage/StageContent/TitleRow/SealPanelContainer
 @onready var _title_label: Label = $Root/ShopStage/StageContent/TitleRow/TitleLabel
+@onready var _title_rule: ColorRect = $Root/ShopStage/StageContent/TitleRow/TitleRule
 @onready var _inflation_label: Label = $Root/ShopStage/StageContent/TitleRow/InflationLabel
 @onready var _npc_label: Label = $Root/ShopStage/StageContent/TitleRow/NpcLabel
 @onready var _stance_label: Label = $Root/ShopStage/StageContent/TitleRow/StanceLabel
-@onready var _offer_list: VBoxContainer = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/OfferScroll/OfferList
+@onready var _offer_list: GridContainer = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/OfferScroll/OfferList
 @onready var _emergency_label: Label = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/EmergencyLabel
 @onready var _pool_fallback_label: Label = $Root/ShopStage/StageContent/PrimarySurface/OfferColumn/PoolFallbackLabel
 @onready var _service_list: VBoxContainer = $Root/ShopStage/StageContent/PrimarySurface/ServiceColumn/ServicePanel/ServicePanelMargin/ServicePanelBox/ServiceScroll/ServiceList
@@ -103,7 +106,7 @@ func _refresh_header() -> void:
 	_feedback_label.text = feedback
 	_feedback_label.visible = feedback != ""
 
-	_title_label.text = str(_snapshot.get("title", "黑市"))
+	_title_label.text = _vertical_title(str(_snapshot.get("title", "黑市")))
 	_inflation_label.text = str(_snapshot.get("inflation_note", ""))
 	_npc_label.text = "NPC：" + str(_snapshot.get("npc_name", ""))
 
@@ -150,6 +153,7 @@ func _build_offer_card(o: Dictionary) -> void:
 	var emergency := bool(o.get("will_emergency_pay", false))
 
 	var card := GuCardScene.instantiate()
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	# 先入树再配内容：GuCardView.content_host 是 @onready，只有 add_child 触发
 	# _ready() 之后才有值，instantiate() 后立刻访问恒为 null。
 	_offer_list.add_child(card)
@@ -378,10 +382,13 @@ func _apply_panel_style(panel: PanelContainer) -> void:
 
 
 func _apply_base_fonts() -> void:
-	_title_label.add_theme_font_size_override("font_size", 22)
+	_title_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_title_label.add_theme_font_size_override("font_size", 26)
 	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_title_rule.color = Color("82463e")
+	_title_rule.custom_minimum_size = Vector2(2, 0)
 	_inflation_label.add_theme_font_size_override("font_size", 13)
-	_inflation_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_inflation_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	_npc_label.add_theme_font_size_override("font_size", 15)
 	_npc_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_stance_label.add_theme_font_size_override("font_size", 15)
@@ -398,86 +405,22 @@ func _apply_base_fonts() -> void:
 	MasterTheme.apply_button(_leave_button, "action")
 
 
+## 竖排：每字一行（Godot Label 无 writing-mode，用换行模拟）。
+func _vertical_title(flat: String) -> String:
+	if flat == "":
+		return ""
+	var lines: Array[String] = []
+	for ch in flat:
+		lines.append(str(ch))
+	return "\n".join(lines)
+
+
 ## 黑市暗色舞台：复用休整屏验证的三层结构（叙事层+规则层+概念层）。
 ## 青茅山背景调暗半透明 + 角色立绘（黑市交易姿态）+ 纸墨UI浮于其上。
 func _apply_stage_style() -> void:
-	# 暗色舞台底色
+	# 纸面基准：全屏浅纸底+网点由 ShopPaper/ShopDots 提供，舞台区透明。
+	_paper.color = GuStyle.PAPER_HALL
 	var stage_box := StyleBoxFlat.new()
-	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.bg_color = Color(0, 0, 0, 0)
 	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	_shop_stage.add_theme_stylebox_override("panel", stage_box)
-
-	# 青茅山背景层（复用战斗屏素材，调暗半透明）
-	var backdrop := TextureRect.new()
-	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backdrop.z_index = -1
-	_shop_stage.add_child(backdrop)
-
-	# 雾气层：半透明冷灰水平渐变，模拟南疆湿冷山雾。
-	var fog_grad := Gradient.new()
-	fog_grad.set_color(0, GuStyle.FOG_COLOR_EDGE)
-	fog_grad.set_color(0.5, GuStyle.FOG_COLOR_MID)
-	fog_grad.set_color(1, GuStyle.FOG_COLOR_EDGE)
-	var fog_tex := GradientTexture2D.new()
-	fog_tex.gradient = fog_grad
-	fog_tex.fill = GradientTexture2D.FILL_LINEAR
-	fog_tex.width = 512
-	fog_tex.height = 256
-	var fog := TextureRect.new()
-	fog.texture = fog_tex
-	fog.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	fog.stretch_mode = TextureRect.STRETCH_SCALE
-	fog.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	fog.z_index = -1
-	_shop_stage.add_child(fog)
-	var fog_tween := create_tween()
-	fog_tween.set_loops()
-	fog_tween.tween_property(fog, "modulate:a", 0.15, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fog_tween.tween_property(fog, "scale", Vector2(1.05, 1.02), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fog_tween.tween_property(fog, "modulate:a", 0.08, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fog_tween.tween_property(fog, "scale", Vector2(1.0, 1.0), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-	# 萤火层：4-6个暖黄色光点，随机闪烁+缓慢漂移。
-	for i in range(5):
-		var firefly := ColorRect.new()
-		firefly.color = GuStyle.FIREFLY_COLOR
-		firefly.size = Vector2(3, 3)
-		firefly.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		firefly.z_index = -1
-		var sx := randf_range(50.0, 500.0)
-		var sy := randf_range(50.0, 250.0)
-		firefly.position = Vector2(sx, sy)
-		_shop_stage.add_child(firefly)
-		var ft := create_tween()
-		ft.set_loops()
-		var bd := randf_range(2.5, 4.5)
-		var dx := randf_range(-25.0, 25.0)
-		var dy := randf_range(-15.0, 15.0)
-		ft.tween_property(firefly, "color:a", 0.7, bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		ft.tween_property(firefly, "position", Vector2(sx + dx, sy + dy), bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		ft.tween_property(firefly, "color:a", 0.1, bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		ft.tween_property(firefly, "position", Vector2(sx, sy), bd).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-	# 角色立绘：黑市交易姿态，放在舞台右侧调暗半透明
-	# NPC商人立绘：优先加载npc_merchant.png，失败时回退到玩家立绘
-	var npc_tex := _load_npc_merchant_portrait()
-	var portrait_tex: Texture2D = npc_tex if npc_tex != null else PlayerPortrait
-	var portrait := TextureRect.new()
-	portrait.texture = portrait_tex
-	portrait.custom_minimum_size = Vector2(120, 160)
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.modulate = GuStyle.PORTRAIT_DIM
-	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	portrait.z_index = -1
-	portrait.anchor_right = 1.0
-	portrait.anchor_bottom = 1.0
-	portrait.offset_left = -140
-	portrait.offset_top = 20
-	portrait.offset_right = -20
-	portrait.offset_bottom = -20
-	_shop_stage.add_child(portrait)

@@ -201,3 +201,52 @@ static func _spec(role: String, size: String) -> Dictionary:
 		"pressed_width": pressed_width,
 		"radius": radius,
 	}
+
+
+## 双色描边主按钮（基准图实测：黑字芯 + 蓝 #3880b8 描边 + 铁锈橙红 #803810 左投影；
+## hover 文字转朱砂）——大厅「续入此世」/流派确认/结算「继续」共用。
+static func apply_primary_outline(btn: Button, font_size: int = 22) -> void:
+	if btn == null:
+		return
+	btn.add_theme_font_size_override("font_size", font_size)
+	btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
+	btn.add_theme_color_override("font_outline_color", GuStyle.BTN_OUTLINE_BLUE)
+	btn.add_theme_constant_override("outline_size", 1)
+	btn.add_theme_color_override("font_shadow_color", GuStyle.BTN_SHADOW_RUST)
+	btn.add_theme_constant_override("shadow_offset_x", -1)
+	btn.add_theme_constant_override("shadow_offset_y", 0)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0, 0, 0, 0)
+	normal.set_border_width_all(0)
+	normal.set_corner_radius_all(2)
+	normal.content_margin_left = 14
+	normal.content_margin_right = 14
+	normal.content_margin_top = 5
+	normal.content_margin_bottom = 5
+	btn.add_theme_stylebox_override("normal", normal)
+	var hover := StyleBoxFlat.new()
+	hover.bg_color = Color(0, 0, 0, 0)
+	hover.border_color = GuStyle.CINNABAR
+	hover.set_border_width_all(1)
+	hover.set_corner_radius_all(2)
+	hover.content_margin_left = 14
+	hover.content_margin_right = 14
+	hover.content_margin_top = 5
+	hover.content_margin_bottom = 5
+	btn.add_theme_stylebox_override("hover", hover)
+	var pressed := StyleBoxFlat.new()
+	pressed.bg_color = Color(0, 0, 0, 0)
+	pressed.border_color = GuStyle.CINNABAR
+	pressed.set_border_width_all(1)
+	pressed.set_corner_radius_all(2)
+	pressed.content_margin_left = 14
+	pressed.content_margin_right = 14
+	pressed.content_margin_top = 5
+	pressed.content_margin_bottom = 5
+	btn.add_theme_stylebox_override("pressed", pressed)
+	btn.add_theme_stylebox_override("focus", pressed)
+	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND

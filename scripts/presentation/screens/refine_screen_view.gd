@@ -8,11 +8,14 @@ extends MarginContainer
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
-const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
 
 @onready var _top_bar: PanelContainer = $Root/TopBar
 @onready var _refine_stage: PanelContainer = $Root/RefineStage
+@onready var _paper: ColorRect = $RefinePaper
+@onready var _seal_box: PanelContainer = $Root/RefineStage/StageContent/HeaderRow/SealPanelContainer
 @onready var _title_label: Label = $Root/RefineStage/StageContent/HeaderRow/TitleLabel
+@onready var _title_rule: ColorRect = $Root/RefineStage/StageContent/HeaderRow/TitleRule
+@onready var _sub_label: Label = $Root/RefineStage/StageContent/HeaderRow/SubLabel
 @onready var _tab_row: HBoxContainer = $Root/RefineStage/StageContent/HeaderRow/TabRow
 @onready var _slot_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/SlotStatusLabel
 @onready var _recipe_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/RecipePanel
@@ -71,7 +74,7 @@ func _refresh_top_bar() -> void:
 
 
 func _refresh_header() -> void:
-	_title_label.text = str(_snapshot.get("title", "炼蛊台"))
+	_title_label.text = _vertical_title(str(_snapshot.get("title", "炼蛊台")))
 	var slot_ok := bool(_snapshot.get("slot_ok", false))
 	_slot_label.text = ("空位校验：已就绪" if slot_ok
 			else "空位校验：蛊囊已满，需先移除或拆解一只蛊")
@@ -328,40 +331,34 @@ func _label_of(text: String, color: Color, size: int) -> Label:
 
 
 func _apply_base_fonts() -> void:
-	_title_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	# 基准风格：竖排墨色标题 + 红线 + 副题（横排 22px 黄字已废）
+	_title_label.text = _vertical_title(str(_snapshot.get("title", "炼蛊台")))
+	_title_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_title_label.add_theme_font_size_override("font_size", 26)
+	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_title_rule.color = Color("82463e")
+	_title_rule.custom_minimum_size = Vector2(2, 0)
+	_sub_label.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
 	_streak_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	MasterTheme.apply_button(_leave_button, "action")
 
 
-## 炼蛊台暗色舞台：复用交易屏/休整屏验证的三层结构。
-## 青茅山背景调暗半透明 + 角色立绘炼蛊姿态 + 纸墨UI浮于其上。
+## 竖排：每字一行（Godot Label 无 writing-mode，用换行模拟）。
+func _vertical_title(flat: String) -> String:
+	if flat == "":
+		return ""
+	var lines: Array[String] = []
+	for ch in flat:
+		lines.append(str(ch))
+	return "\n".join(lines)
+
+
+## 炼蛊台纸面基准：全屏浅纸底+网点由 RefinePaper/RefineDots 提供，
+## 舞台区透明，不再使用暗色舞台/青茅山背景/立绘。
 func _apply_stage_style() -> void:
+	_paper.color = GuStyle.PAPER_HALL
 	var stage_box := StyleBoxFlat.new()
-	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.bg_color = Color(0, 0, 0, 0)
 	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	_refine_stage.add_theme_stylebox_override("panel", stage_box)
-
-	var backdrop := TextureRect.new()
-	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backdrop.z_index = -1
-	_refine_stage.add_child(backdrop)
-
-	var portrait := TextureRect.new()
-	portrait.texture = PlayerPortrait
-	portrait.custom_minimum_size = Vector2(120, 160)
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.modulate = GuStyle.PORTRAIT_DIM
-	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	portrait.z_index = -1
-	portrait.anchor_right = 1.0
-	portrait.anchor_bottom = 1.0
-	portrait.offset_left = -140
-	portrait.offset_top = 20
-	portrait.offset_right = -20
-	portrait.offset_bottom = -20
-	_refine_stage.add_child(portrait)
+	GuStyle.apply_seal(_seal_box, 3.0)

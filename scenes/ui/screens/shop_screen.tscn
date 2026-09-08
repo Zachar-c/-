@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/presentation/screens/shop_screen_view.gd" id="1_shop"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="3_dialog"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="4_dots"]
 
 [node name="ShopScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -16,6 +17,27 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_bottom = 24
 script = ExtResource("1_shop")
 
+
+[node name="ShopPaper" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ShopDots" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_dots")
+expand_mode = 1
+stretch_mode = 6
 [node name="Root" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -33,6 +55,21 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="SealMargin" type="MarginContainer" parent="Root/ShopStage/SealPanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="SealLabel" type="Label" parent="Root/ShopStage/SealPanelContainer/SealMargin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "黑市
+交易"
+
 [node name="StageContent" type="VBoxContainer" parent="Root/ShopStage"]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -45,6 +82,11 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "黑市"
+
+[node name="TitleRule" type="ColorRect" parent="Root/ShopStage/StageContent/TitleRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(2, 0)
+size_flags_vertical = 3
 
 [node name="InflationLabel" type="Label" parent="Root/ShopStage/StageContent/TitleRow"]
 layout_mode = 2
@@ -60,6 +102,33 @@ text = "NPC："
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "立场·中立"
+
+[node name="SealSpacer" type="Control" parent="Root/ShopStage/StageContent/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SealPanelContainer" type="PanelContainer" parent="Root/ShopStage/StageContent/TitleRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+
+[node name="SealCenter" type="CenterContainer" parent="Root/ShopStage/StageContent/TitleRow/SealPanelContainer"]
+layout_mode = 2
+
+[node name="SealBox" type="VBoxContainer" parent="Root/ShopStage/StageContent/TitleRow/SealPanelContainer/SealCenter"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="SealTop" type="Label" parent="Root/ShopStage/StageContent/TitleRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "黑市"
+horizontal_alignment = 1
+
+[node name="SealBottom" type="Label" parent="Root/ShopStage/StageContent/TitleRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "交易"
+horizontal_alignment = 1
 
 [node name="PrimarySurface" type="HBoxContainer" parent="Root/ShopStage/StageContent"]
 layout_mode = 2
@@ -81,10 +150,12 @@ text = "蛊虫 / 货物"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OfferList" type="VBoxContainer" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn/OfferScroll"]
+[node name="OfferList" type="GridContainer" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn/OfferScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+columns = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
 
 [node name="EmergencyLabel" type="Label" parent="Root/ShopStage/StageContent/PrimarySurface/OfferColumn"]
 layout_mode = 2

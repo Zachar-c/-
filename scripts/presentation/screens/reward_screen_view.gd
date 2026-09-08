@@ -10,7 +10,10 @@ const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd
 const GuCardScene := preload("res://scenes/ui/widgets/gu_card.tscn")
 
 @onready var _top_bar: PanelContainer = $Root/TopBar
+@onready var _paper: ColorRect = $RewardPaper
+@onready var _seal_box: PanelContainer = $Root/HeaderRow/SealPanelContainer
 @onready var _title_label: Label = $Root/HeaderRow/TitleLabel
+@onready var _title_rule: ColorRect = $Root/HeaderRow/TitleRule
 @onready var _reward_row: HBoxContainer = $Root/primary_decision_surface/RewardRow
 @onready var _pool_fallback_label: Label = $Root/NoteRow/PoolFallbackLabel
 @onready var _pity_label: Label = $Root/NoteRow/PityLabel
@@ -57,7 +60,7 @@ func _refresh_top_bar() -> void:
 
 
 func _refresh_header() -> void:
-	_title_label.text = str(_snapshot.get("title", "战利品"))
+	_title_label.text = _vertical_title(str(_snapshot.get("title", "战利品")))
 
 
 func _refresh_rewards() -> void:
@@ -122,9 +125,26 @@ func _label_of(text: String, color: Color, size: int) -> Label:
 
 
 func _apply_base_fonts() -> void:
+	# 基准风格：竖排墨色标题 + 红线 + 印章 + 双色描边主按钮
+	_title_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_title_label.add_theme_font_size_override("font_size", 26)
 	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	$Root/HeaderRow/SubtitleLabel.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_title_rule.color = Color("82463e")
+	_title_rule.custom_minimum_size = Vector2(2, 0)
+	_paper.color = GuStyle.PAPER_HALL
+	GuStyle.apply_seal(_seal_box, 3.0)
+	$Root/HeaderRow/SubtitleLabel.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
 	$Root/primary_decision_surface/SectionTitle.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	_pool_fallback_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	_pity_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
-	MasterTheme.apply_button(_continue_button, "primary")
+	MasterTheme.apply_primary_outline(_continue_button, 20)
+
+
+## 竖排：每字一行（Godot Label 无 writing-mode，用换行模拟）。
+func _vertical_title(flat: String) -> String:
+	if flat == "":
+		return ""
+	var lines: Array[String] = []
+	for ch in flat:
+		lines.append(str(ch))
+	return "\n".join(lines)
