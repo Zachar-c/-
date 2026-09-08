@@ -67,6 +67,15 @@ static func apply_button(button: Button, role: String = "action", size: String =
 	if not button.has_meta("sfx_connected"):
 		button.set_meta("sfx_connected", true)
 		button.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
+	# 第19批 V-F-04：hover 轻微放大 + 按下回弹（公共组件统一动效，meta 防重复连接）
+	if not button.has_meta("scale_connected"):
+		button.set_meta("scale_connected", true)
+		button.pivot_offset = button.size * 0.5
+		button.resized.connect(func(): button.pivot_offset = button.size * 0.5)
+		button.mouse_entered.connect(func(): _tween_scale(button, 1.03))
+		button.mouse_exited.connect(func(): _tween_scale(button, 1.0))
+		button.button_down.connect(func(): _tween_scale(button, 0.97))
+		button.button_up.connect(func(): _tween_scale(button, 1.03 if button.is_hovered() else 1.0))
 
 
 static func _box(bg: Color, border: Color, width: int, left: int, radius: int, content := Vector4i(-1, -1, -1, -1)) -> StyleBoxFlat:
@@ -82,6 +91,17 @@ static func _box(bg: Color, border: Color, width: int, left: int, radius: int, c
 		box.set_content_margin(SIDE_RIGHT, content.z)
 		box.set_content_margin(SIDE_BOTTOM, content.w)
 	return box
+
+
+## V-F-04：hover/按下缩放的统一 tween（绑定按钮生命周期，随节点释放自动清理）。
+static func _tween_scale(button: Button, target: float) -> void:
+	var tween: Tween = button.get_meta("scale_tween", null)
+	if tween != null and tween.is_valid():
+		tween.kill()
+	tween = button.create_tween()
+	button.set_meta("scale_tween", tween)
+	tween.tween_property(button, "scale", Vector2(target, target), 0.08) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 static func _spec(role: String, size: String) -> Dictionary:

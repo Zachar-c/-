@@ -101,6 +101,9 @@ var _ending_state: Dictionary = {}
 const SCREEN_FADE_SECONDS := 0.14
 var _screen_tween: Tween
 var _faded_view := ""
+# V-F-05 batch19: full-screen transition for major scene changes (TransitionLayer/TransitionVeil).
+var _veil: ScreenTransition
+var _prev_major_scene := false
 
 # ----------------------------------------------------------------------------
 # §16.22 D5 开发者调试（仅开发构建）：整条链路以 is_debug_build 门控，Release 下
@@ -157,6 +160,7 @@ func _initialize_view_flow() -> void:
 		_apply_window_mode()
 	_rui_host = Control.new()
 	_rui_host.name = "RUIHost"
+	_veil = get_node_or_null("../TransitionLayer/TransitionVeil")
 	_rui_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_rui_host)
 	_feedback_timer = Timer.new()
@@ -1647,6 +1651,12 @@ func _render() -> void:
 	_sync_bgm()
 	if _view_name != _faded_view:
 		_faded_view = _view_name
+		# V-F-05 batch19: full-screen blink for Battle/Ending/Title in/out;
+		# same-screen re-render and ordinary screen switches keep the RUIHost fade only.
+		var major := _view_name in ["Battle", "Ending", "Title"]
+		if (major or _prev_major_scene) and _veil != null:
+			_veil.blink()
+		_prev_major_scene = major
 		_play_screen_fade()
 	_render_debug_panel()
 

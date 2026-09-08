@@ -58,6 +58,9 @@ var _confirming := false
 var _expanded_enemies := false
 # 动效触发用：记录上一帧敌人 alive 状态和状态名集合，检测死亡/状态施加。
 var _prev_enemy_alive: Dictionary = {}
+# V-F-03 受击反馈用：记录上一帧玩家/敌人 hp，降低时触发红闪+微震+音效。
+var _prev_player_hp := -1
+var _prev_enemy_hp: Dictionary = {}
 var _prev_enemy_statuses: Dictionary = {}
 # 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
 var _enemy_actors: Dictionary = {}
@@ -318,6 +321,20 @@ func _refresh_top_bar(state: Dictionary) -> void:
 		state.get("player", {}))  # 传递player数据，用于显示气血（hp/max_hp）
 
 
+## V-F-03 第19批：受击反馈——目标红闪 + 战斗舞台微震 + 音效。
+## 纯表现层（hp diff 驱动），不触碰领域状态；scale 动画不影响布局。
+func _play_hit_feedback(target: Control, strong := false) -> void:
+	if target != null and is_instance_valid(target):
+		var t := target.create_tween()
+		t.tween_property(target, "modulate", Color(1.0, 0.55, 0.55, 1.0), 0.05)
+		t.tween_property(target, "modulate", Color.WHITE, 0.25)
+	if _battle_stage != null and is_instance_valid(_battle_stage):
+		var s := _battle_stage.create_tween()
+		s.tween_property(_battle_stage, "scale", Vector2(1.006, 1.006), 0.04)
+		s.tween_property(_battle_stage, "scale", Vector2.ONE, 0.12)
+	AudioManager.play_sfx("battle_hit", 1.0 if strong else 0.7)
+
+
 func _refresh_player(state: Dictionary) -> void:
 	var player: Dictionary = state.get("player", {})
 	var actions: Dictionary = state.get("actions", {})
@@ -366,6 +383,11 @@ func _refresh_player(state: Dictionary) -> void:
 	hp.setup("生命", int(player.get("hp", 0)), maxi(1, int(player.get("max_hp", 1))),
 			GuStyle.JADE, int(player.get("shield", 0)), Callable(),
 			bool(health_line.get("danger", false)), str(health_line.get("detail", "")))
+	# V-F-03 第19批：玩家受击反馈（hp 下降→红闪+微震+音效），首次挂载不触发。
+	var cur_hp := int(player.get("hp", 0))
+	if _prev_player_hp >= 0 and cur_hp < _prev_player_hp:
+		_play_hit_feedback(_player_panel, false)
+	_prev_player_hp = cur_hp
 
 	# 杀戮尖塔风格：真元和行动点已在左侧LeftMeta显示，玩家区域只保留立绘+血量条，更简洁
 
@@ -408,6 +430,11 @@ func _refresh_enemies(state: Dictionary) -> void:
 		actor.setup(e, _target_id == enemy_id,
 				_mode == "target_select" and valid_targets.has(enemy_id),
 				_select_enemy)
+		# V-F-03 第19批：敌人受击反馈（hp 下降）。
+		var ehp := int(e.get("hp", 0))
+		if _prev_enemy_hp.has(enemy_id) and ehp < int(_prev_enemy_hp[enemy_id]):
+			_play_hit_feedback(actor, false)
+		_prev_enemy_hp[enemy_id] = ehp
 
 	if not remainder.is_empty():
 		var more := Button.new()
