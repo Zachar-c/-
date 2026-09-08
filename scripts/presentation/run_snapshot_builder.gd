@@ -6,6 +6,7 @@ extends RefCounted
 # RunController; this class never mutates run state, only projects it.
 
 
+const GameVersionScript = preload("res://scripts/domain/game_version.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
@@ -1524,6 +1525,7 @@ static func settings(controller) -> Dictionary:
 	base["master_volume"] = AppSettingsScript.clamp_volume(int(controller.app_settings.master_volume)) if controller.get("app_settings") != null else 100
 	base["resolution_index"] = int(controller.app_settings.resolution_index) if controller.get("app_settings") != null else 0
 	base["resolution_options"] = AppSettingsScript.resolution_labels()
+	base["version_label"] = GameVersionScript.display()
 	return base
 
 

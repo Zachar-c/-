@@ -4,6 +4,7 @@ extends MarginContainer
 ## 分辨率选项与静音走代码生成；保存/读档经 commands 出口。
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
+const GameVersionScript := preload("res://scripts/domain/game_version.gd")
 
 ## 分辨率档位（与 scripts/domain/app_settings.gd 的 RESOLUTIONS 对齐）。
 const RESOLUTIONS: Array[Dictionary] = [
@@ -26,6 +27,7 @@ const RESOLUTIONS: Array[Dictionary] = [
 @onready var _save_button: Button = $Root/SettingsStage/StageContent/SaveRow/SaveButton
 @onready var _load_button: Button = $Root/SettingsStage/StageContent/SaveRow/LoadButton
 @onready var _back_button: Button = $Root/BackRow/BackButton
+@onready var _version_label: Label = $Root/VersionLabel
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -61,6 +63,7 @@ func _refresh() -> void:
 	_refresh_header()
 	# 快照驱动的本地展示态：音量 0 ⇒ 静音；分辨率高亮跟随偏好。
 	_muted = int(_snapshot.get("master_volume", 100)) <= 0
+	_version_label.text = str(_snapshot.get("version_label", GameVersionScript.display()))
 	_resolution_index = int(_snapshot.get("resolution_index", 3))
 	_refresh_sound()
 	_refresh_resolutions()
@@ -157,6 +160,7 @@ func _apply_base_fonts() -> void:
 	_title_rule.custom_minimum_size = Vector2(2, 0)
 	_sub_label.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
 	_volume_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_version_label.add_theme_color_override("font_color", GuStyle.VER_TEXT)
 	_paper.color = GuStyle.PAPER_HALL
 	GuStyle.apply_seal(_seal_box, 3.0)
 	_apply_menu_style(_back_button)
