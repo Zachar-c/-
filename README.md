@@ -32,7 +32,20 @@
 - 单元测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite unit`。
 - 集成测试：`powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Suite integration`。
 - 全量检查（测试、无窗口启动、空白错误）：`powershell -ExecutionPolicy Bypass -File tools/check.ps1`。
-- 导出 Windows 包（需先在 Godot 编辑器安装 4.7.2 导出模板）：`powershell -ExecutionPolicy Bypass -File tools/export.ps1`，产物 `build/win/gu-zhenren.exe`（不入库）。Release 包无调试面板（§16.22，F12 门禁经实测）；调试用 `--export-debug` 产物或直接 `tools/play.ps1`。
+- 导出 Windows 包（需先在 Godot 编辑器安装 4.7.2 导出模板）：`powershell -ExecutionPolicy Bypass -File tools/export.ps1`，产物 `build/win/gu-zhenren.exe`（分卷入库，见[下载安装包](#下载安装包)）。Release 包无调试面板（§16.22，F12 门禁经实测）；调试用 `--export-debug` 产物或直接 `tools/play.ps1`。
+- 导出 Android 包：`powershell -ExecutionPolicy Bypass -File tools/export.ps1 -Preset "Android"` 后再执行 `powershell -ExecutionPolicy Bypass -File tools/sign_android.ps1`，产物 `build/android/gu-zhenren-signed.apk`（已签名）。
+
+## 下载安装包
+
+当前版本 `BUILD 0.9.0+local`（语义化版本单源：`scripts/domain/game_version.gd`）。安装包随仓库存储于 `build/`（gitee 单文件上限 100 MB，Windows 包按二进制分卷为两个文件）。点击链接进入文件页后，点右上角「下载」按钮即可获取。
+
+- **Windows**（约 150 MB，分卷 2 个文件，PCK 内嵌，双击即玩；1280×720 窗口）：
+  - [gu-zhenren.exe.part1](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/win/gu-zhenren.exe.part1)（~78 MB）
+  - [gu-zhenren.exe.part2](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/win/gu-zhenren.exe.part2)（~78 MB）
+  - 两个分卷放同一目录后执行合并与校验：`powershell -ExecutionPolicy Bypass -File tools/join_installer.ps1`，得到 `build\win\gu-zhenren.exe`（SHA256 自动校验）。
+- **Android**：[gu-zhenren-signed.apk](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/android/gu-zhenren-signed.apk)（~77 MB，单文件，debug keystore 已签名，可 `adb install` 装机；包名 `com.wenzhen.game`）
+
+安装包均为 Release 构建，无调试面板。克隆仓库后无需额外步骤即可取回上述文件（普通 Git 存储）。
 
 `tools/godot.ps1` 统一定位 Godot 控制台程序：优先使用环境变量 `GODOT_CONSOLE_PATH`，其次探测 `DevEnv\tools` 与 WinGet 的本机安装路径。`tools/play.ps1` 同样支持用 `GODOT_PATH` 覆盖图形版 Godot 路径。这样 CI、终端和手工验收共用同一入口，不依赖编辑器生成的脚本缓存。
 

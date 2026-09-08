@@ -4,27 +4,30 @@ scripts/core/.superpowers/
 *.uid
 
 # 导出构建产物（Release 包不入库）
-build/
 
-# Reactive UI Toolkit 编译产物（源为 .guitkx，仅提交源；手写的 .gd 放在 scripts/ 下不被忽略）
+# Install packages are stored via Git LFS (pointers only)
+build/*
+!build/win/
+!build/android/
+build/win/*
+!build/win/*.part*
+build/android/*
+!build/android/*.apk
+
 ui/**/*.gd
 *.diags.json
 
-# 本地工具与会话产物（不入库）
 .workbuddy/
 .zcode/
 .godot_gui.log
 godot_gui.log
 
-# 截图捕获产物（验收截图不入库）
 *.png
 !assets/**/*.png
 __pycache__/
 
-# 根目录截图捕获与 Godot 导入副产物（assets 下的 .import 保留）
 /*.png
 /*.png.import
-# 会话与本地工具痕迹
 MEMORY.md
 memory/
 .claude-drive-sweep.log

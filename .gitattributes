@@ -4,7 +4,6 @@
 # spurious "M" status for every text file. This overrides core.autocrlf
 # per-file and matches the LF already present in the working tree.
 * text=auto eol=lf
-
 # ── Godot 4 / project text assets ──
 *.gd           text
 *.gdshader     text
@@ -20,7 +19,6 @@
 *.txt         text
 *.yml         text
 *.yaml        text
-
 # ── Binary assets (never normalize; keeps them intact) ──
 *.png         binary
 *.jpg         binary
