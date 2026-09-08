@@ -70,6 +70,16 @@ func _apply_ending_atmosphere() -> void:
 	backdrop.anchor_bottom = 1.0
 	add_child(backdrop)
 
+	var dots := TextureRect.new()
+	dots.texture = load("res://assets/wenzhen/hall/hall_dots.png")
+	dots.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	dots.stretch_mode = TextureRect.STRETCH_TILE
+	dots.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dots.z_index = -1
+	dots.anchor_right = 1.0
+	dots.anchor_bottom = 1.0
+	add_child(dots)
+
 	var vignette_grad := Gradient.new()
 	vignette_grad.set_color(0, Color(0, 0, 0, 0))
 	vignette_grad.set_color(1, Color(0, 0, 0, 0.12))

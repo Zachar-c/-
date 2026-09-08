@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/screens/npc_screen_view.gd" id="1_npc"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="4_dialog"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="5_dots"]
 
 [node name="NpcScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -16,6 +17,25 @@ theme_override_constants/margin_right = 32
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_bottom = 24
 script = ExtResource("1_npc")
+
+[node name="NpcPaper" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NpcDots" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_dots")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Root" type="VBoxContainer" parent="."]
 layout_mode = 2

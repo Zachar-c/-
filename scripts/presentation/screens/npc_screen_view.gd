@@ -34,6 +34,7 @@ var _confirm_offer := ""
 func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
+	_apply_stage_backdrop()
 	_trade_panel.setup("交易", true, true)
 	_barter_panel.setup("以物易物", true, true)
 	_talk_panel.setup("交涉", false, true)
@@ -306,6 +307,10 @@ func _stance_color(stance: String) -> Color:
 		"极度仇恨": return GuStyle.CINNABAR
 		_: return GuStyle.JADE
 
+
+func _apply_stage_backdrop() -> void:
+	var paper := $NpcPaper as ColorRect
+	paper.color = GuStyle.PAPER_HALL
 
 func _apply_base_fonts() -> void:
 	_npc_name_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)

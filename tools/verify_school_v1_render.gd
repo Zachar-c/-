@@ -76,8 +76,8 @@ func _initialize() -> void:
 	# 断言 3：确认按钮文案与 Buff 复选数量
 	var confirm: Button = hall.get_node("SchoolsView/SchoolOpRow/ConfirmSchoolButton")
 	print("CONFIRM_TEXT=%s" % confirm.text)
-	if not confirm.text.contains("以血道入世"):
-		push_error("确认按钮应为「以血道入世 >」，实际 %s" % confirm.text)
+	if not confirm.text.contains("以血道续入此世"):
+		push_error("确认按钮应为「以血道续入此世 >」，实际 %s" % confirm.text)
 		quit(1)
 		return
 	var buff_row: HBoxContainer = hall.get_node("SchoolsView/SchoolBuffRow")

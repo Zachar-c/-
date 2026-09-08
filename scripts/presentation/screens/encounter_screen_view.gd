@@ -252,35 +252,13 @@ func _apply_base_fonts() -> void:
 	MasterTheme.apply_button(_leave_button, "action")
 
 
-## 遭遇屏暗色舞台：复用交易屏/休整屏验证的三层结构。
-## 青茅山背景调暗半透明 + 角色立绘遭遇姿态 + 纸墨UI浮于其上。
+## 遭遇屏舞台：以大厅屏为基准——纸面 + 网点背景（公共规范），面板透明透出纸底。
 func _apply_stage_style() -> void:
+	var paper := $EncounterPaper as ColorRect
+	paper.color = GuStyle.PAPER_HALL
 	var stage_box := StyleBoxFlat.new()
-	stage_box.bg_color = GuStyle.STAGE_BG
+	stage_box.bg_color = Color(0, 0, 0, 0)
+	stage_box.set_border_width_all(GuStyle.HAIRLINE)
+	stage_box.border_color = GuStyle.HAIRLINE_COLOR
 	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	_encounter_stage.add_theme_stylebox_override("panel", stage_box)
-
-	var backdrop := TextureRect.new()
-	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backdrop.z_index = -1
-	_encounter_stage.add_child(backdrop)
-
-	var portrait := TextureRect.new()
-	portrait.texture = PlayerPortrait
-	portrait.custom_minimum_size = Vector2(120, 160)
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.modulate = GuStyle.PORTRAIT_DIM
-	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	portrait.z_index = -1
-	portrait.anchor_right = 1.0
-	portrait.anchor_bottom = 1.0
-	portrait.offset_left = -140
-	portrait.offset_top = 20
-	portrait.offset_right = -20
-	portrait.offset_bottom = -20
-	_encounter_stage.add_child(portrait)
