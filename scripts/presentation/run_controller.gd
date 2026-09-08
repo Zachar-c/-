@@ -120,7 +120,8 @@ var _debug_enabled_for_test: bool = OS.is_debug_build()
 var _debug_panel_open := false
 var _debug_panel: Control = null
 var _debug_host: Control = null
-var _debug_gu_input := ""
+var _debug_gu_school := "blood"
+var _debug_gu_selected := ""
 var _debug_res_kind := "yuanstone"
 var _debug_res_value := ""
 var _debug_travel_node := ""
@@ -802,15 +803,19 @@ func _debug_props() -> Dictionary:
 		"open": _debug_panel_open,
 		"feedback": _debug_feedback,
 		"info": info,
-		"gu_input": _debug_gu_input,
+		"gu_schools": _debug_gu_schools(),
+		"gu_school": _debug_gu_school,
+		"gu_options": _debug_gu_options(_debug_gu_school),
+		"gu_selected": _debug_gu_selected,
 		"res_kind": _debug_res_kind,
 		"res_value": _debug_res_value,
 		"travel_options": _debug_travel_options(),
 		"travel_selected": _debug_travel_node,
 		"commands": {
 			"toggle_open": func(): _toggle_debug_panel(),
-			"set_gu_input": func(text_value: String): _set_debug_gu_input(text_value),
-			"add_gu": func(): debug_add_gu(_debug_gu_input),
+			"set_gu_school": func(school_id: String): _set_debug_gu_school(school_id),
+			"set_gu_option": func(gu_id: String): _set_debug_gu_option(gu_id),
+			"add_gu": func(): debug_add_gu(_debug_gu_selected),
 			"set_res_kind": func(kind_value: String): _set_debug_res_kind(kind_value),
 			"set_res_value": func(num_text: String): _set_debug_res_value(num_text),
 			"apply_resource": func(): debug_set_resource(_debug_res_kind, _debug_res_value),
@@ -821,8 +826,44 @@ func _debug_props() -> Dictionary:
 	}
 
 
-func _set_debug_gu_input(value: String) -> void:
-	_debug_gu_input = value
+## 加蛊下拉 · 流派列表：目录 schools 顺序即展示顺序，label 用流派中文名。
+func _debug_gu_schools() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if catalog == null or catalog.is_empty():
+		return out
+	var schools: Dictionary = catalog.get("schools", {})
+	for sid: String in schools.keys():
+		var meta: Dictionary = schools[sid]
+		out.append({
+			"id": sid,
+			"label": str(meta.get("name", meta.get("label", sid))),
+		})
+	return out
+
+
+## 加蛊下拉 · 蛊虫选项：按所选流派过滤目录，label 用蛊虫中文名（DisplayText 同源）。
+func _debug_gu_options(school_id: String) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if catalog == null or catalog.is_empty():
+		return out
+	for g: Dictionary in catalog.get("gu", []):
+		if str(g.get("school", "")) == school_id:
+			var gid := str(g.get("id", ""))
+			out.append({"id": gid, "label": DisplayText.gu(gid)})
+	return out
+
+
+func _set_debug_gu_school(value: String) -> void:
+	_debug_gu_school = value
+	# 切换流派后复位选择到该流派第一只蛊，保证"加蛊"永远有确定目标。
+	_debug_gu_selected = ""
+	for g: Dictionary in _debug_gu_options(value):
+		_debug_gu_selected = str(g.get("id", ""))
+		break
+
+
+func _set_debug_gu_option(value: String) -> void:
+	_debug_gu_selected = value
 
 
 func _set_debug_res_kind(value: String) -> void:
@@ -852,7 +893,7 @@ func _mount_debug_panel() -> void:
 	_debug_host = Control.new()
 	_debug_host.name = "DebugPanelHost"
 	_debug_host.position = Vector2(20, 80)
-	_debug_host.custom_minimum_size = Vector2(260, 44)
+	_debug_host.custom_minimum_size = Vector2(420, 44)
 	_debug_host.size = _debug_host_size()
 	_debug_host.mouse_filter = Control.MOUSE_FILTER_PASS
 	add_child(_debug_host)
@@ -862,7 +903,8 @@ func _mount_debug_panel() -> void:
 
 
 func _debug_host_size() -> Vector2:
-	return Vector2(260, 360) if _debug_panel_open else Vector2(260, 44)
+	# 线框稿 v2 基准：420px 分区浮窗（加蛊/资源/跳层/池情报/快照）。
+	return Vector2(420, 450) if _debug_panel_open else Vector2(420, 44)
 
 
 func _render_debug_panel() -> void:

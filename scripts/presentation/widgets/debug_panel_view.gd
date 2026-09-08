@@ -94,18 +94,51 @@ func _refresh() -> void:
 # ————————————————————————— 各功能段 —————————————————————————
 
 func _build_add_gu() -> void:
-	_body_host.add_child(_section("加蛊"))
+	_body_host.add_child(_section("加蛊 · 流派联动，蛊虫中文名"))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 6)
 	_body_host.add_child(row)
 
-	var input := LineEdit.new()
-	input.text = str(_props.get("gu_input", ""))
-	input.placeholder_text = "gu_id 例: small_light_gu"
-	input.custom_minimum_size = Vector2(180, 0)
-	input.text_changed.connect(func(v): _fire1("set_gu_input", v))
-	row.add_child(input)
-	row.add_child(_action_button("加蛊", func(): _fire0("add_gu")))
+	# 流派下拉：gu_schools 为 [{id,label}]，label 即流派中文名。
+	var schools: Array = _props.get("gu_schools", [])
+	var school_opt := OptionButton.new()
+	school_opt.custom_minimum_size = Vector2(92, 0)
+	var current_school := str(_props.get("gu_school", ""))
+	var school_index := 0
+	for i in schools.size():
+		var s: Dictionary = schools[i]
+		school_opt.add_item(str(s.get("label", str(s.get("id", "")))))
+		if str(s.get("id", "")) == current_school:
+			school_index = i
+	school_opt.select(school_index)
+	school_opt.item_selected.connect(func(idx: int):
+		var s: Dictionary = schools[int(idx)]
+		_fire1("set_gu_school", str(s.get("id", ""))))
+	row.add_child(school_opt)
+
+	# 蛊虫下拉：gu_options 为 [{id,label}]，label 即蛊虫中文名。
+	var options: Array = _props.get("gu_options", [])
+	var gu_opt := OptionButton.new()
+	gu_opt.custom_minimum_size = Vector2(150, 0)
+	gu_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var selected_id := str(_props.get("gu_selected", ""))
+	var gu_index := 0
+	for i in options.size():
+		var o: Dictionary = options[i]
+		gu_opt.add_item(str(o.get("label", str(o.get("id", "")))))
+		if str(o.get("id", "")) == selected_id:
+			gu_index = i
+	gu_opt.select(gu_index)
+	gu_opt.item_selected.connect(func(idx: int):
+		var o: Dictionary = options[int(idx)]
+		_fire1("set_gu_option", str(o.get("id", ""))))
+	row.add_child(gu_opt)
+
+	var add_button := _action_button("加蛊", func(): _fire0("add_gu"))
+	# 首次进入且尚未选择时，把视图默认项同步回控制器，保证加蛊目标确定。
+	if selected_id == "" and not options.is_empty():
+		_fire1("set_gu_option", str(options[0].get("id", "")))
+	row.add_child(add_button)
 
 
 func _build_resource_set() -> void:

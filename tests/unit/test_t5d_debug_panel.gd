@@ -446,9 +446,33 @@ func test_panel_toggle_command_flips_controller_state() -> void:
 func test_panel_commands_drive_input_state_for_later_ops() -> void:
 	var controller := _new_controller(true)
 	var commands: Dictionary = controller._debug_props()["commands"]
-	commands["set_gu_input"].call("stone_shell_gu")
-	assert_eq(controller._debug_gu_input, "stone_shell_gu")
+	assert_true(commands.has("set_gu_school"), "panel must receive set_gu_school command")
+	assert_true(commands.has("set_gu_option"), "panel must receive set_gu_option command")
+	commands["set_gu_school"].call("blood")
+	assert_eq(controller._debug_gu_school, "blood")
+	assert_true(controller._debug_gu_selected != "", "school switch resets selection to first gu")
+	commands["set_gu_option"].call("stone_shell_gu")
+	assert_eq(controller._debug_gu_selected, "stone_shell_gu")
 	commands["set_res_kind"].call("soul")
 	assert_eq(controller._debug_res_kind, "soul")
 	commands["set_res_value"].call("42")
 	assert_eq(controller._debug_res_value, "42")
+
+
+func test_panel_add_gu_dropdown_lists_schools_and_chinese_gu_names() -> void:
+	var controller := _new_controller(true)
+	var props: Dictionary = controller._debug_props()
+	var schools: Array = props["gu_schools"]
+	assert_eq(schools.size(), 20, "twenty schools must fill the school dropdown")
+	assert_eq(str(schools[0]["label"]), "血道", "school label must be the Chinese school name")
+	var blood: Array = props["gu_options"]
+	assert_eq(blood.size(), 40, "blood school must list its gu")
+	assert_eq(str(blood[0]["label"]), "爱别离蛊", "gu option label must be the Chinese gu name")
+	assert_eq(str(blood[0]["id"]), "blood_farewell_gu", "gu option id must map to the catalog definition")
+	# 切换流派后选项随之联动刷新。
+	var commands: Dictionary = props["commands"]
+	commands["set_gu_school"].call("bone")
+	var refreshed: Array = controller._debug_props()["gu_options"]
+	assert_eq(str(refreshed[0]["label"]), "骨枪蛊", "school switch must refresh the gu options")
+	assert_eq(str(controller._debug_gu_selected), "bone_def_3_01_gu",
+			"school switch must re-anchor selection to the first gu of the new school")
