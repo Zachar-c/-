@@ -1,6 +1,7 @@
 class_name SettingsScreenView
-extends MarginContainer
-## 设置屏（线框稿 v2：声音 / 显示 / 存档 三栏）。
+extends Control
+## 设置屏（线框稿 v2 高精度对齐：面板 left112/top186/w1130/h420，
+## 声音滑块 / 分隔线 / 当前分辨率提示 / 右侧导航，逐项对齐）。
 ## 分辨率选项与静音走代码生成；保存/读档经 commands 出口。
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
@@ -13,21 +14,31 @@ const RESOLUTIONS: Array[Dictionary] = [
 	{"label": "1600×900 · 窗口", "mode": "window"},
 	{"label": "1280×720 · 窗口", "mode": "window"},
 ]
+const TRACK_LEFT := 110.0
+const TRACK_WIDTH := 440.0
+const THUMB_OFF := 6.0
 
-@onready var _top_bar: PanelContainer = $Root/TopBar
+@onready var _top_bar: PanelContainer = $TopBar
 @onready var _paper: ColorRect = $SettingsPaper
-@onready var _stage: PanelContainer = $Root/SettingsStage
-@onready var _seal_box: PanelContainer = $Root/HeaderRow/SealPanelContainer
-@onready var _title_label: Label = $Root/HeaderRow/TitleLabel
-@onready var _title_rule: ColorRect = $Root/HeaderRow/TitleRule
-@onready var _sub_label: Label = $Root/HeaderRow/SubLabel
-@onready var _volume_label: Label = $Root/SettingsStage/StageContent/SoundRow/VolumeLabel
-@onready var _mute_button: Button = $Root/SettingsStage/StageContent/SoundRow/MuteButton
-@onready var _resolution_row: HBoxContainer = $Root/SettingsStage/StageContent/ResolutionRow
-@onready var _save_button: Button = $Root/SettingsStage/StageContent/SaveRow/SaveButton
-@onready var _load_button: Button = $Root/SettingsStage/StageContent/SaveRow/LoadButton
-@onready var _back_button: Button = $Root/BackRow/BackButton
-@onready var _version_label: Label = $Root/VersionLabel
+@onready var _vtitle: Label = $VTitle
+@onready var _redline: ColorRect = $RedLine
+@onready var _sub_label: Label = $SubLabel
+@onready var _seal_box: PanelContainer = $SealPanelContainer
+@onready var _stage: PanelContainer = $SettingsStage
+@onready var _volume_label: Label = $SettingsStage/Content/VolumeLabel
+@onready var _mute_button: Button = $SettingsStage/Content/MuteButton
+@onready var _fill: ColorRect = $SettingsStage/Content/Fill
+@onready var _thumb: PanelContainer = $SettingsStage/Content/Thumb
+@onready var _resolution_row: HBoxContainer = $SettingsStage/Content/ResolutionRow
+@onready var _current_hint: Label = $SettingsStage/Content/CurrentHint
+@onready var _save_button: Button = $SettingsStage/Content/SaveRow/SaveButton
+@onready var _load_button: Button = $SettingsStage/Content/SaveRow/LoadButton
+@onready var _nav_journal: Button = $Nav/NavJournal
+@onready var _nav_codex: Button = $Nav/NavCodex
+@onready var _nav_settings: Button = $Nav/NavSettings
+@onready var _nav_quit: Button = $Nav/NavQuit
+@onready var _back_button: Button = $BackRow/BackButton
+@onready var _version_label: Label = $VersionLabel
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -46,6 +57,7 @@ func _ready() -> void:
 	_mute_button.pressed.connect(_toggle_mute)
 	_save_button.pressed.connect(func(): _fire("save"))
 	_load_button.pressed.connect(func(): _fire("load"))
+	_nav_quit.pressed.connect(func(): _fire("back"))
 	if not _snapshot.is_empty():
 		_refresh()
 
@@ -81,7 +93,7 @@ func _refresh_top_bar() -> void:
 
 
 func _refresh_header() -> void:
-	_title_label.text = _vertical_title(str(_snapshot.get("title", "设置")))
+	_vtitle.text = _vertical_title(str(_snapshot.get("title", "设置")))
 	_sub_label.text = str(_snapshot.get("subtitle", "声色之调 · 存于机匣"))
 
 
@@ -89,7 +101,12 @@ func _refresh_sound() -> void:
 	var volume := int(_snapshot.get("master_volume", 100))
 	_volume_label.text = "0" if _muted else str(volume)
 	_mute_button.text = "取消静音" if _muted else "静音"
-	MasterTheme.apply_button(_mute_button, "danger" if _muted else "action")
+	# 音量滑块：fill 宽 = 音量百分比；thumb 跟随右端。
+	var fill_w := TRACK_WIDTH * clampf(float(volume) / 100.0, 0.0, 1.0)
+	_fill.offset_right = TRACK_LEFT + fill_w
+	_thumb.offset_left = TRACK_LEFT + fill_w - THUMB_OFF
+	_thumb.offset_right = TRACK_LEFT + fill_w - THUMB_OFF + 16.0
+	_apply_opt_style(_mute_button, _muted)
 
 
 func _toggle_mute() -> void:
@@ -119,7 +136,41 @@ func _refresh_resolutions() -> void:
 		if not (children[i] is Button):
 			continue
 		var on := i == _resolution_index
-		MasterTheme.apply_button(children[i], "danger" if on else "action")
+		_apply_opt_style(children[i], on)
+	var label := str(RESOLUTIONS[_resolution_index]["label"])
+	var hint := "当前 %s" % label
+	if label == "1280×720 · 窗口":
+		hint += "（与基准 1:1）"
+	_current_hint.text = hint
+
+
+## 线稿 v2 选项按钮：透明底 + 细边框 + 墨字；选中态浅纸底。
+func _apply_opt_style(btn: Button, on: bool) -> void:
+	btn.flat = false
+	btn.add_theme_font_size_override("font_size", 13)
+	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
+	var box := StyleBoxFlat.new()
+	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	box.border_width_left = 1
+	box.border_width_top = 1
+	box.border_width_right = 1
+	box.border_width_bottom = 1
+	if on:
+		box.bg_color = Color(0.964706, 0.952941, 0.913725, 0.6)
+		box.border_color = Color("9a978c")
+		btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	else:
+		box.bg_color = Color(0, 0, 0, 0)
+		box.border_color = Color("aaa89f")
+		btn.add_theme_color_override("font_color", GuStyle.NAV_TEXT)
+	btn.add_theme_stylebox_override("normal", box)
+	var hover := box.duplicate()
+	hover.border_color = Color("9c332d")
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", hover)
+	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_focus_color", GuStyle.NAV_TEXT)
 
 
 func _fire(key: String, arg = null) -> void:
@@ -153,23 +204,47 @@ func _vertical_title(flat: String) -> String:
 
 
 func _apply_base_fonts() -> void:
-	_title_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
-	_title_label.add_theme_font_size_override("font_size", 26)
-	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	_title_rule.color = Color("82463e")
-	_title_rule.custom_minimum_size = Vector2(2, 0)
+	_vtitle.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_vtitle.add_theme_font_size_override("font_size", 26)
+	_vtitle.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_redline.color = Color("82463e")
+	_sub_label.add_theme_font_override("font", GuStyle.BODY_FONT)
+	_sub_label.add_theme_font_size_override("font_size", 12)
 	_sub_label.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
+	_volume_label.add_theme_font_override("font", GuStyle.BODY_FONT)
+	_volume_label.add_theme_font_size_override("font_size", 15)
 	_volume_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_version_label.add_theme_font_size_override("font_size", 11)
 	_version_label.add_theme_color_override("font_color", GuStyle.VER_TEXT)
 	_paper.color = GuStyle.PAPER_HALL
 	GuStyle.apply_seal(_seal_box, 3.0)
+	# 右侧导航：手记/图鉴为装饰入口（无独立路由），设置高亮，退出即返回。
+	for btn in [_nav_journal, _nav_codex, _nav_quit]:
+		_apply_menu_style(btn)
+	_nav_settings.flat = true
+	_nav_settings.add_theme_font_size_override("font_size", 14)
+	_nav_settings.add_theme_font_override("font", GuStyle.BODY_FONT)
+	_nav_settings.add_theme_color_override("font_color", GuStyle.CINNABAR)
 	_apply_menu_style(_back_button)
-	MasterTheme.apply_button(_save_button, "action")
-	MasterTheme.apply_button(_load_button, "action")
+	_apply_opt_style(_save_button, false)
+	_apply_opt_style(_load_button, false)
 
 
 func _apply_stage_style() -> void:
 	var stage_box := StyleBoxFlat.new()
-	stage_box.bg_color = Color(0, 0, 0, 0)
+	stage_box.bg_color = Color(0.964706, 0.952941, 0.913725, 0.55)
 	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	stage_box.border_width_left = 1
+	stage_box.border_width_top = 1
+	stage_box.border_width_right = 1
+	stage_box.border_width_bottom = 1
+	stage_box.border_color = Color("aaa89f")
 	_stage.add_theme_stylebox_override("panel", stage_box)
+	var thumb_box := StyleBoxFlat.new()
+	thumb_box.bg_color = Color("e5e2d7")
+	thumb_box.border_width_left = 1
+	thumb_box.border_width_top = 1
+	thumb_box.border_width_right = 1
+	thumb_box.border_width_bottom = 1
+	thumb_box.border_color = Color("9a978c")
+	_thumb.add_theme_stylebox_override("panel", thumb_box)
