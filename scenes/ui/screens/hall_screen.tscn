@@ -588,41 +588,228 @@ theme_override_constants/separation = 8
 layout_mode = 2
 text = "返回大厅"
 
-[node name="SchoolsView" type="VBoxContainer" parent="Root"]
+[node name="SchoolsView" type="Control" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 12
 visible = false
+mouse_filter = 2
 
-[node name="SchoolsTitle" type="Label" parent="Root/SchoolsView"]
+[node name="SchoolPaper" type="ColorRect" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.898039, 0.886275, 0.843137, 1)
+
+[node name="SchoolDots" type="TextureRect" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_dots")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SchoolFolio" type="Label" parent="SchoolsView"]
+layout_mode = 1
+offset_left = 24.0
+offset_top = 23.0
+offset_right = 160.0
+offset_bottom = 37.0
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.552941, 0.552941, 0.513725, 1)
+text = "叁宫·南盟"
+
+[node name="SchoolSeal" type="PanelContainer" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -73.0
+offset_top = 24.0
+offset_right = -28.0
+offset_bottom = 64.0
+grow_horizontal = 0
+grow_vertical = 1
+mouse_filter = 2
+
+[node name="SealCenter" type="CenterContainer" parent="SchoolsView/SchoolSeal"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "流派选择"
 
-[node name="SchoolsSelected" type="Label" parent="Root/SchoolsView"]
+[node name="SealBox" type="VBoxContainer" parent="SchoolsView/SchoolSeal/SealCenter"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "当前选中："
+theme_override_constants/separation = 1
 
-[node name="SchoolsScroll" type="ScrollContainer" parent="Root/SchoolsView"]
+[node name="SealTop" type="Label" parent="SchoolsView/SchoolSeal/SealCenter/SealBox"]
 layout_mode = 2
-size_flags_vertical = 3
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.619608, 0.52549, 0.490196, 1)
+text = "擇道"
+horizontal_alignment = 1
 
-[node name="SchoolsList" type="VBoxContainer" parent="Root/SchoolsView/SchoolsScroll"]
+[node name="SealBottom" type="Label" parent="SchoolsView/SchoolSeal/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.619608, 0.52549, 0.490196, 1)
+text = "入世"
+horizontal_alignment = 1
+
+[node name="SchoolDivider" type="ColorRect" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.242
+anchor_top = 0.09
+anchor_right = 0.242
+anchor_bottom = 0.91
+offset_right = 1.0
+color = Color(0.717647, 0.717647, 0.670588, 1)
+mouse_filter = 2
+
+[node name="SchoolSide" type="Control" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SchoolTitle" type="Label" parent="SchoolsView/SchoolSide"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.067
+anchor_top = 0.30
+anchor_right = 0.067
+anchor_bottom = 0.30
+theme_override_font_sizes/font_size = 52
+theme_override_colors/font_color = Color(0.203922, 0.203922, 0.188235, 1)
+text = "擇道"
+
+[node name="SchoolSub" type="Label" parent="SchoolsView/SchoolSide"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.072
+anchor_top = 0.446
+anchor_right = 0.072
+anchor_bottom = 0.446
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.552941, 0.556863, 0.517647, 1)
+text = "一念之差，道途迥异"
+
+[node name="SchoolRedline" type="ColorRect" parent="SchoolsView/SchoolSide"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.07
+anchor_top = 0.486
+anchor_right = 0.07
+anchor_bottom = 0.486
+offset_right = 42.0
+offset_bottom = 3.0
+color = Color(0.509804, 0.27451, 0.243137, 1)
+mouse_filter = 2
+
+[node name="SchoolsBackButton" type="Button" parent="SchoolsView/SchoolSide"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.067
+anchor_top = 0.66
+anchor_right = 0.067
+anchor_bottom = 0.66
+offset_right = 72.0
+offset_bottom = 30.0
+theme_override_font_sizes/font_size = 12
+text = "返回"
+
+[node name="SchoolVer" type="Label" parent="SchoolsView/SchoolSide"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.067
+anchor_top = 0.905
+anchor_right = 0.067
+anchor_bottom = 0.905
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.643137, 0.643137, 0.611765, 1)
+text = "BUILD 0.9.0 · LOCAL"
+
+[node name="SchoolHead" type="Label" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.285
+anchor_top = 0.062
+anchor_right = 0.285
+anchor_bottom = 0.062
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.337255, 0.32549, 0.309804, 1)
+text = "择定流派"
+
+[node name="SchoolHeadNote" type="Label" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.285
+anchor_top = 0.09
+anchor_right = 0.285
+anchor_bottom = 0.09
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.552941, 0.552941, 0.513725, 1)
+text = "道痕为引，一蛊一命 · 共二十道"
+
+[node name="SchoolGrid" type="GridContainer" parent="SchoolsView"]
+columns = 4
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.285
+anchor_top = 0.152
+anchor_right = 0.285
+anchor_bottom = 0.152
+offset_right = 908.0
+offset_bottom = 480.0
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 10
+mouse_filter = 2
+
+[node name="SchoolBuffRow" type="HBoxContainer" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.285
+anchor_top = 0.854
+anchor_right = 0.285
+anchor_bottom = 0.854
+theme_override_constants/separation = 26
+
+[node name="SchoolBuffLabel" type="Label" parent="SchoolsView/SchoolBuffRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.470588, 0.470588, 0.427451, 1)
+text = "开局加成"
+
+[node name="SchoolOpRow" type="HBoxContainer" parent="SchoolsView"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.285
+anchor_top = 0.914
+anchor_right = 0.285
+anchor_bottom = 0.914
+offset_right = 908.0
+offset_bottom = 30.0
+theme_override_constants/separation = 12
+
+[node name="SchoolOpBack" type="Button" parent="SchoolsView/SchoolOpRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "返回"
+
+[node name="ConfirmSchoolButton" type="Button" parent="SchoolsView/SchoolOpRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="SchoolsButtonRow" type="HBoxContainer" parent="Root/SchoolsView"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="ConfirmSchoolButton" type="Button" parent="Root/SchoolsView/SchoolsButtonRow"]
-layout_mode = 2
-text = "确认流派 → 出发"
-
-[node name="SchoolsBackButton" type="Button" parent="Root/SchoolsView/SchoolsButtonRow"]
-layout_mode = 2
-text = "返回"
+theme_override_font_sizes/font_size = 13
+text = "以血道入世 >"
 
 [node name="ContractsView" type="VBoxContainer" parent="Root"]
 layout_mode = 2

@@ -68,6 +68,15 @@ const NODE_LEFT_LINE      := 4                # 此刻/选中：朱砂左标线�
 const ENEMY_CARD_BORDER   := Color("d5d3c6")  # 敌人卡纸白边框（线框稿 .enemy 边框）
 const ENEMY_CARD_TEXT     := Color("56564c")  # 敌人卡状态行文字（线框稿 .sts 文字）
 
+# —— School-select card tokens (2026-09-08 school wireframe v1) ——
+# 流派选择卡：纸面半透明淡底（让网点透出）+ 选中朱砂描边 / 未选中发丝描边。
+# 半透明纸底与「不搞玻璃卡片」原则兼容：底色本身是纸面家族，仅降低不透明度透纸纹。
+const SCHOOL_CARD_BG_SELECTED := Color(0.91, 0.898, 0.859, 0.55)  # 选中：略深纸底
+const SCHOOL_CARD_BG_IDLE     := Color(0.91, 0.898, 0.859, 0.4)   # 未选中：更浅纸底
+const SCHOOL_CARD_BORDER_SELECTED := Color("82463e")              # 选中：朱砂描边（线框稿 .sel）
+const SCHOOL_CARD_BORDER_IDLE     := Color("b7b7ab")              # 未选中：发丝描边（线框稿 .card）
+
+
 # —— Hairline / rule ——
 const RULE := Color("aaa89f")
 const HAIRLINE_COLOR := Color("aaa89f")        # 发丝分隔线色
@@ -76,6 +85,9 @@ const HAIRLINE     := 1                        # 发丝线宽 1px
 
 # —— Semantic accent ——
 const CINNABAR     := Color("9c332d")       # 朱砂：危险 / 不可逆 / 死亡线
+## 旧朱砂印泥色（2026-09-08 基准图印章区重采样）：框/文字笔画核心 (168,112,104)≈#A87068，
+## 抗锯齿边缘扩散至 #AC7870~#C09C94——Codex 基准印章为氧化褪色的暗红印泥，非鲜朱砂。
+const SEAL_CINNABAR := Color("a87068")
 const CONTRACT_BLUE := Color("315f73")      # 契约规则
 const ANOMALY_YELLOW := Color("936f1e")     # DDA / 异变 / 险象
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
@@ -259,3 +271,29 @@ static func label(text: String, size: int, color: Color) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", color)
 	return l
+
+
+## 公用印章组件（2026-09-08 基准图重采样校准）：透明底（网点透出）+ 旧朱砂 1px 细框
+## + 2×2 竖排旧朱砂印泥字（基准图实测：框与字同为褪色暗红 #A87068 系，非墨色）+ 微斜 -3°。
+static func apply_seal(panel: PanelContainer, tilt_deg: float = -3.0) -> void:
+	if panel == null:
+		return
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = SEAL_CINNABAR
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(RADIUS_SMALL)
+	box.content_margin_left = 10
+	box.content_margin_right = 10
+	box.content_margin_top = 6
+	box.content_margin_bottom = 6
+	panel.add_theme_stylebox_override("panel", box)
+	panel.rotation = deg_to_rad(tilt_deg)
+	var top: Label = panel.get_node_or_null("SealCenter/SealBox/SealTop") as Label
+	var bottom: Label = panel.get_node_or_null("SealCenter/SealBox/SealBottom") as Label
+	for label in [top, bottom]:
+		if label == null:
+			continue
+		label.add_theme_font_override("font", TITLE_FONT)
+		label.add_theme_font_size_override("font_size", 11)
+		label.add_theme_color_override("font_color", SEAL_CINNABAR)

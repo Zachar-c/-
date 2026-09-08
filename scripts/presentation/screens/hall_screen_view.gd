@@ -1,4 +1,4 @@
-class_name HallScreenView
+﻿class_name HallScreenView
 extends MarginContainer
 
 ## 大厅家族（规格 v3 §4.2/§5）：问眞主页 + 流派 + 契约 + 图鉴 + 设置 + 手记。
@@ -24,7 +24,7 @@ const CODEX_TAB_NAMES := {
 @onready var _codex_view: VBoxContainer = $Root/CodexView
 @onready var _settings_view: VBoxContainer = $Root/SettingsView
 @onready var _journal_view: VBoxContainer = $Root/JournalView
-@onready var _schools_view: VBoxContainer = $Root/SchoolsView
+@onready var _schools_view: Control = $SchoolsView
 @onready var _contracts_view: VBoxContainer = $Root/ContractsView
 
 # 主界面（v8 线框稿：左/中/右三栏 + 印章 + 红线连接黑线）
@@ -67,11 +67,12 @@ const CODEX_TAB_NAMES := {
 @onready var _journal_list: VBoxContainer = $Root/JournalView/JournalScroll/JournalList
 @onready var _journal_back: Button = $Root/JournalView/JournalBackButton
 
-# 流派
-@onready var _schools_selected: Label = $Root/SchoolsView/SchoolsSelected
-@onready var _schools_list: VBoxContainer = $Root/SchoolsView/SchoolsScroll/SchoolsList
-@onready var _confirm_school: Button = $Root/SchoolsView/SchoolsButtonRow/ConfirmSchoolButton
-@onready var _schools_back: Button = $Root/SchoolsView/SchoolsButtonRow/SchoolsBackButton
+# 流派（2026-09-08 线框稿 v1：全屏左栏 + 4×5 卡片网格 + Buff 复选 + 底部操作行）
+@onready var _school_grid: Control = $SchoolsView/SchoolGrid
+@onready var _school_buff_row: HBoxContainer = $SchoolsView/SchoolBuffRow
+@onready var _confirm_school: Button = $SchoolsView/SchoolOpRow/ConfirmSchoolButton
+@onready var _schools_back: Button = $SchoolsView/SchoolSide/SchoolsBackButton
+@onready var _schools_op_back: Button = $SchoolsView/SchoolOpRow/SchoolOpBack
 
 # 契约
 @onready var _contracts_note: Label = $Root/ContractsView/ContractsNote
@@ -101,6 +102,25 @@ func _apply_paper_colors() -> void:
 	_hall_title.add_theme_color_override("font_color", Color("343430"))
 	_hall_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	_hall_title.add_theme_constant_override("line_spacing", 6)
+	# 流派屏（线框稿 v1）：纸底 + 竖排標題 + 红线
+	var school_paper: ColorRect = $SchoolsView/SchoolPaper
+	if school_paper != null:
+		school_paper.color = GuStyle.PAPER_HALL
+	var school_title: Label = $SchoolsView/SchoolSide/SchoolTitle
+	if school_title != null:
+		school_title.add_theme_color_override("font_color", Color("343430"))
+		school_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	var school_redline: ColorRect = $SchoolsView/SchoolSide/SchoolRedline
+	if school_redline != null:
+		school_redline.color = Color("82463e")
+	# 公用印章组件（v9）：透明底 + 朱砂细框 + 墨字 + 微斜 -3°。
+	GuStyle.apply_seal($Root/MainView/HallSeal)
+	GuStyle.apply_seal($SchoolsView/SchoolSeal)
+	# 副题文字与按钮文字同步（v9）：基准图副题为细宋体墨字。
+	_sync_subtitle($Root/MainView/HallSheet/HallIdentity/HallSubtitle)
+	_sync_subtitle($SchoolsView/SchoolSide/SchoolSub)
+	_apply_school_back_style(_schools_back)
+	_apply_school_back_style(_schools_op_back)
 	_apply_continue_style(_primary_action)
 	_apply_menu_style(_journal_link)
 	_apply_menu_style(_codex_link)
@@ -108,46 +128,105 @@ func _apply_paper_colors() -> void:
 	_apply_menu_style(_quit_link)
 
 
-## v8：续入此世按钮 = 浅底 #e3e3d7 + 深灰文字（参考图实测），hover 微深。
+## v9：副题（标题下方一行）与按钮文字同字体同色，消除「标题区与按钮区字体不一致」。
+func _sync_subtitle(label: Label) -> void:
+	if label == null:
+		return
+	label.add_theme_font_override("font", GuStyle.BODY_FONT)
+	label.add_theme_font_size_override("font_size", 14)
+	label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+
+
+## v9（2026-09-08 Codex 基准图校准）：续入此世按钮 = 透明底（网点透出，无实色块）
+## + 墨色手写文字；hover 文字转朱砂、加淡描边作为可交互暗示。
 func _apply_continue_style(btn: Button) -> void:
 	if btn == null:
 		return
-	btn.add_theme_font_size_override("font_size", 13)
-	btn.add_theme_color_override("font_color", Color("56534f"))
-	btn.add_theme_color_override("font_hover_color", Color("56534f"))
-	btn.add_theme_color_override("font_pressed_color", Color("3c3a36"))
-	btn.add_theme_color_override("font_focus_color", Color("56534f"))
+	btn.add_theme_font_size_override("font_size", 14)
+	btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color("e3e3d7")
+	normal.bg_color = Color(0, 0, 0, 0)
+	normal.border_color = GuStyle.HAIRLINE_COLOR
+	normal.set_border_width_all(0)
 	normal.set_corner_radius_all(2)
+	normal.content_margin_left = 12
+	normal.content_margin_right = 12
+	normal.content_margin_top = 6
+	normal.content_margin_bottom = 6
 	btn.add_theme_stylebox_override("normal", normal)
 	var hover := StyleBoxFlat.new()
-	hover.bg_color = Color("d8d6c9")
+	hover.bg_color = Color(0, 0, 0, 0)
+	hover.border_color = GuStyle.CINNABAR
+	hover.set_border_width_all(1)
 	hover.set_corner_radius_all(2)
+	hover.content_margin_left = 12
+	hover.content_margin_right = 12
+	hover.content_margin_top = 6
+	hover.content_margin_bottom = 6
 	btn.add_theme_stylebox_override("hover", hover)
-	var pressed := StyleBoxFlat.new()
-	pressed.bg_color = Color("cccabe")
-	pressed.set_corner_radius_all(2)
-	btn.add_theme_stylebox_override("pressed", pressed)
+	btn.add_theme_stylebox_override("pressed", hover)
 	var focus := StyleBoxFlat.new()
-	focus.bg_color = Color("e3e3d7")
+	focus.bg_color = Color(0, 0, 0, 0)
+	focus.border_color = GuStyle.HAIRLINE_COLOR
+	focus.set_border_width_all(0)
 	focus.set_corner_radius_all(2)
 	btn.add_theme_stylebox_override("focus", focus)
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 
-## v8：右栏菜单 = 纯文字（flat），软墨色，hover 转朱砂。
+## v9：右栏菜单 = 纯文字（flat），基准图细宋体墨字，hover 转朱砂。
 func _apply_menu_style(btn: Button) -> void:
 	if btn == null:
 		return
 	btn.flat = true
-	btn.add_theme_font_size_override("font_size", 11)
-	btn.add_theme_color_override("font_color", Color("56564c"))
+	btn.add_theme_font_size_override("font_size", 14)
+	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
+	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
-	btn.add_theme_color_override("font_focus_color", Color("56564c"))
+	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
 	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	btn.custom_minimum_size = Vector2(0, 0)
+	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
+## 线框稿 v1：ghost 返回按钮 = 透明底 + 1px 描边（纸墨一致，hover 转朱砂描边）。
+func _apply_school_back_style(btn: Button) -> void:
+	if btn == null:
+		return
+	btn.flat = false
+	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	btn.add_theme_font_size_override("font_size", 12)
+	btn.add_theme_color_override("font_color", Color("56564c"))
+	btn.add_theme_color_override("font_hover_color", Color("82463e"))
+	btn.add_theme_color_override("font_pressed_color", Color("82463e"))
+	btn.add_theme_color_override("font_focus_color", Color("56564c"))
+	var ghost := StyleBoxFlat.new()
+	ghost.bg_color = Color(0, 0, 0, 0)
+	ghost.border_color = Color("b7b7ab")
+	ghost.set_border_width_all(1)
+	ghost.set_corner_radius_all(2)
+	ghost.content_margin_left = 10
+	ghost.content_margin_right = 10
+	ghost.content_margin_top = 5
+	ghost.content_margin_bottom = 5
+	btn.add_theme_stylebox_override("normal", ghost)
+	var hover := StyleBoxFlat.new()
+	hover.bg_color = Color(0, 0, 0, 0)
+	hover.border_color = Color("82463e")
+	hover.set_border_width_all(1)
+	hover.set_corner_radius_all(2)
+	hover.content_margin_left = 10
+	hover.content_margin_right = 10
+	hover.content_margin_top = 5
+	hover.content_margin_bottom = 5
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", hover)
+	btn.add_theme_stylebox_override("focus", ghost)
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 
@@ -175,6 +254,7 @@ func _wire_static_buttons() -> void:
 	# S 减法：契约系统冻结，开局流收敛为 流派(+Buff) → 出发；契约屏不再占主路径。
 	_confirm_school.pressed.connect(func(): _fire("new_run"))
 	_schools_back.pressed.connect(func(): _fire("back_to_hall"))
+	_schools_op_back.pressed.connect(func(): _fire("back_to_hall"))
 	_start_run.pressed.connect(func(): _fire("new_run"))
 	_contracts_back.pressed.connect(func(): _fire("open_schools"))
 
@@ -453,35 +533,140 @@ func _refresh_journal() -> void:
 
 # ————————————————————————— 流派 —————————————————————————
 
+## 线框稿 v1（2026-09-08）：4 列 × 5 行卡片网格 + 底部 Buff 复选 + 操作行。
+## 卡片自建（Panel + VBox），选中态 = 朱砂描边 + 右上「已选」小印章。
 func _refresh_schools() -> void:
+	_build_school_grid()
+	_build_school_buffs()
+
 	var selected := str(_snapshot.get("selected_school", ""))
-	_schools_selected.text = "当前选中：" + str(_snapshot.get("selected_school_name", selected))
-	_clear(_schools_list)
-	for s in _snapshot.get("available_schools", []):
-		var sid := ""
-		var sname := str(s)
-		var ssum := ""
-		var starters: Array = []
-		if s is Dictionary:
-			sid = str(s.get("id", ""))
-			sname = str(s.get("name", sname))
-			ssum = str(s.get("summary", ""))
-			starters = s.get("starter_gu_names", [])
+	var selected_name := str(_snapshot.get("selected_school_name", ""))
+	_confirm_school.text = ("以%s入世 >" % selected_name) if selected != "" else "择定流派后入世 >"
+	_apply_school_confirm_style(selected != "")
+
+
+func _build_school_grid() -> void:
+	_clear(_school_grid)
+	var schools: Array = _snapshot.get("available_schools", [])
+	var selected := str(_snapshot.get("selected_school", ""))
+	var order := 1
+	for index in schools.size():
+		var s: Dictionary = schools[index]
+		var sid := str(s.get("id", ""))
 		var is_selected := sid == selected
-		var card = GuCardScene.instantiate()
-		_schools_list.add_child(card)
-		# setup(title, quality, danger, curse_warning, sealed, cost, highlight)
-		card.setup(sname, "", false, false, false, "", is_selected)
-		if ssum != "":
-			card.content_host.add_child(_label(ssum, GuStyle.INK_SOFT, 13))
-		if not starters.is_empty():
-			card.content_host.add_child(_label("初始蛊：" + "、".join(starters),
-					GuStyle.INK_HALL, 13))
-		var sel_label := ("选中 · " + sname) if is_selected else "选择"
-		card.content_host.add_child(_action_button(sel_label,
-				func(): _fire1("select_school", sid)))
-	# S2 开局 Buff（多选）：目录投影为复选项，toggle 走命令面，UI 不写状态。
-	_schools_list.add_child(_label("开局加成（Buff，可多选）", GuStyle.INK_HALL, 14))
+		_school_grid.add_child(_school_card(s, sid, is_selected, order))
+		order += 1
+
+
+func _school_card(s: Dictionary, sid: String, is_selected: bool, order: int) -> Control:
+	var card := Panel.new()
+	card.custom_minimum_size = Vector2(218, 88)
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.SCHOOL_CARD_BG_SELECTED if is_selected else GuStyle.SCHOOL_CARD_BG_IDLE
+	box.border_color = GuStyle.SCHOOL_CARD_BORDER_SELECTED if is_selected else GuStyle.SCHOOL_CARD_BORDER_IDLE
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(2)
+	box.content_margin_left = 10
+	box.content_margin_right = 10
+	box.content_margin_top = 7
+	box.content_margin_bottom = 5
+	card.add_theme_stylebox_override("panel", box)
+
+	var body := VBoxContainer.new()
+	body.add_theme_constant_override("separation", 3)
+	card.add_child(body)
+	body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	body.offset_left = 10.0
+	body.offset_right = -10.0
+	body.offset_top = 7.0
+	body.offset_bottom = -5.0
+
+	var name_row := HBoxContainer.new()
+	name_row.add_theme_constant_override("separation", 6)
+	body.add_child(name_row)
+	var name_label := Label.new()
+	name_label.text = str(s.get("name", sid))
+	name_label.add_theme_font_size_override("font_size", 14)
+	name_label.add_theme_color_override("font_color", Color("343430"))
+	name_row.add_child(name_label)
+	var order_label := Label.new()
+	order_label.text = _school_order_text(order)
+	order_label.add_theme_font_size_override("font_size", 9)
+	order_label.add_theme_color_override("font_color", Color("8d8d83"))
+	name_row.add_child(order_label)
+
+	var summary := Label.new()
+	summary.text = str(s.get("summary", ""))
+	summary.add_theme_font_size_override("font_size", 9)
+	summary.add_theme_color_override("font_color", Color("7e7f75"))
+	summary.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	summary.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	summary.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(summary)
+
+	var starters := Label.new()
+	var starter_names: Array = s.get("starter_gu_names", [])
+	var starter_text := "初始蛊 "
+	if not starter_names.is_empty():
+		var parts: Array[String] = []
+		for n in starter_names:
+			parts.append(str(n))
+		starter_text += "、".join(parts)
+	else:
+		starter_text += "—"
+	starters.text = starter_text
+	starters.add_theme_font_size_override("font_size", 9)
+	starters.add_theme_color_override("font_color", Color("56534f"))
+	starters.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	body.add_child(starters)
+
+	if is_selected:
+		var mark := Label.new()
+		mark.text = "已选"
+		mark.add_theme_font_size_override("font_size", 8)
+		mark.add_theme_color_override("font_color", Color("82463e"))
+		mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var mark_box := StyleBoxFlat.new()
+		mark_box.border_color = Color("82463e")
+		mark_box.set_border_width_all(1)
+		mark_box.set_corner_radius_all(2)
+		mark_box.content_margin_left = 4
+		mark_box.content_margin_right = 4
+		mark_box.content_margin_top = 1
+		mark_box.content_margin_bottom = 1
+		mark.add_theme_stylebox_override("normal", mark_box)
+		card.add_child(mark)
+		# 右上角「已选」小印章：锚定卡片右上。
+		mark.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+		mark.offset_left = -34.0
+		mark.offset_top = 0.0
+		mark.offset_right = -1.0
+		mark.offset_bottom = 17.0
+
+	var click := Button.new()
+	click.flat = true
+	click.text = ""
+	click.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	click.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	click.pressed.connect(func(): _fire1("select_school", sid))
+	card.add_child(click)
+	return card
+
+
+func _school_order_text(order: int) -> String:
+	var digits := ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
+			"十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"]
+	if order >= 1 and order <= digits.size():
+		return digits[order - 1]
+	return str(order)
+
+
+## 开局加成 Buff 复选（ghost）：目录投影为复选项，toggle 走命令面，UI 不写状态。
+func _build_school_buffs() -> void:
+	for child in _school_buff_row.get_children():
+		if child.name != "SchoolBuffLabel":
+			_school_buff_row.remove_child(child)
+			child.queue_free()
 	var selected_buffs: Array = _snapshot.get("selected_buffs", [])
 	for b in _snapshot.get("available_buffs", []):
 		var bid := str(b.get("id", "")) if b is Dictionary else str(b)
@@ -491,9 +676,39 @@ func _refresh_schools() -> void:
 		check.text = bname + ("：" + bsum if bsum != "" else "")
 		check.set_pressed_no_signal(selected_buffs.has(bid))
 		check.toggled.connect(func(_on: bool): _fire1("toggle_buff", bid))
-		_schools_list.add_child(check)
-	MasterTheme.apply_button(_confirm_school, "action")
-	MasterTheme.apply_button(_schools_back, "action")
+		_apply_school_check_style(check)
+		_school_buff_row.add_child(check)
+
+
+## 确认按钮：选中流派 = 浅底朱砂字；未选中 = 浅底灰字（沿用大厅续入此世浅底样式）。
+func _apply_school_confirm_style(active: bool) -> void:
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color("e3e3d7") if active else Color("e8e5db")
+	normal.set_corner_radius_all(2)
+	var fg := Color("82463e") if active else Color("898a81")
+	_confirm_school.add_theme_stylebox_override("normal", normal)
+	var hover := StyleBoxFlat.new()
+	hover.bg_color = Color("d8d6c9") if active else Color("e3e3d7")
+	hover.set_corner_radius_all(2)
+	_confirm_school.add_theme_stylebox_override("hover", hover)
+	var pressed := StyleBoxFlat.new()
+	pressed.bg_color = Color("cccabe")
+	pressed.set_corner_radius_all(2)
+	_confirm_school.add_theme_stylebox_override("pressed", pressed)
+	_confirm_school.add_theme_color_override("font_color", fg)
+	_confirm_school.add_theme_color_override("font_hover_color", fg)
+	_confirm_school.add_theme_color_override("font_pressed_color", Color("3c3a36"))
+	_confirm_school.add_theme_color_override("font_focus_color", fg)
+	_confirm_school.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
+func _apply_school_check_style(check: CheckButton) -> void:
+	check.add_theme_font_size_override("font_size", 10)
+	check.add_theme_color_override("font_color", Color("56564c"))
+	check.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	check.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	check.add_theme_color_override("font_focus_color", Color("56564c"))
+	check.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 
 # ————————————————————————— 契约 —————————————————————————
