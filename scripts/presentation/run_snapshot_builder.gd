@@ -828,11 +828,23 @@ static func hall(controller) -> Dictionary:
 	}
 	out["brand_title"] = "問眞"
 	out["primary_action"] = "continue_run" if out["has_save"] else "open_schools"
+	var run_route := _run_route_label(controller)
 	out["run_summary"] = {
-		"route": _run_route_label(controller),
-		"rank": "%d 转" % int(state.cultivation) if state != null else "0 转",
+		"route": run_route,
+		"rank": _rank_cn(int(state.cultivation)) if state != null else "0转",
 		"hp": "%d" % int(state.health) if state != null else "0",
+		# v8 线框稿还原（2026-09-07）：寿元 = cultivator.lifespan - lifespan_debt；
+		# 蛊囊只显示持有数，不伪造分母（项目红线：持有数量无通用硬上限）。
+		"lifespan": "%d年" % _lifespan_remaining(state) if state != null else "0年",
+		"gu_count": state.gu_ids.size() if state != null else 0,
+		"node_count": state.route_progress.size() if state != null else 0,
+		"curse_count": _curse_count(state) if state != null else 0,
+		"build_label": "BUILD 0.9.0 · LOCAL",
 	}
+	out["hall_epoch"] = "今世·第%s劫" % _cn_number(
+			int(state.route_progress.size()) + 1) if state != null else "今世·第一劫"
+	out["prev_life"] = ("上一世止于：%s" % run_route) if out["has_save"] else "上一世止于：—"
+	out["prev_note"] = "札记新得：%s" % _latest_journal_title(meta, catalog)
 
 
 	return out
@@ -860,6 +872,57 @@ static func _run_route_label(controller) -> String:
 	if not node.is_empty():
 		return str(node.get("label", DisplayText.node(template_id)))
 	return DisplayText.node(template_id)
+
+
+## v8 线框稿（2026-09-07）：大厅数值区辅助函数。
+static func _rank_cn(n: int) -> String:
+	const CN_RANK := ["一", "二", "三", "四", "五"]
+	if n <= 0:
+		return "0转"
+	return CN_RANK[clampi(n - 1, 0, CN_RANK.size() - 1)] + "转"
+
+
+static func _lifespan_remaining(state) -> int:
+	return int(state.cultivator.get("lifespan", 0)) - int(state.lifespan_debt)
+
+
+## 诅咒状态数：cultivator.statuses 中 layers>0 的条目数（参考图「N只诅咒蛊」近似口径）。
+static func _curse_count(state) -> int:
+	var statuses: Dictionary = state.cultivator.get("statuses", {})
+	var n := 0
+	for curse_id in statuses:
+		var entry: Variant = statuses[curse_id]
+		if entry is Dictionary and int(entry.get("layers", 0)) > 0:
+			n += 1
+	return n
+
+
+## 100 以内中文数字（「今世·第六十三劫」等）。
+static func _cn_number(n: int) -> String:
+	const UNITS := ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
+	if n <= 0:
+		return "零"
+	if n < 10:
+		return UNITS[n]
+	if n < 20:
+		return "十" + UNITS[n % 10]
+	if n < 100:
+		return UNITS[n / 10] + "十" + UNITS[n % 10]
+	return str(n)
+
+
+## 最新一条已解锁手记标题（无则「—」）。
+static func _latest_journal_title(meta, catalog: Dictionary) -> String:
+	if meta == null:
+		return "—"
+	var by_id: Dictionary = catalog.get("journal_entry_by_id", {})
+	var last_id := ""
+	for jid in meta.journal_unlocked:
+		last_id = str(jid)
+	if last_id.is_empty():
+		return "—"
+	var entry: Dictionary = by_id.get(last_id, {})
+	return str(entry.get("title", "—"))
 
 
 static func _school_display_name(catalog: Dictionary, school_id: String) -> String:

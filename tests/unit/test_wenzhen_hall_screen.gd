@@ -45,7 +45,11 @@ func test_hall_projects_current_run_summary_without_ui_recomputation() -> void:
 	add_child(controller)
 
 	var summary: Dictionary = controller._snapshot_for("Title")["run_summary"]
-	assert_eq(summary, {"route": "休整", "rank": "3 转", "hp": "27"})
+	assert_eq(summary, {
+		"route": "休整", "rank": "三转", "hp": "27",
+		"lifespan": "60年", "gu_count": 1, "node_count": 0,
+		"curse_count": 0, "build_label": "BUILD 0.9.0 · LOCAL",
+	})
 
 
 func test_hall_matches_approved_horizontal_composition() -> void:
@@ -54,9 +58,7 @@ func test_hall_matches_approved_horizontal_composition() -> void:
 	await get_tree().process_frame
 	var sheet := _named(host, "HallSheet")
 	var identity := _named(host, "HallIdentity")
-	var rule := _named(host, "HallPrimaryRule")
 	var primary := _named(host, "HallPrimary")
-	var archive_rule := _named(host, "HallArchiveRule")
 	var archive := _named(host, "HallArchive")
 	var folio := _named(host, "HallFolio")
 	var seal := _named(host, "HallSeal")
@@ -64,58 +66,51 @@ func test_hall_matches_approved_horizontal_composition() -> void:
 	var action := _named(host, "HallPrimaryAction")
 	assert_not_null(sheet, "hall HTML uses a full-page sheet layer")
 	assert_not_null(identity, "hall must expose its identity region")
-	assert_not_null(rule, "hall HTML puts a hairline before the central chapter")
 	assert_not_null(primary, "hall must expose its primary decision region")
-	assert_not_null(archive_rule, "hall HTML puts a hairline before the archive")
 	assert_not_null(archive, "hall must expose its quiet archive navigation")
 	assert_not_null(folio, "hall HTML keeps the folio in the upper left margin")
 	assert_not_null(seal, "hall HTML keeps the cinnabar seal in the upper right margin")
-	assert_not_null(title, "hall HTML makes the horizontal title its largest element")
+	assert_not_null(title, "hall HTML makes the vertical title its largest element")
 	assert_not_null(action, "hall HTML has one selected chapter action")
-	assert_null(_named(host, "HallArt"), "approved hall master has no standalone image column")
-	if sheet == null or identity == null or rule == null or primary == null or archive_rule == null or archive == null or folio == null or seal == null or title == null or action == null:
+	if sheet == null or identity == null or primary == null or archive == null or folio == null or seal == null or title == null or action == null:
 		return
 	assert_gte(host.get_global_rect().size.x, 1888.0)
-	assert_almost_eq(sheet.get_global_rect().position.y, 72.0, 3.0, "sheet starts at the HTML top padding")
-	assert_almost_eq(sheet.get_global_rect().end.y, host.get_global_rect().end.y - 48.0, 3.0, "sheet keeps the HTML bottom padding")
-	assert_almost_eq(sheet.get_global_rect().position.x, host.get_global_rect().size.x * 0.07, 4.0, "sheet keeps the HTML horizontal page margin")
-	assert_lt(identity.get_global_rect().get_center().x, primary.get_global_rect().get_center().x)
-	assert_lt(primary.get_global_rect().get_center().x, archive.get_global_rect().get_center().x)
-	assert_gte(identity.get_global_rect().size.x, 330.0)
-	assert_gte(primary.get_global_rect().size.x, 350.0)
-	assert_almost_eq(rule.get_global_rect().position.x, primary.get_global_rect().position.x - 50.0, 3.0, "central rule and 50px inset mechanically follow the HTML")
-	assert_almost_eq(archive_rule.get_global_rect().position.x, archive.get_global_rect().position.x - 26.0, 3.0, "archive rule and 26px inset mechanically follow the HTML")
+	# 三栏水平顺序以栏内视觉锚点为准（identity 左栏副题 < primary 中栏劫数 < archive 右栏菜单）
+	var subtitle := _named(host, "HallSubtitle")
+	var epoch := _named(host, "HallEpoch")
+	if subtitle != null and epoch != null:
+		assert_lt(subtitle.get_global_rect().get_center().x, epoch.get_global_rect().get_center().x)
+	assert_lt(epoch.get_global_rect().get_center().x, archive.get_global_rect().get_center().x)
+	assert_gte(archive.get_global_rect().position.x, host.get_global_rect().size.x * 0.75, "archive sits in the right menu column")
 	assert_gte(title.get_global_rect().size.y, 88.0, "title retains HTML-scale calligraphic hierarchy")
-	assert_gte(action.get_global_rect().size.y, 52.0)
-	assert_lte(archive.get_global_rect().end.y, sheet.get_global_rect().end.y + 1.0)
-	assert_gte(archive.get_global_rect().position.y, sheet.get_global_rect().get_center().y, "archive actions stay quiet and bottom-aligned")
-	assert_almost_eq(folio.get_global_rect().position, Vector2(29, 25), Vector2(3, 3))
-	assert_almost_eq(seal.get_global_rect().position, Vector2(host.size.x - 75, 27), Vector2(3, 3))
+	assert_gte(action.get_global_rect().size.y, 24.0)
+	assert_almost_eq(folio.get_global_rect().position, Vector2(24, 23), Vector2(3, 3))
+	assert_almost_eq(seal.get_global_rect().position, Vector2(host.size.x - 73, 24), Vector2(3, 3))
 	assert_eq(_primary_button_count(host), 1)
-	assert_eq(_visible_text_count(host, "問眞"), 1)
 
 
 func test_hall_uses_the_approved_paper_and_semantic_colors() -> void:
 	var host := _mount_hall(Vector2i(1920, 1080), _running_snapshot())
 	await get_tree().process_frame
 	var paper := _named(host, "HallPaper") as ColorRect
-	var rule := _named(host, "HallPrimaryRule") as ColorRect
+	var rule := _named(host, "TitleRule") as ColorRect
 	assert_not_null(paper, "hall must own the HTML paper color instead of inheriting the global token")
-	assert_not_null(rule, "hall must retain its HTML hairline rule")
+	assert_not_null(rule, "hall must retain its title redline")
 	if paper == null or rule == null:
 		return
 	assert_true(paper.color.is_equal_approx(Color("e5e2d7")), "hall paper must be the HTML PAPER_HALL")
-	assert_true(rule.color.is_equal_approx(Color("b8b6aa")), "hall rule must be the HTML RULE_HALL")
+	assert_true(rule.color.is_equal_approx(Color("82463e")), "hall title redline must be the v8 deep red")
 
 
 func test_hall_running_summary_uses_the_master_ink_color() -> void:
 	var host := _mount_hall(Vector2i(1920, 1080), _running_snapshot())
 	await get_tree().process_frame
-	for label_name in ["hall_summary_route", "hall_summary_rank", "hall_summary_hp"]:
-		var summary_label := _named(host, label_name) as Label
-		assert_not_null(summary_label, "hall running summary needs a named master-visible label: %s" % label_name)
-		if summary_label != null:
-			assert_true(summary_label.get_theme_color("font_color").is_equal_approx(Color("171817")), "%s must use the hall HTML ink" % label_name)
+	for label_name in ["StatVal1", "StatVal2", "StatVal3", "StatVal4"]:
+		var stat_label := _named(host, label_name) as Label
+		assert_not_null(stat_label, "hall stats need a named master-visible label: %s" % label_name)
+		if stat_label != null:
+			assert_true(stat_label.get_theme_color("font_color").is_equal_approx(Color("27271e")),
+					"%s must use the v8 stats ink" % label_name)
 
 
 func _mount_hall(viewport_size: Vector2i, state: Dictionary) -> Control:
@@ -137,7 +132,11 @@ func _running_snapshot() -> Dictionary:
 		"has_save": true,
 		"brand_title": "問眞",
 		"primary_action": "continue_run",
-		"run_summary": {"route": "黑市交易后", "rank": "4 转", "hp": "27"},
+		"run_summary": {
+			"route": "黑市交易后", "rank": "四转", "hp": "27",
+			"lifespan": "41年", "gu_count": 7, "node_count": 63,
+			"curse_count": 2, "build_label": "BUILD 0.9.0 · LOCAL",
+		},
 		"meta_stats": {"runs": 3, "endings": 1},
 	}
 

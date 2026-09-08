@@ -15,7 +15,6 @@ extends MarginContainer
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuEnemyActorScene := preload("res://scenes/ui/widgets/gu_enemy_actor.tscn")
 const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
-const StageBackdrop := preload("res://assets/wenzhen/hall/qing-mao-mountain.png")
 
 const MAX_VISIBLE_ENEMIES := 3
 
@@ -25,14 +24,14 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _enemy_panel = $Root/BattleStage/battle_field/EnemyPanel
 @onready var _inventory = $Root/BattleStage/battle_field/Inventory
 @onready var _feedback_toast = $Root/FeedbackToast
-@onready var _hint_host: VBoxContainer = $Root/HintHost
+@onready var _hint_host: VBoxContainer = $Root/BattleStage/battle_field/HintHost
 @onready var _hand_stage: PanelContainer = $Root/HandStage
-@onready var _primordial_label: Label = $Root/HandStage/battle_hand/LeftMeta/PrimordialRow/PrimordialLabel
-@onready var _piles_label: Label = $Root/HandStage/battle_hand/LeftMeta/PilesRow/PilesLabel
-@onready var _hand = $Root/HandStage/battle_hand/HandArea/Hand
-@onready var _kill_host: VBoxContainer = $Root/HandStage/battle_hand/HandArea/KillHost
-@onready var _ops_row: VBoxContainer = $Root/HandStage/battle_hand/RightOps/OpsRow
-@onready var _mode_host: VBoxContainer = $Root/ModeHost
+@onready var _primordial_label: Label = $Root/HandStage/HandMargin/LeftMeta/PrimordialRow/PrimordialLabel
+@onready var _piles_label: Label = $Root/HandStage/HandMargin/LeftMeta/PilesRow/PilesLabel
+@onready var _hand = $Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand
+@onready var _kill_host: HBoxContainer = $Root/BattleStage/battle_field/BattleInfo/KillRow
+@onready var _ops_row: VBoxContainer = $Root/BattleStage/battle_field/OpsDock/OpsRow
+@onready var _mode_host: VBoxContainer = $Root/BattleStage/battle_field/ModeHost
 @onready var _confirm_dialog = $Root/ConfirmDialog
 @onready var _tooltip_host: PanelContainer = $Root/battle_hand_tooltip_host
 @onready var _tooltip_title: Label = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/hand_tooltip_title
@@ -77,98 +76,20 @@ func _ready() -> void:
 	_refresh()
 
 
-## 叙事层：暗色南疆志怪舞台底色 + 青茅山背景复用。
-## 纸面UI浮在其上形成「命簿记录志怪世界」的层次。
+## 叙事层：以大厅屏为基准——纸面 + 网点背景由根 Backdrop（BattlePaper + BattleDots）提供，
+## 舞台本身完全透明，让纸面网点透出全屏；敌人/玩家纸卡墨框浮于其上，命簿语言统一。
 func _apply_stage_style() -> void:
 	var box := StyleBoxFlat.new()
-	box.bg_color = GuStyle.STAGE_BG
+	box.bg_color = Color(0, 0, 0, 0)
 	box.set_border_width_all(0)
 	box.set_corner_radius_all(0)
 	_battle_stage.add_theme_stylebox_override("panel", box)
 
-	# 复用青茅山图作为战场背景：裁剪覆盖 + 调暗偏冷 + 半透明，营造南疆山林氛围。
-	var backdrop := TextureRect.new()
-	backdrop.texture = StageBackdrop
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	backdrop.modulate = GuStyle.STAGE_BACKDROP_DIM
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backdrop.z_index = -1
-	_battle_stage.add_child(backdrop)
 
-	# 暗角层：径向渐变，中心透明四角深，增强洞窟包围感。
-	var vignette_grad := Gradient.new()
-	vignette_grad.set_color(0, Color(0, 0, 0, 0))
-	vignette_grad.set_color(1, GuStyle.STAGE_VIGNETTE)
-	var vignette_tex := GradientTexture2D.new()
-	vignette_tex.gradient = vignette_grad
-	vignette_tex.fill = GradientTexture2D.FILL_RADIAL
-	vignette_tex.width = 512
-	vignette_tex.height = 512
-	var vignette := TextureRect.new()
-	vignette.texture = vignette_tex
-	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	vignette.stretch_mode = TextureRect.STRETCH_SCALE
-	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vignette.z_index = -1
-	_battle_stage.add_child(vignette)
-
-	# 雾气层：半透明冷灰水平渐变，模拟南疆湿冷山雾。
-	var fog_grad := Gradient.new()
-	fog_grad.set_color(0, GuStyle.FOG_COLOR_EDGE)
-	fog_grad.set_color(0.5, GuStyle.FOG_COLOR_MID)
-	fog_grad.set_color(1, GuStyle.FOG_COLOR_EDGE)
-	var fog_tex := GradientTexture2D.new()
-	fog_tex.gradient = fog_grad
-	fog_tex.fill = GradientTexture2D.FILL_LINEAR
-	fog_tex.width = 512
-	fog_tex.height = 256
-	var fog := TextureRect.new()
-	fog.texture = fog_tex
-	fog.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	fog.stretch_mode = TextureRect.STRETCH_SCALE
-	fog.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	fog.z_index = -1
-	_battle_stage.add_child(fog)
-	# 雾气缓慢飘动：透明度呼吸 + 轻微缩放，低频率循环不吸睛。
-	# 设计文档§12：环境氛围（雾气、烛光）允许低频率循环，不持续吸睛。
-	var fog_tween := create_tween()
-	fog_tween.set_loops()
-	fog_tween.tween_property(fog, "modulate:a", 0.15, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fog_tween.tween_property(fog, "scale", Vector2(1.05, 1.02), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fog_tween.tween_property(fog, "modulate:a", 0.08, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fog_tween.tween_property(fog, "scale", Vector2(1.0, 1.0), 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-	# 萤火层：5-8个暖黄色光点，随机闪烁+缓慢漂移，模拟南疆山林夜间萤火。
-	# 设计文档§12：环境氛围允许低频率循环，不持续吸睛。
-	var firefly_count := 6
-	for i in range(firefly_count):
-		var firefly := ColorRect.new()
-		firefly.color = GuStyle.FIREFLY_COLOR
-		firefly.size = Vector2(3, 3)
-		firefly.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		firefly.z_index = -1
-		# 随机初始位置（舞台范围内）
-		var start_x := randf_range(50.0, 600.0)
-		var start_y := randf_range(50.0, 300.0)
-		firefly.position = Vector2(start_x, start_y)
-		_battle_stage.add_child(firefly)
-		# 萤火闪烁+漂移：透明度呼吸+位置缓慢移动，随机时长避免同步
-		var ft := create_tween()
-		ft.set_loops()
-		var blink_duration := randf_range(2.0, 4.0)
-		var drift_x := randf_range(-30.0, 30.0)
-		var drift_y := randf_range(-20.0, 20.0)
-		ft.tween_property(firefly, "color:a", 0.8, blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		ft.tween_property(firefly, "position", Vector2(start_x + drift_x, start_y + drift_y), blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		ft.tween_property(firefly, "color:a", 0.1, blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		ft.tween_property(firefly, "position", Vector2(start_x, start_y), blink_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-
-## 规则层：手牌区浅色纸面背景，与整体命簿基调一致。
+## 规则层：手牌区透明，纸面+网点由根 Backdrop 提供，与大厅/地图一致。
 func _apply_hand_stage_style() -> void:
 	var box := StyleBoxFlat.new()
-	box.bg_color = GuStyle.PAPER_BG
+	box.bg_color = Color(0, 0, 0, 0)
 	box.set_border_width_all(0)
 	box.set_corner_radius_all(0)
 	_hand_stage.add_theme_stylebox_override("panel", box)
@@ -404,17 +325,28 @@ func _refresh_player(state: Dictionary) -> void:
 	box.add_theme_constant_override("separation", GuStyle.SPACE_3)
 	host.add_child(box)
 
-	# 叙事层：玩家立绘。杀戮尖塔风格：大而醒目、不透明，占据左侧主要空间
+	# 玩家立绘（左下角小立绘：线框稿 v2 104×148，窗口 1280×720 与画布 1:1）
 	var portrait := TextureRect.new()
 	portrait.name = "player_portrait"
 	portrait.texture = PlayerPortrait
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size = Vector2(0, 200)
+	portrait.custom_minimum_size = Vector2(0, 148)
 	portrait.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	# 不透明，明亮，让立绘成为舞台主体
 	portrait.modulate = Color(1, 1, 1, 1)
 	box.add_child(portrait)
+
+	# 玩家名（快照有 name 才显示，不编造）
+	var pname := str(player.get("name", ""))
+	if pname != "":
+		var nm := Label.new()
+		nm.name = "player_name"
+		nm.text = pname
+		nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nm.add_theme_font_override("font", GuStyle.TITLE_FONT)
+		nm.add_theme_font_size_override("font_size", 13)
+		nm.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+		box.add_child(nm)
 
 	var hp = StatBarScene().instantiate()
 	hp.name = "hp"
@@ -447,7 +379,7 @@ func _refresh_enemies(state: Dictionary) -> void:
 	var group := HBoxContainer.new()
 	group.name = "enemy_group"
 	group.alignment = BoxContainer.ALIGNMENT_CENTER
-	group.add_theme_constant_override("separation", GuStyle.SPACE_3)
+	group.add_theme_constant_override("separation", 26)
 	host.add_child(group)
 
 	var valid_targets: Array = _active_card.get("valid_target_ids", [])
@@ -457,8 +389,8 @@ func _refresh_enemies(state: Dictionary) -> void:
 			continue
 		var enemy_id := str(e.get("id", ""))
 		var actor = GuEnemyActorScene.instantiate()
-		# 杀戮尖塔风格：敌人立绘大而醒目，占据右侧主要空间
-		actor.custom_minimum_size = Vector2(280, 220)
+		# 线框稿 v2：敌人卡 208×306（1280×720 窗口与画布 1:1）
+		actor.custom_minimum_size = Vector2(208, 306)
 		# build 函数一律先 add_child：@onready 要等入树后才有值。
 		group.add_child(actor)
 		_enemy_actors[enemy_id] = actor
@@ -523,10 +455,9 @@ func _refresh_hand(state: Dictionary) -> void:
 	var actions: Dictionary = state.get("actions", {})
 	_primordial_label.text = "真元 %d" % int(player.get("primordial", 0))
 	_primordial_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
-	# V1 无牌库/弃牌堆；此槽位显示行动点（念头）预算，与玩家面板同源。
-	_piles_label.text = "行动 %d/%d · 念头 %d" % [
-			int(actions.get("left", 0)), int(actions.get("max", 0)),
-			int(player.get("thoughts", 0))]
+	# V1 无牌库/弃牌堆；此槽位显示行动点预算（念头移右栏按钮下方，与线框稿 v2 一致）。
+	_piles_label.text = "行动 %d/%d" % [
+			int(actions.get("left", 0)), int(actions.get("max", 0))]
 	# 行动预算是玩家必读资源：浅色纸面主题下用墨色保证对比度。
 	_piles_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	# 开源图标：真元用宝石图标，行动点用拳头图标，动态创建一次后复用。
@@ -537,6 +468,7 @@ func _refresh_hand(state: Dictionary) -> void:
 			var p_icon := GuIconView.new()
 			p_icon.name = "primordial_icon"
 			p_icon.setup("yuanstone", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_BODY)
+			p_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			primordial_row.add_child(p_icon)
 			primordial_row.move_child(p_icon, 0)
 	# 行动点图标添加到PilesRow（行动点行）
@@ -546,6 +478,7 @@ func _refresh_hand(state: Dictionary) -> void:
 			var a_icon := GuIconView.new()
 			a_icon.name = "piles_icon"
 			a_icon.setup("gi_fist", GuStyle.INK_PRIMARY, GuIconView.SIZE_SMALL)
+			a_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			piles_row.add_child(a_icon)
 			piles_row.move_child(a_icon, 0)
 
@@ -589,18 +522,35 @@ func _enemy_at(global_pos: Vector2) -> String:
 func _refresh_ops(state: Dictionary) -> void:
 	for c in _ops_row.get_children():
 		c.queue_free()
-	# 杀戮尖塔风格：结束回合按钮大而醒目，使用primary样式（朱砂色背景+白色文字）
+	# 线框稿 v2：三按钮一律纸面 action 角色（浅底≈透明，墨字），结束回合为大号主按钮，右列竖排
 	var end_btn := _op_button("结束回合", func():
 		if _commands.has("end_turn"):
 			_commands["end_turn"].call())
-	MasterTheme.apply_button(end_btn, "primary")
-	end_btn.custom_minimum_size = Vector2(140, 56)
+	MasterTheme.apply_button(end_btn, "action")
+	end_btn.custom_minimum_size = Vector2(150, 52)
+	end_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	end_btn.add_theme_font_size_override("font_size", 18)
 	_ops_row.add_child(end_btn)
 	if _commands.has("refine"):
-		_ops_row.add_child(_op_button("炼蛊", func(): _commands["refine"].call()))
+		var refine_btn := _op_button("炼骨", func(): _commands["refine"].call())
+		refine_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
+		refine_btn.add_theme_font_size_override("font_size", 15)
+		_ops_row.add_child(refine_btn)
 	if _commands.has("flee") and bool(state.get("flee_available", true)):
-		_ops_row.add_child(_op_button("撤退", func(): _commands["flee"].call()))
+		var flee_btn := _op_button("撤退", func(): _commands["flee"].call())
+		flee_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
+		flee_btn.add_theme_font_size_override("font_size", 15)
+		_ops_row.add_child(flee_btn)
+	# 念头预算：右栏按钮下方小注（线框稿 v2：右栏念头 8/12）
+	var note := Label.new()
+	note.name = "thought_note"
+	note.text = "念头 %d/%d" % [int(state.get("player", {}).get("thoughts", 0)),
+			int(state.get("actions", {}).get("max", 0))]
+	note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	note.add_theme_font_size_override("font_size", 9)
+	note.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
+	note.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0))
+	_ops_row.add_child(note)
 
 
 func _op_button(text: String, on_press: Callable) -> Button:
@@ -611,27 +561,99 @@ func _op_button(text: String, on_press: Callable) -> Button:
 	return b
 
 
+## 杀招区（线框稿 v2：舞台中右 3 格纸卡；空位显示「未研习」）。
 func _refresh_kill_moves(state: Dictionary) -> void:
 	for c in _kill_host.get_children():
 		c.queue_free()
-	for km in state.get("kill_moves", []):
-		if not (km is Dictionary):
-			continue
-		var l := Label.new()
-		var cost_line := str(km.get("cost", ""))
-		var suffix := "" if bool(km.get("executable", false)) else "（不可用：%s）" % str(km.get("block_reason", ""))
-		l.text = "杀招 · %s · %s%s" % [
-				str(km.get("name", "")), str(km.get("sequence_display", "")), suffix]
-		l.add_theme_font_size_override("font_size", 13)
-		l.add_theme_color_override("font_color",
-				GuStyle.CINNABAR if not bool(km.get("executable", false)) else GuStyle.INK_MUTED)
-		_kill_host.add_child(l)
-		if cost_line != "":
-			var cost := Label.new()
-			cost.text = "　　◆ " + cost_line
-			cost.add_theme_font_size_override("font_size", 12)
-			cost.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-			_kill_host.add_child(cost)
+	var moves: Array = state.get("kill_moves", [])
+	var slots: Array = []
+	for km in moves:
+		if km is Dictionary:
+			slots.append(km)
+	# 最多 3 格；不足补空位
+	var idx := 0
+	while idx < 3:
+		if idx < slots.size():
+			var km: Dictionary = slots[idx]
+			_kill_host.add_child(_kill_slot(
+					str(km.get("name", "杀招")),
+					str(km.get("sequence_display", "")),
+					str(km.get("cost", "")),
+					bool(km.get("executable", false)),
+					str(km.get("block_reason", ""))))
+		else:
+			_kill_host.add_child(_kill_slot_empty())
+		idx += 1
+
+
+func _kill_slot(title: String, seq: String, cost: String, executable: bool, block_reason: String) -> PanelContainer:
+	var panel := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
+	box.border_color = GuStyle.NODE_REACH_BORDER
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(4)
+	panel.add_theme_stylebox_override("panel", box)
+	panel.custom_minimum_size = Vector2(248, 90)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	panel.add_child(margin)
+	var body := VBoxContainer.new()
+	body.add_theme_constant_override("separation", 4)
+	margin.add_child(body)
+	var t := Label.new()
+	t.text = title
+	t.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	t.add_theme_font_size_override("font_size", 12)
+	t.add_theme_color_override("font_color", GuStyle.INK_PRIMARY if executable else GuStyle.INK_SOFT)
+	body.add_child(t)
+	if seq != "":
+		var s := Label.new()
+		s.text = seq
+		s.add_theme_font_size_override("font_size", 9)
+		s.add_theme_color_override("font_color", GuStyle.INK_MUTED)
+		body.add_child(s)
+	if not executable and block_reason != "":
+		var b := Label.new()
+		b.text = "不可用：%s" % block_reason
+		b.add_theme_font_size_override("font_size", 9)
+		b.add_theme_color_override("font_color", GuStyle.CINNABAR)
+		body.add_child(b)
+	if cost != "":
+		var c := Label.new()
+		c.text = "念头 %s" % cost
+		c.add_theme_font_size_override("font_size", 9)
+		c.add_theme_color_override("font_color", GuStyle.CINNABAR)
+		c.size_flags_vertical = Control.SIZE_SHRINK_END
+		body.add_child(c)
+	return panel
+
+
+func _kill_slot_empty() -> PanelContainer:
+	var panel := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = GuStyle.NODE_FUTURE_BORDER
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(4)
+	panel.add_theme_stylebox_override("panel", box)
+	panel.custom_minimum_size = Vector2(248, 90)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	panel.add_child(margin)
+	var l := Label.new()
+	l.text = "未研习"
+	l.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	l.add_theme_font_size_override("font_size", 12)
+	l.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
+	margin.add_child(l)
+	return panel
 
 
 func _refresh_hints(state: Dictionary) -> void:

@@ -25,7 +25,11 @@ func test_hall_view_exposes_wenzhen_brand_and_quiet_menu() -> void:
 		"has_save": false,
 		"brand_title": "問眞",
 		"primary_action": "open_schools",
-		"run_summary": {"route": "", "rank": "0 转", "hp": "0"},
+		"run_summary": {
+			"route": "", "rank": "0转", "hp": "0",
+			"lifespan": "0年", "gu_count": 0, "node_count": 0,
+			"curse_count": 0, "build_label": "BUILD 0.9.0 · LOCAL",
+		},
 		"available_schools": [
 			{"id": "blood", "name": "血道"},
 			{"id": "qi", "name": "气道"},
@@ -41,10 +45,10 @@ func test_hall_view_exposes_wenzhen_brand_and_quiet_menu() -> void:
 	host.add_child(root)
 	await get_tree().process_frame
 	var texts := TscnMountHelper.texts(root)
-	assert_true(texts.has("問眞"), "hall must show the formal brand")
+	assert_true(_any_contains(texts, "問眞"), "hall must show the formal brand")
 	assert_true(_any_contains(texts, "开始此世"), "hall must offer its sole new-run entry")
 	assert_true(_any_contains(texts, "图鉴"), "hall must expose codex")
-	assert_true(_any_contains(texts, "手记库"), "hall must expose journal")
+	assert_true(_any_contains(texts, "手记"), "hall must expose journal")
 	assert_false(_any_contains(texts, "继续上次冒险"), "hall must not expose the old secondary continue action")
 
 

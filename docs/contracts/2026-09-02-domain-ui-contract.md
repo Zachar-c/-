@@ -37,6 +37,8 @@ UI (scenes + scripts/ui)
 | screen | 构建函数 | 关键键（现状） |
 | --- | --- | --- |
 | `Title` | `hall()` | 大厅进度/图鉴/开始入口、`selected_school`/`selected_school_name`（选中流派中文名，`_school_display_name`） |
+
+大厅主界面快照（v8 线框稿还原，2026-09-07）：`run_summary` 携带 `route`（当前节点名，`_run_route_label`）、`rank`（中文转数，如「四转」）、`hp`（气血数值）、`lifespan`（`cultivator.lifespan - lifespan_debt`，如「41年」）、`gu_count`（`gu_ids.size()` 持有数，**不显示伪造分母**——项目红线：持有数量无通用硬上限）、`node_count`（`route_progress.size()`）、`curse_count`（`cultivator.statuses` 中 `layers>0` 条目数，语义近似参考图「N只诅咒蛊」）、`build_label`（固定「BUILD 0.9.0 · LOCAL」）。另含 `hall_epoch`（「今世·第N劫」，N=node_count+1 中文数字）、`prev_life`（「上一世止于：<route>」，读档场景即当前世上次退出节点；无存档为「—」）、`prev_note`（「札记新得：<最新手记标题>」，取自 `journal` 末条，无则为「—」）。UI 只消费以上只读键，不得反写领域。
 | `Map` | `map()` | `nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、可达集、当前层、`inventory` |
 | `Encounter` | `encounter()` | 遭遇会话、`node_actions[]`（含 `cost/executable/block_reason/remedy_hints`） |
 | `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`（卡含 `school_label` 中文流派名）、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version` |

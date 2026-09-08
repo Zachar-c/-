@@ -54,6 +54,20 @@ const INK_MAP_LABEL := Color("92948d")      # 地图 HTML 层级标签
 const INK_MAP_VALUE := Color("252624")      # 地图 HTML 资源数值
 const INK_MAP_NAME  := Color("666861")      # 地图 HTML 资源名称
 
+# —— Map route-node card tokens (2026-09-07 v1 wireframe) ——
+# 节点卡三态视觉沉淀在公共 token：此刻=墨框+朱砂左线、下一程=浅底墨框、
+# 再前=透明淡边。屏代码只消费 token，不私有硬编码色值。
+const NODE_CURRENT_BORDER := Color("343430")  # 此刻：墨框
+const NODE_REACH_BG       := Color("f6f3e9")  # 下一程：浅纸底
+const NODE_REACH_BORDER   := Color("9a978c")  # 下一程：清晰墨框
+const NODE_FUTURE_BORDER  := Color("c9c6b8")  # 再前：淡墨边（Godot 无虚线，以淡实框近似）
+const NODE_FUTURE_INK     := Color("a4a49b")  # 再前：标题文字
+const NODE_KIND_INK       := Color("6d6e64")  # 节点类别文字
+const NODE_MARK_RADIUS    := 8                # 角标圆角（线框稿 8px）
+const NODE_LEFT_LINE      := 4                # 此刻/选中：朱砂左标线宽
+const ENEMY_CARD_BORDER   := Color("d5d3c6")  # 敌人卡纸白边框（线框稿 .enemy 边框）
+const ENEMY_CARD_TEXT     := Color("56564c")  # 敌人卡状态行文字（线框稿 .sts 文字）
+
 # —— Hairline / rule ——
 const RULE := Color("aaa89f")
 const HAIRLINE_COLOR := Color("aaa89f")        # 发丝分隔线色

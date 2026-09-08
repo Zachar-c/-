@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3]
+﻿[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/widgets/gu_top_bar_view.gd" id="1_top_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_icon.tscn" id="2_icon"]
@@ -9,10 +9,10 @@ script = ExtResource("1_top_bar")
 
 [node name="BarMargin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 20
 
 [node name="BarRow" type="HBoxContainer" parent="BarMargin"]
 layout_mode = 2
@@ -20,9 +20,10 @@ theme_override_constants/separation = 20
 
 [node name="StatusHost" type="HBoxContainer" parent="BarMargin/BarRow"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 90
 
 [node name="QiStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
 theme_override_constants/separation = 4
 
@@ -35,6 +36,7 @@ theme_override_font_sizes/font_size = 15
 text = "0/0"
 
 [node name="ShouStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
 theme_override_constants/separation = 4
 
@@ -47,6 +49,7 @@ theme_override_font_sizes/font_size = 15
 text = "0/0"
 
 [node name="HunStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
 theme_override_constants/separation = 4
 
@@ -59,6 +62,7 @@ theme_override_font_sizes/font_size = 15
 text = "0/0"
 
 [node name="YuanStatus" type="HBoxContainer" parent="BarMargin/BarRow/StatusHost"]
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
 theme_override_constants/separation = 4
 
@@ -79,7 +83,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="BagButton" type="Button" parent="BarMargin/BarRow/ActionHost"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 flat = true
 focus_mode = 0
@@ -91,16 +95,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -10.0
-offset_top = -10.0
-offset_right = 10.0
-offset_bottom = 10.0
+offset_left = -8.0\noffset_top = -8.0\noffset_right = 8.0\noffset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="SettingsButton" type="Button" parent="BarMargin/BarRow/ActionHost"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 flat = true
 focus_mode = 0
@@ -112,10 +113,7 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -10.0
-offset_top = -10.0
-offset_right = 10.0
-offset_bottom = 10.0
+offset_left = -8.0\noffset_top = -8.0\noffset_right = 8.0\noffset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

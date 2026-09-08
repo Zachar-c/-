@@ -27,21 +27,27 @@ const CODEX_TAB_NAMES := {
 @onready var _schools_view: VBoxContainer = $Root/SchoolsView
 @onready var _contracts_view: VBoxContainer = $Root/ContractsView
 
-# 主界面
+# 主界面（v8 线框稿：左/中/右三栏 + 印章 + 红线连接黑线）
 @onready var _hall_paper: ColorRect = $Root/MainView/HallPaper
-@onready var _title_rule: ColorRect = $Root/MainView/HallSheet/HallIdentity/TitleRule
-@onready var _primary_rule: ColorRect = $Root/MainView/HallSheet/HallPrimaryRule
-@onready var _archive_rule: ColorRect = $Root/MainView/HallSheet/HallArchiveRule
 @onready var _hall_title: Label = $Root/MainView/HallSheet/HallIdentity/HallTitle
-@onready var _volume_label: Label = $Root/MainView/HallSheet/HallPrimary/VolumeLabel
+@onready var _title_rule: ColorRect = $Root/MainView/HallSheet/HallIdentity/TitleRule
+@onready var _prev_life: Label = $Root/MainView/HallSheet/HallIdentity/HallPrevLife
+@onready var _prev_note: Label = $Root/MainView/HallSheet/HallIdentity/HallPrevNote
+@onready var _epoch: Label = $Root/MainView/HallSheet/HallPrimary/HallEpoch
 @onready var _primary_action: Button = $Root/MainView/HallSheet/HallPrimary/HallPrimaryAction
-@onready var _primary_note: Label = $Root/MainView/HallSheet/HallPrimary/PrimaryNote
-@onready var _no_save_host: VBoxContainer = $Root/MainView/HallSheet/HallPrimary/NoSaveHost
-@onready var _summary_host: VBoxContainer = $Root/MainView/HallSheet/HallPrimary/SummaryHost
-@onready var _meta_host: HBoxContainer = $Root/MainView/HallSheet/HallPrimary/MetaHost
+@onready var _primary_note: Label = $Root/MainView/HallSheet/HallPrimary/HallPrimaryNote
+@onready var _stat_val1: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal1
+@onready var _stat_val2: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal2
+@onready var _stat_val3: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal3
+@onready var _stat_val4: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal4
+@onready var _status1: Label = $Root/MainView/HallSheet/HallPrimary/HallStatusRow/StatusItem1
+@onready var _status2: Label = $Root/MainView/HallSheet/HallPrimary/HallStatusRow/StatusItem2
+@onready var _status3: Label = $Root/MainView/HallSheet/HallPrimary/HallStatusRow/StatusItem3
+@onready var _build_ver: Label = $Root/MainView/HallSheet/HallArchive/HallBuildVer
 @onready var _journal_link: Button = $Root/MainView/HallSheet/HallArchive/JournalLink
 @onready var _codex_link: Button = $Root/MainView/HallSheet/HallArchive/CodexLink
 @onready var _settings_link: Button = $Root/MainView/HallSheet/HallArchive/SettingsLink
+@onready var _quit_link: Button = $Root/MainView/HallSheet/HallArchive/QuitLink
 
 # 图鉴
 @onready var _codex_completion: Label = $Root/CodexView/CodexTitleRow/CodexCompletion
@@ -87,39 +93,65 @@ func _ready() -> void:
 
 
 ## 大厅场景中 .tscn 硬编码的颜色统一走 GuStyle token（2026-09-06 视觉审计修复）。
-## 同时添加淡青茅山背景层和标题对比度修复。
+## v8（2026-09-07）：纸面 + 网点层 + 标题墨色 + 竖线/印章朱砂系。
 func _apply_paper_colors() -> void:
 	_hall_paper.color = GuStyle.PAPER_HALL
-	_title_rule.color = GuStyle.CINNABAR
-	_primary_rule.color = GuStyle.RULE_HALL
-	_archive_rule.color = GuStyle.RULE_HALL
-	# 标题对比度修复：問眞标题使用墨色，避免白色低对比度
-	_hall_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	_hall_title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.15))
-	_hall_title.add_theme_constant_override("shadow_offset_x", 1)
-	_hall_title.add_theme_constant_override("shadow_offset_y", 1)
-	# 淡青茅山背景层：半透明，营造命簿背后的南疆山水氛围
-	_apply_hall_backdrop()
+	_title_rule.color = Color("82463e")
+	# 标题对比度修复：問眞命簿使用墨色，避免白色低对比度
+	_hall_title.add_theme_color_override("font_color", Color("343430"))
+	_hall_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_hall_title.add_theme_constant_override("line_spacing", 6)
+	_apply_continue_style(_primary_action)
+	_apply_menu_style(_journal_link)
+	_apply_menu_style(_codex_link)
+	_apply_menu_style(_settings_link)
+	_apply_menu_style(_quit_link)
 
 
-## 大厅屏淡青茅山背景：在纸面之上添加半透明山水层，营造命簿背后的南疆氛围。
-func _apply_hall_backdrop() -> void:
-	if _hall_paper == null or not is_instance_valid(_hall_paper):
+## v8：续入此世按钮 = 浅底 #e3e3d7 + 深灰文字（参考图实测），hover 微深。
+func _apply_continue_style(btn: Button) -> void:
+	if btn == null:
 		return
-	# 检查是否已添加背景层，避免重复
-	if _hall_paper.get_node_or_null("HallBackdrop") != null:
+	btn.add_theme_font_size_override("font_size", 13)
+	btn.add_theme_color_override("font_color", Color("56534f"))
+	btn.add_theme_color_override("font_hover_color", Color("56534f"))
+	btn.add_theme_color_override("font_pressed_color", Color("3c3a36"))
+	btn.add_theme_color_override("font_focus_color", Color("56534f"))
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color("e3e3d7")
+	normal.set_corner_radius_all(2)
+	btn.add_theme_stylebox_override("normal", normal)
+	var hover := StyleBoxFlat.new()
+	hover.bg_color = Color("d8d6c9")
+	hover.set_corner_radius_all(2)
+	btn.add_theme_stylebox_override("hover", hover)
+	var pressed := StyleBoxFlat.new()
+	pressed.bg_color = Color("cccabe")
+	pressed.set_corner_radius_all(2)
+	btn.add_theme_stylebox_override("pressed", pressed)
+	var focus := StyleBoxFlat.new()
+	focus.bg_color = Color("e3e3d7")
+	focus.set_corner_radius_all(2)
+	btn.add_theme_stylebox_override("focus", focus)
+	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
+## v8：右栏菜单 = 纯文字（flat），软墨色，hover 转朱砂。
+func _apply_menu_style(btn: Button) -> void:
+	if btn == null:
 		return
-	var backdrop := TextureRect.new()
-	backdrop.name = "HallBackdrop"
-	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	# 大厅屏是规则层浅色命簿，背景使用极淡的山水（透明度0.08），不影响可读性
-	backdrop.modulate = GuStyle.HALL_BACKDROP_DIM
-	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	# 作为HallPaper的子节点，显示在纸面之上、UI之下
-	_hall_paper.add_child(backdrop)
+	btn.flat = true
+	btn.add_theme_font_size_override("font_size", 11)
+	btn.add_theme_color_override("font_color", Color("56564c"))
+	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_focus_color", Color("56564c"))
+	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	btn.custom_minimum_size = Vector2(0, 0)
+	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
+## 大厅屏淡青茅山背景层已随 v8 网点纸面退役（参考图为纯网点背景，无山水层）。
 
 
 ## run_controller 的挂载入口（与各屏同签名）。
@@ -135,6 +167,7 @@ func _wire_static_buttons() -> void:
 	_journal_link.pressed.connect(func(): _fire("open_journal"))
 	_codex_link.pressed.connect(func(): _fire("open_codex"))
 	_settings_link.pressed.connect(func(): _fire("open_settings"))
+	_quit_link.pressed.connect(func(): _fire("quit"))
 	_codex_back.pressed.connect(func(): _fire("back_to_hall"))
 	_settings_back.pressed.connect(func(): _fire("back_to_hall"))
 	_settings_quit.pressed.connect(func(): _fire("quit"))
@@ -180,49 +213,47 @@ func _refresh_main() -> void:
 			"continue_run" if has_save else "open_schools"))
 	var run_summary: Dictionary = _snapshot.get("run_summary", {})
 
-	_hall_title.text = str(_snapshot.get("brand_title", "問眞"))
+	# v8：竖排大标题「問眞命簿」两行，品牌取快照（默认問眞）。
+	_hall_title.text = str(_snapshot.get("brand_title", "問眞")) + "\n命簿"
 	_hall_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
-	_volume_label.text = "命蠱 · 第 %s 卷" % ("六十三" if has_save else "新")
 
+	# 左栏：上一世止于 / 札记新得
+	_prev_life.text = str(_snapshot.get("prev_life", "上一世止于：—"))
+	_prev_note.text = str(_snapshot.get("prev_note", "札记新得：—"))
+
+	# 中栏：今世劫数 + 续入此世
+	_epoch.text = str(_snapshot.get("hall_epoch", "今世·第一劫"))
 	var primary_label := "续入此世" if primary_action == "continue_run" else "开始此世"
-	_primary_action.text = primary_label + " ›"
-	MasterTheme.apply_button(_primary_action, "primary")
+	_primary_action.text = primary_label + " >"
+	_apply_continue_style(_primary_action)
 	# primary_action 是动态的，重绑前先断开旧连接避免重复触发。
 	_rebind(_primary_action, func(): _fire(primary_action))
 
 	var route := str(run_summary.get("route", "流派选择"))
-	_primary_note.text = "将从 " + route + (" 继续。此世没有回溯。" if has_save else " 开始，随后进入南疆。")
+	_primary_note.text = ("将从 " + route + " 继续。此世没有回溯。" if has_save
+			else "将开始新的一世。此世没有回溯。")
 
-	_clear(_no_save_host)
-	if not has_save:
-		var note := Label.new()
-		note.text = "新一世不会继承修为、蛊虫或元石。已解锁的蛊方、手记与契约仍可查阅。"
-		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		note.custom_minimum_size = Vector2(0, 54)
-		note.add_theme_font_size_override("font_size", 13)
-		note.add_theme_color_override("font_color", GuStyle.INK_SOFT)
-		_no_save_host.add_child(note)
+	# 数值四列（修为/寿元/蛊囊/节点）
+	_stat_val1.text = str(run_summary.get("rank", "0转"))
+	_stat_val2.text = str(run_summary.get("lifespan", "0年"))
+	_stat_val3.text = str(run_summary.get("gu_count", 0))
+	_stat_val4.text = str(run_summary.get("node_count", 0))
 
-	_clear(_summary_host)
-	if has_save:
-		for key in ["route", "rank", "hp"]:
-			var value := str(run_summary.get(key, ""))
-			if value == "":
-				continue
-			var prefixes: Dictionary = {"route": "行路：", "rank": "转数：", "hp": "气血："}
-			var prefix := str(prefixes.get(key, ""))
-			var summary_label := _label(prefix + value, GuStyle.INK_HALL, 15)
-			# 主可见命名标签：验收按名定位（hall_summary_route/rank/hp）。
-			summary_label.name = "hall_summary_" + key
-			_summary_host.add_child(summary_label)
+	# 状态行三段（竖线分隔）：契约 / 异变 / 诅咒蛊
+	_status1.text = "契约·%s" % _first_name(_snapshot.get("contracts", []), "—")
+	_status2.text = "异变·%s" % _first_name(_snapshot.get("anomalies", []), "—")
+	_status3.text = "%d只诅咒蛊" % int(run_summary.get("curse_count", 0))
 
-	_clear(_meta_host)
-	for c in _snapshot.get("contracts", []):
-		var cname := str(c.get("name", c.get("id", "契约"))) if c is Dictionary else str(c)
-		_meta_host.add_child(_badged_label("契约 · " + cname, GuStyle.CONTRACT_BLUE))
-	for a in _snapshot.get("anomalies", []):
-		var aname := str(a.get("label", a.get("id", "异变"))) if a is Dictionary else str(a)
-		_meta_host.add_child(_badged_label("异变 · " + aname, GuStyle.ANOMALY_YELLOW))
+	_build_ver.text = str(run_summary.get("build_label", "BUILD 0.9.0 · LOCAL"))
+
+
+## 从条目数组取首个可读名称（Dictionary 取 name/id，String 直接取）。
+func _first_name(arr: Array, fallback: String) -> String:
+	for e in arr:
+		if e is Dictionary:
+			return str(e.get("name", e.get("id", fallback)))
+		return str(e)
+	return fallback
 
 
 # ————————————————————————— 图鉴 —————————————————————————
@@ -520,17 +551,6 @@ func _label(text: String, color: Color, size: int) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", color)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	return l
-
-
-func _badged_label(text: String, color: Color) -> Label:
-	var l := _label(text, color, 12)
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(0, 0, 0, 0)
-	box.border_color = color
-	box.border_width_left = 2
-	box.content_margin_left = 8
-	l.add_theme_stylebox_override("normal", box)
 	return l
 
 

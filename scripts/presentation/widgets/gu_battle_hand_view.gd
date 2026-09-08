@@ -52,6 +52,10 @@ func _rebuild(interaction: Dictionary) -> void:
 		var cancel := Button.new()
 		cancel.text = "取消目标"
 		MasterTheme.apply_button(cancel, "cancel")
+		cancel.custom_minimum_size = Vector2(0, 20)
+		cancel.add_theme_font_size_override("font_size", 12)
+		cancel.add_theme_constant_override("content_margin_top", 3)
+		cancel.add_theme_constant_override("content_margin_bottom", 3)
 		cancel.pressed.connect(func():
 			if _on_cancel.is_valid():
 				_on_cancel.call())
@@ -63,38 +67,23 @@ func _build_card(card: Dictionary, interaction: Dictionary) -> Node:
 	var executable := bool(card.get("executable", true))
 	var is_active: bool = str(interaction.get("card_id", "")) == card_id
 
-	# 卡牌主体：VBoxContainer 包裹蛊虫插画 + 交互按钮
+	# 卡牌主体：线框稿 v2 紧凑文字卡 168×74（名称/道阶/效果/费用 4 行，无插画）
 	var card_box := VBoxContainer.new()
 	card_box.name = "card_box_" + card_id
-	card_box.custom_minimum_size = Vector2(150, 170)
+	card_box.custom_minimum_size = Vector2(168, 74)
 	card_box.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	card_box.add_theme_constant_override("separation", 2)
-
-	# 蛊虫插画区：异常自然志图鉴风格，按名称关键词匹配
-	var gu_image := TextureRect.new()
-	gu_image.name = "gu_image"
-	gu_image.custom_minimum_size = Vector2(0, 80)
-	gu_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	gu_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var gu_tex := _load_gu_illustration(str(card.get("name", "")))
-	if gu_tex != null:
-		gu_image.texture = gu_tex
-	else:
-		# 无匹配插画时用虫形图标占位
-		var icon_path := GuIconView.ICON_DIR + GuIconView.ICON_PATHS["insect"] + ".svg"
-		gu_image.texture = load(icon_path)
-		gu_image.modulate = GuStyle.INK_SOFT
-	card_box.add_child(gu_image)
+	card_box.add_theme_constant_override("separation", 0)
 
 	var btn := Button.new()
 	btn.name = "card_body_" + card_id
 	btn.text = _card_face_text(card)
 	btn.clip_text = true
 	btn.autowrap_mode = TextServer.AUTOWRAP_OFF
-	btn.custom_minimum_size = Vector2(150, 85)
+	btn.custom_minimum_size = Vector2(168, 74)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	MasterTheme.apply_button(btn, "card")
-	btn.add_theme_font_size_override("font_size", 12)
+	btn.custom_minimum_size = Vector2(168, 74)
+	btn.add_theme_font_size_override("font_size", 10)
 	btn.modulate = Color(1, 1, 1, 1.0) if executable else Color(1, 1, 1, 0.55)
 	if is_active:
 		btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
@@ -147,9 +136,10 @@ func _load_texture(path: String) -> Texture2D:
 	return ImageTexture.create_from_image(img)
 
 
-## 卡面多行文案：品质 / 名称 / 费用 / 效果摘要（详细说明仍走统一 tooltip）。
+## 卡面多行文案：名称 / 道阶 / 效果摘要 / 费用（线框稿 v2 行序；详细说明仍走统一 tooltip）。
 func _card_face_text(card: Dictionary) -> String:
 	var quality := str(card.get("quality", "普通"))
+	var school := str(card.get("school_label", ""))
 	var name := str(card.get("name", "蛊虫"))
 	# cost 已是展示文案（如「念头 1」）；cost_ex 仅在数据自带时优先。
 	var cost := str(card.get("cost_ex", ""))
@@ -160,11 +150,17 @@ func _card_face_text(card: Dictionary) -> String:
 	var paren := effect.find("（")
 	if paren >= 0:
 		effect = effect.substr(0, paren)
-	if effect.length() > 14:
-		effect = effect.substr(0, 14) + "…"
-	var lines: Array[String] = ["〔%s〕" % quality, name, "◆ %s" % cost]
+	if effect.length() > 12:
+		effect = effect.substr(0, 12) + "…"
+	var lines: Array[String] = [name]
+	if not school.is_empty():
+		lines.append("%s · %s" % [school, quality])
+	else:
+		lines.append(quality)
 	if not effect.is_empty():
 		lines.append(effect)
+	if not cost.is_empty():
+		lines.append("◆ %s" % cost)
 	return "\n".join(lines)
 
 

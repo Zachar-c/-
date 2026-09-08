@@ -40,7 +40,7 @@ func _load_enemy_texture(path: String) -> Texture2D:
 @onready var _hp_host: VBoxContainer = $ActorMargin/ActorBody/HpHost
 @onready var _stat_bar = $ActorMargin/ActorBody/HpHost/StatBar
 @onready var _shield_label: Label = $ActorMargin/ActorBody/ShieldLabel
-@onready var _status_host: VBoxContainer = $ActorMargin/ActorBody/StatusHost
+@onready var _status_host: FlowContainer = $ActorMargin/ActorBody/StatusHost
 
 var _on_select: Callable = Callable()
 var _enemy_id := ""
@@ -89,9 +89,13 @@ func _refresh_intent(enemy: Dictionary) -> void:
 		intent_label = "防御"
 		color = GuStyle.ANOMALY_YELLOW
 
-	_intent_label.text = "意图：%s %d · 速 %d\n%s" % [intent_label, ivalue, ispeed, idetail]
+	# 线框稿 v2：意图单行小标签【蓄力 · 3】式，detail 入 tooltip；
+	# speed>0 时追加「速 N」（回归测试 test_b3_experience_gaps 要求速度可见）。
+	var speed_txt := ""
+	if ispeed > 0:
+		speed_txt = " 速 %d" % ispeed
+	_intent_label.text = "意图：【%s · %d】%s" % [intent_label, ivalue, speed_txt]
 	_intent_label.tooltip_text = "意图：%s；数值 %d；速度 %d；%s" % [itype, ivalue, ispeed, idetail]
-	_intent_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_intent_label.add_theme_font_size_override("font_size", 14)
 	_intent_label.add_theme_color_override("font_color", color)
 
@@ -145,22 +149,39 @@ func _refresh_statuses(enemy: Dictionary) -> void:
 
 
 ## 带开源图标的状态行：匹配到图标时用 HBoxContainer 包裹图标+文本，无匹配回退纯文本。
+## 线框稿 v2：状态为横排小标签（纸卡墨框，浅底），不再竖排堆叠。
 func _status_row(status_name: String, stacks: int) -> Control:
+	var tag := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(1, 1, 1, 0.3)
+	box.border_color = GuStyle.ENEMY_CARD_BORDER
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(2)
+	tag.add_theme_stylebox_override("panel", box)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_top", 2)
+	margin.add_theme_constant_override("margin_bottom", 2)
+	tag.add_child(margin)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	margin.add_child(row)
 	var icon_name := ""
 	for key in STATUS_ICON_MAP.keys():
 		if status_name.contains(key):
 			icon_name = STATUS_ICON_MAP[key]
 			break
-	if icon_name.is_empty() or not GuIconView.has(icon_name):
-		return _status_label("%s %d 层" % [status_name, stacks])
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
-	var icon := GuIconView.new()
-	icon.setup(icon_name, Color(0, 0, 0, 0), GuIconView.SIZE_SMALL)
-	row.add_child(icon)
-	var label := _status_label("%s %d 层" % [status_name, stacks])
+	if not icon_name.is_empty() and GuIconView.has(icon_name):
+		var icon := GuIconView.new()
+		icon.setup(icon_name, Color(0, 0, 0, 0), GuIconView.SIZE_SMALL)
+		row.add_child(icon)
+	var label := Label.new()
+	label.text = "%s %d" % [status_name, stacks]
+	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_color_override("font_color", GuStyle.ENEMY_CARD_TEXT)
 	row.add_child(label)
-	return row
+	return tag
 
 
 ## 敌人立绘：按名称关键词匹配对应异常自然志图鉴立绘，无匹配回退主角立绘翻转。
@@ -212,12 +233,12 @@ func _status_label(text: String) -> Label:
 	return label
 
 
-## 杀戮尖塔风格：完全透明背景，选中态用 JADE 描边（可点目标）+ 立绘提亮。
+## 线框稿 v2：纸卡墨框（半透明纸底 + 墨描边），选中态玉绿描边 + 立绘提亮。
 func _apply_actor_style(selected: bool) -> void:
 	var box := StyleBoxFlat.new()
-	box.bg_color = Color(0, 0, 0, 0)  # 完全透明背景
-	box.border_color = GuStyle.JADE if selected else Color(0, 0, 0, 0)  # 选中态玉绿描边，未选中无边框
-	box.set_border_width_all(2 if selected else 0)
+	box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
+	box.border_color = GuStyle.JADE if selected else Color(52 / 255.0, 52 / 255.0, 48 / 255.0, 1)  # #343430
+	box.set_border_width_all(2 if selected else 1)
 	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	add_theme_stylebox_override("panel", box)
 	var current := _enemy_portrait.modulate

@@ -11,6 +11,10 @@ const LAYER_ORDER: Array[String] = ["one", "two", "three", "four", "five"]
 const BOSS_NODE_ID := "final_boss_stand"
 const ASCENSION_NODE_ID := "ascension_window"
 
+# 休整节点行间距。2026-09-08 由 3 收紧到 2（玩家反馈重复打怪、续航点太少，
+# 生成图里战斗占比一度 82%）。测试以它为唯一事实来源，别在测试里另写数字。
+const REST_ROW_STRIDE := 2
+
 
 static func layer_index(stage: String) -> int:
 	return LAYER_ORDER.find(str(stage)) + 1
@@ -169,7 +173,7 @@ static func _anchor_rows(cfg: Dictionary, row_count: int, rng: SeededRng) -> Dic
 	# 一度高达 82%，续航/补给密度过低。休整由每三行加密到每两行。
 	# 同层交错取两张休整模板，保证长层也有续航节点。
 	var rest_index := 0
-	for rest_row in range(1, row_count - 1, 2):
+	for rest_row in range(1, row_count - 1, REST_ROW_STRIDE):
 		var rest_template := "rest_hollow" if rest_index % 2 == 0 else "rest_shrine"
 		rest_index += 1
 		if not anchor_rows.has(rest_row):

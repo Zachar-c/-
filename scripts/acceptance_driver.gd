@@ -1008,7 +1008,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 			"res://scenes/ui/screens/battle_screen.tscn", battle_state, cmds)
 	await process_frame
 
-	var ops := battle.get_node("Root/HandStage/battle_hand/RightOps/OpsRow")
+	var ops := battle.get_node("Root/BattleStage/battle_field/OpsDock/OpsRow")
 	if ops.get_child_count() < 3:
 		push_error("tscn 战斗屏操作按钮不足（应有 结束回合 / 炼蛊 / 撤退）")
 		_teardown_mounts()

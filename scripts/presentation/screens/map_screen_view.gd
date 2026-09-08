@@ -30,22 +30,37 @@ const NODE_STYLE := {
 	"cultivation": {"mark": "息", "kind": "修行", "color": GuStyle.INK_MAP},
 	"refinement": {"mark": "市", "kind": "炼蛊", "color": GuStyle.INK_MAP},
 	"ascension": {"mark": "險", "kind": "突破", "color": GuStyle.INK_MAP},
+	"inheritance": {"mark": "遺", "kind": "传承", "color": GuStyle.INK_MAP},
+	"hazard": {"mark": "險", "kind": "险途", "color": GuStyle.INK_MAP},
+	"wild_gu": {"mark": "蛊", "kind": "野蛊", "color": GuStyle.INK_MAP},
+	"earth_vein": {"mark": "脈", "kind": "地脉", "color": GuStyle.INK_MAP},
+	"contact": {"mark": "缘", "kind": "机缘", "color": GuStyle.INK_MAP},
+	"commission": {"mark": "令", "kind": "悬令", "color": GuStyle.INK_MAP},
+	"ledger": {"mark": "账", "kind": "账目", "color": GuStyle.INK_MAP},
 }
 const UNKNOWN_STYLE := {"mark": "?", "kind": "未知", "color": GuStyle.INK_MAP_FAINT}
 const ELITE_STYLE := {"mark": "險", "kind": "精英", "color": GuStyle.INK_MAP}
 
-# —— 布局常量：沿用 HTML 主屏的 1280px 拓扑坐标系，镜头只做裁切 ——
+# —— 布局常量：以线框稿 v1 画布（1280×720）为基准，按设计分辨率等比映射 ——
+# 节点行区：画布 x=236..844（三列 236/446/656，行内节点在该区内居中分布）。
+# 行标签对齐节点带内（中心偏下）；三行带锚定此刻/下一程/再前。
 const NODE_SIZE := Vector2(192, 126)
-const FUTURE_NODE_SIZE := Vector2(168, 108)
-const CANDIDATE_Y := 482.0
-const FUTURE_Y := 31.0
-const CURRENT_Y := 712.0
+const FUTURE_NODE_SIZE := Vector2(188, 108)
+## 三行带（camera 内坐标，设计 1920×1080）：此刻/下一程/再前 = 画布 y(538/360/150) × 1.5 - camera_top(128)
+const CANDIDATE_Y := 412.0
+const FUTURE_Y := 97.0
+const CURRENT_Y := 679.0
 const LAYER_X_MARGIN := 12.0
 const LAYER_X_GAP := 18.0
 const DESIGN_WIDTH := 1280.0
+const DESIGN_HEIGHT := 720.0
+const ROW_X_START := 236.0
+const ROW_X_END := 844.0
+const CAMERA_LEFT_RATIO := 0.02
+const ROUTES_OFFSET := 22.0
 const MAX_VISIBLE_ROWS := 3
-## 深度刻度三条带（底=当前层、中=下一层、顶=+2 层）。
-const DEPTH_BAND_Y := [678.0, 348.0, 18.0]
+## 深度刻度三条带：对齐节点带顶（画布 y 150/360/538 × 1.5 - 128）。
+const DEPTH_BAND_Y := [679.0, 412.0, 97.0]
 const DEPTH_BAND_NAMES := ["now", "near", "far"]
 ## 刊头资源条：material 属蛊囊范畴，按领域约定不上地图 HUD。
 const RESOURCE_SPECS := ["yuanstone", "shouyuan", "hunpo"]
@@ -57,7 +72,10 @@ const RESOURCE_SPECS := ["yuanstone", "shouyuan", "hunpo"]
 @onready var _contract_badge: Label = $map_root/map_markers/map_contract_badge
 @onready var _anomaly_badge: Label = $map_root/map_markers/map_anomaly_badge
 @onready var _zone_label: Label = $map_root/map_title/map_zone_label
-@onready var _subtitle_label: Label = $map_root/map_title/map_subtitle_label
+@onready var _subtitle_label: Label = $map_root/map_subtitle_label
+@onready var _title_rule: ColorRect = $map_root/map_title_rule
+@onready var _divider_r: ColorRect = $map_root/map_divider_r
+@onready var _build_ver: Label = $map_root/map_build_ver
 @onready var _camera_backdrop: Panel = $map_root/map_camera/map_camera_backdrop
 @onready var _depth_rail: Panel = $map_root/map_camera/map_depth
 @onready var _map_paths = $map_root/map_camera/map_world/map_routes/map_paths
@@ -108,6 +126,10 @@ func _apply_static_theme() -> void:
 	_zone_label.add_theme_color_override("font_color", GuStyle.INK_MAP)
 	_zone_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	_subtitle_label.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
+	# v1 线框稿：地带标题下红线 / 右栏分隔线 / 版本号
+	_title_rule.color = Color("82463e")
+	_divider_r.color = Color("b7b7ab")
+	_build_ver.add_theme_color_override("font_color", Color("a4a49b"))
 	_inspection_name.add_theme_color_override("font_color", GuStyle.INK_MAP)
 	_inspection_note.add_theme_color_override("font_color", GuStyle.INK_MAP_NOTE)
 	for layer_label in [
@@ -116,18 +138,20 @@ func _apply_static_theme() -> void:
 		$map_root/map_camera/map_world/map_routes/map_layer_label_now,
 	]:
 		(layer_label as Label).add_theme_color_override("font_color", GuStyle.INK_MAP_LABEL)
-	_camera_backdrop.add_theme_stylebox_override("panel", _rail_box(GuStyle.PAPER_MAP, SIDE_TOP))
+	# camera 区透明底：网点层在 map_paper 之上，camera 区不再自涂纸底，
+	# 否则会盖住与大厅一致的网点纹理。
+	_camera_backdrop.add_theme_stylebox_override("panel", _rail_box(Color(0, 0, 0, 0), SIDE_TOP))
 	_depth_rail.add_theme_stylebox_override("panel", _rail_box(Color(0, 0, 0, 0), SIDE_RIGHT))
 	_contract_badge.add_theme_stylebox_override("normal", _badge_box(GuStyle.CONTRACT_BLUE))
 	_anomaly_badge.add_theme_stylebox_override("normal", _badge_box(GuStyle.ANOMALY_YELLOW))
 	_contract_badge.add_theme_color_override("font_color", GuStyle.CONTRACT_BLUE)
 	_anomaly_badge.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
 	_leave_panel.add_theme_stylebox_override("panel", _leave_box())
-	# 检视台按钮沿用 HTML 尺寸（action/large = 120x44）：换成 primary 会把
-	# 台面撑到 64px，破坏底部 48px 的安静留白带。
+	# 检视台按钮与大厅屏同款（action 角色：PAPER_RAISED 浅底 ≈ 纸面，视觉近透明）：
+	# 行路为主操作保留 large，存档/返回沿用普通档，全部不引入强按钮感。
 	MasterTheme.apply_button(_travel_button, "action", "large")
 	MasterTheme.apply_button(_save_button, "action")
-	MasterTheme.apply_button(_return_button, "archive")
+	MasterTheme.apply_button(_return_button, "action")
 	MasterTheme.apply_button(_leave_save_button, "primary")
 	MasterTheme.apply_button(_leave_direct_button, "action")
 	MasterTheme.apply_button(_leave_cancel_button, "cancel")
@@ -136,34 +160,18 @@ func _apply_static_theme() -> void:
 
 ## 地图氛围层：淡青茅山背景 + 暗角，增强南疆卷轴感，不影响地图可读性。
 ## 地图屏保持浅色命簿纸面（PAPER_MAP），与战斗屏/休整屏的暗色舞台区分。
+## 纸面氛围：复用大厅屏同款网点纹理与拉伸参数（1px 圆点 / 7px 周期），
+## 地图屏与主屏背景完全一致（纯纸面 + 网点），风格统一。
 func _apply_map_atmosphere() -> void:
-	# 淡青茅山背景：透明度极低（0.1），只作氛围暗示，不抢地图主体
-	var backdrop := TextureRect.new()
-	backdrop.texture = load("res://assets/wenzhen/hall/qing-mao-mountain.png")
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	backdrop.modulate = GuStyle.MAP_BACKDROP_DIM
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backdrop.z_index = 0
-	_paper.get_parent().add_child(backdrop)
-	_paper.get_parent().move_child(backdrop, 1)  # 紧接 map_paper 之后，在其他 UI 之下
-
-	# 暗角层：径向渐变，中心透明四角微暗，增强旧卷轴包围感
-	var vignette_grad := Gradient.new()
-	vignette_grad.set_color(0, Color(0, 0, 0, 0))
-	vignette_grad.set_color(1, Color(0, 0, 0, 0.15))
-	var vignette_tex := GradientTexture2D.new()
-	vignette_tex.gradient = vignette_grad
-	vignette_tex.fill = GradientTexture2D.FILL_RADIAL
-	vignette_tex.width = 512
-	vignette_tex.height = 512
-	var vignette := TextureRect.new()
-	vignette.texture = vignette_tex
-	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	vignette.stretch_mode = TextureRect.STRETCH_SCALE
-	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vignette.z_index = 10
-	_paper.get_parent().add_child(vignette)
+	var dots := TextureRect.new()
+	dots.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dots.texture = load("res://assets/wenzhen/hall/hall_dots.png")
+	dots.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	dots.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	dots.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dots.z_index = 0
+	_paper.get_parent().add_child(dots)
+	_paper.get_parent().move_child(dots, 1)  # paper → dots → 其余 UI
 
 
 func _wire_static_buttons() -> void:
@@ -314,20 +322,38 @@ func _node_layout(nodes: Array) -> Dictionary:
 
 	var positions := {}
 	var sizes := {}
-	var route_width := minf(DESIGN_WIDTH, _map_nodes.size.x if _map_nodes.size.x > 0.0 else DESIGN_WIDTH)
 	var camera_height := _camera_backdrop.size.y
 	var world_top := maxf(0.0, 970.0 - camera_height) if camera_height > 0.0 else 0.0
+	# v1 线框稿：三行（此刻/下一程/再前）都要落在镜头内。rows[0]=当前行（底部）、
+	# rows[1]=候选行（中部）、rows[2]=前瞻行（顶部）。宽视口用映射常量；
+	# 紧凑视口（camera < 760）把三行压缩进可用带，保证可达节点完全可点。
+	var band_y := [CURRENT_Y, CANDIDATE_Y, FUTURE_Y]
+	if camera_height > 0.0 and camera_height < 760.0:
+		var usable := camera_height - 52.0
+		var gap := maxf(24.0, (usable - 360.0) * 0.5)
+		band_y = [108.0 + gap + 126.0 + gap, 108.0 + gap, 0.0]
+	# 节点行区按线框稿画布映射：行内节点在 [ROW_X_START, ROW_X_END] 区内居中分布，
+	# 再叠加 camera 左缘与 routes 偏移，使节点区在窗口中的相对位置与线框稿一致。
+	# 渲染尺寸随屏幕实际宽等比缩放（画布 1280 → 屏幕宽），起点计算用画布坐标。
+	var screen_w := get_global_rect().size.x
+	if screen_w <= 0.0:
+		screen_w = DESIGN_WIDTH
+	var scale_x := screen_w / DESIGN_WIDTH
+	var row_span := ROW_X_END - ROW_X_START
+	var gap := LAYER_X_GAP * scale_x
 	for row_index in rows.size():
 		var row_nodes: Array = by_row[rows[row_index]]
 		var future_row := row_index >= 2
-		var row_size := FUTURE_NODE_SIZE if future_row else NODE_SIZE
-		var total_width := row_nodes.size() * row_size.x + maxi(0, row_nodes.size() - 1) * LAYER_X_GAP
-		var start_x := maxf(LAYER_X_MARGIN, (route_width - total_width) * 0.5)
-		var y := FUTURE_Y if future_row else (maxf(CANDIDATE_Y, world_top + 8.0) if row_index == 1 else CURRENT_Y)
+		var row_size_canvas: Vector2 = FUTURE_NODE_SIZE if future_row else NODE_SIZE
+		var row_size := Vector2(row_size_canvas.x * scale_x, row_size_canvas.y)
+		var total_canvas := row_nodes.size() * row_size_canvas.x + maxi(0, row_nodes.size() - 1) * LAYER_X_GAP
+		var start_canvas := ROW_X_START + maxf(0.0, (row_span - total_canvas) * 0.5)
+		var start_x := start_canvas * scale_x - CAMERA_LEFT_RATIO * screen_w - ROUTES_OFFSET
+		var y: float = band_y[row_index] if row_index < band_y.size() else band_y[band_y.size() - 1]
 		for node_index in row_nodes.size():
 			var node: Dictionary = row_nodes[node_index]
 			var id := str(node.get("id", ""))
-			positions[id] = Vector2(start_x + node_index * (row_size.x + LAYER_X_GAP), y)
+			positions[id] = Vector2(start_x + node_index * (row_size.x + gap), y)
 			sizes[id] = row_size
 	return {"rows": rows, "positions": positions, "sizes": sizes}
 
@@ -374,7 +400,10 @@ func _build_node_button(node: Dictionary, id: String, position: Vector2, size: V
 	var is_selected := id == _selected_id
 	var status := "当前所在" if is_current else ("可前往" if reachable else "已知前路")
 	var detail := "可提交行路" if reachable else ("上一层未选道路已隐去" if is_current else "后继可查看")
-	var mark_color: Color = visual["color"]
+	# v1 线框稿：角标/标题/类别/详情色按节点角色走公共 token，不私有硬编码。
+	var mark_color := GuStyle.NODE_CURRENT_BORDER if is_current else (GuStyle.NODE_REACH_BORDER if reachable else GuStyle.NODE_FUTURE_BORDER)
+	var title_color := GuStyle.NODE_CURRENT_BORDER if (is_current or reachable) else GuStyle.NODE_FUTURE_INK
+	var kind_color := GuStyle.NODE_KIND_INK if reachable else (GuStyle.NODE_CURRENT_BORDER if is_current else GuStyle.NODE_FUTURE_INK)
 
 	var button := Button.new()
 	button.name = "map_node_" + id
@@ -384,6 +413,15 @@ func _build_node_button(node: Dictionary, id: String, position: Vector2, size: V
 	# 绝对定位容器里的 Button 不会自动取 custom_minimum_size，必须显式定尺。
 	button.size = size
 	_apply_node_style(button, is_current, is_selected, reachable)
+	if is_current:
+		# v1 线框稿：此刻节点 = 公共组件墨框 + 朱砂左标线（StyleBoxFlat 无单边色，用 ColorRect 叠加）。
+		var left_bar := ColorRect.new()
+		left_bar.name = "map_node_leftbar_" + id
+		left_bar.color = GuStyle.CINNABAR
+		left_bar.set_anchors_and_offsets_preset(Control.PRESET_LEFT_WIDE)
+		left_bar.offset_right = GuStyle.NODE_LEFT_LINE
+		left_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(left_bar)
 
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 2)
@@ -398,19 +436,19 @@ func _build_node_button(node: Dictionary, id: String, position: Vector2, size: V
 	title_label.text = str(node.get("label", node.get("type", "节点")))
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	title_label.add_theme_font_size_override("font_size", 20 if row_index < 2 else 17)
-	title_label.add_theme_color_override("font_color", GuStyle.INK_MAP)
+	title_label.add_theme_color_override("font_color", title_color)
 	mark_row.add_child(title_label)
 
 	var kind_label := Label.new()
 	kind_label.text = str(visual["kind"]) + " · " + status
 	kind_label.add_theme_font_size_override("font_size", 10)
-	kind_label.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
+	kind_label.add_theme_color_override("font_color", kind_color)
 	column.add_child(kind_label)
 
 	var detail_label := Label.new()
 	detail_label.text = detail
 	detail_label.add_theme_font_size_override("font_size", 9)
-	detail_label.add_theme_color_override("font_color", GuStyle.CINNABAR if reachable else GuStyle.INK_MAP_FAINT)
+	detail_label.add_theme_color_override("font_color", GuStyle.CINNABAR if (reachable or is_current) else GuStyle.NODE_FUTURE_INK)
 	column.add_child(detail_label)
 
 	# 不可达节点按 HTML 原样保留可点外观，但按下不提交行路命令。
@@ -429,7 +467,7 @@ func _build_node_mark(id: String, glyph: String, color: Color) -> PanelContainer
 	box.bg_color = Color(0, 0, 0, 0)
 	box.border_color = color
 	box.set_border_width_all(1)
-	box.set_corner_radius_all(8)
+	box.set_corner_radius_all(GuStyle.NODE_MARK_RADIUS)
 	mark.add_theme_stylebox_override("panel", box)
 	var center := CenterContainer.new()
 	mark.add_child(center)
@@ -446,28 +484,12 @@ func _build_node_mark(id: String, glyph: String, color: Color) -> PanelContainer
 
 func _apply_node_style(button: Button, is_current: bool, is_selected: bool, reachable: bool) -> void:
 	var role := "node_current" if is_current else ("node_reachable" if reachable else "node_future")
+	# v1 线框稿三态视觉全部由公共组件 WenzhenMasterTheme 落参（gu_style token），
+	# 屏代码不私有硬编码色值；选中态复用公共 focus 样式（朱砂 2px 框）作 normal。
 	MasterTheme.apply_button(button, role)
-	var normal_bg := Color(0, 0, 0, 0) if is_current else GuStyle.PAPER_MAP
-	var border := GuStyle.CINNABAR if (is_current or is_selected) else GuStyle.INK_MAP_FAINT
-	var left := 4 if (is_current or is_selected) else GuStyle.HAIRLINE
-	button.add_theme_stylebox_override("normal", _node_box(normal_bg, border, left))
-	button.add_theme_stylebox_override("hover", _node_box(GuStyle.PAPER_BG, GuStyle.CINNABAR, left))
-	button.add_theme_stylebox_override("pressed", _node_box(GuStyle.PAPER_RAISED, GuStyle.CINNABAR, left))
-	button.add_theme_stylebox_override("focus", _node_box(normal_bg, GuStyle.CINNABAR, left))
-
-
-func _node_box(bg: Color, border: Color, left_width: int) -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.bg_color = bg
-	box.border_color = border
-	box.set_border_width_all(GuStyle.HAIRLINE)
-	box.border_width_left = left_width
-	box.set_corner_radius_all(4)
-	box.set_content_margin(SIDE_LEFT, 12)
-	box.set_content_margin(SIDE_RIGHT, 10)
-	box.set_content_margin(SIDE_TOP, 9)
-	box.set_content_margin(SIDE_BOTTOM, 7)
-	return box
+	if is_selected:
+		var focus_box: StyleBoxFlat = button.get_theme_stylebox("focus").duplicate()
+		button.add_theme_stylebox_override("normal", focus_box)
 
 
 # --------------------------------------------------------------- 检视 / 弹层

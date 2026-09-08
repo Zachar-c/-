@@ -77,16 +77,16 @@ func test_map_matches_approved_focused_route_camera_composition() -> void:
 	if mast == null or markers == null or title == null or camera == null or world == null or depth == null or inspector == null:
 		return
 	assert_almost_eq(mast.get_global_rect().position, Vector2(30, 20), Vector2(3, 3))
-	assert_almost_eq(markers.get_global_rect().position, Vector2(31, 80), Vector2(3, 3))
-	assert_almost_eq(title.get_global_rect().position, Vector2(host.size.x * 0.055, 110), Vector2(4, 4))
-	assert_almost_eq(camera.get_global_rect().position, Vector2(host.size.x * 0.055, 158), Vector2(4, 4))
+	assert_almost_eq(markers.get_global_rect().position, Vector2(host.size.x * 0.78, 87), Vector2(4, 4), "v1 wireframe moves contract/anomaly badges to the top-right under resources")
+	assert_almost_eq(title.get_global_rect().position, Vector2(host.size.x * 0.02, 60), Vector2(4, 4), "v1 wireframe lifts the zone title above the marker row")
+	assert_almost_eq(camera.get_global_rect().position, Vector2(host.size.x * 0.02, 128), Vector2(4, 4))
 	assert_almost_eq(camera.get_global_rect().end.y, host.size.y - 92.0, 4.0)
 	assert_almost_eq(world.get_global_rect().size.y, 970.0, 3.0, "route world keeps the HTML 970px topology scale")
-	assert_almost_eq(world.get_global_rect().end.y, camera.get_global_rect().end.y - 1.0, 4.0, "route world is bottom-aligned inside the camera")
+	assert_almost_eq(world.get_global_rect().position.y, camera.get_global_rect().position.y, 4.0, "route world is top-aligned to the camera so the far band stays fully exposed")
 	assert_almost_eq(depth.get_global_rect().position, camera.get_global_rect().position, Vector2(4, 4))
 	assert_almost_eq(depth.get_global_rect().size.x, 58.0, 3.0)
-	assert_almost_eq(inspector.get_global_rect().position.y, host.size.y - 72.0, 4.0)
-	assert_almost_eq(inspector.get_global_rect().size.y, 48.0, 3.0)
+	assert_almost_eq(inspector.get_global_rect().position.y, host.size.y - 111.0, 4.0)
+	assert_almost_eq(inspector.get_global_rect().size.y, 84.0, 3.0)
 	assert_gte(_named_controls(host, "map_path_segment_").size(), 6, "route canvas exposes every visible topology link")
 	assert_true(_has_text(host, "当前所在"))
 	assert_true(_has_text(host, "下一程"))
@@ -134,9 +134,9 @@ func test_map_node_rects_match_the_approved_html_icon_layout() -> void:
 	assert_not_null(future_node, "future route node must be available for master-size verification")
 	if current_node == null or candidate_node == null or future_node == null:
 		return
-	assert_almost_eq(current_node.get_global_rect().size, Vector2(192, 126), Vector2(1, 1), "current node must retain the HTML height that centers its icon row")
-	assert_almost_eq(candidate_node.get_global_rect().size, Vector2(192, 126), Vector2(1, 1), "candidate node must retain the HTML height that centers its icon row")
-	assert_almost_eq(future_node.get_global_rect().size, Vector2(168, 108), Vector2(1, 1), "future node must retain the HTML height that centers its icon row")
+	assert_almost_eq(current_node.get_global_rect().size, Vector2(288, 126), Vector2(2, 1), "current node must scale with the 1920 viewport and retain the HTML height that centers its icon row")
+	assert_almost_eq(candidate_node.get_global_rect().size, Vector2(288, 126), Vector2(2, 1), "candidate node must scale with the 1920 viewport and retain the HTML height that centers its icon row")
+	assert_almost_eq(future_node.get_global_rect().size, Vector2(282, 108), Vector2(2, 1), "future node must scale with the 1920 viewport and retain the HTML height that centers its icon row")
 
 
 func test_map_visible_nodes_in_same_layer_do_not_overlap() -> void:

@@ -134,7 +134,7 @@ func test_rest_heal_never_drops_player_below_current_health() -> void:
 	assert_eq(int(healed["state"].health), 8)
 
 
-func test_generated_layers_have_rest_node_every_three_rows() -> void:
+func test_generated_layers_have_rest_node_every_stride_rows() -> void:
 	for seed_value in [101, 4242, 91011]:
 		var route: Array = MapGeneratorScript.build(seed_value, false, catalog)
 		for layer in range(1, 6):
@@ -148,8 +148,11 @@ func test_generated_layers_have_rest_node_every_three_rows() -> void:
 			var previous_row := -1
 			for row in row_indices:
 				if previous_row >= 0:
-					assert_eq(int(row) - previous_row, 3,
-							"seed %d layer %d rest row %d must sit every 3 rows" % [seed_value, layer, row])
+				# 间距以 MapGenerator.REST_ROW_STRIDE 为唯一事实来源（2026-09-08 由 3
+				# 收紧到 2），别把数字写回测试。
+				assert_eq(int(row) - previous_row, MapGeneratorScript.REST_ROW_STRIDE,
+						"seed %d layer %d rest row %d must sit every %d rows"
+						% [seed_value, layer, row, MapGeneratorScript.REST_ROW_STRIDE])
 				previous_row = int(row)
 
 

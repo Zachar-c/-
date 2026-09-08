@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_stat_bar.tscn" id="2_stat_bar"]
 
 [node name="GuEnemyActor" type="PanelContainer"]
+custom_minimum_size = Vector2(208, 306)
 script = ExtResource("1_script")
 
 [node name="ActorMargin" type="MarginContainer" parent="."]
@@ -27,11 +28,11 @@ horizontal_alignment = 1
 
 [node name="EnemyIconHost" type="CenterContainer" parent="ActorMargin/ActorBody"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 145)
 
 [node name="EnemyPortrait" type="TextureRect" parent="ActorMargin/ActorBody/EnemyIconHost"]
 layout_mode = 2
-custom_minimum_size = Vector2(100, 140)
+custom_minimum_size = Vector2(150, 162)
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 2
@@ -67,6 +68,8 @@ theme_override_font_sizes/font_size = 13
 text = "护盾 0"
 horizontal_alignment = 1
 
-[node name="StatusHost" type="VBoxContainer" parent="ActorMargin/ActorBody"]
+[node name="StatusHost" type="FlowContainer" parent="ActorMargin/ActorBody"]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 6
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 4

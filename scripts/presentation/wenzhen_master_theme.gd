@@ -57,11 +57,11 @@ static func apply_button(button: Button, role: String = "action", size: String =
 	button.add_theme_color_override("font_pressed_color", spec["font_pressed"])
 	button.add_theme_color_override("font_focus_color", spec["font_normal"])
 	button.add_theme_color_override("font_disabled_color", GuStyle.INK_MUTED)
-	button.add_theme_stylebox_override("normal", _box(spec["normal_bg"], spec["normal_border"], spec["normal_width"], spec["normal_left"], spec["radius"]))
-	button.add_theme_stylebox_override("hover", _box(spec["hover_bg"], spec["hover_border"], spec["hover_width"], 0, spec["radius"]))
-	button.add_theme_stylebox_override("pressed", _box(spec["pressed_bg"], spec["pressed_border"], spec["pressed_width"], 0, spec["radius"]))
-	button.add_theme_stylebox_override("focus", _box(spec["normal_bg"], GuStyle.CINNABAR, 2, 0, spec["radius"]))
-	button.add_theme_stylebox_override("disabled", _box(GuStyle.PAPER_DEEP, GuStyle.HAIRLINE_COLOR, 1, 0, spec["radius"]))
+	button.add_theme_stylebox_override("normal", _box(spec["normal_bg"], spec["normal_border"], spec["normal_width"], spec["normal_left"], spec["radius"], spec["content_margin"]))
+	button.add_theme_stylebox_override("hover", _box(spec["hover_bg"], spec["hover_border"], spec["hover_width"], 0, spec["radius"], spec["content_margin"]))
+	button.add_theme_stylebox_override("pressed", _box(spec["pressed_bg"], spec["pressed_border"], spec["pressed_width"], 0, spec["radius"], spec["content_margin"]))
+	button.add_theme_stylebox_override("focus", _box(spec["normal_bg"], GuStyle.CINNABAR, 2, 0, spec["radius"], spec["content_margin"]))
+	button.add_theme_stylebox_override("disabled", _box(GuStyle.PAPER_DEEP, GuStyle.HAIRLINE_COLOR, 1, 0, spec["radius"], spec["content_margin"]))
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	# 第18批：按钮点击音效（用元数据标记避免重复连接）
 	if not button.has_meta("sfx_connected"):
@@ -69,13 +69,18 @@ static func apply_button(button: Button, role: String = "action", size: String =
 		button.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
 
 
-static func _box(bg: Color, border: Color, width: int, left: int, radius: int) -> StyleBoxFlat:
+static func _box(bg: Color, border: Color, width: int, left: int, radius: int, content := Vector4i(-1, -1, -1, -1)) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = bg
 	box.border_color = border
 	box.set_border_width_all(width)
 	box.border_width_left = left if left > 0 else width
 	box.set_corner_radius_all(radius)
+	if content.x >= 0:
+		box.set_content_margin(SIDE_LEFT, content.x)
+		box.set_content_margin(SIDE_TOP, content.y)
+		box.set_content_margin(SIDE_RIGHT, content.z)
+		box.set_content_margin(SIDE_BOTTOM, content.w)
 	return box
 
 
@@ -107,6 +112,7 @@ static func _spec(role: String, size: String) -> Dictionary:
 	var normal_left := 1
 	var hover_width := 1
 	var pressed_width := 1
+	var content_margin := Vector4i(-1, -1, -1, -1)
 	match role:
 		"primary":
 			# shadcn/ui default风格：品牌色背景 + 高对比度浅色文字
@@ -146,20 +152,22 @@ static func _spec(role: String, size: String) -> Dictionary:
 			hover_bg = GuStyle.PAPER_RAISED
 			radius = 4
 		"node_current":
+			# v1 线框稿：透明底 + 墨框；朱砂左标线由屏层 ColorRect 叠加（StyleBoxFlat 无单边色）
 			normal_bg = Color(0, 0, 0, 0)
-			normal_border = GuStyle.CINNABAR
+			normal_border = GuStyle.NODE_CURRENT_BORDER
 			normal_fg = GuStyle.INK_MAP
-			normal_left = 4
 		"node_reachable":
-			normal_bg = GuStyle.PAPER_MAP
-			normal_border = GuStyle.INK_MAP_FAINT
+			# v1 线框稿：浅纸底 + 清晰墨框
+			normal_bg = GuStyle.NODE_REACH_BG
+			normal_border = GuStyle.NODE_REACH_BORDER
 			normal_fg = GuStyle.INK_MAP
 			hover_bg = GuStyle.PAPER_BG
 			pressed_bg = GuStyle.PAPER_RAISED
 		"node_future":
-			normal_bg = GuStyle.PAPER_MAP
-			normal_border = GuStyle.INK_MAP_FAINT
-			normal_fg = GuStyle.INK_MAP_FAINT
+			# v1 线框稿：透明底 + 淡墨边（Godot 无虚线，以淡实框近似虚线感）
+			normal_bg = Color(0, 0, 0, 0)
+			normal_border = GuStyle.NODE_FUTURE_BORDER
+			normal_fg = GuStyle.NODE_FUTURE_INK
 		"target":
 			normal_bg = Color(0, 0, 0, 0)
 			normal_fg = GuStyle.INK_PRIMARY
@@ -169,6 +177,9 @@ static func _spec(role: String, size: String) -> Dictionary:
 			normal_fg = GuStyle.INK_PRIMARY
 			hover_bg = GuStyle.PAPER_RAISED
 			pressed_bg = GuStyle.PAPER_DEEP
+	if node:
+		# 线框稿节点卡内边距：左 12 / 上 9 / 右 10 / 下 7
+		content_margin = Vector4i(12, 9, 10, 7)
 	if cancel:
 		pressed_fg = GuStyle.CINNABAR
 	return {
@@ -181,6 +192,7 @@ static func _spec(role: String, size: String) -> Dictionary:
 		"normal_border": normal_border,
 		"normal_width": normal_width,
 		"normal_left": normal_left,
+		"content_margin": content_margin,
 		"hover_bg": hover_bg,
 		"hover_border": hover_border,
 		"hover_width": hover_width,

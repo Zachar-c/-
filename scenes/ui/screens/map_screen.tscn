@@ -46,7 +46,7 @@ layout_mode = 0
 anchor_right = 1.0
 offset_left = 30.0
 offset_top = 20.0
-offset_right = -30.0
+offset_right = -66.0
 offset_bottom = 68.0
 grow_horizontal = 2
 theme_override_constants/separation = 19
@@ -54,7 +54,7 @@ theme_override_constants/separation = 19
 [node name="map_mast_label" type="Label" parent="map_root/map_mast"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "問眞　/　命蠱第六十三卷　/　南疆"
+text = "命盘·第六十三卷 / 南疆"
 theme_override_font_sizes/font_size = 10
 
 [node name="map_resources" type="HBoxContainer" parent="map_root/map_mast"]
@@ -63,10 +63,12 @@ theme_override_constants/separation = 19
 
 [node name="map_markers" type="HBoxContainer" parent="map_root"]
 layout_mode = 0
-offset_left = 31.0
-offset_top = 80.0
-offset_right = 900.0
-offset_bottom = 104.0
+anchor_left = 0.78
+anchor_right = 0.965
+offset_top = 87.0
+offset_bottom = 111.0
+grow_horizontal = 2
+alignment = 2
 theme_override_constants/separation = 13
 
 [node name="map_contract_badge" type="Label" parent="map_root/map_markers"]
@@ -75,14 +77,14 @@ theme_override_font_sizes/font_size = 9
 
 [node name="map_anomaly_badge" type="Label" parent="map_root/map_markers"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 11
 
 [node name="map_title" type="HBoxContainer" parent="map_root"]
 layout_mode = 0
-anchor_left = 0.055
+anchor_left = 0.02
 anchor_right = 0.945
-offset_top = 110.0
-offset_bottom = 142.0
+offset_top = 60.0
+offset_bottom = 92.0
 grow_horizontal = 2
 theme_override_constants/separation = 12
 
@@ -90,16 +92,56 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 
-[node name="map_subtitle_label" type="Label" parent="map_root/map_title"]
-layout_mode = 2
+[node name="map_subtitle_label" type="Label" parent="map_root"]
+layout_mode = 0
+offset_left = 129.0
+offset_top = 99.0
+offset_right = 500.0
+offset_bottom = 117.0
 theme_override_font_sizes/font_size = 10
+
+[node name="map_title_rule" type="ColorRect" parent="map_root"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 111.0
+offset_right = 76.0
+offset_bottom = 113.0
+mouse_filter = 2
+color = Color(0.509804, 0.27451, 0.243137, 1)
+
+[node name="map_divider_r" type="ColorRect" parent="map_root"]
+layout_mode = 0
+anchor_left = 0.88
+anchor_right = 0.88
+anchor_top = 0.12
+anchor_bottom = 0.94
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.717647, 0.717647, 0.670588, 1)
+
+[node name="map_build_ver" type="Label" parent="map_root"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -32.0
+offset_right = -45.0
+offset_bottom = -18.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.643137, 0.643137, 0.611765, 1)
+text = "BUILD 0.9.0 · LOCAL"
+horizontal_alignment = 2
 
 [node name="map_camera" type="Control" parent="map_root"]
 layout_mode = 0
-anchor_left = 0.055
-anchor_right = 0.775
+anchor_left = 0.02
+anchor_right = 0.87
 anchor_bottom = 1.0
-offset_top = 158.0
+offset_top = 128.0
 offset_bottom = -92.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -107,10 +149,10 @@ clip_contents = true
 
 [node name="map_inventory" parent="map_root" instance=ExtResource("3_inventory")]
 layout_mode = 0
-anchor_left = 0.79
-anchor_right = 0.945
-offset_top = 110.0
-offset_bottom = 142.0
+anchor_left = 0.88
+anchor_right = 0.995
+offset_top = 195.0
+offset_bottom = 243.0
 grow_horizontal = 2
 z_index = 4
 
@@ -134,33 +176,31 @@ z_index = 3
 [node name="map_world" type="Control" parent="map_root/map_camera"]
 layout_mode = 0
 anchor_right = 1.0
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -970.0
+offset_bottom = 970.0
 grow_horizontal = 2
 
 [node name="map_routes" type="Control" parent="map_root/map_camera/map_world"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 70.0
+offset_left = 22.0
 grow_horizontal = 2
 
 [node name="map_layer_label_far" type="Label" parent="map_root/map_camera/map_world/map_routes"]
 layout_mode = 0
-offset_top = 4.0
+offset_top = 184.0
 text = "再前一程"
 theme_override_font_sizes/font_size = 10
 
 [node name="map_layer_label_near" type="Label" parent="map_root/map_camera/map_world/map_routes"]
 layout_mode = 0
-offset_top = 452.0
+offset_top = 496.0
 text = "下一程"
 theme_override_font_sizes/font_size = 10
 
 [node name="map_layer_label_now" type="Label" parent="map_root/map_camera/map_world/map_routes"]
 layout_mode = 0
-offset_top = 682.0
+offset_top = 772.0
 text = "此刻"
 theme_override_font_sizes/font_size = 10
 
@@ -187,18 +227,17 @@ z_index = 2
 
 [node name="map_inspector" type="HBoxContainer" parent="map_root"]
 layout_mode = 0
-anchor_left = 0.055
-anchor_right = 0.775
+anchor_left = 0.02
+anchor_right = 0.87
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -72.0
-offset_bottom = -24.0
+offset_top = -111.0
+offset_bottom = -27.0
 grow_horizontal = 2
 theme_override_constants/separation = 18
 
 [node name="map_inspector_info" type="VBoxContainer" parent="map_root/map_inspector"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
 [node name="map_inspection_name" type="Label" parent="map_root/map_inspector/map_inspector_info"]

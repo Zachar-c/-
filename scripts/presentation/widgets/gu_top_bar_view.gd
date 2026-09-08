@@ -151,10 +151,11 @@ func _on_settings_pressed() -> void:
 
 
 func _apply_bar_style() -> void:
+	# 大屏基准：顶栏透明，纸面+网点由各屏根 Backdrop 提供，无框直接浮于纸面。
 	var box := StyleBoxFlat.new()
-	box.bg_color = GuStyle.PAPER_BG
-	box.border_color = GuStyle.HAIRLINE_COLOR
-	box.set_border_width_all(GuStyle.HAIRLINE)
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = Color(0, 0, 0, 0)
+	box.set_border_width_all(0)
 	add_theme_stylebox_override("panel", box)
 	custom_minimum_size = Vector2(0, 56)
 
