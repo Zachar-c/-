@@ -52,7 +52,7 @@ func _ready() -> void:
 	_ready_done = true
 	# 「调试」角标必须红字（§16.22 与正式 UI 明显区分），DEV 标识灰字。
 	_title_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
-	_sub_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_sub_label.add_theme_color_override("font_color", GuStyle.CORNER_TEXT)
 	_apply_panel_style()
 	_toggle_button.pressed.connect(func(): _fire0("toggle_open"))
 	_refresh()
@@ -233,7 +233,7 @@ func _section(text: String) -> Label:
 	var l := Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", 13)
-	l.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	l.add_theme_color_override("font_color", GuStyle.STAT_NAME_TEXT)
 	return l
 
 
@@ -266,7 +266,7 @@ func _clear(host: Node) -> void:
 func _apply_panel_style() -> void:
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(GuStyle.PAPER_BG, 0.9)
-	box.border_color = GuStyle.CINNABAR
+	box.border_color = GuStyle.HAIRLINE_COLOR
 	box.set_border_width_all(1)
-	box.set_corner_radius_all(6)
+	box.set_corner_radius_all(4)
 	add_theme_stylebox_override("panel", box)

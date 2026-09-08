@@ -18,6 +18,7 @@ const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.
 
 const MAX_VISIBLE_ENEMIES := 3
 
+@onready var _paper: ColorRect = $BattlePaper
 @onready var _top_bar = $Root/battle_hud/TopBar
 @onready var _battle_stage: PanelContainer = $Root/BattleStage
 @onready var _player_panel = $Root/BattleStage/battle_field/PlayerPanel
@@ -68,6 +69,8 @@ var _ready_done := false
 
 func _ready() -> void:
 	_ready_done = true
+	# 第四批：战斗屏同步基准——浅米纸底 + 网点（原暗色舞台设计已由基准统一取代）
+	_paper.color = GuStyle.PAPER_HALL
 	_apply_stage_style()
 	_apply_hand_stage_style()
 	_apply_seal_style()

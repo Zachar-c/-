@@ -667,18 +667,18 @@ func _school_card(s: Dictionary, sid: String, is_selected: bool, order: int) -> 
 	var name_label := Label.new()
 	name_label.text = str(s.get("name", sid))
 	name_label.add_theme_font_size_override("font_size", 14)
-	name_label.add_theme_color_override("font_color", Color("343430"))
+	name_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	name_row.add_child(name_label)
 	var order_label := Label.new()
 	order_label.text = _school_order_text(order)
 	order_label.add_theme_font_size_override("font_size", 9)
-	order_label.add_theme_color_override("font_color", Color("8d8d83"))
+	order_label.add_theme_color_override("font_color", GuStyle.CORNER_TEXT)
 	name_row.add_child(order_label)
 
 	var summary := Label.new()
 	summary.text = str(s.get("summary", ""))
 	summary.add_theme_font_size_override("font_size", 9)
-	summary.add_theme_color_override("font_color", Color("7e7f75"))
+	summary.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
 	summary.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
 	summary.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	summary.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -696,7 +696,7 @@ func _school_card(s: Dictionary, sid: String, is_selected: bool, order: int) -> 
 		starter_text += "—"
 	starters.text = starter_text
 	starters.add_theme_font_size_override("font_size", 9)
-	starters.add_theme_color_override("font_color", Color("56534f"))
+	starters.add_theme_color_override("font_color", GuStyle.STAT_NAME_TEXT)
 	starters.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	body.add_child(starters)
 
@@ -760,34 +760,52 @@ func _build_school_buffs() -> void:
 		_school_buff_row.add_child(check)
 
 
-## 确认按钮：选中流派 = 浅底朱砂字；未选中 = 浅底灰字（沿用大厅续入此世浅底样式）。
+## 确认按钮（2026-09-08 基准同步）：选中流派 = 透明底墨字 + 蓝/橙红双色描边（对齐大厅主按钮）；
+## 未选中 = 透明底灰字。
 func _apply_school_confirm_style(active: bool) -> void:
+	_confirm_school.add_theme_font_size_override("font_size", 22)
+	_confirm_school.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	var fg := GuStyle.INK_PRIMARY if active else GuStyle.INK_SOFT
+	_confirm_school.add_theme_color_override("font_color", fg)
+	_confirm_school.add_theme_color_override("font_focus_color", fg)
+	_confirm_school.add_theme_color_override("font_hover_color", GuStyle.CINNABAR if active else GuStyle.INK_SOFT)
+	_confirm_school.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR if active else GuStyle.INK_SOFT)
+	if active:
+		_confirm_school.add_theme_color_override("font_outline_color", GuStyle.BTN_OUTLINE_BLUE)
+		_confirm_school.add_theme_constant_override("outline_size", 1)
+		_confirm_school.add_theme_color_override("font_shadow_color", GuStyle.BTN_SHADOW_RUST)
+		_confirm_school.add_theme_constant_override("shadow_offset_x", -1)
+		_confirm_school.add_theme_constant_override("shadow_offset_y", 0)
+	else:
+		_confirm_school.add_theme_constant_override("outline_size", 0)
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color("e3e3d7") if active else Color("e8e5db")
+	normal.bg_color = Color(0, 0, 0, 0)
 	normal.set_corner_radius_all(2)
-	var fg := Color("82463e") if active else Color("898a81")
+	normal.content_margin_left = 12
+	normal.content_margin_right = 12
+	normal.content_margin_top = 4
+	normal.content_margin_bottom = 4
 	_confirm_school.add_theme_stylebox_override("normal", normal)
 	var hover := StyleBoxFlat.new()
-	hover.bg_color = Color("d8d6c9") if active else Color("e3e3d7")
+	hover.bg_color = Color(0, 0, 0, 0)
+	hover.border_color = GuStyle.CINNABAR if active else GuStyle.HAIRLINE_COLOR
+	hover.set_border_width_all(1)
 	hover.set_corner_radius_all(2)
+	hover.content_margin_left = 12
+	hover.content_margin_right = 12
+	hover.content_margin_top = 4
+	hover.content_margin_bottom = 4
 	_confirm_school.add_theme_stylebox_override("hover", hover)
-	var pressed := StyleBoxFlat.new()
-	pressed.bg_color = Color("cccabe")
-	pressed.set_corner_radius_all(2)
-	_confirm_school.add_theme_stylebox_override("pressed", pressed)
-	_confirm_school.add_theme_color_override("font_color", fg)
-	_confirm_school.add_theme_color_override("font_hover_color", fg)
-	_confirm_school.add_theme_color_override("font_pressed_color", Color("3c3a36"))
-	_confirm_school.add_theme_color_override("font_focus_color", fg)
+	_confirm_school.add_theme_stylebox_override("pressed", hover)
 	_confirm_school.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 
 func _apply_school_check_style(check: CheckButton) -> void:
 	check.add_theme_font_size_override("font_size", 10)
-	check.add_theme_color_override("font_color", Color("56564c"))
+	check.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	check.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
 	check.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
-	check.add_theme_color_override("font_focus_color", Color("56564c"))
+	check.add_theme_color_override("font_focus_color", GuStyle.INK_SOFT)
 	check.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 

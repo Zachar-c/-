@@ -129,7 +129,7 @@ func _apply_static_theme() -> void:
 	# v1 线框稿：地带标题下红线 / 右栏分隔线 / 版本号
 	_title_rule.color = Color("82463e")
 	_divider_r.color = Color("b7b7ab")
-	_build_ver.add_theme_color_override("font_color", Color("a4a49b"))
+	_build_ver.add_theme_color_override("font_color", GuStyle.VER_TEXT)
 	_inspection_name.add_theme_color_override("font_color", GuStyle.INK_MAP)
 	_inspection_note.add_theme_color_override("font_color", GuStyle.INK_MAP_NOTE)
 	for layer_label in [
@@ -139,6 +139,7 @@ func _apply_static_theme() -> void:
 	]:
 		(layer_label as Label).add_theme_color_override("font_color", GuStyle.INK_MAP_LABEL)
 	# camera 区透明底：网点层在 map_paper 之上，camera 区不再自涂纸底，
+	# 但地图屏仍保持浅色命簿纸面（PAPER_MAP），与全屏基准纸底一致。
 	# 否则会盖住与大厅一致的网点纹理。
 	_camera_backdrop.add_theme_stylebox_override("panel", _rail_box(Color(0, 0, 0, 0), SIDE_TOP))
 	_depth_rail.add_theme_stylebox_override("panel", _rail_box(Color(0, 0, 0, 0), SIDE_RIGHT))
@@ -159,7 +160,7 @@ func _apply_static_theme() -> void:
 
 
 ## 地图氛围层：淡青茅山背景 + 暗角，增强南疆卷轴感，不影响地图可读性。
-## 地图屏保持浅色命簿纸面（PAPER_MAP），与战斗屏/休整屏的暗色舞台区分。
+## 地图屏保持浅色命簿纸面（PAPER_MAP），与全屏基准（大厅/战斗/流派/调试）纸底一致。
 ## 纸面氛围：复用大厅屏同款网点纹理与拉伸参数（1px 圆点 / 7px 周期），
 ## 地图屏与主屏背景完全一致（纯纸面 + 网点），风格统一。
 func _apply_map_atmosphere() -> void:

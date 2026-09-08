@@ -1,6 +1,8 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/screens/map_screen_view.gd" id="1_map"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="map_dots"]
+
 [ext_resource type="Script" path="res://scripts/presentation/widgets/map_path_layer.gd" id="2_paths"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_inventory.tscn" id="3_inventory"]
 
@@ -32,6 +34,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="map_dots" type="TextureRect" parent="map_root"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("map_dots")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="map_toast_host" type="CenterContainer" parent="map_root"]
 layout_mode = 0

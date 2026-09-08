@@ -47,12 +47,13 @@ const INK_PRIMARY  := Color("171814")       # 近黑墨色（主文字 / 主结�
 const INK_SOFT     := Color("686960")       # 次要文字、已知但不紧急
 const INK_MUTED    := Color("68675f")       # 介于 INK_PRIMARY 与 PAPER_BG
 const INK_HALL     := Color("171817")       # 大厅 HTML 主文字
-const INK_MAP      := Color("1b1c19")       # 地图 HTML 主文字
-const INK_MAP_NOTE := Color("64665f")       # 地图 HTML 注释文字
-const INK_MAP_FAINT := Color("8b8d85")      # 地图 HTML 深度刻度
-const INK_MAP_LABEL := Color("92948d")      # 地图 HTML 层级标签
-const INK_MAP_VALUE := Color("252624")      # 地图 HTML 资源数值
-const INK_MAP_NAME  := Color("666861")      # 地图 HTML 资源名称
+# —— Map tokens (2026-09-08 基准同步)：值与基准采样色对齐，与大厅 token 同源 ——
+const INK_MAP      := Color("171814")       # 地图 主文字 = INK_PRIMARY
+const INK_MAP_NOTE := Color("607060")       # 地图 注释文字 = NOTE_TEXT
+const INK_MAP_FAINT := Color("888880")      # 地图 深度刻度 = VER_TEXT
+const INK_MAP_LABEL := Color("707870")      # 地图 层级标签 = CORNER_TEXT
+const INK_MAP_VALUE := Color("252624")      # 地图 资源数值（基准 32,32,32 深灰）
+const INK_MAP_NAME  := Color("606860")      # 地图 资源名称 = STAT_NAME_TEXT
 
 # —— Map route-node card tokens (2026-09-07 v1 wireframe) ——
 # 节点卡三态视觉沉淀在公共 token：此刻=墨框+朱砂左线、下一程=浅底墨框、
@@ -105,8 +106,8 @@ const HILITE_NOTE     := Color("98c8d8")   # 札记名 青蓝
 ## 主按钮「续入此世 >」双色描边（2026-09-08 基准图逐像素确认：黑字芯 + 蓝右描边 + 铁锈橙红左投影）：
 const BTN_OUTLINE_BLUE := Color("3880b8")  # 蓝色描边
 const BTN_SHADOW_RUST  := Color("803810")  # 铁锈橙红 左侧投影
-const CONTRACT_BLUE := Color("315f73")      # 契约规则
-const ANOMALY_YELLOW := Color("936f1e")     # DDA / 异变 / 险象
+const CONTRACT_BLUE := Color("506880")      # 契约规则（2026-09-08 基准同步 = STATUS_CONTRACT）
+const ANOMALY_YELLOW := Color("887830")     # DDA / 异变 / 险象（基准同步 = STATUS_MUTATE）
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
 
 # —— Button color tokens (shadcn/ui风格：品牌色背景 + 高对比度浅色文字) ——
