@@ -16,6 +16,7 @@ const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
 @onready var _study_row: HBoxContainer = $Root/KillStage/StageContent/StudyRow
 @onready var _slot_row: HBoxContainer = $Root/KillStage/StageContent/SlotRow
 @onready var _foot_note: Label = $Root/KillStage/StageContent/FootNote
+@onready var _back_button: Button = $Root/BackRow/BackButton
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -25,6 +26,7 @@ var _ready_done := false
 func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
+	_back_button.pressed.connect(func(): _fire("back"))
 	if not _snapshot.is_empty():
 		_refresh()
 
@@ -176,6 +178,18 @@ func _clear_children(parent: Node) -> void:
 		child.queue_free()
 
 
+func _apply_menu_style(btn: Button) -> void:
+	if btn == null:
+		return
+	btn.flat = true
+	btn.add_theme_font_size_override("font_size", 14)
+	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
+	btn.add_theme_color_override("font_color", GuStyle.NAV_TEXT)
+	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	btn.add_theme_color_override("font_focus_color", GuStyle.NAV_TEXT)
+
+
 func _vertical_title(flat: String) -> String:
 	if flat == "":
 		return ""
@@ -195,3 +209,4 @@ func _apply_base_fonts() -> void:
 	_foot_note.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
 	_paper.color = GuStyle.PAPER_HALL
 	GuStyle.apply_seal(_seal_box, 3.0)
+	_apply_menu_style(_back_button)

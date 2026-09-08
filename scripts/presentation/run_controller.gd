@@ -44,6 +44,8 @@ const MASTER_SCENE_PATHS := {
 	"Refine": "res://scenes/ui/screens/refine_screen.tscn",
 	"Ending": "res://scenes/ui/screens/ending_screen.tscn",
 	"ContentError": "res://scenes/ui/screens/content_error_screen.tscn",
+	"Kill": "res://scenes/ui/screens/kill_screen.tscn",
+	"Settings": "res://scenes/ui/screens/settings_screen.tscn",
 }
 
 ## 视图 → BGM 曲目映射（key 见 AudioDirector.BGM_PATHS，曲目由
@@ -77,6 +79,8 @@ var last_feedback := ""
 var _dialogue_gateway: DialogueGateway
 var _view_name := "Map"
 var _hall_subview := "main"
+## 覆盖屏（杀招/设置）的返回源视图。
+var _overlay_return_view := "Title"
 var _selected_school := "force"
 # S2 开局 Buff：大厅多选暂存，run 创建时一次性结算。
 var _selected_buffs: Array = []
@@ -1332,6 +1336,54 @@ func _show_reward() -> void:
 
 func _show_npc() -> void:
 	_view_name = "Npc"
+	_render()
+
+
+## 覆盖屏统一切换：记录返回源，再挂载目标屏。
+func _show_kill() -> void:
+	_overlay_return_view = _view_name
+	_view_name = "Kill"
+	_render()
+
+
+func _show_settings() -> void:
+	_overlay_return_view = _view_name
+	_view_name = "Settings"
+	_render()
+
+
+func back_from_overlay() -> void:
+	match _overlay_return_view:
+		"Map": _show_map()
+		_:
+			_hall_subview = "main"
+			_show_title()
+
+
+## 设置屏 → 分辨率：直接设为指定档（区别于大厅的 cycle_resolution 循环）。
+func set_resolution_index(index: int) -> void:
+	if app_settings == null:
+		return
+	if int(index) < 0 or int(index) >= AppSettingsScript.RESOLUTIONS.size():
+		return
+	app_settings.resolution_index = int(index)
+	AppSettingsScript.save_settings(app_settings)
+	_apply_window_mode()
+	_render()
+
+
+## 设置屏 → 静音切换：0 ↔ 原音量（0 记入 app_settings 原值旁置 100）。
+func toggle_mute() -> void:
+	if app_settings == null:
+		return
+	var current := AppSettingsScript.clamp_volume(int(app_settings.master_volume))
+	if current > 0:
+		app_settings.pre_mute_volume = current
+		app_settings.master_volume = 0
+	else:
+		app_settings.master_volume = AppSettingsScript.clamp_volume(int(app_settings.pre_mute_volume))
+	AppSettingsScript.save_settings(app_settings)
+	_apply_master_volume()
 	_render()
 
 

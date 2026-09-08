@@ -20,6 +20,8 @@ const RESOLUTIONS := [
 
 var master_volume: int = 100
 var resolution_index: int = 0
+## 静音前的音量（静音切换恢复用，随设置持久化）。
+var pre_mute_volume: int = 100
 
 
 static func clamp_volume(value: int) -> int:
@@ -55,6 +57,7 @@ static func has_saved_file() -> bool:
 static func save_settings(settings: AppSettings) -> void:
 	var config := ConfigFile.new()
 	config.set_value("audio", "master_volume", int(settings.master_volume))
+	config.set_value("audio", "pre_mute_volume", int(settings.pre_mute_volume))
 	config.set_value("display", "resolution_index", int(settings.resolution_index))
 	config.save(SETTINGS_PATH)
 
@@ -67,6 +70,7 @@ static func load_settings() -> AppSettings:
 	if config.load(SETTINGS_PATH) != OK:
 		return settings
 	settings.master_volume = clamp_volume(int(config.get_value("audio", "master_volume", 100)))
+	settings.pre_mute_volume = clamp_volume(int(config.get_value("audio", "pre_mute_volume", 100)))
 	settings.resolution_index = int(config.get_value("display", "resolution_index", 0))
 	if settings.resolution_index < 0 or settings.resolution_index >= RESOLUTIONS.size():
 		settings.resolution_index = 0

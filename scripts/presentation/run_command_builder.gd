@@ -113,7 +113,8 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"open_schools": func(): controller._show_hall_subview("schools"),
 				"open_contracts": func(): controller._show_hall_subview("contracts"),
 				"open_codex": func(): controller._show_hall_subview("codex"),
-				"open_settings": func(): controller._show_hall_subview("settings"),
+				"open_settings": func(): controller._show_settings(),
+				"open_kill": func(): controller._show_kill(),
 				"open_journal": func(): controller._show_hall_subview("journal"),
 				"back_to_hall": func(): controller._show_hall_subview("main"),
 				"toggle_dda": func(): controller.toggle_dda(),
@@ -182,6 +183,20 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"barter": func(id = ""): controller.submit_command({"type": "npc_trade", "npc_id": str(controller.current_node.get("npc_id", "")), "offer_id": str(id), "input_instance_ids": []}),
 				"flee": func(): controller.submit_command({"type": "retreat"}),
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
+		"Kill":
+			return {
+				"back": func(): controller.back_from_overlay(),
+			}
+		"Settings":
+			return {
+				"back": func(): controller.back_from_overlay(),
+				"set_resolution": func(index): controller.set_resolution_index(int(index)),
+				"toggle_mute": func(): controller.toggle_mute(),
+				"save": func():
+					if controller.state != null:
+						controller.submit_command({"type": "save_run"}),
+				"load": func(): controller.submit_command({"type": "load_run"}),
 			}
 		"ContentError":
 			return {"quit": func(): controller.quit_game()}

@@ -40,6 +40,8 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Reward": base = reward(controller)
 		"Npc": base = npc(controller)
 		"ContentError": base = content_error(controller)
+		"Kill": base = kill(controller)
+		"Settings": base = settings(controller)
 		_: return {}
 	return _with_v2(base, controller)
 
@@ -1491,6 +1493,40 @@ static func _v1_reject_text(reason: String) -> String:
 
 
 ## V1 杀招：配方实例 → 蛊名（只读拼装），可释放性复用 kill_move_reason 门禁。
+## 杀招屏快照：研习录（已研习）+ 战斗栏位（装配槽）。
+## 数据源与战斗屏同一套 battle.kill_moves；无战斗数据时给空态。
+static func kill(controller) -> Dictionary:
+	var base := _gui_state(controller)
+	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var battle: Dictionary = controller.current_battle if controller.current_battle != null else {}
+	base["title"] = "杀招"
+	base["subtitle"] = "研习于战 · 一场一用"
+	base["study_slots"] = 3
+	base["kill_moves"] = _v1_kill_moves(battle, catalog)
+	var slots: Array[Dictionary] = []
+	var moves: Array = battle.get("kill_moves", [])
+	for i in mini(3, moves.size()):
+		var mv: Dictionary = moves[i] if moves[i] is Dictionary else {}
+		slots.append({
+			"name": str(mv.get("name", "")),
+			"sequence_display": str(mv.get("sequence_display", "")),
+			"cost": str(mv.get("cost", "")),
+		})
+	base["slots"] = slots
+	return base
+
+
+## 设置屏快照：客户端偏好只投影（同大厅 A6 设置面板字段），绝不写回。
+static func settings(controller) -> Dictionary:
+	var base := _gui_state(controller)
+	base["title"] = "设置"
+	base["subtitle"] = "声色之调 · 存于机匣"
+	base["master_volume"] = AppSettingsScript.clamp_volume(int(controller.app_settings.master_volume)) if controller.get("app_settings") != null else 100
+	base["resolution_index"] = int(controller.app_settings.resolution_index) if controller.get("app_settings") != null else 0
+	base["resolution_options"] = AppSettingsScript.resolution_labels()
+	return base
+
+
 static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for km_value in battle_data.get("kill_moves", []):
