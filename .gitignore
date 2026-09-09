@@ -19,6 +19,9 @@ ui/**/*.gd
 
 .workbuddy/
 .zcode/
+.claude/
+.preview/
+.superpowers/
 .godot_gui.log
 godot_gui.log
 
