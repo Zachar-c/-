@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>遭遇屏 · 线框稿 v1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:720px; overflow:hidden; }
+  body {
+    font-family: "Kaiti SC","STKaiti","KaiTi",serif;
+    background-color:#e8e5da;
+    background-image: radial-gradient(circle at 0 0, rgba(198,199,186,.95) 1px, transparent 1px);
+    background-size: 4px 5px;
+    color:#171814;
+    position:relative;
+  }
+  .frame { position:absolute; inset:14px; border:1px dashed #b7b7ab; }
+  .bar { position:absolute; top:16px; left:16px; right:16px; height:32px;
+         border-bottom:1px solid #b7b7ab; display:flex; align-items:center; gap:20px; font-size:14px; }
+  .chip { display:flex; align-items:center; gap:5px; color:#606860; }
+  .chip .ic { width:16px; height:16px; border:1px solid #9a978c; }
+  .chip b { color:#171814; font-weight:normal; }
+  .icons { position:absolute; right:0; top:0; display:flex; gap:10px; }
+  .iconbtn { width:30px; height:30px; border:1px solid #9a978c; display:flex;
+             align-items:center; justify-content:center; font-size:16px; color:#4a4a40; }
+  .seal { position:absolute; top:64px; right:20px; width:46px; height:46px;
+          border:2px solid #8c5850; color:#8c5850; font-size:12px; line-height:1.25;
+          text-align:center; display:flex; align-items:center; justify-content:center;
+          transform: rotate(3deg); letter-spacing:2px; }
+  .vtitle { position:absolute; top:132px; left:22px; writing-mode:vertical-rl;
+            font-size:30px; letter-spacing:12px; color:#171814; }
+  .redline { position:absolute; top:134px; left:112px; width:170px; height:2px; background:#82463e; }
+  .sub { position:absolute; top:148px; left:112px; font-size:12px; color:#607060; }
+  .panel { position:absolute; border:1px solid #aaa89f; background:rgba(246,243,233,.55); }
+  .descbox { position:absolute; left:112px; top:186px; width:330px; height:430px;
+             border:1px solid #aaa89f; background:rgba(246,243,233,.55); }
+  .descbox .ttl { position:absolute; left:18px; top:16px; font-size:20px; color:#171814; }
+  .descbox .ttl .tag { display:inline-block; margin-left:10px; font-size:12px; color:#607060;
+                       border:1px solid #9a978c; padding:1px 8px; vertical-align:middle; }
+  .descbox .txt { position:absolute; left:18px; top:64px; right:18px; font-size:14px;
+                  line-height:1.9; color:#3a3a34; }
+  .intel { position:absolute; left:18px; bottom:20px; right:18px; font-size:12px;
+           color:#607060; border-top:1px solid #c5c4b8; padding-top:10px; }
+  .intel b { color:#6898c0; font-weight:normal; }
+  .cardgrid { position:absolute; left:462px; top:186px; width:780px; height:430px; }
+  .card { position:absolute; width:370px; height:126px; border:1px solid #9a978c;
+          background:rgba(246,243,233,.62); }
+  .card .name { position:absolute; left:14px; top:10px; font-size:15px; color:#171814; }
+  .card .det { position:absolute; left:14px; top:40px; font-size:12px; color:#7a7a70; }
+  .card .cost { position:absolute; left:14px; top:66px; font-size:12px; color:#9c332d; }
+  .card .btn { position:absolute; right:12px; top:78px; font-size:13px; color:#171814;
+               border:1px solid #3880b8; padding:2px 14px; box-shadow:-1px 0 0 #803810; }
+  .card .ghost { position:absolute; right:12px; top:82px; font-size:12px; color:#a4a49b; }
+  .card .reason { position:absolute; left:14px; top:88px; font-size:11px; color:#904038; }
+  .danger { border-color:#b06a62; }
+  .danger .name { color:#9c332d; }
+  .leave { position:absolute; right:112px; bottom:40px; font-size:14px; color:#171814;
+           border:1px solid #9a978c; padding:4px 18px; background:transparent; }
+  .ver { position:absolute; bottom:10px; right:16px; font-size:11px; color:#888880; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="bar">
+  <span class="chip"><span class="ic"></span>气血 <b>94/120</b></span>
+  <span class="chip"><span class="ic"></span>寿元 <b>41年</b></span>
+  <span class="chip"><span class="ic"></span>魂魄 <b>7</b></span>
+  <span class="chip"><span class="ic"></span>元石 <b>12</b></span>
+  <span class="icons">
+    <div class="iconbtn">▤</div>
+    <div class="iconbtn">⚙</div>
+  </span>
+</div>
+<div class="seal">遭<br>遇</div>
+<div class="vtitle">幽林异响</div>
+<div class="redline"></div>
+<div class="sub">事件 · 第二层 · 尚未触碰</div>
+
+<div class="descbox">
+  <div class="ttl">幽林异响<span class="tag">事件</span></div>
+  <div class="txt">密林深处传来低沉的虫鸣，枝叶间似有暗影游走。你隐约嗅到一丝熟悉的蛊息——可能是野生蛊虫出没，也可能是有人设下的圈套。<br><br>此处不宜久留，但贸然退走又恐错失机缘。</div>
+  <div class="intel">已探明情报 · <b>蛊息来源</b>：林间暗影非野兽，疑似「血纹蛊」群</div>
+</div>
+
+<div class="cardgrid">
+  <div class="card" style="left:0; top:0;">
+    <div class="name">小心探查</div>
+    <div class="det">靠近暗影，辨认蛊息来源。消耗 1 念头。</div>
+    <div class="cost">念头 1</div>
+    <div class="btn">执行</div>
+  </div>
+  <div class="card" style="left:410px; top:0;">
+    <div class="name">高声质问</div>
+    <div class="det">出言喝问，惊动林间之物。若为蛊修或有转机。</div>
+    <div class="cost">无</div>
+    <div class="btn">执行</div>
+  </div>
+  <div class="card" style="left:0; top:152px;">
+    <div class="name">强行穿过</div>
+    <div class="det">以气血硬闯密林，可能被群蛊围攻。</div>
+    <div class="cost">气血 12</div>
+    <div class="btn">执行</div>
+  </div>
+  <div class="card danger" style="left:410px; top:152px;">
+    <div class="name">以魂探路</div>
+    <div class="det">分出魂魄感知四周，若遭伏击魂魄难归。</div>
+    <div class="cost">魂魄 2</div>
+    <div class="btn">执行</div>
+  </div>
+  <div class="card" style="left:0; top:304px;">
+    <div class="name">设下陷阱</div>
+    <div class="det">布下蛊阵反客为主，需消耗蛊材。</div>
+    <div class="cost">蛊材 3</div>
+    <div class="ghost">暂不可用</div>
+    <div class="reason">蛊材不足（缺 2）</div>
+  </div>
+  <div class="card" style="left:410px; top:304px;">
+    <div class="name">转身离开</div>
+    <div class="det">放弃探查，离开此节点。</div>
+    <div class="cost">无</div>
+    <div class="btn">离开</div>
+  </div>
+</div>
+
+<div class="leave">离开节点</div>
+<div class="ver">BUILD 0.9.0</div>
+</body>
+</html>

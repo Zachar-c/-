@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/presentation/screens/battle_screen_view.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="8_tooltip"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_inventory.tscn" id="10_inventory"]
 [ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="9_dots"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/bg/bg_battle_ridge.png" id="11_bg"]
 
 [node name="BattleScreen" type="MarginContainer"]
 anchors_preset = 15
@@ -44,6 +45,20 @@ mouse_filter = 2
 texture = ExtResource("9_dots")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="BattleBackdrop" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("11_bg")
+expand_mode = 1
+stretch_mode = 6
+modulate = Color(1, 1, 1, 0.5)
+
 [node name="Root" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 0

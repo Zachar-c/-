@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>炼蛊屏 线框稿 v3</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:720px; overflow:hidden; }
+  body {
+    font-family: "Kaiti SC","STKaiti","KaiTi",serif;
+    background-color:#e5e2d7;
+    background-image: radial-gradient(circle at 0 0, rgba(200,201,190,.9) 1px, transparent 1px);
+    background-size: 5px 7px;
+    color:#171814;
+    position:relative;
+  }
+  .frame { position:absolute; inset:14px; border:1px dashed #b7b7ab; }
+  .bar { position:absolute; top:16px; left:16px; right:16px; height:32px;
+         border-bottom:1px solid #b7b7ab; display:flex; align-items:center; gap:18px; font-size:14px; }
+  .chip { display:flex; align-items:center; gap:5px; color:#606860; }
+  .chip .ic { width:14px; height:14px; border:1px solid #9a978c; }
+  .chip b { color:#171814; font-weight:normal; }
+  .corner { position:absolute; top:16px; left:50%; transform:translateX(-50%); font-size:12px; color:#707870; }
+  .seal { position:absolute; top:64px; right:20px; width:44px; height:44px;
+          border:2px solid #8c5850; color:#8c5850; font-size:12px; line-height:1.3;
+          text-align:center; display:flex; align-items:center; justify-content:center;
+          transform: rotate(3deg); letter-spacing:2px; }
+  .vtitle { position:absolute; top:130px; left:22px; writing-mode:vertical-rl;
+            font-size:28px; letter-spacing:12px; color:#171814; }
+  .redline { position:absolute; top:132px; left:112px; width:170px; height:2px; background:#82463e; }
+  .sub { position:absolute; top:146px; left:112px; font-size:12px; color:#607060; }
+  .nav { position:absolute; top:124px; right:26px; width:60px; text-align:center;
+         display:flex; flex-direction:column; gap:16px; font-size:14px; color:#505040; }
+  .nav .on { color:#9c332d; }
+  .panel { position:absolute; border:1px solid #aaa89f; background:rgba(246,243,233,.55); }
+  .card { border:1px solid #9a978c; background:rgba(246,243,233,.6); }
+  .lab { font-size:12px; color:#607060; }
+  .lab b { color:#171814; font-weight:normal; }
+  .btn { border:1px solid #aaa89f; padding:4px 12px; font-size:13px; color:#171814; background:transparent; }
+  .primary { border:1px solid #3880b8; box-shadow:-2px 0 0 #803810; font-size:16px; padding:6px 20px; }
+  .tab { font-size:15px; color:#171814; border-bottom:2px solid #82463e; padding-bottom:2px; margin-right:14px; }
+  .tab.off { color:#707870; border-bottom:none; }
+  .tag { display:inline-block; border:1px solid #d5d3c6; background:rgba(255,255,255,.3);
+         font-size:11px; padding:0 4px; color:#56564c; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="bar">
+  <span class="chip"><span class="ic"></span>气血 <b>94/120</b></span>
+  <span class="chip"><span class="ic"></span>寿元 <b>41年</b></span>
+  <span class="chip"><span class="ic"></span>魂魄 <b>7</b></span>
+  <span class="chip"><span class="ic"></span>元石 <b>12</b></span>
+</div>
+<div class="corner">叁宫·南盟</div>
+<div class="seal">炼蛊<br>养道</div>
+<div class="vtitle">炼蛊</div>
+<div class="redline"></div>
+<div class="sub">以蛊炼蛊 · 化毒为药</div>
+<div class="nav">
+  <div>手记</div>
+  <div class="on">炼蛊</div>
+  <div>图鉴</div>
+  <div>设置</div>
+  <div>退出</div>
+</div>
+<div style="position:absolute; bottom:10px; right:16px; font-size:11px; color:#888880;">BUILD 0.9.0 - LOCAL</div>
+
+<!-- 炼制主面板：全宽 112-1242，无侧栏 -->
+<div class="panel" style="left:112px; top:186px; width:1130px; height:420px;">
+  <div style="position:absolute; left:20px; top:14px;">
+    <span class="tab">炼制</span><span class="tab off">拆解</span>
+  </div>
+  <!-- 左：炼制格 2 槽 -->
+  <div class="lab" style="left:20px; top:58px; position:absolute;">炼制格</div>
+  <div class="card" style="left:20px; top:84px; width:150px; height:120px;"></div>
+  <div class="card" style="left:184px; top:84px; width:150px; height:120px;"></div>
+  <div class="lab" style="left:348px; top:96px; position:absolute; width:120px; line-height:26px; color:#a4a49b;">+<br>蛊虫中文名<br>可炼组合提示</div>
+  <!-- 中：炼出 -->
+  <div class="lab" style="left:20px; top:226px; position:absolute;">炼出</div>
+  <div class="card" style="left:20px; top:252px; width:210px; height:120px;">
+    <div class="lab" style="left:12px; top:10px; position:absolute; font-size:13px;"><b>蛊名</b></div>
+    <div class="lab" style="left:12px; top:36px; position:absolute; color:#a4a49b;">序文 · 品阶</div>
+    <div class="lab" style="left:12px; top:86px; position:absolute; color:#9c332d;">念头 2</div>
+  </div>
+  <!-- 连击 -->
+  <div class="lab" style="left:254px; top:252px; position:absolute; width:140px; line-height:26px; color:#888880;">
+    连击<br>连成次数 0<br>（越连越精）</div>
+  <!-- 右：炼制按钮 -->
+  <div style="position:absolute; left:880px; top:330px;"><span class="btn primary">炼 制</span></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>商店屏 线框稿 v1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:720px; overflow:hidden; }
+  body {
+    font-family: "Kaiti SC","STKaiti","KaiTi",serif;
+    background-color:#e5e2d7;
+    background-image: radial-gradient(circle at 0 0, rgba(200,201,190,.9) 1px, transparent 1px);
+    background-size: 5px 7px;
+    color:#171814;
+    position:relative;
+  }
+  .frame { position:absolute; inset:14px; border:1px dashed #b7b7ab; }
+  .seal { position:absolute; width:44px; height:44px; border:2px solid #8c5850; color:#8c5850;
+          font-size:12px; line-height:1.25; text-align:center; display:flex; align-items:center; justify-content:center;
+          transform: rotate(3deg); letter-spacing:2px; }
+  .vtitle { position:absolute; writing-mode:vertical-rl; font-size:30px; letter-spacing:14px; color:#171814; }
+  .redline { position:absolute; height:2px; background:#82463e; }
+  .bar { position:absolute; top:14px; left:14px; right:14px; height:34px;
+         border-bottom:1px solid #b7b7ab; display:flex; align-items:center; gap:12px; font-size:14px; }
+  .bar .chip { display:flex; align-items:center; gap:4px; color:#606860; }
+  .bar .chip b { color:#171814; font-weight:normal; }
+  .corner { position:absolute; top:14px; right:14px; font-size:12px; color:#707870; }
+  .ver { position:absolute; bottom:8px; right:14px; font-size:11px; color:#888880; }
+  .nav { position:absolute; top:64px; right:14px; width:96px; display:flex; flex-direction:column; gap:18px; font-size:14px; color:#505040; }
+  .nav div { text-align:center; }
+  .panel { position:absolute; border:1px solid #aaa89f; background:rgba(246,243,233,.55); }
+  .card { border:1px solid #9a978c; background:rgba(246,243,233,.6); }
+  .lab { font-size:12px; color:#607060; }
+  .lab b { color:#171814; font-weight:normal; }
+  .btn { border:1px solid #aaa89f; padding:4px 12px; font-size:13px; color:#171814; background:transparent; display:inline-block; }
+  .btn:hover { border-color:#9c332d; color:#9c332d; }
+  .tag { display:inline-block; border:1px solid #d5d3c6; background:rgba(255,255,255,.3); font-size:11px; padding:0 4px; color:#56564c; }
+  .price { color:#9c332d; font-size:12px; }
+  .inflate { color:#887830; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="bar">
+  <span class="chip">气血 <b>94/120</b></span>
+  <span class="chip">寿元 <b>41年</b></span>
+  <span class="chip">魂魄 <b>7</b></span>
+  <span class="chip">元石 <b>12</b></span>
+</div>
+<div class="corner">叁宫·南盟</div>
+<div class="seal" style="top:60px; right:14px;">黑市<br>易</div>
+<div class="vtitle" style="top:120px; left:22px;">黑市</div>
+<div class="redline" style="top:120px; left:112px; width:180px;"></div>
+<div class="lab" style="top:132px; left:112px;">黑市商人 · 童叟无欺 <span class="inflate">（已至 3 次涨价）</span></div>
+
+<div class="panel" style="left:112px; top:168px; width:630px; height:420px;">
+  <div class="lab" style="left:16px; top:12px; position:absolute;">蛊物 · 货架</div>
+  <div class="card" style="left:16px; top:38px; width:280px; height:104px;">
+    <div class="lab" style="left:10px; top:8px; position:absolute; font-size:13px;"><b>毒瘴蛛</b></div>
+    <div class="tag" style="left:10px; top:32px; position:absolute;">毒道 · 一阶</div>
+    <div class="lab" style="left:10px; top:56px; position:absolute; color:#a4a49b;">瘴气缠身，攻其不备</div>
+    <div class="price" style="left:10px; top:82px; position:absolute;">6 元石</div>
+  </div>
+  <div class="card" style="left:316px; top:38px; width:280px; height:104px;">
+    <div class="lab" style="left:10px; top:8px; position:absolute; font-size:13px;"><b>生机草</b></div>
+    <div class="tag" style="left:10px; top:32px; position:absolute;">木道 · 一阶</div>
+    <div class="lab" style="left:10px; top:56px; position:absolute; color:#a4a49b;">净化一层负面</div>
+    <div class="price" style="left:10px; top:82px; position:absolute;">3 元石</div>
+  </div>
+  <div class="card" style="left:16px; top:160px; width:280px; height:104px;">
+    <div class="lab" style="left:10px; top:8px; position:absolute; font-size:13px;"><b>石皮蛊</b></div>
+    <div class="tag" style="left:10px; top:32px; position:absolute;">土道 · 一阶</div>
+    <div class="lab" style="left:10px; top:56px; position:absolute; color:#a4a49b;">获得护盾</div>
+    <div class="price" style="left:10px; top:82px; position:absolute;">5 元石</div>
+  </div>
+  <div class="ghost" style="position:absolute; left:316px; top:160px; width:280px; height:104px; border:1px dashed #c9c6b8; color:#a4a49b;">
+    <div style="position:absolute; left:10px; top:8px;">已售罄</div>
+  </div>
+  <div class="lab" style="left:16px; top:290px; position:absolute; color:#888880;">货架告罄时以保底池补给</div>
+</div>
+
+<div class="panel" style="left:762px; top:168px; width:250px; height:420px;">
+  <div class="lab" style="left:14px; top:12px; position:absolute;">杂项 · 服务</div>
+  <div class="card" style="left:14px; top:38px; width:220px; height:64px;">
+    <div class="lab" style="left:10px; top:8px; position:absolute;">疗伤</div>
+    <div class="lab" style="left:10px; top:34px; position:absolute; color:#9c332d;">8 元石</div>
+  </div>
+  <div class="card" style="left:14px; top:112px; width:220px; height:64px;">
+    <div class="lab" style="left:10px; top:8px; position:absolute;">情报</div>
+    <div class="lab" style="left:10px; top:34px; position:absolute; color:#9c332d;">5 元石</div>
+  </div>
+  <div class="lab" style="left:14px; top:220px; position:absolute; color:#888880; line-height:20px;">态度 · 冷淡<br>（购货越多越热络）</div>
+</div>
+
+<div class="nav">
+  <div>手记</div>
+  <div>图鉴</div>
+  <div>设置</div>
+  <div>退出</div>
+</div>
+<div class="ver">BUILD 0.9.0 - LOCAL</div>
+</body>
+</html>

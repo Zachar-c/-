@@ -20,17 +20,48 @@ const STATUS_ICON_MAP := {
 	"血": "gi_blood",
 }
 ## 敌人立绘库：异常自然志图鉴风格，AI生成。运行时用Image.load()直接加载。
+## 专属立绘按 enemy id 精确匹配（AI 定制，文件缺失时回退名称关键词匹配）。
+## 路径规划见 docs/art/AI-ART-PROMPTS.md。
+const ENEMY_PORTRAIT_BY_ID := {
+	"neutral_stone_wanderer": "res://assets/wenzhen/enemies/enemy_stone_wanderer.png",
+	"ridge_hound": "res://assets/wenzhen/enemies/enemy_ridge_hound.png",
+	"ridge_elite_scout": "res://assets/wenzhen/enemies/enemy_ridge_elite_scout.png",
+	"iron_hide_boar": "res://assets/wenzhen/enemies/enemy_iron_hide_boar.png",
+	"thunder_crown_wolf": "res://assets/wenzhen/enemies/enemy_thunder_crown_wolf.png",
+	"beast_swarm": "res://assets/wenzhen/enemies/enemy_beast_swarm.png",
+	"faction_guard": "res://assets/wenzhen/enemies/enemy_faction_guard.png",
+	"crag_serpent_matriarch": "res://assets/wenzhen/enemies/enemy_crag_serpent_matriarch.png",
+	"marrow_gu_adept": "res://assets/wenzhen/enemies/enemy_marrow_gu_adept.png",
+	"thunder_crown_sovereign": "res://assets/wenzhen/enemies/enemy_thunder_crown_sovereign.png",
+	"blood_vein_bishop": "res://assets/wenzhen/enemies/enemy_blood_vein_bishop.png",
+	"miasma_vein_lord": "res://assets/wenzhen/enemies/enemy_miasma_vein_lord.png",
+}
 var EnemySanxiuTex: Texture2D = null
 var EnemyToadTex: Texture2D = null
 var EnemyMothTex: Texture2D = null
 var EnemyCentipedeTex: Texture2D = null
+## enemy_id → 专属立绘缓存；null 也缓存（避免对缺失文件反复 IO）。
+var _special_portrait_cache: Dictionary = {}
 
 
+## 按 enemy id 加载专属立绘；文件缺失返回 null（调用方回退关键词匹配）。
+func _load_special_portrait(enemy_id: String) -> Texture2D:
+	if _special_portrait_cache.has(enemy_id):
+		return _special_portrait_cache[enemy_id]
+	var tex: Texture2D = null
+	var path: String = ENEMY_PORTRAIT_BY_ID.get(enemy_id, "")
+	if path != "" and FileAccess.file_exists(path):
+		tex = _load_enemy_texture(path)
+	_special_portrait_cache[enemy_id] = tex
+	return tex
+
+
+## 加载敌人立绘：文件存在时用资源系统加载（Image.load 在导出包中不可用），
+## 缺失返回 null 由调用方回退，避免 load() 对缺失路径报错。
 func _load_enemy_texture(path: String) -> Texture2D:
-	var img := Image.new()
-	if img.load(path) != OK:
+	if not FileAccess.file_exists(path):
 		return null
-	return ImageTexture.create_from_image(img)
+	return load(path) as Texture2D
 
 @onready var _intent_label: Label = $ActorMargin/ActorBody/IntentLabel
 @onready var _name_button: Button = $ActorMargin/ActorBody/NameButton
@@ -184,9 +215,18 @@ func _status_row(status_name: String, stacks: int) -> Control:
 	return tag
 
 
-## 敌人立绘：按名称关键词匹配对应异常自然志图鉴立绘，无匹配回退主角立绘翻转。
+## 敌人立绘：优先按 enemy id 精确匹配专属立绘（AI 定制），文件缺失时
+## 回退名称关键词匹配（异常自然志图鉴通用图），再回退主角立绘翻转。
 ## 野兽类按状态偏色（中毒偏绿、诅咒偏紫），散修类偏冷灰。
 func _refresh_enemy_portrait(enemy: Dictionary) -> void:
+	var enemy_id := str(enemy.get("id", ""))
+	var special := _load_special_portrait(enemy_id)
+	if special != null:
+		_enemy_portrait.texture = special
+		_enemy_portrait.flip_h = false
+		var tint := _portrait_tint(enemy)
+		_enemy_portrait.modulate = tint
+		return
 	if EnemySanxiuTex == null:
 		EnemySanxiuTex = _load_enemy_texture("res://assets/wenzhen/enemies/enemy_sanxiu.png")
 		EnemyToadTex = _load_enemy_texture("res://assets/wenzhen/enemies/enemy_toad.png")
@@ -213,6 +253,11 @@ func _refresh_enemy_portrait(enemy: Dictionary) -> void:
 	if not matched:
 		_enemy_portrait.texture = EnemyPortraitTex
 		_enemy_portrait.flip_h = true
+	_enemy_portrait.modulate = _portrait_tint(enemy)
+
+
+## 按敌人状态决定立绘偏色：中毒偏绿、诅咒偏紫，否则墨色微暗。
+func _portrait_tint(enemy: Dictionary) -> Color:
 	var tint := GuStyle.PORTRAIT_DIM
 	var statuses: Array = enemy.get("statuses", [])
 	for status in statuses:
@@ -222,7 +267,7 @@ func _refresh_enemy_portrait(enemy: Dictionary) -> void:
 				tint = GuStyle.ENEMY_PORTRAIT_POISON
 			elif sname.contains("咒"):
 				tint = GuStyle.ENEMY_PORTRAIT_CURSE
-	_enemy_portrait.modulate = tint
+	return tint
 
 
 func _status_label(text: String) -> Label:

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>设置屏 线框稿 v1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:720px; overflow:hidden; }
+  body {
+    font-family: "Kaiti SC","STKaiti","KaiTi",serif;
+    background-color:#e5e2d7;
+    background-image: radial-gradient(circle at 0 0, rgba(200,201,190,.9) 1px, transparent 1px);
+    background-size: 5px 7px;
+    color:#171814;
+    position:relative;
+  }
+  .frame { position:absolute; inset:14px; border:1px dashed #b7b7ab; }
+  .seal { position:absolute; width:44px; height:44px; border:2px solid #8c5850; color:#8c5850;
+          font-size:12px; line-height:1.25; text-align:center; display:flex; align-items:center; justify-content:center;
+          transform: rotate(3deg); letter-spacing:2px; }
+  .vtitle { position:absolute; writing-mode:vertical-rl; font-size:30px; letter-spacing:14px; color:#171814; }
+  .redline { position:absolute; height:2px; background:#82463e; }
+  .bar { position:absolute; top:14px; left:14px; right:14px; height:34px;
+         border-bottom:1px solid #b7b7ab; display:flex; align-items:center; gap:12px; font-size:14px; }
+  .bar .chip { display:flex; align-items:center; gap:4px; color:#606860; }
+  .bar .chip b { color:#171814; font-weight:normal; }
+  .corner { position:absolute; top:14px; right:14px; font-size:12px; color:#707870; }
+  .ver { position:absolute; bottom:8px; right:14px; font-size:11px; color:#888880; }
+  .nav { position:absolute; top:64px; right:14px; width:96px; display:flex; flex-direction:column; gap:18px; font-size:14px; color:#505040; }
+  .nav div { text-align:center; }
+  .panel { position:absolute; border:1px solid #aaa89f; background:rgba(246,243,233,.55); }
+  .lab { font-size:13px; color:#171814; }
+  .lab small { font-size:12px; color:#607060; }
+  .btn { border:1px solid #aaa89f; padding:4px 12px; font-size:13px; color:#171814; background:transparent; display:inline-block; }
+  .btn:hover { border-color:#9c332d; color:#9c332d; }
+  .sel { border:1px solid #9a978c; background:rgba(246,243,233,.6); color:#171814; }
+  .opt { display:inline-block; border:1px solid #aaa89f; padding:4px 10px; font-size:13px; color:#505040; margin-right:8px; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="bar">
+  <span class="chip">气血 <b>94/120</b></span>
+  <span class="chip">寿元 <b>41年</b></span>
+  <span class="chip">魂魄 <b>7</b></span>
+  <span class="chip">元石 <b>12</b></span>
+</div>
+<div class="corner">叁宫·南盟</div>
+<div class="seal" style="top:60px; right:14px;">设置<br>阁</div>
+<div class="vtitle" style="top:120px; left:22px;">设置</div>
+<div class="redline" style="top:120px; left:112px; width:180px;"></div>
+<div class="lab" style="top:132px; left:112px;">声色之调 · 存于机匣</div>
+
+<div class="panel" style="left:112px; top:170px; width:870px; height:400px;">
+  <div class="lab" style="left:30px; top:26px; position:absolute;">声音 <small>· 主音量</small></div>
+  <div class="lab" style="left:30px; top:64px; position:absolute; font-size:14px;">100</div>
+  <div style="position:absolute; left:90px; top:72px; width:420px; height:4px; background:#d5d3c6;">
+    <div style="width:100%; height:4px; background:#9a978c;"></div>
+  </div>
+  <div style="position:absolute; left:540px; top:58px;"><span class="btn">静音</span></div>
+
+  <div style="position:absolute; left:30px; top:130px; width:820px; height:1px; background:#b7b7ab;"></div>
+
+  <div class="lab" style="left:30px; top:156px; position:absolute;">显示 <small>· 窗口分辨率</small></div>
+  <div style="position:absolute; left:30px; top:196px;">
+    <span class="opt sel">全屏</span>
+    <span class="opt">1920×1080 · 窗口</span>
+    <span class="opt">1600×900 · 窗口</span>
+    <span class="opt">1280×720 · 窗口</span>
+  </div>
+  <div class="lab" style="left:30px; top:244px; position:absolute; color:#888880;">当前 1280×720 · 窗口（与基准 1:1）</div>
+
+  <div style="position:absolute; left:30px; top:300px; width:820px; height:1px; background:#b7b7ab;"></div>
+  <div class="lab" style="left:30px; top:326px; position:absolute;">存档 <small>· 本机</small></div>
+  <div style="position:absolute; left:30px; top:360px;">
+    <span class="btn">保存</span>&nbsp;&nbsp;<span class="btn">读档</span>
+  </div>
+</div>
+
+<div class="nav">
+  <div>手记</div>
+  <div>图鉴</div>
+  <div>设置</div>
+  <div>退出</div>
+</div>
+<div class="ver">BUILD 0.9.0 - LOCAL</div>
+</body>
+</html>
