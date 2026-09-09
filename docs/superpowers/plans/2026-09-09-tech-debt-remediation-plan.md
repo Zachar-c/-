@@ -246,7 +246,10 @@ D5（09-15）：W6 + W7 + W8（架构收尾与守门）
 | W6-W8 | W6 ✅ W7 ✅ W8 ✅（2026-09-09 同批收口） | 本会话 | 2026-09-09 | W7+W8+契约拼写修正 `7772b58`；W6 `6aefc1e` + catalog 预热 `5bd9c1d`；W8 守门 python→GDScript 迁移 + beckett 导出隔离 `1a00ca5` |
 | W9 | ✅ 闭环 | 本会话 | 2026-09-09 | `a4b5528`（含 .claude ignore + 删临时分支；远端同名分支已 `push --delete`） |
 | W10 | 移交视觉会话 | | | |
-| W11-W12 | 待执行（依赖 W4） | | | |
+| W11 | **进行中：措施 1+2 已闭环** | 本会话 | 2026-09-09 | `6753065`（role 兜底表迁 data/v1_battle.json + 契约测试 + catalog 形状校验）；措施 3（resolver.gd 按命令族切分）+ 措施 4 待下批 |
+| W12 | 待执行（W11 措施 3 后逐屏推进） | | | |
+| W13 | 待执行（并入 W11 措施 4：school_rules.gd 死代码删除，须先确认 is_soul 外部引用） | | | |
+| W14 | ✅ 闭环 | 本会话 | 2026-09-09 | `d322387`（audio_manager.gd:100 豁免注释 + AGENTS 技术约定补种子化豁免条款） |
 
 > **执行事故记录（2026-09-09）**：W2 的 `git gc` 后台执行期间 .git 被外部进程整目录清空（第 5 次损坏，只剩 1K 空壳）。已按 MEMORY.md 六步恢复流程重建：mv 取证 → init → fetch（296M 对象完整）→ FETCH_HEAD 取 sha → update-ref 双引用 → 恢复 git 身份 → add -A + plain reset 对齐。HEAD 与 `ls-remote` 均为 `89f0202`。`.git.broken-20260909-223844/` 空壳（1K，无 pack）保留待用户确认删除。
 
