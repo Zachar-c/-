@@ -226,6 +226,11 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 				var pool_id := str(template_id_value)
 				if not catalog.get("node_by_id", {}).has(pool_id):
 					errors.append("pacing layer %s pool references unknown node %s" % [layer_id, pool_id])
+			# E1a 分类概率表：四分类权重必须存在且非负。
+			for cat in ["battle", "rest", "unknown", "trade"]:
+				var cat_w: Variant = layer.get("category_weights", {}).get(cat, null)
+				if not _is_integral(cat_w) or int(cat_w) < 0:
+					errors.append("pacing layer %s category_weights.%s must be a non-negative integer" % [layer_id, cat])
 			# 修复 4：层预算（中位收入真值）为正，且该层至少存在一件经层加价后
 			# 不超过预算的同层成长物（purchase/soul_boost/recipe_unlock/material）。
 			var stone_budget := int(layer.get("stone_budget", -1))
@@ -247,6 +252,15 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 						cheapest = layer_cost
 				if cheapest < 0 or cheapest > stone_budget:
 					errors.append("pacing layer %s has no affordable shop growth offer under stone_budget %d (cheapest %d)" % [layer_id, stone_budget, cheapest])
+	# E1a 全局分类池：四分类齐全，模板引用合法（boss/锚点/流程节点不要求入池）。
+	for cat in ["battle", "rest", "unknown", "trade"]:
+		var cat_pool: Array = pacing.get("category_pools", {}).get(cat, [])
+		if cat_pool.is_empty():
+			errors.append("pacing category_pools.%s must be a non-empty array" % cat)
+			continue
+		for tid_value in cat_pool:
+			if not catalog.get("node_by_id", {}).has(str(tid_value)):
+				errors.append("pacing category_pools.%s references unknown node %s" % [cat, tid_value])
 	return errors
 
 
