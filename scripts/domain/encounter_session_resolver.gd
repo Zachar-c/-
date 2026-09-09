@@ -5,6 +5,7 @@ extends RefCounted
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
+const RestRulesScript = preload("res://scripts/domain/rest_rules.gd")
 
 
 static func start(node: Dictionary) -> Dictionary:
@@ -160,7 +161,7 @@ static func _rest_choice_pending(state: RunState, session: Dictionary, catalog: 
 	var template_id := str(state.current_node_template_id)
 	# E3a 三选一（规格 §4）：硬门禁统一覆盖休息类（rest/refinement/cultivation），
 	# 与 Resolver._travel 同口径——未消费探访不许离开，会话保持开放供三族选择。
-	if not Resolver._is_rest_class_node(catalog, node_id) and not Resolver._is_rest_class_node(catalog, template_id):
+	if not RestRulesScript._is_rest_class_node(catalog, node_id) and not RestRulesScript._is_rest_class_node(catalog, template_id):
 		return false
 	return str(state.node_flags.get("%s_used" % node_id, "")) != "used"
 
