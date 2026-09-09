@@ -182,7 +182,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 - 屏集合：`Title → Map ⇄ Encounter/Battle/Shop/Rest/Refine/Reward/Npc`；`ContentError` 为目录校验失败兜底屏。
 - `RunController` 持有 `state(RunState) / current_battle{} / current_session{} / current_node{} / route[] / last_feedback / last_load_diagnosis`。
 - 载入：`load_saved_run()` -> `diagnose_run_file()` 失败即 `_save_load_feedback`（v3 显示"已保留"文案）；`_restore_game` 以 `has("state")` 判成功。
-- 结局：`terminal_state != "active"` 即终局（`run_ended` 事件清空局内资源）；非死亡结局与致死确认统一走二次确认命令面（已落地：`bloodlet` 致死标记 `lethal_confirm_required`、`SoulRules.soul_growth_forecast`、兽化门 `beastiality_endpoint_check`——标记随命令结果返回，UI 层执行前强制确认）。
+- 结局：`terminal_state != "active"` 即终局（`run_ended` 事件清空局内资源）；非死亡结局与致死确认统一走二次确认命令面（已落地：`bloodlet` 致死标记 `lethal_confirm_required`、`SoulRules.soul_growth_forecast`、兽化门 `bestiality_endpoint_check`——标记随命令结果返回，UI 层执行前强制确认）。
 
 ---
 

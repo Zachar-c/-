@@ -292,6 +292,8 @@ var pacing = pacing_override if not pacing_override.is_empty() else _load_json("
 | `test_command_rejections_v2` | ⚠️ 契约提到的测试名，tests 下不存在（低影响） |
 | `beastiality_endpoint_check` | ❌ **真漂移**：scripts 与 data 均无 |
 
+> **勘误（2026-09-09 W8 落实时）**：上表三条**全部是误报，实际零漂移**。原因：①比对脚本只扫了 `scripts/`，没扫 `tests/` 与 `data/`——`test_command_rejections_v2.gd` 就在 `tests/unit/` 下，`gu_rot_pact_accept` 在 `data/dialogues/events.dialogue`（首版已核实）；②"真漂移"项实为**契约文档拼写错误**（`beastiality`→代码正确拼写 `bestiality_endpoint_check`，`soul_rules.gd:152` 存在），已修正契约。**158 个标识符经修正后全部解析**。守门脚本 `tools/check_contract_drift.py`（W8）已接入 `check.ps1`，扫描面含 scripts+tests+data 与文件名。
+
 **风险**：单点，影响有限，但说明契约没有自动守门——这次是靠人工比对发现的。
 
 **建议**：把这次的比对脚本固化成 `tools/check_contract_drift.gd` 或加进 `tools/check.ps1`，让契约漂移变红灯。顺手确认 `beastiality_endpoint_check` 是废弃项（删契约）还是未实现项（排期）。

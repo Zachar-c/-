@@ -26,6 +26,16 @@ if ($probe_rc -ne 0) {
     exit $probe_rc
 }
 
+# 契约-实现漂移守门（W8, 2026-09-09）：契约文档声明的标识符必须在
+# scripts/ + tests/ + data/ 中存在；缺失即漂移，exit 1。
+$ErrorActionPreference = 'Continue'
+python (Join-Path $PSScriptRoot 'check_contract_drift.py')
+$drift_rc = $LASTEXITCODE
+$ErrorActionPreference = 'Stop'
+if ($drift_rc -ne 0) {
+    exit $drift_rc
+}
+
 # git 也会向 stderr 写 warning（CRLF 归一化提示等），同样会误杀 Stop 模式；
 # 以 diff --check 的 exit code 判定空白错误。
 $ErrorActionPreference = 'Continue'

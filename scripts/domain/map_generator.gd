@@ -21,13 +21,13 @@ static func layer_index(stage: String) -> int:
 
 
 static func build(seed_value: int, first_run: bool, catalog: Dictionary = {}) -> Array[Dictionary]:
-	var data: Dictionary = catalog.get("nodes_data", {}) if not catalog.is_empty() else _load_json("res://data/nodes.json")
+	var data: Dictionary = catalog.get("nodes_data", {}) if not catalog.is_empty() else _load_json_fallback("build/nodes", "res://data/nodes.json")
 	var node_by_id := _index_nodes(data.get("nodes", []))
 	var ascension_node: Dictionary = data.get("ascension_node", {})
 	if not ascension_node.is_empty():
 		node_by_id[ascension_node.get("id", "")] = ascension_node
 	if first_run:
-		var first_run_cfg: Dictionary = catalog.get("first_run", {}) if not catalog.is_empty() else _load_json("res://data/first_run.json")
+		var first_run_cfg: Dictionary = catalog.get("first_run", {}) if not catalog.is_empty() else _load_json_fallback("build/first_run", "res://data/first_run.json")
 		var route_ids: Array = first_run_cfg.get("route_ids", [])
 		return _route_from_ids(route_ids, node_by_id)
 	return _generate_instance_route(seed_value, node_by_id, catalog.get("pacing", {}) if not catalog.is_empty() else {})
@@ -38,7 +38,7 @@ static func build(seed_value: int, first_run: bool, catalog: Dictionary = {}) ->
 ## 下一行 1–2 个节点且下行每节点 ≥1 入边；关底 Boss 击败后解锁
 ## 下一大层。层形状/锚点/模板池来自 pacing.json 的 layers 裁定表。
 static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pacing_override: Dictionary = {}) -> Array[Dictionary]:
-	var pacing: Dictionary = pacing_override if not pacing_override.is_empty() else _load_json("res://data/pacing.json")
+	var pacing: Dictionary = pacing_override if not pacing_override.is_empty() else _load_json_fallback("route/pacing", "res://data/pacing.json")
 	var layers_cfg: Dictionary = pacing.get("layers", {})
 	var category_pools: Dictionary = pacing.get("category_pools", {})
 	var rng := SeededRng.new(seed_value)
@@ -420,6 +420,14 @@ static func _load_json(path: String) -> Dictionary:
 	if json.parse(FileAccess.get_file_as_string(path)) != OK:
 		return {}
 	return json.data
+
+
+# W7（2026-09-09）：无 catalog 时直读文件属绕过内容目录的旁路（可能取到未经
+# ContentCatalog.validate 校验的数据，且与目录侧两份数据源不一致时无人报警）。
+# 生产路径总是经 build(catalog=...) 传入；此告警只会在测试/工具裸调静态函数时出现。
+static func _load_json_fallback(via: String, path: String) -> Dictionary:
+	push_warning("MapGenerator.%s fell back to a direct file read (no catalog passed): %s" % [via, path])
+	return _load_json(path)
 
 
 static func _index_nodes(nodes: Array) -> Dictionary:
