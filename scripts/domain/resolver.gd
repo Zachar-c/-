@@ -32,6 +32,11 @@ const REST_REMOVAL_MODES := ["remove_card", "remove_imprint", "remove_curse"]
 # refreshes the bare "<id>" visited marker (_complete_node idempotency +
 # MapGenerator.reachable_nodes, matching every other completed node).
 const REST_NODE_TYPE := "rest"
+## E3a（2026-09-09 规格事件分类 §4）：休息类三选一——rest/refinement/cultivation
+## 统一归入休息类。修炼（meditate / cultivate_rank_two）与炼蛊（refine_gu /
+## refine_free_pair）在休息类节点成功执行即消费本次探访（等同 rest 消耗，
+## leave 门禁放行）；硬选择门禁仍只锁 type=="rest" 节点（E4c 路由统一时再扩展）。
+const REST_CLASS_TYPES := ["rest", "refinement", "cultivation"]
 
 
 const BODY_IMPRINTS := {
@@ -82,9 +87,21 @@ static func _handler_for(command_type: String) -> Variant:
 			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
 			"sell_gu": func(state, command, catalog): return _sell_gu(state, command, catalog),
 			"exchange_gu": func(state, command, catalog): return _exchange_gu(state, command, catalog),
-			"refine_gu": func(state, command, catalog): return _refine_gu(state, command, catalog),
-			"refine_free_pair": func(state, command, catalog): return SynthesisRulesScript.execute(state, catalog, str(command.get("main_instance_id", "")), str(command.get("partner_instance_id", ""))),
-			"cultivate_rank_two": func(state, _command, catalog): return _cultivate_rank_two(state, catalog),
+			"refine_gu": func(state, command, catalog):
+				var refined := _refine_gu(state, command, catalog)
+				if bool(refined["result"].get("ok", false)):
+					refined["state"] = _consume_rest_visit_if_rest_class(refined["state"], catalog)
+				return refined,
+			"refine_free_pair": func(state, command, catalog):
+				var paired := SynthesisRulesScript.execute(state, catalog, str(command.get("main_instance_id", "")), str(command.get("partner_instance_id", "")))
+				if bool(paired["result"].get("ok", false)):
+					paired["state"] = _consume_rest_visit_if_rest_class(paired["state"], catalog)
+				return paired,
+			"cultivate_rank_two": func(state, _command, catalog):
+				var cultivated := _cultivate_rank_two(state, catalog)
+				if bool(cultivated["result"].get("ok", false)):
+					cultivated["state"] = _consume_rest_visit_if_rest_class(cultivated["state"], catalog)
+				return cultivated,
 			"settle_feeding": func(state, _command, catalog): return _settle_feeding(state, catalog),
 			"settle_node_feeding": func(state, _command, catalog): return _settle_node_feeding(state, catalog),
 			"disable_card": func(state, command, _catalog): return _disable_card(state, command),
@@ -142,6 +159,11 @@ static func _handler_for(command_type: String) -> Variant:
 
 static func _resolve_contact(state: RunState, command: Dictionary, catalog: Dictionary = {}) -> Dictionary:
 	var node_id := str(command.get("node_id", ""))
+	# preview 会把 node_id 注入为实例 id（wenzhen_LxRxNx），catalog 里只有模板 id。
+	# run 状态记录 current_node_template_id 作兜底，实例与模板两态都能定位。
+	var template_id := str(state.current_node_template_id)
+	if not template_id.is_empty():
+		node_id = template_id
 	# Contact approaches are node-generic: any contact template may be
 	# approached; fight drills the node's own enemy_kind via start_battle.
 	# neutral_wanderer keeps its legacy effect set unchanged (pinned by tests).
@@ -552,7 +574,10 @@ static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dict
 
 
 static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
-	if state.current_node_id != "cultivation_spring":
+	# E3a：修炼族并入休息类三选一——rest/refinement/cultivation 节点均可冲阶
+	# （原 cultivation_spring 字面闸门放宽为休息类；seclusion 等仍拒绝）。
+	if not _is_rest_class_node(catalog, state.current_node_id) \
+			and not _is_rest_class_node(catalog, str(state.current_node_template_id)):
 		return _rejected(state, "not_cultivation_window")
 	if state.cultivation >= 2:
 		return _rejected(state, "cultivation_already_rank_two")
@@ -1396,6 +1421,15 @@ static func _is_rest_node(catalog: Dictionary, node_id: String) -> bool:
 	return false
 
 
+## E3a：休息类节点判定（rest/refinement/cultivation；实例 id 或模板 id 皆可命中）。
+static func _is_rest_class_node(catalog: Dictionary, node_id: String) -> bool:
+	for node_value in catalog.get("nodes", []):
+		var node: Dictionary = node_value
+		if str(node.get("id", "")) == node_id and REST_CLASS_TYPES.has(str(node.get("type", ""))):
+			return true
+	return false
+
+
 static func _rest_visit_key(node_id: String) -> String:
 	return "%s_used" % node_id
 
@@ -1544,6 +1578,9 @@ static func _choose_action(state: RunState, command: Dictionary, catalog: Dictio
 		str(transition["reason"]),
 		state.current_node_id
 	))
+	# E3a：修炼族（meditate）在休息类节点成功执行即消费本次探访（三选一）。
+	if action_id == "meditate":
+		next = _consume_rest_visit_if_rest_class(next, catalog)
 	# Ascension grants (升仙五项): a node may declare that performing one of
 	# its actions secures one of the five ascension conditions. The mapping
 	# lives on the node in nodes.json (ascension_grants); without it the two
@@ -2020,6 +2057,17 @@ static func _consume_rest_visit(state: RunState) -> RunState:
 		state.current_node_id,
 		[]
 	))
+
+
+## E3a：休息类节点上修炼/炼蛊族动作成功执行后消费本次探访（幂等：已消费或
+## 非休息类节点原样返回）。这是三选一「执行一次后 leave 放行」的领域支点。
+static func _consume_rest_visit_if_rest_class(state: RunState, catalog: Dictionary) -> RunState:
+	if _rest_visit_consumed(state):
+		return state
+	if not _is_rest_class_node(catalog, state.current_node_id) \
+			and not _is_rest_class_node(catalog, str(state.current_node_template_id)):
+		return state
+	return _consume_rest_visit(state)
 
 
 static func _rest_remove_card(state: RunState, command: Dictionary, catalog: Dictionary, consumed: RunState) -> Dictionary:

@@ -217,7 +217,22 @@ func _step(controller, view: String, trace: Dictionary) -> String:
 			return _step_map(controller)
 		"Shop", "Caravan":
 			return _step_shop(controller)
-		"Reward", "Npc":
+		"Reward":
+			return _leave(controller, view)
+		"Npc":
+			# 血仇门禁：恶名触发的 extreme_hostile 会锁 leave（feud_no_escape），
+			# 但 UI 保留 fight 卡。bot 必须优先打完血仇战再离场（真玩家同路径）。
+			var npc_cards: Array[Dictionary] = ActionPreviewServiceScript.preview_actions(
+				controller.state, controller.current_node, controller.catalog)
+			var can_fight := false
+			for card in npc_cards:
+				if bool(card.get("executable", false)) and _is_fight_card(card):
+					can_fight = true
+					break
+			if can_fight:
+				var fought := _fight_via_preview(controller)
+				if fought == "ongoing" or fought.begins_with("mandatory_fight"):
+					return fought
 			return _leave(controller, view)
 		"Rest":
 			return _step_rest(controller)

@@ -1051,7 +1051,9 @@ static func _append_leave_card(cards: Array[Dictionary], state: RunState) -> voi
 
 static func _command_for_standard(node: Dictionary, action_id: String) -> Dictionary:
 	if str(node.get("type", "")) == "contact":
-		return {"type": "resolve_contact", "node_id": str(node.get("id", "")), "approach": action_id}
+		# 实例节点用 template_id 定位模板（resolver._resolve_contact 按模板 id 查
+		# catalog.nodes 判断 type；传实例 id 会 unknown_contact）。
+		return {"type": "resolve_contact", "node_id": str(node.get("template_id", node.get("id", ""))), "approach": action_id}
 	if str(node.get("type", "")) == "ascension" and action_id == "attempt_ascension":
 		return {"type": "attempt_ascension", "choice": "now"}
 	return {"type": "choose_action", "action_id": action_id}

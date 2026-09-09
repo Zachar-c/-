@@ -432,6 +432,78 @@ static func rest(controller) -> Dictionary:
 		"requires_confirm": not rest_used,
 		"curse_warning": false,
 	})
+	# E3a 三选一（规格 §4）：rest 类节点统一暴露三族动作卡。
+	# 休整=既有 choices 全集；修炼=meditate/cultivate；炼蛊=refine/free_pair。
+	# 未开放的动作族 disabled + 原因直白（真元已满 / 无蛊可炼等）。E4a 消费渲染。
+	var rank_two_cost := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
+	var essence_cap := int(state.cave_aperture.get("essence_max", 4)) if state != null else 4
+	var essence_now := int(state.essence) if state != null else 0
+	var meditate_disabled := essence_now >= essence_cap
+	var cultivate_disabled := false
+	var cultivate_reason := ""
+	if state != null:
+		if int(state.cultivation) >= 2:
+			cultivate_disabled = true
+			cultivate_reason = "你已经是二转蛊师。"
+		elif int(state.stone) < rank_two_cost:
+			cultivate_disabled = true
+			cultivate_reason = "元石不足：需要 %d 枚，还差 %d 枚。" % [rank_two_cost, rank_two_cost - int(state.stone)]
+	var live_gu := 0
+	if state != null:
+		for live_key in state.cave_aperture.get("stored_gu_instance_ids", []):
+			var live_inst: Dictionary = state.gu_instances.get(str(live_key), {})
+			if not live_inst.is_empty() and str(live_inst.get("state", "")) != "dead":
+				live_gu += 1
+	var has_material := false
+	if state != null:
+		for material_key in state.materials:
+			if int(state.materials.get(str(material_key), 0)) > 0:
+				has_material = true
+				break
+	var can_refine: bool = live_gu > 0 or (state != null and not state.refined_gu_ids.is_empty()) or has_material
+	out["mode_groups"] = {
+		"休整": choices,
+		"修炼": [
+			{
+				"id": "meditate",
+				"label": "调息冥想",
+				"detail": "静坐调息，真元回复 1 点",
+				"cost": "",
+				"disabled": meditate_disabled,
+				"reason": "真元已满" if meditate_disabled else "",
+				"curse_warning": false,
+			},
+			{
+				"id": "cultivate",
+				"label": "冲击二转",
+				"detail": "借灵地静修突破空窍（一转 → 二转）",
+				"cost": "%d 元石" % rank_two_cost,
+				"disabled": cultivate_disabled,
+				"reason": cultivate_reason,
+				"curse_warning": false,
+			},
+		],
+		"炼蛊": [
+			{
+				"id": "refine",
+				"label": "炼蛊合药",
+				"detail": "按蛊方投料合炼新蛊（炼蛊会话）",
+				"cost": "",
+				"disabled": not can_refine,
+				"reason": "" if can_refine else "无蛊可炼：蛊囊与材料皆空",
+				"curse_warning": false,
+			},
+			{
+				"id": "free_pair",
+				"label": "自由配对",
+				"detail": "主辅两只同转蛊自由合炼，零门槛试炼",
+				"cost": "",
+				"disabled": live_gu < 2,
+				"reason": "蛊囊活蛊不足两只" if live_gu < 2 else "",
+				"curse_warning": false,
+			},
+		],
+	}
 	out["title"] = "闭关 · 休整"
 	out["note"] = "强制二选一，不可全拿"
 	out["choices"] = choices
