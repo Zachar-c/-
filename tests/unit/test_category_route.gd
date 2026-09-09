@@ -124,11 +124,15 @@ func test_unknown_nodes_are_misted_until_revealed() -> void:
 
 
 func test_anchor_nodes_stay_visible() -> void:
+	# 锚点/行尾固定位（anchor 标记）保持可见；同一模板被当作未知类随机
+	# 抽中时（如 L2+ 随机槽的遗藏 yizang_ridge）按未知规则迷雾。
 	var route := MapGenerator.build(20260909, false)
+	var anchor_count := 0
 	for n in route:
-		var tid := str(n.get("template_id", ""))
-		if tid in ["yizang_ridge", "ridge_black_market", "refinement_hollow"]:
-			assert_true(bool(n.get("revealed", true)), "anchor %s must stay visible" % tid)
+		if bool(n.get("anchor", false)):
+			anchor_count += 1
+			assert_true(bool(n.get("revealed", true)), "anchor instance must stay visible: %s" % str(n.get("template_id", "")))
+	assert_gt(anchor_count, 0, "route must contain anchor slots")
 
 
 func test_category_pool_templates_are_reachable_some_seed() -> void:

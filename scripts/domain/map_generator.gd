@@ -66,10 +66,13 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 			for index in range(count):
 				var template_id := ""
 				var revealed := true
+				var instance_anchor := false
 				if row == row_count - 1:
 					template_id = BOSS_NODE_ID if layer_number == 5 else "layer_boss_stand_%d" % layer_number
+					instance_anchor = true
 				elif not anchor_queue.is_empty():
 					template_id = str(anchor_queue.pop_front())
+					instance_anchor = true
 				else:
 					# E2a：分类抽取（层概率 → 分类池 → 层难度过滤 → 伪随机 + 层保底）。
 					# 未知类节点地图上迷雾（revealed=false，进入揭示）；锚点保持可见。
@@ -89,6 +92,9 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 				instance["row"] = row
 				instance["visible"] = false
 				instance["revealed"] = revealed
+				# 锚点/行尾固定位标记：地图 UI 与测试据此区分「刻意摆放（保持
+				# 可见）」与「随机抽中的未知类（迷雾）」——遗藏等模板两者皆可。
+				instance["anchor"] = instance_anchor
 				instance["next_ids"] = []
 				if layer_number == 1 and row == 0:
 					instance["start"] = true
