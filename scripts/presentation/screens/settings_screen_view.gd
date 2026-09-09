@@ -156,7 +156,10 @@ func _apply_opt_style(btn: Button, on: bool) -> void:
 	box.border_width_right = 1
 	box.border_width_bottom = 1
 	if on:
-		box.bg_color = Color(0.964706, 0.952941, 0.913725, 0.6)
+		# 与旧硬编码 #f6f3e9 同值，只改走 GuStyle token（UI_RULES §2）。
+		var on_tint := GuStyle.NODE_REACH_BG
+		on_tint.a = 0.6
+		box.bg_color = on_tint
 		box.border_color = Color("9a978c")
 		btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 	else:
@@ -232,7 +235,9 @@ func _apply_base_fonts() -> void:
 
 func _apply_stage_style() -> void:
 	var stage_box := StyleBoxFlat.new()
-	stage_box.bg_color = Color(0.964706, 0.952941, 0.913725, 0.55)
+	var stage_tint := GuStyle.NODE_REACH_BG
+	stage_tint.a = 0.55
+	stage_box.bg_color = stage_tint
 	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	stage_box.border_width_left = 1
 	stage_box.border_width_top = 1

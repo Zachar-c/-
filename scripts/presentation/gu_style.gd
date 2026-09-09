@@ -90,6 +90,9 @@ const CINNABAR     := Color("9c332d")       # 朱砂：危险 / 不可逆 / 死�
 ## 抗锯齿边缘扩散至 #AC7870~#C09C94——Codex 基准印章为氧化褪色的暗红印泥，非鲜朱砂。
 ## 2026-09-08 审计后加深一档 → #a06058，抵消 1px 细框+小字的抗锯齿变浅。
 const SEAL_CINNABAR := Color("8c5850")
+## 受击红闪：作为 modulate 叠在控件原色上，故用高明度浅红而非朱砂
+## （原 battle_screen_view 硬编码 1.0,0.55,0.55；2026-09-09 提为 token，UI_RULES §2）。
+const HIT_FLASH := Color("ff8c8c")
 const REDLINE       := Color("82463e")       # 标题下红线（基准图采样）
 ## 基准图逐元素重采样文本色（2026-09-08 审计，全部来自 Codex 基准图采样）：
 const SUBTITLE_TEXT   := Color("707060")   # 副题（凡人逐道，代价自负）灰褐

@@ -4,12 +4,16 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
 [ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="4_dots"]
 
-[node name="SettingsScreen" type="Control"]
+[node name="SettingsScreen" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
 script = ExtResource("1_settings")
 
 [node name="SettingsPaper" type="ColorRect" parent="."]

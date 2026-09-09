@@ -326,7 +326,7 @@ func _refresh_top_bar(state: Dictionary) -> void:
 func _play_hit_feedback(target: Control, strong := false) -> void:
 	if target != null and is_instance_valid(target):
 		var t := target.create_tween()
-		t.tween_property(target, "modulate", Color(1.0, 0.55, 0.55, 1.0), 0.05)
+		t.tween_property(target, "modulate", GuStyle.HIT_FLASH, 0.05)
 		t.tween_property(target, "modulate", Color.WHITE, 0.25)
 	if _battle_stage != null and is_instance_valid(_battle_stage):
 		var s := _battle_stage.create_tween()
