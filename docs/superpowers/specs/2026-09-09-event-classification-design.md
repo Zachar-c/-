@@ -88,6 +88,39 @@
 - 战斗/休息/交易节点按现有规则显示类型图标（或模板图标）。
 - 地图屏节点图标映射表见 §2「现路由」列（type → 图标）。
 
+## 5.5 战斗敌人按层伪随机（用户裁定 2026-09-09 追加）
+
+现状：敌人写在节点模板 `enemy_kind`/`enemy_kinds`（硬编码单一绑定）；
+`data/enemies.json` 已有 `tier(common/elite/boss)` + `rank(0-5)` + `hp/turn`，
+但随机选敌从未使用（12 敌人，数值已按层缩放 turn_scaling 存在）。
+
+- 数据：`enemies.json` 每敌人补 `weight`（默认 10，越高越常出）。
+- 生成：战斗节点实例化时（map_generator，种子化 SeededRoll）：
+  1. 模板保留 `enemy_kind`/`enemy_kinds` 为**锚定池**（boss 位、兽群主题位直用）；
+  2. 普通战斗模板可加 `enemy_roll: {min_rank, max_rank, count}`——按当前层
+     rank 范围过滤敌人池 → **品质权重**（pacing 每层 `enemy_weights`：
+     L1 80/20/0 → L5 40/60/0，common/elite/boss；boss 只 boss 位）伪随机抽 count 个；
+  3. 无 `enemy_roll` 的模板回落现有 enemy_kind 直用（兼容，schema 校验保留）。
+- 品质随层：elite 概率逐层升（L1 20% → L5 60%），common 反向；boss 仅
+  layer_boss_stand/final_boss_stand 固定，不入随机池。
+- 确定性：同种子同敌人组合；`battle.enemies` 快照与战斗实例一致。
+
+## 5.6 商店物品按层伪随机（用户裁定 2026-09-09 追加）
+
+现状：`run_snapshot_builder.shop()` 遍历全部 `shops.json` offers 仅按
+`tier > max_tier` 过滤——**无随机、无权重**，同层每次商店货架相同。
+
+- 数据：`shops.json` offers 补 `weight`（默认 10）。
+- 生成：进入商店节点时（travel 会话，种子化）在 state 记 `shop_roll`
+  （本店 offer id 列表 + 保底标记），快照与购买命令均读同一 `shop_roll`：
+  1. 按当前层 `max_tier`（pacing `shop_max_tier`）过滤货池；
+  2. 按 tier 权重伪随机抽 N 个（N = 4 + layer/2，约 4-6；高 tier 货 weight 低=稀有）；
+  3. **保底**：至少 1 件当前层最高可上架 tier 的"品质货"（soul_boost/barter 优先）。
+- 购买：`_shop_purchase` 校验 offer id ∈ 本店 `shop_roll`（不在货架= `unknown_shop_offer`
+  拒绝，现有文案复用）；`shop_tier_locked` 门禁保留。
+- 快照：`shop.offers` = 本店实际上架（含现有 price/quality/curse_warning 字段），
+  契约回写说明随机化（同层不同店货架不同）。
+
 ## 6. 校准与验收
 
 - `tools/verify_pacing_density.gd` 扩展：按 4 分类统计全路线节点分布
@@ -112,6 +145,12 @@
 | **E4 表现层** | 休息屏三选一 UI（三组卡片区，一组高亮可执行）；
   地图屏未知类「?」迷雾渲染；travel 分发 refinement→Rest | 交互审计（无死按钮）+ 截图 |
 | **E5 回归** | `verify_pacing_density` 扩展 + `route_diversity` + 全量测试 | unit + integration 全绿 |
+| **E6 敌人伪随机** | `enemies.json` 补 weight；`map_generator.gd` 战斗节点
+  `enemy_roll` 抽取（层 rank 过滤 + 品质权重 + 种子化）；pacing 每层
+  `enemy_weights`；battle 快照一致 | 确定性单测（同种子同敌）+ 层门禁 |
+| **E7 商店伪随机** | `shops.json` offers 补 weight；travel→shop 时生成
+  `shop_roll`（按层 tier 权重抽 N + 保底 1 品质货）；快照与购买读同一
+  `shop_roll`；契约回写 | 确定性单测 + 保底断言 + 购买越权拒绝 |
 
 风险表：休息屏三选一若领域命令（cultivate 冲阶）语义与现状冲突 → 先只接
 meditate/refine/rest 三族，cultivate 保留 action_card 通道；未知类节点揭示后
@@ -124,3 +163,7 @@ meditate/refine/rest 三族，cultivate 保留 action_card 通道；未知类节
   （含锚点 refinement_hollow）。
 - D-C：未知类「?」迷雾是否连已知模板也隐藏（现 yizang_ridge 等 visible=true 锚点是否保留可见）。
 - D-D：聚焦提交（E1-E5 分批提交）还是单批聚合提交。
+- D-E：敌人随机粒度——「节点主题锚定池 + 层品质随机」是否接受（兽群位固定兽群、
+  其余按 rank/品质抽），还是完全脱离模板全局抽。
+- D-F：商店每次上架数 N=4+layer/2 与保底规则是否接受；同层多次进店是否允许
+  货架刷新（现方案：每店生成一次 shop_roll，固定到离开）。
