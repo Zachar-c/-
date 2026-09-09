@@ -241,11 +241,13 @@ D5（09-15）：W6 + W7 + W8（架构收尾与守门）
 | W2 | ✅ 闭环 | 本会话 | 2026-09-09 | `a4b5528` |
 | W3a | **待用户拍板许可类型** | | | |
 | W3b | 待执行（依赖 W3a） | | | |
-| W4 | ✅ 闭环（首版） | 本会话 | 2026-09-09 | `（待提交）` |
+| W4 | ✅ 闭环（首版） | 本会话 | 2026-09-09 | `04c389d`（Battle/Hall 契约 v2 待 state-advance 工具，见工单） |
 | W5 | ✅ 闭环（实测 ~60ms < 200ms 阈值，**不改代码**） | 本会话 | 2026-09-09 | `89f0202`（计时工具落档） |
-| W6-W8 | W6 ✅ W7 ✅ W8 ✅（2026-09-09 同批收口） | 本会话 | 2026-09-09 | W7+W8+契约拼写修正 `7772b58`；W6 `（待提交）` |
+| W6-W8 | W6 ✅ W7 ✅ W8 ✅（2026-09-09 同批收口） | 本会话 | 2026-09-09 | W7+W8+契约拼写修正 `7772b58`；W6 `6aefc1e` + catalog 预热 `5bd9c1d`；W8 守门 python→GDScript 迁移 + beckett 导出隔离 `1a00ca5` |
 | W9 | ✅ 闭环 | 本会话 | 2026-09-09 | `a4b5528`（含 .claude ignore + 删临时分支；远端同名分支已 `push --delete`） |
 | W10 | 移交视觉会话 | | | |
 | W11-W12 | 待执行（依赖 W4） | | | |
 
-> **执行事故记录（2026-09-09）**：W2 的 `git gc` 后台执行期间 .git 被外部进程整目录清空（第 5 次损坏，只剩 1K 空壳）。已按 MEMORY.md 六步恢复流程重建：mv 取证 → init → fetch（296M 对象完整）→ FETCH_HEAD 取 sha → update-ref 双引用 → 恢复 git 身份 → add -A + plain reset 对齐。HEAD 与 `ls-remote` 均为 `89f0202`。`.git.broken-20260909-223844/` 空壳保留待用户确认删除。
+> **执行事故记录（2026-09-09）**：W2 的 `git gc` 后台执行期间 .git 被外部进程整目录清空（第 5 次损坏，只剩 1K 空壳）。已按 MEMORY.md 六步恢复流程重建：mv 取证 → init → fetch（296M 对象完整）→ FETCH_HEAD 取 sha → update-ref 双引用 → 恢复 git 身份 → add -A + plain reset 对齐。HEAD 与 `ls-remote` 均为 `89f0202`。`.git.broken-20260909-223844/` 空壳（1K，无 pack）保留待用户确认删除。
+
+> **守门平台坑（2026-09-09，已固化到代码注释）**：check.ps1 不可依赖 `python`——Windows App Execution Alias 下 PS 解析到 Microsoft Store stub，`python` 调用必失败致整脚本 exit 1。契约漂移守门（W8）重写为 `tools/check_contract_drift.gd`（`extends SceneTree`，经 godot.ps1 headless 调用），与既有探针同一调用路径。审计 P0 遗留 addons/beckett/（第三方编辑器插件，untracked）已同步 `.gitignore` + 双 preset exclude_filter 隔离（`1a00ca5`）。
