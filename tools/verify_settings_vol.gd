@@ -15,7 +15,7 @@ func _initialize() -> void:
 		"subtitle": "声色之调 · 存于机匣",
 		"master_volume": 100,
 		"resolution_index": 3,
-		"version_label": "BUILD 0.9.0+local",
+		"version_label": "BUILD 0.9.0",
 	}
 	var cmds := {
 		"save": Callable(self, "_noop"),

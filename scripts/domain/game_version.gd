@@ -10,10 +10,11 @@ const PATCH := 0
 ## 预发布标识（如 "alpha.1"），无预发布时留空。
 const PRERELEASE := ""
 ## 构建元数据（如 "local" / "nightly.20260908"），不影响版本优先级。
-const BUILD_META := "local"
+## 正式发布留空（输出 0.9.0）；本地/调试构建可临时填 "local"。
+const BUILD_META := ""
 
 
-## 完整语义化版本号：0.9.0+local
+## 完整语义化版本号：0.9.0
 static func semver() -> String:
 	var v := "%d.%d.%d" % [MAJOR, MINOR, PATCH]
 	if not PRERELEASE.is_empty():
@@ -23,6 +24,6 @@ static func semver() -> String:
 	return v
 
 
-## 展示用标签：BUILD 0.9.0+local
+## 展示用标签：BUILD 0.9.0
 static func display() -> String:
 	return "BUILD " + semver()

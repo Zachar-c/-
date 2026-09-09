@@ -2,7 +2,7 @@
 
 《蛊真人》同人单机卡牌肉鸽 **《問眞》**（前称《蛊路求生》/旧名 Nanjiang Smoke）——以《蛊真人》世界规则为素材的修行肉鸽原型项目。仓库不提供 `GDD.md`；权威基线 = [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)。
 
-当前版本：`0.9.0+local`（语义化版本 2.0 单源：`scripts/domain/game_version.gd`，大厅/设置屏统一读取）。
+当前版本：`0.9.0`（语义化版本 2.0 单源：`scripts/domain/game_version.gd`，大厅/设置屏统一读取）。
 
 仓库同时保存两类内容：
 
