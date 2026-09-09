@@ -64,10 +64,10 @@
    ],
    "title": "青茅山外圍",
    "category_weights": {
-    "battle": 60,
-    "rest": 10,
-    "unknown": 18,
-    "trade": 12
+    "battle": 82,
+    "rest": 5,
+    "unknown": 9,
+    "trade": 4
    }
   },
   "2": {
@@ -120,10 +120,10 @@
    ],
    "title": "落瘴岭",
    "category_weights": {
-    "battle": 56,
-    "rest": 10,
-    "unknown": 20,
-    "trade": 14
+    "battle": 80,
+    "rest": 5,
+    "unknown": 10,
+    "trade": 5
    }
   },
   "3": {
@@ -176,10 +176,10 @@
    ],
    "title": "血蟒涧",
    "category_weights": {
-    "battle": 54,
-    "rest": 9,
-    "unknown": 22,
-    "trade": 15
+    "battle": 78,
+    "rest": 5,
+    "unknown": 11,
+    "trade": 6
    }
   },
   "4": {
@@ -232,10 +232,10 @@
    ],
    "title": "万蛊窟",
    "category_weights": {
-    "battle": 52,
-    "rest": 8,
-    "unknown": 24,
-    "trade": 16
+    "battle": 76,
+    "rest": 5,
+    "unknown": 12,
+    "trade": 7
    }
   },
   "5": {
@@ -288,10 +288,10 @@
    ],
    "title": "瘴脉深處",
    "category_weights": {
-    "battle": 50,
-    "rest": 8,
-    "unknown": 26,
-    "trade": 16
+    "battle": 74,
+    "rest": 5,
+    "unknown": 13,
+    "trade": 8
    }
   }
  },

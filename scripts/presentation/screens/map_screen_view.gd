@@ -431,25 +431,27 @@ func _build_node_button(node: Dictionary, id: String, position: Vector2, size: V
 	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	button.add_child(column)
 
+	# E2a 迷雾：未知类节点未揭示时显示「未知 · ?」，进入揭示模板标题与类别。
+	var hidden := not bool(node.get("revealed", true))
 	var mark_row := HBoxContainer.new()
 	mark_row.add_theme_constant_override("separation", 9)
 	column.add_child(mark_row)
-	mark_row.add_child(_build_node_mark(id, str(visual["mark"]), mark_color))
+	mark_row.add_child(_build_node_mark(id, "?" if hidden else str(visual["mark"]), mark_color))
 	var title_label := Label.new()
-	title_label.text = str(node.get("label", node.get("type", "节点")))
+	title_label.text = "未知" if hidden else str(node.get("label", node.get("type", "节点")))
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	title_label.add_theme_font_size_override("font_size", 20 if row_index < 2 else 17)
 	title_label.add_theme_color_override("font_color", title_color)
 	mark_row.add_child(title_label)
 
 	var kind_label := Label.new()
-	kind_label.text = str(visual["kind"]) + " · " + status
+	kind_label.text = "未探明" if hidden else str(visual["kind"]) + " · " + status
 	kind_label.add_theme_font_size_override("font_size", 10)
 	kind_label.add_theme_color_override("font_color", kind_color)
 	column.add_child(kind_label)
 
 	var detail_label := Label.new()
-	detail_label.text = detail
+	detail_label.text = "进入后揭示" if hidden else detail
 	detail_label.add_theme_font_size_override("font_size", 9)
 	detail_label.add_theme_color_override("font_color", GuStyle.CINNABAR if (reachable or is_current) else GuStyle.NODE_FUTURE_INK)
 	column.add_child(detail_label)

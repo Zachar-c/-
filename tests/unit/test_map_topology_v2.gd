@@ -175,14 +175,14 @@ func test_instances_carry_template_layer_and_row() -> void:
 		assert_false(str(node.get("template_id", "")).is_empty(), "%s needs a template id" % str(node["id"]))
 		assert_between(int(node.get("layer", 0)), 1, 5)
 		assert_true(int(node.get("row", -1)) >= 0)
-	# 锚点每局恰一次（节点收窄后黑市为每层自动锚，五层恰五处；旧
-	# body_imprint/earth_vein/mist_shrine/poison_fog 授予源已随事件类节点移除）。
+	# E2a（2026-09-09）：4 分类权重生成，17 种节点类型均合法（见
+	# test_map_generator.gd 同注释）。只要求节点携带非空 type。
 	for node in route:
 		if str(node["id"]) == "ascension_window":
 			continue
 		var template_kind := str(node.get("type", ""))
-		assert_true(template_kind in ["combat", "rest", "shop", "inheritance", "refinement"],
-			"instance %s carries non-skeleton kind %s" % [str(node["id"]), template_kind])
+		assert_true(template_kind != "",
+			"instance %s carries empty kind" % str(node["id"]))
 	var market_count := 0
 	for node in route:
 		if str(node.get("template_id", "")) == "ridge_black_market":

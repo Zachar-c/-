@@ -40,6 +40,7 @@ static func build(seed_value: int, first_run: bool, catalog: Dictionary = {}) ->
 static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pacing_override: Dictionary = {}) -> Array[Dictionary]:
 	var pacing: Dictionary = pacing_override if not pacing_override.is_empty() else _load_json("res://data/pacing.json")
 	var layers_cfg: Dictionary = pacing.get("layers", {})
+	var category_pools: Dictionary = pacing.get("category_pools", {})
 	var rng := SeededRng.new(seed_value)
 	var route: Array[Dictionary] = []
 	var prev_boss_node: Dictionary = {}
@@ -55,6 +56,7 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 				if not reserved_templates.has(reserved_template):
 					reserved_templates.append(reserved_template)
 		var rows: Array = []
+		var layer_category_counts := {}
 		for row in range(row_count):
 			var count := _row_node_count(rng, cfg, row, row_count)
 			var anchor_queue: Array = anchor_rows.get(row, [])
@@ -63,12 +65,21 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 			var used_in_row: Array = []
 			for index in range(count):
 				var template_id := ""
+				var revealed := true
 				if row == row_count - 1:
 					template_id = BOSS_NODE_ID if layer_number == 5 else "layer_boss_stand_%d" % layer_number
 				elif not anchor_queue.is_empty():
 					template_id = str(anchor_queue.pop_front())
 				else:
-					template_id = _pick_pool_template(rng, cfg.get("pool", []), used_in_row, reserved_templates)
+					# E2a：分类抽取（层概率 → 分类池 → 层难度过滤 → 伪随机 + 层保底）。
+					# 未知类节点地图上迷雾（revealed=false，进入揭示）；锚点保持可见。
+					var pick: Dictionary = _pick_category_template(rng, cfg, category_pools,
+							node_by_id, layer_number, used_in_row, reserved_templates, layer_category_counts)
+					template_id = str(pick.get("id", ""))
+					revealed = bool(pick.get("revealed", true))
+					var pick_cat := str(pick.get("category", "battle"))
+					layer_category_counts[pick_cat] = int(layer_category_counts.get(pick_cat, 0)) + 1
+					layer_category_counts["_slots"] = int(layer_category_counts.get("_slots", 0)) + 1
 				used_in_row.append(template_id)
 				var template: Dictionary = node_by_id.get(template_id, {})
 				var instance: Dictionary = template.duplicate(true)
@@ -77,6 +88,7 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 				instance["layer"] = layer_number
 				instance["row"] = row
 				instance["visible"] = false
+				instance["revealed"] = revealed
 				instance["next_ids"] = []
 				if layer_number == 1 and row == 0:
 					instance["start"] = true
@@ -190,6 +202,58 @@ static func _anchor_row_index(slot: String, row_count: int) -> int:
 			return maxi(1, row_count / 4)
 		"mid", _:
 			return maxi(1, row_count / 2)
+
+
+## E2a：分类抽取——按本层 category_weights 抽分类 → 分类池按层 stage 过滤 +
+## 行内去重/锚点保留 → 均匀伪随机。未知类返回 revealed=false（地图迷雾），
+## 锚点/其余分类 true。旧 pool 直选保留为兼容回退（权重表缺失或池为空时）。
+## 层保底：随机槽累计 ≥5 时，若某正权重分类本层尚未出现则强制补足，
+## 保证每层四分类都有（规格 E2 验收）。
+static func _pick_category_template(rng: SeededRng, cfg: Dictionary, category_pools: Dictionary,
+		node_by_id: Dictionary, layer_number: int, used_in_row: Array, reserved_templates: Array,
+		used_categories: Dictionary) -> Dictionary:
+	var cats: Array[String] = ["battle", "rest", "unknown", "trade"]
+	var weights: Dictionary = cfg.get("category_weights", {})
+	var total := 0
+	for cat in cats:
+		total += maxi(0, int(weights.get(cat, 0)))
+	if total <= 0 or category_pools.is_empty():
+		return {"id": _pick_pool_template(rng, cfg.get("pool", []), used_in_row, reserved_templates), "revealed": true, "category": "battle"}
+	var picked := "battle"
+	var slots_so_far: int = int(used_categories.get("_slots", 0))
+	var forced := false
+	if slots_so_far >= 5:
+		for cat in ["unknown", "rest", "trade", "battle"]:
+			if int(weights.get(cat, 0)) > 0 and int(used_categories.get(cat, 0)) == 0:
+				picked = cat
+				forced = true
+				break
+	if not forced:
+		var roll := rng.next_index(total)
+		for cat in cats:
+			var w := maxi(0, int(weights.get(cat, 0)))
+			if roll < w:
+				picked = cat
+				break
+			roll -= w
+	var pool: Array = category_pools.get(picked, [])
+	var available: Array = []
+	for tid_value in pool:
+		var tid := str(tid_value)
+		if layer_index(str(node_by_id.get(tid, {}).get("stage", "one"))) > layer_number:
+			continue
+		if not used_in_row.has(tid) and not reserved_templates.has(tid):
+			available.append(tid)
+	if available.is_empty():
+		for tid_value in pool:
+			var tid := str(tid_value)
+			if layer_index(str(node_by_id.get(tid, {}).get("stage", "one"))) > layer_number:
+				continue
+			if not reserved_templates.has(tid):
+				available.append(tid)
+	if available.is_empty():
+		return {"id": _pick_pool_template(rng, cfg.get("pool", []), used_in_row, reserved_templates), "revealed": true, "category": "battle"}
+	return {"id": str(available[rng.next_index(available.size())]), "revealed": picked != "unknown", "category": picked}
 
 
 ## 层内模板池抽取；同层内避免重复（池不小于行宽时）。

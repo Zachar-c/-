@@ -1119,6 +1119,7 @@ static func map(controller) -> Dictionary:
 			"visited": state.node_flags.has(node_id),
 			"current": node_id == current_id,
 			"visibility": _map_visibility(n, state),
+			"revealed": bool(n.get("revealed", true)),
 		})
 	nodes.sort_custom(func(a, b): return int(a.get("layer", 0)) * 1000 + int(a.get("row", 0)) < int(b.get("layer", 0)) * 1000 + int(b.get("row", 0)))
 	var reach: Array[String] = []

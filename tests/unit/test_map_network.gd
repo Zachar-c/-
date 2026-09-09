@@ -62,10 +62,8 @@ func test_anchor_types_are_guaranteed_every_run() -> void:
 		# S3（2026-09-06）：遗葬经 L1 anchor 保底投放，属设计内保证节点。
 		assert_true(types.has("inheritance"), "seed %d must include the anchored burial site" % seed_value)
 		assert_true(types.has("refinement"), "seed %d must include the anchored refine station" % seed_value)
-		for forbidden in ["event", "contact", "caravan", "market",
-				"hazard", "wild_gu", "seclusion", "earth_vein",
-				"cultivation", "ledger", "commission", "pursuit"]:
-			assert_false(types.has(forbidden), "seed %d must not include %s" % [seed_value, forbidden])
+		# 事件分类（2026-09-09 E2a）：17 种节点类型经 category_pools 合法入池，
+		# 旧"节点收窄"白名单断言作废，仅保留锚点保证。
 
 
 func test_hard_anchors_remain_unique_and_terminal() -> void:
