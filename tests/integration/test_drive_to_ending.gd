@@ -258,6 +258,18 @@ func _leave(controller, context: String) -> String:
 	var payload: Dictionary = result.get("result", result) as Dictionary
 	if bool(payload.get("ok", false)):
 		return "ongoing"
+	# E3a 三选一（规格 §4）：休息类节点（rest/refinement/cultivation）未消费
+	# 探访时不许离开——bot 走真玩家同款「放弃收益并离开」（rest mode=skip）
+	# 后重试，避免把领域硬门禁误报成 leave_blocked。
+	if str(payload.get("reason", "")) == "rest_choice_required":
+		var skipped: Dictionary = controller.submit_command({"type": "rest", "mode": "skip"})
+		if bool((skipped.get("result", skipped) as Dictionary).get("ok", false)):
+			var retried: Dictionary = controller.submit_command({"type": "leave_node"})
+			if bool((retried.get("result", retried) as Dictionary).get("ok", false)):
+				return "ongoing"
+		if OS.has_environment("DRIVE_SWEEP"):
+			print("[leave] %s skip fallback failed" % context)
+		return "leave_blocked:rest_skip_failed"
 	if OS.has_environment("DRIVE_SWEEP"):
 		var session: Dictionary = controller.current_session
 		print("[leave] %s blocked reason=%s node=%s type=%s stance=%s phase=%s offers_fight=%s" % [

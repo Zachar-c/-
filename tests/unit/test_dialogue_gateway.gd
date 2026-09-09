@@ -170,6 +170,9 @@ func test_travel_to_event_passes_dialogue_title_to_gateway() -> void:
 	controller._dialogue_gateway = spy
 	for node_id in ["ridge_caravan", "cultivation_spring", "flooded_cave"]:
 		controller.submit_command({"type": "travel", "node_id": node_id})
+		# E3a 三选一：休息类节点需先消费探访（skip）才能离开。
+		if str(controller.current_node.get("type", "")) in ["rest", "refinement", "cultivation"]:
+			controller.submit_command({"type": "rest", "mode": "skip"})
 		controller.submit_command({"type": "leave_encounter"})
 	controller.submit_command({"type": "travel", "node_id": "echo_cave"})
 
@@ -258,8 +261,12 @@ func _controller_travel_to_echo_cave(controller) -> void:
 	# 用本地合成路线夹具保护（模板仍由 nodes.json 提供，域支持不变）。
 	controller.route = _synthetic_teaching_route()
 	# 合成夹具路线 caravan -> cultivation -> hazard -> event，全程无战斗节点。
+	# E3a 三选一：休息类节点未消费探访不许离开（rest_choice_required），
+	# 夹具对休息类节点先走「放弃收益并离开」（rest mode=skip）再离场。
 	for node_id in ["ridge_caravan", "cultivation_spring", "flooded_cave"]:
 		controller.submit_command({"type": "travel", "node_id": node_id})
+		if str(controller.current_node.get("type", "")) in ["rest", "refinement", "cultivation"]:
+			controller.submit_command({"type": "rest", "mode": "skip"})
 		controller.submit_command({"type": "leave_encounter"})
 	controller.submit_command({"type": "travel", "node_id": "echo_cave"})
 	assert_eq(str(controller.current_node.get("type", "")), "event")

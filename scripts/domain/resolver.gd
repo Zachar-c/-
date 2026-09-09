@@ -1449,7 +1449,13 @@ static func _travel(state: RunState, command: Dictionary, catalog: Dictionary) -
 	# R8.1 hard choice (P2a B generalized to every type=="rest" node): entering
 	# a rest node commits the player to exactly one benefit; leaving without
 	# consuming the visit is refused (skip only means never entering the node).
-	if (_is_rest_node(catalog, state.current_node_id) or _is_rest_node(catalog, str(state.current_node_template_id))) and not _rest_visit_consumed(state):
+	# E3a 三选一（规格 §4）：门禁统一覆盖休息类（rest/refinement/cultivation）。
+	# 节点已被 complete_node 写入完结标记（left/abandoned/completed 等非 used
+	# outcome）时视为探访已结束，门禁不再拦截——否则直接驱动链（choose_action
+	# leave → complete_node）会被下一次 travel 软锁。
+	if not state.node_flags.has(state.current_node_id) \
+			and (_is_rest_class_node(catalog, state.current_node_id) or _is_rest_class_node(catalog, str(state.current_node_template_id))) \
+			and not _rest_visit_consumed(state):
 		return _rejected(state, "rest_choice_required")
 	# R-layering hard gate: the ascension window only opens after the final
 	# layer's boss falls. Topology already funnels it behind final_boss_stand;
@@ -1949,8 +1955,10 @@ static func _gain_force_power(state: RunState, command: Dictionary, _catalog: Di
 static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	# 地图实例 id（L1R1N0）与目录模板 id 不同——休整门禁必须双查：
 	# 实例 id 直命中，或实例的 template_id 指向休整模板。
-	if not _is_rest_node(catalog, state.current_node_id) \
-			and not _is_rest_node(catalog, str(state.current_node_template_id)):
+	# E3a 三选一（规格 §4）：休整族命令在休息类（rest/refinement/cultivation）
+	# 节点均开放，否则 refinement/cultivation 无法 skip 会与硬门禁互相卡死。
+	if not _is_rest_class_node(catalog, state.current_node_id) \
+			and not _is_rest_class_node(catalog, str(state.current_node_template_id)):
 		return _rejected(state, "not_rest_node")
 	var mode := str(command.get("mode", "heal"))
 	if mode == "heal":

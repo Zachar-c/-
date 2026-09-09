@@ -76,7 +76,9 @@ func test_standard_encounter_action_stays_in_the_active_session() -> void:
 	var result := controller.submit_command({"type": "choose_action", "action_id": "meditate"})
 	assert_true(result["result"]["ok"])
 	assert_eq(controller.current_view_name(), "Encounter")
-	assert_false(controller.state.node_flags.has("cultivation_spring"))
+	# E3a 三选一（规格 §4）：休息类节点（含 cultivation）成功执行修炼即消费
+	# 本次探访（裸 id "used" 标记），会话保持 active，离开需玩家显式操作。
+	assert_eq(str(controller.state.node_flags.get("cultivation_spring", "")), "used")
 	assert_eq(controller.state.encounter_session.get("node_id", ""), "cultivation_spring")
 	controller.free()
 

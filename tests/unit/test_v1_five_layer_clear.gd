@@ -93,6 +93,59 @@ func test_multiple_seeds_clear_without_softlock_and_are_reproducible() -> void:
 
 # ---------- 走图器 ----------
 
+## E3a 三选一：休息类节点（rest/refinement/cultivation）未消费探访时
+## leave 会被领域拒绝（rest_choice_required）。走图器按真玩家同款路径
+## 先「放弃收益并离开」（rest mode=skip）再离场。
+func _leave_encounter_exhausting_rest_choice(controller: RunController) -> void:
+	if str(controller.current_node.get("type", "")) in ["rest", "refinement", "cultivation"] \
+			and str(controller.state.node_flags.get("%s_used" % str(controller.state.current_node_id), "")) != "used":
+		controller.submit_command({"type": "rest", "mode": "skip"})
+	controller.submit_command({"type": "leave_encounter"})
+
+
+## 统一离场：先耗掉休息类三选一门禁（E3a skip），再尝试离场；若被血仇
+## 立场（extreme_hostile → feud_no_escape）拒绝，则优先按节点真实预览的
+## 战斗卡应战（血仇不战不可离场），用标准 action_card 信封提交。
+func _leave_resolving_blockers(controller: RunController) -> void:
+	_leave_encounter_exhausting_rest_choice(controller)
+	if str(controller.last_result.get("reason", "")) != "feud_no_escape":
+		return
+	var knowledge: Dictionary = {}
+	if controller.meta != null:
+		knowledge = controller.meta.unlocked_random_outcomes
+	var ghost_actions: Array = ActionPreviewServiceScript.preview_actions(
+			controller.state, controller.current_node, controller.catalog, knowledge)
+	# 血仇不战不可离场：优先战斗卡；无战斗卡时回退到第一张可执行卡周旋。
+	var chosen: Dictionary = {}
+	for card_value in ghost_actions:
+		var card: Dictionary = card_value
+		if bool(card.get("executable", false)) and _is_fight_card(card):
+			chosen = card
+			break
+	if chosen.is_empty():
+		for card_value in ghost_actions:
+			var card: Dictionary = card_value
+			if bool(card.get("executable", false)):
+				chosen = card
+				break
+	if not chosen.is_empty():
+		controller.submit_command({
+			"type": "action_card",
+			"action_id": str(chosen.get("id", "")),
+			"state_version": controller.state.event_log.size(),
+			"node_id": str(controller.current_node.get("id", "")),
+			"session_node_id": str(controller.current_session.get("node_id", "")),
+		})
+
+
+## 与 test_drive_to_ending._is_fight_card 同口径：fight 标准动作或
+## resolve_contact(fight) 接近方式都算应战。
+func _is_fight_card(card: Dictionary) -> bool:
+	var command: Dictionary = card.get("command", {})
+	return str(command.get("action_id", "")) == "fight" \
+			or (str(command.get("type", "")) == "resolve_contact" and str(command.get("approach", "")) == "fight")
+
+
 ## 有界步数走图：优先可达 Boss 台；否则取第一个未访问可达节点；升仙窗就绪后
 ## 直接 attempt_ascension。任何视图循环、travel 全被拒、步数耗尽都算软锁。
 func _walk_to_ascension(controller: RunController, max_steps: int) -> Dictionary:
@@ -115,34 +168,10 @@ func _walk_to_ascension(controller: RunController, max_steps: int) -> Dictionary
 				if str(controller.current_node.get("type", "")) == "ascension":
 					controller.submit_command({"type": "attempt_ascension", "choice": "now"})
 				else:
-					var before_view := controller.current_view_name()
-					controller.submit_command({"type": "leave_encounter"})
-					if controller.current_view_name() == before_view \
-							and str(controller.last_result.get("reason", "")) == "feud_no_escape":
-						# 血仇立场（extreme_hostile）：不战而逃被拒。按节点真实
-						# 预览动作应战（contact→fight、wild_gu→harvest 等），
-						# 用标准 action_card 信封提交。
-						var knowledge: Dictionary = {}
-						if controller.meta != null:
-							knowledge = controller.meta.unlocked_random_outcomes
-						var ghost_actions: Array = ActionPreviewServiceScript.preview_actions(
-								controller.state, controller.current_node, controller.catalog, knowledge)
-						for card_value in ghost_actions:
-							var card: Dictionary = card_value
-							if not bool(card.get("executable", false)):
-								continue
-							controller.submit_command({
-								"type": "action_card",
-								"action_id": str(card.get("id", "")),
-								"state_version": controller.state.event_log.size(),
-								"node_id": str(controller.current_node.get("id", "")),
-								"session_node_id": str(controller.current_session.get("node_id", "")),
-							})
-							if controller.current_view_name() != before_view:
-								break
+					_leave_resolving_blockers(controller)
 				continue
 			"Reward", "Shop", "Refine", "Npc", "ContentError":
-				controller.submit_command({"type": "leave_encounter"})
+				_leave_resolving_blockers(controller)
 				continue
 			"Ending":
 				return {"done": true, "steps": steps}

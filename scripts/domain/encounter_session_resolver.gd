@@ -158,7 +158,9 @@ static func _leave(state: RunState, session: Dictionary, catalog: Dictionary) ->
 static func _rest_choice_pending(state: RunState, session: Dictionary, catalog: Dictionary) -> bool:
 	var node_id := str(session.get("node_id", ""))
 	var template_id := str(state.current_node_template_id)
-	if not Resolver._is_rest_node(catalog, node_id) and not Resolver._is_rest_node(catalog, template_id):
+	# E3a 三选一（规格 §4）：硬门禁统一覆盖休息类（rest/refinement/cultivation），
+	# 与 Resolver._travel 同口径——未消费探访不许离开，会话保持开放供三族选择。
+	if not Resolver._is_rest_class_node(catalog, node_id) and not Resolver._is_rest_class_node(catalog, template_id):
 		return false
 	return str(state.node_flags.get("%s_used" % node_id, "")) != "used"
 
