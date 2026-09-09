@@ -407,7 +407,7 @@
   },
   {
    "id": "greedy_wanderer",
-   "stage": "three",
+   "stage": "one",
    "type": "pursuit",
    "enemy_kind": "thunder_crown_wolf",
    "visible": false,
@@ -549,7 +549,7 @@
   },
   {
    "id": "iron_hide_ambush",
-   "stage": "two",
+   "stage": "one",
    "type": "combat",
    "enemy_kind": "iron_hide_boar",
    "visible": false,
