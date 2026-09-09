@@ -95,6 +95,7 @@ static func play_sfx(sfx_id: String, volume_scale: float = 1.0, pitch_scale: flo
 		return
 	var path: String = SFX_REGISTRY[sfx_id]
 	# 第三批A-F-10：如果该音效有多变体，随机选择一个变体播放，避免重复感
+	# 表现层音效变体，非玩法随机，豁免种子化约束（见 AGENTS.md 技术约定豁免条款）。
 	if SFX_VARIANTS.has(sfx_id):
 		var variant_count: int = SFX_VARIANTS[sfx_id]
 		var variant_idx: int = randi() % (variant_count + 1)
