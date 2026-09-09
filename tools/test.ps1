@@ -17,8 +17,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($Test) {
-    $testArg = '-gtest=res://' + $Test
-    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd',$testArg,'-gexit','-glog=2') -ExpectedTestPath ('res://' + $Test)
+    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd','-gtest',('res://' + $Test),'-gexit','-glog=2') -ExpectedTestPath ('res://' + $Test)
     exit $LASTEXITCODE
 }
 
@@ -29,8 +28,9 @@ $directories = switch ($Suite) {
 }
 
 foreach ($directory in $directories) {
-    $dirArg = '-gdir=res://' + $directory
-    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd',$dirArg,'-gexit','-glog=2')
+    # -gdir/-gtest must be space-separated; the =-form is split by the
+    # shell into '-gdir=res:' + '//tests/unit', so GUT never sees a path.
+    & $gutChecked -CommandPath $godot -CommandArguments @('--headless','--path',$projectRoot,'-s','addons/gut/gut_cmdln.gd','-gdir',('res://' + $directory),'-gexit','-glog=2')
     if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
     }
