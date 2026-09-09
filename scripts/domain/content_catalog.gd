@@ -76,6 +76,11 @@ static func load_all() -> Dictionary:
 	var first_run_cfg := _load_object("res://data/first_run.json")
 	var dialogue_templates_cfg := _load_object("res://data/dialogue_templates.json")
 	var names_cfg := _load_object("res://data/names.json")
+	# gu_names.json 由 display_text.gu() 作额外蛊名增量表（懒加载，低危兜底）。
+	# W6（2026-09-09）：存在性登记进 catalog，validate 检缺失——此前该文件坏/缺
+	# 启动无任何告警，属校验盲区。
+	var gu_extra_names_cfg := _load_object("res://data/gu_names.json")
+	var gu_extra_names_missing := not FileAccess.file_exists("res://data/gu_names.json")
 	var nodes_data := _load_object("res://data/nodes.json")
 	var inheritance_sites_cfg := _load_object("res://data/inheritance_sites.json")
 	var nodes: Array = nodes_data.get("nodes", [])
@@ -127,6 +132,8 @@ static func load_all() -> Dictionary:
 		"first_run": first_run_cfg,
 		"dialogue_templates": dialogue_templates_cfg,
 		"names": names_cfg,
+		"gu_extra_names": gu_extra_names_cfg,
+		"gu_extra_names_missing": gu_extra_names_missing,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
 	}
@@ -854,6 +861,10 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		errors.append_array(_validate_dialogue_templates(catalog))
 	if catalog.has("names"):
 		errors.append_array(_validate_names(catalog))
+	# W6（2026-09-09）：gu_names.json 存在性校验（display_text.gu() 的额外蛊名增量表；
+	# _load_object 静默吞错，缺失此前启动零告警）。
+	if bool(catalog.get("gu_extra_names_missing", false)):
+		errors.append("data/gu_names.json is missing (display_text.gu() extra names table)")
 	errors.append_array(_validate_events(catalog))
 	errors.append_array(_validate_pacing(catalog))
 	errors.append_array(_validate_aptitude(catalog))

@@ -292,6 +292,10 @@ static func gu(id: String) -> String:
 		return str(GU[id])
 	if not _extra_gu_names_loaded:
 		_extra_gu_names_loaded = true
+		# 数据源已登记进 ContentCatalog（gu_extra_names / gu_extra_names_missing，
+		# validate 检缺失，2026-09-09 W6）。此直读为渲染层增量表的懒加载缓存路径；
+		# 结构错误只会让名字 fallback「未知蛊虫」，不崩玩法。若需彻底消除表现层
+		# 直读，需给本静态类加 catalog 预热入口（prime_from_catalog），单独排期。
 		var file := FileAccess.open("res://data/gu_names.json", FileAccess.READ)
 		if file != null:
 			var parsed: Variant = JSON.parse_string(file.get_as_text())
