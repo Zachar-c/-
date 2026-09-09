@@ -146,3 +146,8 @@
 - [ ] R4 全流程验收 + 聚焦提交
 
 > 完成一项勾选一项并回写本文件；状态以各工单内嵌进度为准。
+
+> [!IMPORTANT]
+> 2026-09-09 用户裁定事件分类方案后，本计划 R1 工单已被
+> [2026-09-09-event-classification-design.md](../specs/2026-09-09-event-classification-design.md) 替代（D1/D3 决策落地）；R2-R4 沿用。
+
