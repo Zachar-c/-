@@ -17,6 +17,11 @@ ui/**/*.gd
 .godot_gui.log
 godot_gui.log
 
+# 第三方未审计插件：不入库（本地编辑器工具，含 TCP MCP 运行时）
+addons/beckett/
+# 截图产物目录（根目录截图已迁此，同属开发产物）
+docs/screenshots/
+
 *.png
 !assets/**/*.png
 !scripts/core/.agents/skills/**/*.png

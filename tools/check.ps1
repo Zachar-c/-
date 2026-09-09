@@ -28,8 +28,10 @@ if ($probe_rc -ne 0) {
 
 # 契约-实现漂移守门（W8, 2026-09-09）：契约文档声明的标识符必须在
 # scripts/ + tests/ + data/ 中存在；缺失即漂移，exit 1。
+# GDScript 版（check_contract_drift.gd）：check.ps1 只依赖 godot + git，
+# 不依赖 python——Windows App Execution Alias 下 PS 解析不到 python。
 $ErrorActionPreference = 'Continue'
-python (Join-Path $PSScriptRoot 'check_contract_drift.py')
+& (Join-Path $PSScriptRoot 'godot.ps1') --headless --path $projectRoot -s tools/check_contract_drift.gd 2>$null
 $drift_rc = $LASTEXITCODE
 $ErrorActionPreference = 'Stop'
 if ($drift_rc -ne 0) {
