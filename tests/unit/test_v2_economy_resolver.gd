@@ -1,6 +1,9 @@
 extends GutTest
 
 
+const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
+
+
 var catalog: Dictionary
 
 
@@ -39,7 +42,7 @@ func test_refinement_roll_uses_project_seeded_rng_sequence() -> void:
 		recipe_hash = recipe_hash * 31 + character.unicode_at(0)
 	var seeded_rng := SeededRng.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + recipe_hash)
 
-	assert_eq(Resolver._refinement_roll(state, recipe_id), seeded_rng.next_index(100) + 1)
+	assert_eq(RefineCommandRulesScript._refinement_roll(state, recipe_id), seeded_rng.next_index(100) + 1)
 
 
 func test_cultivation_window_spends_stone_and_breaks_through_to_rank_two() -> void:

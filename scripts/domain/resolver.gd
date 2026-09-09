@@ -16,6 +16,7 @@ const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
 const ResolverHelpersScript = preload("res://scripts/domain/resolver_helpers.gd")
 const RestRulesScript = preload("res://scripts/domain/rest_rules.gd")
 const ShopCommandRulesScript = preload("res://scripts/domain/shop_command_rules.gd")
+const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
 const RunCommandsScript = preload("res://scripts/domain/run_command_rules.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 # GuBalance 为 class_name 静态公式模块，直接按全局类名调用。
@@ -37,6 +38,48 @@ static func shop_layer_price(catalog: Dictionary, state: RunState, base: int) ->
 
 static func shop_max_tier(state: RunState, catalog: Dictionary) -> int:
 	return ShopCommandRulesScript.shop_max_tier(state, catalog)
+
+
+## 公开 API 转发（W11 A4）：实现迁至 refine_command_rules.gd。
+## 外部调用点（action_preview_service / snapshot_builder / 测试）经
+## ResolverScript 引用，签名不变，仅加一行转发。
+static func recipe_unlocked(state: RunState, recipe: Dictionary) -> bool:
+	return RefineCommandRulesScript.recipe_unlocked(state, recipe)
+
+
+static func scavenge_pending_recipes(state: RunState, catalog: Dictionary) -> Array[String]:
+	return RefineCommandRulesScript.scavenge_pending_recipes(state, catalog)
+
+
+static func service_use_count(state: RunState, service_id: String) -> int:
+	return RefineCommandRulesScript.service_use_count(state, service_id)
+
+
+static func service_limit(catalog: Dictionary, service_id: String) -> int:
+	return RefineCommandRulesScript.service_limit(catalog, service_id)
+
+
+static func service_price_for(catalog: Dictionary, state: RunState, service_id: String, base: int) -> int:
+	return RefineCommandRulesScript.service_price_for(catalog, state, service_id, base)
+
+
+## 跨族桥接（W11 A3/A4）：rest_rules ↔ refine_command_rules 互不 preload
+## （避免循环），均经 Resolver 转发。rest 依赖的 refine 移除链与 refine
+## 依赖的 rest 类门禁在此薄转发。
+static func _upgrade_card(state: RunState, command: Dictionary) -> Dictionary:
+	return RefineCommandRulesScript._upgrade_card(state, command)
+
+
+static func _cursed_drop_block(state: RunState, catalog: Dictionary, definition_id: String) -> Dictionary:
+	return RefineCommandRulesScript._cursed_drop_block(state, catalog, definition_id)
+
+
+static func _destroyed_gu_payload(state: RunState, instance_id: String, extracted: Dictionary = {}) -> Dictionary:
+	return RefineCommandRulesScript._destroyed_gu_payload(state, instance_id, extracted)
+
+
+static func _is_rest_class_node(catalog: Dictionary, node_id: String) -> bool:
+	return RestRulesScript._is_rest_class_node(catalog, node_id)
 
 
 const BODY_IMPRINTS := {
@@ -84,11 +127,11 @@ static func _handler_for(command_type: String) -> Variant:
 			"travel": func(state, command, catalog): return _travel(state, command, catalog),
 			"resolve_contact": func(state, command, catalog): return _resolve_contact(state, command, catalog),
 			"complete_node": func(state, command, _catalog): return _complete_node(state, command),
-			"buy_gu": func(state, command, catalog): return _buy_gu(state, command, catalog),
-			"sell_gu": func(state, command, catalog): return _sell_gu(state, command, catalog),
-			"exchange_gu": func(state, command, catalog): return _exchange_gu(state, command, catalog),
+			"buy_gu": func(state, command, catalog): return RefineCommandRulesScript._buy_gu(state, command, catalog),
+			"sell_gu": func(state, command, catalog): return RefineCommandRulesScript._sell_gu(state, command, catalog),
+			"exchange_gu": func(state, command, catalog): return RefineCommandRulesScript._exchange_gu(state, command, catalog),
 			"refine_gu": func(state, command, catalog):
-				var refined := _refine_gu(state, command, catalog)
+				var refined := RefineCommandRulesScript._refine_gu(state, command, catalog)
 				if bool(refined["result"].get("ok", false)):
 					refined["state"] = RestRulesScript._consume_rest_visit_if_rest_class(refined["state"], catalog)
 				return refined,
@@ -98,18 +141,18 @@ static func _handler_for(command_type: String) -> Variant:
 					paired["state"] = RestRulesScript._consume_rest_visit_if_rest_class(paired["state"], catalog)
 				return paired,
 			"cultivate_rank_two": func(state, _command, catalog):
-				var cultivated := _cultivate_rank_two(state, catalog)
+				var cultivated := RefineCommandRulesScript._cultivate_rank_two(state, catalog)
 				if bool(cultivated["result"].get("ok", false)):
 					cultivated["state"] = RestRulesScript._consume_rest_visit_if_rest_class(cultivated["state"], catalog)
 				return cultivated,
-			"settle_feeding": func(state, _command, catalog): return _settle_feeding(state, catalog),
-			"settle_node_feeding": func(state, _command, catalog): return _settle_node_feeding(state, catalog),
-			"disable_card": func(state, command, _catalog): return _disable_card(state, command),
-			"upgrade_card": func(state, command, _catalog): return _upgrade_card(state, command),
-			"copy_card": func(state, command, _catalog): return _copy_card(state, command),
-			"destroy_gu": func(state, command, catalog): return _destroy_gu(state, command, catalog),
-			"remove_card": func(state, command, catalog): return _remove_card_command(state, command, catalog),
-			"remove_imprint": func(state, command, catalog): return _remove_imprint_command(state, command, catalog),
+			"settle_feeding": func(state, _command, catalog): return RefineCommandRulesScript._settle_feeding(state, catalog),
+			"settle_node_feeding": func(state, _command, catalog): return RefineCommandRulesScript._settle_node_feeding(state, catalog),
+			"disable_card": func(state, command, _catalog): return RefineCommandRulesScript._disable_card(state, command),
+			"upgrade_card": func(state, command, _catalog): return RefineCommandRulesScript._upgrade_card(state, command),
+			"copy_card": func(state, command, _catalog): return RefineCommandRulesScript._copy_card(state, command),
+			"destroy_gu": func(state, command, catalog): return RefineCommandRulesScript._destroy_gu(state, command, catalog),
+			"remove_card": func(state, command, catalog): return RefineCommandRulesScript._remove_card_command(state, command, catalog),
+			"remove_imprint": func(state, command, catalog): return RefineCommandRulesScript._remove_imprint_command(state, command, catalog),
 			"spend_lifespan": func(state, command, _catalog): return _spend_lifespan(state, command),
 			"accept_debt": func(state, _command, catalog): return _accept_debt(state, catalog),
 			"use_gu": func(state, command, catalog): return _use_gu(state, command, catalog),
@@ -123,9 +166,9 @@ static func _handler_for(command_type: String) -> Variant:
 			"shop_lifespan_deal": func(state, command, catalog): return ShopCommandRulesScript._shop_lifespan_deal(state, command, catalog),
 			"shop_barter": func(state, command, catalog): return ShopCommandRulesScript._shop_barter(state, command, catalog),
 			"npc_trade": func(state, command, catalog): return _npc_trade(state, command, catalog),
-			"scavenge": func(state, command, catalog): return _scavenge(state, command, catalog),
-			"sell_material": func(state, command, catalog): return _sell_material(state, command, catalog),
-			"use_material": func(state, command, catalog): return _use_material(state, command, catalog),
+			"scavenge": func(state, command, catalog): return RefineCommandRulesScript._scavenge(state, command, catalog),
+			"sell_material": func(state, command, catalog): return RefineCommandRulesScript._sell_material(state, command, catalog),
+			"use_material": func(state, command, catalog): return RefineCommandRulesScript._use_material(state, command, catalog),
 			"raise_aptitude": func(state, command, catalog): return ShopCommandRulesScript._raise_aptitude(state, command, catalog),
 			"record_neutral_npc_kill": func(state, _command, catalog): return _record_neutral_npc_kill(state, catalog),
 			"wash_notoriety": func(state, _command, catalog): return _wash_notoriety(state, catalog),
@@ -232,633 +275,6 @@ static func _complete_node(state: RunState, command: Dictionary) -> Dictionary:
 	return _accepted(next)
 
 
-static func _buy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var offer := _offer(catalog, str(command.get("offer_id", "")), "buy")
-	if offer.is_empty():
-		return _rejected(state, "unknown_buy_offer")
-	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
-	if state.stone < cost:
-		return _rejected(state, "insufficient_stone")
-	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, [], "caravan_bought_gu", [], catalog)
-
-
-static func _sell_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var gu_id := str(command.get("gu_id", ""))
-	if not state.refined_gu_ids.has(gu_id):
-		return _rejected(state, "gu_not_refined")
-	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
-	if gu.is_empty():
-		return _rejected(state, "unknown_gu")
-	# 2026-09-04 中央计价：升阶实例按实例转数取 gu_value_by_rank。
-	var instance_rank := maxi(int(gu.get("rank", 1)), GuInstance.max_refined_rank(state.gu_instances, gu_id))
-	var value := GuBalance.gu_value(gu, instance_rank, catalog)
-	# 2026-09-03 修复：卖出必须同步销毁实例，否则下次 sync 会把卖掉的蛊
-	# 复活（元石已到手、蛊又回来 → 无限刷钱）。
-	var instances := state.gu_instances.duplicate(true)
-	var aperture := state.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	GuInstance.consume_definition_instances(instances, stored, [gu_id])
-	aperture["stored_gu_instance_ids"] = stored
-	var next_gu := _without_gu(state.refined_gu_ids, [gu_id])
-	var next_equipped := _without_gu(state.equipped_gu_ids, [gu_id])
-	var next := state.append_event(_event(
-		state,
-		"sell_gu",
-		{"stone": state.stone, "gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids, "gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
-		{"stone": state.stone + value, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped, "gu_instances": instances, "cave_aperture": aperture},
-		"caravan_sold_gu",
-		state.current_node_id,
-		[gu_id]
-	))
-	next.sync_legacy_gu_projections()
-	return _accepted(next)
-
-
-static func _exchange_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var offer := _offer(catalog, str(command.get("offer_id", "")), "exchange")
-	if offer.is_empty():
-		return _rejected(state, "unknown_exchange_offer")
-	var inputs: Array = offer.get("input_gu_ids", [])
-	if not _has_all_gu(state.refined_gu_ids, inputs):
-		return _rejected(state, "missing_exchange_input")
-	var cost := price_for(catalog, state, int(offer.get("stone_cost", 0)))
-	if state.stone < cost:
-		return _rejected(state, "insufficient_stone")
-	return _add_gu_transaction(state, str(offer["output_gu_id"]), cost, inputs, "caravan_exchanged_gu", [], catalog)
-
-
-static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var recipe: Dictionary = catalog.get("refinement_by_id", {}).get(str(command.get("recipe_id", "")), {})
-	if recipe.is_empty():
-		return _rejected(state, "unknown_refinement_recipe")
-	match str(recipe.get("kind", "combine")):
-		"fixed", "advance":
-			return _apply_fixed_recipe(state, command, catalog, recipe)
-		"free_mix":
-			return _apply_free_mix(state, command, catalog, recipe)
-	return _apply_combine_recipe(state, command, catalog, recipe)
-
-
-static func _recipe_material_pieces(material_cost: Dictionary) -> int:
-	var total := 0
-	for material_id in material_cost:
-		total += int(material_cost[material_id])
-	return total
-
-
-static func _has_all_materials(state: RunState, material_cost: Dictionary) -> bool:
-	for material_id in material_cost:
-		if int(state.materials.get(str(material_id), 0)) < int(material_cost[material_id]):
-			return false
-	return true
-
-
-static func _spend_materials(state: RunState, material_cost: Dictionary) -> RunState:
-	if material_cost.is_empty():
-		return state
-	var remaining := state.materials.duplicate(true)
-	var targets: Array[String] = []
-	for material_id_value in material_cost:
-		var material_id := str(material_id_value)
-		remaining[material_id] = int(remaining.get(material_id, 0)) - int(material_cost[material_id_value])
-		targets.append(material_id)
-	var next := state.append_event(_event(
-		state,
-		"refine_gu",
-		{"materials": state.materials},
-		{"materials": remaining},
-		"refinement_materials_spent",
-		state.current_node_id,
-		targets
-	))
-	next.materials = remaining
-	return next
-
-
-static func _apply_combine_recipe(state: RunState, _command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	# 与 fixed/advance 同门禁（2026-08-30 裁定）：蛊方图鉴未持有则拒绝，不烧材料。
-	if not recipe_unlocked(state, recipe):
-		return _rejected(state, "refinement_recipe_locked")
-	var inputs: Array = recipe.get("input_gu_ids", [])
-	var material_cost: Dictionary = recipe.get("materials", {})
-	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
-		return _rejected(state, "refinement_capacity_exceeded")
-	if not _has_all_gu(state.refined_gu_ids, inputs):
-		return _rejected(state, "missing_refinement_input")
-	if not _has_all_materials(state, material_cost):
-		return _rejected(state, "missing_refinement_material")
-	var paid := _spend_materials(state, material_cost)
-	# The result is determined from the run seed and immutable event position.
-	# Commands never accept client supplied dice values.
-	# 2026-08-28 设计修正：蛊方的「转数」只由产出蛊的转数表达（advance 链
-	# 与产出 rank），与炼蛊成功率无直接关系。
-	var roll := _refinement_roll(paid, str(recipe.get("id", "")))
-	if roll > int(recipe.get("success_roll_max", 100)):
-		# 失败摧毁输入：实例与 legacy 投影同步销毁，避免下次 sync 复活。
-		var instances := paid.gu_instances.duplicate(true)
-		var aperture := paid.cave_aperture.duplicate(true)
-		var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-		GuInstance.consume_definition_instances(instances, stored, inputs)
-		aperture["stored_gu_instance_ids"] = stored
-		var destroyed := _without_gu(paid.refined_gu_ids, inputs)
-		var unequipped := _without_gu(paid.equipped_gu_ids, inputs)
-		var failed := paid.append_event(_event(
-			paid,
-			"refine_gu",
-			{"gu_ids": paid.gu_ids, "refined_gu_ids": paid.refined_gu_ids, "gu_instances": paid.gu_instances, "cave_aperture": paid.cave_aperture},
-			{"gu_ids": destroyed, "refined_gu_ids": destroyed, "equipped_gu_ids": unequipped, "gu_instances": instances, "cave_aperture": aperture},
-			"refinement_failed_destroyed_inputs",
-			paid.current_node_id,
-			inputs
-		))
-		failed.sync_legacy_gu_projections()
-		return _accepted(failed)
-	return _add_gu_transaction(paid, str(recipe["output_gu_id"]), 0, inputs, "refinement_succeeded", ["recipe:%s" % str(recipe["id"])], catalog, int(recipe.get("output_rank", 0)))
-
-
-static func _codex_unlocks_recipe(state: RunState, recipe: Dictionary) -> bool:
-	return state.global_codex_ids.has(str(recipe.get("id", ""))) \
-		or state.global_codex_ids.has(str(recipe.get("output_gu_id", "")))
-
-
-## 蛊方图鉴门禁（2026-08-30 裁定，预览/执行/快照共用同一函数）：
-## fixed/combine 须持有蛊方，advance/free_mix 豁免；default_unlocked 初始持有。
-static func recipe_unlocked(state: RunState, recipe: Dictionary) -> bool:
-	if str(recipe.get("kind", "combine")) == "advance":
-		return true
-	if bool(recipe.get("default_unlocked", false)):
-		return true
-	return _codex_unlocks_recipe(state, recipe)
-
-
-static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	if not recipe_unlocked(state, recipe):
-		return _rejected(state, "refinement_recipe_locked")
-	var is_advance := str(recipe.get("kind", "")) == "advance"
-	var inputs: Array = recipe.get("input_gu_ids", [])
-	if is_advance and (inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(inputs[0])):
-		return _rejected(state, "invalid_advance_recipe")
-	var stone_cost := int(recipe.get("stone_cost", 0))
-	if stone_cost > 0 and state.stone < stone_cost:
-		return _rejected(state, "insufficient_stone")
-	var material_cost: Dictionary = recipe.get("materials", {})
-	# 缺料先于容量：玩家应先看到"缺什么"，而不是被并发上限挡住。
-	var preselected := _selected_input_instance_ids(state, command, inputs)
-	if preselected.is_empty() and not inputs.is_empty():
-		return _rejected(state, "missing_refinement_input")
-	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
-		return _rejected(state, "refinement_capacity_exceeded")
-	if not _has_all_materials(state, material_cost):
-		return _rejected(state, "missing_refinement_material")
-	# 转数门禁（2026-08-31）：input_min_rank 校验提前到烧材料前，拒绝不烧。
-	var min_rank := int(recipe.get("input_min_rank", 0))
-	if min_rank > 0:
-		for instance_id_value in preselected:
-			var instance: Dictionary = state.gu_instances.get(str(instance_id_value), {})
-			if int(instance.get("rank", 1)) < min_rank:
-				return _rejected(state, "refinement_input_rank_insufficient")
-	# 升阶封顶同属转数门禁，必须同样在烧材料之前判定：材料一旦扣除事件即写入，
-	# 事后拒绝会留下"拒绝却仍消耗"的状态。
-	if is_advance:
-		var advance_rank := int(state.gu_instances.get(str(preselected[0]), {}).get("rank", 1))
-		if mini(advance_rank + 1, 5) <= advance_rank:
-			return _rejected(state, "advance_capped")
-	var paid := _spend_materials(state, material_cost)
-	var instances := paid.gu_instances.duplicate(true)
-	var aperture := paid.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	for instance_id_value in preselected:
-		var instance_id := str(instance_id_value)
-		var consumed: Dictionary = instances[instance_id].duplicate(true)
-		consumed["state"] = "consumed"
-		instances[instance_id] = consumed
-		stored.erase(instance_id)
-	var output_instance_id := RunState.next_gu_instance_id(instances)
-	var output_instance := {
-		"instance_id": output_instance_id,
-		"definition_id": str(recipe["output_gu_id"]),
-		"state": "refined",
-	}
-	if is_advance:
-		# 同名升阶：本体进阶不换名，阶数 +1（封顶五转）；封顶可达性已在
-		# 烧材料前判定，这里只推进阶数。
-		output_instance["rank"] = mini(int(instances[str(preselected[0])].get("rank", 1)) + 1, 5)
-	else:
-		# 定向合炼：产出转数 = 配方 output_rank（缺省回退产出蛊本体定义）。
-		var fallback_rank := int(catalog.get("gu_by_id", {}).get(str(recipe["output_gu_id"]), {}).get("rank", 1))
-		output_instance["rank"] = clampi(int(recipe.get("output_rank", fallback_rank)), 1, 5)
-	instances[output_instance_id] = output_instance
-	stored.append(output_instance_id)
-	aperture["stored_gu_instance_ids"] = stored
-	var next := paid.append_event(_event(
-		paid,
-		"refine_gu",
-		{"stone": paid.stone, "gu_instances": paid.gu_instances, "cave_aperture": paid.cave_aperture},
-		{"stone": paid.stone - stone_cost, "gu_instances": instances, "cave_aperture": aperture},
-		"refinement_succeeded",
-		paid.current_node_id,
-		preselected + [output_instance_id, "recipe:%s" % str(recipe["id"])]
-	))
-	next.sync_legacy_gu_projections()
-	if stone_cost > 0:
-		next.stone = paid.stone - stone_cost
-	return _accepted(next)
-
-
-static func _selected_input_instance_ids(state: RunState, command: Dictionary, inputs: Array) -> Array[String]:
-	return ShopRulesScript.selected_input_instance_ids(state, command, inputs)
-
-
-static func _refinement_roll(state: RunState, recipe_id: String) -> int:
-	return SeededRollScript.index(100, int(state.seed), recipe_id, state.event_log.size()) + 1
-
-
-static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dictionary, recipe: Dictionary) -> Dictionary:
-	var min_inputs := int(recipe.get("min_inputs", 2))
-	var requested: Array = command.get("input_instance_ids", [])
-	var selected: Array[String] = []
-	if requested.is_empty():
-		for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
-			var candidate: Dictionary = state.gu_instances.get(str(instance_id_value), {})
-			if str(candidate.get("state", "")) == "refined":
-				selected.append(str(instance_id_value))
-	else:
-		for instance_id_value in requested:
-			var instance_id := str(instance_id_value)
-			var candidate: Dictionary = state.gu_instances.get(instance_id, {})
-			if candidate.is_empty() or str(candidate.get("state", "")) != "refined":
-				return _rejected(state, "missing_refinement_input")
-			if not selected.has(instance_id):
-				selected.append(instance_id)
-	if selected.size() < min_inputs:
-		return _rejected(state, "missing_refinement_input")
-	if selected.size() > SoulCapacityScript.craft_cap(state):
-		return _rejected(state, "refinement_capacity_exceeded")
-	var outcomes: Array = recipe.get("outcomes", [])
-	if outcomes.is_empty():
-		return _rejected(state, "unknown_refinement_recipe")
-	# The outcome is drawn from the run seed and immutable event position;
-	# commands never accept client supplied dice values.
-	var total := 0
-	for outcome_value in outcomes:
-		total += maxi(1, int(outcome_value.get("weight", 1)))
-	var roll := SeededRollScript.index(total, int(state.seed), "+".join(selected), state.event_log.size()) + 1
-	var chosen: Dictionary = {}
-	var cursor := 0
-	for outcome_value in outcomes:
-		chosen = outcome_value
-		cursor += maxi(1, int(outcome_value.get("weight", 1)))
-		if roll <= cursor:
-			break
-	var instances := state.gu_instances.duplicate(true)
-	var aperture := state.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	var next_cultivator := state.cultivator.duplicate(true)
-	var next_health := state.health
-	match str(chosen.get("effect", "")):
-		"mutate_to":
-			var mutated_id := str(selected[0])
-			var mutated: Dictionary = instances[mutated_id].duplicate(true)
-			mutated["definition_id"] = str(chosen.get("target_gu_id", ""))
-			instances[mutated_id] = mutated
-			for index in range(1, selected.size()):
-				var other_id := str(selected[index])
-				var other: Dictionary = instances[other_id].duplicate(true)
-				other["state"] = "dead"
-				instances[other_id] = other
-				stored.erase(other_id)
-		"explosion":
-			next_health = maxi(0, next_health - int(chosen.get("health_cost", 0)))
-			next_cultivator["soul"] = maxi(0, int(next_cultivator.get("soul", 0)) - int(chosen.get("soul_cost", 0)))
-			next_cultivator["lifespan"] = maxi(0, int(next_cultivator.get("lifespan", 0)) - int(chosen.get("lifespan_cost", 0)))
-			for instance_id_value in selected:
-				var destroyed_id := str(instance_id_value)
-				var destroyed: Dictionary = instances[destroyed_id].duplicate(true)
-				destroyed["state"] = "dead"
-				instances[destroyed_id] = destroyed
-				stored.erase(destroyed_id)
-		_:
-			for instance_id_value in selected:
-				var consumed_id := str(instance_id_value)
-				var consumed: Dictionary = instances[consumed_id].duplicate(true)
-				consumed["state"] = "dead"
-				instances[consumed_id] = consumed
-				stored.erase(consumed_id)
-	aperture["stored_gu_instance_ids"] = stored
-	var next := state.append_event(_event(
-		state,
-		"refine_gu",
-		{
-			"health": state.health,
-			"cultivator": state.cultivator,
-			"gu_instances": state.gu_instances,
-			"cave_aperture": state.cave_aperture,
-		},
-		{
-			"health": next_health,
-			"cultivator": next_cultivator,
-			"gu_instances": instances,
-			"cave_aperture": aperture,
-		},
-		str(chosen.get("event_reason", "free_mix_destroyed")),
-		state.current_node_id,
-		selected
-	))
-	next.sync_legacy_gu_projections()
-	# R9.1 free-mix failure entry point: junk outcomes (anything but a
-	# mutation) may carry an optional fail_curse_id backlash attachment.
-	var fail_curse_id := str(chosen.get("fail_curse_id", ""))
-	if not fail_curse_id.is_empty() and str(chosen.get("effect", "")) != "mutate_to":
-		next = CurseRegistryScript.gain_curse(next, fail_curse_id, "free_mix_failure:%s" % str(chosen.get("id", "")))
-	return _finalize_if_dead(next)
-
-
-static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
-	# E3a：修炼族并入休息类三选一——rest/refinement/cultivation 节点均可冲阶
-	# （原 cultivation_spring 字面闸门放宽为休息类；seclusion 等仍拒绝）。
-	if not RestRulesScript._is_rest_class_node(catalog, state.current_node_id) \
-			and not RestRulesScript._is_rest_class_node(catalog, str(state.current_node_template_id)):
-		return _rejected(state, "not_cultivation_window")
-	if state.cultivation >= 2:
-		return _rejected(state, "cultivation_already_rank_two")
-	var rank_two_cost := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
-	if state.stone < rank_two_cost:
-		return _rejected(state, "insufficient_stone")
-	var aperture := state.cave_aperture.duplicate(true)
-	aperture["essence_max"] = EssenceCapacityScript.essence_max_for(state, catalog, 2)
-	# 玩家等级曲线（2026-08-29 设计点）：转数只抬真元总量上限，不加 HP/攻击。
-	# 2026-08-28 验收批：上限值从公式取（aptitude.json tier 表唯一真值），
-	# 不再硬编码 3 + 2。
-	var next_capacity := maxi(state.essence_capacity, EssenceCapacityScript.essence_max_for(state, catalog, 2))
-	var next := state.append_event(_event(
-		state,
-		"cultivate_rank_two",
-		{"cultivation": state.cultivation, "stone": state.stone, "essence": state.essence, "cave_aperture": state.cave_aperture},
-		{"cultivation": 2, "stone": state.stone - rank_two_cost, "essence": state.essence_capacity, "essence_capacity": next_capacity, "cave_aperture": aperture},
-		"rank_two_breakthrough",
-		state.current_node_id
-	))
-	return _accepted(next)
-
-
-static func _disable_card(state: RunState, command: Dictionary) -> Dictionary:
-	var card_key := str(command.get("card_key", ""))
-	if card_key.is_empty():
-		return _rejected(state, "missing_card_key")
-	var overrides := state.gu_card_overrides.duplicate(true)
-	var override: Dictionary = overrides.get(card_key, {}).duplicate(true)
-	override["disabled_for_run"] = true
-	overrides[card_key] = override
-	var next := state.append_event(_event(
-		state,
-		"disable_card",
-		{"gu_card_overrides": state.gu_card_overrides},
-		{"gu_card_overrides": overrides},
-		"battle_card_disabled",
-		state.current_node_id,
-		[card_key]
-	))
-	return _accepted(next)
-
-
-static func _upgrade_card(state: RunState, command: Dictionary) -> Dictionary:
-	var card_key := str(command.get("card_key", ""))
-	if card_key.is_empty():
-		return _rejected(state, "missing_card_key")
-	var overrides := state.gu_card_overrides.duplicate(true)
-	var override: Dictionary = overrides.get(card_key, {}).duplicate(true)
-	override["upgrade_level"] = int(override.get("upgrade_level", 0)) + 1
-	overrides[card_key] = override
-	var next := state.append_event(_event(
-		state,
-		"upgrade_card",
-		{"gu_card_overrides": state.gu_card_overrides},
-		{"gu_card_overrides": overrides},
-		"battle_card_upgraded",
-		state.current_node_id,
-		[card_key]
-	))
-	return _accepted(next)
-
-
-static func _copy_card(state: RunState, command: Dictionary) -> Dictionary:
-	var card_key := str(command.get("card_key", ""))
-	if card_key.is_empty():
-		return _rejected(state, "missing_card_key")
-	var overrides := state.gu_card_overrides.duplicate(true)
-	var override: Dictionary = overrides.get(card_key, {}).duplicate(true)
-	override["extra_copies"] = int(override.get("extra_copies", 0)) + 1
-	overrides[card_key] = override
-	var next := state.append_event(_event(
-		state,
-		"copy_card",
-		{"gu_card_overrides": state.gu_card_overrides},
-		{"gu_card_overrides": overrides},
-		"battle_card_copied",
-		state.current_node_id,
-		[card_key]
-	))
-	return _accepted(next)
-
-
-static func _destroy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var instance_id := str(command.get("instance_id", ""))
-	var existing: Dictionary = state.gu_instances.get(instance_id, {})
-	if existing.is_empty() or str(existing.get("state", "")) == "dead":
-		return _rejected(state, "gu_instance_unavailable")
-	var blocked := _cursed_drop_block(state, catalog, str(existing.get("definition_id", "")))
-	if not blocked.is_empty():
-		return blocked
-	var payload := _destroyed_gu_payload(state, instance_id, LootRules.destroy_gu(existing, str(command.get("method", "")), str(command.get("means", "")), catalog).get("extracted", {}))
-	var next := state.append_event(_event(
-		state,
-		"destroy_gu",
-		{"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture, "materials": state.materials},
-		{"gu_instances": payload["instances"], "cave_aperture": payload["aperture"], "materials": payload["materials"]},
-		"gu_destroyed",
-		state.current_node_id,
-		[instance_id]
-	))
-	next.sync_legacy_gu_projections()
-	return _accepted(next)
-
-
-# Section 16.15: a can_direct_drop=false gu refuses every direct destroy path.
-# The refusal still appends a backlash consequence (one gu_erosion layer) so it
-# is never silent; the returned rejection carries the curse-gained state.
-static func _cursed_drop_block(state: RunState, catalog: Dictionary, definition_id: String) -> Dictionary:
-	var definition: Dictionary = catalog.get("gu_by_id", {}).get(definition_id, {})
-	if bool(definition.get("can_direct_drop", true)):
-		return {}
-	return _rejected(
-		CurseRegistryScript.gain_curse(state, FORCED_DROP_CURSE_ID, "forced_drop"),
-		"cursed_gu_not_directly_droppable"
-	)
-
-
-static func _destroyed_gu_payload(state: RunState, instance_id: String, extracted: Dictionary = {}) -> Dictionary:
-	var instances := state.gu_instances.duplicate(true)
-	instances[instance_id] = instances.get(instance_id, {}).duplicate(true)
-	instances[instance_id]["state"] = "dead"
-	var aperture := state.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	stored.erase(instance_id)
-	aperture["stored_gu_instance_ids"] = stored
-	var materials := state.materials.duplicate(true)
-	for material_id in extracted:
-		materials[str(material_id)] = int(materials.get(str(material_id), 0)) + int(extracted[material_id])
-	return {"instances": instances, "aperture": aperture, "materials": materials}
-
-
-# Task 5 black-market removal services share one accounting family: per-run
-# usage counters in node_flags, escalating price per prior use of the SAME
-# service, hard per-run limits. Rest-node removal bypasses both (R8.1).
-static func service_use_count(state: RunState, service_id: String) -> int:
-	return EconomyRulesScript.service_use_count(state, service_id)
-
-
-static func service_limit(catalog: Dictionary, service_id: String) -> int:
-	return EconomyRulesScript.service_limit(catalog, service_id)
-
-
-static func service_price_for(catalog: Dictionary, state: RunState, service_id: String, base: int) -> int:
-	return EconomyRulesScript.service_price_for(catalog, state, service_id, base)
-
-
-static func _bump_service_flag(flags: Dictionary, service_id: String) -> void:
-	var key := EconomyRulesScript.SERVICE_USE_FLAG_PREFIX + service_id
-	flags[key] = str(int(str(flags.get(key, "0"))) + 1)
-
-
-static func _remove_card_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var instance_id := str(command.get("instance_id", ""))
-	var existing: Dictionary = state.gu_instances.get(instance_id, {})
-	if existing.is_empty() or str(existing.get("state", "")) == "dead":
-		return _rejected(state, "gu_instance_unavailable")
-	var blocked := _cursed_drop_block(state, catalog, str(existing.get("definition_id", "")))
-	if not blocked.is_empty():
-		return blocked
-	if service_use_count(state, "remove_card") >= service_limit(catalog, "remove_card"):
-		return _rejected(state, "service_limit_exceeded")
-	var cost := service_price_for(catalog, state, "remove_card", int(catalog.get("balance", {}).get("remove_card_cost", 120)))
-	if state.stone < cost:
-		return _rejected(state, "insufficient_stone")
-	var flags := state.node_flags.duplicate(true)
-	_bump_service_flag(flags, "remove_card")
-	var payload := _destroyed_gu_payload(state, instance_id)
-	var next := state.append_event(_event(
-		state,
-		"svc_remove_card",
-		{
-			"stone": state.stone,
-			"gu_instances": state.gu_instances,
-			"cave_aperture": state.cave_aperture,
-			"node_flags": state.node_flags,
-		},
-		{
-			"stone": state.stone - cost,
-			"gu_instances": payload["instances"],
-			"cave_aperture": payload["aperture"],
-			"node_flags": flags,
-		},
-		"gu_removed_by_service",
-		state.current_node_id,
-		[instance_id]
-	))
-	next.sync_legacy_gu_projections()
-	return _accepted(next)
-
-
-# R4.8 contracts-tier meta rules are rule changers, not droppable items, so
-# they can never be removed through this service.
-static func _remove_imprint_command(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var relic_id := str(command.get("relic_id", ""))
-	if not catalog.get("relic_by_id", {}).has(relic_id):
-		return _rejected(state, "unknown_relic")
-	if not state.relic_ids.has(relic_id):
-		return _rejected(state, "relic_not_owned")
-	if str(catalog["relic_by_id"][relic_id].get("grade", "")) == "meta_rule":
-		return _rejected(state, "meta_rule_not_removable")
-	if service_use_count(state, "remove_imprint") >= service_limit(catalog, "remove_imprint"):
-		return _rejected(state, "service_limit_exceeded")
-	var cost := service_price_for(catalog, state, "remove_imprint", int(catalog.get("balance", {}).get("remove_imprint_cost", 150)))
-	if state.stone < cost:
-		return _rejected(state, "insufficient_stone")
-	var flags := state.node_flags.duplicate(true)
-	_bump_service_flag(flags, "remove_imprint")
-	var relics := state.relic_ids.duplicate()
-	relics.erase(relic_id)
-	var meta_rules := state.meta_rules.duplicate(true)
-	meta_rules.erase(relic_id)
-	var next := state.append_event(_event(
-		state,
-		"svc_remove_imprint",
-		{
-			"stone": state.stone,
-			"relic_ids": state.relic_ids,
-			"meta_rules": state.meta_rules,
-			"node_flags": state.node_flags,
-		},
-		{
-			"stone": state.stone - cost,
-			"relic_ids": relics,
-			"meta_rules": meta_rules,
-			"node_flags": flags,
-		},
-		"imprint_removed_by_service",
-		state.current_node_id,
-		[relic_id]
-	))
-	return _accepted(next)
-
-
-static func _settle_node_feeding(state: RunState, catalog: Dictionary) -> Dictionary:
-	var needed: Dictionary = state.estimate_feeding_materials(catalog)
-	var materials := state.materials.duplicate(true)
-	var instances := state.gu_instances.duplicate(true)
-	var aperture := state.cave_aperture.duplicate(true)
-	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
-	var deficits: Dictionary = {}
-	for material_id_value in needed:
-		var material_id := str(material_id_value)
-		var cost := int(needed[material_id_value])
-		var available := int(materials.get(material_id, 0))
-		materials[material_id] = maxi(0, available - cost)
-		if available < cost:
-			deficits[material_id] = cost - available
-	if not deficits.is_empty():
-		for instance_id_value in stored.duplicate():
-			var instance_id := str(instance_id_value)
-			var instance: Dictionary = instances.get(instance_id, {}).duplicate(true)
-			if instance.is_empty() or str(instance.get("state", "")) == "dead":
-				continue
-			var definition: Dictionary = catalog.get("gu_by_id", {}).get(str(instance.get("definition_id", "")), {})
-			var needs_deficit := false
-			for material_id_value in definition.get("feeding_need", {}):
-				if deficits.has(str(material_id_value)):
-					needs_deficit = true
-			if not needs_deficit:
-				continue
-			if str(instance.get("state", "")) == "weakened":
-				instance["state"] = "dead"
-				stored.erase(instance_id)
-			else:
-				instance["state"] = "weakened"
-			instances[instance_id] = instance
-	aperture["stored_gu_instance_ids"] = stored
-	var reason := "node_feeding_paid" if deficits.is_empty() else "node_feeding_shortfall"
-	var next := state.append_event(_event(
-		state,
-		"settle_node_feeding",
-		{"materials": state.materials, "gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
-		{"materials": materials, "gu_instances": instances, "cave_aperture": aperture},
-		reason,
-		state.current_node_id,
-		stored
-	))
-	next.sync_legacy_gu_projections()
-	return _accepted(next)
-
 
 static func _spend_lifespan(state: RunState, command: Dictionary) -> Dictionary:
 	var amount := int(command.get("amount", 0))
@@ -883,28 +299,6 @@ static func _finalize_if_dead(state: RunState) -> Dictionary:
 	return _accepted(state.finalize_death())
 
 
-static func _settle_feeding(state: RunState, catalog: Dictionary) -> Dictionary:
-	if state.current_node_id != "stage_one_ledger":
-		return _rejected(state, "not_stage_ledger")
-	var cost := state.estimate_feeding(catalog)
-	if state.stone < cost:
-		return _rejected(state, "feeding_shortfall")
-	var flags := state.node_flags.duplicate(true)
-	var already_paid := str(flags.get("stage_one_ledger", "")) == "paid"
-	flags["stage_one_ledger"] = "paid"
-	var next := state.append_event(_event(
-		state,
-		"settle_feeding",
-		{"stone": state.stone, "node_flags": state.node_flags},
-		{"stone": state.stone - cost, "node_flags": flags},
-		"stage_one_feeding_paid",
-		state.current_node_id
-	))
-	if not already_paid:
-		next = _grant_lifespan_milestone(next, catalog, "stage_one_ledger")
-	return _accepted(next)
-
-
 static func _accept_debt(state: RunState, _catalog: Dictionary) -> Dictionary:
 	if state.current_node_id != "stage_one_ledger":
 		return _rejected(state, "not_stage_ledger")
@@ -923,55 +317,6 @@ static func _accept_debt(state: RunState, _catalog: Dictionary) -> Dictionary:
 	))
 	return _accepted(next)
 
-
-static func _offer(catalog: Dictionary, offer_id: String, kind: String) -> Dictionary:
-	var offer: Dictionary = catalog.get("caravan_offer_by_id", {}).get(offer_id, {})
-	if str(offer.get("kind", "")) != kind:
-		return {}
-	return offer
-
-
-static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String, extra_targets: Array = [], catalog: Dictionary = {}, output_rank: int = 0) -> Dictionary:
-	# 2026-09-03 修复：实例记账见 GuInstance.transaction_ledger（产出蛊必须
-	# 落 gu_instances + 洞天，否则 V1 战斗看不见且会被下次 sync 抹掉）。
-	var ledger := GuInstance.transaction_ledger(state.gu_instances, state.cave_aperture, output_gu_id, catalog, inputs, output_rank)
-	# 2026-09-05 切片护栏：未知产出定义在原石/原蛊/事件落地之前直接拒绝，避免
-	# 下游 sync_legacy_gu_projections 把一个不存在的 gu_id 复活进 legacy 投影。
-	if not str(ledger.get("error", "")).is_empty():
-		return _rejected(state, str(ledger["error"]))
-	var next_gu := _without_gu(state.refined_gu_ids, inputs)
-	next_gu.append(output_gu_id)
-	var next_equipped := _without_gu(state.equipped_gu_ids, inputs)
-	var next := state.append_event(_event(
-		state,
-		"gu_transaction",
-		{"stone": state.stone, "gu_ids": state.gu_ids, "refined_gu_ids": state.refined_gu_ids, "gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
-		{"stone": state.stone - stone_cost, "gu_ids": next_gu, "refined_gu_ids": next_gu, "equipped_gu_ids": next_equipped, "gu_instances": ledger["instances"], "cave_aperture": ledger["aperture"]},
-		reason,
-		state.current_node_id,
-		inputs + [output_gu_id] + extra_targets
-	))
-	next.sync_legacy_gu_projections()
-	return _accepted(next)
-
-
-static func _has_all_gu(owned: Array[String], required: Array) -> bool:
-	var remaining := owned.duplicate()
-	for gu_id in required:
-		var index := remaining.find(str(gu_id))
-		if index < 0:
-			return false
-		remaining.remove_at(index)
-	return true
-
-
-static func _without_gu(owned: Array[String], removed: Array) -> Array[String]:
-	var next := owned.duplicate()
-	for gu_id in removed:
-		var index := next.find(str(gu_id))
-		if index >= 0:
-			next.remove_at(index)
-	return next
 
 
 static func _can_gain_relic(state: RunState, catalog: Dictionary, relic_id: String) -> String:
@@ -1145,7 +490,7 @@ static func _remove_curse_command(state: RunState, command: Dictionary, catalog:
 	if state.stone < cost:
 		return _rejected(state, "insufficient_stone")
 	var flags := state.node_flags.duplicate(true)
-	_bump_service_flag(flags, "remove_curse")
+	RefineCommandRulesScript._bump_service_flag(flags, "remove_curse")
 	var paid := state.append_event(_event(
 		state,
 		"svc_remove_curse",
@@ -1783,112 +1128,6 @@ static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> i
 ## 搜刮候选蛊方（预览与执行共用的唯一配方选择函数，2026-09-01）：
 ## scavenge_recipe 兼容单串与数组；过滤出「存在且尚未持有」的配方。
 ## 持有判定与图鉴门禁同源：global_codex_ids 命中 recipe id 或产出蛊 id。
-static func scavenge_pending_recipes(state: RunState, catalog: Dictionary) -> Array[String]:
-	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	var raw: Variant = boss.get("scavenge_recipe", "")
-	var pending: Array[String] = []
-	var recipe_ids: Array[String] = []
-	if raw is Array:
-		for value in raw:
-			recipe_ids.append(str(value))
-	elif not str(raw).is_empty():
-		recipe_ids.append(str(raw))
-	for recipe_id in recipe_ids:
-		var recipe: Dictionary = catalog.get("refinement_by_id", {}).get(recipe_id, {})
-		if recipe.is_empty():
-			continue
-		if not _codex_unlocks_recipe(state, recipe):
-			pending.append(recipe_id)
-	return pending
-
-
-static func _scavenge(state: RunState, _command: Dictionary, catalog: Dictionary) -> Dictionary:
-	if str(state.node_flags.get("boss_defeated", "")) != "true":
-		return _rejected(state, "boss_undefeated")
-	var boss: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get("boss", {})
-	if str(boss.get("scavenge_recipe", "")).is_empty() and not (boss.get("scavenge_recipe", "") is Array):
-		return _rejected(state, "no_scavenge_recipe")
-	var pending := scavenge_pending_recipes(state, catalog)
-	if pending.is_empty():
-		return _rejected(state, "scavenge_already_done")
-	var codex_after: Array[String] = state.global_codex_ids.duplicate()
-	for recipe_id in pending:
-		codex_after.append(recipe_id)
-	var next := state.append_event(_event(
-		state,
-		"scavenge",
-		{"global_codex_ids": state.global_codex_ids},
-		{"global_codex_ids": codex_after},
-		"scavenge_recipe_unlocked",
-		state.current_node_id,
-		pending
-	))
-	next.global_codex_ids = codex_after
-	return _accepted(next)
-
-
-static func _sell_material(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var material_id := str(command.get("material_id", ""))
-	var materials: Dictionary = catalog.get("loot_tables", {}).get("materials", {})
-	if not materials.has(material_id):
-		return _rejected(state, "unknown_material")
-	var owned := int(state.materials.get(material_id, 0))
-	if owned <= 0:
-		return _rejected(state, "no_material_to_sell")
-	var base := int(materials[material_id].get("value", 1))
-	var price := sell_price_for(catalog, state, base)
-	var stone_after := state.stone + price * owned
-	var remaining := state.materials.duplicate(true)
-	remaining[material_id] = 0
-	var next := state.append_event(_event(
-		state,
-		"sell_material",
-		{"stone": state.stone, "materials": state.materials},
-		{"stone": stone_after, "materials": remaining},
-		"material_sold",
-		state.current_node_id,
-		[material_id]
-	))
-	next.stone = stone_after
-	next.materials = remaining
-	return _accepted(next)
-
-
-static func _use_material(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	# 材料第四通路「直接使用」：数据侧 loot_tables.materials.*.use 声明
-	# health/essence 增量与文案；负向增量受死亡可预见红线约束（执行前预检）。
-	var material_id := str(command.get("material_id", ""))
-	var materials: Dictionary = catalog.get("loot_tables", {}).get("materials", {})
-	if not materials.has(material_id):
-		return _rejected(state, "unknown_material")
-	var use: Dictionary = materials[material_id].get("use", {})
-	if use.is_empty():
-		return _rejected(state, "material_not_usable")
-	var owned := int(state.materials.get(material_id, 0))
-	if owned <= 0:
-		return _rejected(state, "no_material_to_use")
-	var health_delta := int(use.get("health", 0))
-	var essence_delta := int(use.get("essence", 0))
-	if health_delta < 0 and state.health + health_delta <= 0:
-		return _rejected(state, "material_use_lethal")
-	var health_after := mini(state.max_health, maxi(0, state.health + health_delta)) if health_delta != 0 else state.health
-	var essence_after := mini(state.essence_capacity, maxi(0, state.essence + essence_delta)) if essence_delta != 0 else state.essence
-	var remaining := state.materials.duplicate(true)
-	remaining[material_id] = owned - 1
-	var next := state.append_event(_event(
-		state,
-		"use_material",
-		{"health": state.health, "essence": state.essence, "materials": state.materials},
-		{"health": health_after, "essence": essence_after, "materials": remaining},
-		"material_used",
-		state.current_node_id,
-		[material_id]
-	))
-	next.health = health_after
-	next.essence = essence_after
-	next.materials = remaining
-	return _accepted(next)
-
 
 static func gain_notoriety(state: RunState, amount: int, reason_key: String) -> RunState:
 	if amount <= 0:

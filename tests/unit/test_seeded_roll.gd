@@ -12,6 +12,7 @@ extends GutTest
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 
 
@@ -78,7 +79,7 @@ func test_converged_refinement_roll_matches_old_inline_formula() -> void:
 		for character in "bright_thread_risk":
 			recipe_hash = recipe_hash * 31 + character.unicode_at(0)
 		var expected_rng := SeededRng.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + recipe_hash)
-		assert_eq(int(ResolverScript._refinement_roll(state, "bright_thread_risk")), expected_rng.next_index(100) + 1,
+		assert_eq(int(RefineCommandRulesScript._refinement_roll(state, "bright_thread_risk")), expected_rng.next_index(100) + 1,
 				"refinement roll drift seed=%d" % seed_value)
 
 

@@ -21,11 +21,14 @@ func test_balance_json_carries_behavior_cost_keys() -> void:
 
 
 func test_resolver_reads_rank_two_cost_from_balance() -> void:
-	var text := FileAccess.get_file_as_string("res://scripts/domain/resolver.gd")
+	# W11 A4 (2026-09-10): cultivate_rank_two moved to refine_command_rules.gd;
+	# the data-driven contract now scans both the router and the new module.
+	var text := FileAccess.get_file_as_string("res://scripts/domain/resolver.gd") \
+			+ FileAccess.get_file_as_string("res://scripts/domain/refine_command_rules.gd")
 	assert_true(text.contains("cultivate_rank_two_stone_cost"),
-			"resolver.gd must read cultivate_rank_two_stone_cost from catalog")
+			"domain must read cultivate_rank_two_stone_cost from catalog")
 	assert_false(text.contains("state.stone < 5"),
-			"resolver.gd must not hardcode the rank-two stone cost")
+			"domain must not hardcode the rank-two stone cost")
 
 
 func test_preview_reads_costs_from_balance() -> void:
