@@ -195,6 +195,7 @@ func _apply_menu_style(btn: Button) -> void:
 	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_focus_color", GuStyle.NAV_TEXT)
+	btn.add_theme_color_override("font_disabled_color", GuStyle.INK_MUTED)
 
 
 func _vertical_title(flat: String) -> String:
@@ -221,13 +222,18 @@ func _apply_base_fonts() -> void:
 	_version_label.add_theme_color_override("font_color", GuStyle.VER_TEXT)
 	_paper.color = GuStyle.PAPER_HALL
 	GuStyle.apply_seal(_seal_box, 3.0)
-	# 右侧导航：手记/图鉴为装饰入口（无独立路由），设置高亮，退出即返回。
+	# 右侧导航：手记/图鉴尚未接入独立路由（图鉴=蛊方收藏册待 D1b 落地，
+	# 手记=事件日志待规划），为避免"可点无反应"，一律 disabled 置灰；
+	# 设置=当前页标识亦 disabled。退出即返回。接入路由后移除 disabled。
 	for btn in [_nav_journal, _nav_codex, _nav_quit]:
 		_apply_menu_style(btn)
+	_nav_journal.disabled = true
+	_nav_codex.disabled = true
+	_nav_settings.disabled = true
 	_nav_settings.flat = true
 	_nav_settings.add_theme_font_size_override("font_size", 14)
 	_nav_settings.add_theme_font_override("font", GuStyle.BODY_FONT)
-	_nav_settings.add_theme_color_override("font_color", GuStyle.CINNABAR)
+	_nav_settings.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	_apply_menu_style(_back_button)
 	_apply_opt_style(_save_button, false)
 	_apply_opt_style(_load_button, false)

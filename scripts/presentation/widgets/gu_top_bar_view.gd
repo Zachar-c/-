@@ -55,6 +55,13 @@ func _ready() -> void:
 	_apply_action_buttons()
 	_bag_button.pressed.connect(_on_bag_pressed)
 	_settings_button.pressed.connect(_on_settings_pressed)
+	# 点击音效：图标按钮不走 MasterTheme.apply_button，这里补 ui_click；
+	# meta 防重复连接（_setup 可能被宿主多次调用）。
+	if not _bag_button.has_meta("sfx_wired"):
+		_bag_button.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
+		_settings_button.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
+		_bag_button.set_meta("sfx_wired", true)
+		_settings_button.set_meta("sfx_wired", true)
 	_refresh_all()
 
 
