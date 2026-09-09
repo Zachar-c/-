@@ -17,13 +17,14 @@ SEAL = (140, 88, 80)
 FONT = r"C:\Windows\Fonts\simkai.ttf"
 
 
-def paper_canvas(size):
+def paper_canvas(size, height=None):
     """Paper background + halftone dot texture (5px x 7px cycle)."""
-    img = Image.new("RGB", (size, size), PAPER)
+    h = height if height else size
+    img = Image.new("RGB", (size, h), PAPER)
     d = ImageDraw.Draw(img)
     # dot radius scales with canvas: 1px dot on 1405px ref -> approx size/1405
     r = max(1, round(size / 700))
-    for y in range(0, size, 7):
+    for y in range(0, h, 7):
         for x in range(0, size, 5):
             d.ellipse([x - r, y - r, x + r, y + r], fill=DOT)
     return img
@@ -31,17 +32,18 @@ def paper_canvas(size):
 
 def draw_seal(img, text="问真", size_ratio=0.52, font_ratio=0.20, tilt=3.0):
     """Cinnabar square seal, 2x2 vertical text, clockwise +tilt, centered."""
-    size = img.size[0]
+    w = img.size[0]
+    h = img.size[1]
     d = ImageDraw.Draw(img)
-    box = round(size * size_ratio)
-    left = (size - box) // 2
-    top = (size - box) // 2
+    box = round(h * size_ratio)
+    left = (w - box) // 2
+    top = (h - box) // 2
 
     # rotate a separate seal layer clockwise (positive angle in PIL is CCW,
     # so rotate by -tilt to get clockwise in screen terms)
-    seal = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    seal = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     sd = ImageDraw.Draw(seal)
-    sd.rectangle([left, top, left + box - 1, top + box - 1], outline=SEAL, width=max(2, round(size / 220)))
+    sd.rectangle([left, top, left + box - 1, top + box - 1], outline=SEAL, width=max(2, round(h / 220)))
     fsize = round(box * font_ratio)
     try:
         font = ImageFont.truetype(FONT, fsize)
@@ -55,7 +57,7 @@ def draw_seal(img, text="问真", size_ratio=0.52, font_ratio=0.20, tilt=3.0):
         cx = left + (box - cw) // 2 - chbox[0]
         cy = top + round(box * (0.22 + 0.36 * i)) - chbox[1] - chh // 2
         sd.text((cx, cy), ch, font=font, fill=SEAL)
-    rotated = seal.rotate(-tilt, center=(size / 2, size / 2), resample=Image.BICUBIC)
+    rotated = seal.rotate(-tilt, center=(w / 2, h / 2), resample=Image.BICUBIC)
     img.paste(rotated, (0, 0), rotated)
     return img
 
@@ -83,4 +85,10 @@ draw_seal(fg, size_ratio=0.60, font_ratio=0.20)
 save(fg, os.path.join(OUT, "adaptive_foreground_432.png"))
 bg = Image.new("RGB", (432, 432), PAPER)
 save(bg, os.path.join(OUT, "adaptive_background_432.png"))
+
+# Boot splash: 640x360 (16:9), same paper+seal composition, seal sized to
+# the height so it stays proportionate in the wide frame.
+splash = paper_canvas(640, 360)
+draw_seal(splash, size_ratio=0.34, font_ratio=0.20, tilt=3.0)
+save(splash, os.path.join(OUT, "boot_splash.png"))
 print("done")

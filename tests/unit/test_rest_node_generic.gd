@@ -148,9 +148,9 @@ func test_generated_layers_have_rest_node_every_stride_rows() -> void:
 			var previous_row := -1
 			for row in row_indices:
 				if previous_row >= 0:
-				# 间距以 MapGenerator.REST_ROW_STRIDE 为唯一事实来源（2026-09-08 由 3
-				# 收紧到 2），别把数字写回测试。
-				assert_eq(int(row) - previous_row, MapGeneratorScript.REST_ROW_STRIDE,
+					# 间距以 MapGenerator.REST_ROW_STRIDE 为唯一事实来源（2026-09-08 由 3
+					# 收紧到 2），别把数字写回测试。
+					assert_eq(int(row) - previous_row, MapGeneratorScript.REST_ROW_STRIDE,
 						"seed %d layer %d rest row %d must sit every %d rows"
 						% [seed_value, layer, row, MapGeneratorScript.REST_ROW_STRIDE])
 				previous_row = int(row)

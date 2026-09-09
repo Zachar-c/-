@@ -289,7 +289,7 @@ func test_shop_price_pct_lifts_buy_prices_only() -> void:
 
 
 func test_material_bonus_and_penalty_adjust_loot_counts_with_zero_clamp() -> void:
-	var pool: Array = (catalog().get("loot_tables", {}).get("loot", {})
+	var pool: Array = (catalog.get("loot_tables", {}).get("loot", {})
 			.get("common", {}).get("material_pool", []) as Array)
 	var layer_count := _pacing_material_count(1)
 	# _roll_materials 抽完即 remove_at，材料数被池子大小封顶。

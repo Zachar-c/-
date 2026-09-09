@@ -16,6 +16,14 @@
 - **屏幕视觉硬流程**：1280×720 HTML 线框稿 → 逐屏审批 → tscn 实施 → 真窗渲染验收。已交付：大厅、地图、战斗、流派选择、设置、杀招、炼蛊、商店、结算、调试；全部按线框稿 1:1 对齐（线稿留证于 `docs/superpowers/specs/*.html`）。
 - **双端可安装**：Windows 与 Android 安装包已导出并入库，见[下载安装包](#下载安装包)。
 
+## 发布说明（v0.9.0）
+
+- 应用图标与启动画面：问真风格（宣纸网点底 + 朱砂「问真」方印），程序化生成（`tools/gen_icons.py`），已接入 Windows/Android 双端。
+- 版本正式化：语义化版本 `0.9.0`（去除 `+local` 构建标识），大厅/设置屏统一显示。
+- 双端安装包重新导出并入库：Windows（PCK 内嵌、分卷 SHA256 校验）与 Android（`com.wenzhen.game`）。
+- 内容规模：802 蛊、20 流派、386+ 合炼配方、37 地图节点、12 敌人、41 条音频。
+- 说明：Android 当前使用 debug keystore 签名，可直接 `adb install` 试玩；应用商店上架需替换为正式 release keystore（见 `tools/sign_android.ps1` 注释）。
+
 ## 下载安装包
 
 安装包随仓库存储于 `build/`（gitee 单文件上限 100 MB，Windows 包按二进制分卷为两个文件）。点击链接进入文件页后，点右上角「下载」按钮即可获取。
@@ -24,7 +32,7 @@
   - [gu-zhenren.exe.part1](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/win/gu-zhenren.exe.part1)（~78 MB）
   - [gu-zhenren.exe.part2](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/win/gu-zhenren.exe.part2)（~78 MB）
   - 两个分卷放同一目录后执行合并与校验：`powershell -ExecutionPolicy Bypass -File tools/join_installer.ps1`，得到 `build\win\gu-zhenren.exe`（SHA256 自动校验）。
-- **Android**：[gu-zhenren-signed.apk](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/android/gu-zhenren-signed.apk)（~77 MB，单文件，debug keystore 已签名，可 `adb install` 装机；包名 `com.wenzhen.game`）
+- **Android**：[gu-zhenren-signed.apk](https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat/blob/master/build/android/gu-zhenren-signed.apk)（~77 MB，单文件，debug keystore 已签名，可 `adb install` 装机；包名 `com.wenzhen.game`；商店上架需换正式 keystore，见发布说明）
 
 安装包均为 Release 构建，无调试面板（§16.22，F12 门禁经实测）。
 
