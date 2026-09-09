@@ -5,6 +5,34 @@
   "bing": 2,
   "ding": 1
  },
+ "default_effect_by_role": {
+  "attack": {
+   "kind": "strike",
+   "amount": 2
+  },
+  "defense": {
+   "kind": "shield",
+   "amount": 3
+  },
+  "healing": {
+   "kind": "heal",
+   "amount": 2
+  },
+  "movement": {
+   "kind": "shift",
+   "amount": 1
+  },
+  "recon": {
+   "kind": "status",
+   "name": "marked",
+   "amount": 1
+  },
+  "logistics": {
+   "kind": "status",
+   "name": "bound",
+   "amount": 1
+  }
+ },
  "regen_pct": {
   "jia": 35,
   "yi": 30,

@@ -14,19 +14,12 @@ const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 
 const DEFAULT_PHASE := "player_action"
 
-# 蛊定义未声明 v1_effect 时的 role 兜底。映射沿用旧栈 combat_effects 已有的
-# 设计意图（attack→strike / defense→guarded→shield / healing→heal /
-# movement→retreat_preserved→shift / recon→revealed→标记 /
-# logistics→delay_progress→束缚），基准值取同名手工蛊的 v1_effect。
-# 数据里显式声明 v1_effect 的蛊一律优先，这里只是补齐 205 只空效果蛊。
-const DEFAULT_EFFECT_BY_ROLE := {
-	"attack": {"kind": "strike", "amount": 2},
-	"defense": {"kind": "shield", "amount": 3},
-	"healing": {"kind": "heal", "amount": 2},
-	"movement": {"kind": "shift", "amount": 1},
-	"recon": {"kind": "status", "name": "marked", "amount": 1},
-	"logistics": {"kind": "status", "name": "bound", "amount": 1},
-}
+# 蛊定义未声明 v1_effect 时的 role 兜底（W11 2026-09-09 迁 data/v1_battle.json
+# default_effect_by_role，经 role_default_table 读取，见 load_config 同源）。
+# 映射沿用旧栈 combat_effects 已有的设计意图（attack→strike /
+# defense→guarded→shield / healing→heal / movement→retreat_preserved→shift /
+# recon→revealed→标记 / logistics→delay_progress→束缚），基准值取同名手工蛊的
+# v1_effect。数据里显式声明 v1_effect 的蛊一律优先，表只是补齐空效果蛊。
 # 随转数线性成长的量纲；shift / status 是位置与层数，不随转数放大。
 const RANK_SCALED_KINDS := ["strike", "shield", "heal"]
 
@@ -35,6 +28,17 @@ const RANK_SCALED_KINDS := ["strike", "shield", "heal"]
 
 static func load_config(catalog: Dictionary) -> Dictionary:
 	return catalog.get("v1_battle", {})
+
+
+## role 基础动作兜底表（data/v1_battle.json default_effect_by_role）。
+## 缺键/形状退化一律回退空表——此时 default_v1_effect 全 miss 返回 {}，
+## 与「无兜底」原语义一致；表形状由 ContentCatalog 校验钉住。
+static func role_default_table(catalog: Dictionary) -> Dictionary:
+	var battle: Variant = catalog.get("v1_battle", {})
+	if not battle is Dictionary:
+		return {}
+	var table: Variant = (battle as Dictionary).get("default_effect_by_role", {})
+	return table if table is Dictionary else {}
 
 
 ## 从 RunState 开局构建战斗（含资源初始化与玩家回合开始结算）。
@@ -125,14 +129,16 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 
 ## 非战斗蛊过滤：蛊定义缺少 combat 字段或 combat=="none" 视为非战斗蛊，
 ## 不进战斗面板。战斗蛊按 definition 构建槽位（含 V1 三模式与消耗字段）。
-## 蛊定义未声明 v1_effect 时按 role 兜底，避免空效果蛊占槽位、烧真元却无事
-## 发生。显式声明的 v1_effect 永远优先。
+## 蛊定义未声明 v1_effect 时按 role 兜底（表=role_default_table(catalog)，
+## data/v1_battle.json default_effect_by_role），避免空效果蛊占槽位、烧真元
+## 却无事发生。显式声明的 v1_effect 永远优先。
 ## ponytail: 上限=~200 个 legacy 蛊效果朴素且无回合到期语义、但有执行 effect_reason/预览过滤双护栏；升级触发=某个蛊进 slice 或需要精确效果/到期时逐个迁显式 v1_effect。
-static func default_v1_effect(definition: Dictionary) -> Dictionary:
+static func default_v1_effect(definition: Dictionary, role_table: Dictionary) -> Dictionary:
 	var role := str(definition.get("role", ""))
-	if not DEFAULT_EFFECT_BY_ROLE.has(role):
+	var raw: Variant = role_table.get(role, {})
+	if not raw is Dictionary:
 		return {}
-	var effect: Dictionary = (DEFAULT_EFFECT_BY_ROLE[role] as Dictionary).duplicate(true)
+	var effect: Dictionary = (raw as Dictionary).duplicate(true)
 	var kind := str(effect.get("kind", ""))
 	if RANK_SCALED_KINDS.has(kind):
 		effect["amount"] = int(effect.get("amount", 1)) + maxi(0, int(definition.get("rank", 1)) - 1)
@@ -141,6 +147,7 @@ static func default_v1_effect(definition: Dictionary) -> Dictionary:
 
 static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]:
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	var role_table: Dictionary = role_default_table(catalog)
 	var result: Array[Dictionary] = []
 	for instance in run_state.refined_instances():
 		var definition: Dictionary = gu_by_id.get(str(instance.get("definition_id", "")), {})
@@ -149,7 +156,7 @@ static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]
 			continue
 		var effect: Dictionary = definition.get("v1_effect", {})
 		if effect.is_empty():
-			effect = default_v1_effect(definition)
+			effect = default_v1_effect(definition, role_table)
 		result.append({
 			"instance_id": str(instance.get("instance_id", "")),
 			"definition_id": str(instance.get("definition_id", "")),

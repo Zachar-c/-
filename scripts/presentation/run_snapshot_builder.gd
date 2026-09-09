@@ -1077,7 +1077,8 @@ static func _codex(catalog: Dictionary, meta) -> Dictionary:
 		# V1 role 兜底，与战斗口径一致），不再只给流派/品阶剪影。
 		var codex_effect: Dictionary = g.get("v1_effect", {})
 		if codex_effect.is_empty():
-			codex_effect = V1BattleResolverScript.default_v1_effect(g)
+			codex_effect = V1BattleResolverScript.default_v1_effect(g,
+					V1BattleResolverScript.role_default_table(catalog))
 		gu_entries.append({
 			"id": gid,
 			"name": DisplayText.gu(gid),

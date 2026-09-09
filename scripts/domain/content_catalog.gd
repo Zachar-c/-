@@ -950,6 +950,7 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	errors.append_array(_validate_v1_kill_moves(catalog))
 	errors.append_array(_validate_slice_contract(catalog))
 	errors.append_array(_validate_v1_battle_boss_scaling(catalog))
+	errors.append_array(_validate_v1_battle_role_defaults(catalog))
 	return errors
 
 
@@ -982,6 +983,38 @@ static func _validate_v1_battle_boss_scaling(catalog: Dictionary) -> Array[Strin
 		var stage_value: Variant = (stage as Dictionary).get(layer_key)
 		if not _is_integral(stage_value) or int(stage_value) < 1:
 			errors.append("v1_battle.stage_base.%s must be a positive integer" % layer_key)
+	return errors
+
+
+## W11 2026-09-09：蛊 role 基础动作兜底表（default_effect_by_role）必须六档
+## 齐全、effect 形状合法（kind 非空、amount 正整数、status 需 name）。该表被
+## v1_battle_resolver.role_default_table 消费，缺失即空效果蛊失去兜底——
+## 占战斗槽、烧真元却无事发生，属玩法级回归。
+static func _validate_v1_battle_role_defaults(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var battle: Variant = catalog.get("v1_battle", {})
+	if not battle is Dictionary:
+		return errors
+	var table: Variant = (battle as Dictionary).get("default_effect_by_role", null)
+	if not table is Dictionary:
+		errors.append("v1_battle.default_effect_by_role must be an object with six role defaults")
+		return errors
+	for role in ["attack", "defense", "healing", "movement", "recon", "logistics"]:
+		if not (table as Dictionary).has(role):
+			errors.append("v1_battle.default_effect_by_role missing role %s" % role)
+			continue
+		var effect: Variant = (table as Dictionary)[role]
+		if not effect is Dictionary:
+			errors.append("v1_battle.default_effect_by_role.%s must be an object" % role)
+			continue
+		if str((effect as Dictionary).get("kind", "")).is_empty():
+			errors.append("v1_battle.default_effect_by_role.%s.kind must be set" % role)
+		if not _is_integral((effect as Dictionary).get("amount", 0)) \
+				or int((effect as Dictionary).get("amount", 0)) < 1:
+			errors.append("v1_battle.default_effect_by_role.%s.amount must be a positive integer" % role)
+		if str((effect as Dictionary).get("kind", "")) == "status" \
+				and str((effect as Dictionary).get("name", "")).is_empty():
+			errors.append("v1_battle.default_effect_by_role.%s.status needs a name" % role)
 	return errors
 
 
