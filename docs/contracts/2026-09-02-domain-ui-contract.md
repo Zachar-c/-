@@ -43,8 +43,8 @@ UI (scenes + scripts/ui)
 | `Encounter` | `encounter()` | 遭遇会话、`node_actions[]`（含 `cost/executable/block_reason/remedy_hints`） |
 | `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`（卡含 `school_label` 中文流派名）、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version` |
 | `Shop` | `shop()` | 货架报价、`_shop_services[]` |
-| `Rest` | `rest()` | `choices[]`（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集，外加节点允许的 `wash`）、`upgrade_targets` / `remove_card_targets` / `imprint_targets` / `curse_targets`、每个 `choice.disabled/reason/curse_warning/requires_confirm` |
-| `Refine` | `refine()` | 炼蛊台状态、投入位、候选 |
+| `Rest` | `rest()` | `choices[]`（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集，外加节点允许的 `wash`）、`upgrade_targets` / `remove_card_targets` / `imprint_targets` / `curse_targets`、每个 `choice.disabled/reason/curse_warning/requires_confirm`、`mode_groups`（E4b 三选一，2026-09-09：`修炼[]`/`炼蛊[]` 两组动作卡，卡含 `id/label/detail/cost/disabled/reason`；`meditate` 走 encounter `action_card` 信封、`cultivate` 映射 `cultivate_rank_two`、`refine/free_pair` 为会话内子屏导航不发领域命令；快照无此键时 UI 整行隐藏，旧存档兼容。E4a 起 `rest/refinement/cultivation` 三类节点统一由 travel 分发进本屏） |
+| `Refine` | `refine()` | 炼蛊台状态、投入位、候选、`from_rest`（E4a 子屏语境：经休息屏「炼蛊」卡进入时为 true，「离开」按钮文案变「返回休整」且不发 `leave_encounter`，仅退回休息屏）、`initial_channel`（子屏预选通道 id，如 `free_pair`；用户手动切 Tab 后前端本地态优先，不再覆盖） |
 | `Reward` | `reward()` | 战后奖励列表 |
 | `Npc` | `npc()` | NPC 交涉/交易 |
 | `ContentError` | `content_error()` | 目录校验错误（`ContentCatalog.validate` 非空时的兜底屏） |

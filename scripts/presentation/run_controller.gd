@@ -625,14 +625,17 @@ func _travel_to(node_id: String) -> Dictionary:
 	state = session_started["state"]
 	current_session = session_started["session"]
 	last_result = resolved["result"]
+	# E4a：新探访开始，炼蛊子屏状态复位（上一个休息探访的子屏语境不残留）。
+	_refine_from_rest = false
+	_refine_initial_channel = ""
 	if node["type"] in ["combat", "pursuit"]:
 		_start_battle()
 	elif node["type"] in ["shop", "market", "caravan"]:
 		_show_shop()
-	elif node["type"] == "rest":
+	elif node["type"] in ["rest", "refinement", "cultivation"]:
+		# E4a 三选一（规格 §4）：三个休息类模板统一 _show_rest()；refinement
+		# 不再单独走 Refine 屏——炼蛊经休息屏「炼蛊」卡以子屏方式进入。
 		_show_rest()
-	elif node["type"] == "refinement":
-		_show_refine()
 	elif node["type"] == "contact":
 		_show_npc()
 	else:
@@ -1320,6 +1323,26 @@ func _show_refine() -> void:
 		_selected_pair_partner = ""
 	_view_name = "Refine"
 	_render()
+
+
+# E4a 炼蛊子屏（规格 §4）：休息探访内经「炼蛊」卡打开 Refine 视图；
+# 子屏的「离开」不提交 leave_encounter，而是退回休息屏继续三选一。
+var _refine_from_rest := false
+var _refine_initial_channel := ""
+
+
+## 从休息屏打开炼蛊子屏；channel 非空时预选通道（如 free_pair 自由配对）。
+func open_refine_subview(channel := "") -> void:
+	_refine_from_rest = true
+	_refine_initial_channel = str(channel)
+	_show_refine()
+
+
+## 关闭炼蛊子屏并回到休息屏（同一探访会话，不发领域命令）。
+func close_refine_subview() -> void:
+	_refine_from_rest = false
+	_refine_initial_channel = ""
+	_show_rest()
 
 
 ## D1b 自由配对：炼蛊洞屏内选择，只改展示状态，经快照回显。

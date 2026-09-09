@@ -24,6 +24,16 @@ static func _shop_service_command(controller, service_id: String, target_id: Str
 	return {}
 
 
+static func _rest_mode_action_command(controller, id: String) -> Dictionary:
+	# E4b 修炼族（规格 §4）：meditate 走 encounter 标准 action_card 信封
+	# （带 state_version/node 防串档）；cultivate 冲二转是专属领域命令。
+	if str(id) == "meditate":
+		return _encounter_action_command(controller, "meditate")
+	if str(id) == "cultivate":
+		return {"type": "cultivate_rank_two"}
+	return {}
+
+
 static func _rest_choose_command(controller, id: String, target_id: String = "") -> Dictionary:
 	match str(id):
 		"heal": return {"type": "rest", "mode": "heal"}
@@ -163,6 +173,16 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Rest":
 			return {
 				"choose": func(id = "", target_id = ""): controller.submit_command(_rest_choose_command(controller, str(id), str(target_id))),
+				# E4b 三选一：修炼/炼蛊族动作卡（mode_groups）。refine/free_pair
+				# 是会话内子屏导航，不发领域命令。
+				"mode_action": func(id = ""):
+					var mid := str(id)
+					if mid == "refine":
+						controller.open_refine_subview()
+					elif mid == "free_pair":
+						controller.open_refine_subview("free_pair")
+					else:
+						controller.submit_command(_rest_mode_action_command(controller, mid)),
 				"confirm_wash": func(): controller.submit_command({"type": "raise_aptitude", "node_id": str(controller.current_node.get("id", ""))}),
 				"cancel_confirm": func(): pass,
 				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
@@ -174,7 +194,13 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"select_pair_main": func(id = ""): controller.select_pair_main(str(id)),
 				"select_pair_partner": func(id = ""): controller.select_pair_partner(str(id)),
 				"refine_free_pair": func(): controller.submit_command({"type": "refine_free_pair", "main_instance_id": controller._selected_pair_main, "partner_instance_id": controller._selected_pair_partner}),
-				"leave": func(): controller.submit_command({"type": "leave_encounter"}),
+				# E4a 炼蛊子屏：经休息屏打开时「离开」退回休息屏继续三选一，
+				# 不提交 leave_encounter（探访是否结束由休息屏的离开/放弃决定）。
+				"leave": func():
+					if controller._refine_from_rest:
+						controller.close_refine_subview()
+					else:
+						controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Reward":
 			return {"close": func(): controller.submit_command({"type": "leave_encounter"})}

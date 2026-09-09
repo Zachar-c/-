@@ -30,6 +30,8 @@ var _commands: Dictionary = {}
 var _ready_done := false
 ## 当前通道（fixed / combo / blind）：纯展示状态，不改领域。
 var _channel := "fixed"
+## E4a：用户是否手动切过通道 Tab——切过之后 initial_channel 不再覆盖本地选择。
+var _channel_touched := false
 ## 待确认合成的配方 id；空串表示无。
 var _confirm_recipe := ""
 
@@ -56,10 +58,22 @@ func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
 func _refresh() -> void:
 	_refresh_top_bar()
 	_refresh_header()
+	_apply_subview_context()
 	_refresh_tabs()
 	_refresh_recipes()
 	_refresh_dismantle()
 	_refresh_confirm_dialog()
+
+
+## E4a 炼蛊子屏语境：休息探访内打开时离开按钮改为「返回休整」，
+## 并在用户未手动切过 Tab 前按 initial_channel 预选通道（如自由配对）。
+func _apply_subview_context() -> void:
+	var from_rest := bool(_snapshot.get("from_rest", false))
+	_leave_button.text = "返回休整" if from_rest else "离开"
+	if not _channel_touched:
+		var initial := str(_snapshot.get("initial_channel", ""))
+		if initial != "":
+			_channel = initial
 
 
 func _refresh_top_bar() -> void:
@@ -95,6 +109,7 @@ func _refresh_tabs() -> void:
 		MasterTheme.apply_button(tab, "danger" if cid == _channel else "action")
 		tab.pressed.connect(func():
 			_channel = cid
+			_channel_touched = true
 			_refresh_tabs()
 			_refresh_recipes())
 		_tab_row.add_child(tab)

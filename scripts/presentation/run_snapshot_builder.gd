@@ -461,6 +461,10 @@ static func rest(controller) -> Dictionary:
 				has_material = true
 				break
 	var can_refine: bool = live_gu > 0 or (state != null and not state.refined_gu_ids.is_empty()) or has_material
+	# E4b 三选一门面：探访已消费（heal/upgrade/remove/meditate/refine 均会写
+	# used 标记）后，修炼/炼蛊族的收益卡一并禁用——一次探访只取一份收益。
+	var meditate_disabled_used := meditate_disabled or rest_used
+	var cultivate_disabled_used := cultivate_disabled or rest_used
 	out["mode_groups"] = {
 		"休整": choices,
 		"修炼": [
@@ -469,8 +473,8 @@ static func rest(controller) -> Dictionary:
 				"label": "调息冥想",
 				"detail": "静坐调息，真元回复 1 点",
 				"cost": "",
-				"disabled": meditate_disabled,
-				"reason": "真元已满" if meditate_disabled else "",
+				"disabled": meditate_disabled_used,
+				"reason": "本次探访已消费" if (rest_used and not meditate_disabled) else ("真元已满" if meditate_disabled else ""),
 				"curse_warning": false,
 			},
 			{
@@ -478,8 +482,8 @@ static func rest(controller) -> Dictionary:
 				"label": "冲击二转",
 				"detail": "借灵地静修突破空窍（一转 → 二转）",
 				"cost": "%d 元石" % rank_two_cost,
-				"disabled": cultivate_disabled,
-				"reason": cultivate_reason,
+				"disabled": cultivate_disabled_used,
+				"reason": "本次探访已消费" if (rest_used and not cultivate_disabled) else cultivate_reason,
 				"curse_warning": false,
 			},
 		],
@@ -489,8 +493,8 @@ static func rest(controller) -> Dictionary:
 				"label": "炼蛊合药",
 				"detail": "按蛊方投料合炼新蛊（炼蛊会话）",
 				"cost": "",
-				"disabled": not can_refine,
-				"reason": "" if can_refine else "无蛊可炼：蛊囊与材料皆空",
+				"disabled": rest_used or not can_refine,
+				"reason": "本次探访已消费" if (rest_used and can_refine) else ("" if can_refine else "无蛊可炼：蛊囊与材料皆空"),
 				"curse_warning": false,
 			},
 			{
@@ -498,8 +502,8 @@ static func rest(controller) -> Dictionary:
 				"label": "自由配对",
 				"detail": "主辅两只同转蛊自由合炼，零门槛试炼",
 				"cost": "",
-				"disabled": live_gu < 2,
-				"reason": "蛊囊活蛊不足两只" if live_gu < 2 else "",
+				"disabled": rest_used or live_gu < 2,
+				"reason": "本次探访已消费" if (rest_used and live_gu >= 2) else ("蛊囊活蛊不足两只" if live_gu < 2 else ""),
 				"curse_warning": false,
 			},
 		],
@@ -585,6 +589,15 @@ static func refine(controller) -> Dictionary:
 		{"id": "free_pair", "label": "自由配对"},
 		{"id": "blind", "label": "盲盒随机"},
 	]
+	# E4a 炼蛊子屏语境：从休息屏「炼蛊」卡进入时，「离开」退回休息屏而非
+	# 结束探访；initial_channel 用于预选自由配对等通道（用户手动切 Tab 后失效）。
+	# 用 get() 兜底：测试侧的 Dictionary stub（非 RunController 实例）没有这两个
+	# 属性；缺键返回 null，不能直接 bool()/str() 收敛（null 会报 Nonexistent
+	# constructor），改用 == 比较与显式空串回退。
+	var subview_flag = controller.get("_refine_from_rest")
+	out["from_rest"] = subview_flag == true
+	var subview_channel = controller.get("_refine_initial_channel")
+	out["initial_channel"] = "" if subview_channel == null else str(subview_channel)
 	# 古方知识模型：自由配对（主+辅，同转）——零门槛试炼，产物按知识状态揭示。
 	var pair_candidates: Array[Dictionary] = []
 	if state != null:

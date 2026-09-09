@@ -79,12 +79,14 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 数据绑定：`rest_used/rest_mode_used/aptitude_raised`（node_flags 派生）、休整选项（`id/label/detail/cost/disabled/reason/curse_warning/requires_confirm`，id 全集为 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，`wash` 仅在闭关/传承节点出现）、`upgrade_targets`（每张 `refined_gu_id`）、`remove_card_targets`（每只活蛊实例 + `blocked/reason`）、`imprint_targets`（每枚印记 + `meta_rule` 不可移除原因）、`curse_targets`（每条 `statuses` 诅咒 + 层数）。
 - 命令：`rest`（`heal`/`upgrade_card` + `card_key` / `remove_card` + `instance_id` / `remove_imprint` + `relic_id` / `remove_curse` + `curse_id` / `skip`）、`raise_aptitude`。
 - 状态与确认：本次已休整全选项禁用 + "本次已休整"；`skip` 在未消费时强制二次确认（`requires_confirm=true`）；诅咒蛊移除被领域拒绝（`blocked` 原因展示）；`curse_warning=true` 的选项升级确认层级 2。
+- E4 三选一（2026-09-09，规格 §4）：`rest/refinement/cultivation` 三类节点统一由 travel 分发进本屏；快照 `mode_groups` 携带 `修炼[]`/`炼蛊[]` 两组动作卡（`meditate`→encounter `action_card` 信封、`cultivate`→`cultivate_rank_two`、`refine/free_pair`→打开炼蛊子屏不发领域命令），插在主决策面与移除面板之间；成功执行修炼/炼蛊即消费本次探访（node_flags 落 `used`），离开需玩家显式操作；快照无 `mode_groups` 时整行隐藏（旧存档兼容）。
 - 组件：`GuCommandButton`、`GuCard`、`GuToast`、`GuConfirmDialog`。
 - 验收：每节点快照必须包含 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集；`skip` 触发后事件日志落 `rest_skipped`；`leave_node` 在任一选项合法或 skip 已确认后必须放行（`rest_choice_required` 不得成为软锁）；种子 `2/6/8/10/13/15/16/18/33/34/41/49` 回归不得出现无合法选项且无法离开的状态。
 
 ### P7 Refine（`refine_screen`，快照 `Refine/refine()`）——本批扩展重点
 
 - 定位：炼蛊台。现状：配方列表（combine/fixed/advance）+ 投入合成；`[T9]` 接入 RecipeRules 透明面 + 核心确认入口。
+- E4a 子屏语境（2026-09-09）：经休息屏「炼蛊」卡进入时快照 `from_rest=true`，「离开」按钮文案改「返回休整」，点击仅退回休息屏继续三选一，不发 `leave_encounter`（探访是否结束由休息屏决定）；`initial_channel` 预选通道（如 `free_pair`），用户手动切 Tab 后前端本地选择优先；直连路由（非子屏）语境行为不变。
 - 数据绑定（现役）：配方 `id/channel/name/output/rank_note/quality/fail_chance/backlash/curse`（`success_roll_max` 存在的配方显示失败率——T10.1-⑧ 废止后此字段消失，前端不写死依赖）、`recipe_unlocked`。
 - 数据绑定（`[T9]` v2）：`identity_requirements`（点名蛊/材/标签/转数/媒介逐项满足态）、`stages[]`（每阶段念头/真元/轮数/打断点）、`candidate_pool`（2-3 选一，声明序）、`allow_substitute` 替代关系与 `cost_change`、`known_fixed_success` 确定成功标识；核心确认面板（`core_state{depth}`、`hub_evidence`、第一层中段门控态）。
 - 命令：`refine_gu`（现役）；`[T9.2]` `refine_up_material`、`confirm_core`、跨回合炼制续投（对齐 battle2 ongoing 的 `continue_ids`）。

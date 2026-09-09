@@ -1,4 +1,4 @@
-﻿class_name RestScreenView
+class_name RestScreenView
 extends MarginContainer
 ## 休整 / 闭关屏（Godot 官方 .tscn 节点树版，替代 ui/screens/rest_screen.guitkx）。
 ##
@@ -24,6 +24,12 @@ const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.
 @onready var _seal_panel: PanelContainer = $Root/RestStage/SealPanel
 @onready var _confirm_dialog: PanelContainer = $Root/ConfirmDialog
 
+# E4b 三选一（规格 §4）：修炼 / 炼蛊组面板——代码生成，插在主决策面与
+# 移除面板之间；快照无 mode_groups 时整行隐藏（旧存档兼容）。
+var _mode_row: HBoxContainer = null
+var _cultivate_panel: PanelContainer = null
+var _refine_panel: PanelContainer = null
+
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
 ## mount_snapshot 可能早于 _ready()，未就绪时只收数据，_ready() 里补刷新。
@@ -44,6 +50,7 @@ func _ready() -> void:
 	_ready_done = true
 	_apply_base_fonts()
 	_apply_stage_style()
+	_ensure_mode_row()
 	_leave_button.pressed.connect(func(): _fire("leave"))
 	_primary_surface.setup("休整选项", true, true)
 	_remove_panel.setup("选择要移除的蛊", true, false)
@@ -64,9 +71,86 @@ func _refresh() -> void:
 	_refresh_top_bar()
 	_refresh_header()
 	_refresh_choices()
+	_refresh_mode_groups()
 	_refresh_remove_panel()
 	_refresh_growth_panel()
 	_refresh_confirm_dialog()
+
+
+## E4b 三选一：修炼 / 炼蛊两组卡片区。快照 mode_groups 缺失或两组皆空时隐藏。
+func _refresh_mode_groups() -> void:
+	var groups: Dictionary = _snapshot.get("mode_groups", {}) if _snapshot.get("mode_groups", {}) is Dictionary else {}
+	var cultivate_cards: Array = groups.get("修炼", [])
+	var refine_cards: Array = groups.get("炼蛊", [])
+	var has_groups: bool = cultivate_cards.size() > 0 or refine_cards.size() > 0
+	if _mode_row != null:
+		_mode_row.visible = has_groups
+	if not has_groups:
+		return
+	_fill_mode_panel(_cultivate_panel, cultivate_cards)
+	_fill_mode_panel(_refine_panel, refine_cards)
+
+
+func _fill_mode_panel(panel: PanelContainer, cards: Array) -> void:
+	if panel == null:
+		return
+	var host := _ensure_content_host(panel, "ModeBody")
+	_clear_children(host)
+	if cards.is_empty():
+		host.add_child(_note_label_of("（当前无可用选项）"))
+		return
+	for card_value in cards:
+		if not (card_value is Dictionary):
+			continue
+		_build_mode_card(host, card_value)
+
+
+func _build_mode_card(host: Node, c: Dictionary) -> void:
+	var disabled := bool(c.get("disabled", false))
+	var panel := GuPanelScene.instantiate()
+	host.add_child(panel)
+	panel.setup(str(c.get("label", "")), true, false)
+	var detail := _body_label(str(c.get("detail", "")), GuStyle.INK_PRIMARY, 14)
+	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.content_host.add_child(detail)
+	var cost := str(c.get("cost", ""))
+	if cost != "":
+		panel.content_host.add_child(_body_label(cost, GuStyle.CINNABAR, 13))
+	var reason := str(c.get("reason", ""))
+	if reason != "":
+		panel.content_host.add_child(_body_label(reason, GuStyle.CINNABAR, 12))
+	var choose := Button.new()
+	choose.text = "执行"
+	choose.disabled = disabled
+	MasterTheme.apply_button(choose, "action")
+	var cid := str(c.get("id", ""))
+	choose.pressed.connect(func(): _fire("mode_action", cid))
+	panel.content_host.add_child(choose)
+
+
+## 修炼 / 炼蛊组面板只建一次，插在主决策面之后（RemovePanel 之前）。
+func _ensure_mode_row() -> void:
+	if _mode_row != null:
+		return
+	var stage_content: Node = _primary_surface.get_parent()
+	_mode_row = HBoxContainer.new()
+	_mode_row.name = "ModeGroupRow"
+	_mode_row.add_theme_constant_override("separation", 10)
+	_mode_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_cultivate_panel = GuPanelScene.instantiate()
+	_mode_row.add_child(_cultivate_panel)
+	_cultivate_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_refine_panel = GuPanelScene.instantiate()
+	_mode_row.add_child(_refine_panel)
+	_refine_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage_content.add_child(_mode_row)
+	# add_child 追加到末尾（LeaveRow 之后），移到主决策面后面。
+	stage_content.move_child(_mode_row, stage_content.get_children().find(_primary_surface) + 1)
+	# setup 写 @onready 标题 Label，须等面板入树（_ready 已跑）再调用；
+	# 入树前 setup 会对 Nil 赋值报 SCRIPT ERROR（GUT 回归门对此零容忍）。
+	_cultivate_panel.setup("修炼", true, false)
+	_refine_panel.setup("炼蛊", true, false)
 
 
 func _refresh_top_bar() -> void:

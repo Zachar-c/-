@@ -504,9 +504,16 @@ func _apply_node_style(button: Button, is_current: bool, is_selected: bool, reac
 
 func _refresh_inspector() -> void:
 	var reachable := bool(_selected.get("reachable", false))
-	_inspection_name.text = str(_selected.get("label", "尚未选择路线"))
-	var note := "此节点可进入，提交前由领域校验行路状态。" if reachable else "查看路线信息；不可达节点不会提交行路命令。"
-	_inspection_note.text = str(_selected.get("type", "")) + " · " + note
+	# E2a/E4c 迷雾：未知类节点未揭示前，检视台同样只给「未知 · ?」，
+	# 不泄露模板标题与类别（与节点卡口径一致，进入时才揭示）。
+	var hidden := not bool(_selected.get("revealed", true))
+	if _selected.is_empty():
+		_inspection_name.text = "尚未选择路线"
+		_inspection_note.text = ""
+	else:
+		_inspection_name.text = "未知 · ?" if hidden else str(_selected.get("label", "节点"))
+		var note := "此节点可进入，提交前由领域校验行路状态。" if reachable else "查看路线信息；不可达节点不会提交行路命令。"
+		_inspection_note.text = ("未知 · 进入后揭示 · " if hidden else str(_selected.get("type", "")) + " · ") + note
 	_travel_button.visible = reachable and _commands.has("travel")
 	_save_button.visible = _commands.has("save_run")
 	_return_button.visible = _commands.has("to_hall")

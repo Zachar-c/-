@@ -239,7 +239,9 @@ func test_full_route_light_to_layer2() -> void:
 
 	# ---- 节点4：炼蛊 → 白玉蛊（white_jade_basic 基础蛊方默认解锁）----
 	controller.submit_command({"type": "travel", "node_id": "L1R3N0"})
-	assert_eq(controller.current_view_name(), "Refine", "炼蛊节点进 Refine 屏")
+	# E4a 三选一（规格 §4）：refinement 统一进 Rest 屏，Refine 改为休息屏「炼蛊」
+	# 卡的子屏；本验收直接提交领域命令，屏幕归属由 test_rest_screen_tri_mode 覆盖。
+	assert_eq(controller.current_view_name(), "Rest", "炼蛊节点进 Rest 屏（E4a 三选一路由）")
 	# 月芒链配方输入 moonlight_gu 在本市场节点不可购（802 重建后未入市），
 	# 白玉链用小光/守御/力蛊之外的购入材料独立成方，保持光道全链路可走完。
 	var wj := controller.submit_command({"type": "refine_gu", "recipe_id": "white_jade_basic"})
