@@ -53,6 +53,12 @@ func _initialize() -> void:
 						printerr("FAIL battle back")
 						quit(2)
 						return
+				elif view == "Rest":
+					# Rest has a rest_choice_required gate: leave_encounter alone
+					# is rejected, so issue a skip choice first (real UI flow).
+					controller.submit_command({"type": "rest", "mode": "skip"})
+					await process_frame
+					await process_frame
 				controller.submit_command({"type": "leave_encounter"})
 				await process_frame
 				await process_frame
