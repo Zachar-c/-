@@ -247,6 +247,20 @@ static var _names: Dictionary = {}
 static var _names_loaded := false
 
 
+## W6 后续（2026-09-09）：启动预热入口。RunController 在 load_all 后调用，
+## 用 ContentCatalog 的权威数据填充渲染缓存，此后运行时主路径不再直读文件；
+## 未预热调用方（单元测试/工具）仍走下方懒加载 fallback。
+static func prime_from_catalog(cat: Dictionary) -> void:
+	if cat.has("names"):
+		var names_value: Variant = cat["names"]
+		_names = names_value if names_value is Dictionary else {}
+		_names_loaded = true
+	if cat.has("gu_extra_names"):
+		var extra_value: Variant = cat["gu_extra_names"]
+		_extra_gu_names = extra_value if extra_value is Dictionary else {}
+		_extra_gu_names_loaded = true
+
+
 static func _load_names() -> Dictionary:
 	if _names_loaded:
 		return _names

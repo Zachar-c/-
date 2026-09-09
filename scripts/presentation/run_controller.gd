@@ -153,6 +153,8 @@ func _initialize_view_flow() -> void:
 	# 否则选流派前列表恒为空（2026-08-27 实机走查断点）。
 	catalog = ContentCatalog.load_all()
 	_content_errors = ContentCatalog.validate(catalog)
+	# 渲染文案表预热：此后 DisplayText 运行时不再直读 data/*.json（2026-09-09 W6）。
+	DisplayText.prime_from_catalog(catalog)
 	app_settings = AppSettingsScript.load_settings()
 	# 仅在玩家显式保存过偏好时才施加引擎副作用，首跑保持项目默认窗口。
 	if AppSettingsScript.has_saved_file():

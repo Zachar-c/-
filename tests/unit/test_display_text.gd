@@ -40,6 +40,26 @@ func test_result_summary_describes_standard_encounter_action() -> void:
 	assert_eq(DisplayText.result({"ok": true, "action_id": "work"}), "你做完短工，换得了元石。")
 
 
+func test_prime_from_catalog_powers_lookups_without_file_reads() -> void:
+	# W6（2026-09-09）：controller 启动预热路径 —— prime 后查找走 catalog 数据，
+	# 不再直读 data/*.json。用最小 cat 验证替换生效（gu 名/节点名来自预热表）。
+	var cat := {
+		"names": {"gu": {"prime_test_gu": "预热蛊"}, "nodes": {"prime_test_node": "预热节点"}},
+		"gu_extra_names": {},
+	}
+	DisplayText.prime_from_catalog(cat)
+	assert_eq(DisplayText.gu("prime_test_gu"), "预热蛊")
+	assert_eq(DisplayText.node("prime_test_node"), "预热节点")
+	# 预热表没有的 id 落内置 fallback（不崩、不读文件）
+	assert_eq(DisplayText.gu("prime_missing_gu"), "未知蛊虫")
+	assert_eq(DisplayText.node("prime_missing_node"), "未知地点")
+	# 回归真实数据：重新预热为真实 catalog 后，内置 id 的中文名与预热前一致
+	var real_cat := ContentCatalog.load_all()
+	DisplayText.prime_from_catalog(real_cat)
+	assert_eq(DisplayText.gu("small_light_gu"), "小光蛊")
+	assert_eq(DisplayText.node("village_short_work"), "山村短工")
+
+
 func test_result_summary_never_shows_non_chinese_dialogue_text() -> void:
 	var summary := DisplayText.result({
 		"ok": true,
