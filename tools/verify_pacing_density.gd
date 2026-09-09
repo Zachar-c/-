@@ -18,7 +18,8 @@ func _initialize() -> void:
 					continue
 				var template_id := str(node.get("template_id", ""))
 				counts[template_id] = int(counts.get(template_id, 0)) + 1
-				if not combat_templates.has(template_id) and not _is_special(template_id):
+				if (not combat_templates.has(template_id) and not _is_special(template_id)
+						and not template_id.is_empty()):
 					combat_templates.append(template_id)
 			var total := 0
 			for key in counts.keys():
@@ -30,9 +31,11 @@ func _initialize() -> void:
 			for key in counts.keys():
 				if str(key).begins_with("layer_boss_stand_") or str(key) == "final_boss_stand":
 					boss += int(counts[key])
-			var combat := total - shop - refine - rest - boss
-			print("  L%s total=%d | combat=%d shop=%d rest=%d refine=%d boss=%d | 战斗模板=%d 种 %s"
-					% [layer_key, total, combat, shop, rest, refine, boss,
+			var inherit := int(counts.get("yizang_ridge", 0))
+			var unknown := int(counts.get("", 0))
+			var combat := total - shop - refine - rest - boss - inherit - unknown
+			print("  L%s total=%d | combat=%d shop=%d rest=%d refine=%d inherit=%d boss=%d unknown=%d | 战斗模板=%d 种 %s"
+					% [layer_key, total, combat, shop, rest, refine, inherit, boss, unknown,
 					combat_templates.size(), str(combat_templates)])
 	quit(0)
 
@@ -40,4 +43,5 @@ func _initialize() -> void:
 func _is_special(template_id: String) -> bool:
 	return (template_id == "ridge_black_market" or template_id == "refinement_hollow"
 			or template_id == "rest_hollow" or template_id == "rest_shrine"
+			or template_id == "yizang_ridge"	# 遗葬：L1 anchor 保底投放，非战斗
 			or template_id == "final_boss_stand" or template_id.begins_with("layer_boss_stand_"))
