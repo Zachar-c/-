@@ -3,16 +3,8 @@
 scripts/core/.superpowers/
 *.uid
 
-# 导出构建产物（Release 包不入库）
-
-# Install packages are stored via Git LFS (pointers only)
-build/*
-!build/win/
-!build/android/
-build/win/*
-!build/win/*.part*
-build/android/*
-!build/android/*.apk
+# 导出构建产物（Release 包不入库，外部分发；2026-09-09 W2 起不再跟踪）
+build/
 
 ui/**/*.gd
 *.diags.json
