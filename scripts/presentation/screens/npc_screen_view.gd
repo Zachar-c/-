@@ -201,18 +201,31 @@ func _build_talk_row(list: Node, t: Dictionary) -> void:
 	var texec := bool(t.get("executable", true))
 	var tdanger := bool(t.get("danger", false))
 	var tblock := str(t.get("block_reason", ""))
+	var detail := str(t.get("detail", ""))
+	var cost := str(t.get("cost", ""))
 	var panel := GuPanelScene.instantiate()
 	list.add_child(panel)
-	panel.setup(str(t.get("label", "")), true, false)
-	panel.content_host.add_child(_label_of(str(t.get("detail", "")), GuStyle.INK_PRIMARY, 13))
-	if tblock != "":
-		panel.content_host.add_child(_label_of("不可用 · " + tblock, GuStyle.CINNABAR, 12))
+	panel.setup("", true, false)
+	var body := _row_body(panel)
+	# B2 线框卡片：标题 / 细节 / 代价 / 拒因 / 右下「执行」。
+	var text_col := VBoxContainer.new()
+	text_col.add_theme_constant_override("separation", 2)
+	text_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.add_child(text_col)
+	text_col.add_child(_label_of(str(t.get("label", "交涉")),
+			GuStyle.CINNABAR if tdanger else GuStyle.INK_PRIMARY, 15))
+	if detail != "":
+		text_col.add_child(_label_of(detail, GuStyle.INK_SOFT, 12))
+	if cost != "":
+		text_col.add_child(_label_of(cost, GuStyle.ANOMALY_YELLOW, 12))
+	if not texec and tblock != "":
+		text_col.add_child(_label_of("不可用 · " + tblock, GuStyle.CINNABAR, 11))
 	var talk := Button.new()
-	talk.text = str(t.get("label", "交涉"))
+	talk.text = "执行" if texec else "不可用"
 	talk.disabled = not texec
 	MasterTheme.apply_button(talk, "danger" if tdanger else "action")
 	talk.pressed.connect(func(): _fire("talk", tid))
-	panel.content_host.add_child(talk)
+	body.add_child(talk)
 
 
 func _refresh_confirm_dialog() -> void:

@@ -49,6 +49,7 @@ static func build(controller) -> Dictionary:
 			"id": aid,
 			"label": label,
 			"detail": str(a.get("summary", "")),
+			"cost": str(a.get("cost", "")),
 			"danger": aid.contains("fight") or aid.contains("deceive") or not str(a.get("block_reason", "")).is_empty(),
 			"executable": bool(a.get("executable", true)),
 			"block_reason": str(a.get("block_reason", "")),

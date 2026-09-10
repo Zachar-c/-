@@ -84,24 +84,41 @@ visible = false
 layout_mode = 2
 visible = false
 
-[node name="DecisionPanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+[node name="RecapGrid" type="GridContainer" parent="primary_decision_surface"]
 layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 
-[node name="GainsPanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+[node name="DecisionPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="BalancePanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+[node name="GainsPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="RecordPanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+[node name="UnlockPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AftermathPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BalancePanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecordPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
 visible = false
-
-[node name="UnlockPanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
-layout_mode = 2
-
-[node name="AftermathPanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
-layout_mode = 2
 
 [node name="ActionBlock" type="CenterContainer" parent="primary_decision_surface"]
 layout_mode = 2
