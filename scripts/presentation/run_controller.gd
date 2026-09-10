@@ -533,81 +533,30 @@ func cancel_map_leave() -> void:
 	_render()
 
 
+## W12 split: save/load lifecycle moved to run_save_flow.gd. Same-name
+## one-line wrappers keep the public API and internal call sites unchanged.
 func save_and_leave_map() -> void:
-	if _view_name != "Map" or state == null:
-		return
-	var save_error := save_current_run()
-	if save_error == OK:
-		last_feedback = "进度已保存 · 已返回大厅"
-		_map_leave_confirm = false
-		_show_title()
-	else:
-		last_feedback = "存档失败（错误码 %d），仍留在地图。" % save_error
-		_render()
+	RunSaveFlow.save_and_leave_map(self)
 
 
 func leave_map_without_save() -> void:
-	if _view_name != "Map":
-		return
-	_map_leave_confirm = false
-	last_feedback = "未保存本次变化 · 返回大厅后仍可继续上次存档"
-	_show_title()
-
-
+	RunSaveFlow.leave_map_without_save(self)
 
 
 func save_current_run() -> Error:
-	return SaveRepository.save_run(state, route, dialogue_replies)
+	return RunSaveFlow.save_current_run(self)
 
 
 func load_saved_run() -> bool:
-	last_load_diagnosis = SaveRepositoryScript.diagnose_run_file()
-	if not bool(last_load_diagnosis.get("ok", false)):
-		return false
-	return _restore_game(SaveRepositoryScript.load_run())
+	return RunSaveFlow.load_saved_run(self)
 
 
 func _save_load_feedback(diagnosis: Dictionary) -> String:
-	match str(diagnosis.get("kind", "missing")):
-		"unsupported_version":
-			# T1.1: v3 runs are rejected with a domain refusal dict whose message
-			# reassures that hall progress / codex / unlocked recipes survive.
-			if int(diagnosis.get("version", -1)) == 3:
-				return SaveRepositoryScript._run_load_rejection(diagnosis)["message"]
-			return "上次冒险存档版本不受支持（v%d）。" % int(diagnosis.get("version", -1))
-		"checksum_missing", "checksum_mismatch":
-			return "上次冒险存档校验失败，已拒绝载入。"
-		"invalid_json":
-			return "上次冒险存档格式损坏，已拒绝载入。"
-		"invalid_state", "invalid_route", "invalid_event_log":
-			return "上次冒险存档内容损坏，已拒绝载入。"
-		_: return "暂无可继续的冒险：先在地图「存档」一次。"
+	return RunSaveFlow._save_load_feedback(diagnosis)
 
 
 func _restore_game(loaded: Dictionary) -> bool:
-	# Spec-v4 T1.1: refusal dicts carry ok=false and no "state"; judge by the
-	# presence of state, never by is_empty().
-	if not loaded.has("state"):
-		return false
-	state = loaded["state"]
-	if loaded.has("route"):
-		route = loaded["route"].duplicate(true)
-	current_node = _node_by_id(state.current_node_id)
-	if current_node.is_empty() and not route.is_empty():
-		for node_value in route:
-			var node_item: Dictionary = node_value
-			if str(node_item.get("id", "")) == state.current_node_id:
-				current_node = node_item
-				break
-	_stamp_current_node(state, current_node)
-	current_battle = {}
-	current_session = state.encounter_session.duplicate(true)
-	dialogue_replies = loaded.get("replies", [])
-	_dialogue_gateway = DialogueManagerAdapterScript.new()
-	if meta == null and FileAccess.file_exists(SaveRepositoryScript.META_PATH):
-		meta = SaveRepositoryScript.load_meta_file()
-	_show_map()
-	return true
+	return RunSaveFlow._restore_game(self, loaded)
 
 
 func _travel_to(node_id: String) -> Dictionary:
