@@ -285,7 +285,7 @@ Day5  B5 剩余屏 → B6 save flow → B7 debug → B8 router → B9 合入
 | W14 audio randi 豁免 | ✅ | `d322387` |
 | W11 措施 3 resolver 拆分 | **待执行 → 轨道 A** | |
 | W12 拆分 | **待执行 → 轨道 B** | |
-| W10 continue_run | **视觉会话 → 轨道 C** | |
+| W10 continue_run | ✅ 轨道 C（视觉会话，方案甲） | `158aef4` |
 
 ---
 

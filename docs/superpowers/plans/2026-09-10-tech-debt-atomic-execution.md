@@ -190,7 +190,7 @@ C done → remediation-plan W10 关闭（视觉会话写）
 | B7 | debug facade | 代理 A | done | D5 | 52faa7c | unit + integration 绿；`test_t5d_debug_panel` 绿 | `run_debug_facade.gd`；门控 `_debug_enabled_for_test` 留 controller（OS.is_debug_build 单一来源）；DEBUG_* 常量随迁；`DEBUG_RESOURCE_LABELS` 用 `static var`（const 不能调用静态函数初始化）；8acd695 修 test 直调 `controller.DEBUG_STONE_CAP` |
 | B8 | screen router | 代理 A | done | D6 | 4280176 | unit + integration 绿；`test_wenzhen_ui_flow` 绿 | `run_screen_router.gd`（路由表+挂载机制）；controller 同名委托；UI_RULES.md 与 module-interfaces/08 已同步路由表新位置 |
 | B9 | 回归+合入 M2 | 代理 A→用户 | done | D6 | 8acd695→master=fc7cb3e（ff，用户批准） | worktree 合入后 master `check.ps1` rc=0 全绿（guitkx+unit 1167+integration 31+启动探针+契约漂移 157 标识符+diff --check）；已推送 origin/master | builder 767<800 ✓；controller 1241>900 ✗（_show_* 家族与命令构建未在 B6–B8 输入清单内，未达 <900 目标，如实披露，转后续债务条目）；worktree 已 remove（长路径残留目录经 `\\?\` 前缀清理）；合入前 master 工作树遗留的 B1-done 未提交行经核对被 fc7cb3e 完全包含，stash 已 drop |
-| C | W10 continue_run | 视觉会话 | pending | 随时 | | | 通用会话零代码 |
+| C | W10 continue_run | 视觉会话 | done | 2026-09-10 | `158aef4`（master） | unit 1167 + integration 31 全绿；`verify_interaction_loop` 全屏 `dead=[] no_ui_click=[]` | **方案甲**：continue_run = 读档继续（经 `submit_command load_run`，对齐 2026-09-05 存档体验裁定）；load_run 失败留原屏显拒绝文案；`test_map_exit_persistence` 改判直读直恢复；真窗键鼠验收待办 |
 
 ---
 
@@ -198,7 +198,7 @@ C done → remediation-plan W10 关闭（视觉会话写）
 
 - **里程碑 M1（A7）**：master 上 resolver < 1200 行，A2–A6 新模块入 `scripts/domain/`，三件套绿，行为零变化（unit/integration/check 与拆分前同数或更绿）。
 - **里程碑 M2（B9）**：`run_snapshot_builder.gd < 800`、`run_controller.gd < 900`，`for_screen`/public API 唯一入口不变，快照契约键零漂移（`test_snapshot_contract` 全文未改即绿）。
-- **轨道 C**：remediation-plan W10 关闭，`test_map_exit_persistence` 回绿（视觉会话提交说明注明甲/乙方案）。
+- **轨道 C**：✅ remediation-plan W10 已关闭，`test_map_exit_persistence` 直读直恢复语义回绿（方案甲，`158aef4`）。
 - **整批完成定义**：§6 看板全部 done + 三件套全绿 + 关键提交推送且 `git ls-remote origin refs/heads/master` 对齐（《原子》§0 全局完成定义）。
 
 ---

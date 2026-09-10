@@ -21,7 +21,7 @@
 | 架构 | W7 map_generator fallback 告警 | P2-2 | P2 | 0.5h | D5 |
 | 守门 | W8 契约漂移守门入 check.ps1（含遗留 P4） | P2-3 | P2 | 2h | D5 |
 | 流程 | W9 分支清理 + .claude gitignore | P2-4 | P2 | 0.5h | D1 |
-| 视觉会话 | W10 continue_run 语义（当前唯一红测） | 审计 §5.1 | P1 | 视觉会话自估 | 视觉会话收工时 |
+| 视觉会话 | ~~W10 continue_run 语义~~ ✅ 闭环（2026-09-10 方案甲，`158aef4`） | 审计 §5.1 | P1 | 视觉会话自估 | ✅ 视觉会话收工时 |
 | 大重构 | W11 resolver 拆分 + 基础动作表迁移（含遗留 P3） | P1-1 | P1 | 8h+ | 下一迭代 |
 | 大重构 | W12 snapshot_builder / controller 拆分 | P1-1 | P1 | 12h+ | W4 后逐屏推进 |
 | 死代码 | W13 school_rules 删除（遗留 P5） | 工单2 | P2 | 1h | W11 同批 |
@@ -157,13 +157,14 @@
 - **验收标准**：`git check-ignore .claude` 有输出；临时分支已删或已标注
 - **交付物**：1 个提交
 
-### W10 continue_run 语义（移交视觉会话）
+### W10 continue_run 语义（✅ 已闭环：2026-09-10 视觉会话，方案甲，`158aef4`）
 
 - **负责人**：**视觉会话**（AI 会话仅在回执中催办）
 - **时间**：视觉会话下一工作时段
 - **背景**：`run_snapshot_builder.gd:833` 把 Title 的 `primary_action` 定为「读档继续」，`run_command_builder.gd:103` 却接到 `_show_hall_subview("schools")`。需其定夺语义并接线，使 `test_map_exit_persistence` 回绿
 - **验收标准**：unit 1100/1100 全绿
 - **交付物**：1 个提交；交接文档 §5 第 1 条闭环
+- **闭环记录**：方案甲落地——`continue_run` 经 `submit_command({"type":"load_run"})` 直读恢复；失败留原屏显拒绝文案；unit 1167 + integration 31 全绿；`verify_interaction_loop` 全屏 `dead=[]`；交接文档 §5 第 1 条已标闭环。真窗键鼠验收待办
 
 ### W11 resolver 拆分 + 基础动作表迁移（含遗留 P3）
 
@@ -246,7 +247,7 @@ D5（09-15）：W6 + W7 + W8（架构收尾与守门）
 | W5 | ✅ 闭环（实测 ~60ms < 200ms 阈值，**不改代码**） | 本会话 | 2026-09-09 | `89f0202`（计时工具落档） |
 | W6-W8 | W6 ✅ W7 ✅ W8 ✅（2026-09-09 同批收口） | 本会话 | 2026-09-09 | W7+W8+契约拼写修正 `7772b58`；W6 `6aefc1e` + catalog 预热 `5bd9c1d`；W8 守门 python→GDScript 迁移 + beckett 导出隔离 `1a00ca5` |
 | W9 | ✅ 闭环 | 本会话 | 2026-09-09 | `a4b5528`（含 .claude ignore + 删临时分支；远端同名分支已 `push --delete`） |
-| W10 | 移交视觉会话 | | | |
+| W10 | ✅ 视觉会话闭环（方案甲） | `158aef4` | 2026-09-10 | |
 | W11 | **进行中：措施 1+2+4 已闭环，措施 3 待下批** | 本会话 | 2026-09-09 | `6753065`（role 兜底表迁 data/v1_battle.json）+ `10122fb`（school_rules 删 3 死函数）；措施 3（resolver.gd 按命令族切分，worktree 大工程）待派 |
 | W12 | 待执行（W11 措施 3 后逐屏推进） | | | |
 | W13 | ✅ 并入 W11 措施 4（2026-09-09） | 本会话 | 2026-09-09 | `10122fb`。**审计误判修正**：school_rules.gd 整体非死——`is_soul` 被 relic_hook_resolver 真用；真死仅 3 个零引用函数（drain_blood_stacks/overchannel_benefit/apply_overchannel_soul，overchannel 规则在 V1 无实现） |
