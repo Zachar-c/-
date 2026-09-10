@@ -21,9 +21,9 @@ UI 一律走 **Godot 官方 `.tscn` 节点树 + 命令式 `refresh(snapshot)`**�
 
 **已废弃**：RUITK 与 `.guitkx` 声明式 UI。剩余未迁移的屏见 §8 迁移队列，迁移完即整体删除。
 
-**路由**：`scripts/presentation/run_controller.gd` 的 `MASTER_SCENE_PATHS` 是唯一路由表，
+**路由**：`scripts/presentation/run_screen_router.gd` 的 `RunScreenRouter.MASTER_SCENE_PATHS` 是唯一路由表，
 协议为 `instantiate() → mount_snapshot(snapshot, commands)`。`SCREEN_PATHS`（`.guitkx` 路由）
-在迁移完前并存，迁移完删。
+在迁移完前并存，迁移完删。（W12 split：原位于 `run_controller.gd`，2026-09-10 迁至 router。）
 
 ---
 

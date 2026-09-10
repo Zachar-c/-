@@ -24,7 +24,7 @@
 
 - 命令构建：`RunCommandBuilder.for_screen(screen, controller)` 按屏注册命令集；`_battle_card_command/_rest_choose_command/_shop_buy_command` 等按卡片 ID 组装命令
 - 快照：`RunSnapshotBuilder` 输出 UI 消费字典（资源条/立绘/意图/卡片），键全集见 `docs/contracts/2026-09-02-domain-ui-contract.md`
-- 视图路由：`MASTER_SCENE_PATHS` 唯一路由表（.tscn，无 guitkx 生成层）
+- 视图路由：`RunScreenRouter.MASTER_SCENE_PATHS` 唯一路由表（.tscn，无 guitkx 生成层；W12 split 自 `run_controller.gd` 迁至 `run_screen_router.gd`）
 
 ## 信号
 

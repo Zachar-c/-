@@ -26,25 +26,9 @@ const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engin
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 
 ## 全部屏已迁到 Godot 官方 .tscn 节点树（scenes/ui/screens/），RUITK 路由表
-## 清空：_mount_screen() 只剩 .tscn 一条路径。表留在原位是「RUITK 屏必须为零」
-## 的锚点——非空即代表有屏回退到 .guitkx。
-const SCREEN_PATHS := {}
-const MASTER_SCENE_PATHS := {
-	"Title": "res://scenes/ui/screens/hall_screen.tscn",
-	"Map": "res://scenes/ui/screens/map_screen.tscn",
-	"Battle": "res://scenes/ui/screens/battle_screen.tscn",
-	# 所有屏走同一套 instantiate + mount_snapshot 协议，本表即唯一路由表。
-	"Shop": "res://scenes/ui/screens/shop_screen.tscn",
-	"Rest": "res://scenes/ui/screens/rest_screen.tscn",
-	"Reward": "res://scenes/ui/screens/reward_screen.tscn",
-	"Npc": "res://scenes/ui/screens/npc_screen.tscn",
-	"Encounter": "res://scenes/ui/screens/encounter_screen.tscn",
-	"Refine": "res://scenes/ui/screens/refine_screen.tscn",
-	"Ending": "res://scenes/ui/screens/ending_screen.tscn",
-	"ContentError": "res://scenes/ui/screens/content_error_screen.tscn",
-	"Kill": "res://scenes/ui/screens/kill_screen.tscn",
-	"Settings": "res://scenes/ui/screens/settings_screen.tscn",
-}
+## 清空：_mount_screen() 只剩 .tscn 一条路径。W12 split：路由表与挂载机制迁至
+## run_screen_router.gd（RunScreenRouter.MASTER_SCENE_PATHS 即唯一路由表）；
+## 本文件不再持有表，`_mounted_screen` 等挂载节点状态仍在此节点上。
 
 ## 视图 → BGM 曲目映射（key 见 AudioDirector.BGM_PATHS，曲目由
 ## tools/generate_music.py 确定性合成）。探索/商店/休整/炼蛊/事件等屏共用 map。
@@ -1430,7 +1414,7 @@ func _render() -> void:
 	# 只查 SCREEN_PATHS 会把已迁到 .tscn 的屏全误判成未知视图名并跳 ContentError
 	# （这个 bug 曾让已迁移的 Shop / Rest / Reward / Npc / Encounter / Refine / Ending
 	# 在真实流程里全部降级，而 smoke_render / playthrough / GUT 都没抓到）。
-	if not (SCREEN_PATHS.has(_view_name) or MASTER_SCENE_PATHS.has(_view_name)):
+	if not RunScreenRouter.is_registered_screen(_view_name):
 		push_error("未知视图名: %s" % _view_name)
 		_view_name = "ContentError"
 	var snapshot: Dictionary = _ending_state if _view_name == "Ending" else _snapshot_for(_view_name)
@@ -1457,38 +1441,18 @@ func _sync_bgm() -> void:
 	director.play_bgm(str(BGM_BY_VIEW.get(_view_name, BGM_DEFAULT)))
 
 
+## W12 split: mounting machinery moved to run_screen_router.gd. Same-name
+## one-line wrappers keep call sites and tests unchanged.
 func _mount_screen(screen: String, snapshot: Dictionary, commands: Dictionary) -> void:
-	var master_path := str(MASTER_SCENE_PATHS.get(screen, ""))
-	if master_path != "":
-		if _master_instance == null or not is_instance_valid(_master_instance) or _mounted_screen != screen:
-			_unmount_rui_root()
-			if _master_instance != null and is_instance_valid(_master_instance):
-				_master_instance.queue_free()
-			_master_instance = (load(master_path) as PackedScene).instantiate()
-			_master_instance.name = "Wenzhen%sMaster" % screen
-			_rui_host.add_child(_master_instance)
-			_mounted_screen = screen
-		if _master_instance.has_method("mount_snapshot"):
-			_master_instance.mount_snapshot(snapshot, commands)
-		return
-	# RUITK 屏已全部迁离：走到这里说明路由表漏登记，直接报错而不是静默白屏。
-	_unmount_rui_root()
-	_unmount_master_instance()
-	push_error(".tscn 路由表缺少视图 %s（RUITK 兜底已移除）" % screen)
+	RunScreenRouter.mount_screen(self, screen, snapshot, commands)
 
 
 func _unmount_rui_root() -> void:
-	if _rui_root != null and _rui_root.has_method("unmount"):
-		_rui_root.unmount()
-	_rui_root = null
+	RunScreenRouter.unmount_rui_root(self)
 
 
 func _unmount_master_instance() -> void:
-	if _master_instance != null and is_instance_valid(_master_instance):
-		_master_instance.queue_free()
-	_master_instance = null
-	if _mounted_screen in MASTER_SCENE_PATHS:
-		_mounted_screen = ""
+	RunScreenRouter.unmount_master_instance(self)
 
 
 func _exit_tree() -> void:
