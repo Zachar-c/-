@@ -1,4 +1,4 @@
-﻿class_name BattleScreenView
+class_name BattleScreenView
 extends MarginContainer
 
 ## 战斗屏（Godot 官方 .tscn 节点树版，替代 ui/screens/battle_screen.guitkx）。
@@ -19,6 +19,10 @@ const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.
 
 const MAX_VISIBLE_ENEMIES := 3
 
+# 拖拽/瞄准的阈值与几何参数**全部归 GuTallFanHandView**（手势在它手里）。
+# 本屏不再持有 start_threshold / proxy_scale / follow_smooth / rebound_time /
+# cast_distance / proxy_grab / aim_origin_fallback —— 同一套参数存两处必然漂移。
+
 @onready var _paper: ColorRect = $BattlePaper
 @onready var _top_bar = $Root/battle_hud/TopBar
 @onready var _battle_stage: PanelContainer = $Root/BattleStage
@@ -30,7 +34,7 @@ const MAX_VISIBLE_ENEMIES := 3
 @onready var _hand_stage: PanelContainer = $Root/HandStage
 @onready var _primordial_label: Label = $Root/HandStage/HandMargin/battle_hand/LeftMeta/PrimordialRow/PrimordialLabel
 @onready var _piles_label: Label = $Root/HandStage/HandMargin/battle_hand/LeftMeta/PilesRow/PilesLabel
-@onready var _hand = $Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand
+@onready var _hand = $Root/HandStage/HandMargin/battle_hand/HandArea/Hand
 @onready var _build_ver: Label = $Root/HandStage/BuildVer
 @onready var _kill_host: HBoxContainer = $Root/BattleStage/battle_field/BattleInfo/KillRow
 @onready var _ops_row: VBoxContainer = $Root/BattleStage/battle_field/OpsDock/OpsRow
@@ -64,8 +68,10 @@ var _prev_enemy_hp: Dictionary = {}
 var _prev_enemy_statuses: Dictionary = {}
 # 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
 var _enemy_actors: Dictionary = {}
-# 拖拽候选：左键在可执行手牌卡上按下时记录，全局左键抬起时命中敌方卡。
-var _drag_candidate_card: Dictionary = {}
+## 手牌 id → 卡字典。组件只回传 id（领域数据的所有权在宿主），
+## 宿主靠这张表把 id 还原成出牌/解释栏需要的卡字典。
+var _hand_cards: Dictionary = {}
+var _drop_hot_enemy := ""
 var _submitted_card_keys: Dictionary = {}
 var _last_hand_version := -1
 
@@ -78,6 +84,15 @@ func _ready() -> void:
 	_paper.color = GuStyle.PAPER_HALL
 	_apply_stage_style()
 	_apply_hand_stage_style()
+	# ⚠️ 手牌区**整条容器链**（HandStage / HandMargin / battle_hand / HandArea）都是纯装饰的
+	# 透明布局容器，`mouse_filter` 在 battle_screen.tscn 里声明为 IGNORE。
+	# 它们横跨 1280、纵向叠到屏幕下沿，而右栏 OpsDock（结束回合/炼蛊/撤退）正好落在
+	# 同一横带的右侧——`HandMargin` 的 `margin_right = 210` 只是把**卡**让开，
+	# **不改变容器自身的矩形**。所以只要它们还是 STOP/PASS，就会截获右栏按钮的
+	# hover 与点击：按钮 `disabled=false`、`modulate=1`，却"点不动"。
+	# 注意 **PASS 同样会截获**（它只把事件继续传给父节点，不会让给身后被压住的兄弟）
+	# —— 上一次只把 HandStage 改成 IGNORE，漏掉 PASS 的 HandMargin，就是这个原因。
+	# 回归门：tools/verify_interaction_loop.gd 的 `occluded` 必须为空。
 	_apply_seal_style()
 	_apply_ink_style()
 	_apply_tooltip_style()
@@ -86,7 +101,25 @@ func _ready() -> void:
 	_top_bar.set_on_settings(func():
 		if _commands.has("open_settings"):
 			_commands["open_settings"].call())
+	_wire_hand()
 	_refresh()
+
+
+## 手牌信号接线（只做一次）。三根线各有明确归属：
+##   card_chosen       → 出牌命令面（含确认流）
+##   hover_changed     → 统一解释栏
+##   aim_target_changed→ 敌人放置高亮（组件不认识敌人卡，高亮必须由宿主施加）
+## 命中检测用回调注入（组件不持有 _enemy_actors）：UI 层用 Control 矩形判定即可，
+## 不必引入 Area2D 和 2D 物理世界做坐标换算。
+func _wire_hand() -> void:
+	_hand.set_target_provider(func(pos: Vector2) -> String: return _enemy_at(pos))
+	if not _hand.aim_target_changed.is_connected(_set_drop_hot):
+		_hand.aim_target_changed.connect(_set_drop_hot)
+	if not _hand.hover_changed.is_connected(_on_hand_hover_changed):
+		_hand.hover_changed.connect(_on_hand_hover_changed)
+	# 取消请求（右键/Esc，无手势时）：模式状态归宿主，组件只转发意图。
+	if not _hand.cancel_requested.is_connected(_reset_interaction):
+		_hand.cancel_requested.connect(_reset_interaction)
 
 
 ## 叙事层：以大厅屏为基准——纸面 + 网点背景由根 Backdrop（BattlePaper + BattleDots）提供，
@@ -279,14 +312,26 @@ func _reset_interaction() -> void:
 	_refresh()
 
 
-func _on_card_hover(card: Dictionary) -> void:
-	# Hover is presentation-only. Rebuilding the hand here replaces the Button
-	# under the pointer before its click arrives; it also used to overwrite the
-	# card already armed for a single-target selection.
+## 悬停变化（组件 hover_changed）："" = 离开全部卡。
+## 抬升/让位/压暗由组件自己做（它才是几何的拥有者）；本屏只负责解释栏。
+## 手势开始组件也会发 ""，所以宿主不必再自己判断"是否正在拖拽"。
+func _on_hand_hover_changed(card_id: String) -> void:
 	if _mode != "idle" or _confirming:
 		return
-	_hovered_card = card
+	_hovered_card = _hand_cards.get(card_id, {}) if card_id != "" else {}
 	_refresh_tooltip()
+
+
+## 组件提交出牌：card_id + 目标（无指向卡为空串）。
+## 危险卡确认、指向卡的两次确认、去重一律走既有 _play_card/_select_enemy，
+## 组件不参与裁决——它只报告"玩家用哪张卡指向了谁"。
+func _on_hand_card_chosen(card_id: String, target_id: String) -> void:
+	var card: Dictionary = _hand_cards.get(card_id, {})
+	if card.is_empty():
+		return
+	_play_card(card)
+	if target_id != "":
+		_select_enemy(target_id)
 
 
 # ——————————————————————————————— 渲染 ———————————————————————————————
@@ -520,32 +565,29 @@ func _refresh_hand(state: Dictionary) -> void:
 			piles_row.add_child(a_icon)
 			piles_row.move_child(a_icon, 0)
 
-	# Gubattle_hand 接 6 参（press / hover / cancel / drag_start）。拖拽命中走
-	# 全局 _input 抬起拦截（_on_card_drop），不依赖按钮捕获的 release 事件；
-	# 按住期间不重建手牌，避免销毁正在接收输入的按钮。
-	_hand.setup(state.get("hand", []), _interaction_dict(),
-			_play_card, _on_card_hover, _reset_interaction, _on_card_drag_start)
+	# 手牌 = GuTallFanHandView（竖长卡 + 底部横向扇形）。职责切分：
+	#   组件：排布、悬停/让位/抬升、拖拽与瞄准手势、影卡、弧箭、敌人目标广播；
+	#   宿主：命令提交（含危险卡确认流）、统一解释栏、敌人放置高亮。
+	_hand_cards.clear()
+	for card in state.get("hand", []):
+		if card is Dictionary:
+			_hand_cards[str((card as Dictionary).get("id", ""))] = card
+	_hand.setup(state.get("hand", []), _on_hand_card_chosen, _on_hand_hover_changed)
 
 
-## 拖拽候选：左键在可执行手牌卡上按下时记录，不触发任何刷新。
-func _on_card_drag_start(card: Dictionary) -> void:
-	_drag_candidate_card = card
-
-
-## 全局左键抬起：候选非空时用画布全局鼠标位命中敌方卡，命中即按该目标出牌
-## （危险卡进确认流）。未命中敌方卡时不清当前输入，让普通点击照常武装。
-func _input(event: InputEvent) -> void:
-	if _drag_candidate_card.is_empty():
+## 放置区高亮切换：只在实际变化时调用敌人卡 set_drop_highlight。
+func _set_drop_hot(enemy_id: String) -> void:
+	if enemy_id == _drop_hot_enemy:
 		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-		var card: Dictionary = _drag_candidate_card
-		_drag_candidate_card = {}
-		var mouse := get_global_mouse_position()
-		var enemy_id := _enemy_at(mouse)
-		if enemy_id != "":
-			_play_card(card)
-			_select_enemy(enemy_id)
-			get_viewport().set_input_as_handled()
+	if _drop_hot_enemy != "" and _enemy_actors.has(_drop_hot_enemy):
+		var prev = _enemy_actors[_drop_hot_enemy]
+		if prev != null and is_instance_valid(prev):
+			prev.set_drop_highlight(false)
+	_drop_hot_enemy = enemy_id
+	if enemy_id != "" and _enemy_actors.has(enemy_id):
+		var actor = _enemy_actors[enemy_id]
+		if actor != null and is_instance_valid(actor):
+			actor.set_drop_highlight(true)
 
 
 ## 拖拽命中：全局鼠标位命中的存活敌方卡 id；未命中返回空串。
@@ -743,6 +785,17 @@ func _refresh_mode_label() -> void:
 	l.name = "battle_" + _mode
 	l.text = ""
 	_mode_host.add_child(l)
+	if _mode == "target_select":
+		# 「取消目标」出口。指向卡是两步确认（点卡 → 点敌人），必须给退出口，
+		# 否则玩家武装了指向卡就只能靠点别的卡摆脱。这个按钮原先在手牌组件的取消行里，
+		# 手牌换成扇形组件后由本屏承担——模式状态本来就归宿主，放这里也不会分叉。
+		var cancel := Button.new()
+		cancel.text = "取消目标"
+		MasterTheme.apply_button(cancel, "cancel")
+		cancel.custom_minimum_size = Vector2(0, 24)
+		cancel.add_theme_font_size_override("font_size", 13)
+		cancel.pressed.connect(_reset_interaction)
+		_mode_host.add_child(cancel)
 
 
 func _refresh_confirm() -> void:
@@ -763,7 +816,9 @@ func _refresh_confirm() -> void:
 
 
 func _refresh_tooltip() -> void:
-	var show_tip := _mode == "idle" and not _hovered_card.is_empty()
+	# 手势期间由组件负责清空悬停（它一进入拖拽就发 hover_changed("")），
+	# 宿主因此不必再自己判断"是否正在拖拽"——少一处状态镜像。
+	var show_tip: bool = _mode == "idle" and not _hovered_card.is_empty()
 	_tooltip_host.visible = show_tip
 	if not show_tip:
 		return
@@ -783,35 +838,42 @@ func _refresh_tooltip() -> void:
 	call_deferred("_position_tooltip")
 
 
+## 解释栏定位（2026-09-10 改版）：锚定**被悬停的卡**，不再跟鼠标。
+## 手牌贴屏幕底边，只有卡上方有空间——默认贴在卡上方并与卡左对齐，
+## 越界翻到卡右侧/左侧，最后整体钳进视口。宽度按内容自适应（原先强塞 280 宽，
+## 三行短文案会在面板里空掉一大半）。
 func _position_tooltip() -> void:
-	# 蛊虫详情跟随鼠标（v0.10 校准）：tooltip 左上角偏移到光标右下 16px，
-	# 越界时回弹到光标左侧/上方，保证完整可见且不遮挡卡牌操作区。
 	if not _tooltip_host.visible:
 		return
-	var minimum := _tooltip_host.get_combined_minimum_size()
-	var tooltip_size := Vector2(maxf(280.0, minimum.x), minimum.y)
 	var viewport_size := get_viewport_rect().size
-	tooltip_size.x = minf(tooltip_size.x, viewport_size.x - 24.0)
+	var minimum := _tooltip_host.get_combined_minimum_size()
+	var tooltip_size := Vector2(
+			clampf(minimum.x, 180.0, maxf(180.0, viewport_size.x - 24.0)),
+			minimum.y)
 	_tooltip_host.size = tooltip_size
-	var mouse_pos := get_viewport().get_mouse_position()
-	var desired := Vector2(mouse_pos.x + GuStyle.SPACE_2, mouse_pos.y + GuStyle.SPACE_2)
-	desired.x = clampf(desired.x, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.x - tooltip_size.x - GuStyle.SPACE_3))
-	if desired.y + tooltip_size.y > viewport_size.y - GuStyle.SPACE_3:
-		# 下方空间不足时翻到光标上方。
-		desired.y = mouse_pos.y - tooltip_size.y - GuStyle.SPACE_2
-	desired.y = clampf(desired.y, GuStyle.SPACE_3, maxf(GuStyle.SPACE_3, viewport_size.y - tooltip_size.y - GuStyle.SPACE_3))
-	_tooltip_host.global_position = desired
+	_tooltip_host.global_position = _tooltip_anchor_position(tooltip_size, viewport_size)
 
 
-func _interaction_dict() -> Dictionary:
-	return {
-		"mode": _mode,
-		"card": _active_card,
-		"card_id": _card_id,
-		"target_id": _target_id,
-		"confirming": _confirming,
-		"expanded_enemies": _expanded_enemies,
-	}
+## 解释栏锚点：拿得到悬停卡矩形就贴在卡上方；拿不到（卡已重建）退回鼠标上方。
+func _tooltip_anchor_position(tooltip_size: Vector2, viewport_size: Vector2) -> Vector2:
+	var margin := GuStyle.SPACE_3
+	var anchor := Rect2()
+	if not _hovered_card.is_empty():
+		anchor = _hand.card_rect(str(_hovered_card.get("id", "")))
+	var pos := Vector2.ZERO
+	if anchor.size.x > 0.0:
+		# 悬停中的卡是抬升放大的（pivot 在底边），视觉上沿高于布局矩形，
+		# 这里把抬高量算进去，免得解释栏正好压在放大后的卡沿上。
+		var lift: float = _hand.hover_lift_px()
+		pos = Vector2(anchor.position.x,
+				anchor.position.y - lift - tooltip_size.y - GuStyle.SPACE_2)
+	else:
+		var mouse_pos := get_viewport().get_mouse_position()
+		pos = Vector2(mouse_pos.x - tooltip_size.x * 0.5,
+				mouse_pos.y - tooltip_size.y - GuStyle.SPACE_2)
+	pos.x = clampf(pos.x, margin, maxf(margin, viewport_size.x - tooltip_size.x - margin))
+	pos.y = clampf(pos.y, margin, maxf(margin, viewport_size.y - tooltip_size.y - margin))
+	return pos
 
 
 func _apply_tooltip_style() -> void:

@@ -63,6 +63,47 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 状态与确认：单敌目标自动补 `target_id`（现役规则）；多敌强制选择；撤退受 `boss_blocks_retreat`；致死预检 → 确认层级 3，在确认框中展示精准风险；超载自伤预计死亡同上。`death_lines` 不得在战斗页另建数值/死因覆盖层。
 - 组件：`GuBattleHand/HandPanel`、`GuEnemyActor`、`GuStatBar`、`GuInventory`、`GuTooltipView`、`GuIntentBadge`、`[T9]` `GuLedgerBadge`、`GuDistanceBand`、`GuCostBreakdown`。
 - 验收：卡牌详情只经共享 hover tooltip 展示（含风险段），不得另建常驻详情卡；单体卡可经鼠标选择敌人，危险卡先确认再提交，且同一快照内相同卡牌/目标组合最多提交一次；手牌过期（`battle_hand_stale`）触发重建；每个操作按钮可指出预检 spec_id；v2 占位区在未落地时整体隐藏。
+- 手牌卡形与手势（2026-09-10 竖长卡 + 扇形口径，纯表现层，不新增快照键/命令）：
+  - **卡形**：竖长卡 `110×154`（原 168×74 横向卡），由手牌组件 `GuTallFanHandView` 拥有；
+    卡面只承载「名称 / 道阶 / 效果 / 费用」四行**文本**，效果行允许折两行（阈值 `FACE_EFFECT_MAX_CHARS`）；
+    卡体节点树为 `card_box_<清洗 id>`（Control，承担 position/rotation/scale/pivot）包 `card_body_<清洗 id>`
+    （Button，承担 hover/点击）。卡形与排布参数变更须同步更新线框稿与本节。
+  - **排布**：底部横向扇形自适应——`t=(i−center)/center` 非线性缓动后给倾角（`MAX_ANGLE_DEG`）、弧高（`ARC_LIFT`、
+    中间卡低、两端高，两端上溢不占布局）、边缘透视缩放（`PERSPECTIVE_DROP`）、步进 `clamp(可用宽/(n−1), 卡宽×0.45, 卡宽×1.02)`
+    实现负边距重叠；1200px 级屏宽下同屏约 19 张。手牌盒只预留**卡高**，弧高靠两端卡向上溢出（宽度侧为直角区，无控件碰撞）。
+  - **手势**（双入口，组件内实现并向上广播信号）：点击与拖拽都只是既有 `play_card(card_id, target_id)` 的入口。
+    指向性卡（`target_type == "single_enemy"`）按住拖出**瞄准弧箭**（不出影卡、源卡不压暗；颜色按卡牌性质——
+    攻击=朱砂、控制/辅助=青灰；锁定与否由线型与线宽表达——自由态半透明虚线、命中存活敌人转实线加粗），
+    松手命中敌方卡即按该目标提交，未命中即取消；无指向卡按住拖出**固定距离**（`DRAG_CAST_DISTANCE_PX`）松手即出牌
+    （拖出距离跨阈值时影卡转朱砂「可出牌」态），位移不足则回弹（`REBOUND_TIME`）且不提交；
+    位移 < `DRAG_START_THRESHOLD_PX` 视为普通点击，仍走按钮 `pressed` 原路径。
+    不可执行卡（`executable == false`）**可悬停但绝不提交**（玩家要看得到 block_reason）。
+    影卡（按 `DRAG_PROXY_SCALE` 重建放大、不透明、浮层，节点名 `battle_drag_proxy`）与瞄准弧箭
+    （节点名 `battle_aim_line`，挂组件内 `AimLayer` CanvasLayer `layer=90`）均为纯表现层装饰（`mouse_filter=IGNORE`），
+    不落事件日志、不进存档；真拖拽手势的抬起事件一律被消耗，防止同一次松手既回弹又触发按钮 `pressed` 双发。
+  - **组件与宿主的职责边界**：组件发 `card_chosen(card_id, target_id)` / `hover_changed(card_id)` /
+    `aim_target_changed(target_id)` / `cancel_requested` 四个信号；命令提交（含危险卡确认流）、统一解释栏、
+    敌人放置高亮（`GuEnemyActorView.set_drop_highlight`）一律由宿主施加。组件不认识领域状态。
+  - **悬停**：卡体抬升放大（`HOVER_LIFT` + `HOVER_SCALE`，绕底边 pivot 向上浮）、左右邻居让位、未悬停卡压暗；
+    共享解释栏（`battle_hand_tooltip_host`）**锚定悬停卡上方**（不跟鼠标、不盖住卡），抬升量由组件经
+    `hover_lift_px()` 提供；拖拽/瞄准期间解释栏一律收起（组件在进入手势时广播 `hover_changed("")`）。
+  - **可达性（2026-09-10 真机反馈补充，同日二次返工修订）**：任何可点元素必须**既接线又能点到**。
+    透明的纯装饰容器（`HandStage` / `HandMargin` / `battle_hand` / `HandArea` 这类舞台与包装层）
+    必须 `mouse_filter = IGNORE`。判定与排错要点：
+    - **`PASS` 同样会遮挡，只有 `IGNORE` 让路**。`MOUSE_FILTER_PASS` 的语义是"自己也收，并把事件
+      继续交给**父节点**"，它**不会**让给身后被压住的兄弟节点。（首轮只把 `HandStage` 从 `STOP`
+      改成 `IGNORE`，漏掉了 `PASS` 的 `HandMargin`——它以 `margin_right = 210` 只让开**卡**，
+      容器自身仍是满幅 `0,514 1280x206`，于是右栏三个按钮继续点不到。）
+    - **命中顺序**按引擎 `Viewport::_gui_find_control_at_pos`：**子节点逆序**深度优先，先递归子树、
+      子树无命中再判自身；`IGNORE` 节点自身不算命中但不阻断其子树。
+    - 症状极具误导性：按钮 `disabled=false`、`modulate=1`、父链无压暗、无可见覆盖层，
+      但悬停不亮、点了没反应（看起来像"被置灰禁用"）。
+    验收：`tools/verify_interaction_loop.gd` 的 `occluded` 必须为空
+    （既有未修项见该脚本 `KNOWN_OCCLUDED` 留档表，以 `occluded_known` 计数呈现）；
+    回归用例 `test_wenzhen_battle_screen.test_ops_buttons_accept_real_clicks_despite_transparent_hand_containers`
+    ——**真的按下+松开**并断言命令被触发（几何判定只是代理指标，代理本身也容易写错）。
+  - **取消出口**：指向卡两步确认（点卡 → 点敌人）必须留出口——模式区（`ModeHost`）在 `target_select` 态渲染
+    「取消目标」按钮，且卡体上的右键 / Esc 经组件 `cancel_requested` 转发给宿主复位。
 
 ### P5 Shop（`shop_screen`，快照 `Shop/shop()`）
 

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_stat_bar.tscn" id="4_stat_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_toast.tscn" id="5_toast"]
-[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_battle_hand.tscn" id="6_hand"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tall_fan_hand.tscn" id="6_hand"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="7_dialog"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="8_tooltip"]
 [ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_inventory.tscn" id="10_inventory"]
@@ -199,9 +199,13 @@ theme_override_constants/separation = 4
 layout_mode = 2
 visible = false
 
+; 手牌区整条容器链均为纯装饰的透明布局容器：必须 IGNORE（=2）。
+; 它们是 PASS/STOP 时会截获叠在同一横带上的右栏 OpsDock 按钮输入，
+; 表现为按钮 disabled=false 却悬停不亮、点击无反应。见 battle_screen_view._ready() 注释。
 [node name="HandStage" type="PanelContainer" parent="Root"]
 layout_mode = 2
 size_flags_vertical = 0
+mouse_filter = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_top = 0
@@ -209,6 +213,7 @@ theme_override_constants/margin_bottom = 0
 
 [node name="HandMargin" type="MarginContainer" parent="Root/HandStage"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 30
 theme_override_constants/margin_right = 210
 theme_override_constants/margin_top = 10
@@ -216,6 +221,7 @@ theme_override_constants/margin_bottom = 10
 
 [node name="battle_hand" type="VBoxContainer" parent="Root/HandStage/HandMargin"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 6
 
 [node name="LeftMeta" type="HBoxContainer" parent="Root/HandStage/HandMargin/battle_hand"]
@@ -245,18 +251,16 @@ text = "手 0 · 弃 0 · 抽 0"
 
 [node name="HandArea" type="VBoxContainer" parent="Root/HandStage/HandMargin/battle_hand"]
 layout_mode = 2
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 1
 theme_override_constants/separation = 0
 
-[node name="CenterWrap" type="CenterContainer" parent="Root/HandStage/HandMargin/battle_hand/HandArea"]
+[node name="Hand" parent="Root/HandStage/HandMargin/battle_hand/HandArea" instance=ExtResource("6_hand")]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="Hand" parent="Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap" instance=ExtResource("6_hand")]
-layout_mode = 2
-size_flags_horizontal = 0
+size_flags_vertical = 3
 
 [node name="BuildVer" type="Label" parent="Root/HandStage"]
 top_level = true

@@ -80,6 +80,132 @@ func _mount(state: Dictionary) -> Control:
 	return host
 
 
+## 右栏操作按钮的**可达性**回归（2026-09-10 真机反馈）。
+##
+## 症状：行动值耗尽后「结束回合 / 炼蛊 / 撤退」看着置灰、点了没反应。
+## 根因不是 `disabled`——手牌区是**通栏透明面板**，而 Control 默认 `mouse_filter = STOP`，
+## 它横向铺满、纵向覆盖到屏幕下沿，正好把右栏按钮带包在里面，于是吃掉按钮的 hover 与点击。
+## 按钮自身 `disabled=false`、`modulate=1`、父链无压暗、无覆盖层——查状态一律正常，
+## 只有"中心点上盖着谁"能看出问题，所以这条断言测的是**GUI 命中**而不是属性。
+##
+## 为什么值得专门钉一条：手牌区高度一变（本次竖长卡 132→206）就会改变覆盖范围，
+## 而交互闭环审计只查"有没有接线"，查不出"够不够得着"。
+func test_ops_buttons_accept_real_clicks_despite_transparent_hand_containers() -> void:
+	# 必须带上真实战斗命令面：三个按钮都是按 `_commands.has(...)` 条件创建的，
+	# 只给 {} 的话「炼蛊/撤退」根本不建，断言会退化成"没这个按钮"。
+	var state := _snapshot_with_enemies(1)
+	state["hand"] = []
+	state["flee_available"] = true
+	# 几何/点击断言必须在**有确定尺寸**的视口里做：挂到零尺寸的裸 Control 上时，
+	# 容器会把子树排到屏幕外（实测 x 变成负值），一切命中都失真。
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(1280, 720)
+	viewport.gui_disable_input = false
+	add_child(viewport)
+	_hosts.append(viewport)
+	var fired: Array = []
+	var screen := TscnMountHelper.instantiate(BATTLE_SCREEN_TSCN, state, {
+		"end_turn": func(): fired.append("end_turn"),
+		"refine": func(_id = ""): fired.append("refine"),
+		"flee": func(): fired.append("flee"),
+	})
+	viewport.add_child(screen)
+	screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	# 逐按钮**真的按下去再松开**（走引擎 GUI 命中管线），断言命令真的被触发。
+	# 只断言"没被别的控件盖住"不够：那只是代理指标，而且代理本身容易写错
+	# （早先版本只查 STOP、又用先序近似，PASS 的 HandMargin 因此漏网两次）。
+	for pair in [["结束回合", "end_turn"], ["炼蛊", "refine"], ["撤退", "flee"]]:
+		var btn := _find_button_by_text(screen, pair[0])
+		assert_not_null(btn, "右栏操作按钮「%s」必须存在" % pair[0])
+		if btn == null:
+			continue
+		assert_false(btn.disabled, "「%s」不该被禁用（行动值为 0 也不该禁用）" % pair[0])
+		fired.clear()
+		var point: Vector2 = btn.get_global_rect().get_center()
+		_viewport_mouse_motion(viewport, point)
+		await get_tree().process_frame
+		_viewport_mouse_button(viewport, point, true)
+		_viewport_mouse_button(viewport, point, false)
+		await get_tree().process_frame
+		assert_eq(fired, [pair[1]],
+				"「%s」中心点按下+松开必须触发 %s；实际触发=%s，该点命中者=%s"
+				% [pair[0], pair[1], str(fired), _occluder_of(btn, screen)])
+
+
+func _viewport_mouse_motion(viewport: SubViewport, position: Vector2) -> void:
+	var event := InputEventMouseMotion.new()
+	event.position = position
+	event.global_position = position
+	event.relative = Vector2.ZERO
+	viewport.push_input(event)
+
+
+func _viewport_mouse_button(viewport: SubViewport, position: Vector2, pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = pressed
+	event.position = position
+	event.global_position = position
+	viewport.push_input(event)
+
+
+## 按钮中心点上的**实际命中者**（仅供失败时诊断）。
+## 按引擎规则算：**子节点逆序**深度优先，先递归子树、再判自身；IGNORE 自身不作为命中。
+## 命中者若既非按钮、也非其祖先，事件就到不了按钮 → 点了没反应。
+func _occluder_of(button: Control, root: Node) -> String:
+	if not button.is_visible_in_tree():
+		return "（按钮不可见）"
+	var hit := _find_control_at_pos(root, button.get_global_rect().get_center())
+	if hit == null:
+		return "（无控件命中）"
+	var cursor: Node = hit
+	while cursor != null:
+		if cursor == button:
+			return ""
+		cursor = cursor.get_parent()
+	var c := hit as Control
+	return "%s(%s mf=%d rect=%s)" % [c.name, c.get_class(), c.mouse_filter,
+			str(c.get_global_rect())]
+
+
+func _find_control_at_pos(node: Node, point: Vector2) -> Node:
+	for i in range(node.get_child_count() - 1, -1, -1):
+		var child: Node = node.get_child(i)
+		if not (child is CanvasItem):
+			continue
+		if not (child as CanvasItem).is_visible_in_tree():
+			continue
+		var sub := _find_control_at_pos(child, point)
+		if sub != null:
+			return sub
+		if child is Control:
+			var c := child as Control
+			if c.mouse_filter != Control.MOUSE_FILTER_IGNORE \
+					and c.get_global_rect().has_point(point):
+				return c
+	return null
+
+
+func _walk_nodes(node: Node) -> Array:
+	var acc: Array = [node]
+	for child in node.get_children():
+		acc.append_array(_walk_nodes(child))
+	return acc
+
+
+func _find_button_by_text(node: Node, text: String) -> Button:
+	if node is Button and str((node as Button).text) == text:
+		return node as Button
+	for child in node.get_children():
+		var found := _find_button_by_text(child, text)
+		if found != null:
+			return found
+	return null
+
+
 func _mount_with_hand(cards: Array) -> Control:
 	var state := _snapshot_with_enemies(1)
 	state["hand"] = cards

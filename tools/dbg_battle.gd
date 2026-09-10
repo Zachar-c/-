@@ -4,7 +4,7 @@ func _initialize() -> void:
 	root.add_child(battle)
 	await process_frame
 	await process_frame
-	var hand = battle.get_node("Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand")
+	var hand = battle.get_node("Root/HandStage/HandMargin/battle_hand/HandArea/Hand")
 	print("hand size=", hand.size, " min=", hand.get_combined_minimum_size())
 	var cardrow = hand.get_node("CardRow")
 	var cancelrow = hand.get_node("CancelRow")

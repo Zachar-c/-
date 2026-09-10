@@ -109,7 +109,7 @@
 - 出现测试挂起时先检查项目锁和残留 Godot 进程，再重试。
 - UI 改动必须核对真实渲染、交互状态、文本适配和常用视口。
 - **AI 契约（用户裁定 2026-09-05，2026-09-09 修订）：交互改动默认以 headless 回归门（`verify_interaction_loop.gd`、单测、截图）验收；仅当用户主动要求时才打开真实视窗并模拟键鼠复现。headless 通过不代表真窗可用，真窗验证结论以用户主动要求为准。**
-- **交互闭环契约（用户裁定 2026-09-09）：任何可点击 UI 元素必须产生结果与反应，禁止"可点无反应"的死按钮；每次交互须具备视觉 + 听觉双重反应（点击音效经 `MasterTheme.apply_button` 或显式 `AudioManager.play_sfx` 接线）。未接入路由的入口一律 `disabled` 置灰，不得保留可点装饰按钮。全屏交互回归：`tools\godot.ps1 --headless --path . -s tools/verify_interaction_loop.gd`，`dead=[]` 且 `no_ui_click=[]` 方可交付。
+- **交互闭环契约（用户裁定 2026-09-09）：任何可点击 UI 元素必须产生结果与反应，禁止"可点无反应"的死按钮；每次交互须具备视觉 + 听觉双重反应（点击音效经 `MasterTheme.apply_button` 或显式 `AudioManager.play_sfx` 接线）。未接入路由的入口一律 `disabled` 置灰，不得保留可点装饰按钮。全屏交互回归：`tools\godot.ps1 --headless --path . -s tools/verify_interaction_loop.gd`，`dead=[]`、`no_ui_click=[]` **且 `occluded=[]`** 方可交付——`occluded` 查的是"接线齐全但点不到"（被透明容器截获），**`PASS` 同样遮挡，只有 `IGNORE` 让路**，判定按引擎 `_gui_find_control_at_pos`（子节点逆序）。既有未修项须登记进该脚本的 `KNOWN_OCCLUDED` 留档表（以 `occluded_known` 计数呈现），不得直接放行新遮挡。
 - 推送前确认工作树、测试结果、目标分支和远端状态。
 
 ## 工作流程

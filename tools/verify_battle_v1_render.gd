@@ -75,12 +75,12 @@ func _initialize() -> void:
 				"Root/BattleStage/battle_field/PlayerPanel", "Root/BattleStage/battle_field/EnemyPanel",
 				"Root/BattleStage/battle_field/BattleInfo", "Root/BattleStage/battle_field/BattleInfo/KillRow",
 				"Root/BattleStage/battle_field/OpsDock", "Root/BattleStage/battle_field/HintHost",
-				"Root/HandStage", "Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand",
+				"Root/HandStage", "Root/HandStage/HandMargin/battle_hand/HandArea/Hand",
 				"Root/HandStage/BuildVer"]:
 			var node := battle.get_node_or_null(n)
 			if node:
 				print("DBG ", n, " pos=", node.position, " size=", node.size)
-		var hand := battle.get_node_or_null("Root/HandStage/HandMargin/battle_hand/HandArea/CenterWrap/Hand")
+		var hand := battle.get_node_or_null("Root/HandStage/HandMargin/battle_hand/HandArea/Hand")
 		if hand:
 			print("DBG hand childs: card=", hand.get_node("CardRow").size,
 					" cancel=", hand.get_node("CancelRow").size,

@@ -75,6 +75,9 @@ func _load_enemy_texture(path: String) -> Texture2D:
 
 var _on_select: Callable = Callable()
 var _enemy_id := ""
+var _selected := false
+# 拖拽放置区高亮：影卡悬于该敌人上时玉绿描边提示可投放。
+var _drop_highlight := false
 
 
 func _ready() -> void:
@@ -88,6 +91,8 @@ func setup(enemy: Dictionary, selected: bool = false,
 		selectable: bool = false, on_select: Callable = Callable()) -> void:
 	_enemy_id = str(enemy.get("id", ""))
 	_on_select = on_select
+	_selected = selected
+	_drop_highlight = false
 	name = "enemy_actor_" + _enemy_id
 	# 四个段按 enemy_id 命名：既有测试（test_wenzhen_battle_screen）按
 	# enemy_intent_<id> / enemy_hp_<id> / enemy_shield_<id> / enemy_status_<id> 定位。
@@ -278,13 +283,22 @@ func _status_label(text: String) -> Label:
 	return label
 
 
-## 线框稿 v2：纸卡墨框（半透明纸底 + 墨描边），选中态玉绿描边 + 立绘提亮。
+## 拖拽放置区高亮开关：影卡悬停时调用；与选中态共用玉绿描边语言。
+func set_drop_highlight(on: bool) -> void:
+	if _drop_highlight == on:
+		return
+	_drop_highlight = on
+	_apply_actor_style(_selected)
+
+
+## 线框稿 v2：纸卡墨框（半透明纸底 + 墨描边），选中/放置高亮态玉绿描边 + 立绘提亮。
 func _apply_actor_style(selected: bool) -> void:
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
-	box.border_color = GuStyle.JADE if selected else Color(52 / 255.0, 52 / 255.0, 48 / 255.0, 1)  # #343430
-	box.set_border_width_all(2 if selected else 1)
+	var lit := selected or _drop_highlight
+	box.border_color = GuStyle.JADE if lit else Color(52 / 255.0, 52 / 255.0, 48 / 255.0, 1)  # #343430
+	box.set_border_width_all(2 if lit else 1)
 	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
 	add_theme_stylebox_override("panel", box)
 	var current := _enemy_portrait.modulate
-	_enemy_portrait.modulate = Color(current.r, current.g, current.b, 1.0 if selected else current.a)
+	_enemy_portrait.modulate = Color(current.r, current.g, current.b, 1.0 if lit else current.a)
