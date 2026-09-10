@@ -17,9 +17,7 @@ const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
-const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
-const ResourceVocabularyScript = preload("res://scripts/presentation/resource_vocabulary.gd")
 # V1 battle lifecycle hook: battle2 ledger sits in the RunState for the
 # duration of a single battle. Sized by CultivatorRules.thought_capacity and
 # consumed by the battle facade on each accepted turn; finalised through
@@ -110,17 +108,8 @@ var _prev_major_scene := false
 # 面板零节点存在、方法全部早退。调试写操作只落本局 RunData、绝不触碰大厅存档；
 # 加蛊走与 Resolver 同源的 DeckCapacity 正式容量校验；资源钳制到合法区间；
 # 全部操作 print 带 [debug] 前缀可追溯。按简报裁定：调试操作不写事件日志。
+# W12 split: 常量与方法体迁至 run_debug_facade.gd，此处只留门控开关与面板节点状态。
 # ----------------------------------------------------------------------------
-const DEBUG_PANEL_PATH := "res://scenes/ui/widgets/debug_panel.tscn"
-## 元石调试硬上限（经济供给上限未在数据表落地前的展示层安全界）。
-const DEBUG_STONE_CAP := 99999
-var DEBUG_RESOURCE_LABELS := {
-	"yuanstone": ResourceVocabularyScript.label("yuanstone"),
-	"health": "生命",
-	"lifespan": ResourceVocabularyScript.label("lifespan"),
-	"soul": ResourceVocabularyScript.label("soul"),
-	"essence": ResourceVocabularyScript.label("essence"),
-}
 
 ## 测试注入开关：默认跟随构建类型（GUT/编辑器为 true，Release 导出为 false）。
 var _debug_enabled_for_test: bool = OS.is_debug_build()
@@ -610,14 +599,18 @@ func _travel_to(node_id: String) -> Dictionary:
 # ----------------------------------------------------------------------------
 # §16.22 D5 调试方法族（全部 is_debug_build 门控早退；只写本局 RunData；
 # 不写事件日志、不碰大厅存档；print 带 [debug] 前缀可追溯）。
+# W12 split: implementation moved to run_debug_facade.gd; the is_debug_build
+# gate stays here (`_debug_enabled_for_test`, initialized from
+# OS.is_debug_build) and the facade reads it through _debug_enabled(self).
+# Same-name one-line wrappers keep the public API and test call sites.
 # ----------------------------------------------------------------------------
 
 func _debug_enabled() -> bool:
-	return _debug_enabled_for_test
+	return RunDebugFacade._debug_enabled(self)
 
 
 func debug_panel_mounted() -> bool:
-	return _debug_panel != null
+	return RunDebugFacade.debug_panel_mounted(self)
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -632,266 +625,86 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func debug_add_gu(gu_id: String) -> Dictionary:
-	if not _debug_enabled():
-		return {"ok": false, "reason": "debug_disabled"}
-	if state == null or catalog == null or catalog.is_empty():
-		return _debug_fail("no_active_run")
-	var target := str(gu_id).strip_edges()
-	var result := DebugActionsScript.apply(state, catalog,
-			{"op": "add_gu", "definition_id": target}, _debug_enabled())
-	state = result["state"]
-	if not bool(result.get("ok", false)):
-		var reason := str(result.get("result", {}).get("reason", ""))
-		return _debug_fail_with(reason, "调试失败：%s" % reason)
-	var instance_id := str(result.get("result", {}).get("instance_id", ""))
-	_debug_feedback = "调试：已加入 %s（实例 %s）" % [DisplayText.gu(target), instance_id]
-	print("[debug] add_gu %s as %s" % [target, instance_id])
-	_render()
-	return {"ok": true, "instance_id": instance_id}
+	return RunDebugFacade.debug_add_gu(self, gu_id)
 
 
 func debug_set_resource(kind: String, value) -> Dictionary:
-	if not _debug_enabled():
-		return {"ok": false, "reason": "debug_disabled"}
-	if state == null:
-		return _debug_fail("no_active_run")
-	var amount := 0
-	if value is int or value is float:
-		amount = int(value)
-	elif value is String:
-		var text_value := str(value).strip_edges()
-		if not text_value.is_valid_int():
-			return _debug_fail_with("invalid_number", "调试失败：数值必须是整数（收到 %s）" % text_value)
-		amount = int(text_value)
-	else:
-		return _debug_fail_with("invalid_number", "调试失败：数值类型不支持")
-	# UI-layer clamp: stones uncapped in domain but panel shows 99999 cap.
-	var api_kind := str(kind)
-	if api_kind == "yuanstone" or api_kind == "stones":
-		amount = clampi(amount, 0, DEBUG_STONE_CAP)
-		api_kind = "stones"
-	elif api_kind == "lifespan":
-		return _debug_fail_with("unknown_kind", "调试失败：未知资源类别（%s）" % str(kind))
-	elif api_kind not in ["stones", "health", "soul", "essence"]:
-		return _debug_fail_with("unknown_kind", "调试失败：未知资源类别（%s）" % str(kind))
-	var action := {"op": "set_resources"}
-	action[api_kind] = amount
-	var result := DebugActionsScript.apply(state, catalog, action, _debug_enabled())
-	state = result["state"]
-	
-	if not bool(result.get("ok", false)):
-		var reason := str(result.get("result", {}).get("reason", ""))
-		return _debug_fail_with(reason, "调试失败：%s" % reason)
-	var applied := amount
-	if api_kind == "essence":
-		applied = int(result.get("result", {}).get("essence", amount))
-	elif api_kind == "stones":
-		applied = int(result.get("result", {}).get("stones", amount))
-	elif api_kind == "health":
-		applied = int(result.get("result", {}).get("health", amount))
-	elif api_kind == "soul":
-		applied = int(result.get("result", {}).get("soul", amount))
-	print("[debug] set_resource %s -> %d" % [str(kind), applied])
-	_debug_feedback = "调试：%s 已设为 %d" % [str(DEBUG_RESOURCE_LABELS.get(str(kind), str(kind))), applied]
-	_render()
-	return {"ok": true, "applied": applied}
+	return RunDebugFacade.debug_set_resource(self, kind, value)
 
 
 func debug_travel(node_id: String) -> Dictionary:
-	if not _debug_enabled():
-		return {"ok": false, "reason": "debug_disabled"}
-	if state == null or route.is_empty():
-		return _debug_fail("no_active_run")
-	if not current_battle.is_empty():
-		return _debug_fail_with("battle_in_progress", "调试失败：战斗进行中，禁止跳层")
-	var target := str(node_id).strip_edges()
-	var visible_ids: Array[String] = []
-	for visible_node in visible_route_nodes():
-		visible_ids.append(str(visible_node.get("id", "")))
-	if not visible_ids.has(target):
-		return _debug_fail_with("invisible_node", "调试失败：目标节点不在当前可见范围（%s）" % target)
-	var result := DebugActionsScript.apply(state, catalog,
-			{"op": "jump_to_node", "node_id": target}, _debug_enabled(), route)
-	state = result["state"]
-	
-	if not bool(result.get("ok", false)):
-		var reason := str(result.get("result", {}).get("reason", ""))
-		return _debug_fail_with(reason, "调试失败：跳层被拒（%s）" % reason)
-	_debug_travel_node = target
-	_view_name = "Map"
-	_show_map()
-	print("[debug] travel -> %s" % target)
-	_debug_feedback = "调试：已跳至 %s" % target
-	_render()
-	return {"ok": true}
+	return RunDebugFacade.debug_travel(self, node_id)
 
 
 func debug_snapshot_dump() -> Dictionary:
-	if not _debug_enabled():
-		return {}
-	if state == null:
-		return {}
-	var result := DebugActionsScript.apply(state, catalog,
-			{"op": "dump_snapshot"}, _debug_enabled())
-	state = result["state"]
-	
-	var snapshot: Dictionary = result.get("result", {}).get("snapshot", {})
-	print("[debug] snapshot ", JSON.stringify(snapshot))
-	_debug_feedback = "调试：RunData 快照已打印到 stdout"
-	_render_debug_panel()
-	return snapshot
+	return RunDebugFacade.debug_snapshot_dump(self)
 
 
 ## 调试面板跳层下拉选项：仅当前可见节点（防越层破坏地图不变量）。
 func _debug_travel_options() -> Array[Dictionary]:
-	var options: Array[Dictionary] = []
-	if state == null or route.is_empty():
-		return options
-	for node in visible_route_nodes():
-		var nid := str(node.get("id", ""))
-		options.append({
-			"id": nid,
-			# 调试跳层标签带节点类型，便于直接跳进战斗做交互验收。
-			"label": "[%s] %s·%s" % [nid, str(node.get("type", "?")), str(node.get("label", DisplayText.node(nid)))],
-		})
-	return options
+	return RunDebugFacade._debug_travel_options(self)
 
 
 func _debug_props() -> Dictionary:
-	var info: Dictionary = {}
-	if state != null:
-		info = RunSnapshotBuilderScript.debug(self)
-	return {
-		"open": _debug_panel_open,
-		"feedback": _debug_feedback,
-		"info": info,
-		"gu_schools": _debug_gu_schools(),
-		"gu_school": _debug_gu_school,
-		"gu_options": _debug_gu_options(_debug_gu_school),
-		"gu_selected": _debug_gu_selected,
-		"res_kind": _debug_res_kind,
-		"res_value": _debug_res_value,
-		"travel_options": _debug_travel_options(),
-		"travel_selected": _debug_travel_node,
-		"commands": {
-			"toggle_open": func(): _toggle_debug_panel(),
-			"set_gu_school": func(school_id: String): _set_debug_gu_school(school_id),
-			"set_gu_option": func(gu_id: String): _set_debug_gu_option(gu_id),
-			"add_gu": func(): debug_add_gu(_debug_gu_selected),
-			"set_res_kind": func(kind_value: String): _set_debug_res_kind(kind_value),
-			"set_res_value": func(num_text: String): _set_debug_res_value(num_text),
-			"apply_resource": func(): debug_set_resource(_debug_res_kind, _debug_res_value),
-			"set_travel_node": func(node_value: String): _set_debug_travel_node(node_value),
-			"travel": func(): debug_travel(_debug_travel_node),
-			"snapshot_dump": func(): debug_snapshot_dump(),
-		},
-	}
+	return RunDebugFacade._debug_props(self)
 
 
 ## 加蛊下拉 · 流派列表：目录 schools 顺序即展示顺序，label 用流派中文名。
 func _debug_gu_schools() -> Array[Dictionary]:
-	var out: Array[Dictionary] = []
-	if catalog == null or catalog.is_empty():
-		return out
-	var schools: Dictionary = catalog.get("schools", {})
-	for sid: String in schools.keys():
-		var meta: Dictionary = schools[sid]
-		out.append({
-			"id": sid,
-			"label": str(meta.get("name", meta.get("label", sid))),
-		})
-	return out
+	return RunDebugFacade._debug_gu_schools(self)
 
 
 ## 加蛊下拉 · 蛊虫选项：按所选流派过滤目录，label 用蛊虫中文名（DisplayText 同源）。
 func _debug_gu_options(school_id: String) -> Array[Dictionary]:
-	var out: Array[Dictionary] = []
-	if catalog == null or catalog.is_empty():
-		return out
-	for g: Dictionary in catalog.get("gu", []):
-		if str(g.get("school", "")) == school_id:
-			var gid := str(g.get("id", ""))
-			out.append({"id": gid, "label": DisplayText.gu(gid)})
-	return out
+	return RunDebugFacade._debug_gu_options(self, school_id)
 
 
 func _set_debug_gu_school(value: String) -> void:
-	_debug_gu_school = value
-	# 切换流派后复位选择到该流派第一只蛊，保证"加蛊"永远有确定目标。
-	_debug_gu_selected = ""
-	for g: Dictionary in _debug_gu_options(value):
-		_debug_gu_selected = str(g.get("id", ""))
-		break
+	RunDebugFacade._set_debug_gu_school(self, value)
 
 
 func _set_debug_gu_option(value: String) -> void:
-	_debug_gu_selected = value
+	RunDebugFacade._set_debug_gu_option(self, value)
 
 
 func _set_debug_res_kind(value: String) -> void:
-	_debug_res_kind = value
+	RunDebugFacade._set_debug_res_kind(self, value)
 
 
 func _set_debug_res_value(value: String) -> void:
-	_debug_res_value = value
+	RunDebugFacade._set_debug_res_value(self, value)
 
 
 func _set_debug_travel_node(value: String) -> void:
-	_debug_travel_node = value
+	RunDebugFacade._set_debug_travel_node(self, value)
 
 
 func _toggle_debug_panel() -> void:
-	_debug_panel_open = not _debug_panel_open
-	_render_debug_panel()
+	RunDebugFacade._toggle_debug_panel(self)
 
 
 func _mount_debug_panel() -> void:
-	if _debug_panel != null:
-		return
-	var scene := load(DEBUG_PANEL_PATH) as PackedScene
-	if scene == null:
-		print("[debug] debug_panel 场景缺失，面板未挂载")
-		return
-	_debug_host = Control.new()
-	_debug_host.name = "DebugPanelHost"
-	_debug_host.position = Vector2(20, 80)
-	_debug_host.custom_minimum_size = Vector2(420, 44)
-	_debug_host.size = _debug_host_size()
-	_debug_host.mouse_filter = Control.MOUSE_FILTER_PASS
-	add_child(_debug_host)
-	_debug_panel = scene.instantiate()
-	_debug_host.add_child(_debug_panel)
-	_debug_panel.set_props(_debug_props())
+	RunDebugFacade._mount_debug_panel(self)
 
 
 func _debug_host_size() -> Vector2:
-	# 线框稿 v2 基准：420px 分区浮窗（加蛊/资源/跳层/池情报/快照）。
-	return Vector2(420, 450) if _debug_panel_open else Vector2(420, 44)
+	return RunDebugFacade._debug_host_size(self)
 
 
 func _render_debug_panel() -> void:
-	if _debug_panel == null:
-		return
-	if _debug_host != null:
-		_debug_host.size = _debug_host_size()
-	_debug_panel.set_props(_debug_props())
+	RunDebugFacade._render_debug_panel(self)
 
 
 func _debug_ok(feedback: String) -> Dictionary:
-	_debug_feedback = feedback
-	# 主屏重渲染末尾已联动刷新调试面板（_render -> _render_debug_panel）。
-	_render()
-	return {"ok": true}
+	return RunDebugFacade._debug_ok(self, feedback)
 
 
 func _debug_fail(reason: String) -> Dictionary:
-	return {"ok": false, "reason": reason}
+	return RunDebugFacade._debug_fail(self, reason)
 
 
 func _debug_fail_with(reason: String, feedback: String) -> Dictionary:
-	_debug_feedback = feedback
-	_render_debug_panel()
-	return {"ok": false, "reason": reason}
+	return RunDebugFacade._debug_fail_with(self, reason, feedback)
 
 
 func _start_battle() -> void:

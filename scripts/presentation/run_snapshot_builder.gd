@@ -139,6 +139,11 @@ static func _v1_effect_text(source: Dictionary) -> String:
 	return SnapshotTextUtil._v1_effect_text(source)
 
 
+## W12 split: direct test caller (test_central_gu_economy) keeps the forwarder.
+static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+	return BattleSnapshot._v1_hand(battle_data, catalog)
+
+
 ## W12 split: content_error snapshot moved to snapshots/content_error_snapshot.gd.
 static func content_error(controller) -> Dictionary:
 	return ContentErrorSnapshot.build(controller)
