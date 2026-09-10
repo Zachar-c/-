@@ -110,7 +110,10 @@ static func for_screen(screen: String, controller) -> Dictionary:
 	match screen:
 		"Title":
 			return {
-				"continue_run": func(): controller._show_hall_subview("schools"),
+				# W10 方案甲（2026-09-10 视觉会话裁定）：「续入此世」= 读档继续，
+				# 经统一命令入口直接恢复进行中的 Run；无存档时 primary_action
+				# 本就是 open_schools，此分支只在 has_save 时可点。
+				"continue_run": func(): controller.submit_command({"type": "load_run"}),
 				"load_run": func(): controller.submit_command({"type": "load_run"}),
 				"select_school": func(school: String): controller._selected_school = school,
 				"toggle_buff": func(id): controller._toggle_buff(str(id)),

@@ -195,7 +195,10 @@ func submit_command(command: Dictionary) -> Dictionary:
 	if command.get("type", "") == "load_run":
 		var loaded := load_saved_run()
 		last_feedback = "已返回上次保存的行程。" if loaded else _save_load_feedback(last_load_diagnosis)
-		_show_map()
+		# W10 方案甲：读档失败（校验不符/版本拒绝）留在原屏显拒绝文案，
+		# 不切到 Map——null state 渲染地图快照必错，且玩家需要看到失败原因。
+		if loaded:
+			_show_map()
 		return {"ok": loaded, "feedback": last_feedback}
 
 
