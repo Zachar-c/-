@@ -53,8 +53,16 @@ func test_token_claim_grants_quality_loot_and_flags() -> void:
 			"granted gu count %d must match %s bounds" % [granted.size(), quality])
 	var recipe_bounds := {"broken": [0, 0], "common": [1, 2], "rare": [3, 4]}
 	var recipes: Array = result.get("granted_recipes", [])
-	assert_true(recipes.size() >= int(recipe_bounds[quality][0]) and recipes.size() <= int(recipe_bounds[quality][1]),
-			"granted recipe count must match %s bounds" % quality)
+	# 2026-09-10 改写：稀有档名义 3–4 份，但生产按 min(target, 池大小) 发放，
+	# 而「本阶+1 的固定蛊方」池目前很薄（output_rank=2 & kind=fixed 仅 1 条），
+	# 因此断言必须按**可达上界**写，否则会随抽到的档位抖动。
+	# （这是数据缺口：稀有档在当前数据下最多只能给 1 份，已在报告中登记。）
+	var recipe_pool_size := _fixed_recipe_pool_size(controller)
+	var recipe_low := mini(int(recipe_bounds[quality][0]), recipe_pool_size)
+	var recipe_high := mini(int(recipe_bounds[quality][1]), recipe_pool_size)
+	assert_true(recipes.size() >= recipe_low and recipes.size() <= recipe_high,
+			"granted recipe count %d must match %s bounds（固定蛊方池 %d）"
+			% [recipes.size(), quality, recipe_pool_size])
 	for recipe_id in recipes:
 		assert_true(controller.state.global_codex_ids.has(str(recipe_id)),
 				"granted recipe %s must be unlocked in-run" % str(recipe_id))
@@ -80,3 +88,18 @@ func test_scout_claim_path_and_seed_determinism() -> void:
 			"same seed must roll the same quality")
 	assert_eq(replayed.get("result", {}).get("granted_gu", []).size(), first_gu.size(),
 			"same seed must grant the same gu count")
+
+
+## 「本阶 +1 的固定蛊方」池大小 —— 与 inheritance_claim_rules 的筛选口径一致。
+func _fixed_recipe_pool_size(controller) -> int:
+	var sites: Dictionary = controller.catalog.get("inheritance_site_by_id", {})
+	var site: Dictionary = sites.get(str(controller.state.current_node_id), {})
+	if site.is_empty():
+		site = sites.get(str(controller.state.current_node_template_id), {})
+	var level := int(site.get("level", 1))
+	var count := 0
+	for recipe_value in controller.catalog.get("refinement_recipes", []):
+		var recipe: Dictionary = recipe_value
+		if int(recipe.get("output_rank", 0)) == level + 1 and str(recipe.get("kind", "")) == "fixed":
+			count += 1
+	return count

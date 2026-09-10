@@ -110,14 +110,21 @@ func test_gate_failure_does_not_advance_the_counter() -> void:
 	var cat := catalog()
 	var state: RunState = make_state(2026)
 	state.loot_pity = 2
+	# 2026-09-10 改写：原版假设"第一个 gu_id 为空的掉落就是门禁失败、且此前计数器没被动过"，
+	# 这只在特定随机序列下成立（稀有掉落会把计数器清零，之后再现空掉落就与前提矛盾）。
+	# 现在改为断言**真正的不变量**：任何一次"完全空掉落"都不改变计数器——与它出现在第几次无关。
 	var observed_failure := false
 	for _fight in range(30):
+		var pity_before := int(state.loot_pity)
 		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
 		state = rolled["state"]
-		if str(rolled["loot"].get("gu_id", "")).is_empty():
-			assert_eq(int(state.loot_pity), 2, "chance-gate failure must not touch the counter")
+		var loot: Dictionary = rolled["loot"]
+		# 「门禁失败」= **蛊**没抽出来（材料照常掉，所以不能要求 loot 全空）。
+		if str(loot.get("gu_id", "")).is_empty():
+			assert_eq(int(state.loot_pity), pity_before,
+					"蛊门禁失败不得改动计数器（第 %d 次，材料 %s）"
+					% [_fight, str(loot.get("material_ids", []))])
 			observed_failure = true
-			break
 	assert_true(observed_failure, "seed 2026 must hit a gate failure within 30 elite fights")
 
 

@@ -7,6 +7,11 @@ extends GutTest
 # pins it to identical SeededRoll outputs for identical inputs. The legacy
 # battle-resolver helpers (_seeded_index / _battle_rng_seed / _shuffled_cards)
 # died with the V1 convergence (B1 bucket C) and their pins left with them.
+#
+# 2026-09-10: tick 的语义从"种子偏移"改为"流位置"（见 seeded_roll.gd index() 注释）。
+# 之所以改：把 tick 线性混进种子再只走一步是仿射的，连续 tick 会退化成等差阶梯
+# （bound=100 时每 tick 恒 +87），实测命中率均值仍正确、只查确定性的测试抓不到。
+# 下方三条"独立重算"的期望值随之改写为流式；另加一条 tick=0 的逐字节兼容钉子。
 
 
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
@@ -44,10 +49,33 @@ func test_seeded_roll_matches_canonical_formula_computed_independently() -> void
 		var hash := 0
 		for character in str(case_data["salt"]):
 			hash = hash * 31 + character.unicode_at(0)
-		var rng := SeededRng.new(int(case_data["seed"]) * 1000003 + int(case_data["tick"]) * 97 + hash)
+		# 独立重算：tick 不再进入种子，而是在流上推进 tick 步。
+		var rng := SeededRng.new(int(case_data["seed"]) * 1000003 + hash)
+		rng.discard(int(case_data["tick"]))
 		var expected := rng.next_index(9)
 		assert_eq(int(SeededRollScript.index(9, int(case_data["seed"]), str(case_data["salt"]), int(case_data["tick"]))), expected,
 				"canonical formula drift for %s" % str(case_data))
+
+
+## 兼容性契约：tick=0 必须与旧实现（tick 混入种子 + 只走一步）**逐字节一致**。
+## 这是"地图生成不受随机数修正影响"的依据 —— map_generator._node_rng 的 tick 恒为 0。
+func test_tick_zero_stays_byte_identical_to_legacy_formula() -> void:
+	for case_value in [
+			{"seed": 0, "salt": "a"},
+			{"seed": 101, "salt": "ridge_caravan"},
+			{"seed": 424242, "salt": "map:4:beast_swarm_pass:enemy"},
+		]:
+		var case_data: Dictionary = case_value
+		var hash := 0
+		for character in str(case_data["salt"]):
+			hash = hash * 31 + character.unicode_at(0)
+		var legacy := SeededRng.new(int(case_data["seed"]) * 1000003 + hash)   # 旧式：tick=0
+		for bound in [4, 7, 11, 100]:
+			var legacy_rng := SeededRng.new(int(case_data["seed"]) * 1000003 + hash)
+			assert_eq(int(SeededRollScript.index(bound, int(case_data["seed"]), str(case_data["salt"]), 0)),
+					legacy_rng.next_index(bound),
+					"tick=0 与旧式不一致（种子=%d salt=%s bound=%d）" % [int(case_data["seed"]), case_data["salt"], bound])
+		assert_ne(legacy, null)
 
 
 func test_seeded_roll_bound_below_two_is_zero() -> void:
@@ -78,7 +106,8 @@ func test_converged_refinement_roll_matches_old_inline_formula() -> void:
 		var recipe_hash := 0
 		for character in "bright_thread_risk":
 			recipe_hash = recipe_hash * 31 + character.unicode_at(0)
-		var expected_rng := SeededRng.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + recipe_hash)
+		var expected_rng := SeededRng.new(int(state.seed) * 1000003 + recipe_hash)
+		expected_rng.discard(state.event_log.size())
 		assert_eq(int(RefineCommandRulesScript._refinement_roll(state, "bright_thread_risk")), expected_rng.next_index(100) + 1,
 				"refinement roll drift seed=%d" % seed_value)
 
@@ -90,7 +119,8 @@ func test_converged_roll_chance_matches_old_inline_formula() -> void:
 		salt_hash = salt_hash * 31 + character.unicode_at(0)
 	for seed_value in [0, 1, 101, 424242]:
 		var state := _state_with_tick(seed_value, 4)
-		var expected_rng := SeededRng.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
+		var expected_rng := SeededRng.new(int(state.seed) * 1000003 + salt_hash)
+		expected_rng.discard(state.event_log.size())
 		assert_eq(bool(ResolverScript.roll_chance(state, 50, salt)), bool(expected_rng.next_index(100) < 50),
 				"roll chance drift seed=%d" % seed_value)
 

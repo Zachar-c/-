@@ -40,7 +40,9 @@ func test_refinement_roll_uses_project_seeded_rng_sequence() -> void:
 	var recipe_hash := 0
 	for character in recipe_id:
 		recipe_hash = recipe_hash * 31 + character.unicode_at(0)
-	var seeded_rng := SeededRng.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + recipe_hash)
+	# 2026-09-10：tick 改为"流位置"，不再混进种子（见 seeded_roll.gd index() 注释）。
+	var seeded_rng := SeededRng.new(int(state.seed) * 1000003 + recipe_hash)
+	seeded_rng.discard(state.event_log.size())
 
 	assert_eq(RefineCommandRulesScript._refinement_roll(state, recipe_id), seeded_rng.next_index(100) + 1)
 

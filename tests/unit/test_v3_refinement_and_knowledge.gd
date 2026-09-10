@@ -79,9 +79,18 @@ func test_free_mix_resolves_seeded_outcome_and_never_accepts_ui_roll() -> void:
 
 	assert_true(result["result"]["ok"])
 	assert_false(result["result"].has("roll"))
-	assert_true(result["state"].event_log.back()["reason"] in [
-		"free_mix_destroyed", "free_mix_mutation", "free_mix_explosion"
-	])
+	# 2026-09-10 改写：不能断言 event_log.back() —— `destroyed` 分支随后还会追加一个诅咒事件，
+	# back() 会变成诅咒那条，于是断言只在"没抽到 destroyed"时成立。改为检查**本命令追加的事件**里
+	# 含 free_mix_* 之一。
+	var appended_reasons: Array = []
+	for event_index in range(run.event_log.size(), result["state"].event_log.size()):
+		appended_reasons.append(str(result["state"].event_log[event_index].get("reason", "")))
+	var matched_free_mix_reason := false
+	for reason_value in appended_reasons:
+		if str(reason_value) in ["free_mix_destroyed", "free_mix_mutation", "free_mix_explosion"]:
+			matched_free_mix_reason = true
+	assert_true(matched_free_mix_reason,
+			"自由炼蛊必须落 free_mix_* 事件，实际追加=%s" % str(appended_reasons))
 
 	var repeat := _run_with_gu_definitions(["small_light_gu", "trail_eye_gu"])
 	var repeat_result := Resolver.apply(repeat, {
