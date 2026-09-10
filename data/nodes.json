@@ -5,6 +5,7 @@
    "stage": "one",
    "type": "contact",
    "enemy_kind": "neutral_stone_wanderer",
+   "enemy_theme": "neutral",
    "visible": true,
    "start": true,
    "summary": "一名散修拦在岔路前，正试探你的虚实。",
@@ -237,6 +238,7 @@
     "fight"
    ],
    "enemy_kind": "crag_serpent_matriarch",
+   "enemy_theme": "beast",
    "time_scale": "days",
    "on_skip": "none",
    "next_ids": []
@@ -251,6 +253,7 @@
     "fight"
    ],
    "enemy_kind": "marrow_gu_adept",
+   "enemy_theme": "cultivator",
    "time_scale": "days",
    "on_skip": "none",
    "core_replacement_token": {
@@ -268,6 +271,7 @@
     "fight"
    ],
    "enemy_kind": "thunder_crown_sovereign",
+   "enemy_theme": "beast",
    "time_scale": "days",
    "on_skip": "none",
    "next_ids": []
@@ -282,6 +286,7 @@
     "fight"
    ],
    "enemy_kind": "blood_vein_bishop",
+   "enemy_theme": "cultivator",
    "time_scale": "days",
    "on_skip": "none",
    "next_ids": []
@@ -335,6 +340,7 @@
    "stage": "three",
    "type": "caravan",
    "enemy_kind": "faction_guard",
+   "enemy_theme": "faction",
    "visible": false,
    "choices": [
     "probe",
@@ -355,6 +361,7 @@
    "stage": "two",
    "type": "contact",
    "enemy_kind": "neutral_stone_wanderer",
+   "enemy_theme": "neutral",
    "visible": false,
    "summary": "一名货郎守着货担歇脚，担中蛊虫明码标价，也收以物易物。",
    "choices": [
@@ -387,6 +394,7 @@
    "stage": "one",
    "type": "combat",
    "enemy_kind": "ridge_hound",
+   "enemy_theme": "beast",
    "enemy_kinds": [
     "ridge_hound",
     "neutral_stone_wanderer"
@@ -410,6 +418,7 @@
    "stage": "one",
    "type": "pursuit",
    "enemy_kind": "thunder_crown_wolf",
+   "enemy_theme": "beast",
    "visible": false,
    "choices": [
     "fight",
@@ -425,6 +434,7 @@
    "stage": "four",
    "type": "combat",
    "enemy_kind": "faction_guard",
+   "enemy_theme": "faction",
    "visible": false,
    "choices": [
     "fight",
@@ -440,6 +450,7 @@
    "stage": "four",
    "type": "earth_vein",
    "enemy_kind": "beast_swarm",
+   "enemy_theme": "beast",
    "visible": false,
    "choices": [
     "ally",
@@ -488,6 +499,7 @@
    "type": "combat",
    "layer_boss": 5,
    "enemy_kind": "miasma_vein_lord",
+   "enemy_theme": "anomaly",
    "visible": false,
    "summary": "瘴脉尽头，蛊主把守升仙窗口。",
    "choices": [
@@ -552,6 +564,7 @@
    "stage": "one",
    "type": "combat",
    "enemy_kind": "iron_hide_boar",
+   "enemy_theme": "beast",
    "visible": false,
    "summary": "铁皮野猪拦在隘口，獠牙泛光，撞上来就是一道血口。",
    "choices": [
@@ -567,6 +580,7 @@
    "stage": "three",
    "type": "combat",
    "enemy_kind": "ridge_elite_scout",
+   "enemy_theme": "faction",
    "visible": false,
    "summary": "斥候在岭脊设伏，弩机已上弦，先手藏在草丛里。",
    "choices": [
@@ -582,6 +596,7 @@
    "stage": "five",
    "type": "combat",
    "enemy_kind": "thunder_crown_wolf",
+   "enemy_theme": "beast",
    "visible": false,
    "summary": "雷冠狼独踞道中，爪下电纹明灭，是兽群头狼。",
    "choices": [

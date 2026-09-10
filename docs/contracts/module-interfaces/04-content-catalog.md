@@ -18,7 +18,13 @@
 ## 关键数据契约（catalog 键）
 
 - `gu_by_id`：蛊定义（802 项，`{id, tier, rank, school, role, rarity, v1_effect, is_permanent, durability_mode, ...}`）
-- `enemies_by_id`：敌人定义（12 项，`{id, tier, rank, hp, turn, essence, clues, intent, reactions}`）
+- `enemies_by_id`：敌人定义（**30 项**，`{id, theme, tier, rank, hp, turn, essence, clues, intent, reactions, phases?}`）。
+  - `theme ∈ {beast, faction, cultivator, neutral, anomaly}`（白名单见 `enemy_catalog.THEMES`，缺失或未知即校验报错）。
+  - `rank ∈ 0..5` 是**兽王/僵尸阶梯的层位**（原著依据见 `docs/lore/canon-index.md` 的 `CAN-BEAST-TIER-001`、`CAN-ANOMALY-002`）；
+    `hp` 不得等于中心 `beast_scale(rank)` 值（100/200/400/800/1600/3200），否则必须给 `override_reason`。
+  - `clues` **至少 2 条**（玩家出手前的敌情预警载体），守卫见 `test_b5_content_expansion.gd`。
+- `enemy_ids_by_theme`：`theme → [enemy_id]` 索引；`enemy_catalog.enemy_pool(catalog, theme, fallback_ids)`
+  取主题池，**池空/未知主题一律回退 `fallback_ids`，绝不返回空数组**（调用方无需兜底分支）。
 - `nodes_data`：`{nodes[]}` 地图节点模板；`pacing`：`{layers{1..5}, ending_after_stage}`
 - `balance`：行为数值（`{retreat_stone_cost, cultivate_rank_two_stone_cost, ...}`，42 键）
 - `buffs`、`recipes`、`events`、`loot_tables`、`shops`、`aptitude`、`first_run`、`dialogue_templates`、`names`、`contracts`、`journal`

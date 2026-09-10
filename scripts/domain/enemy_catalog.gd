@@ -2,12 +2,35 @@ class_name EnemyCatalog
 extends RefCounted
 
 
+## 主题标签：敌人与点位用它组"同主题池"（E6 敌人按层随机的池来源）。
+## 新增主题必须同时登记在这里，否则 enemy_catalog.validate 会报错。
+const THEMES: Array[String] = ["beast", "faction", "cultivator", "neutral", "anomaly"]
+
+
 static func load_all() -> Dictionary:
 	var entries := _load_entries()
 	var indexed := {}
+	var ids_by_theme := {}
+	for theme in THEMES:
+		ids_by_theme[theme] = []
 	for entry in entries:
-		indexed[str(entry.get("id", ""))] = entry.duplicate(true)
-	return {"enemies": entries, "enemy_by_id": indexed}
+		var enemy_id := str(entry.get("id", ""))
+		indexed[enemy_id] = entry.duplicate(true)
+		var theme := str(entry.get("theme", ""))
+		if ids_by_theme.has(theme):
+			(ids_by_theme[theme] as Array).append(enemy_id)
+	return {"enemies": entries, "enemy_by_id": indexed, "enemy_ids_by_theme": ids_by_theme}
+
+
+## 按主题取敌人 id 池。
+## 未知名主题 / 池为空时回退到 fallback_ids —— **池空绝不返回空**，
+## 调用方因此不需要额外的兜底分支（参考 Slay-The-Robot 的 EventPoolData.fallback 约定）。
+static func enemy_pool(catalog: Dictionary, theme: String, fallback_ids: Array = []) -> Array:
+	var pools: Dictionary = catalog.get("enemy_ids_by_theme", {})
+	var pool: Array = (pools.get(theme, []) as Array).duplicate()
+	if pool.is_empty():
+		return fallback_ids.duplicate()
+	return pool
 
 
 static func validate(entries: Array) -> Array[String]:
@@ -17,6 +40,11 @@ static func validate(entries: Array) -> Array[String]:
 		var tier := str(entry.get("tier", "common"))
 		if not tier in ["common", "elite", "boss"]:
 			errors.append("enemy %s has invalid tier %s" % [enemy_id, tier])
+		var theme := str(entry.get("theme", ""))
+		if theme.is_empty():
+			errors.append("enemy %s missing theme" % enemy_id)
+		elif not THEMES.has(theme):
+			errors.append("enemy %s has unknown theme %s" % [enemy_id, theme])
 		var reactions: Array = entry.get("reactions", [])
 		for index in reactions.size():
 			var reaction: Dictionary = reactions[index]

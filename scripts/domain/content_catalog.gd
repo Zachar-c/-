@@ -136,6 +136,7 @@ static func load_all() -> Dictionary:
 		"gu_extra_names_missing": gu_extra_names_missing,
 		"enemies": enemy_catalog["enemies"],
 		"enemy_by_id": enemy_catalog["enemy_by_id"],
+		"enemy_ids_by_theme": enemy_catalog["enemy_ids_by_theme"],
 	}
 
 
@@ -472,6 +473,11 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var singular_kind := str(node.get("enemy_kind", ""))
 		if not singular_kind.is_empty() and not (catalog.get("enemy_by_id", {}) as Dictionary).has(singular_kind):
 			errors.append("node %s references unknown enemy %s" % [node.get("id", ""), singular_kind])
+		# 2026-09-10 主题标签：点位可声明 enemy_theme，作为 E6 敌人池的来源。
+		# 只校验白名单（未知主题=错别字，必须报错）；缺省主题时回退到该点位原有的敌人指定。
+		var node_theme := str(node.get("enemy_theme", ""))
+		if not node_theme.is_empty() and not EnemyCatalogScript.THEMES.has(node_theme):
+			errors.append("node %s has unknown enemy_theme %s" % [node.get("id", ""), node_theme])
 		var ascension_grants: Dictionary = node.get("ascension_grants", {})
 		var choices: Array = node.get("choices", [])
 		for grant_action in ascension_grants:
