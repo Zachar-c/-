@@ -108,6 +108,12 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 ### P5 Shop（`shop_screen`，快照 `Shop/shop()`）
 
 - 定位：商店购买/回收/以物易物/寿元交易/服务。
+- **货架（E7，2026-09-10）**：每店只摆 `4 + ⌊层/2⌋` 件**货**（层 1/2/3/4/5 = 4/5/5/6/6），
+  保底至少 1 件本层最高档；**服务**（黑市兑换 / 洗恶名 / 蛊方解锁 / 真元）常驻，不受货架限制。
+  货架由 `(局种子, 节点模板 id)` 确定性派生——同一商店点位反复进出**货架不变**（不能刷货），
+  不同点位不同；**不新增存档字段**（可重算，读档后自动一致）。
+  验收：不在货架上的**货**调用 `shop_purchase` 必须被领域层拒绝 `shop_offer_not_in_stock`
+  （此前只藏 UI、命令面仍可越权购买）；回归用例 `tests/unit/test_shop_roll.gd`。
 - 数据绑定：货架报价（`id/kind/gu_id/material_id/price/tier/stock`）、`_shop_services[]`（服务次数/限次/涨价）。
 - 命令：`shop_purchase/shop_lifespan_deal/shop_barter/sell_material/buy_gu/sell_gu/exchange_gu`。
 - 状态与确认：`npc_stock_missing`（已售空）禁用；寿元交易 → 确认层级 2（`lifespan_trade_warning`）；换蛊 → 确认层级 2 + `GuPermanentLossList`（`[T9]` `exchange_screen` 键：permanent_losses/rejected_natures）；危险/秘密材料拒收提示（`[T9]` MarketRules 拒收口径）。

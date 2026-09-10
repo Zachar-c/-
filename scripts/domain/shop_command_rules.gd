@@ -14,9 +14,129 @@ const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
 const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const ResolverHelpersScript = preload("res://scripts/domain/resolver_helpers.gd")
+const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
+const SeededRngScript = preload("res://scripts/domain/rng.gd")
 
 
 const APTITUDE_LADDER := ["ding", "bing", "yi", "jia"]
+
+
+# ---------------------------------------------------------------------------
+# 黑市货架（E7，2026-09-10）：每店只摆 N 件货，不再把全表摊开
+# ---------------------------------------------------------------------------
+#
+# 设计（与两次开源调研的结论对齐）：
+#  · **货要抽架、服务常驻**。`purchase / material_purchase / gu_fang_unlock /
+#    barter / lifespan_deal` 是"货"，每店只上 N 件；`resource_trade`（黑市兑换）、
+#    `wash_notoriety`、`recipe_unlock`、`soul_boost` 是"服务"（柜台业务），常驻。
+#    这也与既有语义一致：货阶门禁本来就只作用于 `purchase`，服务不受层门禁。
+#  · **洗牌取前 N** 而不是"加权抽 N 次"：天然不重复、不需要去重循环
+#    （Slay-The-Robot 的 shuffle_slice_array 与 deck_builder_tutorial 的
+#     `array_shuffle + slice(0,3)` 都是这个手法）。
+#  · **保底**：每架至少 1 件"本层可出的最高档"，避免整架都是低档货。
+#  · **确定性**：种子 = (局种子, 节点模板 id)，经 SeededRoll 的流式抽取派生。
+#    同一节点反复进出货架一致（不会刷货），不同节点不同；不新增存档字段。
+const SHOP_GOODS_KINDS: Array[String] = [
+	"purchase", "material_purchase", "gu_fang_unlock", "barter", "lifespan_deal",
+]
+
+
+## 本店货架的槽位数：4 + ⌊层/2⌋ → 层1=4、层2=5、层3=5、层4=6、层5=6。
+static func shop_slot_count(state: RunState, catalog: Dictionary) -> int:
+	return 4 + int(_current_shop_layer(state, catalog) / 2.0)
+
+
+## 货架 salt：绑定**节点模板 id**（而非随进程变化的实例 id），保证同店一致。
+static func _shop_stock_salt(state: RunState) -> String:
+	var node_key := str(state.current_node_template_id)
+	if node_key.is_empty():
+		node_key = str(state.current_node_id)
+	return "shop.stock.%s" % node_key
+
+
+## 种子化洗牌（Fisher-Yates，取值经 SeededRng 的流式接口）。
+static func _shop_shuffle(seed_value: int, salt: String, items: Array) -> Array:
+	var rng: Variant = SeededRngScript.new(SeededRollScript.mixed_seed(seed_value, salt, 0))
+	var shuffled := items.duplicate()
+	for i in range(shuffled.size() - 1, 0, -1):
+		var j: int = rng.next_index(i + 1)
+		var held: Variant = shuffled[i]
+		shuffled[i] = shuffled[j]
+		shuffled[j] = held
+	return shuffled
+
+
+## 本次可上架的"货"（kind ∈ SHOP_GOODS_KINDS 且货阶 ≤ 本层上限）。
+static func shop_goods_pool(state: RunState, catalog: Dictionary) -> Array[String]:
+	var max_tier := shop_max_tier(state, catalog)
+	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	var pool: Array[String] = []
+	for offer_key in offer_by_id:
+		var offer: Dictionary = offer_by_id[offer_key]
+		if not SHOP_GOODS_KINDS.has(str(offer.get("kind", ""))):
+			continue
+		if int(offer.get("tier", 1)) > max_tier:
+			continue
+		pool.append(str(offer_key))
+	pool.sort()   # 与字典插入顺序解耦：洗牌结果只取决于种子
+	return pool
+
+
+## 本店货架（N 件，已含保底）。空池返回空数组。
+static func shop_stock(state: RunState, catalog: Dictionary, slot_override: int = 0) -> Array[String]:
+	var pool := shop_goods_pool(state, catalog)
+	if pool.is_empty():
+		return []
+	var slots := slot_override if slot_override > 0 else shop_slot_count(state, catalog)
+	slots = mini(slots, pool.size())
+	var shuffled := _shop_shuffle(int(state.seed), _shop_stock_salt(state), pool)
+	var stock: Array[String] = []
+	for offer_key in shuffled.slice(0, slots):
+		stock.append(str(offer_key))
+	# 保底：本层最高档至少一件（不足则拿掉末位换成最高档候选）
+	var max_tier := shop_max_tier(state, catalog)
+	if not _stock_has_tier(stock, catalog, max_tier):
+		var top := _pick_tier_candidate(state, catalog, pool, max_tier, stock)
+		if top != "":
+			stock[stock.size() - 1] = top
+	return stock
+
+
+## 该货是否"在架可买"。
+## **服务常驻**（resource_trade / wash_notoriety / recipe_unlock / soul_boost）恒为真；
+## 只有"货"（SHOP_GOODS_KINDS）才要求出现在本次货架里。
+## 快照面与命令面都走这一个判定，避免"看得见买不到 / 看不见却买得到"。
+static func shop_offer_is_stocked(state: RunState, catalog: Dictionary, offer_id: String) -> bool:
+	var offer: Dictionary = catalog.get("shop_offer_by_id", {}).get(offer_id, {})
+	if offer.is_empty():
+		return false
+	if not SHOP_GOODS_KINDS.has(str(offer.get("kind", ""))):
+		return true
+	return shop_stock(state, catalog).has(offer_id)
+
+
+static func _stock_has_tier(stock: Array[String], catalog: Dictionary, tier: int) -> bool:
+	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	for offer_key in stock:
+		if int((offer_by_id.get(offer_key, {}) as Dictionary).get("tier", 1)) == tier:
+			return true
+	return false
+
+
+## 从未上架的最高档候选中取一件（同一条种子化洗牌，保证确定性）。
+static func _pick_tier_candidate(state: RunState, catalog: Dictionary, pool: Array[String],
+		tier: int, exclude: Array[String]) -> String:
+	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	var candidates: Array[String] = []
+	for offer_key in pool:
+		if exclude.has(offer_key):
+			continue
+		if int((offer_by_id.get(offer_key, {}) as Dictionary).get("tier", 1)) == tier:
+			candidates.append(offer_key)
+	if candidates.is_empty():
+		return ""
+	var shuffled := _shop_shuffle(int(state.seed), "%s.guarantee" % _shop_stock_salt(state), candidates)
+	return str(shuffled[0])
 
 
 ## 统一裁定表：当前大层的黑市参数（货阶上限 / 价格乘数%）。
@@ -60,6 +180,15 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	# 黑市分层上架：货阶高于当前大层时拒绝（层越深货越贵且稀有度越高）。
 	if int(offer.get("tier", 1)) > _current_shop_layer(state, catalog):
 		return Resolver._rejected(state, "shop_tier_locked")
+	# E7（2026-09-10）：**黑市**购买时，不在本次货架上的货一律拒绝。
+	# 只藏货架不拦命令面等于门关了一半 —— 命令面必须与快照读同一份货架。
+	#
+	# ⚠️ 只约束 `shop_purchase`：`npc_trade` 走的是 NPC 自己的 `npc.stock`
+	# （见 _npc_trade），两套货架互不相干；把它们混在一起会让散修货郎的
+	# 个人货架被黑市货架规则误杀（2026-09-10 test_npc_stock 抓到）。
+	if str(command.get("type", "")) == "shop_purchase" \
+			and not shop_offer_is_stocked(state, catalog, str(command.get("offer_id", ""))):
+		return Resolver._rejected(state, "shop_offer_not_in_stock")
 	var cost := shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
 	if state.stone < cost:
 		return Resolver._rejected(state, "insufficient_stone")

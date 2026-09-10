@@ -25,6 +25,10 @@ static func build(controller) -> Dictionary:
 		# 黑市分层上架：货阶高于当前大层的货不露面（层越深货越贵且稀有）。
 		if int(o.get("tier", 1)) > max_tier:
 			continue
+		# E7（2026-09-10）：货要抽架 —— 只列本次货架上的货；服务（兑换/洗恶名/蛊方/真元）
+		# 常驻不受影响。判定与购买门禁共用 Resolver.shop_offer_is_stocked。
+		if not ResolverScript.shop_offer_is_stocked(controller.state, catalog, str(offer_key)):
+			continue
 		var gid := str(o.get("gu_id", ""))
 		var name := DisplayText.gu(gid) if gid != "" else str(o.get("card_key", "货物"))
 		var price := str(ResolverScript.shop_layer_price(catalog, controller.state, int(o.get("stone_cost", 0)))) + " 元石"

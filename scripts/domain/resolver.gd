@@ -44,6 +44,15 @@ static func shop_max_tier(state: RunState, catalog: Dictionary) -> int:
 	return ShopCommandRulesScript.shop_max_tier(state, catalog)
 
 
+## E7（2026-09-10）：黑市货架 —— 命令面与快照面共用的唯一来源。
+static func shop_stock(state: RunState, catalog: Dictionary, slot_override: int = 0) -> Array[String]:
+	return ShopCommandRulesScript.shop_stock(state, catalog, slot_override)
+
+
+static func shop_offer_is_stocked(state: RunState, catalog: Dictionary, offer_id: String) -> bool:
+	return ShopCommandRulesScript.shop_offer_is_stocked(state, catalog, offer_id)
+
+
 ## 公开 API 转发（W11 A4）：实现迁至 refine_command_rules.gd。
 ## 外部调用点（action_preview_service / snapshot_builder / 测试）经
 ## ResolverScript 引用，签名不变，仅加一行转发。

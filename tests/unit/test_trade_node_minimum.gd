@@ -80,11 +80,26 @@ func test_duplicate_gu_price_pit_is_closed() -> void:
 
 
 func test_purchase_small_light_gu_deducts_stone_and_adds_gu() -> void:
-	var state := _state_with_stone(12)
-	var out := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_small_light_gu"}, catalog)
-	assert_true(bool(out["result"].get("ok", false)), "购买 OK")
-	assert_eq(int(out["state"].stone), 0, "扣 12 元石")
-	assert_true(out["state"].refined_gu_ids.has("small_light_gu"), "入 refined_gu_ids")
+	# E7（2026-09-10）：货架每店只摆 N 件，测试不能再假定某件货必在架上。
+	# 改为「从本店货架取一件给蛊的 purchase 货」，验的还是同一件事：购买结算
+	# = 扣元石 + 入 refined_gu_ids。
+	var state := _state_with_stone(999)
+	var target := ""
+	for offer_id in ResolverScript.shop_stock(state, catalog):
+		var candidate: Dictionary = catalog["shop_offer_by_id"].get(offer_id, {})
+		if str(candidate.get("kind", "")) == "purchase" and not str(candidate.get("gu_id", "")).is_empty():
+			target = offer_id
+			break
+	assert_ne(target, "", "本店货架上应有一件给蛊的 purchase 货")
+	if target.is_empty():
+		return
+	var offer: Dictionary = catalog["shop_offer_by_id"][target]
+	var gu_id := str(offer.get("gu_id", ""))
+	var cost := ResolverScript.shop_layer_price(catalog, state, int(offer.get("stone_cost", 0)))
+	var out := ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": target}, catalog)
+	assert_true(bool(out["result"].get("ok", false)), "购买 OK：%s → %s" % [target, str(out["result"])])
+	assert_eq(int(out["state"].stone), 999 - cost, "扣 %d 元石（%s）" % [cost, target])
+	assert_true(out["state"].refined_gu_ids.has(gu_id), "入 refined_gu_ids：%s" % gu_id)
 
 
 func test_purchase_moon_blue_petal_credits_materials() -> void:

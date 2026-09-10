@@ -8,6 +8,7 @@ const RunStateScript = preload("res://scripts/domain/run_state.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
+const ShopRulesScript = preload("res://scripts/domain/shop_command_rules.gd")
 
 var catalog: Dictionary
 
@@ -32,10 +33,31 @@ func test_high_tier_offer_is_locked_on_shallow_layers() -> void:
 
 func test_tiered_offer_unlocks_on_its_layer_with_layered_price() -> void:
 	var run := _state_at_layer(3, 99)
-	var result := ResolverScript.apply(run, {"type": "shop_purchase", "offer_id": "purchase_moonlight"}, catalog)
+	# 「解锁」与「层价」分两件事断言 —— 保底那件未必是 purchase 类。
+	# ① 解锁：层 3 的可选池必须已经含 tier-3 货。
+	var pool := ShopRulesScript.shop_goods_pool(run, catalog)
+	var unlocked := false
+	for offer_id in pool:
+		if int((catalog["shop_offer_by_id"][offer_id] as Dictionary).get("tier", 1)) == 3:
+			unlocked = true
+	assert_true(unlocked, "层 3 的可选池必须含 tier-3 货（货阶解锁）")
+
+	# ② 层价：从**本店货架**上取一件 purchase 货，独立重算层价后购买。
+	var target := ""
+	for offer_id in ResolverScript.shop_stock(run, catalog):
+		if str((catalog["shop_offer_by_id"][offer_id] as Dictionary).get("kind", "")) == "purchase":
+			target = offer_id
+			break
+	assert_ne(target, "", "层 3 货架应含 purchase 货")
+	if target.is_empty():
+		return
+	var base := int((catalog["shop_offer_by_id"][target] as Dictionary).get("stone_cost", 0))
+	var pct := int((catalog["pacing"]["layers"]["3"] as Dictionary).get("shop_price_pct", 0))
+	var expected := base + int(base * pct / 100.0)
+	var result := ResolverScript.apply(run, {"type": "shop_purchase", "offer_id": target}, catalog)
 	assert_true(result["result"]["ok"], str(result["result"]))
-	# 层价：基价 6 → price_for（无恶名=6）→ L3 +20% → 8（7.2 取整）。
-	assert_eq(int(result["state"].stone), 99 - 7, "the layer price multiplier must apply (6 -> price_for 6 -> +20% int = 7)")
+	assert_eq(int(result["state"].stone), 99 - expected,
+			"层价乘数必须生效（%s 基价 %d → 层价 %d）" % [target, base, expected])
 
 
 func test_shop_snapshot_only_lists_offers_within_the_layer_tier_cap() -> void:
@@ -54,5 +76,7 @@ func test_shop_snapshot_only_lists_offers_within_the_layer_tier_cap() -> void:
 	var deep_ids: Array[String] = []
 	for offer in deep.get("offers", []):
 		deep_ids.append(str(offer.get("id", "")))
-	assert_true(deep_ids.has("purchase_moonlight"), "tier-3 goods surface on layer 3")
+	# E7（2026-09-10）：层 3 上架的货必须全部出现在列表里（不多不少），超阶货仍不露面。
+	for offer_id in ResolverScript.shop_stock(controller.state, catalog):
+		assert_true(deep_ids.has(offer_id), "架上的货必须可见：%s" % offer_id)
 	assert_false(deep_ids.has("purchase_moon_glow"), "tier-5 goods stay off the layer-3 shelf")
