@@ -181,15 +181,15 @@ C done → remediation-plan W10 关闭（视觉会话写）
 | A6 | 文档收口 | 代理 A | done | D2 | 49ffbe5 | 新文件名真实存在；无过时行数描述 | PONYTAIL-DEBT + 07-domain-action-router + MODULE-INVENTORY + resolver.gd:4 门限注释 + §6 看板回写 |
 | A7 | 回归+合入 M1 | 代理 A→用户 | done | D2 | master=49ffbe5（ff 自 7158d1c） | master 三件套绿：unit 1167/1167 + integration 31/31 + guitkx 16 确定性 | 用户批准后 ff 合入；看板 A1–A4 详注与 A5/A6/A8 两版并集合并；worktree 已 remove；M1 达成 |
 | A8 | school 复核 | 代理 A | done | 随时 | — | unit 绿 | 4 函数均存活（is_soul→relic_hook_resolver:82；blood/add_blood/material_fuel→test_school_framework）；经 preload 别名 SchoolRulesScript 引用（按 SchoolRules. 查会漏）→ 无需再动 |
-| B1 | worktree+契约基线 | 代理 A | pending | D3(A7后) | | | |
-| B2 | hall 快照 | 代理 A | pending | D3 | | | |
-| B3 | map 快照 | 代理 A | pending | D3 | | | |
-| B4 | battle 快照 | 代理 A | pending | D4 | | | |
-| B5 | 其余屏快照 | 代理 A | pending | D4–D5 | | | 一屏一提交 |
-| B6 | save flow | 代理 A | pending | D5 | | | |
-| B7 | debug facade | 代理 A | pending | D5 | | | |
-| B8 | screen router | 代理 A | pending | D5–D6 | | | |
-| B9 | 回归+合入 M2 | 代理 A→用户 | pending | D6 | | | 需用户批准 merge |
+| B1 | worktree+契约基线 | 代理 A | done | D3(A7后) | 分支 `chore-w12-snapshot-split` @ 2830dd0 | unit 1167/1167（含 test_snapshot_contract） | mtime 门核查：9:21 批量 mtime 为 A7 ff 合入 checkout 产物（git status 干净），非视觉会话；.godot 缓存已复制入 worktree |
+| B2 | hall 快照 | 代理 A | done | D3 | c8fb6b8 | unit 全绿 | `snapshots/hall_snapshot.gd` + `snapshot_text_util.gd`；builder 保留 `_codex` 转发（verify 工具直调） |
+| B3 | map 快照 | 代理 A | done | D3 | 4a3f6cd | unit 全绿 | `snapshots/map_snapshot.gd`；共享 helper 经 `RunSnapshotBuilder._node_label/_inventory` 等 |
+| B4 | battle 快照 | 代理 A | done | D4 | f27ef42 | unit 全绿；V1 键零漂移 | `snapshots/battle_snapshot.gd`（battle+kill）；`battle_turn_supports` 留转发 |
+| B5 | 其余屏快照 | 代理 A | done | D4–D5 | 714d011/6559b6c/b9bc1da/9389f24/d041738 | unit 1155+ 全绿；契约测试绿 | rest→shop→refine→npc→reward 单独提交；encounter/settings/content_error/debug 合并提交（此前 reward 提交误带其他屏转发器，已 soft-reset 重做）；`_v1_hand` 留转发（test_central_gu_economy 直调）；builder 767 行（<800 达标） |
+| B6 | save flow | 代理 A | done | D5 | 71da214 | unit 1155 + integration 31 绿 | `run_save_flow.gd`（8 方法静态化，controller 同名一行委托）；public API 不变 |
+| B7 | debug facade | 代理 A | done | D5 | 52faa7c | unit + integration 绿；`test_t5d_debug_panel` 绿 | `run_debug_facade.gd`；门控 `_debug_enabled_for_test` 留 controller（OS.is_debug_build 单一来源）；DEBUG_* 常量随迁；`DEBUG_RESOURCE_LABELS` 用 `static var`（const 不能调用静态函数初始化）；8acd695 修 test 直调 `controller.DEBUG_STONE_CAP` |
+| B8 | screen router | 代理 A | done | D6 | 4280176 | unit + integration 绿；`test_wenzhen_ui_flow` 绿 | `run_screen_router.gd`（路由表+挂载机制）；controller 同名委托；UI_RULES.md 与 module-interfaces/08 已同步路由表新位置 |
+| B9 | 回归+合入 M2 | 代理 A→用户 | pending(回归done) | D6 | 8acd695 | **`check.ps1` rc=0 全绿**（guitkx+unit 1167+integration 31+启动探针+契约漂移 157 标识符+diff --check） | builder 767<800 ✓；controller 1241>900 ✗（_show_* 家族与命令构建未在 B6–B8 输入清单内，未达 <900 目标，如实披露）；merge 待用户批准 |
 | C | W10 continue_run | 视觉会话 | pending | 随时 | | | 通用会话零代码 |
 
 ---
