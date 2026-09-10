@@ -45,6 +45,33 @@ theme_override_constants/separation = 12
 [node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
 layout_mode = 2
 
+[node name="TitleChrome" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Seal" type="PanelContainer" parent="Root/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(42, 42)
+
+[node name="SealLabel" type="Label" parent="Root/TitleChrome/Seal"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "遭
+遇"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VTitle" type="Label" parent="Root/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+theme_override_font_sizes/font_size = 22
+text = "遭遇"
+vertical_alignment = 1
+
+[node name="RedLine" type="ColorRect" parent="Root/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 2)
+
 [node name="EncounterStage" type="PanelContainer" parent="Root"]
 layout_mode = 2
 size_flags_vertical = 3

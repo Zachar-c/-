@@ -15,6 +15,10 @@ const TYPE_NAMES := {
 }
 
 @onready var _top_bar: PanelContainer = $primary_decision_surface/TopBar
+@onready var _achievement_label: Label = $primary_decision_surface/TitleChrome/AchievementLabel
+@onready var _seal_label: Label = $primary_decision_surface/TitleChrome/Seal/SealLabel
+@onready var _vtitle_label: Label = $primary_decision_surface/TitleChrome/VTitle
+@onready var _redline: ColorRect = $primary_decision_surface/TitleChrome/RedLine
 @onready var _title_label: Label = $primary_decision_surface/TitleBlock/TitleBox/TitleLabel
 @onready var _type_label: Label = $primary_decision_surface/TitleBlock/TitleBox/TypeLabel
 @onready var _type_panel: PanelContainer = $primary_decision_surface/TypePanel
@@ -138,6 +142,15 @@ func _refresh_title() -> void:
 	_title_label.text = str(_snapshot.get("title", "—"))
 	_type_label.text = "结局类型 · " + type_label
 	_type_label.add_theme_color_override("font_color", _type_color(ending_type))
+	var achievement := str(_snapshot.get("achievement", ""))
+	_achievement_label.text = ("成 就 · " + achievement) if achievement != "" else ""
+	_achievement_label.visible = achievement != ""
+	if is_instance_valid(_seal_label):
+		_seal_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
+	if is_instance_valid(_vtitle_label):
+		_vtitle_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	if is_instance_valid(_redline):
+		_redline.color = GuStyle.CINNABAR
 
 
 func _refresh_type() -> void:

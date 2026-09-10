@@ -3,16 +3,19 @@ extends MarginContainer
 
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 
-## 内容配置无法加载时的兜底屏。
+## 内容配置无法加载时的兜底屏（B1 线框 v1 对齐）。
 ##
 ## 这一屏是「内容都没加载成功」时唯一能显示的东西，所以它必须**零依赖**：
 ## 不引用 catalog、不引用 DisplayText、不依赖任何可能同样损坏的数据表，
 ## 只用 GuStyle 的常量与纯节点树。加任何间接依赖都会让它在最需要的时候一起挂掉。
 
-@onready var _title: Label = $Center/Body/TitleLabel
-@onready var _hint: Label = $Center/Body/HintLabel
-@onready var _error_host: VBoxContainer = $Center/Body/ErrorHost
-@onready var _quit: Button = $Center/Body/QuitButton
+@onready var _count_label: Label = $Root/TitleRow/TitleMeta/CountLabel
+@onready var _error_host: VBoxContainer = $Root/ErrorPanel/ErrorScroll/ErrorHost
+@onready var _quit: Button = $Root/FooterRow/QuitButton
+@onready var _seal: Label = $Root/TopBar/Seal/SealLabel
+@onready var _vtitle: Label = $Root/TitleRow/VTitle
+@onready var _redline: ColorRect = $Root/TitleRow/TitleMeta/RedLine
+@onready var _top_hint: Label = $Root/TopBar/TopHint
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -22,7 +25,7 @@ var _ready_done := false
 
 func _ready() -> void:
 	_ready_done = true
-	_apply_fonts()
+	_apply_style()
 	_quit.pressed.connect(func():
 		if _commands.has("quit"):
 			_commands["quit"].call())
@@ -41,26 +44,31 @@ func _refresh() -> void:
 	if not _ready_done:
 		return
 	var errors: Array = _snapshot.get("errors", [])
-	_title.text = str(_snapshot.get("title", "内容配置无法加载"))
-	_hint.text = "请修复数据文件后重新启动。错误数：%d" % int(_snapshot.get("error_count", errors.size()))
+	_count_label.text = "错误条数 %d 条" % int(_snapshot.get("error_count", errors.size()))
 
 	for c in _error_host.get_children():
 		_error_host.remove_child(c)
 		c.free()
-	for e in errors:
+	for i in errors.size():
 		var l := Label.new()
-		l.text = "· " + str(e)
-		l.add_theme_font_size_override("font_size", 14)
-		l.add_theme_color_override("font_color", GuStyle.CINNABAR)
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.text = "%d  %s" % [i + 1, str(errors[i])]
+		l.add_theme_font_size_override("font_size", 13)
+		l.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+		l.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
 		_error_host.add_child(l)
 
 	_quit.visible = _commands.has("quit")
 
 
-func _apply_fonts() -> void:
-	_title.add_theme_font_override("font", GuStyle.TITLE_FONT)
-	_title.add_theme_color_override("font_color", GuStyle.CINNABAR)
-	_hint.add_theme_font_override("font", GuStyle.BODY_FONT)
-	_hint.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+func _apply_style() -> void:
+	_seal.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_seal.add_theme_color_override("font_color", GuStyle.CINNABAR)
+	_vtitle.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_vtitle.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_vtitle.add_theme_constant_override("line_spacing", -4)
+	_redline.color = GuStyle.CINNABAR
+	_count_label.add_theme_font_override("font", GuStyle.BODY_FONT)
+	_count_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_top_hint.add_theme_font_override("font", GuStyle.BODY_FONT)
+	_top_hint.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	MasterTheme.apply_button(_quit, "action")

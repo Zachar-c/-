@@ -23,6 +23,39 @@ theme_override_constants/separation = 14
 [node name="TopBar" parent="primary_decision_surface" instance=ExtResource("2_top_bar")]
 layout_mode = 2
 
+[node name="TitleChrome" type="HBoxContainer" parent="primary_decision_surface"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Seal" type="PanelContainer" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(46, 46)
+
+[node name="SealLabel" type="Label" parent="primary_decision_surface/TitleChrome/Seal"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "结
+算"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VTitle" type="Label" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(56, 0)
+theme_override_font_sizes/font_size = 30
+text = "结算"
+vertical_alignment = 1
+
+[node name="RedLine" type="ColorRect" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 2)
+
+[node name="AchievementLabel" type="Label" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = ""
+
 [node name="TitleBlock" type="CenterContainer" parent="primary_decision_surface"]
 layout_mode = 2
 
