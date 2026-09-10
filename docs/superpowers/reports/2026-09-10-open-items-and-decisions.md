@@ -24,8 +24,8 @@
 
 | # | 事项 | 状态 | 优先级 | 下一步行动 | 依赖 / 验证门 |
 |---|---|---|---|---|---|
-| A1 | **E5a** `verify_pacing_density` 扩 4 分类统计 | 未开工（实测：该工具无 `category` 统计） | P1 | 在现有逐层统计上加 `category` 分布与占比断言 | 依赖 E2b 已完成 ✅；门＝工具输出 5 层四类均现、战斗占比 50–60% |
-| A2 | **E5b** `route_diversity` 全模板可达冒烟 | 未开工（实测：**全仓无 `route_diversity` 工具/测试**） | P1 | 新建 `tools/verify_route_diversity.gd`：多种子 × 全层，断言每个模板至少可达一次 | 同上；门＝工具绿 |
+| A1 | **E5a** `verify_pacing_density` 扩 4 分类统计 | **已收口**（2026-09-10）：逐层四分类 + 40 种子聚合战斗占比门禁；单种子稀疏只标 `sparse`。门：`godot --headless --path . -s tools/verify_pacing_density.gd` → `E5a PASS` | P1 | 无（闭环） | AGG battle_share≈0.593 ∈ [0.50,0.60] |
+| A2 | **E5b** `route_diversity` 全模板可达冒烟 | **已收口**（2026-09-10）：新建 `tools/verify_route_diversity.gd`，20 种子断言 `category_pools` 30 模板 + 关底台必现。门：`E5b PASS` | P1 | 无（闭环） | pool 30/30 appeared |
 | A3 | **E6** 敌人按层品质随机 | **已收口**（2026-09-10）：实现落在 tip `c806215`（`enemy_roll` / `enemy_weights` / `EnemyCatalog.roll_enemy_ids` / 非锚点抽取 / facade 优先读 roll）；本会话启用 `tests/unit/test_enemy_roll.gd`（原 `_disabled_` 前缀）**15/15 绿**；unit 1214 + integration 31 全绿。**不再需要** per-enemy `weight`（tier 权重 + 层 rank 带）；`enemies.json` 排除令已解除 | P1 | 无（闭环） | 验证：`-gtest=res://tests/unit/test_enemy_roll.gd` |
 | A4 | **E7** 商店按层随机 | **已落地**（AGENTS：`shop_stock` + `test_shop_roll.gd` 9/9 绿，2026-09-10 核） | P2 | 无（闭环；open-items 原「shop_roll 不存在」过期） | 验证：`-gtest=res://tests/unit/test_shop_roll.gd` |
 | A5 | **E 线全量回归** | 未开工 | P2 | E6/E7 落地后跑 unit + integration 全绿 | 依赖 A3/A4 |
