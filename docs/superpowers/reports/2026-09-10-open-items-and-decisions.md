@@ -55,10 +55,10 @@
 
 | # | 事项 | 我的建议 | 不决策的后果 |
 |---|---|---|---|
-| **C1** | **三处既有遮挡怎么修**（已进 `KNOWN_OCCLUDED` 留档，见验收报告 §4） | ①**Settings**：给 `BackRow` 换个不被拉伸的父容器（或移出 root 容器）——最干净；②**Shop**：`shop_screen.tscn` 的孤儿 `SealMargin` 三选一（补声明 / 并入 `StageContent/TitleRow` / 直接删），需你确认它本来想长什么样；③**Rest**：把决策面板下移，**不要**加 IGNORE | Settings 整页、Shop 购买/离开、Rest 顶栏一直点不动 |
-| **C2** | **战斗屏线框稿 v3** | 卡形已从 **168×74 → 110×154**，`2026-09-07-battle-wireframe.html:75` 写死的 CSS 已失效。建议重出 v3 并并入 B1 的逐屏批准节奏 | 线框稿与实现持续漂移，后续美术对齐无基准 |
-| **C3** | **`assets/wenzhen/gu/*.png` 全是 1:1 方图**，塞进 1:1.4 卡面要裁 **25%** | 三选一：**裁** / **重出竖版** / **改成留白排版**（插画区留成方形，信息区放下方）。另：`_load_gu_illustration()` **全仓无调用点**，现役卡面其实没有插画 | 卡面停在纯文字四行，竖长卡下方留白明显 |
-| **C4** | **V1 Encounter 线框稿批准**（`2026-09-09-encounter-wireframe-v1.html`） | 看一遍给"过/改" | B1 的 V2–V4 全线阻塞 |
+| **C1** | **三处既有遮挡怎么修**（已进 `KNOWN_OCCLUDED` 留档，见验收报告 §4） | ✅ **已闭环**（方案 B，`cfd7c9f`）：BackRow 换父+anchors；Shop **删** orphan SealMargin；Rest StageContent spacer+pass-through。门禁 8 屏三键全 0，白名单已清 | — |
+| **C2** | **战斗屏线框稿 v3** | ✅ **已出**（`ee67581`）：`2026-09-10-battle-wireframe-v3.html`，卡 110×154；旧稿 DEPRECATED | 等你过目线框 |
+| **C3** | **`assets/wenzhen/gu/*.png` 全是 1:1 方图** | ✅ **已按道映射实现**（`ee67581`）：98×98 keep-aspect + 信息带；`school_id` 进手牌快照；`test_tall_fan_card_art.gd` 3/3 | 真窗手感待你要求 |
+| **C4** | **V1 Encounter 线框稿批准**（`2026-09-09-encounter-wireframe-v1.html`） | 待你回「过 / 改」 | B1 的 V2–V4 仍阻塞 |
 | **C5** | **是否推送** | ✅ 已闭环（本会话多次随用户指令推送；本地=origin `8420f73`） | — |
 | **C6** | **`AGENTS.md` 当前待办是否本轮同步**（见 D1） | ✅ 已闭环（E1–E7 / D1b / A7 状态已写入 AGENTS） | — |
 
