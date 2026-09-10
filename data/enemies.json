@@ -2,11 +2,10 @@
   {
     "id": "neutral_stone_wanderer",
     "theme": "neutral",
+    "grade": "cultivator",
     "tier": "common",
-    "rank": 0,
+    "rank": 1,
     "hp": 4,
-    "turn": 1,
-    "essence": 3,
     "clues": ["stone_dust", "steady_stance"],
     "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2, "speed": 1},
     "reactions": [
@@ -23,11 +22,10 @@
   {
     "id": "ridge_hound",
     "theme": "beast",
+    "grade": "beast",
     "tier": "common",
     "rank": 1,
     "hp": 3,
-    "turn": 1,
-    "essence": 0,
     "clues": ["lowered_shoulders", "wet_fang"],
     "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 2, "speed": 0},
     "reactions": [
@@ -44,11 +42,10 @@
   {
     "id": "ridge_elite_scout",
     "theme": "faction",
+    "grade": "cultivator",
     "tier": "elite",
     "rank": 2,
     "hp": 6,
-    "turn": 1,
-    "essence": 4,
     "clues": ["high_ground", "steady_breath"],
     "intent": {"id": "swift_crossbow", "label": "弩箭上弦", "damage": 3, "speed": 3},
     "reactions": [
@@ -65,11 +62,10 @@
   {
     "id": "miasma_vein_lord",
     "theme": "anomaly",
+    "grade": "cultivator",
     "tier": "boss",
     "rank": 3,
     "hp": 14,
-    "turn": 4,
-    "essence": 8,
     "clues": ["wilting_aura", "slow_gaits"],
     "intent": {"id": "miasma_burst", "label": "瘴气喷涌", "damage": 2, "speed": 1},
     "_phases_note": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
@@ -122,11 +118,10 @@
   {
     "id": "iron_hide_boar",
     "theme": "beast",
+    "grade": "beast",
     "tier": "common",
     "rank": 2,
     "hp": 5,
-    "turn": 1,
-    "essence": 0,
     "clues": ["mud_caked", "worn_tusks"],
     "intent": {"id": "tusk_drive", "label": "獠牙冲撞", "damage": 2, "speed": 1},
     "reactions": [
@@ -143,11 +138,10 @@
   {
     "id": "thunder_crown_wolf",
     "theme": "beast",
+    "grade": "beast",
     "tier": "elite",
     "rank": 3,
     "hp": 7,
-    "turn": 1,
-    "essence": 4,
     "clues": ["crackling_fur", "hunched_gait"],
     "intent": {"id": "thunder_bite", "label": "雷冠撕咬", "damage": 3, "speed": 3},
     "reactions": [
@@ -164,11 +158,10 @@
   {
     "id": "beast_swarm",
     "theme": "beast",
+    "grade": "beast",
     "tier": "common",
     "rank": 1,
-    "turn": 1,
     "hp": 4,
-    "essence": 0,
     "clues": ["droning_wings", "swarming_shadows"],
     "intent": {"id": "swarm_bite", "label": "蜂群撕缠", "damage": 2, "speed": 1},
     "reactions": []
@@ -176,11 +169,10 @@
   {
     "id": "faction_guard",
     "theme": "faction",
+    "grade": "cultivator",
     "tier": "elite",
     "rank": 2,
-    "turn": 2,
     "hp": 6,
-    "essence": 4,
     "clues": ["locked_shieldwall", "even_line"],
     "intent": {"id": "shield_bash", "label": "盾墙冲撞", "damage": 3, "speed": 3},
     "reactions": []
@@ -188,11 +180,10 @@
   {
     "id": "crag_serpent_matriarch",
     "theme": "beast",
+    "grade": "beast",
     "tier": "boss",
     "rank": 4,
-    "turn": 1,
     "hp": 15,
-    "essence": 5,
     "clues": ["coiled_shadows", "scraped_scale"],
     "intent": {"id": "crush_coil", "label": "绞缠碾压", "damage": 3, "speed": 1},
     "reactions": []
@@ -200,11 +191,10 @@
   {
     "id": "marrow_gu_adept",
     "theme": "cultivator",
+    "grade": "cultivator",
     "tier": "boss",
     "rank": 4,
-    "turn": 2,
     "hp": 16,
-    "essence": 6,
     "clues": ["bone_charms", "burnt_incense"],
     "intent": {"id": "marrow_lance", "label": "蚀骨骨矛", "damage": 3, "speed": 2},
     "reactions": [
@@ -221,11 +211,10 @@
   {
     "id": "thunder_crown_sovereign",
     "theme": "beast",
+    "grade": "beast",
     "tier": "boss",
     "rank": 5,
-    "turn": 3,
     "hp": 18,
-    "essence": 7,
     "clues": ["charged_fur", "crackling_air"],
     "intent": {"id": "crown_bolt", "label": "雷冠贯落", "damage": 4, "speed": 2, "cooldown": 1},
     "reactions": [],
@@ -250,11 +239,10 @@
   {
     "id": "blood_vein_bishop",
     "theme": "cultivator",
+    "grade": "cultivator",
     "tier": "boss",
     "rank": 5,
-    "turn": 4,
     "hp": 20,
-    "essence": 8,
     "clues": ["swollen_veins", "beating_drum"],
     "intent": {"id": "vein_whip", "label": "血络鞭挞", "damage": 4, "speed": 3, "cooldown": 1},
     "reactions": [
@@ -307,11 +295,10 @@
   {
     "id": "iron_crown_eagle",
     "theme": "beast",
+    "grade": "beast",
     "tier": "common",
     "rank": 2,
     "hp": 4,
-    "turn": 1,
-    "essence": 0,
     "clues": ["feathered_wing", "circling_shadow"],
     "intent": {"id": "eagle_feather_volley", "label": "鹰羽利箭", "damage": 2, "speed": 3},
     "reactions": [
@@ -329,11 +316,10 @@
   {
     "id": "venom_whisker_wolf_king",
     "theme": "beast",
+    "grade": "beast",
     "tier": "elite",
     "rank": 3,
     "hp": 7,
-    "turn": 1,
-    "essence": 4,
     "clues": ["drawn_out_howl", "arrowlike_pack"],
     "intent": {"id": "pack_flank", "label": "群狼包抄", "damage": 3, "speed": 2},
     "reactions": [
@@ -351,11 +337,10 @@
   {
     "id": "sand_lurker_spider",
     "theme": "beast",
+    "grade": "beast",
     "tier": "elite",
     "rank": 3,
     "hp": 8,
-    "turn": 2,
-    "essence": 4,
     "clues": ["oily_shell", "sand_ripple"],
     "intent": {"id": "sand_bind", "label": "缠沙缚足", "kind": "seal", "seal_turns": 1, "damage": 0, "speed": 1},
     "reactions": [
@@ -373,11 +358,10 @@
   {
     "id": "blood_forest_wolf",
     "theme": "beast",
+    "grade": "beast",
     "tier": "elite",
     "rank": 4,
     "hp": 11,
-    "turn": 1,
-    "essence": 5,
     "clues": ["blood_soaked_hide", "bone_grove"],
     "intent": {"id": "mountain_crush", "label": "山岳碾压", "damage": 4, "speed": 0},
     "reactions": [
@@ -395,11 +379,10 @@
   {
     "id": "dragon_eagle",
     "theme": "beast",
+    "grade": "beast",
     "tier": "elite",
     "rank": 5,
     "hp": 10,
-    "turn": 1,
-    "essence": 6,
     "clues": ["vast_wing_shadow", "scaled_nape"],
     "intent": {"id": "dragon_dive", "label": "龙威俯击", "damage": 4, "speed": 3},
     "reactions": [
@@ -417,11 +400,10 @@
   {
     "id": "clan_warden",
     "theme": "faction",
+    "grade": "cultivator",
     "tier": "common",
     "rank": 1,
     "hp": 4,
-    "turn": 1,
-    "essence": 0,
     "clues": ["barred_gate", "braced_stance"],
     "intent": {"id": "gate_block", "label": "山门横挡", "damage": 2, "speed": 1},
     "reactions": [
@@ -439,11 +421,10 @@
   {
     "id": "school_elder",
     "theme": "faction",
+    "grade": "cultivator",
     "tier": "elite",
     "rank": 2,
     "hp": 6,
-    "turn": 1,
-    "essence": 3,
     "clues": ["white_beard", "jade_token"],
     "intent": {"id": "hall_interdict", "label": "学堂禁令", "kind": "seal", "seal_turns": 2, "damage": 0, "speed": 1},
     "reactions": [
@@ -461,11 +442,10 @@
   {
     "id": "clan_elder",
     "theme": "faction",
+    "grade": "cultivator",
     "tier": "elite",
     "rank": 4,
     "hp": 9,
-    "turn": 1,
-    "essence": 5,
     "clues": ["white_ritual_robe", "wielding_hand"],
     "intent": {"id": "clan_authority", "label": "家族权柄", "damage": 3, "speed": 2},
     "reactions": [
@@ -483,11 +463,10 @@
   {
     "id": "clan_patriarch",
     "theme": "faction",
+    "grade": "cultivator",
     "tier": "boss",
     "rank": 5,
     "hp": 19,
-    "turn": 2,
-    "essence": 7,
     "clues": ["frosted_temples", "solemn_robe"],
     "intent": {"id": "clan_wrath", "label": "一族之威", "damage": 4, "speed": 2, "cooldown": 1},
     "reactions": [
@@ -540,11 +519,10 @@
   {
     "id": "rogue_cultivator",
     "theme": "cultivator",
+    "grade": "cultivator",
     "tier": "common",
     "rank": 2,
     "hp": 5,
-    "turn": 1,
-    "essence": 2,
     "clues": ["unschooled_form", "lone_footsteps"],
     "intent": {"id": "wild_strike", "label": "野路杀招", "damage": 2, "speed": 2},
     "reactions": [
@@ -562,11 +540,10 @@
   {
     "id": "demon_path_adept",
     "theme": "cultivator",
+    "grade": "cultivator",
     "tier": "elite",
     "rank": 3,
     "hp": 7,
-    "turn": 1,
-    "essence": 4,
     "clues": ["bloody_miasma", "green_pupils"],
     "intent": {"id": "soul_gnaw", "label": "噬魂魔功", "kind": "soul_drain", "soul_drain": 1, "damage": 0, "speed": 2},
     "reactions": [
@@ -584,11 +561,10 @@
   {
     "id": "slave_path_adept",
     "theme": "cultivator",
+    "grade": "cultivator",
     "tier": "elite",
     "rank": 4,
     "hp": 9,
-    "turn": 2,
-    "essence": 5,
     "clues": ["commanding_gesture", "docile_growl"],
     "intent": {"id": "thrall_lunge", "label": "驱役扑击", "damage": 3, "speed": 1},
     "reactions": [
@@ -606,11 +582,10 @@
   {
     "id": "straw_puppet",
     "theme": "neutral",
+    "grade": "mortal",
     "tier": "common",
     "rank": 0,
     "hp": 3,
-    "turn": 1,
-    "essence": 0,
     "clues": ["dry_straw_cut", "thick_neck"],
     "intent": {"id": "straw_swing", "label": "稻草挥击", "damage": 1, "speed": 0},
     "reactions": [
@@ -628,11 +603,10 @@
   {
     "id": "fat_sand_scorpion",
     "theme": "neutral",
+    "grade": "beast",
     "tier": "common",
     "rank": 1,
     "hp": 3,
-    "turn": 1,
-    "essence": 0,
     "clues": ["fat_bulk", "limp_pincers"],
     "intent": {"id": "pincer_feint", "label": "螯足虚张", "damage": 1, "speed": 0},
     "reactions": [
@@ -650,11 +624,10 @@
   {
     "id": "white_fur_jiangshi",
     "theme": "anomaly",
+    "grade": "anomaly",
     "tier": "common",
-    "rank": 1,
+    "rank": 0,
     "hp": 3,
-    "turn": 1,
-    "essence": 0,
     "clues": ["white_fur", "rigid_hop"],
     "intent": {"id": "corpse_hop", "label": "僵直一扑", "damage": 2, "speed": 0},
     "reactions": [
@@ -672,11 +645,10 @@
   {
     "id": "black_fur_jiangshi",
     "theme": "anomaly",
+    "grade": "anomaly",
     "tier": "common",
     "rank": 2,
     "hp": 5,
-    "turn": 1,
-    "essence": 0,
     "clues": ["black_fur", "gathered_horde"],
     "intent": {"id": "horde_press", "label": "尸群压上", "damage": 2, "speed": 1},
     "reactions": [
@@ -694,11 +666,10 @@
   {
     "id": "roaming_jiangshi",
     "theme": "anomaly",
+    "grade": "anomaly",
     "tier": "elite",
     "rank": 3,
     "hp": 8,
-    "turn": 1,
-    "essence": 3,
     "clues": ["green_glow_pupils", "long_fangs"],
     "intent": {"id": "stiff_pounce", "label": "僵躯扑噬", "damage": 3, "speed": 1},
     "reactions": [
@@ -716,11 +687,10 @@
   {
     "id": "blue_fur_jiangshi",
     "theme": "anomaly",
+    "grade": "anomaly",
     "tier": "boss",
     "rank": 5,
     "hp": 20,
-    "turn": 3,
-    "essence": 8,
     "clues": ["blue_fur", "corpse_army"],
     "intent": {"id": "corpse_tide", "label": "尸潮掩杀", "damage": 4, "speed": 2, "cooldown": 1},
     "reactions": [
@@ -766,6 +736,48 @@
             "label": "尸群为障"
           }
         ]
+      }
+    ]
+  }
+,
+  {
+    "id": "mountain_boar",
+    "theme": "beast",
+    "grade": "beast",
+    "tier": "common",
+    "rank": 0,
+    "hp": 4,
+    "clues": ["coarse_bristles", "tusking_earth"],
+    "intent": {"id": "boar_charge", "label": "野猪直撞", "damage": 2, "speed": 1},
+    "reactions": [
+      {
+        "id": "mud_shake",
+        "clue": "coarse_bristles",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "bound",
+        "label": "鬃毛乱抖"
+      }
+    ]
+  }
+,
+  {
+    "id": "mountain_hunter",
+    "theme": "neutral",
+    "grade": "mortal",
+    "tier": "common",
+    "rank": 0,
+    "hp": 3,
+    "clues": ["calloused_hands", "snare_rope"],
+    "intent": {"id": "hunter_staff", "label": "木棍横扫", "damage": 1, "speed": 1},
+    "reactions": [
+      {
+        "id": "rope_trip",
+        "clue": "snare_rope",
+        "window": "before_damage",
+        "trigger": "direct_strike",
+        "counter_status": "guarded",
+        "label": "绳索绊足"
       }
     ]
   }

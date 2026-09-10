@@ -3,6 +3,7 @@ extends RefCounted
 
 
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
+const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 
 # R-layering 2026-08-27: a run is exactly five layers (one..five). The last
 # layer funnels through final_boss_stand; ascension_window is only reachable
@@ -30,14 +31,15 @@ static func build(seed_value: int, first_run: bool, catalog: Dictionary = {}) ->
 		var first_run_cfg: Dictionary = catalog.get("first_run", {}) if not catalog.is_empty() else _load_json_fallback("build/first_run", "res://data/first_run.json")
 		var route_ids: Array = first_run_cfg.get("route_ids", [])
 		return _route_from_ids(route_ids, node_by_id)
-	return _generate_instance_route(seed_value, node_by_id, catalog.get("pacing", {}) if not catalog.is_empty() else {})
+	var pacing_cfg: Dictionary = catalog.get("pacing", {}) if not catalog.is_empty() else {}
+	return _generate_instance_route(seed_value, node_by_id, pacing_cfg, catalog)
 
 
 ## v2 拓扑（2026-08-29 裁定）：五大层扇形收敛图。每大层 8–11 行 ×
 ## 每行 2–6 节点（首行 1–2 入口、末行 1 个关底 Boss），行进边只连
 ## 下一行 1–2 个节点且下行每节点 ≥1 入边；关底 Boss 击败后解锁
 ## 下一大层。层形状/锚点/模板池来自 pacing.json 的 layers 裁定表。
-static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pacing_override: Dictionary = {}) -> Array[Dictionary]:
+static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pacing_override: Dictionary = {}, enemy_catalog: Dictionary = {}) -> Array[Dictionary]:
 	var pacing: Dictionary = pacing_override if not pacing_override.is_empty() else _load_json_fallback("route/pacing", "res://data/pacing.json")
 	var layers_cfg: Dictionary = pacing.get("layers", {})
 	var category_pools: Dictionary = pacing.get("category_pools", {})
@@ -95,6 +97,15 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 				# 锚点/行尾固定位标记：地图 UI 与测试据此区分「刻意摆放（保持
 				# 可见）」与「随机抽中的未知类（迷雾）」——遗藏等模板两者皆可。
 				instance["anchor"] = instance_anchor
+				# E6 按层抽取（2026-09-10）：战斗节点且**非锚点**时，记下本节点要打的敌人。
+				# 锚点（含各大层关底台）免抽——它们是刻意摆放的，Boss 不会随机出现。
+				# 抽取用**独立派生流**（见 _roll_enemy_for），不动本函数共享的 rng 序列，
+				# 因此加入该功能不会改变既有地图布局与既有种子产出。
+				if not instance_anchor and str(template.get("type", "")) == "combat":
+					var rolled := _roll_enemy_for(pacing, enemy_catalog, layer_number,
+							str(instance["id"]), template, seed_value)
+					if not rolled.is_empty():
+						instance["enemy_roll"] = rolled
 				instance["next_ids"] = []
 				if layer_number == 1 and row == 0:
 					instance["start"] = true
@@ -283,6 +294,28 @@ static func _pick_pool_template(rng: SeededRng, pool: Array, used_in_row: Array,
 
 static func _node_rng(seed_value: int, node_id: String) -> SeededRng:
 	return SeededRng.new(SeededRollScript.mixed_seed(seed_value, node_id, 0))
+
+
+## E6：给单个战斗节点抽敌人（实现见 `EnemyCatalog.roll_enemy_ids`）。
+## 目录不可用 / 节点未声明 `enemy_theme` / 池空时返回**空数组**，
+## 调用方据此保持模板自带的 `enemy_kind(s)` 不变（回退即"行为同今天"）。
+static func _roll_enemy_for(pacing: Dictionary, catalog: Dictionary, layer_number: int,
+		instance_id: String, template: Dictionary, seed_value: int) -> Array:
+	if catalog.is_empty():
+		return []
+	var theme := str(template.get("enemy_theme", ""))
+	if theme.is_empty():
+		return []
+	var fallback: Array = []
+	if template.has("enemy_kinds"):
+		fallback = (template.get("enemy_kinds", []) as Array).duplicate()
+	elif template.has("enemy_kind"):
+		fallback = [str(template.get("enemy_kind", ""))]
+	var layer_cfg: Dictionary = pacing.get("layers", {}).get(str(layer_number), {})
+	var rank_max := int(layer_cfg.get("enemy_rank_max", layer_number))
+	var rank_min := int(layer_cfg.get("enemy_rank_min", 0))
+	return EnemyCatalogScript.roll_enemy_ids(catalog, theme, rank_min, rank_max,
+			pacing.get("enemy_weights", {}), maxi(1, fallback.size()), seed_value, instance_id, fallback)
 
 
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:

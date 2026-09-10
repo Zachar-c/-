@@ -2,7 +2,8 @@ extends GutTest
 
 
 # 五转梯度（2026-08-28/29 design ruling）幸存部分：
-# - 数据层：每个敌人带手写 turn 基线（1..5）。
+# - 数据层：每个敌人**手写自己的梯度位**（`rank` 层位 + `grade` 类别），不得缺省。
+#   （原承载字段 `turn` 与 `essence` 在 V1 引擎零消费，已于 2026-09-10 退役。）
 # - refine 节点同蛊升阶：stone + 材料、rank 封顶 5；advance 配方 Schema 校验拒绝跨名。
 # legacy 的"层差缩放 HP/+伤"与"rank 提伤/提 essence 消耗"在 V1 战斗里改由敌人
 # authored + cultivation 门槛实现（随 battle_resolver.gd 退役，B1 桶 C）。
@@ -10,6 +11,7 @@ extends GutTest
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
+const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
 
 var catalog: Dictionary
 
@@ -18,10 +20,20 @@ func before_each() -> void:
 	catalog = ContentCatalogScript.load_all()
 
 
-func test_enemies_carry_turn_baseline() -> void:
+## 梯度位的承载字段由 `turn` 换成 `rank`（层位）+ `grade`（类别）后，**契约不变**：
+## 每个敌人必须手写自己的梯度位，缺省即失败。阶梯口径见 enemy_catalog.GRADES。
+func test_enemies_carry_an_authored_rank_and_grade() -> void:
 	for enemy in catalog.get("enemies", []):
-		var turn := int(enemy.get("turn", -1))
-		assert_between(turn, 1, 5, "every enemy needs an authored turn within 1..5 (%s)" % str(enemy.get("id", "")))
+		var enemy_id := str(enemy.get("id", ""))
+		assert_true(enemy.has("rank"), "every enemy needs an authored rank (%s)" % enemy_id)
+		assert_between(int(enemy.get("rank", -1)), 0, 5,
+				"enemy rank must be within 0..5 (%s)" % enemy_id)
+		assert_true(enemy.has("grade"), "every enemy needs an authored grade (%s)" % enemy_id)
+		assert_true(EnemyCatalogScript.GRADES.has(str(enemy.get("grade", ""))),
+				"enemy grade must be a known ladder class (%s)" % enemy_id)
+		# 退役字段不得悄悄回流：要复活请连同消费点一起加回来。
+		assert_false(enemy.has("turn"), "enemy turn was retired in V1 (%s)" % enemy_id)
+		assert_false(enemy.has("essence"), "enemy essence was retired in V1 (%s)" % enemy_id)
 
 
 func test_advance_recipe_raises_rank_and_costs_stone() -> void:

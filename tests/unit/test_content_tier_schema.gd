@@ -61,11 +61,11 @@ func test_real_content_tables_declare_tiers_cleanly() -> void:
 func _fake_enemy(beast_rank: int, hp: int, extra: Dictionary) -> Dictionary:
 	var entry := {
 		"id": "fake_tier_check_beast",
+		"theme": "beast",
+		"grade": "beast",
 		"tier": "boss",
 		"rank": beast_rank,
 		"hp": hp,
-		"turn": 1,
-		"essence": 3,
 		"clues": ["fake_clue"],
 		"intent": {"id": "fake_strike", "label": "假意蓄势", "damage": 1, "speed": 1},
 		"reactions": [],

@@ -33,3 +33,7 @@ MEMORY.md
 memory/
 .claude-drive-sweep.log
 tools/__pycache__/
+
+# 回归日志（tools/_reg*.log 等 headless 校验的 stdout 捕获，可随时重跑再生；
+# 2026-09-10 清理了 114 个未跟踪的历史日志，约 94MB）
+tools/*.log

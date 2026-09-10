@@ -25,6 +25,8 @@
    ],
    "stone_budget": 12,
    "enemy_turn": 1,
+   "enemy_rank_min": 0,
+   "enemy_rank_max": 1,
    "loot": {
     "material_count": 2,
     "weights": {
@@ -85,6 +87,8 @@
    ],
    "stone_budget": 16,
    "enemy_turn": 2,
+   "enemy_rank_min": 0,
+   "enemy_rank_max": 2,
    "loot": {
     "material_count": 2,
     "weights": {
@@ -141,6 +145,8 @@
    ],
    "stone_budget": 22,
    "enemy_turn": 3,
+   "enemy_rank_min": 1,
+   "enemy_rank_max": 3,
    "loot": {
     "material_count": 3,
     "weights": {
@@ -197,6 +203,8 @@
    ],
    "stone_budget": 28,
    "enemy_turn": 4,
+   "enemy_rank_min": 2,
+   "enemy_rank_max": 4,
    "loot": {
     "material_count": 3,
     "weights": {
@@ -253,6 +261,8 @@
    ],
    "stone_budget": 35,
    "enemy_turn": 5,
+   "enemy_rank_min": 3,
+   "enemy_rank_max": 5,
    "loot": {
     "material_count": 4,
     "weights": {
@@ -303,6 +313,11 @@
   "5": 10
  },
  "ending_after_stage": "one",
+ "enemy_weights": {
+  "common": 75,
+  "elite": 25,
+  "boss": 0
+ },
  "category_pools": {
   "battle": [
    "beast_swarm_pass",

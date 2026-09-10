@@ -11,7 +11,7 @@
 
 | 入口 | 输入 | 输出 | 说明 |
 |---|---|---|---|
-| `Facade.start(encounter, state, catalog)` | encounter: `{enemy_kind}`；state: RunState | `{battle, enemies, result}` | 构建战斗字典；Boss 战写 `flags.boss_battle=true` |
+| `Facade.start(encounter, state, catalog)` | encounter: `{enemy_kind}` / `{enemy_kinds}` / **`{enemy_roll}`**；state: RunState | `{battle, enemies, result}` | 构建战斗字典；Boss 战写 `flags.boss_battle=true`。**敌人来源优先级：`enemy_roll` > `enemy_kinds` > `enemy_kind`**（E6，2026-09-10）：地图生成期已按层抽好时用 `enemy_roll`；锚点/关底台/旧存档无该键时回退。单敌遭遇（`enemy_roll` 长度 1）同时落顶层 `battle.enemy_kind`（死亡报告与敌方台词按该键取专属文案） |
 | `Facade.apply_turn(battle, state, command, catalog)` | command: `{type, instance_id, target_id, ...}` | `{battle, state, result, accepted, feeds, finished}` | **唯一合法行动入口**；`finished=true` 即战斗结束（victory/defeat/retreat） |
 | `Facade.apply_enemy_pre_turn(battle, state, catalog)` | battle | `{battle}` | 回合前敌方结算（未接入主流程则保持空实现） |
 | `V1.player_action(battle, action)` | action: `{type: play_gu/basic_attack/play_kill_move/end_turn}` | `{battle, result:{ok, reason, changes}}` | 底层原语；**表现层不得直呼**，仅守卫测试使用 |

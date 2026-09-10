@@ -54,7 +54,7 @@
 
 1. **当前批次（2026-09-09 用户裁定 4 需求，实施计划 `docs/superpowers/plans/2026-09-09-visual-route-batch-plan.md`，规格 `docs/superpowers/specs/2026-09-09-event-classification-design.md`）**：
    - **V0 美术风格补全**：Encounter 线框稿 v1 已出（`2026-09-09-encounter-wireframe-v1.html`，待用户批准）→ Npc / Ending / ContentError 逐屏线框稿（1280×720，统一 tokens）→ 逐屏批准 → tscn 实施。
-   - **E1-E7 按层伪随机**：E1 pacing 分类概率表 ✅ / E2 生成器分类抽取 ✅ / E3 休息三选一（mode_groups）✅ / E4 表现层（地图「?」迷雾 + 休息三选一 UI + refinement→Rest 路由）✅ / **E5 回归未开工**（`pacing_density` 扩分类统计 + `route_diversity`）/ **E6 敌人按层随机**：主题标签与敌人池（30 条，`2026-09-10-enemy-pool-from-novel.md`）✅，**按层抽取未开工** / **E7 商店按层随机** ✅（`shop_stock`：洗牌取前 N + 保底 + 越权拒绝，见 `test_shop_roll.gd`）。
+   - **E1-E7 按层伪随机**：E1 pacing 分类概率表 ✅ / E2 生成器分类抽取 ✅ / E3 休息三选一（mode_groups）✅ / E4 表现层（地图「?」迷雾 + 休息三选一 UI + refinement→Rest 路由）✅ / **E5 回归未开工**（`pacing_density` 扩分类统计 + `route_diversity`）/ **E6 敌人按层随机 ✅**（主题标签 + 32 条敌人池 + `enemy_roll`：`pacing` 的层 rank 区间与 `enemy_weights`、`enemy_catalog.roll_enemy_ids`、地图非锚点战斗节点抽取、Boss 永不入选；见 `2026-09-10-e6-enemy-roll.md`）/ **E7 商店按层随机** ✅（`shop_stock`：洗牌取前 N + 保底 + 越权拒绝，见 `test_shop_roll.gd`）。
    - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门（dead=[] 且 no_ui_click=[]）；Settings 手记/图鉴/设置已 disabled 置灰（接入路由后启用）。
 2. 队列后续：**D1b 实现批**（古方知识模型，spec `2026-09-06-gu-synthesis-design.md` §8）→ **真窗键鼠验收**（S 阶段全流程）。
 3. 验证遗留：Dialogue Manager invalid UID、ObjectDB/RID 泄漏（2026-09-06 复测 20601 实例仍复现）；最终 `tools/test.ps1 -Suite unit`、`-Suite integration`、`tools/check.ps1` 全绿。

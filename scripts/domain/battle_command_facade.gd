@@ -39,7 +39,15 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	battle["terrain"] = str(encounter.get("terrain", ""))
 	battle["layer"] = int(encounter.get("layer", 1))
 	battle["first_mover"] = str(encounter.get("first_mover", "player"))
-	if encounter.has("enemy_kinds"):
+	# E6（2026-09-10）：地图生成期按层抽好的敌人优先。单敌遭遇同时落 `enemy_kind`
+	# （死亡报告与敌方台词按该键取专属文案）；多敌遭遇只落 `enemy_kinds`。
+	# 锚点/关底台/旧存档没有 `enemy_roll` → 回退 `enemy_kinds` / `enemy_kind`。
+	if encounter.has("enemy_roll"):
+		var rolled_kinds: Array = (encounter.get("enemy_roll", []) as Array).duplicate()
+		battle["enemy_kinds"] = rolled_kinds
+		if rolled_kinds.size() == 1:
+			battle["enemy_kind"] = str(rolled_kinds[0])
+	elif encounter.has("enemy_kinds"):
 		battle["enemy_kinds"] = (encounter.get("enemy_kinds", []) as Array).duplicate()
 	# Boss 身份（V1 契约 flags 为 Dictionary）：关底台 layer_boss > 0 或任一敌方
 	# 定义为 tier=="boss" 即禁止撤退。_start_battle 已透传 layer_boss，
@@ -100,7 +108,11 @@ static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
 	var multipliers := _boss_layer_multipliers(encounter, catalog)
 	var result: Array = []
 	var kinds: Array = []
-	if encounter.has("enemy_kinds"):
+	# E6（2026-09-10）：优先读按层抽取的结果；缺失时回退节点模板自带的敌人指定
+	# （锚点、各大层关底台、旧存档均走回退分支）。
+	if encounter.has("enemy_roll"):
+		kinds = (encounter.get("enemy_roll", []) as Array).duplicate()
+	elif encounter.has("enemy_kinds"):
 		kinds = (encounter.get("enemy_kinds", []) as Array).duplicate()
 	elif encounter.has("enemy_kind"):
 		kinds.append(str(encounter.get("enemy_kind", "")))

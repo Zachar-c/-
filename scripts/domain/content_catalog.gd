@@ -216,6 +216,21 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 			var enemy_turn := int(layer.get("enemy_turn", 0))
 			if enemy_turn < 1 or enemy_turn > 5:
 				errors.append("pacing layer %s enemy_turn must be within 1..5" % layer_id)
+			# E6（2026-09-10）：本层可随机抽到的敌人 rank 区间。Boss 不参与随机
+			# （只在锚点摆放），所以区间只约束普通/精英。`min` 是"按层品质"的下界
+			# ——深层不该再抽到未入转的杂鱼；`max` 随层递增。
+			var enemy_rank_max := int(layer.get("enemy_rank_max", -1))
+			if enemy_rank_max < 0 or enemy_rank_max > 5:
+				errors.append("pacing layer %s enemy_rank_max must be within 0..5" % layer_id)
+			elif enemy_rank_max < int(layer_id) - 1:
+				errors.append("pacing layer %s enemy_rank_max %d lags the layer number %s (层越深可出的敌人不应变弱)"
+						% [layer_id, enemy_rank_max, layer_id])
+			var enemy_rank_min := int(layer.get("enemy_rank_min", -1))
+			if enemy_rank_min < 0 or enemy_rank_min > 5:
+				errors.append("pacing layer %s enemy_rank_min must be within 0..5" % layer_id)
+			elif enemy_rank_min > enemy_rank_max:
+				errors.append("pacing layer %s enemy_rank_min %d exceeds enemy_rank_max %d"
+						% [layer_id, enemy_rank_min, enemy_rank_max])
 			var price := int(layer.get("shop_price_pct", -1))
 			if price < 0:
 				errors.append("pacing layer %s shop_price_pct must be non-negative" % layer_id)
@@ -266,9 +281,30 @@ static func _validate_pacing(catalog: Dictionary) -> Array[String]:
 		if cat_pool.is_empty():
 			errors.append("pacing category_pools.%s must be a non-empty array" % cat)
 			continue
-		for tid_value in cat_pool:
-			if not catalog.get("node_by_id", {}).has(str(tid_value)):
-				errors.append("pacing category_pools.%s references unknown node %s" % [cat, tid_value])
+			for tid_value in cat_pool:
+				if not catalog.get("node_by_id", {}).has(str(tid_value)):
+					errors.append("pacing category_pools.%s references unknown node %s" % [cat, tid_value])
+	# E6 敌人抽取的 tier 权重表。`boss` 必须为 0：Boss 只在锚点（关底台）摆放，
+	# 一旦允许随机抽到 Boss，层节奏与"Boss 是刻意安排"这两件事同时失效。
+	var enemy_weights: Variant = pacing.get("enemy_weights", null)
+	if not enemy_weights is Dictionary:
+		errors.append("pacing enemy_weights must be an object")
+	else:
+		var weights_dict: Dictionary = enemy_weights
+		var rollable_total := 0
+		for tier in ["common", "elite", "boss"]:
+			if not weights_dict.has(tier):
+				errors.append("pacing enemy_weights missing tier %s" % tier)
+				continue
+			if not _is_integral(weights_dict[tier]) or int(weights_dict[tier]) < 0:
+				errors.append("pacing enemy_weights.%s must be a non-negative integer" % tier)
+				continue
+			if tier == "boss" and int(weights_dict[tier]) != 0:
+				errors.append("pacing enemy_weights.boss must be 0 (Boss 只在锚点摆放，不参与随机)")
+			elif tier != "boss":
+				rollable_total += int(weights_dict[tier])
+		if rollable_total <= 0:
+			errors.append("pacing enemy_weights needs a positive common/elite weight")
 	return errors
 
 
@@ -456,9 +492,8 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	for enemy_value in catalog.get("enemies", []):
 		var enemy_entry: Dictionary = enemy_value
 		var enemy_id := str(enemy_entry.get("id", ""))
-		var enemy_turn := int(enemy_entry.get("turn", 1))
-		if enemy_turn < 1 or enemy_turn > 5:
-			errors.append("enemy %s turn must be within 1..5" % enemy_id)
+		# 2026-09-10 退役死字段：`turn` / `essence` 在 V1 引擎中零消费点，
+		# 已从 data/enemies.json 移除，此处不再校验。
 		# T2.2 tier schema (§17.1): enemies declare their beast-model rank; a
 		# non-override entry may not copy a central beast-scale hp literal.
 		if not _is_integral(enemy_entry.get("rank", null)) or int(enemy_entry.get("rank", -1)) < 0 or int(enemy_entry.get("rank", -1)) > 5:

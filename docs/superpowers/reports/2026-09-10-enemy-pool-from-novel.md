@@ -2,7 +2,7 @@
 
 > 日期：2026-09-10
 > 语料：`分支：六卷精编版/蛊真人-clean.txt`（437,060 行 / 858.8 万字）
-> 产出：`data/enemies.json` 12 → **30 条**；`data/names.json` 的 `enemies` 表 10 → 32 条
+> 产出：`data/enemies.json` 12 → **32 条**（含后续补的 2 条底层敌人）；`data/names.json` 的 `enemies` 表 10 → 34 条
 > 可追溯证据：`docs/lore/canon-index.md` 新增 21 行 `CAN-*`（含行号）
 > 本轮**未**扩充稀有传承的蛊方池（按用户指令）
 
@@ -102,12 +102,33 @@
 - `hp` 全部用小数值（3–20），不触碰中心 `beast_scale(rank)` 禁值（100/200/400/800/1600/3200）。
 - `intent.kind` 只用在 V1 引擎**真实结算**的四种上：`attack`（默认）/ `seal` / `soul_drain` / `counter`。
 - `reactions[].counter_status` 只用既有值 `bound` / `guarded`（`sparked` 是既有孤例，未扩散）。
-- **顺带发现（未处理，待用户裁定）**：`turn` 与 `essence` 两字段在 V1 引擎中**没有任何消费点**，
-  `content_catalog` 仍在校验 `turn ∈ 1..5`。本轮为保持与既有 12 条同构而照样填写，
-  但这是**旧引擎遗留死数据**——是否退役请用户决定。
+- ~~顺带发现：`turn` 与 `essence` 在 V1 引擎中零消费点~~ → **已退役（2026-09-10 用户裁定）**：
+  两个字段已从全部条目移除，`content_catalog` 的 `turn ∈ 1..5` 校验一并删除。
+  退役时按用户要求**明确战力阶梯**（见下节）。
 
-## 7. 未做（按用户指令）
+## 7. 战力阶梯（2026-09-10 用户裁定，随死字段退役一并立起）
+
+    凡人 < 普通野兽 < 一转蛊修 < 二转 < 三转 < 四转 < 五转
+
+- **蛊修最低一转** ⇒ `grade == "cultivator"` 的条目 `rank` 必须 `>= 1`；
+  反过来 `rank 0`（未入转档）只可能是**普通野兽 / 凡人 / 不入转的异变体**。
+- 新增 `grade ∈ {mortal, beast, cultivator, anomaly}`（阶梯**类别**），与 `theme`（阵营/态度）正交——
+  散修 `theme=neutral` 但 `grade=cultivator`，山间猎户 `theme=neutral` 但 `grade=mortal`，
+  所以类别不能由主题反推。
+- 立起这条规则时**抓到两处既有不一致**，已按原著修正：
+
+  | 条目 | 原值 | 现值 | 依据 |
+  |---|---|---|---|
+  | `neutral_stone_wanderer` 石甲散修 | rank 0 | **rank 1** | 散修就是蛊修 → 最低一转 |
+  | `white_fur_jiangshi` 白毛僵尸 | rank 1 | **rank 0** | "战力最弱，还不如寻常野兽"（`L45664`） |
+
+- 补齐阶梯底部的两条（此前 rank 0 只有草人傀儡，普通野兽与凡人缺席）：
+  `mountain_boar` 山猪（普通野兽，`L10702`/`L2066`）、`mountain_hunter` 山间猎户（凡人，`L2028`）。
+- 校验落在 `enemy_catalog.validate`：类别白名单 + "蛊修最低一转"；守卫见
+  `test_enemy_catalog.gd::test_real_catalog_keeps_the_cultivator_floor_at_one_turn`。
+
+## 8. 未做
 
 - 稀有传承的蛊方池**未扩**（`output_rank=2 & kind=fixed` 仍只有 1 条）。
-- **E6 敌人抽取（T4）未开工**：池已就绪，只差 `pacing.layers` 的层上限、抽取函数、
-  `battle_command_facade` 优先读 `enemy_roll`、锚点/Boss 免抽。
+- E6 按层抽取已在后续批次落地（见 `docs/superpowers/reports/` 同日的 E6 报告与
+  `tests/unit/test_enemy_roll.gd`）。

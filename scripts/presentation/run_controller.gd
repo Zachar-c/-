@@ -721,7 +721,11 @@ func _start_battle() -> void:
 		"first_mover": first_mover,
 		"kill_source": kill_source,
 	}
-	if current_node.has("enemy_kinds"):
+	# E6（2026-09-10）：地图生成期已按层抽好敌人（`enemy_roll`）时优先用它；
+	# 锚点/各大层关底台/旧存档没有该键 → 回退到模板自带的 `enemy_kind(s)`。
+	if current_node.has("enemy_roll"):
+		encounter["enemy_roll"] = (current_node.get("enemy_roll", []) as Array).duplicate()
+	elif current_node.has("enemy_kinds"):
 		encounter["enemy_kinds"] = (current_node.get("enemy_kinds", []) as Array).duplicate()
 	else:
 		encounter["enemy_kind"] = enemy_kind

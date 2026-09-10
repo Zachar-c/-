@@ -22,6 +22,17 @@
 ## 关键数据契约（node 字典）
 
 - `{id, template_id, layer, row, visible, start, next_ids[], type ∈ {combat/rest/shop/inheritance/refinement}, ...}`
+- **`enemy_roll: Array[String]`（E6，2026-09-10）**：仅写在 **`type=="combat"` 且非锚点**的实例上，
+  是"本节点要打的敌人"。锚点、各大层关底台（`layer_boss_stand_N` / `final_boss_stand`）**不带该键**——
+  它们是刻意摆放的，Boss 不会随机出现。
+  - 抽取口径：候选池 = 模板 `enemy_theme` 的主题池 ∩ 本层 `enemy_rank_min..enemy_rank_max`
+    ∩ `tier != boss`；按 `pacing.enemy_weights` 的 tier 权重加权、**同节点内不重复**；
+    数量 = 模板声明的敌人个数（`enemy_kinds` 长度，缺省 1），因此多敌遭遇（如 `beast_swarm_pass`）
+    的**形状**被保留。
+  - **确定性**：种子流 = `mixed_seed(seed, "enemy_roll:<实例 id>", 0)`，与拓扑生成共享的 rng **相互独立**
+    ——所以该字段可用 `stripped`（去掉敌人目录）对照断言地图结构逐字段不变，
+    引入 E6 **不改动既有地图布局与既有种子产出**。
+  - 该键随 `route` 一起进存档；旧存档无此键时战斗侧自动回退（见 01 页）。
 - 锚点行语义：`"mid"=row/2`、`"pre_boss"=row_count-2`；`pacing.json.layers["1"].anchors` = `yizang_ridge(pre_boss)` + `refinement_hollow(mid)`
 - 黑市 `ridge_black_market` 每大层恰 1 处（mid 行）；休整 `rest_hollow/rest_shrine` 每三行交错
 - 路由含 `final_boss_stand`（末层关底）与 `ascension_window`（仅从 Boss 台可达）
