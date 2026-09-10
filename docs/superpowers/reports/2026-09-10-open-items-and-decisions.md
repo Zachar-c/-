@@ -41,8 +41,8 @@
 
 | # | 事项 | 状态 | 优先级 | 卡在哪 | 你只需给 |
 |---|---|---|---|---|---|
-| B1 | **V2→V4 线框稿**（Npc / Ending / ContentError） | **已出稿，待你逐屏批准**（2026-09-10）：`2026-09-10-npc-wireframe-v1.html` / `ending-wireframe-v1.html` / `content-error-wireframe-v1.html`，风格对齐 Encounter v1 | P1 | 回「过」或「改：屏名+意见」 | 无 |
-| B2 | **V5–V8 tscn 实施**（4 屏） | 未开工 | P1 | 依赖 B1 对应线框稿批准 | 同上，逐屏批准 |
+| B1 | **V2→V4 线框稿**（Npc / Ending / ContentError） | ✅ **已批准**（2026-09-10 用户「过」）：`npc/ending/content-error-wireframe-v1.html` | P1 | 无 | B2 可开工 |
+| B2 | **V5–V8 tscn 实施**（4 屏） | **可开工**（B1 已批准；Encounter v1 亦已批准） | P1 | 等你派发或直接开做 | 无 |
 | B3 | **真窗键鼠验收**（AI 契约：只有你主动要求才做） | 挂起 | P1 | 契约规定无你指令不做 | 指定要验哪几项 |
 | B3a | └ W10 `continue_run` 真窗验收 | 挂起（执行板 C 轨遗留） | P1 | 同上 | — |
 | B3b | └ S 阶段全流程真窗验收 | 挂起 | P2 | 依赖 D1b | — |
