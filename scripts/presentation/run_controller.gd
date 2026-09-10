@@ -17,6 +17,15 @@ const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const RunSnapshotBuilderScript = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_builder.gd")
+const RejectionTextScript = preload("res://scripts/presentation/rejection_text.gd")
+const RunOpeningFlowScript = preload("res://scripts/presentation/run_opening_flow.gd")
+const RunSettingsFlowScript = preload("res://scripts/presentation/run_settings_flow.gd")
+const RunBattleFlowScript = preload("res://scripts/presentation/run_battle_flow.gd")
+const RunTravelFlowScript = preload("res://scripts/presentation/run_travel_flow.gd")
+const RunDialogueFlowScript = preload("res://scripts/presentation/run_dialogue_flow.gd")
+const RunEndingFlowScript = preload("res://scripts/presentation/run_ending_flow.gd")
+# 公开常量转发：测试/外部仍可读 controller.WANDERER_STARTER_GU_IDS。
+const WANDERER_STARTER_GU_IDS = RunOpeningFlowScript.WANDERER_STARTER_GU_IDS
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 # V1 battle lifecycle hook: battle2 ledger sits in the RunState for the
 # duration of a single battle. Sized by CultivatorRules.thought_capacity and
@@ -264,19 +273,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 
 
 func _submit_battle_command(command: Dictionary) -> Dictionary:
-	var turn: Dictionary = BattleCommandFacadeScript.apply_turn(current_battle, state, command, catalog)
-	state = turn["state"]
-	current_battle = turn["battle"]
-	_sync_battle_hp_to_state()
-	last_result = {"battle_result": turn.get("result", "ongoing"), "feeds": turn.get("feeds", [])}
-	if bool(turn.get("finished", false)):
-		if str(turn.get("result", "")) == "death":
-			_show_death(DeathReportBuilderScript.build(current_battle, state))
-		else:
-			_finish_battle_in_session(str(turn.get("result", "")))
-	else:
-		_show_battle()
-	return turn
+	return RunBattleFlowScript.submit_battle_command(self, command)
 
 
 ## Dialogue Manager balloon 选择桥接入口（P1-1）：插件/UI 在标题变化
@@ -293,61 +290,12 @@ func submit_dialogue_selection(selection_title: String) -> Dictionary:
 
 
 func _submit_dialogue_branch(command: Dictionary) -> Dictionary:
-	if _dialogue_gateway == null:
-		_dialogue_gateway = DialogueManagerAdapterScript.new()
-	var branch_id := str(command.get("branch_id", ""))
-	var branch_result: Dictionary = {}
-	var branch_context: Dictionary = command.get("context", {}) if command.get("context", {}) is Dictionary else {}
-	if command.has("state_version"):
-		branch_context["state_version"] = command.get("state_version")
-	if _dialogue_gateway.has_method("apply_branch"):
-		branch_result = _dialogue_gateway.apply_branch(
-			state,
-			current_session,
-			branch_id,
-			catalog,
-			current_node,
-			branch_context
-		)
-	else:
-		branch_result = {
-			"ok": false,
-			"reason": "dialogue_adapter_unavailable",
-			"feedback": "对话暂时无法回应，局面没有改变。",
-			"state": state,
-			"session": current_session.duplicate(true),
-			"result": {"ok": false, "reason": "dialogue_adapter_unavailable"},
-		}
-	state = branch_result.get("state", state)
-	current_session = branch_result.get("session", current_session)
-	last_result = branch_result.get("result", {})
-	last_feedback = str(branch_result.get("feedback", ""))
-	if last_feedback.is_empty() and not bool(branch_result.get("ok", false)):
-		last_feedback = rejection_text(str(branch_result.get("reason", "unknown_dialogue_branch")))
-	if bool(current_session.get("completed", false)):
-		_return_to_map()
-	else:
-		_re_show_current_screen()
-	return branch_result
+	return RunDialogueFlowScript.submit_branch(self, command)
 
 
-## 战斗内 hp 写回 RunState：RunState.health 是本局气血唯一真值（resolver/shop/
-## rest 全部写它），V1 战斗 hp 只活在 current_battle.player 里——每回合结算后
-## 同步回写（含 cultivator 镜像），避免战后休整/服务读到陈旧 hp。
+## A7：战斗 hp 同步 / 开局 / 设置 / 拒绝文案已外提；见 run_*_flow 与 rejection_text。
 func _sync_battle_hp_to_state() -> void:
-	if current_battle.is_empty():
-		return
-	var player: Dictionary = current_battle.get("player", {})
-	if player.is_empty():
-		return
-	var hp := maxi(0, int(player.get("hp", state.health)))
-	var max_hp := maxi(1, int(player.get("max_hp", state.max_health)))
-	state.health = hp
-	state.max_health = max_hp
-	var cultivator: Dictionary = state.cultivator.duplicate(true)
-	cultivator["health"] = hp
-	cultivator["max_health"] = max_hp
-	state.cultivator = cultivator
+	RunBattleFlowScript.sync_battle_hp_to_state(self)
 
 
 ## B 批反馈基建（§16.5 信息透明）：命令结果必须可见——被拒走 rejection_text 中文，
@@ -373,114 +321,16 @@ func current_view_name() -> String:
 
 
 func _show_content_error() -> void:
-	_view_name = "ContentError"
 	_ending_state = {}
-	_render()
+	_set_view("ContentError")
 
 
-## 成功命令的反馈摘要：拼接 actual_changes 的 message（领域侧已中文化）。
-## 空变化（如纯查询命令）返回空串，toast 不显示。
 func _summarize_changes(changes) -> String:
-	if changes == null or not (changes is Array):
-		return ""
-	var parts: Array[String] = []
-	for c in changes:
-		var msg := str(c.get("message", "")) if c is Dictionary else ""
-		if not msg.is_empty():
-			parts.append(msg)
-	return "、".join(parts)
+	return RejectionTextScript.summarize_changes(changes)
 
 
-## B 批反馈基建：resolver 拒绝 reason → 玩家可见中文文案（§16.5 数值明确、不模糊）。
-## 未收录的 reason 走通用兜底并保留原始键（可追溯，不静默）。
 func rejection_text(reason: String) -> String:
-	if reason.is_empty() or reason == "unknown":
-		return "该操作暂时无法执行。"
-	return _REJECTION_TEXT.get(reason, "无法执行：%s" % reason)
-
-
-## 高频拒绝 reason 的玩家文案。新增拒绝理由时在此登记，漏网走兜底显示原始键。
-const _REJECTION_TEXT := {
-	"insufficient_stone": "元石不足。",
-	"insufficient_lifespan": "寿元不足。",
-	"insufficient_soul": "魂魄不足。",
-	"insufficient_material": "材料不足。",
-	"unknown_shop_offer": "该商品不在货架上。",
-	"npc_stock_missing": "该货物已被买空。",
-	"npc_not_present": "对方不在此地。",
-	"unknown_npc": "这里没有可交易的人。",
-	"npc_missing": "这里没有可交易的人。",
-	"contract_locked": "该契约尚未解锁。",
-	"contract_sworn": "该契约已立誓。",
-	"contract_soft_cap": "契约数量已达上限。",
-	"gu_slot_full": "蛊槽已满，请先取舍。",
-	"refine_input_missing": "炼蛊材料不足：先投入至少两味材料。",
-	"refine_slot_invalid": "炼蛊空位校验未通过。",
-	"refine_recipe_locked": "该配方尚未解锁。",
-	"retreat_forbidden": "此战不可撤退。",
-	"invalid_action": "当前阶段不能执行该操作。",
-	"invalid_action_card": "这张牌当前不能打出。",
-	"stale_state_version": "局面已变化，操作已过期，请重试。",
-	"not_enough_essence": "真元不足。",
-	"no_actions_left": "行动值已用完，结束回合恢复。",
-	"dodge_exhausted": "本回合已闪避过。",
-	"not_enough_hp": "生命不足，不能支付该代价。",
-	"lifespan_trade_warning": "这笔交易将耗尽寿元，被拒绝。",
-	"already_completed": "该节点已完成。",
-	"invalid_node_completion": "节点状态已变化。",
-	"unknown_contact": "此人无可交涉的选项。",
-	"invalid_contact_approach": "该交涉方式不可用。",
-	"unknown_command": "未知指令。",
-	"unknown_dialogue_branch": "无法理解这段对话的选择，局面没有改变。",
-	"dialogue_branch_used": "这项对话选择已经处理过了。",
-	"dialogue_adapter_unavailable": "对话暂时无法回应，局面没有改变。",
-	"unknown_gu": "没有这只蛊。",
-	"unknown_card": "没有这张卡。",
-	"unknown_node": "无法前往该地点。",
-	"node_not_reachable": "该地点与当前位置不连通。",
-	"unknown_material": "没有这种材料。",
-	"material_not_usable": "这种材料不能直接使用。",
-	"no_material_to_use": "身上没有这种材料。",
-	"material_use_lethal": "直接使用会耗尽气血，被拒绝。",
-	# T9.2 v2 command rejection texts.
-	"too_early_first_layer": "尚在第一大层前段，稍后才能确认核心。",
-	"core_already_confirmed": "本局已有一只核心蛊。",
-	"instance_missing": "没有这只蛊实例。",
-	"replace_limit_reached": "本局核心更换次数已达上限。",
-	"guarantee_replaced_with_peer_reward": "已更换过核心，此处改发同级收益。",
-	"no_token_on_node": "此处没有核心更换凭证。",
-	"buyer_already_paid": "这位买家已为这条消息付过费。",
-	"insufficient_thought": "念头不足。",
-	"gu_already_used_this_turn": "这只蛊本回合已催动过。",
-	"maintenance_blocks_activation": "维持中的蛊本回合不可再催动。",
-	"action_already_used_this_turn": "这个基础动作本回合已用过。",
-	"unknown_action": "未知的基础动作。",
-	"unknown_proposal_kind": "未知的编排提案。",
-	"parallel_group_repeats_action": "并行组重复了动作种类。",
-	"parallel_group_repeats_instance": "并行组重复了蛊实例。",
-	"no_thought": "没有可用的念头。",
-	"window_closed": "反应窗口已关闭。",
-	"dodge_not_allowed": "这次攻击不容许闪避。",
-	"grappled_blocks_dodge": "被擒抱时无法闪避。",
-	"bound_blocks_dodge": "被束缚时无法闪避。",
-	"terrain_restricted": "地形限制无法闪避。",
-	"not_at_contact": "不在接触距离，无法发起擒抱。",
-	"not_stronger": "力量不足，擒抱未能成立。",
-	"no_reserved_thought": "没有预留念头发起反应。",
-	"not_a_legal_reaction": "这不是合法的脱离反应。",
-	"insufficient_health": "气血不足，不能支付该代价。",
-	"bleed_rank_exceeds_cultivator": "不能凝炼高于自身转数的血气。",
-	"soulless_target": "这个目标没有魂魄。",
-	"no_means_declared": "没有声明收魂手段。",
-	"means_capacity_full": "收魂手段容量已满。",
-	"soul_yield_zero": "此次收魂没有收益。",
-	# D1b 古方知识模型：自由配对合炼拒绝/失败文案。
-	"free_pair_failed": "合炼失败：主蛊受伤（休整可愈），元石已耗。",
-	"pair_invalid": "这对蛊虫无法入炉（预检未通过）。",
-	"gu_fang_already_unlocked": "你已持有该古方。",
-	"gu_fang_unknown": "没有这张古方对应的蛊。",
-	"refinement_capacity_exceeded": "炼蛊需要至少保留两处空位，当前不足。",
-}
+	return RejectionTextScript.text(reason)
 
 
 func force_complete_for_test() -> void:
@@ -536,51 +386,7 @@ func _restore_game(loaded: Dictionary) -> bool:
 
 
 func _travel_to(node_id: String) -> Dictionary:
-	var node := _node_by_id(node_id)
-	if node.is_empty():
-		return {"ok": false, "reason": "unknown_route_node"}
-	var reachable_ids: Array[String] = []
-	for reachable in MapGenerator.reachable_nodes(route, state):
-		reachable_ids.append(str(reachable["id"]))
-	if not reachable_ids.has(node_id):
-		return {"ok": false, "reason": "unreachable_route_node"}
-	var resolved := Resolver.apply(state, {"type": "travel", "node_id": node_id}, catalog)
-	state = resolved["state"]
-	current_node = node
-	_stamp_current_node(state, node)
-	var session_started := EncounterSessionResolverScript.begin(state, node)
-	state = session_started["state"]
-	current_session = session_started["session"]
-	last_result = resolved["result"]
-	# E4a：新探访开始，炼蛊子屏状态复位（上一个休息探访的子屏语境不残留）。
-	_refine_from_rest = false
-	_refine_initial_channel = ""
-	if node["type"] in ["combat", "pursuit"]:
-		_start_battle()
-	elif node["type"] in ["shop", "market", "caravan"]:
-		_show_shop()
-	elif node["type"] in ["rest", "refinement", "cultivation"]:
-		# E4a 三选一（规格 §4）：三个休息类模板统一 _show_rest()；refinement
-		# 不再单独走 Refine 屏——炼蛊经休息屏「炼蛊」卡以子屏方式进入。
-		_show_rest()
-	elif node["type"] == "contact":
-		_show_npc()
-	else:
-		if node["type"] == "event" and _dialogue_gateway != null and _dialogue_gateway.has_method("begin"):
-			# P1-2 路由：事件入口 Dialogue title 由节点声明（dialogue_title），默认 "start"；
-			# gu_rot_pact 等事件使用专属 title，不再全部从 echo_cave 的 start 打开。
-			_dialogue_gateway.begin(
-				str(node.get("event_id", node.get("id", ""))),
-				str(node.get("dialogue_title", "start"))
-			)
-			# P1-B 接线：Dialogue Manager 的 passed_title（玩家点选项跳转 title）
-			# 转发到 submit_dialogue_selection，走统一命令结算路径。绑定 Callable
-			# 使 controller 释放后回调自动失效，避免跨测试的信号串扰。
-			if _dialogue_gateway.has_method("set_branch_selection_callback"):
-				_dialogue_gateway.set_branch_selection_callback(
-					Callable(self, "submit_dialogue_selection"))
-		_show_encounter()
-	return resolved["result"]
+	return RunTravelFlowScript.travel_to(self, node_id)
 
 
 # ----------------------------------------------------------------------------
@@ -695,91 +501,16 @@ func _debug_fail_with(reason: String, feedback: String) -> Dictionary:
 
 
 func _start_battle() -> void:
-	var enemy_kind := str(current_node.get("enemy_kind", "beast_swarm"))
-	var first_mover := "player"
-	var notorious := Resolver.notoriety(state)
-	var stance := str(current_session.get("stance", "neutral"))
-	var hostile_flag := stance in ["hostile", "extreme_hostile"] or bool(current_session.get("flags", {}).get("reputation_hostile", false))
-	if notorious > 0 or hostile_flag:
-		if hostile_flag:
-			first_mover = "enemy"
-		else:
-			var effects: Dictionary = catalog.get("reputation", {}).get("effects", {})
-			var pct := notorious * int(effects.get("first_move_chance_pct_per_point", 10))
-			if Resolver.roll_chance(state, pct, "reputation_first_move"):
-				first_mover = "enemy"
-	var kill_source := ""
-	if str(current_session.get("kind", "")) in ["contact", "caravan", "market", "shop", "wild_gu"]:
-		kill_source = "neutral_npc"
-	var encounter := {
-		"turn": int(current_node.get("layer", MapGenerator.layer_index(str(current_node.get("stage", ""))))),
-		"layer": int(current_node.get("layer", 1)),
-		# Boss 身份透传：关底台（layer_boss_stand_N / final_boss_stand）必须让
-		# facade 知道这是 Boss 战（flags.boss_battle），否则退避门禁与 UI 全失效。
-		"layer_boss": int(current_node.get("layer_boss", 0)),
-		"terrain": _battle_terrain(),
-		"first_mover": first_mover,
-		"kill_source": kill_source,
-	}
-	# E6（2026-09-10）：地图生成期已按层抽好敌人（`enemy_roll`）时优先用它；
-	# 锚点/各大层关底台/旧存档没有该键 → 回退到模板自带的 `enemy_kind(s)`。
-	if current_node.has("enemy_roll"):
-		encounter["enemy_roll"] = (current_node.get("enemy_roll", []) as Array).duplicate()
-	elif current_node.has("enemy_kinds"):
-		encounter["enemy_kinds"] = (current_node.get("enemy_kinds", []) as Array).duplicate()
-	else:
-		encounter["enemy_kind"] = enemy_kind
-	# V1 battle2 ledger hook: seed a fresh per-battle ledger sized by the
-	# current cultivator's thought capacity. The battle facade advances it on
-	# each accepted turn and finalises it on the exit info key.
-	state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
-		CultivatorRulesScript.thought_capacity(state.cultivator, catalog)
-	)
-	current_battle = BattleCommandFacadeScript.start(encounter, state, catalog)
-	# N6: weaknesses procured through probe carry into the battle as bonus damage.
-	if state.known_facts.has("procured_weakness"):
-		current_battle["intel_bonus"] = 1
-	if first_mover == "enemy":
-		# 敌方本回合全部存活意图的伤害总和（围攻节点多名敌人叠伤，单看
-		# 单个 intent 会漏判致死）。V1 契约：意图在 enemies[].intent。
-		var opening_damage := 0
-		for enemy_value in current_battle.get("enemies", []):
-			opening_damage += maxi(0, int(((enemy_value as Dictionary).get("intent", {}) as Dictionary).get("damage", 0)))
-		# 2 低血进敌方先手战（死亡可预见红线）：先手意图本会在本帧无条件结算，
-		# 低血玩家入屏即死、无从反应。致死开场不自动结算——先亮意图 + 致命
-		# 警告（快照 lethal_warning + 战斗日志），把敌方先手延后到玩家首个回合
-		# 结束；意图与后续掷骰序列不变，全确定性。玩家可守护/闪避/治疗自救；
-		# 未自救仍由常规结算致死并走统一 DeathReport（击杀意图由战斗日志归因）。
-		var lethal_opening := opening_damage > 0 and state.health <= opening_damage
-		if lethal_opening:
-			# V1 flags 是 Dictionary（禁止 Array 型 flags）。
-			(current_battle["flags"] as Dictionary)["opening_lethal"] = true
-			current_battle["log"].append({"id": "opening_lethal_warning", "damage": opening_damage})
-			_show_battle()
-			return
-		var pre := BattleCommandFacadeScript.apply_enemy_pre_turn(current_battle, state, catalog)
-		state = pre["state"]
-		current_battle = pre["battle"]
-		_sync_battle_hp_to_state()
-		if bool(pre["finished"]):
-			if str(pre["result"]) == "death":
-				_show_death(DeathReportBuilderScript.build(current_battle, state))
-			else:
-				_finish_battle_in_session(str(pre["result"]))
-			return
-	_show_battle()
+	RunBattleFlowScript.start_battle(self)
 
 
 func _battle_terrain() -> String:
-	if current_node.get("id", "") == "greedy_wanderer":
-		return "ridge"
-	return "path"
+	return RunBattleFlowScript.battle_terrain(self)
 
 
 func _show_title() -> void:
-	_view_name = "Title"
 	_hall_subview = "main"
-	_render()
+	_set_view("Title")
 
 
 # 退出流程（A6 设置 → 退出游戏）：request_quit 只置标志（可测），
@@ -789,66 +520,31 @@ var quit_requested := false
 
 
 func request_quit() -> void:
-	quit_requested = true
+	RunSettingsFlowScript.request_quit(self)
 
 
 func quit_game() -> void:
-	request_quit()
-	if is_inside_tree() and not Engine.is_editor_hint():
-		get_tree().quit()
+	RunSettingsFlowScript.quit_game(self)
 
 
-## A6 设置 → 状态自适应难度开关（R14.6⑧）：翻转大厅档布尔值并即时存档。
 func toggle_dda() -> void:
-	if meta == null:
-		return
-	meta.dda_state_adaptive_enabled = not meta.dda_state_adaptive_enabled
-	SaveRepository.save_meta_file(meta)
-	_render()
+	RunSettingsFlowScript.toggle_dda(self)
 
 
-## A6 设置 → 主音量步进（±delta，钳制 0–100），立即作用于 Master 总线并持久化。
 func step_master_volume(delta: int) -> void:
-	if app_settings == null:
-		return
-	app_settings.master_volume = AppSettingsScript.clamp_volume(int(app_settings.master_volume) + delta)
-	AppSettingsScript.save_settings(app_settings)
-	_apply_master_volume()
-	_render()
+	RunSettingsFlowScript.step_master_volume(self, delta)
 
 
-## A6 设置 → 分辨率循环切换（全屏 ↔ 各窗口档），立即作用于窗口并持久化。
 func cycle_resolution() -> void:
-	if app_settings == null:
-		return
-	app_settings.resolution_index = AppSettingsScript.next_resolution_index(int(app_settings.resolution_index))
-	AppSettingsScript.save_settings(app_settings)
-	_apply_window_mode()
-	_render()
+	RunSettingsFlowScript.cycle_resolution(self)
 
 
 func _apply_master_volume() -> void:
-	var percent := AppSettingsScript.clamp_volume(int(app_settings.master_volume)) if app_settings != null else 100
-	if AudioServer.get_bus_count() < 1:
-		return
-	var bus := 0
-	AudioServer.set_bus_mute(bus, percent <= 0)
-	if percent > 0:
-		AudioServer.set_bus_volume_db(bus, linear_to_db(float(percent) / 100.0))
+	RunSettingsFlowScript.apply_master_volume(self)
 
 
 func _apply_window_mode() -> void:
-	if DisplayServer.get_name() == "headless":
-		return
-	var option: Dictionary = AppSettingsScript.resolution_at(int(app_settings.resolution_index)) if app_settings != null else {}
-	if option.is_empty():
-		return
-	if bool(option.get("fullscreen", false)):
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-	else:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		var size: Vector2i = option.get("size", Vector2i(1920, 1080))
-		call_deferred("_deferred_set_window_size", size)
+	RunSettingsFlowScript.apply_window_mode(self)
 
 
 func _deferred_set_window_size(size: Vector2i) -> void:
@@ -864,64 +560,8 @@ func _show_hall_subview(subview: String) -> void:
 	_render()
 
 
-# R-opening-fairness 2026-08-27: runs started without a school pick used to
-# enter the guaranteed layer-one combat with a one-card deck (novice only),
-# which was unwinnable against reaction-guarded enemies. The wanderer pack
-# makes the opening fight winnable without visiting a shop first. Pools stay
-# school-agnostic: state.school remains "".
-# 802 catalog 重建后（2026-09-06）原包 thorn_whip/trail_eye/mist_step 已删，
-# 依「机制角色映射」自拟新包（全部 rank1 且 combat 字段非空，V1 槽位可打）：
-#   缚=blood_farewell_gu  守=stone_shell_gu  吸/blood_bat_gu  攻=force_gu  察=small_light_gu
-# legacy deck 契约仍含 stone_guard（stone_shell_gu blueprint）。
-const WANDERER_STARTER_GU_IDS := [
-	"blood_farewell_gu",
-	"stone_shell_gu",
-	"blood_bat_gu",
-	"force_gu",
-	"small_light_gu",
-]
-
-
-## S2 开局 Buff：选中的 Buff 在 run 创建时一次性结算（多选、本切片无限量）。
-## grant_stones 直接加元石；grant_gu 按实例注入洞天；enemy_hp_one 由
-## BattleCommandFacade.start 在战斗构建时消费（非 Boss 敌 hp=1）。
 func _apply_run_buffs(buff_ids: Array) -> void:
-	var buffs: Dictionary = catalog.get("buffs", {})
-	var applied: Array[String] = []
-	var before := {"stone": int(state.stone), "gu_instances": state.gu_instances.size()}
-	for raw_id in buff_ids:
-		var buff_id := str(raw_id)
-		var bdata: Dictionary = buffs.get(buff_id, {})
-		if bdata.is_empty():
-			continue
-		applied.append(buff_id)
-		state.run_buff_ids.append(buff_id)
-		match str(bdata.get("effect", "")):
-			"grant_stones":
-				state.stone = int(state.stone) + int(bdata.get("amount", 0))
-			"grant_gu":
-				var gu_id := str(bdata.get("gu_id", ""))
-				if not gu_id.is_empty() and catalog.get("gu_by_id", {}).has(gu_id):
-					var instance_id := _next_gu_instance_id(state)
-					state.gu_instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, catalog)
-					state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
-				state.sync_legacy_gu_projections()
-	if applied.is_empty():
-		return
-	state.append_event({
-		"stage": state.stage,
-		"time": state.event_log.size(),
-		"node_id": state.current_node_id,
-		"action": "run_buffs_applied",
-		"before": before,
-		"after": {
-			"stone": int(state.stone),
-			"gu_instances": state.gu_instances.size(),
-			"run_buff_ids": state.run_buff_ids.duplicate(),
-		},
-		"reason": "opening_buffs_settled",
-		"source": "run_controller",
-	})
+	RunOpeningFlowScript.apply_run_buffs(self, buff_ids)
 
 
 func _toggle_buff(buff_id: String) -> void:
@@ -935,96 +575,15 @@ func _toggle_buff(buff_id: String) -> void:
 
 
 func _inject_school_starters(school: String) -> void:
-	var schools: Dictionary = catalog.get("schools", {})
-	var starters: Array = WANDERER_STARTER_GU_IDS if school.is_empty() \
-		else (schools.get(school, {}).get("starter_gu_ids", []) as Array)
-	var before := {"school": str(state.school)}
-	if not school.is_empty():
-		state.school = school
-	var injected: Array[String] = []
-	for starter_value in starters:
-		var gu_id := str(starter_value)
-		# Starter packs may intentionally contain duplicates (e.g. two moonlight gu).
-		# Only skip when the existing instance count already satisfies this pack's
-		# requested multiplicity.
-		var existing_count := 0
-		for instance_value in state.gu_instances.values():
-			if str((instance_value as Dictionary).get("definition_id", "")) == gu_id:
-				existing_count += 1
-		var requested_count := 0
-		for prior_value in starters:
-			if str(prior_value) == gu_id:
-				requested_count += 1
-		if existing_count >= requested_count:
-			continue
-		var instance_id := _next_gu_instance_id(state)
-		state.gu_instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, catalog)
-		state.cave_aperture["stored_gu_instance_ids"].append(instance_id)
-		injected.append(str(gu_id))
-		state.sync_legacy_gu_projections()
-	var after := {
-		"school": str(state.school),
-		"gu_instances": state.gu_instances.duplicate(true),
-		"cave_aperture": state.cave_aperture.duplicate(true),
-	}
-	var next := state.append_event({
-		"stage": state.stage,
-		"time": state.event_log.size(),
-		"node_id": state.current_node_id,
-		"action": "school_selected",
-		"before": before,
-		"after": after,
-		"reason": "school_starters_injected",
-		"source": "run_controller",
-		"targets": injected,
-	})
-	next.sync_legacy_gu_projections()
-	state = next
+	RunOpeningFlowScript.inject_school_starters(self, school)
 
 
 func _next_gu_instance_id(state_ref: RunState) -> String:
 	return RunState.next_gu_instance_id(state_ref.gu_instances)
 
 
-# C1-min §16.13: opening swears ride the same Resolver.apply path as every
-# other command; the allowed whitelist comes from the hall save so locked
-# contracts are refused with an explicit reason feed. After a successful
-# swear the aggregate may include a starter_stone contract; we lift the
-# opening meta stone above that floor and emit one opening_contract_effects
-# event so journal and replay see the same source.
 func _swear_opening_contracts(contract_ids: Array) -> void:
-	if contract_ids.is_empty():
-		return
-	var allowed: Array = []
-	if meta != null and meta.has_method("unlocked_contracts"):
-		allowed = meta.unlocked_contracts(catalog)
-	var resolved := Resolver.apply(state, {
-		"type": "swear_contracts",
-		"ids": contract_ids,
-		"allowed_ids": allowed,
-	}, catalog)
-	var succeeded := bool(resolved["result"].get("ok", false))
-	state = resolved["state"]
-	if not succeeded:
-		last_feedback = "契约被拒：%s。" % str(resolved["result"].get("reason", ""))
-		return
-	var totals := ContractRulesScript.aggregate(state, catalog)
-	var starter_floor := int(totals.get("starter_stone", 0))
-	if starter_floor > state.stone:
-		var before := int(state.stone)
-		state = state.append_event({
-			"stage": state.stage,
-			"time": state.event_log.size(),
-			"node_id": state.current_node_id,
-			"action": "opening_contract_effects",
-			"before": {"stone": before},
-			"after": {"stone": starter_floor},
-			"reason": "starter_stone_applied",
-			"source": "run_controller",
-			"targets": contract_ids,
-		})
-		state.stone = starter_floor
-	last_feedback = "已立誓契约。"
+	RunOpeningFlowScript.swear_opening_contracts(self, contract_ids)
 
 
 func _start_run_from_title() -> void:
@@ -1039,32 +598,28 @@ static func roll_seed() -> int:
 
 
 static func _run_end_outcome(outcome: String) -> String:
-	match outcome:
-		"success", "ascension_special", "ascension_high", "ascension_medium", "ascension_low":
-			return "won"
-		"risky_success": return "risky"
-		"surrendered": return "abandoned"
-	return "dead"
+	return RunEndingFlowScript.run_end_outcome(outcome)
+
+
+func _set_view(view_name: String) -> void:
+	_view_name = view_name
+	_render()
 
 
 func _show_map() -> void:
-	_view_name = "Map"
-	_render()
+	_set_view("Map")
 
 
 func _show_encounter() -> void:
-	_view_name = "Encounter"
-	_render()
+	_set_view("Encounter")
 
 
 func _show_shop() -> void:
-	_view_name = "Shop"
-	_render()
+	_set_view("Shop")
 
 
 func _show_rest() -> void:
-	_view_name = "Rest"
-	_render()
+	_set_view("Rest")
 
 
 func _show_refine() -> void:
@@ -1076,8 +631,7 @@ func _show_refine() -> void:
 		_selected_pair_main = ""
 	if not alive.has(_selected_pair_partner):
 		_selected_pair_partner = ""
-	_view_name = "Refine"
-	_render()
+	_set_view("Refine")
 
 
 # E4a 炼蛊子屏（规格 §4）：休息探访内经「炼蛊」卡打开 Refine 视图；
@@ -1112,26 +666,22 @@ func select_pair_partner(instance_id: String) -> void:
 
 
 func _show_reward() -> void:
-	_view_name = "Reward"
-	_render()
+	_set_view("Reward")
 
 
 func _show_npc() -> void:
-	_view_name = "Npc"
-	_render()
+	_set_view("Npc")
 
 
 ## 覆盖屏统一切换：记录返回源，再挂载目标屏。
 func _show_kill() -> void:
 	_overlay_return_view = _view_name
-	_view_name = "Kill"
-	_render()
+	_set_view("Kill")
 
 
 func _show_settings() -> void:
 	_overlay_return_view = _view_name
-	_view_name = "Settings"
-	_render()
+	_set_view("Settings")
 
 
 func back_from_overlay() -> void:
@@ -1145,29 +695,12 @@ func back_from_overlay() -> void:
 
 ## 设置屏 → 分辨率：直接设为指定档（区别于大厅的 cycle_resolution 循环）。
 func set_resolution_index(index: int) -> void:
-	if app_settings == null:
-		return
-	if int(index) < 0 or int(index) >= AppSettingsScript.RESOLUTIONS.size():
-		return
-	app_settings.resolution_index = int(index)
-	AppSettingsScript.save_settings(app_settings)
-	_apply_window_mode()
-	_render()
+	RunSettingsFlowScript.set_resolution_index(self, index)
 
 
 ## 设置屏 → 静音切换：0 ↔ 原音量（0 记入 app_settings 原值旁置 100）。
 func toggle_mute() -> void:
-	if app_settings == null:
-		return
-	var current := AppSettingsScript.clamp_volume(int(app_settings.master_volume))
-	if current > 0:
-		app_settings.pre_mute_volume = current
-		app_settings.master_volume = 0
-	else:
-		app_settings.master_volume = AppSettingsScript.clamp_volume(int(app_settings.pre_mute_volume))
-	AppSettingsScript.save_settings(app_settings)
-	_apply_master_volume()
-	_render()
+	RunSettingsFlowScript.toggle_mute(self)
 
 
 ## 会话未完成时按当前屏留在原地（T4 节点屏替代 Encounter 通用展示）。
@@ -1181,8 +714,7 @@ func _re_show_current_screen() -> void:
 
 
 func _show_battle() -> void:
-	_view_name = "Battle"
-	_render()
+	_set_view("Battle")
 
 
 func _continue_saved_run() -> void:
@@ -1209,46 +741,15 @@ func surrender_run() -> void:
 
 
 func _show_ending(outcome: Dictionary) -> void:
-	var otype := str(outcome.get("outcome", ""))
-	_record_run_end(_run_end_outcome(otype), RunSnapshotBuilderScript.ending_type_for(otype))
-	_ending_state = RunSnapshotBuilderScript.ending(self, outcome, JournalBuilder.build(state, outcome), state.to_save_data())
-	_view_name = "Ending"
-	_render()
+	RunEndingFlowScript.show_ending(self, outcome)
 
 
 func _show_death(report: Dictionary) -> void:
-	_record_run_end("dead", "death")
-	# T5-B 结算联动：战斗死亡与 builder 路径共用精准死因三字段（只读扫描终局字段）。
-	var cause: Dictionary = RunSnapshotBuilderScript.death_cause_fields(state)
-	# T5-C 结算复盘：战斗死亡内联结算与 builder ending() 同形（路线/记录/最高转数/达成链）。
-	var death_state := {
-		"title": "身死道消",
-		"ending_type": "death",
-		"death_cause_id": str(cause["id"]),
-		"death_cause": str(cause["text"]),
-		"death_cause_short": str(cause["short"]),
-		"key_decisions": ["最后一击：%s" % RunSnapshotBuilderScript.blow_text(str(report.get("final_blow", "")))],
-		"gains_losses": "最后一击：%s（%d 点伤害）" % [RunSnapshotBuilderScript.blow_text(str(report.get("final_blow", ""))), int(report.get("damage", 0))],
-		"resource_balance": {"yuanstone": int(state.stone), "shouyuan": int(state.cultivator.get("lifespan", 0))},
-		"unlocks": [],
-		"aftermath": "残魂归于大地，修行札记已留存。",
-	}
-	death_state.merge(RunSnapshotBuilderScript.settlement_extras(self))
-	death_state["achievement"] = DisplayText.ending_achievement("death")
-	_ending_state = death_state
-	_view_name = "Ending"
-	_render()
+	RunEndingFlowScript.show_death(self, report)
 
 
 func _record_run_end(outcome: String, ending_type := "") -> void:
-	# 结局即此世终点（AGENTS）：结算时删除进行中 Run 存档，使大厅
-	# 「续入此世」不再回到已结束的旧档；下一世从大厅进入时以全新
-	# 随机种子开局。删除放在 meta 判空前，确保任何结局路径都清理。
-	SaveRepositoryScript.delete_run_save()
-	if meta == null:
-		return
-	meta = meta.record_run_end(state, outcome, catalog if catalog != null else {}, ending_type)
-	SaveRepository.save_meta_file(meta)
+	RunEndingFlowScript.record_run_end(self, outcome, ending_type)
 
 
 func _node_by_id(node_id: String) -> Dictionary:
@@ -1277,121 +778,15 @@ func _return_to_map() -> void:
 
 
 func _finish_battle_in_session(outcome: String) -> void:
-	var kill_source := str(current_battle.get("kill_source", ""))
-	var enemy_kind := str(current_battle.get("enemy_kind", ""))
-	var battle_loot: Dictionary = current_battle.get("loot", {})
-	var battle_cost: Dictionary = current_battle.get("cost", {})
-	current_battle = {}
-	current_session = current_session.duplicate(true)
-	current_session["phase"] = "post_battle"
-	# 胜负已分、对峙结束：战后立场归位。否则 extreme_hostile 遭遇在战斗胜利后
-	# 仍被 _leave 的 feud_no_escape 锁死（打赢 Boss 却永远离不了场 = 软锁）。
-	# feud 门禁只应在战斗前阻止「不战而逃」，不适用于已结算的战斗。
-	current_session["stance"] = "neutral"
-	if current_session.has("flags") and current_session["flags"] is Dictionary:
-		current_session["flags"].erase("reputation_hostile")
-		current_session["flags"].erase("reputation_extreme")
-	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
-	var results := state.encounter_results.duplicate(true)
-	# V1 battle2 ledger hook: capture the consumed ledger snapshot now and
-	# ride it on the final battle_finished event's info key below (V1
-	# retreat / death / victory bypass the engine's _battle_over funnel,
-	# so the controller writes the info key itself; the old per-turn
-	# _battle2_ledger info events are now redundant but kept for parity).
-	var ledger_snapshot: Dictionary = {}
-	if not state.current_battle2_ledger.is_empty():
-		ledger_snapshot = state.current_battle2_ledger.duplicate(true)
-	if outcome == "victory" and not battle_loot.is_empty():
-		var loot_labels: Array[String] = []
-		for material_value in battle_loot.get("material_ids", []):
-			loot_labels.append(DisplayText.material(str(material_value)))
-		var loot_gu := str(battle_loot.get("gu_id", ""))
-		if not loot_gu.is_empty():
-			loot_labels.append(DisplayText.gu(loot_gu))
-		if not loot_labels.is_empty():
-			results.append(ResultFeedScript.entry("battle", "battle_loot", {"loot_display": "、".join(loot_labels)}, []))
-	# R5.2 elite cost transparency: the bound cost is shown with exact numbers.
-	if outcome == "victory" and not battle_cost.is_empty():
-		results.append(ResultFeedScript.entry(
-			"battle",
-			"elite_cost_applied",
-			{"cost_display": DisplayText.elite_cost(battle_cost), "cost_kind": str(battle_cost.get("kind", ""))},
-			[]
-		))
-	if outcome == "victory" and enemy_kind == "miasma_vein_lord":
-		results.append(ResultFeedScript.entry("battle", "lifespan_milestone_gained", {}, []))
-	results.append(feed)
-	# V1 battle2 ledger hook: attach the captured ledger snapshot onto the
-	# final battle_finished event's info key (the V1 engine funnel is
-	# bypassed for the controller-driven retreat / death / victory exits,
-	# so the controller writes the info key itself).
-	var finished_event: Dictionary = {
-		"stage": state.stage,
-		"time": state.event_log.size(),
-		"node_id": state.current_node_id,
-		"action": "battle_finished",
-		"before": {},
-		"after": {"encounter_session": current_session, "encounter_results": results},
-		"reason": "battle_%s" % outcome,
-		"source": "run_controller",
-		"targets": [],
-	}
-	if not ledger_snapshot.is_empty():
-		finished_event["info"] = {"_battle2_ledger": ledger_snapshot.duplicate(true)}
-	state = state.append_event(finished_event)
-	# V1 battle2 ledger hook: clear the per-battle handle on the surviving
-	# state immediately after the snapshot rides the event. Future calls
-	# into _start_battle reseed.
-	state.current_battle2_ledger = {}
-	if outcome == "victory" and kill_source == "neutral_npc":
-		state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, catalog)["state"]
-	# 拓扑 v2：关底 Boss 按层落旗标（boss_defeated_L{n} 是下一大层的行进门禁）；
-	# 大层五的瘴脉之主同时保留全局 boss_defeated（升仙窗门禁，语义不变）。
-	if outcome == "victory":
-		var layer_boss := int(current_node.get("layer_boss", 0))
-		if layer_boss > 0:
-			state = Resolver.apply(state, {"type": "record_layer_boss_defeated", "layer": layer_boss}, catalog)["state"]
-			# S6 切片收官：pacing.ending_after_stage 指定的最终层 Boss 落败即
-			# 全局收官（本切片 = 第一层），走统一结算（outcome=success → won），
-			# Run 存档随结算删除；战利品已入账，结算复盘给出整局摘要。
-			var end_stage := str(catalog.get("pacing", {}).get("ending_after_stage", ""))
-			var order: Array = MapGenerator.LAYER_ORDER
-			var boss_stage := str(order[layer_boss - 1]) if layer_boss >= 1 and layer_boss <= order.size() else ""
-			if not end_stage.is_empty() and boss_stage == end_stage:
-				state.terminal_state = "success"
-				_show_ending({"outcome": "success", "conditions": {"layer": layer_boss, "route": "slice_closure"}})
-				return
-		if enemy_kind == "miasma_vein_lord":
-			state = Resolver.apply(state, {"type": "record_boss_defeated"}, catalog)["state"]
-	# D3 战利品弹窗（流程图 G3）：有真实战利品或精英绑定时走 Reward 屏确认，
-	# 纯文本 feed 仍保留在遭遇结果流（两处同源，不双份入账）。
-	last_battle_loot = battle_loot
-	last_battle_cost = battle_cost if outcome == "victory" else {}
-	if outcome == "victory" and (not battle_loot.is_empty() or not last_battle_cost.is_empty()):
-		_show_reward()
-		return
-	_show_encounter()
+	RunBattleFlowScript.finish_battle_in_session(self, outcome)
 
 
 func _record_dialogue_reply(result: Dictionary) -> void:
-	var reply: Variant = result.get("dialogue", {})
-	if not reply is Dictionary or reply.is_empty():
-		return
-	var payload: Dictionary = reply.duplicate(true)
-	payload.erase("source")
-	if DialogueGateway.is_valid_response(payload):
-		dialogue_replies.append(payload)
+	RunDialogueFlowScript.record_dialogue_reply(self, result)
 
 
 func _attach_social_dialogue(result: Dictionary) -> void:
-	var action_id := str(result.get("action_id", ""))
-	if action_id not in ["probe", "trade"] or _dialogue_gateway == null:
-		return
-	var social: Dictionary = state.relations.get("caravan_steward", {})
-	result["dialogue"] = _dialogue_gateway.respond({
-		"intent": action_id,
-		"disposition": str(social.get("npc_disposition", "neutral")),
-	})
+	RunDialogueFlowScript.attach_social_dialogue(self, result)
 
 
 # ----------------------------------------------------------------------------
