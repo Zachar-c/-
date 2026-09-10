@@ -172,15 +172,15 @@ C done → remediation-plan W10 关闭（视觉会话写）
 
 | ID | 任务 | 负责人 | 状态 | 时间窗 | 提交 SHA | 验证结果 | 备注 |
 |----|------|--------|------|--------|---------|----------|------|
-| A1 | worktree+基线 | 代理 A | pending | D0 | | | |
-| A2.0 | helpers 前置(可选) | 代理 A | pending | D0 | | | 仅当 A2 需要时执行 |
-| A2 | rest 族拆分 | 代理 A | pending | D0 | | | |
-| A3 | shop 族拆分 | 代理 A | pending | D1 | | | |
-| A4 | refine 族拆分 | 代理 A | pending | D1 | | | |
-| A5 | social 族拆分 | 代理 A | pending | D2 | | | 门槛：resolver<1200 |
-| A6 | 文档收口 | 代理 A | pending | D2 | | | |
-| A7 | 回归+合入 M1 | 代理 A→用户 | pending | D2 | | | 需用户批准 merge |
-| A8 | school 复核 | 代理 A | pending | 随时 | | | 预期：无需再动 |
+| A1 | worktree+基线 | 代理 A | done | D0 | 7158d1c | unit 1167 基线绿 | 分支 chore-w11-resolver-split（斜杠分支名被沙箱拒，用扁名） |
+| A2.0 | helpers 前置(可选) | 代理 A | done | D0 | — | — | design-skip：A2 未触发私有依赖障碍，helper 经 Resolver 全局名调用 |
+| A2 | rest 族拆分 | 代理 A | done | D0 | c56b8fe | unit+integration 绿 | rest_rules.gd 237 行 |
+| A3 | shop 族拆分 | 代理 A | done | D1 | 9322d25 | unit 绿 | shop_command_rules.gd 274 行 |
+| A4 | refine 族拆分 | 代理 A | done | D1 | 49a2590 | unit 1167 绿 | refine_command_rules.gd 828 行；rest↔refine 循环经 resolver 4 薄桥接 |
+| A5 | social 族拆分 | 代理 A | done | D2 | a5fb1f1 + c7e0ffd | unit 1167 + integration 31 绿 | A5a 社交簇 17 函数 + A5b 行动/升仙簇 24 函数；resolver 2407→264 行；social_command_rules.gd 945 行 |
+| A6 | 文档收口 | 代理 A | done | D2 | （本批） | 新文件名真实存在；无过时行数描述 | PONYTAIL-DEBT + 07-domain-action-router + MODULE-INVENTORY + resolver.gd:4 门限注释 + §6 看板回写 |
+| A7 | 回归+合入 M1 | 代理 A→用户 | pending | D2 | — | — | 需用户批准 merge（三件套已绿，待批准后 merge + remove worktree） |
+| A8 | school 复核 | 代理 A | done | 随时 | — | unit 绿 | 4 函数均存活：is_soul→relic_hook_resolver:82、blood/add_blood/material_fuel→test_school_framework；经 SchoolRulesScript 别名引用 → 无需再动 |
 | B1 | worktree+契约基线 | 代理 A | pending | D3(A7后) | | | |
 | B2 | hall 快照 | 代理 A | pending | D3 | | | |
 | B3 | map 快照 | 代理 A | pending | D3 | | | |

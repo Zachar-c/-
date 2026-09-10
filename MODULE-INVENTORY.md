@@ -28,7 +28,7 @@
 | ID | 模块 | 文件 | 规模 | 需求锚点 | 建议 |
 |----|------|------|------|----------|------|
 | A1 | RunState 纯数据 + 事件日志 + 种子随机 | scripts/domain/run_state.gd, events.gd, result_feed.gd, action_points.gd, rng.gd, seeded_roll.gd | ~540 行 | 单一 RunData、确定性、不可变事件日志（红线） | 核心 |
-| A2 | 中央规则机 resolver | scripts/domain/resolver.gd, resolver_helpers.gd | ~2340 | 所有命令唯一规则入口 | 核心（超行数门限，已知遗留） |
+| A2 | 中央规则机 resolver | scripts/domain/resolver.gd, resolver_helpers.gd | ~260 | 所有命令唯一规则入口 | 核心（W11 m3 已拆分：rest/shop/refine/social 四命令族模块承载 handler，resolver 剩路由核） |
 | A3 | 命令规格注册 | scripts/domain/command_spec.gd, command_spec_registry.gd | ~205 | 命令面契约 | 核心 |
 | A4 | RunController 编排 | scripts/presentation/run_controller.gd | 1519 | UI↔领域唯一边界、视图流转、存档触发 | 核心 |
 | A5 | 快照构建 | scripts/presentation/run_snapshot_builder.gd | 2129 | 领域→UI 只读快照（契约文档对应物） | 核心（可按屏拆分） |
@@ -67,14 +67,14 @@
 |----|------|------|------|----------|------|
 | E1 | 地图生成 | scripts/domain/map_generator.gd | 348 | 五层 L1--L5 图 | 核心 |
 | E2 | 节点会话/遭遇 | scripts/domain/encounter_session_resolver.gd, data/events.json, data/nodes.json, data/pacing.json, data/names.json, data/first_run.json | ~900 | 200--300 有效节点节奏 | 核心 |
-| E3 | NPC | data/npcs.json + resolver NPC 分支 | ~55 | NPC 个人库存/情报 | 核心 |
-| E4 | 休整/交易节点分支 | resolver 内 rest/trade 分支（无独立文件） | — | rest 全集红线、交易死亡预检 | 核心 |
+| E3 | NPC | data/npcs.json + social_command_rules.gd NPC 分支 | ~55 | NPC 个人库存/情报 | 核心 |
+| E4 | 休整/交易节点分支 | rest_rules.gd（休整全集红线）、shop_command_rules.gd（交易死亡预检） | — | rest 全集红线、交易死亡预检 | 核心 |
 
 ## F 规则包
 
 | ID | 模块 | 文件 | 规模 | 需求锚点 | 建议 |
 |----|------|------|------|----------|------|
-| F1 | 恶名 | data/reputation.json + resolver 分支 | 19 | 恶名有效路径 | 冻结（2026-09-05 裁决） |
+| F1 | 恶名 | data/reputation.json + social_command_rules.gd / resolver `gain_notoriety` | 19 | 恶名有效路径 | 冻结（2026-09-05 裁决） |
 | F2 | 契约 | scripts/domain/contract_rules.gd, data/contracts.json | ~101 | 契约路径 | 冻结（2026-09-05 裁决） |
 | F3 | 遗物 | scripts/domain/relic_hook_resolver.gd, data/relics.json | ~220 | 遗物钩子 | 冻结（2026-09-05 裁决） |
 | F4 | 诅咒 | scripts/domain/curse_registry.gd, data/curse.json | ~131 | 诅咒系统 | 冻结（2026-09-05 裁决；与合成失败/强弃反噬的既有耦合保持原样） |
@@ -140,7 +140,7 @@
 
 ## 已知遗留（与本清单相关的未修项，不随裁决自动消失）
 
-- `resolver.gd` 超行数门限（AGENTS 待办 #6）。
+- ~~`resolver.gd` 超行数门限~~：W11 m3（2026-09-10）已拆分，resolver 261 行（AGENTS 待办同批清理）。
 - Dialogue Manager invalid UID（待办 #6）。
 - 流派选择屏空渲染（未入 AGENTS，缺陷在 H1/流派屏）。
 - 小光蛊真窗拖拽 bug：排查中断，暂缓（H4 待你裁决交互形态后再定是否继续修）。
