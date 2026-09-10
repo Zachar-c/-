@@ -124,9 +124,11 @@ offset_left = 1216.0
 offset_top = 64.0
 offset_right = 1260.0
 offset_bottom = 108.0
+mouse_filter = 2
 
 [node name="SealCenter" type="CenterContainer" parent="SealPanelContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="SealBox" type="VBoxContainer" parent="SealPanelContainer/SealCenter"]
 layout_mode = 2
@@ -151,6 +153,7 @@ offset_left = 1194.0
 offset_top = 124.0
 offset_right = 1254.0
 offset_bottom = 252.0
+mouse_filter = 2
 theme_override_constants/separation = 16
 
 [node name="NavJournal" type="Button" parent="Nav"]
@@ -176,6 +179,7 @@ offset_left = 112.0
 offset_top = 186.0
 offset_right = 1242.0
 offset_bottom = 606.0
+mouse_filter = 2
 
 [node name="Content" type="Control" parent="SettingsStage"]
 layout_mode = 1
@@ -184,6 +188,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="SoundLabel" type="Label" parent="SettingsStage/Content"]
 layout_mode = 1
@@ -314,17 +319,23 @@ text = "保存"
 layout_mode = 2
 text = "读档"
 
-[node name="BackRow" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 0
-offset_left = 1176.0
-offset_top = 662.0
-offset_right = 1256.0
-offset_bottom = 692.0
+[node name="BackRow" type="HBoxContainer" parent="SettingsStage/Content"]
+layout_mode = 0
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -30.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="BackButton" type="Button" parent="BackRow"]
+[node name="BackButton" type="Button" parent="SettingsStage/Content/BackRow"]
 layout_mode = 2
 text = "返回"
 

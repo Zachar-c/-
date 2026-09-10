@@ -87,14 +87,13 @@ HandArea     mf=1(PASS)   rect=(30,556 1040x154)
 
 ## 4. 审计顺带暴露的三处既有遮挡（本批未修，已留档）
 
-三处均已核实**不是动画瞬态**（把审计等待从 0.8s 拉到 2.5s 仍复现），且这三个场景在工作树里
-**均未改动**，属修前既有：
+三处均已核实**不是动画瞬态**（把审计等待从 0.8s 拉到 2.5s 仍复现）；**已于 C1（2026-09-10）全部修复**，`KNOWN_OCCLUDED` 清空：
 
-| 屏 | 被盖住 | 遮挡物 | 性质 | 建议 |
-|---|---|---|---|---|
-| **Settings** | 整页内容（静音 / 分辨率 / 保存 / 读档） | `BackRow` 被打成整屏 `32,16 1216x680` | **容器语义**：`BackRow` 是 root `MarginContainer` 的直接子节点，被容器接管矩形——tscn 里写的 `offset_*`（80×30 小框）**完全无效**。只有它自己的「返回」能点 | 给它一个不被拉伸的父容器（或改成非直接子节点） |
-| **Shop** | 4×「购买此蛊」+「离开黑市」+ 顶栏两个 | `Root_ShopStage_SealPanelContainer#SealMargin` 整屏 | **坏场景**：`shop_screen.tscn` 里 `SealMargin` 的 `parent` 指向**从未声明**的 `SealPanelContainer` → 孤儿节点被引擎整屏挂载 | 决定这个节点的归处（补声明 / 并入 `StageContent/TitleRow` / 删除） |
-| **Rest** | 顶栏 手记 / 图鉴 | `PanelMargin`（`gu_panel` 内层，PASS）`123,40 1118x412` | **布局**：决策面板上沿伸进顶栏带 | 把面板下移；**不要**给它加 IGNORE——面板主体本就该吃掉"点在纸面空白上"的点击 |
+| 屏 | 被盖住 | 原遮挡物 | 修复 |
+|---|---|---|---|
+| **Settings** | 整页内容（静音 / 分辨率 / 保存 / 读档） | `BackRow` 被 root `MarginContainer` 拉伸整屏 | `BackRow` 挂到 `SettingsStage/Content` + anchors 右下；装饰层 `SettingsStage`/`Content`/`SealPanelContainer`/`SealCenter`/`Nav` 设 `mouse_filter=IGNORE` 让顶栏可点；`settings_screen_view.gd` 路径同步 |
+| **Shop** | 4×「购买此蛊」+「离开黑市」+ 顶栏两个 | 孤儿 `SealMargin` 整屏 | **删除**孤儿节点块（TitleRow 内印章保留） |
+| **Rest** | 顶栏 手记 / 图鉴 | `PanelMargin` 压顶栏 | `StageContent` 设 `mouse_filter=IGNORE`（决策面板自身仍吃点击）+ `TopSpacer` 16px |
 
 ---
 
@@ -102,7 +101,7 @@ HandArea     mf=1(PASS)   rect=(30,556 1040x154)
 
 | 门 | 命令 | 结果 |
 |---|---|---|
-| 交互闭环（全屏） | `-s tools/verify_interaction_loop.gd` | 8 屏全部 `dead=[] no_ui_click=[] **occluded=[]**`；`occluded_known` = Rest 2 / Shop 7 / Settings 10（留档） |
+| 交互闭环（全屏） | `-s tools/verify_interaction_loop.gd` | 8 屏全部 `dead=[] no_ui_click=[] occluded=[]`；`occluded_known` **全 0**（C1 已清白名单） |
 | 战斗屏（含真实点击） | `-gtest tests/unit/test_wenzhen_battle_screen.gd` | **12/12** |
 | 手牌 FSM | `-gtest tests/unit/test_wenzhen_card_fsm.gd` | **18/18** |
 | 扇形组件协议 | `-gtest tests/unit/test_tall_fan_hand_view.gd` | **2/2** |

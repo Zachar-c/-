@@ -25,9 +25,6 @@ const RunControllerScript := preload("res://scripts/presentation/run_controller.
 ##     （Container 会接管子节点的 pos/size，tscn 里写的 anchors/offset 对它是无效的）。
 ## 键 = "<屏>|<遮挡物节点名>"；**新增**的遮挡一律判红。
 const KNOWN_OCCLUDED := {
-	"Rest|PanelMargin": "决策面板上沿压住顶栏按钮（布局待定）",
-	"Shop|Root_ShopStage_SealPanelContainer#SealMargin": "孤儿节点被整屏挂载（坏场景待修）",
-	"Settings|BackRow": "容器把 BackRow 拉伸成整屏（遮挡全部内容）",
 }
 
 

@@ -37,7 +37,7 @@ const THUMB_OFF := 6.0
 @onready var _nav_codex: Button = $Nav/NavCodex
 @onready var _nav_settings: Button = $Nav/NavSettings
 @onready var _nav_quit: Button = $Nav/NavQuit
-@onready var _back_button: Button = $BackRow/BackButton
+@onready var _back_button: Button = $SettingsStage/Content/BackRow/BackButton
 @onready var _version_label: Label = $VersionLabel
 
 var _snapshot: Dictionary = {}
