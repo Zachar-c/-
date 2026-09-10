@@ -189,7 +189,7 @@ C done → remediation-plan W10 关闭（视觉会话写）
 | B6 | save flow | 代理 A | done | D5 | 71da214 | unit 1155 + integration 31 绿 | `run_save_flow.gd`（8 方法静态化，controller 同名一行委托）；public API 不变 |
 | B7 | debug facade | 代理 A | done | D5 | 52faa7c | unit + integration 绿；`test_t5d_debug_panel` 绿 | `run_debug_facade.gd`；门控 `_debug_enabled_for_test` 留 controller（OS.is_debug_build 单一来源）；DEBUG_* 常量随迁；`DEBUG_RESOURCE_LABELS` 用 `static var`（const 不能调用静态函数初始化）；8acd695 修 test 直调 `controller.DEBUG_STONE_CAP` |
 | B8 | screen router | 代理 A | done | D6 | 4280176 | unit + integration 绿；`test_wenzhen_ui_flow` 绿 | `run_screen_router.gd`（路由表+挂载机制）；controller 同名委托；UI_RULES.md 与 module-interfaces/08 已同步路由表新位置 |
-| B9 | 回归+合入 M2 | 代理 A→用户 | pending(回归done) | D6 | 8acd695 | **`check.ps1` rc=0 全绿**（guitkx+unit 1167+integration 31+启动探针+契约漂移 157 标识符+diff --check） | builder 767<800 ✓；controller 1241>900 ✗（_show_* 家族与命令构建未在 B6–B8 输入清单内，未达 <900 目标，如实披露）；merge 待用户批准 |
+| B9 | 回归+合入 M2 | 代理 A→用户 | done | D6 | 8acd695→master=fc7cb3e（ff，用户批准） | worktree 合入后 master `check.ps1` rc=0 全绿（guitkx+unit 1167+integration 31+启动探针+契约漂移 157 标识符+diff --check）；已推送 origin/master | builder 767<800 ✓；controller 1241>900 ✗（_show_* 家族与命令构建未在 B6–B8 输入清单内，未达 <900 目标，如实披露，转后续债务条目）；worktree 已 remove（长路径残留目录经 `\\?\` 前缀清理）；合入前 master 工作树遗留的 B1-done 未提交行经核对被 fc7cb3e 完全包含，stash 已 drop |
 | C | W10 continue_run | 视觉会话 | pending | 随时 | | | 通用会话零代码 |
 
 ---
