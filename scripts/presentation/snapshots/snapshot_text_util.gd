@@ -6,6 +6,32 @@ extends RefCounted
 # (W12 split). Pure projection: never mutates run state.
 
 
+## NPC 展示名与立场的单一来源：Npc 屏与 Shop 屏共用，玩家在两屏看到的
+## 必须是同一个人（§16.5 一致性）；无 npc_id 的节点回落各自的通用名。
+static func _npc_display_name(npc_id: String, node_type: String) -> String:
+	match npc_id:
+		"caravan_steward":
+			return "商队执事"
+		"earth_vein_scout":
+			return "地脉斥候"
+		"wandering_healer":
+			return "游方医修"
+		"ridge_extortionist":
+			return "山岭索贿者"
+		"wandering_peddler":
+			return "散修货郎"
+	return "拦路散修" if node_type == "contact" else "无名散修"
+
+
+static func _npc_stance(state: Variant) -> String:
+	if state != null and state.node_flags != null:
+		if str(state.node_flags.get("reputation_extreme_stance", "")) == "true":
+			return "极度仇恨"
+		if str(state.node_flags.get("reputation_hostile", "")) == "true":
+			return "敌视"
+	return "中立"
+
+
 static func _school_display_name(catalog: Dictionary, school_id: String) -> String:
 	if school_id.is_empty():
 		return "无（散修开局）"
