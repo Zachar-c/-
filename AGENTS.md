@@ -56,7 +56,7 @@
    - **V0 美术风格补全**：Encounter 线框稿 v1 已出（`2026-09-09-encounter-wireframe-v1.html`，待用户批准）→ Npc / Ending / ContentError 逐屏线框稿（1280×720，统一 tokens）→ 逐屏批准 → tscn 实施。
    - **E1-E7 按层伪随机**：E1 pacing 分类概率表 ✅ / E2 生成器分类抽取 ✅ / E3 休息三选一（mode_groups）✅ / E4 表现层（地图「?」迷雾 + 休息三选一 UI + refinement→Rest 路由）✅ / **E5 回归 ✅**（`verify_pacing_density.gd` 四分类+聚合战斗占比门；`verify_route_diversity.gd` 全池模板冒烟）/ **E6 敌人按层随机 ✅**（主题标签 + 敌人池 + `enemy_roll`：`pacing` 层 rank 区间与 `enemy_weights`、`enemy_catalog.roll_enemy_ids`、非锚点抽取、Boss 永不入选；`test_enemy_roll.gd`；见 `2026-09-10-e6-enemy-roll.md`）/ **E7 商店按层随机** ✅（`shop_stock`：洗牌取前 N + 保底 + 越权拒绝，见 `test_shop_roll.gd`）。
    - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门（dead=[] 且 no_ui_click=[]）；Settings 手记/图鉴/设置已 disabled 置灰（接入路由后启用）。
-2. 队列后续：**D1b 实现批**（古方知识模型，spec `2026-09-06-gu-synthesis-design.md` §8）→ **真窗键鼠验收**（S 阶段全流程）。
+2. 队列后续：**真窗键鼠验收**（S 阶段全流程；D1b 古方知识模型已落地，见 `2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）。
 3. 验证遗留：Dialogue Manager invalid UID、ObjectDB/RID 泄漏（2026-09-06 复测 20601 实例仍复现）；最终 `tools/test.ps1 -Suite unit`、`-Suite integration`、`tools/check.ps1` 全绿。
 4. 提交时继续排除 `.claude/`、无关的 `data/dialogues/events.dialogue` 本地修改，以及截图目录与 `__pycache__`。~~`data/enemies.json` 在 E6 补 weight 验证前仍按未经验证排除，E6 落地后解除。~~ **排除令已解除（2026-09-10 用户指令）**：原排除理由（E6 补 `weight` 验证）已失效——E7 改用"种子化洗牌取前 N"而非权重法，E6 也不再需要 `weight`；`data/enemies.json` 现有 30 条均由 `content_catalog.validate` 全量校验 + `test_b5_content_expansion.gd` 三条池契约守卫（clue ≥2 / 每主题有非 boss / 每条能起战）覆盖。
 

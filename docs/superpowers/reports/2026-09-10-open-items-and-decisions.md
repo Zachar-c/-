@@ -29,7 +29,7 @@
 | A3 | **E6** 敌人按层品质随机 | **已收口**（2026-09-10）：实现落在 tip `c806215`（`enemy_roll` / `enemy_weights` / `EnemyCatalog.roll_enemy_ids` / 非锚点抽取 / facade 优先读 roll）；本会话启用 `tests/unit/test_enemy_roll.gd`（原 `_disabled_` 前缀）**15/15 绿**；unit 1214 + integration 31 全绿。**不再需要** per-enemy `weight`（tier 权重 + 层 rank 带）；`enemies.json` 排除令已解除 | P1 | 无（闭环） | 验证：`-gtest=res://tests/unit/test_enemy_roll.gd` |
 | A4 | **E7** 商店按层随机 | **已落地**（AGENTS：`shop_stock` + `test_shop_roll.gd` 9/9 绿，2026-09-10 核） | P2 | 无（闭环；open-items 原「shop_roll 不存在」过期） | 验证：`-gtest=res://tests/unit/test_shop_roll.gd` |
 | A5 | **E 线全量回归** | **已收口**（2026-09-10）：push 后 unit **1214** + integration **31** 全绿；E5a/E5b 工具 PASS | P2 | 无（闭环） | 本地=origin `fcff146` |
-| A6 | **D1b 实现批**（古方知识模型） | 排队中 | P2 | 按 `docs/superpowers/specs/2026-09-06-gu-synthesis-design.md` §8 开工 | 之后接 S 阶段真窗键鼠验收 |
+| A6 | **D1b 实现批**（古方知识模型） | **已落地并核验**（2026-09-10）：`SynthesisRules.pair_output_id/preview/execute`、零门槛 `refine_free_pair`、首炼授古方、`？？？` 三层揭示、黑市 `gu_fang_unlock`、炼蛊屏 pair 面板；`mx_` 固定方已清零；名方仍在。相关单测 knowledge/refine 21 绿。open-items 原「排队中」过期 | P2 | 无（闭环） | `-gtest=res://tests/unit/test_synthesis_knowledge.gd` |
 | A7 | **`run_controller.gd` 1241 → <900** | 已披露未达（B 轨遗留） | P3 | `_show_*` 家族与命令构建继续外提 | 目标以**绝对行数**为准；执行板 §7 已如实登记 |
 
 > 另有一项**长期挂账**（不单独占行）：验证遗留 —— Dialogue Manager invalid UID、ObjectDB/RID 泄漏
