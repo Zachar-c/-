@@ -6,11 +6,8 @@ extends RefCounted
 # RunController; this class never mutates run state, only projects it.
 
 
-const GameVersionScript = preload("res://scripts/domain/game_version.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
-const ResolverScript = preload("res://scripts/domain/resolver.gd")
-const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 const CoreGuRulesScript = preload("res://scripts/domain/core_gu_rules.gd")
 const RecipeRulesScript = preload("res://scripts/domain/recipe_rules.gd")
@@ -49,25 +46,10 @@ static func _with_v2(snapshot: Dictionary, controller) -> Dictionary:
 	return merged
 
 
-## T5-D 调试面板只读段（§16.22）：保底计数 / 池排除列表 / 当前种子 / 事件数 / DDA 分位。
-## 数据形状对齐 DebugActions.query_loot_state 返回的 pity/excluded 结构。
-## 仅由 debug_panel 渲染，绝不反向写入状态。
+## W12 split: debug snapshot moved to snapshots/debug_snapshot.gd. Forwarder
+## kept for direct callers (unit tests and verify tools).
 static func debug(controller) -> Dictionary:
-	var state = controller.state
-	if state == null:
-		return {}
-	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
-	return {
-		"pity": {
-			"loot_pity": int(state.loot_pity),
-			"material_pity": int(state.material_pity),
-			"synthesis_fail_streak": int(state.synthesis_fail_streak),
-		},
-		"excluded": [] as Array,
-		"seed": int(state.seed),
-		"event_count": state.event_log.size(),
-		"dda_percentile": DdaResolverScript.score_label(state, catalog),
-	}
+	return DebugSnapshot.build(controller)
 
 
 ## 局内节点屏公共骨架（顶栏资源/契约/异变/死线）。
@@ -131,52 +113,10 @@ static func refine(controller) -> Dictionary:
 	return RefineSnapshot.build(controller)
 
 
-## C2/D3 战利品确认屏快照：真实已入账 loot（settle_victory 结果）+ 精英绑定代价
-## + 真实保底计数。规格口径：战后战利品自动入账（§16.4 来源隔离由 loot_tables 承担），
-## 本屏为确认展示而非再抽取——假三选一快照已删除。
+## W12 split: reward snapshot moved to snapshots/reward_snapshot.gd. Forwarder
+## kept for direct callers (unit tests and verify tools).
 static func reward(controller) -> Dictionary:
-	var out := _gui_state(controller)
-	var state = controller.state
-	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
-	var loot: Dictionary = controller.get("last_battle_loot") if controller.get("last_battle_loot") != null else {}
-	var elite_cost: Dictionary = controller.get("last_battle_cost") if controller.get("last_battle_cost") != null else {}
-	out["title"] = "战利品"
-	var rows: Array[Dictionary] = []
-	for material_value in loot.get("material_ids", []):
-		rows.append({
-			"name": DisplayText.material(str(material_value)),
-			"kind": "素材 · 已入账",
-			"quality": "普通",
-			"effect": "本局材料 +1，用于炼蛊与事件支付。",
-			"cost": "",
-		})
-	var loot_gu := str(loot.get("gu_id", ""))
-	if not loot_gu.is_empty():
-		var gu_entry: Dictionary = catalog.get("gu_by_id", {}).get(loot_gu, {})
-		rows.append({
-			"name": DisplayText.gu(loot_gu),
-			"kind": "蛊 · 已入蛊囊",
-			"quality": str(gu_entry.get("rarity", "普通")),
-			"effect": str(gu_entry.get("summary", "获得蛊虫，可在炼蛊台合成。")),
-			"cost": "",
-		})
-	if not elite_cost.is_empty():
-		rows.append({
-			"name": "精英代价（强制绑定）",
-			"kind": "代价 · 已生效",
-			"quality": "史诗",
-			"effect": DisplayText.elite_cost(elite_cost),
-			"cost": "",
-			"curse_warning": true,
-		})
-	out["rewards"] = rows
-	out["full_satchel"] = false
-	out["pity_note"] = "蛊掉落保底计数：%d · 材料保底计数：%d" % [int(state.loot_pity), int(state.material_pity)]
-	# T6-E 空池回退小字：真实 loot 为空即空池回退信号。
-	# T6-E 空池回退小字：仅在真实结算过的战斗（loot 字典非空）且未掉落任何条目时
-	# 展示；未开战（loot 为空字典）不发常驻假提示。
-	out["pool_fallback_note"] = "（空池回退：本场未掉落战利品）" if (not loot.is_empty() and rows.is_empty()) else ""
-	return out
+	return RewardSnapshot.build(controller)
 
 
 ## W12 split: npc snapshot moved to snapshots/npc_snapshot.gd. Forwarder kept
@@ -199,13 +139,9 @@ static func _v1_effect_text(source: Dictionary) -> String:
 	return SnapshotTextUtil._v1_effect_text(source)
 
 
+## W12 split: content_error snapshot moved to snapshots/content_error_snapshot.gd.
 static func content_error(controller) -> Dictionary:
-	var errors: Array = controller.get("_content_errors") if controller != null else []
-	return {
-		"title": "内容配置无法加载",
-		"error_count": errors.size(),
-		"errors": errors.duplicate(),
-	}
+	return ContentErrorSnapshot.build(controller)
 
 
 ## W12 split: map snapshot moved to snapshots/map_snapshot.gd.
@@ -213,52 +149,10 @@ static func map(controller) -> Dictionary:
 	return MapSnapshot.build(controller)
 
 
+## W12 split: encounter snapshot moved to snapshots/encounter_snapshot.gd.
+## Forwarder kept for direct callers (unit tests and verify tools).
 static func encounter(controller) -> Dictionary:
-	var state = controller.state
-	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
-	var meta = controller.meta
-	var current_node: Dictionary = controller.current_node
-	var knowledge: Dictionary = {}
-	if meta != null:
-		knowledge = meta.unlocked_random_outcomes
-	var actions: Array[Dictionary] = _node_actions(controller)
-	var intel: Dictionary = {}
-	if state.known_facts.has("procured_weakness"):
-		intel = {"weakness": "已探明弱点，战斗增伤", "cost": "情报"}
-	return {
-		"node": {
-			"title": _node_label(current_node),
-			"desc": str(current_node.get("summary", current_node.get("desc", ""))),
-			"type": str(current_node.get("type", "")),
-		},
-		"actions": actions,
-		"intel": intel,
-		"player": _player_panel(state),
-		"resources": _resources(state),
-		"contracts": _contracts(state, catalog),
-		"anomalies": DdaResolverScript.marker_meta(state, catalog),
-		"death_lines": _death_lines(state),
-		"inventory": _inventory(state, catalog),
-	}
-
-
-## C4 侧边自身状态面板（§16.5 事件侧边快捷查看气血/魂魄/元石/蛊虫）。
-static func _player_panel(state) -> Dictionary:
-	var cult: Dictionary = state.cultivator
-	var gu_names: Array[String] = []
-	for inst_key in state.gu_instances:
-		var inst: Dictionary = state.gu_instances[inst_key]
-		gu_names.append(DisplayText.gu(str(inst.get("definition_id", ""))))
-	return {
-		# RunState.health 是唯一真值（battle 回合结算后由 run_controller 同步
-		# 写回 state.health + cultivator 镜像；旧路径 shop/rest 也写它）。
-		"hp": int(state.health),
-		"max_hp": maxi(1, int(state.max_health)),
-		"primordial": int(state.essence),
-		"soul": int(cult.get("soul", 0)),
-		"stone": int(state.stone),
-		"gu_names": gu_names,
-	}
+	return EncounterSnapshot.build(controller)
 
 
 ## 战斗屏快照：唯一 V1 战斗 Schema 投影（BattleCommandFacade → V1BattleResolver）。
@@ -279,16 +173,10 @@ static func kill(controller) -> Dictionary:
 	return BattleSnapshot.build_kill(controller)
 
 
-## 设置屏快照：客户端偏好只投影（同大厅 A6 设置面板字段），绝不写回。
+## W12 split: settings snapshot moved to snapshots/settings_snapshot.gd.
+## Forwarder kept for direct callers (unit tests and verify tools).
 static func settings(controller) -> Dictionary:
-	var base := _gui_state(controller)
-	base["title"] = "设置"
-	base["subtitle"] = "声色之调 · 存于机匣"
-	base["master_volume"] = AppSettingsScript.clamp_volume(int(controller.app_settings.master_volume)) if controller.get("app_settings") != null else 100
-	base["resolution_index"] = int(controller.app_settings.resolution_index) if controller.get("app_settings") != null else 0
-	base["resolution_options"] = AppSettingsScript.resolution_labels()
-	base["version_label"] = GameVersionScript.display()
-	return base
+	return SettingsSnapshot.build(controller)
 
 
 ## 2 低血进敌方先手战：致死开场已延后到玩家首个回合结束，把意图伤害与
