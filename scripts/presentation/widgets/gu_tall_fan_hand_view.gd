@@ -63,6 +63,30 @@ const REBOUND_TIME := 0.22
 const FACE_FONT_SIZE := 11
 const FACE_EFFECT_MAX_CHARS := 18
 
+## C3 留白卡面：上 98×98 方形插画（1:1 不裁）+ 下信息带。
+## 插画按道（school id）映射；无图/未知道走网点占位。
+const ART_SIZE := Vector2(98, 98)
+const ART_TOP := 6.0
+## content_margin_top 让 Button 文案落在插画下方（不另挂 Label，满足卡面无角标 Label 的守卫）。
+const FACE_TEXT_TOP := 104.0
+const DAO_TEXTURE := {
+	"blood": "res://assets/wenzhen/gu/gu_blood.png",
+	"bone": "res://assets/wenzhen/gu/gu_bone.png",
+	"earth": "res://assets/wenzhen/gu/gu_earth.png",
+	"fire": "res://assets/wenzhen/gu/gu_fire.png",
+	"force": "res://assets/wenzhen/gu/gu_force.png",
+	"light": "res://assets/wenzhen/gu/gu_light.png",
+	"moon": "res://assets/wenzhen/gu/gu_moon.png",
+	"poison": "res://assets/wenzhen/gu/gu_poison.png",
+	"qi": "res://assets/wenzhen/gu/gu_qi.png",
+	"refine": "res://assets/wenzhen/gu/gu_refine.png",
+	"sword": "res://assets/wenzhen/gu/gu_sword.png",
+	"thunder": "res://assets/wenzhen/gu/gu_thunder.png",
+	"water": "res://assets/wenzhen/gu/gu_water.png",
+	"wind": "res://assets/wenzhen/gu/gu_wind.png",
+}
+var _dao_tex_cache := {}
+
 # —— 扇形参数（**竖长卡的调参重点**）——
 ## 单侧最大倾角：竖长卡重心高，角度一大边缘卡就像"倒下的多米诺"。
 ## 横向卡可以给 8~10°，竖长卡建议 5~7°。
@@ -316,16 +340,38 @@ func _build_card(card: Dictionary) -> Control:
 	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
 	btn.add_theme_font_size_override("font_size", FACE_FONT_SIZE)
 	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	btn.add_theme_stylebox_override("normal", _card_box(false))
-	btn.add_theme_stylebox_override("hover", _card_box(true))
-	btn.add_theme_stylebox_override("pressed", _card_box(false))
-	# 交互闭环契约：每个可点元素必须有**视觉 + 听觉**双重反应。悬停视觉由 hover 样式块
-	# 承担（玉绿描边 + 抬亮纸底），听觉这里显式接一次 ui_click —— 本组件刻意不调
-	# `MasterTheme.apply_button`（它会写死卡角色尺寸 120×110，并自装 hover 缩放补间，
-	# 与扇形自己的 scale 补间抢同一属性），所以没有 theme 代劳的那次接线。
-	# font_hover_color 与主题的 card 角色保持同一语言（hover 文字转朱砂）。
+	# 交互闭环契约：每个可点元素必须有**视觉 + 听觉**双重反应。
 	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	# 文案落在插画下方信息带；插画由子节点 TextureRect 承担。
+	var face_box := _card_box(false)
+	face_box.content_margin_top = FACE_TEXT_TOP
+	face_box.content_margin_left = 6.0
+	face_box.content_margin_right = 6.0
+	face_box.content_margin_bottom = 4.0
+	var hover_box := _card_box(true)
+	hover_box.content_margin_top = FACE_TEXT_TOP
+	hover_box.content_margin_left = 6.0
+	hover_box.content_margin_right = 6.0
+	hover_box.content_margin_bottom = 4.0
+	var pressed_box := _card_box(false)
+	pressed_box.content_margin_top = FACE_TEXT_TOP
+	pressed_box.content_margin_left = 6.0
+	pressed_box.content_margin_right = 6.0
+	pressed_box.content_margin_bottom = 4.0
+	btn.add_theme_stylebox_override("normal", face_box)
+	btn.add_theme_stylebox_override("hover", hover_box)
+	btn.add_theme_stylebox_override("pressed", pressed_box)
 	btn.pressed.connect(func(): _sfx("ui_click"))
+	var art := TextureRect.new()
+	art.name = "card_art_" + node_name
+	art.custom_minimum_size = ART_SIZE
+	art.size = ART_SIZE
+	art.position = Vector2((card_size.x - ART_SIZE.x) * 0.5, ART_TOP)
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.texture = _card_art_texture(str(card.get("school_id", "")))
+	btn.add_child(art)
 	box.add_child(btn)
 
 	var index := _cards.size()
@@ -361,24 +407,45 @@ func _face_text(card: Dictionary) -> String:
 	var name := str(card.get("name", "蛊虫"))
 	var quality := str(card.get("quality", "普通"))
 	var school := str(card.get("school_label", ""))
-	# cost 已是展示文案（如「念头 1」）；cost_ex 仅在数据自带时优先。
 	var cost := str(card.get("cost_ex", ""))
 	if cost.is_empty():
 		cost = str(card.get("cost", ""))
-	# 卡面只放一短行效果；括号注记与长尾留给宿主 tooltip。
 	var effect := str(card.get("effect", ""))
 	var paren := effect.find("（")
 	if paren >= 0:
 		effect = effect.substr(0, paren)
 	if effect.length() > FACE_EFFECT_MAX_CHARS:
 		effect = effect.substr(0, FACE_EFFECT_MAX_CHARS) + "…"
+	# 信息带约 50px：名 / 道·品质·费用 / 效果 一行，避免溢出插画区。
+	var meta := "" if school.is_empty() else "%s · %s" % [school, quality]
+	if not cost.is_empty():
+		meta = ("%s · %s" % [meta, cost]) if not meta.is_empty() else cost
 	var lines: Array[String] = [name]
-	lines.append("%s · %s" % [school, quality] if not school.is_empty() else quality)
+	if not meta.is_empty():
+		lines.append(meta)
 	if not effect.is_empty():
 		lines.append(effect)
-	if not cost.is_empty():
-		lines.append("◆ %s" % cost)
 	return "\n".join(lines)
+
+
+## 按道 id 取插画；缓存 Texture2D；无图返回 null（TextureRect 显示网点纸底占位）。
+func _card_art_texture(school_id: String) -> Texture2D:
+	if school_id.is_empty():
+		return null
+	if _dao_tex_cache.has(school_id):
+		return _dao_tex_cache[school_id]
+	var path: String = str(DAO_TEXTURE.get(school_id, ""))
+	if path.is_empty():
+		_dao_tex_cache[school_id] = null
+		return null
+	var img := Image.new()
+	var err := img.load(path)
+	if err != OK:
+		_dao_tex_cache[school_id] = null
+		return null
+	var tex: Texture2D = ImageTexture.create_from_image(img)
+	_dao_tex_cache[school_id] = tex
+	return tex
 
 
 func _card_box(highlighted: bool) -> StyleBoxFlat:

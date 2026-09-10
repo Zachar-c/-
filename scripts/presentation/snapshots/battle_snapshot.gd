@@ -168,6 +168,7 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 			"cost": _v1_cost_text(slot, "thought_cost", "true_qi_cost", "life_cost"),
 			"cost_ex": "",
 			"school_label": SnapshotTextUtil._school_display_name(catalog, str(definition.get("school", ""))),
+			"school_id": str(definition.get("school", "")),
 			"executable": reason.is_empty(),
 			"block_reason": _v1_reject_text(reason),
 			"known_risk": risks,

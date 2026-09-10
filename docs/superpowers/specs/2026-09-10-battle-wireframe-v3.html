@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>战斗屏线框稿 v3 · 110×154 竖长卡</title>
+<!--
+  card_size = Vector2(110, 154)  对齐 scripts/presentation/widgets/gu_tall_fan_hand_view.gd
+  插画 98×98 1:1 不裁 + 下方信息带（C3 留白排版）
+  操作坞右上，永不被手牌盖
+-->
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:720px; overflow:hidden; }
+  body {
+    font-family: "Kaiti SC","STKaiti","KaiTi",serif;
+    background-color:#e8e5da;
+    background-image: radial-gradient(circle at 0 0, rgba(198,199,186,.95) 1px, transparent 1px);
+    background-size: 4px 5px;
+    color:#171814;
+    position:relative;
+  }
+  .frame { position:absolute; inset:14px; border:1px dashed #b7b7ab; }
+  .hud { position:absolute; top:16px; left:16px; right:16px; height:40px;
+         border-bottom:1px solid #b7b7ab; display:flex; align-items:center; gap:18px; font-size:13px; }
+  .chip { color:#606860; }
+  .chip b { color:#171814; font-weight:normal; }
+  .stage { position:absolute; left:24px; right:24px; top:64px; height:380px; }
+  .enemy-band { position:absolute; left:8px; top:8px; right:8px; height:150px;
+                border:1px solid #aaa89f; background:rgba(246,243,233,.45); }
+  .enemy-band .ttl { position:absolute; left:12px; top:8px; font-size:12px; color:#607060; }
+  .enemy { position:absolute; top:36px; width:150px; height:100px;
+           border:1px solid #9a978c; background:#f6f3e9; text-align:center; padding-top:18px; font-size:13px; }
+  .enemy .intent { font-size:12px; color:#82463e; }
+  .mid { position:absolute; left:8px; top:170px; right:200px; bottom:8px;
+         border:1px solid #aaa89f; background:rgba(246,243,233,.4); padding:12px; font-size:13px; }
+  .ops { position:absolute; right:8px; top:170px; width:180px;
+         display:flex; flex-direction:column; gap:8px; }
+  .ops button { height:36px; border:1px solid #9a978c; background:#f6f3e9; font: inherit; cursor:pointer; }
+  .ops button:disabled { opacity:.4; }
+  .hand-zone { position:absolute; left:16px; right:16px; bottom:12px; height:200px;
+               border-top:1px solid #b7b7ab; }
+  .hand-zone .note { position:absolute; left:8px; top:6px; font-size:11px; color:#607060; }
+  .fan { position:absolute; left:50%; bottom:8px; transform:translateX(-50%);
+         width:720px; height:170px; }
+  .card { position:absolute; width:110px; height:154px; bottom:0;
+          border:1px solid #8a887c; background:#f6f3e9; border-radius:6px;
+          display:flex; flex-direction:column; align-items:center; padding-top:6px; }
+  .card .art { width:98px; height:98px; border:1px dashed #b7b7ab;
+               background-image: radial-gradient(circle at 0 0, rgba(180,180,170,.8) 1px, transparent 1px);
+               background-size: 4px 5px; font-size:11px; color:#8a887c;
+               display:flex; align-items:center; justify-content:center; }
+  .card .info { width:98px; font-size:11px; line-height:1.25; padding:4px 2px 0; text-align:left; }
+  .c0 { left:210px; transform:rotate(-12deg); transform-origin:50% 100%; }
+  .c1 { left:305px; transform:rotate(-6deg); transform-origin:50% 100%; }
+  .c2 { left:400px; transform:rotate(0deg); transform-origin:50% 100%; z-index:2; box-shadow:0 6px 12px rgba(0,0,0,.12); }
+  .c3 { left:495px; transform:rotate(6deg); transform-origin:50% 100%; }
+  .c4 { left:590px; transform:rotate(12deg); transform-origin:50% 100%; }
+  .cap { position:absolute; bottom:4px; left:50%; transform:translateX(-50%);
+         font-size:11px; color:#607060; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="hud">
+  <span class="chip">层 <b>L2 落瘴岭</b></span>
+  <span class="chip">HP <b>14/20</b></span>
+  <span class="chip">真元 <b>3</b></span>
+  <span class="chip">念头 <b>2/5</b></span>
+  <span class="chip">回合 <b>3</b></span>
+  <span style="margin-left:auto" class="chip">1280×720 · 线框 v3</span>
+</div>
+<div class="stage">
+  <div class="enemy-band">
+    <div class="ttl">敌人意图（可见）· Boss 显示阶段</div>
+    <div class="enemy" style="left:24px">岭犬<br><span class="intent">意图：撕咬 2</span></div>
+    <div class="enemy" style="left:190px">石游子<br><span class="intent">意图：蓄势 · 下回合</span></div>
+    <div class="enemy" style="left:356px">瘴脉之主 · 阶段 II<br><span class="intent">意图：瘴气爆发 4</span></div>
+  </div>
+  <div class="mid">
+    说明 / 杀招焦点（选卡后高亮敌人，不挡手牌）<br>
+    「…」
+  </div>
+  <div class="ops">
+    <button>结束回合</button>
+    <button>杀招</button>
+    <button disabled>撤退（禁用置灰）</button>
+    <button>设置</button>
+  </div>
+</div>
+<div class="hand-zone">
+  <div class="note">底部扇形手牌 · 卡 110×154 · 插画 98×98 1:1 不裁 · 弧起点=卡面中心 · 右上操作坞永不被盖</div>
+  <div class="fan">
+    <div class="card c0"><div class="art">道图/占位</div><div class="info">蛊名<br>血道 · 普通<br>◆ 念头 1</div></div>
+    <div class="card c1"><div class="art">道图/占位</div><div class="info">蛊名<br>光道 · 稀有<br>◆ 念头 1</div></div>
+    <div class="card c2"><div class="art">gu_blood 等</div><div class="info">蛊名<br>力道 · 史诗<br>造成 4 点伤害<br>◆ 念头 2</div></div>
+    <div class="card c3"><div class="art">道图/占位</div><div class="info">蛊名<br>气道 · 普通<br>◆ 念头 1</div></div>
+    <div class="card c4"><div class="art">道图/占位</div><div class="info">蛊名<br>魂道 · 稀有<br>◆ 念头 1</div></div>
+  </div>
+  <div class="cap">对照实现：gu_tall_fan_hand_view.gd card_size=Vector2(110,154)</div>
+</div>
+</body>
+</html>
