@@ -41,7 +41,7 @@
 
 | # | 事项 | 状态 | 优先级 | 卡在哪 | 你只需给 |
 |---|---|---|---|---|---|
-| B1 | **V2→V4 线框稿**（Npc / Ending / ContentError） | 未开工 | P1 | **V1 Encounter 线框稿已出但未获批准**，V2 依赖 V1 确定的风格基线 | 一个"批准/改"的回复 |
+| B1 | **V2→V4 线框稿**（Npc / Ending / ContentError） | **可开工**（C4 Encounter v1 已获批准，风格基线就绪） | P1 | 等你排期/直接派发 | 无（已解除阻塞） |
 | B2 | **V5–V8 tscn 实施**（4 屏） | 未开工 | P1 | 依赖 B1 对应线框稿批准 | 同上，逐屏批准 |
 | B3 | **真窗键鼠验收**（AI 契约：只有你主动要求才做） | 挂起 | P1 | 契约规定无你指令不做 | 指定要验哪几项 |
 | B3a | └ W10 `continue_run` 真窗验收 | 挂起（执行板 C 轨遗留） | P1 | 同上 | — |
@@ -58,7 +58,7 @@
 | **C1** | **三处既有遮挡怎么修**（已进 `KNOWN_OCCLUDED` 留档，见验收报告 §4） | ✅ **已闭环**（方案 B，`cfd7c9f`）：BackRow 换父+anchors；Shop **删** orphan SealMargin；Rest StageContent spacer+pass-through。门禁 8 屏三键全 0，白名单已清 | — |
 | **C2** | **战斗屏线框稿 v3** | ✅ **已出**（`ee67581`）：`2026-09-10-battle-wireframe-v3.html`，卡 110×154；旧稿 DEPRECATED | 等你过目线框 |
 | **C3** | **`assets/wenzhen/gu/*.png` 全是 1:1 方图** | ✅ **已按道映射实现**（`ee67581`）：98×98 keep-aspect + 信息带；`school_id` 进手牌快照；`test_tall_fan_card_art.gd` 3/3 | 真窗手感待你要求 |
-| **C4** | **V1 Encounter 线框稿批准**（`2026-09-09-encounter-wireframe-v1.html`） | 待你回「过 / 改」 | B1 的 V2–V4 仍阻塞 |
+| **C4** | **V1 Encounter 线框稿批准**（`2026-09-09-encounter-wireframe-v1.html`） | ✅ **已批准**（2026-09-10 用户「过」） | B1 V2–V4 可开工 |
 | **C5** | **是否推送** | ✅ 已闭环（本会话多次随用户指令推送；本地=origin `8420f73`） | — |
 | **C6** | **`AGENTS.md` 当前待办是否本轮同步**（见 D1） | ✅ 已闭环（E1–E7 / D1b / A7 状态已写入 AGENTS） | — |
 
