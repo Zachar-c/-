@@ -1,7 +1,7 @@
 # 技术债解决实施计划（2026-09-09）
 
 > 依据：`docs/audit/2026-09-09-technical-audit.md`（基线 `7f3dde6`）。
-> **未闭环工单的原子任务拆解**（W11.3 / W12 / W10，含输入输出与验证命令）：`docs/superpowers/plans/2026-09-09-tech-debt-atomic-tasks.md`。
+> ~~**未闭环工单的原子任务拆解**（W11.3 / W12 / W10）~~ → **全部闭环（2026-09-10）**：W11.3=轨道 A（`49ffbe5` 合入）、W12=轨道 B（`fc7cb3e` 合入）、W10=轨道 C（`158aef4`）。拆解与逐任务回执见 `docs/superpowers/plans/2026-09-09-tech-debt-atomic-tasks.md` 与 `2026-09-10-tech-debt-atomic-execution.md`。
 > 本计划按工单卡组织，**每张卡可直接分配给一个工作会话独立执行**，不依赖历史对话。
 > 执行模式：一卡一会话；完成一张回写一张状态；提交保持聚焦（AGENTS 工作流程第 8 条）。
 > 时间基准日：2026-09-10。D+n 表示基准日后第 n 天。并行视觉会话活跃期间（`ls -lt scripts/presentation/screens/` 半小时内有人动）**不得执行 W2/W7/W11/W12**。
@@ -22,8 +22,8 @@
 | 守门 | W8 契约漂移守门入 check.ps1（含遗留 P4） | P2-3 | P2 | 2h | D5 |
 | 流程 | W9 分支清理 + .claude gitignore | P2-4 | P2 | 0.5h | D1 |
 | 视觉会话 | ~~W10 continue_run 语义~~ ✅ 闭环（2026-09-10 方案甲，`158aef4`） | 审计 §5.1 | P1 | 视觉会话自估 | ✅ 视觉会话收工时 |
-| 大重构 | W11 resolver 拆分 + 基础动作表迁移（含遗留 P3） | P1-1 | P1 | 8h+ | 下一迭代 |
-| 大重构 | W12 snapshot_builder / controller 拆分 | P1-1 | P1 | 12h+ | W4 后逐屏推进 |
+| 大重构 | ~~W11 resolver 拆分 + 基础动作表迁移（含遗留 P3）~~ ✅ 闭环（轨道 A，2026-09-10，`49ffbe5`） | P1-1 | P1 | 8h+ | ✅ |
+| 大重构 | ~~W12 snapshot_builder / controller 拆分~~ ✅ 闭环（轨道 B，2026-09-10，`fc7cb3e`；controller <900 未达，转后续债务） | P1-1 | P1 | 12h+ | ✅ |
 | 死代码 | W13 school_rules 删除（遗留 P5） | 工单2 | P2 | 1h | W11 同批 |
 | 观察项 | W14 audio randi 豁免说明 | P3-1 | P3 | 0.2h | 随手 |
 
@@ -166,7 +166,7 @@
 - **交付物**：1 个提交；交接文档 §5 第 1 条闭环
 - **闭环记录**：方案甲落地——`continue_run` 经 `submit_command({"type":"load_run"})` 直读恢复；失败留原屏显拒绝文案；unit 1167 + integration 31 全绿；`verify_interaction_loop` 全屏 `dead=[]`；交接文档 §5 第 1 条已标闭环。真窗键鼠验收待办
 
-### W11 resolver 拆分 + 基础动作表迁移（含遗留 P3）
+### W11 resolver 拆分 + 基础动作表迁移（✅ 已闭环：轨道 A，2026-09-10，合入 `49ffbe5`）
 
 - **负责人**：AI 会话，**独立 git worktree**（按项目纪律）
 - **时间**：下一迭代，8h+
@@ -179,8 +179,9 @@
 - **风险与应对**：V1 战斗是核心路径 → 每切一块跑全量 unit + integration；worktree 用完即 `git worktree remove`；数值迁 JSON 后断言从 catalog 取
 - **验收标准**：`resolver.gd` < 1200 行；动作表在 JSON 且 catalog 校验覆盖；unit + integration 全绿；`git ls-remote` 校验推送
 - **交付物**：独立分支串行提交，验收后合入 master
+- **闭环记录**：分支 `chore/w11-resolver-split`（worktree `.worktrees/resolver-split`，A1–A7 用户批准 ff 合入后已 remove）。resolver.gd 2407→**205 行**（路由保留），命令族模块 `shop/refine/social/run_command_rules.gd` + `resolver_helpers.gd`；动作表已迁 `data/v1_battle.json`（措施 2，先补 `test_v1_basic_actions` 后迁）；M1 达标（resolver < 1200 ✓，unit + integration 全绿）
 
-### W12 snapshot_builder / controller 拆分
+### W12 snapshot_builder / controller 拆分（✅ 已闭环：轨道 B，2026-09-10，合入 `fc7cb3e`）
 
 - **负责人**：AI 会话，独立 worktree
 - **时间**：W4 合入后逐屏推进，每屏 2-3h
@@ -188,6 +189,7 @@
 - **风险与应对**：并行视觉会话同文件高冲突 → 每屏一个聚焦提交，拆分期间与视觉会话错峰；契约测试红即回滚该屏
 - **验收标准**：单文件 < 1200 行；W4 契约测试绿；unit + integration 全绿
 - **交付物**：串行聚焦提交
+- **闭环记录**：分支 `chore-w12-snapshot-split`（worktree `.worktrees/snapshot-split`，B1–B9 用户批准 ff 合入后已 remove）。`run_snapshot_builder.gd` 2373→**767 行**（12 屏各自 `snapshots/*_snapshot.gd`）；controller 抽出 `run_save_flow.gd` / `run_debug_facade.gd` / `run_screen_router.gd`，主文件 1760→**1241 行**（<900 未达，`_show_*` 家族与命令构建转后续债务条目）；快照契约键零漂移（`test_snapshot_contract` 未改即绿）；master 合入后 `check.ps1` rc=0
 
 ### W13/W14 已并入 W11 / 随手
 
@@ -205,7 +207,7 @@ D2（09-12）：W5 重复加载实测
 D3（09-13）：W4 快照契约测试
 D4（09-14）：W3b 署名界面
 D5（09-15）：W6 + W7 + W8（架构收尾与守门）
-下一迭代  ：W11（先）→ W12（后，逐屏）  ；W10 随视觉会话
+下一迭代  ：✅ W11（轨道 A，`49ffbe5`）→ ✅ W12（轨道 B，`fc7cb3e`）✅ W10 随视觉会话（`158aef4`）——2026-09-10 全部闭环
 ```
 
 里程碑判据：**D5 结束时** unit 应回到 1100/1100 全绿、`check.ps1` exit 0、`.git` 停止增长、Release PCK 无开发产物。
@@ -247,9 +249,9 @@ D5（09-15）：W6 + W7 + W8（架构收尾与守门）
 | W5 | ✅ 闭环（实测 ~60ms < 200ms 阈值，**不改代码**） | 本会话 | 2026-09-09 | `89f0202`（计时工具落档） |
 | W6-W8 | W6 ✅ W7 ✅ W8 ✅（2026-09-09 同批收口） | 本会话 | 2026-09-09 | W7+W8+契约拼写修正 `7772b58`；W6 `6aefc1e` + catalog 预热 `5bd9c1d`；W8 守门 python→GDScript 迁移 + beckett 导出隔离 `1a00ca5` |
 | W9 | ✅ 闭环 | 本会话 | 2026-09-09 | `a4b5528`（含 .claude ignore + 删临时分支；远端同名分支已 `push --delete`） |
-| W10 | ✅ 视觉会话闭环（方案甲） | `158aef4` | 2026-09-10 | |
-| W11 | **进行中：措施 1+2+4 已闭环，措施 3 待下批** | 本会话 | 2026-09-09 | `6753065`（role 兜底表迁 data/v1_battle.json）+ `10122fb`（school_rules 删 3 死函数）；措施 3（resolver.gd 按命令族切分，worktree 大工程）待派 |
-| W12 | 待执行（W11 措施 3 后逐屏推进） | | | |
+| W10 | ✅ 视觉会话闭环（方案甲） | 轨道 C | 2026-09-10 | `158aef4`（continue_run=读档继续；`test_map_exit_persistence` 直读直恢复；真窗验收待办） |
+| W11 | ✅ 闭环（措施 1/2/4 + 措施 3=轨道 A） | 本会话 / 轨道 A | 2026-09-10 | `6753065`+`10122fb`（m1/2/4）；轨道 A 分支 `chore/w11-resolver-split` 合入 `49ffbe5`（resolver 2407→205 行，M1 达标） |
+| W12 | ✅ 闭环（轨道 B，M2 达标；controller <900 转后续债务） | 轨道 B | 2026-09-10 | 分支 `chore-w12-snapshot-split` 合入 `fc7cb3e`（builder 2373→767 行；controller 1760→1241 行） |
 | W13 | ✅ 并入 W11 措施 4（2026-09-09） | 本会话 | 2026-09-09 | `10122fb`。**审计误判修正**：school_rules.gd 整体非死——`is_soul` 被 relic_hook_resolver 真用；真死仅 3 个零引用函数（drain_blood_stacks/overchannel_benefit/apply_overchannel_soul，overchannel 规则在 V1 无实现） |
 | W14 | ✅ 闭环 | 本会话 | 2026-09-09 | `d322387`（audio_manager.gd:100 豁免注释 + AGENTS 技术约定补种子化豁免条款） |
 

@@ -12,10 +12,11 @@
 | 项 | 值 |
 |----|-----|
 | 覆盖范围 | 《原子》§1 轨道 A（W11.3，A1–A8）、§2 轨道 B（W12，B1–B9）、§3 轨道 C（W10 催办） |
+| **执行状态（2026-09-10）** | **三轨全部闭环**：A @ `49ffbe5`、B @ `fc7cb3e`（均用户批准 ff 合入并推送）、C @ `158aef4` |
 | 已闭环（禁执行） | 《原子》§5 全清单（W1–W9/W13/W14/W11 m1/2/4），本方案不碰 |
-| resolver.gd | **2407 行**（与《原子》基线一致） |
-| run_snapshot_builder.gd | **2373 行**（《原子》头写 2058 已过时——视觉会话后续增改，以实测为准） |
-| run_controller.gd | **1760 行**（《原子》头写 1407 已过时） |
+| resolver.gd | 基线 2407 行 → 拆分后 **205 行**（M1 达标 <1200） |
+| run_snapshot_builder.gd | 基线 2373 行 → 拆分后 **767 行**（M2 达标 <800） |
+| run_controller.gd | 基线 1760 行 → 拆分后 **1241 行**（<900 未达，`_show_*` 家族与命令构建转后续债务条目） |
 | 三件套基线 | 最近实测：unit 1165/1165、integration 31/31、check exit 0（`90a44ed`，2026-09-09 夜） |
 | 并行会话冲突门 | 每次触碰 `scripts/presentation/` 前 `ls -lt scripts/presentation/screens/ run_snapshot_builder.gd run_controller.gd`；**30 分钟内有视觉会话改动则不执行 B 轨相关步**（《原子》R3） |
 
@@ -196,8 +197,8 @@ C done → remediation-plan W10 关闭（视觉会话写）
 
 ## 7. 里程碑与全局完成定义
 
-- **里程碑 M1（A7）**：master 上 resolver < 1200 行，A2–A6 新模块入 `scripts/domain/`，三件套绿，行为零变化（unit/integration/check 与拆分前同数或更绿）。
-- **里程碑 M2（B9）**：`run_snapshot_builder.gd < 800`、`run_controller.gd < 900`，`for_screen`/public API 唯一入口不变，快照契约键零漂移（`test_snapshot_contract` 全文未改即绿）。
+- **里程碑 M1（A7）**：✅ **已达成**——master @ `49ffbe5` 上 resolver 205 行（<1200），A2–A6 新模块入 `scripts/domain/`，三件套绿，行为零变化。
+- **里程碑 M2（B9）**：✅ **达成（含一项披露）**——master @ `fc7cb3e` 上 `run_snapshot_builder.gd` 767 行（<800 ✓）、`for_screen`/public API 唯一入口不变、快照契约键零漂移（`test_snapshot_contract` 全文未改即绿）；`run_controller.gd` 1241 行（<900 ✗，转后续债务）。
 - **轨道 C**：✅ remediation-plan W10 已关闭，`test_map_exit_persistence` 直读直恢复语义回绿（方案甲，`158aef4`）。
 - **整批完成定义**：§6 看板全部 done + 三件套全绿 + 关键提交推送且 `git ls-remote origin refs/heads/master` 对齐（《原子》§0 全局完成定义）。
 
