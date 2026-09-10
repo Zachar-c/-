@@ -26,8 +26,8 @@
 |---|---|---|---|---|---|
 | A1 | **E5a** `verify_pacing_density` 扩 4 分类统计 | 未开工（实测：该工具无 `category` 统计） | P1 | 在现有逐层统计上加 `category` 分布与占比断言 | 依赖 E2b 已完成 ✅；门＝工具输出 5 层四类均现、战斗占比 50–60% |
 | A2 | **E5b** `route_diversity` 全模板可达冒烟 | 未开工（实测：**全仓无 `route_diversity` 工具/测试**） | P1 | 新建 `tools/verify_route_diversity.gd`：多种子 × 全层，断言每个模板至少可达一次 | 同上；门＝工具绿 |
-| A3 | **E6** 敌人按层品质随机 | 未开工（实测：`enemy_roll` / `enemy_weights` **均不存在**） | P1 | ① `enemies.json` 补 `weight`；② 节点 `enemy_roll` 配置 + `pacing.enemy_weights`；③ facade 读配置抽取；④ 确定性单测 + 层门禁 | 依赖 E1 ✅；**完成后解锁 `data/enemies.json` 的提交排除令**（见 §5-4） |
-| A4 | **E7** 商店按层随机 | 未开工（实测：`shop_roll` **不存在**） | P2 | ① `shops.json` offers 补 `weight`；② travel 生成 `shop_roll`；③ 快照/购买一致性；④ 保底断言 + 单测 | 依赖 E5；门＝确定性单测 + 保底断言 |
+| A3 | **E6** 敌人按层品质随机 | **已收口**（2026-09-10）：实现落在 tip `c806215`（`enemy_roll` / `enemy_weights` / `EnemyCatalog.roll_enemy_ids` / 非锚点抽取 / facade 优先读 roll）；本会话启用 `tests/unit/test_enemy_roll.gd`（原 `_disabled_` 前缀）**15/15 绿**；unit 1214 + integration 31 全绿。**不再需要** per-enemy `weight`（tier 权重 + 层 rank 带）；`enemies.json` 排除令已解除 | P1 | 无（闭环） | 验证：`-gtest=res://tests/unit/test_enemy_roll.gd` |
+| A4 | **E7** 商店按层随机 | **已落地**（AGENTS：`shop_stock` + `test_shop_roll.gd` 9/9 绿，2026-09-10 核） | P2 | 无（闭环；open-items 原「shop_roll 不存在」过期） | 验证：`-gtest=res://tests/unit/test_shop_roll.gd` |
 | A5 | **E 线全量回归** | 未开工 | P2 | E6/E7 落地后跑 unit + integration 全绿 | 依赖 A3/A4 |
 | A6 | **D1b 实现批**（古方知识模型） | 排队中 | P2 | 按 `docs/superpowers/specs/2026-09-06-gu-synthesis-design.md` §8 开工 | 之后接 S 阶段真窗键鼠验收 |
 | A7 | **`run_controller.gd` 1241 → <900** | 已披露未达（B 轨遗留） | P3 | `_show_*` 家族与命令构建继续外提 | 目标以**绝对行数**为准；执行板 §7 已如实登记 |
