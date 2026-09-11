@@ -72,6 +72,8 @@
  "true_qi_cost_default": 1,
  "fight_damage_base": 1,
  "max_seal_turns": 3,
+ "mark_scratch_per_layer": 1,
+ "mark_scratch_cap": 10,
  "kill_moves": [
   {
    "id": "km_light_converge",

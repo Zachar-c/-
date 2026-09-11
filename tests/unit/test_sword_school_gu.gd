@@ -363,6 +363,69 @@ func test_sword_myriad_tribulation_releases_for_sigma_damage() -> void:
 	assert_eq(int(out["battle"]["enemies"][0]["hp"]), hp_before - 18, "万剑劫结算 strike 18（3×6）")
 
 
+# ── T15：刻痕通道（回合末按 marked 层数结算独立伤害） ─────────────────
+#
+# 规格：specs/2026-09-12-sword-p2-t15-t16-spec.md §1（D15-1 线性 / D15-2 不衰减 /
+# D15-3 不吃护盾 / D15-5 参数落 v1_battle.json）。
+# 原文依据：重查报告 §2-M3「刻印下来的剑道道痕……自寻目标的弱点，加以攻击」；
+# 「表面伤口很快就自己愈合了，但刻印……不会消失」⇒ 不衰减。
+
+func _battle_with_marks(layers: int, extra: Dictionary = {}) -> Dictionary:
+	## _build_enemies 不接收 shield/statuses（引擎侧固定初值），故 start 后注入。
+	var battle := V1.start(_run_with_sword(["sword_rec_1_10_gu"]), catalog, [_enemy()])
+	var enemy: Dictionary = (battle["enemies"][0] as Dictionary).duplicate(true)
+	enemy["statuses"] = {"marked": layers}
+	for key in extra:
+		enemy[key] = extra[key]
+	battle["enemies"][0] = enemy
+	return battle
+
+
+func test_mark_scratch_damages_enemy_at_end_turn() -> void:
+	# 端到端：出青锋蛊（recon → status marked 1 层）→ 回合末结算 1 点。
+	var battle := V1.start(_run_with_sword(["sword_rec_1_10_gu"]), catalog, [_enemy()])
+	var slot := _slot_index_by_def(battle, "sword_rec_1_10_gu")
+	assert_true(slot >= 0, "侦察蛊入槽")
+	var hp_before := int(battle["enemies"][0]["hp"])
+	var played := V1.player_action(battle, {"type": "play_gu", "slot_index": slot})
+	assert_true(played["result"]["ok"], "侦察蛊可出：%s" % str(played["result"]))
+	var marked := int((played["battle"]["enemies"][0].get("statuses", {}) as Dictionary).get("marked", 0))
+	assert_eq(marked, 1, "命中后登记 1 层刻痕")
+	var ended := V1.player_action(played["battle"], {"type": "end_turn"})
+	assert_true(ended["result"]["ok"], "end_turn 成功：%s" % str(ended["result"]))
+	assert_eq(int(ended["battle"]["enemies"][0]["hp"]), hp_before - 1, "回合末刻痕结算 1 点")
+	var reasons := []
+	for entry_value in (ended["battle"].get("log", []) as Array):
+		reasons.append(str((entry_value as Dictionary).get("reason", "")))
+	assert_true(reasons.has("mark_scratch"), "刻痕结算写入战斗日志；实际=%s" % str(reasons))
+
+
+func test_mark_scratch_is_an_independent_channel_ignoring_shield() -> void:
+	# 独立通道：道痕自寻弱点 ⇒ 不吃护盾。3 层刻痕打 3 点，护盾分毫不动。
+	var battle := _battle_with_marks(3, {"shield": 50})
+	var hp_before := int(battle["enemies"][0]["hp"])
+	var ended := V1.player_action(battle, {"type": "end_turn"})
+	assert_true(ended["result"]["ok"], "end_turn 成功：%s" % str(ended["result"]))
+	assert_eq(int(ended["battle"]["enemies"][0]["hp"]), hp_before - 3, "3 层刻痕 = 3 点伤害（线性）")
+	assert_eq(int(ended["battle"]["enemies"][0]["shield"]), 50, "刻痕不吃护盾（独立通道）")
+
+
+func test_mark_scratch_does_not_decay_and_can_finish_the_fight() -> void:
+	# 不衰减（原文「刻印不会消失」）：后续回合仍按同层数结算。
+	var first := V1.player_action(_battle_with_marks(2), {"type": "end_turn"})
+	assert_eq(int(first["battle"]["enemies"][0]["hp"]), 997, "第一回合 -2（999→997）")
+	assert_eq(int((first["battle"]["enemies"][0].get("statuses", {}) as Dictionary).get("marked", 0)), 2,
+			"刻痕不衰减")
+	var second := V1.player_action(first["battle"], {"type": "end_turn"})
+	assert_eq(int(second["battle"]["enemies"][0]["hp"]), 995, "第二回合再 -2（跨回合持续追打）")
+	# 层数上限：注入远超上限的层数时按 mark_scratch_cap 截断（默认 10）。
+	var capped_end := V1.player_action(_battle_with_marks(999), {"type": "end_turn"})
+	assert_eq(int(capped_end["battle"]["enemies"][0]["hp"]), 989, "层数上限 10 ⇒ 单次最多 10 伤害")
+	# 刻痕可以收掉残敌（正常胜利判定）。
+	var lethal_end := V1.player_action(_battle_with_marks(2, {"hp": 2}), {"type": "end_turn"})
+	assert_eq(str(lethal_end["battle"]["phase"]), "victory", "刻痕击破敌人 → 战斗胜利")
+
+
 # ── T10：剑道道痕登记（体印 → 知识图谱「身上道痕」转义） ──────────────
 #
 # 转义边界：`mark_<school>` 前缀的体印才是**道痕**（图谱 L2「身上道痕」节点，

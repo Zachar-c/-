@@ -631,9 +631,50 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 			break
 	if _is_over(next):
 		return _result(next, true, "")
+	# T15 刻痕通道（2026-09-12）：表面伤口会愈合，刻印下来的道痕不会消失——
+	# 回合末按敌人身上 marked 层数结算一次**独立**伤害（见 _settle_marks）。
+	next = _settle_marks(next)
+	if _is_over(next):
+		return _result(next, true, "")
 	next["turn"] = int(next["turn"]) + 1
 	next = _start_player_turn(next)
 	return _result(next, true, "")
+
+
+## T15 刻痕通道：回合末按敌人身上 `marked`（刻痕）层数结算伤害。
+## 独立通道定位（重查报告 §2-M3，与 STS 中毒同构）：道痕**自寻弱点**——
+##   - 不吃护盾（独立结算，不参与 shield 交换）；
+##   - 不吃力量/虚弱等增益减益；
+##   - 不衰减（原文「刻印不会消失」），层数由「每回合 2 念头」天然限流。
+## 只伤敌，**无玩家致死路径**，故不需要死亡预检（任务书 T15 该句源自已被
+## 重查推翻的「侵蚀自伤」，此处按重查口径更正）。
+## 参数：cfg.mark_scratch_per_layer（每层伤害，默认 1）、cfg.mark_scratch_cap（层数上限，默认 10）。
+static func _settle_marks(battle: Dictionary) -> Dictionary:
+	var next := _dup(battle)
+	var cfg: Dictionary = next.get("cfg", {})
+	var per_layer := int(cfg.get("mark_scratch_per_layer", 1))
+	var cap := int(cfg.get("mark_scratch_cap", 10))
+	if per_layer <= 0:
+		return next
+	for i in (next["enemies"] as Array).size():
+		var enemy: Dictionary = next["enemies"][i]
+		if not bool(enemy.get("alive", true)):
+			continue
+		var layers := int((enemy.get("statuses", {}) as Dictionary).get("marked", 0))
+		if layers <= 0:
+			continue
+		var damage := mini(layers, maxi(0, cap)) * per_layer
+		if damage <= 0:
+			continue
+		var updated: Dictionary = (next["enemies"][i] as Dictionary).duplicate(true)
+		updated["hp"] = maxi(0, int(updated["hp"]) - damage)
+		if int(updated["hp"]) <= 0:
+			updated["alive"] = false
+		next["enemies"][i] = updated
+		next["last_effect_target"] = str(updated.get("id", ""))
+		_log(next, "mark_scratch", str(updated.get("id", "")))
+	_check_victory(next)
+	return next
 
 
 static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dictionary:
