@@ -631,6 +631,9 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 			break
 	if _is_over(next):
 		return _result(next, true, "")
+	# 敌人追击（位移机制）：本回合拉开的距离在敌人回合末被逼近，
+	# 位移因此是「本回合减伤」而非永久免伤（见 _enemy_pursuit）。
+	next = _enemy_pursuit(next)
 	# T15 刻痕通道（2026-09-12）：表面伤口会愈合，刻印下来的道痕不会消失——
 	# 回合末按敌人身上 marked 层数结算一次**独立**伤害（见 _settle_marks）。
 	next = _settle_marks(next)
@@ -685,6 +688,11 @@ static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dicti
 	match kind:
 		"attack":
 			var damage := int(intent.get("damage", 0))
+			# 位移的意义（specs/2026-09-12-shift-distance-spec.md）：拉开距离
+			# 削减本回合的近身伤害，但封顶 cap_pct —— 距离是拖延，不是免伤。
+			# 只改传入 amount，不动 _damage_player 内部（护盾/TRIGGER_COST/DDA
+			# 都在那条路径上，避免叠加面扩散）。
+			damage = _distance_adjusted_damage(next, damage)
 			# 死亡归因（§17.3）：敌方攻击入战斗日志，DeathReport 由日志导出
 			# 击杀意图（V1 无 final_blow 状态字段）。
 			_log(next, "enemy_attack", str(intent.get("label", str(enemy["id"]))))
@@ -704,6 +712,39 @@ static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dicti
 				enemy["counter_hidden"] = (enemy["counter_hidden"] as Array).duplicate()
 				enemy["counter_hidden"].append(tag)
 			next["enemies"][enemy_index] = enemy
+	return next
+
+
+## 按「玩家与交战点的距离」削减敌人近身伤害。
+## distance = abs(player.position)；敌人固守 0（不新增敌人 position 字段）。
+##   effective = max(ceil(base * (100 - cap_pct) / 100), base - distance * per_step)
+## 参数：cfg.shift_damage_reduction_per_step（默认 1）、cfg.shift_damage_reduction_cap_pct（默认 60）。
+static func _distance_adjusted_damage(battle: Dictionary, base_damage: int) -> int:
+	if base_damage <= 0:
+		return base_damage
+	var cfg: Dictionary = battle.get("cfg", {})
+	var per_step := int(cfg.get("shift_damage_reduction_per_step", 1))
+	var cap_pct := clampi(int(cfg.get("shift_damage_reduction_cap_pct", 60)), 0, 100)
+	var distance := absi(int(battle.get("player", {}).get("position", 0)))
+	if distance <= 0 or per_step <= 0:
+		return base_damage
+	var floor_damage := ceili(float(base_damage) * float(100 - cap_pct) / 100.0)
+	return maxi(floor_damage, base_damage - distance * per_step)
+
+
+## 敌人追击：回合末把玩家距离往 0 收敛，否则玩家一路 shift 即可永久减伤。
+## 参数：cfg.enemy_pursuit_per_turn（默认 1）。
+static func _enemy_pursuit(battle: Dictionary) -> Dictionary:
+	var next := _dup(battle)
+	var position := int(next.get("player", {}).get("position", 0))
+	if position == 0:
+		return next
+	var cfg: Dictionary = next.get("cfg", {})
+	var pursuit := maxi(0, int(cfg.get("enemy_pursuit_per_turn", 1)))
+	if position > 0:
+		next["player"]["position"] = maxi(0, position - pursuit)
+	else:
+		next["player"]["position"] = mini(0, position + pursuit)
 	return next
 
 
