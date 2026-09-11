@@ -18,6 +18,8 @@ const V1 := preload("res://scripts/domain/v1_battle_resolver.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 const BattleSnapshotScript = preload("res://scripts/presentation/snapshots/battle_snapshot.gd")
 const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
+const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const ShopRulesScript = preload("res://scripts/domain/shop_command_rules.gd")
 
 const SWORD_ROLE_BASE := {"attack": 2, "defense": 3, "healing": 2}
 const SWORD_ROLE_KIND := {"attack": "strike", "defense": "shield", "healing": "heal"}
@@ -516,3 +518,80 @@ func test_kill_screen_lists_buildable_moves_outside_battle() -> void:
 			"已可组的杀招须明示；实际=%s" % str(first.get("intro", "")))
 	assert_false(str(first.get("sequence_display", "")).is_empty(),
 			"须显示配方构成")
+
+
+# ── 真机验收：跨转升阶与商店可得性 ────────────────────────────────────
+
+func _sword_forge_state(materials: Dictionary, stone: int) -> RunState:
+	var state := RunState.new_run(101)
+	state.school = "sword"
+	state.refined_gu_ids = ["sword_atk_1_05_gu"]
+	state.gu_ids = state.refined_gu_ids.duplicate()
+	state.gu_instances = {
+		"gu_001": {"instance_id": "gu_001", "definition_id": "sword_atk_1_05_gu", "state": "refined"},
+	}
+	state.cave_aperture["stored_gu_instance_ids"] = ["gu_001"]
+	state.materials = materials.duplicate()
+	state.stone = stone
+	return state
+
+
+func test_sword_cross_rank_ascension_recipes_are_declared() -> void:
+	# 真机反馈「局内没有升级剑道蛊虫的渠道」：此前 20 条剑道配方全是 advance
+	# 且 input == output（原地升阶），386 条配方里没有任何跨转升阶链，
+	# 于是 22 条剑道杀招中 19 条（需二转及以上）永远不可达。
+	var by_id: Dictionary = catalog.get("refinement_by_id", {})
+	var r2: Dictionary = by_id.get("ascend_sword_atk_1_05_gu", {})
+	assert_false(r2.is_empty(), "跨转晋升配方 ascend_sword_atk_1_05_gu 存在")
+	assert_eq(str(r2.get("output_gu_id", "")), "sword_atk_2_12_gu")
+	assert_eq(int(r2.get("output_rank", 0)), 2)
+	assert_true(bool(r2.get("default_unlocked", false)),
+			"晋升属基础成长路径，不该卡图鉴解锁")
+	# 每个角色都要有晋升路线（攻/守/移/疗/侦）。
+	for recipe_id in ["ascend_sword_atk_1_06_gu", "ascend_sword_def_1_07_gu",
+			"ascend_sword_mov_1_08_gu", "ascend_sword_heal_1_09_gu",
+			"ascend_sword_rec_1_10_gu"]:
+		assert_false(by_id.get(recipe_id, {}).is_empty(), "%s 存在" % recipe_id)
+
+
+func test_sword_ascension_forges_a_rank_two_gu() -> void:
+	# 容量约束：开局魂魄 1 ⇒ craft_cap=2 ⇒ 每条方只能 1 蛊 + 1 材。
+	var state := _sword_forge_state({"beast_bone": 1}, 12)
+	var out := ResolverScript.apply(state, {
+		"type": "refine_gu",
+		"recipe_id": "ascend_sword_atk_1_05_gu",
+		"input_instance_ids": ["gu_001"],
+	}, catalog)
+	assert_true(bool(out["result"].get("ok", false)),
+			"炼蛊 OK：%s" % str(out["result"].get("reason", "")))
+	assert_true(out["state"].refined_gu_ids.has("sword_atk_2_12_gu"), "产出二转剑蛊")
+	assert_false(out["state"].refined_gu_ids.has("sword_atk_1_05_gu"), "一转蛊被消耗")
+
+
+func test_sword_ascension_refuses_when_materials_missing() -> void:
+	# 红线：关键成本必须真实结算，材料不足要可见拒绝，不得静默通过。
+	var state := _sword_forge_state({}, 12)
+	var out := ResolverScript.apply(state, {
+		"type": "refine_gu",
+		"recipe_id": "ascend_sword_atk_1_05_gu",
+		"input_instance_ids": ["gu_001"],
+	}, catalog)
+	assert_false(bool(out["result"].get("ok", true)), "缺兽骨时必须拒绝")
+
+
+func test_sword_run_shop_shelves_sword_gu() -> void:
+	# 真机反馈「商店买不到剑道蛊」：货池是全流派共享的，洗牌取前 N 时剑道蛊
+	# 全靠运气，剑道局可能整局都在卖光道/气道蛊。现在每店保底一件本流派蛊。
+	var state := RunState.new_run(101)
+	state.school = "sword"
+	state.current_node_layer = 5
+	for seed_value in [101, 2026, 777]:
+		state.seed = seed_value
+		var stock := ShopRulesScript.shop_stock(state, catalog)
+		var sword_on_shelf := 0
+		for offer_id in stock:
+			var offer: Dictionary = catalog["shop_offer_by_id"].get(offer_id, {})
+			if str(offer.get("gu_id", "")).begins_with("sword_"):
+				sword_on_shelf += 1
+		assert_gt(sword_on_shelf, 0,
+				"剑道局 seed %d 的货架必须有剑道蛊；实际=%s" % [seed_value, str(stock)])

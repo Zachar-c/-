@@ -281,6 +281,51 @@
    "stone_cost": 200,
    "tier": 3,
    "clue": "古方：持方即知产物，免未知损失。"
+  },
+  {
+   "id": "purchase_sword_atk_1_06",
+   "kind": "purchase",
+   "card_key": "purchase.sword_atk_1_06",
+   "gu_id": "sword_atk_1_06_gu",
+   "stone_cost": 8,
+   "tier": 1,
+   "school": "sword"
+  },
+  {
+   "id": "purchase_sword_atk_2_12",
+   "kind": "purchase",
+   "card_key": "purchase.sword_atk_2_12",
+   "gu_id": "sword_atk_2_12_gu",
+   "stone_cost": 18,
+   "tier": 2,
+   "school": "sword"
+  },
+  {
+   "id": "purchase_sword_def_3_14",
+   "kind": "purchase",
+   "card_key": "purchase.sword_def_3_14",
+   "gu_id": "sword_def_3_14_gu",
+   "stone_cost": 30,
+   "tier": 3,
+   "school": "sword"
+  },
+  {
+   "id": "purchase_sword_heal_4_16",
+   "kind": "purchase",
+   "card_key": "purchase.sword_heal_4_16",
+   "gu_id": "sword_heal_4_16_gu",
+   "stone_cost": 45,
+   "tier": 4,
+   "school": "sword"
+  },
+  {
+   "id": "purchase_sword_atk_5_02",
+   "kind": "purchase",
+   "card_key": "purchase.sword_atk_5_02",
+   "gu_id": "sword_atk_5_02_gu",
+   "stone_cost": 70,
+   "tier": 5,
+   "school": "sword"
   }
  ]
 }

@@ -77,6 +77,10 @@ static func shop_goods_pool(state: RunState, catalog: Dictionary) -> Array[Strin
 			continue
 		if int(offer.get("tier", 1)) > max_tier:
 			continue
+		# 流派专属货（带 school 字段）只在本流派局进池：否则会稀释全流派
+		# 共享的货池，让既有商店用例因洗牌结果改变而集体失效。
+		if offer.has("school") and str(offer.get("school", "")) != str(state.school):
+			continue
 		pool.append(str(offer_key))
 	pool.sort()   # 与字典插入顺序解耦：洗牌结果只取决于种子
 	return pool
@@ -99,7 +103,48 @@ static func shop_stock(state: RunState, catalog: Dictionary, slot_override: int 
 		var top := _pick_tier_candidate(state, catalog, pool, max_tier, stock)
 		if top != "":
 			stock[stock.size() - 1] = top
+	# 保底：本流派蛊至少一件。货池是全流派共享的，只靠洗牌的话本流派蛊
+	# 能不能上架全看运气（剑道局可能整局都在卖光道/气道蛊 —— 真机验收反馈）。
+	# 这里沿用最高档保底的同一范式，只补一件，不动货池本身。
+	if not _stock_has_school_gu(stock, catalog, state.school):
+		var school_pick := _pick_school_candidate(state, catalog, pool, stock)
+		if school_pick != "":
+			stock[stock.size() - 1] = school_pick
 	return stock
+
+
+## 只认「显式标了 school 的流派专属货」——不带 school 的既有 offer
+## 不参与流派保底，否则会动到既有商店用例依赖的洗牌结果。
+static func _is_school_offer(offer: Dictionary, school: String) -> bool:
+	return school != "" \
+		and str(offer.get("kind", "")) == "purchase" \
+		and str(offer.get("school", "")) == school
+
+
+static func _stock_has_school_gu(stock: Array[String], catalog: Dictionary, school: String) -> bool:
+	if school.is_empty():
+		return true   # 未选流派（散修）不做流派保底
+	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	for offer_key in stock:
+		if _is_school_offer(offer_by_id.get(offer_key, {}), school):
+			return true
+	return false
+
+
+## 未上架的本流派专属货里取一件（同一条种子化洗牌，保证确定性）。
+static func _pick_school_candidate(state: RunState, catalog: Dictionary, pool: Array[String],
+		exclude: Array[String]) -> String:
+	var offer_by_id: Dictionary = catalog.get("shop_offer_by_id", {})
+	var candidates: Array[String] = []
+	for offer_key in pool:
+		if exclude.has(offer_key):
+			continue
+		if _is_school_offer(offer_by_id.get(offer_key, {}), str(state.school)):
+			candidates.append(offer_key)
+	if candidates.is_empty():
+		return ""
+	var shuffled := _shop_shuffle(int(state.seed), "%s.school" % _shop_stock_salt(state), candidates)
+	return str(shuffled[0])
 
 
 ## 该货是否"在架可买"。

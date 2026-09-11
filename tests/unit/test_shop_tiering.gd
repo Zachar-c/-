@@ -69,7 +69,14 @@ func test_shop_snapshot_only_lists_offers_within_the_layer_tier_cap() -> void:
 	for offer in snapshot.get("offers", []):
 		ids.append(str(offer.get("id", "")))
 	assert_false(ids.has("purchase_moonlight"), "tier-3 goods stay off the layer-1 shelf")
-	assert_true(ids.has("purchase_stone_shell"), "tier-1 goods remain on the shelf")
+	# 断言「层 1 仍有 tier-1 的货」而非「某一件具体货在架上」——货架是种子化
+	# 洗牌出来的，货池扩容后具体哪件上货架会变，硬钉 id 是脆弱断言。
+	var has_tier1_purchase := false
+	for offer_id in ids:
+		var offer: Dictionary = catalog["shop_offer_by_id"].get(offer_id, {})
+		if str(offer.get("kind", "")) == "purchase" and int(offer.get("tier", 1)) == 1:
+			has_tier1_purchase = true
+	assert_true(has_tier1_purchase, "tier-1 goods remain on the shelf；实际=%s" % str(ids))
 
 	controller.state = _state_at_layer(3, 50)
 	var deep: Dictionary = RunSnapshotBuilderScript.shop(controller)

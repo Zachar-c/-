@@ -4880,6 +4880,138 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "ascend_sword_atk_1_05_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_1_05_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 12,
+   "output_gu_id": "sword_atk_2_12_gu",
+   "output_rank": 2,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（2 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_atk_1_06_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_1_06_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 12,
+   "output_gu_id": "sword_atk_2_13_gu",
+   "output_rank": 2,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（2 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_def_1_07_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_def_1_07_gu"
+   ],
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 24,
+   "output_gu_id": "sword_def_3_14_gu",
+   "output_rank": 3,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（3 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_mov_1_08_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_mov_1_08_gu"
+   ],
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 24,
+   "output_gu_id": "sword_mov_3_15_gu",
+   "output_rank": 3,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（3 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_heal_1_09_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_heal_1_09_gu"
+   ],
+   "materials": {
+    "venom_sac": 1
+   },
+   "stone_cost": 40,
+   "output_gu_id": "sword_heal_4_16_gu",
+   "output_rank": 4,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（4 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_rec_1_10_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_rec_1_10_gu"
+   ],
+   "materials": {
+    "boar_king_tusk": 1
+   },
+   "stone_cost": 60,
+   "output_gu_id": "sword_rec_5_17_gu",
+   "output_rank": 5,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（5 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [
