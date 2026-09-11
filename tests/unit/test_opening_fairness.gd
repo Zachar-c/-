@@ -19,6 +19,7 @@ extends GutTest
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
 const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
+const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 
 var catalog: Dictionary
 
@@ -43,6 +44,26 @@ func test_battle_starts_with_full_action_pool() -> void:
 	assert_eq(int(battle["player"]["used_this_turn"]), 0, "起手全部念头可用")
 	assert_eq(int(battle["player"]["true_qi"]), int(battle["player"]["true_qi_max"]),
 		"V1 起手真元满（不存在零真元开局卡死）")
+
+
+func test_school_start_keeps_novice_gu_plus_school_pack() -> void:
+	# 既有设计（见 test_school_starter_data「Default run carries the novice
+	# small_light_gu plus the school starter pack」）：小光蛊是全局"新手蛊"，
+	# 与流派无关，任何流派开局都带它；流派包叠加在它之后。
+	# 真机验收曾反馈「剑道开局为什么塞一只小光蛊」——此为设计而非缺陷，
+	# 本用例把口径钉死，后续若要改为纯流派开局须一并改这里。
+	var controller = RunControllerScript.new()
+	controller.start_new_run(101, "sword", [], [])
+	var state = controller.state
+	var defs: Array = []
+	for instance_value in state.gu_instances.values():
+		defs.append(str((instance_value as Dictionary).get("definition_id", "")))
+	assert_true(defs.has("small_light_gu"), "新手蛊保留（全局设计，非流派残留）")
+	var sword_count := 0
+	for definition_id in defs:
+		if str(definition_id).begins_with("sword_"):
+			sword_count += 1
+	assert_eq(sword_count, 4, "剑道开局 4 只剑道蛊；实际=%s" % str(defs))
 
 
 func test_zero_true_qi_player_still_acts_via_punch_then_blocks() -> void:

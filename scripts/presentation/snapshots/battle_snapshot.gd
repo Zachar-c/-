@@ -263,6 +263,12 @@ static func build_kill(controller) -> Dictionary:
 	base["subtitle"] = "研习于战 · 一场一用"
 	base["study_slots"] = 3
 	base["kill_moves"] = _v1_kill_moves(battle, catalog)
+	if battle.is_empty():
+		# 非战斗时战斗态为空，杀招屏会退化成三张「未研习」空卡，玩家找不到
+		# 杀招从哪来。V1 杀招本就无"研习"步骤——持有配方蛊即自动成招，
+		# 所以这里改给「可组清单 + 还缺哪只」，直接回答「怎么构筑」。
+		base["kill_moves"] = _potential_kill_moves(controller.state, catalog)
+		base["subtitle"] = "集齐配方蛊即成招 · 入战自动可用"
 	var slots: Array[Dictionary] = []
 	var moves: Array = battle.get("kill_moves", [])
 	for i in mini(3, moves.size()):
@@ -306,6 +312,54 @@ static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Arra
 			"executable": reason.is_empty(),
 			"block_reason": _v1_reject_text(reason),
 		})
+	return out
+
+
+## 非战斗时的可组清单：配方已齐的排前，只差一只的紧随其后（够 3 格即可）。
+static func _potential_kill_moves(state, catalog: Dictionary) -> Array[Dictionary]:
+	var cfg: Dictionary = catalog.get("v1_battle", {})
+	var held: Dictionary = {}
+	if state != null:
+		for instance in state.refined_instances():
+			held[str(instance.get("definition_id", ""))] = true
+	var ready: Array[Dictionary] = []
+	var near: Array[Dictionary] = []
+	for km_value in cfg.get("kill_moves", []):
+		var km: Dictionary = km_value
+		var names: Array[String] = []
+		var missing: Array[String] = []
+		for def_id_value in km.get("recipe", []):
+			var def_id := str(def_id_value)
+			names.append(DisplayText.gu(def_id))
+			if not held.has(def_id):
+				missing.append(DisplayText.gu(def_id))
+		var costs: Array[String] = []
+		if int(km.get("true_qi_cost", 0)) > 0:
+			costs.append("真元 %d" % int(km.get("true_qi_cost", 0)))
+		costs.append("念头 %d" % int(km.get("thought_cost", 1)))
+		var card := {
+			"id": str(km.get("id", "")),
+			"name": str(km.get("label", str(km.get("id", "")))),
+			"sequence_display": " · ".join(names),
+			"progress": 0,
+			"next_name": "",
+			"total": 0,
+			"cost": " · ".join(costs),
+			"effect": SnapshotTextUtil._v1_effect_text(km),
+			"executable": false,
+			"block_reason": "",
+			"source": "配方组合",
+			"intro": "",
+		}
+		if missing.is_empty():
+			card["intro"] = "配方已齐 · 进入战斗即可释放"
+			ready.append(card)
+		elif missing.size() == 1:
+			card["intro"] = "还缺：%s" % missing[0]
+			near.append(card)
+	var out: Array[Dictionary] = []
+	out.append_array(ready)
+	out.append_array(near)
 	return out
 
 

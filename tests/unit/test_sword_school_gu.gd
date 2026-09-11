@@ -16,6 +16,8 @@ extends GutTest
 
 const V1 := preload("res://scripts/domain/v1_battle_resolver.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
+const BattleSnapshotScript = preload("res://scripts/presentation/snapshots/battle_snapshot.gd")
+const RunControllerScript = preload("res://scripts/presentation/run_controller.gd")
 
 const SWORD_ROLE_BASE := {"attack": 2, "defense": 3, "healing": 2}
 const SWORD_ROLE_KIND := {"attack": "strike", "defense": "shield", "healing": "heal"}
@@ -491,3 +493,26 @@ func test_cross_school_penalty_needs_two_marks_and_flags_sword_water_exclusion()
 	assert_gt(int(more["penalty"]), int(excluded["penalty"]), "道越多罚越重")
 	assert_eq(more, SchoolRulesScript.cross_school_penalty(three, catalog),
 		"确定性：同输入同输出")
+
+
+# ── 真机验收：杀招的可达性 ────────────────────────────────────────────
+
+func test_kill_screen_lists_buildable_moves_outside_battle() -> void:
+	# 真机反馈「找不到构筑杀招的入口」：非战斗时杀招屏是三张「未研习」空卡。
+	# V1 杀招没有研习步骤——持有配方蛊即自动成招，所以屏上必须给出可组清单
+	# 与「还缺哪只」，否则玩家永远不知道杀招从哪来。
+	var controller = RunControllerScript.new()
+	controller.start_new_run(101, "sword", [], [])
+	var snapshot: Dictionary = BattleSnapshotScript.build_kill(controller)
+	var moves: Array = snapshot.get("kill_moves", [])
+	assert_false(moves.is_empty(), "非战斗时须给出可组清单，不得是空态")
+	var ids: Array = []
+	for m in moves:
+		ids.append(str((m as Dictionary).get("id", "")))
+	assert_true(ids.has("km_sword_double_edge_1"),
+			"开局一转剑蛊应能组出双锋引；实际=%s" % str(ids))
+	var first: Dictionary = moves[0]
+	assert_string_contains(str(first.get("intro", "")), "配方已齐",
+			"已可组的杀招须明示；实际=%s" % str(first.get("intro", "")))
+	assert_false(str(first.get("sequence_display", "")).is_empty(),
+			"须显示配方构成")

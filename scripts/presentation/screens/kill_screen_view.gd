@@ -84,7 +84,7 @@ func _study_card(parent: Node, m: Dictionary, learned: bool) -> PanelContainer:
 	if not learned:
 		var host: Node = panel.content_host
 		var note := Label.new()
-		note.text = "未研习\n（来源：战斗后研习）"
+		note.text = "未研习\n（集齐配方蛊后自动成招）"
 		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		note.add_theme_font_size_override("font_size", 13)
 		note.add_theme_color_override("font_color", GuStyle.INK_SOFT)

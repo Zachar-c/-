@@ -93,8 +93,33 @@ func test_same_school_reward_roll_leans_on_exclusive_pool() -> void:
 				"blood school seed %d must draw its exclusive pool entry" % seed_value)
 
 
-func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
-	# qi has no member in this bucket, so its rolls keep using the full bucket.
+func test_school_roll_uses_school_pool_when_bucket_has_no_entry() -> void:
+	# bucket 里没有本流派蛊 ⇒ 退到 school_pools 中同稀有度的本流派蛊。
+	# 旧行为是退回 bucket 全池（气道局会掉力道/血道蛊），已按「本流派局掉
+	# 本流派蛊」修订。
+	var cat := catalog()
+	var elite: Dictionary = cat["loot_tables"]["loot"]["elite"]
+	elite.erase("forced_rarity")
+	elite["gu_chance_pct"] = 100
+	elite["gu_pool"]["weights"] = {"common": 1}
+	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "blood_droplet_gu"]}
+	var gu_by_id: Dictionary = cat["gu_by_id"]
+	var qi_common: Array = []
+	for gu_id_value in cat["school_pools"]["qi"]:
+		if str(gu_by_id.get(str(gu_id_value), {}).get("rarity", "common")) == "common":
+			qi_common.append(str(gu_id_value))
+	assert_false(qi_common.is_empty(), "气道池有 common 蛊可兜底")
+	var battle := {"enemy_kind": "ridge_elite_scout"}
+	var state := make_state(7)
+	state.school = "qi"
+	var rolled: Dictionary = LootResolverScript.settle_victory(battle, state, cat)
+	assert_true(qi_common.has(str(rolled["loot"].get("gu_id", ""))),
+			"bucket 无本流派蛊时退到 school_pools 同稀有度；实际=%s"
+			% str(rolled["loot"].get("gu_id", "")))
+
+
+func test_school_roll_keeps_bucket_when_no_school_pool() -> void:
+	# 流派未登记 school_pools ⇒ 无兜底可用，才退回原 bucket（保持旧行为）。
 	var cat := catalog()
 	var elite: Dictionary = cat["loot_tables"]["loot"]["elite"]
 	elite.erase("forced_rarity")
@@ -103,10 +128,29 @@ func test_school_roll_falls_back_when_pool_has_no_bucket_entry() -> void:
 	elite["gu_pool"]["by_rarity"] = {"common": ["force_gu", "blood_droplet_gu"]}
 	var battle := {"enemy_kind": "ridge_elite_scout"}
 	var state := make_state(7)
-	state.school = "qi"
+	state.school = "unknown_school"
 	var rolled: Dictionary = LootResolverScript.settle_victory(battle, state, cat)
 	assert_true(["force_gu", "blood_droplet_gu"].has(str(rolled["loot"].get("gu_id", ""))),
-			"school without pool overlap keeps the unfiltered bucket")
+			"no school pool keeps the unfiltered bucket")
+
+
+func test_sword_run_drops_sword_gu() -> void:
+	# 剑道 40 只全部不在 loot_tables 内：旧逻辑会退回落表全池，剑道局永远
+	# 掉光道/气道蛊，成长链断裂（真机验收反馈）。新逻辑走 school_pools 兜底。
+	var cat := catalog()
+	var elite: Dictionary = cat["loot_tables"]["loot"]["elite"]
+	elite.erase("forced_rarity")
+	elite["gu_chance_pct"] = 100
+	elite["gu_pool"]["weights"] = {"common": 1}
+	elite["gu_pool"]["by_rarity"] = {"common": ["small_light_gu", "qi_atk_1_01_gu"]}
+	var battle := {"enemy_kind": "ridge_elite_scout"}
+	for seed_value in [7, 21, 99]:
+		var state := make_state(seed_value)
+		state.school = "sword"
+		var rolled: Dictionary = LootResolverScript.settle_victory(battle, state, cat)
+		var gu_id := str(rolled["loot"].get("gu_id", ""))
+		assert_true(gu_id.begins_with("sword_"),
+				"剑道局 seed %d 必须掉剑道蛊；实际=%s" % [seed_value, gu_id])
 
 
 func test_boss_loot_follows_the_layer_ruling() -> void:

@@ -655,37 +655,74 @@ func _refresh_kill_moves(state: Dictionary) -> void:
 	while idx < 3:
 		if idx < slots.size():
 			var km: Dictionary = slots[idx]
-			_kill_host.add_child(_kill_slot(
+			var km_id := str(km.get("id", ""))
+			var km_ok := bool(km.get("executable", false))
+			var slot_btn := _kill_slot(
 					str(km.get("name", "杀招")),
 					str(km.get("sequence_display", "")),
 					str(km.get("cost", "")),
-					bool(km.get("executable", false)),
-					str(km.get("block_reason", ""))))
+					km_ok,
+					str(km.get("block_reason", "")))
+			if km_ok and km_id != "":
+				slot_btn.pressed.connect(func(): _release_kill_move(km_id))
+			else:
+				# 交互闭环契约：不可用入口一律 disabled 置灰，不留可点装饰。
+				slot_btn.disabled = true
+			_kill_host.add_child(slot_btn)
 		else:
 			_kill_host.add_child(_kill_slot_empty())
 		idx += 1
 
 
-func _kill_slot(title: String, seq: String, cost: String, executable: bool, block_reason: String) -> PanelContainer:
-	var panel := PanelContainer.new()
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
-	box.border_color = GuStyle.NODE_REACH_BORDER
-	box.set_border_width_all(1)
-	box.set_corner_radius_all(4)
-	panel.add_theme_stylebox_override("panel", box)
-	panel.custom_minimum_size = Vector2(248, 90)
+## 释放杀招：与出牌同一条 play_card 通道（"kill_move.<id>" → play_kill_move）。
+func _release_kill_move(kill_move_id: String) -> void:
+	if kill_move_id == "":
+		return
+	var request_key := "killmove:" + kill_move_id
+	if _submitted_card_keys.has(request_key):
+		return
+	_submitted_card_keys[request_key] = true
+	if _commands.has("play_card"):
+		_commands["play_card"].call("kill_move." + kill_move_id, _target_id)
+	# 交互闭环契约：视觉 + 听觉双重反应。
+	AudioManager.play_sfx("battle_card_play")
+	play_ink_spread()
+
+
+func _kill_slot(title: String, seq: String, cost: String, executable: bool, block_reason: String) -> Button:
+	var btn := Button.new()
+	btn.text = ""
+	btn.flat = true
+	btn.custom_minimum_size = Vector2(248, 90)
+	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
+	normal.border_color = GuStyle.NODE_REACH_BORDER
+	normal.set_border_width_all(1)
+	normal.set_corner_radius_all(4)
+	var disabled_box := StyleBoxFlat.new()
+	disabled_box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.2)
+	disabled_box.border_color = GuStyle.NODE_FUTURE_BORDER
+	disabled_box.set_border_width_all(1)
+	disabled_box.set_corner_radius_all(4)
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("hover", normal)
+	btn.add_theme_stylebox_override("pressed", normal)
+	btn.add_theme_stylebox_override("disabled", disabled_box)
 	var margin := MarginContainer.new()
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.add_theme_constant_override("margin_left", 12)
 	margin.add_theme_constant_override("margin_right", 12)
 	margin.add_theme_constant_override("margin_top", 8)
 	margin.add_theme_constant_override("margin_bottom", 8)
-	panel.add_child(margin)
+	btn.add_child(margin)
 	var body := VBoxContainer.new()
+	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_theme_constant_override("separation", 4)
 	margin.add_child(body)
 	var t := Label.new()
 	t.text = title
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	t.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	t.add_theme_font_size_override("font_size", 12)
 	t.add_theme_color_override("font_color", GuStyle.INK_PRIMARY if executable else GuStyle.INK_SOFT)
@@ -693,23 +730,26 @@ func _kill_slot(title: String, seq: String, cost: String, executable: bool, bloc
 	if seq != "":
 		var s := Label.new()
 		s.text = seq
+		s.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		s.add_theme_font_size_override("font_size", 9)
 		s.add_theme_color_override("font_color", GuStyle.INK_MUTED)
 		body.add_child(s)
 	if not executable and block_reason != "":
 		var b := Label.new()
 		b.text = "不可用：%s" % block_reason
+		b.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_theme_font_size_override("font_size", 9)
 		b.add_theme_color_override("font_color", GuStyle.CINNABAR)
 		body.add_child(b)
 	if cost != "":
 		var c := Label.new()
-		c.text = "念头 %s" % cost
+		c.text = cost
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		c.add_theme_font_size_override("font_size", 9)
 		c.add_theme_color_override("font_color", GuStyle.CINNABAR)
 		c.size_flags_vertical = Control.SIZE_SHRINK_END
 		body.add_child(c)
-	return panel
+	return btn
 
 
 func _kill_slot_empty() -> PanelContainer:

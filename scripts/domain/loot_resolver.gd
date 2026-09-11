@@ -33,7 +33,7 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	# 一转多收 1 份材料），一转与五转的采集效率不可同日而语。
 	var count_adjustment := int(mods.get("material_bonus", 0)) + int(mods.get("material_penalty", 0)) 		+ maxi(0, int(state.cultivation) - 1)
 	var material_ids := _roll_materials(table, state, tier, pity_cfg, count_adjustment)
-	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}))
+	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}), catalog.get("gu_by_id", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
 	var next := state
@@ -197,7 +197,7 @@ static func _next_material_pity(current: int, material_ids: Array, pity_cfg: Dic
 # declared weights and the pity forcing: the rarity is fixed before any roll.
 # Forced results therefore never advance the ladder, and the resulting
 # non-common rarity clears it exactly like a natural drop would.
-static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, school_pools: Dictionary = {}) -> Dictionary:
+static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, school_pools: Dictionary = {}, gu_by_id: Dictionary = {}) -> Dictionary:
 	var chance := int(table.get("gu_chance_pct", 0))
 	var pool: Dictionary = table.get("gu_pool", {})
 	var weights: Dictionary = pool.get("weights", {})
@@ -209,7 +209,7 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg:
 	var by_rarity: Dictionary = pool.get("by_rarity", {})
 	var forced_rarity := str(table.get("forced_rarity", ""))
 	if not forced_rarity.is_empty() and not (by_rarity.get(forced_rarity, []) as Array).is_empty():
-		return _pick_from_bucket(str(forced_rarity), by_rarity[forced_rarity], state, tier, school_pools)
+		return _pick_from_bucket(str(forced_rarity), by_rarity[forced_rarity], state, tier, school_pools, gu_by_id)
 	var effective_weights := weights
 	var rarity_salt := "loot.gu.rarity.%s" % tier
 	if state.loot_pity >= int(pity_cfg.get("threshold", PITY_THRESHOLD)):
@@ -239,13 +239,11 @@ static func _roll_gu(table: Dictionary, state: RunState, tier: String, pity_cfg:
 			break
 	if picked_rarity.is_empty():
 		return {"gu_id": "", "rarity": ""}
-	return _pick_from_bucket(picked_rarity, by_rarity.get(picked_rarity, []), state, tier, school_pools)
+	return _pick_from_bucket(picked_rarity, by_rarity.get(picked_rarity, []), state, tier, school_pools, gu_by_id)
 
 
-static func _pick_from_bucket(rarity: String, bucket_value: Variant, state: RunState, tier: String, school_pools: Dictionary) -> Dictionary:
+static func _pick_from_bucket(rarity: String, bucket_value: Variant, state: RunState, tier: String, school_pools: Dictionary, gu_by_id: Dictionary = {}) -> Dictionary:
 	var bucket: Array = (bucket_value as Array).duplicate()
-	if bucket.is_empty():
-		return {"gu_id": "", "rarity": ""}
 	var school_exclusive: Array = school_pools.get(str(state.school), [])
 	var school_members: Array = []
 	if not school_exclusive.is_empty():
@@ -253,11 +251,36 @@ static func _pick_from_bucket(rarity: String, bucket_value: Variant, state: RunS
 			var bucket_gu_id := str(bucket_gu_value)
 			if school_exclusive.has(bucket_gu_id):
 				school_members.append(bucket_gu_id)
-	var pick_pool: Array = school_members if not school_members.is_empty() else bucket
+	var pick_pool: Array = school_members
+	if pick_pool.is_empty():
+		# 掉落表未登记本流派蛊（如剑道 40 只全不在 loot_tables 内）⇒ 退到
+		# school_pools 中同稀有度的本流派蛊，保证「本流派局掉本流派蛊」。
+		# 直接退回 bucket 会让剑道局永远掉光道/气道蛊，成长链彻底断裂。
+		pick_pool = _school_pool_by_rarity(str(state.school), rarity, school_pools, gu_by_id)
+	if pick_pool.is_empty():
+		pick_pool = bucket
+	if pick_pool.is_empty():
+		return {"gu_id": "", "rarity": ""}
 	return {
 		"gu_id": str(pick_pool[_pick_from(pick_pool.size(), state, "loot.gu.pick.%s.%s" % [tier, rarity])]),
 		"rarity": rarity,
 	}
+
+
+## 本流派池里该稀有度的蛊（掉落表的流派兜底来源）。
+static func _school_pool_by_rarity(school: String, rarity: String, school_pools: Dictionary, gu_by_id: Dictionary) -> Array:
+	if school.is_empty() or gu_by_id.is_empty():
+		return []
+	var pool: Array = school_pools.get(school, [])
+	if pool.is_empty():
+		return []
+	var matched: Array = []
+	for gu_id_value in pool:
+		var gu_id := str(gu_id_value)
+		var definition: Dictionary = gu_by_id.get(gu_id, {})
+		if str(definition.get("rarity", "common")) == rarity:
+			matched.append(gu_id)
+	return matched
 
 
 static func _next_loot_pity(current: int, rarity: String, pity_cfg: Dictionary = {}) -> int:
