@@ -435,13 +435,34 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 		reason = str(recipe.get("locked_reason", "尚未获得该蛊方，无法按此配方合炼。"))
 	elif not missing.is_empty():
 		reason = "缺少%s。" % _gu_names(missing)
+	# 2026-09-12（透明度红线）：配方卡必须把**元石与蛊材**成本一并摊开，并让
+	# `executable` 反映可负担性。旧实现只报蛊（`_cost(0, ...)`）且不看元石/材料，
+	# 于是同名升阶（advance，剑道成长曲线的核心）会显示成「可执行」，
+	# 玩家点了才被告知 insufficient_stone / missing_refinement_material。
+	var stone_cost := int(recipe.get("stone_cost", 0))
+	var materials: Dictionary = recipe.get("materials", {})
+	var missing_materials: Array[String] = []
+	for material_id_value in materials:
+		var material_id := str(material_id_value)
+		if int(state.materials.get(material_id, 0)) < int(materials[material_id]):
+			missing_materials.append(material_id)
+	var affordable := int(state.stone) >= stone_cost
+	if executable and not missing_materials.is_empty():
+		executable = false
+		reason = "缺少材料%s。" % _material_names(missing_materials)
+	elif executable and not affordable:
+		executable = false
+		reason = "元石不足（需 %d，现有 %d）。" % [stone_cost, int(state.stone)]
+	var cost := _cost(stone_cost, inputs, 1)
+	if not materials.is_empty():
+		cost["materials"] = materials.duplicate()
 	cards.append(_card(state, {
 		"id": "refine.%s" % str(recipe["id"]),
 		"title": "炼制%s" % DisplayText.gu(str(recipe["output_gu_id"])),
 		"summary": "以%s合炼。" % _gu_names(inputs),
 		"executable": executable,
 		"block_reason": reason,
-		"cost": _cost(0, inputs, 1),
+		"cost": cost,
 		"known_risk": ["失败会损毁输入蛊虫：%s。" % _gu_names(inputs)] if destroys_inputs else [],
 		"expected_gain": ["获得%s。" % DisplayText.gu(str(recipe["output_gu_id"]))],
 		"unknown_note": "" if is_fixed else "炼制成败未定。",
@@ -1129,6 +1150,13 @@ static func _gu_names(gu_ids: Array) -> String:
 	var names: Array[String] = []
 	for gu_id in gu_ids:
 		names.append(DisplayText.gu(str(gu_id)))
+	return "、".join(names)
+
+
+static func _material_names(material_ids: Array) -> String:
+	var names: Array[String] = []
+	for material_id in material_ids:
+		names.append(DisplayText.material(str(material_id)))
 	return "、".join(names)
 
 

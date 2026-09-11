@@ -55,6 +55,45 @@ func test_refinement_preview_exposes_recipe_cost_and_gain() -> void:
 	assert_false(card["command"].has("roll"))
 
 
+func test_refinement_advance_card_shows_stone_cost_and_blocks_when_broke() -> void:
+	# 2026-09-12（透明度红线）：同名升阶（advance）必须把 stone_cost 摊在卡上，
+	# 且元石不足时不可执行并给出可见原因。旧实现两者都缺，玩家点了才被告知
+	# insufficient_stone（同名升阶正是剑道成长曲线的核心路径）。
+	var rich := RunState.new_run(101)
+	rich.refined_gu_ids = ["small_light_gu"]
+	rich.gu_ids = rich.refined_gu_ids.duplicate()
+	rich.materials = {"beast_blood": 5}
+	var rich_card := _card(ActionPreviewServiceScript.preview_actions(rich, {
+		"id": "refinement_hollow",
+		"type": "refinement",
+	}, catalog), "refine.advance_small_light_gu")
+	assert_eq(int(rich_card["cost"].get("stone", 0)), 6, "元石成本必须可见")
+	assert_true(rich_card["executable"], "12 元石 + 材料齐备时可执行（需 6）")
+
+	var broke := RunState.new_run(101)
+	broke.stone = 2
+	broke.refined_gu_ids = ["small_light_gu"]
+	broke.gu_ids = broke.refined_gu_ids.duplicate()
+	broke.materials = {"beast_blood": 5}
+	var broke_card := _card(ActionPreviewServiceScript.preview_actions(broke, {
+		"id": "refinement_hollow",
+		"type": "refinement",
+	}, catalog), "refine.advance_small_light_gu")
+	assert_false(broke_card["executable"], "元石不足时不得显示为可执行")
+	assert_string_contains(str(broke_card["block_reason"]), "元石不足")
+	assert_eq(int(broke_card["cost"].get("stone", 0)), 6, "成本仍须可见")
+
+	var no_material := RunState.new_run(101)
+	no_material.refined_gu_ids = ["small_light_gu"]
+	no_material.gu_ids = no_material.refined_gu_ids.duplicate()
+	var no_material_card := _card(ActionPreviewServiceScript.preview_actions(no_material, {
+		"id": "refinement_hollow",
+		"type": "refinement",
+	}, catalog), "refine.advance_small_light_gu")
+	assert_false(no_material_card["executable"], "材料不足时不得显示为可执行")
+	assert_string_contains(str(no_material_card["block_reason"]), "缺少材料")
+
+
 func test_cultivation_preview_reports_stone_shortfall_and_remedy() -> void:
 	var state := RunState.new_run(101)
 	state.current_node_id = "cultivation_spring"
