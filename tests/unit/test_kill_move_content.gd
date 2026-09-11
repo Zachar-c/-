@@ -97,7 +97,7 @@ func test_kill_move_hidden_when_recipe_gu_missing() -> void:
 	var ids := _ids(battle)
 	assert_false(ids.has("km_light_converge"), "散修没有月光蛊 → 不可见（实际=%s）" % str(ids))
 	assert_false(ids.has("km_force_avalanche"), "散修缺熊力蛊 → 不可见")
-	assert_false(ids.has("km_sword_double_edge"), "散修无剑蛊 → 不可见")
+	assert_false(ids.has("km_sword_double_edge_1"), "散修无剑蛊 → 不可见")
 
 
 func test_used_kill_move_locks_its_recipe_gu_for_the_turn() -> void:

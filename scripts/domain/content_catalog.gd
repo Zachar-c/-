@@ -1294,6 +1294,8 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"soul_calm_beast_below", "soul_calm_departure_below",
 		"beast_nature_emerging_above", "beast_nature_threshold",
 		"retreat_stone_cost", "cultivate_rank_two_stone_cost",
+		"stone_to_essence_per_stone", "cross_school_penalty_per_extra",
+		"cross_school_exclusion_penalty",
 	]
 	for key in positive_keys:
 		var value: Variant = cfg.get(key, null)
@@ -1350,6 +1352,26 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 	for banned_key in ["stone_quality", "stone_face_value"]:
 		if cfg.has(banned_key):
 			errors.append("balance %s is forbidden: yuanstone has quantity only (spec 9.1)" % banned_key)
+	# 2026-09-12（T11）：兼修互斥对 = 两条真实流派 id，不得自斥、不得重复。
+	var exclusions: Variant = cfg.get("school_exclusions", [])
+	if not (exclusions is Array):
+		errors.append("balance school_exclusions must be an array of school-id pairs")
+	else:
+		var seen_pairs := {}
+		for pair_value in (exclusions as Array):
+			if not (pair_value is Array) or (pair_value as Array).size() != 2:
+				errors.append("balance school_exclusions entries must be 2-element arrays")
+				continue
+			var pair: Array = pair_value
+			var left := str(pair[0])
+			var right := str(pair[1])
+			if left == right:
+				errors.append("balance school_exclusions pair %s excludes itself" % left)
+			var pair_key := "%s|%s" % [left, right]
+			var mirror_key := "%s|%s" % [right, left]
+			if seen_pairs.has(pair_key) or seen_pairs.has(mirror_key):
+				errors.append("balance school_exclusions duplicate pair %s" % pair_key)
+			seen_pairs[pair_key] = true
 	return errors
 
 

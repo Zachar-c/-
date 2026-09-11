@@ -8725,7 +8725,12 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "sword_mark_cost": true,
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 5
+  }
  },
  {
   "id": "sword_atk_5_02_gu",
@@ -8739,7 +8744,12 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "sword_mark_cost": true,
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 6
+  }
  },
  {
   "id": "sword_atk_5_03_gu",
@@ -8753,7 +8763,12 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "sword_mark_cost": true,
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 6
+  }
  },
  {
   "id": "sword_atk_5_04_gu",
@@ -8767,7 +8782,12 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "sword_mark_cost": true,
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 6
+  }
  },
  {
   "id": "sword_atk_1_05_gu",
@@ -8781,7 +8801,13 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 2,
+   "support_school": "sword",
+   "support_bonus": 1
+  }
  },
  {
   "id": "sword_atk_1_06_gu",
@@ -8795,7 +8821,13 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 2,
+   "support_school": "sword",
+   "support_bonus": 1
+  }
  },
  {
   "id": "sword_def_1_07_gu",
@@ -8809,7 +8841,11 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "sword_defense_pattern"
+  "combat": "sword_defense_pattern",
+  "v1_effect": {
+   "kind": "shield",
+   "amount": 3
+  }
  },
  {
   "id": "sword_mov_1_08_gu",
@@ -8823,7 +8859,11 @@
    "movement"
   ],
   "source": "school_derived",
-  "combat": "sword_movement_pattern"
+  "combat": "sword_movement_pattern",
+  "v1_effect": {
+   "kind": "shift",
+   "amount": 1
+  }
  },
  {
   "id": "sword_heal_1_09_gu",
@@ -8837,7 +8877,11 @@
    "healing"
   ],
   "source": "school_derived",
-  "combat": "sword_healing_pattern"
+  "combat": "sword_healing_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 2
+  }
  },
  {
   "id": "sword_rec_1_10_gu",
@@ -8879,7 +8923,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "sword_atk_2_13_gu",
@@ -8893,7 +8941,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "sword_def_3_14_gu",
@@ -8907,7 +8959,11 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "sword_defense_pattern"
+  "combat": "sword_defense_pattern",
+  "v1_effect": {
+   "kind": "shield",
+   "amount": 5
+  }
  },
  {
   "id": "sword_mov_3_15_gu",
@@ -8921,7 +8977,11 @@
    "movement"
   ],
   "source": "school_derived",
-  "combat": "sword_movement_pattern"
+  "combat": "sword_movement_pattern",
+  "v1_effect": {
+   "kind": "shift",
+   "amount": 1
+  }
  },
  {
   "id": "sword_heal_4_16_gu",
@@ -8935,7 +8995,11 @@
    "healing"
   ],
   "source": "school_derived",
-  "combat": "sword_healing_pattern"
+  "combat": "sword_healing_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 5
+  }
  },
  {
   "id": "sword_rec_5_17_gu",
@@ -8977,7 +9041,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "sword_atk_2_20_gu",
@@ -8991,7 +9059,14 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3,
+   "support_school": "sword",
+   "support_bonus": 1
+  },
+  "thought_cost": 2
  },
  {
   "id": "sword_def_3_21_gu",
@@ -9005,7 +9080,11 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "sword_defense_pattern"
+  "combat": "sword_defense_pattern",
+  "v1_effect": {
+   "kind": "shield",
+   "amount": 5
+  }
  },
  {
   "id": "sword_mov_3_22_gu",
@@ -9019,7 +9098,11 @@
    "movement"
   ],
   "source": "school_derived",
-  "combat": "sword_movement_pattern"
+  "combat": "sword_movement_pattern",
+  "v1_effect": {
+   "kind": "shift",
+   "amount": 1
+  }
  },
  {
   "id": "sword_heal_4_23_gu",
@@ -9033,7 +9116,11 @@
    "healing"
   ],
   "source": "school_derived",
-  "combat": "sword_healing_pattern"
+  "combat": "sword_healing_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 5
+  }
  },
  {
   "id": "sword_rec_5_24_gu",
@@ -9075,7 +9162,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "sword_atk_2_27_gu",
@@ -9089,7 +9180,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "sword_def_3_28_gu",
@@ -9103,7 +9198,11 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "sword_defense_pattern"
+  "combat": "sword_defense_pattern",
+  "v1_effect": {
+   "kind": "shield",
+   "amount": 5
+  }
  },
  {
   "id": "sword_mov_3_29_gu",
@@ -9117,7 +9216,11 @@
    "movement"
   ],
   "source": "school_derived",
-  "combat": "sword_movement_pattern"
+  "combat": "sword_movement_pattern",
+  "v1_effect": {
+   "kind": "shift",
+   "amount": 1
+  }
  },
  {
   "id": "sword_heal_4_30_gu",
@@ -9131,7 +9234,11 @@
    "healing"
   ],
   "source": "school_derived",
-  "combat": "sword_healing_pattern"
+  "combat": "sword_healing_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 5
+  }
  },
  {
   "id": "sword_rec_5_31_gu",
@@ -9173,7 +9280,14 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3,
+   "support_school": "sword",
+   "support_bonus": 1
+  },
+  "thought_cost": 2
  },
  {
   "id": "sword_atk_2_34_gu",
@@ -9187,7 +9301,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "sword_def_3_35_gu",
@@ -9201,7 +9319,11 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "sword_defense_pattern"
+  "combat": "sword_defense_pattern",
+  "v1_effect": {
+   "kind": "shield",
+   "amount": 5
+  }
  },
  {
   "id": "sword_mov_3_36_gu",
@@ -9215,7 +9337,11 @@
    "movement"
   ],
   "source": "school_derived",
-  "combat": "sword_movement_pattern"
+  "combat": "sword_movement_pattern",
+  "v1_effect": {
+   "kind": "shift",
+   "amount": 1
+  }
  },
  {
   "id": "sword_heal_4_37_gu",
@@ -9229,7 +9355,11 @@
    "healing"
   ],
   "source": "school_derived",
-  "combat": "sword_healing_pattern"
+  "combat": "sword_healing_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 5
+  }
  },
  {
   "id": "sword_rec_5_38_gu",
@@ -9271,7 +9401,11 @@
    "attack"
   ],
   "source": "school_derived",
-  "combat": "sword_attack_pattern"
+  "combat": "sword_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3
+  }
  },
  {
   "id": "water_def_3_01_gu",

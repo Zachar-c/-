@@ -23,6 +23,9 @@
 - 玩家区：`player.{hp, max_hp, shield, life_time, soul, true_qi, thoughts, used_this_turn, buffs{force/yi_zhang}, position, cultivation}`
 - 敌区：`enemies[] = {id, label, hp, max_hp, shield, alive, intent{kind, damage, seal_turns, soul_drain, life_cost}, statuses{}, counter_revealed, counter_hidden}`
 - 蛊槽：`gu_slots[] = {instance_id, definition_id, rank, used_this_turn, is_sealed, consumed, true_qi_cost, thought_cost, durability_mode, v1_effect, effect}`
+- 杀招区：`kill_moves[] = {id, label, tag, recipe, true_qi_cost, thought_cost, life_cost, damage, effect, reveals}`；
+  `reveals` 是**用后置位**的"已泄密"标记（初始 false，用过一次即 true）；`revealed_to[]` = 本场洞悉了该杀招的敌人 id（T14，2026-09-12）。
+  杀招以 `tag` 作为流派归属，故与蛊**共用** `turn_supports` 支援通道（同回合先出的同流派支援蛊会加成后续杀招）
 - 阶段：`phase ∈ {player_action, victory, defeat}`；`result = {outcome, cause}`（cause ∈ hp/life_cost/soul）
 - 旗标：`flags = {}`（Dictionary，非 Array；Boss 战含 `boss_battle`）
 

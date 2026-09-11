@@ -567,6 +567,7 @@ static func _imprint_value(ids: String) -> String:
 			"iron_bone": labels.append("铁骨")
 			"ice_skin": labels.append("冰肤")
 			"three_watch": labels.append("三更守")
+			"mark_sword": labels.append("剑道道痕")
 			_: labels.append("未知体印")
 	return "、".join(labels)
 

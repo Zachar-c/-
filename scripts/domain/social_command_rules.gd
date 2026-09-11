@@ -469,6 +469,16 @@ const BODY_IMPRINTS := {
 		"lifespan_debt": 1,
 		"reason": "body_imprint_cost",
 	},
+	# ── 道痕类体印（T10，2026-09-12）──────────────────────────────────
+	# 命名约定 `mark_<school>`：id 前缀即**道归属**，由 SchoolRules.school_marks()
+	# 转义为知识图谱 L2「身上道痕」节点（specs/2026-09-11-gu-knowledge-graph.md §1-L2）。
+	# 淬体类体印（iron_bone / ice_skin / three_watch）无道归属，不进图谱。
+	# 本条**不带 injury / lifespan_debt**：剑道道痕的代价不在获得瞬间，而在
+	# ①排斥（T11 cross_school_penalty）与 ②残锋（T16/P2，永久耗该蛊道痕）。
+	"mark_sword": {
+		"facts": ["sword_dao_mark", "sword_dao_mark_erosion"],
+		"reason": "body_imprint_sword_mark",
+	},
 }
 
 const OPPORTUNITY_TYPES := ["gu", "information", "service", "favor", "escape_condition"]

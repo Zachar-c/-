@@ -15,6 +15,15 @@
   "heavy_cost_ratio": 2.0,
   "natural_recovery_cost_ratio": 0.1,
   "aptitude_recovery_multiplier": 0.5,
+  "stone_to_essence_per_stone": 5,
+  "cross_school_penalty_per_extra": 1,
+  "cross_school_exclusion_penalty": 1,
+  "school_exclusions": [
+    [
+      "sword",
+      "water"
+    ]
+  ],
   "reaction_multiplier": 1.0,
   "material_refine_efficiency": 0.5,
   "feed_tier": [

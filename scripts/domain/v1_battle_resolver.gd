@@ -80,6 +80,8 @@ static func start(run_state, catalog: Dictionary, enemy_entries: Array) -> Dicti
 		"gu_slots": _build_gu_slots(run_state, catalog),
 		"active_permanents": [],
 		"kill_moves": _build_kill_moves(run_state, catalog),
+		# T14：本场已泄密杀招被哪些敌人洞悉（用后追加，只增不减）。
+		"revealed_to": [],
 		"log": [],
 		"flags": {},
 		"result": null,
@@ -556,9 +558,25 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String) -> Dictiona
 				next["enemies"][target_index]["counter_revealed"] = (enemy["counter_revealed"] as Array).duplicate()
 				(next["enemies"][target_index]["counter_revealed"] as Array).append(tag)
 	if not countered:
-		next = _apply_effect(next, {"effect": km.get("effect", {})}, "kill_move")
+		# T14（2026-09-12）：杀招吃**本回合同流派支援**（F4：支援只惠及本回合后续同流派蛊）。
+		# 杀招的流派归属就是它的 `tag`，故与蛊共用 `_apply_effect` 的同一条支援通道。
+		next = _apply_effect(next, {"effect": km.get("effect", {}), "school": tag}, "kill_move")
 		if int(km.get("damage", 0)) > 0:
 			next = _strike_enemy(next, int(km.get("damage", 0)))
+	# T14：泄密——杀招用一次即入「被洞悉」态（原文「仙道杀招一旦被借用，当中的秘密
+	# 就会被其他蛊仙洞悉」）。条目 `reveals` 置真，并把在场敌人记入 `battle.revealed_to`，
+	# 供后续「被克制」判定消费（敌人生成侧接线属图谱 §4-D3，并入 P3）。
+	var revealed_moves: Array = next["kill_moves"]
+	var revealed_entry: Dictionary = (revealed_moves[index] as Dictionary).duplicate(true)
+	revealed_entry["reveals"] = true
+	revealed_moves[index] = revealed_entry
+	var revealed_to: Array = (next.get("revealed_to", []) as Array).duplicate()
+	for enemy_value in (next.get("enemies", []) as Array):
+		var witnessed_id := str((enemy_value as Dictionary).get("id", ""))
+		if not witnessed_id.is_empty() and not revealed_to.has(witnessed_id):
+			revealed_to.append(witnessed_id)
+	next["revealed_to"] = revealed_to
+	_log(next, "kill_move_revealed", kill_move_id)
 	return _result(next, true, "countered" if countered else "")
 
 
