@@ -57,6 +57,27 @@ func test_seed_101_generated_run_never_reports_no_route() -> void:
 	assert_false(result.begins_with("leave_blocked:"), "seed 101 不得软锁在离场")
 
 
+func test_sword_school_drives_to_ending_or_terminal() -> void:
+	# 2026-09-12：剑道此前**不在**任何端到端覆盖里（流派冒烟只含 5 流派，
+	# 驱动白名单也只认 5 个）。本用例给剑道一个全流程回归门：固定 3 seed，
+	# 每个都必须抵达 Ending 或确定性终局，且不得 no_route / leave_blocked / 步数封顶。
+	var accepted_count := 0
+	for seed_value in [20260927, 101, 777]:
+		var outcome := _drive(seed_value, "sword")
+		var result := str(outcome.get("result", ""))
+		print("[sword-sweep] seed %d -> %s" % [seed_value, _format_trace(outcome)])
+		assert_false(result.begins_with("leave_blocked"),
+				"剑道 seed %d 不得软锁在离场：%s" % [seed_value, _format_trace(outcome)])
+		assert_ne(result, "no_route", "剑道 seed %d 生成图不得死路" % seed_value)
+		assert_ne(result, "steps_cap", "剑道 seed %d 不得步数封顶" % seed_value)
+		var ok := bool(outcome.get("entered_ending", false)) or result.begins_with("terminal@")
+		assert_true(ok, "剑道 seed %d 必须抵达 Ending 或确定性终局：%s"
+				% [seed_value, _format_trace(outcome)])
+		if ok:
+			accepted_count += 1
+	assert_eq(accepted_count, 3, "剑道 3 个 seed 全部必须给出确定性收束")
+
+
 func _format_trace(trace: Dictionary) -> String:
 	var runaways := trace.get("runaways", []) as Array
 	return "%s|layer:%d|l5:%s|ending:%s|battles:%d|boss:%d|runaway:%s|turns:%s|death:%s" % [
@@ -118,12 +139,12 @@ var _rec_intent := -1
 var _footprint: Array = []
 
 
-func _drive(seed_value: int) -> Dictionary:
+func _drive(seed_value: int, school: String = "") -> Dictionary:
 	var controller := RunControllerScript.new()
 	controller.catalog = ContentCatalog.load_all()
 	# 不入树：与 acceptance_driver 的 play 模式同款无头驾驶，避免 RUITK 屏幕挂载的引擎
 	# set_name 噪音污染 GUT 错误桶。
-	controller.start_new_run(seed_value, "", [])
+	controller.start_new_run(seed_value, school, [])
 	# 深层走通覆盖：本测试按多层契约驱动，关闭切片收官（S6 默认 L1 Boss 落败即 Ending）。
 	controller.catalog["pacing"]["ending_after_stage"] = ""
 	_stuck_battle_id = ""

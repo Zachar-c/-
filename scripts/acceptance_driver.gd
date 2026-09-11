@@ -2105,7 +2105,10 @@ func _run_play() -> void:
 		for piece in contract_env.split(",", false):
 			contracts.append(piece.strip_edges())
 	var school_env := OS.get_environment("PLAYTHROUGH_SCHOOL")
-	var school := school_env if school_env in ["blood", "qi", "force", "soul", "refine"] else ""
+	# 2026-09-12：不再白名单 5 个流派——凡 schools.json 登记的流派都可驱动。
+	# 旧白名单让新流派（如剑道）永远进不了端到端验收。
+	var known_schools: Dictionary = ContentCatalog.load_all().get("schools", {})
+	var school := school_env if known_schools.has(school_env) else ""
 	# 玩家真实开局路径：大厅选择流派与契约后开新局（controller 内部执行 swearing）。
 	controller.start_new_run(seed_value, school, contracts)
 	_tell("开局 seed=%d | 起点=%s | 元石=%d | 气血=%d/%d | 魂魄=%d | 契约=%s" % [
@@ -2223,10 +2226,20 @@ func _step_via_cards(controller, label: String) -> String:
 		if battle_started or bool(payload.get("ok", false)):
 			_tell("%s：执行 %s" % [label, card_id])
 			acted = true
-		else:
-			_tell("%s：%s 被拒（%s）" % [label, card_id, str(payload.get("reason", "unknown"))])
-		break
+			break
+		# 2026-09-12：被拒不再中断循环——继续试下一张卡。旧实现 break 后落到
+		# leave_node，被 rest_choice_required 拦下即误判为「软锁」而终止冒烟
+		# （refinement/cultivation 节点在元石不足时必现）。
+		_tell("%s：%s 被拒（%s）" % [label, card_id, str(payload.get("reason", "unknown"))])
 	if not acted:
+		# 休整族节点（rest / refinement / cultivation）在「所有选项都不可用」时，
+		# 领域提供 rest mode=skip 消费探访（rest_rules._rest_skip，落 rest_skipped）。
+		# 动作预览不暴露该卡，故此处按领域全集兜底，与 rest_snapshot 的 skip 等价。
+		var skip_result: Dictionary = controller.submit_command({"type": "rest", "mode": "skip"})
+		var skip_payload: Dictionary = skip_result.get("result", skip_result) as Dictionary
+		if bool(skip_payload.get("ok", false)):
+			_tell("%s：跳过（rest mode=skip）" % label)
+			return "ongoing"
 		if not _leave(controller, label):
 			return "leave_blocked"
 		_tell("%s：已无可用动作，离场" % label)

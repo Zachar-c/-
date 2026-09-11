@@ -5,13 +5,15 @@ extends GutTest
 # closed loop — starter injection, battle action, victory loot, death
 # finalization, hall reset. All rolls are seeded. In-battle refine synthesis
 # was legacy-engine-only and died with the V1 convergence (B1 bucket C).
+#
+# 2026-09-12：加入剑道（sword）。此前只覆盖 5 流派，剑道从未跑过端到端闭环。
 
 
 const FacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const RUN_CONTROLLER = preload("res://scripts/presentation/run_controller.gd")
 
-const SCHOOLS := ["blood", "qi", "force", "soul", "refine"]
+const SCHOOLS := ["blood", "qi", "force", "soul", "refine", "sword"]
 
 
 var catalog: Dictionary
