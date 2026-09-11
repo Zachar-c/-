@@ -37,11 +37,15 @@ func _collect_buttons(root_node: Node) -> Array:
 		if node is BaseButton:
 			var b: BaseButton = node
 			var conns := b.pressed.get_connections()
+			# `toggled` 是 BaseButton 的另一条合法接线（CheckButton / CheckBox 的语义信号）：
+			# 只数 `pressed` 会把"勾选即生效"的开关误报成死按钮（2026-09-11 大厅加成行 3 例）。
+			var toggle_conns := b.toggled.get_connections()
+			var total_conns := conns.size() + toggle_conns.size()
 			out.append({
 				"path": str(b.get_path()),
 				"text": str(b.text if "text" in b else ""),
-				"connected": conns.size() > 0,
-				"conn_count": conns.size(),
+				"connected": total_conns > 0,
+				"conn_count": total_conns,
 				"visible": b.is_visible_in_tree(),
 				"disabled": b.disabled,
 				"themed": b.has_theme_color_override("font_hover_color"),
@@ -178,6 +182,20 @@ func _initialize() -> void:
 	await process_frame
 	await _settle()
 	_report("Hall", controller)
+	# 大厅子视图（A9，2026-09-11）：门原先只审 Hall 主视图，schools / contracts /
+	# codex / journal 四个子视图的**动态构建按钮**（流派卡、契约项、图鉴条目、手记）
+	# 完全没有自动保护——「20 个流派只有力道能选」的 bug 正落在该盲区。
+	# 逐个切换各审一次；审完**复原 main**，保证后续 start_new_run 仍走主视图路径。
+	# 注：hall 的 "settings" 子视图无命令入口（open_settings 走独立 Settings 屏），
+	# 属不可达分支，不纳入。
+	for subview in ["schools", "contracts", "codex", "journal"]:
+		controller._show_hall_subview(subview)
+		await process_frame
+		await _settle()
+		_report("Hall-%s" % str(subview).capitalize(), controller)
+	controller._show_hall_subview("main")
+	await process_frame
+	await _settle()
 	controller.start_new_run(20260909, "", [])
 	await process_frame
 	await _settle()
@@ -209,15 +227,20 @@ func _initialize() -> void:
 		controller.submit_command({"type": "leave_encounter"})
 		await process_frame
 		await process_frame
-	# refine
-	if _travel(controller, "refinement") != "":
-		await process_frame
-		await process_frame
-		await _settle()
-		_report("Refine", controller)
+	# refine —— 生成图只产 combat/rest/shop/layer_boss 四类节点，路线里通常**没有**
+	# refinement 节点；旧写法 `if _travel(...) != ""` 会让该屏被静默跳过（2026-09-11
+	# 实测就只审计到 8 屏）。改为不可达时直接挂载，把覆盖钉死成恒定 9 屏。
+	var refine_reachable := _travel(controller, "refinement") != ""
+	if not refine_reachable:
+		controller._show_refine()
+	await process_frame
+	await process_frame
+	await _settle()
+	_report("Refine", controller)
+	if refine_reachable:
 		controller.submit_command({"type": "leave_encounter"})
-		await process_frame
-		await process_frame
+	await process_frame
+	await process_frame
 	# encounter via inheritance (anchor-guaranteed)
 	if _travel(controller, "inheritance") != "":
 		await process_frame
@@ -240,5 +263,25 @@ func _initialize() -> void:
 	_report("Kill", controller)
 	controller.back_from_overlay()
 	await process_frame
+	# 内容屏（Reward / Npc / ContentError）：三个挂载方法都只走 `_set_view`，无前置状态
+	# 依赖，因此可直接挂起来审计。这三屏是 B2 首发落地（2026-09-11）的，纳入门后才有
+	# "改布局不制造遮挡/死按钮"的自动保护。
+	controller._show_reward()
+	await process_frame
+	await _settle()
+	_report("Reward", controller)
+	controller._show_npc()
+	await process_frame
+	await _settle()
+	_report("Npc", controller)
+	controller._show_content_error()
+	await process_frame
+	await _settle()
+	_report("ContentError", controller)
+	# Ending 放最后：它会走结局流程（record_run_end），可能清空本局状态，故不放在中间。
+	controller.force_complete_for_test()
+	await process_frame
+	await _settle()
+	_report("Ending", controller)
 	print("AUDIT_DONE")
 	quit(0)

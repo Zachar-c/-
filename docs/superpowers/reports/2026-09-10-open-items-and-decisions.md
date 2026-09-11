@@ -31,6 +31,9 @@
 | A5 | **E 线全量回归** | **已收口**（2026-09-10）：push 后 unit **1214** + integration **31** 全绿；E5a/E5b 工具 PASS | P2 | 无（闭环） | 本地=origin `fcff146` |
 | A6 | **D1b 实现批**（古方知识模型） | **已落地并核验**（2026-09-10）：`SynthesisRules.pair_output_id/preview/execute`、零门槛 `refine_free_pair`、首炼授古方、`？？？` 三层揭示、黑市 `gu_fang_unlock`、炼蛊屏 pair 面板；`mx_` 固定方已清零；名方仍在。相关单测 knowledge/refine 21 绿。open-items 原「排队中」过期 | P2 | 无（闭环） | `-gtest=res://tests/unit/test_synthesis_knowledge.gd` |
 | A7 | **`run_controller.gd` 减行 &lt;900** | **已收口**（2026-09-10）：1111 → **888**；外提 rejection/opening/settings/battle/travel/dialogue/ending + `_set_view`。unit 1214 + integration 31 绿 | P3 | 无（闭环） | 绝对行数 888 |
+| A8 | **修复 `test_t5a_confirm_toast.gd` 红灯** | **未修（既有失败）**（2026-09-11 实测：干净基线 `c0959be` 上即红，与交互门扩屏无关） | P1 | 断言要求 Encounter 屏「友善攀谈/诈言诓骗/出手试探/退避三舍」是真实可点按钮，实测 `[] != [friendly_chat, deceive, probe, withdraw]`；先查 `encounter_screen.tscn`（B2 `ddef08a` 改过 chrome）是否把行动卡换成了非 Button 节点——按契约应恢复真按钮，不得直接改断言 | unit 1222/1223（红 1） |
+| A9 | **大厅子视图不在交互门内** | ✅ **已修（2026-09-11）**（`8c000f5`） | P2 | 已闭环 | 门新增 4 个子视图 pass（`Hall-Schools`/`Hall-Contracts`/`Hall-Codex`/`Hall-Journal`），审完复原 main；顺带修判定漏 `toggled` 与流派卡缺点击音效。审计面 13 屏 + 4 子视图 = 17 标签全绿；整门耗时约 4m24s |
+| A10 | **剑道流派设计落地**（spec `2026-09-11-sword-school-design.md`） | 未开工（2026-09-11 调研完成） | P2 | 按 spec §9：P0（显式 `v1_effect` 带 `support_school:"sword"` + `life_cost` 代价）→ P1（`school_rules.sword_intent` 仿 `blood_stacks`；填 `kill_moves`）→ P2（临时剑/穿透/回合末侵蚀，须死亡预检） | 无阻塞；**附注：`kill_moves` 当前为空数组**，杀招是 AGENTS 裁定的核心玩法支柱之一，其填充优先级应高于剑道专属内容 |
 
 > 另有一项**长期挂账**（不单独占行）：验证遗留 —— Dialogue Manager invalid UID、ObjectDB/RID 泄漏
 > （2026-09-06 复测 20601 实例仍复现）。状态：未修，P3，无明确下一步，等有人踩到再收。
@@ -68,9 +71,9 @@
 
 | # | 漂移点 | 实测证据 | 建议 |
 |---|---|---|---|
-| **D1** | `AGENTS.md` §当前待办 把 **E1–E7** 列为整批待开工 | 实测：**E1a/E1b/E2a/E2b/E3a/E3b/E4a/E4b/E4c 均已落地**（`pacing.json` 5 层 `category_weights` 齐备；`map_generator` 已按分类抽取；`test_category_route.gd` 6 用例；`mode_groups` 已进契约；`rest/refinement/cultivation` 已统一走 Rest 屏）。真正剩的只有 **E5/E6/E7** | 把该条收敛为"E5/E6/E7 收尾"，并删掉已完成的 V1 描述里的过时措辞 |
-| **D2** | 同条**交互闭环契约**只写 `dead=[] no_ui_click=[]` | 本轮已扩为追加 `occluded=[]`（`AGENTS.md:112` 已更新，但 `:58` 那处待办描述未同步） | 同步为三键口径 |
-| **D3** | `PONYTAIL-DEBT.md` 已清账条目仍在讲 **`gu_battle_hand_view` 补 `_gui_input`** | 该组件已随本批删除（`6c96623`）；它引用的两个测试**仍存活**（`test_wenzhen_card_fsm.gd:95/130`），锁的行为也仍成立——只是描述的实现位置过期 | 把该行改为现役组件 `GuTallFanHandView`，并补上本轮新增的三条回归（影卡不透明放大 / 弧箭起点与转色 / 解释栏不挡卡） |
+| **D1** | `AGENTS.md` §当前待办 把 **E1–E7** 列为整批待开工 | 实测：**E1a/E1b/E2a/E2b/E3a/E3b/E4a/E4b/E4c 均已落地**（`pacing.json` 5 层 `category_weights` 齐备；`map_generator` 已按分类抽取；`test_category_route.gd` 6 用例；`mode_groups` 已进契约；`rest/refinement/cultivation` 已统一走 Rest 屏）。真正剩的只有 **E5/E6/E7** | ✅ **已修（2026-09-11）**：§当前待办 E1–E7 已全标 ✅；V0 段改写为「Encounter + Npc/Ending/ContentError 线框均已批准、B2 首批 tscn 已落地」，过时措辞清除 |
+| **D2** | 同条**交互闭环契约**只写 `dead=[] no_ui_click=[]` | 本轮已扩为追加 `occluded=[]`（`AGENTS.md:112` 已更新，但 `:58` 那处待办描述未同步） | ✅ **已修（2026-09-11）**：§当前待办该条同步为三键口径（`occluded=[]` 且 `occluded_known` 须为 0），并写明覆盖 8--9 屏（Refine 依赖路线可达性、可能被跳过）、Npc/Ending/ContentError/Reward 未纳入 |
+| **D3** | `PONYTAIL-DEBT.md` 已清账条目仍在讲 **`gu_battle_hand_view` 补 `_gui_input`** | 该组件已随本批删除（`6c96623`）；它引用的两个测试**仍存活**（`test_wenzhen_card_fsm.gd:95/130`），锁的行为也仍成立——只是描述的实现位置过期 | ✅ **已修（2026-09-11）**：改指现役 `GuTallFanHandView`（`button_down` + `gui_input` 驱动、`card_chosen` 冒泡出牌、宿主订阅 `aim_target_changed` 施加高亮），并补上新增三条回归（影卡不透明放大 / 弧箭起点与转色 / 解释栏不挡卡）的测试名 |
 
 ---
 
@@ -83,6 +86,23 @@
   执行板 §6 看板全 done（唯 `run_controller` 行数项转入 A7）。
 - E 线：E1–E4 全部落地（见 D1 证据）。
 - `ponytail:` 标记 3 处 == 台账 3 行，**无未登记债务**。
+- **交互闭环门扩屏**（2026-09-11）：覆盖从 8 屏扩到**路由表全部 13 屏**——新增 Reward / Npc /
+  ContentError / Ending；Refine 原受 `_travel(...,"refinement")` 门控、路线无该节点时静默跳过，
+  改为不可达时直接挂载。**扩屏当场抓出一处隐藏 bug**：refine 屏有与 shop 同款的孤儿 `SealMargin`
+  （`parent` 指向未声明的 `Root/RefineStage/SealPanelContainer`，被按整屏 1216×680 挂载），
+  压住顶栏背包/设置、四个 tab、确认炼蛊、拆解、离开等 13 个按钮；因 Refine 一直被跳过而从未暴露。
+  已按 C1b 同款修法删除孤儿（真身 `StageContent/HeaderRow` 下完整）。全仓 28 个 `.tscn` 现**零孤儿**。
+  门禁结果：13 屏 `dead=[] no_ui_click=[] occluded=[]`、`occluded_known` 全 0。
+- **流派选择屏（择道）修复**（2026-09-11，`9348d91`）：用户报「20 个流派只有默认力道能选，
+  点其它没反应」。实测根因不是死按钮、也不是字段没写——`select_school` 命令**只写
+  `controller._selected_school` 却不重绘**，而流派卡片是自建 Panel（朱砂选中框与「已选」印章
+  全靠快照重建，没有自绘状态）→ 字段变了但屏上毫无变化。修法：新增
+  `RunController.select_school()`（catalog 校验 → 赋值 → `_show_hall_subview("schools")` 重绘，
+  顺带刷新确认按钮「以X入世」文案）；`_toggle_buff()` 同样补重绘（否则选流派触发的重绘会把
+  刚勾的开局加成视觉冲掉）。starter 蛊本就随流派（`RunOpeningFlow.inject_school_starters` 读
+  `schools.json.starter_gu_ids`），本次补齐测试钉住。新测试
+  `tests/unit/test_hall_school_select.gd` 6 例——关键断言刻意落在**屏上「已选」印章的归属**
+  （而非字段值），否则抓不到"不重绘"这一类 bug。
 
 ---
 

@@ -746,6 +746,9 @@ func _school_card(s: Dictionary, sid: String, is_selected: bool, order: int) -> 
 	click.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	click.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	click.pressed.connect(func(): _fire1("select_school", sid))
+	# 交互闭环契约：点击须有听觉反应。这张覆盖层是透明 flat Button，不能走
+	# MasterTheme.apply_button（会写死卡角色尺寸并附加样式），故显式接 ui_click。
+	click.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
 	card.add_child(click)
 	return card
 

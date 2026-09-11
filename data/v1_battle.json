@@ -72,5 +72,26 @@
  "true_qi_cost_default": 1,
  "fight_damage_base": 1,
  "max_seal_turns": 3,
- "kill_moves": []
+ "kill_moves": [
+  {"id": "km_light_converge", "label": "凝光", "tag": "light",
+   "recipe": ["moonlight_gu", "small_light_gu"],
+   "true_qi_cost": 3, "thought_cost": 1, "life_cost": 0, "damage": 0,
+   "effect": {"kind": "strike", "amount": 5}},
+  {"id": "km_light_bulwark", "label": "明光壁", "tag": "light",
+   "recipe": ["stone_shell_gu", "vitality_grass_gu"],
+   "true_qi_cost": 2, "thought_cost": 1, "life_cost": 0, "damage": 0,
+   "effect": {"kind": "shield", "amount": 6}},
+  {"id": "km_sword_double_edge", "label": "双锋引", "tag": "sword",
+   "recipe": ["sword_atk_1_05_gu", "sword_atk_1_06_gu"],
+   "true_qi_cost": 3, "thought_cost": 1, "life_cost": 0, "damage": 0,
+   "effect": {"kind": "strike", "amount": 4}},
+  {"id": "km_blood_ember", "label": "血昙", "tag": "blood",
+   "recipe": ["blood_farewell_gu", "blood_droplet_gu"],
+   "true_qi_cost": 3, "thought_cost": 2, "life_cost": 0, "damage": 0,
+   "effect": {"kind": "heal_and_strike", "heal": 2, "amount": 3}},
+  {"id": "km_force_avalanche", "label": "崩山", "tag": "force",
+   "recipe": ["force_gu", "bear_strength_gu"],
+   "true_qi_cost": 4, "thought_cost": 2, "life_cost": 0, "damage": 8,
+   "effect": {}}
+ ]
 }

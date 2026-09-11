@@ -564,6 +564,18 @@ func _apply_run_buffs(buff_ids: Array) -> void:
 	RunOpeningFlowScript.apply_run_buffs(self, buff_ids)
 
 
+## 流派选择（大厅「择道」子视图）：校验 → 写入开局流派 → **重绘**。
+## 旧实现只在命令回调里赋值 `_selected_school`、不重绘；流派卡片是自建 Panel
+## （选中态与「已选」印章都由快照重建，没有自绘状态），所以点其它流派看不到
+## 任何变化，表现为「只有默认力道能用」。重绘同时刷新确认按钮文案（以X入世）。
+func select_school(school_id: String) -> void:
+	var sid := str(school_id)
+	if not catalog.get("schools", {}).has(sid):
+		return
+	_selected_school = sid
+	_show_hall_subview("schools")
+
+
 func _toggle_buff(buff_id: String) -> void:
 	var bid := str(buff_id)
 	if not catalog.get("buffs", {}).has(bid):
@@ -572,6 +584,9 @@ func _toggle_buff(buff_id: String) -> void:
 		_selected_buffs.erase(bid)
 	else:
 		_selected_buffs.append(bid)
+	# 勾选同样要重绘：加成行是目录投影，重建时按快照 selected_buffs 恢复；
+	# 否则随后因选流派触发的重绘会把刚勾的加成视觉冲掉。
+	_show_hall_subview("schools")
 
 
 func _inject_school_starters(school: String) -> void:

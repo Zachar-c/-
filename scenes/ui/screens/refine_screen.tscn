@@ -50,21 +50,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SealMargin" type="MarginContainer" parent="Root/RefineStage/SealPanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_bottom = 4
-
-[node name="SealLabel" type="Label" parent="Root/RefineStage/SealPanelContainer/SealMargin"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-horizontal_alignment = 1
-vertical_alignment = 1
-text = "炼蛊
-养道"
-
 [node name="StageContent" type="VBoxContainer" parent="Root/RefineStage"]
 layout_mode = 2
 theme_override_constants/separation = 10

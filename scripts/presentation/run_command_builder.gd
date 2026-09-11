@@ -115,7 +115,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				# 本就是 open_schools，此分支只在 has_save 时可点。
 				"continue_run": func(): controller.submit_command({"type": "load_run"}),
 				"load_run": func(): controller.submit_command({"type": "load_run"}),
-				"select_school": func(school: String): controller._selected_school = school,
+				"select_school": func(school: String): controller.select_school(str(school)),
 				"toggle_buff": func(id): controller._toggle_buff(str(id)),
 				"toggle_contract": func(id: String):
 					var cid := str(id)
