@@ -74,7 +74,17 @@ func _refresh() -> void:
 	_refresh_mode_groups()
 	_refresh_remove_panel()
 	_refresh_growth_panel()
+	_refresh_leave()
 	_refresh_confirm_dialog()
+
+## E4 leave：未消费休整时禁用离开并提示。
+func _refresh_leave() -> void:
+	var can_leave := bool(_snapshot.get("can_leave", true))
+	_leave_button.disabled = not can_leave
+	var hint := str(_snapshot.get("leave_hint", ""))
+	_leave_button.tooltip_text = "离开此节点" if can_leave else hint
+	if not can_leave and not hint.is_empty() and _note_label != null:
+		_note_label.text = hint
 
 
 ## E4b 三选一：修炼 / 炼蛊两组卡片区。快照 mode_groups 缺失或两组皆空时隐藏。

@@ -237,4 +237,8 @@ static func build(controller) -> Dictionary:
 	out["choices"] = choices
 	out["is_ascension"] = false
 	out["growth"] = []
+	# E4 leave 门禁可视化：未消费探访时 UI 禁用「离开」，避免静默 rest_choice_required。
+	out["visit_consumed"] = rest_used
+	out["can_leave"] = rest_used
+	out["leave_hint"] = "" if rest_used else "先执行一项休整，或点「跳过」，方可离开"
 	return out

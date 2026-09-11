@@ -82,6 +82,10 @@ const TEXT := {
 	"gu_fang_already_unlocked": "你已持有该古方。",
 	"gu_fang_unknown": "没有这张古方对应的蛊。",
 	"refinement_capacity_exceeded": "炼蛊需要至少保留两处空位，当前不足。",
+	"rest_choice_required": "休整尚未选定：请先执行一项（调息/强化/移除/跳过）。",
+	"rest_already_used": "本次休整已经消耗过了。",
+	"rest_mode_already_used": "这类休整已经用过一次。",
+	"not_rest_node": "这里不是可休整之处。",
 }
 
 
