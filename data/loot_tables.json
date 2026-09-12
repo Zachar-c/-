@@ -1001,6 +1001,381 @@
     "type": "design_only",
     "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
    }
+  },
+  "mat_fire_2": {
+   "name_zh": "火岩髓",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "fire"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "火岩髓——fire派 promotion 主材品质档 plain。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "grease",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，fire 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_fire_3": {
+   "name_zh": "离火精",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "fire"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "离火精——fire派 promotion 主材品质档 refined。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "grease",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，fire 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_fire_4": {
+   "name_zh": "焚天髓",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "fire"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "焚天髓——fire派 promotion 主材品质档 prized。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "grease",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，fire 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_water_2": {
+   "name_zh": "寒潭髓",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "water"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "寒潭髓——water派 promotion 主材品质档 plain。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "bead",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，water 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_water_3": {
+   "name_zh": "沧溟珠",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "water"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "沧溟珠——water派 promotion 主材品质档 refined。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "bead",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，water 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_water_4": {
+   "name_zh": "弱水精",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "water"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "弱水精——water派 promotion 主材品质档 prized。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "bead",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，water 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wind_2": {
+   "name_zh": "罡风絮",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "wind"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "罡风絮——wind派 promotion 主材品质档 plain。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "feather",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，wind 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wind_3": {
+   "name_zh": "天罡翎",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "wind"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "天罡翎——wind派 promotion 主材品质档 refined。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "feather",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，wind 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wind_4": {
+   "name_zh": "太虚风息",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "wind"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "太虚风息——wind派 promotion 主材品质档 prized。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "feather",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，wind 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wood_2": {
+   "name_zh": "百年松脂",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "wood"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "百年松脂——wood派 promotion 主材品质档 plain。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "resin",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，wood 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wood_3": {
+   "name_zh": "木灵芯",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "wood"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "木灵芯——wood派 promotion 主材品质档 refined。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "resin",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，wood 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wood_4": {
+   "name_zh": "建木青髓",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "wood"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "建木青髓——wood派 promotion 主材品质档 prized。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "resin",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，wood 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_earth_2": {
+   "name_zh": "黄泉壤",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "earth"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "黄泉壤——earth派 promotion 主材品质档 plain。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "loam",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，earth 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_earth_3": {
+   "name_zh": "地心岩乳",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "earth"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "地心岩乳——earth派 promotion 主材品质档 refined。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "loam",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，earth 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_earth_4": {
+   "name_zh": "息壤精",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "earth"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "息壤精——earth派 promotion 主材品质档 prized。[Q8-G 1-B1-b provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "loam",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，earth 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
   }
  },
  "loot": {

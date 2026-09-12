@@ -4,7 +4,7 @@
 > - **本单不改代码、不改 balance、不碰商店、不碰战斗、不写 recipe/loot JSON。**
 > - **上游（唯一 normative source）**：`docs/q8g/Q8G_BATCH0_RULING.md` §6（promotion 语义冻结）
 > - **前置**：`Q8G_BATCH1A_WORKSHEET.md` 已收口（promotion schema 验证完成，Gate 1–7 全绿）
-> - **状态**：✅ **1-B1-a CLOSED（v3.11）** —— 四派 promotion 链 + Economic Red Line Gate 正式关闭（2026-09-13 二次审阅）；链：1-B0-R ✅ → 1-B0-M ✅ → 1-B1 ✅ → **1-B1-a ✅ CLOSED**；计划内剩余：bone 论证（暂缓）· 获取通道（1-C/1-D）· 品质映射（F8/Batch 2）· **1-B1-b（fire/water/wind/wood/earth）待开工**
+> - **状态**：✅ **1-B1-b 施工完成（v3.12）** —— fire/water/wind/wood/earth 五派 promotion 链落地（20 配方 + 15 品质变体），聚焦 10/10、全量 unit 1398/1398、交互闭环全绿（Refine 可点 419→439）；记录见 `Q8G_1B1B_PROMOTION_BATCH.md`；下一批 1-B1-c（blood/dream/luck/qi，bone 暂缓除外）
 > - **硬红线（继承 1-A）**：🔴 禁止引入 `gu_family_id`；🔴 每步 `output_gu_id != input_gu_ids[0]`；🔴 每步严格 +1 转不得跳级
 
 > **v2 修订记录（2026-09-13，用户裁定原文要点）**：
