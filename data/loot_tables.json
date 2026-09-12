@@ -2059,9 +2059,85 @@
    "material_pool": [
     "beast_blood",
     "beast_bone",
-    "moon_blue_petal"
+    "moon_blue_petal",
+    {
+     "id": "mat_blood_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_bone_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_dream_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_earth_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_fire_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_force_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_gold_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_heaven_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_human_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_luck_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_qi_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_refine_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_slave_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_soul_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_sword_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_water_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_wind_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_wisdom_1",
+     "weight": 3
+    },
+    {
+     "id": "mat_wood_1",
+     "weight": 3
+    }
    ],
-   "gu_chance_pct": 0,
+   "gu_chance_pct": 6,
    "gu_pool": {
     "weights": {
      "common": 80,
@@ -2097,7 +2173,151 @@
    "material_pool": [
     "beast_blood",
     "beast_bone",
-    "venom_sac"
+    "venom_sac",
+    {
+     "id": "mat_blood_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_dream_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_earth_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_fire_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_force_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_gold_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_heaven_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_human_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_luck_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_qi_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_refine_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_slave_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_soul_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_sword_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_water_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_wind_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_wisdom_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_wood_2",
+     "weight": 3
+    },
+    {
+     "id": "mat_blood_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_dream_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_earth_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_fire_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_force_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_gold_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_heaven_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_human_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_luck_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_qi_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_refine_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_slave_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_soul_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_sword_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_water_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_wind_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_wisdom_3",
+     "weight": 1
+    },
+    {
+     "id": "mat_wood_3",
+     "weight": 1
+    }
    ],
    "gu_chance_pct": 30,
    "forced_rarity": "epic",
@@ -2144,7 +2364,151 @@
     "beast_blood",
     "beast_bone",
     "venom_sac",
-    "moon_dew"
+    "moon_dew",
+    {
+     "id": "mat_blood_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_dream_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_earth_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_fire_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_force_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_gold_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_heaven_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_human_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_luck_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_qi_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_refine_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_slave_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_soul_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_sword_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_water_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_wind_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_wisdom_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_wood_3",
+     "weight": 2
+    },
+    {
+     "id": "mat_blood_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_dream_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_earth_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_fire_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_force_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_gold_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_heaven_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_human_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_luck_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_qi_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_refine_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_slave_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_soul_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_sword_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_water_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_wind_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_wisdom_4",
+     "weight": 3
+    },
+    {
+     "id": "mat_wood_4",
+     "weight": 3
+    }
    ],
    "gu_chance_pct": 0,
    "gu_pool": {

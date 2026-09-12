@@ -986,9 +986,24 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var chance := int(tier.get("gu_chance_pct", 0))
 		if chance < 0 or chance > 100:
 			errors.append("loot tier %s has invalid gu chance %d" % [tier_key, chance])
-		for material_id_value in tier.get("material_pool", []):
-			if not materials.has(str(material_id_value)):
-				errors.append("loot tier %s references unknown material %s" % [tier_key, material_id_value])
+		# Q8-G 1-D: material pool entries are plain ids (legacy, weight 1) or
+		# {id, weight} objects for the quality-band channels.
+		for material_entry_value in tier.get("material_pool", []):
+			var pool_entry: Variant = material_entry_value
+			var material_id := ""
+			if pool_entry is String:
+				material_id = str(pool_entry)
+			elif pool_entry is Dictionary:
+				material_id = str((pool_entry as Dictionary).get("id", ""))
+				var pool_weight: Variant = (pool_entry as Dictionary).get("weight", 1)
+				if not _is_integral(pool_weight) or int(pool_weight) < 1:
+					errors.append("loot tier %s material entry %s needs a positive integer weight" % [tier_key, material_id])
+					continue
+			else:
+				errors.append("loot tier %s has a malformed material entry" % tier_key)
+				continue
+			if not materials.has(material_id):
+				errors.append("loot tier %s references unknown material %s" % [tier_key, material_id])
 		var gu_pool: Dictionary = tier.get("gu_pool", {})
 		var weights: Dictionary = gu_pool.get("weights", {})
 		var by_rarity: Dictionary = gu_pool.get("by_rarity", {})

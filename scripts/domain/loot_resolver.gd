@@ -164,6 +164,22 @@ static func _layer_table(catalog: Dictionary, tier: String, layer: int) -> Dicti
 	return table
 
 
+## Q8-G 1-D: normalize material pool entries to {id, weight}. Legacy string
+## entries keep weight 1 so old tables roll exactly as before.
+static func _material_entries(raw_pool: Array) -> Array:
+	var entries: Array = []
+	for entry_value in raw_pool:
+		if entry_value is String:
+			entries.append({"id": str(entry_value), "weight": 1})
+		elif entry_value is Dictionary:
+			var entry: Dictionary = entry_value
+			var weight := int(entry.get("weight", 1))
+			if str(entry.get("id", "")).is_empty() or weight < 1:
+				continue
+			entries.append({"id": str(entry["id"]), "weight": weight})
+	return entries
+
+
 ## Q8-G 1-C: tier+layer stone reward, frozen shape / provisional numbers
 ## (balance.battle_stone_rewards). Pure function of tier and layer so the
 ## production ledger stays deterministic and independent of loot rolls.
@@ -184,13 +200,17 @@ static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
 
 
 static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, count_adjustment: int = 0) -> Array[String]:
-	var pool: Array = (table.get("material_pool", []) as Array).duplicate()
+	# Q8-G 1-D: pool entries may be plain ids (legacy, weight 1) or {id, weight}
+	# objects - the quality-band channels need per-material weights.
+	var pool: Array = _material_entries(table.get("material_pool", []))
 	var count := maxi(0, int(table.get("material_count", 0)) + count_adjustment)
 	var picked: Array[String] = []
 	while picked.size() < count and not pool.is_empty():
-		var index := _pick_from(pool.size(), state, "loot.material.%s" % tier)
-		picked.append(str(pool[index]))
-		pool.remove_at(index)
+		var entry := _pick_weighted(pool, state, "loot.material.%s" % tier)
+		if entry.is_empty():
+			break
+		picked.append(str(entry["id"]))
+		pool.erase(entry)
 	var m_pity: Dictionary = pity_cfg.get("material_pity", {})
 	var threshold := int(m_pity.get("threshold", 0))
 	var targets: Array = m_pity.get("target_material_ids", [])
@@ -204,11 +224,12 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String, pi
 			# Only force what the tier pool actually declares; a guarantee can
 			# never invent a material the table does not offer.
 			var forced_pool: Array = []
-			var table_pool: Array = table.get("material_pool", [])
 			for target_value in targets:
 				var target_id := str(target_value)
-				if table_pool.has(target_id):
-					forced_pool.append(target_id)
+				for entry_value in pool:
+					if str((entry_value as Dictionary).get("id", "")) == target_id:
+						forced_pool.append(target_id)
+						break
 			if not forced_pool.is_empty():
 				var forced_id := str(forced_pool[_pick_from(forced_pool.size(), state, "loot.material.forced.%s" % tier)])
 				picked.append(forced_id)
