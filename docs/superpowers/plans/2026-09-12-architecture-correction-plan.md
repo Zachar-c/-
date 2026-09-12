@@ -109,6 +109,20 @@ UI 屏（快照里拿 commands 字典）→ `RunController.submit_command`（唯
 
 每批之间必须独立提交、全绿后再开下一批；M3 若冒烟异常立即回滚并登记 KNOWN 留档。
 
+## 8.1 M4 复审结论（2026-09-12 用户冒烟通过后复审）
+
+**判定：M4 取消，升级进 §9 Do Not Change，以触发条件替代。**
+
+复审依据：
+1. **直接消费者不存在**：Q7 规格（`plans/2026-09-12-shop-recipe-support-landing.md`）明确辅助蛊实义化全部走已有通道——`support_bonus`（零改动）、`sword_intent` 接线（小改调用点）、`durability/life_cost`（零改动）、T10 `mark_sword`——**不需要新增 status kind**，M4 要解决的"每加一种状态改两处"痛点击不中任何已排期需求。
+2. **现状不是扩散链**：`_apply_effect` 的 match 7 分支约 45 行、注释完好，status/buff 消费收敛在两个结算点（`_apply_effect`/`_settle_marks` + `basic_attack` 的 force/yi_zhang）。GDScript match 是惯用法；handler 字典无消费者，属"为设计模式而设计模式"。
+3. **扩展成本可控**：新增 kind = resolver match 分支 + `V1_EFFECT_KIND_IDS` 登记（content_catalog 校验）+ 数据 + 契约测试，两处小改且有全量测试护栏。
+
+**重启触发条件（满足任一即重启 M4，届时带着具体需求做表驱动）**：
+- 单批新增 ≥3 种带回合语义的新 status（中毒/虚弱/破甲类）；
+- status 结算开始散布到第 3 个文件；
+- 流派差异化需要 per-status 钩子（on_attacked / on_turn_start 类）。
+
 ## 9. Do Not Change（不完美但现在不动）
 
 1. **resolver.gd 路由核 + _dispatch 表**——205 行已达标，非必要不碰。
