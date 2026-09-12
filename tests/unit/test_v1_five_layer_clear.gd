@@ -134,7 +134,7 @@ func _leave_resolving_blockers(controller: RunController) -> void:
 			"action_id": str(chosen.get("id", "")),
 			"state_version": controller.state.event_log.size(),
 			"node_id": str(controller.current_node.get("id", "")),
-			"session_node_id": str(controller.current_session.get("node_id", "")),
+			"session_node_id": str(controller.state.encounter_session.get("node_id", "")),
 		})
 
 

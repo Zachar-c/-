@@ -225,7 +225,7 @@ func _pick_fight(controller: RunController) -> bool:
 			"action_id": str(card.get("id", "")),
 			"state_version": controller.state.event_log.size(),
 			"node_id": str(controller.current_node.get("id", "")),
-			"session_node_id": str(controller.current_session.get("node_id", "")),
+			"session_node_id": str(controller.state.encounter_session.get("node_id", "")),
 		})
 		await _settle(6)
 		return str(controller.current_view_name()) == "Battle"

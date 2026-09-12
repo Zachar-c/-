@@ -75,7 +75,7 @@ func test_encounter_snapshot_preserves_command_context_and_builder_forwards_it()
 	controller.state = state
 	controller.catalog = catalog
 	controller.current_node = {"id": "cultivation_spring", "type": "cultivation"}
-	controller.current_session = {"node_id": "cultivation_spring"}
+	controller.state.encounter_session = {"node_id": "cultivation_spring"}
 	var snapshot: Dictionary = SnapshotScript.encounter(controller)
 	var found := false
 	for action in snapshot["actions"]:

@@ -268,7 +268,7 @@ func test_real_snapshot_death_lines_feed_battle_top_bar_tooltip_end_to_end() -> 
 	var controller := _new_controller()
 	controller.state.cultivator["lifespan"] = 2
 	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "ridge_hound"}
-	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller.state.encounter_session = EncounterSessionResolverScript.start(controller.current_node)
 	controller._start_battle()
 	var snapshot: Dictionary = controller._snapshot_for("Battle")
 	# Producer side: the real builder must flag 寿元 as a danger line with full shape.

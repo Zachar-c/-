@@ -2,7 +2,7 @@ extends RefCounted
 
 ## A7：战斗会话生命周期（开局敌先手 / 回合命令 / 战后结算）外提。
 ## controller 保持同名一行包装；本模块直接读写 controller 上的
-## current_battle / current_session / state / catalog / current_node。
+## current_battle / state（含 encounter_session）/ catalog / current_node。
 
 
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
@@ -51,7 +51,7 @@ static func sync_battle_hp_to_state(controller) -> void:
 static func start_battle(controller) -> void:
 	var state = controller.state
 	var current_node: Dictionary = controller.current_node
-	var current_session: Dictionary = controller.current_session
+	var current_session: Dictionary = controller.state.encounter_session
 	var catalog: Dictionary = controller.catalog
 	var enemy_kind := str(current_node.get("enemy_kind", "beast_swarm"))
 	var first_mover := "player"
@@ -121,19 +121,17 @@ static func battle_terrain(controller) -> String:
 
 static func finish_battle_in_session(controller, outcome: String) -> void:
 	var state = controller.state
-	var current_session: Dictionary = controller.current_session
+	var current_session: Dictionary = controller.state.encounter_session.duplicate(true)
 	var kill_source := str(controller.current_battle.get("kill_source", ""))
 	var enemy_kind := str(controller.current_battle.get("enemy_kind", ""))
 	var battle_loot: Dictionary = controller.current_battle.get("loot", {})
 	var battle_cost: Dictionary = controller.current_battle.get("cost", {})
 	controller.current_battle = {}
-	current_session = current_session.duplicate(true)
 	current_session["phase"] = "post_battle"
 	current_session["stance"] = "neutral"
 	if current_session.has("flags") and current_session["flags"] is Dictionary:
 		current_session["flags"].erase("reputation_hostile")
 		current_session["flags"].erase("reputation_extreme")
-	controller.current_session = current_session
 	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
 	var results: Array = state.encounter_results.duplicate(true)
 	var ledger_snapshot: Dictionary = {}

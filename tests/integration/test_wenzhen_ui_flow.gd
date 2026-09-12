@@ -124,7 +124,7 @@ func _act_via_cards(controller: RunController) -> void:
 			"action_id": str(card.get("id", "")),
 			"state_version": controller.state.event_log.size(),
 			"node_id": str(controller.current_node.get("id", "")),
-			"session_node_id": str(controller.current_session.get("node_id", "")),
+			"session_node_id": str(controller.state.encounter_session.get("node_id", "")),
 		})
 		if bool(result.get("accepted", false)) or bool((result.get("result", {}) as Dictionary).get("ok", false)):
 			return
@@ -151,6 +151,6 @@ func _fight_via_preview(controller: RunController) -> void:
 			"action_id": str(card.get("id", "")),
 			"state_version": controller.state.event_log.size(),
 			"node_id": str(controller.current_node.get("id", "")),
-			"session_node_id": str(controller.current_session.get("node_id", "")),
+			"session_node_id": str(controller.state.encounter_session.get("node_id", "")),
 		})
 		return

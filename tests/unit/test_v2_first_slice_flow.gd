@@ -143,8 +143,8 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 	if str(controller.last_battle_loot.get("gu_id", "")) != "":
 		loot_rows += 1
 	assert_gt(loot_rows, 0, "victory loot was settled by LootResolver")
-	assert_eq(controller.current_session.get("phase", ""), "post_battle")
-	assert_false(controller.current_session.get("completed", true))
+	assert_eq(controller.state.encounter_session.get("phase", ""), "post_battle")
+	assert_false(controller.state.encounter_session.get("completed", true))
 	controller.submit_command({"type": "leave_encounter"})
 	assert_eq(controller.current_view_name(), "Map")
 	controller.free()

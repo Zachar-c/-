@@ -39,7 +39,7 @@ func _two_enemy_combat_controller() -> RunController:
 	}
 	controller.state.current_node_template_id = "beast_swarm_pass"
 	controller.state.current_node_layer = 1
-	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller.state.encounter_session = EncounterSessionResolverScript.start(controller.current_node)
 	return controller
 
 
@@ -53,7 +53,7 @@ func _fire_fight(controller: RunController) -> Dictionary:
 		"action_id": "node.fight",
 		"state_version": int(card.get("state_version", controller.state.event_log.size())),
 		"node_id": str(controller.current_node.get("id", "")),
-		"session_node_id": str(controller.current_session.get("node_id", "")),
+		"session_node_id": str(controller.state.encounter_session.get("node_id", "")),
 	})
 
 

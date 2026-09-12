@@ -53,7 +53,7 @@ static func _npc_talk_command(controller, id: String) -> Dictionary:
 		"action_id": str(id),
 		"state_version": controller.state.event_log.size() if controller.state != null else -1,
 		"node_id": str(controller.current_node.get("id", "")),
-		"session_node_id": str(controller.current_session.get("node_id", controller.current_node.get("id", ""))) if controller.current_session != null else str(controller.current_node.get("id", "")),
+		"session_node_id": str(controller.state.encounter_session.get("node_id", controller.current_node.get("id", ""))) if controller.state != null else str(controller.current_node.get("id", "")),
 	}
 
 
@@ -94,8 +94,8 @@ static func _encounter_action_command(controller, action_id: String) -> Dictiona
 	var state_version: int = controller.state.event_log.size() if controller.state != null else -1
 	var node_id := str(controller.current_node.get("id", ""))
 	var session_node_id := node_id
-	if controller.current_session != null and not controller.current_session.is_empty():
-		session_node_id = str(controller.current_session.get("node_id", node_id))
+	if controller.state != null and not controller.state.encounter_session.is_empty():
+		session_node_id = str(controller.state.encounter_session.get("node_id", node_id))
 	return {"type": "action_card", "action_id": action_id, "state_version": state_version, "node_id": node_id, "session_node_id": session_node_id}
 
 

@@ -72,8 +72,8 @@ func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 	var traveled: Dictionary = controller.submit_command({"type": "travel", "node_id": "neutral_wanderer"})
 	assert_true(bool(traveled.get("ok", false)), "travel must reach the neutral wanderer")
 	# 强行进入极端敌对姿态（领域姿势在 begin 里按声望掷出，这里注入等价状态）。
-	controller.current_session["stance"] = "extreme_hostile"
-	controller.current_session["flags"]["reputation_extreme"] = true
+	controller.state.encounter_session["stance"] = "extreme_hostile"
+	controller.state.encounter_session["flags"]["reputation_extreme"] = true
 	controller.state.encounter_session["stance"] = "extreme_hostile"
 	controller.state.encounter_session["flags"]["reputation_extreme"] = true
 	var fight: Dictionary = controller.submit_command({
@@ -95,7 +95,7 @@ func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 		"state_version": controller.state.event_log.size(),
 	})
 	assert_eq(str(result.get("result", "")), "victory", "battle must end in victory")
-	assert_eq(str(controller.current_session.get("phase", "")), "post_battle")
+	assert_eq(str(controller.state.encounter_session.get("phase", "")), "post_battle")
 	# ★ 软锁断言：极端敌对 + 战后阶段必须能离场回地图。
 	var left: Dictionary = controller.submit_command({"type": "leave_encounter"})
 	var payload: Dictionary = left.get("result", left) as Dictionary
@@ -104,8 +104,8 @@ func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 		"post-battle leave must succeed, got %s (current=%s session_node=%s phase=%s)" % [
 			str(payload.get("reason", payload)),
 			str(controller.state.current_node_id),
-			str(controller.current_session.get("node_id", "")),
-			str(controller.current_session.get("phase", "")),
+			str(controller.state.encounter_session.get("node_id", "")),
+			str(controller.state.encounter_session.get("phase", "")),
 		]
 	)
 	assert_eq(controller.current_view_name(), "Map")

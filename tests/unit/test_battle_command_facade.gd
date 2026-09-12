@@ -521,7 +521,9 @@ func _catalog_with_scale_probe(hp: int = 20, damage: int = 20, intent_kind: Stri
 	test_catalog["enemy_by_id"] = enemy_by_id
 	return test_catalog
 func _stub_controller(state: RunState, battle: Dictionary = {}) -> Dictionary:
-	return {"state": state, "current_battle": battle, "current_node": {}, "current_session": {}}
+	# M3：current_session 字段已删；stub 走 state.encounter_session。
+	state.encounter_session = {}
+	return {"state": state, "current_battle": battle, "current_node": {}}
 
 
 func _mount_battle_screen(on_play: Callable, hand: Array) -> Control:

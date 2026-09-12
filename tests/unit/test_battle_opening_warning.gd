@@ -23,7 +23,7 @@ func _controller() -> RunController:
 func _open_enemy_first(controller: RunController, hp: int) -> void:
 	# 真实遭遇链的等价入口：战斗节点 + 极端敌对姿态（敌先手）。
 	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "ridge_hound"}
-	controller.current_session = {
+	controller.state.encounter_session = {
 		"node_id": "beast_swarm_pass", "kind": "combat", "phase": "active",
 		"completed": false, "flags": {"reputation_extreme": true}, "stance": "extreme_hostile",
 	}
@@ -82,7 +82,7 @@ func test_multi_enemy_lethal_opening_sums_all_intents() -> void:
 	# 单个敌人 intent=2 会漏判 → 入帧即死）。
 	var controller := _controller()
 	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kinds": ["ridge_hound", "ridge_hound"]}
-	controller.current_session = {
+	controller.state.encounter_session = {
 		"node_id": "beast_swarm_pass", "kind": "combat", "phase": "active",
 		"completed": false, "flags": {"reputation_extreme": true}, "stance": "extreme_hostile",
 	}

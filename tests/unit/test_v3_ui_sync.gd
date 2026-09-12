@@ -145,7 +145,7 @@ func _battle_controller() -> RunController:
 	var controller: RunController = autofree(preload("res://scripts/presentation/run_controller.gd").new())
 	controller.start_new_run(101)
 	controller.current_node = {"id": "beast_swarm_pass", "type": "combat", "enemy_kind": "ridge_hound"}
-	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller.state.encounter_session = EncounterSessionResolverScript.start(controller.current_node)
 	controller._start_battle()
 	return controller
 

@@ -22,7 +22,7 @@ static func travel_to(controller, node_id: String) -> Dictionary:
 	controller._stamp_current_node(controller.state, node)
 	var session_started := EncounterSessionResolverScript.begin(controller.state, node)
 	controller.state = session_started["state"]
-	controller.current_session = session_started["session"]
+	# M3：会话镜像已删，begin 已把新会话写入 state.encounter_session。
 	controller.last_result = resolved["result"]
 	# E4a：新探访开始，炼蛊子屏状态复位（上一个休息探访的子屏语境不残留）。
 	controller._refine_from_rest = false

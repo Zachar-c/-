@@ -7,7 +7,7 @@ extends GutTest
 ## 2. 战斗命令结算时 sync_battle_hp_to_state 已把 hp 同步进 state，
 ##    所以战斗中存档保留的是"已同步的 hp"，不是战斗现场；
 ## 3. load_run 恢复后 current_battle 必为空、视图回到 Map、
-##    current_session 恢复为 state.encounter_session 的镜像。
+##    state.encounter_session 随存档整体恢复（M3 后无镜像字段）。
 ## 若未来实现"战斗中存档可恢复战斗"，必须先改本测试再改实现。
 
 const SaveRepositoryScript = preload("res://scripts/domain/save_repository.gd")
@@ -53,6 +53,7 @@ func test_save_during_battle_persists_synced_hp_and_load_returns_to_map_without_
 	assert_true(attack_result.has("state") or bool(attack_result.get("finished", false)),
 			"battle command must return a turn result")
 	var expected_hp := int(controller.state.health)
+	var expected_session: Dictionary = controller.state.encounter_session.duplicate(true)
 
 	var save_result := controller.submit_command({"type": "save_run"})
 	assert_true(bool(save_result.get("ok", false)), "save during battle must succeed")
@@ -69,5 +70,5 @@ func test_save_during_battle_persists_synced_hp_and_load_returns_to_map_without_
 			"load must land on Map, not Battle")
 	assert_eq(int(controller.state.health), expected_hp,
 			"synced hp must survive the round trip")
-	assert_eq(controller.current_session, controller.state.encounter_session,
-			"current_session must be re-mirrored from state.encounter_session on load")
+	assert_eq(controller.state.encounter_session, expected_session,
+			"encounter_session must be restored from the save")

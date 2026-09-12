@@ -78,7 +78,7 @@ static func _restore_game(controller, loaded: Dictionary) -> bool:
 				break
 	controller._stamp_current_node(controller.state, controller.current_node)
 	controller.current_battle = {}
-	controller.current_session = controller.state.encounter_session.duplicate(true)
+	# M3：会话镜像已删，state.encounter_session 随存档整体恢复。
 	controller.dialogue_replies = loaded.get("replies", [])
 	controller._dialogue_gateway = DialogueManagerAdapterScript.new()
 	if controller.meta == null and FileAccess.file_exists(SaveRepositoryScript.META_PATH):

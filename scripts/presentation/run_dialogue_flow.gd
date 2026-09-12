@@ -19,7 +19,7 @@ static func submit_branch(controller, command: Dictionary) -> Dictionary:
 	if controller._dialogue_gateway.has_method("apply_branch"):
 		branch_result = controller._dialogue_gateway.apply_branch(
 			controller.state,
-			controller.current_session,
+			controller.state.encounter_session,
 			branch_id,
 			controller.catalog,
 			controller.current_node,
@@ -31,17 +31,16 @@ static func submit_branch(controller, command: Dictionary) -> Dictionary:
 			"reason": "dialogue_adapter_unavailable",
 			"feedback": "对话暂时无法回应，局面没有改变。",
 			"state": controller.state,
-			"session": controller.current_session.duplicate(true),
+			"session": controller.state.encounter_session.duplicate(true),
 			"result": {"ok": false, "reason": "dialogue_adapter_unavailable"},
 		}
 	controller.state = branch_result.get("state", controller.state)
-	controller.current_session = branch_result.get("session", controller.current_session)
 	controller.last_result = branch_result.get("result", {})
 	controller.last_feedback = str(branch_result.get("feedback", ""))
 	if controller.last_feedback.is_empty() and not bool(branch_result.get("ok", false)):
 		controller.last_feedback = RejectionTextScript.text(
 			str(branch_result.get("reason", "unknown_dialogue_branch")))
-	if bool(controller.current_session.get("completed", false)):
+	if bool(controller.state.encounter_session.get("completed", false)):
 		controller._return_to_map()
 	else:
 		controller._re_show_current_screen()

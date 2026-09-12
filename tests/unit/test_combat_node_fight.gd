@@ -24,7 +24,7 @@ func _combat_controller(node_id: String, enemy_kind: String) -> RunController:
 		"enemy_kind": enemy_kind,
 		"choices": ["fight", "deceive", "retreat"],
 	}
-	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller.state.encounter_session = EncounterSessionResolverScript.start(controller.current_node)
 	return controller
 
 
@@ -37,7 +37,7 @@ func _fire_fight(controller: RunController) -> Dictionary:
 		"action_id": "node.fight",
 		"state_version": int(card.get("state_version", controller.state.event_log.size())),
 		"node_id": str(controller.current_node.get("id", "")),
-		"session_node_id": str(controller.current_session.get("node_id", "")),
+		"session_node_id": str(controller.state.encounter_session.get("node_id", "")),
 	})
 
 

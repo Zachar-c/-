@@ -59,7 +59,8 @@ var app_settings  # AppSettings instance, untyped so tests can stub it with null
 var route: Array[Dictionary] = []
 var current_node: Dictionary = {}
 var current_battle: Dictionary = {}
-var current_session: Dictionary = {}
+# M3（2026-09-12 纠偏）：encounter 会话唯一真状态是 RunState.encounter_session；
+# 本控制器不再持有镜像副本（原 current_session 字段已删）。
 ## D3 战利品弹窗数据源：最近一场胜利的 loot/elite cost（只读快照消费）。
 var last_battle_loot: Dictionary = {}
 var last_battle_cost: Dictionary = {}
@@ -183,7 +184,6 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	route = MapGenerator.build(seed_value, false, catalog)
 	current_node = {}
 	current_battle = {}
-	current_session = {}
 	last_result = {}
 	dialogue_replies = []
 	_dialogue_gateway = DialogueManagerAdapterScript.new()
@@ -235,9 +235,8 @@ func submit_command(command: Dictionary) -> Dictionary:
 	if BattleCommandFacadeScript.is_battle_command(str(command.get("type", ""))) and not current_battle.is_empty():
 		return _submit_battle_command(command)
 	if not current_node.is_empty():
-		var session_result := EncounterSessionResolverScript.apply(state, current_session, command, catalog, current_node)
+		var session_result := EncounterSessionResolverScript.apply(state, state.encounter_session, command, catalog, current_node)
 		state = session_result["state"]
-		current_session = session_result["session"]
 		last_result = session_result["result"]
 		_attach_social_dialogue(last_result)
 		_record_dialogue_reply(last_result)
@@ -250,7 +249,7 @@ func submit_command(command: Dictionary) -> Dictionary:
 		if str(command.get("type", "")) == "attempt_ascension" and bool(last_result.get("ok", false)):
 			_show_ending(last_result)
 			return session_result
-		if bool(current_session.get("completed", false)):
+		if bool(session_result["session"].get("completed", false)):
 			_return_to_map()
 		else:
 			_re_show_current_screen()
@@ -748,7 +747,6 @@ func surrender_run() -> void:
 	if state == null or state.is_terminal():
 		return
 	current_battle = {}
-	current_session = {}
 	last_battle_loot = {}
 	last_battle_cost = {}
 	_record_run_end("surrendered", "abandoned")
@@ -791,7 +789,8 @@ func _complete_current_node(outcome: String) -> void:
 func _return_to_map() -> void:
 	current_battle = {}
 	current_node = {}
-	current_session = {}
+	# M3：不再清空会话镜像——state.encounter_session 保留 completed 会话，
+	# 下一次 travel 经 EncounterSessionResolver.begin 原子替换。
 	_show_map()
 
 

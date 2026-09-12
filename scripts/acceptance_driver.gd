@@ -2439,7 +2439,7 @@ func _step_encounter(controller) -> String:
 	var node: Dictionary = controller.current_node
 	var node_type := str(node.get("type", ""))
 	# 战后阶段：胜利后结算再离场（玩家视角的战后处理）。
-	if str(controller.current_session.get("phase", "")) == "post_battle":
+	if str(controller.state.encounter_session.get("phase", "")) == "post_battle":
 		if not _leave(controller, "战后结算"):
 			return "leave_blocked"
 		return "ongoing"

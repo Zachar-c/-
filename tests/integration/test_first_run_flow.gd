@@ -20,7 +20,7 @@ func test_caravan_dispute_fight_starts_a_faction_guard_battle() -> void:
 		"enemy_kind": "faction_guard",
 		"choices": ["probe", "trade", "leave", "fight"],
 	}
-	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller.state.encounter_session = EncounterSessionResolverScript.start(controller.current_node)
 
 	controller.submit_command({"type": "choose_action", "action_id": "fight", "npc_id": "caravan_steward"})
 
@@ -40,7 +40,7 @@ func test_generic_battle_action_card_routes_once_and_replay_is_rejected() -> voi
 		"enemy_kind": "faction_guard",
 		"choices": ["probe", "trade", "leave", "fight"],
 	}
-	controller.current_session = EncounterSessionResolverScript.start(controller.current_node)
+	controller.state.encounter_session = EncounterSessionResolverScript.start(controller.current_node)
 	controller.submit_command({"type": "choose_action", "action_id": "fight", "npc_id": "caravan_steward"})
 
 	# V1 契约（无牌库/手牌/弃牌——禁止字段）：蛊行动按 instance_id 直催；

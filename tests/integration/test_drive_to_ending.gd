@@ -105,7 +105,7 @@ func _is_fight_card(card: Dictionary) -> bool:
 
 
 func _mandatory_fight_pending(controller) -> bool:
-	var session: Dictionary = controller.current_session
+	var session: Dictionary = controller.state.encounter_session
 	return bool(session.get("offers_fight", false)) and str(session.get("stance", "neutral")) == "extreme_hostile" and str(session.get("phase", "active")) != "post_battle"
 
 
@@ -114,13 +114,13 @@ func _fight_via_preview(controller) -> String:
 	for card in cards:
 		if not bool(card.get("executable", false)) or not _is_fight_card(card):
 			continue
-		var result: Dictionary = controller.submit_command({"type": "action_card", "action_id": str(card.get("id", "")), "state_version": controller.state.event_log.size(), "node_id": str(controller.current_node.get("id", "")), "session_node_id": str(controller.current_session.get("node_id", ""))})
+		var result: Dictionary = controller.submit_command({"type": "action_card", "action_id": str(card.get("id", "")), "state_version": controller.state.event_log.size(), "node_id": str(controller.current_node.get("id", "")), "session_node_id": str(controller.state.encounter_session.get("node_id", ""))})
 		var payload: Dictionary = result.get("result", result)
 		if bool(payload.get("start_battle", false)) or str(controller.current_view_name()) == "Battle" or bool(payload.get("ok", false)):
 			return "ongoing"
 		_last_reject_reason = str(payload.get("reason", "mandatory_fight_rejected"))
 		return "mandatory_fight_rejected:%s" % _last_reject_reason
-	var session: Dictionary = controller.current_session
+	var session: Dictionary = controller.state.encounter_session
 	return "mandatory_fight_missing@%s:stance=%s:phase=%s" % [str(controller.state.current_node_id), str(session.get("stance", "?")), str(session.get("phase", "?"))]
 
 
@@ -292,7 +292,7 @@ func _leave(controller, context: String) -> String:
 			print("[leave] %s skip fallback failed" % context)
 		return "leave_blocked:rest_skip_failed"
 	if OS.has_environment("DRIVE_SWEEP"):
-		var session: Dictionary = controller.current_session
+		var session: Dictionary = controller.state.encounter_session
 		print("[leave] %s blocked reason=%s node=%s type=%s stance=%s phase=%s offers_fight=%s" % [
 			context, str(payload.get("reason", "unknown")),
 			str(controller.state.current_node_id), str(controller.current_node.get("type", "")),
@@ -359,7 +359,7 @@ func _step_map(controller) -> String:
 func _step_encounter(controller) -> String:
 	var node: Dictionary = controller.current_node
 	var node_type := str(node.get("type", ""))
-	if str(controller.current_session.get("phase", "")) == "post_battle":
+	if str(controller.state.encounter_session.get("phase", "")) == "post_battle":
 		return _leave(controller, "战后")
 	if node_type == "ascension":
 		var attempted: Dictionary = controller.submit_command({"type": "attempt_ascension", "choice": "now"})

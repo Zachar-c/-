@@ -250,7 +250,7 @@ func test_finished_victory_battle_carries_cost_and_controller_feeds_it_to_the_pl
 	controller.catalog = cat
 	controller.state = turn["state"]
 	controller.current_battle = turn["battle"]
-	controller.current_session = {"node_id": "elite_ambush", "kind": "combat", "phase": "active"}
+	controller.state.encounter_session = {"node_id": "elite_ambush", "kind": "combat", "phase": "active"}
 	controller._finish_battle_in_session("victory")
 
 	var surfaced := false

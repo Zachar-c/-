@@ -78,7 +78,7 @@ static func _node_actions(controller) -> Array[Dictionary]:
 	var actions: Array[Dictionary] = []
 	var node_id := str(controller.current_node.get("id", ""))
 	var session_node_id := node_id
-	var current_session: Variant = controller.get("current_session") if controller != null else null
+	var current_session: Variant = controller.get("state").encounter_session if controller != null and controller.get("state") != null else {}
 	if current_session is Dictionary and not (current_session as Dictionary).is_empty():
 		session_node_id = str((current_session as Dictionary).get("node_id", node_id))
 	for c in ActionPreviewServiceScript.preview_actions(controller.state, controller.current_node, catalog, knowledge):
