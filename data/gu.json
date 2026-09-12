@@ -8895,7 +8895,11 @@
    "recon"
   ],
   "source": "school_derived",
-  "combat": "sword_recon_pattern"
+  "combat": "sword_recon_pattern",
+  "v1_effect": {
+   "kind": "sword_intent",
+   "amount": 1
+  }
  },
  {
   "id": "sword_log_1_11_gu",
@@ -8909,7 +8913,11 @@
    "logistics"
   ],
   "source": "school_derived",
-  "combat": "sword_logistics_pattern"
+  "combat": "sword_logistics_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 1
+  }
  },
  {
   "id": "sword_atk_2_12_gu",
@@ -9013,7 +9021,11 @@
    "recon"
   ],
   "source": "school_derived",
-  "combat": "sword_recon_pattern"
+  "combat": "sword_recon_pattern",
+  "v1_effect": {
+   "kind": "sword_intent",
+   "amount": 2
+  }
  },
  {
   "id": "sword_log_1_18_gu",
@@ -9027,7 +9039,11 @@
    "logistics"
   ],
   "source": "school_derived",
-  "combat": "sword_logistics_pattern"
+  "combat": "sword_logistics_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 1
+  }
  },
  {
   "id": "sword_atk_2_19_gu",
@@ -9134,7 +9150,11 @@
    "recon"
   ],
   "source": "school_derived",
-  "combat": "sword_recon_pattern"
+  "combat": "sword_recon_pattern",
+  "v1_effect": {
+   "kind": "sword_intent",
+   "amount": 2
+  }
  },
  {
   "id": "sword_log_1_25_gu",
@@ -9148,7 +9168,11 @@
    "logistics"
   ],
   "source": "school_derived",
-  "combat": "sword_logistics_pattern"
+  "combat": "sword_logistics_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 1
+  }
  },
  {
   "id": "sword_atk_2_26_gu",
@@ -9252,7 +9276,11 @@
    "recon"
   ],
   "source": "school_derived",
-  "combat": "sword_recon_pattern"
+  "combat": "sword_recon_pattern",
+  "v1_effect": {
+   "kind": "sword_intent",
+   "amount": 2
+  }
  },
  {
   "id": "sword_log_1_32_gu",
@@ -9266,7 +9294,11 @@
    "logistics"
   ],
   "source": "school_derived",
-  "combat": "sword_logistics_pattern"
+  "combat": "sword_logistics_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 1
+  }
  },
  {
   "id": "sword_atk_2_33_gu",
@@ -9373,7 +9405,11 @@
    "recon"
   ],
   "source": "school_derived",
-  "combat": "sword_recon_pattern"
+  "combat": "sword_recon_pattern",
+  "v1_effect": {
+   "kind": "sword_intent",
+   "amount": 2
+  }
  },
  {
   "id": "sword_log_1_39_gu",
@@ -9387,7 +9423,11 @@
    "logistics"
   ],
   "source": "school_derived",
-  "combat": "sword_logistics_pattern"
+  "combat": "sword_logistics_pattern",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 1
+  }
  },
  {
   "id": "sword_atk_2_40_gu",
