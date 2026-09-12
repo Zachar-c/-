@@ -5101,6 +5101,358 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "promote_force_atk_1_05_to_force_atk_2_06",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_1_05_gu"
+   ],
+   "materials": {
+    "mat_force_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "force_atk_2_06_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：force 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_2_06_to_force_atk_3_07",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_2_06_gu"
+   ],
+   "materials": {
+    "mat_force_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "force_atk_3_07_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：force 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_3_07_to_force_atk_4_08",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_3_07_gu"
+   ],
+   "materials": {
+    "mat_force_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "force_atk_4_08_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：force 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_4_08_to_force_atk_5_23",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_4_08_gu"
+   ],
+   "materials": {
+    "mat_force_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "force_atk_5_23_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：force 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_1_21_to_gold_atk_2_12",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_1_21_gu"
+   ],
+   "materials": {
+    "mat_gold_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "gold_atk_2_12_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_2_12_to_gold_atk_3_13",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_2_12_gu"
+   ],
+   "materials": {
+    "mat_gold_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "gold_atk_3_13_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_3_13_to_gold_atk_4_14",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_3_13_gu"
+   ],
+   "materials": {
+    "mat_gold_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "gold_atk_4_14_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_4_14_to_gold_atk_5_15",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_4_14_gu"
+   ],
+   "materials": {
+    "mat_gold_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "gold_atk_5_15_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_1_02_to_wisdom_atk_2_11",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_1_02_gu"
+   ],
+   "materials": {
+    "mat_wisdom_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "wisdom_atk_2_11_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_2_11_to_wisdom_atk_3_13",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_2_11_gu"
+   ],
+   "materials": {
+    "mat_wisdom_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "wisdom_atk_3_13_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_3_13_to_wisdom_atk_4_18",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_3_13_gu"
+   ],
+   "materials": {
+    "mat_wisdom_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "wisdom_atk_4_18_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_4_18_to_wisdom_atk_5_05",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_4_18_gu"
+   ],
+   "materials": {
+    "mat_wisdom_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "wisdom_atk_5_05_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_1_12_to_heaven_atk_2_36",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_1_12_gu"
+   ],
+   "materials": {
+    "mat_heaven_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "heaven_atk_2_36_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_2_36_to_heaven_atk_3_13",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_2_36_gu"
+   ],
+   "materials": {
+    "mat_heaven_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "heaven_atk_3_13_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_3_13_to_heaven_atk_4_09",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_3_13_gu"
+   ],
+   "materials": {
+    "mat_heaven_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "heaven_atk_4_09_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_4_09_to_heaven_atk_5_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_4_09_gu"
+   ],
+   "materials": {
+    "mat_heaven_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "heaven_atk_5_01_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 4,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [

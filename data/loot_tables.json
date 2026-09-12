@@ -36,6 +36,15 @@
    "use": {
     "health": 2,
     "text": "生饮兽血，气血回复 2。"
+   },
+   "form": "blood",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "plain",
+   "origin_status": "original",
+   "semantic_basis": {
+    "type": "original_fact",
+    "rationale": "荒兽血液用于血本仙蛊血湖（原文217452，E3）；qi 副道痕为游戏语义（精血含真元，28492），不作强适配。"
    }
   },
   "beast_bone": {
@@ -58,6 +67,15 @@
    "use": {
     "health": 1,
     "text": "嚼碎兽骨，气血回复 1。"
+   },
+   "form": "bone",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "crude",
+   "origin_status": "original",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "骨为载体可承载道痕：象腿骨蕴含天然力道道痕（原文142182，E4）；force 归属为游戏既定语义，未断言\"骨=骨道\"。"
    }
   },
   "venom_sac": {
@@ -79,6 +97,15 @@
    "use": {
     "health": -1,
     "text": "吞服毒囊蚀伤脏腑，气血 -1。"
+   },
+   "form": "sac",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "原文名 0 命中（事实库 §3.3，E0）；毒类材料的原文形态参照为含毒道道痕的腐泥（398318）。本实例为游戏扩展。"
    }
   },
   "moon_dew": {
@@ -101,6 +128,15 @@
    "use": {
     "essence": 2,
     "text": "含服月华露，真元回复 2。"
+   },
+   "form": "dew",
+   "source_class": "environment",
+   "acquisition_mode": "hunt",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "月露原文名 0 命中（事实库 §3.4，E0）；月光系实证形态为花瓣口粮（原文3834，E3）。本实例为游戏扩展，不得视为原文材料。"
    }
   },
   "moon_blue_petal": {
@@ -122,6 +158,15 @@
    "reference_value": 5,
    "use": {
     "text": "月蓝花瓣 入药。"
+   },
+   "form": "petal",
+   "source_class": "environment",
+   "acquisition_mode": "trade",
+   "quality_band": "crude",
+   "origin_status": "original",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "花瓣喂养月光蛊、1 元石 10 片、日耗 4 片（原文3834，E3）；\"月蓝\"色名为游戏取色（E1）。"
    }
   },
   "boar_king_tusk": {
@@ -144,6 +189,15 @@
    "reference_value": 15,
    "use": {
     "text": "野猪王牙 入药。"
+   },
+   "form": "tusk",
+   "source_class": "beast_king",
+   "acquisition_mode": "hunt",
+   "quality_band": "refined",
+   "origin_status": "original",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "獠牙为\"某些蛊虫合练晋升之物\"（原文10974，E4）；force 道痕归属为游戏语义。"
    }
   },
   "inheritance_token": {
@@ -162,6 +216,790 @@
    "reference_value": 60,
    "use": {
     "text": "前人传承的信物，遗葬之地对它有感应。"
+   },
+   "form": "token",
+   "source_class": "gu_master",
+   "acquisition_mode": "inherit",
+   "quality_band": "prized",
+   "origin_status": "original",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "传承信物为原文概念（原文60748，E4）；human 道痕归属为游戏语义；不入 promotion 阶梯（M-9 方向）。"
+   }
+  },
+  "mat_blood_1": {
+   "name_zh": "兽凝血膏",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "blood"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "击杀凡兽后凝取的血膏，血道炼蛊的血引。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "blood",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D2",
+    "rationale": "血类材料→血道主材：【推导 D2】荒兽血液养血本仙蛊（原文217452，E3）+ 血滴子以精血为食分化（原文28492，E4）+ 血道\"以血养蛊\"[游戏数据]。注意分层：血类材料→血道主材为 D2；\"兽凝血膏\"这一具体形态是纯设计实例。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_qi_1": {
+   "name_zh": "凝气露",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "qi"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "山野灵气凝结的露珠，气道炼蛊的引气之物。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "dew",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "气道\"掌气之有无形转化\"[游戏数据]；凝气露为纯设计。裁定确认（2026-09-13）：dew 形态保留不强制改——形态是载体标签（M-2），凝气露与月华露同形态异道痕恰为 M-1/M-2 的实证。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_force_1": {
+   "name_zh": "兽筋",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "force"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "凡兽筋腱，力道炼蛊常用的韧材。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "sinew",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "兽体部件承载 force 道痕有 E4 实证（象腿骨，原文142182）；兽筋同理为单条事实的弱推导，不声称原文证明兽筋属力道。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_soul_1": {
+   "name_zh": "魂絮",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "soul"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "幽冥逸散的魂息残絮，魂道炼蛊的基础魂材。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "wisp",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "魂道\"掌魂魄之壮养收摄\"；魂息残絮属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_refine_1": {
+   "name_zh": "熔炉灰",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "refine"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "炼蛊炉冷却后的炉灰，炼道辅料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "ash",
+   "source_class": "craft",
+   "acquisition_mode": "craft_byproduct",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "炼道\"以材换力\"；炉灰为炼制副产属设计语义（acquisition 组合待验证）。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_wisdom_1": {
+   "name_zh": "灵思墨",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "wisdom"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "蛊师推演时研磨的念力松烟墨，智道炼蛊辅料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "ink",
+   "source_class": "gu_master",
+   "acquisition_mode": "trade",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "智道\"念头为兵、算计无形\"；念力墨属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_dream_1": {
+   "name_zh": "眠雾",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "dream"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "眠者梦境边缘凝出的雾丝，梦道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "mist",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "梦道\"掌梦境虚实\"；梦缘凝雾属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_luck_1": {
+   "name_zh": "福签",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "luck"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "气运聚集处捡得的签枝，运道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "charm",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "运道\"掌气运消长\"；福签属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_sword_1": {
+   "name_zh": "断刃屑",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "sword"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "折断剑蛊剑刃留下的金属碎屑，剑道炼蛊辅料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "filing",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "剑道\"掌剑意锋锐\"[游戏数据]；断刃屑为纯设计。方案 B 已裁定（2026-09-13）：source_class=environment（古战场/遗迹断剑），acquisition_mode=gather（探索取得），不引入\"蛊师尸体掉落\"生态。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_wood_1": {
+   "name_zh": "青树脂",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "wood"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "生发草木淌出的青色树脂，木道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "resin",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "木道\"掌草木生发\"；青树脂属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_fire_1": {
+   "name_zh": "地火膏",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "fire"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "地脉火口渗出的膏脂，火道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "grease",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "火道焚灭之威；地火膏属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_water_1": {
+   "name_zh": "潭心珠",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "water"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "深潭水眼凝成的水珠，水道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "bead",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "水道\"上善若水\"；潭心珠属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_wind_1": {
+   "name_zh": "游风羽",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "wind"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "疾风卷落的轻羽，风道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "feather",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "风道\"风行无形\"；游风羽属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_gold_1": {
+   "name_zh": "砂金",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "gold"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "河床砂砾中淘出的金屑，金道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "grit",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "金道材料存在有 E4 实证（蜂翅主含金道道痕，原文170552）；砂金同理为单条弱推导；同条亦证适配强弱归道痕不归形态。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_earth_1": {
+   "name_zh": "壤髓泥",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "earth"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "地脉滋养的沃土泥芯，土道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "loam",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "土道材料存在有 E4 实证（腐泥含土道道痕，原文398318）；壤髓泥本身无原文对应。腐泥毒+土双道痕先例已记录，未主动引入副道痕（克制）。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_slave_1": {
+   "name_zh": "兽革扣",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "slave"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "驯兽用的革制扣具原料，奴道辅料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "leather",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "奴道\"驭兽役傀\"；兽革扣属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_heaven_1": {
+   "name_zh": "天尘",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "heaven"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "雷雨过后飘落的异尘，天道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "dust",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "天道\"天纲天罚\"；天尘属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_human_1": {
+   "name_zh": "遗墨纸片",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "human"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "故人遗留的书信残页，人道材料。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "paper",
+   "source_class": "gu_master",
+   "acquisition_mode": "trade",
+   "quality_band": "crude",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "人道\"人情百态\"；遗墨纸片属设计语义。已验收（2026-09-13 世界语义裁定，Q8G_1B1_SEMANTIC_GATE_PROPOSALS.md）"
+   }
+  },
+  "mat_bone_1": {
+   "name_zh": "白骨粉",
+   "value": 1,
+   "value_tier": 1,
+   "rank": 1,
+   "dao_tags": [
+    "bone"
+   ],
+   "diet_tags": [],
+   "is_common": true,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.8,
+   "reference_value": 3,
+   "description": "研磨兽骨得到的骨粉，骨道炼蛊基础材。 [Q8-G 1-B1 材料前置批 provisional]",
+   "form": "bone_dust",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "crude",
+   "origin_status": "design_candidate",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "⚠️ 骨≠骨道（事实库 D3，§2.2/§4）：白骨粉形态与骨道流派的关联是待验证设计候选。🟡 暂缓裁定（2026-09-13）：保留候选、不进入已验收材料集合；方案 B（骨道选骨为高相关载体）进入后续世界模型论证。🔒 防自证锁：D3 证明\"形态不决定道\"，不得反向利用 D3 证明\"某道就应由某形态决定\"；骨道是否成立，需另以骨道原文事实、推导或纯设计三者之一明确落层。"
+   }
+  },
+  "mat_force_2": {
+   "name_zh": "荒兽筋",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "force"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "荒兽筋——force派 promotion 主材品质档 plain。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "sinew",
+   "source_class": "fierce_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_force_3": {
+   "name_zh": "兽王筋",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "force"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "兽王筋——force派 promotion 主材品质档 refined。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "sinew",
+   "source_class": "beast_king",
+   "acquisition_mode": "hunt",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_force_4": {
+   "name_zh": "太古荒兽筋",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "force"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "太古荒兽筋——force派 promotion 主材品质档 prized。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "sinew",
+   "source_class": "fierce_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_gold_2": {
+   "name_zh": "矿脉金砂",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "gold"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "矿脉金砂——gold派 promotion 主材品质档 plain。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "grit",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_gold_3": {
+   "name_zh": "精金屑",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "gold"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "精金屑——gold派 promotion 主材品质档 refined。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "grit",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_gold_4": {
+   "name_zh": "藏山金精",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "gold"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "藏山金精——gold派 promotion 主材品质档 prized。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "grit",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D1",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wisdom_2": {
+   "name_zh": "谋算墨",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "wisdom"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "谋算墨——wisdom派 promotion 主材品质档 plain。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "ink",
+   "source_class": "gu_master",
+   "acquisition_mode": "trade",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wisdom_3": {
+   "name_zh": "传世墨锭",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "wisdom"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "传世墨锭——wisdom派 promotion 主材品质档 refined。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "ink",
+   "source_class": "gu_master",
+   "acquisition_mode": "trade",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_wisdom_4": {
+   "name_zh": "圣贤残墨",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "wisdom"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "圣贤残墨——wisdom派 promotion 主材品质档 prized。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "ink",
+   "source_class": "gu_master",
+   "acquisition_mode": "trade",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_heaven_2": {
+   "name_zh": "雷涤尘",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "heaven"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "雷涤尘——heaven派 promotion 主材品质档 plain。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "dust",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_heaven_3": {
+   "name_zh": "穹核尘",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "heaven"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "穹核尘——heaven派 promotion 主材品质档 refined。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "dust",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_heaven_4": {
+   "name_zh": "命数尘",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "heaven"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "命数尘——heaven派 promotion 主材品质档 prized。[Q8-G 1-B1-a provisional：品质带↔转数映射为设计提案，F8 校准]",
+   "form": "dust",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）；本条为同派品质变体，provisional 命名未做原文考据。 分层声明：派级语义依据见上；本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
    }
   }
  },

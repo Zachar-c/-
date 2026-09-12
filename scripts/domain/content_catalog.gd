@@ -19,6 +19,29 @@ const SCHOOL_IDS := [
 	"human", "bone",
 ]
 const RELIC_GRADES := ["meta_rule"]
+# Q8-G 1-B0-M frozen material model (2026-09-13): the five attribute classes on
+# every loot material. source_class is a TYPE label (no implicit ordering), not
+# a tier; acquisition_mode is how the PLAYER obtains it (orthogonal to source);
+# quality_band bands are provisional until 1-B1/Batch 2 finalize them.
+# Convention: dao_tags[0] is the primary dao mark (secondary marks only weaken
+# suitability, never gate it - no hard school exclusivity).
+const MATERIAL_SOURCE_CLASSES := [
+	"common_beast", "fierce_beast", "beast_king", "gu_immortal", "foreign_race",
+	"gu_master", "environment", "craft",
+]
+const MATERIAL_ACQUISITION_MODES := [
+	"hunt", "gather", "trade", "husbandry", "event", "craft_byproduct", "seize", "inherit",
+]
+const MATERIAL_QUALITY_BANDS := ["crude", "plain", "refined", "prized"]
+# 1-B1 front-batch review (2026-09-13): origin and semantic-basis tracking.
+# origin_status separates original-text materials from game extensions and from
+# design candidates that have NOT passed the World Semantic Gate yet;
+# semantic_basis.type records which layer justifies the material-dao relation
+# (never let a naming association masquerade as a world fact).
+const MATERIAL_ORIGIN_STATUS := ["original", "design_extension", "design_candidate"]
+const MATERIAL_SEMANTIC_BASIS_TYPES := [
+	"original_fact", "derived_D1", "derived_D2", "derived_D3", "design_only",
+]
 const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
 const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
 const EVENT_KIND_IDS := ["delayed_cost", "curse_bargain"]
@@ -813,6 +836,29 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var blood_qi_tags: Array = material_entry.get("dao_tags", [])
 		if blood_qi_tags.has("blood") and blood_qi_tags.has("qi") and not bool(material_entry.get("divisible", false)):
 			errors.append("material %s blood+qi dual-tag requires divisible" % material_id)
+		# Q8-G 1-B0-M frozen clauses (2026-09-13): the five attribute classes are
+		# mandatory and enum-checked. See MATERIAL_* consts for the vocabulary.
+		if str(material_entry.get("form", "")).is_empty():
+			errors.append("material %s needs a non-empty form label" % material_id)
+		var source_class := str(material_entry.get("source_class", ""))
+		if not MATERIAL_SOURCE_CLASSES.has(source_class):
+			errors.append("material %s source_class %s is not a declared source class" % [material_id, source_class])
+		var acquisition_mode := str(material_entry.get("acquisition_mode", ""))
+		if not MATERIAL_ACQUISITION_MODES.has(acquisition_mode):
+			errors.append("material %s acquisition_mode %s is not a declared acquisition mode" % [material_id, acquisition_mode])
+		var quality_band := str(material_entry.get("quality_band", ""))
+		if not MATERIAL_QUALITY_BANDS.has(quality_band):
+			errors.append("material %s quality_band %s is not a declared quality band" % [material_id, quality_band])
+		# 1-B1 front-batch review: origin tracking + semantic basis are mandatory
+		# so a naming association can never silently pass as a world fact.
+		var origin_status := str(material_entry.get("origin_status", ""))
+		if not MATERIAL_ORIGIN_STATUS.has(origin_status):
+			errors.append("material %s origin_status %s is not a declared origin status" % [material_id, origin_status])
+		var semantic_basis: Variant = material_entry.get("semantic_basis", null)
+		if not semantic_basis is Dictionary \
+				or not MATERIAL_SEMANTIC_BASIS_TYPES.has(str(semantic_basis.get("type", ""))) \
+				or str(semantic_basis.get("rationale", "")).is_empty():
+			errors.append("material %s semantic_basis must declare a known basis type and a non-empty rationale" % material_id)
 	for recipe in catalog.get("refinement_recipes", []):
 		for material_id_value in recipe.get("materials", {}):
 			if not materials.has(str(material_id_value)):
