@@ -4,7 +4,7 @@
 > - **本单不改代码、不改 balance、不碰商店、不碰战斗、不写 recipe/loot JSON。**
 > - **上游（唯一 normative source）**：`docs/q8g/Q8G_BATCH0_RULING.md` §6（promotion 语义冻结）
 > - **前置**：`Q8G_BATCH1A_WORKSHEET.md` 已收口（promotion schema 验证完成，Gate 1–7 全绿）
-> - **状态**：✅ **1-C 战斗产石施工完成（v3.16）** —— tier+layer 石产出接入胜利结算（provisional 配置落 balance.json + 事件日志 + 校验同步），聚焦 8/8、全量 unit 1426/1426；记录见 `Q8G_1C_STONE_PRODUCTION_BATCH.md`；下一阶段 1-D（掉落分层清偿可达性债务）
+> - **状态**：✅ **1-C CLOSED（v3.17）** —— 战斗产石生产者/tier 梯度/layer 缩放/事件日志全部通过；stone_budget 维持封闭（正确状态）；F8-lite 降级为**结构性验证成立**（最小闭环 ≠ 完整跑图经济可持续，后者归 F8）；记录见 `Q8G_1C_STONE_PRODUCTION_BATCH.md`。下一阶段 **1-D 掉落分层**（战斗→石、世界→材料、材料→promotion 完整生产链接通）
 > - **硬红线（继承 1-A）**：🔴 禁止引入 `gu_family_id`；🔴 每步 `output_gu_id != input_gu_ids[0]`；🔴 每步严格 +1 转不得跳级
 
 > **v2 修订记录（2026-09-13，用户裁定原文要点）**：

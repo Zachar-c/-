@@ -100,9 +100,10 @@ func test_elite_cost_binding_still_applies_alongside_the_reward() -> void:
 
 
 func test_f8_lite_ten_common_victories_fund_the_first_promotion_step() -> void:
-	# Batch 1 Gate A sketch (provisional numbers): a run of common fights at
-	# layer 1 must fund the cheapest promotion step (10 stones) - production is
-	# real income, not a conversion. F8 owns the full calibration later.
+	# Structural check only (NOT full-economy sustainability): under the current
+	# provisional numbers, basic battle income covers the cheapest promotion
+	# step's stones - a minimal economic loop exists. Full run-map income vs.
+	# long-term costs belongs to F8 calibration.
 	var earned := 0
 	for run_seed in range(1, 11):
 		var run := make_state(run_seed)
