@@ -57,20 +57,30 @@ static func _status_label(status_name: String) -> String:
 static func _v1_effect_text(source: Dictionary) -> String:
 	var effect: Dictionary = source.get("effect", {})
 	var kind := str(effect.get("kind", ""))
+	var text := ""
 	match kind:
 		"strike":
-			return "造成 %d 伤害" % int(effect.get("amount", 0))
+			text = "造成 %d 伤害" % int(effect.get("amount", 0))
 		"shield":
-			return "获得 %d 护盾" % int(effect.get("amount", 0))
+			text = "获得 %d 护盾" % int(effect.get("amount", 0))
 		"buff":
-			return "%s +%d" % [_buff_label(str(effect.get("name", "force"))), int(effect.get("amount", 0))]
+			text = "%s +%d" % [_buff_label(str(effect.get("name", "force"))), int(effect.get("amount", 0))]
 		"heal":
-			return "恢复 %d 气血" % int(effect.get("amount", 0))
+			text = "恢复 %d 气血" % int(effect.get("amount", 0))
 		"heal_and_strike":
-			return "恢复 %d 气血并造成 %d 伤害" % [int(effect.get("heal", 0)), int(effect.get("amount", 0))]
+			text = "恢复 %d 气血并造成 %d 伤害" % [int(effect.get("heal", 0)), int(effect.get("amount", 0))]
 		"status":
-			return "%s %d 层" % [_status_label(str(effect.get("name", ""))), int(effect.get("amount", 0))]
+			text = "%s %d 层" % [_status_label(str(effect.get("name", ""))), int(effect.get("amount", 0))]
 		"shift":
 			# Q8 裁定：位移转译为防御，卡牌文字与实际结算一致。
-			return "退守：护盾 +%d" % int(effect.get("amount", 1))
-	return "效果未明"
+			text = "退守：护盾 +%d" % int(effect.get("amount", 1))
+		"sword_intent":
+			# Q7 阶段 A：剑意叠层（跨回合存续，回合末减半；结算=剑道出蛊伤害加成）。
+			text = "剑意 +%d 层" % int(effect.get("amount", 0))
+		_:
+			return "效果未明"
+	# Q7 阶段 C：支援骑键必须随文案披露（recon 兜底=刻痕+同流派支援双通道）。
+	var support_bonus := int(effect.get("support_bonus", 0))
+	if support_bonus > 0 and not str(effect.get("support_school", "")).is_empty():
+		text += "；下一次同流派蛊伤害 +%d" % support_bonus
+	return text
