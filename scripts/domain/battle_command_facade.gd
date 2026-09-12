@@ -13,13 +13,25 @@ const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engin
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 
 
+# 战斗命令路由单一事实来源（M2 2026-09-12）：controller 只准经
+# is_battle_command() 路由，不得自持类型表。
+# use_inheritance / basic_dodge / refine 是 V1 未实现的遗留命令：
+# 仍路由到本门面以便统一走 unsupported_battle_action 拒绝路径
+# （test_battle2_lifecycle 的 basic_dodge fallback 依赖该行为）。
 const BATTLE_COMMAND_TYPES := [
 	"use_gu",
 	"end_turn",
 	"retreat",
 	"basic_attack",
 	"play_kill_move",
+	"use_inheritance",
+	"basic_dodge",
+	"refine",
 ]
+
+
+static func is_battle_command(command_type: String) -> bool:
+	return command_type in BATTLE_COMMAND_TYPES
 
 const BOSS_LAYER_IDS := {
 	1: "one",

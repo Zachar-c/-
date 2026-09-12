@@ -229,7 +229,10 @@ func submit_command(command: Dictionary) -> Dictionary:
 		command = {"type": "leave_node"}
 	if command.get("type", "") == "action_card" and not current_battle.is_empty():
 		return _submit_battle_command(command)
-	if command.get("type", "") in ["use_gu", "use_inheritance", "end_turn", "retreat", "basic_attack", "basic_dodge", "refine", "play_kill_move"] and not current_battle.is_empty():
+	# M2（2026-09-12 纠偏）：战斗命令类型表的唯一事实来源在
+	# BattleCommandFacade.BATTLE_COMMAND_TYPES；本文件不得自持命令 ID 列表
+	# （tests/unit/test_battle_command_routing.gd 有源码卫生守卫）。
+	if BattleCommandFacadeScript.is_battle_command(str(command.get("type", ""))) and not current_battle.is_empty():
 		return _submit_battle_command(command)
 	if not current_node.is_empty():
 		var session_result := EncounterSessionResolverScript.apply(state, current_session, command, catalog, current_node)
