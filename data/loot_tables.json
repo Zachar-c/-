@@ -1376,6 +1376,306 @@
     "type": "design_only",
     "rationale": "派级依据已验收（2026-09-13，earth 纯设计通过，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
    }
+  },
+  "mat_blood_2": {
+   "name_zh": "沁血髓",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "blood"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "沁血髓——blood派 promotion 主材品质档 plain。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "blood",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D2",
+    "rationale": "派级依据已验收（2026-09-13，blood，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_blood_3": {
+   "name_zh": "血菩提",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "blood"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "血菩提——blood派 promotion 主材品质档 refined。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "blood",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D2",
+    "rationale": "派级依据已验收（2026-09-13，blood，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_blood_4": {
+   "name_zh": "万血精",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "blood"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "万血精——blood派 promotion 主材品质档 prized。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "blood",
+   "source_class": "common_beast",
+   "acquisition_mode": "hunt",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "derived_D2",
+    "rationale": "派级依据已验收（2026-09-13，blood，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_dream_2": {
+   "name_zh": "酣梦丝",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "dream"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "酣梦丝——dream派 promotion 主材品质档 plain。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "mist",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，dream，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_dream_3": {
+   "name_zh": "蝶梦纱",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "dream"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "蝶梦纱——dream派 promotion 主材品质档 refined。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "mist",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，dream，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_dream_4": {
+   "name_zh": "大梦真绫",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "dream"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "大梦真绫——dream派 promotion 主材品质档 prized。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "mist",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，dream，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_luck_2": {
+   "name_zh": "吉运绦",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "luck"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "吉运绦——luck派 promotion 主材品质档 plain。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "charm",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，luck，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_luck_3": {
+   "name_zh": "鸿运绫",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "luck"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "鸿运绫——luck派 promotion 主材品质档 refined。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "charm",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，luck，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_luck_4": {
+   "name_zh": "天运符",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "luck"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "天运符——luck派 promotion 主材品质档 prized。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "charm",
+   "source_class": "environment",
+   "acquisition_mode": "event",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，luck，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_qi_2": {
+   "name_zh": "氤氲珠",
+   "value": 2,
+   "value_tier": 2,
+   "rank": 1,
+   "dao_tags": [
+    "qi"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.6,
+   "reference_value": 6,
+   "description": "氤氲珠——qi派 promotion 主材品质档 plain。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "dew",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "plain",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，qi，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_qi_3": {
+   "name_zh": "纯阳息",
+   "value": 3,
+   "value_tier": 3,
+   "rank": 1,
+   "dao_tags": [
+    "qi"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.4,
+   "reference_value": 11,
+   "description": "纯阳息——qi派 promotion 主材品质档 refined。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "dew",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "refined",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，qi，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
+  },
+  "mat_qi_4": {
+   "name_zh": "龙涎气",
+   "value": 5,
+   "value_tier": 4,
+   "rank": 1,
+   "dao_tags": [
+    "qi"
+   ],
+   "diet_tags": [],
+   "is_common": false,
+   "is_exclusive": false,
+   "divisible": false,
+   "public_liquidity": 0.25,
+   "reference_value": 19,
+   "description": "龙涎气——qi派 promotion 主材品质档 prized。[Q8-G 1-B1-c provisional：品质带↔转数映射为设计提案，F8 校准；命名未做原文考据]",
+   "form": "dew",
+   "source_class": "environment",
+   "acquisition_mode": "gather",
+   "quality_band": "prized",
+   "origin_status": "design_extension",
+   "semantic_basis": {
+    "type": "design_only",
+    "rationale": "派级依据已验收（2026-09-13，qi，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）；分层声明：本实例的具体来源/名称 = design_extension（纯设计），不声称为原文材料或已证同道痕。"
+   }
   }
  },
  "loot": {

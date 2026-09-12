@@ -5893,6 +5893,358 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "promote_blood_droplet_to_blood_rec_2_24",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_droplet_gu"
+   ],
+   "materials": {
+    "mat_blood_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "blood_rec_2_24_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：血道先寻猎再杀（谱系 §6.1）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_rec_2_24_to_blood_atk_3_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_rec_2_24_gu"
+   ],
+   "materials": {
+    "mat_blood_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "blood_atk_3_03_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_atk_3_03_to_blood_atk_4_10",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_atk_3_03_gu"
+   ],
+   "materials": {
+    "mat_blood_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "blood_atk_4_10_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_atk_4_10_to_blood_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_atk_4_10_gu"
+   ],
+   "materials": {
+    "mat_blood_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "blood_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_atk_1_09_to_dream_rec_2_34",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_atk_1_09_gu"
+   ],
+   "materials": {
+    "mat_dream_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "dream_rec_2_34_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：入梦窥人平生（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_rec_2_34_to_dream_atk_3_16",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_rec_2_34_gu"
+   ],
+   "materials": {
+    "mat_dream_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "dream_atk_3_16_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（rec→atk）：黄粱大梦醒（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_atk_3_16_to_dream_def_4_24",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_atk_3_16_gu"
+   ],
+   "materials": {
+    "mat_dream_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "dream_def_4_24_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（atk→def）：南柯梦土为疆（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_def_4_24_to_dream_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_def_4_24_gu"
+   ],
+   "materials": {
+    "mat_dream_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "dream_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r4→r5 跨 role（def→atk）：庄周梦蝶（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_atk_1_08_to_luck_rec_2_28",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_atk_1_08_gu"
+   ],
+   "materials": {
+    "mat_luck_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "luck_rec_2_28_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：先聚敛气运（谱系 §6.10）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_rec_2_28_to_luck_atk_3_37",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_rec_2_28_gu"
+   ],
+   "materials": {
+    "mat_luck_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "luck_atk_3_37_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_atk_3_37_to_luck_atk_4_38",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_atk_3_37_gu"
+   ],
+   "materials": {
+    "mat_luck_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "luck_atk_4_38_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_atk_4_38_to_luck_atk_5_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_atk_4_38_gu"
+   ],
+   "materials": {
+    "mat_luck_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "luck_atk_5_01_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_atk_1_04_to_qi_heal_2_20",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_qi_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "qi_heal_2_20_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→heal）：一吐一纳为吐纳之道（谱系 §6.11）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_heal_2_20_to_qi_atk_3_37",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_heal_2_20_gu"
+   ],
+   "materials": {
+    "mat_qi_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "qi_atk_3_37_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_atk_3_37_to_qi_atk_4_38",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_atk_3_37_gu"
+   ],
+   "materials": {
+    "mat_qi_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "qi_atk_4_38_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_atk_4_38_to_qi_atk_5_05",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_atk_4_38_gu"
+   ],
+   "materials": {
+    "mat_qi_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "qi_atk_5_05_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 4,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [

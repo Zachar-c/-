@@ -2,7 +2,8 @@
 
 > - **上游**：1-B1-a 关口（CLOSED）+ 世界语义裁定（五派均 design_only 已验收）
 > - **范围**：五派骨架链 5×4=20 条 promotion recipe + 配套品质带实例 15 个 + 测试
-> - **状态**：✅ 施工完成，聚焦 10/10 + 全量 unit 1398/1398 + 交互闭环 17 屏全绿
+> - **状态**：✅ **CLOSED（2026-09-13 审阅正式关闭）**——跨 role 执行模型、design_only/design_extension 分层、品质阶梯 provisional、红线 SKIP 台账、e2e、unit 1398/1398、UI 17 屏全部通过；当前阻塞：**无**
+> - 🔒 **跨 role 护栏（本批收口新增）**：跨 role 仅表示**该具体 promotion 谱系**的输出定义发生变化，不形成"某流派默认具有某 role"或"该流派 promotion 必须跨 role"的全局规则——water r1→r2 走 rec 不等于"水道=recovery"，wood 走 log/def 不等于"木道天然等于 log+def"
 
 ---
 
@@ -46,7 +47,7 @@
 | # | 项 | 归属 |
 |---|---|---|
 | 1 | 15 个品质变体 provisional 命名未做原文考据 | 可选：按 R14–R18 补 |
-| 2 | 9 派 promotion 未铺：blood / qi / force✓… 剩 **human / slave / soul / refine / sword**（1-B1-d）与 luck？——实际剩余：human / slave / soul / refine / sword（1-B1-d 前置需要其派级裁定均已验收 ✅）| 1-B1-d |
+| 2 | 未铺派清点：1-B1-c = blood / dream / luck / qi（均已验收，bone 除外）；1-B1-d = human / slave / soul / refine / sword（均已验收）——两批收口后 19 派骨架全落（bone 单独补批）| 1-B1-c / 1-B1-d |
 | 3 | 材料获取通道仍未落地 | 1-C / 1-D |
 
 > 注：1-B1-c 批（blood / bone / dream / luck / qi）中 blood / dream / luck / qi 已验收，**bone 仍暂缓**——c 批届时为 4 派（blood / dream / luck / qi），bone 单独补批。
