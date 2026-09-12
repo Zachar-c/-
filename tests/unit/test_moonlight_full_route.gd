@@ -232,7 +232,7 @@ func test_full_route_light_to_layer2() -> void:
 	for row in buys:
 		var res := controller.submit_command({"type": "shop_purchase", "offer_id": str(row[0])})
 		assert_true(bool((res.get("result", res) as Dictionary).get("ok", false)), "购买 %s OK" % str(row[0]))
-	assert_eq(int(controller.state.stone), 935, "1000−65=935")
+	assert_eq(int(controller.state.stone), 938, "1000−65+3（节点2 战斗产石 provisional）=938")
 	assert_true(controller.state.refined_gu_ids.has("jade_skin_gu"), "玉皮蛊入袋")
 	assert_true(controller.state.refined_gu_ids.has("white_boar_strength_gu"), "白猪力蛊入袋")
 	_leave_to_map(controller)
@@ -247,7 +247,7 @@ func test_full_route_light_to_layer2() -> void:
 	var wj := controller.submit_command({"type": "refine_gu", "recipe_id": "white_jade_basic"})
 	assert_true(bool((wj.get("result", wj) as Dictionary).get("ok", false)), "炼白玉蛊 OK: %s" % str((wj.get("result", wj) as Dictionary).get("reason", "")))
 	assert_true(controller.state.refined_gu_ids.has("white_jade_gu"), "白玉蛊入袋")
-	assert_eq(int(controller.state.stone), 885, "935−50=885（炼白玉蛊扣 50 元石）")
+	assert_eq(int(controller.state.stone), 888, "938−50=888（炼白玉蛊扣 50 元石）")
 	_leave_to_map(controller)
 
 	# ---- 节点5：休整 → 回复 30% 生命（不超上限）----

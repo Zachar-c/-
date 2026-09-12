@@ -643,6 +643,17 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var value: Variant = balance.get(key, null)
 		if not _is_integral(value) or int(value) < 1:
 			errors.append("balance %s must be a positive integer" % key)
+	# Q8-G 1-C: battle stone production config (Batch 0 §4 frozen tier+layer
+	# shape, provisional numbers). The three tiers are a closed set and every
+	# tier needs a base so a victory can never settle with a silent zero.
+	var stone_rewards: Dictionary = balance.get("battle_stone_rewards", {})
+	var stone_bases: Dictionary = stone_rewards.get("base_by_tier", {})
+	for tier_key in ["common", "elite", "boss"]:
+		var base_value: Variant = stone_bases.get(tier_key, null)
+		if not _is_integral(base_value) or int(base_value) < 1:
+			errors.append("balance battle_stone_rewards.base_by_tier.%s must be a positive integer" % tier_key)
+	if not _is_integral(stone_rewards.get("layer_step_pct", null)) or int(stone_rewards.get("layer_step_pct", -1)) < 0:
+		errors.append("balance battle_stone_rewards.layer_step_pct must be a non-negative integer")
 	for migrated_key in ["remove_card_cost", "remove_imprint_cost", "imprint_capacity", "meta_rule_cap"]:
 		if catalog.get("deck", {}).has(migrated_key):
 			errors.append("deck %s is deprecated; move it to balance" % migrated_key)

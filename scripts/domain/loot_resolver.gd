@@ -24,7 +24,8 @@ const PITY_CLEARING_RARITIES := ["rare", "epic", "legendary"]
 
 static func settle_victory(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
 	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
-	var table: Dictionary = _layer_table(catalog, tier, int(battle.get("layer", 1)))
+	var layer := clampi(int(battle.get("layer", 1)), 1, 5)
+	var table: Dictionary = _layer_table(catalog, tier, layer)
 	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
 	# C1-min §16.13: material_bonus/-penalty shift the rolled material count,
 	# clamped at >= 0 so a penalty can never invert the roll.
@@ -44,6 +45,28 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 			next_material_pity = _next_material_pity(int(state.material_pity), material_ids, pity_cfg)
 		next = _apply_loot(state, loot, catalog, next_pity, next_material_pity)
 	var result := {"state": next, "loot": loot}
+	# Q8-G 1-C (Batch 0 §4 frozen semantics): battle is the main stone producer.
+	# Reward = base_by_tier[tier] + layer modifier (provisional numbers in
+	# balance.battle_stone_rewards). Pure production, never a conversion: stones
+	# enter the run only here, settled from tier+layer alone so the reward is
+	# deterministic and independent of the loot rolls.
+	var stone_reward := _stone_reward(tier, layer, catalog)
+	loot["stone_reward"] = stone_reward
+	if stone_reward > 0:
+		# append_event applies event.after; do NOT also assign next.stone by
+		# hand or the reward double-counts.
+		next = next.append_event({
+			"stage": next.stage,
+			"time": next.event_log.size(),
+			"node_id": next.current_node_id,
+			"action": "battle_loot",
+			"before": {"stone": next.stone},
+			"after": {"stone": next.stone + stone_reward},
+			"reason": "loot_stone_gained",
+			"source": "loot_resolver",
+			"targets": [tier, "layer_%d" % layer],
+		})
+	result["state"] = next
 	# R5.2/R6.9/R13.1 elite victories always bind exactly one seeded cost.
 	if tier == "elite":
 		var costed := _apply_elite_cost(next, catalog)
@@ -139,6 +162,18 @@ static func _layer_table(catalog: Dictionary, tier: String, layer: int) -> Dicti
 		if not effective.is_empty():
 			(table["gu_pool"] as Dictionary)["weights"] = effective
 	return table
+
+
+## Q8-G 1-C: tier+layer stone reward, frozen shape / provisional numbers
+## (balance.battle_stone_rewards). Pure function of tier and layer so the
+## production ledger stays deterministic and independent of loot rolls.
+static func _stone_reward(tier: String, layer: int, catalog: Dictionary) -> int:
+	var cfg: Dictionary = catalog.get("balance", {}).get("battle_stone_rewards", {})
+	var base := int(cfg.get("base_by_tier", {}).get(tier, 0))
+	if base <= 0:
+		return 0
+	var step_pct := int(cfg.get("layer_step_pct", 0))
+	return base + int(float(base) * float(step_pct) * float(maxi(1, layer) - 1) / 100.0)
 
 
 static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:

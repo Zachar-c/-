@@ -173,7 +173,9 @@ func test_loot_materials_are_added_to_state_and_logged() -> void:
 	var after: RunState = rolled["state"]
 	var gained: Array = rolled["loot"].get("material_ids", [])
 	assert_true(int(after.materials.get(str(gained[0]), 0)) > 0)
-	assert_eq(after.event_log.size(), before.event_log.size() + 1)
+	# Q8-G 1-C：胜利结算现在固定追加一条产石事件（loot_stone_gained），
+	# 加上材料事件共 +2。
+	assert_eq(after.event_log.size(), before.event_log.size() + 2)
 
 
 func test_scavenge_requires_boss_defeated() -> void:

@@ -84,5 +84,14 @@
     }
   },
   "retreat_stone_cost": 2,
-  "cultivate_rank_two_stone_cost": 5
+  "cultivate_rank_two_stone_cost": 5,
+  "battle_stone_rewards": {
+    "base_by_tier": {
+      "common": 3,
+      "elite": 8,
+      "boss": 15
+    },
+    "layer_step_pct": 20,
+    "provisional_note": "Q8-G 1-C provisional：战斗产石 = base_by_tier[tier] + base*layer_step_pct*(layer-1)/100。Batch 0 §4 冻结口径：tier+layer 结构、数值 provisional、F8 校准；production 口径为净新增（卖材料不算）。"
+  }
 }
