@@ -128,8 +128,6 @@ func _battle_changed_by_gu(before: Dictionary, after: Dictionary) -> bool:
 		return true
 	if before_player.get("statuses", {}) != after_player.get("statuses", {}):
 		return true
-	if before_player.get("position", 0) != after_player.get("position", 0):
-		return true
 	for index in (before["enemies"] as Array).size():
 		var old_enemy: Dictionary = before["enemies"][index]
 		var new_enemy: Dictionary = after["enemies"][index]

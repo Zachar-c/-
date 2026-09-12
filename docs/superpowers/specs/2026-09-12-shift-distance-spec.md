@@ -4,7 +4,7 @@
 >
 > 「位移同比转化为防御力——目前不实现闪避、位移、攻击距离，通通转译为防御实现。」
 > shift 结算已改为等量护盾（v1_battle_resolver shift 分支），position 不再推进，
-> 本规格的距离减伤/敌人追击因 distance 恒 0 自动失效（死路径保留待清理）。
+> 本规格的距离减伤/敌人追击因 distance 恒 0 自动失效（死路径已于 2026-09-12 Q7 批次删除：_distance_adjusted_damage/_enemy_pursuit 及 cfg 三键）。
 > 卡牌文字已改「退守：护盾 +N」。落位记录：plans/2026-09-12-shop-recipe-support-landing.md。
 
 日期：2026-09-12

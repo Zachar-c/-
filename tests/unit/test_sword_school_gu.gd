@@ -605,17 +605,7 @@ func test_shift_no_longer_advances_position() -> void:
 	var battle := _battle_with_movement(10)
 	var out := V1.player_action(battle, {"type": "play_gu", "slot_index": 0})
 	assert_eq(int(out["battle"]["player"].get("position", 0)), 0,
-		"position 不再推进（距离系统随 Q8 裁定失效）")
-
-
-func test_legacy_distance_reduction_is_inert() -> void:
-	# 行为保持对照：即使外部注入 position>0（旧存档兼容），敌人追击收敛后
-	# 新结算不再产生距离减伤——这里只锁「shift 不再写 position」的传播面。
-	var battle := _battle_with_movement(10)
-	battle["player"]["position"] = 3
-	var ended := V1.player_action(battle, {"type": "end_turn"})
-	assert_eq(int(ended["battle"]["player"].get("position", 0)), 2,
-		"旧 position 仍按追击规则收敛（死路径兼容，不新增减伤入口）")
+		"position 不再推进（距离系统随 Q8 裁定失效，死路径已于 2026-09-12 删除）")
 
 
 func test_sword_run_shop_shelves_sword_gu() -> void:

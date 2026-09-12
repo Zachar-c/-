@@ -75,9 +75,6 @@
  "max_seal_turns": 3,
  "mark_scratch_per_layer": 1,
  "mark_scratch_cap": 10,
- "shift_damage_reduction_per_step": 1,
- "shift_damage_reduction_cap_pct": 60,
- "enemy_pursuit_per_turn": 1,
  "kill_moves": [
   {
    "id": "km_light_converge",
