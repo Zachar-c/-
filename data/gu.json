@@ -409,7 +409,15 @@
   "school": "blood",
   "role": "attack",
   "rarity": "epic",
-  "can_direct_drop": false
+  "can_direct_drop": false,
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 4,
+   "condition": {
+    "type": "self_hp_below",
+    "threshold": 0.5
+   }
+  }
  },
  {
   "id": "blood_droplet_gu",
@@ -535,7 +543,12 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "blood_attack_pattern"
+  "combat": "blood_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 8
+  },
+  "life_cost": 2
  },
  {
   "id": "blood_atk_3_03_gu",
@@ -619,7 +632,13 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "blood_attack_pattern"
+  "combat": "blood_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 2,
+   "support_school": "blood",
+   "support_bonus": 1
+  }
  },
  {
   "id": "blood_atk_5_09_gu",
@@ -2677,7 +2696,14 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "fire_attack_pattern"
+  "combat": "fire_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 3,
+   "delay": {
+    "turns": 1
+   }
+  }
  },
  {
   "id": "fire_atk_4_02_gu",
@@ -6513,7 +6539,13 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "qi_attack_pattern"
+  "combat": "qi_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 6
+  },
+  "true_qi_cost": 6,
+  "thought_cost": 2
  },
  {
   "id": "qi_mov_4_03_gu",
@@ -8291,7 +8323,12 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "soul_defense_pattern"
+  "combat": "soul_defense_pattern",
+  "v1_effect": {
+   "kind": "status",
+   "name": "sealed",
+   "amount": 1
+  }
  },
  {
   "id": "soul_mov_2_11_gu",
@@ -9515,7 +9552,15 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "water_attack_pattern"
+  "combat": "water_attack_pattern",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 2,
+   "consume_status": {
+    "name": "marked",
+    "per_stack": 1
+   }
+  }
  },
  {
   "id": "water_atk_3_06_gu",
@@ -10747,7 +10792,11 @@
    "attack"
   ],
   "source": "novel",
-  "combat": "wisdom_attack_pattern"
+  "combat": "wisdom_attack_pattern",
+  "v1_effect": {
+   "kind": "weaken_intent",
+   "amount": 2
+  }
  },
  {
   "id": "wisdom_atk_5_14_gu",
@@ -10845,7 +10894,14 @@
    "recon"
   ],
   "source": "novel",
-  "combat": "wisdom_recon_pattern"
+  "combat": "wisdom_recon_pattern",
+  "v1_effect": {
+   "kind": "status",
+   "name": "marked",
+   "amount": 1,
+   "support_school": "wisdom",
+   "support_bonus": 1
+  }
  },
  {
   "id": "wisdom_atk_3_21_gu",

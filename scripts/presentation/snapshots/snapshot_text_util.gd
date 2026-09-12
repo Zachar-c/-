@@ -50,6 +50,7 @@ static func _status_label(status_name: String) -> String:
 	match status_name:
 		"marked": return "标记"
 		"bound": return "束缚"
+		"sealed": return "封印"
 		"poison": return "中毒"
 	return status_name if not status_name.is_empty() else "状态"
 
@@ -77,6 +78,9 @@ static func _v1_effect_text(source: Dictionary) -> String:
 		"sword_intent":
 			# Q7 阶段 A：剑意叠层（跨回合存续，回合末减半；结算=剑道出蛊伤害加成）。
 			text = "剑意 +%d 层" % int(effect.get("amount", 0))
+		"weaken_intent":
+			# Q8 第 5 操作（FINAL §2）：per-target 削弱目标下一次伤害意图。
+			text = "削弱其下一次伤害 %d 点" % int(effect.get("amount", 0))
 		_:
 			return "效果未明"
 	# Q7 阶段 C：支援骑键必须随文案披露（recon 兜底=刻痕+同流派支援双通道）。

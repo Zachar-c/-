@@ -1166,8 +1166,8 @@ static func _validate_slice_contract(catalog: Dictionary) -> Array[String]:
 	return errors
 
 
-const V1_EFFECT_KIND_IDS := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent"]
-const V1_STATUS_IDS := ["marked", "bound"]
+const V1_EFFECT_KIND_IDS := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent", "weaken_intent"]
+const V1_STATUS_IDS := ["marked", "bound", "sealed"]
 
 
 static func _validate_v1_effect(effect_value: Variant, owner: String) -> Array[String]:
@@ -1181,7 +1181,7 @@ static func _validate_v1_effect(effect_value: Variant, owner: String) -> Array[S
 		errors.append("%s has unknown kind %s" % [owner, kind])
 		return errors
 	match kind:
-		"strike", "shield", "heal", "shift", "sword_intent":
+		"strike", "shield", "heal", "shift", "sword_intent", "weaken_intent":
 			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
 				errors.append("%s amount must be a non-negative integer" % owner)
 		"buff", "status":

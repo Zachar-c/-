@@ -12,6 +12,8 @@ extends RefCounted
 
 const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
+# Q8-IMPLEMENT Step 2（2026-09-12）：Effect Grammar V2 管线（FINAL §1）。
+const GrammarPipeline = preload("res://scripts/domain/v1_grammar_pipeline.gd")
 
 const DEFAULT_PHASE := "player_action"
 
@@ -79,6 +81,9 @@ static func start(run_state, catalog: Dictionary, enemy_entries: Array) -> Dicti
 		"enemies": _build_enemies(enemy_entries),
 		"gu_slots": _build_gu_slots(run_state, catalog),
 		"active_permanents": [],
+		# Q8 Step 5（FINAL §3/§8）：延迟效果表——battle 生命周期内登记与到期
+		# 结算，战斗结束即销毁；随 battle Dictionary 整体序列化（只存 ID 与数值）。
+		"delayed_effects": [],
 		"kill_moves": _build_kill_moves(run_state, catalog),
 		# T14：本场已泄密杀招被哪些敌人洞悉（用后追加，只增不减）。
 		"revealed_to": [],
@@ -105,6 +110,7 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 	for entry in enemy_entries:
 		var e: Dictionary = entry
 		var intent: Dictionary = e.get("intent", {})
+		var intent_kind := str(intent.get("kind", "attack"))
 		result.append({
 			"id": str(e.get("id", "enemy")),
 			"label": str(e.get("label", str(e.get("id", "enemy")))),
@@ -112,7 +118,11 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 			"max_hp": int(e.get("hp", 1)),
 			"alive": true,
 			"intent": {
-				"kind": str(intent.get("kind", "attack")),
+				"kind": intent_kind,
+				# H3（Q8 Step 4）：意图带最小语义属性——这是不是一次伤害意图。
+				# sealed 门禁与 weaken_intent 只作用于 damage intent；数据可显式
+				# 声明覆盖，缺省按 kind 派生（attack=伤害意图）。
+				"damage_intent": bool(intent.get("damage_intent", intent_kind == "attack")),
 				"damage": int(intent.get("damage", 0)),
 				"label": str(intent.get("label", "蓄力")),
 				"speed": int(intent.get("speed", 0)),
@@ -125,6 +135,9 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 			"counter_hidden": [],
 			"shield": 0,
 			"statuses": {},
+			# Q8 Step 4（FINAL §8）：下一次 damage intent 减免额（per-target，
+			# weaken_intent 操作写入；消费或回合结束清零）。
+			"intent_weaken": 0,
 		})
 	return result
 
@@ -300,6 +313,14 @@ static func play_gu(battle: Dictionary, slot_index: int, target_id: String = "")
 	var slot_effect_reason := effect_reason(slot.get("effect", {}))
 	if not slot_effect_reason.is_empty():
 		return _result(battle, false, slot_effect_reason)
+	# Q8-IMPLEMENT Step 2（H1 硬约束）：trigger + condition 资格段必须在 cost commit
+	# 之前——cost commit 是管线上第一笔不可逆变更，资格 miss 一分不扣。
+	# miss 事件由本层落（pipeline 只判不写）；零消耗返回。
+	var gate_reason: String = GrammarPipeline.gate_miss_reason(slot.get("effect", {}), battle)
+	if not gate_reason.is_empty():
+		var gatted := _dup(battle)
+		_log(gatted, gate_reason, str(slot.get("definition_id", "")))
+		return _result(gatted, false, gate_reason)
 	var paid := _spend_costs(battle, slot, "gu:%s" % str(slot["instance_id"]))
 	var life_cost := int(slot.get("life_cost", 0))
 	if life_cost > 0 and int(paid["player"]["life_time"]) <= 0:
@@ -322,7 +343,7 @@ static func effect_reason(effect: Variant) -> String:
 	if data.is_empty():
 		return ""
 	var kind := str(data.get("kind", ""))
-	const SUPPORTED := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent"]
+	const SUPPORTED := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent", "weaken_intent"]
 	if not SUPPORTED.has(kind):
 		return "unknown_effect"
 	return ""
@@ -382,10 +403,39 @@ static func _stack_buff(buffs: Dictionary, buff: Dictionary) -> Dictionary:
 ##   {"kind":"buff","name":X,"amount":N} / {"kind":"heal","amount":N} /
 ##   {"kind":"heal_and_strike","heal":N,"amount":N} /
 ##   {"kind":"status","name":X,"amount":N} / {"kind":"shift","amount":N}
+##
+## Q8-IMPLEMENT Step 2：本函数是 Grammar 管线的结算段（cost commit 之后调用），
+## 阶段标注（FINAL §1）：selector（下方 target_key 语义）-> modifier.prepare
+## （Step 3 挂点：consume_status 定参位）-> operation（match kind）->
+## modifier.commit（尾部 support 登记，登记型 modifier）。
+## 行为零漂移：48 只显式蛊基线（test_q8_grammar_baseline.gd）逐只保持绿。
 static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: String) -> Dictionary:
 	var next := _dup(battle)
 	var effect: Dictionary = slot.get("effect", {})
 	var kind := str(effect.get("kind", ""))
+	# ---- Step 5（FINAL §3 delay 形态锁定，先付费后延迟）：打出时 cost 已由
+	# play_gu 提交（拖延不免费）；operation 不立即结算，改登记 delayed_effects，
+	# 到期回合由 _fire_delayed_effects 结算（事件 delayed_scheduled / delayed_fired）。
+	# 目标不在此刻锁定——到期重放走缺省解析（H4：队列第一个存活目标）。
+	if effect.has("delay"):
+		var due_turn := int(next.get("turn", 1)) + int((effect["delay"] as Dictionary).get("turns", 1))
+		var scheduled := {
+			"effect": (effect as Dictionary).duplicate(true),
+			"school": str(slot.get("school", "")),
+			"due_turn": due_turn,
+			"source_id": str(slot.get("instance_id", "")),
+		}
+		next["delayed_effects"] = (next.get("delayed_effects", []) as Array).duplicate(true)
+		(next["delayed_effects"] as Array).append(scheduled)
+		_log(next, "delayed_scheduled", str(due_turn))
+		return next
+	# ---- selector（Step 2 现状回退语义）：target_key 空或无效时由
+	# _enemy_index 回退首个存活敌（H4「enemy_first」的现状雏形）。
+	# Step 3 换成冻结集合 self / enemy_first / enemy_all 的显式解析。
+	# ---- modifier.prepare（Step 3 挂点）：consume_status 定参
+	# final_amount = base + stacks * per_stack 在此处计算（H2 原子事务的算段）。
+	# ---- operation：一效果恰好一个操作；遗留 4 kind（buff / heal_and_strike /
+	# shift / sword_intent）原语义保留（FINAL §6），不新增数据。
 	match kind:
 		"strike":
 			var amount := int(effect.get("amount", 0))
@@ -396,15 +446,31 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			# heal_and_strike 直调或走别的通道，结构性吃不到（计划 §0-2）。
 			if str(slot.get("school", "")) == "sword":
 				amount += SchoolRulesScript.sword_intent(next)
-			if bool(effect.get("aoe", false)):
-				# S2 十转杀蛊：群体打击——对本场全部存活敌人各结算一次。
-				for enemy_value in (next.get("enemies", []) as Array):
-					var aoe_enemy: Dictionary = enemy_value
-					if int(aoe_enemy.get("hp", 0)) > 0:
-						next = _strike_enemy(next, amount, str(aoe_enemy.get("id", "")))
+			# modifier.prepare（H2 计算步，Step 3）：consume_status 定参——
+			# final_amount = base + stacks * per_stack；gate 已保证 stacks >= 1
+			# 且单目标（enemy_all / aoe 组合在 gate 拒绝），此处直接读首个存活敌。
+			var consume: Dictionary = effect.get("consume_status", {}) if effect.has("consume_status") else {}
+			if not consume.is_empty():
+				var consume_index := GrammarPipeline.first_alive_index(next)
+				if consume_index >= 0:
+					var consume_statuses: Dictionary = (next["enemies"][consume_index] as Dictionary).get("statuses", {})
+					amount = GrammarPipeline.consume_final_amount(
+						amount,
+						int(consume_statuses.get(str(consume.get("name", "marked")), 0)),
+						int(consume.get("per_stack", 0))
+					)
+			# selector 解析（Step 3）：缺省回退 target_key/首个存活敌；
+			# enemy_all 或遗留 aoe 键 = 全部存活敌（行为与 S2 aoe 现状一致）。
+			var targets: Array = GrammarPipeline.resolve_targets(next, effect, target_key)
+			for target_id_value in targets:
+				next = _strike_enemy(next, amount, str(target_id_value))
+			if targets.size() > 1:
 				_log(next, "strike_aoe", str(amount))
-			else:
-				next = _strike_enemy(next, amount, target_key)
+			# modifier.commit（H2 清除步）：strike 提交完成后清除已消费状态——
+			# 「消费状态 + 使用状态产生的效果」同一次确定性结算（同一 next 副本，
+			# 纯函数天然原子）；禁止 clear-then-strike（先清再打）。
+			if not consume.is_empty() and not targets.is_empty():
+				next = _clear_enemy_status(next, str(consume.get("name", "marked")), str(targets[0]))
 		"shield":
 			next["player"]["shield"] = int(next["player"]["shield"]) + int(effect.get("amount", 0))
 		"buff":
@@ -415,7 +481,26 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			next = _heal_player(next, int(effect.get("heal", 0)))
 			next = _strike_enemy(next, int(effect.get("amount", 0)), target_key)
 		"status":
-			next = _apply_enemy_status(next, effect, target_key)
+			# Step 3：status 走 selector 解析（缺省/enemy_first 均单目标，矩阵冻结）。
+			var status_targets: Array = GrammarPipeline.resolve_targets(next, effect, target_key)
+			if status_targets.is_empty():
+				return next
+			next = _apply_enemy_status(next, effect, str(status_targets[0]))
+		"weaken_intent":
+			# Q8 Step 4（FINAL §2 第 5 操作）：per-target 降低目标**下一次**
+			# damage intent 数值。写目标 intent_weaken（可叠加）；消费或回合
+			# 结束清零；不做全局 debuff、不产生跨目标涟漪。
+			var weaken_targets: Array = GrammarPipeline.resolve_targets(next, effect, target_key)
+			if weaken_targets.is_empty():
+				return next
+			var weaken_index := _enemy_index(next, str(weaken_targets[0]))
+			if weaken_index < 0:
+				return next
+			var weaken_enemy: Dictionary = (next["enemies"][weaken_index] as Dictionary).duplicate(true)
+			weaken_enemy["intent_weaken"] = int(weaken_enemy.get("intent_weaken", 0)) + int(effect.get("amount", 0))
+			next["enemies"][weaken_index] = weaken_enemy
+			next["last_effect_target"] = str(weaken_enemy["id"])
+			_log(next, "weaken_applied", str(weaken_enemy["id"]))
 		"shift":
 			# ⚠️ 2026-09-12 用户裁定（Q8）：位移同比转化为防御力——
 			# 不实现闪避/位移/攻击距离，shift 一律转译为等量护盾。
@@ -427,8 +512,9 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			var intent_amount := int(effect.get("amount", 1))
 			SchoolRulesScript.add_sword_intent(next, intent_amount)
 			_log(next, "sword_intent", str(intent_amount))
-	# S4 元素协同：支援类子键（随任意 kind 叠加）——登记后本回合内该流派
-	# 后续蛊伤害 +support_bonus；end_turn 统一清零，不跨回合。
+	# ---- modifier.commit（登记型 modifier）：S4 元素协同支援类子键（随任意 kind
+	# 叠加）——登记后本回合内该流派后续蛊伤害 +support_bonus；end_turn 统一清零，
+	# 不跨回合。登记在 operation 之后：同蛊自己的 strike 读不到自己这发（基线实证）。
 	var support_school := str(effect.get("support_school", ""))
 	var support_bonus := int(effect.get("support_bonus", 0))
 	if not support_school.is_empty() and support_bonus > 0:
@@ -462,6 +548,26 @@ static func _apply_enemy_status(battle: Dictionary, effect: Dictionary, target_k
 	# can record who really took the status.
 	next["last_effect_target"] = str(enemy["id"])
 	_log(next, "status", str(enemy["id"]))
+	# Q8 Step 4：sealed 上身是关键状态变化，落专属事件（FINAL §8 允许面）。
+	if name == "sealed":
+		_log(next, "sealed_applied", str(enemy["id"]))
+	return next
+
+
+## H2 原子事务清除步：consume_status 结算提交后，清除目标身上该 status 的
+## 全部层数（层数已全额计入 final_amount）。只清不补，不做部分保留。
+static func _clear_enemy_status(battle: Dictionary, status_name: String, target_id: String) -> Dictionary:
+	var next := _dup(battle)
+	var target_index := _enemy_index(next, target_id)
+	if target_index < 0:
+		return next
+	var enemy: Dictionary = (next["enemies"][target_index] as Dictionary).duplicate(true)
+	var statuses: Dictionary = (enemy.get("statuses", {}) as Dictionary).duplicate(true)
+	if not statuses.has(status_name):
+		return next
+	statuses.erase(status_name)
+	enemy["statuses"] = statuses
+	next["enemies"][target_index] = enemy
 	return next
 
 
@@ -650,6 +756,13 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 			break
 	if _is_over(next):
 		return _result(next, true, "")
+	# Q8 Step 4（FINAL §2）：intent_weaken「消费或回合结束」清零——未被消费的
+	# 减免不跨回合（回合窗口语义，与 turn_supports 同构收口）。
+	for i in (next["enemies"] as Array).size():
+		var cleanup_enemy: Dictionary = (next["enemies"][i] as Dictionary).duplicate(true)
+		if int(cleanup_enemy.get("intent_weaken", 0)) != 0:
+			cleanup_enemy["intent_weaken"] = 0
+			next["enemies"][i] = cleanup_enemy
 	# Q8 死路径清理（2026-09-12）：_enemy_pursuit 已删——shift 转译护盾后无距离可追。
 	# T15 刻痕通道（2026-09-12）：表面伤口会愈合，刻印下来的道痕不会消失——
 	# 回合末按敌人身上 marked 层数结算一次**独立**伤害（见 _settle_marks）。
@@ -659,6 +772,10 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 	# Q7 阶段 A：剑意跨回合衰减（50% 向下取整，school_rules 落桩语义）。
 	SchoolRulesScript.decay_sword_intent(next)
 	next["turn"] = int(next["turn"]) + 1
+	# Q8 Step 5：延迟效果到期结算（先于新玩家回合——埋下的蛊在下一回合开始时起效）。
+	next = _fire_delayed_effects(next)
+	if _is_over(next):
+		return _result(next, true, "")
 	next = _start_player_turn(next)
 	return _result(next, true, "")
 
@@ -699,6 +816,28 @@ static func _settle_marks(battle: Dictionary) -> Dictionary:
 	return next
 
 
+static func _fire_delayed_effects(battle: Dictionary) -> Dictionary:
+	var next := _dup(battle)
+	var pending: Array = (next.get("delayed_effects", []) as Array).duplicate(true)
+	if pending.is_empty():
+		return next
+	var remaining: Array = []
+	var current_turn := int(next.get("turn", 1))
+	for entry_value in pending:
+		var entry: Dictionary = entry_value
+		if int(entry.get("due_turn", 0)) > current_turn:
+			remaining.append(entry)
+			continue
+		# 到期重放：目标缺省解析（enemy_first 语义，H4——到期时队列第一个存活）。
+		var replay_effect: Dictionary = (entry.get("effect", {}) as Dictionary).duplicate(true)
+		replay_effect.erase("delay")
+		next = _apply_effect(next, {"effect": replay_effect, "school": str(entry.get("school", ""))}, "")
+		_log(next, "delayed_fired", str(entry.get("source_id", "")))
+	_check_victory(next)
+	next["delayed_effects"] = remaining
+	return next
+
+
 static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dictionary:
 	var next := _dup(battle)
 	var enemy: Dictionary = next["enemies"][enemy_index].duplicate(true)
@@ -706,7 +845,30 @@ static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dicti
 	var kind := str(intent.get("kind", "attack"))
 	match kind:
 		"attack":
+			# H3（Q8 Step 4）：门禁读意图自身的 damage_intent 属性裁决，**禁止**
+			# 以 sealed 计数硬编码短路——非伤害意图不受 sealed 门禁、不消耗 sealed。
+			var is_damage_intent := bool(intent.get("damage_intent", true))
+			var enemy_statuses: Dictionary = (enemy.get("statuses", {}) as Dictionary)
+			# sealed 最小纵切（FINAL §2）：下一次 damage intent 被门禁——意图不存在。
+			# 消费即清；同在身的 weaken 未服务过，保留（不被本次门禁消耗）。
+			if is_damage_intent and int(enemy_statuses.get("sealed", 0)) > 0:
+				var sealed_enemy: Dictionary = enemy.duplicate(true)
+				var sealed_statuses: Dictionary = (sealed_enemy.get("statuses", {}) as Dictionary).duplicate(true)
+				sealed_statuses.erase("sealed")
+				sealed_enemy["statuses"] = sealed_statuses
+				next["enemies"][enemy_index] = sealed_enemy
+				_log(next, "sealed_consumed", str(enemy["id"]))
+				return next
+			# weaken_intent（per-target，FINAL §2）：只降低本次 damage intent 数值，
+			# 用后立即清零；减免不把意图变成非伤害意图，floor 0。
 			var damage := int(intent.get("damage", 0))
+			var weaken := int(enemy.get("intent_weaken", 0))
+			if is_damage_intent and weaken > 0:
+				damage = maxi(0, damage - weaken)
+				var weakened_enemy: Dictionary = enemy.duplicate(true)
+				weakened_enemy["intent_weaken"] = 0
+				next["enemies"][enemy_index] = weakened_enemy
+				_log(next, "weaken_consumed", str(enemy["id"]))
 			# Q8 死路径清理（2026-09-12）：_distance_adjusted_damage 已删——
 			# shift 转译护盾后 distance 恒 0，减伤入口不复存在。
 			# 死亡归因（§17.3）：敌方攻击入战斗日志，DeathReport 由日志导出
