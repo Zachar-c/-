@@ -6611,7 +6611,7 @@
    "stone_cost": 6,
    "output_gu_id": "sword_atk_2_20_gu",
    "input_min_rank": 1,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（def→atk）：剑藏于鞘，出鞘即攻（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（def→atk）：剑藏于鞘，出鞘即攻（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 6 + 材料 value 2（mat_sword_1×2, value 1）= 8。",
    "inputs": [
     {
      "school": "sword",
@@ -6633,7 +6633,7 @@
    "stone_cost": 8,
    "output_gu_id": "sword_mov_3_22_gu",
    "input_min_rank": 2,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：藏锋守拙，剑随身走（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：藏锋守拙，剑随身走（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 8 + 材料 value 4（mat_sword_2×2, value 2）= 12，累计 20。",
    "inputs": [
     {
      "school": "sword",
@@ -6655,7 +6655,7 @@
    "stone_cost": 12,
    "output_gu_id": "sword_atk_4_01_gu",
    "input_min_rank": 3,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 12 + 材料 value 6（mat_sword_3×2, value 3）= 18，累计 38。",
    "inputs": [
     {
      "school": "sword",
@@ -6677,7 +6677,7 @@
    "stone_cost": 18,
    "output_gu_id": "sword_atk_5_02_gu",
    "input_min_rank": 4,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 18 + 材料 value 10（mat_sword_4×2, value 5）= 28，累计 66 < 70（直取价）。",
    "inputs": [
     {
      "school": "sword",
