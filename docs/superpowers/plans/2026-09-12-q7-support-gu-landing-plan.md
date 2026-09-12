@@ -1,6 +1,7 @@
 # Q7 辅助蛊实义化实施计划（2026-09-12，待批复）
 
-> 状态：**仅供审阅，未实施**。批复后按阶段执行，每阶段独立提交、先测试后实现。
+> 状态：**已实施完成（2026-09-12）**。提交链：阶段 0 `d55cb16` → A `3fe4143` → B1 `a25d6a6` → B2 `38302e8` → C `4f5eb61` → Q8 死路径独立清理 `a701dfa`。
+> 终验：unit 1286/1287（唯一红=既有 t5a）· integration 32/32 · 交互门 17 屏 dead/no_ui_click/occluded 全空。
 > 取证口径：`data/gu.json` 802 只中 recon/logistics 共 **151 只**（19 流派），`v1_effect` **全部为空**；
 > 战斗核经 `default_v1_effect` 走 `data/v1_battle.json → default_effect_by_role` 兜底
 > （recon→`status/marked/1`，logistics→`status/bound/1`）；`bound` 全仓无消费者（死状态）；
