@@ -6245,6 +6245,446 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "promote_human_atk_1_04_to_human_atk_2_29",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_human_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "human_atk_2_29_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：human 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_2_29_to_human_atk_3_16",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_2_29_gu"
+   ],
+   "materials": {
+    "mat_human_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "human_atk_3_16_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：human 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_3_16_to_human_atk_4_40",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_3_16_gu"
+   ],
+   "materials": {
+    "mat_human_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "human_atk_4_40_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：human 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_4_40_to_human_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_4_40_gu"
+   ],
+   "materials": {
+    "mat_human_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "human_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：human 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_atk_1_03_to_slave_mov_2_27",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_atk_1_03_gu"
+   ],
+   "materials": {
+    "mat_slave_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "slave_mov_2_27_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→mov）：驯一犬者持鞭，鞭策即权柄（谱系 §6.13）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_mov_2_27_to_slave_atk_3_04",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_mov_2_27_gu"
+   ],
+   "materials": {
+    "mat_slave_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "slave_atk_3_04_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_atk_3_04_to_slave_atk_4_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_atk_3_04_gu"
+   ],
+   "materials": {
+    "mat_slave_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "slave_atk_4_02_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_atk_4_02_to_slave_atk_5_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_atk_4_02_gu"
+   ],
+   "materials": {
+    "mat_slave_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "slave_atk_5_01_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_atk_1_04_to_soul_def_2_17",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_soul_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "soul_def_2_17_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→def）：摄得生魂燃为魂火（谱系 §6.14）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_def_2_17_to_soul_heal_3_19",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_def_2_17_gu"
+   ],
+   "materials": {
+    "mat_soul_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "soul_heal_3_19_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（def→heal）：魂火化雾滋养魂魄（谱系 §6.14）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_heal_3_19_to_soul_log_4_28",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_heal_3_19_gu"
+   ],
+   "materials": {
+    "mat_soul_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "soul_log_4_28_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（heal→log）：魂雾入冥通幽冥之路（谱系 §6.14）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_log_4_28_to_soul_atk_5_22",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_log_4_28_gu"
+   ],
+   "materials": {
+    "mat_soul_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "soul_atk_5_22_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_atk_1_10_to_refine_log_2_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_atk_1_10_gu"
+   ],
+   "materials": {
+    "mat_refine_1": 2
+   },
+   "stone_cost": 10,
+   "output_gu_id": "refine_log_2_03_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→log）：先熔材后合炼（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_log_2_03_to_refine_atk_3_17",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_log_2_03_gu"
+   ],
+   "materials": {
+    "mat_refine_2": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "refine_atk_3_17_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（log→atk）：合炼之后去芜存纯（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_atk_3_17_to_refine_def_4_18",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_atk_3_17_gu"
+   ],
+   "materials": {
+    "mat_refine_3": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "refine_def_4_18_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（atk→def）：提纯之后凝形定性（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_def_4_18_to_refine_log_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_def_4_18_gu"
+   ],
+   "materials": {
+    "mat_refine_4": 2
+   },
+   "stone_cost": 45,
+   "output_gu_id": "refine_log_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r4→r5 跨 role（def→log）：凝而复升九转方成（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_def_1_07_to_sword_atk_2_20",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_def_1_07_gu"
+   ],
+   "materials": {
+    "mat_sword_1": 2
+   },
+   "stone_cost": 6,
+   "output_gu_id": "sword_atk_2_20_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（def→atk）：剑藏于鞘，出鞘即攻（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_atk_2_20_to_sword_mov_3_22",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_2_20_gu"
+   ],
+   "materials": {
+    "mat_sword_2": 2
+   },
+   "stone_cost": 8,
+   "output_gu_id": "sword_mov_3_22_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：藏锋守拙，剑随身走（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_mov_3_22_to_sword_atk_4_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_mov_3_22_gu"
+   ],
+   "materials": {
+    "mat_sword_3": 2
+   },
+   "stone_cost": 12,
+   "output_gu_id": "sword_atk_4_01_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_atk_4_01_to_sword_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_4_01_gu"
+   ],
+   "materials": {
+    "mat_sword_4": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "sword_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 4,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [
