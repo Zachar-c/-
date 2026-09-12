@@ -5012,6 +5012,95 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "promote_light_atk_1_01_to_moon_glow",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "light_atk_1_01_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "moon_glow_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_moon_glow_to_moon_shadow",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moon_glow_gu"
+   ],
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 18,
+   "output_gu_id": "moon_shadow_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_moon_shadow_to_light_atk_4_21",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moon_shadow_gu"
+   ],
+   "materials": {
+    "beast_blood": 2
+   },
+   "stone_cost": 30,
+   "output_gu_id": "light_atk_4_21_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_light_atk_4_21_to_light_atk_5_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "light_atk_4_21_gu"
+   ],
+   "materials": {
+    "beast_bone": 2,
+    "venom_sac": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "light_atk_5_03_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 4,
+     "count": 1
+    }
+   ]
   }
  ],
  "caravan_offers": [

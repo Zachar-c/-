@@ -114,19 +114,43 @@ static func consume_definition_instances(instances: Dictionary, stored: Array, i
 			break
 
 
+# 2026-09-12（Q8-G Batch 1-A）：按**显式实例 id** 消耗（promotion 用）。
+# 与 consume_definition_instances 的区别只在选谁：这里认 id 不认 definition，
+# 因为 promotion 的转数门禁是按选中实例算的，若退回"首个同名实例"会出现
+# "校验 A、消耗 B"。"state" 沿用 refine 状态键（"consumed"），与 fixed 一致。
+static func consume_instance_id_list(instances: Dictionary, stored: Array, instance_ids: Array) -> void:
+	for instance_id_value in instance_ids:
+		var instance_id := str(instance_id_value)
+		if not instances.has(instance_id):
+			continue
+		if not stored.has(instance_id):
+			continue
+		var consumed: Dictionary = instances[instance_id].duplicate(true)
+		consumed[REFINE_STATE_KEY] = "consumed"
+		instances[instance_id] = consumed
+		stored.erase(instance_id)
+
+
 # 2026-09-03 修复：gu_transaction 的实例侧记账（combine 炼蛊 / 商队购买 /
 # 商队兑换共用）。产出蛊必须落到 gu_instances + 洞天，否则 V1 战斗
 # refined_instances() 看不见它，且下次 sync_legacy_gu_projections() 会把
 # 只写 legacy 数组的产出抹掉；输入蛊同步销毁实例。返回新的
 # {instances, aperture}，输入字典不被修改。
-static func transaction_ledger(instances: Dictionary, aperture: Dictionary, output_gu_id: String, catalog: Dictionary, inputs: Array, output_rank: int = 0) -> Dictionary:
+#
+# consume_instance_ids（2026-09-12，Q8-G Batch 1-A）：调用方已按实例 id 选定
+# 输入时（promotion 单输入带转数门禁），必须按**该实例**消耗，不能退回
+# "首个同名 refined 实例"。为空时保持原语义（按 definition 逐个消耗）。
+static func transaction_ledger(instances: Dictionary, aperture: Dictionary, output_gu_id: String, catalog: Dictionary, inputs: Array, output_rank: int = 0, consume_instance_ids: Array = []) -> Dictionary:
 	var output_error := output_definition_error(output_gu_id, catalog)
 	if not output_error.is_empty():
 		return {"instances": instances, "aperture": aperture, "error": output_error}
 	var next_instances := instances.duplicate(true)
 	var next_aperture := aperture.duplicate(true)
 	var stored: Array = next_aperture.get("stored_gu_instance_ids", []).duplicate()
-	consume_definition_instances(next_instances, stored, inputs)
+	if consume_instance_ids.is_empty():
+		consume_definition_instances(next_instances, stored, inputs)
+	else:
+		consume_instance_id_list(next_instances, stored, consume_instance_ids)
 	var output_instance_id := RunState.next_gu_instance_id(next_instances)
 	var extra := {"rank": clampi(output_rank, 1, 5)} if output_rank > 0 else {}
 	next_instances[output_instance_id] = new_instance(output_gu_id, output_instance_id, catalog, extra)

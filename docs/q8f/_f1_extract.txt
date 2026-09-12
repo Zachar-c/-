@@ -1,0 +1,307 @@
+######################################################################
+# F1 EXTRACT — economy raw facts
+######################################################################
+
+
+=== [A] BALANCE CONSTANTS ===
+{
+ "remove_card_cost": 120,
+ "remove_imprint_cost": 150,
+ "imprint_capacity": 4,
+ "meta_rule_cap": 2,
+ "rank_step_ratio": 2.0,
+ "standard_hit_ratio": 0.2,
+ "human_base_health": 100,
+ "human_base_strength": 100,
+ "human_base_body_capacity": 100,
+ "thought_base_capacity": 3,
+ "unarmed_damage_ratio": 0.2,
+ "standard_activation_cost": 0.1,
+ "light_cost_ratio": 0.5,
+ "heavy_cost_ratio": 2.0,
+ "natural_recovery_cost_ratio": 0.1,
+ "aptitude_recovery_multiplier": 0.5,
+ "stone_to_essence_per_stone": 5,
+ "cross_school_penalty_per_extra": 1,
+ "cross_school_exclusion_penalty": 1,
+ "school_exclusions": [
+  [
+   "sword",
+   "water"
+  ]
+ ],
+ "reaction_multiplier": 1.0,
+ "material_refine_efficiency": 0.5,
+ "feed_tier": [
+  0.5,
+  1.0,
+  2.0
+ ],
+ "fixed_defense_ratio": 0.2,
+ "stone_per_t1_material": 10,
+ "public_buyback_ratio": 0.5,
+ "low_liquidity_ratio": 0.3,
+ "demand_price_tiers": [
+  0.8,
+  1.0,
+  1.2
+ ],
+ "dragon_fish_replacement": [
+  50,
+  70,
+  80,
+  90,
+  95
+ ],
+ "quick_substitute_cap": 0.5,
+ "base_speed": 3,
+ "speed_min": 1,
+ "speed_max": 5,
+ "gu_estimate_ratio": 6.5,
+ "blood_yield_ratio": 0.01,
+ "deep_blood_multiplier": 0.5,
+ "deep_blood_trail": 1,
+ "deep_blood_time_cost": 1,
+ "soul_burst_capacity_ratio": 2.0,
+ "soul_calm_emotional_below": 40,
+ "soul_calm_beast_below": 25,
+ "soul_calm_departure_below": 10,
+ "beast_nature_emerging_above": 0.5,
+ "beast_nature_threshold": 1.0,
+ "gu_value_by_rank": {
+  "1": 3,
+  "2": 5,
+  "3": 8,
+  "4": 12,
+  "5": 20
+ },
+ "free_pair": {
+  "success_pct": {
+   "2": 90,
+   "3": 70,
+   "4": 50,
+   "5": 35
+  },
+  "stone_cost": {
+   "2": 20,
+   "3": 60,
+   "4": 150,
+   "5": 300
+  }
+ },
+ "retreat_stone_cost": 2,
+ "cultivate_rank_two_stone_cost": 5
+}
+
+
+=== [B] MATERIALS (loot_tables.materials) ===
+count = 7
+
+-- beast_blood (兽血)
+   value=2 value_tier=2 rank=1 reference_value=10
+   dao_tags=['blood', 'qi'] diet_tags=['meat', 'blood']
+   is_common=True is_exclusive=False divisible=True public_liquidity=0.8
+   use={"health": 2, "text": "生饮兽血，气血回复 2。"}
+
+-- beast_bone (兽骨)
+   value=1 value_tier=1 rank=1 reference_value=5
+   dao_tags=['force'] diet_tags=['meat', 'bone']
+   is_common=True is_exclusive=False divisible=False public_liquidity=0.7
+   use={"health": 1, "text": "嚼碎兽骨，气血回复 1。"}
+
+-- venom_sac (毒囊)
+   value=3 value_tier=3 rank=1 reference_value=15
+   dao_tags=['poison'] diet_tags=['toxin']
+   is_common=False is_exclusive=False divisible=False public_liquidity=0.3
+   use={"health": -1, "text": "吞服毒囊蚀伤脏腑，气血 -1。"}
+
+-- moon_dew (月华露)
+   value=4 value_tier=4 rank=1 reference_value=20
+   dao_tags=['moon'] diet_tags=['herb', 'spirit']
+   is_common=False is_exclusive=False divisible=True public_liquidity=0.4
+   use={"essence": 2, "text": "含服月华露，真元回复 2。"}
+
+-- moon_blue_petal (月蓝花瓣)
+   value=1 value_tier=1 rank=1 reference_value=5
+   dao_tags=['moon'] diet_tags=['herb']
+   is_common=True is_exclusive=False divisible=True public_liquidity=0.5
+   use={"text": "月蓝花瓣 入药。"}
+
+-- boar_king_tusk (野猪王牙)
+   value=1 value_tier=1 rank=1 reference_value=15
+   dao_tags=['force'] diet_tags=['meat', 'bone']
+   is_common=False is_exclusive=True divisible=False public_liquidity=0.2
+   use={"text": "野猪王牙 入药。"}
+
+-- inheritance_token (传承信物)
+   value=30 value_tier=3 rank=1 reference_value=60
+   dao_tags=['human'] diet_tags=[]
+   is_common=False is_exclusive=False divisible=False public_liquidity=0.5
+   use={"text": "前人传承的信物，遗葬之地对它有感应。"}
+
+
+=== [C] LOOT TABLES ===
+pity = {"threshold": 3, "clearing_rarities": ["rare", "epic", "legendary"], "material_pity": {"threshold": 3, "target_material_ids": ["venom_sac", "moon_dew"]}}
+
+-- tier=common
+   material_count=1 material_pool=['beast_blood', 'beast_bone', 'moon_blue_petal']
+   gu_chance_pct=0 forced_rarity=None
+
+-- tier=elite
+   material_count=1 material_pool=['beast_blood', 'beast_bone', 'venom_sac']
+   gu_chance_pct=30 forced_rarity=epic
+   cost_pool=[{"kind": "backlash", "curse_id": "gu_erosion", "layers": 1, "weight": 1}, {"kind": "notoriety", "amount": 2, "weight": 1}]
+
+-- tier=boss
+   material_count=2 material_pool=['beast_blood', 'beast_bone', 'venom_sac', 'moon_dew']
+   gu_chance_pct=0 forced_rarity=None
+   scavenge_recipe=["moon_shadow_locked", "blood_moon_forged"]
+
+
+=== [D] REFINEMENT RECIPES ===
+recipe count = 392
+kind histogram = {'fixed': 14, 'advance': 377, 'free_mix': 1}
+output_rank distribution = {'2': 3, '3': 4, '4': 1, '5': 1, 'None': 383}
+recipes missing output_rank = 383
+recipes with materials field = 385 / 392
+recipes with stone_cost = 385 / 392
+stone_cost values = {6: 220, 10: 157, 12: 2, 24: 2, 40: 1, 50: 2, 60: 1}
+distinct gu used as input = 377
+
+-- MATERIAL usage in recipes (recipe_count, total_qty) --
+   materials referenced = 5
+   beast_bone                   recipes=378  total_qty=537
+   beast_blood                  recipes=3    total_qty=3
+   boar_king_tusk               recipes=2    total_qty=2
+   moon_dew                     recipes=1    total_qty=1
+   venom_sac                    recipes=1    total_qty=1
+   (unused materials) = ['moon_blue_petal', 'inheritance_token']
+
+-- top 15 gu used as recipe input --
+   small_light_gu                 5
+   moonlight_gu                   4
+   jade_skin_gu                   3
+   white_boar_strength_gu         3
+   moon_glow_gu                   2
+   moon_ray_gu                    2
+   blood_atk_1_08_gu              2
+   qi_mov_1_07_gu                 2
+   sword_atk_1_05_gu              2
+   sword_atk_1_06_gu              2
+   sword_def_1_07_gu              2
+   sword_mov_1_08_gu              2
+   sword_heal_1_09_gu             2
+   sword_rec_1_10_gu              2
+   stone_shell_gu                 1
+
+-- caravan_offers --
+count = 4
+[
+ {
+  "id": "buy_force_blow",
+  "kind": "buy",
+  "stone_cost": 5,
+  "output_gu_id": "force_gu"
+ },
+ {
+  "id": "buy_droplet",
+  "kind": "buy",
+  "stone_cost": 6,
+  "output_gu_id": "blood_droplet_gu"
+ },
+ {
+  "id": "buy_shell",
+  "kind": "buy",
+  "stone_cost": 5,
+  "output_gu_id": "stone_shell_gu"
+ },
+ {
+  "id": "caravan_mist_exchange",
+  "kind": "exchange",
+  "input_gu_ids": [
+   "small_light_gu",
+   "moonlight_gu"
+  ],
+  "stone_cost": 0,
+  "output_gu_id": "qi_mov_1_07_gu"
+ }
+]
+
+
+=== [E] GU VALUE TABLE (gu.json) ===
+gu count = 802
+rank histogram = {1: 220, 2: 157, 3: 180, 4: 97, 5: 147, 10: 1}
+rarity histogram = {'common': 368, 'epic': 249, 'rare': 185}
+explicit v1_effect = 57 / 802
+value formula: gu_value_by_rank = {'1': 3, '2': 5, '3': 8, '4': 12, '5': 20}
+gu_estimate_ratio = 6.5
+
+-- rarity x rank crosstab --
+   common     {1: 214, 2: 154}
+   epic       {1: 3, 2: 1, 4: 97, 5: 147, 10: 1}
+   rare       {1: 3, 2: 2, 3: 180}
+
+
+=== [F] SHOPS ===
+offer count = 37
+kind histogram = {'soul_boost': 1, 'purchase': 19, 'lifespan_deal': 1, 'barter': 1, 'wash_notoriety': 1, 'material_purchase': 3, 'recipe_unlock': 1, 'resource_trade': 5, 'gu_fang_unlock': 5}
+
+-- all offers --
+[00] {"id": "soul_pill", "kind": "soul_boost", "card_key": "soul_pill", "stone_cost": 6, "soul_gain": 1, "tier": 2}
+[01] {"id": "purchase_stone_shell", "kind": "purchase", "card_key": "purchase.stone_shell", "gu_id": "stone_shell_gu", "stone_cost": 6, "tier": 1}
+[02] {"id": "purchase_moonlight", "kind": "purchase", "card_key": "purchase.moonlight", "gu_id": "moonlight_gu", "stone_cost": 6, "tier": 3}
+[03] {"id": "lifespan_pulse_drum", "kind": "lifespan_deal", "card_key": "lifespan.pulse_drum", "gu_id": "qi_atk_1_01_gu", "lifespan_cost": 1, "tier": 2}
+[04] {"id": "barter_unknown_gu", "kind": "barter", "card_key": "barter.unknown_gu", "input_gu_ids": ["qi_rec_2_14_gu"], "clue": "merchant_sealed_cage", "rewards": [{"id": "reward_jade_cicada_shell", "relic_id": "jade_cicada_shell", "weight": 2}, {"id": "reward_empty_cage", "weight": 1}], "tier": 3}
+[05] {"id": "wash_notoriety", "kind": "wash_notoriety", "card_key": "wash.notoriety", "tier": 1}
+[06] {"id": "purchase_thunder_ward", "kind": "purchase", "card_key": "purchase.thunder_ward", "gu_id": "qi_atk_1_01_gu", "stone_cost": 9, "tier": 4}
+[07] {"id": "purchase_moon_glow", "kind": "purchase", "card_key": "purchase.moon_glow", "gu_id": "moon_glow_gu", "stone_cost": 12, "tier": 5}
+[08] {"id": "purchase_small_light_gu", "kind": "purchase", "card_key": "purchase.small_light", "gu_id": "small_light_gu", "stone_cost": 12, "tier": 1}
+[09] {"id": "purchase_moon_blue_petal", "kind": "material_purchase", "card_key": "purchase.moon_blue_petal", "material_id": "moon_blue_petal", "stone_cost": 3, "tier": 1}
+[10] {"id": "purchase_boar_king_tusk", "kind": "material_purchase", "card_key": "purchase.boar_king_tusk", "material_id": "boar_king_tusk", "stone_cost": 10, "tier": 1}
+[11] {"id": "purchase_jade_skin_gu", "kind": "purchase", "card_key": "purchase.jade_skin", "gu_id": "jade_skin_gu", "stone_cost": 30, "tier": 1}
+[12] {"id": "purchase_white_boar_strength_gu", "kind": "purchase", "card_key": "purchase.white_boar", "gu_id": "white_boar_strength_gu", "stone_cost": 35, "tier": 1}
+[13] {"id": "purchase_white_jade_recipe", "kind": "recipe_unlock", "card_key": "purchase.white_jade_recipe", "recipe_id": "white_jade_advance", "stone_cost": 60, "tier": 1}
+[14] {"id": "black_market_lifespan_for_soul", "kind": "resource_trade", "card_key": "bm.lifespan_for_soul", "cost_kind": "lifespan", "cost_amount": 20, "gain_kind": "soul", "gain_amount": 1, "tier": 1}
+[15] {"id": "black_market_soul_for_lifespan", "kind": "resource_trade", "card_key": "bm.soul_for_lifespan", "cost_kind": "soul", "cost_amount": 1, "gain_kind": "lifespan", "gain_amount": 10, "tier": 1}
+[16] {"id": "black_market_health_for_soul", "kind": "resource_trade", "card_key": "bm.health_for_soul", "cost_kind": "health", "cost_amount": 20, "gain_kind": "soul", "gain_amount": 1, "tier": 1}
+[17] {"id": "black_market_soul_for_health", "kind": "resource_trade", "card_key": "bm.soul_for_health", "cost_kind": "soul", "cost_amount": 1, "gain_kind": "health", "gain_amount": 10, "tier": 1}
+[18] {"id": "black_market_health_for_lifespan", "kind": "resource_trade", "card_key": "bm.health_for_lifespan", "cost_kind": "health", "cost_amount": 20, "gain_kind": "lifespan", "gain_amount": 10, "tier": 1}
+[19] {"id": "purchase_mending_grass", "kind": "purchase", "card_key": "purchase.mending_grass", "gu_id": "wood_atk_1_05_gu", "stone_cost": 8, "tier": 1}
+[20] {"id": "purchase_bone_knit", "kind": "purchase", "card_key": "purchase.bone_knit", "gu_id": "bone_atk_1_08_gu", "stone_cost": 14, "tier": 2}
+[21] {"id": "purchase_spring_heart", "kind": "purchase", "card_key": "purchase.spring_heart", "gu_id": "human_atk_1_01_gu", "stone_cost": 18, "tier": 3}
+[22] {"id": "purchase_moon_shadow_300", "kind": "purchase", "card_key": "purchase.moon_shadow_300", "gu_id": "moon_shadow_gu", "stone_cost": 40, "tier": 3}
+[23] {"id": "purchase_life_root", "kind": "purchase", "card_key": "purchase.life_root", "gu_id": "wood_atk_1_05_gu", "stone_cost": 20, "tier": 4}
+[24] {"id": "purchase_undying_vine", "kind": "purchase", "card_key": "purchase.undying_vine", "gu_id": "wood_atk_1_05_gu", "stone_cost": 20, "tier": 4}
+[25] {"id": "purchase_heaven_dew", "kind": "purchase", "card_key": "purchase.heaven_dew", "gu_id": "water_atk_1_08_gu", "stone_cost": 80, "tier": 5}
+[26] {"id": "purchase_inheritance_token", "kind": "material_purchase", "card_key": "purchase.inheritance_token", "material_id": "inheritance_token", "stone_cost": 60, "tier": 2}
+[27] {"id": "gu_fang_moon_glow_gu", "kind": "gu_fang_unlock", "card_key": "gu_fang.moon_glow_gu", "gu_id": "moon_glow_gu", "stone_cost": 80, "tier": 2, "clue": "古方：持方即知产物，免未知损失。"}
+[28] {"id": "gu_fang_white_jade_gu", "kind": "gu_fang_unlock", "card_key": "gu_fang.white_jade_gu", "gu_id": "white_jade_gu", "stone_cost": 80, "tier": 2, "clue": "古方：持方即知产物，免未知损失。"}
+[29] {"id": "gu_fang_blood_heal_2_23_gu", "kind": "gu_fang_unlock", "card_key": "gu_fang.blood_heal_2_23_gu", "gu_id": "blood_heal_2_23_gu", "stone_cost": 80, "tier": 2, "clue": "古方：持方即知产物，免未知损失。"}
+[30] {"id": "gu_fang_blood_atk_3_03_gu", "kind": "gu_fang_unlock", "card_key": "gu_fang.blood_atk_3_03_gu", "gu_id": "blood_atk_3_03_gu", "stone_cost": 200, "tier": 3, "clue": "古方：持方即知产物，免未知损失。"}
+[31] {"id": "gu_fang_blood_atk_3_11_gu", "kind": "gu_fang_unlock", "card_key": "gu_fang.blood_atk_3_11_gu", "gu_id": "blood_atk_3_11_gu", "stone_cost": 200, "tier": 3, "clue": "古方：持方即知产物，免未知损失。"}
+[32] {"id": "purchase_sword_atk_1_06", "kind": "purchase", "card_key": "purchase.sword_atk_1_06", "gu_id": "sword_atk_1_06_gu", "stone_cost": 8, "tier": 1, "school": "sword"}
+[33] {"id": "purchase_sword_atk_2_12", "kind": "purchase", "card_key": "purchase.sword_atk_2_12", "gu_id": "sword_atk_2_12_gu", "stone_cost": 18, "tier": 2, "school": "sword"}
+[34] {"id": "purchase_sword_def_3_14", "kind": "purchase", "card_key": "purchase.sword_def_3_14", "gu_id": "sword_def_3_14_gu", "stone_cost": 30, "tier": 3, "school": "sword"}
+[35] {"id": "purchase_sword_heal_4_16", "kind": "purchase", "card_key": "purchase.sword_heal_4_16", "gu_id": "sword_heal_4_16_gu", "stone_cost": 45, "tier": 4, "school": "sword"}
+[36] {"id": "purchase_sword_atk_5_02", "kind": "purchase", "card_key": "purchase.sword_atk_5_02", "gu_id": "sword_atk_5_02_gu", "stone_cost": 70, "tier": 5, "school": "sword"}
+
+
+=== [G] PACING (layers / stone budget) ===
+layers = {"1": {"rows": [8, 11], "row_nodes": [2, 6], "entry_nodes": [1, 2], "stone_budget": 12, "enemy_turn": 1, "enemy_rank_min": 0, "enemy_rank_max": 1, "loot": {"material_count": 2, "weights": {"common": 90, "rare": 10, "epic": 0}}, "shop_price_pct": 0, "shop_max_tier": 1, "anchors": [{"template": "yizang_ridge", "row": "pre_boss"}, {"template": "refinement_hollow", "row": "mid"}, {"template": "ridge_black_market", "row": "mid"}, {"template": "ridge_black_market", "row": "pre_boss"}, {"template": "ridge_black_market", "row": "quarter"}], "pool": ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"], "title": "青茅山外圍", "category_weights": {"battle": 82, "rest": 5, "unknown": 9, "trade": 4}}, "2": {"rows": [8, 11], "row_nodes": [2, 6], "entry_nodes": [1, 2], "stone_budget": 16, "enemy_turn": 2, "enemy_rank_min": 0, "enemy_rank_max": 2, "loot": {"material_count": 2, "weights": {"common": 80, "rare": 18, "epic": 2}}, "shop_price_pct": 10, "shop_max_tier": 2, "anchors": [{"template": "ridge_black_market", "row": "mid"}, {"template": "ridge_black_market", "row": "pre_boss"}, {"template": "refinement_hollow", "row": "mid"}, {"template": "ridge_black_market", "row": "quarter"}], "pool": ["iron_hide_ambush", "scout_crossing_raid", "beast_swarm_pass"], "title": "落瘴岭", "category_weights": {"battle": 80, "rest": 5, "unknown": 10, "trade": 5}}, "3": {"rows": [8, 11], "row_nodes": [2, 6], "entry_nodes": [1, 2], "stone_budget": 22, "enemy_turn": 3, "enemy_rank_min": 1, "enemy_rank_max": 3, "loot": {"material_count": 3, "weights": {"common": 70, "rare": 24, "epic": 6}}, "shop_price_pct": 20, "shop_max_tier": 3, "anchors": [{"template": "ridge_black_market", "row": "mid"}, {"template": "ridge_black_market", "row": "pre_boss"}, {"template": "refinement_hollow", "row": "mid"}, {"template": "ridge_black_market", "row": "quarter"}], "pool": ["scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"], "title": "血蟒涧", "category_weights": {"battle": 78, "rest": 5, "unknown": 11, "trade": 6}}, "4": {"rows": [8, 11], "row_nodes": [2, 6], "entry_nodes": [1, 2], "stone_budget": 28, "enemy_turn": 4, "enemy_rank_min": 2, "enemy_rank_max": 4, "loot": {"material_count": 3, "weights": {"common": 60, "rare": 28, "epic": 12}}, "shop_price_pct": 35, "shop_max_tier": 4, "anchors": [{"template": "ridge_black_market", "row": "mid"}, {"template": "ridge_black_market", "row": "pre_boss"}, {"template": "refinement_hollow", "row": "mid"}, {"template": "ridge_black_market", "row": "quarter"}], "pool": ["faction_guard_checkpoint", "wolf_pack_trail", "scout_crossing_raid"], "title": "万蛊窟", "category_weights": {"battle": 76, "rest": 5, "unknown": 12, "trade": 7}}, "5": {"rows": [8, 11], "row_nodes": [2, 6], "entry_nodes": [1, 2], "stone_budget": 35, "enemy_turn": 5, "enemy_rank_min": 3, "enemy_rank_max": 5, "loot": {"material_count": 4, "weights": {"common": 50, "rare": 30, "epic": 20}}, "shop_price_pct": 50, "shop_max_tier": 5, "anchors": [{"template": "ridge_black_market", "row": "mid"}, {"template": "ridge_black_market", "row": "pre_boss"}, {"template": "refinement_hollow", "row": "mid"}, {"template": "ridge_black_market", "row": "quarter"}], "pool": ["wolf_pack_trail", "faction_guard_checkpoint", "iron_hide_ambush"], "title": "瘴脉深處", "category_weights": {"battle": 74, "rest": 5, "unknown": 13, "trade": 8}}}
+advance_bonus_by_rank = {"1": 0, "2": 1, "3": 3, "4": 6, "5": 10}
+lifespan_milestones = {"stage_one_ledger": 10, "boss_defeated": 10}
+turn_scaling = {"hp_add_per_turn": 2, "damage_add_per_turn": 1, "hp_cap_bonus": 6, "damage_cap_bonus": 2}
+
+
+=== [H] ENEMIES ===
+enemy count = 32
+first enemy sample = {"id": "neutral_stone_wanderer", "theme": "neutral", "grade": "cultivator", "tier": "common", "rank": 1, "hp": 4, "clues": ["stone_dust", "steady_stance"], "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2, "speed": 1}, "reactions": [{"id": "stone_shell", "clue": "stone_dust", "window": "before_damage", "trigger": "direct_strike", "counter_status": "bound", "label": "石甲护身"}]}
+tier/role histogram = {'common': 13, 'elite': 12, 'boss': 7}
+
+
+=== [I] NODES — economy-relevant types ===
+nodes type = dict
+keys = ['nodes', 'ascension_node']
+  nodes -> [{"id": "neutral_wanderer", "stage": "one", "type": "contact", "enemy_kind": "neutral_stone_wanderer", "enemy_theme": "neutral", "visible": true, "start": true, "summary": "一名散修拦在岔路前，正试探你的虚实。", "choices": ["negotiate", "deceive", "fight", "retreat"], "time_scale": "hours", "on_skip": "alerted", "next_ids": ["beast_swarm_pass", "moonlit_trail"]}, {"id": "ridge_caravan", "stage": "one", "type": "car
+  ascension_node -> {"id": "ascension_window", "stage": "five", "type": "ascension", "visible": false, "choices": ["attempt_ascension", "prepare", "retreat"], "time_scale": "days", "on_skip": "survived_failure", "next_ids": []}
+node type histogram = {'ascension': 1}

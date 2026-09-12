@@ -414,6 +414,9 @@ static func _append_refinement_cards(cards: Array[Dictionary], state: RunState, 
 			"free_mix":
 				_append_free_mix_card(cards, state, recipe, knowledge, catalog)
 			_:
+				# fixed / advance / promotion 共用配方卡：三者的成本与门禁形状一致，
+				# 差异只在执行分支（见 refine_command_rules._apply_*）。promotion 的
+				# 产出转数由输入实例 rank 决定，故卡片沿用同一渲染即可。
 				_append_recipe_card(cards, state, recipe, catalog)
 	_append_leave_card(cards, state)
 
@@ -447,6 +450,23 @@ static func _append_recipe_card(cards: Array[Dictionary], state: RunState, recip
 		if int(state.materials.get(material_id, 0)) < int(materials[material_id]):
 			missing_materials.append(material_id)
 	var affordable := int(state.stone) >= stone_cost
+	# 2026-09-12（Q8-G Batch 1-A Gate 3）：转数门禁必须与执行侧同形。执行侧在
+	# _apply_fixed_recipe / _apply_promotion_recipe 里先判 input_min_rank 再扣料，
+	# 预览若不看它，rank 不足的配方会显示成「可执行」，玩家点了才被拒——
+	# 正是"看得见做不到"。这里按同一规则算，并把最缺的那只实例转数报出来。
+	var min_rank := int(recipe.get("input_min_rank", 0))
+	var rank_short := false
+	var observed_rank := 1
+	if min_rank > 0:
+		observed_rank = _lowest_selected_rank(state, inputs)
+		rank_short = observed_rank < min_rank
+	if not codex_ok:
+		reason = str(recipe.get("locked_reason", "尚未获得该蛊方，无法按此配方合炼。"))
+	elif not missing.is_empty():
+		reason = "缺少%s。" % _gu_names(missing)
+	elif rank_short:
+		executable = false
+		reason = "输入蛊转数不足（需 %d 转，现有 %d 转）。" % [min_rank, observed_rank]
 	if executable and not missing_materials.is_empty():
 		executable = false
 		reason = "缺少材料%s。" % _material_names(missing_materials)
@@ -1123,6 +1143,32 @@ static func _missing_gu(owned: Array[String], required: Array) -> Array[String]:
 		else:
 			remaining.remove_at(index)
 	return missing
+
+
+## 预览侧转数门禁：取"将被投入炉中的那些实例"的最低转数。执行侧按 definition
+## 逐个取首个 refined 实例（多集语义），这里用同一套配对规则（配对即移除），
+## 缺货时返回 1 —— 缺货本身已由 _missing_gu 拦下，不叠加报错。
+static func _lowest_selected_rank(state: RunState, required: Array) -> int:
+	var remaining: Array[String] = []
+	for instance_id_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+		var instance_id := str(instance_id_value)
+		if str(state.gu_instances.get(instance_id, {}).get("state", "")) == "refined":
+			remaining.append(instance_id)
+	var lowest := -1
+	for item in required:
+		var gu_id := str(item)
+		var matched := ""
+		for instance_id in remaining:
+			if str(state.gu_instances.get(instance_id, {}).get("definition_id", "")) == gu_id:
+				matched = instance_id
+				break
+		if matched.is_empty():
+			return 1
+		remaining.erase(matched)
+		var rank := int(state.gu_instances.get(matched, {}).get("rank", 1))
+		if lowest < 0 or rank < lowest:
+			lowest = rank
+	return lowest if lowest > 0 else 1
 
 
 static func _requirements_reason(missing: Array[String], stone: int, required_stone: int) -> String:

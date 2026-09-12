@@ -728,6 +728,18 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			var adv_inputs: Array = recipe.get("input_gu_ids", [])
 			if adv_inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(adv_inputs[0]):
 				errors.append("advance recipe %s must map one same-name gu onto itself" % recipe.get("id", ""))
+		# Q8-G Batch 1-A Gate 1 / Gate 7: promotion is a cross-definition step
+		# (Rank N -> Rank N+1 of a DIFFERENT gu definition). If output == input
+		# this recipe is really an `advance`, so reject it at load time rather
+		# than let the two semantics blur at runtime.
+		if str(recipe.get("kind", "")) == "promotion":
+			var promo_inputs: Array = recipe.get("input_gu_ids", [])
+			if promo_inputs.size() != 1:
+				errors.append("promotion recipe %s must take exactly one input gu" % recipe.get("id", ""))
+			elif str(recipe.get("output_gu_id", "")) == str(promo_inputs[0]):
+				errors.append("promotion recipe %s must change gu definition (use advance for same-name rank up)" % recipe.get("id", ""))
+			if str(recipe.get("output_gu_id", "")).is_empty():
+				errors.append("promotion recipe %s needs an output_gu_id" % recipe.get("id", ""))
 		for rank_field in ["output_rank", "input_min_rank"]:
 			var rank_value = recipe.get(rank_field, null)
 			if rank_value != null and (not _is_integral(rank_value) or int(rank_value) < 1 or int(rank_value) > 5):
@@ -747,7 +759,7 @@ static func validate(catalog: Dictionary) -> Array[String]:
 				errors.append("recipe %s failure references unknown curse %s" % [recipe["id"], fail_curse_id])
 		# D1: curated (hand-authored) recipes must name their novel source; the
 		# generated advance table is derived, so it is exempt.
-		if str(recipe.get("kind", "")) in ["fixed", "free_mix"]:
+		if str(recipe.get("kind", "")) in ["fixed", "free_mix", "promotion"]:
 			if str(recipe.get("source", "")).strip_edges().is_empty():
 				errors.append("curated recipe %s needs a non-empty source" % recipe.get("id", ""))
 		# D1 v2 schema: inputs:[{school, rank, count}] is optional next to the

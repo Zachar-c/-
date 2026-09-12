@@ -81,6 +81,8 @@ static func _refine_gu(state: RunState, command: Dictionary, catalog: Dictionary
 	match str(recipe.get("kind", "combine")):
 		"fixed", "advance":
 			return _apply_fixed_recipe(state, command, catalog, recipe)
+		"promotion":
+			return _apply_promotion_recipe(state, command, catalog, recipe)
 		"free_mix":
 			return _apply_free_mix(state, command, catalog, recipe)
 	return _apply_combine_recipe(state, command, catalog, recipe)
@@ -250,6 +252,53 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	if stone_cost > 0:
 		next.stone = paid.stone - stone_cost
 	return Resolver._accepted(next)
+
+
+## Q8-G Batch 1-A：promotion = 跨 definition 的定向晋升（Rank N → Rank N+1 的**另一个**蛊）。
+## 与 advance 的语义边界（Gate 7）：
+##   advance   → 同 definition，实例 rank +1
+##   promotion → 消耗输入实例，产出**不同** definition，rank = 输入 rank + 1
+## 数据层由 content_catalog 静态锁死 `output_gu_id != input_gu_ids[0]`（Gate 1）。
+static func _apply_promotion_recipe(state: RunState, command: Dictionary, catalog: Dictionary, recipe: Dictionary) -> Dictionary:
+	var inputs: Array = recipe.get("input_gu_ids", [])
+	if inputs.size() != 1:
+		return Resolver._rejected(state, "invalid_promotion_recipe")
+	var input_gu_id := str(inputs[0])
+	var output_gu_id := str(recipe.get("output_gu_id", ""))
+	# 语义隔离硬门禁：output 必须是另一个 definition，否则这就是 advance。
+	if output_gu_id.is_empty() or output_gu_id == input_gu_id:
+		return Resolver._rejected(state, "invalid_promotion_recipe")
+	if not recipe_unlocked(state, recipe):
+		return Resolver._rejected(state, "refinement_recipe_locked")
+	var stone_cost := int(recipe.get("stone_cost", 0))
+	if stone_cost > 0 and state.stone < stone_cost:
+		return Resolver._rejected(state, "insufficient_stone")
+	var material_cost: Dictionary = recipe.get("materials", {})
+	# 与 fixed 同序：定位输入 → 容量 → 缺料，全部拒绝都发生在烧材料之前。
+	var preselected := _selected_input_instance_ids(state, command, inputs)
+	if preselected.is_empty():
+		return Resolver._rejected(state, "missing_refinement_input")
+	if inputs.size() + _recipe_material_pieces(material_cost) > SoulCapacityScript.craft_cap(state):
+		return Resolver._rejected(state, "refinement_capacity_exceeded")
+	if not _has_all_materials(state, material_cost):
+		return Resolver._rejected(state, "missing_refinement_material")
+	# 转数门禁同样先于扣料：输入 rank 必须等于配方声明的 input_min_rank（缺省 1），
+	# 且输入 rank 不能已是 5（+1 后无处可去）。事后拒绝会留下"拒绝却仍消耗"。
+	var input_instance_id := str(preselected[0])
+	var input_rank := int(state.gu_instances.get(input_instance_id, {}).get("rank", 1))
+	var min_rank := int(recipe.get("input_min_rank", 1))
+	if input_rank < min_rank:
+		return Resolver._rejected(state, "refinement_input_rank_insufficient")
+	if input_rank >= 5:
+		return Resolver._rejected(state, "promotion_capped")
+	var paid := _spend_materials(state, material_cost)
+	# 产出的定义转数必须与"输入 rank + 1"一致，否则链会脱轨。
+	var output_rank := input_rank + 1
+	# 复用 _add_gu_transaction：它经 GuInstance.transaction_ledger 统一落
+	# gu_instances + cave_aperture（含显式 output_rank），并消费输入实例。
+	# consume_instance_ids 传**选中那只**：promotion 的转数门禁是按它算的，
+	# 若只传 definition 会让 ledger 退回"首个同名实例"，出现"校验 A 消耗 B"。
+	return _add_gu_transaction(paid, output_gu_id, stone_cost, [input_gu_id], "promotion_succeeded", ["recipe:%s" % str(recipe["id"])], catalog, output_rank, [input_instance_id])
 
 
 static func _selected_input_instance_ids(state: RunState, command: Dictionary, inputs: Array) -> Array[String]:
@@ -677,10 +726,10 @@ static func _offer(catalog: Dictionary, offer_id: String, kind: String) -> Dicti
 	return offer
 
 
-static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String, extra_targets: Array = [], catalog: Dictionary = {}, output_rank: int = 0) -> Dictionary:
+static func _add_gu_transaction(state: RunState, output_gu_id: String, stone_cost: int, inputs: Array, reason: String, extra_targets: Array = [], catalog: Dictionary = {}, output_rank: int = 0, consume_instance_ids: Array = []) -> Dictionary:
 	# 2026-09-03 修复：实例记账见 GuInstance.transaction_ledger（产出蛊必须
 	# 落 gu_instances + 洞天，否则 V1 战斗看不见且会被下次 sync 抹掉）。
-	var ledger := GuInstance.transaction_ledger(state.gu_instances, state.cave_aperture, output_gu_id, catalog, inputs, output_rank)
+	var ledger := GuInstance.transaction_ledger(state.gu_instances, state.cave_aperture, output_gu_id, catalog, inputs, output_rank, consume_instance_ids)
 	# 2026-09-05 切片护栏：未知产出定义在原石/原蛊/事件落地之前直接拒绝，避免
 	# 下游 sync_legacy_gu_projections 把一个不存在的 gu_id 复活进 legacy 投影。
 	if not str(ledger.get("error", "")).is_empty():
