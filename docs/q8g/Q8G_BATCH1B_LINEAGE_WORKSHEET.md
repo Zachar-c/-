@@ -4,7 +4,7 @@
 > - **本单不改代码、不改 balance、不碰商店、不碰战斗、不写 recipe/loot JSON。**
 > - **上游（唯一 normative source）**：`docs/q8g/Q8G_BATCH0_RULING.md` §6（promotion 语义冻结）
 > - **前置**：`Q8G_BATCH1A_WORKSHEET.md` 已收口（promotion schema 验证完成，Gate 1–7 全绿）
-> - **状态**：✅ **1-B1-d 施工完成（v3.14）——19/20 派 promotion 骨架全落**（76 条配方 / 80 种材料；红线 Gate 首次真实咬合：sword 链因飞剑蛊直取价 70 石下调为 6/8/12/18）；聚焦 10/10、全量 unit 1418/1418、交互闭环全绿（Refine 可点 455→475）；记录见 `Q8G_1B1D_PROMOTION_BATCH.md`。bone 暂缓维持；下一阶段 **1-C（战斗产石）**
+> - **状态**：✅ **1-B1-d CLOSED（v3.15）——Batch 1 的 19/20 派 promotion 骨架正式完成**（76 条配方 / 80 种材料；红线 Gate 首次真实咬合并归档审计拆解：sword 累计 66 = 44 石 + 22 材料 value < 直取 70）；聚焦 10/10、全量 unit 1418/1418、交互闭环全绿（Refine 可点 455→475）；记录见 `Q8G_1B1D_PROMOTION_BATCH.md`。bone 暂缓维持；下一阶段 **1-C（战斗产石）**
 > - **硬红线（继承 1-A）**：🔴 禁止引入 `gu_family_id`；🔴 每步 `output_gu_id != input_gu_ids[0]`；🔴 每步严格 +1 转不得跳级
 
 > **v2 修订记录（2026-09-13，用户裁定原文要点）**：
