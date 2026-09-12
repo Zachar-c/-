@@ -11,6 +11,7 @@ extends RefCounted
 # 非战斗蛊自动过滤。
 
 const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
+const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
 
 const DEFAULT_PHASE := "player_action"
 
@@ -317,7 +318,7 @@ static func effect_reason(effect: Variant) -> String:
 	if data.is_empty():
 		return ""
 	var kind := str(data.get("kind", ""))
-	const SUPPORTED := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift"]
+	const SUPPORTED := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent"]
 	if not SUPPORTED.has(kind):
 		return "unknown_effect"
 	return ""
@@ -386,6 +387,11 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			var amount := int(effect.get("amount", 0))
 			# S4 元素协同：吃到本回合已登记的同流派支援（透明度：battle.turn_supports）。
 			amount += int((next.get("turn_supports", {}) as Dictionary).get(str(slot.get("school", "")), 0))
+			# Q7 阶段 A（2026-09-12）：剑意作用域硬边界——只加成剑道 strike，
+			# 且只在此处计算后随 amount 进 _strike_enemy；杀招/刻痕划伤/拳脚/
+			# heal_and_strike 直调或走别的通道，结构性吃不到（计划 §0-2）。
+			if str(slot.get("school", "")) == "sword":
+				amount += SchoolRulesScript.sword_intent(next)
 			if bool(effect.get("aoe", false)):
 				# S2 十转杀蛊：群体打击——对本场全部存活敌人各结算一次。
 				for enemy_value in (next.get("enemies", []) as Array):
@@ -413,6 +419,11 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 			# 因 distance 恒 0 自动失效（死路径保留，待清理批次删除）。
 			# 推翻：specs/2026-09-12-shift-distance-spec.md 的距离减伤模型。
 			next["player"]["shield"] = int(next["player"].get("shield", 0)) + int(effect.get("amount", 1))
+		"sword_intent":
+			# Q7 阶段 A（2026-09-12）：剑意叠层（不消费，跨回合存续，回合末减半）。
+			var intent_amount := int(effect.get("amount", 1))
+			SchoolRulesScript.add_sword_intent(next, intent_amount)
+			_log(next, "sword_intent", str(intent_amount))
 	# S4 元素协同：支援类子键（随任意 kind 叠加）——登记后本回合内该流派
 	# 后续蛊伤害 +support_bonus；end_turn 统一清零，不跨回合。
 	var support_school := str(effect.get("support_school", ""))
@@ -644,6 +655,8 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 	next = _settle_marks(next)
 	if _is_over(next):
 		return _result(next, true, "")
+	# Q7 阶段 A：剑意跨回合衰减（50% 向下取整，school_rules 落桩语义）。
+	SchoolRulesScript.decay_sword_intent(next)
 	next["turn"] = int(next["turn"]) + 1
 	next = _start_player_turn(next)
 	return _result(next, true, "")

@@ -1157,7 +1157,7 @@ static func _validate_slice_contract(catalog: Dictionary) -> Array[String]:
 	return errors
 
 
-const V1_EFFECT_KIND_IDS := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift"]
+const V1_EFFECT_KIND_IDS := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent"]
 const V1_STATUS_IDS := ["marked", "bound"]
 
 

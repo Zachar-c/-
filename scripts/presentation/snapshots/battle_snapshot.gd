@@ -34,6 +34,8 @@ static func build_battle(controller) -> Dictionary:
 	out["flee_available"] = not BattleCommandFacadeScript.boss_blocks_retreat(battle_data)
 	# S4 元素协同：本回合流派支援随快照透出（透明度红线）。
 	out["turn_supports"] = battle_turn_supports(battle_data)
+	# Q7 阶段 A（2026-09-12）：剑意层数透出（跨回合存续，回合末减半）。
+	out["sword_intent"] = int(battle_data.get("sword_intent", 0))
 	out["synthesis"] = RunSnapshotBuilder._synthesis_options(state, catalog)
 	out["can_ultimate"] = false
 	out["dda_boss_hint"] = str(battle_data.get("dda_boss_hint", ""))
