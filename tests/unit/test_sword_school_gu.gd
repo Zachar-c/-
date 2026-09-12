@@ -579,50 +579,42 @@ func test_sword_ascension_refuses_when_materials_missing() -> void:
 	assert_false(bool(out["result"].get("ok", true)), "缺兽骨时必须拒绝")
 
 
-# ── 真机验收：位移（shift）必须有实际意义 ────────────────────────────
-# 规格：docs/superpowers/specs/2026-09-12-shift-distance-spec.md
-# 位移此前是死数据：player.position 只有写入（初始化 0 / shift 累加），
-# 全仓无读取点。现在：拉开距离 ⇒ 本回合敌人近身伤害递减（封顶 60%），
-# 敌人回合末逼近 pursuit 格 ⇒ 位移是「本回合减伤」而非永久免伤。
+# ── Q8 裁定（2026-09-12）：位移同比转化为防御力 ──────────────────────
+# 用户裁定推翻距离减伤模型（specs/2026-09-12-shift-distance-spec.md）：
+# 不实现闪避/位移/攻击距离，shift 一律转译为等量护盾；position 不再推进，
+# 距离减伤/敌人追击因 distance 恒 0 自动失效（死路径，待清理批次删除）。
+# 卡牌文字同步改为「退守：护盾 +N」（snapshot_text_util）。
 
-func _battle_at_distance(distance: int, damage: int) -> Dictionary:
+func _battle_with_movement(damage: int) -> Dictionary:
 	var enemy := _enemy()
 	enemy["intent"] = {"kind": "attack", "label": "测试意图", "damage": damage}
 	var battle := V1.start(_run_with_sword(["sword_mov_1_08_gu"]), catalog, [enemy])
-	battle["player"]["position"] = distance
 	battle["player"]["hp"] = 100
 	return battle
 
 
-func _damage_taken_at(distance: int, damage: int) -> int:
-	var battle := _battle_at_distance(distance, damage)
-	var before := int(battle["player"]["hp"])
+func test_shift_grants_equivalent_shield() -> void:
+	var battle := _battle_with_movement(10)
+	var out := V1.player_action(battle, {"type": "play_gu", "slot_index": 0})
+	assert_true(out["result"]["ok"], "位移蛊可出：%s" % str(out["result"]))
+	assert_eq(int(out["battle"]["player"]["shield"]), 1, "shift amount 1 → 同比护盾 +1")
+
+
+func test_shift_no_longer_advances_position() -> void:
+	var battle := _battle_with_movement(10)
+	var out := V1.player_action(battle, {"type": "play_gu", "slot_index": 0})
+	assert_eq(int(out["battle"]["player"].get("position", 0)), 0,
+		"position 不再推进（距离系统随 Q8 裁定失效）")
+
+
+func test_legacy_distance_reduction_is_inert() -> void:
+	# 行为保持对照：即使外部注入 position>0（旧存档兼容），敌人追击收敛后
+	# 新结算不再产生距离减伤——这里只锁「shift 不再写 position」的传播面。
+	var battle := _battle_with_movement(10)
+	battle["player"]["position"] = 3
 	var ended := V1.player_action(battle, {"type": "end_turn"})
-	return before - int(ended["battle"]["player"]["hp"])
-
-
-func test_shift_distance_reduces_enemy_damage_and_caps_at_sixty_percent() -> void:
-	assert_eq(_damage_taken_at(0, 10), 10, "距离 0 伤害不变（行为保持红线）")
-	assert_eq(_damage_taken_at(3, 10), 7, "距离 3 每格减 1 → 7")
-	assert_eq(_damage_taken_at(50, 10), 4, "封顶 60%：保留 40% = 4，距离不是免伤")
-
-
-func test_enemy_pursuit_closes_distance_each_turn() -> void:
-	# 否则玩家一路 shift 就能永久减伤。
-	var battle := _battle_at_distance(2, 10)
-	var ended := V1.player_action(battle, {"type": "end_turn"})
-	assert_eq(int(ended["battle"]["player"]["position"]), 1, "回合末敌人逼近 1 格")
-
-
-func test_non_attack_intents_ignore_distance() -> void:
-	# 边界（规格 §3.4）：封印/摄魂/寿元损耗不靠近身，不吃距离减免。
-	var enemy := _enemy()
-	enemy["intent"] = {"kind": "soul_drain", "label": "摄魂", "soul_drain": 1}
-	var battle := V1.start(_run_with_sword(["sword_mov_1_08_gu"]), catalog, [enemy])
-	battle["player"]["position"] = 5
-	var soul_before := int(battle["player"]["soul"])
-	var ended := V1.player_action(battle, {"type": "end_turn"})
-	assert_eq(int(ended["battle"]["player"]["soul"]), soul_before - 1, "摄魂不受距离影响")
+	assert_eq(int(ended["battle"]["player"].get("position", 0)), 2,
+		"旧 position 仍按追击规则收敛（死路径兼容，不新增减伤入口）")
 
 
 func test_sword_run_shop_shelves_sword_gu() -> void:

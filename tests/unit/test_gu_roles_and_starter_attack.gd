@@ -87,7 +87,7 @@ func test_starter_combat_gu_are_usable_and_have_observable_effects() -> void:
 func test_starter_gu_effect_projection_is_chinese_and_exact() -> void:
 	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "status", "name": "marked", "amount": 1}}), "标记 1 层")
 	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "heal_and_strike", "heal": 2, "amount": 1}}), "恢复 2 气血并造成 1 伤害")
-	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "shift", "amount": 1}}), "位移 1 格")
+	assert_eq(SnapshotBuilderScript._v1_effect_text({"effect": {"kind": "shift", "amount": 1}}), "退守：护盾 +1")  # Q8：位移转防御
 
 
 func test_starter_gu_costs_and_effect_facts_are_logged() -> void:

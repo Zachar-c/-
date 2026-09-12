@@ -71,5 +71,6 @@ static func _v1_effect_text(source: Dictionary) -> String:
 		"status":
 			return "%s %d 层" % [_status_label(str(effect.get("name", ""))), int(effect.get("amount", 0))]
 		"shift":
-			return "位移 %d 格" % int(effect.get("amount", 1))
+			# Q8 裁定：位移转译为防御，卡牌文字与实际结算一致。
+			return "退守：护盾 +%d" % int(effect.get("amount", 1))
 	return "效果未明"

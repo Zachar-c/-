@@ -69,13 +69,15 @@ func test_status_effect_stacks_on_enemy() -> void:
 	assert_eq(str(battle.get("last_effect_target", "")), "v1_test_enemy")
 
 
-func test_shift_effect_moves_player_position() -> void:
+func test_shift_effect_converts_to_shield() -> void:
+	# Q8 裁定（2026-09-12）：位移同比转化为防御——shift amount → 等量护盾。
 	var battle := _battle([{"definition_id": "v1_effect_test_gu", "rank": 1}], _enemy("attack", 0))
 	var shift_slot: Dictionary = battle["gu_slots"][0].duplicate(true)
 	shift_slot["effect"] = {"kind": "shift", "amount": 2}
 	battle["gu_slots"][0] = shift_slot
 	var out := V1.play_gu(battle, 0)
-	assert_eq(int(out["battle"]["player"].get("position", 0)), 2)
+	assert_eq(int(out["battle"]["player"].get("shield", 0)), 2)
+	assert_eq(int(out["battle"]["player"].get("position", 0)), 0)
 
 
 func test_shield_effect_adds_to_player_shield() -> void:

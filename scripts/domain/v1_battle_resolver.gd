@@ -407,7 +407,12 @@ static func _apply_effect(battle: Dictionary, slot: Dictionary, target_key: Stri
 		"status":
 			next = _apply_enemy_status(next, effect, target_key)
 		"shift":
-			next["player"]["position"] = int(next["player"].get("position", 0)) + int(effect.get("amount", 1))
+			# ⚠️ 2026-09-12 用户裁定（Q8）：位移同比转化为防御力——
+			# 不实现闪避/位移/攻击距离，shift 一律转译为等量护盾。
+			# position 不再推进 ⇒ _distance_adjusted_damage / _enemy_pursuit
+			# 因 distance 恒 0 自动失效（死路径保留，待清理批次删除）。
+			# 推翻：specs/2026-09-12-shift-distance-spec.md 的距离减伤模型。
+			next["player"]["shield"] = int(next["player"].get("shield", 0)) + int(effect.get("amount", 1))
 	# S4 元素协同：支援类子键（随任意 kind 叠加）——登记后本回合内该流派
 	# 后续蛊伤害 +support_bonus；end_turn 统一清零，不跨回合。
 	var support_school := str(effect.get("support_school", ""))
