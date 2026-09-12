@@ -592,9 +592,20 @@ static func _strike_enemy(battle: Dictionary, amount: int, target_key: String = 
 	return next
 
 
+## Q8-POST（2026-09-12）：存活唯一事实来源 = `hp > 0`。
+## 缺陷背景：本文件原以 `alive` 字段判存活，而 v1_grammar_pipeline / action_preview_service /
+## battle_snapshot 三方均以 `hp > 0`（或 `alive && hp > 0`）判——同一概念两个来源。
+## 一旦 hp 归零而 alive 未同步，selector 认为敌已死、行动队列认为敌还活着，
+## 且 _check_victory 永远看不到全灭（结果不可预见）。
+## 现统一口径：hp 归零即不可行动、不可选中、计入全灭。
+## alive 字段保留（快照/表现层消费，写入口仍同步），但不再是权威判定。
+static func _enemy_is_alive(enemy: Dictionary) -> bool:
+	return int(enemy.get("hp", 0)) > 0
+
+
 static func _current_enemy_index(battle: Dictionary) -> int:
 	for i in (battle["enemies"] as Array).size():
-		if bool(battle["enemies"][i]["alive"]):
+		if _enemy_is_alive(battle["enemies"][i]):
 			return i
 	return -1
 
@@ -604,7 +615,7 @@ static func _enemy_index(battle: Dictionary, target_key: String) -> int:
 	if not target_key.is_empty():
 		for i in (battle["enemies"] as Array).size():
 			var enemy: Dictionary = battle["enemies"][i]
-			if str(enemy.get("id", "")) == target_key and bool(enemy.get("alive", false)):
+			if str(enemy.get("id", "")) == target_key and _enemy_is_alive(enemy):
 				return i
 	return _current_enemy_index(battle)
 
@@ -747,9 +758,9 @@ static func end_turn(battle: Dictionary) -> Dictionary:
 	for i in (next["gu_slots"] as Array).size():
 		next["gu_slots"][i] = (next["gu_slots"][i] as Dictionary).duplicate(true)
 		next["gu_slots"][i]["used_this_turn"] = false
-	# 敌人回合
+	# 敌人回合（Q8-POST：存活判定统一为 hp > 0，见 _enemy_is_alive）
 	for i in (next["enemies"] as Array).size():
-		if not bool(next["enemies"][i]["alive"]):
+		if not _enemy_is_alive(next["enemies"][i]):
 			continue
 		next = _resolve_enemy_intent(next, i)
 		if _is_over(next):
@@ -797,7 +808,7 @@ static func _settle_marks(battle: Dictionary) -> Dictionary:
 		return next
 	for i in (next["enemies"] as Array).size():
 		var enemy: Dictionary = next["enemies"][i]
-		if not bool(enemy.get("alive", true)):
+		if not _enemy_is_alive(enemy):
 			continue
 		var layers := int((enemy.get("statuses", {}) as Dictionary).get("marked", 0))
 		if layers <= 0:
@@ -1000,8 +1011,10 @@ static func _mark_death(battle: Dictionary, cause: String) -> Dictionary:
 
 
 static func _check_victory(battle: Dictionary) -> void:
+	# Q8-POST：全灭判定同样以 hp > 0 为准——hp 归零的敌即使 alive 遗留 true
+	# 也计入全灭，避免「打不死的敌人」。
 	for enemy in battle["enemies"]:
-		if bool(enemy["alive"]):
+		if _enemy_is_alive(enemy):
 			return
 	battle["phase"] = "victory"
 	battle["result"] = {"outcome": "victory"}

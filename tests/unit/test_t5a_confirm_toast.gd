@@ -97,6 +97,18 @@ func _host_has_text(host: Node, wanted: String) -> bool:
 	return false
 
 
+## 按遍历序收集指定文案的可点按钮（用于「一行一执行按钮」的卡片式 screen）。
+func _collect_buttons_by_text(host: Node, text: String) -> Array:
+	var buttons: Array = []
+	var labels: Array = []
+	_collect_controls(host, buttons, labels)
+	var out: Array = []
+	for b in buttons:
+		if str(b.text) == text and not b.disabled:
+			out.append(b)
+	return out
+
+
 func test_save_run_feedback_uses_continue_wording() -> void:
 	var controller := _new_controller()
 	var result := controller.submit_command({"type": "save_run"})
@@ -312,8 +324,17 @@ func test_npc_talk_buttons_use_snapshot_labels_and_unique_action_ids() -> void:
 	for _i in 3:
 		await get_tree().process_frame
 
+	# 实现形态（npc_screen_view._build_talk_row）：每条 talk_option 渲染为
+	# 「标题 Label（= 快照 label）+ 固定文案「执行」按钮」的卡片行。
+	# 因此断言分两段：① label 作为可见文本出现；② 按行序点「执行」派发各自 action_id。
+	# （原断言把 label 当作按钮文案，与卡片式实现不符——非 flaky，是断言过时。）
 	var labels := ["友善攀谈", "诈言诓骗", "出手试探", "退避三舍"]
 	for label in labels:
-		assert_true(_press_button(host, label), "%s must be a real clickable button" % label)
+		assert_true(_host_has_text(host, label), "%s must render as visible text" % label)
+
+	var exec_buttons := _collect_buttons_by_text(host, "执行")
+	assert_eq(exec_buttons.size(), labels.size(), "one 执行 button per talk option")
+	for button in exec_buttons:
+		button.pressed.emit()
 	assert_eq(talked, ["friendly_chat", "deceive", "probe", "withdraw"],
-			"each talk label must dispatch its own action_id")
+			"each talk row must dispatch its own action_id")
