@@ -145,6 +145,11 @@ static func default_v1_effect(definition: Dictionary, role_table: Dictionary) ->
 	var kind := str(effect.get("kind", ""))
 	if RANK_SCALED_KINDS.has(kind):
 		effect["amount"] = int(effect.get("amount", 1)) + maxi(0, int(definition.get("rank", 1)) - 1)
+	# Q7 阶段 B2（2026-09-12）：兜底表支援键——"self" 哨兵注入流派，bonus 随 rank 梯度。
+	if str(effect.get("support_school", "")) == "self":
+		effect["support_school"] = str(definition.get("school", ""))
+	if effect.has("support_bonus"):
+		effect["support_bonus"] = int(effect.get("support_bonus", 0)) + maxi(0, int(definition.get("rank", 1)) - 1)
 	return effect
 
 

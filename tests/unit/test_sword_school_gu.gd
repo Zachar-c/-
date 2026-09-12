@@ -386,9 +386,10 @@ func _battle_with_marks(layers: int, extra: Dictionary = {}) -> Dictionary:
 
 
 func test_mark_scratch_damages_enemy_at_end_turn() -> void:
-	# 端到端：出青锋蛊（recon → status marked 1 层）→ 回合末结算 1 点。
-	var battle := V1.start(_run_with_sword(["sword_rec_1_10_gu"]), catalog, [_enemy()])
-	var slot := _slot_index_by_def(battle, "sword_rec_1_10_gu")
+	# 端到端：出非剑道侦察蛊（recon 兜底 → status marked 1 层，Q7 B2 后剑道
+	# 侦察蛊已改走 sword_intent，刻痕通道用通用 recon 验证）→ 回合末结算 1 点。
+	var battle := V1.start(_run_with_sword(["fire_rec_1_13_gu"]), catalog, [_enemy()])
+	var slot := _slot_index_by_def(battle, "fire_rec_1_13_gu")
 	assert_true(slot >= 0, "侦察蛊入槽")
 	var hp_before := int(battle["enemies"][0]["hp"])
 	var played := V1.player_action(battle, {"type": "play_gu", "slot_index": slot})

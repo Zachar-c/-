@@ -25,11 +25,12 @@
   "recon": {
    "kind": "status",
    "name": "marked",
-   "amount": 1
+   "amount": 1,
+   "support_school": "self",
+   "support_bonus": 1
   },
   "logistics": {
-   "kind": "status",
-   "name": "bound",
+   "kind": "heal",
    "amount": 1
   }
  },

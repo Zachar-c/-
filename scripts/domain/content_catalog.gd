@@ -1056,6 +1056,15 @@ static func _validate_v1_battle_role_defaults(catalog: Dictionary) -> Array[Stri
 		if str((effect as Dictionary).get("kind", "")) == "status" \
 				and str((effect as Dictionary).get("name", "")).is_empty():
 			errors.append("v1_battle.default_effect_by_role.%s.status needs a name" % role)
+		# Q7 B2（2026-09-12）：支援键——support_school 只允许 "self" 哨兵或已登记流派；
+		# "self" 在 v1_battle_resolver.default_v1_effect 注入 definition.school。
+		if effect is Dictionary and (effect as Dictionary).has("support_school"):
+			var support_school := str((effect as Dictionary).get("support_school", ""))
+			if support_school != "self" and not SCHOOL_IDS.has(support_school):
+				errors.append("v1_battle.default_effect_by_role.%s.support_school %s is not self or a known school" % [role, support_school])
+		if effect is Dictionary and (effect as Dictionary).has("support_bonus") \
+				and not _is_integral((effect as Dictionary).get("support_bonus", null)):
+			errors.append("v1_battle.default_effect_by_role.%s.support_bonus must be an integer" % role)
 	return errors
 
 
@@ -1172,7 +1181,7 @@ static func _validate_v1_effect(effect_value: Variant, owner: String) -> Array[S
 		errors.append("%s has unknown kind %s" % [owner, kind])
 		return errors
 	match kind:
-		"strike", "shield", "heal", "shift":
+		"strike", "shield", "heal", "shift", "sword_intent":
 			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
 				errors.append("%s amount must be a non-negative integer" % owner)
 		"buff", "status":
