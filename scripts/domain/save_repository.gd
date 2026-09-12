@@ -247,7 +247,13 @@ static func _has_valid_event_log(state: RunState) -> bool:
 		if str(key).begins_with("_"):
 			# "_"-prefixed info keys are attribution metadata, not state fields.
 			continue
-		if not key in state or state.get(key) != after[key]:
+		if not RunState.STATE_FIELDS.has(key):
+			# Non-state after keys (e.g. battle_turn) are attribution-only and
+			# are silently skipped by RunState._apply_after; validation must
+			# mirror that tolerance or every save whose last event carries one
+			# is unloadable (M1 audit 2026-09-12).
+			continue
+		if state.get(key) != after[key]:
 			return false
 	return true
 
