@@ -7,7 +7,6 @@
    "enemy_kind": "neutral_stone_wanderer",
    "enemy_theme": "neutral",
    "visible": true,
-   "start": true,
    "summary": "一名散修拦在岔路前，正试探你的虚实。",
    "choices": [
     "negotiate",
@@ -27,7 +26,6 @@
    "stage": "one",
    "type": "caravan",
    "visible": true,
-   "start": true,
    "summary": "山脊商队临时开市，可买卖或以蛊换蛊。",
    "choices": [
     "buy",

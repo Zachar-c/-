@@ -131,6 +131,55 @@ func test_visible_nodes_annotate_reachable_vs_advisory() -> void:
 				node_id, str(node.get("reachable")), str(is_start)])
 
 
+func test_node_templates_do_not_carry_legacy_start_field() -> void:
+	# R8 start-leak data guard (2026-09-13). Node templates once carried a
+	# legacy `start` field (the removed "dual entry" contract). Because
+	# `_generate_instance_route` builds instances via
+	# `template.duplicate(true)`, any leftover `start` on a template is copied
+	# onto that template's instance at ANY layer, and
+	# `reachable_nodes("trailhead")` returns every `start` node -- so the player
+	# could enter directly into L2..L5 and bypass all layer bosses.
+	# The data-level contract is therefore: templates must NOT declare `start`.
+	# (The generator owns `start`; only layer 1 / row 0 instances get it.)
+	# Do not "fix" a failure here by relaxing this assertion.
+	var nodes_data: Dictionary = catalog.get("nodes_data", {})
+	assert_false(nodes_data.is_empty(), "catalog must expose nodes_data")
+	var offenders: Array[String] = []
+	for node_value in nodes_data.get("nodes", []):
+		var node: Dictionary = node_value
+		if node.has("start"):
+			offenders.append("%s(start=%s)" % [
+				str(node.get("id", "")), str(node.get("start"))])
+	assert_eq(offenders.size(), 0,
+			"node templates must not declare `start`; offenders: %s" % str(offenders))
+
+
+func test_start_flag_is_confined_to_layer_one_entry_row() -> void:
+	# R8 start-leak regression (2026-09-13). This pins the ABSOLUTE contract that
+	# the assertion above cannot see: `reachable == start` simply mirrors the same
+	# flag, so a leaked `start` at layer 4 still "passes" there. Here we require
+	# that every start node sits on layer 1 / row 0, and that each map exposes at
+	# least one entry so trailhead is never a dead end.
+	for seed_value in [101, 505, 606, 11, 33, 55, 202, 303, 404, 707, 808, 909,
+			1111, 1212, 1313, 20260927]:
+		var route: Array = MapGeneratorScript.build(seed_value, false)
+		var starts := 0
+		for node_value in route:
+			var node: Dictionary = node_value
+			if not bool(node.get("start", false)):
+				continue
+			starts += 1
+			var node_id := str(node.get("id", ""))
+			assert_eq(int(node.get("layer", 0)), 1,
+				"seed %d: start node %s must live on layer 1 (got %d)" % [
+					seed_value, node_id, int(node.get("layer", 0))])
+			assert_eq(int(node.get("row", -1)), 0,
+				"seed %d: start node %s must live on row 0 (got %d)" % [
+					seed_value, node_id, int(node.get("row", -1))])
+		assert_true(starts >= 1,
+			"seed %d: a generated map must expose at least one trailhead entry" % seed_value)
+
+
 # B1 bucket C (2026-09-06): the boss-retreat block leg below was deleted as
 # domain debt - boss_blocks_retreat() lived on battle_resolver.gd. The V1
 # facade re-homes it on flags.boss_battle (test_battle_command_facade
