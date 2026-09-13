@@ -5,7 +5,7 @@ description: Implement or revise Gu Lu Qiu Sheng domain rules, battle, map, econ
 
 # Gu Domain Change
 
-Use this skill for changes under `scripts/domain/`, or when presentation code needs a new game command. Read `AGENTS.md`, `docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`, and the relevant existing resolver/tests before editing. The mechanics-first specification is authoritative; the older smoke design is reference only.
+Use this skill for changes under `scripts/domain/`, or when presentation code needs a new game command. Read `AGENTS.md`, the relevant existing resolver/tests before editing. Authority is split by topic: gu, economy, combat, and synthesis follow `docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md`; other mechanisms follow `docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`; the older smoke design is reference only.
 
 ## Preserve The Domain Boundary
 

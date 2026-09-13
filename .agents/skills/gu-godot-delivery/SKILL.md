@@ -13,7 +13,7 @@ Use this skill for cross-cutting work in this repository that spans Godot runtim
 
 ## Read The Current Authority
 
-Before changing behavior, read `AGENTS.md`, `docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`, and the closest code, tests, and data records. The current repository state and the user's latest instruction override older design documents and external prompt material.
+Before changing behavior, read `AGENTS.md` and the closest code, tests, and data records. Authority is split by topic: gu, economy, combat, and synthesis follow `docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md`; other mechanisms follow `docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`. The current repository state and the user's latest instruction override older design documents and external prompt material.
 
 Treat the external Godot prompt that originated this skill as historical guidance only. In particular, do not reintroduce its outdated engine target, dark-theme direction, CSV requirement, fixed 1280x720 layout, or its restriction against exercising engineering judgment.
 
@@ -27,10 +27,10 @@ Treat the external Godot prompt that originated this skill as historical guidanc
 
 ## Presentation And UI
 
-- Edit `.guitkx` source files, not generated `ui/**/*.gd`. The RUI toolkit compiles headlessly; its generated siblings remain ignored output.
-- Follow the active Wen Zhen visual tokens in `scripts/presentation/gu_style.gd`: paper and ink surfaces, hairline rules, restrained 4px radii, cinnabar danger, jade recovery, blue contracts, and yellow DDA anomalies. Do not revive the retired dark UI by using compatibility aliases in new work.
-- Work with the existing RUI component hierarchy and snapshot data. Use containers and responsive constraints for layout; do not create presentation-owned gameplay state or force UI shapes through positional hacks.
-- Verify visual changes with the repository's real capture path, not a hypothetical Godot MCP. `scripts/acceptance_driver.gd` with `-- --mode=smoke` covers headless RUI compilation and component mounting (plus the real main-scene flow). `-- --mode=capture` produces real-renderer capture evidence under `.superpowers/ui_captures/wenzhen/`.
+- Edit `scenes/ui/**/*.tscn` screen files plus hand-written GDScript under `scripts/` and `ui/`. The legacy RUI `.guitkx` toolchain is retired (only the `ui/_sample.guitkx` sample remains); do not build new screens on it.
+- Follow the active Wen Zhen visual tokens in `scripts/presentation/gu_style.gd` and `scripts/presentation/wenzhen_master_theme.gd`: paper and ink surfaces, hairline rules, restrained 4px radii, cinnabar danger, jade recovery, blue contracts, and yellow DDA anomalies. For any visual change, the `wenzhen-visual-style` skill is the authoritative spec. Do not revive the retired dark UI by using compatibility aliases in new work.
+- Work with the existing tscn scene tree and snapshot data. Use containers and anchors for layout; do not create presentation-owned gameplay state or force UI shapes through positional hacks.
+- Verify visual changes with the repository's real capture path, not a hypothetical Godot MCP. `scripts/acceptance_driver.gd` with `-- --mode=smoke` covers headless screen mounting assertions (plus the real main-scene flow). `-- --mode=capture` produces real-renderer capture evidence under `scripts/core/.superpowers/ui_captures/wenzhen/` (created on demand).
 - For each changed flow, preserve information transparency: numeric enemy intentions; separate health and shield; confirmation plus preflight for dangerous actions; visible shop limits/inflation; distinct contract and anomaly areas; no undo/reload path; unified ending route.
 
 ## Delivery Loop
@@ -38,7 +38,7 @@ Treat the external Godot prompt that originated this skill as historical guidanc
 1. State the invariant and inspect the closest tests before editing. Add the smallest test or executable acceptance check that can fail for the requested behavior.
 2. Make the narrowest change consistent with the existing module boundary. Do not alter `vendor/` or read-only corpus/design-data directories unless the user explicitly asks.
 3. Run the focused test with `powershell -ExecutionPolicy Bypass -File tools/test.ps1 -Test <test-path>`, then the affected suite. Run `powershell -ExecutionPolicy Bypass -File tools/check.ps1` for shared boundaries, lifecycle/persistence, catalogs, controllers, navigation, or broad changes.
-4. For `.guitkx` or visual work, run `scripts/acceptance_driver.gd -- --mode=smoke` through `tools/godot.ps1` when applicable, then run the relevant `-- --mode=capture` batch and inspect captures at the requested viewport sizes. Check containment, clipping, overlap, focus/disabled states, and danger feedback.
+4. For tscn or visual work, run `scripts/acceptance_driver.gd -- --mode=smoke` through `tools/godot.ps1` when applicable, then run the relevant `-- --mode=capture` batch and inspect captures at the requested viewport sizes. Check containment, clipping, overlap, focus/disabled states, and danger feedback.
 5. Finish with `git diff --check` and `git diff --ignore-cr-at-eol`. This worktree can show widespread autocrlf-only modifications; preserve user changes and distinguish real content edits from line-ending noise before reporting scope.
 
 ## Release Boundary

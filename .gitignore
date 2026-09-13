@@ -24,7 +24,7 @@ docs/screenshots/
 
 *.png
 !assets/**/*.png
-!scripts/core/.agents/skills/**/*.png
+!.agents/skills/**/*.png
 __pycache__/
 
 /*.png

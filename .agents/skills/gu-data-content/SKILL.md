@@ -38,4 +38,4 @@ Use this skill whenever changing `data/*.json` or adding data-driven content. Re
 - `scripts/domain/content_catalog.gd`: table loading and cross-table validation.
 - `tests/unit/test_content_catalog.gd`: validation style and shipped-table baseline.
 - `data/school_pools.json`, `data/loot_tables.json`, and `data/synthesis.json`: pool, reward, and refinement boundaries.
-- `data/gu.json`, `data/cards.json`, `data/enemies.json`, `data/shops.json`, and `data/events.json`: primary content tables.
+- `data/gu.json`, `data/enemies.json`, `data/shops.json`, and `data/events.json`: primary content tables.
