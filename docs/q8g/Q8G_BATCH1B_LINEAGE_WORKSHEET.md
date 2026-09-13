@@ -4,7 +4,7 @@
 > - **本单不改代码、不改 balance、不碰商店、不碰战斗、不写 recipe/loot JSON。**
 > - **上游（唯一 normative source）**：`docs/q8g/Q8G_BATCH0_RULING.md` §6（promotion 语义冻结）
 > - **前置**：`Q8G_BATCH1A_WORKSHEET.md` 已收口（promotion schema 验证完成，Gate 1–7 全绿）
-> - **状态**：✅ **1-D 掉落分层施工完成（v3.18）** —— 73 条品质带材料加权接入三 tier 掉落池 + 普通战基础蛊概率开启（8 只非 starter 蛊可达性清偿），聚焦 10/10、全量 unit 1434/1434；记录见 `Q8G_1D_DROP_TIERING_BATCH.md`。下一步 **Batch 1 总验收（Gate A/B/C）** → Batch 2（gu_value → 商店定价）
+> - **状态**：✅ **1-D CLOSED（v3.19）** —— 三项必修落实：接线计数精确化（common 19 crude 含 bone 档1 / elite·boss 18 派）、Gate B 升级三 tier 实掉落验证、Material Reachability Matrix 自动守护；quality→tier 声明为 provisional 施工规则。聚焦 13/13、全量 unit 1436/1436；记录见 `Q8G_1D_DROP_TIERING_BATCH.md`。**Batch 1 施工全部完成**，下一步 **总验收（Gate A/B/C）** → Batch 2（gu_value → 商店定价）
 > - **硬红线（继承 1-A）**：🔴 禁止引入 `gu_family_id`；🔴 每步 `output_gu_id != input_gu_ids[0]`；🔴 每步严格 +1 转不得跳级
 
 > **v2 修订记录（2026-09-13，用户裁定原文要点）**：

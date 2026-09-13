@@ -64,7 +64,8 @@ func test_catalog_still_validates_clean() -> void:
 
 
 func test_band_materials_are_wired_to_the_provisional_tiers() -> void:
-	# band 1 -> common, band 2 -> elite, band 3 -> elite+boss, band 4 -> boss.
+	# band 1 -> common (19 条：18 全梯派 + bone 档1)；band 2 -> elite；
+	# band 3 -> elite+boss；band 4 -> boss（elite/boss 为 18 派，bone 档2-4 暂缓）。
 	var bands := {1: ["common"], 2: ["elite"], 3: ["elite", "boss"], 4: ["boss"]}
 	for school in FULL_LADDER_SCHOOLS:
 		for band in bands:
@@ -75,6 +76,12 @@ func test_band_materials_are_wired_to_the_provisional_tiers() -> void:
 					assert_true(wired, "%s missing from %s" % [material_id, tier])
 				else:
 					assert_false(wired, "%s unexpectedly in %s" % [material_id, tier])
+	# bone：仅档 1 进 common；档 2-4 全域不可见
+	assert_true(_pool_ids("common").has("mat_bone_1"), "bone crude belongs to common")
+	for tier in ["common", "elite", "boss"]:
+		assert_false(_pool_ids(tier).has("mat_bone_2"), "bone band2 must stay unwired")
+		assert_false(_pool_ids(tier).has("mat_bone_3"), "bone band3 must stay unwired")
+		assert_false(_pool_ids(tier).has("mat_bone_4"), "bone band4 must stay unwired")
 
 
 func test_provisional_weights_favor_the_quality_bands() -> void:
@@ -125,8 +132,7 @@ func test_weighted_rolls_are_deterministic_for_the_same_seed() -> void:
 
 
 func test_band_materials_actually_drop_in_a_seeded_sweep() -> void:
-	# Gate B sketch: sweep many seeded common victories and assert at least a
-	# few crude-band materials come out of the wired pool (not just registry).
+	# Gate B (common leg): seeded common victories surface crude-band materials.
 	var crude_drops := {}
 	for run_seed in range(1, 61):
 		var run := RunStateScript.new_run(run_seed, null)
@@ -135,6 +141,67 @@ func test_band_materials_actually_drop_in_a_seeded_sweep() -> void:
 			if str(material_id).begins_with("mat_"):
 				crude_drops[str(material_id)] = true
 	assert_gt(crude_drops.size(), 5, "seeded sweep should surface several crude materials, got %d" % crude_drops.size())
+
+
+func test_high_band_materials_actually_drop_on_elite_and_boss() -> void:
+	# Gate B (high-band legs): elite must surface plain+refined, boss must
+	# surface refined+prized. Thresholds are conservative counts over a fixed
+	# seed range; if F8 re-weights the pools these numbers move with them.
+	var elite_plain := {}
+	var elite_refined := {}
+	for run_seed in range(1, 121):
+		var run := RunStateScript.new_run(run_seed, null)
+		var rolled := LootResolverScript.settle_victory(
+			{"enemy_kind": "ridge_elite_scout", "layer": 3}, run, catalog())
+		for material_id in rolled["loot"]["material_ids"]:
+			if str(material_id).ends_with("_2"):
+				elite_plain[str(material_id)] = true
+			elif str(material_id).ends_with("_3"):
+				elite_refined[str(material_id)] = true
+	assert_gt(elite_plain.size(), 2, "elite sweep surfaced %d plain" % elite_plain.size())
+	assert_gt(elite_refined.size(), 1, "elite sweep surfaced %d refined" % elite_refined.size())
+
+	var boss_refined := {}
+	var boss_prized := {}
+	for run_seed in range(1, 121):
+		var run := RunStateScript.new_run(run_seed, null)
+		var rolled := LootResolverScript.settle_victory(
+			{"enemy_kind": "miasma_vein_lord", "layer": 3}, run, catalog())
+		for material_id in rolled["loot"]["material_ids"]:
+			if str(material_id).ends_with("_3"):
+				boss_refined[str(material_id)] = true
+			elif str(material_id).ends_with("_4"):
+				boss_prized[str(material_id)] = true
+	assert_gt(boss_refined.size(), 1, "boss sweep surfaced %d refined" % boss_refined.size())
+	assert_gt(boss_prized.size(), 2, "boss sweep surfaced %d prized" % boss_prized.size())
+
+
+func test_material_reachability_matrix() -> void:
+	# Registry-level reachability matrix (independent of any seed):
+	#   common: crude x19 (18 full-ladder + bone band1)
+	#   elite:  plain x18 + refined x18
+	#   boss:   refined x18 + prized x18
+	# Guards: deferred schools (bone bands 2-4, all light) never leak in; every
+	# full-ladder material has at least one acquisition path; pools non-empty.
+	var matrix := {
+		"common": {"1": SCHOOLS},
+		"elite": {"2": FULL_LADDER_SCHOOLS, "3": FULL_LADDER_SCHOOLS},
+		"boss": {"3": FULL_LADDER_SCHOOLS, "4": FULL_LADDER_SCHOOLS},
+	}
+	for tier in matrix:
+		assert_gt(_pool_ids(tier).size(), 0, "%s pool empty" % tier)
+		for band in matrix[tier]:
+			for school in matrix[tier][band]:
+				assert_true(_pool_ids(tier).has("mat_%s_%s" % [school, band]),
+						"matrix hole: mat_%s_%s missing from %s" % [school, band, tier])
+	# no light materials anywhere (light has none registered - guard the leak)
+	for tier in ["common", "elite", "boss"]:
+		for material_id in _pool_ids(tier):
+			assert_false(material_id.begins_with("mat_light_"), "light material leaked into %s" % tier)
+	# bone leak guard beyond its single crude entry
+	for tier in ["elite", "boss"]:
+		for material_id in _pool_ids(tier):
+			assert_false(material_id.begins_with("mat_bone_"), "bone material leaked into %s" % tier)
 
 
 func test_common_battles_now_offer_low_chance_basic_gu() -> void:
