@@ -144,10 +144,25 @@ func test_slay_gu_catalog_entry_is_test_only() -> void:
 	assert_eq(str(v1.get("kind", "")), "strike")
 	assert_eq(int(v1.get("amount", 0)), 999, "V1 效果 999 点伤害")
 	assert_eq(DisplayText.gu(SLAY_GU_ID), "十转杀蛊", "显示名十转杀蛊")
-	# 不进任何掉落/商店池：仅按 id 直查命中
-	for table_value in catalog.get("loot_tables", {}).values():
-		var table: Dictionary = table_value
-		for bucket_value in table.get("by_rarity", {}).values():
+	# 不进任何掉落/商店池：仅按 id 直查命中。
+	# VDA 2026-09-14：此前的写法把 loot_tables 的**每个顶层 value** 赋给
+	# Dictionary。顶层现在还有元数据键（`school_material_resonance` 是数值、
+	# `school_material_resonance_note` 是字符串），赋给 Dictionary 会抛
+	# "Trying to assign value of type 'float' to a variable of type 'Dictionary'"
+	# —— 该运行期错误会**中断本测试，使下面这条断言永不执行**（且被 GUT 计为
+	# engine 类错误、不计入 Failing）。同时真实池位是
+	# `loot.<tier>.gu_pool.by_rarity`，顶层根本没有 `by_rarity`，所以原先
+	# 即使执行也是空转。这里显式走到池位，断言才真正覆盖「杀蛊不进稀有度桶」。
+	var loot: Dictionary = catalog.get("loot_tables", {}).get("loot", {})
+	for tier_value in loot.values():
+		if not (tier_value is Dictionary):
+			continue
+		var tier: Dictionary = tier_value
+		var pool_value: Variant = tier.get("gu_pool", {})
+		if not (pool_value is Dictionary):
+			continue
+		var gu_pool: Dictionary = pool_value
+		for bucket_value in gu_pool.get("by_rarity", {}).values():
 			assert_false(SLAY_GU_ID in (bucket_value as Array), "杀蛊不进稀有度桶")
 
 
