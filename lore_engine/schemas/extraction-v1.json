@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entities", "facts", "events", "relations", "rule_candidates", "uncertain_items"],
+  "properties": {
+    "entities": {"type": "array"},
+    "facts": {"type": "array"},
+    "events": {"type": "array"},
+    "relations": {"type": "array"},
+    "rule_candidates": {"type": "array"},
+    "uncertain_items": {"type": "array"}
+  }
+}

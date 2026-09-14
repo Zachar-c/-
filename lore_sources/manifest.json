@@ -1,0 +1,18 @@
+[
+  {
+    "source_file_id": "gu_zhenren_main",
+    "path": "分支：六卷精编版/蛊真人-clean.txt",
+    "encoding": "utf-8",
+    "authority": "primary_text",
+    "default_claim_type": "CANON",
+    "expected_sha256": "BF78D41427E28BB8B64F1AD6D93B971D1A77458ABF273E554AABE7F27A155D34"
+  },
+  {
+    "source_file_id": "ren_zu_zhuan",
+    "path": "分支：六卷精编版/《人祖传》.txt",
+    "encoding": "gb18030",
+    "authority": "in_world_text",
+    "default_claim_type": "IN_WORLD_LORE",
+    "expected_sha256": "E6A6A6187EC69D36957DEFAC0AA644CEC494FE2C1B2D2E6C13969FE460B9CAB8"
+  }
+]

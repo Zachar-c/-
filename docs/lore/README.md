@@ -2,6 +2,24 @@
 
 本目录是《南疆凡人一局制》游戏设计的设定护栏。它不替代原著，也不替代游戏设计文档；其作用是让每一项可见内容、规则改编和原创内容都能被追溯与审查。
 
+## Lore Compiler V1
+
+`lore_engine/` 是独立的本地 Lore Compiler。V1 将第一卷前 10 个 canonical section 转换为带来源、引文和 checkpoint 的 SQLite 中间数据，作为后续审查和适配的结构化真值。
+
+现有 `canon-index.md`、`adaptation-register.md` 和 `game-rule-register.md` 在迁移期仍是人工可读的审查视图；编译器通过 `lore_sources/seeds/` 追加导入，不会覆盖这些文档。`generated/lore/` 下的数据库、缓存、checkpoint 和报告均可重建，不属于 Godot 运行时内容。
+
+V1 不会写入 `data/*.json`，也不会修改 `ContentCatalog`、Godot 场景、领域脚本或原文。只有未来经过人工批准的适配记录，才可以进入 Godot 数据体系。
+
+本地入口：
+
+```powershell
+tools/lore.ps1 ingest --manifest lore_sources/manifest.json --verify-only
+tools/lore.ps1 index --source-file-id gu_zhenren_main --section-limit 10
+tools/lore.ps1 run --backend fixture --resume
+tools/lore.ps1 validate --database generated/lore/lore-v1.sqlite
+tools/lore.ps1 report --database generated/lore/lore-v1.sqlite
+```
+
 ## 使用规则
 
 1. 新增蛊虫、传承、势力、事件、首领或遗藏前，先在 `canon-index.md` 检索是否有原著依据。
