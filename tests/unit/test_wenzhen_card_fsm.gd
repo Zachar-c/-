@@ -588,10 +588,15 @@ func _button(node: Node, text: String) -> Button:
 
 func _button_match(node: Node, text: String, exact: bool) -> Button:
 	if node is Button:
-		var label := str((node as Button).text)
-		var hit := (label == text) if exact else label.contains(text)
-		if hit and not (node as Button).disabled:
-			return node
+		var btn := node as Button
+		# 2026-09-11 卡面层级重构：卡名从 Button.text 迁到 `card_name` meta；
+		# 两个来源都匹配——普通按钮（文本在 text 上）不受影响。
+		var label := str(btn.text)
+		var meta := str(btn.get_meta("card_name", ""))
+		var hit := ((label == text) or (meta == text)) if exact \
+				else (label.contains(text) or meta.contains(text))
+		if hit and not btn.disabled:
+			return btn
 	for child in node.get_children():
 		var found := _button_match(child, text, exact)
 		if found != null:

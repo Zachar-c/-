@@ -50,10 +50,10 @@ RGB(200,201,190)、以 Tile 模式铺满全屏。任何屏幕背景 = 纸底 Col
 | token | 色值 | 用途 |
 |---|---|---|
 | BTN_OUTLINE_BLUE | `#3880b8` | 蓝色描边（outline） |
-| BTN_SHADOW_RUST | `#803810` | 铁锈橙红 左投影（shadow offset -1,0） |
+| ~~BTN_SHADOW_RUST~~ | `#803810` | **已废弃（2026-09-11 用户裁定：全部文字阴影移除）** |
 
 **规格**：透明底（网点透出）、TITLE_FONT、font_size 22、黑字芯 INK_PRIMARY、
-蓝 outline 1px + 橙红 shadow 左偏移 1px、hover 文字转 CINNABAR、圆角 2px。
+蓝 outline 1px、hover 文字转 CINNABAR、圆角 2px。**无文字阴影。**
 
 ## 5. 印章（apply_seal 公共组件）
 

@@ -131,3 +131,40 @@ func test_settings_screen_renders_real_values_without_placeholders() -> void:
 	assert_true(joined.contains("音量 70%"), "volume label must show the live value")
 	var res_label: String = AppSettingsScript.resolution_labels()[1]
 	assert_true(joined.contains(res_label), "resolution button must show the current option label")
+
+
+# 2026-09-11 P1-3：设置屏右侧导航（手记/图鉴）接入路由——复用 Ending to_codex
+# 模式（_show_title + _show_hall_subview），表现层内部导航，不发领域命令。
+func test_settings_command_surface_exposes_hall_nav() -> void:
+	var controller: RunController = autofree(RunControllerScript.new())
+	var commands := RunCommandBuilderScript.for_screen("Settings", controller)
+	assert_true(commands.has("nav_journal"), "Settings must expose nav_journal command")
+	assert_true(commands.has("nav_codex"), "Settings must expose nav_codex command")
+
+
+func test_settings_nav_commands_land_on_hall_subviews() -> void:
+	var controller: RunController = autofree(RunControllerScript.new())
+	controller._show_settings()
+	assert_eq(controller.current_view_name(), "Settings", "precondition: settings overlay is open")
+	var commands := RunCommandBuilderScript.for_screen("Settings", controller)
+	commands["nav_journal"].call()
+	assert_eq(controller.current_view_name(), "Title", "nav_journal must leave the overlay into the hall")
+	assert_eq(str(controller._hall_subview), "journal", "nav_journal must open the journal subview")
+	commands["nav_codex"].call()
+	assert_eq(str(controller._hall_subview), "codex", "nav_codex must open the codex subview")
+
+
+func test_settings_screen_nav_buttons_enabled_with_routing() -> void:
+	var controller: RunController = autofree(RunControllerScript.new())
+	controller.app_settings = AppSettingsScript.new()
+	var snapshot: Dictionary = RunSnapshotBuilderScript.settings(controller)
+	var commands: Dictionary = RunCommandBuilderScript.for_screen("Settings", controller)
+	var host := Control.new()
+	add_child_autofree(host)
+	var screen: Control = TscnMountHelper.instantiate(
+			"res://scenes/ui/screens/settings_screen.tscn", snapshot, commands)
+	host.add_child(screen)
+	var journal: Button = screen.get_node("Nav/NavJournal")
+	var codex: Button = screen.get_node("Nav/NavCodex")
+	assert_false(journal.disabled, "journal nav must be enabled now that routing is wired")
+	assert_false(codex.disabled, "codex nav must be enabled now that routing is wired")

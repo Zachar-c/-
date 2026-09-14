@@ -1,4 +1,4 @@
-﻿extends Node
+extends Node
 
 ## 音效管理器（第18批基础架构）
 ##
@@ -169,6 +169,17 @@ static func stop_all_sfx() -> void:
 		return
 	for player in _instance._sfx_players:
 		player.stop()
+
+
+## 退出树（进程退出 / 测试卸载）时停掉玩家池全部播放：AudioServer 持有的
+## AudioStreamPlayback 对象只有 stop 后才会释放，否则 ObjectDB 在退出
+## 检查时报泄漏（2026-09-11 泄漏诊断定位，与 audio_director 同因）。
+func _exit_tree() -> void:
+	for player in _sfx_players:
+		player.stop()
+	# stop 的释放由音频 mix 线程在下一轮 mix 完成，进程退出不等它——
+	# 短等一拍让 mix 线程跑完回收（同 audio_director._exit_tree，2026-09-11）。
+	OS.delay_usec(100_000)
 
 
 ## 检查音效文件是否存在

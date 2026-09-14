@@ -1,4 +1,4 @@
-﻿class_name HallScreenView
+class_name HallScreenView
 extends MarginContainer
 
 ## 大厅家族（规格 v3 §4.2/§5）：问眞主页 + 流派 + 契约 + 图鉴 + 设置 + 手记。
@@ -193,12 +193,9 @@ func _apply_continue_style(btn: Button) -> void:
 	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
 	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
-	# 双色描边：蓝环绕 + 铁锈橙红左侧投影（近似基准左橙右蓝立体字）
+	# 双色描边：蓝环绕（近似基准立体字）；文字阴影已按 2026-09-11 用户裁定全量移除。
 	btn.add_theme_color_override("font_outline_color", GuStyle.BTN_OUTLINE_BLUE)
 	btn.add_theme_constant_override("outline_size", 1)
-	btn.add_theme_color_override("font_shadow_color", GuStyle.BTN_SHADOW_RUST)
-	btn.add_theme_constant_override("shadow_offset_x", -1)
-	btn.add_theme_constant_override("shadow_offset_y", 0)
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(0, 0, 0, 0)
 	normal.border_color = GuStyle.HAIRLINE_COLOR
@@ -457,15 +454,16 @@ func _refresh_codex() -> void:
 				var school := str(e.get("school", ""))
 				var school_name := str(e.get("school_name", school))
 				var eid := str(e.get("id", ""))
-				card.setup(ename, str(e.get("rarity", "")), false, false, false, "")
+				var codex_desc := ""
 				if int(e.get("rank", 0)) > 0:
 					# 2026-09-04：图鉴蛊条目透出转数与效果（数据见 _codex）。
 					var rank_no := int(e.get("rank", 1))
 					var rank_label := "%s转" % ["一", "二", "三", "四", "五"][clampi(rank_no, 1, 5) - 1]
 					card.content_host.add_child(_label("转数：" + rank_label, GuStyle.INK_SOFT, 12))
-					var effect_text := str(e.get("effect", ""))
-					if effect_text != "":
-						card.content_host.add_child(_label("效果：" + effect_text, GuStyle.INK_PRIMARY, 12))
+					codex_desc = str(e.get("effect", ""))
+				# 效果走组件内建描述槽（关键词高亮）。
+				card.setup(ename, str(e.get("rarity", "")), false, false, false, "",
+						false, false, false, "idle", codex_desc)
 				# C2 2026-09-05：图鉴透出中文流派名（schools.json v2）。
 				card.content_host.add_child(_label(
 						("流派：" + school_name) if school_name != "" else eid, GuStyle.INK_SOFT, 12))
@@ -793,9 +791,6 @@ func _apply_school_confirm_style(active: bool) -> void:
 	if active:
 		_confirm_school.add_theme_color_override("font_outline_color", GuStyle.BTN_OUTLINE_BLUE)
 		_confirm_school.add_theme_constant_override("outline_size", 1)
-		_confirm_school.add_theme_color_override("font_shadow_color", GuStyle.BTN_SHADOW_RUST)
-		_confirm_school.add_theme_constant_override("shadow_offset_x", -1)
-		_confirm_school.add_theme_constant_override("shadow_offset_y", 0)
 	else:
 		_confirm_school.add_theme_constant_override("outline_size", 0)
 	var normal := StyleBoxFlat.new()

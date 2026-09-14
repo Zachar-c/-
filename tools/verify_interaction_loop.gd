@@ -50,9 +50,28 @@ func _collect_buttons(root_node: Node) -> Array:
 				"disabled": b.disabled,
 				"themed": b.has_theme_color_override("font_hover_color"),
 				"occluded_by": _occluder_for(b, root_node),
+				"scrolled": _clipped_by_scroll(b),
 				"path_last": str(b.name),
 			})
 	return out
+
+
+## 滚动裁剪豁免：按钮中心落在祖先 ScrollContainer 可视区之外 = 需滚动才可见。
+## 引擎真实拾取（SubViewport push_input + gui_get_hovered_control 实证）尊重
+## 裁剪：这类按钮既收不到点击、也不会劫持别处的点击，属"可滚动到达"而非
+## 死按钮/遮挡，因此不计入 dead/occluded，仅以 scrolled 计数留痕。
+## 全向禁用滚动的 ScrollContainer 视作静态裁剪容器，不豁免（内容出界即真遮挡）。
+func _clipped_by_scroll(button: BaseButton) -> bool:
+	var cursor: Node = button.get_parent()
+	while cursor != null:
+		if cursor is ScrollContainer:
+			var sc := cursor as ScrollContainer
+			var can_scroll := sc.vertical_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED \
+					or sc.horizontal_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED
+			if can_scroll and not sc.get_global_rect().has_point(button.get_global_rect().get_center()):
+				return true
+		cursor = cursor.get_parent()
+	return false
 
 
 ## 按钮能否真正收到点击：按引擎的真实 GUI 命中算法求出"最上层命中者"，
@@ -141,6 +160,7 @@ func _report(label: String, controller: Node) -> void:
 	var no_sfx: Array = []
 	var occluded: Array = []
 	var known: Array = []
+	var scrolled := 0
 	for b in btns:
 		if b["visible"] and not b["disabled"] and not b["connected"]:
 			dead.append("%s(%s)" % [b["path"], b["text"]])
@@ -150,7 +170,11 @@ func _report(label: String, controller: Node) -> void:
 			no_sfx.append("%s(%s)" % [b["path"], b["text"]])
 		# 接线齐全但**够不着**：中心点的实际命中者不是按钮也不是它的祖先 → 点了没反应。
 		# 注意 PASS 也会遮挡，只有 IGNORE 才让路（见 _occluder_for 注释）。
+		# 滚动裁剪（scrolled）的内容可滚动到达且引擎尊重裁剪，不计遮挡（见 _clipped_by_scroll）。
 		if b["visible"] and not b["disabled"] and not b["occluded_by"].is_empty():
+			if b["scrolled"]:
+				scrolled += 1
+				continue
 			var hit_desc: String = str(b["occluded_by"]["desc"])
 			var entry := "%s(%s) ← %s" % [b["path"], b["text"], hit_desc]
 			if KNOWN_OCCLUDED.has("%s|%s" % [label, str(b["occluded_by"]["name"])]):
@@ -161,8 +185,8 @@ func _report(label: String, controller: Node) -> void:
 	for b in btns:
 		if b["visible"] and not b["disabled"]:
 			clickable += 1
-	print("AUDIT[%s] total=%d clickable=%d dead=%s no_ui_click=%s occluded=%s occluded_known=%d" % [
-		label, btns.size(), clickable, str(dead), str(no_sfx), str(occluded), known.size()])
+	print("AUDIT[%s] total=%d clickable=%d dead=%s no_ui_click=%s occluded=%s occluded_known=%d scrolled=%d" % [
+			label, btns.size(), clickable, str(dead), str(no_sfx), str(occluded), known.size(), scrolled])
 
 
 func _travel(controller: Node, want_type: String) -> String:

@@ -44,6 +44,8 @@ var _target_cid := ""
 var _target_list_key := ""
 ## 是否正在选择要移除的蛊虫。
 var _remove_select := false
+## LeaveRow 里的常驻跳过入口：主决策面网格滚动化后仍保证跳过始终可见（防软锁）。
+var _skip_entry: Button = null
 
 
 func _ready() -> void:
@@ -51,6 +53,7 @@ func _ready() -> void:
 	_apply_base_fonts()
 	_apply_stage_style()
 	_ensure_mode_row()
+	_ensure_skip_entry()
 	_leave_button.pressed.connect(func(): _fire("leave"))
 	_primary_surface.setup("休整选项", true, true)
 	_remove_panel.setup("选择要移除的蛊", true, false)
@@ -75,7 +78,9 @@ func _refresh() -> void:
 	_refresh_remove_panel()
 	_refresh_growth_panel()
 	_refresh_leave()
+	_refresh_skip_entry()
 	_refresh_confirm_dialog()
+
 
 ## E4 leave：未消费休整时禁用离开并提示。
 func _refresh_leave() -> void:
@@ -85,6 +90,48 @@ func _refresh_leave() -> void:
 	_leave_button.tooltip_text = "离开此节点" if can_leave else hint
 	if not can_leave and not hint.is_empty() and _note_label != null:
 		_note_label.text = hint
+
+
+## 常驻跳过入口状态：快照无 skip（异常）时隐藏；已休整时禁用并给原因。
+func _refresh_skip_entry() -> void:
+	if _skip_entry == null:
+		return
+	var skip := _choice_by_id("skip")
+	if skip.is_empty():
+		_skip_entry.visible = false
+		return
+	_skip_entry.visible = true
+	var disabled := bool(skip.get("disabled", false))
+	_skip_entry.disabled = disabled
+	_skip_entry.tooltip_text = str(skip.get("reason", "")) if disabled else "放弃本次休整收益并解锁离场"
+
+
+## 跳过常驻入口：固定在 LeaveRow，小视口下主决策面即使溢出也能直接放弃收益
+## （1280x720 曾把网格末尾的 skip 卡与离开行一起挤出可视窗口造成软锁）。
+## 古籍文本式按钮：apply_button 保留点击音效与悬停缩放，样式覆写为无背板文字。
+func _ensure_skip_entry() -> void:
+	if _skip_entry != null:
+		return
+	_skip_entry = Button.new()
+	_skip_entry.name = "SkipEntryButton"
+	_skip_entry.text = "跳过 · 放弃收益"
+	MasterTheme.apply_button(_skip_entry, "warning")
+	for stylebox_key in ["normal", "hover", "pressed", "disabled", "focus"]:
+		_skip_entry.add_theme_stylebox_override(stylebox_key, StyleBoxEmpty.new())
+	_skip_entry.add_theme_font_size_override("font_size", 14)
+	_skip_entry.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_skip_entry.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	_skip_entry.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	_skip_entry.add_theme_color_override("font_disabled_color", GuStyle.INK_MUTED)
+	_skip_entry.add_theme_color_override("font_focus_color", GuStyle.INK_SOFT)
+	_skip_entry.pressed.connect(func():
+		_skip_confirm = "skip"
+		_wash_confirm = ""
+		_remove_select = false
+		_refresh_confirm_dialog())
+	var leave_row: Node = _leave_button.get_parent()
+	leave_row.add_child(_skip_entry)
+	leave_row.move_child(_skip_entry, _leave_button.get_index())
 
 
 ## E4b 三选一：修炼 / 炼蛊两组卡片区。快照 mode_groups 缺失或两组皆空时隐藏。
@@ -180,7 +227,7 @@ func _refresh_header() -> void:
 
 
 func _refresh_choices() -> void:
-	var row := _ensure_content_host(_primary_surface, "ChoiceRow", 3)
+	var row := _ensure_choice_row()
 	_clear_children(row)
 	var choices: Array = _snapshot.get("choices", [])
 	for c in choices:
@@ -189,6 +236,34 @@ func _refresh_choices() -> void:
 		_build_choice_card(row, c)
 	if choices.is_empty():
 		row.add_child(_note_label_of("（当前无休整选项）"))
+
+
+## 主决策面内容纵向滚动：7 张选项卡（seclusion 节点含洗髓+跳过）在 1280x720
+## 下会把网格末尾的 skip 卡与 NoteLabel/LeaveRow 挤出可视窗口（软锁）。
+## ContentHost/ChoiceHost 默认按 min 高度分配（VBox 非展开子项），必须显式
+## EXPAND_FILL 撑开，ScrollContainer 才有真实可视视口；底行始终钉在窗口内。
+func _ensure_choice_row() -> GridContainer:
+	var host := _ensure_content_host(_primary_surface, "ChoiceHost")
+	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_primary_surface.content_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var scroll: ScrollContainer = host.get_node_or_null("ChoiceScroll")
+	if scroll == null:
+		scroll = ScrollContainer.new()
+		scroll.name = "ChoiceScroll"
+		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		host.add_child(scroll)
+	var row: GridContainer = scroll.get_node_or_null("ChoiceRow")
+	if row == null:
+		row = GridContainer.new()
+		row.name = "ChoiceRow"
+		row.columns = 3
+		row.add_theme_constant_override("h_separation", 12)
+		row.add_theme_constant_override("v_separation", 12)
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		scroll.add_child(row)
+	return row
 
 
 func _build_choice_card(row: Node, c: Dictionary) -> void:

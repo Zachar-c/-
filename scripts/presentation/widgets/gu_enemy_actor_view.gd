@@ -5,7 +5,6 @@ extends PanelContainer
 ##
 ## 选中与否由外部传入（selected），本组件不持有选择状态——选择属于宿主的呈现状态。
 
-const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const EnemyPortraitTex := preload("res://assets/wenzhen/hall/first-life-character.png")
 ## 状态名关键词 → 开源图标映射（game-icons.net CC BY 3.0）。
 ## 无匹配时回退纯文本，不阻断流程。
@@ -63,27 +62,37 @@ func _load_enemy_texture(path: String) -> Texture2D:
 		return null
 	return load(path) as Texture2D
 
-@onready var _intent_label: Label = $ActorMargin/ActorBody/IntentLabel
-@onready var _name_button: Button = $ActorMargin/ActorBody/NameButton
+@onready var _intent_host: HBoxContainer = $ActorMargin/ActorBody/IntentHost
+@onready var _seal_box: PanelContainer = $ActorMargin/ActorBody/IntentHost/SealBox
+@onready var _intent_glyph: Label = $ActorMargin/ActorBody/IntentHost/SealBox/SealMargin/SealInner/IntentGlyph
+@onready var _intent_value: Label = $ActorMargin/ActorBody/IntentHost/SealBox/SealMargin/SealInner/IntentValue
+@onready var _intent_caption: Label = $ActorMargin/ActorBody/IntentHost/IntentCaption
+@onready var _name_button: Button = $ActorMargin/ActorBody/NameRow/NameButton
+@onready var _name_label: Label = $ActorMargin/ActorBody/NameRow/NameLabel
+@onready var _shield_label: Label = $ActorMargin/ActorBody/NameRow/ShieldLabel
 @onready var _enemy_portrait: TextureRect = $ActorMargin/ActorBody/EnemyIconHost/EnemyPortrait
-@onready var _name_label: Label = $ActorMargin/ActorBody/NameLabel
 @onready var _strike_line: ColorRect = $ActorMargin/ActorBody/StrikeLine
 @onready var _hp_host: VBoxContainer = $ActorMargin/ActorBody/HpHost
 @onready var _stat_bar = $ActorMargin/ActorBody/HpHost/StatBar
-@onready var _shield_label: Label = $ActorMargin/ActorBody/ShieldLabel
 @onready var _status_host: FlowContainer = $ActorMargin/ActorBody/StatusHost
 
 var _on_select: Callable = Callable()
 var _enemy_id := ""
 var _selected := false
+## 最近一次 setup 的敌人数据（_apply_actor_style 重算立绘偏色用）。
+var _last_enemy: Dictionary = {}
 # 拖拽放置区高亮：影卡悬于该敌人上时玉绿描边提示可投放。
 var _drop_highlight := false
 
 
 func _ready() -> void:
 	_name_button.pressed.connect(func():
+		AudioManager.play_sfx("ui_click")
 		if _on_select.is_valid():
 			_on_select.call(_enemy_id))
+	# 水墨去框（2026-09-11 用户裁定）：选目标按钮不再用主题框式按钮——
+	# 名字本身就是可点文字（玉绿 hover），像古籍里的批注选项。
+	_apply_flat_text_button(_name_button, GuStyle.INK_PRIMARY, GuStyle.JADE)
 
 
 ## selectable 为真时名称渲染成按钮（点它选目标），否则渲染成静态文字。
@@ -93,10 +102,12 @@ func setup(enemy: Dictionary, selected: bool = false,
 	_on_select = on_select
 	_selected = selected
 	_drop_highlight = false
+	_last_enemy = enemy
 	name = "enemy_actor_" + _enemy_id
 	# 四个段按 enemy_id 命名：既有测试（test_wenzhen_battle_screen）按
 	# enemy_intent_<id> / enemy_hp_<id> / enemy_shield_<id> / enemy_status_<id> 定位。
-	_intent_label.name = "enemy_intent_" + _enemy_id
+	# 意图段 2026-09-11 起是篆刻印容器（印 + 小注），命名挂在 IntentHost 上。
+	_intent_host.name = "enemy_intent_" + _enemy_id
 	_hp_host.name = "enemy_hp_" + _enemy_id
 	_shield_label.name = "enemy_shield_" + _enemy_id
 	_status_host.name = "enemy_status_" + _enemy_id
@@ -109,6 +120,13 @@ func setup(enemy: Dictionary, selected: bool = false,
 	_apply_actor_style(selected)
 
 
+## 意图篆刻印（2026-09-11 战斗视觉重构）：**形状 + 符号 + 颜色三通道编码**，
+## 快速扫视即可判读敌人下回合动作。
+##   攻击 = 朱砂方印「攻」；防御 = 契蓝青灰印「盾」；强化 = 险金印「强」；
+##   蓄力 = 墨印「蓄」；未知类型 = 墨印「异」。数值放大（雅黑 UI 数字）。
+## 印下小注保留「意图：」字样与「速 N」（契约文本扫描 test_v1_battle_mounted /
+## test_v3_ui_sync 要求"意图："在场；test_b3_experience_gaps 要求速度可见）。
+## detail 语义入 tooltip，不占版面。
 func _refresh_intent(enemy: Dictionary) -> void:
 	var intent: Dictionary = enemy.get("intent", {})
 	var itype := str(intent.get("type", "charge"))
@@ -116,24 +134,47 @@ func _refresh_intent(enemy: Dictionary) -> void:
 	var ispeed := int(intent.get("speed", 0))
 	var idetail := str(intent.get("detail", "蓄势待发"))
 
-	var intent_label := "蓄势"
-	var color := GuStyle.INK_SOFT
-	if itype == "attack":
-		intent_label = "攻击"
-		color = GuStyle.CINNABAR
-	elif itype == "defend" or itype == "guard":
-		intent_label = "防御"
-		color = GuStyle.ANOMALY_YELLOW
+	var glyph := "异"
+	var color := GuStyle.INK_PRIMARY
+	match itype:
+		"attack":
+			glyph = "攻"
+			color = GuStyle.CINNABAR
+		"defend", "guard":
+			glyph = "盾"
+			color = GuStyle.CONTRACT_BLUE
+		"buff", "strengthen", "empower":
+			glyph = "强"
+			color = GuStyle.ANOMALY_YELLOW
+		"charge":
+			glyph = "蓄"
+			color = GuStyle.INK_PRIMARY
 
-	# 线框稿 v2：意图单行小标签【蓄力 · 3】式，detail 入 tooltip；
-	# speed>0 时追加「速 N」（回归测试 test_b3_experience_gaps 要求速度可见）。
+	_intent_glyph.text = glyph
+	_intent_glyph.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_intent_glyph.add_theme_font_size_override("font_size", 12)
+	_intent_glyph.add_theme_color_override("font_color", color)
+	_intent_value.text = str(ivalue)
+	_intent_value.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_intent_value.add_theme_font_size_override("font_size", 15)
+	_intent_value.add_theme_color_override("font_color", color)
+
+	# 印身 = 篆刻印：无纸底、类型色细方框（近似印章），攻击印框加粗一档（威胁预读）。
+	# 不做矩形 UI 卡片：无圆角、无阴影、背景全透，像盖在画上的一枚印。
+	var seal := StyleBoxFlat.new()
+	seal.bg_color = Color(color.r, color.g, color.b, 0.08)
+	seal.border_color = color
+	seal.set_border_width_all(3 if itype == "attack" else 2)
+	seal.set_corner_radius_all(2)
+	_seal_box.add_theme_stylebox_override("panel", seal)
+
 	var speed_txt := ""
 	if ispeed > 0:
-		speed_txt = " 速 %d" % ispeed
-	_intent_label.text = "意图：【%s · %d】%s" % [intent_label, ivalue, speed_txt]
-	_intent_label.tooltip_text = "意图：%s；数值 %d；速度 %d；%s" % [itype, ivalue, ispeed, idetail]
-	_intent_label.add_theme_font_size_override("font_size", 14)
-	_intent_label.add_theme_color_override("font_color", color)
+		speed_txt = "速 %d" % ispeed
+	_intent_caption.text = "意图：" + speed_txt
+	_intent_caption.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_intent_caption.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_intent_host.tooltip_text = "意图：%s；数值 %d；速度 %d；%s" % [itype, ivalue, ispeed, idetail]
 
 
 func _refresh_name(enemy: Dictionary, selectable: bool) -> void:
@@ -143,10 +184,10 @@ func _refresh_name(enemy: Dictionary, selectable: bool) -> void:
 	_name_label.visible = not selectable or is_dead
 	if selectable and not is_dead:
 		_name_button.text = enemy_name
-		MasterTheme.apply_button(_name_button, "target")
 	else:
 		_name_label.text = enemy_name
-		_name_label.add_theme_font_size_override("font_size", 18)
+		_name_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+		_name_label.add_theme_font_size_override("font_size", 16)
 		# 死亡态：名字变灰 + 朱砂划除线从左到右划过（文字划除=死亡，设计文档§12）
 		if is_dead:
 			_name_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
@@ -165,7 +206,8 @@ func _refresh_vitals(enemy: Dictionary) -> void:
 			maxi(1, int(enemy.get("max_hp", 1))), GuStyle.CINNABAR)
 	_shield_label.text = "护盾 %d" % int(enemy.get("shield", 0))
 	_shield_label.tooltip_text = "护盾先承受本次伤害。"
-	_shield_label.add_theme_font_size_override("font_size", 13)
+	_shield_label.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_shield_label.add_theme_font_size_override("font_size", 12)
 	_shield_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 
 
@@ -184,25 +226,11 @@ func _refresh_statuses(enemy: Dictionary) -> void:
 		_status_host.add_child(_status_row(sname, stacks))
 
 
-## 带开源图标的状态行：匹配到图标时用 HBoxContainer 包裹图标+文本，无匹配回退纯文本。
-## 线框稿 v2：状态为横排小标签（纸卡墨框，浅底），不再竖排堆叠。
+## 无框状态注记（2026-09-11 水墨去框）：图标 + 灰字，不画边框小标签——
+## 状态是画上的小注，不是 UI 徽章。
 func _status_row(status_name: String, stacks: int) -> Control:
-	var tag := PanelContainer.new()
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(1, 1, 1, 0.3)
-	box.border_color = GuStyle.ENEMY_CARD_BORDER
-	box.set_border_width_all(1)
-	box.set_corner_radius_all(2)
-	tag.add_theme_stylebox_override("panel", box)
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 8)
-	margin.add_theme_constant_override("margin_right", 8)
-	margin.add_theme_constant_override("margin_top", 2)
-	margin.add_theme_constant_override("margin_bottom", 2)
-	tag.add_child(margin)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
-	margin.add_child(row)
+	row.add_theme_constant_override("separation", 3)
 	var icon_name := ""
 	for key in STATUS_ICON_MAP.keys():
 		if status_name.contains(key):
@@ -210,14 +238,14 @@ func _status_row(status_name: String, stacks: int) -> Control:
 			break
 	if not icon_name.is_empty() and GuIconView.has(icon_name):
 		var icon := GuIconView.new()
-		icon.setup(icon_name, Color(0, 0, 0, 0), GuIconView.SIZE_SMALL)
+		icon.setup(icon_name, GuStyle.INK_SOFT, GuIconView.SIZE_SMALL)
 		row.add_child(icon)
 	var label := Label.new()
 	label.text = "%s %d" % [status_name, stacks]
-	label.add_theme_font_size_override("font_size", 8)
-	label.add_theme_color_override("font_color", GuStyle.ENEMY_CARD_TEXT)
+	label.add_theme_font_size_override("font_size", 10)
+	label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
 	row.add_child(label)
-	return tag
+	return row
 
 
 ## 敌人立绘：优先按 enemy id 精确匹配专属立绘（AI 定制），文件缺失时
@@ -291,14 +319,27 @@ func set_drop_highlight(on: bool) -> void:
 	_apply_actor_style(_selected)
 
 
-## 线框稿 v2：纸卡墨框（半透明纸底 + 墨描边），选中/放置高亮态玉绿描边 + 立绘提亮。
+## 水墨去框（2026-09-11 用户裁定）：实体不进矩形面板——根容器全透明，
+## 命中矩形保留（拖拽落点判定用）。选中/放置高亮 = 立绘提亮 + 名字玉绿，
+## 不再画边框。
 func _apply_actor_style(selected: bool) -> void:
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
+	add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	var lit := selected or _drop_highlight
-	box.border_color = GuStyle.JADE if lit else Color(52 / 255.0, 52 / 255.0, 48 / 255.0, 1)  # #343430
-	box.set_border_width_all(2 if lit else 1)
-	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
-	add_theme_stylebox_override("panel", box)
-	var current := _enemy_portrait.modulate
-	_enemy_portrait.modulate = Color(current.r, current.g, current.b, 1.0 if lit else current.a)
+	_enemy_portrait.modulate = Color(1, 1, 1, 1) if lit else _portrait_tint(_last_enemy)
+	# 死亡名灰由 _refresh_name 负责，这里只在存活时做高亮提色。
+	if not (_last_enemy.get("alive", true) == false):
+		_name_label.add_theme_color_override("font_color",
+				GuStyle.JADE if lit else GuStyle.INK_PRIMARY)
+
+
+## 无框文字按钮：透明底、无框，hover/pressed 只变色（古籍批注式操作）。
+## 保留点击音效（交互闭环契约：视觉+听觉双重反馈）。
+func _apply_flat_text_button(button: Button, base: Color, hover: Color) -> void:
+	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+		button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	button.add_theme_color_override("font_color", base)
+	button.add_theme_color_override("font_hover_color", hover)
+	button.add_theme_color_override("font_pressed_color", hover)
+	button.add_theme_color_override("font_focus_color", base)
+	button.add_theme_color_override("font_disabled_color", GuStyle.INK_MUTED)
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND

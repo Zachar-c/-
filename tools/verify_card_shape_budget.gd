@@ -21,11 +21,12 @@ extends SceneTree
 const BattleScene := "res://scenes/ui/screens/battle_screen.tscn"
 const VIEWPORT_SIZE := Vector2i(1280, 720)
 ## 现役卡形（GuTallFanHandView 默认）。改它的话这里也要跟着改。
-const CURRENT_CARD := Vector2(110, 154)
+## 2026-09-11 战斗视觉重构：110×154 → 126×176。
+const CURRENT_CARD := Vector2(126, 176)
 ## 旧卡形，仅用于对照打印"换形前后差多少"。
 const LEGACY_CARD := Vector2(168, 74)
-## 线框稿 v2 敌人卡尺寸（battle_screen_view._build_enemy_panel 写死 208×306）。
-const ENEMY_CARD_MIN := Vector2(208, 306)
+## 敌人卡尺寸（gu_enemy_actor.tscn / battle_screen_view，2026-09-11 视觉重构 236×352）。
+const ENEMY_CARD_MIN := Vector2(236, 352)
 
 ## 参与对比的节点路径（相对 BattleScreen）。
 const PROBES := {

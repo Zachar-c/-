@@ -70,6 +70,15 @@ func _refresh() -> void:
 	var open_flag := bool(_props.get("open", false))
 	_toggle_button.text = "收起 ▲" if open_flag else "展开 ▼"
 	MasterTheme.apply_button(_toggle_button, "action")
+	# 折叠态完全去框（2026-09-11 水墨去框裁定）：默认只剩「调试 DEV ONLY · F12」
+	# 一行淡字浮在画上，不与正式战斗画面争夺视觉层级；展开后恢复纸底细框。
+	if not open_flag:
+		add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+		_title_label.add_theme_color_override("font_color",
+				Color(GuStyle.CINNABAR.r, GuStyle.CINNABAR.g, GuStyle.CINNABAR.b, 0.55))
+	else:
+		_apply_panel_style()
+		_title_label.add_theme_color_override("font_color", GuStyle.CINNABAR)
 
 	var feedback := str(_props.get("feedback", ""))
 	_feedback_toast.visible = feedback != ""

@@ -80,12 +80,12 @@ func _build_reward_card(r: Dictionary) -> void:
 	var card := GuCardScene.instantiate()
 	# 先入树再配内容：GuCardView.content_host 是 @onready，add_child 触发 _ready() 后才有值。
 	_reward_row.add_child(card)
-	card.setup(str(r.get("name", "")), str(r.get("quality", "")), cursed, cursed, false, "")
+	card.setup(str(r.get("name", "")), str(r.get("quality", "")), cursed, cursed, false, "",
+			false, false, false, "idle", str(r.get("effect", "")))
 
 	var kind := str(r.get("kind", ""))
 	if kind != "":
 		card.content_host.add_child(_label_of(kind, GuStyle.INK_SOFT, 12))
-	card.content_host.add_child(_label_of(str(r.get("effect", "")), GuStyle.INK_PRIMARY, 14))
 	var cost := str(r.get("cost", ""))
 	if cost != "":
 		card.content_host.add_child(_label_of(cost, GuStyle.ANOMALY_YELLOW, 13))

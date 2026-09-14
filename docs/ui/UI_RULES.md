@@ -31,6 +31,10 @@ UI 一律走 **Godot 官方 `.tscn` 节点树 + 命令式 `refresh(snapshot)`**�
 
 1. **纸纹只是低对比细颗粒，绝不损害可读性。** 底纹 opacity ≤ 0.06。
 2. **不要渐变文字、不要彩色辉光、不要玻璃卡片。** 层级靠留白 + 1px 发丝线表达。
+   **卡面例外（2026-09-11 用户裁定）**：卡牌组件（`gu_card.tscn`）的悬停辉光
+   （`card_hover_glow.gdshader`）、稀有度闪箔 / 裸眼视差（`card_holo_foil.gdshader` /
+   `card_parallax.gdshader`）是卡面专属装饰——低强度、金色系、仅 epic+ 明显；
+   屏面、面板、按钮一律不适用本例外。
 3. **圆角上限 8px**，优先方角或 2px 微圆角。超 8 即视为浮动卡片。
 4. **分区用留白 + 发丝线，不用悬浮卡片。** 见 §3。
 5. **美术（角色 / 蛊虫 / 场景）是第一视觉信号，UI 退居其后。**
@@ -101,6 +105,26 @@ UI 一律走 **Godot 官方 `.tscn` 节点树 + 命令式 `refresh(snapshot)`**�
 - 中文正文必须走同一套宋体。引擎默认回退是无衬线，与宣纸 + 宋标题断风格。
 - **字体只能在 `gu_style.gd` 里 `preload`**，其他文件一律引用 `GuStyle.BODY_FONT` / `TITLE_FONT`。
   （守卫 `test_fonts_only_preloaded_in_gu_style` 强制）
+
+### 卡面例外：毛笔字体（2026-09-11 用户裁定）
+
+- `MaShanZheng-Regular.ttf`（马善政毛笔楷，SIL OFL 1.1）注册为 `GuStyle.TITLE_BRUSH_FONT`，
+  **仅用于大尺寸卡牌标题**（`gu_card_view.gd`，216×300 基线，19px）；正文 / 屏面标题仍走霞鹜智宋。
+  **小尺寸例外（2026-09-11 用户反馈"看不清"）**：竖长战斗手牌卡（`GuTallFanHandView`，
+  126×176 基线）标题仅 14px 空间，毛笔体在该字号不可读；毛笔体不得用于 16px 以下的文字。
+- 许可副本 `assets/wenzhen/fonts/OFL1.1_MaShanZheng.txt` 随字体存放，随包导出。
+- OFL 允许改名与子集化，但本项目仍原名原样分发，不做子集。
+
+### 文字样式：高锐度无衬线 + 禁用文字阴影（2026-09-11 用户裁定）
+
+- **全部文字阴影移除**（`font_shadow_color` 一律不得再设）：卡面标题（横/竖卡）、
+  全局与大厅按钮文字阴影均已删除；`INK_TEXT_SHADOW` / `BTN_SHADOW_RUST` token 已删除。
+  面板 / 卡体的 StyleBox DropShadow **不是**文字阴影，保留不受影响。
+- 小字号卡面文本（竖卡标题/标签/描述）统一走 `GuStyle.CARD_UI_FONT`——系统
+  **微软雅黑 UI**（回退 Microsoft YaHei → Noto Sans CJK SC → PingFang SC → Segoe UI），
+  hinting=normal + 灰度 AA + **subpixel 关闭**（扇形手牌为旋转渲染，亚像素定位
+  重采样后产生彩边发虚；整像素定位最锐）。
+- 毛笔体（上节）与霞鹜智宋仅用于大字号场景；16px 以下文本一律 `CARD_UI_FONT`。
 
 ### ⚠️ 许可：是 IPA，不是 OFL
 
@@ -304,6 +328,7 @@ await _verify_tscn_rest(...)  # 对
 | 资源 | 许可 | 状态 | 注意 |
 |---|---|---|---|
 | LXGW ZhiSong CL | **IPA Font License 1.0** | 已落地使用 | **不是 OFL**，见 §4 |
+| Ma Shan Zheng（马善政） | SIL OFL 1.1 | 已落地使用（卡面标题） | 许可副本 `OFL1.1_MaShanZheng.txt`，见 §4 卡面例外 |
 | GUT | MIT | 已落地 | 测试框架 |
 | game-icons.net | CC BY 3.0 | 未引用 | 若引入**必须游戏内署名** |
 | Remix Icon / Lucide / Kenney | Apache-2.0 / ISC / CC0 | 未引用 | |

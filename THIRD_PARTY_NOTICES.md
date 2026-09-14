@@ -60,3 +60,16 @@ Obligations that apply to this project:
 
 "IPA Font" / "IPAフォント" is a registered trademark of the Information-technology
 Promotion Agency, Japan.
+
+## Ma Shan Zheng (马善政) — card title typeface
+
+- Font name: Ma Shan Zheng
+- Source URL: https://github.com/google/fonts/tree/main/ofl/mashanzheng
+- License: **SIL Open Font License 1.1**
+- License retained at: `assets/wenzhen/fonts/OFL1.1_MaShanZheng.txt`
+- Font file: `assets/wenzhen/fonts/MaShanZheng-Regular.ttf`
+
+Usage: card title typeface only (`TITLE_BRUSH_FONT` in
+`scripts/presentation/gu_style.gd`), used by `gu_card_view.gd` for card face
+titles. Distributed unmodified under its original name; the license copy ships
+beside the font and must be included in exported builds.

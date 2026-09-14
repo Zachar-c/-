@@ -95,7 +95,7 @@
 | `GuInventory`（gu_inventory） | 同上 | 局内只读行囊：按 `inventory{materials,gu_instances,loot,intel}` 分区展示材料、蛊虫、已结算收获与已知情报；所有分区鼠标穿透，禁止命令和 `RunState` 引用 |
 | `GuConfirmDialog` | 同上 | §1.6 单次确认：必须支持逐项失去物列表、结构化代价和致死死因文本 |
 | `GuEnemyActor` | 同上 | 敌人展示：hp/shield/statuses/intent/alive 全量绑定 |
-| `GuCard` / `CardView`(GuHandCardView) / `GuBattleHand` / `HandPanel` | `scenes/ui/widgets` + `scenes/ui` | 卡牌实例视图与手牌区：主题变体 `CardView[Dim]`、`%HandBox` spawn 模式、溢出滚动 |
+| `GuCard` / `CardView`(GuHandCardView) / `GuBattleHand` / `HandPanel` | `scenes/ui/widgets` + `scenes/ui` | 卡牌实例视图与手牌区：主题变体 `CardView[Dim]`、`%HandBox` spawn 模式、溢出滚动。**2026-09-11 卡面重构**：`gu_card.tscn` 层级=标题（`GuStyle.TITLE_BRUSH_FONT` 毛笔体+阴影）/ 右上费用徽章 / 深灰标签行（品质+咒/锁角标）/ 独立画框插画 / 内建描述槽（`setup(..., desc=)` bbcode 关键词高亮：气血·真元·寿元·魂魄）/ `content_host`（宿主专属：价格、按钮）；稀有度闪箔 + 悬停辉光 + 裸眼视差为卡面专属 shader（UI_RULES §1.2 例外），根节点 STOP、子节点 IGNORE |
 | `GuDeathCauseOverlay` | 同上 | 致死/终局死因覆盖层 |
 | `DebugPanel` | 同上 | 只读调试段（§16.22），仅 debug 构建 |
 

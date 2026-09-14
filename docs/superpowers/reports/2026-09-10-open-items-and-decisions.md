@@ -71,9 +71,9 @@
 
 | # | 漂移点 | 实测证据 | 建议 |
 |---|---|---|---|
-| **D1** | `AGENTS.md` §当前待办 把 **E1–E7** 列为整批待开工 | 实测：**E1a/E1b/E2a/E2b/E3a/E3b/E4a/E4b/E4c 均已落地**（`pacing.json` 5 层 `category_weights` 齐备；`map_generator` 已按分类抽取；`test_category_route.gd` 6 用例；`mode_groups` 已进契约；`rest/refinement/cultivation` 已统一走 Rest 屏）。真正剩的只有 **E5/E6/E7** | ✅ **已修（2026-09-11）**：§当前待办 E1–E7 已全标 ✅；V0 段改写为「Encounter + Npc/Ending/ContentError 线框均已批准、B2 首批 tscn 已落地」，过时措辞清除 |
-| **D2** | 同条**交互闭环契约**只写 `dead=[] no_ui_click=[]` | 本轮已扩为追加 `occluded=[]`（`AGENTS.md:112` 已更新，但 `:58` 那处待办描述未同步） | ✅ **已修（2026-09-11）**：§当前待办该条同步为三键口径（`occluded=[]` 且 `occluded_known` 须为 0），并写明覆盖 8--9 屏（Refine 依赖路线可达性、可能被跳过）、Npc/Ending/ContentError/Reward 未纳入 |
-| **D3** | `PONYTAIL-DEBT.md` 已清账条目仍在讲 **`gu_battle_hand_view` 补 `_gui_input`** | 该组件已随本批删除（`6c96623`）；它引用的两个测试**仍存活**（`test_wenzhen_card_fsm.gd:95/130`），锁的行为也仍成立——只是描述的实现位置过期 | ✅ **已修（2026-09-11）**：改指现役 `GuTallFanHandView`（`button_down` + `gui_input` 驱动、`card_chosen` 冒泡出牌、宿主订阅 `aim_target_changed` 施加高亮），并补上新增三条回归（影卡不透明放大 / 弧箭起点与转色 / 解释栏不挡卡）的测试名 |
+| **D1** | `AGENTS.md` §当前待办 把 **E1–E7** 列为整批待开工 | 实测：**E1a/E1b/E2a/E2b/E3a/E3b/E4a/E4b/E4c 均已落地**（`pacing.json` 5 层 `category_weights` 齐备；`map_generator` 已按分类抽取；`test_category_route.gd` 6 用例；`mode_groups` 已进契约；`rest/refinement/cultivation` 已统一走 Rest 屏）。真正剩的只有 **E5/E6/E7** | ✅ **已闭环**（2026-09-11）：AGENTS 待办收敛为批次状态行，E1–E7 标全链闭环 |
+| **D2** | 同条**交互闭环契约**只写 `dead=[] no_ui_click=[]` | 本轮已扩为追加 `occluded=[]`（`AGENTS.md:112` 已更新，但 `:58` 那处待办描述未同步） | ✅ **已闭环**（2026-09-11）：待办处同步为三键口径 |
+| **D3** | `PONYTAIL-DEBT.md` 已清账条目仍在讲 **`gu_battle_hand_view` 补 `_gui_input`** | 该组件已随本批删除（`6c96623`）；它引用的两个测试**仍存活**（`test_wenzhen_card_fsm.gd:95/130`），锁的行为也仍成立——只是描述的实现位置过期 | ✅ **已闭环**（2026-09-11）：改为现役组件 `GuTallFanHandView`，并补录三条新回归（`test_drag_proxy_is_opaque_and_larger_than_source_card` / `test_aim_line_is_a_curved_arrow_from_card_top` / `test_tooltip_anchors_above_card_and_hides_during_drag`） |
 
 ---
 

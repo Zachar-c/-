@@ -58,6 +58,9 @@ func _ready() -> void:
 	_save_button.pressed.connect(func(): _fire("save"))
 	_load_button.pressed.connect(func(): _fire("load"))
 	_nav_quit.pressed.connect(func(): _fire("back"))
+	# 2026-09-11 P1-3：手记/图鉴导航接入（nav_journal/nav_codex，见 run_command_builder）。
+	_nav_journal.pressed.connect(func(): _fire("nav_journal"))
+	_nav_codex.pressed.connect(func(): _fire("nav_codex"))
 	if not _snapshot.is_empty():
 		_refresh()
 
@@ -222,13 +225,10 @@ func _apply_base_fonts() -> void:
 	_version_label.add_theme_color_override("font_color", GuStyle.VER_TEXT)
 	_paper.color = GuStyle.PAPER_HALL
 	GuStyle.apply_seal(_seal_box, 3.0)
-	# 右侧导航：手记/图鉴尚未接入独立路由（图鉴=蛊方收藏册待 D1b 落地，
-	# 手记=事件日志待规划），为避免"可点无反应"，一律 disabled 置灰；
-	# 设置=当前页标识亦 disabled。退出即返回。接入路由后移除 disabled。
+	# 右侧导航：手记/图鉴已接入路由（nav_journal/nav_codex，D1b 图鉴数据已落地）；
+	# 设置=当前页标识保持 disabled；退出=返回上一屏。
 	for btn in [_nav_journal, _nav_codex, _nav_quit]:
 		_apply_menu_style(btn)
-	_nav_journal.disabled = true
-	_nav_codex.disabled = true
 	_nav_settings.disabled = true
 	_nav_settings.flat = true
 	_nav_settings.add_theme_font_size_override("font_size", 14)

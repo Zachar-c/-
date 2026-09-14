@@ -43,3 +43,12 @@ tools/*.log
 # 运行日志 godot.log（每跑一次游戏就变脏）、存档副本 nanjiang_smoke_meta.json。
 # 代码只经 user:// 访问真身，不读仓库副本，可安全忽略。
 /Godot/
+
+# 引擎运行时产物（user:// 指向仓库内目录，2026-09-11 起 Godot 用户数据不入库；
+# 运行日志的尾随空格会让 check.ps1 的 git diff --check 结构性失败）
+Godot/app_userdata/
+
+# Lore Compiler generated databases, caches, checkpoints, and reports.
+generated/lore/
+lore_engine/__pycache__/
+**/__pycache__/

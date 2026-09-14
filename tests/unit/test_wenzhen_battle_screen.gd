@@ -275,9 +275,11 @@ func _count_buttons_with_text(node: Node, text: String) -> int:
 	if node == null:
 		return 0
 	var count := 0
-	# 卡面是多行文案（品质/名称/费用/效果），卡名是其中一行，用 contains 匹配。
-	if node is Button and str((node as Button).text).contains(text):
-		count += 1
+	# 2026-09-11 卡面层级重构：卡名从 Button.text 迁到 `card_name` meta，两处都匹配。
+	if node is Button:
+		var btn := node as Button
+		if str(btn.text).contains(text) or str(btn.get_meta("card_name", "")).contains(text):
+			count += 1
 	for child in node.get_children():
 		count += _count_buttons_with_text(child, text)
 	return count
@@ -303,17 +305,21 @@ func test_battle_hand_renders_no_permanent_tooltip_children() -> void:
 	var host := _mount_with_hand(cards)
 	var hand := _named(host, "battle_hand")
 	assert_not_null(hand)
-	# Each card body is one Button whose text is the card name; no duplicate
-	# card-name labels should remain inside the hand region.
-	assert_eq(_count_labels_with_text(hand, "血牙蛊"), 0, "card name should live only on the body Button, not as a separate label")
-	assert_eq(_count_buttons_with_text(hand, "血牙蛊"), 1, "card body Button must exist once with the card name")
-	assert_eq(_count_buttons_with_text(hand, "闭息蛊"), 1, "card body Button must exist once with the card name")
-	assert_null(_find_label_containing(hand, "普通"),
-			"quality belongs to the shared hover tooltip, not the clickable card body")
+	# 2026-09-11 卡面层级重构（与横卡 gu_card 同步）：卡面常驻
+	# 标题 / 费用徽章 / 品质标签 / 描述槽；详细段（联动/代价/不可用）仍归共享 tooltip。
+	assert_eq(_count_labels_with_text(hand, "血牙蛊"), 1, "card title label exists exactly once")
+	assert_not_null(_named(hand, "card_title_c0"), "title label node present")
+	assert_not_null(_named(hand, "card_tag_c0"), "quality tag row present on face")
+	assert_eq(_count_buttons_with_text(hand, "血牙蛊"), 1, "card body Button exists once (name via card_name meta)")
+	assert_eq(_count_buttons_with_text(hand, "闭息蛊"), 1, "card body Button exists once (name via card_name meta)")
+	assert_not_null(_named(hand, "card_desc_c0"), "desc slot present on face")
+	var desc := _named(hand, "card_desc_c0") as RichTextLabel
+	assert_not_null(desc, "effect renders in the RichTextLabel desc slot")
+	if desc != null:
+		assert_true(str(desc.text).contains("造成 4 点伤害"), "desc slot carries the effect summary")
+	assert_not_null(_named(hand, "card_cost_c0"), "cost badge present on face")
 	assert_null(_find_label_containing(hand, "造成 4 点伤害"),
-			"effect belongs to the shared hover tooltip, not the clickable card body")
-	assert_null(_find_label_containing(hand, "◆ 1"),
-			"cost belongs to the shared hover tooltip, not the clickable card body")
+			"effect lives in the desc RichTextLabel, not a plain Label")
 
 
 func test_battle_hand_blocked_cards_remain_hoverable_and_carry_block_reason() -> void:

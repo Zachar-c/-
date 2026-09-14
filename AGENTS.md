@@ -53,11 +53,14 @@
 
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 
-1. **当前批次（2026-09-09 用户裁定 4 需求，实施计划 `docs/superpowers/plans/2026-09-09-visual-route-batch-plan.md`，规格 `docs/superpowers/specs/2026-09-09-event-classification-design.md`）**：
-   - **V0 美术风格补全 ✅**：Encounter（`2026-09-09-encounter-wireframe-v1.html`）与 Npc / Ending / ContentError（`2026-09-10-{npc,ending,content-error}-wireframe-v1.html`）均已逐屏获用户批准；battle 线框 v3（`2026-09-10-battle-wireframe-v3.html`，卡 110×154）已出，旧稿 `2026-09-07-battle-wireframe.html` 标 DEPRECATED。**B2 tscn 首批已落地**（`ddef08a` / `4de08bf`）：ContentError / Npc / Ending / Encounter 四屏布局对齐线框（印章 / 竖题 / 三栏 / 成就条）；这四屏已于 2026-09-11 纳入交互门。
-   - **E1-E7 按层伪随机**：E1 pacing 分类概率表 ✅ / E2 生成器分类抽取 ✅ / E3 休息三选一（mode_groups）✅ / E4 表现层（地图「?」迷雾 + 休息三选一 UI + refinement→Rest 路由）✅ / **E5 回归 ✅**（`verify_pacing_density.gd` 四分类+聚合战斗占比门；`verify_route_diversity.gd` 全池模板冒烟）/ **E6 敌人按层随机 ✅**（主题标签 + 敌人池 + `enemy_roll`：`pacing` 层 rank 区间与 `enemy_weights`、`enemy_catalog.roll_enemy_ids`、非锚点抽取、Boss 永不入选；`test_enemy_roll.gd`；见 `2026-09-10-e6-enemy-roll.md`）/ **E7 商店按层随机** ✅（`shop_stock`：洗牌取前 N + 保底 + 越权拒绝，见 `test_shop_roll.gd`）。
-   - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门，三键 `dead=[]`、`no_ui_click=[]` **且 `occluded=[]`** 方可交付（`occluded_known` 须为 0，白名单不得长期挂账）。**审计面 = 13 屏 + 大厅 4 个子视图**（共 17 个 `AUDIT[...]` 标签，2026-09-11 扩屏）：Hall / Map / Battle / Rest / Shop / Refine / Encounter / Settings / Kill + Reward / Npc / ContentError / Ending，外加 `Hall-Schools` / `Hall-Contracts` / `Hall-Codex` / `Hall-Journal`（子视图的动态按钮此前无自动保护，流派选择"点了没反应"的 bug 正落在该盲区）。Refine 原先由 `_travel(...,"refinement")` 门控、路线无该节点时静默跳过（覆盖会掉到 8 屏），现已改为不可达时直接挂载。接线判定同时计入 `pressed` 与 `toggled`（CheckButton 语义信号，否则误报死按钮）。整门一次约 **4.5 分钟**（Refine 屏 399 按钮为主开销）。Settings 手记/图鉴/设置已 disabled 置灰（接入路由后启用）。
-2. 队列后续：**真窗键鼠验收**（S 阶段全流程；D1b 古方知识模型已落地，见 `2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`；`run_controller` A7 减行已达标 888 行）。
+1. **当前批次（2026-09-11 用户裁定：卡牌 UI 重构 + 真窗验收）**：
+   - **卡牌重构**：手牌单卡信息层级/画框/稀有度流光重构（现役 `GuTallFanHandView`，战斗线框 v3 卡 110×154 基线）——单测 + 交互门三键回归**已完成**（2026-09-11），**剩余：真窗手感验收**。
+   - **战斗水墨去框重构（2026-09-11 已落地）**：敌人/玩家去框融入山水、意图篆刻印、按钮减重、debug 弱化；headless 全绿，剩余真窗验收。
+   - **休息屏软锁修复（2026-09-11 已落地）**：主决策面滚动化 + LeaveRow 常驻跳过入口；回归门 `tools/verify_rest_headless.gd`（1280x720 SubViewport 可视预算 + 引擎拾取）。
+   - **V 线（已批准，2026-09-10）**：Encounter v1（C4）、Npc/Ending/ContentError v1（B1）线框稿均获批；B2 首批 tscn 已落地（`ddef08a` + `4de08bf`：四屏布局与线框对齐 + 结局回顾格 + NPC 对话卡）。**剩余：B2 真窗/截图验收与细化**。
+   - **E1-E7 按层伪随机：全链闭环**（E1 pacing 分类概率表 / E2 生成器分类抽取 / E3 休息三选一 mode_groups / E4 表现层路由 / E5 `verify_pacing_density` + `verify_route_diversity` 双门 / E6 `enemy_roll` / E7 `shop_stock`）。
+   - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门（`dead=[]`、`no_ui_click=[]`、`occluded=[]` 三键全 0，滚动裁剪以 `scrolled=N` 计数留痕）；Settings 手记/图鉴导航已接入路由启用（`nav_journal`/`nav_codex`，2026-09-11），设置=当前页标识 disabled。
+2. 队列后续：**真窗键鼠验收**（用户已下令 2026-09-11：B2 四屏 + W10 `continue_run` + S 阶段全流程 + 手牌动态手感）。D1b 古方知识模型已落地（`2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）；`run_controller` A7 减行已达标 888 行。
 3. 验证遗留：Dialogue Manager invalid UID、ObjectDB/RID 泄漏（2026-09-06 复测 20601 实例仍复现）；最终 `tools/test.ps1 -Suite unit`、`-Suite integration`、`tools/check.ps1` 全绿。
 4. 提交时继续排除 `.claude/`、无关的 `data/dialogues/events.dialogue` 本地修改，以及截图目录与 `__pycache__`。~~`data/enemies.json` 在 E6 补 weight 验证前仍按未经验证排除，E6 落地后解除。~~ **排除令已解除（2026-09-10 用户指令）**：原排除理由（E6 补 `weight` 验证）已失效——E7 改用"种子化洗牌取前 N"而非权重法，E6 也不再需要 `weight`；`data/enemies.json` 现有 30 条均由 `content_catalog.validate` 全量校验 + `test_b5_content_expansion.gd` 三条池契约守卫（clue ≥2 / 每主题有非 boss / 每条能起战）覆盖。
 

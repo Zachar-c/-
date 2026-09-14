@@ -238,9 +238,7 @@ static func apply_primary_outline(btn: Button, font_size: int = 22) -> void:
 	btn.add_theme_color_override("font_focus_color", GuStyle.INK_PRIMARY)
 	btn.add_theme_color_override("font_outline_color", GuStyle.BTN_OUTLINE_BLUE)
 	btn.add_theme_constant_override("outline_size", 1)
-	btn.add_theme_color_override("font_shadow_color", GuStyle.BTN_SHADOW_RUST)
-	btn.add_theme_constant_override("shadow_offset_x", -1)
-	btn.add_theme_constant_override("shadow_offset_y", 0)
+	# 文字阴影已按 2026-09-11 用户裁定全量移除（高锐度文本样式收敛）。
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(0, 0, 0, 0)
 	normal.set_border_width_all(0)

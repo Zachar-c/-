@@ -222,6 +222,14 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Settings":
 			return {
 				"back": func(): controller.back_from_overlay(),
+				# 2026-09-11 P1-3：手记/图鉴导航接入（复用 Ending to_codex 模式：
+				# 出 overlay 回大厅并落到对应子视图；表现层内部路由，不发领域命令）。
+				"nav_journal": func():
+					controller._show_title()
+					controller._show_hall_subview("journal"),
+				"nav_codex": func():
+					controller._show_title()
+					controller._show_hall_subview("codex"),
 				"set_resolution": func(index): controller.set_resolution_index(int(index)),
 				"toggle_mute": func(): controller.toggle_mute(),
 				"save": func():

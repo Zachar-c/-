@@ -324,17 +324,13 @@ func test_npc_talk_buttons_use_snapshot_labels_and_unique_action_ids() -> void:
 	for _i in 3:
 		await get_tree().process_frame
 
-	# 实现形态（npc_screen_view._build_talk_row）：每条 talk_option 渲染为
-	# 「标题 Label（= 快照 label）+ 固定文案「执行」按钮」的卡片行。
-	# 因此断言分两段：① label 作为可见文本出现；② 按行序点「执行」派发各自 action_id。
-	# （原断言把 label 当作按钮文案，与卡片式实现不符——非 flaky，是断言过时。）
+	# B2 线框卡片（2026-09-11 批准）：快照 label 在行标题文本列，按钮统一为
+	# 「执行」/「不可用」；按下第 i 行的「执行」必须派发第 i 个 action_id。
 	var labels := ["友善攀谈", "诈言诓骗", "出手试探", "退避三舍"]
 	for label in labels:
-		assert_true(_host_has_text(host, label), "%s must render as visible text" % label)
-
-	var exec_buttons := _collect_buttons_by_text(host, "执行")
-	assert_eq(exec_buttons.size(), labels.size(), "one 执行 button per talk option")
-	for button in exec_buttons:
-		button.pressed.emit()
+		assert_true(_host_has_text(host, label), "%s must render as row title" % label)
+	for i in labels.size():
+		assert_true(_press_button(host, "执行", i),
+				"talk row %d must have a real clickable button" % i)
 	assert_eq(talked, ["friendly_chat", "deceive", "probe", "withdraw"],
 			"each talk row must dispatch its own action_id")

@@ -3,8 +3,8 @@ extends Control
 
 ## 竖向长卡片的底部横向扇形手牌（Tall-Card Bottom Fan Hand）——2026-09-10。
 ##
-## 适用形态：卡面改成长条（高 > 宽，默认 110×154），手牌区仍在屏幕底部横向扇形展开。
-## 卡变窄后 `step` 会自动变小，同屏容量按比例上升（110 宽 + 45% 重叠 → 1280 可放 20+ 张）。
+## 适用形态：卡面改成长条（高 > 宽，默认 126×176），手牌区仍在屏幕底部横向扇形展开。
+## 卡变窄后 `step` 会自动变小，同屏容量按比例上升（126 宽 + 45% 重叠 → 1280 可放 17+ 张）。
 ##
 ## 责任边界：
 ##   · 只负责「摆放 + 悬停/拖拽的表现」；出牌与否由宿主命令面裁决（只发信号）。
@@ -53,22 +53,28 @@ const DRAG_PROXY_GRAB := Vector2(0.5, 0.72)
 ## 起点==终点会让贝塞尔退化成零长度，`draw_polyline` 什么都画不出来（线"消失"）。
 const AIM_ORIGIN_FALLBACK_Y := 120.0
 const DRAG_PROXY_SCALE := 1.4
-const TWEEN_TIME := 0.16
+const TWEEN_TIME := 0.12
 const REBOUND_TIME := 0.22
-## 卡面字号与效果行截断阈值。竖长卡宽 110：
-##   · 字号 11 时每行约容 10 个汉字；
-##   · 卡高 154 富余很多（四行只用掉约 60px），所以效果行**允许折成两行**再截断，
-##     不然「对单体造成 6 点伤害」会被切成「对单体造成 6…」这种半截话。
-## 超出仍会被 `clip_text` **静默切掉**（不报错），所以阈值必须显式给。
-const FACE_FONT_SIZE := 11
+## 卡面信息层级（2026-09-11 与横卡 gu_card 同步重构，126×176 基线，纯表现层）：
+## 标题 → 右上真元费用徽章（图标+放大数字）→ 深灰标签行（品质·代价 + 咒角标）
+## → 画框插画（按道映射，装裱细框）→ 内建描述槽（bbcode 关键词高亮）。
+## 文字样式（2026-09-11 用户裁定"看不清"二次收敛）：卡面标题/标签/描述一律走
+## `GuStyle.CARD_UI_FONT`（高锐度无衬线，hinting+整像素定位），**无文字阴影**——
+## 阴影在旋转卡面上重采样后变成脏边；毛笔体仅限横卡大尺寸卡面（UI_RULES §4）。
+## 卡面文案不再走 Button.text：卡名进 `card_name` meta，按名找卡的测试/工具走 meta。
+const FACE_MARGIN := 6.0
+const TITLE_H := 20.0
+const TAG_H := 12.0
+const COST_BADGE_W := 26.0
+const COST_BADGE_H := 16.0
+const DESC_H := 36.0
+const TITLE_FONT_SIZE := 14
+const TAG_FONT_SIZE := 10
+const DESC_FONT_SIZE := 10
+## 效果行截断阈值：字号 10 时描述槽（36px 约三行）容得下；括注细节归共享 tooltip。
 const FACE_EFFECT_MAX_CHARS := 18
 
-## C3 留白卡面：上 98×98 方形插画（1:1 不裁）+ 下信息带。
 ## 插画按道（school id）映射；无图/未知道走网点占位。
-const ART_SIZE := Vector2(98, 98)
-const ART_TOP := 6.0
-## content_margin_top 让 Button 文案落在插画下方（不另挂 Label，满足卡面无角标 Label 的守卫）。
-const FACE_TEXT_TOP := 104.0
 const DAO_TEXTURE := {
 	"blood": "res://assets/wenzhen/gu/gu_blood.png",
 	"bone": "res://assets/wenzhen/gu/gu_bone.png",
@@ -116,6 +122,8 @@ const EDGE_OVERHANG_INSET := 10.0
 ## 取 42 时卡顶到 485 → **撞进 ModeHost 22px**；取 18 时到 509 → 让开。
 ## 这个数不能单看组件自身调大——它是"组件参数 + 卡高"两笔叠加出来的。
 const HOVER_LIFT := 18.0
+## 悬停放大 1.15（2026-09-11 水墨去框裁定：卡是画面里最明确的矩形元素，
+## 拿起感回落到用户指定的 ~1.15，不继续放大）。
 const HOVER_SCALE := 1.15
 const HOVER_Z := 100
 ## 悬停时左右邻居让位：按距离衰减到第 3 张。
@@ -128,7 +136,7 @@ const DRAG_Z := 1000
 ## （UI_RULES §2，test_ui_rules_guard 会扫 scripts/presentation/）。
 const DIM_DARKEN := 0.22
 
-var card_size := Vector2(110, 154)
+var card_size := Vector2(126, 176)
 var on_chosen: Callable = Callable()
 var target_provider: Callable = Callable()
 
@@ -314,8 +322,7 @@ func _pivot() -> Vector2:
 ##   · 变形放在外层，Button 就能保持 AABB 命中与自己的 hover 态样式；
 ##   · 节点名与生产组件同构（`card_box_<清洗 id>` / `card_body_<清洗 id>`），
 ##     既有测试按这两个名字定位，换组件因此不必改测试。
-## 卡面**只能**是 Button 自己的多行 text：既有测试断言"手牌区内不得存在含卡名/品质/费用的
-## 独立 Label"（详情归宿主 tooltip），所以不要往卡上挂角标 Label。
+## 卡面层级见文件头常量区注释（2026-09-11 与横卡同步重构）。
 func _build_card(card: Dictionary) -> Control:
 	var card_id := str(card.get("id", ""))
 	var node_name := _node_name(card_id)
@@ -326,52 +333,12 @@ func _build_card(card: Dictionary) -> Control:
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.pivot_offset = _pivot()
 
-	var btn := Button.new()
-	btn.name = "card_body_" + node_name
-	btn.text = _face_text(card)
-	btn.clip_text = true
-	# 中文按字断行（WORD_SMART 对无空格的中文会整段不折），效果行因此能占两行。
-	btn.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
-	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var btn := _build_face(card, card_size, node_name)
 	# 卡体必须 STOP：否则 hover/点击都收不到（IGNORE 会变成"看得见点不到"）。
 	btn.mouse_filter = Control.MOUSE_FILTER_STOP
 	if not bool(card.get("executable", true)):
 		btn.modulate = Color(1, 1, 1, 0.55)
-	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
-	btn.add_theme_font_size_override("font_size", FACE_FONT_SIZE)
-	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	# 交互闭环契约：每个可点元素必须有**视觉 + 听觉**双重反应。
-	btn.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
-	# 文案落在插画下方信息带；插画由子节点 TextureRect 承担。
-	var face_box := _card_box(false)
-	face_box.content_margin_top = FACE_TEXT_TOP
-	face_box.content_margin_left = 6.0
-	face_box.content_margin_right = 6.0
-	face_box.content_margin_bottom = 4.0
-	var hover_box := _card_box(true)
-	hover_box.content_margin_top = FACE_TEXT_TOP
-	hover_box.content_margin_left = 6.0
-	hover_box.content_margin_right = 6.0
-	hover_box.content_margin_bottom = 4.0
-	var pressed_box := _card_box(false)
-	pressed_box.content_margin_top = FACE_TEXT_TOP
-	pressed_box.content_margin_left = 6.0
-	pressed_box.content_margin_right = 6.0
-	pressed_box.content_margin_bottom = 4.0
-	btn.add_theme_stylebox_override("normal", face_box)
-	btn.add_theme_stylebox_override("hover", hover_box)
-	btn.add_theme_stylebox_override("pressed", pressed_box)
 	btn.pressed.connect(func(): _sfx("ui_click"))
-	var art := TextureRect.new()
-	art.name = "card_art_" + node_name
-	art.custom_minimum_size = ART_SIZE
-	art.size = ART_SIZE
-	art.position = Vector2((card_size.x - ART_SIZE.x) * 0.5, ART_TOP)
-	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	art.texture = _card_art_texture(str(card.get("school_id", "")))
-	btn.add_child(art)
 	box.add_child(btn)
 
 	var index := _cards.size()
@@ -393,6 +360,164 @@ func _build_card(card: Dictionary) -> Control:
 	return box
 
 
+## 卡面构建（2026-09-11 层级重构，与横卡 GuCardView 同构）：
+## 标题（毛笔字+阴影）→ 右上真元徽章（图标+放大数字）→ 标签行（品质·代价+咒角标）
+## → 画框插画（按道映射，装裱细框）→ 描述槽（bbcode 关键词高亮）。
+## 外层 Button 只承担交互；卡面子节点**全部 IGNORE**，命中归根节点（遮挡红线）。
+## 卡名同步写进 `card_name` meta：文案不再走 Button.text，按名找卡的测试/工具
+## （如 test_wenzhen_card_fsm._button）走 meta 匹配。
+func _build_face(card: Dictionary, face_size: Vector2, node_name: String) -> Button:
+	var btn := Button.new()
+	btn.name = "card_body_" + node_name
+	btn.clip_text = true
+	btn.custom_minimum_size = face_size
+	btn.size = face_size
+	btn.set_meta("card_name", str(card.get("name", "蛊虫")))
+	# 影卡按 DRAG_PROXY_SCALE 重建放大时字号/行高随宽度等比（不缩放 Control，字会虚）。
+	var s: float = face_size.x / maxf(1.0, card_size.x)
+	var margin := FACE_MARGIN * s
+	var quality := str(card.get("quality", "普通"))
+	var danger := bool(card.get("curse_warning", false))
+	btn.add_theme_stylebox_override("normal", _face_box(false, danger, quality))
+	btn.add_theme_stylebox_override("hover", _face_box(true, danger, quality))
+	btn.add_theme_stylebox_override("pressed", _face_box(false, danger, quality))
+
+	# —— 标题：高锐度无衬线，无文字阴影（旋转卡面上阴影重采样成脏边，见文件头）——
+	var title := Label.new()
+	title.name = "card_title_" + node_name
+	title.text = str(card.get("name", "蛊虫"))
+	title.position = Vector2(margin, 3.0 * s)
+	title.size = Vector2(face_size.x - margin * 2.0 - COST_BADGE_W * s, TITLE_H * s)
+	title.clip_text = true
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	title.add_theme_font_size_override("font_size", int(TITLE_FONT_SIZE * s))
+	title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	btn.add_child(title)
+
+	# —— 右上费用徽章：「真元 N」取数字进徽章（横卡同款图标+放大数字）；
+	# 纯数字代价同样进徽章；念头/寿元段留标签行常驻——成本不得只在悬停 tooltip 里。
+	var cost_text := str(card.get("cost_ex", ""))
+	if cost_text.is_empty():
+		cost_text = str(card.get("cost", ""))
+	var cost_parts := _split_cost(cost_text)
+	if str(cost_parts["badge"]) != "":
+		var badge := PanelContainer.new()
+		badge.name = "card_cost_" + node_name
+		badge.position = Vector2(face_size.x - margin - COST_BADGE_W * s, 4.0 * s)
+		badge.custom_minimum_size = Vector2(COST_BADGE_W * s, COST_BADGE_H * s)
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var badge_box := StyleBoxFlat.new()
+		badge_box.bg_color = GuStyle.PAPER_RAISED
+		badge_box.set_corner_radius_all(6)
+		badge_box.content_margin_left = 3.0 * s
+		badge_box.content_margin_right = 4.0 * s
+		badge_box.content_margin_top = 1.0 * s
+		badge_box.content_margin_bottom = 1.0 * s
+		badge.add_theme_stylebox_override("panel", badge_box)
+		var row := HBoxContainer.new()
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_theme_constant_override("separation", int(2.0 * s))
+		badge.add_child(row)
+		var icon := GuIconView.new()
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.setup("yuanstone", GuStyle.CONTRACT_BLUE, int(12.0 * s))
+		row.add_child(icon)
+		var num := Label.new()
+		num.text = str(cost_parts["badge"])
+		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		num.add_theme_font_size_override("font_size", int(12.0 * s))
+		num.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+		row.add_child(num)
+		btn.add_child(badge)
+
+	# —— 标签行：品质 + 其余代价（念头/寿元），深灰小字 ——
+	var tag_y := 3.0 * s + TITLE_H * s + 2.0 * s
+	var tag := Label.new()
+	tag.name = "card_tag_" + node_name
+	var tag_bits: Array[String] = []
+	if not quality.is_empty():
+		tag_bits.append(quality)
+	if str(cost_parts["rest"]) != "":
+		tag_bits.append(str(cost_parts["rest"]))
+	tag.text = " · ".join(tag_bits)
+	tag.position = Vector2(margin, tag_y)
+	tag.size = Vector2(face_size.x - margin * 2.0, TAG_H * s)
+	tag.clip_text = true
+	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tag.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	tag.add_theme_font_size_override("font_size", int(TAG_FONT_SIZE * s))
+	tag.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	btn.add_child(tag)
+
+	# —— 咒角标：诅咒卡朱砂小角标（标签行右端，与横卡 CurseBadge 同语义）——
+	if danger:
+		var curse := PanelContainer.new()
+		curse.name = "card_curse_" + node_name
+		curse.position = Vector2(face_size.x - margin - 14.0 * s, tag_y - 1.0 * s)
+		curse.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var curse_box := StyleBoxFlat.new()
+		curse_box.bg_color = GuStyle.CINNABAR
+		curse_box.set_corner_radius_all(4)
+		curse_box.content_margin_left = 3.0 * s
+		curse_box.content_margin_right = 3.0 * s
+		curse_box.content_margin_top = 1.0 * s
+		curse_box.content_margin_bottom = 1.0 * s
+		curse.add_theme_stylebox_override("panel", curse_box)
+		var curse_label := Label.new()
+		curse_label.text = "咒"
+		curse_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		curse_label.add_theme_font_size_override("font_size", int(9.0 * s))
+		curse_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
+		curse.add_child(curse_label)
+		btn.add_child(curse)
+
+	# —— 画框插画：装裱细框 + 微沉底色，按道映射（无图走网点纸底占位）——
+	var frame_y := tag_y + TAG_H * s + 2.0 * s
+	var frame_h: float = face_size.y - frame_y - DESC_H * s - 4.0 * s
+	var frame := PanelContainer.new()
+	frame.name = "card_frame_" + node_name
+	frame.position = Vector2(margin, frame_y)
+	frame.size = Vector2(face_size.x - margin * 2.0, frame_h)
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var art_box := StyleBoxFlat.new()
+	art_box.bg_color = GuStyle.PAPER_RAISED
+	art_box.set_corner_radius_all(4)
+	art_box.set_border_width_all(1)
+	art_box.border_color = GuStyle.INK_SOFT
+	art_box.content_margin_left = 3.0 * s
+	art_box.content_margin_right = 3.0 * s
+	art_box.content_margin_top = 3.0 * s
+	art_box.content_margin_bottom = 3.0 * s
+	frame.add_theme_stylebox_override("panel", art_box)
+	var art := TextureRect.new()
+	art.name = "card_art_" + node_name
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.texture = _card_art_texture(str(card.get("school_id", "")))
+	frame.add_child(art)
+	btn.add_child(frame)
+
+	# —— 内建描述槽：bbcode 关键词高亮（气血=朱砂/真元=契蓝/寿元=险黄/魂魄=玉青）——
+	var desc := RichTextLabel.new()
+	desc.name = "card_desc_" + node_name
+	desc.text = GuStyle.highlight_desc_keywords(_desc_text(card))
+	desc.bbcode_enabled = true
+	desc.scroll_active = false
+	desc.clip_contents = true
+	# 中文按字断行（WORD_SMART 对无空格的中文会整段不折）。
+	desc.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	desc.position = Vector2(margin, frame_y + frame_h + 2.0 * s)
+	desc.size = Vector2(face_size.x - margin * 2.0, DESC_H * s)
+	desc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	desc.add_theme_font_override("normal_font", GuStyle.CARD_UI_FONT)
+	desc.add_theme_font_size_override("normal_font_size", int(DESC_FONT_SIZE * s))
+	desc.add_theme_color_override("default_color", GuStyle.INK_PRIMARY)
+	btn.add_child(desc)
+	return btn
+
+
 ## 数据 id → 节点名后缀。**显式清洗**而不是依赖引擎的隐式行为：
 ## Godot 节点名不允许 `. : @ / %`，会自行替换，但那是引擎实现细节；
 ## 命名方与查找方用同一条规则（`id.replace(".", "_")`）才不会漂移。
@@ -400,32 +525,31 @@ static func _node_name(card_id: String) -> String:
 	return card_id.replace(".", "_")
 
 
-## 卡面多行文案：名称 / 道阶 / 效果 / 费用。与生产手牌同构（含字段回退顺序），
-## 只是截断阈值按竖长卡的窄宽度（110）重算：字号 11 时每行约容 10 字，
-## 取 8 字留内边距——超了会被 clip_text 静默切掉，所以必须显式截断。
-func _face_text(card: Dictionary) -> String:
-	var name := str(card.get("name", "蛊虫"))
-	var quality := str(card.get("quality", "普通"))
-	var school := str(card.get("school_label", ""))
-	var cost := str(card.get("cost_ex", ""))
-	if cost.is_empty():
-		cost = str(card.get("cost", ""))
+## 代价解析（2026-09-11 卡面层级）：「真元 N」/纯数字 → 徽章数字；
+## 「念头/寿元」段并入标签行常驻卡面——成本不得只在悬停 tooltip 里（透明度红线）。
+static func _split_cost(cost: String) -> Dictionary:
+	var badge := ""
+	var rest: Array[String] = []
+	for raw in cost.split(" · ", false):
+		var part := raw.strip_edges()
+		if part.begins_with("真元"):
+			badge = part.trim_prefix("真元").strip_edges()
+		elif part.is_valid_int():
+			badge = part
+		elif not part.is_empty():
+			rest.append(part)
+	return {"badge": badge, "rest": " · ".join(rest)}
+
+
+## 描述槽文案：效果去括注后按窄卡宽度截断；括注与完整代价归共享 tooltip。
+static func _desc_text(card: Dictionary) -> String:
 	var effect := str(card.get("effect", ""))
 	var paren := effect.find("（")
 	if paren >= 0:
 		effect = effect.substr(0, paren)
 	if effect.length() > FACE_EFFECT_MAX_CHARS:
 		effect = effect.substr(0, FACE_EFFECT_MAX_CHARS) + "…"
-	# 信息带约 50px：名 / 道·品质·费用 / 效果 一行，避免溢出插画区。
-	var meta := "" if school.is_empty() else "%s · %s" % [school, quality]
-	if not cost.is_empty():
-		meta = ("%s · %s" % [meta, cost]) if not meta.is_empty() else cost
-	var lines: Array[String] = [name]
-	if not meta.is_empty():
-		lines.append(meta)
-	if not effect.is_empty():
-		lines.append(effect)
-	return "\n".join(lines)
+	return effect
 
 
 ## 按道 id 取插画；缓存 Texture2D；无图返回 null（TextureRect 显示网点纸底占位）。
@@ -448,15 +572,20 @@ func _card_art_texture(school_id: String) -> Texture2D:
 	return tex
 
 
-func _card_box(highlighted: bool) -> StyleBoxFlat:
+## 卡面样式：8px 圆角 + DropShadow 投影 + 稀有度描边（与横卡 GuCardView._refresh_style
+## 同一套视觉语言）；诅咒卡朱砂描边加粗，悬停转玉绿（既有 hover 视觉语言）。
+func _face_box(hovered: bool, danger: bool, quality: String) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
-	box.bg_color = GuStyle.PAPER_RAISED if highlighted else GuStyle.PAPER_BG
-	box.border_color = GuStyle.JADE if highlighted else GuStyle.HAIRLINE_COLOR
-	box.set_border_width_all(2 if highlighted else GuStyle.HAIRLINE)
-	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
-	box.shadow_color = GuStyle.SHADOW_LARGE_COLOR if highlighted else GuStyle.SHADOW_SMALL_COLOR
-	box.shadow_size = GuStyle.SHADOW_LARGE_SIZE if highlighted else GuStyle.SHADOW_SMALL_SIZE
-	box.shadow_offset = GuStyle.SHADOW_LARGE_OFFSET if highlighted else GuStyle.SHADOW_SMALL_OFFSET
+	box.bg_color = GuStyle.PAPER_BG
+	box.set_corner_radius_all(GuStyle.RADIUS_LARGE)
+	var border := GuStyle.CINNABAR if danger \
+			else GuStyle.rarity_color(GuStyle.quality_key(quality))
+	box.border_color = GuStyle.JADE if hovered else border
+	box.set_border_width_all(2 if (danger or hovered) else GuStyle.HAIRLINE)
+	box.shadow_color = GuStyle.INK_DROP_SHADOW
+	# 悬停 = 拿起：落影加深 + 描边加粗一档，边缘对比增强（2026-09-11 视觉重构）。
+	box.shadow_size = 10 if hovered else 6
+	box.shadow_offset = Vector2(0, 3 if hovered else 2)
 	return box
 
 
@@ -769,21 +898,14 @@ func _submit(index: int, target_id: String) -> void:
 		on_chosen.call(card_id, target_id)
 
 
-## 无指向卡的影卡：不透明 + 按比例重建放大（缩放 Control 会把字拉虚），
-## 带墨框与投影读作"离手"。
+## 无指向卡的影卡：不透明 + **按比例重建放大卡面**（缩放 Control 会把字拉虚），
+## 复用 `_build_face`（新卡面层级随影卡同步），带墨框与投影读作"离手"。
 func _spawn_proxy(index: int) -> void:
 	var card := _card_at(index)
 	var size := card_size * DRAG_PROXY_SCALE
-	var btn := Button.new()
-	btn.text = _face_text(card)
-	btn.clip_text = true
-	btn.custom_minimum_size = size
-	btn.size = size
+	var node_name := _node_name(str(card.get("id", "")))
+	var btn := _build_face(card, size, node_name)
 	btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	btn.add_theme_font_override("font", GuStyle.BODY_FONT)
-	btn.add_theme_font_size_override("font_size", int(FACE_FONT_SIZE * DRAG_PROXY_SCALE))
-	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	btn.add_theme_stylebox_override("normal", _lifted_box(false))
 	var wrapper := Control.new()
 	# 名字与生产组件一致：既有测试按 `battle_drag_proxy` 前缀在视口里找影卡。
 	wrapper.name = "battle_drag_proxy"
@@ -806,7 +928,7 @@ func _lifted_box(ready: bool) -> StyleBoxFlat:
 	box.bg_color = GuStyle.PAPER_BG
 	box.border_color = GuStyle.CINNABAR if ready else GuStyle.INK_PRIMARY
 	box.set_border_width_all(2)
-	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	box.set_corner_radius_all(GuStyle.RADIUS_LARGE)
 	box.shadow_color = GuStyle.SHADOW_LARGE_COLOR
 	box.shadow_size = GuStyle.SHADOW_LARGE_SIZE
 	box.shadow_offset = GuStyle.SHADOW_LARGE_OFFSET

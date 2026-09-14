@@ -269,6 +269,9 @@ static func _mount_debug_panel(controller) -> void:
 	controller.add_child(controller._debug_host)
 	controller._debug_panel = scene.instantiate()
 	controller._debug_host.add_child(controller._debug_panel)
+	# 2026-09-11 战斗视觉重构：调试面板弱化（半透），不得影响正式战斗视觉层级。
+	# 仅 DEBUG 挂载（Release 编译裁剪），透明度只影响观感不影响交互。
+	controller._debug_panel.modulate = Color(1, 1, 1, 0.45)
 	controller._debug_panel.set_props(_debug_props(controller))
 
 
@@ -282,6 +285,9 @@ static func _render_debug_panel(controller) -> void:
 		return
 	if controller._debug_host != null:
 		controller._debug_host.size = _debug_host_size(controller)
+	# 折叠 = 一行淡字（0.4），展开 = 轻提亮（0.85）——面板不与战斗画面争读。
+	controller._debug_panel.modulate = Color(1, 1, 1,
+			0.85 if controller._debug_panel_open else 0.4)
 	controller._debug_panel.set_props(_debug_props(controller))
 
 

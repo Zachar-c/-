@@ -37,9 +37,9 @@ GuStyle.apply_seal($Path/SealPanelContainer)  # 方角 + 顺时针 +3° + 深印
 
 - 导航/次要按钮：透明底 + `NAV_TEXT`，hover 转 CINNABAR，圆角 2px。
 - 主按钮（确认/进入）：透明底 + TITLE_FONT 22px + INK_PRIMARY 黑字芯 +
-  `font_outline_color=BTN_OUTLINE_BLUE` + `outline_size=1` +
-  `font_shadow_color=BTN_SHADOW_RUST` + `shadow_offset(-1,0)`；
+  `font_outline_color=BTN_OUTLINE_BLUE` + `outline_size=1`；
   未激活态 = 透明底 + INK_SOFT 灰字（无描边）。
+  （2026-09-11 用户裁定：全部文字阴影移除，`BTN_SHADOW_RUST` 左投影不再使用，勿回加。）
 
 ## 6. 语义状态文字
 

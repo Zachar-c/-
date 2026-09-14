@@ -1,4 +1,4 @@
-﻿class_name ShopScreenView
+class_name ShopScreenView
 extends MarginContainer
 ## 黑市 / 商店屏（Godot 官方 .tscn 节点树版，替代 ui/screens/shop_screen.guitkx）。
 ##
@@ -157,14 +157,9 @@ func _build_offer_card(o: Dictionary) -> void:
 	# 先入树再配内容：GuCardView.content_host 是 @onready，只有 add_child 触发
 	# _ready() 之后才有值，instantiate() 后立刻访问恒为 null。
 	_offer_list.add_child(card)
-	card.setup(oname, str(o.get("quality", "")), cursed, cursed, false, "")
-
-	var desc := Label.new()
-	desc.text = str(o.get("desc", ""))
-	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc.add_theme_font_size_override("font_size", 13)
-	desc.add_theme_color_override("font_color", GuStyle.INK_SOFT)
-	card.content_host.add_child(desc)
+	# 描述走组件内建描述槽（关键词高亮），不再自拼 Label。
+	card.setup(oname, str(o.get("quality", "")), cursed, cursed, false, "",
+			false, false, false, "idle", str(o.get("desc", "")))
 
 	var price_row := HBoxContainer.new()
 	price_row.add_theme_constant_override("separation", 4)

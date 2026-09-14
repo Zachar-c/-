@@ -47,6 +47,8 @@ const INK_PRIMARY  := Color("171814")       # 近黑墨色（主文字 / 主结�
 const INK_SOFT     := Color("686960")       # 次要文字、已知但不紧急
 const INK_MUTED    := Color("68675f")       # 介于 INK_PRIMARY 与 PAPER_BG
 const INK_HALL     := Color("171817")       # 大厅 HTML 主文字
+# INK_TEXT_SHADOW 已删除（2026-09-11 用户裁定：全部文字阴影移除，不得回潮）
+const INK_DROP_SHADOW := Color("171814", 0.28)  # 卡面 DropShadow 投影（UI_RULES §1.2 卡面例外）
 # —— Map tokens (2026-09-08 基准同步)：值与基准采样色对齐，与大厅 token 同源 ——
 const INK_MAP      := Color("171814")       # 地图 主文字 = INK_PRIMARY
 const INK_MAP_NOTE := Color("607060")       # 地图 注释文字 = NOTE_TEXT
@@ -109,7 +111,7 @@ const HILITE_REALM    := Color("6898c0")   # 上一世境界 蓝灰
 const HILITE_NOTE     := Color("98c8d8")   # 札记名 青蓝
 ## 主按钮「续入此世 >」双色描边（2026-09-08 基准图逐像素确认：黑字芯 + 蓝右描边 + 铁锈橙红左投影）：
 const BTN_OUTLINE_BLUE := Color("3880b8")  # 蓝色描边
-const BTN_SHADOW_RUST  := Color("803810")  # 铁锈橙红 左侧投影
+# BTN_SHADOW_RUST 已删除（2026-09-11 用户裁定：全部文字阴影移除，按钮保留蓝描边）
 const CONTRACT_BLUE := Color("506880")      # 契约规则（2026-09-08 基准同步 = STATUS_CONTRACT）
 const ANOMALY_YELLOW := Color("887830")     # DDA / 异变 / 险象（基准同步 = STATUS_MUTATE）
 const JADE         := Color("3f7063")       # 护盾 / 正向 / 可恢复
@@ -149,6 +151,24 @@ const DDA_GLYPH := "异"
 const TITLE_FONT := preload("res://assets/wenzhen/fonts/LXGWZhiSongCL-Regular.ttf")
 # 中文正文必须走同一套宋体：引擎默认回退是无衬线，与宣纸/宋标题断风格。
 const BODY_FONT: Font = TITLE_FONT
+# 卡面标题专用毛笔楷书（Ma Shan Zheng 马善政楷书，OFL 1.1，许可证见
+# assets/wenzhen/fonts/OFL1.1_MaShanZheng.txt）。UI_RULES §4 卡面例外条款：
+# 仅限卡牌标题等短标签，正文一律仍走 BODY_FONT（覆盖不全时回退宋体可读）。
+const TITLE_BRUSH_FONT := preload("res://assets/wenzhen/fonts/MaShanZheng-Regular.ttf")
+# 小字号卡面文本专用高锐度无衬线（2026-09-11 用户裁定：宋体在 10~14px 旋转卡面上发糊）。
+## 取系统微软雅黑 UI（Windows Demo 目标平台必带，笔画边缘带 hinting、小字号锐利），
+## 缺失时回退 Noto/PingFang 等无衬线；subpixel 关闭——扇形手牌卡是旋转渲染的，
+## 亚像素定位会在重采样时产生彩边与发虚，整像素定位 + 灰度 AA 最锐。
+static var CARD_UI_FONT: SystemFont = _make_card_ui_font()
+
+static func _make_card_ui_font() -> SystemFont:
+	var f := SystemFont.new()
+	f.font_names = ["Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "PingFang SC", "Segoe UI"]
+	f.hinting = TextServer.HINTING_NORMAL
+	f.antialiasing = TextServer.FONT_ANTIALIASING_GRAY
+	f.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
+	f.allow_system_fallback = true
+	return f
 
 # —— Reusable texture assets (GDQuest, purchased; visual-reference-index §3 mandates reuse) ——
 const LIFE_BAR_FILL := preload("res://assets/theme/bar/life_bar_fill.png")
@@ -208,6 +228,34 @@ static func rarity_color(rarity: String) -> Color:
 		"epic": return RARITY_EPIC
 		"legendary": return RARITY_LEGENDARY
 		_: return RARITY_COMMON
+
+
+## 卡面品质中文显示 → rarity key（横卡 GuCardView 与竖长手牌卡共用映射）。
+const QUALITY_KEYS := {
+	"普通": "common", "稀有": "rare", "史诗": "epic", "传说": "legendary",
+	"common": "common", "rare": "rare", "epic": "epic", "legendary": "legendary",
+}
+
+
+static func quality_key(quality: String) -> String:
+	return str(QUALITY_KEYS.get(quality, "common"))
+
+
+## 卡面描述关键词高亮（2026-09-11 卡面信息层级）：气血=朱砂 / 真元=契蓝 /
+## 寿元=险黄 / 魂魄=玉青。颜色一律取既有 token，不新增色值；横卡与竖长卡共用。
+const DESC_KEYWORD_COLORS := {
+	"气血": CINNABAR, "真元": CONTRACT_BLUE,
+	"寿元": ANOMALY_YELLOW, "魂魄": JADE,
+}
+
+
+static func highlight_desc_keywords(text: String) -> String:
+	var bb := text
+	for kw: String in DESC_KEYWORD_COLORS:
+		if bb.contains(kw):
+			var hex: String = (DESC_KEYWORD_COLORS[kw] as Color).to_html(false)
+			bb = bb.replace(kw, "[color=#%s]%s[/color]" % [hex, kw])
+	return bb
 
 
 # Quality is presented as a Chinese display string on cards ("普通/稀有/史诗/传说").

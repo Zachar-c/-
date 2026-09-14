@@ -27,7 +27,7 @@ const ENEMY_ACTOR_PATH := "res://scenes/ui/widgets/gu_enemy_actor.tscn"
 const OUT_DIR := "res://.preview"
 const VIEWPORT_SIZE := Vector2i(1280, 720)
 const HAND_RECT := Rect2(0, 530, 1280, 190)
-const CARD_SIZE := Vector2(110, 154)
+const CARD_SIZE := Vector2(126, 176)
 const CARD_COUNT := 18
 const STATES := ["fan_idle", "fan_hover", "aim_free", "aim_control_hot", "aim_hot"]
 
@@ -225,8 +225,8 @@ func _mount_enemies(stage: Control) -> Array:
 		actor.name = "enemy_%d" % i
 		actor.set_meta("enemy_id", "e%d" % i)
 		actor.position = Vector2(700 + i * 240, 120)
-		actor.custom_minimum_size = Vector2(208, 306)
-		actor.size = Vector2(208, 306)
+		actor.custom_minimum_size = Vector2(236, 352)
+		actor.size = Vector2(236, 352)
 		actor.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		stage.add_child(actor)
 		if not actor.is_node_ready():

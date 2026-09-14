@@ -62,12 +62,48 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 命令：现役 `use_gu/use_inheritance/end_turn/retreat/basic_attack/basic_dodge/refine/play_kill_move`（全部经 `battle.action_card`/`battle.turn` 预检）；`[T9.2]` 增 `enact`（proposal 三形）、`dodge/grapple/respond`、预留念头。
 - 状态与确认：单敌目标自动补 `target_id`（现役规则）；多敌强制选择；撤退受 `boss_blocks_retreat`；致死预检 → 确认层级 3，在确认框中展示精准风险；超载自伤预计死亡同上。`death_lines` 不得在战斗页另建数值/死因覆盖层。
 - 组件：`GuBattleHand/HandPanel`、`GuEnemyActor`、`GuStatBar`、`GuInventory`、`GuTooltipView`、`GuIntentBadge`、`[T9]` `GuLedgerBadge`、`GuDistanceBand`、`GuCostBreakdown`。
-- 验收：卡牌详情只经共享 hover tooltip 展示（含风险段），不得另建常驻详情卡；单体卡可经鼠标选择敌人，危险卡先确认再提交，且同一快照内相同卡牌/目标组合最多提交一次；手牌过期（`battle_hand_stale`）触发重建；每个操作按钮可指出预检 spec_id；v2 占位区在未落地时整体隐藏。
-- 手牌卡形与手势（2026-09-10 竖长卡 + 扇形口径，纯表现层，不新增快照键/命令）：
-  - **卡形**：竖长卡 `110×154`（原 168×74 横向卡），由手牌组件 `GuTallFanHandView` 拥有；
-    卡面只承载「名称 / 道阶 / 效果 / 费用」四行**文本**，效果行允许折两行（阈值 `FACE_EFFECT_MAX_CHARS`）；
-    卡体节点树为 `card_box_<清洗 id>`（Control，承担 position/rotation/scale/pivot）包 `card_body_<清洗 id>`
-    （Button，承担 hover/点击）。卡形与排布参数变更须同步更新线框稿与本节。
+- 战斗视觉：水墨去框重构（2026-09-11 用户裁定"一幅可以交互的中国水墨战斗画"，纯表现层，
+  不新增快照键/命令；**禁止**敌人/玩家大矩形信息卡、白色角色面板、大面积半透明矩形）：
+  - **三层空间**：背景氛围层（`BattleBackdrop` alpha 0.45 + `BattleFog` 宣纸雾帷 0.30——
+    "稍微降低对比度但不能过度灰白"，远山雾气必须保留）→ 战斗实体层 → HUD/手牌层。
+    阅读顺序：敌人+意图 → 玩家+行动/真元 → 手牌 → 按钮 → 背景山水。
+  - **敌人 = 场景实体**（`GuEnemyActorView` 根容器 `StyleBoxEmpty` 全透明，命中矩形保留
+    供拖拽落点判定）：立绘区纵向 EXPAND（约 `220×200+`，较旧框版 ~+30% 面积）直接立于
+    山水中；名称/护盾同行无框灰字（`enemy_shield_<id>` 保留）；HP 用共享 `GuStatBar`
+    贴图条；状态为无框图标+灰字小注（`enemy_status_<id>` 保留）。选中/拖放高亮 =
+    立绘提亮 + 名字玉绿，不画边框；死亡仍走灰名 + 朱砂划除线。节点名契约
+    `enemy_actor_/enemy_intent_/enemy_hp_/enemy_shield_/enemy_status_<id>` 不变。
+  - **意图篆刻印**（节点名仍为 `enemy_intent_<id>`）：悬浮头顶的一枚印——类型符
+    （攻/盾/强/蓄/异）+ 数值同印，印身无纸底、类型色细方框、2px 圆角
+    （攻击=朱砂印框 3px/防御=契蓝/强化=险金/蓄力与未知=墨印）；印侧小注
+    `意图：` 或 `意图：速 N`（"意图："字样与速度可见是回归测试契约）；
+    detail 语义入 tooltip。
+  - **行动墨点**（手牌区 `PilesRow` 内 `action_dots`）：●=可用/○=已用，数字标签
+    `行动 L/M` 保留为精读备份；回合回复时墨点涟漪（alpha 闪回 + 缩放回落）。
+  - **真元**：`PrimordialRow` 元石图标 + `真元 N`，暗金（`RARITY_LEGENDARY`）+
+    `CARD_UI_FONT` 数字。
+  - **操作主次**：结束回合 = 唯一主按钮 `196×48`（字 18，右对齐）；炼蛊/撤退 =
+    古籍批注式**无框文字操作**（`_text_op_button`，hover 变朱砂，保留点击音效），
+    撤退灰字降一档；行动点耗尽时结束回合极轻呼吸（alpha 0.82↔1.0，无发光）。
+    `OpsDock` 右坞几何 `-260..-20`。
+  - **玩家实体**：无框（透明 `GuPanel`），立绘 210 高前置，血条贴图条贴近立绘。
+  - **调试面板**：DEBUG 构建折叠态全透明仅剩「调试 DEV ONLY · F12」淡字
+    （modulate 0.4，展开 0.85），Release 编译裁剪。
+- 手牌卡形与手势（2026-09-10 竖长卡 + 扇形口径，2026-09-11 卡面层级与横卡 `gu_card` 同步，纯表现层，不新增快照键/命令）：
+  - **卡形**：竖长卡 `126×176`（2026-09-11 战斗视觉重构放大，原 168×74 横向卡 →
+    110×154 竖长 → 126×176），由手牌组件 `GuTallFanHandView` 拥有；
+    卡面为五层信息层级：**标题（2026-09-11 文字样式收敛：高锐度无衬线
+    `GuStyle.CARD_UI_FONT`（微软雅黑 UI，hinting+整像素定位）、14px、无文字阴影；
+    毛笔体仅限大尺寸卡面，全部文字阴影已按用户裁定移除，见 UI_RULES §4）
+    → 右上真元费用徽章（元石图标+放大数字）→
+    深灰标签行（品质·念头/寿元代价 + 咒角标）→ 画框插画（按道映射）→ 内建描述槽**
+    （bbcode 关键词高亮：气血=朱砂/真元=契蓝/寿元=险黄/魂魄=玉青）；效果行按
+    `FACE_EFFECT_MAX_CHARS` 截断、括注归共享 tooltip；8px 圆角 + DropShadow + 稀有度描边
+    （诅咒卡朱砂加粗、悬停玉绿）。卡体节点树为 `card_box_<清洗 id>`（Control，承担
+    position/rotation/scale/pivot）包 `card_body_<清洗 id>`（Button，承担 hover/点击），
+    卡面子节点全部 `mouse_filter=IGNORE`；卡名不再走 Button 文案，进 `card_name` meta
+    （测试/工具按 meta 或 `card_title_<清洗 id>` 定位）。卡形、卡面层级或排布参数变更
+    须同步更新线框稿与本节。
   - **排布**：底部横向扇形自适应——`t=(i−center)/center` 非线性缓动后给倾角（`MAX_ANGLE_DEG`）、弧高（`ARC_LIFT`、
     中间卡低、两端高，两端上溢不占布局）、边缘透视缩放（`PERSPECTIVE_DROP`）、步进 `clamp(可用宽/(n−1), 卡宽×0.45, 卡宽×1.02)`
     实现负边距重叠；1200px 级屏宽下同屏约 19 张。手牌盒只预留**卡高**，弧高靠两端卡向上溢出（宽度侧为直角区，无控件碰撞）。
@@ -126,6 +162,7 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 数据绑定：`rest_used/rest_mode_used/aptitude_raised`（node_flags 派生）、休整选项（`id/label/detail/cost/disabled/reason/curse_warning/requires_confirm`，id 全集为 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，`wash` 仅在闭关/传承节点出现）、`upgrade_targets`（每张 `refined_gu_id`）、`remove_card_targets`（每只活蛊实例 + `blocked/reason`）、`imprint_targets`（每枚印记 + `meta_rule` 不可移除原因）、`curse_targets`（每条 `statuses` 诅咒 + 层数）。
 - 命令：`rest`（`heal`/`upgrade_card` + `card_key` / `remove_card` + `instance_id` / `remove_imprint` + `relic_id` / `remove_curse` + `curse_id` / `skip`）、`raise_aptitude`。
 - 状态与确认：本次已休整全选项禁用 + "本次已休整"；`skip` 在未消费时强制二次确认（`requires_confirm=true`）；诅咒蛊移除被领域拒绝（`blocked` 原因展示）；`curse_warning=true` 的选项升级确认层级 2。
+- 可视预算（2026-09-11 修复）：主决策面选项网格（seclusion 节点最多 7 张卡）纵向滚动（`ChoiceScroll`），`NoteLabel`/`LeaveRow` 恒钉在窗口内；1280x720 曾把网格末尾 skip 卡与离开行一起挤出可视窗口造成软锁。`LeaveRow` 另有常驻跳过入口 `SkipEntryButton`（古籍文本式，disabled/tooltip 随快照 skip 同步），不滚动也始终可发起 skip 二次确认。验收探针：`tools/verify_rest_headless.gd`（SubViewport 1280x720：底行可视 + 滚动视口高度 > 0 + 引擎拾取可达 skip）。
 - E4 三选一（2026-09-09，规格 §4）：`rest/refinement/cultivation` 三类节点统一由 travel 分发进本屏；快照 `mode_groups` 携带 `修炼[]`/`炼蛊[]` 两组动作卡（`meditate`→encounter `action_card` 信封、`cultivate`→`cultivate_rank_two`、`refine/free_pair`→打开炼蛊子屏不发领域命令），插在主决策面与移除面板之间；成功执行修炼/炼蛊即消费本次探访（node_flags 落 `used`），离开需玩家显式操作；快照无 `mode_groups` 时整行隐藏（旧存档兼容）。
 - 组件：`GuCommandButton`、`GuCard`、`GuToast`、`GuConfirmDialog`。
 - 验收：每节点快照必须包含 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集；`skip` 触发后事件日志落 `rest_skipped`；`leave_node` 在任一选项合法或 skip 已确认后必须放行（`rest_choice_required` 不得成为软锁）；种子 `2/6/8/10/13/15/16/18/33/34/41/49` 回归不得出现无合法选项且无法离开的状态。

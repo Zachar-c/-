@@ -142,6 +142,18 @@ func stop_bgm() -> void:
 		_bgm_player.stop()
 
 
+## 退出树（进程退出 / 测试卸载）时停掉全部播放：AudioServer 持有的
+## AudioStreamPlayback / OggPacketSequence 对象只有 stop 后才会释放，
+## 否则 ObjectDB 在退出检查时报泄漏（2026-09-11 泄漏诊断定位）。
+## stop 的释放由音频 mix 线程在下一轮 mix 完成进程退出不等它——短等一拍
+## 让 mix 线程跑完回收，否则退出码仍为 1（泄漏 2~9 个，数量随竞态浮动）。
+func _exit_tree() -> void:
+	stop()
+	if _bgm_player != null and is_instance_valid(_bgm_player):
+		_bgm_player.stop()
+	OS.delay_usec(100_000)
+
+
 ## 当前 BGM 曲目 key；未播放或已停止时为 ""。
 func current_bgm() -> String:
 	return _current_bgm

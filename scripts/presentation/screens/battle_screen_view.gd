@@ -24,6 +24,7 @@ const MAX_VISIBLE_ENEMIES := 3
 # cast_distance / proxy_grab / aim_origin_fallback —— 同一套参数存两处必然漂移。
 
 @onready var _paper: ColorRect = $BattlePaper
+@onready var _fog: ColorRect = $BattleFog
 @onready var _top_bar = $Root/battle_hud/TopBar
 @onready var _battle_stage: PanelContainer = $Root/BattleStage
 @onready var _player_panel = $Root/BattleStage/battle_field/PlayerPanel
@@ -66,6 +67,8 @@ var _prev_enemy_alive: Dictionary = {}
 var _prev_player_hp := -1
 var _prev_enemy_hp: Dictionary = {}
 var _prev_enemy_statuses: Dictionary = {}
+# 行动墨点涟漪触发用：上一帧剩余行动数（-1 = 首次挂载）。
+var _prev_actions_left := -1
 # 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
 var _enemy_actors: Dictionary = {}
 ## 手牌 id → 卡字典。组件只回传 id（领域数据的所有权在宿主），
@@ -82,6 +85,10 @@ func _ready() -> void:
 	_ready_done = true
 	# 第四批：战斗屏同步基准——浅米纸底 + 网点（原暗色舞台设计已由基准统一取代）
 	_paper.color = GuStyle.PAPER_HALL
+	# 背景雾帷（2026-09-11 水墨去框重构）：宣纸色罩层轻压背景对比，保古画空气感。
+	# 用户裁定"稍微降低对比度但不能过度灰白"——alpha 从 0.42 回落到 0.30，
+	# 同时 tscn 里 BattleBackdrop 提到 0.45，远山雾气保留。
+	_fog.color = Color(GuStyle.PAPER_BG.r, GuStyle.PAPER_BG.g, GuStyle.PAPER_BG.b, 0.30)
 	_apply_stage_style()
 	_apply_hand_stage_style()
 	# ⚠️ 手牌区**整条容器链**（HandStage / HandMargin / battle_hand / HandArea）都是纯装饰的
@@ -398,13 +405,13 @@ func _refresh_player(state: Dictionary) -> void:
 	box.add_theme_constant_override("separation", GuStyle.SPACE_3)
 	host.add_child(box)
 
-	# 玩家立绘（左下角小立绘：线框稿 v2 104×148，窗口 1280×720 与画布 1:1）
+	# 玩家立绘（左下前景：2026-09-11 水墨去框重构 210 高，稍大，敌我纵深）
 	var portrait := TextureRect.new()
 	portrait.name = "player_portrait"
 	portrait.texture = PlayerPortrait
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size = Vector2(0, 148)
+	portrait.custom_minimum_size = Vector2(0, 210)
 	portrait.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	portrait.modulate = Color(1, 1, 1, 1)
 	box.add_child(portrait)
@@ -417,7 +424,7 @@ func _refresh_player(state: Dictionary) -> void:
 		nm.text = pname
 		nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		nm.add_theme_font_override("font", GuStyle.TITLE_FONT)
-		nm.add_theme_font_size_override("font_size", 13)
+		nm.add_theme_font_size_override("font_size", 14)
 		nm.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
 		box.add_child(nm)
 
@@ -467,8 +474,8 @@ func _refresh_enemies(state: Dictionary) -> void:
 			continue
 		var enemy_id := str(e.get("id", ""))
 		var actor = GuEnemyActorScene.instantiate()
-		# 线框稿 v2：敌人卡 208×306（1280×720 窗口与画布 1:1）
-		actor.custom_minimum_size = Vector2(208, 306)
+		# 2026-09-11 视觉重构：敌人实体放大 236×352（立绘约 1.8× 面积，战斗实体感）
+		actor.custom_minimum_size = Vector2(236, 352)
 		# build 函数一律先 add_child：@onready 要等入树后才有值。
 		group.add_child(actor)
 		_enemy_actors[enemy_id] = actor
@@ -536,34 +543,29 @@ func _refresh_enemies(state: Dictionary) -> void:
 func _refresh_hand(state: Dictionary) -> void:
 	var player: Dictionary = state.get("player", {})
 	var actions: Dictionary = state.get("actions", {})
+	# 真元（2026-09-11 视觉重构）：暗金 + 雅黑数字（数值用高锐度无衬线）。
 	_primordial_label.text = "真元 %d" % int(player.get("primordial", 0))
-	_primordial_label.add_theme_color_override("font_color", GuStyle.ANOMALY_YELLOW)
+	_primordial_label.add_theme_color_override("font_color", GuStyle.RARITY_LEGENDARY)
+	_primordial_label.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_primordial_label.add_theme_font_size_override("font_size", 16)
 	# V1 无牌库/弃牌堆；此槽位显示行动点预算（念头移右栏按钮下方，与线框稿 v2 一致）。
 	_piles_label.text = "行动 %d/%d" % [
 			int(actions.get("left", 0)), int(actions.get("max", 0))]
 	# 行动预算是玩家必读资源：浅色纸面主题下用墨色保证对比度。
 	_piles_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
-	# 开源图标：真元用宝石图标，行动点用拳头图标，动态创建一次后复用。
-	# 真元图标添加到PrimordialRow（真元行）
+	_piles_label.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_piles_label.add_theme_font_size_override("font_size", 14)
+	# 开源图标：真元用元石图标（暗金），动态创建一次后复用。
 	var primordial_row: HBoxContainer = _primordial_label.get_parent() as HBoxContainer
 	if primordial_row != null:
 		if primordial_row.get_node_or_null("primordial_icon") == null:
 			var p_icon := GuIconView.new()
 			p_icon.name = "primordial_icon"
-			p_icon.setup("yuanstone", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_BODY)
+			p_icon.setup("yuanstone", GuStyle.RARITY_LEGENDARY, GuIconView.SIZE_BODY)
 			p_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			primordial_row.add_child(p_icon)
 			primordial_row.move_child(p_icon, 0)
-	# 行动点图标添加到PilesRow（行动点行）
-	var piles_row: HBoxContainer = _piles_label.get_parent() as HBoxContainer
-	if piles_row != null:
-		if piles_row.get_node_or_null("piles_icon") == null:
-			var a_icon := GuIconView.new()
-			a_icon.name = "piles_icon"
-			a_icon.setup("gi_fist", GuStyle.INK_PRIMARY, GuIconView.SIZE_SMALL)
-			a_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			piles_row.add_child(a_icon)
-			piles_row.move_child(a_icon, 0)
+	_refresh_action_dots(int(actions.get("left", 0)), int(actions.get("max", 0)))
 
 	# 手牌 = GuTallFanHandView（竖长卡 + 底部横向扇形）。职责切分：
 	#   组件：排布、悬停/让位/抬升、拖拽与瞄准手势、影卡、弧箭、敌人目标广播；
@@ -573,6 +575,42 @@ func _refresh_hand(state: Dictionary) -> void:
 		if card is Dictionary:
 			_hand_cards[str((card as Dictionary).get("id", ""))] = card
 	_hand.setup(state.get("hand", []), _on_hand_card_chosen, _on_hand_hover_changed)
+
+
+## 行动墨点（2026-09-11 视觉重构）：●=可用 / ○=已用，一眼读出"还能行动几次"。
+## 数字标签（"行动 2/2"）保留作精读备份；墨点是扫视通道。
+## 回合回复（left 增加）时墨点做一次水墨涟漪：alpha 闪回 + 轻微放大回落。
+func _refresh_action_dots(left: int, max_actions: int) -> void:
+	var piles_row: HBoxContainer = _piles_label.get_parent() as HBoxContainer
+	if piles_row == null:
+		return
+	var dots := piles_row.get_node_or_null("action_dots") as HBoxContainer
+	if dots == null:
+		dots = HBoxContainer.new()
+		dots.name = "action_dots"
+		dots.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dots.add_theme_constant_override("separation", 2)
+		piles_row.add_child(dots)
+		piles_row.move_child(dots, 0)
+	for c in dots.get_children():
+		c.queue_free()
+	for i in maxi(0, max_actions):
+		var dot := Label.new()
+		dot.text = "●" if i < left else "○"
+		dot.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+		dot.add_theme_font_size_override("font_size", 15)
+		dot.add_theme_color_override("font_color",
+				GuStyle.INK_PRIMARY if i < left else GuStyle.INK_MAP_FAINT)
+		dots.add_child(dot)
+	# 回合回复涟漪：只在本帧 left 比回上一帧多时触发（首次挂载不触发）。
+	if _prev_actions_left >= 0 and left > _prev_actions_left:
+		dots.pivot_offset = dots.size * 0.5
+		dots.modulate = Color(1, 1, 1, 0.25)
+		var t := dots.create_tween()
+		t.tween_property(dots, "modulate:a", 1.0, 0.3)
+		t.parallel().tween_property(dots, "scale", Vector2.ONE, 0.3) \
+				.from(Vector2(1.25, 1.25)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_prev_actions_left = left
 
 
 ## 放置区高亮切换：只在实际变化时调用敌人卡 set_drop_highlight。
@@ -602,25 +640,33 @@ func _enemy_at(global_pos: Vector2) -> String:
 func _refresh_ops(state: Dictionary) -> void:
 	for c in _ops_row.get_children():
 		c.queue_free()
-	# 线框稿 v2：三按钮一律纸面 action 角色（浅底≈透明，墨字），结束回合为大号主按钮，右列竖排
+	# 2026-09-11 水墨去框重构：结束回合 = 唯一主按钮（矩形重量降一档）；
+	# 炼蛊/撤退 = 古籍批注式文字操作（无框，hover 变色）。行动点耗尽时
+	# 结束回合进入待点态（轻微墨息呼吸）。
+	var actions_left := int(state.get("actions", {}).get("left", 0))
 	var end_btn := _op_button("结束回合", func():
 		if _commands.has("end_turn"):
 			_commands["end_turn"].call())
 	MasterTheme.apply_button(end_btn, "action")
-	end_btn.custom_minimum_size = Vector2(150, 52)
+	end_btn.custom_minimum_size = Vector2(196, 48)
+	end_btn.size_flags_horizontal = Control.SIZE_SHRINK_END
 	end_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
 	end_btn.add_theme_font_size_override("font_size", 18)
 	_ops_row.add_child(end_btn)
+	if actions_left <= 0:
+		# E 态待点呼吸：极轻（alpha 0.82↔1.0），无发光、无位移——安静地引导点击。
+		var breath := end_btn.create_tween().set_loops()
+		breath.tween_property(end_btn, "modulate:a", 0.82, 1.1) \
+				.set_trans(Tween.TRANS_SINE)
+		breath.tween_property(end_btn, "modulate:a", 1.0, 1.1) \
+				.set_trans(Tween.TRANS_SINE)
 	if _commands.has("refine"):
-		var refine_btn := _op_button("炼蛊", func(): _commands["refine"].call())
-		refine_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
-		refine_btn.add_theme_font_size_override("font_size", 15)
-		_ops_row.add_child(refine_btn)
+		_ops_row.add_child(_text_op_button("炼蛊", func(): _commands["refine"].call(),
+				GuStyle.INK_PRIMARY))
 	if _commands.has("flee") and bool(state.get("flee_available", true)):
-		var flee_btn := _op_button("撤退", func(): _commands["flee"].call())
-		flee_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
-		flee_btn.add_theme_font_size_override("font_size", 15)
-		_ops_row.add_child(flee_btn)
+		# 撤退再降一档（灰字），防误操作。
+		_ops_row.add_child(_text_op_button("撤退", func(): _commands["flee"].call(),
+				GuStyle.INK_SOFT))
 	# 念头预算：右栏按钮下方小注（线框稿 v2：右栏念头 8/12）
 	var note := Label.new()
 	note.name = "thought_note"
@@ -638,6 +684,22 @@ func _op_button(text: String, on_press: Callable) -> Button:
 	b.text = text
 	MasterTheme.apply_button(b, "action")
 	b.pressed.connect(on_press)
+	return b
+
+
+## 古籍批注式文字操作（2026-09-11 水墨去框）：无框透明底，hover 变朱砂。
+## 复用 _op_button 保留点击音效与 hover 缩放（交互闭环契约），再抹掉矩形样式。
+func _text_op_button(text: String, on_press: Callable, base: Color) -> Button:
+	var b := _op_button(text, on_press)
+	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+		b.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	b.add_theme_color_override("font_color", base)
+	b.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	b.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	b.add_theme_color_override("font_focus_color", base)
+	b.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	b.add_theme_font_size_override("font_size", 14)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_END
 	return b
 
 
@@ -928,17 +990,25 @@ func _apply_tooltip_style() -> void:
 
 ## 立即清空并释放子节点。
 ##
-## ⚠️ 只能用在**不会发射信号**的容器上（目前只有 ModeHost，里面是自建的空 Label）。
-## 其余容器一律用 queue_free：它们的子节点可能是正在发射 pressed 的按钮，
-## 立即 free() 会在信号发射途中销毁发射者——Godot 会报
-## "Object was freed while a signal is being emitted" 并有崩溃风险。
+## ⚠️ 只能用在**不会发射信号**的容器上（目前只有 ModeHost）。其余容器一律用
+## queue_free：它们的子节点可能是正在发射 pressed 的按钮，立即 free() 会在信号
+## 发射途中销毁发射者——Godot 会报 "Object was freed while a signal is being
+## emitted" 并有崩溃风险。
 ##
 ## 之所以给 ModeHost 破例：refresh 同一帧会被调用多次，queue_free 的延迟释放
 ## 会让 ModeHost 短暂出现多个子节点，按 child_count / get_child(0) 的断言会失真。
+## 但 ModeHost 现在也含按钮（"取消目标"，见 _refresh_mode_label）：按下它会在
+## pressed 发射途中触发 _refresh → _clear → free 自己——发射途中 free 会让
+## ObjectDB 在退出时报实例泄漏（2026-09-11 P3-2 定位）。因此按钮先 remove_child
+## （ModeHost 同帧即空，断言不受影响）再 queue_free（发射安全结束、帧末释放），
+## 其余仍立即 free。
 func _clear(host: Node) -> void:
 	for c in host.get_children():
 		host.remove_child(c)
-		c.free()
+		if c is Button:
+			c.queue_free()
+		else:
+			c.free()
 
 ## 小工具：本屏动态创建生命 / 真元条。
 static func StatBarScene() -> PackedScene:
