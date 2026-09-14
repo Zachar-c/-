@@ -15,7 +15,7 @@ const FOIL_INTENSITY := {
 }
 
 ## 蛊虫插画库：异常自然志图鉴风格，AI生成。按名称关键词匹配，无匹配回退到虫形图标。
-## 运行时用Image.load()直接加载PNG创建ImageTexture，绕过Godot资源导入系统。
+## 用 load() 加载导入后的 Texture2D（Image.load 直读 res:// 在导出包中不可用）。
 var GU_BLOOD_TEX: Texture2D = null
 var GU_LIGHT_TEX: Texture2D = null
 var GU_BONE_TEX: Texture2D = null
@@ -29,10 +29,9 @@ var _hovered := false
 
 
 func _load_gu_texture(path: String) -> Texture2D:
-	var img := Image.new()
-	if img.load(path) != OK:
+	if not FileAccess.file_exists(path):
 		return null
-	return ImageTexture.create_from_image(img)
+	return load(path) as Texture2D
 
 @onready var _title_label: Label = $CardMargin/CardBody/HeadRow/TitleLabel
 @onready var _cost_badge: PanelContainer = $CardMargin/CardBody/HeadRow/CostBadge
