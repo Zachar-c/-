@@ -2229,3 +2229,806 @@ RunState / save / event 修改
 正式 pity / E6 / pacing / battle 修改
 G1 / M / G / T 经济施工
 ```
+
+---
+
+# 29. Agent-1 / Q8G Post-Fix Baseline and G1 Reassessment 回写（2026-09-14）
+
+**交付报告**：`docs/q8g/AGENT1_Q8G_POST_FIX_REPORT.md`（Agent 1 任务书要求的 8 项全部覆盖）
+**新增工具**：`tools/q8g_agent1_post_fix_baseline.mjs`（只读；`--layers` 按层份额 / `<school>/<seed>` 逐场追踪）
+**性质**：measurement-only。生产代码、数据、RunState、正式 pity / E6 / pacing / battle / promotion 零修改。
+**本回写不含 A/B/C/D 裁定。**
+
+## 基线状态
+
+```text
+29286071 在 HEAD 历史中（git merge-base --is-ancestor = YES）
+34b23e69 已归档 Q8-G 代码/数据/工具/文档并保留 pity state
+当前 HEAD = 3f09e040
+32 局重建：rc=0；与 2026-09-13 语料逐行对比 identical 32 / differing 0
+地图审计复跑：非 L1 起手 0/16，契约违规 0，determinism OK
+```
+
+## POST 基线（32 局）
+
+```text
+entry layer {"1":32}                访问节点 1279 / 40.0 每局
+战斗 619 / 19.3 每局                短局 (<15) 5
+by_layer L1 145 L2 165 L3 148 L4 98 L5 63
+by_tier  common 155 elite 151 boss 88 unsettled 225
+非 Boss settled Common 份额  L1 62.8% L2 62.2% L3 36.4% L4 16.0% L5 11.1%（合计 50.7%）
+refinement 探访 98（= 路线 refinement 节点 98）
+f1/f2/f3/f4 掉落 66/57/54/48（f1 每抽命中 19.0%，348 抽）
+漏斗 visits 98 | gu_ready 98 | mat_ready 88 | full_ready 70 | attempts 72 | successes 72
+gate_b 15/32   gate_c 8/32   f1_zero 2/32
+```
+
+修复未改变各层 Common 比例结构，改变的是**层权重**；**L4/L5 的 Common 悬崖依然存在**。
+
+## f1=0 人口（2/32）与 force/303
+
+```text
+force/303：20 场、Common 仅 2 场（#1、#4，都在 L1）、4 抽全非 force-crude（f1×0）
+           pity 阈值 3、按 tier 独立计数 ⇒ 需第 4 场 Common 才兑现，从未触发
+           mat_ready=2、full_ready=0、attempts=0 ⇒ f1 断供，不是没去炼
+force/20260927：结构完全相同（13 场、Common 2 场都在 L1、f1×0）
+⇒ 唯一原因是「Common 胜场 < pity 阈值」，与起手层、局长度、Elite、时序无关
+```
+
+## G1 K=2 / S1-α 重评（报告层）
+
+```text
+G1 K=2（A3a short floor K=2）：f1zero 修复 0/2，Elite 151 → 150     ← 收益 0，成本仍在
+  另一口径 R7B（natural 0.556）：1.55/2 → 1.55/2，差值 0
+S1-α（A1 L5 coverage 全系）：f1zero 修复 0/2，Elite −1 ~ −2
+  两局 Common 数在各变体下恒为 2，不跨过兑现阈值 4
+唯一能闭合缺口：A2 全层份额下限 0.60 → 2/2，代价 Elite 151 → 61（−59.6%）
+材料件数全部变体恒为 482（+0.00）
+短局人口已与失败脱钩：5 个短局里 4 个 Common ≥3；另一失败局是 20 场长局
+```
+
+## 作废范围
+
+```text
+§25 G K=2 条件接受边界            §23 G K=1/2/3/4 比较
+§22 G1/G2 成本效率与 M 前沿        §24 M 代价预算
+§20 R7B 报告层总量（2.72/8、6.20/8 等）
+「短局 = 战斗数 < 15」的人口定义（14/32 → 5/32）
+材料件数基线 389.0（新基线 482.0）
+```
+
+保留有效：R5 的 tier 结构结论、fallback 通道结论、R6 的「数量与时序独立」方法论、正式 pity 语义。
+
+## 当前状态
+
+```text
+Start leak fix：29286071，已推送并在 HEAD 历史中
+POST 32 局基线：已重建并确定性复核（identical 32/32）
+f1=0：8 → 2（PRE → POST）
+G1 K=2：POST 报告层收益 0/2，成本 Elite −1 ⇒ 不建议按 §25 继续实施
+S1-α：POST 报告层收益 0/2 ⇒ 不建议挂在 f1 / Gate B/C 目标下
+生产施工：仅 start 泄漏修复已完成；G1 / M / G / T 均未批准、未实施
+经济规则：冻结
+```
+
+## 收尾验证（2026-09-14 补）
+
+```text
+guitkx_build rc=0 | unit rc=0（1445/1445）| integration rc=0（32/32）
+启动探针 rc=0 | 契约漂移 rc=0（168）| git diff --check rc=0
+run_gut_checked 严格判定：unit PASS / integration PASS
+```
+
+⚠️ **该结果是在「含其他 Agent 在途修复」的共享工作树上取得的，不等于 HEAD 全绿。**
+文件 mtime：`tests/unit/test_slay_gu_final_chapter.gd` 21:21:50、`tools/test.ps1` 21:22:05
+（均由 VDA 工作流另一 Agent 先改），本轮 unit 运行始于 21:25:47。
+HEAD（`3f09e040`）上 `test_slay_gu_final_chapter.gd:149` 的 loot_tables SCRIPT ERROR 仍在，
+`tools/check.ps1` 仍会在 unit 段 exit 1；修复**尚未提交**。
+
+**并发风险**：本工作树同时被多个 Agent 编辑（`AGENT3_UI_RELEASE_REPORT.md`、VDA 文档、
+`gu_card_view.gd`、`export_presets.cfg`、`tools/test.ps1`、`tests/unit/test_slay_gu_final_chapter.gd`）。
+Agent 1 的测试数字为共享工作树快照，可能随他人编辑失效；Agent 1 未触碰、未提交任何他人改动。
+
+残余 f1=0 的方差判定（`tools/q8g_agent1_f1_zero_risk.mjs`）：
+
+```text
+每场 Common 胜利命中 f1 的概率 q = 0.4065（Wilson 95% CI 0.3323–0.4851）
+模型预期 f1=0 局数 = 2.97（区间 2.14 .. 3.94）；观测 = 2
+⇒ 残余 2 局是「Common 胜场数分布 × pity 阈值」的正常尾部，无隐藏缺陷
+⇒ 所有风险局 N ≤ 3 < 兑现阈值 4：floor K ≤ 3 的短局 guard 结构上无法抬升任何一局
+```
+
+## 需要 Luna 新裁定
+
+```text
+① 是否正式撤回 §25 的 G1 K=2 条件接受
+② S1-α 是否重新定义产品目标（建议与 f1 解耦，作为「深层内容多样性」独立立项）
+③ 剩余 2/32 f1=0 的接受度与目标口径（新基线的短板已不是短局；且该 2 局属预期方差）
+④ 是否把保护变量从「局长度」改为「Common 胜场数」；若要有效，guard 下限须 ≥ 4（新机制设计）
+⑤ 包装层 tools/check.ps1 unit 段 SCRIPT ERROR 修法 → 仍在办，归 VDA 工作流（非 Agent 1 范围）
+⑥ 【新增】多 Agent 共用同一工作树的测量纠缠：需裁定并行 Agent 的验证口径与提交顺序
+   （建议验证结论必须绑定明确的树状态标识，或改用 worktree 隔离）
+```
+
+ZCode / Agent 1 仍不得修改：
+
+```text
+scripts/domain/** 的规则修改
+data/** 修改
+RunState / save / event 修改
+正式 pity / E6 / pacing / battle / promotion 修改
+G1 / M / G / T 经济施工
+```
+
+---
+
+# 30. Agent3 UI / Release 审计复核（2026-09-14）
+
+交付报告：
+
+```text
+`docs/q8g/AGENT3_UI_RELEASE_REPORT.md`
+```
+
+## 已独立复核
+
+### 交互闭环
+
+```text
+15/15 屏
+ dead=[]
+ no_ui_click=[]
+ occluded=[]
+ occluded_known=0
+```
+
+独立运行：
+
+```text
+tools/verify_interaction_loop.gd
+```
+
+结果：`AUDIT_DONE`，所有审计屏三键均为 0。
+
+### Rest
+
+```text
+tools/verify_rest_headless.gd
+```
+
+结果：`REST HEADLESS OK`。
+
+### Card budget
+
+```text
+tools/verify_card_shape_budget.gd
+```
+
+结果：`FAILED=0`，卡高、战场高度和屏内边界通过。
+
+### B2 四屏真窗
+
+```text
+tools/verify_b2_four_screens_render.gd
+```
+
+结果：四张 1280×720 截图生成，`B2_FOUR_SCREENS FAILED=0`。
+
+### W10 真窗
+
+```text
+tools/verify_w10_continue_run.gd
+```
+
+结果日志显示：
+
+```text
+save_run ok=true
+with-save has_save=true primary_action=continue_run
+load_run ok=true view=Map
+W10_CONTINUE_RUN FAILED=0
+```
+
+Windows GUI 包装层未可靠返回数值退出码，但输出结果为 `FAILED=0`；worker 已记录首跑 `has_save=false` flake、重试通过。该 flake 不得被写成已根治。
+
+## Agent3 改动范围
+
+Agent3 负责的改动限定为：
+
+```text
+scripts/presentation/widgets/gu_card_view.gd
+export_presets.cfg
+docs/q8g/AGENT3_UI_RELEASE_REPORT.md
+```
+
+其中：
+
+- `gu_card_view.gd` 改用导入后的 `Texture2D`，修复导出包中 `Image.load()` 不可用及 WARNING 风暴；
+- `export_presets.cfg` 补充 `.preview`、本地 Agent 目录和日志等排除项；
+- 没有触碰 `scripts/domain/**`、`data/**`、RunState、resolver、loot/pity、E6、pacing 或 battle。
+
+当前工作树中的 `tests/unit/test_slay_gu_final_chapter.gd`、`tools/test.ps1` 等变更不计入 Agent3 范围，应由验证 Agent 单独审查。
+
+## Agent3 交付裁定
+
+```text
+交互闭环：PASS
+Rest：PASS
+B2 真窗：PASS（输出 FAILED=0）
+W10 continue_run：CONDITIONAL PASS（重试通过，首跑 flake 未根治）
+Release 过滤：CONDITIONAL PASS
+最终 Release PCK：未验证
+```
+
+## 未关闭风险
+
+1. 未执行最终 Windows/Android `--export-release` PCK 实测；
+2. 根目录零散截图是否全部被 `exclude_filter` 覆盖，尚未闭合；
+3. `lore_engine/`、`lore_sources/` 是否应进入 Release 尚未产品裁定；
+4. debug 面板仍在包内，仅运行时门控，尚未证明编译期裁剪；
+5. W10 首跑 `has_save=false` flake 尚未定位；
+6. 既有 ObjectDB/RID 泄漏仍存在。
+
+## 当前下一步
+
+Agent3 不得继续扩展 UI 功能。只允许在取得明确范围后：
+
+- 做最终 Release PCK 导出实测；
+- 完成 Release 内容清单审计；
+- 复核 W10 flake；
+- 更新报告。
+
+## 当前总状态
+
+```text
+Agent3 UI 交互门：PASS
+Agent3 Release：CONDITIONAL PASS
+最终交付：未关闭
+生产经济规则：冻结
+```
+
+---
+
+# 31. Agent1 POST 基线复核与产品裁定（2026-09-14）
+
+## Agent1 交付复核
+
+Agent1 的 measurement-only 交付通过审阅：
+
+```text
+POST 32 局与既有 POST 语料逐行 identical：32/32
+地图审计：非 L1 起手 0/16，契约违规 0，determinism OK
+生产代码/数据/RunState/正式 pity/E6/pacing/battle：未修改
+```
+
+POST 基线：
+
+```text
+战斗：619
+短局（<15）：5
+Common / Elite / Boss：155 / 151 / 88
+Common 份额按层：L1 62.8% / L2 62.2% / L3 36.4% / L4 16.0% / L5 11.1%
+f1=0：2/32
+mat_ready / full_ready：88 / 70
+promotion 尝试 / 成功：72 / 72
+Gate B / Gate C：15/32 / 8/32
+```
+
+## G1 K=2 裁定
+
+```text
+正式撤回 §25 的 G1 K=2 条件接受。
+```
+
+原因：在 POST 语料上：
+
+```text
+G1 K=2：f1zero 修复 0/2
+Elite：151 → 150
+```
+
+即收益为 0，仍有成本。原 G1 边界来自 start 泄漏污染的人口，不能继续引用。
+
+同时撤回/作废：
+
+- §25 的 G1 K=2 条件接受边界；
+- 旧的短局 guard 作用域和成本数字；
+- 旧 `9/32`、`单局最多 2 场 Elite` 等验收线；
+- 旧 R7B–R7E 的经济效应量。
+
+## S1-α 裁定
+
+```text
+不作为 F1 / Gate B/C 修复继续推进。
+```
+
+如果未来需要保留，可另立为：
+
+```text
+深层内容多样性 / 层级体验设计
+```
+
+但当前不批准 S1-α 实现，也不批准任何 Common opportunity 保护。
+
+## 剩余 2/32 f1=0 裁定
+
+```text
+当前接受为正常随机尾部，不开新机制修复。
+```
+
+依据：
+
+```text
+Common 胜利：155
+每场 Common 命中率 q：0.4065
+Wilson 95% CI：0.3323–0.4851
+模型预期 f1=0：2.97 局，区间 2.14–3.94
+观测：2 局
+```
+
+观测落在模型区间内，未形成新的结构性缺陷证据。
+
+当前产品口径：
+
+```text
+不承诺每局必有 f1；
+不承诺 Batch 1 Final Gate B/C 通过；
+不为 2/32 尾部引入第二条成长线、额外 pity、商店或产量膨胀。
+```
+
+## Common 胜场保护变量
+
+```text
+暂不批准改为 Common 胜场数 guard。
+```
+
+理由：即使该变量需要 `K>=4` 才能触发，也会成为新机制设计，不是既有 G1 的小修；当前残余 2/32 已被判定为正常尾部，没有足够证据开启该系统。
+
+## 验证归因纪律
+
+Agent1 的 unit/integration 全绿数字来自包含其他 Agent 在途修复的共享工作树，不能当作 HEAD 结果。
+
+当前必须区分：
+
+```text
+HEAD 3f09e040：仍保留验证遗留
+当前工作树：含 Agent2/Agent3 未提交修复
+```
+
+`tests/unit/test_slay_gu_final_chapter.gd`、`tools/test.ps1`、`.gutconfig.json`、Dialogue Manager UID 和 `project.godot` 跨 worktree 引用不属于 Agent1 任务，继续由验证任务单独审查。
+
+## 下一步
+
+```text
+1. 不再推进 G1 / S1-α / Common-victory guard
+2. 单独审阅 Agent2 验证债务修复
+3. 单独审阅 Agent3 UI/Release 修复
+4. 分支隔离后分别提交，不把共享工作树测试结果归给 HEAD
+5. Q8-G 经济线保持冻结，等待新的用户产品目标
+```
+
+## 当前状态
+
+```text
+R8 start leak fix：PASS，已提交并推送
+POST baseline：PASS，32/32 deterministic
+G1 K=2：正式撤回
+S1-α：不作为 F1 修复，暂不实施
+Common-victory guard：不批准
+剩余 2/32 f1=0：接受为正常尾部
+验证债务：由 Agent2 独立收口
+UI/Release：Agent3 条件通过，最终 PCK 未验证
+生产规则：冻结
+```
+
+---
+
+# 32. Agent-1 收讫 §31 裁定 + 一处数据更正（2026-09-14）
+
+## 裁定收讫
+
+Agent-1 确认收到 §31 全部裁定，无异议，无剩余待裁定项：
+
+```text
+G1 K=2 撤回            -> 与本报告 §3 结论一致
+S1-α 不作为 F1 修复     -> 与本报告 §4 结论一致（但见下方更正）
+Common-victory guard   -> 不批准，与本报告 §12.2 的「需 K≥4 才有效」结论一致
+剩余 2/32 接受          -> 与本报告 §12.2 的方差判定一致
+验证归因纪律            -> 已按裁定在报告 §12.1 与 worker report §9.1 落实
+```
+
+## ⚠️ 一处数据更正：S1-α 的修复量按作用域不同
+
+裁定引用的本报告 §4 初稿写「S1-α f1zero 修复 0/2」。该数字**只对 L5-only 成立**；
+R7 的逐局表当时未覆盖 L4+L5 作用域。Agent-1 补做了**模型无关的逐局反事实**
+（`tools/q8g_agent1_s1alpha_counterfactual.mjs`：把 L4/L5 的 elite 胜场直接换算为 Common 胜场，
+再按「N ≥ 4 则 pity 在最坏情况下保证命中」判定，不依赖任何 natural f1 率假设）：
+
+```text
+S1a L5-only : f1zero 修复 0/2   转换 8 场 elite（6 局受影响）
+S1a L4+L5   : f1zero 修复 1/2   转换 29 场 elite（14 局受影响）
+              force/303 的 Common 数 2 -> 5，第 4 场落在战斗 #16，早于末次探访 #18 ⇒ 可兑现
+              force/20260927 仅 13 场、从未进入 L4/L5 ⇒ 结构上无法被覆盖恢复触及
+```
+
+**该更正不改变 §31 的裁定**：S1-α 仍不作为 F1 修复（修复 1/2 却要转换 29 场 elite，
+且另一局结构上不可达）。但它把「收益 0」修正为「收益 1/2、代价 29 场 elite」，
+避免后续复引时把 S1-α 误记为「完全无效」。
+
+报告侧已同步：`docs/q8g/AGENT1_Q8G_POST_FIX_REPORT.md` §4.5（新增）、§4.2/§4.4（更正）、§11（摘要）、§10.3（更正记录）。
+
+## 本批次 Agent-1 的自我更正汇总
+
+```text
+更正 1  验证归因：工作树全绿不等于 HEAD 全绿（mtime 证据，见报告 §12.1）
+更正 2  S1-α 作用域：0/2 只对 L5-only 成立；L4+L5 为 1/2（本文件 §32）
+更正 3  统计估计量：q 应为「每场 Common 胜利是否命中」= 0.4065（见报告 §12.2）
+```
+
+## 验证归因歧义已解决（2026-09-14 21:55 补）
+
+其他 Agent 已把在途修复提交：
+
+```text
+73e3e5ee  fix(ui): load card art via ResourceLoader and widen export excludes      （Agent3）
+2748ef82  test: fix slay-gu loot pool assertion and pre-import cache in test.ps1   （Agent2 / VDA）
+```
+
+当前 HEAD = `2748ef82`。工作树相对 HEAD 仅多出 Agent-1 自己的文档与只读工具，
+**无任何代码/数据/测试改动**。⇒ Agent-1 的 unit 1445/1445、integration 32/32、
+`check.ps1` 六段 rc=0 现在**可合法归给 HEAD `2748ef82`**（测试所依赖文件在工作树与 HEAD 逐字节一致）。
+
+⚠️ 引用时注意区分：
+
+```text
+报告 §1–§12 的语料与统计结论  -> 基于 3f09e040 时代重建的 32 局语料
+报告 §12.1 的回归门结果        -> 对应 HEAD 2748ef82
+```
+
+## 当前状态（Agent-1 视角）
+
+```text
+Agent-1 任务：全部交付完成，无剩余待裁定项
+生产文件：零修改（data/ tests/ scripts/domain/ RunState / 正式 pity / E6 / pacing / battle / promotion）
+未运行：M+G / M+T / M+G+T 任何组合
+新增只读工具：q8g_agent1_post_fix_baseline.mjs / q8g_agent1_f1_zero_risk.mjs / q8g_agent1_s1alpha_counterfactual.mjs
+等待：无（经济线冻结，等待新的用户产品目标）
+```
+
+---
+
+# 33. Agent2 验证债务复核与本地提交状态（2026-09-14）
+
+## Agent2 交付裁定
+
+Agent2 的低风险修复已形成独立本地提交：
+
+```text
+2748ef82 test: fix slay-gu loot pool assertion and pre-import cache in test.ps1
+```
+
+包含：
+
+```text
+tests/unit/test_slay_gu_final_chapter.gd
+tools/test.ps1
+docs/q8g/Q8G_VERIFICATION_DEBT_AUDIT.md
+```
+
+受影响的 `test_slay` 聚焦测试已独立复核：
+
+```text
+Tests 2
+Passing Tests 2
+Failing Tests 0
+SCRIPT ERROR：0
+退出码：0
+```
+
+该提交不触碰：
+
+```text
+scripts/domain/**
+data/**
+RunState
+正式 pity / E6 / pacing / battle
+Dialogue Manager addon
+project.godot
+```
+
+## 验证结论
+
+`tools/check.ps1` 已在当前本机启动并完成前置 build，但在 Android 导出检查阶段因环境缺少：
+
+```text
+Android build-tools directory
+```
+
+而退出，不能将本次结果称为完整 `check.ps1` 通过。此前直接 Godot 的 unit/integration 结果仍需绑定当前提交状态和具体命令，不能混用 Agent1/Agent2/Agent3 的共享工作树数字。
+
+## 四项验证债务裁定
+
+### 1. `SCRIPT ERROR` 门
+
+```text
+保留严格原始日志扫描，不放宽为“GUT 绿即通过”。
+```
+
+真实 `SCRIPT ERROR` 必须导致验证失败或至少被明确报告。不得用永久白名单吞掉编译错误、方法不存在或空引用错误。
+
+### 2. `.gutconfig.json`
+
+```text
+本轮不修改。
+```
+
+当前先依赖：
+
+```text
+run_gut_checked.ps1 的原始日志扫描
+```
+
+以后如需恢复 `engine` error tracking，必须单独做 UID warning 与真实 engine error 的分离实验，不得直接改配置后假定无副作用。
+
+### 3. Dialogue Manager UID
+
+```text
+本轮不修改第三方 addon。
+```
+
+18 处 UID 不一致继续登记为第三方依赖遗留。若要修复，需单独确认上游版本、许可证、升级回归和替代方案。
+
+### 4. `project.godot` 跨 worktree POT 路径
+
+```text
+允许另立 Shared 文件清理任务，但本轮不修改。
+```
+
+清理需声明：
+
+```text
+project.godot
+```
+
+并按 Shared ownership 5 步协议单独提交。
+
+## 当前本地提交状态
+
+```text
+HEAD：2748ef82
+origin/master：3f09e040
+本地领先远端：2 commits
+```
+
+两个待推送提交：
+
+```text
+73e3e5ee fix(ui): load card art via ResourceLoader and widen export excludes
+2748ef82 test: fix slay-gu loot pool assertion and pre-import cache in test.ps1
+```
+
+Agent1 的 POST 基线报告和工具仍是未提交文件；`.codex/`、来源不明敌人立绘仍排除。
+
+在完整 `check.ps1` 被 Android 环境阻塞前，不自动推送这两个提交。
+
+## 当前状态
+
+```text
+Agent1 Q8G：POST 基线 PASS，G1 K=2 已撤回
+Agent2 VDA：低风险修复已提交本地，验证策略部分完成
+Agent3 UI：交互 PASS，Release CONDITIONAL
+check.ps1：被本机 Android build-tools 缺失阻塞
+Dialogue Manager UID：第三方遗留，未修改
+ObjectDB/RID：既有遗留，未闭合
+生产经济规则：冻结
+```
+
+---
+
+# 34. Agent1 数字更正与验证归因收口（2026-09-14）
+
+## S1-α 逐局反事实更正
+
+独立运行：
+
+```text
+node tools/q8g_agent1_s1alpha_counterfactual.mjs
+```
+
+结果：
+
+```text
+S1-α L5-only：0/2 修复，转换 8 场 Elite
+S1-α L4+L5：1/2 修复，转换 29 场 Elite
+```
+
+`force/303` 在 L4+L5 反事实下：
+
+```text
+Common 2 → 5
+第 4 场 Common 位于战斗 #16
+末次 refinement 探访位于战斗 #18
+=> 可在窗口内兑现 pity
+```
+
+`force/20260927` 只走到 L3、未进入 L4/L5：
+
+```text
+Common 仍为 2
+=> L4+L5 覆盖结构上无法修复
+```
+
+此前把 S1-α 统一写成 `0/2` 是错误的；正确口径必须区分作用域。该更正不改变产品裁定：
+
+```text
+S1-α 仍不作为 F1 / Gate B/C 修复实施
+```
+
+原因是 L4+L5 仅修复 1/2，却需要转换 29 场 Elite，且另一失败局结构上不可达；这不是可接受的最小修复。
+
+## Agent1 验证归因收口
+
+当前本地 HEAD：
+
+```text
+2748ef82
+```
+
+Agent1 新增内容仅为：
+
+```text
+docs/q8g/AGENT1_Q8G_POST_FIX_REPORT.md
+tools/q8g_agent1_post_fix_baseline.mjs
+tools/q8g_agent1_f1_zero_risk.mjs
+tools/q8g_agent1_s1alpha_counterfactual.mjs
+docs/q8g/Q8G_HANDOFF_CURRENT.md
+docs/q8g/Q8G_WORKER_REPORT_CURRENT.md
+```
+
+当前工作树没有 Agent1 新增的生产代码、数据或测试改动。Agent2/Agent3 已分别形成：
+
+```text
+73e3e5ee  Agent3 UI/Release
+2748ef82  Agent2/VDA 测试与 test.ps1
+```
+
+引用验证结果时必须区分：
+
+```text
+语料/统计：基于 3f09e040 时代生成的 POST 语料
+回归测试：基于 HEAD 2748ef82 的工作树
+```
+
+不能把 Agent1 的测量结果、Agent2/Agent3 的修复结果和不同 HEAD 混写成单一验证快照。
+
+## 当前裁定保持
+
+```text
+G1 K=2：正式撤回
+S1-α：不作为 F1 修复，暂不实施
+Common-victory guard：不批准
+剩余 2/32 f1=0：接受为正常随机尾部
+M/G/T：不运行组合
+生产经济规则：冻结
+```
+
+## 下一步
+
+```text
+1. 保留 S1-α 数字更正，不再引用旧的 0/2 总数
+2. 单独处理 Agent2 的验证债务裁定与最终 check 复验
+3. 单独处理 Agent3 的最终 PCK 导出审计
+4. 等待新的产品目标，不重新开启 G1/S1-α 经济施工
+```
+
+---
+
+# 35. Release 导出边界裁定（2026-09-14）
+
+## Android 发布要求
+
+```text
+本阶段不要求 Android 导出。
+```
+
+项目当前交付目标是：
+
+```text
+Godot 4.7.2 Windows 单机 Demo
+```
+
+因此：
+
+- Android SDK 缺失不阻塞 Windows Demo；
+- Android export template 缺失不阻塞 Windows Demo；
+- `debug.keystore` 缺失不阻塞 Windows Demo；
+- `tools/sign_android.ps1` 的 build-tools 版本硬编码问题暂不处理；
+- 不安装 Android SDK、模板或 keystore 作为本阶段隐含任务；
+- Android preset 可以保留，但不得被描述为当前必过 Gate。
+
+Android 若未来要支持，必须另立 Android 发布批次，单独处理 SDK、导出模板、签名和 CI。
+
+## `check.ps1` 归因更正
+
+```text
+`tools/check.ps1` 不包含 Android 阶段。
+```
+
+其五阶段仍是：
+
+```text
+guitkx_build
+unit + integration
+headless 启动探针
+contract drift
+git diff --check
+```
+
+因此旧表述：
+
+```text
+“完整 check 被 Android build-tools 阻塞”
+```
+
+作废。正确表述为：
+
+```text
+Android 导出/签名流水线被本机 Android 环境阻塞；
+`check.ps1` 与 Android 正交，不能用 Android 缺失解释 check 结果。
+```
+
+## Windows Release PCK
+
+```text
+Windows Release 导出是当前阶段必须补齐的验证项。
+```
+
+原因：
+
+- Windows 导出模板存在；
+- `Windows Desktop` preset 使用 `binary_format/embed_pck=true`；
+- 当前旧的 `build/win/gu-zhenren.exe` 早于现有 UI/验证提交，不能作为证据；
+- Agent3 的 `load() as Texture2D` 和 `exclude_filter` 修改尚未在当前 HEAD 的新 exe 中实测。
+
+下一步允许 Agent3 只做：
+
+```text
+1. 导出到新的 build/verify-<HEAD>/ 目录，不覆盖旧产物；
+2. 验证 Windows Release exe 启动；
+3. 检查内嵌 PCK 中不含 tests/tools/docs/.preview/.codex 等受排除内容；
+4. 验证卡牌贴图在导出包内可加载；
+5. 检查 debug 面板和 debug 脚本是否只是运行时门控，还是需要编译期裁剪；
+6. 更新 AGENT3_UI_RELEASE_REPORT.md。
+```
+
+本任务不得新增 UI 功能，不得修改领域规则或经济数据。
+
+## Release 未决项
+
+以下仍需 Windows PCK 实测或另行裁定：
+
+```text
+lore_engine/ 是否进入包
+lore_sources/ 是否进入包
+debug_panel.tscn 是否必须物理裁剪
+根目录零散调试截图是否全部排除
+W10 首跑 has_save=false flake
+ObjectDB/RID 泄漏
+```
+
+在这些问题闭合前，Windows Release 状态只能写：
+
+```text
+CONDITIONAL
+```
+
+## 当前状态
+
+```text
+Android：本阶段非阻塞，可选发布路径
+check.ps1：与 Android 正交，旧阻塞归因作废
+Windows Release PCK：必须补测
+Agent3 UI：交互门 PASS
+Agent3 Release：CONDITIONAL，等待 Windows PCK 实测
+生产经济规则：冻结
+```

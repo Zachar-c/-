@@ -208,3 +208,169 @@ node tools/q8g_reachability8_corpus_compare.mjs    # PRE/POST 对照
 ```
 
 本报告不含 A/B/C/D 产品裁定。
+
+---
+
+# Agent-1 / Q8G Post-Fix Baseline and G1 Reassessment（2026-09-14）
+
+> 任务书：Q8G Post-Fix Baseline and G1 Reassessment（Agent 1）。
+> 报告全文：`docs/q8g/AGENT1_Q8G_POST_FIX_REPORT.md`。measurement-only，生产零修改，不含 A/B/C/D 裁定。
+
+## 1. 实际修改文件
+
+| 文件 | 变更 |
+|---|---|
+| `tools/q8g_agent1_post_fix_baseline.mjs` | 新增只读分析工具（`--layers` 按层份额；`<school>/<seed>` 逐场追踪） |
+| `docs/q8g/AGENT1_Q8G_POST_FIX_REPORT.md` | 交付报告（新增） |
+| `docs/q8g/Q8G_WORKER_REPORT_CURRENT.md` | 本增补 |
+
+既有工具全部按原样运行，未修改（`--natural=observed` 是 R7 工具已有参数）。
+
+## 2. 语料状态
+
+`29286071` 在 HEAD 历史中；`34b23e69` 归档 Q8-G 代码/数据/文档并保留 pity state。
+在当前 HEAD（`3f09e040`）重建 32 局，退出码 0；与 2026-09-13 语料逐行对比 **identical 32 / differing 0**。
+地图审计复跑：非 L1 起手 0/16，契约违规 0，determinism OK。
+
+## 3. POST 基线要点
+
+```text
+entry layer {"1":32}   访问节点 1279 / 40.0 每局   战斗 619 / 19.3 每局   短局 5
+by_layer L1 145 L2 165 L3 148 L4 98 L5 63
+by_tier  common 155 elite 151 boss 88 unsettled 225
+非 Boss settled Common 份额  L1 62.8% L2 62.2% L3 36.4% L4 16.0% L5 11.1%（合计 50.7%）
+refinement 探访 98（= 路线 refinement 节点 98，机会 100% 消费）
+f1/f2/f3/f4 掉落 66/57/54/48    f1 每抽命中 19.0%（348 抽）
+漏斗 visits 98 | gu_ready 98 | mat_ready 88 | full_ready 70 | attempts 72 | successes 72
+gate_b 15/32   gate_c 8/32     f1_zero 2/32
+```
+
+关键读法：修复未改变各层 Common 比例结构，改变的是**层权重**（全部从 L1 起手 ⇒ 战斗集中在 L1–L3）；
+L4/L5 的 Common 悬崖（16.0% / 11.1%）依然存在。
+
+## 4. force/303 逐场分析（摘要）
+
+```text
+entry L1R0N0 | 20 场 | 路线 refinement 节点 2 | 探访 2（战斗 #11、#18）
+Common 仅 2 场（#1、#4），都在 L1；4 抽材料全部非 force-crude（f1×0）
+pity 阈值 3、按 tier 独立计数 ⇒ 需第 4 场 Common 才兑现，从未触发
+mat_ready=2 但 full_ready=0、attempts=0 ⇒ 不是没去炼，是 f1 断供
+```
+
+`force/20260927` 结构完全相同（13 场、Common 2 场都在 L1、f1×0）。
+⇒ 剩余 f1=0 的唯一原因是「Common 胜场 < pity 阈值」，与起手层、局长度、Elite、时序无关。
+
+## 5. G1 K=2 与 S1-α 重评
+
+```text
+G1 K=2（A3a short floor K=2）：f1zero 修复 0/2，Elite 151 → 150（收益 0，成本仍在）
+  R7B（natural 0.556）亦为 1.55/2 → 1.55/2，差值 0
+S1-α（A1）：**按作用域分**——L5-only f1zero 修复 0/2（Elite −1）；
+  L4+L5 修复 1/2（`force/303`，代价 14 局共 29 场 elite 转换，见 §10 更正）
+唯一能闭合缺口：A2 全层份额下限 0.60 → 2/2，但 Elite 151 → 61（−59.6%）
+材料件数在所有变体恒为 482（+0.00）
+```
+
+短局人口已与失败脱钩：5 个短局里 4 个 Common ≥3；另一失败局是 20 场长局。
+⇒ 建议保护变量从「局长度」改为「Common 胜场数」，属新机制设计，需 Luna 裁定。
+
+## 6. 旧 G1 数值作废清单
+
+`§25` 的 G K=2 条件接受边界、`§23` 的 K=1/2/3/4 比较、`§22` 的效率前沿与 M 前沿、
+`§24` 的 M 代价预算、`§20` 的 R7B 报告层总量、以及「短局 = <15 战斗」的人口定义与
+材料件数基线 389.0 —— 全部作废（详见交付报告 §5）。R5 的 tier 结构结论与 fallback 通道结论保留。
+
+## 7. 验证命令与退出码
+
+| 命令 | 退出码 |
+|---|---|
+| `godot --headless --path . -s tools/q8g_reachability8_b1_map_audit.gd` | 0 |
+| `bash %TEMP%/q8g_rebuild_corpus.sh` | 0（32/32） |
+| 新旧语料关键行 diff | 0（identical 32 / differing 0） |
+| `node tools/q8g_agent1_post_fix_baseline.mjs` | 0 |
+| `node tools/q8g_agent1_post_fix_baseline.mjs --layers` | 0 |
+| `node tools/q8g_agent1_post_fix_baseline.mjs force/303` | 0 |
+| `node tools/q8g_reachability7b_design_preflight.mjs` | 0 |
+| `node tools/q8g_reachability7_ashape_preflight.mjs --natural=observed` | 0 |
+
+## 8. 未验证风险与需裁定项
+
+风险：模型 natural 率假设（0.406 vs 0.556）、n=2 的统计分辨率、A2 代价未逐场重演、
+f1 每抽率无置信区间、force/303 为单局观测、未重跑 unit/integration/check。
+
+需 Luna 裁定：① 是否撤回 §25 的 G1 K=2 条件接受；② S1-α 是否重新定义产品目标；
+③ 剩余 2/32 f1=0 的接受度与目标口径；④ 保护变量是否改为 Common 胜场数。
+→ **已全部裁定，见 §10。**
+
+## 9. 收尾验证（2026-09-14 补，回应原「未验证风险」）
+
+### 9.1 回归门在**当前工作树**全绿（含其他 Agent 在途修复）
+
+```text
+guitkx_build    rc=0  compiled=0 errors=0 held=0 total=16
+unit            rc=0  Tests 1445 / Passing 1445 / Failing 0   （原 1441）
+integration     rc=0  Tests 32 / Passing 32 / Failing 0
+启动探针        rc=0
+契约漂移        rc=0  168 identifiers resolved
+git diff --check rc=0
+run_gut_checked 严格判定：unit PASS / integration PASS（2026-09-13 为 unit FAIL）
+```
+
+> **更正**：本节初稿把上述结果归因为「两条既有 `SCRIPT ERROR` 已被 `34b23e69` 修掉」，
+> **该归因错误**。文件 mtime 显示 `tests/unit/test_slay_gu_final_chapter.gd`（21:21:50）与
+> `tools/test.ps1`（21:22:05）由**其他 Agent（VDA 工作流）**先改，本轮 unit 运行始于 21:25:47。
+> 即：本轮的绿是在**含在途修复的共享工作树**上取得的，**不等于 HEAD 全绿**。
+> HEAD（`3f09e040`）上该 SCRIPT ERROR 仍在，`tools/check.ps1` 仍会在 unit 段 exit 1；
+> 修复**尚未提交**。**原裁定项 ⑤ 仍有效**，归属转为 VDA 工作流（非 Agent 1 范围）。
+
+**并发风险**：本工作树同时被多个 Agent 编辑（`AGENT3_UI_RELEASE_REPORT.md`、VDA 文档、
+`gu_card_view.gd`、`export_presets.cfg`、`tools/test.ps1`、`tests/unit/test_slay_gu_final_chapter.gd`）。
+本报告全部测试数字为该共享工作树的**快照**，可能随他人后续编辑失效。
+Agent 1 未修改、未回退、未提交任何他人改动。
+
+**归因已由提交落地解决**：其他 Agent 随后提交 `73e3e5ee`（Agent3 UI）与
+`2748ef82`（Agent2/VDA：slay-gu 断言 + `test.ps1` 预导入缓存）。当前 HEAD = `2748ef82`；
+工作树相对 HEAD 仅多出 Agent-1 自己的文档与只读工具，无代码/数据/测试改动。
+⇒ 本节的 unit 1445/1445、integration 32/32、`check.ps1` 六段 rc=0 **可合法归给 HEAD `2748ef82`**。
+引用时注意：§1–§9.2 的语料结论基于 `3f09e040` 时代重建的 32 局语料，与 §9.1 的 HEAD 不同。
+
+### 9.2 残余 f1=0 是方差尾部，不是结构性异常
+
+新增工具 `tools/q8g_agent1_f1_zero_risk.mjs`（只读）：
+
+```text
+Common 胜利 155 场 / 材料抽数 348 / f1 抽数 63
+每抽命中率 0.1810；每场 Common 胜利命中率 q = 0.4065（Wilson 95% CI 0.3323–0.4851）
+模型预期 f1=0 局数 = 2.97（区间 2.14 .. 3.94）    观测 = 2
+⇒ 观测落在预期区间内且略低于点估计：残余 2 局是「Common 胜场数分布 × pity 阈值」的正常尾部
+```
+
+模型无关的结构性结论：所有风险局 N ≤ 3 < pity 兑现阈值 4，
+⇒ **floor K ≤ 3 的短局 guard 结构上无法抬升任何一局**；要有效，guard 下限须 ≥ 4。
+
+## 10. 裁定结果与更正记录（2026-09-14，inbox §31）
+
+**裁定**：
+
+```text
+G1 K=2：正式撤回（POST 下 f1zero 修复 0/2，Elite 151 → 150）
+S1-α：不作为 F1 修复、暂不实施；若保留须改名为「深层内容多样性 / 层级体验设计」
+Common-victory guard：不批准
+剩余 2/32 f1=0：接受为正常随机尾部
+验证归因纪律：验证结果必须绑定工作树；HEAD 与工作树分开表述
+```
+
+**本报告的三处自我更正**：
+
+```text
+更正 1（§9.1）验证归因：初稿称「SCRIPT ERROR 已被 34b23e69 修掉」。
+     mtime 证据：test_slay_gu_final_chapter.gd 21:21:50、tools/test.ps1 21:22:05 由他人先改，
+     本轮 unit 21:25:47 才运行 ⇒ 绿是共享工作树快照，不等于 HEAD。已改。
+更正 2（§5）S1-α 作用域：初稿称 0/2（只对 L5-only 成立）。
+     新增模型无关逐局反事实 `tools/q8g_agent1_s1alpha_counterfactual.mjs`：
+     L4+L5 换算后 force/303 的 Common 数 2 → 5，第 4 场落在战斗 #16（早于末次探访 #18）⇒ 修复；
+     force/20260927 13 场从未进入 L4/L5 ⇒ 结构上无法被救。全语料 L4+L5 = 1/2，代价 29 场 elite。
+更正 3（§9.2）统计估计量：初稿误用「局是否命中」估计 q，已改为「每场 Common 胜利是否命中」。
+```
+
+本报告不含 A/B/C/D 产品裁定。
