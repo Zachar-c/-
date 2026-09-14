@@ -157,17 +157,71 @@ Agent 3 **未**对以上三点做产品裁定，也未扩展业务规则。
 
 ---
 
-## 11. 结论
+## 11. Windows Release 卫生复测（2026-09-14 / HEAD `96d79f2d`）
+
+用户裁定后 Agent3 复测（**不是**沿用 `2748ef82` 旧 PCK）。
+
+### 11.1 运行时依赖审计（排除前提）
+
+| 目录 | 正式运行时依赖 | 结论 |
+|------|----------------|------|
+| `Godot/` | 无（误写的 editor/user 数据） | 可排除 |
+| `lore_engine/` `lore_sources/` | `scripts/` `scenes/` 零引用 | 可排除 |
+| `ui/**/*.guitkx` | `RunScreenRouter.SCREEN_PATHS` 为空；全屏 `.tscn` | 源文件可排除；生成层 `.gdc` 仍进包（未批准扩大） |
+
+### 11.2 导出与产物
+
+```text
+APPDATA 显式设为 C:\Users\90877\AppData\Roaming（否则模板路径落到 ./Godot）
+--export-release "Windows Desktop" → rc=0
+  build/agent3-release-20260914-2301/gu-zhenren.exe  190,503,784 B
+--export-pack 同预设 → rc=0
+  …/gu-zhenren.pck  81,359,100 B
+Release exe --headless --quit-after 3 → EXIT=0
+```
+
+### 11.3 PCK 阴性断言（字节串扫描，非工程盘合并枚举）
+
+| 标记 | 计数 | 判定 |
+|------|-----:|------|
+| `res://tests/` | 0 | PASS |
+| `res://tools/` | 0 | PASS |
+| `res://docs/` | 0 | PASS |
+| `res://.preview/` `.codex/` `.superpowers/` | 0 | PASS |
+| `res://memory/` | 0 | PASS |
+| `res://lore_engine/` `res://lore_sources/` | 0 | PASS |
+| `res://vendor/` / 只读语料 | 0 | PASS |
+| `res://Godot/` | 0 | PASS |
+| `scripts/acceptance_driver` / `guitkx_build` | 0 | PASS |
+| `res://ui/_sample` | 0 | PASS |
+| `.guitkx` 字面量 | 1（vocabulary 注释文案，非文件） | PASS |
+| `res://.claude/worktrees/...events.dialogue` | 1 | **known_shared**：来自 `project.godot` POT 路径（Shared，另案） |
+| `debug_panel` / `run_debug_facade` / `debug_actions` | 9 / 5 / 5 | **OBS**：编译期裁剪未做（见方案文档） |
+
+工具：`tools/agent3_pck_audit.gd`（扫 PCK 字节，不 `DirAccess(res://)` 合并工程盘）。
+
+### 11.4 Debug 编译期裁剪
+
+已提交方案：`docs/q8g/Q8G_DEBUG_COMPILE_PRUNE_PLAN.md`  
+**本批未实现**（`run_controller` 硬引用 `RunDebugFacade`，需 Shared 5 步协议）。禁止只靠 exclude_filter 剔脚本却留硬引用。
+
+### 11.5 Android
+
+本阶段 **不要求** Android 导出（用户裁定）。
+
+---
+
+## 12. 结论
 
 | 交付门 | 状态 |
 |--------|------|
-| `dead=[]` | **PASS**（15/15） |
-| `no_ui_click=[]` | **PASS**（15/15） |
-| `occluded=[]` | **PASS**（15/15，`occluded_known=0`） |
-| Rest 软锁门 | **PASS** |
-| B2 四屏真窗 | **PASS** |
-| W10 continue_run | **PASS**（重试） |
-| Release 资源边界 | **条件 PASS**：过滤已加强 + 卡贴图导出路径已修；未做最终导出实测 |
-| 死按钮 / 未接入入口 | **无** |
+| `dead=[]` / `no_ui_click=[]` / `occluded=[]` | **PASS**（15/15） |
+| Rest / B2 / 卡带预算 | **PASS** |
+| W10 continue_run | **PASS**（重试；flake 未根治） |
+| Windows Release 导出 + exe 启动 | **PASS**（`96d79f2d`） |
+| PCK 卫生阴性（tests/tools/docs/lore/Godot…） | **PASS** |
+| Debug 编译期裁剪 | **未完成**（方案已交） |
+| `.claude` POT 跨 worktree | **known_shared**（`project.godot`） |
+| Android | **非本阶段 Gate** |
 
-**可交付判定：在 headless 三键门与指定 UI 验证命令范围内通过；Release 最终 PCK 仍需一次导出实测闭环。**
+**综合：Windows Release 卫生与基础导出 CONDITIONAL→当前卫生项已闭环；最终仍待 Debug 阶段 B + Luna 对 known_shared POT 的 Shared 任务裁定。**
