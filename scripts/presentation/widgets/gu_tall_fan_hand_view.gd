@@ -553,6 +553,8 @@ static func _desc_text(card: Dictionary) -> String:
 
 
 ## 按道 id 取插画；缓存 Texture2D；无图返回 null（TextureRect 显示网点纸底占位）。
+## 用 load() 加载导入后的 Texture2D 资源，而非 Image.load() 直读文件
+## （后者会触发 "Loaded resource as image file, this will not work on export" WARNING）。
 func _card_art_texture(school_id: String) -> Texture2D:
 	if school_id.is_empty():
 		return null
@@ -562,12 +564,10 @@ func _card_art_texture(school_id: String) -> Texture2D:
 	if path.is_empty():
 		_dao_tex_cache[school_id] = null
 		return null
-	var img := Image.new()
-	var err := img.load(path)
-	if err != OK:
+	var tex: Texture2D = load(path) as Texture2D
+	if tex == null:
 		_dao_tex_cache[school_id] = null
 		return null
-	var tex: Texture2D = ImageTexture.create_from_image(img)
 	_dao_tex_cache[school_id] = tex
 	return tex
 

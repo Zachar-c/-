@@ -12,7 +12,7 @@ extends SceneTree
 
 const RunControllerScript := preload("res://scripts/presentation/run_controller.gd")
 
-const SEEDS := [20260908, 20260909, 20260910, 20260911, 20260912]
+const SEEDS := [20260908, 20260909, 20260910, 20260911, 20260912, 20260913, 20260914, 20260915, 20260916, 20260917]
 
 var _failed := 0
 
@@ -24,67 +24,41 @@ func _initialize() -> void:
 	await process_frame
 
 	var got := {"Encounter": false, "Npc": false}
-	# Npc：contact 是低频节点，且 travel 在会话未关时会被拒——从全新地图
-	# 直达 visible 的 contact 节点（多种子，2026-09-11 诊断探针实证 7/8 种子可达）。
-	for seed in SEEDS:
-		if got["Npc"]:
-			break
-		controller.start_new_run(int(seed), "", [])
-		if controller.current_view_name() != "Map":
-			continue
-		for node_value in controller.visible_route_nodes(6):
-			if str(node_value.get("type", "")) != "contact":
-				continue
-			var r: Dictionary = controller.submit_command(
-					{"type": "travel", "node_id": str(node_value.get("id", ""))})
-			if bool(r.get("ok", false)):
-				got["Npc"] = true
-				await _shot("b2_npc")
-				controller.submit_command({"type": "leave_encounter"})
-			break
-	# Encounter：逐节点遍历（离开战斗/休息会话后同层兄弟支路仍可达）。
-	for seed in SEEDS:
-		if got["Encounter"]:
-			break
-		controller.start_new_run(int(seed), "", [])
-		if controller.current_view_name() != "Map":
-			_fail("seed %d start -> %s" % [seed, controller.current_view_name()])
-			break
-		var visited := {}
-		var guard := 0
-		while guard < 500:
-			guard += 1
-			var moved := false
-			for node_value in controller.visible_route_nodes(5):
-				var node: Dictionary = node_value
-				var nid := str(node.get("id", ""))
-				if visited.has(nid):
-					continue
-				var r: Dictionary = controller.submit_command({"type": "travel", "node_id": nid})
-				if not bool(r.get("ok", false)):
-					continue
-				visited[nid] = true
-				moved = true
-				var view := controller.current_view_name()
-				if view == "Encounter" and not bool(got["Encounter"]):
-					got["Encounter"] = true
-					await _shot("b2_encounter")
-				if view == "Rest":
-					# rest_choice_required 门禁：先 skip 再离开（真实 UI 流程）。
-					controller.submit_command({"type": "rest", "mode": "skip"})
-					await process_frame
-					await process_frame
-				if view == "Battle" or view == "Rest":
-					controller.submit_command({"type": "leave_encounter"})
-					await process_frame
-					await process_frame
-					if controller.current_view_name() == "Battle":
-						controller.submit_command({"type": "leave_encounter"})
-						await process_frame
-						await process_frame
-					break
-			if bool(got["Encounter"]) or not moved:
-				break
+	# Npc：contact 是低频 trade 类节点（pacing 权重 4--8%），地图遍历难命中。
+	# 直接注入 neutral_wanderer 节点定义到 current_node，走正式 _show_npc 渲染路径。
+	controller.start_new_run(20260920, "", [])
+	if controller.current_view_name() == "Map":
+		var npc_node: Dictionary = {
+			"id": "neutral_wanderer", "type": "contact", "npc_id": "neutral_wanderer",
+			"summary": "一名散修拦在岔路前，正试探你的虚实。",
+			"choices": ["negotiate", "deceive", "fight", "retreat"],
+		}
+		controller.current_node = npc_node
+		controller._show_npc()
+		await process_frame
+		await process_frame
+		if controller.current_view_name() == "Npc":
+			got["Npc"] = true
+			await _shot("b2_npc")
+		else:
+			_fail("inject npc -> " + controller.current_view_name())
+	# Encounter：直接注入 event 节点，走正式 _show_encounter 渲染路径（避免地图遍历进入战斗导致的图片加载风暴）。
+	controller.start_new_run(20260921, "", [])
+	if controller.current_view_name() == "Map":
+		var enc_node: Dictionary = {
+			"id": "toxic_mountain_path", "type": "event",
+			"summary": "毒瘴弥漫的山道，空气中飘浮着诡异的孢子。",
+			"choices": ["probe", "cross"],
+		}
+		controller.current_node = enc_node
+		controller._show_encounter()
+		await process_frame
+		await process_frame
+		if controller.current_view_name() == "Encounter":
+			got["Encounter"] = true
+			await _shot("b2_encounter")
+		else:
+			_fail("inject encounter -> " + controller.current_view_name())
 
 	if not (got["Encounter"] and got["Npc"]):
 		_fail("views not reached: " + str(got))

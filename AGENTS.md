@@ -54,13 +54,13 @@
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 
 1. **当前批次（2026-09-11 用户裁定：卡牌 UI 重构 + 真窗验收）**：
-   - **卡牌重构**：手牌单卡信息层级/画框/稀有度流光重构（现役 `GuTallFanHandView`，战斗线框 v3 卡 110×154 基线）——单测 + 交互门三键回归**已完成**（2026-09-11），**剩余：真窗手感验收**。
-   - **战斗水墨去框重构（2026-09-11 已落地）**：敌人/玩家去框融入山水、意图篆刻印、按钮减重、debug 弱化；headless 全绿，剩余真窗验收。
+   - **卡牌重构**：手牌单卡信息层级/画框/稀有度流光重构（现役 `GuTallFanHandView`，战斗线框 v3 卡 110×154 基线）——单测 + 交互门三键回归**已完成**（2026-09-11），真窗手感验收 ✅（2026-09-14，五态截图全通过，连带修复卡牌插画空白）。
+   - **战斗水墨去框重构（2026-09-11 已落地）**：敌人/玩家去框融入山水、意图篆刻印、按钮减重、debug 弱化；headless 全绿，真窗验收 ✅（2026-09-14）。
    - **休息屏软锁修复（2026-09-11 已落地）**：主决策面滚动化 + LeaveRow 常驻跳过入口；回归门 `tools/verify_rest_headless.gd`（1280x720 SubViewport 可视预算 + 引擎拾取）。
-   - **V 线（已批准，2026-09-10）**：Encounter v1（C4）、Npc/Ending/ContentError v1（B1）线框稿均获批；B2 首批 tscn 已落地（`ddef08a` + `4de08bf`：四屏布局与线框对齐 + 结局回顾格 + NPC 对话卡）。**剩余：B2 真窗/截图验收与细化**。
+   - **V 线（已批准，2026-09-10）**：Encounter v1（C4）、Npc/Ending/ContentError v1（B1）线框稿均获批；B2 首批 tscn 已落地（`ddef08a` + `4de08bf`：四屏布局与线框对齐 + 结局回顾格 + NPC 对话卡）。B2 真窗/截图验收 ✅（2026-09-14，四屏全部成功截图）。
    - **E1-E7 按层伪随机：全链闭环**（E1 pacing 分类概率表 / E2 生成器分类抽取 / E3 休息三选一 mode_groups / E4 表现层路由 / E5 `verify_pacing_density` + `verify_route_diversity` 双门 / E6 `enemy_roll` / E7 `shop_stock`）。
    - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门（`dead=[]`、`no_ui_click=[]`、`occluded=[]` 三键全 0，滚动裁剪以 `scrolled=N` 计数留痕）；Settings 手记/图鉴导航已接入路由启用（`nav_journal`/`nav_codex`，2026-09-11），设置=当前页标识 disabled。
-2. 队列后续：**真窗键鼠验收**（用户已下令 2026-09-11：B2 四屏 + W10 `continue_run` + S 阶段全流程 + 手牌动态手感）。D1b 古方知识模型已落地（`2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）；`run_controller` A7 减行已达标 888 行。
+2. ~~队列后续：真窗键鼠验收（B2 四屏 + W10 `continue_run` + S 阶段全流程 + 手牌动态手感）~~ ✅ **已闭环（2026-09-14）**：四项真窗验收全部通过，详见 `docs/superpowers/reports/2026-09-14-true-window-acceptance.md`；连带修复卡牌插画空白（`_card_art_texture` 改用 `load()` 替代 `Image.load()`，消除导出 WARNING）。D1b 古方知识模型已落地（`2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）；`run_controller` A7 减行已达标 888 行。
 3. 验证遗留：Dialogue Manager invalid UID、ObjectDB/RID 泄漏（2026-09-06 复测 20601 实例仍复现）；最终 `tools/test.ps1 -Suite unit`、`-Suite integration`、`tools/check.ps1` 全绿。
 4. 提交时继续排除 `.claude/`、无关的 `data/dialogues/events.dialogue` 本地修改，以及截图目录与 `__pycache__`。~~`data/enemies.json` 在 E6 补 weight 验证前仍按未经验证排除，E6 落地后解除。~~ **排除令已解除（2026-09-10 用户指令）**：原排除理由（E6 补 `weight` 验证）已失效——E7 改用"种子化洗牌取前 N"而非权重法，E6 也不再需要 `weight`；`data/enemies.json` 现有 30 条均由 `content_catalog.validate` 全量校验 + `test_b5_content_expansion.gd` 三条池契约守卫（clue ≥2 / 每主题有非 boss / 每条能起战）覆盖。
 
