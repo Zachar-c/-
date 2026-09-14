@@ -64,14 +64,14 @@ func _append_node_events(state: RunState, index: int) -> RunState:
 			"time": state.event_log.size(),
 			"node_id": node_id,
 			"action": "battle_loot",
-			"before": {"material_pity": state.material_pity},
-			"after": {"materials": materials, "material_pity": 0},
+			"before": {"material_pity_by_tier": (state.material_pity_by_tier as Dictionary).duplicate(true)},
+			"after": {"materials": materials, "material_pity_by_tier": {}},
 			"reason": "loot_materials_gained",
 			"source": "loot_resolver",
 			"targets": ["feed_points"],
 		})
 		state.materials = materials
-		state.material_pity = 0
+		state.material_pity_by_tier = {}
 	if index % 32 == 0:
 		state = state.append_event({
 			"stage": _stage_for(index),

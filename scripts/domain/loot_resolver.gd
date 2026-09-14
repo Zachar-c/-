@@ -33,16 +33,19 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	# 2026-08-28 设计点：材料也有转阶差异——修为越高收获越丰（每高
 	# 一转多收 1 份材料），一转与五转的采集效率不可同日而语。
 	var count_adjustment := int(mods.get("material_bonus", 0)) + int(mods.get("material_penalty", 0)) 		+ maxi(0, int(state.cultivation) - 1)
-	var material_ids := _roll_materials(table, state, tier, pity_cfg, count_adjustment)
+	var material_ids := _roll_materials(table, state, tier, pity_cfg, count_adjustment, catalog)
 	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}), catalog.get("gu_by_id", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
+	# P2-a（R-3 校准）：pity 目标派系化——本派链路材料中该池声明且带段
+	# 在允许集内的条目；roll 与计数器推进必须用同一目标集。
+	var pity_targets := _material_pity_targets(tier, table, state, catalog)
 	var next := state
 	if not material_ids.is_empty() or not gu_id.is_empty():
 		var next_pity := _next_loot_pity(int(state.loot_pity), str(gu_roll.get("rarity", "")), pity_cfg)
-		var next_material_pity := int(state.material_pity)
+		var next_material_pity := (state.material_pity_by_tier as Dictionary).duplicate(true)
 		if not material_ids.is_empty():
-			next_material_pity = _next_material_pity(int(state.material_pity), material_ids, pity_cfg)
+			next_material_pity = _next_material_pity(next_material_pity, tier, material_ids, pity_targets)
 		next = _apply_loot(state, loot, catalog, next_pity, next_material_pity)
 	var result := {"state": next, "loot": loot}
 	# Q8-G 1-C (Batch 0 §4 frozen semantics): battle is the main stone producer.
@@ -165,8 +168,10 @@ static func _layer_table(catalog: Dictionary, tier: String, layer: int) -> Dicti
 
 
 ## Q8-G 1-D: normalize material pool entries to {id, weight}. Legacy string
-## entries keep weight 1 so old tables roll exactly as before.
-static func _material_entries(raw_pool: Array) -> Array:
+## entries keep weight 1 so old tables roll exactly as before. 派系共振：
+## 主道痕 == 玩家流派的条目权重 × resonance（校准倍率，配置 school_material_resonance）。
+static func _material_entries(raw_pool: Array, state: RunState, resonance: int, catalog: Dictionary) -> Array:
+	var school := str(state.school)
 	var entries: Array = []
 	for entry_value in raw_pool:
 		if entry_value is String:
@@ -174,9 +179,15 @@ static func _material_entries(raw_pool: Array) -> Array:
 		elif entry_value is Dictionary:
 			var entry: Dictionary = entry_value
 			var weight := int(entry.get("weight", 1))
-			if str(entry.get("id", "")).is_empty() or weight < 1:
+			var material_id := str(entry.get("id", ""))
+			if material_id.is_empty() or weight < 1:
 				continue
-			entries.append({"id": str(entry["id"]), "weight": weight})
+			if not school.is_empty() and resonance > 1:
+				var material: Dictionary = (catalog.get("material_by_id", {}) as Dictionary).get(material_id, {})
+				var tags: Array = material.get("dao_tags", [])
+				if not tags.is_empty() and str(tags[0]) == school:
+					weight *= resonance
+			entries.append({"id": material_id, "weight": weight})
 	return entries
 
 
@@ -199,10 +210,13 @@ static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
 	return "common"
 
 
-static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, count_adjustment: int = 0) -> Array[String]:
+static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, count_adjustment: int = 0, catalog: Dictionary = {}) -> Array[String]:
 	# Q8-G 1-D: pool entries may be plain ids (legacy, weight 1) or {id, weight}
 	# objects - the quality-band channels need per-material weights.
-	var pool: Array = _material_entries(table.get("material_pool", []))
+	# 派系共振（Q8-G 1-D provisional）：主道痕 == 玩家流派的条目权重 ×共振倍率，
+	# 与蛊掉落"本流派局掉本流派蛊"同构——单流派局只养本派，19 派平摊会饿死链路。
+	var resonance := maxi(1, int(catalog.get("loot_tables", {}).get("school_material_resonance", 1)))
+	var pool: Array = _material_entries(table.get("material_pool", []), state, resonance, catalog)
 	var count := maxi(0, int(table.get("material_count", 0)) + count_adjustment)
 	var picked: Array[String] = []
 	while picked.size() < count and not pool.is_empty():
@@ -213,8 +227,9 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String, pi
 		pool.erase(entry)
 	var m_pity: Dictionary = pity_cfg.get("material_pity", {})
 	var threshold := int(m_pity.get("threshold", 0))
-	var targets: Array = m_pity.get("target_material_ids", [])
-	if threshold > 0 and int(state.material_pity) >= threshold and not targets.is_empty():
+	var targets: Array = _material_pity_targets(tier, table, state, catalog)
+	var pity_count := int((state.material_pity_by_tier as Dictionary).get(tier, 0))
+	if threshold > 0 and pity_count >= threshold and not targets.is_empty():
 		var has_target := false
 		for material_value in picked:
 			if targets.has(str(material_value)):
@@ -236,14 +251,58 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String, pi
 	return picked
 
 
-static func _next_material_pity(current: int, material_ids: Array, pity_cfg: Dictionary = {}) -> int:
-	var targets: Array = pity_cfg.get("material_pity", {}).get("target_material_ids", [])
+## P2-a（R-3 校准，2026-09-13 裁定）：material_pity 目标派系化。
+## 目标集 = 本派 promotion 配方声明的链路材料 ∩ 该 tier 池实际声明条目
+## ∩ 配置允许的 quality_band。硬限：pity 只能补"该池已定义存在的目标
+## 带段"（common→crude/f1、elite→plain/refined/f2f3、boss→prized/f4），
+## 不得跨 tier 拉取或凭空生成——目标集恒为 池×配方×带段 的纯函数，
+## 同种子同状态必得同目标（pity state determinism 门）。
+static func _material_pity_targets(tier: String, table: Dictionary, state: RunState, catalog: Dictionary) -> Array[String]:
+	var m_pity: Dictionary = catalog.get("loot_tables", {}).get("pity", {}).get("material_pity", {})
+	var bands: Array = (m_pity.get("target_bands_by_tier", {}).get(tier, []) as Array)
+	var school := str(state.school)
+	if bands.is_empty() or school.is_empty():
+		return []
+	var chain: Dictionary = {}
+	for recipe_value in catalog.get("refinement_recipes", []):
+		var recipe: Dictionary = recipe_value
+		if str(recipe.get("kind", "")) != "promotion":
+			continue
+		if not str(recipe.get("id", "")).begins_with("promote_%s_" % school):
+			continue
+		for material_id_value in (recipe.get("materials", {}) as Dictionary):
+			chain[str(material_id_value)] = true
+	var material_by_id: Dictionary = catalog.get("material_by_id", {})
+	var targets: Array[String] = []
+	for entry_value in table.get("material_pool", []):
+		var material_id := ""
+		if entry_value is String:
+			material_id = str(entry_value)
+		elif entry_value is Dictionary:
+			material_id = str((entry_value as Dictionary).get("id", ""))
+		if material_id.is_empty() or not chain.has(material_id) or targets.has(material_id):
+			continue
+		var band := str((material_by_id.get(material_id, {}) as Dictionary).get("quality_band", ""))
+		if bands.has(band):
+			targets.append(material_id)
+	return targets
+
+
+## Reachability-3（2026-09-13 裁定）：按 tier 独立的材料保底计数——
+## common(f1)/elite(f2f3)/boss(f4) 各自累计：本 tier 战斗掉中目标则清零，
+## 未掉中则本组 +1；**其他 tier 的掉落对本组计数零影响**（既不重置也不推进）。
+## 旧单计数器会被跨带掉落清零，f1 断档沿顺序 promotion 链传导（Reachability-2）。
+static func _next_material_pity(current_by_tier: Dictionary, tier: String, material_ids: Array, targets: Array = []) -> Dictionary:
+	var next := current_by_tier.duplicate(true)
 	if targets.is_empty():
-		return current
+		return next
+	var hit := false
 	for material_value in material_ids:
 		if targets.has(str(material_value)):
-			return 0
-	return current + 1
+			hit = true
+			break
+	next[tier] = 0 if hit else int(next.get(tier, 0)) + 1
+	return next
 
 
 # Shop purchases are fixed offers and never call _roll_gu, so they bypass
@@ -353,7 +412,7 @@ static func _pick_from(bound: int, state: RunState, salt: String) -> int:
 	return SeededRollScript.index(bound, int(state.seed), salt, state.event_log.size())
 
 
-static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, new_loot_pity: int, new_material_pity: int) -> RunState:
+static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, new_loot_pity: int, new_material_pity_by_tier: Dictionary) -> RunState:
 	var next := state
 	var material_ids: Array = loot.get("material_ids", [])
 	if not material_ids.is_empty():
@@ -366,14 +425,14 @@ static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, 
 			"time": state.event_log.size(),
 			"node_id": state.current_node_id,
 			"action": "battle_loot",
-			"before": {"material_pity": state.material_pity},
-			"after": {"materials": after, "material_pity": new_material_pity},
+			"before": {"material_pity_by_tier": state.material_pity_by_tier.duplicate(true)},
+			"after": {"materials": after, "material_pity_by_tier": new_material_pity_by_tier.duplicate(true)},
 			"reason": "loot_materials_gained",
 			"source": "loot_resolver",
 			"targets": material_ids,
 		})
 		next.materials = after
-		next.material_pity = new_material_pity
+		next.material_pity_by_tier = new_material_pity_by_tier.duplicate(true)
 	var gu_id := str(loot.get("gu_id", ""))
 	if not gu_id.is_empty():
 		next = _gain_gu(next, gu_id, catalog, new_loot_pity)

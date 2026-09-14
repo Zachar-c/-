@@ -67,7 +67,7 @@
    "title": "青茅山外圍",
    "category_weights": {
     "battle": 82,
-    "rest": 5,
+    "rest": 6,
     "unknown": 9,
     "trade": 4
    }
@@ -125,7 +125,7 @@
    "title": "落瘴岭",
    "category_weights": {
     "battle": 80,
-    "rest": 5,
+    "rest": 6,
     "unknown": 10,
     "trade": 5
    }
@@ -183,7 +183,7 @@
    "title": "血蟒涧",
    "category_weights": {
     "battle": 78,
-    "rest": 5,
+    "rest": 6,
     "unknown": 11,
     "trade": 6
    }
@@ -241,7 +241,7 @@
    "title": "万蛊窟",
    "category_weights": {
     "battle": 76,
-    "rest": 5,
+    "rest": 6,
     "unknown": 12,
     "trade": 7
    }
@@ -299,7 +299,7 @@
    "title": "瘴脉深處",
    "category_weights": {
     "battle": 74,
-    "rest": 5,
+    "rest": 6,
     "unknown": 13,
     "trade": 8
    }
@@ -330,6 +330,7 @@
   "rest": [
    "rest_hollow",
    "rest_shrine",
+   "refinement_hollow",
    "refinement_hollow",
    "cultivation_spring"
   ],

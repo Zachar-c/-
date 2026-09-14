@@ -244,7 +244,7 @@ func test_query_and_dump_are_read_only_but_still_leave_audit_events() -> void:
 	var cat := enabled_catalog()
 	var state: RunState = RunStateScript.new_run(2026, null)
 	state.loot_pity = 2
-	state.material_pity = 1
+	state.material_pity_by_tier = {"common": 1}
 	state.synthesis_fail_streak = 1
 	var baseline := state.to_save_data()
 	var queried := DebugActionsScript.apply(state, cat, {"op": "query_loot_state"}, true)

@@ -98,9 +98,10 @@ func test_shop_purchases_do_not_advance_pity() -> void:
 	var state := RunStateScript.new_run(42)
 	state.stone = 100
 	var pity_before := int(state.loot_pity)
-	var material_before := int(state.material_pity)
+	var material_before: Dictionary = (state.material_pity_by_tier as Dictionary).duplicate(true)
 	for _i in 3:
 		var bought: Dictionary = ResolverScript.apply(state, {"type": "shop_purchase", "offer_id": "purchase_stone_shell"}, catalog)
 		state = bought["state"]
 	assert_eq(int(state.loot_pity), pity_before, "商店购买不得推动蛊保底")
-	assert_eq(int(state.material_pity), material_before, "商店购买不得推动材料保底")
+	# 商店购买不得推动材料保底（按 tier 计数整体不变）
+	assert_eq_deep(state.material_pity_by_tier as Dictionary, material_before)

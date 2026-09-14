@@ -168,6 +168,9 @@ func test_same_seed_replays_identical_loot_and_pity_sequence() -> void:
 		var runs := []
 		for _copy in range(2):
 			var state: RunState = make_state(run_seed)
+			# P2-a: faction targets make material pity state-dependent too, so
+			# the replay determinism gate must cover it (2026-09-13 ruling).
+			state.school = "force"
 			var sequence := []
 			for _fight in range(25):
 				var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
@@ -176,57 +179,132 @@ func test_same_seed_replays_identical_loot_and_pity_sequence() -> void:
 					"gu_id": str(rolled["loot"].get("gu_id", "")),
 					"materials": rolled["loot"].get("material_ids", []),
 					"pity": int(state.loot_pity),
+					"material_pity_by_tier": (state.material_pity_by_tier as Dictionary).duplicate(true),
 				})
 			runs.append({"sequence": sequence, "event_log": state.event_log})
 		assert_eq_deep(runs[0], runs[1])
 
 
-# ---- material pity (S3: qi-aligned material guarantee) ----
+# ---- material pity (P2-a: faction chain targets, 2026-09-13 R-3 ruling) ----
+# Targets are no longer a static id list: they are the intersection of
+# (a) the school's promotion-recipe materials, (b) materials the tier pool
+# actually declares, (c) bands allowed for that tier in target_bands_by_tier.
+# Hard limit from the ruling: pity can only backfill a target band the pool
+# already defines - never cross-tier pulls, never invented materials.
 
-func test_material_pity_forces_qi_target_on_threshold() -> void:
+const BOSS_BATTLE := {"enemy_kind": "miasma_vein_lord"}
+
+
+func _pity_targets(tier: String, state: RunState, cat: Dictionary) -> Array:
+	var table: Dictionary = cat["loot_tables"]["loot"][tier]
+	return LootResolverScript._material_pity_targets(tier, table, state, cat)
+
+
+func _force_state(run_seed: int) -> RunState:
+	var state: RunState = make_state(run_seed)
+	state.school = "force"
+	return state
+
+
+func test_pity_targets_are_chain_pool_and_band_intersection() -> void:
 	var cat := catalog()
-	var pity: Dictionary = cat["loot_tables"]["pity"]["material_pity"]
-	var state: RunState = make_state(11)
-	state.material_pity = int(pity["threshold"])
-	var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
+	var force: RunState = _force_state(5)
+	# common: only the f1 chain material; force-tagged crude beast_bone is
+	# deliberately NOT a target (chain set comes from promotion recipes).
+	assert_eq_deep(_pity_targets("common", force, cat), ["mat_force_1"])
+	# boss pool declares refined f3 too, but the band hard limit forbids it.
+	assert_eq_deep(_pity_targets("boss", force, cat), ["mat_force_4"])
+	assert_eq_deep(_pity_targets("elite", force, cat), ["mat_force_2", "mat_force_3"])
+	assert_true(_pity_targets("elite", make_state(5), cat).is_empty(),
+			"no school means no faction targets, so pity stays a no-op")
+
+
+func test_material_pity_forces_school_f1_on_threshold() -> void:
+	var cat := catalog()
+	var state: RunState = _force_state(11)
+	state.material_pity_by_tier = {"common": 3, "elite": 0, "boss": 0}
+	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
 	var ids: Array = rolled["loot"]["material_ids"]
-	assert_true(ids.has("venom_sac"), "elite pool must supply the forced qi target venom_sac")
-	assert_eq(int(rolled["state"].material_pity), 0, "forced target pick resets the counter")
+	assert_true(ids.has("mat_force_1"), "common pity must force the school f1 chain material")
+	assert_eq(int((rolled["state"].material_pity_by_tier as Dictionary).get("common", -1)), 0,
+			"forced target pick resets the common counter")
+
+
+func test_boss_pity_backfills_f4_only() -> void:
+	var cat := catalog()
+	var state: RunState = _force_state(13)
+	state.material_pity_by_tier = {"common": 0, "elite": 0, "boss": 3}
+	var rolled: Dictionary = LootResolverScript.settle_victory(BOSS_BATTLE, state, cat)
+	var ids: Array = rolled["loot"]["material_ids"]
+	assert_true(ids.has("mat_force_4"), "boss pity must backfill the f4 band gap")
+	assert_eq(int((rolled["state"].material_pity_by_tier as Dictionary).get("boss", -1)), 0,
+			"forced f4 resets only the boss counter")
+
+
+func test_elite_f23_hit_leaves_common_f1_counter_untouched() -> void:
+	# Reachability-3 关键测试（2026-09-13 裁定点名）：elite 的 f2/f3 命中
+	# 对 f1（common 组）计数零影响——既不清零也不推进。这是旧单计数器
+	# 模型下 f1 断档的根因。
+	var cat := catalog()
+	var observed := false
+	for run_seed in range(1, 61):
+		var state: RunState = _force_state(run_seed)
+		state.material_pity_by_tier = {"common": 2, "elite": 0, "boss": 0}
+		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
+		var ids: Array = rolled["loot"]["material_ids"]
+		var hit_f23 := false
+		for material_id_value in ids:
+			if _pity_targets("elite", state, cat).has(str(material_id_value)):
+				hit_f23 = true
+				break
+		if not hit_f23:
+			continue
+		var pity: Dictionary = rolled["state"].material_pity_by_tier
+		assert_eq(int(pity.get("common", -1)), 2,
+				"seed %d: elite f2/f3 drop must not touch the f1 counter" % run_seed)
+		assert_eq(int(pity.get("elite", -1)), 0,
+				"seed %d: elite target hit resets only the elite counter" % run_seed)
+		observed = true
+		break
+	assert_true(observed, "expected at least one seed whose elite fight drops an f2/f3 chain material")
+
+
+func test_material_pity_counters_advance_only_in_own_tier() -> void:
+	var cat := catalog()
+	var state: RunState = _force_state(3)
+	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
+	var ids: Array = rolled["loot"]["material_ids"]
+	var pity: Dictionary = rolled["state"].material_pity_by_tier
+	var expected_common := 0 if ids.has("mat_force_1") else 1
+	assert_eq(int(pity.get("common", -1)), expected_common,
+			"common counter tracks only common fights' f1 outcome")
+	assert_eq(int(pity.get("elite", 0)), 0, "common fight must not advance the elite counter")
+	assert_eq(int(pity.get("boss", 0)), 0, "common fight must not advance the boss counter")
 
 
 func test_material_pity_resets_when_target_naturally_picked() -> void:
 	var cat := catalog()
-	var state: RunState = make_state(7)
-	state.material_pity = 1
+	var state: RunState = _force_state(7)
+	state.material_pity_by_tier = {"common": 0, "elite": 1, "boss": 0}
 	var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
-	# The elite pool can draw venom_sac naturally for some seeds: when it does
-	# the counter resets, otherwise it advances by one.
+	# The elite pool can draw an f2/f3 chain material naturally for some seeds:
+	# when it does the elite counter resets, otherwise it advances by one.
 	var ids: Array = rolled["loot"]["material_ids"]
-	var expected := 0 if ids.has("venom_sac") else 2
-	assert_eq(int(rolled["state"].material_pity), expected)
+	var hit := false
+	for material_id_value in ids:
+		if _pity_targets("elite", state, cat).has(str(material_id_value)):
+			hit = true
+			break
+	var expected := 0 if hit else 2
+	assert_eq(int((rolled["state"].material_pity_by_tier as Dictionary).get("elite", -1)), expected)
 
 
-func test_material_pity_advances_on_material_loot_without_target() -> void:
-	var cat := catalog()
-	var state: RunState = make_state(3)
-	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
-	assert_eq(int(rolled["state"].material_pity), 1, "common tier has no qi target material")
-
-
-func test_material_pity_cannot_invent_off_pool_targets() -> void:
-	var cat := catalog()
-	var pity: Dictionary = cat["loot_tables"]["pity"]["material_pity"]
-	var state: RunState = make_state(9)
-	state.material_pity = int(pity["threshold"])
-	var rolled: Dictionary = LootResolverScript.settle_victory({"enemy_kind": "ridge_hound"}, state, cat)
-	var ids: Array = rolled["loot"]["material_ids"]
-	# 数量随 pacing 的 material_count 走（2026-09-07 由 1 调到 2），别硬编码——
-	# 本用例契约是「怜悯不得凭空造出池外目标」，不是「永远掉 1 个」。
-	var pacing: Dictionary = cat.get("pacing", {})
-	var layers: Dictionary = pacing.get("layers", {})
-	var layer_one: Dictionary = layers.get("1", {})
-	var loot_cfg: Dictionary = layer_one.get("loot", {})
-	var expected_count := maxi(1, int(loot_cfg.get("material_count", 1)))
-	assert_eq(ids.size(), expected_count,
-			"materials follow pacing material_count; pity never invents off-pool targets")
-	assert_eq(int(rolled["state"].material_pity), int(pity["threshold"]) + 1)
+func test_material_pity_by_tier_survives_save_round_trip() -> void:
+	var state: RunState = make_state(777)
+	state.school = "force"
+	state.material_pity_by_tier = {"common": 2, "elite": 1, "boss": 0}
+	var data := SaveRepositoryScript.serialize_run(state, [], [])
+	var loaded: Dictionary = SaveRepositoryScript.load_run_from_data(data)
+	assert_false(loaded.is_empty(), "round trip must load")
+	# per-tier counters must persist through serialize/load
+	assert_eq_deep((loaded["state"].material_pity_by_tier as Dictionary), {"common": 2, "elite": 1, "boss": 0})

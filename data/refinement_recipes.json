@@ -5043,7 +5043,7 @@
     "moon_glow_gu"
    ],
    "materials": {
-    "beast_bone": 2
+    "beast_bone": 1
    },
    "stone_cost": 18,
    "output_gu_id": "moon_shadow_gu",
@@ -5065,7 +5065,7 @@
     "moon_shadow_gu"
    ],
    "materials": {
-    "beast_blood": 2
+    "beast_blood": 1
    },
    "stone_cost": 30,
    "output_gu_id": "light_atk_4_21_gu",
@@ -5087,7 +5087,7 @@
     "light_atk_4_21_gu"
    ],
    "materials": {
-    "beast_bone": 2,
+    "beast_bone": 1,
     "venom_sac": 1
    },
    "stone_cost": 45,
@@ -5110,7 +5110,7 @@
     "force_atk_1_05_gu"
    ],
    "materials": {
-    "mat_force_1": 2
+    "mat_force_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "force_atk_2_06_gu",
@@ -5132,7 +5132,7 @@
     "force_atk_2_06_gu"
    ],
    "materials": {
-    "mat_force_2": 2
+    "mat_force_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "force_atk_3_07_gu",
@@ -5154,7 +5154,7 @@
     "force_atk_3_07_gu"
    ],
    "materials": {
-    "mat_force_3": 2
+    "mat_force_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "force_atk_4_08_gu",
@@ -5176,7 +5176,7 @@
     "force_atk_4_08_gu"
    ],
    "materials": {
-    "mat_force_4": 2
+    "mat_force_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "force_atk_5_23_gu",
@@ -5198,7 +5198,7 @@
     "gold_atk_1_21_gu"
    ],
    "materials": {
-    "mat_gold_1": 2
+    "mat_gold_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "gold_atk_2_12_gu",
@@ -5220,7 +5220,7 @@
     "gold_atk_2_12_gu"
    ],
    "materials": {
-    "mat_gold_2": 2
+    "mat_gold_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "gold_atk_3_13_gu",
@@ -5242,7 +5242,7 @@
     "gold_atk_3_13_gu"
    ],
    "materials": {
-    "mat_gold_3": 2
+    "mat_gold_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "gold_atk_4_14_gu",
@@ -5264,7 +5264,7 @@
     "gold_atk_4_14_gu"
    ],
    "materials": {
-    "mat_gold_4": 2
+    "mat_gold_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "gold_atk_5_15_gu",
@@ -5286,7 +5286,7 @@
     "wisdom_atk_1_02_gu"
    ],
    "materials": {
-    "mat_wisdom_1": 2
+    "mat_wisdom_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "wisdom_atk_2_11_gu",
@@ -5308,7 +5308,7 @@
     "wisdom_atk_2_11_gu"
    ],
    "materials": {
-    "mat_wisdom_2": 2
+    "mat_wisdom_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "wisdom_atk_3_13_gu",
@@ -5330,7 +5330,7 @@
     "wisdom_atk_3_13_gu"
    ],
    "materials": {
-    "mat_wisdom_3": 2
+    "mat_wisdom_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "wisdom_atk_4_18_gu",
@@ -5352,7 +5352,7 @@
     "wisdom_atk_4_18_gu"
    ],
    "materials": {
-    "mat_wisdom_4": 2
+    "mat_wisdom_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "wisdom_atk_5_05_gu",
@@ -5374,7 +5374,7 @@
     "heaven_atk_1_12_gu"
    ],
    "materials": {
-    "mat_heaven_1": 2
+    "mat_heaven_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "heaven_atk_2_36_gu",
@@ -5396,7 +5396,7 @@
     "heaven_atk_2_36_gu"
    ],
    "materials": {
-    "mat_heaven_2": 2
+    "mat_heaven_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "heaven_atk_3_13_gu",
@@ -5418,7 +5418,7 @@
     "heaven_atk_3_13_gu"
    ],
    "materials": {
-    "mat_heaven_3": 2
+    "mat_heaven_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "heaven_atk_4_09_gu",
@@ -5440,7 +5440,7 @@
     "heaven_atk_4_09_gu"
    ],
    "materials": {
-    "mat_heaven_4": 2
+    "mat_heaven_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "heaven_atk_5_01_gu",
@@ -5462,7 +5462,7 @@
     "fire_atk_1_04_gu"
    ],
    "materials": {
-    "mat_fire_1": 2
+    "mat_fire_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "fire_atk_2_36_gu",
@@ -5484,7 +5484,7 @@
     "fire_atk_2_36_gu"
    ],
    "materials": {
-    "mat_fire_2": 2
+    "mat_fire_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "fire_atk_3_03_gu",
@@ -5506,7 +5506,7 @@
     "fire_atk_3_03_gu"
    ],
    "materials": {
-    "mat_fire_3": 2
+    "mat_fire_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "fire_atk_4_05_gu",
@@ -5528,7 +5528,7 @@
     "fire_atk_4_05_gu"
    ],
    "materials": {
-    "mat_fire_4": 2
+    "mat_fire_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "fire_heal_5_33_gu",
@@ -5550,7 +5550,7 @@
     "water_atk_1_12_gu"
    ],
    "materials": {
-    "mat_water_1": 2
+    "mat_water_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "water_rec_2_18_gu",
@@ -5572,7 +5572,7 @@
     "water_rec_2_18_gu"
    ],
    "materials": {
-    "mat_water_2": 2
+    "mat_water_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "water_atk_3_21_gu",
@@ -5594,7 +5594,7 @@
     "water_atk_3_21_gu"
    ],
    "materials": {
-    "mat_water_3": 2
+    "mat_water_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "water_atk_4_02_gu",
@@ -5616,7 +5616,7 @@
     "water_atk_4_02_gu"
    ],
    "materials": {
-    "mat_water_4": 2
+    "mat_water_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "water_atk_5_10_gu",
@@ -5638,7 +5638,7 @@
     "wind_atk_1_07_gu"
    ],
    "materials": {
-    "mat_wind_1": 2
+    "mat_wind_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "wind_atk_2_26_gu",
@@ -5660,7 +5660,7 @@
     "wind_atk_2_26_gu"
    ],
    "materials": {
-    "mat_wind_2": 2
+    "mat_wind_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "wind_mov_3_14_gu",
@@ -5682,7 +5682,7 @@
     "wind_mov_3_14_gu"
    ],
    "materials": {
-    "mat_wind_3": 2
+    "mat_wind_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "wind_mov_4_01_gu",
@@ -5704,7 +5704,7 @@
     "wind_mov_4_01_gu"
    ],
    "materials": {
-    "mat_wind_4": 2
+    "mat_wind_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "wind_mov_5_06_gu",
@@ -5726,7 +5726,7 @@
     "wood_atk_1_11_gu"
    ],
    "materials": {
-    "mat_wood_1": 2
+    "mat_wood_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "wood_log_2_31_gu",
@@ -5748,7 +5748,7 @@
     "wood_log_2_31_gu"
    ],
    "materials": {
-    "mat_wood_2": 2
+    "mat_wood_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "wood_atk_3_32_gu",
@@ -5770,7 +5770,7 @@
     "wood_atk_3_32_gu"
    ],
    "materials": {
-    "mat_wood_3": 2
+    "mat_wood_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "wood_def_4_34_gu",
@@ -5792,7 +5792,7 @@
     "wood_def_4_34_gu"
    ],
    "materials": {
-    "mat_wood_4": 2
+    "mat_wood_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "wood_atk_5_08_gu",
@@ -5814,7 +5814,7 @@
     "earth_atk_1_05_gu"
    ],
    "materials": {
-    "mat_earth_1": 2
+    "mat_earth_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "earth_rec_2_18_gu",
@@ -5836,7 +5836,7 @@
     "earth_rec_2_18_gu"
    ],
    "materials": {
-    "mat_earth_2": 2
+    "mat_earth_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "earth_atk_3_21_gu",
@@ -5858,7 +5858,7 @@
     "earth_atk_3_21_gu"
    ],
    "materials": {
-    "mat_earth_3": 2
+    "mat_earth_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "earth_def_4_22_gu",
@@ -5880,7 +5880,7 @@
     "earth_def_4_22_gu"
    ],
    "materials": {
-    "mat_earth_4": 2
+    "mat_earth_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "earth_atk_5_03_gu",
@@ -5902,7 +5902,7 @@
     "blood_droplet_gu"
    ],
    "materials": {
-    "mat_blood_1": 2
+    "mat_blood_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "blood_rec_2_24_gu",
@@ -5924,7 +5924,7 @@
     "blood_rec_2_24_gu"
    ],
    "materials": {
-    "mat_blood_2": 2
+    "mat_blood_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "blood_atk_3_03_gu",
@@ -5946,7 +5946,7 @@
     "blood_atk_3_03_gu"
    ],
    "materials": {
-    "mat_blood_3": 2
+    "mat_blood_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "blood_atk_4_10_gu",
@@ -5968,7 +5968,7 @@
     "blood_atk_4_10_gu"
    ],
    "materials": {
-    "mat_blood_4": 2
+    "mat_blood_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "blood_atk_5_02_gu",
@@ -5990,7 +5990,7 @@
     "dream_atk_1_09_gu"
    ],
    "materials": {
-    "mat_dream_1": 2
+    "mat_dream_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "dream_rec_2_34_gu",
@@ -6012,7 +6012,7 @@
     "dream_rec_2_34_gu"
    ],
    "materials": {
-    "mat_dream_2": 2
+    "mat_dream_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "dream_atk_3_16_gu",
@@ -6034,7 +6034,7 @@
     "dream_atk_3_16_gu"
    ],
    "materials": {
-    "mat_dream_3": 2
+    "mat_dream_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "dream_def_4_24_gu",
@@ -6056,7 +6056,7 @@
     "dream_def_4_24_gu"
    ],
    "materials": {
-    "mat_dream_4": 2
+    "mat_dream_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "dream_atk_5_02_gu",
@@ -6078,7 +6078,7 @@
     "luck_atk_1_08_gu"
    ],
    "materials": {
-    "mat_luck_1": 2
+    "mat_luck_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "luck_rec_2_28_gu",
@@ -6100,7 +6100,7 @@
     "luck_rec_2_28_gu"
    ],
    "materials": {
-    "mat_luck_2": 2
+    "mat_luck_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "luck_atk_3_37_gu",
@@ -6122,7 +6122,7 @@
     "luck_atk_3_37_gu"
    ],
    "materials": {
-    "mat_luck_3": 2
+    "mat_luck_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "luck_atk_4_38_gu",
@@ -6144,7 +6144,7 @@
     "luck_atk_4_38_gu"
    ],
    "materials": {
-    "mat_luck_4": 2
+    "mat_luck_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "luck_atk_5_01_gu",
@@ -6166,7 +6166,7 @@
     "qi_atk_1_04_gu"
    ],
    "materials": {
-    "mat_qi_1": 2
+    "mat_qi_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "qi_heal_2_20_gu",
@@ -6188,7 +6188,7 @@
     "qi_heal_2_20_gu"
    ],
    "materials": {
-    "mat_qi_2": 2
+    "mat_qi_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "qi_atk_3_37_gu",
@@ -6210,7 +6210,7 @@
     "qi_atk_3_37_gu"
    ],
    "materials": {
-    "mat_qi_3": 2
+    "mat_qi_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "qi_atk_4_38_gu",
@@ -6232,7 +6232,7 @@
     "qi_atk_4_38_gu"
    ],
    "materials": {
-    "mat_qi_4": 2
+    "mat_qi_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "qi_atk_5_05_gu",
@@ -6254,7 +6254,7 @@
     "human_atk_1_04_gu"
    ],
    "materials": {
-    "mat_human_1": 2
+    "mat_human_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "human_atk_2_29_gu",
@@ -6276,7 +6276,7 @@
     "human_atk_2_29_gu"
    ],
    "materials": {
-    "mat_human_2": 2
+    "mat_human_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "human_atk_3_16_gu",
@@ -6298,7 +6298,7 @@
     "human_atk_3_16_gu"
    ],
    "materials": {
-    "mat_human_3": 2
+    "mat_human_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "human_atk_4_40_gu",
@@ -6320,7 +6320,7 @@
     "human_atk_4_40_gu"
    ],
    "materials": {
-    "mat_human_4": 2
+    "mat_human_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "human_atk_5_02_gu",
@@ -6342,7 +6342,7 @@
     "slave_atk_1_03_gu"
    ],
    "materials": {
-    "mat_slave_1": 2
+    "mat_slave_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "slave_mov_2_27_gu",
@@ -6364,7 +6364,7 @@
     "slave_mov_2_27_gu"
    ],
    "materials": {
-    "mat_slave_2": 2
+    "mat_slave_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "slave_atk_3_04_gu",
@@ -6386,7 +6386,7 @@
     "slave_atk_3_04_gu"
    ],
    "materials": {
-    "mat_slave_3": 2
+    "mat_slave_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "slave_atk_4_02_gu",
@@ -6408,7 +6408,7 @@
     "slave_atk_4_02_gu"
    ],
    "materials": {
-    "mat_slave_4": 2
+    "mat_slave_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "slave_atk_5_01_gu",
@@ -6430,7 +6430,7 @@
     "soul_atk_1_04_gu"
    ],
    "materials": {
-    "mat_soul_1": 2
+    "mat_soul_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "soul_def_2_17_gu",
@@ -6452,7 +6452,7 @@
     "soul_def_2_17_gu"
    ],
    "materials": {
-    "mat_soul_2": 2
+    "mat_soul_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "soul_heal_3_19_gu",
@@ -6474,7 +6474,7 @@
     "soul_heal_3_19_gu"
    ],
    "materials": {
-    "mat_soul_3": 2
+    "mat_soul_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "soul_log_4_28_gu",
@@ -6496,7 +6496,7 @@
     "soul_log_4_28_gu"
    ],
    "materials": {
-    "mat_soul_4": 2
+    "mat_soul_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "soul_atk_5_22_gu",
@@ -6518,7 +6518,7 @@
     "refine_atk_1_10_gu"
    ],
    "materials": {
-    "mat_refine_1": 2
+    "mat_refine_1": 1
    },
    "stone_cost": 10,
    "output_gu_id": "refine_log_2_03_gu",
@@ -6540,7 +6540,7 @@
     "refine_log_2_03_gu"
    ],
    "materials": {
-    "mat_refine_2": 2
+    "mat_refine_2": 1
    },
    "stone_cost": 18,
    "output_gu_id": "refine_atk_3_17_gu",
@@ -6562,7 +6562,7 @@
     "refine_atk_3_17_gu"
    ],
    "materials": {
-    "mat_refine_3": 2
+    "mat_refine_3": 1
    },
    "stone_cost": 30,
    "output_gu_id": "refine_def_4_18_gu",
@@ -6584,7 +6584,7 @@
     "refine_def_4_18_gu"
    ],
    "materials": {
-    "mat_refine_4": 2
+    "mat_refine_4": 1
    },
    "stone_cost": 45,
    "output_gu_id": "refine_log_5_02_gu",
@@ -6606,12 +6606,12 @@
     "sword_def_1_07_gu"
    ],
    "materials": {
-    "mat_sword_1": 2
+    "mat_sword_1": 1
    },
    "stone_cost": 6,
    "output_gu_id": "sword_atk_2_20_gu",
    "input_min_rank": 1,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（def→atk）：剑藏于鞘，出鞘即攻（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 6 + 材料 value 2（mat_sword_1×2, value 1）= 8。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（def→atk）：剑藏于鞘，出鞘即攻（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 6 + 材料 value 1（mat_sword_1×1）= 7，累计 7。",
    "inputs": [
     {
      "school": "sword",
@@ -6628,12 +6628,12 @@
     "sword_atk_2_20_gu"
    ],
    "materials": {
-    "mat_sword_2": 2
+    "mat_sword_2": 1
    },
    "stone_cost": 8,
    "output_gu_id": "sword_mov_3_22_gu",
    "input_min_rank": 2,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：藏锋守拙，剑随身走（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 8 + 材料 value 4（mat_sword_2×2, value 2）= 12，累计 20。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：藏锋守拙，剑随身走（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 8 + 材料 value 2（mat_sword_2×1）= 10，累计 17。",
    "inputs": [
     {
      "school": "sword",
@@ -6650,12 +6650,12 @@
     "sword_mov_3_22_gu"
    ],
    "materials": {
-    "mat_sword_3": 2
+    "mat_sword_3": 1
    },
    "stone_cost": 12,
    "output_gu_id": "sword_atk_4_01_gu",
    "input_min_rank": 3,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 12 + 材料 value 6（mat_sword_3×2, value 3）= 18，累计 38。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 12 + 材料 value 3（mat_sword_3×1）= 15，累计 32。",
    "inputs": [
     {
      "school": "sword",
@@ -6672,12 +6672,12 @@
     "sword_atk_4_01_gu"
    ],
    "materials": {
-    "mat_sword_4": 2
+    "mat_sword_4": 1
    },
    "stone_cost": 18,
    "output_gu_id": "sword_atk_5_02_gu",
    "input_min_rank": 4,
-   "source": "Q8-G 1-B1-d：sword 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 125 违例），provisional。品质带映射 provisional，F8 校准。成本拆解：石 18 + 材料 value 10（mat_sword_4×2, value 5）= 28，累计 66 < 70（直取价）。",
+   "source": "Q8-G 1-B1-d：sword 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 18 + 材料 value 5（mat_sword_4×1）= 23，累计 55 < 70（直取价）。",
    "inputs": [
     {
      "school": "sword",

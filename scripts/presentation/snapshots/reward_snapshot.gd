@@ -47,7 +47,7 @@ static func build(controller) -> Dictionary:
 		})
 	out["rewards"] = rows
 	out["full_satchel"] = false
-	out["pity_note"] = "蛊掉落保底计数：%d · 材料保底计数：%d" % [int(state.loot_pity), int(state.material_pity)]
+	out["pity_note"] = "蛊掉落保底计数：%d · 材料保底计数：%d" % [int(state.loot_pity), int(state.material_pity_by_tier.get("common", 0))]
 	# T6-E 空池回退小字：真实 loot 为空即空池回退信号。
 	# T6-E 空池回退小字：仅在真实结算过的战斗（loot 字典非空）且未掉落任何条目时
 	# 展示；未开战（loot 为空字典）不发常驻假提示。

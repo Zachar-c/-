@@ -167,7 +167,7 @@ static func _read_only(state: RunState, action: Dictionary) -> Dictionary:
 		payload = {
 			"pity": {
 				"loot_pity": int(state.loot_pity),
-				"material_pity": int(state.material_pity),
+				"material_pity": int(state.material_pity_by_tier.get("common", 0)),
 				"synthesis_fail_streak": int(state.synthesis_fail_streak),
 			},
 			"excluded": [],

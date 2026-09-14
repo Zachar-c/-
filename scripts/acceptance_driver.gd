@@ -86,6 +86,46 @@ var _last_view := ""
 var _stuck_battle_id := ""
 var _stuck_count := 0
 var _stuck_enemy_hp := -1
+# R-3 观测指标（Batch 1 总验收修复轮，provisional 调参的后续依据）：
+# refinement 机会/实际探访/promotion 尝试与拒因直方图。
+var _refine_visits := 0
+var _promo_attempts := 0
+var _promo_accepted := 0
+var _promo_rejects := {}
+# R-3 O→C 漏斗（2026-09-13 裁定新增出口指标）：探访时本派 promotion 材料
+# 是否就绪，用于区分"没材料 / 有材没台 / 有台没去 / 去了失败"。
+# Reachability-2（2026-09-13 二次裁定）扩为五段：gu_ready 一段前移。
+var _visits_material_ready := 0
+var _visits_gu_ready := 0
+var _visits_full_ready := 0
+# "材料就绪而输入蛊缺"的探访中缺失的输入蛊直方图（Reachability-2 Q1 证据）。
+var _gu_missing_hist := {}
+# Reachability-4（opt-in only）：假设全战斗 f1 opportunity pity 的测量状态。
+# 这些字段只由 acceptance_driver 自己维护，不写入 controller.state / event_log。
+var _f1_opportunity_pity_enabled := false
+var _sim_f1_missing_streak := 0
+var _sim_f1_threshold := 0
+var _sim_legal_f1_ids: Array[String] = []
+var _sim_actual_f1_count := 0
+var _sim_forced_f1_count := 0
+var _sim_battle_number := 0
+var _sim_actual_common_battle_count := 0
+var _sim_candidate_empty_count := 0
+# 实际结算 tier 分布（Reachability-4 inbox §7 要求每局报告）。
+var _sim_tier_counts := {}
+# Reachability-5（opt-in only）：E6 loot-tier opportunity audit 测量状态。
+# 只读：不写 controller.state / event_log / save，不改任何正式规则。
+var _e6_enabled := false
+var _e6_battle_number := 0
+var _e6_legal_f1_ids: Array[String] = []
+var _e6_actual_f1_count := 0
+var _e6_visit_battle_marks: Array[int] = []
+var _e6_by_tier := {}
+var _e6_by_layer := {}
+var _e6_by_template := {}
+var _e6_by_actual := {}
+var _e6_common_indices: Array[int] = []
+var _e6_common_layers: Array[int] = []
 
 
 # =====================================================================
@@ -2111,6 +2151,16 @@ func _run_play() -> void:
 	var school := school_env if known_schools.has(school_env) else ""
 	# 玩家真实开局路径：大厅选择流派与契约后开新局（controller 内部执行 swearing）。
 	controller.start_new_run(seed_value, school, contracts)
+	# Q8-G Batch 1 总验收：PLAYTHROUGH_FULL=1 把 slice 收口（ending_after_stage，
+	# 生产配置为 "one"）推迟到第五层——验收局需要完整 5 层拓扑验证 promotion 链。
+	# 必须在 start_new_run 之后打补丁（start_new_run 会重载 catalog），而收口
+	# 判定发生在战斗胜利时（读 controller.catalog），此处补丁恰好生效。
+	# 只改验收局 catalog，不动生产 pacing.json。
+	if OS.get_environment("PLAYTHROUGH_FULL") == "1":
+		controller.catalog["pacing"]["ending_after_stage"] = "five"
+		_tell("总验收模式：完整 5 层拓扑（ending_after_stage -> five）")
+	_init_f1_opportunity_pity_simulation(controller)
+	_init_e6_tier_audit(controller)
 	_tell("开局 seed=%d | 起点=%s | 元石=%d | 气血=%d/%d | 魂魄=%d | 契约=%s" % [
 		seed_value, controller.state.current_node_id,
 		int(controller.state.stone), int(controller.state.health),
@@ -2141,8 +2191,121 @@ func _run_play() -> void:
 			dda_triggers += 1
 	_tell("DDA 标记触发: %d 次" % dda_triggers)
 	_tell("中途进程: %s" % ["失败(无进展)" if steps >= 900 else "正常"])
+	_run_play_acceptance_report(controller, school)
 	controller.free()
 	quit(0)
+
+
+## Q8-G Batch 1 总验收（Gate A/B/C）终局报告：从不可变事件日志读真实循环数据。
+## Gate A 战斗是否合理赚钱（产石收入 vs promotion 石耗）；
+## Gate B 高 Rank 是否可通过游玩获得（promotion 次数 + 持有最高 rank）；
+## Gate C 是否完成至少一条本流派 1→5 promotion链（4 次链内 promotion + rank5 在手）。
+func _run_play_acceptance_report(controller, school: String) -> void:
+	var promotions: Array = []
+	var stone_earned := 0
+	var loot_events := 0
+	for event in controller.state.event_log:
+		match str(event.get("reason", "")):
+			"promotion_succeeded":
+				var output_id := ""
+				var recipe_id := ""
+				for target_value in event.get("targets", []):
+					var target := str(target_value)
+					if target.begins_with("recipe:"):
+						recipe_id = target.trim_prefix("recipe:")
+					elif output_id.is_empty():
+						output_id = target
+				promotions.append({"recipe": recipe_id, "output": output_id})
+			"loot_stone_gained":
+				stone_earned += int(event["after"]["stone"]) - int(event["before"]["stone"])
+				loot_events += 1
+	var battles := loot_events  # 每场胜利结算恰一条产石事件
+	_tell("-- Batch 1 总验收（Gate A/B/C，流派=%s）--" % [school if not school.is_empty() else "(默认)"])
+	_tell("战斗胜利结算: %d | 战斗产石合计: %d | 终局元石: %d" % [battles, stone_earned, int(controller.state.stone)])
+	# R-3 观测指标（provisional 调参的后续校准依据）：机会 = 路线上 refinement 节点数。
+	var refine_opportunities := 0
+	for node_value in controller.route:
+		if str((node_value as Dictionary).get("type", "")) == "refinement":
+			refine_opportunities += 1
+	_tell("R-3 观测: refinement 节点 %d 个 | 实际探访 %d 次（材料就绪 %d 次）| 本流派 promotion 尝试 %d 次（成功 %d）" % [
+		refine_opportunities, _refine_visits, _visits_material_ready, _promo_attempts, _promo_accepted,
+	])
+	# Reachability-2 五段漏斗（2026-09-13 裁定）：gu_ready → mat_ready →
+	# 全条件就绪 → 尝试 → 成功；gu_missing 直方图回答"材料就绪为何尝试 0"。
+	var final_readiness: Dictionary = _promotion_readiness(controller)
+	_tell("R-4 漏斗: 探访 %d | gu_ready %d | mat_ready %d | 全条件就绪 %d | 尝试 %d / 成功 %d" % [
+		_refine_visits, _visits_gu_ready, _visits_material_ready, _visits_full_ready,
+		_promo_attempts, _promo_accepted,
+	])
+	_tell("R-4 终局就绪: 蛊=%s 材料=%s 全条件=%s | 机会→探访转换 %d/%d" % [
+		"是" if bool(final_readiness["gu_ok"]) else "否",
+		"是" if bool(final_readiness["mat_ok"]) else "否",
+		"是" if bool(final_readiness["full_ok"]) else "否",
+		_refine_visits, refine_opportunities,
+	])
+	for missing_gu_id in _gu_missing_hist:
+		_tell("  gu_missing（材料就绪而蛊缺）%s ×%d" % [missing_gu_id, int(_gu_missing_hist[missing_gu_id])])
+	for reject_reason in _promo_rejects:
+		_tell("  promotion 拒因 %s ×%d" % [reject_reason, int(_promo_rejects[reject_reason])])
+	# 材料经济观测：战斗掉落按材料直方图（本流派四段带量），对账"断在哪一带"。
+	var mat_gained := {}
+	for event in controller.state.event_log:
+		if str(event.get("reason", "")) != "loot_materials_gained":
+			continue
+		for material_id_value in event.get("targets", []):
+			var material_id := str(material_id_value)
+			mat_gained[material_id] = int(mat_gained.get(material_id, 0)) + 1
+	var gained_total := 0
+	for material_id in mat_gained:
+		gained_total += int(mat_gained[material_id])
+	_tell("材料掉落合计 %d 件" % gained_total)
+	if not school.is_empty():
+		for band in range(1, 5):
+			var band_mat := "mat_%s_%d" % [school, band]
+			_tell("  掉落 %s ×%d | 剩余 ×%d" % [
+				band_mat, int(mat_gained.get(band_mat, 0)),
+				int(controller.state.materials.get(band_mat, 0)),
+			])
+	_tell("promotion 完成: %d 次" % promotions.size())
+	for promo in promotions:
+		_tell("  promotion: %s -> %s" % [promo["recipe"], promo["output"]])
+	var highest_rank := 0
+	for instance_value in controller.state.gu_instances.values():
+		if str(instance_value.get("state", "")) == "refined":
+			highest_rank = maxi(highest_rank, int(instance_value.get("rank", 1)))
+	_tell("持有蛊最高 rank: %d" % highest_rank)
+	if not school.is_empty():
+		for band in range(1, 5):
+			var band_mat := "mat_%s_%d" % [school, band]
+			_tell("主材 %s 剩余 ×%d" % [band_mat, int(controller.state.materials.get(band_mat, 0))])
+	# Gate A：产石为正且 ≥ 首步 promotion 石耗（本验收口径下最低石耗 6）。
+	var gate_a := battles > 0 and stone_earned >= 6
+	_tell("Gate A 战斗合理赚钱: %s" % ["PASS" if gate_a else "FAIL"])
+	# Gate B：高 Rank 通过游玩获得（≥3 次 promotion 即抵达 rank4，rank5 为满分）。
+	var gate_b := promotions.size() >= 3 and highest_rank >= 4
+	_tell("Gate B 高转可玩获得: %s" % ["PASS" if gate_b else "FAIL"])
+	# Gate C：本流派 1→5 链完成（4 次链内 promotion + rank5 在手）。
+	var school_promotions := 0
+	for promo in promotions:
+		if str(promo["recipe"]).begins_with("promote_%s_" % school):
+			school_promotions += 1
+	var gate_c := (not school.is_empty()) and school_promotions >= 4 and highest_rank >= 5
+	_tell("Gate C 1→5 链完成: %s（本流派链内 promotion %d 次）" % ["PASS" if gate_c else "FAIL", school_promotions])
+	if _f1_opportunity_pity_enabled:
+		_tell("R-4 actual funnel: visits=%d gu_ready=%d mat_ready=%d full_ready=%d attempts=%d successes=%d" % [
+			_refine_visits, _visits_gu_ready, _visits_material_ready, _visits_full_ready,
+			_promo_attempts, _promo_accepted,
+		])
+		_tell("R-4 actual gates: gate_b=%s gate_c=%s promotions=%d highest_rank=%d school_promotions=%d" % [
+			"PASS" if gate_b else "FAIL", "PASS" if gate_c else "FAIL",
+			promotions.size(), highest_rank, school_promotions,
+		])
+		_tell("R-4 SIM summary: actual_f1_count=%d simulated_forced_f1_count=%d actual_common_battle_count=%d candidate_empty_count=%d f1_missing_final=%d threshold=%d legal_f1=%s tier_distribution=%s" % [
+			_sim_actual_f1_count, _sim_forced_f1_count, _sim_actual_common_battle_count,
+			_sim_candidate_empty_count, _sim_f1_missing_streak, _sim_f1_threshold,
+			str(_sim_legal_f1_ids), str(_sim_tier_counts),
+		])
+	_e6_summary(controller, gate_b, gate_c)
 
 
 func _step(controller) -> String:
@@ -2152,6 +2315,8 @@ func _step(controller) -> String:
 			controller.state.current_node_id,
 			str(controller.current_node.get("enemy_kind", "")),
 		])
+	if view == "Refine" and _last_view != "Refine":
+		_tell("打开炼蛊子屏于 %s" % controller.state.current_node_id)
 	_last_view = view
 	match view:
 		"Map":
@@ -2163,7 +2328,23 @@ func _step(controller) -> String:
 		"Rest":
 			return _step_via_cards(controller, "休整")
 		"Refine":
-			# 玩家策略：有元石就先做同名升阶（质量换预算的核心成长点）。
+			# 玩家策略（Q8-G Batch 1 总验收）：先试 promotion（谱系链 completion
+			# 是本验收目标），再做同名升阶（质量换预算）。
+			for recipe_value in controller.catalog.get("refinement_recipes", []):
+				var promo_recipe: Dictionary = recipe_value
+				if str(promo_recipe.get("kind", "")) != "promotion":
+					continue
+				var promo_result: Dictionary = controller.submit_command({"type": "refine_gu", "recipe_id": str(promo_recipe.get("id", ""))})
+				var promo_payload_check: Dictionary = promo_result.get("result", promo_result) as Dictionary
+				var promo_ok: bool = bool(promo_result.get("ok", false)) or bool(promo_payload_check.get("ok", false))
+				_note_promo_attempt(controller, str(promo_recipe.get("id", "")), promo_ok,
+						str(promo_payload_check.get("reason", "unknown")))
+				if promo_ok:
+					_tell("炼蛊台：promotion %s" % str(promo_recipe.get("id", "")))
+					return "ongoing"
+				if str(promo_recipe.get("id", "")).begins_with("promote_%s_" % controller.state.school):
+					var promo_payload: Dictionary = promo_result.get("result", promo_result) as Dictionary
+					_tell("promotion 被拒 %s（%s）" % [str(promo_recipe.get("id", "")), str(promo_payload.get("reason", "unknown"))])
 			for recipe_value in controller.catalog.get("refinement_recipes", []):
 				var recipe: Dictionary = recipe_value
 				if str(recipe.get("kind", "")) != "advance":
@@ -2194,12 +2375,39 @@ func _step(controller) -> String:
 			return "ongoing"
 
 
+## R-3 观测：只计本流派链内 promotion 尝试（跨派配方必然缺输入，计入只是噪声）。
+func _note_promo_attempt(controller, recipe_id: String, ok: bool, reason: String) -> void:
+	if not recipe_id.begins_with("promote_%s_" % controller.state.school):
+		return
+	_promo_attempts += 1
+	if ok:
+		_promo_accepted += 1
+	else:
+		_promo_rejects[reason] = int(_promo_rejects.get(reason, 0)) + 1
+
+
 func _step_via_cards(controller, label: String) -> String:
 	# 通用节点策略：按官方动作预览逐张消费可执行卡（含休整双选/地脉探查），
 	# 全部处置完或只剩离场时离开。硬编码单一动作会撞 R8.1 rest_choice 门禁。
 	var cards: Array[Dictionary] = ActionPreviewServiceScript.preview_actions(
 		controller.state, controller.current_node, controller.catalog)
 	var node_type := str(controller.current_node.get("type", ""))
+	# 总验收策略：炼蛊台 promotion 卡优先（谱系链是 Gate B/C 目标），
+	# advance/其余卡次之；配方卡顺序按目录序，不重排会先吃掉无关可执行卡。
+	if node_type == "refinement":
+		var promo_cards: Array[Dictionary] = []
+		var tail_cards: Array[Dictionary] = []
+		for card in cards:
+			if str(card.get("id", "")).begins_with("refine.promote_"):
+				promo_cards.append(card)
+			else:
+				tail_cards.append(card)
+		var ordered: Array[Dictionary] = []
+		for card in promo_cards:
+			ordered.append(card)
+		for card in tail_cards:
+			ordered.append(card)
+		cards = ordered
 	var acted := false
 	for card in cards:
 		var card_id := str(card.get("id", ""))
@@ -2207,9 +2415,14 @@ func _step_via_cards(controller, label: String) -> String:
 			continue
 		if str(card_id) == "node.leave":
 			continue
-		# 玩家理财：元石要留给战力构筑；商店之外不为情报/服务掏钱。
+		# free_mix（自由配对）需在 UI 中逐对选择输入实例；卡片命令携带全部
+		# 候选实例，盲提交必然超 craft_cap——驱动器不冒充配对选择。
+		if str(card_id) == "refine.free_mix":
+			continue
+		# 玩家理财：元石要留给战力构筑；商店与炼蛊台之外不为情报/服务掏钱
+		# （promotion/advance 的元石与材料正是战力构筑本身的支出）。
 		var cost: Dictionary = card.get("cost", {})
-		if int(cost.get("stone", 0)) > 0 and node_type != "shop":
+		if int(cost.get("stone", 0)) > 0 and node_type != "shop" and node_type != "refinement":
 			continue
 		var command: Dictionary = card.get("command", {})
 		if command.is_empty():
@@ -2221,9 +2434,13 @@ func _step_via_cards(controller, label: String) -> String:
 		var result: Dictionary = controller.submit_command(command)
 		# 会话路径返回 {state, session, feed, result}：ok 在内层 result 里。
 		var payload: Dictionary = result.get("result", result) as Dictionary
+		var card_ok: bool = bool(payload.get("ok", false))
+		if card_id.begins_with("refine."):
+			_note_promo_attempt(controller, str(card_id).trim_prefix("refine."), card_ok,
+					str(payload.get("reason", "unknown")))
 		var battle_started: bool = bool(payload.get("start_battle", false)) \
 			or controller.current_view_name() == "Battle"
-		if battle_started or bool(payload.get("ok", false)):
+		if battle_started or card_ok:
 			_tell("%s：执行 %s" % [label, card_id])
 			acted = true
 			break
@@ -2292,7 +2509,14 @@ func _step_map(controller) -> String:
 	# 冲仙五项收集优先（玩家策略：升仙前集齐条件节点）；气血不满就主动
 	# 补休整（防带伤抵达 Boss 台后无路可退），其余节点随后。
 	var sources := ["body_imprint_ritual", "earth_vein_contest", "sealed_earth_vein", "mist_shrine", "poison_fog_vein"]
+	# P1-a（R-3 校准，仅测量口径）：mid 行锚点错过即整层无 bench，单看当前可达集
+	# 会系统性低估探访上限。利用已取回的 2 层视野预判"走这里能否够到炼蛊台"。
+	var visible_by_id: Dictionary = {}
+	for node_value in visible:
+		visible_by_id[str((node_value as Dictionary).get("id", ""))] = node_value
 	var prioritized: Array[Dictionary] = []
+	var refine_first: Array[Dictionary] = []
+	var refine_leading: Array[Dictionary] = []
 	var rest_first: Array[Dictionary] = []
 	var others: Array[Dictionary] = []
 	var optional_combat: Array[Dictionary] = []
@@ -2301,19 +2525,37 @@ func _step_map(controller) -> String:
 		var candidate_type := str(candidate.get("type", ""))
 		if _is_ascension_source(candidate, sources):
 			prioritized.append(candidate)
+		elif candidate_type == "refinement":
+			# 总验收策略：炼蛊台主动求访（promotion 链是 Gate B/C 目标）——
+			# 旧策略把它压在 others，rest/combat 永远先走，整局到不了炼蛊台。
+			refine_first.append(candidate)
 		elif int(controller.state.health) < int(controller.state.max_health) and candidate_type == "rest":
 			rest_first.append(candidate)
+		elif _leads_to_refinement(candidate, visible_by_id):
+			# 带明确炼蛊意图的玩家会朝 2 层视野内的 bench 走（P1-a 实验设计）。
+			refine_leading.append(candidate)
 		elif candidate_type in ["combat", "pursuit"]:
 			optional_combat.append(candidate)
 		else:
 			others.append(candidate)
 	candidates = prioritized
+	for refine_node in refine_first:
+		candidates.append(refine_node)
 	for rest_node in rest_first:
 		candidates.append(rest_node)
+	for lead_node in refine_leading:
+		candidates.append(lead_node)
+	# Q8-G Batch 1 总验收开关：战斗是主生产者，验收局主动求战（opt-in，
+	# 不改变既有 play 冒烟的"战斗垫底"默认策略）。
+	var combat_first := OS.get_environment("PLAYTHROUGH_COMBAT_FIRST") == "1" and not hurt
+	if combat_first:
+		for combat_node in optional_combat:
+			candidates.append(combat_node)
 	for other in others:
 		candidates.append(other)
-	for combat_node in optional_combat:
-		candidates.append(combat_node)
+	if not combat_first:
+		for combat_node in optional_combat:
+			candidates.append(combat_node)
 	# 未访问节点全部走完后，允许沿前向边重走已访问节点（领域不拒 visited），
 	# 绕到有 Boss 边的节点——单向链上不再困死。
 	if candidates.is_empty():
@@ -2330,6 +2572,26 @@ func _step_map(controller) -> String:
 		var node_id := str(target.get("id", ""))
 		var result: Dictionary = controller.submit_command({"type": "travel", "node_id": node_id})
 		if bool(result.get("ok", false)):
+			# R-3 观测：炼蛊台探访次数按「到达 refinement 节点」计（卡路径
+			# 不开 Refine 子屏，按子屏计数会恒为 0）；同时记录 O→C 漏斗的
+			# "探访时材料就绪"环。
+			if str(target.get("type", "")) == "refinement":
+				_refine_visits += 1
+				var readiness: Dictionary = _promotion_readiness(controller)
+				if bool(readiness["mat_ok"]):
+					_visits_material_ready += 1
+				if bool(readiness["gu_ok"]):
+					_visits_gu_ready += 1
+				if bool(readiness["full_ok"]):
+					_visits_full_ready += 1
+				if bool(readiness["mat_ok"]) and not bool(readiness["gu_ok"]):
+					for missing_id_value in readiness["missing_gu"]:
+						var missing_id := str(missing_id_value)
+						_gu_missing_hist[missing_id] = int(_gu_missing_hist.get(missing_id, 0)) + 1
+				# Reachability-5：探访时点标记（已完成的战斗数），用于
+				# common 战斗 vs refinement 探访的时序对照。
+				if _e6_enabled:
+					_e6_visit_battle_marks.append(_e6_battle_number)
 			_tell("行至 %s (%s)：元石=%d 气血=%d" % [
 				node_id, str(target.get("type", "")),
 				int(controller.state.stone), int(controller.state.health),
@@ -2358,6 +2620,299 @@ func _is_ascension_source(node: Dictionary, sources: Array) -> bool:
 	var node_id := str(node.get("id", ""))
 	var template_id := str(node.get("template_id", ""))
 	return sources.has(node_id) or sources.has(template_id)
+
+
+## P1-a：候选节点沿 next_ids 下行 2 步内是否够得到 refinement 节点。
+## 只在 visible_route_nodes(2) 取回的视野内查——视野外按够不到处理（保守估计）。
+func _leads_to_refinement(candidate: Dictionary, visible_by_id: Dictionary) -> bool:
+	var frontier: Array = [str(candidate.get("id", ""))]
+	for _depth in 2:
+		var next_frontier: Array = []
+		for node_id_value in frontier:
+			var node: Dictionary = visible_by_id.get(str(node_id_value), {})
+			for next_id_value in node.get("next_ids", []):
+				var next_id := str(next_id_value)
+				var next_node: Dictionary = visible_by_id.get(next_id, {})
+				if next_node.is_empty():
+					continue
+				if str(next_node.get("type", "")) == "refinement":
+					return true
+				next_frontier.append(next_id)
+		frontier = next_frontier
+	return false
+
+
+## Reachability-2（2026-09-13 裁定）：本派 promotion 配方在当前状态的
+## 五段漏斗前两环判定。gu_ok = 持有输入蛊且 rank ≥ input_min_rank；
+## mat_ok = 材料齐；full_ok = 单配方三条件（蛊/材料/元石）全齐。
+## missing_gu 收集"材料就绪而蛊缺"场景下缺失的输入蛊 id。
+func _promotion_readiness(controller) -> Dictionary:
+	var school := str(controller.state.school)
+	var held_rank: Dictionary = {}
+	for inst_value in controller.state.gu_instances.values():
+		var inst: Dictionary = inst_value
+		var owned_id := str(inst.get("definition_id", ""))
+		var owned_rank := int(inst.get("rank", 1))
+		if owned_rank > int(held_rank.get(owned_id, 0)):
+			held_rank[owned_id] = owned_rank
+	var gu_ok := false
+	var mat_ok := false
+	var full_ok := false
+	var missing_gu: Array[String] = []
+	for recipe_value in controller.catalog.get("refinement_recipes", []):
+		var recipe: Dictionary = recipe_value
+		if str(recipe.get("kind", "")) != "promotion":
+			continue
+		if not str(recipe.get("id", "")).begins_with("promote_%s_" % school):
+			continue
+		var recipe_gu_ok := true
+		for input_id_value in recipe.get("input_gu_ids", []):
+			var input_id := str(input_id_value)
+			if int(held_rank.get(input_id, 0)) < maxi(1, int(recipe.get("input_min_rank", 1))):
+				recipe_gu_ok = false
+				if not missing_gu.has(input_id):
+					missing_gu.append(input_id)
+		var recipe_mat_ok := true
+		for material_id_value in (recipe.get("materials", {}) as Dictionary):
+			var material_id := str(material_id_value)
+			if int(controller.state.materials.get(material_id, 0)) < int(recipe["materials"][material_id]):
+				recipe_mat_ok = false
+		var recipe_stone_ok := int(controller.state.stone) >= int(recipe.get("stone_cost", 0))
+		gu_ok = gu_ok or recipe_gu_ok
+		mat_ok = mat_ok or recipe_mat_ok
+		full_ok = full_ok or (recipe_gu_ok and recipe_mat_ok and recipe_stone_ok)
+	return {"gu_ok": gu_ok, "mat_ok": mat_ok, "full_ok": full_ok, "missing_gu": missing_gu}
+
+
+## Reachability-4：初始化 hypothetical opportunity pity。所有候选都从真实
+## catalog 派生：本派 promotion chain ∩ common material_pool ∩ crude。
+func _init_f1_opportunity_pity_simulation(controller) -> void:
+	_f1_opportunity_pity_enabled = OS.get_environment("PLAYTHROUGH_F1_OPPORTUNITY_PITY") == "1"
+	_sim_f1_missing_streak = 0
+	_sim_f1_threshold = 0
+	_sim_legal_f1_ids.clear()
+	_sim_actual_f1_count = 0
+	_sim_forced_f1_count = 0
+	_sim_actual_common_battle_count = 0
+	_sim_candidate_empty_count = 0
+	_sim_battle_number = 0
+	_sim_tier_counts = {}
+	if not _f1_opportunity_pity_enabled:
+		return
+	var material_pity: Dictionary = controller.catalog.get("loot_tables", {}).get("pity", {}).get("material_pity", {})
+	_sim_f1_threshold = int(material_pity.get("threshold", 0))
+	_sim_legal_f1_ids = _legal_f1_candidates(controller)
+	_tell("R-4 模拟开启：full-battle f1 opportunity pity | threshold=%d | legal_f1=%s | 仅 Common 强制" % [
+		_sim_f1_threshold, str(_sim_legal_f1_ids),
+	])
+
+
+## 与正式 P2-a 目标集合同源但独立实现，便于把本轮测量边界固定在报告中。
+## 不调用、改写或注入 LootResolver 的任何状态。
+func _legal_f1_candidates(controller) -> Array[String]:
+	var school := str(controller.state.school)
+	var chain_material_ids: Dictionary = {}
+	if school.is_empty():
+		return []
+	for recipe_value in controller.catalog.get("refinement_recipes", []):
+		var recipe: Dictionary = recipe_value
+		if str(recipe.get("kind", "")) != "promotion":
+			continue
+		if not str(recipe.get("id", "")).begins_with("promote_%s_" % school):
+			continue
+		for material_id_value in (recipe.get("materials", {}) as Dictionary):
+			chain_material_ids[str(material_id_value)] = true
+	var common_table: Dictionary = controller.catalog.get("loot_tables", {}).get("loot", {}).get("common", {})
+	var material_by_id: Dictionary = controller.catalog.get("material_by_id", {})
+	var candidates: Array[String] = []
+	for entry_value in common_table.get("material_pool", []):
+		var material_id := ""
+		if entry_value is String:
+			material_id = str(entry_value)
+		elif entry_value is Dictionary:
+			material_id = str((entry_value as Dictionary).get("id", ""))
+		if material_id.is_empty() or not chain_material_ids.has(material_id) or candidates.has(material_id):
+			continue
+		var material: Dictionary = material_by_id.get(material_id, {})
+		if str(material.get("quality_band", "")) == "crude":
+			candidates.append(material_id)
+	return candidates
+
+
+## The settlement tier is read from the actual loot event first. Fallback uses
+## the returned battle.enemy_kind, matching LootResolver's unknown/multi-enemy
+## common fallback rather than reading current_node.enemy_kind.
+func _actual_settlement_tier(controller, battle: Dictionary) -> String:
+	var node_id := str(controller.current_node.get("id", ""))
+	var events: Array = controller.state.event_log
+	for index in range(events.size() - 1, -1, -1):
+		var event: Dictionary = events[index]
+		if str(event.get("reason", "")) != "loot_stone_gained":
+			continue
+		if str(event.get("node_id", "")) != node_id:
+			continue
+		var targets: Array = event.get("targets", [])
+		if not targets.is_empty():
+			return str(targets[0])
+	var enemy_kind := str(battle.get("enemy_kind", ""))
+	for enemy_value in controller.catalog.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if str(enemy.get("id", "")) == enemy_kind:
+			return str(enemy.get("tier", "common"))
+	return "common"
+
+
+## Record only hypothetical local measurements. A material-empty battle leaves
+## the simulated counter unchanged; a legal f1 hit clears it; otherwise a
+## material-bearing battle accumulates. A forced redemption consumes the
+## configured threshold only on a Common settlement and never changes live
+## loot/state.
+func _record_f1_opportunity_battle(controller, result: Dictionary) -> void:
+	if not _f1_opportunity_pity_enabled:
+		return
+	_sim_battle_number += 1
+	var outcome := str(result.get("result", ""))
+	var battle: Dictionary = result.get("battle", {}) as Dictionary
+	var loot: Dictionary = battle.get("loot", {}) as Dictionary
+	var material_ids: Array = loot.get("material_ids", [])
+	var actual_f1_count := 0
+	for material_id_value in material_ids:
+		if _sim_legal_f1_ids.has(str(material_id_value)):
+			actual_f1_count += 1
+	var settled := outcome == "victory"
+	var tier := _actual_settlement_tier(controller, battle) if settled else "unsettled"
+	var actual_common := 1 if tier == "common" else 0
+	var candidate_empty := 1 if actual_common == 1 and _sim_legal_f1_ids.is_empty() else 0
+	var streak_before := _sim_f1_missing_streak
+	var forced := 0
+	var material_count := material_ids.size()
+	if settled:
+		if actual_common == 1:
+			_sim_actual_common_battle_count += 1
+		_sim_candidate_empty_count += candidate_empty
+		_sim_tier_counts[tier] = int(_sim_tier_counts.get(tier, 0)) + 1
+	_sim_actual_f1_count += actual_f1_count
+	if material_count > 0:
+		if actual_f1_count > 0:
+			_sim_f1_missing_streak = 0
+		elif settled and tier == "common" and not _sim_legal_f1_ids.is_empty() \
+				and _sim_f1_threshold > 0 and streak_before >= _sim_f1_threshold:
+			# Existing pity timing is pre-roll: after threshold misses, the next
+			# eligible Common settlement is the hypothetical forced redemption.
+			forced = 1
+			_sim_forced_f1_count += 1
+			_sim_f1_missing_streak = 0
+		else:
+			_sim_f1_missing_streak += 1
+	var streak_after := _sim_f1_missing_streak
+	_tell("R-4 battle #%d: outcome=%s node=%s enemy_kind=%s tier=%s actual_f1_count=%d simulated_forced_f1_count=%d actual_common_battle_count=%d candidate_empty_count=%d f1_missing_before=%d f1_missing_after=%d" % [
+		_sim_battle_number, outcome, str(controller.current_node.get("id", "")),
+		str(battle.get("enemy_kind", "")), tier, actual_f1_count, forced, actual_common,
+		candidate_empty, streak_before, streak_after,
+	])
+
+
+## Reachability-5（inbox §14）：E6 loot-tier opportunity audit，opt-in 只读测量。
+## resolved tier 以正式结算同源为准：battle.enemy_kind 查 enemy_by_id，
+## 空/未知（多敌战斗）按 LootResolver 口径兜底 common。
+func _init_e6_tier_audit(controller) -> void:
+	_e6_enabled = OS.get_environment("PLAYTHROUGH_E6_TIER_AUDIT") == "1"
+	_e6_battle_number = 0
+	_e6_actual_f1_count = 0
+	_e6_visit_battle_marks.clear()
+	_e6_by_tier = {}
+	_e6_by_layer = {}
+	_e6_by_template = {}
+	_e6_by_actual = {}
+	_e6_common_indices.clear()
+	_e6_common_layers.clear()
+	if not _e6_enabled:
+		return
+	_e6_legal_f1_ids = _legal_f1_candidates(controller)
+	_tell("R-5 audit on: legal_f1=%s（只读测量，不改变任何正式规则）" % str(_e6_legal_f1_ids))
+
+
+func _e6_resolved_tier(controller, battle: Dictionary) -> String:
+	var enemy_kind := str(battle.get("enemy_kind", ""))
+	if not enemy_kind.is_empty():
+		var enemy: Dictionary = (controller.catalog.get("enemy_by_id", {}) as Dictionary).get(enemy_kind, {})
+		if not enemy.is_empty():
+			return str(enemy.get("tier", "common"))
+	return "common"
+
+
+func _e6_record_battle(controller, result: Dictionary) -> void:
+	if not _e6_enabled:
+		return
+	_e6_battle_number += 1
+	var outcome := str(result.get("result", ""))
+	var battle: Dictionary = result.get("battle", {}) as Dictionary
+	var node: Dictionary = controller.current_node
+	var node_layer := int(battle.get("layer", 0))
+	if node_layer <= 0:
+		node_layer = int(node.get("layer", 1))
+	var tier := "unsettled"
+	var grade := ""
+	var rank := -1
+	var material_ids: Array = []
+	if outcome == "victory":
+		tier = _e6_resolved_tier(controller, battle)
+		material_ids = (battle.get("loot", {}) as Dictionary).get("material_ids", [])
+	var enemy_kind := str(battle.get("enemy_kind", ""))
+	if not enemy_kind.is_empty():
+		var enemy: Dictionary = (controller.catalog.get("enemy_by_id", {}) as Dictionary).get(enemy_kind, {})
+		grade = str(enemy.get("grade", ""))
+		rank = int(enemy.get("rank", -1))
+	var layer_cfg: Dictionary = (controller.catalog.get("pacing", {}).get("layers", {}) as Dictionary).get(str(node_layer), {})
+	var rank_min := int(layer_cfg.get("enemy_rank_min", -1))
+	var rank_max := int(layer_cfg.get("enemy_rank_max", -1))
+	var weights: Dictionary = layer_cfg.get("enemy_weights", (controller.catalog.get("pacing", {}) as Dictionary).get("enemy_weights", {}))
+	var f1_hit := 0
+	for material_id_value in material_ids:
+		if _e6_legal_f1_ids.has(str(material_id_value)):
+			f1_hit += 1
+	_e6_actual_f1_count += f1_hit
+	_e6_by_tier[tier] = int(_e6_by_tier.get(tier, 0)) + 1
+	_e6_by_layer[node_layer] = int(_e6_by_layer.get(node_layer, 0)) + 1
+	var template_kind := str(node.get("enemy_kind", ""))
+	_e6_by_template[template_kind] = int(_e6_by_template.get(template_kind, 0)) + 1
+	_e6_by_actual[enemy_kind] = int(_e6_by_actual.get(enemy_kind, 0)) + 1
+	var is_common := outcome == "victory" and tier == "common"
+	if is_common:
+		_e6_common_indices.append(_e6_battle_number)
+		_e6_common_layers.append(node_layer)
+	_tell("R-5 battle: idx=%d outcome=%s stage=%d node=%s tmpl_kind=%s battle_kind=%s battle_kinds=%s tier=%s grade=%s rank=%d layer=%d rank_min=%d rank_max=%d weights=%s mat_tier=%s mats=%s f1_hit=%d school=%s" % [
+		_e6_battle_number, outcome, int(controller.state.stage), str(node.get("id", "")),
+		template_kind, enemy_kind, str(battle.get("enemy_kinds", [])), tier, grade, rank,
+		node_layer, rank_min, rank_max, str(weights), tier if outcome == "victory" else "unsettled",
+		str(material_ids), f1_hit, str(controller.state.school),
+	])
+
+
+func _e6_summary(controller, gate_b: bool, gate_c: bool) -> void:
+	if not _e6_enabled:
+		return
+	var first_mark := -1
+	for mark in _e6_visit_battle_marks:
+		first_mark = mark if first_mark < 0 else mini(first_mark, mark)
+	var last_mark := 0
+	for mark in _e6_visit_battle_marks:
+		last_mark = maxi(last_mark, mark)
+	var before_first := 0
+	var after_last := 0
+	for index in _e6_common_indices:
+		if first_mark < 0 or index <= first_mark:
+			before_first += 1
+		if index > last_mark:
+			after_last += 1
+	_tell("R-5 summary: battles=%d by_tier=%s by_layer=%s by_template=%s by_actual=%s common_indices=%s common_layers=%s common_before_first_refinement=%d common_after_last_refinement=%d visit_marks=%s visits=%d f1_count=%d f1_zero=%s mat_ready=%d full_ready=%d attempts=%d successes=%d gate_b=%s gate_c=%s" % [
+		_e6_battle_number, str(_e6_by_tier), str(_e6_by_layer), str(_e6_by_template),
+		str(_e6_by_actual), str(_e6_common_indices), str(_e6_common_layers),
+		before_first, after_last, str(_e6_visit_battle_marks), _refine_visits, _e6_actual_f1_count,
+		"yes" if _e6_actual_f1_count == 0 else "no",
+		_visits_material_ready, _visits_full_ready, _promo_attempts, _promo_accepted,
+		"PASS" if gate_b else "FAIL", "PASS" if gate_c else "FAIL",
+	])
 
 
 func _is_boss_stand(node: Dictionary) -> bool:
@@ -2512,7 +3067,13 @@ func _step_battle(controller) -> String:
 		command = _play_gu_command(battle, attack_gu)
 	elif can_flee and finish_now and attack_gu.is_empty():
 		command = _battle_turn_command(controller, "retreat")
-	elif can_flee and (hp <= 1 or intent_damage >= hp or _stuck_count >= 6):
+	elif can_flee and (hp <= 1 or intent_damage >= hp or intent_damage * 2 >= hp or _stuck_count >= 6):
+		# P4（R-3 校准，仅测量口径）：危险意图预撤——下一击会打到半血以下
+		# 就先撤，不等致死线；驱动器不许替游戏"送死"污染生存数据。
+		command = _battle_turn_command(controller, "retreat")
+	elif can_flee and hp * 10 < max_hp * 6:
+		# P4（R-3 校准，仅测量口径）：止损线 40%→60%——"系统是否能完成目标"
+		# 的验证不得因 driver 无谓送死而失真；不作为游戏生存率结论依据。
 		command = _battle_turn_command(controller, "retreat")
 	elif not can_flee:
 		# Boss 死战节奏：攻击与守护交替，危险线守护优先，收头窗口搏命，
@@ -2543,6 +3104,10 @@ func _step_battle(controller) -> String:
 			str(result.get("result", "unknown")),
 			int(player.get("hp", 0)), max_hp,
 		])
+		# Reachability-4：opt-in hypothetical 测量，只在模拟开关开启时生效。
+		_record_f1_opportunity_battle(controller, result)
+		# Reachability-5：opt-in 只读 E6 tier audit，只在审计开关开启时生效。
+		_e6_record_battle(controller, result)
 		if str(result.get("result", "")) == "retreat":
 			if not _leave(controller, "止损撤离"):
 				return "leave_blocked"

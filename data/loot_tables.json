@@ -8,10 +8,19 @@
   ],
   "material_pity": {
    "threshold": 3,
-   "target_material_ids": [
-    "venom_sac",
-    "moon_dew"
-   ]
+   "target_bands_by_tier": {
+    "common": [
+     "crude"
+    ],
+    "elite": [
+     "plain",
+     "refined"
+    ],
+    "boss": [
+     "prized"
+    ]
+   },
+   "note": "P2-a（R-3 校准）：目标派系化——本派 promotion 链路材料中、该 tier 池声明且带段在允许集内的条目。硬限：只补池内已定义存在的目标带段，不跨 tier 拉取、不凭空生成。Reachability-3（2026-09-13 裁定）：保底计数按 tier 独立（state.material_pity_by_tier：common→f1、elite→f2/f3、boss→f4），其他带段掉落对计数零影响。带段→f 段映射 provisional（F8 校准）。"
   }
  },
  "materials": {
@@ -2520,5 +2529,7 @@
     "blood_moon_forged"
    ]
   }
- }
+ },
+ "school_material_resonance": 5,
+ "school_material_resonance_note": "Q8-G 1-D provisional：材料池 roll 时，主道痕 == 玩家流派的条目权重 ×此倍率（与蛊掉落\"本流派局掉本流派蛊\"同构的派系共振）。F8 校准。"
 }

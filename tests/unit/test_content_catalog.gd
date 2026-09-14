@@ -120,8 +120,8 @@ func test_validation_rejects_missing_exclusive_pool() -> void:
 func test_material_pity_config_is_validated() -> void:
 	var catalog := ContentCatalog.load_all()
 	var pity: Dictionary = catalog["loot_tables"]["pity"]["material_pity"]
-	pity["target_material_ids"].append("missing_material_x")
-	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown material"))
+	pity["target_bands_by_tier"]["common"].append("missing_band_x")
+	assert_true(_has_hint(ContentCatalog.validate(catalog), "unknown quality band"))
 
 
 func test_synthesis_config_is_validated() -> void:

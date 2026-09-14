@@ -654,6 +654,11 @@ static func validate(catalog: Dictionary) -> Array[String]:
 			errors.append("balance battle_stone_rewards.base_by_tier.%s must be a positive integer" % tier_key)
 	if not _is_integral(stone_rewards.get("layer_step_pct", null)) or int(stone_rewards.get("layer_step_pct", -1)) < 0:
 		errors.append("balance battle_stone_rewards.layer_step_pct must be a non-negative integer")
+	# Q8-G 1-D: 派系共振倍率（主道痕 == 玩家流派的掉落权重倍增），provisional。
+	var loot_tables_root: Dictionary = catalog.get("loot_tables", {})
+	var resonance: Variant = loot_tables_root.get("school_material_resonance", null)
+	if not _is_integral(resonance) or int(resonance) < 1:
+		errors.append("loot_tables school_material_resonance must be a positive integer")
 	for migrated_key in ["remove_card_cost", "remove_imprint_cost", "imprint_capacity", "meta_rule_cap"]:
 		if catalog.get("deck", {}).has(migrated_key):
 			errors.append("deck %s is deprecated; move it to balance" % migrated_key)
@@ -921,9 +926,25 @@ static func validate(catalog: Dictionary) -> Array[String]:
 	if not material_pity.is_empty():
 		if not _is_integral(material_pity.get("threshold", null)) or int(material_pity.get("threshold", 0)) < 1:
 			errors.append("loot material_pity threshold must be a positive integer")
-		for target_value in material_pity.get("target_material_ids", []):
-			if not materials.has(str(target_value)):
-				errors.append("loot material_pity references unknown material %s" % target_value)
+		# P2-a（R-3 校准）：目标派系化后，配置只声明"每池允许的带段"；
+		# 目标材料由 resolver 从 promotion 配方 × 池成员 × 带段动态求交。
+		var loot_tiers: Dictionary = loot_tables.get("loot", {})
+		var known_bands := {"crude": true, "plain": true, "refined": true, "prized": true}
+		var bands_by_tier: Dictionary = material_pity.get("target_bands_by_tier", {})
+		if not (bands_by_tier is Dictionary) or bands_by_tier.is_empty():
+			errors.append("loot material_pity target_bands_by_tier must be a non-empty object")
+		else:
+			for tier_key_value in bands_by_tier:
+				var tier_key := str(tier_key_value)
+				if not loot_tiers.has(tier_key):
+					errors.append("loot material_pity references unknown loot tier %s" % tier_key)
+				var band_list: Variant = bands_by_tier[tier_key_value]
+				if not (band_list is Array) or (band_list as Array).is_empty():
+					errors.append("loot material_pity tier %s must declare a non-empty band list" % tier_key)
+					continue
+				for band_value in band_list:
+					if not known_bands.has(str(band_value)):
+						errors.append("loot material_pity references unknown quality band %s" % str(band_value))
 	var synthesis: Dictionary = catalog.get("synthesis", {})
 	if not synthesis.is_empty():
 		var battle_cfg: Dictionary = synthesis.get("battle", {})

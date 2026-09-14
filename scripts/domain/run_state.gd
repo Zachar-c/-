@@ -24,7 +24,11 @@ var stone: int = 12
 # S2 开局 Buff：本局选中的 Buff id（run 创建时结算，详见 buffs.json）。
 var run_buff_ids: Array = []
 var loot_pity: int = 0
-var material_pity: int = 0
+# Reachability-3（2026-09-13 裁定）：按 loot tier 独立的材料保底计数
+# （common→f1、elite→f2/f3、boss→f4，与 pity.target_bands_by_tier 一一对应）。
+# 其他带段的掉落对本组计数零影响——旧单计数器会被跨带掉落清零，f1 断档沿
+# 顺序 promotion 链传导（Reachability-2 调查结论）。
+var material_pity_by_tier: Dictionary = {}
 var synthesis_fail_streak: int = 0
 var gu_ids: Array[String] = []
 var refined_gu_ids: Array[String] = []
@@ -82,7 +86,7 @@ var school: String = ""
 # event_log and seed are deliberately excluded from event after-applies.
 const STATE_FIELDS: Array[String] = [
 	"seed", "stage", "cultivation", "essence", "essence_capacity", "health", "max_health",
-	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity", "synthesis_fail_streak",
+	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity_by_tier", "synthesis_fail_streak",
 	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "contracts", "clues",
 	"relations", "pursuit", "ascension", "known_facts", "current_node_id",
 	"current_node_template_id", "current_node_layer",
