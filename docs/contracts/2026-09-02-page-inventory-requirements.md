@@ -44,6 +44,11 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 状态与确认：不可达节点禁用 + 原因；`[T9]` 进新大层强制跳 LayerSettle；离开进行中节点走单次确认。
 - 组件：`GuTopBar`、`GuInventory`、节点图（现役 HTML 合成式地图，遵守自管页边距成文规则）、`GuToast`；`[T9]` `GuHungerBanner`（若下一切层有饥饿预测）。
 - 验收：visited/current/reachable 三态视觉可辨；每个 `reachable=true` 节点的完整点击区域位于当前可视地图内；同一快照中重复点击同一节点只提交一次 `travel`；travel 拒绝文案可见。
+- **Playable Core Loop Phase 2（2026-09-15）**：右栏新增「构筑目标区」，直接回答四问——当前目标是什么 / 缺哪些材料 / 缺输入蛊吗 / 缺元石吗 / 哪个节点类型可能推进。
+  - 数据绑定：`build_goal`（键集见 `2026-09-02-domain-ui-contract.md` Playable Core Loop 段）、每节点 `build_relevance{code,text}`。
+  - 信息纪律：目标区**不显示任何内部保底计数**；节点相关性只表达「可能推进 / 可执行 / 无直接关系」，**不承诺掉落**；未揭示节点一律 `unknown`，不得反推内容。
+  - 状态与确认：目标区为纯只读展示，**无交互元素**（面板及全部子标签 `mouse_filter=2`，不截获地图节点点击）；`build_goal.available=false` 时整块隐藏。
+  - 验收：地图上可直接读出「目标 / 缺口 / 建议节点类型」；检视任意节点时「与目标」文案与 `build_relevance.code` 一致；目标区不遮挡任何可达节点的点击区域。
 
 ### P3 Encounter（`encounter_screen`，快照 `Encounter/encounter()`）
 
@@ -177,6 +182,11 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 状态与确认：未解锁配方禁用 + `refine_recipe_locked`；投入不足禁用 + `refine_input_missing`；核心蛊作辅蛊 → 确认层级 2（`aux_core_warning` 强警告）；跨回合炼制中断 → 展示已发生结果与损失。
 - 组件：`GuCard`（投入位）、`GuCommandButton`、`GuCostBreakdown`、`[T9]` `GuCoreBadge`、候选池选择控件（单选，声明序展示）、`GuConfirmDialog`。
 - 验收：随机失败率文案只对带 `override_reason` 的存量配方出现；点名材料缺项时缺哪味可见；`[T9]` 区未落地时隐藏。
+- **Playable Core Loop Phase 4（2026-09-15）**：配方列表按「当前构筑目标」优先排序，且**点击前**即可见全部成本。
+  - 数据绑定：`build_goal` / `goal_recipe_id`；每条配方行新增 `recipe_kind` / `is_goal` / `executable` / `materials[{id,name,owned,required,complete}]` / `missing[]` / `missing_summary` / `stone_owned` / `stone_required` / `input_gu_id` / `input_gu_name` / `input_owned`。
+  - 排序：`is_goal`(0) → 同流派 promotion 链(1) → 其他可执行(2) → 不可执行(3)，同级稳定保序。
+  - 状态与确认：**禁止「点击后才第一次告诉玩家成本」**；`executable=false` 时「确认炼蛊」置灰（不得把不可执行配方伪装成可执行）；可执行性取自快照，UI 不重复推导领域门禁；UI 不直接扣材料。
+  - 验收：目标配方位于列表首位并带「◆ 当前构筑目标」标记；每条配方显示材料 owned/required、元石 owned/required、输入蛊持有状态与缺失项；缺项行以朱砂色区分。
 
 ### P8 Reward（`reward_screen`，快照 `Reward/reward()`）
 
@@ -186,6 +196,11 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 状态与确认：`[T9]` 收取幸存蛊 → 确认层级 1（条件/结局说明）；释放/灭蛊入口从此屏进（确认层级 2，展示 `release_gu` 后果 / `destroy_gu` 声明提取物）。
 - 组件：`GuCard`、`GuResourceChip`、`[T9]` `GuCommandButton`、`GuConfirmDialog`。
 - 验收：入账项与 `loot_rules` 收取结果一一对应；无预算裁剪痕迹（#12 透明）。
+- **Playable Core Loop Phase 3（2026-09-15）**：奖励卡下方新增「构筑进度」块，回答「本场拿到了什么 / 它推进了什么 / 现在能不能做下一步」。
+  - 数据绑定：`build_progress`（键集见 `2026-09-02-domain-ui-contract.md` Playable Core Loop 段）；`before` 由「当前库存 − 本场入账」反推（`loot.material_ids` 计数、`loot.stone_reward`）。
+  - 纪律：只用**已入账** loot 派生，**不重复抽取**、不改变领域状态、不把奖励二次「补到库存」；`available=false`（无战斗入账或无构筑目标）时整块隐藏。
+  - 状态与确认：保持既有奖励确认流程与成本透明；`became_ready=true` 时状态行以朱砂色提示「可以执行了」。
+  - 验收：块内每条材料的 `owned_after` 与真实库存一致；元石 `stone_after` 与真实 `state.stone` 一致；`gained>0` 的材料标注「本场 +N」；`next_step_text` 指向炼蛊台或缺口的补齐方向。
 
 ### P9 Npc（`npc_screen`，快照 `Npc/npc()`）
 

@@ -9,12 +9,16 @@ extends RefCounted
 
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
+const BuildGoalProjectionScript = preload("res://scripts/presentation/snapshots/build_goal_projection.gd")
 
 
 static func build(controller) -> Dictionary:
 	var state = controller.state
 	var route: Array = controller.route
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	# Playable Core Loop（2026-09-15）Phase 2：构筑目标只读投影 + 逐节点相关性。
+	# 目标只算一次，逐节点复用，避免 O(nodes × recipes)。
+	var build_goal: Dictionary = BuildGoalProjectionScript.build_goal(state, catalog)
 	var nodes: Array[Dictionary] = []
 	# 2026-08-28 验收批 P0-4：地带/深度/境界改由真实状态导出（旧屏面是
 	# 「青茅山外圍 / 深度 62 · 四轉初階」硬编码谎言）。zone_title 取
@@ -47,6 +51,8 @@ static func build(controller) -> Dictionary:
 			"current": node_id == current_id,
 			"visibility": _map_visibility(n, state),
 			"revealed": bool(n.get("revealed", true)),
+			# Phase 2：与当前构筑目标的关系（只读派生，不承诺掉落、不泄露未揭示内容）。
+			"build_relevance": BuildGoalProjectionScript.node_relevance(n, state, catalog, build_goal),
 		})
 	nodes.sort_custom(func(a, b): return int(a.get("layer", 0)) * 1000 + int(a.get("row", 0)) < int(b.get("layer", 0)) * 1000 + int(b.get("row", 0)))
 	var reach: Array[String] = []
@@ -74,6 +80,8 @@ static func build(controller) -> Dictionary:
 		"reachable_ids": reach,
 		"gu_satchel": gu_satchel,
 		"inventory": RunSnapshotBuilder._inventory(state, catalog),
+		# Playable Core Loop Phase 2：地图上的「当前构筑目标」区（只读投影）。
+		"build_goal": build_goal,
 		"zone_title": zone_title,
 		"depth_label": depth_label,
 			"realm_label": realm_label,

@@ -9,6 +9,7 @@ extends RefCounted
 
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const SynthesisRulesScript = preload("res://scripts/domain/synthesis_rules.gd")
+const BuildGoalProjectionScript = preload("res://scripts/presentation/snapshots/build_goal_projection.gd")
 
 
 ## C6 炼蛊 / 合成屏快照（refinement_by_id 真实配方 + 盲盒）。
@@ -21,6 +22,10 @@ static func build(controller) -> Dictionary:
 	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
 	var recipe_by_id: Dictionary = catalog.get("refinement_by_id", {})
+	# Playable Core Loop Phase 4：先算当前构筑目标，用于「目标配方置顶」。
+	var build_goal: Dictionary = BuildGoalProjectionScript.build_goal(state, catalog)
+	var goal_recipe_id := str(build_goal.get("recipe_id", ""))
+	var goal_prefix := "promote_%s_" % str(build_goal.get("school", ""))
 	var rec_rows: Array[Dictionary] = []
 	for recipe_key in recipe_by_id:
 		var r: Dictionary = recipe_by_id[recipe_key]
@@ -60,6 +65,8 @@ static func build(controller) -> Dictionary:
 			"backlash": "失败毁材 · 躁动 +1" if kind == "combine" else "无躁动",
 			"curse": "",
 			"unlocked": recipe_unlocked,
+			"recipe_kind": kind,
+			"is_goal": str(recipe_key) == goal_recipe_id,
 		})
 	var free_mix: Dictionary = recipe_by_id.get("free_mix", {})
 	if not free_mix.is_empty():
@@ -77,7 +84,38 @@ static func build(controller) -> Dictionary:
 			"curse": "诅咒继承⚠",
 			"unlocked": true,
 		})
+	# Playable Core Loop Phase 4：逐条配方补「成本 / 缺失项 / 可执行性」，
+	# 再按「目标配方 → 同链 promotion → 其他可执行 → 不可执行」稳定排序。
+	# 玩家因此不必点开才知道成本（任务书 Phase 4 明令禁止「点击后才告知成本」）。
+	for index in rec_rows.size():
+		var row: Dictionary = rec_rows[index]
+		var recipe: Dictionary = recipe_by_id.get(str(row["id"]), {})
+		if str(row.get("recipe_kind", "")) == "free_mix":
+			# 盲盒的可执行性由「已炼成蛊虫数 >= min_inputs」决定，不走材料/元石门禁。
+			var blind_ready := _blind_inputs_ready(state, int(recipe.get("min_inputs", 2)))
+			row["executable"] = blind_ready
+			row["materials"] = []
+			row["missing"] = [] if blind_ready else ["已炼成蛊虫不足"]
+			row["missing_summary"] = "" if blind_ready else "已炼成蛊虫不足"
+			row["stone_owned"] = int(state.stone) if state != null else 0
+			row["stone_required"] = int(recipe.get("stone_cost", 0))
+			row["input_gu_id"] = ""
+			row["input_gu_name"] = ""
+			row["input_instance_id"] = ""
+			row["input_owned"] = blind_ready
+			row["output_gu_id"] = ""
+			row["output_name"] = "未知蛊"
+		else:
+			row.merge(BuildGoalProjectionScript.requirement_view(recipe, state, catalog), true)
+		row["priority"] = _row_priority(row, goal_recipe_id, goal_prefix)
+		row["sort_index"] = index
+	rec_rows.sort_custom(func(a, b):
+		if int(a["priority"]) != int(b["priority"]):
+			return int(a["priority"]) < int(b["priority"])
+		return int(a["sort_index"]) < int(b["sort_index"]))
 	out["title"] = "炼蛊台"
+	out["build_goal"] = build_goal
+	out["goal_recipe_id"] = goal_recipe_id
 	out["channels"] = [
 		{"id": "fixed", "label": "定向配方"},
 		{"id": "combine", "label": "组合标签"},
@@ -130,3 +168,28 @@ static func build(controller) -> Dictionary:
 	out["dismantle_slots"] = dismantle_slots
 	out["streak_note"] = "连续失败计数 Run 内清零，成功率加成永不到 100%"
 	return out
+
+
+## Phase 4 排序优先级：0 = 当前构筑目标；1 = 同流派 promotion 链上的其他步；
+## 2 = 其他可执行配方；3 = 当前不可执行。值越小越靠前。
+static func _row_priority(row: Dictionary, goal_recipe_id: String, goal_prefix: String) -> int:
+	if not goal_recipe_id.is_empty() and str(row.get("id", "")) == goal_recipe_id:
+		return 0
+	if str(row.get("recipe_kind", "")) == "promotion" \
+			and str(row.get("id", "")).begins_with(goal_prefix):
+		return 1
+	if bool(row.get("executable", false)):
+		return 2
+	return 3
+
+
+## 盲盒通道的可执行性：蛊仓中已炼成的实例数是否达到配方下限。
+static func _blind_inputs_ready(state, min_inputs: int) -> bool:
+	if state == null:
+		return false
+	var refined := 0
+	for stored_value in state.cave_aperture.get("stored_gu_instance_ids", []):
+		var instance: Dictionary = state.gu_instances.get(str(stored_value), {})
+		if str(instance.get("state", "")) == "refined":
+			refined += 1
+	return refined >= min_inputs

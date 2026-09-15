@@ -39,18 +39,41 @@ UI (scenes + scripts/ui)
 | `Title` | `hall()` | 大厅进度/图鉴/开始入口、`selected_school`/`selected_school_name`（选中流派中文名，`_school_display_name`） |
 
 大厅主界面快照（v8 线框稿还原，2026-09-07）：`run_summary` 携带 `route`（当前节点名，`_run_route_label`）、`rank`（中文转数，如「四转」）、`hp`（气血数值）、`lifespan`（`cultivator.lifespan - lifespan_debt`，如「41年」）、`gu_count`（`gu_ids.size()` 持有数，**不显示伪造分母**——项目红线：持有数量无通用硬上限）、`node_count`（`route_progress.size()`）、`curse_count`（`cultivator.statuses` 中 `layers>0` 条目数，语义近似参考图「N只诅咒蛊」）、`build_label`（固定「BUILD 0.9.0 · LOCAL」）。另含 `hall_epoch`（「今世·第N劫」，N=node_count+1 中文数字）、`prev_life`（「上一世止于：<route>」，读档场景即当前世上次退出节点；无存档为「—」）、`prev_note`（「札记新得：<最新手记标题>」，取自 `journal` 末条，无则为「—」）。UI 只消费以上只读键，不得反写领域。
-| `Map` | `map()` | `nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、可达集、当前层、`inventory` |
+| `Map` | `map()` | `nodes[]`（`id/type/label/layer/row/next_ids/reachable/visited/current/visibility`）、可达集、当前层、`inventory`、**`build_goal`（Playable Core Loop Phase 2，2026-09-15：当前构筑目标只读投影；键见下）**、每节点 **`build_relevance`**（`{code, text}`，`code ∈ advance/execute/trade/none/unknown`；只表达「可能推进 / 可执行 / 无直接关系」，不承诺掉落、未揭示节点一律 `unknown`） |
 | `Encounter` | `encounter()` | 遭遇会话、`node_actions[]`（含 `cost/executable/block_reason/remedy_hints`） |
 | `Battle` | `battle()` | `enemies[]`（`id/name/hp/max_hp/shield/statuses[]/intent/alive/counter_revealed`）、`player`、`hand`（卡含 `school_label` 中文流派名）、`piles`、`actions`、`default_target_id`、`kill_moves`、`flee_available`、`synthesis`、`dda_boss_hint`、`first_battle`、`inventory`、`hand_version`、`sword_intent`（Q7 阶段 A 2026-09-12：剑意层数 int，跨回合存续、回合末减半，`≥0`，无剑意时 `0`）、`intent.damage_intent`（Q8 Step 4 2026-09-12：敌意图语义属性 bool，H3 门禁依据，非伤害意图为 `false`）、`intent_weaken`（Q8 Step 4：每敌 int，下一次 damage intent 减免额，消费或回合结束清零，`≥0`）、`statuses.sealed`（Q8 Step 4：敌方封门禁标记，下一次 damage intent 被门禁后消费清除）、`delayed_effects`（Q8 Step 5 2026-09-12：延迟效果表 Array，元素含 `effect`/`school`/`due_turn`/`source_id`，battle 生命周期内到期自动结算，战斗结束销毁，随存档序列化） |
 | `Shop` | `shop()` | **`offers[]` = 本次货架（E7，2026-09-10）**：只列 `Resolver.shop_stock(state, catalog)` 内的货（`4 + ⌊层/2⌋` 件 → 层 1/2/3/4/5 = 4/5/5/6/6，每架保底 1 件本层最高档），以及**常驻服务**（`resource_trade` 黑市兑换 / `wash_notoriety` / `recipe_unlock` / `soul_boost`）；每项含 `id/name/kind/price/desc/quality/curse_warning/will_emergency_pay`。货架由 `(局种子, 节点模板 id)` 确定性派生，**同店反复进出不变、不新增存档字段**。命令面同源：`shop_purchase` 对不在货架上的**货**返回 `shop_offer_not_in_stock`（`npc_trade` 走 NPC 自己的 `npc.stock`，不受此限）；既有 `shop_tier_locked` / `insufficient_stone` 语义不变，判定顺序为 阶 → 架 → 钱。 |
 | `Rest` | `rest()` | `choices[]`（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集，外加节点允许的 `wash`）、`upgrade_targets` / `remove_card_targets` / `imprint_targets` / `curse_targets`、每个 `choice.disabled/reason/curse_warning/requires_confirm`、`mode_groups`（E4b 三选一，2026-09-09：`修炼[]`/`炼蛊[]` 两组动作卡，卡含 `id/label/detail/cost/disabled/reason`；`meditate` 走 encounter `action_card` 信封、`cultivate` 映射 `cultivate_rank_two`、`refine/free_pair` 为会话内子屏导航不发领域命令；快照无此键时 UI 整行隐藏，旧存档兼容。E4a 起 `rest/refinement/cultivation` 三类节点统一由 travel 分发进本屏） |
-| `Refine` | `refine()` | 炼蛊台状态、投入位、候选、`from_rest`（E4a 子屏语境：经休息屏「炼蛊」卡进入时为 true，「离开」按钮文案变「返回休整」且不发 `leave_encounter`，仅退回休息屏）、`initial_channel`（子屏预选通道 id，如 `free_pair`；用户手动切 Tab 后前端本地态优先，不再覆盖） |
-| `Reward` | `reward()` | 战后奖励列表 |
+| `Refine` | `refine()` | 炼蛊台状态、投入位、候选、`from_rest`（E4a 子屏语境：经休息屏「炼蛊」卡进入时为 true，「离开」按钮文案变「返回休整」且不发 `leave_encounter`，仅退回休息屏）、`initial_channel`（子屏预选通道 id，如 `free_pair`；用户手动切 Tab 后前端本地态优先，不再覆盖）、**`build_goal` 与 `goal_recipe_id`（Phase 4，2026-09-15）**；`recipes[]` 每条新增 **`recipe_kind` / `is_goal` / `executable` / `materials[{id,name,owned,required,complete}]` / `missing[]` / `missing_summary` / `stone_owned` / `stone_required` / `input_gu_id` / `input_gu_name` / `input_owned`** —— 成本与缺失项**点击前即可见**；配方按「目标配方 → 同流派 promotion 链 → 其他可执行 → 不可执行」稳定排序 |
+| `Reward` | `reward()` | 战后奖励列表、**`build_progress`（Phase 3，2026-09-15：本场产出 → 当前构筑目标的连接；键见下）** |
 | `Npc` | `npc()` | NPC 交涉/交易 |
 | `ContentError` | `content_error()` | 目录校验错误（`ContentCatalog.validate` 非空时的兜底屏） |
 | 调试 | `debug()` | 保底计数/池排除/种子/事件数/DDA 分位（只读，§16.22） |
 
 流派中文名透出（C2 2026-09-05 起，UI 不裸显英文 school id；统一 `_school_display_name(catalog, school_id)`，源 `schools.json` v2）：大厅选中流派 `selected_school_name`；图鉴/书库蛊条目与休整升级候选等携带 `school`（英文 id）+ `school_name`（中文）；battle 手牌卡携带 `school_label`（中文，供卡面 tooltip 拼接）。
+
+**Playable Core Loop 只读投影（2026-09-15，任务 `Q8-Playable-Core-Loop-Vertical-Slice`）**：
+把「玩家当前想做什么 / 还缺什么 / 去哪里推进」做成三屏共用的只读投影，**不新增成长线、不改命令面、不写 RunState**。
+生成入口：`scripts/presentation/snapshots/build_goal_projection.gd`（纯函数，确定性、可测试）。
+
+- **`build_goal`**（Map / Refine 携带）：
+  `available` / `school` / `title` / `recipe_id` / `recipe_kind` / `recipe_name` /
+  `input_gu_id` / `input_gu_name` / `input_instance_id` / `input_gu_ready` /
+  `output_gu_id` / `output_name` /
+  `materials[{id,name,owned,required,complete}]` / `stone_owned` / `stone_required` /
+  `missing_materials[]` / `missing_stone` / `ready` / `missing_summary` /
+  `recommended_node_types[]` / `progress_text` / `chain_index` / `chain_length`。
+  **目标选择规则（固定优先级、纯函数）**：① 本流派 promotion 链中第一条「尚未完成」（产出蛊未持有）的配方，
+  按 `input_min_rank` 升序、`id` 升序；② 链已走完时回退到「已解锁、输入蛊在手的关键炼蛊配方」（fixed/advance）；
+  ③ 都没有时 `available=false`，`title="暂无可执行构筑目标"`。
+  **信息纪律**：不含任何内部保底计数（`loot_pity` / `material_pity_by_tier`）；不承诺掉落；
+  未揭示节点不得反推内容（`build_relevance.code == "unknown"`）。
+- **`build_progress`**（Reward 携带，仅在本场有**已入账** loot 时 `available=true`）：
+  `available` / `title` / `recipe_id` / `lines[{id,name,gained,owned_before,owned_after,required,complete}]` /
+  `stone_gained` / `stone_before` / `stone_after` / `stone_required` /
+  `ready_before` / `ready_after` / `became_ready` / `next_step_text`。
+  `before` 值由「当前库存 − 本场入账」反推（`loot.material_ids` 计数、`loot.stone_reward`），
+  **不重抽、不改领域状态**；输入蛊若正是本场掉落的蛊，则 `before` 记为未持有。
 
 开局 Buff 透出（S2 2026-09-06 起）：大厅快照 `available_buffs`（`id`/`name`/`summary`，源 `data/buffs.json`，目录校验 effect 种类与产物引用）与 `selected_buffs`（已选 id 数组）；命令 `toggle_buff(id)` 切换多选（未知 id 忽略）；`new_run` 增第四参 `buff_ids`，run 创建时一次性结算——`grant_stones` 加元石、`grant_gu` 注入蛊实例入洞天（均落 `run_buffs_applied` 事件）、`enemy_hp_one_except_boss` 由 `BattleCommandFacade.start` 消费（非 Boss 敌 hp/max_hp=1）。
 
