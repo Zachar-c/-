@@ -17,7 +17,7 @@ const FORCE_FIRST_PROMOTION := "promote_force_atk_1_05_to_force_atk_2_06"
 
 
 func _controller_in_run() -> Node:
-	var controller = autofree(RunControllerScript.new())
+	var controller: RunController = autofree(RunControllerScript.new())
 	add_child(controller)
 	await get_tree().process_frame
 	controller.start_new_run(404, "force")

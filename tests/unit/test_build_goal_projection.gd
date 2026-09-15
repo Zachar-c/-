@@ -18,7 +18,7 @@ const SWORD_FIRST_PROMOTION := "promote_sword_def_1_07_to_sword_atk_2_20"
 
 
 func _controller(seed_value: int, school: String) -> Node:
-	var controller = autofree(RunControllerScript.new())
+	var controller: RunController = autofree(RunControllerScript.new())
 	add_child(controller)
 	await get_tree().process_frame
 	controller.start_new_run(seed_value, school)
