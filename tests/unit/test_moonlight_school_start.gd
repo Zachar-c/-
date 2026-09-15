@@ -44,7 +44,7 @@ func test_light_school_starter_pack() -> void:
 
 func test_start_new_run_seeds_light_starter_pack() -> void:
 	var catalog: Dictionary = ContentCatalog.load_all()
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	controller.start_new_run(42, "light", [])
 	assert_eq(controller.state.school, "light", "school 已设置")
@@ -74,7 +74,7 @@ func test_enemy_vitality_trial_has_starter_stone_and_hp_floor() -> void:
 
 func test_starter_stone_lifts_run_state_stone_to_1000() -> void:
 	var catalog: Dictionary = ContentCatalog.load_all()
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	# 默认元石 12；签 starter_stone=1000 契约后应为 1000
 	controller.start_new_run(101, "force", ["enemy_vitality_trial"])
@@ -96,7 +96,7 @@ func test_enemy_hp_floor_clamps_non_boss_to_one_and_skips_boss() -> void:
 
 func test_opening_school_contract_map_chain_view_flow() -> void:
 	var catalog: Dictionary = ContentCatalog.load_all()
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	controller._show_title()
 	assert_eq(controller.current_view_name(), "Title", "起点 Title")
@@ -115,6 +115,6 @@ func test_opening_school_contract_map_chain_view_flow() -> void:
 	assert_eq(controller.state.school, "light")
 	assert_eq(controller.state.contracts.size(), 2, "契约可多选")
 	# 出口存在：save_run / leave_map_without_save 不抛错
-	var save_res := controller.submit_command({"type": "save_run"})
+	var save_res = controller.submit_command({"type": "save_run"})
 	assert_true(bool(save_res.get("ok", false)), "save_run OK")
 	controller.free()

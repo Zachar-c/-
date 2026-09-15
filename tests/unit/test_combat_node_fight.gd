@@ -14,7 +14,7 @@ const RunControllerScript = preload("res://scripts/presentation/run_controller.g
 
 
 func _combat_controller(node_id: String, enemy_kind: String) -> RunController:
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = ContentCatalog.load_all()
 	controller.state = RunState.new_run(101)
 	controller.state.current_node_id = node_id

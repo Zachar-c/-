@@ -504,7 +504,7 @@ func test_kill_screen_lists_buildable_moves_outside_battle() -> void:
 	# 真机反馈「找不到构筑杀招的入口」：非战斗时杀招屏是三张「未研习」空卡。
 	# V1 杀招没有研习步骤——持有配方蛊即自动成招，所以屏上必须给出可组清单
 	# 与「还缺哪只」，否则玩家永远不知道杀招从哪来。
-	var controller = RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.start_new_run(101, "sword", [], [])
 	var snapshot: Dictionary = BattleSnapshotScript.build_kill(controller)
 	var moves: Array = snapshot.get("kill_moves", [])

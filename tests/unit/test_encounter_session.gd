@@ -53,7 +53,7 @@ func test_active_extreme_hostile_still_blocks_leave() -> void:
 func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 	# 真实命令链：extreme_hostile 遭遇 → node.fight → 敌先手 → 胜利 →
 	# post_battle 阶段 → leave_encounter → 回到 Map（软锁不复现）。
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	controller.start_new_run(101)
 	# 节点收窄后 first_run 骨架无 contact 模板；以本地合成路线（nodes.json

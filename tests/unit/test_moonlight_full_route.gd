@@ -61,7 +61,7 @@ func _build_route() -> Array[Dictionary]:
 
 
 func _start_light_run() -> RunController:
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	controller.start_new_run(20260831, "light", ["enemy_vitality_trial"])
 	# 深层机制覆盖：本测试走多层契约，关闭切片收官（S6 默认 L1 Boss 落败即 Ending）。

@@ -52,7 +52,7 @@ func test_school_start_keeps_novice_gu_plus_school_pack() -> void:
 	# 与流派无关，任何流派开局都带它；流派包叠加在它之后。
 	# 真机验收曾反馈「剑道开局为什么塞一只小光蛊」——此为设计而非缺陷，
 	# 本用例把口径钉死，后续若要改为纯流派开局须一并改这里。
-	var controller = RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.start_new_run(101, "sword", [], [])
 	var state = controller.state
 	var defs: Array = []

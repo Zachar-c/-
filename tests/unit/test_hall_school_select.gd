@@ -17,7 +17,7 @@ const RunCommandBuilderScript = preload("res://scripts/presentation/run_command_
 
 
 func _controller() -> Node:
-	var controller = RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	add_child(controller)
 	controller.catalog = ContentCatalog.load_all()
 	controller._show_title()

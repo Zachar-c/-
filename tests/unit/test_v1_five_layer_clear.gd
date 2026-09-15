@@ -254,7 +254,7 @@ func _boss_flag_digest(state: RunState) -> String:
 # ---------- 夹具 ----------
 
 func _start_run_with_slay_gu(seed_value: int) -> RunController:
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	controller.start_new_run(seed_value, "moonlight", [])
 	# 深层机制覆盖：本测试走多层契约，关闭切片收官（S6 默认 L1 Boss 落败即 Ending）。

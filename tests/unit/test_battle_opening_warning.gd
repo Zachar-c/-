@@ -13,7 +13,7 @@ const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 
 
 func _controller() -> RunController:
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = ContentCatalogScript.load_all()
 	add_child(controller)
 	controller.start_new_run(2026)

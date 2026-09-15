@@ -157,7 +157,7 @@ func test_run_controller_syncs_bgm_on_view_change() -> void:
 	main.name = "Main"
 	add_child(main)
 	_hosts.append(main)
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	var director: AudioDirector = AudioDirectorScript.new()
 	# main.tscn 中 AudioDirector 节点名固定；RunController 经 "../AudioDirector" 寻址
 	director.name = "AudioDirector"
@@ -182,7 +182,7 @@ func test_run_controller_syncs_bgm_on_view_change() -> void:
 
 
 func test_run_controller_without_director_is_silent() -> void:
-	var controller := RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	add_child(controller)
 	_hosts.append(controller)
 	controller._view_name = "Battle"

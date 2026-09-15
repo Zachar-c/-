@@ -28,7 +28,7 @@ func _enemy() -> Dictionary:
 
 
 func _battle_for_school(school: String) -> Dictionary:
-	var controller = RunControllerScript.new()
+	var controller: RunController = autofree(RunControllerScript.new())
 	controller.catalog = catalog
 	controller.start_new_run(101, school, [])
 	var battle: Dictionary = V1.start(controller.state, catalog, [_enemy()])
