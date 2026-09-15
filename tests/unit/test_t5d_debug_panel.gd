@@ -230,8 +230,12 @@ func test_set_resources_clamp_via_the_service_and_append_one_audit_entry() -> vo
 	assert_eq(int(controller.state.health), 80)
 	assert_eq(int(controller.debug_set_resource("health", -5)["applied"]), 1, "health floors at 1 (no silent death)")
 
+	var stone_cap := 99999
+	var facade := load("res://scripts/presentation/run_debug_facade.gd") as Script
+	if facade != null and facade.get("DEBUG_STONE_CAP") != null:
+		stone_cap = int(facade.DEBUG_STONE_CAP)
 	assert_eq(int(controller.debug_set_resource("stones", 100000)["applied"]),
-			int(RunDebugFacade.DEBUG_STONE_CAP), "the 99999 cap lives at this UI input layer")
+			stone_cap, "the 99999 cap lives at this UI input layer")
 	assert_eq(int(controller.debug_set_resource("stones", -3)["applied"]), 0, "domain floors stones at 0")
 
 	assert_eq(int(controller.debug_set_resource("soul", 99)["applied"]), 4, "soul caps at soul_max")

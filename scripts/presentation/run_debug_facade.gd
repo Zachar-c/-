@@ -1,5 +1,6 @@
-class_name RunDebugFacade
 extends RefCounted
+# class_name removed for Release prune: DebugBridge loads this script by path
+# only on debug builds. Do not reintroduce a global class_name.
 
 
 # W12 split: §16.22 D5 developer-debug method family moved out of

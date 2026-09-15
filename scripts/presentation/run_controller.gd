@@ -27,6 +27,9 @@ const RunEndingFlowScript = preload("res://scripts/presentation/run_ending_flow.
 # 公开常量转发：测试/外部仍可读 controller.WANDERER_STARTER_GU_IDS。
 const WANDERER_STARTER_GU_IDS = RunOpeningFlowScript.WANDERER_STARTER_GU_IDS
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
+## Debug façade is optional at compile-time (Release prune): only this bridge is
+## statically preloaded; the implementation script loads by path on debug builds.
+const DebugBridge = preload("res://scripts/presentation/debug_bridge.gd")
 # V1 battle lifecycle hook: battle2 ledger sits in the RunState for the
 # duration of a single battle. Sized by CultivatorRules.thought_capacity and
 # consumed by the battle facade on each accepted turn; finalised through
@@ -394,18 +397,17 @@ func _travel_to(node_id: String) -> Dictionary:
 # ----------------------------------------------------------------------------
 # §16.22 D5 调试方法族（全部 is_debug_build 门控早退；只写本局 RunData；
 # 不写事件日志、不碰大厅存档；print 带 [debug] 前缀可追溯）。
-# W12 split: implementation moved to run_debug_facade.gd; the is_debug_build
-# gate stays here (`_debug_enabled_for_test`, initialized from
-# OS.is_debug_build) and the facade reads it through _debug_enabled(self).
-# Same-name one-line wrappers keep the public API and test call sites.
+# W12 split: implementation lives in run_debug_facade.gd, reached only through
+# DebugBridge (lazy load on debug builds). Release packs must not contain a
+# compile-time edge from this controller to the façade.
 # ----------------------------------------------------------------------------
 
 func _debug_enabled() -> bool:
-	return RunDebugFacade._debug_enabled(self)
+	return DebugBridge.enabled(self)
 
 
 func debug_panel_mounted() -> bool:
-	return RunDebugFacade.debug_panel_mounted(self)
+	return DebugBridge.panel_mounted(self)
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -420,86 +422,86 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func debug_add_gu(gu_id: String) -> Dictionary:
-	return RunDebugFacade.debug_add_gu(self, gu_id)
+	return DebugBridge.debug_add_gu(self, gu_id)
 
 
 func debug_set_resource(kind: String, value) -> Dictionary:
-	return RunDebugFacade.debug_set_resource(self, kind, value)
+	return DebugBridge.debug_set_resource(self, kind, value)
 
 
 func debug_travel(node_id: String) -> Dictionary:
-	return RunDebugFacade.debug_travel(self, node_id)
+	return DebugBridge.debug_travel(self, node_id)
 
 
 func debug_snapshot_dump() -> Dictionary:
-	return RunDebugFacade.debug_snapshot_dump(self)
+	return DebugBridge.debug_snapshot_dump(self)
 
 
 ## 调试面板跳层下拉选项：仅当前可见节点（防越层破坏地图不变量）。
 func _debug_travel_options() -> Array[Dictionary]:
-	return RunDebugFacade._debug_travel_options(self)
+	return DebugBridge.travel_options(self)
 
 
 func _debug_props() -> Dictionary:
-	return RunDebugFacade._debug_props(self)
+	return DebugBridge.props(self)
 
 
 ## 加蛊下拉 · 流派列表：目录 schools 顺序即展示顺序，label 用流派中文名。
 func _debug_gu_schools() -> Array[Dictionary]:
-	return RunDebugFacade._debug_gu_schools(self)
+	return DebugBridge.gu_schools(self)
 
 
 ## 加蛊下拉 · 蛊虫选项：按所选流派过滤目录，label 用蛊虫中文名（DisplayText 同源）。
 func _debug_gu_options(school_id: String) -> Array[Dictionary]:
-	return RunDebugFacade._debug_gu_options(self, school_id)
+	return DebugBridge.gu_options(self, school_id)
 
 
 func _set_debug_gu_school(value: String) -> void:
-	RunDebugFacade._set_debug_gu_school(self, value)
+	DebugBridge.set_gu_school(self, value)
 
 
 func _set_debug_gu_option(value: String) -> void:
-	RunDebugFacade._set_debug_gu_option(self, value)
+	DebugBridge.set_gu_option(self, value)
 
 
 func _set_debug_res_kind(value: String) -> void:
-	RunDebugFacade._set_debug_res_kind(self, value)
+	DebugBridge.set_res_kind(self, value)
 
 
 func _set_debug_res_value(value: String) -> void:
-	RunDebugFacade._set_debug_res_value(self, value)
+	DebugBridge.set_res_value(self, value)
 
 
 func _set_debug_travel_node(value: String) -> void:
-	RunDebugFacade._set_debug_travel_node(self, value)
+	DebugBridge.set_travel_node(self, value)
 
 
 func _toggle_debug_panel() -> void:
-	RunDebugFacade._toggle_debug_panel(self)
+	DebugBridge.toggle_panel(self)
 
 
 func _mount_debug_panel() -> void:
-	RunDebugFacade._mount_debug_panel(self)
+	DebugBridge.mount_panel(self)
 
 
 func _debug_host_size() -> Vector2:
-	return RunDebugFacade._debug_host_size(self)
+	return DebugBridge.host_size(self)
 
 
 func _render_debug_panel() -> void:
-	RunDebugFacade._render_debug_panel(self)
+	DebugBridge.render_panel(self)
 
 
 func _debug_ok(feedback: String) -> Dictionary:
-	return RunDebugFacade._debug_ok(self, feedback)
+	return DebugBridge.debug_ok(self, feedback)
 
 
 func _debug_fail(reason: String) -> Dictionary:
-	return RunDebugFacade._debug_fail(self, reason)
+	return DebugBridge.debug_fail(self, reason)
 
 
 func _debug_fail_with(reason: String, feedback: String) -> Dictionary:
-	return RunDebugFacade._debug_fail_with(self, reason, feedback)
+	return DebugBridge.debug_fail_with(self, reason, feedback)
 
 
 func _start_battle() -> void:

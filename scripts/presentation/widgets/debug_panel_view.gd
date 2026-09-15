@@ -1,5 +1,5 @@
-class_name DebugPanelView
 extends PanelContainer
+# class_name removed for Release prune (loaded only via debug_panel.tscn).
 
 ## D5 开发者调试面板（§16.22 硬红线）。
 ##
