@@ -87,6 +87,12 @@ const RESOURCE_SPECS := ["yuanstone", "shouyuan", "hunpo"]
 @onready var _travel_button: Button = $map_root/map_inspector/map_travel_button
 @onready var _save_button: Button = $map_root/map_inspector/map_save_button
 @onready var _return_button: Button = $map_root/map_inspector/map_return_button
+# Playable Core Loop Phase 2：右栏「当前构筑目标」区（只读，无交互）。
+@onready var _build_goal_panel: PanelContainer = $map_root/map_build_goal
+@onready var _goal_title: Label = $map_root/map_build_goal/map_goal_margin/map_goal_box/map_goal_title
+@onready var _goal_progress: Label = $map_root/map_build_goal/map_goal_margin/map_goal_box/map_goal_progress
+@onready var _goal_status: Label = $map_root/map_build_goal/map_goal_margin/map_goal_box/map_goal_status
+@onready var _goal_hint: Label = $map_root/map_build_goal/map_goal_margin/map_goal_box/map_goal_hint
 @onready var _leave_confirm_host: Control = $map_root/map_leave_confirm_host
 @onready var _leave_panel: PanelContainer = $map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm
 @onready var _leave_save_button: Button = $map_root/map_leave_confirm_host/map_leave_center/map_leave_confirm/MarginContainer/VBoxContainer/map_leave_buttons/map_leave_save_button
@@ -133,6 +139,11 @@ func _apply_static_theme() -> void:
 	_build_ver.add_theme_color_override("font_color", GuStyle.VER_TEXT)
 	_inspection_name.add_theme_color_override("font_color", GuStyle.INK_MAP)
 	_inspection_note.add_theme_color_override("font_color", GuStyle.INK_MAP_NOTE)
+	# Playable Core Loop Phase 2：目标区配色走令牌（.tscn 只写结构）。
+	_goal_title.add_theme_color_override("font_color", GuStyle.INK_MAP)
+	_goal_progress.add_theme_color_override("font_color", GuStyle.INK_MAP_VALUE)
+	_goal_status.add_theme_color_override("font_color", GuStyle.INK_MAP_NOTE)
+	_goal_hint.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
 	for layer_label in [
 		$map_root/map_camera/map_world/map_routes/map_layer_label_far,
 		$map_root/map_camera/map_world/map_routes/map_layer_label_near,
@@ -194,6 +205,7 @@ func _refresh() -> void:
 	_refresh_markers(_snapshot.get("contracts", []), _snapshot.get("anomalies", []))
 	_refresh_title(_snapshot)
 	_inventory.setup(_snapshot.get("inventory", {}))
+	_refresh_build_goal(_snapshot.get("build_goal", {}))
 	_refresh_depth_rail(nodes)
 	_refresh_world(nodes)
 	_refresh_inspector()
@@ -502,6 +514,41 @@ func _apply_node_style(button: Button, is_current: bool, is_selected: bool, reac
 
 # --------------------------------------------------------------- 检视 / 弹层
 
+## Playable Core Loop Phase 2：右栏构筑目标区。
+## 只读渲染快照的 build_goal；无可执行目标时整块隐藏（不占版面、不留空壳）。
+func _refresh_build_goal(goal: Dictionary) -> void:
+	var available := bool(goal.get("available", false))
+	_build_goal_panel.visible = available
+	if not available:
+		_goal_title.text = ""
+		_goal_progress.text = ""
+		_goal_status.text = ""
+		_goal_hint.text = ""
+		return
+	_goal_title.text = "构筑目标 · " + str(goal.get("title", ""))
+	_goal_progress.text = str(goal.get("progress_text", ""))
+	var ready := bool(goal.get("ready", false))
+	_goal_status.text = ("状态：已就绪 —— 前往炼蛊台执行。" if ready
+			else "状态：" + str(goal.get("missing_summary", "")))
+	_goal_status.add_theme_color_override("font_color",
+			GuStyle.CINNABAR if ready else GuStyle.INK_MAP_NOTE)
+	_goal_hint.text = _build_goal_hint(goal)
+
+
+func _build_goal_hint(goal: Dictionary) -> String:
+	var lines: Array[String] = []
+	var recommended: Array = goal.get("recommended_node_types", [])
+	if recommended.has("combat"):
+		lines.append("建议：战斗节点可能获得粗材")
+	if recommended.has("refinement"):
+		lines.append("建议：炼蛊台用于执行当前配方")
+	if recommended.has("caravan"):
+		lines.append("建议：商队 / 黑市可换取缺少的蛊与材料")
+	if lines.is_empty():
+		return ""
+	return "\n".join(lines)
+
+
 func _refresh_inspector() -> void:
 	var reachable := bool(_selected.get("reachable", false))
 	# E2a/E4c 迷雾：未知类节点未揭示前，检视台同样只给「未知 · ?」，
@@ -513,6 +560,11 @@ func _refresh_inspector() -> void:
 	else:
 		_inspection_name.text = "未知 · ?" if hidden else str(_selected.get("label", "节点"))
 		var note := "此节点可进入，提交前由领域校验行路状态。" if reachable else "查看路线信息；不可达节点不会提交行路命令。"
+		# Playable Core Loop Phase 2：节点与当前构筑目标的关系（只读派生）。
+		var relevance: Dictionary = _selected.get("build_relevance", {})
+		var relevance_text := str(relevance.get("text", ""))
+		if not relevance_text.is_empty():
+			note = note + " ｜ 与目标：" + relevance_text
 		_inspection_note.text = ("未知 · 进入后揭示 · " if hidden else str(_selected.get("type", "")) + " · ") + note
 	_travel_button.visible = reachable and _commands.has("travel")
 	_save_button.visible = _commands.has("save_run")

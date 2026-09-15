@@ -18,6 +18,12 @@ const GuCardScene := preload("res://scenes/ui/widgets/gu_card.tscn")
 @onready var _pool_fallback_label: Label = $Root/NoteRow/PoolFallbackLabel
 @onready var _pity_label: Label = $Root/NoteRow/PityLabel
 @onready var _continue_button: Button = $Root/ContinueButton
+# Playable Core Loop Phase 3：本场产出 → 构筑目标进度（只读，无交互）。
+@onready var _progress_box: VBoxContainer = $Root/primary_decision_surface/BuildProgressBox
+@onready var _progress_title: Label = $Root/primary_decision_surface/BuildProgressBox/BuildProgressTitle
+@onready var _progress_lines: Label = $Root/primary_decision_surface/BuildProgressBox/BuildProgressLines
+@onready var _progress_status: Label = $Root/primary_decision_surface/BuildProgressBox/BuildProgressStatus
+@onready var _progress_next: Label = $Root/primary_decision_surface/BuildProgressBox/BuildProgressNext
 
 var _snapshot: Dictionary = {}
 var _commands: Dictionary = {}
@@ -45,7 +51,49 @@ func _refresh() -> void:
 	_refresh_top_bar()
 	_refresh_header()
 	_refresh_rewards()
+	_refresh_build_progress()
 	_refresh_notes()
+
+
+## Playable Core Loop Phase 3：本场战利品推进了当前构筑目标的什么。
+## 无可执行目标或无战斗入账时整块隐藏（不留空壳）。
+func _refresh_build_progress() -> void:
+	var progress: Dictionary = _snapshot.get("build_progress", {})
+	var available := bool(progress.get("available", false))
+	_progress_box.visible = available
+	if not available:
+		_progress_title.text = ""
+		_progress_lines.text = ""
+		_progress_status.text = ""
+		_progress_next.text = ""
+		return
+	_progress_title.text = "构筑进度 · " + str(progress.get("title", ""))
+	var lines: Array[String] = []
+	for row_value in progress.get("lines", []):
+		var row: Dictionary = row_value
+		var gained := int(row.get("gained", 0))
+		var mark := "✓" if bool(row.get("complete", false)) else "·"
+		var gain_text := "（本场 +%d）" % gained if gained > 0 else ""
+		lines.append("%s %s %d/%d%s" % [mark, str(row.get("name", "")),
+				int(row.get("owned_after", 0)), int(row.get("required", 0)), gain_text])
+	var stone_gained := int(progress.get("stone_gained", 0))
+	var stone_after := int(progress.get("stone_after", 0))
+	var stone_required := int(progress.get("stone_required", 0))
+	lines.append("%s 元石 %d/%d%s" % [
+			"✓" if stone_after >= stone_required else "·",
+			stone_after, stone_required,
+			"（本场 +%d）" % stone_gained if stone_gained > 0 else ""])
+	_progress_lines.text = "\n".join(lines)
+	if bool(progress.get("became_ready", false)):
+		_progress_status.text = "状态：本场已满足全部条件 —— 可以执行了。"
+		_progress_status.add_theme_color_override("font_color", GuStyle.CINNABAR)
+	elif bool(progress.get("ready_after", false)):
+		_progress_status.text = "状态：已满足全部条件。"
+		_progress_status.add_theme_color_override("font_color", GuStyle.CINNABAR)
+	else:
+		_progress_status.text = "状态：尚未满足条件。"
+		_progress_status.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	_progress_next.text = str(progress.get("next_step_text", ""))
 
 
 func _refresh_top_bar() -> void:

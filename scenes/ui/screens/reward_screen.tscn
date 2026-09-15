@@ -103,6 +103,35 @@ text = "本场所得"
 layout_mode = 2
 theme_override_constants/separation = 12
 
+[node name="BuildProgressBox" type="VBoxContainer" parent="Root/primary_decision_surface"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="BuildProgressTitle" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 15
+
+[node name="BuildProgressLines" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="BuildProgressStatus" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="BuildProgressNext" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
 [node name="NoteRow" type="VBoxContainer" parent="Root"]
 layout_mode = 2
 theme_override_constants/separation = 4

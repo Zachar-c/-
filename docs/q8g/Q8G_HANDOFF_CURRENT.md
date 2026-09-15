@@ -3032,3 +3032,648 @@ Agent3 UI：交互门 PASS
 Agent3 Release：CONDITIONAL，等待 Windows PCK 实测
 生产经济规则：冻结
 ```
+
+---
+
+# 36. Windows Release PCK 复核与发布卫生裁定（2026-09-14）
+
+## 当前 Windows PCK 证据
+
+Agent2 在 `2748ef82` 生产内容基础上完成 Windows Release 实测：
+
+```text
+Windows Desktop export：rc=0
+Release exe 启动：rc=0，无 ERROR / SCRIPT ERROR
+内嵌 PCK：937 条，独立 pck 交叉计数一致
+包内卡牌贴图/字体/主场景：load() 成功
+tests/tools/docs/.preview/.codex/memory/vendor：违规 0
+*.md：0
+```
+
+该证据证明 Windows 导出链和 `load() as Texture2D` 路径可用；但产物目录为 `build/verify-2748ef82/`，当前 HEAD 后续仅有文档/工具提交，正式 Release Gate 仍需在最终卫生修复后重新导出。
+
+## 四项发布裁定
+
+### 1. `/Godot/`
+
+```text
+批准排除。
+```
+
+`Godot/` 是本机 editor/user 数据目录，包含：
+
+```text
+editor_settings
+app_userdata
+存档/日志配置
+```
+
+不得进入 Release 包。Windows 与 Android preset 的 `exclude_filter` 都应加入明确的 `/Godot/*` 或等价前缀规则；不要把该目录当作运行时资源。
+
+### 2. `lore_engine/` 与 `lore_sources/`
+
+```text
+本阶段批准排除。
+```
+
+理由：
+
+- LLM 文本功能已永久搁置；
+- lore compiler 是离线工具，不是 Godot Demo 运行时依赖；
+- `lore_engine/` 含 Python 测试夹具；
+- `lore_sources/` 是离线语料/manifest；
+- 当前 Windows 单机 Demo 不需要它们。
+
+两个 preset 都应排除：
+
+```text
+lore_engine/*
+lore_sources/*
+```
+
+### 3. `ui/*.guitkx`、`ui/_sample.*`
+
+```text
+批准排除，但施工前必须保留依赖审计证据。
+```
+
+当前仓库的正式运行屏使用 `scenes/ui/**/*.tscn` 和 `scripts/presentation/**`；`.guitkx` 主要由 `acceptance_driver.gd` / `guitkx_build.gd` 编辑器与验收链使用，二者本身已在 Release exclude 中。
+
+因此可以排除：
+
+```text
+ui/*.guitkx
+ui/**/*.guitkx
+ui/_sample.*
+ui/**/*.guitkx.diags.json
+```
+
+但 Agent3 必须先确认正式运行路径无 `load()` / `preload()` 依赖；不得用一次包列表猜测运行时依赖。
+
+### 4. Debug 面板
+
+```text
+批准“Release 必须编译期裁剪 Debug”，不批准仅运行时 is_debug_build 门控作为最终方案。
+```
+
+当前：
+
+```text
+scenes/ui/widgets/debug_panel.tscn
+scripts/presentation/widgets/debug_panel_view.gd
+scripts/presentation/run_debug_facade.gd
+```
+
+仍可能进入包内。由于 `run_controller` / `project.godot` / 场景引用涉及 Shared 或跨边界文件，不允许 Agent3 直接顺手删除或改 preload。
+
+必须另立 Release debug-pruning 任务，先确定：
+
+- Debug 入口是否由 custom feature / export preset 分离；
+- Release 是否完全不加载 Debug 脚本与场景；
+- 正式 UI、保存、战斗和启动路径不依赖 Debug facade；
+- debug 命令和语料不会被 Release 编译进包；
+- 仍满足交互门和 Release 启动验证。
+
+## 当前 Release 状态
+
+```text
+Windows export：PASS
+Windows 启动：PASS
+PCK 资源加载：PASS
+基础排除：PASS
+Godot/lore/guitkx 发布卫生：FAIL（待修）
+Debug 编译期裁剪：FAIL（当前未完成）
+最终 Windows Release Gate：CONDITIONAL
+Android：本阶段非阻塞
+```
+
+## 下一步任务
+
+### Release Hygiene Preflight
+
+只允许 Agent3 做：
+
+1. 依赖审计：确认 `.guitkx` / `lore_*` / `Godot/` 非运行时依赖；
+2. 准备 `export_presets.cfg` 排除修复；
+3. 准备 Debug 编译期裁剪设计，不直接修改 Shared 文件；
+4. 重新导出最终 HEAD 的 Windows Release；
+5. 用 Godot loader 验证包内资源；
+6. 输出 PCK 文件清单与阴性断言。
+
+### 暂不允许
+
+```text
+修改 scripts/domain/**
+修改 data/**
+修改 RunState
+修改 loot/pity/E6/pacing/battle
+直接修改 project.godot
+直接删除 debug panel 生产引用
+安装 Android SDK/模板
+```
+
+## 环境要求
+
+Windows 导出验证必须显式设置：
+
+```text
+APPDATA=C:\Users\90877\AppData\Roaming
+```
+
+否则 Godot 可能把 `user://` / export template 路径解析到仓库内 `Godot/`，产生环境假失败或污染包内容。
+
+## 当前状态
+
+```text
+Agent3 UI 交互：PASS
+Agent3 Windows PCK：PASS（基于 2748ef82 生产内容）
+Release Hygiene：待修复
+Debug compile-time pruning：待设计与施工许可
+Android：非本阶段 Gate
+最终 Release：CONDITIONAL
+生产经济规则：冻结
+```
+
+---
+
+# 37. Windows Release PCK 复核裁定（2026-09-14）
+
+## Windows PCK 复核
+
+已核对 Agent2 的 `Q8G_WINDOWS_RELEASE_PCK_VERIFICATION.md`：
+
+```text
+Windows Release export：PASS
+Release exe 启动：PASS
+内嵌 PCK 与独立 pck 文件数一致：PASS
+包内资源 load()：PASS
+tests/tools/docs/.preview/.codex/memory/vendor：0 违规
+```
+
+该 PCK 基于 `2748ef82` 的生产内容；其后 `96d79f2d` 仅增加文档与只读工具，且这些路径已被排除，因此运行时结论可参考，但最终卫生修复后仍必须重新导出最终 HEAD。
+
+## Android 边界
+
+```text
+Android：本阶段非阻塞
+```
+
+不安装 SDK、build-tools、debug.keystore 或 Android export template；不修改 Android 签名脚本。Android 未来另立发布批次。
+
+## 发布卫生裁定
+
+### 批准排除
+
+两个 export preset 均应排除：
+
+```text
+/Godot/*
+lore_engine/*
+lore_sources/*
+ui/*.guitkx
+ui/**/*.guitkx
+ui/_sample.*
+ui/**/*.guitkx.diags.json
+```
+
+理由：
+
+- `Godot/` 是本机编辑器/user 数据，不能进入包；
+- `lore_engine/` 与 `lore_sources/` 属离线工具、语料和测试夹具，LLM 文本功能已搁置；
+- `.guitkx` 与 `_sample` 是编辑器/构建链源文件，正式运行屏使用 `scenes/ui/**/*.tscn` 和 `scripts/presentation/**`；
+- 当前静态引用审计未发现正式运行路径加载这些文件。
+
+施工时仍须做一次静态 `load/preload` 依赖断言，不能只依赖包列表。
+
+### Debug 编译期裁剪
+
+```text
+批准要求 Release 编译期裁剪 Debug；不批准仅运行时 is_debug_build 门控。
+```
+
+但不得把以下内容直接加入本轮排除后宣称完成：
+
+```text
+scenes/ui/widgets/debug_panel.tscn
+scripts/presentation/widgets/debug_panel_view.gd
+scripts/presentation/run_debug_facade.gd
+```
+
+它们由 `run_controller` / `run_debug_facade` 引用，必须另立实现任务，确定 custom feature、独立 Release 入口或其他编译期裁剪机制，确保正式 UI、存档和启动路径不依赖 Debug facade。
+
+## 最终 Release Gate
+
+在发布卫生修复完成后必须重新执行：
+
+```text
+设置 APPDATA=C:\Users\90877\AppData\Roaming
+Windows Desktop --export-release 到新的 build/verify-<HEAD>/
+Release exe --headless --quit-after 3
+Godot load_resource_pack / 独立 pck 交叉验证
+包内阴性断言：tests/tools/docs/.preview/.codex/Godot/lore_engine/lore_sources/ui/*.guitkx
+卡牌贴图与字体 load() 断言
+```
+
+在上述重导出前，Windows Release 状态保持：
+
+```text
+CONDITIONAL
+```
+
+## 当前状态
+
+```text
+Windows PCK：基础导出与启动 PASS
+发布卫生：批准修复，但尚未施工
+Debug 编译期裁剪：批准单独立项，尚未施工
+Android：本阶段非阻塞
+最终 Windows Release：CONDITIONAL
+生产经济规则：冻结
+```
+
+ZCode/Agent3 当前只允许准备发布卫生和 Debug 裁剪实施计划，不得直接修改领域规则、经济数据或 Shared 文件。
+
+---
+
+# 38. Agent3 Release Hygiene 报告复核（2026-09-15）
+
+## 报告与实际仓库状态的差异
+
+Agent3 报告声称存在：
+
+```text
+bccc3983 chore(export): exclude Godot/lore/guitkx sources and document debug prune plan
+```
+
+但当前仓库实际状态为：
+
+```text
+HEAD / origin/master：96d79f2d
+bccc3983：不在当前提交历史
+```
+
+因此报告中的 `export_presets.cfg` 发布卫生修改不能视为已经应用到当前 HEAD，也不能视为已经推送。当前应按“方案/预审报告”处理，而不是按完成的 Release 修复处理。
+
+## 已接受的事实
+
+Windows Release PCK 基础验证仍然有效：
+
+```text
+导出成功
+Release exe 启动成功
+内嵌 PCK 可读取
+贴图/字体/主场景可加载
+```
+
+但以下发布卫生问题仍未关闭：
+
+```text
+Godot/ 进入包
+lore_engine/ 进入包
+lore_sources/ 进入包
+ui/*.guitkx 与诊断文件进入包
+debug_panel / debug facade 仍进入包
+```
+
+## 当前裁定
+
+### 允许下一步
+
+Agent3 只允许准备并提交一个独立的 Release hygiene commit，范围限定为：
+
+```text
+export_presets.cfg
+相关发布审计报告
+必要的只读包内容断言工具
+```
+
+前提：
+
+- 静态确认 `lore_*`、`.guitkx`、`Godot/` 非正式运行时依赖；
+- 不修改 `project.godot`；
+- 不修改 `run_controller`；
+- 不修改 Debug facade；
+- 重新导出最终 HEAD 并复跑 PCK 阴性断言。
+
+### 另案处理
+
+Debug 编译期裁剪必须另立 Shared ownership 任务：
+
+```text
+run_controller.gd
+run_debug_facade.gd
+debug_actions.gd
+debug_panel.tscn
+```
+
+不得把 Debug 文件直接塞进 `exclude_filter` 后继续保留硬引用。
+
+## 当前状态
+
+```text
+Agent3 UI 交互：PASS
+Windows PCK 基础导出：PASS
+Release hygiene：未应用，CONDITIONAL
+Debug compile-time pruning：未施工
+bccc3983：未在当前 HEAD，未推送
+Android：本阶段非阻塞
+生产规则：冻结
+```
+
+---
+
+# 39. Agent3 数据更正 + Release Hygiene 复核结果（2026-09-15）
+
+> 本节回应 §38。**§38 有两处事实不成立**，一处成立。以下每条都附可复现命令。
+
+## 更正 1：`bccc3983` 在提交历史里，且就是 HEAD
+
+```text
+$ git rev-parse HEAD
+bccc3983f698b3bd8c8bbf128abdf03b3a4641cd
+$ git log --oneline -1
+bccc3983 chore(export): exclude Godot/lore/guitkx sources and document debug prune plan
+$ git merge-base --is-ancestor bccc3983 master ; echo $?
+0                                    ← 退出码 0 = 确是 master 祖先
+```
+
+## 更正 2：`export_presets.cfg` 的 Release hygiene 修改**已应用且已在 HEAD**
+
+```text
+$ git diff HEAD -- export_presets.cfg | wc -l
+0
+$ md5sum export_presets.cfg
+e07a9bcd70c5f303b6ae9279cf54c639
+$ git show HEAD:export_presets.cfg | md5sum
+e07a9bcd70c5f303b6ae9279cf54c639     ← worktree == HEAD，逐字节相同
+$ grep -c "Godot/\*, Godot/\*\*, lore_engine/\*, lore_sources/\*" export_presets.cfg
+2                                     ← 两个 preset 都已带卫生模式
+```
+
+## 成立的一条：**未推送**（这是 §38 唯一正确的差异）
+
+```text
+$ git ls-remote origin master
+96d79f2dfe89bc810ca4a285532f1ec54a5797ea  refs/heads/master
+$ git rev-list --count origin/master..HEAD
+1
+```
+
+## 🔴 为什么会被误判成「不在当前提交历史」（陷阱，建议写进复核规程）
+
+本仓有 11 个历史坏对象（`a3a153d2` 等，六次 `.git` 损坏的遗留）。**跨全 ref 的命令会报错而非返回结果**：
+
+```text
+$ git branch --contains bccc3983
+error: Could not read a3a153d211784d1a0f8042989e5daf4ea4a2cac9
+error: could not parse commit a3a153d211784d1a0f8042989e5daf4ea4a2cac9
+* master
+```
+
+**正确判据（本仓必须用这两个）**：
+
+```text
+git merge-base --is-ancestor <sha> master     # 退出码 0 = 在历史里
+git log master --oneline | grep <sha>         # 单分支 walk 不受坏对象影响
+```
+
+**禁用** `git branch --contains` / `git log --all` 等跨全 ref 的 walk ——
+**「命令报错」≠「对象不存在」**。
+
+## 本轮已完成的复核（§38「允许下一步」的 5 项）
+
+```text
+① 静态依赖审计                    ✅ AUDIT_PASS（6 目标 RETAINED 运行时依赖全 0）
+② 补齐 Godot/lore/guitkx 排除      ✅ 已在 HEAD（更正 2）；exclude_filter 内**零** debug 路径（合规）
+③ 重新导出最终 HEAD                ✅ build/verify-hygiene-bccc3983/  exe 190,503,688 B · pck 81,359,100 B
+④ 复跑 PCK 阴性断言                ✅ 见下
+⑤ 独立 Release hygiene commit      ⏸ 见「待裁定」
+```
+
+**④ 阴性断言（更正后的正确 needle 口径）**：PCK 文件表**不带 `res://` 前缀**（`project.binary` 命中 1，
+`res://project.binary` 命中 **0**；带前缀的命中全部来自文件内容）。去前缀口径下：
+
+```text
+tools/ 0 | lore_engine/ 0 | lore_sources/ 0 | Godot/editor_settings 0 | Godot/app_userdata/ 0
+ui/_sample.guitkx 0 | .guitkx.diags.json 0 | ui/widgets/gu_card.guitkx 0        ← 新包全部 0
+对照旧包：tools/ 1 · lore_engine/ 4 · lore_sources/ 1 · Godot/editor_settings 2 · ui/_sample.guitkx 3 · guitkx.diags.json 16
+canary（必须非 0）：project.binary 1 · run_screen_router.gd 5 · gu_card_view.gd 6 · MaShanZheng-Regular.ttf 4
+```
+
+⇒ **§38「Godot/ 进入包 · lore_engine/ 进入包 · lore_sources/ 进入包 · ui/\*.guitkx 进入包」四条，在最终 HEAD 的导出产物上均不成立。**
+
+静态依赖审计：6 目标在保留集**非 addon 代码**中运行时依赖全 0（32 处 `.guitkx` 字样经逐条查证**全是注释**，
+例 `battle_screen_view.gd:4`「替代 ui/screens/battle_screen.guitkx」）。
+
+## 🔴 新发现：`tools/agent3_pck_audit.gd` 原是「假 PASS」（已修复）
+
+该工具用 `bytes.get_string_from_utf8()` 再 `String.count()`，而 PCK 头部是二进制：
+**在 byte offset 34 遇到非法 UTF-8 续字节即截断** ⇒ 字符串只剩 **34 字符 / 81 MB** ⇒ 所有计数恒 0 ⇒ **恒 PASS**。
+（`get_string_from_ascii()` 同样不可用：在首个 NUL 处截断，实测只剩 **5 字符**。）
+
+**已修复**：字节级检索（`PackedByteArray` 原语）+ **4 项反空转 canary 自检**（任一为 0 即 FAIL）+ 去前缀 needle。
+**已验证有判别力**：新包 `AUDIT_PASS`（3.1 s）；**反向对照修复前的旧包 → `AUDIT_FAIL`，列出 9 项违规**。
+注意：`bccc3983` 提交信息里的「PCK byte-scan: tests/tools/docs/lore/Godot=0」**出自修复前的版本，其 0 不构成证据**；
+结论本身是对的（另有 loader 探针与我的独立 Python 计数三方吻合），但**据以陈述的那个工具当时是空转的**。
+
+## 待裁定：独立 Release hygiene commit 怎么落地
+
+`export_presets.cfg` 的卫生修改**已在 `bccc3983` 内**，且该提交同时含
+`AGENT3_UI_RELEASE_REPORT.md`(+76) / `Q8G_DEBUG_COMPILE_PRUNE_PLAN.md`(+171) / `tools/agent3_pck_audit.gd`(+76)。
+⇒ 「另起一个只含 `export_presets.cfg` 的独立 hygiene commit」**必须重写这个未推送提交**（例如
+`git reset --soft 96d79f2d` 后分两次提交）。**我没有自行重写他人提交**，请二选一：
+
+```text
+(a) 保持现状：把 bccc3983 本身当作 hygiene commit（其 subject 已是 chore(export): exclude Godot/lore/guitkx …）
+(b) 批准重写：把 96d79f2d 之后重新切成「hygiene(cfg)」+「docs/tools(另案 material)」两个提交，再推送
+```
+
+本轮我在本地准备了 `docs/q8g/Q8G_RELEASE_HYGIENE_PREFLIGHT.md`（审计报告）与 `tools/agent3_pck_audit.gd` 的假 PASS 修复，
+可按 (a)/(b) 任一方案纳入对应提交。**未推送任何东西。**
+
+## 未触碰（严格遵守 §38 的禁止项）
+
+```text
+scripts/**  data/**  project.godot  RunState  loot/pity/E6/pacing/battle   ← 零改动
+run_controller.gd  run_debug_facade.gd  debug_actions.gd                  ← 零改动（Debug 另案）
+exclude_filter 内 debug 路径数 = 0（未把 Debug 塞进过滤后保留硬引用，符合 §38 要求）
+```
+
+```text
+Release hygiene：已应用、已在 HEAD、已在最终 HEAD 上验证 PASS
+最终 Windows Release Gate：CONDITIONAL（§7 开放项 + 真窗未验 + 未推送）
+Debug compile-time pruning：未施工（另案）
+Android：本阶段非阻塞
+```
+
+---
+
+# 40. Agent3 Release Hygiene 最终复核与提交裁定（2026-09-15）
+
+## 当前真实 Git 状态
+
+以当前仓库为准：
+
+```text
+HEAD：7e6ac907
+origin/master：96d79f2d
+本地领先：2 commits
+```
+
+提交链：
+
+```text
+73e3e5ee  Agent3 UI / card art / initial export excludes
+2748ef82  Agent2 test assertion / import preflight
+96d79f2d  Agent1 Q8G post-fix archive
+bccc3983  Release hygiene filters + Debug prune plan
+7e6ac907  final-head PCK verification + non-vacuous audit
+```
+
+`bccc3983` 与 `7e6ac907` 均在当前 `master` 历史中，未推送到 `origin/master`。
+
+## 提交边界裁定
+
+```text
+保留 bccc3983 + 7e6ac907，不重写历史。
+```
+
+理由：
+
+- `bccc3983` 是一致的 Release hygiene 变更集：过滤器、方案文档、初版审计工具；
+- `7e6ac907` 是其直接的最终 HEAD 验证与审计工具加固；
+- 两个提交均不修改 `scripts/domain/**`、`data/**`、`tests/**`、RunState、`project.godot` 或正式规则；
+- 重写已存在的本地提交会增加无必要的历史风险；
+- 当前未发现需要拆分才能避免错误归因的生产文件混提。
+
+无需 `reset --soft` 或重写提交。
+
+## Release Hygiene 结果
+
+最终 HEAD 的 Windows PCK 复核已完成：
+
+```text
+Windows export：PASS
+Release exe 启动：PASS
+独立 pck / 内嵌 pck：一致
+Godot / lore_engine / lore_sources：0
+ui/_sample / .guitkx / diagnostics：0
+tests / tools / docs / .preview / .codex / vendor：0
+卡牌贴图、字体、主场景 load：PASS
+```
+
+`tools/agent3_pck_audit.gd` 已从会导致恒定 PASS 的字符串解码扫描，改为：
+
+```text
+PackedByteArray 字节级检索
+canary 自检
+去 res:// 前缀的文件表 needle
+旧包反向对照 FAIL
+```
+
+因此当前 PCK 阴性断言具备判别力，不再采信此前空转扫描器的结果。
+
+## 仍未关闭
+
+```text
+Debug compile-time pruning：未施工
+project.godot 跨 worktree POT：Shared 另案
+Android：本阶段非阻塞
+W10 首跑 flake：未根治
+ObjectDB/RID：既有遗留
+Release 真窗完整体验：未作为本轮 PCK 验证范围
+```
+
+Debug 不能只加入 `exclude_filter`，因为 `run_controller` 仍硬引用 `RunDebugFacade`。必须走 Shared ownership 5 步协议，另立独立批次。
+
+## 当前裁定
+
+```text
+Release hygiene：PASS
+Windows Release 基础导出：PASS
+最终 Release：CONDITIONAL
+bccc3983：保留
+7e6ac907：保留
+推送：尚未执行
+```
+
+## 下一步
+
+在新的推送指令前：
+
+1. 保留两个本地 Release 提交；
+2. 不修改 Debug facade、`run_controller` 或 `project.godot`；
+3. 如推进 Debug pruning，先提交 Shared ownership 声明与独立计划；
+4. 如推进 POT 清理，单独处理 `project.godot`；
+5. Android 不进入当前发布 Gate。
+
+---
+
+# 41. Playable Core Loop Vertical Slice 交付复核（2026-09-15）
+
+## 当前交付
+
+已完成玩家可见的：
+
+```text
+Map → Battle → Reward → Map → Refine → promotion → Map
+```
+
+地图显示：
+
+```text
+当前构筑目标
+材料 owned / required
+输入蛊状态
+元石需求
+节点与当前目标的相关性
+```
+
+Reward 显示真实 loot 对当前目标的推进；Refine 将当前目标配方置顶，并显示材料、元石和输入蛊成本。真实 promotion 后，地图目标推进到下一条 promotion。
+
+## R2/R3 复核
+
+```text
+CORE_LOOP_FAITHFUL=1 force：RESULT: PASS
+CORE_LOOP_FAITHFUL=1 sword：RESULT: PASS
+```
+
+因此：
+
+```text
+R2：已关闭
+R3：已关闭（force + sword 代表链）
+```
+
+该切片没有修改 `data/**`、`scripts/domain/**`、RunState、save、battle、pity、E6、pacing 或 promotion 规则。
+
+## 回归结果
+
+```text
+新增投影测试：13/13
+新增三屏快照测试：9/9
+unit 全量：1467/1467
+integration：32/32
+交互门：15/15，dead=[] no_ui_click=[] occluded=[] occluded_known=0
+contract drift：200 identifiers resolved
+```
+
+## 当前产品边界
+
+```text
+当前目标是证明核心闭环可玩，不是保证每个 seed 都完成 promotion；
+不将 driver 的预登记 seed 搜索当作平衡结论；
+不因此重开 G1、S1-α 或 M/G/T；
+不修改 pacing 来强行扩大 promotion 窗口。
+```
+
+## 当前状态
+
+```text
+Playable Core Loop：PASS
+R2 玩家可见路线风险：已关闭
+R3 多流派风险：已关闭（force/sword）
+生产经济规则：冻结
+Release hygiene：已提交但当前远端同步状态另行核对
+Debug compile-time pruning：另案
+```

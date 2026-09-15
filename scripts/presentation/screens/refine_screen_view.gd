@@ -18,6 +18,8 @@ const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
 @onready var _sub_label: Label = $Root/RefineStage/StageContent/HeaderRow/SubLabel
 @onready var _tab_row: HBoxContainer = $Root/RefineStage/StageContent/HeaderRow/TabRow
 @onready var _slot_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/SlotStatusLabel
+# Playable Core Loop Phase 4：当前构筑目标横幅（只读）。
+@onready var _goal_banner: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/GoalBanner
 @onready var _recipe_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/RecipePanel
 @onready var _streak_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/StreakNoteLabel
 @onready var _dismantle_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/SideColumn/DismantlePanel
@@ -95,6 +97,20 @@ func _refresh_header() -> void:
 	_slot_label.add_theme_color_override("font_color",
 			GuStyle.JADE if slot_ok else GuStyle.CINNABAR)
 	_streak_label.text = str(_snapshot.get("streak_note", ""))
+	# Playable Core Loop Phase 4：把当前构筑目标放在配方列表正上方。
+	var goal: Dictionary = _snapshot.get("build_goal", {})
+	if bool(goal.get("available", false)):
+		var ready := bool(goal.get("ready", false))
+		_goal_banner.text = "当前构筑目标：%s —— %s%s" % [
+			str(goal.get("title", "")),
+			str(goal.get("progress_text", "")),
+			"（已就绪，可直接执行）" if ready else ""]
+		_goal_banner.add_theme_color_override("font_color",
+				GuStyle.CINNABAR if ready else GuStyle.INK_SOFT)
+		_goal_banner.visible = true
+	else:
+		_goal_banner.text = ""
+		_goal_banner.visible = false
 
 
 ## 通道 Tab 只改本地过滤，不发命令。
@@ -205,6 +221,9 @@ func _build_recipe_card(list: Node, r: Dictionary, slot_ok: bool, blind_note: St
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 3)
 	panel.content_host.add_child(box)
+	# Playable Core Loop Phase 4：目标配方置顶并打标（快照已按优先级排序）。
+	if bool(r.get("is_goal", false)):
+		box.add_child(_label_of("◆ 当前构筑目标", GuStyle.CINNABAR, 13))
 	var output_row := HBoxContainer.new()
 	output_row.add_theme_constant_override("separation", 4)
 	var output_icon := GuIconView.new()
@@ -214,6 +233,9 @@ func _build_recipe_card(list: Node, r: Dictionary, slot_ok: bool, blind_note: St
 	box.add_child(output_row)
 	box.add_child(_label_of(str(r.get("fail_chance", "")), GuStyle.ANOMALY_YELLOW, 13))
 	box.add_child(_label_of(rbacklash, GuStyle.ANOMALY_YELLOW, 13))
+	# Phase 4：成本与缺失项**点击前**可见（禁止点击后才告知成本）。
+	for cost_line in _requirement_lines(r):
+		box.add_child(cost_line)
 	var rank_note := str(r.get("rank_note", ""))
 	if rank_note != "":
 		box.add_child(_label_of(rank_note, GuStyle.INK_SOFT, 12))
@@ -222,14 +244,43 @@ func _build_recipe_card(list: Node, r: Dictionary, slot_ok: bool, blind_note: St
 	if _channel == "blind" and blind_note != "":
 		box.add_child(_label_of(blind_note, GuStyle.INK_SOFT, 12))
 
+	var executable := bool(r.get("executable", true))
 	var refine_btn := Button.new()
 	refine_btn.text = "确认炼蛊"
-	refine_btn.disabled = not slot_ok or not runlocked
+	refine_btn.disabled = not slot_ok or not runlocked or not executable
 	MasterTheme.apply_button(refine_btn, "danger" if is_danger else "action")
 	refine_btn.pressed.connect(func():
 		_confirm_recipe = rid
 		_refresh_confirm_dialog())
 	panel.content_host.add_child(refine_btn)
+
+
+## Phase 4：把快照给出的材料 / 元石 / 输入蛊成本渲染成逐行文案。
+## 只读渲染；不做任何领域判断（可执行性来自快照的 executable）。
+func _requirement_lines(r: Dictionary) -> Array[Label]:
+	var lines: Array[Label] = []
+	for row_value in r.get("materials", []):
+		var row: Dictionary = row_value
+		var mark := "✓" if bool(row.get("complete", false)) else "·"
+		var color := GuStyle.INK_SOFT if bool(row.get("complete", false)) else GuStyle.CINNABAR
+		lines.append(_label_of("%s 材料 %s %d/%d" % [mark, str(row.get("name", "")),
+				int(row.get("owned", 0)), int(row.get("required", 0))], color, 12))
+	var stone_owned := int(r.get("stone_owned", 0))
+	var stone_required := int(r.get("stone_required", 0))
+	if stone_required > 0:
+		var stone_ok := stone_owned >= stone_required
+		lines.append(_label_of("%s 元石 %d/%d" % ["✓" if stone_ok else "·",
+				stone_owned, stone_required],
+				GuStyle.INK_SOFT if stone_ok else GuStyle.CINNABAR, 12))
+	var input_name := str(r.get("input_gu_name", ""))
+	if input_name != "":
+		var input_ok := bool(r.get("input_owned", false))
+		lines.append(_label_of("%s 输入蛊 %s" % ["✓" if input_ok else "·", input_name],
+				GuStyle.INK_SOFT if input_ok else GuStyle.CINNABAR, 12))
+	var missing_summary := str(r.get("missing_summary", ""))
+	if missing_summary != "":
+		lines.append(_label_of("缺：" + missing_summary, GuStyle.CINNABAR, 12))
+	return lines
 
 
 func _refresh_dismantle() -> void:

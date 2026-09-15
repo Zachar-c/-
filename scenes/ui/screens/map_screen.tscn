@@ -170,6 +170,52 @@ offset_bottom = 243.0
 grow_horizontal = 2
 z_index = 4
 
+[node name="map_build_goal" type="PanelContainer" parent="map_root"]
+layout_mode = 0
+anchor_left = 0.88
+anchor_right = 0.995
+offset_top = 256.0
+offset_bottom = 460.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="map_goal_margin" type="MarginContainer" parent="map_root/map_build_goal"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="map_goal_box" type="VBoxContainer" parent="map_root/map_build_goal/map_goal_margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="map_goal_title" type="Label" parent="map_root/map_build_goal/map_goal_margin/map_goal_box"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="map_goal_progress" type="Label" parent="map_root/map_build_goal/map_goal_margin/map_goal_box"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 10
+
+[node name="map_goal_status" type="Label" parent="map_root/map_build_goal/map_goal_margin/map_goal_box"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 10
+
+[node name="map_goal_hint" type="Label" parent="map_root/map_build_goal/map_goal_margin/map_goal_box"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 9
+
 [node name="map_camera_backdrop" type="Panel" parent="map_root/map_camera"]
 layout_mode = 0
 anchors_preset = 15
