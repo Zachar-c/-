@@ -115,8 +115,10 @@ fix(project): drop cross-worktree POT path and stop DM auto-POT rewrite
 
 ```text
 提交清单：
-  <sha>  fix(project): drop cross-worktree POT path and stop DM auto-POT rewrite
-  <sha>  docs(q8g): record P0-2 POT cleanup declaration and owner return
+  6ea67c95  fix(project): drop cross-worktree POT path and stop DM auto-POT rewrite
+  88e906c9  docs(q8g): record P0-2 POT cleanup declaration and owner return
+
+（P0-1 由另一 Agent 提交：a35e3786 refactor(debug)… / 79b67210 chore(export)…）
 
 命令与退出码：
   grep -c worktrees project.godot                          → 0（import 前后各一次，幂等）
