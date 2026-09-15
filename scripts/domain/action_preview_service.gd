@@ -37,15 +37,24 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 				_append_standard_cards(cards, state, node, catalog)
 		if not str(node.get("type", "")) in ["caravan", "refinement", "cultivation", "ledger", "shop", "event", "rest"]:
 			_append_leave_card(cards, state)
-	_apply_stance_card_filter(cards, state)
+	_apply_stance_card_filter(cards, state, node)
 	_inject_encounter_context(cards, state, node)
 	_mark_consumed_cards(cards, state)
 	_assert_unique_ids(cards)
 	return cards
 
 
-static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState) -> void:
+static func _apply_stance_card_filter(cards: Array[Dictionary], state: RunState, node: Dictionary) -> void:
 	if str(state.encounter_session.get("stance", "neutral")) != "extreme_hostile":
+		return
+	# 与 _leave 的 feud_no_escape 门禁同语义（规格 2026-09-01-v1-battle-schema：
+	# "有仗必须打，无仗可打允许离开"）：血仇过滤只作用于有战斗对象的节点
+	# （choices 含 fight 或 caravan 特例，与 EncounterSessionResolver.begin 的
+	# offers_fight 公式同源）。rest/refinement/cultivation/shop 等服务类节点
+	# 无仗可打，服务照常提供，否则恶名玩家无法休整/炼蛊形成死亡螺旋。
+	var offers_fight: bool = "fight" in (node.get("choices", []) as Array) \
+		or str(node.get("type", "")) == "caravan"
+	if not offers_fight:
 		return
 	var kept: Array[Dictionary] = []
 	for card in cards:

@@ -45,8 +45,12 @@ func _initialize() -> void:
 		print("[W10] traveled to node=%s" % saved_node_id)
 
 		# 保存并离开地图回大厅
+		# save_run 失败必须显式失败：只打印继续跑会把保存层错误伪装成
+		# "首跑 has_save=false flake"（2026-09-15 flake 诊断结论）。
 		var save_result: Dictionary = controller.submit_command({"type": "save_run"})
 		print("[W10] save_run ok=%s" % str(save_result.get("ok", false)))
+		if not bool(save_result.get("ok", false)):
+			_fail("save_run failed: %s" % str(save_result))
 		controller.save_and_leave_map()
 		await process_frame
 		await process_frame
@@ -77,7 +81,9 @@ func _initialize() -> void:
 				_fail("seed mismatch after load: saved=%d loaded=%d" % [saved_seed, loaded_seed])
 
 	# 阶段 5：截图大厅（有存档态）供肉眼比对
-	await _shot("w10_hall_with_save")
+	# 截图仅真窗模式执行；headless 下 get_texture() 恒为 null 会挂起等待帧绘制。
+	if DisplayServer.get_name() != "headless":
+		await _shot("w10_hall_with_save")
 
 	print("W10_CONTINUE_RUN FAILED=%d" % _failed)
 	quit(1 if _failed > 0 else 0)

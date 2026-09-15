@@ -859,6 +859,20 @@ func _find_button_by_text_contains(node: Node, wanted: String) -> Button:
 	return null
 
 
+## 卡名自 2026-09-11 卡面层级重构起走 `card_name` meta（Button.text 不再含卡名）。
+## 与 test_wenzhen_card_fsm._button_match 同约定：meta 与 text 双来源 contains 匹配。
+func _find_card_button_by_name_contains(node: Node, wanted: String) -> Button:
+	if node is Button:
+		var btn := node as Button
+		if str(btn.text).contains(wanted) or str(btn.get_meta("card_name", "")).contains(wanted):
+			return btn
+	for c in node.get_children():
+		var found := _find_card_button_by_name_contains(c, wanted)
+		if found != null:
+			return found
+	return null
+
+
 func _host_has_label_text(node: Node, wanted: String) -> bool:
 	if node is Label and str(node.text).contains(wanted):
 		return true
@@ -1054,14 +1068,15 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 		_teardown_mounts()
 		return false
 	# mode 用空 Label 的 name 承载（test_wenzhen_card_fsm 按此定位），初始为 idle。
-	var mode_host := battle.get_node("Root/ModeHost")
+	# 水墨去框重构后 ModeHost 位于 battle_field 之内。
+	var mode_host := battle.get_node("Root/BattleStage/battle_field/ModeHost")
 	if mode_host.get_child_count() != 1 or mode_host.get_child(0).name != "battle_idle":
 		push_error("tscn 战斗屏初始 mode 应为 battle_idle")
 		_teardown_mounts()
 		return false
 
 	# 1) 危险卡 → 只弹确认，不下发
-	var danger_btn := _find_button_by_text_contains(battle, "血祭蛊")
+	var danger_btn := _find_card_button_by_name_contains(battle, "血祭蛊")
 	if danger_btn == null:
 		push_error("tscn 战斗屏手牌未渲染「血祭蛊」")
 		_teardown_mounts()
@@ -1090,14 +1105,15 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 
 	# 2) 需选目标的卡 → 进入 target_select，敌人变可选
 	log.clear()
-	var target_btn := _find_button_by_text_contains(battle, "月芒蛊")
+	var target_btn := _find_card_button_by_name_contains(battle, "月芒蛊")
 	if target_btn == null:
 		push_error("tscn 战斗屏手牌未渲染「月芒蛊」")
 		_teardown_mounts()
 		return false
 	target_btn.pressed.emit()
 	await process_frame
-	if mode_host.get_child_count() != 1 or mode_host.get_child(0).name != "battle_target_select":
+	# target_select 模式下 ModeHost 含模式标签 + 「取消目标」按钮两个子节点。
+	if mode_host.get_child_count() < 1 or mode_host.get_child(0).name != "battle_target_select":
 		push_error("tscn 战斗屏选目标卡应进入 battle_target_select")
 		_teardown_mounts()
 		return false
@@ -1105,7 +1121,7 @@ func _verify_tscn_battle(battle_state: Dictionary, battle_cmds: Dictionary) -> b
 		push_error("tscn 战斗屏选敌阶段不得下发命令: " + str(log))
 		_teardown_mounts()
 		return false
-	var enemy_btn := _find_button_by_text_contains(battle, "铁皮山猪")
+	var enemy_btn := _find_card_button_by_name_contains(battle, "铁皮山猪")
 	if enemy_btn == null or not enemy_btn.visible:
 		push_error("tscn 战斗屏选敌时敌人应变为可选按钮")
 		_teardown_mounts()
@@ -1236,7 +1252,8 @@ func _verify_tscn_ending(ending_success: Dictionary, ending_cmds: Dictionary) ->
 		push_error("tscn 无记录 run 不得渲染路线条")
 		_teardown_mounts()
 		return false
-	if minimal.get_node("primary_decision_surface/RecordPanel").visible:
+	# 本局记录块在 B2 结局回顾格（RecapGrid）之内。
+	if minimal.get_node("primary_decision_surface/RecapGrid/RecordPanel").visible:
 		push_error("tscn 无记录 run 不得渲染本局记录块")
 		_teardown_mounts()
 		return false
@@ -1327,11 +1344,19 @@ func _verify_tscn_rest(rest_state: Dictionary, rest_cmds: Dictionary) -> bool:
 		push_error("tscn 休整按钮数 %d < 1" % buttons)
 		_teardown_mounts()
 		return false
+	# 休整主决策面滚动化后，选项行在 ChoiceHost/ChoiceScroll 之下（2026-09-11 重构）。
 	var choice_row := rest.get_node(
-			"Root/RestStage/StageContent/primary_decision_surface/PanelMargin/PanelBody/ContentHost/ChoiceRow")
+			"Root/RestStage/StageContent/primary_decision_surface/PanelMargin/PanelBody/ContentHost/ChoiceHost/ChoiceScroll/ChoiceRow")
 	var expected: int = rest_state["choices"].size()
 	if choice_row.get_child_count() != expected:
 		push_error("tscn 休整选项卡数 %d != %d" % [choice_row.get_child_count(), expected])
+		_teardown_mounts()
+		return false
+	# LeaveRow 是休整软锁红线：常驻跳过入口必须始终存在（AGENTS.md 工作边界）。
+	var leave_button: Node = rest.get_node_or_null(
+			"Root/RestStage/StageContent/LeaveRow/LeaveButton")
+	if leave_button == null or not leave_button.visible:
+		push_error("tscn 休整必须常驻可见 LeaveRow 跳过入口")
 		_teardown_mounts()
 		return false
 	# 移除目标面板是条件槽位，未点「温养一蛊」前不得展开。
@@ -1402,8 +1427,9 @@ func _verify_tscn_npc(npc_state: Dictionary, npc_cmds: Dictionary) -> bool:
 	var surface := "Root/primary_decision_surface/"
 	var offer_list: Node = npc.get_node(
 			surface + "TradeColumn/TradePanel").content_host.get_node("OfferScroll/List")
+	# 易物面板已独立为第三列（TalkColumn/TradeColumn/BarterColumn 三列布局）。
 	var barter_list: Node = npc.get_node(
-			surface + "TradeColumn/BarterPanel").content_host.get_node("BarterScroll/List")
+			surface + "BarterColumn/BarterPanel").content_host.get_node("BarterScroll/List")
 	var talk_list: Node = npc.get_node(
 			surface + "TalkColumn/TalkPanel").content_host.get_node("TalkScroll/List")
 	if offer_list.get_child_count() != npc_state["offers"].size():
@@ -2651,6 +2677,9 @@ func _promotion_readiness(controller) -> Dictionary:
 	var held_rank: Dictionary = {}
 	for inst_value in controller.state.gu_instances.values():
 		var inst: Dictionary = inst_value
+		# 已消耗实例（promotion 输入/卖掉/放生等）不属持有：与预览卡 refined_gu_ids 口径一致。
+		if str(inst.get("state", "")) == "consumed":
+			continue
 		var owned_id := str(inst.get("definition_id", ""))
 		var owned_rank := int(inst.get("rank", 1))
 		if owned_rank > int(held_rank.get(owned_id, 0)):

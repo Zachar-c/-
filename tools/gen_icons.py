@@ -88,7 +88,11 @@ save(bg, os.path.join(OUT, "adaptive_background_432.png"))
 
 # Boot splash: 640x360 (16:9), same paper+seal composition, seal sized to
 # the height so it stays proportionate in the wide frame.
-splash = paper_canvas(640, 360)
-draw_seal(splash, size_ratio=0.34, font_ratio=0.20, tilt=3.0)
-save(splash, os.path.join(OUT, "boot_splash.png"))
+# NOTE(2026-09-15): boot_splash.png is now an AI-generated asset
+# (assets/icon/boot_splash.png, 16:9 gu beast breaking through paper).
+# The programmatic version below is kept as reference but must NOT overwrite
+# the AI asset, so it is commented out.
+# splash = paper_canvas(640, 360)
+# draw_seal(splash, size_ratio=0.34, font_ratio=0.20, tilt=3.0)
+# save(splash, os.path.join(OUT, "boot_splash.png"))
 print("done")
