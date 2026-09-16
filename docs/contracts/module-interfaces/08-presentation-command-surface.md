@@ -23,6 +23,7 @@
 ## 关键数据契约
 
 - 命令构建：`RunCommandBuilder.for_screen(screen, controller)` 按屏注册命令集；`_battle_card_command/_rest_choose_command/_shop_buy_command` 等按卡片 ID 组装命令
+- 战斗杀招命令：`play_kill_move` 携带可选 `confirmed`（T16，2026-09-15）。残锋会触发质变且未确认时，领域侧硬拦 `sword_mark_confirm_required`；表现层确认框复用 `GuConfirmDialog`，不得静默出招
 - 快照：`RunSnapshotBuilder` 输出 UI 消费字典（资源条/立绘/意图/卡片），键全集见 `docs/contracts/2026-09-02-domain-ui-contract.md`
 - 视图路由：`RunScreenRouter.MASTER_SCENE_PATHS` 唯一路由表（.tscn，无 guitkx 生成层；W12 split 自 `run_controller.gd` 迁至 `run_screen_router.gd`）
 

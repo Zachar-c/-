@@ -53,38 +53,25 @@
 ## 当前待办
 
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
+> 状态以代码 / 测试 / `git log` 为准；本节只同步「仍在动」的事。
 
-1. **World Model Stage 0：蛊界世界规则基准审计（2026-09-16 用户裁定：最高优先级）**：以 `docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md` 为最高设计宪章。Stage 0 通过前只允许证据索引、审计报告、只读探针和测试夹具；禁止继续施工 F1 Pity、Q8-G promotion/material、流派晋升链及其他生产规则变更。Q8-G 文档降级为现有系统状态与历史决策档案。
-   - 出口：至少冻结 20 条、目标 24 条高影响 `world_claim`，形成 `World Model Baseline v1`，并逐项裁定现有机制保留、冻结、重做或废止。
-   - **证据债现状（2026-09-16）**：管道与门禁已就绪（`tools/lore.ps1 world-model-0`，exit 3 = `NO_GO`），24 条 claim 仍全部 `deferred`、零引用。候选已批量召回（`tools/stage0_evidence_candidates.py` → `docs/lore/candidates/`，208 条 / 207 条可入库），复核走 `tools/verify_stage0_candidates.py`（用真 `resolve_evidence` 反查，含 twin）。**唯一阻塞是人工确认**：把确认项写入 `evidence.jsonl` 并挂到 claim。据此报告 `.superpowers/sdd/evidence-recall-report.md`。
-   - **《人祖传》证据效力（2026-09-16 用户裁定）**：它是书中书，全文散在蛊真人中（实测 92.6% 段落可在主文定位）。故为**派生摘编而非独立见证**——同一句话不得当两条互证；两源同为 P0（`_AUTHORITY_RANK` 均为 0），主文存在的段落一律引主文（候选带 `twin` 坐标），仅摘编独有的段落才以 `in_world_text` 引用。
-   - Stage 0 通过后，后续阶段必须先做 10–20 只蛊的纵向切片，再允许扩大内容池。
-2. **剑道流派收口（暂停，待 Stage 0）**：端到端可玩已通（契约 + 至终局驱动 + `CORE_LOOP_FAITHFUL=1 sword`）；身份机制未做完。其规则是否保留、重做或废止由 Stage 0 基准裁定。
-   - **T16 残锋降转**（第一阻塞）：杀招永久耗剑蛊道痕、阈值降转；规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §2。前置：`battle_command_facade` → `RunState.gu_instances` 实例回写通路；不可逆代价须确认 UI + 预检，禁止静默惩罚。
-   - 随 T16：`sword_mark_cost` 4 只预留字段接入；logistics `bound` 死数据读取点（或裁定删除）。
-   - **P2-1 剑气临时蛊 / P2-2 pierce**：T16 落地后再排，不扩包。
-   - 参考：`reports/2026-09-12-sword-school-completion-audit.md` §7；验收：剑道契约 + `test_drive_to_ending` + unit/integration + 交互门。
-2. **当前批次（2026-09-11 用户裁定：卡牌 UI 重构 + 真窗验收）**：
-   - **卡牌重构**：手牌单卡信息层级/画框/稀有度流光重构（现役 `GuTallFanHandView`，战斗线框 v3 卡 110×154 基线）——单测 + 交互门三键回归**已完成**（2026-09-11），真窗手感验收 ✅（2026-09-14，五态截图全通过，连带修复卡牌插画空白）。
-   - **战斗水墨去框重构（2026-09-11 已落地）**：敌人/玩家去框融入山水、意图篆刻印、按钮减重、debug 弱化；headless 全绿，真窗验收 ✅（2026-09-14）。
-   - **休息屏软锁修复（2026-09-11 已落地）**：主决策面滚动化 + LeaveRow 常驻跳过入口；回归门 `tools/verify_rest_headless.gd`（1280x720 SubViewport 可视预算 + 引擎拾取）。
-   - **V 线（已批准，2026-09-10）**：Encounter v1（C4）、Npc/Ending/ContentError v1（B1）线框稿均获批；B2 首批 tscn 已落地（`ddef08a` + `4de08bf`：四屏布局与线框对齐 + 结局回顾格 + NPC 对话卡）。B2 真窗/截图验收 ✅（2026-09-14，四屏全部成功截图）。
-   - **E1-E7 按层伪随机：全链闭环**（E1 pacing 分类概率表 / E2 生成器分类抽取 / E3 休息三选一 mode_groups / E4 表现层路由 / E5 `verify_pacing_density` + `verify_route_diversity` 双门 / E6 `enemy_roll` / E7 `shop_stock`）。
-   - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门（`dead=[]`、`no_ui_click=[]`、`occluded=[]` 三键全 0，滚动裁剪以 `scrolled=N` 计数留痕）；Settings 手记/图鉴导航已接入路由启用（`nav_journal`/`nav_codex`，2026-09-11），设置=当前页标识 disabled。
-3. ~~队列后续：真窗键鼠验收（B2 四屏 + W10 `continue_run` + S 阶段全流程 + 手牌动态手感）~~ ✅ **已闭环（2026-09-14）**：四项真窗验收全部通过，详见 `docs/superpowers/reports/2026-09-14-true-window-acceptance.md`；连带修复卡牌插画空白（`_card_art_texture` 改用 `load()` 替代 `Image.load()`，消除导出 WARNING）。D1b 古方知识模型已落地（`2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）；`run_controller` A7 减行已达标 888 行。
-4. 验证遗留（2026-09-15 复核）：smoke 门断言已跟进 rest/NPC/ending/battle 屏重构全绿；W10 首跑 `has_save=false` flake 经 headless 5 轮全新态探针（`tools/probe_w10_flake.gd`）不可复现，判定为真窗环境因素（并发引擎实例或 GUI 包装层），`verify_w10_continue_run.gd` 已加固为 `save_run` 失败显式报错；Dialogue Manager invalid UID 在 smoke/play 模式未复现；ObjectDB/RID 泄漏仍存但 GUT 退出时降至 18 实例 / 6 资源（历史 20601，属 GUT 语境既有遗留）；最终 `tools/test.ps1 -Suite unit`（1467/1467）、`-Suite integration`（32/32）、交互门全绿。
-5. 提交时继续排除 `.claude/`、`.codex/`、截图目录与 `__pycache__`。~~无关的 `data/dialogues/events.dialogue` 本地修改~~ **排除令已解除（2026-09-16）**：D4 已使 `events.dialogue` 成为事件机制的必要组成（每条事件必须有 `~ <event_id>` 菜单块，否则对话气球点了悬空），并由 `tools/verify_event_variety.gd` 的反空转 canary 守卫，不再属"无关本地修改"。~~`data/enemies.json` 在 E6 补 weight 验证前仍按未经验证排除，E6 落地后解除。~~ **排除令已解除（2026-09-10 用户指令）**：原排除理由（E6 补 `weight` 验证）已失效——E7 改用"种子化洗牌取前 N"而非权重法，E6 也不再需要 `weight`；`data/enemies.json` 现有 30 条均由 `content_catalog.validate` 全量校验 + `test_b5_content_expansion.gd` 三条池契约守卫（clue ≥2 / 每主题有非 boss / 每条能起战）覆盖。
-6. **美术素材补齐（2026-09-15 新建待办，两途径）**：缺失清单与提示词见 `docs/art/AI-ART-PROMPTS.md`（§9 开源 vs AI 分类）、`docs/art/BATCH-1-PROMPTS.md`（首轮入库状态速查）。
-   - **公开美术（开源）**：game-icons 52 枚已入库、`gu_icon_view.gd` ICON_PATHS 注册 + modulate 染色、大厅「关于」CC BY 3.0 署名、`apply_seal` 印章组件已实现。**2026-09-15 已落地**：① E1 羊皮纸纹理 `paper_texture.png`（texturize.app royalty-free，2048²）与 E2 印泥肌理 `seal_ink_texture.png`（grunge 源本地调朱砂红，`tools/gen_seal_ink_texture.py` 复现）已入库 `assets/wenzhen/textures/` 并导入；③ 52 枚 game-icons + 2 纹理已补登 `assets_manifest.json`（57 条，`tools/update_assets_manifest.py` 幂等追加，manifest 单测 4/4）。**剩余**：② 流派道徽纹样 13/20 game-icons 裁切入框（流派卡当前纯文字，可选增强）；E3 云纹卷轴边框公开源无匹配水墨素材，留待 AI 生成或程序化。
-   - **GPT/AI 生图**：提示词已就绪——Boss 4 张见 `BATCH-1-PROMPTS.md` 批次 1，其余 29 条（敌人 7 / NPC 3 / 蛊形 9 / 背景 7 / 品牌 3）见 `BATCH-2-PROMPTS.md`（2026-09-15，高内聚低耦合：§0 画风锚点单一来源 + 每条提示词内联展开、可直接复制）。生成后落对应目录跑 `tools/import.ps1` 即导入；`seal_missing_grid.png` 15 枚待裁切（节点 3 + 道徽 7 + 徽记 5）。
-7. **肉鸽化改造（2026-09-16：D1 + D4 + D7 已落地，D2/D4 频率待裁定）**：
-   - **D1 关底 Boss 随机化** ✅：4 个关底台加 `boss_pool`（按 `hp × boss_layer_mult` 的**有效强度**做滑动窗口，层内差 ≤2 / 层间单调，原关底 Boss 恒在池内），`map_generator._roll_boss_for` 用独立派生流抽取 + 相邻层不重复；**L5 `final_boss_stand` 保持固定**。门禁 `tools/verify_boss_variety.gd` 40 种子 PASS（`topology_mismatch=0`），**7 个 boss 全部上场**（改前 5 个）。回滚＝删 4 个节点上的 `boss_pool` 键。
-   - **D4 事件池扩容** ✅：`data/events.json` 2 → 12 条（母题落在原文高频词：遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊），四杠杆＝`health_cost` / `delayed_soul_cost` / `curse_id`（3 条诅咒全用上）/ **新增 `stone_gain`**；事件节点加 `event_pool` 按种子抽宿主事件。**顺带修复扩容硬前置**：`_append_event_cards` 原不接收 node、遍历全表出卡（池=2 时看不出，扩到 12 会铺满 12 张），已改 node-aware。门禁 `tools/verify_event_variety.gd` 40 种子 PASS（12/12 覆盖、93 事件槽）。回滚＝删 `event_pool` / `stone_gain`。
-   - **D7 精英节点显性化** ✅（2026-09-16）：地图节点新增只读键 `threat`（`"" | "elite"`，判据真源 `MapGenerator.node_threat` 读 catalog 的 `tier`）。修复两个叠加缺陷：① `map_screen_view` 的精英分支判 `node.enemy_kind.contains("elite")`，而地图快照**从不写 `enemy_kind`** ⇒ 死代码；② 12 个精英里只有 `ridge_elite_scout` 的 id 含 "elite" ⇒ 即使键到位也漏判 11/12。门禁 `tools/verify_map_threat.gd` 40 种子 PASS（6500 节点 / 1105 精英 / 旧判据仅 418）；全量 unit 1525/1525 + 交互门三键全 0。回滚＝删快照 `threat` 键。
-   - **🔴 待用户裁定（第一前置）**：`pacing.json` 是否解冻。现在**卡住三件事**——① D2 层性向（改 `category_weights`，违反 Reachability「不改 pacing」红线 + 作废 f1 的 32 局语料）；② D4 的**频率提升**（事件仍 ≈2.3 个/局，本轮只买到"种类"多样性）；③ **D7 暴露的 L1/L2 零精英**（前两大层战斗池只剩 beast 主题，而 beast 精英最低 rank 3 > 两层 `enemy_rank_max` ⇒ 一局前 40% 没有精英威胁方差）。不裁定就只能继续在数据层做加法。
-   - **已知缺陷（未修，需口径裁定）**：多敌遭遇结算 tier 错位——`LootResolver` 只读 `battle.enemy_kind`，而 `BattleCommandFacade` 仅在 `enemy_roll.size()==1` 时写该键 ⇒ `beast_swarm_pass`（唯一多敌模板）即使两只都是精英也按 **common** 结算（少给奖励、不触发精英绑定代价）。修它要动 `LootResolver`（红线）。
-   - **未做**：L5 终局随机化（阻塞于 `miasma_vein_lord` **强度倒挂**——rank 3 / hp 14 却是全场最弱 boss，有效 HP 21 < L4 候选 27，需平衡裁定）；`pursuit` 型固定精英（`greedy_wanderer`）未纳入 D7；精英角标视觉权重可再加强（现仅角标 `險` + 类别 `精英`）。
-   - 文档：交接 `docs/superpowers/reports/2026-09-16-roguelike-handover.md` · 调研与方向对比 `...roguelike-audit-and-directions.md` · D4 实施 `...d4-event-pool-expansion.md` · **D7 实施 `...d7-elite-node-visibility.md`（含 Shared 区五步声明）** · D2 预审 `docs/superpowers/specs/2026-09-16-rogue-layer-temperament-spec.md`。
+1. **World Model Stage 0：蛊界世界规则基准审计（2026-09-16 用户裁定：最高优先级）**：以 `docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md` 为最高设计宪章。
+   - **✅ Gate = GO（2026-09-16 重跑）**：`tools/lore.ps1 world-model-0` 输出 `result: GO`；24/24 高影响 claim 均有完整 P0 引用；报告 `docs/lore/generated/world-model-stage0-gate.md`。语料指纹已按仓库内只读原文校正（`lore_sources/manifest.json`）。
+   - **仍禁止**：Gate GO ≠ 自动授权生产改造。在纵向切片批准前，继续禁止把 Stage 0 裁定直接落成 `data/` / `scripts/` / `scenes/` 变更；Q8-G / F1 Pity / promotion 仍按 legacy disposition（audit_only / defer）。
+   - **下一步**：按宪章做 10–20 只蛊的纵向切片规格与评审，再允许扩大内容池；裁决语义以 `decisions.jsonl` + baseline v1 为准。
+   - **《人祖传》证据效力（2026-09-16 用户裁定）**：派生摘编而非独立见证——主文存在的一律引主文 twin。
+2. **剑道流派（暂停，待 Stage 0 裁定）**：端到端可玩；**T15 刻痕通道 + T16 残锋降转已落地**（`sword_mark_rules.gd`、`BattleCommandFacade.settle_sword_marks`、快照键 `dao_marks`/`sword_downgrades`、确认通路 `play_kill_move.confirmed`，规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §5）。身份机制剩余项是否保留/重做/废止由 Stage 0 基准裁定。
+   - 未做（Stage 0 解冻后另排，不扩包）：**P2-1 剑气临时蛊**、**P2-2 pierce**、`sword_intent` 是否接线（重查已把「剑意」从核心降级，需另行论证）。
+   - ~~logistics `bound` 死数据~~ **已关闭（数据层）**：`default_effect_by_role.logistics` 现为 `heal:1`，`gu.json` 无显式 `status:bound`；战斗侧 `bound_blocks_dodge` 是 battle2 玩家旗标，与蛊效果无关。
+   - ~~refine 卡隐藏元石/材料成本~~ **已关闭（2026-09-12）**：`action_preview_service._append_recipe_card` 摊开 `stone_cost`+`materials` 并写入 `executable`/`block_reason`；守卫 `test_action_preview_service.gd`。
+3. **肉鸽化改造（D1 + D4 + D7 已落地；下一前置待裁定）**：
+   - 已落地：D1 关底 `boss_pool`（7 boss 全上场，门禁 `verify_boss_variety.gd`）· D4 事件 2→12 + `event_pool`（`verify_event_variety.gd`）· D7 快照 `threat`（`verify_map_threat.gd`）。交接：`docs/superpowers/reports/2026-09-16-roguelike-handover.md`。
+   - **🔴 待用户裁定**：① `pacing.json` 是否解冻（卡住 D2 层性向、D4 事件频率、D7 暴露的 L1/L2 零精英）；② L5 终局随机化（`miasma_vein_lord` 强度倒挂，需平衡裁定）；③ 多敌遭遇 `LootResolver` tier 错位（动红线对象，需口径裁定）。
+4. **美术素材补齐**：清单与提示词见 `docs/art/AI-ART-PROMPTS.md`、`BATCH-1-PROMPTS.md`、`BATCH-2-PROMPTS.md`。
+   - 开源侧：game-icons 52 枚 + 羊皮纸/印泥纹理已入库并登 `assets_manifest.json`。剩余：流派道徽裁切入框（可选）、`seal_missing_grid.png` 15 枚裁切、云纹卷轴边框。
+   - AI 侧：Boss 4 张 + 批次 2 共 29 条提示词已就绪；生成后 `tools/import.ps1` 导入。
+5. **提交卫生**：继续排除 `.claude/`、`.codex/`、截图目录与 `__pycache__`。`events.dialogue` / `enemies.json` 的历史排除令已解除（见 2026-09-16 D4 / 2026-09-10 用户指令）。
+6. **验证残留风险（不阻断交付）**：GUT 语境 ObjectDB/RID 泄漏已从历史 2 万级降到个位数～十余实例；W10 真窗 flake 判定为环境因素；Dialogue Manager invalid UID 在 smoke/play 未复现。以当前全量 unit/integration/交互门绿为准。
 
 ## 技术约定
 

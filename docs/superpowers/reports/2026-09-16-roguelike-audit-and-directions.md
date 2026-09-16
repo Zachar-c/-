@@ -127,7 +127,7 @@
 
 - `school_rules.gd`（86）、`inheritance_claim_rules.gd`（128）、`curse_registry.gd`（104）、
   `contract_rules.gd`（33）
-- 剑道（sword）是当前重点：`sword_mark_rules.gd`（93），T16 残锋降转**未完工**
+- 剑道（sword）是当前重点：`sword_mark_rules.gd`（93）。~~T16 残锋降转未完工~~ **已落地（2026-09-15）**，见 `specs/2026-09-12-sword-p2-t15-t16-spec.md` §5；本文该行写作时点早于落地。
 
 ---
 
