@@ -54,6 +54,10 @@ static func build(controller) -> Dictionary:
 			"revealed": bool(n.get("revealed", true)),
 			# Phase 2：与当前构筑目标的关系（只读派生，不承诺掉落、不泄露未揭示内容）。
 			"build_relevance": BuildGoalProjectionScript.node_relevance(n, state, catalog, build_goal),
+			# D7 精英节点显性化（2026-09-16）：遭遇威胁（"" | "elite"）。
+			# 判据唯一真源在领域层 MapGenerator.node_threat（读 catalog 的 tier，
+			# 不猜 id 子串）；迷雾节点与 Boss 台由领域层自己排除。
+			"threat": MapGeneratorScript.node_threat(n, catalog),
 		})
 	nodes.sort_custom(func(a, b): return int(a.get("layer", 0)) * 1000 + int(a.get("row", 0)) < int(b.get("layer", 0)) * 1000 + int(b.get("row", 0)))
 	var reach: Array[String] = []

@@ -405,6 +405,47 @@ static func _roll_event_for(catalog: Dictionary, instance_id: String, template: 
 	return {"id": picked, "summary": str(event.get("summary", ""))}
 
 
+## D7 精英节点显性化（2026-09-16）：地图节点的**遭遇威胁**只读投影。
+##
+## 返回 `""`（不标记）或 `"elite"`（本节点要打的遭遇里有 `tier=="elite"` 的敌人）。
+##
+## 判据是 `catalog.enemy_by_id[<id>].tier`——**不是** id 子串：当前 12 个精英里只有
+## `ridge_elite_scout` 的 id 含 "elite"，按子串判会漏掉 11/12（旧实现即如此）。
+##
+## 读键顺序与战斗侧同源（`run_battle_flow._start_battle` / `BattleCommandFacade.start`）：
+## `enemy_roll`（E6 抽取）→ `enemy_kinds` → `enemy_kind`（锚点 / 关底台 / 旧存档）。
+## 多敌遭遇里**任一**敌人是精英即标记：本键回答的是「这条路要不要走」（遭遇风险），
+## **不承诺结算 tier**——结算 tier 由 `LootResolver` 按 `battle.enemy_kind` 单独取，
+## 两者在多敌遭遇上并不等价（见 2026-09-16 D7 报告「已知不一致」）。
+##
+## **迷雾纪律**：`revealed == false` 的节点一律返回 `""`，与节点卡「未知 · ?」口径一致，
+## 不得让未揭示节点经该键泄露内容。非 `combat` 类型同样返回 `""`
+## （`pursuit` 等固定敌人节点本轮不在范围内，见同报告「未做」）。
+static func node_threat(node: Dictionary, catalog: Dictionary) -> String:
+	if str(node.get("type", "")) != "combat":
+		return ""
+	if not bool(node.get("revealed", true)):
+		return ""
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	if enemy_by_id.is_empty():
+		return ""
+	for enemy_id in encounter_enemy_ids(node):
+		if str((enemy_by_id.get(enemy_id, {}) as Dictionary).get("tier", "")) == "elite":
+			return "elite"
+	return ""
+
+
+## 遭遇敌人 id 的读键顺序（与战斗侧同源；供威胁投影与测试复用）。
+static func encounter_enemy_ids(node: Dictionary) -> Array:
+	if node.has("enemy_roll"):
+		return (node.get("enemy_roll", []) as Array).duplicate()
+	if node.has("enemy_kinds"):
+		return (node.get("enemy_kinds", []) as Array).duplicate()
+	if node.has("enemy_kind"):
+		return [str(node.get("enemy_kind", ""))]
+	return []
+
+
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:
 	var route: Array[Dictionary] = []
 	var route_id_set := {}

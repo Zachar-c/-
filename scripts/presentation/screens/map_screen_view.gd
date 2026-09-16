@@ -411,7 +411,11 @@ func _build_nodes(nodes: Array, positions: Dictionary, sizes: Dictionary, rows: 
 func _build_node_button(node: Dictionary, id: String, position: Vector2, size: Vector2, row_index: int) -> Button:
 	var ntype := str(node.get("type", ""))
 	var visual: Dictionary = NODE_STYLE.get(ntype, UNKNOWN_STYLE)
-	if ntype == "combat" and str(node.get("enemy_kind", "")).contains("elite"):
+	# D7（2026-09-16）：精英遭遇角标改接快照 `threat`（领域层判据）。
+	# 旧实现判 `node.get("enemy_kind","").contains("elite")`——地图快照从不写
+	# `enemy_kind`，且 12 个精英里只有 1 个 id 含 "elite"，两个原因叠加使该分支
+	# 从未生效（死代码 + 子串漏判）。
+	if str(node.get("threat", "")) == "elite":
 		visual = ELITE_STYLE
 	var reachable := bool(node.get("reachable", false))
 	var is_current := str(node.get("visibility", "")) == "current" or bool(node.get("current", false))

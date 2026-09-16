@@ -122,6 +122,34 @@ func test_map_uses_html_palette_and_circled_node_marks() -> void:
 	assert_eq(combat_icon.text, "鬥", "ordinary combat must keep the approved route-map mark")
 
 
+func test_map_marks_elite_only_from_the_snapshot_threat_key() -> void:
+	# D7 回归钉（2026-09-16）：旧实现判 `node.enemy_kind.contains("elite")`，
+	# 而地图快照**从不写 enemy_kind**、且 12 个精英里只有 1 个 id 含 "elite"
+	# ⇒ 精英角标从未生效。判据必须只认领域层给的 `threat`。
+	var snapshot := {
+		"nodes": [
+			{"id": "current", "type": "combat", "label": "当前", "layer": 1, "next_ids": ["substring_only"], "reachable": false, "visibility": "current", "current": true},
+			{"id": "substring_only", "type": "combat", "label": "旧子串", "layer": 2, "next_ids": ["tier_elite"], "reachable": true, "visibility": "reachable", "enemy_kind": "resolute_elite"},
+			{"id": "tier_elite", "type": "combat", "label": "真精英", "layer": 2, "next_ids": [], "reachable": true, "visibility": "reachable", "threat": "elite"},
+		],
+		"resources": {}, "contracts": [], "anomalies": [], "death_lines": {}, "gu_satchel": [], "toast": "",
+	}
+	var host := _mount(snapshot)
+	for _frame in 3:
+		await get_tree().process_frame
+	var substring_icon := _named(host, "map_node_mark_label_substring_only") as Label
+	var threat_icon := _named(host, "map_node_mark_label_tier_elite") as Label
+	assert_not_null(substring_icon, "the legacy-substring node must render")
+	assert_not_null(threat_icon, "the elite-threat node must render")
+	if substring_icon == null or threat_icon == null:
+		return
+	assert_eq(substring_icon.text, "鬥",
+			"an 'elite' substring in enemy_kind must no longer mark a node as elite")
+	assert_eq(threat_icon.text, "險", "the snapshot threat key must drive the elite mark")
+	assert_true(_has_text(host, "精英 · 可前往"),
+			"an elite node must read as 精英 on the card, not as an ordinary 战斗")
+
+
 func test_map_node_rects_match_the_approved_html_icon_layout() -> void:
 	var host := _mount_with_commands(_route_snapshot(), {"travel": func(_id): pass, "view_node": func(_id): pass})
 	for _frame in 3:
@@ -321,7 +349,7 @@ func _route_snapshot() -> Dictionary:
 			{"id": "past", "type": "event", "label": "旧路", "layer": 61, "next_ids": ["current"], "reachable": false, "visibility": "past"},
 			{"id": "current", "type": "combat", "label": "当前所在", "layer": 62, "next_ids": ["market", "elite", "event"], "reachable": false, "visibility": "current"},
 			{"id": "market", "type": "market", "label": "黑市商队", "layer": 63, "next_ids": ["rest"], "reachable": true, "visibility": "reachable"},
-			{"id": "elite", "type": "combat", "label": "雷泽伏杀", "layer": 63, "next_ids": ["rest", "shop"], "reachable": true, "visibility": "reachable", "enemy_kind": "resolute_elite"},
+			{"id": "elite", "type": "combat", "label": "雷泽伏杀", "layer": 63, "next_ids": ["rest", "shop"], "reachable": true, "visibility": "reachable", "threat": "elite"},
 			{"id": "event", "type": "event", "label": "无名异闻", "layer": 63, "next_ids": ["shop"], "reachable": true, "visibility": "reachable"},
 			{"id": "rest", "type": "rest", "label": "荒寺休整", "layer": 64, "next_ids": [], "reachable": false, "visibility": "lookahead"},
 			{"id": "shop", "type": "shop", "label": "百虫黑市", "layer": 64, "next_ids": [], "reachable": false, "visibility": "lookahead"},

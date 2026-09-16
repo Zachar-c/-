@@ -1,0 +1,20 @@
+﻿rc=0
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+AUDIT[Hall] total=15 clickable=6 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Hall-Schools] total=38 clickable=26 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Hall-Contracts] total=43 clickable=2 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Hall-Codex] total=43 clickable=1 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Hall-Journal] total=43 clickable=1 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Map] total=15 clickable=11 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Battle] total=17 clickable=11 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Rest] total=16 clickable=10 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=1
+AUDIT[Refine] total=481 clickable=11 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Settings] total=14 clickable=13 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Kill] total=3 clickable=3 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Reward] total=3 clickable=3 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Npc] total=11 clickable=4 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[ContentError] total=1 clickable=1 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT[Ending] total=4 clickable=4 dead=[] no_ui_click=[] occluded=[] occluded_known=0 scrolled=0
+AUDIT_DONE
+

@@ -16,8 +16,10 @@
 | `visible_nodes(route, state, forward_layers=1)` | route + state | `Array[Dictionary]` | 迷雾揭示：当前选择层 + 前瞻 N 层 |
 | `visible_node_ids(route, state, forward_layers)` | 同上 | `Array[String]` | 便捷变体 |
 | `tree_columns(route)` | route | `Array[Array]` | 列宽分组（UI 画树用） |
-| `instance_id_for(layer, row, index)` | 三层坐标 | String | 节点 ID 规范（`node_L_R_I`） |
+| `instance_id_for(layer, row, index)` | 三层坐标 | String | 节点 ID 规范（`L{layer}R{row}N{index}`） |
 | `layer_index(stage)` | `"one".."five"` | int 1..5 | 层名↔层号 |
+| `node_threat(node, catalog)` | node 字典 + catalog | `""` \| `"elite"` | **D7（2026-09-16）遭遇威胁只读投影**：遭遇里有 `tier=="elite"` 敌人即 `"elite"`。读键顺序 `enemy_roll` → `enemy_kinds` → `enemy_kind`（与战斗侧同源）；仅 `type=="combat"`；`revealed==false` 一律 `""`（迷雾纪律）。**判据读 catalog 的 `tier`，不得退回 id 子串判**（12 个精英里只有 1 个 id 含 "elite"）。表达的是**遭遇风险**，不承诺结算 tier |
+| `encounter_enemy_ids(node)` | node 字典 | `Array` | 上面的读键顺序抽出为可复用静态函数（威胁投影与测试共用，避免两处各写一套） |
 
 ## 关键数据契约（node 字典）
 
@@ -33,6 +35,8 @@
     ——所以该字段可用 `stripped`（去掉敌人目录）对照断言地图结构逐字段不变，
     引入 E6 **不改动既有地图布局与既有种子产出**。
   - 该键随 `route` 一起进存档；旧存档无此键时战斗侧自动回退（见 01 页）。
+- **`threat` 不在 route 节点上**（D7，2026-09-16）：它是**表现层快照键**，由 `map_snapshot` 调用
+  `MapGenerator.node_threat` 现算——**不进 route、不进存档、无迁移成本**，动作方式是纯读投影。
 - 锚点行语义：`"mid"=row/2`、`"pre_boss"=row_count-2`；`pacing.json.layers["1"].anchors` = `yizang_ridge(pre_boss)` + `refinement_hollow(mid)`
 - 黑市 `ridge_black_market` 每大层恰 1 处（mid 行）；休整 `rest_hollow/rest_shrine` 每三行交错
 - 路由含 `final_boss_stand`（末层关底）与 `ascension_window`（仅从 Boss 台可达）
