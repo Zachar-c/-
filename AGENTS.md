@@ -58,7 +58,7 @@
 1. **World Model Stage 0：蛊界世界规则基准审计（2026-09-16 用户裁定：最高优先级）**：以 `docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md` 为最高设计宪章。
    - **✅ Gate = GO（2026-09-16 重跑）**：`tools/lore.ps1 world-model-0` 输出 `result: GO`；24/24 高影响 claim 均有完整 P0 引用；报告 `docs/lore/generated/world-model-stage0-gate.md`。语料指纹已按仓库内只读原文校正（`lore_sources/manifest.json`）。
    - **仍禁止**：Gate GO ≠ 自动授权生产改造。在纵向切片批准前，继续禁止把 Stage 0 裁定直接落成 `data/` / `scripts/` / `scenes/` 变更；Q8-G / F1 Pity / promotion 仍按 legacy disposition（audit_only / defer）。
-   - **下一步**：按宪章做 10–20 只蛊的纵向切片规格与评审，再允许扩大内容池；裁决语义以 `decisions.jsonl` + baseline v1 为准。
+   - **下一步（设计已出，待用户批准）**：`docs/superpowers/specs/2026-09-16-stage1-gu-entity-vertical-slice-design.md`——12 蛊 / 南疆散修身份 / 短路线剧本 / 月光炼成 / 货郎。批准前零生产 diff；通过前禁止扩大蛊目录与流派数。
    - **《人祖传》证据效力（2026-09-16 用户裁定）**：派生摘编而非独立见证——主文存在的一律引主文 twin。
 2. **剑道流派（暂停，待 Stage 0 裁定）**：端到端可玩；**T15 刻痕通道 + T16 残锋降转已落地**（`sword_mark_rules.gd`、`BattleCommandFacade.settle_sword_marks`、快照键 `dao_marks`/`sword_downgrades`、确认通路 `play_kill_move.confirmed`，规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §5）。身份机制剩余项是否保留/重做/废止由 Stage 0 基准裁定。
    - 未做（Stage 0 解冻后另排，不扩包）：**P2-1 剑气临时蛊**、**P2-2 pierce**、`sword_intent` 是否接线（重查已把「剑意」从核心降级，需另行论证）。
