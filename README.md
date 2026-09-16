@@ -1,6 +1,6 @@
 # 問眞
 
-《蛊真人》同人单机卡牌肉鸽 **《問眞》**（前称《蛊路求生》/旧名 Nanjiang Smoke）——以《蛊真人》世界规则为素材的修行肉鸽原型项目。仓库不提供 `GDD.md`；权威基线 = [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)。
+《蛊真人》同人单机卡牌肉鸽 **《問眞》**（前称《蛊路求生》/旧名 Nanjiang Smoke）——以《蛊真人》世界规则为素材的修行肉鸽原型项目。仓库不提供 `GDD.md`；当前最高设计宪章 = [蛊界世界模型纠偏设计](docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md)，既有机制规格在 Stage 0 通过前仅作为待审计实现材料。
 
 当前版本：`0.9.0`（语义化版本 2.0 单源：`scripts/domain/game_version.gd`，大厅/设置屏统一读取）。
 
@@ -39,7 +39,8 @@
 ## 从这里开始
 
 - [项目决策浓缩对话](docs/项目决策浓缩对话.md)：快速了解已经确认的游戏方向与版本边界。
-- [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)：**权威基线**——核心玩法循环/资源/流派/地图/战斗/交互/肉鸽规则。
+- [蛊界世界模型纠偏设计](docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md)：当前最高设计宪章；规定原著证据、Stage 0 硬 Gate 和改造边界。
+- [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)：既有机制基线——核心玩法循环/资源/流派/地图/战斗/交互/肉鸽规则；其中与世界模型冲突的部分须经 Stage 0 重新裁定。
 - [问真视觉方向设计](docs/superpowers/specs/2026-09-04-wenzhen-visual-direction-design.md)：美术风格唯一来源（纸底网点/墨色/朱砂印章）。
 - [南疆冒烟版设计](docs/superpowers/specs/2026-08-21-nanjiang-roguelite-smoke-design.md)：旧基线，仅作参考。
 - [协作约定](AGENTS.md)：人工与代理继续编辑本仓库时应遵循的规则。
