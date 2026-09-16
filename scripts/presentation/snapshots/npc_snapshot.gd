@@ -127,8 +127,14 @@ static func build(controller) -> Dictionary:
 				price = "%d 元石" % (ResolverScript.price_for(catalog, state, raw_cost) if state != null else raw_cost)
 			# 黑市分层上架（§16.4）：货阶高于当前大层的货保留展示但禁点，
 			# 给出原因而不是让玩家点了才知道 shop_tier_locked。
+			#
+			# ⚠️ Stage 1（2026-09-16）：分层是「黑市上架」概念，只约束黑市节点
+			# （type=shop）。NPC 个人货架已由 `npc.stock` 精确约束，再套黑市分层
+			# 会让 L1 的货郎/商队卖不出自己的存货（切片缺口 5）。与命令面
+			# `SocialCommandRules._npc_trade` 同口径：只认节点类型，不认调用来源。
 			var block_reason := ""
-			if state != null and int(offer.get("tier", 1)) > ResolverScript.shop_max_tier(state, catalog):
+			if state != null and _node_is_black_market(controller) \
+					and int(offer.get("tier", 1)) > ResolverScript.shop_max_tier(state, catalog):
 				block_reason = "货阶超出当前大层"
 			var offer_desc := str(offer.get("clue", ""))
 			if offer_desc.is_empty() or offer_desc.contains(".") or offer_desc.contains("_"):
@@ -154,3 +160,11 @@ static func build(controller) -> Dictionary:
 	out["talk_options"] = talk_options
 	out["can_flee"] = stance != "极度仇恨"
 	return out
+
+
+## Stage 1（2026-09-16）：当前节点是否为黑市。分层门禁只约束黑市货架；
+## NPC 个人货架（contact/caravan）不受黑市分层限制。
+static func _node_is_black_market(controller) -> bool:
+	if controller == null or controller.current_node == null:
+		return false
+	return str(controller.current_node.get("type", "")) == "shop"

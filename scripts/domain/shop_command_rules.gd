@@ -81,6 +81,11 @@ static func shop_goods_pool(state: RunState, catalog: Dictionary) -> Array[Strin
 		# 共享的货池，让既有商店用例因洗牌结果改变而集体失效。
 		if offer.has("school") and str(offer.get("school", "")) != str(state.school):
 			continue
+		# Stage 1（2026-09-16）：`npc_only` 的货只挂在 NPC 个人货架（npc.stock）上，
+		# 不进黑市货池 —— 池子大小会改变种子化洗牌结果，新增一件就会让所有
+		# 依赖货架的既有用例集体失效（同上一条 school 隔离的教训）。
+		if bool(offer.get("npc_only", false)):
+			continue
 		pool.append(str(offer_key))
 	pool.sort()   # 与字典插入顺序解耦：洗牌结果只取决于种子
 	return pool
@@ -223,7 +228,12 @@ static func _shop_purchase(state: RunState, command: Dictionary, catalog: Dictio
 	if str(offer.get("kind", "")) != "purchase":
 		return Resolver._rejected(state, "unknown_shop_offer")
 	# 黑市分层上架：货阶高于当前大层时拒绝（层越深货越贵且稀有度越高）。
-	if int(offer.get("tier", 1)) > _current_shop_layer(state, catalog):
+	#
+	# ⚠️ Stage 1（2026-09-16）：`npc_trade` 走 NPC 自己的 `npc.stock`，不是黑市货架，
+	# 分层门禁原样复用会让 L1 的散修货郎卖不出 tier>1 的个人存货（切片缺口 5）。
+	# 与下方 `shop_offer_not_in_stock` 同口径：只约束黑市购买，NPC 个人货架不套黑市分层。
+	if str(command.get("type", "")) != "npc_trade" \
+			and int(offer.get("tier", 1)) > _current_shop_layer(state, catalog):
 		return Resolver._rejected(state, "shop_tier_locked")
 	# E7（2026-09-10）：**黑市**购买时，不在本次货架上的货一律拒绝。
 	# 只藏货架不拦命令面等于门关了一半 —— 命令面必须与快照读同一份货架。

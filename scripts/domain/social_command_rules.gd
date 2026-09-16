@@ -367,7 +367,15 @@ static func _npc_trade(state: RunState, command: Dictionary, catalog: Dictionary
 		return Resolver._rejected(state, "npc_not_present")
 	match str(offer.get("kind", "")):
 		"purchase":
-			return ShopCommandRulesScript._shop_purchase(state, {"offer_id": offer_id}, catalog)
+			# Stage 1（2026-09-16）：黑市节点继续走黑市货架口径（分层门禁照旧）；
+			# NPC 个人货架（contact/caravan 的 npc.stock）不套黑市分层 —— 分层是
+			# 「黑市上架」概念，货架归属已由 npc.stock 精确约束，否则 L1 的散修
+			# 货郎会被 shop_tier_locked 误杀（切片缺口 5）。与 npc_snapshot 同口径。
+			# 标记必须是自有值，不能复用 "shop_purchase"：后者会连带触发
+			# 黑市「本次货架」校验（shop_offer_not_in_stock），把 NPC 个人货
+			# 按黑市货架误杀 —— 那道校验本就只该管黑市购买。
+			var purchase_type := "npc_trade_shop" if _current_node_is_shop(state, catalog) else "npc_trade"
+			return ShopCommandRulesScript._shop_purchase(state, {"offer_id": offer_id, "type": purchase_type}, catalog)
 		"soul_boost":
 			return ShopCommandRulesScript._shop_soul_boost(state, {}, catalog, offer)
 		"lifespan_deal":
@@ -376,6 +384,15 @@ static func _npc_trade(state: RunState, command: Dictionary, catalog: Dictionary
 			return ShopCommandRulesScript._shop_barter(state, {"offer_id": offer_id, "input_instance_ids": command.get("input_instance_ids", [])}, catalog)
 		_:
 			return Resolver._rejected(state, "unknown_shop_offer")
+
+
+## Stage 1（2026-09-16）：当前节点是否为黑市（type=shop）。与表现层
+## `NpcSnapshot._node_is_black_market` 同口径，保证命令面与快照面一致。
+static func _current_node_is_shop(state: RunState, catalog: Dictionary) -> bool:
+	for node in catalog.get("nodes", []):
+		if str(node.get("id", "")) == state.current_node_id:
+			return str(node.get("type", "")) == "shop"
+	return false
 
 
 static func _current_node_declares_npc(state: RunState, catalog: Dictionary, npc_id: String) -> bool:

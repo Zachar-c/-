@@ -184,6 +184,18 @@ const CURSES := {
 	"meridian_seal": "经脉封蛊",
 }
 
+# Stage 1（2026-09-16）：炼蛊失败的世界内原因（设计 §5 要求「火候/相性/心神」）。
+# 未收录的 reason 返回空串，由调用方退回结构化变更摘要 —— 不能把原始 reason code 漏给玩家。
+const REFINEMENT_REASONS := {
+	"free_mix_destroyed": "火候失了分寸，炉中蛊虫尽数焦枯，一件也没能留下。",
+	"free_mix_mutation": "两蛊相性相冲，未成新方，反倒异变成了别的活物。",
+	"free_mix_explosion": "心神一乱，炉火炸开，气血、魂魄、寿元一并折了进去。",
+}
+
+
+static func refine_failure_text(reason: String) -> String:
+	return str(REFINEMENT_REASONS.get(reason, ""))
+
 # DDA 元机制提示文案（§16.5 黄系异变，与契约蓝系分区）。battle 字典里的
 # dda_boss_hint 只携带稳定 id，玩家可见文案统一走本表。
 const DDA_HINTS := {

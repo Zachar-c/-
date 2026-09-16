@@ -57,7 +57,8 @@ const BACKGROUND_ID := "background_nanjiang_wanderer"
 ## **没有**「未炼化」态 —— 这本身是切片要暴露的缺口（见 Gate C 的 GAP 输出）。
 const UNREFINED_STATE := "unrefined"
 
-## 预登记 seed 列表（不是事后挑选）：从表头开始取第一个 L1 内含炼蛊台的 seed。
+## 预登记 seed 列表（不是事后挑选）：从表头开始取第一个「L1 含炼蛊台 **且** 含货郎节点」的 seed
+## （剧本第 5/6 步都在 L1 内）；无同时命中者退化为只要求炼蛊台，货郎缺口由 Gate B 报出。
 const SEED_CANDIDATES: Array[int] = [101, 202, 303, 404, 505, 606, 707, 808, 909, 1111,
 		1212, 1313, 1414, 1515, 1616, 1717, 1818, 1919, 2020, 2121]
 
@@ -144,9 +145,24 @@ func _pick_seed() -> int:
 		return int(override)
 	for candidate in SEED_CANDIDATES:
 		var route: Array = MapGenerator.build(candidate, false, _catalog)
-		if _count_type(route, 1, "refinement") > 0:
+		if _count_type(route, 1, "refinement") > 0 and _l1_has_peddler(route):
 			return candidate
+	for fallback in SEED_CANDIDATES:
+		var route2: Array = MapGenerator.build(fallback, false, _catalog)
+		if _count_type(route2, 1, "refinement") > 0:
+			return fallback
 	return 0
+
+
+## L1 内是否存在货郎节点（剧本第 6 步：元石买血滴蛊 / 卖山货）。
+func _l1_has_peddler(route: Array) -> bool:
+	for node_value in route:
+		var node: Dictionary = node_value
+		if _coords(str(node.get("id", ""))).x != 1:
+			continue
+		if str(node.get("npc_id", "")) == PEDDLER_NPC_ID:
+			return true
+	return false
 
 
 func _gate_b(seed_value: int) -> String:
@@ -170,7 +186,8 @@ func _gate_b(seed_value: int) -> String:
 				int((rows_by_layer[layer_key] as Dictionary).get(str(coords.y), 0)) + 1
 		if bool(node.get("start", false)):
 			starts.append(str(node.get("id", "")))
-	_check("起点唯一", starts.size() == 1, str(starts))
+	# 起点数由 pacing.entry_nodes（1..2）决定，不是恒为 1；双入口是合法拓扑。
+	_check("起点数在 1..2 之间（pacing entry_nodes）", starts.size() >= 1 and starts.size() <= 2, str(starts))
 	_check("五大层齐全", rows_by_layer.size() == 5, "%d 层" % rows_by_layer.size())
 
 	var shape_parts: Array[String] = []
@@ -454,15 +471,24 @@ func _gate_e(seed_value: int) -> String:
 	# 分层上架观察：货郎的 purchase_moonlight 是 tier 3，而切片剧本只在 L1。
 	# npc_trade 复用 _shop_purchase，因此**也会被黑市分层门禁拦住**
 	# （shop_command_rules 只把「货架」判定豁免给了 npc_trade，tier 门禁没有）。
-	if not (npc.get("stock", []) as Array).has(BLOOD_DROPLET_GU) \
-			and not (npc.get("stock", []) as Array).has(CARAVAN_DROPLET_OFFER):
+	# 缺口 4（2026-09-16 已修）：货郎货架新增 purchase_blood_droplet（npc_only，
+	# 不进黑市货池，避免洗牌结果整体漂移）。判定改为「货架上存在产出血滴蛊的报价」。
+	var droplet_on_peddler := _stock_has_gu(npc, BLOOD_DROPLET_GU)
+	if not droplet_on_peddler and not (npc.get("stock", []) as Array).has(CARAVAN_DROPLET_OFFER):
 		_gap("货郎货架不含血滴蛊；设计 §6「货郎买 %s」在现役数据里挂在商队报价 %s（已用商队通路验证）"
 				% [BLOOD_DROPLET_GU, CARAVAN_DROPLET_OFFER])
+	# 缺口 5（2026-09-16 已修）：货阶分层只约束黑市节点（type=shop），NPC 个人
+	# 货架已由 npc.stock 精确约束。这里改为正向断言：L1 走 npc_trade 能买到 tier 3 的月光蛊。
 	var moonlight_offer: Dictionary = _catalog.get("shop_offer_by_id", {}).get("purchase_moonlight", {})
-	if int(moonlight_offer.get("tier", 1)) > 1:
-		_gap("货郎 purchase_moonlight 为 tier %d，L1 走 npc_trade 会被 shop_tier_locked 拒；"
-				% int(moonlight_offer.get("tier", 1))
-				+ "若剧本要求 L1 内货郎卖月光蛊，需裁定：豁免 npc_trade 的分层门禁，或下调该报价 tier")
+	var moon_state := _peddler_state(seed_value, 30)
+	var moon_result: Dictionary = Resolver.apply(moon_state, {
+		"type": "npc_trade",
+		"npc_id": PEDDLER_NPC_ID,
+		"offer_id": "purchase_moonlight",
+	}, _catalog)
+	_check("L1 内货郎个人货架不受黑市货阶门禁限制（tier %d 可买）" % int(moonlight_offer.get("tier", 1)),
+			bool(moon_result.get("result", {}).get("ok", false)),
+			str(moon_result.get("result", {}).get("reason", "")))
 	var node_declares_npc := false
 	for node_value in _catalog.get("nodes", []):
 		var node: Dictionary = node_value
@@ -772,6 +798,16 @@ func _owns_definition(state, definition_id: String) -> bool:
 		if str(instance.get("definition_id", "")) != definition_id:
 			continue
 		if str(instance.get("state", "")) in ["refined", "contracted", "weakened"]:
+			return true
+	return false
+
+
+## NPC 货架上是否存在「产出该蛊」的报价（按 gu_id 判，不依赖报价 id 命名）。
+func _stock_has_gu(npc: Dictionary, gu_id: String) -> bool:
+	var offer_by_id: Dictionary = _catalog.get("shop_offer_by_id", {})
+	for offer_id_value in npc.get("stock", []):
+		var offer: Dictionary = offer_by_id.get(str(offer_id_value), {})
+		if str(offer.get("gu_id", "")) == gu_id:
 			return true
 	return false
 

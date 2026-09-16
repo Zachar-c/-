@@ -219,10 +219,12 @@ func test_snapshot_npc_offers_surface_tier_block_and_lifespan_precheck() -> void
 	for offer_value in (RunSnapshotBuilderScript.npc(stub)["offers"] as Array):
 		var offer: Dictionary = offer_value
 		by_id[str(offer["id"])] = offer
-	# 一大层的货阶上限为 1：t1 可买，t2/t3 禁点并给原因。
-	assert_eq(str(by_id["purchase_moonlight"]["block_reason"]), "货阶超出当前大层")
-	assert_false(bool(by_id["purchase_moonlight"]["executable"]))
-	assert_false(bool(by_id["soul_pill"]["executable"]))
+	# Stage 1（2026-09-16）：货阶分层是「黑市上架」概念，只约束黑市节点。
+	# NPC 个人货架（npc.stock）已由数据精确约束，不再套黑市分层 ——
+	# 商队的 t3 月光蛊与 t2 魂魄丹在 L1 应当可点（与命令面 npc_trade 同口径）。
+	assert_eq(str(by_id["purchase_moonlight"]["block_reason"]), "")
+	assert_true(bool(by_id["purchase_moonlight"]["executable"]))
+	assert_true(bool(by_id["soul_pill"]["executable"]))
 
 	var extortionist_stub := {
 		"current_node": {
@@ -237,6 +239,9 @@ func test_snapshot_npc_offers_surface_tier_block_and_lifespan_precheck() -> void
 	assert_eq(market_offers.size(), 1)
 	var drum: Dictionary = market_offers[0]
 	assert_true(bool(drum["curse_warning"]))
+	# 黑市节点（type=shop）仍受货阶分层约束：L1 上限 1，t2 的寿元鼓禁点并给原因。
+	assert_false(bool(drum["executable"]))
+	assert_eq(str(drum["block_reason"]), "货阶超出当前大层")
 	assert_true(str(drum["price"]).contains("寿元"))
 	assert_true(str(drum["precheck"]).contains("当前寿元"), "lifespan deals must carry a precheck line")
 

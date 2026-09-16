@@ -82,15 +82,18 @@ godot --headless --path . -s addons/gut/gut_cmdln.gd \
 
 ---
 
-## 3. 暴露的缺口（**均未擅自修改生产数据/代码**，需裁定）
+## 3. 缺口处置（2026-09-16 晚重跑：1 / 3 / 4 / 5 已修，2 待裁定）
+
+本轮 seed 由 101 变为 **202**：预登记列表内第一个「L1 同时含炼蛊台 **与** 货郎节点」的 seed
+（货郎已下沉到 L1，101 的 L1 没抽到货郎）。探针结论 `checks=167 failed=0 gaps=1`、`RESULT: PASS`。
 
 | # | 缺口 | 证据 | 影响 |
 |---|---|---|---|
-| 1 | **L1 不出现货郎节点** | seed=101 的 L1 无 `contact` 类型、无 `npc_id=wandering_peddler`；该模板在 `nodes.json` 里 `stage=two` | 剧本第 6 步（货郎）在 L1 单局内走不到；Gate E 改用节点模板 id 直接钉场景 |
-| 2 | **现役领域没有「未炼化 → 已炼化」的炼化命令** | resolver 命令表只有 `refine_gu`（合炼）/`feed_instance`（喂养）/`release_gu`（放生）；`refined_instances()` 的状态白名单是 `refined/contracted/weakened`，**没有未炼化态** | 剧本第 5 步「用未炼化小光蛊做原料」在现役规则下不可执行；夹具用已炼化实例代跑 |
-| 3 | **盲炼失败没有世界内原因文案** | 事件 reason 为 `free_mix_destroyed / free_mix_mutation / free_mix_explosion`，`DisplayText` 无对应映射（`scripts/presentation/**` 无 `free_mix` 引用） | 违反设计 §5「失败必须有火候/相性/心神之类的原因文案」；玩家只能看到原始 code |
-| 4 | **货郎货架不含血滴蛊** | `npcs.json:wandering_peddler.stock = [purchase_stone_shell, purchase_moonlight, barter_unknown_gu]`；血滴蛊只在商队 `buy_droplet` | 设计 §6 的「货郎买 `blood_droplet_gu`」需改数据（或改剧本） |
-| 5 | **货郎 `purchase_moonlight` 是 tier 3，L1 买不到** | `npc_trade` 复用 `_shop_purchase`，因此**连黑市分层门禁一起复用**：L1 时 `shop_tier_locked`。`shop_command_rules.gd` 只把「货架」判定豁免给了 npc_trade，**tier 门禁没豁免** | 若切片剧本要求 L1 内货郎卖月光蛊，需裁定：豁免 `npc_trade` 的分层门禁，或下调该报价 tier |
+| 1 | ✅ **已修** L1 不出现货郎节点 | seed=101 的 L1 无 `contact` 类型、无 `npc_id=wandering_peddler`；该模板在 `nodes.json` 里 `stage=two` | 剧本第 6 步（货郎）在 L1 单局内走不到；Gate E 改用节点模板 id 直接钉场景 |
+| 2 | ⏳ **待裁定** 现役领域没有「未炼化 → 已炼化」的炼化命令 | resolver 命令表只有 `refine_gu`（合炼）/`feed_instance`（喂养）/`release_gu`（放生）；`refined_instances()` 的状态白名单是 `refined/contracted/weakened`，**没有未炼化态** | 剧本第 5 步「用未炼化小光蛊做原料」在现役规则下不可执行；夹具用已炼化实例代跑 |
+| 3 | ✅ **已修** 盲炼失败没有世界内原因文案 | 事件 reason 为 `free_mix_destroyed / free_mix_mutation / free_mix_explosion`，`DisplayText` 无对应映射（`scripts/presentation/**` 无 `free_mix` 引用） | 违反设计 §5「失败必须有火候/相性/心神之类的原因文案」；玩家只能看到原始 code |
+| 4 | ✅ **已修** 货郎货架不含血滴蛊 | `npcs.json:wandering_peddler.stock = [purchase_stone_shell, purchase_moonlight, barter_unknown_gu]`；血滴蛊只在商队 `buy_droplet` | 设计 §6 的「货郎买 `blood_droplet_gu`」需改数据（或改剧本） |
+| 5 | ✅ **已修** 货郎 `purchase_moonlight` 是 tier 3，L1 买不到 | `npc_trade` 复用 `_shop_purchase`，因此**连黑市分层门禁一起复用**：L1 时 `shop_tier_locked`。`shop_command_rules.gd` 只把「货架」判定豁免给了 npc_trade，**tier 门禁没豁免** | 若切片剧本要求 L1 内货郎卖月光蛊，需裁定：豁免 `npc_trade` 的分层门禁，或下调该报价 tier |
 
 ---
 
@@ -101,3 +104,19 @@ godot --headless --path . -s addons/gut/gut_cmdln.gd \
 - 「身份夹具」是**探针级夹具**，不是生产开局流程；`select_school` 命令面与 20 流派未动
   （设计 §11.3 的「先夹具剧本、后拆流派择道」批次口径）。
 - 探针里的 `unrefined` 状态字是**夹具专用**；生产侧若要落地「未炼化」语义，需先裁定状态模型。
+
+
+---
+
+## 5. 本轮施工明细（1 / 3 / 4 / 5）
+
+| 缺口 | 改动 | 文件 |
+|---|---|---|
+| 1 | 货郎节点模板 `stage` two → one，L1 起可进入 trade 池 | `data/nodes.json` |
+| 3 | 新增 `DisplayText.REFINEMENT_REASONS`（火候 / 相性 / 心神）+ 炼蛊失败优先于结构化摘要作为反馈 | `scripts/presentation/display_text.gd`、`scripts/presentation/run_controller.gd` |
+| 4 | 新增报价 `purchase_blood_droplet`（6 元石 / tier 1）并挂进货郎 `stock` | `data/shops.json`、`data/npcs.json` |
+| 5 | 货阶分层门禁只约束**黑市节点**（type=shop）；NPC 个人货架由 `npc.stock` 精确约束，不再套黑市分层 | `scripts/domain/social_command_rules.gd`、`scripts/domain/shop_command_rules.gd`、`scripts/presentation/snapshots/npc_snapshot.gd` |
+| 配套 | 新增的 NPC 专属报价标 `npc_only`，**不进黑市货池** —— 货池大小会改变种子化洗牌结果，新增一件会让所有依赖货架的既有用例集体失效（与既有 `school` 隔离同一教训） | `data/shops.json`、`scripts/domain/shop_command_rules.gd` |
+| 测试 | `test_npc_stock` 的旧断言（商队 t3 月光蛊在 L1 禁点）已按新契约改写，并补充「黑市分层门禁仍在」的断言 | `tests/unit/test_npc_stock.gd` |
+
+回归：`unit 1535/1535（52216 断言）· integration 32/32 · SCRIPT ERROR 0`。

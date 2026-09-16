@@ -375,7 +375,7 @@
   },
   {
    "id": "wandering_peddler",
-   "stage": "two",
+   "stage": "one",
    "type": "contact",
    "enemy_kind": "neutral_stone_wanderer",
    "enemy_theme": "neutral",

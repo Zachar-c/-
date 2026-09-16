@@ -25,6 +25,15 @@
    "tier": 3
   },
   {
+   "id": "purchase_blood_droplet",
+   "kind": "purchase",
+   "card_key": "purchase.blood_droplet",
+   "gu_id": "blood_droplet_gu",
+   "stone_cost": 6,
+   "tier": 1,
+   "npc_only": true
+  },
+  {
    "id": "lifespan_pulse_drum",
    "kind": "lifespan_deal",
    "card_key": "lifespan.pulse_drum",

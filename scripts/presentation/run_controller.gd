@@ -330,7 +330,23 @@ func _apply_command_feedback(result: Dictionary) -> void:
 		if last_feedback.is_empty():
 			last_feedback = rejection_text(str(result.get("reason", "unknown")))
 	elif last_feedback.is_empty():
-		last_feedback = _summarize_changes(result.get("actual_changes", []))
+		var refinement_note := _last_refinement_note()
+		if not refinement_note.is_empty():
+			last_feedback = refinement_note
+		else:
+			last_feedback = _summarize_changes(result.get("actual_changes", []))
+
+
+## Stage 1（2026-09-16）：盲炼/合炼失败必须给出世界内原因（设计 §5「火候/相性/心神」），
+## 不能只让玩家看到蛊仓空了。只认最后一条 refine_gu 事件；成功（refinement_succeeded
+## 等未收录 reason）返回空串，交回结构化变更摘要，不抢镜。
+func _last_refinement_note() -> String:
+	if state == null or state.event_log.is_empty():
+		return ""
+	var last_event: Dictionary = state.event_log[-1]
+	if str(last_event.get("action", "")) != "refine_gu":
+		return ""
+	return DisplayText.refine_failure_text(str(last_event.get("reason", "")))
 
 
 ## 拓扑 v2：把当前实例的模板 id 与大层盖到 RunState，供领域侧

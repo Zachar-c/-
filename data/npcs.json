@@ -51,6 +51,6 @@
     "retreat": "pack_up_and_leave",
     "reinforcements": "none",
     "injury_reaction": "caution",
-    "stock": ["purchase_stone_shell", "purchase_moonlight", "barter_unknown_gu"]
+    "stock": ["purchase_stone_shell", "purchase_moonlight", "purchase_blood_droplet", "barter_unknown_gu"]
   }
 ]
