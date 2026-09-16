@@ -1,0 +1,1880 @@
+{
+  "baseline_version": "world-model-baseline-v1",
+  "claim_counts": {
+    "effective_rulings": {
+      "needs_evidence": 24
+    },
+    "high_impact": 24,
+    "statuses": {
+      "deferred": 24
+    },
+    "total": 24
+  },
+  "claims": [
+    {
+      "claim_id": "aptitude_capacity",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "The relationship among aptitude, capacity, recovery, and quality remains an unverified source claim.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 83,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bb3d42e31f743623",
+            "locator": "/aptitude_recovery_multiplier",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f6fb69065e680ea3",
+            "locator": "line:14",
+            "migration_action": "defer",
+            "path": "docs/lore/adaptation-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-50b164a3f120d508",
+            "locator": "line:20",
+            "migration_action": "defer",
+            "path": "docs/lore/canon-index.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0bc9c7b87fa6e148",
+            "locator": "line:21",
+            "migration_action": "defer",
+            "path": "docs/lore/canon-index.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5985bed3d44f9579",
+            "locator": "line:22",
+            "migration_action": "defer",
+            "path": "docs/lore/canon-index.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fc41efcfbbb639de",
+            "locator": "line:82",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bc8caae4a7384ddb",
+            "locator": "line:83",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2975c0dfd033f719",
+            "locator": "line:90",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6a0c4b9065336616",
+            "locator": "line:19",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c626bf577bcf99a4",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f88dba1608713e17",
+            "locator": "line:1079",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e49e87f601653f32",
+            "locator": "line:1080",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          }
+        ],
+        "omitted_location_count": 71
+      },
+      "migration_deprecation_action": "Defer production work and record the verified scope before proposing a model. Do not promote current aptitude fields into world truth.",
+      "player_consequence": "No aptitude-derived capacity or recovery rule is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "aptitude_capacity",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish aptitude and capacity semantics."
+    },
+    {
+      "claim_id": "body_and_blood",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Body and blood state semantics have not been verified against exact source passages.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer production work pending source verification. Do not infer rules from current data labels.",
+      "player_consequence": "No new body, bloodline, or injury rule is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "body_and_blood",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish body and blood state semantics."
+    },
+    {
+      "claim_id": "cultivator_aperture",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "The clean-text locations and scope of aperture constraints have not yet been verified.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer production work and collect exact P0 support, conditions, and counter-evidence. Keep current behavior unchanged while evidence is unresolved.",
+      "player_consequence": "No aperture rule change is authorized by Stage 0.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "cultivator_aperture",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish the role and limits of a cultivator aperture."
+    },
+    {
+      "claim_id": "dao_marks",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: remove generalized mortal-stage dao marks as a universal progression bar; retain only future evidence-backed exceptions.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 16,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-145601322d014190",
+            "locator": "line:7",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-aac3cb7442367f95",
+            "locator": "line:14",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-74ef39357c29c073",
+            "locator": "line:26",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-61d87ae420ff458c",
+            "locator": "line:39",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-159143c0ba700c1d",
+            "locator": "line:870",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9646ced94e609c13",
+            "locator": "line:87",
+            "migration_action": "defer",
+            "path": "scripts/domain/core_gu_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-10fd25ea27d9faea",
+            "locator": "line:16",
+            "migration_action": "defer",
+            "path": "scripts/domain/cultivator_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-124f31f2fe4a51ee",
+            "locator": "line:28",
+            "migration_action": "defer",
+            "path": "scripts/domain/gu_instance.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b15a5047274e6df6",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "scripts/domain/soul_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-83aea51fa43fce5c",
+            "locator": "line:103",
+            "migration_action": "defer",
+            "path": "scripts/domain/sword_mark_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f7994a9f1ec75bc2",
+            "locator": "line:110",
+            "migration_action": "defer",
+            "path": "scripts/domain/sword_mark_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-67bf676e8b9bb07c",
+            "locator": "line:116",
+            "migration_action": "defer",
+            "path": "scripts/domain/sword_mark_rules.gd"
+          }
+        ],
+        "omitted_location_count": 4
+      },
+      "migration_deprecation_action": "Mark generalized mortal dao-mark progression for deprecation; do not delete fields or migrate saves in Stage 0. Exact P0 exceptions must be preserved before any later removal.",
+      "player_consequence": "If approved later, players will not receive unsupported universal dao-mark experience for routine actions.",
+      "preliminary_ruling": "remove",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "dao_marks",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish dao mark accumulation and effects."
+    },
+    {
+      "claim_id": "economy_and_primeval_stones",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary adaptation hypothesis: retain primeval stones as ordinary exchange while excluding universal pricing of scarce or taboo assets; exact scope remains pending.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 42,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6a466a29f400406b",
+            "locator": "line:55",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-96b292cad7bb52df",
+            "locator": "line:19",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8767972d490a9e0c",
+            "locator": "line:20",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-adbe8d37e34706e6",
+            "locator": "line:21",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3a15f0995b2a34d2",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/economy.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b1b60788aac31f37",
+            "locator": "line:38",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f5aa735b80c254d2",
+            "locator": "line:401",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-90ca1fe68fae19e2",
+            "locator": "line:409",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9c183bed4e764d45",
+            "locator": "line:976",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-11b37eae259e25ad",
+            "locator": "line:89",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3ee5080af1d994f1",
+            "locator": "line:90",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-23c1d097554b73a2",
+            "locator": "line:92",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          }
+        ],
+        "omitted_location_count": 30
+      },
+      "migration_deprecation_action": "Keep promotion economy audit-only and defer any pricing or inventory migration. Do not change shops, prices, materials, or saves in Stage 0.",
+      "player_consequence": "If verified later, players can buy ordinary goods but must use relationships, knowledge, or risk for non-fungible assets.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "economy_and_primeval_stones",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish economy and primeval stone semantics."
+    },
+    {
+      "claim_id": "force_and_social_order",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: social outcomes should persist through faction and relationship consequences; exact source scope remains pending.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 54,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c04ad0ba649f99fc",
+            "locator": "line:183",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4d8fbe04a75c27f9",
+            "locator": "line:67",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6b3798e66a34c554",
+            "locator": "line:26",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/world-model-translation.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f9061b620e67e50e",
+            "locator": "line:384",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9610f83e2a855b10",
+            "locator": "line:398",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6fdaa5c143e8d2c8",
+            "locator": "line:409",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5dc7cfcdf154ec21",
+            "locator": "line:420",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-12d04582e8bad918",
+            "locator": "line:1033",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-19994afb36000c34",
+            "locator": "line:1034",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2b1b3d82482f33fd",
+            "locator": "line:121",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ec40d614049bdcc9",
+            "locator": "line:1363",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1ad7cb713b9f7450",
+            "locator": "line:1365",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          }
+        ],
+        "omitted_location_count": 42
+      },
+      "migration_deprecation_action": "Audit existing NPC and faction outcomes only; defer production changes. One-off current outcomes do not prove the proposed model.",
+      "player_consequence": "If verified later, coercion and status choices leave visible future protection, hostility, or pursuit consequences.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "force_and_social_order",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish force, status, and social order semantics."
+    },
+    {
+      "claim_id": "gu_activation",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Activation costs, quality gates, and exceptional conditions require exact P0 verification.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 806,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1da12cbc9eab3b54",
+            "locator": "/0/v1_effect",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c2ae90dbdba2ece2",
+            "locator": "/1/v1_effect",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-75a62229aa6f40b0",
+            "locator": "/10/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-38be5a46c87a6faa",
+            "locator": "/100/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a0988abf2008749d",
+            "locator": "/101/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b20d1aeb9f3bfcba",
+            "locator": "/102/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-629271a8a5c793eb",
+            "locator": "/103/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-478a659104a2d7b9",
+            "locator": "/104/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-23e0eb80bbfd2951",
+            "locator": "/105/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8beb651f3a7b32dd",
+            "locator": "/106/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-69c4e33ef16fb061",
+            "locator": "/107/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9cd6eb5526a18a93",
+            "locator": "/108/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 794
+      },
+      "migration_deprecation_action": "Defer production work and verify support plus exceptions. Do not treat role fallbacks as source facts.",
+      "player_consequence": "No activation-cost or fallback change is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_activation",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish gu activation costs and conditions."
+    },
+    {
+      "claim_id": "gu_feeding",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: replace universalized upkeep with specific feeding relationships; exact source scope remains unverified.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 152,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4d73d1a19ca35fc6",
+            "locator": "/0/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ac2e3e212f6dac4c",
+            "locator": "/0/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d2d6c86ef4b37c58",
+            "locator": "/1/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f1440efabea98ee4",
+            "locator": "/1/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-032c8a4b72b55e92",
+            "locator": "/10/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-847d19aaf76c75c8",
+            "locator": "/10/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6e13287e0f5bb222",
+            "locator": "/11/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-7254acb5b7393a06",
+            "locator": "/11/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-54ceae90655439d4",
+            "locator": "/12/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3cfe050b8bbde127",
+            "locator": "/12/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9c0ce0fa394bdfe6",
+            "locator": "/13/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-600dbc2ce3c61586",
+            "locator": "/13/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 140
+      },
+      "migration_deprecation_action": "Audit feeding fields only; defer any data or runtime migration. Promotion materials remain deferred.",
+      "player_consequence": "If verified later, upkeep choices expose specific food, timing, and failure consequences.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_feeding",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish gu feeding requirements and consequences."
+    },
+    {
+      "claim_id": "gu_is_independent_entity",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: preserve independent Gu identity, subject to exact P0 verification.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Audit instance identity only; make no production change before P0 verification. Do not infer independence from existing instance fields.",
+      "player_consequence": "If verified later, ownership, transfer, feeding, and loss remain attached to individual Gu.",
+      "preliminary_ruling": "retain",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_is_independent_entity",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: determine whether a gu is an independent entity in the world model."
+    },
+    {
+      "claim_id": "gu_is_life",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: preserve the living-entity model, subject to exact P0 verification; adjudication must downgrade this row until then.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Audit current lifecycle behavior only; make no production change before P0 verification. Existing implementation is not evidence for retention.",
+      "player_consequence": "If verified later, players must treat Gu as maintained living entities rather than disposable skill tokens.",
+      "preliminary_ruling": "retain",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_is_life",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: determine whether a gu is treated as a living entity."
+    },
+    {
+      "claim_id": "gu_ownership",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Ownership, recognition, transfer, and loss conditions require exact source verification.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer and gather P0 support, conditions, and counterexamples. Current inventory representation is observation only.",
+      "player_consequence": "No ownership or transfer behavior changes are authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_ownership",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish gu ownership and transfer semantics."
+    },
+    {
+      "claim_id": "gu_recipe",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Recipe knowledge, acquisition, secrecy, and execution semantics require exact source locations.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer and verify source-backed knowledge and execution boundaries. Current recipe data cannot prove the world rule.",
+      "player_consequence": "No recipe unlock or execution rule change is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_recipe",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish gu recipe knowledge and execution semantics."
+    },
+    {
+      "claim_id": "gu_refinement",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: refinement should distinguish known recipes from blind attempts; exact source rules remain unverified.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 577,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-703cfca3150a6a2b",
+            "locator": "/material_refine_efficiency",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-67a44e99aa8d62b5",
+            "locator": "/stone_per_t1_material",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a65ffc972a79ec56",
+            "locator": "line:102",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1da3b7c227852439",
+            "locator": "line:114",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e67c1cd31e793797",
+            "locator": "line:13",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a9f5d5dc8aa5d655",
+            "locator": "line:23",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f1afb3a0d8b1bc88",
+            "locator": "line:51",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-afebc9a954a319b6",
+            "locator": "line:94",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f5329384656c44cd",
+            "locator": "line:99",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e85a03ea7c7aeb0a",
+            "locator": "line:27",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-68f76054cb1875f5",
+            "locator": "line:28",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f2cd50ca4e64a58d",
+            "locator": "line:29",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          }
+        ],
+        "omitted_location_count": 565
+      },
+      "migration_deprecation_action": "Audit current refinement paths; defer production redesign and migration. Do not modify recipes, materials, or success logic in Stage 0.",
+      "player_consequence": "If verified later, players can distinguish knowledge-backed refinement from explicitly risky experimentation.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "gu_refinement",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish gu refinement inputs, outcomes, and risks."
+    },
+    {
+      "claim_id": "information_leak",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Information exposure is plausible but its actionable scope and counterplay have not been verified.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer until exact support, conditions, and representative cases are recorded. Do not infer a mechanic from design prose alone.",
+      "player_consequence": "No leak, secrecy, or enemy-learning mechanic is authorized yet.",
+      "preliminary_ruling": "defer",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "information_leak",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish information exposure and leak semantics."
+    },
+    {
+      "claim_id": "inheritance",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Inheritance contents, tests, transmission, and contestability require exact source evidence.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer and verify P0 support and exceptions. Current reward rooms are not authoritative.",
+      "player_consequence": "No inheritance reward or access rule change is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "inheritance",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish inheritance and transmission semantics."
+    },
+    {
+      "claim_id": "kill_move",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary adaptation hypothesis: treat kill moves as knowledge-and-sequence assets rather than ordinary cards; exact P0 scope remains pending.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 36,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0bb06699d16f4f17",
+            "locator": "line:13",
+            "migration_action": "defer",
+            "path": "docs/lore/adaptation-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ff4f2c957813a860",
+            "locator": "line:10",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0829f769604fb227",
+            "locator": "line:11",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-60c764c61fb6713e",
+            "locator": "line:8",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0ed9476daeb4f9ac",
+            "locator": "line:9",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0916c7cf2d994275",
+            "locator": "line:41",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/combat-system.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8e15417bd9dd9426",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/combat-system.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c63c00d4cfece58e",
+            "locator": "line:15",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bbf5d173f647ef92",
+            "locator": "line:30",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fc19d617250d134b",
+            "locator": "line:38",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-27f03eddd536e84d",
+            "locator": "line:38",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gu-and-synthesis.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-964179ec7272adac",
+            "locator": "line:42",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gu-and-synthesis.md"
+          }
+        ],
+        "omitted_location_count": 24
+      },
+      "migration_deprecation_action": "Audit existing kill-move surfaces only; defer production redesign. Do not modify combat runtime in Stage 0.",
+      "player_consequence": "If verified later, players must acquire, prepare, and expose a combination instead of pressing an unexplained universal action.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "kill_move",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish kill move composition and resolution semantics."
+    },
+    {
+      "claim_id": "lifespan",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: retain lifespan as a real cost while removing ordinary-currency treatment; exact source boundaries remain pending.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 76,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-686353aaeef95da6",
+            "locator": "line:29",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f6f52c90ccf2084f",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c8979305099f80b1",
+            "locator": "line:1086",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6eb38f490b45b43f",
+            "locator": "line:1089",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1429aa2592fd8376",
+            "locator": "line:1097",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-04e09d4220ca5b3b",
+            "locator": "line:635",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d7b19db014c36cd5",
+            "locator": "line:636",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fbda9ff23393370d",
+            "locator": "line:637",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-62205b44c04928cb",
+            "locator": "line:638",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c87a8605904c41c4",
+            "locator": "line:646",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-20819c0ece5999af",
+            "locator": "line:647",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-24cf819c5da75655",
+            "locator": "line:656",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          }
+        ],
+        "omitted_location_count": 64
+      },
+      "migration_deprecation_action": "Audit lifespan payment surfaces only; defer runtime and economy migration. No production price or cost changes in Stage 0.",
+      "player_consequence": "If verified later, lifespan spending is exceptional, previewed, and irreversible rather than routine shopping currency.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "lifespan",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish lifespan rules and costs."
+    },
+    {
+      "claim_id": "mortal_immortal_boundary",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "The mortal/immortal boundary is high impact and lacks verified source coverage in the current benchmark.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer until exact P0 evidence and conditions are complete. Do not approximate the boundary from rank fields.",
+      "player_consequence": "No ascension boundary or immortal-stage production behavior is authorized.",
+      "preliminary_ruling": "defer",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "mortal_immortal_boundary",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish the mortal and immortal boundary."
+    },
+    {
+      "claim_id": "natal_gu",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary hypothesis: remove the unsupported interpretation of natal Gu as an arbitrary post-hoc talent slot; formation rules still require P0 verification.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Deprecate the arbitrary-slot hypothesis in future design; preserve current saves and runtime until a separately approved migration exists. No production field or save migration occurs in Stage 0.",
+      "player_consequence": "If later approved, players will not choose a consequence-free core slot detached from cultivation history.",
+      "preliminary_ruling": "remove",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "natal_gu",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish natal gu identity and lifecycle semantics."
+    },
+    {
+      "claim_id": "primeval_essence",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary adaptation hypothesis: unify world semantics while retaining a bounded combat display; exact P0 constraints still control the effective ruling.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 110,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4bef42778e5216cb",
+            "locator": "/stone_to_essence_per_stone",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9ee084fb323d6aec",
+            "locator": "/0",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1c1e28ab024e28b5",
+            "locator": "/0/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8f00fe1c8eb30a14",
+            "locator": "/1",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bbf180eafc2cc269",
+            "locator": "/1/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-64b0a213e7147a5b",
+            "locator": "/10/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bfd0eafab74e689e",
+            "locator": "/11/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a14b1867a9c20ee4",
+            "locator": "/12/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5c9ba5850a8d170c",
+            "locator": "/13/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c9f61324f9ecba41",
+            "locator": "/14/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fc9e9e879694dac3",
+            "locator": "/15/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-028a7cb63a49589a",
+            "locator": "/2/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 98
+      },
+      "migration_deprecation_action": "Audit dual-resource semantics only; defer any migration until evidence and a later slice are approved. Do not alter essence or true-qi runtime state in Stage 0.",
+      "player_consequence": "If verified later, players see combat cost as a view of one world resource rather than two unrelated currencies.",
+      "preliminary_ruling": "revise",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "primeval_essence",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish primeval essence semantics and constraints."
+    },
+    {
+      "claim_id": "rank_and_subrank",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Rank and subrank effects beyond numeric scaling have not been tied to exact P0 evidence.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 1008,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-7f48bce3d20ed2e9",
+            "locator": "/rank_step_ratio",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-44eb22aa2bc60499",
+            "locator": "/0/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-02cc091710ff9650",
+            "locator": "/1/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-531af08765730bbf",
+            "locator": "/10/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8e8ca090e06b94a5",
+            "locator": "/100/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e620c00562fae1ec",
+            "locator": "/101/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e756fc75df4a6e48",
+            "locator": "/102/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9c3a04b9e30096eb",
+            "locator": "/103/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-66e9d3e7017043fd",
+            "locator": "/104/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3c7899a6c791182c",
+            "locator": "/105/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-825ca47b4d0417b9",
+            "locator": "/106/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-83bf0bf247720232",
+            "locator": "/107/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 996
+      },
+      "migration_deprecation_action": "Collect exact support and exceptions before adjudicating progression semantics. F1 and Q8-G remain audit-only.",
+      "player_consequence": "No new rank gate, multiplier, or promotion rule is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "rank_and_subrank",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish rank and subrank progression semantics."
+    },
+    {
+      "claim_id": "soul",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Soul strength, carrying capacity, damage, and bestial risk remain unresolved source claims.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 147,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ea2acb3359f5efac",
+            "locator": "/soul_burst_capacity_ratio",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-30f4b21a2507a515",
+            "locator": "/soul_calm_beast_below",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-04a1b21158a5c6e2",
+            "locator": "/soul_calm_departure_below",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-031bedf83772a82b",
+            "locator": "/soul_calm_emotional_below",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b6eb287793c0ff99",
+            "locator": "line:31",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/combat-system.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3c9011b9f47ae868",
+            "locator": "line:27",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-802d7c2819cc82e4",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d002b6666a62c1d7",
+            "locator": "line:11",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5df77e1508d61b18",
+            "locator": "line:14",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b04ce2413901929c",
+            "locator": "line:15",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-176a47a4ba6f96c5",
+            "locator": "line:16",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-72f1b81f92fa2fb5",
+            "locator": "line:4",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          }
+        ],
+        "omitted_location_count": 135
+      },
+      "migration_deprecation_action": "Defer and collect exact P0 support, conditions, and counterexamples. Current soul fields are implementation observations only.",
+      "player_consequence": "No soul-derived action-point or capacity rule is authorized.",
+      "preliminary_ruling": "needs_evidence",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "soul",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish soul state, growth, and damage semantics."
+    },
+    {
+      "claim_id": "tribulation_or_ascension",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Tribulation and ascension semantics are unverified and outside the first production slice.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer until exact P0 evidence and a later-stage design are approved. Do not equate current boss gates with ascension.",
+      "player_consequence": "No tribulation, ascension, or boss-gate production rule is authorized.",
+      "preliminary_ruling": "defer",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "tribulation_or_ascension",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish tribulation and ascension semantics."
+    },
+    {
+      "claim_id": "world_scope_and_compression",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "preliminary",
+      "derivation": "Preliminary game-adaptation hypothesis: retain deterministic spatial and temporal compression only when it is labeled as abstraction and does not contradict P0 causality.",
+      "effective_ruling": "needs_evidence",
+      "evidence": [],
+      "final_ruling": null,
+      "impact": "high",
+      "implementation": {
+        "finding_count": 268,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-cb8a4d577c09d914",
+            "locator": "/blood/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bd0a838789b22c01",
+            "locator": "/bone/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8e7851409866123d",
+            "locator": "/dream/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4f876989d18dc868",
+            "locator": "/earth/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8c9aeea403264c0d",
+            "locator": "/fire/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a9ba0beadabf724f",
+            "locator": "/force/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-293556fd2699a5ed",
+            "locator": "/gold/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-de1d2765de93b5b5",
+            "locator": "/heaven/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2b4550748aee88f8",
+            "locator": "/human/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d505a0f866c28ce1",
+            "locator": "/light/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-598244b04be34438",
+            "locator": "/luck/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2f40045b7d7eba8c",
+            "locator": "/qi/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          }
+        ],
+        "omitted_location_count": 256
+      },
+      "migration_deprecation_action": "Retain as an audit hypothesis only; defer production authorization until source boundaries are verified. Five-layer structure is not source evidence.",
+      "player_consequence": "Players receive a finite run structure without being told that compressed layers are literal world geography or universal law.",
+      "preliminary_ruling": "retain",
+      "resolution_status": "not_required",
+      "source_fact": [],
+      "topic": "world_scope_and_compression",
+      "unknowns": [
+        "verified P0 support is not yet available"
+      ],
+      "world_model_ruling": "Stage 0 evidence target: establish world scope and compression boundaries."
+    }
+  ],
+  "detailed_registers": [
+    "docs/lore/adaptation-register.md",
+    "docs/lore/canon-index.md",
+    "docs/lore/game-rule-register.md"
+  ],
+  "generated_at_utc": "2026-09-16T08:20:35Z",
+  "generator": {
+    "name": "lore_engine.reports",
+    "version": "1"
+  },
+  "legacy_disposition_summary": {
+    "f1_pity": "audit_only",
+    "promotion_economy": "defer",
+    "promotion_materials": "defer",
+    "q8g_promotion_chain": "audit_only",
+    "school_promotion": "defer"
+  },
+  "legacy_dispositions": [
+    {
+      "disposition": "audit_only",
+      "mechanic_id": "f1_pity",
+      "rationale": "F1 Pity is historical implementation context and cannot authorize Stage 0 production behavior."
+    },
+    {
+      "disposition": "defer",
+      "mechanic_id": "promotion_economy",
+      "rationale": "Promotion economy remains deferred until source evidence and the later economy slice are adjudicated."
+    },
+    {
+      "disposition": "defer",
+      "mechanic_id": "promotion_materials",
+      "rationale": "Promotion materials remain deferred until source evidence and the later refinement slice are adjudicated."
+    },
+    {
+      "disposition": "audit_only",
+      "mechanic_id": "q8g_promotion_chain",
+      "rationale": "Q8-G is retained only as an audit trail and is not a production-ready world rule."
+    },
+    {
+      "disposition": "defer",
+      "mechanic_id": "school_promotion",
+      "rationale": "School promotion remains deferred while school-as-class semantics are under review."
+    }
+  ],
+  "provenance": {
+    "implementation_audit": {
+      "finding_count": 3375,
+      "normalized_sha256": "2392a2b42b0f7742ce5377fb6213d16884fde520a6ebf0e31ee3aa98d01eeca1"
+    },
+    "input_files": [
+      {
+        "path": "lore_engine/config/world-model-stage0.json",
+        "sha256": "63e549a97291058442c82d4de96d60749bf0daf0233d6fce0152fb2d1f1138f3"
+      },
+      {
+        "path": "lore_sources/benchmarks/world_model_stage0/claims.jsonl",
+        "sha256": "5fe9ffb5a0d05bcb313223f3b164641220488851331cb0e228de72c53265d4ea"
+      },
+      {
+        "path": "lore_sources/benchmarks/world_model_stage0/decisions.jsonl",
+        "sha256": "8ec1cb7eda3daa97d093175c02a7be19f71aad75f5ff12f3ced04ebe5fa688a8"
+      },
+      {
+        "path": "lore_sources/benchmarks/world_model_stage0/evidence.jsonl",
+        "sha256": "5cd81f1a3b31c49e42ec218bc4191334879f7d44b3a64b6fa53b5c8de72ab177"
+      },
+      {
+        "path": "lore_sources/manifest.json",
+        "sha256": "3fea9b67f8f02740c6ef3e5adfcec12f3c17c06a77dc0208f0e2466d924f5f8a"
+      }
+    ],
+    "source_manifest": {
+      "path": "lore_sources/manifest.json",
+      "sha256": "3fea9b67f8f02740c6ef3e5adfcec12f3c17c06a77dc0208f0e2466d924f5f8a",
+      "sources": [
+        {
+          "actual_sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+          "authority": "primary_text",
+          "bytes": 23609617,
+          "characters": 9024757,
+          "declared_sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+          "encoding": "utf-8",
+          "path": "分支：六卷精编版/蛊真人-clean.txt",
+          "source_file_id": "gu_zhenren_main"
+        },
+        {
+          "actual_sha256": "e6a6a6187ec69d36957defac0aa644cec494fe2c1b2d2e6c13969fe460b9cab8",
+          "authority": "in_world_text",
+          "bytes": 155759,
+          "characters": 82247,
+          "declared_sha256": "e6a6a6187ec69d36957defac0aa644cec494fe2c1b2d2e6c13969fe460b9cab8",
+          "encoding": "gb18030",
+          "path": "分支：六卷精编版/《人祖传》.txt",
+          "source_file_id": "ren_zu_zhuan"
+        }
+      ]
+    }
+  },
+  "stage0_gate": {
+    "blockers": [
+      "high-impact complete references 0 < 20",
+      "high-impact claims missing complete P0 references: aptitude_capacity, body_and_blood, cultivator_aperture, dao_marks, economy_and_primeval_stones, force_and_social_order, gu_activation, gu_feeding, gu_is_independent_entity, gu_is_life, gu_ownership, gu_recipe, gu_refinement, information_leak, inheritance, kill_move, lifespan, mortal_immortal_boundary, natal_gu, primeval_essence, rank_and_subrank, soul, tribulation_or_ascension, world_scope_and_compression",
+      "unresolved high-impact claims: aptitude_capacity, body_and_blood, cultivator_aperture, dao_marks, economy_and_primeval_stones, force_and_social_order, gu_activation, gu_feeding, gu_is_independent_entity, gu_is_life, gu_ownership, gu_recipe, gu_refinement, information_leak, inheritance, kill_move, lifespan, mortal_immortal_boundary, natal_gu, primeval_essence, rank_and_subrank, soul, tribulation_or_ascension, world_scope_and_compression"
+    ],
+    "deterministic": true,
+    "production_changes_authorized": false,
+    "production_paths_changed": [],
+    "result": "NO_GO"
+  },
+  "timestamp_policy": "explicit_reproducible_utc",
+  "unresolved_high_impact": [
+    "aptitude_capacity",
+    "body_and_blood",
+    "cultivator_aperture",
+    "dao_marks",
+    "economy_and_primeval_stones",
+    "force_and_social_order",
+    "gu_activation",
+    "gu_feeding",
+    "gu_is_independent_entity",
+    "gu_is_life",
+    "gu_ownership",
+    "gu_recipe",
+    "gu_refinement",
+    "information_leak",
+    "inheritance",
+    "kill_move",
+    "lifespan",
+    "mortal_immortal_boundary",
+    "natal_gu",
+    "primeval_essence",
+    "rank_and_subrank",
+    "soul",
+    "tribulation_or_ascension",
+    "world_scope_and_compression"
+  ]
+}

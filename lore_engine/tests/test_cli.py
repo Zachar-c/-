@@ -27,7 +27,7 @@ class CliTests(unittest.TestCase):
     def test_help_lists_v1_commands(self) -> None:
         result = run_cli("--help")
         self.assertEqual(result.returncode, 0, result.stderr)
-        for command in ("ingest", "index", "run", "retry", "validate", "report"):
+        for command in ("ingest", "index", "run", "retry", "validate", "report", "world-model-0"):
             self.assertIn(command, result.stdout)
 
     def test_unknown_command_is_configuration_error(self) -> None:

@@ -122,3 +122,63 @@ class SeedRecord:
 class SeedImportSummary:
     inserted: int
     skipped: int
+
+
+@dataclass(frozen=True)
+class WorldClaim:
+    claim_id: str
+    topic: str
+    statement: str
+    status: str
+    impact: str
+    source_ids: tuple[str, ...]
+    evidence_ids: tuple[str, ...]
+    counter_evidence_ids: tuple[str, ...]
+    confidence: str
+    previous_status: str | None = None
+
+
+@dataclass(frozen=True)
+class EvidenceRef:
+    evidence_id: str
+    source_file_id: str
+    source_ref: str
+    char_start: int
+    char_end: int
+    quote: str
+    authority: str
+    evidence_kind: str
+
+
+@dataclass(frozen=True)
+class ImplementationFinding:
+    finding_id: str
+    claim_id: str
+    path: str
+    locator: str
+    observed: str
+    source_layer: str
+    behavior_status: str
+    migration_action: str
+
+
+@dataclass(frozen=True)
+class WorldDecision:
+    claim_id: str
+    ruling: str
+    rationale: str
+    player_consequence: str
+    implementation_action: str
+    non_regression_notes: tuple[str, ...]
+    previous_status: str | None = None
+    decision_kind: str = "final"
+
+
+@dataclass(frozen=True)
+class Stage0Gate:
+    result: str
+    claim_count: int
+    high_impact_covered: int
+    unresolved_high_impact: tuple[str, ...]
+    production_paths_changed: tuple[str, ...]
+    deterministic: bool
