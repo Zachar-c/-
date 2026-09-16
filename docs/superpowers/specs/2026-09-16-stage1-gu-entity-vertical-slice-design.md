@@ -3,7 +3,13 @@
 > **权威依据**：`docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md` §7 阶段 1。
 > **前置**：Stage 0 Gate = **GO**（`docs/lore/generated/world-model-stage0-gate.md`，24/24 完整 P0 引用）。
 > **本文件性质**：设计稿 + 切片边界。
-> **实施状态（2026-09-16）**：**数据完备化已落地**——5 只补显式 effect/feeding + `tests/unit/test_stage1_gu_entity_slice.gd`；身份夹具、固定 seed 路线探针、货郎/炼成验收脚本**未做**。
+> **实施状态（2026-09-16 晚）**：**数据完备化 + 场景探针已落地**——5 只补显式 effect/feeding
+> （`tests/unit/test_stage1_gu_entity_slice.gd`）+ `tools/verify_stage1_slice.gd`（Gate A–F，165 项 PASS，
+> 固定 seed=101）+ `tests/unit/test_stage1_slice_scene_gates.gd`（5/5）。
+> 身份夹具落在**探针级**（未接生产开局），**生产零 diff**；暴露 5 条缺口待裁定
+> （详见 `docs/superpowers/reports/2026-09-16-stage1-slice-probe.md` §3）：
+> ① L1 不出货郎节点 ② 无「未炼化 → 已炼化」命令 ③ 盲炼失败无世界内原因文案
+> ④ 货郎货架不含血滴蛊 ⑤ 货郎 `purchase_moonlight` 为 tier 3（L1 被 `shop_tier_locked` 拒）。
 > **出口**：切片剧本探针通过前，禁止扩大生产蛊目录、流派数或敌人池。
 
 ---
