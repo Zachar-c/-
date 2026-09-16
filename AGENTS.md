@@ -56,6 +56,8 @@
 
 1. **World Model Stage 0：蛊界世界规则基准审计（2026-09-16 用户裁定：最高优先级）**：以 `docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md` 为最高设计宪章。Stage 0 通过前只允许证据索引、审计报告、只读探针和测试夹具；禁止继续施工 F1 Pity、Q8-G promotion/material、流派晋升链及其他生产规则变更。Q8-G 文档降级为现有系统状态与历史决策档案。
    - 出口：至少冻结 20 条、目标 24 条高影响 `world_claim`，形成 `World Model Baseline v1`，并逐项裁定现有机制保留、冻结、重做或废止。
+   - **证据债现状（2026-09-16）**：管道与门禁已就绪（`tools/lore.ps1 world-model-0`，exit 3 = `NO_GO`），24 条 claim 仍全部 `deferred`、零引用。候选已批量召回（`tools/stage0_evidence_candidates.py` → `docs/lore/candidates/`，208 条 / 207 条可入库），复核走 `tools/verify_stage0_candidates.py`（用真 `resolve_evidence` 反查，含 twin）。**唯一阻塞是人工确认**：把确认项写入 `evidence.jsonl` 并挂到 claim。据此报告 `.superpowers/sdd/evidence-recall-report.md`。
+   - **《人祖传》证据效力（2026-09-16 用户裁定）**：它是书中书，全文散在蛊真人中（实测 92.6% 段落可在主文定位）。故为**派生摘编而非独立见证**——同一句话不得当两条互证；两源同为 P0（`_AUTHORITY_RANK` 均为 0），主文存在的段落一律引主文（候选带 `twin` 坐标），仅摘编独有的段落才以 `in_world_text` 引用。
    - Stage 0 通过后，后续阶段必须先做 10–20 只蛊的纵向切片，再允许扩大内容池。
 2. **剑道流派收口（暂停，待 Stage 0）**：端到端可玩已通（契约 + 至终局驱动 + `CORE_LOOP_FAITHFUL=1 sword`）；身份机制未做完。其规则是否保留、重做或废止由 Stage 0 基准裁定。
    - **T16 残锋降转**（第一阻塞）：杀招永久耗剑蛊道痕、阈值降转；规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §2。前置：`battle_command_facade` → `RunState.gu_instances` 实例回写通路；不可逆代价须确认 UI + 预检，禁止静默惩罚。

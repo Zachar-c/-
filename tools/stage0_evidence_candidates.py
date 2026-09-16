@@ -19,6 +19,22 @@ So a candidate is only usable when its quote is globally unique.  This tool grow
 candidate window until the slice is unique and reports candidates where uniqueness
 cannot be reached, instead of emitting quotes that would be rejected later.
 
+Why ``ren_zu_zhuan`` hits carry a main-text twin
+------------------------------------------------
+``《人祖传》`` is a book-within-the-book: its 82k characters are a compilation of
+passages that sit *inside* the 9.0M-character main text.  Measured over its 1572
+paragraphs, **86.6% appear verbatim in the main text** and a further 5.9% are locatable
+through an internal fragment - 92.6% in total.  It is therefore a *derivative excerpt*,
+not an independent second witness, and two quotes that are really one sentence must not
+be counted as corroboration.
+
+So every ``ren_zu_zhuan`` candidate is also resolved against the main text, and when the
+same passage is found there the record carries a ``twin`` object with the main-text
+coordinates.  Both remain P0 (``world_evidence._P0_AUTHORITIES`` ranks ``primary_text``
+and ``in_world_text`` equally), but a ``twin`` means the reader can cite the canonical
+artifact instead of the excerpt.  The ~7% with no twin are the only passages that exist
+*only* in the excerpt; those keep ``in_world_text`` as their citation.
+
 Usage
 -----
     python tools/stage0_evidence_candidates.py [--top N] [--per-topic N]
@@ -35,6 +51,7 @@ import hashlib
 import json
 import re
 import sys
+from array import array
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -52,6 +69,13 @@ MIN_QUOTE = 30          # a 2-character hit is unique but useless as a citation
 STRIDE = 4              # characters added per growth step when hunting a unique window
 CONTEXT = 70            # characters of padding used when scoring a hit's neighbourhood
 UNIQUE_TRIES = 40       # growth steps when hunting for a globally unique window
+# Anchor widths tried, longest first, when locating a ren_zu_zhuan hit inside the main
+# text.  Longest-first is both the most reliable and the cheapest: the excerpt matches
+# the main text for most paragraphs, so the first probe usually succeeds.
+TWIN_SIZES = (140, 120, 90, 70, 50, 30)
+
+MAIN_SOURCE_ID = "gu_zhenren_main"
+SOURCE_LABELS = {MAIN_SOURCE_ID: "主文", "ren_zu_zhuan": "人祖传"}
 
 # ---------------------------------------------------------------------------
 # Query table: topic -> list of (regex, weight).
@@ -195,6 +219,80 @@ def unique_quote(text: str, match_start: int, match_end: int) -> tuple[int, int,
     return match_start, match_end, fallback, text.count(fallback) == 1
 
 
+def compact_source(text: str) -> tuple[str, array]:
+    """Whitespace-free view of a source plus a compact-index -> raw-index map.
+
+    The excerpt is de-indented relative to the novel, so the same paragraph differs only
+    in whitespace runs (``\\r\\n\\r\\n    “`` in the novel vs ``\\r\\n\\r\\n“`` in the excerpt).
+    Citations still need raw slices, so locating happens on the whitespace-free view and
+    the offsets are mapped back onto the untouched original.
+    """
+    chars: list[str] = []
+    offsets = array("i")
+    for index, char in enumerate(text):
+        if char.isspace():
+            continue
+        chars.append(char)
+        offsets.append(index)
+    return "".join(chars), offsets
+
+
+def find_twin(
+    main: str, main_compact: str, main_map: array, excerpt: str, hit_start: int, hit_end: int
+) -> dict | None:
+    """Locate an excerpt hit inside the main text and resolve a quote there.
+
+    Probes progressively narrower windows around the hit until one is found in the main
+    text.  Each width is tried in three placements - centred on the hit, flush to its
+    right edge, and flush to its left edge - because a hit sitting near a paragraph edge
+    would otherwise push a centred window into neighbouring excerpt text, and the excerpt
+    concatenates passages that are far apart in the novel.  Matching ignores whitespace,
+    then maps back to raw offsets, so indentation differences do not defeat it.
+
+    Returns the main-text coordinates as a quote block, or ``None`` when the passage is
+    genuinely not contiguous in the main text (that is, the excerpt rewrote or stitched it).
+    """
+    def squeeze(value: str) -> str:
+        return "".join(char for char in value if not char.isspace())
+
+    span = hit_end - hit_start
+    hit_width = len(squeeze(excerpt[hit_start:hit_end]))
+    for size in TWIN_SIZES:
+        if size < span:
+            continue
+        pad = size - span
+        placements = (
+            (hit_start - pad // 2, hit_end + (pad - pad // 2)),
+            (hit_start - pad, hit_end),
+            (hit_start, hit_end + pad),
+        )
+        for raw_left, raw_right in placements:
+            left = max(0, raw_left)
+            right = min(len(excerpt), raw_right)
+            anchor = squeeze(excerpt[left:right])
+            if not anchor:
+                continue
+            position = main_compact.find(anchor)
+            if position < 0:
+                continue
+            start_compact = position + len(squeeze(excerpt[left:hit_start]))
+            end_compact = start_compact + hit_width
+            if end_compact > len(main_map):
+                continue
+            char_start, char_end, quote, _unique = unique_quote(
+                main, main_map[start_compact], main_map[end_compact - 1] + 1
+            )
+            return {
+                "char_start": char_start,
+                "char_end": char_end,
+                "quote": quote,
+                "quote_chars": len(quote),
+                "resolver_ready": main[char_start:char_end] == quote and main.count(quote) == 1,
+                "anchor_chars": len(anchor),
+            }
+    return None
+
+
 def recall_for_topic(text: str, topic: str, per_topic: int) -> tuple[list[dict], dict[str, int]]:
     patterns = QUERIES.get(topic, [])
     compiled = [(re.compile(pattern), weight, pattern) for pattern, weight in patterns]
@@ -240,6 +338,8 @@ def recall_for_topic(text: str, topic: str, per_topic: int) -> tuple[list[dict],
             "score": round(score, 4),
             "matched_pattern": pattern,
             "matched_weight": weight,
+            "hit_start": hit_start,
+            "hit_end": hit_end,
             "char_start": char_start,
             "char_end": char_end,
             "quote": quote,
@@ -269,7 +369,14 @@ def main() -> int:
     records: list[dict] = []
     verified = 0
     not_unique = 0
+    twins = 0
+    twin_ambiguous = 0
+    excerpt_rows = 0
     coverage: dict[str, int] = {}
+    main_text = payloads.get(MAIN_SOURCE_ID, ("", "", ""))[0]
+    # Built once: locating excerpt hits in the novel is whitespace-insensitive, and the
+    # index map is what turns a whitespace-free position back into a raw offset.
+    main_compact, main_map = compact_source(main_text) if main_text else ("", array("i"))
     for topic in topics:
         coverage[topic] = 0
         for source_file_id, (text, authority, source_hash) in payloads.items():
@@ -289,8 +396,21 @@ def main() -> int:
                     "unique": candidate["unique"],
                     "occurrences": candidate["occurrences"],
                     "matched_pattern": candidate["matched_pattern"],
+                    "twin": None,
                     "confirmed": False,
                 }
+                # The excerpt is a view of the main text, so look the same passage up
+                # there and carry the canonical coordinates alongside it.
+                if source_file_id != MAIN_SOURCE_ID and main_text:
+                    excerpt_rows += 1
+                    record["twin"] = find_twin(
+                        main_text, main_compact, main_map, text,
+                        candidate["hit_start"], candidate["hit_end"],
+                    )
+                    if record["twin"] is not None:
+                        twins += 1
+                        if not record["twin"]["resolver_ready"]:
+                            twin_ambiguous += 1
                 # Self-check against the resolver's own acceptance rule.
                 slice_ok = text[record["char_start"]:record["char_end"]] == record["quote"]
                 record["resolver_ready"] = bool(slice_ok and record["occurrences"] == 1)
@@ -322,24 +442,42 @@ def main() -> int:
         "The table below collapses whitespace runs for readability; the JSONL keeps the "
         "exact source slice, which is what must be copied into the ledger.",
         "",
+        "`《人祖传》` is a book-within-the-book whose text also lives inside the main novel, "
+        "so it is a derivative excerpt rather than an independent witness. For those rows the "
+        "`main` column carries the same passage's coordinates in 主文 (from the `twin` "
+        "object); `-` means the passage exists only in the excerpt, and `?` marks a "
+        "location where the novel's variant is not uniquely quotable. Two quotes that "
+        "resolve to one sentence must not be counted as corroboration.",
+        "",
         f"- topics: {len(topics)}   candidates: {len(records)}   "
         f"resolver-ready: {verified}   needing disambiguation: {not_unique}",
+        f"- excerpt rows: {excerpt_rows}   located in 主文: {twins}   "
+        f"excerpt-only: {excerpt_rows - twins}   of the located, ambiguous: {twin_ambiguous}",
         "",
-        "| topic | source | rank | ready | start | quote |",
-        "|---|---|---|---|---|---|",
+        "| topic | source | rank | ready | start | main | quote |",
+        "|---|---|---|---|---|---|---|",
     ]
     for topic in topics:
         for record in [item for item in records if item["claim_id"] == topic]:
             quote = re.sub(r"\s+", " ", record["quote"]).strip().replace("|", "\\|")
             mark = "yes" if record["resolver_ready"] else "NO"
-            source = "主文" if record["source_file_id"] == "gu_zhenren_main" else "人祖传"
+            source = SOURCE_LABELS.get(record["source_file_id"], record["source_file_id"])
+            twin = record["twin"]
+            if twin is None:
+                main_cell = "-"
+            elif twin["resolver_ready"]:
+                main_cell = str(twin["char_start"])
+            else:
+                main_cell = f"{twin['char_start']}?"
             lines.append(
-                f"| {topic} | {source} | {record['rank']} | {mark} | {record['char_start']} | {quote} |"
+                f"| {topic} | {source} | {record['rank']} | {mark} | {record['char_start']} "
+                f"| {main_cell} | {quote} |"
             )
     lines.append("")
     (OUT_DIR / "stage0-evidence-candidates.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"topics={len(topics)} candidates={len(records)} resolver_ready={verified} not_unique={not_unique}")
+    print(f"excerpt_rows={excerpt_rows} twins={twins} excerpt_only={excerpt_rows - twins} twin_ambiguous={twin_ambiguous}")
     print(f"wrote {jsonl.relative_to(ROOT)}")
     print(f"wrote {(OUT_DIR / 'stage0-evidence-candidates.md').relative_to(ROOT)}")
     empty = [topic for topic, count in coverage.items() if count == 0]
