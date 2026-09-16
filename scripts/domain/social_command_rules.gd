@@ -14,6 +14,7 @@ extends RefCounted
 # (one-way), so there is no preload cycle.
 
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
+const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 const ResolverHelpersScript = preload("res://scripts/domain/resolver_helpers.gd")
 const ShopCommandRulesScript = preload("res://scripts/domain/shop_command_rules.gd")
@@ -130,15 +131,23 @@ static func _accept_event(state: RunState, command: Dictionary, catalog: Diction
 	if event.is_empty():
 		return Resolver._rejected(state, "unknown_event")
 	var health_cost := int(event.get("health_cost", 0))
+	# 硬门禁用 <=：代价必须严格小于当前气血 ⇒ 事件永不可能把玩家结算到 0
+	# （「不允许静默致死」红线）。气血不足时返回可预检的拒绝理由，UI 据此禁用卡片。
 	if state.health <= health_cost:
 		return Resolver._rejected(state, "insufficient_health")
+	# D4（2026-09-16）：事件此前是**纯代价**（`expected_gain` 只是文案承诺，无任何
+	# 结算）。现在 `stone_gain` 与代价在**同一条**不可变事件日志里一并落账，
+	# before/after 双写 stone ⇒ EncounterSession 的 actual_changes 会自动把
+	# 「元石 +N」回显给玩家，无需表现层另加通路。
+	# `stone_gain` 与 `health_cost` 同源读取：预检提示与真实结算不会漂移。
+	var stone_gain := maxi(0, int(event.get("stone_gain", 0)))
 	var flags := state.node_flags.duplicate(true)
 	flags["pending_delayed_soul_drain"] = int(flags.get("pending_delayed_soul_drain", 0)) + int(event.get("delayed_soul_cost", 0))
 	var next := state.append_event(Resolver._event(
 		state,
 		"accept_event",
-		{"health": state.health, "node_flags": state.node_flags},
-		{"health": state.health - health_cost, "node_flags": flags},
+		{"health": state.health, "stone": state.stone, "node_flags": state.node_flags},
+		{"health": state.health - health_cost, "stone": state.stone + stone_gain, "node_flags": flags},
 		"event_accepted_delayed_cost",
 		state.current_node_id,
 		[str(event["id"])]
@@ -952,4 +961,66 @@ static func _ascension_conditions(state: RunState) -> Dictionary:
 		"protection": state.ascension.get("protection", false),
 		"external_interference": not state.ascension.get("external_interference", true),
 	}
+
+
+# ---------- 收官抉择（2026-09-15 用户裁定） --------------------------------------
+#
+# `pacing.ending_after_stage` 的语义从「打掉该层关底即**强制**收官」改为
+# 「自该层起，收官成为**玩家可选**」：打掉该层关底后 `close_run` 持续可用，
+# 玩家可继续深入，也可随时主动收官。旧行为是切片期的收口闸门
+# （`run_battle_flow.finish_battle_in_session` 直接置 terminal_state=success），
+# 它让单局在生产配置下只有约 3–12 场战斗、转数永远停在 1–2，局内没有成长空间。
+#
+# 判据单一事实来源：`closure_available` 同时供领域校验与快照按钮可见性使用，
+# 避免「按钮亮了但领域拒绝」的漂移。
+
+## 收官是否已解锁（快照/UI 与 `_close_run` 共用同一判据）。
+static func closure_available(state, catalog: Dictionary) -> bool:
+	if state == null or state.is_terminal():
+		return false
+	return _highest_defeated_layer(state) >= _closure_stage_threshold(catalog)
+
+
+## 收官可选起始层。`ending_after_stage` 为空（深层机制测试用的"不强制收官"态）
+## 取第 1 层——即"任何关底打完后都可主动收官"。
+static func _closure_stage_threshold(catalog: Dictionary) -> int:
+	var stage := str(catalog.get("pacing", {}).get("ending_after_stage", ""))
+	if stage.is_empty():
+		return 1
+	return maxi(1, MapGeneratorScript.layer_index(stage))
+
+
+## 已击败的最高层级 Boss。记来源：`record_layer_boss_defeated` 落的
+## `node_flags["boss_defeated_L<n>"]`（随存档持久化）。
+static func _highest_defeated_layer(state) -> int:
+	var highest := 0
+	for layer in range(1, 6):
+		if str((state.node_flags as Dictionary).get("boss_defeated_L%d" % layer, "")) == "true":
+			highest = layer
+	return highest
+
+
+static func _close_run(state: RunState, _command: Dictionary, catalog: Dictionary) -> Dictionary:
+	if state.is_terminal():
+		return Resolver._rejected(state, "terminal_run")
+	if not closure_available(state, catalog):
+		return Resolver._rejected(state, "closure_not_available")
+	var layer := _highest_defeated_layer(state)
+	# 结局归因只能使用事件日志与玩家已知事实：把收官本身写成不可变事件，
+	# terminal_state 走 event.after 落账（不旁路写字段）。
+	var next := state.append_event(Resolver._event(
+		state,
+		"close_run",
+		{"terminal_state": state.terminal_state},
+		{"terminal_state": "success"},
+		"player_closure_layer_%d" % layer,
+		state.current_node_id
+	))
+	next.terminal_state = "success"
+	return {"state": next, "result": {
+		"ok": true,
+		"outcome": "success",
+		"route": "player_closure",
+		"conditions": {"layer": layer, "route": "player_closure"},
+	}}
 

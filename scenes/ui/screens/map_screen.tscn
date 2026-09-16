@@ -326,6 +326,11 @@ visible = false
 layout_mode = 2
 text = "返回大厅"
 
+[node name="map_close_run_button" type="Button" parent="map_root/map_inspector"]
+visible = false
+layout_mode = 2
+text = "就此收官"
+
 [node name="map_leave_confirm_host" type="Control" parent="map_root"]
 visible = false
 layout_mode = 0

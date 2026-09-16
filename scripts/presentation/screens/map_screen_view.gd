@@ -87,6 +87,7 @@ const RESOURCE_SPECS := ["yuanstone", "shouyuan", "hunpo"]
 @onready var _travel_button: Button = $map_root/map_inspector/map_travel_button
 @onready var _save_button: Button = $map_root/map_inspector/map_save_button
 @onready var _return_button: Button = $map_root/map_inspector/map_return_button
+@onready var _close_run_button: Button = $map_root/map_inspector/map_close_run_button
 # Playable Core Loop Phase 2：右栏「当前构筑目标」区（只读，无交互）。
 @onready var _build_goal_panel: PanelContainer = $map_root/map_build_goal
 @onready var _goal_title: Label = $map_root/map_build_goal/map_goal_margin/map_goal_box/map_goal_title
@@ -165,6 +166,7 @@ func _apply_static_theme() -> void:
 	MasterTheme.apply_button(_travel_button, "action", "large")
 	MasterTheme.apply_button(_save_button, "action")
 	MasterTheme.apply_button(_return_button, "action")
+	MasterTheme.apply_button(_close_run_button, "primary")
 	MasterTheme.apply_button(_leave_save_button, "primary")
 	MasterTheme.apply_button(_leave_direct_button, "action")
 	MasterTheme.apply_button(_leave_cancel_button, "cancel")
@@ -191,6 +193,7 @@ func _wire_static_buttons() -> void:
 	_travel_button.pressed.connect(func(): _fire_travel(_selected_id))
 	_save_button.pressed.connect(func(): _fire("save_run"))
 	_return_button.pressed.connect(func(): _fire("to_hall"))
+	_close_run_button.pressed.connect(func(): _fire("close_run"))
 	_leave_save_button.pressed.connect(func(): _fire("save_and_to_hall"))
 	_leave_direct_button.pressed.connect(func(): _fire("leave_without_save"))
 	_leave_cancel_button.pressed.connect(func(): _fire("cancel_to_hall"))
@@ -569,6 +572,9 @@ func _refresh_inspector() -> void:
 	_travel_button.visible = reachable and _commands.has("travel")
 	_save_button.visible = _commands.has("save_run")
 	_return_button.visible = _commands.has("to_hall")
+	# 收官抉择（2026-09-15）：pacing.ending_after_stage 改为「收官可选起始层」，
+	# 打掉该层关底后开放。领域不支持时一律隐藏，不留可点装饰。
+	_close_run_button.visible = bool(_snapshot.get("closure_available", false)) and _commands.has("close_run")
 
 
 func _refresh_toast(toast_text: String) -> void:

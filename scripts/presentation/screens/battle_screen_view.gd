@@ -60,6 +60,9 @@ var _hovered_card: Dictionary = {}
 var _card_id := ""
 var _target_id := ""
 var _confirming := false
+# T16 残锋降转（2026-09-15）：待确认的杀招条目（非空时确认框提交的是它，
+# 而不是手牌卡）。残锋是永久削弱，出招前必须确认，禁止静默惩罚。
+var _pending_kill_move: Dictionary = {}
 var _expanded_enemies := false
 # 动效触发用：记录上一帧敌人 alive 状态和状态名集合，检测死亡/状态施加。
 var _prev_enemy_alive: Dictionary = {}
@@ -316,6 +319,7 @@ func _reset_interaction() -> void:
 	_card_id = ""
 	_target_id = ""
 	_confirming = false
+	_pending_kill_move = {}
 	_refresh()
 
 
@@ -726,7 +730,7 @@ func _refresh_kill_moves(state: Dictionary) -> void:
 					km_ok,
 					str(km.get("block_reason", "")))
 			if km_ok and km_id != "":
-				slot_btn.pressed.connect(func(): _release_kill_move(km_id))
+				slot_btn.pressed.connect(func(): _release_kill_move(km_id, km))
 			else:
 				# 交互闭环契约：不可用入口一律 disabled 置灰，不留可点装饰。
 				slot_btn.disabled = true
@@ -737,15 +741,31 @@ func _refresh_kill_moves(state: Dictionary) -> void:
 
 
 ## 释放杀招：与出牌同一条 play_card 通道（"kill_move.<id>" → play_kill_move）。
-func _release_kill_move(kill_move_id: String) -> void:
+## T16（2026-09-15）：残锋触发质变（`dangerous`）时先弹确认，确认后才带
+## confirmed=true 提交——领域侧同判据硬拦，未确认不扣道痕。
+func _release_kill_move(kill_move_id: String, km: Dictionary = {}) -> void:
 	if kill_move_id == "":
 		return
+	if bool(km.get("dangerous", false)):
+		_pending_kill_move = km
+		_active_card = km
+		_card_id = "kill_move." + kill_move_id
+		_target_id = ""
+		_confirming = true
+		_refresh()
+		return
+	_submit_kill_move(kill_move_id, false)
+
+
+func _submit_kill_move(kill_move_id: String, confirmed: bool) -> void:
 	var request_key := "killmove:" + kill_move_id
 	if _submitted_card_keys.has(request_key):
 		return
 	_submitted_card_keys[request_key] = true
+	_pending_kill_move = {}
+	_confirming = false
 	if _commands.has("play_card"):
-		_commands["play_card"].call("kill_move." + kill_move_id, _target_id)
+		_commands["play_card"].call("kill_move." + kill_move_id, _target_id, confirmed)
 	# 交互闭环契约：视觉 + 听觉双重反应。
 	AudioManager.play_sfx("battle_card_play")
 	play_ink_spread()
@@ -906,13 +926,24 @@ func _refresh_confirm() -> void:
 		_confirm_dialog.close()  # close() 会清空文本，只设 visible 会让隐藏节点残留文本
 		return
 	var card_name := str(_active_card.get("name", "此行动"))
+	# T16：确认框可能承载手牌危险卡，也可能承载残锋杀招——同一个对话框，
+	# 由 `_pending_kill_move` 决定确认后提交哪一条。
+	var pending_km := str(_pending_kill_move.get("id", ""))
+	var headline := card_name + " 将执行已预览的不可逆代价。"
+	if pending_km != "":
+		headline = card_name + " 将永久耗费配方剑蛊的道痕。"
 	# GuConfirmDialog 的入口是 open()（不是 setup），签名见 gu_confirm_dialog_view.gd。
 	_confirm_dialog.open(
-			card_name + " 将执行已预览的不可逆代价。",
+			headline,
 			func():
 				play_cinnabar_seal("裁定")
-				_submit_card(_active_card, _target_id),
-		func(): _set_mode("drag_cancel", _active_card),
+				if pending_km != "":
+					_submit_kill_move(pending_km, true)
+				else:
+					_submit_card(_active_card, _target_id),
+		func():
+			_pending_kill_move = {}
+			_set_mode("drag_cancel", _active_card),
 		"⚠ 危险行动",
 			_known_risk_text(_active_card))
 

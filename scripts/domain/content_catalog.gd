@@ -186,9 +186,21 @@ static func _validate_events(catalog: Dictionary) -> Array[String]:
 		var kind := str(entry.get("kind", ""))
 		if entry.has("kind") and not EVENT_KIND_IDS.has(kind):
 			errors.append("event %s has unknown kind %s" % [event_id, kind])
-		for field in ["health_cost", "delayed_soul_cost"]:
+		for field in ["health_cost", "delayed_soul_cost", "stone_gain"]:
 			if entry.has(field) and (not _is_integral(entry.get(field)) or int(entry.get(field)) < 0):
 				errors.append("event %s.%s must be a non-negative integer" % [event_id, field])
+		# D4：事件文案自描述。卡片与对话气球都从这里取字，不再硬编码"洞穴回声"话术。
+		# 只校验类型（空串 = 沿用代码兜底话术，不算错），不强制每条都写。
+		for text_field in ["title", "summary", "flavor_gain", "unknown_note"]:
+			if entry.has(text_field) and not entry.get(text_field) is String:
+				errors.append("event %s.%s must be a string" % [event_id, text_field])
+		# 事件必须至少有一个真实杠杆，否则卡片点了也没有任何结算（死内容）。
+		var leverless := int(entry.get("health_cost", 0)) == 0 \
+				and int(entry.get("delayed_soul_cost", 0)) == 0 \
+				and int(entry.get("stone_gain", 0)) == 0 \
+				and str(entry.get("curse_id", "")).is_empty()
+		if leverless:
+			errors.append("event %s has no effect at all (no cost, no gain, no curse)" % event_id)
 		var trigger := str(entry.get("delayed_trigger", ""))
 		if entry.has("delayed_trigger") and trigger != "next_travel":
 			errors.append("event %s.delayed_trigger has unknown value %s" % [event_id, trigger])
@@ -536,6 +548,50 @@ static func validate(catalog: Dictionary) -> Array[String]:
 		var node_theme := str(node.get("enemy_theme", ""))
 		if not node_theme.is_empty() and not EnemyCatalogScript.THEMES.has(node_theme):
 			errors.append("node %s has unknown enemy_theme %s" % [node.get("id", ""), node_theme])
+		# R9（2026-09-16）：关底 Boss 候选池。只许挂在 layer_boss 关底台上；
+		# 成员必须存在且 tier == "boss"；至少 2 个有效候选（1 个 = 不随机，
+		# 那还不如不写 boss_pool，让模板自带的 enemy_kind 直接生效）。
+		var boss_pool_value: Variant = node.get("boss_pool", null)
+		if boss_pool_value != null:
+			var boss_node_id := str(node.get("id", ""))
+			if int(node.get("layer_boss", 0)) <= 0:
+				errors.append("node %s boss_pool only on layer_boss stands" % boss_node_id)
+			if not boss_pool_value is Array or (boss_pool_value as Array).size() < 2:
+				errors.append("node %s boss_pool must be an array of at least 2 boss ids" % boss_node_id)
+			else:
+				var seen_boss_ids := {}
+				for boss_id_value in boss_pool_value:
+					var boss_id := str(boss_id_value)
+					var boss_entry: Dictionary = enemy_by_id.get(boss_id, {})
+					if boss_entry.is_empty():
+						errors.append("node %s boss_pool references unknown enemy %s" % [boss_node_id, boss_id])
+					elif str(boss_entry.get("tier", "")) != "boss":
+						errors.append("node %s boss_pool member %s has tier %s, must be boss"
+								% [boss_node_id, boss_id, str(boss_entry.get("tier", ""))])
+					if seen_boss_ids.has(boss_id):
+						errors.append("node %s boss_pool has duplicate boss %s" % [boss_node_id, boss_id])
+					seen_boss_ids[boss_id] = true
+		# D4（2026-09-16）：事件节点候选池。只许挂在 type=="event" 的点位上；
+		# 成员必须是真实事件 id；至少 2 条候选（1 条等于不随机，直接写 event_id 即可）。
+		# 与 boss_pool 同构：候选池成员在进地图时由 map_generator 用派生流抽取。
+		var event_pool_value: Variant = node.get("event_pool", null)
+		if event_pool_value != null:
+			var event_node_id := str(node.get("id", ""))
+			if str(node.get("type", "")) != "event":
+				errors.append("node %s event_pool only on type=event nodes" % event_node_id)
+			if not event_pool_value is Array or (event_pool_value as Array).size() < 2:
+				errors.append("node %s event_pool must be an array of at least 2 event ids" % event_node_id)
+			else:
+				var seen_event_pool_ids := {}
+				for event_id_value in event_pool_value:
+					var pool_event_id := str(event_id_value)
+					if not catalog.get("event_by_id", {}).has(pool_event_id):
+						errors.append("node %s event_pool references unknown event %s"
+								% [event_node_id, pool_event_id])
+					if seen_event_pool_ids.has(pool_event_id):
+						errors.append("node %s event_pool has duplicate event %s"
+								% [event_node_id, pool_event_id])
+					seen_event_pool_ids[pool_event_id] = true
 		var ascension_grants: Dictionary = node.get("ascension_grants", {})
 		var choices: Array = node.get("choices", [])
 		for grant_action in ascension_grants:
@@ -1408,6 +1464,9 @@ static func _validate_balance(cfg: Dictionary) -> Array[String]:
 		"soul_calm_beast_below", "soul_calm_departure_below",
 		"beast_nature_emerging_above", "beast_nature_threshold",
 		"retreat_stone_cost", "cultivate_rank_two_stone_cost",
+		# 一转一突破（2026-09-15）：2→3→4→5 各档元石成本，与二转同族标量键。
+		"cultivate_rank_three_stone_cost", "cultivate_rank_four_stone_cost",
+		"cultivate_rank_five_stone_cost",
 		"stone_to_essence_per_stone", "cross_school_penalty_per_extra",
 		"cross_school_exclusion_penalty",
 	]

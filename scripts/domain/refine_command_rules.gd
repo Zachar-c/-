@@ -17,6 +17,8 @@ const ShopRulesScript = preload("res://scripts/domain/shop_rules.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
+# 一转一突破（2026-09-15）：领域侧自查探访是否已消费（勿依赖 UI 禁用卡片）。
+const RestRulesScript = preload("res://scripts/domain/rest_rules.gd")
 
 
 static func _buy_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
@@ -409,32 +411,93 @@ static func _apply_free_mix(state: RunState, command: Dictionary, _catalog: Dict
 	return Resolver._finalize_if_dead(next)
 
 
-static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
+## 转数上限（境内最高五转）。与 `aptitude.json.cultivation_factor` 的 1–5 档、
+## `pacing.layers[N].enemy_rank_max` 的 1..5 梯度同源。
+const MAX_CULTIVATION := 5
+# 境界中文名。领域层是本表的唯一来源（转数语义归本模块，且本模块已持有
+# 「元石不足」等中文拒绝文案）；表现层经 `cultivation_label` 读取，
+# 不允许反向依赖表现层的 DisplayText。
+const CULTIVATION_LABELS := {
+	1: "一转", 2: "二转", 3: "三转", 4: "四转", 5: "五转",
+}
+const CULTIVATE_COST_BALANCE_KEYS := {
+	2: "cultivate_rank_two_stone_cost",
+	3: "cultivate_rank_three_stone_cost",
+	4: "cultivate_rank_four_stone_cost",
+	5: "cultivate_rank_five_stone_cost",
+}
+
+
+## 突破至 target_rank 的元石成本（0 = 该档未配置/越界）。快照、预览与本模块共用。
+static func cultivate_stone_cost(catalog: Dictionary, target_rank: int) -> int:
+	var key := str(CULTIVATE_COST_BALANCE_KEYS.get(target_rank, ""))
+	if key.is_empty():
+		return 0
+	return int((catalog.get("balance", {}) as Dictionary).get(key, 0))
+
+
+## 转数 → 中文境界名。越界回退为「N 转」。
+static func cultivation_label(rank: int) -> String:
+	var value := maxi(1, int(rank))
+	return str(CULTIVATION_LABELS.get(value, "%d 转" % value))
+
+
+## 一转一突破（2026-09-15 用户裁定：聚焦剑道、打造局内成长空间）。
+##
+## 背景：`aptitude.json.cultivation_factor = {1:1, 2:3, 3:9, 4:27, 5:81}` 与
+## `pacing.layers[N].enemy_rank_max = 1..5` **早已把 1→5 的成长曲线设计完**，
+## 但领域只实现了硬编码的二转（且 `>= 2` 直接拒绝）⇒ 转数永久封顶 2 转。
+## 后果：门禁 `can_activate(cultivation >= gu_rank)` 让全库 52% 的蛊（rank ≥3）
+## **永远无法催动**；剑道 40 只蛊里 20 只是死内容，22 条杀招中配方含 4–5 转蛊的
+## 全部不可达，promotion 链 1→5 也永远走不完。
+##
+## 现改为逐档突破（不可跳档、不可超上限），每层关底后开放下一档。
+## 目标档缺省 = 当前转数 + 1，由领域自行判定，UI 不需要知道档位公式。
+static func _breakthrough(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	# E3a：修炼族并入休息类三选一——rest/refinement/cultivation 节点均可冲阶
 	# （原 cultivation_spring 字面闸门放宽为休息类；seclusion 等仍拒绝）。
 	if not Resolver._is_rest_class_node(catalog, state.current_node_id) \
 			and not Resolver._is_rest_class_node(catalog, str(state.current_node_template_id)):
 		return Resolver._rejected(state, "not_cultivation_window")
-	if state.cultivation >= 2:
-		return Resolver._rejected(state, "cultivation_already_rank_two")
-	var rank_two_cost := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
-	if state.stone < rank_two_cost:
+	# 一次探访只取一份收益（领域自查）：否则四档突破可在一个休整点连跳。
+	if RestRulesScript.rest_visit_consumed(state):
+		return Resolver._rejected(state, "rest_visit_already_used")
+	var current := maxi(1, int(state.cultivation))
+	if current >= MAX_CULTIVATION:
+		return Resolver._rejected(state, "cultivation_already_max")
+	var target := int(command.get("target_rank", current + 1))
+	if target < 2 or target > MAX_CULTIVATION:
+		return Resolver._rejected(state, "cultivation_rank_out_of_range")
+	if target <= current:
+		return Resolver._rejected(state, "cultivation_already_rank_two" if current >= 2 else "cultivation_already_rank_one")
+	# 不可跳档：一转一突破，保证成长是四拍而不是一次跃升。
+	if target != current + 1:
+		return Resolver._rejected(state, "cultivation_step_too_far")
+	var cost := cultivate_stone_cost(catalog, target)
+	if state.stone < cost:
 		return Resolver._rejected(state, "insufficient_stone")
 	var aperture := state.cave_aperture.duplicate(true)
-	aperture["essence_max"] = EssenceCapacityScript.essence_max_for(state, catalog, 2)
+	aperture["essence_max"] = maxi(int(aperture.get("essence_max", 0)),
+			EssenceCapacityScript.essence_max_for(state, catalog, target))
 	# 玩家等级曲线（2026-08-29 设计点）：转数只抬真元总量上限，不加 HP/攻击。
 	# 2026-08-28 验收批：上限值从公式取（aptitude.json tier 表唯一真值），
-	# 不再硬编码 3 + 2。
-	var next_capacity := maxi(state.essence_capacity, EssenceCapacityScript.essence_max_for(state, catalog, 2))
+	# 不再硬编码 3 + 2。现值随目标档走（×3 一档）。
+	var next_capacity := maxi(state.essence_capacity, EssenceCapacityScript.essence_max_for(state, catalog, target))
 	var next := state.append_event(Resolver._event(
 		state,
-		"cultivate_rank_two",
+		"breakthrough",
 		{"cultivation": state.cultivation, "stone": state.stone, "essence": state.essence, "cave_aperture": state.cave_aperture},
-		{"cultivation": 2, "stone": state.stone - rank_two_cost, "essence": state.essence_capacity, "essence_capacity": next_capacity, "cave_aperture": aperture},
-		"rank_two_breakthrough",
+		{"cultivation": target, "stone": state.stone - cost, "essence": state.essence_capacity, "essence_capacity": next_capacity, "cave_aperture": aperture},
+		"rank_%d_breakthrough" % target,
 		state.current_node_id
 	))
 	return Resolver._accepted(next)
+
+
+## 历史命令名（`cultivate_rank_two`）。保留为薄包装：旧存档、旧测试与
+## 既有领域命令面继续可用；行为等价于 `_breakthrough` 指定目标 2 转。
+static func _cultivate_rank_two(state: RunState, catalog: Dictionary) -> Dictionary:
+	return _breakthrough(state, {"target_rank": 2}, catalog)
 
 
 static func _disable_card(state: RunState, command: Dictionary) -> Dictionary:

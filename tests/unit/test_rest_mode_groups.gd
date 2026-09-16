@@ -85,8 +85,17 @@ func test_cultivate_card_mirrors_rank_and_stone() -> void:
 	state.stone = 12
 	state.cultivation = 2
 	cultivate = _card(_group(_snapshot_for("rest_shrine", "rest", state), "修炼"), "cultivate")
-	assert_true(bool(cultivate.get("disabled", false)), "cultivate must be disabled at rank 2")
-	assert_ne(str(cultivate.get("reason", "")), "", "rank-2 cultivate must explain why")
+	# 一转一突破（2026-09-15）：二转不再是终点——有余量就继续冲三转。
+	assert_false(bool(cultivate.get("disabled", true)), "二转后仍可继续突破三转")
+	assert_eq(str(cultivate.get("label", "")), "冲击三转", "档位随当前转数自增")
+	state.stone = 11
+	cultivate = _card(_group(_snapshot_for("rest_shrine", "rest", state), "修炼"), "cultivate")
+	assert_true(bool(cultivate.get("disabled", false)), "三转成本 12，11 枚不足")
+	assert_ne(str(cultivate.get("reason", "")), "", "元石不足必须说明原因")
+	state.stone = 999
+	state.cultivation = 5
+	cultivate = _card(_group(_snapshot_for("rest_shrine", "rest", state), "修炼"), "cultivate")
+	assert_true(bool(cultivate.get("disabled", false)), "五转为境内上限，无更高境界")
 
 
 func test_refine_cards_mirror_aperture_state() -> void:

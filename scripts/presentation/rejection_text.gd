@@ -48,6 +48,13 @@ const TEXT := {
 	"material_use_lethal": "直接使用会耗尽气血，被拒绝。",
 	"too_early_first_layer": "尚在第一大层前段，稍后才能确认核心。",
 	"core_already_confirmed": "本局已有一只核心蛊。",
+	"closure_not_available": "尚未平定收官层，暂时无法收官。",
+	# 一转一突破（2026-09-15）
+	"cultivation_already_max": "你已是五转蛊师，境内再无更高境界。",
+	"cultivation_already_rank_one": "你已是一转蛊师，无需重复突破。",
+	"cultivation_rank_out_of_range": "此境界超出境内可及范围。",
+	"cultivation_step_too_far": "境界须逐转突破，不可越级。",
+	"rest_visit_already_used": "此处已取过收益，换个地方再修行。",
 	"instance_missing": "没有这只蛊实例。",
 	"replace_limit_reached": "本局核心更换次数已达上限。",
 	"guarantee_replaced_with_peer_reward": "已更换过核心，此处改发同级收益。",

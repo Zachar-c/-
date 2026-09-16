@@ -146,6 +146,13 @@ static func _handler_for(command_type: String) -> Variant:
 				if bool(cultivated["result"].get("ok", false)):
 					cultivated["state"] = RestRulesScript._consume_rest_visit_if_rest_class(cultivated["state"], catalog)
 				return cultivated,
+			# 一转一突破（2026-09-15）：目标档缺省 = 当前 + 1，逐档推进至五转。
+			# 与二转同款消费休整探访（一次探访只取一份收益，不得连跳）。
+			"breakthrough": func(state, command, catalog):
+				var stepped := RefineCommandRulesScript._breakthrough(state, command, catalog)
+				if bool(stepped["result"].get("ok", false)):
+					stepped["state"] = RestRulesScript._consume_rest_visit_if_rest_class(stepped["state"], catalog)
+				return stepped,
 			"settle_feeding": func(state, _command, catalog): return RefineCommandRulesScript._settle_feeding(state, catalog),
 			"settle_node_feeding": func(state, _command, catalog): return RefineCommandRulesScript._settle_node_feeding(state, catalog),
 			"disable_card": func(state, command, _catalog): return RefineCommandRulesScript._disable_card(state, command),
@@ -162,6 +169,9 @@ static func _handler_for(command_type: String) -> Variant:
 			"choose_action": func(state, command, catalog): return SocialCommandRulesScript._choose_action(state, command, catalog),
 			"retreat": func(state, _command, _catalog): return SocialCommandRulesScript._retreat(state),
 			"attempt_ascension": func(state, command, _catalog): return SocialCommandRulesScript._attempt_ascension(state, command),
+			# 收官抉择（2026-09-15）：打掉 ending_after_stage 指定层关底后，
+			# 玩家可主动收官（原为强制收官）。
+			"close_run": func(state, command, catalog): return SocialCommandRulesScript._close_run(state, command, catalog),
 			"gain_relic": func(state, command, catalog): return SocialCommandRulesScript._gain_relic(state, command, catalog),
 			"shop_purchase": func(state, command, catalog): return ShopCommandRulesScript._shop_purchase(state, command, catalog),
 			"shop_lifespan_deal": func(state, command, catalog): return ShopCommandRulesScript._shop_lifespan_deal(state, command, catalog),

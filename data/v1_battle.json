@@ -75,6 +75,8 @@
  "max_seal_turns": 3,
  "mark_scratch_per_layer": 1,
  "mark_scratch_cap": 10,
+  "sword_dao_marks_init": 5,
+  "sword_downgrade_every": 5,
  "kill_moves": [
   {
    "id": "km_light_converge",

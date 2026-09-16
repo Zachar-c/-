@@ -46,8 +46,8 @@ func _initialize() -> void:
 	controller.start_new_run(20260921, "", [])
 	if controller.current_view_name() == "Map":
 		var enc_node: Dictionary = {
-			"id": "toxic_mountain_path", "type": "event",
-			"summary": "毒瘴弥漫的山道，空气中飘浮着诡异的孢子。",
+			"id": "echo_cave", "type": "event", "event_id": "echo_cave",
+			"summary": "洞穴深处有回声应答，已知与未知的代价都刻在石壁上。",
 			"choices": ["probe", "cross"],
 		}
 		controller.current_node = enc_node

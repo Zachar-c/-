@@ -56,6 +56,14 @@ static func _rest_visit_consumed(state: RunState) -> bool:
 	return str(state.node_flags.get(_rest_visit_key(state.current_node_id), "")) == "used"
 
 
+## 公开判据（一转一突破 2026-09-15）：本次休整探访是否已取过收益。
+## 领域侧必须自查——此前"一次探访只取一份收益"只由快照禁用卡片实现，
+## 领域可被连刷；四档突破放开后会让人在一个休整点连跳 2→5 转，
+## 把四拍成长塌成一拍。
+static func rest_visit_consumed(state: RunState) -> bool:
+	return _rest_visit_consumed(state)
+
+
 static func _rest(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
 	# 地图实例 id（L1R1N0）与目录模板 id 不同——休整门禁必须双查：
 	# 实例 id 直命中，或实例的 template_id 指向休整模板。

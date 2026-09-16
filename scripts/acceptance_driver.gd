@@ -2434,6 +2434,20 @@ func _step_via_cards(controller, label: String) -> String:
 		for card in tail_cards:
 			ordered.append(card)
 		cards = ordered
+	# 一转一突破（2026-09-15）：休整类节点优先冲阶。转数是本局唯一的成长主轴——
+	# 不升转则 `can_activate(cultivation >= gu_rank)` 让全库 52% 的蛊（rank≥3）
+	# 永远无法催动，promotion 链也会产出"拿得到却用不了"的高转蛊。
+	# 驱动器此前完全不升转（生产口径转数一路停在 1），整条成长链因此不可测。
+	elif node_type in ["rest", "cultivation", "seclusion", "refinement"]:
+		var breakthrough_cards: Array[Dictionary] = []
+		var other_cards: Array[Dictionary] = []
+		for card in cards:
+			if str(card.get("id", "")).begins_with("cultivate."):
+				breakthrough_cards.append(card)
+			else:
+				other_cards.append(card)
+		if not breakthrough_cards.is_empty():
+			cards = breakthrough_cards + other_cards
 	var acted := false
 	for card in cards:
 		var card_id := str(card.get("id", ""))
@@ -2448,7 +2462,10 @@ func _step_via_cards(controller, label: String) -> String:
 		# 玩家理财：元石要留给战力构筑；商店与炼蛊台之外不为情报/服务掏钱
 		# （promotion/advance 的元石与材料正是战力构筑本身的支出）。
 		var cost: Dictionary = card.get("cost", {})
-		if int(cost.get("stone", 0)) > 0 and node_type != "shop" and node_type != "refinement":
+		# 冲阶不是"情报/服务"消费，而是战力构筑支出本身（与 promotion/advance 同类），
+		# 故元石守卫对它放行。
+		if int(cost.get("stone", 0)) > 0 and node_type != "shop" and node_type != "refinement" \
+				and not str(card_id).begins_with("cultivate."):
 			continue
 		var command: Dictionary = card.get("command", {})
 		if command.is_empty():

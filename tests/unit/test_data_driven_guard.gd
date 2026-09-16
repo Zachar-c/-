@@ -18,6 +18,13 @@ func test_balance_json_carries_behavior_cost_keys() -> void:
 			"retreat_stone_cost must stay in balance.json")
 	assert_eq(int((cfg as Dictionary).get("cultivate_rank_two_stone_cost", 0)), 5,
 			"cultivate_rank_two_stone_cost must stay in balance.json")
+	# 一转一突破（2026-09-15）：2→5 各档成本全部落 JSON。
+	assert_eq(int((cfg as Dictionary).get("cultivate_rank_three_stone_cost", 0)), 12,
+			"cultivate_rank_three_stone_cost must stay in balance.json")
+	assert_eq(int((cfg as Dictionary).get("cultivate_rank_four_stone_cost", 0)), 20,
+			"cultivate_rank_four_stone_cost must stay in balance.json")
+	assert_eq(int((cfg as Dictionary).get("cultivate_rank_five_stone_cost", 0)), 30,
+			"cultivate_rank_five_stone_cost must stay in balance.json")
 
 
 func test_resolver_reads_rank_two_cost_from_balance() -> void:
@@ -35,8 +42,15 @@ func test_preview_reads_costs_from_balance() -> void:
 	var text := FileAccess.get_file_as_string("res://scripts/domain/action_preview_service.gd")
 	assert_true(text.contains("retreat_stone_cost"),
 			"action_preview_service.gd must read retreat_stone_cost from catalog")
-	assert_true(text.contains("cultivate_rank_two_stone_cost"),
-			"action_preview_service.gd must read cultivate_rank_two_stone_cost from catalog")
+	# 一转一突破（2026-09-15）：升转档位与成本的**单一来源**移到
+	# RefineCommandRules（`cultivate_stone_cost` 读 balance 的
+	# cultivate_rank_<n>_stone_cost，其中二转键仍为 cultivate_rank_two_stone_cost）。
+	# 守卫意图不变——预览层不得自行硬编码/重复读取成本键——故改为：
+	# ① 必须经单一来源取成本；② 禁止在本文件重新散落档位键（防止两份真值）。
+	assert_true(text.contains("cultivate_stone_cost"),
+			"action_preview_service.gd must read the cultivation cost via RefineCommandRules")
+	assert_false(text.contains("cultivate_rank_two_stone_cost"),
+			"cost keys must live only in RefineCommandRules.CULTIVATE_COST_BALANCE_KEYS")
 
 
 func test_domain_does_not_bake_entity_data_dictionaries() -> void:

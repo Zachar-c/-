@@ -181,15 +181,12 @@ static func finish_battle_in_session(controller, outcome: String) -> void:
 		if layer_boss > 0:
 			controller.state = Resolver.apply(controller.state,
 					{"type": "record_layer_boss_defeated", "layer": layer_boss}, controller.catalog)["state"]
-			var end_stage := str(controller.catalog.get("pacing", {}).get("ending_after_stage", ""))
-			var order: Array = MapGeneratorScript.LAYER_ORDER
-			var boss_stage := str(order[layer_boss - 1]) \
-					if layer_boss >= 1 and layer_boss <= order.size() else ""
-			if not end_stage.is_empty() and boss_stage == end_stage:
-				controller.state.terminal_state = "success"
-				controller._show_ending({"outcome": "success",
-						"conditions": {"layer": layer_boss, "route": "slice_closure"}})
-				return
+			# 收官抉择（2026-09-15 用户裁定）：此处**不再**强制收官。
+			# `pacing.ending_after_stage` 改为「收官可选起始层」——击败该层关底后
+			# 玩家继续深入（本函数照常走 Reward → Map），收官按钮在地图屏常驻
+			# （`close_run` 命令，判据 SocialCommandRules.closure_available）。
+			# 原实现直接置 terminal_state=success 并跳 Ending，导致生产局只有
+			# L1（约 3–12 场战斗）就收官，转数永远停在 1–2，局内毫无成长空间。
 		if enemy_kind == "miasma_vein_lord":
 			controller.state = Resolver.apply(controller.state,
 					{"type": "record_boss_defeated"}, controller.catalog)["state"]

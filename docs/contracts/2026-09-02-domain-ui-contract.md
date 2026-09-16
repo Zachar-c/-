@@ -102,7 +102,7 @@ UI (scenes + scripts/ui)
 
 现役 type 全集（参数见 resolver 对应 `_xxx` 函数；均为 `state, command, catalog` 三元签名）：
 
-`travel(node_id)`、`resolve_contact`、`complete_node`、`buy_gu`、`sell_gu`、`exchange_gu`、`refine_gu`、`cultivate_rank_two`、`settle_feeding`、`settle_node_feeding`、`disable_card`、`upgrade_card`、`copy_card`、`destroy_gu`、`remove_card`、`remove_imprint`、`spend_lifespan`、`accept_debt`、`use_gu`、`buy_opportunity`、`take_body_imprint`、`choose_action`、`retreat`、`attempt_ascension`、`gain_relic`、`shop_purchase`、`shop_lifespan_deal`、`shop_barter`、`npc_trade`、`scavenge`、`sell_material`、`use_material`、`raise_aptitude`、`record_neutral_npc_kill`、`wash_notoriety`、`record_boss_defeated`、`record_layer_boss_defeated`、`rest`（`mode ∈ {heal,upgrade_card,remove_card,remove_imprint,remove_curse,skip}`，覆盖 `_rest_skip` 在内的领域全集）、`gain_force_power`、`accept_event`、`gain_curse`、`remove_curse`、`swear_contracts`。
+`travel(node_id)`、`resolve_contact`、`complete_node`、`buy_gu`、`sell_gu`、`exchange_gu`、`refine_gu`、`cultivate_rank_two`、`breakthrough`、`settle_feeding`、`settle_node_feeding`、`disable_card`、`upgrade_card`、`copy_card`、`destroy_gu`、`remove_card`、`remove_imprint`、`spend_lifespan`、`accept_debt`、`use_gu`、`buy_opportunity`、`take_body_imprint`、`choose_action`、`retreat`、`attempt_ascension`、`close_run`、`gain_relic`、`shop_purchase`、`shop_lifespan_deal`、`shop_barter`、`npc_trade`、`scavenge`、`sell_material`、`use_material`、`raise_aptitude`、`record_neutral_npc_kill`、`wash_notoriety`、`record_boss_defeated`、`record_layer_boss_defeated`、`rest`（`mode ∈ {heal,upgrade_card,remove_card,remove_imprint,remove_curse,skip}`，覆盖 `_rest_skip` 在内的领域全集）、`gain_force_power`、`accept_event`、`gain_curse`、`remove_curse`、`swear_contracts`。
 
 统一返回：`{"ok": bool, "reason": str?, "feedback"?: str, ...}`；`ok=false` 时 `reason` 必须能命中 §5 的中文映射。`load_run`/`save_run` 由 controller 层直接处理（v4 拒载契约见 §7）。
 
@@ -116,9 +116,45 @@ UI (scenes + scripts/ui)
 
 controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / basic_dodge / refine / play_kill_move`（`run_controller.gd:200`），经 `BattleCommandFacade.apply_turn` 转为 V1 内部动作（`play_gu(slot_index)/basic_attack/end_turn/play_kill_move`）；敌方回合 `apply_enemy_pre_turn`。撤退门：`boss_blocks_retreat`。
 
+- **收官抉择（2026-09-15 用户裁定，**语义变更**）**：`pacing.ending_after_stage` 从
+  「打掉该层关底即**强制**收官」改为「自该层起，收官成为**玩家可选**」。击败该层
+  （`node_flags["boss_defeated_L<n>"]`，由 `record_layer_boss_defeated` 落账、随存档持久化）
+  后 `close_run` 持续可用：玩家可继续深入，也可随时主动收官。
+  - 命令 `close_run`（无参）：判据单一来源 `SocialCommandRules.closure_available(state, catalog)`；
+    不可用时拒绝 `closure_not_available`（中文「尚未平定收官层，暂时无法收官。」），**不落事件、不改终局态**。
+    可用时落不可变事件 `action:"close_run"`（`reason:"player_closure_layer_<n>"`），
+    `terminal_state → success`，控制器切入 Ending。
+  - 快照键（仅 Map 屏）：`closure_available`（bool，与领域同判据）、`closure_hint`（String，
+    层名取自 `pacing.layers[<index>].title`，如「「青茅山外圍」已平定——可继续深入，或就此收官了结本局。」）。
+  - UI：`map_screen_view` 的 `map_close_run_button`（`scenes/ui/screens/map_screen.tscn`）
+    仅在 `closure_available and commands.has("close_run")` 时可见，否则隐藏（不留可点装饰）。
+  - **不改动**：`attempt_ascension`（冲仙）是另一条结局路径，本键不参与其判定。
+- **一转一突破（2026-09-15 用户裁定：聚焦剑道、打造局内成长空间，**新增命令**）**：
+  `aptitude.json.cultivation_factor = {1:1,2:3,3:9,4:27,5:81}` 与 `pacing.layers[N].enemy_rank_max = 1..5`
+  早已把 1→5 曲线设计完，但领域只实现了硬编码二转（且 `>= 2` 直接拒绝）⇒ 转数永久封顶 2，
+  门禁 `can_activate(cultivation >= gu_rank)` 让全库 52% 的蛊（rank ≥3）**永远无法催动**。
+  - 命令 `breakthrough`（可选 `target_rank`，缺省 = 当前转数 + 1）：须在休息类节点；**逐档推进**
+    （跳档 → `cultivation_step_too_far`）；上限 5 转（`cultivation_already_max`）；
+    元石不足 → `insufficient_stone`；**一次探访只取一份收益**（`rest_visit_already_used`，
+    领域侧自查 `RestRules.rest_visit_consumed`，不再只靠快照禁用卡片）。
+  - 成本单一来源 `RefineCommandRules.cultivate_stone_cost(catalog, rank)`，读 `balance.json` 的
+    `cultivate_rank_{two,three,four,five}_stone_cost`（5 / 12 / 20 / 30）。
+  - 结算：`after.cultivation` = 目标档；`after.essence_capacity` 与 `cave_aperture.essence_max`
+    均取 `max(现值, EssenceCapacity.essence_max_for(state, catalog, target))`（**不得回落**）；
+    事件 `action:"breakthrough"`，`reason:"rank_<n>_breakthrough"`。
+  - 快照：Rest 屏 `mode_groups.修炼` 的 `cultivate` 卡 `label` 为「冲击{N}转」，`cost` 为对应档位元石数；
+    `ActionPreviewService` 的修炼卡 `id` 为 `cultivate.rank_<n>`，`command` 带 `target_rank`。
+  - 境界中文名单一来源 `RefineCommandRules.cultivation_label(rank)`（领域层拥有；
+    表现层不得反向依赖 `DisplayText`，其 `DisplayText.cultivation` 已移除）。
+  - 兼容：旧命令 `cultivate_rank_two` 保留为薄包装（等价目标 2 转），旧存档与既有测试不受影响。
 - `use_gu` 命令携带可选 `target_id`（`gu.<instance_id>` 点击的目标敌人 id）；经 facade 的 `play_gu(slot_index, target_id)` 贯穿到 `V1BattleResolver`（`_strike_enemy`/`_apply_enemy_status` 按目标解析，空/无效回退首个存活敌人）。多敌战斗中点选第 N 个敌人必须命中该敌人。
 - `use_gu` 成功结算写入 `battle_v1` 事件；`info.effect` 含 `kind/amount/target`，并按类别补 `name`（status/buff）、`heal`（heal_and_strike）、`target_id`（**实际命中敌人 id**：resolver 结算后把命中者写回 battle 的 `last_effect_target`，facade 以它为准——空/无效请求回退首个存活敌人时日志记录真实命中者而非空/原始值）；`amount` 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0）。
 - **转数门禁（2026-09-03，spec §11.2）**：`can_play_gu` 前置校验 `CultivatorRules.can_activate(player.cultivation, slot.rank, slot.low_rank_exception)`；拒绝 reason `insufficient_qi_quality`（中文「真元质量不足，无法催动此转数的蛊虫」，走 `_v1_reject_text`）。`gu_slots[]` 新增 `rank`（实例与定义转数取较高者，同名升阶计入）与 `low_rank_exception`（gu 定义可声明 `low_rank_exception: true` 例外，对应 §11.2 珍稀蛊低转催动条款）；`player` 新增 `cultivation`（数值转数）。拒绝零消耗。杀招（`play_kill_move`）暂不做同款校验，与既有行为一致。
+- **T16 残锋降转（2026-09-15，规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §2，D16-4 已修正为 b）**：
+  - 快照键扩容（仅 Battle 屏）：`gu_slots[]` 新增 `rank_held`（持有转数，含同名升阶）、`sword_downgrades`（质变次数）、`dao_marks`（距下次质变的剩余逆炼次数，旧存档缺键按 `v1_battle.sword_dao_marks_init` 读取）、`dao_marks_per_downgrade`（质变阈值）、`sword_mark_cost`（该蛊是否吃残锋）。**语义变更**：`gu_slots[].rank` 现在是**等效转数**（`max(1, rank_held - sword_downgrades)`）；未降转实例 `rank == rank_held`，与改动前逐值一致。
+  - `kill_moves[]` 新增 `dangerous`（bool）与 `known_risk`（Array[String]）：本次释放若耗尽道痕触发质变则为真，文案含「永久降 1 转（不可逆，无法回复）」。`cost` 字符串在配方含残锋蛊时追加 `残锋 N`。**UI 义务**：`dangerous` 为真时必须在提交前弹确认（`battle_screen_view._release_kill_move` → `_pending_kill_move` → `GuConfirmDialog`）。
+  - 命令：`play_kill_move` 携带可选 `confirmed`（bool，缺省 `false`）。未确认且本次会触发质变 → 领域侧拒绝 `sword_mark_confirm_required`，**不扣余量、不执行**（红线「禁止静默惩罚」）。判据唯一来源 `SwordMarkRules.pending_downgrade`，快照与引擎共用。
+  - 事件：逆炼落 `action: "sword_erosion"`（`source: "sword_mark_rules"`，`info.spent[]` / `info.downgraded[]`，`after.gu_instances`）；结算挂在 `BattleCommandFacade.settle_sword_marks`（resolver 只见 battle，跨战斗的永久消耗必须落在 `RunState.gu_instances`）。
 - **转数与效果展示（2026-09-04）**：`hand[]` 蛊卡 `summary` 带转数前缀（`N转·<效果文本>（<状态注记>）`；`basic_attack` 拳脚卡除外）。图鉴（`hall()` → `codex.gu[]`）条目新增 `rank`（整数转数，UI 渲「转数：N转」）与 `effect`（效果中文文本：显式 `v1_effect` 优先，缺省走 `V1BattleResolver.default_v1_effect` role 兜底，与战斗口径一致）。
 
 预检规格（`CommandSpecRegistry`）：

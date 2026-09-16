@@ -12,6 +12,8 @@ extends RefCounted
 
 const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
 const SchoolRulesScript = preload("res://scripts/domain/school_rules.gd")
+# T16 残锋降转（2026-09-15）：道痕余量/质变的唯一读写口（结算侧在门面）。
+const SwordMarkRulesScript = preload("res://scripts/domain/sword_mark_rules.gd")
 # Q8-IMPLEMENT Step 2（2026-09-12）：Effect Grammar V2 管线（FINAL §1）。
 const GrammarPipeline = preload("res://scripts/domain/v1_grammar_pipeline.gd")
 
@@ -174,16 +176,33 @@ static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]
 		var combat := str(definition.get("combat", ""))
 		if combat.is_empty() or combat == "none":
 			continue
+		# T16 残锋降转（2026-09-15）：持有转数取"同名升阶"口径，等效转数再减
+		# 质变次数（下限 1 转）。未降转实例 effective == held ⇒ 行为保持。
+		var held_rank := maxi(int(instance.get("rank", 1)), int(definition.get("rank", 1)))
+		var downgrades := SwordMarkRulesScript.downgrades_of(instance)
+		var effective_rank := SwordMarkRulesScript.effective_rank(held_rank, instance)
 		var effect: Dictionary = definition.get("v1_effect", {})
 		if effect.is_empty():
 			effect = default_v1_effect(definition, role_table)
+		else:
+			effect = (effect as Dictionary).duplicate(true)
+		# D16-4(b)：降转必须**真的变弱**——门禁转数下降只是"更易催动"，
+		# 故 RANK_SCALED_KINDS 的显式 amount 同步按质变次数下调（下限 1）。
+		if downgrades > 0 and RANK_SCALED_KINDS.has(str(effect.get("kind", ""))):
+			effect["amount"] = maxi(1, int(effect.get("amount", 1)) - downgrades)
 		result.append({
 			"instance_id": str(instance.get("instance_id", "")),
 			"definition_id": str(instance.get("definition_id", "")),
 			# S4 元素协同：流派随槽位走，供支援加成匹配（本回合同流派 strike +N）。
 			"school": str(definition.get("school", "")),
 			# 同名升阶可让实例转数高于定义：门禁按两者较高者拦截。
-			"rank": maxi(int(instance.get("rank", 1)), int(definition.get("rank", 1))),
+			"rank": effective_rank,
+			# T16 可见性：持有转数 / 道痕余量 / 距质变还差几次（UI 与快照只读）。
+			"rank_held": held_rank,
+			"sword_downgrades": downgrades,
+			"dao_marks": SwordMarkRulesScript.remaining_marks(instance, catalog),
+			"dao_marks_per_downgrade": SwordMarkRulesScript.downgrade_every(catalog),
+			"sword_mark_cost": bool(definition.get("sword_mark_cost", false)),
 			"low_rank_exception": bool(definition.get("low_rank_exception", false)),
 			"is_sealed": false,
 			"seal_turns": 0,
@@ -218,12 +237,19 @@ static func _build_kill_moves(run_state, catalog: Dictionary) -> Array[Dictionar
 	for km_value in raw:
 		var km: Dictionary = km_value
 		var recipe: Array[String] = []
+		var mark_recipe: Array[String] = []
 		var recipe_ok := true
 		for def_id_value in km.get("recipe", []):
-			if not instance_by_def.has(str(def_id_value)):
+			var def_id := str(def_id_value)
+			if not instance_by_def.has(def_id):
 				recipe_ok = false
 				break
-			recipe.append(str(instance_by_def[str(def_id_value)]))
+			var instance_id := str(instance_by_def[def_id])
+			recipe.append(instance_id)
+			# T16：配方里哪些蛊带残锋标记（`sword_mark_cost`）——逆炼只吃这些，
+			# 出招前预检与持久化结算共用同一份名单，避免二次判定义。
+			if bool((gu_by_id.get(def_id, {}) as Dictionary).get("sword_mark_cost", false)):
+				mark_recipe.append(instance_id)
 		if not recipe_ok:
 			continue
 		result.append({
@@ -231,6 +257,7 @@ static func _build_kill_moves(run_state, catalog: Dictionary) -> Array[Dictionar
 			"label": str(km.get("label", str(km.get("id", "")))),
 			"tag": str(km.get("tag", "")),
 			"recipe": recipe,
+			"sword_mark_recipe": mark_recipe,
 			"true_qi_cost": int(km.get("true_qi_cost", 0)),
 			"thought_cost": int(km.get("thought_cost", 1)),
 			"life_cost": int(km.get("life_cost", 0)),
@@ -295,7 +322,8 @@ static func player_action(battle: Dictionary, action: Dictionary) -> Dictionary:
 		"basic_attack":
 			return basic_attack(battle)
 		"play_kill_move":
-			return play_kill_move(battle, str(action.get("kill_move_id", "")))
+			return play_kill_move(battle, str(action.get("kill_move_id", "")),
+					bool(action.get("confirmed", false)))
 		"end_turn":
 			return end_turn(battle)
 		_:
@@ -639,7 +667,7 @@ static func basic_attack(battle: Dictionary) -> Dictionary:
 
 ## 预制杀招：配方蛊全部未封印、行动+念头+真元（+寿元）校验；化解判定；
 ## 配方蛊标记 used_this_turn；寿元消耗致死则效果不执行直接陨落。
-static func play_kill_move(battle: Dictionary, kill_move_id: String) -> Dictionary:
+static func play_kill_move(battle: Dictionary, kill_move_id: String, confirmed: bool = false) -> Dictionary:
 	var index := -1
 	for i in (battle["kill_moves"] as Array).size():
 		if str(battle["kill_moves"][i]["id"]) == kill_move_id:
@@ -663,6 +691,10 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String) -> Dictiona
 		return _result(battle, false, "insufficient_thought")
 	if int(battle["player"]["true_qi"]) < int(km.get("true_qi_cost", 0)):
 		return _result(battle, false, "insufficient_true_qi")
+	# T16 红线（AGENTS §核心业务红线）：残锋是**不可逆的永久削弱**，本次出招若会把
+	# 任一配方剑蛊推过质变阈值，必须先经确认；未确认时不扣余量、不执行。
+	if SwordMarkRulesScript.pending_downgrade(battle, kill_move_id) and not confirmed:
+		return _result(battle, false, "sword_mark_confirm_required")
 	var player: Dictionary = (battle["player"] as Dictionary).duplicate(true)
 	player["true_qi"] = int(player["true_qi"]) - int(km.get("true_qi_cost", 0))
 	player["thoughts"] = int(player["thoughts"]) - int(km.get("thought_cost", 1))
@@ -678,6 +710,10 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String) -> Dictiona
 		var slot := _find_slot(next, str(instance_id))
 		if not slot.is_empty():
 			next["gu_slots"][_find_slot_index(next, str(instance_id))]["used_this_turn"] = true
+	# T16：把本次逆炼的配方蛊名单交给门面——resolver 只持有 battle，
+	# 写回 RunState.gu_instances 由 battle_command_facade 按 loot_resolver
+	# 同款范式落地（跨战斗的永久消耗必须落在实例上）。
+	next["sword_mark_spent"] = (km.get("sword_mark_recipe", []) as Array).duplicate()
 	_log(next, "kill_move", kill_move_id)
 	# 化解判定：命中已暴露或隐藏的同标签化解 → 效果无效（资源已扣）。
 	var tag := str(km.get("tag", ""))
@@ -741,6 +777,13 @@ static func kill_move_reason(battle: Dictionary, kill_move_id: String) -> String
 	if int(battle["player"]["true_qi"]) < int(km.get("true_qi_cost", 0)):
 		return "insufficient_true_qi"
 	return ""
+
+
+## T16（2026-09-15）：本次释放该杀招是否会触发质变（等效转数 -1，不可逆）。
+## 快照/UI 用它出招前给出确认提示；play_kill_move 用同一判据硬拦未确认的释放，
+## 保证「禁止静默惩罚」——判据只有一处。
+static func kill_move_downgrade_pending(battle: Dictionary, kill_move_id: String) -> bool:
+	return SwordMarkRulesScript.pending_downgrade(battle, kill_move_id)
 
 
 # ---------- 回合流转 ----------

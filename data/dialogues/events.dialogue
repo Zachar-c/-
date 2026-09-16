@@ -4,14 +4,20 @@ Nathan: Choose a Response...
 - Option 2
 	Nathan: You chose option 2
 ~ start
-- 接受这段残响
+旁白: 四下无事，只有风穿过石缝的声响。
+- 转身离开
+    => END
+
+~ echo_cave
+旁白: 你应下残响，洞穴深处的低语记下了这份因果。
+- 应下残响（耗 1 气血，行路时失 1 魂魄）
     => echo_cave_accept
 - 拒绝并离开
     => echo_cave_leave
 
 ~ echo_cave_accept
-旁白: 你应下残响，洞穴深处的低语记下了这份因果。
-- 承受回响
+旁白: 石壁上的刻痕亮了一瞬，又暗了下去。
+- 收好所得
     => END
 
 ~ echo_cave_leave
@@ -21,7 +27,7 @@ Nathan: Choose a Response...
 
 ~ gu_rot_pact
 旁白: 腐朽的蛊契在掌心发热，代价与收获都写在血色纹路里。
-- 接下蛊契
+- 接下蛊契（耗 1 气血，行路时失 1 魂魄，沾染元石滞胀）
     => gu_rot_pact_accept
 - 收起蛊契，转身离开
     => gu_rot_pact_leave
@@ -33,5 +39,175 @@ Nathan: Choose a Response...
 
 ~ gu_rot_pact_leave
 旁白: 你合拢衣袖，那枚蛊契并未生效，只留下掌心一丝余温。
+- 离开
+    => END
+
+~ huajiu_cache
+旁白: 山腹被凿开一道旧痕，深处的遗藏还压在碎石之下。旁人若知，必生觊觎。
+- 独吞遗藏（耗 2 气血）
+    => huajiu_cache_accept
+- 不碰它，转身就走
+    => huajiu_cache_leave
+
+~ huajiu_cache_accept
+旁白: 元石被一捧捧取出，身后风声骤紧——独吞者从无善终。
+- 收好所得
+    => END
+
+~ huajiu_cache_leave
+旁白: 你把碎石重新掩上，遗藏仍留在原处。
+- 离开
+    => END
+
+~ tithing_cache
+旁白: 你记下了遗藏的位置，没有动它。报与山寨，总比一个人扛着风险划算。
+- 献藏换赏
+    => tithing_cache_accept
+- 连位置也不留下
+    => tithing_cache_leave
+
+~ tithing_cache_accept
+旁白: 管事验过方位，赏钱如数结清，看你的眼神却多了几分掂量。
+- 收起赏钱
+    => END
+
+~ tithing_cache_leave
+旁白: 你什么也没说，遗藏与这份知情权一同作废。
+- 离开
+    => END
+
+~ small_beast_tide
+旁白: 山寨附近的兽群已经开始聚集。蛊师是唯一能挡在寨门前的那堵墙。
+- 迎上兽潮（耗 2 气血，行路时失 1 魂魄）
+    => small_beast_tide_accept
+- 绕道而行
+    => small_beast_tide_leave
+
+~ small_beast_tide_accept
+旁白: 潮头被硬生生砸散，活着的人分赏，死去的人算减员。
+- 清点所得
+    => END
+
+~ small_beast_tide_leave
+旁白: 你从侧坡绕了过去，身后的呼喝声渐渐远了。
+- 离开
+    => END
+
+~ tide_aftermath
+旁白: 兽潮退去，山道上留下成片尸骨与未干的血气。值钱的东西还没被人捡净。
+- 翻检尸骨（行路时失 2 魂魄）
+    => tide_aftermath_accept
+- 嫌晦气，绕开
+    => tide_aftermath_leave
+
+~ tide_aftermath_accept
+旁白: 元石从血泥里被一枚枚拣出，指尖的凉意一直渗到魂魄里。
+- 收起所得
+    => END
+
+~ tide_aftermath_leave
+旁白: 你踩着干净的石头绕了过去。
+- 离开
+    => END
+
+~ duel_wager
+旁白: 有人当街设下赌斗，注头就摆在桌面上。围观的人越来越多，没人敢先押。
+- 押上注头（耗 1 气血）
+    => duel_wager_accept
+- 不押，走开
+    => duel_wager_leave
+
+~ duel_wager_accept
+旁白: 你把注头揽进怀里。输赢各安天命，这一手是你自己下的。
+- 收起注头
+    => END
+
+~ duel_wager_leave
+旁白: 你退出人群，身后的喝彩声与你无关。
+- 离开
+    => END
+
+~ duel_loss
+旁白: 斗蛊场上的契纸已经摊开，输家的代价写得清清楚楚。
+- 应下比试（耗 2 气血，沾染经脉封蛊）
+    => duel_loss_accept
+- 不签，转身离开
+    => duel_loss_leave
+
+~ duel_loss_accept
+旁白: 经脉被死死封住，气机流转滞了一瞬，场边的零散元石归你。
+- 收场
+    => END
+
+~ duel_loss_leave
+旁白: 契纸被你推了回去，对方冷笑一声，未再纠缠。
+- 离开
+    => END
+
+~ weird_trade
+旁白: 秘境入口半开，守门者只要魂魄，不要元石。这份买卖，本身就不像好事。
+- 与守门者换物（行路时失 1 魂魄）
+    => weird_trade_accept
+- 不与它做买卖
+    => weird_trade_leave
+
+~ weird_trade_accept
+旁白: 换到手的东西带着一股说不清的气味，暂且算作元石。
+- 收起所得
+    => END
+
+~ weird_trade_leave
+旁白: 入口在你眼前合拢，像从未开过。
+- 离开
+    => END
+
+~ contract_seal
+旁白: 毒誓蛊已经摆在案上，报酬先给——这种契约，从不给人反悔的余地。
+- 立下毒誓（耗 1 气血，行路时失 2 魂魄）
+    => contract_seal_accept
+- 不立这个誓
+    => contract_seal_leave
+
+~ contract_seal_accept
+旁白: 毒誓入体，酬劳当场结清，案上那枚蛊收回了匣中。
+- 收起酬劳
+    => END
+
+~ contract_seal_leave
+旁白: 你把案上的蛊推了回去，对方收起匣子，没有多言。
+- 离开
+    => END
+
+~ recognition_toll
+旁白: 有势力逼你认主输诚。输了名头，换一条活路——这笔账要先认下来。
+- 认主输诚（沾染蛊蚀）
+    => recognition_toll_accept
+- 不认，硬顶着
+    => recognition_toll_leave
+
+~ recognition_toll_accept
+旁白: 你低头称臣，赏赐随即送到手上，蛊蚀也在同时埋进了体内。
+- 收下赏赐
+    => END
+
+~ recognition_toll_leave
+旁白: 你转过身，把脊背留给他们——这条路之后不会好走。
+- 离开
+    => END
+
+~ blood_vein_offering
+旁白: 血脉祭坛前有人在收买精血，价钱开得极高，祭坛边的元石堆得很高。
+- 献上精血（耗 2 气血，沾染元石滞胀）
+    => blood_vein_offering_accept
+- 不卖
+    => blood_vein_offering_leave
+
+~ blood_vein_offering_accept
+旁白: 精血离体的一瞬，祭坛上的纹路全亮了，元石推到你面前。
+- 收起元石
+    => END
+
+~ blood_vein_offering_leave
+旁白: 你把手从祭坛上收回，纹路随即暗了下去。
 - 离开
     => END

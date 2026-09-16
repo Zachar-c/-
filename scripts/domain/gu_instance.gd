@@ -22,6 +22,10 @@ const SAVE_KEYS := [
 	"lifecycle", "uses_left",
 	"loyal", "ferocity", "parasitic", "flee", "sealed",
 	"modifications",
+	# T16 残锋降转（2026-09-15）：道痕余量与质变次数。缺键读取时按
+	# v1_battle.sword_dao_marks_init 补默认，故**不需要**提升 SAVE_VERSION
+	# 或写迁移（旧存档读作未降转）。
+	"dao_marks", "sword_downgrades",
 ]
 
 

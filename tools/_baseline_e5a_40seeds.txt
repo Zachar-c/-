@@ -1,0 +1,898 @@
+﻿Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot_v4.7.2-stable_win64_console.exe : WARNING: MapGenerator.build/nodes fell 
+back to a direct file read (no catalog passed): res://data/nodes.json
+所在位置 行:445 字符: 310
++ ... t_log.txt"; & $g --headless --path . -s tools/verify_pacing_density.g ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: MapGen...data/nodes.json 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 1 =====
+  L1 battle=19 rest=7 unknown=4 trade=1 total=31 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=20 rest=7 unknown=2 trade=3 total=32 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=22 rest=6 unknown=2 trade=3 total=33 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=12 rest=6 unknown=4 trade=2 total=24 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=13 rest=6 unknown=5 trade=2 total=26 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.589 | unknown_unrevealed=17
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 2 =====
+  L1 battle=15 rest=6 unknown=1 trade=1 total=23 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=21 rest=7 unknown=4 trade=1 total=33 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=19 rest=5 unknown=1 trade=2 total=27 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=13 rest=5 unknown=1 trade=2 total=21 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=17 rest=5 unknown=1 trade=3 total=26 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.654 | unknown_unrevealed=8
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 3 =====
+  L1 battle=14 rest=6 unknown=2 trade=1 total=23 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=14 rest=11 unknown=3 trade=1 total=29 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=16 rest=8 unknown=2 trade=2 total=28 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=11 rest=5 unknown=2 trade=2 total=20 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=26 rest=8 unknown=3 trade=3 total=40 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.579 | unknown_unrevealed=12
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 4 =====
+  L1 battle=12 rest=5 unknown=2 trade=2 total=21 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=8 rest=5 unknown=2 trade=1 total=16 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=20 rest=7 unknown=2 trade=1 total=30 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=21 rest=7 unknown=2 trade=1 total=31 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=8 rest=6 unknown=2 trade=3 total=19 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  FULL battle share=0.590 | unknown_unrevealed=10
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 5 =====
+  L1 battle=18 rest=8 unknown=4 trade=1 total=31 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=16 rest=9 unknown=3 trade=2 total=30 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=15 rest=6 unknown=1 trade=4 total=26 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=16 rest=6 unknown=2 trade=2 total=26 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=31 rest=8 unknown=4 trade=2 total=45 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.608 | unknown_unrevealed=14
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 6 =====
+  L1 battle=20 rest=6 unknown=3 trade=2 total=31 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=14 rest=7 unknown=3 trade=3 total=27 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=16 rest=7 unknown=2 trade=3 total=28 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=13 rest=6 unknown=1 trade=2 total=22 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=22 rest=8 unknown=3 trade=5 total=38 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.582 | unknown_unrevealed=12
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 7 =====
+  L1 battle=10 rest=7 unknown=2 trade=1 total=20 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=13 rest=6 unknown=3 trade=2 total=24 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=12 rest=7 unknown=4 trade=4 total=27 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=16 rest=7 unknown=4 trade=1 total=28 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=11 rest=7 unknown=2 trade=2 total=22 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.512 | unknown_unrevealed=15
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 8 =====
+  L1 battle=15 rest=6 unknown=2 trade=1 total=24 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=23 rest=8 unknown=2 trade=3 total=36 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=9 rest=7 unknown=3 trade=2 total=21 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=12 rest=6 unknown=1 trade=1 total=20 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=10 rest=6 unknown=6 trade=4 total=26 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.543 | unknown_unrevealed=14
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 9 =====
+  L1 battle=14 rest=8 unknown=5 trade=1 total=28 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=23 rest=6 unknown=4 trade=1 total=34 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=14 rest=7 unknown=4 trade=3 total=28 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=12 rest=8 unknown=2 trade=2 total=24 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=22 rest=7 unknown=7 trade=4 total=40 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.552 | unknown_unrevealed=22
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 10 =====
+  L1 battle=15 rest=9 unknown=2 trade=1 total=27 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=16 rest=7 unknown=2 trade=4 total=29 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=21 rest=7 unknown=3 trade=1 total=32 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=19 rest=10 unknown=2 trade=2 total=33 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=19 rest=7 unknown=4 trade=4 total=34 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.581 | unknown_unrevealed=13
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 11 =====
+  L1 battle=12 rest=7 unknown=2 trade=2 total=23 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=11 rest=8 unknown=0 trade=1 total=20 [sparse] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=11 rest=6 unknown=3 trade=3 total=23 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=16 rest=6 unknown=2 trade=2 total=26 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=26 rest=8 unknown=3 trade=2 total=39 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.580 | unknown_unrevealed=10
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 12 =====
+  L1 battle=7 rest=6 unknown=2 trade=1 total=16 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=13 rest=6 unknown=3 trade=2 total=24 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=21 rest=8 unknown=1 trade=2 total=32 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=15 rest=7 unknown=3 trade=4 total=29 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=14 rest=7 unknown=4 trade=1 total=26 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.551 | unknown_unrevealed=13
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 13 =====
+  L1 battle=21 rest=7 unknown=2 trade=1 total=31 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=23 rest=9 unknown=2 trade=1 total=35 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=11 rest=5 unknown=4 trade=2 total=22 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=27 rest=8 unknown=2 trade=2 total=39 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=17 rest=6 unknown=4 trade=4 total=31 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.627 | unknown_unrevealed=14
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 14 =====
+  L1 battle=14 rest=7 unknown=4 trade=1 total=26 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=19 rest=6 unknown=2 trade=3 total=30 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=14 rest=6 unknown=1 trade=2 total=23 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=12 rest=8 unknown=4 trade=2 total=26 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=24 rest=8 unknown=6 trade=3 total=41 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.568 | unknown_unrevealed=17
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 15 =====
+  L1 battle=21 rest=6 unknown=1 trade=1 total=29 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=19 rest=6 unknown=5 trade=1 total=31 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=14 rest=8 unknown=5 trade=3 total=30 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=19 rest=8 unknown=2 trade=2 total=31 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=17 rest=6 unknown=7 trade=2 total=32 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.588 | unknown_unrevealed=20
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 16 =====
+  L1 battle=17 rest=6 unknown=2 trade=2 total=27 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=11 rest=7 unknown=2 trade=1 total=21 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=10 rest=6 unknown=1 trade=1 total=18 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=17 rest=7 unknown=4 trade=1 total=29 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=12 rest=7 unknown=1 trade=1 total=21 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.578 | unknown_unrevealed=10
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 17 =====
+  L1 battle=16 rest=7 unknown=3 trade=2 total=28 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=22 rest=6 unknown=1 trade=1 total=30 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=18 rest=6 unknown=2 trade=2 total=28 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=24 rest=8 unknown=1 trade=4 total=37 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=24 rest=8 unknown=1 trade=2 total=35 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.658 | unknown_unrevealed=8
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 18 =====
+  L1 battle=19 rest=7 unknown=3 trade=1 total=30 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=15 rest=7 unknown=1 trade=2 total=25 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=17 rest=6 unknown=3 trade=2 total=28 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=21 rest=7 unknown=1 trade=1 total=30 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=19 rest=11 unknown=3 trade=4 total=37 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.607 | unknown_unrevealed=11
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 19 =====
+  L1 battle=15 rest=7 unknown=2 trade=2 total=26 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=15 rest=5 unknown=1 trade=1 total=22 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=11 rest=5 unknown=1 trade=2 total=19 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=10 rest=8 unknown=3 trade=3 total=24 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=13 rest=7 unknown=2 trade=1 total=23 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.561 | unknown_unrevealed=9
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 20 =====
+  L1 battle=10 rest=5 unknown=5 trade=1 total=21 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=18 rest=9 unknown=1 trade=2 total=30 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=10 rest=6 unknown=2 trade=1 total=19 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=18 rest=9 unknown=2 trade=1 total=30 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=12 rest=9 unknown=1 trade=2 total=24 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.548 | unknown_unrevealed=11
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 21 =====
+  L1 battle=17 rest=8 unknown=2 trade=1 total=28 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=15 rest=7 unknown=2 trade=2 total=26 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=11 rest=6 unknown=2 trade=1 total=20 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=22 rest=8 unknown=3 trade=2 total=35 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=18 rest=7 unknown=4 trade=4 total=33 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.585 | unknown_unrevealed=13
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 22 =====
+  L1 battle=9 rest=7 unknown=2 trade=1 total=19 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=27 rest=8 unknown=1 trade=3 total=39 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=21 rest=5 unknown=2 trade=1 total=29 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=15 rest=7 unknown=4 trade=1 total=27 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=22 rest=8 unknown=1 trade=3 total=34 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.635 | unknown_unrevealed=10
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 23 =====
+  L1 battle=11 rest=6 unknown=1 trade=1 total=19 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=15 rest=7 unknown=2 trade=1 total=25 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=22 rest=9 unknown=3 trade=3 total=37 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=13 rest=6 unknown=2 trade=4 total=25 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=12 rest=5 unknown=1 trade=1 total=19 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.584 | unknown_unrevealed=9
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 24 =====
+  L1 battle=10 rest=6 unknown=2 trade=1 total=19 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=13 rest=6 unknown=2 trade=2 total=23 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=16 rest=9 unknown=3 trade=2 total=30 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=16 rest=6 unknown=2 trade=2 total=26 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=5 rest=6 unknown=1 trade=2 total=14 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.536 | unknown_unrevealed=10
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 25 =====
+  L1 battle=20 rest=7 unknown=1 trade=1 total=29 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=15 rest=6 unknown=1 trade=3 total=25 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=22 rest=6 unknown=6 trade=1 total=35 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=19 rest=7 unknown=2 trade=4 total=32 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=18 rest=8 unknown=2 trade=5 total=33 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.610 | unknown_unrevealed=12
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 26 =====
+  L1 battle=10 rest=6 unknown=3 trade=2 total=21 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=15 rest=7 unknown=4 trade=3 total=29 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=11 rest=6 unknown=2 trade=1 total=20 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=22 rest=9 unknown=5 trade=4 total=40 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=15 rest=6 unknown=2 trade=1 total=24 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.545 | unknown_unrevealed=16
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 27 =====
+  L1 battle=11 rest=6 unknown=2 trade=1 total=20 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=15 rest=5 unknown=2 trade=2 total=24 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=14 rest=6 unknown=2 trade=2 total=24 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=14 rest=6 unknown=4 trade=4 total=28 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=12 rest=7 unknown=1 trade=3 total=23 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.555 | unknown_unrevealed=11
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 28 =====
+  L1 battle=12 rest=5 unknown=2 trade=1 total=20 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=19 rest=9 unknown=5 trade=2 total=35 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=14 rest=6 unknown=1 trade=2 total=23 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=15 rest=8 unknown=2 trade=2 total=27 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=21 rest=10 unknown=1 trade=2 total=34 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.583 | unknown_unrevealed=11
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 29 =====
+  L1 battle=17 rest=11 unknown=4 trade=2 total=34 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=14 rest=6 unknown=1 trade=2 total=23 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=16 rest=9 unknown=5 trade=1 total=31 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=12 rest=5 unknown=3 trade=5 total=25 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=25 rest=9 unknown=4 trade=3 total=41 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.545 | unknown_unrevealed=17
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 30 =====
+  L1 battle=17 rest=7 unknown=5 trade=2 total=31 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=24 rest=8 unknown=1 trade=2 total=35 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=16 rest=8 unknown=3 trade=1 total=28 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=13 rest=6 unknown=4 trade=2 total=25 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=17 rest=9 unknown=3 trade=2 total=31 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.580 | unknown_unrevealed=16
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 31 =====
+  L1 battle=9 rest=6 unknown=3 trade=2 total=20 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=17 rest=7 unknown=4 trade=2 total=30 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=8 rest=5 unknown=4 trade=1 total=18 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=19 rest=6 unknown=5 trade=1 total=31 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=13 rest=5 unknown=3 trade=1 total=22 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.545 | unknown_unrevealed=19
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 32 =====
+  L1 battle=8 rest=5 unknown=1 trade=1 total=15 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=18 rest=7 unknown=2 trade=2 total=29 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=19 rest=7 unknown=1 trade=3 total=30 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=16 rest=9 unknown=2 trade=3 total=30 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=16 rest=8 unknown=3 trade=3 total=30 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.575 | unknown_unrevealed=9
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 33 =====
+  L1 battle=22 rest=8 unknown=2 trade=1 total=33 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=13 rest=8 unknown=3 trade=2 total=26 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=14 rest=7 unknown=5 trade=2 total=28 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=12 rest=8 unknown=1 trade=5 total=26 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=23 rest=7 unknown=6 trade=2 total=38 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.556 | unknown_unrevealed=17
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 34 =====
+  L1 battle=19 rest=8 unknown=1 trade=1 total=29 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=20 rest=9 unknown=3 trade=3 total=35 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=29 rest=9 unknown=1 trade=1 total=40 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=10 rest=7 unknown=2 trade=1 total=20 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=10 rest=8 unknown=4 trade=3 total=25 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.591 | unknown_unrevealed=11
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 35 =====
+  L1 battle=12 rest=9 unknown=2 trade=2 total=25 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=24 rest=9 unknown=1 trade=3 total=37 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=13 rest=6 unknown=2 trade=2 total=23 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=17 rest=8 unknown=5 trade=2 total=32 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=21 rest=8 unknown=3 trade=6 total=38 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.561 | unknown_unrevealed=13
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 36 =====
+  L1 battle=10 rest=6 unknown=1 trade=1 total=18 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=22 rest=10 unknown=3 trade=3 total=38 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=11 rest=7 unknown=5 trade=2 total=25 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=11 rest=7 unknown=1 trade=2 total=21 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=22 rest=9 unknown=4 trade=2 total=37 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.547 | unknown_unrevealed=14
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 37 =====
+  L1 battle=30 rest=7 unknown=3 trade=1 total=41 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=18 rest=8 unknown=4 trade=1 total=31 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=19 rest=6 unknown=3 trade=2 total=30 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=12 rest=6 unknown=2 trade=2 total=22 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=14 rest=6 unknown=3 trade=3 total=26 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.620 | unknown_unrevealed=15
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 38 =====
+  L1 battle=16 rest=9 unknown=2 trade=2 total=29 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=16 rest=10 unknown=2 trade=2 total=30 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=21 rest=7 unknown=3 trade=2 total=33 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=9 rest=8 unknown=5 trade=3 total=25 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=14 rest=7 unknown=1 trade=3 total=25 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.535 | unknown_unrevealed=13
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 39 =====
+  L1 battle=18 rest=8 unknown=4 trade=1 total=31 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L2 battle=20 rest=8 unknown=2 trade=1 total=31 [ok] | combat templates=2 ["beast_swarm_pass", "iron_hide_ambush"]
+  L3 battle=17 rest=6 unknown=4 trade=2 total=29 [ok] | combat templates=3 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid"]
+  L4 battle=20 rest=8 unknown=1 trade=4 total=33 [ok] | combat templates=4 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=10 rest=7 unknown=4 trade=2 total=23 [ok] | combat templates=5 ["beast_swarm_pass", "iron_hide_ambush", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.578 | unknown_unrevealed=15
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_pacing_density.gd:39)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:462)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_pacing_density.gd:39)
+===== seed 40 =====
+  L1 battle=8 rest=6 unknown=3 trade=1 total=18 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L2 battle=21 rest=6 unknown=3 trade=2 total=32 [ok] | combat templates=2 ["iron_hide_ambush", "beast_swarm_pass"]
+  L3 battle=21 rest=7 unknown=5 trade=1 total=34 [ok] | combat templates=3 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid"]
+  L4 battle=11 rest=6 unknown=3 trade=3 total=23 [ok] | combat templates=4 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint"]
+  L5 battle=11 rest=9 unknown=3 trade=2 total=25 [ok] | combat templates=5 ["iron_hide_ambush", "beast_swarm_pass", "scout_crossing_raid", "faction_guard_checkpoint", "wolf_pack_trail"]
+  FULL battle share=0.545 | unknown_unrevealed=17
+===== aggregate over 40 seeds =====
+  L1 battle=590 rest=274 unknown=99 trade=52 total=1015
+  L2 battle=695 rest=293 unknown=94 trade=79 total=1161
+  L3 battle=636 rest=266 unknown=109 trade=78 total=1089
+  L4 battle=622 rest=283 unknown=103 trade=95 total=1103
+  L5 battle=676 rest=294 unknown=123 trade=107 total=1200
+  AGG battle=3219 rest=1410 unknown=528 trade=411 battle_share=0.578 [ok]
+E5a PASS: every layer has all four categories; battle share within band
+EXIT=0

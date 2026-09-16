@@ -5,6 +5,10 @@ const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const InheritanceClaimRulesScript = preload("res://scripts/domain/inheritance_claim_rules.gd")
 const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
+# 一转一突破（2026-09-15）：档位、成本、境界名单一来源（领域层）。
+const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
+const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
+const RestRulesScript = preload("res://scripts/domain/rest_rules.gd")
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -30,7 +34,7 @@ static func preview_actions(state: RunState, node: Dictionary, catalog: Dictiona
 			"shop":
 				_append_shop_cards(cards, state, catalog)
 			"event":
-				_append_event_cards(cards, state, catalog)
+				_append_event_cards(cards, state, node, catalog)
 			"rest":
 				_append_rest_cards(cards, state, node, catalog)
 			_:
@@ -807,44 +811,95 @@ static func _cursed_drop_block_reason(catalog: Dictionary, definition_id: String
 	return "cursed_gu_not_directly_droppable"
 
 
-static func _append_event_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
-	for event in catalog.get("events", []):
-		var health_cost := int(event.get("health_cost", 0))
-		var executable := state.health > health_cost
-		cards.append(_card(state, {
-			"id": "event.%s.accept" % str(event["id"]),
-			"title": "承受回声",
-			"summary": "洞穴深处的回声在等待应答，应答者需先付出已知的气血代价。",
-			"executable": executable,
-			"block_reason": "当前气血不足以承受已知代价。" if not executable else "",
-			"cost": {"hp": health_cost},
-			"known_risk": ["已知代价：立即损失 %d 点气血。" % health_cost],
-			"expected_gain": ["取得回声允诺的机缘。"],
-			"unknown_note": "回声的后续代价结果未明，似有低语要在魂魄深处留下印记。",
-			"remedy_hints": ["可先恢复气血，再回来应答。"] if not executable else [],
-			"command": {"type": "accept_event", "event_id": str(event["id"])},
-		}))
+## D4（2026-09-16）：事件卡片**只渲染本点位宿主的那一条事件**。
+## 此前该函数遍历 catalog.events 全表：池子只有 2 条时看不出来，一旦扩容到 12 条
+## 就会在每个事件点位铺出 12 张卡 —— 所以扩容前必须先修掉这个行为。
+## 宿主事件 = `node.event_id`，缺省回退 `node.id`（与 `run_travel_flow.gd:43`
+## 的对话标题回退同源）；两者都命中不到时退化为"此地无事件可应答"，仅保留离场卡。
+## 文案：`title/summary/unknown_note/flavor_gain` 取自事件数据（自描述），
+## 而**代价与收益条目由数值杠杆派生**（不是再抄一份文案），从而保证预检提示与
+## `SocialCommandRules._accept_event` 的真实结算**同源**、不会漂移。
+static func _append_event_cards(cards: Array[Dictionary], state: RunState, node: Dictionary,
+		catalog: Dictionary) -> void:
+	var event_id := str(node.get("event_id", node.get("id", "")))
+	var event: Dictionary = catalog.get("event_by_id", {}).get(event_id, {})
+	if not event.is_empty():
+		cards.append(_event_accept_card(state, event, catalog))
 	_append_leave_card(cards, state)
 
 
+static func _event_accept_card(state: RunState, event: Dictionary, catalog: Dictionary) -> Dictionary:
+	var health_cost := int(event.get("health_cost", 0))
+	var delayed_soul_cost := int(event.get("delayed_soul_cost", 0))
+	var stone_gain := int(event.get("stone_gain", 0))
+	var curse_id := str(event.get("curse_id", ""))
+	# 与领域层同一判据（`state.health > health_cost`），代价永不为致命级。
+	var executable := state.health > health_cost
+	var known_risk: Array[String] = []
+	if health_cost > 0:
+		known_risk.append("立即损失 %d 点气血。" % health_cost)
+	if delayed_soul_cost > 0:
+		known_risk.append("下一次赶路时失去 %d 点魂魄。" % delayed_soul_cost)
+	if not curse_id.is_empty():
+		known_risk.append("从此被「%s」缠身。" % _curse_label(catalog, curse_id))
+	var expected_gain: Array[String] = []
+	if stone_gain > 0:
+		expected_gain.append("得到 %d 枚元石。" % stone_gain)
+	var flavor := str(event.get("flavor_gain", ""))
+	if not flavor.is_empty():
+		expected_gain.append(flavor)
+	return _card(state, {
+		"id": "event.%s.accept" % str(event.get("id", "")),
+		"title": str(event.get("title", event.get("id", "异闻"))),
+		"summary": str(event.get("summary", "")),
+		"executable": executable,
+		"block_reason": "当前气血不足以承受已知代价。" if not executable else "",
+		"cost": {"hp": health_cost},
+		"known_risk": known_risk,
+		"expected_gain": expected_gain,
+		"unknown_note": str(event.get("unknown_note", "")),
+		"remedy_hints": ["可先恢复气血，再回来应答。"] if not executable else [],
+		"command": {"type": "accept_event", "event_id": str(event.get("id", ""))},
+	})
+
+
+static func _curse_label(catalog: Dictionary, curse_id: String) -> String:
+	var curse: Dictionary = catalog.get("curse_by_id", {}).get(curse_id, {})
+	var label := str(curse.get("name_zh", ""))
+	return label if not label.is_empty() else curse_id
+
+
 static func _append_cultivation_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:
-	var required_stone := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
-	var executable := state.cultivation < 2 and state.stone >= required_stone
+	# 一转一突破（2026-09-15）：档位与成本单一来源在 RefineCommandRules
+	# （`cultivate_stone_cost` 读 balance 的升转成本键表）。
+	var current := maxi(1, int(state.cultivation))
+	var max_rank := RefineCommandRulesScript.MAX_CULTIVATION
+	var target := mini(current + 1, max_rank)
+	var required_stone := RefineCommandRulesScript.cultivate_stone_cost(catalog, target)
+	# 领域侧硬门禁（RestRules.rest_visit_consumed）必须同步反映到可执行性，
+	# 否则会出现「卡可点、提交被拒」的空按钮（交互闭环契约禁止）。
+	var visit_used := RestRulesScript.rest_visit_consumed(state)
+	var executable := current < max_rank and state.stone >= required_stone and not visit_used
 	var reason := ""
-	if state.cultivation >= 2:
-		reason = "你已经是二转蛊师。"
+	if visit_used:
+		reason = "此处已取过收益，换个地方再修行。"
+	elif current >= max_rank:
+		reason = "你已是五转蛊师，境内再无更高境界。"
 	elif state.stone < required_stone:
 		reason = "元石不足：需要 %d 枚，还差 %d 枚。" % [required_stone, required_stone - state.stone]
 	cards.append(_card(state, {
-		"id": "cultivate.rank_two",
-		"title": "冲击二转",
+		"id": "cultivate.rank_%d" % target,
+		"title": "冲击%s" % RefineCommandRulesScript.cultivation_label(target),
 		"summary": "借泉眼静修，尝试突破空窍。",
 		"executable": executable,
 		"block_reason": reason,
 		"cost": {"stone": required_stone, "time": 1},
-		"expected_gain": ["由一转巅峰晋为二转初阶，真元恢复至上限。"],
+		"expected_gain": ["由%s晋为%s，真元上限扩张至 %d。" % [
+				RefineCommandRulesScript.cultivation_label(current),
+				RefineCommandRulesScript.cultivation_label(target),
+				EssenceCapacityScript.essence_max_for(state, catalog, target)]],
 		"remedy_hints": _stone_remedies(required_stone - state.stone) if state.stone < required_stone else [],
-		"command": {"type": "cultivate_rank_two"},
+		"command": {"type": "breakthrough", "target_rank": target},
 	}))
 	_append_standard_card(cards, state, "meditate")
 	_append_leave_card(cards, state)

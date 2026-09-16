@@ -237,6 +237,10 @@
    ],
    "enemy_kind": "crag_serpent_matriarch",
    "enemy_theme": "beast",
+   "boss_pool": [
+    "crag_serpent_matriarch",
+    "marrow_gu_adept"
+   ],
    "time_scale": "days",
    "on_skip": "none",
    "next_ids": []
@@ -252,6 +256,10 @@
    ],
    "enemy_kind": "marrow_gu_adept",
    "enemy_theme": "cultivator",
+   "boss_pool": [
+    "marrow_gu_adept",
+    "thunder_crown_sovereign"
+   ],
    "time_scale": "days",
    "on_skip": "none",
    "core_replacement_token": {
@@ -270,6 +278,10 @@
    ],
    "enemy_kind": "thunder_crown_sovereign",
    "enemy_theme": "beast",
+   "boss_pool": [
+    "thunder_crown_sovereign",
+    "clan_patriarch"
+   ],
    "time_scale": "days",
    "on_skip": "none",
    "next_ids": []
@@ -285,6 +297,11 @@
    ],
    "enemy_kind": "blood_vein_bishop",
    "enemy_theme": "cultivator",
+   "boss_pool": [
+    "clan_patriarch",
+    "blood_vein_bishop",
+    "blue_fur_jiangshi"
+   ],
    "time_scale": "days",
    "on_skip": "none",
    "next_ids": []
@@ -294,10 +311,11 @@
    "stage": "two",
    "type": "event",
    "visible": false,
-   "summary": "洞穴深处有回声应答，已知与未知的代价都刻在石壁上。",
+   "summary": "石壁上刻着旧痕，岩缝里的应答不知是谁留下的。",
    "choices": [],
    "time_scale": "days",
    "on_skip": "none",
+   "event_pool": ["echo_cave", "gu_rot_pact", "huajiu_cache", "tithing_cache", "small_beast_tide", "tide_aftermath", "duel_wager", "duel_loss", "weird_trade", "contract_seal", "recognition_toll", "blood_vein_offering"],
    "next_ids": [
     "blood_moss_grove",
     "gu_rot_pact"
@@ -308,12 +326,13 @@
    "stage": "two",
    "type": "event",
    "visible": false,
-   "summary": "腐朽的蛊契在掌心发热，代价与收获都写在血色纹路里。",
+   "summary": "异闻未死，风里带着一股说不清的代价味。",
    "choices": [],
    "time_scale": "days",
    "on_skip": "none",
    "event_id": "gu_rot_pact",
    "dialogue_title": "gu_rot_pact",
+   "event_pool": ["echo_cave", "gu_rot_pact", "huajiu_cache", "tithing_cache", "small_beast_tide", "tide_aftermath", "duel_wager", "duel_loss", "weird_trade", "contract_seal", "recognition_toll", "blood_vein_offering"],
    "next_ids": []
   },
   {

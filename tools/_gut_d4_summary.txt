@@ -1,0 +1,12 @@
+# D4 全量 unit 套件证据（2026-09-16）
+# 命令：godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir res://tests/unit -gexit -glog=2
+# 旁证（不在 GUT 汇总里，必须单独数）：
+#   SCRIPT ERROR = 0（GUT 把它归 engine 类，不计 Failing）
+#   ObjectDB leaked at exit = 0；resources still in use at exit = 0
+#   Orphans 警告组数 = 24（GUT 语境既有遗留，非本轮新增）
+
+Totals
+Scripts             210
+Passing Tests      1514
+Asserts           51598
+rc=0

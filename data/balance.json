@@ -85,6 +85,9 @@
   },
   "retreat_stone_cost": 2,
   "cultivate_rank_two_stone_cost": 5,
+  "cultivate_rank_three_stone_cost": 12,
+  "cultivate_rank_four_stone_cost": 20,
+  "cultivate_rank_five_stone_cost": 30,
   "battle_stone_rewards": {
     "base_by_tier": {
       "common": 3,

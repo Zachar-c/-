@@ -302,6 +302,21 @@ static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Arra
 		costs.append("念头 %d" % int(km.get("thought_cost", 1)))
 		if int(km.get("life_cost", 0)) > 0:
 			costs.append("寿元 %d" % int(km.get("life_cost", 0)))
+		# T16 残锋降转（2026-09-15）：残锋是永久削弱，成本必须逐条可见（红线
+		# 「禁止隐藏关键成本」）。距质变还剩几次由配方蛊的余量最小值决定。
+		var mark_ids: Array = km.get("sword_mark_recipe", [])
+		var risks: Array[String] = []
+		if not mark_ids.is_empty():
+			costs.append("残锋 %d" % mark_ids.size())
+			var least := -1
+			for mark_id_value in mark_ids:
+				var mark_slot := _find_v1_slot(battle_data, str(mark_id_value))
+				var left := int(mark_slot.get("dao_marks", 0))
+				least = left if least < 0 else mini(least, left)
+			if least >= 0:
+				risks.append("残锋：配方中 %d 只剑蛊各耗 1 道痕；距质变还剩 %d 次" % [mark_ids.size(), least])
+			if V1BattleResolverScript.kill_move_downgrade_pending(battle_data, str(km.get("id", ""))):
+				risks.append("本次出招将耗尽道痕，配方剑蛊永久降 1 转（不可逆，无法回复）")
 		out.append({
 			"id": str(km.get("id", "")),
 			"name": str(km.get("label", str(km.get("id", "")))),
@@ -313,6 +328,8 @@ static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Arra
 			"effect": SnapshotTextUtil._v1_effect_text(km),
 			"executable": reason.is_empty(),
 			"block_reason": _v1_reject_text(reason),
+			"dangerous": not risks.is_empty(),
+			"known_risk": risks,
 		})
 	return out
 

@@ -46,6 +46,8 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 	var rng := SeededRng.new(seed_value)
 	var route: Array[Dictionary] = []
 	var prev_boss_node: Dictionary = {}
+	# R9（2026-09-16）：上一大层抽中的关底 Boss id，用于「相邻层不重复」约束。
+	var prev_boss_id := ""
 	for layer_number in range(1, 6):
 		var cfg: Dictionary = layers_cfg.get(str(layer_number), {})
 		var row_bounds: Array = cfg.get("rows", [8, 11])
@@ -106,6 +108,32 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 							str(instance["id"]), template, seed_value)
 					if not rolled.is_empty():
 						instance["enemy_roll"] = rolled
+				# R9 关底 Boss 随机化（2026-09-16）：关底台（行尾锚点）若声明
+				# `boss_pool`，用**独立派生流**抽一个 Boss 覆盖模板自带的 enemy_kind。
+				# 与 E6 同一手法：不消耗本函数共享的 rng ⇒ 既有地图拓扑 / 连边 /
+				# 锚点行位逐位不变，只有「关底站的是谁」变化。
+				if instance_anchor and template.has("boss_pool"):
+					var rolled_boss := _roll_boss_for(enemy_catalog, str(instance["id"]),
+							template, seed_value, prev_boss_id)
+					if not rolled_boss.is_empty():
+						prev_boss_id = str(rolled_boss.get("id", ""))
+						instance["enemy_kind"] = prev_boss_id
+						instance["enemy_theme"] = str(rolled_boss.get("theme", ""))
+				# D4 事件池随机化（2026-09-16）：事件节点若声明 `event_pool`，用
+				# **独立派生流**抽一条事件作为本实例的宿主，并把事件 id 同时写入
+				# `event_id`（领域侧日志/结算）与 `dialogue_title`（Dialogue Manager
+				# 气球标题，见 run_travel_flow.gd:43）以及 `summary`（地图/遭遇面
+				# 文案跟着事件走，否则会出现"点位说回声、实际是兽潮"的错位）。
+				# 与 E6/R9 同手法：不消耗本函数共享的 rng ⇒ 既有拓扑逐位不变。
+				if not instance_anchor and str(template.get("type", "")) == "event" \
+						and template.has("event_pool"):
+					var rolled_event := _roll_event_for(enemy_catalog, str(instance["id"]),
+							template, seed_value)
+					if not rolled_event.is_empty():
+						instance["event_id"] = str(rolled_event.get("id", ""))
+						instance["dialogue_title"] = str(rolled_event.get("id", ""))
+						if not str(rolled_event.get("summary", "")).is_empty():
+							instance["summary"] = str(rolled_event.get("summary", ""))
 				instance["next_ids"] = []
 				if layer_number == 1 and row == 0:
 					instance["start"] = true
@@ -316,6 +344,65 @@ static func _roll_enemy_for(pacing: Dictionary, catalog: Dictionary, layer_numbe
 	var rank_min := int(layer_cfg.get("enemy_rank_min", 0))
 	return EnemyCatalogScript.roll_enemy_ids(catalog, theme, rank_min, rank_max,
 			pacing.get("enemy_weights", {}), maxi(1, fallback.size()), seed_value, instance_id, fallback)
+
+
+## R9：给关底台抽 Boss（2026-09-16）。
+## 与 E6 同构：抽取用**独立派生流**（salt = 关底台实例 id，tick 恒 0），
+## 不动 `_generate_instance_route` 的共享 rng 序列 ⇒ 既有地图拓扑逐位不变。
+## ⚠️ 层号/实例 id 必须进 **salt** 而不是 `tick`：`mixed_seed` 的 tick 是仿射
+## 混入，连续 tick 会退化（见 `seeded_roll.gd:43`）。
+## 目录不可用 / 未声明 `boss_pool` / 池内无有效 id 时返回**空字典**，调用方据此
+## 保持模板自带的 `enemy_kind` 不变（回退即"行为同今天"）。
+## `exclude_id` = 上一大层抽中的 Boss，避免相邻层连打同一个 Boss；
+## 排除后若无候选则放弃排除（宁可重复也不破坏抽取）。
+static func _roll_boss_for(catalog: Dictionary, instance_id: String, template: Dictionary,
+		seed_value: int, exclude_id: String = "") -> Dictionary:
+	if catalog.is_empty():
+		return {}
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	var pool: Array = template.get("boss_pool", [])
+	var candidates: Array = []
+	for boss_id_value in pool:
+		var boss_id := str(boss_id_value)
+		if enemy_by_id.has(boss_id) and boss_id != exclude_id:
+			candidates.append(boss_id)
+	if candidates.is_empty():
+		for boss_id_value in pool:
+			var boss_id := str(boss_id_value)
+			if enemy_by_id.has(boss_id):
+				candidates.append(boss_id)
+	if candidates.is_empty():
+		return {}
+	var rng := SeededRng.new(SeededRollScript.mixed_seed(seed_value, "boss_stand_" + instance_id, 0))
+	var picked := str(candidates[rng.next_index(candidates.size())])
+	var enemy: Dictionary = enemy_by_id.get(picked, {})
+	return {"id": picked, "theme": str(enemy.get("theme", ""))}
+
+
+## D4：给事件节点抽宿主事件（2026-09-16）。
+## 与 E6/R9 同构：抽取用**独立派生流**（salt = 事件节点实例 id，tick 恒 0），
+## 不动 `_generate_instance_route` 的共享 rng 序列 ⇒ 既有地图拓扑逐位不变，
+## 只有"这个点位遇到的是哪桩异闻"变化。
+## ⚠️ 实例 id 必须进 **salt** 而不是 `tick`：`mixed_seed` 的 tick 是仿射混入，
+## 连续 tick 会退化（见 `seeded_roll.gd:43`）。
+## 目录不可用 / 未声明 `event_pool` / 池内无有效 id 时返回**空字典**，调用方据此
+## 保持模板自带的 `event_id` 不变（回退即"行为同今天"）。
+static func _roll_event_for(catalog: Dictionary, instance_id: String, template: Dictionary,
+		seed_value: int) -> Dictionary:
+	if catalog.is_empty():
+		return {}
+	var event_by_id: Dictionary = catalog.get("event_by_id", {})
+	var candidates: Array = []
+	for event_id_value in template.get("event_pool", []):
+		var event_id := str(event_id_value)
+		if event_by_id.has(event_id):
+			candidates.append(event_id)
+	if candidates.is_empty():
+		return {}
+	var rng := SeededRng.new(SeededRollScript.mixed_seed(seed_value, "event_node_" + instance_id, 0))
+	var picked := str(candidates[rng.next_index(candidates.size())])
+	var event: Dictionary = event_by_id.get(picked, {})
+	return {"id": picked, "summary": str(event.get("summary", ""))}
 
 
 static func _route_from_ids(route_ids: Array, node_by_id: Dictionary) -> Array[Dictionary]:

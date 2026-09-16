@@ -102,12 +102,23 @@ func test_cultivation_preview_reports_stone_shortfall_and_remedy() -> void:
 		"id": "cultivation_spring",
 		"type": "cultivation",
 	}, catalog)
-	var card := _card(cards, "cultivate.rank_two")
-
+	var card := _card(cards, "cultivate.rank_2")
+	assert_false(card.is_empty(), "一转应给出「冲击二转」预览卡")
 	assert_false(card["executable"])
 	assert_string_contains(str(card["block_reason"]), "还差 2")
 	assert_eq(card["cost"]["stone"], 5)
 	assert_false(card.get("remedy_hints", []).is_empty())
+	# 一转一突破（2026-09-15）：档位随当前转数自增，成本取对应档（不再是恒二转）。
+	state.cultivation = 2
+	state.stone = 11
+	var third := _card(ActionPreviewServiceScript.preview_actions(state, {
+		"id": "cultivation_spring",
+		"type": "cultivation",
+	}, catalog), "cultivate.rank_3")
+	assert_false(third.is_empty(), "二转应给出「冲击三转」预览卡")
+	assert_eq(third["cost"]["stone"], 12, "三转成本 12")
+	assert_string_contains(str(third["block_reason"]), "还差 1")
+	assert_eq(int(third["command"]["target_rank"]), 3, "命令必须带目标档，领域不猜")
 
 
 func test_ledger_preview_offers_debt_when_payment_is_blocked() -> void:

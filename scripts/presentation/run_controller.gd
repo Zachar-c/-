@@ -237,6 +237,11 @@ func submit_command(command: Dictionary) -> Dictionary:
 	# （tests/unit/test_battle_command_routing.gd 有源码卫生守卫）。
 	if BattleCommandFacadeScript.is_battle_command(str(command.get("type", ""))) and not current_battle.is_empty():
 		return _submit_battle_command(command)
+	# 收官抉择（2026-09-15）：收官是 **Run 级**命令，不属于任何节点或遭遇会话，
+	# 必须在遭遇会话路由之前短路——否则会被 session resolver 当作未知会话命令
+	# 拒掉（战斗刚结束时 currentNode 仍非空，正是最需要它的时刻）。
+	if str(command.get("type", "")) == "close_run":
+		return _submit_close_run(command)
 	if not current_node.is_empty():
 		var session_result := EncounterSessionResolverScript.apply(state, state.encounter_session, command, catalog, current_node)
 		state = session_result["state"]
@@ -274,6 +279,20 @@ func submit_command(command: Dictionary) -> Dictionary:
 		_show_ending(resolved["result"])
 	elif not current_node.is_empty():
 		_show_encounter()
+	return resolved
+
+
+## 收官抉择（2026-09-15）：主动收官与冲仙同走 Ending 结算路由；被领域判据拒绝时
+## 留在原屏（`last_result` 已带闭包原因），不切屏、不落事件。
+func _submit_close_run(command: Dictionary) -> Dictionary:
+	var resolved := Resolver.apply(state, command, catalog)
+	state = resolved["state"]
+	last_result = resolved["result"]
+	_apply_command_feedback(last_result)
+	if bool(last_result.get("ok", false)):
+		_show_ending(last_result)
+	else:
+		_re_show_current_screen()
 	return resolved
 
 

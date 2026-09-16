@@ -11,6 +11,9 @@ const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
 const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
 const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
+# T16 残锋降转（2026-09-15）：跨战斗的永久消耗必须落在 RunState.gu_instances。
+# resolver 只持有 battle 字典 ⇒ 写回挂在门面侧（与 loot_resolver 同款范式）。
+const SwordMarkRulesScript = preload("res://scripts/domain/sword_mark_rules.gd")
 
 
 # 战斗命令路由单一事实来源（M2 2026-09-12）：controller 只准经
@@ -183,7 +186,8 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 		"end_turn":
 			action = {"type": "end_turn"}
 		"play_kill_move":
-			action = {"type": "play_kill_move", "kill_move_id": str(command.get("kill_move_id", ""))}
+			action = {"type": "play_kill_move", "kill_move_id": str(command.get("kill_move_id", "")),
+					"confirmed": bool(command.get("confirmed", false))}
 		"retreat":
 			# V1 撤退：Boss 战禁止（flags.boss_battle 由 start() 落账）；其余直接
 			# 结算为 retreat（战斗结束路由到结算屏）。
@@ -203,6 +207,9 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 	if not bool(out["result"]["ok"]):
 		return _rejected(next, state, str(out["result"]["reason"]))
 	var event_state := _append_v1_event(state, battle, next, command_type, action)
+	# T16 残锋降转：杀招已成功结算 ⇒ 逆炼落地。放在胜负分支之前，保证
+	# 胜利/战死/继续三条出口都带上被永久削弱的实例（原文「无法回复」）。
+	event_state = settle_sword_marks(next, event_state, catalog)
 	match str(next.get("phase", "")):
 		"victory":
 			# V1 胜利掉落：复用 LootResolver（材料/蛊/精英绑定代价），
@@ -289,6 +296,19 @@ static func _slot_index(battle: Dictionary, instance_id: String) -> int:
 		if str(battle["gu_slots"][i].get("instance_id", "")) == instance_id:
 			return i
 	return -1
+
+
+## T16 残锋降转（2026-09-15）：把杀招结算时登记的逆炼名单落到 RunState.gu_instances。
+## resolver 只持有 battle 字典（facade 原先没有任何实例回写通路），故按 loot_resolver
+## 同款范式在这里补齐——只读 battle 上的 `sword_mark_spent`，无名单则原样返回。
+static func settle_sword_marks(battle: Dictionary, state: RunState, catalog: Dictionary = {}) -> RunState:
+	var spent: Array = (battle.get("sword_mark_spent", []) as Array)
+	# 一次性消费：名单随 battle 字典续到下一条命令（end_turn 会 _dup 携带），
+	# 不清掉就会每次行动重复逆炼。读完即抹，语义＝"本次释放已结算"。
+	battle.erase("sword_mark_spent")
+	if spent.is_empty():
+		return state
+	return SwordMarkRulesScript.apply_erosion(state, spent, catalog)["state"]
 
 
 static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:

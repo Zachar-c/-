@@ -9,6 +9,7 @@ extends RefCounted
 
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
+const SocialCommandRulesScript = preload("res://scripts/domain/social_command_rules.gd")
 const BuildGoalProjectionScript = preload("res://scripts/presentation/snapshots/build_goal_projection.gd")
 
 
@@ -92,8 +93,28 @@ static func build(controller) -> Dictionary:
 			"anomalies": DdaResolverScript.marker_meta(state, catalog),
 			"death_lines": RunSnapshotBuilder._death_lines(state),
 			"leave_confirm": bool(controller.get("_map_leave_confirm")) if controller != null else false,
+			# 收官抉择（2026-09-15）：判据直调领域层唯一实现，避免按钮与规则漂移。
+			"closure_available": SocialCommandRulesScript.closure_available(state, catalog),
+			"closure_hint": _closure_hint(state, catalog),
 
 	}
+
+
+## 收官提示文案（只读）。层名取 pacing.layers.<stage>.title，缺失时回退空串。
+static func _closure_hint(state, catalog: Dictionary) -> String:
+	if not SocialCommandRulesScript.closure_available(state, catalog):
+		return ""
+	var stage := str((catalog.get("pacing", {}) as Dictionary).get("ending_after_stage", ""))
+	if stage.is_empty():
+		stage = "one"
+	# pacing.layers 以层序数字为键（"1".."5"），ending_after_stage 存层名
+	# （"one".."five"）——必须经 layer_index 换算，不能直接拿层名索引。
+	var layers: Dictionary = ((catalog.get("pacing", {}) as Dictionary).get("layers", {}) as Dictionary)
+	var stage_index := MapGeneratorScript.layer_index(stage)
+	var layer_title := str((layers.get(str(stage_index), {}) as Dictionary).get("title", ""))
+	if layer_title.is_empty():
+		return "已可主动收官——继续深入，或就此了结本局。"
+	return "「%s」已平定——可继续深入，或就此收官了结本局。" % layer_title
 
 
 static func _map_visibility(node: Dictionary, state) -> String:

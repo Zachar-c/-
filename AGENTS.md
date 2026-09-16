@@ -53,19 +53,30 @@
 
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 
-1. **当前批次（2026-09-11 用户裁定：卡牌 UI 重构 + 真窗验收）**：
+1. **剑道流派收口（2026-09-15 用户裁定：最高优先级）**：端到端可玩已通（契约 + 至终局驱动 + `CORE_LOOP_FAITHFUL=1 sword`）；**身份机制未做完**。
+   - **T16 残锋降转**（第一阻塞）：杀招永久耗剑蛊道痕、阈值降转；规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §2。前置：`battle_command_facade` → `RunState.gu_instances` 实例回写通路；不可逆代价须确认 UI + 预检，禁止静默惩罚。
+   - 随 T16：`sword_mark_cost` 4 只预留字段接入；logistics `bound` 死数据读取点（或裁定删除）。
+   - **P2-1 剑气临时蛊 / P2-2 pierce**：T16 落地后再排，不扩包。
+   - 参考：`reports/2026-09-12-sword-school-completion-audit.md` §7；验收：剑道契约 + `test_drive_to_ending` + unit/integration + 交互门。
+2. **当前批次（2026-09-11 用户裁定：卡牌 UI 重构 + 真窗验收）**：
    - **卡牌重构**：手牌单卡信息层级/画框/稀有度流光重构（现役 `GuTallFanHandView`，战斗线框 v3 卡 110×154 基线）——单测 + 交互门三键回归**已完成**（2026-09-11），真窗手感验收 ✅（2026-09-14，五态截图全通过，连带修复卡牌插画空白）。
    - **战斗水墨去框重构（2026-09-11 已落地）**：敌人/玩家去框融入山水、意图篆刻印、按钮减重、debug 弱化；headless 全绿，真窗验收 ✅（2026-09-14）。
    - **休息屏软锁修复（2026-09-11 已落地）**：主决策面滚动化 + LeaveRow 常驻跳过入口；回归门 `tools/verify_rest_headless.gd`（1280x720 SubViewport 可视预算 + 引擎拾取）。
    - **V 线（已批准，2026-09-10）**：Encounter v1（C4）、Npc/Ending/ContentError v1（B1）线框稿均获批；B2 首批 tscn 已落地（`ddef08a` + `4de08bf`：四屏布局与线框对齐 + 结局回顾格 + NPC 对话卡）。B2 真窗/截图验收 ✅（2026-09-14，四屏全部成功截图）。
    - **E1-E7 按层伪随机：全链闭环**（E1 pacing 分类概率表 / E2 生成器分类抽取 / E3 休息三选一 mode_groups / E4 表现层路由 / E5 `verify_pacing_density` + `verify_route_diversity` 双门 / E6 `enemy_roll` / E7 `shop_stock`）。
    - **交互闭环契约**（已落工具规则 §）：全屏 `verify_interaction_loop.gd` 为交付回归门（`dead=[]`、`no_ui_click=[]`、`occluded=[]` 三键全 0，滚动裁剪以 `scrolled=N` 计数留痕）；Settings 手记/图鉴导航已接入路由启用（`nav_journal`/`nav_codex`，2026-09-11），设置=当前页标识 disabled。
-2. ~~队列后续：真窗键鼠验收（B2 四屏 + W10 `continue_run` + S 阶段全流程 + 手牌动态手感）~~ ✅ **已闭环（2026-09-14）**：四项真窗验收全部通过，详见 `docs/superpowers/reports/2026-09-14-true-window-acceptance.md`；连带修复卡牌插画空白（`_card_art_texture` 改用 `load()` 替代 `Image.load()`，消除导出 WARNING）。D1b 古方知识模型已落地（`2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）；`run_controller` A7 减行已达标 888 行。
-3. 验证遗留（2026-09-15 复核）：smoke 门断言已跟进 rest/NPC/ending/battle 屏重构全绿；W10 首跑 `has_save=false` flake 经 headless 5 轮全新态探针（`tools/probe_w10_flake.gd`）不可复现，判定为真窗环境因素（并发引擎实例或 GUI 包装层），`verify_w10_continue_run.gd` 已加固为 `save_run` 失败显式报错；Dialogue Manager invalid UID 在 smoke/play 模式未复现；ObjectDB/RID 泄漏仍存但 GUT 退出时降至 18 实例 / 6 资源（历史 20601，属 GUT 语境既有遗留）；最终 `tools/test.ps1 -Suite unit`（1467/1467）、`-Suite integration`（32/32）、交互门全绿。
-4. 提交时继续排除 `.claude/`、无关的 `data/dialogues/events.dialogue` 本地修改，以及截图目录与 `__pycache__`。~~`data/enemies.json` 在 E6 补 weight 验证前仍按未经验证排除，E6 落地后解除。~~ **排除令已解除（2026-09-10 用户指令）**：原排除理由（E6 补 `weight` 验证）已失效——E7 改用"种子化洗牌取前 N"而非权重法，E6 也不再需要 `weight`；`data/enemies.json` 现有 30 条均由 `content_catalog.validate` 全量校验 + `test_b5_content_expansion.gd` 三条池契约守卫（clue ≥2 / 每主题有非 boss / 每条能起战）覆盖。
-5. **美术素材补齐（2026-09-15 新建待办，两途径）**：缺失清单与提示词见 `docs/art/AI-ART-PROMPTS.md`（§9 开源 vs AI 分类）、`docs/art/BATCH-1-PROMPTS.md`（首轮入库状态速查）。
+3. ~~队列后续：真窗键鼠验收（B2 四屏 + W10 `continue_run` + S 阶段全流程 + 手牌动态手感）~~ ✅ **已闭环（2026-09-14）**：四项真窗验收全部通过，详见 `docs/superpowers/reports/2026-09-14-true-window-acceptance.md`；连带修复卡牌插画空白（`_card_art_texture` 改用 `load()` 替代 `Image.load()`，消除导出 WARNING）。D1b 古方知识模型已落地（`2026-09-06-gu-synthesis-design.md` + `test_synthesis_knowledge.gd`）；`run_controller` A7 减行已达标 888 行。
+4. 验证遗留（2026-09-15 复核）：smoke 门断言已跟进 rest/NPC/ending/battle 屏重构全绿；W10 首跑 `has_save=false` flake 经 headless 5 轮全新态探针（`tools/probe_w10_flake.gd`）不可复现，判定为真窗环境因素（并发引擎实例或 GUI 包装层），`verify_w10_continue_run.gd` 已加固为 `save_run` 失败显式报错；Dialogue Manager invalid UID 在 smoke/play 模式未复现；ObjectDB/RID 泄漏仍存但 GUT 退出时降至 18 实例 / 6 资源（历史 20601，属 GUT 语境既有遗留）；最终 `tools/test.ps1 -Suite unit`（1467/1467）、`-Suite integration`（32/32）、交互门全绿。
+5. 提交时继续排除 `.claude/`、`.codex/`、截图目录与 `__pycache__`。~~无关的 `data/dialogues/events.dialogue` 本地修改~~ **排除令已解除（2026-09-16）**：D4 已使 `events.dialogue` 成为事件机制的必要组成（每条事件必须有 `~ <event_id>` 菜单块，否则对话气球点了悬空），并由 `tools/verify_event_variety.gd` 的反空转 canary 守卫，不再属"无关本地修改"。~~`data/enemies.json` 在 E6 补 weight 验证前仍按未经验证排除，E6 落地后解除。~~ **排除令已解除（2026-09-10 用户指令）**：原排除理由（E6 补 `weight` 验证）已失效——E7 改用"种子化洗牌取前 N"而非权重法，E6 也不再需要 `weight`；`data/enemies.json` 现有 30 条均由 `content_catalog.validate` 全量校验 + `test_b5_content_expansion.gd` 三条池契约守卫（clue ≥2 / 每主题有非 boss / 每条能起战）覆盖。
+6. **美术素材补齐（2026-09-15 新建待办，两途径）**：缺失清单与提示词见 `docs/art/AI-ART-PROMPTS.md`（§9 开源 vs AI 分类）、`docs/art/BATCH-1-PROMPTS.md`（首轮入库状态速查）。
    - **公开美术（开源）**：game-icons 52 枚已入库、`gu_icon_view.gd` ICON_PATHS 注册 + modulate 染色、大厅「关于」CC BY 3.0 署名、`apply_seal` 印章组件已实现。**2026-09-15 已落地**：① E1 羊皮纸纹理 `paper_texture.png`（texturize.app royalty-free，2048²）与 E2 印泥肌理 `seal_ink_texture.png`（grunge 源本地调朱砂红，`tools/gen_seal_ink_texture.py` 复现）已入库 `assets/wenzhen/textures/` 并导入；③ 52 枚 game-icons + 2 纹理已补登 `assets_manifest.json`（57 条，`tools/update_assets_manifest.py` 幂等追加，manifest 单测 4/4）。**剩余**：② 流派道徽纹样 13/20 game-icons 裁切入框（流派卡当前纯文字，可选增强）；E3 云纹卷轴边框公开源无匹配水墨素材，留待 AI 生成或程序化。
    - **GPT/AI 生图**：提示词已就绪——Boss 4 张见 `BATCH-1-PROMPTS.md` 批次 1，其余 29 条（敌人 7 / NPC 3 / 蛊形 9 / 背景 7 / 品牌 3）见 `BATCH-2-PROMPTS.md`（2026-09-15，高内聚低耦合：§0 画风锚点单一来源 + 每条提示词内联展开、可直接复制）。生成后落对应目录跑 `tools/import.ps1` 即导入；`seal_missing_grid.png` 15 枚待裁切（节点 3 + 道徽 7 + 徽记 5）。
+7. **肉鸽化改造（2026-09-16：D1 + D4 已落地，D2/D4 频率待裁定）**：
+   - **D1 关底 Boss 随机化** ✅：4 个关底台加 `boss_pool`（按 `hp × boss_layer_mult` 的**有效强度**做滑动窗口，层内差 ≤2 / 层间单调，原关底 Boss 恒在池内），`map_generator._roll_boss_for` 用独立派生流抽取 + 相邻层不重复；**L5 `final_boss_stand` 保持固定**。门禁 `tools/verify_boss_variety.gd` 40 种子 PASS（`topology_mismatch=0`），**7 个 boss 全部上场**（改前 5 个）。回滚＝删 4 个节点上的 `boss_pool` 键。
+   - **D4 事件池扩容** ✅：`data/events.json` 2 → 12 条（母题落在原文高频词：遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊），四杠杆＝`health_cost` / `delayed_soul_cost` / `curse_id`（3 条诅咒全用上）/ **新增 `stone_gain`**；事件节点加 `event_pool` 按种子抽宿主事件。**顺带修复扩容硬前置**：`_append_event_cards` 原不接收 node、遍历全表出卡（池=2 时看不出，扩到 12 会铺满 12 张），已改 node-aware。门禁 `tools/verify_event_variety.gd` 40 种子 PASS（12/12 覆盖、93 事件槽）。回滚＝删 `event_pool` / `stone_gain`。
+   - **🔴 待用户裁定（第一前置）**：`pacing.json` 是否解冻。它**同时卡住两件事**——D2 层性向（改 `category_weights`，违反 Reachability「不改 pacing」红线 + 作废 f1 的 32 局语料）与 D4 的**频率提升**（事件仍 ≈2.3 个/局，本轮只买到"种类"多样性）。不裁定就只能继续在数据层做加法。
+   - **未做**：L5 终局随机化（阻塞于 `miasma_vein_lord` **强度倒挂**——rank 3 / hp 14 却是全场最弱 boss，有效 HP 21 < L4 候选 27，需平衡裁定）；D7 精英节点显性化（下一步，改动极小）。
+   - 文档：交接 `docs/superpowers/reports/2026-09-16-roguelike-handover.md` · 调研与方向对比 `...roguelike-audit-and-directions.md` · D4 实施 `...d4-event-pool-expansion.md` · D2 预审 `docs/superpowers/specs/2026-09-16-rogue-layer-temperament-spec.md`。
 
 ## 技术约定
 

@@ -30,7 +30,8 @@ static func _rest_mode_action_command(controller, id: String) -> Dictionary:
 	if str(id) == "meditate":
 		return _encounter_action_command(controller, "meditate")
 	if str(id) == "cultivate":
-		return {"type": "cultivate_rank_two"}
+		# 一转一突破（2026-09-15）：档位由领域按当前转数自增，UI 不传档位。
+		return {"type": "breakthrough"}
 	return {}
 
 
@@ -57,7 +58,7 @@ static func _npc_talk_command(controller, id: String) -> Dictionary:
 	}
 
 
-static func _battle_card_command(controller, action_id: String, target_id: String) -> Dictionary:
+static func _battle_card_command(controller, action_id: String, target_id: String, confirmed: bool = false) -> Dictionary:
 	# V1 蛊行动制：手牌行 id 即 gu.<instance_id>，直接走 use_gu 命令。
 	if action_id.begins_with("gu."):
 		return {
@@ -72,11 +73,13 @@ static func _battle_card_command(controller, action_id: String, target_id: Strin
 			"type": "basic_attack",
 			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
 		}
-	# V1 预制杀招。
+	# V1 预制杀招。confirmed（T16 2026-09-15）：残锋触发质变时的出招前确认，
+	# 未确认则领域侧硬拦（sword_mark_confirm_required），禁止静默惩罚。
 	if action_id.begins_with("kill_move."):
 		return {
 			"type": "play_kill_move",
 			"kill_move_id": str(action_id.trim_prefix("kill_move.")),
+			"confirmed": confirmed,
 			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
 		}
 	var card_id := action_id.trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", "")))
@@ -150,11 +153,14 @@ static func for_screen(screen: String, controller) -> Dictionary:
 				"save_and_to_hall": func(): controller.save_and_leave_map(),
 				"leave_without_save": func(): controller.leave_map_without_save(),
 				"cancel_to_hall": func(): controller.cancel_map_leave(),
+				# 收官抉择（2026-09-15）：唯一入口是领域命令，判据在
+				# SocialCommandRules.closure_available（快照同一判据）。
+				"close_run": func(): controller.submit_command({"type": "close_run"}),
 				"surrender": func(): controller.surrender_run(),
 			}
 		"Battle":
 			return {
-				"play_card": func(action_id, target_id): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id))),
+				"play_card": func(action_id, target_id, confirmed = false): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id), bool(confirmed))),
 				"end_turn": func(): controller.submit_command(_battle_turn_command(controller, "end_turn")),
 				"refine": func(id = ""): controller.submit_command(_battle_turn_command(controller, "refine", {"recipe_id": str(id)})),
 				"flee": func(): controller.submit_command(_battle_turn_command(controller, "retreat")),

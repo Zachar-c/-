@@ -6,6 +6,9 @@ extends RefCounted
 # run_snapshot_builder.gd. Read-only projection; multi-screen shared helpers
 # stay on RunSnapshotBuilder and are called via the global class name.
 
+# 一转一突破（2026-09-15）：档位/成本与领域同源，禁止在快照里重写公式。
+const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
+
 
 static func build(controller) -> Dictionary:
 	var out := RunSnapshotBuilder._gui_state(controller)
@@ -159,19 +162,23 @@ static func build(controller) -> Dictionary:
 	# E3a 三选一（规格 §4）：rest 类节点统一暴露三族动作卡。
 	# 休整=既有 choices 全集；修炼=meditate/cultivate；炼蛊=refine/free_pair。
 	# 未开放的动作族 disabled + 原因直白（真元已满 / 无蛊可炼等）。E4a 消费渲染。
-	var rank_two_cost := int(catalog.get("balance", {}).get("cultivate_rank_two_stone_cost", 5))
+	# 一转一突破（2026-09-15）：档位不再写死二转，成本与目标档由领域同源给出。
+	var cultivation_now := maxi(1, int(state.cultivation)) if state != null else 1
+	var max_cultivation := RefineCommandRulesScript.MAX_CULTIVATION
+	var next_rank := mini(cultivation_now + 1, max_cultivation)
+	var rank_cost := RefineCommandRulesScript.cultivate_stone_cost(catalog, next_rank)
 	var essence_cap := int(state.cave_aperture.get("essence_max", 4)) if state != null else 4
 	var essence_now := int(state.essence) if state != null else 0
 	var meditate_disabled := essence_now >= essence_cap
 	var cultivate_disabled := false
 	var cultivate_reason := ""
 	if state != null:
-		if int(state.cultivation) >= 2:
+		if cultivation_now >= max_cultivation:
 			cultivate_disabled = true
-			cultivate_reason = "你已经是二转蛊师。"
-		elif int(state.stone) < rank_two_cost:
+			cultivate_reason = "你已是五转蛊师，境内再无更高境界。"
+		elif int(state.stone) < rank_cost:
 			cultivate_disabled = true
-			cultivate_reason = "元石不足：需要 %d 枚，还差 %d 枚。" % [rank_two_cost, rank_two_cost - int(state.stone)]
+			cultivate_reason = "元石不足：需要 %d 枚，还差 %d 枚。" % [rank_cost, rank_cost - int(state.stone)]
 	var live_gu := 0
 	if state != null:
 		for live_key in state.cave_aperture.get("stored_gu_instance_ids", []):
@@ -203,9 +210,11 @@ static func build(controller) -> Dictionary:
 			},
 			{
 				"id": "cultivate",
-				"label": "冲击二转",
-				"detail": "借灵地静修突破空窍（一转 → 二转）",
-				"cost": "%d 元石" % rank_two_cost,
+				"label": "冲击%s" % RefineCommandRulesScript.cultivation_label(next_rank),
+				"detail": "借灵地静修突破空窍（%s → %s），真元上限随之扩张" % [
+						RefineCommandRulesScript.cultivation_label(cultivation_now),
+						RefineCommandRulesScript.cultivation_label(next_rank)],
+				"cost": "%d 元石" % rank_cost,
 				"disabled": cultivate_disabled_used,
 				"reason": "本次探访已消费" if (rest_used and not cultivate_disabled) else cultivate_reason,
 				"curse_warning": false,

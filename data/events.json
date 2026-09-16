@@ -3,17 +3,127 @@
     {
       "id": "echo_cave",
       "kind": "delayed_cost",
+      "title": "残响叩穴",
+      "summary": "洞穴深处有回声应答，已知与未知的代价都刻在石壁上。",
+      "flavor_gain": "取得回声允诺的机缘。",
+      "unknown_note": "回声的后续代价结果未明，似有低语要在魂魄深处留下印记。",
       "health_cost": 1,
       "delayed_soul_cost": 1,
-      "delayed_trigger": "next_travel"
+      "delayed_trigger": "next_travel",
+      "stone_gain": 2
     },
     {
       "id": "gu_rot_pact",
       "kind": "curse_bargain",
+      "title": "腐朽蛊契",
+      "summary": "腐朽的蛊契在掌心发热，代价与收获都写在血色纹路里。",
+      "flavor_gain": "借此蛊契牵动一线机缘。",
+      "unknown_note": "蛊契烙入体内后，元石滞胀的苦果何时显现仍未明。",
       "health_cost": 1,
       "delayed_soul_cost": 1,
       "delayed_trigger": "next_travel",
       "curse_id": "essence_bloat"
+    },
+    {
+      "id": "huajiu_cache",
+      "title": "行者遗藏",
+      "summary": "山腹深处藏着某位行者的遗藏，独吞者从无善终。",
+      "flavor_gain": "取走遗藏中的元石。",
+      "unknown_note": "遗藏深处是否另有埋伏，只有挖到尽头才知。",
+      "health_cost": 2,
+      "stone_gain": 5
+    },
+    {
+      "id": "tithing_cache",
+      "title": "献藏换赏",
+      "summary": "遗藏见光便引来窥伺，不如报与山寨换一份赏钱。",
+      "flavor_gain": "换一份稳妥的赏钱。",
+      "unknown_note": "山寨给的赏钱是否足数，全看管事的心情。",
+      "health_cost": 0,
+      "stone_gain": 2
+    },
+    {
+      "id": "small_beast_tide",
+      "title": "小兽潮",
+      "summary": "小型兽潮已经在山寨附近成形，蛊师是唯一能挡的墙。",
+      "flavor_gain": "从兽尸与赏功中收得元石。",
+      "unknown_note": "这股兽潮是否会滚成大型，眼下无人说得准。",
+      "health_cost": 2,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 3
+    },
+    {
+      "id": "tide_aftermath",
+      "title": "潮后拾骨",
+      "summary": "兽潮退去，山道上留下成片尸骨与未干的血气。",
+      "flavor_gain": "从尸骨间拾取遗留的元石。",
+      "unknown_note": "尸骨之间还盘着什么活物，谁也说不上来。",
+      "health_cost": 0,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 3
+    },
+    {
+      "id": "duel_wager",
+      "title": "赌斗押注",
+      "summary": "有人当街设下赌斗，胜负各安天命，注头就摆在桌面上。",
+      "flavor_gain": "赢下注头，把元石收入囊中。",
+      "unknown_note": "对手的底细与后手一概不知，只看你敢不敢押。",
+      "health_cost": 1,
+      "stone_gain": 4
+    },
+    {
+      "id": "duel_loss",
+      "title": "斗蛊折戟",
+      "summary": "斗蛊场上一场比试已经摆开，输家的代价写在契纸上。",
+      "flavor_gain": "即便落败，也能从场中捡到零散的元石。",
+      "unknown_note": "经脉封蛊何时松解，没有定数。",
+      "health_cost": 2,
+      "curse_id": "meridian_seal",
+      "stone_gain": 1
+    },
+    {
+      "id": "weird_trade",
+      "title": "秘境换物",
+      "summary": "秘境入口半开，守门者只要魂魄，不要元石。",
+      "flavor_gain": "换回一份可用的元石。",
+      "unknown_note": "换到手的东西能否合用，结果未明。",
+      "health_cost": 0,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 2
+    },
+    {
+      "id": "contract_seal",
+      "title": "毒誓之契",
+      "summary": "要人用毒誓蛊立下不容反悔的契约，报酬先给。",
+      "flavor_gain": "先收下契约的酬劳。",
+      "unknown_note": "毒誓的制约何时收紧，只有违约那天才知道。",
+      "health_cost": 1,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 4
+    },
+    {
+      "id": "recognition_toll",
+      "title": "认主输诚",
+      "summary": "有势力逼你认主输诚，输了名头，换一条活路。",
+      "flavor_gain": "换得对方的赏赐。",
+      "unknown_note": "蛊蚀何时发作，全看对方心意。",
+      "health_cost": 0,
+      "curse_id": "gu_erosion",
+      "stone_gain": 3
+    },
+    {
+      "id": "blood_vein_offering",
+      "title": "血脉献祭",
+      "summary": "血脉祭坛前有人收买精血，价钱开得很高。",
+      "flavor_gain": "取走祭坛边堆积的元石。",
+      "unknown_note": "元石滞胀的余患何时现形，无人敢断言。",
+      "health_cost": 2,
+      "curse_id": "essence_bloat",
+      "stone_gain": 4
     }
   ]
 }
