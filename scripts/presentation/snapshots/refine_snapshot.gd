@@ -121,6 +121,8 @@ static func build(controller) -> Dictionary:
 		{"id": "combine", "label": "组合标签"},
 		{"id": "free_pair", "label": "自由配对"},
 		{"id": "blind", "label": "盲盒随机"},
+		# Stage 1（2026-09-17）：炼化 = 把野生蛊压成自己的蛊，与"合炼"是两个动作。
+		{"id": "attune", "label": "炼化野生蛊"},
 	]
 	# E4a 炼蛊子屏语境：从休息屏「炼蛊」卡进入时，「离开」退回休息屏而非
 	# 结束探访；initial_channel 用于预选自由配对等通道（用户手动切 Tab 后失效）。
@@ -153,6 +155,30 @@ static func build(controller) -> Dictionary:
 		pair_preview = SynthesisRulesScript.pair_preview(state, catalog, str(controller._selected_pair_main), str(controller._selected_pair_partner))
 	out["pair_preview"] = pair_preview
 	out["slot_ok"] = true
+	# Stage 1（2026-09-17）炼化候选：蛊仓里 state=wild 的野生蛊。
+	# 代价必须点之前可见（信息透明红线），禁「点了才知道」。
+	var attune_candidates: Array[Dictionary] = []
+	if state != null:
+		for attune_key in state.cave_aperture.get("stored_gu_instance_ids", []):
+			var wild_inst: Dictionary = state.gu_instances.get(str(attune_key), {})
+			if str(wild_inst.get("state", "")) != "wild":
+				continue
+			var wild_def: Dictionary = catalog.get("gu_by_id", {}).get(str(wild_inst.get("definition_id", "")), {})
+			var wild_rank := clampi(int(wild_def.get("rank", 1)), 1, 5)
+			var attune_cost := 4 + 2 * (wild_rank - 1)
+			var owned_essence := int(state.essence)
+			var affordable := owned_essence >= attune_cost
+			attune_candidates.append({
+				"id": str(attune_key),
+				"name": DisplayText.gu(str(wild_inst.get("definition_id", ""))),
+				"rank": wild_rank,
+				"essence_cost": attune_cost,
+				"essence_owned": owned_essence,
+				"executable": affordable,
+				"block_reason": "" if affordable else ("真元不足：需要 %d 点，当前仅有 %d 点。" % [attune_cost, owned_essence]),
+				"note": "炼化后它不再自食元气，改由你的真元喂养。",
+			})
+	out["attune_candidates"] = attune_candidates
 	out["blind_note"] = "盲盒自动投入全部已炼成蛊虫（至少 %d 只），产物与炸炉代价按种子结算。" % int(free_mix.get("min_inputs", 2))
 	out["recipes"] = rec_rows
 	var dismantle_slots: Array[Dictionary] = []

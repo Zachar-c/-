@@ -137,6 +137,9 @@ func _refresh_recipes() -> void:
 	if _channel == "free_pair":
 		_build_pair_panel(list)
 		return
+	if _channel == "attune":
+		_build_attune_panel(list)
+		return
 	var blind_note := str(_snapshot.get("blind_note", ""))
 	var slot_ok := bool(_snapshot.get("slot_ok", false))
 	var shown := 0
@@ -150,6 +153,37 @@ func _refresh_recipes() -> void:
 		_build_recipe_card(list, r, slot_ok, blind_note)
 	if shown == 0:
 		list.add_child(_label_of("（无可用配方）", GuStyle.INK_SOFT, 14))
+
+
+## Stage 1（2026-09-17）炼化面板：把野生蛊（未认主）压成自己的蛊。
+## 代价（真元）与后果（改由真元喂养）在点之前全部写明，不做「点了才知道」。
+func _build_attune_panel(list: Node) -> void:
+	var candidates: Array = _snapshot.get("attune_candidates", [])
+	var note := _label_of("野蛊自己吸食空气中的元气；一旦炼化，它便失去这个能力，改吞你的真元。" +
+			"炼化是拿真元压制它的意志——真元不继，前功尽弃。", GuStyle.INK_SOFT, 13)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	list.add_child(note)
+	if candidates.is_empty():
+		list.add_child(_label_of("（蛊仓中没有野生蛊）", GuStyle.INK_SOFT, 14))
+		return
+	for c in candidates:
+		if not (c is Dictionary):
+			continue
+		var cid := str(c.get("id", ""))
+		var cost := int(c.get("essence_cost", 0))
+		var head := _label_of("%s · %d转 · 真元 %d" % [str(c.get("name", "")), int(c.get("rank", 0)), cost], GuStyle.INK_HALL, 14)
+		list.add_child(head)
+		list.add_child(_label_of(str(c.get("note", "")), GuStyle.INK_SOFT, 12))
+		var btn := Button.new()
+		btn.text = "炼化（真元 %d / 现有 %d）" % [cost, int(c.get("essence_owned", 0))]
+		btn.disabled = not bool(c.get("executable", false))
+		if btn.disabled:
+			btn.tooltip_text = str(c.get("block_reason", ""))
+		btn.pressed.connect(func(): _fire("attune", cid))
+		MasterTheme.apply_button(btn, "action")
+		list.add_child(btn)
+		if btn.disabled:
+			list.add_child(_label_of(str(c.get("block_reason", "")), GuStyle.CINNABAR, 12))
 
 
 ## D1b 古方知识模型：自由配对面板——选主/辅蛊，产物按知识状态揭示（？？？/实名）。

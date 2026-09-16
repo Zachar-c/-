@@ -136,6 +136,8 @@ static func _handler_for(command_type: String) -> Variant:
 				if bool(refined["result"].get("ok", false)):
 					refined["state"] = RestRulesScript._consume_rest_visit_if_rest_class(refined["state"], catalog)
 				return refined,
+			# Stage 1（2026-09-17）：炼化（野生蛊 → 已炼化），与 refine_gu（合炼）语义分离。
+			"attune_gu": func(state, command, catalog): return RefineCommandRulesScript._attune_gu(state, command, catalog),
 			"refine_free_pair": func(state, command, catalog):
 				var paired := SynthesisRulesScript.execute(state, catalog, str(command.get("main_instance_id", "")), str(command.get("partner_instance_id", "")))
 				if bool(paired["result"].get("ok", false)):

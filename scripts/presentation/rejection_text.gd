@@ -26,6 +26,11 @@ const TEXT := {
 	"invalid_action_card": "这张牌当前不能打出。",
 	"stale_state_version": "局面已变化，操作已过期，请重试。",
 	"not_enough_essence": "真元不足。",
+	# Stage 1（2026-09-17）炼化（attune_gu）拒绝文案。真元是原文里唯一被点名的
+	# 炼化消耗物，故不足时只谈真元，不暗示其他代价。
+	"insufficient_essence": "真元不足，压制不住它的意志。",
+	"attune_target_missing": "需要指定一只野生蛊才能炼化。",
+	"attune_target_not_wild": "这只蛊已经认主，无需再炼化。",
 	"no_actions_left": "行动值已用完，结束回合恢复。",
 	"dodge_exhausted": "本回合已闪避过。",
 	"not_enough_hp": "生命不足，不能支付该代价。",

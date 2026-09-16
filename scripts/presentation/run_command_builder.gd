@@ -199,6 +199,8 @@ static func for_screen(screen: String, controller) -> Dictionary:
 		"Refine":
 			return {
 				"refine": func(id = ""): controller.submit_command({"type": "refine_gu", "recipe_id": str(id)}),
+				# Stage 1（2026-09-17）：炼化单只野生蛊，与 refine_gu（合炼）分开。
+				"attune": func(id = ""): controller.submit_command({"type": "attune_gu", "input_instance_ids": [str(id)]}),
 				"dismantle": func(id = ""): controller.submit_command({"type": "destroy_gu", "instance_id": str(id)}),
 				"select_pair_main": func(id = ""): controller.select_pair_main(str(id)),
 				"select_pair_partner": func(id = ""): controller.select_pair_partner(str(id)),

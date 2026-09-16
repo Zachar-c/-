@@ -178,7 +178,7 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - E4a 子屏语境（2026-09-09）：经休息屏「炼蛊」卡进入时快照 `from_rest=true`，「离开」按钮文案改「返回休整」，点击仅退回休息屏继续三选一，不发 `leave_encounter`（探访是否结束由休息屏决定）；`initial_channel` 预选通道（如 `free_pair`），用户手动切 Tab 后前端本地选择优先；直连路由（非子屏）语境行为不变。
 - 数据绑定（现役）：配方 `id/channel/name/output/rank_note/quality/fail_chance/backlash/curse`（`success_roll_max` 存在的配方显示失败率——T10.1-⑧ 废止后此字段消失，前端不写死依赖）、`recipe_unlocked`。
 - 数据绑定（`[T9]` v2）：`identity_requirements`（点名蛊/材/标签/转数/媒介逐项满足态）、`stages[]`（每阶段念头/真元/轮数/打断点）、`candidate_pool`（2-3 选一，声明序）、`allow_substitute` 替代关系与 `cost_change`、`known_fixed_success` 确定成功标识；核心确认面板（`core_state{depth}`、`hub_evidence`、第一层中段门控态）。
-- 命令：`refine_gu`（现役）；`[T9.2]` `refine_up_material`、`confirm_core`、跨回合炼制续投（对齐 battle2 ongoing 的 `continue_ids`）。
+- 命令：`refine_gu`（现役）；**`attune_gu`（Stage 1 缺口 2，2026-09-17）**：通道「炼化野生蛊」，把 `state=wild` 实例压成 `refined`；代价真元 `4+2*(rank-1)`，不足则 `insufficient_essence`；候选快照键 `attune_candidates[]` 含成本/持有真元/block_reason，点前可见；`[T9.2]` `refine_up_material`、`confirm_core`、跨回合炼制续投（对齐 battle2 ongoing 的 `continue_ids`）。
 - 状态与确认：未解锁配方禁用 + `refine_recipe_locked`；投入不足禁用 + `refine_input_missing`；核心蛊作辅蛊 → 确认层级 2（`aux_core_warning` 强警告）；跨回合炼制中断 → 展示已发生结果与损失。
 - 组件：`GuCard`（投入位）、`GuCommandButton`、`GuCostBreakdown`、`[T9]` `GuCoreBadge`、候选池选择控件（单选，声明序展示）、`GuConfirmDialog`。
 - 验收：随机失败率文案只对带 `override_reason` 的存量配方出现；点名材料缺项时缺哪味可见；`[T9]` 区未落地时隐藏。

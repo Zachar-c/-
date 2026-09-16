@@ -256,6 +256,56 @@ static func _apply_fixed_recipe(state: RunState, command: Dictionary, catalog: D
 	return Resolver._accepted(next)
 
 
+## Stage 1（2026-09-17）：炼化 —— 把一只野生蛊（state=wild）压成本人的蛊（state=refined）。
+##
+## 原文依据 `docs/superpowers/reports/2026-09-17-lianhua-corpus-research.md`：
+## 炼化是「以真元抹去蛊虫意志」的消耗战，**唯一被点名的消耗物是真元**
+## （精血/寿元 × 炼化 同句命中 0 次；魂魄只作"底蕴"上限，不是付款项）。
+## 量级锚点（行 1866）：祭炼 1/12 ≈ 3 成真元；一转普通蛊 5–8 元石，珍稀蛊 11–16 元石
+## ⇒ 转数越高越贵，取 `4 + 2 × (rank - 1)`。
+## 本切片**不做**进度条：原文的"持续祭炼 + 中断即前功尽弃"需要新状态字段与离开节点
+## 清进度，超出切片范围；改为一次性扣真元 + 真元不足即拒，代价在文案里明说。
+static func _attune_gu(state: RunState, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var requested: Array = command.get("input_instance_ids", [])
+	if requested.size() != 1:
+		return Resolver._rejected(state, "attune_target_missing")
+	var instance_id := str(requested[0])
+	var instance: Dictionary = state.gu_instances.get(instance_id, {})
+	if instance.is_empty() or str(instance.get("state", "")) != "wild":
+		return Resolver._rejected(state, "attune_target_not_wild")
+	var definition_id := str(instance.get("definition_id", ""))
+	var definition: Dictionary = catalog.get("gu_by_id", {}).get(definition_id, {})
+	var rank := clampi(int(definition.get("rank", 1)), 1, 5)
+	var cost := 4 + 2 * (rank - 1)
+	# 门禁先于扣费：真元不足时一只真元都不扣，也不改动实例状态。
+	if int(state.essence) < cost:
+		return Resolver._rejected(state, "insufficient_essence")
+	var instances: Dictionary = state.gu_instances.duplicate(true)
+	var attuned: Dictionary = (instances[instance_id] as Dictionary).duplicate(true)
+	attuned["state"] = "refined"
+	instances[instance_id] = attuned
+	# 本命蛊 = 第一只炼化的蛊（原文定义句）。只落事件，不给槽位、不给加成
+	# —— Stage 0 裁定 natal_gu = remove（禁止后置任意核心蛊槽）。
+	var is_first := true
+	for event_value in state.event_log:
+		if str((event_value as Dictionary).get("action", "")) == "attune_gu":
+			is_first = false
+			break
+	var next := state.append_event(Resolver._event(
+		state,
+		"attune_gu",
+		{"essence": state.essence, "gu_instances": state.gu_instances},
+		{"essence": state.essence - cost, "gu_instances": instances},
+		"first_gu_attuned" if is_first else "gu_attuned",
+		state.current_node_id,
+		[instance_id, definition_id]
+	))
+	next.essence = state.essence - cost
+	next.gu_instances = instances
+	next.sync_legacy_gu_projections()
+	return Resolver._accepted(next)
+
+
 ## Q8-G Batch 1-A：promotion = 跨 definition 的定向晋升（Rank N → Rank N+1 的**另一个**蛊）。
 ## 与 advance 的语义边界（Gate 7）：
 ##   advance   → 同 definition，实例 rank +1
