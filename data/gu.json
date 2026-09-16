@@ -130,7 +130,11 @@
   ],
   "school": "light",
   "role": "attack",
-  "rarity": "rare"
+  "rarity": "rare",
+  "v1_effect": {
+   "kind": "strike",
+   "amount": 4
+  }
  },
  {
   "id": "moon_shadow_gu",
@@ -251,7 +255,11 @@
   ],
   "school": "force",
   "role": "healing",
-  "rarity": "rare"
+  "rarity": "rare",
+  "v1_effect": {
+   "kind": "heal",
+   "amount": 2
+  }
  },
  {
   "id": "white_boar_strength_gu",
@@ -820,7 +828,15 @@
    "defense"
   ],
   "source": "school_derived",
-  "combat": "blood_defense_pattern"
+  "combat": "blood_defense_pattern",
+  "v1_effect": {
+   "kind": "shield",
+   "amount": 3
+  },
+  "feeding_cost": 1,
+  "feeding_need": {
+   "feed_points": 1
+  }
  },
  {
   "id": "blood_mov_1_22_gu",
@@ -834,7 +850,15 @@
    "movement"
   ],
   "source": "school_derived",
-  "combat": "blood_movement_pattern"
+  "combat": "blood_movement_pattern",
+  "v1_effect": {
+   "kind": "shift",
+   "amount": 1
+  },
+  "feeding_cost": 1,
+  "feeding_need": {
+   "feed_points": 1
+  }
  },
  {
   "id": "blood_heal_2_23_gu",
@@ -8844,6 +8868,10 @@
    "amount": 2,
    "support_school": "sword",
    "support_bonus": 1
+  },
+  "feeding_cost": 1,
+  "feeding_need": {
+   "feed_points": 1
   }
  },
  {

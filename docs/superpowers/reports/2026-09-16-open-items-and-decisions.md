@@ -23,7 +23,7 @@
 | # | 事项 | 状态 | 优先级 | 卡在哪 | 你只需给 |
 |---|---|---|---|---|---|
 | ~~**A1**~~ | ~~World Model Stage 0 证据债~~ | **✅ Gate GO（2026-09-16 重跑）**：24/24 完整 P0 引用；manifest 指纹已按只读原文校正 | — | 已解锁 | 进入 Stage 1 |
-| **A1b** | **Stage 1 纵向切片设计批准** | 设计稿已出：`specs/2026-09-16-stage1-gu-entity-vertical-slice-design.md`（12 蛊 / 南疆散修 / 短路线） | **P1** | 批准前零生产 diff | 过 / 改名单 |
+| **A1b** | **Stage 1 纵向切片** | 设计已出；**数据完备化已落地**（5 蛊 effect/feeding + 切片单测 5/5）；身份夹具/路线探针未做 | P1 | 身份与择道改造 | 是否拆流派择道 |
 | **A2** | **`pacing.json` 是否解冻** | 同时卡 D2 层性向 / D4 事件频率 / D7 L1–L2 零精英 | P1 | Reachability「不改 pacing」红线 + 作废 f1 语料 | 一句：解冻 / 不解冻 |
 | **A3** | **L5 终局随机化** | `miasma_vein_lord` 强度倒挂（有效 HP 21 < L4 27） | P2 | 需平衡裁定或另立终局候选 | 抬数值 / 换终局叙事 |
 | **A4** | **多敌遭遇 loot tier 错位** | `LootResolver` 只读 `battle.enemy_kind`；多敌模板不写该键 ⇒ 精英按 common 结算 | P2 | 动 `LootResolver` 红线 | 修 / 不修 |
