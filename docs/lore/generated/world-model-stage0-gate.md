@@ -1,52 +1,29 @@
 # World Model Stage 0 Gate
 
-- Result: **NO_GO**
+- Result: **GO**
 - Exact command: `tools/lore.ps1 world-model-0 --config lore_engine/config/world-model-stage0.json --out docs/lore/generated`
 - Deterministic repeated output: `true`
 - Provenance verified: `true`
 
 ## Source hashes
 
-- `gu_zhenren_main`: `bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34`
-- `ren_zu_zhuan`: `e6a6a6187ec69d36957defac0aa644cec494fe2c1b2d2e6c13969fe460b9cab8`
+- `gu_zhenren_main`: `95cd0b13684e5ce9c47dea0c198d3ecfc1a7182c2263674cb021af6cbb287647`
+- `ren_zu_zhuan`: `acc3ec34b7606ebcb96626b5bb3672d894e12c80cce8aa46ecacca28b7749155`
 
 ## Output hashes
 
-- `world-model-baseline-v1.json`: `033aa5246fddcd8882c7ad2c1865d0994473fa1d4cc9715b7b3371fdb71530a7`
-- `world-model-baseline-v1.md`: `7f2639f7cbfdbce195413f2f25936f969c61265cc436b81578693b80227a110a`
+- `world-model-baseline-v1.json`: `2f13c107fa01f0f1a25e3d0fc73ae6d974f3f159f1cdf96df2c73d50af7fc62a`
+- `world-model-baseline-v1.md`: `39a4847bdf435376b506b032aa79d09ec23bc5cf698f297a350bb49ee704770e`
 
 ## Claim coverage
 
 - Target topics represented: `24/24`
-- High-impact claims with complete P0 references: `0`
+- High-impact claims with complete P0 references: `24`
 - Total baseline rows: `24`
 
 ## Unresolved items
 
-- `aptitude_capacity`
-- `body_and_blood`
-- `cultivator_aperture`
-- `dao_marks`
-- `economy_and_primeval_stones`
-- `force_and_social_order`
-- `gu_activation`
-- `gu_feeding`
-- `gu_is_independent_entity`
-- `gu_is_life`
-- `gu_ownership`
-- `gu_recipe`
-- `gu_refinement`
-- `information_leak`
-- `inheritance`
-- `kill_move`
-- `lifespan`
-- `mortal_immortal_boundary`
-- `natal_gu`
-- `primeval_essence`
-- `rank_and_subrank`
-- `soul`
-- `tribulation_or_ascension`
-- `world_scope_and_compression`
+- None.
 - Unresolved P0 conflicts: None.
 - Non-blocking deferred claims: None.
 
@@ -61,7 +38,7 @@
 ## Production boundary
 
 - Changed forbidden paths: None.
-- Gate blockers: high-impact complete references 0 < 20; high-impact claims missing complete P0 references: aptitude_capacity, body_and_blood, cultivator_aperture, dao_marks, economy_and_primeval_stones, force_and_social_order, gu_activation, gu_feeding, gu_is_independent_entity, gu_is_life, gu_ownership, gu_recipe, gu_refinement, information_leak, inheritance, kill_move, lifespan, mortal_immortal_boundary, natal_gu, primeval_essence, rank_and_subrank, soul, tribulation_or_ascension, world_scope_and_compression; unresolved high-impact claims: aptitude_capacity, body_and_blood, cultivator_aperture, dao_marks, economy_and_primeval_stones, force_and_social_order, gu_activation, gu_feeding, gu_is_independent_entity, gu_is_life, gu_ownership, gu_recipe, gu_refinement, information_leak, inheritance, kill_move, lifespan, mortal_immortal_boundary, natal_gu, primeval_essence, rank_and_subrank, soul, tribulation_or_ascension, world_scope_and_compression
+- Gate blockers: None.
 
 ## Forbidden follow-up actions before Gate approval
 

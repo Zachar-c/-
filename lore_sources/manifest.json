@@ -5,7 +5,7 @@
     "encoding": "utf-8",
     "authority": "primary_text",
     "default_claim_type": "CANON",
-    "expected_sha256": "BF78D41427E28BB8B64F1AD6D93B971D1A77458ABF273E554AABE7F27A155D34"
+    "expected_sha256": "95CD0B13684E5CE9C47DEA0C198D3ECFC1A7182C2263674CB021AF6CBB287647"
   },
   {
     "source_file_id": "ren_zu_zhuan",
@@ -13,6 +13,6 @@
     "encoding": "gb18030",
     "authority": "in_world_text",
     "default_claim_type": "IN_WORLD_LORE",
-    "expected_sha256": "E6A6A6187EC69D36957DEFAC0AA644CEC494FE2C1B2D2E6C13969FE460B9CAB8"
+    "expected_sha256": "ACC3EC34B7606EBCB96626B5BB3672D894E12C80CCE8AA46ECACCA28B7749155"
   }
 ]
