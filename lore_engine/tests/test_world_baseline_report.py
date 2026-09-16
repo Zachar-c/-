@@ -137,9 +137,12 @@ class WorldBaselineReportTests(unittest.TestCase):
         self.assertTrue(all(len(item["sha256"]) == 64 for item in input_hashes))
         self.assertEqual(report["claim_counts"]["total"], 24)
         self.assertEqual(report["claim_counts"]["high_impact"], 24)
-        self.assertEqual(report["claim_counts"]["effective_rulings"], {"needs_evidence": 24})
-        self.assertEqual(len(report["unresolved_high_impact"]), 24)
-        self.assertEqual(report["stage0_gate"]["result"], "NO_GO")
+        self.assertEqual(
+            report["claim_counts"]["effective_rulings"],
+            {"remove": 2, "retain": 15, "revise": 7},
+        )
+        self.assertEqual(len(report["unresolved_high_impact"]), 0)
+        self.assertEqual(report["stage0_gate"]["result"], "GO")
 
         expected_legacy = [
             {"mechanic_id": item.mechanic_id, "disposition": item.disposition, "rationale": item.rationale}
@@ -188,7 +191,7 @@ class WorldBaselineReportTests(unittest.TestCase):
             "| Claim | 已核验事实 | Evidence IDs | Source locations | 偏差候选 | 冲突与未知 | 当前实现映射 | 玩家后果 | 迁移/废止说明 |",
             markdown,
         )
-        self.assertIn("**NO_GO**", markdown)
+        self.assertIn("**GO**", markdown)
         self.assertIn("[适配登记](../adaptation-register.md)", markdown)
         self.assertNotIn("stage0_pending_main_text\n", markdown)
         representative = next(row for row in self.report["claims"] if row["claim_id"] == "aptitude_capacity")

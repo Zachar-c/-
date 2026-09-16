@@ -308,7 +308,7 @@ class WorldBaselineTests(unittest.TestCase):
 
         self.assertEqual(result.gate_result, "CONDITIONAL_GO")
 
-    def test_benchmark_has_24_deterministic_rows_and_all_preliminary_rulings(self) -> None:
+    def test_benchmark_finalized_with_complete_p0_coverage(self) -> None:
         import json
 
         config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
@@ -320,10 +320,10 @@ class WorldBaselineTests(unittest.TestCase):
         self.assertEqual(claims.errors + evidence_records.errors + first.errors, ())
         self.assertEqual(first.records, second.records)
         self.assertEqual(len(first.records), 24)
-        self.assertTrue(all(item.decision_kind == "preliminary" for item in first.records))
+        self.assertTrue(all(item.decision_kind == "final" for item in first.records))
         self.assertEqual(
             {item.ruling for item in first.records},
-            {"retain", "revise", "remove", "defer", "needs_evidence"},
+            {"retain", "revise", "remove"},
         )
         findings = audit_current_implementation(ROOT)
         validation = validate_claim_set(
@@ -336,8 +336,12 @@ class WorldBaselineTests(unittest.TestCase):
             claims.records, evidence_records.records, findings, first.records
         )
         self.assertEqual(len(adjudication.rows), 24)
-        self.assertTrue(all(row.effective_ruling == "needs_evidence" for row in adjudication.rows))
-        self.assertEqual(adjudication.gate_result, "NO_GO")
+        self.assertEqual(
+            {row.effective_ruling for row in adjudication.rows},
+            {"retain", "revise", "remove"},
+        )
+        self.assertTrue(all(row.resolution_status == "not_required" for row in adjudication.rows))
+        self.assertEqual(adjudication.gate_result, "GO")
         retained_finding_ids = {
             finding.finding_id
             for row in adjudication.rows

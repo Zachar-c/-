@@ -153,7 +153,13 @@ def validate_status_transition(previous: str, current: str, *, explicit_decision
     allowed = {
         "candidate": {"canonical", "derived", "adaptation", "rejected", "deferred"},
         "canonical": {"canonical", "derived", "adaptation", "deferred"} if explicit_decision else set(),
-        "derived": set(), "adaptation": set(), "deferred": set(), "rejected": set(),
+        # `deferred` is parking: it is terminal for bookkeeping purposes, but an
+        # explicit adjudication decision is exactly what lifts it. Without this
+        # edge a deferred claim could never be finalized, and the Stage 0 gate -
+        # which blocks until every high-impact claim carries a non-defer ruling -
+        # would be unsatisfiable no matter how complete the evidence became.
+        "deferred": {"deferred", "canonical", "derived", "adaptation", "rejected"} if explicit_decision else set(),
+        "derived": set(), "adaptation": set(), "rejected": set(),
     }
     if previous not in STATUSES or current not in STATUSES:
         return ValidationResult((_error("invalid_enum", "unknown claim status"),))

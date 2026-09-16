@@ -138,7 +138,11 @@ class Stage0CliTests(unittest.TestCase):
                 ],
             )
 
-    def test_world_model_0_returns_no_go_with_exit_3(self) -> None:
+    def test_world_model_0_returns_go_for_finalized_benchmark(self) -> None:
+        # The benchmark ledger is finalized (all 24 high-impact claims carry a
+        # final ruling backed by verified P0 citations), so the live gate must
+        # report GO with a success exit code. A regression that reverts any
+        # claim to a preliminary/needs_evidence state fails this guard.
         with tempfile.TemporaryDirectory() as tmp:
             with (
                 patch("lore_engine.cli.build_world_baseline_report", return_value=copy.deepcopy(self.real_report)),
@@ -148,8 +152,8 @@ class Stage0CliTests(unittest.TestCase):
                     "world-model-0", "--out", tmp, "--generated-at-utc", GENERATED_AT
                 )
 
-        self.assertEqual(code, 3, stderr)
-        self.assertEqual(json.loads(stdout)["result"], "NO_GO")
+        self.assertEqual(code, 0, stderr)
+        self.assertEqual(json.loads(stdout)["result"], "GO")
 
     def test_world_model_0_missing_config_is_input_error(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
