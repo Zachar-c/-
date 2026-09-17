@@ -59,19 +59,23 @@ static func _npc_talk_command(controller, id: String) -> Dictionary:
 
 
 static func _battle_card_command(controller, action_id: String, target_id: String, confirmed: bool = false) -> Dictionary:
+	var expected_phase := str(controller.current_battle.get("phase", "player_action")) if controller.current_battle != null else ""
+	var state_version := int(controller.state.event_log.size()) if controller.state != null else -1
 	# V1 蛊行动制：手牌行 id 即 gu.<instance_id>，直接走 use_gu 命令。
 	if action_id.begins_with("gu."):
 		return {
 			"type": "use_gu",
 			"instance_id": str(action_id.trim_prefix("gu.")),
 			"target_id": target_id,
-			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
+			"state_version": state_version,
+			"expected_phase": expected_phase,
 		}
 	# V1 拳脚（肉体搏斗）。
 	if action_id == "basic_attack":
 		return {
 			"type": "basic_attack",
-			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
+			"state_version": state_version,
+			"expected_phase": expected_phase,
 		}
 	# V1 预制杀招。confirmed（T16 2026-09-15）：残锋触发质变时的出招前确认，
 	# 未确认则领域侧硬拦（sword_mark_confirm_required），禁止静默惩罚。
@@ -80,7 +84,8 @@ static func _battle_card_command(controller, action_id: String, target_id: Strin
 			"type": "play_kill_move",
 			"kill_move_id": str(action_id.trim_prefix("kill_move.")),
 			"confirmed": confirmed,
-			"state_version": int(controller.state.event_log.size()) if controller.state != null else -1,
+			"state_version": state_version,
+			"expected_phase": expected_phase,
 		}
 	var card_id := action_id.trim_prefix("battle.%s." % str(controller.current_battle.get("battle_id", "")))
 	return {
@@ -88,8 +93,8 @@ static func _battle_card_command(controller, action_id: String, target_id: Strin
 		"action_id": action_id,
 		"card_id": card_id,
 		"target_id": target_id,
-		"state_version": int(controller.current_battle.get("hand_version", -1)),
-		"expected_phase": str(controller.current_battle.get("phase", "")),
+		"state_version": state_version,
+		"expected_phase": expected_phase,
 	}
 
 
@@ -103,7 +108,7 @@ static func _encounter_action_command(controller, action_id: String) -> Dictiona
 
 
 static func _battle_turn_command(controller, command_type: String, extra: Dictionary = {}) -> Dictionary:
-	var command := {"type": command_type, "state_version": controller.state.event_log.size() if controller.state != null else -1, "expected_phase": str(controller.current_battle.get("phase", ""))}
+	var command := {"type": command_type, "state_version": controller.state.event_log.size() if controller.state != null else -1, "expected_phase": str(controller.current_battle.get("phase", "player_action"))}
 	for key in extra:
 		command[str(key)] = extra[key]
 	return command
@@ -163,8 +168,11 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			return {
 				# 第三阶段 Task 3（2026-09-17）：战斗卡自带结构化命令，战斗屏直接转呈
 				# 本通道提交领域；play_card 保留为按 ID 构造的兼容包装（存量夹具）。
-				"submit_command": func(command): controller.submit_command(command),
-				"play_card": func(action_id, target_id, confirmed = false): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id), bool(confirmed))),
+				# F-02 复验（第三轮）：单行 lambda 在 GDScript 里**不会隐式返回**
+				# 末表达式的值，必须显式 return；否则领域拒绝信封被吞成 null，
+				# 战斗屏按"未转呈"处理 ⇒ 被拒的操作照样播成功音效与墨迹。
+				"submit_command": func(command): return controller.submit_command(command),
+				"play_card": func(action_id, target_id, confirmed = false): return controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id), bool(confirmed))),
 				"end_turn": func(): controller.submit_command(_battle_turn_command(controller, "end_turn")),
 				"refine": func(id = ""): controller.submit_command(_battle_turn_command(controller, "refine", {"recipe_id": str(id)})),
 				"flee": func(): controller.submit_command(_battle_turn_command(controller, "retreat")),

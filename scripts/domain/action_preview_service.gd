@@ -9,6 +9,8 @@ const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
 const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const RestRulesScript = preload("res://scripts/domain/rest_rules.gd")
+# F-01：撤离门禁唯一来源在 BattleCommandFacade.retreat_gate，预览只转呈结论。
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 
 
 # This service is read-only: it must never append events, mutate RunState, or use RNG.
@@ -146,6 +148,7 @@ static func _append_battle_gu_card(cards: Array[Dictionary], battle: Dictionary,
 			"instance_id": instance_id,
 			"target_id": "",
 			"state_version": state.event_log.size(),
+			"expected_phase": str(battle.get("phase", "player_action")),
 		},
 	}))
 
@@ -164,7 +167,11 @@ static func _battle_basic_attack_card(battle: Dictionary, state: RunState) -> Di
 		"expected_gain": ["造成 1 点基础伤害。"],
 		"target_type": "single_enemy",
 		"valid_target_ids": _living_enemy_ids(battle),
-		"command": {"type": "basic_attack", "state_version": state.event_log.size()},
+		"command": {
+			"type": "basic_attack",
+			"state_version": state.event_log.size(),
+			"expected_phase": str(battle.get("phase", "player_action")),
+		},
 	})
 
 
@@ -185,34 +192,34 @@ static func _append_battle_kill_card(cards: Array[Dictionary], battle: Dictionar
 			"kill_move_id": kill_move_id,
 			"confirmed": false,
 			"state_version": state.event_log.size(),
+			"expected_phase": str(battle.get("phase", "player_action")),
 		},
 	}))
 
 
 static func _append_battle_retreat_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
-	var retreat_cost := 0 if battle.get("flags", []).has("retreat_preserved") \
-			else int(catalog.get("balance", {}).get("retreat_stone_cost", 2))
-	var retreat_open := _battle_retreat_open(battle)
-	# R-boss-no-retreat: the window only exists behind this fight, so boss-tier
-	# enemies close it for good — shown with the reason, never silently.
-	var boss_no_retreat: bool = _boss_blocks_retreat(battle)
-	if boss_no_retreat:
-		retreat_open = false
-	var retreat_ready := retreat_open and state.stone >= retreat_cost
+	# F-01：与领域 execute 同一纯门禁；卡片 reason 直接采用门禁 reason 码。
+	var gate := BattleCommandFacadeScript.retreat_gate(battle, state, catalog)
+	var retreat_ready := bool(gate["ok"])
+	var retreat_cost := int(gate["cost"])
+	var boss_no_retreat := BattleCommandFacadeScript.boss_blocks_retreat(battle)
+	var terrain_closed := (not boss_no_retreat) and (not BattleCommandFacadeScript.retreat_terrain_open(battle))
+	var stone_short := (not boss_no_retreat) and (not terrain_closed) and int(state.stone) < retreat_cost
 	cards.append(_battle_command_card(battle, state, {
 		"id": "battle.retreat",
 		"type": "retreat",
 		"title": "撤离",
 		"summary": "趁交锋间隙抽身。",
 		"executable": retreat_ready,
-		"reason": "" if retreat_ready else "retreat_blocked",
+		"reason": str(gate["reason"]),
 		"block_reason": "敌方为首领：此战退无可退。" if boss_no_retreat \
-			else "当前地形、追击或敌方控制不允许撤离。" if not retreat_open \
-			else "元石不足：需要 %d 枚。" % retreat_cost if state.stone < retreat_cost else "",
+			else "当前地形、追击或敌方控制不允许撤离。" if terrain_closed \
+			else "元石不足：需要 %d 枚。" % retreat_cost if stone_short else "",
 		"cost": {"stone": retreat_cost} if retreat_cost > 0 else {},
 		"known_risk": ["撤离成功后会放弃本次战利品。"],
 		"remedy_hints": [] if boss_no_retreat else (
-			["可先催发雾步蛊保留撤离机会。"] if not retreat_open else _stone_remedies(retreat_cost - state.stone)),
+			["可先催发雾步蛊保留撤离机会。"] if terrain_closed
+			else _stone_remedies(retreat_cost - int(state.stone)) if stone_short else []),
 		"command": {
 			"type": "retreat",
 			"state_version": state.event_log.size(),
@@ -350,37 +357,19 @@ static func _counter_swallow_risk(battle: Dictionary) -> Array[String]:
 
 
 static func _battle_retreat_open(battle: Dictionary) -> bool:
-	if _boss_blocks_retreat(battle):
+	if BattleCommandFacadeScript.boss_blocks_retreat(battle):
 		return false
-	return _retreat_terrain_open(battle)
+	return BattleCommandFacadeScript.retreat_terrain_open(battle)
 
 
-## 两代战斗形状的 Boss 判定，与 V1 运行时撤退 gate（flags.boss_battle，
-## facade.start 对 tier=="boss" 敌人落账）同源：
-## - V1 形状：flags.boss_battle（Dictionary）。
-## - 旧信封形状（存量测试 battle，敌人可能内嵌 definition/顶层 enemy_definition）：
-##   按敌人 tier=="boss" 兜底。
-## 曾是 legacy class BattleResolver（boss_blocks_retreat 全局名）的调用——旧实现在 V1
-## battle 上查 enemy_definition/enemies[].definition.tier，恒 false，导致预览
-## 错误放行 Boss 战撤退（SS16.5 无静默放行回归，2026-09-06 桶 B 修复）。
+## 两代战斗形状的 Boss 判定：委托 Facade.boss_blocks_retreat（F-01 同源）。
 static func _boss_blocks_retreat(battle: Dictionary) -> bool:
-	if (battle.get("flags", {}) is Dictionary) \
-			and bool((battle.get("flags", {}) as Dictionary).get("boss_battle", false)):
-		return true
-	for enemy_value in battle.get("enemies", []):
-		var enemy: Dictionary = enemy_value
-		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
-			if str((enemy.get("definition", {}) as Dictionary).get("tier", "")) == "boss":
-				return true
-	return str((battle.get("enemy_definition", {}) as Dictionary).get("tier", "")) == "boss"
+	return BattleCommandFacadeScript.boss_blocks_retreat(battle)
 
 
-## 旧版 can_retreat(terrain, pursuit, enemy_control) 的本地等价：V1 battle 携带
-## terrain（encounter 透传），pursuit/enemy_control 在 V1 形状缺省为 0。
+## 旧版 can_retreat 本地等价：委托 Facade.retreat_terrain_open（F-01 同源）。
 static func _retreat_terrain_open(battle: Dictionary) -> bool:
-	return str(battle.get("terrain", "")) in ["path", "ridge", "marsh"] \
-		and int(battle.get("pursuit", 0)) <= 1 \
-		and int(battle.get("enemy_control", 0)) <= 1
+	return BattleCommandFacadeScript.retreat_terrain_open(battle)
 
 
 static func _append_caravan_cards(cards: Array[Dictionary], state: RunState, catalog: Dictionary) -> void:

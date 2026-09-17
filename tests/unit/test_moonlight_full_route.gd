@@ -91,6 +91,7 @@ func _play_source_gu(controller: RunController, battle: Dictionary, skip: Dictio
 			"type": "use_gu",
 			"instance_id": instance_id,
 			"state_version": controller.state.event_log.size(),
+			"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 		})
 		if bool(res.get("accepted", false)):
 			return true
@@ -128,6 +129,7 @@ func _fight_to_victory(controller: RunController, max_steps: int = 40) -> void:
 			var res := controller.submit_command({
 				"type": "basic_attack",
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			})
 			if bool(res.get("accepted", false)):
 				acted = true
@@ -136,6 +138,7 @@ func _fight_to_victory(controller: RunController, max_steps: int = 40) -> void:
 			controller.submit_command({
 				"type": "end_turn",
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			})
 			skip = {}
 

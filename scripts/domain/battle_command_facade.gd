@@ -216,10 +216,11 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			action = {"type": "play_kill_move", "kill_move_id": str(command.get("kill_move_id", "")),
 					"confirmed": bool(command.get("confirmed", false))}
 		"retreat":
-			# V1 撤退：Boss 战禁止（flags.boss_battle 由 start_session 落账）；其余直接
-			# 结算为 retreat（战斗结束路由到结算屏）。
-			if boss_blocks_retreat(battle):
-				return _rejected(battle, state, "retreat_forbidden")
+			# F-01（2026-09-17）：预览与执行共用 retreat_gate——Boss / 地形·追击 / 元石
+			# 同一套纯门禁；拒绝不改 battle、不落日志、不写 battle_finished。
+			var gate := retreat_gate(battle, state, catalog)
+			if not bool(gate["ok"]):
+				return _rejected(battle, state, str(gate["reason"]))
 			# 第三阶段 Task 2/4：撤离是本场唯一的显式终局路径之一——phase 保持
 			# player_action（不进"三值集合"以外），终局标记落在 flags.session_closed，
 			# 此后任何战斗命令一律 battle_over。账本不额外扣念头，由生命周期层的
@@ -309,15 +310,33 @@ static func _append_v1_event(state: RunState, before: Dictionary, after: Diction
 	})
 
 
-static func _action_card_passthrough(battle: Dictionary, command: Dictionary) -> String:
-	var action_id := str(command.get("action_id", ""))
-	var battle_id := str(battle.get("battle_id", ""))
-	if battle_id != "" and action_id == "battle.%s.basic.punch" % battle_id:
+# 卡 id 形状归一（**唯一映射点**，preflight 与执行侧共用）。
+# 现行手牌 id 由 `ActionPreviewService.preview_battle_actions` 产出，不含 battle_id 段：
+# `battle.end_turn` / `battle.retreat` / `basic_attack`。
+# 旧信封遗留的 `battle.<battle_id>.<card>` 按**后缀**归一到同一组现行 id：
+# 不读 `battle_id`（生产战斗从不设置该键），否则旧形状既路由不到、又过不了
+# controller preflight ⇒「声明兼容但一提交就被拒」。
+static func canonical_action_card_id(action_id: String) -> String:
+	if not action_id.begins_with("battle."):
+		return action_id
+	if action_id.ends_with(".basic.punch"):
 		return "basic_attack"
-	if battle_id != "" and action_id == "battle.%s.end_turn" % battle_id:
-		return "end_turn"
-	if battle_id != "" and action_id == "battle.%s.retreat" % battle_id:
-		return "retreat"
+	if action_id.ends_with(".end_turn"):
+		return "battle.end_turn"
+	if action_id.ends_with(".retreat"):
+		return "battle.retreat"
+	return action_id
+
+
+static func _action_card_passthrough(_battle: Dictionary, command: Dictionary) -> String:
+	# 两代卡 id 形状先归一再路由：旧形状不得只剩"提交被拒"。
+	match canonical_action_card_id(str(command.get("action_id", ""))):
+		"battle.end_turn":
+			return "end_turn"
+		"battle.retreat":
+			return "retreat"
+		"basic_attack":
+			return "basic_attack"
 	return ""
 
 
@@ -349,8 +368,47 @@ static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: D
 
 
 ## Boss 战禁止撤退（V1 兼容旧锚点：真 Boss 节点不可逃，普通战斗可逃）。
+## F-01：预览侧两代形状（flags.boss_battle + 敌方 tier/enemy_definition）与执行侧
+## 共用本函数，禁止再分叉一份本地判定。
 static func boss_blocks_retreat(battle: Dictionary) -> bool:
-	return bool(battle.get("flags", {}).get("boss_battle", false))
+	if (battle.get("flags", {}) is Dictionary) \
+			and bool((battle.get("flags", {}) as Dictionary).get("boss_battle", false)):
+		return true
+	# 旧信封形状（存量测试 battle，敌人可能内嵌 definition/顶层 enemy_definition）。
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			if str((enemy.get("definition", {}) as Dictionary).get("tier", "")) == "boss":
+				return true
+	return str((battle.get("enemy_definition", {}) as Dictionary).get("tier", "")) == "boss"
+
+
+## 撤离费用（预览与执行同源）：retreat_preserved 旗标免付，否则读 balance.retreat_stone_cost。
+static func retreat_cost(battle: Dictionary, catalog: Dictionary) -> int:
+	if battle.get("flags", []).has("retreat_preserved"):
+		return 0
+	return int(catalog.get("balance", {}).get("retreat_stone_cost", 2))
+
+
+## 旧版 can_retreat(terrain, pursuit, enemy_control) 的本地等价。
+## F-01：预览与执行共用，禁止只在预览侧拦元石/地形。
+static func retreat_terrain_open(battle: Dictionary) -> bool:
+	return str(battle.get("terrain", "")) in ["path", "ridge", "marsh"] \
+		and int(battle.get("pursuit", 0)) <= 1 \
+		and int(battle.get("enemy_control", 0)) <= 1
+
+
+## 撤离纯门禁（F-01）：Boss → 地形/追击 → 元石，顺序与预览文案一致。
+## 返回 {ok, reason, cost}；reason 与卡片 reason 字段同码，便于预览/执行对账。
+static func retreat_gate(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	var cost := retreat_cost(battle, catalog)
+	if boss_blocks_retreat(battle):
+		return {"ok": false, "reason": "retreat_forbidden", "cost": cost}
+	if not retreat_terrain_open(battle):
+		return {"ok": false, "reason": "retreat_forbidden", "cost": cost}
+	if int(state.stone) < cost:
+		return {"ok": false, "reason": "insufficient_stone", "cost": cost}
+	return {"ok": true, "reason": "", "cost": cost}
 
 
 ## 第三阶段 Task 4：本场会话是否已在终局关闭（胜利/战死走 phase，撤离走该标记）。

@@ -14,6 +14,7 @@ const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 
 var catalog: Dictionary
 var _hosts: Array = []
+var _rejected_payloads: Array = []
 
 
 func before_each() -> void:
@@ -139,7 +140,8 @@ func test_victory_marks_finished() -> void:
 
 func test_retreat_finishes_battle() -> void:
 	var state := RunState.new_run(101)
-	var battle: Dictionary = FacadeScript.start({"enemy_kind": "beast_swarm"}, state, catalog)
+	var battle: Dictionary = FacadeScript.start(
+			{"enemy_kind": "beast_swarm", "terrain": "path"}, state, catalog)
 
 	var result: Dictionary = FacadeScript.apply_turn(battle, state, {"type": "retreat"}, catalog)
 
@@ -160,8 +162,9 @@ func test_boss_identity_flows_into_flags_and_blocks_retreat() -> void:
 	var stand: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound", "layer_boss": 2}, state, catalog)
 	assert_true(bool(stand["flags"].get("boss_battle", false)),
 			"layer_boss stand must set flags.boss_battle")
-	# 普通战斗不落 Boss 旗标、可撤。
-	var common: Dictionary = FacadeScript.start({"enemy_kind": "ridge_hound"}, state, catalog)
+	# 普通战斗不落 Boss 旗标、可撤（同预览：还需开放地形与元石）。
+	var common: Dictionary = FacadeScript.start(
+			{"enemy_kind": "ridge_hound", "terrain": "path"}, state, catalog)
 	assert_false(bool(common["flags"].get("boss_battle", false)), "trivial fight must not be a boss")
 	var out: Dictionary = FacadeScript.apply_turn(common, state, {"type": "retreat"}, catalog)
 	assert_eq(out["result"], "retreat")
@@ -259,6 +262,63 @@ func test_remount_new_hand_version_allows_resubmit() -> void:
 
 	assert_eq(played, [["gu.inst_1", "e0"], ["gu.inst_1", "e0"]],
 			"a new hand_version must allow the same card/target to be submitted again")
+
+
+# ==== F-02 复验：旧 play_card 兼容包装与拒绝分支不得产生成功动效 ====
+
+## 旧 `play_card` 按现行手牌 id（`battle.end_turn`，不含 battle_id 段）组装命令后，
+## 执行侧必须仍命中同一条路由——否则兼容包装只剩"提交被拒"。
+func test_legacy_play_card_end_turn_still_routes_to_the_shared_turn_path() -> void:
+	var state := RunState.new_run(101)
+	var battle: Dictionary = FacadeScript.start(
+			{"enemy_kind": "beast_swarm", "terrain": "path"}, state, catalog)
+	var legacy: Dictionary = RunCommandBuilderScript._battle_card_command(
+			_stub_controller(state, battle), "battle.end_turn", "")
+
+	assert_eq(str(legacy.get("type", "")), "action_card",
+			"the legacy wrapper must still send an action_card envelope")
+	var out: Dictionary = FacadeScript.apply_turn(battle, state, legacy, catalog)
+	assert_true(bool(out.get("accepted", false)),
+			"legacy battle.end_turn must still route: %s" % str(out.get("feeds", [])))
+	assert_eq(str(out.get("result", "")), "ongoing")
+
+
+## 旧 `play_card("battle.retreat")` 同样必须落到 F-01 同一套撤离门禁上。
+func test_legacy_play_card_retreat_still_routes_to_the_gated_retreat() -> void:
+	var state := RunState.new_run(101)
+	var battle: Dictionary = FacadeScript.start(
+			{"enemy_kind": "beast_swarm", "terrain": "path"}, state, catalog)
+	var legacy: Dictionary = RunCommandBuilderScript._battle_card_command(
+			_stub_controller(state, battle), "battle.retreat", "")
+
+	var out: Dictionary = FacadeScript.apply_turn(battle, state, legacy, catalog)
+	assert_true(bool(out.get("accepted", false)),
+			"legacy battle.retreat must still route: %s" % str(out.get("feeds", [])))
+	assert_eq(str(out.get("result", "")), "retreat")
+
+
+## 被拒的卡命令（新鲜度过期 / 门禁不通过）不得播放成功音效与墨迹，不得进入
+## 成功态；去重键必须释放，让拒绝文案里的"请重试"真的可重试。
+func test_rejected_card_command_skips_success_effects_and_allows_retry() -> void:
+	_rejected_payloads = []
+	var commands := {"submit_command": Callable(self, "_rejecting_submit")}
+	var hand := [{"id": "gu.inst_1", "name": "月光蛊", "executable": true, "command": {
+		"type": "use_gu", "instance_id": "inst_1",
+		"state_version": 1, "expected_phase": "player_action"}}]
+	var host := _mount_battle_screen_with(commands, hand)
+	var screen := _screen_of(host)
+	var card: Dictionary = screen._snapshot.get("hand", [])[0]
+
+	screen._submit_card(card, "")
+	assert_eq(_rejected_payloads.size(), 1, "the card must be forwarded once")
+	assert_ne(str(screen._mode), "play_success",
+			"a rejected card must not enter the success state")
+	assert_false(bool(screen._ink_overlay.visible),
+			"a rejected card must not play the success ink animation")
+
+	screen._submit_card(card, "")
+	assert_eq(_rejected_payloads.size(), 2,
+			"a rejected card must stay retryable once its dedup key is released")
 
 
 # ==== Agent B 返工 P2-4：效果事件日志事实字段 ====
@@ -369,6 +429,33 @@ func test_stale_battle_command_is_rejected_by_preflight_without_mutation() -> vo
 	assert_eq(stale["reason"], "battle_action_stale")
 	assert_eq(state.event_log.size(), expected,
 			"preflight rejection must not mutate RunState")
+
+
+## 两代卡 id 形状归一到同一组现行 id（唯一映射点在门面）：preflight 与执行侧
+## 因此不可能各自持一份形状表，旧形状也不会"查不到卡"。
+func test_card_id_shapes_canonicalise_to_the_current_hand_ids() -> void:
+	var pairs := {
+		"battle.end_turn": "battle.end_turn",
+		"battle.v1.end_turn": "battle.end_turn",
+		"battle.retreat": "battle.retreat",
+		"battle.v1.retreat": "battle.retreat",
+		"battle.v1.basic.punch": "basic_attack",
+		"gu.inst_1": "gu.inst_1",
+	}
+	for raw in pairs:
+		assert_eq(FacadeScript.canonical_action_card_id(str(raw)), str(pairs[raw]),
+				"%s must canonicalise to %s" % [raw, pairs[raw]])
+
+	# 路由侧同源：两代形状必须落到同一个 passthrough 结果。
+	var battle := {"battle_id": "v1"}
+	assert_eq(FacadeScript._action_card_passthrough(battle, {"action_id": "battle.end_turn"}), "end_turn")
+	assert_eq(FacadeScript._action_card_passthrough(battle, {"action_id": "battle.v1.end_turn"}), "end_turn")
+	assert_eq(FacadeScript._action_card_passthrough(battle, {"action_id": "battle.retreat"}), "retreat")
+	assert_eq(FacadeScript._action_card_passthrough(battle, {"action_id": "battle.v1.retreat"}), "retreat")
+	assert_eq(FacadeScript._action_card_passthrough(battle, {"action_id": "battle.v1.basic.punch"}), "basic_attack")
+	# 归一不依赖 battle 上的 battle_id 键（生产战斗从不设置它）。
+	assert_eq(FacadeScript.canonical_action_card_id("battle.v1.end_turn"), "battle.end_turn")
+	assert_eq(FacadeScript._action_card_passthrough({}, {"action_id": "battle.v1.retreat"}), "retreat")
 
 
 ## 过期战斗手牌版本（battle_hand）被 preflight 拒绝。
@@ -516,6 +603,15 @@ func test_rank_one_player_can_act_in_layer_five_boss_but_not_use_rank_two_gu() -
 	assert_eq(blocked.get("feeds", []), ["insufficient_qi_quality"])
 
 
+## 注入用的假 submit_command：记录载荷并返回领域拒绝信封（新鲜度过期形状）。
+func _rejecting_submit(payload) -> Dictionary:
+	_rejected_payloads.append(payload)
+	return {
+		"accepted": false, "ok": false, "result": "rejected", "finished": false,
+		"feeds": ["battle_action_stale"], "reason": "battle_action_stale",
+	}
+
+
 func _catalog_with_scale_probe(hp: int = 20, damage: int = 20, intent_kind: String = "attack") -> Dictionary:
 	var test_catalog := catalog.duplicate(true)
 	var enemy_by_id: Dictionary = test_catalog.get("enemy_by_id", {})
@@ -529,6 +625,11 @@ func _stub_controller(state: RunState, battle: Dictionary = {}) -> Dictionary:
 
 
 func _mount_battle_screen(on_play: Callable, hand: Array) -> Control:
+	return _mount_battle_screen_with({"play_card": on_play}, hand)
+
+
+## 允许注入任意命令面（旧 play_card 通道与新的 submit_command 通道都要能挂）。
+func _mount_battle_screen_with(commands: Dictionary, hand: Array) -> Control:
 	var host := Control.new()
 	add_child(host)
 	_hosts.append(host)
@@ -543,7 +644,7 @@ func _mount_battle_screen(on_play: Callable, hand: Array) -> Control:
 	}
 	var inst := TscnMountHelper.instantiate(
 			"res://scenes/ui/screens/battle_screen.tscn",
-			state, {"play_card": on_play})
+			state, commands)
 	host.add_child(inst)
 	return host
 

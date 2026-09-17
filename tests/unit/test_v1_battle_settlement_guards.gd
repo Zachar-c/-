@@ -95,6 +95,9 @@ func test_victory_phase_blocks_further_player_actions() -> void:
 func test_retreat_marks_battle_over_via_facade() -> void:
 	var run := _run_with_gu([{"definition_id": "v1_hp_battle_gu", "rank": 1}])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 0)])
+	# F-01：撤离门禁与预览同源后，开放地形是放行条件之一（真实战斗由
+	# RunBattleFlow.battle_terrain 透传；V1 裸 battle 无地形一律不放行）。
+	battle["terrain"] = "path"
 	var out := FacadeScript.apply_turn(battle, run, {"type": "retreat"})
 	assert_true(bool(out.get("accepted", false)))
 	assert_eq(str(out.get("result", "")), "retreat")

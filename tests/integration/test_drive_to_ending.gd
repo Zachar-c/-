@@ -668,6 +668,7 @@ func _gu_command(controller, instance_id: String, target_id: String) -> Dictiona
 		"instance_id": instance_id,
 		"target_id": target_id,
 		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	}
 
 
@@ -689,4 +690,5 @@ func _turn_command(controller, command_type: String) -> Dictionary:
 	return {
 		"type": command_type,
 		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	}

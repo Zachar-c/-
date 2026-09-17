@@ -93,6 +93,7 @@ func test_extreme_hostile_battle_victory_leaves_to_map() -> void:
 	var result: Dictionary = controller.submit_command({
 		"type": "basic_attack",
 		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	})
 	assert_eq(str(result.get("result", "")), "victory", "battle must end in victory")
 	assert_eq(str(controller.state.encounter_session.get("phase", "")), "post_battle")

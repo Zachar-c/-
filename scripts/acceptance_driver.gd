@@ -3110,7 +3110,7 @@ func _step_battle(controller) -> String:
 	var guarded: bool = int(player.get("shield", 0)) > 0
 	var command: Dictionary
 	if immediate_kill:
-		command = _play_gu_command(battle, attack_gu)
+		command = _play_gu_command(controller, battle, attack_gu)
 	elif can_flee and finish_now and attack_gu.is_empty():
 		command = _battle_turn_command(controller, "retreat")
 	elif can_flee and (hp <= 1 or intent_damage >= hp or intent_damage * 2 >= hp or _stuck_count >= 6):
@@ -3128,19 +3128,19 @@ func _step_battle(controller) -> String:
 		var danger := hp <= intent_damage * 2
 		var must_attack := (not attack_gu.is_empty()) and (not danger or kill_window or guarded or _stuck_count >= 4)
 		if must_attack:
-			command = _play_gu_command(battle, attack_gu)
+			command = _play_gu_command(controller, battle, attack_gu)
 		elif danger and not guarded and not guard_gu.is_empty():
-			command = _play_gu_command(battle, guard_gu)
+			command = _play_gu_command(controller, battle, guard_gu)
 		elif not guard_gu.is_empty() and guard_gu != attack_gu:
-			command = _play_gu_command(battle, guard_gu)
+			command = _play_gu_command(controller, battle, guard_gu)
 		else:
 			command = _battle_turn_command(controller, "basic_attack")
 	else:
 		# 常规战：敌方大伤害先守护，否则攻击，无牌收势换回合。
 		if intent_damage >= 2 and not guarded and not guard_gu.is_empty():
-			command = _play_gu_command(battle, guard_gu)
+			command = _play_gu_command(controller, battle, guard_gu)
 		elif not attack_gu.is_empty():
-			command = _play_gu_command(battle, attack_gu)
+			command = _play_gu_command(controller, battle, attack_gu)
 		else:
 			command = _battle_turn_command(controller, "end_turn")
 	var pre_hp := hp
@@ -3184,12 +3184,24 @@ func _pick_effect_gu(battle: Dictionary, kinds: Array) -> String:
 	return ""
 
 
-func _play_gu_command(battle: Dictionary, instance_id: String) -> Dictionary:
-	return {"type": "use_gu", "instance_id": instance_id}
+## F-02 复验：验收驱动必须提交带新鲜度上下文的战斗命令，否则真实
+## smoke/play 路径全部落到 freshness 预检的拒绝分支（命令永远不生效）。
+## static：不依赖实例状态，便于回归测试直接调用。
+static func _play_gu_command(controller, battle: Dictionary, instance_id: String) -> Dictionary:
+	return {
+		"type": "use_gu",
+		"instance_id": instance_id,
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(battle.get("phase", "player_action")),
+	}
 
 
-func _battle_turn_command(controller, command_type: String) -> Dictionary:
-	return {"type": command_type}
+static func _battle_turn_command(controller, command_type: String) -> Dictionary:
+	return {
+		"type": command_type,
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
+	}
 
 
 func _living_enemies(battle: Dictionary) -> Array[Dictionary]:

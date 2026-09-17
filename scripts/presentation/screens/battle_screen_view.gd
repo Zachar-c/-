@@ -268,31 +268,53 @@ func _submit_card(card: Dictionary, target_id: String) -> void:
 	_submitted_card_keys[request_key] = true
 	# 第三阶段 Task 3：新路径只转呈卡片自带的结构化命令（领域判定的唯一出口）；
 	# 无命令键的旧信封卡（存量测试夹具）仍走 play_card 兼容包装。
-	if not _submit_card_command(card, target_id) and _commands.has("play_card"):
-		_commands["play_card"].call(card_id, target_id)
-	# 第18批：接入出牌音效
-	AudioManager.play_sfx("battle_card_play")
-	# 概念层：出牌成功触发墨迹扩散（状态落定）
-	play_ink_spread()
+	var result: Variant = _submit_card_command(card, target_id)
+	if result == null and _commands.has("play_card"):
+		result = _commands["play_card"].call(card_id, target_id)
 	_active_card = card
 	_card_id = card_id
 	_target_id = target_id
 	_confirming = false
+	# F-02 复验：被拒命令（新鲜度过期 / 门禁不通过）不得播放成功音效、墨迹
+	# 或进入成功态；拒绝文案由领域信封写入 last_feedback，随重挂载的快照显示。
+	# 同时释放去重键——拒绝文案要求"重试"，键不释放就永远重试不了。
+	if _command_rejected(result):
+		_submitted_card_keys.erase(request_key)
+		_mode = "idle"
+		_refresh()
+		return
+	# 第18批：接入出牌音效
+	AudioManager.play_sfx("battle_card_play")
+	# 概念层：出牌成功触发墨迹扩散（状态落定）
+	play_ink_spread()
 	_mode = "play_success"
 	_refresh()
 
 
-## 转呈卡片携带的结构化命令；成功下发返回 true。
+## 转呈卡片携带的结构化命令；未转呈（无命令键 / 无通道）返回 null。
 ## 目标由本屏的交互态补入（卡片里的 target_id 是快照期的缺省值）。
-func _submit_card_command(card: Dictionary, target_id: String) -> bool:
+## 返回领域信封，调用方据此判定接受与拒绝——拒绝不得产生成功动效。
+func _submit_card_command(card: Dictionary, target_id: String) -> Variant:
 	var command: Dictionary = card.get("command", {})
 	if command.is_empty() or not _commands.has("submit_command"):
-		return false
+		return null
 	var payload: Dictionary = command.duplicate(true)
 	if target_id != "":
 		payload["target_id"] = target_id
-	_commands["submit_command"].call(payload)
-	return true
+	return _commands["submit_command"].call(payload)
+
+
+## 领域信封判定：`accepted` / `ok` 任一为 false 即视为被拒。
+## 兼容包装（`play_card` 假命令）返回 null 或无信封时按接受处理，
+## 保持存量夹具与旧通道语义不变。
+func _command_rejected(result: Variant) -> bool:
+	if not (result is Dictionary):
+		return false
+	if (result as Dictionary).has("accepted"):
+		return not bool((result as Dictionary)["accepted"])
+	if (result as Dictionary).has("ok"):
+		return not bool((result as Dictionary)["ok"])
+	return false
 
 
 func _is_dangerous_card(card: Dictionary) -> bool:
@@ -782,14 +804,18 @@ func _submit_kill_move(kill_move_id: String, confirmed: bool, km: Dictionary = {
 	# 第三阶段 Task 3：杀招卡自带结构化命令（play_kill_move），确认态由本屏补入；
 	# 无命令键时回退 play_card 兼容包装。
 	var command: Dictionary = (km.get("command", {}) as Dictionary)
-	var submitted := false
+	var result: Variant = null
 	if not command.is_empty() and _commands.has("submit_command"):
 		var payload: Dictionary = command.duplicate(true)
 		payload["confirmed"] = confirmed
-		_commands["submit_command"].call(payload)
-		submitted = true
-	if not submitted and _commands.has("play_card"):
-		_commands["play_card"].call("kill_move." + kill_move_id, _target_id, confirmed)
+		result = _commands["submit_command"].call(payload)
+	elif _commands.has("play_card"):
+		result = _commands["play_card"].call("kill_move." + kill_move_id, _target_id, confirmed)
+	# F-02 复验：被拒的杀招同样不得播放成功音效/墨迹，并释放去重键供重试。
+	if _command_rejected(result):
+		_submitted_card_keys.erase(request_key)
+		_refresh()
+		return
 	# 交互闭环契约：视觉 + 听觉双重反应。
 	AudioManager.play_sfx("battle_card_play")
 	play_ink_spread()

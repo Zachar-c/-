@@ -57,7 +57,7 @@ func test_unanswered_lethal_opening_dies_with_final_blow_and_report() -> void:
 	var turn: Dictionary = controller.submit_command({
 		"type": "end_turn",
 		"state_version": controller.state.event_log.size(),
-		"expected_phase": "player",
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	})
 	assert_true(bool(turn.get("finished", false)), "unanswered lethal opening must finish")
 	assert_eq(str(turn.get("result", "")), "death", "unanswered lethal opening must resolve to death")

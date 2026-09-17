@@ -28,7 +28,7 @@
 - 战斗卡片 `target_type`：`"single_enemy"` / `"none"`；仅 `v1_effect.kind == "strike"` 的蛊与拳脚需要选敌，`valid_target_ids` = 当前存活敌人 id 列表（其余为空）
 - 杀招卡片 `command.confirmed = false`：UI 确认后补 `confirmed = true` 才下发（T16 残锋降转不得静默惩罚）
 - 终局（`phase != player_action`）或撤离后（`flags.session_closed`）**不再产出任何战斗卡**；快照对缺卡的卡位一律置灰，不放行
-- 撤退卡片：Boss 战 `executable=false` + `block_reason="退无可退"`；当前预览还检查元石/地形条件，但领域 `retreat` 分支目前只拦 Boss。该差异不是可接受的“预览侧例外”，已登记为 `F-01`，在修复或正式修订契约前，第三阶段 Gate 保持 `HOLD`。
+- 撤退卡片：Boss 战 `executable=false` + `block_reason="退无可退"`；元石/地形条件与领域**同源**——预览与执行都调 `BattleCommandFacade.retreat_gate`，卡片的 `executable`/`reason` 就是门禁的 `ok`/`reason`（`F-01` 已于 2026-09-17 落地修复，独立复验二次结论回收后于 2026-09-18 判定 `CLOSED`）。
 
 ## 信号
 
@@ -47,9 +47,10 @@
 4. 预览与执行共用同一套门禁函数（`can_play_gu` 等），禁止预览宽松、执行严格的漂移。
 5. 战斗屏可执行性、结构化命令与目标面只有本服务一个来源：`battle_snapshot` 只读取结论并透传（`_battle_gates/_apply_battle_gate`），禁止快照或 UI 再调 resolver 重算。
 
-## 2026-09-17 独立审查状态
+## 独立审查状态（2026-09-17 审查，2026-09-18 收口）
 
 - 报告：`docs/superpowers/reports/2026-09-17-battle-core-audit.md`。
-- `F-01`：撤离的元石/地形预览门禁与领域执行门禁不一致，未闭环。
-- `F-02`：Gu / 基础攻击 / 杀招的嵌套 `command` 尚未全部带 `expected_phase`；当前 V1 战斗提交路径也未调用 `CommandSpecRegistry` 的 freshness preflight。
-- 上述事项不否定已通过的测试结果，但禁止把“测试全绿”写成“战斗契约全部闭合”。
+- `F-01` **CLOSED**（修复已落地，独立复验二次结论已回收于 2026-09-18；证据：可写 `user://` 下全量 unit 1581/1581 / integration 56/56）：撤离门禁唯一来源 `BattleCommandFacade.retreat_gate`（Boss → 地形/追击 → 元石），预览只转呈结论、执行复用同一纯门禁；`PREVIEW_ONLY_GATES` 豁免已删除。
+- `F-02` **CLOSED**（修复已落地，独立复验二次结论已回收于 2026-09-18；证据同上，见审查报告 §9）：Gu / 基础攻击 / 杀招的嵌套 `command` 全部带 `state_version` + `expected_phase`；提交路径已接 `CommandSpecRegistry` preflight，过期命令按 `battle_*_stale` 拒绝且零副作用。
+- **卡 id 形状统一（2026-09-17 第三轮）**：本服务产出的现行 id（`battle.end_turn` / `battle.retreat`，不含 battle_id 段）是唯一规范形；旧信封 `battle.<battle_id>.<card>` 由 `BattleCommandFacade.canonical_action_card_id` 归一后再路由，两代形状都通过 controller preflight。归一不读 `battle.battle_id`（生产战斗从不设置该键，按它判定会让兼容分支永远不可达）。
+- 仍开放：`F-03`～`F-06`（计划复选框回写、表现层残留 preload、回放断言强度、提交边界），均为 P2 技术债。

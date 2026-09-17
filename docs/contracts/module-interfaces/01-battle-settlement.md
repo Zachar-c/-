@@ -21,7 +21,7 @@
 | `V1.end_turn(battle)` | battle | `{battle, result}` | 敌方意图结算 + 新回合；内部检查 `_is_over` |
 | `Facade.boss_blocks_retreat(battle)` | battle | bool | Boss 战禁止撤退 |
 
-> **审查状态（2026-09-17）**：当前领域 `retreat` 分支实际只执行 `boss_blocks_retreat`；预览侧另有元石/地形门禁，形成 `F-01` 漂移。该实现事实不应被误读为最终设计裁定；在 `docs/superpowers/reports/2026-09-17-battle-core-audit.md` 的 F-01 关闭前，预览与执行不得宣称语义一致。
+> **审查状态（2026-09-17 审查，2026-09-18 收口）**：`F-01` **CLOSED**（修复与回归守卫齐备，独立复验二次结论已回收；证据：可写 `user://` 下全量 unit 1581/1581 / integration 56/56，见审查报告 §9）——撤离门禁的唯一来源是 `Facade.retreat_gate(battle, state, catalog)`（Boss → 地形/追击 → 元石），`apply_turn` 的 `retreat` 分支与预览卡片共用它；拒绝走 `_rejected`，不改 battle、不落日志、不写 `battle_finished`。见 `docs/superpowers/reports/2026-09-17-battle-core-audit.md`。
 
 ## 关键数据契约（battle 字典）
 
@@ -58,4 +58,5 @@
 6. **残锋只减不增**：唯一允许写 `dao_marks` / `sword_downgrades` 的模块是 `SwordMarkRules`（经 `Facade.settle_sword_marks`）；任何回复路径违规。
 7. 回合末 `_settle_marks`（T15 刻痕）只读 `statuses.marked`，独立伤害通道不吃护盾；写 `mark_scratch` 事件日志。
 
-> **命令上下文审查（F-02）**：预览卡片契约要求 `state_version` / `expected_phase`，但当前 `BattleCommandFacade.apply_turn` 不负责 freshness preflight，且表现层战斗路径未调用 `CommandSpecRegistry`。若这些字段继续作为过期命令门禁，必须补接线与测试；若仅作 UI 元数据，必须修订上层契约。
+> **命令上下文（F-02，2026-09-17 接线，2026-09-18 判定 CLOSED）**：`state_version` / `expected_phase` 是**已执行的运行时门禁**。preflight 归表现层提交路径 `RunBattleFlow.submit_battle_command`（按命令形状走 `CommandSpecRegistry` 的 `battle.action_card` / `battle.turn`）；门面自身保持无状态、不重复判新鲜度。缺上下文 → `command_context_missing`，过期 → `battle_hand_stale` / `battle_action_stale` / `battle_phase_stale`，拒绝一律零副作用。
+> **卡 id 形状归一（同一轮）**：唯一映射点是 `Facade.canonical_action_card_id(action_id)`——现行 `battle.end_turn` / `battle.retreat` / `basic_attack` 为规范形，旧信封 `battle.<battle_id>.<card>` 按后缀归一到规范形后再路由；`CommandSpecRegistry` preflight 与 `_action_card_passthrough` 共用同一函数，禁止各自再持一份形状表。

@@ -240,10 +240,10 @@ func _fight_without_retreat(controller: RunController, max_steps: int = 120) -> 
 		elif not guard_id.is_empty():
 			command = _gu_command(controller, guard_id, _living_target_id(battle))
 		else:
-			command = {"type": "end_turn", "state_version": controller.state.event_log.size()}
+			command = {"type": "end_turn", "state_version": controller.state.event_log.size(), "expected_phase": str(controller.current_battle.get("phase", "player_action"))}
 		var result: Dictionary = controller.submit_command(command)
 		if not bool(result.get("accepted", false)) and not bool(result.get("finished", false)):
-			controller.submit_command({"type": "end_turn", "state_version": controller.state.event_log.size()})
+			controller.submit_command({"type": "end_turn", "state_version": controller.state.event_log.size(), "expected_phase": str(controller.current_battle.get("phase", "player_action"))})
 	return controller.current_view_name() in ["Reward", "Encounter", "Ending"]
 
 
@@ -267,6 +267,7 @@ func _gu_command(controller: RunController, instance_id: String, target_id: Stri
 		"instance_id": instance_id,
 		"target_id": target_id,
 		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	}
 
 

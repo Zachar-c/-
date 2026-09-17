@@ -42,7 +42,12 @@ func test_layer_one_boss_victory_no_longer_force_ends() -> void:
 	var controller := _boss_controller()
 	var slay_id := _slay_instance_id(controller)
 	assert_false(slay_id.is_empty(), "slay gu from the opening buff must be playable here")
-	controller.submit_command({"type": "use_gu", "instance_id": slay_id})
+	controller.submit_command({
+		"type": "use_gu",
+		"instance_id": slay_id,
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
+	})
 	assert_ne(controller.current_view_name(), "Ending", "L1 关底胜利不得直接跳结算")
 	assert_eq(str(controller.state.terminal_state), "active", "Run 必须保持非终局，玩家可继续")
 	assert_true(SocialCommandRules.closure_available(controller.state, controller.catalog),
@@ -55,7 +60,12 @@ func test_layer_one_boss_victory_no_longer_force_ends() -> void:
 func test_player_can_close_the_run_voluntarily() -> void:
 	var controller := _boss_controller()
 	var slay_id := _slay_instance_id(controller)
-	controller.submit_command({"type": "use_gu", "instance_id": slay_id})
+	controller.submit_command({
+		"type": "use_gu",
+		"instance_id": slay_id,
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
+	})
 	controller.submit_command({"type": "close_run"})
 	assert_eq(controller.current_view_name(), "Ending", "主动收官必须进入结算页")
 	assert_eq(str(controller.state.terminal_state), "success", "收官后 Run 转终局")

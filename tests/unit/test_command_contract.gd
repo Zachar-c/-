@@ -98,7 +98,8 @@ func test_player_view_boss_fight_uses_v1_gu_and_attack_fallback() -> void:
 	assert_true(text.contains("finish_now") and text.contains("immediate_kill"), "one-health enemies must enter the immediate-kill branch")
 	assert_true(text.contains("can_flee and finish_now and attack_gu.is_empty()"), "retreatable one-health fights without a safe attack must retreat")
 	assert_true(text.contains('_pick_effect_gu(battle, ["strike"])'), "boss fight must pick strike gu by V1 effect kind")
-	assert_true(text.contains('_play_gu_command(battle, attack_gu)'), "boss fight must cast the picked gu through use_gu")
+	assert_true(text.contains('_play_gu_command(controller, battle, attack_gu)'),
+			"boss fight must cast the picked gu through use_gu (with freshness context)")
 	assert_true(text.contains('_battle_turn_command(controller, "basic_attack")'), "boss fight must fall back to the V1 basic attack")
 
 

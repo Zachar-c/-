@@ -24,8 +24,8 @@
 ## 关键数据契约
 
 - 命令构建：`RunCommandBuilder.for_screen(screen, controller)` 按屏注册命令集；`_battle_card_command/_rest_choose_command/_shop_buy_command` 等按卡片 ID 组装命令
-- 战斗屏命令面（第三阶段 Task 3，2026-09-17）：新增 `submit_command(command)`——UI **新路径只转呈卡片自带的结构化命令**（`card.command` + 本屏交互态补入的 `target_id`）；`play_card(action_id, target_id, confirmed)` 降级为按 ID 组装的兼容包装（存量夹具/旧信封卡），不得再作为新 UI 的入口
-- 战斗命令审查状态（2026-09-17）：卡片顶层有 `state_version` / `expected_phase`，但 Gu、基础攻击、杀招的嵌套 `card.command` 尚未全部带 `expected_phase`；`RunController.submit_command` 当前直接转发给 facade，未调用 `CommandSpecRegistry` freshness preflight。详见 `docs/superpowers/reports/2026-09-17-battle-core-audit.md` 的 `F-02`，在关闭前不得把新鲜度字段描述为已执行的运行时门禁。
+- 战斗屏命令面（第三阶段 Task 3，2026-09-17）：新增 `submit_command(command)`——UI **新路径只转呈卡片自带的结构化命令**（`card.command` + 本屏交互态补入的 `target_id`）；`play_card(action_id, target_id, confirmed)` 降级为按 ID 组装的兼容包装（存量夹具/旧信封卡），不得再作为新 UI 的入口。**两条通道都必须显式 `return` 领域信封**——GDScript 单行 lambda 不隐式返回末表达式，漏掉 `return` 就把拒绝信封吞成 `null`，战斗屏会当作「未转呈」而照常播成功音效与墨迹；旧形状 `battle.<battle_id>.end_turn` / `.retreat` / `.basic.punch` 与现行形状都经 `BattleCommandFacade.canonical_action_card_id` 归一后过 preflight
+- 战斗命令新鲜度（`F-02`，2026-09-17 接线；审查报告状态为 **CLOSED**，独立复验二次结论已回收于 2026-09-18）：卡片顶层与嵌套 `command`（Gu / 基础攻击 / 杀招 / 结束回合 / 撤离）都带 `state_version` + `expected_phase`；`RunController.submit_command` 的 V1 战斗路径经 `RunBattleFlow.submit_battle_command` → `CommandSpecRegistry` preflight（`battle.action_card` / `battle.turn`）。拒绝返回 `accepted=false` + `feeds=[command_context_missing|battle_hand_stale|battle_action_stale|battle_phase_stale]`，不改 state/battle（原对象原样返回）、不写 `battle_finished`；玩家文案取 `rejection_text.gd`，在 `_show_battle()` 之前写入 `RunController.last_feedback`（随快照 `feedback` 键送达战斗屏 toast）；战斗屏收到 `accepted=false` 时不得播放成功音效/墨迹、不得进入成功态，并须释放该卡去重键。
 - M0 命令：大厅 `new_m0_run` 进入切片；Reward `m0_reward_take` 由控制器校验当前三选一会话后，携带内部 `option` 经 `Resolver.apply` 结算；UI 不直调 `M0RewardResolver`。
 - 战斗杀招命令：`play_kill_move` 携带可选 `confirmed`（T16，2026-09-15）。残锋会触发质变且未确认时，领域侧硬拦 `sword_mark_confirm_required`；表现层确认框复用 `GuConfirmDialog`，不得静默出招
 - 战斗终局收口（第三阶段 Task 4，2026-09-17）：victory / retreat / death **只有一条收口路径** `RunBattleFlow.finish_battle_in_session`——它调 `finalize_session` 交出账本快照、由生命周期层落**唯一**一条 `battle_finished`（`info._battle2_ledger` 携带快照），再分派 Reward / Encounter / Ending。victory / retreat 收口后清空 `controller.current_battle`；**战死保留战斗现场**（死因归因与死亡复盘通路读它，run 已终结不会再续战），并由 `DeathReportBuilder` 在收口前生成报告。门面自身不写 `battle_finished`
@@ -49,4 +49,4 @@
 4. 存档键/结构变更必须同步 `save_repository` 序列化与 `to_save_data`，保证旧档可加载。
 5. 表现层只读快照，不写状态键；发现「数据拿不到」先查快照构建，不要绕道改状态。
 
-> **交付审查（2026-09-17）**：普通战斗 UI 的默认路径已验证为胜利收口而非撤离；撤离预览/执行门禁差异与命令新鲜度差异分别登记为 `F-01` / `F-02`，不因 UI 流程测试通过而关闭。
+> **交付审查（2026-09-17）**：普通战斗 UI 的默认路径已验证为胜利收口而非撤离（`test_m0_core_loop.gd` / `test_wenzhen_ui_flow.gd`）；`F-01`（撤离门禁同源）与 `F-02`（命令新鲜度闭环）**均为 `CLOSED`**（2026-09-18）——修复与回归守卫齐备，独立复验二次结论已回收。证据与计数见 `docs/superpowers/reports/2026-09-17-battle-core-audit.md`。

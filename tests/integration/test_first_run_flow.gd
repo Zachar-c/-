@@ -50,6 +50,7 @@ func test_generic_battle_action_card_routes_once_and_replay_is_rejected() -> voi
 		"type": "use_gu",
 		"instance_id": str(slot["instance_id"]),
 		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	}
 	var first := controller.submit_command(command)
 	var hp_before_fight: int = int((controller.current_battle["player"] as Dictionary)["hp"])

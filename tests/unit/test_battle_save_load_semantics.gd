@@ -49,7 +49,11 @@ func test_save_during_battle_persists_synced_hp_and_load_returns_to_map_without_
 	assert_false(controller.current_battle.is_empty(), "battle must be running before save")
 
 	# 走一步真实战斗命令，触发 hp 同步路径（不关心战斗结果）。
-	var attack_result := controller.submit_command({"type": "basic_attack"})
+	var attack_result := controller.submit_command({
+		"type": "basic_attack",
+		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
+	})
 	assert_true(attack_result.has("state") or bool(attack_result.get("finished", false)),
 			"battle command must return a turn result")
 	var expected_hp := int(controller.state.health)
@@ -89,6 +93,7 @@ func test_same_seed_and_command_sequence_replay_to_the_same_battle() -> void:
 		for command_value in recorded:
 			var command: Dictionary = (command_value as Dictionary).duplicate(true)
 			command["state_version"] = controller.state.event_log.size()
+			command["expected_phase"] = str(controller.current_battle.get("phase", "player_action"))
 			controller.submit_command(command)
 		if attempt == 0:
 			first_battle = JSON.stringify(controller.current_battle)
@@ -135,6 +140,7 @@ func test_battle_ledger_is_runtime_only_and_not_restored_by_load() -> void:
 		"type": "use_gu",
 		"instance_id": str((slots[0] as Dictionary).get("instance_id", "")),
 		"state_version": controller.state.event_log.size(),
+		"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 	})
 	assert_false(controller.state.current_battle2_ledger.is_empty(),
 			"an accepted turn must advance the runtime battle ledger")

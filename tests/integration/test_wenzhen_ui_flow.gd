@@ -81,6 +81,7 @@ func _fight_to_victory(controller: RunController, max_steps: int = 80) -> bool:
 				"instance_id": attack_id,
 				"target_id": _living_target_id(battle),
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			}
 		elif not guard_id.is_empty():
 			command = {
@@ -88,12 +89,13 @@ func _fight_to_victory(controller: RunController, max_steps: int = 80) -> bool:
 				"instance_id": guard_id,
 				"target_id": _living_target_id(battle),
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			}
 		else:
-			command = {"type": "end_turn", "state_version": controller.state.event_log.size()}
+			command = {"type": "end_turn", "state_version": controller.state.event_log.size(), "expected_phase": str(controller.current_battle.get("phase", "player_action"))}
 		var result: Dictionary = controller.submit_command(command)
 		if not bool(result.get("accepted", false)) and not bool(result.get("finished", false)):
-			controller.submit_command({"type": "end_turn", "state_version": controller.state.event_log.size()})
+			controller.submit_command({"type": "end_turn", "state_version": controller.state.event_log.size(), "expected_phase": str(controller.current_battle.get("phase", "player_action"))})
 	return controller.current_view_name() in ["Reward", "Encounter"] and _has_battle_victory(controller.state.event_log)
 
 
@@ -172,7 +174,7 @@ func _step(controller: RunController, view: String) -> void:
 		"Encounter", "Npc", "Reward":
 			_act_via_cards(controller)
 		"Battle":
-			controller.submit_command({"type": "end_turn", "state_version": controller.state.event_log.size()})
+			controller.submit_command({"type": "end_turn", "state_version": controller.state.event_log.size(), "expected_phase": str(controller.current_battle.get("phase", "player_action"))})
 		_:
 			_leave(controller)
 

@@ -39,9 +39,19 @@ func test_resolver_reads_rank_two_cost_from_balance() -> void:
 
 
 func test_preview_reads_costs_from_balance() -> void:
+	# F-01（2026-09-17）：撤离成本与门禁收归 BattleCommandFacade.retreat_gate 单一来源，
+	# 预览只转呈结论——守卫意图（成本键必须从 balance 读、不得出现第二份真值）不变，
+	# 改为扫描「唯一来源读键」+「预览不得自行读该键」。
+	var facade_text := FileAccess.get_file_as_string("res://scripts/domain/battle_command_facade.gd")
+	assert_true(facade_text.contains("retreat_stone_cost"),
+			"battle_command_facade.gd must read retreat_stone_cost from catalog")
+	assert_true(facade_text.contains('"balance"'),
+			"the retreat cost must be read through catalog.balance")
 	var text := FileAccess.get_file_as_string("res://scripts/domain/action_preview_service.gd")
-	assert_true(text.contains("retreat_stone_cost"),
-			"action_preview_service.gd must read retreat_stone_cost from catalog")
+	assert_true(text.contains("BattleCommandFacadeScript.retreat_gate"),
+			"action_preview_service.gd must take the retreat gate from its single source")
+	assert_false(text.contains("retreat_stone_cost"),
+			"the preview must not re-read the retreat cost key (single source = facade)")
 	# 一转一突破（2026-09-15）：升转档位与成本的**单一来源**移到
 	# RefineCommandRules（`cultivate_stone_cost` 读 balance 的
 	# cultivate_rank_<n>_stone_cost，其中二转键仍为 cultivate_rank_two_stone_cost）。

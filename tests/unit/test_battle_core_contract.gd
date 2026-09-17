@@ -21,9 +21,8 @@ const CARD_KEYS := [
 	"id", "type", "executable", "block_reason", "costs",
 	"target_type", "valid_target_ids", "command", "state_version", "expected_phase",
 ]
-## 只承载展示性门禁、领域不设对应拦截的卡（撤离的元石/地形条件是遗留预览语义，
-## 领域 retreat 分支目前只拦 Boss）。差异不在本文件断言方向，登记为待裁定项。
-const PREVIEW_ONLY_GATES := ["battle.retreat"]
+## F-01（2026-09-17）：撤离预览与领域执行共用同一套门禁后，
+## 不再有任何「仅预览禁用、领域却接受」的豁免卡。
 
 var catalog: Dictionary
 
@@ -147,6 +146,71 @@ func test_boss_retreat_forbidden_while_ordinary_retreat_is_explicit() -> void:
 	assert_true(bool(escaped["accepted"]))
 	assert_eq(str(escaped["result"]), "retreat")
 	assert_true(bool(escaped["finished"]))
+
+
+## F-01：撤离预览与领域执行共用纯门禁——允许/Boss/元石不足/地形不允许四条路径。
+func test_retreat_preview_and_execute_share_the_same_gates() -> void:
+	var cases := [
+		{
+			"label": "allowed",
+			"tier": "", "terrain": "path", "stone": 5,
+			"expect_executable": true, "expect_feeds": [],
+		},
+		{
+			"label": "boss",
+			"tier": "boss", "terrain": "path", "stone": 5,
+			"expect_executable": false, "expect_feeds": ["retreat_forbidden"],
+		},
+		{
+			"label": "stone",
+			"tier": "", "terrain": "path", "stone": 0,
+			"expect_executable": false, "expect_feeds": ["insufficient_stone"],
+		},
+		{
+			"label": "terrain",
+			"tier": "", "terrain": "", "stone": 5,
+			"expect_executable": false, "expect_feeds": ["retreat_forbidden"],
+		},
+	]
+	for case_value in cases:
+		var case: Dictionary = case_value
+		var label := str(case["label"])
+		var state := RunState.new_run(101)
+		state.stone = int(case["stone"])
+		var battle := _start(state, _probe_catalog(4, 2, str(case["tier"])),
+				{"terrain": str(case["terrain"])})
+		var cards := ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog)
+		var retreat_card: Dictionary = {}
+		for card_value in cards:
+			if str((card_value as Dictionary).get("id", "")) == "battle.retreat":
+				retreat_card = card_value
+				break
+		assert_false(retreat_card.is_empty(), "%s: retreat card must exist" % label)
+		assert_eq(bool(retreat_card["executable"]), bool(case["expect_executable"]),
+				"%s: preview executable must match gate" % label)
+
+		var before_battle: Dictionary = battle.duplicate(true)
+		var log_before := state.event_log.size()
+		var out := FacadeScript.apply_turn(battle, state,
+				(retreat_card["command"] as Dictionary).duplicate(true), catalog)
+		if bool(case["expect_executable"]):
+			assert_true(bool(out["accepted"]),
+					"%s: allowed retreat must be accepted (%s)" % [label, str(out["feeds"])])
+			assert_eq(str(out["result"]), "retreat")
+		else:
+			assert_false(bool(out["accepted"]),
+					"%s: disabled retreat must be rejected" % label)
+			for reason in case["expect_feeds"] as Array:
+				assert_true((out["feeds"] as Array).has(str(reason)),
+						"%s: feeds must include %s, got %s" % [label, str(reason), str(out["feeds"])])
+			assert_eq(str(retreat_card["reason"]), str((case["expect_feeds"] as Array)[0]),
+					"%s: card reason must match domain reason" % label)
+			assert_eq(out["battle"], before_battle,
+					"%s: rejected retreat must not touch battle" % label)
+			assert_eq(state.event_log.size(), log_before,
+					"%s: rejected retreat must not append events" % label)
+			assert_eq(_count_actions(state, "battle_finished"), 0,
+					"%s: rejected retreat must not write battle_finished" % label)
 
 
 # ---------- 会话边界（Task 2） ----------
@@ -369,10 +433,6 @@ func test_preview_executable_commands_are_accepted_and_disabled_ones_rejected() 
 	for card_value in cards:
 		var card: Dictionary = card_value
 		var card_id := str(card["id"])
-		if not bool(card["executable"]) and PREVIEW_ONLY_GATES.has(card_id):
-			# battle.retreat 的元石/地形条件是遗留预览语义，领域 retreat 分支只拦
-			# Boss——该差异登记为待裁定项，不在本测试里捏造方向断言。
-			continue
 		# 每张卡都在一场全新战斗上提交：前一张卡花掉的念头/真元不得干扰后一张。
 		var case_state := RunState.new_run(101)
 		var case_battle := _with_probe_commands(_start(case_state, _probe_catalog()))
@@ -389,6 +449,11 @@ func test_preview_executable_commands_are_accepted_and_disabled_ones_rejected() 
 					"a disabled card must be rejected: %s" % card_id)
 			assert_true((out["feeds"] as Array).has(str(card["reason"])),
 					"the rejection must quote the card reason: %s -> %s" % [card_id, str(out["feeds"])])
+			# preview=false ⇒ execute 拒绝；拒绝不得写 battle_finished、不得改日志。
+			assert_eq(_count_actions(case_state, "battle_finished"), 0,
+					"a rejected card must not close the session: %s" % card_id)
+			assert_eq(case_state.event_log.size(), RunState.new_run(101).event_log.size(),
+					"a rejected card must not append events: %s" % card_id)
 
 
 func test_multi_enemy_target_id_reaches_the_actual_hit() -> void:

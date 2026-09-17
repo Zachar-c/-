@@ -70,6 +70,7 @@ func _submit_one_accepted_turn(controller: RunController) -> void:
 			"type": "use_gu",
 			"instance_id": instance_id,
 			"state_version": controller.state.event_log.size(),
+			"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 		})
 		if bool(result.get("accepted", false)):
 			executed = true
@@ -78,6 +79,7 @@ func _submit_one_accepted_turn(controller: RunController) -> void:
 		var dodged := controller.submit_command({
 			"type": "basic_dodge",
 			"state_version": controller.state.event_log.size(),
+			"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 		})
 		assert_true(bool(dodged.get("accepted", false)),
 			"dodge must be accepted on the two-enemy combat fixture")

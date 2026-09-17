@@ -226,12 +226,14 @@ func _fight_to_victory_with_slay(controller: RunController, max_steps: int = 60)
 				"type": "use_gu",
 				"instance_id": str(slot.get("instance_id", "")),
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			})
 			if bool(res.get("accepted", false)):
 				continue
 		controller.submit_command({
 			"type": "end_turn",
 			"state_version": controller.state.event_log.size(),
+			"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 		})
 
 

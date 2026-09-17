@@ -125,6 +125,7 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 				"type": "use_gu",
 				"instance_id": instance_id,
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			})
 			played.append(instance_id)
 			break
@@ -133,6 +134,7 @@ func test_battle_victory_returns_to_the_encounter_for_post_battle_handling() -> 
 			controller.submit_command({
 				"type": "end_turn",
 				"state_version": controller.state.event_log.size(),
+				"expected_phase": str(controller.current_battle.get("phase", "player_action")),
 			})
 			played.clear()
 

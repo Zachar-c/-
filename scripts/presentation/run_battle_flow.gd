@@ -7,15 +7,28 @@ extends RefCounted
 
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
+const CommandSpecRegistryScript = preload("res://scripts/domain/command_spec_registry.gd")
+const CommandSpecScript = preload("res://scripts/domain/command_spec.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const DisplayTextScript = preload("res://scripts/presentation/display_text.gd")
+const RejectionTextScript = preload("res://scripts/presentation/rejection_text.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
 const M0RewardResolverScript = preload("res://scripts/domain/m0_reward_resolver.gd")
 
 
 static func submit_battle_command(controller, command: Dictionary) -> Dictionary:
+	# F-02：V1 战斗提交路径接入 CommandSpecRegistry freshness preflight。
+	# 过期/缺上下文一律在 facade 前拒绝——不改 state、不改 battle、不写 battle_finished。
+	var preflight := _freshness_preflight(controller, command)
+	if not bool(preflight.get("ok", false)):
+		return _preflight_rejected(controller, str(preflight.get("reason", "command_context_missing")),
+				preflight)
 	var turn: Dictionary = BattleCommandFacadeScript.apply_turn(
 			controller.current_battle, controller.state, command, controller.catalog)
+	# F-02 复验：领域拒绝（含 F-01 的撤离门禁）零副作用——不接管 state/battle，
+	# 只把拒绝原因写进可见反馈（战斗屏 toast 读快照的 feedback 键）。
+	if str(turn.get("result", "")) == "rejected":
+		return _turn_rejected(controller, turn)
 	controller.state = turn["state"]
 	controller.current_battle = turn["battle"]
 	sync_battle_hp_to_state(controller)
@@ -27,6 +40,90 @@ static func submit_battle_command(controller, command: Dictionary) -> Dictionary
 	else:
 		controller._show_battle()
 	return turn
+
+
+## F-02：按命令形状选 battle.turn / battle.action_card 预检规格。
+static func _freshness_preflight(controller, command: Dictionary) -> Dictionary:
+	var action_id := str(command.get("action_id", ""))
+	if str(command.get("type", "")) == "action_card" or action_id.begins_with("battle."):
+		return CommandSpecRegistryScript.preflight(
+				"battle.action_card",
+				controller.state,
+				controller.current_battle,
+				{},
+				command,
+				controller.catalog)
+	if BattleCommandFacadeScript.is_battle_command(str(command.get("type", ""))):
+		return CommandSpecRegistryScript.preflight(
+				"battle.turn",
+				controller.state,
+				controller.current_battle,
+				{},
+				command,
+				controller.catalog)
+	return CommandSpecScript.ok("event_log")
+
+
+## 预检拒绝信封：与 facade 拒绝同形（accepted/feeds/result），且零副作用。
+static func _preflight_rejected(controller, reason: String, preflight: Dictionary) -> Dictionary:
+	controller.last_result = {
+		"battle_result": "rejected",
+		"feeds": [reason],
+		"ok": false,
+		"reason": reason,
+		"accepted": false,
+		"finished": false,
+		"remedy_hints": preflight.get("remedy_hints", []),
+	}
+	# 可见反馈必须在 _show_battle() 之前写入：战斗屏 toast 读快照里的 feedback 键。
+	controller.last_feedback = RejectionTextScript.text(reason)
+	controller._show_battle()
+	return {
+		"battle": controller.current_battle,
+		"state": controller.state,
+		"result": "rejected",
+		"accepted": false,
+		"finished": false,
+		"feeds": [reason],
+		"ok": false,
+		"reason": reason,
+		"remedy_hints": preflight.get("remedy_hints", []),
+	}
+
+
+## 领域拒绝信封（facade `_rejected` 只带 feeds）：补 ok/reason/accepted 并把中文
+## 拒绝原因写进可见反馈，与预检拒绝同形。这里不接管 battle/state——
+## 拒绝必须证得零副作用（不推进战斗、不落事件、不写 battle_finished）。
+static func _turn_rejected(controller, turn: Dictionary) -> Dictionary:
+	var reason := _first_reason(turn)
+	controller.last_result = {
+		"battle_result": "rejected",
+		"feeds": turn.get("feeds", []),
+		"ok": false,
+		"reason": reason,
+		"accepted": false,
+		"finished": false,
+		"battle": controller.current_battle,
+		"state": controller.state,
+	}
+	controller.last_feedback = RejectionTextScript.text(reason)
+	controller._show_battle()
+	var rejected: Dictionary = turn.duplicate(true)
+	rejected["ok"] = false
+	rejected["reason"] = reason
+	rejected["accepted"] = false
+	rejected["finished"] = false
+	# 拒绝不得改变现场：回给调用方的 battle 就是原对象，不是 facade 的深拷贝。
+	rejected["battle"] = controller.current_battle
+	rejected["state"] = controller.state
+	return rejected
+
+
+static func _first_reason(turn: Dictionary) -> String:
+	var feeds: Array = turn.get("feeds", [])
+	if feeds.is_empty():
+		return "unknown"
+	return str(feeds[0])
 
 
 static func sync_battle_hp_to_state(controller) -> void:

@@ -4,6 +4,8 @@ extends RefCounted
 
 const CommandSpecScript = preload("res://scripts/domain/command_spec.gd")
 const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
+# 卡 id 形状归一的唯一映射点在门面（`canonical_action_card_id`），preflight 只调用不重复实现。
+const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 
 
 const _SPECS := {
@@ -106,17 +108,24 @@ static func _preflight_battle_card(
 	command: Dictionary,
 	catalog: Dictionary
 ) -> Dictionary:
+	# V1 契约：hand_version ≡ event_log.size()（见 domain-ui-contract §Battle）。
+	# domain battle 字典通常不带该键，缺省时回落到事件日志长度。
 	var expected_version := int(battle.get("hand_version", -1))
+	if expected_version < 0:
+		expected_version = state.event_log.size()
 	var actual_version := int(command.get("state_version", -1))
 	if actual_version != expected_version:
 		return CommandSpecScript.reject("battle_hand_stale", "battle_hand", expected_version, actual_version, ["刷新战斗手牌后重试。"])
-	var expected_phase := str(battle.get("phase", "player"))
+	var expected_phase := str(battle.get("phase", "player_action"))
 	var actual_phase := str(command.get("expected_phase", ""))
 	if actual_phase != expected_phase:
 		return CommandSpecScript.reject("battle_phase_stale", "battle_hand", expected_phase, actual_phase, ["刷新当前战斗后重试。"])
 	var action_id := str(command.get("action_id", ""))
 	if action_id.is_empty() and not str(command.get("card_id", "")).is_empty():
 		action_id = "battle.%s.%s" % [str(battle.get("battle_id", "")), str(command.get("card_id", ""))]
+	# 旧卡 id 形状（`battle.<battle_id>.<card>`，含 card_id 回退拼出的 `battle..<card>`）
+	# 与现行形状在此收敛——否则「声明兼容」的 id 查不到卡，一律 battle_action_unavailable。
+	action_id = BattleCommandFacadeScript.canonical_action_card_id(action_id)
 	var card: Dictionary = {}
 	for candidate in ActionPreviewServiceScript.preview_battle_actions(battle, state, catalog):
 		if str(candidate.get("id", "")) == action_id:
@@ -162,7 +171,7 @@ static func _preflight_battle_turn(
 	var actual_version := int(command.get("state_version", -1))
 	if actual_version != expected_version:
 		return CommandSpecScript.reject("battle_action_stale", "event_log", expected_version, actual_version, ["刷新当前战斗后重试。"])
-	var expected_phase := str(battle.get("phase", "player"))
+	var expected_phase := str(battle.get("phase", "player_action"))
 	var actual_phase := str(command.get("expected_phase", ""))
 	if actual_phase != expected_phase:
 		return CommandSpecScript.reject("battle_phase_stale", "event_log", expected_phase, actual_phase, ["刷新当前战斗后重试。"])
