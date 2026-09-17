@@ -1,0 +1,773 @@
+{
+ "world_model_version": "1.0.0",
+ "schema_id": "gu-zhenren/world-model",
+ "schema_version": "1.0.0",
+ "entity_type": "event",
+ "generated_at": "2026-09-17T00:00:00Z",
+ "generator": "world-model/tools/build_world_model.py",
+ "source_refs": [
+  "data/curse.json",
+  "data/events.json"
+ ],
+ "count": 12,
+ "entities": [
+  {
+   "id": "echo_cave",
+   "name_zh": "残响叩穴",
+   "kind": "delayed_cost",
+   "summary_zh": "洞穴深处有回声应答，已知与未知的代价都刻在石壁上。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 2,
+      "health_cost": 1,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "取得回声允诺的机缘。",
+   "unknown_note_zh": "回声的后续代价结果未明，似有低语要在魂魄深处留下印记。",
+   "delayed_cost": {
+    "soul": 1,
+    "trigger": "next_travel"
+   },
+   "health_cost": 1,
+   "stone_gain": 2,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "gu_rot_pact",
+   "name_zh": "腐朽蛊契",
+   "kind": "curse_bargain",
+   "summary_zh": "腐朽的蛊契在掌心发热，代价与收获都写在血色纹路里。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 1,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "curse_id": "essence_bloat",
+      "curse_name_zh": "元石滞胀"
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "借此蛊契牵动一线机缘。",
+   "unknown_note_zh": "蛊契烙入体内后，元石滞胀的苦果何时显现仍未明。",
+   "delayed_cost": {
+    "soul": 1,
+    "trigger": "next_travel"
+   },
+   "health_cost": 1,
+   "stone_gain": 0,
+   "curse_id": "essence_bloat",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "huajiu_cache",
+   "name_zh": "行者遗藏",
+   "kind": "cache",
+   "summary_zh": "山腹深处藏着某位行者的遗藏，独吞者从无善终。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 5,
+      "health_cost": 2,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "取走遗藏中的元石。",
+   "unknown_note_zh": "遗藏深处是否另有埋伏，只有挖到尽头才知。",
+   "delayed_cost": {
+    "soul": 0,
+    "trigger": ""
+   },
+   "health_cost": 2,
+   "stone_gain": 5,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "tithing_cache",
+   "name_zh": "献藏换赏",
+   "kind": "cache",
+   "summary_zh": "遗藏见光便引来窥伺，不如报与山寨换一份赏钱。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 2,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": false,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "换一份稳妥的赏钱。",
+   "unknown_note_zh": "山寨给的赏钱是否足数，全看管事的心情。",
+   "delayed_cost": {
+    "soul": 0,
+    "trigger": ""
+   },
+   "health_cost": 0,
+   "stone_gain": 2,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "small_beast_tide",
+   "name_zh": "小兽潮",
+   "kind": "cache",
+   "summary_zh": "小型兽潮已经在山寨附近成形，蛊师是唯一能挡的墙。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 3,
+      "health_cost": 2,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "从兽尸与赏功中收得元石。",
+   "unknown_note_zh": "这股兽潮是否会滚成大型，眼下无人说得准。",
+   "delayed_cost": {
+    "soul": 1,
+    "trigger": "next_travel"
+   },
+   "health_cost": 2,
+   "stone_gain": 3,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "tide_aftermath",
+   "name_zh": "潮后拾骨",
+   "kind": "cache",
+   "summary_zh": "兽潮退去，山道上留下成片尸骨与未干的血气。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 3,
+      "health_cost": 0,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "从尸骨间拾取遗留的元石。",
+   "unknown_note_zh": "尸骨之间还盘着什么活物，谁也说不上来。",
+   "delayed_cost": {
+    "soul": 2,
+    "trigger": "next_travel"
+   },
+   "health_cost": 0,
+   "stone_gain": 3,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "duel_wager",
+   "name_zh": "赌斗押注",
+   "kind": "cache",
+   "summary_zh": "有人当街设下赌斗，胜负各安天命，注头就摆在桌面上。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 4,
+      "health_cost": 1,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "赢下注头，把元石收入囊中。",
+   "unknown_note_zh": "对手的底细与后手一概不知，只看你敢不敢押。",
+   "delayed_cost": {
+    "soul": 0,
+    "trigger": ""
+   },
+   "health_cost": 1,
+   "stone_gain": 4,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "duel_loss",
+   "name_zh": "斗蛊折戟",
+   "kind": "cache",
+   "summary_zh": "斗蛊场上一场比试已经摆开，输家的代价写在契纸上。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 1,
+      "health_cost": 2,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "meridian_seal",
+      "curse_name_zh": "经脉封蛊"
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "即便落败，也能从场中捡到零散的元石。",
+   "unknown_note_zh": "经脉封蛊何时松解，没有定数。",
+   "delayed_cost": {
+    "soul": 0,
+    "trigger": ""
+   },
+   "health_cost": 2,
+   "stone_gain": 1,
+   "curse_id": "meridian_seal",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "weird_trade",
+   "name_zh": "秘境换物",
+   "kind": "cache",
+   "summary_zh": "秘境入口半开，守门者只要魂魄，不要元石。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 2,
+      "health_cost": 0,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "换回一份可用的元石。",
+   "unknown_note_zh": "换到手的东西能否合用，结果未明。",
+   "delayed_cost": {
+    "soul": 1,
+    "trigger": "next_travel"
+   },
+   "health_cost": 0,
+   "stone_gain": 2,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "contract_seal",
+   "name_zh": "毒誓之契",
+   "kind": "cache",
+   "summary_zh": "要人用毒誓蛊立下不容反悔的契约，报酬先给。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 4,
+      "health_cost": 1,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "curse_id": "",
+      "curse_name_zh": ""
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "先收下契约的酬劳。",
+   "unknown_note_zh": "毒誓的制约何时收紧，只有违约那天才知道。",
+   "delayed_cost": {
+    "soul": 2,
+    "trigger": "next_travel"
+   },
+   "health_cost": 1,
+   "stone_gain": 4,
+   "curse_id": "",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "recognition_toll",
+   "name_zh": "认主输诚",
+   "kind": "cache",
+   "summary_zh": "有势力逼你认主输诚，输了名头，换一条活路。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 3,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "gu_erosion",
+      "curse_name_zh": "蛊蚀"
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "换得对方的赏赐。",
+   "unknown_note_zh": "蛊蚀何时发作，全看对方心意。",
+   "delayed_cost": {
+    "soul": 0,
+    "trigger": ""
+   },
+   "health_cost": 0,
+   "stone_gain": 3,
+   "curse_id": "gu_erosion",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  },
+  {
+   "id": "blood_vein_offering",
+   "name_zh": "血脉献祭",
+   "kind": "cache",
+   "summary_zh": "血脉祭坛前有人收买精血，价钱开得很高。",
+   "trigger": {
+    "node_type": "event",
+    "pool_owner": "event_node",
+    "selection": "seeded_pick_from_node_event_pool"
+   },
+   "options": [
+    {
+     "id": "accept",
+     "label_zh": "接受",
+     "effects": {
+      "stone_gain": 4,
+      "health_cost": 2,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "essence_bloat",
+      "curse_name_zh": "元石滞胀"
+     },
+     "precheck_required": true,
+     "precheck_text_zh": "接受后将立刻扣除气血并背负延迟代价，蛊虫可能反噬；不可撤销。"
+    },
+    {
+     "id": "decline",
+     "label_zh": "离开",
+     "precheck_required": false,
+     "precheck_text_zh": "",
+     "effects": {
+      "stone_gain": 0,
+      "health_cost": 0,
+      "delayed_soul_cost": 0,
+      "delayed_trigger": "",
+      "curse_id": "",
+      "curse_name_zh": ""
+     }
+    }
+   ],
+   "gain_text_zh": "取走祭坛边堆积的元石。",
+   "unknown_note_zh": "元石滞胀的余患何时现形，无人敢断言。",
+   "delayed_cost": {
+    "soul": 0,
+    "trigger": ""
+   },
+   "health_cost": 2,
+   "stone_gain": 4,
+   "curse_id": "essence_bloat",
+   "source_class": "original_game_content",
+   "source_ids": [
+    "GAME-CULTIVATOR-001",
+    "GAME-CULTIVATOR-002",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "事件母题（遗藏/兽潮/赌斗/斗蛊/秘境/血脉/元石/本命蛊）取自原著高频场景；具体事件文案、数值与诅咒绑定为游戏原创内容，不是原著情节。",
+   "tunable": true
+  }
+ ],
+ "event_curse_pool": [
+  {
+   "id": "gu_erosion",
+   "name_zh": "蛊蚀",
+   "effect": "draw_pollution",
+   "base_intensity": 1,
+   "escalation_per_stage": 1,
+   "removal_base_cost": 6
+  },
+  {
+   "id": "essence_bloat",
+   "name_zh": "元石滞胀",
+   "effect": "essence_surcharge",
+   "base_intensity": 2,
+   "escalation_per_stage": 1,
+   "removal_base_cost": 5
+  },
+  {
+   "id": "meridian_seal",
+   "name_zh": "经脉封蛊",
+   "effect": "slot_seal",
+   "base_intensity": 1,
+   "escalation_per_stage": 0,
+   "removal_base_cost": 8
+  }
+ ]
+}
