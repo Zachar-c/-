@@ -22,7 +22,7 @@
 
 ## 权威资料
 
-- **当前最高设计宪章**：`docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md`。Stage 0 通过前，它高于以下既有机制规格；Q8-G、F1 Pity、promotion/material 等文档仅作为现有实现状态与历史决策档案。
+- **当前生效约束（2026-09-17 起）**：`world-model/governance/CONSTRAINTS-V2.md`，依据 `world-model/rulings/RUL-2026-09-17-003.json`。该裁定作废了此前的全部流程性约束（含 2026-09-16 纠偏设计的 Stage 0 门禁与生产冻结令）。下列既有规格降级为**历史参考**，不再有约束力；与 CONSTRAINTS-V2 冲突时以 CONSTRAINTS-V2 为准。
 - 总体机制基线：`docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`
 - 蛊系统、经济与战斗最新基线：`docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md`
 - spec-v4 实施计划（10 阶段 20 任务）：`docs/superpowers/plans/2026-09-01-gu-system-economy-combat-implementation.md`
@@ -31,7 +31,7 @@
 - 页面清单与页面需求（逐屏需求单）：`docs/contracts/2026-09-02-page-inventory-requirements.md`
 - UI 改动、快照键扩容或命令面扩容前，必须核对上述三份契约文档；新增键/命令/组件须同步回写契约，防止契约与代码漂移。
 - **核心模块接口约定（Agent 生成代码强制参考，每系统 1 页：输入输出/信号/依赖/强制规则）**：`docs/contracts/module-interfaces/`（README 含索引与数据流总览；01 战斗结算、02 蛊实体与合成、03 地图节点生成、04 内容目录、05 运行状态、06 行动预览、07 领域动作路由、08 表现层命令面）。新增模块或改接口（函数签名/数据键/命令面）前必须先读对应页；依赖方向只允许 表现层 → 领域层 → 数据层，禁止反向依赖与绕过目录直读 JSON。
-- **Agent Ownership 契约（2026-09-12 用户批准，硬门槛）**：`docs/contracts/2026-09-12-agent-ownership-contract.md`。多 Agent 并行施工前必读；Shared 单写者区文件（run_controller / snapshot builder / resolver / run_state / save_repository / main.tscn / project.godot / docs/contracts）修改必须走 5 步协议（声明文件→原因→影响面→指定测试→单独 commit）；契约落档前禁止开始新功能开发。
+- ~~Agent Ownership 契约（2026-09-12）~~ **已随 RUL-2026-09-17-003 作废**：四角色写区、Shared 单写者区与 5 步协议不再有约束力（文件保留作历史参考）。替代纪律见 CONSTRAINTS-V2 §3：**改前快照、改后跑验收**。
 - 项目裁定索引：`docs/项目决策浓缩对话.md`
 - 旧冒烟设计仅供参考：`docs/superpowers/specs/2026-08-21-nanjiang-roguelite-smoke-design.md`
 - 当前实现状态以代码、测试、`git log` 和当前任务文档为准，不在本文件维护历史台账。
@@ -55,9 +55,13 @@
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 > 状态以代码 / 测试 / `git log` 为准；本节只同步「仍在动」的事。
 
-1. **World Model Stage 0：蛊界世界规则基准审计（2026-09-16 用户裁定：最高优先级）**：以 `docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md` 为最高设计宪章。
+1. **世界模型：已交付并接线（2026-09-17）**：产物在 `world-model/`（8 类实体 / 10 个机读数据文件 / 纯 Python 规则层与运行器 / 校验器 / 平衡模拟器 / 上游漂移检测器）。
+   - 约束已换代：按 `RUL-2026-09-17-003` 作废旧流程约束，改行 `CONSTRAINTS-V2` 的 6 条可执行规则（数据即规范 / 一条命令验收 / 单一裁定入口 / 默认放行+自动快照 / 约束必须可执行 / 验收不靠人勾选）。
+   - Godot 侧接线：接入层 `scripts/domain/world_model_bridge.gd`（只读，不改玩法）+ 一致性门禁 `tests/unit/test_world_model_bridge.gd`（8 用例 / 20 断言，含 `SABOTAGE` 负控）。游戏运行时仍以 `data/` 为真源。
+   - 当前基线：`accept.py` 退出码 0（校验 64608 条 / 0 失败，测试 39/39）；漂移检测 5204 项 / 0 漂移；Godot 全量 unit 215 脚本 / 1556 用例 / 0 失败。
+   - 详细交接：`world-model/HANDOFF.md`。以下 Stage 0 / Stage 1 段落降级为历史记录：
    - **✅ Gate = GO（2026-09-16 重跑）**：`tools/lore.ps1 world-model-0` 输出 `result: GO`；24/24 高影响 claim 均有完整 P0 引用；报告 `docs/lore/generated/world-model-stage0-gate.md`。语料指纹已按仓库内只读原文校正（`lore_sources/manifest.json`）。
-   - **仍禁止**：Gate GO ≠ 自动授权生产改造。在纵向切片批准前，继续禁止把 Stage 0 裁定直接落成 `data/` / `scripts/` / `scenes/` 变更；Q8-G / F1 Pity / promotion 仍按 legacy disposition（audit_only / defer）。
+   - ~~**仍禁止**~~ **该冻结已作废**（RUL-2026-09-17-003）：不再有「通过前禁止修改 `data/` / `scripts/` / `scenes/`」的门禁。替代纪律：改前 `snapshot.py take`，改后跑 `accept.py` 与 Godot 全量 unit。
    - **Stage 1 切片：缺口 1 / 3 / 4 / 5 已按用户裁定落地（2026-09-16 晚）**：①货郎节点 `stage` two→one（L1 可出）②盲炼失败世界内原因文案（火候/相性/心神）③货郎货架新增 `purchase_blood_droplet`④货阶分层只约束黑市节点、NPC 个人货架豁免。新增 NPC 专属报价标 `npc_only` 以免扰动黑市种子化洗牌。回归 unit 1535/1535 · integration 32/32 · SCRIPT ERROR 0；探针 `tools/verify_stage1_slice.gd` seed=202、167 项全过。   - **下一步（Stage 1 切片，探针已落地，生产零 diff → 已有 4 条生产 diff）**：设计 `docs/superpowers/specs/2026-09-16-stage1-gu-entity-vertical-slice-design.md`。已落地：切片 12 蛊中 5 只补显式 `v1_effect`/食性（`moon_ray`/`bear_strength`/`blood_def_1_21`/`blood_mov_1_22`/`sword_atk_1_05`）+ `tests/unit/test_stage1_gu_entity_slice.gd`（5/5）；**身份夹具（探针级）+ 固定 seed 路线探针（seed=101）+ 货郎/炼成场景验收脚本** = `tools/verify_stage1_slice.gd`（Gate A–F，165 项 PASS）+ `tests/unit/test_stage1_slice_scene_gates.gd`（5/5，全量 unit 1535/1535）。报告 `docs/superpowers/reports/2026-09-16-stage1-slice-probe.md`，含 **5 条待裁定缺口**（L1 不出货郎节点 / 无「未炼化→已炼化」命令 / 盲炼失败无世界内原因文案 / 货郎货架不含血滴蛊 / 货郎月光蛊 tier 3 被 L1 分层门禁拒）。
    - **✅ 缺口 2 已落地（2026-09-17）**：`attune_gu`（野生 `state=wild` → 已炼化 `refined`），代价只扣真元 `4+2*(rank-1)`；依据 `docs/superpowers/reports/2026-09-17-lianhua-corpus-research.md`。Shared 五步协议：`resolver.gd` + `refine_snapshot.gd` + 契约回写；守卫 `tests/unit/test_attune_gu.gd`。**开局另注入 2 只未炼化 `small_light_gu`**；**loot `held_only` 入袋为 wild**（高转/不安全不可直接催动）。全量 unit 全绿。进度条/反噬未做。**Stage 1 切片五缺口已全部关闭**；扩大蛊目录与流派数、身份与择道改造仍待 Stage 0 后续裁定。
    - **《人祖传》证据效力（2026-09-16 用户裁定）**：派生摘编而非独立见证——主文存在的一律引主文 twin。
@@ -119,6 +123,8 @@
 - 阅读相关规格、现有实现和测试后再编辑。
 - 手工编辑使用补丁工具；格式化或批量机械修改可使用项目工具。
 - 测试与检查优先使用仓库脚本，如 `tools/test.ps1` 和 `tools/check.ps1`。
+- **世界模型验收**：`python world-model/tools/accept.py --smoke 10`（校验 + 测试 + 冒烟，退出码即结论）。改 `world-model/data/` 后加跑 `python world-model/tools/check_upstream_drift.py`（退出码 0 = 与上游 `data/` 一致）。改 `world-model/` 之前先 `python world-model/tools/snapshot.py take <label>`。
+- **世界模型接线门禁**：凡改动 `data/` 或 `world-model/data/`，必须跑 Godot 侧门禁 `-gtest res://tests/unit/test_world_model_bridge.gd`。该门禁带负控开关 `SABOTAGE`；**若打开负控仍然全绿，即判定门禁失效**（应失败）。
 - Godot 自动化命令使用 headless 模式或仓库脚本，避免启动无法退出的 GUI 进程。
 - 出现测试挂起时先检查项目锁和残留 Godot 进程，再重试。
 - UI 改动必须核对真实渲染、交互状态、文本适配和常用视口。
@@ -174,6 +180,7 @@
 - 所有不可逆成本与死亡风险在执行前可见。
 - 关键状态变化进入不可变事件日志。
 - 聚焦测试通过；高风险改动完成对应集成、全量、试玩或导出验证。
+- 涉及世界模型数据一致性时，`accept.py`、上游漂移检测、Godot 接线门禁三者均须为绿/退出码 0。
 - UI 改动不存在死按钮、假状态、文本溢出、遮挡或错误路由；可点击元素必须有结果与反应，交互具备视觉+听觉双重反馈（见交互闭环契约），未开放入口必须 disabled 置灰。
 - Release 构建不包含开发调试入口、语料、测试和受排除资源。
 - Run 结局后局内资源清空；大厅永久数据只保留规格允许的内容。
