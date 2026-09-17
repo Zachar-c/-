@@ -47,6 +47,8 @@ func test_free_pair_executes_without_any_recipe_and_grants_gu_fang() -> void:
 	var main_id := _instance_id_by_definition(controller, "moonlight_gu")
 	var partner_id := _instance_id_by_definition(controller, "small_light_gu")
 	assert_false(main_id.is_empty() or partner_id.is_empty(), "light starters present")
+	# Stage 1 开局另带 2 只野生小光；断言用净变化（消 2 产 1 = -1），不钉死绝对持有数。
+	var size_before := controller.state.gu_instances.size()
 	var saw_success := false
 	var granted_fang := ""
 	for attempt in range(12):
@@ -64,7 +66,7 @@ func test_free_pair_executes_without_any_recipe_and_grants_gu_fang() -> void:
 	assert_true(saw_success, "zero-gate synthesis must succeed without any recipe (90% per attempt)")
 	assert_true(controller.state.global_codex_ids.has(granted_fang),
 			"first craft must auto-grant the gu fang")
-	assert_eq(controller.state.gu_instances.size(), 3, "two starters consumed, one output granted")
+	assert_eq(controller.state.gu_instances.size(), size_before - 1, "two starters consumed, one output granted")
 
 
 func test_preview_reveal_tiers_follow_gu_fang_ownership() -> void:

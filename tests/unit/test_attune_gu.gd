@@ -143,3 +143,46 @@ func test_refine_snapshot_lists_wild_candidates_with_visible_cost() -> void:
 	assert_eq(int(row.get("essence_cost", 0)), _cost_for("moonlight_gu"))
 	assert_true(bool(row.get("executable", false)), "default run has enough essence for rank-1 attune")
 	assert_eq(int(row.get("essence_owned", 0)), controller.state.essence)
+
+
+func test_start_new_run_injects_two_wild_small_light() -> void:
+	# Stage 1 §2 开局：流派 starter 之外另带 2 只未炼化小光蛊，attune 通道一开局就有货。
+	var controller := RunController.new()
+	add_child_autofree(controller)
+	controller.catalog = catalog
+	controller.start_new_run(101, "light")
+	var wild_ids: Array[String] = []
+	for key_value in controller.state.gu_instances:
+		var inst: Dictionary = controller.state.gu_instances[key_value]
+		if str(inst.get("state", "")) == "wild" and str(inst.get("definition_id", "")) == "small_light_gu":
+			wild_ids.append(str(key_value))
+	assert_eq(wild_ids.size(), 2, "opening must carry two wild small_light_gu")
+	# 野生不进已炼化投影 / 装备栏，也不进喂养账。
+	var refined_instance_ids: Array[String] = []
+	for inst in controller.state.refined_instances():
+		refined_instance_ids.append(str(inst.get("instance_id", "")))
+	for wild_id in wild_ids:
+		assert_false(refined_instance_ids.has(wild_id), "wild %s must not enter refined_instances" % wild_id)
+		# 野生不进喂养投影；equipped_gu_ids 按 definition_id 记，与流派 starter 重名不在此断言。
+	var snap: Dictionary = RefineSnapshotScript.build(controller)
+	var candidates: Array = snap.get("attune_candidates", [])
+	assert_eq(candidates.size(), 2, "attune panel must list the two opening wild gu")
+
+
+func test_opening_wild_gu_can_be_attuned_through_resolver() -> void:
+	var controller := RunController.new()
+	add_child_autofree(controller)
+	controller.catalog = catalog
+	controller.start_new_run(101, "")
+	var wild_id := ""
+	for key_value in controller.state.gu_instances:
+		if str((controller.state.gu_instances[key_value] as Dictionary).get("state", "")) == "wild":
+			wild_id = str(key_value)
+			break
+	assert_false(wild_id.is_empty(), "wanderer start must also carry wild gu")
+	var out := ResolverScript.apply(controller.state, {
+		"type": "attune_gu", "input_instance_ids": [wild_id],
+	}, catalog)
+	assert_true(bool(out["result"].get("ok", false)), "opening wild gu must be attunable")
+	assert_eq(str(out["state"].gu_instances[wild_id]["state"]), "refined")
+
