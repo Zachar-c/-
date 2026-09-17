@@ -8,6 +8,8 @@
 
 **Tech Stack:** Godot 4.7.2, GDScript, GUT, JSON data tables, deterministic seeded run state.
 
+**Independent audit status (2026-09-17):** `HOLD`. The fresh unit, integration, interaction, and repository checks pass, but the final gate is not closed. Findings `F-01` (retreat preview/execution gate drift) and `F-02` (normalized command freshness contract not fully wired) are recorded in [`docs/superpowers/reports/2026-09-17-battle-core-audit.md`](../reports/2026-09-17-battle-core-audit.md). The checkboxes below remain the execution checklist; they are not evidence that every final-gate condition is satisfied.
+
 ## Global Constraints
 
 - 本阶段只收敛现有战斗模块，不新增距离、速度、复杂状态、杀招、敌人或数值机制。
@@ -394,6 +396,5 @@ The executor must report existing warnings, ObjectDB leaks, or unrelated failure
 ## Executor Handoff
 
 执行模型必须按 Task 0 → Task 1 → Task 2 → Task 3 → Task 4 → Task 5 → Task 6 顺序推进。每个任务先写或补测试，再做最小实现；遇到新增机制、数据扩容或 UI 重做需求时停止并登记，不得夹带进第三阶段。除非另行授权，执行模型不得提交或推送。
-
 
 

@@ -28,7 +28,7 @@
 - 战斗卡片 `target_type`：`"single_enemy"` / `"none"`；仅 `v1_effect.kind == "strike"` 的蛊与拳脚需要选敌，`valid_target_ids` = 当前存活敌人 id 列表（其余为空）
 - 杀招卡片 `command.confirmed = false`：UI 确认后补 `confirmed = true` 才下发（T16 残锋降转不得静默惩罚）
 - 终局（`phase != player_action`）或撤离后（`flags.session_closed`）**不再产出任何战斗卡**；快照对缺卡的卡位一律置灰，不放行
-- 撤退卡片：Boss 战 `executable=false` + `block_reason="退无可退"`；元石/地形条件为预览侧遗留展示门禁（领域 `retreat` 分支目前只拦 Boss），差异待裁定
+- 撤退卡片：Boss 战 `executable=false` + `block_reason="退无可退"`；当前预览还检查元石/地形条件，但领域 `retreat` 分支目前只拦 Boss。该差异不是可接受的“预览侧例外”，已登记为 `F-01`，在修复或正式修订契约前，第三阶段 Gate 保持 `HOLD`。
 
 ## 信号
 
@@ -46,3 +46,10 @@
 3. 禁用态语义只经 `block_reason`/`remedy_hints` 表达，UI 不重复推导。
 4. 预览与执行共用同一套门禁函数（`can_play_gu` 等），禁止预览宽松、执行严格的漂移。
 5. 战斗屏可执行性、结构化命令与目标面只有本服务一个来源：`battle_snapshot` 只读取结论并透传（`_battle_gates/_apply_battle_gate`），禁止快照或 UI 再调 resolver 重算。
+
+## 2026-09-17 独立审查状态
+
+- 报告：`docs/superpowers/reports/2026-09-17-battle-core-audit.md`。
+- `F-01`：撤离的元石/地形预览门禁与领域执行门禁不一致，未闭环。
+- `F-02`：Gu / 基础攻击 / 杀招的嵌套 `command` 尚未全部带 `expected_phase`；当前 V1 战斗提交路径也未调用 `CommandSpecRegistry` 的 freshness preflight。
+- 上述事项不否定已通过的测试结果，但禁止把“测试全绿”写成“战斗契约全部闭合”。

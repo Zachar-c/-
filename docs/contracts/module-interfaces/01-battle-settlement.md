@@ -21,6 +21,8 @@
 | `V1.end_turn(battle)` | battle | `{battle, result}` | 敌方意图结算 + 新回合；内部检查 `_is_over` |
 | `Facade.boss_blocks_retreat(battle)` | battle | bool | Boss 战禁止撤退 |
 
+> **审查状态（2026-09-17）**：当前领域 `retreat` 分支实际只执行 `boss_blocks_retreat`；预览侧另有元石/地形门禁，形成 `F-01` 漂移。该实现事实不应被误读为最终设计裁定；在 `docs/superpowers/reports/2026-09-17-battle-core-audit.md` 的 F-01 关闭前，预览与执行不得宣称语义一致。
+
 ## 关键数据契约（battle 字典）
 
 - 玩家区：`player.{hp, max_hp, shield, life_time, soul, true_qi, thoughts, used_this_turn, buffs{force/yi_zhang}, position, cultivation}`
@@ -55,3 +57,5 @@
 5. 效果数值只经 `v1_effect`/`effect` 字典表达，禁止在 resolver 内硬编码成本/伤害。
 6. **残锋只减不增**：唯一允许写 `dao_marks` / `sword_downgrades` 的模块是 `SwordMarkRules`（经 `Facade.settle_sword_marks`）；任何回复路径违规。
 7. 回合末 `_settle_marks`（T15 刻痕）只读 `statuses.marked`，独立伤害通道不吃护盾；写 `mark_scratch` 事件日志。
+
+> **命令上下文审查（F-02）**：预览卡片契约要求 `state_version` / `expected_phase`，但当前 `BattleCommandFacade.apply_turn` 不负责 freshness preflight，且表现层战斗路径未调用 `CommandSpecRegistry`。若这些字段继续作为过期命令门禁，必须补接线与测试；若仅作 UI 元数据，必须修订上层契约。

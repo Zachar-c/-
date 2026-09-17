@@ -49,6 +49,16 @@
 |---|---|---|
 | D1 | GUT 语境 ObjectDB/RID 泄漏 | 已从历史 2 万级降到退出期十余实例；属 GUT 既有遗留 |
 
+## E. 第三阶段战斗核心独立审查（2026-09-17）
+
+| # | 事项 | 状态 | 优先级 | 卡在哪 | 证据 |
+|---|---|---|---|---|---|
+| **E1 / F-01** | **撤离预览与领域执行门禁漂移** | 预览检查元石/地形，`BattleCommandFacade` 普通战斗只拦 Boss；测试明确跳过该差异 | P1 | 需要决定统一以预览规则执行，或删除预览门禁 | `docs/superpowers/reports/2026-09-17-battle-core-audit.md` |
+| **E2 / F-02** | **战斗命令新鲜度契约未闭合** | 部分嵌套 `command` 缺 `expected_phase`；V1 提交路径未接 `CommandSpecRegistry` preflight | P1 | 需要接线并补 stale 测试，或修订契约为元数据语义 | 同上 |
+| **E3 / F-03～F-06** | 计划勾选、无用 preload、回放断言强度、提交边界 | 已登记，不阻断当前运行测试；进入下一次收口 | P2 | 清理与文档回写 | 同上 |
+
+完整审查报告：`docs/superpowers/reports/2026-09-17-battle-core-audit.md`。
+
 ---
 
 ## 本轮清扫关闭的登记项（对照）

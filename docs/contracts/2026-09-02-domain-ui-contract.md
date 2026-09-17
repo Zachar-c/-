@@ -82,6 +82,7 @@ UI (scenes + scripts/ui)
 - `inventory{materials[],gu_instances[],loot[],intel[]}`：材料仅含 `id/name/quantity`；蛊虫实例含 `id/definition_id/name/state/rank/quality`；收获与情报仅投影已结算结果和 `known_facts`。UI 不得据此反写库存或推断未知信息。
 - `hand_version`（仅 Battle 屏）：`= event_log.size()`，与 `use_gu` 命令 `state_version` 同源。`battle_screen_view.mount_snapshot` 仅在 `hand_version` 变化时清空已提交卡/目标去重缓存；相同版本重挂载（刷新/重渲染）不得解除防重复提交保护。
 - **战斗手牌卡（第三阶段 Task 3，2026-09-17）**：Battle 屏 `hand[]` / `kill_moves[]` 每张卡携带十键契约 `{id, type, executable, block_reason, costs, target_type, valid_target_ids, command, state_version, expected_phase}`，全部取自 `ActionPreviewService.preview_battle_actions`（唯一门禁来源，`battle_snapshot` 只透传）。UI 新路径**只提交 `command`**（经 `RunCommandBuilder.for_screen("Battle").submit_command`），并按本屏交互态补 `target_id`；`play_card` 仅为按 ID 组装的兼容包装。杀招卡 `command.confirmed=false`，确认框通过后补 `true`（T16）。终局/撤离后预览不产出卡片，卡面一律置灰。
+- **战斗核心独立审查（2026-09-17）**：上述十键契约是目标契约，不代表当前实现已无偏移。`F-01`：撤离卡的元石/地形预览门禁尚未在领域执行侧复用；`F-02`：Gu / 基础攻击 / 杀招嵌套命令的 `expected_phase` 尚未全部落入，V1 战斗提交路径也未接入 freshness preflight。详见 `docs/superpowers/reports/2026-09-17-battle-core-audit.md`；在两项关闭前，第三阶段状态为 `HOLD`。
 - `death_lines{health,shouyuan,hunpo,backlash}`：用于危险预警、操作预检与死因信息；其中气血、寿元、魂魄任一 `remaining <= 0` 的终局判定仍完全由领域层执行。`death_lines` 不授权常驻独立数值面板。
 
 `[T9.1 已落地]` 快照 v2 按 §17.2 八组扩容（增量键，逐键与规则模块同源，`RunSnapshotBuilder.transparency_v2(controller)`，返回八个分组键；`_` 前缀旁路键不进快照）。所有真实 `for_screen(screen, controller)` 快照经 `_with_v2` 保守合并带入八组（同屏键优先）：
@@ -158,7 +159,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
   - 事件：逆炼落 `action: "sword_erosion"`（`source: "sword_mark_rules"`，`info.spent[]` / `info.downgraded[]`，`after.gu_instances`）；结算挂在 `BattleCommandFacade.settle_sword_marks`（resolver 只见 battle，跨战斗的永久消耗必须落在 `RunState.gu_instances`）。
 - **转数与效果展示（2026-09-04）**：`hand[]` 蛊卡 `summary` 带转数前缀（`N转·<效果文本>（<状态注记>）`；`basic_attack` 拳脚卡除外）。图鉴（`hall()` → `codex.gu[]`）条目新增 `rank`（整数转数，UI 渲「转数：N转」）与 `effect`（效果中文文本：显式 `v1_effect` 优先，缺省走 `V1BattleResolver.default_v1_effect` role 兜底，与战斗口径一致）。
 
-预检规格（`CommandSpecRegistry`）：
+预检规格（`CommandSpecRegistry`，规范要求；V1 战斗当前路径的未接线差异见审查项 `F-02`）：
 
 | spec_id | freshness_kind | 必填字段 |
 | --- | --- | --- |
@@ -228,6 +229,8 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 - `event_log` freshness：`state_version == event_log.size()`；
 - `battle_hand` freshness：`state_version == battle.hand_version` 且 `expected_phase == battle.phase`；
 - 拒绝 reason：`action_preview_stale / encounter_context_stale / battle_hand_stale / battle_phase_stale / battle_action_stale / battle_target_invalid / action_not_executable / battle_action_unavailable / unknown_action_card`（附 `remedy_hints` 中文提示）。
+
+> 当前文档保留上述作为目标/规范语义；审查已确认 `RunController.submit_command` 的 V1 战斗路径直接进入 `BattleCommandFacade`，不能把该表误报为已执行的运行时 freshness 门禁。
 
 ### 5.2 通用拒绝中文映射（`run_controller._REJECTION_TEXT`，39 条现役）
 
