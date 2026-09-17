@@ -53,3 +53,14 @@ Godot/app_userdata/
 generated/lore/
 lore_engine/__pycache__/
 **/__pycache__/
+
+# Local recovery and verification leftovers
+.git.broken-*/
+.codex-verification-temp/
+.local-lore-test-temp/
+.review-temp/
+.review-test-temp/
+.tmp-test-env/
+tmp*/
+*.local-bak
+tools/_tmp_*
