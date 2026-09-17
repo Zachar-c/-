@@ -213,6 +213,7 @@
      "stock": [
       "purchase_stone_shell",
       "purchase_moonlight",
+      "purchase_blood_droplet",
       "barter_unknown_gu"
      ],
      "source_class": "adaptation",
@@ -1124,7 +1125,7 @@
      "name_zh": "wandering_peddler",
      "type": "contact",
      "type_zh": "接触",
-     "stage": "two",
+     "stage": "one",
      "visible": false,
      "summary_zh": "一名货郎守着货担歇脚，担中蛊虫明码标价，也收以物易物。",
      "choices": [
@@ -3529,6 +3530,7 @@
     "village_short_work",
     "layer_boss_stand_1",
     "ridge_market",
+    "wandering_peddler",
     "beast_swarm_pass",
     "greedy_wanderer",
     "body_imprint_ritual",
@@ -3628,7 +3630,6 @@
     "layer_boss_stand_2",
     "echo_cave",
     "gu_rot_pact",
-    "wandering_peddler",
     "rest_hollow",
     "rest_shrine"
    ],

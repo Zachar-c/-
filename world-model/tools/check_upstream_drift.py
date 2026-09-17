@@ -57,6 +57,13 @@ for gid in sorted(up_ids & wm_ids):
                             ("school", "school", "school"), ("role", "role", "role"),
                             ("rarity", "rarity", "rarity")):
         cmp(f"gu[{gid}].{field}", g.get(upf), e.get(wmf))
+    # effect_source 是世界模型的派生判定（上游给蛊补上显式 v1_effect 后，未重生成
+    # 的 gu.json 会静默停留在 role_default）。只比这个枚举即可覆盖该类漏同步，
+    # 不必在此复算 effect 本体（那会把生成器逻辑抄成第二份真相）。
+    want_effect_source = ("explicit" if "v1_effect" in g
+                          else "combat_effects" if "combat_effects" in g
+                          else "role_default")
+    cmp(f"gu[{gid}].effect_source", want_effect_source, e.get("effect_source"))
     if up_names.get(gid) and up_names[gid] != e.get("name_zh"):
         drift.append(f"gu[{gid}].name_zh: 上游名={up_names[gid]!r} 世界模型={e.get('name_zh')!r}")
 
@@ -98,10 +105,38 @@ def _count_entries(d):
 
 
 cmp("流派数量", _count_entries(load(UP, "schools")), len(load(WM / "data", "paths").get("entities", [])))
-cmp("商店报价数量", len(load(UP, "shops").get("offers", [])),
-    sum(len(e.get("shop_offers") or []) for e in wm_entities("economy").values()))
-cmp("节点模板数量", len(load(UP, "nodes").get("nodes", [])) if isinstance(load(UP, "nodes").get("nodes"), list) else len(load(UP, "nodes").get("nodes", {})),
-    sum(len(e.get("node_templates") or []) for e in wm_en.values()))
+
+# 商店报价：只比条数会漏掉"等量替换"（新增一条 + 删掉一条，总数不变），而 2026-09-16
+# 新增的 purchase_blood_droplet 恰好是带 npc_only 标（货阶分层豁免）的规则输入，
+# 漏同步会直接改变黑市/个人货架的档位判定，所以逐条比。
+up_offers = {o["id"]: o for o in load(UP, "shops").get("offers", [])}
+wm_offers = {o["id"]: o for e in wm_entities("economy").values() for o in (e.get("shop_offers") or [])}
+cmp("商店报价数量", len(up_offers), len(wm_offers))
+if set(up_offers) - set(wm_offers):
+    drift.append(f"报价缺失：{sorted(set(up_offers) - set(wm_offers))[:10]}")
+if set(wm_offers) - set(up_offers):
+    drift.append(f"报价多余：{sorted(set(wm_offers) - set(up_offers))[:10]}")
+for oid in sorted(set(up_offers) & set(wm_offers)):
+    u, w = up_offers[oid], wm_offers[oid]
+    for field, norm in (("kind", lambda v: v), ("tier", lambda v: int(v or 0)),
+                        ("stone_cost", lambda v: v), ("npc_only", lambda v: bool(v))):
+        cmp(f"报价[{oid}].{field}", norm(u.get(field)), norm(w.get(field)))
+
+# 节点模板：同理，条数不变但某点的 stage 被改（如货郎 two→one）会让"该层可出哪些点"
+# 静默失效——本层可出的点位判定直接决定地图生成，因此逐条比 stage/type。
+up_nodes = {n["id"]: n for n in load(UP, "nodes").get("nodes", [])}
+wm_nodes = {}
+for e in wm_en.values():
+    for t in (e.get("node_templates") or []):
+        wm_nodes[t["id"]] = t
+cmp("节点模板数量", len(up_nodes), len(wm_nodes))
+if set(up_nodes) - set(wm_nodes):
+    drift.append(f"节点缺失：{sorted(set(up_nodes) - set(wm_nodes))[:10]}")
+if set(wm_nodes) - set(up_nodes):
+    drift.append(f"节点多余：{sorted(set(wm_nodes) - set(up_nodes))[:10]}")
+for nid in sorted(set(up_nodes) & set(wm_nodes)):
+    for field in ("stage", "type"):
+        cmp(f"节点[{nid}].{field}", up_nodes[nid].get(field), wm_nodes[nid].get(field))
 
 print(f"检查项：{checked}｜漂移项：{len(drift)}")
 if drift:

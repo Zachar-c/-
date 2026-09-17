@@ -299,7 +299,7 @@
    "black_market_asymmetry_note": "同一对资源双向兑换率不对称（如 寿20→魂1 与 魂1→寿10，隐含约 100 倍往返损耗），属已登记风险项。",
    "shop_offer_histogram": {
     "soul_boost": 1,
-    "purchase": 19,
+    "purchase": 20,
     "lifespan_deal": 1,
     "barter": 1,
     "wash_notoriety": 1,
@@ -327,6 +327,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "soul_pill",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -357,6 +358,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.stone_shell",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -387,6 +389,38 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.moonlight",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_blood_droplet",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "blood_droplet_gu",
+     "material_id": "",
+     "stone_cost": 6,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.blood_droplet",
+     "npc_only": true,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -417,6 +451,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "lifespan.pulse_drum",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -459,6 +494,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "barter.unknown_gu",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -489,6 +525,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "wash.notoriety",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -519,6 +556,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.thunder_ward",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -549,6 +587,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.moon_glow",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -579,6 +618,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.small_light",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -609,6 +649,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.moon_blue_petal",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -639,6 +680,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.boar_king_tusk",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -669,6 +711,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.jade_skin",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -699,6 +742,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.white_boar",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -729,6 +773,7 @@
      "recipe_id": "white_jade_advance",
      "school": "",
      "card_key": "purchase.white_jade_recipe",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -759,6 +804,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "bm.lifespan_for_soul",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -789,6 +835,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "bm.soul_for_lifespan",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -819,6 +866,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "bm.health_for_soul",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -849,6 +897,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "bm.soul_for_health",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -879,6 +928,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "bm.health_for_lifespan",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -909,6 +959,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.mending_grass",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -939,6 +990,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.bone_knit",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -969,6 +1021,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.spring_heart",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -999,6 +1052,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.moon_shadow_300",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1029,6 +1083,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.life_root",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1059,6 +1114,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.undying_vine",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1089,6 +1145,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.heaven_dew",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1119,6 +1176,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "purchase.inheritance_token",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1149,6 +1207,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "gu_fang.moon_glow_gu",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1179,6 +1238,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "gu_fang.white_jade_gu",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1209,6 +1269,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "gu_fang.blood_heal_2_23_gu",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1239,6 +1300,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "gu_fang.blood_atk_3_03_gu",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1269,6 +1331,7 @@
      "recipe_id": "",
      "school": "",
      "card_key": "gu_fang.blood_atk_3_11_gu",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1299,6 +1362,7 @@
      "recipe_id": "",
      "school": "sword",
      "card_key": "purchase.sword_atk_1_06",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1329,6 +1393,7 @@
      "recipe_id": "",
      "school": "sword",
      "card_key": "purchase.sword_atk_2_12",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1359,6 +1424,7 @@
      "recipe_id": "",
      "school": "sword",
      "card_key": "purchase.sword_def_3_14",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1389,6 +1455,7 @@
      "recipe_id": "",
      "school": "sword",
      "card_key": "purchase.sword_heal_4_16",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",
@@ -1419,6 +1486,7 @@
      "recipe_id": "",
      "school": "sword",
      "card_key": "purchase.sword_atk_5_02",
+     "npc_only": false,
      "source_class": "adaptation",
      "source_ids": [
       "CAN-ECONOMY-001",

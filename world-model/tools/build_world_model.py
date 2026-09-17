@@ -257,7 +257,11 @@ CURATED_GU: dict[str, tuple[list[str], str, str]] = {
     "moon_ray_gu": (CAN_SMALL_LIGHT, "needs_source", "月痕蛊：月光蛊多晋升路线之一，输出名由策展补名。"),
     "moon_shadow_gu": (CAN_SMALL_LIGHT, "needs_source", "月影蛊＝月芒蛊＋雾步蛊（光×气跨流派）。"),
 }
-CURATED_GU_DEFAULT = ([], "needs_source", "原著语料可定位，但尚未在 docs/lore/canon-index.md 登记 CAN 条目。")
+# 蛊表 source_class 统计口径（随数据一起发布，供阅读者判断计数字段含义）。
+SOURCE_CLASS_NOTE_ZH = "canon 仅统计已登记 CAN 编号的蛊；无编号的策展蛊计入 original_game_content（2026-09-17 修正）。"
+CURATED_GU_DEFAULT = ([], "needs_source",
+                      "策展蛊：原著语料可定位，但未在 canon-index 登记 CAN 条目，故按原创内容归类，"
+                      "不冒充原著设定；补登 CAN 编号后可回调为 canon。")
 
 
 def build_gu(generated_at: str) -> dict:
@@ -362,6 +366,10 @@ def build_gu(generated_at: str) -> dict:
             "drop_tiers": sorted(set(drop_by_gu.get(gid, []))),
             **trace(src_class, src_ids, note, review, tunable=True),
         })
+    # 稳定顺序：上游 data/gu.json 是策展顺序（小光蛊开头），若直接沿用，上游插一条
+    # 新蛊就会让 800 条实体的下标整体位移、产出无法逐字节比较。按 id 排序后本表顺序
+    # 只由 id 集合决定，与上游表顺序解耦。
+    entities.sort(key=lambda e: e["id"])
     stats = {
         "total": len(entities),
         "by_effect_source": dict(collections.Counter(e["effect_source"] for e in entities)),
@@ -370,6 +378,7 @@ def build_gu(generated_at: str) -> dict:
         "by_rank": {str(k): v for k, v in sorted(collections.Counter(e["rank"] for e in entities).items())},
         "by_school": dict(collections.Counter(e["school"] for e in entities)),
         "by_source_class": dict(collections.Counter(e["source_class"] for e in entities)),
+        "by_source_class_note": SOURCE_CLASS_NOTE_ZH,
         "test_entities": [e["id"] for e in entities if e["is_test_entity"]],
         "gu_with_refine_output": sum(1 for e in entities if e["refine_as_output"]),
         "gu_with_refine_input": sum(1 for e in entities if e["refine_as_input"]),
@@ -475,6 +484,9 @@ def build_economy(generated_at: str) -> dict:
             "input_gu_ids": o.get("input_gu_ids", []), "rewards": o.get("rewards", []),
             "recipe_id": o.get("recipe_id", ""), "school": o.get("school", ""),
             "card_key": o.get("card_key", ""),
+            # 2026-09-16 货阶分层只约束黑市节点，NPC 个人货架豁免：该豁免以本标为判据，
+            # 是规则输入而非展示字段，因此必须原样带过来（此前被静默丢弃）。
+            "npc_only": bool(o.get("npc_only", False)),
             **trace(ADAPT, CAN_ECONOMY + CAN_NANJIANG,
                     "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
                     "approved", tunable=True),
@@ -828,6 +840,22 @@ def build_loot(generated_at: str) -> dict:
 # balance.json  (single point of tuning)
 # --------------------------------------------------------------------------
 
+# 价值锚例外登记表：`gu_value_by_rank` 是普通蛊的基准价值锚，只约束普通蛊；以下策展蛊
+# （流派起始蛊 / 关键古方产物）的交易价值刻意高于同转锚值，必须在 balance.json 里显式
+# 登记，validate_world_model.py 才放行——"偏离锚值而未登记"是硬失败。
+# 这里用"id 列表 + 共用说明"而不是 13 份重复字面量：说明文字只有一处，避免改动时漏改。
+# 调整本表 = 调整平衡语义，须同时核对 world-model/data/gu.json 中该蛊的 value。
+GU_VALUE_ANCHOR_EXCEPTION_IDS: list[str] = [
+    "moonlight_gu", "moon_glow_gu", "moon_ray_gu", "moon_shadow_gu", "force_gu",
+    "bear_strength_gu", "white_boar_strength_gu", "jade_skin_gu", "white_jade_gu",
+    "stone_shell_gu", "blood_farewell_gu", "blood_droplet_gu", "blood_bat_gu",
+]
+GU_VALUE_ANCHOR_EXCEPTION_NOTE_ZH = "策展蛊：作为流派起始蛊或关键古方产物，交易价值高于同转基准锚（锚值只约束普通蛊）"
+GU_VALUE_ANCHOR_EXCEPTIONS_NOTE_ZH = (
+    "gu_value_by_rank 是普通蛊的基准价值锚；下列策展蛊（流派起始蛊/关键古方产物）允许高于锚值，"
+    "必须在此显式登记，校验器据此判定。新增偏离而未登记者会被校验器判为失败。")
+
+
 def build_balance(generated_at: str) -> dict:
     b = load("balance")
     v1 = load("v1_battle")
@@ -945,6 +973,9 @@ def build_balance(generated_at: str) -> dict:
             "synthesis": synthesis,
             "contracts": contracts,
             "free_mix_recipe": next((r for r in load("refinement_recipes")["recipes"] if r["kind"] == "free_mix"), {}),
+            "gu_value_anchor_exceptions": {gid: GU_VALUE_ANCHOR_EXCEPTION_NOTE_ZH
+                                           for gid in GU_VALUE_ANCHOR_EXCEPTION_IDS},
+            "gu_value_anchor_exceptions_note_zh": GU_VALUE_ANCHOR_EXCEPTIONS_NOTE_ZH,
         },
         "loot": {
             "pity_threshold": load("loot_tables")["pity"]["threshold"],
