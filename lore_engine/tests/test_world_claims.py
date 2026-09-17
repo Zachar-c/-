@@ -26,7 +26,6 @@ INVALID_FIXTURE_PATH = Path(__file__).parent / "fixtures" / "world_model" / "inv
 
 
 ALLOWED_STATUSES = {"candidate", "canonical", "derived", "adaptation", "rejected", "deferred"}
-PROVISIONAL_STATUSES = {"candidate", "deferred"}
 P0_SOURCE_IDS = {"gu_zhenren_main", "ren_zu_zhuan"}
 FORBIDDEN_PRODUCTION_PREFIXES = ("data/", "scripts/", "scenes/")
 
@@ -81,21 +80,31 @@ class WorldClaimsContractTests(unittest.TestCase):
                 f"manifest source is outside Stage 0 read allowlist: {source_path}",
             )
 
-    def test_benchmark_rows_are_provisional_and_have_target_topics(self) -> None:
+    def test_benchmark_rows_are_finalized_and_have_target_topics(self) -> None:
         config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
         rows = [json.loads(line) for line in BENCHMARK_PATH.read_text(encoding="utf-8").splitlines()]
         self.assertEqual({row["claim_id"] for row in rows}, set(config["high_impact_claim_ids"]))
-        self.assertTrue(all(row["status"] in PROVISIONAL_STATUSES for row in rows))
-        self.assertGreaterEqual(sum(bool(row["source_ids"] and row["evidence_ids"]) or row["status"] == "deferred" for row in rows), 20)
+        self.assertEqual(
+            {row["status"] for row in rows},
+            {"canonical", "derived", "rejected"},
+        )
+        self.assertEqual(
+            {status: sum(row["status"] == status for row in rows) for status in ("canonical", "derived", "rejected")},
+            {"canonical": 15, "derived": 7, "rejected": 2},
+        )
+        self.assertTrue(all(row["source_ids"] and row["evidence_ids"] for row in rows))
 
     def test_real_benchmark_claims_load_without_malformed_records(self) -> None:
         loaded = load_jsonl((BENCHMARK_PATH,), "claim")
 
         self.assertEqual(len(loaded.records), 24)
         self.assertEqual(loaded.errors, ())
-        self.assertTrue(all(claim.status == "deferred" for claim in loaded.records))
-        self.assertTrue(all(claim.source_ids == () for claim in loaded.records))
-        self.assertTrue(all(claim.evidence_ids == () for claim in loaded.records))
+        self.assertEqual(
+            {claim.status for claim in loaded.records},
+            {"canonical", "derived", "rejected"},
+        )
+        self.assertTrue(all(claim.source_ids for claim in loaded.records))
+        self.assertTrue(all(claim.evidence_ids for claim in loaded.records))
         self.assertTrue(all(claim.counter_evidence_ids == () for claim in loaded.records))
         self.assertTrue(all(claim.confidence == "unknown" for claim in loaded.records))
 
@@ -287,8 +296,17 @@ class WorldClaimsContractTests(unittest.TestCase):
         evidence_path = ROOT / "lore_sources" / "benchmarks" / "world_model_stage0" / "evidence.jsonl"
         loaded = load_jsonl((evidence_path,), "evidence")
         self.assertEqual(loaded.errors, ())
-        self.assertEqual([item.evidence_kind for item in loaded.records], ["unknown", "unknown"])
-        self.assertEqual([(item.char_start, item.char_end, item.quote) for item in loaded.records], [(-1, -1, ""), (-1, -1, "")])
+        placeholders = [item for item in loaded.records if item.evidence_kind == "unknown"]
+        self.assertEqual(len(placeholders), 2)
+        self.assertEqual(
+            [item.evidence_id for item in placeholders],
+            ["stage0_pending_main_text", "stage0_pending_ren_zu"],
+        )
+        self.assertEqual(
+            [(item.char_start, item.char_end, item.quote) for item in placeholders],
+            [(-1, -1, ""), (-1, -1, "")],
+        )
+        self.assertEqual(sum(item.evidence_kind == "support" for item in loaded.records), 48)
         claim = WorldClaim("c1", "topic", "x", "canonical", "high", ("gu_zhenren_main",), ("stage0_pending_main_text",), (), "high")
         result = validate_claim_set(tuple(loaded.records) + (claim,), {"minimum_claims": 1, "high_impact_claim_ids": [], "p0_source_ids": ["gu_zhenren_main"]})
         codes = {error.code for error in result.errors}

@@ -18,6 +18,12 @@ ROOT = Path(__file__).resolve().parents[2]
 GENERATED_AT = "2026-09-16T00:00:00Z"
 
 
+def _sha256(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 class Stage0CliTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -154,6 +160,30 @@ class Stage0CliTests(unittest.TestCase):
 
         self.assertEqual(code, 0, stderr)
         self.assertEqual(json.loads(stdout)["result"], "GO")
+
+    def test_committed_canonical_reports_agree_with_gate_output(self) -> None:
+        canonical_dir = ROOT / "docs/lore/generated"
+        gate_dir = ROOT / "generated/_gate_out"
+        for output_dir in (canonical_dir, gate_dir):
+            baseline = json.loads(
+                (output_dir / "world-model-baseline-v1.json").read_text(encoding="utf-8")
+            )
+            gate = (output_dir / "world-model-stage0-gate.md").read_text(encoding="utf-8")
+            self.assertIn("- Result: **GO**", gate)
+            self.assertIn("- Target topics represented: `24/24`", gate)
+            self.assertIn("- High-impact claims with complete P0 references: `24`", gate)
+            self.assertIn(
+                f"- `world-model-baseline-v1.json`: `{_sha256(output_dir / 'world-model-baseline-v1.json')}`",
+                gate,
+            )
+            self.assertIn(
+                f"- `world-model-baseline-v1.md`: `{_sha256(output_dir / 'world-model-baseline-v1.md')}`",
+                gate,
+            )
+            self.assertEqual(baseline["stage0_gate"]["result"], "GO")
+            self.assertEqual(baseline["claim_counts"]["high_impact"], 24)
+            self.assertEqual(baseline["claim_counts"]["total"], 24)
+            self.assertEqual(baseline["stage0_gate"]["production_paths_changed"], [])
 
     def test_world_model_0_missing_config_is_input_error(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
