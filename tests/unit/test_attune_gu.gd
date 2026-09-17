@@ -186,3 +186,49 @@ func test_opening_wild_gu_can_be_attuned_through_resolver() -> void:
 	assert_true(bool(out["result"].get("ok", false)), "opening wild gu must be attunable")
 	assert_eq(str(out["state"].gu_instances[wild_id]["state"]), "refined")
 
+
+func test_wild_gu_cannot_enter_battle_slots() -> void:
+	# Stage 1 验收 §8.1.3：未炼化蛊不能被当作已炼化催动。
+	const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
+	var enemy := {"id": "ridge_hound", "label": "ridge", "hp": 4,
+			"intent": {"kind": "attack", "damage": 0, "label": "蓄力"}}
+	var run := RunState.new_run(101)
+	_wild_instance(run, "gu_901", "force_gu")
+	var battle: Dictionary = V1BattleResolver.start(run, catalog, [enemy])
+	var slots: Array = battle.get("gu_slots", [])
+	for slot_value in slots:
+		assert_ne(str((slot_value as Dictionary).get("instance_id", "")), "gu_901",
+				"wild gu must not appear as a battle slot")
+	var attuned := ResolverScript.apply(run, {"type": "attune_gu", "input_instance_ids": ["gu_901"]}, catalog)
+	var after_battle: Dictionary = V1BattleResolver.start(attuned["state"], catalog, [enemy])
+	var found := false
+	for slot_value in after_battle.get("gu_slots", []):
+		if str((slot_value as Dictionary).get("instance_id", "")) == "gu_901":
+			found = true
+	assert_true(found, "after attune the gu must be usable in battle slots")
+
+
+func test_held_only_collect_lands_as_wild_and_is_attunable() -> void:
+	# §8.3 held_only（高转或不安全）入袋必须是 wild，不能静默变 refined。
+	var run := RunState.new_run(101)
+	var before_refined := run.refined_gu_ids.size()
+	var out := ResolverScript.apply(run, {
+		"type": "collect_surviving",
+		"survivors": [{"instance_id": "sur_held", "definition_id": "moonlight_gu", "rank": 5}],
+		"options": {"safe_and_time_available": true, "cultivator_rank": 1, "satisfied_conditions": {}},
+	}, catalog)
+	assert_true(bool(out["result"].get("ok", false)), "collect_surviving must accept")
+	var harvested: Array = out["result"].get("collected", [])
+	assert_eq(harvested.size(), 1)
+	assert_eq(str(harvested[0].get("status", "")), "held_only")
+	var new_id := str(harvested[0].get("new_instance_id", ""))
+	assert_eq(str(out["state"].gu_instances[new_id].get("state", "")), "wild",
+			"held_only survivor must land as wild, not refined")
+	assert_eq(out["state"].refined_gu_ids.size(), before_refined,
+			"held_only must not inflate refined_gu_ids")
+	var attune := ResolverScript.apply(out["state"], {
+		"type": "attune_gu", "input_instance_ids": [new_id],
+	}, catalog)
+	assert_true(bool(attune["result"].get("ok", false)), "collected wild gu must be attunable")
+	assert_eq(str(attune["state"].gu_instances[new_id]["state"]), "refined")
+

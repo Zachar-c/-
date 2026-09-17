@@ -129,8 +129,12 @@ static func collect_surviving(state, command: Dictionary, catalog: Dictionary) -
 		var status := str(entry.get("status", ""))
 		if status in ["refined", "held_only"] and bool(entry.get("ok", false)):
 			var new_id := RunStateScript.next_gu_instance_id(instances)
+			# Stage 1：held_only（高转 / 不安全无时间）入袋为野生，不能直接催动；
+			# 必须经 attune_gu 扣真元炼化后才进 refined_instances / 战斗槽。
+			# §8.3 原文口径：held 但 cannot activate。
+			var instance_extra := {"state": "wild"} if status == "held_only" else {}
 			instances[new_id] = GuInstanceScript.new_instance(
-					str(entry.get("definition_id", "")), new_id, catalog)
+					str(entry.get("definition_id", "")), new_id, catalog, instance_extra)
 			(aperture.get("stored_gu_instance_ids", []) as Array).append(new_id)
 			harvested.append({"source": str(entry.get("instance_id", "")), "new_instance_id": new_id, "status": status})
 	var next: RunState = state.append_event(_event(state, "gu_collected",
