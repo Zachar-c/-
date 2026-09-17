@@ -192,7 +192,7 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 
 - 定位：战后收获入账清单。
 - 数据绑定：`last_battle_loot`（material_ids/gu_id/stone/info）逐项 `name/kind/quality/effect/cost`、`last_battle_cost`（战斗代价）。
-- 命令：入账为已发生事实（自动），继续/离开；`[T9.2]` 战后幸存蛊收取确认（`collect_surviving_gu`：held_only 与 refined 分态展示、战前声明条件未满足的 `not_collected` 原因可见）。
+- 命令：入账为已发生事实（自动），继续/离开；`[T9.2]` 战后幸存蛊收取确认（`collect_surviving_gu`：held_only 与 refined 分态展示、战前声明条件未满足的 `not_collected` 原因可见）。**Stage 1（2026-09-17）**：`held_only`（高转 / 不安全无时间）入袋为 `state=wild`，不进战斗槽与喂养投影，须 `attune_gu` 扣真元炼化后才可用。
 - 状态与确认：`[T9]` 收取幸存蛊 → 确认层级 1（条件/结局说明）；释放/灭蛊入口从此屏进（确认层级 2，展示 `release_gu` 后果 / `destroy_gu` 声明提取物）。
 - 组件：`GuCard`、`GuResourceChip`、`[T9]` `GuCommandButton`、`GuConfirmDialog`。
 - 验收：入账项与 `loot_rules` 收取结果一一对应；无预算裁剪痕迹（#12 透明）。
