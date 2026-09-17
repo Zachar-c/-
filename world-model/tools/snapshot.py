@@ -66,18 +66,29 @@ def find_snap(sid: str) -> Path:
     return sorted(cands)[-1]
 
 
-def restore(sid: str, yes: bool) -> int:
+def restore(sid: str, yes: bool, prune: bool = False) -> int:
     snap = find_snap(sid)
     files = [r for r in iter_files(snap) if str(r) != "_MANIFEST.txt"]
-    print(f"将从 {snap.name} 恢复 {len(files)} 个文件到 world-model/")
+    snap_set = {str(r) for r in files}
+    extras = [r for r in iter_files(WM_ROOT) if str(r) not in snap_set]
+    mode = "全量回滚（--prune，会删除新增文件）" if prune else "覆盖式恢复（保留新增文件）"
+    print(f"模式：{mode}")
+    print(f"将从 {snap.name} 恢复 {len(files)} 个文件；快照之后新增 {len(extras)} 个文件")
     if not yes:
         print("（演练模式；加 --yes 真正执行。恢复前建议先 take 一张当前快照）")
+        for r in extras[:10]:
+            print(f"   新增(待删) {r}")
         return 0
     for rel in files:
         target = WM_ROOT / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(snap / rel, target)
-    print(f"已恢复 {len(files)} 个文件")
+    removed = 0
+    if prune:
+        for rel in extras:
+            (WM_ROOT / rel).unlink(missing_ok=True)
+            removed += 1
+    print(f"已恢复 {len(files)} 个文件；已删除新增文件 {removed} 个")
     return 0
 
 
@@ -105,6 +116,8 @@ def main() -> int:
     t = sub.add_parser("take"); t.add_argument("label", nargs="?", default="")
     sub.add_parser("list")
     r = sub.add_parser("restore"); r.add_argument("id"); r.add_argument("--yes", action="store_true")
+    r.add_argument("--prune", action="store_true",
+                   help="同时删除快照之后新增的文件（默认只做覆盖式恢复）")
     d = sub.add_parser("diff"); d.add_argument("id")
     a = ap.parse_args()
     if a.cmd == "take":
@@ -112,7 +125,7 @@ def main() -> int:
     if a.cmd == "list":
         return list_snaps()
     if a.cmd == "restore":
-        return restore(a.id, a.yes)
+        return restore(a.id, a.yes, getattr(a, "prune", False))
     return diff(a.id)
 
 

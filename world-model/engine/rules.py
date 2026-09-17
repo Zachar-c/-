@@ -145,6 +145,8 @@ def gu_instance(wm, gu_id: str, iid: str) -> dict:
         "starved_stages": 0,
         "sealed_turns": 0,
         "alive": True,
+        # wild=野生未炼化；refined=已炼化认主（与 Godot refine_command_rules 同语义）
+        "state": "refined",
     }
 
 
@@ -282,6 +284,27 @@ def resolve_effect(wm, effect: dict, gu_rank: int, state: dict) -> dict:
         return {"kind": "strike", "damage": int(effect.get("amount", 0)), "sword_mark": True}
     return {"kind": "none", "damage": 0}
 
+
+
+def attune_gu(wm, state: dict, iid: str) -> dict:
+    """炼化/认主：把野生蛊转为已炼化。
+
+    与 Godot `scripts/domain/refine_command_rules.gd:268 _attune_gu` 同语义：
+    仅 wild 可炼化；消耗 4 + 2*(转-1) 真元；先判门槛后扣费（不足时一只真元都不扣、状态不变）。
+    """
+    inst = next((i for i in state.get("gu_instances", []) if i.get("iid") == iid), None)
+    if inst is None:
+        raise ResourceExhausted(f"没有这只蛊实例：{iid}")
+    if inst.get("state", "refined") != "wild":
+        raise ResourceExhausted(f"该蛊并非野生状态，无需炼化：{iid}")
+    rank = max(1, int(inst.get("instance_rank", 1)))
+    cost = 4 + 2 * (rank - 1)
+    if "essence" in state and int(state["essence"]) < cost:
+        raise ResourceExhausted(f"真元不足：炼化需要 {cost}，现有 {state['essence']}")
+    if "essence" in state:
+        state["essence"] = int(state["essence"]) - cost
+    inst["state"] = "refined"
+    return {"iid": iid, "cost": cost, "rank": rank}
 
 def refine_gu(wm, state: dict, gu_id: str, recipe: dict, *, roll: float = None) -> dict:
     """炼蛊/升炼。recipe 来自 gu.json 的 refine_as_output 边。"""

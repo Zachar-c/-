@@ -97,10 +97,10 @@ def main() -> int:
         note = e["canon_review_status"]
         if e["essence_tier"] is None:
             note += "；品阶留空"
-        return row("realm", e["id"], e["name_zh"], mapped, detail, CLASS_ZH[e["source_class"]], note)
+        return row("realm", e["id"], e["name_zh"], refs(e) + "<br>" + mapped, detail, CLASS_ZH[e["source_class"]], note)
 
     def path_row(e):
-        return row("path", e["id"], e["name_zh"], "原著道途/流派（血、气、力、魂、炼…）",
+        return row("path", e["id"], e["name_zh"], refs(e) + "<br>" + "原著道途/流派（血、气、力、魂、炼…）",
                    e["summary_zh"], CLASS_ZH[e["source_class"]],
                    f"冲突流派={e['conflict_paths'] or '无'}；起始蛊 {len(e['starter_gu_ids'])} 只；池 {e['pool_size']} 只")
 
@@ -109,7 +109,7 @@ def main() -> int:
             e["prototype_source"], "手写策展蛊虫")
         effect_note = {"explicit": "独立效果", "combat_effects": "组合效果",
                        "role_default": "仅角色兜底（非独立效果）"}[e["effect_source"]]
-        return row("gu", e["id"], e["name_zh"], origin,
+        return row("gu", e["id"], e["name_zh"], refs(e) + "<br>" + origin,
                    f"{e['rank']} 转 {e['school']}／{e['role']}；效果 {effect_note}",
                    CLASS_ZH[e["source_class"]],
                    f"{e['canon_review_status']}；{e['adaptation_note']}")
@@ -117,7 +117,7 @@ def main() -> int:
     def faction_row(e):
         agents = "，".join(e["agents"]) or "无"
         return row("faction", e["id"], e["name_zh"],
-                   "南疆山寨/商队/体制外散修/魔道的利害结构" if e["entity_kind"] == "faction" else "恶名与信誉的社会压力",
+                   refs(e) + "<br>" + "南疆山寨/商队/体制外散修/魔道的利害结构" if e["entity_kind"] == "faction" else "恶名与信誉的社会压力",
                    e["summary_zh"], CLASS_ZH[e["source_class"]],
                    f"成员={agents}；关系档 {len(e['relation_levels'])} 级")
 
@@ -133,10 +133,10 @@ def main() -> int:
             detail = "升仙终局窗口（碎窍纳气、三气平衡）"
             extra = f"选项 {e['choices']}；跳过={e['on_skip']}"
         return row("region", e["id"], e["name_zh"],
-                   "南疆地理与山寨聚居；层名取自原文地名线索", detail, CLASS_ZH[e["source_class"]], extra)
+                   refs(e) + "<br>" + "南疆地理与山寨聚居；层名取自原文地名线索", detail, CLASS_ZH[e["source_class"]], extra)
 
     def event_row(e):
-        return row("event", e["id"], e["name_zh"], f"原著高频场景母题：{e['kind']}",
+        return row("event", e["id"], e["name_zh"], refs(e) + "<br>" + f"原著高频场景母题：{e['kind']}",
                    f"{e['summary_zh']}（收益：{e['gain_text_zh']}）", CLASS_ZH[e["source_class"]],
                    f"气血 -{e['health_cost']}｜元石 +{e['stone_gain']}｜延迟魂 -{e['delayed_cost']['soul']}"
                    + (f"｜诅咒 {e['curse_id']}" if e["curse_id"] else ""))
@@ -144,25 +144,25 @@ def main() -> int:
     def loot_material_row(e):
         use = (e.get("use") or {}).get("text", "")
         return row("loot", e["id"], e["name_zh"],
-                   (e.get("use") or {}).get("text", "") and "原著材料形态参照"
+                   refs(e) + "<br>" + (e.get("use") or {}).get("text", "") and "原著材料形态参照"
                    if e["source_class"] == "canon" else "游戏扩展材料",
                    f"价值 {e['value']}／参考价 {e['reference_value']}／流动性 {e['public_liquidity']}；{use}",
                    CLASS_ZH[e["source_class"]],
                    f"{'核心蛊材' if e['is_core_material'] else '派生蛊材'}；{e['origin_status']}")
 
     def economy_row(e):
-        return row("economy", e["id"], e["name_zh"], "元石本位经济；修行/战斗/炼蛊/交易都耗元石",
+        return row("economy", e["id"], e["name_zh"], refs(e) + "<br>" + "元石本位经济；修行/战斗/炼蛊/交易都耗元石",
                    f"{len(e['resources'])} 种资源、{len(e['shop_offers'])} 条报价、"
                    f"{len(e['black_market_exchange'])} 条黑市汇率、{len(e['layer_budget'])} 层预算",
                    CLASS_ZH[e["source_class"]], e["adaptation_note"])
 
     def balance_row(e):
-        return row("balance", e["id"], e["name_zh"], "把原著约束落成可调参数（非原著数值）",
+        return row("balance", e["id"], e["name_zh"], refs(e) + "<br>" + "把原著约束落成可调参数（非原著数值）",
                    f"参数分组：{'、'.join(k for k in e if isinstance(e[k], dict) and k not in ('source_ids',))}",
                    CLASS_ZH[e["source_class"]], e["adaptation_note"])
 
     def manifest_row(e):
-        return row("manifest", e["id"], e["name_zh"], "构建产物，无原著对应",
+        return row("manifest", e["id"], e["name_zh"], refs(e) + "<br>" + "构建产物，无原著对应",
                    f"{e['file_count']} 个数据文件、{e['total_bytes']} 字节、零第三方依赖",
                    CLASS_ZH[e["source_class"]], e["adaptation_note"])
 

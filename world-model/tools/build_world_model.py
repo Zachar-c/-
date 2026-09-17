@@ -327,9 +327,11 @@ def build_gu(generated_at: str) -> dict:
             note = "批量派生蛊：由流派×角色×转数机械生成，其伤害数值与标签联动为游戏规则，不代表原著中同名或同类蛊虫的既定能力。"
         else:
             src_ids, review, note = CURATED_GU_DEFAULT
-            src_class = CANON
             if gid in CURATED_GU:
                 src_ids, review, note = CURATED_GU[gid]
+            # 只有真的登记了 CAN-/ADP-/GAME- 编号才允许标为原著事实；
+            # 没有编号的策展蛊按原创内容归类，不得冒充原著设定。
+            src_class = CANON if src_ids else ORIGINAL
         entities.append({
             "id": gid,
             "name_zh": names.get(gid, gid),

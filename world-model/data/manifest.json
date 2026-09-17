@@ -37,8 +37,8 @@
           "path": "world-model/data/gu.json",
           "entity_type": "gu",
           "count": 802,
-          "bytes": 1105068,
-          "sha256": "1060e66ffe075bcd41a1fdb64bd994a93e026cbbf79455b03373f001043a3e9d"
+          "bytes": 1261550,
+          "sha256": "c0e52d2980d5f4723ede2147295924ea69f13fe9994c83d42192138559f50fd4"
         },
         {
           "path": "world-model/data/economy.json",
@@ -84,7 +84,7 @@
         }
       ],
       "file_count": 9,
-      "total_bytes": 1497752,
+      "total_bytes": 1654234,
       "read_only_upstream": [
         "data/gu.json",
         "data/gu_names.json",

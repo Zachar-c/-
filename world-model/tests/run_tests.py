@@ -793,6 +793,15 @@ def traceability_fields_are_wellformed(ctx: Ctx) -> None:
             assert isinstance(entity["adaptation_note"], str)
             for sid in entity["source_ids"]:
                 assert sid.startswith(pattern_ok), f"{entity['id']} 的来源编号 {sid!r} 不是 CAN-/ADP-/GAME-"
+            if entity_type == "manifest":
+                # 数据清单是构建产物，不对应原著设定，豁免内容溯源要求
+                continue
+            if entity["source_class"] == "canon":
+                assert entity["source_ids"], (
+                    f"{entity['id']} 标为 canon 却没有 source_ids —— 必须补 CAN 编号，"
+                    f"或改判为 adaptation/original_game_content")
+            if entity["canon_review_status"] == "approved":
+                assert entity["source_ids"], f"{entity['id']} 已是 approved 状态却无来源编号"
     canon_gu = [g for g in wm.gu.values() if g["source_class"] == "canon"]
     assert len(canon_gu) > 200, "原著蛊虫数量偏少"
 
@@ -873,5 +882,45 @@ def main(argv: list[str]) -> int:
     return 0 if not failed else 1
 
 
+@test
+def attune_gu_mirrors_godot_lifecycle(ctx: Ctx) -> None:
+    from engine import rules as R
+
+    wm = WorldModel()
+    inst = R.gu_instance(wm, "small_light_gu", "i1")
+    inst["state"] = "wild"
+    state = {"gu_instances": [inst], "essence": 100}
+    out = R.attune_gu(wm, state, "i1")
+    assert inst["state"] == "refined", "炼化后应转为 refined"
+    assert out["cost"] == 4 and state["essence"] == 96, f"1 转成本应为 4，实际 {out}"
+
+    # 非 wild 拒绝
+    rejected = False
+    try:
+        R.attune_gu(wm, state, "i1")
+    except Exception:
+        rejected = True
+    assert rejected, "已炼化的蛊再次炼化应被拒绝"
+
+    # 真元不足：拒绝且不扣费、状态不变
+    inst2 = R.gu_instance(wm, "small_light_gu", "i2")
+    inst2["state"] = "wild"
+    st2 = {"gu_instances": [inst2], "essence": 0}
+    rejected2 = False
+    try:
+        R.attune_gu(wm, st2, "i2")
+    except Exception:
+        rejected2 = True
+    assert rejected2 and inst2["state"] == "wild" and st2["essence"] == 0, "真元不足时应零副作用拒绝"
+
+    # 高转成本随转数递增，且与 Godot 公式一致
+    hi = R.gu_instance(wm, "small_light_gu", "i3")
+    hi["instance_rank"] = 5
+    hi["state"] = "wild"
+    st3 = {"gu_instances": [hi], "essence": 100}
+    assert R.attune_gu(wm, st3, "i3")["cost"] == 4 + 2 * (5 - 1) == 12
+
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv))
+
+

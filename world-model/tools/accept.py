@@ -62,7 +62,7 @@ def main() -> int:
 
     checks = [
         ("1 数据校验（schema/引用/数值/环）", lambda: run("validate", [PY, str(WM_ROOT / "tools" / "validate_world_model.py")])),
-        ("2 测试套件（38 用例）", lambda: run("tests", [PY, str(WM_ROOT / "tests" / "run_tests.py")])),
+        ("2 测试套件（断言式，全量）", lambda: run("tests", [PY, str(WM_ROOT / "tests" / "run_tests.py")])),
         (f"3 冒烟跑局（{args.smoke} 局）", lambda: smoke(args.smoke)),
     ]
 
