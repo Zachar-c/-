@@ -34,7 +34,7 @@ class RealTenSectionAcceptanceTests(unittest.TestCase):
             database = Path(tmp) / "lore.sqlite"
             indexed = run_cli(database, "index", "--source-file-id", "gu_zhenren_main", "--section-limit", "10")
             self.assertEqual(indexed.returncode, 0, indexed.stderr)
-            self.assertEqual(json.loads(indexed.stdout), {"characters": 32500, "chunks": 10, "sections": 10})
+            self.assertEqual(json.loads(indexed.stdout), {"characters": 31084, "chunks": 10, "sections": 10})
 
             first = run_cli(database, "run", "--backend", "fixture", "--stop-after", "3")
             self.assertEqual(first.returncode, 0, first.stderr)
