@@ -100,34 +100,96 @@ static func find_card(state: RunState, node: Dictionary, action_id: String, cata
 	return {}
 
 
+## 战斗行动预览（第三阶段 Task 3，2026-09-17）：**战斗行动的唯一投影来源**。
+## 蛊虫卡（gu.<instance_id>）/ 拳脚（basic_attack）/ 杀招（kill_move.<id>）/
+## 收势（battle.end_turn）/ 撤离（battle.retreat）都产出结构化命令，可执行性与
+## 禁用原因一律取自 V1BattleResolver 的同一套门禁（can_play_gu /
+## basic_attack_reason / kill_move_reason）。表现层只准转呈 `command`，不得自行
+## 判定；run_command_builder 按 ID 构造命令仅作兼容包装。
 static func preview_battle_actions(battle: Dictionary, state: RunState, catalog: Dictionary) -> Array[Dictionary]:
 	var cards: Array[Dictionary] = []
-	if state.is_terminal():
+	if battle.is_empty() or state.is_terminal():
 		return cards
-	# I-2a 收敛（2026-09-06）：蛊行动不再经此投影。V1 蛊行动的手牌行 id 即
-	# gu.<instance_id>，由 run_command_builder 直接构造 use_gu 命令（不经
-	# battle.action_card 信封）；旧卡蓝图层索引已随 B2 退役，原先以它查定义
-	# 的 hand/蛊槽投影恒空、属死代码，一并移除。本函数只服务 battle.action_card
-	# 信封所需的基本动作（拳脚/闪避/撤离等）与旧信封测试。
-	cards.append(_battle_card(battle, state, {
-		"id": "battle.basic.punch",
+	# 终局（victory/defeat）或已收场（retreat 落 flags.session_closed）后不再产出
+	# 可提交行动——与门面 apply_turn 的 battle_over 拦截同源，UI 由此天然置灰。
+	if str(battle.get("phase", "player_action")) != "player_action" \
+			or bool((battle.get("flags", {}) as Dictionary).get("session_closed", false)):
+		return cards
+	for slot_index in (battle.get("gu_slots", []) as Array).size():
+		_append_battle_gu_card(cards, battle, state, slot_index)
+	cards.append(_battle_basic_attack_card(battle, state))
+	for km_value in battle.get("kill_moves", []):
+		_append_battle_kill_card(cards, battle, state, km_value)
+	_append_battle_retreat_card(cards, battle, state, catalog)
+	cards.append(_battle_end_turn_card(battle, state))
+	_assert_unique_ids(cards)
+	return cards
+
+
+static func _append_battle_gu_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, slot_index: int) -> void:
+	var slot: Dictionary = (battle.get("gu_slots", []) as Array)[slot_index]
+	var instance_id := str(slot.get("instance_id", ""))
+	var reason := V1BattleResolver.can_play_gu(battle, slot_index)
+	cards.append(_battle_command_card(battle, state, {
+		"id": "gu.%s" % instance_id,
+		"type": "use_gu",
+		"title": DisplayText.gu(str(slot.get("definition_id", ""))),
+		"summary": "催发此蛊。",
+		"executable": reason.is_empty(),
+		"reason": reason,
+		"cost": _battle_gu_cost(slot),
+		# 指向规则与快照同口径（仅 strike 类需要选敌），Task 3 不改拖拽交互。
+		"target_type": "single_enemy" if str((slot.get("effect", {}) as Dictionary).get("kind", "")) == "strike" else "none",
+		"valid_target_ids": _living_enemy_ids(battle),
+		"command": {
+			"type": "use_gu",
+			"instance_id": instance_id,
+			"target_id": "",
+			"state_version": state.event_log.size(),
+		},
+	}))
+
+
+static func _battle_basic_attack_card(battle: Dictionary, state: RunState) -> Dictionary:
+	var reason := V1BattleResolver.basic_attack_reason(battle)
+	return _battle_command_card(battle, state, {
+		"id": "basic_attack",
+		"type": "basic_attack",
 		"title": "拳脚",
 		"summary": "零消耗的基础打击，任何战况都可用。",
-		"executable": true,
-		"cost": {},
+		"executable": reason.is_empty(),
+		"reason": reason,
+		"cost": {"thought": 1},
 		"known_risk": _counter_swallow_risk(battle),
 		"expected_gain": ["造成 1 点基础伤害。"],
 		"target_type": "single_enemy",
 		"valid_target_ids": _living_enemy_ids(battle),
+		"command": {"type": "basic_attack", "state_version": state.event_log.size()},
+	})
+
+
+static func _append_battle_kill_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, km_value: Variant) -> void:
+	var km: Dictionary = km_value
+	var kill_move_id := str(km.get("id", ""))
+	var reason := V1BattleResolver.kill_move_reason(battle, kill_move_id)
+	cards.append(_battle_command_card(battle, state, {
+		"id": "kill_move.%s" % kill_move_id,
+		"type": "play_kill_move",
+		"title": str(km.get("label", kill_move_id)),
+		"summary": "预制杀招，一场一用。",
+		"executable": reason.is_empty(),
+		"reason": reason,
+		"cost": _battle_kill_move_cost(km),
+		"command": {
+			"type": "play_kill_move",
+			"kill_move_id": kill_move_id,
+			"confirmed": false,
+			"state_version": state.event_log.size(),
+		},
 	}))
-	cards.append(_battle_card(battle, state, {
-		"id": "battle.basic.dodge",
-		"title": "闪避",
-		"summary": "零消耗的防守姿态，速度压制慢速攻势。",
-		"executable": true,
-		"cost": {},
-		"known_risk": ["闪避速度高于敌方攻击速度时，完全免伤本轮攻势。"],
-	}))
+
+
+static func _append_battle_retreat_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, catalog: Dictionary) -> void:
 	var retreat_cost := 0 if battle.get("flags", []).has("retreat_preserved") \
 			else int(catalog.get("balance", {}).get("retreat_stone_cost", 2))
 	var retreat_open := _battle_retreat_open(battle)
@@ -137,11 +199,13 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 	if boss_no_retreat:
 		retreat_open = false
 	var retreat_ready := retreat_open and state.stone >= retreat_cost
-	cards.append(_battle_card(battle, state, {
+	cards.append(_battle_command_card(battle, state, {
 		"id": "battle.retreat",
+		"type": "retreat",
 		"title": "撤离",
 		"summary": "趁交锋间隙抽身。",
 		"executable": retreat_ready,
+		"reason": "" if retreat_ready else "retreat_blocked",
 		"block_reason": "敌方为首领：此战退无可退。" if boss_no_retreat \
 			else "当前地形、追击或敌方控制不允许撤离。" if not retreat_open \
 			else "元石不足：需要 %d 枚。" % retreat_cost if state.stone < retreat_cost else "",
@@ -149,24 +213,44 @@ static func preview_battle_actions(battle: Dictionary, state: RunState, catalog:
 		"known_risk": ["撤离成功后会放弃本次战利品。"],
 		"remedy_hints": [] if boss_no_retreat else (
 			["可先催发雾步蛊保留撤离机会。"] if not retreat_open else _stone_remedies(retreat_cost - state.stone)),
+		"command": {
+			"type": "retreat",
+			"state_version": state.event_log.size(),
+			"expected_phase": str(battle.get("phase", "player_action")),
+		},
 	}))
-	cards.append(_battle_card(battle, state, {
+
+
+static func _battle_end_turn_card(battle: Dictionary, state: RunState) -> Dictionary:
+	return _battle_command_card(battle, state, {
 		"id": "battle.end_turn",
+		"type": "end_turn",
 		"title": "收势",
 		"summary": "结束本轮，敌方将执行已公开意图。",
 		"executable": true,
+		"reason": "",
 		"cost": {},
 		"known_risk": ["敌方将执行：%s。" % _living_intent_labels(battle)],
-	}))
-	_assert_unique_ids(cards)
-	return cards
+		"command": {
+			"type": "end_turn",
+			"state_version": state.event_log.size(),
+			"expected_phase": str(battle.get("phase", "player_action")),
+		},
+	})
 
 
-static func _battle_card(battle: Dictionary, state: RunState, values: Dictionary) -> Dictionary:
+## 战斗行动卡成型处（Task 3 十键契约：id/type/executable/block_reason/costs/
+## target_type/valid_target_ids/command/state_version/expected_phase）。
+## cost/costs 同值双写：既有消费面读 cost，计划契约读 costs。
+static func _battle_command_card(battle: Dictionary, state: RunState, values: Dictionary) -> Dictionary:
+	var reason := str(values.get("reason", ""))
 	var card := _card(state, values)
-	card["state_version"] = int(battle.get("hand_version", 0))
-	card["expected_phase"] = str(battle.get("phase", "player"))
-	card["command"] = {}
+	card["type"] = str(values.get("type", ""))
+	card["reason"] = reason
+	if not values.has("block_reason"):
+		card["block_reason"] = _battle_block_text(reason)
+	card["costs"] = card["cost"].duplicate(true)
+	card["expected_phase"] = str(battle.get("phase", "player_action"))
 	if not card.has("target_type"):
 		card["target_type"] = "none"
 	if not card.has("valid_target_ids"):
@@ -174,12 +258,49 @@ static func _battle_card(battle: Dictionary, state: RunState, values: Dictionary
 	return card
 
 
+## 战斗禁用原因 → 玩家可见文案（唯一一份）。此前 battle_snapshot._v1_reject_text
+## 与本服务各持一套，Task 3 收敛到预览侧，快照只透传。
+static func _battle_block_text(reason: String) -> String:
+	match reason:
+		"unknown_gu": return "未知蛊虫"
+		"gu_consumed": return "此蛊已在战斗中被消耗"
+		"gu_sealed": return "此蛊正被封印"
+		"gu_used_this_turn": return "此蛊本回合已释放"
+		"action_limit_reached": return "本回合行动次数已用完"
+		"insufficient_thought": return "念头不足（每次行动耗 1 念头）"
+		"insufficient_true_qi": return "真元不足"
+		"insufficient_qi_quality": return "真元质量不足，无法催动此转数的蛊虫"
+		"kill_move_recipe_sealed": return "配方蛊被封印，杀招不可用"
+		"unknown_kill_move": return "未知杀招"
+	return reason
+
+
+static func _battle_gu_cost(slot: Dictionary) -> Dictionary:
+	var cost := {}
+	if int(slot.get("true_qi_cost", 0)) > 0:
+		cost["true_qi"] = int(slot.get("true_qi_cost", 0))
+	cost["thought"] = int(slot.get("thought_cost", 1))
+	if int(slot.get("life_cost", 0)) > 0:
+		cost["life_time"] = int(slot.get("life_cost", 0))
+	return cost
+
+
+static func _battle_kill_move_cost(km: Dictionary) -> Dictionary:
+	var cost := {}
+	if int(km.get("true_qi_cost", 0)) > 0:
+		cost["true_qi"] = int(km.get("true_qi_cost", 0))
+	cost["thought"] = int(km.get("thought_cost", 1))
+	if int(km.get("life_cost", 0)) > 0:
+		cost["life_time"] = int(km.get("life_cost", 0))
+	return cost
+
+
 static func _living_enemy_ids(battle: Dictionary) -> Array[String]:
 	var ids: Array[String] = []
 	for enemy_value in battle.get("enemies", []):
 		var enemy: Dictionary = enemy_value
-		if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
-			ids.append(str(enemy.get("enemy_id", "")))
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			ids.append(str(enemy.get("id", "")))
 	return ids
 
 
@@ -187,8 +308,10 @@ static func _living_intent_labels(battle: Dictionary) -> String:
 	var labels: Array[String] = []
 	for enemy_value in battle.get("enemies", []):
 		var enemy: Dictionary = enemy_value
-		if bool(enemy.get("alive", false)) and int(enemy.get("hp", 0)) > 0:
-			labels.append(str((enemy.get("visible_intent", {}) as Dictionary).get("label", "已公开意图")))
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			# V1 敌人意图键是 intent；visible_intent 只作旧形状回退。
+			var intent: Dictionary = enemy.get("intent", enemy.get("visible_intent", {}))
+			labels.append(str(intent.get("label", "已公开意图")))
 	return "、".join(labels) if not labels.is_empty() else "已公开意图"
 
 
@@ -224,65 +347,6 @@ static func _counter_swallow_risk(battle: Dictionary) -> Array[String]:
 	if not labels.is_empty():
 		risk.append("敌方蓄势「%s」：这次的直接攻伐会被吞下，不造成伤害；可先以束缚/守护类蛊虫破解。" % "、".join(labels))
 	return risk
-
-
-static func _target_type_for_gu(gu_id: String, definition: Dictionary) -> String:
-	if gu_id in ["small_light_gu", "thorn_whip_gu", "blood_moss_gu", "blood_droplet_gu", "blood_bat_gu", "force_gu", "moonlight_gu", "moon_glow_gu"]:
-		return "single_enemy"
-	for effect_value in definition.get("combat_effects", []):
-		if str((effect_value as Dictionary).get("kind", "")) == "strike":
-			return "single_enemy"
-	return "self"
-
-static func _append_battle_gu_card(cards: Array[Dictionary], battle: Dictionary, state: RunState, gu: Dictionary, gu_id: String, mode: String) -> void:
-	var essence_cost := int(gu.get("essence_cost", 0))
-	var executable := state.essence >= essence_cost
-	var title_suffix := ""
-	var effect := _battle_effect(gu_id, mode)
-	if not mode.is_empty():
-		title_suffix = "·%s" % ("束缚" if mode == "bind" else "抽击")
-	var risk: Array[String] = []
-	if gu_id == "thorn_whip_gu" and mode == "strike" and battle.get("clues", []).has("stone_dust"):
-		risk.append("对方脚下石粉未散，直接攻伐可能遭遇已知的护身反制。")
-	if gu_id == "thorn_whip_gu" and mode != "bind":
-		risk.append_array(_counter_swallow_risk(battle))
-	cards.append(_card(state, {
-		"id": "battle.gu.%s.%s" % [gu_id, mode if not mode.is_empty() else "activate"],
-		"title": "%s%s" % [DisplayText.gu(gu_id), title_suffix],
-		"summary": effect,
-		"executable": executable,
-		"block_reason": "真元不足：需要 %d 点，当前仅有 %d 点。" % [essence_cost, state.essence] if not executable else "",
-		"cost": {"spirit": essence_cost},
-		"known_risk": risk,
-		"expected_gain": [effect],
-		"unknown_note": "部分效果会受敌方状态和未暴露后手影响。" if not risk.is_empty() else "",
-		"remedy_hints": ["可先收势恢复判断，或改用真元消耗更低的蛊虫。"] if not executable else [],
-		"command": {"type": "use_gu", "gu_id": gu_id, "mode": mode},
-	}))
-
-
-static func _battle_effect(gu_id: String, mode: String) -> String:
-	if gu_id == "thorn_whip_gu":
-		return "束缚敌人，使其难以施展护身反制。" if mode == "bind" else "对敌人造成 2 点伤害。"
-	match gu_id:
-		"small_light_gu": return "小光弹照中敌手，伤敌并照出异状。本回合内后续光道蛊伤害 +2。"
-		"stone_shell_gu": return "获得护身，削减本轮所受伤害。"
-		"mist_step_gu": return "保留撤离机会。"
-		"blood_moss_gu": return "恢复 1 点伤势并造成 1 点伤害。"
-		"venom_thread_gu": return "拖慢敌人攻势。"
-		"pulse_drum_gu": return "打断敌方本轮攻势。"
-		"shadow_veil_gu": return "扰乱敌方锁定，削减伤害。"
-		"moonlight_gu": return "月刃横空，对敌人造成 2 点伤害。"
-		"moon_glow_gu": return "月华炽放，对敌人造成 3 点伤害。"
-		"trail_eye_gu": return "目光如炬，照出敌方异状并拖慢其攻势。"
-		"blood_droplet_gu": return "血滴如刃，对敌人造成 2 点伤害。"
-		"blood_bat_gu": return "蝙蝠噬血：恢复 1 点伤势并造成 1 点伤害。"
-		"blood_wing_gu": return "展开血翼，保留撤离机会。"
-		"blood_farewell_gu": return "爱别离之毒缚住敌人，拖慢本回合攻势。"
-		"force_gu": return "力量蛊爆发，对敌人造成 2 点伤害。"
-		"bear_strength_gu": return "熊力贯体，恢复 1 点伤势。"
-		"qi_wall_gu": return "竖起无形气墙，护住周身。"
-	return "催发蛊虫效果。"
 
 
 static func _battle_retreat_open(battle: Dictionary) -> bool:

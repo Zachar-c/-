@@ -26,7 +26,7 @@ func test_small_light_card_declares_the_support_statically() -> void:
 		{"definition_id": "s4_moonlight_gu"},
 	])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy(20)])
-	var cards := SnapshotBuilder._v1_hand(battle, catalog)
+	var cards := SnapshotBuilder._v1_hand(battle, catalog, run)
 	var card := _card_for_gu(cards, "s4_small_light_gu")
 	assert_false(card.is_empty(), "small light card must be in the hand snapshot")
 	assert_string_contains(str(card["summary"]), "+2",
@@ -40,7 +40,7 @@ func test_active_support_is_visible_on_same_school_card() -> void:
 	])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy(20)])
 	battle = V1.play_gu(battle, 0)["battle"]  # small light registers light +2
-	var cards := SnapshotBuilder._v1_hand(battle, catalog)
+	var cards := SnapshotBuilder._v1_hand(battle, catalog, run)
 	var card := _card_for_gu(cards, "s4_moonlight_gu")
 	assert_false(card.is_empty(), "moonlight card must be in the hand snapshot")
 	var risks := (card["known_risk"] as Array).map(func(v): return str(v))
@@ -52,7 +52,7 @@ func test_active_support_is_visible_on_same_school_card() -> void:
 func test_no_support_hint_without_a_registered_boost() -> void:
 	var run := _run_with_gu([{"definition_id": "s4_moonlight_gu"}])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy(20)])
-	var cards := SnapshotBuilder._v1_hand(battle, catalog)
+	var cards := SnapshotBuilder._v1_hand(battle, catalog, run)
 	var card := _card_for_gu(cards, "s4_moonlight_gu")
 	var risks := " / ".join(PackedStringArray((card["known_risk"] as Array).map(func(v): return str(v))))
 	assert_false(risks.contains("支援"), "no support hint without small light")

@@ -22,6 +22,7 @@ const ShopCommandRulesScript = preload("res://scripts/domain/shop_command_rules.
 const RefineCommandRulesScript = preload("res://scripts/domain/refine_command_rules.gd")
 const SocialCommandRulesScript = preload("res://scripts/domain/social_command_rules.gd")
 const RunCommandsScript = preload("res://scripts/domain/run_command_rules.gd")
+const M0RewardResolverScript = preload("res://scripts/domain/m0_reward_resolver.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 # GuBalance 为 class_name 静态公式模块，直接按全局类名调用。
 
@@ -209,6 +210,16 @@ static func _handler_for(command_type: String) -> Variant:
 			"refine_up_material": func(state, command, catalog): return RunCommandsScript.refine_up_material(state, command, catalog),
 			"bloodlet": func(state, command, catalog): return RunCommandsScript.bloodlet(state, command, catalog),
 			"absorb_soul": func(state, command, catalog): return RunCommandsScript.absorb_soul(state, command, catalog),
+			"m0_reward_take": func(state, command, catalog):
+				if not bool(state.node_flags.get("m0_mode", false)):
+					return _rejected(state, "m0_reward_not_available")
+				var option: Dictionary = command.get("option", {})
+				if option.is_empty():
+					return _rejected(state, "m0_reward_unknown")
+				var applied := M0RewardResolverScript.apply_choice(state, option, catalog)
+				if not bool(applied.get("ok", false)):
+					return _rejected(state, str(applied.get("reason", "m0_reward_rejected")))
+				return _accepted(applied["state"]),
 		}
 	return _dispatch.get(command_type, null)
 

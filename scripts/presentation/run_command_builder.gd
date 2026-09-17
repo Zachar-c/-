@@ -127,6 +127,7 @@ static func for_screen(screen: String, controller) -> Dictionary:
 					else:
 						controller._selected_contracts.append(cid),
 				"new_run": func(): controller.start_new_run(controller.roll_seed(), controller._selected_school, Array(controller._selected_contracts), Array(controller._selected_buffs)),
+				"new_m0_run": func(): controller.start_m0_run(controller.roll_seed()),
 				"open_schools": func(): controller._show_hall_subview("schools"),
 				"open_contracts": func(): controller._show_hall_subview("contracts"),
 				"open_codex": func(): controller._show_hall_subview("codex"),
@@ -160,6 +161,9 @@ static func for_screen(screen: String, controller) -> Dictionary:
 			}
 		"Battle":
 			return {
+				# 第三阶段 Task 3（2026-09-17）：战斗卡自带结构化命令，战斗屏直接转呈
+				# 本通道提交领域；play_card 保留为按 ID 构造的兼容包装（存量夹具）。
+				"submit_command": func(command): controller.submit_command(command),
 				"play_card": func(action_id, target_id, confirmed = false): controller.submit_command(_battle_card_command(controller, str(action_id), str(target_id), bool(confirmed))),
 				"end_turn": func(): controller.submit_command(_battle_turn_command(controller, "end_turn")),
 				"refine": func(id = ""): controller.submit_command(_battle_turn_command(controller, "refine", {"recipe_id": str(id)})),
@@ -214,7 +218,13 @@ static func for_screen(screen: String, controller) -> Dictionary:
 						controller.submit_command({"type": "leave_encounter"}),
 			}
 		"Reward":
-			return {"close": func(): controller.submit_command({"type": "leave_encounter"})}
+			var reward_commands := {
+				"close": func(): controller.submit_command({"type": "leave_encounter"}),
+			}
+			if bool(controller.m0_mode):
+				reward_commands["choose_reward"] = func(id = ""):
+					controller.submit_command({"type": "m0_reward_take", "reward_id": str(id)})
+			return reward_commands
 		"Npc":
 			return {
 				"talk": func(id = ""): controller.submit_command(_npc_talk_command(controller, str(id))),

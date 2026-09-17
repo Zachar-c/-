@@ -67,6 +67,9 @@ static func _restore_game(controller, loaded: Dictionary) -> bool:
 	if not loaded.has("state"):
 		return false
 	controller.state = loaded["state"]
+	controller.m0_mode = bool(controller.state.node_flags.get("m0_mode", false))
+	controller.m0_reward_options.clear()
+	controller.m0_reward_selected = false
 	if loaded.has("route"):
 		controller.route = loaded["route"].duplicate(true)
 	controller.current_node = controller._node_by_id(controller.state.current_node_id)

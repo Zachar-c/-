@@ -31,7 +31,7 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 
 - 定位：大厅永久存档入口；开始新局（选流派开局）、继续进行中 Run、图鉴与已解锁蛊方浏览。
 - 数据绑定：`starters[]`（`id/name/starter_gu_ids`）、大厅 meta（`MetaProgress`：codex/recipes_unlocked/contract_unlocked/stats）、`load_run` 诊断（v3 拒载显示"已保留"文案）。
-- 命令：开局选择（school starter）、`load_run`（controller 层）、删除无。
+- 命令：开局选择（school starter）、`new_m0_run`（四战 M0 独立入口）、`load_run`（controller 层）、删除无。
 - 状态与确认：开局为不可逆入口但属于"新局开始"，无需确认；`load_run` 失败展示 `_save_load_feedback` 全文。
 - 组件：`GuPanel`、`GuIcon`、`GuToast`；图鉴列表用 `GuStatBar` 无、列表行通用。
 - 验收：v3 存档场景显示契约 §6 的"已保留"完整文案；开始后直达 Map。
@@ -191,8 +191,8 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 ### P8 Reward（`reward_screen`，快照 `Reward/reward()`）
 
 - 定位：战后收获入账清单。
-- 数据绑定：`last_battle_loot`（material_ids/gu_id/stone/info）逐项 `name/kind/quality/effect/cost`、`last_battle_cost`（战斗代价）。
-- 命令：入账为已发生事实（自动），继续/离开；`[T9.2]` 战后幸存蛊收取确认（`collect_surviving_gu`：held_only 与 refined 分态展示、战前声明条件未满足的 `not_collected` 原因可见）。**Stage 1（2026-09-17）**：`held_only`（高转 / 不安全无时间）入袋为 `state=wild`，不进战斗槽与喂养投影，须 `attune_gu` 扣真元炼化后才可用。
+- 数据绑定：普通路线 `last_battle_loot`（material_ids/gu_id/stone/info）逐项 `name/kind/quality/effect/cost`、`last_battle_cost`（战斗代价）；M0 另绑定 `m0_mode`、`choice_rewards[]`、`choice_selected`。
+- 命令：普通路线入账为已发生事实（自动），继续/离开；M0 由 `m0_reward_take` 三选一，选择前 `继续旅程` 置灰且不可通过 `leave_encounter` 绕过；`[T9.2]` 战后幸存蛊收取确认（`collect_surviving_gu`：held_only 与 refined 分态展示、战前声明条件未满足的 `not_collected` 原因可见）。**Stage 1（2026-09-17）**：`held_only`（高转 / 不安全无时间）入袋为 `state=wild`，不进战斗槽与喂养投影，须 `attune_gu` 扣真元炼化后才可用。
 - 状态与确认：`[T9]` 收取幸存蛊 → 确认层级 1（条件/结局说明）；释放/灭蛊入口从此屏进（确认层级 2，展示 `release_gu` 后果 / `destroy_gu` 声明提取物）。
 - 组件：`GuCard`、`GuResourceChip`、`[T9]` `GuCommandButton`、`GuConfirmDialog`。
 - 验收：入账项与 `loot_rules` 收取结果一一对应；无预算裁剪痕迹（#12 透明）。

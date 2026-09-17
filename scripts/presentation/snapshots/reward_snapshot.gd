@@ -10,13 +10,13 @@ extends RefCounted
 const BuildGoalProjectionScript = preload("res://scripts/presentation/snapshots/build_goal_projection.gd")
 
 
-## C2/D3 战利品确认屏快照：真实已入账 loot（settle_victory 结果）+ 精英绑定代价
-## + 真实保底计数。规格口径：战后战利品自动入账（§16.4 来源隔离由 loot_tables 承担），
-## 本屏为确认展示而非再抽取——假三选一快照已删除。
+## C2/D3 战利品确认屏快照：普通路线展示真实已入账 loot（settle_victory 结果）+ 精英绑定代价；
+## 独立 M0 路线改为战后真实三选一，选择命令由 RewardScreenView 发回控制器。
 static func build(controller) -> Dictionary:
 	var out := RunSnapshotBuilder._gui_state(controller)
 	var state = controller.state
 	var catalog: Dictionary = controller.catalog if controller.catalog != null else {}
+	var m0_mode: bool = bool(controller.m0_mode)
 	var loot: Dictionary = controller.get("last_battle_loot") if controller.get("last_battle_loot") != null else {}
 	var elite_cost: Dictionary = controller.get("last_battle_cost") if controller.get("last_battle_cost") != null else {}
 	out["title"] = "战利品"
@@ -49,6 +49,9 @@ static func build(controller) -> Dictionary:
 			"curse_warning": true,
 		})
 	out["rewards"] = rows
+	out["m0_mode"] = m0_mode
+	out["choice_rewards"] = controller.m0_reward_options.duplicate(true) if m0_mode else []
+	out["choice_selected"] = bool(controller.m0_reward_selected) if m0_mode else false
 	out["full_satchel"] = false
 	out["pity_note"] = "蛊掉落保底计数：%d · 材料保底计数：%d" % [int(state.loot_pity), int(state.material_pity_by_tier.get("common", 0))]
 	# T6-E 空池回退小字：真实 loot 为空即空池回退信号。

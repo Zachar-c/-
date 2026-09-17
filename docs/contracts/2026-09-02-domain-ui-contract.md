@@ -45,7 +45,7 @@ UI (scenes + scripts/ui)
 | `Shop` | `shop()` | **`offers[]` = 本次货架（E7，2026-09-10）**：只列 `Resolver.shop_stock(state, catalog)` 内的货（`4 + ⌊层/2⌋` 件 → 层 1/2/3/4/5 = 4/5/5/6/6，每架保底 1 件本层最高档），以及**常驻服务**（`resource_trade` 黑市兑换 / `wash_notoriety` / `recipe_unlock` / `soul_boost`）；每项含 `id/name/kind/price/desc/quality/curse_warning/will_emergency_pay`。货架由 `(局种子, 节点模板 id)` 确定性派生，**同店反复进出不变、不新增存档字段**。命令面同源：`shop_purchase` 对不在货架上的**货**返回 `shop_offer_not_in_stock`（`npc_trade` 走 NPC 自己的 `npc.stock`，不受此限）；既有 `shop_tier_locked` / `insufficient_stone` 语义不变，判定顺序为 阶 → 架 → 钱。 |
 | `Rest` | `rest()` | `choices[]`（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集，外加节点允许的 `wash`）、`upgrade_targets` / `remove_card_targets` / `imprint_targets` / `curse_targets`、每个 `choice.disabled/reason/curse_warning/requires_confirm`、`mode_groups`（E4b 三选一，2026-09-09：`修炼[]`/`炼蛊[]` 两组动作卡，卡含 `id/label/detail/cost/disabled/reason`；`meditate` 走 encounter `action_card` 信封、`cultivate` 映射 `cultivate_rank_two`、`refine/free_pair` 为会话内子屏导航不发领域命令；快照无此键时 UI 整行隐藏，旧存档兼容。E4a 起 `rest/refinement/cultivation` 三类节点统一由 travel 分发进本屏） |
 | `Refine` | `refine()` | 炼蛊台状态、投入位、候选、`from_rest`（E4a 子屏语境：经休息屏「炼蛊」卡进入时为 true，「离开」按钮文案变「返回休整」且不发 `leave_encounter`，仅退回休息屏）、`initial_channel`（子屏预选通道 id，如 `free_pair`；用户手动切 Tab 后前端本地态优先，不再覆盖）、**`build_goal` 与 `goal_recipe_id`（Phase 4，2026-09-15）**；`recipes[]` 每条新增 **`recipe_kind` / `is_goal` / `executable` / `materials[{id,name,owned,required,complete}]` / `missing[]` / `missing_summary` / `stone_owned` / `stone_required` / `input_gu_id` / `input_gu_name` / `input_owned`** —— 成本与缺失项**点击前即可见**；配方按「目标配方 → 同流派 promotion 链 → 其他可执行 → 不可执行」稳定排序；**`attune_candidates[]`（Stage 1 缺口 2，2026-09-17）**：蛊仓 `state=wild` 的野生蛊候选，每条含 `id/name/rank/essence_cost/essence_owned/executable/block_reason/note`，代价与「炼化后改由真元喂养」点击前可见；通道列表新增 `attune`（标签「炼化野生蛊」），与合炼通道分离 |
-| `Reward` | `reward()` | 战后奖励列表、**`build_progress`（Phase 3，2026-09-15：本场产出 → 当前构筑目标的连接；键见下）** |
+| `Reward` | `reward()` | 普通路线战后奖励列表、**`build_progress`（Phase 3，2026-09-15：本场产出 → 当前构筑目标的连接；键见下）**；M0 模式另带 `m0_mode`、`choice_rewards[]`、`choice_selected`，三选一选择前不得离开 |
 | `Npc` | `npc()` | NPC 交涉/交易 |
 | `ContentError` | `content_error()` | 目录校验错误（`ContentCatalog.validate` 非空时的兜底屏） |
 | 调试 | `debug()` | 保底计数/池排除/种子/事件数/DDA 分位（只读，§16.22） |
@@ -81,6 +81,7 @@ UI (scenes + scripts/ui)
 
 - `inventory{materials[],gu_instances[],loot[],intel[]}`：材料仅含 `id/name/quantity`；蛊虫实例含 `id/definition_id/name/state/rank/quality`；收获与情报仅投影已结算结果和 `known_facts`。UI 不得据此反写库存或推断未知信息。
 - `hand_version`（仅 Battle 屏）：`= event_log.size()`，与 `use_gu` 命令 `state_version` 同源。`battle_screen_view.mount_snapshot` 仅在 `hand_version` 变化时清空已提交卡/目标去重缓存；相同版本重挂载（刷新/重渲染）不得解除防重复提交保护。
+- **战斗手牌卡（第三阶段 Task 3，2026-09-17）**：Battle 屏 `hand[]` / `kill_moves[]` 每张卡携带十键契约 `{id, type, executable, block_reason, costs, target_type, valid_target_ids, command, state_version, expected_phase}`，全部取自 `ActionPreviewService.preview_battle_actions`（唯一门禁来源，`battle_snapshot` 只透传）。UI 新路径**只提交 `command`**（经 `RunCommandBuilder.for_screen("Battle").submit_command`），并按本屏交互态补 `target_id`；`play_card` 仅为按 ID 组装的兼容包装。杀招卡 `command.confirmed=false`，确认框通过后补 `true`（T16）。终局/撤离后预览不产出卡片，卡面一律置灰。
 - `death_lines{health,shouyuan,hunpo,backlash}`：用于危险预警、操作预检与死因信息；其中气血、寿元、魂魄任一 `remaining <= 0` 的终局判定仍完全由领域层执行。`death_lines` 不授权常驻独立数值面板。
 
 `[T9.1 已落地]` 快照 v2 按 §17.2 八组扩容（增量键，逐键与规则模块同源，`RunSnapshotBuilder.transparency_v2(controller)`，返回八个分组键；`_` 前缀旁路键不进快照）。所有真实 `for_screen(screen, controller)` 快照经 `_with_v2` 保守合并带入八组（同屏键优先）：
@@ -102,7 +103,7 @@ UI (scenes + scripts/ui)
 
 现役 type 全集（参数见 resolver 对应 `_xxx` 函数；均为 `state, command, catalog` 三元签名）：
 
-`travel(node_id)`、`resolve_contact`、`complete_node`、`buy_gu`、`sell_gu`、`exchange_gu`、`refine_gu`、`attune_gu`（Stage 1 缺口 2，2026-09-17：野生蛊 → 已炼化；载荷 `input_instance_ids:[instance_id]`，只扣真元 `4+2*(rank-1)`，拒绝原因 `attune_target_missing` / `attune_target_not_wild` / `insufficient_essence`；首只炼化事件 reason=`first_gu_attuned`，与 `refine_gu` 合炼语义分离）、`cultivate_rank_two`、`breakthrough`、`settle_feeding`、`settle_node_feeding`、`disable_card`、`upgrade_card`、`copy_card`、`destroy_gu`、`remove_card`、`remove_imprint`、`spend_lifespan`、`accept_debt`、`use_gu`、`buy_opportunity`、`take_body_imprint`、`choose_action`、`retreat`、`attempt_ascension`、`close_run`、`gain_relic`、`shop_purchase`、`shop_lifespan_deal`、`shop_barter`、`npc_trade`、`scavenge`、`sell_material`、`use_material`、`raise_aptitude`、`record_neutral_npc_kill`、`wash_notoriety`、`record_boss_defeated`、`record_layer_boss_defeated`、`rest`（`mode ∈ {heal,upgrade_card,remove_card,remove_imprint,remove_curse,skip}`，覆盖 `_rest_skip` 在内的领域全集）、`gain_force_power`、`accept_event`、`gain_curse`、`remove_curse`、`swear_contracts`。
+`travel(node_id)`、`resolve_contact`、`complete_node`、`buy_gu`、`sell_gu`、`exchange_gu`、`refine_gu`、`attune_gu`（Stage 1 缺口 2，2026-09-17：野生蛊 → 已炼化；载荷 `input_instance_ids:[instance_id]`，只扣真元 `4+2*(rank-1)`，拒绝原因 `attune_target_missing` / `attune_target_not_wild` / `insufficient_essence`；首只炼化事件 reason=`first_gu_attuned`，与 `refine_gu` 合炼语义分离）、`cultivate_rank_two`、`breakthrough`、`settle_feeding`、`settle_node_feeding`、`disable_card`、`upgrade_card`、`copy_card`、`destroy_gu`、`remove_card`、`remove_imprint`、`spend_lifespan`、`accept_debt`、`use_gu`、`buy_opportunity`、`take_body_imprint`、`choose_action`、`retreat`、`attempt_ascension`、`close_run`、`gain_relic`、`shop_purchase`、`shop_lifespan_deal`、`shop_barter`、`npc_trade`、`scavenge`、`sell_material`、`use_material`、`raise_aptitude`、`record_neutral_npc_kill`、`wash_notoriety`、`record_boss_defeated`、`record_layer_boss_defeated`、`rest`（`mode ∈ {heal,upgrade_card,remove_card,remove_imprint,remove_curse,skip}`，覆盖 `_rest_skip` 在内的领域全集）、`gain_force_power`、`accept_event`、`gain_curse`、`remove_curse`、`swear_contracts`、`m0_reward_take`（仅 M0，控制器注入当前选项 `option` 后经 Resolver 结算）。
 
 统一返回：`{"ok": bool, "reason": str?, "feedback"?: str, ...}`；`ok=false` 时 `reason` 必须能命中 §5 的中文映射。`load_run`/`save_run` 由 controller 层直接处理（v4 拒载契约见 §7）。
 
@@ -168,7 +169,13 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 
 `[T9.2 已落地]` battle2 编排命令已接入 `enact`/`dodge`/`grapple`/`respond`（proposal 形状 `{"kind": "activate_gu"|"basic_action"|"maintain", ...}`）；拒绝 reason 集合达产：`maintenance_blocks_activation / gu_already_used_this_turn / insufficient_thought / action_already_used_this_turn / unknown_action / unknown_proposal_kind / parallel_group_repeats_action / parallel_group_repeats_instance / no_thought / window_closed / dodge_not_allowed / grappled_blocks_dodge / bound_blocks_dodge / terrain_restricted / not_at_contact / not_stronger / no_reserved_thought / not_a_legal_reaction`；跨回合续投：`start_turn(turn, capacity, continue_ids)`（ongoing 条目携带稳定 `"id"`）。
 
-### 3.3 对话分支命令（Dialogue Gateway，`run_controller` 入口）
+### 3.3 M0 控制器命令（表现层入口，领域结算仍走 `Resolver.apply`）
+
+- `new_m0_run`：仅由 `Title` 大厅的「M0 · 四战试炼」按钮提交，调用 `RunController.start_m0_run(seed)`；完整运行的 `new_run` 同时保留。
+- `m0_reward_take`：仅由 M0 `Reward` 屏的三选一按钮提交，载荷为 `{"type":"m0_reward_take","reward_id":"..."}`。控制器先校验当前 Reward 会话的选项池与一次性门禁，再把选项交给 `Resolver.apply` 的同名领域 handler；领域层写入 `m0_reward_chosen` 事件并返回新状态。
+- M0 `Reward` 快照：`m0_mode: bool`、`choice_rewards[]`（`id/kind/title/description`，蛊选项另含 `gu_id`，资源选项另含 `amount`）、`choice_selected: bool`。普通路线仍只消费自动入账 `rewards`。
+
+### 3.4 对话分支命令（Dialogue Gateway，`run_controller` 入口）
 
 - `dialogue_branch`：`{"type":"dialogue_branch","branch_id":"...","state_version":<event_log.size>,"context":{...}}` → `_submit_dialogue_branch` → `DialogueManagerAdapter.apply_branch`（`command_for_branch` 把 `accept/accept_event/take/investigate → accept_event`、`leave/decline/reject → leave_node`，未知返回空并中文拒绝 `unknown_dialogue_branch`；`state_version` 过期拒绝 `action_preview_stale`；`used_action_ids` 去重拒绝 `dialogue_branch_used`）。event 节点的 `action_card` 由 controller 包装为 `dialogue_branch`（branch_id=`action_id`）走同一路径。
 - branch_id 两种形状（`command_for_branch` 均可解析）：点分 `event.echo_cave.accept` / `echo_cave.accept`（模板/测试）；下划线 `echo_cave_accept` / `gu_rot_pact_leave`（Dialogue Manager 插件 title 禁止 `.`，`rfind("_")` 拆 event_id 与分支，`gu_rot_pact_accept` → event_id=`gu_rot_pact`）。
@@ -176,7 +183,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 - 运行时接线（P1-B）：`_travel_to` 对 event 节点调 `begin(...)` 后，`DialogueManagerAdapter.set_branch_selection_callback(Callable(self,"submit_dialogue_selection"))`；adapter `begin` 连接 DialogueManager 全局单例的 `passed_title` 信号 → 玩家点 balloon 选项（title 跳转）即回调 `submit_dialogue_selection(title)` 走领域结算。回调为绑定 Callable，controller 释放后自动失效。
 - 事件入口 title 路由（P1-2）：`_travel_to` 对 event 节点调 `begin(event_id, node.dialogue_title or "start")`；节点未声明 `dialogue_title` 时打开默认 `start`（echo_cave），声明专属 title（如 `gu_rot_pact`）的事件打开对应入口，不再全部从 start 打开。数据侧：`nodes.json` 的 event 节点可声明 `event_id`（缺省回退 `id`）与 `dialogue_title`（缺省 `start`）；`data/dialogues/events.dialogue` 的 title 与入口一一对应，选项 `=> title` 跳转的 title 即 branch_id 下划线形式。
 
-### 3.3 规则模块公开函数（供命令面/快照薄委托；UI 不得绕过命令直调）
+### 3.5 规则模块公开函数（供命令面/快照薄委托；UI 不得绕过命令直调）
 
 - **GuBalance**：`rank_multiplier(rank,cat) / standard_gu_power / beast_scale / fixed_defense / human_standard_heal / actual_cost_percent(native,gu_rank,cultivator_rank,cat) / natural_recovery(aptitude_percent,cat) / unarmed_raw_damage / overload_self_damage`。
 - **CultivatorRules**：`can_activate(cultivator_rank,gu_rank,low_rank_exception) / thought_capacity(_cultivator,catalog) / body(_cultivator,cat)`（折算与恢复是 GuBalance 薄委托）。
@@ -212,7 +219,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 }
 ```
 
-已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`、V1 战斗 `battle_v1`、对话分支元事件 `dialogue_branch`（`after{branch_id,event_id,outcome}`，`source=dialogue_manager_adapter`，由 `DialogueManagerAdapter.apply_branch` 成功路径写入，供结局归因/回放；`stage`/`time` 不硬编码——省略键由 `RunState._normalized_event` 规范化到当前阶段与事件序号，后期分支不会被误归入 stage `"one"`/time 0）。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
+已知 action 词表（前端可据此做事件流渲染/结局归因）：`run_ended`、`layer_feeding`（含 `_feeding_<instance_id>` 旁路键，`gu_starved` 死因带 `_snapshot`）、`battle_finished`、`state_change`、`core_confirmed`、`core_replaced`、`swear_contracts` 等 resolver 各命令的动作词，以及 T9.2 新增：`feed_instance / gu_collected / gu_released / gu_destroyed / info_sold / battle2_enact / battle2_dodge / battle2_grapple / battle2_respond / material_refined / bloodlet / soul_absorbed`、M0 新增 `m0_battle_completed / m0_boss_defeated / m0_reward_chosen`、V1 战斗 `battle_v1`、对话分支元事件 `dialogue_branch`（`after{branch_id,event_id,outcome}`，`source=dialogue_manager_adapter`，由 `DialogueManagerAdapter.apply_branch` 成功路径写入，供结局归因/回放；`stage`/`time` 不硬编码——省略键由 `RunState._normalized_event` 规范化到当前阶段与事件序号，后期分支不会被误归入 stage `"one"`/time 0）。§17.3 全清单（催蛊/炼蛊/核心确认更换/喂养/交易/收取/释放/采血/收魂/魂魄变化/战斗结算）已逐项落账。
 
 ## 5. 预检与拒绝契约
 
@@ -224,7 +231,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 
 ### 5.2 通用拒绝中文映射（`run_controller._REJECTION_TEXT`，39 条现役）
 
-`insufficient_stone / insufficient_lifespan / insufficient_soul / insufficient_material / unknown_shop_offer / npc_stock_missing / npc_not_present / unknown_npc / npc_missing / contract_locked / contract_sworn / contract_soft_cap / deck_capacity(待废) / gu_slot_full(待废) / refine_input_missing / refine_slot_invalid / refine_recipe_locked / retreat_forbidden / invalid_action / invalid_action_card / stale_state_version / not_enough_essence / no_actions_left / dodge_exhausted / not_enough_hp / lifespan_trade_warning / already_completed / invalid_node_completion / unknown_contact / invalid_contact_approach / unknown_command / unknown_gu / unknown_card / unknown_node / node_not_reachable / unknown_material / material_not_usable / no_material_to_use / material_use_lethal`。
+`insufficient_stone / insufficient_lifespan / insufficient_soul / insufficient_material / unknown_shop_offer / npc_stock_missing / npc_not_present / unknown_npc / npc_missing / contract_locked / contract_sworn / contract_soft_cap / deck_capacity(待废) / gu_slot_full(待废) / refine_input_missing / refine_slot_invalid / refine_recipe_locked / retreat_forbidden / invalid_action / invalid_action_card / stale_state_version / not_enough_essence / no_actions_left / dodge_exhausted / not_enough_hp / lifespan_trade_warning / already_completed / invalid_node_completion / unknown_contact / invalid_contact_approach / unknown_command / unknown_gu / unknown_card / unknown_node / node_not_reachable / unknown_material / material_not_usable / no_material_to_use / material_use_lethal / m0_reward_choice_required / m0_reward_not_available / m0_reward_already_chosen / m0_reward_unknown / m0_reward_unknown_gu / m0_reward_rejected`。
 
 `[T9.2 已落地]` 每条新命令的拒绝路径已入该映射（现役 71 条，含 `too_early_first_layer / core_already_confirmed / instance_missing / replace_limit_reached / guarantee_replaced_with_peer_reward / no_token_on_node / buyer_already_paid / insufficient_thought / gu_already_used_this_turn / maintenance_blocks_activation / action_already_used_this_turn / unknown_action / unknown_proposal_kind / parallel_group_repeats_action / parallel_group_repeats_instance / no_thought / window_closed / dodge_not_allowed / grappled_blocks_dodge / bound_blocks_dodge / terrain_restricted / not_at_contact / not_stronger / no_reserved_thought / not_a_legal_reaction / insufficient_health / bleed_rank_exceeds_cultivator / soulless_target / no_means_declared / means_capacity_full / soul_yield_zero`；`test_command_rejections_v2` 钉死"拒绝不改状态"）。
 
@@ -238,7 +245,7 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 
 ## 7. 页面流转与控制器状态（现状）
 
-- 屏集合：`Title → Map ⇄ Encounter/Battle/Shop/Rest/Refine/Reward/Npc`；`ContentError` 为目录校验失败兜底屏。
+- 屏集合：`Title → Map ⇄ Encounter/Battle/Shop/Rest/Refine/Reward/Npc`；`ContentError` 为目录校验失败兜底屏。`Title` 另有 M0 独立入口；M0 `m0_mode` 标记存于既有 `RunState.node_flags`，跟随 v4 Run 存档恢复。
 - `RunController` 持有 `state(RunState) / current_battle{} / current_session{} / current_node{} / route[] / last_feedback / last_load_diagnosis`。
 - 载入：`load_saved_run()` -> `diagnose_run_file()` 失败即 `_save_load_feedback`（v3 显示"已保留"文案）；`_restore_game` 以 `has("state")` 判成功。
 - 结局：`terminal_state != "active"` 即终局（`run_ended` 事件清空局内资源）；非死亡结局与致死确认统一走二次确认命令面（已落地：`bloodlet` 致死标记 `lethal_confirm_required`、`SoulRules.soul_growth_forecast`、兽化门 `bestiality_endpoint_check`——标记随命令结果返回，UI 层执行前强制确认）。

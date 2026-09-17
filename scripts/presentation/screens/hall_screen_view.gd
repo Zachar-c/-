@@ -37,6 +37,7 @@ const CODEX_TAB_NAMES := {
 @onready var _epoch: Label = $Root/MainView/HallSheet/HallPrimary/HallEpoch
 @onready var _primary_action: Button = $Root/MainView/HallSheet/HallPrimary/HallPrimaryAction
 @onready var _primary_note: Label = $Root/MainView/HallSheet/HallPrimary/HallPrimaryNote
+@onready var _m0_action: Button = $Root/MainView/HallSheet/HallPrimary/M0Action
 @onready var _stat_val1: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal1
 @onready var _stat_val2: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal2
 @onready var _stat_val3: Label = $Root/MainView/HallSheet/HallPrimary/HallStatsRow/StatVal3
@@ -157,6 +158,7 @@ func _apply_paper_colors() -> void:
 	_apply_school_back_style(_schools_back)
 	_apply_school_back_style(_schools_op_back)
 	_apply_continue_style(_primary_action)
+	_apply_school_back_style(_m0_action)
 	_apply_menu_style(_journal_link)
 	_apply_menu_style(_codex_link)
 	_sync_build_ver()
@@ -311,6 +313,8 @@ func _wire_static_buttons() -> void:
 	_schools_back.pressed.connect(func(): _fire("back_to_hall"))
 	_schools_op_back.pressed.connect(func(): _fire("back_to_hall"))
 	_start_run.pressed.connect(func(): _fire("new_run"))
+	_m0_action.pressed.connect(func(): _fire("new_m0_run"))
+	_m0_action.pressed.connect(func(): AudioManager.play_sfx("ui_click"))
 	_contracts_back.pressed.connect(func(): _fire("open_schools"))
 
 

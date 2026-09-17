@@ -266,7 +266,9 @@ func _submit_card(card: Dictionary, target_id: String) -> void:
 	if _submitted_card_keys.has(request_key):
 		return
 	_submitted_card_keys[request_key] = true
-	if _commands.has("play_card"):
+	# 第三阶段 Task 3：新路径只转呈卡片自带的结构化命令（领域判定的唯一出口）；
+	# 无命令键的旧信封卡（存量测试夹具）仍走 play_card 兼容包装。
+	if not _submit_card_command(card, target_id) and _commands.has("play_card"):
 		_commands["play_card"].call(card_id, target_id)
 	# 第18批：接入出牌音效
 	AudioManager.play_sfx("battle_card_play")
@@ -278,6 +280,19 @@ func _submit_card(card: Dictionary, target_id: String) -> void:
 	_confirming = false
 	_mode = "play_success"
 	_refresh()
+
+
+## 转呈卡片携带的结构化命令；成功下发返回 true。
+## 目标由本屏的交互态补入（卡片里的 target_id 是快照期的缺省值）。
+func _submit_card_command(card: Dictionary, target_id: String) -> bool:
+	var command: Dictionary = card.get("command", {})
+	if command.is_empty() or not _commands.has("submit_command"):
+		return false
+	var payload: Dictionary = command.duplicate(true)
+	if target_id != "":
+		payload["target_id"] = target_id
+	_commands["submit_command"].call(payload)
+	return true
 
 
 func _is_dangerous_card(card: Dictionary) -> bool:
@@ -754,17 +769,26 @@ func _release_kill_move(kill_move_id: String, km: Dictionary = {}) -> void:
 		_confirming = true
 		_refresh()
 		return
-	_submit_kill_move(kill_move_id, false)
+	_submit_kill_move(kill_move_id, false, km)
 
 
-func _submit_kill_move(kill_move_id: String, confirmed: bool) -> void:
+func _submit_kill_move(kill_move_id: String, confirmed: bool, km: Dictionary = {}) -> void:
 	var request_key := "killmove:" + kill_move_id
 	if _submitted_card_keys.has(request_key):
 		return
 	_submitted_card_keys[request_key] = true
 	_pending_kill_move = {}
 	_confirming = false
-	if _commands.has("play_card"):
+	# 第三阶段 Task 3：杀招卡自带结构化命令（play_kill_move），确认态由本屏补入；
+	# 无命令键时回退 play_card 兼容包装。
+	var command: Dictionary = (km.get("command", {}) as Dictionary)
+	var submitted := false
+	if not command.is_empty() and _commands.has("submit_command"):
+		var payload: Dictionary = command.duplicate(true)
+		payload["confirmed"] = confirmed
+		_commands["submit_command"].call(payload)
+		submitted = true
+	if not submitted and _commands.has("play_card"):
 		_commands["play_card"].call("kill_move." + kill_move_id, _target_id, confirmed)
 	# 交互闭环契约：视觉 + 听觉双重反应。
 	AudioManager.play_sfx("battle_card_play")
@@ -938,7 +962,7 @@ func _refresh_confirm() -> void:
 			func():
 				play_cinnabar_seal("裁定")
 				if pending_km != "":
-					_submit_kill_move(pending_km, true)
+					_submit_kill_move(pending_km, true, _pending_kill_move)
 				else:
 					_submit_card(_active_card, _target_id),
 		func():

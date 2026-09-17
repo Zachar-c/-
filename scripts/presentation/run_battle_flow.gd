@@ -8,10 +8,9 @@ extends RefCounted
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
-const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
-const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 const DisplayTextScript = preload("res://scripts/presentation/display_text.gd")
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")
+const M0RewardResolverScript = preload("res://scripts/domain/m0_reward_resolver.gd")
 
 
 static func submit_battle_command(controller, command: Dictionary) -> Dictionary:
@@ -21,11 +20,10 @@ static func submit_battle_command(controller, command: Dictionary) -> Dictionary
 	controller.current_battle = turn["battle"]
 	sync_battle_hp_to_state(controller)
 	controller.last_result = {"battle_result": turn.get("result", "ongoing"), "feeds": turn.get("feeds", [])}
+	# 第三阶段 Task 4：终局只有一条收口路径——胜利/撤离/战死一律交给
+	# finish_battle_in_session（它负责落唯一的 battle_finished 与清场后再分派屏）。
 	if bool(turn.get("finished", false)):
-		if str(turn.get("result", "")) == "death":
-			controller._show_death(DeathReportBuilderScript.build(controller.current_battle, controller.state))
-		else:
-			finish_battle_in_session(controller, str(turn.get("result", "")))
+		finish_battle_in_session(controller, str(turn.get("result", "")))
 	else:
 		controller._show_battle()
 	return turn
@@ -84,10 +82,11 @@ static func start_battle(controller) -> void:
 		encounter["enemy_kinds"] = (current_node.get("enemy_kinds", []) as Array).duplicate()
 	else:
 		encounter["enemy_kind"] = enemy_kind
-	state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
-		CultivatorRulesScript.thought_capacity(state.cultivator, catalog)
-	)
-	controller.current_battle = BattleCommandFacadeScript.start(encounter, state, catalog)
+	# 第三阶段 Task 2：开局与会话账本一并由门面 start_session 建立，
+	# 表现层不再自行 new_turn()。
+	var session: Dictionary = BattleCommandFacadeScript.start_session(encounter, state, catalog)
+	controller.state = session["state"]
+	controller.current_battle = session["battle"]
 	if state.known_facts.has("procured_weakness"):
 		controller.current_battle["intel_bonus"] = 1
 	if first_mover == "enemy":
@@ -105,10 +104,7 @@ static func start_battle(controller) -> void:
 		controller.current_battle = pre["battle"]
 		sync_battle_hp_to_state(controller)
 		if bool(pre["finished"]):
-			if str(pre["result"]) == "death":
-				controller._show_death(DeathReportBuilderScript.build(controller.current_battle, controller.state))
-			else:
-				finish_battle_in_session(controller, str(pre["result"]))
+			finish_battle_in_session(controller, str(pre["result"]))
 			return
 	controller._show_battle()
 
@@ -121,12 +117,24 @@ static func battle_terrain(controller) -> String:
 
 static func finish_battle_in_session(controller, outcome: String) -> void:
 	var state = controller.state
+	# 第三阶段 Task 4：战死也走同一条收口，落唯一的 battle_finished（带账本快照）。
+	# 死亡复盘沿用收口前的战斗现场构建（既有契约读 current_battle 归因最后一击）。
+	var death_report: Dictionary = {}
+	if outcome == "death":
+		death_report = DeathReportBuilderScript.build(controller.current_battle, controller.state)
 	var current_session: Dictionary = controller.state.encounter_session.duplicate(true)
 	var kill_source := str(controller.current_battle.get("kill_source", ""))
 	var enemy_kind := str(controller.current_battle.get("enemy_kind", ""))
 	var battle_loot: Dictionary = controller.current_battle.get("loot", {})
 	var battle_cost: Dictionary = controller.current_battle.get("cost", {})
-	controller.current_battle = {}
+	# 第三阶段 Task 2：会话收口（交出账本快照并清场）归门面 finalize_session。
+	var finalized: Dictionary = BattleCommandFacadeScript.finalize_session(
+			controller.current_battle, state, outcome)
+	state = finalized["state"]
+	var ledger_snapshot: Dictionary = finalized["ledger"]
+	# 战死保留战斗现场：死因归因与既有死亡复盘通路都读它（run 已终结，不会再续战）。
+	if outcome != "death":
+		controller.current_battle = {}
 	current_session["phase"] = "post_battle"
 	current_session["stance"] = "neutral"
 	if current_session.has("flags") and current_session["flags"] is Dictionary:
@@ -134,9 +142,6 @@ static func finish_battle_in_session(controller, outcome: String) -> void:
 		current_session["flags"].erase("reputation_extreme")
 	var feed := ResultFeedScript.entry("battle", "battle_%s" % outcome, {}, [])
 	var results: Array = state.encounter_results.duplicate(true)
-	var ledger_snapshot: Dictionary = {}
-	if not state.current_battle2_ledger.is_empty():
-		ledger_snapshot = state.current_battle2_ledger.duplicate(true)
 	if outcome == "victory" and not battle_loot.is_empty():
 		var loot_labels: Array[String] = []
 		for material_value in battle_loot.get("material_ids", []):
@@ -172,7 +177,6 @@ static func finish_battle_in_session(controller, outcome: String) -> void:
 	if not ledger_snapshot.is_empty():
 		finished_event["info"] = {"_battle2_ledger": ledger_snapshot.duplicate(true)}
 	state = state.append_event(finished_event)
-	state.current_battle2_ledger = {}
 	controller.state = state
 	if outcome == "victory" and kill_source == "neutral_npc":
 		controller.state = Resolver.apply(state, {"type": "record_neutral_npc_kill"}, controller.catalog)["state"]
@@ -192,7 +196,47 @@ static func finish_battle_in_session(controller, outcome: String) -> void:
 					{"type": "record_boss_defeated"}, controller.catalog)["state"]
 	controller.last_battle_loot = battle_loot
 	controller.last_battle_cost = battle_cost if outcome == "victory" else {}
+	if controller.m0_mode and outcome == "victory":
+		var m0_count := int(controller.state.node_flags.get("m0_battles_completed", 0)) + 1
+		var m0_flags: Dictionary = controller.state.node_flags.duplicate(true)
+		m0_flags["m0_battles_completed"] = m0_count
+		controller.state = controller.state.append_event({
+			"stage": controller.state.stage,
+			"time": controller.state.event_log.size(),
+			"node_id": controller.state.current_node_id,
+			"action": "m0_battle_completed",
+			"before": {"node_flags": controller.state.node_flags},
+			"after": {"node_flags": m0_flags},
+			"reason": "m0_battle_completed",
+			"source": "m0_run_flow",
+			"targets": [str(controller.current_node.get("id", ""))],
+		})
+		if str(controller.current_node.get("id", "")) == "m0_boss":
+			controller.state = controller.state.append_event({
+				"stage": controller.state.stage,
+				"time": controller.state.event_log.size(),
+				"node_id": controller.state.current_node_id,
+				"action": "m0_boss_defeated",
+				"before": {},
+				"after": {"node_flags": controller.state.node_flags},
+				"reason": "m0_boss_defeated",
+				"source": "m0_run_flow",
+				"targets": ["m0_boss"],
+			})
+			controller._show_ending({
+				"outcome": "m0_boss_defeated",
+				"conditions": {"m0_battles": m0_count},
+			})
+			return
+		controller.m0_reward_options = M0RewardResolverScript.build_options(
+			controller.state, m0_count, controller.catalog)
+		controller.m0_reward_selected = false
+		controller._show_reward()
+		return
 	if outcome == "victory" and (not battle_loot.is_empty() or not controller.last_battle_cost.is_empty()):
 		controller._show_reward()
+		return
+	if outcome == "death":
+		controller._show_death(death_report)
 		return
 	controller._show_encounter()

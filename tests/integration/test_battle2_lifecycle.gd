@@ -146,4 +146,11 @@ func test_battle2_ledger_lifecycle_creation_advance_finalisation() -> void:
 		ledger_info_found = true
 	assert_true(ledger_info_found,
 		"the final battle event must carry the ledger snapshot under _battle2_ledger")
+	# Task 4: the lifecycle layer owns the close-out - exactly one battle_finished.
+	var finished_events := 0
+	for event_value in controller.state.event_log:
+		if str((event_value as Dictionary).get("action", "")) == "battle_finished":
+			finished_events += 1
+	assert_eq(finished_events, 1,
+		"a battle must be closed by exactly one lifecycle battle_finished event")
 	controller.free()

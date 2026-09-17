@@ -137,10 +137,11 @@ func test_codex_and_hand_surface_rank_and_effect() -> void:
 	assert_eq(int(gen_entry.get("rank", 0)), 1, "codex gu entry must carry rank")
 	assert_string_contains(str(gen_entry.get("effect", "")), "伤害", "codex effect text must come from role fallback")
 
-	var battle: Dictionary = V1BattleResolver.start(_run_with_gu("force_atk_1_05_gu", 1), catalog, [
+	var run: RunState = _run_with_gu("force_atk_1_05_gu", 1)
+	var battle: Dictionary = V1BattleResolver.start(run, catalog, [
 		{"id": "v1_test_enemy", "label": "测试敌人", "hp": 9, "intent": {"kind": "attack", "damage": 0, "label": "测试意图"}}
 	])
-	var hand: Array = RunSnapshotBuilder._v1_hand(battle, catalog)
+	var hand: Array = RunSnapshotBuilder._v1_hand(battle, catalog, run)
 	assert_false(hand.is_empty())
 	for card in hand:
 		if str(card.get("id", "")) == "basic_attack":

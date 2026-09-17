@@ -20,7 +20,7 @@
 
 ## 关键数据契约
 
-- 命令：`{type, ...}`；`type` 全集与 `docs/contracts/2026-09-02-domain-ui-contract.md` 一致
+- 命令：`{type, ...}`；`type` 全集与 `docs/contracts/2026-09-02-domain-ui-contract.md` 一致。M0 的 `m0_reward_take` 由控制器校验当前选项池后注入 `option`，再进入本路由。
 - resolver 内部 handler：`_handler_for` 按命令 type 分发——休整族 → `RestRulesScript`、商店族 → `ShopCommandRulesScript`、蛊/卡/服务族 → `RefineCommandRulesScript`、社交/行动/升仙族 → `SocialCommandRulesScript`、v2 信封 → `RunCommandsScript`；`type` 全集与 `docs/contracts/2026-09-02-domain-ui-contract.md` 一致
 - 战利品表：`data/loot_tables.json`（按 tier+layer），保底参数在 `balance.json`
 - 返回契约：`feeds` = 给 UI 的文本反馈数组；`changes` = 变更摘要（`_summarize_changes` 消费）

@@ -5,6 +5,9 @@ extends RefCounted
 # V1 战斗门面（2026-08-30 全量替换卡牌战斗）：路由到 V1BattleResolver
 # （蛊行动制）。API 形状保持 start/apply_turn/apply_enemy_pre_turn，
 # run_controller 与命令通路零改动进入。
+# 第三阶段 Task 2（2026-09-17）：会话边界与战斗回合账本收归本门面——
+# start_session 开局建 battle + 初始化账本，finalize_session 交出账本快照并清场；
+# 表现层不得再自行 new_turn()/consume()。
 
 
 const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
@@ -90,6 +93,27 @@ static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = 
 	return battle
 
 
+## 战斗会话边界（第三阶段 Task 2）：开局 = 构建 battle + 初始化本场回合账本。
+## 账本归门面所有，表现层只消费返回的 state 与 battle。
+## 返回 {"battle": Dictionary, "state": RunState, "result": "ongoing"}。
+static func start_session(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
+	var battle: Dictionary = start(encounter, state, catalog)
+	if state.current_battle2_ledger.is_empty():
+		state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
+				CultivatorRulesScript.thought_capacity(state.cultivator, catalog))
+	return {"battle": battle, "state": state, "result": "ongoing"}
+
+
+## 战斗会话收口（第三阶段 Task 2）：交出账本快照并清场，供生命周期层把它写进
+## 唯一的 battle_finished 事件。返回 {"state": RunState, "ledger": Dictionary}。
+static func finalize_session(battle: Dictionary, state: RunState, outcome: String) -> Dictionary:
+	var ledger: Dictionary = {}
+	if not battle.is_empty() and not state.current_battle2_ledger.is_empty():
+		ledger = state.current_battle2_ledger.duplicate(true)
+	state.current_battle2_ledger = {}
+	return {"state": state, "ledger": ledger}
+
+
 ## 敌人定义 → V1 敌人条目：意图缺省按 attack 映射，V1 新增意图字段
 ## （kind/seal_turns/soul_drain/life_cost/counter_tag）随数据透传。
 static func _boss_layer_multipliers(encounter: Dictionary, catalog: Dictionary) -> Dictionary:
@@ -161,6 +185,9 @@ static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
 static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary, catalog: Dictionary = {}) -> Dictionary:
 	if battle.is_empty():
 		return _rejected({}, state, "battle_missing")
+	# 第三阶段 Task 4：终局（胜利/战死/撤离）后会话关闭，任何战斗命令一律 battle_over。
+	if _session_closed(battle):
+		return _rejected(battle, state, "battle_over")
 	if state.is_terminal():
 		return _rejected(battle, state, "terminal_run")
 	var command_type := str(command.get("type", ""))
@@ -189,17 +216,20 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			action = {"type": "play_kill_move", "kill_move_id": str(command.get("kill_move_id", "")),
 					"confirmed": bool(command.get("confirmed", false))}
 		"retreat":
-			# V1 撤退：Boss 战禁止（flags.boss_battle 由 start() 落账）；其余直接
+			# V1 撤退：Boss 战禁止（flags.boss_battle 由 start_session 落账）；其余直接
 			# 结算为 retreat（战斗结束路由到结算屏）。
 			if boss_blocks_retreat(battle):
 				return _rejected(battle, state, "retreat_forbidden")
-			# V1 battle2 ledger hook: the per-battle ledger was already
-			# populated by the controller's _start_battle; retreat itself
-			# does NOT spend an extra thought (the controller only writes
-			# the existing ledger snapshot onto the exit info key, mirroring
-			# the spec's "every accepted turn" wording strictly).
-			var post_state: RunState = state
-			return {"battle": battle, "state": post_state, "result": "retreat", "feeds": [], "finished": true, "accepted": true}
+			# 第三阶段 Task 2/4：撤离是本场唯一的显式终局路径之一——phase 保持
+			# player_action（不进"三值集合"以外），终局标记落在 flags.session_closed，
+			# 此后任何战斗命令一律 battle_over。账本不额外扣念头，由生命周期层的
+			# finalize_session 取出快照写入 battle_finished。
+			var closed: Dictionary = battle.duplicate(true)
+			if not (closed["flags"] is Dictionary):
+				closed["flags"] = {}
+			(closed["flags"] as Dictionary)["session_closed"] = true
+			return {"battle": closed, "state": state, "result": "retreat",
+					"feeds": [], "finished": true, "accepted": true}
 		_:
 			return _rejected(battle, state, "unsupported_battle_action")
 	var out: Dictionary = V1Script.player_action(battle, action)
@@ -218,16 +248,15 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 			next["loot"] = settled.get("loot", {})
 			if not (settled.get("cost", {}) as Dictionary).is_empty():
 				next["cost"] = settled["cost"]
-			# V1 battle2 ledger hook: the controller already populated the
-			# per-battle ledger in _start_battle; victory only needs the
-			# existing snapshot to ride the exit info key (mirrors the
-			# retreat path - no extra thought spend).
+			# V1 battle2 ledger hook: 账本已在 start_session 建好，胜利不需要额外
+			# 扣念头——生命周期层收口时用 finalize_session 取快照。
 			var victory_state: RunState = settled.get("state", event_state)
-			return {"battle": next, "state": victory_state, "result": "victory", "feeds": [], "finished": true, "accepted": true}
+			return {"battle": next, "state": victory_state, "result": "victory",
+					"feeds": [], "accepted": true, "finished": true}
 		"defeat":
-			# V1 battle2 ledger hook: a death exit also only needs the
-			# already-populated ledger to ride the exit info key.
-			return {"battle": next, "state": event_state, "result": "death", "feeds": [], "finished": true, "accepted": true}
+			# V1 battle2 ledger hook: 战死同样只交出已建好的账本快照。
+			return {"battle": next, "state": event_state, "result": "death",
+					"feeds": [], "accepted": true, "finished": true}
 		_:
 			# V1 battle2 ledger hook: every accepted turn (ongoing path) spends
 			# one thought on the per-battle ledger before the event lands.
@@ -236,7 +265,8 @@ static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary,
 					CultivatorRulesScript.thought_capacity(event_state.cultivator, catalog))
 			else:
 				event_state.current_battle2_ledger = Battle2TurnEngineScript.consume(event_state.current_battle2_ledger, 1)
-			return {"battle": next, "state": event_state, "result": "ongoing", "feeds": [], "accepted": true}
+			return {"battle": next, "state": event_state, "result": "ongoing",
+					"feeds": [], "accepted": true, "finished": false}
 
 
 static func _append_v1_event(state: RunState, before: Dictionary, after: Dictionary, command_type: String, action: Dictionary) -> RunState:
@@ -311,27 +341,24 @@ static func settle_sword_marks(battle: Dictionary, state: RunState, catalog: Dic
 	return SwordMarkRulesScript.apply_erosion(state, spent, catalog)["state"]
 
 
+## 敌人先手（第三阶段 Task 2）：与玩家主动结束回合**同一条结算路径**——直接复用
+## apply_turn 的 end_turn（同样的敌意结算、事件落账与账本推进），不再自持一份
+## 只改战斗、不落日志、不动账本的旁路实现。
 static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
-	if battle.is_empty():
-		return _rejected({}, state, "battle_missing")
-	if state.is_terminal():
-		return _rejected(battle, state, "terminal_run")
-	# V1：敌人先手 = 立即执行一次敌人回合（意图结算 + 玩家回合开始）。
-	var out: Dictionary = V1Script.player_action(battle, {"type": "end_turn"})
-	var next: Dictionary = out["battle"]
-	var phase := str(next.get("phase", ""))
-	var finished := phase == "victory" or phase == "defeat"
-	var result := "ongoing"
-	if phase == "defeat":
-		result = "death"
-	elif phase == "victory":
-		result = "victory"
-	return {"battle": next, "state": state, "finished": finished, "result": result}
+	return apply_turn(battle, state, {"type": "end_turn"}, catalog)
 
 
 ## Boss 战禁止撤退（V1 兼容旧锚点：真 Boss 节点不可逃，普通战斗可逃）。
 static func boss_blocks_retreat(battle: Dictionary) -> bool:
 	return bool(battle.get("flags", {}).get("boss_battle", false))
+
+
+## 第三阶段 Task 4：本场会话是否已在终局关闭（胜利/战死走 phase，撤离走该标记）。
+static func _session_closed(battle: Dictionary) -> bool:
+	var phase := str(battle.get("phase", "player_action"))
+	if phase == "victory" or phase == "defeat":
+		return true
+	return bool((battle.get("flags", {}) as Dictionary).get("session_closed", false))
 
 
 static func _rejected(battle: Dictionary, state: RunState, reason: String, details: Dictionary = {}) -> Dictionary:
@@ -341,6 +368,7 @@ static func _rejected(battle: Dictionary, state: RunState, reason: String, detai
 		"feeds": [reason],
 		"result": "rejected",
 		"accepted": false,
+		"finished": false,
 	}
 	if not details.is_empty():
 		result["details"] = details

@@ -12,15 +12,23 @@
 | 入口 | 输入 | 输出 | 说明 |
 |---|---|---|---|
 | `preview_actions(state, node, catalog, knowledge)` | 状态 + 节点 + 目录 | `Array[Dictionary]`（卡片） | **节点行动唯一来源**（商店/休整/遗葬/NPC 等） |
-| `preview_battle_actions(battle, state, catalog)` | battle + 状态 | `Array[Dictionary]`（战斗卡片） | 战斗行动唯一来源（出蛊/杀招/拳脚/结束回合/撤退） |
+| `preview_battle_actions(battle, state, catalog)` | battle + 状态 | `Array[Dictionary]`（战斗卡片） | **战斗行动唯一来源**（出蛊/杀招/拳脚/结束回合/撤退） |
 | `find_card(state, node, action_id, catalog)` | action_id | Dictionary（卡片） | 按 ID 取卡片（校验/回显用） |
 
 ## 关键数据契约（卡片字典）
 
 - `{id, type, label, executable: bool, block_reason, remedy_hints[], costs{...}, requires, target_type}`
 - 命令 `type` 全集必须与 `docs/contracts/2026-09-02-domain-ui-contract.md` 命令面一致
-- 战斗卡片 `target_type`：`"enemy"`/`"self"`/`"none"`（蛊定义 `v1_effect.kind` 推导）
-- 撤退卡片：Boss 战 `executable=false` + `block_reason="退无可退"`
+- 战斗卡片（第三阶段 Task 3，2026-09-17）**十键契约**：每张卡必须齐备
+  `{id, type, executable, block_reason, costs, target_type, valid_target_ids, command, state_version, expected_phase}`
+  - `id`：`gu.<instance_id>` / `basic_attack` / `kill_move.<id>` / `battle.end_turn` / `battle.retreat`
+  - `type`：`use_gu` / `basic_attack` / `play_kill_move` / `end_turn` / `retreat`
+  - `costs` 与既有消费面读的 `cost` 同值双写；`reason` 保留领域原始原因码（`block_reason` 是其玩家文案）
+  - `state_version` = `state.event_log.size()`（与手牌版本同源）；`expected_phase` = 快照期 `battle.phase`
+- 战斗卡片 `target_type`：`"single_enemy"` / `"none"`；仅 `v1_effect.kind == "strike"` 的蛊与拳脚需要选敌，`valid_target_ids` = 当前存活敌人 id 列表（其余为空）
+- 杀招卡片 `command.confirmed = false`：UI 确认后补 `confirmed = true` 才下发（T16 残锋降转不得静默惩罚）
+- 终局（`phase != player_action`）或撤离后（`flags.session_closed`）**不再产出任何战斗卡**；快照对缺卡的卡位一律置灰，不放行
+- 撤退卡片：Boss 战 `executable=false` + `block_reason="退无可退"`；元石/地形条件为预览侧遗留展示门禁（领域 `retreat` 分支目前只拦 Boss），差异待裁定
 
 ## 信号
 
@@ -37,3 +45,4 @@
 2. 新增可执行动作必须：先实现领域路由（resolver/facade），再在预览服务产出卡片，三处（领域/预览/契约）同步。
 3. 禁用态语义只经 `block_reason`/`remedy_hints` 表达，UI 不重复推导。
 4. 预览与执行共用同一套门禁函数（`can_play_gu` 等），禁止预览宽松、执行严格的漂移。
+5. 战斗屏可执行性、结构化命令与目标面只有本服务一个来源：`battle_snapshot` 只读取结论并透传（`_battle_gates/_apply_battle_gate`），禁止快照或 UI 再调 resolver 重算。

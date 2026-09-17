@@ -24,6 +24,7 @@ const RunBattleFlowScript = preload("res://scripts/presentation/run_battle_flow.
 const RunTravelFlowScript = preload("res://scripts/presentation/run_travel_flow.gd")
 const RunDialogueFlowScript = preload("res://scripts/presentation/run_dialogue_flow.gd")
 const RunEndingFlowScript = preload("res://scripts/presentation/run_ending_flow.gd")
+const M0RunFlowScript = preload("res://scripts/presentation/m0_run_flow.gd")
 # 公开常量转发：测试/外部仍可读 controller.WANDERER_STARTER_GU_IDS。
 const WANDERER_STARTER_GU_IDS = RunOpeningFlowScript.WANDERER_STARTER_GU_IDS
 const AppSettingsScript = preload("res://scripts/domain/app_settings.gd")
@@ -67,6 +68,10 @@ var current_battle: Dictionary = {}
 ## D3 战利品弹窗数据源：最近一场胜利的 loot/elite cost（只读快照消费）。
 var last_battle_loot: Dictionary = {}
 var last_battle_cost: Dictionary = {}
+## 独立 M0 垂直切片状态；完整运行流保持旧的自动战利品语义。
+var m0_mode := false
+var m0_reward_options: Array[Dictionary] = []
+var m0_reward_selected := false
 var last_result: Dictionary = {}
 var last_load_diagnosis: Dictionary = {}
 var dialogue_replies: Array[Dictionary] = []
@@ -165,6 +170,9 @@ func _initialize_view_flow() -> void:
 
 
 func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [], buff_ids: Array = []) -> void:
+	m0_mode = false
+	m0_reward_options.clear()
+	m0_reward_selected = false
 	var loaded := ContentCatalog.load_and_validate_all()
 	catalog = loaded.get("catalog", {})
 	_content_errors = loaded.get("errors", [])
@@ -193,12 +201,59 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 	_show_map()
 
 
+## M0 独立入口：只启用四场最小路线与三选一奖励，不改变完整运行流。
+func start_m0_run(seed_value: int) -> void:
+	var loaded := ContentCatalog.load_and_validate_all()
+	catalog = loaded.get("catalog", {})
+	_content_errors = loaded.get("errors", [])
+	if not _content_errors.is_empty():
+		_show_content_error()
+		return
+	meta = SaveRepositoryScript.load_meta_file()
+	if meta == null:
+		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
+	state = RunState.new_run(seed_value, meta)
+	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
+	# M0 content cap: one player, three starting Gu, six possible reward Gu.
+	state.gu_instances = {}
+	state.cave_aperture["stored_gu_instance_ids"] = []
+	state.gu_ids = []
+	state.refined_gu_ids = []
+	state.equipped_gu_ids = []
+	for gu_id in ["small_light_gu", "stone_shell_gu", "moonlight_gu"]:
+		if not catalog.get("gu_by_id", {}).has(gu_id):
+			continue
+		var instance_id := RunState.next_gu_instance_id(state.gu_instances)
+		state.gu_instances[instance_id] = GuInstanceScript.new_instance(gu_id, instance_id, catalog)
+		(state.cave_aperture["stored_gu_instance_ids"] as Array).append(instance_id)
+	state.sync_legacy_gu_projections()
+	state.equipped_gu_ids = state.refined_gu_ids.duplicate()
+	state.node_flags["m0_mode"] = true
+	m0_mode = true
+	m0_reward_options.clear()
+	m0_reward_selected = false
+	route = M0RunFlowScript.build_route()
+	current_node = {}
+	current_battle = {}
+	last_result = {}
+	last_battle_loot = {}
+	last_battle_cost = {}
+	dialogue_replies = []
+	_dialogue_gateway = DialogueManagerAdapterScript.new()
+	_show_map()
+
+
 func submit_command(command: Dictionary) -> Dictionary:
 	if not _content_errors.is_empty() and command.get("type", "") != "quit":
 		_show_content_error()
 		return {"ok": false, "reason": "content_invalid", "feedback": "内容配置无法加载。"}
 	# D4 Toast：反馈只在产生它的那次命令后可见；下一条命令即清空（无计时器，确定性显隐）。
 	last_feedback = ""
+	if m0_mode and str(command.get("type", "")) == "m0_reward_take":
+		return _submit_m0_reward(command)
+	if m0_mode and _view_name == "Reward" and not m0_reward_selected \
+			and str(command.get("type", "")) in ["leave_encounter", "leave_node"]:
+		return {"ok": false, "reason": "m0_reward_choice_required", "feedback": "请先选择一项战后奖励。"}
 	if command.get("type", "") == "save_run":
 		var save_error := save_current_run()
 		last_feedback = "进度已保存 · 关闭游戏后可继续本次冒险" if save_error == OK else "存档失败（错误码 %d）。" % save_error
@@ -298,6 +353,34 @@ func _submit_close_run(command: Dictionary) -> Dictionary:
 
 func _submit_battle_command(command: Dictionary) -> Dictionary:
 	return RunBattleFlowScript.submit_battle_command(self, command)
+
+
+func _submit_m0_reward(command: Dictionary) -> Dictionary:
+	if not m0_mode or _view_name != "Reward":
+		return {"ok": false, "reason": "m0_reward_not_available"}
+	if m0_reward_selected:
+		return {"ok": false, "reason": "m0_reward_already_chosen"}
+	var reward_id := str(command.get("reward_id", ""))
+	var option: Dictionary = {}
+	for option_value in m0_reward_options:
+		var candidate: Dictionary = option_value
+		if str(candidate.get("id", "")) == reward_id:
+			option = candidate
+			break
+	if option.is_empty():
+		return {"ok": false, "reason": "m0_reward_unknown"}
+	var reward_command := command.duplicate(true)
+	reward_command["option"] = option
+	var applied: Dictionary = Resolver.apply(state, reward_command, catalog)
+	var result: Dictionary = applied.get("result", {})
+	if not bool(result.get("ok", false)):
+		return {"ok": false, "reason": str(result.get("reason", "m0_reward_rejected"))}
+	state = applied["state"]
+	m0_reward_selected = true
+	last_result = {"ok": true, "action_id": "m0_reward_take", "reward_id": reward_id}
+	_apply_command_feedback(last_result)
+	_re_show_current_screen()
+	return {"ok": true, "result": last_result}
 
 
 ## Dialogue Manager balloon 选择桥接入口（P1-1）：插件/UI 在标题变化
@@ -826,6 +909,9 @@ func _complete_current_node(outcome: String) -> void:
 func _return_to_map() -> void:
 	current_battle = {}
 	current_node = {}
+	if m0_mode:
+		m0_reward_options.clear()
+		m0_reward_selected = false
 	# M3：不再清空会话镜像——state.encounter_session 保留 completed 会话，
 	# 下一次 travel 经 EncounterSessionResolver.begin 原子替换。
 	_show_map()

@@ -2,9 +2,8 @@ class_name RewardScreenView
 extends MarginContainer
 ## 战利品确认屏（Godot 官方 .tscn 节点树版，替代 ui/screens/reward_screen.guitkx）。
 ##
-## 战利品已由 settle_victory 自动入账，本屏是**确认展示**而非再抽取——
-## 没有任何拾取 / 替换 / 放弃按钮（那些发的是领域不存在的幽灵命令，2026-08-28 已移除）。
-## 静态骨架预置在节点树里，战利品卡走代码生成。
+## 普通路线的战利品已由 settle_victory 自动入账，本屏是确认展示；
+## 独立 M0 路线在这里提供真实的三选一奖励按钮，选择前不能离开。
 
 const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
 const GuCardScene := preload("res://scenes/ui/widgets/gu_card.tscn")
@@ -13,7 +12,9 @@ const GuCardScene := preload("res://scenes/ui/widgets/gu_card.tscn")
 @onready var _paper: ColorRect = $RewardPaper
 @onready var _seal_box: PanelContainer = $Root/HeaderRow/SealPanelContainer
 @onready var _title_label: Label = $Root/HeaderRow/TitleLabel
+@onready var _subtitle_label: Label = $Root/HeaderRow/SubtitleLabel
 @onready var _title_rule: ColorRect = $Root/HeaderRow/TitleRule
+@onready var _section_title: Label = $Root/primary_decision_surface/SectionTitle
 @onready var _reward_row: HBoxContainer = $Root/primary_decision_surface/RewardRow
 @onready var _pool_fallback_label: Label = $Root/NoteRow/PoolFallbackLabel
 @onready var _pity_label: Label = $Root/NoteRow/PityLabel
@@ -108,11 +109,17 @@ func _refresh_top_bar() -> void:
 
 
 func _refresh_header() -> void:
-	_title_label.text = _vertical_title(str(_snapshot.get("title", "战利品")))
+	var m0_mode := bool(_snapshot.get("m0_mode", false))
+	_title_label.text = _vertical_title("战后抉择" if m0_mode else str(_snapshot.get("title", "战利品")))
+	_subtitle_label.text = "三选一 · 选择会改变本局构筑" if m0_mode else "战利品已入账 · 本屏为确认展示"
+	_section_title.text = "本场奖励" if m0_mode else "本场所得"
 
 
 func _refresh_rewards() -> void:
 	_clear_children(_reward_row)
+	if bool(_snapshot.get("m0_mode", false)):
+		_refresh_m0_choices()
+		return
 	var rewards: Array = _snapshot.get("rewards", [])
 	for r in rewards:
 		if not (r is Dictionary):
@@ -121,6 +128,33 @@ func _refresh_rewards() -> void:
 	if rewards.is_empty():
 		var empty := _label_of("（本次无战利品）", GuStyle.INK_SOFT, 14)
 		_reward_row.add_child(empty)
+
+
+func _refresh_m0_choices() -> void:
+	var choices: Array = _snapshot.get("choice_rewards", [])
+	var selected := bool(_snapshot.get("choice_selected", false))
+	for option_value in choices:
+		if not (option_value is Dictionary):
+			continue
+		var option: Dictionary = option_value
+		var option_id := str(option.get("id", ""))
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(220, 104)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.text = "%s\n\n%s" % [str(option.get("title", "")), str(option.get("description", ""))]
+		button.tooltip_text = str(option.get("description", ""))
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		MasterTheme.apply_button(button, "action", "large")
+		button.custom_minimum_size = Vector2(220, 104)
+		button.disabled = selected
+		button.pressed.connect(_on_m0_choice_pressed.bind(option_id))
+		_reward_row.add_child(button)
+	if choices.is_empty():
+		_reward_row.add_child(_label_of("（当前没有可用奖励）", GuStyle.INK_SOFT, 14))
+
+
+func _on_m0_choice_pressed(option_id: String) -> void:
+	_fire("choose_reward", option_id)
 
 
 func _build_reward_card(r: Dictionary) -> void:
@@ -147,6 +181,10 @@ func _refresh_notes() -> void:
 	var pity := str(_snapshot.get("pity_note", ""))
 	_pity_label.text = pity
 	_pity_label.visible = pity != ""
+	var m0_mode := bool(_snapshot.get("m0_mode", false))
+	var choice_selected := bool(_snapshot.get("choice_selected", false))
+	_continue_button.disabled = m0_mode and not choice_selected
+	_continue_button.text = "继续旅程" if not m0_mode or choice_selected else "请选择一项奖励"
 
 
 func _fire(key: String, arg = null) -> void:

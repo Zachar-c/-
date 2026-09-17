@@ -11,6 +11,10 @@ extends RefCounted
 const V1BattleResolverScript = preload("res://scripts/domain/v1_battle_resolver.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
 const ActionPointsScript = preload("res://scripts/domain/action_points.gd")
+# 第三阶段 Task 3（2026-09-17）：战斗行动的门禁与结构化命令只有一个来源——
+# ActionPreviewService.preview_battle_actions。本快照只读取其结论，不再自调
+# resolver 判定可执行性（历史上两处各算一遍，口径会漂）。
+const ActionPreviewServiceScript = preload("res://scripts/domain/action_preview_service.gd")
 
 
 ## 战斗屏快照：唯一 V1 战斗 Schema 投影（BattleCommandFacade → V1BattleResolver）。
@@ -24,11 +28,11 @@ static func build_battle(controller) -> Dictionary:
 	var out := RunSnapshotBuilder._gui_state(controller)
 	out["enemies"] = _v1_enemies(battle_data)
 	out["player"] = _v1_player(battle_data)
-	out["hand"] = _v1_hand(battle_data, catalog)
+	out["hand"] = _v1_hand(battle_data, catalog, state)
 	out["piles"] = {}
 	out["actions"] = _v1_actions(battle_data)
 	out["default_target_id"] = _first_living_enemy_id(out["enemies"])
-	out["kill_moves"] = _v1_kill_moves(battle_data, catalog)
+	out["kill_moves"] = _v1_kill_moves(battle_data, catalog, state)
 	# R-boss-no-retreat：门禁以 V1 flags(Dictionary) 判定（facade 与 resolver 同源），
 	# UI 只镜像展示结果，不自行判断敌人定义。
 	out["flee_available"] = not BattleCommandFacadeScript.boss_blocks_retreat(battle_data)
@@ -134,15 +138,19 @@ static func _v1_buffs_to_statuses(buffs: Dictionary) -> Array[Dictionary]:
 
 
 ## V1 手牌：每个蛊槽一张卡（id "gu.<instance_id>"）+ 拳脚（肉体搏斗）。
-## 可执行性直接复用 V1 领域门禁 can_play_gu/basic_attack_reason，禁止 UI 自算。
-static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+## 第三阶段 Task 3：可执行性 / 禁用原因 / 结构化命令 / 版本一律取自
+## ActionPreviewService.preview_battle_actions 的同一结论（该处复用 V1 领域门禁），
+## 本函数只负责卡面文字拼装，禁止自行调 resolver 重算。
+static func _v1_hand(battle_data: Dictionary, catalog: Dictionary, state) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
+	var gates := _battle_gates(battle_data, catalog, state)
 	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
 	for i in (battle_data.get("gu_slots", []) as Array).size():
 		var slot: Dictionary = battle_data["gu_slots"][i]
 		var def_id := str(slot.get("definition_id", ""))
 		var definition: Dictionary = gu_by_id.get(def_id, {})
-		var reason := V1BattleResolverScript.can_play_gu(battle_data, i)
+		var card_id := "gu.%s" % str(slot.get("instance_id", ""))
+		var gate: Dictionary = gates.get(card_id, {})
 		var note := _v1_slot_note(slot)
 		var effect := SnapshotTextUtil._v1_effect_text(slot)
 		var slot_effect: Dictionary = slot.get("effect", {})
@@ -162,7 +170,7 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 			# S4 元素协同：当前回合已生效的流派支援随卡面透出（透明度红线）。
 			risks.append("当前受%s支援：本回合该流派蛊伤害 +%d。" % [SnapshotTextUtil._school_display_name(catalog, str(slot.get("school", ""))), live_support])
 		var card := {
-			"id": "gu.%s" % str(slot.get("instance_id", "")),
+			"id": card_id,
 			"name": DisplayText.gu(def_id),
 			"summary": summary,
 			"effect": summary,
@@ -171,20 +179,15 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 			"cost_ex": "",
 			"school_label": SnapshotTextUtil._school_display_name(catalog, str(definition.get("school", ""))),
 			"school_id": str(definition.get("school", "")),
-			"executable": reason.is_empty(),
-			"block_reason": _v1_reject_text(reason),
 			"known_risk": risks,
-			"target_type": "single_enemy" if str(slot.get("effect", {}).get("kind", "")) == "strike" else "none",
-			"valid_target_ids": _living_enemy_ids_v1(battle_data),
 			"curse_warning": false,
-			"state_version": int(battle_data.get("turn", 1)),
-			"expected_phase": str(battle_data.get("phase", "player_action")),
 		}
-		out.append(card)
-	var punch_reason := V1BattleResolverScript.basic_attack_reason(battle_data)
+		out.append(_apply_battle_gate(card, gate, battle_data, state))
+	var punch_id := "basic_attack"
+	var punch_gate: Dictionary = gates.get(punch_id, {})
 	var fight_damage := int(battle_data.get("cfg", {}).get("fight_damage_base", 1))
-	out.append({
-		"id": "basic_attack",
+	out.append(_apply_battle_gate({
+		"id": punch_id,
 		"name": "拳脚",
 		"summary": "肉体搏斗：基础 %d 伤 + 力道 + 仪仗，耗 1 念头。" % fight_damage,
 		"effect": "基础 %d 伤 + 力道 + 仪仗" % fight_damage,
@@ -192,16 +195,46 @@ static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dict
 		"cost": "念头 1",
 		"cost_ex": "",
 		"school_label": "",
-		"executable": punch_reason.is_empty(),
-		"block_reason": _v1_reject_text(punch_reason),
 		"known_risk": [],
-		"target_type": "single_enemy",
-		"valid_target_ids": _living_enemy_ids_v1(battle_data),
 		"curse_warning": false,
-		"state_version": int(battle_data.get("turn", 1)),
-		"expected_phase": str(battle_data.get("phase", "player_action")),
-	})
+		"target_type": "single_enemy",
+	}, punch_gate, battle_data, state))
 	return out
+
+
+## 预览结论按 id 建索引（战斗行动的唯一门禁来源，Task 3）。
+static func _battle_gates(battle_data: Dictionary, catalog: Dictionary, state) -> Dictionary:
+	var gates: Dictionary = {}
+	if battle_data.is_empty() or state == null:
+		return gates
+	for card_value in ActionPreviewServiceScript.preview_battle_actions(battle_data, state, catalog):
+		var card: Dictionary = card_value
+		gates[str(card.get("id", ""))] = card
+	return gates
+
+
+## 把预览结论（可执行性 / 禁用原因 / 命令 / 版本 / 目标面）贴到卡面投影上。
+## 预览缺该卡 = 战斗已终局收场，一律置灰并给出原因，绝不放行。
+static func _apply_battle_gate(card: Dictionary, gate: Dictionary, battle_data: Dictionary, state) -> Dictionary:
+	var version := int(state.event_log.size()) if state != null else int(battle_data.get("turn", 1))
+	var phase := str(battle_data.get("phase", "player_action"))
+	if gate.is_empty():
+		card["executable"] = false
+		card["block_reason"] = "战斗已结束。"
+		card["target_type"] = str(card.get("target_type", "none"))
+		card["valid_target_ids"] = []
+		card["command"] = {}
+		card["state_version"] = version
+		card["expected_phase"] = phase
+		return card
+	card["executable"] = bool(gate.get("executable", false))
+	card["block_reason"] = str(gate.get("block_reason", ""))
+	card["target_type"] = str(gate.get("target_type", "none"))
+	card["valid_target_ids"] = (gate.get("valid_target_ids", []) as Array).duplicate()
+	card["command"] = (gate.get("command", {}) as Dictionary).duplicate(true)
+	card["state_version"] = int(gate.get("state_version", version))
+	card["expected_phase"] = str(gate.get("expected_phase", phase))
+	return card
 
 
 static func _v1_slot_note(slot: Dictionary) -> String:
@@ -239,21 +272,6 @@ static func _gu_quality(definition: Dictionary) -> String:
 	return ""
 
 
-static func _v1_reject_text(reason: String) -> String:
-	match reason:
-		"unknown_gu": return "未知蛊虫"
-		"gu_consumed": return "此蛊已在战斗中被消耗"
-		"gu_sealed": return "此蛊正被封印"
-		"gu_used_this_turn": return "此蛊本回合已释放"
-		"action_limit_reached": return "本回合行动次数已用完"
-		"insufficient_thought": return "念头不足（每次行动耗 1 念头）"
-		"insufficient_true_qi": return "真元不足"
-		"insufficient_qi_quality": return "真元质量不足，无法催动此转数的蛊虫"
-		"kill_move_recipe_sealed": return "配方蛊被封印，杀招不可用"
-		"unknown_kill_move": return "未知杀招"
-	return reason
-
-
 ## V1 杀招：配方实例 → 蛊名（只读拼装），可释放性复用 kill_move_reason 门禁。
 ## 杀招屏快照：研习录（已研习）+ 战斗栏位（装配槽）。
 ## 数据源与战斗屏同一套 battle.kill_moves；无战斗数据时给空态。
@@ -264,7 +282,7 @@ static func build_kill(controller) -> Dictionary:
 	base["title"] = "杀招"
 	base["subtitle"] = "研习于战 · 一场一用"
 	base["study_slots"] = 3
-	base["kill_moves"] = _v1_kill_moves(battle, catalog)
+	base["kill_moves"] = _v1_kill_moves(battle, catalog, controller.state)
 	if battle.is_empty():
 		# 非战斗时战斗态为空，杀招屏会退化成三张「未研习」空卡，玩家找不到
 		# 杀招从哪来。V1 杀招本就无"研习"步骤——持有配方蛊即自动成招，
@@ -284,8 +302,9 @@ static func build_kill(controller) -> Dictionary:
 	return base
 
 
-static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
+static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary, state) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
+	var gates := _battle_gates(battle_data, catalog, state)
 	for km_value in battle_data.get("kill_moves", []):
 		var km: Dictionary = km_value
 		var recipe_names: Array[String] = []
@@ -295,7 +314,6 @@ static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Arra
 				recipe_names.append(DisplayText.gu(str(slot.get("definition_id", ""))))
 			else:
 				recipe_names.append(str(instance_id_value))
-		var reason := V1BattleResolverScript.kill_move_reason(battle_data, str(km.get("id", "")))
 		var costs: Array[String] = []
 		if int(km.get("true_qi_cost", 0)) > 0:
 			costs.append("真元 %d" % int(km.get("true_qi_cost", 0)))
@@ -317,7 +335,9 @@ static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Arra
 				risks.append("残锋：配方中 %d 只剑蛊各耗 1 道痕；距质变还剩 %d 次" % [mark_ids.size(), least])
 			if V1BattleResolverScript.kill_move_downgrade_pending(battle_data, str(km.get("id", ""))):
 				risks.append("本次出招将耗尽道痕，配方剑蛊永久降 1 转（不可逆，无法回复）")
-		out.append({
+		# Task 3：可执行性 / 禁用原因 / 结构化命令取自预览结论，快照只装卡面。
+		var gate: Dictionary = gates.get("kill_move.%s" % str(km.get("id", "")), {})
+		out.append(_apply_battle_gate({
 			"id": str(km.get("id", "")),
 			"name": str(km.get("label", str(km.get("id", "")))),
 			"sequence_display": " · ".join(recipe_names) if not recipe_names.is_empty() else "配方缺失",
@@ -326,11 +346,9 @@ static func _v1_kill_moves(battle_data: Dictionary, catalog: Dictionary) -> Arra
 			"total": 0,
 			"cost": " · ".join(costs),
 			"effect": SnapshotTextUtil._v1_effect_text(km),
-			"executable": reason.is_empty(),
-			"block_reason": _v1_reject_text(reason),
 			"dangerous": not risks.is_empty(),
 			"known_risk": risks,
-		})
+		}, gate, battle_data, state))
 	return out
 
 
@@ -387,15 +405,6 @@ static func _find_v1_slot(battle_data: Dictionary, instance_id: String) -> Dicti
 		if str(slot.get("instance_id", "")) == instance_id:
 			return slot
 	return {}
-
-
-static func _living_enemy_ids_v1(battle_data: Dictionary) -> Array[String]:
-	var ids: Array[String] = []
-	for enemy_value in battle_data.get("enemies", []):
-		var enemy: Dictionary = enemy_value
-		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
-			ids.append(str(enemy.get("id", "")))
-	return ids
 
 
 static func _first_living_enemy_id(enemies: Array[Dictionary]) -> String:

@@ -140,8 +140,11 @@ static func _v1_effect_text(source: Dictionary) -> String:
 
 
 ## W12 split: direct test caller (test_central_gu_economy) keeps the forwarder.
-static func _v1_hand(battle_data: Dictionary, catalog: Dictionary) -> Array[Dictionary]:
-	return BattleSnapshot._v1_hand(battle_data, catalog)
+## 第三阶段 Task 3（2026-09-17）：门禁与结构化命令只有一个来源
+## （ActionPreviewService.preview_battle_actions），故本转发器与投影层同签名，
+## 必须带上本局 RunState；缺 state 时无法判定可执行性，不再默默放行。
+static func _v1_hand(battle_data: Dictionary, catalog: Dictionary, state) -> Array[Dictionary]:
+	return BattleSnapshot._v1_hand(battle_data, catalog, state)
 
 
 ## W12 split: content_error snapshot moved to snapshots/content_error_snapshot.gd.

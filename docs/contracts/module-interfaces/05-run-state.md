@@ -24,7 +24,7 @@
 
 ## 关键数据契约
 
-- 状态键：`{run_seed, stone, essence, life_time, soul, thoughts, gu_instances{}, refined_gu_ids[], event_log[], run_buff_ids[], cave_aperture{stored_gu_instance_ids[]}, flags, ...}`
+- 状态键：`{run_seed, stone, essence, life_time, soul, thoughts, gu_instances{}, refined_gu_ids[], event_log[], run_buff_ids[], cave_aperture{stored_gu_instance_ids[]}, flags, ...}`；M0 不新增顶层状态键，模式标记复用可持久化 `node_flags.m0_mode`。
 - 实例仓：`gu_instances[instance_id] = {instance_id, definition_id, state, rank, ...}`
 - 事件：`event_log[]` 每项 `{type, ...}`，追加即返回新状态（防引用共享）
 
