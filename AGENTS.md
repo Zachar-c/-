@@ -15,9 +15,10 @@
 
 ## 当前阶段
 
-- Monorepo 迁移进行中，执行计划见 `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`。
-- Task 5、Task 6、Task 7 已完成：`lore/research/`、`lore/wiki/`、`editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`、`game/` 均已导入；剩余 Task 8（边界终验）、Task 9（推送准备）。
+- Monorepo 迁移已完成：`master` 即当前基线，执行记录见 `MIGRATION.md`，目标目录与来源映射见 `PROJECT_MAP.md`，已知债务见 `docs/debt.md`。
+- 已导入目标目录：`lore/research/`、`lore/wiki/`、`editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`、`game/`；各目录首读文件见 `PROJECT_MAP.md`。
 - `gu-zu/`、`wenzhen-lore/`、`gu-zhenren-editor/` 的受版本内容均已删除；旧 `gu-zhenren-editor/` 磁盘残留只有本地恢复材料与缓存（根 `.gitignore` 的 `/gu-zhenren-editor/` 规则已忽略，不进入 Git 树），当前游戏入口为 `game/`。
+- 设计依据见 `docs/superpowers/specs/2026-09-18-gu-zhenren-monorepo-migration-design.md`；执行计划 `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md` 是历史记录，不再作为待办清单。
 
 ## 禁止事项
 
