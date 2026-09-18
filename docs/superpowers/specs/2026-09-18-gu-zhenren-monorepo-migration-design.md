@@ -1,6 +1,6 @@
 # Gu Zhenren Monorepo Migration Design v1.0
 
-状态：待审阅
+状态：审阅通过；迁移已在 `master` 执行完成（2026-09-18）。本文是迁移期设计基线，不是仓库的长期定位说明。
 
 ## 1. 目标
 
@@ -26,7 +26,7 @@ gu-zhenren/
 ├── source/                    # 本地原始资料，根 .gitignore 排除
 ├── lore/
 │   ├── research/              # gu-zu：研究、读书资料、设定和设计原始材料
-│   └── wiki/                  # wenzhen-lore：冻结的 AI Wiki
+│   └── wiki/                  # wenzhen-lore：AI 可读蒸馏 Wiki
 ├── editorial/                 # GitHub gu-zhenren-editor
 ├── game/                      # 当前 Gitee 游戏工程
 ├── fortune/
@@ -59,6 +59,8 @@ AI 的默认行为是先读地图，再按任务进入一个目录；没有理�
 
 ## 5. Wiki 冻结边界
 
+> 本节是迁移期约束：冻结只为保证迁移期间语义不变，不构成本仓库的长期定位。迁移完成后 `lore/wiki/` 已解冻，当前编辑约定见 `lore/wiki/AGENTS.md`，续作计划见 `docs/superpowers/plans/2026-09-18-wenzhen-lore-wiki-continuation.md`。
+
 `lore/wiki/` 在本次迁移中视为冻结资产：
 
 - 允许：目录移动、文件重命名、相对链接更新、来源路径更新。
@@ -72,7 +74,7 @@ source/（本地原始资料）
         ↓
 lore/research/（研究与整理）
         ↓
-lore/wiki/（冻结的 AI 可读知识）
+lore/wiki/（AI 可读蒸馏知识，按批次持续更新）
         ↓
 game / editorial / fortune / ai-system
 ```

@@ -1,5 +1,7 @@
 # Gu Zhenren Monorepo Migration Implementation Plan
 
+> 状态：已执行完成（2026-09-18，基线 `master`）。保留作历史记录，不再作为待办清单；其中的「只做目录迁移」等约束属于迁移期范围，不是仓库的长期定位。当前基线见 `AGENTS.md`「当前阶段」与 `MIGRATION.md`。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 将当前《蛊真人》相关项目迁移为个人开发者可维护的单一 Monorepo，保留可审计历史、冻结 Wiki 语义、排除原著正文，并让 AI 能通过根导航进入正确项目。
