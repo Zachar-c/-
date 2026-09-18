@@ -55,5 +55,6 @@ sources:
 - 星宿仙尊在不同历史阶段的完整履历、天庭制度建设和宿命蛊掌控细节尚未按时间线独立建档。
 - 以身合道、星宿意志、天意和后续状态之间的精确机制需要逐段回原文，不能只依据人物台账概括。
 - 人物弧光台账中关于星宿后续重生和三相合体的内容属于创作边界资料；在当前 Wiki 中不把它扩写为断点后的原著事实。
+- 「智慧蛊为星宿仙尊本命蛊」仅为琅琊地灵单源说法（根原文行号 189526），无叙述者背书和第二佐证，不得作为原著明确内容；详见[智慧蛊](../gu/wisdom-gu.md)「待核对」。星宿棋盘品阶关联（若得智慧蛊可升九转，对应笔记锚点：H1 的 325284）亦只作中性记录，不作本命蛊断言。
 
-关联页面：[天庭](../world/heavenly-court.md)、[龙公](dragon-duke.md)、[红莲魔尊](red-lotus.md)、[方源](fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)。
+关联页面：[天庭](../world/heavenly-court.md)、[龙公](dragon-duke.md)、[红莲魔尊](red-lotus.md)、[方源](fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[智慧蛊](../gu/wisdom-gu.md)。

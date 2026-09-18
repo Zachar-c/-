@@ -7,6 +7,8 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
   - "canon-index:CAN-NANJIANG-001"
   - "canon-index:CAN-NANJIANG-002"
+  - "canon-index:CAN-NANJIANG-003"
+  - "canon-index:CAN-NANJIANG-004"
   - "canon-index:CAN-BEAST-TIDE-002"
 ---
 

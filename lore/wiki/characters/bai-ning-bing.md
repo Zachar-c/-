@@ -27,4 +27,4 @@ sources:
 - 北冥冰魄体的完整规则、白相传承时间线、性别与身份变化等细节需按章节补齐。
 - 现有读书笔记中的部分评价属于人物弧光分析，不直接等同于原著明文。
 
-关联页面：[方源](fang-yuan.md)、[青茅山](../events/qing-mao-mountain.md)、[修炼体系](../world/cultivation-system.md)、[资质与空窍](../world/aptitude-and-aperture.md)。
+关联页面：[方源](fang-yuan.md)、[青茅山](../events/qing-mao-mountain.md)、[南疆](../world/south-jiang.md)、[修炼体系](../world/cultivation-system.md)、[资质与空窍](../world/aptitude-and-aperture.md)。

@@ -29,6 +29,7 @@ sources:
 
 - **元始仙尊**：天庭的创立者，门派制度、元始气墙和部分人道遗产的源头。
 - [星宿仙尊](../characters/star-constellation.md)：以身合道并以智道意志影响天意，是天庭战略和宿命蛊体系的关键节点。
+- [元莲仙尊](../characters/yuan-lian-xian-zun.md)：入主天庭的三仙尊之一（与元始、星宿并列）；完整生平与在天庭的具体任期仍待核对。对应笔记锚点：F2a 的 230294–230296。
 - [龙公](../characters/dragon-duke.md)：天庭的护道人与核心战力；现有角色台账要求把他写成真诚的秩序殉道者，不写成临场改信或突然道德觉醒的人物。
 - **紫薇仙子**：负责推算、布局和星投等战略行动的核心成员。
 - **袁琼都、正元老人等**：分别代表炼道、人道和牺牲机制；具体人物页尚未建立。
@@ -68,7 +69,7 @@ sources:
 - 星宿合道、天意、宿命蛊和天庭之间的精确因果与权限边界，需要按原文逐段核验。
 - 两次轮回中的天庭行动、修复进度和人物生死必须分开记录；当前页面只提供导航，不替代宿命大战事件页。
 - `02-人物弧光.md` 中关于龙公、星宿和天庭的内容属于人物写作约束或分析资料，不能自动升级为原著事实。
-- 「天庭」页《主要人物》尚未收录元莲仙尊：依据在 `characters/yuan-lian-xian-zun.md`（F2a 的 230294–230296 记入主天庭者只有元始、星宿、元莲），需后续批次核原文后再决定是否补入本节。
+- Batch 14 已按 F2a 的 230294–230296（入主天庭者仅元始、星宿、元莲三仙尊）补入《主要人物》元莲仙尊链接；其完整生平、在天庭的具体任期与断点后状态仍待核对，不得推测补写。
 - 元始仙尊、紫薇仙子、袁琼都、正元老人等天庭核心成员暂无独立页面，登记为后续节点候选。
 
-关联页面：[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[方源](../characters/fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[智慧蛊](../gu/wisdom-gu.md)、[宿命大战](../events/fate-war.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[人祖传](../themes/ren-zu-zhuan.md)、[修炼体系](cultivation-system.md)。
+关联页面：[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[元莲仙尊](../characters/yuan-lian-xian-zun.md)、[龙公](../characters/dragon-duke.md)、[方源](../characters/fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[智慧蛊](../gu/wisdom-gu.md)、[宿命大战](../events/fate-war.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[人祖传](../themes/ren-zu-zhuan.md)、[修炼体系](cultivation-system.md)。
