@@ -1,0 +1,464 @@
+class_name RefineScreenView
+extends MarginContainer
+## 炼蛊 / 合成屏（Godot 官方 .tscn 节点树版，替代 ui/screens/refine_screen.guitkx）。
+##
+## 三通道 Tab（定向 / 组合 / 盲盒）是**屏内展示状态**，切换只改本地过滤、不发命令
+## （2026-08-28 验收批已移除 set_channel 等幽灵命令）。
+## 合成执行前走二次确认，完整预览产物 / 失败率 / 躁动 / 诅咒继承。
+
+const MasterTheme := preload("res://scripts/presentation/wenzhen_master_theme.gd")
+const GuPanelScene := preload("res://scenes/ui/widgets/gu_panel.tscn")
+
+@onready var _top_bar: PanelContainer = $Root/TopBar
+@onready var _refine_stage: PanelContainer = $Root/RefineStage
+@onready var _paper: ColorRect = $RefinePaper
+@onready var _seal_box: PanelContainer = $Root/RefineStage/StageContent/HeaderRow/SealPanelContainer
+@onready var _title_label: Label = $Root/RefineStage/StageContent/HeaderRow/TitleLabel
+@onready var _title_rule: ColorRect = $Root/RefineStage/StageContent/HeaderRow/TitleRule
+@onready var _sub_label: Label = $Root/RefineStage/StageContent/HeaderRow/SubLabel
+@onready var _tab_row: HBoxContainer = $Root/RefineStage/StageContent/HeaderRow/TabRow
+@onready var _slot_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/SlotStatusLabel
+# Playable Core Loop Phase 4：当前构筑目标横幅（只读）。
+@onready var _goal_banner: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/GoalBanner
+@onready var _recipe_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/RecipePanel
+@onready var _streak_label: Label = $Root/RefineStage/StageContent/primary_decision_surface/MainColumn/StreakNoteLabel
+@onready var _dismantle_panel: PanelContainer = $Root/RefineStage/StageContent/primary_decision_surface/SideColumn/DismantlePanel
+@onready var _leave_button: Button = $Root/RefineStage/StageContent/primary_decision_surface/SideColumn/LeaveButton
+@onready var _confirm_dialog: PanelContainer = $Root/ConfirmDialog
+
+var _snapshot: Dictionary = {}
+var _commands: Dictionary = {}
+## mount_snapshot 可能早于 _ready()，未就绪时只收数据，_ready() 里补刷新。
+var _ready_done := false
+## 当前通道（fixed / combo / blind）：纯展示状态，不改领域。
+var _channel := "fixed"
+## E4a：用户是否手动切过通道 Tab——切过之后 initial_channel 不再覆盖本地选择。
+var _channel_touched := false
+## 待确认合成的配方 id；空串表示无。
+var _confirm_recipe := ""
+
+
+func _ready() -> void:
+	_ready_done = true
+	_apply_base_fonts()
+	_apply_stage_style()
+	_recipe_panel.setup("配方 / 预览", true, true)
+	_dismantle_panel.setup("拆解化材", false, false)
+	_leave_button.pressed.connect(func(): _fire("leave"))
+	if not _snapshot.is_empty():
+		_refresh()
+
+
+## run_controller 的挂载入口（与各 master 场景同签名）。
+func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
+	_snapshot = snapshot
+	_commands = commands
+	if _ready_done:
+		_refresh()
+
+
+func _refresh() -> void:
+	_refresh_top_bar()
+	_refresh_header()
+	_apply_subview_context()
+	_refresh_tabs()
+	_refresh_recipes()
+	_refresh_dismantle()
+	_refresh_confirm_dialog()
+
+
+## E4a 炼蛊子屏语境：休息探访内打开时离开按钮改为「返回休整」，
+## 并在用户未手动切过 Tab 前按 initial_channel 预选通道（如自由配对）。
+func _apply_subview_context() -> void:
+	var from_rest := bool(_snapshot.get("from_rest", false))
+	_leave_button.text = "返回休整" if from_rest else "离开"
+	if not _channel_touched:
+		var initial := str(_snapshot.get("initial_channel", ""))
+		if initial != "":
+			_channel = initial
+
+
+func _refresh_top_bar() -> void:
+	if not _top_bar.has_method("set_data"):
+		return
+	_top_bar.set_data(
+		_snapshot.get("resources", {}),
+		_snapshot.get("contracts", []),
+		_snapshot.get("anomalies", []),
+		_snapshot.get("death_lines", {}),
+		int(_snapshot.get("layer", -1)))
+
+
+func _refresh_header() -> void:
+	_title_label.text = _vertical_title(str(_snapshot.get("title", "炼蛊台")))
+	var slot_ok := bool(_snapshot.get("slot_ok", false))
+	_slot_label.text = ("空位校验：已就绪" if slot_ok
+			else "空位校验：蛊囊已满，需先移除或拆解一只蛊")
+	_slot_label.add_theme_color_override("font_color",
+			GuStyle.JADE if slot_ok else GuStyle.CINNABAR)
+	_streak_label.text = str(_snapshot.get("streak_note", ""))
+	# Playable Core Loop Phase 4：把当前构筑目标放在配方列表正上方。
+	var goal: Dictionary = _snapshot.get("build_goal", {})
+	if bool(goal.get("available", false)):
+		var ready := bool(goal.get("ready", false))
+		_goal_banner.text = "当前构筑目标：%s —— %s%s" % [
+			str(goal.get("title", "")),
+			str(goal.get("progress_text", "")),
+			"（已就绪，可直接执行）" if ready else ""]
+		_goal_banner.add_theme_color_override("font_color",
+				GuStyle.CINNABAR if ready else GuStyle.INK_SOFT)
+		_goal_banner.visible = true
+	else:
+		_goal_banner.text = ""
+		_goal_banner.visible = false
+
+
+## 通道 Tab 只改本地过滤，不发命令。
+func _refresh_tabs() -> void:
+	_clear_children(_tab_row)
+	for ch in _snapshot.get("channels", []):
+		if not (ch is Dictionary):
+			continue
+		var cid := str(ch.get("id", ""))
+		var tab := Button.new()
+		tab.text = str(ch.get("label", ""))
+		MasterTheme.apply_button(tab, "danger" if cid == _channel else "action")
+		tab.pressed.connect(func():
+			_channel = cid
+			_channel_touched = true
+			_refresh_tabs()
+			_refresh_recipes())
+		_tab_row.add_child(tab)
+
+
+func _refresh_recipes() -> void:
+	var list := _ensure_scroll_list(_recipe_panel, "RecipeScroll")
+	_clear_children(list)
+	if _channel == "free_pair":
+		_build_pair_panel(list)
+		return
+	if _channel == "attune":
+		_build_attune_panel(list)
+		return
+	var blind_note := str(_snapshot.get("blind_note", ""))
+	var slot_ok := bool(_snapshot.get("slot_ok", false))
+	var shown := 0
+	for r in _snapshot.get("recipes", []):
+		if not (r is Dictionary):
+			continue
+		# 通道过滤：配方自带 channel 标签，与当前 Tab 一致才显示。
+		if str(r.get("channel", "fixed")) != _channel:
+			continue
+		shown += 1
+		_build_recipe_card(list, r, slot_ok, blind_note)
+	if shown == 0:
+		list.add_child(_label_of("（无可用配方）", GuStyle.INK_SOFT, 14))
+
+
+## Stage 1（2026-09-17）炼化面板：把野生蛊（未认主）压成自己的蛊。
+## 代价（真元）与后果（改由真元喂养）在点之前全部写明，不做「点了才知道」。
+func _build_attune_panel(list: Node) -> void:
+	var candidates: Array = _snapshot.get("attune_candidates", [])
+	var note := _label_of("野蛊自己吸食空气中的元气；一旦炼化，它便失去这个能力，改吞你的真元。" +
+			"炼化是拿真元压制它的意志——真元不继，前功尽弃。", GuStyle.INK_SOFT, 13)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	list.add_child(note)
+	if candidates.is_empty():
+		list.add_child(_label_of("（蛊仓中没有野生蛊）", GuStyle.INK_SOFT, 14))
+		return
+	for c in candidates:
+		if not (c is Dictionary):
+			continue
+		var cid := str(c.get("id", ""))
+		var cost := int(c.get("essence_cost", 0))
+		var head := _label_of("%s · %d转 · 真元 %d" % [str(c.get("name", "")), int(c.get("rank", 0)), cost], GuStyle.INK_HALL, 14)
+		list.add_child(head)
+		list.add_child(_label_of(str(c.get("note", "")), GuStyle.INK_SOFT, 12))
+		var btn := Button.new()
+		btn.text = "炼化（真元 %d / 现有 %d）" % [cost, int(c.get("essence_owned", 0))]
+		btn.disabled = not bool(c.get("executable", false))
+		if btn.disabled:
+			btn.tooltip_text = str(c.get("block_reason", ""))
+		btn.pressed.connect(func(): _fire("attune", cid))
+		MasterTheme.apply_button(btn, "action")
+		list.add_child(btn)
+		if btn.disabled:
+			list.add_child(_label_of(str(c.get("block_reason", "")), GuStyle.CINNABAR, 12))
+
+
+## D1b 古方知识模型：自由配对面板——选主/辅蛊，产物按知识状态揭示（？？？/实名）。
+func _build_pair_panel(list: Node) -> void:
+	var candidates: Array = _snapshot.get("pair_candidates", [])
+	var main_id := str(_snapshot.get("pair_main", ""))
+	var partner_id := str(_snapshot.get("pair_partner", ""))
+	var preview: Dictionary = _snapshot.get("pair_preview", {})
+
+	var note := _label_of("任何两只同转已炼化蛊都可入炉；产物由这一对决定，同对永远同果。" +
+			"持古方者当场可见产物，未持者见「？？？」，首炼自动授予古方。", GuStyle.INK_SOFT, 13)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	list.add_child(note)
+
+	list.add_child(_label_of("主蛊位（其流派与转数决定产物域）", GuStyle.INK_HALL, 14))
+	for c in candidates:
+		if not (c is Dictionary):
+			continue
+		var cid := str(c.get("id", ""))
+		var btn := Button.new()
+		btn.text = "%s · %d转 · %s%s" % [str(c.get("name", "")), int(c.get("rank", 0)), str(c.get("school", "")), "（主）" if cid == main_id else ""]
+		MasterTheme.apply_button(btn, "danger" if cid == main_id else "action")
+		btn.pressed.connect(func(): _fire("select_pair_main", cid))
+		list.add_child(btn)
+	list.add_child(_label_of("辅蛊位", GuStyle.INK_HALL, 14))
+	for c in candidates:
+		if not (c is Dictionary):
+			continue
+		var cid2 := str(c.get("id", ""))
+		var btn2 := Button.new()
+		btn2.text = "%s · %d转 · %s%s" % [str(c.get("name", "")), int(c.get("rank", 0)), str(c.get("school", "")), "（辅）" if cid2 == partner_id else ""]
+		MasterTheme.apply_button(btn2, "danger" if cid2 == partner_id else "action")
+		btn2.pressed.connect(func(): _fire("select_pair_partner", cid2))
+		list.add_child(btn2)
+
+	list.add_child(_label_of("预检", GuStyle.INK_HALL, 14))
+	if not bool(preview.get("ok", false)) and str(preview.get("reason", "")) != "":
+		list.add_child(_label_of(str(preview.get("reason", "")), GuStyle.CINNABAR, 13))
+	else:
+		var known := bool(preview.get("output_known", false))
+		var output_line := ""
+		if known:
+			output_line = "产物：%s（古方在手，效果见图鉴）" % DisplayText.gu(str(preview.get("output_id", "")))
+		else:
+			output_line = "产物：？？？（首炼自动获得古方）"
+		list.add_child(_label_of("产物域：" + str(preview.get("domain", "")), GuStyle.INK_HALL, 13))
+		list.add_child(_label_of(output_line, GuStyle.ANOMALY_YELLOW if known else GuStyle.INK_SOFT, 14))
+		list.add_child(_label_of("成功率 %d%% · 元石 %d 枚" % [int(preview.get("success_pct", 0)), int(preview.get("stone_cost", 0))], GuStyle.INK_HALL, 13))
+		list.add_child(_label_of("失败：主蛊受伤（休整可愈），元石照耗。", GuStyle.CINNABAR, 12))
+	var go := Button.new()
+	go.text = "确认炼蛊"
+	go.disabled = not (bool(preview.get("ok", false)) and bool(preview.get("executable", false)))
+	MasterTheme.apply_button(go, "danger")
+	go.pressed.connect(func(): _fire("refine_free_pair"))
+	list.add_child(go)
+
+
+func _build_recipe_card(list: Node, r: Dictionary, slot_ok: bool, blind_note: String) -> void:
+	var rid := str(r.get("id", ""))
+	var rcurse := str(r.get("curse", ""))
+	var rbacklash := str(r.get("backlash", ""))
+	var runlocked := bool(r.get("unlocked", true))
+	var is_danger: bool = rcurse != "" or rbacklash != "无躁动"
+
+	var panel := GuPanelScene.instantiate()
+	list.add_child(panel)
+	panel.setup(str(r.get("name", "")), true, false)
+
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 3)
+	panel.content_host.add_child(box)
+	# Playable Core Loop Phase 4：目标配方置顶并打标（快照已按优先级排序）。
+	if bool(r.get("is_goal", false)):
+		box.add_child(_label_of("◆ 当前构筑目标", GuStyle.CINNABAR, 13))
+	var output_row := HBoxContainer.new()
+	output_row.add_theme_constant_override("separation", 4)
+	var output_icon := GuIconView.new()
+	output_icon.setup("yuanstone", GuStyle.ANOMALY_YELLOW, GuIconView.SIZE_SMALL)
+	output_row.add_child(output_icon)
+	output_row.add_child(_label_of("产物：" + str(r.get("output", "")), GuStyle.ANOMALY_YELLOW, 15))
+	box.add_child(output_row)
+	box.add_child(_label_of(str(r.get("fail_chance", "")), GuStyle.ANOMALY_YELLOW, 13))
+	box.add_child(_label_of(rbacklash, GuStyle.ANOMALY_YELLOW, 13))
+	# Phase 4：成本与缺失项**点击前**可见（禁止点击后才告知成本）。
+	for cost_line in _requirement_lines(r):
+		box.add_child(cost_line)
+	var rank_note := str(r.get("rank_note", ""))
+	if rank_note != "":
+		box.add_child(_label_of(rank_note, GuStyle.INK_SOFT, 12))
+	if rcurse != "":
+		box.add_child(_label_of(rcurse, GuStyle.CINNABAR, 13))
+	if _channel == "blind" and blind_note != "":
+		box.add_child(_label_of(blind_note, GuStyle.INK_SOFT, 12))
+
+	var executable := bool(r.get("executable", true))
+	var refine_btn := Button.new()
+	refine_btn.text = "确认炼蛊"
+	refine_btn.disabled = not slot_ok or not runlocked or not executable
+	MasterTheme.apply_button(refine_btn, "danger" if is_danger else "action")
+	refine_btn.pressed.connect(func():
+		_confirm_recipe = rid
+		_refresh_confirm_dialog())
+	panel.content_host.add_child(refine_btn)
+
+
+## Phase 4：把快照给出的材料 / 元石 / 输入蛊成本渲染成逐行文案。
+## 只读渲染；不做任何领域判断（可执行性来自快照的 executable）。
+func _requirement_lines(r: Dictionary) -> Array[Label]:
+	var lines: Array[Label] = []
+	for row_value in r.get("materials", []):
+		var row: Dictionary = row_value
+		var mark := "✓" if bool(row.get("complete", false)) else "·"
+		var color := GuStyle.INK_SOFT if bool(row.get("complete", false)) else GuStyle.CINNABAR
+		lines.append(_label_of("%s 材料 %s %d/%d" % [mark, str(row.get("name", "")),
+				int(row.get("owned", 0)), int(row.get("required", 0))], color, 12))
+	var stone_owned := int(r.get("stone_owned", 0))
+	var stone_required := int(r.get("stone_required", 0))
+	if stone_required > 0:
+		var stone_ok := stone_owned >= stone_required
+		lines.append(_label_of("%s 元石 %d/%d" % ["✓" if stone_ok else "·",
+				stone_owned, stone_required],
+				GuStyle.INK_SOFT if stone_ok else GuStyle.CINNABAR, 12))
+	var input_name := str(r.get("input_gu_name", ""))
+	if input_name != "":
+		var input_ok := bool(r.get("input_owned", false))
+		lines.append(_label_of("%s 输入蛊 %s" % ["✓" if input_ok else "·", input_name],
+				GuStyle.INK_SOFT if input_ok else GuStyle.CINNABAR, 12))
+	var missing_summary := str(r.get("missing_summary", ""))
+	if missing_summary != "":
+		lines.append(_label_of("缺：" + missing_summary, GuStyle.CINNABAR, 12))
+	return lines
+
+
+func _refresh_dismantle() -> void:
+	var host := _ensure_box(_dismantle_panel, "DismantleBody")
+	_clear_children(host)
+	var slots: Array = _snapshot.get("dismantle_slots", [])
+	for g in slots:
+		var did := str(g.get("id", "")) if g is Dictionary else str(g)
+		var dname := str(g.get("name", did)) if g is Dictionary else str(g)
+		var btn := Button.new()
+		btn.text = "拆解 " + dname
+		MasterTheme.apply_button(btn, "action")
+		btn.pressed.connect(func(): _fire("dismantle", did))
+		host.add_child(btn)
+	if slots.is_empty():
+		host.add_child(_label_of("（蛊囊中没有可拆解的蛊虫）", GuStyle.INK_SOFT, 12))
+	var hint := Label.new()
+	hint.text = "被拆解蛊直接消失换材料（仅炼蛊台/事件节点）"
+	hint.add_theme_font_size_override("font_size", 12)
+	hint.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	host.add_child(hint)
+
+
+func _refresh_confirm_dialog() -> void:
+	if _confirm_recipe == "":
+		_confirm_dialog.close()
+		return
+	var recipe := _recipe_by_id(_confirm_recipe)
+	if recipe.is_empty():
+		_confirm_recipe = ""
+		_confirm_dialog.close()
+		return
+	var parts: Array[String] = []
+	for part in [str(recipe.get("fail_chance", "")),
+			str(recipe.get("backlash", "")), str(recipe.get("curse", ""))]:
+		if part != "":
+			parts.append(part)
+	_confirm_dialog.open(
+		"配方：" + str(recipe.get("name", "")),
+		func():
+			var rid := _confirm_recipe
+			_confirm_recipe = ""
+			_fire("refine", rid),
+		func():
+			_confirm_recipe = ""
+			_confirm_dialog.close(),
+		"合成执行", " · ".join(parts), "确认合成", "取消")
+
+
+# ---------------------------------------------------------------------------
+# 工具
+# ---------------------------------------------------------------------------
+
+func _ensure_scroll_list(panel: PanelContainer, name_hint: String) -> Node:
+	var host: Node = panel.content_host
+	var scroll: Node = host.get_node_or_null(name_hint)
+	if scroll != null:
+		return scroll.get_node("List")
+	var new_scroll := ScrollContainer.new()
+	new_scroll.name = name_hint
+	new_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	new_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	host.add_child(new_scroll)
+	var list := VBoxContainer.new()
+	list.name = "List"
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override("separation", 10)
+	new_scroll.add_child(list)
+	return list
+
+
+func _ensure_box(panel: PanelContainer, name_hint: String) -> Node:
+	var host: Node = panel.content_host
+	var existing: Node = host.get_node_or_null(name_hint)
+	if existing != null:
+		return existing
+	var box := VBoxContainer.new()
+	box.name = name_hint
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_theme_constant_override("separation", 6)
+	host.add_child(box)
+	return box
+
+
+func _fire(key: String, arg = null) -> void:
+	if not _commands.has(key):
+		return
+	if arg == null:
+		_commands[key].call()
+	else:
+		_commands[key].call(arg)
+
+
+func _recipe_by_id(recipe_id: String) -> Dictionary:
+	for r in _snapshot.get("recipes", []):
+		if r is Dictionary and str(r.get("id", "")) == recipe_id:
+			return r
+	return {}
+
+
+func _clear_children(parent: Node) -> void:
+	for child in parent.get_children():
+		parent.remove_child(child)
+		child.queue_free()
+
+
+func _label_of(text: String, color: Color, size: int) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", color)
+	return label
+
+
+func _apply_base_fonts() -> void:
+	# 基准风格：竖排墨色标题 + 红线 + 副题（横排 22px 黄字已废）
+	_title_label.text = _vertical_title(str(_snapshot.get("title", "炼蛊台")))
+	_title_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_title_label.add_theme_font_size_override("font_size", 26)
+	_title_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_title_rule.color = Color("82463e")
+	_title_rule.custom_minimum_size = Vector2(2, 0)
+	_sub_label.add_theme_color_override("font_color", GuStyle.NOTE_TEXT)
+	_streak_label.add_theme_color_override("font_color", GuStyle.INK_SOFT)
+	MasterTheme.apply_button(_leave_button, "action")
+
+
+## 竖排：每字一行（Godot Label 无 writing-mode，用换行模拟）。
+func _vertical_title(flat: String) -> String:
+	if flat == "":
+		return ""
+	var lines: Array[String] = []
+	for ch in flat:
+		lines.append(str(ch))
+	return "\n".join(lines)
+
+
+## 炼蛊台纸面基准：全屏浅纸底+网点由 RefinePaper/RefineDots 提供，
+## 舞台区透明，不再使用暗色舞台/青茅山背景/立绘。
+func _apply_stage_style() -> void:
+	_paper.color = GuStyle.PAPER_HALL
+	var stage_box := StyleBoxFlat.new()
+	stage_box.bg_color = Color(0, 0, 0, 0)
+	stage_box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	_refine_stage.add_theme_stylebox_override("panel", stage_box)
+	GuStyle.apply_seal(_seal_box, 3.0)

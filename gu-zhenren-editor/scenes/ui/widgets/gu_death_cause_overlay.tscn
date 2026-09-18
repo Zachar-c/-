@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_death_cause_overlay_view.gd" id="1_overlay"]
+
+[node name="GuDeathCauseOverlay" type="PanelContainer"]
+script = ExtResource("1_overlay")
+
+[node name="OverlayMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 14
+
+[node name="OverlayBody" type="VBoxContainer" parent="OverlayMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderRow" type="HBoxContainer" parent="OverlayMargin/OverlayBody"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="OverlayMargin/OverlayBody/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "死因"
+
+[node name="CloseButton" type="Button" parent="OverlayMargin/OverlayBody/HeaderRow"]
+custom_minimum_size = Vector2(64, 30)
+layout_mode = 2
+text = "关闭"
+
+[node name="ValueLabel" type="Label" parent="OverlayMargin/OverlayBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "当前值：0 / 上限：0"
+
+[node name="DetailLabel" type="Label" parent="OverlayMargin/OverlayBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "成因："

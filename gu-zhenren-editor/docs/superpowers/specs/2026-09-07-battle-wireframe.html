@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>战斗屏线框稿 v1</title>
+<!--
+  DEPRECATED：卡形已改 110×154，请用 2026-09-10-battle-wireframe-v3.html
+-->
+<style>
+  body { background: #26241f; font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif; padding: 24px; }
+  .doc-head { color: #cfc9b8; font-size: 13px; max-width: 1280px; margin: 0 auto 12px; line-height: 1.6; }
+  .canvas { width: 1280px; height: 720px; margin: 0 auto; position: relative; background: #efece0; overflow: hidden; }
+  .dots { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(120,116,104,0.10) 1px, transparent 1.7px); background-size: 7px 7px; pointer-events: none; }
+
+  /* —— 状态栏（以大厅屏同参）—— */
+  .topbar { position: absolute; left: 0; top: 0; width: 100%; height: 56px; }
+  .stat { position: absolute; top: 16px; display: flex; align-items: center; gap: 8px; }
+  .stat .ico { width: 15px; height: 15px; border: 1.5px solid #343430; border-radius: 3px; }
+  .stat .ico.yuan { border-color: #877b46; }
+  .stat .val { font-size: 15px; color: #343430; font-weight: 700; letter-spacing: 1px; }
+  .stat .nm { font-size: 9px; color: #7e7f75; letter-spacing: 2px; }
+  #s-qi { left: 30px; } #s-shou { left: 190px; } #s-hun { left: 350px; } #s-yuan { left: 510px; }
+  .top-actions { position: absolute; right: 30px; top: 14px; display: flex; gap: 12px; }
+  .top-icon { width: 30px; height: 30px; border: 1px solid #9a978c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #56564c; background: rgba(255,255,255,0.3); }
+
+  /* —— 舞台 —— */
+  .stage { position: absolute; left: 30px; right: 210px; top: 66px; bottom: 148px; }
+
+  /* 敌方区（占舞台上部，卡放大：意图 + 立绘 + 名字 + 血条 + 状态行） */
+  .enemies { position: absolute; left: 0; right: 0; top: 0; height: 306px; display: flex; gap: 26px; justify-content: center; align-items: flex-start; }
+  .enemy { width: 208px; height: 306px; border: 1px solid #343430; border-radius: 4px; background: rgba(246,243,233,0.5); display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+  .enemy .intent { font-size: 10px; color: #82463e; letter-spacing: 2px; height: 18px; }
+  .enemy .art { width: 150px; height: 162px; border: 1px dashed #b7b7ab; margin-top: 4px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #b0aea0; }
+  .enemy .nm { font-size: 14px; font-weight: 700; color: #343430; margin-top: 10px; }
+  .enemy .hpwrap { width: 100%; margin-top: 8px; display: flex; align-items: center; gap: 6px; padding: 0 16px; }
+  .enemy .hpbar { flex: 1; height: 5px; background: #d8d5c8; }
+  .enemy .hpbar .fill { height: 100%; background: #9c332d; }
+  .enemy .hptext { font-size: 9px; color: #343430; }
+  .enemy .sts { width: 100%; margin-top: 10px; display: flex; gap: 8px; justify-content: center; }
+  .enemy .sts .st { font-size: 9px; color: #56564c; border: 1px solid #d5d3c6; border-radius: 2px; padding: 2px 8px; background: rgba(255,255,255,0.3); }
+
+  .stage-rule { position: absolute; left: 0; right: 0; top: 320px; height: 1px; background: #b7b7ab; }
+
+  /* 玩家区（左下角小立绘 + 血/护盾条，杀戮尖塔式，不占横带） */
+  .player { position: absolute; left: 0; top: 348px; width: 220px; display: flex; flex-direction: column; align-items: center; }
+  .player .art { width: 104px; height: 148px; border: 1px dashed #b7b7ab; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #b0aea0; }
+  .player .nm { font-size: 13px; font-weight: 700; color: #343430; letter-spacing: 2px; margin-top: 8px; }
+  .player .bar { width: 168px; height: 6px; background: #d8d5c8; margin-top: 6px; }
+  .player .bar.hp .fill { height: 100%; width: 78%; background: #9c332d; }
+  .player .bar.shield .fill { height: 100%; width: 35%; background: #315f73; }
+  .player .v { font-size: 9px; color: #7e7f75; margin-top: 3px; letter-spacing: 1px; }
+
+  /* 战场信息 + 杀招位（利用玩家旁的中右空间） */
+  .battle-info { position: absolute; left: 260px; top: 348px; right: 0; }
+  .battle-info .turn { font-size: 10px; color: #7e7f75; letter-spacing: 2px; }
+  .battle-info .kill-row { display: flex; gap: 20px; margin-top: 14px; }
+  .kill-slot { width: 248px; height: 90px; border: 1px solid #9a978c; border-radius: 4px; background: rgba(246,243,233,0.5); display: flex; flex-direction: column; padding: 8px 12px; box-sizing: border-box; }
+  .kill-slot .k-t { font-size: 12px; font-weight: 700; color: #343430; letter-spacing: 1px; }
+  .kill-slot .k-e { font-size: 9px; color: #6d6e64; margin-top: 6px; line-height: 1.5; }
+  .kill-slot .k-c { font-size: 9px; color: #82463e; margin-top: auto; }
+  .kill-slot.empty { border: 1px dashed #b7b7ab; background: transparent; }
+  .kill-slot.empty .k-t { color: #a4a49b; font-weight: 400; }
+
+  /* —— 右栏操作（结束回合 / 炼蛊 / 撤退，从上往下）—— */
+  .ops { position: absolute; right: 30px; top: 96px; width: 160px; display: flex; flex-direction: column; gap: 14px; }
+  .btn { font-size: 13px; padding: 10px 0; border-radius: 3px; text-align: center; cursor: pointer; }
+  .btn-primary { background: #e3e3d7; color: #56534f; border: 1px solid #d5d3c6; }
+  .btn-ghost { background: transparent; color: #56564c; border: 1px solid transparent; }
+  .ops .note { font-size: 9px; color: #a4a49b; text-align: center; margin-top: -4px; letter-spacing: 1px; }
+
+  /* —— 杀招 ——（已移至舞台中右 battle-info） */
+
+  /* —— 手牌区（居中）—— */
+  .hand-stage { position: absolute; left: 30px; right: 210px; bottom: 0; height: 100px; border-top: 1px solid #b7b7ab; display: flex; align-items: center; }
+  .hand-meta { position: absolute; left: 0; bottom: 12px; }
+  .hand-meta .m { font-size: 10px; color: #7e7f75; letter-spacing: 1px; }
+  .hand { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; bottom: 16px; }
+  .card { width: 168px; height: 74px; border: 1px solid #9a978c; border-radius: 4px; background: #f6f3e9; display: flex; flex-direction: column; padding: 6px 10px; box-sizing: border-box; }
+  .card .t { font-size: 12px; font-weight: 700; color: #343430; letter-spacing: 1px; }
+  .card .k { font-size: 9px; color: #6d6e64; margin-top: 2px; }
+  .card .e { font-size: 8px; color: #898a81; margin-top: 4px; line-height: 1.4; }
+  .card .c { font-size: 9px; color: #82463e; margin-top: auto; }
+
+  .build { position: absolute; right: 30px; bottom: 12px; font-size: 8px; color: #a4a49b; }
+
+  /* —— 朱砂确认框（示意：危险/不可逆时覆盖）—— */
+  .seal { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); width: 300px; height: 190px; border: 2px solid #9c332d; background: rgba(246,243,233,0.96); display: none; }
+  .seal .s-t { font-size: 16px; color: #9c332d; text-align: center; margin-top: 34px; letter-spacing: 4px; font-weight: 700; }
+  .seal .s-n { font-size: 10px; color: #56564c; text-align: center; margin-top: 12px; line-height: 1.8; }
+  .seal .s-btns { position: absolute; bottom: 22px; left: 0; right: 0; display: flex; gap: 12px; justify-content: center; }
+  .seal .s-btn { font-size: 12px; padding: 6px 18px; border-radius: 2px; }
+  .seal .s-yes { background: #e3e3d7; color: #56534f; border: 1px solid #d5d3c6; }
+  .seal .s-no { background: transparent; color: #56564c; border: 1px solid transparent; }
+
+  .depth-rail { position: absolute; left: 14px; top: 90px; font-size: 9px; color: #b0aea0; line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="doc-head">
+  <b>战斗屏线框稿 v2</b>（基准：杀戮尖塔战斗主视图布局 × 大厅 v8 命簿视觉语言 × 视觉方向 §9 墨线；数据样例为示意，非真实运行值）—— 画布 1280×720，网点/竖线/字号/色值与大厅 v8、地图 v1 同参。以大厅屏为大屏基准：纸面+网点、墨色+朱砂、透明按钮。v2：玩家收敛左下角、敌人卡放大加状态行、杀招移中右，释放空间全部利用。
+</div>
+
+<div class="canvas">
+  <div class="dots"></div>
+
+  <!-- 状态栏：气血 / 寿命 / 魂魄 / 原石（图标 + 当前/最大，无框深墨字），右端背包 / 设置 icon -->
+  <div class="topbar">
+    <div class="stat" id="s-qi"><span class="ico"></span><span class="val">78 / 120</span><span class="nm">气血</span></div>
+    <div class="stat" id="s-shou"><span class="ico"></span><span class="val">41</span><span class="nm">寿元</span></div>
+    <div class="stat" id="s-hun"><span class="ico"></span><span class="val">7</span><span class="nm">魂魄</span></div>
+    <div class="stat" id="s-yuan"><span class="ico yuan"></span><span class="val">12</span><span class="nm">元石</span></div>
+    <div class="top-actions">
+      <div class="top-icon">囊</div>
+      <div class="top-icon">设</div>
+    </div>
+  </div>
+
+  <!-- 主舞台 -->
+  <div class="stage">
+    <!-- 敌方区（意图 + 立绘 + 血条/护盾 + 状态行） -->
+    <div class="enemies">
+      <div class="enemy">
+        <div class="intent">【 蓄力 · 3 】</div>
+        <div class="art">立绘</div>
+        <div class="nm">毒瘴蛛</div>
+        <div class="hpwrap"><div class="hpbar"><div class="fill" style="width:46%"></div></div><span class="hptext">23 / 50</span></div>
+        <div class="sts"><span class="st">中毒 · 2</span><span class="st">蓄力</span></div>
+      </div>
+      <div class="enemy">
+        <div class="intent">【 猛击 · 8 】</div>
+        <div class="art">立绘</div>
+        <div class="nm">石皮蝎</div>
+        <div class="hpwrap"><div class="hpbar"><div class="fill" style="width:88%"></div></div><span class="hptext">66 / 75</span></div>
+        <div class="sts"><span class="st">石皮 · 3</span><span class="st">猛击</span></div>
+      </div>
+      <div class="enemy">
+        <div class="intent">【 腐毒 · 4 】</div>
+        <div class="art">立绘</div>
+        <div class="nm">血苔蛇</div>
+        <div class="hpwrap"><div class="hpbar"><div class="fill" style="width:12%"></div></div><span class="hptext">9 / 78</span></div>
+        <div class="sts"><span class="st">虚弱 · 1</span><span class="st">腐毒</span></div>
+      </div>
+    </div>
+    <div class="stage-rule"></div>
+
+    <!-- 玩家区（左下角：立绘 + 血量/护盾，资源曝光收敛） -->
+    <div class="player">
+      <div class="art">立绘</div>
+      <div class="nm">问真</div>
+      <div class="bar hp"><div class="fill"></div></div>
+      <div class="v">94 / 120</div>
+      <div class="bar shield"><div class="fill"></div></div>
+      <div class="v">护盾 12</div>
+    </div>
+
+    <!-- 战场信息 + 杀招位（中右） -->
+    <div class="battle-info">
+      <div class="turn">先手 · 第三回</div>
+      <div class="kill-row">
+        <div class="kill-slot"><div class="k-t">月噬</div><div class="k-e">对敌造成 18 点伤害</div><div class="k-c">念头 6</div></div>
+        <div class="kill-slot empty"><div class="k-t">未研习</div></div>
+        <div class="kill-slot empty"><div class="k-t">未研习</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右栏操作：结束回合 / 炼蛊 / 撤退，从上往下 -->
+  <div class="ops">
+    <div class="btn btn-primary">结束回合</div>
+    <div class="btn btn-ghost">炼蛊</div>
+    <div class="btn btn-ghost">撤退</div>
+    <div class="note">念头 8 / 12</div>
+  </div>
+
+  <!-- 手牌区：卡牌居中 -->
+  <div class="hand-stage">
+    <div class="hand-meta">
+      <div class="m">蛊 · 手牌 4</div>
+    </div>
+    <div class="hand">
+      <div class="card"><div class="t">月光蛊</div><div class="k">光道 · 一阶</div><div class="e">对敌造成 6 点伤害</div><div class="c">念头 2</div></div>
+      <div class="card"><div class="t">石皮蛊</div><div class="k">土道 · 一阶</div><div class="e">获得 10 点护盾</div><div class="c">念头 1</div></div>
+      <div class="card"><div class="t">小光蛊</div><div class="k">光道 · 一阶</div><div class="e">恢复 4 点气血</div><div class="c">念头 1</div></div>
+      <div class="card"><div class="t">生机草</div><div class="k">木道 · 一阶</div><div class="e">净化 1 层负面</div><div class="c">念头 2</div></div>
+    </div>
+  </div>
+
+  <div class="build">BUILD 0.9.0 · LOCAL</div>
+
+  <!-- 朱砂确认框（危险/不可逆裁定，默认隐藏，示意样式） -->
+  <div class="seal">
+    <div class="s-t">炼蛊确认</div>
+    <div class="s-n">将永久消耗气血 20 · 魂魄 3<br>（有死亡风险，此操作不可逆）</div>
+    <div class="s-btns">
+      <span class="s-btn s-yes">确 认</span>
+      <span class="s-btn s-no">取 消</span>
+    </div>
+  </div>
+
+  <div class="depth-rail">◎ 先手<br>◎ 回合</div>
+</div>
+</body>
+</html>

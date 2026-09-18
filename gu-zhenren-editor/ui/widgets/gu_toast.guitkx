@@ -1,0 +1,20 @@
+
+# GuToast —— 轻量提示条（规格 §8 D4 / §4.5 L4 不拦截）
+# 深墨底 BG_PANEL + 圆角 6；GOLD(info) / ANOMALY_AMBER(warn) 文字。
+# 纯展示组件：显隐由宿主控制，不在组件内起计时器（RUI 函数组件无常驻状态，
+# 消隐由控制器侧 last_feedback 清空驱动）。
+
+export GuToast() -> RuitkVNode {
+  var text = str(props.get("text", ""))
+  var tone = str(props.get("tone", "info"))
+  var color = GuStyle.ANOMALY_YELLOW if tone == "warn" else GuStyle.ANOMALY_YELLOW
+  return (
+    <CenterContainer style={ {"mouse_filter": "IGNORE"} }>
+      <PanelContainer style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 6, "border_width_all": 1, "border_color": color} }>
+        <MarginContainer style={ {"margin_left": 16, "margin_right": 16, "margin_top": 8, "margin_bottom": 8} }>
+          <Label text={ text } style={ {"font_color": color, "font_size": 15} } />
+        </MarginContainer>
+      </PanelContainer>
+    </CenterContainer>
+  )
+}

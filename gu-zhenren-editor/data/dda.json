@@ -1,0 +1,23 @@
+{
+  "max_score": 10,
+  "recent_window": 4,
+  "bands": [
+    {"min_score": 0, "marker": "", "label": "平稳"},
+    {"min_score": 5, "marker": "sys:dda_peril", "label": "险象"},
+    {"min_score": 9, "marker": "sys:dda_decay", "label": "衰运"}
+  ],
+  "weights": {
+    "low_health": 3,
+    "many_curses": 3,
+    "low_stone": 2,
+    "recent_losses": 2,
+    "synthesis_streak": 1
+  },
+  "enemy_swap_pools": {
+    "sys:dda_peril": ["thunder_crown_wolf", "ridge_hound", "iron_hide_boar"],
+    "sys:dda_decay": ["thunder_crown_wolf", "ridge_elite_scout"]
+  },
+  "boss_local": [
+    {"when": "many_curses", "intent_id": "essence_scorch"}
+  ]
+}

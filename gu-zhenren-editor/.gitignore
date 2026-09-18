@@ -1,0 +1,72 @@
+.worktrees/
+.godot/
+scripts/core/.superpowers/
+*.uid
+
+# 导出构建产物（Release 包不入库，外部分发；2026-09-09 W2 起不再跟踪）
+build/
+
+ui/**/*.gd
+*.diags.json
+
+.workbuddy/
+.zcode/
+.claude/
+.codex/
+.preview/
+.superpowers/
+.godot_gui.log
+godot_gui.log
+
+# 第三方未审计插件：不入库（本地编辑器工具，含 TCP MCP 运行时）
+addons/beckett/
+# 截图产物目录（根目录截图已迁此，同属开发产物）
+docs/screenshots/
+
+*.png
+!assets/**/*.png
+!.agents/skills/**/*.png
+# 问真 Web 线：assets/ 是生图产物，重新生成要花积分，属唯一源，必须入库。
+# 同目录的 screenshots/ 是本地验证帧，可随 tools/drive.mjs 重跑重出，继续排除。
+!wenzhen-web/assets/**/*.png
+
+# 问真 Web 线：验证时的临时输出（PowerShell 不回显 stdout，一律写文件再读）
+wenzhen-web/tools/*.log
+__pycache__/
+
+/*.png
+/*.png.import
+MEMORY.md
+memory/
+.claude-drive-sweep.log
+tools/__pycache__/
+
+# 回归日志（tools/_reg*.log 等 headless 校验的 stdout 捕获，可随时重跑再生；
+# 2026-09-10 清理了 114 个未跟踪的历史日志，约 94MB）
+tools/*.log
+
+# Godot 运行时产物（2026-09-11 移出版本控制）
+# 根目录 Godot/app_userdata/ 是 user:// 目录被误入库的副本：驱动缓存（2.7MB，机器相关）、
+# 运行日志 godot.log（每跑一次游戏就变脏）、存档副本 nanjiang_smoke_meta.json。
+# 代码只经 user:// 访问真身，不读仓库副本，可安全忽略。
+/Godot/
+
+# 引擎运行时产物（user:// 指向仓库内目录，2026-09-11 起 Godot 用户数据不入库；
+# 运行日志的尾随空格会让 check.ps1 的 git diff --check 结构性失败）
+Godot/app_userdata/
+
+# Lore Compiler generated databases, caches, checkpoints, and reports.
+generated/lore/
+lore_engine/__pycache__/
+**/__pycache__/
+
+# Local recovery and verification leftovers
+.git.broken-*/
+.codex-verification-temp/
+.local-lore-test-temp/
+.review-temp/
+.review-test-temp/
+.tmp-test-env/
+tmp*/
+*.local-bak
+tools/_tmp_*

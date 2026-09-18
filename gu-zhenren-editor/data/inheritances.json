@@ -1,0 +1,55 @@
+[
+ {
+  "id": "moonlit_trace",
+  "move_id": "moonlit_trace",
+  "required_gu_ids": [
+   "small_light_gu",
+   "moonlight_gu"
+  ],
+  "required_tags": [
+   "light",
+   "scout"
+  ],
+  "effect_id": "reveal_hidden",
+  "battle_limit": 1,
+  "special_buff": "enemy_bonus_revealed",
+  "source_kind": "authored",
+  "version": "1"
+ },
+ {
+  "id": "bloodwood_reversal",
+  "move_id": "bloodwood_reversal",
+  "required_gu_ids": [
+   "blood_heal_2_23_gu",
+   "wood_atk_1_05_gu"
+  ],
+  "required_tags": [
+   "blood",
+   "healing",
+   "wood",
+   "attack"
+  ],
+  "effect_id": "heal_and_strike",
+  "battle_limit": 1,
+  "special_buff": "counterattack_ready",
+  "source_kind": "authored",
+  "version": "1"
+ },
+ {
+  "id": "venomous_mist_escape",
+  "move_id": "venomous_mist_escape",
+  "required_gu_ids": [
+   "blood_farewell_gu",
+   "qi_mov_1_07_gu"
+  ],
+  "required_tags": [
+   "poison",
+   "movement"
+  ],
+  "effect_id": "control_escape",
+  "battle_limit": 1,
+  "special_buff": "retreat_preserved",
+  "source_kind": "authored",
+  "version": "1"
+ }
+]

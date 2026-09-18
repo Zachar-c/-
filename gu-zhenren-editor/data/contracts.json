@@ -1,0 +1,60 @@
+{
+  "contract_cap": 6,
+  "entries": [
+    {
+      "id": "blood_pact",
+      "label": "血契",
+      "desc": "打击伤害+30%，敌方意图伤害+20%（反噬直扣不受此加成）。",
+      "rules": [
+        {"key": "strike_damage_pct", "value": 30},
+        {"key": "enemy_damage_pct", "value": 20}
+      ],
+      "mutual_exclusive": [],
+      "unlock": {"kind": "always"}
+    },
+    {
+      "id": "miser_pact",
+      "label": "守财契约",
+      "desc": "商店价格+25%，战斗掉落材料+1。",
+      "rules": [
+        {"key": "shop_price_pct", "value": 25},
+        {"key": "material_bonus", "value": 1}
+      ],
+      "mutual_exclusive": [],
+      "unlock": {"kind": "always"}
+    },
+    {
+      "id": "essence_tide",
+      "label": "真元潮契",
+      "desc": "每回合开始真元+1（不超过真元上限）；立誓时生命上限-2。",
+      "rules": [
+        {"key": "turn_essence_bonus", "value": 1},
+        {"key": "hp_max_penalty", "value": -2}
+      ],
+      "mutual_exclusive": [],
+      "unlock": {"kind": "always"}
+    },
+    {
+      "id": "ascetic_path",
+      "label": "苦修之路",
+      "desc": "战斗掉落材料-1；险胜结局后解锁，成功/险胜结算时大厅素材倍率记录+50%。",
+      "rules": [
+        {"key": "material_penalty", "value": -1},
+        {"key": "hall_material_bonus_pct", "value": 50}
+      ],
+      "mutual_exclusive": [],
+      "unlock": {"kind": "ending", "endings": ["risky"]}
+    },
+    {
+      "id": "enemy_vitality_trial",
+      "label": "枯敌试炼",
+      "desc": "开局 1000 元石；非 Boss 敌方生命锁定为 1。仅用于验证完整流程。",
+      "rules": [
+        {"key": "starter_stone", "value": 1000},
+        {"key": "enemy_hp_floor", "value": 1}
+      ],
+      "mutual_exclusive": [],
+      "unlock": {"kind": "always"}
+    }
+  ]
+}

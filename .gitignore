@@ -1,0 +1,20 @@
+# Preserved nested repository metadata; the parent repository is authoritative.
+**/.git-nested-backup/
+
+# Nested worktrees are local working copies, not monorepo content.
+**/.worktrees/
+
+# Full source texts stay local for copyright and repository-size reasons.
+gu-zhenren-editor/分支：六卷精编版/蛊真人-clean.txt
+gu-zhenren-editor/分支：六卷精编版/《人祖传》.txt
+
+# Local test output, backups, sabotage/debug logs, and generated shortlist files.
+/map_test_result.txt
+**/*.bak-*
+**/gate_sabotage.log
+**/generated/_shortlist_spec.txt
+gu-zhenren-editor/tools/_*.txt
+
+# Common local OS/editor noise.
+**/.DS_Store
+**/Thumbs.db

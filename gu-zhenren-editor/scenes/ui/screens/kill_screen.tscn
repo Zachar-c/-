@@ -1,0 +1,138 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/kill_screen_view.gd" id="1_kill"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="4_dots"]
+
+[node name="KillScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_kill")
+
+[node name="KillPaper" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="KillDots" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_dots")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "杀招"
+
+[node name="TitleRule" type="ColorRect" parent="Root/HeaderRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(2, 0)
+size_flags_vertical = 3
+
+[node name="SubLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "研习于战 · 一场一用"
+
+[node name="SealSpacer" type="Control" parent="Root/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SealPanelContainer" type="PanelContainer" parent="Root/HeaderRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+
+[node name="SealCenter" type="CenterContainer" parent="Root/HeaderRow/SealPanelContainer"]
+layout_mode = 2
+
+[node name="SealBox" type="VBoxContainer" parent="Root/HeaderRow/SealPanelContainer/SealCenter"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="SealTop" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "杀招"
+horizontal_alignment = 1
+
+[node name="SealBottom" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "录"
+horizontal_alignment = 1
+
+[node name="KillStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StageContent" type="VBoxContainer" parent="Root/KillStage"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SectionStudy" type="Label" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "研习录"
+
+[node name="StudyRow" type="HBoxContainer" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StudyRule" type="ColorRect" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 1)
+size_flags_horizontal = 3
+color = Color(0.717647, 0.717647, 0.670588, 1)
+
+[node name="SectionSlot" type="Label" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "战斗栏位"
+
+[node name="SlotRow" type="HBoxContainer" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FootNote" type="Label" parent="Root/KillStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "杀招在战斗中以念头施展"
+
+[node name="BackRow" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="BackButton" type="Button" parent="Root/BackRow"]
+layout_mode = 2
+text = "返回"

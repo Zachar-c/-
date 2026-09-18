@@ -1,0 +1,6720 @@
+{
+ "recipes": [
+  {
+   "id": "moon_glow_fixed",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moonlight_gu",
+    "small_light_gu",
+    "small_light_gu"
+   ],
+   "output_gu_id": "moon_glow_gu",
+   "source": "蛊真人-clean.txt 17024-17155：月芒蛊=月光蛊x1+小光蛊x2（合炼失败代价示例：小光蛊消亡）",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 1,
+     "count": 1
+    },
+    {
+     "school": "light",
+     "rank": 1,
+     "count": 2
+    }
+   ]
+  },
+  {
+   "id": "moon_ray_forged",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moonlight_gu",
+    "small_light_gu"
+   ],
+   "output_gu_id": "moon_ray_gu",
+   "output_rank": 2,
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）"
+  },
+  {
+   "id": "advance_small_light_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "small_light_gu"
+   ],
+   "output_gu_id": "small_light_gu",
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_stone_shell_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "stone_shell_gu"
+   ],
+   "output_gu_id": "stone_shell_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_moonlight_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "moonlight_gu"
+   ],
+   "output_gu_id": "moonlight_gu",
+   "materials": {
+    "moon_dew": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "stone_shell_bone_forge",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [],
+   "materials": {
+    "beast_bone": 2
+   },
+   "output_gu_id": "stone_shell_gu",
+   "source": "蛊真人-clean.txt：石皮蛊x7 / 石皮x44（皮蛊家族：铜皮/铁皮/石皮/玉皮）；骨道炼法策展"
+  },
+  {
+   "id": "white_jade_advance",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "jade_skin_gu",
+    "white_boar_strength_gu"
+   ],
+   "materials": {
+    "boar_king_tusk": 1
+   },
+   "stone_cost": 50,
+   "output_gu_id": "white_jade_gu",
+   "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊，添头野猪王雪獠牙（后世改良，提高成功率）",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 1,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "moonlight_glow",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moonlight_gu",
+    "small_light_gu"
+   ],
+   "output_gu_id": "moon_glow_gu",
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）"
+  },
+  {
+   "id": "white_jade_basic",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "jade_skin_gu",
+    "white_boar_strength_gu"
+   ],
+   "stone_cost": 50,
+   "output_gu_id": "white_jade_gu",
+   "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 1,
+     "count": 1
+    },
+    {
+     "school": "force",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "advance_moon_glow_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "moon_glow_gu"
+   ],
+   "output_gu_id": "moon_glow_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_moon_ray_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "moon_ray_gu"
+   ],
+   "output_gu_id": "moon_ray_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_vitality_grass_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "vitality_grass_gu"
+   ],
+   "output_gu_id": "vitality_grass_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_gu"
+   ],
+   "output_gu_id": "force_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bear_strength_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bear_strength_gu"
+   ],
+   "output_gu_id": "bear_strength_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_white_boar_strength_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "white_boar_strength_gu"
+   ],
+   "output_gu_id": "white_boar_strength_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_jade_skin_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "jade_skin_gu"
+   ],
+   "output_gu_id": "jade_skin_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_white_jade_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "white_jade_gu"
+   ],
+   "output_gu_id": "white_jade_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_farewell_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_farewell_gu"
+   ],
+   "output_gu_id": "blood_farewell_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_droplet_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_droplet_gu"
+   ],
+   "output_gu_id": "blood_droplet_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_bat_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_bat_gu"
+   ],
+   "output_gu_id": "blood_bat_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_08_gu"
+   ],
+   "output_gu_id": "blood_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_16_gu"
+   ],
+   "output_gu_id": "blood_atk_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_17_gu"
+   ],
+   "output_gu_id": "blood_atk_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_18_gu"
+   ],
+   "output_gu_id": "blood_atk_1_18_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_19_gu"
+   ],
+   "output_gu_id": "blood_atk_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_atk_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_atk_1_20_gu"
+   ],
+   "output_gu_id": "blood_atk_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_def_1_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_def_1_21_gu"
+   ],
+   "output_gu_id": "blood_def_1_21_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_mov_1_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_mov_1_22_gu"
+   ],
+   "output_gu_id": "blood_mov_1_22_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_heal_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_heal_2_23_gu"
+   ],
+   "output_gu_id": "blood_heal_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_rec_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_rec_2_24_gu"
+   ],
+   "output_gu_id": "blood_rec_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_mov_1_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_mov_1_29_gu"
+   ],
+   "output_gu_id": "blood_mov_1_29_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_heal_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_heal_2_30_gu"
+   ],
+   "output_gu_id": "blood_heal_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_rec_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_rec_2_31_gu"
+   ],
+   "output_gu_id": "blood_rec_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_blood_mov_1_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_mov_1_36_gu"
+   ],
+   "output_gu_id": "blood_mov_1_36_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_blood_heal_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "blood_heal_2_37_gu"
+   ],
+   "output_gu_id": "blood_heal_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_def_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_def_1_06_gu"
+   ],
+   "output_gu_id": "bone_def_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_def_2_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_def_2_07_gu"
+   ],
+   "output_gu_id": "bone_def_2_07_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_1_08_gu"
+   ],
+   "output_gu_id": "bone_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_1_09_gu"
+   ],
+   "output_gu_id": "bone_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_def_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_def_1_10_gu"
+   ],
+   "output_gu_id": "bone_def_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_mov_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_mov_1_11_gu"
+   ],
+   "output_gu_id": "bone_mov_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_heal_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_heal_1_12_gu"
+   ],
+   "output_gu_id": "bone_heal_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_rec_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_13_gu"
+   ],
+   "output_gu_id": "bone_rec_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_14_gu"
+   ],
+   "output_gu_id": "bone_log_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_15_gu"
+   ],
+   "output_gu_id": "bone_atk_2_15_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_20_gu"
+   ],
+   "output_gu_id": "bone_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_21_gu"
+   ],
+   "output_gu_id": "bone_log_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_22_gu"
+   ],
+   "output_gu_id": "bone_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_rec_1_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_27_gu"
+   ],
+   "output_gu_id": "bone_rec_1_27_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_28_gu"
+   ],
+   "output_gu_id": "bone_log_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_29_gu"
+   ],
+   "output_gu_id": "bone_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_rec_1_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_rec_1_34_gu"
+   ],
+   "output_gu_id": "bone_rec_1_34_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_bone_log_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_log_2_35_gu"
+   ],
+   "output_gu_id": "bone_log_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_bone_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "bone_atk_2_36_gu"
+   ],
+   "output_gu_id": "bone_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_04_gu"
+   ],
+   "output_gu_id": "dream_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_05_gu"
+   ],
+   "output_gu_id": "dream_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_08_gu"
+   ],
+   "output_gu_id": "dream_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_atk_1_09_gu"
+   ],
+   "output_gu_id": "dream_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_def_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_def_1_10_gu"
+   ],
+   "output_gu_id": "dream_def_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_mov_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_mov_1_11_gu"
+   ],
+   "output_gu_id": "dream_mov_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_heal_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_12_gu"
+   ],
+   "output_gu_id": "dream_heal_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_13_gu"
+   ],
+   "output_gu_id": "dream_rec_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_14_gu"
+   ],
+   "output_gu_id": "dream_log_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_19_gu"
+   ],
+   "output_gu_id": "dream_heal_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_20_gu"
+   ],
+   "output_gu_id": "dream_rec_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_21_gu"
+   ],
+   "output_gu_id": "dream_log_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_26_gu"
+   ],
+   "output_gu_id": "dream_heal_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_27_gu"
+   ],
+   "output_gu_id": "dream_rec_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_28_gu"
+   ],
+   "output_gu_id": "dream_log_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_33_gu"
+   ],
+   "output_gu_id": "dream_heal_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_dream_rec_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_rec_2_34_gu"
+   ],
+   "output_gu_id": "dream_rec_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_log_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_log_2_35_gu"
+   ],
+   "output_gu_id": "dream_log_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_dream_heal_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "dream_heal_1_40_gu"
+   ],
+   "output_gu_id": "dream_heal_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_04_gu"
+   ],
+   "output_gu_id": "earth_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_05_gu"
+   ],
+   "output_gu_id": "earth_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_06_gu"
+   ],
+   "output_gu_id": "earth_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_atk_1_07_gu"
+   ],
+   "output_gu_id": "earth_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_def_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_def_1_08_gu"
+   ],
+   "output_gu_id": "earth_def_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_mov_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_mov_1_09_gu"
+   ],
+   "output_gu_id": "earth_mov_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_heal_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_10_gu"
+   ],
+   "output_gu_id": "earth_heal_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_11_gu"
+   ],
+   "output_gu_id": "earth_rec_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_12_gu"
+   ],
+   "output_gu_id": "earth_log_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_heal_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_17_gu"
+   ],
+   "output_gu_id": "earth_heal_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_18_gu"
+   ],
+   "output_gu_id": "earth_rec_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_19_gu"
+   ],
+   "output_gu_id": "earth_log_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_heal_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_24_gu"
+   ],
+   "output_gu_id": "earth_heal_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_25_gu"
+   ],
+   "output_gu_id": "earth_rec_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_26_gu"
+   ],
+   "output_gu_id": "earth_log_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_heal_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_heal_1_31_gu"
+   ],
+   "output_gu_id": "earth_heal_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_earth_rec_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_rec_2_32_gu"
+   ],
+   "output_gu_id": "earth_rec_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_earth_log_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "earth_log_2_33_gu"
+   ],
+   "output_gu_id": "earth_log_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_01_gu"
+   ],
+   "output_gu_id": "fire_atk_2_01_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_1_04_gu"
+   ],
+   "output_gu_id": "fire_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_1_08_gu"
+   ],
+   "output_gu_id": "fire_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_1_09_gu"
+   ],
+   "output_gu_id": "fire_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_def_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_def_1_10_gu"
+   ],
+   "output_gu_id": "fire_def_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_mov_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_mov_1_11_gu"
+   ],
+   "output_gu_id": "fire_mov_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_heal_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_heal_1_12_gu"
+   ],
+   "output_gu_id": "fire_heal_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_rec_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_13_gu"
+   ],
+   "output_gu_id": "fire_rec_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_14_gu"
+   ],
+   "output_gu_id": "fire_log_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_15_gu"
+   ],
+   "output_gu_id": "fire_atk_2_15_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_20_gu"
+   ],
+   "output_gu_id": "fire_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_21_gu"
+   ],
+   "output_gu_id": "fire_log_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_22_gu"
+   ],
+   "output_gu_id": "fire_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_rec_1_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_27_gu"
+   ],
+   "output_gu_id": "fire_rec_1_27_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_28_gu"
+   ],
+   "output_gu_id": "fire_log_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_29_gu"
+   ],
+   "output_gu_id": "fire_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_rec_1_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_rec_1_34_gu"
+   ],
+   "output_gu_id": "fire_rec_1_34_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_fire_log_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_log_2_35_gu"
+   ],
+   "output_gu_id": "fire_log_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_fire_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "fire_atk_2_36_gu"
+   ],
+   "output_gu_id": "fire_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_force_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_05_gu"
+   ],
+   "output_gu_id": "force_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_2_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_2_06_gu"
+   ],
+   "output_gu_id": "force_atk_2_06_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_force_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_09_gu"
+   ],
+   "output_gu_id": "force_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_12_gu"
+   ],
+   "output_gu_id": "force_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_13_gu"
+   ],
+   "output_gu_id": "force_atk_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_14_gu"
+   ],
+   "output_gu_id": "force_atk_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_15_gu"
+   ],
+   "output_gu_id": "force_atk_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_24_gu"
+   ],
+   "output_gu_id": "force_atk_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_31_gu"
+   ],
+   "output_gu_id": "force_atk_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_1_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_1_32_gu"
+   ],
+   "output_gu_id": "force_atk_1_32_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_force_atk_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_2_33_gu"
+   ],
+   "output_gu_id": "force_atk_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_force_atk_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "force_atk_2_34_gu"
+   ],
+   "output_gu_id": "force_atk_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_def_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_def_1_07_gu"
+   ],
+   "output_gu_id": "gold_def_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_atk_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_11_gu"
+   ],
+   "output_gu_id": "gold_atk_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_12_gu"
+   ],
+   "output_gu_id": "gold_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_16_gu"
+   ],
+   "output_gu_id": "gold_atk_2_16_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_19_gu"
+   ],
+   "output_gu_id": "gold_atk_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_1_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_1_21_gu"
+   ],
+   "output_gu_id": "gold_atk_1_21_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_atk_1_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_1_22_gu"
+   ],
+   "output_gu_id": "gold_atk_1_22_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_def_1_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_def_1_23_gu"
+   ],
+   "output_gu_id": "gold_def_1_23_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_mov_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_mov_1_24_gu"
+   ],
+   "output_gu_id": "gold_mov_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_heal_1_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_heal_1_25_gu"
+   ],
+   "output_gu_id": "gold_heal_1_25_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_rec_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_rec_1_26_gu"
+   ],
+   "output_gu_id": "gold_rec_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_log_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_log_2_27_gu"
+   ],
+   "output_gu_id": "gold_log_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_28_gu"
+   ],
+   "output_gu_id": "gold_atk_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_rec_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_rec_1_33_gu"
+   ],
+   "output_gu_id": "gold_rec_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_gold_log_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_log_2_34_gu"
+   ],
+   "output_gu_id": "gold_log_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_atk_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_atk_2_35_gu"
+   ],
+   "output_gu_id": "gold_atk_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_gold_rec_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "gold_rec_1_40_gu"
+   ],
+   "output_gu_id": "gold_rec_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_11_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_12_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_15_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_1_16_gu"
+   ],
+   "output_gu_id": "heaven_atk_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_def_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_def_1_17_gu"
+   ],
+   "output_gu_id": "heaven_def_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_mov_1_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_mov_1_18_gu"
+   ],
+   "output_gu_id": "heaven_mov_1_18_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_heal_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_heal_1_19_gu"
+   ],
+   "output_gu_id": "heaven_heal_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_rec_1_20_gu"
+   ],
+   "output_gu_id": "heaven_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_log_1_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_log_1_21_gu"
+   ],
+   "output_gu_id": "heaven_log_1_21_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_22_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_atk_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_23_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_log_1_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_log_1_28_gu"
+   ],
+   "output_gu_id": "heaven_log_1_28_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_29_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_atk_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_30_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_log_1_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_log_1_35_gu"
+   ],
+   "output_gu_id": "heaven_log_1_35_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_heaven_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_36_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_heaven_atk_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "heaven_atk_2_37_gu"
+   ],
+   "output_gu_id": "heaven_atk_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_01_gu"
+   ],
+   "output_gu_id": "human_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_rec_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_rec_1_03_gu"
+   ],
+   "output_gu_id": "human_rec_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_04_gu"
+   ],
+   "output_gu_id": "human_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_def_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_def_1_06_gu"
+   ],
+   "output_gu_id": "human_def_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_07_gu"
+   ],
+   "output_gu_id": "human_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_08_gu"
+   ],
+   "output_gu_id": "human_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_12_gu"
+   ],
+   "output_gu_id": "human_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_13_gu"
+   ],
+   "output_gu_id": "human_atk_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_14_gu"
+   ],
+   "output_gu_id": "human_atk_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_20_gu"
+   ],
+   "output_gu_id": "human_atk_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_22_gu"
+   ],
+   "output_gu_id": "human_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_23_gu"
+   ],
+   "output_gu_id": "human_atk_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_1_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_28_gu"
+   ],
+   "output_gu_id": "human_atk_1_28_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_29_gu"
+   ],
+   "output_gu_id": "human_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_atk_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_2_30_gu"
+   ],
+   "output_gu_id": "human_atk_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_human_def_1_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_def_1_32_gu"
+   ],
+   "output_gu_id": "human_def_1_32_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_human_atk_1_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "human_atk_1_38_gu"
+   ],
+   "output_gu_id": "human_atk_1_38_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_01_gu"
+   ],
+   "output_gu_id": "light_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_04_gu"
+   ],
+   "output_gu_id": "light_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_06_gu"
+   ],
+   "output_gu_id": "light_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_rec_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_1_10_gu"
+   ],
+   "output_gu_id": "light_rec_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_13_gu"
+   ],
+   "output_gu_id": "light_atk_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_atk_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_atk_1_14_gu"
+   ],
+   "output_gu_id": "light_atk_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_def_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_def_1_15_gu"
+   ],
+   "output_gu_id": "light_def_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_mov_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_mov_1_16_gu"
+   ],
+   "output_gu_id": "light_mov_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_heal_2_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_heal_2_17_gu"
+   ],
+   "output_gu_id": "light_heal_2_17_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_rec_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_2_18_gu"
+   ],
+   "output_gu_id": "light_rec_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_mov_1_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_mov_1_23_gu"
+   ],
+   "output_gu_id": "light_mov_1_23_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_heal_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_heal_2_24_gu"
+   ],
+   "output_gu_id": "light_heal_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_rec_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_2_25_gu"
+   ],
+   "output_gu_id": "light_rec_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_mov_1_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_mov_1_30_gu"
+   ],
+   "output_gu_id": "light_mov_1_30_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_light_heal_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_heal_2_31_gu"
+   ],
+   "output_gu_id": "light_heal_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_light_rec_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "light_rec_2_32_gu"
+   ],
+   "output_gu_id": "light_rec_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_atk_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_03_gu"
+   ],
+   "output_gu_id": "luck_atk_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_06_gu"
+   ],
+   "output_gu_id": "luck_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_07_gu"
+   ],
+   "output_gu_id": "luck_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_08_gu"
+   ],
+   "output_gu_id": "luck_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_09_gu"
+   ],
+   "output_gu_id": "luck_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_atk_1_10_gu"
+   ],
+   "output_gu_id": "luck_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_def_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_def_1_11_gu"
+   ],
+   "output_gu_id": "luck_def_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_mov_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_12_gu"
+   ],
+   "output_gu_id": "luck_mov_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_13_gu"
+   ],
+   "output_gu_id": "luck_heal_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_14_gu"
+   ],
+   "output_gu_id": "luck_rec_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_19_gu"
+   ],
+   "output_gu_id": "luck_mov_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_20_gu"
+   ],
+   "output_gu_id": "luck_heal_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_21_gu"
+   ],
+   "output_gu_id": "luck_rec_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_26_gu"
+   ],
+   "output_gu_id": "luck_mov_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_27_gu"
+   ],
+   "output_gu_id": "luck_heal_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_28_gu"
+   ],
+   "output_gu_id": "luck_rec_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_33_gu"
+   ],
+   "output_gu_id": "luck_mov_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_luck_heal_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_heal_2_34_gu"
+   ],
+   "output_gu_id": "luck_heal_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_rec_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_rec_2_35_gu"
+   ],
+   "output_gu_id": "luck_rec_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_luck_mov_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "luck_mov_1_40_gu"
+   ],
+   "output_gu_id": "luck_mov_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_01_gu"
+   ],
+   "output_gu_id": "qi_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_04_gu"
+   ],
+   "output_gu_id": "qi_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_mov_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_07_gu"
+   ],
+   "output_gu_id": "qi_mov_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_09_gu"
+   ],
+   "output_gu_id": "qi_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_atk_1_10_gu"
+   ],
+   "output_gu_id": "qi_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_def_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_def_1_11_gu"
+   ],
+   "output_gu_id": "qi_def_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_mov_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_12_gu"
+   ],
+   "output_gu_id": "qi_mov_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_13_gu"
+   ],
+   "output_gu_id": "qi_heal_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_14_gu"
+   ],
+   "output_gu_id": "qi_rec_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_mov_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_19_gu"
+   ],
+   "output_gu_id": "qi_mov_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_20_gu"
+   ],
+   "output_gu_id": "qi_heal_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_21_gu"
+   ],
+   "output_gu_id": "qi_rec_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_mov_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_26_gu"
+   ],
+   "output_gu_id": "qi_mov_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_27_gu"
+   ],
+   "output_gu_id": "qi_heal_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_28_gu"
+   ],
+   "output_gu_id": "qi_rec_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_mov_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_mov_1_33_gu"
+   ],
+   "output_gu_id": "qi_mov_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_qi_heal_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_heal_2_34_gu"
+   ],
+   "output_gu_id": "qi_heal_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_qi_rec_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "qi_rec_2_35_gu"
+   ],
+   "output_gu_id": "qi_rec_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_03_gu"
+   ],
+   "output_gu_id": "refine_log_2_03_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_04_gu"
+   ],
+   "output_gu_id": "refine_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_log_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_1_06_gu"
+   ],
+   "output_gu_id": "refine_log_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_08_gu"
+   ],
+   "output_gu_id": "refine_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_09_gu"
+   ],
+   "output_gu_id": "refine_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_atk_1_10_gu"
+   ],
+   "output_gu_id": "refine_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_def_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_def_1_11_gu"
+   ],
+   "output_gu_id": "refine_def_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_mov_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_mov_1_12_gu"
+   ],
+   "output_gu_id": "refine_mov_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_heal_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_13_gu"
+   ],
+   "output_gu_id": "refine_heal_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_14_gu"
+   ],
+   "output_gu_id": "refine_rec_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_15_gu"
+   ],
+   "output_gu_id": "refine_log_2_15_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_heal_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_20_gu"
+   ],
+   "output_gu_id": "refine_heal_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_21_gu"
+   ],
+   "output_gu_id": "refine_rec_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_22_gu"
+   ],
+   "output_gu_id": "refine_log_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_heal_1_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_27_gu"
+   ],
+   "output_gu_id": "refine_heal_1_27_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_28_gu"
+   ],
+   "output_gu_id": "refine_rec_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_29_gu"
+   ],
+   "output_gu_id": "refine_log_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_heal_1_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_heal_1_34_gu"
+   ],
+   "output_gu_id": "refine_heal_1_34_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_refine_rec_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_rec_2_35_gu"
+   ],
+   "output_gu_id": "refine_rec_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_refine_log_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "refine_log_2_36_gu"
+   ],
+   "output_gu_id": "refine_log_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_atk_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_03_gu"
+   ],
+   "output_gu_id": "slave_atk_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_06_gu"
+   ],
+   "output_gu_id": "slave_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_07_gu"
+   ],
+   "output_gu_id": "slave_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_08_gu"
+   ],
+   "output_gu_id": "slave_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_09_gu"
+   ],
+   "output_gu_id": "slave_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_10_gu"
+   ],
+   "output_gu_id": "slave_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_atk_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_atk_1_11_gu"
+   ],
+   "output_gu_id": "slave_atk_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_def_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_12_gu"
+   ],
+   "output_gu_id": "slave_def_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_13_gu"
+   ],
+   "output_gu_id": "slave_mov_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_14_gu"
+   ],
+   "output_gu_id": "slave_heal_2_14_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_19_gu"
+   ],
+   "output_gu_id": "slave_def_1_19_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_20_gu"
+   ],
+   "output_gu_id": "slave_mov_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_21_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_21_gu"
+   ],
+   "output_gu_id": "slave_heal_2_21_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_26_gu"
+   ],
+   "output_gu_id": "slave_def_1_26_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_27_gu"
+   ],
+   "output_gu_id": "slave_mov_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_28_gu"
+   ],
+   "output_gu_id": "slave_heal_2_28_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_33_gu"
+   ],
+   "output_gu_id": "slave_def_1_33_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_slave_mov_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_mov_2_34_gu"
+   ],
+   "output_gu_id": "slave_mov_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_heal_2_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_heal_2_35_gu"
+   ],
+   "output_gu_id": "slave_heal_2_35_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_slave_def_1_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "slave_def_1_40_gu"
+   ],
+   "output_gu_id": "slave_def_1_40_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_02_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_02_gu"
+   ],
+   "output_gu_id": "soul_atk_1_02_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_04_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_04_gu"
+   ],
+   "output_gu_id": "soul_atk_1_04_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_05_gu"
+   ],
+   "output_gu_id": "soul_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_06_gu"
+   ],
+   "output_gu_id": "soul_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_07_gu"
+   ],
+   "output_gu_id": "soul_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_08_gu"
+   ],
+   "output_gu_id": "soul_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_09_gu"
+   ],
+   "output_gu_id": "soul_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_10_gu"
+   ],
+   "output_gu_id": "soul_def_2_10_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_11_gu"
+   ],
+   "output_gu_id": "soul_mov_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_16_gu"
+   ],
+   "output_gu_id": "soul_atk_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_17_gu"
+   ],
+   "output_gu_id": "soul_def_2_17_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_18_gu"
+   ],
+   "output_gu_id": "soul_mov_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_23_gu"
+   ],
+   "output_gu_id": "soul_atk_1_23_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_24_gu"
+   ],
+   "output_gu_id": "soul_def_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_25_gu"
+   ],
+   "output_gu_id": "soul_mov_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_30_gu"
+   ],
+   "output_gu_id": "soul_atk_1_30_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_31_gu"
+   ],
+   "output_gu_id": "soul_def_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_32_gu"
+   ],
+   "output_gu_id": "soul_mov_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_atk_1_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_atk_1_37_gu"
+   ],
+   "output_gu_id": "soul_atk_1_37_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_soul_def_2_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_def_2_38_gu"
+   ],
+   "output_gu_id": "soul_def_2_38_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_soul_mov_2_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "soul_mov_2_39_gu"
+   ],
+   "output_gu_id": "soul_mov_2_39_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_1_05_gu"
+   ],
+   "output_gu_id": "sword_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_1_06_gu"
+   ],
+   "output_gu_id": "sword_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_def_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_def_1_07_gu"
+   ],
+   "output_gu_id": "sword_def_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_mov_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_mov_1_08_gu"
+   ],
+   "output_gu_id": "sword_mov_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_heal_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_heal_1_09_gu"
+   ],
+   "output_gu_id": "sword_heal_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_rec_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_rec_1_10_gu"
+   ],
+   "output_gu_id": "sword_rec_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_log_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_11_gu"
+   ],
+   "output_gu_id": "sword_log_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_12_gu"
+   ],
+   "output_gu_id": "sword_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_13_gu"
+   ],
+   "output_gu_id": "sword_atk_2_13_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_18_gu"
+   ],
+   "output_gu_id": "sword_log_1_18_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_19_gu"
+   ],
+   "output_gu_id": "sword_atk_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_20_gu"
+   ],
+   "output_gu_id": "sword_atk_2_20_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_25_gu"
+   ],
+   "output_gu_id": "sword_log_1_25_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_26_gu"
+   ],
+   "output_gu_id": "sword_atk_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_27_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_27_gu"
+   ],
+   "output_gu_id": "sword_atk_2_27_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_32_gu"
+   ],
+   "output_gu_id": "sword_log_1_32_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_33_gu"
+   ],
+   "output_gu_id": "sword_atk_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_atk_2_34_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_34_gu"
+   ],
+   "output_gu_id": "sword_atk_2_34_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_sword_log_1_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_log_1_39_gu"
+   ],
+   "output_gu_id": "sword_log_1_39_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_sword_atk_2_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "sword_atk_2_40_gu"
+   ],
+   "output_gu_id": "sword_atk_2_40_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_08_gu"
+   ],
+   "output_gu_id": "water_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_12_gu"
+   ],
+   "output_gu_id": "water_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_atk_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_13_gu"
+   ],
+   "output_gu_id": "water_atk_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_atk_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_atk_1_14_gu"
+   ],
+   "output_gu_id": "water_atk_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_def_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_def_1_15_gu"
+   ],
+   "output_gu_id": "water_def_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_mov_1_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_mov_1_16_gu"
+   ],
+   "output_gu_id": "water_mov_1_16_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_heal_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_17_gu"
+   ],
+   "output_gu_id": "water_heal_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_18_gu"
+   ],
+   "output_gu_id": "water_rec_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_19_gu"
+   ],
+   "output_gu_id": "water_log_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_heal_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_24_gu"
+   ],
+   "output_gu_id": "water_heal_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_25_gu"
+   ],
+   "output_gu_id": "water_rec_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_26_gu"
+   ],
+   "output_gu_id": "water_log_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_heal_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_31_gu"
+   ],
+   "output_gu_id": "water_heal_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_32_gu"
+   ],
+   "output_gu_id": "water_rec_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_33_gu"
+   ],
+   "output_gu_id": "water_log_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_heal_1_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_heal_1_38_gu"
+   ],
+   "output_gu_id": "water_heal_1_38_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_water_rec_2_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_rec_2_39_gu"
+   ],
+   "output_gu_id": "water_rec_2_39_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_water_log_2_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "water_log_2_40_gu"
+   ],
+   "output_gu_id": "water_log_2_40_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_1_02_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_1_02_gu"
+   ],
+   "output_gu_id": "wind_atk_1_02_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_03_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_03_gu"
+   ],
+   "output_gu_id": "wind_mov_1_03_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_05_gu"
+   ],
+   "output_gu_id": "wind_mov_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_1_07_gu"
+   ],
+   "output_gu_id": "wind_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_08_gu"
+   ],
+   "output_gu_id": "wind_mov_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_mov_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_mov_1_09_gu"
+   ],
+   "output_gu_id": "wind_mov_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_1_10_gu"
+   ],
+   "output_gu_id": "wind_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_11_gu"
+   ],
+   "output_gu_id": "wind_atk_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_12_gu"
+   ],
+   "output_gu_id": "wind_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_17_gu"
+   ],
+   "output_gu_id": "wind_log_1_17_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_18_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_18_gu"
+   ],
+   "output_gu_id": "wind_atk_2_18_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_19_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_19_gu"
+   ],
+   "output_gu_id": "wind_atk_2_19_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_24_gu"
+   ],
+   "output_gu_id": "wind_log_1_24_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_25_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_25_gu"
+   ],
+   "output_gu_id": "wind_atk_2_25_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_26_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_26_gu"
+   ],
+   "output_gu_id": "wind_atk_2_26_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_31_gu"
+   ],
+   "output_gu_id": "wind_log_1_31_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_32_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_32_gu"
+   ],
+   "output_gu_id": "wind_atk_2_32_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_33_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_33_gu"
+   ],
+   "output_gu_id": "wind_atk_2_33_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_log_1_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_log_1_38_gu"
+   ],
+   "output_gu_id": "wind_log_1_38_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wind_atk_2_39_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_39_gu"
+   ],
+   "output_gu_id": "wind_atk_2_39_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wind_atk_2_40_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wind_atk_2_40_gu"
+   ],
+   "output_gu_id": "wind_atk_2_40_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_1_01_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_01_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_01_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_02_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_02_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_02_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_06_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_06_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_06_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_07_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_08_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_08_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_08_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_09_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_09_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_09_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_1_10_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_1_10_gu"
+   ],
+   "output_gu_id": "wisdom_atk_1_10_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_11_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_11_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_12_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_12_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_rec_1_20_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_rec_1_20_gu"
+   ],
+   "output_gu_id": "wisdom_rec_1_20_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_22_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_22_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_23_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_log_1_28_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_log_1_28_gu"
+   ],
+   "output_gu_id": "wisdom_log_1_28_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_29_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_29_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_30_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_log_1_35_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_log_1_35_gu"
+   ],
+   "output_gu_id": "wisdom_log_1_35_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wisdom_atk_2_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_36_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_36_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wisdom_atk_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wisdom_atk_2_37_gu"
+   ],
+   "output_gu_id": "wisdom_atk_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_atk_1_05_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_atk_1_05_gu"
+   ],
+   "output_gu_id": "wood_atk_1_05_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_def_1_07_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_def_1_07_gu"
+   ],
+   "output_gu_id": "wood_def_1_07_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_atk_1_11_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_atk_1_11_gu"
+   ],
+   "output_gu_id": "wood_atk_1_11_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_atk_1_12_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_atk_1_12_gu"
+   ],
+   "output_gu_id": "wood_atk_1_12_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_def_1_13_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_def_1_13_gu"
+   ],
+   "output_gu_id": "wood_def_1_13_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_mov_1_14_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_mov_1_14_gu"
+   ],
+   "output_gu_id": "wood_mov_1_14_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_heal_1_15_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_15_gu"
+   ],
+   "output_gu_id": "wood_heal_1_15_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_16_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_16_gu"
+   ],
+   "output_gu_id": "wood_rec_2_16_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_17_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_17_gu"
+   ],
+   "output_gu_id": "wood_log_2_17_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_heal_1_22_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_22_gu"
+   ],
+   "output_gu_id": "wood_heal_1_22_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_23_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_23_gu"
+   ],
+   "output_gu_id": "wood_rec_2_23_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_24_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_24_gu"
+   ],
+   "output_gu_id": "wood_log_2_24_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_heal_1_29_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_29_gu"
+   ],
+   "output_gu_id": "wood_heal_1_29_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_30_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_30_gu"
+   ],
+   "output_gu_id": "wood_rec_2_30_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_31_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_31_gu"
+   ],
+   "output_gu_id": "wood_log_2_31_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_heal_1_36_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_heal_1_36_gu"
+   ],
+   "output_gu_id": "wood_heal_1_36_gu",
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 6
+  },
+  {
+   "id": "advance_wood_rec_2_37_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_rec_2_37_gu"
+   ],
+   "output_gu_id": "wood_rec_2_37_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "advance_wood_log_2_38_gu",
+   "kind": "advance",
+   "input_gu_ids": [
+    "wood_log_2_38_gu"
+   ],
+   "output_gu_id": "wood_log_2_38_gu",
+   "materials": {
+    "beast_bone": 2
+   },
+   "stone_cost": 10,
+   "input_min_rank": 2
+  },
+  {
+   "id": "free_mix",
+   "kind": "free_mix",
+   "min_inputs": 2,
+   "outcomes": [
+    {
+     "id": "destroyed",
+     "weight": 5,
+     "effect": "destroy_inputs",
+     "event_reason": "free_mix_destroyed",
+     "fail_curse_id": "gu_erosion"
+    },
+    {
+     "id": "mutation_venom",
+     "weight": 4,
+     "effect": "mutate_to",
+     "target_gu_id": "blood_farewell_gu",
+     "event_reason": "free_mix_mutation"
+    },
+    {
+     "id": "explosion",
+     "weight": 1,
+     "effect": "explosion",
+     "health_cost": 2,
+     "soul_cost": 1,
+     "lifespan_cost": 1,
+     "event_reason": "free_mix_explosion"
+    }
+   ],
+   "risk_hints": [
+    {
+     "tags": [
+      "poison"
+     ],
+     "text": "炉中隐约腥气，恐催生毒物。"
+    },
+    {
+     "tags": [
+      "moon"
+     ],
+     "text": "炉火间月息浮沉，恐炼出暗夜之物。"
+    }
+   ],
+   "source": "蛊真人-clean.txt 15731：合炼定义「将不同的多种蛊虫合并成一只更高级数的蛊虫」；无秘方的自由混合"
+  },
+  {
+   "id": "blood_moon_forged",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "moon_ray_gu",
+    "blood_atk_1_08_gu"
+   ],
+   "input_min_rank": 2,
+   "output_gu_id": "blood_atk_3_11_gu",
+   "output_rank": 3,
+   "source": "读书笔记 A2b 蛊虫盘：血月蛊=月痕蛊+血道蛊（光x血跨流派，三转）",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "blood",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "moon_shadow_locked",
+   "kind": "fixed",
+   "input_gu_ids": [
+    "moon_glow_gu",
+    "qi_mov_1_07_gu"
+   ],
+   "output_gu_id": "moon_shadow_gu",
+   "output_rank": 3,
+   "source": "蛊真人-clean.txt 北原后期：月影蛊=月芒蛊+雾步蛊（光x气跨流派，三转）",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    },
+    {
+     "school": "qi",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_atk_1_05_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_1_05_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 12,
+   "output_gu_id": "sword_atk_2_12_gu",
+   "output_rank": 2,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（2 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_atk_1_06_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_1_06_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 12,
+   "output_gu_id": "sword_atk_2_13_gu",
+   "output_rank": 2,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（2 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_def_1_07_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_def_1_07_gu"
+   ],
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 24,
+   "output_gu_id": "sword_def_3_14_gu",
+   "output_rank": 3,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（3 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_mov_1_08_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_mov_1_08_gu"
+   ],
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 24,
+   "output_gu_id": "sword_mov_3_15_gu",
+   "output_rank": 3,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（3 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_heal_1_09_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_heal_1_09_gu"
+   ],
+   "materials": {
+    "venom_sac": 1
+   },
+   "stone_cost": 40,
+   "output_gu_id": "sword_heal_4_16_gu",
+   "output_rank": 4,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（4 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "ascend_sword_rec_1_10_gu",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_rec_1_10_gu"
+   ],
+   "materials": {
+    "boar_king_tusk": 1
+   },
+   "stone_cost": 60,
+   "output_gu_id": "sword_rec_5_17_gu",
+   "output_rank": 5,
+   "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（5 转）",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_light_atk_1_01_to_moon_glow",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "light_atk_1_01_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "moon_glow_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_moon_glow_to_moon_shadow",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moon_glow_gu"
+   ],
+   "materials": {
+    "beast_bone": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "moon_shadow_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_moon_shadow_to_light_atk_4_21",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "moon_shadow_gu"
+   ],
+   "materials": {
+    "beast_blood": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "light_atk_4_21_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_light_atk_4_21_to_light_atk_5_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "light_atk_4_21_gu"
+   ],
+   "materials": {
+    "beast_bone": 1,
+    "venom_sac": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "light_atk_5_03_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G Batch 1-A 垂直切片（D7 方案 C）：light 跨 definition 定向晋升，每步 +1 转且换蛊名，严格 +1 转不得跳级。成本为 provisional，仅用于验证 promotion schema 与成本红线，尚未平衡。",
+   "inputs": [
+    {
+     "school": "light",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_1_05_to_force_atk_2_06",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_1_05_gu"
+   ],
+   "materials": {
+    "mat_force_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "force_atk_2_06_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：force 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_2_06_to_force_atk_3_07",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_2_06_gu"
+   ],
+   "materials": {
+    "mat_force_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "force_atk_3_07_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：force 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_3_07_to_force_atk_4_08",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_3_07_gu"
+   ],
+   "materials": {
+    "mat_force_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "force_atk_4_08_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：force 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_force_atk_4_08_to_force_atk_5_23",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "force_atk_4_08_gu"
+   ],
+   "materials": {
+    "mat_force_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "force_atk_5_23_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：force 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #force）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "force",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_1_21_to_gold_atk_2_12",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_1_21_gu"
+   ],
+   "materials": {
+    "mat_gold_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "gold_atk_2_12_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_2_12_to_gold_atk_3_13",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_2_12_gu"
+   ],
+   "materials": {
+    "mat_gold_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "gold_atk_3_13_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_3_13_to_gold_atk_4_14",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_3_13_gu"
+   ],
+   "materials": {
+    "mat_gold_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "gold_atk_4_14_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_gold_atk_4_14_to_gold_atk_5_15",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "gold_atk_4_14_gu"
+   ],
+   "materials": {
+    "mat_gold_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "gold_atk_5_15_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：gold 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #gold）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "gold",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_1_02_to_wisdom_atk_2_11",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_1_02_gu"
+   ],
+   "materials": {
+    "mat_wisdom_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "wisdom_atk_2_11_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_2_11_to_wisdom_atk_3_13",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_2_11_gu"
+   ],
+   "materials": {
+    "mat_wisdom_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "wisdom_atk_3_13_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_3_13_to_wisdom_atk_4_18",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_3_13_gu"
+   ],
+   "materials": {
+    "mat_wisdom_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "wisdom_atk_4_18_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wisdom_atk_4_18_to_wisdom_atk_5_05",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wisdom_atk_4_18_gu"
+   ],
+   "materials": {
+    "mat_wisdom_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "wisdom_atk_5_05_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：wisdom 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #wisdom）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wisdom",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_1_12_to_heaven_atk_2_36",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_1_12_gu"
+   ],
+   "materials": {
+    "mat_heaven_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "heaven_atk_2_36_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_2_36_to_heaven_atk_3_13",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_2_36_gu"
+   ],
+   "materials": {
+    "mat_heaven_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "heaven_atk_3_13_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_3_13_to_heaven_atk_4_09",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_3_13_gu"
+   ],
+   "materials": {
+    "mat_heaven_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "heaven_atk_4_09_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_heaven_atk_4_09_to_heaven_atk_5_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "heaven_atk_4_09_gu"
+   ],
+   "materials": {
+    "mat_heaven_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "heaven_atk_5_01_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-a：heaven 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS #heaven）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "heaven",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_fire_atk_1_04_to_fire_atk_2_36",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "fire_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_fire_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "fire_atk_2_36_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-b：fire 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_fire_atk_2_36_to_fire_atk_3_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "fire_atk_2_36_gu"
+   ],
+   "materials": {
+    "mat_fire_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "fire_atk_3_03_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-b：fire 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_fire_atk_3_03_to_fire_atk_4_05",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "fire_atk_3_03_gu"
+   ],
+   "materials": {
+    "mat_fire_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "fire_atk_4_05_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-b：fire 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_fire_atk_4_05_to_fire_heal_5_33",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "fire_atk_4_05_gu"
+   ],
+   "materials": {
+    "mat_fire_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "fire_heal_5_33_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-b：fire 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r4→r5 跨 role（atk→heal）：焚灭归烬、烬土养人（谱系 §6.5，语义已解释）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "fire",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_water_atk_1_12_to_water_rec_2_18",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "water_atk_1_12_gu"
+   ],
+   "materials": {
+    "mat_water_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "water_rec_2_18_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-b：water 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：水纹侦察（谱系 §6.16）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_water_rec_2_18_to_water_atk_3_21",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "water_rec_2_18_gu"
+   ],
+   "materials": {
+    "mat_water_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "water_atk_3_21_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-b：water 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_water_atk_3_21_to_water_atk_4_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "water_atk_3_21_gu"
+   ],
+   "materials": {
+    "mat_water_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "water_atk_4_02_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-b：water 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_water_atk_4_02_to_water_atk_5_10",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "water_atk_4_02_gu"
+   ],
+   "materials": {
+    "mat_water_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "water_atk_5_10_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-b：water 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "water",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wind_atk_1_07_to_wind_atk_2_26",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wind_atk_1_07_gu"
+   ],
+   "materials": {
+    "mat_wind_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "wind_atk_2_26_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-b：wind 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wind_atk_2_26_to_wind_mov_3_14",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wind_atk_2_26_gu"
+   ],
+   "materials": {
+    "mat_wind_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "wind_mov_3_14_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-b：wind 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：风道擅移形（谱系 §6.17）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wind_mov_3_14_to_wind_mov_4_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wind_mov_3_14_gu"
+   ],
+   "materials": {
+    "mat_wind_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "wind_mov_4_01_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-b：wind 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wind_mov_4_01_to_wind_mov_5_06",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wind_mov_4_01_gu"
+   ],
+   "materials": {
+    "mat_wind_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "wind_mov_5_06_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-b：wind 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wind",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wood_atk_1_11_to_wood_log_2_31",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wood_atk_1_11_gu"
+   ],
+   "materials": {
+    "mat_wood_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "wood_log_2_31_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-b：wood 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→log）：生长转滋养（谱系 §6.19）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wood_log_2_31_to_wood_atk_3_32",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wood_log_2_31_gu"
+   ],
+   "materials": {
+    "mat_wood_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "wood_atk_3_32_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-b：wood 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wood_atk_3_32_to_wood_def_4_34",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wood_atk_3_32_gu"
+   ],
+   "materials": {
+    "mat_wood_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "wood_def_4_34_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-b：wood 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（atk→def）：藤蔓缠护（谱系 §6.19）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_wood_def_4_34_to_wood_atk_5_08",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "wood_def_4_34_gu"
+   ],
+   "materials": {
+    "mat_wood_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "wood_atk_5_08_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-b：wood 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "wood",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_earth_atk_1_05_to_earth_rec_2_18",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "earth_atk_1_05_gu"
+   ],
+   "materials": {
+    "mat_earth_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "earth_rec_2_18_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-b：earth 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：探地脉（谱系 §6.4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_earth_rec_2_18_to_earth_atk_3_21",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "earth_rec_2_18_gu"
+   ],
+   "materials": {
+    "mat_earth_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "earth_atk_3_21_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-b：earth 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_earth_atk_3_21_to_earth_def_4_22",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "earth_atk_3_21_gu"
+   ],
+   "materials": {
+    "mat_earth_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "earth_def_4_22_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-b：earth 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（atk→def）：垒石成磐（谱系 §6.4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_earth_def_4_22_to_earth_atk_5_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "earth_def_4_22_gu"
+   ],
+   "materials": {
+    "mat_earth_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "earth_atk_5_03_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-b：earth 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "earth",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_droplet_to_blood_rec_2_24",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_droplet_gu"
+   ],
+   "materials": {
+    "mat_blood_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "blood_rec_2_24_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：血道先寻猎再杀（谱系 §6.1）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_rec_2_24_to_blood_atk_3_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_rec_2_24_gu"
+   ],
+   "materials": {
+    "mat_blood_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "blood_atk_3_03_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_atk_3_03_to_blood_atk_4_10",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_atk_3_03_gu"
+   ],
+   "materials": {
+    "mat_blood_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "blood_atk_4_10_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_blood_atk_4_10_to_blood_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "blood_atk_4_10_gu"
+   ],
+   "materials": {
+    "mat_blood_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "blood_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：blood 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "blood",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_atk_1_09_to_dream_rec_2_34",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_atk_1_09_gu"
+   ],
+   "materials": {
+    "mat_dream_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "dream_rec_2_34_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：入梦窥人平生（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_rec_2_34_to_dream_atk_3_16",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_rec_2_34_gu"
+   ],
+   "materials": {
+    "mat_dream_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "dream_atk_3_16_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（rec→atk）：黄粱大梦醒（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_atk_3_16_to_dream_def_4_24",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_atk_3_16_gu"
+   ],
+   "materials": {
+    "mat_dream_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "dream_def_4_24_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（atk→def）：南柯梦土为疆（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_dream_def_4_24_to_dream_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "dream_def_4_24_gu"
+   ],
+   "materials": {
+    "mat_dream_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "dream_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：dream 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r4→r5 跨 role（def→atk）：庄周梦蝶（谱系 §6.3）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "dream",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_atk_1_08_to_luck_rec_2_28",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_atk_1_08_gu"
+   ],
+   "materials": {
+    "mat_luck_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "luck_rec_2_28_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→rec）：先聚敛气运（谱系 §6.10）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_rec_2_28_to_luck_atk_3_37",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_rec_2_28_gu"
+   ],
+   "materials": {
+    "mat_luck_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "luck_atk_3_37_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_atk_3_37_to_luck_atk_4_38",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_atk_3_37_gu"
+   ],
+   "materials": {
+    "mat_luck_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "luck_atk_4_38_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_luck_atk_4_38_to_luck_atk_5_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "luck_atk_4_38_gu"
+   ],
+   "materials": {
+    "mat_luck_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "luck_atk_5_01_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：luck 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "luck",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_atk_1_04_to_qi_heal_2_20",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_qi_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "qi_heal_2_20_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 1 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→heal）：一吐一纳为吐纳之道（谱系 §6.11）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_heal_2_20_to_qi_atk_3_37",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_heal_2_20_gu"
+   ],
+   "materials": {
+    "mat_qi_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "qi_atk_3_37_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 2 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_atk_3_37_to_qi_atk_4_38",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_atk_3_37_gu"
+   ],
+   "materials": {
+    "mat_qi_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "qi_atk_4_38_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 3 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_qi_atk_4_38_to_qi_atk_5_05",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "qi_atk_4_38_gu"
+   ],
+   "materials": {
+    "mat_qi_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "qi_atk_5_05_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-c：qi 派谱系第 4 步（世界语义裁定见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。成本与品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "qi",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_1_04_to_human_atk_2_29",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_human_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "human_atk_2_29_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：human 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_2_29_to_human_atk_3_16",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_2_29_gu"
+   ],
+   "materials": {
+    "mat_human_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "human_atk_3_16_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：human 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_3_16_to_human_atk_4_40",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_3_16_gu"
+   ],
+   "materials": {
+    "mat_human_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "human_atk_4_40_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：human 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_human_atk_4_40_to_human_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "human_atk_4_40_gu"
+   ],
+   "materials": {
+    "mat_human_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "human_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：human 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "human",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_atk_1_03_to_slave_mov_2_27",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_atk_1_03_gu"
+   ],
+   "materials": {
+    "mat_slave_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "slave_mov_2_27_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→mov）：驯一犬者持鞭，鞭策即权柄（谱系 §6.13）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_mov_2_27_to_slave_atk_3_04",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_mov_2_27_gu"
+   ],
+   "materials": {
+    "mat_slave_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "slave_atk_3_04_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_atk_3_04_to_slave_atk_4_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_atk_3_04_gu"
+   ],
+   "materials": {
+    "mat_slave_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "slave_atk_4_02_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_slave_atk_4_02_to_slave_atk_5_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "slave_atk_4_02_gu"
+   ],
+   "materials": {
+    "mat_slave_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "slave_atk_5_01_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：slave 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "slave",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_atk_1_04_to_soul_def_2_17",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_atk_1_04_gu"
+   ],
+   "materials": {
+    "mat_soul_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "soul_def_2_17_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→def）：摄得生魂燃为魂火（谱系 §6.14）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_def_2_17_to_soul_heal_3_19",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_def_2_17_gu"
+   ],
+   "materials": {
+    "mat_soul_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "soul_heal_3_19_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（def→heal）：魂火化雾滋养魂魄（谱系 §6.14）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_heal_3_19_to_soul_log_4_28",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_heal_3_19_gu"
+   ],
+   "materials": {
+    "mat_soul_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "soul_log_4_28_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（heal→log）：魂雾入冥通幽冥之路（谱系 §6.14）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_soul_log_4_28_to_soul_atk_5_22",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "soul_log_4_28_gu"
+   ],
+   "materials": {
+    "mat_soul_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "soul_atk_5_22_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：soul 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "soul",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_atk_1_10_to_refine_log_2_03",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_atk_1_10_gu"
+   ],
+   "materials": {
+    "mat_refine_1": 1
+   },
+   "stone_cost": 10,
+   "output_gu_id": "refine_log_2_03_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（atk→log）：先熔材后合炼（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_log_2_03_to_refine_atk_3_17",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_log_2_03_gu"
+   ],
+   "materials": {
+    "mat_refine_2": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "refine_atk_3_17_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（log→atk）：合炼之后去芜存纯（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_atk_3_17_to_refine_def_4_18",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_atk_3_17_gu"
+   ],
+   "materials": {
+    "mat_refine_3": 1
+   },
+   "stone_cost": 30,
+   "output_gu_id": "refine_def_4_18_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r3→r4 跨 role（atk→def）：提纯之后凝形定性（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_refine_def_4_18_to_refine_log_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "refine_def_4_18_gu"
+   ],
+   "materials": {
+    "mat_refine_4": 1
+   },
+   "stone_cost": 45,
+   "output_gu_id": "refine_log_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：refine 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r4→r5 跨 role（def→log）：凝而复升九转方成（谱系 §6.12）。品质带映射 provisional，F8 校准。",
+   "inputs": [
+    {
+     "school": "refine",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_def_1_07_to_sword_atk_2_20",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_def_1_07_gu"
+   ],
+   "materials": {
+    "mat_sword_1": 1
+   },
+   "stone_cost": 6,
+   "output_gu_id": "sword_atk_2_20_gu",
+   "input_min_rank": 1,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 1 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r1→r2 跨 role（def→atk）：剑藏于鞘，出鞘即攻（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 6 + 材料 value 1（mat_sword_1×1）= 7，累计 7。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 1,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_atk_2_20_to_sword_mov_3_22",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_2_20_gu"
+   ],
+   "materials": {
+    "mat_sword_2": 1
+   },
+   "stone_cost": 8,
+   "output_gu_id": "sword_mov_3_22_gu",
+   "input_min_rank": 2,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 2 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。跨 role 依据：r2→r3 跨 role（atk→mov）：藏锋守拙，剑随身走（谱系 §6.15）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 8 + 材料 value 2（mat_sword_2×1）= 10，累计 17。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 2,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_mov_3_22_to_sword_atk_4_01",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_mov_3_22_gu"
+   ],
+   "materials": {
+    "mat_sword_3": 1
+   },
+   "stone_cost": 12,
+   "output_gu_id": "sword_atk_4_01_gu",
+   "input_min_rank": 3,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 3 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 12 + 材料 value 3（mat_sword_3×1）= 15，累计 32。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 3,
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "promote_sword_atk_4_01_to_sword_atk_5_02",
+   "kind": "promotion",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "sword_atk_4_01_gu"
+   ],
+   "materials": {
+    "mat_sword_4": 1
+   },
+   "stone_cost": 18,
+   "output_gu_id": "sword_atk_5_02_gu",
+   "input_min_rank": 4,
+   "source": "Q8-G 1-B1-d：sword 派谱系第 4 步（世界语义裁定 design_only 已验收，见 Q8G_1B1_SEMANTIC_GATE_PROPOSALS §4）。 石耗经 Economic Red Line 实测下调（飞剑蛊直取 70 石，标准阶梯累计 114 违例），provisional；材料 ×1 为 craft_cap 约束（1 蛊+1 材 = 2 件 ≤ soul1 上限 2，1-B1-d 总验收发现）。品质带映射 provisional，F8 校准。成本拆解：石 18 + 材料 value 5（mat_sword_4×1）= 23，累计 55 < 70（直取价）。",
+   "inputs": [
+    {
+     "school": "sword",
+     "rank": 4,
+     "count": 1
+    }
+   ]
+  }
+ ],
+ "caravan_offers": [
+  {
+   "id": "buy_force_blow",
+   "kind": "buy",
+   "stone_cost": 5,
+   "output_gu_id": "force_gu"
+  },
+  {
+   "id": "buy_droplet",
+   "kind": "buy",
+   "stone_cost": 6,
+   "output_gu_id": "blood_droplet_gu"
+  },
+  {
+   "id": "buy_shell",
+   "kind": "buy",
+   "stone_cost": 5,
+   "output_gu_id": "stone_shell_gu"
+  },
+  {
+   "id": "caravan_mist_exchange",
+   "kind": "exchange",
+   "input_gu_ids": [
+    "small_light_gu",
+    "moonlight_gu"
+   ],
+   "stone_cost": 0,
+   "output_gu_id": "qi_mov_1_07_gu"
+  }
+ ]
+}

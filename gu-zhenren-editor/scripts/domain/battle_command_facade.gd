@@ -1,0 +1,433 @@
+class_name BattleCommandFacade
+extends RefCounted
+
+
+# V1 战斗门面（2026-08-30 全量替换卡牌战斗）：路由到 V1BattleResolver
+# （蛊行动制）。API 形状保持 start/apply_turn/apply_enemy_pre_turn，
+# run_controller 与命令通路零改动进入。
+# 第三阶段 Task 2（2026-09-17）：会话边界与战斗回合账本收归本门面——
+# start_session 开局建 battle + 初始化账本，finalize_session 交出账本快照并清场；
+# 表现层不得再自行 new_turn()/consume()。
+
+
+const V1Script = preload("res://scripts/domain/v1_battle_resolver.gd")
+const LootResolverScript = preload("res://scripts/domain/loot_resolver.gd")
+const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
+const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
+# T16 残锋降转（2026-09-15）：跨战斗的永久消耗必须落在 RunState.gu_instances。
+# resolver 只持有 battle 字典 ⇒ 写回挂在门面侧（与 loot_resolver 同款范式）。
+const SwordMarkRulesScript = preload("res://scripts/domain/sword_mark_rules.gd")
+
+
+# 战斗命令路由单一事实来源（M2 2026-09-12）：controller 只准经
+# is_battle_command() 路由，不得自持类型表。
+# use_inheritance / basic_dodge / refine 是 V1 未实现的遗留命令：
+# 仍路由到本门面以便统一走 unsupported_battle_action 拒绝路径
+# （test_battle2_lifecycle 的 basic_dodge fallback 依赖该行为）。
+const BATTLE_COMMAND_TYPES := [
+	"use_gu",
+	"end_turn",
+	"retreat",
+	"basic_attack",
+	"play_kill_move",
+	"use_inheritance",
+	"basic_dodge",
+	"refine",
+]
+
+
+static func is_battle_command(command_type: String) -> bool:
+	return command_type in BATTLE_COMMAND_TYPES
+
+const BOSS_LAYER_IDS := {
+	1: "one",
+	2: "two",
+	3: "three",
+	4: "four",
+	5: "five",
+}
+
+
+static func start(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
+	var enemies := _v1_enemies(encounter, catalog)
+	var battle := V1Script.start(state, catalog, enemies)
+	# 战斗元信息透传：结算/死亡报告/撤退判定依赖这些顶层键。
+	battle["enemy_kind"] = str(encounter.get("enemy_kind", ""))
+	battle["kill_source"] = str(encounter.get("kill_source", ""))
+	battle["terrain"] = str(encounter.get("terrain", ""))
+	battle["layer"] = int(encounter.get("layer", 1))
+	battle["first_mover"] = str(encounter.get("first_mover", "player"))
+	# E6（2026-09-10）：地图生成期按层抽好的敌人优先。单敌遭遇同时落 `enemy_kind`
+	# （死亡报告与敌方台词按该键取专属文案）；多敌遭遇只落 `enemy_kinds`。
+	# 锚点/关底台/旧存档没有 `enemy_roll` → 回退 `enemy_kinds` / `enemy_kind`。
+	if encounter.has("enemy_roll"):
+		var rolled_kinds: Array = (encounter.get("enemy_roll", []) as Array).duplicate()
+		battle["enemy_kinds"] = rolled_kinds
+		if rolled_kinds.size() == 1:
+			battle["enemy_kind"] = str(rolled_kinds[0])
+	elif encounter.has("enemy_kinds"):
+		battle["enemy_kinds"] = (encounter.get("enemy_kinds", []) as Array).duplicate()
+	# Boss 身份（V1 契约 flags 为 Dictionary）：关底台 layer_boss > 0 或任一敌方
+	# 定义为 tier=="boss" 即禁止撤退。_start_battle 已透传 layer_boss，
+	# 这里再按敌方定义兜底，保证 boss_blocks_retreat() 全链可判定。
+	var boss_layer := int(encounter.get("layer_boss", 0))
+	var boss_tier := false
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if str((enemy_by_id.get(str(enemy.get("id", "")), {}) as Dictionary).get("tier", "")) == "boss":
+			boss_tier = true
+			break
+	if boss_layer > 0 or boss_tier:
+		if not (battle["flags"] is Dictionary):
+			battle["flags"] = {}
+		battle["flags"]["boss_battle"] = true
+	# S2 开局 Buff「凡敌一滴血」：非 Boss 敌人 hp/max_hp 归 1（tier=boss 豁免）。
+	if state.run_buff_ids.has("lesser_one_hp"):
+		for enemy_value in battle.get("enemies", []):
+			var enemy: Dictionary = enemy_value
+			if str((enemy_by_id.get(str(enemy.get("id", "")), {}) as Dictionary).get("tier", "")) == "boss":
+				continue
+			enemy["hp"] = 1
+			enemy["max_hp"] = 1
+	return battle
+
+
+## 战斗会话边界（第三阶段 Task 2）：开局 = 构建 battle + 初始化本场回合账本。
+## 账本归门面所有，表现层只消费返回的 state 与 battle。
+## 返回 {"battle": Dictionary, "state": RunState, "result": "ongoing"}。
+static func start_session(encounter: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
+	var battle: Dictionary = start(encounter, state, catalog)
+	if state.current_battle2_ledger.is_empty():
+		state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
+				CultivatorRulesScript.thought_capacity(state.cultivator, catalog))
+	return {"battle": battle, "state": state, "result": "ongoing"}
+
+
+## 战斗会话收口（第三阶段 Task 2）：交出账本快照并清场，供生命周期层把它写进
+## 唯一的 battle_finished 事件。返回 {"state": RunState, "ledger": Dictionary}。
+static func finalize_session(battle: Dictionary, state: RunState, outcome: String) -> Dictionary:
+	var ledger: Dictionary = {}
+	if not battle.is_empty() and not state.current_battle2_ledger.is_empty():
+		ledger = state.current_battle2_ledger.duplicate(true)
+	state.current_battle2_ledger = {}
+	return {"state": state, "ledger": ledger}
+
+
+## 敌人定义 → V1 敌人条目：意图缺省按 attack 映射，V1 新增意图字段
+## （kind/seal_turns/soul_drain/life_cost/counter_tag）随数据透传。
+static func _boss_layer_multipliers(encounter: Dictionary, catalog: Dictionary) -> Dictionary:
+	var layer := int(encounter.get("layer_boss", 0))
+	if not BOSS_LAYER_IDS.has(layer):
+		return {"hp": 1.0, "damage": 1.0}
+	var battle_config: Dictionary = catalog.get("v1_battle", {})
+	var multiplier_by_layer: Dictionary = battle_config.get("boss_layer_mult", {})
+	var layer_config: Dictionary = multiplier_by_layer.get(BOSS_LAYER_IDS[layer], {})
+	return {
+		"hp": _positive_multiplier(layer_config.get("hp", 1.0)),
+		"damage": _positive_multiplier(layer_config.get("damage", 1.0)),
+	}
+
+
+static func _positive_multiplier(value: Variant) -> float:
+	if not (value is int or value is float):
+		return 1.0
+	var multiplier := float(value)
+	return multiplier if multiplier > 0.0 else 1.0
+
+
+static func _scale_positive_int(value: int, multiplier: float) -> int:
+	if value <= 0:
+		return value
+	return maxi(1, roundi(float(value) * multiplier))
+
+
+static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	var multipliers := _boss_layer_multipliers(encounter, catalog)
+	var result: Array = []
+	var kinds: Array = []
+	# E6（2026-09-10）：优先读按层抽取的结果；缺失时回退节点模板自带的敌人指定
+	# （锚点、各大层关底台、旧存档均走回退分支）。
+	if encounter.has("enemy_roll"):
+		kinds = (encounter.get("enemy_roll", []) as Array).duplicate()
+	elif encounter.has("enemy_kinds"):
+		kinds = (encounter.get("enemy_kinds", []) as Array).duplicate()
+	elif encounter.has("enemy_kind"):
+		kinds.append(str(encounter.get("enemy_kind", "")))
+	for kind_value in kinds:
+		var kind := str(kind_value)
+		var definition: Dictionary = enemy_by_id.get(kind, {})
+		var intent: Dictionary = definition.get("intent", {})
+		var intent_kind := str(intent.get("kind", "attack"))
+		var source_damage := int(intent.get("damage", 0))
+		var mapped_damage := source_damage
+		if intent_kind == "attack":
+			mapped_damage = _scale_positive_int(source_damage, float(multipliers["damage"]))
+		result.append({
+			"id": kind,
+			"label": str(definition.get("label", definition.get("name", kind))),
+			"hp": _scale_positive_int(int(definition.get("hp", 1)), float(multipliers["hp"])),
+			"intent": {
+				"kind": intent_kind,
+				"damage": mapped_damage,
+				"label": str(intent.get("label", "蓄力")),
+				"speed": int(intent.get("speed", 0)),
+				"seal_turns": int(intent.get("seal_turns", 0)),
+				"soul_drain": int(intent.get("soul_drain", 0)),
+				"life_cost": int(intent.get("life_cost", 0)),
+				"counter_tag": str(intent.get("counter_tag", "")),
+			},
+		})
+	return result
+
+
+static func apply_turn(battle: Dictionary, state: RunState, command: Dictionary, catalog: Dictionary = {}) -> Dictionary:
+	if battle.is_empty():
+		return _rejected({}, state, "battle_missing")
+	# 第三阶段 Task 4：终局（胜利/战死/撤离）后会话关闭，任何战斗命令一律 battle_over。
+	if _session_closed(battle):
+		return _rejected(battle, state, "battle_over")
+	if state.is_terminal():
+		return _rejected(battle, state, "terminal_run")
+	var command_type := str(command.get("type", ""))
+	# R3.6 兼容：action_card 信封只透传基础行动（V1 无手牌卡）。
+	if command_type == "action_card":
+		var passthrough := _action_card_passthrough(battle, command)
+		if passthrough.is_empty():
+			return _rejected(battle, state, "unsupported_battle_action")
+		var forward := command.duplicate(true)
+		forward["type"] = passthrough
+		forward["state_version"] = state.event_log.size()
+		return apply_turn(battle, state, forward, catalog)
+	var action: Dictionary = {}
+	match command_type:
+		"use_gu":
+			var instance_id := str(command.get("instance_id", command.get("gu_id", "")))
+			var slot_index := _slot_index(battle, instance_id)
+			if slot_index < 0:
+				return _rejected(battle, state, "unknown_gu")
+			action = {"type": "play_gu", "slot_index": slot_index, "target_id": str(command.get("target_id", ""))}
+		"basic_attack":
+			action = {"type": "basic_attack"}
+		"end_turn":
+			action = {"type": "end_turn"}
+		"play_kill_move":
+			action = {"type": "play_kill_move", "kill_move_id": str(command.get("kill_move_id", "")),
+					"confirmed": bool(command.get("confirmed", false))}
+		"retreat":
+			# F-01（2026-09-17）：预览与执行共用 retreat_gate——Boss / 地形·追击 / 元石
+			# 同一套纯门禁；拒绝不改 battle、不落日志、不写 battle_finished。
+			var gate := retreat_gate(battle, state, catalog)
+			if not bool(gate["ok"]):
+				return _rejected(battle, state, str(gate["reason"]))
+			# 第三阶段 Task 2/4：撤离是本场唯一的显式终局路径之一——phase 保持
+			# player_action（不进"三值集合"以外），终局标记落在 flags.session_closed，
+			# 此后任何战斗命令一律 battle_over。账本不额外扣念头，由生命周期层的
+			# finalize_session 取出快照写入 battle_finished。
+			var closed: Dictionary = battle.duplicate(true)
+			if not (closed["flags"] is Dictionary):
+				closed["flags"] = {}
+			(closed["flags"] as Dictionary)["session_closed"] = true
+			return {"battle": closed, "state": state, "result": "retreat",
+					"feeds": [], "finished": true, "accepted": true}
+		_:
+			return _rejected(battle, state, "unsupported_battle_action")
+	var out: Dictionary = V1Script.player_action(battle, action)
+	var next: Dictionary = out["battle"]
+	if not bool(out["result"]["ok"]):
+		return _rejected(next, state, str(out["result"]["reason"]))
+	var event_state := _append_v1_event(state, battle, next, command_type, action)
+	# T16 残锋降转：杀招已成功结算 ⇒ 逆炼落地。放在胜负分支之前，保证
+	# 胜利/战死/继续三条出口都带上被永久削弱的实例（原文「无法回复」）。
+	event_state = settle_sword_marks(next, event_state, catalog)
+	match str(next.get("phase", "")):
+		"victory":
+			# V1 胜利掉落：复用 LootResolver（材料/蛊/精英绑定代价），
+			# 与旧卡牌战斗同一结算口径，保证战利品闭环。
+			var settled := LootResolverScript.settle_victory(next, event_state, catalog)
+			next["loot"] = settled.get("loot", {})
+			if not (settled.get("cost", {}) as Dictionary).is_empty():
+				next["cost"] = settled["cost"]
+			# V1 battle2 ledger hook: 账本已在 start_session 建好，胜利不需要额外
+			# 扣念头——生命周期层收口时用 finalize_session 取快照。
+			var victory_state: RunState = settled.get("state", event_state)
+			return {"battle": next, "state": victory_state, "result": "victory",
+					"feeds": [], "accepted": true, "finished": true}
+		"defeat":
+			# V1 battle2 ledger hook: 战死同样只交出已建好的账本快照。
+			return {"battle": next, "state": event_state, "result": "death",
+					"feeds": [], "accepted": true, "finished": true}
+		_:
+			# V1 battle2 ledger hook: every accepted turn (ongoing path) spends
+			# one thought on the per-battle ledger before the event lands.
+			if event_state.current_battle2_ledger.is_empty():
+				event_state.current_battle2_ledger = Battle2TurnEngineScript.new_turn(
+					CultivatorRulesScript.thought_capacity(event_state.cultivator, catalog))
+			else:
+				event_state.current_battle2_ledger = Battle2TurnEngineScript.consume(event_state.current_battle2_ledger, 1)
+			return {"battle": next, "state": event_state, "result": "ongoing",
+					"feeds": [], "accepted": true, "finished": false}
+
+
+static func _append_v1_event(state: RunState, before: Dictionary, after: Dictionary, command_type: String, action: Dictionary) -> RunState:
+	var info: Dictionary = {"command_type": command_type}
+	if command_type == "use_gu":
+		var slot_index := int(action.get("slot_index", -1))
+		var slots: Array = before.get("gu_slots", [])
+		if slot_index >= 0 and slot_index < slots.size():
+			var slot: Dictionary = slots[slot_index]
+			var effect: Dictionary = slot.get("effect", {})
+			var kind := str(effect.get("kind", ""))
+			# amount 默认值与 resolver 结算一致（status/buff/shift 默认 1，其余 0），
+			# 使日志可重建实际结算数值。
+			var amount_default := 1 if kind in ["buff", "status", "shift"] else 0
+			var target_id := str(action.get("target_id", ""))
+			info["effect"] = {
+				"kind": kind,
+				"amount": int(effect.get("amount", amount_default)),
+				"target": "enemy" if kind in ["strike", "status", "heal_and_strike"] else "player",
+			}
+			if kind in ["status", "buff"]:
+				info["effect"]["name"] = str(effect.get("name", ""))
+			if kind == "heal_and_strike":
+				info["effect"]["heal"] = int(effect.get("heal", 0))
+			if kind in ["strike", "status", "heal_and_strike"]:
+				# Record the actual resolved target (resolver may fall back to the
+				# first alive enemy when the requested target is empty/invalid).
+				info["effect"]["target_id"] = str(after.get("last_effect_target", target_id))
+	return state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "battle_v1",
+		"before": {},
+		"after": {"battle_turn": int(after.get("turn", 1))},
+		"reason": "battle_v1_%s" % command_type,
+		"source": "battle_facade",
+		"targets": [],
+		"info": info,
+	})
+
+
+# 卡 id 形状归一（**唯一映射点**，preflight 与执行侧共用）。
+# 现行手牌 id 由 `ActionPreviewService.preview_battle_actions` 产出，不含 battle_id 段：
+# `battle.end_turn` / `battle.retreat` / `basic_attack`。
+# 旧信封遗留的 `battle.<battle_id>.<card>` 按**后缀**归一到同一组现行 id：
+# 不读 `battle_id`（生产战斗从不设置该键），否则旧形状既路由不到、又过不了
+# controller preflight ⇒「声明兼容但一提交就被拒」。
+static func canonical_action_card_id(action_id: String) -> String:
+	if not action_id.begins_with("battle."):
+		return action_id
+	if action_id.ends_with(".basic.punch"):
+		return "basic_attack"
+	if action_id.ends_with(".end_turn"):
+		return "battle.end_turn"
+	if action_id.ends_with(".retreat"):
+		return "battle.retreat"
+	return action_id
+
+
+static func _action_card_passthrough(_battle: Dictionary, command: Dictionary) -> String:
+	# 两代卡 id 形状先归一再路由：旧形状不得只剩"提交被拒"。
+	match canonical_action_card_id(str(command.get("action_id", ""))):
+		"battle.end_turn":
+			return "end_turn"
+		"battle.retreat":
+			return "retreat"
+		"basic_attack":
+			return "basic_attack"
+	return ""
+
+
+static func _slot_index(battle: Dictionary, instance_id: String) -> int:
+	for i in (battle.get("gu_slots", []) as Array).size():
+		if str(battle["gu_slots"][i].get("instance_id", "")) == instance_id:
+			return i
+	return -1
+
+
+## T16 残锋降转（2026-09-15）：把杀招结算时登记的逆炼名单落到 RunState.gu_instances。
+## resolver 只持有 battle 字典（facade 原先没有任何实例回写通路），故按 loot_resolver
+## 同款范式在这里补齐——只读 battle 上的 `sword_mark_spent`，无名单则原样返回。
+static func settle_sword_marks(battle: Dictionary, state: RunState, catalog: Dictionary = {}) -> RunState:
+	var spent: Array = (battle.get("sword_mark_spent", []) as Array)
+	# 一次性消费：名单随 battle 字典续到下一条命令（end_turn 会 _dup 携带），
+	# 不清掉就会每次行动重复逆炼。读完即抹，语义＝"本次释放已结算"。
+	battle.erase("sword_mark_spent")
+	if spent.is_empty():
+		return state
+	return SwordMarkRulesScript.apply_erosion(state, spent, catalog)["state"]
+
+
+## 敌人先手（第三阶段 Task 2）：与玩家主动结束回合**同一条结算路径**——直接复用
+## apply_turn 的 end_turn（同样的敌意结算、事件落账与账本推进），不再自持一份
+## 只改战斗、不落日志、不动账本的旁路实现。
+static func apply_enemy_pre_turn(battle: Dictionary, state: RunState, catalog: Dictionary = {}) -> Dictionary:
+	return apply_turn(battle, state, {"type": "end_turn"}, catalog)
+
+
+## Boss 战禁止撤退（V1 兼容旧锚点：真 Boss 节点不可逃，普通战斗可逃）。
+## F-01：预览侧两代形状（flags.boss_battle + 敌方 tier/enemy_definition）与执行侧
+## 共用本函数，禁止再分叉一份本地判定。
+static func boss_blocks_retreat(battle: Dictionary) -> bool:
+	if (battle.get("flags", {}) is Dictionary) \
+			and bool((battle.get("flags", {}) as Dictionary).get("boss_battle", false)):
+		return true
+	# 旧信封形状（存量测试 battle，敌人可能内嵌 definition/顶层 enemy_definition）。
+	for enemy_value in battle.get("enemies", []):
+		var enemy: Dictionary = enemy_value
+		if bool(enemy.get("alive", true)) and int(enemy.get("hp", 0)) > 0:
+			if str((enemy.get("definition", {}) as Dictionary).get("tier", "")) == "boss":
+				return true
+	return str((battle.get("enemy_definition", {}) as Dictionary).get("tier", "")) == "boss"
+
+
+## 撤离费用（预览与执行同源）：retreat_preserved 旗标免付，否则读 balance.retreat_stone_cost。
+static func retreat_cost(battle: Dictionary, catalog: Dictionary) -> int:
+	if battle.get("flags", []).has("retreat_preserved"):
+		return 0
+	return int(catalog.get("balance", {}).get("retreat_stone_cost", 2))
+
+
+## 旧版 can_retreat(terrain, pursuit, enemy_control) 的本地等价。
+## F-01：预览与执行共用，禁止只在预览侧拦元石/地形。
+static func retreat_terrain_open(battle: Dictionary) -> bool:
+	return str(battle.get("terrain", "")) in ["path", "ridge", "marsh"] \
+		and int(battle.get("pursuit", 0)) <= 1 \
+		and int(battle.get("enemy_control", 0)) <= 1
+
+
+## 撤离纯门禁（F-01）：Boss → 地形/追击 → 元石，顺序与预览文案一致。
+## 返回 {ok, reason, cost}；reason 与卡片 reason 字段同码，便于预览/执行对账。
+static func retreat_gate(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+	var cost := retreat_cost(battle, catalog)
+	if boss_blocks_retreat(battle):
+		return {"ok": false, "reason": "retreat_forbidden", "cost": cost}
+	if not retreat_terrain_open(battle):
+		return {"ok": false, "reason": "retreat_forbidden", "cost": cost}
+	if int(state.stone) < cost:
+		return {"ok": false, "reason": "insufficient_stone", "cost": cost}
+	return {"ok": true, "reason": "", "cost": cost}
+
+
+## 第三阶段 Task 4：本场会话是否已在终局关闭（胜利/战死走 phase，撤离走该标记）。
+static func _session_closed(battle: Dictionary) -> bool:
+	var phase := str(battle.get("phase", "player_action"))
+	if phase == "victory" or phase == "defeat":
+		return true
+	return bool((battle.get("flags", {}) as Dictionary).get("session_closed", false))
+
+
+static func _rejected(battle: Dictionary, state: RunState, reason: String, details: Dictionary = {}) -> Dictionary:
+	var result := {
+		"battle": battle.duplicate(true),
+		"state": state,
+		"feeds": [reason],
+		"result": "rejected",
+		"accepted": false,
+		"finished": false,
+	}
+	if not details.is_empty():
+		result["details"] = details
+	return result

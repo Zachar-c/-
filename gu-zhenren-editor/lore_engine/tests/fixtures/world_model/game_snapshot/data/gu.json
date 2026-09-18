@@ -1,0 +1,15 @@
+[
+  {
+    "id": "explicit_gu",
+    "rank": 2,
+    "essence_cost": 3,
+    "true_qi_cost": 5,
+    "feeding_need": {"feed_points": 1},
+    "v1_effect": {"kind": "strike", "amount": 4}
+  },
+  {
+    "id": "fallback_gu",
+    "rank": 1,
+    "role": "defense"
+  }
+]
