@@ -33,3 +33,5 @@
 - Batch 4 天庭冲突簇：新增 `中洲炼蛊大会.md`（`events/central-plain-refinement-conference.md`）、`石莲岛与红莲真传争夺.md`（`events/stone-lotus-island-contest.md`）、`天庭入侵琅琊福地.md`（`events/langya-blessed-land-invasion.md`）三页；来源边界为 `source:source/蛊真人-clean.txt` 加对应 G/H1/H2 读书笔记（琅琊页仅 H1），Run 1 缺口一律入「待核对」。
 - Batch 4 反向链接：`world/heavenly-court.md` 3 条待建立清零并指向新页；`events/index.md` 收录 3 页；`events/fate-war.md` 关键转折接通 3 页；`characters/red-lotus.md` 关联页面追加石莲岛页；`characters/fang-yuan.md` 关联页面追加 3 页。
 - Batch 4 验收结果：27 个知识页、38 个 Markdown 文件；`check.ps1` 7 行 PASS、`ALL CHECKS PASSED`、退出码 0；`git diff --check` 无输出；`heavenly-court.md` 内「待建立」0 命中；Wiki 页面内 source 直引分支路径 0 命中（仅本日志的历史叙述行保留旧字样）。
+- Batch 4b 来源修正：协调方 Batch 4 简报误判「Run 1 无天庭入侵琅琊福地记录」，实际 G 笔记 292640–292899 与原文第五百五十五节已完整记录该战；`langya-blessed-land-invasion.md` 已补齐 Run 1 事实并新增 G 笔记来源。
+- Batch 4b 收紧：`central-plain-refinement-conference.md` 按笔记原文修正袭击口径、删除无出处别名；`stone-lotus-island-contest.md` 把推论移出事实性位置。
