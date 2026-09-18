@@ -23,7 +23,7 @@ const PITY_CLEARING_RARITIES := ["rare", "epic", "legendary"]
 
 
 static func settle_victory(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
-	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
+	var tier := _resolve_battle_tier(battle, catalog)
 	var layer := clampi(int(battle.get("layer", 1)), 1, 5)
 	var table: Dictionary = _layer_table(catalog, tier, layer)
 	var pity_cfg: Dictionary = catalog.get("loot_tables", {}).get("pity", {})
@@ -208,6 +208,26 @@ static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
 		if str(enemy.get("id", "")) == enemy_kind:
 			return str(enemy.get("tier", "common"))
 	return "common"
+
+
+## Domain rule (E6): a multi-enemy victory uses the highest threat tier present:
+## boss > elite > common. Any boss => boss; otherwise any elite => elite;
+## otherwise common. Single-enemy behavior is preserved: without a non-empty
+## enemy_kinds array the lone enemy_kind rules.
+static func _resolve_battle_tier(battle: Dictionary, catalog: Dictionary) -> String:
+	var kinds_value: Variant = battle.get("enemy_kinds", [])
+	if kinds_value is Array and not (kinds_value as Array).is_empty():
+		var seen_elite := false
+		for kind_value in (kinds_value as Array):
+			var tier := _enemy_tier(str(kind_value), catalog)
+			if tier == "boss":
+				return "boss"
+			if tier == "elite":
+				seen_elite = true
+		if seen_elite:
+			return "elite"
+		return "common"
+	return _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
 
 
 static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, count_adjustment: int = 0, catalog: Dictionary = {}) -> Array[String]:
