@@ -6,7 +6,7 @@
 
 - 入口顺序：`AGENTS.md` → `PROJECT_MAP.md` → 目标目录 `README.md` / `AGENTS.md`。
 - 一次只进一个目录；没有理由不扫描全仓。
-- 已完成导入的目标目录（`lore/`、`editorial/`、`fortune/`、`ai-system/`）是当前入口；`gu-zhenren-editor/` 仍是当前游戏快照，Task 7 迁移前不手动拆散。
+- 已完成导入的目标目录（`lore/`、`editorial/`、`fortune/`、`ai-system/`、`game/`）是当前入口；旧 `gu-zhenren-editor/` 的受版本内容已删除（Task 7），残留本地恢复材料不作为入口。
 
 ## 目标目录
 
@@ -33,13 +33,13 @@
 - 当前入口：`editorial/`（导入提交 `0cbce85`，183 文件）。
 - 权威来源：`https://github.com/Zachar-c/gu-zhenren-editor.git`（`main`，基线 `dbf6615`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
-- 注意：本目录与旧根目录 `gu-zhenren-editor/` 同名但不同项目；后者是 Gitee Godot 游戏工程快照，Task 7 迁移为 `game/`。
+- 注意：本目录与旧根目录 `gu-zhenren-editor/` 同名但不同项目；后者是 Gitee Godot 游戏工程快照，Task 7 已迁移为 `game/`，旧快照受版本内容已删除。
 
-### `game/`（待 Task 7 导入）
+### `game/`（Task 7 已导入）
 
 - 用途：当前 Gitee Godot 游戏工程（最后迁移，保留工程结构、UID、资源路径和测试入口）。
-- 首读文件：`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`（导入后）。
-- 当前入口：`gu-zhenren-editor/`（旧快照，当前游戏位置；`game/` 建立前不挪动它）。
+- 首读文件：`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`。
+- 当前入口：`game/`（导入提交 `ebb7f81`，744 提交、1904 文件，另有本地带过提交 `db34873`；旧 `gu-zhenren-editor/` 的受版本内容已删除）。
 - 权威来源：`https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git`（`master`）。
 - 可修改范围：仅目录导入、旧根路径配置/文档的机械引用更新、忽略规则；不改 Godot 逻辑、数据数值与契约内容。
 - 约束说明：当前生效约束以 `game/world-model/governance/CONSTRAINTS-V2.md` 为准；`game/docs/contracts/2026-09-12-agent-ownership-contract.md` 已被该约束明确降级为历史档案，不作为执行契约。

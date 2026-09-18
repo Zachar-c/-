@@ -1,5 +1,0 @@
-# GuInventory 的运行时实现使用同名 .tscn + gu_inventory_view.gd。
-# 这里保留可编译的源组件，以便 RUI 源文件与正式场景的只读数据契约同步。
-export GuInventory() -> RuitkVNode {
-  return (<VBoxContainer />)
-}

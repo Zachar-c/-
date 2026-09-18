@@ -10,6 +10,8 @@
 # Full source texts stay local for copyright and repository-size reasons.
 gu-zhenren-editor/分支：六卷精编版/蛊真人-clean.txt
 gu-zhenren-editor/分支：六卷精编版/《人祖传》.txt
+game/分支：六卷精编版/蛊真人-clean.txt
+game/分支：六卷精编版/《人祖传》.txt
 
 # Local test output, backups, sabotage/debug logs, and generated shortlist files.
 /map_test_result.txt
@@ -17,6 +19,7 @@ gu-zhenren-editor/分支：六卷精编版/《人祖传》.txt
 **/gate_sabotage.log
 **/generated/_shortlist_spec.txt
 gu-zhenren-editor/tools/_*.txt
+game/tools/_*.txt
 
 # Common local OS/editor noise.
 **/.DS_Store

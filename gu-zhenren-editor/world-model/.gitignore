@@ -1,7 +1,0 @@
-__pycache__/
-*.pyc
-*.tmp
-saves/
-runs/
-.snapshots/
-_MANIFEST.txt

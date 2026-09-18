@@ -7,13 +7,13 @@
 - [`lore/research/`](lore/research/)：研究、读书资料、设定和设计原始材料（已从 `gu-zu` 完整导入）。
 - [`lore/wiki/`](lore/wiki/)：面向 AI 使用的冻结 Markdown Wiki（已从 `wenzhen-lore` 扁平迁移）。
 - [`editorial/`](editorial/)：GitHub `gu-zhenren-editor` 编辑部资料库与分卷精编流水线（已导入）。
-- [`game/`](game/)：Gitee Godot 游戏工程（待 Task 7 最后导入；当前快照仍在 `gu-zhenren-editor/`）。
+- [`game/`](game/)：Gitee Godot 游戏工程（Task 7 已导入）。
 - [`fortune/app/`](fortune/app/)、[`fortune/server/`](fortune/server/)：`fortune-app` 与 `fortune-server` 项目（已导入）。
 - [`ai-system/`](ai-system/)：`my-ai-production-system` 项目（已导入）。
 - [`docs/`](docs/)：项目计划、设计说明与债务清单（`docs/debt.md`）。
 - [`archive/`](archive/)：历史资料保留位置，不作为当前入口。
 
-`gu-zu/` 与 `wenzhen-lore/` 的迁移已完成；`gu-zhenren-editor/` 仍是当前游戏快照，Task 7 迁移前不要手动拆散。各目录的当前入口与可修改范围见 `PROJECT_MAP.md`，来源登记见 `MIGRATION.md`。
+`gu-zu/`、`wenzhen-lore/` 与 `gu-zhenren-editor/` 的受版本迁移已完成；旧 `gu-zhenren-editor/` 的受版本内容已删除，当前游戏入口为 `game/`。各目录的当前入口与可修改范围见 `PROJECT_MAP.md`，来源登记见 `MIGRATION.md`。
 
 ## 资料边界
 
@@ -24,7 +24,7 @@
 ## 迁移状态
 
 - 执行计划：`docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`；旧的 `docs/superpowers/plans/2026-09-18-wenzhen-monorepo-migration.md` 已被取代，仅作历史参考。
-- 当前阶段：Task 5 已完成 `lore/research/`、`lore/wiki/`，Task 6 已完成 `editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`；剩余 Task 7（Gitee Godot 游戏 → `game/`）、Task 8（边界终验）、Task 9（推送准备）。
+- 当前阶段：Task 5 已完成 `lore/research/`、`lore/wiki/`，Task 6 已完成 `editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`，Task 7 已完成 `game/` 导入与旧快照删除；剩余 Task 8（边界终验）、Task 9（推送准备）。
 
 ## 协作原则
 

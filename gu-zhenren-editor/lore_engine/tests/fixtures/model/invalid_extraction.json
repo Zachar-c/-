@@ -1,8 +1,0 @@
-{
-  "entities": [{"id": "bad", "type": "unknown"}],
-  "facts": [],
-  "events": [],
-  "relations": [{"predicate": "unknown_relation"}],
-  "rule_candidates": [],
-  "uncertain_items": []
-}

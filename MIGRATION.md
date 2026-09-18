@@ -25,7 +25,7 @@
 | `fortune-app` | `https://github.com/Zachar-c/fortune-app.git` | `master` | `fortune/app/` | 过滤历史后 subtree 导入；不带外层本地包装目录 | 同上 Task 4 过滤组 | Task 6：导入 `6603115`（21 提交） |
 | `fortune-server` | `https://github.com/Zachar-c/fortune-server.git` | `main` | `fortune/server/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | Task 6：导入 `0240567`（1 提交） |
 | `my-ai-production-system` | `https://github.com/Zachar-c/my-ai-production-system.git` | `main` | `ai-system/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | Task 6：导入 `479145d`（1 提交） |
-| Gitee 游戏 | `https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git` | `master` | `game/` | 最后过滤历史后 subtree 导入；保留 Godot 工程结构 | 同上 Task 4 过滤组 | 待 Task 7 |
+| Gitee 游戏 | `https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git` | `master` | `game/` | 最后过滤历史后 subtree 导入；保留 Godot 工程结构 | 同上 Task 4 过滤组 | Task 7：导入 `ebb7f81`（744 提交、1904 文件）+ 本地带过提交 `db34873`（`game/wenzhen-web/` 10 文件） |
 
 - 历史保留方式：外部仓库先在临时镜像中过滤禁止原文路径，再以不带 `--squash` 的 `git subtree add --prefix` 导入，保留作者、日期和提交历史；临时镜像不进入父仓库。
 - 已发布历史不重写：`master` / `origin/master` 不被改写；各阶段提交只落在 `codex/gu-zhenren-monorepo-migration`。
@@ -104,6 +104,20 @@ memory:gu-zu/...              -> memory:lore/research/...
 - 工具教训（补记 Task 4 审计缺口）：`git ls-tree` 默认 `core.quotePath=true`，中文路径会输出成八进制转义并用双引号包裹，任何 `\.epub$`、`\.edited\.txt$` 这类行尾锚定 grep 都会整片漏检；本节一律显式加 `-c core.quotePath=false` 复核。Task 4 审计把 `editorial.git` 的原文写成 `蛊真人-clean.txt` 也属同类转写错误，实际路径名是 `蛊真人.txt`。
 - 与计划的偏差：计划 Step 1 写的是直接从 `mirrors/editorial.git` 导入，实际改为从重建后的 `editorial-final` 导入（用户裁定后覆盖原文，见上）；`AGENTS.md`、`README.md` 同时做了事实性导航更新，属计划 Task 6 Step 4「导航入口全部使用新目标目录」范围。
 
+## Task 7 Godot Game Import（收尾执行于 `db34873` 上；导入 `ebb7f81` + 带过 `db34873`）
+
+- Step 1（本地 `source/`，前期会话执行，本会话复核）：`source/蛊真人-clean.txt`（23,172,557 字节，SHA-256 `95cd0b13…7647`）、`source/《人祖传》.txt`（151,392 字节，SHA-256 `acc3ec34…d9155`），被根 `.gitignore` 的 `/source/` 规则忽略（`git check-ignore -v` 命中两条）。两份候选剥离 `\r` 后 SHA-256 相同，游戏侧 LF 版本被采用：`.worktrees/` 副本 raw SHA 为 `bf78d414…` / `e6a6a618…`（与 Task 3 记录一致），`tr -d '\r'` 后与 `source/` 双份 SHA 完全一致；`source/` 内零 CR（`grep -c $'\r'` 为 0）。
+- Step 2（subtree 导入，前期会话执行）：`git subtree add --prefix='game' <mirrors/game.git> master -m 'chore: import Godot game project'` → `ebb7f81`，第二父为过滤后 `game.git` 镜像 tip（`git rev-list --count ebb7f81^2` = 744，历史提交完整保留，无 `--squash`）；`git -c core.quotePath=false ls-tree -r --name-only ebb7f81 -- game` 共 1904 个文件。完整原文路径已在 Task 4 过滤（`game/` 受版本树内 `分支：六卷精编版/` 下仅 24 个记忆库/读书笔记文件，无正文 txt）。
+- Step 3（本地新文件带过，前期会话执行）：本地 `gu-zhenren-editor/wenzhen-web/` 比远程 master 新的 10 个文件，按用户裁定以独立提交 `db34873`（`chore: carry local wenzhen-web work into game`）带进 `game/wenzhen-web/`，逐 blob 与旧快照一致；`game/` 文件数 1904 → 1909（`git show --stat db34873`：10 files changed，含 3 个新增二进制 asset）。
+- Step 4（Godot 验证，前期会话执行）：`godot --headless --path game --editor --quit` 成功打开 `game/project.godot`，exit 0。
+- Step 5（契约检查，本会话执行）：`git diff -- game/AGENTS.md game/world-model/governance/CONSTRAINTS-V2.md game/docs/contracts` 无输出（exit 0）；`git diff --check -- game` 无输出（exit 0）。游戏契约未被迁移改写。
+- Step 6（根忽略规则，本会话执行）：根 `.gitignore` 新增 3 条（保留既有 `gu-zhenren-editor/...` 3 条）：`game/分支：六卷精编版/蛊真人-clean.txt`、`game/分支：六卷精编版/《人祖传》.txt`、`game/tools/_*.txt`；`git diff --check` 通过（仅 autocrlf 换行提示，无空白错误）。
+- Step 7（删旧快照并提交，本会话执行）：收尾前 `git -c core.quotePath=false ls-files -- gu-zhenren-editor` = 1758，`-- game` = 1909；`git rm -r -- gu-zhenren-editor`（exit 0）后前者为 0。被忽略的 `.git-nested-backup/`、`.worktrees/`、`.godot/`、两份本地原文 txt（151,392 / 23,172,557 字节，与 Task 3 一致）、10 个 `tmp*/` 目录均保留在磁盘。文档更新（本文件、`PROJECT_MAP.md`、`docs/debt.md`、`README.md`）后以 `chore: import Godot game as final monorepo project` 提交；未推送。
+- 与计划的偏差：
+  1. Step 3 不是纯 subtree：本地超前文件以独立提交 `db34873` 带过（用户裁定），`game/` 内容 = 过滤后远程历史 + 10 个本地文件。
+  2. `game/tools/_*.txt`（`game/tools/` 下 10 个）随导入历史已在 Git 树内，原样保留（KEEP，见 `docs/debt.md`）；新增根忽略只阻止未来新增，不改写历史。
+  3. 旧快照自带的嵌套 `.gitignore`（含 `.godot/`、`.workbuddy/`、`.zcode/` 等规则）随 `git rm` 离开 Git 树后，残留本地缓存显示为 `?? gu-zhenren-editor/`（约 4500 个未跟踪文件，全在 `.godot/`、`.workbuddy/` 等本地工具目录内）；收尾提交改用精确路径 `git add`（`.gitignore` + 四个文档，已暂存的 1758 个删除不受影响），未使用 `git add -A`，未把缓存带入提交。Task 8 可视需要补根忽略规则或保留现状。
+
 ## Verification Log
 
 - Task 2（本提交）：根边界验证，命令见计划 Task 2 Step 5：
@@ -138,3 +152,12 @@ memory:gu-zu/...              -> memory:lore/research/...
   - 边界复核：`git -c core.quotePath=false ls-tree -r --name-only HEAD -- editorial` 不含 `蛊真人.txt`；`git log --oneline --all -- editorial/蛊真人.txt` 无输出；`editorial-final` 的 `rev-list --objects --all` 无该路径。
   - Step 4 旧路径扫描：`rg … 'gu-zu/|wenzhen-lore/|gu-zhenren-editor/|fortune-app/fortune-app/'` 在 `editorial/`、`fortune/`、`ai-system/` 零命中；剩余命中仅在 `MIGRATION.md`、`docs/debt.md` 与 `docs/superpowers/{plans,specs}/`（自身引用旧路径）。
   - `git diff --check` 通过（仅 autocrlf 提示，无空白错误）。
+- Task 7（导入 `game/` 并删除旧快照；bash 执行，详见本文件 Task 7 Godot Game Import 小节）：
+  - Step 1：`source/` 双份 SHA 与游戏侧一致（`95cd0b13…` / `acc3ec34…`），零 CR；`.worktrees/` 副本剥离 `\r` 后一致，游戏侧 LF 版本被采用；`git check-ignore -v source/*` 命中根 `/source/` 规则。
+  - Step 2：`git subtree add --prefix='game' <mirrors/game.git> master` → `ebb7f81`（第二父 744 提交，无 `--squash`；`game/` 1904 文件）。
+  - Step 3：本地 `wenzhen-web/` 10 文件以独立提交 `db34873` 带进 `game/wenzhen-web/`（用户裁定，逐 blob 一致）；`game/` 1904 → 1909 文件。
+  - Step 4：`godot --headless --path game --editor --quit`，exit 0（前期会话）。
+  - Step 5：`git diff -- game/AGENTS.md game/world-model/governance/CONSTRAINTS-V2.md game/docs/contracts` 无输出（exit 0）；`git diff --check -- game` 无输出（exit 0）。
+  - Step 6：根 `.gitignore` +3 行（`game/分支…` 2 条 + `game/tools/_*.txt` 1 条），旧 `gu-zhenren-editor/...` 3 条保留；`git diff --check` 通过。
+  - Step 7：`ls-files` 计数 `gu-zhenren-editor=1758`、`game=1909`；`git rm -r -- gu-zhenren-editor`（exit 0）后前者为 0；五类本地受保护路径磁盘保留；`game/opencode.json` 含另一台机器绝对路径（`C:/Users/90877/...`）已登记 REVIEW；精确路径 `git add`（未用 `git add -A`，残留本地缓存未入提交）。
+  - 偏差：Step 3 独立带过提交 `db34873`（用户裁定）；`game/tools/_*.txt` 为随历史入库的既有内容（KEEP）；嵌套 `.gitignore` 离开后残留显示为 `??`（见 Task 7 小节偏差 3）。
