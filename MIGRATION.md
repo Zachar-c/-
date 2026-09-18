@@ -131,6 +131,7 @@ memory:gu-zu/...              -> memory:lore/research/...
 - Step 6（可定位性）：旧路径引用只出现在 `MIGRATION.md` 历史记录、`docs/debt.md` 与计划/归档旧文档及 `game/` 内随历史导入的产品文档中（后者原样保留，不改写产品文档）；根导航三件套均不把旧路径当当前入口。`git status` 另有 9 个 `?? game/wenzhen-web/assets/*.import`（本地 Godot 生成，见下），故非全干净。
 - 失败与回退：本 Task 内零失败；`AGENTS.md`/`lore/wiki/README.md` 若需回退即 revert 本次提交，不影响 Task 2—7 历史。
 - 新增 REVIEW（`docs/debt.md`）：9 个 `game/wenzhen-web/assets/*.import` 未跟踪——`db34873` 本地 asset 缺侧车文件，本地编辑器运行后生成；全树惯例跟踪 `.import`（221 个），Task 8 不加宽泛忽略、不删除、不代提交，交用户在 Task 9 前裁定。
+- 独立复核（协调方，2026-09-18 于 `a3bcc99`）：三个旧根 `git ls-files` 均为 0；嵌套元数据 / 原文名 / 缓存三类扫描 0 命中；`rev-list --objects --all` 无禁止原文；`lore/wiki` 35 个 Markdown 文件相对链接 0 断链；命名空间正则 `source:(?!source/)|notes:(?!game/|lore/research/)|memory:(?!game/|lore/research/)` 0 命中；`git diff --check` 干净。以上均独立复现本小节结论。
 
 ## Verification Log
 
@@ -175,6 +176,8 @@ memory:gu-zu/...              -> memory:lore/research/...
   - Step 6：根 `.gitignore` +3 行（`game/分支…` 2 条 + `game/tools/_*.txt` 1 条），旧 `gu-zhenren-editor/...` 3 条保留；`git diff --check` 通过。
   - Step 7：`ls-files` 计数 `gu-zhenren-editor=1758`、`game=1909`；`git rm -r -- gu-zhenren-editor`（exit 0）后前者为 0；五类本地受保护路径磁盘保留；`game/opencode.json` 含另一台机器绝对路径（`C:/Users/90877/...`）已登记 REVIEW；精确路径 `git add`（未用 `git add -A`，残留本地缓存未入提交）。
   - 偏差：Step 3 独立带过提交 `db34873`（用户裁定）；`game/tools/_*.txt` 为随历史入库的既有内容（KEEP）；嵌套 `.gitignore` 离开后残留显示为 `??`（见 Task 7 小节偏差 3）。
+  - Step 4（Godot 入口与测试；2026-09-18 由协调方在 `a3bcc99` 上补跑，原 Task 7 未执行）：`game/tools/test.ps1 -Suite unit`（缓存预热后）exit 0 —— Scripts 216 / Tests 1581 / Passing 1581 / Asserts 52673 / Orphans 2，`SCRIPT ERROR`、`Parse Error`、`Ignoring script`、`Nothing was run` 均 0 条；`game/tools/test.ps1 -Suite integration` exit 0 —— Scripts 12 / Tests 56 / Passing 56 / Asserts 1723。退出期 `WARNING: 8 ObjectDB instances were leaked at exit` 与 `ERROR: 2 resources still in use at exit` 在迁移前基线克隆上逐字重现，非迁移引入。冷缓存首跑不稳定：迁移后首次 `-Suite unit` 返回 rc=1 但 GUT 仍 1581/1581 全过；迁移前基线克隆首次冷缓存 `-Suite unit` 直接崩溃（0xC0000005），单独 `--import` 预热后正常 —— 判定为既有环境/缓存现象，不改产品代码。
+  - Step 4 迁移保真度对照（基线 = 镜像 `game.git` 的 master 克隆，1904 文件）：`git ls-tree -r` 逐路径比对 —— 1904 条共有路径中 1899 条 blob 完全一致，5 条为 `db34873` 用户裁定的本地较新 `wenzhen-web` 文件，0 条缺失；`game/` 另多 5 个新文件（同提交新增），1909 = 1904 + 5。`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`、`game/docs/contracts/`（13 文件）与基线 SHA-256 逐一一致。
 - Task 8（完整边界验收；bash + pwsh 脚本文件方式，详见本文件 Task 8 Final Acceptance 小节）：
   - Step 0：根 `.gitignore` +4 行（`/gu-zhenren-editor/` 整目录忽略）；`git status` 不再出现 `??`，`ls-files` 为 0。
   - Step 1：12 路径全存在；三旧路径 `ls-files` 全 0；`source/` 被忽略且含双份原文。
