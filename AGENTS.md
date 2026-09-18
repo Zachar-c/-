@@ -11,7 +11,7 @@
 
 - 先读地图：`AGENTS.md` → `PROJECT_MAP.md` → 目标目录 `README.md` / `AGENTS.md`。
 - 一次只进一个目录；不复制其他项目的完整规则。
-- 只做目录迁移、来源路径替换、忽略规则、迁移记录和验证。
+- 日常改动就地做：每个目标目录遵守自己的 `README.md` / `AGENTS.md`，跨目录只做数据、上下文与版本边界对接；新增或移动来源时同步更新 `PROJECT_MAP.md` 与 `docs/debt.md`。
 
 ## 当前阶段
 
