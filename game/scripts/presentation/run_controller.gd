@@ -169,13 +169,24 @@ func _initialize_view_flow() -> void:
 		_mount_debug_panel()
 
 
+## W5 目录复用：初始化（_initialize_view_flow）已加载并校验过目录，开局直接复用，
+## 避免每次开新局重复全量解析 data/*.json。未经初始化的 headless 测试/工具
+## （catalog 仍为空）在此处补齐加载 + 校验；已有目录只重新校验内存数据，
+## 不再重复解析文件；内容非法时的内容错误行为不变。
+func _ensure_catalog_loaded() -> void:
+	if catalog.is_empty():
+		var loaded := ContentCatalog.load_and_validate_all()
+		catalog = loaded.get("catalog", {})
+		_content_errors = loaded.get("errors", [])
+		return
+	_content_errors = ContentCatalog.validate(catalog)
+
+
 func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [], buff_ids: Array = []) -> void:
 	m0_mode = false
 	m0_reward_options.clear()
 	m0_reward_selected = false
-	var loaded := ContentCatalog.load_and_validate_all()
-	catalog = loaded.get("catalog", {})
-	_content_errors = loaded.get("errors", [])
+	_ensure_catalog_loaded()
 	if not _content_errors.is_empty():
 		_show_content_error()
 		return
@@ -203,9 +214,7 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 
 ## M0 独立入口：只启用四场最小路线与三选一奖励，不改变完整运行流。
 func start_m0_run(seed_value: int) -> void:
-	var loaded := ContentCatalog.load_and_validate_all()
-	catalog = loaded.get("catalog", {})
-	_content_errors = loaded.get("errors", [])
+	_ensure_catalog_loaded()
 	if not _content_errors.is_empty():
 		_show_content_error()
 		return
