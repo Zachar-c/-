@@ -25,5 +25,6 @@ sources:
 ## 待核对
 
 - 品阶、饲料、消耗、持续时间和全部适配蛊虫尚未建立完整条目。
+- 本批窗口核验（根原文 `蛊真人-clean.txt` 906–3454 行，第 4–20 节）：窗口内无“小光”命中，小光蛊未实际出现，其作用本批不升级为原著事实。
 
 关联页面：[月光蛊](moonlight-gu.md)、[蛊的饲养与炼化](../world/gu-care-and-refinement.md)、[真元](../world/primeval-essence.md)、[方源](../characters/fang-yuan.md)。
