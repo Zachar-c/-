@@ -14,9 +14,9 @@
 
 ## 地域与界壁
 
-- [南疆与山寨](south-jiang.md)
-- [中洲炼蛊大会](../events/central-plain-refinement-conference.md)（事件视角：五域界壁变化的笔记整理记录位置之一，Run 1 / Run 2 分开记录）
-- [宿命大战](../events/fate-war.md)（事件视角：五域界壁消弭与多战场范围的对照入口，Run 1 / Run 2 分开记录，不得合并）
+- [南疆与山寨](south-jiang.md)（地域/世界规则入口）
+- [中洲炼蛊大会](../events/central-plain-refinement-conference.md)（事件入口：用于核验界壁「缩减」阶段，Run 1 炼蛊大会阶段，原文行 313034、313036；Run 1 / Run 2 分开记录）
+- [宿命大战](../events/fate-war.md)（事件入口：用于核验界壁「彻底消弭」阶段，Run 1 大战收尾，原文行 323400；Run 1 / Run 2 分开记录，不得合并）
 
 当前 Wiki 只覆盖以上已建入口；五域完整地图、各域之间距离、势力谱系仍未完成，不得把缺失地域推断为已被完整建模。新增地域结论前须先完成逐段原文核验。
 
