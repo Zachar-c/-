@@ -48,4 +48,4 @@ sources:
 - 坚持仙蛊之外的品阶细节、豆神宫的完整构成、天元宝皇莲被盗与重炼之间的完整链条需要逐段回原文。
 - 毛里球所揭“元莲丑事”的具体所指，在现有锚点之外没有展开，本页不作定性。
 
-关联页面：[坚持](../themes/persistence.md)、[人祖传](../themes/ren-zu-zhuan.md)、[逆流河](../events/reverse-flow-river.md)、[方源](../characters/fang-yuan.md)、[坚持仙蛊](../gu/persistence-gu.md)。
+关联页面：[坚持](../themes/persistence.md)、[人祖传](../themes/ren-zu-zhuan.md)、[逆流河](../events/reverse-flow-river.md)、[方源](../characters/fang-yuan.md)、[天庭](../world/heavenly-court.md)、[坚持仙蛊](../gu/persistence-gu.md)。
