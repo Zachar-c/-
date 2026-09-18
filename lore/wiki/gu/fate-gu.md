@@ -28,9 +28,9 @@ sources:
 ## 关键关系
 
 - **天意**：天地层面的意志；宿命蛊可以成为天意运行的规则接口，但二者不是同一实体。
-- **天庭**：长期维护、修复和利用宿命蛊的组织；组织的信念与宿命蛊的存在不能互相替代。
-- **红莲魔尊**：损伤宿命蛊并留下后手的人物，是宿命蛊“可被改变但代价极高”的关键证据。
-- **方源**：把摧毁宿命蛊与永生可能性联系起来，并在不同轮回中持续围绕它布局。
+- [天庭](../world/heavenly-court.md)：长期维护、修复和利用宿命蛊的组织；组织的信念与宿命蛊的存在不能互相替代。
+- [红莲魔尊](../characters/red-lotus.md)：损伤宿命蛊并留下后手的人物，是宿命蛊“可被改变但代价极高”的关键证据。
+- [方源](../characters/fang-yuan.md)：把摧毁宿命蛊与永生可能性联系起来，并在不同轮回中持续围绕它布局。
 - **命运蛊**：与运道结合的替代方案或后续对象，必须单独记录其来源、目标和状态。
 
 ## 分析与解读
@@ -45,5 +45,6 @@ sources:
 - 宿命蛊从完整、受损、修复到不同轮回后续状态的完整时间线尚未独立建档。
 - 宿命蛊对生死、仙僵、魂魄和其他规则的精确作用边界，需要逐段回读原文。
 - 宿命蛊与天意、命运蛊、运道之间的因果关系目前以导航性摘要为主，不能替代事件页和原文核验。
+- 天意、命运蛊暂无独立页面，登记为后续节点候选；本页《关键关系》已改为链接形式，链接只表示导航可达，不代表新增事实主张。
 
-关联页面：[宿命大战](../events/fate-war.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命](../themes/fate.md)。
+关联页面：[宿命大战](../events/fate-war.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命](../themes/fate.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)。
