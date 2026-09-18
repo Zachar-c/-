@@ -21,10 +21,10 @@
 |---|---|---|---|---|---|---|
 | `gu-zu` | `https://github.com/Zachar-c/gu-zu.git` | `master` | `lore/research/` | 过滤历史后 subtree 导入；保留完整资料包 | Task 4：`*蛊真人-clean.txt`、`*《人祖传》.txt`（`--invert-paths`，以前缀由 `git subtree add --prefix` 提供，不用 `--to-subdirectory-filter`） | Task 5：导入 `072aa6e` + 本次冻结提交（见 Task 5 小节） |
 | 当前 `wenzhen-lore/` | 父仓库 `5f3fbfc` 快照（本地） | — | `lore/wiki/` | `git mv` 扁平移动；只做机械路径更新 | 不适用（工作树移动；原文候选按 Task 3 清单排除） | Task 5：本次冻结提交（见 Task 5 小节） |
-| GitHub `gu-zhenren-editor` | `https://github.com/Zachar-c/gu-zhenren-editor.git` | `main` | `editorial/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | 待 Task 6 |
-| `fortune-app` | `https://github.com/Zachar-c/fortune-app.git` | `master` | `fortune/app/` | 过滤历史后 subtree 导入；不带外层本地包装目录 | 同上 Task 4 过滤组 | 待 Task 6 |
-| `fortune-server` | `https://github.com/Zachar-c/fortune-server.git` | `main` | `fortune/server/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | 待 Task 6 |
-| `my-ai-production-system` | `https://github.com/Zachar-c/my-ai-production-system.git` | `main` | `ai-system/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | 待 Task 6 |
+| GitHub `gu-zhenren-editor` | `https://github.com/Zachar-c/gu-zhenren-editor.git` | `main` | `editorial/` | 过滤历史后 subtree 导入 | Task 6 修正组：仅 `蛊真人.txt`（Task 4 组漏检，见 Task 6 小节） | Task 6：导入 `0cbce85`（83 提交） |
+| `fortune-app` | `https://github.com/Zachar-c/fortune-app.git` | `master` | `fortune/app/` | 过滤历史后 subtree 导入；不带外层本地包装目录 | 同上 Task 4 过滤组 | Task 6：导入 `6603115`（21 提交） |
+| `fortune-server` | `https://github.com/Zachar-c/fortune-server.git` | `main` | `fortune/server/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | Task 6：导入 `0240567`（1 提交） |
+| `my-ai-production-system` | `https://github.com/Zachar-c/my-ai-production-system.git` | `main` | `ai-system/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | Task 6：导入 `479145d`（1 提交） |
 | Gitee 游戏 | `https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git` | `master` | `game/` | 最后过滤历史后 subtree 导入；保留 Godot 工程结构 | 同上 Task 4 过滤组 | 待 Task 7 |
 
 - 历史保留方式：外部仓库先在临时镜像中过滤禁止原文路径，再以不带 `--squash` 的 `git subtree add --prefix` 导入，保留作者、日期和提交历史；临时镜像不进入父仓库。
@@ -90,6 +90,20 @@ memory:gu-zu/...              -> memory:lore/research/...
 - Step 5/6（验证，真实输出见 Verification Log 的 Task 5 条目）：旧字符串/PCRE 零输出；229 个相对 `.md` 链接逐个 resolve，0 损坏；Task 3 SHA-256 清单 35/35 与基线 blob 一致，且“旧 blob + 本节替换程序”重建新文件 35/35 字节一致（差异仅来自路径替换与目录移动）；Git 树无禁止原文/嵌套元数据；`source/` 未创建。
 - 与计划的偏差：powershell 直译 bash；Task 5 自然产生 2 个提交（subtree 导入 `072aa6e` + 本次冻结提交，均为 `git subtree` 机制与计划 Step 7 所要求）；`AGENTS.md:67` 与 `:14` 的两处更新如上，属“目录移动/来源路径更新”允许范围；`log.md:12` 保留属有意为之（见债务 REVIEW 行：`README.md` 小说正文示例指向 `game/`，而正文最终落地 `source/`，待 Task 7/8 裁定）。
 
+## Task 6 Editorial / Fortune / AI Import（`1d022ac` 上执行，bash 直译）
+
+- 执行基线：Task 5 完成提交 `1d022ac`，工作区干净。
+- 第一次尝试（本地提交 `3afe2dd`，未推送）：把 `mirrors/editorial.git` 的 `main` 原样导入 `editorial/`，结果把仓库根 23.5 MB 的完整原文底稿 `蛊真人.txt` 一并带入。发现后停止导入并提交用户裁定，未推送、未继续 Task 7。
+- 用户裁定（2026-09-18，原文顺序）：「其实不用排除，去重就行」→「排除成书，保留研究延伸」→「我犯了一个错误，除了蛊真人和人祖传以外的成书都是项目的精编产出，不应该排除」→ 选择方案 1。
+  - 最终口径：只排除完整原文 `蛊真人.txt` 与 `《人祖传》.txt`；`volumes/**/*.edited.txt`（24 条精编分节）、`volumes/01-魔性不改/蛊真人-第一部-魔性不改-第001-199节.epub`、`working/archive-2026-08/read-*.txt`（9 条）、`round3-*.txt`（3 条）、`working/*.cp936.txt`（9 条）均属项目精编产出与工作副本，保留。
+- 修正动作（重建过滤镜像）：以 `git filter-branch --index-filter` + `--prune-empty`（不重写初始提交）从 `mirrors/editorial.git` 重建工作克隆 `editorial-final`，只删除路径 `蛊真人.txt`；`git rev-list --count` 85 → 83；`refs/original/*` 已清理；`editorial-final` 上 `git log --all --name-only` 与 `git rev-list --objects --all` 均不再出现 `蛊真人.txt`。旧提交 `3afe2dd` 只留在本地 reflog，未推送，本分支以重建后的导入提交取代。
+- Step 1（editorial）：`git subtree add --prefix=editorial <editorial-final> main` → `0cbce85`，第二父 `cf2cb48`（83 个历史提交完整保留，无 `--squash`）。`git ls-tree -r` 路径清单 183/183 与 `editorial-final` 一致；`editorial-final` 与 `mirrors/editorial.git` 的路径清单差集恰好只有 `蛊真人.txt`，两侧共有 183 条路径的 blob 183/183 完全一致。`editorial/` 与旧根目录 `gu-zhenren-editor/` 同名但不同项目，后者是 Gitee 游戏快照。
+- Step 2（fortune）：`fortune/app` ← `mirrors/fortune-app.git` `master` → `6603115`，第二父 `a039639`（21 提交），36 文件；`fortune/server` ← `mirrors/fortune-server.git` `main` → `0240567`，第二父 `6a5eed2`（1 提交），3 文件。两个前缀的路径清单与各自镜像 tip 逐行一致。
+- Step 3（AI system）：`ai-system` ← `mirrors/ai-system.git` `main` → `479145d`，第二父 `fbe67e2`（1 提交），1 文件（`PRD.md`）。路径清单与镜像 tip 一致。
+- Step 4（导航与旧路径扫描）：`rg -n --hidden --glob '!**/.git/**' --glob '!**/.git-nested-backup/**' --glob '!**/.godot/**' 'gu-zu/|wenzhen-lore/|gu-zhenren-editor/|fortune-app/fortune-app/' AGENTS.md PROJECT_MAP.md MIGRATION.md README.md docs editorial fortune ai-system` → 导入内容 `editorial/`、`fortune/`、`ai-system/` 零命中；剩余命中只在 `MIGRATION.md`（历史映射与本节）、`docs/debt.md`（债务与裁定）、`docs/superpowers/plans|specs/`（计划与设计自身引用旧路径）。根导航三件套已改为只描述新目标目录，`gu-zhenren-editor/` 仅作为 Task 7 待迁移的当前游戏快照保留说明。
+- 工具教训（补记 Task 4 审计缺口）：`git ls-tree` 默认 `core.quotePath=true`，中文路径会输出成八进制转义并用双引号包裹，任何 `\.epub$`、`\.edited\.txt$` 这类行尾锚定 grep 都会整片漏检；本节一律显式加 `-c core.quotePath=false` 复核。Task 4 审计把 `editorial.git` 的原文写成 `蛊真人-clean.txt` 也属同类转写错误，实际路径名是 `蛊真人.txt`。
+- 与计划的偏差：计划 Step 1 写的是直接从 `mirrors/editorial.git` 导入，实际改为从重建后的 `editorial-final` 导入（用户裁定后覆盖原文，见上）；`AGENTS.md`、`README.md` 同时做了事实性导航更新，属计划 Task 6 Step 4「导航入口全部使用新目标目录」范围。
+
 ## Verification Log
 
 - Task 2（本提交）：根边界验证，命令见计划 Task 2 Step 5：
@@ -117,3 +131,10 @@ memory:gu-zu/...              -> memory:lore/research/...
   - Step 3：6 条 `git mv` 扁平落地 `lore/wiki/`，无 `lore/wiki/wiki/`；空 `wenzhen-lore/` 经 `find`+`git status --ignored` 确认后 `rmdir`。
   - Step 4：frontmatter 五规则按顺序全局替换；`wiki/` 五前缀替换；`source/README.md`、`chapter-index.md`、`README.md`、`AGENTS.md` 逐项分类替换（`log.md:12` 历史记录保留）。
   - Step 5/6：`grep -rn 'wenzhen-lore/\|gu-zhenren-editor/\|gu-zu/' lore/wiki` 无输出（rc=1）；`grep -rnP 'source:(?!source/)|notes:(?!game/|lore/research/)|memory:(?!game/|lore/research/)' lore/wiki` 无输出（rc=1；中途唯一的 1 处命中 `AGENTS.md:14` 短 ID 示例已按命名空间补全为真实值后重跑通过）；venv Python 逐个 resolve 35 文件 229 个相对 `.md` 链接，0 损坏；Task 3 `wenzhen-lore-sha256.txt` 35/35 与 `HEAD` blob 一致，“旧 blob + 替换程序”重建 35/35 字节一致；`git ls-files | grep -E '蛊真人-clean\.txt|《人祖传》\.txt'` 无输出，嵌套元数据扫描无输出，`source/` 未创建；`git diff --check` 通过（仅 autocrlf 提示，无空白错误）。
+- Task 6（导入 `editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`；bash 直译；详见本文件 Task 6 小节）：
+  - `git status --short --branch` → 干净；起点 `git rev-parse HEAD` → `1d022ac`；随后依次产生 `0cbce85`（editorial）、`6603115`（fortune/app）、`0240567`（fortune/server）、`479145d`（ai-system）四个 subtree 导入提交，均无 `--squash`。
+  - 路径清单一致性：`git -c core.quotePath=false ls-tree -r --name-only HEAD -- <prefix>` 去掉前缀后与各镜像 `refs/heads/<ref>` 逐行一致（editorial 183、fortune/app 36、fortune/server 3、ai-system 1）。
+  - `editorial-final` 对照 `mirrors/editorial.git`：路径差集仅 `蛊真人.txt`；共有 183 条路径 blob 183/183 完全一致；提交数 83（镜像 85，被裁掉的两条只触及被过滤文件）。
+  - 边界复核：`git -c core.quotePath=false ls-tree -r --name-only HEAD -- editorial` 不含 `蛊真人.txt`；`git log --oneline --all -- editorial/蛊真人.txt` 无输出；`editorial-final` 的 `rev-list --objects --all` 无该路径。
+  - Step 4 旧路径扫描：`rg … 'gu-zu/|wenzhen-lore/|gu-zhenren-editor/|fortune-app/fortune-app/'` 在 `editorial/`、`fortune/`、`ai-system/` 零命中；剩余命中仅在 `MIGRATION.md`、`docs/debt.md` 与 `docs/superpowers/{plans,specs}/`（自身引用旧路径）。
+  - `git diff --check` 通过（仅 autocrlf 提示，无空白错误）。

@@ -6,33 +6,34 @@
 
 - 入口顺序：`AGENTS.md` → `PROJECT_MAP.md` → 目标目录 `README.md` / `AGENTS.md`。
 - 一次只进一个目录；没有理由不扫描全仓。
-- 当前快照仍在旧根目录（`gu-zu/`、`wenzhen-lore/`、`gu-zhenren-editor/`），迁移完成前不手动拆散；新目标目录按计划逐步建立。
+- 已完成导入的目标目录（`lore/`、`editorial/`、`fortune/`、`ai-system/`）是当前入口；`gu-zhenren-editor/` 仍是当前游戏快照，Task 7 迁移前不手动拆散。
 
 ## 目标目录
 
-### `lore/research/`（待 Task 5 导入）
+### `lore/research/`（Task 5 已导入）
 
 - 用途：`gu-zu` 研究、读书资料、设定和设计原始材料的完整资料包；首次迁移不拆分内部研究/设定/游戏设计边界。
-- 首读文件：`lore/research/README.md`（导入后）。
-- 当前入口：`gu-zu/`（旧快照，只读，迁移前不改散）。
-- 权威来源：`https://github.com/Zachar-c/gu-zu.git`（`master`）。
+- 首读文件：`lore/research/README.md`。
+- 当前入口：`lore/research/`（导入提交 `072aa6e`，206 文件；旧 `gu-zu/` 的受版本内容已删除）。
+- 权威来源：`https://github.com/Zachar-c/gu-zu.git`（`master`，基线 `84b8ce8`）。
 - 可修改范围：仅目录导入、来源路径登记、债务登记；不改写研究语义。
 
-### `lore/wiki/`（待 Task 5 迁移）
+### `lore/wiki/`（Task 5 已迁移）
 
-- 用途：冻结的 AI 可读 Wiki（现 `wenzhen-lore`），迁移后为只读知识。
-- 首读文件：`lore/wiki/README.md`、`lore/wiki/index.md`、`lore/wiki/AGENTS.md`（迁移后）。
-- 当前入口：`wenzhen-lore/`（旧快照，只读）。
-- 权威来源：父仓库 `5f3fbfc` 快照；后续以 `lore/wiki/` 为准。
+- 用途：冻结的 AI 可读 Wiki（原 `wenzhen-lore`），只读知识。
+- 首读文件：`lore/wiki/README.md`、`lore/wiki/index.md`、`lore/wiki/AGENTS.md`。
+- 当前入口：`lore/wiki/`（旧 `wenzhen-lore/` 已移除）。
+- 权威来源：父仓库 `5f3fbfc` 快照；现以 `lore/wiki/` 为准。
 - 可修改范围：只允许目录移动、文件重命名、相对链接更新、来源路径更新；禁止补写事实、改写分析、调整主题结论、扩充知识范围。
 
-### `editorial/`（待 Task 6 导入）
+### `editorial/`（Task 6 已导入）
 
-- 用途：GitHub `gu-zhenren-editor` 项目（编辑器/Web 原型/工具）。
-- 首读文件：`editorial/README.md`（导入后）。
-- 当前入口：`gu-zhenren-editor/` 是当前 Gitee 游戏工程快照，不要与 GitHub 同名项目混淆；`editorial/` 建立前不挪动它。
-- 权威来源：`https://github.com/Zachar-c/gu-zhenren-editor.git`（`main`）。
+- 用途：GitHub `gu-zhenren-editor` 项目（《蛊真人》编辑部资料库、分卷精编流水线与 epub 构建脚本）。
+- 首读文件：`editorial/README.md`。
+- 当前入口：`editorial/`（导入提交 `0cbce85`，183 文件）。
+- 权威来源：`https://github.com/Zachar-c/gu-zhenren-editor.git`（`main`，基线 `dbf6615`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
+- 注意：本目录与旧根目录 `gu-zhenren-editor/` 同名但不同项目；后者是 Gitee Godot 游戏工程快照，Task 7 迁移为 `game/`。
 
 ### `game/`（待 Task 7 导入）
 
@@ -43,28 +44,28 @@
 - 可修改范围：仅目录导入、旧根路径配置/文档的机械引用更新、忽略规则；不改 Godot 逻辑、数据数值与契约内容。
 - 约束说明：当前生效约束以 `game/world-model/governance/CONSTRAINTS-V2.md` 为准；`game/docs/contracts/2026-09-12-agent-ownership-contract.md` 已被该约束明确降级为历史档案，不作为执行契约。
 
-### `fortune/app/`（待 Task 6 导入）
+### `fortune/app/`（Task 6 已导入）
 
 - 用途：GitHub `fortune-app` 项目。
-- 首读文件：`fortune/app/README.md`（导入后）。
-- 当前入口：`C:/Users/Zachary/DevEnv/06_个人项目/fortune-app/fortune-app/`（本地来源，只读；不复制外层包装目录）。
-- 权威来源：`https://github.com/Zachar-c/fortune-app.git`（`master`）。
+- 首读文件：`fortune/app/PRD.md`（该仓库无 README）。
+- 当前入口：`fortune/app/`（导入提交 `6603115`，36 文件；未复制本地外层包装目录 `fortune-app/fortune-app/`）。
+- 权威来源：`https://github.com/Zachar-c/fortune-app.git`（`master`，基线 `a039639`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
 
-### `fortune/server/`（待 Task 6 导入）
+### `fortune/server/`（Task 6 已导入）
 
 - 用途：GitHub `fortune-server` 项目。
-- 首读文件：`fortune/server/README.md`（导入后）。
-- 当前入口：`C:/Users/Zachary/DevEnv/06_个人项目/fortune-server/`（本地来源，只读）。
-- 权威来源：`https://github.com/Zachar-c/fortune-server.git`（`main`）。
+- 首读文件：`fortune/server/FortuneServer.java` 与 `fortune/server/start-fortune-server.sh`（该仓库无 README）。
+- 当前入口：`fortune/server/`（导入提交 `0240567`，3 文件）。
+- 权威来源：`https://github.com/Zachar-c/fortune-server.git`（`main`，基线 `6a5eed2`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
 
-### `ai-system/`（待 Task 6 导入）
+### `ai-system/`（Task 6 已导入）
 
 - 用途：GitHub `my-ai-production-system` 项目。
-- 首读文件：`ai-system/PRD.md`（导入后，按计划为首读入口之一）。
-- 当前入口：`C:/Users/Zachary/DevEnv/06_个人项目/MyAIProductionSystem/`（本地来源，只读）。
-- 权威来源：`https://github.com/Zachar-c/my-ai-production-system.git`（`main`）。
+- 首读文件：`ai-system/PRD.md`（该仓库当前只有这一个文件）。
+- 当前入口：`ai-system/`（导入提交 `479145d`，1 文件）。
+- 权威来源：`https://github.com/Zachar-c/my-ai-production-system.git`（`main`，基线 `fbe67e2`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
 
 ### `docs/`
