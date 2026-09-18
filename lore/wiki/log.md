@@ -29,3 +29,4 @@
 - Wiki 解冻：用户决定按 `lore/wiki/AGENTS.md` 的编辑约定继续蒸馏，冻结期结束；续作计划见 `docs/superpowers/plans/2026-09-18-wenzhen-lore-wiki-continuation.md`。
 - 修正迁移遗留的 12 处 `source:` 引用（`source:source/分支：六卷精编版/...` 残尾），并把 canon 命名空间统一为 `canon-index:`。
 - 新增验收脚本 `lore/wiki/tools/check.ps1`，本批全部检查项通过。
+- Batch 0 收尾：根 `README.md` 去掉 wiki「冻结」措辞；`check.ps1` 增加 check6（概念页被分类索引收录）与 check7（`type` 与目录一致）两条门禁，全部通过。

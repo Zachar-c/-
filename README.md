@@ -5,7 +5,7 @@
 ## 目标目录
 
 - [`lore/research/`](lore/research/)：研究、读书资料、设定和设计原始材料（已从 `gu-zu` 完整导入）。
-- [`lore/wiki/`](lore/wiki/)：面向 AI 使用的冻结 Markdown Wiki（已从 `wenzhen-lore` 扁平迁移）。
+- [`lore/wiki/`](lore/wiki/)：面向 AI 使用的《蛊真人》蒸馏 Markdown Wiki，按批次持续更新（已从 `wenzhen-lore` 扁平迁移）。
 - [`editorial/`](editorial/)：GitHub `gu-zhenren-editor` 编辑部资料库与分卷精编流水线（已导入）。
 - [`game/`](game/)：Gitee Godot 游戏工程（Task 7 已导入）。
 - [`fortune/app/`](fortune/app/)、[`fortune/server/`](fortune/server/)：`fortune-app` 与 `fortune-server` 项目（已导入）。

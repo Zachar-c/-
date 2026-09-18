@@ -1,8 +1,9 @@
 #Requires -Version 7.0
 <#
-  lore/wiki 验收脚本（Batch 0 新增）。
+  lore/wiki 验收脚本（Batch 0 新增，Batch 0b 增加 check6/check7）。
   从仓库根运行：pwsh -NoProfile -File lore\wiki\tools\check.ps1
   无外部依赖。逐项输出 PASS/FAIL 明细；全部通过退出码 0，任一失败退出码 1。
+  check6 校验概念页被分类索引收录，check7 校验 frontmatter 的 type 与所在目录一致。
 #>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Continue'
@@ -118,6 +119,36 @@ foreach ($f in $allWikiMd) {
 }
 if ($c5bad -eq 0) { Write-Output "PASS: check5 无双括号链接、无行尾空白 ($c5total 个 Markdown 文件)" }
 else { Write-Output "FAIL: check5 无双括号链接、无行尾空白 ($c5bad 处问题)" }
+
+# 6. 概念页必须被所在分类的 index.md 收录
+$c6ok = 0; $c6total = 0
+foreach ($d in $conceptDirs) {
+  $indexPath = Join-Path 'lore/wiki' (Join-Path $d 'index.md')
+  $indexText = if (Test-Path -LiteralPath $indexPath) { Get-Content -LiteralPath $indexPath -Raw -Encoding utf8 } else { '' }
+  if (-not $indexText) { Add-Fail "check6 分类索引缺失: lore/wiki/$d/index.md" }
+  foreach ($f in ($conceptPages | Where-Object { $_.Directory.Name -eq $d })) {
+    $c6total++
+    if ($indexText.Contains($f.Name)) { $c6ok++ }
+    else { Add-Fail "check6 概念页未被索引收录 [$($f.Name)]: lore/wiki/$d/index.md" }
+  }
+}
+if ($c6ok -eq $c6total) { Write-Output "PASS: check6 概念页均被分类索引收录 ($c6ok/$c6total)" }
+else { Write-Output "FAIL: check6 概念页均被分类索引收录 ($c6ok/$c6total)" }
+
+# 7. frontmatter 的 type 与所在目录一致
+$typeByDir = @{ characters = 'character'; gu = 'gu'; events = 'event'; world = 'world'; themes = 'theme' }
+$c7ok = 0; $c7total = 0
+foreach ($f in $conceptPages) {
+  $c7total++
+  $fm = Get-FrontMatter $f.FullName
+  if ($null -eq $fm) { continue }
+  $declared = ([regex]::Match($fm, '(?m)^\s*type\s*:\s*(\S+)')).Groups[1].Value
+  $expected = $typeByDir[$f.Directory.Name]
+  if ($declared -eq $expected) { $c7ok++ }
+  else { Add-Fail "check7 type 与目录不一致 [type=$declared 期望=$expected]: $($f.FullName)" }
+}
+if ($c7ok -eq $c7total) { Write-Output "PASS: check7 type 与目录一致 ($c7ok/$c7total)" }
+else { Write-Output "FAIL: check7 type 与目录一致 ($c7ok/$c7total)" }
 
 if ($failures.Count -eq 0) { Write-Output 'ALL CHECKS PASSED'; exit 0 }
 else { Write-Output "TOTAL FAILURES: $($failures.Count)"; exit 1 }
