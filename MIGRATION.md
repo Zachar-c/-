@@ -130,8 +130,8 @@ memory:gu-zu/...              -> memory:lore/research/...
   - README 裁定：`game/分支：六卷精编版/蛊真人-clean.txt` 在树与盘上均不存在（Task 4 过滤 + Task 7 只放 `source/`），属悬空引用；按 Source Namespace Mapping「原文→`source/`」机械修正 `lore/wiki/README.md` 3 行指向 `source/…`（读书笔记行与 `game/docs/lore/canon-index.md` 行经核对存在，未动）。
 - Step 6（可定位性）：旧路径引用只出现在 `MIGRATION.md` 历史记录、`docs/debt.md` 与计划/归档旧文档及 `game/` 内随历史导入的产品文档中（后者原样保留，不改写产品文档）；根导航三件套均不把旧路径当当前入口。`git status` 另有 9 个 `?? game/wenzhen-web/assets/*.import`（本地 Godot 生成，见下），故非全干净。
 - 失败与回退：本 Task 内零失败；`AGENTS.md`/`lore/wiki/README.md` 若需回退即 revert 本次提交，不影响 Task 2—7 历史。
-- Task 9 收口（用户 2026-09-18 裁定四项全部认可）：9 个 `game/wenzhen-web/assets/*.import` 入库（提交 `1d8a7b3`），`docs/debt.md` 对应行由 REVIEW 改 KEEP；`game/opencode.json` 机器绝对路径保留 REVIEW（不改 MCP 配置）；`editorial/working/` 水印切片维持 KEEP（用户既有裁定）。推送 `codex/gu-zhenren-monorepo-migration` → `origin` 由协调方在验收后执行。
 - 新增 REVIEW（`docs/debt.md`）：9 个 `game/wenzhen-web/assets/*.import` 未跟踪——`db34873` 本地 asset 缺侧车文件，本地编辑器运行后生成；全树惯例跟踪 `.import`（221 个），Task 8 不加宽泛忽略、不删除、不代提交，交用户在 Task 9 前裁定。
+- Task 9 收口（用户 2026-09-18 裁定四项全部认可）：9 个 `game/wenzhen-web/assets/*.import` 入库（提交 `1d8a7b3`），`docs/debt.md` 对应行由 REVIEW 改 KEEP；`game/opencode.json` 机器绝对路径保留 REVIEW（不改 MCP 配置）；`editorial/working/` 水印切片维持 KEEP（用户既有裁定）。推送 `codex/gu-zhenren-monorepo-migration` → `origin` 由协调方在验收后执行。
 - 独立复核（协调方，2026-09-18 于 `a3bcc99`）：三个旧根 `git ls-files` 均为 0；嵌套元数据 / 原文名 / 缓存三类扫描 0 命中；`rev-list --objects --all` 无禁止原文；`lore/wiki` 35 个 Markdown 文件相对链接 0 断链；命名空间正则 `source:(?!source/)|notes:(?!game/|lore/research/)|memory:(?!game/|lore/research/)` 0 命中；`git diff --check` 干净。以上均独立复现本小节结论。
 
 ## Verification Log
