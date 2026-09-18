@@ -1,7 +1,7 @@
 ---
 type: theme
 name: 坚持
-aliases: [坚持, 坚持蛊, 坚持仙蛊]
+aliases: [坚持]
 sources:
   - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"

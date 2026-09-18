@@ -51,8 +51,11 @@ foreach ($f in $conceptPages) {
 if ($c1ok -eq $c1total) { Write-Output "PASS: check1 frontmatter 完整 ($c1ok/$c1total 概念页)" }
 else { Write-Output "FAIL: check1 frontmatter 完整 ($c1ok/$c1total 概念页)" }
 
-# 2. frontmatter 里 source:/notes:/memory: 的值在仓库内真实存在（相对仓库根解析）
-$c2ok = 0; $c2total = 0
+# 2. frontmatter 里 source:/notes:/memory: 的值在仓库内真实存在（相对仓库根解析）。
+#    已知历史 local-only 路径（根 AGENTS.md 约束不进入 Git）在本地缺失时记 WARN，不计入 failures；
+#    其他任何缺失仍记 FAIL。仅允许这两个已知路径泛 WARN，不得泛化全部 source/ 缺失。
+$knownLocalOnlySources = @('source/蛊真人-clean.txt', 'source/《人祖传》.txt')
+$c2ok = 0; $c2warn = 0; $c2fail = 0; $c2total = 0
 foreach ($f in $conceptPages) {
   $fm = Get-FrontMatter $f.FullName
   if ($null -eq $fm) { continue }
@@ -60,11 +63,15 @@ foreach ($f in $conceptPages) {
     $c2total++
     $rel = $m.Groups[2].Value
     if (Test-Path -LiteralPath (Join-Path $repoRoot $rel)) { $c2ok++ }
-    else { Add-Fail "check2 来源路径不存在 [$($m.Groups[1].Value):$rel]: $($f.FullName)" }
+    elseif (($m.Groups[1].Value -eq 'source') -and ($knownLocalOnlySources -contains $rel)) {
+      $c2warn++
+      Write-Output "WARN: check2 已知 local-only 来源缺失 [$rel]: $($f.FullName)"
+    }
+    else { $c2fail++; Add-Fail "check2 来源路径不存在 [$($m.Groups[1].Value):$rel]: $($f.FullName)" }
   }
 }
-if ($c2ok -eq $c2total) { Write-Output "PASS: check2 来源路径存在 ($c2ok/$c2total 条 source:/notes:/memory:)" }
-else { Write-Output "FAIL: check2 来源路径存在 ($c2ok/$c2total 条 source:/notes:/memory:)" }
+if ($c2fail -eq 0) { Write-Output "PASS: check2 来源路径存在 ($c2ok/$c2total 条 source:/notes:/memory:, WARN $c2warn, FAIL $c2fail)" }
+else { Write-Output "FAIL: check2 来源路径存在 ($c2ok/$c2total 条 source:/notes:/memory:, WARN $c2warn, FAIL $c2fail)" }
 
 # 3. 所有 canon-index:CAN-... 的 ID 能在 game/docs/lore/canon-index.md 里找到
 $canonPath = Join-Path $repoRoot 'game/docs/lore/canon-index.md'
