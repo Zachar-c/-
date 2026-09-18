@@ -1,0 +1,56 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_confirm_dialog_view.gd" id="1_dialog"]
+
+[node name="GuConfirmDialog" type="PanelContainer"]
+visible = false
+script = ExtResource("1_dialog")
+
+[node name="DialogBody" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="WarnBar" type="PanelContainer" parent="DialogBody"]
+layout_mode = 2
+
+[node name="WarnMargin" type="MarginContainer" parent="DialogBody/WarnBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="TitleLabel" type="Label" parent="DialogBody/WarnBar/WarnMargin"]
+layout_mode = 2
+text = ""
+
+[node name="BodyMargin" type="MarginContainer" parent="DialogBody"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="BodyBox" type="VBoxContainer" parent="DialogBody/BodyMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MessageLabel" type="Label" parent="DialogBody/BodyMargin/BodyBox"]
+layout_mode = 2
+text = "确认执行？"
+
+[node name="NoteLabel" type="Label" parent="DialogBody/BodyMargin/BodyBox"]
+layout_mode = 2
+text = "后果预览"
+visible = false
+
+[node name="ButtonRow" type="HBoxContainer" parent="DialogBody/BodyMargin/BodyBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CancelButton" type="Button" parent="DialogBody/BodyMargin/BodyBox/ButtonRow"]
+layout_mode = 2
+text = "取消"
+
+[node name="ConfirmButton" type="Button" parent="DialogBody/BodyMargin/BodyBox/ButtonRow"]
+layout_mode = 2
+text = "确认"

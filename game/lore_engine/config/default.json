@@ -1,0 +1,11 @@
+{
+  "chunking": {
+    "target_chars": 6000,
+    "max_chars": 8000,
+    "min_chars": 3000
+  },
+  "pipeline": {
+    "default_backend": "disabled",
+    "section_limit": 10
+  }
+}

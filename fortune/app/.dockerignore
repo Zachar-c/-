@@ -1,0 +1,20 @@
+# Git
+.git
+.gitignore
+
+# Maven build output
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Runtime data (persisted via volume, not image)
+data/
+logs/
+
+# Local env / docs not needed in image
+*.md
+.github/
+docs/

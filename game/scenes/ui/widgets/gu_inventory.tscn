@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_inventory_view.gd" id="1_inventory"]
+
+[node name="GuInventory" type="PanelContainer"]
+custom_minimum_size = Vector2(240, 0)
+script = ExtResource("1_inventory")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Body" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EmptyState" type="Label" parent="Margin/Body"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "行囊暂无物品"
+
+[node name="InventoryMaterials" type="VBoxContainer" parent="Margin/Body"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Margin/Body/InventoryMaterials"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "材料"
+
+[node name="InventoryGuInstances" type="VBoxContainer" parent="Margin/Body"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Margin/Body/InventoryGuInstances"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "蛊虫"
+
+[node name="InventoryLoot" type="VBoxContainer" parent="Margin/Body"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Margin/Body/InventoryLoot"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "收获"
+
+[node name="InventoryIntel" type="VBoxContainer" parent="Margin/Body"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Margin/Body/InventoryIntel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "已知情报"

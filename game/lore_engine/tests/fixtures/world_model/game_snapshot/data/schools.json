@@ -1,0 +1,10 @@
+{
+  "light~/path": {
+    "name": "Light",
+    "class": "wanderer",
+    "role": "scout",
+    "archetype": "controller",
+    "specialization": "reconnaissance",
+    "starter_gu_ids": ["explicit_gu", "fallback_gu"]
+  }
+}

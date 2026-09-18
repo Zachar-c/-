@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_icon_view.gd" id="1_script"]
+
+[node name="GuIcon" type="TextureRect"]
+custom_minimum_size = Vector2(20, 20)
+offset_right = 20.0
+offset_bottom = 20.0
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("1_script")

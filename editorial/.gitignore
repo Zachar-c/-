@@ -1,0 +1,33 @@
+# Local source input and transient files
+蛊真人.txt
+*.tmp
+*.bak
+*.log
+*.orig
+
+# Local source extracts and intermediate editorial working copies
+working/read-*.txt
+working/round3-*.txt
+working/*.cp936.txt
+working/*.utf8.txt
+working/vol2-source/
+working/batch-state-*.md
+
+# Candidate pipeline outputs (kept local, not committed)
+working/candidates-*.tsv
+working/candidates-*.md
+working/apply-*.log
+working/audit-*.tsv
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+
+# Local isolated worktrees
+.worktrees/
+
+# Editor and operating-system metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,111 +1,34 @@
-# 《蛊真人》授权文本精编版
+# 问真·《蛊真人》项目 Monorepo
 
-本仓库用于完本小说的出版级精编。工作包括正文重构、世界观校准、编辑台账和回归检查，不是续写、同人或剧情摘要。
+这个仓库统一管理《蛊真人》相关的游戏开发、资料整理与 AI 协作资产。AI 先读 `AGENTS.md`，再读 `PROJECT_MAP.md`，再进入一个目标目录。
 
-## 唯一规范源
+## 目标目录
 
-所有 AI 会话开始工作前必须先读 [`AGENTS.md`](AGENTS.md)。它是编辑边界、裁决优先级、文风判据和验证流程的唯一完整规范源。
+- [`lore/research/`](lore/research/)：研究、读书资料、设定和设计原始材料（已从 `gu-zu` 完整导入）。
+- [`lore/wiki/`](lore/wiki/)：面向 AI 使用的《蛊真人》蒸馏 Markdown Wiki，按批次持续更新（已从 `wenzhen-lore` 扁平迁移）。
+- [`editorial/`](editorial/)：GitHub `gu-zhenren-editor` 编辑部资料库与分卷精编流水线（已导入）。
+- [`game/`](game/)：Gitee Godot 游戏工程（Task 7 已导入）。
+- [`fortune/app/`](fortune/app/)、[`fortune/server/`](fortune/server/)：`fortune-app` 与 `fortune-server` 项目（已导入）。
+- [`ai-system/`](ai-system/)：`my-ai-production-system` 项目（已导入）。
+- [`docs/`](docs/)：项目计划、设计说明与债务清单（`docs/debt.md`）。
+- [`archive/`](archive/)：历史资料保留位置，不作为当前入口。
 
-README 只负责分工和启动，不复制完整规则。README、提示词或模型记忆与 `AGENTS.md` 冲突时，以 `AGENTS.md` 为准。
+`gu-zu/`、`wenzhen-lore/` 与 `gu-zhenren-editor/` 的受版本迁移已完成；旧 `gu-zhenren-editor/` 的受版本内容已删除，当前游戏入口为 `game/`。各目录的当前入口与可修改范围见 `PROJECT_MAP.md`，来源登记见 `MIGRATION.md`。
 
-## Git 同步保护
+## 资料边界
 
-每个 clone 或 worktree 初始化一次版本化 hooks：
+本仓库不提交《蛊真人》原文或《人祖传》全文。完整原文只在本地 `source/`（被根 `.gitignore` 的 `/source/` 规则排除，不进入 Git 树，不推送），用于必要时回查；Wiki 页面只记录整理后的知识、分析和来源定位。
 
-```powershell
-git config core.hooksPath .githooks
-```
+以下内容也不进入版本库：子项目历史 Git 元数据、Git worktree、缓存、临时日志和本地测试输出。子项目原有 Git 元数据已保存在各自的 `.git-nested-backup/` 目录中，并由根目录规则忽略，便于需要时恢复。
 
-提交或推送前可手动校验远程基准；命令会先获取 `origin/main`，再阻止本地 `HEAD` 落后于该基准：
+## 迁移状态
 
-```powershell
-py -3 scripts/check_remote_base.py
-```
+- 执行计划：`docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`；旧的 `docs/superpowers/plans/2026-09-18-wenzhen-monorepo-migration.md` 已被取代，仅作历史参考。
+- 当前阶段：Task 5 已完成 `lore/research/`、`lore/wiki/`，Task 6 已完成 `editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`，Task 7 已完成 `game/` 导入与旧快照删除；剩余 Task 8（边界终验）、Task 9（推送准备）。
 
-完整处理规则见 `AGENTS.md`「提交保护」。
+## 协作原则
 
-## 目录
-
-- `volumes/`：分卷精编正文；卷一卷二已冻结，实验产物在 `volumes/_archive/`。
-- `outlines/detail/`：批次细纲。
-- `notes/`：唯一台账 `ledger.md` + 事实争议队列 + 工具索引 CSV；历史台账在 `notes/archive/`。
-- `scripts/`：极简线核心工具；退役脚本在 `scripts/_archive/`。
-- `docs/knowledge-base/`：世界观与审查知识库；`docs/archive/`：历史规范与实验设计。
-
-## 提效工具
-
-### 批次上下文简报 `scripts/gen_brief.py`
-
-开工前恢复上下文的导航工具（只读，不修改正文或台账），一次汇总本卷批次进度、本批定位、逐节标题与源文行号、台账命中、Git 状态：
-
-```powershell
-# 生成具体批次简报（控制台）
-py -3 scripts/gen_brief.py -Volume vol2 -Batch 091-120
-
-# 写简报文件 + 生成批内状态卡模板
-py -3 scripts/gen_brief.py -Volume vol2 -Batch 091-120 -WriteState -BriefOut working/brief.md
-
-# 仅查看某卷全部批次进度
-py -3 scripts/gen_brief.py -Volume vol2
-```
-
-参数：`-Volume` 卷 id（vol1/vol2），`-Batch` 与 `config/editorial-volumes.json` 中 `range` 一致的节范围，`-WriteState` 生成 `working/batch-state-<卷id>-<范围>.md` 状态卡模板，`-BriefOut` 简报写盘。
-
-### 批次审阅简报 `scripts/gen_report.py`
-
-批末交付给用户审阅的报告生成器（只读 + 运行验证），自动采集本批改动范围、关联提交、台账命中与落账情况、validate 和 `git diff --check` 结果：
-
-```powershell
-py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120
-py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -OutFile notes/batch-report.md
-py -3 scripts/gen_report.py -Volume vol2 -Batch 091-120 -SkipValidate
-```
-
-"关键裁决及理由"和"遗留问题"两节由编辑会话填写后交付审阅；审阅通过后按批次提交（commit message 含批次范围 + 裁决要点 + 审阅状态）。
-
-### 全卷源文净化 `scripts/clean_full_source.py`
-
-对授权源文 `蛊真人.txt` 做一次性批量清洗（站点广告、作者 ps 碎碎念、打赏/月票拉票、`未完待续` 与 `</dd>` 章尾标记、HTML 标签、微信导流广告、页码水印），产出净版 `蛊真人-clean.txt`：
-
-```powershell
-py -3 scripts/clean_full_source.py -SourcePath 蛊真人.txt -OutputPath 蛊真人-clean.txt -ReportPath working/source-clean-candidates.tsv
-```
-
-- **行号零漂移**：只行内替换与整行置空，绝不删行；`蛊真人-clean.txt` 与 `蛊真人.txt` 行数一致，挂靠在原文上的 `source_line`、台账行号与 source-map 全部继续有效。
-- **已裁决词表自动替换**：淬不及防→猝不及防、幸-运→幸运、爱生离→爱别离、青矛山→青茅山、黒豕→黑豕 等历批确认项。
-- **上下文敏感项只出候选**：漠尘/漠北、王大/王二、拼音残留（sè→色 等 OCR 形态）、英文残留等写入 `working/source-clean-candidates.tsv`，仅供人工/LLM 逐条审阅，脚本不自动改。
-- 重跑是幂等的；`gen_brief.py` 已优先指向净版（行号不变），校验白名单含 `蛊真人-clean.txt`。
-
-单人单批次串行推进；并行协作规则已在 2026-08-24 极简线重构中移除，如需恢复见 docs/archive/AGENTS-v2-full-2026-08-24.md。
-
-## 会话启动模板
-
-给正文会话提供以下短提示即可；完整规则由模型自行读取文件：
-
-```text
-你负责《蛊真人》精编第XXX—YYY节，只处理这一批。
-先读 AGENTS.md，然后运行 py -3 scripts/gen_brief.py -Volume <卷id> -Batch <节范围> -WriteState 生成批次简报，按其中指引读取细纲、notes/ledger.md 相关小节与源文对应行区间。
-逐节编辑并在批末运行验证：py -3 scripts/validate_editorial_assets.py -Phase detail 与 git diff --check。
-完成后 py -3 scripts/gen_report.py -Volume <卷id> -Batch <节范围> 生成交付报告，补全裁决理由后交用户审阅。
-```
-
-总编会话职责已并入单会话流程；跨批冲突标为待裁决并记入 notes/ledger.md 待核问题，不在单个批次内自行创造设定。
-
-## 30节交付门槛
-
-每批交付至少满足：
-
-- 章节标题数量与顺序正确。
-- 人物、修为、蛊虫、伤势、资源、时间和地点首尾连续。
-- 战斗过程、关键哲思、伏笔、高潮及章末推进未被压成梗概。
-- 作者怨怼得到压缩，但作品的魔性、黑暗、残酷和人物锋芒没有被中和。
-- 共享台账的建议单独列出，未经总编裁决不擅自写成全书规则。
-
-基础验证：
-
-```powershell
-py -3 scripts/validate_editorial_assets.py -Phase detail
-git diff --check
-```
-
-验证通过只说明结构和格式合格，正文仍须由用户或总编会话审阅。
+1. 原著事实、分析解读和游戏设计分层保存。
+2. 能用 Markdown 和 Git 解决的问题，不提前引入数据库或自研知识引擎。
+3. 需要核验时回查本地原始资料，不把读书笔记或 AI 摘要自动升级为原著事实。
+4. 新内容先放入对应子目录，再通过父仓库统一提交和审阅。

@@ -1,0 +1,49 @@
+﻿===== test_boss_pool_variety =====
+
+Totals
+Asserts             175
+
+
+rc=0
+===== test_category_route =====
+
+Totals
+Asserts             341
+
+
+rc=0
+===== test_map_generator =====
+
+Totals
+Asserts            6361
+
+
+rc=0
+===== test_map_network =====
+
+Totals
+Asserts            6549
+
+
+rc=0
+===== test_map_anchor_guards =====
+
+Totals
+Asserts             162
+
+
+rc=0
+===== test_map_catalog_config =====
+
+Totals
+Asserts               3
+
+
+rc=0
+===== test_data_driven_guard =====
+
+Totals
+Asserts              12
+
+
+rc=0

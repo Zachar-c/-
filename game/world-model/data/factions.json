@@ -1,0 +1,549 @@
+{
+ "world_model_version": "1.0.0",
+ "schema_id": "gu-zhenren/world-model",
+ "schema_version": "1.0.0",
+ "entity_type": "faction",
+ "generated_at": "2026-09-17T00:00:00Z",
+ "generator": "world-model/tools/build_world_model.py",
+ "source_refs": [
+  "data/balance.json",
+  "data/npcs.json",
+  "data/reputation.json"
+ ],
+ "count": 6,
+ "entities": [
+  {
+   "id": "qingmao_clan",
+   "name_zh": "青茅山寨",
+   "summary_zh": "青茅山三家山寨之一的秩序方：守备、征丁、赏功与家族权柄。",
+   "entity_kind": "faction",
+   "agents": [
+    "caravan_steward"
+   ],
+   "relation_levels": [
+    {
+     "id": "hostile",
+     "label_zh": "敌对",
+     "min_points": -99,
+     "max_points": -2,
+     "price_pct": 60,
+     "hostile_chance_pct": 30,
+     "first_move_chance_pct": 20
+    },
+    {
+     "id": "cold",
+     "label_zh": "冷淡",
+     "min_points": -1,
+     "max_points": -1,
+     "price_pct": 10,
+     "hostile_chance_pct": 15,
+     "first_move_chance_pct": 10
+    },
+    {
+     "id": "neutral",
+     "label_zh": "中立",
+     "min_points": 0,
+     "max_points": 0,
+     "price_pct": 0,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "warm",
+     "label_zh": "友善",
+     "min_points": 1,
+     "max_points": 2,
+     "price_pct": -10,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "honored",
+     "label_zh": "尊崇",
+     "min_points": 3,
+     "max_points": 99,
+     "price_pct": -20,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    }
+   ],
+   "route_effects": {
+    "price_pct": -10,
+    "hostile_chance_pct": 0,
+    "first_move_chance_pct": 0,
+    "extra_encounter_weight": 0,
+    "retreat_allowed": true,
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 15
+   },
+   "trade_effects": {
+    "shop_price_pct": -10,
+    "buyback_ratio": 0.5
+   },
+   "pursuit_effects": {
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 15
+   },
+   "source_class": "adaptation",
+   "source_ids": [
+    "CAN-FACTION-001",
+    "CAN-FACTION-002",
+    "CAN-FACTION-003",
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001",
+    "ADP-FACTION-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "山寨聚居、家老/族长权柄、战斗蛊师为护卫、兽潮时分摊防线均为原著事实；「青茅山寨」这一具体势力名与关系阈值、赏功数值为游戏原创（ADP-FACTION-001 的首发四势力之一）。",
+   "tunable": true
+  },
+  {
+   "id": "scarlet_caravan",
+   "name_zh": "丹霞商队",
+   "summary_zh": "跨山险行商的车队：临时开市、以蛊换蛊、情报买卖与护送委托。",
+   "entity_kind": "faction",
+   "agents": [
+    "caravan_steward",
+    "wandering_peddler"
+   ],
+   "relation_levels": [
+    {
+     "id": "hostile",
+     "label_zh": "敌对",
+     "min_points": -99,
+     "max_points": -2,
+     "price_pct": 60,
+     "hostile_chance_pct": 30,
+     "first_move_chance_pct": 20
+    },
+    {
+     "id": "cold",
+     "label_zh": "冷淡",
+     "min_points": -1,
+     "max_points": -1,
+     "price_pct": 10,
+     "hostile_chance_pct": 15,
+     "first_move_chance_pct": 10
+    },
+    {
+     "id": "neutral",
+     "label_zh": "中立",
+     "min_points": 0,
+     "max_points": 0,
+     "price_pct": 0,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "warm",
+     "label_zh": "友善",
+     "min_points": 1,
+     "max_points": 2,
+     "price_pct": -10,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "honored",
+     "label_zh": "尊崇",
+     "min_points": 3,
+     "max_points": 99,
+     "price_pct": -20,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    }
+   ],
+   "route_effects": {
+    "price_pct": 0,
+    "hostile_chance_pct": 5,
+    "first_move_chance_pct": 0,
+    "extra_encounter_weight": 0,
+    "retreat_allowed": true,
+    "pursuit_allowed": false
+   },
+   "trade_effects": {
+    "shop_price_pct": 0,
+    "buyback_ratio": 0.5
+   },
+   "pursuit_effects": {
+    "pursuit_allowed": false,
+    "pursuit_pressure_pct": 0
+   },
+   "source_class": "adaptation",
+   "source_ids": [
+    "CAN-NANJIANG-001",
+    "CAN-NANJIANG-002",
+    "CAN-NANJIANG-003",
+    "CAN-NANJIANG-004",
+    "ADP-FACTION-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "商队越山运输、驻扎成市、与山寨互赖为原著事实；商队名号、报价倍率与换物规则为游戏原创。",
+   "tunable": true
+  },
+  {
+   "id": "ridge_scavengers",
+   "name_zh": "拾骨帮",
+   "summary_zh": "山道上的体制外散修与拾荒者：劫掠、赌斗、以命换石。",
+   "entity_kind": "faction",
+   "agents": [
+    "ridge_extortionist",
+    "wandering_peddler"
+   ],
+   "relation_levels": [
+    {
+     "id": "hostile",
+     "label_zh": "敌对",
+     "min_points": -99,
+     "max_points": -2,
+     "price_pct": 60,
+     "hostile_chance_pct": 30,
+     "first_move_chance_pct": 20
+    },
+    {
+     "id": "cold",
+     "label_zh": "冷淡",
+     "min_points": -1,
+     "max_points": -1,
+     "price_pct": 10,
+     "hostile_chance_pct": 15,
+     "first_move_chance_pct": 10
+    },
+    {
+     "id": "neutral",
+     "label_zh": "中立",
+     "min_points": 0,
+     "max_points": 0,
+     "price_pct": 0,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "warm",
+     "label_zh": "友善",
+     "min_points": 1,
+     "max_points": 2,
+     "price_pct": -10,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "honored",
+     "label_zh": "尊崇",
+     "min_points": 3,
+     "max_points": 99,
+     "price_pct": -20,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    }
+   ],
+   "route_effects": {
+    "price_pct": 10,
+    "hostile_chance_pct": 25,
+    "first_move_chance_pct": 20,
+    "extra_encounter_weight": 10,
+    "retreat_allowed": true,
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 25
+   },
+   "trade_effects": {
+    "shop_price_pct": 10,
+    "buyback_ratio": 0.5
+   },
+   "pursuit_effects": {
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 25
+   },
+   "source_class": "original_game_content",
+   "source_ids": [
+    "CAN-CULTIVATOR-001",
+    "CAN-CULTIVATOR-002",
+    "ADP-FACTION-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "「体制外者机缘巧合成为魔道蛊师」是原著事实；本势力名称、成员与劫掠机制为游戏原创。",
+   "tunable": true
+  },
+  {
+   "id": "miasma_cult",
+   "name_zh": "瘴蛊教",
+   "summary_zh": "盘踞瘴脉的魔道教团：以蛊蚀与毒誓契约换取短期力量。",
+   "entity_kind": "faction",
+   "agents": [
+    "wandering_healer",
+    "earth_vein_scout"
+   ],
+   "relation_levels": [
+    {
+     "id": "hostile",
+     "label_zh": "敌对",
+     "min_points": -99,
+     "max_points": -2,
+     "price_pct": 60,
+     "hostile_chance_pct": 30,
+     "first_move_chance_pct": 20
+    },
+    {
+     "id": "cold",
+     "label_zh": "冷淡",
+     "min_points": -1,
+     "max_points": -1,
+     "price_pct": 10,
+     "hostile_chance_pct": 15,
+     "first_move_chance_pct": 10
+    },
+    {
+     "id": "neutral",
+     "label_zh": "中立",
+     "min_points": 0,
+     "max_points": 0,
+     "price_pct": 0,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "warm",
+     "label_zh": "友善",
+     "min_points": 1,
+     "max_points": 2,
+     "price_pct": -10,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "honored",
+     "label_zh": "尊崇",
+     "min_points": 3,
+     "max_points": 99,
+     "price_pct": -20,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    }
+   ],
+   "route_effects": {
+    "price_pct": 20,
+    "hostile_chance_pct": 30,
+    "first_move_chance_pct": 15,
+    "extra_encounter_weight": 15,
+    "retreat_allowed": false,
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 35
+   },
+   "trade_effects": {
+    "shop_price_pct": 20,
+    "buyback_ratio": 0.5
+   },
+   "pursuit_effects": {
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 35
+   },
+   "source_class": "original_game_content",
+   "source_ids": [
+    "CAN-CULTIVATOR-001",
+    "CAN-CULTIVATOR-002",
+    "ADP-FACTION-001"
+   ],
+   "canon_review_status": "draft",
+   "adaptation_note": "魔道作为修行路径是原著事实；本教团名称、诅咒契约与敌意机制为游戏原创。",
+   "tunable": true
+  },
+  {
+   "id": "beast_tide",
+   "name_zh": "兽潮",
+   "summary_zh": "周期性天灾：兽群成潮冲击山寨，蛊师是唯一能挡的墙。",
+   "entity_kind": "faction",
+   "agents": [],
+   "relation_levels": [
+    {
+     "id": "hostile",
+     "label_zh": "敌对",
+     "min_points": -99,
+     "max_points": -2,
+     "price_pct": 60,
+     "hostile_chance_pct": 30,
+     "first_move_chance_pct": 20
+    },
+    {
+     "id": "cold",
+     "label_zh": "冷淡",
+     "min_points": -1,
+     "max_points": -1,
+     "price_pct": 10,
+     "hostile_chance_pct": 15,
+     "first_move_chance_pct": 10
+    },
+    {
+     "id": "neutral",
+     "label_zh": "中立",
+     "min_points": 0,
+     "max_points": 0,
+     "price_pct": 0,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "warm",
+     "label_zh": "友善",
+     "min_points": 1,
+     "max_points": 2,
+     "price_pct": -10,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "honored",
+     "label_zh": "尊崇",
+     "min_points": 3,
+     "max_points": 99,
+     "price_pct": -20,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    }
+   ],
+   "route_effects": {
+    "price_pct": 0,
+    "hostile_chance_pct": 100,
+    "first_move_chance_pct": 50,
+    "extra_encounter_weight": 25,
+    "retreat_allowed": false,
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 40
+   },
+   "trade_effects": {
+    "shop_price_pct": 0,
+    "buyback_ratio": 0.5
+   },
+   "pursuit_effects": {
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 40
+   },
+   "source_class": "canon",
+   "source_ids": [
+    "CAN-BEAST-TIDE-001",
+    "CAN-BEAST-TIDE-002",
+    "CAN-BEAST-SWARM-001"
+   ],
+   "canon_review_status": "approved",
+   "adaptation_note": "兽潮作为周期性天灾、狼潮三年一次、雷冠头狼是狼群首领均为原著事实；本条目不是可谈判势力，而是地图压力源，登记在此以便统一关系/路线影响面。",
+   "tunable": true
+  },
+  {
+   "id": "notoriety_axis",
+   "name_zh": "恶名轴（全局）",
+   "entity_kind": "global_axis",
+   "summary_zh": "杀死中立者与背信会累积恶名；恶名提高全场价格与敌方敌意，洗白需以寿元为代价。",
+   "agents": [],
+   "relation_levels": [
+    {
+     "id": "hostile",
+     "label_zh": "敌对",
+     "min_points": -99,
+     "max_points": -2,
+     "price_pct": 60,
+     "hostile_chance_pct": 30,
+     "first_move_chance_pct": 20
+    },
+    {
+     "id": "cold",
+     "label_zh": "冷淡",
+     "min_points": -1,
+     "max_points": -1,
+     "price_pct": 10,
+     "hostile_chance_pct": 15,
+     "first_move_chance_pct": 10
+    },
+    {
+     "id": "neutral",
+     "label_zh": "中立",
+     "min_points": 0,
+     "max_points": 0,
+     "price_pct": 0,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "warm",
+     "label_zh": "友善",
+     "min_points": 1,
+     "max_points": 2,
+     "price_pct": -10,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    },
+    {
+     "id": "honored",
+     "label_zh": "尊崇",
+     "min_points": 3,
+     "max_points": 99,
+     "price_pct": -20,
+     "hostile_chance_pct": 0,
+     "first_move_chance_pct": 0
+    }
+   ],
+   "route_effects": {
+    "price_pct": 0,
+    "hostile_chance_pct": 0,
+    "first_move_chance_pct": 0,
+    "extra_encounter_weight": 0,
+    "retreat_allowed": true,
+    "pursuit_allowed": false
+   },
+   "trade_effects": {
+    "shop_price_pct": 0,
+    "buyback_ratio": 0.5
+   },
+   "pursuit_effects": {
+    "pursuit_allowed": true,
+    "pursuit_pressure_pct": 0
+   },
+   "notoriety": {
+    "gains": {
+     "kill_neutral_npc": 2,
+     "broken_trust": 1
+    },
+    "effects": {
+     "price_pct_per_point": 10,
+     "price_cap_pct": 60,
+     "hostile_chance_pct_per_point": 15,
+     "first_move_chance_pct_per_point": 10,
+     "wash_lifespan_cost": 10,
+     "wash_reduce": 2,
+     "flip_hostile_chance_pct": 20,
+     "extreme_stance_pct_per_point": 5,
+     "revisit_price_pct_per_visit": 25,
+     "revisit_price_cap_pct": 100,
+     "service_use_price_pct_per_use": 25,
+     "service_use_price_cap_pct": 100
+    }
+   },
+   "source_class": "adaptation",
+   "source_ids": [
+    "ADP-FACTION-001",
+    "CAN-CULTIVATOR-001",
+    "CAN-CULTIVATOR-002"
+   ],
+   "canon_review_status": "approved",
+   "adaptation_note": "恶名惩罚价格与敌意为游戏规则；洗白消耗寿元为不可逆代价，执行前必须预检并明确提示。",
+   "tunable": true
+  }
+ ],
+ "relation_model": {
+  "axis_range": [
+   -3,
+   3
+  ],
+  "levels": [
+   "hostile",
+   "cold",
+   "neutral",
+   "warm",
+   "honored"
+  ],
+  "simultaneous_active_factions": [
+   2,
+   3
+  ],
+  "note": "每局激活 2–3 个势力（ADP-FACTION-001）；玩家不能让所有势力永久满意。"
+ }
+}

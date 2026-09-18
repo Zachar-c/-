@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+py -3 scripts/check_remote_base.py

@@ -1,37 +1,30 @@
-# Local source input and transient files
-蛊真人.txt
-*.tmp
-*.bak
-*.log
-*.orig
+# Local-only source bundle; never stage or push it.
+/source/
 
-# Local source extracts and intermediate editorial working copies
-working/read-*.txt
-working/round3-*.txt
-working/*.cp936.txt
-working/*.utf8.txt
-working/vol2-source/
-working/batch-state-*.md
+# Preserved nested repository metadata; the parent repository is authoritative.
+**/.git-nested-backup/
 
-# Candidate pipeline outputs (kept local, not committed)
-working/candidates-*.tsv
-working/candidates-*.md
-working/apply-*.log
-working/audit-*.tsv
+# Nested worktrees are local working copies, not monorepo content.
+**/.worktrees/
 
-# Python build artifacts
-__pycache__/
-*.py[cod]
+# Full source texts stay local for copyright and repository-size reasons.
+gu-zhenren-editor/分支：六卷精编版/蛊真人-clean.txt
+gu-zhenren-editor/分支：六卷精编版/《人祖传》.txt
+game/分支：六卷精编版/蛊真人-clean.txt
+game/分支：六卷精编版/《人祖传》.txt
 
-# Local isolated worktrees
-.worktrees/
+# Local test output, backups, sabotage/debug logs, and generated shortlist files.
+/map_test_result.txt
+**/*.bak-*
+**/gate_sabotage.log
+**/generated/_shortlist_spec.txt
+gu-zhenren-editor/tools/_*.txt
+game/tools/_*.txt
 
-# Editor and operating-system metadata
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
+# Common local OS/editor noise.
+**/.DS_Store
+**/Thumbs.db
 
-# Local working directory (never committed)
-working/
-.superpowers/
+# 已退役的旧游戏路径：Task 7 之后磁盘上只剩本地恢复材料与缓存
+# （.git-nested-backup/、.worktrees/、.godot/、tmp*/、本地原文），均不进入 Git 树。
+/gu-zhenren-editor/

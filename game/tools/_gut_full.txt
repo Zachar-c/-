@@ -1,0 +1,47 @@
+﻿===== test_boss_pool_variety =====
+
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [4] _test_the_scripts (res://addons/gut/gut.gd:835)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [5] _test_the_scripts (res://addons/gut/gut.gd:835)
+[1m5/5 passed.
+Totals
+Scripts               1
+Tests                 5
+Passing Tests         5
+Asserts             175
+[32m---- All tests passed! ----
+
+
+rc=0
+===== test_core_gu_replace =====
+
+[1m7/7 passed.
+Totals
+Scripts               1
+Tests                 7
+Passing Tests         7
+Asserts              22
+[32m---- All tests passed! ----
+
+
+rc=0
+===== test_runtime_seed_policy =====
+
+[1m4/4 passed.
+Totals
+Scripts               1
+Tests                 4
+Passing Tests         4
+Asserts              12
+[32m---- All tests passed! ----
+
+
+rc=0

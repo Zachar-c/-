@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fortune-app 知识图谱</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --surface-1: #fcfcfb;
+      --surface-2: #f9f9f7;
+      --text-primary: #0b0b0b;
+      --text-secondary: #52514e;
+      --muted: #898781;
+      --gridline: #e1e0d9;
+      --class: #2a78d6;
+      --resource: #1baf7a;
+      --test: #eda100;
+      --config: #008300;
+      --doc: #4a3aa7;
+      --infra: #e34948;
+      --dependency: #e87ba4;
+      --edge: #c3c2b7;
+      --shadow: rgba(11, 11, 11, 0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface-1: #1a1a19;
+        --surface-2: #0d0d0d;
+        --text-primary: #ffffff;
+        --text-secondary: #c3c2b7;
+        --muted: #898781;
+        --gridline: #2c2c2a;
+        --class: #3987e5;
+        --resource: #199e70;
+        --test: #c98500;
+        --config: #008300;
+        --doc: #9085e9;
+        --infra: #e66767;
+        --dependency: #d55181;
+        --edge: #383835;
+        --shadow: rgba(0, 0, 0, 0.35);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--surface-2);
+      color: var(--text-primary);
+    }
+    header {
+      padding: 1rem 1.5rem;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--gridline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    h1 { margin: 0; font-size: 1.25rem; }
+    .subtitle { color: var(--text-secondary); font-size: 0.875rem; }
+    .controls { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    button {
+      background: var(--surface-1);
+      border: 1px solid var(--gridline);
+      color: var(--text-primary);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    button:hover { border-color: var(--muted); }
+    button.active { background: var(--class); color: #fff; border-color: var(--class); }
+    main { display: grid; grid-template-columns: 1fr 260px; height: calc(100vh - 68px); }
+    #graph { position: relative; background: var(--surface-1); overflow: hidden; }
+    #graph svg { width: 100%; height: 100%; cursor: grab; }
+    #graph svg:active { cursor: grabbing; }
+    aside {
+      background: var(--surface-1);
+      border-left: 1px solid var(--gridline);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; margin: 0.35rem 0; font-size: 0.875rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: var(--surface-1);
+      border: 1px solid var(--gridline);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 12px var(--shadow);
+      color: var(--text-primary);
+      max-width: 240px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+    .node text { pointer-events: none; font-size: 11px; fill: var(--text-primary); }
+    .node circle { stroke: var(--surface-1); stroke-width: 2px; }
+    .link { stroke: var(--edge); stroke-opacity: 0.7; }
+    .dim { opacity: 0.15; }
+    #table-view { display: none; padding: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--gridline); }
+    th { color: var(--text-secondary); font-weight: 600; }
+    @media (max-width: 800px) {
+      main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+      aside { border-left: none; border-top: 1px solid var(--gridline); max-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>fortune-app 知识图谱</h1>
+      <div class="subtitle">文件、类、依赖与部署实体之间的关系网络</div>
+    </div>
+    <div class="controls">
+      <button id="btn-reset" onclick="resetZoom()">重置视图</button>
+      <button id="btn-table" onclick="toggleTable()">表格视图</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="graph">
+      <div class="tooltip" id="tooltip"></div>
+    </div>
+    <aside id="sidebar">
+      <h3 style="margin-top:0;font-size:1rem;">图例</h3>
+      <div id="legend"></div>
+      <hr style="border:0;border-top:1px solid var(--gridline);margin:1rem 0;" />
+      <div style="font-size:0.8rem;color:var(--text-secondary);">
+        <p><strong>提示：</strong> 拖拽节点可调整布局；悬停查看详情；滚轮缩放。</p>
+        <p>节点颜色按类型区分，边表示“依赖 / 使用 / 属于”关系。</p>
+      </div>
+    </aside>
+  </main>
+
+  <div id="table-view">
+    <button onclick="toggleTable()">返回图谱</button>
+    <h2>节点列表</h2>
+    <div id="node-table"></div>
+    <h2>关系列表</h2>
+    <div id="edge-table"></div>
+  </div>
+
+  <script>
+    const categories = {
+      class: { label: "Java 类", color: "var(--class)" },
+      resource: { label: "资源文件", color: "var(--resource)" },
+      test: { label: "测试", color: "var(--test)" },
+      config: { label: "配置 / 构建", color: "var(--config)" },
+      doc: { label: "文档", color: "var(--doc)" },
+      infra: { label: "部署 / CI", color: "var(--infra)" },
+      dependency: { label: "外部依赖", color: "var(--dependency)" }
+    };
+
+    const nodes = [
+      { id: "Main", label: "Main", type: "class", desc: "程序入口，启动 HTTP 服务器" },
+      { id: "FortuneController", label: "FortuneController", type: "class", desc: "处理 /fortune 路径请求" },
+      { id: "FortuneService", label: "FortuneService", type: "class", desc: "业务逻辑：随机、查询、增删" },
+      { id: "FortuneRepository", label: "FortuneRepository", type: "class", desc: "JDBC 数据访问层" },
+      { id: "Fortune", label: "Fortune", type: "class", desc: "运势实体（text + level）" },
+      { id: "AppConfig", label: "AppConfig", type: "class", desc: "读取 application.properties 配置" },
+      { id: "FortuneServiceTest", label: "FortuneServiceTest", type: "test", desc: "FortuneService 单元测试" },
+      { id: "index.html", label: "index.html", type: "resource", desc: "前端页面" },
+      { id: "fortunes.txt", label: "fortunes.txt", type: "resource", desc: "种子运势文本" },
+      { id: "schema.sql", label: "schema.sql", type: "resource", desc: "H2 建表脚本" },
+      { id: "logback.xml", label: "logback.xml", type: "resource", desc: "日志配置" },
+      { id: "application.properties", label: "application.properties", type: "config", desc: "端口、数据库配置" },
+      { id: "pom.xml", label: "pom.xml", type: "config", desc: "Maven 依赖与构建配置" },
+      { id: "Dockerfile", label: "Dockerfile", type: "infra", desc: "多阶段容器镜像构建" },
+      { id: "docker-compose.yml", label: "docker-compose.yml", type: "infra", desc: "本地/服务器编排" },
+      { id: "deploy.sh", label: "deploy.sh", type: "infra", desc: "远程服务器部署脚本" },
+      { id: "GitHub Actions", label: "GitHub Actions", type: "infra", desc: "CI 自动测试与构建" },
+      { id: "ROADMAP", label: "ROADMAP.md", type: "doc", desc: "项目路线图" },
+      { id: "DEPLOY", label: "DEPLOY.md", type: "doc", desc: "部署运维指南" },
+      { id: "PRD", label: "PRD.md", type: "doc", desc: "产品需求文档" },
+      { id: "CHANGELOG", label: "CHANGELOG.md", type: "doc", desc: "变更日志" },
+      { id: "LEARNING", label: "LEARNING.md", type: "doc", desc: "学习路径" },
+      { id: "Maven", label: "Maven", type: "dependency", desc: "构建工具" },
+      { id: "JUnit5", label: "JUnit 5", type: "dependency", desc: "单元测试框架" },
+      { id: "Mockito", label: "Mockito", type: "dependency", desc: "Mock 测试框架" },
+      { id: "SLF4J", label: "SLF4J", type: "dependency", desc: "日志门面" },
+      { id: "Logback", label: "Logback", type: "dependency", desc: "日志实现" },
+      { id: "Gson", label: "Gson", type: "dependency", desc: "JSON 序列化" },
+      { id: "H2", label: "H2", type: "dependency", desc: "文件/内存数据库" }
+    ];
+
+    const links = [
+      { source: "Main", target: "FortuneController", label: "uses" },
+      { source: "Main", target: "AppConfig", label: "uses" },
+      { source: "Main", target: "index.html", label: "serves" },
+      { source: "FortuneController", target: "FortuneService", label: "uses" },
+      { source: "FortuneController", target: "Fortune", label: "uses" },
+      { source: "FortuneService", target: "FortuneRepository", label: "uses" },
+      { source: "FortuneService", target: "Fortune", label: "uses" },
+      { source: "FortuneServiceTest", target: "FortuneService", label: "tests" },
+      { source: "FortuneRepository", target: "Fortune", label: "uses" },
+      { source: "FortuneRepository", target: "AppConfig", label: "uses" },
+      { source: "FortuneRepository", target: "H2", label: "uses" },
+      { source: "pom.xml", target: "Maven", label: "managed by" },
+      { source: "pom.xml", target: "JUnit5", label: "depends" },
+      { source: "pom.xml", target: "Mockito", label: "depends" },
+      { source: "pom.xml", target: "SLF4J", label: "depends" },
+      { source: "pom.xml", target: "Logback", label: "depends" },
+      { source: "pom.xml", target: "Gson", label: "depends" },
+      { source: "pom.xml", target: "H2", label: "depends" },
+      { source: "Dockerfile", target: "Maven", label: "builds with" },
+      { source: "docker-compose.yml", target: "Dockerfile", label: "uses" },
+      { source: "deploy.sh", target: "docker-compose.yml", label: "uses" },
+      { source: "GitHub Actions", target: "pom.xml", label: "builds" },
+      { source: "GitHub Actions", target: "Maven", label: "uses" },
+      { source: "ROADMAP", target: "DEPLOY", label: "references" },
+      { source: "DEPLOY", target: "Dockerfile", label: "references" },
+      { source: "DEPLOY", target: "docker-compose.yml", label: "references" },
+      { source: "DEPLOY", target: "deploy.sh", label: "references" },
+      { source: "LEARNING", target: "ROADMAP", label: "references" }
+    ];
+
+    const width = document.getElementById("graph").clientWidth;
+    const height = document.getElementById("graph").clientHeight;
+    const svg = d3.select("#graph").append("svg")
+      .attr("viewBox", [0, 0, width, height]);
+
+    const g = svg.append("g");
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.2, 4])
+      .on("zoom", (e) => g.attr("transform", e.transform));
+    svg.call(zoom);
+
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id).distance(90))
+      .force("charge", d3.forceManyBody().strength(-320))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("collide", d3.forceCollide().radius(28));
+
+    const link = g.append("g").attr("class", "links")
+      .selectAll("line")
+      .data(links)
+      .join("line")
+      .attr("class", "link")
+      .attr("stroke-width", 1.5);
+
+    const node = g.append("g").attr("class", "nodes")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+      .attr("class", "node")
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    node.append("circle")
+      .attr("r", 10)
+      .attr("fill", d => categories[d.type].color);
+
+    node.append("text")
+      .attr("dx", 14)
+      .attr("dy", 4)
+      .text(d => d.label);
+
+    const tooltip = d3.select("#tooltip");
+
+    node.on("mouseover", function(event, d) {
+      d3.selectAll(".node").classed("dim", n => n !== d && !isNeighbor(d, n));
+      d3.selectAll(".link").classed("dim", l => l.source.id !== d.id && l.target.id !== d.id);
+      tooltip.style("opacity", 1)
+        .html(`<strong>${d.label}</strong><br/><span style="color:${categories[d.type].color}">● ${categories[d.type].label}</span><br/>${d.desc}`)
+        .style("left", (event.pageX + 12) + "px")
+        .style("top", (event.pageY + 12) + "px");
+    }).on("mousemove", function(event) {
+      tooltip.style("left", (event.pageX + 12) + "px").style("top", (event.pageY + 12) + "px");
+    }).on("mouseout", function() {
+      d3.selectAll(".dim").classed("dim", false);
+      tooltip.style("opacity", 0);
+    });
+
+    function isNeighbor(a, b) {
+      return links.some(l => (l.source.id === a.id && l.target.id === b.id) || (l.source.id === b.id && l.target.id === a.id));
+    }
+
+    simulation.on("tick", () => {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+      node.attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x; d.fy = d.y;
+    }
+    function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null; d.fy = null;
+    }
+
+    function resetZoom() {
+      svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    }
+
+    // Legend
+    const legend = d3.select("#legend");
+    Object.entries(categories).forEach(([key, cat]) => {
+      const item = legend.append("div").attr("class", "legend-item");
+      item.append("span").attr("class", "dot").style("background", cat.color);
+      item.append("span").text(cat.label);
+    });
+
+    // Table view
+    function toggleTable() {
+      const graph = document.getElementById("graph").parentElement;
+      const table = document.getElementById("table-view");
+      const sidebar = document.getElementById("sidebar");
+      if (table.style.display === "block") {
+        table.style.display = "none";
+        graph.style.display = "grid";
+        sidebar.style.display = "block";
+      } else {
+        graph.style.display = "none";
+        sidebar.style.display = "none";
+        table.style.display = "block";
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      const nodeRows = nodes.map(n => `&lt;tr&gt;&lt;td&gt;${n.label}&lt;/td&gt;&lt;td&gt;${categories[n.type].label}&lt;/td&gt;&lt;td&gt;${n.desc}&lt;/td&gt;&lt;/tr&gt;`).join("");
+      document.getElementById("node-table").innerHTML = `
+        &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;节点&lt;/th&gt;&lt;th&gt;类型&lt;/th&gt;&lt;th&gt;说明&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;${nodeRows}&lt;/tbody&gt;&lt;/table&gt;`;
+      const edgeRows = links.map(l => `&lt;tr&gt;&lt;td&gt;${l.source.label || l.source}&lt;/td&gt;&lt;td&gt;${l.label}&lt;/td&gt;&lt;td&gt;${l.target.label || l.target}&lt;/td&gt;&lt;/tr&gt;`).join("");
+      document.getElementById("edge-table").innerHTML = `
+        &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;源&lt;/th&gt;&lt;th&gt;关系&lt;/th&gt;&lt;th&gt;目标&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;${edgeRows}&lt;/tbody&gt;&lt;/table&gt;`;
+    }
+
+    window.addEventListener("resize", () => {
+      const w = document.getElementById("graph").clientWidth;
+      const h = document.getElementById("graph").clientHeight;
+      svg.attr("viewBox", [0, 0, w, h]);
+      simulation.force("center", d3.forceCenter(w / 2, h / 2));
+      simulation.alpha(0.3).restart();
+    });
+  </script>
+</body>
+</html>

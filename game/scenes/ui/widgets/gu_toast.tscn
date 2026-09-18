@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_toast_view.gd" id="1_script"]
+
+[node name="GuToast" type="CenterContainer"]
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="ToastPanel" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="ToastMargin" type="MarginContainer" parent="ToastPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ToastLabel" type="Label" parent="ToastPanel/ToastMargin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = ""

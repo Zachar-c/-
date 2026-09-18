@@ -1,0 +1,362 @@
+{
+ "lifespan_milestones": {
+  "stage_one_ledger": 10,
+  "boss_defeated": 10
+ },
+ "turn_scaling": {
+  "hp_add_per_turn": 2,
+  "damage_add_per_turn": 1,
+  "hp_cap_bonus": 6,
+  "damage_cap_bonus": 2
+ },
+ "layers": {
+  "1": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 12,
+   "enemy_turn": 1,
+   "enemy_rank_min": 0,
+   "enemy_rank_max": 1,
+   "loot": {
+    "material_count": 2,
+    "weights": {
+     "common": 90,
+     "rare": 10,
+     "epic": 0
+    }
+   },
+   "shop_price_pct": 0,
+   "shop_max_tier": 1,
+   "anchors": [
+    {
+     "template": "yizang_ridge",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
+   "pool": [
+    "beast_swarm_pass",
+    "iron_hide_ambush",
+    "scout_crossing_raid"
+   ],
+   "title": "青茅山外圍",
+   "category_weights": {
+    "battle": 82,
+    "rest": 6,
+    "unknown": 9,
+    "trade": 4
+   }
+  },
+  "2": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 16,
+   "enemy_turn": 2,
+   "enemy_rank_min": 0,
+   "enemy_rank_max": 2,
+   "loot": {
+    "material_count": 2,
+    "weights": {
+     "common": 80,
+     "rare": 18,
+     "epic": 2
+    }
+   },
+   "shop_price_pct": 10,
+   "shop_max_tier": 2,
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
+   "pool": [
+    "iron_hide_ambush",
+    "scout_crossing_raid",
+    "beast_swarm_pass"
+   ],
+   "title": "落瘴岭",
+   "category_weights": {
+    "battle": 80,
+    "rest": 6,
+    "unknown": 10,
+    "trade": 5
+   }
+  },
+  "3": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 22,
+   "enemy_turn": 3,
+   "enemy_rank_min": 1,
+   "enemy_rank_max": 3,
+   "loot": {
+    "material_count": 3,
+    "weights": {
+     "common": 70,
+     "rare": 24,
+     "epic": 6
+    }
+   },
+   "shop_price_pct": 20,
+   "shop_max_tier": 3,
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
+   "pool": [
+    "scout_crossing_raid",
+    "faction_guard_checkpoint",
+    "wolf_pack_trail"
+   ],
+   "title": "血蟒涧",
+   "category_weights": {
+    "battle": 78,
+    "rest": 6,
+    "unknown": 11,
+    "trade": 6
+   }
+  },
+  "4": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 28,
+   "enemy_turn": 4,
+   "enemy_rank_min": 2,
+   "enemy_rank_max": 4,
+   "loot": {
+    "material_count": 3,
+    "weights": {
+     "common": 60,
+     "rare": 28,
+     "epic": 12
+    }
+   },
+   "shop_price_pct": 35,
+   "shop_max_tier": 4,
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
+   "pool": [
+    "faction_guard_checkpoint",
+    "wolf_pack_trail",
+    "scout_crossing_raid"
+   ],
+   "title": "万蛊窟",
+   "category_weights": {
+    "battle": 76,
+    "rest": 6,
+    "unknown": 12,
+    "trade": 7
+   }
+  },
+  "5": {
+   "rows": [
+    8,
+    11
+   ],
+   "row_nodes": [
+    2,
+    6
+   ],
+   "entry_nodes": [
+    1,
+    2
+   ],
+   "stone_budget": 35,
+   "enemy_turn": 5,
+   "enemy_rank_min": 3,
+   "enemy_rank_max": 5,
+   "loot": {
+    "material_count": 4,
+    "weights": {
+     "common": 50,
+     "rare": 30,
+     "epic": 20
+    }
+   },
+   "shop_price_pct": 50,
+   "shop_max_tier": 5,
+   "anchors": [
+    {
+     "template": "ridge_black_market",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "pre_boss"
+    },
+    {
+     "template": "refinement_hollow",
+     "row": "mid"
+    },
+    {
+     "template": "ridge_black_market",
+     "row": "quarter"
+    }
+   ],
+   "pool": [
+    "wolf_pack_trail",
+    "faction_guard_checkpoint",
+    "iron_hide_ambush"
+   ],
+   "title": "瘴脉深處",
+   "category_weights": {
+    "battle": 74,
+    "rest": 6,
+    "unknown": 13,
+    "trade": 8
+   }
+  }
+ },
+ "advance_bonus_by_rank": {
+  "1": 0,
+  "2": 1,
+  "3": 3,
+  "4": 6,
+  "5": 10
+ },
+ "ending_after_stage": "one",
+ "enemy_weights": {
+  "common": 75,
+  "elite": 25,
+  "boss": 0
+ },
+ "category_pools": {
+  "battle": [
+   "beast_swarm_pass",
+   "iron_hide_ambush",
+   "scout_crossing_raid",
+   "wolf_pack_trail",
+   "faction_guard_checkpoint",
+   "greedy_wanderer"
+  ],
+  "rest": [
+   "rest_hollow",
+   "rest_shrine",
+   "refinement_hollow",
+   "refinement_hollow",
+   "cultivation_spring"
+  ],
+  "unknown": [
+   "toxic_mountain_path",
+   "flooded_cave",
+   "black_mud_marsh",
+   "echo_cave",
+   "gu_rot_pact",
+   "moonlit_trail",
+   "yizang_ridge",
+   "mist_shrine",
+   "earth_vein_contest",
+   "sealed_earth_vein",
+   "poison_fog_vein",
+   "blood_moss_grove",
+   "body_imprint_ritual"
+  ],
+  "trade": [
+   "neutral_wanderer",
+   "wandering_peddler",
+   "ridge_caravan",
+   "caravan_missing_goods",
+   "village_short_work",
+   "ridge_market",
+   "herbalist_commission"
+  ]
+ }
+}
