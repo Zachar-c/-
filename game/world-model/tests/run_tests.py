@@ -306,9 +306,12 @@ def cultivation_hard_gate_blocks_bing_rank_three(ctx: Ctx) -> None:
 @test
 def essence_formulas_match_the_locked_spec(ctx: Ctx) -> None:
     wm = WorldModel()
+    # rank 0 走 floor：与 1 转同读 cultivation_factor["1"]
+    assert rules.essence_max(wm, 0, "bing") == 20
     assert rules.essence_max(wm, 1, "bing") == 20
     assert rules.essence_max(wm, 2, "bing") == 60
     assert rules.essence_max(wm, 3, "jia") == 360
+    assert rules.essence_max(wm, 5, "jia") == 3240
     assert rules.essence_max_battle(wm, 1, "bing") == 20
     assert rules.essence_max_battle(wm, 5, "jia") == 600
     assert rules.essence_regen_per_turn(wm, 20, "bing") == 5
@@ -382,6 +385,15 @@ def exception_gu_backlash_fires(ctx: Ctx) -> None:
 @test
 def exception_numeric_overflow_fires(ctx: Ctx) -> None:
     wm = WorldModel()
+    # 局外真元上限：cultivation_factor 只覆盖 1-5 转，越界必须报错而不是静默退回 1 转
+    for rank in (6, 9):
+        try:
+            rules.essence_max(wm, rank, "jia")
+        except NumericOverflow as exc:
+            assert exc.code == "numeric_overflow"
+            assert str(rank) in exc.message, f"报错信息须带上越界转数：{exc.message}"
+        else:
+            raise AssertionError(f"{rank} 转的局外真元上限未被 NumericOverflow 拦住")
     try:
         rules.essence_max_battle(wm, 9, "bing")
     except NumericOverflow as exc:

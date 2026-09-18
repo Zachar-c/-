@@ -76,7 +76,7 @@ seed 101: content_sha256 = 584e141d68f085e7d1e49019f86d44c67ba3930b662d12dc1ed29
 2. **`gate_sabotage.log`**（仓库根）：门禁负控的实测日志，未删除。
 3. **`generated/_shortlist_spec.txt`**：未跟踪文件，来源不明，非本工作流产物。
 4. **世界模型与 Godot 数据尚未统一**为单一真源：目前是「Godot `data/` 为运行时真源 + world-model 派生视图 + 门禁保证一致」。若要变成单一真源，需要另立裁定。
-5. **6–9 转内容为 0**：`gu.json` 只有 1–5 转（含 1 只测试实体）。若首发范围上移，`cultivation_factor` 与 `stage_base_battle` 只到 5 转——**6 转会使局外真元上限静默退回 1 转水平**（`rules.py:42` 回落默认值，不报错），战斗侧则会抛 `NumericOverflow`。这是放开范围前必须先补的表。
+5. **6–9 转内容为 0**：`gu.json` 只有 1–5 转（含 1 只测试实体）。若首发范围上移，`cultivation_factor` 与 `stage_base_battle` 只到 5 转——**这是放开范围前必须先补的表**。两侧现在都不再给出错值：战斗侧 `essence_max_battle` 抛 `NumericOverflow`（原有行为），局外侧 `essence_max` 自 2026-09-18（`q8h-001`）起同样抛 `NumericOverflow`——此前是静默回落到 1 转默认值（`rules.py` 的 `.get(..., 1)`），即"看着合理的错数"，现已加回归锁。放开范围前只需补表，不会再出现静默降级。
 
 ## 七、快速验收（复制粘贴，Windows PowerShell）
 

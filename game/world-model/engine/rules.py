@@ -39,7 +39,11 @@ def essence_max(wm, rank: int, aptitude: str) -> int:
     """局外真元上限：essence_base * aptitude_factor * cultivation_factor."""
     base = wm.b("growth", "essence_base")
     apt = wm.b("growth", "aptitude_factor").get(aptitude, 1)
-    cult = wm.b("growth", "cultivation_factor").get(str(max(1, int(rank))), 1)
+    # 0 转与负数一律按 1 转读表（floor 语义，与历史行为一致）
+    step = max(1, int(rank))
+    cult = wm.b("growth", "cultivation_factor").get(str(step))
+    if cult is None:
+        raise NumericOverflow(f"balance 的 cultivation_factor 未覆盖 {rank} 转")
     return int(base * apt * cult)
 
 
