@@ -1,0 +1,19 @@
+services:
+  fortune-app:
+    build: .
+    container_name: fortune-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    environment:
+      # 预留：后续可通过环境变量覆盖配置
+      - SERVER_PORT=8080
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/fortune"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
