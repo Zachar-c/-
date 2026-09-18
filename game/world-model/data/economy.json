@@ -1,0 +1,2006 @@
+{
+ "world_model_version": "1.0.0",
+ "schema_id": "gu-zhenren/world-model",
+ "schema_version": "1.0.0",
+ "entity_type": "economy",
+ "generated_at": "2026-09-17T00:00:00Z",
+ "generator": "world-model/tools/build_world_model.py",
+ "source_refs": [
+  "data/balance.json",
+  "data/loot_tables.json",
+  "data/pacing.json",
+  "data/reputation.json",
+  "data/shops.json"
+ ],
+ "count": 1,
+ "entities": [
+  {
+   "id": "south_jiang_mortal_economy",
+   "name_zh": "南疆凡人经济（元石本位）",
+   "scope": "mortal_run",
+   "resources": [
+    {
+     "id": "primeval_stone",
+     "name_zh": "元石",
+     "unit": "块",
+     "start_value": 12,
+     "hard_cap": null,
+     "channels_in": [
+      "battle_reward",
+      "event_stone_gain",
+      "node_reward",
+      "sell_material",
+      "sell_gu",
+      "commission"
+     ],
+     "channels_out": [
+      "gu_purchase",
+      "material_purchase",
+      "refine_cost",
+      "cultivate_cost",
+      "feed_cost",
+      "remove_card",
+      "remove_imprint",
+      "remove_curse",
+      "retreat",
+      "stone_to_essence"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "gu_material",
+     "name_zh": "蛊材",
+     "unit": "份",
+     "start_value": 0,
+     "hard_cap": null,
+     "channels_in": [
+      "battle_loot",
+      "event_gain",
+      "harvest",
+      "shop_purchase"
+     ],
+     "channels_out": [
+      "refine_input",
+      "feeding_input",
+      "sell",
+      "self_use"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "lifespan",
+     "name_zh": "寿元",
+     "unit": "年",
+     "start_value": 60,
+     "hard_cap": null,
+     "channels_in": [
+      "lifespan_milestone_stage_ledger",
+      "lifespan_milestone_boss_defeated",
+      "black_market_exchange"
+     ],
+     "channels_out": [
+      "aptitude_reroll",
+      "black_market_exchange",
+      "wash_notoriety",
+      "event_cost",
+      "curse_recovery"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "soul",
+     "name_zh": "魂",
+     "unit": "点",
+     "start_value": 1,
+     "hard_cap": 4,
+     "channels_in": [
+      "soul_pill",
+      "black_market_exchange",
+      "soul_gain_event"
+     ],
+     "channels_out": [
+      "soul_burst",
+      "delayed_event_cost",
+      "curse_cost"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "primeval_essence",
+     "name_zh": "真元",
+     "unit": "点",
+     "start_value": null,
+     "hard_cap": "10 * aptitude_factor * cultivation_factor",
+     "channels_in": [
+      "turn_regen",
+      "stone_to_essence",
+      "material_use"
+     ],
+     "channels_out": [
+      "gu_activation",
+      "kill_move"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "health",
+     "name_zh": "气血",
+     "unit": "点",
+     "start_value": 80,
+     "hard_cap": 80,
+     "channels_in": [
+      "rest_heal",
+      "healing_gu",
+      "material_use"
+     ],
+     "channels_out": [
+      "enemy_damage",
+      "hazard_cost",
+      "event_cost",
+      "backlash",
+      "overload"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "thought",
+     "name_zh": "念头",
+     "unit": "点",
+     "start_value": 3,
+     "hard_cap": 3,
+     "channels_in": [
+      "turn_refresh"
+     ],
+     "channels_out": [
+      "gu_activation",
+      "basic_attack",
+      "kill_move"
+     ],
+     "tunable": true
+    },
+    {
+     "id": "immortal_stone",
+     "name_zh": "仙元石",
+     "unit": "块",
+     "start_value": 0,
+     "hard_cap": null,
+     "channels_in": [
+      "heaven_court_monopoly"
+     ],
+     "channels_out": [
+      "immortal_tier_only"
+     ],
+     "in_launch_scope": false,
+     "tunable": false
+    }
+   ],
+   "price_anchors": {
+    "gu_value_by_rank": {
+     "1": 3,
+     "2": 5,
+     "3": 8,
+     "4": 12,
+     "5": 20
+    },
+    "public_buyback_ratio": 0.5,
+    "low_liquidity_ratio": 0.3,
+    "demand_price_tiers": [
+     0.8,
+     1.0,
+     1.2
+    ],
+    "remove_card_cost": 120,
+    "remove_imprint_cost": 150,
+    "imprint_capacity": 4,
+    "free_pair_success_pct": {
+     "2": 90,
+     "3": 70,
+     "4": 50,
+     "5": 35
+    },
+    "free_pair_stone_cost": {
+     "2": 20,
+     "3": 60,
+     "4": 150,
+     "5": 300
+    },
+    "material_refine_efficiency": 0.5,
+    "stone_per_t1_material": 10,
+    "stone_to_essence_per_stone": 5,
+    "retreat_stone_cost": 2,
+    "base_speed": 3,
+    "speed_min": 1,
+    "speed_max": 5,
+    "gu_estimate_ratio": 6.5,
+    "reference_price_note": "每条蛊材的 reference_value 是黑市/需求价基准；public_liquidity 决定公开市场可兑现比例。"
+   },
+   "battle_stone_rewards": {
+    "base_by_tier": {
+     "common": 3,
+     "elite": 8,
+     "boss": 15
+    },
+    "layer_step_pct": 20,
+    "provisional_note": "Q8-G 1-C provisional：战斗产石 = base_by_tier[tier] + base*layer_step_pct*(layer-1)/100。Batch 0 §4 冻结口径：tier+layer 结构、数值 provisional、F8 校准；production 口径为净新增（卖材料不算）。"
+   },
+   "layer_budget": {
+    "1": {
+     "stone_budget": 12,
+     "shop_price_pct": 0,
+     "shop_max_tier": 1
+    },
+    "2": {
+     "stone_budget": 16,
+     "shop_price_pct": 10,
+     "shop_max_tier": 2
+    },
+    "3": {
+     "stone_budget": 22,
+     "shop_price_pct": 20,
+     "shop_max_tier": 3
+    },
+    "4": {
+     "stone_budget": 28,
+     "shop_price_pct": 35,
+     "shop_max_tier": 4
+    },
+    "5": {
+     "stone_budget": 35,
+     "shop_price_pct": 50,
+     "shop_max_tier": 5
+    }
+   },
+   "inflation": {
+    "shop_price_pct_by_layer": [
+     0,
+     10,
+     20,
+     35,
+     50
+    ],
+    "revisit_price_pct_per_visit": 25,
+    "revisit_price_cap_pct": 100,
+    "service_use_price_pct_per_use": 25,
+    "service_use_price_cap_pct": 100,
+    "layer_stone_step_pct": 20
+   },
+   "black_market_exchange": [
+    {
+     "from": "lifespan",
+     "amount_in": 20,
+     "to": "soul",
+     "amount_out": 1
+    },
+    {
+     "from": "soul",
+     "amount_in": 1,
+     "to": "lifespan",
+     "amount_out": 10
+    },
+    {
+     "from": "health",
+     "amount_in": 20,
+     "to": "soul",
+     "amount_out": 1
+    },
+    {
+     "from": "soul",
+     "amount_in": 1,
+     "to": "health",
+     "amount_out": 10
+    },
+    {
+     "from": "health",
+     "amount_in": 20,
+     "to": "lifespan",
+     "amount_out": 10
+    }
+   ],
+   "black_market_asymmetry_note": "同一对资源双向兑换率不对称（如 寿20→魂1 与 魂1→寿10，隐含约 100 倍往返损耗），属已登记风险项。",
+   "shop_offer_histogram": {
+    "soul_boost": 1,
+    "purchase": 20,
+    "lifespan_deal": 1,
+    "barter": 1,
+    "wash_notoriety": 1,
+    "material_purchase": 3,
+    "recipe_unlock": 1,
+    "resource_trade": 5,
+    "gu_fang_unlock": 5
+   },
+   "shop_offers": [
+    {
+     "id": "soul_pill",
+     "kind": "soul_boost",
+     "tier": 2,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": 6,
+     "lifespan_cost": null,
+     "soul_gain": 1,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "soul_pill",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_stone_shell",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "stone_shell_gu",
+     "material_id": "",
+     "stone_cost": 6,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.stone_shell",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_moonlight",
+     "kind": "purchase",
+     "tier": 3,
+     "gu_id": "moonlight_gu",
+     "material_id": "",
+     "stone_cost": 6,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.moonlight",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_blood_droplet",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "blood_droplet_gu",
+     "material_id": "",
+     "stone_cost": 6,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.blood_droplet",
+     "npc_only": true,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "lifespan_pulse_drum",
+     "kind": "lifespan_deal",
+     "tier": 2,
+     "gu_id": "qi_atk_1_01_gu",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": 1,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "lifespan.pulse_drum",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "barter_unknown_gu",
+     "kind": "barter",
+     "tier": 3,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [
+      "qi_rec_2_14_gu"
+     ],
+     "rewards": [
+      {
+       "id": "reward_jade_cicada_shell",
+       "relic_id": "jade_cicada_shell",
+       "weight": 2
+      },
+      {
+       "id": "reward_empty_cage",
+       "weight": 1
+      }
+     ],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "barter.unknown_gu",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "wash_notoriety",
+     "kind": "wash_notoriety",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "wash.notoriety",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_thunder_ward",
+     "kind": "purchase",
+     "tier": 4,
+     "gu_id": "qi_atk_1_01_gu",
+     "material_id": "",
+     "stone_cost": 9,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.thunder_ward",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_moon_glow",
+     "kind": "purchase",
+     "tier": 5,
+     "gu_id": "moon_glow_gu",
+     "material_id": "",
+     "stone_cost": 12,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.moon_glow",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_small_light_gu",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "small_light_gu",
+     "material_id": "",
+     "stone_cost": 12,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.small_light",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_moon_blue_petal",
+     "kind": "material_purchase",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "moon_blue_petal",
+     "stone_cost": 3,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.moon_blue_petal",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_boar_king_tusk",
+     "kind": "material_purchase",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "boar_king_tusk",
+     "stone_cost": 10,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.boar_king_tusk",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_jade_skin_gu",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "jade_skin_gu",
+     "material_id": "",
+     "stone_cost": 30,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.jade_skin",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_white_boar_strength_gu",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "white_boar_strength_gu",
+     "material_id": "",
+     "stone_cost": 35,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.white_boar",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_white_jade_recipe",
+     "kind": "recipe_unlock",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": 60,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "white_jade_advance",
+     "school": "",
+     "card_key": "purchase.white_jade_recipe",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "black_market_lifespan_for_soul",
+     "kind": "resource_trade",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "lifespan",
+     "cost_amount": 20,
+     "gain_kind": "soul",
+     "gain_amount": 1,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "bm.lifespan_for_soul",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "black_market_soul_for_lifespan",
+     "kind": "resource_trade",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "soul",
+     "cost_amount": 1,
+     "gain_kind": "lifespan",
+     "gain_amount": 10,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "bm.soul_for_lifespan",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "black_market_health_for_soul",
+     "kind": "resource_trade",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "health",
+     "cost_amount": 20,
+     "gain_kind": "soul",
+     "gain_amount": 1,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "bm.health_for_soul",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "black_market_soul_for_health",
+     "kind": "resource_trade",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "soul",
+     "cost_amount": 1,
+     "gain_kind": "health",
+     "gain_amount": 10,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "bm.soul_for_health",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "black_market_health_for_lifespan",
+     "kind": "resource_trade",
+     "tier": 1,
+     "gu_id": "",
+     "material_id": "",
+     "stone_cost": null,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "health",
+     "cost_amount": 20,
+     "gain_kind": "lifespan",
+     "gain_amount": 10,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "bm.health_for_lifespan",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_mending_grass",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "wood_atk_1_05_gu",
+     "material_id": "",
+     "stone_cost": 8,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.mending_grass",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_bone_knit",
+     "kind": "purchase",
+     "tier": 2,
+     "gu_id": "bone_atk_1_08_gu",
+     "material_id": "",
+     "stone_cost": 14,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.bone_knit",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_spring_heart",
+     "kind": "purchase",
+     "tier": 3,
+     "gu_id": "human_atk_1_01_gu",
+     "material_id": "",
+     "stone_cost": 18,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.spring_heart",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_moon_shadow_300",
+     "kind": "purchase",
+     "tier": 3,
+     "gu_id": "moon_shadow_gu",
+     "material_id": "",
+     "stone_cost": 40,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.moon_shadow_300",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_life_root",
+     "kind": "purchase",
+     "tier": 4,
+     "gu_id": "wood_atk_1_05_gu",
+     "material_id": "",
+     "stone_cost": 20,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.life_root",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_undying_vine",
+     "kind": "purchase",
+     "tier": 4,
+     "gu_id": "wood_atk_1_05_gu",
+     "material_id": "",
+     "stone_cost": 20,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.undying_vine",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_heaven_dew",
+     "kind": "purchase",
+     "tier": 5,
+     "gu_id": "water_atk_1_08_gu",
+     "material_id": "",
+     "stone_cost": 80,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.heaven_dew",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_inheritance_token",
+     "kind": "material_purchase",
+     "tier": 2,
+     "gu_id": "",
+     "material_id": "inheritance_token",
+     "stone_cost": 60,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "purchase.inheritance_token",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "gu_fang_moon_glow_gu",
+     "kind": "gu_fang_unlock",
+     "tier": 2,
+     "gu_id": "moon_glow_gu",
+     "material_id": "",
+     "stone_cost": 80,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "gu_fang.moon_glow_gu",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "gu_fang_white_jade_gu",
+     "kind": "gu_fang_unlock",
+     "tier": 2,
+     "gu_id": "white_jade_gu",
+     "material_id": "",
+     "stone_cost": 80,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "gu_fang.white_jade_gu",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "gu_fang_blood_heal_2_23_gu",
+     "kind": "gu_fang_unlock",
+     "tier": 2,
+     "gu_id": "blood_heal_2_23_gu",
+     "material_id": "",
+     "stone_cost": 80,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "gu_fang.blood_heal_2_23_gu",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "gu_fang_blood_atk_3_03_gu",
+     "kind": "gu_fang_unlock",
+     "tier": 3,
+     "gu_id": "blood_atk_3_03_gu",
+     "material_id": "",
+     "stone_cost": 200,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "gu_fang.blood_atk_3_03_gu",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "gu_fang_blood_atk_3_11_gu",
+     "kind": "gu_fang_unlock",
+     "tier": 3,
+     "gu_id": "blood_atk_3_11_gu",
+     "material_id": "",
+     "stone_cost": 200,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "",
+     "card_key": "gu_fang.blood_atk_3_11_gu",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_sword_atk_1_06",
+     "kind": "purchase",
+     "tier": 1,
+     "gu_id": "sword_atk_1_06_gu",
+     "material_id": "",
+     "stone_cost": 8,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "sword",
+     "card_key": "purchase.sword_atk_1_06",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_sword_atk_2_12",
+     "kind": "purchase",
+     "tier": 2,
+     "gu_id": "sword_atk_2_12_gu",
+     "material_id": "",
+     "stone_cost": 18,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "sword",
+     "card_key": "purchase.sword_atk_2_12",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_sword_def_3_14",
+     "kind": "purchase",
+     "tier": 3,
+     "gu_id": "sword_def_3_14_gu",
+     "material_id": "",
+     "stone_cost": 30,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "sword",
+     "card_key": "purchase.sword_def_3_14",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_sword_heal_4_16",
+     "kind": "purchase",
+     "tier": 4,
+     "gu_id": "sword_heal_4_16_gu",
+     "material_id": "",
+     "stone_cost": 45,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "sword",
+     "card_key": "purchase.sword_heal_4_16",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    },
+    {
+     "id": "purchase_sword_atk_5_02",
+     "kind": "purchase",
+     "tier": 5,
+     "gu_id": "sword_atk_5_02_gu",
+     "material_id": "",
+     "stone_cost": 70,
+     "lifespan_cost": null,
+     "soul_gain": null,
+     "cost_kind": "",
+     "cost_amount": null,
+     "gain_kind": "",
+     "gain_amount": null,
+     "input_gu_ids": [],
+     "rewards": [],
+     "recipe_id": "",
+     "school": "sword",
+     "card_key": "purchase.sword_atk_5_02",
+     "npc_only": false,
+     "source_class": "adaptation",
+     "source_ids": [
+      "CAN-ECONOMY-001",
+      "CAN-NANJIANG-001",
+      "CAN-NANJIANG-002",
+      "CAN-NANJIANG-003",
+      "CAN-NANJIANG-004"
+     ],
+     "canon_review_status": "approved",
+     "adaptation_note": "元石本位、议价与商队临时开市是原著事实；每条报价的档位与价格数值为游戏规则（附录 B 口径）。",
+     "tunable": true
+    }
+   ],
+   "material_reference_prices": {
+    "beast_blood": {
+     "name_zh": "兽血",
+     "value": 2,
+     "reference_value": 10,
+     "public_liquidity": 0.8
+    },
+    "beast_bone": {
+     "name_zh": "兽骨",
+     "value": 1,
+     "reference_value": 5,
+     "public_liquidity": 0.7
+    },
+    "venom_sac": {
+     "name_zh": "毒囊",
+     "value": 3,
+     "reference_value": 15,
+     "public_liquidity": 0.3
+    },
+    "moon_dew": {
+     "name_zh": "月华露",
+     "value": 4,
+     "reference_value": 20,
+     "public_liquidity": 0.4
+    },
+    "moon_blue_petal": {
+     "name_zh": "月蓝花瓣",
+     "value": 1,
+     "reference_value": 5,
+     "public_liquidity": 0.5
+    },
+    "boar_king_tusk": {
+     "name_zh": "野猪王牙",
+     "value": 1,
+     "reference_value": 15,
+     "public_liquidity": 0.2
+    },
+    "inheritance_token": {
+     "name_zh": "传承信物",
+     "value": 30,
+     "reference_value": 60,
+     "public_liquidity": 0.5
+    },
+    "mat_blood_1": {
+     "name_zh": "兽凝血膏",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_qi_1": {
+     "name_zh": "凝气露",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_force_1": {
+     "name_zh": "兽筋",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_soul_1": {
+     "name_zh": "魂絮",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_refine_1": {
+     "name_zh": "熔炉灰",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_wisdom_1": {
+     "name_zh": "灵思墨",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_dream_1": {
+     "name_zh": "眠雾",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_luck_1": {
+     "name_zh": "福签",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_sword_1": {
+     "name_zh": "断刃屑",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_wood_1": {
+     "name_zh": "青树脂",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_fire_1": {
+     "name_zh": "地火膏",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_water_1": {
+     "name_zh": "潭心珠",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_wind_1": {
+     "name_zh": "游风羽",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_gold_1": {
+     "name_zh": "砂金",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_earth_1": {
+     "name_zh": "壤髓泥",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_slave_1": {
+     "name_zh": "兽革扣",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_heaven_1": {
+     "name_zh": "天尘",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_human_1": {
+     "name_zh": "遗墨纸片",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_bone_1": {
+     "name_zh": "白骨粉",
+     "value": 1,
+     "reference_value": 3,
+     "public_liquidity": 0.8
+    },
+    "mat_force_2": {
+     "name_zh": "荒兽筋",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_force_3": {
+     "name_zh": "兽王筋",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_force_4": {
+     "name_zh": "太古荒兽筋",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_gold_2": {
+     "name_zh": "矿脉金砂",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_gold_3": {
+     "name_zh": "精金屑",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_gold_4": {
+     "name_zh": "藏山金精",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_wisdom_2": {
+     "name_zh": "谋算墨",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_wisdom_3": {
+     "name_zh": "传世墨锭",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_wisdom_4": {
+     "name_zh": "圣贤残墨",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_heaven_2": {
+     "name_zh": "雷涤尘",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_heaven_3": {
+     "name_zh": "穹核尘",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_heaven_4": {
+     "name_zh": "命数尘",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_fire_2": {
+     "name_zh": "火岩髓",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_fire_3": {
+     "name_zh": "离火精",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_fire_4": {
+     "name_zh": "焚天髓",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_water_2": {
+     "name_zh": "寒潭髓",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_water_3": {
+     "name_zh": "沧溟珠",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_water_4": {
+     "name_zh": "弱水精",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_wind_2": {
+     "name_zh": "罡风絮",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_wind_3": {
+     "name_zh": "天罡翎",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_wind_4": {
+     "name_zh": "太虚风息",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_wood_2": {
+     "name_zh": "百年松脂",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_wood_3": {
+     "name_zh": "木灵芯",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_wood_4": {
+     "name_zh": "建木青髓",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_earth_2": {
+     "name_zh": "黄泉壤",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_earth_3": {
+     "name_zh": "地心岩乳",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_earth_4": {
+     "name_zh": "息壤精",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_blood_2": {
+     "name_zh": "沁血髓",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_blood_3": {
+     "name_zh": "血菩提",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_blood_4": {
+     "name_zh": "万血精",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_dream_2": {
+     "name_zh": "酣梦丝",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_dream_3": {
+     "name_zh": "蝶梦纱",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_dream_4": {
+     "name_zh": "大梦真绫",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_luck_2": {
+     "name_zh": "吉运绦",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_luck_3": {
+     "name_zh": "鸿运绫",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_luck_4": {
+     "name_zh": "天运符",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_qi_2": {
+     "name_zh": "氤氲珠",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_qi_3": {
+     "name_zh": "纯阳息",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_qi_4": {
+     "name_zh": "龙涎气",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_human_2": {
+     "name_zh": "名家信札",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_human_3": {
+     "name_zh": "宗师手札",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_human_4": {
+     "name_zh": "圣贤遗篇",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_slave_2": {
+     "name_zh": "厚兽革",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_slave_3": {
+     "name_zh": "兽王革",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_slave_4": {
+     "name_zh": "万兽纹革",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_soul_2": {
+     "name_zh": "凝魂玉屑",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_soul_3": {
+     "name_zh": "魂将残晶",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_soul_4": {
+     "name_zh": "先贤英魂核",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_refine_2": {
+     "name_zh": "地火熔渣",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_refine_3": {
+     "name_zh": "五金熔英",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_refine_4": {
+     "name_zh": "九转炉心",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    },
+    "mat_sword_2": {
+     "name_zh": "陨铁屑",
+     "value": 2,
+     "reference_value": 6,
+     "public_liquidity": 0.6
+    },
+    "mat_sword_3": {
+     "name_zh": "寒铁屑",
+     "value": 3,
+     "reference_value": 11,
+     "public_liquidity": 0.4
+    },
+    "mat_sword_4": {
+     "name_zh": "天外玄铁屑",
+     "value": 5,
+     "reference_value": 19,
+     "public_liquidity": 0.25
+    }
+   },
+   "dragon_fish_replacement": [
+    50,
+    70,
+    80,
+    90,
+    95
+   ],
+   "source_class": "adaptation",
+   "source_ids": [
+    "CAN-ECONOMY-001",
+    "CAN-GU-CARE-001",
+    "CAN-NANJIANG-001",
+    "CAN-NANJIANG-002",
+    "CAN-NANJIANG-003",
+    "CAN-NANJIANG-004"
+   ],
+   "canon_review_status": "approved",
+   "adaptation_note": "元石本位、元石兼作修行/战斗/炼蛊消耗品是原著事实；层预算、通胀乘数、黑市兑换率与回购比例为游戏规则。仙元石仅登记为蛊仙阶段资源，首发不参与凡人跑局（CAN-IMMORTAL-BOUNDARY-001）。",
+   "tunable": true
+  }
+ ]
+}

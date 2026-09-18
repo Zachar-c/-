@@ -1,0 +1,39 @@
+import { GuStatBar } from "~/ui/widgets/gu_stat_bar"
+
+# One snapshot enemy. Selection stays within the caller's presentation state.
+export GuEnemyActor() -> RuitkVNode {
+  var MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
+  var enemy = props.get("enemy", {})
+  var selected = (props.get("selected", false))
+  var selectable = (props.get("selectable", false))
+  var on_select = props.get("on_select", func(_id = ""): pass)
+  var enemy_id = str(enemy.get("id", ""))
+  var intent = enemy.get("intent", {})
+  var intent_type = str(intent.get("type", "charge"))
+  var intent_value = int(intent.get("value", 0))
+  var intent_detail = str(intent.get("detail", "蓄势待发"))
+  var intent_speed = int(intent.get("speed", 0))
+  var intent_rune = "☾"
+  var intent_color = GuStyle.INK_SOFT
+  if intent_type == "attack":
+    intent_rune = "⚔"
+    intent_color = GuStyle.CINNABAR
+  elif intent_type == "defend" or intent_type == "guard":
+    intent_rune = "🛡"
+    intent_color = GuStyle.ANOMALY_YELLOW
+  var status_rows = []
+  for status in enemy.get("statuses", []):
+    status_rows.append(<Label name={ "enemy_status_" + enemy_id } text={ "%s %d 层" % [str(status.get("name", "状态")), int(status.get("stacks", 0))] } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />)
+  if status_rows.is_empty():
+    status_rows.append(<Label name={ "enemy_status_" + enemy_id } text="无状态" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />)
+  var select_rows = []
+  if selectable:
+    select_rows.append(<Button text={ str(enemy.get("name", "敌人")) } onPressed={ func(): on_select.call(enemy_id) } style={ MasterTheme.button_style("target") } />)
+  else:
+    select_rows.append(<Label text={ str(enemy.get("name", "敌人")) } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 18} } />)
+  var body = (<VBoxContainer name={ "enemy_actor_" + enemy_id } style={ {"separation": 5, "size_flags_horizontal": 3} }><Label name={ "enemy_intent_" + enemy_id } text={ "意图：%s %d · 速 %d · %s" % [intent_rune, intent_value, intent_speed, intent_detail] } tooltip_text={ "意图：%s；数值 %d；速度 %d；%s" % [intent_type, intent_value, intent_speed, intent_detail] } style={ {"font_color": intent_color, "font_size": 14} } />{ select_rows }<VBoxContainer name={ "enemy_hp_" + enemy_id }><GuStatBar label="生命" value={ int(enemy.get("hp", 0)) } max_value={ maxi(1, int(enemy.get("max_hp", 1))) } color={ GuStyle.CINNABAR } /></VBoxContainer><Label name={ "enemy_shield_" + enemy_id } text={ "护盾 %d" % int(enemy.get("shield", 0)) } tooltip_text="护盾先承受本次伤害。" style={ {"font_color": GuStyle.INK_SOFT, "font_size": 13} } />{ status_rows }</VBoxContainer>)
+  var actor_style = {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": GuStyle.RADIUS_SMALL, "border_width_all": GuStyle.HAIRLINE, "border_color": GuStyle.JADE if selected else GuStyle.HAIRLINE_COLOR}
+  # A1 drag hit-testing: the host forwards a root_ref (a host "ref" Callable/box)
+  # so the battle screen can read this actor's real Control rect at drop time.
+  return (<PanelContainer ref={ props.get("root_ref") } style={ actor_style }><MarginContainer style={ {"margin_left": 10, "margin_right": 10, "margin_top": 8, "margin_bottom": 8} }>{ body }</MarginContainer></PanelContainer>)
+}

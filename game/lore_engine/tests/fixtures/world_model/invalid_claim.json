@@ -1,0 +1,21 @@
+{
+  "cases": [
+    {
+      "name": "missing source and evidence reference",
+      "record": {"status": "candidate", "source_ids": [], "evidence_ids": []}
+    },
+    {
+      "name": "invented status",
+      "record": {"status": "settled", "source_ids": ["gu_zhenren_main"], "evidence_ids": ["e1"]}
+    },
+    {
+      "name": "P0 claim without source citation",
+      "p0_claim": true,
+      "record": {"status": "candidate", "source_ids": ["secondary_note"], "evidence_ids": ["e1"]}
+    },
+    {
+      "name": "implementation action edits production path",
+      "record": {"status": "candidate", "source_ids": ["gu_zhenren_main"], "evidence_ids": ["e1"], "implementation_action": "data/gu.json: add a rule"}
+    }
+  ]
+}

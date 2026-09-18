@@ -1,0 +1,58 @@
+
+# GuTooltipView —— 统一 tooltip 模板（规格 §9 / §16.5；T6-E 打磨批按规格落宣纸卷轴感）
+# 固定格式：品质 / 效果 / 联动 / 代价 / 不可用 / 诅咒警示 / 风险；缺段隐藏、顺序恒定。
+# 底色 PAPER 卷轴 + 深字 INK；DANGER 只保留给诅咒警示行，不与正文混用。
+# 品质色轨取宣纸上可读的深色暖阶（GOLD_DIM→ANOMALY_AMBER→EMBER→BLOOD）。
+# props：title / quality / effect / synergy / cost / block_reason / curse_warning / risk_warning / on_detail
+
+export GuTooltipView() -> RuitkVNode {
+  var title = props.get("title", "")
+  var quality = props.get("quality", "")
+  var effect = props.get("effect", "")
+  var synergy = props.get("synergy", "")
+  var cost = props.get("cost", "")
+  var block_reason = props.get("block_reason", "")
+  var curse_warning = props.get("curse_warning", false)
+  var risk_warning = props.get("risk_warning", "")
+  var on_detail = props.get("on_detail", null)
+
+  var quality_color = GuStyle.quality_color(quality)
+
+  return (
+    <PanelContainer style={ {"bg_color": GuStyle.PAPER_BG, "corner_radius_all": 6, "border_width_all": 1, "border_color": GuStyle.PAPER_DEEP} }>
+      <MarginContainer style={ {"margin_left": 12, "margin_right": 12, "margin_top": 10, "margin_bottom": 10} }>
+        <VBoxContainer style={ {"separation": 4} }>
+          <HBoxContainer style={ {"separation": 8} }>
+            @if (title != "") {
+              return ( <Label text={ title } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 16} } /> )
+            }
+            @if (quality != "") {
+              return ( <Label text={ quality } style={ {"font_color": quality_color, "font_size": 12} } /> )
+            }
+          </HBoxContainer>
+          @if (effect != "") {
+            return ( <Label text={ "效果：" + effect } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } /> )
+          }
+          @if (synergy != "") {
+            return ( <Label text={ "联动：" + synergy } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } /> )
+          }
+          @if (cost != "") {
+            return ( <Label text={ "代价：" + cost } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 14} } /> )
+          }
+          @if (block_reason != "") {
+            return ( <Label text={ "不可用：" + block_reason } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
+          }
+          @if (curse_warning) {
+            return ( <Label text={ "诅咒警示：" + effect } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
+          }
+          @if (risk_warning != "") {
+            return ( <Label text={ "风险：" + risk_warning } style={ {"font_color": GuStyle.CINNABAR, "font_size": 14} } /> )
+          }
+          @if (on_detail != null) {
+            return ( <Button text="详情" onPressed={ func(): on_detail.call() } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14, "min_width": 24, "min_height": 24} } /> )
+          }
+        </VBoxContainer>
+      </MarginContainer>
+    </PanelContainer>
+  )
+}

@@ -1,0 +1,41 @@
+{
+  "version": "world-model-stage0-v1",
+  "minimum_claims": 20,
+  "pre_stage0_baseline_commit": "b2aeb2e5cb854cb2ee2cea12647cd6fadd46aa7d",
+  "high_impact_claim_ids": [
+    "gu_is_life",
+    "gu_is_independent_entity",
+    "cultivator_aperture",
+    "aptitude_capacity",
+    "primeval_essence",
+    "rank_and_subrank",
+    "gu_refinement",
+    "gu_ownership",
+    "gu_feeding",
+    "gu_activation",
+    "natal_gu",
+    "gu_recipe",
+    "kill_move",
+    "information_leak",
+    "dao_marks",
+    "mortal_immortal_boundary",
+    "lifespan",
+    "soul",
+    "body_and_blood",
+    "force_and_social_order",
+    "inheritance",
+    "economy_and_primeval_stones",
+    "tribulation_or_ascension",
+    "world_scope_and_compression"
+  ],
+  "p0_source_ids": ["gu_zhenren_main", "ren_zu_zhuan"],
+  "read_allowlist": [
+    "lore_engine/config/world-model-stage0.json",
+    "lore_sources/manifest.json",
+    "lore_sources/benchmarks/world_model_stage0/",
+    "lore_engine/tests/fixtures/world_model/",
+    "分支：六卷精编版/蛊真人-clean.txt",
+    "分支：六卷精编版/《人祖传》.txt"
+  ],
+  "production_write_denylist": ["data/", "scripts/", "scenes/"]
+}

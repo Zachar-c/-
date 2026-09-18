@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序员运势 | Programmer's Fortune</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0d1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-muted: #7d8590;
+            --accent: #a371f7;
+            --accent-soft: rgba(163, 113, 247, 0.15);
+            --success: #3fb950;
+            --danger: #f85149;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px 40px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset,
+                        0 24px 80px -24px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 0%, var(--accent-soft), transparent 50%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 1px;
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .run-button {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, var(--accent), #8957e5);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 8px 24px -8px rgba(163, 113, 247, 0.5);
+        }
+
+        .run-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 32px -8px rgba(163, 113, 247, 0.6);
+        }
+
+        .run-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .run-button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .run-button .icon {
+            font-size: 14px;
+        }
+
+        .terminal {
+            margin-top: 28px;
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.7;
+            min-height: 120px;
+            display: none;
+        }
+
+        .terminal.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .terminal-line {
+            color: var(--text-muted);
+        }
+
+        .terminal-line.success {
+            color: var(--success);
+        }
+
+        .terminal-line.result {
+            color: var(--text-primary);
+            font-size: 18px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .terminal-line.stars {
+            color: var(--accent);
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background: var(--accent);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 24px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="eyebrow">Programmer's Fortune</div>
+            <h1>今日运势</h1>
+            <p class="subtitle">按下运行按钮，编译你的程序员今日运势。</p>
+
+            <button class="run-button" id="runBtn" onclick="runFortune()">
+                <span class="icon">▶</span>
+                <span id="btnText">运行命运.exe</span>
+            </button>
+
+            <div class="terminal" id="terminal">
+                <div class="terminal-line" id="line1">> 等待输入...<span class="cursor"></span></div>
+            </div>
+        </div>
+        <div class="footer">
+            Powered by <a href="http://localhost:8080/fortune" target="_blank">fortune-app</a>
+        </div>
+    </div>
+
+    <script>
+        const runBtn = document.getElementById('runBtn');
+        const btnText = document.getElementById('btnText');
+        const terminal = document.getElementById('terminal');
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function typeLine(element, text, className = '') {
+            element.className = 'terminal-line ' + className;
+            element.textContent = '';
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text[i];
+                await sleep(25);
+            }
+        }
+
+        async function runFortune() {
+            runBtn.disabled = true;
+            btnText.textContent = 'compiling fate...';
+            terminal.innerHTML = '';
+            terminal.classList.add('visible');
+
+            const line1 = document.createElement('div');
+            const line2 = document.createElement('div');
+            const line3 = document.createElement('div');
+            const line4 = document.createElement('div');
+            terminal.appendChild(line1);
+            terminal.appendChild(line2);
+            terminal.appendChild(line3);
+            terminal.appendChild(line4);
+
+            await typeLine(line1, '> 正在连接 fortune-app...');
+            await sleep(300);
+            await typeLine(line2, '> 编译命运中...', 'success');
+            await sleep(400);
+
+            try {
+                const response = await fetch('/fortune');
+                const data = await response.json();
+
+                await typeLine(line3, '> 今日结果：', 'success');
+                await sleep(200);
+                await typeLine(line4, data.display, 'result');
+
+            } catch (err) {
+                await typeLine(line3, '> 错误：无法连接到服务器', 'danger');
+                await typeLine(line4, '> ' + err.message);
+            }
+
+            runBtn.disabled = false;
+            btnText.textContent = '再运行一次';
+        }
+    </script>
+</body>
+</html>

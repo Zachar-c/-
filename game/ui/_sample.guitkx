@@ -1,0 +1,13 @@
+
+export SampleApp() -> RuitkVNode {
+  return (
+    <CenterContainer>
+      <VBoxContainer style={ {"separation": 12} }>
+        <Label text="蛊路求生 · RUI 验证" style={ {"font_size": 28, "font_color": GuStyle.ANOMALY_YELLOW } } />
+        <Label text="统一组件体系已接入" style={ {"font_color": GuStyle.INK_SOFT } } />
+        <Button text="样例按钮" style={ {"min_width": 200, "font_color": GuStyle.JADE } } />
+        <Button text="危险示意" style={ {"min_width": 200, "font_color": GuStyle.CINNABAR } } />
+      </VBoxContainer>
+    </CenterContainer>
+  )
+}

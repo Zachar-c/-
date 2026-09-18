@@ -1,0 +1,151 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/reward_screen_view.gd" id="1_reward"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="3_dots"]
+
+[node name="RewardScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_reward")
+
+
+[node name="RewardPaper" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RewardDots" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_dots")
+expand_mode = 1
+stretch_mode = 6
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "战利品"
+
+[node name="TitleRule" type="ColorRect" parent="Root/HeaderRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(2, 0)
+size_flags_vertical = 3
+
+[node name="SubtitleLabel" type="Label" parent="Root/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "战利品已入账 · 本屏为确认展示"
+
+[node name="SealSpacer" type="Control" parent="Root/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SealPanelContainer" type="PanelContainer" parent="Root/HeaderRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+
+[node name="SealCenter" type="CenterContainer" parent="Root/HeaderRow/SealPanelContainer"]
+layout_mode = 2
+
+[node name="SealBox" type="VBoxContainer" parent="Root/HeaderRow/SealPanelContainer/SealCenter"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="SealTop" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "得胜"
+horizontal_alignment = 1
+
+[node name="SealBottom" type="Label" parent="Root/HeaderRow/SealPanelContainer/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "录"
+horizontal_alignment = 1
+
+[node name="primary_decision_surface" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SectionTitle" type="Label" parent="Root/primary_decision_surface"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "本场所得"
+
+[node name="RewardRow" type="HBoxContainer" parent="Root/primary_decision_surface"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BuildProgressBox" type="VBoxContainer" parent="Root/primary_decision_surface"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="BuildProgressTitle" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 15
+
+[node name="BuildProgressLines" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="BuildProgressStatus" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="BuildProgressNext" type="Label" parent="Root/primary_decision_surface/BuildProgressBox"]
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="NoteRow" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PoolFallbackLabel" type="Label" parent="Root/NoteRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+visible = false
+
+[node name="PityLabel" type="Label" parent="Root/NoteRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+visible = false
+
+[node name="ContinueButton" type="Button" parent="Root"]
+layout_mode = 2
+text = "继续旅程"

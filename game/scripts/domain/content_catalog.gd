@@ -1,0 +1,1713 @@
+class_name ContentCatalog
+extends RefCounted
+
+
+const EFFECT_IDS := ["reveal_hidden", "heal_and_strike", "control_escape"]
+const RARITY_IDS := ["common", "rare", "epic", "legendary"]
+# C3 2026-09-05 转阶落表：gu.rank = 转数，语义域 1..5，与地图层 L1..L5 一一对应
+# （每层 Boss 即该转量级考验；中央倍率见 data/v1_battle.json 的 boss_layer_mult 与
+# stage_base，键 one..five 对齐 battle_command_facade.BOSS_LAYER_IDS）。
+# rarity（掉落/价值层次）与转阶（催动门禁/成长）解耦：任一稀有度可出现于任意转
+# （数据实证：epic·1转 与 common·2转 并存）。test-only 蛊（tags 含 "test"，如
+# 十转杀蛊 test_slay_gu）以 low_rank_exception: true 豁免上界，供天梯验收夹具使用。
+const GU_RANK_MAX := 5
+# C2 2026-09-05: dao-mark school set after 214-gu remap (U1 26-list minus the six
+# zero-coverage schools change/star/zhou/thunder/ice/formation; D-stage curation adds them).
+const SCHOOL_IDS := [
+	"blood", "qi", "force", "soul", "refine", "light", "wisdom", "dream", "luck",
+	"sword", "wood", "fire", "water", "wind", "gold", "earth", "slave", "heaven",
+	"human", "bone",
+]
+const RELIC_GRADES := ["meta_rule"]
+# Q8-G 1-B0-M frozen material model (2026-09-13): the five attribute classes on
+# every loot material. source_class is a TYPE label (no implicit ordering), not
+# a tier; acquisition_mode is how the PLAYER obtains it (orthogonal to source);
+# quality_band bands are provisional until 1-B1/Batch 2 finalize them.
+# Convention: dao_tags[0] is the primary dao mark (secondary marks only weaken
+# suitability, never gate it - no hard school exclusivity).
+const MATERIAL_SOURCE_CLASSES := [
+	"common_beast", "fierce_beast", "beast_king", "gu_immortal", "foreign_race",
+	"gu_master", "environment", "craft",
+]
+const MATERIAL_ACQUISITION_MODES := [
+	"hunt", "gather", "trade", "husbandry", "event", "craft_byproduct", "seize", "inherit",
+]
+const MATERIAL_QUALITY_BANDS := ["crude", "plain", "refined", "prized"]
+# 1-B1 front-batch review (2026-09-13): origin and semantic-basis tracking.
+# origin_status separates original-text materials from game extensions and from
+# design candidates that have NOT passed the World Semantic Gate yet;
+# semantic_basis.type records which layer justifies the material-dao relation
+# (never let a naming association masquerade as a world fact).
+const MATERIAL_ORIGIN_STATUS := ["original", "design_extension", "design_candidate"]
+const MATERIAL_SEMANTIC_BASIS_TYPES := [
+	"original_fact", "derived_D1", "derived_D2", "derived_D3", "design_only",
+]
+const CURSE_EFFECT_IDS := ["draw_pollution", "essence_surcharge", "slot_seal"]
+const DECK_SERVICE_IDS := ["remove_card", "remove_imprint", "remove_curse"]
+const EVENT_KIND_IDS := ["delayed_cost", "curse_bargain"]
+const DIALOGUE_INTENT_IDS := ["probe", "trade", "pressure", "leave", "clarify"]
+const NODE_KIND_IDS := ["start", "combat", "pursuit", "event", "shop", "market", "rest", "seclusion", "cultivation", "ascension", "refinement", "inheritance", "caravan", "wild_gu", "contact", "hazard", "earth_vein", "ledger"]
+# C1-min §16.13: contract rule keys are a closed whitelist; the ending ids
+# mirror the snapshot builder's ending_type vocabulary.
+const CONTRACT_RULE_KEYS := [
+	"strike_damage_pct", "enemy_damage_pct", "shop_price_pct",
+	"material_bonus", "material_penalty", "turn_essence_bonus",
+	"hp_max_penalty", "hall_material_bonus_pct", "enemy_hp_pct",
+	"starter_stone", "enemy_hp_floor",
+]
+const ENDING_TYPE_IDS := ["success", "risky", "retreat", "death", "gu_fall", "true_ending"]
+# N1 §16.9: journal layers are a closed enum and route markers must name real
+# event-log signals produced by MetaProgress._run_markers (single mapping).
+const JOURNAL_LAYER_IDS := ["hall"]
+# S2 开局 Buff 结算种类；每种由对应消费点执行（facade/V1/RunController）。
+const BUFF_EFFECTS := ["enemy_hp_one_except_boss", "grant_gu", "grant_stones"]
+const JOURNAL_MARKER_IDS := [
+	"boss_defeated", "sworn_contracts", "ascension_attempted",
+	"notoriety_gte_5", "shop_barter", "rest_curse_removed",
+]
+const EnemyCatalogScript = preload("res://scripts/domain/enemy_catalog.gd")
+const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
+const DialogueGatewayScript = preload("res://scripts/domain/dialogue_gateway.gd")
+const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
+
+
+static func load_all() -> Dictionary:
+	var gu := _load_array("res://data/gu.json")
+	var inheritances := _load_array("res://data/inheritances.json")
+	var refinement := _load_object("res://data/refinement_recipes.json")
+	var recipes: Array = refinement.get("recipes", [])
+	var caravan_offers: Array = refinement.get("caravan_offers", [])
+	var enemy_catalog := EnemyCatalogScript.load_all()
+	var relics := _load_array("res://data/relics.json")
+	var curses := _load_array("res://data/curse.json")
+	var events: Array = _load_object("res://data/events.json").get("events", [])
+	var shop_offers: Array = _load_object("res://data/shops.json").get("offers", [])
+	var reputation := _load_object("res://data/reputation.json")
+	var deck := _load_object("res://data/deck.json")
+	var pacing := _load_object("res://data/pacing.json")
+	var aptitude := _load_object("res://data/aptitude.json")
+	var synthesis := _load_object("res://data/synthesis.json")
+	var v1_battle := _load_object("res://data/v1_battle.json")
+	var schools := _load_object("res://data/schools.json")
+	var buffs_cfg := _load_object("res://data/buffs.json")
+	var loot_tables := _load_object("res://data/loot_tables.json")
+	var contracts_cfg := _load_object("res://data/contracts.json")
+	var journal_cfg := _load_object("res://data/journal.json")
+	var dda_cfg := _load_object("res://data/dda.json")
+	var balance_cfg := _load_object("res://data/balance.json")
+	var debug_cfg := _load_object("res://data/debug.json")
+	var first_run_cfg := _load_object("res://data/first_run.json")
+	var dialogue_templates_cfg := _load_object("res://data/dialogue_templates.json")
+	var names_cfg := _load_object("res://data/names.json")
+	# gu_names.json 由 display_text.gu() 作额外蛊名增量表（懒加载，低危兜底）。
+	# W6（2026-09-09）：存在性登记进 catalog，validate 检缺失——此前该文件坏/缺
+	# 启动无任何告警，属校验盲区。
+	var gu_extra_names_cfg := _load_object("res://data/gu_names.json")
+	var gu_extra_names_missing := not FileAccess.file_exists("res://data/gu_names.json")
+	var nodes_data := _load_object("res://data/nodes.json")
+	var inheritance_sites_cfg := _load_object("res://data/inheritance_sites.json")
+	var nodes: Array = nodes_data.get("nodes", [])
+	var loot_materials: Dictionary = loot_tables.get("materials", {})
+	var material_ids: Array[String] = ["feed_points"]
+	for material_id in loot_materials:
+		material_ids.append(str(material_id))
+	return {
+		"gu": gu,
+		"gu_by_id": _index_by_id(gu),
+		"material_ids": material_ids,
+		"loot_tables": loot_tables,
+		"material_by_id": loot_tables.get("materials", {}),
+		"inheritances": inheritances,
+		"npcs": _load_array("res://data/npcs.json"),
+		"refinement_recipes": recipes,
+		"refinement_by_id": _index_by_id(recipes),
+		"caravan_offers": caravan_offers,
+		"caravan_offer_by_id": _index_by_id(caravan_offers),
+		"relics": relics,
+		"relic_by_id": _index_by_id(relics),
+		"curses": curses,
+		"curse_by_id": _index_by_id(curses),
+		"events": events,
+		"event_by_id": _index_by_id(events),
+		"nodes": nodes,
+		"node_by_id": _index_by_id(nodes),
+		"inheritance_sites": inheritance_sites_cfg.get("sites", []),
+		"inheritance_site_by_id": _index_by_id(inheritance_sites_cfg.get("sites", [])),
+		"nodes_data": nodes_data,
+		"shop_offers": shop_offers,
+		"shop_offer_by_id": _index_by_id(shop_offers),
+		"buffs": buffs_cfg.get("buffs", {}),
+		"reputation": reputation,
+		"deck": deck,
+		"pacing": pacing,
+		"aptitude": aptitude,
+		"synthesis": synthesis,
+		"v1_battle": v1_battle,
+		"schools": schools,
+		"school_pools": _load_object("res://data/school_pools.json"),
+		"contracts": contracts_cfg,
+		"contract_entry_by_id": _index_by_id(contracts_cfg.get("entries", [])),
+		"journal": journal_cfg,
+		"journal_entry_by_id": _index_by_id(journal_cfg.get("entries", [])),
+		"dda": dda_cfg,
+		"balance": balance_cfg,
+		"debug": debug_cfg,
+		"first_run": first_run_cfg,
+		"dialogue_templates": dialogue_templates_cfg,
+		"names": names_cfg,
+		"gu_extra_names": gu_extra_names_cfg,
+		"gu_extra_names_missing": gu_extra_names_missing,
+		"enemies": enemy_catalog["enemies"],
+		"enemy_by_id": enemy_catalog["enemy_by_id"],
+		"enemy_ids_by_theme": enemy_catalog["enemy_ids_by_theme"],
+	}
+
+
+static func load_and_validate_all() -> Dictionary:
+	var catalog := load_all()
+	var errors := validate(catalog)
+	return {"catalog": catalog, "errors": errors}
+
+
+static func _validate_events(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var seen := {}
+	for entry_value in catalog.get("events", []):
+		if not entry_value is Dictionary:
+			errors.append("events entry must be an object")
+			continue
+		var entry: Dictionary = entry_value
+		var event_id := str(entry.get("id", ""))
+		if event_id.is_empty():
+			errors.append("event entry missing id")
+		elif seen.has(event_id):
+			errors.append("duplicate event id %s" % event_id)
+		seen[event_id] = true
+		var kind := str(entry.get("kind", ""))
+		if entry.has("kind") and not EVENT_KIND_IDS.has(kind):
+			errors.append("event %s has unknown kind %s" % [event_id, kind])
+		for field in ["health_cost", "delayed_soul_cost", "stone_gain"]:
+			if entry.has(field) and (not _is_integral(entry.get(field)) or int(entry.get(field)) < 0):
+				errors.append("event %s.%s must be a non-negative integer" % [event_id, field])
+		# D4：事件文案自描述。卡片与对话气球都从这里取字，不再硬编码"洞穴回声"话术。
+		# 只校验类型（空串 = 沿用代码兜底话术，不算错），不强制每条都写。
+		for text_field in ["title", "summary", "flavor_gain", "unknown_note"]:
+			if entry.has(text_field) and not entry.get(text_field) is String:
+				errors.append("event %s.%s must be a string" % [event_id, text_field])
+		# 事件必须至少有一个真实杠杆，否则卡片点了也没有任何结算（死内容）。
+		var leverless := int(entry.get("health_cost", 0)) == 0 \
+				and int(entry.get("delayed_soul_cost", 0)) == 0 \
+				and int(entry.get("stone_gain", 0)) == 0 \
+				and str(entry.get("curse_id", "")).is_empty()
+		if leverless:
+			errors.append("event %s has no effect at all (no cost, no gain, no curse)" % event_id)
+		var trigger := str(entry.get("delayed_trigger", ""))
+		if entry.has("delayed_trigger") and trigger != "next_travel":
+			errors.append("event %s.delayed_trigger has unknown value %s" % [event_id, trigger])
+		if entry.has("kind") and kind == "curse_bargain" and str(entry.get("curse_id", "")).is_empty():
+			errors.append("event %s curse_bargain needs curse_id" % event_id)
+		var curse_id := str(entry.get("curse_id", ""))
+		if not curse_id.is_empty() and not catalog.get("curse_by_id", {}).has(curse_id):
+			errors.append("event %s references unknown curse %s" % [event_id, curse_id])
+	return errors
+
+
+static func _validate_pacing(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var pacing: Dictionary = catalog.get("pacing", {})
+	var scaling: Dictionary = pacing.get("turn_scaling", {})
+	for field in ["hp_add_per_turn", "damage_add_per_turn", "hp_cap_bonus", "damage_cap_bonus"]:
+		if not _is_integral(scaling.get(field, null)) or int(scaling.get(field, 0)) < 0:
+			errors.append("pacing turn_scaling.%s must be a non-negative integer" % field)
+	var layers: Dictionary = pacing.get("layers", {})
+	for layer_number in range(1, 6):
+		var layer_id := str(layer_number)
+		if not layers.has(layer_id):
+			errors.append("pacing layers missing %s" % layer_id)
+			continue
+		var layer: Dictionary = layers[layer_id]
+		for range_field in ["rows", "row_nodes", "entry_nodes"]:
+			var bounds: Variant = layer.get(range_field, null)
+			if not bounds is Array or (bounds as Array).size() != 2:
+				errors.append("pacing layer %s.%s must be a two-item array" % [layer_id, range_field])
+				continue
+			if not _is_integral(bounds[0]) or not _is_integral(bounds[1]) or int(bounds[0]) < 1 or int(bounds[1]) < int(bounds[0]):
+				errors.append("pacing layer %s.%s has invalid bounds" % [layer_id, range_field])
+			var loot: Dictionary = layer.get("loot", {})
+			if not _is_integral(loot.get("material_count", null)) or int(loot.get("material_count", -1)) < 0:
+				errors.append("pacing layer %s loot.material_count must be non-negative" % layer_id)
+			var weights: Dictionary = loot.get("weights", {})
+			var has_weight := false
+			for rarity_value in weights:
+				var rarity := str(rarity_value)
+				if not RARITY_IDS.has(rarity):
+					errors.append("pacing layer %s loot.weights uses unknown rarity %s" % [layer_id, rarity])
+				if not _is_integral(weights[rarity_value]) or int(weights[rarity_value]) < 0:
+					errors.append("pacing layer %s loot.weights.%s must be non-negative" % [layer_id, rarity])
+				elif int(weights[rarity_value]) > 0:
+					has_weight = true
+			if not weights.is_empty() and not has_weight:
+				errors.append("pacing layer %s loot.weights needs a positive weight" % layer_id)
+			var enemy_turn := int(layer.get("enemy_turn", 0))
+			if enemy_turn < 1 or enemy_turn > 5:
+				errors.append("pacing layer %s enemy_turn must be within 1..5" % layer_id)
+			# E6（2026-09-10）：本层可随机抽到的敌人 rank 区间。Boss 不参与随机
+			# （只在锚点摆放），所以区间只约束普通/精英。`min` 是"按层品质"的下界
+			# ——深层不该再抽到未入转的杂鱼；`max` 随层递增。
+			var enemy_rank_max := int(layer.get("enemy_rank_max", -1))
+			if enemy_rank_max < 0 or enemy_rank_max > 5:
+				errors.append("pacing layer %s enemy_rank_max must be within 0..5" % layer_id)
+			elif enemy_rank_max < int(layer_id) - 1:
+				errors.append("pacing layer %s enemy_rank_max %d lags the layer number %s (层越深可出的敌人不应变弱)"
+						% [layer_id, enemy_rank_max, layer_id])
+			var enemy_rank_min := int(layer.get("enemy_rank_min", -1))
+			if enemy_rank_min < 0 or enemy_rank_min > 5:
+				errors.append("pacing layer %s enemy_rank_min must be within 0..5" % layer_id)
+			elif enemy_rank_min > enemy_rank_max:
+				errors.append("pacing layer %s enemy_rank_min %d exceeds enemy_rank_max %d"
+						% [layer_id, enemy_rank_min, enemy_rank_max])
+			var price := int(layer.get("shop_price_pct", -1))
+			if price < 0:
+				errors.append("pacing layer %s shop_price_pct must be non-negative" % layer_id)
+			var max_tier := int(layer.get("shop_max_tier", 0))
+			if max_tier < 1 or max_tier > 5:
+				errors.append("pacing layer %s shop_max_tier must be within 1..5" % layer_id)
+			for anchor_value in layer.get("anchors", []):
+				var anchor: Dictionary = anchor_value
+				var template_id := str(anchor.get("template", ""))
+				if not catalog.get("node_by_id", {}).has(template_id):
+					errors.append("pacing layer %s anchor references unknown node %s" % [layer_id, template_id])
+				# 行位槽位须与 MapGenerator._anchor_row_index 保持一致（quarter 于 2026-09-08 增补）。
+				if str(anchor.get("row", "")) not in ["mid", "pre_boss", "quarter"]:
+					errors.append("pacing layer %s anchor %s has unknown row" % [layer_id, template_id])
+			for template_id_value in layer.get("pool", []):
+				var pool_id := str(template_id_value)
+				if not catalog.get("node_by_id", {}).has(pool_id):
+					errors.append("pacing layer %s pool references unknown node %s" % [layer_id, pool_id])
+			# E1a 分类概率表：四分类权重必须存在且非负。
+			for cat in ["battle", "rest", "unknown", "trade"]:
+				var cat_w: Variant = layer.get("category_weights", {}).get(cat, null)
+				if not _is_integral(cat_w) or int(cat_w) < 0:
+					errors.append("pacing layer %s category_weights.%s must be a non-negative integer" % [layer_id, cat])
+			# 修复 4：层预算（中位收入真值）为正，且该层至少存在一件经层加价后
+			# 不超过预算的同层成长物（purchase/soul_boost/recipe_unlock/material）。
+			var stone_budget := int(layer.get("stone_budget", -1))
+			if stone_budget < 1:
+				errors.append("pacing layer %s stone_budget must be a positive integer" % layer_id)
+			else:
+				var cheapest := -1
+				for offer_value in catalog.get("shop_offer_by_id", {}).values():
+					var shop_offer: Dictionary = offer_value
+					if str(shop_offer.get("kind", "")) not in ["purchase", "soul_boost", "recipe_unlock", "material_purchase"]:
+						continue
+					if int(shop_offer.get("tier", 99)) > layer_number:
+						continue
+					var base_cost := int(shop_offer.get("stone_cost", 0))
+					if base_cost <= 0:
+						continue
+					var layer_cost := base_cost + int(base_cost * price / 100)
+					if cheapest < 0 or layer_cost < cheapest:
+						cheapest = layer_cost
+				if cheapest < 0 or cheapest > stone_budget:
+					errors.append("pacing layer %s has no affordable shop growth offer under stone_budget %d (cheapest %d)" % [layer_id, stone_budget, cheapest])
+	# E1a 全局分类池：四分类齐全，模板引用合法（boss/锚点/流程节点不要求入池）。
+	for cat in ["battle", "rest", "unknown", "trade"]:
+		var cat_pool: Array = pacing.get("category_pools", {}).get(cat, [])
+		if cat_pool.is_empty():
+			errors.append("pacing category_pools.%s must be a non-empty array" % cat)
+			continue
+			for tid_value in cat_pool:
+				if not catalog.get("node_by_id", {}).has(str(tid_value)):
+					errors.append("pacing category_pools.%s references unknown node %s" % [cat, tid_value])
+	# E6 敌人抽取的 tier 权重表。`boss` 必须为 0：Boss 只在锚点（关底台）摆放，
+	# 一旦允许随机抽到 Boss，层节奏与"Boss 是刻意安排"这两件事同时失效。
+	var enemy_weights: Variant = pacing.get("enemy_weights", null)
+	if not enemy_weights is Dictionary:
+		errors.append("pacing enemy_weights must be an object")
+	else:
+		var weights_dict: Dictionary = enemy_weights
+		var rollable_total := 0
+		for tier in ["common", "elite", "boss"]:
+			if not weights_dict.has(tier):
+				errors.append("pacing enemy_weights missing tier %s" % tier)
+				continue
+			if not _is_integral(weights_dict[tier]) or int(weights_dict[tier]) < 0:
+				errors.append("pacing enemy_weights.%s must be a non-negative integer" % tier)
+				continue
+			if tier == "boss" and int(weights_dict[tier]) != 0:
+				errors.append("pacing enemy_weights.boss must be 0 (Boss 只在锚点摆放，不参与随机)")
+			elif tier != "boss":
+				rollable_total += int(weights_dict[tier])
+		if rollable_total <= 0:
+			errors.append("pacing enemy_weights needs a positive common/elite weight")
+	return errors
+
+
+static func _validate_aptitude(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var data: Dictionary = catalog.get("aptitude", {})
+	if not _is_integral(data.get("essence_base", null)) or int(data.get("essence_base", 0)) < 1:
+		errors.append("aptitude essence_base must be a positive integer")
+	var factor_map: Dictionary = data.get("aptitude_factor", {})
+	for aptitude_id in ["jia", "yi", "bing", "ding"]:
+		if not _is_integral(factor_map.get(aptitude_id, null)) or int(factor_map[aptitude_id]) < 1:
+			errors.append("aptitude aptitude_factor missing/invalid %s" % aptitude_id)
+	var cult_map: Dictionary = data.get("cultivation_factor", {})
+	for rank in ["1", "2", "3", "4", "5"]:
+		if not _is_integral(cult_map.get(rank, null)) or int(cult_map[rank]) < 1:
+			errors.append("aptitude cultivation_factor missing/invalid %s" % rank)
+	var regen_map: Dictionary = data.get("regen_pct", {})
+	for aptitude_id in ["jia", "yi", "bing", "ding"]:
+		var regen_value: Variant = regen_map.get(aptitude_id, null)
+		if not _is_integral(regen_value) or int(regen_value) < 1 or int(regen_value) > 100:
+			errors.append("aptitude regen_pct missing/invalid %s" % aptitude_id)
+	for path_value in data.get("paths", []):
+		var path: Dictionary = path_value
+		var path_id := str(path.get("id", ""))
+		if path_id.is_empty():
+			errors.append("aptitude path missing id")
+		for field in ["cost_lifespan", "cost_stone", "limit_per_run"]:
+			if not _is_integral(path.get(field, null)) or int(path.get(field, 0)) < 1:
+				errors.append("aptitude path %s.%s must be a positive integer" % [path_id, field])
+		for node_kind_value in path.get("node_kinds", []):
+			if not NODE_KIND_IDS.has(str(node_kind_value)):
+				errors.append("aptitude path %s references unknown node kind %s" % [path_id, node_kind_value])
+	return errors
+
+
+static func _validate_first_run(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var cfg: Dictionary = catalog.get("first_run", {})
+	if not _is_integral(cfg.get("seed", null)):
+		errors.append("first_run seed must be an integer")
+	var seen := {}
+	for route_id_value in cfg.get("route_ids", []):
+		var route_id := str(route_id_value)
+		if seen.has(route_id):
+			errors.append("first_run route_ids duplicates %s" % route_id)
+		seen[route_id] = true
+		# ascension_window 在 ascension_node 字段而非 nodes 表；map_generator 局部
+		# 并入 node_by_id。校验器同样认它。
+		var ascension_id := str(catalog.get("nodes_data", {}).get("ascension_node", {}).get("id", ""))
+		var known: bool = catalog.get("node_by_id", {}).has(route_id) or route_id == ascension_id
+		if not known:
+			errors.append("first_run route_ids references missing node %s" % route_id)
+	return errors
+
+
+static func _validate_dialogue_templates(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var cfg: Dictionary = catalog.get("dialogue_templates", {})
+	var responses: Variant = cfg.get("responses", null)
+	if not responses is Dictionary:
+		return ["dialogue_templates responses must be an object"]
+	if not (responses as Dictionary).has("clarify"):
+		errors.append("dialogue_templates responses missing clarify fallback")
+	for intent_value in responses:
+		var intent := str(intent_value)
+		if not DIALOGUE_INTENT_IDS.has(intent):
+			errors.append("dialogue_templates has unknown intent %s" % intent)
+			continue
+		var response: Variant = responses[intent_value]
+		if not response is Dictionary or not DialogueGatewayScript.is_valid_response(response):
+			errors.append("dialogue_templates response %s has invalid shape" % intent)
+		elif str(response.get("intent", "")) != intent:
+			errors.append("dialogue_templates response %s intent mismatch" % intent)
+	return errors
+
+
+static func _validate_names(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var names: Variant = catalog.get("names", null)
+	if not names is Dictionary:
+		return ["names must be an object"]
+	for table_value in names:
+		var table_name := str(table_value)
+		var table: Variant = names[table_value]
+		if not table is Dictionary:
+			errors.append("names.%s must be an object" % table_name)
+			continue
+		for key_value in table:
+			if str(key_value).is_empty() or not table[key_value] is String or str(table[key_value]).is_empty():
+				errors.append("names.%s.%s must be a non-empty string" % [table_name, key_value])
+
+	return errors
+
+
+static func validate(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+
+	var entry_tables := {
+		"gu": catalog.get("gu", []),
+		"refinement_recipes": catalog.get("refinement_recipes", []),
+		"caravan_offers": catalog.get("caravan_offers", []),
+		"relics": catalog.get("relics", []),
+		"shop_offers": catalog.get("shop_offers", []),
+		"nodes": catalog.get("nodes", []),
+		"enemies": catalog.get("enemies", []),
+	}
+	for table_name in entry_tables:
+		for entry in entry_tables[table_name]:
+			if str(entry.get("id", "")).is_empty():
+				errors.append("%s entry missing id" % table_name)
+	var gu_by_id: Dictionary = catalog["gu_by_id"]
+	var material_ids: Array = catalog.get("material_ids", [])
+	var seen_gu_ids := {}
+	for gu in catalog.get("gu", []):
+		if seen_gu_ids.has(gu["id"]):
+			errors.append("duplicate gu id %s" % gu["id"])
+		seen_gu_ids[gu["id"]] = true
+		if not _is_integral(gu.get("rank", null)) or int(gu.get("rank", 0)) < 1:
+			errors.append("gu %s rank must be a positive integer" % gu["id"])
+		elif int(gu["rank"]) > GU_RANK_MAX and not _gu_rank_exempt(gu):
+			errors.append("gu %s rank %d exceeds the %d-turn cap (test-only gu needs low_rank_exception)"
+					% [gu["id"], int(gu["rank"]), GU_RANK_MAX])
+		# 2026-09-04 中央数值支配：批量生成的 gen_ 蛊价值必须等于
+		# balance.gu_value_by_rank[rank]，禁止手写跨转字面量；手工蛊
+		# 保留设计字面量（卖出时作 GuBalance.gu_value 的下限）。
+		if str(gu.get("id", "")).begins_with("gen_"):
+			var tier_table: Dictionary = catalog.get("balance", {}).get("gu_value_by_rank", {})
+			var tier_expected: Variant = tier_table.get(str(int(gu.get("rank", 1))), -1)
+			if not _is_integral(tier_expected) or int(gu.get("value", -1)) != int(tier_expected):
+				errors.append("gen gu %s value must equal balance.gu_value_by_rank[rank]" % gu["id"])
+		# T7.1 §1.1: a hub-core gu must declare reachable evidence - its
+		# branch recipes / exclusive refining must resolve in the catalog.
+		if str(gu.get("core_depth", "")) == "hub":
+			var hub_branches: Array = gu.get("branch_recipes", [])
+			if hub_branches.is_empty():
+				errors.append("gu %s hub core needs branch_recipes evidence" % gu["id"])
+			for hub_recipe_value in hub_branches:
+				if not (catalog.get("refinement_by_id", {}) as Dictionary).has(str(hub_recipe_value)):
+					errors.append("gu %s hub branch recipe %s is missing" % [gu["id"], hub_recipe_value])
+		if not gu.has("school"):
+			errors.append("gu %s missing school" % gu["id"])
+		elif not SCHOOL_IDS.has(str(gu["school"])):
+			errors.append("gu %s invalid school %s" % [gu["id"], gu["school"]])
+		if not gu.has("rarity"):
+			errors.append("gu %s missing rarity" % gu["id"])
+		elif not RARITY_IDS.has(str(gu["rarity"])):
+			errors.append("gu %s invalid rarity %s" % [gu["id"], gu["rarity"]])
+		if not gu.has("role"):
+			errors.append("gu %s missing role" % gu["id"])
+		elif not str(gu["role"]) in ["attack", "defense", "movement", "healing", "logistics", "recon"]:
+			errors.append("gu %s invalid role %s" % [gu["id"], gu["role"]])
+		for material_id in gu.get("feeding_need", {}):
+			if not material_ids.has(material_id):
+				errors.append("gu %s has unknown feeding material %s" % [gu["id"], material_id])
+		# B2 2026-09-06 卡层退役：旧蓝图链与卡表文件退出，战斗蛊
+		# 的效果完备性改由显式 v1_effect 的形状校验承担（未声明则走 role 兜底）。
+		if gu.has("v1_effect"):
+			for effect_error in _validate_v1_effect(gu["v1_effect"], "gu %s v1_effect" % gu["id"]):
+				errors.append(effect_error)
+		if gu.has("can_direct_drop") and not (gu["can_direct_drop"] is bool):
+			errors.append("gu %s can_direct_drop must be a boolean" % gu["id"])
+
+	for inheritance in catalog["inheritances"]:
+		var required_gu_ids: Array = inheritance["required_gu_ids"]
+		var available_tags: Array = []
+		var has_missing_gu := false
+		for gu_id in required_gu_ids:
+			if not gu_by_id.has(gu_id):
+				errors.append("inheritance %s references missing gu %s" % [inheritance["id"], gu_id])
+				has_missing_gu = true
+				continue
+			for tag in gu_by_id[gu_id]["tags"]:
+				if not available_tags.has(tag):
+					available_tags.append(tag)
+		if not has_missing_gu:
+			for tag in inheritance["required_tags"]:
+				if not available_tags.has(tag):
+					errors.append("inheritance %s requires missing tag %s" % [inheritance["id"], tag])
+		if not EFFECT_IDS.has(inheritance["effect_id"]):
+			errors.append("inheritance %s has invalid effect %s" % [inheritance["id"], inheritance["effect_id"]])
+	errors.append_array(EnemyCatalogScript.validate(catalog.get("enemies", [])))
+	var central_beast_hp := {}
+	for beast_rank in range(0, 6):
+		central_beast_hp[int(GuBalanceScript.beast_scale(beast_rank, catalog))] = true
+	for enemy_value in catalog.get("enemies", []):
+		var enemy_entry: Dictionary = enemy_value
+		var enemy_id := str(enemy_entry.get("id", ""))
+		# 2026-09-10 退役死字段：`turn` / `essence` 在 V1 引擎中零消费点，
+		# 已从 data/enemies.json 移除，此处不再校验。
+		# T2.2 tier schema (§17.1): enemies declare their beast-model rank; a
+		# non-override entry may not copy a central beast-scale hp literal.
+		if not _is_integral(enemy_entry.get("rank", null)) or int(enemy_entry.get("rank", -1)) < 0 or int(enemy_entry.get("rank", -1)) > 5:
+			errors.append("enemy %s rank must be an integer in 0..5" % enemy_id)
+		var raw_hp: Variant = enemy_entry.get("hp", null)
+		if str(enemy_entry.get("override_reason", "")).is_empty() and raw_hp is int and central_beast_hp.has(int(raw_hp)):
+			errors.append("enemy %s hp %d replicates central beast-scale hp; declare rank and project it, or add override_reason" % [enemy_id, int(raw_hp)])
+	var enemy_by_id: Dictionary = catalog.get("enemy_by_id", {})
+	for node_value in catalog.get("nodes", []):
+		var node: Dictionary = node_value
+		# 同名/单数引用同样校验：战斗节点 enemy_kind 必须真实存在。
+		var singular_kind := str(node.get("enemy_kind", ""))
+		if not singular_kind.is_empty() and not (catalog.get("enemy_by_id", {}) as Dictionary).has(singular_kind):
+			errors.append("node %s references unknown enemy %s" % [node.get("id", ""), singular_kind])
+		# 2026-09-10 主题标签：点位可声明 enemy_theme，作为 E6 敌人池的来源。
+		# 只校验白名单（未知主题=错别字，必须报错）；缺省主题时回退到该点位原有的敌人指定。
+		var node_theme := str(node.get("enemy_theme", ""))
+		if not node_theme.is_empty() and not EnemyCatalogScript.THEMES.has(node_theme):
+			errors.append("node %s has unknown enemy_theme %s" % [node.get("id", ""), node_theme])
+		# R9（2026-09-16）：关底 Boss 候选池。只许挂在 layer_boss 关底台上；
+		# 成员必须存在且 tier == "boss"；至少 2 个有效候选（1 个 = 不随机，
+		# 那还不如不写 boss_pool，让模板自带的 enemy_kind 直接生效）。
+		var boss_pool_value: Variant = node.get("boss_pool", null)
+		if boss_pool_value != null:
+			var boss_node_id := str(node.get("id", ""))
+			if int(node.get("layer_boss", 0)) <= 0:
+				errors.append("node %s boss_pool only on layer_boss stands" % boss_node_id)
+			if not boss_pool_value is Array or (boss_pool_value as Array).size() < 2:
+				errors.append("node %s boss_pool must be an array of at least 2 boss ids" % boss_node_id)
+			else:
+				var seen_boss_ids := {}
+				for boss_id_value in boss_pool_value:
+					var boss_id := str(boss_id_value)
+					var boss_entry: Dictionary = enemy_by_id.get(boss_id, {})
+					if boss_entry.is_empty():
+						errors.append("node %s boss_pool references unknown enemy %s" % [boss_node_id, boss_id])
+					elif str(boss_entry.get("tier", "")) != "boss":
+						errors.append("node %s boss_pool member %s has tier %s, must be boss"
+								% [boss_node_id, boss_id, str(boss_entry.get("tier", ""))])
+					if seen_boss_ids.has(boss_id):
+						errors.append("node %s boss_pool has duplicate boss %s" % [boss_node_id, boss_id])
+					seen_boss_ids[boss_id] = true
+		# D4（2026-09-16）：事件节点候选池。只许挂在 type=="event" 的点位上；
+		# 成员必须是真实事件 id；至少 2 条候选（1 条等于不随机，直接写 event_id 即可）。
+		# 与 boss_pool 同构：候选池成员在进地图时由 map_generator 用派生流抽取。
+		var event_pool_value: Variant = node.get("event_pool", null)
+		if event_pool_value != null:
+			var event_node_id := str(node.get("id", ""))
+			if str(node.get("type", "")) != "event":
+				errors.append("node %s event_pool only on type=event nodes" % event_node_id)
+			if not event_pool_value is Array or (event_pool_value as Array).size() < 2:
+				errors.append("node %s event_pool must be an array of at least 2 event ids" % event_node_id)
+			else:
+				var seen_event_pool_ids := {}
+				for event_id_value in event_pool_value:
+					var pool_event_id := str(event_id_value)
+					if not catalog.get("event_by_id", {}).has(pool_event_id):
+						errors.append("node %s event_pool references unknown event %s"
+								% [event_node_id, pool_event_id])
+					if seen_event_pool_ids.has(pool_event_id):
+						errors.append("node %s event_pool has duplicate event %s"
+								% [event_node_id, pool_event_id])
+					seen_event_pool_ids[pool_event_id] = true
+		var ascension_grants: Dictionary = node.get("ascension_grants", {})
+		var choices: Array = node.get("choices", [])
+		for grant_action in ascension_grants:
+			var grant_flag := str(ascension_grants[grant_action])
+			if not grant_flag in ["aperture_foundation", "heaven_earth_qi", "site", "protection", "external_interference"]:
+				errors.append("node %s grants unknown ascension condition %s" % [node.get("id", ""), grant_flag])
+			if not choices.has(grant_action):
+				errors.append("node %s grants ascension condition on unknown action %s" % [node.get("id", ""), grant_action])
+		var core_token: Variant = node.get("core_replacement_token", null)
+		if core_token != null:
+			# T7.2 §1.3: the token key is a non-empty object granted only on
+			# stage two/three major nodes (the guarantee races the node's own
+			# strengthening at the command surface).
+			if not core_token is Dictionary or (core_token as Dictionary).is_empty():
+				errors.append("node %s core_replacement_token must be a non-empty object" % node.get("id", ""))
+			elif not str(node.get("stage", "")) in ["two", "three"]:
+				errors.append("node %s core_replacement_token only on stage two/three major nodes" % node.get("id", ""))
+		if not node.has("enemy_kinds"):
+			continue
+		var enemy_kinds_value: Variant = node.get("enemy_kinds", [])
+		if not enemy_kinds_value is Array or (enemy_kinds_value as Array).is_empty():
+			errors.append("node %s enemy_kinds must be a non-empty array" % node.get("id", ""))
+			continue
+		var seen_enemy_ids := {}
+		for enemy_id_value in enemy_kinds_value:
+			var enemy_id := str(enemy_id_value)
+			if not enemy_by_id.has(enemy_id):
+				errors.append("node %s references unknown enemy %s" % [node.get("id", ""), enemy_id])
+			if seen_enemy_ids.has(enemy_id):
+				errors.append("node %s has duplicate enemy %s" % [node.get("id", ""), enemy_id])
+			seen_enemy_ids[enemy_id] = true
+	var relic_by_id: Dictionary = catalog.get("relic_by_id", {})
+	for relic in catalog.get("relics", []):
+		if not relic.has("rarity"):
+			errors.append("relic %s missing rarity" % relic["id"])
+		elif not RARITY_IDS.has(str(relic["rarity"])):
+			errors.append("relic %s invalid rarity %s" % [relic["id"], relic["rarity"]])
+		var grade := str(relic.get("grade", ""))
+		if not grade.is_empty() and not RELIC_GRADES.has(grade):
+			errors.append("relic %s has unknown grade %s" % [relic["id"], grade])
+		for hook in relic.get("hooks", []):
+			var trigger := str(hook.get("trigger", ""))
+			if not RelicHookResolverScript.TRIGGERS.has(trigger):
+				errors.append("relic %s references unknown trigger %s" % [relic["id"], trigger])
+			var effect: Dictionary = hook.get("effect", {})
+			var kind := str(effect.get("kind", ""))
+			if not RelicHookResolverScript.EFFECT_KINDS.has(kind):
+				errors.append("relic %s references unknown effect kind %s" % [relic["id"], kind])
+			if not _is_integral(effect.get("amount", -1)) or int(effect.get("amount", -1)) < 0:
+				errors.append("relic %s effect amount must be a non-negative integer" % relic["id"])
+	var curse_by_id: Dictionary = catalog.get("curse_by_id", {})
+	for curse in catalog.get("curses", []):
+		for field in ["id", "name_zh", "effect"]:
+			if str(curse.get(field, "")).is_empty():
+				errors.append("curse %s missing %s" % [curse.get("id", ""), field])
+		if not CURSE_EFFECT_IDS.has(str(curse.get("effect", ""))):
+			errors.append("curse %s unknown effect %s" % [curse.get("id", ""), curse.get("effect", "")])
+		if not _is_integral(curse.get("base_intensity", null)) or int(curse.get("base_intensity", 0)) < 1:
+			errors.append("curse %s base_intensity must be a positive integer" % curse.get("id", ""))
+		if not _is_integral(curse.get("escalation_per_stage", null)) or int(curse.get("escalation_per_stage", 0)) < 0:
+			errors.append("curse %s escalation_per_stage must be a non-negative integer" % curse.get("id", ""))
+		if not _is_integral(curse.get("removal_base_cost", null)) or int(curse.get("removal_base_cost", 0)) < 1:
+			errors.append("curse %s removal_base_cost must be a positive integer" % curse.get("id", ""))
+		for offer in catalog.get("shop_offers", []):
+			var offer_kind := str(offer.get("kind", ""))
+			if not _is_integral(offer.get("tier", null)) or int(offer.get("tier", 0)) < 1 or int(offer.get("tier", 0)) > 5:
+				errors.append("shop offer %s tier must be an integer in 1..5" % offer["id"])
+			if offer_kind in ["purchase", "lifespan_deal"] and not gu_by_id.has(str(offer.get("gu_id", ""))):
+				errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
+			if offer_kind == "material_purchase" and not material_ids.has(str(offer.get("material_id", ""))):
+				errors.append("shop offer %s references missing material %s" % [offer["id"], offer.get("material_id", "")])
+			if offer_kind == "recipe_unlock" and not catalog.get("refinement_by_id", {}).has(str(offer.get("recipe_id", ""))):
+				errors.append("shop offer %s references missing recipe %s" % [offer["id"], offer.get("recipe_id", "")])
+			if offer_kind == "gu_fang_unlock" and not catalog.get("gu_by_id", {}).has(str(offer.get("gu_id", ""))):
+				errors.append("shop offer %s references missing gu %s" % [offer["id"], offer.get("gu_id", "")])
+			if offer_kind in ["purchase", "material_purchase", "recipe_unlock", "gu_fang_unlock"] and (not _is_integral(offer.get("stone_cost", null)) or int(offer.get("stone_cost", 0)) < 1):
+				errors.append("shop offer %s stone_cost must be positive" % offer["id"])
+			if offer_kind == "resource_trade":
+				var cost_kinds := ["lifespan", "soul", "health"]
+				var gain_kinds := ["lifespan", "soul", "health"]
+				if not str(offer.get("cost_kind", "")) in cost_kinds:
+					errors.append("shop offer %s cost_kind must be one of %s" % [offer["id"], str(cost_kinds)])
+				if not str(offer.get("gain_kind", "")) in gain_kinds:
+					errors.append("shop offer %s gain_kind must be one of %s" % [offer["id"], str(gain_kinds)])
+				if not _is_integral(offer.get("cost_amount", null)) or int(offer.get("cost_amount", 0)) < 1:
+					errors.append("shop offer %s cost_amount must be positive" % offer["id"])
+				if not _is_integral(offer.get("gain_amount", null)) or int(offer.get("gain_amount", 0)) < 1:
+					errors.append("shop offer %s gain_amount must be positive" % offer["id"])
+			for input_gu_id in offer.get("input_gu_ids", []):
+				if not gu_by_id.has(str(input_gu_id)):
+					errors.append("shop offer %s references missing gu %s" % [offer["id"], input_gu_id])
+			for reward in offer.get("rewards", []):
+				if reward.has("gu_id") and not gu_by_id.has(str(reward["gu_id"])):
+					errors.append("shop offer %s rewards missing gu %s" % [offer["id"], reward["gu_id"]])
+				if reward.has("relic_id") and not relic_by_id.has(str(reward["relic_id"])):
+					errors.append("shop offer %s rewards missing relic %s" % [offer["id"], reward["relic_id"]])
+	var reputation: Dictionary = catalog.get("reputation", {})
+	for group_name in ["gains", "effects"]:
+		for key_value in reputation.get(group_name, {}):
+			var value: Variant = reputation[group_name][key_value]
+			if not _is_integral(value) or int(value) < 0:
+				errors.append("reputation %s.%s must be a non-negative integer" % [group_name, key_value])
+	var balance: Dictionary = catalog.get("balance", {})
+	for key in ["remove_card_cost", "remove_imprint_cost", "imprint_capacity", "meta_rule_cap"]:
+		var value: Variant = balance.get(key, null)
+		if not _is_integral(value) or int(value) < 1:
+			errors.append("balance %s must be a positive integer" % key)
+	# Q8-G 1-C: battle stone production config (Batch 0 §4 frozen tier+layer
+	# shape, provisional numbers). The three tiers are a closed set and every
+	# tier needs a base so a victory can never settle with a silent zero.
+	var stone_rewards: Dictionary = balance.get("battle_stone_rewards", {})
+	var stone_bases: Dictionary = stone_rewards.get("base_by_tier", {})
+	for tier_key in ["common", "elite", "boss"]:
+		var base_value: Variant = stone_bases.get(tier_key, null)
+		if not _is_integral(base_value) or int(base_value) < 1:
+			errors.append("balance battle_stone_rewards.base_by_tier.%s must be a positive integer" % tier_key)
+	if not _is_integral(stone_rewards.get("layer_step_pct", null)) or int(stone_rewards.get("layer_step_pct", -1)) < 0:
+		errors.append("balance battle_stone_rewards.layer_step_pct must be a non-negative integer")
+	# Q8-G 1-D: 派系共振倍率（主道痕 == 玩家流派的掉落权重倍增），provisional。
+	var loot_tables_root: Dictionary = catalog.get("loot_tables", {})
+	var resonance: Variant = loot_tables_root.get("school_material_resonance", null)
+	if not _is_integral(resonance) or int(resonance) < 1:
+		errors.append("loot_tables school_material_resonance must be a positive integer")
+	for migrated_key in ["remove_card_cost", "remove_imprint_cost", "imprint_capacity", "meta_rule_cap"]:
+		if catalog.get("deck", {}).has(migrated_key):
+			errors.append("deck %s is deprecated; move it to balance" % migrated_key)
+	var raw_service_limits: Variant = catalog.get("deck", {}).get("service_limits", null)
+	if not raw_service_limits is Dictionary:
+		errors.append("deck service_limits must be an object")
+	else:
+		for service_id_value in DECK_SERVICE_IDS:
+			var service_id := str(service_id_value)
+			if not (raw_service_limits as Dictionary).has(service_id):
+				errors.append("deck service_limits missing %s" % service_id)
+				continue
+			var limit_value: Variant = (raw_service_limits as Dictionary)[service_id]
+			if not _is_integral(limit_value) or int(limit_value) < 1:
+				errors.append("deck service_limits.%s must be a positive integer" % service_id)
+	var milestones: Dictionary = catalog.get("pacing", {}).get("lifespan_milestones", {})
+	for milestone_id in milestones:
+		var milestone_value: Variant = milestones[milestone_id]
+		if not _is_integral(milestone_value) or int(milestone_value) < 0:
+			errors.append("pacing lifespan_milestones.%s must be a non-negative integer" % milestone_id)
+	var aptitude_data: Dictionary = catalog.get("aptitude", {})
+	var apt_factor_map: Dictionary = aptitude_data.get("aptitude_factor", {})
+	for aptitude_id in apt_factor_map:
+		var factor_value: Variant = apt_factor_map[aptitude_id]
+		if not _is_integral(factor_value) or int(factor_value) < 1:
+			errors.append("aptitude aptitude_factor.%s must be a positive integer" % aptitude_id)
+	var cult_factor_map: Dictionary = aptitude_data.get("cultivation_factor", {})
+	for rank_key in cult_factor_map:
+		var cult_value: Variant = cult_factor_map[rank_key]
+		if not _is_integral(cult_value) or int(cult_value) < 1:
+			errors.append("aptitude cultivation_factor.%s must be a positive integer" % rank_key)
+	var regen_map2: Dictionary = aptitude_data.get("regen_pct", {})
+	for aptitude_id2 in regen_map2:
+		var regen_value2: Variant = regen_map2[aptitude_id2]
+		if not _is_integral(regen_value2) or int(regen_value2) < 0 or int(regen_value2) > 100:
+			errors.append("aptitude regen_pct.%s must be within 0..100" % aptitude_id2)
+	# S2 开局 Buff：表驱动校验（名称/描述/效果种类/产物引用）。
+	var buffs_data: Dictionary = catalog.get("buffs", {})
+	for buff_id in buffs_data:
+		var bdata: Dictionary = buffs_data[buff_id]
+		if str(bdata.get("name", "")).is_empty() or str(bdata.get("summary", "")).is_empty():
+			errors.append("buff %s needs name and summary" % str(buff_id))
+		if not BUFF_EFFECTS.has(str(bdata.get("effect", ""))):
+			errors.append("buff %s has unknown effect %s" % [str(buff_id), str(bdata.get("effect", ""))])
+		if str(bdata.get("effect", "")) == "grant_gu" and not catalog.get("gu_by_id", {}).has(str(bdata.get("gu_id", ""))):
+			errors.append("buff %s grants unknown gu %s" % [str(buff_id), str(bdata.get("gu_id", ""))])
+		if str(bdata.get("effect", "")) == "grant_stones" and int(bdata.get("amount", 0)) < 1:
+			errors.append("buff %s grant_stones needs positive amount" % str(buff_id))
+	# S3 遗葬传承站点：名称/等级/品质权重校验。
+	for site_id in catalog.get("inheritance_site_by_id", {}):
+		var site_data: Dictionary = catalog["inheritance_site_by_id"][site_id]
+		if str(site_data.get("name", "")).is_empty() or str(site_data.get("summary", "")).is_empty():
+			errors.append("inheritance site %s needs name and summary" % str(site_id))
+		var site_level := int(site_data.get("level", 0))
+		if site_level < 1 or site_level > 5:
+			errors.append("inheritance site %s level must sit in 1..5" % str(site_id))
+		var site_weight_sum := 0
+		for quality_key in site_data.get("quality_weights", {}):
+			site_weight_sum += int(site_data["quality_weights"][quality_key])
+		if site_weight_sum <= 0:
+			errors.append("inheritance site %s needs positive quality weights" % str(site_id))
+	var schools_data: Dictionary = catalog.get("schools", {})
+	for school_id in SCHOOL_IDS:
+		if not schools_data.has(school_id):
+			errors.append("schools missing %s" % school_id)
+	for school_id in schools_data:
+		var school_entry: Dictionary = schools_data[school_id]
+		if str(school_entry.get("name", "")).is_empty():
+			errors.append("school %s needs display name" % school_id)
+		if str(school_entry.get("summary", "")).is_empty():
+			errors.append("school %s needs summary" % school_id)
+		var starters: Array = school_entry.get("starter_gu_ids", [])
+		if starters.is_empty():
+			errors.append("school %s needs starter gu ids" % school_id)
+		for starter in starters:
+			if not gu_by_id.has(str(starter)):
+				errors.append("school %s starter references missing gu %s" % [school_id, starter])
+	var school_pools: Dictionary = catalog.get("school_pools", {})
+	var pool_gu_seen := {}
+	for school_id in SCHOOL_IDS:
+		if not school_pools.has(school_id):
+			errors.append("school %s needs exclusive pool" % school_id)
+			continue
+		var pool: Array = school_pools[school_id]
+		if pool.is_empty():
+			errors.append("school %s exclusive pool is empty" % school_id)
+			continue
+		for pool_gu_value in pool:
+			var pool_gu_id := str(pool_gu_value)
+			if not gu_by_id.has(pool_gu_id):
+				errors.append("school %s pool references missing gu %s" % [school_id, pool_gu_id])
+				continue
+			if pool_gu_seen.has(pool_gu_id):
+				errors.append("gu %s appears in multiple school pools" % pool_gu_id)
+				continue
+			pool_gu_seen[pool_gu_id] = school_id
+			if str(gu_by_id[pool_gu_id].get("school", "")) != school_id:
+				errors.append("school %s pool gu %s belongs to school %s" % [school_id, pool_gu_id, gu_by_id[pool_gu_id].get("school", "")])
+	var gu_tags: Array[String] = []
+	for gu in catalog.get("gu", []):
+		for tag_value in gu.get("tags", []):
+			if not gu_tags.has(str(tag_value)):
+				gu_tags.append(str(tag_value))
+	for recipe in catalog.get("refinement_recipes", []):
+		if str(recipe.get("kind", "")) == "advance":
+			var adv_inputs: Array = recipe.get("input_gu_ids", [])
+			if adv_inputs.size() != 1 or str(recipe.get("output_gu_id", "")) != str(adv_inputs[0]):
+				errors.append("advance recipe %s must map one same-name gu onto itself" % recipe.get("id", ""))
+		# Q8-G Batch 1-A Gate 1 / Gate 7: promotion is a cross-definition step
+		# (Rank N -> Rank N+1 of a DIFFERENT gu definition). If output == input
+		# this recipe is really an `advance`, so reject it at load time rather
+		# than let the two semantics blur at runtime.
+		if str(recipe.get("kind", "")) == "promotion":
+			var promo_inputs: Array = recipe.get("input_gu_ids", [])
+			if promo_inputs.size() != 1:
+				errors.append("promotion recipe %s must take exactly one input gu" % recipe.get("id", ""))
+			elif str(recipe.get("output_gu_id", "")) == str(promo_inputs[0]):
+				errors.append("promotion recipe %s must change gu definition (use advance for same-name rank up)" % recipe.get("id", ""))
+			if str(recipe.get("output_gu_id", "")).is_empty():
+				errors.append("promotion recipe %s needs an output_gu_id" % recipe.get("id", ""))
+		for rank_field in ["output_rank", "input_min_rank"]:
+			var rank_value = recipe.get(rank_field, null)
+			if rank_value != null and (not _is_integral(rank_value) or int(rank_value) < 1 or int(rank_value) > 5):
+				errors.append("recipe %s %s must be an integer in 1..5" % [recipe.get("id", ""), rank_field])
+		if recipe.has("default_unlocked") and not (recipe["default_unlocked"] is bool):
+			errors.append("recipe %s default_unlocked must be a boolean" % recipe.get("id", ""))
+		for rule_value in recipe.get("risk_hints", []):
+			var rule: Dictionary = rule_value
+			for required_tag in rule.get("tags", []):
+				if not gu_tags.has(str(required_tag)):
+					errors.append("recipe %s risk hint references unknown tag %s" % [recipe["id"], required_tag])
+			if str(rule.get("text", "")).is_empty():
+				errors.append("recipe %s risk hint needs non-empty text" % recipe["id"])
+		for outcome_value in recipe.get("outcomes", []):
+			var fail_curse_id := str(outcome_value.get("fail_curse_id", ""))
+			if not fail_curse_id.is_empty() and not curse_by_id.has(fail_curse_id):
+				errors.append("recipe %s failure references unknown curse %s" % [recipe["id"], fail_curse_id])
+		# D1: curated (hand-authored) recipes must name their novel source; the
+		# generated advance table is derived, so it is exempt.
+		if str(recipe.get("kind", "")) in ["fixed", "free_mix", "promotion"]:
+			if str(recipe.get("source", "")).strip_edges().is_empty():
+				errors.append("curated recipe %s needs a non-empty source" % recipe.get("id", ""))
+		# D1 v2 schema: inputs:[{school, rank, count}] is optional next to the
+		# legacy input_gu_ids; when present every entry must be well formed.
+		if recipe.has("inputs"):
+			var v2_inputs: Array = recipe.get("inputs", [])
+			if v2_inputs.is_empty():
+				errors.append("recipe %s declares inputs but leaves it empty" % recipe.get("id", ""))
+			for entry_value in v2_inputs:
+				var entry: Dictionary = entry_value
+				var entry_school := str(entry.get("school", ""))
+				if entry_school.is_empty() or not catalog.get("schools", {}).has(entry_school):
+					errors.append("recipe %s v2 input school %s is not a declared dao mark" % [recipe.get("id", ""), entry_school])
+				var entry_rank := int(entry.get("rank", 0))
+				if entry_rank < 1 or entry_rank > 5:
+					errors.append("recipe %s v2 input rank must sit in 1..5" % recipe.get("id", ""))
+				if int(entry.get("count", 0)) < 1:
+					errors.append("recipe %s v2 input count must be positive" % recipe.get("id", ""))
+	var loot_tables: Dictionary = catalog.get("loot_tables", {})
+	var materials: Dictionary = loot_tables.get("materials", {})
+	# T5.1: the §6.1 unified material table is guarded field by field; the
+	# literal guard keeps on the T2.2 tier discipline - no material may copy a
+	# central rank multiplier projection without an override_reason.
+	var central_rank_multipliers := {}
+	for multiplier_rank in range(1, 10):
+		central_rank_multipliers[int(GuBalanceScript.rank_multiplier(multiplier_rank, catalog))] = true
+	for material_id in materials:
+		var material_entry: Dictionary = materials[material_id]
+		if int(material_entry.get("value", 0)) < 1:
+			errors.append("material %s needs a positive value" % material_id)
+		if not _is_integral(material_entry.get("value_tier", null)) or int(material_entry.get("value_tier", 0)) < 1:
+			errors.append("material %s must declare a positive value_tier" % material_id)
+		if not _is_integral(material_entry.get("rank", null)) or int(material_entry.get("rank", 0)) < 1 or int(material_entry.get("rank", 0)) > 9:
+			errors.append("material %s rank must be an integer in 1..9" % material_id)
+		for list_key in ["dao_tags", "diet_tags"]:
+			if not material_entry.get(list_key, null) is Array:
+				errors.append("material %s %s must be an array" % [material_id, list_key])
+		for bool_key in ["is_common", "is_exclusive", "divisible"]:
+			if not material_entry.get(bool_key, null) is bool:
+				errors.append("material %s %s must be a boolean" % [material_id, bool_key])
+		var liquidity: Variant = material_entry.get("public_liquidity", null)
+		if not (liquidity is int or liquidity is float) or float(liquidity) <= 0.0 or float(liquidity) > 1.0:
+			errors.append("material %s public_liquidity must be in (0, 1]" % material_id)
+		var ref_value: Variant = material_entry.get("reference_value", null)
+		if not _is_integral(ref_value) or int(ref_value) < 1:
+			errors.append("material %s reference_value must be a positive integer" % material_id)
+		elif str(material_entry.get("override_reason", "")).is_empty() and central_rank_multipliers.has(int(ref_value)):
+			errors.append("material %s reference_value %d replicates the central rank multiplier table" % [material_id, int(ref_value)])
+		# T8.1 §15.1: a blood+qi dual-tag material is single-stock blood qi and
+		# must be divisible - the two paths spend one shared inventory.
+		var blood_qi_tags: Array = material_entry.get("dao_tags", [])
+		if blood_qi_tags.has("blood") and blood_qi_tags.has("qi") and not bool(material_entry.get("divisible", false)):
+			errors.append("material %s blood+qi dual-tag requires divisible" % material_id)
+		# Q8-G 1-B0-M frozen clauses (2026-09-13): the five attribute classes are
+		# mandatory and enum-checked. See MATERIAL_* consts for the vocabulary.
+		if str(material_entry.get("form", "")).is_empty():
+			errors.append("material %s needs a non-empty form label" % material_id)
+		var source_class := str(material_entry.get("source_class", ""))
+		if not MATERIAL_SOURCE_CLASSES.has(source_class):
+			errors.append("material %s source_class %s is not a declared source class" % [material_id, source_class])
+		var acquisition_mode := str(material_entry.get("acquisition_mode", ""))
+		if not MATERIAL_ACQUISITION_MODES.has(acquisition_mode):
+			errors.append("material %s acquisition_mode %s is not a declared acquisition mode" % [material_id, acquisition_mode])
+		var quality_band := str(material_entry.get("quality_band", ""))
+		if not MATERIAL_QUALITY_BANDS.has(quality_band):
+			errors.append("material %s quality_band %s is not a declared quality band" % [material_id, quality_band])
+		# 1-B1 front-batch review: origin tracking + semantic basis are mandatory
+		# so a naming association can never silently pass as a world fact.
+		var origin_status := str(material_entry.get("origin_status", ""))
+		if not MATERIAL_ORIGIN_STATUS.has(origin_status):
+			errors.append("material %s origin_status %s is not a declared origin status" % [material_id, origin_status])
+		var semantic_basis: Variant = material_entry.get("semantic_basis", null)
+		if not semantic_basis is Dictionary \
+				or not MATERIAL_SEMANTIC_BASIS_TYPES.has(str(semantic_basis.get("type", ""))) \
+				or str(semantic_basis.get("rationale", "")).is_empty():
+			errors.append("material %s semantic_basis must declare a known basis type and a non-empty rationale" % material_id)
+	for recipe in catalog.get("refinement_recipes", []):
+		for material_id_value in recipe.get("materials", {}):
+			if not materials.has(str(material_id_value)):
+				errors.append("recipe %s references unknown material %s" % [recipe.get("id", ""), material_id_value])
+		# T5.2 §5.x recipe declaration guards (optional new sections).
+		for pool_gu_value in recipe.get("candidate_pool", []):
+			if not gu_by_id.has(str(pool_gu_value)):
+				errors.append("recipe %s candidate_pool references unknown gu %s" % [recipe.get("id", ""), pool_gu_value])
+		var product_rule := str(recipe.get("product_rule", ""))
+		if not product_rule.is_empty() and product_rule != "main_gu_transformation":
+			errors.append("recipe %s product_rule must be main_gu_transformation" % recipe.get("id", ""))
+		if recipe.has("aux_core_warning") and not (recipe["aux_core_warning"] is bool):
+			errors.append("recipe %s aux_core_warning must be a boolean" % recipe.get("id", ""))
+		for stage_value in recipe.get("stages", []):
+			var stage: Dictionary = stage_value
+			if not _is_integral(stage.get("thought", null)) or int(stage.get("thought", 0)) < 0:
+				errors.append("recipe %s stage thought must be a non-negative integer" % recipe.get("id", ""))
+			if not _is_integral(stage.get("essence", null)) or int(stage.get("essence", 0)) < 0:
+				errors.append("recipe %s stage essence must be a non-negative integer" % recipe.get("id", ""))
+			if not _is_integral(stage.get("duration", null)) or int(stage.get("duration", 0)) < 1:
+				errors.append("recipe %s stage duration must be a positive integer" % recipe.get("id", ""))
+			if stage.has("interruptible") and not (stage["interruptible"] is bool):
+				errors.append("recipe %s stage interruptible must be a boolean" % recipe.get("id", ""))
+		var identity: Dictionary = recipe.get("identity_requirements", {})
+		for required_gu_value in identity.get("named_gu_ids", []):
+			if not gu_by_id.has(str(required_gu_value)):
+				errors.append("recipe %s identity named gu %s is missing from gu.json" % [recipe.get("id", ""), required_gu_value])
+		for required_material_value in identity.get("named_materials", []):
+			if not materials.has(str(required_material_value)):
+				errors.append("recipe %s identity named material %s is missing" % [recipe.get("id", ""), required_material_value])
+		if not (identity.get("named_media", []) is Array):
+			errors.append("recipe %s identity named_media must be an array" % recipe.get("id", ""))
+		var identity_min_rank: Variant = identity.get("min_rank", null)
+		if identity_min_rank != null and (not _is_integral(identity_min_rank) or int(identity_min_rank) < 1 or int(identity_min_rank) > 5):
+			errors.append("recipe %s identity min_rank must be an integer in 1..5" % recipe.get("id", ""))
+		var substitute: Dictionary = recipe.get("allow_substitute", {})
+		for from_material_value in substitute.get("materials", {}):
+			var from_material := str(from_material_value)
+			if not materials.has(from_material):
+				errors.append("recipe %s allow_substitute references unknown material %s" % [recipe.get("id", ""), from_material])
+			for to_material_value in substitute["materials"][from_material_value]:
+				if not materials.has(str(to_material_value)):
+					errors.append("recipe %s allow_substitute references unknown material %s" % [recipe.get("id", ""), to_material_value])
+		if not (substitute.get("media", {}) is Dictionary):
+			errors.append("recipe %s allow_substitute media must be an object" % recipe.get("id", ""))
+		if recipe.has("success_roll_max") and str(recipe.get("override_reason", "")).is_empty():
+			errors.append("recipe %s cannot declare random failure; add override_reason for the legacy retirement (T10.1-8)" % recipe.get("id", ""))
+	var material_pity: Dictionary = loot_tables.get("pity", {}).get("material_pity", {})
+	if not material_pity.is_empty():
+		if not _is_integral(material_pity.get("threshold", null)) or int(material_pity.get("threshold", 0)) < 1:
+			errors.append("loot material_pity threshold must be a positive integer")
+		# P2-a（R-3 校准）：目标派系化后，配置只声明"每池允许的带段"；
+		# 目标材料由 resolver 从 promotion 配方 × 池成员 × 带段动态求交。
+		var loot_tiers: Dictionary = loot_tables.get("loot", {})
+		var known_bands := {"crude": true, "plain": true, "refined": true, "prized": true}
+		var bands_by_tier: Dictionary = material_pity.get("target_bands_by_tier", {})
+		if not (bands_by_tier is Dictionary) or bands_by_tier.is_empty():
+			errors.append("loot material_pity target_bands_by_tier must be a non-empty object")
+		else:
+			for tier_key_value in bands_by_tier:
+				var tier_key := str(tier_key_value)
+				if not loot_tiers.has(tier_key):
+					errors.append("loot material_pity references unknown loot tier %s" % tier_key)
+				var band_list: Variant = bands_by_tier[tier_key_value]
+				if not (band_list is Array) or (band_list as Array).is_empty():
+					errors.append("loot material_pity tier %s must declare a non-empty band list" % tier_key)
+					continue
+				for band_value in band_list:
+					if not known_bands.has(str(band_value)):
+						errors.append("loot material_pity references unknown quality band %s" % str(band_value))
+	var synthesis: Dictionary = catalog.get("synthesis", {})
+	if not synthesis.is_empty():
+		var battle_cfg: Dictionary = synthesis.get("battle", {})
+		if not _is_integral(battle_cfg.get("success_base_pct", null)) or int(battle_cfg.get("success_base_pct", 0)) < 1 or int(battle_cfg.get("success_base_pct", 0)) > 99:
+			errors.append("synthesis battle success_base_pct must be 1..99")
+		if not _is_integral(battle_cfg.get("per_fail_bonus_pct", null)) or int(battle_cfg.get("per_fail_bonus_pct", 0)) < 1:
+			errors.append("synthesis battle per_fail_bonus_pct must be positive")
+		if not _is_integral(battle_cfg.get("max_bonus_pct", null)) or int(battle_cfg.get("max_bonus_pct", 0)) < 1 or int(battle_cfg.get("max_bonus_pct", 0)) > 99:
+			errors.append("synthesis battle max_bonus_pct must be 1..99")
+		if not _is_integral(battle_cfg.get("blind_penalty_pct", null)) or int(battle_cfg.get("blind_penalty_pct", 0)) < 0:
+			errors.append("synthesis battle blind_penalty_pct must be non-negative")
+		var blind_curse := str(battle_cfg.get("blind_fail_curse_id", ""))
+		if not blind_curse.is_empty() and not curse_by_id.has(blind_curse):
+			errors.append("synthesis blind failure references unknown curse %s" % blind_curse)
+		for recipe_value in synthesis.get("battle_recipes", []):
+			var recipe: Dictionary = recipe_value
+			if str(recipe.get("id", "")).is_empty():
+				errors.append("synthesis recipe missing id")
+			for material_id_value in recipe.get("material_cost", {}):
+				if not materials.has(str(material_id_value)):
+					errors.append("synthesis recipe %s references unknown material %s" % [recipe.get("id", ""), material_id_value])
+			# B2: 临时卡蓝图引用随卡表文件退役（产物改由杀招支柱收敛）。
+		var blind_cfg: Dictionary = synthesis.get("battle_blind", {})
+		if not blind_cfg.is_empty():
+			for material_id_value in blind_cfg.get("material_cost", {}):
+				if not materials.has(str(material_id_value)):
+					errors.append("synthesis blind references unknown material %s" % material_id_value)
+	if catalog.has("contracts"):
+		errors.append_array(_validate_contracts(catalog.get("contracts", {})))
+	if catalog.has("npcs"):
+		errors.append_array(_validate_npcs(catalog.get("npcs", []), catalog.get("shop_offer_by_id", {})))
+	if catalog.has("dda"):
+		errors.append_array(_validate_dda(catalog.get("dda", {}), catalog.get("enemy_by_id", {})))
+	if catalog.has("balance"):
+		errors.append_array(_validate_balance(catalog.get("balance", {})))
+	if catalog.has("journal"):
+		errors.append_array(_validate_journal(catalog.get("journal", {})))
+	if catalog.has("debug"):
+		var enabled_value: Variant = catalog.get("debug", {}).get("enabled", null)
+		if not (enabled_value is bool):
+			errors.append("debug.enabled must be a boolean")
+	if catalog.has("first_run"):
+		errors.append_array(_validate_first_run(catalog))
+	if catalog.has("dialogue_templates"):
+		errors.append_array(_validate_dialogue_templates(catalog))
+	if catalog.has("names"):
+		errors.append_array(_validate_names(catalog))
+	# W6（2026-09-09）：gu_names.json 存在性校验（display_text.gu() 的额外蛊名增量表；
+	# _load_object 静默吞错，缺失此前启动零告警）。
+	if bool(catalog.get("gu_extra_names_missing", false)):
+		errors.append("data/gu_names.json is missing (display_text.gu() extra names table)")
+	errors.append_array(_validate_events(catalog))
+	errors.append_array(_validate_pacing(catalog))
+	errors.append_array(_validate_aptitude(catalog))
+
+	for tier_key in loot_tables.get("loot", {}):
+		var tier: Dictionary = loot_tables["loot"][tier_key]
+		if int(tier.get("material_count", 0)) < 0:
+			errors.append("loot tier %s has a negative material count" % tier_key)
+		var chance := int(tier.get("gu_chance_pct", 0))
+		if chance < 0 or chance > 100:
+			errors.append("loot tier %s has invalid gu chance %d" % [tier_key, chance])
+		# Q8-G 1-D: material pool entries are plain ids (legacy, weight 1) or
+		# {id, weight} objects for the quality-band channels.
+		for material_entry_value in tier.get("material_pool", []):
+			var pool_entry: Variant = material_entry_value
+			var material_id := ""
+			if pool_entry is String:
+				material_id = str(pool_entry)
+			elif pool_entry is Dictionary:
+				material_id = str((pool_entry as Dictionary).get("id", ""))
+				var pool_weight: Variant = (pool_entry as Dictionary).get("weight", 1)
+				if not _is_integral(pool_weight) or int(pool_weight) < 1:
+					errors.append("loot tier %s material entry %s needs a positive integer weight" % [tier_key, material_id])
+					continue
+			else:
+				errors.append("loot tier %s has a malformed material entry" % tier_key)
+				continue
+			if not materials.has(material_id):
+				errors.append("loot tier %s references unknown material %s" % [tier_key, material_id])
+		var gu_pool: Dictionary = tier.get("gu_pool", {})
+		var weights: Dictionary = gu_pool.get("weights", {})
+		var by_rarity: Dictionary = gu_pool.get("by_rarity", {})
+		var forced_rarity := str(tier.get("forced_rarity", ""))
+		if not forced_rarity.is_empty():
+			if not RARITY_IDS.has(forced_rarity):
+				errors.append("loot tier %s has invalid forced rarity %s" % [tier_key, forced_rarity])
+			elif (by_rarity.get(forced_rarity, []) as Array).is_empty():
+				errors.append("loot tier %s forced rarity %s sits on an empty bucket" % [tier_key, forced_rarity])
+		var cost_pool: Array = tier.get("cost_pool", [])
+		var cost_positive_weight := false
+		for cost_value in cost_pool:
+			var cost: Dictionary = cost_value
+			if not _is_integral(cost.get("weight", 1)) or int(cost.get("weight", 1)) < 0:
+				errors.append("loot tier %s cost weight must be a non-negative integer" % tier_key)
+				continue
+			if int(cost.get("weight", 1)) > 0:
+				cost_positive_weight = true
+			match str(cost.get("kind", "")):
+				"backlash":
+					var curse_id := str(cost.get("curse_id", ""))
+					if not curse_by_id.has(curse_id):
+						errors.append("loot tier %s cost references unknown curse %s" % [tier_key, curse_id])
+					if not _is_integral(cost.get("layers", 0)) or int(cost.get("layers", 0)) < 1:
+						errors.append("loot tier %s backlash cost needs positive layers" % tier_key)
+				"notoriety":
+					if not _is_integral(cost.get("amount", 0)) or int(cost.get("amount", 0)) < 1:
+						errors.append("loot tier %s notoriety cost needs a positive amount" % tier_key)
+				_:
+					errors.append("loot tier %s cost uses unknown cost kind %s" % [tier_key, cost.get("kind", "")])
+		if not cost_pool.is_empty() and not cost_positive_weight:
+			errors.append("loot tier %s cost_pool needs at least one positive weight" % tier_key)
+		var has_positive_weight := false
+		for rarity_id_value in weights:
+			var weighted_rarity := str(rarity_id_value)
+			if not RARITY_IDS.has(weighted_rarity):
+				errors.append("loot tier %s weight uses unknown rarity %s" % [tier_key, weighted_rarity])
+				continue
+			if not _is_integral(weights[rarity_id_value]) or int(weights[rarity_id_value]) < 0:
+				errors.append("loot tier %s weight %s must be a non-negative integer" % [tier_key, weighted_rarity])
+				continue
+			if int(weights[rarity_id_value]) > 0:
+				has_positive_weight = true
+				var weighted_bucket: Array = by_rarity.get(weighted_rarity, [])
+				if weighted_bucket.is_empty():
+					errors.append("loot tier %s weight %s sits on an empty bucket" % [tier_key, weighted_rarity])
+		if not weights.is_empty() and not has_positive_weight:
+			errors.append("loot tier %s gu_pool needs at least one positive weight" % tier_key)
+		for rarity_id_value in by_rarity:
+			var bucket_rarity := str(rarity_id_value)
+			if not RARITY_IDS.has(bucket_rarity):
+				errors.append("loot tier %s bucket uses unknown rarity %s" % [tier_key, bucket_rarity])
+			for gu_id_value in by_rarity[rarity_id_value]:
+				var pool_gu_id := str(gu_id_value)
+				if not gu_by_id.has(pool_gu_id):
+					errors.append("loot tier %s references unknown gu %s" % [tier_key, pool_gu_id])
+				elif str(gu_by_id[pool_gu_id].get("rarity", "")) != bucket_rarity:
+					errors.append("loot tier %s gu %s rarity mismatch with bucket %s" % [tier_key, pool_gu_id, bucket_rarity])
+		var raw_scavenge: Variant = tier.get("scavenge_recipe", "")
+		var scavenge_ids: Array[String] = []
+		if raw_scavenge is Array:
+			for value in raw_scavenge:
+				scavenge_ids.append(str(value))
+		elif not str(raw_scavenge).is_empty():
+			scavenge_ids.append(str(raw_scavenge))
+		for scavenge_recipe in scavenge_ids:
+			if not catalog.get("refinement_by_id", {}).has(scavenge_recipe):
+				errors.append("loot tier %s references missing scavenge recipe %s" % [tier_key, scavenge_recipe])
+	errors.append_array(_validate_v1_kill_moves(catalog))
+	errors.append_array(_validate_slice_contract(catalog))
+	errors.append_array(_validate_v1_battle_boss_scaling(catalog))
+	errors.append_array(_validate_v1_battle_role_defaults(catalog))
+	return errors
+
+
+## C3 2026-09-05 Boss 量级挂钩：中央倍率表必须覆盖 L1..L5 全部五层键
+## （one..five，与 battle_command_facade.BOSS_LAYER_IDS 的 1..5 → one..five 消费
+## 映射一致），hp/damage 倍率 ≥ 1.0、stage_base 为正整数，校验拒绝缺失/退化层。
+static func _validate_v1_battle_boss_scaling(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var battle: Dictionary = catalog.get("v1_battle", {})
+	var multipliers: Variant = battle.get("boss_layer_mult", {})
+	var stage: Variant = battle.get("stage_base", {})
+	if not multipliers is Dictionary or not stage is Dictionary:
+		errors.append("v1_battle boss_layer_mult and stage_base must be objects")
+		return errors
+	for layer_key in ["one", "two", "three", "four", "five"]:
+		var layer_config: Variant = (multipliers as Dictionary).get(layer_key)
+		if not layer_config is Dictionary:
+			errors.append("v1_battle.boss_layer_mult missing layer %s" % layer_key)
+			continue
+		if not (layer_config as Dictionary).get("hp") is int \
+				and not (layer_config as Dictionary).get("hp") is float:
+			errors.append("v1_battle.boss_layer_mult.%s.hp must be a number" % layer_key)
+		elif float((layer_config as Dictionary).get("hp", 0.0)) < 1.0:
+			errors.append("v1_battle.boss_layer_mult.%s.hp must be >= 1.0" % layer_key)
+		if not (layer_config as Dictionary).get("damage") is int \
+				and not (layer_config as Dictionary).get("damage") is float:
+			errors.append("v1_battle.boss_layer_mult.%s.damage must be a number" % layer_key)
+		elif float((layer_config as Dictionary).get("damage", 0.0)) < 1.0:
+			errors.append("v1_battle.boss_layer_mult.%s.damage must be >= 1.0" % layer_key)
+		var stage_value: Variant = (stage as Dictionary).get(layer_key)
+		if not _is_integral(stage_value) or int(stage_value) < 1:
+			errors.append("v1_battle.stage_base.%s must be a positive integer" % layer_key)
+	return errors
+
+
+## W11 2026-09-09：蛊 role 基础动作兜底表（default_effect_by_role）必须六档
+## 齐全、effect 形状合法（kind 非空、amount 正整数、status 需 name）。该表被
+## v1_battle_resolver.role_default_table 消费，缺失即空效果蛊失去兜底——
+## 占战斗槽、烧真元却无事发生，属玩法级回归。
+static func _validate_v1_battle_role_defaults(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var battle: Variant = catalog.get("v1_battle", {})
+	if not battle is Dictionary:
+		return errors
+	var table: Variant = (battle as Dictionary).get("default_effect_by_role", null)
+	if not table is Dictionary:
+		errors.append("v1_battle.default_effect_by_role must be an object with six role defaults")
+		return errors
+	for role in ["attack", "defense", "healing", "movement", "recon", "logistics"]:
+		if not (table as Dictionary).has(role):
+			errors.append("v1_battle.default_effect_by_role missing role %s" % role)
+			continue
+		var effect: Variant = (table as Dictionary)[role]
+		if not effect is Dictionary:
+			errors.append("v1_battle.default_effect_by_role.%s must be an object" % role)
+			continue
+		if str((effect as Dictionary).get("kind", "")).is_empty():
+			errors.append("v1_battle.default_effect_by_role.%s.kind must be set" % role)
+		if not _is_integral((effect as Dictionary).get("amount", 0)) \
+				or int((effect as Dictionary).get("amount", 0)) < 1:
+			errors.append("v1_battle.default_effect_by_role.%s.amount must be a positive integer" % role)
+		if str((effect as Dictionary).get("kind", "")) == "status" \
+				and str((effect as Dictionary).get("name", "")).is_empty():
+			errors.append("v1_battle.default_effect_by_role.%s.status needs a name" % role)
+		# Q7 B2（2026-09-12）：支援键——support_school 只允许 "self" 哨兵或已登记流派；
+		# "self" 在 v1_battle_resolver.default_v1_effect 注入 definition.school。
+		if effect is Dictionary and (effect as Dictionary).has("support_school"):
+			var support_school := str((effect as Dictionary).get("support_school", ""))
+			if support_school != "self" and not SCHOOL_IDS.has(support_school):
+				errors.append("v1_battle.default_effect_by_role.%s.support_school %s is not self or a known school" % [role, support_school])
+		if effect is Dictionary and (effect as Dictionary).has("support_bonus") \
+				and not _is_integral((effect as Dictionary).get("support_bonus", null)):
+			errors.append("v1_battle.default_effect_by_role.%s.support_bonus must be an integer" % role)
+	return errors
+
+
+## 2026-09-05 随机合成杀招最小闭环：校验 v1_battle.kill_moves 的形状与跨文件
+## 引用，并把 `slice_bright_thread` 的输入/输出/杀招闭包解析出来。
+static func _validate_v1_kill_moves(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var v1_battle: Dictionary = catalog.get("v1_battle", {})
+	var raw: Variant = v1_battle.get("kill_moves", [])
+	if raw is not Array:
+		errors.append("v1_battle.kill_moves must be an array")
+		return errors
+	var seen := {}
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	for km_value in raw:
+		if not (km_value is Dictionary):
+			errors.append("v1_battle.kill_moves entry must be an object")
+			continue
+		var km: Dictionary = km_value
+		var km_id := str(km.get("id", ""))
+		if km_id.is_empty():
+			errors.append("v1_battle.kill_moves entry missing id")
+		elif seen.has(km_id):
+			errors.append("v1_battle.kill_moves duplicate id %s" % km_id)
+		seen[km_id] = true
+		var recipe: Array = km.get("recipe", [])
+		if recipe.is_empty():
+			errors.append("v1 kill move %s needs a non-empty recipe" % km_id)
+		var seen_defs := {}
+		for def_id_value in recipe:
+			var def_id := str(def_id_value)
+			if seen_defs.has(def_id):
+				errors.append("v1 kill move %s recipe duplicates %s" % [km_id, def_id])
+			seen_defs[def_id] = true
+			if not gu_by_id.has(def_id):
+				errors.append("v1 kill move %s recipe references unknown gu %s" % [km_id, def_id])
+		for cost_key in ["true_qi_cost", "thought_cost", "life_cost", "damage"]:
+			var cost_value: Variant = km.get(cost_key, 0)
+			if not _is_integral(cost_value) or int(cost_value) < 0:
+				errors.append("v1 kill move %s %s must be a non-negative integer" % [km_id, cost_key])
+		var effect_value: Variant = km.get("effect", null)
+		if effect_value == null:
+			continue
+		if not (effect_value is Dictionary):
+			errors.append("v1 kill move %s effect must be an object when present" % km_id)
+			continue
+		# 2026-09-05：damage-only 杀招允许空 effect dict；非空才校验形状。
+		if (effect_value as Dictionary).is_empty():
+			continue
+		var effect_errors := _validate_v1_effect(effect_value, "v1 kill move %s effect" % km_id)
+		for err in effect_errors:
+			errors.append(err)
+	return errors
+
+
+## 2026-09-05 切片：凡 refinement_recipes 声明 kill_move_id 的「合成杀招切片」，
+## 必须自洽于 gu/refinement/v1_battle 三个入口（U3b 重建后内容锚点换血，校验改为
+## 数据驱动：不再硬编码某个已删配方，凡带 kill_move_id 的配方一律闭环检查）。
+static func _validate_slice_contract(catalog: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var gu_by_id: Dictionary = catalog.get("gu_by_id", {})
+	for recipe_value in catalog.get("refinement_recipes", []):
+		var recipe: Dictionary = recipe_value
+		var recipe_id := str(recipe.get("id", ""))
+		if not recipe.has("kill_move_id"):
+			continue
+		var kill_move_id := str(recipe.get("kill_move_id", ""))
+		if kill_move_id.is_empty():
+			errors.append("slice recipe %s missing kill_move_id" % recipe_id)
+		var output_gu_id := str(recipe.get("output_gu_id", ""))
+		if output_gu_id.is_empty():
+			errors.append("slice recipe %s missing output_gu_id" % recipe_id)
+		for input_gu_id_value in recipe.get("input_gu_ids", []):
+			var input_gu_id := str(input_gu_id_value)
+			if not gu_by_id.has(input_gu_id):
+				errors.append("slice recipe %s references unknown input gu %s" % [recipe_id, input_gu_id])
+		var output: Dictionary = gu_by_id.get(output_gu_id, {})
+		if output.is_empty():
+			errors.append("slice recipe %s output %s missing from gu.json" % [recipe_id, output_gu_id])
+		else:
+			var effect_value: Variant = output.get("v1_effect", null)
+			if effect_value == null:
+				errors.append("slice recipe %s output %s missing v1_effect" % [recipe_id, output_gu_id])
+			else:
+				for err in _validate_v1_effect(effect_value, "gu %s v1_effect" % output_gu_id):
+					errors.append(err)
+		if not kill_move_id.is_empty():
+			var found_km := false
+			for km_value in catalog.get("v1_battle", {}).get("kill_moves", []):
+				var km: Dictionary = km_value
+				if str(km.get("id", "")) == kill_move_id:
+					found_km = true
+					var km_recipe: Array = km.get("recipe", [])
+					if not km_recipe.has(output_gu_id):
+						errors.append("slice kill move %s recipe must contain %s" % [kill_move_id, output_gu_id])
+					break
+			if not found_km:
+				errors.append("slice kill move %s missing from v1_battle.kill_moves" % kill_move_id)
+	return errors
+
+
+const V1_EFFECT_KIND_IDS := ["strike", "shield", "buff", "heal", "heal_and_strike", "status", "shift", "sword_intent", "weaken_intent"]
+const V1_STATUS_IDS := ["marked", "bound", "sealed"]
+
+
+static func _validate_v1_effect(effect_value: Variant, owner: String) -> Array[String]:
+	var errors: Array[String] = []
+	if not (effect_value is Dictionary):
+		errors.append("%s must be an object" % owner)
+		return errors
+	var effect: Dictionary = effect_value
+	var kind := str(effect.get("kind", ""))
+	if not V1_EFFECT_KIND_IDS.has(kind):
+		errors.append("%s has unknown kind %s" % [owner, kind])
+		return errors
+	match kind:
+		"strike", "shield", "heal", "shift", "sword_intent", "weaken_intent":
+			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
+				errors.append("%s amount must be a non-negative integer" % owner)
+		"buff", "status":
+			if str(effect.get("name", "")).is_empty():
+				errors.append("%s name must be a non-empty string" % owner)
+			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
+				errors.append("%s amount must be a non-negative integer" % owner)
+			if kind == "status" and not V1_STATUS_IDS.has(str(effect.get("name", ""))):
+				errors.append("%s name %s is not a known status" % [owner, effect.get("name", "")])
+		"heal_and_strike":
+			if not _is_integral(effect.get("amount", null)) or int(effect.get("amount", -1)) < 0:
+				errors.append("%s amount must be a non-negative integer" % owner)
+			if not _is_integral(effect.get("heal", null)) or int(effect.get("heal", -1)) < 0:
+				errors.append("%s heal must be a non-negative integer" % owner)
+	return errors
+
+
+# N-candidate (night batch): NPC personal inventory schema guard — stock ids
+# must resolve to real shop offers of a supported kind, without duplicates.
+static func _validate_npcs(npcs: Array, shop_offer_by_id: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	for npc_value in npcs:
+		var npc: Dictionary = npc_value
+		var npc_id := str(npc.get("id", ""))
+		var stock: Array = npc.get("stock", [])
+		var seen := {}
+		for offer_id_value in stock:
+			var offer_id := str(offer_id_value)
+			if seen.has(offer_id):
+				errors.append("npc %s stock duplicates offer %s" % [npc_id, offer_id])
+			seen[offer_id] = true
+			var offer: Dictionary = shop_offer_by_id.get(offer_id, {})
+			if offer.is_empty():
+				errors.append("npc %s stock references unknown offer %s" % [npc_id, offer_id])
+				continue
+			var kind := str(offer.get("kind", ""))
+			if not kind in ["purchase", "soul_boost", "lifespan_deal", "barter"]:
+				errors.append("npc %s stock offer %s has unsupported kind %s" % [npc_id, offer_id, kind])
+	return errors
+
+
+# R14.5/R14.6 (night batch) schema guard: ascending score bands within
+# [0, max_score], sys:-prefixed markers, known enemy ids in swap pools,
+# positive integer weights.
+static func _validate_dda(cfg: Dictionary, enemy_by_id: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var max_score := int(cfg.get("max_score", 10))
+	if max_score < 1:
+		errors.append("dda max_score must be a positive integer")
+	var previous := -1
+	var bands: Array = cfg.get("bands", [])
+	for band_index in bands.size():
+		var band: Dictionary = bands[band_index]
+		var min_score := int(band.get("min_score", 0))
+		if min_score < 0 or min_score > max_score:
+			errors.append("dda band %d min_score %d outside [0, %d]" % [band_index, min_score, max_score])
+		if min_score <= previous:
+			errors.append("dda band %d min_score must ascend strictly" % band_index)
+		previous = min_score
+		var marker := str(band.get("marker", ""))
+		if not marker.is_empty() and not marker.begins_with("sys:"):
+			errors.append("dda band %d marker %s must start with sys:" % [band_index, marker])
+	var pools: Dictionary = cfg.get("enemy_swap_pools", {})
+	for marker_value in pools:
+		var marker := str(marker_value)
+		if not marker.begins_with("sys:"):
+			errors.append("dda swap pool key %s must start with sys:" % marker)
+		for enemy_id_value in pools[marker]:
+			if not enemy_by_id.has(str(enemy_id_value)):
+				errors.append("dda swap pool %s references unknown enemy %s" % [marker, enemy_id_value])
+	var weights: Dictionary = cfg.get("weights", {})
+	for weight_value in weights.values():
+		if not _is_integral(weight_value) or int(weight_value) < 1:
+			errors.append("dda weights must be positive integers")
+	var recent_window := int(cfg.get("recent_window", 4))
+	if recent_window < 1:
+		errors.append("dda recent_window must be a positive integer")
+	# R14.6⑦ boss-local rules: known condition keys; intent must exist in some
+	# boss enemy's phase pool (a rule pointing nowhere is a silent no-op).
+	var boss_intent_ids := {}
+	var boss_checked := false
+	for enemy_value in enemy_by_id.values():
+		var enemy: Dictionary = enemy_value
+		if str(enemy.get("tier", "")) != "boss":
+			continue
+		boss_checked = true
+		for phase_value in enemy.get("phases", []):
+			var phase: Dictionary = phase_value
+			for intent_value in phase.get("intents", []):
+				boss_intent_ids[str((intent_value as Dictionary).get("id", ""))] = true
+	for rule_value in cfg.get("boss_local", []):
+		var rule: Dictionary = rule_value
+		var when := str(rule.get("when", ""))
+		if when != "many_curses":
+			errors.append("dda boss_local rule has unknown condition %s" % when)
+		var intent_id := str(rule.get("intent_id", ""))
+		if boss_checked and not boss_intent_ids.has(intent_id):
+			errors.append("dda boss_local intent %s not in any boss phase pool" % intent_id)
+	return errors
+
+
+# Spec-v4 phase-1 (T1.2): central balance schema guard — every §10/§11 key
+# present, positive, in-range, and ascending where the spec defines tiers.
+# Run on every catalog load (terminates the §16.22 production zero-call item).
+static func _validate_balance(cfg: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var positive_keys := [
+		"rank_step_ratio", "standard_hit_ratio", "human_base_health",
+		"human_base_strength", "human_base_body_capacity", "thought_base_capacity",
+		"unarmed_damage_ratio", "standard_activation_cost", "light_cost_ratio",
+		"heavy_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
+		"reaction_multiplier", "material_refine_efficiency",
+		"fixed_defense_ratio", "stone_per_t1_material", "public_buyback_ratio",
+		"low_liquidity_ratio", "quick_substitute_cap", "base_speed",
+		"speed_min", "speed_max", "gu_estimate_ratio",
+		"blood_yield_ratio", "deep_blood_multiplier", "deep_blood_trail",
+		"deep_blood_time_cost",
+		"soul_burst_capacity_ratio", "soul_calm_emotional_below",
+		"soul_calm_beast_below", "soul_calm_departure_below",
+		"beast_nature_emerging_above", "beast_nature_threshold",
+		"retreat_stone_cost", "cultivate_rank_two_stone_cost",
+		# 一转一突破（2026-09-15）：2→3→4→5 各档元石成本，与二转同族标量键。
+		"cultivate_rank_three_stone_cost", "cultivate_rank_four_stone_cost",
+		"cultivate_rank_five_stone_cost",
+		"stone_to_essence_per_stone", "cross_school_penalty_per_extra",
+		"cross_school_exclusion_penalty",
+	]
+	for key in positive_keys:
+		var value: Variant = cfg.get(key, null)
+		if not (value is int or value is float):
+			errors.append("balance %s must be numeric" % key)
+			continue
+		if float(value) <= 0.0:
+			errors.append("balance %s must be positive" % key)
+	if float(cfg.get("speed_max", 0.0)) < float(cfg.get("speed_min", 0.0)):
+		errors.append("balance speed_max must be >= speed_min")
+	# 2026-09-04 中央蛊虫计价表：1..5 转全覆盖正整数。
+	var gu_value_table: Variant = cfg.get("gu_value_by_rank", null)
+	if gu_value_table is Dictionary:
+		if (gu_value_table as Dictionary).size() != 5:
+			errors.append("balance gu_value_by_rank must cover ranks 1..5")
+		for rank_key in (gu_value_table as Dictionary):
+			var tier_value: Variant = (gu_value_table as Dictionary)[rank_key]
+			if not _is_integral(tier_value) or int(tier_value) < 1:
+				errors.append("balance gu_value_by_rank.%s must be a positive integer" % str(rank_key))
+	elif gu_value_table != null:
+		errors.append("balance gu_value_by_rank must be an object")
+	var calm_regions := ["soul_calm_emotional_below", "soul_calm_beast_below", "soul_calm_departure_below"]
+	var previous_calm := 101.0
+	for calm_key in calm_regions:
+		var calm_value := float(cfg.get(calm_key, 0.0))
+		if calm_value <= 0.0 or calm_value > 100.0:
+			errors.append("balance %s must be in (0, 100]" % calm_key)
+		elif calm_value >= previous_calm:
+			errors.append("balance %s must descend below the previous stage" % calm_key)
+		previous_calm = calm_value
+	var ratio_keys := [
+		"standard_hit_ratio", "unarmed_damage_ratio", "standard_activation_cost",
+		"light_cost_ratio", "natural_recovery_cost_ratio", "aptitude_recovery_multiplier",
+		"reaction_multiplier", "material_refine_efficiency",
+		"fixed_defense_ratio", "public_buyback_ratio", "low_liquidity_ratio",
+		"quick_substitute_cap",
+	]
+	for key in ratio_keys:
+		var value := float(cfg.get(key, 0.0))
+		if value <= 0.0 or value > 1.0:
+			errors.append("balance %s must be in (0, 1]" % key)
+	if not _is_ascending_positive(cfg.get("feed_tier", [])):
+		errors.append("balance feed_tier must be a non-empty ascending positive array")
+	if not _is_ascending_positive(cfg.get("demand_price_tiers", [])):
+		errors.append("balance demand_price_tiers must be a non-empty ascending positive array")
+	var dragon_fish: Array = cfg.get("dragon_fish_replacement", [])
+	for index in dragon_fish.size():
+		var value := int(dragon_fish[index])
+		if value <= 0 or value > 100:
+			errors.append("balance dragon_fish_replacement[%d] outside (0, 100]" % index)
+		if index > 0 and value <= int(dragon_fish[index - 1]):
+			errors.append("balance dragon_fish_replacement must ascend strictly")
+	# §9.1: yuanstone is quantity only - quality/face-value keys are refused.
+	for banned_key in ["stone_quality", "stone_face_value"]:
+		if cfg.has(banned_key):
+			errors.append("balance %s is forbidden: yuanstone has quantity only (spec 9.1)" % banned_key)
+	# 2026-09-12（T11）：兼修互斥对 = 两条真实流派 id，不得自斥、不得重复。
+	var exclusions: Variant = cfg.get("school_exclusions", [])
+	if not (exclusions is Array):
+		errors.append("balance school_exclusions must be an array of school-id pairs")
+	else:
+		var seen_pairs := {}
+		for pair_value in (exclusions as Array):
+			if not (pair_value is Array) or (pair_value as Array).size() != 2:
+				errors.append("balance school_exclusions entries must be 2-element arrays")
+				continue
+			var pair: Array = pair_value
+			var left := str(pair[0])
+			var right := str(pair[1])
+			if left == right:
+				errors.append("balance school_exclusions pair %s excludes itself" % left)
+			var pair_key := "%s|%s" % [left, right]
+			var mirror_key := "%s|%s" % [right, left]
+			if seen_pairs.has(pair_key) or seen_pairs.has(mirror_key):
+				errors.append("balance school_exclusions duplicate pair %s" % pair_key)
+			seen_pairs[pair_key] = true
+	return errors
+
+
+static func _is_ascending_positive(values: Variant) -> bool:
+	if not values is Array or (values as Array).is_empty():
+		return false
+	var previous := 0.0
+	for value in values:
+		if not (value is int or value is float) or float(value) <= previous:
+			return false
+		previous = float(value)
+	return true
+
+
+# C1-min §16.13 schema guard: id uniqueness, closed rule-key whitelist,
+# mutual-exclusion references, unlock shape and a positive contract cap.
+static func _validate_contracts(cfg: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	if not _is_integral(cfg.get("contract_cap", null)) or int(cfg.get("contract_cap", 0)) < 1:
+		errors.append("contracts contract_cap must be a positive integer")
+	var entries: Array = cfg.get("entries", [])
+	var seen_ids := {}
+	for entry_value in entries:
+		var entry: Dictionary = entry_value
+		var entry_id := str(entry.get("id", ""))
+		if entry_id.is_empty():
+			errors.append("contract entry missing id")
+			continue
+		if seen_ids.has(entry_id):
+			errors.append("duplicate contract id %s" % entry_id)
+		seen_ids[entry_id] = true
+		for field in ["label", "desc"]:
+			if str(entry.get(field, "")).is_empty():
+				errors.append("contract %s missing %s" % [entry_id, field])
+		for rule_value in entry.get("rules", []):
+			var rule: Dictionary = rule_value
+			if not CONTRACT_RULE_KEYS.has(str(rule.get("key", ""))):
+				errors.append("contract %s uses unknown rule key %s" % [entry_id, rule.get("key", "")])
+			if not _is_integral(rule.get("value", null)):
+				errors.append("contract %s rule %s value must be an integer" % [entry_id, rule.get("key", "")])
+		# Quality batch ③: player-visible desc numerals must state every rule
+		# value (by magnitude), so the copy cannot drift from the config.
+		# Numerals are standalone digit tokens: runs inside longer numbers
+		# (e.g. "30" inside "130") do not count; extra numerals are allowed.
+		var desc := str(entry.get("desc", ""))
+		if not desc.is_empty():
+			var token_regex := RegEx.new()
+			token_regex.compile("(?<![0-9])[0-9]+(?![0-9])")
+			var stated := {}
+			for token_match in token_regex.search_all(desc):
+				stated[int(token_match.get_string())] = true
+			for rule_value in entry.get("rules", []):
+				var rule: Dictionary = rule_value
+				if not _is_integral(rule.get("value", null)):
+					continue
+				var magnitude := absi(int(rule["value"]))
+				if not stated.has(magnitude):
+					errors.append("contract %s desc lacks numeral %d for rule %s" % [entry_id, magnitude, rule.get("key", "")])
+		var unlock: Dictionary = entry.get("unlock", {})
+		var kind := str(unlock.get("kind", ""))
+		if kind != "always" and kind != "ending":
+			errors.append("contract %s has unknown unlock kind %s" % [entry_id, kind])
+		elif kind == "ending":
+			var endings: Array = unlock.get("endings", [])
+			if endings.is_empty():
+				errors.append("contract %s ending unlock needs endings" % entry_id)
+			else:
+				for ending_value in endings:
+					if not ENDING_TYPE_IDS.has(str(ending_value)):
+						errors.append("contract %s ending unlock lists unknown ending %s" % [entry_id, ending_value])
+	for entry_value in entries:
+		var entry: Dictionary = entry_value
+		var entry_id := str(entry.get("id", ""))
+		if entry_id.is_empty():
+			continue
+		for excluded_value in entry.get("mutual_exclusive", []):
+			var excluded := str(excluded_value)
+			if excluded == entry_id:
+				errors.append("contract %s mutual_exclusive must not reference itself" % entry_id)
+			elif not seen_ids.has(excluded):
+				errors.append("contract %s mutual_exclusive references unknown id %s" % [entry_id, excluded])
+	return errors
+
+
+# N1 §16.9 schema guard: unique ids, hall-layer enum, unlock shape and a
+# closed route-marker whitelist aligned with MetaProgress._run_markers.
+static func _validate_journal(cfg: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var seen_ids := {}
+	for entry_value in cfg.get("entries", []):
+		var entry: Dictionary = entry_value
+		var entry_id := str(entry.get("id", ""))
+		if entry_id.is_empty():
+			errors.append("journal entry missing id")
+			continue
+		if seen_ids.has(entry_id):
+			errors.append("duplicate journal id %s" % entry_id)
+		seen_ids[entry_id] = true
+		for field in ["title", "text"]:
+			if str(entry.get(field, "")).is_empty():
+				errors.append("journal %s missing %s" % [entry_id, field])
+		if not JOURNAL_LAYER_IDS.has(str(entry.get("layer", ""))):
+			errors.append("journal %s has unknown layer %s" % [entry_id, entry.get("layer", "")])
+		var unlock: Dictionary = entry.get("unlock", {})
+		var kind := str(unlock.get("kind", ""))
+		if kind != "always" and kind != "ending" and kind != "route":
+			errors.append("journal %s has unknown unlock kind %s" % [entry_id, kind])
+		elif kind == "ending":
+			var endings: Array = unlock.get("endings", [])
+			if endings.is_empty():
+				errors.append("journal %s ending unlock needs endings" % entry_id)
+			else:
+				for ending_value in endings:
+					if not ENDING_TYPE_IDS.has(str(ending_value)):
+						errors.append("journal %s ending unlock lists unknown ending %s" % [entry_id, ending_value])
+		elif kind == "route":
+			var markers: Array = unlock.get("markers", [])
+			if markers.is_empty():
+				errors.append("journal %s route unlock needs markers" % entry_id)
+			else:
+				for marker_value in markers:
+					if not JOURNAL_MARKER_IDS.has(str(marker_value)):
+						errors.append("journal %s route unlock lists unknown marker %s" % [entry_id, marker_value])
+	for ending_key in cfg.get("ending_texts", {}):
+		if not ENDING_TYPE_IDS.has(str(ending_key)):
+			errors.append("journal ending_texts lists unknown ending %s" % ending_key)
+	return errors
+
+
+static func _load_array(path: String) -> Array:
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK:
+		return []
+	if json.data is Array:
+		return json.data
+	return []
+
+
+static func _load_object(path: String) -> Dictionary:
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK:
+		return {}
+	if json.data is Dictionary:
+		return json.data
+	return {}
+
+
+static func _index_by_id(entries: Array) -> Dictionary:
+	var indexed := {}
+	for entry in entries:
+		indexed[entry["id"]] = entry
+	return indexed
+
+
+static func _is_integral(value: Variant) -> bool:
+	return value is int or (value is float and is_equal_approx(value, floor(value)))
+
+
+## C3 转阶落表：rank 上界豁免——test-only 蛊（tags 含 "test"，十转杀蛊等夹具）
+## 以 low_rank_exception 显式声明，突破 1..5 转门禁而不污染生产数据语义。
+static func _gu_rank_exempt(gu: Dictionary) -> bool:
+	if bool(gu.get("low_rank_exception", false)):
+		return true
+	var tags: Variant = gu.get("tags", [])
+	return tags is Array and tags.has("test")
+

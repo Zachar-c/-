@@ -1,0 +1,10 @@
+*.class
+target/
+.idea/
+*.iml
+dependency-reduced-pom.xml
+.vscode/
+logs/
+data/
+*.mv.db
+*.trace.db

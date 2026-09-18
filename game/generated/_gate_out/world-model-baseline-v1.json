@@ -1,0 +1,2335 @@
+{
+  "baseline_version": "world-model-baseline-v1",
+  "claim_counts": {
+    "effective_rulings": {
+      "remove": 2,
+      "retain": 15,
+      "revise": 7
+    },
+    "high_impact": 24,
+    "statuses": {
+      "canonical": 15,
+      "derived": 7,
+      "rejected": 2
+    },
+    "total": 24
+  },
+  "claims": [
+    {
+      "claim_id": "aptitude_capacity",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "The relationship among aptitude, capacity, recovery, and quality remains an unverified source claim. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_aptitude_capacity_m01, stage0_aptitude_capacity_m02). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 23794,
+          "char_start": 23764,
+          "evidence_id": "stage0_aptitude_capacity_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/容纳"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 27581,
+          "char_start": 27551,
+          "evidence_id": "stage0_aptitude_capacity_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/容纳"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 83,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bb3d42e31f743623",
+            "locator": "/aptitude_recovery_multiplier",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f6fb69065e680ea3",
+            "locator": "line:14",
+            "migration_action": "defer",
+            "path": "docs/lore/adaptation-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-50b164a3f120d508",
+            "locator": "line:20",
+            "migration_action": "defer",
+            "path": "docs/lore/canon-index.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0bc9c7b87fa6e148",
+            "locator": "line:21",
+            "migration_action": "defer",
+            "path": "docs/lore/canon-index.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5985bed3d44f9579",
+            "locator": "line:22",
+            "migration_action": "defer",
+            "path": "docs/lore/canon-index.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fc41efcfbbb639de",
+            "locator": "line:82",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bc8caae4a7384ddb",
+            "locator": "line:83",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2975c0dfd033f719",
+            "locator": "line:90",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6a0c4b9065336616",
+            "locator": "line:19",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c626bf577bcf99a4",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f88dba1608713e17",
+            "locator": "line:1079",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e49e87f601653f32",
+            "locator": "line:1080",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          }
+        ],
+        "omitted_location_count": 71
+      },
+      "migration_deprecation_action": "Defer production work and record the verified scope before proposing a model. Do not promote current aptitude fields into world truth.",
+      "player_consequence": "No aptitude-derived capacity or recovery rule is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "“十步以下，是没有修行资质。十步到二十步之间，是丁",
+        "，往往最高能修行到一转二转。丙等资质，元海是空窍的四五成，通"
+      ],
+      "topic": "aptitude_capacity",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish aptitude and capacity semantics."
+    },
+    {
+      "claim_id": "body_and_blood",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Body and blood state semantics have not been verified against exact source passages. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_body_and_blood_m01, stage0_body_and_blood_m02). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 6841276,
+          "char_start": 6841246,
+          "evidence_id": "stage0_body_and_blood_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/血统"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 6846435,
+          "char_start": 6846405,
+          "evidence_id": "stage0_body_and_blood_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/血统"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer production work pending source verification. Do not infer rules from current data labels.",
+      "player_consequence": "No new body, bloodline, or injury rule is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "该是没有问题的。我检查了二长老的血统、魂魄、肉身，都是如假包",
+        "疲惫的样子，心中则在思索：“我的肉身本就是房睇长的肉身，因此"
+      ],
+      "topic": "body_and_blood",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish body and blood state semantics."
+    },
+    {
+      "claim_id": "cultivator_aperture",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "The clean-text locations and scope of aperture constraints have not yet been verified. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_cultivator_aperture_m06, stage0_cultivator_aperture_t01). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 167925,
+          "char_start": 167895,
+          "evidence_id": "stage0_cultivator_aperture_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/窍[^。！？]{0,3}破碎"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 8186140,
+          "char_start": 8186110,
+          "evidence_id": "stage0_cultivator_aperture_t01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/窍[^。！？]{0,3}破碎"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer production work and collect exact P0 support, conditions, and counter-evidence. Keep current behavior unchanged while evidence is unresolved.",
+      "player_consequence": "No aperture rule change is authorized by Stage 0.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "元对冲。对冲引发的剧烈波动，会对空窍造成损伤。\n\n    空",
+        "望蛊便答道：“人啊，我可以帮助你开窍。”\n\n    希望能让"
+      ],
+      "topic": "cultivator_aperture",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish the role and limits of a cultivator aperture."
+    },
+    {
+      "claim_id": "dao_marks",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: remove generalized mortal-stage dao marks as a universal progression bar; retain only future evidence-backed exceptions. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_dao_marks_m01, stage0_dao_marks_m04). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "remove",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 7261708,
+          "char_start": 7261678,
+          "evidence_id": "stage0_dao_marks_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/痕迹"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 1075794,
+          "char_start": 1075764,
+          "evidence_id": "stage0_dao_marks_m04",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/痕迹"
+        }
+      ],
+      "final_ruling": "remove",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 16,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-145601322d014190",
+            "locator": "line:7",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-aac3cb7442367f95",
+            "locator": "line:14",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-74ef39357c29c073",
+            "locator": "line:26",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-61d87ae420ff458c",
+            "locator": "line:39",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-159143c0ba700c1d",
+            "locator": "line:870",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9646ced94e609c13",
+            "locator": "line:87",
+            "migration_action": "defer",
+            "path": "scripts/domain/core_gu_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-10fd25ea27d9faea",
+            "locator": "line:16",
+            "migration_action": "defer",
+            "path": "scripts/domain/cultivator_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-124f31f2fe4a51ee",
+            "locator": "line:28",
+            "migration_action": "defer",
+            "path": "scripts/domain/gu_instance.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b15a5047274e6df6",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "scripts/domain/soul_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-83aea51fa43fce5c",
+            "locator": "line:103",
+            "migration_action": "defer",
+            "path": "scripts/domain/sword_mark_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f7994a9f1ec75bc2",
+            "locator": "line:110",
+            "migration_action": "defer",
+            "path": "scripts/domain/sword_mark_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-67bf676e8b9bb07c",
+            "locator": "line:116",
+            "migration_action": "defer",
+            "path": "scripts/domain/sword_mark_rules.gd"
+          }
+        ],
+        "omitted_location_count": 4
+      },
+      "migration_deprecation_action": "Mark generalized mortal dao-mark progression for deprecation; do not delete fields or migrate saves in Stage 0. Exact P0 exceptions must be preserved before any later removal.",
+      "player_consequence": "If approved later, players will not receive unsupported universal dao-mark experience for routine actions.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "紧一切机会，开始全力收集这些天道道痕。\n\n    每一根天道",
+        "是兽力虚影，究其本质，就是力量的道纹天地大道的痕迹！"
+      ],
+      "topic": "dao_marks",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish dao mark accumulation and effects."
+    },
+    {
+      "claim_id": "economy_and_primeval_stones",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary adaptation hypothesis: retain primeval stones as ordinary exchange while excluding universal pricing of scarce or taboo assets; exact scope remains pending. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_economy_and_primeval_stones_m01, stage0_economy_and_primeval_stones_t01). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 2498542,
+          "char_start": 2498512,
+          "evidence_id": "stage0_economy_and_primeval_stones_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/货币"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 196649,
+          "char_start": 196619,
+          "evidence_id": "stage0_economy_and_primeval_stones_t01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/货币"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 42,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6a466a29f400406b",
+            "locator": "line:55",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-96b292cad7bb52df",
+            "locator": "line:19",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8767972d490a9e0c",
+            "locator": "line:20",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-adbe8d37e34706e6",
+            "locator": "line:21",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3a15f0995b2a34d2",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/economy.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b1b60788aac31f37",
+            "locator": "line:38",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f5aa735b80c254d2",
+            "locator": "line:401",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-90ca1fe68fae19e2",
+            "locator": "line:409",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9c183bed4e764d45",
+            "locator": "line:976",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-11b37eae259e25ad",
+            "locator": "line:89",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3ee5080af1d994f1",
+            "locator": "line:90",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-23c1d097554b73a2",
+            "locator": "line:92",
+            "migration_action": "defer",
+            "path": "scripts/domain/blood_qi_rules.gd"
+          }
+        ],
+        "omitted_location_count": 30
+      },
+      "migration_deprecation_action": "Keep promotion economy audit-only and defer any pricing or inventory migration. Do not change shops, prices, materials, or saves in Stage 0.",
+      "player_consequence": "If verified later, players can buy ordinary goods but must use relationships, knowledge, or risk for non-fungible assets.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "后，方源再不强求。最终他以两块仙元石，买下春星雨，以及足够十",
+        "存在，而你不行。不过我们可以再做交易，你把你的青年给我，我就"
+      ],
+      "topic": "economy_and_primeval_stones",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish economy and primeval stone semantics."
+    },
+    {
+      "claim_id": "force_and_social_order",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: social outcomes should persist through faction and relationship consequences; exact source scope remains pending. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_force_and_social_order_m06, stage0_force_and_social_order_m04). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 4546597,
+          "char_start": 4546567,
+          "evidence_id": "stage0_force_and_social_order_m04",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/秩序"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 128401,
+          "char_start": 128371,
+          "evidence_id": "stage0_force_and_social_order_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/秩序"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 65,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c04ad0ba649f99fc",
+            "locator": "line:183",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4d8fbe04a75c27f9",
+            "locator": "line:67",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6b3798e66a34c554",
+            "locator": "line:26",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/world-model-translation.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f9061b620e67e50e",
+            "locator": "line:384",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9610f83e2a855b10",
+            "locator": "line:398",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6fdaa5c143e8d2c8",
+            "locator": "line:409",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5dc7cfcdf154ec21",
+            "locator": "line:420",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-12d04582e8bad918",
+            "locator": "line:1033",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-19994afb36000c34",
+            "locator": "line:1034",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2b1b3d82482f33fd",
+            "locator": "line:121",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ec40d614049bdcc9",
+            "locator": "line:1363",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1ad7cb713b9f7450",
+            "locator": "line:1365",
+            "migration_action": "defer",
+            "path": "scripts/domain/content_catalog.gd"
+          }
+        ],
+        "omitted_location_count": 53
+      },
+      "migration_deprecation_action": "Audit existing NPC and faction outcomes only; defer production changes. One-off current outcomes do not prove the proposed model.",
+      "player_consequence": "If verified later, coercion and status choices leave visible future protection, hostility, or pursuit consequences.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "和中洲大异。\n\n    南疆正道势力中，武家独占鳌头。历史上",
+        "和利益。漠颜找我麻烦，已经是坏了规矩，为了维护家族名誉，他必"
+      ],
+      "topic": "force_and_social_order",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish force, status, and social order semantics."
+    },
+    {
+      "claim_id": "gu_activation",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Activation costs, quality gates, and exceptional conditions require exact P0 verification. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_activation_m01, stage0_gu_activation_m03). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 5579287,
+          "char_start": 5579257,
+          "evidence_id": "stage0_gu_activation_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/耗尽"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 5843185,
+          "char_start": 5843155,
+          "evidence_id": "stage0_gu_activation_m03",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/耗尽"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 806,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1da12cbc9eab3b54",
+            "locator": "/0/v1_effect",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c2ae90dbdba2ece2",
+            "locator": "/1/v1_effect",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-75a62229aa6f40b0",
+            "locator": "/10/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-38be5a46c87a6faa",
+            "locator": "/100/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a0988abf2008749d",
+            "locator": "/101/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b20d1aeb9f3bfcba",
+            "locator": "/102/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-629271a8a5c793eb",
+            "locator": "/103/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-478a659104a2d7b9",
+            "locator": "/104/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-23e0eb80bbfd2951",
+            "locator": "/105/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8beb651f3a7b32dd",
+            "locator": "/106/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-69c4e33ef16fb061",
+            "locator": "/107/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9cd6eb5526a18a93",
+            "locator": "/108/role",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 794
+      },
+      "migration_deprecation_action": "Defer production work and verify support plus exceptions. Do not treat role fallbacks as source facts.",
+      "player_consequence": "No activation-cost or fallback change is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "低劣，真元极其有限。方源之前连续催动蛊虫，已经差不多耗尽了。",
+        "候，步骤简略，效率更高。导致原本催动一两次万蛟的时间，此时他"
+      ],
+      "topic": "gu_activation",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish gu activation costs and conditions."
+    },
+    {
+      "claim_id": "gu_feeding",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: replace universalized upkeep with specific feeding relationships; exact source scope remains unverified. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_feeding_m06, stage0_gu_feeding_m01). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 131870,
+          "char_start": 131840,
+          "evidence_id": "stage0_gu_feeding_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/进食"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 1516273,
+          "char_start": 1516243,
+          "evidence_id": "stage0_gu_feeding_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/进食"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 158,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4d73d1a19ca35fc6",
+            "locator": "/0/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ac2e3e212f6dac4c",
+            "locator": "/0/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d2d6c86ef4b37c58",
+            "locator": "/1/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f1440efabea98ee4",
+            "locator": "/1/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-032c8a4b72b55e92",
+            "locator": "/10/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-847d19aaf76c75c8",
+            "locator": "/10/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6e13287e0f5bb222",
+            "locator": "/11/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-7254acb5b7393a06",
+            "locator": "/11/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-54ceae90655439d4",
+            "locator": "/12/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3cfe050b8bbde127",
+            "locator": "/12/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9c0ce0fa394bdfe6",
+            "locator": "/13/feeding_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-600dbc2ce3c61586",
+            "locator": "/13/feeding_need",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 146
+      },
+      "migration_deprecation_action": "Audit feeding fields only; defer any data or runtime migration. Promotion materials remain deferred.",
+      "player_consequence": "If verified later, upkeep choices expose specific food, timing, and failure consequences.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "价值在于它能和一些食物搭配起来，喂养蛊虫。\n\n    比方说",
+        "数越高，喂养的代价就越大，但同时喂养的间隔时间也大幅度地拉长"
+      ],
+      "topic": "gu_feeding",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish gu feeding requirements and consequences."
+    },
+    {
+      "claim_id": "gu_is_independent_entity",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: preserve independent Gu identity, subject to exact P0 verification. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_is_independent_entity_m06, stage0_gu_is_independent_entity_t01). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 71142,
+          "char_start": 71110,
+          "evidence_id": "stage0_gu_is_independent_entity_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/听命于"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 127129,
+          "char_start": 127098,
+          "evidence_id": "stage0_gu_is_independent_entity_t01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/听命于"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Audit instance identity only; make no production change before P0 verification. Do not infer independence from existing instance fields.",
+      "player_consequence": "If verified later, ownership, transfer, feeding, and loss remain attached to individual Gu.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "感受到春秋蝉的气息，月光蛊的意志，立即缴械投降，畏惧得只能龟缩到",
+        "，只要是知道了我们的名字，我们就听命于他。人啊，你既然已经知道"
+      ],
+      "topic": "gu_is_independent_entity",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: determine whether a gu is an independent entity in the world model."
+    },
+    {
+      "claim_id": "gu_is_life",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: preserve the living-entity model, subject to exact P0 verification; adjudication must downgrade this row until then. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_is_life_m01, stage0_gu_is_life_m02). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 140474,
+          "char_start": 140444,
+          "evidence_id": "stage0_gu_is_life_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/有灵性"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 142896,
+          "char_start": 142866,
+          "evidence_id": "stage0_gu_is_life_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/有灵性"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Audit current lifecycle behavior only; make no production change before P0 verification. Existing implementation is not evidence for retention.",
+      "player_consequence": "If verified later, players must treat Gu as maintained living entities rather than disposable skill tokens.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "间变得十分精彩。\n\n    一只活蛊和一只死蛊之间的价值差距",
+        "十赌八输。剩下的两成赢面中，还分死蛊和活蛊。\n\n    死蛊"
+      ],
+      "topic": "gu_is_life",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: determine whether a gu is treated as a living entity."
+    },
+    {
+      "claim_id": "gu_ownership",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Ownership, recognition, transfer, and loss conditions require exact source verification. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_ownership_t01, stage0_gu_ownership_m05). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 4566365,
+          "char_start": 4566335,
+          "evidence_id": "stage0_gu_ownership_m05",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/归属"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 196170,
+          "char_start": 196137,
+          "evidence_id": "stage0_gu_ownership_t01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/归属"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer and gather P0 support, conditions, and counterexamples. Current inventory representation is observation only.",
+      "player_consequence": "No ownership or transfer behavior changes are authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "，从严格意义上来讲，智慧蛊并不归属于方源。\n\n    武家的",
+        "喜，这样一来，天下所有的蛊虫都归属自己了，从此以后他将是世界之主！"
+      ],
+      "topic": "gu_ownership",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish gu ownership and transfer semantics."
+    },
+    {
+      "claim_id": "gu_recipe",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Recipe knowledge, acquisition, secrecy, and execution semantics require exact source locations. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_recipe_m03, stage0_gu_recipe_m02). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 2847318,
+          "char_start": 2847288,
+          "evidence_id": "stage0_gu_recipe_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/丹方"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 1725721,
+          "char_start": 1725691,
+          "evidence_id": "stage0_gu_recipe_m03",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/丹方"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer and verify source-backed knowledge and execution boundaries. Current recipe data cannot prove the world rule.",
+      "player_consequence": "No recipe unlock or execution rule change is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "宙道、智道等等杀招，之后又是各种蛊方，蛊方越老越稀少便越好。",
+        "。\n\n    当即，方源用了三张秘方，获得了十万只星萤虫。只"
+      ],
+      "topic": "gu_recipe",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish gu recipe knowledge and execution semantics."
+    },
+    {
+      "claim_id": "gu_refinement",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: refinement should distinguish known recipes from blind attempts; exact source rules remain unverified. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_gu_refinement_m01, stage0_gu_refinement_t02). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 2452418,
+          "char_start": 2452388,
+          "evidence_id": "stage0_gu_refinement_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/秘方"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 3154193,
+          "char_start": 3154163,
+          "evidence_id": "stage0_gu_refinement_t02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/秘方"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 582,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-703cfca3150a6a2b",
+            "locator": "/material_refine_efficiency",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-67a44e99aa8d62b5",
+            "locator": "/stone_per_t1_material",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a65ffc972a79ec56",
+            "locator": "line:102",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1da3b7c227852439",
+            "locator": "line:114",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e67c1cd31e793797",
+            "locator": "line:13",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a9f5d5dc8aa5d655",
+            "locator": "line:23",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f1afb3a0d8b1bc88",
+            "locator": "line:51",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-afebc9a954a319b6",
+            "locator": "line:94",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f5329384656c44cd",
+            "locator": "line:99",
+            "migration_action": "defer",
+            "path": "docs/lore/content-source-schema.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e85a03ea7c7aeb0a",
+            "locator": "line:27",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-68f76054cb1875f5",
+            "locator": "line:28",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f2cd50ca4e64a58d",
+            "locator": "line:29",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          }
+        ],
+        "omitted_location_count": 570
+      },
+      "migration_deprecation_action": "Audit current refinement paths; defer production redesign and migration. Do not modify recipes, materials, or success logic in Stage 0.",
+      "player_consequence": "If verified later, players can distinguish knowledge-backed refinement from explicitly risky experimentation.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "他正在构思并完善和稀泥仙蛊的炼制秘方。\n\n    和之前",
+        "则拍着大腿喊叫起来：“我知道如何炼制成功蛊了，就是通过失败啊"
+      ],
+      "topic": "gu_refinement",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish gu refinement inputs, outcomes, and risks."
+    },
+    {
+      "claim_id": "information_leak",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Information exposure is plausible but its actionable scope and counterplay have not been verified. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_information_leak_m02, stage0_information_leak_m06). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 5540897,
+          "char_start": 5540867,
+          "evidence_id": "stage0_information_leak_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/消息灵通"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 5666128,
+          "char_start": 5666098,
+          "evidence_id": "stage0_information_leak_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/消息灵通"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer until exact support, conditions, and representative cases are recorded. Do not infer a mechanic from design prose alone.",
+      "player_consequence": "No leak, secrecy, or enemy-learning mechanic is authorized yet.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "，只有让你自己炼制出来，才会掩人耳目，不让人发现我。”沙枭又",
+        "太上三长老……”\n\n    这种情报，捂不住，南疆蛊仙界已经"
+      ],
+      "topic": "information_leak",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish information exposure and leak semantics."
+    },
+    {
+      "claim_id": "inheritance",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Inheritance contents, tests, transmission, and contestability require exact source evidence. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_inheritance_m01, stage0_inheritance_m06). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 917792,
+          "char_start": 917762,
+          "evidence_id": "stage0_inheritance_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/继承"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 5447511,
+          "char_start": 5447481,
+          "evidence_id": "stage0_inheritance_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/继承"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer and verify P0 support and exceptions. Current reward rooms are not authoritative.",
+      "player_consequence": "No inheritance reward or access rule change is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "上立碑之后，还在此时留下了一道隐秘传承。\n\n    这传承隐",
+        "对于方源而言，他掌握着海量传承内容，自然也就拥有无数资"
+      ],
+      "topic": "inheritance",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish inheritance and transmission semantics."
+    },
+    {
+      "claim_id": "kill_move",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary adaptation hypothesis: treat kill moves as knowledge-and-sequence assets rather than ordinary cards; exact P0 scope remains pending. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_kill_move_m02, stage0_kill_move_m06). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 1875688,
+          "char_start": 1875658,
+          "evidence_id": "stage0_kill_move_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/招式"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 3515126,
+          "char_start": 3515096,
+          "evidence_id": "stage0_kill_move_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/招式"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 36,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0bb06699d16f4f17",
+            "locator": "line:13",
+            "migration_action": "defer",
+            "path": "docs/lore/adaptation-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ff4f2c957813a860",
+            "locator": "line:10",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0829f769604fb227",
+            "locator": "line:11",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-60c764c61fb6713e",
+            "locator": "line:8",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0ed9476daeb4f9ac",
+            "locator": "line:9",
+            "migration_action": "defer",
+            "path": "docs/lore/game-rule-register.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-0916c7cf2d994275",
+            "locator": "line:41",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/combat-system.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8e15417bd9dd9426",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/combat-system.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c63c00d4cfece58e",
+            "locator": "line:15",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bbf5d173f647ef92",
+            "locator": "line:30",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fc19d617250d134b",
+            "locator": "line:38",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gameplay-loop.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-27f03eddd536e84d",
+            "locator": "line:38",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gu-and-synthesis.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-964179ec7272adac",
+            "locator": "line:42",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/gu-and-synthesis.md"
+          }
+        ],
+        "omitted_location_count": 24
+      },
+      "migration_deprecation_action": "Audit existing kill-move surfaces only; defer production redesign. Do not modify combat runtime in Stage 0.",
+      "player_consequence": "If verified later, players must acquire, prepare, and expose a combination instead of pressing an unexplained universal action.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "：“诸位可知道我东方家有一个三人合击的杀招，名为三心合魂？”",
+        "人的胸膛上。\n\n    这是仙道连招！\n\n    所谓仙道连"
+      ],
+      "topic": "kill_move",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish kill move composition and resolution semantics."
+    },
+    {
+      "claim_id": "lifespan",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: retain lifespan as a real cost while removing ordinary-currency treatment; exact source boundaries remain pending. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_lifespan_m02, stage0_lifespan_t02). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 3462859,
+          "char_start": 3462829,
+          "evidence_id": "stage0_lifespan_m02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/短寿"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 125390,
+          "char_start": 125360,
+          "evidence_id": "stage0_lifespan_t02",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/短寿"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 76,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-686353aaeef95da6",
+            "locator": "line:29",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-f6f52c90ccf2084f",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c8979305099f80b1",
+            "locator": "line:1086",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-6eb38f490b45b43f",
+            "locator": "line:1089",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1429aa2592fd8376",
+            "locator": "line:1097",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-04e09d4220ca5b3b",
+            "locator": "line:635",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d7b19db014c36cd5",
+            "locator": "line:636",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fbda9ff23393370d",
+            "locator": "line:637",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-62205b44c04928cb",
+            "locator": "line:638",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c87a8605904c41c4",
+            "locator": "line:646",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-20819c0ece5999af",
+            "locator": "line:647",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-24cf819c5da75655",
+            "locator": "line:656",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          }
+        ],
+        "omitted_location_count": 64
+      },
+      "migration_deprecation_action": "Audit lifespan payment surfaces only; defer runtime and economy migration. No production price or cost changes in Stage 0.",
+      "player_consequence": "If verified later, lifespan spending is exceptional, previewed, and irreversible rather than routine shopping currency.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "代价，请万寿娘子出手，为他们延长阳寿。\n\n    久而久之，",
+        "。只要你抓住寿蛊，你就能增添新的寿命。”\n\n    人祖早就"
+      ],
+      "topic": "lifespan",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish lifespan rules and costs."
+    },
+    {
+      "claim_id": "mortal_immortal_boundary",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "The mortal/immortal boundary is high impact and lacks verified source coverage in the current benchmark. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_mortal_immortal_boundary_m03, stage0_mortal_immortal_boundary_m01). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 5669574,
+          "char_start": 5669544,
+          "evidence_id": "stage0_mortal_immortal_boundary_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/长生"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 2019698,
+          "char_start": 2019668,
+          "evidence_id": "stage0_mortal_immortal_boundary_m03",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/长生"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer until exact P0 evidence and conditions are complete. Do not approximate the boundary from rank fields.",
+      "player_consequence": "No ascension boundary or immortal-stage production behavior is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "己无能为力！\n\n    方源已经成仙！若是过去，铁若男不知道",
+        "在，方源的计划里，并非是一人敢干蛊仙。他要借助八十八角真阳楼"
+      ],
+      "topic": "mortal_immortal_boundary",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish the mortal and immortal boundary."
+    },
+    {
+      "claim_id": "natal_gu",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary hypothesis: remove the unsupported interpretation of natal Gu as an arbitrary post-hoc talent slot; formation rules still require P0 verification. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_natal_gu_m03, stage0_natal_gu_m01). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "remove",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 29561,
+          "char_start": 29530,
+          "evidence_id": "stage0_natal_gu_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/命蛊"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 30592,
+          "char_start": 30561,
+          "evidence_id": "stage0_natal_gu_m03",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/命蛊"
+        }
+      ],
+      "final_ruling": "remove",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Deprecate the arbitrary-slot hypothesis in future design; preserve current saves and runtime until a separately approved migration exists. No production field or save migration occurs in Stage 0.",
+      "player_consequence": "If later approved, players will not choose a consequence-free core slot detached from cultivation history.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "“若是找到那酒虫，炼化为本命蛊，比家族中的月光蛊要好多",
+        "化的第一只蛊虫，意义重大，称之为本命蛊，性命交修。一旦灭亡，蛊"
+      ],
+      "topic": "natal_gu",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish natal gu identity and lifecycle semantics."
+    },
+    {
+      "claim_id": "primeval_essence",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary adaptation hypothesis: unify world semantics while retaining a bounded combat display; exact P0 constraints still control the effective ruling. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_primeval_essence_m05, stage0_primeval_essence_m06). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "revise",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 37898,
+          "char_start": 37868,
+          "evidence_id": "stage0_primeval_essence_m05",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/催动真元"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 39152,
+          "char_start": 39122,
+          "evidence_id": "stage0_primeval_essence_m06",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/催动真元"
+        }
+      ],
+      "final_ruling": "revise",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 114,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4bef42778e5216cb",
+            "locator": "/stone_to_essence_per_stone",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9ee084fb323d6aec",
+            "locator": "/0",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-1c1e28ab024e28b5",
+            "locator": "/0/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8f00fe1c8eb30a14",
+            "locator": "/1",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bbf180eafc2cc269",
+            "locator": "/1/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-64b0a213e7147a5b",
+            "locator": "/10/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bfd0eafab74e689e",
+            "locator": "/11/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a14b1867a9c20ee4",
+            "locator": "/12/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5c9ba5850a8d170c",
+            "locator": "/13/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-c9f61324f9ecba41",
+            "locator": "/14/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-fc9e9e879694dac3",
+            "locator": "/15/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-028a7cb63a49589a",
+            "locator": "/2/essence_cost",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 102
+      },
+      "migration_deprecation_action": "Audit dual-resource semantics only; defer any migration until evidence and a later slice are approved. Do not alter essence or true-qi runtime state in Stage 0.",
+      "player_consequence": "If verified later, players see combat cost as a view of one world resource rather than two unrelated currencies.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "蛊师的青铜元海，每一滴海水，都是真元。是方源的生命元力，是方",
+        "。每过一段时间，元海就会自动补充真元。像方源这种丙等资质，大"
+      ],
+      "topic": "primeval_essence",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish primeval essence semantics and constraints."
+    },
+    {
+      "claim_id": "rank_and_subrank",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Rank and subrank effects beyond numeric scaling have not been tied to exact P0 evidence. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_rank_and_subrank_m03, stage0_rank_and_subrank_m05). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 27429,
+          "char_start": 27399,
+          "evidence_id": "stage0_rank_and_subrank_m03",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/转阶"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 2121694,
+          "char_start": 2121664,
+          "evidence_id": "stage0_rank_and_subrank_m05",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/转阶"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 1011,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-7f48bce3d20ed2e9",
+            "locator": "/rank_step_ratio",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-44eb22aa2bc60499",
+            "locator": "/0/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-02cc091710ff9650",
+            "locator": "/1/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-531af08765730bbf",
+            "locator": "/10/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8e8ca090e06b94a5",
+            "locator": "/100/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e620c00562fae1ec",
+            "locator": "/101/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-e756fc75df4a6e48",
+            "locator": "/102/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-9c3a04b9e30096eb",
+            "locator": "/103/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-66e9d3e7017043fd",
+            "locator": "/104/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3c7899a6c791182c",
+            "locator": "/105/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-825ca47b4d0417b9",
+            "locator": "/106/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-83bf0bf247720232",
+            "locator": "/107/rank",
+            "migration_action": "defer",
+            "path": "data/gu.json"
+          }
+        ],
+        "omitted_location_count": 999
+      },
+      "migration_deprecation_action": "Collect exact support and exceptions before adjudicating progression semantics. F1 and Q8-G remain audit-only.",
+      "player_consequence": "No new rank gate, multiplier, or promotion rule is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "一共有九大境界，从下到上，分别是一转、二转、三转直至九转。每",
+        "，刚刚起步，战力孱弱，最为常见。二转，则是骨干、基石，十分普"
+      ],
+      "topic": "rank_and_subrank",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish rank and subrank progression semantics."
+    },
+    {
+      "claim_id": "soul",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Soul strength, carrying capacity, damage, and bestial risk remain unresolved source claims. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_soul_m01, stage0_soul_m04). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 1352009,
+          "char_start": 1351979,
+          "evidence_id": "stage0_soul_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/魂飞魄散"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 1252071,
+          "char_start": 1252041,
+          "evidence_id": "stage0_soul_m04",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/魂飞魄散"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 147,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-ea2acb3359f5efac",
+            "locator": "/soul_burst_capacity_ratio",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-30f4b21a2507a515",
+            "locator": "/soul_calm_beast_below",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-04a1b21158a5c6e2",
+            "locator": "/soul_calm_departure_below",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-031bedf83772a82b",
+            "locator": "/soul_calm_emotional_below",
+            "migration_action": "defer",
+            "path": "data/balance.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b6eb287793c0ff99",
+            "locator": "line:31",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/combat-system.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-3c9011b9f47ae868",
+            "locator": "line:27",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-802d7c2819cc82e4",
+            "locator": "line:5",
+            "migration_action": "defer",
+            "path": "docs/wiki/concepts/resource-model.md"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d002b6666a62c1d7",
+            "locator": "line:11",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-5df77e1508d61b18",
+            "locator": "line:14",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-b04ce2413901929c",
+            "locator": "line:15",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-176a47a4ba6f96c5",
+            "locator": "line:16",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_points.gd"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-72f1b81f92fa2fb5",
+            "locator": "line:4",
+            "migration_action": "defer",
+            "path": "scripts/domain/action_preview_service.gd"
+          }
+        ],
+        "omitted_location_count": 135
+      },
+      "migration_deprecation_action": "Defer and collect exact P0 support, conditions, and counterexamples. Current soul fields are implementation observations only.",
+      "player_consequence": "No soul-derived action-point or capacity rule is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "灵，只要进入荡魂山的范围，它们的魂魄就要受到震荡。越接近峰巅",
+        "单纯的比拼战力，而是比较意志力，魂力。有为师的魂魄暗中辅助你"
+      ],
+      "topic": "soul",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish soul state, growth, and damage semantics."
+    },
+    {
+      "claim_id": "tribulation_or_ascension",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Tribulation and ascension semantics are unverified and outside the first production slice. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_tribulation_or_ascension_m03, stage0_tribulation_or_ascension_m04). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 2304581,
+          "char_start": 2304551,
+          "evidence_id": "stage0_tribulation_or_ascension_m03",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/劫难"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 2765309,
+          "char_start": 2765279,
+          "evidence_id": "stage0_tribulation_or_ascension_m04",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/劫难"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 0,
+        "locations": [],
+        "omitted_location_count": 0
+      },
+      "migration_deprecation_action": "Defer until exact P0 evidence and a later-stage design are approved. Do not equate current boss gates with ascension.",
+      "player_consequence": "No tribulation, ascension, or boss-gate production rule is authorized.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "念。\n\n    但是当他成功渡过天劫，成为蛊仙之后，他站在全",
+        "地灾已经没有。但每隔十年就是一场天劫，五十年一次浩劫，百年一"
+      ],
+      "topic": "tribulation_or_ascension",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish tribulation and ascension semantics."
+    },
+    {
+      "claim_id": "world_scope_and_compression",
+      "confidence": "unknown",
+      "counter_evidence": [],
+      "decision_kind": "final",
+      "derivation": "Preliminary game-adaptation hypothesis: retain deterministic spatial and temporal compression only when it is labeled as abstraction and does not contradict P0 causality. Final ruling: confirmed against 2 verified P0 citation(s) (stage0_world_scope_and_compression_m01, stage0_world_scope_and_compression_m04). Scope: as written at the cited spans; Stage 0 authorises audit only.",
+      "effective_ruling": "retain",
+      "evidence": [
+        {
+          "authority": "primary_text",
+          "char_end": 3953802,
+          "char_start": 3953772,
+          "evidence_id": "stage0_world_scope_and_compression_m01",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/格局"
+        },
+        {
+          "authority": "primary_text",
+          "char_end": 3986569,
+          "char_start": 3986539,
+          "evidence_id": "stage0_world_scope_and_compression_m04",
+          "evidence_kind": "support",
+          "source_file_id": "gu_zhenren_main",
+          "source_ref": "stage0_recall/格局"
+        }
+      ],
+      "final_ruling": "retain",
+      "impact": "high",
+      "implementation": {
+        "finding_count": 269,
+        "locations": [
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-cb8a4d577c09d914",
+            "locator": "/blood/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-bd0a838789b22c01",
+            "locator": "/bone/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8e7851409866123d",
+            "locator": "/dream/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-4f876989d18dc868",
+            "locator": "/earth/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-8c9aeea403264c0d",
+            "locator": "/fire/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-a9ba0beadabf724f",
+            "locator": "/force/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-293556fd2699a5ed",
+            "locator": "/gold/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-de1d2765de93b5b5",
+            "locator": "/heaven/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2b4550748aee88f8",
+            "locator": "/human/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-d505a0f866c28ce1",
+            "locator": "/light/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-598244b04be34438",
+            "locator": "/luck/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          },
+          {
+            "behavior_status": "unknown",
+            "finding_id": "implementation-2f40045b7d7eba8c",
+            "locator": "/qi/starter_gu_ids",
+            "migration_action": "defer",
+            "path": "data/schools.json"
+          }
+        ],
+        "omitted_location_count": 257
+      },
+      "migration_deprecation_action": "Retain as an audit hypothesis only; defer production authorization until source boundaries are verified. Five-layer structure is not source evidence.",
+      "player_consequence": "Players receive a finite run structure without being told that compressed layers are literal world geography or universal law.",
+      "preliminary_ruling": null,
+      "resolution_status": "not_required",
+      "source_fact": [
+        "至尊仙窍中。\n\n    至尊仙窍广袤无比，内分五域九天的格局",
+        "他发现：至尊仙窍中的五域九天，不仅格局方面和外界"
+      ],
+      "topic": "world_scope_and_compression",
+      "unknowns": [],
+      "world_model_ruling": "Stage 0 evidence target: establish world scope and compression boundaries."
+    }
+  ],
+  "detailed_registers": [
+    "docs/lore/adaptation-register.md",
+    "docs/lore/canon-index.md",
+    "docs/lore/game-rule-register.md"
+  ],
+  "generated_at_utc": "2026-09-16T08:20:35Z",
+  "generator": {
+    "name": "lore_engine.reports",
+    "version": "1"
+  },
+  "legacy_disposition_summary": {
+    "f1_pity": "audit_only",
+    "promotion_economy": "defer",
+    "promotion_materials": "defer",
+    "q8g_promotion_chain": "audit_only",
+    "school_promotion": "defer"
+  },
+  "legacy_dispositions": [
+    {
+      "disposition": "audit_only",
+      "mechanic_id": "f1_pity",
+      "rationale": "F1 Pity is historical implementation context and cannot authorize Stage 0 production behavior."
+    },
+    {
+      "disposition": "defer",
+      "mechanic_id": "promotion_economy",
+      "rationale": "Promotion economy remains deferred until source evidence and the later economy slice are adjudicated."
+    },
+    {
+      "disposition": "defer",
+      "mechanic_id": "promotion_materials",
+      "rationale": "Promotion materials remain deferred until source evidence and the later refinement slice are adjudicated."
+    },
+    {
+      "disposition": "audit_only",
+      "mechanic_id": "q8g_promotion_chain",
+      "rationale": "Q8-G is retained only as an audit trail and is not a production-ready world rule."
+    },
+    {
+      "disposition": "defer",
+      "mechanic_id": "school_promotion",
+      "rationale": "School promotion remains deferred while school-as-class semantics are under review."
+    }
+  ],
+  "provenance": {
+    "implementation_audit": {
+      "finding_count": 3405,
+      "normalized_sha256": "361332d556ae16ed353169da61a6c58631f58392f5c4ce2f3c2cf9cee36478fb"
+    },
+    "input_files": [
+      {
+        "path": "lore_engine/config/world-model-stage0.json",
+        "sha256": "63e549a97291058442c82d4de96d60749bf0daf0233d6fce0152fb2d1f1138f3"
+      },
+      {
+        "path": "lore_sources/benchmarks/world_model_stage0/claims.jsonl",
+        "sha256": "2691044172784c43059c352731b99be4d434256f463e5b5c20e05dfa1fab36e8"
+      },
+      {
+        "path": "lore_sources/benchmarks/world_model_stage0/decisions.jsonl",
+        "sha256": "f37dbda3b8da7c752fa80eadac9848783aa0b218bfc3f3b212bf1c16dcc32fed"
+      },
+      {
+        "path": "lore_sources/benchmarks/world_model_stage0/evidence.jsonl",
+        "sha256": "fd16d32f882cc0b02d5585860baca9dab4f5381feed19e2223eff013ac68f9b2"
+      },
+      {
+        "path": "lore_sources/manifest.json",
+        "sha256": "07833596295b6708e9de685697e9ecb92a60a1fba60afd4ac9e1bcadb9637a4c"
+      }
+    ],
+    "source_manifest": {
+      "path": "lore_sources/manifest.json",
+      "sha256": "07833596295b6708e9de685697e9ecb92a60a1fba60afd4ac9e1bcadb9637a4c",
+      "sources": [
+        {
+          "actual_sha256": "95cd0b13684e5ce9c47dea0c198d3ecfc1a7182c2263674cb021af6cbb287647",
+          "authority": "primary_text",
+          "bytes": 23172557,
+          "characters": 8587697,
+          "declared_sha256": "95cd0b13684e5ce9c47dea0c198d3ecfc1a7182c2263674cb021af6cbb287647",
+          "encoding": "utf-8",
+          "path": "分支：六卷精编版/蛊真人-clean.txt",
+          "source_file_id": "gu_zhenren_main"
+        },
+        {
+          "actual_sha256": "acc3ec34b7606ebcb96626b5bb3672d894e12c80cce8aa46ecacca28b7749155",
+          "authority": "in_world_text",
+          "bytes": 151392,
+          "characters": 77880,
+          "declared_sha256": "acc3ec34b7606ebcb96626b5bb3672d894e12c80cce8aa46ecacca28b7749155",
+          "encoding": "gb18030",
+          "path": "分支：六卷精编版/《人祖传》.txt",
+          "source_file_id": "ren_zu_zhuan"
+        }
+      ]
+    }
+  },
+  "stage0_gate": {
+    "blockers": [],
+    "deterministic": true,
+    "production_changes_authorized": false,
+    "production_paths_changed": [],
+    "result": "GO"
+  },
+  "timestamp_policy": "explicit_reproducible_utc",
+  "unresolved_high_impact": []
+}

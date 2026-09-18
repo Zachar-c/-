@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大厅登录界面 · 线框稿 v8</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'PingFang SC', serif;
+    background: #f4f3ee;
+    color: #171814;
+    padding: 24px 0 40px;
+  }
+  .page { max-width: 1360px; margin: 0 auto; padding: 0 24px; }
+
+  .doc-head { padding: 0 4px 16px; border-bottom: 1px solid #b8b6aa; margin-bottom: 20px; }
+  .doc-title { font-size: 21px; font-weight: 600; letter-spacing: 2px; }
+  .doc-sub { font-size: 12px; color: #686960; margin-top: 6px; line-height: 1.7; }
+
+  /* ===== 线框稿画布：1280x720，等比原图 1405x790 ===== */
+  .canvas {
+    position: relative;
+    width: 1280px; height: 720px;
+    margin: 0 auto;
+    background-color: #e8e5db;
+    background-image: radial-gradient(circle, rgba(120,116,104,0.10) 1px, transparent 1.7px);
+    background-size: 7px 7px;
+    border: 1px solid #b8b6aa;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* 右侧贯穿竖线（参考图实测 x=1136→80.9%） */
+  .divider-r { position: absolute; left: 80.9%; top: 9%; bottom: 9%; width: 1px; background: #b7b7ab; }
+
+  /* 续入此世左侧红线连接黑线（参考图实测 x=585→41.6%，灰线 y247-321 + 红段 y322-373 + 灰线 y374-566） */
+  .vline-gray-top { position: absolute; left: 41.6%; top: 31.3%; width: 1px; height: 67px; background: #b7b7ab; }
+  .vline-red { position: absolute; left: 41.6%; top: 40.8%; width: 1px; height: 47px; background: #8a665b; }
+  .vline-gray-bottom { position: absolute; left: 41.6%; top: 47.3%; width: 1px; height: 175px; background: #b7b7ab; }
+
+  /* 大标题下方红线（参考图实测 y483-487→61.3%，x98-143→7%-10.2%） */
+  .title-redline { position: absolute; left: 7%; top: 61.3%; width: 42px; height: 3px; background: #82463e; }
+
+  /* 中栏横线1：说明文字下方（实测 y430→54.4%，x626-1063→44.6%-75.7%） */
+  .mid-rule { position: absolute; left: 44.6%; top: 54.4%; width: 31.1%; height: 1px; background: #b6b6aa; }
+
+  /* 中栏横线2：标签下方、状态行上方（实测 y494→62.5%，x628-1063→44.7%-75.7%） */
+  .mid-rule2 { position: absolute; left: 44.7%; top: 62.5%; width: 31.0%; height: 1px; background: #b7b7ab; }
+
+  /* 左上标签 */
+  .loc-tag { position: absolute; left: 1.9%; top: 3.2%; font-size: 10px; letter-spacing: 2px; color: #8d8d83; }
+
+  /* 右上印章：参考图实测 50×44px，边框 1px 棕红(170,148,139)，竖排两行 */
+  .seal {
+    position: absolute; right: 2.2%; top: 3.4%;
+    width: 45px; height: 40px;
+    border: 1px solid #aa948b; border-radius: 2px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 10px; color: #9e867d; font-weight: 600; line-height: 1.4; letter-spacing: 1px;
+  }
+
+  /* 左栏：副题 / 大标题 / 上一世 / 札记 */
+  .subtitle { position: absolute; left: 6.7%; top: 33.4%; font-size: 10px; color: #8d8e84; letter-spacing: 1px; }
+  .main-title {
+    position: absolute; left: 7%; top: 36.5%;
+    font-size: 58px; font-weight: 700; color: #343430;
+    line-height: 1.5; letter-spacing: 6px;
+  }
+  .prev-life { position: absolute; left: 6.7%; top: 64.0%; font-size: 11px; color: #5b5b52; }
+  .prev-note { position: absolute; left: 6.7%; top: 67.4%; font-size: 11px; color: #6b6a62; }
+
+  /* 中栏 */
+  .epoch { position: absolute; left: 44.2%; top: 35.6%; font-size: 11px; font-weight: 500; color: #78786d; letter-spacing: 2px; }
+  .continue-btn {
+    position: absolute; left: 44.5%; top: 40.8%;
+    font-size: 13px; color: #56534f; letter-spacing: 2px;
+    padding: 5px 14px; background: #e3e3d7; border-radius: 2px;
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  }
+  .continue-desc { position: absolute; left: 44.2%; top: 46.6%; font-size: 10px; color: #898a81; }
+
+  /* 数值四列（实测列起点 x630/712/770/828 → 44.8%/50.7%/54.8%/58.9%） */
+  .stats-row { position: absolute; left: 44.8%; top: 56.2%; display: flex; }
+  .stats-row .val { font-size: 13px; font-weight: 600; color: #27271e; }
+  .stats-row .val + .val { margin-left: 58px; }
+  .stats-row .val:first-child { margin-left: 0; }
+  .stats-labels { position: absolute; left: 44.8%; top: 58.9%; display: flex; }
+  .stats-labels div { font-size: 9px; color: #7e7f75; }
+  .stats-labels div + div { margin-left: 58px; }
+
+  /* 状态行：三条 2px 竖线分隔（实测 x628蓝灰/698金棕/769红棕，y517-531→65.4%-67.2%）+ 异色文字 */
+  .status-row { position: absolute; left: 44.7%; top: 65.4%; display: flex; align-items: center; }
+  .status-vline { width: 2px; height: 15px; }
+  .status-vline.s1 { background: #5a6a75; }
+  .status-vline.s2 { background: #877b46; }
+  .status-vline.s3 { background: #734e45; }
+  .status-item { font-size: 11px; padding: 0 9px 0 5px; }
+  .status-item.c1 { color: #8e9594; }
+  .status-item.c2 { color: #9d9675; }
+  .status-item.c3 { color: #997d74; }
+
+  /* 右栏：菜单 4 项（原图实测起点 684/734/784/834 千分比，间距 20px）+ 版本号流式排后 */
+  .side-menu { position: absolute; left: 82.7%; top: 68.4%; display: flex; flex-direction: column; align-items: center; }
+  .side-menu .item { font-size: 11px; color: #56564c; letter-spacing: 1px; line-height: 1.5; }
+  .side-menu .item + .item { margin-top: 20px; }
+  .build-ver { font-size: 8px; color: #a4a49b; letter-spacing: 1px; margin-top: 42px; white-space: nowrap; }
+
+  /* 数据表 */
+  .data-table { margin-top: 20px; border: 1px solid #e4e3dd; border-radius: 6px; padding: 14px 16px; }
+  .data-table h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .data-table div { font-size: 12px; color: #171814; line-height: 1.9; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="doc-head">
+    <div class="doc-title">大厅登录界面 · 线框稿 v8（数值区与状态行裁切实测还原）</div>
+    <div class="doc-sub">
+      ① 数值四列：实测起点 x630/712/770/828（修为/寿元/蛊囊/节点），数值 y444-458、标签 y465-479<br>
+      ② 状态行：实测三条 2px 竖线分隔（蓝灰 x628 / 金棕 x698 / 红棕 x769，y517-531），文字异色<br>
+      ③ 两条中栏横线：y430（说明下方）+ y494（标签下方），x626/628-1063<br>
+      ④ 红印章 / 問真命簿红线 / 续入此世左侧红线连接黑线保持 v7 实测
+    </div>
+  </div>
+
+  <div class="canvas">
+    <div class="loc-tag">叁宫·南盟</div>
+    <div class="seal">問眞<br>命簿</div>
+
+    <div class="divider-r"></div>
+
+    <div class="vline-gray-top"></div>
+    <div class="vline-red"></div>
+    <div class="vline-gray-bottom"></div>
+
+    <div class="subtitle">凡人逐道，代价自负</div>
+    <div class="main-title">問眞<br>命簿</div>
+    <div class="title-redline"></div>
+    <div class="prev-life">上一世止于：青茅山·三转</div>
+    <div class="prev-note">札记新得：血海遗痕</div>
+
+    <div class="epoch">今世·第六十三劫</div>
+    <div class="continue-btn">续入此世 &gt;</div>
+    <div class="continue-desc">将从黑市交易后的地图节点继续。此世没有回溯。</div>
+    <div class="mid-rule"></div>
+
+    <div class="stats-row">
+      <div class="val">四转初阶</div><div class="val">41年</div><div class="val">7</div><div class="val">63</div>
+    </div>
+    <div class="stats-labels">
+      <div>修为</div><div>寿元</div><div>蛊囊</div><div>节点</div>
+    </div>
+    <div class="mid-rule2"></div>
+    <div class="status-row">
+      <div class="status-vline s1"></div><span class="status-item c1">契约·孤注</span>
+      <div class="status-vline s2"></div><span class="status-item c2">异变·衰运</span>
+      <div class="status-vline s3"></div><span class="status-item c3">2只诅咒蛊</span>
+    </div>
+
+    <div class="side-menu">
+      <div class="item">手记</div><div class="item">图鉴</div><div class="item">设置</div><div class="item">退出</div>
+      <div class="build-ver">BUILD 0.9.0 · LOCAL</div>
+    </div>
+  </div>
+
+  <div class="data-table">
+    <h3>v8 实测校准参数（原图 1405×790 像素分析）</h3>
+    <div>
+      画布：1280×720（等比缩放 0.911）；网点：1px 圆点 / 7px 行距 / 5px 列距（7px 网格）<br>
+      数值行：y444-458→56.2%，列起点 x630/712/770/828→44.8%/50.7%/54.8%/58.9%；数值 RGB(39,39,30)、标签 RGB(126,127,117)<br>
+      状态行：文字 y520-528，三条竖线 y517-531（2px 宽）——蓝灰(90,106,117)@x628 / 金棕(135,123,70)@x698 / 红棕(115,78,69)@x769<br>
+      状态文字异色：契约·孤注(142,149,148) 灰蓝 / 异变·衰运(157,150,117) 金棕 / 2只诅咒蛊(153,125,116) 红棕<br>
+      中栏横线1：y430→54.4%、x626-1063→44.6%-75.7%，RGB(182,182,170)；横线2：y494→62.5%、x628-1063，RGB(183,183,171)<br>
+      红印章：原图 x1324-1374 / y27-71（50×44px），边框 1px RGB(170,148,139)，文字 RGB(158,134,125) 竖排两行<br>
+      問真命簿下方红线：原图 y483-487、x98-143（46×5px），深红 RGB(130,70,62) → 42×3px @left7%/top61.3%<br>
+      续入此世左侧竖线：原图 x585→41.6%，灰段 y247-321 + 红段 y322-373(52px) + 灰段 y374-566<br>
+      右贯穿竖线：x1136→80.9%，RGB(183,183,171)，y72-741 贯穿
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

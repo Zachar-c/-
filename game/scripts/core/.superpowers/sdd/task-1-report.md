@@ -1,0 +1,80 @@
+# Task 1 Report
+
+## Fix
+
+Corrected `tests/unit/test_content_catalog.gd` to use the required
+`slice_bright_thread` mapping, require a non-empty `kill_move_id`, require a
+matching kill move, and require that its recipe includes the output GU. Fixed
+the malformed GDScript declarations and retained explicit `v1_effect` checks.
+The negative tests now mutate the `slice_bright_thread` slice as required.
+
+## Verification (Earlier Pre-Fix Counts)
+
+These are the original red-run counts, before the assertion hardening and
+follow-up fixes were applied.
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_content_catalog.gd`
+
+Output summary: `17/21 passed`, `4 failing`, `23/27 asserts`; exit code `1`.
+Failures were the missing shipped `slice_bright_thread` recipe, missing
+`kill_moves` table, and the not-yet-implemented invalid `v1_effect` validation.
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_battle_synthesis.gd`
+
+Output summary: `8/9 passed`, `1 failing`, `21/23 asserts`; exit code `1`.
+The remaining failure was the pre-existing unknown transaction output contract:
+`GuInstance.transaction_ledger()` returned no `error` entry for
+`missing_output_gu`.
+
+## Concerns
+
+The requested test-only hardening was applied to `tests/unit/test_content_catalog.gd`: missing `slice_bright_thread`, `v1_battle.kill_moves`, output GU, and `v1_effect` values now use `get` plus type guards, while shipped mapping assertions remain strict.
+
+## Fix Verification
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_content_catalog.gd`
+
+Output summary: `17/21 passed`, `4 failing`, `24/28 asserts`; exit code `1`.
+The four failures are clean assertion failures for absent slice data/validation, with no key-access crashes.
+
+The ledger test already contains `assert_true(result.has("error"))` immediately before reading `result["error"]`; no production files were changed.
+
+## Review Fix Verification
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_content_catalog.gd`
+
+Exact result:
+
+`17/21 passed.`
+
+`Totals: Tests 21, Passing Tests 17, Failing Tests 4, Asserts 24/28, exit code 1.`
+
+The four failures remain the intended red tests for missing slice data/validation; no key-access crash occurred.
+
+Command:
+
+`powershell.exe -File tools/test.ps1 -Test tests/unit/test_battle_synthesis.gd`
+
+Exact result:
+
+`8/9 passed.`
+
+`Totals: Tests 9, Passing Tests 8, Failing Tests 1, Asserts 21/22, exit code 1.`
+
+The remaining failure is the intended red unknown transaction output assertion; the missing `error` key is now guarded before indexing.
+## Final Exact Counts
+
+The final verification runs after review fixes are explicitly recorded below.
+
+- `test_content_catalog.gd`: `17/21 passed`, `4 failing`, `24/28 asserts` (exit code `1`).
+- `test_battle_synthesis.gd`: `8/9 passed`, `1 failing`, `21/22 asserts` (exit code `1`).
+
+The remaining failures are the intended red contract assertions; the invalid `v1_effect` test now uses safe dictionary/type guards and returns after a clean failed assertion when `pulse_drum_gu` is absent.

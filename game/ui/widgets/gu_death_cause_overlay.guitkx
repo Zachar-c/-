@@ -1,0 +1,32 @@
+
+# GuDeathCauseOverlay —— 死因查看浮层（规格 §8 D2 / §16.5 L2）
+# 展示单条死线的 名称/当前值/上限/一句成因说明。
+# （Fix1 裁定：移除「距离死线余量」行——仅危险行可点，该值恒为 0，属噪音。）
+# 信息型浮层，非确认语义（不用 GuConfirmDialog）；右上「关闭」返回原屏，
+# 不改变任何领域状态——显隐由宿主屏 useState 驱动。
+# 纯展示组件：无 hooks、无计时器、静态样式（§3.4 动效预算）。
+# props：line{name,current,max,detail} / on_close
+
+export GuDeathCauseOverlay() -> RuitkVNode {
+  var line = props.get("line", {})
+  var on_close = props.get("on_close", func(): pass)
+  var nm = str(line.get("name", ""))
+  var cur = int(line.get("current", 0))
+  var maxv = int(line.get("max", 0))
+  var detail = str(line.get("detail", ""))
+
+  return (
+    <PanelContainer style={ {"bg_color": GuStyle.PAPER_RAISED, "corner_radius_all": 8, "border_width_all": 2, "border_color": GuStyle.CINNABAR} }>
+      <MarginContainer style={ {"margin_left": 16, "margin_right": 16, "margin_top": 12, "margin_bottom": 14} }>
+        <VBoxContainer style={ {"separation": 8} }>
+          <HBoxContainer style={ {"separation": 10} }>
+            <Label text={ "死因 · %s" % nm } style={ {"font_color": GuStyle.CINNABAR, "font_size": 18, "size_flags_horizontal": 3} } />
+            <Button text="关闭" onPressed={ func(): on_close.call() } style={ {"font_color": GuStyle.INK_SOFT, "min_width": 64, "min_height": 30} } />
+          </HBoxContainer>
+          <Label text={ "当前值：%d / 上限：%d" % [cur, maxv] } style={ {"font_color": GuStyle.INK_PRIMARY, "font_size": 15} } />
+          <Label text={ "成因：%s" % detail } style={ {"font_color": GuStyle.INK_SOFT, "font_size": 14} } />
+        </VBoxContainer>
+      </MarginContainer>
+    </PanelContainer>
+  )
+}

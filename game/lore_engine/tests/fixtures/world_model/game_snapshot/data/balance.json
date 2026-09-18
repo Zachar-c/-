@@ -1,0 +1,7 @@
+{
+  "rank_step_ratio": 2.0,
+  "aptitude_recovery_multiplier": 0.5,
+  "lifespan_trade_cost": 10,
+  "soul_safe_capacity": 3,
+  "dao_mark_ratio": 1.0
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "id": "explicit_recipe",
+    "input_gu_ids": ["explicit_gu"],
+    "input_materials": [{"material_id": "moon_dew", "amount": 2}],
+    "output_gu_id": "fallback_gu"
+  }
+]

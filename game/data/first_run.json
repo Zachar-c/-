@@ -1,0 +1,18 @@
+{
+ "seed": 101,
+ "route_ids": [
+  "beast_swarm_pass",
+  "layer_boss_stand_1",
+  "rest_hollow",
+  "iron_hide_ambush",
+  "ridge_black_market",
+  "layer_boss_stand_2",
+  "scout_crossing_raid",
+  "layer_boss_stand_3",
+  "faction_guard_checkpoint",
+  "layer_boss_stand_4",
+  "wolf_pack_trail",
+  "final_boss_stand",
+  "ascension_window"
+ ]
+}

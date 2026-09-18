@@ -1,0 +1,17 @@
+﻿rc=0
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+===== D7 map threat projection over 40 seeds =====
+nodes scanned: 6500
+elite nodes by tier: 1105
+  layer 1: 0
+  layer 2: 0
+  layer 3: 165
+  layer 4: 375
+  layer 5: 565
+legacy id-substring hits: 418
+mismatched=0  mislabelled=0
+NOTE layer 1/2 stay at 0: only faction templates can roll an elite that early,
+     and both are stage-gated (three / four). See the D7 report for the pacing ask.
+D7 PASS: threat is data-driven, layer-covering, fog-safe and read-only
+
