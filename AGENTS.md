@@ -16,8 +16,8 @@
 ## 当前阶段
 
 - Monorepo 迁移进行中，执行计划见 `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`。
-- Task 5、Task 6 已完成：`lore/research/`、`lore/wiki/`、`editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/` 已导入；剩余 Task 7（Gitee Godot 游戏 → `game/`）、Task 8（边界终验）、Task 9（推送准备）。
-- `gu-zu/`、`wenzhen-lore/` 已迁移完成；`gu-zhenren-editor/` 仍是当前游戏快照，Task 7 迁移前不手动拆散。
+- Task 5、Task 6、Task 7 已完成：`lore/research/`、`lore/wiki/`、`editorial/`、`fortune/app/`、`fortune/server/`、`ai-system/`、`game/` 均已导入；剩余 Task 8（边界终验）、Task 9（推送准备）。
+- `gu-zu/`、`wenzhen-lore/`、`gu-zhenren-editor/` 的受版本内容均已删除；旧 `gu-zhenren-editor/` 磁盘残留只有本地恢复材料与缓存（根 `.gitignore` 的 `/gu-zhenren-editor/` 规则已忽略，不进入 Git 树），当前游戏入口为 `game/`。
 
 ## 禁止事项
 

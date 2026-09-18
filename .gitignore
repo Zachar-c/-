@@ -24,3 +24,7 @@ game/tools/_*.txt
 # Common local OS/editor noise.
 **/.DS_Store
 **/Thumbs.db
+
+# 已退役的旧游戏路径：Task 7 之后磁盘上只剩本地恢复材料与缓存
+# （.git-nested-backup/、.worktrees/、.godot/、tmp*/、本地原文），均不进入 Git 树。
+/gu-zhenren-editor/

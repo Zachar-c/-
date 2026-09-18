@@ -118,6 +118,20 @@ memory:gu-zu/...              -> memory:lore/research/...
   2. `game/tools/_*.txt`（`game/tools/` 下 10 个）随导入历史已在 Git 树内，原样保留（KEEP，见 `docs/debt.md`）；新增根忽略只阻止未来新增，不改写历史。
   3. 旧快照自带的嵌套 `.gitignore`（含 `.godot/`、`.workbuddy/`、`.zcode/` 等规则）随 `git rm` 离开 Git 树后，残留本地缓存显示为 `?? gu-zhenren-editor/`（约 4500 个未跟踪文件，全在 `.godot/`、`.workbuddy/` 等本地工具目录内）；收尾提交改用精确路径 `git add`（`.gitignore` + 四个文档，已暂存的 1758 个删除不受影响），未使用 `git add -A`，未把缓存带入提交。Task 8 可视需要补根忽略规则或保留现状。
 
+## Task 8 Final Acceptance（执行于 `6c087c2` 上；`docs: finalize monorepo map and migration debt` 待提交）
+
+- Step 0（残留忽略，前置）：根 `.gitignore` 末尾新增一节 `/gu-zhenren-editor/` 整目录忽略（既有 `分支：六卷精编版/...` 2 条与 `tools/_*.txt` 保留）。`git status --short --branch` 由 `?? gu-zhenren-editor/` 变为仅 `M .gitignore`；`git ls-files -- gu-zhenren-editor` 为 0；`git check-ignore -v gu-zhenren-editor/` 命中新规则；`git diff --check` 通过（仅 autocrlf 提示）。
+- Step 1（目标树/旧路径）：12 个期望路径全部存在；`git ls-files -- gu-zu / wenzhen-lore / gu-zhenren-editor` 均为 0；`source/` 存在并被 `/source/` 忽略（内含 `蛊真人-clean.txt`、`《人祖传》.txt`）。
+- Step 2（Git 树边界）：嵌套元数据扫描、原文名扫描、缓存扫描均无输出（grep rc=1）；`git diff --check` 通过；`git -c core.quotePath=false rev-list --objects --all | grep -E '蛊真人-clean\.txt|《人祖传》\.txt'` 无输出。注：`editorial/蛊真人.txt` 的首次误导入提交 `3afe2dd` 只在本地 reflog，不在任何 ref 可达历史内（`--all` 已覆盖全部 ref）。
+- Step 3（Wiki 链接/命名空间）：计划 pwsh 脚本经脚本文件方式执行（内联 `$` 被 bash 转义，语义等价）→ 35 文件、0 损坏；`rg -n -P 'source:(?!source/)|notes:(?!game/|lore/research/)|memory:(?!game/|lore/research/)' lore/wiki` 无输出（rc=1）。
+- Step 4（AI 三步导航）：`AGENTS.md`→`PROJECT_MAP.md` 可达；9 个目标目录首读文件全部存在（逐项 `ls` 通过）；`README.md` 只作历史陈述、`MIGRATION.md` 只作历史映射、旧计划已有取代头，均不把旧根目录当当前入口。发现 `AGENTS.md` 当前阶段行仍写 Task 7 未做（过期），已更新为 Task 7 完成 + 残留说明（导航类机械修正）。
+- Step 5（债务汇总）：`docs/debt.md` 逐行复核——全部行均有处理结论；`Task 4 审计模式缺口` 与 `lore/wiki/README.md 正文示例` 两行 REVIEW 本 Task 闭合（见下）；其余 REVIEW 行保留并有明确理由（`game/opencode.json`、`origin` URL 待用户、`editorial` 精编切片水印待用户复核、`gitee` 远程已确认为单源）；新增 `旧路径本地残留` EXCLUDE 行。
+  - 审计缺口闭合证据（均 `-c core.quotePath=false`）：`rev-list --objects --all` 中 `clean\|人祖传` 仅命中工具脚本与两处派生索引；`.epub` 仅命中 `editorial/` 精编产出与构建脚本（用户裁定 KEEP），`game` 历史零 `.epub`；`verify-pack` 最大 blob 151,477 字节（包总量 549,587 字节；另有 49 个零散对象共 71 KB），23 MB 原文无藏匿可能。
+  - README 裁定：`game/分支：六卷精编版/蛊真人-clean.txt` 在树与盘上均不存在（Task 4 过滤 + Task 7 只放 `source/`），属悬空引用；按 Source Namespace Mapping「原文→`source/`」机械修正 `lore/wiki/README.md` 3 行指向 `source/…`（读书笔记行与 `game/docs/lore/canon-index.md` 行经核对存在，未动）。
+- Step 6（可定位性）：旧路径引用只出现在 `MIGRATION.md` 历史记录、`docs/debt.md` 与计划/归档旧文档及 `game/` 内随历史导入的产品文档中（后者原样保留，不改写产品文档）；根导航三件套均不把旧路径当当前入口。`git status` 另有 9 个 `?? game/wenzhen-web/assets/*.import`（本地 Godot 生成，见下），故非全干净。
+- 失败与回退：本 Task 内零失败；`AGENTS.md`/`lore/wiki/README.md` 若需回退即 revert 本次提交，不影响 Task 2—7 历史。
+- 新增 REVIEW（`docs/debt.md`）：9 个 `game/wenzhen-web/assets/*.import` 未跟踪——`db34873` 本地 asset 缺侧车文件，本地编辑器运行后生成；全树惯例跟踪 `.import`（221 个），Task 8 不加宽泛忽略、不删除、不代提交，交用户在 Task 9 前裁定。
+
 ## Verification Log
 
 - Task 2（本提交）：根边界验证，命令见计划 Task 2 Step 5：
@@ -161,3 +175,11 @@ memory:gu-zu/...              -> memory:lore/research/...
   - Step 6：根 `.gitignore` +3 行（`game/分支…` 2 条 + `game/tools/_*.txt` 1 条），旧 `gu-zhenren-editor/...` 3 条保留；`git diff --check` 通过。
   - Step 7：`ls-files` 计数 `gu-zhenren-editor=1758`、`game=1909`；`git rm -r -- gu-zhenren-editor`（exit 0）后前者为 0；五类本地受保护路径磁盘保留；`game/opencode.json` 含另一台机器绝对路径（`C:/Users/90877/...`）已登记 REVIEW；精确路径 `git add`（未用 `git add -A`，残留本地缓存未入提交）。
   - 偏差：Step 3 独立带过提交 `db34873`（用户裁定）；`game/tools/_*.txt` 为随历史入库的既有内容（KEEP）；嵌套 `.gitignore` 离开后残留显示为 `??`（见 Task 7 小节偏差 3）。
+- Task 8（完整边界验收；bash + pwsh 脚本文件方式，详见本文件 Task 8 Final Acceptance 小节）：
+  - Step 0：根 `.gitignore` +4 行（`/gu-zhenren-editor/` 整目录忽略）；`git status` 不再出现 `??`，`ls-files` 为 0。
+  - Step 1：12 路径全存在；三旧路径 `ls-files` 全 0；`source/` 被忽略且含双份原文。
+  - Step 2：三扫描 + `rev-list --objects --all` 全无输出；`git diff --check` 通过。`3afe2dd` 不在 ref 可达历史内。
+  - Step 3：35 文件 0 损坏；来源命名空间零命中。pwsh 内联改脚本文件执行（语义等价）。
+  - Step 4：9 目标首读文件全存在；旧入口引用只剩历史语境；`AGENTS.md` 过期阶段行已更新。
+  - Step 5：债务全行有结论；闭合 2 行 REVIEW（审计缺口、README 示例），新增 1 行 EXCLUDE（残留忽略）；`lore/wiki/README.md` 机械修正 3 行 `game/→source/`。
+  - Step 6/7：可定位性结论见 Task 8 小节（含 9 个 `.import` 未跟踪的 REVIEW 说明）；显式路径暂存（另加机械修正的 `lore/wiki/README.md`，`README.md`/`PROJECT_MAP.md`/`archive/README.md` 无改动不暂存），未用 `git add -A`。

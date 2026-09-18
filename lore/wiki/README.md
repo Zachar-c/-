@@ -10,14 +10,14 @@
 4. 确认后的结论写回对应 Wiki 页面，并保留章节或行号来源。
 
 ```powershell
-rg -n "关键词" "game\分支：六卷精编版\蛊真人-clean.txt"
+rg -n "关键词" "source\蛊真人-clean.txt"
 rg -n "关键词" "game\分支：六卷精编版\读书笔记"
 ```
 
 ## 来源优先级
 
-1. `game/分支：六卷精编版/蛊真人-clean.txt`
-2. `game/分支：六卷精编版/《人祖传》.txt`
+1. `source/蛊真人-clean.txt`
+2. `source/《人祖传》.txt`
 3. `game/docs/lore/canon-index.md`
 4. 现有读书笔记和记忆库
 5. 游戏设计、重写方案和分析文字
