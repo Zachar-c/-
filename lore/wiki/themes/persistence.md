@@ -6,7 +6,7 @@ sources:
   - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
-  - "source:source/分支：六卷精编版/蛊真人-clean.txt"
+  - "source:source/蛊真人-clean.txt"
 ---
 
 # 坚持

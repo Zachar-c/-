@@ -20,11 +20,11 @@
 
 ### `lore/wiki/`（Task 5 已迁移）
 
-- 用途：冻结的 AI 可读 Wiki（原 `wenzhen-lore`），只读知识。
+- 用途：AI 可读的《蛊真人》蒸馏知识层（原 `wenzhen-lore`），按批次持续更新。
 - 首读文件：`lore/wiki/README.md`、`lore/wiki/index.md`、`lore/wiki/AGENTS.md`。
 - 当前入口：`lore/wiki/`（旧 `wenzhen-lore/` 已移除）。
 - 权威来源：父仓库 `5f3fbfc` 快照；现以 `lore/wiki/` 为准。
-- 可修改范围：只允许目录移动、文件重命名、相对链接更新、来源路径更新；禁止补写事实、改写分析、调整主题结论、扩充知识范围。
+- 可修改范围：按 `lore/wiki/AGENTS.md` 编辑约定增补与修订页面；事实必须可追溯到 `source/`、读书笔记、记忆库或 `canon-index:` 条目，游戏数值与改编不写入原著事实区。
 
 ### `editorial/`（Task 6 已导入）
 

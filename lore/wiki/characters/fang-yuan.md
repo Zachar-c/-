@@ -3,7 +3,7 @@ type: character
 name: 方源
 aliases: [古月方源, 血翼魔尊]
 sources:
-  - "source:source/分支：六卷精编版/蛊真人-clean.txt"
+  - "source:source/蛊真人-clean.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
   - "memory:lore/research/分支：六卷精编版/记忆库/06-角色台账.md"

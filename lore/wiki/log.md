@@ -26,3 +26,6 @@
 - 下一统一批次定义为“宿命冲突簇”：宿命蛊、宿命大战、星宿仙尊、龙公，并与既有红莲、天庭、方源、春秋蝉和宿命主题页一次性接通。
 - “宿命冲突簇”已完成：新增宿命蛊、宿命大战、星宿仙尊、龙公四页；补齐分类索引和相关主题、人物、蛊虫、世界页的反向链接。
 - “宿命冲突簇”验收结果：24 个知识页、35 个 Markdown 文件；24/24 frontmatter 字段完整；核心节点待建立引用为 0；source/notes/memory 路径、相对链接、主题模板和 `git diff --check` 全部通过。
+- Wiki 解冻：用户决定按 `lore/wiki/AGENTS.md` 的编辑约定继续蒸馏，冻结期结束；续作计划见 `docs/superpowers/plans/2026-09-18-wenzhen-lore-wiki-continuation.md`。
+- 修正迁移遗留的 12 处 `source:` 引用（`source:source/分支：六卷精编版/...` 残尾），并把 canon 命名空间统一为 `canon-index:`。
+- 新增验收脚本 `lore/wiki/tools/check.ps1`，本批全部检查项通过。

@@ -3,7 +3,7 @@ type: theme
 name: 宿命
 aliases: [宿命, 宿命蛊]
 sources:
-  - "source:source/分支：六卷精编版/蛊真人-clean.txt"
+  - "source:source/蛊真人-clean.txt"
   - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"

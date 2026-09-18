@@ -11,7 +11,7 @@
 type: character
 name: 方源
 aliases: [古月方源]
-sources: ["notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md", "canon:CAN-SMALL-LIGHT-001"]
+sources: ["notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md", "canon-index:CAN-SMALL-LIGHT-001"]
 ---
 ```
 
@@ -49,6 +49,7 @@ sources: ["notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补�
 
 ## 来源与边界
 
+- 来源命名空间固定为四类：`source:`（原文，指向本地 `source/`）、`notes:`（读书笔记）、`memory:`（记忆库）、`canon-index:`（指向 `game/docs/lore/canon-index.md` 的事实条目 ID）。
 - 原文、`canon-index.md` 和读书笔记是不同层级，不要把读书笔记的判断自动升级成原文事实。
 - 《人祖传》是世界内典籍；它的寓言内容与正文中被验证的世界规则要分开写。
 - `lore/research/` 下的重写总纲、人物弧光和角色台账属于创作资料，除非明确标注，不得写成原著事实。

@@ -5,7 +5,7 @@ aliases: [春秋蝉, 时间道蛊虫]
 sources:
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
-  - "source:source/分支：六卷精编版/蛊真人-clean.txt"
+  - "source:source/蛊真人-clean.txt"
 ---
 
 # 春秋蝉

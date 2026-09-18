@@ -4,7 +4,7 @@ name: 人祖传
 aliases: [人祖传寓言, 人祖传隐喻]
 sources:
   - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
-  - "source:source/分支：六卷精编版/《人祖传》.txt"
+  - "source:source/《人祖传》.txt"
 ---
 
 # 人祖传
