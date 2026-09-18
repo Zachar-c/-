@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>休息屏 线框稿 v1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:720px; overflow:hidden; }
+  body {
+    font-family: "Kaiti SC","STKaiti","KaiTi",serif;
+    background-color:#e8e5da;
+    background-image: radial-gradient(circle at 0 0, rgba(198,199,186,.95) 1px, transparent 1px);
+    background-size: 4px 5px;
+    color:#171814;
+    position:relative;
+  }
+  .frame { position:absolute; inset:14px; border:1px dashed #b7b7ab; }
+  .bar { position:absolute; top:16px; left:16px; right:16px; height:32px;
+         border-bottom:1px solid #b7b7ab; display:flex; align-items:center; gap:20px; font-size:14px; }
+  .chip { display:flex; align-items:center; gap:5px; color:#606860; }
+  .chip .ic { width:16px; height:16px; border:1px solid #9a978c; }
+  .chip b { color:#171814; font-weight:normal; }
+  .icons { position:absolute; right:0; top:0; display:flex; gap:10px; }
+  .iconbtn { width:30px; height:30px; border:1px solid #9a978c; display:flex;
+             align-items:center; justify-content:center; font-size:16px; color:#4a4a40; }
+  .seal { position:absolute; top:64px; right:20px; width:46px; height:46px;
+          border:2px solid #8c5850; color:#8c5850; font-size:12px; line-height:1.25;
+          text-align:center; display:flex; align-items:center; justify-content:center;
+          transform: rotate(3deg); letter-spacing:2px; }
+  .vtitle { position:absolute; top:132px; left:22px; writing-mode:vertical-rl;
+            font-size:30px; letter-spacing:12px; color:#171814; }
+  .redline { position:absolute; top:134px; left:112px; width:170px; height:2px; background:#82463e; }
+  .sub { position:absolute; top:148px; left:112px; font-size:12px; color:#607060; }
+  .panel { position:absolute; border:1px solid #aaa89f; background:rgba(246,243,233,.55); }
+  .card { position:absolute; border:1px solid #9a978c; background:rgba(246,243,233,.62); }
+  .card .name { position:absolute; left:14px; top:10px; font-size:15px; color:#171814; }
+  .card .det { position:absolute; left:14px; top:40px; font-size:12px; color:#7a7a70; }
+  .card .cost { position:absolute; left:14px; top:66px; font-size:12px; color:#9c332d; }
+  .card .btn { position:absolute; right:10px; top:74px; font-size:13px; color:#171814;
+               border:1px solid #9a978c; padding:2px 12px; }
+  .card .ghost { position:absolute; right:10px; top:78px; font-size:12px; color:#a4a49b; }
+  .danger { border-color:#b06a62; }
+  .danger .name { color:#9c332d; }
+  .lab { font-size:12px; color:#607060; }
+  .lab b { color:#171814; font-weight:normal; }
+  .note { position:absolute; left:112px; bottom:52px; font-size:12px; color:#7a7a70; }
+  .leave { position:absolute; right:112px; bottom:40px; font-size:14px; color:#171814;
+           border:1px solid #9a978c; padding:4px 18px; background:transparent; }
+  .ver { position:absolute; bottom:10px; right:16px; font-size:11px; color:#888880; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="bar">
+  <span class="chip"><span class="ic"></span>气血 <b>94/120</b></span>
+  <span class="chip"><span class="ic"></span>寿元 <b>41年</b></span>
+  <span class="chip"><span class="ic"></span>魂魄 <b>7</b></span>
+  <span class="chip"><span class="ic"></span>元石 <b>12</b></span>
+  <span class="icons">
+    <div class="iconbtn">▤</div>
+    <div class="iconbtn">⚙</div>
+  </span>
+</div>
+<div class="seal">休<br>整</div>
+<div class="vtitle">闭关</div>
+<div class="redline"></div>
+<div class="sub">休整 · 强制二选一，不可全拿</div>
+
+<div class="panel" style="left:112px; top:186px; width:1130px; height:430px;">
+  <div class="lab" style="left:20px; top:14px; position:absolute;">休整选项</div>
+
+  <!-- 第 1 行 -->
+  <div class="card" style="left:20px; top:44px; width:350px; height:120px;">
+    <div class="name">调息回血</div>
+    <div class="det">回复气血与真元 · 消耗本次休整</div>
+    <div class="cost">—</div>
+    <div class="btn">选择</div>
+  </div>
+  <div class="card" style="left:390px; top:44px; width:350px; height:120px;">
+    <div class="name">强化蛊卡</div>
+    <div class="det">永久提升一张已精炼蛊卡的强化等级</div>
+    <div class="cost">—</div>
+    <div class="btn">选择</div>
+  </div>
+  <div class="card" style="left:760px; top:44px; width:350px; height:120px;">
+    <div class="name">温养一蛊</div>
+    <div class="det">移除 1 只蛊虫实例 · 不返还资源</div>
+    <div class="cost">—</div>
+    <div class="btn">选择</div>
+  </div>
+
+  <!-- 第 2 行 -->
+  <div class="card" style="left:20px; top:184px; width:350px; height:120px;">
+    <div class="name">抹除印记</div>
+    <div class="det">移除 1 枚非规则类印记</div>
+    <div class="cost">—</div>
+    <div class="btn">选择</div>
+  </div>
+  <div class="card" style="left:390px; top:184px; width:350px; height:120px;">
+    <div class="name">拔除反噬</div>
+    <div class="det">逐层拔除 1 只诅咒蛊的反噬</div>
+    <div class="cost">—</div>
+    <div class="btn">选择</div>
+  </div>
+  <div class="card danger" style="left:760px; top:184px; width:350px; height:120px;">
+    <div class="name">洗髓换骨</div>
+    <div class="det">重置资质并重定根骨 · 一局一次</div>
+    <div class="cost">代价 · 寿元 12 年</div>
+    <div class="btn" style="border-color:#b06a62; color:#9c332d;">选择</div>
+  </div>
+
+  <div class="lab" style="left:20px; top:330px; position:absolute; color:#888880;">本次休整仅可择其一 · 洗髓换骨确认后须支付寿元，死亡可预见</div>
+  <div class="lab" style="left:20px; top:360px; position:absolute; color:#888880;">选中目标类选项后，于面板下方展开目标清单</div>
+</div>
+
+<div class="note">第 3 层 · 叁宫</div>
+<div class="leave">离开</div>
+<div class="ver">BUILD 0.9.0 - LOCAL</div>
+</body>
+</html>

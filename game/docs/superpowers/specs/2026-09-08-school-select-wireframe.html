@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流派选择界面 · 线框稿 v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'PingFang SC', serif;
+    background: #f4f3ee;
+    color: #171814;
+    padding: 24px 0 40px;
+  }
+  .page { max-width: 1360px; margin: 0 auto; padding: 0 24px; }
+
+  .doc-head { padding: 0 4px 16px; border-bottom: 1px solid #b8b6aa; margin-bottom: 20px; }
+  .doc-title { font-size: 21px; font-weight: 600; letter-spacing: 2px; }
+  .doc-sub { font-size: 12px; color: #686960; margin-top: 6px; line-height: 1.7; }
+
+  /* ===== 线框稿画布：1280x720，大厅 v8 同参 ===== */
+  .canvas {
+    position: relative;
+    width: 1280px; height: 720px;
+    margin: 0 auto;
+    background-color: #e8e5db;
+    background-image: radial-gradient(circle, rgba(120,116,104,0.10) 1px, transparent 1.7px);
+    background-size: 7px 7px;
+    border: 1px solid #b8b6aa;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* 左上角标签（沿用大厅） */
+  .loc-tag { position: absolute; left: 1.9%; top: 3.2%; font-size: 10px; letter-spacing: 2px; color: #8d8d83; }
+
+  /* 右上印章：竖排两行，沿用大厅印章规格 */
+  .seal {
+    position: absolute; right: 2.2%; top: 3.4%;
+    width: 45px; height: 40px;
+    border: 1px solid #aa948b; border-radius: 2px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 10px; color: #9e867d; font-weight: 600; line-height: 1.4; letter-spacing: 1px;
+  }
+
+  /* 左栏：竖排大标题 + 说明 + 返回（ghost） */
+  .side-title {
+    position: absolute; left: 6.7%; top: 30%;
+    font-size: 52px; font-weight: 700; color: #343430;
+    line-height: 1.4; letter-spacing: 8px;
+  }
+  .side-sub { position: absolute; left: 7.2%; top: 44.6%; font-size: 10px; color: #8d8e84; letter-spacing: 1px; }
+  .side-redline { position: absolute; left: 7%; top: 48.6%; width: 42px; height: 3px; background: #82463e; }
+  .side-back {
+    position: absolute; left: 6.7%; top: 66.0%;
+    font-size: 12px; color: #56534f; letter-spacing: 2px;
+    padding: 5px 12px; background: transparent; border: 1px solid #b7b7ab; border-radius: 2px;
+  }
+  .side-ver { position: absolute; left: 6.7%; top: 90.5%; font-size: 8px; color: #a4a49b; letter-spacing: 1px; }
+
+  /* 左栏贯穿竖线 */
+  .divider-l { position: absolute; left: 24.2%; top: 9%; bottom: 9%; width: 1px; background: #b7b7ab; }
+
+  /* 主区标题行 */
+  .main-head { position: absolute; left: 28.5%; top: 6.2%; font-size: 13px; color: #56534f; letter-spacing: 2px; }
+  .main-head-n { position: absolute; left: 28.5%; top: 9.0%; font-size: 9px; color: #8d8d83; letter-spacing: 1px; }
+
+  /* ===== 流派卡片网格：4 列 × 5 行 ===== */
+  .grid {
+    position: absolute; left: 28.5%; top: 15.2%;
+    width: 908px; height: 500px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .grid-row { display: flex; gap: 12px; }
+  .card {
+    position: relative;
+    width: 218px; height: 92px;
+    border: 1px solid #b7b7ab; border-radius: 2px;
+    background: rgba(232,229,219,0.55);
+    padding: 8px 10px;
+    cursor: pointer;
+  }
+  .card.selected { border-color: #82463e; background: rgba(130,70,62,0.05); }
+  .card-name { font-size: 14px; font-weight: 600; color: #343430; letter-spacing: 1px; }
+  .card-name small { font-size: 9px; color: #8d8d83; font-weight: 400; margin-left: 6px; letter-spacing: 0; }
+  .card-sum { margin-top: 5px; font-size: 9px; color: #7e7f75; line-height: 1.45;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .card-starter { margin-top: 5px; font-size: 9px; color: #898a81; letter-spacing: 0.5px; }
+  .card-starter b { color: #56534f; font-weight: 500; }
+  /* 选中印章 */
+  .card-mark {
+    position: absolute; right: -1px; top: -1px;
+    border: 1px solid #82463e; border-radius: 0 2px 0 2px;
+    font-size: 8px; color: #82463e; padding: 1px 4px;
+    letter-spacing: 1px; display: none;
+  }
+  .card.selected .card-mark { display: block; }
+
+  /* ===== 底部：Buff 复选 + 操作行 ===== */
+  .buff-row {
+    position: absolute; left: 28.5%; top: 85.4%;
+    display: flex; align-items: center; gap: 26px;
+  }
+  .buff-label { font-size: 10px; color: #78786d; letter-spacing: 1px; }
+  .buff-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #56564c; letter-spacing: 0.5px; }
+  .buff-box {
+    width: 11px; height: 11px; border: 1px solid #8d8d83; border-radius: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: #82463e; line-height: 1;
+  }
+  .buff-item.on .buff-box { border-color: #82463e; }
+
+  .op-row { position: absolute; left: 28.5%; top: 91.4%; width: 908px; display: flex; justify-content: space-between; align-items: center; }
+  .op-back {
+    font-size: 12px; color: #56534f; letter-spacing: 2px;
+    padding: 5px 14px; background: transparent; border: 1px solid #b7b7ab; border-radius: 2px;
+  }
+  .op-confirm {
+    font-size: 13px; color: #56534f; letter-spacing: 2px;
+    padding: 5px 14px; background: #e3e3d7; border-radius: 2px;
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  }
+  .op-confirm.active { color: #82463e; background: rgba(130,70,62,0.08); }
+
+  /* 数据表 */
+  .data-table { margin-top: 20px; border: 1px solid #e4e3dd; border-radius: 6px; padding: 14px 16px; }
+  .data-table h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .data-table div { font-size: 12px; color: #171814; line-height: 1.9; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="doc-head">
+    <div class="doc-title">流派选择界面 · 线框稿 v1（基准：大厅 v8 命牌视觉语言 × 20 流派 × 3 Buff）</div>
+    <div class="doc-sub">
+      ① 全屏 1280×720，延续大厅纸底网点 / 墨字 / 朱砂 / ghost 按钮；左栏标题，主区 4×5 流派卡片网格<br>
+      ② 卡片：流派名 + 摘要一行 + 初始蛊四只中文名；选中 = 朱砂描边 + 右上「已选」小印章<br>
+      ③ 底部：开局加成 Buff 三选（ghost 复选）+ 操作行（左返回 / 右「以×道入世」）<br>
+      ④ 数据样例取自 data/schools.json 与 data/buffs.json；选中态为示意（血道）。
+    </div>
+  </div>
+
+  <div class="canvas">
+    <div class="loc-tag">叁宫·南盟</div>
+    <div class="seal">擇道<br>入世</div>
+
+    <div class="divider-l"></div>
+
+    <div class="side-title">擇道</div>
+    <div class="side-sub">一念之差，道途迥异</div>
+    <div class="side-redline"></div>
+    <div class="side-back">返回</div>
+    <div class="side-ver">BUILD 0.9.0 · LOCAL</div>
+
+    <div class="main-head">择定流派</div>
+    <div class="main-head-n">道痕为引，一蛊一命 · 共二十道</div>
+
+    <div class="grid">
+      <div class="grid-row">
+        <div class="card selected"><div class="card-mark">已选</div><div class="card-name">血道<small>第一</small></div><div class="card-sum">掌气血生灭与精血饲蛊；以血养蛊、血海不孤，养蛊成本高</div><div class="card-starter"><b>初始蛊</b> 爱别离蛊·血池蛊·血雨蛊·血滴子</div></div>
+        <div class="card"><div class="card-name">气道<small>第二</small></div><div class="card-sum">掌气之有无形转化；攻守移形皆可塑气，上古气道鼎盛一度</div><div class="card-starter"><b>初始蛊</b> 硬气蛊·烟蛊·雾蛊·吐气蛊</div></div>
+        <div class="card"><div class="card-name">力道<small>第三</small></div><div class="card-sum">掌肉身蛮力与兽力叠加；借荒兽之力入体，一力降十会，南</div><div class="card-starter"><b>初始蛊</b> 力量蛊·熊力蛊·白豕蛊·斤力蛊</div></div>
+        <div class="card"><div class="card-name">魂道<small>第四</small></div><div class="card-sum">掌魂魄之壮养收摄；魂魄为薪、魂兽成群，荡魂山壮魂、落</div><div class="card-starter"><b>初始蛊</b> 净魂仙蛊·摄魂蛊·落魄蛊·灵蛊</div></div>
+      </div>
+      <div class="grid-row">
+        <div class="card"><div class="card-name">炼道<small>第五</small></div><div class="card-sum">掌炼蛊合炼与仙蛊屋营造；炉火炼蛊、以材换力、炸炉反噬</div><div class="card-starter"><b>初始蛊</b> 化蛊·煅蛊·淬蛊·锻蛊</div></div>
+        <div class="card"><div class="card-name">光道<small>第六</small></div><div class="card-sum">掌光之显隐与月华之力；光明/月华系蛊互相成就，光明正</div><div class="card-starter"><b>初始蛊</b> 月光蛊·小光蛊·石皮蛊·生机草蛊</div></div>
+        <div class="card"><div class="card-name">智道<small>第七</small></div><div class="card-sum">掌念头思算与攻心推演；念头为兵、算计无形，算命/卜算</div><div class="card-starter"><b>初始蛊</b> 智慧蛊·灵感蛊·妙蛊·思想蛊</div></div>
+        <div class="card"><div class="card-name">梦道<small>第八</small></div><div class="card-sum">掌梦境虚实与先贤底蕴；入梦历练、梦中百年，梦境汲取情</div><div class="card-starter"><b>初始蛊</b> 睡蛊·沉梦蛊·梦乡蛊·迷梦蛊</div></div>
+      </div>
+      <div class="grid-row">
+        <div class="card"><div class="card-name">运道<small>第九</small></div><div class="card-sum">掌气运消长与福祸转移；运势如河可借可夺可均，克命改运</div><div class="card-starter"><b>初始蛊</b> 招灾蛊·祥蛊·瑞蛊·福蛊</div></div>
+        <div class="card"><div class="card-name">剑道<small>第十</small></div><div class="card-sum">掌剑意锋锐与剑气纵横；剑道道痕有侵蚀性、攻伐第一。</div><div class="card-starter"><b>初始蛊</b> 锋蛊·意蛊·鞘蛊·芒蛊</div></div>
+        <div class="card"><div class="card-name">木道<small>十一</small></div><div class="card-sum">掌草木生发与树人缠斗；生发缠绕、木牢困敌、树精化身，</div><div class="card-starter"><b>初始蛊</b> 青藤蛊·枝蛊·木甲蛊·藤蛊</div></div>
+        <div class="card"><div class="card-name">火道<small>十二</small></div><div class="card-sum">掌火之爆烈与焚烧；追求爆炸力量，炎道道痕可焚山涨潮，</div><div class="card-starter"><b>初始蛊</b> 火鸦蛊·灼蛊·烬蛊·燎蛊</div></div>
+      </div>
+      <div class="grid-row">
+        <div class="card"><div class="card-name">水道<small>十三</small></div><div class="card-sum">掌水之流动包容；川流防御、水罩困敌，福地洞天落地汲地</div><div class="card-starter"><b>初始蛊</b> 浪蛊·瀑蛊·溪蛊·潭蛊</div></div>
+        <div class="card"><div class="card-name">风道<small>十四</small></div><div class="card-sum">掌风之流动疾速；锁风/无限风可移山封道，风道道痕海量</div><div class="card-starter"><b>初始蛊</b> 狂风蛊·旋风蛊·清蛊·迅影蛊</div></div>
+        <div class="card"><div class="card-name">金道<small>十五</small></div><div class="card-sum">掌金锐锋刃与铁甲防护；金道道痕伤口难治、金蜈化剑、金</div><div class="card-starter"><b>初始蛊</b> 铜蛊·锋蛊·铁皮蛊·刃蛊</div></div>
+        <div class="card"><div class="card-name">土道<small>十六</small></div><div class="card-sum">掌土石厚重稳固；防御与山体、炼蛊稳定增益，常与变化/</div><div class="card-starter"><b>初始蛊</b> 地藏花王蛊·山蛊·玉皮蛊·石蛊</div></div>
+      </div>
+      <div class="grid-row">
+        <div class="card"><div class="card-name">奴道<small>十七</small></div><div class="card-sum">掌驭兽驱物与兽役契约；以蛊驭兽、兽海战术，犬王传承的</div><div class="card-starter"><b>初始蛊</b> 驭犬蛊·牵蛊·驭虎蛊·驭鹿蛊</div></div>
+        <div class="card"><div class="card-name">天道<small>十八</small></div><div class="card-sum">掌天地规则与灾劫天意；道痕可化任何流派，宿命/灾劫/</div><div class="card-starter"><b>初始蛊</b> 命蛊·霄蛊·昊蛊·穹蛊</div></div>
+        <div class="card"><div class="card-name">人道<small>十九</small></div><div class="card-sum">掌人心人性与情感愿念；人祖传诸蛊皆人道，以情克命、以</div><div class="card-starter"><b>初始蛊</b> 自己蛊·固执蛊·希望蛊·虚荣蛊</div></div>
+        <div class="card"><div class="card-name">骨道<small>二十</small></div><div class="card-sum">掌骨之坚硬与骨架术；骨甲/骨枪/白骨战车，锻骨成兵，</div><div class="card-starter"><b>初始蛊</b> 骨蛊·骨象蛊·白骨蛊·骨骑蛊</div></div>
+      </div>
+    </div>
+
+    <div class="buff-row">
+      <span class="buff-label">开局加成</span>
+      <div class="buff-item on"><span class="buff-box">✓</span>凡敌一滴血</div>
+      <div class="buff-item"><span class="buff-box"></span>十转杀蛊</div>
+      <div class="buff-item"><span class="buff-box"></span>开局元石</div>
+    </div>
+
+    <div class="op-row">
+      <div class="op-back">返回</div>
+      <div class="op-confirm active">以血道入世 &gt;</div>
+    </div>
+  </div>
+
+  <div class="data-table">
+    <h3>v1 设计说明</h3>
+    <div>
+      画布：1280×720，与大厅 v8 同参（网点 7px 网格 / 纸底 #e8e5db / 墨字 #343430 / 朱砂 #82463e）<br>
+      左栏：竖排大标题「擇道」52px + 副题 + 红线 + ghost 返回 + 版本号；贯穿竖线 x310（24.2%）<br>
+      主区：4 列 × 5 行 = 20 卡（218×92），卡片含流派名 / 摘要一行 / 初始蛊四只中文名<br>
+      选中态：朱砂描边 + 右上「已选」小印章（示意：血道）；未选灰描边<br>
+      底部：Buff 三复选（ghost 方块勾选）+ 操作行（返回 ghost / 以×道入世 浅底下划线）<br>
+      数据源：data/schools.json（name/summary/starter_gu_ids）+ data/gu_names.json（中文名）+ data/buffs.json
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

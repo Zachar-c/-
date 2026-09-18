@@ -1,0 +1,497 @@
+﻿=== commits ===
+834c6f8 feat: add rare pity counter forcing non-common loot after three commons (p0 t2)
+=== stat ===
+ scripts/domain/loot_resolver.gd   |  75 +++++++++++++----
+ scripts/domain/run_state.gd       |   4 +
+ scripts/domain/save_repository.gd |   1 +
+ tests/unit/test_loot_pity.gd      | 167 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 229 insertions(+), 18 deletions(-)
+=== full diff (-U10) ===
+diff --git a/scripts/domain/loot_resolver.gd b/scripts/domain/loot_resolver.gd
+index 551df62..69f115c 100644
+--- a/scripts/domain/loot_resolver.gd
++++ b/scripts/domain/loot_resolver.gd
+@@ -1,30 +1,41 @@
+ class_name LootResolver
+ extends RefCounted
+ 
+ 
+ const SeededRngScript = preload("res://scripts/domain/rng.gd")
+ 
+ 
++# R13.1 rare pity threshold: after this many consecutive common-producing
++# adventure drops, the next gated gu roll is forced onto non-common buckets.
++const PITY_THRESHOLD := 3
++
++# R13.1 rarity outcomes that clear the pity counter; anything else produced
++# by the buckets advances it (only "common" exists besides these today).
++const PITY_CLEARING_RARITIES := ["rare", "epic", "legendary"]
++
++
+ # B2: victory loot. Rolls are derived from the run seed and the immutable
+ # event position, so the same seed and position always yield the same loot.
+ 
+ 
+ static func settle_victory(battle: Dictionary, state: RunState, catalog: Dictionary) -> Dictionary:
+ 	var tier := _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
+ 	var table: Dictionary = catalog.get("loot_tables", {}).get("loot", {}).get(tier, {})
+ 	var material_ids := _roll_materials(table, state, tier)
+-	var gu_id := _roll_gu(table, state, tier)
++	var gu_roll := _roll_gu(table, state, tier)
++	var gu_id := str(gu_roll.get("gu_id", ""))
+ 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
+ 	var next := state
+ 	if not material_ids.is_empty() or not gu_id.is_empty():
+-		next = _apply_loot(state, loot, catalog)
++		var next_pity := _next_loot_pity(int(state.loot_pity), str(gu_roll.get("rarity", "")))
++		next = _apply_loot(state, loot, catalog, next_pity)
+ 	return {"state": next, "loot": loot}
+ 
+ 
+ static func _enemy_tier(enemy_kind: String, catalog: Dictionary) -> String:
+ 	for enemy in catalog.get("enemies", []):
+ 		if str(enemy.get("id", "")) == enemy_kind:
+ 			return str(enemy.get("tier", "common"))
+ 	return "common"
+ 
+ 
+@@ -32,60 +43,88 @@ static func _roll_materials(table: Dictionary, state: RunState, tier: String) ->
+ 	var pool: Array = (table.get("material_pool", []) as Array).duplicate()
+ 	var count := int(table.get("material_count", 0))
+ 	var picked: Array[String] = []
+ 	while picked.size() < count and not pool.is_empty():
+ 		var index := _pick_from(pool.size(), state, "loot.material.%s" % tier)
+ 		picked.append(str(pool[index]))
+ 		pool.remove_at(index)
+ 	return picked
+ 
+ 
+-static func _roll_gu(table: Dictionary, state: RunState, tier: String) -> String:
++# Shop purchases are fixed offers and never call _roll_gu, so they bypass
++# the R13.1 adventure-drop pity counter by construction.
++static func _roll_gu(table: Dictionary, state: RunState, tier: String) -> Dictionary:
+ 	var chance := int(table.get("gu_chance_pct", 0))
+ 	var pool: Dictionary = table.get("gu_pool", {})
+ 	var weights: Dictionary = pool.get("weights", {})
+ 	if chance <= 0 or weights.is_empty():
+-		return ""
++		return {"gu_id": "", "rarity": ""}
+ 	var bound := clampi(chance, 0, 100)
+ 	if bound < 100 and _pick_from(100, state, "loot.gu.%s" % tier) >= bound:
+-		return ""
++		return {"gu_id": "", "rarity": ""}
++	var effective_weights := weights
++	var rarity_salt := "loot.gu.rarity.%s" % tier
++	if state.loot_pity >= PITY_THRESHOLD:
++		var forced := {}
++		var forced_total := 0
++		for rarity_id_value in weights:
++			if str(rarity_id_value) == "common":
++				continue
++			forced[rarity_id_value] = maxi(0, int(weights[rarity_id_value]))
++			forced_total += maxi(0, int(weights[rarity_id_value]))
++		# Weights come from data; with no non-common weight the force is a no-op
++		# so the rule can never hand out a legendary the table does not declare.
++		if forced_total > 0:
++			effective_weights = forced
++			rarity_salt = "loot.gu.rarity.forced.%s" % tier
+ 	var total_weight := 0
+-	for rarity_id_value in weights:
+-		total_weight += maxi(0, int(weights[rarity_id_value]))
++	for rarity_id_value in effective_weights:
++		total_weight += maxi(0, int(effective_weights[rarity_id_value]))
+ 	if total_weight <= 0:
+-		return ""
+-	var rarity_roll := _pick_from(total_weight, state, "loot.gu.rarity.%s" % tier)
++		return {"gu_id": "", "rarity": ""}
++	var rarity_roll := _pick_from(total_weight, state, rarity_salt)
+ 	var picked_rarity := ""
+-	for rarity_id_value in weights:
+-		rarity_roll -= maxi(0, int(weights[rarity_id_value]))
++	for rarity_id_value in effective_weights:
++		rarity_roll -= maxi(0, int(effective_weights[rarity_id_value]))
+ 		if rarity_roll < 0:
+ 			picked_rarity = str(rarity_id_value)
+ 			break
+ 	if picked_rarity.is_empty():
+-		return ""
++		return {"gu_id": "", "rarity": ""}
+ 	var bucket: Array = (pool.get("by_rarity", {}).get(picked_rarity, []) as Array).duplicate()
+ 	if bucket.is_empty():
+-		return ""
+-	return str(bucket[_pick_from(bucket.size(), state, "loot.gu.pick.%s.%s" % [tier, picked_rarity])])
++		return {"gu_id": "", "rarity": ""}
++	return {
++		"gu_id": str(bucket[_pick_from(bucket.size(), state, "loot.gu.pick.%s.%s" % [tier, picked_rarity])]),
++		"rarity": picked_rarity,
++	}
++
++
++static func _next_loot_pity(current: int, rarity: String) -> int:
++	if PITY_CLEARING_RARITIES.has(rarity):
++		return 0
++	if rarity == "common":
++		return current + 1
++	return current
+ 
+ 
+ static func _pick_from(bound: int, state: RunState, salt: String) -> int:
+ 	if bound <= 1:
+ 		return 0
+ 	var salt_hash := 0
+ 	for character in salt:
+ 		salt_hash = salt_hash * 31 + character.unicode_at(0)
+ 	var rng := SeededRngScript.new(int(state.seed) * 1000003 + state.event_log.size() * 97 + salt_hash)
+ 	return rng.next_index(bound)
+ 
+ 
+-static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary) -> RunState:
++static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary, new_loot_pity: int) -> RunState:
+ 	var next := state
+ 	var material_ids: Array = loot.get("material_ids", [])
+ 	if not material_ids.is_empty():
+ 		var after := state.materials.duplicate(true)
+ 		for material_id_value in material_ids:
+ 			var material_id := str(material_id_value)
+ 			after[material_id] = int(after.get(material_id, 0)) + 1
+ 		next = state.append_event({
+ 			"stage": state.stage,
+ 			"time": state.event_log.size(),
+@@ -93,43 +132,43 @@ static func _apply_loot(state: RunState, loot: Dictionary, catalog: Dictionary)
+ 			"action": "battle_loot",
+ 			"before": {"materials": state.materials},
+ 			"after": {"materials": after},
+ 			"reason": "loot_materials_gained",
+ 			"source": "loot_resolver",
+ 			"targets": material_ids,
+ 		})
+ 		next.materials = after
+ 	var gu_id := str(loot.get("gu_id", ""))
+ 	if not gu_id.is_empty():
+-		next = _gain_gu(next, gu_id, catalog)
++		next = _gain_gu(next, gu_id, catalog, new_loot_pity)
+ 	return next
+ 
+ 
+-static func _gain_gu(state: RunState, gu_id: String, catalog: Dictionary) -> RunState:
++static func _gain_gu(state: RunState, gu_id: String, catalog: Dictionary, new_loot_pity: int) -> RunState:
+ 	var instances := state.gu_instances.duplicate(true)
+ 	var aperture := state.cave_aperture.duplicate(true)
+ 	var stored: Array = aperture.get("stored_gu_instance_ids", []).duplicate()
+ 	var instance_id := _next_instance_id(instances)
+ 	instances[instance_id] = {
+ 		"instance_id": instance_id,
+ 		"definition_id": gu_id,
+ 		"state": "refined",
+ 	}
+ 	stored.append(instance_id)
+ 	aperture["stored_gu_instance_ids"] = stored
+ 	var next := state.append_event({
+ 		"stage": state.stage,
+ 		"time": state.event_log.size(),
+ 		"node_id": state.current_node_id,
+ 		"action": "battle_loot",
+ 		"before": {"gu_instances": state.gu_instances, "cave_aperture": state.cave_aperture},
+-		"after": {"gu_instances": instances, "cave_aperture": aperture},
++		"after": {"gu_instances": instances, "cave_aperture": aperture, "loot_pity": new_loot_pity},
+ 		"reason": "loot_gu_gained",
+ 		"source": "loot_resolver",
+ 		"targets": [gu_id],
+ 	})
+ 	next.gu_instances = instances
+ 	next.cave_aperture = aperture
+ 	next.sync_legacy_gu_projections()
+ 	return next
+ 
+ 
+diff --git a/scripts/domain/run_state.gd b/scripts/domain/run_state.gd
+index 682d6b0..955d8f0 100644
+--- a/scripts/domain/run_state.gd
++++ b/scripts/domain/run_state.gd
+@@ -9,20 +9,21 @@ var seed: int = 0
+ var stage: String = "one"
+ var cultivation: int = 1
+ var essence: int = 3
+ var essence_capacity: int = 4
+ var health: int = 6
+ var max_health: int = 6
+ var aptitude: String = "bing"
+ var injury: int = 0
+ var lifespan_debt: int = 0
+ var stone: int = 12
++var loot_pity: int = 0
+ var gu_ids: Array[String] = []
+ var refined_gu_ids: Array[String] = []
+ var equipped_gu_ids: Array[String] = []
+ var inheritance_ids: Array[String] = []
+ var body_imprints: Array[String] = []
+ var clues: Array[String] = []
+ var relations: Dictionary = {}
+ var pursuit: int = 0
+ var ascension: Dictionary = {}
+ var known_facts: Array[String] = []
+@@ -181,20 +182,21 @@ func to_save_data() -> Dictionary:
+ 		"stage": stage,
+ 		"cultivation": cultivation,
+ 		"essence": essence,
+ 		"essence_capacity": essence_capacity,
+ 		"health": health,
+ 		"max_health": max_health,
+ 		"aptitude": aptitude,
+ 		"injury": injury,
+ 		"lifespan_debt": lifespan_debt,
+ 		"stone": stone,
++		"loot_pity": loot_pity,
+ 		"gu_ids": gu_ids.duplicate(),
+ 		"refined_gu_ids": refined_gu_ids.duplicate(),
+ 		"equipped_gu_ids": equipped_gu_ids.duplicate(),
+ 		"inheritance_ids": inheritance_ids.duplicate(),
+ 		"body_imprints": body_imprints.duplicate(),
+ 		"clues": clues.duplicate(),
+ 		"relations": relations.duplicate(true),
+ 		"pursuit": pursuit,
+ 		"ascension": ascension.duplicate(true),
+ 		"known_facts": known_facts.duplicate(),
+@@ -245,20 +247,21 @@ func _copy() -> RunState:
+ 	copy.stage = stage
+ 	copy.cultivation = cultivation
+ 	copy.essence = essence
+ 	copy.essence_capacity = essence_capacity
+ 	copy.health = health
+ 	copy.max_health = max_health
+ 	copy.aptitude = aptitude
+ 	copy.injury = injury
+ 	copy.lifespan_debt = lifespan_debt
+ 	copy.stone = stone
++	copy.loot_pity = loot_pity
+ 	copy.gu_ids = gu_ids.duplicate()
+ 	copy.refined_gu_ids = refined_gu_ids.duplicate()
+ 	copy.equipped_gu_ids = equipped_gu_ids.duplicate()
+ 	copy.inheritance_ids = inheritance_ids.duplicate()
+ 	copy.body_imprints = body_imprints.duplicate()
+ 	copy.clues = clues.duplicate()
+ 	copy.relations = relations.duplicate(true)
+ 	copy.pursuit = pursuit
+ 	copy.ascension = ascension.duplicate(true)
+ 	copy.known_facts = known_facts.duplicate()
+@@ -294,20 +297,21 @@ func _normalized_event(event: Dictionary, index: int) -> Dictionary:
+ 		"reason": event.get("reason", ""),
+ 		"source": event.get("source", current_node_id),
+ 		"targets": event.get("targets", []).duplicate(true),
+ 	}
+ 
+ 
+ func _apply_after(after: Dictionary) -> void:
+ 	for key in after:
+ 		if key in [
+ 			"stage", "cultivation", "essence", "essence_capacity", "health", "max_health", "aptitude", "injury", "lifespan_debt", "stone",
++			"loot_pity",
+ 			"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "clues",
+ 			"relations", "pursuit", "ascension", "known_facts", "current_node_id",
+ 			"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos",
+ 			"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials", "relic_ids", "global_codex_ids", "school", "terminal_state",
+ 		]:
+ 			set(key, _copy_value(after[key]))
+ 
+ 
+ func _copy_value(value: Variant) -> Variant:
+ 	if value is Dictionary or value is Array:
+diff --git a/scripts/domain/save_repository.gd b/scripts/domain/save_repository.gd
+index 789fbb2..8c0f698 100644
+--- a/scripts/domain/save_repository.gd
++++ b/scripts/domain/save_repository.gd
+@@ -139,20 +139,21 @@ static func _state_from_save_data(data: Dictionary) -> Variant:
+ 	state.stage = str(data.get("stage", "one"))
+ 	state.cultivation = int(data.get("cultivation", 1))
+ 	state.essence = int(data.get("essence", 3))
+ 	state.essence_capacity = int(data.get("essence_capacity", 4))
+ 	state.health = int(data.get("health", 6))
+ 	state.max_health = int(data.get("max_health", 6))
+ 	state.aptitude = str(data.get("aptitude", "bing"))
+ 	state.injury = int(data.get("injury", 0))
+ 	state.lifespan_debt = int(data.get("lifespan_debt", 0))
+ 	state.stone = int(data.get("stone", 12))
++	state.loot_pity = int(data.get("loot_pity", 0))
+ 	state.gu_ids = _string_array(data.get("gu_ids", []))
+ 	state.refined_gu_ids = _string_array(data.get("refined_gu_ids", state.gu_ids))
+ 	state.equipped_gu_ids = _string_array(data.get("equipped_gu_ids", []))
+ 	state.inheritance_ids = _string_array(data.get("inheritance_ids", []))
+ 	state.body_imprints = _string_array(data.get("body_imprints", []))
+ 	state.clues = _string_array(data.get("clues", []))
+ 	state.relations = data.get("relations", {}).duplicate(true)
+ 	state.pursuit = int(data.get("pursuit", 0))
+ 	state.ascension = data.get("ascension", {}).duplicate(true)
+ 	state.known_facts = _string_array(data.get("known_facts", []))
+diff --git a/tests/unit/test_loot_pity.gd b/tests/unit/test_loot_pity.gd
+new file mode 100644
+index 0000000..f1f70d9
+--- /dev/null
++++ b/tests/unit/test_loot_pity.gd
+@@ -0,0 +1,167 @@
++extends "res://addons/gut/test.gd"
++
++
++# T2 rare pity counter (lockdown spec R13.1): after 3 consecutive
++# common-producing adventure drops the next gated gu roll is forced onto
++# non-common buckets; a rare-or-better drop clears the counter; chance-gate
++# failures never touch it and shop purchases bypass it by construction.
++# All rolls stay seeded from the run seed.
++
++
++const ContentCatalogScript := preload("res://scripts/domain/content_catalog.gd")
++const LootResolverScript := preload("res://scripts/domain/loot_resolver.gd")
++const RunStateScript := preload("res://scripts/domain/run_state.gd")
++const SaveRepositoryScript := preload("res://scripts/domain/save_repository.gd")
++
++const ELITE_BATTLE := {"enemy_kind": "ridge_elite_scout"}
++const PITY_THRESHOLD := 3
++
++
++func make_state(run_seed: int = 2026) -> RunState:
++	return RunStateScript.new_run(run_seed, null)
++
++
++func catalog() -> Dictionary:
++	return ContentCatalogScript.load_all()
++
++
++func elite_table(cat: Dictionary) -> Dictionary:
++	return cat["loot_tables"]["loot"]["elite"]
++
++
++func _rarity_of(cat: Dictionary, gu_id: String) -> String:
++	var pool: Dictionary = elite_table(cat)["gu_pool"]
++	for rarity_id in pool["by_rarity"]:
++		if (pool["by_rarity"][rarity_id] as Array).has(gu_id):
++			return str(rarity_id)
++	return str(cat["gu_by_id"][gu_id].get("rarity", ""))
++
++
++func test_fourth_consecutive_common_drop_is_forced_rare_or_better() -> void:
++	var cat := catalog()
++	var forced_observations := 0
++	for run_seed in range(2026, 2046):
++		var state: RunState = make_state(run_seed)
++		var streak := 0
++		for fight_index in range(60):
++			var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
++			state = rolled["state"]
++			var gu_id := str(rolled["loot"].get("gu_id", ""))
++			if gu_id.is_empty():
++				continue
++			var rarity := _rarity_of(cat, gu_id)
++			var was_forced := streak >= PITY_THRESHOLD
++			if was_forced:
++				assert_ne(rarity, "common",
++						"seed %d fight %d: drop after %d commons must be rare or better" % [run_seed, fight_index, streak])
++			streak = 0 if rarity != "common" else streak + 1
++			assert_eq(int(state.loot_pity), streak,
++					"seed %d fight %d: counter must track consecutive commons" % [run_seed, fight_index])
++			if was_forced:
++				forced_observations += 1
++	assert_true(forced_observations > 0, "expected at least one forced-drop scenario across seeds")
++
++
++func test_forced_rarity_roll_excludes_common_bucket() -> void:
++	var cat := catalog()
++	# Gate raised to 100 so every seed reaches the forced rarity roll instead
++	# of being filtered by the elite 30% drop gate.
++	var table: Dictionary = elite_table(cat).duplicate(true)
++	table["gu_chance_pct"] = 100
++	var seen := {}
++	for run_seed in range(1, 41):
++		var state: RunState = make_state(run_seed)
++		state.loot_pity = PITY_THRESHOLD
++		var roll: Variant = LootResolverScript._roll_gu(table, state, "elite")
++		var gu_id := str(roll.get("gu_id", ""))
++		assert_false(gu_id.is_empty(), "seed %d: forced roll must produce a gu" % run_seed)
++		var rarity := _rarity_of(cat, gu_id)
++		assert_ne(rarity, "common", "seed %d: forced roll produced common gu %s" % [run_seed, gu_id])
++		seen[rarity] = true
++	assert_true(seen.has("rare"), "renormalized weights must keep rare reachable")
++	assert_true(seen.has("epic"), "renormalized weights must keep epic reachable")
++
++
++func test_counter_resets_to_zero_after_rare_or_better_drop() -> void:
++	var cat := catalog()
++	var state: RunState = make_state(424242)
++	state.loot_pity = PITY_THRESHOLD
++	var observed := false
++	for _fight in range(30):
++		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
++		state = rolled["state"]
++		if str(rolled["loot"].get("gu_id", "")).is_empty():
++			continue
++		assert_ne(_rarity_of(cat, str(rolled["loot"]["gu_id"])), "common")
++		assert_eq(int(state.loot_pity), 0, "rare-or-better drop must clear the counter")
++		observed = true
++		break
++	assert_true(observed, "pity state must force a gated drop within 30 elite fights for seed 424242")
++
++
++func test_gate_failure_does_not_advance_the_counter() -> void:
++	var cat := catalog()
++	var state: RunState = make_state(2026)
++	state.loot_pity = 2
++	var observed_failure := false
++	for _fight in range(30):
++		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
++		state = rolled["state"]
++		if str(rolled["loot"].get("gu_id", "")).is_empty():
++			assert_eq(int(state.loot_pity), 2, "chance-gate failure must not touch the counter")
++			observed_failure = true
++			break
++	assert_true(observed_failure, "seed 2026 must hit a gate failure within 30 elite fights")
++
++
++func test_gu_loot_event_payload_carries_new_pity() -> void:
++	var cat := catalog()
++	var state: RunState = make_state(2026)
++	var observed := false
++	for _fight in range(40):
++		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
++		var had_gu := not str(rolled["loot"].get("gu_id", "")).is_empty()
++		state = rolled["state"]
++		if had_gu:
++			var entry: Dictionary = state.event_log.back()
++			assert_eq(str(entry.get("reason", "")), "loot_gu_gained")
++			assert_eq(int(entry["after"].get("loot_pity", -1)), int(state.loot_pity),
++					"replays must reproduce pity from the event payload")
++			observed = true
++			break
++	assert_true(observed, "seed 2026 must produce a gated gu drop within 40 elite fights")
++
++
++func test_loot_pity_survives_save_round_trip() -> void:
++	var cat := catalog()
++	var state: RunState = make_state(777)
++	for _fight in range(40):
++		var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
++		state = rolled["state"]
++		if int(state.loot_pity) > 0:
++			break
++	assert_true(int(state.loot_pity) > 0, "seed 777 must raise the counter within 40 elite fights")
++	var data := SaveRepositoryScript.serialize_run(state, [], [])
++	var loaded: Dictionary = SaveRepositoryScript.load_run_from_data(data)
++	assert_false(loaded.is_empty(), "round trip must load")
++	assert_eq(int(loaded["state"].loot_pity), int(state.loot_pity),
++			"counter must persist through serialize/load")
++
++
++func test_same_seed_replays_identical_loot_and_pity_sequence() -> void:
++	var cat := catalog()
++	for run_seed in [11, 424242]:
++		var runs := []
++		for _copy in range(2):
++			var state: RunState = make_state(run_seed)
++			var sequence := []
++			for _fight in range(25):
++				var rolled: Dictionary = LootResolverScript.settle_victory(ELITE_BATTLE, state, cat)
++				state = rolled["state"]
++				sequence.append({
++					"gu_id": str(rolled["loot"].get("gu_id", "")),
++					"materials": rolled["loot"].get("material_ids", []),
++					"pity": int(state.loot_pity),
++				})
++			runs.append({"sequence": sequence, "event_log": state.event_log})
++		assert_eq_deep(runs[0], runs[1])

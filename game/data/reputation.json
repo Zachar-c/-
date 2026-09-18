@@ -1,0 +1,20 @@
+{
+  "gains": {
+    "kill_neutral_npc": 2,
+    "broken_trust": 1
+  },
+  "effects": {
+    "price_pct_per_point": 10,
+    "price_cap_pct": 60,
+    "hostile_chance_pct_per_point": 15,
+    "first_move_chance_pct_per_point": 10,
+    "wash_lifespan_cost": 10,
+    "wash_reduce": 2,
+    "flip_hostile_chance_pct": 20,
+    "extreme_stance_pct_per_point": 5,
+    "revisit_price_pct_per_visit": 25,
+    "revisit_price_cap_pct": 100,
+    "service_use_price_pct_per_use": 25,
+    "service_use_price_cap_pct": 100
+  }
+}

@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/run_controller.gd" id="1_run_controller"]
+[ext_resource type="Script" path="res://scripts/presentation/audio_director.gd" id="2_audio_director"]
+[ext_resource type="Script" path="res://scripts/presentation/screen_transition.gd" id="3_screen_transition"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PaperBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.92549, 0.913725, 0.87451, 1)
+
+[node name="RunController" type="Node" parent="."]
+script = ExtResource("1_run_controller")
+
+[node name="AudioDirector" type="AudioStreamPlayer" parent="."]
+script = ExtResource("2_audio_director")
+
+[node name="TransitionLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="TransitionVeil" type="ColorRect" parent="TransitionLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+script = ExtResource("3_screen_transition")

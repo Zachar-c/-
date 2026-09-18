@@ -1,0 +1,35 @@
+12513:Tests              1525
+12514:Passing Tests      1525
+12515:Asserts           51667
+12519:[32m---- All tests passed! ----
+--- SCRIPT ERROR lines (pre-existing, unrelated to D7) ---
+12088:SCRIPT ERROR: Assertion failed: Key "tithing_cache" not found.
+12120:SCRIPT ERROR: Assertion failed: Key "tithing_cache" not found.
+12134:SCRIPT ERROR: Assertion failed: Key "tithing_cache" not found.
+12148:SCRIPT ERROR: Assertion failed: Key "tide_aftermath" not found.
+12162:SCRIPT ERROR: Assertion failed: Key "tide_aftermath" not found.
+12176:SCRIPT ERROR: Assertion failed: Key "tithing_cache" not found.
+12190:SCRIPT ERROR: Assertion failed: Key "blood_vein_offering" not found.
+12204:SCRIPT ERROR: Assertion failed: Key "tithing_cache" not found.
+12218:SCRIPT ERROR: Assertion failed: Key "blood_vein_offering" not found.
+--- tail (engine leak accounting) ---
+
+[33m==============================================
+[0m[33m= Run Summary
+[0m[33m==============================================
+[0m
+Totals
+------
+Warnings              1
+
+Scripts             211
+Tests              1525
+Passing Tests      1525
+Asserts           51667
+Time              252.844s
+
+
+[32m---- All tests passed! ----
+[0mGUT 9.7.1:  https://github.com/bitwes/Gut/releases/tag/v9.7.1 is now available!
+
+

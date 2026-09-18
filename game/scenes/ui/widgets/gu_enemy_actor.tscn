@@ -1,0 +1,124 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_enemy_actor_view.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_stat_bar.tscn" id="2_stat_bar"]
+
+; 水墨战斗画去框重构（2026-09-11 用户裁定）：敌人是"场景实体"不是信息卡。
+; 根容器保留 PanelContainer（命中矩形用于拖拽落点判定），但面板样式由脚本
+; 换成全透明（_apply_actor_style），选中/放置高亮走立绘提亮 + 名字玉绿，
+; 不再画矩形边框。立绘区 EnemyIconHost 纵向 EXPAND 吃掉全部剩余高度。
+[node name="GuEnemyActor" type="PanelContainer"]
+custom_minimum_size = Vector2(236, 352)
+script = ExtResource("1_script")
+
+[node name="ActorMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="ActorBody" type="VBoxContainer" parent="ActorMargin"]
+layout_mode = 2
+theme_override_constants/separation = 2
+size_flags_horizontal = 3
+alignment = 1
+
+; 意图印记：悬浮在敌人头顶的一枚篆刻印（非矩形 UI 卡片）——印章小方框 +
+; 类型符 + 数值，印侧小注 "意图：速 N"。节点名 IntentHost 在脚本里改为
+; enemy_intent_<id>（既有测试按此定位；"意图：" 字样与速度可见是
+; test_v1_battle_mounted / test_v3_ui_sync / test_b3_experience_gaps 契约）。
+[node name="IntentHost" type="HBoxContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="SealBox" type="PanelContainer" parent="ActorMargin/ActorBody/IntentHost"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="SealMargin" type="MarginContainer" parent="ActorMargin/ActorBody/IntentHost/SealBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="SealInner" type="VBoxContainer" parent="ActorMargin/ActorBody/IntentHost/SealBox/SealMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="IntentGlyph" type="Label" parent="ActorMargin/ActorBody/IntentHost/SealBox/SealMargin/SealInner"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "蓄"
+horizontal_alignment = 1
+
+[node name="IntentValue" type="Label" parent="ActorMargin/ActorBody/IntentHost/SealBox/SealMargin/SealInner"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "0"
+horizontal_alignment = 1
+
+[node name="IntentCaption" type="Label" parent="ActorMargin/ActorBody/IntentHost"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 10
+text = "意图："
+vertical_alignment = 1
+
+; 立绘：吃掉印下方全部剩余高度（约 230px，约 +30% 面积），直接立在山水里。
+[node name="EnemyIconHost" type="CenterContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EnemyPortrait" type="TextureRect" parent="ActorMargin/ActorBody/EnemyIconHost"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 200)
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+flip_h = true
+
+; 名称 + 护盾同行（无框轻量）：名字可点选目标（selectable 时），护盾是灰字小注。
+[node name="NameRow" type="HBoxContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="NameButton" type="Button" parent="ActorMargin/ActorBody/NameRow"]
+layout_mode = 2
+visible = false
+text = "敌人"
+
+[node name="NameLabel" type="Label" parent="ActorMargin/ActorBody/NameRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "敌人"
+
+[node name="ShieldLabel" type="Label" parent="ActorMargin/ActorBody/NameRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "护盾 0"
+
+[node name="StrikeLine" type="ColorRect" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 2)
+color = Color(0.61, 0.2, 0.18, 1)
+visible = false
+mouse_filter = 2
+
+[node name="HpHost" type="VBoxContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+
+[node name="StatBar" parent="ActorMargin/ActorBody/HpHost" instance=ExtResource("2_stat_bar")]
+layout_mode = 2
+
+; 状态：无框灰字 + 小图标（脚本 _status_row 不再画边框小标签）。
+[node name="StatusHost" type="FlowContainer" parent="ActorMargin/ActorBody"]
+layout_mode = 2
+theme_override_constants/separation = 6
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 2

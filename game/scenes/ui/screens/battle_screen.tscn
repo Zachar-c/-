@@ -1,0 +1,383 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/battle_screen_view.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_stat_bar.tscn" id="4_stat_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_toast.tscn" id="5_toast"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tall_fan_hand.tscn" id="6_hand"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="7_dialog"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="8_tooltip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_inventory.tscn" id="10_inventory"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="9_dots"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/bg/bg_battle_ridge.png" id="11_bg"]
+
+[node name="BattleScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("1_script")
+
+
+[node name="BattlePaper" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BattleDots" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_dots")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BattleBackdrop" type="TextureRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("11_bg")
+expand_mode = 1
+stretch_mode = 6
+modulate = Color(1, 1, 1, 0.45)
+
+; 背景雾帷（2026-09-11 水墨去框重构）：宣纸色半透罩层轻压山水对比——
+; "稍微降低对比度但不能过度灰白"（用户裁定），远山雾气必须保留。
+; 颜色在 battle_screen_view._ready() 用 GuStyle.PAPER_BG 校准（tscn 里只放近似值）。
+[node name="BattleFog" type="ColorRect" parent="."]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.925, 0.894, 0.82, 0.30)
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="battle_hud" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+
+[node name="TopBar" parent="Root/battle_hud" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="BattleStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="battle_field" type="Control" parent="Root/BattleStage"]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerPanel" parent="Root/BattleStage/battle_field" instance=ExtResource("3_panel")]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 246.0
+offset_right = 240.0
+offset_bottom = 512.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="EnemyPanel" parent="Root/BattleStage/battle_field" instance=ExtResource("3_panel")]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = 30.0
+offset_top = 10.0
+offset_right = -210.0
+offset_bottom = 362.0
+grow_horizontal = 2
+grow_vertical = 1
+
+[node name="Inventory" parent="Root/BattleStage/battle_field" instance=ExtResource("10_inventory")]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+offset_left = -196.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 0.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="BattleInfo" type="Control" parent="Root/BattleStage/battle_field"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.203
+anchor_top = 0.645
+anchor_right = 0.816
+anchor_bottom = 0.805
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="KillRow" type="HBoxContainer" parent="Root/BattleStage/battle_field/BattleInfo"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 20
+
+[node name="OpsDock" type="VBoxContainer" parent="Root/BattleStage/battle_field"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -260.0
+offset_top = 446.0
+offset_right = -20.0
+offset_bottom = 652.0
+grow_horizontal = 0
+grow_vertical = 1
+mouse_filter = 2
+
+[node name="OpsRow" type="VBoxContainer" parent="Root/BattleStage/battle_field/OpsDock"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="HintHost" type="VBoxContainer" parent="Root/BattleStage/battle_field"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.203
+anchor_top = 0.805
+anchor_right = 0.816
+anchor_bottom = 0.893
+grow_horizontal = 2
+grow_vertical = 1
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="ModeHost" type="VBoxContainer" parent="Root/BattleStage/battle_field"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.35
+anchor_top = 0.893
+anchor_right = 0.65
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="FeedbackToast" parent="Root" instance=ExtResource("5_toast")]
+layout_mode = 2
+visible = false
+
+; 手牌区整条容器链均为纯装饰的透明布局容器：必须 IGNORE（=2）。
+; 它们是 PASS/STOP 时会截获叠在同一横带上的右栏 OpsDock 按钮输入，
+; 表现为按钮 disabled=false 却悬停不亮、点击无反应。见 battle_screen_view._ready() 注释。
+[node name="HandStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="HandMargin" type="MarginContainer" parent="Root/HandStage"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 210
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="battle_hand" type="VBoxContainer" parent="Root/HandStage/HandMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="LeftMeta" type="HBoxContainer" parent="Root/HandStage/HandMargin/battle_hand"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 24
+
+[node name="PrimordialRow" type="HBoxContainer" parent="Root/HandStage/HandMargin/battle_hand/LeftMeta"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="PrimordialLabel" type="Label" parent="Root/HandStage/HandMargin/battle_hand/LeftMeta/PrimordialRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "真元 0"
+
+[node name="PilesRow" type="HBoxContainer" parent="Root/HandStage/HandMargin/battle_hand/LeftMeta"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="PilesLabel" type="Label" parent="Root/HandStage/HandMargin/battle_hand/LeftMeta/PilesRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "手 0 · 弃 0 · 抽 0"
+
+[node name="HandArea" type="VBoxContainer" parent="Root/HandStage/HandMargin/battle_hand"]
+layout_mode = 2
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 0
+
+[node name="Hand" parent="Root/HandStage/HandMargin/battle_hand/HandArea" instance=ExtResource("6_hand")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BuildVer" type="Label" parent="Root/HandStage"]
+top_level = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -24.0
+offset_right = -12.0
+offset_bottom = -6.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "BUILD 2026-09-08"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.337, 0.337, 0.302, 0.55)
+
+[node name="ConfirmDialog" parent="Root" instance=ExtResource("7_dialog")]
+layout_mode = 2
+visible = false
+
+[node name="battle_hand_tooltip_host" type="PanelContainer" parent="Root"]
+layout_mode = 2
+custom_minimum_size = Vector2(280, 0)
+visible = false
+mouse_filter = 2
+top_level = true
+
+[node name="TooltipMargin" type="MarginContainer" parent="Root/battle_hand_tooltip_host"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TooltipBody" type="VBoxContainer" parent="Root/battle_hand_tooltip_host/TooltipMargin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="hand_tooltip_title" type="Label" parent="Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="TooltipView" parent="Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody" instance=ExtResource("8_tooltip")]
+layout_mode = 2
+
+[node name="SealOverlay" type="Control" parent="Root"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 2
+top_level = true
+
+[node name="SealCenter" type="CenterContainer" parent="Root/SealOverlay"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SealBox" type="PanelContainer" parent="Root/SealOverlay/SealCenter"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="SealMargin" type="MarginContainer" parent="Root/SealOverlay/SealCenter/SealBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="SealLabel" type="Label" parent="Root/SealOverlay/SealCenter/SealBox/SealMargin"]
+layout_mode = 2
+text = "瑁佸畾"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="InkOverlay" type="Control" parent="Root"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 2
+top_level = true
+
+[node name="InkCenter" type="CenterContainer" parent="Root/InkOverlay"]
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InkBlob" type="PanelContainer" parent="Root/InkOverlay/InkCenter"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2

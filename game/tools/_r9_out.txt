@@ -1,0 +1,621 @@
+﻿Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot_v4.7.2-stable_win64_console.exe : WARNING: MapGenerator.build/nodes fell 
+back to a direct file read (no catalog passed): res://data/nodes.json
+所在位置 行:445 字符: 304
++ ... _imp2.txt"; & $g --headless --path . -s tools/verify_boss_variety.gd  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: MapGen...data/nodes.json 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.build/nodes fell back to a direct file read (no catalog p
+assed): res://data/nodes.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] build (res://scripts/domain/map_generator.gd:25)
+       [2] _initialize (res://tools/verify_boss_variety.gd:61)
+WARNING: MapGenerator.route/pacing fell back to a direct file read (no catalog 
+passed): res://data/pacing.json
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _load_json_fallback (res://scripts/domain/map_generator.gd:508)
+       [1] _generate_instance_route (res://scripts/domain/map_generator.gd:43)
+       [2] build (res://scripts/domain/map_generator.gd:35)
+       [3] _initialize (res://tools/verify_boss_variety.gd:61)
+===== R9 boss variety over 40 seeds =====
+stand slots seen: 200 (expected 200)
+  [pool] crag_serpent_matriarch       seen=21
+  [pool] marrow_gu_adept              seen=27
+  [pool] thunder_crown_sovereign      seen=38
+  [pool] clan_patriarch               seen=36
+  [pool] blood_vein_bishop            seen=21
+  [pool] blue_fur_jiangshi            seen=17
+  [fixed] miasma_vein_lord             seen=40
+topology_mismatch=0  adjacency_repeat=0
+R9 PASS: coverage complete, deterministic, no adjacent repeat, topology frozen
+EXIT=0

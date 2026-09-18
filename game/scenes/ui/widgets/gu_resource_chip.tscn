@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/widgets/gu_resource_chip_view.gd" id="1_chip"]
+
+[node name="GuResourceChip" type="PanelContainer"]
+script = ExtResource("1_chip")
+
+[node name="ChipMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_bottom = 3
+
+[node name="ChipLabel" type="Label" parent="ChipMargin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "资源: 0"

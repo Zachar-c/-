@@ -1,0 +1,36 @@
+{
+  "essence_base": 10,
+  "aptitude_factor": {
+    "jia": 4,
+    "yi": 3,
+    "bing": 2,
+    "ding": 1
+  },
+  "cultivation_factor": {
+    "1": 1,
+    "2": 3,
+    "3": 9,
+    "4": 27,
+    "5": 81
+  },
+  "regen_pct": {
+    "jia": 40,
+    "yi": 30,
+    "bing": 20,
+    "ding": 10
+  },
+  "paths": [
+    {
+      "id": "essence_refinement",
+      "name_zh": "洗髓换骨",
+      "desc": "以十年寿元为引，重塑根骨，资质提升一档。",
+      "cost_lifespan": 10,
+      "cost_stone": 8,
+      "limit_per_run": 1,
+      "node_kinds": [
+        "seclusion",
+        "inheritance"
+      ]
+    }
+  ]
+}

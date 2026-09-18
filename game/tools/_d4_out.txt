@@ -1,0 +1,19 @@
+﻿Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+===== D4 event variety over 40 seeds =====
+event slots seen: 93
+  echo_cave                seen=14
+  gu_rot_pact              seen=6
+  huajiu_cache             seen=11
+  tithing_cache            seen=4
+  small_beast_tide         seen=10
+  tide_aftermath           seen=9
+  duel_wager               seen=4
+  duel_loss                seen=7
+  weird_trade              seen=5
+  contract_seal            seen=10
+  recognition_toll         seen=7
+  blood_vein_offering      seen=6
+dialogue titles parsed=37  topology_mismatch=0
+D4 PASS: coverage complete, deterministic, summaries follow events, dialogue resolvable, topology frozen
+EXIT=0

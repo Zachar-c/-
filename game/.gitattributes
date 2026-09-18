@@ -1,0 +1,38 @@
+# ── Line-ending normalization (one-time 归仓, 2026-08-27) ──
+# Force LF in both the repository and the working tree so that
+# core.autocrlf=true (set globally on the dev machine) no longer produces
+# spurious "M" status for every text file. This overrides core.autocrlf
+# per-file and matches the LF already present in the working tree.
+* text=auto eol=lf
+# ── Godot 4 / project text assets ──
+*.gd           text
+*.gdshader     text
+*.gdshaderinc  text
+*.tscn         text
+*.tres        text
+*.guitkx      text
+*.import      text
+*.cfg         text
+*.json        text
+*.csv         text
+*.md          text
+*.txt         text
+*.yml         text
+*.yaml        text
+# ── Binary assets (never normalize; keeps them intact) ──
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.gif         binary
+*.bmp         binary
+*.webp        binary
+*.ico         binary
+*.ttf         binary
+*.otf         binary
+*.wav         binary
+*.ogg         binary
+*.mp3         binary
+*.pck         binary
+*.exe         binary
+*.dll         binary
+*.zip         binary

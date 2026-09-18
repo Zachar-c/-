@@ -1,0 +1,73 @@
+import { GuButton } from "~/ui/widgets/gu_button"
+import { GuCard } from "~/ui/widgets/gu_card"
+import { GuConfirmDialog } from "~/ui/widgets/gu_confirm_dialog"
+
+# ActionCardRow —— 单张领域行动卡（替换旧 action_card_row.gd）
+# props：card / on_command(Callable)
+# 危险卡（含寿元/魂魄代价或反噬风险）点击先弹 GuConfirmDialog 再执行。
+# 组件内部用 useState 管理确认态，条件渲染 GuConfirmDialog。
+
+export ActionCardRow() -> RuitkVNode {
+  var card = props.get("card", {})
+  var on_command = props.get("on_command", func(c): pass)
+
+  var executable = (card.get("executable", false))
+  var cost = card.get("cost", {})
+  var risk = str(card.get("known_risk", ""))
+  var danger = (int(cost.get("lifespan", 0)) > 0 or int(cost.get("soul", 0)) > 0) or ("反噬" in risk or "魂魄" in risk or "寿元" in risk)
+
+  var st = useState({"confirming": false})
+  var confirming = (st[0].get("confirming", false))
+  var set_confirming = st[1]
+
+  var title = str(card.get("title", "行动"))
+  var lines = []
+  if not cost.is_empty():
+    lines.append("代价：" + str(cost))
+  for g in card.get("expected_gain", []):
+    lines.append("收益：" + str(g))
+  for r in card.get("known_risk", []):
+    lines.append("风险：" + str(r))
+  if not executable:
+    lines.append("受阻：" + str(card.get("block_reason", "条件不足。")))
+  var detail = "\n".join(lines)
+
+  var do_confirm = func():
+    set_confirming.call({"confirming": false})
+    on_command.call(card)
+
+  var do_cancel = func():
+    set_confirming.call({"confirming": false})
+
+  var handle_press = func():
+    if not executable:
+      return
+    if danger:
+      set_confirming.call({"confirming": true})
+    else:
+      on_command.call(card)
+
+  var btn_label = "确认执行" if danger else "选择"
+  var detail_color = GuStyle.CINNABAR if not executable else GuStyle.INK_SOFT
+
+  return (
+    <VBoxContainer style={ {"separation": 4} }>
+      <GuCard title={ title } danger={ danger }>
+        <Label text={ detail } style={ {"font_color": detail_color, "font_size": 14, "autowrap_mode": 2} } />
+        <GuButton label={ btn_label } danger={ danger } disabled={ not executable } on_press={ handle_press } />
+      </GuCard>
+
+      @if (confirming) {
+        return (
+          <GuConfirmDialog
+            title="⚠ 危险行动"
+            message={ detail }
+            warning_note="此选择代价含寿元/魂魄或触发反噬，执行前请确认余量。"
+            on_confirm={ do_confirm }
+            on_cancel={ do_cancel }
+          />
+        )
+      }
+    </VBoxContainer>
+  )
+}

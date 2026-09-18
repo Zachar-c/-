@@ -1,0 +1,1105 @@
+class_name BattleScreenView
+extends MarginContainer
+
+## 战斗屏（Godot 官方 .tscn 节点树版，替代 ui/screens/battle_screen.guitkx）。
+##
+## 战斗状态是只读快照；**交互态是本屏唯一的本地状态**（mode / card / target_id /
+## confirming / expanded_enemies）。转 .tscn 后这些从 RUITK 的 useState
+## 变成脚本成员变量——比整树重渲染更好管，也更好调试。
+##
+## 出牌判定顺序（与原实现一致，不要改）：
+##   1. target_type == "single_enemy"  → 进入选目标，等玩家点敌人
+##   2. known_risk or dangerous        → 弹确认，确认后才下发
+##   3. 其余                            → 直接下发
+
+const GameVersionScript := preload("res://scripts/domain/game_version.gd")
+const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
+const GuEnemyActorScene := preload("res://scenes/ui/widgets/gu_enemy_actor.tscn")
+const PlayerPortrait := preload("res://assets/wenzhen/hall/first-life-character.png")
+
+const MAX_VISIBLE_ENEMIES := 3
+
+# 拖拽/瞄准的阈值与几何参数**全部归 GuTallFanHandView**（手势在它手里）。
+# 本屏不再持有 start_threshold / proxy_scale / follow_smooth / rebound_time /
+# cast_distance / proxy_grab / aim_origin_fallback —— 同一套参数存两处必然漂移。
+
+@onready var _paper: ColorRect = $BattlePaper
+@onready var _fog: ColorRect = $BattleFog
+@onready var _top_bar = $Root/battle_hud/TopBar
+@onready var _battle_stage: PanelContainer = $Root/BattleStage
+@onready var _player_panel = $Root/BattleStage/battle_field/PlayerPanel
+@onready var _enemy_panel = $Root/BattleStage/battle_field/EnemyPanel
+@onready var _inventory = $Root/BattleStage/battle_field/Inventory
+@onready var _feedback_toast = $Root/FeedbackToast
+@onready var _hint_host: VBoxContainer = $Root/BattleStage/battle_field/HintHost
+@onready var _hand_stage: PanelContainer = $Root/HandStage
+@onready var _primordial_label: Label = $Root/HandStage/HandMargin/battle_hand/LeftMeta/PrimordialRow/PrimordialLabel
+@onready var _piles_label: Label = $Root/HandStage/HandMargin/battle_hand/LeftMeta/PilesRow/PilesLabel
+@onready var _hand = $Root/HandStage/HandMargin/battle_hand/HandArea/Hand
+@onready var _build_ver: Label = $Root/HandStage/BuildVer
+@onready var _kill_host: HBoxContainer = $Root/BattleStage/battle_field/BattleInfo/KillRow
+@onready var _ops_row: VBoxContainer = $Root/BattleStage/battle_field/OpsDock/OpsRow
+@onready var _mode_host: VBoxContainer = $Root/BattleStage/battle_field/ModeHost
+@onready var _confirm_dialog = $Root/ConfirmDialog
+@onready var _tooltip_host: PanelContainer = $Root/battle_hand_tooltip_host
+@onready var _tooltip_title: Label = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/hand_tooltip_title
+@onready var _tooltip_view = $Root/battle_hand_tooltip_host/TooltipMargin/TooltipBody/TooltipView
+@onready var _seal_overlay: Control = $Root/SealOverlay
+@onready var _seal_box: PanelContainer = $Root/SealOverlay/SealCenter/SealBox
+@onready var _seal_label: Label = $Root/SealOverlay/SealCenter/SealBox/SealMargin/SealLabel
+@onready var _ink_overlay: Control = $Root/InkOverlay
+@onready var _ink_blob: PanelContainer = $Root/InkOverlay/InkCenter/InkBlob
+
+var _snapshot: Dictionary = {}
+var _commands: Dictionary = {}
+
+# —— 本地交互态 ——
+var _mode := "idle"
+var _active_card: Dictionary = {}
+var _hovered_card: Dictionary = {}
+var _card_id := ""
+var _target_id := ""
+var _confirming := false
+# T16 残锋降转（2026-09-15）：待确认的杀招条目（非空时确认框提交的是它，
+# 而不是手牌卡）。残锋是永久削弱，出招前必须确认，禁止静默惩罚。
+var _pending_kill_move: Dictionary = {}
+var _expanded_enemies := false
+# 动效触发用：记录上一帧敌人 alive 状态和状态名集合，检测死亡/状态施加。
+var _prev_enemy_alive: Dictionary = {}
+# V-F-03 受击反馈用：记录上一帧玩家/敌人 hp，降低时触发红闪+微震+音效。
+var _prev_player_hp := -1
+var _prev_enemy_hp: Dictionary = {}
+var _prev_enemy_statuses: Dictionary = {}
+# 行动墨点涟漪触发用：上一帧剩余行动数（-1 = 首次挂载）。
+var _prev_actions_left := -1
+# 拖拽命中用：enemy_id -> 敌方卡 Control（_refresh_enemies 每次重建）。
+var _enemy_actors: Dictionary = {}
+## 手牌 id → 卡字典。组件只回传 id（领域数据的所有权在宿主），
+## 宿主靠这张表把 id 还原成出牌/解释栏需要的卡字典。
+var _hand_cards: Dictionary = {}
+var _drop_hot_enemy := ""
+var _submitted_card_keys: Dictionary = {}
+var _last_hand_version := -1
+
+var _ready_done := false
+
+
+func _ready() -> void:
+	_ready_done = true
+	# 第四批：战斗屏同步基准——浅米纸底 + 网点（原暗色舞台设计已由基准统一取代）
+	_paper.color = GuStyle.PAPER_HALL
+	# 背景雾帷（2026-09-11 水墨去框重构）：宣纸色罩层轻压背景对比，保古画空气感。
+	# 用户裁定"稍微降低对比度但不能过度灰白"——alpha 从 0.42 回落到 0.30，
+	# 同时 tscn 里 BattleBackdrop 提到 0.45，远山雾气保留。
+	_fog.color = Color(GuStyle.PAPER_BG.r, GuStyle.PAPER_BG.g, GuStyle.PAPER_BG.b, 0.30)
+	_apply_stage_style()
+	_apply_hand_stage_style()
+	# ⚠️ 手牌区**整条容器链**（HandStage / HandMargin / battle_hand / HandArea）都是纯装饰的
+	# 透明布局容器，`mouse_filter` 在 battle_screen.tscn 里声明为 IGNORE。
+	# 它们横跨 1280、纵向叠到屏幕下沿，而右栏 OpsDock（结束回合/炼蛊/撤退）正好落在
+	# 同一横带的右侧——`HandMargin` 的 `margin_right = 210` 只是把**卡**让开，
+	# **不改变容器自身的矩形**。所以只要它们还是 STOP/PASS，就会截获右栏按钮的
+	# hover 与点击：按钮 `disabled=false`、`modulate=1`，却"点不动"。
+	# 注意 **PASS 同样会截获**（它只把事件继续传给父节点，不会让给身后被压住的兄弟）
+	# —— 上一次只把 HandStage 改成 IGNORE，漏掉 PASS 的 HandMargin，就是这个原因。
+	# 回归门：tools/verify_interaction_loop.gd 的 `occluded` 必须为空。
+	_apply_seal_style()
+	_apply_ink_style()
+	_apply_tooltip_style()
+	_build_ver.text = GameVersionScript.display()
+	# 设置入口收敛到顶栏状态栏 icon（独立「设置」文字按钮已移除）。
+	_top_bar.set_on_settings(func():
+		if _commands.has("open_settings"):
+			_commands["open_settings"].call())
+	_wire_hand()
+	_refresh()
+
+
+## 手牌信号接线（只做一次）。三根线各有明确归属：
+##   card_chosen       → 出牌命令面（含确认流）
+##   hover_changed     → 统一解释栏
+##   aim_target_changed→ 敌人放置高亮（组件不认识敌人卡，高亮必须由宿主施加）
+## 命中检测用回调注入（组件不持有 _enemy_actors）：UI 层用 Control 矩形判定即可，
+## 不必引入 Area2D 和 2D 物理世界做坐标换算。
+func _wire_hand() -> void:
+	_hand.set_target_provider(func(pos: Vector2) -> String: return _enemy_at(pos))
+	if not _hand.aim_target_changed.is_connected(_set_drop_hot):
+		_hand.aim_target_changed.connect(_set_drop_hot)
+	if not _hand.hover_changed.is_connected(_on_hand_hover_changed):
+		_hand.hover_changed.connect(_on_hand_hover_changed)
+	# 取消请求（右键/Esc，无手势时）：模式状态归宿主，组件只转发意图。
+	if not _hand.cancel_requested.is_connected(_reset_interaction):
+		_hand.cancel_requested.connect(_reset_interaction)
+
+
+## 叙事层：以大厅屏为基准——纸面 + 网点背景由根 Backdrop（BattlePaper + BattleDots）提供，
+## 舞台本身完全透明，让纸面网点透出全屏；敌人/玩家纸卡墨框浮于其上，命簿语言统一。
+
+func _apply_stage_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(0)
+	_battle_stage.add_theme_stylebox_override("panel", box)
+
+
+## 规则层：手牌区透明，纸面+网点由根 Backdrop 提供，与大厅/地图一致。
+func _apply_hand_stage_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(0)
+	_hand_stage.add_theme_stylebox_override("panel", box)
+
+
+## 概念层：朱砂盖印样式。用于危险确认、不可逆裁定。短、功能性，完成后归于安静。
+func _apply_seal_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.CINNABAR
+	box.border_color = GuStyle.INK_PRIMARY
+	box.set_border_width_all(3)
+	box.set_corner_radius_all(8)
+	_seal_box.add_theme_stylebox_override("panel", box)
+	_seal_label.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	_seal_label.add_theme_color_override("font_color", GuStyle.PAPER_BG)
+
+
+## 朱砂盖印动效：从上方盖下，缩放回落 + 旋转回正 + 淡入，停留后淡出。
+func play_cinnabar_seal(text: String = "裁定") -> void:
+	# 第18批：接入朱砂盖印音效
+	AudioManager.play_sfx("concept_seal_stamp")
+	_seal_label.text = text
+	_seal_overlay.visible = true
+	_seal_overlay.modulate = Color(1, 1, 1, 0)
+	_seal_box.scale = Vector2(1.5, 1.5)
+	_seal_box.rotation = deg_to_rad(-12)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	# 盖下：缩放回落 + 旋转回正 + 淡入
+	tween.tween_property(_seal_box, "scale", Vector2(1, 1), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_seal_box, "rotation", 0.0, 0.16).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_seal_overlay, "modulate:a", 1.0, 0.12)
+	# 停留
+	tween.tween_interval(0.28)
+	# 淡出
+	tween.tween_property(_seal_overlay, "modulate:a", 0.0, 0.22)
+	tween.tween_callback(func(): _seal_overlay.visible = false)
+
+
+## 概念层：墨迹扩散样式。用于状态落定、新记录揭示。黑色墨团从中心扩散后消散。
+func _apply_ink_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.INK_PRIMARY
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(8)
+	_ink_blob.add_theme_stylebox_override("panel", box)
+
+
+## 墨迹扩散动效：黑色墨团从中心缩放扩散，半透明淡入后缓慢消散。
+## 用于出牌成功、状态落定等时刻，符合设计文档「墨迹扩散=状态落定」语义。
+func play_ink_spread() -> void:
+	# 第18批：接入墨迹扩散音效
+	AudioManager.play_sfx("concept_ink_spread")
+	_ink_overlay.visible = true
+	_ink_overlay.modulate = Color(1, 1, 1, 0)
+	_ink_blob.scale = Vector2(0.2, 0.2)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	# 扩散：缩放放大 + 淡入
+	tween.tween_property(_ink_blob, "scale", Vector2(1.8, 1.8), 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_ink_overlay, "modulate:a", 0.25, 0.25)
+	# 消散：缓慢淡出
+	tween.tween_interval(0.15)
+	tween.tween_property(_ink_overlay, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func(): _ink_overlay.visible = false)
+
+
+## run_controller 的挂载入口（与各屏同签名）。
+func mount_snapshot(snapshot: Dictionary, commands: Dictionary) -> void:
+	# 防重复提交缓存只在快照版本（领域 event_log 推进）变化时清理；
+	# 相同版本的重挂载（刷新/重渲染）不得解除已建立的卡/目标去重保护。
+	var new_hand_version := int(snapshot.get("hand_version", -1))
+	if new_hand_version != _last_hand_version:
+		_submitted_card_keys.clear()
+		_last_hand_version = new_hand_version
+	_snapshot = snapshot
+	_commands = commands
+	if _ready_done:
+		_refresh()
+
+
+# ——————————————————————————————— 交互 ———————————————————————————————
+
+func _play_card(card: Dictionary) -> void:
+	if str(card.get("target_type", "none")) == "single_enemy":
+		_set_mode("target_select", card)
+	elif _is_dangerous_card(card):
+		_active_card = card
+		_card_id = str(card.get("id", ""))
+		_target_id = ""
+		_confirming = true
+		_mode = "dragging"
+		_refresh()
+	else:
+		_submit_card(card, "")
+
+
+func _select_enemy(enemy_id: String) -> void:
+	if _mode != "target_select":
+		return
+	var valid: Array = _active_card.get("valid_target_ids", [])
+	if not valid.has(enemy_id):
+		return
+	if _is_dangerous_card(_active_card):
+		_target_id = enemy_id
+		_confirming = true
+		_refresh()
+	else:
+		_submit_card(_active_card, enemy_id)
+
+
+func _submit_card(card: Dictionary, target_id: String) -> void:
+	var card_id := str(card.get("id", ""))
+	var request_key := card_id + ":" + target_id
+	if _submitted_card_keys.has(request_key):
+		return
+	_submitted_card_keys[request_key] = true
+	# 第三阶段 Task 3：新路径只转呈卡片自带的结构化命令（领域判定的唯一出口）；
+	# 无命令键的旧信封卡（存量测试夹具）仍走 play_card 兼容包装。
+	var result: Variant = _submit_card_command(card, target_id)
+	if result == null and _commands.has("play_card"):
+		result = _commands["play_card"].call(card_id, target_id)
+	_active_card = card
+	_card_id = card_id
+	_target_id = target_id
+	_confirming = false
+	# F-02 复验：被拒命令（新鲜度过期 / 门禁不通过）不得播放成功音效、墨迹
+	# 或进入成功态；拒绝文案由领域信封写入 last_feedback，随重挂载的快照显示。
+	# 同时释放去重键——拒绝文案要求"重试"，键不释放就永远重试不了。
+	if _command_rejected(result):
+		_submitted_card_keys.erase(request_key)
+		_mode = "idle"
+		_refresh()
+		return
+	# 第18批：接入出牌音效
+	AudioManager.play_sfx("battle_card_play")
+	# 概念层：出牌成功触发墨迹扩散（状态落定）
+	play_ink_spread()
+	_mode = "play_success"
+	_refresh()
+
+
+## 转呈卡片携带的结构化命令；未转呈（无命令键 / 无通道）返回 null。
+## 目标由本屏的交互态补入（卡片里的 target_id 是快照期的缺省值）。
+## 返回领域信封，调用方据此判定接受与拒绝——拒绝不得产生成功动效。
+func _submit_card_command(card: Dictionary, target_id: String) -> Variant:
+	var command: Dictionary = card.get("command", {})
+	if command.is_empty() or not _commands.has("submit_command"):
+		return null
+	var payload: Dictionary = command.duplicate(true)
+	if target_id != "":
+		payload["target_id"] = target_id
+	return _commands["submit_command"].call(payload)
+
+
+## 领域信封判定：`accepted` / `ok` 任一为 false 即视为被拒。
+## 兼容包装（`play_card` 假命令）返回 null 或无信封时按接受处理，
+## 保持存量夹具与旧通道语义不变。
+func _command_rejected(result: Variant) -> bool:
+	if not (result is Dictionary):
+		return false
+	if (result as Dictionary).has("accepted"):
+		return not bool((result as Dictionary)["accepted"])
+	if (result as Dictionary).has("ok"):
+		return not bool((result as Dictionary)["ok"])
+	return false
+
+
+func _is_dangerous_card(card: Dictionary) -> bool:
+	if card.get("dangerous", false) == true:
+		return true
+	var known_risk = card.get("known_risk", [])
+	if known_risk is Array:
+		return not known_risk.is_empty()
+	return str(known_risk) != ""
+
+
+func _known_risk_text(card: Dictionary) -> String:
+	var known_risk = card.get("known_risk", [])
+	if known_risk is Array:
+		var lines: Array[String] = []
+		for line in known_risk:
+			var text := str(line)
+			if text != "":
+				lines.append(text)
+		return "；".join(lines)
+	return str(known_risk)
+
+
+func _set_mode(next_mode: String, card: Dictionary = {}) -> void:
+	var c: Dictionary = card if not card.is_empty() else _active_card
+	_mode = next_mode
+	_active_card = c
+	_card_id = str(c.get("id", ""))
+	_target_id = ""
+	_confirming = false
+	_refresh()
+
+
+## 取消 / 关闭浮层：保留 expanded_enemies，其余归位。
+func _reset_interaction() -> void:
+	_mode = "idle"
+	_active_card = {}
+	_hovered_card = {}
+	_card_id = ""
+	_target_id = ""
+	_confirming = false
+	_pending_kill_move = {}
+	_refresh()
+
+
+## 悬停变化（组件 hover_changed）："" = 离开全部卡。
+## 抬升/让位/压暗由组件自己做（它才是几何的拥有者）；本屏只负责解释栏。
+## 手势开始组件也会发 ""，所以宿主不必再自己判断"是否正在拖拽"。
+func _on_hand_hover_changed(card_id: String) -> void:
+	if _mode != "idle" or _confirming:
+		return
+	_hovered_card = _hand_cards.get(card_id, {}) if card_id != "" else {}
+	_refresh_tooltip()
+
+
+## 组件提交出牌：card_id + 目标（无指向卡为空串）。
+## 危险卡确认、指向卡的两次确认、去重一律走既有 _play_card/_select_enemy，
+## 组件不参与裁决——它只报告"玩家用哪张卡指向了谁"。
+func _on_hand_card_chosen(card_id: String, target_id: String) -> void:
+	var card: Dictionary = _hand_cards.get(card_id, {})
+	if card.is_empty():
+		return
+	_play_card(card)
+	if target_id != "":
+		_select_enemy(target_id)
+
+
+# ——————————————————————————————— 渲染 ———————————————————————————————
+
+func _refresh() -> void:
+	if not _ready_done:
+		return
+	var state := _snapshot
+	_refresh_top_bar(state)
+	_refresh_player(state)
+	_refresh_enemies(state)
+	_inventory.setup(state.get("inventory", {}))
+	# 杀戮尖塔风格：隐藏舞台中的背包面板，顶栏右侧已有背包入口按钮，主舞台只保留立绘
+	_inventory.visible = false
+	_refresh_hand(state)
+	_refresh_ops(state)
+	_refresh_kill_moves(state)
+	_refresh_hints(state)
+	_refresh_feedback(state)
+	_refresh_mode_label()
+	_refresh_confirm()
+	_refresh_tooltip()
+
+
+func _refresh_top_bar(state: Dictionary) -> void:
+	_top_bar.set_data(
+			state.get("resources", {}),
+			state.get("contracts", []),
+		state.get("anomalies", []),
+		state.get("death_lines", {}),
+		int(state.get("layer", -1)),
+		state.get("player", {}))  # 传递player数据，用于显示气血（hp/max_hp）
+
+
+## V-F-03 第19批：受击反馈——目标红闪 + 战斗舞台微震 + 音效。
+## 纯表现层（hp diff 驱动），不触碰领域状态；scale 动画不影响布局。
+func _play_hit_feedback(target: Control, strong := false) -> void:
+	if target != null and is_instance_valid(target):
+		var t := target.create_tween()
+		t.tween_property(target, "modulate", GuStyle.HIT_FLASH, 0.05)
+		t.tween_property(target, "modulate", Color.WHITE, 0.25)
+	if _battle_stage != null and is_instance_valid(_battle_stage):
+		var s := _battle_stage.create_tween()
+		s.tween_property(_battle_stage, "scale", Vector2(1.006, 1.006), 0.04)
+		s.tween_property(_battle_stage, "scale", Vector2.ONE, 0.12)
+	AudioManager.play_sfx("battle_hit", 1.0 if strong else 0.7)
+
+
+func _refresh_player(state: Dictionary) -> void:
+	var player: Dictionary = state.get("player", {})
+	var actions: Dictionary = state.get("actions", {})
+	# 杀戮尖塔风格：无标题、完全透明背景，立绘为主体
+	_player_panel.setup("", true, true, true)
+	_make_panel_fully_transparent(_player_panel)
+	var host: Node = _player_panel.content_host
+	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+	for c in host.get_children():
+		c.queue_free()
+
+	var box := VBoxContainer.new()
+	box.name = "player_actor"
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", GuStyle.SPACE_3)
+	host.add_child(box)
+
+	# 玩家立绘（左下前景：2026-09-11 水墨去框重构 210 高，稍大，敌我纵深）
+	var portrait := TextureRect.new()
+	portrait.name = "player_portrait"
+	portrait.texture = PlayerPortrait
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.custom_minimum_size = Vector2(0, 210)
+	portrait.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	portrait.modulate = Color(1, 1, 1, 1)
+	box.add_child(portrait)
+
+	# 玩家名（快照有 name 才显示，不编造）
+	var pname := str(player.get("name", ""))
+	if pname != "":
+		var nm := Label.new()
+		nm.name = "player_name"
+		nm.text = pname
+		nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nm.add_theme_font_override("font", GuStyle.TITLE_FONT)
+		nm.add_theme_font_size_override("font_size", 14)
+		nm.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+		box.add_child(nm)
+
+	var hp = StatBarScene().instantiate()
+	hp.name = "hp"
+	box.add_child(hp)
+	var health_line: Dictionary = state.get("death_lines", {}).get("health", {})
+	hp.setup("生命", int(player.get("hp", 0)), maxi(1, int(player.get("max_hp", 1))),
+			GuStyle.JADE, int(player.get("shield", 0)), Callable(),
+			bool(health_line.get("danger", false)), str(health_line.get("detail", "")))
+	# V-F-03 第19批：玩家受击反馈（hp 下降→红闪+微震+音效），首次挂载不触发。
+	var cur_hp := int(player.get("hp", 0))
+	if _prev_player_hp >= 0 and cur_hp < _prev_player_hp:
+		_play_hit_feedback(_player_panel, false)
+	_prev_player_hp = cur_hp
+
+	# 杀戮尖塔风格：真元和行动点已在左侧LeftMeta显示，玩家区域只保留立绘+血量条，更简洁
+
+
+func _refresh_enemies(state: Dictionary) -> void:
+	var enemies: Array = state.get("enemies", [])
+	var visible_enemies: Array = enemies
+	var remainder: Array = []
+	if not _expanded_enemies and enemies.size() > MAX_VISIBLE_ENEMIES:
+		visible_enemies = enemies.slice(0, MAX_VISIBLE_ENEMIES)
+		remainder = enemies.slice(MAX_VISIBLE_ENEMIES)
+
+	# 杀戮尖塔风格：无标题、完全透明背景，立绘为主体
+	_enemy_panel.setup("", true, true, true)
+	_make_panel_fully_transparent(_enemy_panel)
+	var host: Node = _enemy_panel.content_host
+	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	(host as VBoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
+	for c in host.get_children():
+		c.queue_free()
+
+	var group := HBoxContainer.new()
+	group.name = "enemy_group"
+	group.alignment = BoxContainer.ALIGNMENT_CENTER
+	group.add_theme_constant_override("separation", 26)
+	host.add_child(group)
+
+	var valid_targets: Array = _active_card.get("valid_target_ids", [])
+	_enemy_actors.clear()
+	for e in visible_enemies:
+		if not (e is Dictionary):
+			continue
+		var enemy_id := str(e.get("id", ""))
+		var actor = GuEnemyActorScene.instantiate()
+		# 2026-09-11 视觉重构：敌人实体放大 236×352（立绘约 1.8× 面积，战斗实体感）
+		actor.custom_minimum_size = Vector2(236, 352)
+		# build 函数一律先 add_child：@onready 要等入树后才有值。
+		group.add_child(actor)
+		_enemy_actors[enemy_id] = actor
+		actor.setup(e, _target_id == enemy_id,
+				_mode == "target_select" and valid_targets.has(enemy_id),
+				_select_enemy)
+		# V-F-03 第19批：敌人受击反馈（hp 下降）。
+		var ehp := int(e.get("hp", 0))
+		if _prev_enemy_hp.has(enemy_id) and ehp < int(_prev_enemy_hp[enemy_id]):
+			_play_hit_feedback(actor, false)
+		_prev_enemy_hp[enemy_id] = ehp
+
+	if not remainder.is_empty():
+		var more := Button.new()
+		more.name = "enemy_remainder"
+		more.text = "余敌 %d" % remainder.size()
+		MasterTheme.apply_button(more, "action")
+		more.pressed.connect(func():
+			_expanded_enemies = true
+			_refresh())
+		group.add_child(more)
+
+	# 动效触发：检测敌人死亡（alive true→false）和状态施加（新状态名出现）。
+	# 死亡触发墨迹扩散（生命消散），状态施加触发墨迹扩散（蛊毒落定）。
+	var death_triggered := false
+	var status_triggered := false
+	for e in visible_enemies:
+		if not (e is Dictionary):
+			continue
+		var eid := str(e.get("id", ""))
+		var alive: bool = e.get("alive", true)
+		var prev_alive: bool = _prev_enemy_alive.get(eid, true)
+		if prev_alive and not alive:
+			death_triggered = true
+		# 状态施加检测：当前有但上一帧没有的状态名
+		var cur_statuses: Array = e.get("statuses", [])
+		var prev_set: Dictionary = _prev_enemy_statuses.get(eid, {})
+		for s in cur_statuses:
+			if s is Dictionary:
+				var sname := str(s.get("name", ""))
+				if sname != "" and not prev_set.has(sname):
+					status_triggered = true
+	# 更新跟踪状态
+	_prev_enemy_alive.clear()
+	_prev_enemy_statuses.clear()
+	for e in visible_enemies:
+		if not (e is Dictionary):
+			continue
+		var eid := str(e.get("id", ""))
+		_prev_enemy_alive[eid] = e.get("alive", true)
+		var sset := {}
+		for s in e.get("statuses", []):
+			if s is Dictionary:
+				sset[str(s.get("name", ""))] = true
+		_prev_enemy_statuses[eid] = sset
+	# 触发动效+音效（死亡优先，状态施加次之，不重复触发）
+	if death_triggered:
+		play_ink_spread()
+		AudioManager.play_sfx("battle_death")
+	elif status_triggered:
+		play_ink_spread()
+		AudioManager.play_sfx("battle_status_apply")
+
+
+func _refresh_hand(state: Dictionary) -> void:
+	var player: Dictionary = state.get("player", {})
+	var actions: Dictionary = state.get("actions", {})
+	# 真元（2026-09-11 视觉重构）：暗金 + 雅黑数字（数值用高锐度无衬线）。
+	_primordial_label.text = "真元 %d" % int(player.get("primordial", 0))
+	_primordial_label.add_theme_color_override("font_color", GuStyle.RARITY_LEGENDARY)
+	_primordial_label.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_primordial_label.add_theme_font_size_override("font_size", 16)
+	# V1 无牌库/弃牌堆；此槽位显示行动点预算（念头移右栏按钮下方，与线框稿 v2 一致）。
+	_piles_label.text = "行动 %d/%d" % [
+			int(actions.get("left", 0)), int(actions.get("max", 0))]
+	# 行动预算是玩家必读资源：浅色纸面主题下用墨色保证对比度。
+	_piles_label.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_piles_label.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+	_piles_label.add_theme_font_size_override("font_size", 14)
+	# 开源图标：真元用元石图标（暗金），动态创建一次后复用。
+	var primordial_row: HBoxContainer = _primordial_label.get_parent() as HBoxContainer
+	if primordial_row != null:
+		if primordial_row.get_node_or_null("primordial_icon") == null:
+			var p_icon := GuIconView.new()
+			p_icon.name = "primordial_icon"
+			p_icon.setup("yuanstone", GuStyle.RARITY_LEGENDARY, GuIconView.SIZE_BODY)
+			p_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			primordial_row.add_child(p_icon)
+			primordial_row.move_child(p_icon, 0)
+	_refresh_action_dots(int(actions.get("left", 0)), int(actions.get("max", 0)))
+
+	# 手牌 = GuTallFanHandView（竖长卡 + 底部横向扇形）。职责切分：
+	#   组件：排布、悬停/让位/抬升、拖拽与瞄准手势、影卡、弧箭、敌人目标广播；
+	#   宿主：命令提交（含危险卡确认流）、统一解释栏、敌人放置高亮。
+	_hand_cards.clear()
+	for card in state.get("hand", []):
+		if card is Dictionary:
+			_hand_cards[str((card as Dictionary).get("id", ""))] = card
+	_hand.setup(state.get("hand", []), _on_hand_card_chosen, _on_hand_hover_changed)
+
+
+## 行动墨点（2026-09-11 视觉重构）：●=可用 / ○=已用，一眼读出"还能行动几次"。
+## 数字标签（"行动 2/2"）保留作精读备份；墨点是扫视通道。
+## 回合回复（left 增加）时墨点做一次水墨涟漪：alpha 闪回 + 轻微放大回落。
+func _refresh_action_dots(left: int, max_actions: int) -> void:
+	var piles_row: HBoxContainer = _piles_label.get_parent() as HBoxContainer
+	if piles_row == null:
+		return
+	var dots := piles_row.get_node_or_null("action_dots") as HBoxContainer
+	if dots == null:
+		dots = HBoxContainer.new()
+		dots.name = "action_dots"
+		dots.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dots.add_theme_constant_override("separation", 2)
+		piles_row.add_child(dots)
+		piles_row.move_child(dots, 0)
+	for c in dots.get_children():
+		c.queue_free()
+	for i in maxi(0, max_actions):
+		var dot := Label.new()
+		dot.text = "●" if i < left else "○"
+		dot.add_theme_font_override("font", GuStyle.CARD_UI_FONT)
+		dot.add_theme_font_size_override("font_size", 15)
+		dot.add_theme_color_override("font_color",
+				GuStyle.INK_PRIMARY if i < left else GuStyle.INK_MAP_FAINT)
+		dots.add_child(dot)
+	# 回合回复涟漪：只在本帧 left 比回上一帧多时触发（首次挂载不触发）。
+	if _prev_actions_left >= 0 and left > _prev_actions_left:
+		dots.pivot_offset = dots.size * 0.5
+		dots.modulate = Color(1, 1, 1, 0.25)
+		var t := dots.create_tween()
+		t.tween_property(dots, "modulate:a", 1.0, 0.3)
+		t.parallel().tween_property(dots, "scale", Vector2.ONE, 0.3) \
+				.from(Vector2(1.25, 1.25)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_prev_actions_left = left
+
+
+## 放置区高亮切换：只在实际变化时调用敌人卡 set_drop_highlight。
+func _set_drop_hot(enemy_id: String) -> void:
+	if enemy_id == _drop_hot_enemy:
+		return
+	if _drop_hot_enemy != "" and _enemy_actors.has(_drop_hot_enemy):
+		var prev = _enemy_actors[_drop_hot_enemy]
+		if prev != null and is_instance_valid(prev):
+			prev.set_drop_highlight(false)
+	_drop_hot_enemy = enemy_id
+	if enemy_id != "" and _enemy_actors.has(enemy_id):
+		var actor = _enemy_actors[enemy_id]
+		if actor != null and is_instance_valid(actor):
+			actor.set_drop_highlight(true)
+
+
+## 拖拽命中：全局鼠标位命中的存活敌方卡 id；未命中返回空串。
+func _enemy_at(global_pos: Vector2) -> String:
+	for enemy_id in _enemy_actors:
+		var actor := _enemy_actors[enemy_id] as Control
+		if actor != null and actor.is_visible_in_tree() and actor.get_global_rect().has_point(global_pos):
+			return str(enemy_id)
+	return ""
+
+
+func _refresh_ops(state: Dictionary) -> void:
+	for c in _ops_row.get_children():
+		c.queue_free()
+	# 2026-09-11 水墨去框重构：结束回合 = 唯一主按钮（矩形重量降一档）；
+	# 炼蛊/撤退 = 古籍批注式文字操作（无框，hover 变色）。行动点耗尽时
+	# 结束回合进入待点态（轻微墨息呼吸）。
+	var actions_left := int(state.get("actions", {}).get("left", 0))
+	var end_btn := _op_button("结束回合", func():
+		if _commands.has("end_turn"):
+			_commands["end_turn"].call())
+	MasterTheme.apply_button(end_btn, "action")
+	end_btn.custom_minimum_size = Vector2(196, 48)
+	end_btn.size_flags_horizontal = Control.SIZE_SHRINK_END
+	end_btn.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	end_btn.add_theme_font_size_override("font_size", 18)
+	_ops_row.add_child(end_btn)
+	if actions_left <= 0:
+		# E 态待点呼吸：极轻（alpha 0.82↔1.0），无发光、无位移——安静地引导点击。
+		var breath := end_btn.create_tween().set_loops()
+		breath.tween_property(end_btn, "modulate:a", 0.82, 1.1) \
+				.set_trans(Tween.TRANS_SINE)
+		breath.tween_property(end_btn, "modulate:a", 1.0, 1.1) \
+				.set_trans(Tween.TRANS_SINE)
+	if _commands.has("refine"):
+		_ops_row.add_child(_text_op_button("炼蛊", func(): _commands["refine"].call(),
+				GuStyle.INK_PRIMARY))
+	if _commands.has("flee") and bool(state.get("flee_available", true)):
+		# 撤退再降一档（灰字），防误操作。
+		_ops_row.add_child(_text_op_button("撤退", func(): _commands["flee"].call(),
+				GuStyle.INK_SOFT))
+	# 念头预算：右栏按钮下方小注（线框稿 v2：右栏念头 8/12）
+	var note := Label.new()
+	note.name = "thought_note"
+	note.text = "念头 %d/%d" % [int(state.get("player", {}).get("thoughts", 0)),
+			int(state.get("actions", {}).get("max", 0))]
+	note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	note.add_theme_font_size_override("font_size", 9)
+	note.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
+	note.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0))
+	_ops_row.add_child(note)
+
+
+func _op_button(text: String, on_press: Callable) -> Button:
+	var b := Button.new()
+	b.text = text
+	MasterTheme.apply_button(b, "action")
+	b.pressed.connect(on_press)
+	return b
+
+
+## 古籍批注式文字操作（2026-09-11 水墨去框）：无框透明底，hover 变朱砂。
+## 复用 _op_button 保留点击音效与 hover 缩放（交互闭环契约），再抹掉矩形样式。
+func _text_op_button(text: String, on_press: Callable, base: Color) -> Button:
+	var b := _op_button(text, on_press)
+	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+		b.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	b.add_theme_color_override("font_color", base)
+	b.add_theme_color_override("font_hover_color", GuStyle.CINNABAR)
+	b.add_theme_color_override("font_pressed_color", GuStyle.CINNABAR)
+	b.add_theme_color_override("font_focus_color", base)
+	b.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	b.add_theme_font_size_override("font_size", 14)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_END
+	return b
+
+
+## 杀招区（线框稿 v2：舞台中右 3 格纸卡；空位显示「未研习」）。
+func _refresh_kill_moves(state: Dictionary) -> void:
+	for c in _kill_host.get_children():
+		c.queue_free()
+	var moves: Array = state.get("kill_moves", [])
+	var slots: Array = []
+	for km in moves:
+		if km is Dictionary:
+			slots.append(km)
+	# 最多 3 格；不足补空位
+	var idx := 0
+	while idx < 3:
+		if idx < slots.size():
+			var km: Dictionary = slots[idx]
+			var km_id := str(km.get("id", ""))
+			var km_ok := bool(km.get("executable", false))
+			var slot_btn := _kill_slot(
+					str(km.get("name", "杀招")),
+					str(km.get("sequence_display", "")),
+					str(km.get("cost", "")),
+					km_ok,
+					str(km.get("block_reason", "")))
+			if km_ok and km_id != "":
+				slot_btn.pressed.connect(func(): _release_kill_move(km_id, km))
+			else:
+				# 交互闭环契约：不可用入口一律 disabled 置灰，不留可点装饰。
+				slot_btn.disabled = true
+			_kill_host.add_child(slot_btn)
+		else:
+			_kill_host.add_child(_kill_slot_empty())
+		idx += 1
+
+
+## 释放杀招：与出牌同一条 play_card 通道（"kill_move.<id>" → play_kill_move）。
+## T16（2026-09-15）：残锋触发质变（`dangerous`）时先弹确认，确认后才带
+## confirmed=true 提交——领域侧同判据硬拦，未确认不扣道痕。
+func _release_kill_move(kill_move_id: String, km: Dictionary = {}) -> void:
+	if kill_move_id == "":
+		return
+	if bool(km.get("dangerous", false)):
+		_pending_kill_move = km
+		_active_card = km
+		_card_id = "kill_move." + kill_move_id
+		_target_id = ""
+		_confirming = true
+		_refresh()
+		return
+	_submit_kill_move(kill_move_id, false, km)
+
+
+func _submit_kill_move(kill_move_id: String, confirmed: bool, km: Dictionary = {}) -> void:
+	var request_key := "killmove:" + kill_move_id
+	if _submitted_card_keys.has(request_key):
+		return
+	_submitted_card_keys[request_key] = true
+	_pending_kill_move = {}
+	_confirming = false
+	# 第三阶段 Task 3：杀招卡自带结构化命令（play_kill_move），确认态由本屏补入；
+	# 无命令键时回退 play_card 兼容包装。
+	var command: Dictionary = (km.get("command", {}) as Dictionary)
+	var result: Variant = null
+	if not command.is_empty() and _commands.has("submit_command"):
+		var payload: Dictionary = command.duplicate(true)
+		payload["confirmed"] = confirmed
+		result = _commands["submit_command"].call(payload)
+	elif _commands.has("play_card"):
+		result = _commands["play_card"].call("kill_move." + kill_move_id, _target_id, confirmed)
+	# F-02 复验：被拒的杀招同样不得播放成功音效/墨迹，并释放去重键供重试。
+	if _command_rejected(result):
+		_submitted_card_keys.erase(request_key)
+		_refresh()
+		return
+	# 交互闭环契约：视觉 + 听觉双重反应。
+	AudioManager.play_sfx("battle_card_play")
+	play_ink_spread()
+
+
+func _kill_slot(title: String, seq: String, cost: String, executable: bool, block_reason: String) -> Button:
+	var btn := Button.new()
+	btn.text = ""
+	btn.flat = true
+	btn.custom_minimum_size = Vector2(248, 90)
+	btn.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.5)
+	normal.border_color = GuStyle.NODE_REACH_BORDER
+	normal.set_border_width_all(1)
+	normal.set_corner_radius_all(4)
+	var disabled_box := StyleBoxFlat.new()
+	disabled_box.bg_color = Color(246 / 255.0, 243 / 255.0, 233 / 255.0, 0.2)
+	disabled_box.border_color = GuStyle.NODE_FUTURE_BORDER
+	disabled_box.set_border_width_all(1)
+	disabled_box.set_corner_radius_all(4)
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("hover", normal)
+	btn.add_theme_stylebox_override("pressed", normal)
+	btn.add_theme_stylebox_override("disabled", disabled_box)
+	var margin := MarginContainer.new()
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	btn.add_child(margin)
+	var body := VBoxContainer.new()
+	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	body.add_theme_constant_override("separation", 4)
+	margin.add_child(body)
+	var t := Label.new()
+	t.text = title
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	t.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	t.add_theme_font_size_override("font_size", 12)
+	t.add_theme_color_override("font_color", GuStyle.INK_PRIMARY if executable else GuStyle.INK_SOFT)
+	body.add_child(t)
+	if seq != "":
+		var s := Label.new()
+		s.text = seq
+		s.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		s.add_theme_font_size_override("font_size", 9)
+		s.add_theme_color_override("font_color", GuStyle.INK_MUTED)
+		body.add_child(s)
+	if not executable and block_reason != "":
+		var b := Label.new()
+		b.text = "不可用：%s" % block_reason
+		b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_theme_font_size_override("font_size", 9)
+		b.add_theme_color_override("font_color", GuStyle.CINNABAR)
+		body.add_child(b)
+	if cost != "":
+		var c := Label.new()
+		c.text = cost
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		c.add_theme_font_size_override("font_size", 9)
+		c.add_theme_color_override("font_color", GuStyle.CINNABAR)
+		c.size_flags_vertical = Control.SIZE_SHRINK_END
+		body.add_child(c)
+	return btn
+
+
+func _kill_slot_empty() -> PanelContainer:
+	var panel := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = GuStyle.NODE_FUTURE_BORDER
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(4)
+	panel.add_theme_stylebox_override("panel", box)
+	panel.custom_minimum_size = Vector2(248, 90)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	panel.add_child(margin)
+	var l := Label.new()
+	l.text = "未研习"
+	l.add_theme_font_override("font", GuStyle.TITLE_FONT)
+	l.add_theme_font_size_override("font_size", 12)
+	l.add_theme_color_override("font_color", GuStyle.INK_MAP_FAINT)
+	margin.add_child(l)
+	return panel
+
+
+func _refresh_hints(state: Dictionary) -> void:
+	for c in _hint_host.get_children():
+		c.queue_free()
+	if bool(state.get("first_battle", false)):
+		_hint_host.add_child(_hint_label(
+				"初战指引：出手次数由魂魄底蕴分档；每次行动耗 1 念头；敌人意图数值可见。",
+				GuStyle.INK_SOFT))
+	var boss_hint := DisplayText.dda_hint(str(state.get("dda_boss_hint", "")))
+	if boss_hint != "":
+		_hint_host.add_child(_hint_label(boss_hint, GuStyle.ANOMALY_YELLOW))
+	# 异变徽章：DDA 异变(险象)等逐条随提示区呈现。历史快照 anomalies 曾为
+	# String 标签数组（旧 UI），DDA marker_meta 演进后为 {id,label} 条目；
+	# 两种形状都渲染 label 文本，id 不外泄。
+	for anomaly_value in state.get("anomalies", []):
+		var anomaly_label := ""
+		if anomaly_value is Dictionary:
+			anomaly_label = str((anomaly_value as Dictionary).get("label", ""))
+		else:
+			anomaly_label = str(anomaly_value)
+		if anomaly_label != "":
+			_hint_host.add_child(_hint_label(anomaly_label, GuStyle.ANOMALY_YELLOW))
+
+
+func _hint_label(text: String, color: Color) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", 13)
+	l.add_theme_color_override("font_color", color)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return l
+
+
+func _refresh_feedback(state: Dictionary) -> void:
+	var text := str(state.get("feedback", ""))
+	_feedback_toast.visible = text != ""
+	if text != "":
+		_feedback_toast.setup(text, "warn")
+
+
+## mode 用一个空 Label 的 **name** 承载（"battle_<mode>"）——test_wenzhen_card_fsm
+## 就是按这个名字定位节点状态的，约定得留着。
+## 但不能改 ModeHost 自己的名字：节点名是路径的一部分，改了会让 @onready 与
+## 一切按路径的查找全部失效。所以改成在固定路径的 ModeHost 下动态挂子 Label。
+func _refresh_mode_label() -> void:
+	_clear(_mode_host)
+	var l := Label.new()
+	l.name = "battle_" + _mode
+	l.text = ""
+	_mode_host.add_child(l)
+	if _mode == "target_select":
+		# 「取消目标」出口。指向卡是两步确认（点卡 → 点敌人），必须给退出口，
+		# 否则玩家武装了指向卡就只能靠点别的卡摆脱。这个按钮原先在手牌组件的取消行里，
+		# 手牌换成扇形组件后由本屏承担——模式状态本来就归宿主，放这里也不会分叉。
+		var cancel := Button.new()
+		cancel.text = "取消目标"
+		MasterTheme.apply_button(cancel, "cancel")
+		cancel.custom_minimum_size = Vector2(0, 24)
+		cancel.add_theme_font_size_override("font_size", 13)
+		cancel.pressed.connect(_reset_interaction)
+		_mode_host.add_child(cancel)
+
+
+func _refresh_confirm() -> void:
+	_confirm_dialog.visible = _confirming
+	if not _confirming:
+		_confirm_dialog.close()  # close() 会清空文本，只设 visible 会让隐藏节点残留文本
+		return
+	var card_name := str(_active_card.get("name", "此行动"))
+	# T16：确认框可能承载手牌危险卡，也可能承载残锋杀招——同一个对话框，
+	# 由 `_pending_kill_move` 决定确认后提交哪一条。
+	var pending_km := str(_pending_kill_move.get("id", ""))
+	var headline := card_name + " 将执行已预览的不可逆代价。"
+	if pending_km != "":
+		headline = card_name + " 将永久耗费配方剑蛊的道痕。"
+	# GuConfirmDialog 的入口是 open()（不是 setup），签名见 gu_confirm_dialog_view.gd。
+	_confirm_dialog.open(
+			headline,
+			func():
+				play_cinnabar_seal("裁定")
+				if pending_km != "":
+					_submit_kill_move(pending_km, true, _pending_kill_move)
+				else:
+					_submit_card(_active_card, _target_id),
+		func():
+			_pending_kill_move = {}
+			_set_mode("drag_cancel", _active_card),
+		"⚠ 危险行动",
+			_known_risk_text(_active_card))
+
+
+func _refresh_tooltip() -> void:
+	# 手势期间由组件负责清空悬停（它一进入拖拽就发 hover_changed("")），
+	# 宿主因此不必再自己判断"是否正在拖拽"——少一处状态镜像。
+	var show_tip: bool = _mode == "idle" and not _hovered_card.is_empty()
+	_tooltip_host.visible = show_tip
+	if not show_tip:
+		return
+	_tooltip_title.text = str(_hovered_card.get("name", "蛊虫"))
+	# C2 2026-09-05：蛊卡 tooltip 标题追加流派标签（如「小光蛊 · 光道」）。
+	var school_label := str(_hovered_card.get("school_label", ""))
+	if school_label != "":
+		_tooltip_title.text += " · " + school_label
+	_tooltip_title.add_theme_color_override("font_color", GuStyle.INK_PRIMARY)
+	_tooltip_view.setup("", str(_hovered_card.get("quality", "")),
+			str(_hovered_card.get("effect", "")),
+			str(_hovered_card.get("synergy", "")),
+			str(_hovered_card.get("cost_ex", str(_hovered_card.get("cost", "")))),
+		str(_hovered_card.get("block_reason", "")) if not bool(_hovered_card.get("executable", true)) else "",
+		bool(_hovered_card.get("curse_warning", false)),
+		_known_risk_text(_hovered_card))
+	call_deferred("_position_tooltip")
+
+
+## 解释栏定位（2026-09-10 改版）：锚定**被悬停的卡**，不再跟鼠标。
+## 手牌贴屏幕底边，只有卡上方有空间——默认贴在卡上方并与卡左对齐，
+## 越界翻到卡右侧/左侧，最后整体钳进视口。宽度按内容自适应（原先强塞 280 宽，
+## 三行短文案会在面板里空掉一大半）。
+func _position_tooltip() -> void:
+	if not _tooltip_host.visible:
+		return
+	var viewport_size := get_viewport_rect().size
+	var minimum := _tooltip_host.get_combined_minimum_size()
+	var tooltip_size := Vector2(
+			clampf(minimum.x, 180.0, maxf(180.0, viewport_size.x - 24.0)),
+			minimum.y)
+	_tooltip_host.size = tooltip_size
+	_tooltip_host.global_position = _tooltip_anchor_position(tooltip_size, viewport_size)
+
+
+## 解释栏锚点：拿得到悬停卡矩形就贴在卡上方；拿不到（卡已重建）退回鼠标上方。
+func _tooltip_anchor_position(tooltip_size: Vector2, viewport_size: Vector2) -> Vector2:
+	var margin := GuStyle.SPACE_3
+	var anchor := Rect2()
+	if not _hovered_card.is_empty():
+		anchor = _hand.card_rect(str(_hovered_card.get("id", "")))
+	var pos := Vector2.ZERO
+	if anchor.size.x > 0.0:
+		# 悬停中的卡是抬升放大的（pivot 在底边），视觉上沿高于布局矩形，
+		# 这里把抬高量算进去，免得解释栏正好压在放大后的卡沿上。
+		var lift: float = _hand.hover_lift_px()
+		pos = Vector2(anchor.position.x,
+				anchor.position.y - lift - tooltip_size.y - GuStyle.SPACE_2)
+	else:
+		var mouse_pos := get_viewport().get_mouse_position()
+		pos = Vector2(mouse_pos.x - tooltip_size.x * 0.5,
+				mouse_pos.y - tooltip_size.y - GuStyle.SPACE_2)
+	pos.x = clampf(pos.x, margin, maxf(margin, viewport_size.x - tooltip_size.x - margin))
+	pos.y = clampf(pos.y, margin, maxf(margin, viewport_size.y - tooltip_size.y - margin))
+	return pos
+
+
+func _apply_tooltip_style() -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = GuStyle.PAPER_RAISED
+	box.border_color = GuStyle.HAIRLINE_COLOR
+	box.set_border_width_all(GuStyle.HAIRLINE)
+	box.set_corner_radius_all(GuStyle.RADIUS_SMALL)
+	_tooltip_host.add_theme_stylebox_override("panel", box)
+
+
+
+## 立即清空并释放子节点。
+##
+## ⚠️ 只能用在**不会发射信号**的容器上（目前只有 ModeHost）。其余容器一律用
+## queue_free：它们的子节点可能是正在发射 pressed 的按钮，立即 free() 会在信号
+## 发射途中销毁发射者——Godot 会报 "Object was freed while a signal is being
+## emitted" 并有崩溃风险。
+##
+## 之所以给 ModeHost 破例：refresh 同一帧会被调用多次，queue_free 的延迟释放
+## 会让 ModeHost 短暂出现多个子节点，按 child_count / get_child(0) 的断言会失真。
+## 但 ModeHost 现在也含按钮（"取消目标"，见 _refresh_mode_label）：按下它会在
+## pressed 发射途中触发 _refresh → _clear → free 自己——发射途中 free 会让
+## ObjectDB 在退出时报实例泄漏（2026-09-11 P3-2 定位）。因此按钮先 remove_child
+## （ModeHost 同帧即空，断言不受影响）再 queue_free（发射安全结束、帧末释放），
+## 其余仍立即 free。
+func _clear(host: Node) -> void:
+	for c in host.get_children():
+		host.remove_child(c)
+		if c is Button:
+			c.queue_free()
+		else:
+			c.free()
+
+## 小工具：本屏动态创建生命 / 真元条。
+static func StatBarScene() -> PackedScene:
+	return preload("res://scenes/ui/widgets/gu_stat_bar.tscn")
+
+## 杀戮尖塔风格：面板完全透明，只显示立绘和血量条，不显示面板背景和边框。
+func _make_panel_fully_transparent(panel: PanelContainer) -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.border_color = Color(0, 0, 0, 0)
+	box.set_border_width_all(0)
+	box.set_corner_radius_all(0)
+	panel.add_theme_stylebox_override("panel", box)

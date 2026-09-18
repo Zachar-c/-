@@ -1,0 +1,119 @@
+{
+ "world_model_version": "1.0.0",
+ "schema_id": "gu-zhenren/world-model",
+ "schema_version": "1.0.0",
+ "entity_type": "manifest",
+ "generated_at": "2026-09-17T00:00:00Z",
+ "generator": "world-model/tools/build_world_model.py",
+ "source_refs": [],
+ "count": 1,
+ "entities": [
+  {
+   "id": "world_model_manifest",
+   "name_zh": "世界模型数据清单",
+   "version": "1.0.0",
+   "schema_version": "1.0.0",
+   "schema_id": "gu-zhenren/world-model",
+   "generated_at": "2026-09-17T00:00:00Z",
+   "generator": "world-model/tools/build_world_model.py",
+   "python_requires": ">=3.9 (standard library only)",
+   "third_party_dependencies": [],
+   "files": [
+    {
+     "path": "world-model/data/realms.json",
+     "entity_type": "realm",
+     "count": 36,
+     "bytes": 46067,
+     "sha256": "78517be20bb9cee27d23e7aaa4dffe91a8cceb79cb15a4bd7b9416c21fea61b5"
+    },
+    {
+     "path": "world-model/data/paths.json",
+     "entity_type": "path",
+     "count": 20,
+     "bytes": 44633,
+     "sha256": "54155a80cb7b8471350bfa3102491ea45c36cdb9a1e0646136a2d83ebce8a878"
+    },
+    {
+     "path": "world-model/data/gu.json",
+     "entity_type": "gu",
+     "count": 802,
+     "bytes": 1106274,
+     "sha256": "b00eda64ec505fb9614e5ebe5399a97dd5ea9b9448f47e8a15cf8bf2849fe323"
+    },
+    {
+     "path": "world-model/data/economy.json",
+     "entity_type": "economy",
+     "count": 1,
+     "bytes": 51820,
+     "sha256": "6cba9e0a11667dd450a1b0e22399896b8251d1919cb18cd2fad882c5184340f9"
+    },
+    {
+     "path": "world-model/data/factions.json",
+     "entity_type": "faction",
+     "count": 6,
+     "bytes": 13298,
+     "sha256": "ac7c481c6a8d56f4820d0b797f5b359c315f42076a29bfe2e3f3d2182af9633b"
+    },
+    {
+     "path": "world-model/data/regions.json",
+     "entity_type": "region",
+     "count": 7,
+     "bytes": 108118,
+     "sha256": "9e862cf2c28de6e9ec8bcb3e634ec478ebd1fe36fe31f40d2a5343d268353f65"
+    },
+    {
+     "path": "world-model/data/events.json",
+     "entity_type": "event",
+     "count": 12,
+     "bytes": 22159,
+     "sha256": "ac8e26b1877fd5b5ac4cb1ef18f91d7020355f82f9c6c53db27ef577e5593306"
+    },
+    {
+     "path": "world-model/data/loot.json",
+     "entity_type": "loot",
+     "count": 1,
+     "bytes": 86873,
+     "sha256": "a6bb7c01b110f4f9c904718a01b33ed5ed2f8cfb4704ccf0547f2b5df906f59a"
+    },
+    {
+     "path": "world-model/data/balance.json",
+     "entity_type": "balance",
+     "count": 1,
+     "bytes": 18021,
+     "sha256": "40e28aab3922ee5e30ebd0f2e3be88d8467dfe9ed49d724e98f3fc33fd68163a"
+    }
+   ],
+   "file_count": 9,
+   "total_bytes": 1497263,
+   "read_only_upstream": [
+    "data/gu.json",
+    "data/gu_names.json",
+    "data/enemies.json",
+    "data/nodes.json",
+    "data/pacing.json",
+    "data/loot_tables.json",
+    "data/refinement_recipes.json",
+    "data/schools.json",
+    "data/school_pools.json",
+    "data/shops.json",
+    "data/balance.json",
+    "data/aptitude.json",
+    "data/v1_battle.json",
+    "data/events.json",
+    "data/relics.json",
+    "data/contracts.json",
+    "data/curse.json",
+    "data/npcs.json",
+    "data/reputation.json",
+    "data/synthesis.json"
+   ],
+   "upstream_write_policy": "read_only",
+   "source_class": "adaptation",
+   "source_ids": [],
+   "canon_review_status": "approved",
+   "adaptation_note": "清单本身为构建产物；sha256 用于检测数据漂移。",
+   "tunable": false
+  }
+ ],
+ "version_source": "world-model/VERSION"
+}

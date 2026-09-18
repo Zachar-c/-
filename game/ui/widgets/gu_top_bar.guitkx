@@ -1,0 +1,71 @@
+import { GuResourceChip } from "./gu_resource_chip"
+
+# GuTopBar —— 局内全局顶栏（规格 §9 / §16.5）
+# 资源 chip + 契约（蓝系 CONTRACT_BLUE）+ 异变/DDA（黄红系）。死亡风险由各资源
+# 状态条承载，顶栏不再重复展示“三死线”。
+# 契约与异变 UI 分区展示（§16.13），颜色语义锁死。
+# 实现注：全程 GDScript 构建 vnode，不用 @if/@for/@else（guitkx 解析不稳）。
+
+export GuTopBar() -> RuitkVNode {
+  var resources = props.get("resources", {})
+  var contracts = props.get("contracts", [])
+  var anomalies = props.get("anomalies", [])
+  var on_menu = props.get("on_menu", null)
+  var layer = props.get("layer", -1)
+
+  var kinds = ["yuanstone", "shouyuan", "hunpo"]
+  var chip_items = []
+  for kind in kinds:
+    if resources.has(kind):
+      chip_items.append(<GuResourceChip kind={ kind } value={ int(resources[kind]) } key={ kind } />)
+
+  var meta_panels = []
+  for c in contracts:
+    meta_panels.append((
+      <PanelContainer style={ {"bg_color": Color(0.3, 0.4, 0.5, 0.25), "corner_radius_all": 4} } key={ c }>
+        <MarginContainer style={ {"margin_left": 6, "margin_right": 6, "margin_top": 2, "margin_bottom": 2} }>
+          <Label text={ "契约·%s" % c } style={ {"font_color": GuStyle.CONTRACT_BLUE, "font_size": 13} } />
+        </MarginContainer>
+      </PanelContainer>
+    ))
+  for a in anomalies:
+    var label_text = str(a.get("label", a)) if a is Dictionary else str(a)
+    meta_panels.append((
+      <PanelContainer style={ {"bg_color": Color(0.5, 0.35, 0.15, 0.25), "corner_radius_all": 4} } key={ a }>
+        <MarginContainer style={ {"margin_left": 6, "margin_right": 6, "margin_top": 2, "margin_bottom": 2} }>
+          <Label text={ "异变·%s" % label_text } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 13} } />
+        </MarginContainer>
+      </PanelContainer>
+    ))
+
+  var bar_style = {"bg_color": GuStyle.PAPER_BG, "border_width_all": GuStyle.HAIRLINE, "border_color": GuStyle.HAIRLINE_COLOR, "min_height": GuStyle.TOP_BAR_HEIGHT}
+
+  var left_items = []
+  if layer >= 0:
+    left_items.append(<Label text={ "第 %d 转" % layer } style={ {"font_color": GuStyle.ANOMALY_YELLOW, "font_size": 16, "min_width": 70} } />)
+  left_items.append((
+    <HBoxContainer style={ {"separation": 6, "size_flags_horizontal": 3} }>
+      { chip_items }
+    </HBoxContainer>
+  ))
+
+  var right_items = []
+  right_items.append((
+    <HBoxContainer style={ {"separation": 6} }>
+      { meta_panels }
+    </HBoxContainer>
+  ))
+  if on_menu != null:
+    right_items.append(<Button text="≡" onPressed={ func(): on_menu.call() } style={ {"font_color": GuStyle.INK_PRIMARY, "min_width": 32, "min_height": 32} } />)
+
+  return (
+    <PanelContainer style={ bar_style }>
+      <MarginContainer style={ {"margin_left": 10, "margin_right": 10, "margin_top": 6, "margin_bottom": 6} }>
+        <HBoxContainer style={ {"separation": 14} }>
+          { left_items }
+          { right_items }
+        </HBoxContainer>
+      </MarginContainer>
+    </PanelContainer>
+  )
+}

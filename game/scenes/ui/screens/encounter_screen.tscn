@@ -1,0 +1,128 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/encounter_screen_view.gd" id="1_enc"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_tooltip_view.tscn" id="4_tip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_confirm_dialog.tscn" id="5_dialog"]
+[ext_resource type="Texture2D" path="res://assets/wenzhen/hall/hall_dots.png" id="6_dots"]
+
+[node name="EncounterScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_enc")
+
+[node name="EncounterPaper" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="EncounterDots" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_dots")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TopBar" parent="Root" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="TitleChrome" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Seal" type="PanelContainer" parent="Root/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(42, 42)
+
+[node name="SealLabel" type="Label" parent="Root/TitleChrome/Seal"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "遭
+遇"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VTitle" type="Label" parent="Root/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+theme_override_font_sizes/font_size = 22
+text = "遭遇"
+vertical_alignment = 1
+
+[node name="RedLine" type="ColorRect" parent="Root/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 2)
+
+[node name="EncounterStage" type="PanelContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StageContent" type="VBoxContainer" parent="Root/EncounterStage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FeedbackLabel" type="Label" parent="Root/EncounterStage/StageContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="primary_decision_surface" type="HBoxContainer" parent="Root/EncounterStage/StageContent"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="MainColumn" type="VBoxContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="BriefPanel" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ActionScroll" type="ScrollContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionList" type="VBoxContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn/ActionScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LeaveButton" type="Button" parent="Root/EncounterStage/StageContent/primary_decision_surface/MainColumn"]
+layout_mode = 2
+text = "离开"
+
+[node name="SideColumn" type="VBoxContainer" parent="Root/EncounterStage/StageContent/primary_decision_surface"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatusPanel" parent="Root/EncounterStage/StageContent/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
+layout_mode = 2
+
+[node name="SatchelPanel" parent="Root/EncounterStage/StageContent/primary_decision_surface/SideColumn" instance=ExtResource("3_panel")]
+layout_mode = 2
+
+[node name="ConfirmDialog" parent="Root" instance=ExtResource("5_dialog")]
+layout_mode = 2
+visible = false

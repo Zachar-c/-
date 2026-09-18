@@ -1,0 +1,136 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/screens/ending_screen_view.gd" id="1_end"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_top_bar.tscn" id="2_top_bar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/widgets/gu_panel.tscn" id="3_panel"]
+
+[node name="EndingScreen" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 24
+script = ExtResource("1_end")
+
+[node name="primary_decision_surface" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TopBar" parent="primary_decision_surface" instance=ExtResource("2_top_bar")]
+layout_mode = 2
+
+[node name="TitleChrome" type="HBoxContainer" parent="primary_decision_surface"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Seal" type="PanelContainer" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(46, 46)
+
+[node name="SealLabel" type="Label" parent="primary_decision_surface/TitleChrome/Seal"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "结
+算"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VTitle" type="Label" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(56, 0)
+theme_override_font_sizes/font_size = 30
+text = "结算"
+vertical_alignment = 1
+
+[node name="RedLine" type="ColorRect" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 2)
+
+[node name="AchievementLabel" type="Label" parent="primary_decision_surface/TitleChrome"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = ""
+
+[node name="TitleBlock" type="CenterContainer" parent="primary_decision_surface"]
+layout_mode = 2
+
+[node name="TitleBox" type="VBoxContainer" parent="primary_decision_surface/TitleBlock"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TitleLabel" type="Label" parent="primary_decision_surface/TitleBlock/TitleBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "—"
+
+[node name="TypeLabel" type="Label" parent="primary_decision_surface/TitleBlock/TitleBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "结局类型 · 未知结局"
+
+[node name="TypePanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+layout_mode = 2
+
+[node name="DeathCausePanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+layout_mode = 2
+visible = false
+
+[node name="RoutePanel" parent="primary_decision_surface" instance=ExtResource("3_panel")]
+layout_mode = 2
+visible = false
+
+[node name="RecapGrid" type="GridContainer" parent="primary_decision_surface"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+
+[node name="DecisionPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GainsPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="UnlockPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AftermathPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BalancePanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecordPanel" parent="primary_decision_surface/RecapGrid" instance=ExtResource("3_panel")]
+layout_mode = 2
+size_flags_horizontal = 3
+visible = false
+
+[node name="ActionBlock" type="CenterContainer" parent="primary_decision_surface"]
+layout_mode = 2
+
+[node name="ActionRow" type="HBoxContainer" parent="primary_decision_surface/ActionBlock"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ToHallButton" type="Button" parent="primary_decision_surface/ActionBlock/ActionRow"]
+layout_mode = 2
+text = "返回大厅"
+
+[node name="ToCodexButton" type="Button" parent="primary_decision_surface/ActionBlock/ActionRow"]
+layout_mode = 2
+text = "查看图鉴"
