@@ -192,14 +192,65 @@ export function waterDrop() {
   src.start(t); src.stop(t + 0.2);
 }
 
-/* 每隔一会儿来一次滴水，让静止的画面不是死的 */
+/* 每隔一会儿来一次滴水，让静止的画面不是死的。
+   只许有一条循环——第二幕和第四幕都会要它，起两条水滴会翻倍。 */
+let dropsStarted = false;
+
 export function startAmbientDrops() {
+  if (dropsStarted) return;
+  dropsStarted = true;
   const tick = () => {
     if (!ctx) return;
     waterDrop();
     setTimeout(tick, 2600 + Math.random() * 5200);
   };
   setTimeout(tick, 1800);
+}
+
+/* 听不清的低语。不是词，是两个人隔着雨说话的节奏和口气。
+   用带通噪声做气音，一段 2~4 个音节的模糊句子。
+   pan：-1 全在左，1 全在右。用来把人放在画面之外——玩家只能转头去找。 */
+export function murmur(syllables = 3, at = 0, pan = 0, level = 0.07) {
+  if (!ctx) return;
+  const bus = ctx.createGain();
+  bus.gain.value = level;
+
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 820;              // 隔着雨，高频先没了
+  lp.connect(bus);
+
+  if (ctx.createStereoPanner) {
+    const p = ctx.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, pan));
+    bus.connect(p);
+    p.connect(master);
+  } else {
+    bus.connect(master);
+  }
+
+  let t = ctx.currentTime + 0.04 + at;
+  for (let i = 0; i < syllables; i++) {
+    const dur = 0.15 + Math.random() * 0.13;
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuf;
+    src.loop = true;
+
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(430 + Math.random() * 240, t);
+    bp.frequency.exponentialRampToValueAtTime(300 + Math.random() * 190, t + dur);
+    bp.Q.value = 1.7;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.9, t + 0.035);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    src.connect(bp); bp.connect(g); g.connect(lp);
+    src.start(t); src.stop(t + dur + 0.06);
+    t += dur + 0.05 + Math.random() * 0.1;
+  }
 }
 
 /* 屋里。同一场雨，隔着墙——低通压掉高频，只剩闷闷的一片。

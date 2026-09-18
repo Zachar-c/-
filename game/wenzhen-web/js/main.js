@@ -3,11 +3,12 @@
 
 import {
   initAudio, resumeAudio, fadeMaster, soundVault, soundRain, fadeRoom,
-  heartbeat, chime, startAmbientDrops, soundRoom, swallow, stoneTick,
+  heartbeat, chime, startAmbientDrops, soundRoom, swallow, stoneTick, murmur,
 } from './audio.js';
 import { vaultScene } from './scenes/01_vault.js';
 import { rainScene } from './scenes/02_rain.js';
 import { feedScene } from './scenes/03_feed.js';
+import { visitScene } from './scenes/04_visit.js';
 
 const stageEl = document.getElementById('stage');
 const flashEl = document.getElementById('flash');
@@ -31,9 +32,10 @@ window.addEventListener('unhandledrejection', (e) => report(`[reject] ${e.reason
 
 const stage = {
   params,
+  state: {},                 // 幕与幕之间要留下的东西。一个普通对象，够用。
   audio: {
     initAudio, resumeAudio, fadeMaster, soundVault, soundRain, fadeRoom,
-    heartbeat, chime, startAmbientDrops, soundRoom, swallow, stoneTick,
+    heartbeat, chime, startAmbientDrops, soundRoom, swallow, stoneTick, murmur,
   },
 
   wait(ms) {
@@ -147,14 +149,19 @@ async function boot() {
     await feedScene(stage);
     return;
   }
+  if (startAt === 'visit') {
+    await visitScene(stage);
+    return;
+  }
 
   await vaultScene(stage);
   await rainScene(stage);
   await feedScene(stage);
+  await visitScene(stage);
 
-  // 原型到此。第四幕还没写。
+  // 原型到此。第五幕还没写。
   const marker = stage.layer(0);
-  stage.put(marker, 'div', 'marker', '原型到此 · 第三幕完');
+  stage.put(marker, 'div', 'marker', '原型到此 · 第四幕完 · 选择：' + (stage.state.act4 ?? '—'));
   await stage.fade(marker, 1, 2200, 1400);
 }
 

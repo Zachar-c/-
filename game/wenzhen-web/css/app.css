@@ -346,6 +346,119 @@ body {
   42%      { transform: translate(-50%, -50%) scale(1.11); }
 }
 
+/* ---------- 第四幕 · 窗外站着一个人 ---------- */
+
+/* 近景。这一幅整幅换掉：换机位就是换一幅画。
+   位置和第三幕的屋子一样是「比屏幕大 4%」，留出缓慢推近的余量。 */
+.visitor-plate {
+  position: absolute;
+  left: -2%; top: -2%;
+  width: 104%; height: 104%;
+  transform: scale(1);
+  transition: transform 46s linear;
+}
+
+.visitor-plate.settle { transform: scale(1.06); }
+
+.visitor {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  /* 往 92% 推，是为了把窗台压到画面下缘，给他留出上半身的空间。
+     再往下会把檐口切掉，再往上窗台就沉到画面外了。 */
+  object-position: center 92%;
+}
+
+/* 窗上那层雨雾。开场把整扇窗糊住，再慢慢散开——
+   人不是走进来的，是一直在那儿。
+   核要够密，但椭圆不能张到把他的肩臂也盖住：留一点人形透出来，
+   「雨里有东西」比「一面白墙」更让人想凑近看。 */
+.haze {
+  position: absolute;
+  left: 13%; top: 0;
+  width: 73%; height: 96%;
+  background: radial-gradient(78% 68% at 50% 44%,
+    rgba(204, 221, 236, .975) 0%,
+    rgba(199, 217, 233, .96) 56%,
+    rgba(191, 211, 229, .74) 82%,
+    rgba(184, 206, 226, 0) 100%);
+}
+
+/* 他搁在窗台上的那颗元石。比屋里那三颗离眼睛近，所以大一点、也亮一点。 */
+.sill-stone {
+  left: 36%;
+  top: 93%;
+  --s: 6.4vmin;
+  filter: drop-shadow(0 0 calc(var(--s) * .42) rgba(190, 222, 252, .50))
+          drop-shadow(0 0 calc(var(--s) * 1.1) rgba(126, 172, 228, .26))
+          brightness(1.06);
+}
+
+/* 收下了。它比旁边那三颗亮一点。 */
+.sill-stone.taken {
+  filter: drop-shadow(0 0 calc(var(--s) * .5) rgba(214, 238, 255, .78))
+          drop-shadow(0 0 calc(var(--s) * 1.5) rgba(150, 198, 246, .44))
+          brightness(1.24);
+}
+
+/* 他说的那句话。跟旁白同一支字，但它不是旁白。
+   光晕比旁白小：这里字落在他的衣袍上，66px 的黑色发光会糊成一块脏印。 */
+.spoken {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-narr);
+  font-size: clamp(17px, 1.32vw, 24px);
+  letter-spacing: .3em;
+  padding-left: .3em;
+  color: rgba(240, 236, 228, .92);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, .92), 0 0 34px rgba(0, 0, 0, .42);
+}
+
+/* 他的回答。比第一句轻——他自己也不太想被追问。 */
+.spoken.dim {
+  bottom: 23%;
+  font-size: clamp(15px, 1.1vw, 20px);
+  color: rgba(216, 213, 206, .58);
+}
+
+/* 玩家自己的三个动作，还没说出口。
+   排成一行，是因为它们是并列的三条路，不是一份列表。
+   颜色不能太浅：这是这一幕唯一要玩家读的东西。 */
+.choices {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5.5vmin;
+}
+
+.choice {
+  white-space: nowrap;
+  font-family: var(--font-narr);
+  font-size: clamp(15px, 1.18vw, 22px);
+  letter-spacing: .34em;
+  padding-left: .34em;
+  color: rgba(228, 226, 219, .62);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, .95), 0 0 30px rgba(0, 0, 0, .55);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color .45s ease, text-shadow .45s ease, opacity .7s ease;
+}
+
+.choice:hover {
+  color: rgba(248, 246, 241, .98);
+  text-shadow: 0 0 26px rgba(176, 212, 255, .62), 0 1px 14px rgba(0, 0, 0, .95);
+}
+
+.choice.gone { opacity: 0; pointer-events: none; }
+
 /* ---------- 文字 ---------- */
 
 .narration {

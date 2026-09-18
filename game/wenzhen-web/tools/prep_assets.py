@@ -8,8 +8,10 @@
   2. 如果主体是黑底发光体，把亮度当 alpha 转成透明贴图
 
 用法：
-    python tools/prep_assets.py
+    python tools/prep_assets.py            # 全部
+    python tools/prep_assets.py visit      # 只处理某几个（按资产名）
 """
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -22,6 +24,11 @@ WATERMARK_CROP_PX = 90
 
 # 需要做「黑底 -> 透明」的资产。其余只裁水印。
 CUTOUT = {"cicada"}
+
+# 这些名字的成品**不**由本脚本产出，别覆盖。
+# stone.png 是 cut_stone.py 从一张「三颗石头合影」里抠出来的，
+# 本脚本只会把那两张合影原图裁条水印，写出来不是一颗石头，会把成品砸掉。
+SKIP = {"stone"}
 
 
 def strip_watermark(img):
@@ -41,6 +48,7 @@ def luminance_to_alpha(img, black=18, white=190):
 
 
 def main():
+    only = set(sys.argv[1:])
     log = []
     raws = sorted(ASSETS.glob("*_raw.png"))
     if not raws:
@@ -48,6 +56,11 @@ def main():
 
     for raw in raws:
         name = raw.name[: -len("_raw.png")]
+        if only and name not in only:
+            continue
+        if name in SKIP:
+            log.append(f"{name}.png 跳过（由 cut_stone.py 负责）")
+            continue
         img = strip_watermark(Image.open(raw))
         if name in CUTOUT:
             img = luminance_to_alpha(img)

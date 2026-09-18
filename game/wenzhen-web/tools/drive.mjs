@@ -50,6 +50,31 @@ const edge = spawn(EDGE, [
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/* 计划用逗号分隔，但表达式里几乎必然有逗号（数组、参数、对象字面量），
+   所以只在括号和引号**之外**断句。否则 eval:map(e => [a, b]) 会被切成两截，
+   报一个和真实原因无关的错。 */
+function splitPlan(s) {
+  const out = [];
+  let cur = '';
+  let depth = 0;
+  let quote = null;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (quote) {
+      cur += c;
+      if (c === quote && s[i - 1] !== '\\') quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; cur += c; continue; }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (c === ',' && depth <= 0) { out.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  if (cur.trim()) out.push(cur);
+  return out.map((x) => x.trim()).filter(Boolean);
+}
+
 async function debuggerUrl() {
   for (let i = 0; i < 120; i++) {
     try {
@@ -126,7 +151,7 @@ async function main() {
 
   const results = [];
 
-  for (const raw of plan.split(',').map((s) => s.trim()).filter(Boolean)) {
+  for (const raw of splitPlan(plan)) {
     const [step, a, b] = raw.split(':');
 
     if (step === 'wait') {
