@@ -30,3 +30,6 @@
 - 修正迁移遗留的 12 处 `source:` 引用（`source:source/分支：六卷精编版/...` 残尾），并把 canon 命名空间统一为 `canon-index:`。
 - 新增验收脚本 `lore/wiki/tools/check.ps1`，本批全部检查项通过。
 - Batch 0 收尾：根 `README.md` 去掉 wiki「冻结」措辞；`check.ps1` 增加 check6（概念页被分类索引收录）与 check7（`type` 与目录一致）两条门禁，全部通过。
+- Batch 4 天庭冲突簇：新增 `中洲炼蛊大会.md`（`events/central-plain-refinement-conference.md`）、`石莲岛与红莲真传争夺.md`（`events/stone-lotus-island-contest.md`）、`天庭入侵琅琊福地.md`（`events/langya-blessed-land-invasion.md`）三页；来源边界为 `source:source/蛊真人-clean.txt` 加对应 G/H1/H2 读书笔记（琅琊页仅 H1），Run 1 缺口一律入「待核对」。
+- Batch 4 反向链接：`world/heavenly-court.md` 3 条待建立清零并指向新页；`events/index.md` 收录 3 页；`events/fate-war.md` 关键转折接通 3 页；`characters/red-lotus.md` 关联页面追加石莲岛页；`characters/fang-yuan.md` 关联页面追加 3 页。
+- Batch 4 验收结果：27 个知识页、38 个 Markdown 文件；`check.ps1` 7 行 PASS、`ALL CHECKS PASSED`、退出码 0；`git diff --check` 无输出；`heavenly-court.md` 内「待建立」0 命中；Wiki 页面内 source 直引分支路径 0 命中（仅本日志的历史叙述行保留旧字样）。

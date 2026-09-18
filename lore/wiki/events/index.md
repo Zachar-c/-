@@ -6,5 +6,8 @@
 - [三王福地](three-kings-mountain.md)
 - [逆流河](reverse-flow-river.md)
 - [宿命大战](fate-war.md)
+- [中洲炼蛊大会](central-plain-refinement-conference.md)
+- [石莲岛与红莲真传争夺](stone-lotus-island-contest.md)
+- [天庭入侵琅琊福地](langya-blessed-land-invasion.md)
 
 事件页是剧情导航，不替代原文，也不把游戏节点当作原著事件。

@@ -63,4 +63,4 @@ sources:
 - “红莲把意志留给未来的外来者/天外之魔”等表述目前来自读书笔记和人物弧光整理；正式回答时应保留原文锚点，不把整理者的概括升级为更强的因果断言。
 - 不复活红莲，不补写资料断点之后的结局；人物台账中的“遗产与意志存在”只作为创作边界。
 
-关联页面：[方源](fang-yuan.md)、[天庭](../world/heavenly-court.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[人祖传](../themes/ren-zu-zhuan.md)。
+关联页面：[方源](fang-yuan.md)、[天庭](../world/heavenly-court.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[人祖传](../themes/ren-zu-zhuan.md)。

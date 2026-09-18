@@ -69,4 +69,4 @@ sources:
 - “魔尊阶段”“永生阶段”和宿命大战后的状态不能只依据角色台账补全，需要建立对应的原文和章节来源。
 - 本页的行为模式、叙事意义和人物阶段归纳属于分析层；不得直接当作游戏数值、技能设计或原著明文。
 
-关联页面：[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命蛊](../gu/fate-gu.md)、[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[天庭](../world/heavenly-court.md)、[宿命大战](../events/fate-war.md)、[青茅山](../events/qing-mao-mountain.md)、[三王山](../events/three-kings-mountain.md)、[逆流河](../events/reverse-flow-river.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。
+关联页面：[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命蛊](../gu/fate-gu.md)、[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[天庭](../world/heavenly-court.md)、[宿命大战](../events/fate-war.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)、[石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)、[天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)、[青茅山](../events/qing-mao-mountain.md)、[三王山](../events/three-kings-mountain.md)、[逆流河](../events/reverse-flow-river.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。
