@@ -4,11 +4,12 @@
 
 | 路径 | 类型 | 现状 | 处理 | 权威/理由 |
 |---|---|---|---|---|
-| `gu-zu/`（旧根目录入口） | MOVE | 当前快照仍在旧根目录，职责应为目标 `lore/research/` | Task 5 以过滤后 subtree 导入 `lore/research/`，核对后 `git rm` 旧快照受版本内容 | 计划 Target Mapping：完整资料包进入 `lore/research/` |
-| `wenzhen-lore/`（旧根目录入口） | MOVE | 当前 Wiki 快照仍在旧根目录，职责应为目标 `lore/wiki/` | Task 5 以 `git mv` 扁平迁移到 `lore/wiki/`，只做机械路径更新 | 计划 Target Mapping；设计 Wiki 冻结边界 |
+| `gu-zu/`（旧根目录入口） | MOVE | Task 5 已完成：过滤后 subtree 导入 `lore/research/`（`072aa6e`，206 文件，blob 级 206/206 一致）；旧快照 206 个受版本文件已 `git rm`，仅删真正空目录；残留空壳 `gu-zu/` 下只有被忽略的本地恢复材料 | 保留残留 `gu-zu/.git-nested-backup/`、`.worktrees/` 作本地恢复（根规则已忽略，不进入 Git 树）；Task 8 最终验收时复核 | 计划 Target Mapping；Task 5 Verification Log |
+| `wenzhen-lore/`（旧根目录入口） | MOVE | Task 5 已完成：35 文件以 `git mv` 扁平迁移到 `lore/wiki/`，只做机械路径更新（旧 blob + 替换程序重建 35/35 字节一致）；旧目录已确认无被忽略文件后 `rmdir` 移除 | 关闭 | 计划 Target Mapping；设计 Wiki 冻结边界 |
 | `gu-zhenren-editor/`（当前 Gitee 游戏工程快照） | MOVE | 当前游戏快照仍在旧根目录，职责应为目标 `game/`；不要与 GitHub 同名 `editorial/` 来源混淆 | Task 7 最后以过滤后 subtree 导入 `game/`，核对后删除旧快照受版本内容 | 计划 Target Mapping：最后迁移 Godot `game/` |
-| `wenzhen-lore/source/README.md` 的旧相对路径 | MOVE | 仍引用 `wenzhen-lore/wiki/...`、`gu-zhenren-editor/...`、`gu-zu/...` 等旧仓库相对路径 | Task 5 按 Source Namespace Mapping 机械替换为 `source/...`、`game/...`、`lore/research/...` | `MIGRATION.md` Source Namespace Mapping |
-| `wenzhen-lore/source/chapter-index.md` 的旧相对路径 | MOVE | 同上，章节索引仍使用旧仓库相对路径 | Task 5 同步机械替换为新仓库相对路径 | `MIGRATION.md` Source Namespace Mapping |
+| `wenzhen-lore/source/README.md` 的旧相对路径 | MOVE | Task 5 已按分类机械替换完毕：原文 2 行→`source/...`、游戏整理 3 行→`game/...`、研究 2 行→`lore/research/...` | 关闭 | `MIGRATION.md` Source Namespace Mapping |
+| `wenzhen-lore/source/chapter-index.md` 的旧相对路径 | MOVE | Task 5 已替换完毕：读书笔记前缀→`game/...`（11 处），无前缀简写不动 | 关闭 | `MIGRATION.md` Source Namespace Mapping |
+| `lore/wiki/README.md` 小说正文示例指向 `game/` | REVIEW | Task 5 按“裸 `gu-zhenren-editor/`→`game/`”机械替换后，来源优先级 1–2 行与 `rg` 代码块示例指向 `game/分支：六卷精编版/...clean.txt`；但完整正文按计划最终落地本地 `source/`（Task 7），`game/` 历史已被过滤不含正文 | Task 7 放置 `source/` 时或 Task 8 终验时裁定这两处示例改指 `source/` 还是保留指向游戏侧整理路径；Task 5 内不做语义裁定 | Task 5 机械替换记录；计划 Task 7 Step 1 |
 | 完整原文候选（`蛊真人-clean.txt`、`《人祖传》.txt` 及同义改名） | EXCLUDE | 工作树与远程历史中存在完整原文候选；公开树不得包含。Task 3 已审计：`git ls-files` 全树无跟踪记录；两处正文均被忽略；本地 `source/` 尚不存在 | Task 4 以 `git-filter-repo --invert-paths` 从导入历史过滤；本地只保留一份 `source/` 副本；游戏侧与 `.worktrees/` 副本 SHA 互异，Task 7 不得自动二选一（见 REVIEW 行） | `CONSTRAINTS-V2` §2：不复制原著正文（法律边界）；计划 Global Constraints |
 | `**/.git-nested-backup/` | EXCLUDE | 子项目历史 Git 元数据的本地备份 | 保留在本地作恢复材料；不进入 Git 树（根规则已忽略） | 计划 Global Constraints：远程 `.git` 不进入 Monorepo |
 | `**/.worktrees/` | EXCLUDE | 本地工作副本 | 保留在本地；不进入 Git 树（根规则已忽略） | 计划 Global Constraints：worktree 不进入 Monorepo |

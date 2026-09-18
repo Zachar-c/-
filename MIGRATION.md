@@ -19,8 +19,8 @@
 
 | 当前来源 | URL | 来源分支 | 目标目录 | 迁移方式 | 过滤参数 | 阶段提交 |
 |---|---|---|---|---|---|---|
-| `gu-zu` | `https://github.com/Zachar-c/gu-zu.git` | `master` | `lore/research/` | 过滤历史后 subtree 导入；保留完整资料包 | Task 4：`*蛊真人-clean.txt`、`*《人祖传》.txt`（`--invert-paths`，以前缀由 `git subtree add --prefix` 提供，不用 `--to-subdirectory-filter`） | 待 Task 5 |
-| 当前 `wenzhen-lore/` | 父仓库 `5f3fbfc` 快照（本地） | — | `lore/wiki/` | `git mv` 扁平移动；只做机械路径更新 | 不适用（工作树移动；原文候选按 Task 3 清单排除） | 待 Task 5 |
+| `gu-zu` | `https://github.com/Zachar-c/gu-zu.git` | `master` | `lore/research/` | 过滤历史后 subtree 导入；保留完整资料包 | Task 4：`*蛊真人-clean.txt`、`*《人祖传》.txt`（`--invert-paths`，以前缀由 `git subtree add --prefix` 提供，不用 `--to-subdirectory-filter`） | Task 5：导入 `072aa6e` + 本次冻结提交（见 Task 5 小节） |
+| 当前 `wenzhen-lore/` | 父仓库 `5f3fbfc` 快照（本地） | — | `lore/wiki/` | `git mv` 扁平移动；只做机械路径更新 | 不适用（工作树移动；原文候选按 Task 3 清单排除） | Task 5：本次冻结提交（见 Task 5 小节） |
 | GitHub `gu-zhenren-editor` | `https://github.com/Zachar-c/gu-zhenren-editor.git` | `main` | `editorial/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | 待 Task 6 |
 | `fortune-app` | `https://github.com/Zachar-c/fortune-app.git` | `master` | `fortune/app/` | 过滤历史后 subtree 导入；不带外层本地包装目录 | 同上 Task 4 过滤组 | 待 Task 6 |
 | `fortune-server` | `https://github.com/Zachar-c/fortune-server.git` | `main` | `fortune/server/` | 过滤历史后 subtree 导入 | 同上 Task 4 过滤组 | 待 Task 6 |
@@ -81,6 +81,15 @@ memory:gu-zu/...              -> memory:lore/research/...
   - 分支完整性：镜像保留全部远端分支（含 `game` 的 `chore-w11-resolver-split`、`chore/w11-resolver-split`、`master-clean`、`push-master`，`--all` 已覆盖）；过滤后提交计数 `gu-zu=8`（解析 9，1 个提交因仅触及被过滤文件而被清除）、`editorial=85`、`fortune-app=21`、`fortune-server=1`、`ai-system=1`、`game=749`。
 - 与计划的偏差：计划 Step 1 预期“安装失败时转入快照导入”，实际安装一次成功，无需替代方案；计划 powershell 代码块均直译为 bash 执行（`py -3 -m venv`、`pip`、`git clone --mirror`、`git log`、`grep`），语义一致；用户指令明确本 Task 不创建 `source/` 副本，未创建。
 
+## Task 5 Research Import + Frozen Wiki（`6b88b1f` 上执行，bash 直译）
+
+- Step 1（subtree 导入）：`git subtree add --prefix='lore/research' <mirrors/gu-zu.git> master -m 'chore: import gu-zu into lore research'` → `072aa6e`。第二父提交 `724a372`（过滤后 `gu-zu` 镜像 tip），8 个历史提交完整保留，未使用 `--squash`；`git ls-files -- lore/research` 共 206 个文件；`git log 072aa6e^2 -- README.md` 可追溯。
+- Step 2（快照对比）：`gu-zu/`（206）与 `lore/research/`（206）受版本文件清单逐行 `diff` 一致；`git show HEAD:gu-zu/<p>` 与 `git show 072aa6e:lore/research/<p>` 逐文件 `cmp`，206/206 blob 一致。工作树直接 `cmp` 有 196 处差异，经 `xxd` 取证全部是换行符差异（旧快照工作树 LF，新检出受 `core.autocrlf=true` 为 CRLF；`tr -d '\r'` 后一致），无内容分歧，符合“一致则删除旧快照”条件。`git rm -r -- gu-zu` 删除 206 个受版本文件；仅删除真正为空的子目录（`find -empty -delete`，排除 backup/worktrees 路径），保留 `gu-zu/.git-nested-backup/` 与 `gu-zu/.worktrees/`（其下 531 个被忽略文件原样保留，`git ls-files -- gu-zu` 已为 0）。
+- Step 3（扁平移动）：`mkdir -p lore` + 6 条 `git mv`（`wiki`、`AGENTS.md`、`README.md`、`index.md`、`log.md`、`source`）。`lore/wiki/{characters,gu,events,world,themes}/` 直接落地，无 `lore/wiki/wiki/`；`wenzhen-lore/` 内无被忽略文件，确认后 `rmdir` 移除。
+- Step 4（机械替换）：frontmatter 按顺序 `source:gu-zhenren-editor/→source:source/`、`notes:gu-zhenren-editor/→notes:game/`、`memory:gu-zhenren-editor/→memory:game/`、`notes:gu-zu/→notes:lore/research/`、`memory:gu-zu/→memory:lore/research/`；相对链接 `wiki/characters|gu|events|world|themes/→characters|gu|events|world|themes/`（`wenzhen-lore/wiki/` 全树零命中）。`source/README.md` 逐行分类：原文 2 行→`source/...`、游戏整理 3 行→`game/...`、研究 2 行→`lore/research/...`；`chapter-index.md` 读书笔记前缀→`game/...`（11 处，无前缀简写 `D2-...` 不动）；`README.md` 代码块反斜杠路径→`game\...`、来源优先级 3 行→`game/...`；`AGENTS.md` 链接示例→`gu/...`+`` `characters/` ``、`` `gu-zu/` ``→`` `lore/research/` ``、更新方式命令 `-- wenzhen-lore`→`-- lore/wiki`、`notes:` 短 ID 示例按新命名空间补全为真实值（`notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md`，与 `fang-yuan.md` 实值一致）。`log.md:12` 是 2026-09-18 当日验收命令的历史记录，有意保留原文（改动日志等于改写历史）。
+- Step 5/6（验证，真实输出见 Verification Log 的 Task 5 条目）：旧字符串/PCRE 零输出；229 个相对 `.md` 链接逐个 resolve，0 损坏；Task 3 SHA-256 清单 35/35 与基线 blob 一致，且“旧 blob + 本节替换程序”重建新文件 35/35 字节一致（差异仅来自路径替换与目录移动）；Git 树无禁止原文/嵌套元数据；`source/` 未创建。
+- 与计划的偏差：powershell 直译 bash；Task 5 自然产生 2 个提交（subtree 导入 `072aa6e` + 本次冻结提交，均为 `git subtree` 机制与计划 Step 7 所要求）；`AGENTS.md:67` 与 `:14` 的两处更新如上，属“目录移动/来源路径更新”允许范围；`log.md:12` 保留属有意为之（见债务 REVIEW 行：`README.md` 小说正文示例指向 `game/`，而正文最终落地 `source/`，待 Task 7/8 裁定）。
+
 ## Verification Log
 
 - Task 2（本提交）：根边界验证，命令见计划 Task 2 Step 5：
@@ -102,3 +111,9 @@ memory:gu-zu/...              -> memory:lore/research/...
   - Step 3：`quotePath=false` 下审计出 7 条完整原文历史路径（`gu-zu` 4、`editorial` 1、`game` 2），同一组 `--invert-paths` 过滤全部 `exit=0`；派生索引与工具文件保留，无 REVIEW。
   - Step 4：精确模式 `log --all --name-only` 六镜像均无输出，`rev-list --objects --all` 加检均无输出。
   - Step 5：`git diff --check` 通过，`git status --short` 仅 `MIGRATION.md` 一处修改，随后独立提交。
+- Task 5（导入 `lore/research/` + 冻结 `lore/wiki/`；bash 直译执行，详见本文件 Task 5 小节）：
+  - Step 1：`git subtree add --prefix='lore/research' <mirrors/gu-zu.git> master` → `072aa6e`（第二父 `724a372`，8 提交保留，无 `--squash`）。
+  - Step 2：清单 `diff` 206/206 一致，blob 级 `cmp` 206/206 一致；工作树 196 处差异经 `xxd`/`tr -d '\r'` 取证全系 CRLF 换行符 artifact；`git rm -r -- gu-zu` 后 `git ls-files -- gu-zu` 为 0，仅删真正空目录，`.git-nested-backup/`、`.worktrees/` 原样保留。
+  - Step 3：6 条 `git mv` 扁平落地 `lore/wiki/`，无 `lore/wiki/wiki/`；空 `wenzhen-lore/` 经 `find`+`git status --ignored` 确认后 `rmdir`。
+  - Step 4：frontmatter 五规则按顺序全局替换；`wiki/` 五前缀替换；`source/README.md`、`chapter-index.md`、`README.md`、`AGENTS.md` 逐项分类替换（`log.md:12` 历史记录保留）。
+  - Step 5/6：`grep -rn 'wenzhen-lore/\|gu-zhenren-editor/\|gu-zu/' lore/wiki` 无输出（rc=1）；`grep -rnP 'source:(?!source/)|notes:(?!game/|lore/research/)|memory:(?!game/|lore/research/)' lore/wiki` 无输出（rc=1；中途唯一的 1 处命中 `AGENTS.md:14` 短 ID 示例已按命名空间补全为真实值后重跑通过）；venv Python 逐个 resolve 35 文件 229 个相对 `.md` 链接，0 损坏；Task 3 `wenzhen-lore-sha256.txt` 35/35 与 `HEAD` blob 一致，“旧 blob + 替换程序”重建 35/35 字节一致；`git ls-files | grep -E '蛊真人-clean\.txt|《人祖传》\.txt'` 无输出，嵌套元数据扫描无输出，`source/` 未创建；`git diff --check` 通过（仅 autocrlf 提示，无空白错误）。
