@@ -35,3 +35,6 @@
 - Batch 4 验收结果：27 个知识页、38 个 Markdown 文件；`check.ps1` 7 行 PASS、`ALL CHECKS PASSED`、退出码 0；`git diff --check` 无输出；`heavenly-court.md` 内「待建立」0 命中；Wiki 页面内 source 直引分支路径 0 命中（仅本日志的历史叙述行保留旧字样）。
 - Batch 4b 来源修正：协调方 Batch 4 简报误判「Run 1 无天庭入侵琅琊福地记录」，实际 G 笔记 292640–292899 与原文第五百五十五节已完整记录该战；`langya-blessed-land-invasion.md` 已补齐 Run 1 事实并新增 G 笔记来源。
 - Batch 4b 收紧：`central-plain-refinement-conference.md` 按笔记原文修正袭击口径、删除无出处别名；`stone-lotus-island-contest.md` 把推论移出事实性位置。
+- Batch 5 坚持主题簇：新增 `gu/persistence-gu.md`（坚持仙蛊）与 `characters/yuan-lian-xian-zun.md`（元莲仙尊）两页；来源边界为 `source:source/蛊真人-clean.txt` 加 F2a/F2b、G、A2b、B、H1 读书笔记，寓言母本与真实仙蛊分开记录。
+- Batch 5 接通：`themes/persistence.md` 两条待建立清零并改写待核对；`characters/index.md`、`gu/index.md` 收录新页；`events/reverse-flow-river.md`、`characters/fang-yuan.md` 补反向链接。
+- Batch 5 执行说明：worker（opencode）写完两页后因本机网络 TLS 中断，剩余接线与验收由协调方本地完成。

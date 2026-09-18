@@ -8,5 +8,6 @@
 - [龙公](dragon-duke.md)
 - [白凝冰](bai-ning-bing.md)
 - [黑楼兰](he-lou-lan.md)
+- [元莲仙尊](yuan-lian-xian-zun.md)
 
 未列出的人物不代表没有整理价值，只表示本批尚未建立页面。

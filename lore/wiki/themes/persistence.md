@@ -19,13 +19,13 @@ sources:
 
 - [方源](../characters/fang-yuan.md)：坚持自身道路和永生目标，但不断更换方法与身份。
 - 人祖：在“小人的坚持”寓言中提供主题起点，属于世界内典籍角色。
-- 元莲仙尊：坚持仙蛊的第一代主人，人物页待建立。
+- [元莲仙尊](../characters/yuan-lian-xian-zun.md)：坚持仙蛊的第一代主人。
 
 ## 相关事件
 
 - [逆流河](../events/reverse-flow-river.md)：把坚持转化为持续前行、损耗和规则考验。
 - [宿命大战](../events/fate-war.md)：坚持与终局、失败和后继者相关。
-- 坚持仙蛊：关键蛊虫入口，独立蛊虫页待建立。
+- [坚持仙蛊](../gu/persistence-gu.md)：坚持主题在蛊虫层面的落点，与《人祖传》「小人的坚持」寓言同源。
 
 ## 主题冲突
 
@@ -55,8 +55,8 @@ sources:
 
 ## 待核对
 
-- 坚持仙蛊的完整品阶、炼化条件、历代主人和全部能力尚未建立独立蛊虫页面。
+- 坚持仙蛊独立页已建立；炼化条件、除元莲仙尊与方源之外的持有者，以及全部能力清单仍需逐章回原文。
 - “坚持”与人道、宙道、宿命、永生之间的关系目前是主题归纳，需要逐条补充原文位置。
 - 方源在逆流河前后的心理变化、前世回忆和后续杀招演化还可以继续细化。
 
-关联页面：[人祖传](ren-zu-zhuan.md)、[宿命](fate.md)、[自由](freedom.md)、[方源](../characters/fang-yuan.md)、[逆流河](../events/reverse-flow-river.md)。
+关联页面：[人祖传](ren-zu-zhuan.md)、[宿命](fate.md)、[自由](freedom.md)、[方源](../characters/fang-yuan.md)、[逆流河](../events/reverse-flow-river.md)、[元莲仙尊](../characters/yuan-lian-xian-zun.md)、[坚持仙蛊](../gu/persistence-gu.md)。

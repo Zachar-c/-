@@ -14,7 +14,7 @@ sources:
 - 逆流河被整理为三大死关之一，是高阶剧情中重要的环境型考验。
 - 河中通常不能使用蛊虫，只有九转道痕碎片等特殊例外被资料单独记录；行动者必须依靠肉身、意志和持续行动渡河。
 - 河水无尽且向上游动，外力攻击河水会反向作用于攻击者，损耗也可能以反向方式体现。
-- 方源通过炼化坚持仙蛊成为逆流河之主；整理资料记录他是继前任河主之后的第二位河主。
+- 方源通过炼化[坚持仙蛊](../gu/persistence-gu.md)成为逆流河之主；整理资料记录先前任河主是[元莲仙尊](../characters/yuan-lian-xian-zun.md)，方源为第二位河主。对应笔记锚点：F2a 的 239600–239630、239614–239630、237890–237896。
 
 ## 分析与解读
 
@@ -25,4 +25,4 @@ sources:
 
 - 逆流河的完整规则、前任河主、各方渡河顺序和坚持仙蛊的炼化细节需要继续逐章核对。
 
-关联页面：[方源](../characters/fang-yuan.md)、[黑楼兰](../characters/he-lou-lan.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。
+关联页面：[方源](../characters/fang-yuan.md)、[黑楼兰](../characters/he-lou-lan.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[坚持仙蛊](../gu/persistence-gu.md)、[元莲仙尊](../characters/yuan-lian-xian-zun.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。

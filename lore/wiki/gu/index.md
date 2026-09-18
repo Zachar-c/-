@@ -6,5 +6,6 @@
 - [月光蛊](moonlight-gu.md)
 - [春秋蝉](spring-autumn-cicada.md)
 - [宿命蛊](fate-gu.md)
+- [坚持仙蛊](persistence-gu.md)
 
 未整理的蛊虫仍需回查原文，不根据名称或游戏数据补全能力。
