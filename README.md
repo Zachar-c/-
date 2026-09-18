@@ -1,23 +1,30 @@
 # 问真·《蛊真人》项目 Monorepo
 
-这个仓库统一管理《蛊真人》相关的游戏开发、资料整理与 AI 协作资产。
+这个仓库统一管理《蛊真人》相关的游戏开发、资料整理与 AI 协作资产。AI 先读 `AGENTS.md`，再读 `PROJECT_MAP.md`，再进入一个目标目录。
 
-## 目录
+## 目标目录
 
-- [`gu-zhenren-editor/`](gu-zhenren-editor/)：游戏、编辑器、Web 原型、工具与当前开发资料。
-- [`gu-zu/`](gu-zu/)：读书笔记、设定整理和研究资料。
-- [`wenzhen-lore/`](wenzhen-lore/)：面向 AI 使用的 Markdown 蒸馏 Wiki。
-- [`docs/`](docs/)：项目计划与审阅文档。
+- [`lore/research/`](lore/research/)：研究、读书资料、设定和设计原始材料（待 Task 5 从 `gu-zu` 导入完整资料包）。
+- [`lore/wiki/`](lore/wiki/)：面向 AI 使用的冻结 Markdown Wiki（待 Task 5 从 `wenzhen-lore` 扁平迁移）。
+- [`editorial/`](editorial/)：GitHub `gu-zhenren-editor` 项目（待 Task 6 导入）。
+- [`game/`](game/)：Gitee Godot 游戏工程（待 Task 7 最后导入）。
+- [`fortune/app/`](fortune/app/)、[`fortune/server/`](fortune/server/)：`fortune-app` 与 `fortune-server` 项目（待 Task 6 导入）。
+- [`ai-system/`](ai-system/)：`my-ai-production-system` 项目（待 Task 6 导入）。
+- [`docs/`](docs/)：项目计划、设计说明与债务清单（`docs/debt.md`）。
+- [`archive/`](archive/)：历史资料保留位置，不作为当前入口。
+
+迁移完成前，旧快照仍在 `gu-zu/`、`wenzhen-lore/`、`gu-zhenren-editor/`，不要手动拆散；各目录的当前入口与可修改范围见 `PROJECT_MAP.md`，来源登记见 `MIGRATION.md`。
 
 ## 资料边界
 
-本仓库不提交《蛊真人》原文或《人祖传》全文。原始资料仍保留在本地，用于必要时回查；Wiki 页面只记录整理后的知识、分析和来源定位。
+本仓库不提交《蛊真人》原文或《人祖传》全文。完整原文只在本地 `source/`（被根 `.gitignore` 的 `/source/` 规则排除，不进入 Git 树，不推送），用于必要时回查；Wiki 页面只记录整理后的知识、分析和来源定位。
 
 以下内容也不进入版本库：子项目历史 Git 元数据、Git worktree、缓存、临时日志和本地测试输出。子项目原有 Git 元数据已保存在各自的 `.git-nested-backup/` 目录中，并由根目录规则忽略，便于需要时恢复。
 
-## 迁移基线
+## 迁移状态
 
-迁移前已抓取可访问的远程：编辑器项目来自 Gitee `chen-dong-s/gu-zhenrens-pigeon-meat`，资料项目来自 GitHub `Zachar-c/gu-zu`，父仓库来自 GitHub `Zachar-c/-`。资料项目中名为 `gitee` 的远程实际指向编辑器项目，因此不作为第三个资料仓库重复导入。
+- 执行计划：`docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`；旧的 `docs/superpowers/plans/2026-09-18-wenzhen-monorepo-migration.md` 已被取代，仅作历史参考。
+- 当前阶段：Task 2 已建立根导航、迁移记录和公开边界；各产品目录按计划后续导入。
 
 ## 协作原则
 

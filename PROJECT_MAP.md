@@ -1,0 +1,87 @@
+# PROJECT_MAP.md
+
+> 根导航：先读本文件，再进入一个目标目录的首读文件。迁移执行计划见 `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`，来源登记见 `MIGRATION.md`，已知债务见 `docs/debt.md`。
+
+## 导航约定
+
+- 入口顺序：`AGENTS.md` → `PROJECT_MAP.md` → 目标目录 `README.md` / `AGENTS.md`。
+- 一次只进一个目录；没有理由不扫描全仓。
+- 当前快照仍在旧根目录（`gu-zu/`、`wenzhen-lore/`、`gu-zhenren-editor/`），迁移完成前不手动拆散；新目标目录按计划逐步建立。
+
+## 目标目录
+
+### `lore/research/`（待 Task 5 导入）
+
+- 用途：`gu-zu` 研究、读书资料、设定和设计原始材料的完整资料包；首次迁移不拆分内部研究/设定/游戏设计边界。
+- 首读文件：`lore/research/README.md`（导入后）。
+- 当前入口：`gu-zu/`（旧快照，只读，迁移前不改散）。
+- 权威来源：`https://github.com/Zachar-c/gu-zu.git`（`master`）。
+- 可修改范围：仅目录导入、来源路径登记、债务登记；不改写研究语义。
+
+### `lore/wiki/`（待 Task 5 迁移）
+
+- 用途：冻结的 AI 可读 Wiki（现 `wenzhen-lore`），迁移后为只读知识。
+- 首读文件：`lore/wiki/README.md`、`lore/wiki/index.md`、`lore/wiki/AGENTS.md`（迁移后）。
+- 当前入口：`wenzhen-lore/`（旧快照，只读）。
+- 权威来源：父仓库 `5f3fbfc` 快照；后续以 `lore/wiki/` 为准。
+- 可修改范围：只允许目录移动、文件重命名、相对链接更新、来源路径更新；禁止补写事实、改写分析、调整主题结论、扩充知识范围。
+
+### `editorial/`（待 Task 6 导入）
+
+- 用途：GitHub `gu-zhenren-editor` 项目（编辑器/Web 原型/工具）。
+- 首读文件：`editorial/README.md`（导入后）。
+- 当前入口：`gu-zhenren-editor/` 是当前 Gitee 游戏工程快照，不要与 GitHub 同名项目混淆；`editorial/` 建立前不挪动它。
+- 权威来源：`https://github.com/Zachar-c/gu-zhenren-editor.git`（`main`）。
+- 可修改范围：仅目录导入与导航更新；不改产品逻辑。
+
+### `game/`（待 Task 7 导入）
+
+- 用途：当前 Gitee Godot 游戏工程（最后迁移，保留工程结构、UID、资源路径和测试入口）。
+- 首读文件：`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`（导入后）。
+- 当前入口：`gu-zhenren-editor/`（旧快照，当前游戏位置；`game/` 建立前不挪动它）。
+- 权威来源：`https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git`（`master`）。
+- 可修改范围：仅目录导入、旧根路径配置/文档的机械引用更新、忽略规则；不改 Godot 逻辑、数据数值与契约内容。
+- 约束说明：当前生效约束以 `game/world-model/governance/CONSTRAINTS-V2.md` 为准；`game/docs/contracts/2026-09-12-agent-ownership-contract.md` 已被该约束明确降级为历史档案，不作为执行契约。
+
+### `fortune/app/`（待 Task 6 导入）
+
+- 用途：GitHub `fortune-app` 项目。
+- 首读文件：`fortune/app/README.md`（导入后）。
+- 当前入口：`C:/Users/Zachary/DevEnv/06_个人项目/fortune-app/fortune-app/`（本地来源，只读；不复制外层包装目录）。
+- 权威来源：`https://github.com/Zachar-c/fortune-app.git`（`master`）。
+- 可修改范围：仅目录导入与导航更新；不改产品逻辑。
+
+### `fortune/server/`（待 Task 6 导入）
+
+- 用途：GitHub `fortune-server` 项目。
+- 首读文件：`fortune/server/README.md`（导入后）。
+- 当前入口：`C:/Users/Zachary/DevEnv/06_个人项目/fortune-server/`（本地来源，只读）。
+- 权威来源：`https://github.com/Zachar-c/fortune-server.git`（`main`）。
+- 可修改范围：仅目录导入与导航更新；不改产品逻辑。
+
+### `ai-system/`（待 Task 6 导入）
+
+- 用途：GitHub `my-ai-production-system` 项目。
+- 首读文件：`ai-system/PRD.md`（导入后，按计划为首读入口之一）。
+- 当前入口：`C:/Users/Zachary/DevEnv/06_个人项目/MyAIProductionSystem/`（本地来源，只读）。
+- 权威来源：`https://github.com/Zachar-c/my-ai-production-system.git`（`main`）。
+- 可修改范围：仅目录导入与导航更新；不改产品逻辑。
+
+### `docs/`
+
+- 用途：项目计划、设计说明与债务清单。
+- 首读文件：`docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`（执行计划）、`docs/superpowers/specs/2026-09-18-gu-zhenren-monorepo-migration-design.md`（设计）、`docs/debt.md`（债务）。
+- 权威来源：本仓库。
+- 可修改范围：迁移记录、债务登记、验收记录；不写新业务规格。
+
+### `archive/`
+
+- 用途：历史资料保留位置，不得作为当前入口。
+- 首读文件：`archive/README.md`。
+- 权威来源：本仓库。
+- 可修改范围：仅保留规则说明；不新增有效入口。
+
+## 本地-only 位置（不进入 Git）
+
+- `source/`：本地共享原始资料位置，被根 `.gitignore` 的 `/source/` 规则排除；完整原文只保留在这里。
+- `**/.git-nested-backup/`、`**/.worktrees/`：本地恢复材料，被根规则排除，不进入 Monorepo。

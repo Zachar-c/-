@@ -1,5 +1,7 @@
 # 问真 Monorepo Migration Implementation Plan
 
+> **历史说明（2026-09-18，Task 2）：本计划已被 `2026-09-18-gu-zhenren-monorepo-migration.md` 取代，仅作历史参考（`docs/debt.md` 登记为 ARCHIVE）。其中“保留旧根目录结构”的方案不再执行；后续迁移按新计划的目标树（`lore/research/`、`lore/wiki/`、`editorial/`、`game/`、`fortune/`、`ai-system/`）进行。本文件内容不再修改。**
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (\`- [ ]\`) syntax for tracking.
 
 **Goal:** 将当前《蛊真人》项目代码、设定、读书笔记和 Wiki 纳入同一个父 Git 仓库，同时排除原著全文、嵌套 Git 历史、工作树和本地临时产物。

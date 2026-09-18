@@ -1,3 +1,6 @@
+# Local-only source bundle; never stage or push it.
+/source/
+
 # Preserved nested repository metadata; the parent repository is authoritative.
 **/.git-nested-backup/
 
