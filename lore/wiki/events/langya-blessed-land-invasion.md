@@ -12,7 +12,7 @@ sources:
 
 ## 核心定义
 
-天庭入侵琅琊福地是天庭为方源、智慧蛊和宿命蛊修复目标投入多名八转战力的行动。两轮各有一次记录，Run 1 的天庭入侵被 G 笔记标为「第二次」，Run 2 的守卫战是方源翻盘节点；本页并列记录两轮，防止把战果错配。H1 笔记把 Run 2 这一战记为「琅琊福地守卫战」。对应笔记锚点：H1 的 5、325136–326111。
+天庭入侵琅琊福地是天庭为方源、[智慧蛊](../gu/wisdom-gu.md)和宿命蛊修复目标投入多名八转战力的行动。两轮各有一次记录，Run 1 的天庭入侵被 G 笔记标为「第二次」，Run 2 的守卫战是方源翻盘节点；本页并列记录两轮，防止把战果错配。H1 笔记把 Run 2 这一战记为「琅琊福地守卫战」。对应笔记锚点：H1 的 5、325136–326111。
 
 ## 时间线边界
 
@@ -85,4 +85,4 @@ sources:
 - 智慧蛊在 Run 1 被方源带走与 Run 2 被方源以七彩漩涡诓走（H1 的 323792–323977）之间的关系与先后，需回原文核验后另行建档。
 - 天庭投入的完整八转名单、星投的完整机制、阎帝／鬼不觉阻断推算的原理需回原文确认。
 
-关联页面：[宿命大战](fate-war.md)、[中洲炼蛊大会](central-plain-refinement-conference.md)、[石莲岛与红莲真传争夺](stone-lotus-island-contest.md)、[天庭](../world/heavenly-court.md)、[红莲魔尊](../characters/red-lotus.md)、[方源](../characters/fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)。
+关联页面：[宿命大战](fate-war.md)、[中洲炼蛊大会](central-plain-refinement-conference.md)、[石莲岛与红莲真传争夺](stone-lotus-island-contest.md)、[天庭](../world/heavenly-court.md)、[红莲魔尊](../characters/red-lotus.md)、[方源](../characters/fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[智慧蛊](../gu/wisdom-gu.md)。

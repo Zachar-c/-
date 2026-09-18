@@ -119,4 +119,4 @@ sources:
 - 38 节摘要需要逐节补充原文行号，并将“原文情节”“现有索引”“读者分析”分栏保存。
 - 与方源、宿命大战、自由和坚持相关的互文需要建立反向链接后再作为 AI 稳定回答依据。
 
-关联页面：[宿命](fate.md)、[自由](freedom.md)、[坚持](persistence.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[修炼体系](../world/cultivation-system.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[逆流河](../events/reverse-flow-river.md)。
+关联页面：[宿命](fate.md)、[自由](freedom.md)、[坚持](persistence.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[修炼体系](../world/cultivation-system.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[逆流河](../events/reverse-flow-river.md)、[智慧蛊](../gu/wisdom-gu.md)。

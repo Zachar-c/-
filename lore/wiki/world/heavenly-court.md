@@ -40,7 +40,7 @@ sources:
 - 元始仙尊建立门派与天庭：组织制度的起点，当前以 H1 笔记为主要入口。
 - [中洲炼蛊大会](../events/central-plain-refinement-conference.md)：天庭借助炼道和成功道痕推进宿命蛊修复的关键事件。
 - [石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)：天庭试图截取红莲遗产，方源借此反制天庭的时间线节点。
-- [天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)：天庭为方源、智慧蛊和宿命蛊修复目标投入多名八转战力的行动。
+- [天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)：天庭为方源、[智慧蛊](../gu/wisdom-gu.md)和宿命蛊修复目标投入多名八转战力的行动。
 
 ## 主题冲突
 
@@ -71,4 +71,4 @@ sources:
 - 「天庭」页《主要人物》尚未收录元莲仙尊：依据在 `characters/yuan-lian-xian-zun.md`（F2a 的 230294–230296 记入主天庭者只有元始、星宿、元莲），需后续批次核原文后再决定是否补入本节。
 - 元始仙尊、紫薇仙子、袁琼都、正元老人等天庭核心成员暂无独立页面，登记为后续节点候选。
 
-关联页面：[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[方源](../characters/fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[人祖传](../themes/ren-zu-zhuan.md)、[修炼体系](cultivation-system.md)。
+关联页面：[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[方源](../characters/fang-yuan.md)、[宿命蛊](../gu/fate-gu.md)、[智慧蛊](../gu/wisdom-gu.md)、[宿命大战](../events/fate-war.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[人祖传](../themes/ren-zu-zhuan.md)、[修炼体系](cultivation-system.md)。
