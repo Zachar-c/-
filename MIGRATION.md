@@ -60,6 +60,27 @@ memory:gu-zu/...              -> memory:lore/research/...
 - 远程历史：工作树内无嵌套 `.git`、无 gitlink；`.git-nested-backup/`（`gu-zu/`、`gu-zhenren-editor/` 下）为本地恢复材料，已被根规则忽略。`gu-zu` 备份配置含 `gitee` 远程指向 Gitee 游戏 URL——导入时只从 `gu-zu` 镜像单源导入，不另作第三个仓库处理（债务见 `docs/debt.md`）。
 - 过滤路径（Task 4 用）：`*蛊真人-clean.txt`、`*《人祖传》.txt`（`--invert-paths`）。
 
+## Task 4 Filtered Mirrors（`0ee9a59` 上执行，未导入仓库、未改工作树结构）
+
+- 任务专用虚拟环境：`C:/Users/Zachary/AppData/Local/Temp/gu-zhenren-monorepo-migration-20260918/venv/`（新建；`py -3 -m venv` 创建，`pip install git-filter-repo` 安装 `git-filter-repo 2.47.0`，`git_filter_repo --version` → `a40bce548d2c`；不修改系统 Python）。
+- 镜像根目录：`C:/Users/Zachary/AppData/Local/Temp/gu-zhenren-monorepo-migration-20260918/mirrors/`（新建；六个 `--mirror` 克隆，不在父仓库下生成 `.git` 或 worktree）。
+- 执行前复核远程基线：六条 `git ls-remote <url> refs/heads/<ref>` 实测 SHA 与本文件 Baseline 小节完全一致，无漂移；各镜像 `refs/heads/<ref>` tip 与基线逐一比对一致（`gu-zu/master=84b8ce8…f2e1f`、`editorial/main=dbf6615…09723`、`fortune-app/master=a039639…10583`、`fortune-server/main=6a5eed2…7a850`、`ai-system/main=fbe67e2…56f9`、`game/master=c982fe9…d8243`）。
+- 过滤前审计（`git -c core.quotePath=false --git-dir=<mirror> log --all --name-only --format=` 去重后全文检索；注：默认 `core.quotePath=true` 会把中文路径输出为八进制转义，直接 grep UTF-8 会漏检，已改用 `quotePath=false` 复核）：
+  - `gu-zu.git`：`分支：六卷精编版/蛊真人-clean.txt`、`分支：六卷精编版/《人祖传》.txt`、`豆包/蛊真人-clean.txt`、`豆包/《人祖传》.txt`（4 条完整原文路径，需过滤）；`分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md`、`旧稿归档_不采用/重写稿/记忆库/04-人祖传-隐喻索引.md`（研究派生索引，非完整原文，保留）。
+  - `editorial.git`：`蛊真人-clean.txt`（仓库根，1 条，需过滤）；`scripts/clean_full_source.py`、`working/source-clean-candidates.tsv` 为处理脚本与候选清单，非完整原文，保留。
+  - `fortune-app.git` / `fortune-server.git` / `ai-system.git`：无 `蛊真人-clean` / `人祖传` 相关路径。
+  - `game.git`：`分支：六卷精编版/蛊真人-clean.txt`、`分支：六卷精编版/《人祖传》.txt`（2 条，需过滤）；`分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md`（派生索引，保留）；`docs/superpowers/{plans,reports,specs}/2026-08-2*-novel-to-game-*.md` 为 novel-to-game 设计文档，非完整原文，保留。
+  - 无无法判定是否为完整原文的文件，无新增 REVIEW。
+- 过滤命令（六个镜像逐一执行，同一组参数，未使用 `--to-subdirectory-filter`，目标前缀由后续 `git subtree add --prefix` 提供）：
+  - `<venv>/Scripts/python.exe -m git_filter_repo --force --path-glob '*蛊真人-clean.txt' --path-glob '*《人祖传》.txt' --invert-paths`
+  - 解析提交数：`gu-zu` 9、`editorial` 85、`fortune-app` 21、`fortune-server` 1、`ai-system` 1、`game` 749；全部 `exit=0`。
+- 过滤后验证（计划 Step 4 原命令的 bash 直译，精确模式 `grep -F -e '蛊真人-clean' -e '《人祖传'`，该模式天然不命中无书名号的派生索引文件名）：
+  - 六个镜像 `git log --all --name-only --format=` 检索均无输出（PASS）。
+  - 加检 `git rev-list --objects --all | grep -E '蛊真人-clean\.txt|《人祖传》\.txt'` 六个镜像均无输出（PASS）。
+  - 派生索引与工具文件保留抽查通过（`gu-zu` 2 条索引、`game` 1 条索引、`editorial` 2 个工具文件仍存在于历史路径清单）。
+  - 分支完整性：镜像保留全部远端分支（含 `game` 的 `chore-w11-resolver-split`、`chore/w11-resolver-split`、`master-clean`、`push-master`，`--all` 已覆盖）；过滤后提交计数 `gu-zu=8`（解析 9，1 个提交因仅触及被过滤文件而被清除）、`editorial=85`、`fortune-app=21`、`fortune-server=1`、`ai-system=1`、`game=749`。
+- 与计划的偏差：计划 Step 1 预期“安装失败时转入快照导入”，实际安装一次成功，无需替代方案；计划 powershell 代码块均直译为 bash 执行（`py -3 -m venv`、`pip`、`git clone --mirror`、`git log`、`grep`），语义一致；用户指令明确本 Task 不创建 `source/` 副本，未创建。
+
 ## Verification Log
 
 - Task 2（本提交）：根边界验证，命令见计划 Task 2 Step 5：
@@ -75,3 +96,9 @@ memory:gu-zu/...              -> memory:lore/research/...
   - `find gu-zhenren-editor gu-zu -type f ( -name '*蛊真人-clean*' -o -name '*人祖传*' )` → 11 条候选；`git ls-files | grep -E '蛊真人-clean|人祖传'` → 无输出（Git 树无原文）；`git check-ignore -v` 确认两处正文被忽略。
   - `sha256sum` 六份正文：游戏侧与 `.worktrees/` 副本 SHA 互异（REVIEW），`.worktrees/` 内两对同名副本各自同 SHA。
   - `git diff --check`（本次文档修改无行尾空白，提交前复核）。
+- Task 4（过滤镜像；bash 直译执行，详见本文件 Task 4 Filtered Mirrors 小节）：
+  - Step 1：`py -3 -m venv` 新建任务专用 venv，`pip install git-filter-repo`（2.47.0）一次成功。
+  - Step 2：六个 `git clone --mirror` 成功；执行前 `git ls-remote` 六基线无漂移，镜像分支 tip 与基线逐一一致。
+  - Step 3：`quotePath=false` 下审计出 7 条完整原文历史路径（`gu-zu` 4、`editorial` 1、`game` 2），同一组 `--invert-paths` 过滤全部 `exit=0`；派生索引与工具文件保留，无 REVIEW。
+  - Step 4：精确模式 `log --all --name-only` 六镜像均无输出，`rev-list --objects --all` 加检均无输出。
+  - Step 5：`git diff --check` 通过，`git status --short` 仅 `MIGRATION.md` 一处修改，随后独立提交。
