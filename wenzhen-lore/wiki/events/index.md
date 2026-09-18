@@ -1,0 +1,10 @@
+# 事件与舞台
+
+事件页以参与者、局势、转折、代价和后续影响为主，完整时间线以后再补。
+
+- [青茅山](qing-mao-mountain.md)
+- [三王福地](three-kings-mountain.md)
+- [逆流河](reverse-flow-river.md)
+- [宿命大战](fate-war.md)
+
+事件页是剧情导航，不替代原文，也不把游戏节点当作原著事件。
