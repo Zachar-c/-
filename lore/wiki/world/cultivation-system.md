@@ -22,7 +22,7 @@ sources:
 - 修炼体系至少同时包含“转数—小境界—真元颜色—身份层次”几条轴线。
 - 查询人物实力时，应同时注明转数和小境界；只写“很强”或“高阶”容易丢失上下文。
 
-相关页面：[资质与空窍](aptitude-and-aperture.md)、[真元](primeval-essence.md)、[蛊的饲养与炼化](gu-care-and-refinement.md)。
+相关页面：[资质与空窍](aptitude-and-aperture.md)、[真元](primeval-essence.md)、[蛊的饲养与炼化](gu-care-and-refinement.md)、[方源](../characters/fang-yuan.md)。
 
 ## 待核对
 

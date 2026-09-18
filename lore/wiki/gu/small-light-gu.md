@@ -25,4 +25,4 @@ sources:
 
 - 品阶、饲料、消耗、持续时间和全部适配蛊虫尚未建立完整条目。
 
-关联页面：[月光蛊](moonlight-gu.md)、[蛊的饲养与炼化](../world/gu-care-and-refinement.md)、[真元](../world/primeval-essence.md)。
+关联页面：[月光蛊](moonlight-gu.md)、[蛊的饲养与炼化](../world/gu-care-and-refinement.md)、[真元](../world/primeval-essence.md)、[方源](../characters/fang-yuan.md)。

@@ -38,3 +38,5 @@
 - Batch 5 坚持主题簇：新增 `gu/persistence-gu.md`（坚持仙蛊）与 `characters/yuan-lian-xian-zun.md`（元莲仙尊）两页；来源边界为 `source:source/蛊真人-clean.txt` 加 F2a/F2b、G、A2b、B、H1 读书笔记，寓言母本与真实仙蛊分开记录。
 - Batch 5 接通：`themes/persistence.md` 两条待建立清零并改写待核对；`characters/index.md`、`gu/index.md` 收录新页；`events/reverse-flow-river.md`、`characters/fang-yuan.md` 补反向链接。
 - Batch 5 执行说明：worker（opencode）写完两页后因本机网络 TLS 中断，剩余接线与验收由协调方本地完成。
+- Batch 6 关系补全（方源）：`characters/fang-yuan.md` 新增「关系网络」导航区块（出身与早期舞台/关键人物/关键蛊虫/关键事件/主题与终局）；补齐 5 处回链（龙公、小光蛊、修炼体系、养蛊与炼蛊、真元）；未新建页面，未引入新事实。
+- Batch 6 候选节点：`黑楼兰` 暂未写入方源「关键人物」——方源本页无黑楼兰记载，已链接页（三王山、逆流河）正文亦无两人具体关系表述，仅导航行并列；`he-lou-lan.md` 单方面合作表述的时间线仍在该页「待核对」中，后续批次确认双向依据后再接线。

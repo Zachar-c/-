@@ -47,6 +47,48 @@ sources:
 - 逆流河、宿命大战以及后期“魔尊”阶段需要单独建立原文锚点后再写入本页。
 - 目前只保留事件入口，不把后期称号、最终目标或剧情断点后的内容提前写成定论。
 
+## 关系网络
+
+本节只做导航与关系定位，不引入新事实；每条关系的依据见括号内的本页区块、笔记锚点或链接页。
+
+### 出身与早期舞台
+
+- [青茅山](../events/qing-mao-mountain.md)：重生起点（见本页《阶段索引·青茅山阶段》）
+- [三王山](../events/three-kings-mountain.md)：早期传承争夺（见本页《原著明确内容》）
+- [南疆与山寨](../world/south-jiang.md)：早期活动区域
+- [空窍与资质](../world/aptitude-and-aperture.md)：开窍与资质分级（对应笔记锚点：A2a 的 1156、1358、14458–14460）
+- [真元](../world/primeval-essence.md)：真元海规模（对应笔记锚点：A2a 的 1156、1358、14458–14460）
+- [修炼体系](../world/cultivation-system.md)：修为与转阶框架
+
+### 关键人物
+
+- [白凝冰](../characters/bai-ning-bing.md)：南疆合作线（见本页《阶段索引·南疆外出早期》）
+- [红莲魔尊](../characters/red-lotus.md)：红莲真传的取得者与遗产继承关系
+- [龙公](../characters/dragon-duke.md)：后期宿命冲突中的对手
+- [星宿仙尊](../characters/star-constellation.md)：天庭智道与合道一方
+- [元莲仙尊](../characters/yuan-lian-xian-zun.md)：坚持仙蛊的前任持有者
+
+### 关键蛊虫
+
+- [春秋蝉](../gu/spring-autumn-cicada.md)：重生机制的关键蛊虫（见本页《原著明确内容》）
+- [宿命蛊](../gu/fate-gu.md)：后期冲突的核心对象
+- [坚持仙蛊](../gu/persistence-gu.md)：逆流河炼成，方源为第二代主人
+- [小光蛊](../gu/small-light-gu.md)、[月光蛊](../gu/moonlight-gu.md)：早期蛊虫
+- [养蛊与炼蛊](../world/gu-care-and-refinement.md)：炼蛊与合炼规则
+
+### 关键事件
+
+- [逆流河](../events/reverse-flow-river.md)：坚持主题的事件落点
+- [宿命大战](../events/fate-war.md)：后期终局冲突
+- [中洲炼蛊大会](../events/central-plain-refinement-conference.md)
+- [石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)
+- [天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)
+
+### 主题与终局
+
+- [宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[人祖传](../themes/ren-zu-zhuan.md)
+- 永生：方源路线的终局目标，**暂无独立页面**（本页「待核对」已登记）
+
 ## 分析与解读
 
 - 方源的核心行动逻辑可以暂时归纳为四点：信息优先、资源优先、多手准备、收益与代价同时计算。这是对剧情证据的归纳，不是原著中的单句定义。
@@ -68,5 +110,6 @@ sources:
 - 27 步、丙等和四成四的数值已经按现有笔记修正，但仍应回到 clean 原文对应位置做一次最终核验。
 - “魔尊阶段”“永生阶段”和宿命大战后的状态不能只依据角色台账补全，需要建立对应的原文和章节来源。
 - 本页的行为模式、叙事意义和人物阶段归纳属于分析层；不得直接当作游戏数值、技能设计或原著明文。
+- 「关系网络」是导航层，不构成新的事实主张；其中「永生」等暂无独立页面的节点，需在后续批次确认是否建页或并入既有主题页。
 
 关联页面：[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命蛊](../gu/fate-gu.md)、[坚持仙蛊](../gu/persistence-gu.md)、[元莲仙尊](yuan-lian-xian-zun.md)、[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[天庭](../world/heavenly-court.md)、[宿命大战](../events/fate-war.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)、[石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)、[天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)、[青茅山](../events/qing-mao-mountain.md)、[三王山](../events/three-kings-mountain.md)、[逆流河](../events/reverse-flow-river.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。

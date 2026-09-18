@@ -21,7 +21,7 @@ sources:
 - 真元是把“蛊的能力”转化为“当下行动”的资源约束，因此同一只蛊在不同角色手中并不等于同样的持续作战能力。
 - 讨论战斗时，应区分“蛊的理论能力”“催动一次的消耗”和“角色当前剩余真元”。
 
-相关页面：[资质与空窍](aptitude-and-aperture.md)、[修炼体系](cultivation-system.md)、[月光蛊](../gu/moonlight-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)。
+相关页面：[资质与空窍](aptitude-and-aperture.md)、[修炼体系](cultivation-system.md)、[月光蛊](../gu/moonlight-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[方源](../characters/fang-yuan.md)。
 
 ## 待核对
 

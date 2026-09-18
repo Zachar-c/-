@@ -61,4 +61,4 @@ sources:
 - “爱情抗衡命运”的原文语境、龙人寂灭的机制边界和龙公寿元消耗需要回原文确认。
 - 角色台账要求“不写道德觉醒”属于创作约束，不应当当作原著事实；正文中的事实和分析仍需分别引用。
 
-关联页面：[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[天庭](../world/heavenly-court.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[宿命](../themes/fate.md)。
+关联页面：[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[天庭](../world/heavenly-court.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)、[宿命](../themes/fate.md)、[方源](fang-yuan.md)。
