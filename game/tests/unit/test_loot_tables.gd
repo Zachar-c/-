@@ -53,6 +53,50 @@ func test_same_seed_same_position_yields_identical_loot() -> void:
 	assert_eq_deep(one["loot"], two["loot"])
 
 
+func test_multi_enemy_common_only_resolves_common() -> void:
+	# Multi-enemy battles carry only battle["enemy_kinds"] (facade leaves
+	# battle["enemy_kind"] empty); all-common kinds must settle the common tier.
+	var multi := {"enemy_kind": "", "enemy_kinds": ["ridge_hound", "neutral_stone_wanderer"]}
+	var single := {"enemy_kind": "ridge_hound"}
+	var multi_rolled: Dictionary = LootResolverScript.settle_victory(multi, make_state(), catalog())
+	var single_rolled: Dictionary = LootResolverScript.settle_victory(single, make_state(), catalog())
+	assert_eq_deep(multi_rolled["loot"], single_rolled["loot"])
+	assert_false(multi_rolled.has("cost"), "common settlement binds no elite cost")
+
+
+func test_multi_enemy_common_plus_elite_resolves_elite() -> void:
+	# Any elite in enemy_kinds upgrades the settlement to the elite tier.
+	var multi := {"enemy_kind": "", "enemy_kinds": ["ridge_hound", "ridge_elite_scout"]}
+	var single := {"enemy_kind": "ridge_elite_scout"}
+	var multi_rolled: Dictionary = LootResolverScript.settle_victory(multi, make_state(), catalog())
+	var single_rolled: Dictionary = LootResolverScript.settle_victory(single, make_state(), catalog())
+	assert_eq_deep(multi_rolled["loot"], single_rolled["loot"])
+	assert_true(multi_rolled.has("cost"), "elite settlement must bind the seeded cost")
+
+
+func test_multi_enemy_boss_takes_precedence() -> void:
+	# Any boss in enemy_kinds wins over elite and common, regardless of order.
+	var single := {"enemy_kind": "miasma_vein_lord"}
+	var single_rolled: Dictionary = LootResolverScript.settle_victory(single, make_state(), catalog())
+	for kinds in [
+		["ridge_hound", "ridge_elite_scout", "miasma_vein_lord"],
+		["miasma_vein_lord", "ridge_hound"],
+		["ridge_elite_scout", "miasma_vein_lord"],
+	]:
+		var multi := {"enemy_kind": "", "enemy_kinds": kinds}
+		var multi_rolled: Dictionary = LootResolverScript.settle_victory(multi, make_state(), catalog())
+		assert_true(multi_rolled["loot"] == single_rolled["loot"],
+				"kinds %s must settle the boss tier" % str(kinds))
+		assert_false(multi_rolled.has("cost"), "boss settlement binds no elite cost")
+
+
+func test_multi_enemy_loot_is_deterministic() -> void:
+	var multi := {"enemy_kind": "", "enemy_kinds": ["ridge_hound", "ridge_elite_scout"]}
+	var one: Dictionary = LootResolverScript.settle_victory(multi, make_state(424242), catalog())
+	var two: Dictionary = LootResolverScript.settle_victory(multi, make_state(424242), catalog())
+	assert_eq_deep(one["loot"], two["loot"])
+
+
 func test_elite_loot_grants_material_and_may_be_gu() -> void:
 	var battle := {"enemy_kind": "ridge_elite_scout"}
 	var table: Dictionary = catalog().get("loot_tables", {}).get("loot", {}).get("elite", {})

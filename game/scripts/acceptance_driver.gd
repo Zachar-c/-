@@ -2786,8 +2786,8 @@ func _legal_f1_candidates(controller) -> Array[String]:
 
 
 ## The settlement tier is read from the actual loot event first. Fallback uses
-## the returned battle.enemy_kind, matching LootResolver's unknown/multi-enemy
-## common fallback rather than reading current_node.enemy_kind.
+## the returned battle metadata, matching LootResolver's single/multi-enemy
+## precedence rather than reading current_node.enemy_kind.
 func _actual_settlement_tier(controller, battle: Dictionary) -> String:
 	var node_id := str(controller.current_node.get("id", ""))
 	var events: Array = controller.state.event_log
@@ -2800,12 +2800,7 @@ func _actual_settlement_tier(controller, battle: Dictionary) -> String:
 		var targets: Array = event.get("targets", [])
 		if not targets.is_empty():
 			return str(targets[0])
-	var enemy_kind := str(battle.get("enemy_kind", ""))
-	for enemy_value in controller.catalog.get("enemies", []):
-		var enemy: Dictionary = enemy_value
-		if str(enemy.get("id", "")) == enemy_kind:
-			return str(enemy.get("tier", "common"))
-	return "common"
+	return _e6_resolved_tier(controller, battle)
 
 
 ## Record only hypothetical local measurements. A material-empty battle leaves
@@ -2859,8 +2854,8 @@ func _record_f1_opportunity_battle(controller, result: Dictionary) -> void:
 
 
 ## Reachability-5（inbox §14）：E6 loot-tier opportunity audit，opt-in 只读测量。
-## resolved tier 以正式结算同源为准：battle.enemy_kind 查 enemy_by_id，
-## 空/未知（多敌战斗）按 LootResolver 口径兜底 common。
+## resolved tier 以正式结算同源为准：单敌读取 enemy_kind，多敌按
+## boss > elite > common precedence。
 func _init_e6_tier_audit(controller) -> void:
 	_e6_enabled = OS.get_environment("PLAYTHROUGH_E6_TIER_AUDIT") == "1"
 	_e6_battle_number = 0
@@ -2879,6 +2874,17 @@ func _init_e6_tier_audit(controller) -> void:
 
 
 func _e6_resolved_tier(controller, battle: Dictionary) -> String:
+	var enemy_kinds_value: Variant = battle.get("enemy_kinds", [])
+	if enemy_kinds_value is Array and not (enemy_kinds_value as Array).is_empty():
+		var seen_elite := false
+		for kind_value in (enemy_kinds_value as Array):
+			var enemy: Dictionary = (controller.catalog.get("enemy_by_id", {}) as Dictionary).get(str(kind_value), {})
+			var tier := str(enemy.get("tier", "common"))
+			if tier == "boss":
+				return "boss"
+			if tier == "elite":
+				seen_elite = true
+		return "elite" if seen_elite else "common"
 	var enemy_kind := str(battle.get("enemy_kind", ""))
 	if not enemy_kind.is_empty():
 		var enemy: Dictionary = (controller.catalog.get("enemy_by_id", {}) as Dictionary).get(enemy_kind, {})
