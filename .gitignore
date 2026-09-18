@@ -26,6 +26,12 @@ docs/screenshots/
 *.png
 !assets/**/*.png
 !.agents/skills/**/*.png
+# 问真 Web 线：assets/ 是生图产物，重新生成要花积分，属唯一源，必须入库。
+# 同目录的 screenshots/ 是本地验证帧，可随 tools/drive.mjs 重跑重出，继续排除。
+!wenzhen-web/assets/**/*.png
+
+# 问真 Web 线：验证时的临时输出（PowerShell 不回显 stdout，一律写文件再读）
+wenzhen-web/tools/*.log
 __pycache__/
 
 /*.png
