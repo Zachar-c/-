@@ -13,6 +13,51 @@
 - 一次只进一个目录；不复制其他项目的完整规则。
 - 日常改动就地做：每个目标目录遵守自己的 `README.md` / `AGENTS.md`，跨目录只做数据、上下文与版本边界对接；新增或移动来源时同步更新 `PROJECT_MAP.md` 与 `docs/debt.md`。
 
+## 文档权威链（本仓库最高优先级，先于其余全部条目）
+
+低层不能推翻高层。冲突时一律以上位为准，并停止执行、报告 L2。
+
+```text
+1  PRD              docs/PRODUCT_REQUIREMENTS_v1.0.md
+2  AI 开发协议       docs/AI_DEVELOPMENT_PROTOCOL_v1.0.md
+                    docs/CHANGE_CONTROL_PROTOCOL_v1.0.md   （变更控制，与上条同级）
+3  阶段契约          game/world-model/governance/CONSTRAINTS-V2.md 等
+4  设计文档          docs/superpowers/specs/、game/docs/、技能/SKILL 文档
+5  实施计划          docs/superpowers/plans/、game/docs/superpowers/plans/、ai-system/tasks/
+6  代码
+```
+
+- **《问真》PRD 只有一份**：`docs/PRODUCT_REQUIREMENTS_v1.0.md`。
+  `ai-system/PRD.md` **不是**《问真》PRD——它是 `my-ai-production-system` 镜像项目的文档
+  （upstream 见 `PROJECT_MAP.md`），仅作历史参考，不得当产品权威读。
+- 本文件与各目录 `AGENTS.md`、`README.md` 属第 3–4 层的导航/契约文档，**不是**产品权威。
+- **第 3 层及以下不得用「取代此前全部约束」「凡冲突以本文件为准」这类表述凌驾 PRD 或协议。**
+  已存在此类表述的文件（`game/world-model/governance/CONSTRAINTS-V2.md`）已就地标注层级。
+
+## 变更控制（按 `docs/CHANGE_CONTROL_PROTOCOL_v1.0.md`）
+
+- **重大变更** = 核心体验变化 / 新增核心系统 / 阶段范围变化 / **技术路线变化（更换开发平台）**。
+  只有 **L0 批准**后，重大变更才能进入开发；在途任务不因新想法中断。
+- 新想法一律先进 Idea Pool，走 `IDEA → RESEARCHING → APPROVED → IMPLEMENTING → DONE`，
+  **禁止想法直接进入代码**。（Idea Pool 载体待 L0 定，见下条。）
+- 冲突时按优先级阶梯取舍：
+
+```text
+1 核心体验验证 > 2 产品问题修复 > 3 玩家体验提升 > 4 内容扩展 > 5 技术优化 > 6 装饰功能
+```
+
+## L2 的硬禁区（按 `docs/AI_DEVELOPMENT_PROTOCOL_v1.0.md` 第五节）
+
+L2（Codex）**禁止自行改变：核心玩法 / 产品方向 / 阶段目标**。
+
+这三项不是「可以上抛」的裁量，而是**必须上抛**的义务：
+
+| 问题性质 | 上抛对象 |
+| --- | --- |
+| 产品意图、重大取舍、载体/技术路线变更、阶段范围 | **L0（用户）** |
+| 数值与架构判定、多方向建模 | **L1（ChatGPT）** |
+| 仓库内可通过检查/实现/测试解决的问题 | L2 自行规划并派 Worker |
+
 ## 当前阶段
 
 - Monorepo 迁移已完成：`master` 即当前基线，执行记录见 `MIGRATION.md`，目标目录与来源映射见 `PROJECT_MAP.md`，已知债务见 `docs/debt.md`。
@@ -79,7 +124,7 @@ OpenCode + Muse Spark 1.3（默认执行器，可替换）
 | --- | --- | --- |
 | **V1** | **验收命令可能假绿：判定通过只看真实输出文本，不看退出码。** 任何"全绿/通过"的结论必须附可复核的输出片段。 | Godot 非 console 版二进制在 `--headless` 下**零输出且退出码 0**；`tools/test.ps1` 因拿不到文本而恒返回 1。两种表现都与真实结果无关。 |
 | **V2** | **Worker 结果包必须独立复核，且分三类分别验：① 代码改动 ② 数字 ③ 根因归因。** 三者可信度不同，不得因为一类对就信任全部。 | 某 Worker 报「5/9 FAIL」（实为 4 failing）；把 harness 故障归因于参数 splat（实为 `GODOT_PATH` 指向非 console 版）；但同包的 `219/1603/54061/0` 数字**完全正确**。 |
-| **V3** | **数值与架构判定一律上抛 L1；产品意图与重大取舍一律上抛 L0。L2 与 Worker 不得自定。** 不自行发明数值，也不替 L0 在两条都站得住的选项里挑一个。 | Effect 预算分配系数、开局气血基准，均属此类；本会话两次按此挂起而非代决。 |
+| **V3** | **数值与架构判定一律上抛 L1；产品意图与重大取舍一律上抛 L0。L2 与 Worker 不得自定。** 不自行发明数值，也不替 L0 在两条都站得住的选项里挑一个。**（2026-09-20 按 `docs/AI_DEVELOPMENT_PROTOCOL_v1.0.md` 校正口径：判定门槛不是"要不要上抛"，而是 L2 禁止自行改变核心玩法/产品方向/阶段目标；其中「技术路线变化（更换开发平台）」按变更控制协议属 L0，不属 L1。）** | Effect 预算分配系数、开局气血基准，均属此类；本会话两次按此挂起而非代决。载体系属 L0 一例，见 `docs/CHANGE_CONTROL_PROTOCOL_v1.0.md`。 |
 | **V4** | **给 L1 的 Research Request 必须自足**（L1 看不到仓库，证据、数值、引文全部内嵌，不给路径让他自己读）；**数值论断必须回到「应用点」确认作用对象**，不能只读键名。 | 「气血每回合 +2、上限 +6」事故：那是敌方 `turn_scaling`，读键名概括而没回到 `rules.py` 的应用点，错误陈述进了送审稿。 |
 | **V5** | **计划与实际不符时：停止、上报，并更正计划文件本身。** 计划里被证伪的指令要留痕作废，不能只是口头不做，否则下一个 Worker 会照旧执行。 | 计划写「清理残留测试蛊 `test_slay_gu`」，实际它是 S2 开局 Buff 的载体且有专门测试保护；已就地划掉并注明依据。 |
 | **V6** | **拆批判据：若「零数值漂移的安全批」在语义上不可能，直接说明必须等裁决，不要为了开工而假装能拆。** | P3 无法拆出零漂移结构批——预算驱动本身就改变曲线（现兜底 r5/r1≈3×，预算为 16×），故数值批必须等 L1，只开不依赖裁决的普查批。 |

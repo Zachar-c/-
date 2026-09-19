@@ -2,6 +2,15 @@
 
 本目录是个人开发环境的执行约定，不是 Agent 平台。
 
+## 命名消歧（2026-09-20）
+
+`ai-system/PRD.md` **不是《问真》的 PRD**。它是本目录镜像来源项目 `my-ai-production-system`
+的文档（`MyAIProductionSystem`，Vue3/FastAPI/Chroma），2026-09-18 已标注为历史设计记录。
+它属镜像上游内容，**不得改名**（改名会破坏 `PROJECT_MAP.md` 登记的镜像映射）。
+
+《问真》的产品权威只有 `docs/PRODUCT_REQUIREMENTS_v1.0.md`；层级与变更控制见根 `AGENTS.md`
+的「文档权威链」「变更控制」两节。本目录的 `WORKER_PROTOCOL.md` 是执行纪律，**不是**产品规格。
+
 ## 默认角色
 
 ```text

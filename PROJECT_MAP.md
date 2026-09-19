@@ -1,6 +1,9 @@
 # PROJECT_MAP.md
 
 > 根导航：先读本文件，再进入一个目标目录的首读文件。迁移执行计划见 `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`，来源登记见 `MIGRATION.md`，已知债务见 `docs/debt.md`。
+>
+> **本文件只是导航地图，不是产品权威。**《问真》产品权威链以根 `AGENTS.md` 的「文档权威链」一节为准：
+> `docs/PRODUCT_REQUIREMENTS_v1.0.md`（第 1 层）为最高。
 
 ## 导航约定
 
@@ -62,18 +65,26 @@
 
 ### `ai-system/`（Task 6 已导入）
 
-- 用途：GitHub `my-ai-production-system` 项目。
-- 首读文件：`ai-system/AGENTS.md`、`ai-system/README.md`、`ai-system/PRD.md`。
+- 用途：GitHub `my-ai-production-system` 项目 + 本仓库的 AI 执行环境约定（Worker 协议、模型链、任务包）。
+- 首读文件：`ai-system/AGENTS.md`、`ai-system/README.md`。
 - 当前入口：`ai-system/`（导入提交 `479145d`，1 文件）。
 - 权威来源：`https://github.com/Zachar-c/my-ai-production-system.git`（`main`，基线 `fbe67e2`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
+- **命名消歧（2026-09-20）**：`ai-system/PRD.md` 是上述镜像项目的文档（`MyAIProductionSystem`，Vue3/FastAPI/Chroma），
+  自 2026-09-18 起已标注为历史设计记录。**它不是《问真》的 PRD**，不得作为产品权威读；
+  《问真》PRD 见 `docs/PRODUCT_REQUIREMENTS_v1.0.md`。该文件属镜像上游内容，**不得改名**（改名会破坏镜像映射）。
 
 ### `docs/`
 
-- 用途：项目计划、设计说明与债务清单。
-- 首读文件：`docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`（执行计划）、`docs/superpowers/specs/2026-09-18-gu-zhenren-monorepo-migration-design.md`（设计）、`docs/debt.md`（债务）。
+- 用途：**《问真》权威协议层**、项目计划、设计说明与债务清单。
+- 首读文件：
+  - `docs/PRODUCT_REQUIREMENTS_v1.0.md`（**第 1 层 PRD，《问真》唯一产品权威**）
+  - `docs/AI_DEVELOPMENT_PROTOCOL_v1.0.md`（第 2 层：L0/L1/L2/Worker 职责与文档优先级）
+  - `docs/CHANGE_CONTROL_PROTOCOL_v1.0.md`（第 2 层：变更控制与优先级阶梯）
+  - `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`（执行计划）、`docs/superpowers/specs/2026-09-18-gu-zhenren-monorepo-migration-design.md`（设计）、`docs/debt.md`（债务）
 - 权威来源：本仓库。
-- 可修改范围：迁移记录、债务登记、验收记录；不写新业务规格。
+- 可修改范围：迁移记录、债务登记、验收记录；协议层只由 L0 修订。
+- 注意：`docs/` 与 `game/docs/` 同名但不同层——`game/docs/` 属 `game/` 内部文档，层级不高于本目录协议。
 
 ### `archive/`
 
