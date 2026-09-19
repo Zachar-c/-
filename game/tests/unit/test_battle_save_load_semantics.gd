@@ -94,7 +94,14 @@ func test_same_seed_and_command_sequence_replay_to_the_same_battle() -> void:
 			var command: Dictionary = (command_value as Dictionary).duplicate(true)
 			command["state_version"] = controller.state.event_log.size()
 			command["expected_phase"] = str(controller.current_battle.get("phase", "player_action"))
-			controller.submit_command(command)
+			var command_type := str(command.get("type", ""))
+			var turn_result: Dictionary = controller.submit_command(command)
+			assert_true(bool(turn_result.get("accepted", false)),
+					"attempt %d command %s must be accepted" % [attempt, command_type])
+			assert_ne(str(turn_result.get("result", "")), "rejected",
+					"attempt %d command %s must not be rejected" % [attempt, command_type])
+			assert_true(turn_result.has("battle") and turn_result.has("state"),
+					"attempt %d command %s must return battle/state" % [attempt, command_type])
 		if attempt == 0:
 			first_battle = JSON.stringify(controller.current_battle)
 			first_events = _battle_events(controller.state)

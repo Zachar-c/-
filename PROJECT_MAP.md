@@ -63,7 +63,7 @@
 ### `ai-system/`（Task 6 已导入）
 
 - 用途：GitHub `my-ai-production-system` 项目。
-- 首读文件：`ai-system/PRD.md`（该仓库当前只有这一个文件）。
+- 首读文件：`ai-system/AGENTS.md`、`ai-system/README.md`、`ai-system/PRD.md`。
 - 当前入口：`ai-system/`（导入提交 `479145d`，1 文件）。
 - 权威来源：`https://github.com/Zachar-c/my-ai-production-system.git`（`main`，基线 `fbe67e2`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。

@@ -7,6 +7,7 @@ const CurseRegistryScript = preload("res://scripts/domain/curse_registry.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
+const M0RewardResolverScript = preload("res://scripts/domain/m0_reward_resolver.gd")
 
 
 # R13.1 rare pity threshold: after this many consecutive common-producing
@@ -36,13 +37,25 @@ static func settle_victory(battle: Dictionary, state: RunState, catalog: Diction
 	var material_ids := _roll_materials(table, state, tier, pity_cfg, count_adjustment, catalog)
 	var gu_roll := _roll_gu(table, state, tier, pity_cfg, catalog.get("school_pools", {}), catalog.get("gu_by_id", {}))
 	var gu_id := str(gu_roll.get("gu_id", ""))
+	var gu_rarity := str(gu_roll.get("rarity", ""))
+	# M0 allowlist (2026-09-19): M0 is a 6-gu isolated slice. The generic
+	# victory loot can roll gu outside the slice (common table + school-pool
+	# fallback), so in M0 mode a non-allowlist gu is dropped to empty.
+	# Materials, stones, pity salts and random call order stay untouched, and
+	# non-M0 flows skip this branch entirely.
+	if not gu_id.is_empty() and _is_m0_mode(state) \
+			and not (M0RewardResolverScript.M0_GU_POOL as Array).has(gu_id):
+		gu_id = ""
+		gu_rarity = ""
 	var loot := {"material_ids": material_ids, "gu_id": gu_id}
 	# P2-a（R-3 校准）：pity 目标派系化——本派链路材料中该池声明且带段
 	# 在允许集内的条目；roll 与计数器推进必须用同一目标集。
 	var pity_targets := _material_pity_targets(tier, table, state, catalog)
 	var next := state
 	if not material_ids.is_empty() or not gu_id.is_empty():
-		var next_pity := _next_loot_pity(int(state.loot_pity), str(gu_roll.get("rarity", "")), pity_cfg)
+		# Filtered-out M0 gu carries rarity "" so the pity ladder neither
+		# clears (no gu reached the player) nor advances on a phantom drop.
+		var next_pity := _next_loot_pity(int(state.loot_pity), gu_rarity, pity_cfg)
 		var next_material_pity := (state.material_pity_by_tier as Dictionary).duplicate(true)
 		if not material_ids.is_empty():
 			next_material_pity = _next_material_pity(next_material_pity, tier, material_ids, pity_targets)
@@ -228,6 +241,13 @@ static func _resolve_battle_tier(battle: Dictionary, catalog: Dictionary) -> Str
 			return "elite"
 		return "common"
 	return _enemy_tier(str(battle.get("enemy_kind", "")), catalog)
+
+
+## M0 mode marker: the single persisted flag `node_flags.m0_mode`
+## (written by `RunController.start_m0_run`, restored via v4 saves).
+## No enemy-name / stage / layer guessing.
+static func _is_m0_mode(state: RunState) -> bool:
+	return bool((state.node_flags as Dictionary).get("m0_mode", false))
 
 
 static func _roll_materials(table: Dictionary, state: RunState, tier: String, pity_cfg: Dictionary = {}, count_adjustment: int = 0, catalog: Dictionary = {}) -> Array[String]:
