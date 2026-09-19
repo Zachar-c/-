@@ -71,12 +71,18 @@ static func wisdom_bonus(catalog: Dictionary) -> int:
 
 
 # §14.1 mortal body: health / strength / body_capacity project from the
-# human_base_* anchors; ascension (转数/资历) never grows any of them. The
-# cultivator argument is accepted for the future correction hooks and is
-# intentionally unused today.
+# HP Source-of-Truth pair (RUL-2026-09-19-008 D11: standard 100; opening value
+# is a separate explicit key read via GuBalance, never a bare literal here).
+# Ascension never grows any of them. The cultivator argument is accepted for
+# the future correction hooks and is intentionally unused today.
 static func body(_cultivator: Dictionary, cat: Dictionary) -> Dictionary:
 	return {
-		"health": _balance(cat, "human_base_health", 100.0),
+		"health": GuBalanceScript.standard_human_hp(cat),
 		"strength": _balance(cat, "human_base_strength", 100.0),
 		"body_capacity": _balance(cat, "human_base_body_capacity", 100.0),
 	}
+
+
+# Player opening HP: thin delegate, formula lives in GuBalance only.
+static func player_start_hp(cat: Dictionary) -> float:
+	return GuBalanceScript.player_start_hp(cat)

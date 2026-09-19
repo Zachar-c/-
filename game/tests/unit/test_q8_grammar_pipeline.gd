@@ -31,12 +31,12 @@ func test_condition_self_hp_below() -> void:
 	# self_hp_below threshold：hp / max_hp < threshold 才资格成立（B1 残血构筑）。
 	var cond := {"type": "self_hp_below", "threshold": 0.5}
 	var low := _battle()
-	low["player"]["hp"] = 30  # 30/80 = 0.375 < 0.5 -> 成立
-	assert_true(Pipeline.evaluate_condition(low, cond), "30/80 below half")
+	low["player"]["hp"] = 30  # 30/100 = 0.3 < 0.5 -> 成立
+	assert_true(Pipeline.evaluate_condition(low, cond), "30/100 below half")
 	assert_eq(Pipeline.gate_miss_reason({"kind": "strike", "amount": 4, "condition": cond}, low), "")
 	var high := _battle()
-	high["player"]["hp"] = 50  # 50/80 = 0.625 >= 0.5 -> 不成立
-	assert_false(Pipeline.evaluate_condition(high, cond), "50/80 not below half")
+	high["player"]["hp"] = 50  # 50/100 = 0.5, 恰卡刀锋值：< 0.5 为 false -> 不成立（有意保留边界覆盖）
+	assert_false(Pipeline.evaluate_condition(high, cond), "50/100 on the 0.5 edge, not below half")
 	assert_eq(Pipeline.gate_miss_reason({"kind": "strike", "amount": 4, "condition": cond}, high), "condition_miss")
 
 
@@ -162,7 +162,7 @@ func test_weaken_intent_reduces_next_damage_intent() -> void:
 	var played: Dictionary = V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["battle"]
 	assert_eq(int((played["enemies"][0] as Dictionary).get("intent_weaken", 0)), 2, "weaken applied per-target")
 	var ended: Dictionary = V1.end_turn(played)["battle"]
-	assert_eq(int(ended["player"]["hp"]), 79, "3 - 2 weaken = 1 damage")
+	assert_eq(int(ended["player"]["hp"]), 99, "3 - 2 weaken = 1 damage")
 	assert_eq(int((ended["enemies"][0] as Dictionary).get("intent_weaken", 0)), 0, "consumed -> cleared")
 	var reasons := []
 	for entry in (ended["log"] as Array):
@@ -184,7 +184,7 @@ func test_weaken_damage_floor_zero() -> void:
 	var battle: Dictionary = V1.start(run, catalog, [_attacker_enemy()])
 	var played: Dictionary = V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["battle"]
 	var ended: Dictionary = V1.end_turn(played)["battle"]
-	assert_eq(int(ended["player"]["hp"]), 80, "damage floored to 0")
+	assert_eq(int(ended["player"]["hp"]), 100, "damage floored to 0")
 
 
 func test_sealed_gates_damage_intent() -> void:
@@ -202,7 +202,7 @@ func test_sealed_gates_damage_intent() -> void:
 	var played: Dictionary = V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["battle"]
 	assert_eq(int((played["enemies"][0] as Dictionary)["statuses"].get("sealed", 0)), 1, "sealed applied")
 	var ended: Dictionary = V1.end_turn(played)["battle"]
-	assert_eq(int(ended["player"]["hp"]), 80, "damage intent gated")
+	assert_eq(int(ended["player"]["hp"]), 100, "damage intent gated")
 	assert_false(((ended["enemies"][0] as Dictionary).get("statuses", {}) as Dictionary).has("sealed"), "consumed -> cleared")
 	var reasons := []
 	for entry in (ended["log"] as Array):
@@ -283,7 +283,7 @@ func test_delay_defers_operation_and_pays_now() -> void:
 	assert_has(reasons, "delayed_scheduled")
 	# 回合推进：敌人打 3 伤，然后延迟的 strike 3 落地。
 	var ended: Dictionary = V1.end_turn(played)["battle"]
-	assert_eq(int(ended["player"]["hp"]), 77, "enemy intent 3 damage")
+	assert_eq(int(ended["player"]["hp"]), 97, "enemy intent 3 damage")
 	assert_eq(int(ended["enemies"][0]["hp"]), 6, "delayed strike 3 fired")
 	assert_eq((ended.get("delayed_effects", []) as Array).size(), 0, "table cleared after firing")
 	var end_reasons := []

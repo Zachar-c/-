@@ -1,0 +1,161 @@
+{
+  "ruling_id": "RUL-2026-09-19-008",
+  "date": "2026-09-19",
+  "by": "architect-L1",
+  "adjudicated_via": "ai-system/RESEARCH-REQUEST-2026-09-19-rank-foundation.md",
+  "received_by": "L2",
+  "scope": [
+    "rank",
+    "numeric-foundation",
+    "gu-effects",
+    "essence",
+    "economy",
+    "progression",
+    "difficulty",
+    "hp"
+  ],
+  "statement": "FOUNDATION APPROVED。1–5 转是凡级世界的「能力层级轴」——它决定能力预算、真元层级、可使用蛊的层级、成长门槛、资源稀缺度、社会身份，但它不是「一个统一乘到 HP / Damage / Price / Essence 上的万能倍率」。",
+  "supersedes": "无（首件转数基石裁定）",
+  "voids": [],
+  "frozen_invariants": [
+    "转数是综合层级轴（Rank Axis），不是万能倍率（Power Multiplier）。同一个 Rank Axis 不等于同一个乘数。",
+    "Rank Power Budget ≈ 每转 ×2、1→5 约 ×16。它作用于「效果预算（Effect Budget）」，不直接乘所有伤害。",
+    "不同轴之间不要求共用同一个倍率。真元品质曲线、能力预算曲线、经济稀缺曲线、成长门槛是各自独立的曲线。"
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "topic": "Rank 语义",
+      "ruling": "转数 = 能力层级轴，统领多个轴（能力预算 / 真元层级 / 可用蛊层级 / 成长门槛 / 资源稀缺度 / 社会身份），但不是统一倍率。",
+      "note": "六套曲线互相打架的根因不是「必须从六条里选一条」，而是过去把战力、能量、价格、Boss、奖励、资源容量全部误认为应是同一种转数倍率。"
+    },
+    {
+      "id": "D2",
+      "topic": "Rank Power Budget",
+      "ruling": "锚点定为 Rank Power Budget ≈ 每转 ×2、1→5 总计约 ×16。语义是「同类型、同定位、正常设计的五转能力，其效果预算约为一转同类能力的一个数量级以上」，而非「五转角色能打十六个一转」。",
+      "rationale": "(1) rank_step_ratio = 2 已是现行唯一被代码当通用倍率消费的量；(2) ×16 层级感明显但不至于让低转蛊全成垃圾；(3) 与「低转蛊通过成本效率进入高转构筑」的既有设计要求兼容。",
+      "frozen_formula": "Rank Power Budget ≈ geometric ×2 per rank"
+    },
+    {
+      "id": "D3",
+      "topic": "真元（Essence）",
+      "ruling": "真元是独立轴。原文的 ×10 只作为「真元品质关系」的证据保留，**不外推到四转、五转**，且**不等于战力**。战斗真元可使用归一化的「本转资源点」。",
+      "explicitly_rejected": "禁止做成「二转每点真元 = 一转 10 点 → 伤害也 ×10 → 容量再 ×10」的指数爆炸结构。",
+      "explanation": "真元 → 支付能力成本 → 催动蛊 → 产生效果。高转蛊本身消耗更昂贵、养育更困难、获取更困难、复杂度更高，因此不存在「真元十倍 → 一拳十倍」。"
+    },
+    {
+      "id": "D4",
+      "topic": "五档材质名（青铜/赤铁/白银/黄金/紫晶）",
+      "ruling": "它们是「转数层级的语义刻度」，会投影到真元名称、舍利蛊档位、身份、稀有度、能力范围。**不是货币，也不是独立的战力单位。**"
+    },
+    {
+      "id": "D5",
+      "topic": "资质（Aptitude）",
+      "ruling": "**Soft Gate**。语义上取「倾向 / 概率门禁」，但游戏实现**优先使用确定性的成本门槛**。资质影响成长成本与自然上限倾向，可被机缘突破（机缘 / 特殊蛊 / 传承 / 巨大资源投入 / 特殊流派）。",
+      "explicitly_rejected": "禁止做成「丙等永远不能三转」的永久硬锁。",
+      "rationale": "一次低资质开局应是「这局想逆天改命就得找异常路线」，而不是「这局废了」——这本身产生玩法，且适合 Roguelike。"
+    },
+    {
+      "id": "D6",
+      "topic": "蛊效果的实现口径（统一管线）",
+      "ruling": "统一为 `Rank → Effect Budget → Effect Archetype → Gu-specific Modifier → Final Effect`。手写效果表达的是「这个蛊怎样花自己的效果预算」，而不是「作者随手写 damage=3」。**fallback 必须从同一个 Effect Budget 生成**，使显式蛊与 fallback 蛊处在同一个世界。",
+      "priority": "L1 标记为「当前最应该马上改的结构问题」，也是「当前最大的实际失衡来源之一」。"
+    },
+    {
+      "id": "D7",
+      "topic": "转数倒挂的判定标准",
+      "ruling": "不要求「高转蛊 raw damage 一律更高」，也不允许「rank3 所有技能 > rank2 所有技能 > rank1 所有技能」。要求的是：**同角色定位、同类型、同代价结构的能力预算随转数上升**。",
+      "allowed_example": "一转纯攻击蛊伤害 4、三转侦查/控制蛊伤害 2 —— 这不叫倒挂。",
+      "true_inversion_definition": "同样纯攻击、同成本定位，三转全面不如一转 —— 这才是倒挂。",
+      "budget_may_be_spent_on": [
+        "伤害",
+        "范围",
+        "目标数",
+        "距离",
+        "控制",
+        "持续时间",
+        "穿透",
+        "可靠性",
+        "资源效率",
+        "复合效果",
+        "特殊规则"
+      ]
+    },
+    {
+      "id": "D8",
+      "topic": "跨转催动（cross-rank）",
+      "ruling": "跨转催动与 rank_power 是**两条独立曲线**，绝对不要绑定。rank_power = 能力有多强；cross_rank_penalty = 没有对应修为却硬催动的困难程度。现有 `2^(rank gap)` 可暂时保留为游戏规则，未来可以做得更陡；但不得因「战力 ×2」而推出「催动成本也必须 ×2」。"
+    },
+    {
+      "id": "D9",
+      "topic": "五转的可达性",
+      "ruling": "玩家**应该能达到五转**，但五转应是「成功 Run 的顶层状态 / 凡境顶峰」，而非普通中期等级。节奏定位：一转起步 → 二转形成构筑 → 三转成熟 → 四转高级 → 五转凡境顶峰。五转应有明显的资源门槛、组织影响、稀有蛊获取难度、突破成本。",
+      "explicitly_rejected": "禁止「设计了 1–5 转，然后告诉玩家五转永远不让你玩」。"
+    },
+    {
+      "id": "D10",
+      "topic": "难度分档",
+      "ruling": "**最后再做。** 形态为多旋钮 Difficulty Profile（Easy / Normal / Hard），每档控制少数真正影响压力的旋钮：敌方威胁、资源丰度、恢复机会、事件代价、失败宽容度。**不使用一个全局倍率。**",
+      "enemy_hp_mult": "保留为内部参数，但暂时取消其「代表整局难度」的地位——它只是 Combat Durability Knob；将来若验证单调，再纳入 Difficulty Profile。",
+      "soul": "**魂不得作为难度轴**（魂是可成长的 Build Axis，动它等于改玩家构筑）。",
+      "rationale": "当前难度曲线是平的，更可能是「底层实力阶梯根本还没统一」，而不是难度参数没调好。在地基未定前调难度只是在移动沙子。"
+    },
+    {
+      "id": "D11",
+      "topic": "HP 基准（80 vs 100）",
+      "ruling": "`human_base_health = 100` 是 **Canonical baseline / Source of Truth**，因为 100 已明确承担蛊师肉身基准、一转能力参照、兽类参照三重身份；80 只是构建脚本中的孤立字面量，无设计依据。玩家开局可以为 80，但必须变成**显式设计**：`standard_human_hp = 100` 与 `player_start_hp = 80` 各自独立配置并说明「玩家开局是标准一转肉身的 80%」。",
+      "action_now": "先按 100 做 Source of Truth；将来若产品明确决定「弱小开局」，再显式改成 80。禁止继续让 80 藏在构建脚本里。",
+      "revised_by": "RUL-2026-09-19-009",
+      "revision_note_zh": "2026-09-19 经 L1 重裁修订：原论证中「80 只是构建脚本中的孤立字面量，无设计依据」一条被证据证伪（80 是文档化且游戏本体实际运行的出身气血），已撤回；数值结论 100 维持不变，但论证改为「保持资质/肉身两条成长轴语义独立」。权威文本以 RUL-2026-09-19-009 为准。"
+    },
+    {
+      "id": "D12",
+      "topic": "六套算法的收敛目标",
+      "ruling": "收敛成 3 + 1 个概念：① Rank Power Budget（蛊/能力效果预算）② Essence Budget（真元容量、消耗、跨转催动）③ Economy / Availability（价格、稀缺、市场流通、组织管禁）+ Progression Gates（资质、突破、身份、内容解锁）。",
+      "explicitly_removed_from_rank_curve": [
+        "Boss 倍率",
+        "难度",
+        "奖励"
+      ]
+    },
+    {
+      "id": "D13",
+      "topic": "决策顺序（L1 指定，严格）",
+      "ruling": "① 定义 Rank 语义 → ② 定 Rank Power Budget → ③ 统一所有蛊的 Effect Budget 管线 → ④ 定 Essence Budget → ⑤ 定资质 + 突破 + 跨转门槛 → ⑥ 定经济/稀缺/市场规则 → ⑦ 定一局 1→5 的节奏 → ⑧ 再调敌人和关卡 → ⑨ 最后做 Easy / Normal / Hard。",
+      "hard_constraint": "难度必须最后。"
+    }
+  ],
+  "left_open_by_L1": [
+    {
+      "id": "O1",
+      "question": "黄金、紫晶真元是否也延续 ×10 品质关系",
+      "reason": "原文证据不足，不能外推。",
+      "must_not_decide_at_L2": true
+    },
+    {
+      "id": "O2",
+      "question": "高转经济到底应该贵多少倍",
+      "reason": "原文只支持稀缺度与流通性明显变化，没有通用价格曲线。",
+      "must_not_decide_at_L2": true
+    },
+    {
+      "id": "O3",
+      "question": "跨转催动 ×2 是否恰当",
+      "reason": "原文没有数值，只能靠游戏测试。",
+      "must_not_decide_at_L2": true
+    },
+    {
+      "id": "O4",
+      "question": "五转应该在多少比例的成功 Run 中出现",
+      "reason": "这是玩法节奏问题，必须等 1→5 的真实原型跑起来再定。",
+      "must_not_decide_at_L2": true
+    }
+  ],
+  "if_only_three_things": [
+    "① Rank Power Budget：转数是综合层级；标准同类能力预算每转约 ×2、1→5 约 ×16。不是所有数值 ×2。",
+    "② 统一 Effect Pipeline：消灭「61 只手写一套世界 + 741 只 fallback 另一套世界」。",
+    "③ Soft Progression Gate：资质影响成长成本与自然上限倾向，不等于永久硬锁；五转可达到但应是凡境顶点。"
+  ],
+  "l1_closing_statement": "这次真正应该冻结的不是『一转伤害等于多少』，而是：以后所有数值系统都知道——转数究竟意味着什么，以及哪些东西绝对不能拿同一个倍率硬乘。这才叫数值基石。",
+  "status": "RULED"
+}

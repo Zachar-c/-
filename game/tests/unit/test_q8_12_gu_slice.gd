@@ -102,7 +102,7 @@ func test_c1_soul_def_sealed_gates_intent() -> void:
 	var played: Dictionary = V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["battle"]
 	assert_eq(int((played["enemies"][0] as Dictionary)["statuses"].get("sealed", 0)), 1)
 	var ended: Dictionary = V1.end_turn(played)["battle"]
-	assert_eq(int(ended["player"]["hp"]), 80, "damage intent gated by sealed")
+	assert_eq(int(ended["player"]["hp"]), 100, "damage intent gated by sealed")
 	assert_false(((ended["enemies"][0] as Dictionary).get("statuses", {}) as Dictionary).has("sealed"), "consumed")
 
 
@@ -113,7 +113,7 @@ func test_c2_wisdom_weaken_reduces_intent() -> void:
 	var played: Dictionary = V1.player_action(battle, {"type": "play_gu", "slot_index": 0})["battle"]
 	assert_eq(int((played["enemies"][0] as Dictionary).get("intent_weaken", 0)), 2)
 	var ended: Dictionary = V1.end_turn(played)["battle"]
-	assert_eq(int(ended["player"]["hp"]), 79, "3 - 2 weaken = 1 damage")
+	assert_eq(int(ended["player"]["hp"]), 99, "3 - 2 weaken = 1 damage")
 	assert_eq(int((ended["enemies"][0] as Dictionary).get("intent_weaken", 0)), 0, "consumed -> cleared")
 
 

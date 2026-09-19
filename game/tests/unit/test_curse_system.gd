@@ -230,7 +230,7 @@ func test_event_outcome_option_attaches_curse_on_accept() -> void:
 	assert_true(accepted["result"]["ok"])
 	assert_eq(int(accepted["state"].cultivator["statuses"]["essence_bloat"]["layers"]), 1)
 	assert_eq(str(accepted["state"].cultivator["statuses"]["essence_bloat"]["source"]), "event:gu_rot_pact")
-	assert_eq(int(accepted["state"].health), 79, "契约事件代价 -1")
+	assert_eq(int(accepted["state"].health), 99, "契约事件代价 -1")
 
 
 func _run_with_gu(definition_ids: Array[String]) -> RunState:

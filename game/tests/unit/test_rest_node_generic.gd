@@ -42,7 +42,7 @@ func test_rest_shrine_heals_consumes_visit_and_gates_travel() -> void:
 
 	var healed := ResolverScript.apply(gate_shut["state"], {"type": "rest"}, catalog)
 	assert_true(healed["result"]["ok"])
-	assert_eq(int(healed["state"].health), 27)
+	assert_eq(int(healed["state"].health), 33)
 	assert_eq(int(healed["state"].essence), 3)
 	assert_eq(str(healed["state"].node_flags.get("rest_shrine_used", "")), "used")
 

@@ -383,6 +383,105 @@ def check_ranges(docs: dict, report: Report) -> None:
     report.add("3. 数值越界（rank/value/cost/hp/权重/概率范围、权重守恒与归一、价值锚一致性）", checks, failures, notes)
 
 
+def check_rank_budget(docs: dict, report: Report) -> None:
+    """RUL-2026-09-19-008 P2 可执行断言（CONSTRAINTS-V2 R5 预备）。
+
+    1. rank_power_budget 的 1-5 转取值等于 rank1_budget * 2^(rank-1)，
+       且 rank1_budget = human_base_health * standard_hit_ratio * rank_step_ratio。
+    2. 被归位的曲线在数据中带有所属轴标注（growth.rank_axis_annotations），
+       字段可被脚本读出；开局气血显式成对配置且与 HP SoT 一致。
+    改错任一预算值或删掉任一轴标注，本节即失败（负控见验收记录）。
+    """
+    ix = collect_index(docs)
+    checks = 0
+    failures: list[str] = []
+    notes: list[str] = []
+
+    def need(condition: bool, message: str) -> None:
+        nonlocal checks
+        checks += 1
+        if not condition:
+            failures.append(message)
+
+    balance = ix["balance"]
+    growth = balance.get("growth", {})
+    run = balance.get("run", {})
+    economy = balance.get("economy", {})
+    formulas = balance.get("formulas", {})
+
+    step = growth.get("rank_step_ratio")
+    hit = growth.get("standard_hit_ratio")
+    base = growth.get("human_base_health")
+    need(isinstance(step, (int, float)) and step == 2.0,
+         f"rank_step_ratio 应为 2.0（预算步进比），实为 {step!r}")
+    rpb = growth.get("rank_power_budget")
+    need(isinstance(rpb, dict), "growth.rank_power_budget 缺失（P2 唯一真源未派生）")
+    if isinstance(rpb, dict):
+        rank1 = rpb.get("rank1_budget")
+        expected_rank1 = (float(base) * float(hit) * float(step)
+                          if isinstance(base, (int, float)) and isinstance(hit, (int, float)) else None)
+        need(isinstance(rank1, (int, float)) and expected_rank1 is not None
+             and abs(float(rank1) - expected_rank1) < 1e-9,
+             f"rank1_budget 应 = human_base_health*standard_hit_ratio*rank_step_ratio"
+             f"={expected_rank1}，实为 {rank1!r}")
+        table = rpb.get("budget_by_rank", {})
+        for rank in range(1, 6):
+            want = float(rank1) * (float(step) ** (rank - 1)) if isinstance(rank1, (int, float)) else None
+            got = (table.get(str(rank)) if isinstance(table, dict) else None)
+            need(isinstance(got, (int, float)) and want is not None and abs(float(got) - want) < 1e-9,
+                 f"rank_power_budget[{rank}] 应为 {want}（rank1*2^{rank - 1}），实为 {got!r}")
+        need(rpb.get("axis") == "rank_power_budget",
+             f"rank_power_budget.axis 应为 'rank_power_budget'，实为 {rpb.get('axis')!r}")
+        need(rpb.get("formula") == "rank1_budget * rank_step_ratio^(rank-1)",
+             f"rank_power_budget.formula 口径漂移：{rpb.get('formula')!r}")
+    need(formulas.get("rank_power_budget") == "rank1_budget * rank_step_ratio^(rank-1)",
+         f"formulas.rank_power_budget 口径漂移：{formulas.get('rank_power_budget')!r}")
+    need(formulas.get("rank1_budget") == "human_base_health * standard_hit_ratio * rank_step_ratio",
+         f"formulas.rank1_budget 口径漂移：{formulas.get('rank1_budget')!r}")
+
+    annotations = growth.get("rank_axis_annotations")
+    need(isinstance(annotations, dict), "growth.rank_axis_annotations 缺失（归位标注未派生）")
+    expected_axes = {
+        "rank_step_ratio": "rank_power_budget",
+        "standard_gu_power": "rank_power_budget",
+        "cultivation_factor": "essence_budget",
+        "stage_base_battle": "essence_budget",
+        "gu_value_by_rank": "economy",
+        "boss_layer_mult": "enemy_level_system",
+        "advance_bonus_by_rank": "progression_reward",
+        "beast_scale": "parallel_reference",
+    }
+    if isinstance(annotations, dict):
+        for curve, axis in expected_axes.items():
+            entry = annotations.get(curve)
+            need(isinstance(entry, dict) and entry.get("axis") == axis,
+                 f"曲线 {curve} 的所属轴标注应为 '{axis}'，实为 "
+                 f"{(entry.get('axis') if isinstance(entry, dict) else entry)!r}")
+
+    starter = run.get("starter", {})
+    std_hp = growth.get("standard_human_hp")
+    start_hp = growth.get("player_start_hp")
+    ratio = growth.get("player_start_hp_ratio")
+    need(std_hp == 100, f"standard_human_hp 应为 100（SoT），实为 {std_hp!r}")
+    need(start_hp == 100, f"player_start_hp 应为 100（D11 默认），实为 {start_hp!r}")
+    need(isinstance(ratio, (int, float)) and abs(float(start_hp) - float(std_hp) * float(ratio)) < 1e-9,
+         f"player_start_hp 应 = standard_human_hp*ratio（{std_hp}*{ratio}），实为 {start_hp!r}")
+    need(starter.get("hp") == start_hp and starter.get("hp_max") == start_hp,
+         f"run.starter.hp/hp_max 应显式派生自 player_start_hp={start_hp!r}，"
+         f"实为 hp={starter.get('hp')!r} hp_max={starter.get('hp_max')!r}")
+    need(starter.get("hp_source") == "player_start_hp",
+         f"run.starter.hp_source 应为 'player_start_hp'（禁裸字面量），实为 {starter.get('hp_source')!r}")
+    health_res = next((r for r in entities(docs, "economy")[0].get("resources", [])
+                       if isinstance(r, dict) and r.get("id") == "health"), {})
+    need(health_res.get("start_value") == start_hp and health_res.get("hard_cap") == start_hp,
+         f"economy health 起点/上限应与 player_start_hp 一致，实为 "
+         f"{health_res.get('start_value')!r}/{health_res.get('hard_cap')!r}")
+    notes.append("rank_power_budget 1-5 转 = 40/80/160/320/640（rank1=100*0.2*2，步进比 2，零数值漂移）。")
+    notes.append("归位轴：能力预算 rank_power_budget｜真元 essence_budget｜经济 economy＋"
+                 "敌人关卡 enemy_level_system＋进度奖励 progression_reward＋并列参照 parallel_reference。")
+    report.add("6. Rank Power Budget 与转数曲线归位（RUL-2026-09-19-008 P2）", checks, failures, notes)
+
+
 # --------------------------------------------------------------------------
 # 4. 环与深度
 # --------------------------------------------------------------------------
@@ -590,6 +689,7 @@ def main(argv: list[str] | None = None) -> int:
         check_schema(docs, report)
         check_references(docs, report)
         check_ranges(docs, report)
+        check_rank_budget(docs, report)
         check_cycles(docs, report)
         check_determinism(docs, report)
     except WorldModelError as exc:

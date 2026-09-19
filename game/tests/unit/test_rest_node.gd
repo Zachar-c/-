@@ -20,8 +20,8 @@ func test_rest_recovers_health_and_essence_without_lifespan() -> void:
 	var result := ResolverScript.apply(state, {"type": "rest"}, catalog)
 
 	assert_true(result["result"]["ok"])
-	# 2026-08-31 数值重做：30% 上限封顶（4+24=28），真元 2+2=4 不超过 20。
-	assert_eq(result["state"].health, 28)
+	# 2026-08-31 数值重做：30% 上限封顶（4+30=34），真元 2+2=4 不超过 20。
+	assert_eq(result["state"].health, 34)
 	assert_eq(result["state"].essence, 4)
 	assert_eq(int(result["state"].cultivator["lifespan"]), 60)
 	assert_eq(result["state"].event_log.back()["reason"], "rest_recovered")
@@ -36,7 +36,7 @@ func test_rest_recovers_only_once_per_node() -> void:
 
 	assert_false(second["result"]["ok"])
 	assert_eq(second["result"]["reason"], "rest_already_used")
-	assert_eq(int(second["state"].health), mini(80, 4 + maxi(1, int(floor(80 * 0.30)))), "30%% 上限封顶")
+	assert_eq(int(second["state"].health), mini(100, 4 + maxi(1, int(floor(100 * 0.30)))), "30%% 上限封顶")
 
 
 func test_rest_is_rejected_outside_rest_node() -> void:

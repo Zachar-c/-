@@ -215,7 +215,8 @@ def full_run_reaches_settlement(ctx: Ctx) -> None:
     run.start()
     assert run.state["status"] == "active"
     assert run.state["rank"] == 1 and run.state["aptitude"] == "bing"
-    assert run.state["hp"] == 80 and run.state["lifespan"] == 60 and run.state["soul"] == 1
+    assert run.state["hp"] == wm.b("run", "starter")["hp"] == 100
+    assert run.state["lifespan"] == 60 and run.state["soul"] == 1
     summary = run.run_to_end()
     assert summary["outcome"] in ("ascended", "death"), summary["outcome"]
     assert summary["layer_reached"] == 5, f"应走到第 5 层，实际 {summary['layer_reached']}"
@@ -318,6 +319,46 @@ def essence_formulas_match_the_locked_spec(ctx: Ctx) -> None:
     # down-rank discount: 2^(gu_rank - cultivator_rank)
     assert approx(rules.actual_activation_cost(wm, 8, 1, 3), 2.0), rules.actual_activation_cost(wm, 8, 1, 3)
     assert approx(rules.actual_activation_cost(wm, 8, 3, 3), 8.0)
+
+
+@test
+def rank_power_budget_matches_formula(ctx: Ctx) -> None:
+    """RUL-2026-09-19-008 P2：rank_power_budget 由公式给出，不是硬编码五个数。"""
+    wm = WorldModel()
+    rpb = wm.b("growth", "rank_power_budget")
+    assert rpb["axis"] == "rank_power_budget"
+    assert rpb["formula"] == "rank1_budget * rank_step_ratio^(rank-1)"
+    assert approx(float(rpb["rank1_budget"]), 40.0), rpb["rank1_budget"]
+    expected = {"1": 40, "2": 80, "3": 160, "4": 320, "5": 640}
+    for rank, want in expected.items():
+        assert approx(float(rpb["budget_by_rank"][rank]), float(want)), (rank, rpb["budget_by_rank"])
+    # 与 standard_gu_power 同值（唯一真源，零数值漂移）
+    for rank in range(1, 6):
+        assert approx(rules.standard_gu_power(wm, rank), float(expected[str(rank)])), rank
+
+
+@test
+def rank_curves_carry_axis_annotations(ctx: Ctx) -> None:
+    """P2 归位标注可被脚本读出；HP 显式成对配置且无裸字面量。"""
+    wm = WorldModel()
+    annotations = wm.b("growth", "rank_axis_annotations")
+    expected = {
+        "rank_step_ratio": "rank_power_budget",
+        "standard_gu_power": "rank_power_budget",
+        "cultivation_factor": "essence_budget",
+        "stage_base_battle": "essence_budget",
+        "gu_value_by_rank": "economy",
+        "boss_layer_mult": "enemy_level_system",
+        "advance_bonus_by_rank": "progression_reward",
+        "beast_scale": "parallel_reference",
+    }
+    for curve, axis in expected.items():
+        assert annotations[curve]["axis"] == axis, (curve, annotations.get(curve))
+    assert wm.b("growth", "standard_human_hp") == 100
+    assert wm.b("growth", "player_start_hp") == 100
+    starter = wm.b("run", "starter")
+    assert starter["hp"] == starter["hp_max"] == 100
+    assert starter["hp_source"] == "player_start_hp"
 
 
 # ==========================================================================

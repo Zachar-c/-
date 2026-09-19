@@ -7,6 +7,19 @@ extends RefCounted
 # truth (schema-guarded by ContentCatalog.validate); this module only projects
 # the formulas from §10/§11/§14 of the 2026-09-01 spec. No hardcoded
 # multiplier tables or value arrays anywhere else.
+#
+# RUL-2026-09-19-008 D2/D12 (Rank Power Budget,唯一真源):
+# rank_power_budget(rank) = rank1_budget * rank_step_ratio^(rank-1), rank 1..5
+# -> 40 / 80 / 160 / 320 / 640 (rank1_budget = 100 * 0.2 * 2 = 40,零数值漂移).
+# 口径关系(同一条曲线,三种读法):
+# - rank_multiplier(rank) = rank_step_ratio^(rank-1)
+#   = rank_power_budget(rank) / rank1_budget (无量纲步进比,1/2/4/8/16).
+# - standard_gu_power(rank) = human_base_health * standard_hit_ratio * rank_step_ratio^rank
+#   = rank_power_budget(rank) (数值恒等,指定为本曲线的唯一真源;本函数仍保留作
+#   为战斗/防御侧的具名投影,实现上委托给 rank_power_budget,不再各自算一套).
+# 其余曲线已归位(见 balance.json rank_axis_annotations):真元两条归 Essence
+# Budget 轴;gu_value_by_rank 归 Economy 轴;boss 层倍率归敌人/关卡系统;进阶奖励
+# 归进度/奖励系统;beast_scale 为并列参照系(基数不同,只标注不改值).
 
 
 static func _b(cat: Dictionary, key: String, fallback: float) -> float:
@@ -25,14 +38,49 @@ static func gu_value(definition: Dictionary, instance_rank: int, cat: Dictionary
 
 
 # §10.1 rank_multiplier(rank) = rank_step_ratio ^ (rank - 1); rank >= 1.
+# RUL-008:本函数是 rank_power_budget 的无量纲读法(= budget(rank)/rank1_budget).
 static func rank_multiplier(rank: int, cat: Dictionary) -> float:
 	return pow(_b(cat, "rank_step_ratio", 2.0), maxi(1, rank) - 1)
 
 
-# §10.3 standard_gu_power(rank) = human_base_health * standard_hit_ratio * rank_step_ratio ^ rank.
-static func standard_gu_power(rank: int, cat: Dictionary) -> float:
+# RUL-2026-09-19-008 D2:唯一的 rank_power_budget(rank)访问点.优先读上游
+# balance.json rank_power_budget.budget_by_rank 的具名表(构建器已按公式核对),
+# 缺表时按 rank1_budget * step^(rank-1) 现算;其余代码不得再各自算一套.
+static func rank1_budget(cat: Dictionary) -> float:
 	return _b(cat, "human_base_health", 100.0) * _b(cat, "standard_hit_ratio", 0.2) \
-			* pow(_b(cat, "rank_step_ratio", 2.0), maxi(0, rank))
+			* _b(cat, "rank_step_ratio", 2.0)
+
+
+static func rank_power_budget(rank: int, cat: Dictionary) -> float:
+	# 公式与 standard_gu_power 恒等:rank1 * step^(rank-1) = human*hit*step^rank.
+	# rank 0 (凡人) -> 20,与旧 standard_gu_power(0) 一致;1..5 -> 40/80/160/320/640.
+	var expected := rank1_budget(cat) * pow(_b(cat, "rank_step_ratio", 2.0), maxi(0, rank) - 1)
+	var upstream: Variant = cat.get("balance", {}).get("rank_power_budget", {})
+	if upstream is Dictionary:
+		var table: Variant = (upstream as Dictionary).get("budget_by_rank", {})
+		if table is Dictionary and (table as Dictionary).has(str(rank)):
+			var listed := float((table as Dictionary)[str(rank)])
+			# 具名表是公式的物化视图:一致时直接读表,不一致(如调参后)以公式为准,
+			# 保证投影永远跟随 balance.json (single source 红线).
+			if absf(listed - expected) < 0.0001:
+				return listed
+	return expected
+
+
+# RUL-008 HP 基准(D11):standard_human_hp = 100 为 SoT;player_start_hp 为开局
+# 显式配置(现 100 = 标准一转肉身的 100%).Godot 开局数值统一经此处读取.
+static func standard_human_hp(cat: Dictionary) -> float:
+	return _b(cat, "standard_human_hp", _b(cat, "human_base_health", 100.0))
+
+
+static func player_start_hp(cat: Dictionary) -> float:
+	return _b(cat, "player_start_hp", standard_human_hp(cat))
+
+
+# §10.3 standard_gu_power(rank) = human_base_health * standard_hit_ratio * rank_step_ratio ^ rank.
+# RUL-008:数值恒等于 rank_power_budget(rank),指定为其唯一真源;实现委托,不再另写一套公式.
+static func standard_gu_power(rank: int, cat: Dictionary) -> float:
+	return rank_power_budget(rank, cat)
 
 
 # §14.3 beast body scale: rank 0 (凡兽) .. 5 (五转) -> 100 .. 3200, the shared

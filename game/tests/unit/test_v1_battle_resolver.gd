@@ -20,7 +20,7 @@ func test_start_builds_player_resources_from_runstate() -> void:
 	var run := _run_with_gu([{"definition_id": "small_light_gu", "rank": 1}])
 	var battle: Dictionary = V1.start(run, catalog, [_enemy("attack", 2)])
 
-	assert_eq(int(battle["player"]["hp"]), 80)
+	assert_eq(int(battle["player"]["hp"]), 100)
 	assert_eq(int(battle["player"]["life_time"]), 60)
 	assert_eq(int(battle["player"]["soul"]), 1)
 	# 2026-08-31 统一行动点：魂魄底蕴 1 → 每回合 2 行动（念头）。
@@ -176,14 +176,14 @@ func test_trigger_cost_permanent_blocks_once_and_closes_on_broke() -> void:
 
 	# 敌人 5 伤 → 触发扣 1 真元挡 2 → 玩家掉 3 血。
 	battle = V1.end_turn(battle)["battle"]
-	assert_eq(int(battle["player"]["hp"]), 80 - 3)
+	assert_eq(int(battle["player"]["hp"]), 100 - 3)
 
 	# 真元不足时蛊关闭、全额承伤。
 	var broke := V1.start(run, catalog, [_enemy("attack", 5)])
 	broke = V1.player_action(broke, {"type": "play_gu", "slot_index": 1})["battle"]
 	broke["player"]["true_qi"] = 0
 	broke = V1.end_turn(broke)["battle"]
-	assert_eq(int(broke["player"]["hp"]), 80 - 5)
+	assert_eq(int(broke["player"]["hp"]), 100 - 5)
 	assert_eq((broke["active_permanents"] as Array).size(), 0)
 
 
