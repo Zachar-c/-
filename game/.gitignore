@@ -30,6 +30,11 @@ docs/screenshots/
 # 同目录的 screenshots/ 是本地验证帧，可随 tools/drive.mjs 重跑重出，继续排除。
 !wenzhen-web/assets/**/*.png
 
+# 核心玩法原型（wenzhen-web-lab）：screenshots/ 是本地验证帧，可随
+# wenzhen-web/tools/drive.mjs 重跑重出。整目录排除，否则 Godot 扫描出的
+# *.png.import 会入库，变成指向不存在 png 的引用。新截图写到 .preview/（已被上方的 .preview/ 规则排除）。
+wenzhen-web-lab/screenshots/
+
 # 问真 Web 线：验证时的临时输出（PowerShell 不回显 stdout，一律写文件再读）
 wenzhen-web/tools/*.log
 __pycache__/
