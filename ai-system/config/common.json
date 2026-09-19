@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "planner": {
+    "surface": "codex-cloud",
+    "model": "gpt-5.6-luna",
+    "default": true,
+    "swappable": true,
+    "fallbackPolicy": "discover-configured-only-if-unavailable"
+  },
+  "productionWorker": {
+    "surface": "workbuddy-cli",
+    "bridge": "local-cli-session",
+    "default": false,
+    "status": "priority-production-candidate-live-task-pending",
+    "freeQuota": true,
+    "cloudAlternative": "workbuddy-worker-body",
+    "defaultBody": "overseas",
+    "defaultModelSlot": "deepseekV41"
+  },
+  "workerBodies": {
+    "domestic": {
+      "product": "WorkBuddy",
+      "region": "国内",
+      "models": {
+        "hunyuan4": {
+          "label": "混元四",
+          "selector": "Hy4 preview",
+          "availability": "free-23:00-08:00-Asia/Shanghai",
+          "quotaLimited": true,
+          "costPolicy": "free-during-window",
+          "costMultiplier": 0.29
+        },
+        "deepseekV41": {
+          "label": "DeepSeek V4.1",
+          "selector": "Deepseek-V4.1-Flash",
+          "availability": "always-available",
+          "quotaLimited": true,
+          "costPolicy": "exclusive-discount",
+          "costMultiplier": 0.03
+        }
+      }
+    },
+    "overseas": {
+      "product": "WorkBuddyAI",
+      "region": "海外",
+      "models": {
+        "hunyuan4": {
+          "label": "混元四",
+          "selector": "Hy4 preview",
+          "availability": "always-available",
+          "quotaLimited": true,
+          "costPolicy": "free-now-quota",
+          "costMultiplier": 0.0
+        },
+        "deepseekV41": {
+          "label": "DeepSeek V4.1",
+          "selector": "Deepseek-V4.1-Flash",
+          "availability": "always-available",
+          "quotaLimited": true,
+          "costPolicy": "free-now-quota",
+          "costMultiplier": 0.0
+        }
+      }
+    }
+  },
+  "localFallbackWorker": {
+    "surface": "opencode",
+    "agent": "build",
+    "model": "opencode/muse-spark-1.3-contributor-free",
+    "modelLabel": "opencode/muse-spark-1.3-contributor-free",
+    "verifyExactModel": true,
+    "default": true,
+    "swappable": true,
+    "fallbackPolicy": "discover-configured-only-if-unavailable"
+  },
+  "profiles": {
+    "home": "config/home.json",
+    "work": "config/work.json",
+    "secrets": "config/secrets.json"
+  }
+}

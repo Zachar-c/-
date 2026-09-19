@@ -1,0 +1,5 @@
+config/home.json
+config/work.json
+config/secrets.json
+config/*.local.json
+*.local.json

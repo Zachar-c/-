@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "lastVerified": "2026-09-19",
+  "scope": "Only the four configured WorkBuddy model slots are eligible.",
+  "selection": {
+    "mode": "static-fallback-chain",
+    "input": "normal-or-hard",
+    "skipUnavailable": true,
+    "fixedPoolLast": true,
+    "noSilentFallback": true,
+    "performanceOrderingIsManual": true
+  },
+  "chains": {
+    "normal": [
+      "overseas/deepseekV41",
+      "domestic/hunyuan4",
+      "overseas/hunyuan4",
+      "domestic/deepseekV41"
+    ],
+    "hard": [
+      "overseas/hunyuan4",
+      "domestic/hunyuan4",
+      "overseas/deepseekV41",
+      "domestic/deepseekV41"
+    ]
+  },
+  "candidates": {
+    "overseas/deepseekV41": {
+      "enabled": true,
+      "workerBody": "overseas",
+      "modelSlot": "deepseekV41",
+      "selector": "Deepseek-V4.1-Flash",
+      "quotaClass": "daily-reset",
+      "availability": "always",
+      "costPolicy": "free-quota",
+      "fallbackToNext": true,
+      "source": [
+        "https://deepseek.com/news/deepseek-v4-1-flash/",
+        "https://api-docs.deepseek.com/quick_start/pricing/"
+      ]
+    },
+    "domestic/hunyuan4": {
+      "enabled": true,
+      "workerBody": "domestic",
+      "modelSlot": "hunyuan4",
+      "selector": "Hy4 preview",
+      "quotaClass": "daily-reset",
+      "availability": "23:00-08:00-Asia/Shanghai",
+      "costPolicy": "free-during-window",
+      "fallbackToNext": true,
+      "source": [
+        "https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model",
+        "https://github.com/Tencent-Hunyuan/Hy4-preview"
+      ]
+    },
+    "overseas/hunyuan4": {
+      "enabled": true,
+      "workerBody": "overseas",
+      "modelSlot": "hunyuan4",
+      "selector": "Hy4 preview",
+      "quotaClass": "daily-reset",
+      "availability": "always",
+      "costPolicy": "free-quota",
+      "fallbackToNext": true,
+      "source": [
+        "https://github.com/Tencent-Hunyuan/Hy4-preview",
+        "https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model"
+      ]
+    },
+    "domestic/deepseekV41": {
+      "enabled": true,
+      "workerBody": "domestic",
+      "modelSlot": "deepseekV41",
+      "selector": "Deepseek-V4.1-Flash",
+      "quotaClass": "fixed-pool",
+      "availability": "always",
+      "costPolicy": "exclusive-discount-0.03x",
+      "fallbackToNext": true,
+      "source": [
+        "https://www.workbuddy.cn/pricing/",
+        "https://api-docs.deepseek.com/quick_start/pricing/"
+      ]
+    }
+  }
+}
