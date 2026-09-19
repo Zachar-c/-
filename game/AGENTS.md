@@ -23,6 +23,20 @@
 ## 权威资料
 
 - **当前生效约束（2026-09-17 起）**：`world-model/governance/CONSTRAINTS-V2.md`，依据 `world-model/rulings/RUL-2026-09-17-003.json`。该裁定作废了此前的全部流程性约束（含 2026-09-16 纠偏设计的 Stage 0 门禁与生产冻结令）。下列既有规格降级为**历史参考**，不再有约束力；与 CONSTRAINTS-V2 冲突时以 CONSTRAINTS-V2 为准。
+- **数值基石：转数语义（2026-09-19，L1 架构裁决）**：`world-model/rulings/RUL-2026-09-19-008.json`。三条不变量：
+  ① **转数是综合层级轴（Rank Axis），不是万能倍率（Power Multiplier）**；
+  ② **Rank Power Budget ≈ 每转 ×2、1→5 约 ×16**，作用于「效果预算（Effect Budget）」，**不直接乘所有伤害**；
+  ③ **不同轴不要求共用同一倍率**——真元品质曲线、能力预算曲线、经济稀缺曲线、成长门槛各自独立。
+  六套算法收敛为 **3+1**：`Rank Power Budget` ｜ `Essence Budget` ｜ `Economy / Availability` ＋ `Progression Gates`；
+  **Boss 倍率、难度、奖励不属于转数曲线**。
+  实施顺序见 `docs/superpowers/plans/2026-09-19-rank-foundation-implementation.md`
+  （① Rank 语义 → ② Rank Power Budget → ③ 统一 Effect 管线 → ④ Essence Budget → ⑤ 资质/突破/跨转 →
+  ⑥ 经济稀缺 → ⑦ 1→5 节奏 → ⑧ 敌人关卡 → ⑨ 难度档；**难度必须最后**）。
+  L1 留白四项**不得由 L2 或 Worker 代决**：黄金/紫晶是否延续 ×10、高转经济应贵多少倍、跨转 ×2 是否恰当、五转应在多少比例的成功 Run 中出现。
+- **数值基石：开局气血基准（2026-09-19 L1 重裁）**：`world-model/rulings/RUL-2026-09-19-009.json`（修订 `RUL-2026-09-19-008#D11`）。两条不变量：
+  ① **资质 / 真元** 与 **肉身 / HP** 是**两条独立成长轴**——不得因为一个历史数字把资质、肉身、魂魄悄悄绑成一条「角色品质」总轴；
+  ② `standard_human_hp = 100`、`player_start_hp = 100` 为当前真源；**禁止把「丙等资质 → HP ×0.8」当作默认规则**，除非另有产品裁决。
+  若未来产品明令「弱肉身开局」，`player_start_hp = 80` 可直接作为有产品语义的设计常量，**不需要伪造资质系数公式**（有明确语义的常量 > 没有依据的漂亮公式）。
 - 总体机制基线：`docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`
 - 蛊系统、经济与战斗最新基线：`docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md`
 - spec-v4 实施计划（10 阶段 20 任务）：`docs/superpowers/plans/2026-09-01-gu-system-economy-combat-implementation.md`
@@ -158,6 +172,8 @@
 - 禁止调试指令修改大厅存档、解锁状态或绕过正式资源与所有权校验。
 - 禁止用调试 Build 的结果作为正式平衡结论。
 - 禁止新增局外数值成长、通用蛊槽、平行经验等级、局内任务或局内成就。
+- 禁止把转数当作万能倍率——HP / Damage / Price / Essence / Boss 倍率 / 奖励不得共用同一个转数乘数；各轴倍率必须独立（依据 `RUL-2026-09-19-008`）。
+- 禁止把资质、肉身、魂魄耦合进同一条「角色品质」总轴；禁止把「丙等资质 → HP ×0.8」当默认规则；禁止为「有明确产品语义的常量」伪造推导公式（依据 `RUL-2026-09-19-009`）。
 - 禁止在本文件维护提交流水账、历史测试数字、已修缺陷清单或大段规格原文。
 
 ## 输出格式

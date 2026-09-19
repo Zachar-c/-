@@ -110,8 +110,8 @@ func test_end_turn_resolves_enemy_and_reopens_player_turn() -> void:
 	var result: Dictionary = FacadeScript.apply_turn(battle, state, {"type": "end_turn"}, catalog)
 
 	assert_eq(result["result"], "ongoing")
-	# 敌人 2 伤，玩家气血 80→78；真元按回复 +5（20 满则不变）。
-	assert_eq(int(result["battle"]["player"]["hp"]), 78)
+	# 敌人 2 伤，玩家气血 100→98；真元按回复 +5（20 满则不变）。
+	assert_eq(int(result["battle"]["player"]["hp"]), 98)
 	assert_eq(int(result["battle"]["turn"]), 2)
 	assert_eq(int(result["battle"]["player"]["thoughts"]), 2)
 
@@ -176,7 +176,7 @@ func test_enemy_first_mover_resolves_before_player() -> void:
 
 	var pre: Dictionary = FacadeScript.apply_enemy_pre_turn(battle, state, catalog)
 
-	assert_eq(int(pre["battle"]["player"]["hp"]), 78)
+	assert_eq(int(pre["battle"]["player"]["hp"]), 98)
 	# 敌人先手一次完整回合后，战斗进入第 2 回合（玩家行动阶段）。
 	assert_eq(int(pre["battle"]["turn"]), 2)
 	assert_eq(pre["finished"], false)

@@ -49,7 +49,7 @@ func test_echo_cave_accept_pays_known_health_and_delays_hidden_soul_drain() -> v
 	var run := RunState.new_run(101)
 	var accepted := Resolver.apply(run, {"type": "accept_event", "event_id": "echo_cave"}, catalog)
 	assert_true(accepted["result"]["ok"])
-	assert_eq(int(accepted["state"].health), 79)
+	assert_eq(int(accepted["state"].health), 99)
 	assert_eq(int(accepted["state"].node_flags.get("pending_delayed_soul_drain", 0)), 1)
 	var traveled := Resolver.apply(accepted["state"], {"type": "travel", "node_id": "ridge_market"}, catalog)
 	assert_eq(int(traveled["state"].cultivator["soul"]), 0)

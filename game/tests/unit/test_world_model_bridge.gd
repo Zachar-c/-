@@ -176,6 +176,41 @@ func test_value_anchor_exceptions_are_consistent_with_production_gu() -> void:
 	assert_eq(problems, [] as Array[String], "价值锚例外表应与生产蛊表一一对上")
 
 
+# --- 开局气血（RUL-2026-09-19-009）------------------------------------------
+
+func test_runtime_start_hp_matches_config_and_world_model() -> void:
+	# runtime 开局气血 == GuBalance.player_start_hp == 世界模型 run.starter.hp。
+	# 三处必须相等；任一侧改坏都必须让本用例失败（负控见 SABOTAGE）。
+	var state := RunState.new_run(20260919)
+	RunState.apply_start_hp(state, catalog)
+	var expected := int(GuBalance.player_start_hp(catalog))
+	assert_gt(expected, 0, "player_start_hp 读到非正数：本用例会退化成恒假")
+	# F1：回退常量与配置绑死——两者同值时行为正确，配置一改门禁立刻红，
+	# 逼同步 START_HP_FALLBACK（不经 apply_start_hp 的路径静默拿回退值）。
+	assert_eq(RunState.START_HP_FALLBACK, expected, "START_HP_FALLBACK 必须等于 player_start_hp")
+	assert_eq(int(state.health), expected, "RunState.health 应等于 player_start_hp")
+	assert_eq(int(state.max_health), expected, "RunState.max_health 应等于 player_start_hp")
+	assert_eq(int(state.cultivator.get("health", -1)), expected, "cultivator.health 应等于 player_start_hp")
+	assert_eq(int(state.cultivator.get("max_health", -1)), expected, "cultivator.max_health 应等于 player_start_hp")
+	var starter := _wm_starter()
+	assert_eq(int(starter.get("hp", -1)), expected, "世界模型 run.starter.hp 应等于 player_start_hp")
+	assert_eq(int(starter.get("hp_max", -1)), expected, "世界模型 run.starter.hp_max 应等于 player_start_hp")
+
+
+# --- 开局气血真实入口（F2）---------------------------------------------------
+# 上一用例直调 apply_start_hp，只证明函数对；本用例走 run_controller.start_new_run，
+# 证明入口真的调了它（入口忘接线必须红）。
+
+func test_start_new_run_entry_writes_config_hp() -> void:
+	var controller := RunController.new()
+	add_child_autofree(controller)
+	controller.catalog = catalog
+	controller.start_new_run(20260919, "")
+	var expected := int(GuBalance.player_start_hp(catalog))
+	assert_eq(int(controller.state.health), expected, "经 start_new_run 入口的 health 应等于 player_start_hp")
+	assert_eq(int(controller.state.max_health), expected, "经 start_new_run 入口的 max_health 应等于 player_start_hp")
+
+
 # --- 辅助 -----------------------------------------------------------------
 
 ## 世界模型侧的蛊表镜像。负控打开时故意改坏一只蛊的 value。
@@ -192,6 +227,14 @@ func _wm_offer_by_id() -> Dictionary:
 	if SABOTAGE:
 		mirror.erase(BRIDGE_SABOTAGE_OFFER_ID)
 	return mirror
+
+
+## 世界模型侧的开局锚镜像。负控打开时故意改坏 hp。
+func _wm_starter() -> Dictionary:
+	var starter := WorldModelBridge.starter()
+	if SABOTAGE:
+		starter["hp"] = -999
+	return starter
 
 
 func _sorted_ids(index: Dictionary) -> Array[String]:

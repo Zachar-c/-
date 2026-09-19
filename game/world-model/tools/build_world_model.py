@@ -428,7 +428,8 @@ def build_economy(generated_at: str) -> dict:
              "hard_cap": "10 * aptitude_factor * cultivation_factor",
              "channels_in": ["turn_regen", "stone_to_essence", "material_use"],
              "channels_out": ["gu_activation", "kill_move"], "tunable": True},
-            {"id": "health", "name_zh": "气血", "unit": "点", "start_value": 80, "hard_cap": 80,
+            {"id": "health", "name_zh": "气血", "unit": "点", "start_value": int(load("balance")["player_start_hp"]),
+             "hard_cap": int(load("balance")["player_start_hp"]),
              "channels_in": ["rest_heal", "healing_gu", "material_use"],
              "channels_out": ["enemy_damage", "hazard_cost", "event_cost", "backlash", "overload"], "tunable": True},
             {"id": "thought", "name_zh": "念头", "unit": "点", "start_value": 3, "hard_cap": 3,
@@ -856,6 +857,37 @@ GU_VALUE_ANCHOR_EXCEPTIONS_NOTE_ZH = (
     "必须在此显式登记，校验器据此判定。新增偏离而未登记者会被校验器判为失败。")
 
 
+def _rank_power_budget(b: dict) -> dict:
+    """RUL-2026-09-19-008 D2/D12：唯一的 rank_power_budget(rank) 真源。
+
+    rank1_budget 由上游 human_base_health * standard_hit_ratio * rank_step_ratio
+    给出（100 * 0.2 * 2 = 40）；1..5 转 = rank1_budget * rank_step_ratio^(rank-1)。
+    本函数按公式计算 budget_by_rank 并与上游字面表交叉核对，不一致即中断构建，
+    使派生值永远由公式给出而不是第二份硬编码。
+    """
+    step = float(b["rank_step_ratio"])
+    rank1 = float(b["human_base_health"]) * float(b["standard_hit_ratio"]) * step
+    declared = b["rank_power_budget"]
+    if abs(float(declared["rank1_budget"]) - rank1) > 1e-9:
+        raise SystemExit(
+            f"FATAL: 上游 rank_power_budget.rank1_budget={declared['rank1_budget']} "
+            f"与公式 human_base_health*standard_hit_ratio*rank_step_ratio={rank1} 不符")
+    computed = {str(r): rank1 * (step ** (r - 1)) for r in range(1, 6)}
+    table = {str(k): float(v) for k, v in declared["budget_by_rank"].items()}
+    if set(table) != set(computed) or any(abs(table[k] - computed[k]) > 1e-9 for k in computed):
+        raise SystemExit(
+            f"FATAL: 上游 rank_power_budget.budget_by_rank={table} 与公式计算值={computed} 不符")
+    return {
+        "formula": declared["formula"],
+        "rank1_formula": declared["rank1_formula"],
+        "rank1_budget": rank1,
+        "rank_step_ratio": step,
+        "budget_by_rank": {k: int(v) if float(v).is_integer() else v for k, v in computed.items()},
+        "axis": "rank_power_budget",
+        "axis_note_zh": declared.get("axis_note_zh", ""),
+    }
+
+
 def build_balance(generated_at: str) -> dict:
     b = load("balance")
     v1 = load("v1_battle")
@@ -882,6 +914,11 @@ def build_balance(generated_at: str) -> dict:
             "standard_hit_ratio": b["standard_hit_ratio"],
             "standard_activation_cost": b["standard_activation_cost"],
             "human_base_health": b["human_base_health"],
+            "standard_human_hp": b["standard_human_hp"],
+            "player_start_hp": b["player_start_hp"],
+            "player_start_hp_ratio": b["player_start_hp_ratio"],
+            "rank_power_budget": _rank_power_budget(b),
+            "rank_axis_annotations": b["rank_axis_annotations"],
             "human_base_strength": b["human_base_strength"],
             "human_base_body_capacity": b["human_base_body_capacity"],
             "thought_base_capacity": b["thought_base_capacity"],
@@ -894,7 +931,10 @@ def build_balance(generated_at: str) -> dict:
                                    "note": "丙等必须先在本局提升资质，才可尝试三转（ADP-CULTIVATION-001）。"},
         },
         "run": {
-            "starter": {"aptitude": "bing", "rank": 1, "stage": "initial", "hp": 80, "hp_max": 80,
+            "starter": {"aptitude": "bing", "rank": 1, "stage": "initial",
+                        "hp": int(b["player_start_hp"]), "hp_max": int(b["player_start_hp"]),
+                        "hp_source": "player_start_hp",
+                        "hp_note_zh": b.get("hp_note_zh", ""),
                         "lifespan": 60, "lifespan_max": 60, "soul": 1, "soul_max": 4, "stone": 12,
                         "gu": ["small_light_gu"], "path": "light", "thought_max": b["thought_base_capacity"]},
             "action_points_by_soul": [{"min_soul": 10000, "ap": 6}, {"min_soul": 1000, "ap": 5},
@@ -1009,6 +1049,8 @@ def build_balance(generated_at: str) -> dict:
         "essence_max_out_of_run": "essence_base * aptitude_factor * cultivation_factor",
         "essence_max_battle": "stage_base_battle[rank] * aptitude_factor",
         "essence_regen_per_turn": "ceil(essence_max * regen_pct_battle[aptitude] / 100)",
+        "rank_power_budget": "rank1_budget * rank_step_ratio^(rank-1)",
+        "rank1_budget": "human_base_health * standard_hit_ratio * rank_step_ratio",
         "standard_gu_power": "human_base_health * standard_hit_ratio * rank_step_ratio^rank",
         "fixed_defense": "standard_gu_power(rank) * fixed_defense_ratio",
         "actual_activation_cost_pct": "native * rank_step_ratio^(gu_rank-1) / rank_step_ratio^(cultivator_rank-1)",

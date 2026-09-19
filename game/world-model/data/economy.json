@@ -126,8 +126,8 @@
      "id": "health",
      "name_zh": "气血",
      "unit": "点",
-     "start_value": 80,
-     "hard_cap": 80,
+     "start_value": 100,
+     "hard_cap": 100,
      "channels_in": [
       "rest_heal",
       "healing_gu",

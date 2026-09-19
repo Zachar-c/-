@@ -5,6 +5,12 @@ extends RefCounted
 const RelicHookResolverScript = preload("res://scripts/domain/relic_hook_resolver.gd")
 const GuInstanceScript = preload("res://scripts/domain/gu_instance.gd")
 const FeedingRulesScript = preload("res://scripts/domain/feeding_rules.gd")
+const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
+
+# P2.1 (RUL-2026-09-19-009):开局气血回退常量 = 100,与 GuBalance.player_start_hp
+# 同值.成员缺省与 new_run 缺省用它占位;run 创建入口再经 apply_start_hp 从
+# catalog 显式写入唯一真源.不得在此写裸字面量,不得引入资质→HP 耦合.
+const START_HP_FALLBACK := 100
 
 
 @warning_ignore("shadowed_global_identifier")
@@ -13,10 +19,12 @@ var stage: String = "one"
 var cultivation: int = 1
 var essence: int = 20
 var essence_capacity: int = 20
-# 2026-08-31 数值重做：出身丙等满真元 20（10×丙2×一转1）、80 气血、
+# 2026-08-31 数值重做：出身丙等满真元 20（10×丙2×一转1）、100 气血
+# （RUL-2026-09-19-009：资质/真元与肉身/HP 独立成轴，开局气血唯一真源为
+# balance.json player_start_hp，经 apply_start_hp 写入）、
 # 60 年寿元、魂魄底蕴 1（每回合 2 次行动，底蕴分档抬升）。
-var health: int = 80
-var max_health: int = 80
+var health: int = START_HP_FALLBACK
+var max_health: int = START_HP_FALLBACK
 var aptitude: String = "bing"
 var injury: int = 0
 var lifespan_debt: int = 0
@@ -109,8 +117,8 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 		"reincarnation": 1,
 		"stage": 0,
 		"aptitude": "bing",
-		"health": 80,
-		"max_health": 80,
+		"health": START_HP_FALLBACK,
+		"max_health": START_HP_FALLBACK,
 		"lifespan": 60,
 		"soul": 1,
 		"soul_max": 4,
@@ -159,6 +167,17 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 	state.current_node_id = "trailhead"
 	state.event_log = [state._initial_event()]
 	return state
+
+
+# P2.1 (RUL-2026-09-19-009):把开局气血从唯一真源写入已创建的 run.
+# new_run 无 catalog 参数(调用点 20+ 处),故由 run 创建入口显式调用本函数
+# (与 essence_max 接线同构).只读 GuBalance.player_start_hp,不读资质.
+static func apply_start_hp(state: RunState, cat: Dictionary) -> void:
+	var hp := int(GuBalanceScript.player_start_hp(cat))
+	state.health = hp
+	state.max_health = hp
+	state.cultivator["health"] = hp
+	state.cultivator["max_health"] = hp
 
 
 func is_terminal() -> bool:

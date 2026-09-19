@@ -156,6 +156,21 @@ static func gu_value_anchor_exceptions() -> Dictionary:
 	return _balance_economy().get("gu_value_anchor_exceptions", {})
 
 
+# --- 开局锚（RUL-2026-09-19-009：run.starter 为开局基准的派生镜像）-------
+
+## 开局基准镜像（balance.json entities[0].run.starter）；缺失时返回 {}。
+static func starter() -> Dictionary:
+	var entities := entities_of("balance")
+	if entities.is_empty():
+		return {}
+	var run: Variant = (entities[0] as Dictionary).get("run")
+	if run is Dictionary:
+		var starter: Variant = (run as Dictionary).get("starter")
+		if starter is Dictionary:
+			return starter
+	return {}
+
+
 # --- 内部 -----------------------------------------------------------------
 
 static func _index_by_id(entries: Array) -> Dictionary:

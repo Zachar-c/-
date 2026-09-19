@@ -49,7 +49,7 @@ func test_accept_event_grants_stone_and_curse_together() -> void:
 			run, {"type": "accept_event", "event_id": "blood_vein_offering"}, catalog)
 
 	assert_true(bool(accepted["result"]["ok"]))
-	assert_eq(int(accepted["state"].health), 78)
+	assert_eq(int(accepted["state"].health), 98)
 	assert_eq(int(accepted["state"].stone), stone_before + 4)
 	assert_gt(CurseRegistry.layers_of(accepted["state"], "essence_bloat"), 0,
 			"curse_bargain must land with the payout")

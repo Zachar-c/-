@@ -1,0 +1,27 @@
+{
+  "ruling_id": "RUL-2026-09-19-004",
+  "date": "2026-09-19",
+  "by": "producer",
+  "scope": ["soul", "growth", "difficulty", "battle"],
+  "statement": "魂是一个可成长的 Build Axis，并对应魂道玩法。它同时承担：1. 魂魄生存值；2. 魂道能力资源；3. 魂道攻击/防御基础；4. 长期成长属性。因此不要把魂设计成固定 1-4 的风险条。优先重新调查：soul 当前值与上限是否应分离；现有 10/100/1000/10000 AP 门槛的原始设计意图；哪些蛊/事件/资源可以增长魂魄；哪些能力消耗或攻击魂魄；魂道构筑如何形成获得→养魂→使用→强化的闭环；与肉身/真元等 Build Axis 的机会成本与克制关系。当前禁止：直接删除高魂 AP 档位；继续以 max_soul=4 为前提调难度；把 starting_soul 定为主要 difficulty knob；仅把魂视为第三死亡条。下一步先做只读 Soul System Audit，再决定数值。",
+  "supersedes": "上一轮「魂 = 生命周期风险资源、上限暂保留 4、starting_soul 作为主要难度旋钮」的裁决（撤回）",
+  "voids": [],
+  "effects": [
+    {
+      "target": "game/world-model/reports/numeric-status-audit.md#/§2.4",
+      "action": "annotate",
+      "to": "该节「魂只有死亡风险，没有可达收益」为事实观察，其推论方向（把魂修成有收益的风险资源）已被 RUL-2026-09-19-004 取代：魂是可成长 Build Axis，不是风险条。事实保留，解释作废。"
+    },
+    {
+      "target": "game/world-model/reports/difficulty-axis-probe.md",
+      "action": "annotate",
+      "to": "soul 1→4 一组的诊断结论（魂存量是通关率的绑定约束）仍然成立；但其修复方向不得再被当作难度调参依据——禁止以 max_soul=4 为前提调难度。"
+    },
+    {
+      "target": "ai-system/RESEARCH-REQUEST-2026-09-19-numeric-difficulty.md#/RR-1",
+      "action": "replace",
+      "to": "RR-1 的原始设问（风险资源 vs 可经营资源）已由本裁定回答：是 Build Axis。RR-1 改为等待只读 Soul System Audit 完成后，就「魂道闭环结构与跨轴机会成本」提问。"
+    }
+  ],
+  "status": "RULED"
+}

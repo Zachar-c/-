@@ -44,8 +44,8 @@
      "path": "world-model/data/economy.json",
      "entity_type": "economy",
      "count": 1,
-     "bytes": 51820,
-     "sha256": "6cba9e0a11667dd450a1b0e22399896b8251d1919cb18cd2fad882c5184340f9"
+     "bytes": 51822,
+     "sha256": "dbc96e64d98c5fc0f5417f5f6a17b9e09f6f0de523c1f74ac38c1f7737ba99cb"
     },
     {
      "path": "world-model/data/factions.json",
@@ -79,12 +79,12 @@
      "path": "world-model/data/balance.json",
      "entity_type": "balance",
      "count": 1,
-     "bytes": 18021,
-     "sha256": "40e28aab3922ee5e30ebd0f2e3be88d8467dfe9ed49d724e98f3fc33fd68163a"
+     "bytes": 21300,
+     "sha256": "39959c78a84daf05a130d959bd31da06add7e1f7f43ac88f600f7dd0dcc18414"
     }
    ],
    "file_count": 9,
-   "total_bytes": 1497263,
+   "total_bytes": 1500544,
    "read_only_upstream": [
     "data/gu.json",
     "data/gu_names.json",

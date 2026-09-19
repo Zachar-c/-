@@ -25,7 +25,7 @@ func test_zero_hp_enemy_does_not_act() -> void:
 
 	var ended: Dictionary = V1.end_turn(battle)["battle"]
 	# 乙 3 伤落账；甲 7 伤不得出现。
-	assert_eq(int(ended["player"]["hp"]), 77, "only beta's 3 damage lands (80 - 3)")
+	assert_eq(int(ended["player"]["hp"]), 97, "only beta's 3 damage lands (100 - 3)")
 	# enemy_attack 事件的 target 是意图 label（见 _resolve_enemy_intent 的 _log 调用）。
 	assert_true(_has_target_event(ended, "enemy_attack", "撕咬"), "beta acted")
 	assert_false(_has_target_event(ended, "enemy_attack", "重压"), "alpha must not act at hp 0")
@@ -38,7 +38,7 @@ func test_zero_hp_single_enemy_is_victory() -> void:
 
 	var ended: Dictionary = V1.end_turn(battle)["battle"]
 	assert_eq(str(ended["phase"]), "victory", "all-zero-hp enemies = victory")
-	assert_eq(int(ended["player"]["hp"]), 80, "no enemy attack at hp 0")
+	assert_eq(int(ended["player"]["hp"]), 100, "no enemy attack at hp 0")
 
 
 # ---------- 存活事实来源统一 ----------

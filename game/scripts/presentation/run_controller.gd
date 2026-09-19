@@ -195,6 +195,8 @@ func start_new_run(seed_value: int, school: String = "", contract_ids: Array = [
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
 	state = RunState.new_run(seed_value, meta)
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
+	# P2.1 (RUL-2026-09-19-009):开局气血从唯一真源写入(与 essence_max 接线同构).
+	RunState.apply_start_hp(state, catalog)
 	_inject_school_starters(school)
 	_swear_opening_contracts(contract_ids)
 	_apply_run_buffs(buff_ids)
@@ -223,6 +225,8 @@ func start_m0_run(seed_value: int) -> void:
 		meta = load("res://scripts/domain/meta_progress.gd").new_empty()
 	state = RunState.new_run(seed_value, meta)
 	state.cave_aperture["essence_max"] = EssenceCapacityScript.essence_max(state, catalog)
+	# P2.1 (RUL-2026-09-19-009):开局气血从唯一真源写入(与 essence_max 接线同构).
+	RunState.apply_start_hp(state, catalog)
 	# M0 content cap: one player, three starting Gu, six possible reward Gu.
 	state.gu_instances = {}
 	state.cave_aperture["stored_gu_instance_ids"] = []

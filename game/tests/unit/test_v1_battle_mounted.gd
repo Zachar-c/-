@@ -57,7 +57,7 @@ func test_mounted_v1_battle_renders_and_drives_real_commands() -> void:
 	cmds["end_turn"].call()
 	assert_eq(int(controller.current_battle["turn"]), 2)
 	assert_eq(int(controller.current_battle["player"]["thoughts"]), 2)
-	assert_eq(int(controller.current_battle["player"]["hp"]), 80 - 2, "enemy intent resolved")
+	assert_eq(int(controller.current_battle["player"]["hp"]), 100 - 2, "enemy intent resolved")
 
 	# 快照与推进后的领域状态保持同源。
 	var after: Dictionary = controller._snapshot_for("Battle")

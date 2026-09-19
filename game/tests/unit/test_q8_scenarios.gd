@@ -46,7 +46,7 @@ func test_s2_a_shield_first_absorbs_blow() -> void:
 	assert_eq(int(out["battle"]["player"]["shield"]), 3)
 	var ended: Dictionary = V1.end_turn(out["battle"])["battle"]
 	assert_eq(int(ended["player"]["shield"]), 0, "shield 3 absorbed")
-	assert_eq(int(ended["player"]["hp"]), 77, "80 - 3 leftover")
+	assert_eq(int(ended["player"]["hp"]), 97, "100 - 3 leftover")
 	assert_eq(int(ended["enemies"][0]["hp"]), 10, "no damage dealt")
 
 
@@ -60,7 +60,7 @@ func test_s2_b_delay_accepts_blow_for_tempo() -> void:
 	assert_true(_has_event(out["battle"], "delayed_scheduled"), "scheduled at play time")
 	assert_eq(int(out["battle"]["enemies"][0]["hp"]), 10, "deferred, no immediate damage")
 	var ended: Dictionary = V1.end_turn(out["battle"])["battle"]
-	assert_eq(int(ended["player"]["hp"]), 74, "80 - 6, hard eat the blow")
+	assert_eq(int(ended["player"]["hp"]), 94, "100 - 6, hard eat the blow")
 	assert_eq(int(ended["enemies"][0]["hp"]), 7, "10 - 3 fired")
 	assert_true(_has_event(ended, "delayed_fired"), "fired event")
 	assert_eq((ended.get("delayed_effects", []) as Array).size(), 0, "table drained")
@@ -103,7 +103,7 @@ func test_s4_a_seal_negates_heavy_blow() -> void:
 	assert_true(bool(out["result"]["ok"]))
 	assert_true(_has_event(out["battle"], "sealed_applied"), "seal applied event")
 	var ended: Dictionary = V1.end_turn(out["battle"])["battle"]
-	assert_eq(int(ended["player"]["hp"]), 80, "intent does not exist -> zero damage")
+	assert_eq(int(ended["player"]["hp"]), 100, "intent does not exist -> zero damage")
 	assert_true(_has_event(ended, "sealed_consumed"), "consumed on gate")
 	assert_false(((ended["enemies"][0] as Dictionary).get("statuses", {}) as Dictionary).has("sealed"))
 
@@ -117,7 +117,7 @@ func test_s4_b_weaken_shaves_heavy_blow() -> void:
 	assert_true(bool(out["result"]["ok"]))
 	assert_true(_has_event(out["battle"], "weaken_applied"), "weaken applied event")
 	var ended: Dictionary = V1.end_turn(out["battle"])["battle"]
-	assert_eq(int(ended["player"]["hp"]), 74, "80 - (8 - 2)")
+	assert_eq(int(ended["player"]["hp"]), 94, "100 - (8 - 2)")
 	assert_true(_has_event(ended, "weaken_consumed"), "consumed on resolve")
 	assert_eq(int((ended["enemies"][0] as Dictionary).get("intent_weaken", 0)), 0, "cleared after use")
 
@@ -134,7 +134,7 @@ func test_s5_a_weaken_default_first_threat() -> void:
 	assert_eq(int((out["battle"]["enemies"][0] as Dictionary).get("intent_weaken", 0)), 2, "alpha weakened")
 	assert_eq(int((out["battle"]["enemies"][1] as Dictionary).get("intent_weaken", 0)), 0, "beta untouched")
 	var ended: Dictionary = V1.end_turn(out["battle"])["battle"]
-	assert_eq(int(ended["player"]["hp"]), 72, "80 - (7-2) - 3")
+	assert_eq(int(ended["player"]["hp"]), 92, "100 - (7-2) - 3")
 	assert_true(_has_target_event(ended, "weaken_applied", "alpha"))
 
 

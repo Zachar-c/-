@@ -15,7 +15,7 @@
   "phase": "player_action",        # "player_action" | "victory" | "defeat"
   "cfg": {...},                    # data/v1_battle.json 原样
   "player": {
-    "hp": 80, "max_hp": 80,        # 出身气血（cultivator.health，随重做 80）
+    "hp": 100, "max_hp": 100,      # 出身气血（cultivator.health，RUL-2026-09-19-009：唯一真源 balance.json player_start_hp=100）
     "life_time": 60,               # 寿元，归零即死
     "soul": 1,                     # 当前魂魄底蕴（死亡判定 + 行动分档输入）
     "aptitude": "bing", "stage": "one", "stage_base": 10,

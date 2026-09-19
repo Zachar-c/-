@@ -208,9 +208,9 @@ func test_essence_tide_applies_hp_max_penalty_with_lethal_precheck() -> void:
 	var result := _swear(run, ["essence_tide"])
 	assert_true(result["result"]["ok"])
 	var next: RunState = result["state"]
-	assert_eq(int(next.max_health), 78)
-	assert_eq(int(next.health), 78)
-	assert_eq(int(next.cultivator["max_health"]), 78)
+	assert_eq(int(next.max_health), 98)
+	assert_eq(int(next.health), 98)
+	assert_eq(int(next.cultivator["max_health"]), 98)
 
 	var tuned := catalog.duplicate(true)
 	tuned["contracts"] = {
@@ -218,8 +218,8 @@ func test_essence_tide_applies_hp_max_penalty_with_lethal_precheck() -> void:
 		"entries": [{
 			"id": "death_wish",
 			"label": "求死之约",
-			"desc": "生命上限-80。",
-			"rules": [{"key": "hp_max_penalty", "value": -80}],
+			"desc": "生命上限-100。",
+			"rules": [{"key": "hp_max_penalty", "value": -100}],
 			"mutual_exclusive": [],
 			"unlock": {"kind": "always"},
 		}],
@@ -229,7 +229,7 @@ func test_essence_tide_applies_hp_max_penalty_with_lethal_precheck() -> void:
 	assert_false(rejected["result"]["ok"])
 	assert_eq(str(rejected["result"]["reason"]), "contract_hp_max_lethal")
 	assert_eq(rejected["state"].contracts, [])
-	assert_eq(int(rejected["state"].max_health), 80)
+	assert_eq(int(rejected["state"].max_health), 100)
 
 
 func test_aggregate_sums_signed_rule_values_across_sworn_contracts() -> void:
