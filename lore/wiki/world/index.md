@@ -2,11 +2,17 @@
 
 世界规则页记录能跨人物、跨事件复用的设定，优先于单一剧情摘要。
 
+- [世界操作系统](world-operating-system.md)（关系骨架：四轴、两个飞轮、天道外环；不是百科，不替代实体页和原文核验）
+
 ## 修炼
 
 - [修炼体系](cultivation-system.md)
-- [空窍与资质](aptitude-and-aperture.md)
+- [资质与空窍](aptitude-and-aperture.md)
 - [元海与真元](primeval-essence.md)
+
+## 流派
+
+- [魂道](soul-path.md)
 
 ## 蛊与资源
 

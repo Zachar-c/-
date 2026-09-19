@@ -3,6 +3,7 @@ type: world
 name: 蛊的饲养与炼化
 aliases: [养蛊, 炼蛊, 炼化]
 sources:
+  - "source:source/蛊真人-clean.txt"
   - "canon-index:CAN-GU-CARE-001"
   - "canon-index:CAN-GU-SYNERGY-001"
   - "canon-index:CAN-GU-SYNERGY-002"

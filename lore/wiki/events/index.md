@@ -2,6 +2,7 @@
 
 事件页以参与者、局势、转折、代价和后续影响为主，完整时间线以后再补。
 
+- [全书故事骨架总览](story-arc-overview.md)
 - [青茅山](qing-mao-mountain.md)
 - [三王福地](three-kings-mountain.md)
 - [逆流河](reverse-flow-river.md)

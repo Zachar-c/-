@@ -12,6 +12,7 @@
 
 ## 当前阅读顺序
 
+0. [全书故事骨架总览](events/story-arc-overview.md)
 1. [修炼体系](world/cultivation-system.md)
 2. [空窍与资质](world/aptitude-and-aperture.md)
 3. [南疆与山寨](world/south-jiang.md)

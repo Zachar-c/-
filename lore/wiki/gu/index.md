@@ -4,6 +4,7 @@
 
 - [小光蛊](small-light-gu.md)
 - [月光蛊](moonlight-gu.md)
+- [M0 六蛊原著边界](m0-six-gu.md)
 - [春秋蝉](spring-autumn-cicada.md)
 - [宿命蛊](fate-gu.md)
 - [智慧蛊](wisdom-gu.md)
