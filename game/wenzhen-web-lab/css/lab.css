@@ -1,0 +1,294 @@
+/* 问真 · 核心玩法原型 · 视觉层
+   唯一权威 = assets/base_ref.png（1405×790）+ scripts/presentation/gu_style.gd 的 token。
+   改任何一个色值前，先回基准图重新采样，再同步这里 —— 禁止凭空拍色。
+   与 Godot 侧的关系：这里是同一套 token 的 CSS 镜像，不是另立一套风格。 */
+
+@font-face {
+  font-family: 'ZhiSong';
+  src: url('../../assets/wenzhen/fonts/LXGWZhiSongCL-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+/* 大字标题专用：基准图「蛊路求生」是同款毛笔体（Godot TITLE_BRUSH_FONT） */
+@font-face {
+  font-family: 'Brush';
+  src: url('../../assets/wenzhen/fonts/MaShanZheng-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  /* ── 纸（全屏基底）────────────────────────────── */
+  --paper:        #ece9df;  /* PAPER_BG 主表面、宣纸白 */
+  --paper-raised: #e6e2d7;  /* PAPER_RAISED 次级纸面 */
+  --paper-deep:   #ddd8cc;  /* PAPER_DEEP 禁用层 */
+  --paper-card:   #f6f3e9;  /* 卡面浅纸（线框稿 .card / .enemy 底色） */
+
+  /* ── 墨（文字）────────────────────────────────── */
+  --ink:        #171814;  /* INK_PRIMARY 大标题、主文字 */
+  --ink-soft:   #686960;  /* INK_SOFT 次级文字 */
+  --ink-muted:  #68675f;  /* INK_MUTED */
+  --ink-note:   #607060;  /* NOTE_TEXT 说明/注释 */
+  --ink-nav:    #505040;  /* NAV_TEXT 导航 */
+  --ink-stat:   #606860;  /* STAT_NAME_TEXT 属性名 */
+  --ink-ver:    #888880;  /* VER_TEXT 版本号/最弱一级 */
+  --ink-faint:  #8a887c;  /* 发丝级提示（线框稿 #8a887c） */
+
+  /* ── 线（发丝分隔）────────────────────────────── */
+  --hairline:   #b8b6aa;  /* RULE_HALL 大厅发丝线 */
+  --rule:       #aaa89f;  /* RULE */
+  --rule-deep:  #9a978c;  /* 节点卡「下一程」清晰墨框 */
+  --card-border:#d5d3c6;  /* ENEMY_CARD_BORDER 敌人卡纸白边框 */
+
+  /* ── 朱砂与语义色 ─────────────────────────────── */
+  --cinnabar: #9c332d;  /* CINNABAR 危险 / 不可逆 / 死亡线 / 代价 */
+  --seal:     #8c5850;  /* SEAL_CINNABAR 印章印泥 */
+  --redline:  #82463e;  /* REDLINE 标题下红线 */
+  --contract: #506880;  /* STATUS_CONTRACT 契约（蓝灰） */
+  --mutate:   #887830;  /* STATUS_MUTATE 异变/DDA（橄榄黄） */
+  --curse:    #904038;  /* STATUS_CURSE 诅咒（砖红） */
+  --jade:     #3f7063;  /* JADE 护盾 / 正向 */
+
+  /* ── 按钮 ─────────────────────────────────────── */
+  --btn-outline: #3880b8;  /* BTN_OUTLINE_BLUE 蓝色描边 */
+  --hit-flash:   #ff8c8c;  /* HIT_FLASH 受击红闪 */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'ZhiSong', 'Songti SC', 'Times New Roman', serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* 纸底 + 网点：任何屏幕都必须有这两层（技能硬规） */
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background-color: var(--paper);
+  background-image: url('../../assets/wenzhen/hall/hall_dots.png');
+  background-size: 1280px 720px;
+  background-repeat: repeat;
+}
+/* 极轻的纸面呼吸：四角略沉，中央留白。不做暗角，不压可读性。 */
+#grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, transparent 0%, rgba(120,112,96,0.05) 62%, rgba(120,112,96,0.11) 100%);
+}
+
+#hud, #tabs, main { position: relative; z-index: 2; }
+
+/* ── 顶栏 ──────────────────────────────────────── */
+#hud {
+  display: flex; align-items: center; gap: 26px;
+  padding: 15px 28px 14px;
+  border-bottom: 1px solid var(--hairline);
+}
+.who { display: flex; align-items: baseline; }
+.who .app {
+  font-family: 'Brush', 'ZhiSong', serif;
+  font-size: 27px; letter-spacing: 5px; color: var(--ink);
+  margin-right: 16px;
+}
+.who .name { font-size: 17px; letter-spacing: 3px; color: var(--ink); }
+.who .tag { margin-left: 11px; font-size: 12px; color: var(--ink-stat); letter-spacing: 1px; }
+
+.pools { display: flex; gap: 24px; margin-left: auto; align-items: center; }
+.pool { display: flex; align-items: center; gap: 8px; }
+.pool label { font-size: 12px; color: var(--ink-stat); letter-spacing: 2px; }
+.pool .num { font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.pool.qi .bar { width: 148px; height: 4px; background: rgba(23,24,20,0.10); overflow: hidden; }
+.pool.qi .bar i {
+  display: block; height: 100%; width: 100%;
+  background: var(--contract);
+  transition: width 320ms ease;
+}
+.pool.blood .num { color: var(--cinnabar); }
+
+/* 印章：方角直角框、2px 印泥、2×2 竖排、顺时针 +3°、透明底 */
+.seal {
+  width: 40px; height: 40px; margin-left: 16px;
+  border: 2px solid var(--seal); border-radius: 0;
+  transform: rotate(3deg);
+  display: grid; grid-template-columns: 1fr 1fr; align-content: center; justify-items: center;
+  font-family: 'Brush', serif; font-size: 13px; line-height: 1.05; color: var(--seal);
+  letter-spacing: 0; padding: 3px;
+}
+
+/* ── 按钮：透明底（网点透出）+ 蓝描边 + 墨字芯 + hover 朱砂。无文字阴影。 ── */
+button {
+  font-family: inherit; color: var(--ink); background: transparent;
+  border: 1px solid var(--btn-outline); border-radius: 2px;
+  padding: 8px 15px; font-size: 14px; letter-spacing: 2px;
+  cursor: pointer; transition: color 180ms, border-color 180ms, background 180ms;
+}
+button:hover:not(:disabled) { color: var(--cinnabar); border-color: var(--cinnabar); }
+button:disabled { opacity: 0.34; cursor: not-allowed; }
+button.ghost { font-size: 12px; padding: 6px 12px; color: var(--ink-nav); border-color: var(--rule); }
+button.primary { font-size: 16px; padding: 10px 20px; color: var(--ink); border-color: var(--btn-outline); }
+
+/* ── 页签 ──────────────────────────────────────── */
+#tabs { display: flex; gap: 2px; padding: 0 28px; border-bottom: 1px solid var(--hairline); }
+#tabs button {
+  border: none; border-radius: 0; border-bottom: 2px solid transparent;
+  padding: 13px 24px; color: var(--ink-nav); letter-spacing: 3px;
+}
+#tabs button:hover:not(:disabled) { color: var(--cinnabar); border-bottom-color: transparent; }
+#tabs button.on { color: var(--ink); border-bottom-color: var(--cinnabar); }
+
+main { padding: 24px 28px; height: calc(100vh - 150px); overflow: auto; }
+.panel { display: none; }
+.panel.on { display: block; animation: rise 300ms ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* 区块标题：墨色 + 下方 2px 红线（技能硬规） */
+h2 {
+  font-size: 15px; font-weight: 400; letter-spacing: 4px; color: var(--ink);
+  margin-bottom: 8px; padding-bottom: 7px; border-bottom: 2px solid var(--redline);
+  display: inline-block;
+}
+
+/* ── 蛊虫卡：浅纸面 + 发丝边框，图与纸融合 ────── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(184px, 1fr)); gap: 14px; margin-top: 16px; }
+.gu {
+  position: relative; padding: 13px;
+  border: 1px solid var(--card-border); background: var(--paper-card);
+  transition: border-color 180ms, transform 180ms;
+}
+.gu:hover { border-color: var(--rule-deep); transform: translateY(-2px); }
+/* 道徽/立绘本身就画在纸底上 → 用 multiply 让它的纸融进界面纸底，
+   而不是当一张矩形贴片压在背景上。 */
+.gu img:not(.thumb) {
+  width: 48px; height: 48px; object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.gu .gn { margin-top: 9px; font-size: 16px; letter-spacing: 2px; color: var(--ink); }
+.gu .gm { margin-top: 5px; font-size: 11px; color: var(--ink-faint); letter-spacing: 1px; }
+.gu .ge { margin-top: 8px; font-size: 12px; color: var(--jade); }
+.gu .cnt { position: absolute; right: 12px; top: 12px; font-size: 13px; color: var(--cinnabar); }
+.gu.r2 { border-color: var(--seal); }
+.gu.r2 .gn::after {
+  content: '◆'; margin-left: 7px; font-size: 9px; color: var(--seal); vertical-align: 2px;
+}
+/* 对手选择页的立绘缩略：铺满卡片，避免图自带纸底在卡上露出一圈色差 */
+.thumb {
+  width: 100%; height: 132px; object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+/* ── 配方 ──────────────────────────────────────── */
+.recipes { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.recipe {
+  display: flex; align-items: center; gap: 18px; padding: 15px 17px;
+  border: 1px solid var(--card-border); background: var(--paper-card);
+}
+.recipe .io { display: flex; align-items: center; gap: 11px; font-size: 14px; }
+.recipe .io img { width: 34px; height: 34px; object-fit: contain; mix-blend-mode: multiply; }
+.recipe .arrow { color: var(--ink-faint); }
+.recipe .meta { margin-left: auto; text-align: right; font-size: 12px; color: var(--ink-stat); }
+.recipe .src { display: block; margin-top: 5px; font-size: 10px; color: var(--ink-ver); max-width: 420px; }
+
+/* ── 杀招 ──────────────────────────────────────── */
+.slots { display: flex; gap: 10px; margin: 16px 0 20px; }
+.slot {
+  width: 62px; height: 62px; border: 1px dashed var(--rule); border-radius: 2px;
+  display: grid; place-items: center; font-size: 11px; color: var(--ink-faint);
+  background: var(--paper-card);
+}
+.slot.filled { border-style: solid; border-color: var(--seal); }
+.slot img { width: 34px; height: 34px; object-fit: contain; mix-blend-mode: multiply; }
+.moves { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 12px; }
+.move { padding: 14px; border: 1px solid var(--card-border); background: var(--paper-card); }
+.move.ready { border-color: var(--btn-outline); }
+.move .ml { font-size: 16px; letter-spacing: 2px; color: var(--ink); }
+.move .mr { margin-top: 6px; font-size: 11px; color: var(--ink-faint); }
+.move .me { margin-top: 8px; font-size: 12px; color: var(--jade); }
+.move .mc { margin-top: 8px; font-size: 11px; color: var(--ink-stat); }
+
+/* ── 战斗 ──────────────────────────────────────── */
+.field { display: grid; grid-template-columns: 1fr 280px 1fr; gap: 28px; align-items: start; }
+.colhead {
+  font-size: 12px; letter-spacing: 4px; color: var(--ink-stat);
+  margin-bottom: 11px; padding-bottom: 5px; border-bottom: 1px solid var(--hairline);
+}
+.foe { text-align: center; }
+/* 立绘同样画在纸底上：multiply 让它成为「命簿里贴的一幅志怪图」。
+   立绘源是方图，所以画框也用 1:1 + cover —— 用 3:4 contain 会在上下留出
+   两道底色空带，看起来像没加载完。 */
+.foe img {
+  width: 100%; max-width: 258px; aspect-ratio: 1 / 1; object-fit: cover;
+  border: 1px solid var(--card-border); background: var(--paper-card);
+  mix-blend-mode: multiply;
+}
+.foe .fn { margin-top: 12px; font-size: 20px; letter-spacing: 4px; color: var(--ink); }
+.foe .fi { margin-top: 7px; font-size: 13px; color: var(--cinnabar); letter-spacing: 1px; }
+.hpline { margin-top: 11px; height: 5px; background: rgba(156,51,45,0.16); }
+.hpline i { display: block; height: 100%; background: var(--cinnabar); transition: width 300ms ease; }
+.pick { display: flex; flex-direction: column; gap: 10px; }
+.pick button { width: 100%; }
+.pick .cost { color: var(--ink-soft); font-size: 11px; }
+.log {
+  min-height: 224px; max-height: 268px; overflow: auto;
+  padding-left: 15px; border-left: 1px solid var(--hairline);
+  font-size: 13px; line-height: 2.0; color: var(--ink-soft);
+}
+.log b { color: var(--ink); font-weight: 400; }
+.log .dmg { color: var(--cinnabar); }
+.log .heal { color: var(--jade); }
+.hit { animation: shake 260ms ease; }
+@keyframes shake { 0%, 100% { transform: none; } 25% { transform: translateX(-9px); } 75% { transform: translateX(9px); } }
+
+/* ── 线索 / 反击 / 状态 芯片 ───────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.chip {
+  display: inline-block; padding: 3px 9px; font-size: 11px; letter-spacing: 1px;
+  border: 1px solid var(--rule); border-radius: 2px;
+  color: var(--ink-stat); background: var(--paper-card);
+}
+/* 未知刻意压暗（hidden/unknowable 才允许淡），但 none/spent 承载的是真实
+   战况（"冷却至第 N 回合"），用 VER_TEXT 那种版本号灰会踩到「禁止低对比浅灰正文」，
+   故用 INK_SOFT。 */
+.chip.hidden { color: var(--ink-ver); border-style: dashed; background: transparent; }
+.chip.none   { color: var(--ink-soft); background: transparent; }
+.chip.live   { color: var(--cinnabar); border-color: var(--cinnabar); background: rgba(156,51,45,0.05); }
+.chip.spent  { color: var(--ink-soft); text-decoration: line-through; background: transparent; }
+.chip.flag   { color: var(--curse); border-color: var(--curse); background: rgba(144,64,56,0.05); }
+
+/* 反击预警：朱砂系，明确是「危险」不是「信息」 */
+.forewarn {
+  padding: 9px 12px; font-size: 12px; line-height: 1.75; letter-spacing: 1px;
+  color: var(--cinnabar); border: 1px solid var(--cinnabar); background: rgba(156,51,45,0.05);
+}
+button.risky { border-color: var(--cinnabar); }
+.warnmark { color: var(--cinnabar); }
+
+/* ── 覆盖清单 ──────────────────────────────────── */
+.cover-list { display: grid; gap: 10px; margin-top: 16px; }
+.cover { padding: 14px 16px; border: 1px solid var(--card-border); background: var(--paper-card); }
+.cover.ok { border-left: 3px solid var(--jade); }
+.cover.no { border-left: 3px solid var(--cinnabar); }
+.cover .cv { font-size: 15px; letter-spacing: 2px; color: var(--ink); }
+.cover .cd { margin-top: 7px; font-size: 12px; line-height: 1.85; color: var(--ink-soft); }
+.cover .cs { margin-top: 7px; font-size: 11px; color: var(--ink-ver); }
+
+/* ── 提示条 ────────────────────────────────────── */
+#toast {
+  position: fixed; left: 50%; bottom: 50px; transform: translateX(-50%);
+  z-index: 5; font-size: 14px; letter-spacing: 2px; color: var(--ink);
+  background: var(--paper-card); border: 1px solid var(--rule); border-radius: 2px;
+  padding: 11px 22px; opacity: 0; transition: opacity 260ms ease;
+}
+#toast.on { opacity: 1; }
+#toast.bad  { border-color: var(--cinnabar); color: var(--cinnabar); }
+#toast.good { border-color: var(--jade); color: var(--jade); }
+
+/* 脚本没跑起来时的兜底提示（见 index.html 末尾内联脚本） */
+#bootfail {
+  position: fixed; z-index: 9; left: 50%; top: 42%; transform: translate(-50%, -50%);
+  max-width: 520px; padding: 26px 30px; text-align: center;
+  background: var(--paper-card); border: 1px solid var(--cinnabar); border-radius: 2px;
+}
+#bootfail b { display: block; font-size: 19px; letter-spacing: 3px; color: var(--cinnabar); }
+#bootfail p { margin-top: 12px; font-size: 13px; line-height: 1.9; color: var(--ink-soft); }
