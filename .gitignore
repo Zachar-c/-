@@ -8,6 +8,10 @@
 **/.worktrees/
 
 # Full source texts stay local for copyright and repository-size reasons.
+# 未锚定：任意层级的完整原文底稿一律不得进入 Git 树（含仓库根，2026-09-19 P0 围堵）。
+蛊真人.txt
+蛊真人-clean.txt
+《人祖传》.txt
 gu-zhenren-editor/分支：六卷精编版/蛊真人-clean.txt
 gu-zhenren-editor/分支：六卷精编版/《人祖传》.txt
 game/分支：六卷精编版/蛊真人-clean.txt
