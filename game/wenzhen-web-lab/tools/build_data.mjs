@@ -344,9 +344,10 @@ const mechanisms = {
     { name: '焚元意图', detail: '意图带 essence_burn 时烧掉玩家真元（蚀脉扰元 / 麻痹长嗥）', source: 'data/enemies.json phases[].intents[].essence_burn（按字段名直译，Godot 运行时不读该字段）' },
     { name: '多敌遭遇', detail: '10 个 type=combat 模板中唯一多敌 beast_swarm_pass（enemy_kinds 2 只）；规模 = enemy_kinds 长度；玩家点选目标、未选回退第一个存活；敌方按数组序逐个结算、每次立即判胜负；全灭才胜利；反击/阶段/冷却每敌一份；护体是池语义', source: 'data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）' },
     { name: '坊市货架与蛊方服务', detail: '按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价；仅保留蛊方解锁服务', source: 'data/shops.json → purchase/material_purchase/gu_fang_unlock；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price/_shop_gu_fang_unlock' },
+    { name: '险地节点（探查 / 穿越 / 退回）', detail: '固定图每层 3 个候选中确定性地换入 1 个险地节点（毒瘴山道 / 积水石窟 / 黑泥沼地；槽位与模板都由 seed 决定，同 seed 同难度同图）；探查与退回只记事实（route_scouted / withdrawn_safely），穿越消耗 1 点真元、真元不足则拒绝且不结算；解析后回统一整备，不做 on_skip 后果', source: 'data/nodes.json → toxic_mountain_path / flooded_cave / black_mud_marsh（choices 均为 scout/cross/withdraw）；social_command_rules.gd:768-771,801-803（标准行动转移）；action_preview_service.gd:1022-1028,1076-1077,1085-1087（预览门禁与文案）；display_text.gd:69,86,90（显示名）、228,238,242（行动结果文案）' },
   ],
   notCovered: [
-    { name: '路线选择的领域结算', why: '本原型只按节点类型分流，并在选择后推进路线；交涉、侦察、穿越等完整结算仍以 Godot 领域层为准' },
+    { name: '非险地节点的路线选择结算', why: '本原型固定图只放战斗、精英、险地与层主；接触、商队、事件等其余节点类型的选择结算未接入，仍以 Godot 领域层为准。险地的探查/穿越/退回已接入，见已覆盖清单' },
     { name: '精英代价绑定', why: 'elite 战利品表声明 backlash/notoriety cost_pool；本原型不继承恶名系统，也不伪造精英代价结算' },
     { name: 'Godot 服务型系统与动态难度', why: 'L0 裁决：除蛊方服务外，资源交换、寿元交易、以物易物、洗恶名、补魂丹、配方解锁与动态难度均不作为本原型目标；相关 Godot 实现仅保留为历史参照' },
     { name: '意图选取顺序', why: '数据未写明多意图之间的优先级（_phases_note 只定义了冷却门禁）。本页取"数据顺序中第一条可用的"，属原型设定，Godot 无实现可对照' },
@@ -355,6 +356,7 @@ const mechanisms = {
     { name: '魂魄成长与失控', why: '本页已接魂魄行动分档、抽魂与魂魄归零死亡；魂魄收集、成长、狂暴和失控仍未实现' },
     { name: '完整事件日志与存档', why: '已接最小 run event_log 并用于炼蛊与战利品 tick；完整领域事件形状、存档与回放尚未接入' },
     { name: 'counter_status="sparked"（雷冠头狼）', why: '数据漂移：data/enemies.json 声明了该反击状态，但 scripts/ 与 docs/ 里零命中，规则层无实现语义。本页不臆造，已从反击列表剔除' },
+    { name: '险地节点的 on_skip', why: '数据漂移：data/nodes.json 的险地模板声明了 on_skip（lose_route / lose_clue / gain_pursuit），但 scripts/ 里零命中，Godot 域层没有实现该字段。本页不臆造跳过后果，险地只结算 choices 里的三条 standard action' },
     { name: '线索的中文名', why: '数据缺口：data/names.json 没有 clues 分区，敌人线索只有 id（stone_dust、steady_stance 等）；本页照原样显示 id，不自行译名' },
   ],
 };

@@ -27,7 +27,7 @@ function eventById(id) {
 }
 
 function nodeTypeLabel(type) {
-  return ({ battle: '战斗', elite: '精英', boss: '层主' }[type]) || type || '未知';
+  return ({ battle: '战斗', elite: '精英', boss: '层主', hazard: '险地' }[type]) || type || '未知';
 }
 
 function actionLabel(action) {
@@ -51,6 +51,15 @@ function currentSegment() {
   return Number(currentNode()?.segment || 1);
 }
 
+// 选中节点后该回到哪一页：战斗/结算/未解析的险地/统一整备。
+function currentNodePage() {
+  if (state.battle) return 'battle';
+  if (state.reward) return 'reward';
+  const node = currentNode();
+  if (node?.type === 'hazard' && state.prepFor !== node.id) return 'hazard';
+  return 'prep';
+}
+
 function segmentTitle(segment) {
   return DATA.flow.segmentTitles?.[String(segment)] || `第 ${segment} 段`;
 }
@@ -58,6 +67,7 @@ function segmentTitle(segment) {
 function renderJourneyPages() {
   renderHall(document.querySelector('#panel-hall'));
   renderMap(document.querySelector('#panel-map'));
+  renderHazard(document.querySelector('#panel-hazard'));
   renderPrep(document.querySelector('#panel-prep'));
   renderReward(document.querySelector('#panel-reward'));
   renderEnding(document.querySelector('#panel-ending'));
@@ -74,7 +84,7 @@ function renderHall(root) {
       <section class="hall-main">
         <div class="eyebrow">问真 · Web 拼装局</div>
         <h1>问真</h1>
-        <p class="hall-copy">固定节点图、战斗、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
+        <p class="hall-copy">固定节点图、战斗、险地、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
         <div class="difficulty-row">
           ${Object.entries(DATA.flow.difficulties).map(([key, value]) => `
             <button class="${key === difficulty ? 'on' : ''}" data-difficulty="${key}">
@@ -147,13 +157,13 @@ function renderMap(root) {
     ${pathNodes.length ? `<div class="journey-trail">${pathNodes.map((node) => `<span>${node.depth + 1}. ${nodeTypeLabel(node.type)}</span>`).join('')}</div>` : ''}
     ${current ? `<div class="map-nodes map-choices">${mapNodeCard(current, selected, new Set([current.id]), completed)}</div>` : ''}
     ${!current && candidates.length ? `<h3 class="map-choice-title">当前可走后继</h3><div class="map-nodes map-choices">${candidates.map((node) => mapNodeCard(node, selected, available, completed)).join('')}</div>` : ''}
-    ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${state.battle ? '返回当前战斗' : state.reward ? '查看结算' : '继续整备'}</button></div>` : ''}`;
+    ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${{ battle: '返回当前战斗', reward: '查看结算', hazard: '返回险地', prep: '继续整备' }[currentNodePage()]}</button></div>` : ''}`;
 
   root.querySelectorAll('[data-choose-node]').forEach((button) => {
     button.addEventListener('click', () => act.chooseNode(button.dataset.chooseNode));
   });
   root.querySelector('[data-return-node]')?.addEventListener('click', () => {
-    showPage(state.battle ? 'battle' : state.reward ? 'reward' : 'prep');
+    showPage(currentNodePage());
   });
 }
 
@@ -162,13 +172,53 @@ function mapNodeCard(node, selected, available, completed) {
   const isAvailable = available.has(node.id);
   const isDone = completed.has(node.id);
   const stateClass = isSelected ? 'current' : isDone ? 'done' : isAvailable ? 'available' : 'locked';
-  const enemies = nodeEnemyIds(node).map((id) => (enemyById(id) || {}).name || id).join('、');
+  const isHazard = node.type === 'hazard';
+  const detail = isHazard
+    ? (node.choices || []).map(actionLabel).join(' · ')
+    : nodeEnemyIds(node).map((id) => (enemyById(id) || {}).name || id).join('、');
   return `<article class="map-node ${stateClass}">
     <div class="rn-top"><span>${node.type === 'boss' ? '层主' : `L${node.segment} · ${node.depth + 1}`}</span><em>${nodeTypeLabel(node.type)}</em></div>
     <div class="rn-name">${node.name}</div>
-    <div class="rn-enemies">${enemies || '无战斗数据'}</div>
+    <div class="rn-enemies">${detail || '无战斗数据'}</div>
+    ${isHazard && node.summary ? `<div class="rn-summary">${node.summary}</div>` : ''}
     ${isAvailable ? `<button data-choose-node="${node.id}">进入</button>` : `<span class="rn-state">${isSelected ? '当前' : isDone ? '已过' : '未选'}</span>`}
   </article>`;
+}
+
+// 险地页：列 node.choices 的三条 standard action 与当前可用性，解析后回统一整备。
+function renderHazard(root) {
+  if (!root) return;
+  const node = currentNode();
+  if (!node || node.type !== 'hazard' || state.prepFor === node.id) {
+    root.innerHTML = '<div class="empty">当前没有待处理的险地节点。</div>';
+    return;
+  }
+  const choices = HazardRules.options({ choices: node.choices, essence: state.qi });
+  root.innerHTML = `
+    <div class="section-head">
+      <div>
+        <div class="kicker">${segmentTitle(node.segment)} · 险地 · 第 ${node.depth + 1} / ${state.journey.graph.prepPerSegment} 个准备节点</div>
+        <h2>${node.name}</h2>
+      </div>
+      <div class="prep-resources">
+        <span>真元 ${state.qi}/${state.qiMax}</span>
+        <span>元石 ${state.stones}</span>
+        <span>气血 ${state.blood}/${state.bloodMax}</span>
+      </div>
+    </div>
+    ${node.summary ? `<p class="lead">${node.summary}</p>` : ''}
+    <div class="hazard-choices">${choices.map((option) => `
+      <article class="hazard-choice ${option.available ? 'ready' : ''}">
+        <div class="hc-head"><b>${actionLabel(option.id)}</b><span>${option.essenceCost > 0 ? `真元 -${option.essenceCost}` : '无消耗'}</span></div>
+        ${(option.gain || []).map((line) => `<p>${line}</p>`).join('')}
+        ${(option.risk || []).map((line) => `<p class="risk">${line}</p>`).join('')}
+        ${option.available ? '' : `<p class="blocked">${HazardRules.reasonLabel(option.reason)}</p>`}
+        <button class="${option.available ? 'primary' : ''}" ${option.available ? '' : 'disabled'} data-hazard-choice="${option.id}">${option.available ? '执行' : '不可用'}</button>
+      </article>`).join('')}</div>
+    <div class="map-help">险地按 Godot standard actions 结算：探查与退回只记事实，穿越消耗 1 点真元；解析后进入统一整备。</div>`;
+  root.querySelectorAll('[data-hazard-choice]').forEach((button) => {
+    button.addEventListener('click', () => act.resolveHazard(button.dataset.hazardChoice));
+  });
 }
 
 function currentShopContext() {

@@ -457,8 +457,20 @@ button.risky { border-color: var(--cinnabar); }
 .map-node.locked { opacity: .45; }
 .map-node .rn-name { min-height: 40px; }
 .rn-enemies { margin-top: 8px; font-size: 11px; line-height: 1.6; color: var(--ink-soft); }
+.rn-summary { margin-top: 6px; font-size: 11px; line-height: 1.6; color: var(--ink-faint); }
 .map-node button { margin-top: 10px; }
 .map-node .rn-state { bottom: 12px; }
+
+/* 险地 */
+.hazard-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 20px; max-width: 980px; }
+.hazard-choice { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.82), rgba(5,13,21,.74)); }
+.hazard-choice.ready { border-color: rgba(169,215,255,.48); }
+.hc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.hc-head b { font-size: 17px; font-weight: 400; letter-spacing: 2px; }
+.hc-head span { font-size: 11px; color: var(--ink-stat); white-space: nowrap; }
+.hazard-choice p { font-size: 12px; line-height: 1.75; color: var(--ink-soft); }
+.hazard-choice p.risk, .hazard-choice p.blocked { color: var(--cinnabar); }
+.hazard-choice button { margin-top: auto; }
 
 /* 统一整备 */
 .prep-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; padding-bottom: 16px; border-bottom: 1px solid var(--hairline); }

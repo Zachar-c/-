@@ -48,26 +48,68 @@ globalThis.RunFlow = (() => {
     };
   }
 
+  // 险地模板来自 Godot 数据（data/nodes.json 的 type=hazard：毒瘴山道 / 积水石窟 /
+  // 黑泥沼地）。每层 3 个候选里固定换 1 个槽位为险地，槽位与模板都由 seed 决定：
+  // 同 seed + difficulty 必须产出完全相同的图。
+  // 没有 choices 的模板不进池：险地页靠模板 choices 出按钮，空 choices 会卡死节点。
+  function hazardPool(hazardTemplates) {
+    return [...(hazardTemplates || [])]
+      .filter((entry) => entry && entry.id && (entry.choices || []).length > 0);
+  }
+
+  function hazardSlotFor(layerKey, seed, hasPool) {
+    if (!hasPool) return -1;
+    return RunRules.seededIndex(3, seed, `${layerKey}.hazard.slot`, 0);
+  }
+
+  function hazardTemplateFor(layerKey, seed, pool) {
+    if (!pool.length) return null;
+    return pool[RunRules.seededIndex(pool.length, seed, `${layerKey}.hazard.template`, 0)];
+  }
+
   function generateGraph({
     seed = 1,
     difficulty = 'normal',
     difficulties = DEFAULT_DIFFICULTIES,
     pools = {},
     enemyById = {},
+    hazardTemplates = [],
   } = {}) {
     const difficultyKey = difficulties[difficulty] ? difficulty : 'normal';
     const preset = difficulties[difficultyKey] || DEFAULT_DIFFICULTIES.normal;
     const prepPerSegment = Math.max(1, Number(preset.prepPerSegment || 10));
     const nodes = [];
     const roots = [];
+    const hazardPoolEntries = hazardPool(hazardTemplates);
 
     for (let segment = 1; segment <= 5; segment += 1) {
       const segmentPools = poolsForSegment(pools, segment);
       const rows = [];
       for (let depth = 0; depth < prepPerSegment; depth += 1) {
         const row = [];
+        const layerKey = `L${segment}D${depth}`;
+        const hazardSlot = hazardSlotFor(layerKey, seed, hazardPoolEntries.length > 0);
+        const hazardTemplate = hazardTemplateFor(layerKey, seed, hazardPoolEntries);
         for (let slot = 0; slot < 3; slot += 1) {
           const id = nodeId(segment, depth, slot);
+          if (slot === hazardSlot && hazardTemplate) {
+            row.push({
+              id,
+              segment,
+              layer: segment,
+              depth,
+              slot,
+              type: 'hazard',
+              tier: 'hazard',
+              hazardId: hazardTemplate.id,
+              enemyIds: [],
+              name: `险地 · ${hazardTemplate.name || hazardTemplate.id}`,
+              summary: hazardTemplate.summary || '',
+              choices: [...(hazardTemplate.choices || [])],
+              nextIds: [],
+            });
+            continue;
+          }
           const elite = (depth + slot) % 4 === 3;
           const type = elite ? 'elite' : 'battle';
           const enemyIds = pickEnemyIds(

@@ -6587,12 +6587,17 @@ const DATA = {
         "name": "坊市货架与蛊方服务",
         "detail": "按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价；仅保留蛊方解锁服务",
         "source": "data/shops.json → purchase/material_purchase/gu_fang_unlock；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price/_shop_gu_fang_unlock"
+      },
+      {
+        "name": "险地节点（探查 / 穿越 / 退回）",
+        "detail": "固定图每层 3 个候选中确定性地换入 1 个险地节点（毒瘴山道 / 积水石窟 / 黑泥沼地；槽位与模板都由 seed 决定，同 seed 同难度同图）；探查与退回只记事实（route_scouted / withdrawn_safely），穿越消耗 1 点真元、真元不足则拒绝且不结算；解析后回统一整备，不做 on_skip 后果",
+        "source": "data/nodes.json → toxic_mountain_path / flooded_cave / black_mud_marsh（choices 均为 scout/cross/withdraw）；social_command_rules.gd:768-771,801-803（标准行动转移）；action_preview_service.gd:1022-1028,1076-1077,1085-1087（预览门禁与文案）；display_text.gd:69,86,90（显示名）、228,238,242（行动结果文案）"
       }
     ],
     "notCovered": [
       {
-        "name": "路线选择的领域结算",
-        "why": "本原型只按节点类型分流，并在选择后推进路线；交涉、侦察、穿越等完整结算仍以 Godot 领域层为准"
+        "name": "非险地节点的路线选择结算",
+        "why": "本原型固定图只放战斗、精英、险地与层主；接触、商队、事件等其余节点类型的选择结算未接入，仍以 Godot 领域层为准。险地的探查/穿越/退回已接入，见已覆盖清单"
       },
       {
         "name": "精英代价绑定",
@@ -6625,6 +6630,10 @@ const DATA = {
       {
         "name": "counter_status=\"sparked\"（雷冠头狼）",
         "why": "数据漂移：data/enemies.json 声明了该反击状态，但 scripts/ 与 docs/ 里零命中，规则层无实现语义。本页不臆造，已从反击列表剔除"
+      },
+      {
+        "name": "险地节点的 on_skip",
+        "why": "数据漂移：data/nodes.json 的险地模板声明了 on_skip（lose_route / lose_clue / gain_pursuit），但 scripts/ 里零命中，Godot 域层没有实现该字段。本页不臆造跳过后果，险地只结算 choices 里的三条 standard action"
       },
       {
         "name": "线索的中文名",

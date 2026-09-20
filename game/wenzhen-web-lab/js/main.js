@@ -37,6 +37,7 @@ function fresh(difficulty = 'normal') {
     difficulties: DATA.flow.difficulties,
     pools: DATA.flow.poolsBySegment,
     enemyById,
+    hazardTemplates: DATA.nodes.filter((node) => node.type === 'hazard'),
   });
   const journey = {
     difficulty,
@@ -51,7 +52,7 @@ function fresh(difficulty = 'normal') {
     thought: thoughts, thoughtMax: thoughts,
     journey, prepFor: null, reward: null, ending: null, shopSold: [], restUsed: false, journal: [],
     materials: {}, page: 'hall', lootPity: 0, materialPityByTier: {},
-    globalCodexIds: [],
+    globalCodexIds: [], knownFacts: [],
     eventLog: [{
       id: 'event_0000', time: 0, nodeId: journey.nodeId, action: 'run_started',
       reason: 'new_run',
@@ -536,12 +537,44 @@ const act = {
     state.reward = null;
     state.shopSold = [];
     state.battle = null;
+    if (node.type === 'hazard') return act.enterHazard();
     if (!node.enemyIds?.length) {
       state.journey.availableNodeIds = node.nextIds || [];
       state.journey.nodeId = null;
       return showPage('map');
     }
     act.startBattle(node.enemyIds, node.id);
+  },
+
+  // 险地节点：进入后等玩家在险地页选一个 standard action（探查/穿越/退回）。
+  enterHazard() {
+    const node = currentNode();
+    if (!node || node.type !== 'hazard') return showPage('map');
+    showPage('hazard');
+    Sfx.click();
+    draw();
+  },
+
+  // 解析险地选择。转移与拒绝口径见 js/hazard_rules.js（照搬 social_command_rules.gd
+  // 的 standard actions 与 action_preview_service.gd 的预览门禁）。
+  resolveHazard(choiceId) {
+    const node = currentNode();
+    if (!node || node.type !== 'hazard') return;
+    if (state.prepFor === node.id) return; // 已解析：节点只剩统一整备
+    const before = state.qi;
+    const result = HazardRules.resolve(choiceId, { essence: state.qi, knownFacts: state.knownFacts });
+    if (!result.ok) return toast(HazardRules.reasonLabel(result.reason), 'bad');
+    state.qi = result.essence;
+    state.knownFacts = result.knownFacts;
+    const spent = before - state.qi;
+    state.journal.unshift(`${node.name} · ${actionLabel(choiceId)}${spent > 0 ? ` · 真元 -${spent}` : ''}`);
+    recordEvent('choose_action', {
+      true_qi: state.qi,
+      known_facts: [...state.knownFacts],
+    }, result.reason, [node.hazardId]);
+    Sfx.success();
+    toast(HazardRules.resultText(choiceId) || actionLabel(choiceId), 'good');
+    act.openPrep();
   },
 
   completeCurrentNode(reason = '整备完成') {
