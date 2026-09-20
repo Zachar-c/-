@@ -119,15 +119,24 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 			"hp": int(e.get("hp", 1)),
 			"max_hp": int(e.get("hp", 1)),
 			"alive": true,
+			# SIDE-FIX（2026-09-19）：多阶段 AI。phases 随条目透传（facade 深拷贝），
+			# phase_index = 上次结算所处阶段（-1 = 未计算），last_fired = 意图 id →
+			# 上次发出回合。无 phases 的敌人走单意图 + 同一套冷却门禁。
+			"phases": (e.get("phases", []) as Array).duplicate(true),
+			"phase_index": -1,
+			"last_fired": {},
 			"intent": {
 				"kind": intent_kind,
 				# H3（Q8 Step 4）：意图带最小语义属性——这是不是一次伤害意图。
 				# sealed 门禁与 weaken_intent 只作用于 damage intent；数据可显式
 				# 声明覆盖，缺省按 kind 派生（attack=伤害意图）。
 				"damage_intent": bool(intent.get("damage_intent", intent_kind == "attack")),
+				"id": str(intent.get("id", "")),
 				"damage": int(intent.get("damage", 0)),
 				"label": str(intent.get("label", "蓄力")),
 				"speed": int(intent.get("speed", 0)),
+				"cooldown": maxi(0, int(intent.get("cooldown", 0))),
+				"essence_burn": maxi(0, int(intent.get("essence_burn", 0))),
 				"seal_turns": int(intent.get("seal_turns", 0)),
 				"soul_drain": int(intent.get("soul_drain", 0)),
 				"life_cost": int(intent.get("life_cost", 0)),
@@ -141,6 +150,11 @@ static func _build_enemies(enemy_entries: Array) -> Array[Dictionary]:
 			# weaken_intent 操作写入；消费或回合结束清零）。
 			"intent_weaken": 0,
 		})
+		# SIDE-FIX：开局即落在当前血量比对应的阶段，避免首回合刷一条
+		# 伪装的 phase_shift（满血即 phase 0，无切换可记）。
+		var built: Dictionary = result[result.size() - 1]
+		built["phase_index"] = active_phase_index(built)
+		result[result.size() - 1] = built
 	return result
 
 
@@ -892,8 +906,114 @@ static func _fire_delayed_effects(battle: Dictionary) -> Dictionary:
 	return next
 
 
+# ---------- 敌人多阶段 AI（SIDE-FIX 2026-09-19） ----------
+# 语义来源：data/enemies.json → miasma_vein_lord._phases_note（唯一语义说明，
+# 已与 game/wenzhen-web-lab/js/rules.js 的 activePhase/intentReady/selectIntent
+# 逐条核对一致；Web 仅只读参照）。多意图优先级数据未写明 → 取数据顺序（原型口径）。
+
+## 当前血量比（max_hp 缺失/归零时按满血计，避免除零）。
+static func _hp_ratio(enemy: Dictionary) -> float:
+	var max_hp := int(enemy.get("max_hp", 0))
+	if max_hp <= 0:
+		return 1.0
+	return clampf(float(int(enemy.get("hp", 0))) / float(max_hp), 0.0, 1.0)
+
+
+## 当前阶段下标 = 数据顺序中最后一个 until_hp_ratio >= 当前血量比的阶段。
+## 无 phases 返回 -1（调用方走单意图路径）。
+static func active_phase_index(enemy: Dictionary) -> int:
+	var phases: Array = enemy.get("phases", [])
+	if phases.is_empty():
+		return -1
+	var ratio := _hp_ratio(enemy)
+	var index := 0
+	for i in phases.size():
+		if float((phases[i] as Dictionary).get("until_hp_ratio", 0.0)) >= ratio:
+			index = i
+	return index
+
+
+## 意图是否已冷却完毕：第 T 回合发出后，最早 T+n+1 回合才能再选。
+static func _intent_ready(last_fired: Dictionary, intent_id: String, cooldown: int, turn: int) -> bool:
+	if not last_fired.has(intent_id):
+		return true
+	return turn >= int(last_fired[intent_id]) + maxi(0, cooldown) + 1
+
+
+## 本回合意图：阶段内按数据顺序取第一条已冷却的；全部在冷却 → {}（cooldown_wait）。
+static func select_enemy_intent(enemy: Dictionary, turn: int) -> Dictionary:
+	var intents: Array = []
+	var phases: Array = enemy.get("phases", [])
+	if not phases.is_empty():
+		var phase_index := active_phase_index(enemy)
+		if phase_index >= 0:
+			intents = (phases[phase_index] as Dictionary).get("intents", [])
+	else:
+		intents = [enemy.get("intent", {})]
+	var last_fired: Dictionary = enemy.get("last_fired", {})
+	for intent_value in intents:
+		var candidate: Dictionary = intent_value
+		var intent_id := str(candidate.get("id", ""))
+		if _intent_ready(last_fired, intent_id, int(candidate.get("cooldown", 0)), turn):
+			return candidate
+	return {}
+
+
+## 阶段意图 → 可结算意图（补全缺省键；无 kind 视为 attack；damage_intent 缺省按 kind 派生）。
+static func _merge_phase_intent(candidate: Dictionary) -> Dictionary:
+	var kind := str(candidate.get("kind", "attack"))
+	return {
+		"kind": kind,
+		"damage_intent": bool(candidate.get("damage_intent", kind == "attack")),
+		"id": str(candidate.get("id", "")),
+		"damage": int(candidate.get("damage", 0)),
+		"label": str(candidate.get("label", "蓄力")),
+		"speed": int(candidate.get("speed", 0)),
+		"cooldown": maxi(0, int(candidate.get("cooldown", 0))),
+		"essence_burn": maxi(0, int(candidate.get("essence_burn", 0))),
+		"seal_turns": int(candidate.get("seal_turns", 0)),
+		"soul_drain": int(candidate.get("soul_drain", 0)),
+		"life_cost": int(candidate.get("life_cost", 0)),
+		"counter_tag": str(candidate.get("counter_tag", "")),
+	}
+
+
 static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dictionary:
 	var next := _dup(battle)
+	# 多阶段 / 冷却门禁：有 phases 按血量比选阶段 + 数据顺序选意图；单意图敌人
+	# 同样过冷却门禁（cooldown 缺省 0 → 恒就绪，行为零漂移）。
+	var phases: Array = (next["enemies"][enemy_index] as Dictionary).get("phases", [])
+	if not phases.is_empty():
+		var phase_enemy: Dictionary = next["enemies"][enemy_index]
+		var phase_index := active_phase_index(phase_enemy)
+		if phase_index != int(phase_enemy.get("phase_index", -1)):
+			phase_enemy["phase_index"] = phase_index
+			next["enemies"][enemy_index] = phase_enemy
+			_log(next, "phase_shift", str(phase_enemy.get("id", "")))
+		var selected := select_enemy_intent(next["enemies"][enemy_index], int(next.get("turn", 1)))
+		if selected.is_empty():
+			_log(next, "cooldown_wait", str((next["enemies"][enemy_index] as Dictionary).get("id", "")))
+			return next
+		var merged := _merge_phase_intent(selected)
+		var fired: Dictionary = (next["enemies"][enemy_index] as Dictionary).duplicate(true)
+		fired["intent"] = merged
+		var last_fired: Dictionary = (fired.get("last_fired", {}) as Dictionary).duplicate(true)
+		last_fired[str(merged["id"])] = int(next.get("turn", 1))
+		fired["last_fired"] = last_fired
+		next["enemies"][enemy_index] = fired
+	else:
+		var single: Dictionary = next["enemies"][enemy_index]
+		var single_intent: Dictionary = single.get("intent", {})
+		if not _intent_ready(single.get("last_fired", {}),
+				str(single_intent.get("id", "")),
+				int(single_intent.get("cooldown", 0)), int(next.get("turn", 1))):
+			_log(next, "cooldown_wait", str(single.get("id", "")))
+			return next
+		var single_fired: Dictionary = (single as Dictionary).duplicate(true)
+		var single_last: Dictionary = (single_fired.get("last_fired", {}) as Dictionary).duplicate(true)
+		single_last[str(single_intent.get("id", ""))] = int(next.get("turn", 1))
+		single_fired["last_fired"] = single_last
+		next["enemies"][enemy_index] = single_fired
 	var enemy: Dictionary = next["enemies"][enemy_index].duplicate(true)
 	var intent: Dictionary = enemy["intent"]
 	var kind := str(intent.get("kind", "attack"))
@@ -923,9 +1043,9 @@ static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dicti
 				weakened_enemy["intent_weaken"] = 0
 				next["enemies"][enemy_index] = weakened_enemy
 				_log(next, "weaken_consumed", str(enemy["id"]))
-			# Q8 死路径清理（2026-09-12）：_distance_adjusted_damage 已删——
-			# shift 转译护盾后 distance 恒 0，减伤入口不复存在。
-			# 死亡归因（§17.3）：敌方攻击入战斗日志，DeathReport 由日志导出
+		# Q8 死路径清理（2026-09-12）：_distance_adjusted_damage 已删——
+		# shift 转译护盾后 distance 恒 0，减伤入口不复存在。
+		# 死亡归因（§17.3）：敌方攻击入战斗日志，DeathReport 由日志导出
 			# 击杀意图（V1 无 final_blow 状态字段）。
 			_log(next, "enemy_attack", str(intent.get("label", str(enemy["id"]))))
 			next = _damage_player(next, damage)
@@ -943,7 +1063,16 @@ static func _resolve_enemy_intent(battle: Dictionary, enemy_index: int) -> Dicti
 			if not tag.is_empty() and not (enemy["counter_hidden"] as Array).has(tag):
 				enemy["counter_hidden"] = (enemy["counter_hidden"] as Array).duplicate()
 				enemy["counter_hidden"].append(tag)
-			next["enemies"][enemy_index] = enemy
+				next["enemies"][enemy_index] = enemy
+	# SIDE-FIX 收尾（2026-09-19）：焚元结算——意图实际发出即扣玩家真元，下限 0，
+	# 对任何 kind 生效（attack/seal/soul_drain/… 一视同仁），独立于伤害
+	# （格挡/减免不吞焚元）。能到这里说明意图确实发出：
+	# cooldown_wait 未就绪已提前返回，sealed 门禁吞掉意图也在上面提前返回。
+	# 只记账，不调数值（焚元被回复吃掉是已知平衡观察，不在本任务范围）。
+	var burn := int(intent.get("essence_burn", 0))
+	if burn > 0:
+		next["player"]["true_qi"] = maxi(0, int(next["player"]["true_qi"]) - burn)
+		_log(next, "essence_burn", str(enemy["id"]))
 	return next
 
 

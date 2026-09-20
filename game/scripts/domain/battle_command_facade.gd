@@ -115,7 +115,8 @@ static func finalize_session(battle: Dictionary, state: RunState, outcome: Strin
 
 
 ## 敌人定义 → V1 敌人条目：意图缺省按 attack 映射，V1 新增意图字段
-## （kind/seal_turns/soul_drain/life_cost/counter_tag）随数据透传。
+## （kind/seal_turns/soul_drain/life_cost/counter_tag/id/cooldown/essence_burn）随数据透传。
+## 有 phases 的敌人另带阶段表（运行时由 V1BattleResolver 按血量比选阶段）。
 static func _boss_layer_multipliers(encounter: Dictionary, catalog: Dictionary) -> Dictionary:
 	var layer := int(encounter.get("layer_boss", 0))
 	if not BOSS_LAYER_IDS.has(layer):
@@ -168,11 +169,15 @@ static func _v1_enemies(encounter: Dictionary, catalog: Dictionary) -> Array:
 			"id": kind,
 			"label": str(definition.get("label", definition.get("name", kind))),
 			"hp": _scale_positive_int(int(definition.get("hp", 1)), float(multipliers["hp"])),
+			"phases": (definition.get("phases", []) as Array).duplicate(true),
 			"intent": {
+				"id": str(intent.get("id", "")),
 				"kind": intent_kind,
 				"damage": mapped_damage,
 				"label": str(intent.get("label", "蓄力")),
 				"speed": int(intent.get("speed", 0)),
+				"cooldown": maxi(0, int(intent.get("cooldown", 0))),
+				"essence_burn": maxi(0, int(intent.get("essence_burn", 0))),
 				"seal_turns": int(intent.get("seal_turns", 0)),
 				"soul_drain": int(intent.get("soul_drain", 0)),
 				"life_cost": int(intent.get("life_cost", 0)),
