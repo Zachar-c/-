@@ -19,12 +19,9 @@ extends GutTest
 #     never any 读档 / 回溯 affordance
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const DisplayTextScript = preload("res://scripts/presentation/display_text.gd")
 
-var _rui_roots: Array = []
 var _rui_hosts: Array = []
 
 
@@ -36,10 +33,6 @@ func _new_controller() -> RunController:
 
 
 func after_each() -> void:
-	for r in _rui_roots:
-		if r != null and r.has_method("unmount"):
-			r.unmount()
-	_rui_roots.clear()
 	for h in _rui_hosts:
 		# free at once (queue_free would leak orphans into the next test).
 		if h != null and is_instance_valid(h):

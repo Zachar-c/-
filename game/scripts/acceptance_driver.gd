@@ -9,7 +9,7 @@ extends SceneTree
 ##
 ## 用法：
 ##   smoke   godot --headless --path . -s res://scripts/acceptance_driver.gd -- --mode=smoke
-##           RUITK 编译 + 组件/屏幕结构断言 + 主场景真实开局与推进流程。
+##           屏幕结构断言 + 主场景真实开局与推进流程。
 ##   capture godot --path . -s res://scripts/acceptance_driver.gd -- --mode=capture [--batch hall|map]
 ##           真实渲染器截图（非 headless），输出 scripts/core/.superpowers/ui_captures/wenzhen/*.png。
 ##   play    godot --headless --path . -s res://scripts/acceptance_driver.gd -- --mode=play
@@ -22,11 +22,6 @@ extends SceneTree
 ## 模式与运行条件：capture/render 需要真实渲染器（窗口），headless 下会得到
 ## 空白采样；smoke/play/crash 可 headless。
 
-# ========== RUITK / 领域依赖 ==========
-const Guitkx = preload("res://addons/reactive_ui_toolkit/guitkx/guitkx.gd")
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
 # play / crash 模式才需要 domain 依赖；用惰性 load（_ensure_domains）而非
 # preload，使不触域逻辑的 smoke/capture/render 模式不与领域脚本的编译状态耦合。
 var RunControllerScript: GDScript
@@ -35,11 +30,6 @@ var BattleCommandFacadeScript: GDScript
 var V1BattleResolverScript: GDScript
 var ResolverScript: GDScript
 var SaveRepositoryScript: GDScript
-
-const ROOT := "res://"
-const WIDGET_DIR := "res://ui/widgets"
-const SCREEN_DIR := "res://ui/screens"
-const SAMPLE := "res://ui/_sample.guitkx"
 
 # ========== 截图 / 捕获契约 ==========
 const OUT_DIR := "res://scripts/core/.superpowers/ui_captures/wenzhen"
@@ -75,8 +65,7 @@ const MODES := ["smoke", "capture", "play", "render", "crash"]
 const DEFAULT_SCENE := "res://scenes/main.tscn"
 
 # ========== 成员状态 ==========
-# smoke：RUI 挂载宿主追踪。
-var _rui_roots: Array = []
+# smoke：挂载宿主追踪。
 var _mounted_hosts: Array[Node] = []
 # capture：截图序号。
 var _cur := 0
@@ -187,61 +176,13 @@ func _noop(_x = null) -> void:
 	pass
 
 
-func _compile_file(rel_path: String) -> bool:
-	var src := FileAccess.get_file_as_string(rel_path)
-	if src.is_empty():
-		push_error("读不到 %s" % rel_path)
-		return false
-	var res := Guitkx.compile(src, rel_path.get_file().get_basename(), [], {}, rel_path, ROOT)
-	if res.get("env_error", false):
-		push_error("RUI 环境未就绪（词汇表未加载）: %s" % rel_path)
-		return false
-	if not res.get("ok", false):
-		push_error("编译失败 %s: %s" % [rel_path, str(res.get("diagnostics", []))])
-		return false
-	var gd_path := rel_path.get_basename() + ".gd"
-	var f := FileAccess.open(gd_path, FileAccess.WRITE)
-	if f == null:
-		push_error("写不出 %s" % gd_path)
-		return false
-	f.store_string(res["gd"])
-	f.close()
-	return true
-
-
-func _compile_dir(dir_path: String) -> bool:
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
-		# 目录已退役/为空（ui/screens 2026-09-06 全屏迁官方 .tscn 后清空）：
-		# 无可编译 .guitkx，视为通过，不当作失败。
-		return true
-	dir.list_dir_begin()
-	var fname := dir.get_next()
-	while fname != "":
-		if fname.get_extension() == "guitkx":
-			if not _compile_file(dir_path.path_join(fname)):
-				return false
-		fname = dir.get_next()
-	dir.list_dir_end()
-	return true
-
-
 # ---- .tscn 屏挂载追踪（smoke）----
 
 func _track_host(host: Node) -> void:
 	_mounted_hosts.append(host)
 
 
-func _mount_rui(container: Control, vnode) -> void:
-	_track_host(container)
-	_rui_roots.append(RuiRoot.create(container, vnode))
-
-
 func _teardown_mounts() -> void:
-	for mounted_root in _rui_roots:
-		if mounted_root != null and mounted_root.has_method("unmount"):
-			mounted_root.unmount()
-	_rui_roots.clear()
 	for host in _mounted_hosts:
 		if host != null and is_instance_valid(host):
 			host.free()
@@ -277,7 +218,7 @@ func _mount_tscn_screen(path: String, snapshot: Dictionary, commands: Dictionary
 
 
 # =====================================================================
-# smoke 模式：RUITK 编译 + 组件/屏幕结构断言 + 主场景真实开局推进
+# smoke 模式：屏幕结构断言 + 主场景真实开局推进
 # =====================================================================
 
 func _run_smoke() -> void:
@@ -292,158 +233,7 @@ func _run_smoke() -> void:
 # _smoke_body 返回 false 即失败（quit 请求由 _run_smoke 统一发出，避免
 # 中途 quit 之后继续跑到集成段结尾时退出码被覆盖的隐患）。
 func _smoke_body() -> bool:
-	# 1) 先编译 _sample（保留既有断言）
-	if not _compile_file(SAMPLE):
-		_teardown_mounts()
-		return false
-	var sc := _mount("res://ui/_sample.gd", "render", {})
-	print("OK SampleApp buttons=%d" % sc)
-
-	# 2) 编译 ui/widgets 下全部 .guitkx（先于挂载，确保 import 的 .gd 已存在）
-	if not _compile_dir(WIDGET_DIR):
-		_teardown_mounts()
-		return false
-
-	# 3) 逐个挂载断言（编译产物已就绪，import 可解析）
-	var b = _sample_button()
-
-	_assert_widget("GuButton", "res://ui/widgets/gu_button.gd", {"label": "测试", "on_press": func(): pass})
-	_assert_widget("GuResourceChip", "res://ui/widgets/gu_resource_chip.gd", {"kind": "yuanstone", "value": 12, "on_click": Callable(self, "_noop")})
-	_assert_widget("GuStatBar", "res://ui/widgets/gu_stat_bar.gd",
-		{"label": "生命", "value": 4, "max_value": 6, "color": GuStyle.JADE, "shield": 2, "on_inspect": Callable(self, "_noop")})
-	_assert_widget("GuPanel", "res://ui/widgets/gu_panel.gd", {"title": "面板"}, [b])
-	_assert_widget("GuCard", "res://ui/widgets/gu_card.gd", {"title": "卡片", "highlight": true}, [b])
-	# T6-E：危险蛊强红变体——「咒」角标必须朱砂底 + 墨字（R4.10），描边朱砂加粗。
-	# 术语注：规格旧稿称 BONE / DANGER；这两组别名已随主题迁移移除，
-	# 现分别对应 INK_PRIMARY / CINNABAR（见 test_wenzhen_theme_migration）。
-	var gc_danger := _mount_component("res://ui/widgets/gu_card.gd", "render",
-		{"title": "血祭蛊", "curse_warning": true})
-	var curse_glyph := _find_label_exact(gc_danger, "咒")
-	if curse_glyph == null:
-		push_error("GuCard 危险变体缺少「咒」角标")
-		_teardown_mounts()
-		return false
-	if not curse_glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY):
-		push_error("GuCard「咒」角标字符必须墨色（朱砂底 + 墨字）")
-		_teardown_mounts()
-		return false
-	var curse_chip := _nearest_panel_ancestor(curse_glyph)
-	if curse_chip == null:
-		push_error("GuCard「咒」角标必须是实底角标容器（PanelContainer）")
-		_teardown_mounts()
-		return false
-	var curse_sb := curse_chip.get_theme_stylebox("panel") as StyleBoxFlat
-	if curse_sb == null or not curse_sb.bg_color.is_equal_approx(GuStyle.CINNABAR):
-		push_error("GuCard「咒」角标底色必须 DANGER 强红")
-		_teardown_mounts()
-		return false
-	var gc_danger_panel := _find_first_panel(gc_danger)
-	var danger_card_sb := gc_danger_panel.get_theme_stylebox("panel") as StyleBoxFlat
-	if danger_card_sb == null or not danger_card_sb.border_color.is_equal_approx(GuStyle.CINNABAR):
-		push_error("GuCard 危险变体描边必须 DANGER")
-		_teardown_mounts()
-		return false
-	print("OK GuCardDanger buttons=%d" % _count_buttons(gc_danger))
-	# T6-E：封印态——保留「锁」标 + 整卡暗淡。
-	var gc_sealed := _mount_component("res://ui/widgets/gu_card.gd", "render",
-		{"title": "石甲蛊", "sealed": true})
-	if _find_label_exact(gc_sealed, "锁") == null:
-		push_error("GuCard 封印态缺少「锁」标")
-		_teardown_mounts()
-		return false
-	if not is_equal_approx(_find_first_panel(gc_sealed).modulate.a, 0.55):
-		push_error("GuCard 封印态必须整卡暗淡（modulate a=0.55）")
-		_teardown_mounts()
-		return false
-	print("OK GuCardSealed buttons=%d" % _count_buttons(gc_sealed))
-	_assert_widget("GuTopBar", "res://ui/widgets/gu_top_bar.gd",
-		{
-			"resources": {"yuanstone": 12, "shouyuan": 60, "hunpo": 4, "material": 3},
-			"contracts": ["苦修契约"],
-			"anomalies": ["衰运"],
-			"death_lines": {"shouyuan": {"value": 55, "threshold": 60}, "hunpo": {"value": 4, "threshold": 4}, "backlash": {"value": 2, "threshold": 3}},
-			"on_menu": func(): pass,
-		})
-	_assert_widget("GuTooltipView", "res://ui/widgets/gu_tooltip_view.gd",
-		{"title": "火蛊", "quality": "稀有", "effect": "造成灼烧", "curse_warning": true, "on_detail": Callable(self, "_noop")})
-	# T6-E：tooltip 宣纸卷轴底（PAPER）+ 深字 INK + 五段固定顺序（§16.5）。
-	var tip := _mount_component("res://ui/widgets/gu_tooltip_view.gd", "render",
-		{"title": "血祭蛊", "quality": "稀有", "effect": "吸取气血", "synergy": "与血道蛊联动",
-			"cost": "消耗 3 寿元", "curse_warning": true})
-	var tip_panel := _find_first_panel(tip)
-	var tip_sb := tip_panel.get_theme_stylebox("panel") as StyleBoxFlat
-	if tip_sb == null or not tip_sb.bg_color.is_equal_approx(GuStyle.PAPER_BG):
-		push_error("GuTooltipView 底色必须 PAPER 卷轴感（禁深底金字回潮）")
-		_teardown_mounts()
-		return false
-	var tip_labels: Array = []
-	_collect_labels(tip_panel, tip_labels)
-	var tip_texts: Array[String] = []
-	for tl in tip_labels:
-		tip_texts.append(str((tl as Label).text))
-	var idx_effect := _index_with_prefix(tip_texts, "效果：")
-	var idx_synergy := _index_with_prefix(tip_texts, "联动：")
-	var idx_cost := _index_with_prefix(tip_texts, "代价：")
-	var idx_curse := _index_with_prefix(tip_texts, "诅咒警示：")
-	if idx_effect < 0 or not (idx_effect < idx_synergy and idx_synergy < idx_cost and idx_cost < idx_curse):
-		push_error("GuTooltipView 五段顺序必须恒定：效果→联动→代价→诅咒警示")
-		_teardown_mounts()
-		return false
-	if not (tip_labels[idx_effect] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY):
-		push_error("GuTooltipView 正文必须 INK 深字")
-		_teardown_mounts()
-		return false
-	if not (tip_labels[idx_curse] as Label).get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR):
-		push_error("GuTooltipView 诅咒警示行必须 DANGER 红字")
-		_teardown_mounts()
-		return false
-	print("OK GuTooltipPaper labels=%d" % tip_texts.size())
-	_assert_widget("GuConfirmDialog", "res://ui/widgets/gu_confirm_dialog.gd",
-		{"message": "确认执行？", "on_confirm": func(): pass, "on_cancel": func(): pass})
-	# T5-A D1：带语义化 title / warning_note 的确认弹窗变体
-	_assert_widget("GuConfirmDialogTitled", "res://ui/widgets/gu_confirm_dialog.gd",
-		{"message": "确认洗髓换骨？", "title": "⚠ 危险行动", "warning_note": "代价：10 寿元 + 8 元石 · 执行前预检寿元",
-		"on_confirm": func(): pass, "on_cancel": func(): pass})
-	# T5-B D2：死因查看浮层（L2 信息浮层，非确认语义；右上「关闭」；Fix1 移除余量行）
-	var dco := _mount_component("res://ui/widgets/gu_death_cause_overlay.gd", "render",
-		{"line": {"name": "寿元", "current": 12, "max": 60, "detail": "寿元耗尽即死。"}, "on_close": func(): pass})
-	if _find_button_by_text(dco, "关闭") == null:
-		push_error("GuDeathCauseOverlay 缺少「关闭」按钮")
-		_teardown_mounts()
-		return false
-	if not (_host_has_label_text(dco, "死因 · 寿元") and _host_has_label_text(dco, "当前值：12 / 上限：60")
-			and _host_has_label_text(dco, "成因：寿元耗尽即死。")):
-		push_error("GuDeathCauseOverlay 缺少 名称/当前值/上限/成因 文案行")
-		_teardown_mounts()
-		return false
-	if _host_has_label_text(dco, "距离死线余量"):
-		push_error("GuDeathCauseOverlay 不应再渲染「距离死线余量」行（恒为 0）")
-		_teardown_mounts()
-		return false
-	print("OK GuDeathCauseOverlay buttons=%d" % _count_buttons(dco))
-	# T5-A D4：GuToast 纯展示组件（buttons>=0，控件必须存在）
-	var toast_info := _mount_component("res://ui/widgets/gu_toast.gd", "render",
-		{"text": "进度已保存 · 关闭游戏后可继续本次冒险", "tone": "info"})
-	if toast_info.get_child_count() == 0:
-		push_error("GuToast(info) 未渲染出任何控件")
-		_teardown_mounts()
-		return false
-	print("OK GuToast buttons=%d" % _count_buttons(toast_info))
-	var toast_warn := _mount_component("res://ui/widgets/gu_toast.gd", "render",
-		{"text": "大厅存档版本差异较大，建议在设置中清除后重新开始", "tone": "warn"})
-	if toast_warn.get_child_count() == 0:
-		push_error("GuToast(warn) 未渲染出任何控件")
-		_teardown_mounts()
-		return false
-	print("OK GuToastWarn buttons=%d" % _count_buttons(toast_warn))
-	_assert_widget("GuScrollBox", "res://ui/widgets/gu_scroll_box.gd", {}, [b])
-
-	# 4) 编译 ui/screens 下全部 .guitkx（widgets 已先编译，import 可解析）
-	if not _compile_dir(SCREEN_DIR):
-		_teardown_mounts()
-		return false
-
-	# 5) 大厅屏断言：四分支至少 4 个按钮；有存档时含「继续」共 5 个
+	# 大厅屏断言：四分支至少 4 个按钮；有存档时含「继续」共 5 个
 	var cmds := {
 		"continue_run": Callable(self, "_noop"),
 		"new_run": Callable(self, "_noop"),
@@ -766,7 +556,7 @@ func _smoke_body() -> bool:
 		return false
 	print("OK DebugPanelFeedback buttons=%d" % _count_buttons(dpcf))
 
-	# Godot 官方 .tscn 节点树屏（过渡期与 .guitkx 双轨并存，全部转完后合并）。
+	# Godot 官方 .tscn 节点树屏。
 	# 表驱动：每个已迁屏给一组 {name: [state, cmds]}，新增屏只加一行。
 	var cases := {
 		"shop": [shop_state, shop_cmds],
@@ -789,32 +579,8 @@ func _smoke_body() -> bool:
 
 
 # =====================================================================
-# smoke：RUITK 挂载与断言 helpers
+# smoke：结构断言 helpers
 # =====================================================================
-
-func _mount(rel_gd: String, component: String, props: Dictionary) -> int:
-	var fn = VLib.comp(rel_gd, component)
-	if not (fn is Callable):
-		push_error("%s 无组件 %s" % [rel_gd, component])
-		_teardown_mounts()
-		quit(1)
-	var container := Control.new()
-	root.add_child(container)
-	_mount_rui(container, VLib.fc(fn, props))
-	return _count_buttons(container)
-
-
-func _mount_children(rel_gd: String, component: String, props: Dictionary, children: Array) -> int:
-	var fn = VLib.comp(rel_gd, component)
-	if not (fn is Callable):
-		push_error("%s 无组件 %s" % [rel_gd, component])
-		_teardown_mounts()
-		quit(1)
-	var container := Control.new()
-	root.add_child(container)
-	_mount_rui(container, VLib.fc(fn, props, children))
-	return _count_buttons(container)
-
 
 func _count_buttons(node: Node) -> int:
 	var n := 0
@@ -893,70 +659,6 @@ func _find_label_exact(node: Node, wanted: String) -> Label:
 	return null
 
 
-# T6-E：取子树第一个 PanelContainer（读 stylebox 断言底色/描边用）。
-func _find_first_panel(node: Node) -> PanelContainer:
-	if node is PanelContainer:
-		return node
-	for c in node.get_children():
-		var found := _find_first_panel(c)
-		if found != null:
-			return found
-	return null
-
-
-func _collect_labels(node: Node, out_labels: Array) -> void:
-	if node is Label:
-		out_labels.append(node)
-	for c in node.get_children():
-		_collect_labels(c, out_labels)
-
-
-func _index_with_prefix(texts: Array[String], prefix: String) -> int:
-	for i in texts.size():
-		if texts[i].begins_with(prefix):
-			return i
-	return -1
-
-
-# T6-E：从角标字符向上爬到最近的 PanelContainer 祖先（角标实底容器）。
-func _nearest_panel_ancestor(node: Node) -> PanelContainer:
-	var cur := node.get_parent()
-	while cur != null:
-		if cur is PanelContainer:
-			return cur
-		cur = cur.get_parent()
-	return null
-
-
-func _mount_component(rel_gd: String, component: String, props: Dictionary) -> Control:
-	var fn = VLib.comp(rel_gd, component)
-	if not (fn is Callable):
-		push_error("%s 无组件 %s" % [rel_gd, component])
-		_teardown_mounts()
-		quit(1)
-	var container := Control.new()
-	root.add_child(container)
-	_mount_rui(container, VLib.fc(fn, props))
-	return container
-
-
-func _assert_widget(name: String, rel_gd: String, props: Dictionary, children := []) -> void:
-	var count := 0
-	if children.is_empty():
-		count = _mount(rel_gd, "render", props)
-	else:
-		count = _mount_children(rel_gd, "render", props, children)
-	if count < 1:
-		push_error("控件 %s 按钮数 %d < 1" % [name, count])
-		_teardown_mounts()
-		quit(1)
-	print("OK %s buttons=%d" % [name, count])
-
-
-func _sample_button() -> Variant:
-	return VLib.fc(VLib.comp("res://ui/widgets/gu_button.gd", "render"), {"label": "测试", "on_press": func(): pass})
-
-
 # =====================================================================
 # smoke：.tscn 屏表驱动 verify（返回 false 即失败）
 # =====================================================================
@@ -1006,7 +708,7 @@ func _verify_tscn_screens(cases: Dictionary) -> bool:
 		return false
 
 	# 空池回退小字为条件槽位：未标记不渲染，标记后按 13px INK_SOFT 出现。
-	# 这两条是旧 ui/screens/shop_screen.guitkx 实现删除后平移过来的等价覆盖。
+	# 这两条沿用旧商店屏实现删除后的等价覆盖。
 	var fallback_label: Label = shop.get_node(
 			"Root/ShopStage/StageContent/PrimarySurface/OfferColumn/PoolFallbackLabel")
 	if fallback_label.visible:
@@ -1573,21 +1275,7 @@ static func batch_from_args(user_args: Array, command_line_args: Array) -> Strin
 	return ""
 
 
-func _snap(component: String, props: Dictionary, slug: String = "", presses: Array[String] = [], focus_text: String = "") -> void:
-	for viewport_size in VIEWPORTS:
-		await _snap_at_size(component, props, slug, presses, focus_text, viewport_size)
-
-
-func _snap_at_size(component: String, props: Dictionary, slug: String, presses: Array[String], focus_text: String, viewport_size: Vector2i, tscn_path: String = "") -> void:
-	# tscn_path 非空时走 Godot 官方 .tscn 节点树（黑市已迁离 RUITK），否则走 .guitkx。
-	var fn = null
-	if tscn_path.is_empty():
-		fn = VLib.comp("res://ui/screens/%s.gd" % component, "render")
-		if not (fn is Callable):
-			push_error("无组件 %s" % component)
-			return
-	if tscn_path.is_empty() and component == "map_screen" and viewport_size == VIEWPORTS[0]:
-		_print_map_capture_identity(fn)
+func _snap_at_size(tscn_path: String, props: Dictionary, slug: String, presses: Array[String], focus_text: String, viewport_size: Vector2i) -> void:
 	var viewport := SubViewport.new()
 	viewport.size = viewport_size
 	viewport.transparent_bg = false
@@ -1599,73 +1287,51 @@ func _snap_at_size(component: String, props: Dictionary, slug: String, presses: 
 	bg.color = Color("eee9df")
 	bg.size = Vector2(viewport_size)
 	viewport.add_child(bg)
-	# PanelContainer 强制唯一子（RUI 根）填满画幅，避免内容按最小尺寸收缩在左上角
+	# PanelContainer 作为唯一子节点填满画幅，避免内容按最小尺寸收缩在左上角。
 	var inner := PanelContainer.new()
 	inner.size = Vector2(viewport_size)
 	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	viewport.add_child(inner)
-	var rui_root = null
-	if tscn_path.is_empty():
-		rui_root = RuiRoot.create(inner, VLib.fc(fn, props))
-	else:
-		var tscn_inst := (load(tscn_path) as PackedScene).instantiate()
-		inner.add_child(tscn_inst)
-		if tscn_inst.has_method("mount_snapshot"):
-			tscn_inst.mount_snapshot(props.get("state", {}), props.get("commands", {}))
-	# 等逻辑帧确保 RUI 完成挂载与布局，再强制同步渲染一帧（不依赖窗口可见性，不会挂死）
+	var tscn_inst := (load(tscn_path) as PackedScene).instantiate()
+	inner.add_child(tscn_inst)
+	if tscn_inst.has_method("mount_snapshot"):
+		tscn_inst.mount_snapshot(props.get("state", {}), props.get("commands", {}))
+	# 等逻辑帧确保挂载与布局完成，再强制同步渲染一帧（不依赖窗口可见性，不会挂死）。
 	for i in range(6):
 		await process_frame
 	if tscn_path == MAP_SCREEN_TSCN and viewport_size == VIEWPORTS[0] and slug == "core_map_current":
 		_print_map_render_state(inner)
 	for button_text in presses:
 		if not _press_button(inner, button_text):
-			push_error("找不到交互按钮 %s (%s)" % [button_text, component])
+			push_error("找不到交互按钮 %s (%s)" % [button_text, tscn_path])
 		for i in range(4):
 			await process_frame
 	if not focus_text.is_empty():
 		var focus_button := _find_button(inner, focus_text)
 		if focus_button == null:
-			push_error("找不到焦点按钮 %s (%s)" % [focus_text, component])
+			push_error("找不到焦点按钮 %s (%s)" % [focus_text, tscn_path])
 		else:
 			focus_button.grab_focus()
 			await process_frame
 	RenderingServer.force_draw()
 	await RenderingServer.frame_post_draw
 	_cur += 1
-	var shot_name := slug if not slug.is_empty() else component
+	var shot_name := slug
 	var p := ProjectSettings.globalize_path(OUT_DIR).path_join("%02d_%s_%dx%d.png" % [_cur, shot_name, viewport_size.x, viewport_size.y])
 	var image := viewport.get_texture().get_image()
 	if image == null or image.is_empty() or image.save_png(p) != OK:
 		push_error("窗口捕获失败: %s" % p)
-	print("SNAP %s -> %s" % [component, p])
-	if rui_root != null:
-		rui_root.unmount()
-		rui_root = null
+	print("SNAP %s -> %s" % [tscn_path, p])
 	viewport.free()
 	await process_frame
 
 
 ## 截图 Godot 官方 .tscn 节点树屏。presses 用于截"点了某按钮之后"的状态，
-## focus_text 用于键盘焦点高亮（与 RUITK 版 _snap 的第 5 参同义）。
+## focus_text 用于键盘焦点高亮。
 func _snap_tscn(tscn_path: String, props: Dictionary, slug: String,
 		presses: Array[String] = [], focus_text: String = "") -> void:
 	for viewport_size in VIEWPORTS:
-		await _snap_at_size(slug, props, slug, presses, focus_text, viewport_size, tscn_path)
-
-
-func _print_map_capture_identity(fn: Callable) -> void:
-	var script_resource: Variant = fn.get_object()
-	var source_path: String = "<not a script>"
-	var source_code: String = ""
-	if script_resource is Script:
-		source_path = script_resource.resource_path
-	if script_resource is GDScript:
-		source_code = script_resource.source_code
-	print("MAP CAPTURE IDENTITY path=%s has_paper=%s has_legacy_trip=%s" % [
-		source_path,
-		source_code.contains("map_paper"),
-		source_code.contains("南疆行程") or source_code.contains("蛊囊") or source_code.contains("图例"),
-	])
+		await _snap_at_size(tscn_path, props, slug, presses, focus_text, viewport_size)
 
 
 func _print_map_render_state(root_node: Node) -> void:
@@ -1807,15 +1473,6 @@ func _capture_map_batch() -> void:
 func _run_capture() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
 
-	if not _compile_file(SAMPLE):
-		quit(1)
-		return
-	if not _compile_dir(WIDGET_DIR):
-		quit(1)
-		return
-	if not _compile_dir(SCREEN_DIR):
-		quit(1)
-		return
 	var batch := batch_from_args(OS.get_cmdline_user_args(), OS.get_cmdline_args())
 	if batch == "hall":
 		await _capture_hall_batch()

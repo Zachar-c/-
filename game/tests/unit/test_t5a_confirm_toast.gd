@@ -9,10 +9,6 @@ extends GutTest
 
 const SAVE_FEEDBACK := "进度已保存 · 关闭游戏后可继续本次冒险"
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
-var _rui_roots: Array = []
 var _rui_hosts: Array = []
 var _tscn_hosts: Array = []
 
@@ -25,10 +21,6 @@ func _new_controller() -> RunController:
 
 
 func after_each() -> void:
-	for r in _rui_roots:
-		if r != null and r.has_method("unmount"):
-			r.unmount()
-	_rui_roots.clear()
 	for h in _rui_hosts:
 		if h != null and is_instance_valid(h):
 			h.queue_free()
@@ -39,21 +31,6 @@ func after_each() -> void:
 	_tscn_hosts.clear()
 
 
-func _mount_screen(screen_path: String, props: Dictionary) -> Control:
-	var fn = VLib.comp(screen_path, "render")
-	assert_true(fn is Callable, screen_path + " must expose render")
-	if not (fn is Callable):
-		return Control.new()
-	var host := Control.new()
-	add_child(host)
-	_rui_hosts.append(host)
-	# Retain the RuitkRoot: unreferenced roots can be collected, silently
-	# stopping scheduled re-renders (RunController keeps its root as a member).
-	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
-	return host
-
-
-## 挂载 Godot 官方 .tscn 节点树屏（黑市已迁离 RUITK）。
 ## mount_snapshot 可能早于 _ready()，屏内自行兜底补刷新。
 func _mount_tscn_screen(scene_path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
 	var inst: Control = (load(scene_path) as PackedScene).instantiate()

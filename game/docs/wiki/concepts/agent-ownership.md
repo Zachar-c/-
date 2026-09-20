@@ -28,15 +28,15 @@ tags: [agent-ownership, collaboration, contracts]
 
 ```mermaid
 graph LR
-    A["GUT 单测 202 文件"] --> B["check.ps1 全局门"]
+    A["GUT 单测"] --> B["check.ps1 全局门"]
     B --> C["交互门 17 审计标签"]
     C --> D["渲染级像素验证"]
 ```
 
-- `tools/test.ps1 -Suite unit|integration`：GUT 全套（unit 全量约 2 分钟，必须后台跑）[^1][^2]。
+- `tools/test.ps1 -Suite unit|integration`：GUT 全套（unit 全量约 3-4 分钟，必须后台跑）[^1][^2]。
 - `tools/check.ps1`：构建 + 全测 + 启动探针 + 契约漂移守门（契约声明的标识符必须在 scripts/tests/data 存在）[^3]。
-- `verify_interaction_loop.gd`：headless 遍历 13 屏 + 大厅 4 子视图，dead / no_ui_click / occluded 三键全空才可交付；occluded 查"接线齐全但点不到"（判定按引擎 `_gui_find_control_at_pos`）[^1]。
-- 约 30 个 `verify_*.gd` 逐特性渲染验证，含像素/色彩分布级白屏检测（UNIQUE=1 即白屏）[^2]。
+- 点击可达性用真实按下/松开 GUT 断言守门，例如 `tests/unit/test_wenzhen_battle_screen.gd`；透明容器必须 `IGNORE`[^1]。
+- 逐特性渲染与交互验证已收敛到 GUT 与 `acceptance_driver.gd`，不再维护一次性 `verify_*.gd` 脚本[^2]。
 
 ## 领域-表现契约
 

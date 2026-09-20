@@ -3,8 +3,7 @@ extends RefCounted
 
 ## 测试侧的 Godot 官方 .tscn 屏挂载辅助。
 ##
-## 屏幕陆续从 RUITK 声明式（.guitkx）迁到官方节点树后，一批测试原本用
-## `RuiRoot.create(VLib.fc(Script.render, props))` 挂载，现在要改成
+## 屏幕统一到官方节点树后，测试使用
 ## `instantiate() + mount_snapshot(snapshot, commands)`。各测试文件各自实现一遍
 ## 只会漂移，所以收敛到这里。
 ##

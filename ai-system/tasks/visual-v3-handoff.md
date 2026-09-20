@@ -3,6 +3,31 @@
 > 交接对象：下一个接手的会话/Agent。本件只写事实、证据、风险、决定。
 > 生成：2026-09-20　｜　写件：L2 Orchestrator（Codex）
 
+## L0 审阅结论（2026-09-20）
+
+- v3-F 已获 L0 采用：性质从“素材与假说”确定为“约束边界”，核心交付是 `HARD / SOFT / OPEN` 自由度矩阵。
+- 下一阶段不再继续泛化 Lore 取证；进入《问真视觉定位决策稿 v1》阶段。
+- 视觉定位候选由 L1 产出，L0 裁决；L2 不代选方向。
+- 新请求已写入 `ai-system/RESEARCH-REQUEST-2026-09-20-visual-positioning.md`。
+- 需要分开两类 HARD：世界规则约束不可改；组织制度等对象的**视觉表达**仍按 v3 的 `SOFT / OPEN` 处理。
+- 追加 L1 产出、L0 批准件：`docs/superpowers/specs/2026-09-20-wenzhen-gu-dual-layer-visual-design.md`；当前版本为 v2.0，统一采用“本体层 + 高完成度主题皮肤”，取消 A/B/C 人格化生产档。
+- L2 一审：HARD/SOFT 裁定可直接作为解释层使用；三项产品事项已由 v2.0 关闭，HARD 主题皮肤仍须保持幻想标识、来源识别和本体独立存在。
+- L1 已裁定双层体系与 v3 的 HARD / SOFT 绑定边界：`docs/superpowers/specs/2026-09-20-wenzhen-gu-hard-soft-binding-decision.md`；三项产品取舍已由 L0 在 v2.0 中关闭。当前只进入视觉方向验证与单样本 POC 规划，不进入批量正式资产生产。
+- 视觉任务模板已更新：`ai-system/visual-asset-task-packet-template.md`；任务级别区分 `Visual Proof of Concept / Production Asset`，资产类型使用 `Canonical Asset / Theme Skin Asset`，并强制包含 Prompt Draft、审查重点与 GPT Image 生成记录。
+- L2 维护的提示词规范草稿：`docs/superpowers/specs/2026-09-20-wenzhen-visual-prompt-spec-v1.md`；L1 审查后才升级为正式规范。
+- 前版逐只资产试点已作废：`ai-system/tasks/visual-v2-pilot-batch-plan.md`；月光蛊正式任务包同步标为 `VOID / DO NOT EXECUTE`。
+- 当前执行件：`ai-system/tasks/visual-v2-quick-validation-plan.md`；拆为 A 轨结构验证与 B 轨视觉验证。
+- L0 2026-09-20 二次校准：当前既不是资产生产阶段，也不是单纯工程复用阶段；目标是验证新视觉方向是否成立。
+- L1 追加 `PASS WITH REQUIRED ADJUSTMENT`：视觉定位决策是当前唯一最高优先级；A 轨结构验证可以存在，但不得成为主线。
+- 阶段优先级决策件：`docs/superpowers/specs/2026-09-20-wenzhen-visual-stage-priority-decision.md`。
+- L1 视觉定位候选已产出：`docs/superpowers/specs/2026-09-20-wenzhen-visual-positioning-decision-v1.md`；L0 已批准推荐方向。
+- L0 冻结件：`docs/superpowers/specs/2026-09-20-wenzhen-visual-positioning-v1-approved.md`；视觉定位状态 `APPROVED / FROZEN`。
+- L1 已产出《问真》视觉圣经 v1.0：`docs/superpowers/specs/2026-09-20-wenzhen-visual-bible-v1.md`；状态 `READY_FOR_L0_DECISION`。
+- 当前下一步不是 POC，而是等待 L0 批准并冻结视觉圣经：三项决策见该件 `L0_DECISIONS`。
+- 强制顺序：视觉定位冻结 → L0 批准视觉圣经 v1.0 → 月光蛊 POC → 结构适配。
+- A 轨可用旧资产做结构占位，但旧素材不能证明新视觉；B 轨必须使用已冻结的新视觉定位，并通过 L1 Prompt 审查后用 GPT Image 做单样本 POC。
+- 月光蛊任务已从 `Canonical Asset Production` 降级为 `Visual Proof of Concept`：`ai-system/tasks/visual-v2-01-moonlight-poc-task.md`；不批量扩展、不建资产库、不改 `game/`。
+
 ```text
 TASK visual-v3-L1（L1 视觉语义与设计自由度取证 v3 · 送审）
 PHASE V2 需求重构期 · 视觉线（采集 L3 → 归纳 L2 → 裁决 L1 → 批准 L0）
@@ -12,7 +37,7 @@ ASK ① 送审件是否就这样发 L1；② v3 产物是否随本批提交；�
 
 GOAL
 跑完 L1 的 v3 任务书（A–G 七子专题），交一份 L1 能直接读、且每条结论都能追到原文行号的
-《视觉设计自由度矩阵》取证件。**范围外**：不做画风结论、不选方向、不排优先级、不提配色/UI/造型/美术方案。
+《视觉设计自由度矩阵》取证件。**范围外**：不做画风结论、不选方向、不排优先级、不提具体方案。
 
 DELTA
 + ai-system/tasks/visual-v3-L1-core.md        32,842 字符｜**送 L1 的唯一粘贴件**（已复制到剪贴板）
@@ -52,7 +77,7 @@ TEST
 引文机检（程序化，含全书行号定位）：10 个子包 + 终稿全部 **0 未命中**
   终稿 214/214｜A1 63｜A2 104｜A3 113｜B1 202｜C1 55｜C2 385｜D1 65｜E1 221｜E2 277｜G1 167
 残留「无锚点」共 6 处，全部是自查表里的占位文字「原文未提供」（非引文），已逐条确认
-禁词扫描：0（唯一命中是「本批不含画风结论（水墨/…）」这句**声明本身**）
+禁词扫描：0（唯一命中是“本批不含画风结论”这句**声明本身**）
 wiki 门禁：pwsh -NoProfile -File lore/wiki/tools/check.ps1  ->  ALL CHECKS PASSED（39/39 概念页）
 网页端：node tools/build_data.mjs  ->  gu 10 | recipes 6 | killMoves 3 | enemies 6 | encounters 10
         （另报 1 条已知漂移：thunder_crown_wolf 的 counter_status="sparked" 无规则实现）

@@ -1,0 +1,2 @@
+id,name,rank,type,asset_path,pipeline
+moonlight_gu,月光蛊,1,attack,gu/moonlight_gu,gpt-image->comfyui->asset-manager

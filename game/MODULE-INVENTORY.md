@@ -12,16 +12,14 @@
 - **LLM 相关功能永久搁置**：仅保留离线模板与接入接口（I1 冻结，不删除不开发）。
 - **冻结（不再开发、暂不删除）**：F1 恶名、F2 契约、F3 遗物、F4 诅咒、F5 DDA、F6 继承。
 - **F7 流派：活跃**。蛊虫流派标签已全量入数据（`data/gu.json` 214/214 条带 `school`），但快照/UI 不展示、领域规则不消费，属"死数据"，需功能化（道标签开放集合红线不变）。
-- **2026-09-05 二轮裁决**：D2/D3/D5 收敛进 V1，只保留一个战斗引擎（代码纯净性）；D4 迁移退役；H7 不归档——它是新视觉架构，**全部旧屏幕迁移到该模型**；J2 冒烟驱动瘦身；J3 guitkx 链保留并承载屏幕迁移；J4 待归属（用途见 J4 行）。
+- **2026-09-05 二轮裁决**：D2/D3/D5 收敛进 V1，只保留一个战斗引擎（代码纯净性）；D4 迁移退役；J2 冒烟驱动瘦身；J4 待归属（用途见 J4 行）。
 
 ## 事实基线（影响裁决的引用关系，已核实）
 
 - `scripts/domain/battle_command_facade.gd:11` 仍预载旧引擎 `battle_resolver.gd`；V1 是唯一 start 路径，旧引擎只服务「旧信封路径 + 存量测试」（`action_preview_service.gd:99` 注释亦印证）。
 - `scripts/domain/battle2/turn_engine.gd` 被 V1 路径用作每战斗行动账本（`battle_command_facade.gd:198-201`、`run_controller.gd:901-905`）；`battle2/action_resolver.gd`、`body_rules.gd` 无 V1 引用。
 - `scripts/domain/content_catalog.gd:38,49` 仍加载 `data/cards.json` 与 `data/deck.json`；`resolver.gd` 活用 `deck.json` 的配置键（`remove_card_cost`、`imprint_capacity`、`meta_rule_cap` 等，resolver.gd:713,956,961）。
-- `scenes/ui_masters/*.tscn` + `ui/*.guitkx` + `wenzhen_battle/map_master.gd` 未被 main/run_controller 挂载，仅 master.tscn 自引与 `test_wenzhen_master_theme.gd` 引用。
 - `addons/beckett` 全仓（scripts/scenes/project.godot/tools）零引用。
-- 正式 UI 屏（scenes/ui/screens/*.tscn）未检出 reactive_ui 节点引用；reactive_ui_toolkit 仅编辑器插件启用 + guitkx 工具链使用。
 
 ## A 骨架与状态
 
@@ -100,13 +98,12 @@
 | H4 | 手牌拖拽交互 | gu_battle_hand_view.gd 拖拽段 + battle_screen_view.gd `_input`/`_enemy_at`/`_on_card_drag_start` | ~150 | 卡→敌拖放（当前真窗 bug 未修，改动未提交） | 待定（你裁决是否保留此交互形态；不保留则退化为点击选卡） |
 | H5 | 调试面板 | scripts/presentation/widgets/debug_panel_view.gd, scripts/domain/debug_actions.gd, data/debug.json | ~475 | 开发跳转/快进（Release 裁剪红线） | 核心 |
 | H6 | 死亡报告/确认层 | widgets/gu_death_cause_overlay_view.gd, gu_confirm_dialog_view.gd, scripts/domain/death_report_builder.gd | ~156 | 不静默致死、二次确认红线 | 核心 |
-| H7 | wenzhen 视觉模型（新 UI 架构） | scenes/ui_masters/*.tscn, ui/*.guitkx + ui/screens, ui/widgets, scripts/presentation/wenzhen_battle_master.gd, wenzhen_map_master.gd, wenzhen_asset_manifest.gd, addons/reactive_ui_toolkit(+editor), scripts/guitkx_build.gd, tools/guitkx_build.ps1 | ~1200+addon | 2026-09-04 视觉方向 spec；**已裁决：这是新视觉架构，全部旧屏幕迁移到该模型，旧屏幕届时退役** | 核心（目标架构；迁移大工程另行排期） |
 
 ## I 文本与对话
 
 | ID | 模块 | 文件 | 规模 | 需求锚点 | 建议 |
 |----|------|------|------|----------|------|
-| I1 | Dialogue Manager 栈 | addons/dialogue_manager, scripts/domain/dialogue_manager_adapter.gd, dialogue_gateway.gd, template_dialogue_gateway.gd, data/dialogues/events.dialogue, data/dialogue_templates.json | ~500+addon | 事件文本；LLM 路线未实装，仅离线模板（invalid UID 遗留） | 冻结：LLM 永久搁置，仅保留离线模板与接入接口 |
+| I1 | 模板对话网关 | scripts/domain/dialogue_manager_adapter.gd, dialogue_gateway.gd, template_dialogue_gateway.gd, data/dialogue_templates.json | ~260 | 事件分支；LLM 路线未实装，仅离线模板 | 保留：Dialogue Manager addon 与 events.dialogue 已于 2026-09-20 删除 |
 
 ## J 工具与基建
 
@@ -114,7 +111,6 @@
 |----|------|------|------|----------|------|
 | J1 | Godot 脚本入口 | tools/godot.ps1, import.ps1, export.ps1, test.ps1, check.ps1, play.ps1, run_gut_checked.ps1, crash_recovery_check.ps1 | — | 全部验证/导出命令 | 核心 |
 | J2 | 统一验收驱动 | scripts/acceptance_driver.gd | ~2800 | 验收基建（原 smoke_render/ui_capture/playthrough_smoke/crash_recovery_driver/integration_smoke/render_probe 六驱动于 B3 收编，`--mode=smoke/capture/play/render/crash`） | 已裁决：B3 瘦身完成 |
-| J3 | guitkx 构建链 | scripts/guitkx_build.gd, tools/guitkx_build.ps1, tools/verify_codex_render.gd | ~160 | 服务 H7（新视觉架构的唯一构建链） | 已裁决：保留，承载屏幕迁移 |
 | J4 | 蛊目录生成器 | tools/generate_gu_catalog.py | 265 | 确定性目录扩充器：从词频语料批量生成 蛊/卡/名，把每流派补到 40 只（common24/rare12/epic4），支撑「海量」支柱；cards.json 退役后需同步改造（去掉出卡） | 建议保留改造（待你归属） |
 | J5 | GUT 测试框架 | addons/gut | — | 测试基建 | 核心 |
 | J6 | 导出配置 | export_presets.cfg, build/win | — | Demo 导出 | 核心 |
@@ -132,7 +128,7 @@
 | ID | 范围 | 说明 | 建议 |
 |----|------|------|------|
 | L1 | 分支：六卷精编版/, 肉鸽设计-原始数据/ | AGENTS 保护只读语料 | 保留不动 |
-| L2 | vendor/godot-open-rpg | 未审计，AGENTS 禁止耦合 | 保留现状（是否移除由你决定） |
+| L2 | vendor/godot-open-rpg | 仅 LICENSE、无运行时代码；上游源码目录已于 2026-09-20 删除 | 已完成 A 清理；MIT 许可文本迁入 `THIRD_PARTY_NOTICES.md` |
 | L3 | THIRD_PARTY_NOTICES.md | 许可合规 | 核心 |
 | L4 | MEMORY.md, memory/, .claude/, .claude-drive-sweep.log, godot_gui.log, opencode.json | 会话/本地痕迹 | 不入库 |
 | L5 | docs/ | 权威规格 + 契约 + 计划 | 核心 |
@@ -141,7 +137,6 @@
 ## 已知遗留（与本清单相关的未修项，不随裁决自动消失）
 
 - ~~`resolver.gd` 超行数门限~~：W11 m3（2026-09-10）已拆分，resolver 261 行（AGENTS 待办同批清理）。
-- Dialogue Manager invalid UID（待办 #6）。
 - 流派选择屏空渲染（未入 AGENTS，缺陷在 H1/流派屏）。
 - 小光蛊真窗拖拽 bug：排查中断，暂缓（H4 待你裁决交互形态后再定是否继续修）。
 - ObjectDB/RID 泄漏专项（冻结列表）。

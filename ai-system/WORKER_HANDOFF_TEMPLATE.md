@@ -6,7 +6,7 @@
 TASK <task-id>
 PHASE <phase/batch>
 STATUS READY_FOR_REVIEW | PARTIAL | BLOCKED
-TYPE architecture | implementation | content | bugfix | infrastructure | migration
+TYPE architecture | implementation | content | bugfix | infrastructure | migration | canonical_asset | theme_skin_asset
 ASK <审阅者要决定什么>
 
 GOAL
@@ -59,6 +59,9 @@ STOP
 EVIDENCE
 <需要展开时给路径；不复制长日志>
 ```
+
+蛊虫视觉任务使用独立任务包模板：
+`ai-system/visual-asset-task-packet-template.md`。
 
 Lore 任务额外追加：
 ```text

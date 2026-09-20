@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dv67kwhui6vxq"
+
+[deps]
+
+files=["res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.name.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.rank.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.type.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.asset.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.pipeline.translation"]
+
+source_file="res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.csv"
+dest_files=["res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.name.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.rank.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.type.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.asset.translation", "res://wenzhen-web/assets/gu/moonlight_gu/metadata/moonlight_gu.pipeline.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

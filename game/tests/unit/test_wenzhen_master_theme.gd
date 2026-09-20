@@ -1,22 +1,15 @@
 extends GutTest
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const MasterTheme = preload("res://scripts/presentation/wenzhen_master_theme.gd")
 ## 全部屏已迁 Godot 官方 .tscn（MASTER_SCENE_PATHS 即唯一路由表）；
 ## wenzhen_battle/map_master 与 ui/screens/{battle,map}_screen.guitkx 生成层
 ## 已于 2026-09-06 退役（ui_masters 收官），本文件只保留按钮三态契约。
 
-var _rui_roots: Array = []
 var _rui_hosts: Array = []
 
 
 func after_each() -> void:
-	for root in _rui_roots:
-		if root != null and root.has_method("unmount"):
-			root.unmount()
-	_rui_roots.clear()
 	for host in _rui_hosts:
 		if host != null and is_instance_valid(host):
 			host.queue_free()
@@ -49,4 +42,3 @@ func test_button_style_has_distinct_normal_hover_pressed_states() -> void:
 		assert_eq(primary_btn.get_theme_color("font_color"), spec["colors"]["font_color"], "%s font_color mismatch" % role)
 		assert_eq(primary_btn.get_theme_color("font_hover_color"), spec["colors"]["font_hover_color"], "%s font_hover_color mismatch" % role)
 		assert_eq(primary_btn.get_theme_color("font_pressed_color"), spec["colors"]["font_pressed_color"], "%s font_pressed_color mismatch" % role)
-

@@ -141,11 +141,11 @@
 
 ## 第三方代码
 
-### GDQuest Open RPG
+### GDQuest Open RPG（衍生 UI 贴图）
 - **来源**: https://github.com/GDQuest/godot-open-rpg
 - **许可证**: MIT
-- **使用范围**: `vendor/godot-open-rpg/` 目录（未经审计不得直接耦合或修改）
-- **状态**: 引入时保留 MIT 许可证、上游 URL 和固定提交号
+- **使用范围**: `assets/theme/` 中由上游贴图改名得到的 UI 资源
+- **状态**: 上游源码目录已于 2026-09-20 删除；MIT 许可和固定提交号保留在 `THIRD_PARTY_NOTICES.md`
 
 ### GUT (Godot Unit Test)
 - **来源**: https://github.com/bitwes/Gut

@@ -183,19 +183,20 @@ func test_travel_to_event_passes_dialogue_title_to_gateway() -> void:
 	controller.free()
 
 
-## 事件专属 Dialogue title（gu_rot_pact）必须被 adapter 透传给 balloon 入口。
+## 事件专属 Dialogue title（gu_rot_pact）必须保留在路由结果中。
 func test_adapter_begin_passes_event_specific_title() -> void:
 	var adapter := DialogueManagerAdapterScript.new()
 	var result: Dictionary = adapter.begin("gu_rot_pact", "gu_rot_pact")
 
 	assert_true(bool(result["ok"]))
+	assert_eq(result["source"], "template")
 	assert_eq(result["title"], "gu_rot_pact")
 	assert_eq(result["event_id"], "gu_rot_pact")
 
 
 # ==== 返工 P1-1：Dialogue 选择 → 领域命令桥接 ====
 
-## Dialogue Manager balloon 选择桥接入口：标题报告（非入口 title）必须转为
+## 标题选择兼容入口：branch title 必须转为
 ## dialogue_branch 领域命令并实际结算领域效果。
 func test_controller_submit_dialogue_selection_applies_branch() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
@@ -293,23 +294,10 @@ func _synthetic_teaching_route() -> Array[Dictionary]:
 	return route
 
 
-# ==== 复审 P1-A/P1-B/P1-C/P2：Dialogue Manager 真实接入 ====
-
-## 插件安装后 begin 必须走 dialogue_manager 来源而非模板降级；未装插件或
-## 未 import（新环境）时跳过真实路径断言。
-func test_begin_uses_dialogue_manager_source_when_plugin_available() -> void:
-	var adapter := DialogueManagerAdapterScript.new()
-	if not adapter.plugin_available():
-		return
-	var resource: Resource = load("res://data/dialogues/events.dialogue")
-	if resource == null:
-		return  # 新环境尚未 import（tools/import.ps1），降级路径由其他测试覆盖。
-	var result := adapter.begin("echo_cave", "start")
-	assert_eq(result["source"], "dialogue_manager", "installed addon must drive begin")
-	assert_eq(result["title"], "start")
+# ==== 复审 P1-A/P1-C/P2：模板分支路由 ====
 
 
-## 下划线 title（Dialogue Manager 禁 "."）必须映射到既有 accept_event 命令。
+## 下划线 title 必须映射到既有 accept_event 命令。
 func test_underscore_accept_branch_maps_to_event_command() -> void:
 	var adapter := DialogueManagerAdapterScript.new()
 	assert_eq(adapter.command_for_branch("echo_cave_accept"),
@@ -323,31 +311,6 @@ func test_underscore_leave_branch_maps_to_leave_node_command() -> void:
 	var adapter := DialogueManagerAdapterScript.new()
 	assert_eq(adapter.command_for_branch("echo_cave_leave"), {"type": "leave_node"})
 	assert_eq(adapter.command_for_branch("gu_rot_pact_leave"), {"type": "leave_node"})
-
-
-## P1-B：passed_title（玩家点选项跳转 title）必须转发到注入的选择回调。
-func test_passed_title_forwards_to_selection_callback() -> void:
-	var adapter := DialogueManagerAdapterScript.new()
-	var seen: Array[String] = []
-	adapter.set_branch_selection_callback(func(title: String): seen.append(title))
-	adapter._on_passed_title("echo_cave_accept")
-	assert_eq(seen, ["echo_cave_accept"])
-
-
-## P1-B 端到端：真实 DialogueManager 全局单例的 passed_title 信号必须驱动
-## controller 的领域结算（travel 后回调已注入）。
-func test_passed_title_signal_drives_controller_settlement() -> void:
-	var manager: Object = Engine.get_singleton("DialogueManager")
-	if manager == null or not manager.has_signal("passed_title"):
-		return
-	var controller := preload("res://scripts/presentation/run_controller.gd").new()
-	controller.start_new_run(101)
-	_controller_travel_to_echo_cave(controller)
-	var before_health := controller.state.health
-	manager.passed_title.emit("echo_cave_accept")
-	assert_lt(controller.state.health, before_health,
-			"passed_title signal must drive accept_event through submit_dialogue_selection")
-	controller.free()
 
 
 ## P2：dialogue_branch 事件不再硬编码 stage "one"/time 0，而是反映当前阶段
@@ -373,9 +336,8 @@ func test_dialogue_branch_event_carries_real_stage_and_time() -> void:
 			"branch event must carry its real event index, not time zero")
 
 
-## P1-C 集成：地图节点（echo_cave，first_run 可达）进入 → 玩家选择（真实
-## DialogueManager passed_title 信号）→ 领域结算 → 不可变日志，覆盖
-## “地图节点 → 事件 → Dialogue Manager → 选择 → 结算 → 日志”真实链路。
+## P1-C 集成：地图节点（echo_cave，first_run 可达）进入 → 玩家选择 →
+## 领域结算 → 不可变日志。
 func test_controller_event_full_link_node_to_dialogue_to_settlement_to_log() -> void:
 	var controller := preload("res://scripts/presentation/run_controller.gd").new()
 	controller.start_new_run(101)
@@ -385,10 +347,7 @@ func test_controller_event_full_link_node_to_dialogue_to_settlement_to_log() -> 
 	var before_health := controller.state.health
 	var before_log := controller.state.event_log.size()
 
-	# 玩家在 balloon 点“接受这段残响”→ passed_title("echo_cave_accept")
-	# → adapter 回调 → controller.submit_dialogue_selection → accept_event 结算。
-	# （真实 passed_title 信号驱动已在 test_passed_title_signal_drives_controller_settlement
-	# 覆盖；此处直接提交命令以保持确定性断言。）
+	# 事件卡提交 echo_cave_accept → submit_dialogue_selection → accept_event 结算。
 	var result: Dictionary = controller.submit_dialogue_selection("echo_cave_accept")
 
 	assert_true(result["ok"])

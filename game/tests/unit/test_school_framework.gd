@@ -6,9 +6,6 @@ const ResolverScript = preload("res://scripts/domain/resolver.gd")
 const ContentCatalogScript = preload("res://scripts/domain/content_catalog.gd")
 const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
 const HALL_SCREEN_TSCN := "res://scenes/ui/screens/hall_screen.tscn"
-const RuiVLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
 
 var catalog: Dictionary
 

@@ -8,7 +8,7 @@ extends SceneTree
 ##     带前缀的命中全部来自**文件内容**（`.import` 的 dest_files、`.remap` 的 path=、脚本源码字符串）。
 ##     因此排除项必须写**去前缀**形态，否则测的是「内容里有没有提过」而不是「文件表里有没有」。
 ##     对照真值（new vs 旧包）：lore_engine/ 0↔4 · lore_sources/ 0↔1 · tools/ 0↔1
-##     · Godot/editor_settings 0↔2 · ui/_sample.guitkx 0↔3 · .guitkx.diags.json 0↔16
+##     · Godot/editor_settings 0↔2
 const FORBIDDEN := [
 	"tests/unit/",
 	"tests/integration/",
@@ -24,12 +24,8 @@ const FORBIDDEN := [
 	"分支：六卷精编版/",
 	"肉鸽设计-原始数据/",
 	"acceptance_driver.gd",
-	"guitkx_build.gd",
 	"Godot/editor_settings",
 	"Godot/app_userdata/",
-	"ui/_sample.guitkx",
-	"guitkx.diags.json",
-	"ui/widgets/gu_card.guitkx",
 ]
 
 ## 反空转 canary：这些**必然**在包内（2026-09-15 实测计数见注释）。

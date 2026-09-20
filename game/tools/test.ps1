@@ -8,7 +8,6 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $godot = Join-Path $PSScriptRoot 'godot.ps1'
-$guitkxBuild = Join-Path $PSScriptRoot 'guitkx_build.ps1'
 $gutChecked = Join-Path $PSScriptRoot 'run_gut_checked.ps1'
 
 # 导入缓存前置（VDA 2026-09-14）。新增或替换资产（字体 / 音频等）后，若 `.godot`
@@ -24,11 +23,6 @@ $import_rc = $LASTEXITCODE
 $ErrorActionPreference = 'Stop'
 if ($import_rc -ne 0) {
     exit $import_rc
-}
-
-& $guitkxBuild
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
 }
 
 if ($Test) {

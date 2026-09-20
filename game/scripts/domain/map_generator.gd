@@ -121,8 +121,8 @@ static func _generate_instance_route(seed_value: int, node_by_id: Dictionary, pa
 						instance["enemy_theme"] = str(rolled_boss.get("theme", ""))
 				# D4 事件池随机化（2026-09-16）：事件节点若声明 `event_pool`，用
 				# **独立派生流**抽一条事件作为本实例的宿主，并把事件 id 同时写入
-				# `event_id`（领域侧日志/结算）与 `dialogue_title`（Dialogue Manager
-				# 气球标题，见 run_travel_flow.gd:43）以及 `summary`（地图/遭遇面
+				# `event_id`（领域侧日志/结算）与 `dialogue_title`（旧事件入口标题
+				# 兼容字段，见 run_travel_flow.gd:43）以及 `summary`（地图/遭遇面
 				# 文案跟着事件走，否则会出现"点位说回声、实际是兽潮"的错位）。
 				# 与 E6/R9 同手法：不消耗本函数共享的 rng ⇒ 既有拓扑逐位不变。
 				if not instance_anchor and str(template.get("type", "")) == "event" \

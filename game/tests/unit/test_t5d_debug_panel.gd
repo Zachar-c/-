@@ -21,13 +21,10 @@ const DebugActionsScript = preload("res://scripts/domain/debug_actions.gd")
 # Disabled-gate assertions stay: disallowed => zero ops, zero events, no panel.
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const ControllerScript = preload("res://scripts/presentation/run_controller.gd")
 const DdaResolverScript = preload("res://scripts/domain/dda_resolver.gd")
 
-var _rui_roots: Array = []
 var _rui_hosts: Array = []
 var _controllers: Array[RunController] = []
 
@@ -46,10 +43,6 @@ func _last_entry(state: RunState) -> Dictionary:
 
 
 func after_each() -> void:
-	for r in _rui_roots:
-		if r != null and r.has_method("unmount"):
-			r.unmount()
-	_rui_roots.clear()
 	for h in _rui_hosts:
 		if h != null and is_instance_valid(h):
 			h.free()

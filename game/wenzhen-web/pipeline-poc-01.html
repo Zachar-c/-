@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>问真 · Asset Pipeline POC 01</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #03070d;
+      --panel: #07111b;
+      --panel-2: #0b1926;
+      --line: rgba(190, 220, 244, .17);
+      --line-soft: rgba(190, 220, 244, .09);
+      --ink: #edf6ff;
+      --ink-soft: rgba(226, 240, 252, .72);
+      --ink-dim: rgba(192, 215, 234, .48);
+      --ice: #a9d7ff;
+      --jade: #8edfd4;
+      --fail: #e7a18c;
+      --px: 0px;
+      --py: 0px;
+      font-family: "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--void);
+    }
+
+    body {
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    button { font: inherit; }
+
+    .shell {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse at 52% 42%, rgba(110, 171, 217, .15), transparent 30%),
+        linear-gradient(180deg, #02060b, #07111b 50%, #02060b);
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .5), transparent 17%, transparent 83%, rgba(0, 0, 0, .5)),
+        linear-gradient(180deg, rgba(0, 0, 0, .14), transparent 25%, transparent 72%, rgba(0, 0, 0, .72));
+    }
+
+    .shell::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      z-index: -1;
+      width: min(1380px, 112vw);
+      height: 27%;
+      transform: translateX(-50%);
+      border-top: 1px solid rgba(185, 219, 244, .07);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(210, 235, 255, .1), transparent 48%),
+        linear-gradient(180deg, transparent, rgba(82, 137, 174, .05) 56%, rgba(3, 8, 14, .64));
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      padding: 26px clamp(18px, 4vw, 58px);
+      color: var(--ink-dim);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .brand::after {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--line), transparent);
+    }
+
+    .gate {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid rgba(142, 223, 212, .24);
+      color: var(--jade);
+      font-size: 9px;
+    }
+
+    .gate::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(190px, 230px) minmax(480px, 1fr) minmax(280px, 340px);
+      gap: clamp(18px, 2.7vw, 42px);
+      width: min(1660px, 100%);
+      min-height: calc(100svh - 84px);
+      margin: 0 auto;
+      padding: 0 clamp(18px, 4vw, 58px) 38px;
+    }
+
+    .panel {
+      align-self: center;
+      min-width: 0;
+    }
+
+    .kicker {
+      color: var(--ink-dim);
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: "STSong", "Songti SC", "Noto Serif SC", serif;
+      font-weight: 500;
+      letter-spacing: .04em;
+    }
+
+    h1 {
+      margin-top: 12px;
+      font-size: clamp(30px, 2.75vw, 46px);
+      line-height: 1.08;
+    }
+
+    h2 {
+      font-size: 19px;
+      line-height: 1.25;
+    }
+
+    .copy {
+      margin: 14px 0 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.85;
+    }
+
+    .meta {
+      display: grid;
+      gap: 15px;
+      margin: 24px 0 0;
+    }
+
+    .meta > div {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 10px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .meta dt {
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .meta dd {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 11px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: min(78vh, 790px);
+      perspective: 1200px;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      top: 15%;
+      width: min(54vw, 700px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px solid rgba(182, 218, 243, .08);
+      box-shadow: 0 0 0 50px rgba(182, 218, 243, .025);
+      opacity: .6;
+      transform: rotate(-8deg) translate3d(calc(var(--px) * -.16), calc(var(--py) * -.16), 0);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      width: min(53vw, 660px);
+      height: 11%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(130, 190, 229, .14), transparent 70%);
+      filter: blur(18px);
+    }
+
+    .glow,
+    .body,
+    .blade {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .glow {
+      z-index: 1;
+      width: min(54vw, 710px);
+      opacity: .18;
+      transition: opacity .55s ease, transform .7s ease;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scale(.94);
+    }
+
+    .body {
+      z-index: 2;
+      width: min(61vw, 820px);
+      max-width: 100%;
+      filter: drop-shadow(0 36px 58px rgba(0, 0, 0, .62));
+      transform: translate3d(calc(var(--px) * .36), calc(var(--py) * .36), 0);
+      transition: filter .5s ease;
+    }
+
+    .blade {
+      z-index: 3;
+      right: -1%;
+      top: 42%;
+      width: min(45vw, 610px);
+      opacity: 0;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scaleX(.82);
+      transform-origin: left center;
+      transition: opacity .2s ease, transform .42s cubic-bezier(.18, .78, .18, 1);
+      filter: drop-shadow(0 0 18px rgba(143, 205, 240, .26));
+    }
+
+    .is-firing .glow {
+      opacity: .72;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scale(1.05);
+    }
+
+    .is-firing .body {
+      filter:
+        drop-shadow(0 36px 58px rgba(0, 0, 0, .62))
+        drop-shadow(0 0 26px rgba(153, 214, 248, .46));
+    }
+
+    .is-firing .blade {
+      opacity: .92;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scaleX(1);
+    }
+
+    .asset-audit {
+      display: grid;
+      gap: 14px;
+    }
+
+    .audit-card {
+      padding: 15px;
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(12, 25, 38, .8), rgba(5, 13, 21, .72));
+    }
+
+    .audit-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .audit-head span {
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .card-preview {
+      position: relative;
+      width: min(100%, 188px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(205, 231, 253, .18);
+      background: #06101a;
+    }
+
+    .card-preview img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+    }
+
+    .card-preview figcaption {
+      position: absolute;
+      right: 10px;
+      bottom: 9px;
+      left: 10px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 10px;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, .82);
+    }
+
+    .card-preview figcaption span:last-child {
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .12em;
+    }
+
+    .icon-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .icon-slot,
+    .silhouette-slot {
+      display: grid;
+      place-items: center;
+      min-height: 92px;
+      border: 1px solid var(--line-soft);
+      background: rgba(3, 9, 15, .5);
+    }
+
+    .icon-slot img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+
+    .icon-slot.large img {
+      width: 84px;
+      height: 84px;
+    }
+
+    .silhouette-slot {
+      min-height: 122px;
+    }
+
+    .silhouette-slot img {
+      width: min(150px, 84%);
+      max-height: 106px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: .84;
+    }
+
+    .status {
+      display: grid;
+      gap: 8px;
+      margin-top: 2px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--ink-dim);
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+
+    .status-row strong {
+      color: var(--ice);
+      font-weight: 500;
+    }
+
+    .status-row.fail strong { color: var(--fail); }
+
+    .hash {
+      margin: 8px 0 0;
+      color: var(--ink-dim);
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 9px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .controls {
+      position: fixed;
+      z-index: 5;
+      left: 50%;
+      bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: min(560px, calc(100% - 32px));
+      padding: 8px;
+      transform: translateX(-50%);
+      border: 1px solid var(--line);
+      background: rgba(4, 11, 18, .86);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 22px 64px rgba(0, 0, 0, .44);
+    }
+
+    .trigger {
+      display: inline-flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 42px;
+      border: 1px solid rgba(151, 205, 244, .42);
+      color: var(--ink);
+      background: rgba(115, 176, 218, .08);
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease;
+    }
+
+    .trigger:hover,
+    .trigger:focus-visible {
+      border-color: var(--ice);
+      background: rgba(145, 203, 244, .14);
+      outline: none;
+    }
+
+    .trigger:disabled {
+      cursor: wait;
+      opacity: .66;
+    }
+
+    .trigger svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+    }
+
+    .trace {
+      min-width: 130px;
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1200px) {
+      main {
+        grid-template-columns: 1fr;
+        padding-bottom: 130px;
+      }
+
+      .panel.copy-panel,
+      .asset-audit {
+        justify-self: center;
+        width: min(660px, 100%);
+        text-align: center;
+      }
+
+      .meta {
+        justify-content: center;
+      }
+
+      .meta > div {
+        grid-template-columns: 46px 1fr;
+        text-align: left;
+      }
+
+      .stage {
+        min-height: min(64vh, 680px);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        padding: 18px;
+        font-size: 9px;
+      }
+
+      .topbar .gate {
+        display: none;
+      }
+
+      main {
+        gap: 6px;
+        padding: 0 16px 138px;
+      }
+
+      .stage {
+        min-height: 48vh;
+      }
+
+      .body {
+        width: min(112vw, 690px);
+        max-width: none;
+      }
+
+      .glow {
+        width: min(103vw, 620px);
+      }
+
+      .blade {
+        top: 45%;
+        width: min(78vw, 520px);
+      }
+
+      .asset-audit {
+        gap: 10px;
+      }
+
+      .audit-card {
+        padding: 13px;
+      }
+
+      .icon-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .trace {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell" id="shell">
+    <header class="topbar">
+      <div class="brand">Asset Pipeline POC 01</div>
+      <div class="gate">ComfyUI · Gate 1 · Canonical</div>
+    </header>
+
+    <main>
+      <section class="panel copy-panel">
+        <div class="kicker">Encounter Contract</div>
+        <h1>月光蛊</h1>
+        <p class="copy">这页不展示概念图原件。页面只加载标准资源包中的派生文件，验证“源图 → 后处理 → 游戏调用”是否闭环。</p>
+        <dl class="meta">
+          <div><dt>Layer</dt><dd>Canonical Form</dd></div>
+          <div><dt>Source</dt><dd>GPT Image frozen concept</dd></div>
+          <div><dt>Pipeline</dt><dd>ComfyUI → Asset Manager</dd></div>
+          <div><dt>Runtime</dt><dd>PNG + manifest + CSV</dd></div>
+        </dl>
+      </section>
+
+      <section class="stage" aria-label="月光蛊标准资源调用验证">
+        <img class="glow" src="assets/gu/moonlight_gu/effect/activation_glow.png" alt="">
+        <img class="body" id="body" src="assets/gu/moonlight_gu/canonical/body.png" alt="月光蛊标准本体资源">
+        <img class="blade" src="assets/gu/moonlight_gu/effect/moon_blade_preview.png" alt="">
+      </section>
+
+      <aside class="asset-audit">
+        <section class="audit-card">
+          <div class="audit-head">
+            <h2>Card Slot</h2>
+            <span>768 × 1024</span>
+          </div>
+          <figure class="card-preview">
+            <img src="assets/gu/moonlight_gu/ui/card_portrait.png" alt="月光蛊卡面标准资源">
+            <figcaption><span>月光蛊</span><span>1 转 · 月道</span></figcaption>
+          </figure>
+        </section>
+
+        <section class="audit-card">
+          <div class="audit-head">
+            <h2>Recognition Slot</h2>
+            <span>64 / 128</span>
+          </div>
+          <div class="icon-row">
+            <div class="icon-slot">
+              <img src="assets/gu/moonlight_gu/ui/icon_64.png" alt="月光蛊 64 像素图标">
+            </div>
+            <div class="icon-slot large">
+              <img src="assets/gu/moonlight_gu/ui/icon_128.png" alt="月光蛊 128 像素图标">
+            </div>
+          </div>
+          <div class="silhouette-slot">
+            <img src="assets/gu/moonlight_gu/canonical/silhouette.png" alt="月光蛊识别剪影">
+          </div>
+          <div class="status">
+            <div class="status-row" id="body-status"><span>body.png</span><strong data-status>waiting</strong></div>
+            <div class="status-row" id="icon-status"><span>icon_128.png</span><strong data-status>waiting</strong></div>
+            <div class="status-row" id="metadata-status"><span>metadata</span><strong data-status>waiting</strong></div>
+            <div class="status-row" id="pipeline-status"><span>comfyui pipeline</span><strong data-status>waiting</strong></div>
+            <p class="hash" id="source-hash">source hash: pending</p>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="controls">
+      <button class="trigger" id="trigger" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M16 3.2C9.2 1.9 2.9 6.4 2.9 12.4c0 3 1.9 5.4 4.6 5.9-2.1-1.5-3-3.8-2.3-6.2.8-2.8 3.6-4.7 6.7-4.2-2.2.4-3.8 2-4.3 4.2-.6 2.9 1.6 5.5 4.5 5.5 2.5 0 4.5-2 4.5-4.5 0-2.4-1.8-4.4-4.2-4.5 2.3-1.7 3.6-3.5 3.6-5.4Z"/>
+        </svg>
+        <span id="trigger-label">调用月刃资源</span>
+      </button>
+      <div class="trace" id="trace" aria-live="polite">asset manifest / idle</div>
+    </footer>
+  </main>
+
+  <script>
+    const shell = document.getElementById('shell');
+    const trigger = document.getElementById('trigger');
+    const triggerLabel = document.getElementById('trigger-label');
+    const trace = document.getElementById('trace');
+    const sourceHash = document.getElementById('source-hash');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setStatus(id, ok, label) {
+      const row = document.getElementById(id);
+      const value = row.querySelector('[data-status]');
+      row.classList.toggle('fail', !ok);
+      value.textContent = label;
+    }
+
+    function waitForImage(img) {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve(true);
+      return new Promise((resolve) => {
+        img.addEventListener('load', () => resolve(true), { once: true });
+        img.addEventListener('error', () => resolve(false), { once: true });
+      });
+    }
+
+    async function verifyAssets() {
+      const body = document.getElementById('body');
+      const icon = document.querySelector('.icon-slot.large img');
+      const [bodyOk, iconOk] = await Promise.all([waitForImage(body), waitForImage(icon)]);
+      setStatus('body-status', bodyOk, bodyOk ? 'loaded' : 'failed');
+      setStatus('icon-status', iconOk, iconOk ? 'loaded' : 'failed');
+
+      try {
+        const response = await fetch('assets/gu/moonlight_gu/metadata/moonlight_gu.json');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const metadata = await response.json();
+        setStatus('metadata-status', true, 'loaded');
+        setStatus('pipeline-status', metadata.orchestrator === 'comfyui', String(metadata.orchestrator || 'unknown'));
+        sourceHash.textContent = `source sha256: ${metadata.source.sha256}`;
+        trace.textContent = 'comfyui pipeline / canonical ready';
+      } catch (error) {
+        setStatus('metadata-status', false, 'failed');
+        setStatus('pipeline-status', false, 'blocked');
+        sourceHash.textContent = `metadata error: ${error.message}`;
+        trace.textContent = 'pipeline blocked / metadata';
+      }
+    }
+
+    trigger.addEventListener('click', () => {
+      if (shell.classList.contains('is-firing')) return;
+      shell.classList.add('is-firing');
+      trigger.disabled = true;
+      triggerLabel.textContent = '月刃资源已调用';
+      trace.textContent = 'effect / moon_blade_preview';
+      window.setTimeout(() => {
+        shell.classList.remove('is-firing');
+        trigger.disabled = false;
+        triggerLabel.textContent = '调用月刃资源';
+        trace.textContent = 'pipeline ready / canonical';
+      }, reduced ? 1800 : 1800);
+    });
+
+    if (!reduced) {
+      shell.addEventListener('pointermove', (event) => {
+        const rect = shell.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width - .5) * 16;
+        const y = ((event.clientY - rect.top) / rect.height - .5) * 12;
+        shell.style.setProperty('--px', `${x.toFixed(2)}px`);
+        shell.style.setProperty('--py', `${y.toFixed(2)}px`);
+      });
+
+      shell.addEventListener('pointerleave', () => {
+        shell.style.setProperty('--px', '0px');
+        shell.style.setProperty('--py', '0px');
+      });
+    }
+
+    verifyAssets();
+    document.documentElement.dataset.ready = '1';
+  </script>
+</body>
+</html>

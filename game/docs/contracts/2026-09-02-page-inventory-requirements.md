@@ -139,10 +139,8 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
       子树无命中再判自身；`IGNORE` 节点自身不算命中但不阻断其子树。
     - 症状极具误导性：按钮 `disabled=false`、`modulate=1`、父链无压暗、无可见覆盖层，
       但悬停不亮、点了没反应（看起来像"被置灰禁用"）。
-    验收：`tools/verify_interaction_loop.gd` 的 `occluded` 必须为空
-    （既有未修项见该脚本 `KNOWN_OCCLUDED` 留档表，以 `occluded_known` 计数呈现）；
-    回归用例 `test_wenzhen_battle_screen.test_ops_buttons_accept_real_clicks_despite_transparent_hand_containers`
-    ——**真的按下+松开**并断言命令被触发（几何判定只是代理指标，代理本身也容易写错）。
+    验收：点击可达性由 `test_wenzhen_battle_screen.test_ops_buttons_accept_real_clicks_despite_transparent_hand_containers`
+    守门——**真的按下+松开**并断言命令被触发（几何判定只是代理指标，代理本身也容易写错）。
   - **取消出口**：指向卡两步确认（点卡 → 点敌人）必须留出口——模式区（`ModeHost`）在 `target_select` 态渲染
     「取消目标」按钮，且卡体上的右键 / Esc 经组件 `cancel_requested` 转发给宿主复位。
 
@@ -167,7 +165,7 @@ Hall(Title) ──开始/继续──> Map ◇┬─> Encounter ──冲突─�
 - 数据绑定：`rest_used/rest_mode_used/aptitude_raised`（node_flags 派生）、休整选项（`id/label/detail/cost/disabled/reason/curse_warning/requires_confirm`，id 全集为 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，`wash` 仅在闭关/传承节点出现）、`upgrade_targets`（每张 `refined_gu_id`）、`remove_card_targets`（每只活蛊实例 + `blocked/reason`）、`imprint_targets`（每枚印记 + `meta_rule` 不可移除原因）、`curse_targets`（每条 `statuses` 诅咒 + 层数）。
 - 命令：`rest`（`heal`/`upgrade_card` + `card_key` / `remove_card` + `instance_id` / `remove_imprint` + `relic_id` / `remove_curse` + `curse_id` / `skip`）、`raise_aptitude`。
 - 状态与确认：本次已休整全选项禁用 + "本次已休整"；`skip` 在未消费时强制二次确认（`requires_confirm=true`）；诅咒蛊移除被领域拒绝（`blocked` 原因展示）；`curse_warning=true` 的选项升级确认层级 2。
-- 可视预算（2026-09-11 修复）：主决策面选项网格（seclusion 节点最多 7 张卡）纵向滚动（`ChoiceScroll`），`NoteLabel`/`LeaveRow` 恒钉在窗口内；1280x720 曾把网格末尾 skip 卡与离开行一起挤出可视窗口造成软锁。`LeaveRow` 另有常驻跳过入口 `SkipEntryButton`（古籍文本式，disabled/tooltip 随快照 skip 同步），不滚动也始终可发起 skip 二次确认。验收探针：`tools/verify_rest_headless.gd`（SubViewport 1280x720：底行可视 + 滚动视口高度 > 0 + 引擎拾取可达 skip）。
+- 可视预算（2026-09-11 修复）：主决策面选项网格（seclusion 节点最多 7 张卡）纵向滚动（`ChoiceScroll`），`NoteLabel`/`LeaveRow` 恒钉在窗口内；1280x720 曾把网格末尾 skip 卡与离开行一起挤出可视窗口造成软锁。`LeaveRow` 另有常驻跳过入口 `SkipEntryButton`（古籍文本式，disabled/tooltip 随快照 skip 同步），不滚动也始终可发起 skip 二次确认。验收：在 1280x720 视图下复核底行与拾取路径；领域覆盖见 `tests/unit/test_rest_snapshot_choice_coverage.gd`。
 - E4 三选一（2026-09-09，规格 §4）：`rest/refinement/cultivation` 三类节点统一由 travel 分发进本屏；快照 `mode_groups` 携带 `修炼[]`/`炼蛊[]` 两组动作卡（`meditate`→encounter `action_card` 信封、`cultivate`→`cultivate_rank_two`、`refine/free_pair`→打开炼蛊子屏不发领域命令），插在主决策面与移除面板之间；成功执行修炼/炼蛊即消费本次探访（node_flags 落 `used`），离开需玩家显式操作；快照无 `mode_groups` 时整行隐藏（旧存档兼容）。
 - 组件：`GuCommandButton`、`GuCard`、`GuToast`、`GuConfirmDialog`。
 - 验收：每节点快照必须包含 `heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip` 域全集；`skip` 触发后事件日志落 `rest_skipped`；`leave_node` 在任一选项合法或 skip 已确认后必须放行（`rest_choice_required` 不得成为软锁）；种子 `2/6/8/10/13/15/16/18/33/34/41/49` 回归不得出现无合法选项且无法离开的状态。

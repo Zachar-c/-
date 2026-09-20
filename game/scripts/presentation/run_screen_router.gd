@@ -8,9 +8,6 @@ extends RefCounted
 # wrappers so call sites and tests are unchanged.
 
 
-## RUITK 屏已全部迁离：本表留空是「RUITK 屏必须为零」的锚点——非空即代表
-## 有屏回退到 .guitkx。
-const SCREEN_PATHS := {}
 ## 唯一视图路由表（.tscn）。所有屏走同一套 instantiate + mount_snapshot 协议。
 const MASTER_SCENE_PATHS := {
 	"Title": "res://scenes/ui/screens/hall_screen.tscn",
@@ -31,14 +28,13 @@ const MASTER_SCENE_PATHS := {
 
 
 static func is_registered_screen(screen: String) -> bool:
-	return SCREEN_PATHS.has(screen) or MASTER_SCENE_PATHS.has(screen)
+	return MASTER_SCENE_PATHS.has(screen)
 
 
 static func mount_screen(controller, screen: String, snapshot: Dictionary, commands: Dictionary) -> void:
 	var master_path := str(MASTER_SCENE_PATHS.get(screen, ""))
 	if master_path != "":
 		if controller._master_instance == null or not is_instance_valid(controller._master_instance) or controller._mounted_screen != screen:
-			unmount_rui_root(controller)
 			if controller._master_instance != null and is_instance_valid(controller._master_instance):
 				controller._master_instance.queue_free()
 			controller._master_instance = (load(master_path) as PackedScene).instantiate()
@@ -48,16 +44,9 @@ static func mount_screen(controller, screen: String, snapshot: Dictionary, comma
 		if controller._master_instance.has_method("mount_snapshot"):
 			controller._master_instance.mount_snapshot(snapshot, commands)
 		return
-	# RUITK 屏已全部迁离：走到这里说明路由表漏登记，直接报错而不是静默白屏。
-	unmount_rui_root(controller)
+	# 路由表漏登记时直接报错，不静默白屏。
 	unmount_master_instance(controller)
-	push_error(".tscn 路由表缺少视图 %s（RUITK 兜底已移除）" % screen)
-
-
-static func unmount_rui_root(controller) -> void:
-	if controller._rui_root != null and controller._rui_root.has_method("unmount"):
-		controller._rui_root.unmount()
-	controller._rui_root = null
+	push_error(".tscn 路由表缺少视图 %s" % screen)
 
 
 static func unmount_master_instance(controller) -> void:

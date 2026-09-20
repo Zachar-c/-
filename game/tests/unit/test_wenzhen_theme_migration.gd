@@ -1,6 +1,6 @@
 extends GutTest
 
-const FORMAL_EXTENSIONS := [".gd", ".guitkx", ".tres", ".tscn"]
+const FORMAL_EXTENSIONS := [".gd", ".tres", ".tscn"]
 const FORMAL_PATHS := ["scripts/presentation", "ui", "scenes", "tools"]
 
 

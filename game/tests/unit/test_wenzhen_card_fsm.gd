@@ -1,12 +1,9 @@
 extends GutTest
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
 # 显式 preload 而非依赖 class_name 全局注册：后者的注册有时序，
 # 在 GUT 收集脚本阶段可能还没就绪，会让整个测试文件 Parse Error。
 const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
 var _roots: Array = []
 var _hosts: Array = []
 

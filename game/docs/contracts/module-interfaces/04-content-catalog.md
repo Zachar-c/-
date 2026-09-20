@@ -52,11 +52,11 @@
     （排除后无候选则放弃排除）。池必须按 `hp × boss_layer_mult` 的**有效强度**分层  
     （层内差 ≤2、层间单调递增），**禁止全池随机**。  
     池缺失 / 目录不可用 / 池内无有效 id ⇒ 返回**空字典**，调用方保持模板自带的 `enemy_kind`  
-    （回退即无池时的原行为）。门禁 `tools/verify_boss_variety.gd`。
-  - **`event_pool`（2026-09-16 D4）**：仅允许挂在 `type == "event"` 的节点上，≥2 个真实 event id、无重复。  
-    抽法与 `boss_pool` 同构：`mixed_seed(seed, "event_node_" + 实例id, 0)`，抽中 id 写入实例的  
-    `event_id` / `dialogue_title`，同样**不消耗主 rng**。池不可用时回退模板自带 `event_id`。  
-    门禁 `tools/verify_event_variety.gd`。
+     （回退即无池时的原行为）。门禁 `tests/unit/test_boss_pool_variety.gd`。
+  - **`event_pool`（2026-09-16 D4）**：仅允许挂在 `type == "event"` 的节点上，≥2 个真实 event id、无重复。
+    抽法与 `boss_pool` 同构：`mixed_seed(seed, "event_node_" + 实例id, 0)`，抽中 id 写入实例的
+     `event_id` / `dialogue_title`，同样**不消耗主 rng**。池不可用时回退模板自带 `event_id`。
+    门禁 `tests/unit/test_event_pool.gd`。
 - `balance`：行为数值（`{retreat_stone_cost, cultivate_rank_two_stone_cost, ...}`，45 键）
   - 升转成本四键（**一转一突破 2026-09-15 新增后三键**）：`cultivate_rank_two_stone_cost`(5) /  
     `cultivate_rank_three_stone_cost`(12) / `cultivate_rank_four_stone_cost`(20) /  
@@ -75,9 +75,8 @@
     与 resolver 同一判据），**禁止在卡片侧硬编码数值**——反漂移守卫会拦截。
   - `stone_gain` 与 `health_cost` **同源读取**（预检提示与真实结算不得漂移）；结算在  
     `social_command_rules._accept_event`，与代价写在**同一条不可变事件日志**里，表现层无需另接通路。
-  - **新增事件时必须同步 `data/dialogues/events.dialogue` 的 `~ <event_id>` 菜单块**，  
-    否则对话气球点了悬空（Dialogue Manager 是真 autoload，气球才是事件主界面）；  
-    `tools/verify_event_variety.gd` 的反空转 canary 会当场 FAIL。
+  - 新增事件由遭遇卡的 `action_preview_service` / `social_command_rules` 消费；
+    `tests/unit/test_event_pool.gd` 与 `tests/unit/test_v3_market_event_relic.gd` 守门。
   - `kind` 是**惰性字段**（只做白名单校验，`_accept_event` 不读它）——不要为"看起来完整"加枚举值。
 - 实体字典识别前缀：`"gu_`/`"enemy_`/`"offer_`/`"event_`（守卫测试防硬编码的依据）
 

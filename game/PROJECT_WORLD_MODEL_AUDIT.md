@@ -1,5 +1,9 @@
 # PROJECT_WORLD_MODEL_AUDIT.md — 《問眞》（前称《蛊路求生》）项目状态基线
 
+> 2026-09-20 说明：本文是 2026-09 的架构审计快照。`world-model` 运行时、
+> Dialogue Manager 与 GDQuest vendor 源码均已清理，涉及这些对象的事实段不再代表当前仓库；
+> 当前状态以 `game/AGENTS.md`、代码、测试和 `tools/check.ps1` 为准。
+
 > 生成日期：2026-09-12。生成方式：三路并行代码/数据调研 + 权威规格文档核对。
 > 用途：供外部架构审阅者在**不打开 Godot 项目**的情况下回答"这个项目现在到底是什么、独特在哪、有没有走偏"。
 > 标记约定：[FACT]=代码/数据确凿存在；[DESIGN]=文档明确规定；[IMPLEMENTATION]=已实现且接入主循环；[PROTOTYPE]=存在但未稳定；[INFERRED]=推断；[MISSING]=不存在。

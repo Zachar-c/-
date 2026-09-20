@@ -5,9 +5,6 @@ const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
 const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
 var _roots: Array = []
 var _hosts: Array = []
 var _last_state: Dictionary = {}

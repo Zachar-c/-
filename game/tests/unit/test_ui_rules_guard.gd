@@ -6,10 +6,7 @@ extends GutTest
 ## 新增代码一旦绕过 token / 超圆角 / 屏根不是 MarginContainer / 图标不走 GuIcon，
 ## 测试立刻变红，不给「先这样吧」留余地。
 ##
-## 扫描范围刻意分两级：
-##   - **新体系**（scripts/presentation/ + scenes/ui/）：违规即阻断，这里是未来。
-##   - **旧体系**（ui/ 下的 .guitkx / 编译产物 .gd）：只统计不阻断，
-##     那是迁移队列，每转一屏清零一批；一旦全转完，本文件把旧体系也纳入阻断即可。
+## 扫描范围：scripts/presentation/ + scenes/ui/。违规即阻断。
 ##
 ## 若你新增了一条规则，请同时改本文件与 UI_RULES.md——两边是一套。
 
@@ -169,16 +166,3 @@ func test_icon_registry_files_exist() -> void:
 		if not FileAccess.file_exists(p):
 			missing.append("%s -> %s" % [name, p])
 	assert_eq(missing.size(), 0, "图标注册表引用了不存在的 SVG: " + str(missing))
-
-
-## 旧体系迁移进度（只报告，不阻断）——每转一屏这里就少一批。
-func test_legacy_stack_violation_report() -> void:
-	var counts := {"hardcoded_color": 0, "radius_over_cap": 0}
-	for path in _walk("res://ui/", [".guitkx"]):
-		var text := _read(path)
-		counts["hardcoded_color"] += _rgx_color.search_all(text).size()
-		for m in _rgx_radius.search_all(text):
-			if int(m.get_string(1)) > 8:
-				counts["radius_over_cap"] += 1
-	gut.p("旧 .guitkx 体系残留违规: %s（迁移队列，暂不阻断）" % counts)
-	pass_test("旧体系统计完成")

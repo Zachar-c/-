@@ -15,7 +15,7 @@ tags: [map, generation, pacing, seeded-random]
 | E2 | 分类抽取 + 行内去重 + 层保底（累计 ≥5 槽强制补足）；unknown 类迷雾 | `_pick_category_template` |
 | E3 | 休息三选一 mode_groups（休整/修炼/炼蛊分组，一次探访只取一份收益） | rest_snapshot.gd |
 | E4 | 表现层：「?」迷雾 + 休息三选一 UI + refinement/cultivation → Rest 屏统一路由 | presentation |
-| E5 | 回归门：verify_pacing_density.gd 四分类战斗占比门 + verify_route_diversity.gd 全模板可达冒烟 | tools/ |
+| E5 | 回归门：`test_first_run_route.gd` / `test_category_route.gd` / `test_boss_pool_variety.gd` | tests/unit/ |
 | E6 | 敌人按层 roll：主题锚定池 + 层 rank 区间 + tier 权重（common 75/elite 25/boss 0）；Boss 永不入选普通节点 | enemy_roll |
 | E7 | 商店按层货架：洗牌取前 4+⌊层/2⌋ 件 + 保底 1 件本层最高档；(局种子, 节点模板) 派生 | shop_stock |
 

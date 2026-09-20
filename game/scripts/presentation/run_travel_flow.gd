@@ -43,8 +43,5 @@ static func travel_to(controller, node_id: String) -> Dictionary:
 				str(node.get("event_id", node.get("id", ""))),
 				str(node.get("dialogue_title", "start"))
 			)
-			if controller._dialogue_gateway.has_method("set_branch_selection_callback"):
-				controller._dialogue_gateway.set_branch_selection_callback(
-					Callable(controller, "submit_dialogue_selection"))
 		controller._show_encounter()
 	return resolved["result"]

@@ -4,7 +4,7 @@
 
 ## 角色
 
-- 作为《蛊路求生》项目的工程代理，负责设计核对、实现、测试、审查和交付。
+- 作为《问真》项目的工程代理，负责设计核对、实现、测试、审查和交付。
 - 以仓库现有架构、权威规格和可复现结果为依据，不自行扩展业务范围。
 - 保护用户已有改动；发现无关修改时忽略，相关修改则在其基础上工作。
 
@@ -59,8 +59,6 @@
 - `肉鸽设计-原始数据/` 是只读检索资料；未经用户明确指令不得整理或改写。
 - 不得重建 `豆包/`、`旧稿归档_不采用/`、`重写稿/` 或已移除的编辑产物。
 - `.worktrees/game-impl/` 是历史快照，不得修改。
-- `vendor/godot-open-rpg/` 未经审计不得直接耦合或修改。
-- 引入或更新 GDQuest Open RPG 时必须保留 MIT 许可证、上游 URL 和固定提交号。
 - `master` 是集成与实际开发主线；除非用户另有要求，基于当前检出分支工作。
 - **休整节点 UI 必须暴露领域全集**：任何 `type=="rest"` 节点的快照 `choices` 必须覆盖领域层 `rest` 命令的全集（`heal/upgrade_card/remove_card/remove_imprint/remove_curse/skip`，含节点允许的 `wash`），不得让"全部选项禁用 + leave_node 被 `rest_choice_required` 门禁"成为软锁；当领域全集在当前状态下全部 `disabled` 时，UI 必须保留 `skip` 入口并落 `rest_skipped` 事件日志。违反此约束的 PR 一律回退。新增 / 修改休整节点命令面、快照键、确认层级时须同步更新 `docs/contracts/2026-09-02-domain-ui-contract.md` 与 `docs/contracts/2026-09-02-page-inventory-requirements.md`。
 
@@ -69,14 +67,14 @@
 > 完成后删除或更新对应条目；本节只记录当前工作，不保留历史流水账。
 > 状态以代码 / 测试 / `git log` 为准；本节只同步「仍在动」的事。
 
-1. **世界模型：已交付并接线（2026-09-17）**：产物在 `world-model/`（8 类实体 / 10 个机读数据文件 / 纯 Python 规则层与运行器 / 校验器 / 平衡模拟器 / 上游漂移检测器）。
+1. **世界模型：仅保留治理、裁定与报告（2026-09-20 清理）**：运行时 `engine/runner/tools/tests/data/schema`、派生镜像和快照工具已删除；`governance/`、`rulings/`、`reports/` 与历史说明保留为权威证据。
    - 约束已换代：按 `RUL-2026-09-17-003` 作废旧流程约束，改行 `CONSTRAINTS-V2` 的 6 条可执行规则（数据即规范 / 一条命令验收 / 单一裁定入口 / 默认放行+自动快照 / 约束必须可执行 / 验收不靠人勾选）。
-   - Godot 侧接线：接入层 `scripts/domain/world_model_bridge.gd`（只读，不改玩法）+ 一致性门禁 `tests/unit/test_world_model_bridge.gd`（8 用例 / 20 断言，含 `SABOTAGE` 负控）。游戏运行时仍以 `data/` 为真源。
-   - 当前基线：`accept.py` 退出码 0（校验 64608 条 / 0 失败，测试 39/39）；漂移检测 5204 项 / 0 漂移；Godot 全量 unit 215 脚本 / 1556 用例 / 0 失败。
+   - Godot 侧不再接线 world-model 镜像；游戏运行时以 `data/` 为唯一真源。
+   - 已删除的 `accept.py`、漂移检测与 `snapshot.py` 不再是可用验收命令；历史数字只作迁移记录。
    - 详细交接：`world-model/HANDOFF.md`。以下 Stage 0 / Stage 1 段落降级为历史记录：
    - **✅ Gate = GO（2026-09-16 重跑）**：`tools/lore.ps1 world-model-0` 输出 `result: GO`；24/24 高影响 claim 均有完整 P0 引用；报告 `docs/lore/generated/world-model-stage0-gate.md`。语料指纹已按仓库内只读原文校正（`lore_sources/manifest.json`）。
-   - ~~**仍禁止**~~ **该冻结已作废**（RUL-2026-09-17-003）：不再有「通过前禁止修改 `data/` / `scripts/` / `scenes/`」的门禁。替代纪律：改前 `snapshot.py take`，改后跑 `accept.py` 与 Godot 全量 unit。
-   - **Stage 1 切片：缺口 1 / 3 / 4 / 5 已按用户裁定落地（2026-09-16 晚）**：①货郎节点 `stage` two→one（L1 可出）②盲炼失败世界内原因文案（火候/相性/心神）③货郎货架新增 `purchase_blood_droplet`④货阶分层只约束黑市节点、NPC 个人货架豁免。新增 NPC 专属报价标 `npc_only` 以免扰动黑市种子化洗牌。回归 unit 1535/1535 · integration 32/32 · SCRIPT ERROR 0；探针 `tools/verify_stage1_slice.gd` seed=202、167 项全过。   - **下一步（Stage 1 切片，探针已落地，生产零 diff → 已有 4 条生产 diff）**：设计 `docs/superpowers/specs/2026-09-16-stage1-gu-entity-vertical-slice-design.md`。已落地：切片 12 蛊中 5 只补显式 `v1_effect`/食性（`moon_ray`/`bear_strength`/`blood_def_1_21`/`blood_mov_1_22`/`sword_atk_1_05`）+ `tests/unit/test_stage1_gu_entity_slice.gd`（5/5）；**身份夹具（探针级）+ 固定 seed 路线探针（seed=101）+ 货郎/炼成场景验收脚本** = `tools/verify_stage1_slice.gd`（Gate A–F，165 项 PASS）+ `tests/unit/test_stage1_slice_scene_gates.gd`（5/5，全量 unit 1535/1535）。报告 `docs/superpowers/reports/2026-09-16-stage1-slice-probe.md`，含 **5 条待裁定缺口**（L1 不出货郎节点 / 无「未炼化→已炼化」命令 / 盲炼失败无世界内原因文案 / 货郎货架不含血滴蛊 / 货郎月光蛊 tier 3 被 L1 分层门禁拒）。
+   - ~~**仍禁止**~~ **该冻结已作废**（RUL-2026-09-17-003）：不再有「通过前禁止修改 `data/` / `scripts/` / `scenes/`」的门禁。替代纪律：改前检查 `git diff`，改后运行对应 GUT 测试与仓库验收脚本。
+   - **Stage 1 切片：缺口 1 / 3 / 4 / 5 已按用户裁定落地（2026-09-16 晚）**：历史探针脚本已于 2026-09-20 删除；对应 GUT 覆盖保留在 `tests/unit/test_stage1_gu_entity_slice.gd` 与 `tests/unit/test_stage1_slice_scene_gates.gd`。报告 `docs/superpowers/reports/2026-09-16-stage1-slice-probe.md`。
    - **✅ 缺口 2 已落地（2026-09-17）**：`attune_gu`（野生 `state=wild` → 已炼化 `refined`），代价只扣真元 `4+2*(rank-1)`；依据 `docs/superpowers/reports/2026-09-17-lianhua-corpus-research.md`。Shared 五步协议：`resolver.gd` + `refine_snapshot.gd` + 契约回写；守卫 `tests/unit/test_attune_gu.gd`。**开局另注入 2 只未炼化 `small_light_gu`**；**loot `held_only` 入袋为 wild**（高转/不安全不可直接催动）。全量 unit 全绿。进度条/反噬未做。**Stage 1 切片五缺口已全部关闭**；扩大蛊目录与流派数、身份与择道改造仍待 Stage 0 后续裁定。
    - **《人祖传》证据效力（2026-09-16 用户裁定）**：派生摘编而非独立见证——主文存在的一律引主文 twin。
 2. **剑道流派（暂停，待 Stage 0 裁定）**：端到端可玩；**T15 刻痕通道 + T16 残锋降转已落地**（`sword_mark_rules.gd`、`BattleCommandFacade.settle_sword_marks`、快照键 `dao_marks`/`sword_downgrades`、确认通路 `play_kill_move.confirmed`，规格 `docs/superpowers/specs/2026-09-12-sword-p2-t15-t16-spec.md` §5）。身份机制剩余项是否保留/重做/废止由 Stage 0 基准裁定。
@@ -84,13 +82,13 @@
    - ~~logistics `bound` 死数据~~ **已关闭（数据层）**：`default_effect_by_role.logistics` 现为 `heal:1`，`gu.json` 无显式 `status:bound`；战斗侧 `bound_blocks_dodge` 是 battle2 玩家旗标，与蛊效果无关。
    - ~~refine 卡隐藏元石/材料成本~~ **已关闭（2026-09-12）**：`action_preview_service._append_recipe_card` 摊开 `stone_cost`+`materials` 并写入 `executable`/`block_reason`；守卫 `test_action_preview_service.gd`。
 3. **肉鸽化改造（D1 + D4 + D7 已落地；下一前置待裁定）**：
-   - 已落地：D1 关底 `boss_pool`（7 boss 全上场，门禁 `verify_boss_variety.gd`）· D4 事件 2→12 + `event_pool`（`verify_event_variety.gd`）· D7 快照 `threat`（`verify_map_threat.gd`）。交接：`docs/superpowers/reports/2026-09-16-roguelike-handover.md`。
+   - 已落地：D1 关底 `boss_pool`（`test_boss_pool_variety.gd`）· D4 事件 2→12 + `event_pool`（`test_event_pool.gd`）· D7 快照 `threat`（`test_map_threat_marker.gd`）。交接：`docs/superpowers/reports/2026-09-16-roguelike-handover.md`。
    - **🔴 待用户裁定**：① `pacing.json` 是否解冻（卡住 D2 层性向、D4 事件频率、D7 暴露的 L1/L2 零精英）；② L5 终局随机化（`miasma_vein_lord` 强度倒挂，需平衡裁定）；③ 多敌遭遇 `LootResolver` tier 错位（动红线对象，需口径裁定）。
 4. **美术素材补齐**：清单与提示词见 `docs/art/AI-ART-PROMPTS.md`、`BATCH-1-PROMPTS.md`、`BATCH-2-PROMPTS.md`。
    - 开源侧：game-icons 52 枚 + 羊皮纸/印泥纹理已入库并登 `assets_manifest.json`。剩余：流派道徽裁切入框（可选）、`seal_missing_grid.png` 15 枚裁切、云纹卷轴边框。
    - AI 侧：Boss 4 张 + 批次 2 共 29 条提示词已就绪；生成后 `tools/import.ps1` 导入。
-5. **提交卫生**：继续排除 `.claude/`、`.codex/`、截图目录与 `__pycache__`。`events.dialogue` / `enemies.json` 的历史排除令已解除（见 2026-09-16 D4 / 2026-09-10 用户指令）。
-6. **验证残留风险（不阻断交付）**：GUT 语境 ObjectDB/RID 泄漏已从历史 2 万级降到个位数～十余实例；W10 真窗 flake 判定为环境因素；Dialogue Manager invalid UID 在 smoke/play 未复现。以当前全量 unit/integration/交互门绿为准。
+5. **提交卫生**：继续排除 `.claude/`、`.codex/`、截图目录与 `__pycache__`。`enemies.json` 的历史排除令已解除（见 2026-09-10 用户指令）。
+6. **验证残留风险（不阻断交付）**：GUT 语境 ObjectDB/RID 泄漏已从历史 2 万级降到个位数～十余实例；W10 真窗 flake 判定为环境因素。以当前全量 unit/integration/交互回归绿为准。
 
 ## 技术约定
 
@@ -137,13 +135,11 @@
 - 阅读相关规格、现有实现和测试后再编辑。
 - 手工编辑使用补丁工具；格式化或批量机械修改可使用项目工具。
 - 测试与检查优先使用仓库脚本，如 `tools/test.ps1` 和 `tools/check.ps1`。
-- **世界模型验收**：`python world-model/tools/accept.py --smoke 10`（校验 + 测试 + 冒烟，退出码即结论）。改 `world-model/data/` 后加跑 `python world-model/tools/check_upstream_drift.py`（退出码 0 = 与上游 `data/` 一致）。改 `world-model/` 之前先 `python world-model/tools/snapshot.py take <label>`。
-- **世界模型接线门禁**：凡改动 `data/` 或 `world-model/data/`，必须跑 Godot 侧门禁 `-gtest res://tests/unit/test_world_model_bridge.gd`。该门禁带负控开关 `SABOTAGE`；**若打开负控仍然全绿，即判定门禁失效**（应失败）。
 - Godot 自动化命令使用 headless 模式或仓库脚本，避免启动无法退出的 GUI 进程。
 - 出现测试挂起时先检查项目锁和残留 Godot 进程，再重试。
 - UI 改动必须核对真实渲染、交互状态、文本适配和常用视口。
-- **AI 契约（用户裁定 2026-09-05，2026-09-09 修订）：交互改动默认以 headless 回归门（`verify_interaction_loop.gd`、单测、截图）验收；仅当用户主动要求时才打开真实视窗并模拟键鼠复现。headless 通过不代表真窗可用，真窗验证结论以用户主动要求为准。**
-- **交互闭环契约（用户裁定 2026-09-09）：任何可点击 UI 元素必须产生结果与反应，禁止"可点无反应"的死按钮；每次交互须具备视觉 + 听觉双重反应（点击音效经 `MasterTheme.apply_button` 或显式 `AudioManager.play_sfx` 接线）。未接入路由的入口一律 `disabled` 置灰，不得保留可点装饰按钮。全屏交互回归：`tools\godot.ps1 --headless --path . -s tools/verify_interaction_loop.gd`，`dead=[]`、`no_ui_click=[]` **且 `occluded=[]`** 方可交付——`occluded` 查的是"接线齐全但点不到"（被透明容器截获），**`PASS` 同样遮挡，只有 `IGNORE` 让路**，判定按引擎 `_gui_find_control_at_pos`（子节点逆序）。既有未修项须登记进该脚本的 `KNOWN_OCCLUDED` 留档表（以 `occluded_known` 计数呈现），不得直接放行新遮挡。
+- **AI 契约（用户裁定 2026-09-05，2026-09-09 修订）：交互改动默认以 headless GUT 交互用例、`acceptance_driver.gd` 模式和截图验收；仅当用户主动要求时才打开真实视窗并模拟键鼠复现。headless 通过不代表真窗可用，真窗验证结论以用户主动要求为准。**
+- **交互闭环契约（用户裁定 2026-09-09）：任何可点击 UI 元素必须产生结果与反应，禁止"可点无反应"的死按钮；每次交互须具备视觉 + 听觉双重反应（点击音效经 `MasterTheme.apply_button` 或显式 `AudioManager.play_sfx` 接线）。未接入路由的入口一律 `disabled` 置灰，不得保留可点装饰按钮。点击可达性必须用真实按下/松开断言守门；现役样例见 `tests/unit/test_wenzhen_battle_screen.gd`。透明容器必须 `IGNORE`，`PASS` 同样会遮挡身后兄弟节点。**
 - 推送前确认工作树、测试结果、目标分支和远端状态。
 
 ## 工作流程
@@ -196,7 +192,7 @@
 - 所有不可逆成本与死亡风险在执行前可见。
 - 关键状态变化进入不可变事件日志。
 - 聚焦测试通过；高风险改动完成对应集成、全量、试玩或导出验证。
-- 涉及世界模型数据一致性时，`accept.py`、上游漂移检测、Godot 接线门禁三者均须为绿/退出码 0。
+- 涉及历史 `world-model/reports` 的引用时，不要把它当成可执行验证；运行时以 `data/`、GUT 测试和 `tools/check.ps1` 为准。
 - UI 改动不存在死按钮、假状态、文本溢出、遮挡或错误路由；可点击元素必须有结果与反应，交互具备视觉+听觉双重反馈（见交互闭环契约），未开放入口必须 disabled 置灰。
 - Release 构建不包含开发调试入口、语料、测试和受排除资源。
 - Run 结局后局内资源清空；大厅永久数据只保留规格允许的内容。

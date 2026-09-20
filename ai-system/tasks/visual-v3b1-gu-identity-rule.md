@@ -2,7 +2,7 @@
 
 > 任务包：`ai-system/tasks/visual-v3b1-gu-identity-rule-task.md`；公共约定：`ai-system/tasks/visual-v3-schema.md`。
 > 原文：根目录 `蛊真人-clean.txt`（437060 行）。以下行号均为该文件行号，短引为原文连续复制（「」内），每条 ≤60 字，已逐条回原文机检（见文末机检记录）。
-> 本文件无画风结论、无配色 / UI / 角色造型 / 美术方案建议。
+> 本文件无画风结论、无产品方案建议。
 
 ## 0 本包要回答的问题
 

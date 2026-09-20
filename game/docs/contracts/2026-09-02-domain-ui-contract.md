@@ -183,10 +183,9 @@ controller 收 `use_gu / use_inheritance / end_turn / retreat / basic_attack / b
 ### 3.4 对话分支命令（Dialogue Gateway，`run_controller` 入口）
 
 - `dialogue_branch`：`{"type":"dialogue_branch","branch_id":"...","state_version":<event_log.size>,"context":{...}}` → `_submit_dialogue_branch` → `DialogueManagerAdapter.apply_branch`（`command_for_branch` 把 `accept/accept_event/take/investigate → accept_event`、`leave/decline/reject → leave_node`，未知返回空并中文拒绝 `unknown_dialogue_branch`；`state_version` 过期拒绝 `action_preview_stale`；`used_action_ids` 去重拒绝 `dialogue_branch_used`）。event 节点的 `action_card` 由 controller 包装为 `dialogue_branch`（branch_id=`action_id`）走同一路径。
-- branch_id 两种形状（`command_for_branch` 均可解析）：点分 `event.echo_cave.accept` / `echo_cave.accept`（模板/测试）；下划线 `echo_cave_accept` / `gu_rot_pact_leave`（Dialogue Manager 插件 title 禁止 `.`，`rfind("_")` 拆 event_id 与分支，`gu_rot_pact_accept` → event_id=`gu_rot_pact`）。
-- `submit_dialogue_selection(title)`：Dialogue Manager balloon 选择桥接公开入口（P1-1）。插件/UI 在标题变化（非入口 title，如 `echo_cave.accept`）时调用，等价于提交 `{"type":"dialogue_branch","branch_id":title,"state_version":event_log.size()}`；空 title 拒绝 `empty_dialogue_selection`。
-- 运行时接线（P1-B）：`_travel_to` 对 event 节点调 `begin(...)` 后，`DialogueManagerAdapter.set_branch_selection_callback(Callable(self,"submit_dialogue_selection"))`；adapter `begin` 连接 DialogueManager 全局单例的 `passed_title` 信号 → 玩家点 balloon 选项（title 跳转）即回调 `submit_dialogue_selection(title)` 走领域结算。回调为绑定 Callable，controller 释放后自动失效。
-- 事件入口 title 路由（P1-2）：`_travel_to` 对 event 节点调 `begin(event_id, node.dialogue_title or "start")`；节点未声明 `dialogue_title` 时打开默认 `start`（echo_cave），声明专属 title（如 `gu_rot_pact`）的事件打开对应入口，不再全部从 start 打开。数据侧：`nodes.json` 的 event 节点可声明 `event_id`（缺省回退 `id`）与 `dialogue_title`（缺省 `start`）；`data/dialogues/events.dialogue` 的 title 与入口一一对应，选项 `=> title` 跳转的 title 即 branch_id 下划线形式。
+- branch_id 两种形状（`command_for_branch` 均可解析）：点分 `event.echo_cave.accept` / `echo_cave.accept`（模板/测试）；下划线 `echo_cave_accept` / `gu_rot_pact_leave`（兼容旧脚本生成的 branch id，`rfind("_")` 拆 event_id 与分支，`gu_rot_pact_accept` → event_id=`gu_rot_pact`）。
+- `submit_dialogue_selection(title)`：保留的兼容入口，等价于提交 `{"type":"dialogue_branch","branch_id":title,"state_version":event_log.size()}`；空 title 拒绝 `empty_dialogue_selection`。
+- 事件节点由普通 Encounter 画面与 `action_card` 呈现；`begin(event_id, dialogue_title)` 只保留事件 id/title 路由元数据，不再启动外部对话气球。`nodes.json` 的 `dialogue_title` 字段保留用于旧数据兼容。
 
 ### 3.5 规则模块公开函数（供命令面/快照薄委托；UI 不得绕过命令直调）
 

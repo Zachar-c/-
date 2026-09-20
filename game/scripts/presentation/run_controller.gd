@@ -2,9 +2,6 @@ class_name RunController
 extends Node
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
 const DeathReportBuilderScript = preload("res://scripts/domain/death_report_builder.gd")
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
@@ -38,10 +35,9 @@ const DebugBridge = preload("res://scripts/presentation/debug_bridge.gd")
 const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 const CultivatorRulesScript = preload("res://scripts/domain/cultivator_rules.gd")
 
-## 全部屏已迁到 Godot 官方 .tscn 节点树（scenes/ui/screens/），RUITK 路由表
-## 清空：_mount_screen() 只剩 .tscn 一条路径。W12 split：路由表与挂载机制迁至
-## run_screen_router.gd（RunScreenRouter.MASTER_SCENE_PATHS 即唯一路由表）；
-## 本文件不再持有表，`_mounted_screen` 等挂载节点状态仍在此节点上。
+## 全部屏使用 Godot 官方 .tscn 节点树（scenes/ui/screens/）。W12 split：
+## 路由表与挂载机制迁至 run_screen_router.gd（RunScreenRouter.MASTER_SCENE_PATHS
+## 即唯一路由表）；本文件只持有挂载节点状态。
 
 ## 视图 → BGM 曲目映射（key 见 AudioDirector.BGM_PATHS，曲目由
 ## tools/generate_music.py 确定性合成）。探索/商店/休整/炼蛊/事件等屏共用 map。
@@ -91,7 +87,6 @@ var _selected_pair_partner := ""
 var _selected_contracts: Array[String] = []
 
 var _rui_host: Control
-var _rui_root
 var _mounted_screen := ""
 var _master_instance: Control
 var _ending_state: Dictionary = {}
@@ -396,8 +391,7 @@ func _submit_m0_reward(command: Dictionary) -> Dictionary:
 	return {"ok": true, "result": last_result}
 
 
-## Dialogue Manager balloon 选择桥接入口（P1-1）：插件/UI 在标题变化
-## （非入口 title，如 "echo_cave.accept"）时调用本方法，把选择标题转成
+## 兼容入口：把 authored branch title（如 "echo_cave.accept"）转成
 ## dialogue_branch 领域命令提交，走与 submit_command 完全相同的结算路径。
 func submit_dialogue_selection(selection_title: String) -> Dictionary:
 	if str(selection_title).is_empty():
@@ -1002,10 +996,6 @@ func _mount_screen(screen: String, snapshot: Dictionary, commands: Dictionary) -
 	RunScreenRouter.mount_screen(self, screen, snapshot, commands)
 
 
-func _unmount_rui_root() -> void:
-	RunScreenRouter.unmount_rui_root(self)
-
-
 func _unmount_master_instance() -> void:
 	RunScreenRouter.unmount_master_instance(self)
 
@@ -1014,7 +1004,6 @@ func _exit_tree() -> void:
 	if _screen_tween != null and _screen_tween.is_valid():
 		_screen_tween.kill()
 	_screen_tween = null
-	_unmount_rui_root()
 	_master_instance = null
 	_mounted_screen = ""
 
@@ -1022,7 +1011,7 @@ func _exit_tree() -> void:
 ## T6-E 跨屏过渡：屏切换（含死亡返大厅）时对新挂载根做 140ms 一次性淡入
 ## （modulate 0→1）；同屏重渲染不触发，战斗/商店等连续操作零闪烁。
 ## 快速连切先杀上一条 Tween 防叠加；有限 Tween 播完即失效，无循环残留。
-## RuitkRoot 无内置过渡 API，按简报裁定落在表现层控制器。
+## 过渡挂在统一屏宿主上，切屏时一次性淡入。
 func _play_screen_fade() -> void:
 	if _rui_host == null:
 		return

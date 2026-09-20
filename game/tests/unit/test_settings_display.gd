@@ -14,12 +14,7 @@ const RunCommandBuilderScript := preload("res://scripts/presentation/run_command
 const RunControllerScript := preload("res://scripts/presentation/run_controller.gd")
 const RunSnapshotBuilderScript := preload("res://scripts/presentation/run_snapshot_builder.gd")
 const AppSettingsScript := preload("res://scripts/domain/app_settings.gd")
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
 const SETTINGS_PATH := "user://nanjiang_smoke_settings.cfg"
-
-var _rui_roots: Array = []
 
 
 func before_each() -> void:
@@ -28,10 +23,6 @@ func before_each() -> void:
 
 func after_each() -> void:
 	_remove_settings_file()
-	for r in _rui_roots:
-		if r != null and r.has_method("unmount"):
-			r.unmount()
-	_rui_roots.clear()
 
 
 func _remove_settings_file() -> void:

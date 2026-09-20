@@ -12,13 +12,10 @@ extends GutTest
 #   - 死因 badge on the ending screen for death endings only
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder.gd")
 const DisplayTextScript = preload("res://scripts/presentation/display_text.gd")
 const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_session_resolver.gd")
 
-var _rui_roots: Array = []
 var _rui_hosts: Array = []
 var _tscn_hosts: Array = []
 
@@ -31,10 +28,6 @@ func _new_controller() -> RunController:
 
 
 func after_each() -> void:
-	for r in _rui_roots:
-		if r != null and r.has_method("unmount"):
-			r.unmount()
-	_rui_roots.clear()
 	for h in _rui_hosts:
 		# 立即 free（queue_free 是延迟的，脚本收尾时仍会挂成孤儿，触发 GUT 警告）。
 		if h != null and is_instance_valid(h):
@@ -46,19 +39,6 @@ func after_each() -> void:
 	_tscn_hosts.clear()
 
 
-func _mount_screen(screen_path: String, props: Dictionary) -> Control:
-	var fn = VLib.comp(screen_path, "render")
-	assert_true(fn is Callable, screen_path + " must expose render")
-	if not (fn is Callable):
-		return Control.new()
-	var host := Control.new()
-	add_child(host)
-	_rui_hosts.append(host)
-	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
-	return host
-
-
-## 挂载 Godot 官方 .tscn 节点树屏（遭遇屏已迁离 RUITK）。
 ## mount_snapshot 可能早于 _ready()，屏内自行兜底补刷新。
 func _mount_tscn_screen(scene_path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
 	var inst: Control = (load(scene_path) as PackedScene).instantiate()
@@ -262,7 +242,7 @@ func test_ending_screen_renders_death_cause_badge_for_deaths_only() -> void:
 
 
 ## 快照→顶栏端到端契约。真实 RunState 逼近寿元预警 → 屏幕实际消费的
-## 快照路径（controller._snapshot_for("Battle")）→ RuiRoot 挂载 battle_screen →
+## 快照路径（controller._snapshot_for("Battle")）→ 挂载 battle_screen →
 ## 断言死因说明进入既有寿元资源 chip 的 tooltip，不生成独立面板。
 func test_real_snapshot_death_lines_feed_battle_top_bar_tooltip_end_to_end() -> void:
 	var controller := _new_controller()

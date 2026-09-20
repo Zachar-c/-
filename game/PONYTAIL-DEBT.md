@@ -10,7 +10,7 @@
 |---|---|---|---|
 | `scripts/domain/v1_battle_resolver.gd:130` | ~200 个 legacy 蛊走 role fallback 效果，无回合到期语义 | 执行 `effect_reason` / 预览过滤双护栏已兜住 | 某个蛊进 slice 或需要精确效果/到期时，逐个迁显式 `v1_effect` |
 | `scripts/domain/*_command_rules.gd`（rest/shop/refine/social，见 resolver.gd:4） | 命令族拆模块后单文件增长护栏 1200 | 各命令族模块当前 237--945 行 | 任一 domain 文件撞 1200 行门限时继续按命令族抽模块 |
-| `scripts/guitkx_build.gd:4` | `.guitkx` 生成层仍服务非战斗屏，双渲染路径并存 | 战斗屏已原生 `.tscn` 化 | 新屏一律 `.tscn`；旧屏触碰到时逐个退役生成层 |
+| `game/tools/verify_interaction_loop.gd`（已删除） | 全屏 `dead/no_ui_click/occluded` 扫描改为按屏 GUT 真实点击断言 | 当前只覆盖代表性战斗屏与各屏渲染契约 | 新的“接线齐全但点不到”缺陷逃过 GUT 时，补对应屏断言或重建最小扫描器 |
 
 ## 已清账（备忘）
 

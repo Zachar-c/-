@@ -46,6 +46,7 @@
 - 权威来源：`https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git`（`master`）。
 - 可修改范围：仅目录导入、旧根路径配置/文档的机械引用更新、忽略规则；不改 Godot 逻辑、数据数值与契约内容。
 - 约束说明：当前生效约束以 `game/world-model/governance/CONSTRAINTS-V2.md` 为准；`game/docs/contracts/2026-09-12-agent-ownership-contract.md` 已被该约束明确降级为历史档案，不作为执行契约。
+- 2026-09-20 清理：`game/world-model/` 仅保留 `governance/`、`rulings/`、`reports/` 与历史说明；运行时、镜像数据和快照/验收脚本已删除，游戏真源为 `game/data/`。
 
 ### `fortune/app/`（Task 6 已导入）
 

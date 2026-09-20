@@ -1,0 +1,43 @@
+{
+  "1": {
+    "class_type": "WenzhenFrozenSource",
+    "inputs": {
+      "source_path": "{{SOURCE_PATH}}",
+      "asset_root": "{{ASSET_ROOT}}"
+    }
+  },
+  "2": {
+    "class_type": "WenzhenCanonicalCutout",
+    "inputs": {
+      "source": [
+        "1",
+        0
+      ],
+      "asset_root": "{{ASSET_ROOT}}"
+    }
+  },
+  "3": {
+    "class_type": "WenzhenDeriveAssetSet",
+    "inputs": {
+      "body": [
+        "2",
+        0
+      ],
+      "asset_root": "{{ASSET_ROOT}}"
+    }
+  },
+  "4": {
+    "class_type": "WenzhenAssetManager",
+    "inputs": {
+      "source": [
+        "1",
+        0
+      ],
+      "assets": [
+        "3",
+        0
+      ],
+      "asset_root": "{{ASSET_ROOT}}"
+    }
+  }
+}

@@ -5,7 +5,6 @@ func test_release_excludes_dev_only_wenzhen_files() -> void:
 	var source := FileAccess.get_file_as_string("res://export_presets.cfg")
 	var exclude_filter := _value_for_key(source, "exclude_filter")
 	assert_true(exclude_filter.contains("scripts/acceptance_driver.gd"))
-	assert_true(exclude_filter.contains("scripts/guitkx_build.gd"))
 	# 2026-09-09：assets/wenzhen/hall/* 已变成运行时目录，不再排除。
 	# hall_dots.png 被 battle/encounter/hall/kill/map 五屏引用；
 	# first-life-character.png 被 battle/encounter/rest 三屏引用；

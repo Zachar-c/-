@@ -1,0 +1,83 @@
+{
+  "id": "moonlight_gu",
+  "name": "月光蛊",
+  "layer": "canonical",
+  "rank": 1,
+  "school": "moon",
+  "asset_status": "visual_poc",
+  "not_production_asset": true,
+  "pipeline": "gpt-image -> comfyui -> asset-manager",
+  "provider": "gpt-image",
+  "orchestrator": "comfyui",
+  "source": {
+    "path": "source/moonlight_gu_concept.png",
+    "sha256": "d69485712a7da502c6a58f911cec4f78beca05dbb489880d10add1e5a9d03d01",
+    "frozen_reference": "docs/art/references/moonlight/canonical_form.png"
+  },
+  "assets": {
+    "body": {
+      "path": "canonical/body.png",
+      "width": 941,
+      "height": 812,
+      "mode": "RGBA",
+      "sha256": "8998ff719ecc03ef34c4cac6068a1b3975c45966a88be01ed3e0461b822889d4"
+    },
+    "body_2x": {
+      "path": "canonical/body@2x.png",
+      "width": 941,
+      "height": 812,
+      "mode": "RGBA",
+      "sha256": "8998ff719ecc03ef34c4cac6068a1b3975c45966a88be01ed3e0461b822889d4"
+    },
+    "silhouette": {
+      "path": "canonical/silhouette.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "sha256": "345645de19ba60b6cc6dfdcf69c951fc961d36f09f5dc772ec9bdf57e6b27025"
+    },
+    "icon_64": {
+      "path": "ui/icon_64.png",
+      "width": 64,
+      "height": 64,
+      "mode": "RGBA",
+      "sha256": "712db2c00644ee28b3558288b7940e15243ad0f0cf4185439b630e6f705f7918"
+    },
+    "icon_128": {
+      "path": "ui/icon_128.png",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "sha256": "34fa306316bf2b48ee037e2e38aa297de7f18620b39f4cc06c96a1fc702cf1bc"
+    },
+    "card_portrait": {
+      "path": "ui/card_portrait.png",
+      "width": 768,
+      "height": 1024,
+      "mode": "RGBA",
+      "sha256": "4e287ba5ef5df67ec14efdcbb2c8e673ff9ddd41a5623e6967f6ca26248c0568"
+    },
+    "collection_cover": {
+      "path": "ui/collection_cover.png",
+      "width": 640,
+      "height": 800,
+      "mode": "RGBA",
+      "sha256": "339aaa991db55cd26525008a6c5a63c3ed4f62f45213ffd3871126d0d6cd706e"
+    },
+    "moon_blade_preview": {
+      "path": "effect/moon_blade_preview.png",
+      "width": 1024,
+      "height": 320,
+      "mode": "RGBA",
+      "sha256": "65e5d9c0d10b56dc8ebfa76acaf97b63d490ec7fd2d51115a71f993251ff6469"
+    },
+    "activation_glow": {
+      "path": "effect/activation_glow.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "sha256": "ad0b8d0f809095230c894460e6f32685969f1d2661e0dc26118039850e184141"
+    }
+  },
+  "generated_on": "2026-09-20"
+}

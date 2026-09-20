@@ -106,7 +106,7 @@ const T_EASE := 1.35
 ## 手牌盒只预留 `卡高`（见 _sync_min_size），弧高部分靠卡自己向上溢出，
 ## 而溢出发生在**最左/最右**两张卡上——那是水平方向唯一没有控件占用的位置
 ## （`ModeHost` 居中 448..832、`OpsDock` 靠右 1090+）。调大它会让端卡顶到
-## 战场区最靠下的内容，实测口径见 tools/verify_card_shape_budget.gd。
+## 战场区最靠下的内容，实测口径见 tests/unit/test_tall_fan_hand_view.gd。
 const ARC_LIFT := 22.0
 ## 横向自适应压缩的下限比例（= 1 − 最大重叠率）。卡越窄这个值越关键：
 ## 0.45 → 最多重叠 55%，再小卡片就只剩一条缝，认不出是哪张。
@@ -118,7 +118,7 @@ const PERSPECTIVE_DROP := 0.10
 const EDGE_OVERHANG_INSET := 10.0
 ## 悬停：上浮 / 放大 / 抬到最高层的 z。
 ## ⚠️ HOVER_LIFT 受**上方控件**硬约束：手牌区顶边 508 时，`ModeHost`（模式按钮区）底边在 507。
-## 实测（tools/verify_card_shape_budget.gd）：卡顶边 550，抬升量 = HOVER_LIFT + 卡高×0.15。
+## 实测（tests/unit/test_tall_fan_hand_view.gd）：卡顶边 550，抬升量 = HOVER_LIFT + 卡高×0.15。
 ## 取 42 时卡顶到 485 → **撞进 ModeHost 22px**；取 18 时到 509 → 让开。
 ## 这个数不能单看组件自身调大——它是"组件参数 + 卡高"两笔叠加出来的。
 const HOVER_LIFT := 18.0
@@ -620,7 +620,7 @@ func _update_hand_layout() -> void:
 		# 减 ARC_LIFT 把坐标系对齐到「中间卡顶边 = 手牌盒顶边」：手牌盒因此只需预留
 		# **卡高**，弧高由两端卡向上溢出，而不是让整块手牌区再长高 22px——
 		# 那 22px 会顶掉战场区最靠下的 ModeHost（实测该缝隙只剩 1px，见
-		# tools/verify_card_shape_budget.gd）。溢出的两端卡在水平方向是空的
+		# tests/unit/test_tall_fan_hand_view.gd）。溢出的两端卡在水平方向是空的
 		# （ModeHost 居中 448..832、OpsDock 靠右 1090+），所以看不见碰撞。
 		var position := Vector2(base_x + step * float(i) + _hover_shift[i], arc_y - ARC_LIFT)
 		if i == _hovered_index:

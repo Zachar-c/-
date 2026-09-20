@@ -17,7 +17,6 @@ config/icon="res://assets/icon/app_icon_256.png"
 
 [autoload]
 
-DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 AudioManager="*res://scripts/audio/audio_manager.gd"
 
 [boot_splash]
@@ -33,10 +32,6 @@ min_visible_time=700
 
 gdscript/warnings/unused_parameter=0
 
-[dialogue_manager]
-
-editor/translations/update_pot_files_automatically=false
-
 [display]
 
 window/size/viewport_width=1280
@@ -44,17 +39,9 @@ window/size/viewport_height=720
 window/size/mode="maximized"
 window/stretch/mode="canvas_items"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/reactive_ui_toolkit/plugin.cfg", "res://addons/reactive_ui_toolkit_editor/plugin.cfg")
-
 [gui]
 
 config/theme="res://gu_theme.tres"
-
-[internationalization]
-
-locale/translations_pot_files=PackedStringArray("res://data/dialogues/events.dialogue")
 
 [layer_names]
 

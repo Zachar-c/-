@@ -102,7 +102,7 @@ func _ready() -> void:
 	# hover 与点击：按钮 `disabled=false`、`modulate=1`，却"点不动"。
 	# 注意 **PASS 同样会截获**（它只把事件继续传给父节点，不会让给身后被压住的兄弟）
 	# —— 上一次只把 HandStage 改成 IGNORE，漏掉 PASS 的 HandMargin，就是这个原因。
-	# 回归门：tools/verify_interaction_loop.gd 的 `occluded` 必须为空。
+	# 回归门：tests/unit/test_wenzhen_battle_screen.gd 的真实点击断言。
 	_apply_seal_style()
 	_apply_ink_style()
 	_apply_tooltip_style()

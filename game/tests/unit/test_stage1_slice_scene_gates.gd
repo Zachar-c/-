@@ -2,7 +2,7 @@ extends GutTest
 
 # Stage 1 纵向切片场景门禁（specs/2026-09-16-stage1-gu-entity-vertical-slice-design.md §8）。
 #
-# tools/verify_stage1_slice.gd 是完整探针（含打印与缺口清单）；本文件只把
+# 历史 verify_stage1_slice.gd 已于 2026-09-20 删除；本文件保留可自动化的
 # **会随代码改动而悄悄退化**的几条硬断言钉进 unit 套件：
 #   1. 货郎：展示价 == 结算价，且三道门禁（货架 / 不在场 / 元石）都在；
 #   2. 盲炼：失败必须留可归因事件，且输入蛊真实消亡；

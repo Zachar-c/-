@@ -6,61 +6,24 @@ const EncounterSessionResolverScript = preload("res://scripts/domain/encounter_s
 const ResultFeedScript = preload("res://scripts/domain/result_feed.gd")
 const TemplateDialogueGatewayScript = preload("res://scripts/domain/template_dialogue_gateway.gd")
 const EventFactoryScript = preload("res://scripts/domain/events.gd")
-const EVENTS_DIALOGUE_PATH := "res://data/dialogues/events.dialogue"
 
 var _fallback: DialogueGateway
-var _selection_callback: Callable = Callable()
 
 
 func _init(fallback: DialogueGateway = null) -> void:
 	_fallback = fallback if fallback != null else TemplateDialogueGatewayScript.new()
 
 
-## 运行时桥接入口（P1-B）：由 controller 在 begin() 后注入，把 Dialogue Manager
-## 的 passed_title 信号（玩家点击 balloon 选项导致的 title 跳转）转成
-## submit_dialogue_selection 的标题，从而走统一命令结算路径。
-func set_branch_selection_callback(callback: Callable) -> void:
-	_selection_callback = callback
-
-
-## Narrative-only response boundary. Dialogue Manager is optional: this method
-## always returns the validated offline response when the addon is unavailable.
+## Narrative-only response boundary. Responses always come from the validated
+## offline template so saves and tests stay deterministic.
 func respond(context: Dictionary) -> Dictionary:
-	# The addon exposes an asynchronous balloon API, so it cannot replace the
-	# synchronous, replayable response contract. It is started explicitly by
-	# begin() while this method remains deterministic for saves and tests.
 	return _fallback.respond(context)
 
 
-func plugin_available() -> bool:
-	return _dialogue_manager() != null
-
-
-## Start a Dialogue Manager balloon when the optional addon is installed. No
-## RunState or command is passed to the addon; branch application stays below.
-## Once the balloon runs, passed_title signals are forwarded to the injected
-## selection callback (the controller's submit_dialogue_selection).
+## Event screens are rendered by the regular encounter UI. This method remains
+## as the stable routing hook for the event id and authored dialogue title.
 func begin(event_id: String, title: String = "start") -> Dictionary:
-	var manager := _dialogue_manager()
-	if manager == null:
-		return {"ok": true, "source": "template", "event_id": event_id, "title": title}
-	if not manager.has_method("show_dialogue_balloon"):
-		return {"ok": true, "source": "template", "event_id": event_id, "title": title}
-	var resource := load(EVENTS_DIALOGUE_PATH)
-	if resource == null:
-		return {"ok": true, "source": "template", "event_id": event_id, "title": title}
-	if manager.has_signal("passed_title") and not manager.passed_title.is_connected(_on_passed_title):
-		manager.passed_title.connect(_on_passed_title)
-	manager.show_dialogue_balloon(resource, title)
-	return {"ok": true, "source": "dialogue_manager", "event_id": event_id, "title": title}
-
-
-## Dialogue Manager emits this when the balloon jumps to a title, i.e. the
-## player picked one of the authored options. The title encodes the branch
-## (event_id + branch), so it is handed straight to the domain command path.
-func _on_passed_title(title: String) -> void:
-	if _selection_callback.is_valid():
-		_selection_callback.call(str(title))
+	return {"ok": true, "source": "template", "event_id": event_id, "title": title}
 
 
 ## Convert authored branch IDs to existing domain commands. Context may carry
@@ -69,7 +32,7 @@ func _on_passed_title(title: String) -> void:
 ##
 ## Two shapes are accepted:
 ##   - dot form (templates/tests): "event.echo_cave.accept" / "echo_cave.accept"
-##   - underscore form (Dialogue Manager plugin title, which forbids "."):
+##   - underscore form (legacy authored branch id):
 ##     "echo_cave_accept" / "gu_rot_pact_leave"
 func command_for_branch(branch_id: String, context: Dictionary = {}) -> Dictionary:
 	var normalized := branch_id.strip_edges().replace("/", ".")
@@ -209,14 +172,3 @@ func _feedback_for(ok: bool, result: Dictionary, feed: Dictionary) -> String:
 		if not messages.is_empty():
 			return "、".join(messages)
 	return "对话已回应，结果已记入行程。"
-
-
-func _dialogue_manager() -> Object:
-	if Engine.has_singleton("DialogueManager"):
-		return Engine.get_singleton("DialogueManager")
-	var loop := Engine.get_main_loop()
-	if loop is SceneTree and (loop as SceneTree).root != null:
-		var node := (loop as SceneTree).root.get_node_or_null("DialogueManager")
-		if node != null:
-			return node
-	return null

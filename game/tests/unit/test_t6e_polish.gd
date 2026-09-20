@@ -14,11 +14,8 @@ extends GutTest
 # 现分别对应 INK_PRIMARY / CINNABAR / INK_SOFT（见 test_wenzhen_theme_migration）。
 
 
-const VLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
 const SnapshotBuilder = preload("res://scripts/presentation/run_snapshot_builder.gd")
 
-var _rui_roots: Array = []
 var _rui_hosts: Array = []
 var _tscn_hosts: Array = []
 
@@ -31,10 +28,6 @@ func _new_controller() -> RunController:
 
 
 func after_each() -> void:
-	for r in _rui_roots:
-		if r != null and r.has_method("unmount"):
-			r.unmount()
-	_rui_roots.clear()
 	for h in _rui_hosts:
 		if h != null and is_instance_valid(h):
 			h.free()
@@ -45,19 +38,6 @@ func after_each() -> void:
 	_tscn_hosts.clear()
 
 
-func _mount_screen(screen_path: String, props: Dictionary) -> Control:
-	var fn = VLib.comp(screen_path, "render")
-	assert_true(fn is Callable, screen_path + " must expose render")
-	if not (fn is Callable):
-		return Control.new()
-	var host := Control.new()
-	add_child(host)
-	_rui_hosts.append(host)
-	_rui_roots.append(RuiRoot.create(host, VLib.fc(fn, props)))
-	return host
-
-
-## 挂载 Godot 官方 .tscn 节点树屏（黑市已迁离 RUITK）。
 ## mount_snapshot 可能早于 _ready()，屏内自行兜底补刷新。
 func _mount_tscn_screen(scene_path: String, snapshot: Dictionary, commands: Dictionary) -> Control:
 	var inst: Control = (load(scene_path) as PackedScene).instantiate()
@@ -75,16 +55,6 @@ func _collect_labels(node: Node, out_labels: Array) -> void:
 		_collect_labels(c, out_labels)
 
 
-func _first_panel(node: Node) -> PanelContainer:
-	if node is PanelContainer:
-		return node
-	for c in node.get_children():
-		var found := _first_panel(c)
-		if found != null:
-			return found
-	return null
-
-
 func _find_label_exact(node: Node, wanted: String) -> Label:
 	if node is Label and str(node.text) == wanted:
 		return node
@@ -92,15 +62,6 @@ func _find_label_exact(node: Node, wanted: String) -> Label:
 		var found := _find_label_exact(c, wanted)
 		if found != null:
 			return found
-	return null
-
-
-func _nearest_panel_ancestor(node: Node) -> PanelContainer:
-	var cur := node.get_parent()
-	while cur != null:
-		if cur is PanelContainer:
-			return cur
-		cur = cur.get_parent()
 	return null
 
 
@@ -118,90 +79,6 @@ func _gui_base_state() -> Dictionary:
 		"anomalies": [],
 		"death_lines": {},
 	}
-
-
-# ---- 1. tooltip 宣纸卷轴底 + 五段固定顺序 ----
-
-func test_tooltip_paper_bg_ink_text_and_fixed_segment_order() -> void:
-	var host := _mount_screen("res://ui/widgets/gu_tooltip_view.gd", {
-		"title": "血祭蛊",
-		"quality": "稀有",
-		"effect": "吸取气血",
-		"synergy": "与血道蛊联动增强",
-		"cost": "消耗 3 寿元",
-		"curse_warning": true,
-	})
-	var panel := _first_panel(host)
-	assert_true(panel != null, "tooltip root must be a PanelContainer")
-	if panel == null:
-		return
-	var sb := panel.get_theme_stylebox("panel") as StyleBoxFlat
-	assert_true(sb != null and sb.bg_color.is_equal_approx(GuStyle.PAPER_BG),
-			"tooltip background must be PAPER scroll tone, not the old dark panel")
-	var labels: Array = []
-	_collect_labels(panel, labels)
-	var idx_effect := _label_index(labels, "效果：")
-	var idx_synergy := _label_index(labels, "联动：")
-	var idx_cost := _label_index(labels, "代价：")
-	var idx_curse := _label_index(labels, "诅咒警示：")
-	assert_gt(idx_effect, -1, "effect segment present")
-	assert_gt(idx_synergy, idx_effect, "synergy follows effect (fixed order)")
-	assert_gt(idx_cost, idx_synergy, "cost follows synergy (fixed order)")
-	assert_gt(idx_curse, idx_cost, "curse warning is the last segment")
-	var effect_label: Label = labels[idx_effect]
-	assert_true(effect_label.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY),
-			"body text must switch to deep ink on paper")
-	var curse_label: Label = labels[idx_curse]
-	assert_true(curse_label.get_theme_color("font_color").is_equal_approx(GuStyle.CINNABAR),
-			"DANGER stays reserved for the curse warning line")
-
-
-func test_tooltip_hides_empty_segments_but_keeps_order_slots() -> void:
-	var host := _mount_screen("res://ui/widgets/gu_tooltip_view.gd", {
-		"title": "月光蛊",
-		"effect": "造成月光伤害",
-	})
-	var labels: Array = []
-	_collect_labels(host, labels)
-	assert_true(_label_index(labels, "效果：") > -1, "provided segment renders")
-	assert_eq(_label_index(labels, "联动："), -1, "empty synergy hides its segment")
-	assert_eq(_label_index(labels, "代价："), -1, "empty cost hides its segment")
-	assert_eq(_label_index(labels, "诅咒警示："), -1, "non-curse cards hide the warning")
-
-
-# ---- 2. 危险蛊强红角标 / 封印锁态 ----
-
-func test_gu_card_danger_curse_badge_uses_cinnabar_bg_primary_ink_glyph() -> void:
-	var host := _mount_screen("res://ui/widgets/gu_card.gd", {"title": "血祭蛊", "curse_warning": true})
-	var glyph := _find_label_exact(host, "咒")
-	assert_true(glyph != null, "danger card must carry the 咒 corner badge")
-	if glyph == null:
-		return
-	assert_true(glyph.get_theme_color("font_color").is_equal_approx(GuStyle.INK_PRIMARY),
-			"badge glyph must use primary ink on the cinnabar fill")
-	var chip := _nearest_panel_ancestor(glyph)
-	assert_true(chip != null, "badge must be a filled chip, not a bare colored label")
-	if chip != null:
-		var sb := chip.get_theme_stylebox("panel") as StyleBoxFlat
-		assert_true(sb != null and sb.bg_color.is_equal_approx(GuStyle.CINNABAR),
-				"badge fill must be cinnabar")
-	var outer := _first_panel(host)
-	assert_true(outer != null)
-	if outer != null:
-		var osb := outer.get_theme_stylebox("panel") as StyleBoxFlat
-		assert_true(osb != null and osb.border_width_left == 2,
-				"danger cards keep the thick border treatment")
-		assert_true(osb.border_color.is_equal_approx(GuStyle.CINNABAR),
-			"danger border color must be cinnabar")
-
-
-func test_gu_card_sealed_state_keeps_lock_glyph_and_dimming() -> void:
-	var host := _mount_screen("res://ui/widgets/gu_card.gd", {"title": "石甲蛊", "sealed": true})
-	assert_true(_find_label_exact(host, "锁") != null, "sealed card keeps the 锁 marker")
-	var outer := _first_panel(host)
-	assert_true(outer != null)
-	if outer != null:
-		assert_almost_eq(outer.modulate.a, 0.55, 0.02, "sealed card stays dimmed")
 
 
 # ---- 3. 空池回退小字 ----

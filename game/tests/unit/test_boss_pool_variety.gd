@@ -2,7 +2,7 @@ extends GutTest
 ## R9：关底 Boss 随机化（2026-09-16）。
 ## 覆盖：池成员全部可达、确定性、相邻层不重复、终局固定、无 catalog 回退。
 ## 规格：docs/superpowers/reports/2026-09-16-roguelike-audit-and-directions.md §3.2
-## 全量门禁（40 种子 + 拓扑冻结）在 tools/verify_boss_variety.gd。
+## 本文件是 boss 池的 GUT 覆盖；历史一次性探针已于 2026-09-20 删除。
 
 
 const MapGeneratorScript = preload("res://scripts/domain/map_generator.gd")

@@ -29,6 +29,10 @@ game/tools/_*.txt
 **/.DS_Store
 **/Thumbs.db
 
+# Local browser verification caches and captured proof output.
+/.playwright-cli/
+/output/
+
 # 已退役的旧游戏路径：Task 7 之后磁盘上只剩本地恢复材料与缓存
 # （.git-nested-backup/、.worktrees/、.godot/、tmp*/、本地原文），均不进入 Git 树。
 /gu-zhenren-editor/

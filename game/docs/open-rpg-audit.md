@@ -1,5 +1,8 @@
 # GDQuest Open RPG Audit
 
+> 2026-09-20 A 清理：上游源码目录已删除；本文只保留审计记录。
+> MIT 许可文本与固定提交号已迁入 `THIRD_PARTY_NOTICES.md`。
+
 ## Provenance
 
 - Upstream URL: https://github.com/gdquest-demos/godot-open-rpg.git

@@ -3,12 +3,6 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$guitkxBuild = Join-Path $PSScriptRoot 'guitkx_build.ps1'
-
-& $guitkxBuild
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
-}
 
 & (Join-Path $PSScriptRoot 'test.ps1') -Suite all
 if ($LASTEXITCODE -ne 0) {

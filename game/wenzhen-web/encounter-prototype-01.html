@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="zh-CN" data-state="idle">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>问真 · Encounter Prototype 01</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #03070d;
+      --deep: #07111c;
+      --ink: #edf6ff;
+      --ink-soft: rgba(226, 240, 252, .72);
+      --ink-dim: rgba(192, 215, 234, .46);
+      --line: rgba(192, 220, 243, .16);
+      --line-soft: rgba(192, 220, 243, .085);
+      --ice: #a8d7ff;
+      --jade: #8edfd4;
+      --danger: #e7a18c;
+      --px: 0px;
+      --py: 0px;
+      font-family: "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--void);
+    }
+
+    body {
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    button { font: inherit; }
+
+    .scene {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse at 52% 40%, rgba(106, 169, 214, .15), transparent 29%),
+        radial-gradient(ellipse at 50% 92%, rgba(81, 144, 177, .09), transparent 44%),
+        linear-gradient(180deg, #02060b, #07111c 50%, #02060b);
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .5), transparent 17%, transparent 83%, rgba(0, 0, 0, .5)),
+        linear-gradient(180deg, rgba(0, 0, 0, .16), transparent 26%, transparent 67%, rgba(0, 0, 0, .77));
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      z-index: -1;
+      width: min(1420px, 115vw);
+      height: 29%;
+      transform: translateX(-50%);
+      border-top: 1px solid rgba(190, 222, 247, .07);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(205, 232, 255, .11), transparent 47%),
+        linear-gradient(180deg, transparent, rgba(82, 139, 176, .05) 55%, rgba(3, 8, 14, .67));
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 26px clamp(18px, 4vw, 56px);
+      color: var(--ink-dim);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .brand::after {
+      content: "";
+      width: 44px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(205, 232, 255, .42), transparent);
+    }
+
+    .asset-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--jade);
+      font-size: 9px;
+    }
+
+    .asset-state::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      outline: 1px solid rgba(142, 223, 212, .28);
+      outline-offset: 3px;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: minmax(190px, 245px) minmax(520px, 1fr) minmax(250px, 310px);
+      gap: clamp(18px, 3vw, 44px);
+      width: min(1580px, 100%);
+      min-height: calc(100svh - 82px);
+      margin: 0 auto;
+      padding: 0 clamp(18px, 4vw, 56px) 44px;
+    }
+
+    .rail {
+      align-self: center;
+      min-width: 0;
+    }
+
+    .kicker {
+      color: var(--ink-dim);
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: "STSong", "Songti SC", "Noto Serif SC", serif;
+      font-weight: 500;
+      letter-spacing: .04em;
+    }
+
+    h1 {
+      margin-top: 12px;
+      font-size: clamp(32px, 2.8vw, 48px);
+      line-height: 1.06;
+    }
+
+    h2 {
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .copy {
+      margin: 14px 0 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.85;
+      text-wrap: pretty;
+    }
+
+    .rule-trace {
+      margin-top: 26px;
+      padding-top: 17px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .trace-steps {
+      display: grid;
+      gap: 11px;
+      margin: 13px 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: rule-step;
+    }
+
+    .trace-steps li {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 9px;
+      align-items: baseline;
+      color: var(--ink-dim);
+      font-size: 11px;
+      line-height: 1.55;
+      counter-increment: rule-step;
+    }
+
+    .trace-steps li::before {
+      content: counter(rule-step, decimal-leading-zero);
+      color: var(--ice);
+      font-size: 9px;
+      letter-spacing: .12em;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: min(78vh, 790px);
+      perspective: 1200px;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      top: 11%;
+      width: min(55vw, 720px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(181, 217, 243, .075);
+      border-radius: 50%;
+      opacity: .74;
+      transform: translate3d(calc(var(--px) * -.16), calc(var(--py) * -.16), 0) rotate(-8deg);
+      box-shadow: 0 0 0 50px rgba(181, 217, 243, .02);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 6%;
+      width: min(54vw, 680px);
+      height: 11%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(138, 194, 231, .15), transparent 70%);
+      filter: blur(18px);
+    }
+
+    .body,
+    .glow,
+    .blade,
+    .pulse {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .glow {
+      z-index: 1;
+      width: min(55vw, 710px);
+      opacity: .12;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scale(.93);
+      transition: opacity .5s ease, transform .7s ease;
+    }
+
+    .body {
+      z-index: 2;
+      width: min(61vw, 820px);
+      max-width: 100%;
+      filter: drop-shadow(0 36px 58px rgba(0, 0, 0, .64));
+      transform: translate3d(calc(var(--px) * .36), calc(var(--py) * .36), 0);
+      transition: opacity .4s ease, filter .45s ease, transform .7s ease;
+    }
+
+    .blade {
+      z-index: 3;
+      right: 0;
+      top: 43%;
+      width: min(44vw, 620px);
+      opacity: 0;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scaleX(.78);
+      transform-origin: left center;
+      transition: opacity .18s ease, transform .38s cubic-bezier(.18, .78, .18, 1);
+      filter: drop-shadow(0 0 20px rgba(145, 207, 241, .24));
+    }
+
+    .pulse {
+      z-index: 4;
+      top: 15%;
+      width: min(52vw, 650px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(169, 216, 248, .32);
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(.72);
+    }
+
+    [data-state="charge"] .glow {
+      opacity: .6;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scale(1.04);
+    }
+
+    [data-state="charge"] .body {
+      filter:
+        drop-shadow(0 36px 58px rgba(0, 0, 0, .64))
+        drop-shadow(0 0 22px rgba(151, 211, 245, .38));
+      transform: translate3d(calc(var(--px) * .36), calc(var(--py) * .36), 0) scale(1.018);
+    }
+
+    [data-state="cast"] .glow {
+      opacity: .78;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scale(1.08);
+    }
+
+    [data-state="cast"] .body {
+      filter:
+        drop-shadow(0 36px 58px rgba(0, 0, 0, .64))
+        drop-shadow(0 0 26px rgba(163, 220, 250, .52));
+      transform: translate3d(calc(var(--px) * .36), calc(var(--py) * .36), 0) scale(1.025);
+    }
+
+    [data-state="cast"] .blade {
+      opacity: .96;
+      transform: translate3d(calc(var(--px) * .2), calc(var(--py) * .2), 0) scaleX(1);
+    }
+
+    [data-state="cast"] .pulse {
+      opacity: .78;
+      transform: scale(1.08);
+      transition: opacity .55s ease, transform .8s ease;
+    }
+
+    .codex {
+      align-self: center;
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .codex-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(11, 24, 37, .82), rgba(4, 11, 18, .74));
+    }
+
+    .card-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 15px 12px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .card-head span {
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .portrait {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+    }
+
+    .facts {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 14px 15px 15px;
+    }
+
+    .facts > div {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .facts dt {
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .facts dd {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .state-readout {
+      padding: 14px 15px 15px;
+      border: 1px solid var(--line);
+      background: rgba(4, 11, 18, .58);
+    }
+
+    .state-name {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 9px;
+    }
+
+    .state-name strong {
+      color: var(--ice);
+      font-family: "STSong", "Songti SC", "Noto Serif SC", serif;
+      font-size: 21px;
+      font-weight: 500;
+    }
+
+    .state-name span {
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .state-copy {
+      margin: 10px 0 0;
+      color: var(--ink-soft);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .dock {
+      position: fixed;
+      z-index: 8;
+      left: 50%;
+      bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: min(680px, calc(100% - 32px));
+      padding: 8px;
+      transform: translateX(-50%);
+      border: 1px solid var(--line);
+      background: rgba(4, 11, 18, .86);
+      backdrop-filter: blur(20px) saturate(118%);
+      box-shadow: 0 22px 66px rgba(0, 0, 0, .46);
+    }
+
+    .action {
+      display: inline-flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 44px;
+      border: 1px solid rgba(151, 205, 244, .42);
+      color: var(--ink);
+      background: rgba(115, 176, 218, .08);
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease;
+    }
+
+    .action:hover,
+    .action:focus-visible {
+      border-color: var(--ice);
+      background: rgba(145, 203, 244, .14);
+      outline: none;
+    }
+
+    .action:disabled {
+      cursor: wait;
+      opacity: .66;
+    }
+
+    .action svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+    }
+
+    .dock-trace {
+      min-width: 170px;
+      color: var(--ink-dim);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+        padding-bottom: 138px;
+      }
+
+      .rail,
+      .codex {
+        justify-self: center;
+        width: min(640px, 100%);
+        text-align: center;
+      }
+
+      .rail { order: 2; }
+      .stage { order: 1; min-height: min(64vh, 690px); }
+      .codex { order: 3; }
+      .trace-steps { justify-content: center; }
+      .codex-card { text-align: left; }
+    }
+
+    @media (max-width: 680px) {
+      .topbar { padding: 18px; font-size: 9px; }
+      .topbar .asset-state { display: none; }
+
+      .layout {
+        gap: 6px;
+        padding: 0 16px 138px;
+      }
+
+      .stage { min-height: 50vh; }
+
+      .body {
+        width: min(112vw, 690px);
+        max-width: none;
+      }
+
+      .glow { width: min(104vw, 630px); }
+      .blade { top: 45%; width: min(76vw, 520px); }
+      .pulse { top: 15%; width: min(88vw, 540px); }
+
+      .dock-trace { display: none; }
+      .action { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="scene" id="scene">
+    <header class="topbar">
+      <div class="brand">Encounter Prototype 01</div>
+      <div class="asset-state">Canonical asset loaded</div>
+    </header>
+
+    <section class="layout">
+      <aside class="rail">
+        <div class="kicker">Encounter / 月道</div>
+        <h1>月光蛊</h1>
+        <p class="copy">本次交互只验证标准本体资产能否进入遭遇场景，并让“规则从哪里来”保持可见。</p>
+
+        <section class="rule-trace">
+          <div class="kicker">Rule Trace</div>
+          <ol class="trace-steps">
+            <li>月华进入月盘晶核</li>
+            <li>晶核重排真元流向</li>
+            <li>月刃从壳缘与核影之间成形</li>
+          </ol>
+        </section>
+      </aside>
+
+      <section class="stage" aria-label="月光蛊遭遇场景">
+        <img class="glow" src="assets/gu/moonlight_gu/effect/activation_glow.png" alt="">
+        <img class="body" id="body" src="assets/gu/moonlight_gu/canonical/body.png" alt="月光蛊标准本体">
+        <img class="blade" id="blade" src="assets/gu/moonlight_gu/effect/moon_blade_preview.png" alt="">
+        <div class="pulse" aria-hidden="true"></div>
+      </section>
+
+      <aside class="codex">
+        <section class="codex-card">
+          <div class="card-head">
+            <h2>Codex</h2>
+            <span>1 转 · 月道</span>
+          </div>
+          <img class="portrait" src="assets/gu/moonlight_gu/ui/card_portrait.png" alt="月光蛊标准卡面">
+          <dl class="facts">
+            <div><dt>形</dt><dd>弯月壳身，冰璃节肢</dd></div>
+            <div><dt>用</dt><dd>引月华，成月刃</dd></div>
+            <div><dt>价</dt><dd>持续供真元，中断则停</dd></div>
+          </dl>
+        </section>
+
+        <section class="state-readout">
+          <div class="kicker">Current State</div>
+          <div class="state-name">
+            <strong id="state-name">静息</strong>
+            <span id="state-code">idle</span>
+          </div>
+          <p class="state-copy" id="state-copy">晶核未开启，月华仅在壳体内低鸣。</p>
+        </section>
+      </aside>
+    </section>
+
+    <footer class="dock">
+      <button class="action" id="action" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M16 3.2C9.2 1.9 2.9 6.4 2.9 12.4c0 3 1.9 5.4 4.6 5.9-2.1-1.5-3-3.8-2.3-6.2.8-2.8 3.6-4.7 6.7-4.2-2.2.4-3.8 2-4.3 4.2-.6 2.9 1.6 5.5 4.5 5.5 2.5 0 4.5-2 4.5-4.5 0-2.4-1.8-4.4-4.2-4.5 2.3-1.7 3.6-3.5 3.6-5.4Z"/>
+        </svg>
+        <span id="action-label">引入月华</span>
+      </button>
+      <div class="dock-trace" id="dock-trace" aria-live="polite">rule source / dormant</div>
+    </footer>
+  </main>
+
+  <script>
+    const scene = document.getElementById('scene');
+    const action = document.getElementById('action');
+    const actionLabel = document.getElementById('action-label');
+    const stateName = document.getElementById('state-name');
+    const stateCode = document.getElementById('state-code');
+    const stateCopy = document.getElementById('state-copy');
+    const dockTrace = document.getElementById('dock-trace');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let state = 'idle';
+    let resetTimer = 0;
+
+    const states = {
+      idle: {
+        name: '静息',
+        code: 'idle',
+        label: '引入月华',
+        copy: '晶核未开启，月华仅在壳体内低鸣。',
+        trace: 'rule source / dormant',
+      },
+      charge: {
+        name: '引月',
+        code: 'charging',
+        label: '凝成月刃',
+        copy: '月华进入月盘晶核，冰璃壳体开始重排真元流向。',
+        trace: 'moonlight / core resonance',
+      },
+      cast: {
+        name: '月刃',
+        code: 'resolved',
+        label: '收回真元',
+        copy: '晶核定形，月刃从壳缘与核影之间显形。',
+        trace: 'moon blade / resolved',
+      },
+    };
+
+    function render() {
+      const current = states[state];
+      scene.dataset.state = state;
+      actionLabel.textContent = current.label;
+      stateName.textContent = current.name;
+      stateCode.textContent = current.code;
+      stateCopy.textContent = current.copy;
+      dockTrace.textContent = current.trace;
+    }
+
+    function reset() {
+      window.clearTimeout(resetTimer);
+      state = 'idle';
+      action.disabled = false;
+      render();
+    }
+
+    action.addEventListener('click', () => {
+      if (state === 'idle') {
+        state = 'charge';
+        render();
+        return;
+      }
+
+      if (state === 'charge') {
+        state = 'cast';
+        action.disabled = true;
+        render();
+        resetTimer = window.setTimeout(reset, reduced ? 1800 : 2100);
+        return;
+      }
+
+      reset();
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') reset();
+      if (event.key === 'Enter' && document.activeElement === action) action.click();
+    });
+
+    if (!reduced) {
+      scene.addEventListener('pointermove', (event) => {
+        const rect = scene.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width - .5) * 16;
+        const y = ((event.clientY - rect.top) / rect.height - .5) * 12;
+        scene.style.setProperty('--px', `${x.toFixed(2)}px`);
+        scene.style.setProperty('--py', `${y.toFixed(2)}px`);
+      });
+
+      scene.addEventListener('pointerleave', () => {
+        scene.style.setProperty('--px', '0px');
+        scene.style.setProperty('--py', '0px');
+      });
+    }
+
+    render();
+    document.documentElement.dataset.ready = '1';
+  </script>
+</body>
+</html>

@@ -10,11 +10,6 @@ const TscnMountHelper = preload("res://tests/unit/tscn_mount_helper.gd")
 const BATTLE_SCREEN_TSCN := "res://scenes/ui/screens/battle_screen.tscn"
 const EssenceCapacityScript = preload("res://scripts/domain/essence_capacity.gd")
 const BattleCommandFacadeScript = preload("res://scripts/domain/battle_command_facade.gd")
-# T5-B：RUI 屏含 hooks（useState），必须经 reactive root 挂载，不能直接调 render。
-const RuiVLib = preload("res://addons/reactive_ui_toolkit/core/v.gd")
-const RuiRoot = preload("res://addons/reactive_ui_toolkit/core/reactive_root.gd")
-
-
 const NODE_CASES := [
 	{"id": "neutral_wanderer", "type": "contact", "choices": ["negotiate", "deceive", "fight", "retreat"]},
 	{"id": "ridge_caravan", "type": "caravan", "choices": []},
@@ -150,26 +145,6 @@ func _battle_controller() -> RunController:
 	return controller
 
 
-func _rui_texts(vnode: Variant) -> Array[String]:
-	var out: Array[String] = []
-	if vnode == null:
-		return out
-	if vnode is RefCounted or vnode is Dictionary:
-		var props: Variant = vnode.props if vnode is RefCounted else vnode.get("props", {})
-		if props is Dictionary:
-			for key in ["text", "label", "title"]:
-				if props.has(key):
-					out.append(str(props[key]))
-		var children: Variant = vnode.children if vnode is RefCounted else vnode.get("children", [])
-		if children is Array:
-			for child in children:
-				out.append_array(_rui_texts(child))
-	return out
-
-
-## T5-B：经 reactive root 同步挂载 RUI 屏并收集已渲染 Label 文本
-## （hooks 组件不允许绕过 RuiRoot 直接 render）。
-## 战斗屏已迁到 Godot 官方 .tscn，不再有 render 入口；
 ## 这里走 instantiate + mount_snapshot，文本收集复用 _collect_label_texts。
 func _battle_tscn_texts(snapshot: Dictionary) -> Array[String]:
 	var host := Control.new()
@@ -178,17 +153,6 @@ func _battle_tscn_texts(snapshot: Dictionary) -> Array[String]:
 	var out: Array[String] = []
 	_collect_label_texts(host, out)
 	return out
-
-func _rui_screen_texts(screen_script: GDScript, props: Dictionary) -> Array[String]:
-	assert_true(screen_script.render is Callable, "%s must expose render" % str(screen_script.resource_path))
-	var host := Control.new()
-	add_child_autofree(host)
-	RuiRoot.create(host, RuiVLib.fc(screen_script.render, props))
-	var out: Array[String] = []
-	_collect_label_texts(host, out)
-	return out
-
-
 func _collect_label_texts(node: Node, out: Array[String]) -> void:
 	if node is Label:
 		out.append(str(node.text))
