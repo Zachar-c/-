@@ -564,6 +564,124 @@ const DATA = {
       ]
     }
   ],
+  "encounters": [
+    {
+      "id": "layer_boss_stand_1",
+      "name": "layer_boss_stand_1",
+      "type": "combat",
+      "enemy_kind": "crag_serpent_matriarch",
+      "enemy_kinds": null,
+      "enemy_theme": "beast",
+      "boss_pool": [
+        "crag_serpent_matriarch",
+        "marrow_gu_adept"
+      ],
+      "summary": ""
+    },
+    {
+      "id": "layer_boss_stand_2",
+      "name": "layer_boss_stand_2",
+      "type": "combat",
+      "enemy_kind": "marrow_gu_adept",
+      "enemy_kinds": null,
+      "enemy_theme": "cultivator",
+      "boss_pool": [
+        "marrow_gu_adept",
+        "thunder_crown_sovereign"
+      ],
+      "summary": ""
+    },
+    {
+      "id": "layer_boss_stand_3",
+      "name": "layer_boss_stand_3",
+      "type": "combat",
+      "enemy_kind": "thunder_crown_sovereign",
+      "enemy_kinds": null,
+      "enemy_theme": "beast",
+      "boss_pool": [
+        "thunder_crown_sovereign",
+        "clan_patriarch"
+      ],
+      "summary": ""
+    },
+    {
+      "id": "layer_boss_stand_4",
+      "name": "layer_boss_stand_4",
+      "type": "combat",
+      "enemy_kind": "blood_vein_bishop",
+      "enemy_kinds": null,
+      "enemy_theme": "cultivator",
+      "boss_pool": [
+        "clan_patriarch",
+        "blood_vein_bishop",
+        "blue_fur_jiangshi"
+      ],
+      "summary": ""
+    },
+    {
+      "id": "beast_swarm_pass",
+      "name": "兽群隘口",
+      "type": "combat",
+      "enemy_kind": "ridge_hound",
+      "enemy_kinds": [
+        "ridge_hound",
+        "neutral_stone_wanderer"
+      ],
+      "enemy_theme": "beast",
+      "boss_pool": null,
+      "summary": "兽群堵住窄隘，击退它们可收取材料，撤退则必须改道。"
+    },
+    {
+      "id": "faction_guard_checkpoint",
+      "name": "势力关卡",
+      "type": "combat",
+      "enemy_kind": "faction_guard",
+      "enemy_kinds": null,
+      "enemy_theme": "faction",
+      "boss_pool": null,
+      "summary": ""
+    },
+    {
+      "id": "final_boss_stand",
+      "name": "final_boss_stand",
+      "type": "combat",
+      "enemy_kind": "miasma_vein_lord",
+      "enemy_kinds": null,
+      "enemy_theme": "anomaly",
+      "boss_pool": null,
+      "summary": "瘴脉尽头，蛊主把守升仙窗口。"
+    },
+    {
+      "id": "iron_hide_ambush",
+      "name": "iron_hide_ambush",
+      "type": "combat",
+      "enemy_kind": "iron_hide_boar",
+      "enemy_kinds": null,
+      "enemy_theme": "beast",
+      "boss_pool": null,
+      "summary": "铁皮野猪拦在隘口，獠牙泛光，撞上来就是一道血口。"
+    },
+    {
+      "id": "scout_crossing_raid",
+      "name": "scout_crossing_raid",
+      "type": "combat",
+      "enemy_kind": "ridge_elite_scout",
+      "enemy_kinds": null,
+      "enemy_theme": "faction",
+      "boss_pool": null,
+      "summary": "斥候在岭脊设伏，弩机已上弦，先手藏在草丛里。"
+    },
+    {
+      "id": "wolf_pack_trail",
+      "name": "wolf_pack_trail",
+      "type": "combat",
+      "enemy_kind": "thunder_crown_wolf",
+      "enemy_kinds": null,
+      "enemy_theme": "beast",
+      "boss_pool": null,
+      "summary": "雷冠狼独踞道中，爪下电纹明灭，是兽群头狼。"
+    }
+  ],
   "battle": {
     "aptitudeMult": {
       "jia": 4,
@@ -634,6 +752,11 @@ const DATA = {
         "name": "焚元意图",
         "detail": "意图带 essence_burn 时烧掉玩家真元（蚀脉扰元 / 麻痹长嗥）",
         "source": "data/enemies.json phases[].intents[].essence_burn（按字段名直译，Godot 运行时不读该字段）"
+      },
+      {
+        "name": "多敌遭遇",
+        "detail": "10 个 type=combat 模板中唯一多敌 beast_swarm_pass（enemy_kinds 2 只）；规模 = enemy_kinds 长度；玩家点选目标、未选回退第一个存活；敌方按数组序逐个结算、每次立即判胜负；全灭才胜利；反击/阶段/冷却每敌一份；护体是池语义",
+        "source": "data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）"
       }
     ],
     "notCovered": [
@@ -660,10 +783,6 @@ const DATA = {
       {
         "name": "Boss 立绘",
         "why": "血络主教无专属立绘，借用同流派血道蝙蝠图（enemy_bat.png），仅影响观感"
-      },
-      {
-        "name": "多敌遭遇",
-        "why": "data/nodes.json 的节点是 enemy_kind 单敌结构，未见多敌编组数据"
       },
       {
         "name": "念头/魂魄完整系统",
