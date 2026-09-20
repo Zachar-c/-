@@ -121,6 +121,45 @@ test('sari series follows the novel: rank 1 bronze, rank 2 red iron', () => {
   assert.equal(rank2WithRedIron.canSari, true);
 });
 
+test('non-combat slot stays one per layer and its template comes from the merged pool', () => {
+  // 单独开一个 context 载入 data.js：run_flow 的 context 里下面还有一条测试要载它，
+  // 同一 context 重复声明 `const DATA` 会抛重声明错误。
+  const dataContext = vm.createContext({});
+  vm.runInContext(
+    fs.readFileSync(new URL('../js/data.js', import.meta.url), 'utf8') + ';globalThis.DATA = DATA;',
+    dataContext,
+  );
+  const data = dataContext.DATA;
+  const pool = data.nodes.filter((node) => ['hazard', 'market', 'wild_gu'].includes(node.type));
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(pool.map((node) => node.type))).sort(),
+    ['hazard', 'hazard', 'hazard', 'market', 'market', 'wild_gu'],
+  );
+  const graph = flow.generateGraph({
+    seed: 101,
+    difficulty: 'normal',
+    pools,
+    enemyById,
+    nonCombatTemplates: pool,
+    nonCombatTypeLabels: data.nodeTypes,
+  });
+  const poolIds = new Set(pool.map((node) => node.id));
+  const kinds = new Set();
+  for (let segment = 1; segment <= 5; segment += 1) {
+    for (let depth = 0; depth < graph.prepPerSegment; depth += 1) {
+      const nodes = [0, 1, 2].map((slot) => flow.nodeById(graph, flow.nodeId(segment, depth, slot)));
+      const routeNodes = nodes.filter((node) => node.routeTemplateId);
+      assert.equal(routeNodes.length, 1);
+      assert.ok(poolIds.has(routeNodes[0].routeTemplateId), routeNodes[0].routeTemplateId);
+      assert.equal(routeNodes[0].tier, routeNodes[0].routeKind);
+      assert.equal(routeNodes[0].enemyIds.length, 0);
+      kinds.add(routeNodes[0].routeKind);
+    }
+  }
+  assert.ok(kinds.has('market') && kinds.has('wild_gu'), '合并池必须真的把市集与野蛊放进图里');
+  assert.equal(graph.nodes.filter((node) => node.type === 'boss').length, 5);
+});
+
 test('generated lab data exposes non-combat sari and aptitude gu', () => {
   vm.runInContext(fs.readFileSync(new URL('../js/data.js', import.meta.url), 'utf8'), context);
   const data = vm.runInContext('DATA', context);

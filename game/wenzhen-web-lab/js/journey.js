@@ -37,8 +37,12 @@ function eventById(id) {
   return DATA.events.find((e) => e.id === id) || null;
 }
 
+// 节点类型中文名优先取 Godot 侧 data/names.json 的 types 分区（DATA.nodeTypes）；
+// battle/elite/boss 是原型自己的战斗节点分层，不在该分区内，走回退。
 function nodeTypeLabel(type) {
-  return ({ battle: '战斗', elite: '精英', boss: '层主', hazard: '险地' }[type]) || type || '未知';
+  return DATA.nodeTypes?.[type]
+    || ({ battle: '战斗', elite: '精英', boss: '层主' }[type])
+    || type || '未知';
 }
 
 function actionLabel(action) {
@@ -62,12 +66,12 @@ function currentSegment() {
   return Number(currentNode()?.segment || 1);
 }
 
-// 选中节点后该回到哪一页：战斗/结算/未解析的险地/统一整备。
+// 选中节点后该回到哪一页：战斗/结算/未解析的节点动作/统一整备。
 function currentNodePage() {
   if (state.battle) return 'battle';
   if (state.reward) return 'reward';
   const node = currentNode();
-  if (node?.type === 'hazard' && state.prepFor !== node.id) return 'hazard';
+  if (node && NodeActionRules.nodeTypes.includes(node.type) && state.prepFor !== node.id) return 'node-action';
   return 'prep';
 }
 
@@ -78,7 +82,7 @@ function segmentTitle(segment) {
 function renderJourneyPages() {
   renderHall(document.querySelector('#panel-hall'));
   renderMap(document.querySelector('#panel-map'));
-  renderHazard(document.querySelector('#panel-hazard'));
+  renderNodeActions(document.querySelector('#panel-node-action'));
   renderPrep(document.querySelector('#panel-prep'));
   renderReward(document.querySelector('#panel-reward'));
   renderEnding(document.querySelector('#panel-ending'));
@@ -95,7 +99,7 @@ function renderHall(root) {
       <section class="hall-main">
         <div class="eyebrow">问真 · Web 拼装局</div>
         <h1>问真</h1>
-        <p class="hall-copy">固定节点图、战斗、险地、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
+        <p class="hall-copy">固定节点图、战斗、险地与市集/野蛊的节点动作、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
         <div class="difficulty-row">
           ${Object.entries(DATA.flow.difficulties).map(([key, value]) => `
             <button class="${key === difficulty ? 'on' : ''}" data-difficulty="${key}">
@@ -168,7 +172,7 @@ function renderMap(root) {
     ${pathNodes.length ? `<div class="journey-trail">${pathNodes.map((node) => `<span>${node.depth + 1}. ${nodeTypeLabel(node.type)}</span>`).join('')}</div>` : ''}
     ${current ? `<div class="map-nodes map-choices">${mapNodeCard(current, selected, new Set([current.id]), completed)}</div>` : ''}
     ${!current && candidates.length ? `<h3 class="map-choice-title">当前可走后继</h3><div class="map-nodes map-choices">${candidates.map((node) => mapNodeCard(node, selected, available, completed)).join('')}</div>` : ''}
-    ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${{ battle: '返回当前战斗', reward: '查看结算', hazard: '返回险地', prep: '继续整备' }[currentNodePage()]}</button></div>` : ''}`;
+    ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${{ battle: '返回当前战斗', reward: '查看结算', 'node-action': '返回选择', prep: '继续整备' }[currentNodePage()]}</button></div>` : ''}`;
 
   root.querySelectorAll('[data-choose-node]').forEach((button) => {
     button.addEventListener('click', () => act.chooseNode(button.dataset.chooseNode));
@@ -183,32 +187,37 @@ function mapNodeCard(node, selected, available, completed) {
   const isAvailable = available.has(node.id);
   const isDone = completed.has(node.id);
   const stateClass = isSelected ? 'current' : isDone ? 'done' : isAvailable ? 'available' : 'locked';
-  const isHazard = node.type === 'hazard';
-  const detail = isHazard
+  const isActionNode = NodeActionRules.nodeTypes.includes(node.type);
+  const detail = isActionNode
     ? (node.choices || []).map(actionLabel).join(' · ')
     : nodeEnemyIds(node).map((id) => (enemyById(id) || {}).name || id).join('、');
   return `<article class="map-node ${stateClass}">
     <div class="rn-top"><span>${node.type === 'boss' ? '层主' : `L${node.segment} · ${node.depth + 1}`}</span><em>${nodeTypeLabel(node.type)}</em></div>
     <div class="rn-name">${node.name}</div>
     <div class="rn-enemies">${detail || '无战斗数据'}</div>
-    ${isHazard && node.summary ? `<div class="rn-summary">${node.summary}</div>` : ''}
+    ${isActionNode && node.summary ? `<div class="rn-summary">${node.summary}</div>` : ''}
     ${isAvailable ? `<button data-choose-node="${node.id}">进入</button>` : `<span class="rn-state">${isSelected ? '当前' : isDone ? '已过' : '未选'}</span>`}
   </article>`;
 }
 
-// 险地页：列 node.choices 的三条 standard action 与当前可用性，解析后回统一整备。
-function renderHazard(root) {
+// 节点动作页（险地 / 市集 / 野蛊）：列模板 choices 的 standard action 卡（另补一张 leave 卡），
+// 解析后回统一整备。规则、门禁、文案全部来自 js/node_action_rules.js，页面不另算。
+function renderNodeActions(root) {
   if (!root) return;
   const node = currentNode();
-  if (!node || node.type !== 'hazard' || state.prepFor === node.id) {
-    root.innerHTML = '<div class="empty">当前没有待处理的险地节点。</div>';
+  if (!node || !NodeActionRules.nodeTypes.includes(node.type) || state.prepFor === node.id) {
+    root.innerHTML = '<div class="empty">当前没有待处理的节点动作。</div>';
     return;
   }
-  const choices = HazardRules.options({ choices: node.choices, essence: state.qi });
+  const choices = NodeActionRules.options({
+    choices: node.choices,
+    stones: state.stones,
+    essence: state.qi,
+  });
   root.innerHTML = `
     <div class="section-head">
       <div>
-        <div class="kicker">${segmentTitle(node.segment)} · 险地 · 第 ${node.depth + 1} / ${state.journey.graph.prepPerSegment} 个准备节点</div>
+        <div class="kicker">${segmentTitle(node.segment)} · ${nodeTypeLabel(node.type)} · 第 ${node.depth + 1} / ${state.journey.graph.prepPerSegment} 个准备节点</div>
         <h2>${node.name}</h2>
       </div>
       <div class="prep-resources">
@@ -217,19 +226,28 @@ function renderHazard(root) {
         <span>气血 ${state.blood}/${state.bloodMax}</span>
       </div>
     </div>
-    ${node.summary ? `<p class="lead">${node.summary}</p>` : ''}
-    <div class="hazard-choices">${choices.map((option) => `
-      <article class="hazard-choice ${option.available ? 'ready' : ''}">
-        <div class="hc-head"><b>${actionLabel(option.id)}</b><span>${option.essenceCost > 0 ? `真元 -${option.essenceCost}` : '无消耗'}</span></div>
+    <div class="node-action-choices">${choices.map((option) => `
+      <article class="node-action-choice ${option.available ? 'ready' : ''}">
+        <div class="na-head"><b>${option.title || actionLabel(option.id)}</b><span>${nodeActionCostText(option)}</span></div>
+        ${option.summary || node.summary ? `<p class="na-summary">${option.summary || node.summary}</p>` : ''}
         ${(option.gain || []).map((line) => `<p>${line}</p>`).join('')}
         ${(option.risk || []).map((line) => `<p class="risk">${line}</p>`).join('')}
-        ${option.available ? '' : `<p class="blocked">${HazardRules.reasonLabel(option.reason)}</p>`}
-        <button class="${option.available ? 'primary' : ''}" ${option.available ? '' : 'disabled'} data-hazard-choice="${option.id}">${option.available ? '执行' : '不可用'}</button>
+        ${option.available ? '' : `<p class="blocked">${option.blockReason}</p>`}
+        ${(option.remedy || []).map((line) => `<p class="remedy">${line}</p>`).join('')}
+        <button class="${option.available ? 'primary' : ''}" ${option.available ? '' : 'disabled'} data-node-action="${option.id}">${option.available ? '执行' : '不可用'}</button>
       </article>`).join('')}</div>
-    <div class="map-help">险地按 Godot standard actions 结算：探查与退回只记事实，穿越消耗 1 点真元；解析后进入统一整备。</div>`;
-  root.querySelectorAll('[data-hazard-choice]').forEach((button) => {
-    button.addEventListener('click', () => act.resolveHazard(button.dataset.hazardChoice));
+    <div class="map-help">节点动作按 Godot standard actions 结算：做工 +3 元石、采集 +2 元石；购买情报与交易各耗 2 枚元石；探查、退回与离开只记事实；穿越消耗 1 点真元；解析后进入统一整备。</div>`;
+  root.querySelectorAll('[data-node-action]').forEach((button) => {
+    button.addEventListener('click', () => act.resolveNodeAction(button.dataset.nodeAction));
   });
+}
+
+// 成本文案口径同 display_text.gd:455-462（元石 X / 真元 Y），无成本显示「无消耗」。
+function nodeActionCostText(option) {
+  const parts = [];
+  if (option.essenceCost > 0) parts.push(`真元 -${option.essenceCost}`);
+  if (option.stoneCost > 0) parts.push(`元石 -${option.stoneCost}`);
+  return parts.length ? parts.join(' · ') : '无消耗';
 }
 
 function currentShopContext() {
@@ -318,6 +336,9 @@ function shopOfferCard(offer) {
   </article>`;
 }
 
+// 蛊仓卡片：与坊市、炼蛊台共用 .gu 卡片外观。
+// 早先这里是全宽单行列表——14 行、每行为了右侧一个「卖」按钮横跨整个页面宽度，
+// 既占地方又难扫（2026-09-20）。
 function inventoryCard(gu) {
   const count = Number(state.owned[gu.id] || 0);
   if (count <= 0) return '';

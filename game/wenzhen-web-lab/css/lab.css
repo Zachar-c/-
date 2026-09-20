@@ -461,16 +461,17 @@ button.risky { border-color: var(--cinnabar); }
 .map-node button { margin-top: 10px; }
 .map-node .rn-state { bottom: 12px; }
 
-/* 险地 */
-.hazard-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 20px; max-width: 980px; }
-.hazard-choice { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.82), rgba(5,13,21,.74)); }
-.hazard-choice.ready { border-color: rgba(169,215,255,.48); }
-.hc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-.hc-head b { font-size: 17px; font-weight: 400; letter-spacing: 2px; }
-.hc-head span { font-size: 11px; color: var(--ink-stat); white-space: nowrap; }
-.hazard-choice p { font-size: 12px; line-height: 1.75; color: var(--ink-soft); }
-.hazard-choice p.risk, .hazard-choice p.blocked { color: var(--cinnabar); }
-.hazard-choice button { margin-top: auto; }
+/* 节点动作页（险地 / 市集 / 野蛊）：沿用 slice-09 险地卡的样式 token，只改类名。 */
+.node-action-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 20px; max-width: 980px; }
+.node-action-choice { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.82), rgba(5,13,21,.74)); }
+.node-action-choice.ready { border-color: rgba(169,215,255,.48); }
+.na-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.na-head b { font-size: 17px; font-weight: 400; letter-spacing: 2px; }
+.na-head span { font-size: 11px; color: var(--ink-stat); white-space: nowrap; }
+.node-action-choice p { font-size: 12px; line-height: 1.75; color: var(--ink-soft); }
+.node-action-choice p.na-summary { color: var(--ink-faint); }
+.node-action-choice p.risk, .node-action-choice p.blocked { color: var(--cinnabar); }
+.node-action-choice button { margin-top: auto; }
 
 /* 统一整备：固定头 + 常驻左栏 + 右侧页签工作区。
    头固定是为了出口永远在手边——2026-09-20 之前出口排在整页最底下，

@@ -48,21 +48,23 @@ globalThis.RunFlow = (() => {
     };
   }
 
-  // 险地模板来自 Godot 数据（data/nodes.json 的 type=hazard：毒瘴山道 / 积水石窟 /
-  // 黑泥沼地）。每层 3 个候选里固定换 1 个槽位为险地，槽位与模板都由 seed 决定：
-  // 同 seed + difficulty 必须产出完全相同的图。
-  // 没有 choices 的模板不进池：险地页靠模板 choices 出按钮，空 choices 会卡死节点。
-  function hazardPool(hazardTemplates) {
-    return [...(hazardTemplates || [])]
+  // 非战斗模板来自 Godot 数据（data/nodes.json 的 type=hazard / market / wild_gu：
+  // 毒瘴山道 / 积水石窟 / 黑泥沼地 / 山村短工 / 山脊市集 / 血苔林）。每层 3 个候选里固定换
+  // 1 个槽位为非战斗节点，槽位与模板都由 seed 决定：同 seed + difficulty 必须产出完全相同的图。
+  // 槽位 seed 字符串沿用 slice-09 的 `hazard.slot` / `hazard.template`：这样每层非战斗槽位的
+  // 落点与上一片逐格一致，配比不因本片改变（模板池由险地扩为合并池是本片唯一变化）。
+  // 没有 choices 的模板不进池：节点动作页靠模板 choices 出按钮，空 choices 会卡死节点。
+  function nonCombatPool(nonCombatTemplates) {
+    return [...(nonCombatTemplates || [])]
       .filter((entry) => entry && entry.id && (entry.choices || []).length > 0);
   }
 
-  function hazardSlotFor(layerKey, seed, hasPool) {
+  function nonCombatSlotFor(layerKey, seed, hasPool) {
     if (!hasPool) return -1;
     return RunRules.seededIndex(3, seed, `${layerKey}.hazard.slot`, 0);
   }
 
-  function hazardTemplateFor(layerKey, seed, pool) {
+  function nonCombatTemplateFor(layerKey, seed, pool) {
     if (!pool.length) return null;
     return pool[RunRules.seededIndex(pool.length, seed, `${layerKey}.hazard.template`, 0)];
   }
@@ -73,14 +75,15 @@ globalThis.RunFlow = (() => {
     difficulties = DEFAULT_DIFFICULTIES,
     pools = {},
     enemyById = {},
-    hazardTemplates = [],
+    nonCombatTemplates = [],
+    nonCombatTypeLabels = {},
   } = {}) {
     const difficultyKey = difficulties[difficulty] ? difficulty : 'normal';
     const preset = difficulties[difficultyKey] || DEFAULT_DIFFICULTIES.normal;
     const prepPerSegment = Math.max(1, Number(preset.prepPerSegment || 10));
     const nodes = [];
     const roots = [];
-    const hazardPoolEntries = hazardPool(hazardTemplates);
+    const nonCombatPoolEntries = nonCombatPool(nonCombatTemplates);
 
     for (let segment = 1; segment <= 5; segment += 1) {
       const segmentPools = poolsForSegment(pools, segment);
@@ -88,24 +91,26 @@ globalThis.RunFlow = (() => {
       for (let depth = 0; depth < prepPerSegment; depth += 1) {
         const row = [];
         const layerKey = `L${segment}D${depth}`;
-        const hazardSlot = hazardSlotFor(layerKey, seed, hazardPoolEntries.length > 0);
-        const hazardTemplate = hazardTemplateFor(layerKey, seed, hazardPoolEntries);
+        const routeSlot = nonCombatSlotFor(layerKey, seed, nonCombatPoolEntries.length > 0);
+        const routeTemplate = nonCombatTemplateFor(layerKey, seed, nonCombatPoolEntries);
         for (let slot = 0; slot < 3; slot += 1) {
           const id = nodeId(segment, depth, slot);
-          if (slot === hazardSlot && hazardTemplate) {
+          if (slot === routeSlot && routeTemplate) {
+            const kind = String(routeTemplate.type || '');
             row.push({
               id,
               segment,
               layer: segment,
               depth,
               slot,
-              type: 'hazard',
-              tier: 'hazard',
-              hazardId: hazardTemplate.id,
+              type: kind,
+              tier: kind,
+              routeTemplateId: routeTemplate.id,
+              routeKind: kind,
               enemyIds: [],
-              name: `险地 · ${hazardTemplate.name || hazardTemplate.id}`,
-              summary: hazardTemplate.summary || '',
-              choices: [...(hazardTemplate.choices || [])],
+              name: `${nonCombatTypeLabels[kind] || kind} · ${routeTemplate.name || routeTemplate.id}`,
+              summary: routeTemplate.summary || '',
+              choices: [...(routeTemplate.choices || [])],
               nextIds: [],
             });
             continue;

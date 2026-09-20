@@ -21,6 +21,10 @@ const READY = {
   },
 };
 
+// 需要走节点动作页的节点类型（险地 / 市集 / 野蛊）；由 NodeActionRules 单点定义，避免两处分叉。
+// 必须声明在下面的 `let state = fresh()` 之前：fresh 生成固定图时要过滤模板池。
+const NODE_ACTION_TYPES = NodeActionRules.nodeTypes;
+
 let state = fresh();
 
 function fresh(difficulty = 'normal') {
@@ -37,7 +41,8 @@ function fresh(difficulty = 'normal') {
     difficulties: DATA.flow.difficulties,
     pools: DATA.flow.poolsBySegment,
     enemyById,
-    hazardTemplates: DATA.nodes.filter((node) => node.type === 'hazard'),
+    nonCombatTemplates: DATA.nodes.filter((node) => NODE_ACTION_TYPES.includes(node.type)),
+    nonCombatTypeLabels: DATA.nodeTypes,
   });
   const journey = {
     difficulty,
@@ -537,7 +542,7 @@ const act = {
     state.reward = null;
     state.shopSold = [];
     state.battle = null;
-    if (node.type === 'hazard') return act.enterHazard();
+    if (NODE_ACTION_TYPES.includes(node.type)) return act.enterNodeAction();
     if (!node.enemyIds?.length) {
       state.journey.availableNodeIds = node.nextIds || [];
       state.journey.nodeId = null;
@@ -546,34 +551,46 @@ const act = {
     act.startBattle(node.enemyIds, node.id);
   },
 
-  // 险地节点：进入后等玩家在险地页选一个 standard action（探查/穿越/退回）。
-  enterHazard() {
+  // 非战斗节点（险地 / 市集 / 野蛊）：进入后等玩家在节点动作页选一个 standard action。
+  enterNodeAction() {
     const node = currentNode();
-    if (!node || node.type !== 'hazard') return showPage('map');
-    showPage('hazard');
+    if (!node || !NODE_ACTION_TYPES.includes(node.type)) return showPage('map');
+    showPage('node-action');
     Sfx.click();
     draw();
   },
 
-  // 解析险地选择。转移与拒绝口径见 js/hazard_rules.js（照搬 social_command_rules.gd
+  // 解析节点动作选择。转移与拒绝口径见 js/node_action_rules.js（照搬 social_command_rules.gd
   // 的 standard actions 与 action_preview_service.gd 的预览门禁）。
-  resolveHazard(choiceId) {
+  resolveNodeAction(choiceId) {
     const node = currentNode();
-    if (!node || node.type !== 'hazard') return;
+    if (!node || !NODE_ACTION_TYPES.includes(node.type)) return;
     if (state.prepFor === node.id) return; // 已解析：节点只剩统一整备
-    const before = state.qi;
-    const result = HazardRules.resolve(choiceId, { essence: state.qi, knownFacts: state.knownFacts });
-    if (!result.ok) return toast(HazardRules.reasonLabel(result.reason), 'bad');
+    const beforeStones = state.stones;
+    const beforeQi = state.qi;
+    const result = NodeActionRules.resolve(choiceId, {
+      stones: state.stones,
+      essence: state.qi,
+      knownFacts: state.knownFacts,
+    });
+    if (!result.ok) {
+      return toast(NodeActionRules.reasonLabel(result.reason, { stones: state.stones }), 'bad');
+    }
+    state.stones = result.stones;
     state.qi = result.essence;
     state.knownFacts = result.knownFacts;
-    const spent = before - state.qi;
-    state.journal.unshift(`${node.name} · ${actionLabel(choiceId)}${spent > 0 ? ` · 真元 -${spent}` : ''}`);
+    const stoneDelta = state.stones - beforeStones;
+    const qiSpent = beforeQi - state.qi;
+    state.journal.unshift(`${node.name} · ${actionLabel(choiceId)}`
+      + `${stoneDelta ? ` · 元石 ${stoneDelta > 0 ? '+' : ''}${stoneDelta}` : ''}`
+      + `${qiSpent > 0 ? ` · 真元 -${qiSpent}` : ''}`);
     recordEvent('choose_action', {
+      stone: state.stones,
       true_qi: state.qi,
       known_facts: [...state.knownFacts],
-    }, result.reason, [node.hazardId]);
+    }, result.reason, [node.routeTemplateId]);
     Sfx.success();
-    toast(HazardRules.resultText(choiceId) || actionLabel(choiceId), 'good');
+    toast(NodeActionRules.resultText(choiceId) || actionLabel(choiceId), 'good');
     act.openPrep();
   },
 
@@ -1114,8 +1131,8 @@ function renderCover(root) {
 
 // 面板切换。ending 没有常驻页签，由终局流程直接打开。
 function showPage(page) {
-  const valid = [...document.querySelectorAll('.panel')].map((p) => p.id.replace(/^panel-/, ''));
-  const next = valid.includes(page) ? page : 'hall';
+  const panelIds = [...document.querySelectorAll('.panel')].map((p) => p.id);
+  const next = typeof page === 'string' && panelIds.includes(`panel-${page}`) ? page : 'hall';
   state.page = next;
   document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === next));
   document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('on', p.id === `panel-${next}`));

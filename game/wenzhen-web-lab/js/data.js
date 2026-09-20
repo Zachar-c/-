@@ -6593,12 +6593,41 @@ const DATA = {
         "name": "险地节点（探查 / 穿越 / 退回）",
         "detail": "固定图每层 3 个候选中确定性地换入 1 个险地节点（毒瘴山道 / 积水石窟 / 黑泥沼地；槽位与模板都由 seed 决定，同 seed 同难度同图）；探查与退回只记事实（route_scouted / withdrawn_safely），穿越消耗 1 点真元、真元不足则拒绝且不结算；解析后回统一整备，不做 on_skip 后果",
         "source": "data/nodes.json → toxic_mountain_path / flooded_cave / black_mud_marsh（choices 均为 scout/cross/withdraw）；social_command_rules.gd:768-771,801-803（标准行动转移）；action_preview_service.gd:1022-1028,1076-1077,1085-1087（预览门禁与文案）；display_text.gd:69,86,90（显示名）、228,238,242（行动结果文案）"
+      },
+      {
+        "name": "非战斗节点的标准动作结算（险地 / 市集 / 野蛊）",
+        "detail": "固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 + 市集 + 野蛊共 6 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡，并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw；被拒不结算，解析后进入统一整备",
+        "source": "data/nodes.json → village_short_work / ridge_market / blood_moss_grove（choices work+trade / trade+buy_information / harvest+trade）与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）"
       }
     ],
     "notCovered": [
       {
-        "name": "非险地节点的路线选择结算",
-        "why": "本原型固定图只放战斗、精英、险地与层主；接触、商队、事件等其余节点类型的选择结算未接入，仍以 Godot 领域层为准。险地的探查/穿越/退回已接入，见已覆盖清单"
+        "name": "追击压力类动作（deceive / retreat）",
+        "why": "效果落在 state.pursuit（social_command_rules.gd:774-777）；本原型没有追击压力槽，搬进来就是「声明了但没人读」的字段，按登记不实现"
+      },
+      {
+        "name": "升仙条件类动作（open / prepare / scheme）",
+        "why": "效果落在 state.ascension 的升仙五项（social_command_rules.gd:778-783）；本原型没有升仙窗口与终局资格判定，登记不实现"
+      },
+      {
+        "name": "体印动作（take_imprint）",
+        "why": "效果写入 body_imprints（social_command_rules.gd:784-794 的铁骨体印）；本原型没有体印系统，登记不实现"
+      },
+      {
+        "name": "只记事实、无消费点的动作（accept / ally / claim / inspect / lure 与 contact / caravan 专属动作）",
+        "why": "这些动作只写 known_facts（social_command_rules.gd:795-800），而本原型对已知事实没有任何分支消费（见下面 knownFacts 一条）；contact 的 negotiate/deceive/retreat/fight 与 caravan 的 probe/buy/sell/exchange 还各自需要专属结算模块，一并登记不实现"
+      },
+      {
+        "name": "休息类节点的一次性门禁",
+        "why": "rest / refinement / cultivation 属休息类：rest_rules.gd:39,55,92,115 规定一节点只能消费一次，未消费就离开会被 rest_choice_required 拒绝（social_command_rules.gd:586-589）；本原型没有节点内多次行动模型，该门禁搬不进来，refine / cultivate / rest 等专属动作因此一并不接"
+      },
+      {
+        "name": "其余节点类型的专属结算",
+        "why": "contact / caravan / event / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein / seclusion 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等），本原型固定图只放战斗与非战斗三类模板，其余类型未接入"
+      },
+      {
+        "name": "knownFacts 只写不读",
+        "why": "本片与 slice-09 引入的 state.knownFacts 至今只被写入（scout / withdraw / leave / buy_information / trade），没有任何分支消费它；读取点只有 node_action_rules 的透传与 main.js 的事件日志。照实登记：这是「声明了但没人读」的状态槽，不要以为它已经在驱动玩法"
       },
       {
         "name": "精英代价绑定",
