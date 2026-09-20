@@ -339,6 +339,16 @@ function renderPrep(root) {
   const offers = shopStock();
   const aptId = DATA.flow.aptitudeGuId;
   const sariName = next.sariId ? (guById(next.sariId) || {}).name : '同阶舍利蛊';
+  // 界面必须区分「需求」与「持有」：早先这里直接把需求蛊写成 `名字 ×1`，
+  // 读起来就是背包条目，玩家会以为已经持有（2026-09-20 实测踩到）。
+  // 舍利不可越阶替代，所以持有但转数不符时要把持有清单摊开说明原因。
+  const sariRankById = Object.fromEntries(
+    Object.entries(DATA.flow.sariByRank || {}).map(([rank, id]) => [id, Number(rank)]),
+  );
+  const sariHeld = next.sariId ? Number(state.owned[next.sariId] || 0) : 0;
+  const heldSari = Object.keys(sariRankById)
+    .filter((id) => Number(state.owned[id] || 0) > 0 && !(next.canSari && id === next.sariId))
+    .map((id) => `${(guById(id) || {}).name || id} ×${Number(state.owned[id])}（${sariRankById[id]} 转）`);
   root.innerHTML = `
     <div class="prep-head">
       <div>
@@ -360,8 +370,10 @@ function renderPrep(root) {
           <p>小突破消耗元石，或消耗 1 只当前转数同阶舍利蛊。</p>
           <div class="button-row">
             <button class="${next.canStone ? 'primary' : ''}" ${next.canStone ? '' : 'disabled'} data-break="stone">元石 ${next.stoneCost}</button>
-            <button class="${next.canSari ? 'primary' : ''}" ${next.canSari ? '' : 'disabled'} data-break="sari">${sariName} ×1</button>
+            <button class="${next.canSari ? 'primary' : ''}" ${next.canSari ? '' : 'disabled'} data-break="sari">消耗 ${sariName}</button>
           </div>
+          <div class="prep-line">需要 1 只 ${sariName} · 你持有 ${sariHeld}</div>
+          ${heldSari.length ? `<div class="prep-line">舍利不可越阶替代；你还持有 ${heldSari.join('、')}</div>` : ''}
         ` : next.kind === 'big' ? `
           <p>大突破要求资质与元石同时达标。</p>
           <div class="prep-line">资质 ${next.aptitudeOk ? '达标' : `需要 ${({ jia: '甲等', yi: '乙等', bing: '丙等', ding: '丁等' })[next.requiredApt]}`}</div>

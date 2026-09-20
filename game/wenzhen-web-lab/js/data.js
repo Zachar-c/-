@@ -248,6 +248,7 @@ const DATA = {
       "5": "jia"
     },
     "sariByRank": {
+      "1": "gold_atk_2_12_gu",
       "2": "gold_atk_2_11_gu",
       "3": "gold_atk_3_13_gu",
       "4": "gold_atk_4_14_gu",
@@ -5480,20 +5481,20 @@ const DATA = {
       "gu_name": ""
     },
     {
+      "id": "lab_shop_gold_atk_2_12_gu",
+      "kind": "purchase",
+      "gu_id": "gold_atk_2_12_gu",
+      "tier": 1,
+      "stone_cost": 10,
+      "gu_name": "青铜舍利蛊"
+    },
+    {
       "id": "lab_shop_gold_atk_2_11_gu",
       "kind": "purchase",
       "gu_id": "gold_atk_2_11_gu",
       "tier": 2,
       "stone_cost": 10,
       "gu_name": "赤铁舍利蛊"
-    },
-    {
-      "id": "lab_shop_gold_atk_2_12_gu",
-      "kind": "purchase",
-      "gu_id": "gold_atk_2_12_gu",
-      "tier": 2,
-      "stone_cost": 10,
-      "gu_name": "青铜舍利蛊"
     },
     {
       "id": "lab_shop_gold_atk_3_13_gu",
@@ -6525,8 +6526,8 @@ const DATA = {
       },
       {
         "name": "突破链",
-        "detail": "每转四阶；小突破消耗元石或当前转数同阶舍利蛊，舍利不可越阶；巅峰冲下一转要求资质与元石同时达标",
-        "source": "本轮 L0 裁决；大突破元石成本沿用 balance；essence_capacity.gd"
+        "detail": "每转四阶；小突破消耗元石或当前转数同阶舍利蛊，舍利不可越阶；巅峰冲下一转要求资质与元石同时达标。舍利系列按原著定位建转数：一转青铜 / 二转赤铁 / 三转白银 / 四转黄金 / 五转紫晶",
+        "source": "本轮 L0 裁决；舍利转数依据 `蛊真人-clean.txt:86506`「从一转到五转，分别有青铜、赤铁、白银、黄金、紫晶舍利蛊」（另见 `:18066` `:18068`）；大突破元石成本沿用 balance；essence_capacity.gd"
       },
       {
         "name": "敌人意图",

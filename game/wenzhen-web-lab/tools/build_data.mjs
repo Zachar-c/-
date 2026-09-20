@@ -61,6 +61,22 @@ const SUPPORT_GU_IDS = new Set([
   'gold_atk_5_15_gu',
   'gold_atk_2_16_gu',
 ]);
+// 舍利系列的转数按**原著定位**建，不读 gu 自己的 rank 字段。
+// 主依据 `蛊真人-clean.txt:86506` 一句话列全系列：「从一转到五转，分别有青铜、
+// 赤铁、白银、黄金、紫晶舍利蛊」；同一点另由 18066（青铜/赤铁/白银）与
+// 18068（黄金到四转）复述。
+//
+// 为什么不能读 rank：金色进阶链（`refinement_recipes.json` 的 promote_gold_*）
+// 是 1→5 的严格阶梯，第 2 级正是 `gold_atk_2_12_gu`（青铜舍利蛊），
+// `tests/unit/test_promotion_1b1a.gd` 断言每一级 rank 恰好 +1。把它的 rank
+// 改成 1 会打断那条链与测试；所以 lab 按名字定转数，Godot 数据不动。
+const SARI_BY_RANK = {
+  1: 'gold_atk_2_12_gu',
+  2: 'gold_atk_2_11_gu',
+  3: 'gold_atk_3_13_gu',
+  4: 'gold_atk_4_14_gu',
+  5: 'gold_atk_5_15_gu',
+};
 const SUPPORT_GU_ICON = {
   aptitude_gu: 'gu_qi',
   gold_atk_2_11_gu: 'gu_qi',
@@ -275,14 +291,16 @@ const encounters = nodeList
 const SHOP_OFFER_KINDS = new Set(['purchase', 'material_purchase', 'gu_fang_unlock']);
 const supportShopOffers = [
   { id: 'lab_shop_aptitude_gu', kind: 'purchase', gu_id: 'aptitude_gu', tier: 1, stone_cost: 20 },
-  ...['gold_atk_2_11_gu', 'gold_atk_2_12_gu', 'gold_atk_3_13_gu', 'gold_atk_4_14_gu', 'gold_atk_5_15_gu']
-    .map((guId, index) => {
+  ...Object.entries(SARI_BY_RANK)
+    .map(([rank, guId]) => {
       const entity = battleGuById[guId] || {};
       return {
         id: `lab_shop_${guId}`,
         kind: 'purchase',
         gu_id: guId,
-        tier: Math.max(1, Number(entity.rank || index + 2)),
+        // 档位取原著转数：青铜舍利蛊是一转蛊，必须在一转区域就买得到
+        // （shop_rules 按 offer.tier <= 该层 shop_max_tier 上架）。
+        tier: Number(rank),
         stone_cost: Math.max(5, Number(entity.value || 5) * 2),
       };
     }),
@@ -331,7 +349,7 @@ const mechanisms = {
     { name: '真元上限与回复', detail: '真元上限 = essence_base × aptitude_factor × cultivation_factor；战斗每回合按 v1 regen_pct 向上取整回复（丙等 25%）', source: 'data/aptitude.json；v1_battle_resolver.gd::_ceil_pct' },
     { name: '战后恢复', detail: '战斗胜利后真元回满，气血恢复最大气血的 30%；不设休整节点或调息按钮', source: '本轮 L0 裁决' },
     { name: '战利品池与保底', detail: '按 tier+layer 读取材料数/权重、蛊概率/稀有度权重；common/elite/boss 材料保底与 common 蛊保底按事件序号推进', source: 'data/loot_tables.json；data/pacing.json；loot_resolver.gd::settle_victory' },
-    { name: '突破链', detail: '每转四阶；小突破消耗元石或当前转数同阶舍利蛊，舍利不可越阶；巅峰冲下一转要求资质与元石同时达标', source: '本轮 L0 裁决；大突破元石成本沿用 balance；essence_capacity.gd' },
+    { name: '突破链', detail: '每转四阶；小突破消耗元石或当前转数同阶舍利蛊，舍利不可越阶；巅峰冲下一转要求资质与元石同时达标。舍利系列按原著定位建转数：一转青铜 / 二转赤铁 / 三转白银 / 四转黄金 / 五转紫晶', source: '本轮 L0 裁决；舍利转数依据 `蛊真人-clean.txt:86506`「从一转到五转，分别有青铜、赤铁、白银、黄金、紫晶舍利蛊」（另见 `:18066` `:18068`）；大突破元石成本沿用 balance；essence_capacity.gd' },
     { name: '敌人意图', detail: '意图标签与伤害，每回合公开', source: 'data/enemies.json → intent' },
     { name: '线索与反击（隐藏→揭示）', detail: '敌人自带 clues 与 reactions；揭示前不预警，揭示后可预警', source: 'v1_battle_resolver.gd:136,724-731（counter_revealed）' },
     { name: '直接攻击被反击吞掉', detail: '触发条件 trigger=direct_strike / window=before_damage；吞掉后敌方进入 bound/guarded，该反击随即不再预警', source: 'action_preview_service.gd:325-347（_live_counter_labels）' },
@@ -450,12 +468,7 @@ const flow = {
   bigStoneCosts: cultivationCosts,
   aptitudeOrder: ['ding', 'bing', 'yi', 'jia'],
   aptitudeGateByTargetRank: { 2: 'bing', 3: 'yi', 4: 'yi', 5: 'jia' },
-  sariByRank: {
-    2: 'gold_atk_2_11_gu',
-    3: 'gold_atk_3_13_gu',
-    4: 'gold_atk_4_14_gu',
-    5: 'gold_atk_5_15_gu',
-  },
+  sariByRank: SARI_BY_RANK,
   rewardGuChoiceCount: 3,
   postBattleHealPct: 30,
 };

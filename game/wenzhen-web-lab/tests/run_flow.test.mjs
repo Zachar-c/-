@@ -95,6 +95,32 @@ test('sell value floors at half of the configured value', () => {
   assert.equal(flow.sellValue(0), 0);
 });
 
+test('sari series follows the novel: rank 1 bronze, rank 2 red iron', () => {
+  // 原著 `蛊真人-clean.txt:18066`：一转的是青铜舍利蛊 / 二转的是赤铁舍利蛊 / 三转白银。
+  // 数据把阶梯第 2 级命名成了青铜舍利蛊（gold_atk_2_12_gu），rank 字段与原著定位冲突，
+  // 所以 lab 按名字定转数、不读 rank；这条测试钉住那个映射与「不可越阶」。
+  const config = {
+    smallBreakthroughCosts: { 1: [2, 3, 4], 2: [4, 6, 8] },
+    bigStoneCosts: {},
+    aptitudeOrder: ['ding', 'bing', 'yi', 'jia'],
+    aptitudeGateByTargetRank: {},
+    sariByRank: { 1: 'gold_atk_2_12_gu', 2: 'gold_atk_2_11_gu' },
+  };
+  const bronze = { gold_atk_2_12_gu: 1 };
+  const redIron = { gold_atk_2_11_gu: 1 };
+
+  const rank1 = flow.nextBreakthrough({ rank: 1, stageIndex: 0, stones: 0, aptitude: 'bing', owned: bronze }, config);
+  assert.equal(rank1.sariId, 'gold_atk_2_12_gu');
+  assert.equal(rank1.canSari, true);
+
+  const rank2WithBronze = flow.nextBreakthrough({ rank: 2, stageIndex: 0, stones: 0, aptitude: 'bing', owned: bronze }, config);
+  assert.equal(rank2WithBronze.sariId, 'gold_atk_2_11_gu');
+  assert.equal(rank2WithBronze.canSari, false, '青铜舍利蛊是一转蛊，不能替代二转的赤铁舍利蛊');
+
+  const rank2WithRedIron = flow.nextBreakthrough({ rank: 2, stageIndex: 0, stones: 0, aptitude: 'bing', owned: redIron }, config);
+  assert.equal(rank2WithRedIron.canSari, true);
+});
+
 test('generated lab data exposes non-combat sari and aptitude gu', () => {
   vm.runInContext(fs.readFileSync(new URL('../js/data.js', import.meta.url), 'utf8'), context);
   const data = vm.runInContext('DATA', context);
@@ -103,4 +129,15 @@ test('generated lab data exposes non-combat sari and aptitude gu', () => {
   assert.ok(support.some((gu) => gu.id === 'gold_atk_2_11_gu' && gu.rank === 2));
   assert.equal(support.every((gu) => gu.combat === ''), true);
   assert.equal(data.flow.sariByRank['2'], 'gold_atk_2_11_gu');
+  // 舍利系列按原著定位建（不读 gu 的 rank 字段），五转俱全。
+  assert.equal(data.flow.sariByRank['1'], 'gold_atk_2_12_gu');
+  assert.equal(data.flow.sariByRank['3'], 'gold_atk_3_13_gu');
+  assert.equal(data.flow.sariByRank['4'], 'gold_atk_4_14_gu');
+  assert.equal(data.flow.sariByRank['5'], 'gold_atk_5_15_gu');
+  // 青铜舍利蛊的等级数据写的 rank=2（金色进阶链的第 2 级），但货架档位必须按
+  // 原著的一转定位，否则一转区域买不到它，一转小突破就永远没有舍利可用。
+  const bronzeOffer = data.shopOffers.find((offer) => offer.gu_id === 'gold_atk_2_12_gu');
+  assert.equal(bronzeOffer.tier, 1);
+  const redIronOffer = data.shopOffers.find((offer) => offer.gu_id === 'gold_atk_2_11_gu');
+  assert.equal(redIronOffer.tier, 2);
 });
