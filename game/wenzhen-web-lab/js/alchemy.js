@@ -1,4 +1,5 @@
-// 炼蛊台。普通脚本：全局 renderAlchemy；依赖 data.js 的 DATA 与 describe.js 的 effectText/schoolLabel。
+// 炼蛊台。普通脚本：全局 renderAlchemy；依赖 data.js 的 DATA 与 describe.js 的 effectText。
+// 只渲染「炼化野生蛊」与「炼蛊台配方」两块：已炼化的蛊虫归整备页的蛊仓页签，避免两处同一份列表。
 const iconOf = (id) => {
   const g = DATA.gu.find((x) => x.id === id);
   return g ? `../assets/wenzhen/gu/${g.icon}.png` : '';
@@ -8,14 +9,6 @@ const nameOf = (id) => (DATA.gu.find((g) => g.id === id) || {}).name || id;
 function renderAlchemy(root) {
   const owned = DATA.gu.filter((g) => (state.owned[g.id] || 0) > 0);
   const wild = DATA.gu.filter((g) => (state.wild[g.id] || 0) > 0);
-  const cards = owned.map((g) => `
-    <div class="gu ${g.rank > 1 ? 'r2' : ''}">
-      <span class="cnt">×${state.owned[g.id]}</span>
-      <img src="../assets/wenzhen/gu/${g.icon}.png" alt="">
-      <div class="gn">${g.name}</div>
-      <div class="gm">${g.rank} 转 · ${g.rarity} · ${schoolLabel(g.school)} · 值 ${g.value}</div>
-      <div class="ge">${effectText(g.effect)}</div>
-    </div>`).join('');
   const wildCards = wild.map((g) => {
     const cost = GuRules.attuneCost(g.rank);
     const affordable = state.qi >= cost;
@@ -59,22 +52,17 @@ function renderAlchemy(root) {
   }).join('');
 
   root.innerHTML = `
-    <h2>已炼化蛊虫 · ${owned.length} 种在手</h2>
-    <div class="grid">${cards}</div>
-    <h2 style="margin-top:32px">炼化野生蛊 · ${wild.length} 种待炼化</h2>
+    <div class="pane-note">已在手的蛊虫见「蛊仓」页签（卖蛊也在那里）；本页把它们当作合炼与升炼的投入。</div>
+    <h2 style="margin-top:22px">炼化野生蛊 · ${wild.length} 种待炼化</h2>
     <p class="lead muted">野生蛊不能催动；炼化后按实例加入已炼化蛊仓。</p>
     <div class="grid">${wildCards || '<div class="empty">暂无野生蛊。</div>'}</div>
-    <h2 style="margin-top:32px">炼蛊台 · 合炼与升炼</h2>
-    <div class="recipes">${rows}</div>
-    ${currentNode() && currentNode().type === 'refinement'
-      ? '<div class="leave-row"><button class="ghost" data-alchemy-leave>完成炼制并离开</button></div>'
-      : ''}`;
+    <h2 style="margin-top:22px">炼蛊台 · 合炼与升炼 · ${owned.length} 种可作投入</h2>
+    <div class="recipes">${rows}</div>`;
 
   root.querySelectorAll('[data-forge]').forEach((el) =>
     el.addEventListener('click', () => act.forge(el.dataset.forge)));
   root.querySelectorAll('[data-attune]').forEach((el) =>
     el.addEventListener('click', () => act.attuneGu(el.dataset.attune)));
-  root.querySelector('[data-alchemy-leave]')?.addEventListener('click', () => act.advanceJourney('完成炼制'));
 }
 
 function countBy(ids) {

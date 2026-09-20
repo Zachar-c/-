@@ -472,26 +472,50 @@ button.risky { border-color: var(--cinnabar); }
 .hazard-choice p.risk, .hazard-choice p.blocked { color: var(--cinnabar); }
 .hazard-choice button { margin-top: auto; }
 
-/* 统一整备 */
-.prep-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; padding-bottom: 16px; border-bottom: 1px solid var(--hairline); }
+/* 统一整备：固定头 + 常驻左栏 + 右侧页签工作区。
+   头固定是为了出口永远在手边——2026-09-20 之前出口排在整页最底下，
+   内容 3695px 而可视区只有 750px，必须滚四屏才够得着。 */
+.prep-head {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: flex-end; gap: 20px;
+  margin: -24px -28px 22px; padding: 20px 28px 16px;
+  background: linear-gradient(180deg, rgba(3,7,13,.97) 70%, rgba(3,7,13,.88));
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--hairline);
+}
+.prep-title { min-width: 0; }
 .prep-head h2 { margin-top: 8px; }
-.prep-resources { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px 14px; font-size: 12px; color: var(--ink-stat); }
-.prep-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; margin-top: 22px; }
-.prep-panel { padding: 14px 0 18px; border-top: 1px solid var(--hairline); }
-.prep-panel.wide { grid-column: 1 / -1; }
-.prep-panel h3 { margin-top: 7px; font-size: 20px; font-weight: 400; letter-spacing: 2px; }
-.prep-panel p { margin-top: 9px; font-size: 12px; line-height: 1.75; color: var(--ink-soft); }
-.prep-line { margin-top: 8px; font-size: 12px; color: var(--ink-stat); }
-.button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
-.prep-section { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule); }
-.inventory-list { display: grid; gap: 0; margin-top: 12px; }
-.inventory-card { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--hairline); }
-.inventory-card img { width: 38px; height: 38px; object-fit: contain; }
-.inventory-card div { min-width: 0; display: grid; gap: 4px; }
-.inventory-card b { font-size: 13px; font-weight: 400; letter-spacing: 1px; }
-.inventory-card span { font-size: 11px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.material-line { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--hairline); font-size: 12px; color: var(--ink-soft); }
+.prep-resources { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-left: auto; font-size: 12px; color: var(--ink-stat); }
+.prep-leave { flex: 0 0 auto; }
+
+.prep-shell { display: grid; grid-template-columns: 306px minmax(0, 1fr); gap: 30px; align-items: start; }
+.prep-rail { position: sticky; top: 112px; display: grid; gap: 16px; }
+.rail-block { padding: 14px 15px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.72), rgba(5,13,21,.62)); }
+.rail-block h3 { margin-top: 7px; font-size: 18px; font-weight: 400; letter-spacing: 2px; }
+.rail-block p { margin-top: 8px; font-size: 11.5px; line-height: 1.7; color: var(--ink-soft); }
+.rail-block .button-row { margin-top: 13px; }
+.button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.rail-block .button-row button { flex: 1 1 100%; }
+.rail-block > button { width: 100%; }
+.prep-line { margin-top: 8px; font-size: 11.5px; line-height: 1.6; color: var(--ink-stat); }
+.material-list { display: grid; margin-top: 10px; max-height: 170px; overflow: auto; }
+.material-line { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--hairline); font-size: 12px; color: var(--ink-soft); }
 .material-line b { color: var(--cinnabar); font-weight: 400; }
+
+.prep-work { min-width: 0; }
+.prep-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--rule); }
+.prep-tabs button {
+  border: none; border-radius: 0; border-bottom: 2px solid transparent;
+  padding: 10px 18px; font-size: 14px; letter-spacing: 3px; color: var(--ink-nav);
+}
+.prep-tabs button:hover:not(:disabled) { color: var(--jade); border-bottom-color: transparent; }
+.prep-tabs button.on { color: var(--ink); border-bottom-color: var(--jade); }
+.prep-tabs .tab-count { margin-left: 7px; font-size: 11px; color: var(--ink-ver); }
+/* 单个页签内部自己滚，整页基本不需要滚。 */
+.prep-pane { display: none; padding-top: 18px; max-height: calc(100vh - 336px); min-height: 280px; overflow: auto; }
+.prep-pane.on { display: block; }
+.pane-note { font-size: 12px; line-height: 1.7; color: var(--ink-soft); }
+.gu-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 11px; font-size: 11px; color: var(--ink-stat); }
 
 /* 战后三选一 */
 .reward-sheet { max-width: 980px; }
@@ -503,17 +527,21 @@ button.risky { border-color: var(--cinnabar); }
 .reward-choices span { font-size: 11px; color: var(--ink-ver); }
 .reward-choices em { margin-top: auto; font-size: 11px; line-height: 1.65; font-style: normal; color: var(--ink-soft); }
 
+@media (max-width: 1100px) {
+  .prep-shell { grid-template-columns: 1fr; }
+  .prep-rail { position: static; }
+  .prep-pane { max-height: none; }
+}
+
 @media (max-width: 940px) {
   .difficulty-row, .map-nodes { grid-template-columns: 1fr 1fr; }
-  .prep-grid { grid-template-columns: 1fr; }
-  .prep-panel.wide { grid-column: auto; }
 }
 
 @media (max-width: 620px) {
   .difficulty-row, .map-row, .map-nodes, .reward-choices { grid-template-columns: 1fr; }
   .map-depth { padding-top: 0; border-right: 0; }
-  .prep-head { align-items: flex-start; flex-direction: column; }
-  .prep-resources { justify-content: flex-start; }
-  .inventory-card { grid-template-columns: 38px minmax(0, 1fr); }
-  .inventory-card button { grid-column: 2; justify-self: start; }
+  .prep-head { flex-direction: column; align-items: flex-start; }
+  .prep-resources { margin-left: 0; }
+  .prep-tabs { overflow-x: auto; }
+  .prep-tabs button { padding: 10px 12px; letter-spacing: 2px; }
 }

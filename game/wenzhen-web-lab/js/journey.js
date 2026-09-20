@@ -1,5 +1,16 @@
 // 路线、节点图、整备页与终局页。状态转换仍全部收口到 main.js 的 act。
 const STAGE_LABEL = { one: '一转', two: '二转', three: '三转', four: '四转', five: '五转' };
+const APTITUDE_LABEL = { jia: '甲等', yi: '乙等', bing: '丙等', ding: '丁等' };
+
+// 整备页右侧工作区的页签。选中项必须活过整页重绘——否则在蛊仓里卖一只蛊，
+// 界面会把你弹回坊市（2026-09-20）。
+let prepTab = 'shop';
+const PREP_TABS = [
+  { id: 'shop', label: '坊市' },
+  { id: 'gu', label: '蛊仓' },
+  { id: 'alchemy', label: '炼蛊' },
+  { id: 'killmove', label: '杀招' },
+];
 
 function guById(id) {
   return DATA.gu.find((g) => g.id === id) || null;
@@ -311,13 +322,13 @@ function inventoryCard(gu) {
   const count = Number(state.owned[gu.id] || 0);
   if (count <= 0) return '';
   const price = RunFlow.sellValue(gu.value);
-  return `<article class="inventory-card">
+  return `<article class="gu ${gu.rank > 1 ? 'r2' : ''}">
+    <span class="cnt">×${count}</span>
     <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
-    <div>
-      <b>${gu.name} ×${count}</b>
-      <span>${gu.rank} 转 · ${schoolLabel(gu.school)} · ${effectText(gu.effect)}</span>
-    </div>
-    <button class="ghost" data-sell-gu="${gu.id}">卖 ${price}</button>
+    <div class="gn">${gu.name}</div>
+    <div class="gm">${gu.rank} 转 · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
+    <div class="ge">${effectText(gu.effect)}</div>
+    <div class="gu-foot"><span>卖 ${price}</span><button class="ghost" data-sell-gu="${gu.id}">卖出</button></div>
   </article>`;
 }
 
@@ -349,9 +360,18 @@ function renderPrep(root) {
   const heldSari = Object.keys(sariRankById)
     .filter((id) => Number(state.owned[id] || 0) > 0 && !(next.canSari && id === next.sariId))
     .map((id) => `${(guById(id) || {}).name || id} ×${Number(state.owned[id])}（${sariRankById[id]} 转）`);
+  const ownedGu = DATA.gu.filter((gu) => Number(state.owned[gu.id] || 0) > 0);
+  const aptCount = Number(state.owned[aptId] || 0);
+  const tab = PREP_TABS.some((entry) => entry.id === prepTab) ? prepTab : 'shop';
+  const tabCount = {
+    shop: offers.length,
+    gu: ownedGu.length,
+    alchemy: DATA.recipes.length,
+    killmove: DATA.killMoves.length,
+  };
   root.innerHTML = `
     <div class="prep-head">
-      <div>
+      <div class="prep-title">
         <div class="kicker">${segmentTitle(node.segment)} · ${nodeTypeLabel(node.type)} · 整备</div>
         <h2>${node.name}</h2>
       </div>
@@ -361,53 +381,65 @@ function renderPrep(root) {
         <span>真元 ${state.qi}/${state.qiMax}</span>
         <span>元石 ${state.stones}</span>
       </div>
+      <button class="primary prep-leave" data-prep-continue>完成整备 · 选择下一节点</button>
     </div>
-    <div class="prep-grid">
-      <section class="prep-panel">
-        <div class="kicker">修炼突破</div>
-        <h3>${next.kind === 'small' ? `冲击 ${next.targetLabel}` : next.kind === 'big' ? `冲击 ${next.targetRank} 转` : '五转巅峰'}</h3>
-        ${next.kind === 'small' ? `
-          <p>小突破消耗元石，或消耗 1 只当前转数同阶舍利蛊。</p>
-          <div class="button-row">
-            <button class="${next.canStone ? 'primary' : ''}" ${next.canStone ? '' : 'disabled'} data-break="stone">元石 ${next.stoneCost}</button>
-            <button class="${next.canSari ? 'primary' : ''}" ${next.canSari ? '' : 'disabled'} data-break="sari">消耗 ${sariName}</button>
-          </div>
-          <div class="prep-line">需要 1 只 ${sariName} · 你持有 ${sariHeld}</div>
-          ${heldSari.length ? `<div class="prep-line">舍利不可越阶替代；你还持有 ${heldSari.join('、')}</div>` : ''}
-        ` : next.kind === 'big' ? `
-          <p>大突破要求资质与元石同时达标。</p>
-          <div class="prep-line">资质 ${next.aptitudeOk ? '达标' : `需要 ${({ jia: '甲等', yi: '乙等', bing: '丙等', ding: '丁等' })[next.requiredApt]}`}</div>
-          <div class="prep-line">元石 ${next.stoneCost}</div>
-          <button class="${next.ok ? 'primary' : ''}" ${next.ok ? '' : 'disabled'} data-break="stone">冲击下一转</button>
-        ` : '<p>已经到达当前修炼上限。</p>'}
-      </section>
-      <section class="prep-panel">
-        <div class="kicker">资质蛊</div>
-        <h3>资质 ${({ jia: '甲等', yi: '乙等', bing: '丙等', ding: '丁等' })[state.aptitude] || state.aptitude}</h3>
-        <p>使用后立即提升一档，并同步更新真元容量与恢复。</p>
-        <button class="${Number(state.owned[aptId] || 0) > 0 ? 'primary' : ''}" ${Number(state.owned[aptId] || 0) > 0 ? '' : 'disabled'} data-use-aptitude>使用资质蛊 ×${Number(state.owned[aptId] || 0)}</button>
-      </section>
-      <section class="prep-panel wide">
-        <div class="kicker">坊市 · 本节点货架</div>
-        <p>本页买完即售罄，进入下一节点后刷新。</p>
-        <div class="shop-grid">${offers.map(shopOfferCard).join('') || '<div class="empty">本层暂无可用货物。</div>'}</div>
-      </section>
-      <section class="prep-panel wide">
-        <div class="kicker">蛊仓</div>
-        <p>卖蛊返还价值 50%；若令杀招配方失效，会自动卸下对应杀招。</p>
-        <div class="inventory-list">${DATA.gu.map(inventoryCard).join('') || '<div class="empty">蛊仓为空。</div>'}</div>
-      </section>
-      <section class="prep-panel wide">
-        <div class="kicker">材料</div>
-        <div class="inventory-list">${materials.map((material) => `<div class="material-line"><span>${material.name}</span><b>×${state.materials[material.id]}</b></div>`).join('') || '<div class="empty">暂无材料。</div>'}</div>
-      </section>
-    </div>
-    <section class="prep-section"><div id="prep-alchemy"></div></section>
-    <section class="prep-section"><div id="prep-killmove"></div></section>
-    <div class="leave-row"><button class="primary" data-prep-continue>完成整备 · 选择下一个节点</button></div>`;
+    <div class="prep-shell">
+      <aside class="prep-rail">
+        <section class="rail-block">
+          <div class="kicker">修炼突破</div>
+          <h3>${next.kind === 'small' ? `冲击 ${next.targetLabel}` : next.kind === 'big' ? `冲击 ${next.targetRank} 转` : '五转巅峰'}</h3>
+          ${next.kind === 'small' ? `
+            <p>小突破消耗元石，或消耗 1 只当前转数同阶舍利蛊。</p>
+            <div class="button-row">
+              <button class="${next.canStone ? 'primary' : ''}" ${next.canStone ? '' : 'disabled'} data-break="stone">元石 ${next.stoneCost}</button>
+              <button class="${next.canSari ? 'primary' : ''}" ${next.canSari ? '' : 'disabled'} data-break="sari">消耗 ${sariName}</button>
+            </div>
+            <div class="prep-line">需要 1 只 ${sariName} · 你持有 ${sariHeld}</div>
+            ${heldSari.length ? `<div class="prep-line">舍利不可越阶替代；你还持有 ${heldSari.join('、')}</div>` : ''}
+          ` : next.kind === 'big' ? `
+            <p>大突破要求资质与元石同时达标。</p>
+            <div class="prep-line">资质 ${next.aptitudeOk ? '达标' : `需要 ${APTITUDE_LABEL[next.requiredApt] || next.requiredApt}`}</div>
+            <div class="prep-line">元石 ${next.stoneCost}</div>
+            <button class="${next.ok ? 'primary' : ''}" ${next.ok ? '' : 'disabled'} data-break="stone">冲击下一转</button>
+          ` : '<p>已经到达当前修炼上限。</p>'}
+        </section>
+        <section class="rail-block">
+          <div class="kicker">资质蛊</div>
+          <h3>资质 ${APTITUDE_LABEL[state.aptitude] || state.aptitude}</h3>
+          <p>使用后立即提升一档，并同步更新真元容量与恢复。</p>
+          <button style="margin-top:13px" class="${aptCount > 0 ? 'primary' : ''}" ${aptCount > 0 ? '' : 'disabled'} data-use-aptitude>使用资质蛊 ×${aptCount}</button>
+        </section>
+        <section class="rail-block">
+          <div class="kicker">材料 · ${materials.length} 种</div>
+          <div class="material-list">${materials.map((material) => `<div class="material-line"><span>${material.name}</span><b>×${state.materials[material.id]}</b></div>`).join('') || '<div class="empty">暂无材料。</div>'}</div>
+        </section>
+      </aside>
+      <div class="prep-work">
+        <nav class="prep-tabs">
+          ${PREP_TABS.map((entry) => `<button data-prep-tab="${entry.id}" class="${entry.id === tab ? 'on' : ''}">${entry.label}<span class="tab-count">${tabCount[entry.id]}</span></button>`).join('')}
+        </nav>
+        <div class="prep-pane${tab === 'shop' ? ' on' : ''}" data-pane="shop">
+          <div class="pane-note">本页买完即售罄，进入下一节点后刷新。</div>
+          <div class="shop-grid">${offers.map(shopOfferCard).join('') || '<div class="empty">本层暂无可用货物。</div>'}</div>
+        </div>
+        <div class="prep-pane${tab === 'gu' ? ' on' : ''}" data-pane="gu">
+          <div class="pane-note">卖蛊返还价值 50%；若令杀招配方失效，会自动卸下对应杀招。</div>
+          <div class="grid">${ownedGu.map(inventoryCard).join('') || '<div class="empty">蛊仓为空。</div>'}</div>
+        </div>
+        <div class="prep-pane${tab === 'alchemy' ? ' on' : ''}" data-pane="alchemy"><div id="prep-alchemy"></div></div>
+        <div class="prep-pane${tab === 'killmove' ? ' on' : ''}" data-pane="killmove"><div id="prep-killmove"></div></div>
+      </div>
+    </div>`;
 
   renderAlchemy(root.querySelector('#prep-alchemy'));
   renderKillmove(root.querySelector('#prep-killmove'));
+  root.querySelectorAll('[data-prep-tab]').forEach((button) => {
+    button.addEventListener('click', () => {
+      prepTab = button.dataset.prepTab;
+      root.querySelectorAll('[data-prep-tab]').forEach((tabButton) => tabButton.classList.toggle('on', tabButton === button));
+      root.querySelectorAll('[data-pane]').forEach((pane) => pane.classList.toggle('on', pane.dataset.pane === prepTab));
+    });
+  });
   root.querySelectorAll('[data-buy-offer]').forEach((button) => {
     button.addEventListener('click', () => act.buyOffer(button.dataset.buyOffer));
   });
