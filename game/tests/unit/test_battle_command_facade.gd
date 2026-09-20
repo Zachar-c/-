@@ -570,12 +570,16 @@ func test_layer_boss_scaling_rounds_floors_and_preserves_nonattack_intents() -> 
 	assert_eq(int(battle["enemies"][0]["hp"]), 8)
 	var mapped_intent: Dictionary = battle["enemies"][0]["intent"]
 	assert_eq(mapped_intent, {
+		"id": "",
 		"kind": "seal",
 		# H3（Q8 Step 4）：意图带 damage_intent 语义属性——seal 类非伤害意图为 false。
 		"damage_intent": false,
 		"damage": 7,
 		"label": "倍率探针",
 		"speed": 3,
+		# SIDE-FIX（2026-09-19）：冷却门禁用 id/cooldown，焚元结算用 essence_burn。
+		"cooldown": 0,
+		"essence_burn": 0,
 		"seal_turns": 2,
 		"soul_drain": 4,
 		"life_cost": 5,
