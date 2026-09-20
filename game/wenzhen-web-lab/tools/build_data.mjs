@@ -82,6 +82,24 @@ const pickedEnemies = Object.keys(ART)
       && (r.counter_status === 'bound' || r.counter_status === 'guarded')),
   }));
 
+// 遭遇：战斗节点模板原样抽取（10 个 type=combat；唯一多敌 beast_swarm_pass）。
+// 规模口径见 map_generator.gd（maxi(1, fallback.size())），运行时敌名单口径见
+// battle_command_facade.gd `_v1_enemies`（enemy_roll > enemy_kinds > enemy_kind）。
+const nodesFile = read('data/nodes.json');
+const nodeList = Array.isArray(nodesFile) ? nodesFile : (nodesFile.nodes || []);
+const nodeNames = names.nodes || {};
+const encounters = nodeList
+  .filter((t) => t.type === 'combat')
+  .map((t) => ({
+    id: t.id,
+    name: nodeNames[t.id] || t.id,
+    type: t.type,
+    enemy_kind: t.enemy_kind || null,
+    enemy_kinds: t.enemy_kinds ? [...t.enemy_kinds] : null,
+    enemy_theme: t.enemy_theme || null,
+    boss_pool: t.boss_pool ? [...t.boss_pool] : null,
+    summary: t.summary || '',
+  }));
 // 机制覆盖清单：给开发者看的"这个页面验了什么、没验什么"。
 // 只列已实现且能指到源头的机制；未覆盖项要写清为什么没做，避免页面看起来比实际完整。
 const mechanisms = {
@@ -95,6 +113,7 @@ const mechanisms = {
     { name: '直接攻击被反击吞掉', detail: '触发条件 trigger=direct_strike / window=before_damage；吞掉后敌方进入 bound/guarded，该反击随即不再预警', source: 'action_preview_service.gd:325-347（_live_counter_labels）' },
     { name: '多阶段 AI（阶段 + 冷却门禁）', detail: '按 until_hp_ratio 切阶段；每阶段可有多条意图，第 T 回合发出后 T+cooldown+1 起才可再选；当前阶段所有意图都在冷却时显示 cooldown_wait、该回合不攻击', source: 'data/enemies.json 的 phases 与自带 _phases_note；enemy_catalog.gd:174-208 只做 schema 校验，运行时未实现——本页是首个实现' },
     { name: '焚元意图', detail: '意图带 essence_burn 时烧掉玩家真元（蚀脉扰元 / 麻痹长嗥）', source: 'data/enemies.json phases[].intents[].essence_burn（按字段名直译，Godot 运行时不读该字段）' },
+    { name: '多敌遭遇', detail: '10 个 type=combat 模板中唯一多敌 beast_swarm_pass（enemy_kinds 2 只）；规模 = enemy_kinds 长度；玩家点选目标、未选回退第一个存活；敌方按数组序逐个结算、每次立即判胜负；全灭才胜利；反击/阶段/冷却每敌一份；护体是池语义', source: 'data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）' },
   ],
   notCovered: [
     { name: 'marked 刻痕', why: 'v1_battle.json 的 kill_moves 里没有任何带 marked 的招，来源在剑道刻痕通道，本批无数据支撑，不臆造' },
@@ -103,7 +122,6 @@ const mechanisms = {
     { name: '意图选取顺序', why: '数据未写明多意图之间的优先级（_phases_note 只定义了冷却门禁）。本页取"数据顺序中第一条可用的"，属原型设定，Godot 无实现可对照' },
     { name: '另 3 个带阶段数据的 Boss', why: 'blood_vein_bishop 之外的 clan_patriarch / blue_fur_jiangshi / miasma_vein_lord 缺少对应立绘，未纳入；其中 clan_patriarch 的「家族征召」是 damage 0 且无 essence_burn，语义未知' },
     { name: 'Boss 立绘', why: '血络主教无专属立绘，借用同流派血道蝙蝠图（enemy_bat.png），仅影响观感' },
-    { name: '多敌遭遇', why: 'data/nodes.json 的节点是 enemy_kind 单敌结构，未见多敌编组数据' },
     { name: '念头/魂魄完整系统', why: '本页只用了念头作为行动成本，魂魄与失控未实现' },
     { name: '确定性、存档、事件日志', why: '本原型完全没有：随机、不落盘、不改写状态机，仅供视觉确认' },
     { name: 'counter_status="sparked"（雷冠头狼）', why: '数据漂移：data/enemies.json 声明了该反击状态，但 scripts/ 与 docs/ 里零命中，规则层无实现语义。本页不臆造，已从反击列表剔除' },
@@ -125,10 +143,10 @@ const battle = {
   fightDamageBase: v1.fight_damage_base,
 };
 
-const out = { gu, recipes: picked, killMoves, enemies: pickedEnemies, battle, mechanisms };
+const out = { gu, recipes: picked, killMoves, enemies: pickedEnemies, encounters, battle, mechanisms };
 const banner = '// 本文件由 tools/build_data.mjs 从 Godot 侧数据表生成，不要手改。\n'
   + '// 用普通脚本（非 ES module）产出，这样 file:// 双击打开也能跑，不必起本地服务。\n';
 fs.writeFileSync(path.join(here, '..', 'js', 'data.js'),
   banner + 'const DATA = ' + JSON.stringify(out, null, 2) + ';\n');
-console.log('gu', gu.length, '| recipes', picked.length, '| killMoves', killMoves.length, '| enemies', pickedEnemies.length);
+console.log('gu', gu.length, '| recipes', picked.length, '| killMoves', killMoves.length, '| enemies', pickedEnemies.length, '| encounters', encounters.length);
 if (drift.length) console.log('数据/规则漂移（' + drift.length + '）：\n  - ' + drift.join('\n  - '));
