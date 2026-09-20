@@ -10,6 +10,7 @@ function renderKillmove(root) {
     const id = state.equipped[i];
     if (!id) return '<div class="slot">空</div>';
     const km = DATA.killMoves.find((m) => m.id === id);
+    if (!km) return '<div class="slot">空</div>';
     return `<div class="slot filled" title="${km.label}">${(km.recipe[0] && `<img src="${iconOf(km.recipe[0])}" alt="">`) || km.label}</div>`;
   }).join('');
 

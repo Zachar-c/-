@@ -19,24 +19,24 @@ const statusZh = (s) => ({ bound: '受制', guarded: '戒备' }[s] || s || '—'
 // 一条反击当前是否生效（会吞掉直接攻击）。
 // 与 Godot 一致：trigger=direct_strike、window=before_damage；
 // 敌方已处于该状态时该反击不再生效（bound → enemy_bound，guarded → guarded）。
-function reactionLive(battle, r) {
-  if (!battle.revealed) return false;
+function reactionLive(enemy, r) {
+  if (!enemy.revealed) return false;
   if (r.trigger !== 'direct_strike' || r.window !== 'before_damage') return false;
-  if (r.counter_status === 'bound' && battle.flags.enemy_bound) return false;
-  if (r.counter_status === 'guarded' && battle.flags.guarded) return false;
+  if (r.counter_status === 'bound' && enemy.flags.enemy_bound) return false;
+  if (r.counter_status === 'guarded' && enemy.flags.guarded) return false;
   return true;
 }
 
-function reactionSettled(battle, r) {
-  return (r.counter_status === 'bound' && !!battle.flags.enemy_bound)
-    || (r.counter_status === 'guarded' && !!battle.flags.guarded);
+function reactionSettled(enemy, r) {
+  return (r.counter_status === 'bound' && !!enemy.flags.enemy_bound)
+    || (r.counter_status === 'guarded' && !!enemy.flags.guarded);
 }
 
 const hpRatio = (enemy) => (enemy.hpMax ? Math.max(0, enemy.hp) / enemy.hpMax : 1);
 
 // 当前生效中的反击：取当前阶段的反击表（有 phases 的敌人在各阶段可给不同反击）
-function liveReactions(battle) {
-  return phaseView(battle.enemy).reactions.filter((r) => reactionLive(battle, r));
+function liveReactions(enemy) {
+  return phaseView(enemy).reactions.filter((r) => reactionLive(enemy, r));
 }
 
 // ---------- 多阶段 AI ----------
@@ -73,11 +73,14 @@ function selectIntent(intents, lastFired, turn) {
   return null;
 }
 
-// 意图文案：伤害 / 焚元 / 攻击
+// 意图文案：伤害 / 封印 / 抽魂 / 焚元 / 攻击
 function intentText(it) {
   if (!it) return '冷却中 · 本回合不攻击';
   const parts = [];
   if (it.damage) parts.push(`伤 ${it.damage}`);
+  if (it.kind === 'seal') parts.push(`封印 ${it.seal_turns || 1} 回合`);
+  if (it.soul_drain) parts.push(`抽魂 ${it.soul_drain}`);
+  if (it.life_cost) parts.push(`寿元 ${it.life_cost}`);
   if (it.essence_burn) parts.push(`焚元 ${it.essence_burn}`);
   return `${it.label}（${parts.join(' · ') || '无直接伤害'}）`;
 }
