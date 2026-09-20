@@ -288,8 +288,9 @@ git diff --check
 
 ### 12.2 远程基准校准（强制）
 
-- 每次提交前必须运行 `py -3 scripts/check_remote_base.py`。该命令会先 `git fetch origin main`，再确认 `origin/main` 已包含于当前 `HEAD`；未通过时不得提交。
-- 每次推送前也必须重新运行该命令。远程在审阅期间推进时，先保护未提交改动，再执行 `git rebase origin/main`，处理完成后重新校验。
+- 每次提交前必须运行 `py -3 scripts/check_remote_base.py`。该命令会先 `git fetch github master`，再确认 `github/master` 已包含于当前 `HEAD`；未通过时不得提交。
+- 每次推送前也必须重新运行该命令。远程在审阅期间推进时，先保护未提交改动，再执行 `git rebase github/master`，处理完成后重新校验。
+- **基准已换**（2026-09-20）：本机 `main` 已对齐 `github/master`；Gitee 的 `origin/main` 是有意保留的旧分叉，**不再作为门禁基准**。要换基准就改 `check_remote_base.py` 的两个默认值，不要在 hooks 里各写一份。
 - 每个 clone 或 worktree 均须执行一次 `git config core.hooksPath .githooks`，启用仓库版本化的 `pre-commit` 与 `pre-push` 保护；hooks 是人工校验之外的第二道门。
 - 禁止用跳过 hook、强制推送或改写远程历史绕过此规则。若远程基准不可用，停止提交和推送，先报告阻塞原因。
 

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""阻止在未吸收远程 main 基准时提交或推送。"""
+"""阻止在未吸收远程基准时提交或推送。
+
+基准为 `github/master`（2026-09-20 起）：本机 `main` 已对齐该分支，
+Gitee `origin/main` 是有意保留的旧分叉，不再作为提交门禁的基准。
+"""
 import os
 import subprocess
 import sys
@@ -70,8 +74,8 @@ def main():
         ('NoFetch', 'bool'),
     ], defaults={
         'RepoRoot': REPO_ROOT,
-        'Remote': 'origin',
-        'Branch': 'main',
+        'Remote': 'github',
+        'Branch': 'master',
         'NoFetch': False,
     })
     result = check_remote_base(
