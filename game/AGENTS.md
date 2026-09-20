@@ -37,6 +37,12 @@
   ① **资质 / 真元** 与 **肉身 / HP** 是**两条独立成长轴**——不得因为一个历史数字把资质、肉身、魂魄悄悄绑成一条「角色品质」总轴；
   ② `standard_human_hp = 100`、`player_start_hp = 100` 为当前真源；**禁止把「丙等资质 → HP ×0.8」当作默认规则**，除非另有产品裁决。
   若未来产品明令「弱肉身开局」，`player_start_hp = 80` 可直接作为有产品语义的设计常量，**不需要伪造资质系数公式**（有明确语义的常量 > 没有依据的漂亮公式）。
+- **双线规则权威源（2026-09-19，L1 裁决）**：`world-model/rulings/RUL-2026-09-19-010.json`。三条不变量：
+  ① 当前阶段 **Godot = Canonical（唯一规则权威源）**，**Web = Disposable Prototype**；
+  ② **禁止两个规则权威源**——「双线各写一份规则」的手抄模式已被 REJECT（长期必漂）；
+  ③ **不新建共享规则基础设施**；P3 的 conformance cases 以 Godot 侧输出为准，Web 侧消费或接受一致性测试。
+  弃 Godot 必须通过 **Production-Equivalent Bake-off** 的 7 项能力等价证明（确定性 / 规则验证 / 存档 / 最小迁移 / 数据契约 / 可调试性 / 目标交付）；
+  **规模对照（行数、耗时、测试数量）不作判据**。
 - 总体机制基线：`docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md`
 - 蛊系统、经济与战斗最新基线：`docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md`
 - spec-v4 实施计划（10 阶段 20 任务）：`docs/superpowers/plans/2026-09-01-gu-system-economy-combat-implementation.md`
@@ -174,6 +180,7 @@
 - 禁止新增局外数值成长、通用蛊槽、平行经验等级、局内任务或局内成就。
 - 禁止把转数当作万能倍率——HP / Damage / Price / Essence / Boss 倍率 / 奖励不得共用同一个转数乘数；各轴倍率必须独立（依据 `RUL-2026-09-19-008`）。
 - 禁止把资质、肉身、魂魄耦合进同一条「角色品质」总轴；禁止把「丙等资质 → HP ×0.8」当默认规则；禁止为「有明确产品语义的常量」伪造推导公式（依据 `RUL-2026-09-19-009`）。
+- 禁止建立第二条规则权威源（Web 线不得自行实现规则判定；双线手抄已 REJECT）；禁止新建 Web↔Godot 共享规则基础设施（依据 `RUL-2026-09-19-010`）。
 - 禁止在本文件维护提交流水账、历史测试数字、已修缺陷清单或大段规格原文。
 
 ## 输出格式
