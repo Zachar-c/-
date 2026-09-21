@@ -91,6 +91,9 @@ globalThis.MVP_CONTENT = Object.freeze({
     preserveStones: 3,
     rule: '月芒蛊消耗 3 真元、1 气血、1 念头，冷却 2 回合；对已洞悉目标可压制反制与特殊效果，并降低本次敌方伤害 3。',
   }),
+  /* V4 生存校准阀门：普通战胜利后恢复 2 气血 / 2 真元。不做节点、不做 UI、不做选择。
+     Boss 前不额外满血满真元。前三场最多回 6 气血，受伤仍是长期代价。 */
+  victoryRecovery: Object.freeze({ hp: 2, qi: 2 }),
   actions: Object.freeze({
     moonlight_gu: Object.freeze({
       label: '月光蛊',
@@ -195,7 +198,7 @@ globalThis.MVP_CONTENT = Object.freeze({
           kind: 'drain_qi',
           drainQi: 3,
         }),
-        Object.freeze({ id: 'crossbow_shot', label: '弩箭贯击', damage: 5, tag: 'charge' }),
+        Object.freeze({ id: 'crossbow_shot', label: '弩箭贯击', damage: 4, tag: 'charge' }),
       ]),
     }),
     thunder_crown_sovereign: Object.freeze({
@@ -205,14 +208,14 @@ globalThis.MVP_CONTENT = Object.freeze({
         Object.freeze({
           id: 'thunder_pounce',
           label: '雷冠贯落',
-          damage: 4,
+          damage: 5,
           tag: 'charge',
           counterPool: Object.freeze(['intercept', 'draw_light']),
         }),
       ]),
       phaseTwo: Object.freeze([
         Object.freeze({ id: 'burn_qi_3', label: '焚元', damage: 0, kind: 'burn_qi', burnQi: 3 }),
-        Object.freeze({ id: 'thunder_pounce_2', label: '雷冠贯落', damage: 4, tag: 'charge' }),
+        Object.freeze({ id: 'thunder_pounce_2', label: '雷冠贯落', damage: 6, tag: 'charge' }),
       ]),
     }),
   }),

@@ -5,8 +5,12 @@ const Mvp = (() => {
   const guById = (id) => DATA.gu.find((gu) => gu.id === id) || null;
   const enemyById = (id) => DATA.enemies.find((enemy) => enemy.id === id) || null;
 
+  /* 允许 ?seed=N 覆盖，这样自动走盘可以对同一套规则换种子重复验证。 */
+  const requestedSeed = Number(new URLSearchParams(globalThis.location?.search || '').get('seed'));
+  const baseSeed = Number.isFinite(requestedSeed) && requestedSeed > 0 ? requestedSeed : content.run.seed;
+
   let runSerial = 0;
-  let run = rules.createRun(content, content.run.seed);
+  let run = rules.createRun(content, baseSeed);
   let battle = null;
   let toastTimer = null;
 
@@ -71,7 +75,12 @@ const Mvp = (() => {
       sealedNext: {},
       usedLight: false,
       stoneShellUsed: false,
+      attackedThisTurn: false,
+      guUsedCount: 0,
       lastEnemyDamage: 0,
+      observeCount: 0,
+      damageTaken: 0,
+      guUsage: {},
       log: [`${definition.name} 出现。`],
     };
   }
@@ -120,6 +129,8 @@ const Mvp = (() => {
     battle.used[cooldownKey(id, index)] = true;
     battle.actionOrder.push(id);
     battle.currentGuIds.push(id);
+    battle.guUsedCount += 1;
+    battle.guUsage[id] = (battle.guUsage[id] || 0) + 1;
     const action = content.actions[id];
     if (action.cooldown > 0) {
       battle.cooldowns[cooldownKey(id, index)] = battle.turn + action.cooldown + 1;
@@ -146,8 +157,12 @@ const Mvp = (() => {
     markActionUsed(id, index);
 
     if (action.inspect) {
+      const alreadyKnown = battle.enemy.revealed;
       battle.enemy = rules.revealCounter(battle.enemy);
       battle.lightSupport += 1;
+      /* 只有真正揭示了新信息才计入观察成本：小光蛊平时是当光道支援用的，
+         把它每次都算成「观察」会让信息税看起来比实际高。 */
+      if (!alreadyKnown) battle.observeCount += 1;
       battle.log.push(`<b>${gu.name}</b> 照见当前反制。`);
     }
     if (action.block) {
@@ -160,6 +175,7 @@ const Mvp = (() => {
       battle.log.push(`<b>${gu.name}</b> 回气 +${action.heal}。`);
     }
     if (action.damage) {
+      battle.attackedThisTurn = true;
       const wounded = battle.lastEnemyDamage > 0;
       const damage = id === 'white_boar_strength_gu' && wounded
         ? action.woundedDamage
@@ -177,6 +193,7 @@ const Mvp = (() => {
         battle.log.push(`<b>${gu.name}</b> 被「${counter?.label || '反制'}」吞掉，未造成伤害。`);
         if (hit.selfDamage) {
           run.hp = Math.max(0, run.hp - hit.selfDamage);
+          battle.damageTaken += hit.selfDamage;
           battle.log.push(`迎击反伤 ${hit.selfDamage} 气血。`);
         }
         if (hit.ironRage) {
@@ -196,6 +213,7 @@ const Mvp = (() => {
     if (!battle || battle.won || run.thoughts < 1 || battle.enemy.revealed) return;
     run.thoughts -= 1;
     battle.enemy = rules.revealCounter(battle.enemy);
+    battle.observeCount += 1;
     battle.log.push(`观察成功：当前反制为「${rules.counterRule(content, battle.enemy.currentCounter)?.label || '无'}」。`);
     render();
   }
@@ -213,10 +231,11 @@ const Mvp = (() => {
     battle.won = true;
     const reward = rewardText(battle.definition);
     run.stones += reward;
-    run.qi = Math.min(run.qiMax, run.qi + 2);
-    pushLog('battle', battle.step.title, `${battle.definition.name} 伏诛；元石 +${reward}，真元 +2。`);
-    battle.log.push(`<b>${battle.definition.name}</b> 伏诛。元石 +${reward}，战后真元 +2。`);
-    toast(`伏诛 · 元石 +${reward} · 真元 +2`, 'good');
+    /* V4：普通战胜利恢复 2 气血 / 2 真元（唯一生存校准阀门，不做节点/UI/选择）。 */
+    run = rules.applyVictoryRecovery(run, content);
+    pushLog('battle', battle.step.title, `${battle.definition.name} 伏诛；元石 +${reward}，气血 +2，真元 +2。`);
+    battle.log.push(`<b>${battle.definition.name}</b> 伏诛。元石 +${reward}，战后恢复 2 气血 / 2 真元。`);
+    toast(`伏诛 · 元石 +${reward} · 气血 +2 · 真元 +2`, 'good');
     return true;
   }
 
@@ -236,18 +255,25 @@ const Mvp = (() => {
         usedLight: battle.usedLight,
         damageReduction: battle.damageReduction,
         stoneShellUsed: battle.stoneShellUsed,
+        attacked: battle.attackedThisTurn,
+        guUsedCount: battle.guUsedCount,
       },
     );
     run.hp = resolved.player.hp;
     run.qi = resolved.player.qi;
     battle.block = resolved.player.block;
     battle.lastEnemyDamage = resolved.damage;
+    battle.damageTaken += resolved.damage;
     battle.enemy = resolved.enemy;
+
+    const counter = rules.counterRule(content, counterId);
+    if (resolved.handled) {
+      battle.log.push(`已正确处理反制「${counter?.label || counterId}」：本次敌方伤害 -3。`);
+    }
 
     if (!intent || intent.tag === 'wait') {
       battle.log.push(`<b>${battle.definition.name}</b> 蓄势不动。`);
     } else {
-      const counter = rules.counterRule(content, counterId);
       let extra = '';
       if (counterId === 'draw_light' && !battle.usedLight) extra = '（逐光未破）';
       if (intent.tag === 'charge' && battle.enemy.ironRage > 0) extra = `（铁皮积威 +${battle.enemy.ironRage}）`;
@@ -256,8 +282,9 @@ const Mvp = (() => {
         battle.log.push(battle.usedLight ? '逐光条件已满足。' : '逐光条件未满足，扑击伤害提高。');
       }
       if (resolved.qiLoss) battle.log.push(`真元被夺 ${resolved.qiLoss}。`);
-      if (resolved.specialSuppressed && intent.kind) battle.log.push('月芒压制生效，特殊效果没有发生。');
-      if (intent.kind === 'seal' && !resolved.specialSuppressed) {
+      if (resolved.specialSuppressed) battle.log.push('月芒压制生效，特殊效果没有发生。');
+      else if (resolved.handled && intent.kind) battle.log.push('反制已被正确处理，特殊效果没有发生。');
+      if (intent.kind === 'seal' && !resolved.specialCancelled) {
         const target = rules.sealTarget(counterId, battle.actionOrder);
         if (target) {
           battle.sealedNext[target] = true;
@@ -291,6 +318,8 @@ const Mvp = (() => {
     battle.damageReduction = 0;
     battle.usedLight = false;
     battle.stoneShellUsed = false;
+    battle.attackedThisTurn = false;
+    battle.guUsedCount = 0;
     battle.block = 0;
     run.thoughts = run.thoughtMax;
     startEnemyTurnState();
@@ -321,7 +350,7 @@ const Mvp = (() => {
 
   function restart() {
     runSerial += 1;
-    run = rules.createRun(content, content.run.seed + runSerial);
+    run = rules.createRun(content, baseSeed + runSerial);
     battle = null;
     beginStep();
   }
@@ -572,7 +601,45 @@ const Mvp = (() => {
     return renderEnding();
   }
 
-  return { start: beginStep };
+  /* 只读快照，供自动走盘记录逐场指标（HP/Qi/Stone/turnCount/observeCount/
+     damageTaken/guUsage）。页面渲染不依赖它。 */
+  function stats() {
+    return {
+      seed: run.seed,
+      stepId: currentStep().id,
+      stepIndex: run.stepIndex,
+      hp: run.hp,
+      hpMax: run.hpMax,
+      qi: run.qi,
+      qiMax: run.qiMax,
+      stones: run.stones,
+      tradeChoice: run.tradeChoice,
+      forgeChoice: run.forgeChoice,
+      borrowedMoon: run.borrowedMoon,
+      owned: { ...run.owned },
+      ended: !!run.result,
+      result: run.result ? { ...run.result } : null,
+      runLog: run.runLog.map((entry) => ({ ...entry })),
+      battle: battle ? {
+        enemyId: battle.definition.id,
+        enemyHp: battle.enemy.hp,
+        enemyHpMax: battle.enemy.hpMax,
+        turn: battle.turn,
+        won: !!battle.won,
+        revealed: !!battle.enemy.revealed,
+        currentCounter: battle.enemy.currentCounter || '',
+        knownCounters: [...(battle.enemy.knownCounters || [])],
+        intent: battle.enemy.currentIntent ? { ...battle.enemy.currentIntent } : null,
+        lightSupport: battle.lightSupport,
+        block: battle.block,
+        observeCount: battle.observeCount,
+        damageTaken: battle.damageTaken,
+        guUsage: { ...battle.guUsage },
+      } : null,
+    };
+  }
+
+  return { start: beginStep, stats };
 })();
 
 Mvp.start();

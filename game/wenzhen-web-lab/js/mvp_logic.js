@@ -152,6 +152,7 @@ globalThis.MvpLogic = (() => {
       currentIntent: null,
       currentCounter: null,
       revealed: false,
+      knownCounters: [],
       counterDisabled: false,
       suppressed: false,
       damageReduction: 0,
@@ -200,7 +201,7 @@ globalThis.MvpLogic = (() => {
     const phaseChanged = next.lastPhaseIndex >= 0 && next.lastPhaseIndex !== phaseIndex;
     next.lastPhaseIndex = phaseIndex;
     next.currentIntent = intentFor(content, next, turn);
-    next.revealed = false;
+    next.knownCounters = [...(next.knownCounters || [])];
     next.counterDisabled = false;
     next.suppressed = false;
     next.damageReduction = 0;
@@ -212,6 +213,9 @@ globalThis.MvpLogic = (() => {
     } else if (intent?.counter === 'iron' && !next.counterBroken) {
       next.currentCounter = 'iron';
     }
+    /* V4：同一反制类型在本场被观察过一次后即永久识别，不再每回合重新隐藏。
+       隐藏信息因此只在「第一次遇到该反制」时收一次念头税，而不是每回合固定收。 */
+    next.revealed = !!next.currentCounter && next.knownCounters.includes(next.currentCounter);
     return { enemy: next, phaseIndex, phaseChanged };
   }
 
@@ -226,6 +230,35 @@ globalThis.MvpLogic = (() => {
   function revealCounter(enemy) {
     const next = clone(enemy);
     next.revealed = true;
+    const id = next.currentCounter;
+    next.knownCounters = [...(next.knownCounters || [])];
+    if (id && !next.knownCounters.includes(id)) next.knownCounters.push(id);
+    return next;
+  }
+
+  /* V4：正确处理当前反制的要求 → 本次敌方伤害 -3 并取消该意图附带的特殊效果。
+     门槛是「读对 + 做对」：反制必须先被识破（revealed），才开始谈执行要求；
+     否则不看信息、靠运气撞对动作就能白拿减伤，信息就不再是资源了。 */
+  function counterHandled(enemy, context = {}) {
+    const counterId = counterActive(enemy) ? enemy.currentCounter : '';
+    if (!counterId || !enemy.revealed) return false;
+    switch (counterId) {
+      case 'intercept': return !context.attacked;                      // 不硬打
+      case 'draw_light': return !!context.usedLight;                   // 用了光道蛊
+      case 'iron': return !!enemy.counterDisabled || !!enemy.counterBroken;  // 已破铁皮
+      case 'seal_first':
+      case 'seal_last': return Number(context.guUsedCount || 0) === 0; // 本回合不出招，无手可封
+      default: return false;
+    }
+  }
+
+  /* V4：普通战胜利后恢复 2 气血 / 2 真元。这是唯一的生存校准阀门——
+     不做节点、不做 UI、不做选择。Boss 前不额外满血。 */
+  function applyVictoryRecovery(run, content = globalThis.MVP_CONTENT) {
+    const next = clone(run);
+    const recovery = content?.victoryRecovery || {};
+    next.hp = Math.min(next.hpMax, next.hp + Number(recovery.hp || 0));
+    next.qi = Math.min(next.qiMax, next.qi + Number(recovery.qi || 0));
     return next;
   }
 
@@ -263,12 +296,23 @@ globalThis.MvpLogic = (() => {
     const nextEnemy = clone(enemy);
     const nextPlayer = clone(player);
     const intent = context.intent || enemy.currentIntent || { damage: 0 };
-    const counterId = counterActive(nextEnemy) ? nextEnemy.currentCounter : '';
-    let rawDamage = Math.max(0, Number(intent.damage || 0));
 
+    /* 铁皮是否在本轮被石皮破掉，必须先结算：counterHandled('iron') 要看这个结果，
+       而这些赋值不依赖下方任何伤害计算，因此提前不影响原有语义。 */
+    const wasAlreadyBroken = !!nextEnemy.counterBroken;
+    if (context.stoneShellUsed && intent.tag === 'charge') nextEnemy.counterBroken = true;
+    if (intent.tag === 'charge' && wasAlreadyBroken) nextEnemy.counterBroken = false;
+
+    const counterId = counterActive(nextEnemy) ? nextEnemy.currentCounter : '';
+    const handled = counterHandled(nextEnemy, { ...context, intent });
+    const specialSuppressed = !!nextEnemy.suppressed;
+    const specialCancelled = handled || specialSuppressed;
+
+    let rawDamage = Math.max(0, Number(intent.damage || 0));
     if (intent.tag === 'charge') rawDamage += Math.max(0, Number(nextEnemy.ironRage || 0));
     if (counterId === 'draw_light' && !context.usedLight) rawDamage += 3;
-    if (nextEnemy.suppressed) rawDamage = Math.max(0, rawDamage - 3);
+    if (handled) rawDamage = Math.max(0, rawDamage - 3);
+    if (specialSuppressed) rawDamage = Math.max(0, rawDamage - 3);
     rawDamage = Math.max(0, rawDamage - Math.max(0, Number(context.damageReduction || 0)));
 
     const blocked = Math.min(Math.max(0, Number(nextPlayer.block || 0)), rawDamage);
@@ -277,15 +321,10 @@ globalThis.MvpLogic = (() => {
     nextPlayer.hp = Math.max(0, Number(nextPlayer.hp || 0) - hpLoss);
     nextPlayer.lastHpLoss = hpLoss;
 
-    const specialSuppressed = !!nextEnemy.suppressed;
     let qiLoss = 0;
-    if (!specialSuppressed && intent.kind === 'drain_qi') qiLoss += Math.max(0, Number(intent.drainQi || 0));
-    if (!specialSuppressed && intent.kind === 'burn_qi') qiLoss += Math.max(0, Number(intent.burnQi || 0));
+    if (!specialCancelled && intent.kind === 'drain_qi') qiLoss += Math.max(0, Number(intent.drainQi || 0));
+    if (!specialCancelled && intent.kind === 'burn_qi') qiLoss += Math.max(0, Number(intent.burnQi || 0));
     nextPlayer.qi = Math.max(0, Number(nextPlayer.qi || 0) - qiLoss);
-
-    const wasAlreadyBroken = !!nextEnemy.counterBroken;
-    if (context.stoneShellUsed && intent.tag === 'charge') nextEnemy.counterBroken = true;
-    if (intent.tag === 'charge' && wasAlreadyBroken) nextEnemy.counterBroken = false;
 
     return {
       enemy: nextEnemy,
@@ -294,7 +333,9 @@ globalThis.MvpLogic = (() => {
       blocked,
       qiLoss,
       counterId,
+      handled,
       specialSuppressed,
+      specialCancelled,
     };
   }
 
@@ -344,9 +385,11 @@ globalThis.MvpLogic = (() => {
     startTurn,
     counterRule,
     counterActive,
+    counterHandled,
     revealCounter,
     resolveDirectStrike,
     resolveEnemyAction,
+    applyVictoryRecovery,
     finishEnemyAction,
     sealTarget,
     repeatingGuIds,

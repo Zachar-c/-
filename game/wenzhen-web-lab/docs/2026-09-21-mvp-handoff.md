@@ -15,18 +15,42 @@
 - 玩家 1 人，初始 5 只蛊。
 - 4 场战斗、1 次三选一交易、1 次炼蛊或保炉、1 次 Boss 阶段战。
 - `js/data.js` 提供蛊名、图标、敌人名、肖像和战斗奖励；`mvp_content.js` 只定义本局原型场景的持久资源、敌人意图和反制规则。
-- 真元不按回合自动恢复；战斗胜利恢复 2 点真元且不回血，元石可在非战斗阶段以 1→2 碎石还元。
-- 每回合 2 念头；观察消耗 1 念头并揭示当前反制，反制持续到敌方行动结束或被正确解法压制。
+- 真元不按回合自动恢复；**普通战胜利恢复 2 点气血 + 2 点真元**（V4 唯一的生存校准阀门，不做节点/UI/选择），元石可在非战斗阶段以 1→2 碎石还元。
+- 每回合 2 念头；反制**同一类型在本场被观察过一次后永久识别**，不再每回合重新隐藏。
+- **正确处理当前反制 → 本次敌方伤害 -3 并取消该意图附带的特殊效果**（下限 0）；未识破则不给减伤（读对 + 做对才给）。
 
 ## 验证
 
+Node 22 下 `node --test <目录>` 会报 `MODULE_NOT_FOUND`，**必须显式列出 8 个测试文件**：
+
 ```powershell
 cd game/wenzhen-web-lab
-node --test tests/mvp_logic.test.mjs
+node --test tests/rules.test.mjs tests/gu_rules.test.mjs tests/run_rules.test.mjs `
+  tests/loot_rules.test.mjs tests/shop_rules.test.mjs tests/node_action_rules.test.mjs `
+  tests/run_flow.test.mjs tests/mvp_logic.test.mjs
 node --check js/mvp_content.js
 node --check js/mvp_logic.js
 node --check js/mvp.js
+node --check tools/autoplay.mjs
 ```
+
+当前基线：**98/98 通过**。
+
+## 产品验收门（V4 起的第一道门）
+
+88/88 只能证明「按钮能按、状态能变」，证明不了「这个游戏数学上还能不能玩」。
+所以从 V4 起，真实 DOM 自动走盘是**必过的产品验收门**：
+
+```powershell
+cd game/wenzhen-web-lab
+node tools/autoplay.mjs --route all --seed 101        # 三条交易分支 + L1 验收区间判定
+node tools/autoplay.mjs --route sacrifice --trace     # 逐回合决策与逐场指标
+```
+
+它按 `2026-09-21 L1 冻结规则 V4` 的区间逐项判定（猎犬后 HP≥18 / 山猪后 HP≥12 /
+悍客后 HP≥8 / Boss 开战不满血满真元 / 三条路线轨迹不同 / 全部通关 / 各场回合数），
+并逐场记录 `HP / Qi / Stone / turnCount / observeCount / damageTaken / guUsage`。
+判定不通过时退出码为 3。
 
 浏览器走盘：
 
@@ -51,3 +75,15 @@ node tools/drive.mjs `
 - 这是单局 MVP，不做存档、成就、难度、完整地图、完整商店或大规模蛊目录。
 - 月芒蛊的“压制反制”是本 MVP 为验证合成改变规则而新增的 lab-only 行为；Godot 数据与原运行时未声明该规则。
 - 敌人意图/反制是本局验证用场景配置，不应回写为正式 Godot 数值结论；当前仍需 L1/L0 试玩后再校准平衡。
+- **V4 尚未通过验收门（19/34）**，两个结构性阻塞已上抛 L1，不在 lab 内自行改数：
+  1. **僵局（soft-lock）**：炼蛊台会消耗月光蛊 + 小光蛊，此后唯一输出只剩月芒蛊
+     （3 真元 + 1 气血，CD 2）；而真元在战斗内不回复，噬元/焚元还在抽干它。
+     真元归零后玩家可以进入「没有任何可用输出手段、但收势(-2)+生机草蛊(+1) 又能压过
+     被处理过的敌方伤害」的状态 —— 既打不死也死不了。实测 sacrifice / debt 均在此打满
+     900 步上限（`autoplay` 会把它标成 `stalemate`）。
+  2. **回合数超标**：反制序列使「不能出手」的回合占比过高。seed 101 下猎犬与狼王的
+     反制在 `逐光 / 迎击` 之间交替（T1逐光 T2迎击 T3逐光 T4迎击…），山猪三分之二回合带铁皮。
+     按「迎击不能硬打」的读法，这些回合伤害为 0，战斗长度因此约为目标值的 2 倍。
+- 另有一处**内容缺口**（同上抛 L1）：悍客的伤害意图 `crossbow_shot` 与狼王二阶段
+  `thunder_pounce_2` 都没有 counterPool，按统一规则天生不可减免，
+  故 L1 期望的「悍客 1 / 狼王重击 2~3」需先给这两个意图补反制才能达成。
