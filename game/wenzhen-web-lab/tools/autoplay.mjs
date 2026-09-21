@@ -18,7 +18,8 @@
  *   --max-steps <N>                      单局步数上限（防死循环，默认 900）
  *   --headed                             不用 headless
  *
- * 判定区间来自 2026-09-21 L1 冻结规则 V4；本文件只测量与判定，不改数值。
+ * 判定区间来自 2026-09-21 L1 冻结规则 V4。区间原文、当前阻塞与待裁决杠杆见
+ * docs/2026-09-21-v4-calibration-handoff.md；本文件只测量与判定，不改数值。
  */
 
 import { spawn } from 'node:child_process';

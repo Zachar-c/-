@@ -157,12 +157,14 @@ const Mvp = (() => {
     markActionUsed(id, index);
 
     if (action.inspect) {
-      const alreadyKnown = battle.enemy.revealed;
+      /* 只有「本来有隐藏反制、且尚未识破」时，这次照见才算买了一次信息。
+         小光蛊平时是当光道支援用的；在无敌方反制的回合（例如山猪的蓄势）
+         把它算成「观察」，会让信息税看起来比实际高。
+         （无 counter 时 revealed 恒为 false，所以不能只看 revealed。） */
+      const boughtInfo = !!battle.enemy.currentCounter && !battle.enemy.revealed;
       battle.enemy = rules.revealCounter(battle.enemy);
       battle.lightSupport += 1;
-      /* 只有真正揭示了新信息才计入观察成本：小光蛊平时是当光道支援用的，
-         把它每次都算成「观察」会让信息税看起来比实际高。 */
-      if (!alreadyKnown) battle.observeCount += 1;
+      if (boughtInfo) battle.observeCount += 1;
       battle.log.push(`<b>${gu.name}</b> 照见当前反制。`);
     }
     if (action.block) {
