@@ -37,10 +37,12 @@ function eventById(id) {
   return DATA.events.find((e) => e.id === id) || null;
 }
 
-// 节点类型中文名优先取 Godot 侧 data/names.json 的 types 分区（DATA.nodeTypes）；
+// 节点类型中文名优先取 Godot 侧 data/names.json 的 types 分区（DATA.nodeTypes）；该分区缺
+// rest 键（数据缺口，覆盖页已登记），回退名由 NodeActionRules.typeLabel 提供
+// （来源 scripts/presentation/display_text.gd:54）。
 // battle/elite/boss 是原型自己的战斗节点分层，不在该分区内，走回退。
 function nodeTypeLabel(type) {
-  return DATA.nodeTypes?.[type]
+  return NodeActionRules.typeLabel(type, DATA.nodeTypes)
     || ({ battle: '战斗', elite: '精英', boss: '层主' }[type])
     || type || '未知';
 }
@@ -99,7 +101,7 @@ function renderHall(root) {
       <section class="hall-main">
         <div class="eyebrow">问真 · Web 拼装局</div>
         <h1>问真</h1>
-        <p class="hall-copy">固定节点图、战斗、险地与市集/野蛊的节点动作、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
+        <p class="hall-copy">固定节点图、战斗、节点动作（险地 / 市集 / 野蛊 / 休整 / 静修）、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
         <div class="difficulty-row">
           ${Object.entries(DATA.flow.difficulties).map(([key, value]) => `
             <button class="${key === difficulty ? 'on' : ''}" data-difficulty="${key}">
@@ -189,7 +191,7 @@ function mapNodeCard(node, selected, available, completed) {
   const stateClass = isSelected ? 'current' : isDone ? 'done' : isAvailable ? 'available' : 'locked';
   const isActionNode = NodeActionRules.nodeTypes.includes(node.type);
   const detail = isActionNode
-    ? (node.choices || []).map(actionLabel).join(' · ')
+    ? nodeActionMenuLabels(node).join(' · ')
     : nodeEnemyIds(node).map((id) => (enemyById(id) || {}).name || id).join('、');
   return `<article class="map-node ${stateClass}">
     <div class="rn-top"><span>${node.type === 'boss' ? '层主' : `L${node.segment} · ${node.depth + 1}`}</span><em>${nodeTypeLabel(node.type)}</em></div>
@@ -200,8 +202,24 @@ function mapNodeCard(node, selected, available, completed) {
   </article>`;
 }
 
-// 节点动作页（险地 / 市集 / 野蛊）：列模板 choices 的 standard action 卡（另补一张 leave 卡），
-// 解析后回统一整备。规则、门禁、文案全部来自 js/node_action_rules.js，页面不另算。
+// 地图卡片上的动作摘要：休整节点列自己的两张卡（歇脚恢复 / 离开休整，标题与卡片同源），
+// 其余标准节点只列本模块真的会出卡的动作——choices 里未搬的动作不列（如体印仪式的 take_imprint）。
+function nodeActionMenuLabels(node) {
+  if (node.type === NodeActionRules.restNodeType) {
+    return NodeActionRules.restCards({ summary: node.summary }).map((card) => card.title);
+  }
+  return (node.choices || [])
+    .filter((choiceId) => NodeActionRules.actionIds.includes(String(choiceId)))
+    .map(actionLabel);
+}
+
+// 节点动作页底注（lab 侧说明文案，不是 Godot 原文）。
+const NODE_ACTION_HELP = '节点动作按 Godot standard actions 结算：做工 +3 元石、采集 +2 元石；购买情报与交易各耗 2 枚元石；探查、退回与离开只记事实；穿越消耗 1 点真元；静修恢复 1 点真元（真元上限处截断）；解析后进入统一整备。';
+const REST_ACTION_HELP = '休整节点是一次收益门禁：先取「歇脚恢复」（气血按上限的 30% 向下取整、至少 1 点，真元 +2，均不超上限），「离开休整」才会解禁；本次探访只能取一项收益。数值来源 rest_rules.gd:121-141。';
+
+// 节点动作页（险地 / 市集 / 野蛊 / 休整 / 静修）：标准节点列模板 choices 的 standard action 卡
+// （另按 :44-45 补一张 leave 卡）；休整节点出自己的一套卡（歇脚恢复 + 离开休整，后者是两步交互的门禁）。
+// 规则、门禁、文案全部来自 js/node_action_rules.js，页面不另算。
 function renderNodeActions(root) {
   if (!root) return;
   const node = currentNode();
@@ -209,11 +227,21 @@ function renderNodeActions(root) {
     root.innerHTML = '<div class="empty">当前没有待处理的节点动作。</div>';
     return;
   }
-  const choices = NodeActionRules.options({
-    choices: node.choices,
-    stones: state.stones,
-    essence: state.qi,
-  });
+  const isRest = node.type === NodeActionRules.restNodeType;
+  const cards = isRest
+    ? NodeActionRules.restCards({
+        summary: node.summary,
+        used: state.restUsed === true,
+        health: state.blood,
+        healthMax: state.bloodMax,
+        essence: state.qi,
+        essenceMax: state.qiMax,
+      })
+    : NodeActionRules.options({
+        choices: node.choices,
+        stones: state.stones,
+        essence: state.qi,
+      });
   root.innerHTML = `
     <div class="section-head">
       <div>
@@ -226,7 +254,7 @@ function renderNodeActions(root) {
         <span>气血 ${state.blood}/${state.bloodMax}</span>
       </div>
     </div>
-    <div class="node-action-choices">${choices.map((option) => `
+    <div class="node-action-choices">${cards.map((option) => `
       <article class="node-action-choice ${option.available ? 'ready' : ''}">
         <div class="na-head"><b>${option.title || actionLabel(option.id)}</b><span>${nodeActionCostText(option)}</span></div>
         ${option.summary || node.summary ? `<p class="na-summary">${option.summary || node.summary}</p>` : ''}
@@ -236,7 +264,7 @@ function renderNodeActions(root) {
         ${(option.remedy || []).map((line) => `<p class="remedy">${line}</p>`).join('')}
         <button class="${option.available ? 'primary' : ''}" ${option.available ? '' : 'disabled'} data-node-action="${option.id}">${option.available ? '执行' : '不可用'}</button>
       </article>`).join('')}</div>
-    <div class="map-help">节点动作按 Godot standard actions 结算：做工 +3 元石、采集 +2 元石；购买情报与交易各耗 2 枚元石；探查、退回与离开只记事实；穿越消耗 1 点真元；解析后进入统一整备。</div>`;
+    <div class="map-help">${isRest ? REST_ACTION_HELP : NODE_ACTION_HELP}</div>`;
   root.querySelectorAll('[data-node-action]').forEach((button) => {
     button.addEventListener('click', () => act.resolveNodeAction(button.dataset.nodeAction));
   });

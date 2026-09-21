@@ -23,16 +23,20 @@ const enemyById = Object.fromEntries(
     [`b${segment}`, { id: `b${segment}`, name: `层主${segment}` }],
   ]),
 );
-// 与 data/nodes.json 的 6 个非战斗模板同形（险地 3 + 市集 2 + 野蛊 1）。
+// 与 data/nodes.json 的 9 个非战斗模板同形（险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1），
+// 顺序与 DATA.nodes 的天然顺序一致（池序影响 seededIndex 的选中项）。
 const nonCombatTemplates = [
-  { id: 'toxic_mountain_path', type: 'hazard', name: '毒瘴山道', summary: '毒瘴沿山口沉降。', choices: ['scout', 'cross', 'withdraw'] },
+  { id: 'toxic_mountain_path', type: 'hazard', name: '毒瘴山道', summary: '毒瘴沿山口沉降。谨慎侦察可避开消耗，强行穿越能节省时间。', choices: ['scout', 'cross', 'withdraw'] },
   { id: 'flooded_cave', type: 'hazard', name: '积水石窟', summary: '暗河倒灌石洞，水声中有蛊虫振翅。', choices: ['scout', 'cross', 'withdraw'] },
   { id: 'black_mud_marsh', type: 'hazard', name: '黑泥沼地', summary: '', choices: ['scout', 'cross', 'withdraw'] },
+  { id: 'blood_moss_grove', type: 'wild_gu', name: '血苔林', summary: '血苔丛中藏着疗伤蛊与采集者，收益和伤势风险并存。', choices: ['harvest', 'trade', 'leave'] },
   { id: 'village_short_work', type: 'market', name: '山村短工', summary: '山民寨子缺人守夜。短工给元石，交易则能换取情报。', choices: ['work', 'trade', 'leave'] },
   { id: 'ridge_market', type: 'market', name: '山脊市集', summary: '临时寨市接近收摊，能补资源，但会失去深入山路的时间。', choices: ['trade', 'buy_information', 'leave'] },
-  { id: 'blood_moss_grove', type: 'wild_gu', name: '血苔林', summary: '血苔丛中藏着疗伤蛊与采集者，收益和伤势风险并存。', choices: ['harvest', 'trade', 'leave'] },
+  { id: 'rest_hollow', type: 'rest', name: '山壁石穴', summary: '山壁石穴，落潮前的安静片刻，可稍作歇息恢复气血与真元。', choices: ['rest', 'leave'] },
+  { id: 'rest_shrine', type: 'rest', name: '古祠残龛', summary: '古祠残龛，香火断绝后的清净角落，可稍作歇息恢复气血与真元。', choices: ['rest', 'leave'] },
+  { id: 'body_imprint_ritual', type: 'seclusion', name: '体印仪式', summary: '石壁留有淬体仪式。可稳固根基，也可能留下难以察觉的代价。', choices: ['meditate', 'take_imprint', 'leave'] },
 ];
-const typeLabels = { hazard: '险地', market: '市集', wild_gu: '野蛊' };
+const typeLabels = rules.typeLabels({ hazard: '险地', market: '市集', wild_gu: '野蛊', seclusion: '静修' });
 const generate = (overrides = {}) => flow.generateGraph({
   seed: 20260920,
   difficulty: 'normal',
@@ -137,7 +141,7 @@ test('scout and withdraw still record their own fact exactly once', () => {
 });
 
 test('unlisted actions follow the Godot fallback without touching state', () => {
-  for (const actionId of ['meditate', 'fight', 'deceive', 'retreat']) {
+  for (const actionId of ['take_imprint', 'fight', 'deceive', 'retreat']) {
     const unknown = rules.resolve(actionId, { stones: 7, essence: 9, knownFacts: ['a'] });
     assert.equal(unknown.ok, false, actionId);
     assert.equal(unknown.reason, 'unsupported_standard_action');
@@ -215,10 +219,15 @@ test('options always append the leave card and skip leave inside choices', () =>
   // 险地模板的 choices 里没有 leave，卡里同样补一张（action_preview_service.gd:44-45）。
   const hazardOptions = rules.options({ choices: ['scout', 'cross', 'withdraw'], stones: 3, essence: 3 });
   assert.deepEqual(plain(hazardOptions.map((option) => option.id)), ['scout', 'cross', 'withdraw', 'leave']);
-  const unknown = rules.option('meditate', { stones: 3, essence: 3 });
-  assert.equal(unknown.available, false);
-  assert.equal(unknown.reason, 'unsupported_standard_action');
-  assert.equal(unknown.blockReason, '行动未能完成。');
+  // 未搬的动作不给禁用空按钮（单个 option() 仍保留 Godot 兜底卡，供契约测试用）。
+  const unsupported = rules.option('take_imprint', { stones: 3, essence: 3 });
+  assert.equal(unsupported.available, false);
+  assert.equal(unsupported.reason, 'unsupported_standard_action');
+  assert.equal(unsupported.blockReason, '行动未能完成。');
+  assert.deepEqual(
+    plain(rules.options({ choices: ['meditate', 'take_imprint', 'leave'], stones: 3, essence: 3 }).map((option) => option.id)),
+    ['meditate', 'leave'],
+  );
 });
 
 test('result texts come from display_text ACTION_RESULTS', () => {
@@ -230,6 +239,163 @@ test('result texts come from display_text ACTION_RESULTS', () => {
   assert.equal(rules.resultText('cross'), '你耗去真元，穿过了眼前险处。');
   assert.equal(rules.resultText('scout'), '你探明前路，留下了可靠的路径情报。');
   assert.equal(rules.resultText('withdraw'), '你及时收手，暂时全身而退。');
+  assert.equal(rules.resultText('meditate'), '你静修片刻，恢复了一点真元。');
+});
+
+test('meditate adds one essence and never crosses the essence cap', () => {
+  const card = Object.fromEntries(
+    rules.options({ choices: ['meditate', 'leave'], stones: 0, essence: 3 })
+      .map((option) => [option.id, option]),
+  );
+  // action_preview_service.gd:1068-1069 的 gain 原文
+  assert.deepEqual(plain(card.meditate.gain), ['恢复 1 点真元。']);
+  assert.equal(card.meditate.essenceCost, 0);
+  assert.equal(card.meditate.stoneCost, 0);
+  assert.equal(card.meditate.available, true);
+  // social_command_rules.gd:772-773：真元 +1
+  const raised = rules.resolve('meditate', { essence: 3, essenceMax: 20 });
+  assert.equal(raised.ok, true);
+  assert.equal(raised.reason, 'action_meditate_essence');
+  assert.equal(raised.essenceBefore, 3);
+  assert.equal(raised.essenceAfter, 4);
+  // 上限截断（L2 口径；Godot _resource_transition:814-821 本身不截断，调用点传 qiMax）
+  const capped = rules.resolve('meditate', { essence: 20, essenceMax: 20 });
+  assert.equal(capped.ok, true);
+  assert.equal(capped.essenceAfter, 20);
+  const nearCap = rules.resolve('meditate', { essence: 19, essenceMax: 20 });
+  assert.equal(nearCap.essenceAfter, 20);
+  // 不传上限即不截断（模块层默认值，lab 应用层一律传 qiMax）
+  assert.equal(rules.resolve('meditate', { essence: 20 }).essenceAfter, 21);
+});
+
+test('rest heal card carries the true recovery numbers instead of the drifted constant', () => {
+  // action_preview_service.gd:756 写死「恢复气血 2 点。/恢复真元 2 点。」与 rest_rules.gd:129-131
+  // 不符（覆盖页登记）；lab 卡显示按当前数值算出的真实恢复量。
+  const cards = rules.restCards({
+    summary: '山壁石穴，落潮前的安静片刻，可稍作歇息恢复气血与真元。',
+    used: false, health: 10, healthMax: 24, essence: 3, essenceMax: 20,
+  });
+  assert.deepEqual(plain(cards.map((card) => card.id)), ['node.rest_heal', 'node.leave']);
+  const [heal, leave] = cards;
+  assert.equal(heal.title, '歇脚恢复');
+  assert.equal(heal.summary, '山壁石穴，落潮前的安静片刻，可稍作歇息恢复气血与真元。');
+  assert.deepEqual(plain(heal.gain), ['恢复气血 7 点。', '恢复真元 2 点。']);
+  assert.equal(heal.available, true);
+  assert.equal(heal.blockReason, '');
+  assert.equal(leave.title, '离开休整');
+  assert.equal(leave.summary, '结束休整，返回地图选择下一条路线。');
+  assert.deepEqual(plain(leave.gain), ['结束当前遭遇。']);
+  // 未取收益：离开卡禁用并显示门禁原文（action_preview_service.gd:803-804）
+  assert.equal(leave.available, false);
+  assert.equal(leave.reason, 'rest_choice_required');
+  assert.equal(leave.blockReason, '休整抉择未定：须先选择恢复、强化或移除其一，才能离开。');
+  // 取过收益：收益卡禁用（:822-823）、离开卡解禁
+  const used = rules.restCards({ used: true, health: 24, healthMax: 24, essence: 20, essenceMax: 20 });
+  assert.equal(used[0].available, false);
+  assert.equal(used[0].blockReason, '本次休整已处置完毕。');
+  assert.equal(used[1].available, true);
+  assert.equal(used[1].blockReason, '');
+});
+
+test('rest heal mirrors rest_rules.gd including the at-least-one and cap edges', () => {
+  // 验收口径：气血 10 / 上限 24、真元 3 / 上限 20 -> 17 / 5（30% 向下取整 = 7，至少 1）
+  const healed = rules.resolveRest('node.rest_heal', {
+    used: false, health: 10, healthMax: 24, essence: 3, essenceMax: 20,
+  });
+  assert.equal(healed.ok, true);
+  assert.equal(healed.reason, 'rest_recovered');
+  assert.equal(healed.healthBefore, 10);
+  assert.equal(healed.healthAfter, 17);
+  assert.equal(healed.essenceBefore, 3);
+  assert.equal(healed.essenceAfter, 5);
+  assert.equal(healed.used, true);
+  assert.equal(healed.usedBefore, false);
+  assert.equal(healed.text, '歇脚恢复 · 气血 +7 · 真元 +2');
+  // 至少 1 点：上限 1、气血 0 -> 1
+  const tiny = rules.resolveRest('node.rest_heal', { health: 0, healthMax: 1, essence: 0, essenceMax: 1 });
+  assert.equal(tiny.healthAfter, 1);
+  assert.equal(tiny.essenceAfter, 1);
+  // 上限截断：气血已满 / 真元已满都不越界
+  const full = rules.resolveRest('node.rest_heal', { health: 24, healthMax: 24, essence: 20, essenceMax: 20 });
+  assert.equal(full.healthAfter, 24);
+  assert.equal(full.essenceAfter, 20);
+  assert.equal(full.healthGain, 0);
+  assert.equal(full.essenceGain, 0);
+});
+
+test('the rest visit is consumed exactly once and the leave gate needs it', () => {
+  // 重复取收益被拒：状态不变（health/essence/used 都不动）
+  const twice = rules.resolveRest('node.rest_heal', {
+    used: true, health: 17, healthMax: 24, essence: 5, essenceMax: 20, knownFacts: ['k'],
+  });
+  assert.equal(twice.ok, false);
+  assert.equal(twice.reason, 'rest_already_used');
+  assert.equal(twice.healthBefore, 17);
+  assert.equal(twice.healthAfter, 17);
+  assert.equal(twice.essenceBefore, 5);
+  assert.equal(twice.essenceAfter, 5);
+  assert.equal(twice.healthGain, 0);
+  assert.equal(twice.essenceGain, 0);
+  assert.equal(twice.used, true);
+  assert.deepEqual(plain(twice.knownFacts), ['k']);
+  assert.equal(twice.fact, '');
+  // 未取收益时离开被拒（social_command_rules.gd:586-589 → rest_choice_required），状态不变
+  const blockedLeave = rules.resolveRest('node.leave', {
+    used: false, health: 10, healthMax: 24, essence: 3, essenceMax: 20, knownFacts: ['k'],
+  });
+  assert.equal(blockedLeave.ok, false);
+  assert.equal(blockedLeave.reason, 'rest_choice_required');
+  assert.equal(blockedLeave.healthAfter, 10);
+  assert.equal(blockedLeave.essenceAfter, 3);
+  assert.equal(blockedLeave.used, false);
+  assert.deepEqual(plain(blockedLeave.knownFacts), ['k']);
+  // 取过收益后可离开：沿用 lab 的 leave 转移（action_leave_route + route_left_behind）
+  const left = rules.resolveRest('node.leave', {
+    used: true, health: 17, healthMax: 24, essence: 5, essenceMax: 20, knownFacts: ['k'],
+  });
+  assert.equal(left.ok, true);
+  assert.equal(left.reason, 'action_leave_route');
+  assert.equal(left.title, '离开休整');
+  assert.equal(left.healthAfter, 17);
+  assert.equal(left.essenceAfter, 5);
+  assert.deepEqual(plain(left.knownFacts), ['k', 'route_left_behind']);
+  assert.equal(left.fact, 'route_left_behind');
+  assert.equal(left.text, '你放下眼前收益，保留了退路。');
+  // 未知选择
+  assert.equal(rules.resolveRest('nope', { used: true }).reason, 'unsupported_standard_action');
+  // 两条门禁文案
+  assert.equal(rules.restReasonLabel('rest_choice_required'), '休整抉择未定：须先选择恢复、强化或移除其一，才能离开。');
+  assert.equal(rules.restReasonLabel('rest_already_used'), '本次休整已处置完毕。');
+});
+
+test('seclusion has no rest gate: meditate then leave without consuming a visit', () => {
+  // rest_rules.gd:27 的 REST_CLASS_TYPES = [rest, refinement, cultivation]，seclusion 不在其中。
+  assert.equal(rules.restNodeType, 'rest');
+  assert.deepEqual(
+    plain(rules.options({ choices: ['meditate', 'take_imprint', 'leave'], stones: 0, essence: 1 })
+      .map((option) => option.id)),
+    ['meditate', 'leave'],
+  );
+  const meditated = rules.resolve('meditate', { essence: 1, essenceMax: 20 });
+  assert.equal(meditated.ok, true);
+  // 静修的 leave 走标准 leave（route_left_behind），没有一次性门禁
+  const left = rules.resolve('leave', { essence: 2, knownFacts: [] });
+  assert.equal(left.ok, true);
+  assert.equal(left.reason, 'action_leave_route');
+  assert.deepEqual(plain(left.knownFacts), ['route_left_behind']);
+});
+
+test('node type labels prefer data names and fall back to the Godot TYPES table for rest', () => {
+  // data/names.json → types 缺 rest 键（数据缺口）；回退名来源 display_text.gd:54。
+  assert.equal(rules.typeLabel('rest', {}), '休整');
+  assert.equal(rules.typeLabel('rest', { rest: '别的名字' }), '别的名字');
+  assert.equal(rules.typeLabel('seclusion', { seclusion: '静修' }), '静修');
+  assert.equal(rules.typeLabel('unknown_type', {}), '');
+  assert.deepEqual(plain(rules.typeLabels({ market: '市集' })), { rest: '休整', market: '市集' });
+  assert.deepEqual(
+    plain(rules.nodeTypes),
+    ['hazard', 'market', 'wild_gu', 'rest', 'seclusion'],
+  );
 });
 
 test('one non-combat node per preparation layer, drawn from the merged pool', () => {
@@ -254,19 +420,24 @@ test('one non-combat node per preparation layer, drawn from the merged pool', ()
       kinds.add(node.routeKind);
     }
   }
-  // 合并池真的生效：三类模板都出现过，不再只有险地。
-  assert.deepEqual([...kinds].sort(), ['hazard', 'market', 'wild_gu']);
+  // 9 个模板全部出现过（险地 / 市集 / 野蛊 / 休整 / 静修）。
+  assert.deepEqual([...kinds].sort(), ['hazard', 'market', 'rest', 'seclusion', 'wild_gu']);
   // 固定 seed 的槽位与模板（用实际生成值钉死，防止规则漂移）。
   assert.equal(flow.nodeById(first, flow.nodeId(1, 0, 0)).type, 'battle');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 0, 2)).routeTemplateId, 'flooded_cave');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 0, 2)).routeKind, 'hazard');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 4, 0)).routeTemplateId, 'toxic_mountain_path');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 3, 2)).routeTemplateId, 'ridge_market');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 7, 1)).routeTemplateId, 'village_short_work');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 8, 1)).routeTemplateId, 'blood_moss_grove');
-  assert.equal(flow.nodeById(first, flow.nodeId(1, 8, 1)).routeKind, 'wild_gu');
-  assert.equal(flow.nodeById(first, flow.nodeId(5, 9, 2)).routeTemplateId, 'ridge_market');
-  assert.equal(flow.nodeById(first, flow.nodeId(5, 9, 2)).routeKind, 'market');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 0, 2)).routeTemplateId, 'village_short_work');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 0, 2)).routeKind, 'market');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 1, 2)).routeTemplateId, 'rest_hollow');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 1, 2)).routeKind, 'rest');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 4, 0)).routeTemplateId, 'blood_moss_grove');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 4, 0)).routeKind, 'wild_gu');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 3, 2)).routeTemplateId, 'village_short_work');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 7, 1)).routeTemplateId, 'blood_moss_grove');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 8, 1)).routeTemplateId, 'black_mud_marsh');
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 8, 1)).routeKind, 'hazard');
+  assert.equal(flow.nodeById(first, flow.nodeId(5, 9, 2)).routeTemplateId, 'rest_shrine');
+  assert.equal(flow.nodeById(first, flow.nodeId(5, 9, 2)).routeKind, 'rest');
+  // 休整节点的名字带类型名回落（DATA.nodeTypes 缺 rest，用 display_text.gd:54 的「休整」）。
+  assert.equal(flow.nodeById(first, flow.nodeId(1, 1, 2)).name, '休整 · 山壁石穴');
 });
 
 test('every difficulty keeps the three-slot rows and the boss funnel', () => {
@@ -314,11 +485,15 @@ test('generated data still carries the non-combat templates and every choice is 
   assert.deepEqual(plain(hazards.map((node) => node.id)), ['toxic_mountain_path', 'flooded_cave', 'black_mud_marsh']);
   assert.deepEqual(plain(hazards.map((node) => node.name)), ['毒瘴山道', '积水石窟', '黑泥沼地']);
   assert.ok(hazards.every((node) => node.choices.join(',') === 'scout,cross,withdraw'));
-  // 合并池成员：市集 2 + 野蛊 1，模板 choices 全部落在模块已搬动作上（leave 单独补卡）。
+  // 合并池成员：市集 2 + 野蛊 1 + 休整 2 + 静修 1，模板 choices 全部落在模块已搬动作上（leave 单独补卡）。
   const markets = data.nodes.filter((node) => node.type === 'market');
   const wildGu = data.nodes.filter((node) => node.type === 'wild_gu');
+  const rests = data.nodes.filter((node) => node.type === 'rest');
+  const seclusions = data.nodes.filter((node) => node.type === 'seclusion');
   assert.deepEqual(plain(markets.map((node) => node.id)), ['village_short_work', 'ridge_market']);
   assert.deepEqual(plain(wildGu.map((node) => node.id)), ['blood_moss_grove']);
+  assert.deepEqual(plain(rests.map((node) => node.id)), ['rest_hollow', 'rest_shrine']);
+  assert.deepEqual(plain(seclusions.map((node) => node.id)), ['body_imprint_ritual']);
   for (const template of [...markets, ...wildGu, ...hazards]) {
     const options = rules.options({ choices: template.choices, stones: 3, essence: 3 });
     // 模板 choices 里已有 leave 时原位补卡；没有时（险地）按 :44-45 追加一张。
@@ -332,17 +507,45 @@ test('generated data still carries the non-combat templates and every choice is 
     );
     for (const option of options) {
       assert.notEqual(option.reason, 'unsupported_standard_action', `${template.id}:${option.id}`);
-      const resolved = rules.resolve(option.id, { stones: 3, essence: 3 });
+      const resolved = rules.resolve(option.id, { stones: 3, essence: 3, essenceMax: 20 });
       assert.equal(resolved.ok, true, `${template.id}:${option.id}`);
       assert.notEqual(resolved.reason, 'unsupported_standard_action');
     }
   }
-  // 节点类型与动作的中文名来自 names.json，页面不得硬编码。
+  // 休整节点：choices 是领域命令集（rest / leave），卡片集合来自 _append_rest_cards，
+  // 不走 options()——两条卡都必须可解析，且离开卡在未取收益时是禁用的。
+  for (const template of rests) {
+    assert.deepEqual(plain(template.choices), ['rest', 'leave']);
+    const cards = rules.restCards({ summary: template.summary, used: false, health: 10, healthMax: 24, essence: 3, essenceMax: 20 });
+    assert.deepEqual(plain(cards.map((card) => card.id)), ['node.rest_heal', 'node.leave']);
+    assert.equal(cards[0].available, true);
+    assert.equal(cards[1].available, false);
+    assert.equal(rules.resolveRest('node.rest_heal', { health: 10, healthMax: 24, essence: 3, essenceMax: 20 }).ok, true);
+    assert.equal(rules.resolveRest('node.leave', { used: false }).ok, false);
+    assert.equal(rules.resolveRest('node.leave', { used: true }).ok, true);
+  }
+  // 静修节点：choices 里的 take_imprint 未搬，不出卡；meditate 可解析且真元 +1、不超上限。
+  for (const template of seclusions) {
+    assert.deepEqual(plain(template.choices), ['meditate', 'take_imprint', 'leave']);
+    const options = rules.options({ choices: template.choices, stones: 3, essence: 3 });
+    assert.deepEqual(plain(options.map((option) => option.id)), ['meditate', 'leave']);
+    const meditated = rules.resolve('meditate', { essence: 3, essenceMax: 20 });
+    assert.equal(meditated.ok, true);
+    assert.equal(meditated.essenceAfter, 4);
+    assert.equal(rules.resolve('meditate', { essence: 20, essenceMax: 20 }).essenceAfter, 20);
+  }
+  // 节点类型与动作的中文名来自 names.json，页面不得硬编码；names.json 缺 rest 键（数据缺口），
+  // 由 NodeActionRules.typeLabel 回退到 display_text.gd:54 的「休整」。
   assert.equal(data.nodeTypes.market, '市集');
   assert.equal(data.nodeTypes.wild_gu, '野蛊');
+  assert.equal(data.nodeTypes.seclusion, '静修');
+  assert.equal(data.nodeTypes.rest, undefined);
+  assert.equal(rules.typeLabel('rest', data.nodeTypes), '休整');
+  assert.equal(rules.typeLabel('seclusion', data.nodeTypes), '静修');
   assert.equal(data.actions.work, '做工');
   assert.equal(data.actions.harvest, '采集');
   assert.equal(data.actions.buy_information, '购买情报');
   assert.equal(data.actions.trade, '交易');
   assert.equal(data.actions.leave, '离开');
+  assert.equal(data.actions.meditate, '静修');
 });

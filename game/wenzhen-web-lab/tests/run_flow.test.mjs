@@ -130,10 +130,11 @@ test('non-combat slot stays one per layer and its template comes from the merged
     dataContext,
   );
   const data = dataContext.DATA;
-  const pool = data.nodes.filter((node) => ['hazard', 'market', 'wild_gu'].includes(node.type));
+  const pool = data.nodes.filter((node) =>
+    ['hazard', 'market', 'wild_gu', 'rest', 'seclusion'].includes(node.type));
   assert.deepEqual(
     JSON.parse(JSON.stringify(pool.map((node) => node.type))).sort(),
-    ['hazard', 'hazard', 'hazard', 'market', 'market', 'wild_gu'],
+    ['hazard', 'hazard', 'hazard', 'market', 'market', 'rest', 'rest', 'seclusion', 'wild_gu'],
   );
   const graph = flow.generateGraph({
     seed: 101,
@@ -157,7 +158,67 @@ test('non-combat slot stays one per layer and its template comes from the merged
     }
   }
   assert.ok(kinds.has('market') && kinds.has('wild_gu'), '合并池必须真的把市集与野蛊放进图里');
+  assert.ok(kinds.has('rest') && kinds.has('seclusion'), '合并池必须真的把休整与静修放进图里');
   assert.equal(graph.nodes.filter((node) => node.type === 'boss').length, 5);
+});
+
+test('rest and seclusion nodes keep the real recovery semantics on the generated graph', () => {
+  const ctx = vm.createContext({});
+  for (const file of ['run_rules.js', 'run_flow.js', 'node_action_rules.js']) {
+    vm.runInContext(fs.readFileSync(new URL(`../js/${file}`, import.meta.url), 'utf8'), ctx);
+  }
+  vm.runInContext(
+    fs.readFileSync(new URL('../js/data.js', import.meta.url), 'utf8') + ';globalThis.DATA = DATA;',
+    ctx,
+  );
+  const data = ctx.DATA;
+  const rules = ctx.NodeActionRules;
+  const pool = data.nodes.filter((node) => rules.nodeTypes.includes(node.type));
+  const graph = ctx.RunFlow.generateGraph({
+    seed: 101,
+    difficulty: 'normal',
+    pools,
+    enemyById,
+    nonCombatTemplates: pool,
+    nonCombatTypeLabels: rules.typeLabels(data.nodeTypes),
+  });
+  const routeNodes = graph.nodes.filter((node) => node.routeTemplateId);
+  const rest = routeNodes.find((node) => node.routeKind === 'rest');
+  const seclusion = routeNodes.find((node) => node.routeKind === 'seclusion');
+  assert.ok(rest, '首局必有休整节点');
+  assert.ok(seclusion, '首局必有静修节点');
+  // 休整节点的名字带类型名回落（names.json 的 types 缺 rest）。
+  assert.equal(rest.name, `休整 · ${data.nodes.find((node) => node.id === rest.routeTemplateId).name}`);
+  assert.equal(seclusion.name, `静修 · ${data.nodes.find((node) => node.id === seclusion.routeTemplateId).name}`);
+  // 休整恢复的真实数值：气血 10 / 上限 24、真元 3 / 上限 20 -> 17 / 5
+  const healed = rules.resolveRest('node.rest_heal', {
+    used: false, health: 10, healthMax: 24, essence: 3, essenceMax: 20,
+  });
+  assert.equal(healed.healthAfter, 17);
+  assert.equal(healed.essenceAfter, 5);
+  assert.equal(healed.reason, 'rest_recovered');
+  // 边界：气血已满 / 真元已满都不越界
+  assert.equal(rules.resolveRest('node.rest_heal', { health: 24, healthMax: 24, essence: 20, essenceMax: 20 }).healthAfter, 24);
+  assert.equal(rules.resolve('meditate', { essence: 20, essenceMax: 20 }).essenceAfter, 20);
+  // 门禁：未取收益离开被拒；取过可离开；重复取收益被拒且状态不变
+  const blocked = rules.resolveRest('node.leave', { used: false, health: 10, healthMax: 24, essence: 3, essenceMax: 20 });
+  assert.equal(blocked.ok, false);
+  assert.equal(blocked.reason, 'rest_choice_required');
+  assert.equal(blocked.healthAfter, 10);
+  assert.equal(blocked.essenceAfter, 3);
+  const again = rules.resolveRest('node.rest_heal', { used: true, health: 17, healthMax: 24, essence: 5, essenceMax: 20 });
+  assert.equal(again.ok, false);
+  assert.equal(again.reason, 'rest_already_used');
+  assert.equal(again.healthAfter, 17);
+  assert.equal(again.essenceAfter, 5);
+  const left = rules.resolveRest('node.leave', { used: true, health: 17, healthMax: 24, essence: 5, essenceMax: 20 });
+  assert.equal(left.ok, true);
+  // 静修：真元 +1、无休整门禁
+  const meditated = rules.resolve('meditate', { essence: 3, essenceMax: 20 });
+  assert.equal(meditated.reason, 'action_meditate_essence');
+  assert.equal(meditated.essenceAfter, 4);
+  assert.equal(rules.resolve('leave', { essence: 4 }).ok, true);
+  assert.equal(rules.options({ choices: seclusion.choices, stones: 3, essence: 3 }).length, 2);
 });
 
 test('generated lab data exposes non-combat sari and aptitude gu', () => {

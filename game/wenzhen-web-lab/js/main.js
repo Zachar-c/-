@@ -21,8 +21,8 @@ const READY = {
   },
 };
 
-// 需要走节点动作页的节点类型（险地 / 市集 / 野蛊）；由 NodeActionRules 单点定义，避免两处分叉。
-// 必须声明在下面的 `let state = fresh()` 之前：fresh 生成固定图时要过滤模板池。
+// 需要走节点动作页的节点类型（险地 / 市集 / 野蛊 / 休整 / 静修）；由 NodeActionRules 单点定义，
+// 避免两处分叉。必须声明在下面的 `let state = fresh()` 之前：fresh 生成固定图时要过滤模板池。
 const NODE_ACTION_TYPES = NodeActionRules.nodeTypes;
 
 let state = fresh();
@@ -42,7 +42,7 @@ function fresh(difficulty = 'normal') {
     pools: DATA.flow.poolsBySegment,
     enemyById,
     nonCombatTemplates: DATA.nodes.filter((node) => NODE_ACTION_TYPES.includes(node.type)),
-    nonCombatTypeLabels: DATA.nodeTypes,
+    nonCombatTypeLabels: NodeActionRules.typeLabels(DATA.nodeTypes),
   });
   const journey = {
     difficulty,
@@ -542,6 +542,9 @@ const act = {
     state.reward = null;
     state.shopSold = [];
     state.battle = null;
+    // 休整的「本次探访已消费」标记按节点重置：lab 一节点一处理，进入节点即清零，
+    // 与 Godot 的 <节点id>_used 旗标（rest_rules.gd:125,167）同语义。
+    state.restUsed = false;
     if (NODE_ACTION_TYPES.includes(node.type)) return act.enterNodeAction();
     if (!node.enemyIds?.length) {
       state.journey.availableNodeIds = node.nextIds || [];
@@ -551,7 +554,7 @@ const act = {
     act.startBattle(node.enemyIds, node.id);
   },
 
-  // 非战斗节点（险地 / 市集 / 野蛊）：进入后等玩家在节点动作页选一个 standard action。
+  // 非战斗节点（险地 / 市集 / 野蛊 / 休整 / 静修）：进入后等玩家在节点动作页选一个动作。
   enterNodeAction() {
     const node = currentNode();
     if (!node || !NODE_ACTION_TYPES.includes(node.type)) return showPage('map');
@@ -562,15 +565,18 @@ const act = {
 
   // 解析节点动作选择。转移与拒绝口径见 js/node_action_rules.js（照搬 social_command_rules.gd
   // 的 standard actions 与 action_preview_service.gd 的预览门禁）。
+  // 休整节点是唯一的两步交互：先取「歇脚恢复」，才解禁「离开休整」（rest_rules.gd:121-141 的一次性门禁）。
   resolveNodeAction(choiceId) {
     const node = currentNode();
     if (!node || !NODE_ACTION_TYPES.includes(node.type)) return;
     if (state.prepFor === node.id) return; // 已解析：节点只剩统一整备
+    if (node.type === NodeActionRules.restNodeType) return act.resolveRestAction(choiceId);
     const beforeStones = state.stones;
     const beforeQi = state.qi;
     const result = NodeActionRules.resolve(choiceId, {
       stones: state.stones,
       essence: state.qi,
+      essenceMax: state.qiMax,
       knownFacts: state.knownFacts,
     });
     if (!result.ok) {
@@ -580,10 +586,10 @@ const act = {
     state.qi = result.essence;
     state.knownFacts = result.knownFacts;
     const stoneDelta = state.stones - beforeStones;
-    const qiSpent = beforeQi - state.qi;
+    const qiDelta = state.qi - beforeQi;
     state.journal.unshift(`${node.name} · ${actionLabel(choiceId)}`
       + `${stoneDelta ? ` · 元石 ${stoneDelta > 0 ? '+' : ''}${stoneDelta}` : ''}`
-      + `${qiSpent > 0 ? ` · 真元 -${qiSpent}` : ''}`);
+      + `${qiDelta ? ` · 真元 ${qiDelta > 0 ? '+' : ''}${qiDelta}` : ''}`);
     recordEvent('choose_action', {
       stone: state.stones,
       true_qi: state.qi,
@@ -592,6 +598,40 @@ const act = {
     Sfx.success();
     toast(NodeActionRules.resultText(choiceId) || actionLabel(choiceId), 'good');
     act.openPrep();
+  },
+
+  // 休整节点的一步：取收益（歇脚恢复）后留在本页，离开卡才结束节点进统一整备。
+  // 被拒只提示、不改状态、不推进页面（沿用 slice-10 口径）。
+  resolveRestAction(choiceId) {
+    const node = currentNode();
+    if (!node || node.type !== NodeActionRules.restNodeType) return;
+    const result = NodeActionRules.resolveRest(choiceId, {
+      used: state.restUsed === true,
+      health: state.blood,
+      healthMax: state.bloodMax,
+      essence: state.qi,
+      essenceMax: state.qiMax,
+      knownFacts: state.knownFacts,
+    });
+    if (!result.ok) {
+      return toast(NodeActionRules.restReasonLabel(result.reason), 'bad');
+    }
+    state.blood = result.healthAfter;
+    state.qi = result.essenceAfter;
+    state.knownFacts = result.knownFacts;
+    state.restUsed = result.used;
+    state.journal.unshift(choiceId === NodeActionRules.restHealId
+      ? `${node.name} · ${result.text}`
+      : `${node.name} · ${result.title}`);
+    recordEvent('choose_action', {
+      health: state.blood,
+      true_qi: state.qi,
+      rest_used: state.restUsed,
+    }, result.reason, [node.routeTemplateId]);
+    Sfx.success();
+    toast(result.text, 'good');
+    if (choiceId === NodeActionRules.restLeaveId) return act.openPrep();
+    draw();
   },
 
   completeCurrentNode(reason = '整备完成') {
@@ -949,10 +989,6 @@ const act = {
   leaveShop() {
     showPage(state.prepFor ? 'prep' : 'map');
     draw();
-  },
-
-  restHeal() {
-    toast('休整节点已移除；战斗胜利会自动恢复到所需状态', 'bad');
   },
 
   breakthrough(mode = 'stone') {

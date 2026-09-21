@@ -6596,8 +6596,13 @@ const DATA = {
       },
       {
         "name": "非战斗节点的标准动作结算（险地 / 市集 / 野蛊）",
-        "detail": "固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 + 市集 + 野蛊共 6 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡，并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw；被拒不结算，解析后进入统一整备",
-        "source": "data/nodes.json → village_short_work / ridge_market / blood_moss_grove（choices work+trade / trade+buy_information / harvest+trade）与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）"
+        "detail": "固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1 共 9 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡（choices 里未搬的动作不出卡），并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw（静修节点的 meditate 见下条）；被拒不结算，解析后进入统一整备",
+        "source": "data/nodes.json → village_short_work / ridge_market / blood_moss_grove / rest_hollow / rest_shrine / body_imprint_ritual 与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）"
+      },
+      {
+        "name": "恢复类节点（休整 / 静修）",
+        "detail": "非战斗模板池加入休整（山壁石穴 / 古祠残龛）与静修（体印仪式）后，地图上第一次出现恢复气血与真元的途径。休整节点（type=rest）是一次收益门禁、两步交互：先取「歇脚恢复」（气血恢复 max(1, floor(上限×0.30))、真元 +2，均按各自上限截断；卡片显示按当前数值算出的真实恢复量），「离开休整」卡此时才解禁——未取收益时该卡禁用并显示门禁原文「休整抉择未定：须先选择恢复、强化或移除其一，才能离开。」；探访已消费后收益卡禁用（「本次休整已处置完毕。」），重复取收益被拒（rest_already_used）且状态不变，未取收益就想离开被拒（rest_choice_required）且状态不变。静修节点（type=seclusion）走标准动作：「静修」真元 +1（按真元上限截断），离开没有休整门禁（seclusion 不在 rest-class 名单内）",
+        "source": "data/nodes.json → rest_hollow / rest_shrine / body_imprint_ritual；rest_rules.gd:22（REST_NODE_TYPE）、:27（REST_CLASS_TYPES，seclusion 不在其中）、:121-141（_rest_heal：气血/真元公式与 rest_recovered、<节点id>_used 标记）、:165-179（_consume_rest_visit 的旗标语义，本片未搬）；social_command_rules.gd:586-589 与 encounter_session_resolver.gd:121-126（未消费不许离开 → rest_choice_required）；action_preview_service.gd:746-808（node.rest_heal / node.leave 两张卡与文案）、:811-831（已消费卡禁用的 block_reason）；social_command_rules.gd:772-773（meditate 真元 +1）与 display_text.gd:76,234（静修显示名与结果文案）"
       }
     ],
     "notCovered": [
@@ -6611,19 +6616,39 @@ const DATA = {
       },
       {
         "name": "体印动作（take_imprint）",
-        "why": "效果写入 body_imprints（social_command_rules.gd:784-794 的铁骨体印）；本原型没有体印系统，登记不实现"
+        "why": "效果写入 body_imprints（social_command_rules.gd:784-794 的铁骨体印）；本原型没有体印系统，登记不实现。静修节点（体印仪式）的 choices 里有这条，但节点动作页不出这张卡——搬进来只会是禁用空按钮"
+      },
+      {
+        "name": "只有单张蛊卡的强化、免费移除、印记与反噬（休整节点的另四种收益）",
+        "why": "休整节点在 Godot 还有强化一张蛊卡（action_preview_service.gd:759-768）、移除一只蛊（:769-778）、抹除一枚印记（:779-788）、拔除一层反噬（:789-798）四个选项；本原型没有蛊卡强化、没有免费移除（蛊仓只有卖蛊返 50%）、没有印记/遗物、没有诅咒系统，搬进来就是空按钮，按登记不实现"
+      },
+      {
+        "name": "休整跳过模式（rest mode=skip）",
+        "why": "rest_rules.gd:89-103 的 _rest_skip 只在领域层可达（消费探访并落 rest_skipped），Godot 侧的休整卡集合（action_preview_service.gd:746-808）没有它的入口，故本片不搬；休整节点因此必须至少取一次收益才能离开"
+      },
+      {
+        "name": "文案与实现漂移：休整收益卡的「恢复 2 点」",
+        "why": "数据/表现漂移（登记，不修 Godot）：action_preview_service.gd:756 的 node.rest_heal 卡写死 expected_gain「恢复气血 2 点。/恢复真元 2 点。」，而 rest_rules.gd:129-131 的实际效果是「气血 +max(1, floor(上限×0.30))、真元 +2」。本页按真实数值显示（例：上限 24 点时恢复 7 点）"
+      },
+      {
+        "name": "数据缺口：data/names.json → types 缺 rest 键",
+        "why": "data/names.json 的 types 分区有 seclusion（静修）但没有 rest，而 Godot 侧的 scripts/presentation/display_text.gd:54 的 const TYPES 里 rest 是「休整」。本页类型名取 DATA.nodeTypes 优先、缺失时回退「休整」（来源 display_text.gd:54），回退表在 js/node_action_rules.js"
       },
       {
         "name": "只记事实、无消费点的动作（accept / ally / claim / inspect / lure 与 contact / caravan 专属动作）",
         "why": "这些动作只写 known_facts（social_command_rules.gd:795-800），而本原型对已知事实没有任何分支消费（见下面 knownFacts 一条）；contact 的 negotiate/deceive/retreat/fight 与 caravan 的 probe/buy/sell/exchange 还各自需要专属结算模块，一并登记不实现"
       },
       {
-        "name": "休息类节点的一次性门禁",
-        "why": "rest / refinement / cultivation 属休息类：rest_rules.gd:39,55,92,115 规定一节点只能消费一次，未消费就离开会被 rest_choice_required 拒绝（social_command_rules.gd:586-589）；本原型没有节点内多次行动模型，该门禁搬不进来，refine / cultivate / rest 等专属动作因此一并不接"
+        "name": "炼蛊 / 修行节点的休息类门禁（rest-class 剩余部分）",
+        "why": "rest_rules.gd:27 的 REST_CLASS_TYPES = [rest, refinement, cultivation]：rest 的那一份门禁已在本片搬入（见 covered 的恢复类节点），refinement / cultivation 两类节点本原型仍未接入（连节点带动作），其一次性门禁与 refine / cultivate 专属动作一并不搬"
       },
       {
         "name": "其余节点类型的专属结算",
-        "why": "contact / caravan / event / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein / seclusion 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等），本原型固定图只放战斗与非战斗三类模板，其余类型未接入"
+        "why": "contact / caravan / event / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等），本原型固定图只放战斗与五类非战斗模板（险地 / 市集 / 野蛊 / 休整 / 静修），其余类型未接入"
+      },
+      {
+        "name": "非战斗槽位的类型分布进一步稀释",
+        "why": "非战斗槽位仍是每层 1 个（槽位 seed 未变），但模板池由 6 个扩到 9 个后，各类型出现频率被进一步稀释（本片首局 seed 101 / normal 实测：险地 12 / 市集 11 / 野蛊 8 / 休整 12 / 静修 7，slice-10 时是险地 31 / 市集 12 / 野蛊 7）。这是 slice-10 已登记、待 L1 裁的同一件事的延续，不是本片新增裁决项"
       },
       {
         "name": "knownFacts 只写不读",
@@ -6663,7 +6688,7 @@ const DATA = {
       },
       {
         "name": "险地节点的 on_skip",
-        "why": "数据漂移：data/nodes.json 的险地模板声明了 on_skip（lose_route / lose_clue / gain_pursuit），但 scripts/ 里零命中，Godot 域层没有实现该字段。本页不臆造跳过后果，险地只结算 choices 里的三条 standard action"
+        "why": "数据漂移：data/nodes.json 的险地模板声明了 on_skip（lose_route / lose_clue / gain_pursuit），但 scripts/ 里零命中，Godot 域层没有实现该字段。本页不臆造跳过后果，险地只结算 choices 里的三条 standard action。休整/静修模板也带 on_skip（rest 为 none；体印仪式为 lose_foundation），本页同样不结算——休整节点没有跳过入口（见上一条），静修节点也没有"
       },
       {
         "name": "线索的中文名",
