@@ -3,95 +3,19 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>问真 · 核心玩法原型</title>
+<title>问真 · 一局十刻</title>
 <link rel="icon" href="data:," />
-<link rel="stylesheet" href="css/lab.css" />
+<link rel="stylesheet" href="css/mvp.css" />
 </head>
 <body>
-  <div id="bg"></div>
-  <div id="grain"></div>
-
-  <header id="hud">
-    <div class="who">
-      <span class="app">问真</span>
-      <span class="name">古月方源</span>
-      <span class="tag" id="hud-talent">丙等 · 一转初阶</span>
-    </div>
-    <div class="pools">
-      <div class="pool qi">
-        <label>真元</label>
-        <div class="bar"><i id="hud-qi"></i></div>
-        <span class="num" id="hud-qi-num">20/20</span>
-      </div>
-      <div class="pool">
-        <label>念头</label><span class="num" id="hud-thought">3</span>
-      </div>
-      <div class="pool">
-        <label>元石</label><span class="num" id="hud-stone">3</span>
-      </div>
-      <div class="pool blood">
-        <label>气血</label><span class="num" id="hud-blood">12</span>
-      </div>
-      <div class="pool life">
-        <label>寿元</label><span class="num" id="hud-life">60</span>
-      </div>
-      <div class="pool soul">
-        <label>魂魄</label><span class="num" id="hud-soul">1/4</span>
-      </div>
-      <div class="seal" aria-hidden="true">问真</div>
-    </div>
-    <button id="reset" class="ghost">重开</button>
-  </header>
-
-  <nav id="tabs">
-    <button data-tab="hall" class="on">大厅</button>
-    <button data-tab="map">节点</button>
-    <button data-tab="battle">战斗</button>
-    <button data-tab="prep">整备</button>
-    <button data-tab="cover">覆盖</button>
-  </nav>
-
-  <main>
-    <section id="panel-hall" class="panel on"></section>
-    <section id="panel-map" class="panel"></section>
-    <section id="panel-node-action" class="panel"></section>
-    <section id="panel-battle" class="panel"></section>
-    <section id="panel-prep" class="panel"></section>
-    <section id="panel-reward" class="panel"></section>
-    <section id="panel-cover" class="panel"></section>
-    <section id="panel-ending" class="panel"></section>
-  </main>
-
-  <div id="toast"></div>
-  <!-- 普通脚本按顺序加载，不用 ES module：这样直接双击 index.html 也能跑（file:// 下 module 会被 CORS 拦）。 -->
+  <div class="paper-grain" aria-hidden="true"></div>
+  <header id="mvp-hud"></header>
+  <main id="mvp-app"></main>
+  <div id="mvp-toast"></div>
+  <noscript>需要启用 JavaScript 才能继续。</noscript>
   <script src="js/data.js"></script>
-  <script src="js/run_rules.js"></script>
-  <script src="js/run_flow.js"></script>
-  <script src="js/gu_rules.js"></script>
-  <script src="js/loot_rules.js"></script>
-  <script src="js/shop_rules.js"></script>
-  <script src="js/node_action_rules.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/describe.js"></script>
-  <script src="js/rules.js"></script>
-  <script src="js/alchemy.js"></script>
-  <script src="js/killmove.js"></script>
-  <script src="js/battle.js"></script>
-  <script src="js/journey.js"></script>
-  <script src="js/main.js"></script>
-  <!-- 内联脚本不会被 CORS 拦，可靠地兜底：外部脚本若没执行（旧缓存 / 路径错 / 版本不匹配），
-       页面会明确报错，而不是留一个 HUD 看着正常、按钮却没反应的空壳。 -->
-  <script>
-    setTimeout(function () {
-      if (document.documentElement.dataset.ready === '1') return;
-      var d = document.createElement('div');
-      d.id = 'bootfail';
-      d.innerHTML = '<b>原型脚本没有执行</b>'
-        + '<p>现在看到的是静态默认值，点任何按钮都不会有反应。</p>'
-        + '<p>请按 Ctrl+F5 硬刷新；若仍如此，说明这个副本不是最新版本'
-        + '（当前版本：2026-09-19 普通脚本 + 相对路径）。</p>';
-      document.body.appendChild(d);
-    }, 1200);
-  </script>
+  <script src="js/mvp_content.js"></script>
+  <script src="js/mvp_logic.js"></script>
+  <script src="js/mvp.js"></script>
 </body>
 </html>

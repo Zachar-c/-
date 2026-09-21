@@ -1,4 +1,4 @@
-// Pure state transitions for the focused MVP. Browser and Node run the same code.
+// Pure state transitions for the focused MVP. Values are frozen by the 2026-09-21 L1 ruling.
 globalThis.MvpLogic = (() => {
   const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -13,19 +13,29 @@ globalThis.MvpLogic = (() => {
     return Object.entries(cost).every(([id, amount]) => Number(owned[id] || 0) >= Number(amount || 0));
   }
 
+  function actionValues(action = {}, lightSupport = 0) {
+    const supported = !!action.light && Number(lightSupport) > 0;
+    return {
+      qi: Math.max(0, Number(action.qi || 0) - (supported ? 1 : 0)),
+      damage: Number(action.damage || 0) + (supported ? 1 : 0),
+    };
+  }
+
   function payGu(owned, cost = {}) {
     let next = { ...owned };
     for (const [id, amount] of Object.entries(cost)) next = addGu(next, id, -Number(amount || 0));
     return next;
   }
 
-  function createRun(content) {
+  function createRun(content, seed = content.run.seed) {
     const start = content.run;
     return {
+      seed: Number(seed) || Number(start.seed) || 101,
       hp: start.hp,
       hpMax: start.hpMax,
       qi: start.qi,
       qiMax: start.qiMax,
+      baseQiMax: start.baseQiMax,
       thoughts: start.thoughts,
       thoughtMax: start.thoughts,
       stones: start.stones,
@@ -34,10 +44,24 @@ globalThis.MvpLogic = (() => {
       battle: null,
       tradeChoice: null,
       forgeChoice: null,
-      nextBattlePenalty: false,
+      borrowedMoon: false,
       runLog: [],
       result: null,
     };
+  }
+
+  function smeltStone(run) {
+    if (run.stones <= 0) return { ok: false, reason: 'insufficient_stones', run };
+    if (run.qi >= run.qiMax) return { ok: false, reason: 'essence_full', run };
+    const next = clone(run);
+    next.stones -= 1;
+    next.qi = Math.min(next.qiMax, next.qi + 2);
+    next.runLog.push({
+      kind: 'smelt',
+      label: '碎石还元',
+      detail: '元石 1 → 真元 2。',
+    });
+    return { ok: true, run: next };
   }
 
   function applyTrade(run, optionId, content) {
@@ -56,7 +80,11 @@ globalThis.MvpLogic = (() => {
     for (const [id, amount] of Object.entries(option.gain?.gu || {})) {
       next.owned = addGu(next.owned, id, Number(amount || 0));
     }
-    if (option.penalty?.nextBattleHalf) next.nextBattlePenalty = true;
+    if (option.penalty?.qiMax) {
+      next.qiMax = Number(option.penalty.qiMax);
+      next.qi = Math.min(next.qi, next.qiMax);
+    }
+    if (option.penalty?.borrowedMoon) next.borrowedMoon = true;
     next.tradeChoice = option.id;
     next.runLog.push({
       kind: 'trade',
@@ -83,161 +111,219 @@ globalThis.MvpLogic = (() => {
     if (!canPay(next.owned, content.forge.consume)) {
       return { ok: false, reason: 'missing_ingredients', run };
     }
+    if (next.qi < Number(content.forge.qiCost || 0)) {
+      return { ok: false, reason: 'insufficient_essence', run };
+    }
     next.owned = payGu(next.owned, content.forge.consume);
+    next.qi -= Number(content.forge.qiCost || 0);
+    if (next.borrowedMoon) {
+      next.borrowedMoon = false;
+      next.qiMax = next.baseQiMax;
+      next.forgeChoice = 'repay';
+      next.runLog.push({
+        kind: 'forge',
+        label: '正炼还债',
+        detail: '不获得第二只月芒；解除道伤，真元上限恢复至 12。',
+      });
+      return { ok: true, run: next };
+    }
     next.owned = addGu(next.owned, content.forge.output, 1);
     next.forgeChoice = 'forge';
     next.runLog.push({
       kind: 'forge',
-      label: '炼蛊',
+      label: '正炼月芒',
       detail: `${content.forge.recipeId} -> ${content.forge.output}；${content.forge.rule}`,
     });
     return { ok: true, run: next };
   }
 
-  function createEnemy(definition) {
-    const hp = Number(definition.hp || 1);
+  function profileFor(content, enemyId) {
+    return content.enemyProfiles[enemyId] || null;
+  }
+
+  function createEnemy(content, enemyId) {
+    const profile = profileFor(content, enemyId);
+    if (!profile) throw new Error(`unknown enemy profile: ${enemyId}`);
     return {
-      id: definition.id,
-      hp,
-      hpMax: hp,
-      lastFired: {},
+      id: enemyId,
+      hp: profile.hp,
+      hpMax: profile.hp,
       lastPhaseIndex: -1,
       currentIntent: null,
+      currentCounter: null,
       revealed: false,
-      reactionSettled: false,
-      reactionSuppressed: 0,
+      counterDisabled: false,
+      suppressed: false,
+      damageReduction: 0,
+      ironRage: 0,
+      counterBroken: false,
     };
   }
 
-  function phaseDataFor(definition, hpRatio) {
-    if (!definition.phases?.length) {
-      return {
-        index: 0,
-        total: 1,
-        data: {
-          intents: definition.intent ? [definition.intent] : [],
-          reactions: definition.reactions || [],
-        },
-      };
-    }
-    const ratio = Math.max(0, Number(hpRatio));
-    let index = 0;
-    for (let i = 0; i < definition.phases.length; i += 1) {
-      if (Number(definition.phases[i].until_hp_ratio) >= ratio) index = i;
-    }
-    return {
-      index,
-      total: definition.phases.length,
-      data: definition.phases[index],
-    };
+  function hashInt(value) {
+    let hash = 0;
+    for (const char of String(value)) hash = (hash * 31 + char.charCodeAt(0)) % 2147483647;
+    return hash || 1;
   }
 
-  function intentReady(lastFired, cooldown, turn) {
-    if (lastFired === null || lastFired === undefined) return true;
-    return turn >= Number(lastFired) + Number(cooldown || 0) + 1;
+  function pickVariant(seed, salt, pool) {
+    const items = [...(pool || [])];
+    if (!items.length) return '';
+    let state = Math.abs((Number(seed) * 1000003) + hashInt(salt)) % 2147483647;
+    if (state === 0) state = 1;
+    state = (state * 48271) % 2147483647;
+    return items[state % items.length];
   }
 
-  function chooseIntent(definition, enemy, turn) {
-    const phase = phaseDataFor(definition, enemy.hp / enemy.hpMax);
-    for (const intent of phase.data.intents || []) {
-      if (intentReady(enemy.lastFired[intent.id], intent.cooldown, turn)) return intent;
-    }
-    return null;
+  function phaseIndexFor(content, enemy) {
+    const profile = profileFor(content, enemy.id);
+    if (!profile?.phaseAt) return 0;
+    return enemy.hp <= profile.phaseAt ? 1 : 0;
   }
 
-  function syncIntent(definition, enemy, turn) {
+  function phaseIntents(content, enemy) {
+    const profile = profileFor(content, enemy.id);
+    if (!profile) return [];
+    if (!profile.phaseAt) return profile.intents || [];
+    return phaseIndexFor(content, enemy) === 0 ? profile.phaseOne : profile.phaseTwo;
+  }
+
+  function intentFor(content, enemy, turn) {
+    const intents = phaseIntents(content, enemy);
+    if (!intents.length) return null;
+    return clone(intents[(Math.max(1, Number(turn)) - 1) % intents.length]);
+  }
+
+  function startTurn(content, enemy, turn, seed) {
     const next = clone(enemy);
-    const phase = phaseDataFor(definition, next.hp / next.hpMax);
-    const phaseChanged = next.lastPhaseIndex >= 0 && next.lastPhaseIndex !== phase.index;
-    next.lastPhaseIndex = phase.index;
-    next.currentIntent = chooseIntent(definition, next, turn);
-    return { enemy: next, phase, phaseChanged };
+    const phaseIndex = phaseIndexFor(content, next);
+    const phaseChanged = next.lastPhaseIndex >= 0 && next.lastPhaseIndex !== phaseIndex;
+    next.lastPhaseIndex = phaseIndex;
+    next.currentIntent = intentFor(content, next, turn);
+    next.revealed = false;
+    next.counterDisabled = false;
+    next.suppressed = false;
+    next.damageReduction = 0;
+    next.currentCounter = '';
+
+    const intent = next.currentIntent;
+    if (intent?.counterPool?.length) {
+      next.currentCounter = pickVariant(seed, `${next.id}:${turn}:counter`, intent.counterPool);
+    } else if (intent?.counter === 'iron' && !next.counterBroken) {
+      next.currentCounter = 'iron';
+    }
+    return { enemy: next, phaseIndex, phaseChanged };
   }
 
-  function markIntentUsed(enemy, intent, turn) {
+  function counterRule(content, counterId) {
+    return content.counterRules[counterId] || null;
+  }
+
+  function counterActive(enemy) {
+    return !!enemy.currentCounter && !enemy.counterDisabled && !enemy.suppressed;
+  }
+
+  function revealCounter(enemy) {
     const next = clone(enemy);
-    if (intent?.id) next.lastFired[intent.id] = Number(turn);
+    next.revealed = true;
     return next;
   }
 
-  function phaseReactions(definition, enemy) {
-    return phaseDataFor(definition, enemy.hp / enemy.hpMax).data.reactions || [];
-  }
-
-  function reactionState(definition, enemy) {
-    const reaction = phaseReactions(definition, enemy)[0] || null;
-    return {
-      reaction,
-      live: !!reaction && !enemy.reactionSettled && Number(enemy.reactionSuppressed || 0) <= 0,
-      suppressed: !!reaction && Number(enemy.reactionSuppressed || 0) > 0,
-      settled: !!reaction && enemy.reactionSettled,
-    };
-  }
-
-  function resolveDirectStrike(definition, enemy, options = {}) {
+  function resolveDirectStrike(enemy, options = {}) {
     const next = clone(enemy);
-    const state = reactionState(definition, next);
     const damage = Math.max(0, Number(options.damage || 0));
-    if (state.live && !options.bypassReaction) {
-      next.reactionSettled = true;
-      return {
-        enemy: next,
-        damage: 0,
-        swallowed: true,
-        reactionLabel: state.reaction.label,
-      };
+    const counterId = counterActive(next) ? next.currentCounter : '';
+
+    if (counterId === 'intercept' && !options.bypassCounter) {
+      next.hp = Math.max(0, next.hp);
+      return { enemy: next, damage: 0, swallowed: true, counterId, selfDamage: 2 };
     }
-    if (state.live && options.bypassReaction) {
-      next.reactionSuppressed = Math.max(Number(next.reactionSuppressed || 0), 2);
-    } else if (options.suppressReaction) {
-      next.reactionSuppressed = Math.max(Number(next.reactionSuppressed || 0), 2);
+    if (counterId === 'iron' && !options.bypassCounter) {
+      next.ironRage += 1;
+      return { enemy: next, damage: 0, swallowed: true, counterId, ironRage: next.ironRage };
+    }
+    if (options.bypassCounter && counterId) next.counterDisabled = true;
+    if (options.suppressCounter) {
+      next.counterDisabled = true;
+      next.suppressed = true;
+      next.damageReduction = Math.max(Number(next.damageReduction || 0), 3);
     }
     next.hp = Math.max(0, Number(next.hp) - damage);
     return {
       enemy: next,
       damage,
       swallowed: false,
-      reactionLabel: state.reaction?.label || '',
-      suppressed: !!options.suppressReaction && !!state.reaction,
+      counterId,
+      selfDamage: 0,
+      suppressed: !!options.suppressCounter && !!counterId,
     };
   }
 
-  function tickReactionSuppression(enemy) {
-    const next = clone(enemy);
-    next.reactionSuppressed = Math.max(0, Number(next.reactionSuppressed || 0) - 1);
-    return next;
-  }
-
-  function resolveEnemyIntent(enemy, intent, player) {
+  function resolveEnemyAction(enemy, player, context = {}) {
     const nextEnemy = clone(enemy);
     const nextPlayer = clone(player);
-    const rawDamage = Math.max(0, Number(intent?.damage || 0));
+    const intent = context.intent || enemy.currentIntent || { damage: 0 };
+    const counterId = counterActive(nextEnemy) ? nextEnemy.currentCounter : '';
+    let rawDamage = Math.max(0, Number(intent.damage || 0));
+
+    if (intent.tag === 'charge') rawDamage += Math.max(0, Number(nextEnemy.ironRage || 0));
+    if (counterId === 'draw_light' && !context.usedLight) rawDamage += 3;
+    if (nextEnemy.suppressed) rawDamage = Math.max(0, rawDamage - 3);
+    rawDamage = Math.max(0, rawDamage - Math.max(0, Number(context.damageReduction || 0)));
+
     const blocked = Math.min(Math.max(0, Number(nextPlayer.block || 0)), rawDamage);
-    const damage = rawDamage - blocked;
+    const hpLoss = rawDamage - blocked;
     nextPlayer.block = Math.max(0, Number(nextPlayer.block || 0) - blocked);
-    nextPlayer.hp = Math.max(0, Number(nextPlayer.hp || 0) - damage);
-    nextPlayer.qi = Math.max(0, Number(nextPlayer.qi || 0) - Math.max(0, Number(intent?.essence_burn || 0)));
+    nextPlayer.hp = Math.max(0, Number(nextPlayer.hp || 0) - hpLoss);
+    nextPlayer.lastHpLoss = hpLoss;
+
+    const specialSuppressed = !!nextEnemy.suppressed;
+    let qiLoss = 0;
+    if (!specialSuppressed && intent.kind === 'drain_qi') qiLoss += Math.max(0, Number(intent.drainQi || 0));
+    if (!specialSuppressed && intent.kind === 'burn_qi') qiLoss += Math.max(0, Number(intent.burnQi || 0));
+    nextPlayer.qi = Math.max(0, Number(nextPlayer.qi || 0) - qiLoss);
+
+    const wasAlreadyBroken = !!nextEnemy.counterBroken;
+    if (context.stoneShellUsed && intent.tag === 'charge') nextEnemy.counterBroken = true;
+    if (intent.tag === 'charge' && wasAlreadyBroken) nextEnemy.counterBroken = false;
+
     return {
       enemy: nextEnemy,
       player: nextPlayer,
-      damage,
+      damage: hpLoss,
       blocked,
-      essenceBurn: Math.max(0, Number(intent?.essence_burn || 0)),
+      qiLoss,
+      counterId,
+      specialSuppressed,
     };
   }
 
-  function battleReward(definition, rewardConfig) {
-    const tier = String(definition?.tier || 'common');
-    return Math.max(0, Number(rewardConfig?.base_by_tier?.[tier] || 0));
+  function finishEnemyAction(enemy) {
+    const next = clone(enemy);
+    next.currentCounter = '';
+    next.currentIntent = null;
+    next.revealed = false;
+    next.counterDisabled = false;
+    next.suppressed = false;
+    next.damageReduction = 0;
+    return next;
   }
 
-  function applyNextBattlePenalty(run) {
-    if (!run.nextBattlePenalty) return clone(run);
-    const next = clone(run);
-    next.hp = Math.max(1, Math.floor(next.hp / 2));
-    next.qi = Math.floor(next.qi / 2);
-    next.nextBattlePenalty = false;
-    return next;
+  function sealTarget(counterId, actionOrder = []) {
+    if (counterId === 'seal_first') return actionOrder[0] || '';
+    if (counterId === 'seal_last') return actionOrder.at(-1) || '';
+    return '';
+  }
+
+  function repeatingGuIds(previous = [], current = []) {
+    const previousIds = new Set(previous);
+    return [...new Set(current.filter((id) => previousIds.has(id)))];
+  }
+
+  function battleReward(data, enemyId) {
+    const definition = data?.enemies?.find((entry) => entry.id === enemyId);
+    const tier = String(definition?.tier || 'common');
+    return Math.max(0, Number(data?.battle?.stoneRewards?.base_by_tier?.[tier] || 0));
   }
 
   const api = {
@@ -245,21 +331,26 @@ globalThis.MvpLogic = (() => {
     addGu,
     canPay,
     payGu,
+    actionValues,
     createRun,
+    smeltStone,
     applyTrade,
     applyForge,
+    profileFor,
     createEnemy,
-    phaseDataFor,
-    intentReady,
-    chooseIntent,
-    syncIntent,
-    markIntentUsed,
-    reactionState,
+    pickVariant,
+    phaseIndexFor,
+    intentFor,
+    startTurn,
+    counterRule,
+    counterActive,
+    revealCounter,
     resolveDirectStrike,
-    tickReactionSuppression,
-    resolveEnemyIntent,
+    resolveEnemyAction,
+    finishEnemyAction,
+    sealTarget,
+    repeatingGuIds,
     battleReward,
-    applyNextBattlePenalty,
   };
   return Object.freeze(api);
 })();

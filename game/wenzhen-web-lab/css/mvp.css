@@ -90,6 +90,7 @@ button.plain { min-height: 34px; padding: 5px 12px; color: var(--ink-soft); back
 .phase-count { color: var(--seal); font-size: 12px; letter-spacing: .12em; white-space: nowrap; }
 .resources { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; color: var(--ink-soft); font-size: 13px; }
 .resources b { margin-right: 5px; color: var(--ink); font-weight: 500; }
+.wound { color: var(--cinnabar); }
 
 #mvp-app {
   position: relative;
@@ -183,6 +184,14 @@ button.plain { min-height: 34px; padding: 5px 12px; color: var(--ink-soft); back
   border-bottom: 1px solid var(--rule);
   color: var(--ink-soft);
   font-size: 12px;
+}
+.support-line {
+  margin-top: 8px;
+  padding: 7px 10px;
+  border-left: 2px solid var(--jade);
+  color: var(--jade);
+  font-size: 11px;
+  background: rgba(83, 111, 97, .05);
 }
 
 .action-grid { display: grid; gap: 8px; margin-top: 14px; }
@@ -364,6 +373,13 @@ button.plain { min-height: 34px; padding: 5px 12px; color: var(--ink-soft); back
 .run-trail b { font-weight: 500; }
 .run-trail em { color: var(--ink-soft); font-style: normal; line-height: 1.6; }
 .ending-screen .primary { margin-top: 28px; }
+
+.smelt {
+  width: 100%;
+  margin-top: 14px;
+  border-style: dashed;
+  color: var(--ink-soft);
+}
 
 #mvp-toast {
   position: fixed;
