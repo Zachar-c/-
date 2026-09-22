@@ -1120,13 +1120,15 @@ const DATA = {
       "cost": 2,
       "effect": {
         "kind": "strike",
-        "amount": 3
+        "amount": 3,
+        "ignoreEvasion": true
       },
       "icon": "gu_moon",
       "combat": "moonlight_strike",
       "battleEffect": {
         "kind": "strike",
-        "amount": 3
+        "amount": 3,
+        "ignoreEvasion": true
       },
       "trueQiCost": 2,
       "thoughtCost": 1,
@@ -1147,7 +1149,8 @@ const DATA = {
         "kind": "strike",
         "amount": 1,
         "support_school": "light",
-        "support_bonus": 2
+        "support_bonus": 2,
+        "inspect": true
       },
       "icon": "gu_light",
       "combat": "reveal_hidden_bonus",
@@ -1155,7 +1158,8 @@ const DATA = {
         "kind": "strike",
         "amount": 1,
         "support_school": "light",
-        "support_bonus": 2
+        "support_bonus": 2,
+        "inspect": true
       },
       "trueQiCost": 1,
       "thoughtCost": 1,
@@ -1174,13 +1178,17 @@ const DATA = {
       "cost": 2,
       "effect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 4,
+        "suppressWhenRevealed": true,
+        "suppress": true
       },
       "icon": "gu_moon",
       "combat": "moonlight_strike",
       "battleEffect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 4,
+        "suppressWhenRevealed": true,
+        "suppress": true
       },
       "trueQiCost": 2,
       "thoughtCost": 1,
@@ -1199,13 +1207,17 @@ const DATA = {
       "cost": 1,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 2,
+        "armorBreak": 2,
+        "pierce": 2
       },
       "icon": "gu_force",
       "combat": "white_boar_strength",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 2,
+        "armorBreak": 2,
+        "pierce": 2
       },
       "trueQiCost": 1,
       "thoughtCost": 1,
@@ -3262,6 +3274,10 @@ const DATA = {
       "hp": 4,
       "theme": "neutral",
       "tier": "common",
+      "problemAxis": "info",
+      "problemLabel": "信息/反制",
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "stone_palm",
         "label": "掌势蓄而未发",
@@ -3293,6 +3309,10 @@ const DATA = {
       "hp": 3,
       "theme": "beast",
       "tier": "common",
+      "problemAxis": "evasion",
+      "problemLabel": "高速/闪避",
+      "armorValue": null,
+      "evasionBreakpoint": 2,
       "intent": {
         "id": "pounce",
         "label": "伏肩扑咬",
@@ -3324,6 +3344,10 @@ const DATA = {
       "hp": 5,
       "theme": "beast",
       "tier": "common",
+      "problemAxis": "armor",
+      "problemLabel": "重甲/防御",
+      "armorValue": 2,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "tusk_drive",
         "label": "獠牙冲撞",
@@ -3355,6 +3379,10 @@ const DATA = {
       "hp": 7,
       "theme": "beast",
       "tier": "elite",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "thunder_bite",
         "label": "雷冠撕咬",
@@ -3377,6 +3405,10 @@ const DATA = {
       "hp": 15,
       "theme": "beast",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "crush_coil",
         "label": "绞缠碾压",
@@ -3399,6 +3431,10 @@ const DATA = {
       "hp": 16,
       "theme": "cultivator",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "marrow_lance",
         "label": "蚀骨骨矛",
@@ -3430,6 +3466,10 @@ const DATA = {
       "hp": 6,
       "theme": "faction",
       "tier": "elite",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "swift_crossbow",
         "label": "弩箭上弦",
@@ -3461,6 +3501,10 @@ const DATA = {
       "hp": 14,
       "theme": "anomaly",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "miasma_burst",
         "label": "瘴气喷涌",
@@ -3545,6 +3589,10 @@ const DATA = {
       "hp": 19,
       "theme": "faction",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "clan_wrath",
         "label": "一族之威",
@@ -3631,6 +3679,10 @@ const DATA = {
       "hp": 20,
       "theme": "anomaly",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "corpse_tide",
         "label": "尸潮掩杀",
@@ -3717,6 +3769,10 @@ const DATA = {
       "hp": 7,
       "theme": "cultivator",
       "tier": "elite",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "soul_gnaw",
         "label": "噬魂魔功",
@@ -3750,6 +3806,10 @@ const DATA = {
       "hp": 18,
       "theme": "beast",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "crown_bolt",
         "label": "雷冠贯落",
@@ -3808,6 +3868,10 @@ const DATA = {
       "hp": 20,
       "theme": "cultivator",
       "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "vein_whip",
         "label": "血络鞭挞",
@@ -3892,6 +3956,10 @@ const DATA = {
       "hp": 6,
       "theme": "faction",
       "tier": "elite",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
       "intent": {
         "id": "shield_bash",
         "label": "盾墙冲撞",
@@ -6706,5 +6774,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "062ed754f90dfec2a508254c225b8bc23ec503fdd625804ef2b4026a4ffdbac4"
+  "contentVersion": "2daa01de04e640c847c91a41d2cb9c4fe45ecbe4e79d6413e082ba38b383805e"
 };

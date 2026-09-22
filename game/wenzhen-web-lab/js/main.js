@@ -714,10 +714,32 @@ function applyEffectPlan(b, target, plan, label) {
     const core = globalThis.CombatCore;
     const asStrike = Number(plan.damage) > 0;
     if (core?.resolveDirectStrike && asStrike) {
+      // L0 Phase 1：先结算问题轴（重甲/闪避/信息税），再进反制管线
+      const problem = (typeof GuRules !== 'undefined' && GuRules.resolveProblemHit)
+        ? GuRules.resolveProblemHit(target, plan, plan.damage)
+        : { damage: plan.damage, notes: [] };
+      for (const note of problem.notes || []) {
+        if (note === 'evaded') b.log.push(`<b>${target.name}</b> · <b>${label}</b> <span class="dmg">被闪避</span>`);
+        if (note === 'armored') b.log.push(`<b>${target.name}</b> · 厚甲吞伤 · <b>${label}</b> 未破防`);
+        if (note === 'armor_tax') b.log.push(`<b>${target.name}</b> · 厚甲减伤`);
+        if (note === 'pierce_armor') b.log.push(`<b>${label}</b> · <span class="heal">破甲/穿透</span>`);
+        if (note === 'chip_through_armor') b.log.push(`<b>${label}</b> · 蹭血穿甲`);
+        if (note === 'ignore_evasion') b.log.push(`<b>${label}</b> · <span class="heal">稳定必中</span>`);
+        if (note === 'locked_on') b.log.push(`<b>${label}</b> · 已锁定 · 必中`);
+        if (note === 'stable_hit') b.log.push(`<b>${label}</b> · 稳定命中`);
+        if (note === 'suppressed_rule') b.log.push(`<b>${label}</b> · <span class="heal">镇压规则</span>`);
+        if (note === 'read_rule') b.log.push(`<b>${label}</b> · 已读破规则`);
+      }
+      if ((problem.notes || []).includes('unread_tax')) {
+        const tax = Math.max(1, Math.ceil(Number(problem.damage || 0) / 2));
+        state.blood = Math.max(0, state.blood - tax);
+        b.log.push(`未识破规则 · <span class="dmg">反噬 ${tax}</span>`);
+        BattleFx.selfDamage(tax);
+      }
       const coreEnemy = core.toCoreEnemy(target, globalThis.MVP_CONTENT?.enemyProfiles);
       const res = core.resolveDirectStrike(coreEnemy, {
-        damage: plan.damage,
-        bypassCounter: !!plan.bypassCounter,
+        damage: problem.damage,
+        bypassCounter: !!plan.bypassCounter || !!plan.armorBreak,
         suppressCounter: !!plan.suppressCounter,
         attacked: true,
       });

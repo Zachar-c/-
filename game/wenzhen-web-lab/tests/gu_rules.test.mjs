@@ -103,6 +103,25 @@ test('kill move recipes resolve one unused instance per required gu', () => {
   );
 });
 
+test('L0 kill move effect is composed from recipe components in order', () => {
+  const guById = {
+    alpha_gu: { school: 'force', v1_effect: { kind: 'strike', amount: 2 } },
+    beta_gu: { school: 'blood', v1_effect: { kind: 'heal_and_strike', heal: 1, amount: 3 } },
+  };
+  const move = {
+    recipe: ['alpha_gu', 'beta_gu'],
+    // LEGACY prefab must not drive settlement
+    effect: { kind: 'strike', amount: 99 },
+    damage: 88,
+  };
+  const plan = rules.killMoveEffectPlan(move, guById, { school: 'force' });
+  assert.equal(plan.damage, 5);
+  assert.equal(plan.heal, 1);
+  const flipped = rules.killMoveEffectPlan({ ...move, recipe: ['beta_gu', 'alpha_gu'] }, guById, {});
+  assert.equal(flipped.damage, 5);
+  assert.equal(flipped.heal, 1);
+});
+
 test('generated effects mirror Godot role fallback rank and self-support transforms', () => {
   const byId = Object.fromEntries(data.gu.map((entry) => [entry.id, entry]));
   assert.equal(byId.light_atk_5_03_gu.battleEffect.amount, 6);
@@ -131,28 +150,36 @@ test('consume_status requires at least one live stack before cost commit', () =>
 });
 
 test('gu effect plan resolves strike support, shield, heal and composite effects', () => {
+  const base = {
+    damage: 0, heal: 0, block: 0, statuses: [], swordIntent: 0, support: null,
+    inspect: false, suppressCounter: false, armorBreak: 0, ignoreEvasion: false,
+  };
   assert.deepEqual(
     plain(rules.effectPlan({ kind: 'strike', amount: 2 }, { school: 'light', supports: { light: 3 } })),
-    { damage: 5, heal: 0, block: 0, statuses: [], swordIntent: 0, support: null },
+    { ...base, damage: 5 },
   );
   assert.deepEqual(
     plain(rules.effectPlan({ kind: 'shield', amount: 3 })),
-    { damage: 0, heal: 0, block: 3, statuses: [], swordIntent: 0, support: null },
+    { ...base, block: 3 },
   );
   assert.deepEqual(
     plain(rules.effectPlan({ kind: 'heal_and_strike', heal: 2, amount: 4 })),
-    { damage: 4, heal: 2, block: 0, statuses: [], swordIntent: 0, support: null },
+    { ...base, damage: 4, heal: 2 },
   );
   assert.deepEqual(
     plain(rules.effectPlan({ kind: 'composite', parts: [{ kind: 'grant_block', amount: 5 }] })),
-    { damage: 0, heal: 0, block: 5, statuses: [], swordIntent: 0, support: null },
+    { ...base, block: 5 },
   );
 });
 
 test('gu effect plan resolves delayed, consume-status and intent-weaken effects', () => {
+  const base = {
+    damage: 0, heal: 0, block: 0, statuses: [], swordIntent: 0, support: null,
+    inspect: false, suppressCounter: false, armorBreak: 0, ignoreEvasion: false,
+  };
   assert.deepEqual(
     plain(rules.effectPlan({ kind: 'strike', amount: 3, delay: { turns: 1 } })),
-    { damage: 3, heal: 0, block: 0, statuses: [], swordIntent: 0, support: null, delayTurns: 1 },
+    { ...base, damage: 3, delayTurns: 1 },
   );
   assert.deepEqual(
     plain(rules.effectPlan(
@@ -160,18 +187,14 @@ test('gu effect plan resolves delayed, consume-status and intent-weaken effects'
       { statusStacks: { marked: 3 } },
     )),
     {
+      ...base,
       damage: 5,
-      heal: 0,
-      block: 0,
-      statuses: [],
-      swordIntent: 0,
-      support: null,
       consumeStatus: 'marked',
     },
   );
   assert.deepEqual(
     plain(rules.effectPlan({ kind: 'weaken_intent', amount: 2 })),
-    { damage: 0, heal: 0, block: 0, statuses: [], swordIntent: 0, support: null, intentWeaken: 2 },
+    { ...base, intentWeaken: 2 },
   );
 });
 

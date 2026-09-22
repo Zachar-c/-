@@ -242,6 +242,11 @@ const pickedEnemies = pickedEnemyIds
   .map((e) => ({
     id: e.id, name: enemyNames[e.id] || e.id, rank: e.rank, hp: e.hp, theme: e.theme,
     tier: e.tier || 'common',
+    // L0 Phase 1：三个敌人问题轴（信息反制 / 重甲 / 闪避）
+    problemAxis: e.problemAxis || null,
+    problemLabel: e.problemLabel || null,
+    armorValue: e.armorValue ?? null,
+    evasionBreakpoint: e.evasionBreakpoint ?? null,
     intent: e.intent, portrait: ART[e.id] || PORTRAIT_BY_THEME[e.theme] || 'enemy_beast_swarm',
     // 多阶段 AI：数据里 phases 为 [{until_hp_ratio, intents[{damage,speed,cooldown,essence_burn}], reactions}]，
     // 选取语义见数据自带的 _phases_note（冷却、阶段阈值严格递减、全部冷却则 cooldown_wait）。

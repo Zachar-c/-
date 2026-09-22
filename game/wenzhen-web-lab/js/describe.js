@@ -72,6 +72,10 @@ function killMoveEffectText(move, guById = {}) {
   if (plan.intentWeaken) parts.push(`弱化敌方意图 ${plan.intentWeaken}`);
   for (const st of plan.statuses || []) parts.push(`标记 ${st.amount || 1}`);
   if (plan.support) parts.push(`助${plan.support.school} +${plan.support.bonus}`);
+  if (plan.inspect) parts.push('查验');
+  if (plan.suppressCounter) parts.push('压制反制');
+  if (plan.armorBreak) parts.push(`破甲 ${plan.armorBreak}`);
+  if (plan.ignoreEvasion) parts.push('必中');
   if (plan.delayTurns) parts.push(`延迟 ${plan.delayTurns} 回合`);
   let text = parts.length ? parts.join(' · ') : '—';
   const conditions = [];

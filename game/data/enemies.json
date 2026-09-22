@@ -6,6 +6,8 @@
     "tier": "common",
     "rank": 1,
     "hp": 4,
+    "problemAxis": "info",
+    "problemLabel": "信息/反制",
     "clues": ["stone_dust", "steady_stance"],
     "intent": {"id": "stone_palm", "label": "掌势蓄而未发", "damage": 2, "speed": 1},
     "reactions": [
@@ -26,6 +28,9 @@
     "tier": "common",
     "rank": 1,
     "hp": 3,
+    "problemAxis": "evasion",
+    "problemLabel": "高速/闪避",
+    "evasionBreakpoint": 2,
     "clues": ["lowered_shoulders", "wet_fang"],
     "intent": {"id": "pounce", "label": "伏肩扑咬", "damage": 2, "speed": 0},
     "reactions": [
@@ -122,6 +127,9 @@
     "tier": "common",
     "rank": 2,
     "hp": 5,
+    "problemAxis": "armor",
+    "problemLabel": "重甲/防御",
+    "armorValue": 2,
     "clues": ["mud_caked", "worn_tusks"],
     "intent": {"id": "tusk_drive", "label": "獠牙冲撞", "damage": 2, "speed": 1},
     "reactions": [
