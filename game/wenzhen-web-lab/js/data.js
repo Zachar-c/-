@@ -6382,6 +6382,29 @@ const DATA = {
       "stone_gain": 4
     }
   ],
+  "worldBalance": {
+    "rank_step_ratio": 2,
+    "standard_hit_ratio": 0.2,
+    "human_base_health": 100,
+    "standard_human_hp": 100,
+    "player_start_hp": 100,
+    "thought_base_capacity": 3,
+    "stone_to_essence_per_stone": 5,
+    "rank_power_budget": {
+      "formula": "rank1_budget * rank_step_ratio^(rank-1)",
+      "rank1_formula": "human_base_health * standard_hit_ratio * rank_step_ratio",
+      "rank1_budget": 40,
+      "budget_by_rank": {
+        "1": 40,
+        "2": 80,
+        "3": 160,
+        "4": 320,
+        "5": 640
+      },
+      "axis": "rank_power_budget",
+      "axis_note_zh": "RUL-2026-09-19-008 D2/D12：全仓唯一能力预算真源。每转约 x2、1->5 约 x16，作用于效果预算（Effect Budget），不直接乘所有伤害。rank_step_ratio 升格为本曲线的步进比；standard_gu_power 指定为本曲线的唯一真源（值不变，零数值漂移）。"
+    }
+  },
   "actions": {
     "accept": "接取",
     "ally": "结盟",
@@ -6695,5 +6718,6 @@ const DATA = {
         "why": "数据缺口：data/names.json 没有 clues 分区，敌人线索只有 id（stone_dust、steady_stance 等）；本页照原样显示 id，不自行译名"
       }
     ]
-  }
+  },
+  "contentVersion": "28f9c059d26b6c71c406d106b166c9d83d19d8f59d25a3e78e7a0fab614bb676"
 };

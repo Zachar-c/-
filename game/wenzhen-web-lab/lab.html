@@ -1,3 +1,4 @@
+<!-- AI生成 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -8,6 +9,8 @@
 <link rel="stylesheet" href="css/lab.css" />
 </head>
 <body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
   <div id="bg"></div>
   <div id="grain"></div>
 
@@ -64,13 +67,18 @@
 
   <div id="toast"></div>
   <!-- 普通脚本按顺序加载，不用 ES module：这样直接双击 index.html 也能跑（file:// 下 module 会被 CORS 拦）。 -->
+  <!-- 合并：样式=lab.css，逻辑=MVP（mvp_logic = CombatCore）。禁止双引擎。 -->
   <script src="js/data.js"></script>
+  <script src="js/balance.js"></script>
   <script src="js/run_rules.js"></script>
   <script src="js/run_flow.js"></script>
   <script src="js/gu_rules.js"></script>
   <script src="js/loot_rules.js"></script>
   <script src="js/shop_rules.js"></script>
   <script src="js/node_action_rules.js"></script>
+  <script src="js/mvp_content.js"></script>
+  <script src="js/mvp_logic.js"></script>
+  <script src="js/combat_core.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/describe.js"></script>
   <script src="js/rules.js"></script>
@@ -78,6 +86,7 @@
   <script src="js/killmove.js"></script>
   <script src="js/battle.js"></script>
   <script src="js/journey.js"></script>
+  <script src="js/lab_save.js"></script>
   <script src="js/main.js"></script>
   <!-- 内联脚本不会被 CORS 拦，可靠地兜底：外部脚本若没执行（旧缓存 / 路径错 / 版本不匹配），
        页面会明确报错，而不是留一个 HUD 看着正常、按钮却没反应的空壳。 -->

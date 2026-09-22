@@ -3,6 +3,7 @@
 // 为什么需要它：原型必须跑在真实数据上，否则"Web vs Godot"的质量对比不成立。
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -510,13 +511,28 @@ const out = {
   },
   gu, recipes: picked, killMoves, enemies: pickedEnemies, encounters,
   nodes, route, shopOffers, materials, npcs, events,
+  /* Rank 主链：WORLD 真源快照（Integration 刀1）。Lab 投影只准读这里。 */
+  worldBalance: {
+    rank_step_ratio: balance.rank_step_ratio,
+    standard_hit_ratio: balance.standard_hit_ratio,
+    human_base_health: balance.human_base_health,
+    standard_human_hp: balance.standard_human_hp,
+    player_start_hp: balance.player_start_hp,
+    thought_base_capacity: balance.thought_base_capacity,
+    stone_to_essence_per_stone: balance.stone_to_essence_per_stone,
+    rank_power_budget: balance.rank_power_budget,
+  },
   actions: names.actions || {}, nodeTypes: names.types || {}, battle, mechanisms,
 };
+// contentVersion = sha256(JSON.stringify(out)) 在写入 contentVersion 字段之前。
+// 存档信封用它做内容兼容门禁；改状态结构时必须提升 LabSave.schemaVersion。
+const contentVersion = createHash('sha256').update(JSON.stringify(out)).digest('hex');
+out.contentVersion = contentVersion;
 const banner = '// 本文件由 tools/build_data.mjs 从 Godot 侧数据表生成，不要手改。\n'
   + '// 用普通脚本（非 ES module）产出，这样 file:// 双击打开也能跑，不必起本地服务。\n';
 fs.writeFileSync(path.join(here, '..', 'js', 'data.js'),
   banner + 'const DATA = ' + JSON.stringify(out, null, 2) + ';\n');
 console.log('gu', gu.length, '| recipes', picked.length, '| killMoves', killMoves.length,
   '| enemies', pickedEnemies.length, '| nodes', nodes.length, '| route', route.length,
-  '| shopOffers', shopOffers.length);
+  '| shopOffers', shopOffers.length, '| contentVersion', contentVersion);
 if (drift.length) console.log('数据/规则漂移（' + drift.length + '）：\n  - ' + drift.join('\n  - '));

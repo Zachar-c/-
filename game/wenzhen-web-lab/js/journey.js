@@ -96,12 +96,38 @@ function renderHall(root) {
   const preset = DATA.flow.difficulties[difficulty] || DATA.flow.difficulties.normal;
   const started = !!state.journey.started;
   const completed = state.journey.completed.length;
+  const inProgress = typeof isInProgressRun === 'function' ? isInProgressRun() : false;
+  const saveIssue = typeof bootSaveIssue !== 'undefined' ? bootSaveIssue : null;
+  const saveStatus = typeof lastSaveStatus !== 'undefined' ? lastSaveStatus : { ok: true, reason: '' };
+  const cannotRead = saveIssue === 'unreadable';
+  const storageDown = saveIssue === 'storage_error' || saveStatus.ok === false;
+  const saveLine = cannotRead
+    ? '<div class="hall-save bad">无法读取存档 · 原文已保留 · 请明确选择重新开局</div>'
+    : storageDown
+      ? '<div class="hall-save bad">存储不可用 · 本局无法续玩 · 不会假称已保存</div>'
+      : inProgress
+        ? '<div class="hall-save ok">本局会自动保存 · 刷新后可继续</div>'
+        : started
+          ? '<div class="hall-save">本局已结束 · 可直接开始新局</div>'
+          : '';
   root.innerHTML = `
     <div class="hall-grid">
       <section class="hall-main">
         <div class="eyebrow">问真 · Web 拼装局</div>
         <h1>问真</h1>
         <p class="hall-copy">固定节点图、战斗、节点动作（险地 / 市集 / 野蛊 / 休整 / 静修）、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
+        ${saveLine}
+        ${state.ending ? `
+        <div class="hall-ending" data-hall-ending>
+          <div class="kicker">终局摘要 · ${state.ending.outcome === 'victory' ? '胜局' : '败局'}</div>
+          <h2>${state.ending.title}</h2>
+          <p>${state.ending.detail}</p>
+          <div class="resource-row">
+            <span>outcome: ${state.ending.outcome}</span>
+            <span>回合 ${state.ending.turn || 0}</span>
+            <span>已完成 ${state.journey.completed.length}</span>
+          </div>
+        </div>` : ''}
         <div class="difficulty-row">
           ${Object.entries(DATA.flow.difficulties).map(([key, value]) => `
             <button class="${key === difficulty ? 'on' : ''}" data-difficulty="${key}">
@@ -109,14 +135,15 @@ function renderHall(root) {
             </button>`).join('')}
         </div>
         <div class="hall-actions">
-          <button class="primary" data-start-run>${started ? '重新开局' : '开始新局'}</button>
-          ${started ? '<button class="ghost" data-go-map>返回节点图</button>' : ''}
+          ${inProgress ? '<button class="primary" data-continue-run>继续当前局</button>' : ''}
+          <button class="${inProgress ? 'ghost' : 'primary'}" data-start-run>${inProgress ? '开始新局' : started ? '重新开局' : '开始新局'}</button>
+          ${started && !state.ending ? '<button class="ghost" data-go-map>返回节点图</button>' : ''}
         </div>
       </section>
       <aside class="hall-side">
         <div class="kicker">当前局面</div>
         <div class="hall-big">${completed}<span>/ ${state.journey.graph.nodes.length}</span></div>
-        <div class="hall-node">${currentNode() ? `${nodeTypeLabel(currentNode().type)} · ${currentNode().name}` : started ? '等待选择下一个节点' : '尚未开局'}</div>
+        <div class="hall-node">${currentNode() ? `${nodeTypeLabel(currentNode().type)} · ${currentNode().name}` : state.ending ? `已终局 · ${state.ending.outcome}` : started ? '等待选择下一个节点' : '尚未开局'}</div>
         <div class="resource-row">
           <span>${RunFlow.stageLabel(state.cultivation, state.cultivationStage)}</span>
           <span>真元 ${state.qi}/${state.qiMax}</span>
@@ -133,9 +160,16 @@ function renderHall(root) {
 
   root.querySelectorAll('[data-difficulty]').forEach((button) => {
     button.addEventListener('click', () => {
+      if (typeof requestDifficultyChange === 'function') {
+        requestDifficultyChange(button.dataset.difficulty);
+        return;
+      }
       state = fresh(button.dataset.difficulty);
       draw();
     });
+  });
+  root.querySelector('[data-continue-run]')?.addEventListener('click', () => {
+    if (typeof continueRun === 'function') continueRun();
   });
   root.querySelector('[data-start-run]').addEventListener('click', () => act.startRun(state.journey.difficulty || 'normal'));
   root.querySelector('[data-go-map]')?.addEventListener('click', () => showPage('map'));
@@ -546,12 +580,14 @@ function renderEnding(root) {
     root.innerHTML = '<div class="empty">本局尚未结束。</div>';
     return;
   }
+  const outcomeLabel = ending.outcome === 'victory' ? '胜局' : ending.outcome === 'defeat' ? '败局' : '终局';
   root.innerHTML = `
     <div class="ending-sheet">
-      <div class="kicker">终局归因</div>
+      <div class="kicker">终局摘要 · ${outcomeLabel}</div>
       <h1>${ending.title}</h1>
       <p class="lead">${ending.detail}</p>
       <div class="ending-stats">
+        <span>outcome: ${ending.outcome || 'unknown'}</span>
         <span>节点 ${state.journey.completed.length}</span>
         <span>气血 ${state.blood}</span>
         <span>元石 ${state.stones}</span>

@@ -259,6 +259,54 @@ globalThis.RunFlow = (() => {
 
   const sellValue = (value) => Math.floor(Math.max(0, Number(value) || 0) * 0.5);
 
+  // —— W2 生命周期纯规则（供 main.js 与 lab_lifecycle.test.mjs 共用）——
+  // graph.nodes 是数组；节点查找一律 nodeById / nodes.find。
+  const COMBAT_NODE_TYPES = new Set(['battle', 'elite', 'boss']);
+
+  function canSelectNode(availableNodeIds, nodeId) {
+    return Array.isArray(availableNodeIds) && availableNodeIds.includes(nodeId);
+  }
+
+  function battleLeaveMode(battle) {
+    if (!battle) return 'no_battle';
+    if (battle.over) return 'settle';
+    return 'view_only';
+  }
+
+  function combatNodeEnemyError(node) {
+    if (!node) return 'missing_node';
+    if (!COMBAT_NODE_TYPES.has(String(node.type || ''))) return null;
+    const ids = node.enemyIds;
+    if (!Array.isArray(ids) || !ids.length) return 'missing_enemies';
+    return null;
+  }
+
+  function graphContentError(graph) {
+    if (!graph || !Array.isArray(graph.nodes) || !graph.nodes.length) return 'empty_graph';
+    if (!Array.isArray(graph.roots) || !graph.roots.length) return 'empty_graph';
+    return null;
+  }
+
+  function endingOutcomeFromBattleOver(over) {
+    if (over === '败') return 'defeat';
+    if (over === '胜') return 'victory';
+    return null;
+  }
+
+  // 真实终局转移：只有节点完成且 nextIds 耗尽才 victory；不得用打开页面伪造。
+  function journeyAdvanceResult({ nodeId, node, started, alreadyEnded, hasUnfinishedBattle }) {
+    if (alreadyEnded) return { ok: false, kind: 'already_ended' };
+    if (!started) return { ok: false, kind: 'not_started' };
+    if (hasUnfinishedBattle) return { ok: false, kind: 'battle_unfinished' };
+    if (!nodeId) return { ok: false, kind: 'reentry' };
+    if (!node) return { ok: false, kind: 'content_error', reason: 'missing_node' };
+    const nextIds = [...(node.nextIds || [])];
+    if (!nextIds.length) {
+      return { ok: true, kind: 'victory_ending', outcome: 'victory', title: '五段行程已走完' };
+    }
+    return { ok: true, kind: 'continue', nextIds };
+  }
+
   return Object.freeze({
     STAGE_LABELS,
     DEFAULT_DIFFICULTIES,
@@ -272,5 +320,12 @@ globalThis.RunFlow = (() => {
     visibleRows,
     nextBreakthrough,
     sellValue,
+    canSelectNode,
+    battleLeaveMode,
+    combatNodeEnemyError,
+    graphContentError,
+    endingOutcomeFromBattleOver,
+    journeyAdvanceResult,
+    COMBAT_NODE_TYPES,
   });
 })();

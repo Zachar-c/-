@@ -25,9 +25,169 @@ const READY = {
 // 避免两处分叉。必须声明在下面的 `let state = fresh()` 之前：fresh 生成固定图时要过滤模板池。
 const NODE_ACTION_TYPES = NodeActionRules.nodeTypes;
 
-let state = fresh();
+// —— 种子与存档提交边界（W1）——
+// READY.seed 只是模板残留，不得覆盖已选择/已存档种子。
+// ?seed= 只服务「明确的新局」；继续始终优先存档里的 seed。
+let nextRunSeedValue = null;
+let saveWriteBlockedUntilNewRun = false;
+let skipPersistOnce = false;
+let bootSaveIssue = null; // null | 'unreadable' | 'storage_error'
+let lastSaveStatus = { ok: true, reason: '' };
 
-function fresh(difficulty = 'normal') {
+function nextRunSeed() {
+  if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+    const buf = new Uint32Array(1);
+    globalThis.crypto.getRandomValues(buf);
+    return (buf[0] % 2147483646) + 1;
+  }
+  return Math.floor(Math.random() * 2147483646) + 1;
+}
+
+function readUrlSeed() {
+  try {
+    const raw = new URLSearchParams(String(globalThis.location?.search || '')).get('seed');
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
+  } catch {
+    return null;
+  }
+}
+
+function resolveRunSeed(seed) {
+  const n = Number(seed);
+  if (Number.isFinite(n) && n > 0) {
+    nextRunSeedValue = Math.floor(n);
+    return nextRunSeedValue;
+  }
+  if (nextRunSeedValue == null) nextRunSeedValue = nextRunSeed();
+  return nextRunSeedValue;
+}
+
+function saveStorage() {
+  try {
+    return globalThis.localStorage || null;
+  } catch {
+    return null;
+  }
+}
+
+function contentVersion() {
+  return DATA.contentVersion || '';
+}
+
+function isInProgressRun() {
+  return !!(state && state.journey && state.journey.started && !state.ending);
+}
+
+// 终局后禁止再买/炼/战斗等局内增强。
+function assertRunMutable() {
+  if (state && state.ending) {
+    toast('本局已结束', 'bad');
+    return false;
+  }
+  return true;
+}
+
+function confirmAbandon(message) {
+  if (!isInProgressRun()) return true;
+  try {
+    return globalThis.confirm(message || '放弃当前局？') === true;
+  } catch {
+    return false;
+  }
+}
+
+function clearSaveOnAbandon() {
+  saveWriteBlockedUntilNewRun = true;
+  if (!globalThis.LabSave) return;
+  const result = LabSave.clear(saveStorage());
+  lastSaveStatus = result;
+}
+
+// 完整动作/结算后的统一提交点。禁止在 recordEvent 半笔扣款中途保存、禁止每帧保存。
+function persistSave() {
+  if (skipPersistOnce) {
+    skipPersistOnce = false;
+    return;
+  }
+  if (!globalThis.LabSave) return;
+  if (saveWriteBlockedUntilNewRun) return;
+  if (!state || !state.journey || !state.journey.started) return;
+  const result = LabSave.write(saveStorage(), state, contentVersion());
+  lastSaveStatus = result;
+  if (!result.ok && result.reason === 'storage_error') {
+    bootSaveIssue = bootSaveIssue || 'storage_error';
+  }
+}
+
+function commit() {
+  draw();
+  persistSave();
+}
+
+function resumePage() {
+  if (!state || !state.journey) return 'hall';
+  if (state.battle) return 'battle';
+  if (state.reward) return 'reward';
+  const node = currentNode();
+  if (node && NodeActionRules.nodeTypes.includes(node.type) && state.prepFor !== node.id) return 'node-action';
+  if (node) return 'prep';
+  return state.journey.started ? 'map' : 'hall';
+}
+
+function continueRun() {
+  if (!isInProgressRun()) return;
+  showPage(resumePage());
+  Sfx.click();
+  draw();
+}
+
+function requestDifficultyChange(difficulty) {
+  if (!confirmAbandon('修改难度将放弃当前局，确定？')) {
+    skipPersistOnce = true;
+    persistSave();
+    return;
+  }
+  if (isInProgressRun()) clearSaveOnAbandon();
+  state = fresh(difficulty);
+  draw();
+}
+
+function bootFromSave() {
+  if (!globalThis.LabSave) {
+    bootSaveIssue = 'storage_error';
+    state = fresh();
+    return;
+  }
+  const result = LabSave.read(saveStorage(), contentVersion());
+  if (result.ok && result.state) {
+    state = result.state;
+    bootSaveIssue = null;
+    saveWriteBlockedUntilNewRun = false;
+    return;
+  }
+  if (result.reason === 'empty') {
+    bootSaveIssue = null;
+    saveWriteBlockedUntilNewRun = false;
+    state = fresh();
+    return;
+  }
+  if (result.reason === 'storage_error') {
+    bootSaveIssue = 'storage_error';
+    saveWriteBlockedUntilNewRun = false;
+    state = fresh();
+    return;
+  }
+  // 坏档 / 版本不匹配：保留原文，不覆盖；UI 显示无法读取，由玩家明确重新开局。
+  bootSaveIssue = 'unreadable';
+  saveWriteBlockedUntilNewRun = true;
+  state = fresh();
+}
+
+let state;
+
+function fresh(difficulty = 'normal', seed) {
+  const runSeed = resolveRunSeed(seed);
   const thoughts = RunRules.actionPointsPerTurn(READY.soul);
   const qiMax = RunRules.essenceMax(READY.cultivation, READY.aptitude, {
     essenceBase: DATA.aptitude.essence_base,
@@ -36,7 +196,7 @@ function fresh(difficulty = 'normal') {
   });
   const enemyById = Object.fromEntries(DATA.enemies.map((enemy) => [enemy.id, enemy]));
   const graph = RunFlow.generateGraph({
-    seed: READY.seed,
+    seed: runSeed,
     difficulty,
     difficulties: DATA.flow.difficulties,
     pools: DATA.flow.poolsBySegment,
@@ -53,7 +213,8 @@ function fresh(difficulty = 'normal') {
     started: false,
   };
   return {
-    ...READY, owned: { ...READY.owned }, wild: { ...READY.wild }, equipped: [], battle: null, qiMax, qi: qiMax,
+    // seed 必须写在 READY 展开之后：禁止 READY.seed 覆盖已选择种子。
+    ...READY, seed: runSeed, owned: { ...READY.owned }, wild: { ...READY.wild }, equipped: [], battle: null, qiMax, qi: qiMax,
     thought: thoughts, thoughtMax: thoughts,
     journey, prepFor: null, reward: null, ending: null, shopSold: [], restUsed: false, journal: [],
     materials: {}, page: 'hall', lootPity: 0, materialPityByTier: {},
@@ -65,6 +226,8 @@ function fresh(difficulty = 'normal') {
     }],
   };
 }
+
+bootFromSave();
 
 const $ = (s) => document.querySelector(s);
 
@@ -209,9 +372,29 @@ function enemyTurn(b) {
       }
     }
     if (it.damage) {
-      const rawDamage = Number(it.damage || 0);
+      const rawDamage = Number(it.damage || 0)
+        + (it.tag === 'charge' ? Math.max(0, Number(enemy.ironRage || 0)) : 0)
+        + (enemy.currentCounter === 'draw_light' && !enemy.counterRevealed ? 0 : 0);
+      /* 吸收 MVP：读对+做对减伤 / 逐光未用光 +3 */
+      const core = globalThis.CombatCore;
+      let handledCut = 0;
+      if (core?.previewEnemyDamage) {
+        const pv = core.previewEnemyDamage(enemy, it, {
+          usedLight: !!b.usedLightThisTurn,
+          usedDefense: !!b.usedDefenseThisTurn,
+          attacked: !!b.attackedThisTurn,
+        });
+        handledCut = Math.max(0, Number(pv.base || rawDamage) - Number(pv.projected || pv.base || rawDamage));
+      }
       const weaken = Number(enemy.intentWeaken || 0);
-      const damage = RunRules.weakenedDamage(rawDamage, weaken);
+      let damage = RunRules.weakenedDamage(rawDamage - handledCut, weaken);
+      if (enemy.currentCounter === 'draw_light' && !enemy.counterRevealed && !b.usedLightThisTurn) {
+        damage += 3;
+        b.log.push(`${prefix}逐光 · <span class="dmg">伤害 +3</span>（本回合未用光道）`);
+      }
+      if (handledCut > 0) {
+        b.log.push(`${prefix}反制读对+做对 · 减伤 ${handledCut}`);
+      }
       if (weaken > 0) {
         enemy.intentWeaken = 0;
         b.log.push(`${prefix}<b>意图弱化</b> 减免 ${Math.min(rawDamage, weaken)}`);
@@ -314,6 +497,10 @@ function enemyTurn(b) {
 function openBattleOutcome() {
   const b = state.battle;
   if (!b || !b.over) return;
+  // 防重复结算：奖励已开出或已终局时不得再次 roll loot / 重写 ending。
+  if (state.ending) return;
+  if (b.over === '胜' && state.reward) return;
+  const outcome = RunFlow.endingOutcomeFromBattleOver(b.over);
   if (b.over === '败') {
     const lifeDeath = b.deathCause === 'life_cost';
     const soulDeath = b.deathCause === 'soul';
@@ -325,10 +512,12 @@ function openBattleOutcome() {
           ? '你的魂魄被抽干，败于当前遭遇。'
           : '气血耗尽，败于当前遭遇。',
       turn: b.turn,
+      outcome: 'defeat',
     };
     state.battle = null;
     showPage('ending');
-  } else {
+    Sfx.lose();
+  } else if (outcome === 'victory') {
     const loot = rollVictoryLoot(b);
     const healed = Math.ceil(state.bloodMax * (DATA.flow.postBattleHealPct || 0) / 100);
     state.blood = Math.min(state.bloodMax, state.blood + healed);
@@ -370,9 +559,41 @@ function applyEffectPlan(b, target, plan, label) {
     b.log.push(`<b>${label}</b> · 护体 +${plan.block}`);
   }
   if (plan.damage) {
-    target.hp -= plan.damage;
-    b.log.push(`<b>${target.name}</b> · <b>${label}</b> 命中，<span class="dmg">伤 ${plan.damage}</span>`);
-    Sfx.hit();
+    /* 吸收 MVP：直接攻击过反制（迎击/铁皮吞伤、压制、handled 减伤） */
+    const core = globalThis.CombatCore;
+    const asStrike = Number(plan.damage) > 0;
+    if (core?.resolveDirectStrike && asStrike) {
+      const coreEnemy = core.toCoreEnemy(target, globalThis.MVP_CONTENT?.enemyProfiles);
+      const res = core.resolveDirectStrike(coreEnemy, {
+        damage: plan.damage,
+        bypassCounter: !!plan.bypassCounter,
+        suppressCounter: !!plan.suppressCounter,
+        attacked: true,
+      });
+      target.hp = res.enemy.hp;
+      target.currentCounter = res.enemy.currentCounter;
+      target.counterDisabled = res.enemy.counterDisabled;
+      target.suppressed = res.enemy.suppressed;
+      target.ironRage = res.enemy.ironRage;
+      target.counterBroke = res.enemy.counterBroke;
+      if (res.selfDamage) {
+        state.blood = Math.max(0, state.blood - res.selfDamage);
+        b.log.push(`迎击反噬 · <span class="dmg">气血 -${res.selfDamage}</span>`);
+      }
+      if (res.swallowed) {
+        b.log.push(`<b>${target.name}</b> · <b>${label}</b> 被反制吞掉（${res.counterId}）`);
+        Sfx.hit();
+      } else if (res.damage > 0) {
+        b.log.push(`<b>${target.name}</b> · <b>${label}</b> 命中，<span class="dmg">伤 ${res.damage}</span>`);
+        Sfx.hit();
+      } else {
+        b.log.push(`<b>${target.name}</b> · <b>${label}</b> 未造成伤害`);
+      }
+    } else {
+      target.hp -= plan.damage;
+      b.log.push(`<b>${target.name}</b> · <b>${label}</b> 命中，<span class="dmg">伤 ${plan.damage}</span>`);
+      Sfx.hit();
+    }
     const box = $('#foe-box');
     if (box) { box.classList.add('hit'); setTimeout(() => box.classList.remove('hit'), 300); }
   }
@@ -456,6 +677,7 @@ function finishPlayerAction(b) {
 
 const act = {
   attuneGu(definitionId) {
+    if (!assertRunMutable()) return;
     const gu = GU_BY_ID[definitionId];
     if (!gu) return toast('未找到该蛊数据', 'bad');
     const result = GuRules.attuneWild(state.wild, state.owned, state.qi, definitionId, gu.rank);
@@ -483,6 +705,7 @@ const act = {
   },
 
   forge(recipeId) {
+    if (!assertRunMutable()) return;
     const r = DATA.recipes.find((x) => x.id === recipeId);
     if (!r) return;
     const need = r.inputs.reduce((m, id) => ((m[id] = (m[id] || 0) + 1), m), {});
@@ -525,17 +748,35 @@ const act = {
   },
 
   startRun(difficulty = 'normal') {
-    state = fresh(difficulty);
+    if (!confirmAbandon('开始新局将放弃当前局，确定？')) {
+      skipPersistOnce = true;
+      return;
+    }
+    saveWriteBlockedUntilNewRun = false;
+    bootSaveIssue = bootSaveIssue === 'unreadable' ? null : bootSaveIssue;
+    // ?seed= 只影响明确的新局；继续不会走到这里。
+    state = fresh(difficulty, readUrlSeed());
     state.journey.started = true;
+    nextRunSeedValue = null;
     showPage('map');
     Sfx.click();
-    draw();
     toast(`已开局 · ${DATA.flow.difficulties[state.journey.difficulty].label}`);
   },
 
   chooseNode(nodeId) {
+    if (state.ending) return;
+    if (state.battle && !state.battle.over) return toast('战斗尚未结算', 'bad');
     const node = nodeById(nodeId);
-    if (!node || !state.journey.availableNodeIds.includes(nodeId)) return;
+    if (!RunFlow.canSelectNode(state.journey.availableNodeIds, nodeId) || !node) return;
+    const enemyError = RunFlow.combatNodeEnemyError(node);
+    if (enemyError) {
+      // 内容错误：不跳关、不伪造「行程已尽」
+      return toast('内容错误 · 该节点缺少敌人数据', 'bad');
+    }
+    if (!NODE_ACTION_TYPES.includes(node.type)) {
+      const missing = (node.enemyIds || []).filter((id) => !DATA.enemies.find((x) => x.id === id));
+      if (missing.length) return toast('内容错误 · 未找到敌人数据', 'bad');
+    }
     state.journey.nodeId = nodeId;
     state.journey.availableNodeIds = [];
     state.prepFor = null;
@@ -546,11 +787,6 @@ const act = {
     // 与 Godot 的 <节点id>_used 旗标（rest_rules.gd:125,167）同语义。
     state.restUsed = false;
     if (NODE_ACTION_TYPES.includes(node.type)) return act.enterNodeAction();
-    if (!node.enemyIds?.length) {
-      state.journey.availableNodeIds = node.nextIds || [];
-      state.journey.nodeId = null;
-      return showPage('map');
-    }
     act.startBattle(node.enemyIds, node.id);
   },
 
@@ -567,6 +803,7 @@ const act = {
   // 的 standard actions 与 action_preview_service.gd 的预览门禁）。
   // 休整节点是唯一的两步交互：先取「歇脚恢复」，才解禁「离开休整」（rest_rules.gd:121-141 的一次性门禁）。
   resolveNodeAction(choiceId) {
+    if (!assertRunMutable()) return;
     const node = currentNode();
     if (!node || !NODE_ACTION_TYPES.includes(node.type)) return;
     if (state.prepFor === node.id) return; // 已解析：节点只剩统一整备
@@ -603,6 +840,7 @@ const act = {
   // 休整节点的一步：取收益（歇脚恢复）后留在本页，离开卡才结束节点进统一整备。
   // 被拒只提示、不改状态、不推进页面（沿用 slice-10 口径）。
   resolveRestAction(choiceId) {
+    if (!assertRunMutable()) return;
     const node = currentNode();
     if (!node || node.type !== NodeActionRules.restNodeType) return;
     const result = NodeActionRules.resolveRest(choiceId, {
@@ -635,18 +873,35 @@ const act = {
   },
 
   completeCurrentNode(reason = '整备完成') {
+    const result = RunFlow.journeyAdvanceResult({
+      nodeId: state.journey.nodeId,
+      node: currentNode(),
+      started: !!state.journey.started,
+      alreadyEnded: !!state.ending,
+      hasUnfinishedBattle: !!(state.battle && !state.battle.over),
+    });
+    if (!result.ok) {
+      if (result.kind === 'battle_unfinished') return toast('战斗尚未结算', 'bad');
+      if (result.kind === 'content_error') {
+        const graphErr = RunFlow.graphContentError(state.journey?.graph);
+        return toast(graphErr === 'empty_graph'
+          ? '内容错误 · 节点图为空'
+          : '内容错误 · 节点数据缺失', 'bad');
+      }
+      // reentry / not_started / already_ended：静默不重复结算
+      return;
+    }
     const node = currentNode();
-    if (!node) return act.endJourney('行程已尽');
     if (!state.journey.completed.includes(node.id)) state.journey.completed.push(node.id);
     state.journal.unshift(`${node.name} · ${reason}`);
     recordEvent('complete_node', { graph_progress: [...state.journey.completed] }, 'node_completed', [node.id]);
     state.prepFor = null;
     state.journey.nodeId = null;
-    state.journey.availableNodeIds = [...(node.nextIds || [])];
+    state.journey.availableNodeIds = result.kind === 'continue' ? [...result.nextIds] : [];
     state.battle = null;
     state.reward = null;
-    if (!state.journey.availableNodeIds.length) {
-      return act.endJourney('五段行程已走完');
+    if (result.kind === 'victory_ending') {
+      return act.endJourney(result.title || '五段行程已走完', 'victory');
     }
     showPage('map');
     Sfx.click();
@@ -657,19 +912,30 @@ const act = {
     return act.completeCurrentNode(reason);
   },
 
-  endJourney(title) {
+  // outcome 必须显式传入；null/缺省视为非法，不得默认成 victory。
+  endJourney(title, outcome) {
+    if (state.ending) return;
+    if (outcome !== 'victory' && outcome !== 'defeat') return;
     state.ending = {
       title,
       detail: state.journal[0] || '本局没有产生可归因记录。',
       turn: state.battle ? state.battle.turn : 0,
+      outcome,
     };
     state.battle = null;
     showPage('ending');
-    Sfx.win();
+    if (outcome === 'victory') Sfx.win();
+    else Sfx.lose();
     draw();
   },
 
   restartRun(difficulty = state.journey?.difficulty || 'normal') {
+    if (!confirmAbandon('重开将放弃当前局，确定？')) {
+      skipPersistOnce = true;
+      return;
+    }
+    clearSaveOnAbandon();
+    nextRunSeedValue = null;
     state = fresh(difficulty);
     showPage('hall');
     Sfx.click();
@@ -678,14 +944,30 @@ const act = {
   },
 
   startBattle(enemyIds, nodeId = null) {
+    if (!assertRunMutable()) return;
     const ids = Array.isArray(enemyIds) ? enemyIds : [enemyIds];
     const picked = ids.map((id) => DATA.enemies.find((x) => x.id === id)).filter(Boolean);
-    if (!picked.length) return toast('未找到敌人数据', 'bad');
-    const enemies = picked.map((e) => ({
-      ...e, hpMax: e.hp, hp: e.hp,
-      revealed: false, flags: {}, lastFired: {},
-      phaseIndex: undefined, phaseTotal: 0, enemyIntent: null, intentWeaken: 0,
-    }));
+    if (!picked.length) return toast('内容错误 · 未找到敌人数据', 'bad');
+    const enemies = picked.map((e) => {
+      const core = (globalThis.CombatCore?.toCoreEnemy
+        ? globalThis.CombatCore.toCoreEnemy({ ...e, hpMax: e.hp }, globalThis.MVP_CONTENT?.enemyProfiles)
+        : null) || {};
+      return {
+        ...e,
+        ...core,
+        hpMax: e.hp,
+        hp: e.hp,
+        revealed: false,
+        counterRevealed: !!core.counterRevealed,
+        currentCounter: core.currentCounter || '',
+        flags: {},
+        lastFired: {},
+        phaseIndex: undefined,
+        phaseTotal: 0,
+        enemyIntent: core.currentIntent || null,
+        intentWeaken: 0,
+      };
+    });
     state.thoughtMax = RunRules.actionPointsPerTurn(state.soul);
     state.thought = state.thoughtMax;
     state.battle = {
@@ -731,6 +1013,7 @@ const act = {
   },
 
   basicAttack() {
+    if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
     const target = targetOf(b);
@@ -762,7 +1045,31 @@ const act = {
     finishPlayerAction(b);
   },
 
+  /** MVP 逆息：真元锁死时 1 念头 · 气血-2 · 真元+3 */
+  exhaust() {
+    if (!assertRunMutable()) return;
+    const b = state.battle;
+    if (!b || b.over) return;
+    if (state.thought < 1) return toast('念头不足', 'bad');
+    if (b.exhaustUsedThisTurn) return toast('本回合已逆息', 'bad');
+    if (b.exhaustCooldown > 0) return toast(`逆息冷却 ${b.exhaustCooldown} 回合`, 'bad');
+    const roster = currentCombatRoster(b.guUsedThisTurn, b.guSealed);
+    const damageGu = roster.filter((g) => g.battleEffect?.kind === 'strike' || Number(g.battleEffect?.amount || 0) > 0);
+    const qiLocked = damageGu.length > 0 && !damageGu.some((g) => state.qi >= Number(g.trueQiCost || 0));
+    if (!qiLocked) return toast('未陷入真元枯竭，无须逆息', 'bad');
+    state.thought -= 1;
+    state.blood = Math.max(0, state.blood - 2);
+    state.qi = Math.min(state.qiMax, state.qi + 3);
+    b.exhaustUsedThisTurn = true;
+    b.exhaustCooldown = 2;
+    b.actionsUsed += 1;
+    b.log.push('逆息 · <span class="dmg">气血 -2</span> · 真元 +3');
+    Sfx.click();
+    draw();
+  },
+
   observe() {
+    if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
     const target = targetOf(b);
@@ -772,12 +1079,19 @@ const act = {
     state.thought -= 1;
     b.actionsUsed += 1;
     target.revealed = true;
+    target.counterRevealed = true;
+    if (globalThis.CombatCore?.revealCounter) {
+      const coreEnemy = globalThis.CombatCore.toCoreEnemy(target, globalThis.MVP_CONTENT?.enemyProfiles);
+      const after = globalThis.CombatCore.revealCounter({ player: { knownCounters: new Set() } }, coreEnemy);
+      target.currentCounter = after.currentCounter;
+    }
     Sfx.click();
     b.log.push(`你凝神细察 <b>${target.name}</b>，看清了它的线索与反击。`);
     finishPlayerAction(b);
   },
 
   useMove(id) {
+    if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
     const target = targetOf(b);
@@ -873,6 +1187,7 @@ const act = {
   },
 
   useGu(instanceId) {
+    if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
     const target = targetOf(b);
@@ -888,6 +1203,7 @@ const act = {
       thought: state.thought,
       usedThisTurn: !!b.guUsedThisTurn[instanceId],
       actionLimitReached: b.actionsUsed >= b.actionLimit,
+      lowRankException: !!(state.lowRankGu && state.lowRankGu[gu.id]),
     });
     if (reason) return toast(guReasonLabel(reason), 'bad');
 
@@ -961,6 +1277,7 @@ const act = {
   },
 
   buyOffer(offerId) {
+    if (!assertRunMutable()) return;
     const offer = DATA.shopOffers.find((o) => o.id === offerId);
     if (!offer || !canBuyOffer(offer)) return;
     const cost = offerCost(offer);
@@ -992,6 +1309,7 @@ const act = {
   },
 
   breakthrough(mode = 'stone') {
+    if (!assertRunMutable()) return;
     const result = RunFlow.nextBreakthrough({
       rank: state.cultivation,
       stageIndex: state.cultivationStage,
@@ -1047,6 +1365,7 @@ const act = {
   },
 
   useAptitudeGu() {
+    if (!assertRunMutable()) return;
     const guId = DATA.flow.aptitudeGuId;
     if (!Number(state.owned[guId] || 0)) return toast('没有资质蛊', 'bad');
     const order = DATA.flow.aptitudeOrder || [];
@@ -1068,6 +1387,7 @@ const act = {
   },
 
   sellGu(guId) {
+    if (!assertRunMutable()) return;
     const gu = GU_BY_ID[guId];
     if (!gu || Number(state.owned[guId] || 0) <= 0) return toast('没有可卖出的该蛊', 'bad');
     const price = RunFlow.sellValue(gu.value);
@@ -1110,16 +1430,20 @@ const act = {
   },
 
   chooseRewardGu(guId) {
+    if (!assertRunMutable()) return;
     const reward = state.reward;
     if (!reward || !(reward.guChoices || []).includes(guId)) return;
     state.owned[guId] = (state.owned[guId] || 0) + 1;
     state.journal.unshift(`战后三选一 · ${(GU_BY_ID[guId] || {}).name || guId}`);
     recordEvent('battle_loot', { owned: { ...state.owned }, loot_pity: state.lootPity }, 'loot_gu_gained', [guId]);
+    // 领取后立刻失效 reward，防重复点击追加
+    state.reward = null;
     Sfx.success();
     act.openPrep();
   },
 
   continueReward() {
+    if (!assertRunMutable()) return;
     const reward = state.reward;
     if (!reward) return showPage('map');
     if ((reward.guChoices || []).length) return toast('请先选择一只蛊虫', 'bad');
@@ -1128,23 +1452,44 @@ const act = {
   },
 
   endTurn() {
+    if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
     Sfx.click();
     b.log.push('你结束本回合。');
     if (enemyTurn(b)) { openBattleOutcome(); return; }
+    b.usedLightThisTurn = false;
+    b.attackedThisTurn = false;
+    b.usedDefenseThisTurn = false;
+    b.exhaustUsedThisTurn = false;
+    if (b.exhaustCooldown > 0) b.exhaustCooldown -= 1;
     draw();
   },
 
   endBattle() {
     const b = state.battle;
-    if (b && b.over) return openBattleOutcome();
-    state.battle = null;
+    const mode = RunFlow.battleLeaveMode(b);
+    if (mode === 'settle') return openBattleOutcome();
+    if (mode === 'no_battle') return showPage('map');
+    // view_only：离开战斗页只是视图切换，必须保留遭遇，禁止付费逃跑/丢遭遇。
     showPage('map');
     Sfx.click();
     draw();
   },
 };
+
+// 统一提交边界：每个公开 act 方法终止后保存一次。
+// _pickIntent 等内部方法不包装，避免战斗中途/半笔结算保存。
+for (const actKey of Object.keys(act)) {
+  if (actKey.startsWith('_')) continue;
+  const rawAct = act[actKey];
+  if (typeof rawAct !== 'function') continue;
+  act[actKey] = function wrappedAct(...args) {
+    const result = rawAct.apply(this, args);
+    commit();
+    return result;
+  };
+}
 
 // 覆盖页：让开发者一眼看清"这页验了什么、没验什么"。
 function renderCover(root) {
@@ -1183,5 +1528,18 @@ $('#reset').addEventListener('click', () => act.restartRun());
 document.addEventListener('pointerdown', () => Sfx.click(), { once: true });
 
 draw();
-showPage(state.page);
+showPage(resumePage());
+// 只读快照入口：供 tests/helpers/lab_browser.mjs 读取完整可序列化 state。
+// 不是改状态 / 调 act 的捷径。
+globalThis.__labSnapshot = function labSnapshot() {
+  return JSON.parse(JSON.stringify(state));
+};
+globalThis.__labBootInfo = function labBootInfo() {
+  return {
+    bootSaveIssue,
+    lastSaveStatus: { ...lastSaveStatus },
+    contentVersion: contentVersion(),
+    inProgress: isInProgressRun(),
+  };
+};
 document.documentElement.dataset.ready = '1';
