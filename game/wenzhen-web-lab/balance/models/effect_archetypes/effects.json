@@ -1,0 +1,132 @@
+{
+  "layer": "models",
+  "id": "effect_archetypes_v1",
+  "note": "数值由 Effect Archetype × dimension 推导。改 range 曲线则所有远程件一起动。",
+  "origin": "adaptation",
+  "base_damage_by_rank": { "1": 4, "2": 7, "3": 12, "4": 18, "5": 26 },
+  "qi_base_by_rank": { "1": 8, "2": 11, "3": 17, "4": 23, "5": 31 },
+  "dimension_curves": {
+    "power": { "to_damage_mult": 1.0 },
+    "range": { "to_qi_mult": 0.15, "to_damage_mult": -0.08, "bands": [0, 1, 2, 3, 4] },
+    "accuracy": { "to_damage_mult": 0.05 },
+    "penetration": { "to_damage_mult": 0.2, "to_armor_break": 3 },
+    "targets": { "to_damage_mult_per_extra": -0.15 },
+    "control": { "to_damage_mult": -0.1 },
+    "defense_block_per_power": 1.2,
+    "cost_pressure": { "qi_mult_per_hp": 0.25, "qi_mult_per_thought_extra": 0.2 }
+  },
+  "archetypes": {
+    "direct_projectile": {
+      "id": "direct_projectile",
+      "slots": 1,
+      "base_dimensions": { "power": 1.0, "range": 0.8, "accuracy": 1.0, "penetration": 0, "targets": 1 },
+      "value_tilt": { "combat_direct": 1.0, "killer_move": 0.9 }
+    },
+    "ranged_snipe": {
+      "id": "ranged_snipe",
+      "slots": 1,
+      "base_dimensions": { "power": 0.65, "range": 1.8, "accuracy": 1.0, "penetration": 0.35, "targets": 1 },
+      "value_tilt": { "combat_direct": 0.7, "control": 0.4, "killer_move": 0.8 }
+    },
+    "curve_projectile": {
+      "id": "curve_projectile",
+      "slots": 1,
+      "base_dimensions": { "power": 0.85, "range": 0.9, "accuracy": 1.15, "penetration": 0, "targets": 1 },
+      "value_tilt": { "combat_direct": 0.85, "mobility": 0.5, "control": 0.3 }
+    },
+    "burst_projectile": {
+      "id": "burst_projectile",
+      "slots": 2,
+      "base_dimensions": { "power": 1.55, "range": 0.8, "accuracy": 1.0, "penetration": 0.2, "targets": 1 },
+      "value_tilt": { "combat_direct": 1.3, "killer_move": 1.1 }
+    },
+    "armor_breaker": {
+      "id": "armor_breaker",
+      "slots": 2,
+      "base_dimensions": { "power": 1.35, "range": 0.8, "accuracy": 1.0, "penetration": 0.8, "targets": 1 },
+      "value_tilt": { "combat_direct": 1.1, "control": 0.2 }
+    },
+    "shield": {
+      "id": "shield",
+      "slots": 1,
+      "base_dimensions": { "power": 1.0, "targets": 1 },
+      "block_per_power_rank": { "1": 6, "2": 10, "3": 14, "4": 20, "5": 34 },
+      "value_tilt": { "defense": 1.2 }
+    },
+    "inspect": {
+      "id": "inspect",
+      "slots": 1,
+      "base_dimensions": { "range": 1.5, "accuracy": 1.0 },
+      "value_tilt": { "information": 1.5, "combat_direct": 0.1, "killer_move": 0.4 },
+      "longevity": true
+    },
+    "support_amp": {
+      "id": "support_amp",
+      "slots": 1,
+      "base_dimensions": {},
+      "value_tilt": { "resource": 0.8, "refinement": 1.0, "killer_move": 1.0, "combat_direct": 0.3 }
+    },
+    "dot_bleed": {
+      "id": "dot_bleed",
+      "slots": 1,
+      "base_dimensions": { "power": 0.7, "range": 0.8 },
+      "value_tilt": { "combat_direct": 0.6, "control": 0.5 },
+      "self_cost": true
+    },
+    "stealth_utility": {
+      "id": "stealth_utility",
+      "slots": 2,
+      "base_dimensions": {},
+      "value_tilt": { "defense": 0.6, "control": 0.5, "mobility": 0.4, "information": 0.3 }
+    },
+    "resource_cycle": {
+      "id": "resource_cycle",
+      "slots": 1,
+      "base_dimensions": {},
+      "value_tilt": { "resource": 1.4, "economy": 1.0, "combat_direct": 0.1 },
+      "longevity": true
+    },
+    "suppress_qi": {
+      "id": "suppress_qi",
+      "slots": 2,
+      "base_dimensions": { "power": 0.25 },
+      "value_tilt": { "control": 1.4, "resource": 0.8, "combat_direct": 0.2 },
+      "situational": "antimana"
+    },
+    "aoe_projectile": {
+      "id": "aoe_projectile",
+      "slots": 2,
+      "base_dimensions": { "power": 0.7, "range": 0.8, "targets": 3 },
+      "value_tilt": { "combat_direct": 1.0, "control": 0.3 }
+    },
+    "control_frost": {
+      "id": "control_frost",
+      "slots": 2,
+      "base_dimensions": { "power": 0.75, "range": 0.8 },
+      "value_tilt": { "control": 1.3, "combat_direct": 0.7 }
+    },
+    "phantom_decoy": {
+      "id": "phantom_decoy",
+      "slots": 2,
+      "base_dimensions": {},
+      "value_tilt": { "defense": 1.0, "control": 0.4 }
+    },
+    "legendary_finisher": {
+      "id": "legendary_finisher",
+      "slots": 3,
+      "base_dimensions": { "power": 1.8, "range": 1.0, "penetration": 0.5, "targets": 1 },
+      "value_tilt": { "combat_direct": 1.4, "killer_move": 1.3 }
+    }
+  },
+  "value_vector_axes": [
+    "combat_direct",
+    "defense",
+    "control",
+    "information",
+    "mobility",
+    "resource",
+    "refinement",
+    "killer_move",
+    "economy"
+  ]
+}

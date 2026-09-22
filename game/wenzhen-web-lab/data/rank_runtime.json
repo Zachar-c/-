@@ -1,0 +1,84 @@
+{
+  "id": "RANK_RUNTIME_V1",
+  "ruling": "RUL-2026-09-21-010",
+  "note": "Rank 纵轴最小运行时字段。均禁止 rank_multiplier。wired=true 表示存在可调用实现路径。",
+  "allow_rank_multiplier_on": [],
+  "fields": {
+    "rank": {
+      "type": "int",
+      "range": [1, 5],
+      "source": "run_state.rank",
+      "wired": true,
+      "consumer": "mvp_logic.createRun / v1_battle",
+      "mult": false
+    },
+    "essence_tier": {
+      "type": "enum",
+      "values": ["crude", "refined", "dense", "spirit", "astral"],
+      "source": "scripts/domain/cultivator_rules.gd + aptitude.json",
+      "wired": true,
+      "consumer": "essence_capacity.gd",
+      "mult": false
+    },
+    "gu_rank_cap": {
+      "type": "int",
+      "map_to": "rank",
+      "rule": "可正常催动 gu.rank <= gu_rank_cap",
+      "source": "gu_balance.gd::cultivator 催动门禁 / mvp_logic 高转禁用",
+      "wired": true,
+      "consumer": "v1_battle_resolver.can_play_gu",
+      "mult": false
+    },
+    "cross_rank_cost_curve": {
+      "type": "curve",
+      "formula": "0.65^(playerRank-guRank)",
+      "minQi": 1,
+      "impl": "MvpBalance.crossRankQiCost",
+      "source": "game/wenzhen-web-lab/js/balance.js",
+      "wired": true,
+      "consumer": "check_l1_phases + lab 催动成本",
+      "mult": false,
+      "note": "独立曲线；vertical 冻结副本不是真源"
+    },
+    "killer_move_complexity_cap": {
+      "type": "int",
+      "metric": "complexity_points",
+      "impl": "MvpBalance.complexityPoints",
+      "policy": "stable_cap; 超出须付代价（未限用）",
+      "source": "game/wenzhen-web-lab/js/balance.js",
+      "wired": true,
+      "affects_player": false,
+      "mult": false
+    },
+    "refinement_rank_cap": {
+      "type": "int",
+      "rule": "可正常主持炼制 output.rank <= refinement_rank_cap",
+      "source": "refine_command_rules.gd",
+      "wired": true,
+      "consumer": "refine_command_rules",
+      "mult": false
+    },
+    "maintenance_capacity": {
+      "type": "int",
+      "rule": "高阶蛊供养压力承载",
+      "source": "feeding_rules.gd",
+      "wired": true,
+      "consumer": "feeding_rules",
+      "mult": false
+    },
+    "progression_access_tier": {
+      "type": "int",
+      "map_to": "rank",
+      "rule": "敌人/商店/材料/事件层级访问",
+      "source": "pacing.json / loot / shops tier",
+      "wired": true,
+      "consumer": "map_generator / shop_rules / loot",
+      "mult": false
+    }
+  },
+  "low_rank_keep": {
+    "cost_discount": "0.65^(rank差)",
+    "value_decay": "FORBIDDEN — 不得再加价值折损",
+    "note": "输出自然落后；功能/炼蛊/杀招组件价值可保留"
+  }
+}

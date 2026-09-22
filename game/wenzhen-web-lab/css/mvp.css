@@ -28,7 +28,7 @@ body {
   min-height: 100vh;
   background-image:
     linear-gradient(rgba(236, 233, 223, .78), rgba(236, 233, 223, .94)),
-    url("../../assets/wenzhen/hall/hall_dots.png");
+    url("../assets/wenzhen/hall/hall_dots.png");
   background-size: auto, 180px 180px;
 }
 

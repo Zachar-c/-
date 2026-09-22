@@ -22,8 +22,17 @@ const Mvp = (() => {
 
   const currentStep = () => content.encounters[run.stepIndex] || content.encounters.at(-1);
   const isBattleStep = (step = currentStep()) => ['battle', 'elite', 'boss'].includes(step.type);
-  const portraitPath = (id) => `../assets/wenzhen/enemies/${enemyById(id).portrait}.png`;
-  const guPath = (id) => `../assets/wenzhen/gu/${guById(id).icon}.png`;
+  /* 素材在 lab 本地 assets/（预览根=wenzhen-web-lab，禁止 ../assets 出界 404） */
+  const portraitPath = (id) => {
+    const enemy = enemyById(id);
+    const portrait = enemy?.portrait || id;
+    return `assets/wenzhen/enemies/${portrait}.png`;
+  };
+  const guPath = (id) => {
+    const gu = guById(id);
+    const icon = gu?.icon || 'gu_moon';
+    return `assets/wenzhen/gu/${icon}.png`;
+  };
   const cooldownKey = (id, index) => `${id}:${index}`;
 
   function pushLog(kind, label, detail) {
@@ -81,8 +90,23 @@ const Mvp = (() => {
       observeCount: 0,
       damageTaken: 0,
       guUsage: {},
+      /* V4.1 逆息与节奏指标 */
+      exhaustionReadyAt: 0,
+      exhaustionUsedThisTurn: false,
+      exhaustionCount: 0,
+      counterTurns: 0,
+      noCounterTurns: 0,
+      zeroDamageTurns: 0,
+      dealtDamageThisTurn: false,
       log: [`${definition.name} 出现。`],
     };
+    tallyTurnCounter();
+  }
+
+  function tallyTurnCounter() {
+    if (!battle) return;
+    if (battle.enemy.currentCounter) battle.counterTurns += 1;
+    else battle.noCounterTurns += 1;
   }
 
   function startEnemyTurnState() {
@@ -108,6 +132,9 @@ const Mvp = (() => {
     const gu = guById(id);
     if (!action || !gu || !battle || battle.won || battle.enemy.hp <= 0) return '不可用';
     if (battle.sealedToday[id]) return '本回合被封印';
+    if (rules.isActionBannedThisTurn(id, battle, content)) {
+      return id === 'vitality_grass_gu' ? '逆息当回合禁生机草' : '逆息当回合禁收势';
+    }
     if (battle.used[cooldownKey(id, index)]) return '本回合已用';
     const nextTurn = Number(battle.cooldowns[cooldownKey(id, index)] || 0);
     if (nextTurn > battle.turn) return `冷却至第 ${nextTurn} 回合`;
@@ -138,9 +165,19 @@ const Mvp = (() => {
   }
 
   function useAction(id, index) {
+    const rankGate = rules.canUseGu && rules.canUseGu(run, id, content);
+    if (rankGate && !rankGate.ok) {
+      return toast(
+        `一转不可催动${content.actions[id]?.label || id}（需 ${rankGate.guRank} 转）`,
+        'bad',
+      );
+    }
     const blocked = actionBlockedReason(id, index);
     if (blocked) return toast(blocked, 'bad');
     const action = content.actions[id];
+    if (id === 'vitality_grass_gu' && rules.isActionBannedThisTurn(id, battle, content)) {
+      return toast('逆息当回合不能使用生机草蛊', 'bad');
+    }
     const gu = guById(id);
     const supportActive = action.light && battle.lightSupport > 0;
     const values = rules.actionValues(action, battle.lightSupport);
@@ -202,6 +239,7 @@ const Mvp = (() => {
           battle.log.push(`铁皮未破；下一次冲撞 +${hit.ironRage}。`);
         }
       } else {
+        battle.dealtDamageThisTurn = true;
         battle.log.push(`<b>${gu.name}</b> 命中，伤 ${hit.damage}${suppress ? '，并压制当前反制与特殊效果' : ''}。`);
       }
     }
@@ -222,9 +260,34 @@ const Mvp = (() => {
 
   function defend() {
     if (!battle || battle.won || run.thoughts < 1) return;
+    if (rules.isActionBannedThisTurn('defend', battle, content)) {
+      return toast('逆息当回合不能收势', 'bad');
+    }
     run.thoughts -= 1;
     battle.damageReduction += 2;
     battle.log.push('收势：本回合受到的敌方伤害 -2。');
+    render();
+  }
+
+  function exhaustion() {
+    if (!battle || battle.won) return;
+    const result = rules.applyExhaustion(run, battle, content);
+    if (!result.ok) {
+      const map = {
+        cooldown: '逆息尚未回气',
+        already_this_turn: '本回合已逆息',
+        cannot_pay: '念头或气血不足',
+        damage_gu_ready: '还有可用伤害蛊',
+        not_qi_blocked: '并非真元卡住输出',
+        no_damage_gu: '没有伤害蛊',
+      };
+      return toast(map[result.reason] || '无法逆息', 'bad');
+    }
+    run = result.run;
+    battle = result.battle;
+    battle.log.push(`<b>逆息</b>：气血 -${result.hpCost}，真元 +${result.qiGain}（以根基换一次出手机会）。本回合不能收势或使用生机草蛊。`);
+    toast(`逆息 · 气血 -${result.hpCost} · 真元 +${result.qiGain}`, 'warn');
+    if (run.hp <= 0) return loseRun('逆息耗尽了最后一点气血。');
     render();
   }
 
@@ -238,6 +301,14 @@ const Mvp = (() => {
     pushLog('battle', battle.step.title, `${battle.definition.name} 伏诛；元石 +${reward}，气血 +2，真元 +2。`);
     battle.log.push(`<b>${battle.definition.name}</b> 伏诛。元石 +${reward}，战后恢复 2 气血 / 2 真元。`);
     toast(`伏诛 · 元石 +${reward} · 气血 +2 · 真元 +2`, 'good');
+    /* Boss 击杀即通关：必须落 run.result，否则结算页 stats.result 为 null（autoplay 会报 unknown）。 */
+    if (battle.step.type === 'boss') {
+      run.result = {
+        won: true,
+        title: '雷冠伏诛',
+        detail: '你从山道走到了雷冠封路，并亲手终结了它。',
+      };
+    }
     return true;
   }
 
@@ -310,6 +381,7 @@ const Mvp = (() => {
     battle.previousGuIds = [...battle.currentGuIds];
     battle.currentGuIds = [];
     battle.enemy = rules.finishEnemyAction(battle.enemy);
+    if (!battle.dealtDamageThisTurn) battle.zeroDamageTurns += 1;
     battle.turn += 1;
     battle.used = {};
     battle.cooldowns = { ...battle.cooldowns };
@@ -323,8 +395,11 @@ const Mvp = (() => {
     battle.attackedThisTurn = false;
     battle.guUsedCount = 0;
     battle.block = 0;
+    battle.exhaustionUsedThisTurn = false;
+    battle.dealtDamageThisTurn = false;
     run.thoughts = run.thoughtMax;
     startEnemyTurnState();
+    tallyTurnCounter();
     battle.log.push(`— 第 ${battle.turn} 回合 —`);
     render();
   }
@@ -434,9 +509,29 @@ const Mvp = (() => {
     const hpPct = Math.max(0, enemy.hp / enemy.hpMax * 100);
     const suppress = enemy.suppressed ? '月芒压制中' : '';
     const intentText = enemy.currentIntent?.label || '无';
+    /* 预览回显 V4 减伤后的实际区间，不再只报原始意图伤害。 */
+    const intentDamageLabel = () => {
+      if (!enemy.currentIntent?.damage && enemy.currentIntent?.damage !== 0) return '';
+      const p = rules.previewEnemyDamage(enemy, enemy.currentIntent, {
+        usedLight: battle.usedLight,
+        attacked: battle.attackedThisTurn,
+        guUsedCount: battle.guUsedCount,
+        stoneShellUsed: battle.stoneShellUsed,
+        damageReduction: battle.damageReduction,
+        canStillUseLight: !battle.usedLight,
+        canStillAvoidAttack: !battle.attackedThisTurn,
+        canStillBreakIron: !battle.stoneShellUsed,
+      });
+      if (p.min === p.max) return ` · 预计 ${p.max} 伤`;
+      if (p.projected !== p.max && p.projected !== p.min) {
+        return ` · 预计 ${p.min}~${p.max} 伤（当前路径 ${p.projected}）`;
+      }
+      return ` · 预计 ${p.min}~${p.max} 伤`;
+    };
     const revealedCounter = enemy.revealed && counter
       ? `${counter.label}：${counter.detail}`
       : enemy.revealed ? '无反制' : '未知';
+    const exhaustionGate = () => rules.exhaustionGate(run, content, battle);
 
     if (battle.won) {
       document.querySelector('#mvp-app').innerHTML = `
@@ -470,7 +565,7 @@ const Mvp = (() => {
           <div class="hp-line"><i style="width:${hpPct}%"></i></div>
           <div class="enemy-hp">气血 ${enemy.hp} / ${enemy.hpMax}</div>
           <dl class="intel">
-            <div><dt>下一行动</dt><dd>${esc(intentText)}${enemy.currentIntent?.damage ? ` · 预计 ${enemy.currentIntent.damage + (enemy.currentIntent.tag === 'charge' ? enemy.ironRage : 0)} 伤` : ''}</dd></div>
+            <div><dt>下一行动</dt><dd>${esc(intentText)}${intentDamageLabel()}</dd></div>
             <div><dt>已知弱点</dt><dd>${esc(intel.known)}</dd></div>
             <div><dt>未察信息</dt><dd>${esc(intel.unknown)}</dd></div>
             <div><dt>反制</dt><dd>${esc(revealedCounter)}</dd></div>
@@ -484,7 +579,8 @@ const Mvp = (() => {
           <div class="action-grid">${renderActions()}</div>
           <div class="basic-actions">
             <button ${run.thoughts >= 1 && !enemy.revealed ? '' : 'disabled'} data-observe>观察 <small>念头 1 · 揭示本回合反制</small></button>
-            <button ${run.thoughts >= 1 ? '' : 'disabled'} data-defend>收势 <small>念头 1 · 本回合伤害 -2</small></button>
+            <button ${run.thoughts >= 1 && !rules.isActionBannedThisTurn('defend', battle, content) ? '' : 'disabled'} data-defend>收势 <small>念头 1 · 本回合伤害 -2</small></button>
+            <button ${exhaustionGate().eligible ? '' : 'disabled'} data-exhaust>逆息 <small>念头 1 · 气血 -2 / 真元 +3</small></button>
             <button data-end-turn>结束回合</button>
           </div>
         </div>
@@ -499,6 +595,7 @@ const Mvp = (() => {
     });
     document.querySelector('[data-observe]')?.addEventListener('click', observe);
     document.querySelector('[data-defend]')?.addEventListener('click', defend);
+    document.querySelector('[data-exhaust]')?.addEventListener('click', exhaustion);
     document.querySelector('[data-end-turn]')?.addEventListener('click', endTurn);
   }
 
@@ -615,6 +712,8 @@ const Mvp = (() => {
       qi: run.qi,
       qiMax: run.qiMax,
       stones: run.stones,
+      thoughts: run.thoughts,
+      thoughtMax: run.thoughtMax,
       tradeChoice: run.tradeChoice,
       forgeChoice: run.forgeChoice,
       borrowedMoon: run.borrowedMoon,
@@ -637,6 +736,12 @@ const Mvp = (() => {
         observeCount: battle.observeCount,
         damageTaken: battle.damageTaken,
         guUsage: { ...battle.guUsage },
+        exhaustionCount: battle.exhaustionCount,
+        counterTurns: battle.counterTurns,
+        noCounterTurns: battle.noCounterTurns,
+        zeroDamageTurns: battle.zeroDamageTurns,
+        exhaustionReadyAt: battle.exhaustionReadyAt,
+        exhaustionUsedThisTurn: !!battle.exhaustionUsedThisTurn,
       } : null,
     };
   }

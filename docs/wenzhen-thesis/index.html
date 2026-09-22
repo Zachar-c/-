@@ -1,0 +1,63 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>《问真》力量体系即玩法 · 定论与偏差</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <header class="top">
+    <p class="eyebrow">《问真》产品定论 · L0 2026-09-21</p>
+    <h1>蛊师如何获得、组织、承担、重构力量</h1>
+    <p class="sub">不是「技能改名成蛊」的 Roguelike。本页：已钉住的因果 + 仍偏之处 + 工程红线。</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="core" class="on">一句话</button>
+    <button data-tab="pillars">已钉住</button>
+    <button data-tab="skew">仍偏之处</button>
+    <button data-tab="loop">成长环</button>
+    <button data-tab="eng">工程红线</button>
+  </nav>
+
+  <main>
+    <section id="core" class="panel on">
+      <blockquote class="thesis">
+        一款以《蛊真人》力量体系本身作为玩法核心的 Roguelike：玩家从一转蛊师开始，在有限资源和真实风险中获取、购买、供养、炼制和淘汰蛊虫，把蛊作为元件不断推演和重构杀招，不同流派拥有不同的资源与状态语法；修为提升使玩家能承载更高层次、更复杂的力量体系；战斗、掉落、商店、炼蛊和经济共同驱动这种成长，最终从一转一路构筑到五转巅峰，并以整套积累去面对升仙。
+      </blockquote>
+      <p class="note">反例（禁止）：做一个好玩的 Roguelike，然后把技能改名成蛊。</p>
+    </section>
+
+    <section id="pillars" class="panel">
+      <h2>已钉住的因果（不要再拧回去）</h2>
+      <div class="cards" id="okCards"></div>
+    </section>
+
+    <section id="skew" class="panel">
+      <h2>仍然偏了 / 未闭合的因果</h2>
+      <p class="note">下面是结构张力，不是措辞问题。每条都有「若不补上会退化成什么」。</p>
+      <div class="cards" id="skewCards"></div>
+    </section>
+
+    <section id="loop" class="panel">
+      <h2>成长环（获得→判断→组合→杀招→资源→修为→淘汰）</h2>
+      <pre class="code" id="loopText"></pre>
+    </section>
+
+    <section id="eng" class="panel">
+      <h2>工程红线（Integration First）</h2>
+      <pre class="code" id="engText"></pre>
+    </section>
+  </main>
+
+  <footer>
+    <span>Owner 图见 game/wenzhen-web-lab/EXISTING_CAPABILITY_MAP.md</span>
+    <span>禁止第四套 Rank / 定价 / 战斗</span>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

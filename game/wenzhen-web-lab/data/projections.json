@@ -1,0 +1,67 @@
+{
+  "id": "PROJ-SET-LAB-PACING-V1",
+  "ruling": "RUL-2026-09-21-010",
+  "note": "禁投影 entity_id/rank/dao/canonical_refinement_composition/lore/provenance/frozen_ruling_semantics",
+  "items": [
+    {
+      "id": "PROJ-LAB-THOUGHT-001",
+      "childKey": "lab.thoughtsPerTurn",
+      "value": 2,
+      "parents": ["balance.thought_base_capacity"],
+      "policy": "pacing_projection_10min_lab",
+      "scope": "wenzhen_web_lab",
+      "rationale": "increase observe-vs-action opportunity cost",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "explicit_value", "expectParent": 3 },
+      "forbidWriteBack": true,
+      "sourceRuling": null
+    },
+    {
+      "id": "PROJ-LAB-HP-001",
+      "childKey": "lab.playerHp",
+      "value": 24,
+      "parents": ["balance.human_base_health"],
+      "policy": "pacing_projection_10min_lab",
+      "scope": "wenzhen_web_lab",
+      "rationale": "compress attrition window for 10-minute proof",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "explicit_value", "expectParent": 100 },
+      "forbidWriteBack": true,
+      "sourceRuling": "RUL-2026-09-19-009"
+    },
+    {
+      "id": "PROJ-LAB-QI-EX-001",
+      "childKey": "lab.LAB_EXCHANGE_RATE",
+      "value": { "stones": 1, "qi": 2 },
+      "parents": ["balance.stone_to_essence_per_stone"],
+      "policy": "pacing_projection_10min_lab",
+      "scope": "wenzhen_web_lab",
+      "rationale": "lab qi pool is percent-like 12; slower essence economy than world 1:5",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "explicit_value", "expectParent": 5 },
+      "forbidWriteBack": true,
+      "sourceRuling": null
+    },
+    {
+      "id": "PROJ-LAB-BUDGET-001",
+      "childKey": "lab.LAB_BUDGET_PROJECTION",
+      "value": 20,
+      "parents": ["balance.rank_power_budget.rank1_budget"],
+      "policy": "budget_scale_projection_not_effect_formula",
+      "scope": "wenzhen_web_lab",
+      "rationale": "40/20=2 lab PP anchor; not P3 Effect→amount",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "explicit_value", "expectParent": 40 },
+      "forbidWriteBack": true,
+      "sourceRuling": "RUL-2026-09-19-008"
+    }
+  ],
+  "forbidden_examples": [
+    {
+      "bad_childKey": "recipe.moon_glow.inputs",
+      "why": "canonical_refinement_composition 禁止 projection",
+      "canonical": ["moonlight_gu", "small_light_gu", "small_light_gu"],
+      "lab_shortcut_id": "experimental_scenario_recipe.moonlight_glow"
+    }
+  ]
+}

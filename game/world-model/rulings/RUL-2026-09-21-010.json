@@ -1,0 +1,113 @@
+{
+  "ruling_id": "RUL-2026-09-21-010",
+  "title_zh": "L1 代码漂移与纵向体系接通（Q1–Q6 + C3/C6）",
+  "date": "2026-09-21",
+  "authority": "L1",
+  "supersedes": null,
+  "principle": "Integration First · 先关系、再门禁、后迁移行为",
+  "phase_order": [
+    "PHASE1 Projection validator",
+    "PHASE2 Rank runtime wiring",
+    "PHASE3 Purchasing-power checks",
+    "PHASE4 Kill-move composition checker (B)",
+    "PHASE5 Counter boundary tests"
+  ],
+  "q1_kill_move": {
+    "decision": "B_gradual",
+    "now": "保留 declared damage / true_qi_cost",
+    "add": "组件贡献校验 expected=Σcomponent×coordination，±15% 或 override_reason",
+    "later": "逐条迁移为组件推导",
+    "forbid": ["一次重写26杀招", "方案A全量运行时推导"],
+    "coordination_range": [0.85, 1.15],
+    "coordination_manual_band": [0.75, 1.25],
+    "roles": ["core", "amplifier", "transform", "support", "condition", "resource"],
+    "forbid_pp_sum_as_damage": true
+  },
+  "q2_economy": {
+    "decision": "four_axes_independent",
+    "axes": ["IncomeCurve", "PriceCurve", "RefinementLossCurve", "BreakthroughCurve"],
+    "unit": "I_r = 同转普通战平均元石净收入（场次制门禁）",
+    "gates_fights_of_I": {
+      "1": { "gu_price": [1.5, 2.5], "refine_fail_loss": [0.5, 1.0], "breakthrough_stone": [2, 3] },
+      "2": { "gu_price": [2.0, 3.0], "refine_fail_loss": [0.75, 1.25], "breakthrough_stone": [3, 5] },
+      "3": { "gu_price": [2.5, 3.5], "refine_fail_loss": [1.0, 1.75], "breakthrough_stone": [5, 8] },
+      "4": { "gu_price": [3.0, 4.5], "refine_fail_loss": [1.5, 2.5], "breakthrough_stone": [8, 12] },
+      "5": { "gu_price": [4.0, 6.0], "refine_fail_loss": [2.0, 3.5], "breakthrough_stone": null }
+    },
+    "enforcement": "TOO_CHEAP / TOO_EXPENSIVE 报警，不自动改价",
+    "rank_multiplier_scope": ["budget_anchor", "material_convert", "feeding_value", "historical_compat"],
+    "forbid": "rank_multiplier 作为经济总函数"
+  },
+  "q3_projection": {
+    "required_fields": ["id", "childKey", "value", "parents", "policy", "scope", "rationale", "authority", "validation", "forbidWriteBack"],
+    "parents_is_array": true,
+    "forbid_projection": [
+      "entity_id",
+      "rank",
+      "dao",
+      "canonical_refinement_composition",
+      "canonical_lore_facts",
+      "provenance",
+      "frozen_ruling_semantics"
+    ],
+    "allow_projection": ["HP", "Thought", "combat_pacing", "qi_mapping", "reward_scale", "enemy_HP", "turn_window", "experimental_price"],
+    "c3_note": "月芒 canonical=月光+小光×2 不得用 pacing_projection 改成 ×1"
+  },
+  "q4_counter": {
+    "decision": "primitive_only_not_skeleton",
+    "owns": ["Intent", "Observe", "KnownCounter", "Read", "Act", "short_cycle_counter"],
+    "not_owns": ["qi_economy", "distance", "gu_composition", "kill_move_structure", "wound", "blood", "stealth", "body", "soul", "poison", "environment", "long_status", "economy", "refinement", "enemy_full_build"],
+    "admission_gates": ["UNIQUE", "BUILD_RELEVANT", "COUNTERPLAY", "STATEFUL", "TESTABLE", "SOURCE"]
+  },
+  "q5_rank_runtime": {
+    "fields": [
+      "rank",
+      "essence_tier",
+      "gu_rank_cap",
+      "cross_rank_cost_curve",
+      "killer_move_complexity_cap",
+      "refinement_rank_cap",
+      "maintenance_capacity",
+      "progression_access_tier"
+    ],
+    "allow_rank_multiplier_on": [],
+    "low_rank_keep_policy": "有 0.65^(rank差) 成本折算则不再加价值折损",
+    "complexity": "stable_complexity_cap + 超出用代价支付；第一版只用 complexity_points"
+  },
+  "q6_order": ["Projection", "Rank", "Economy", "KillMoveChecker", "CounterBoundary"],
+  "l2_may_implement": [
+    "Projection schema/validator",
+    "Rank字段接线（不改玩家行为）",
+    "经济 check_balance 门禁",
+    "杀招组件一致性 checker",
+    "dependency/provenance 标记",
+    "Counter 权限测试",
+    "Golden 回归"
+  ],
+  "must_escalate_L0": [
+    "杀招切换为运行时组件推导",
+    "Rank复杂度门禁正式限制可用杀招",
+    "修改 Counter 核心奖惩",
+    "突破节奏明显改变 Run 时长",
+    "新增 Combat Primitive",
+    "死亡后跨局保留范围变更",
+    "一局是否必须 R1→R5"
+  ],
+  "c3": {
+    "canonical_recipe": "moonlight + small_light×2 → moon_glow",
+    "lab_shortcut": "moonlight + small_light×1 → experimental_scenario_recipe only",
+    "forbid": ["world_refinement", "projection", "vertical_1_5_official"]
+  },
+  "c6": {
+    "system_test": "R1→R5 continuous simulation required",
+    "final_run_structure": "UNRESOLVED",
+    "default_tendency": "知识/解锁可跨局；本局力量不跨局（倾向，非冻结）"
+  },
+  "unresolved_leave_blank": [
+    "黄金/紫晶是否×10",
+    "高转经济贵多少倍",
+    "跨转是否固定×2",
+    "五转蛊出现在多少成功 Run"
+  ],
+  "forbid_this_phase": ["NO_NEW_ENGINE", "NO_FOURTH_SOURCE", "NO_MASS_REWRITE", "NO_BATCH_REPRICE", "NO_BATTLE2_MERGE"]
+}

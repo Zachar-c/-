@@ -47,6 +47,7 @@
 - 可修改范围：仅目录导入、旧根路径配置/文档的机械引用更新、忽略规则；不改 Godot 逻辑、数据数值与契约内容。
 - 约束说明：当前生效约束以 `game/world-model/governance/CONSTRAINTS-V2.md` 为准；`game/docs/contracts/2026-09-12-agent-ownership-contract.md` 已被该约束明确降级为历史档案，不作为执行契约。
 - 2026-09-20 清理：`game/world-model/` 仅保留 `governance/`、`rulings/`、`reports/` 与历史说明；运行时、镜像数据和快照/验收脚本已删除，游戏真源为 `game/data/`。
+- 2026-09-22 L0 本轮交付入口：`game/wenzhen-web-lab/lab.html`，目标为可玩 Web 游戏本体，Godot 不纳入本轮。规格见 `docs/superpowers/specs/2026-09-22-lab-playable-game-design.md`，执行与验收见 `docs/superpowers/plans/2026-09-22-lab-playable-game.md`；沿用既有数据 Owner，不表示重写 Godot 或裁定正式单局必须 R1→R5。
 
 ### `fortune/app/`（Task 6 已导入）
 

@@ -31,6 +31,8 @@ globalThis.MvpLogic = (() => {
     const start = content.run;
     return {
       seed: Number(seed) || Number(start.seed) || 101,
+      playerRank: Number(start.playerRank || 1),
+      lowRankGu: {},
       hp: start.hp,
       hpMax: start.hpMax,
       qi: start.qi,
@@ -84,7 +86,11 @@ globalThis.MvpLogic = (() => {
       next.qiMax = Number(option.penalty.qiMax);
       next.qi = Math.min(next.qi, next.qiMax);
     }
-    if (option.penalty?.borrowedMoon) next.borrowedMoon = true;
+    if (option.penalty?.borrowedMoon) {
+      next.borrowedMoon = true;
+      /* 借月：唯一合法的越阶催动例外（月芒 rank2 @ 一转） */
+      next.lowRankGu = { ...(next.lowRankGu || {}), moon_glow_gu: true };
+    }
     next.tradeChoice = option.id;
     next.runLog.push({
       kind: 'trade',
@@ -92,6 +98,24 @@ globalThis.MvpLogic = (() => {
       detail: option.consequence,
     });
     return { ok: true, run: next };
+  }
+
+  function canUseGu(run, actionId, content) {
+    const action = content.actions?.[actionId];
+    if (!action) return { ok: false, reason: 'unknown_gu' };
+    const playerRank = Number(run.playerRank || 1);
+    const guRank = Number(action.rank || 1);
+    const except = !!(run.lowRankGu && run.lowRankGu[actionId]);
+    if (typeof GuRules !== 'undefined' && GuRules.canActivate) {
+      if (!GuRules.canActivate(playerRank, guRank, except)) {
+        return { ok: false, reason: 'insufficient_qi_quality', playerRank, guRank };
+      }
+      return { ok: true };
+    }
+    if (guRank > playerRank && !except) {
+      return { ok: false, reason: 'insufficient_qi_quality', playerRank, guRank };
+    }
+    return { ok: true };
   }
 
   function applyForge(run, choice, content) {
@@ -114,10 +138,12 @@ globalThis.MvpLogic = (() => {
     if (next.qi < Number(content.forge.qiCost || 0)) {
       return { ok: false, reason: 'insufficient_essence', run };
     }
-    next.owned = payGu(next.owned, content.forge.consume);
-    next.qi -= Number(content.forge.qiCost || 0);
+    /* 借月还债：消耗投入解除道伤，不产出二转蛊，不走 gu_rank_cap */
     if (next.borrowedMoon) {
+      next.owned = payGu(next.owned, content.forge.consume);
+      next.qi -= Number(content.forge.qiCost || 0);
       next.borrowedMoon = false;
+      next.lowRankGu = {};
       next.qiMax = next.baseQiMax;
       next.forgeChoice = 'repay';
       next.runLog.push({
@@ -127,7 +153,24 @@ globalThis.MvpLogic = (() => {
       });
       return { ok: true, run: next };
     }
+    /* gu_rank_cap：一转不可炼成并持有可催动的二转蛊（RUL-010 / canActivate） */
+    const outputRank = Number(content.forge.outputRank || content.actions?.[content.forge.output]?.rank || 1);
+    const playerRank = Number(next.playerRank || 1);
+    if (outputRank > playerRank && !content.forge.allowOverRank) {
+      return { ok: false, reason: 'insufficient_rank', needRank: outputRank, playerRank, run };
+    }
+    next.owned = payGu(next.owned, content.forge.consume);
+    next.qi -= Number(content.forge.qiCost || 0);
     next.owned = addGu(next.owned, content.forge.output, 1);
+    /* 越阶炼成：登记借役例外，否则 canUseGu 会按 gu_rank_cap 拒绝催动 */
+    if (outputRank > playerRank) {
+      next.lowRankGu = { ...(next.lowRankGu || {}), [content.forge.output]: true };
+      next.runLog.push({
+        kind: 'forge',
+        label: '越阶借役',
+        detail: `一转炼成二转${content.forge.output}，仅可以借役催动；转数门禁仍生效。`,
+      });
+    }
     next.forgeChoice = 'forge';
     next.runLog.push({
       kind: 'forge',
@@ -208,7 +251,27 @@ globalThis.MvpLogic = (() => {
     next.currentCounter = '';
 
     const intent = next.currentIntent;
-    if (intent?.counterPool?.length) {
+    /* V4.1-Q2/Q3：反制用确定性序列循环；'none' 明确表示本回合无反制。
+       - 默认按「该意图第几次出现」取槽（多意图敌人也能 50% 密度）
+       - counterSeqMode:'turn' 时按玩家回合取槽（山猪要 1/3 全回合铁皮）
+       不再用 pickVariant 权重，避免某些 seed 连续出 counter。 */
+    if (intent?.counterSequence?.length) {
+      next.intentHits = { ...(next.intentHits || {}) };
+      next.seqCursors = { ...(next.seqCursors || {}) };
+      const hitKey = intent.counterSequenceKey || intent.id || 'default';
+      next.intentHits[hitKey] = (next.intentHits[hitKey] || 0) + 1;
+      const seq = intent.counterSequence;
+      let slotIndex;
+      if (intent.counterSeqMode === 'turn') {
+        slotIndex = (Math.max(1, Number(turn)) - 1) % seq.length;
+      } else {
+        slotIndex = (next.intentHits[hitKey] - 1) % seq.length;
+      }
+      const slot = seq[slotIndex];
+      if (!slot || slot === 'none') next.currentCounter = '';
+      else if (slot === 'iron' && next.counterBroken) next.currentCounter = '';
+      else next.currentCounter = String(slot);
+    } else if (intent?.counterPool?.length) {
       next.currentCounter = pickVariant(seed, `${next.id}:${turn}:counter`, intent.counterPool);
     } else if (intent?.counter === 'iron' && !next.counterBroken) {
       next.currentCounter = 'iron';
@@ -339,6 +402,179 @@ globalThis.MvpLogic = (() => {
     };
   }
 
+  /* 意图预览：回显 V4 减伤后的实际伤害区间（扣减伤前、护体前）。
+     与 resolveEnemyAction 同一条公式，避免预览和结算两套账。
+     min = 本回合剩余选择里能压到的最低值；max = 做错/未识破时的最高值。 */
+  function previewEnemyDamage(enemy, intent, context = {}) {
+    const target = intent || enemy?.currentIntent || { damage: 0 };
+    const base = Math.max(0, Number(target.damage || 0))
+      + (target.tag === 'charge' ? Math.max(0, Number(enemy?.ironRage || 0)) : 0);
+    if (!base && !target.damage) return { min: 0, max: 0, base: 0, projected: 0, hasCounter: false };
+
+    const counterId = enemy?.currentCounter || '';
+    const revealed = !!enemy?.revealed;
+    const suppressed = !!enemy?.suppressed;
+    const damageReduction = Math.max(0, Number(context.damageReduction || 0));
+    const canStillUseLight = context.canStillUseLight !== false;
+    const canStillAvoidAttack = context.canStillAvoidAttack !== false;
+    const canStillBreakIron = context.canStillBreakIron !== false;
+
+    const drawPenalty = (usedLight) => (counterId === 'draw_light' && !usedLight ? 3 : 0);
+    const handleDrop = (handled) => (handled && revealed ? 3 : 0);
+    const suppressDrop = suppressed ? 3 : 0;
+
+    // 当前回合已做选择下的投影值
+    const projectedHandled = counterHandled(enemy || {}, context);
+    const projected = Math.max(0,
+      base
+      + drawPenalty(!!context.usedLight)
+      - handleDrop(projectedHandled)
+      - suppressDrop
+      - damageReduction,
+    );
+
+    // 最好：本轮仍可「先识破再做对」+ 已有减伤。best 指最优玩法，不把当前未识破卡死。
+    const bestHandleDrop = 3;
+    let best = base - suppressDrop - damageReduction;
+    if (counterId === 'draw_light') {
+      if (context.usedLight || canStillUseLight) best -= bestHandleDrop;
+      else best += drawPenalty(true);
+    } else if (counterId === 'intercept') {
+      if (!context.attacked || canStillAvoidAttack) best -= bestHandleDrop;
+    } else if (counterId === 'iron') {
+      if (enemy?.counterDisabled || enemy?.counterBroken || canStillBreakIron) best -= bestHandleDrop;
+    } else if (counterId === 'seal_first' || counterId === 'seal_last') {
+      if (Number(context.guUsedCount || 0) === 0) best -= bestHandleDrop;
+    }
+    best = Math.max(0, best);
+
+    // 最坏：该吃满的加伤与未处理都吃上
+    let worst = base + drawPenalty(!!context.usedLight) - suppressDrop - damageReduction;
+    if (counterId === 'draw_light' && !context.usedLight && !canStillUseLight) {
+      /* 已无法再用光道，逐光加伤已锁定 */
+    } else if (counterId === 'draw_light' && !context.usedLight) {
+      worst = Math.max(worst, base + 3 - suppressDrop - damageReduction);
+    }
+    if (counterId === 'intercept' && context.attacked && !canStillAvoidAttack) {
+      /* 已硬打，-3 拿不到 */
+    }
+    worst = Math.max(0, Math.max(worst, projected, best));
+
+    return {
+      base,
+      min: best,
+      max: worst,
+      projected,
+      hasCounter: !!counterId,
+      revealed,
+      counterId,
+    };
+  }
+
+  /* ---------------- V4.1-Q1 逆息 ----------------
+     HP→Qi 紧急兑换，只防 soft-lock。+3 Qi 不是免费回复。
+     触发条件（玩家回合开始语义）：
+       存在至少一只伤害蛊，但当前没有任何伤害蛊能用，且原因包含真元不足。
+     效果：1 念头 / 真元 +3（不超上限）/ 气血 -2。
+     限制：同一场每 2 个玩家回合最多 1 次；当回合禁收势与生机草蛊。 */
+
+  function isDamageAction(action) {
+    return Number(action?.damage || 0) > 0;
+  }
+
+  function exhaustionConfig(content) {
+    return content?.exhaustion || {
+      thought: 1, qiGain: 3, hpCost: 2, cooldownTurns: 2,
+      banActions: ['defend', 'vitality_grass_gu'],
+    };
+  }
+
+  /* 单只伤害蛊的可用性。battle 提供 used/cooldowns/sealedToday/lightSupport。 */
+  function damageGuBlockReason(id, action, run, battle = {}, index = 0) {
+    const key = `${id}:${index}`;
+    if (battle.sealedToday?.[id]) return 'sealed';
+    if (battle.used?.[key]) return 'used';
+    const nextTurn = Number(battle.cooldowns?.[key] || 0);
+    const turn = Number(battle.turn || 1);
+    if (nextTurn > turn) return 'cooldown';
+    if (Number(run.thoughts || 0) < Number(action.thought || 0)) return 'thought';
+    const supported = !!action.light && Number(battle.lightSupport || 0) > 0;
+    const qiCost = Math.max(0, Number(action.qi || 0) - (supported ? 1 : 0));
+    if (Number(run.qi || 0) < qiCost) return 'qi';
+    if (action.hp && Number(run.hp || 0) <= Number(action.hp)) return 'hp';
+    return '';
+  }
+
+  function exhaustionGate(run, content, battle = {}) {
+    const cfg = exhaustionConfig(content);
+    const owned = run.owned || {};
+    const damageSlots = [];
+    for (const [id, count] of Object.entries(owned)) {
+      const action = content?.actions?.[id];
+      if (!action || !isDamageAction(action)) continue;
+      for (let i = 0; i < Number(count || 0); i++) {
+        damageSlots.push({ id, index: i, action, reason: damageGuBlockReason(id, action, run, battle, i) });
+      }
+    }
+    const hasDamageGu = damageSlots.length > 0;
+    const anyUsable = damageSlots.some((s) => s.reason === '');
+    const qiBlocked = damageSlots.some((s) => s.reason === 'qi');
+    const cooldownUntil = Number(battle.exhaustionReadyAt || 0);
+    const turn = Number(battle.turn || 1);
+    const onCooldown = cooldownUntil > turn;
+    const banned = !!battle.exhaustionUsedThisTurn;
+    const canPay = Number(run.thoughts || 0) >= Number(cfg.thought || 1)
+      && Number(run.hp || 0) > Number(cfg.hpCost || 2);
+    const eligible = hasDamageGu && !anyUsable && qiBlocked && !onCooldown && !banned && canPay;
+    return {
+      eligible,
+      hasDamageGu,
+      anyUsable,
+      qiBlocked,
+      onCooldown,
+      banned,
+      canPay,
+      cooldownUntil,
+      reason: eligible ? '' : (
+        !hasDamageGu ? 'no_damage_gu'
+          : anyUsable ? 'damage_gu_ready'
+            : !qiBlocked ? 'not_qi_blocked'
+              : onCooldown ? 'cooldown'
+                : banned ? 'already_this_turn'
+                  : 'cannot_pay'
+      ),
+    };
+  }
+
+  function applyExhaustion(run, battle, content) {
+    const cfg = exhaustionConfig(content);
+    const gate = exhaustionGate(run, content, battle);
+    if (!gate.eligible) return { ok: false, reason: gate.reason || 'not_eligible', run, battle };
+    const nextRun = clone(run);
+    const nextBattle = clone(battle);
+    nextRun.thoughts = Math.max(0, Number(nextRun.thoughts || 0) - Number(cfg.thought || 1));
+    nextRun.qi = Math.min(Number(nextRun.qiMax || 0), Number(nextRun.qi || 0) + Number(cfg.qiGain || 3));
+    nextRun.hp = Math.max(0, Number(nextRun.hp || 0) - Number(cfg.hpCost || 2));
+    nextBattle.exhaustionUsedThisTurn = true;
+    nextBattle.exhaustionReadyAt = Number(nextBattle.turn || 1) + Number(cfg.cooldownTurns || 2);
+    nextBattle.exhaustionCount = Number(nextBattle.exhaustionCount || 0) + 1;
+    nextBattle.damageReduction = Number(nextBattle.damageReduction || 0); // 收势仍可用过，但之后禁
+    return {
+      ok: true,
+      run: nextRun,
+      battle: nextBattle,
+      qiGain: Number(cfg.qiGain || 3),
+      hpCost: Number(cfg.hpCost || 2),
+      banActions: [...(cfg.banActions || [])],
+    };
+  }
+
+  function isActionBannedThisTurn(actionId, battle = {}, content = null) {
+    if (!battle.exhaustionUsedThisTurn) return false;
+    const bans = exhaustionConfig(content).banActions || ['defend', 'vitality_grass_gu'];
+    return bans.includes(actionId);
+  }
+
   function finishEnemyAction(enemy) {
     const next = clone(enemy);
     next.currentCounter = '';
@@ -377,6 +613,7 @@ globalThis.MvpLogic = (() => {
     smeltStone,
     applyTrade,
     applyForge,
+    canUseGu,
     profileFor,
     createEnemy,
     pickVariant,
@@ -389,7 +626,13 @@ globalThis.MvpLogic = (() => {
     revealCounter,
     resolveDirectStrike,
     resolveEnemyAction,
+    previewEnemyDamage,
     applyVictoryRecovery,
+    isDamageAction,
+    damageGuBlockReason,
+    exhaustionGate,
+    applyExhaustion,
+    isActionBannedThisTurn,
     finishEnemyAction,
     sealTarget,
     repeatingGuIds,

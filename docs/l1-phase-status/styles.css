@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  background: #0f1115;
+  color: #e8e6e1;
+  font-family: "Source Han Serif SC", Georgia, serif;
+  line-height: 1.55;
+}
+header { padding: 24px 28px 14px; border-bottom: 1px solid #2a3040; }
+.eyebrow { margin: 0; font-family: Consolas, monospace; font-size: 11px; color: #c45c26; }
+h1 { margin: 8px 0 4px; font-size: 22px; }
+.sub { margin: 0; color: #8a93a6; font-size: 13px; }
+main { padding: 20px 28px 40px; max-width: 800px; }
+.row {
+  display: grid; grid-template-columns: 72px 1fr; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid #2a3040;
+}
+.badge {
+  font-family: Consolas, monospace; font-size: 11px; height: 22px;
+  display: grid; place-items: center; border-radius: 999px; border: 1px solid;
+}
+.ok { color: #3d8b6e; border-color: #3d8b6e; }
+.alarm { color: #b8860b; border-color: #b8860b; }
+h2 { margin: 0 0 4px; font-size: 15px; }
+p { margin: 0; color: #8a93a6; font-size: 13px; }
+code { font-family: Consolas, monospace; font-size: 12px; color: #d4a574; }
+footer {
+  padding: 14px 28px 24px; border-top: 1px solid #2a3040;
+  color: #8a93a6; font-family: Consolas, monospace; font-size: 11px;
+}

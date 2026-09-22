@@ -1,0 +1,50 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>文件级方向偏移审计 · 《问真》</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <header class="top">
+    <p class="eyebrow">LOCAL REPO AUDIT · 不必 GitHub</p>
+    <h1>代码有没有把需求悄悄改写掉</h1>
+    <p class="sub">总判：方向未丢，体系被拆散。局部各成一个小游戏。以下为文件级 KEEP / DRIFT / CONFLICT / ORPHAN。</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="verdict" class="on">文件裁决</button>
+    <button data-tab="drift">六处偏移</button>
+    <button data-tab="breaks">五个断点</button>
+    <button data-tab="good">做对的</button>
+  </nav>
+
+  <main>
+    <section id="verdict" class="panel on">
+      <h2>文件级裁决</h2>
+      <div id="fileTable"></div>
+    </section>
+    <section id="drift" class="panel">
+      <h2>六处偏移（与 L0 判断对照 + 本地证据）</h2>
+      <div id="driftList"></div>
+    </section>
+    <section id="breaks" class="panel">
+      <h2>优先接通的五个断点</h2>
+      <div id="breakList"></div>
+    </section>
+    <section id="good" class="panel">
+      <h2>明确符合、长期保留</h2>
+      <div id="goodList"></div>
+    </section>
+  </main>
+  <footer>
+    <span>能力地图 game/wenzhen-web-lab/EXISTING_CAPABILITY_MAP.md</span>
+    <span>禁止第四套系统</span>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -6,8 +6,32 @@
 ```text
 TASK v4-calibration
 PHASE 10 分钟循环 · 数值校准
-STATUS BLOCKED（两个结构性阻塞已上抛 L1，等裁决；lab 内未自行改数）
-TYPE implementation + measurement
+STATUS BALANCE FRAMEWORK v1 + L1 兼容裁决已落地 · 门 30/41（1/3 clear）
+TYPE architecture + implementation + measurement
+
+> **L1 2026-09-21 兼容审查裁决已实现**（RR `RESEARCH-REQUEST-2026-09-21-balance-compat-audit.md` = ANSWERED）：
+> `LAB_BUDGET_PROJECTION=20` · `LAB_PRICING_V1` · `THREAT_V1` · H1 override>20% 必须写 reason ·
+> E4 定价/期望分离 · 两 scope 各自单源（WORLD→LAB 单向投影）·
+> `balance.js` 身份 = **P3 实验参考实现**，非最终量纲规范。
+>
+> 毕业链：`priceGu → encounter → autoplay → L0 体验`
+> 当前：静态门 **17/17**；autoplay **1/3 clear**（sacrifice）；**未达 L0 试玩线**。
+
+> **L0 2026-09-21 指令**：数只蛊就会打架，扩到成百上千必须在原型解决并留扩展空间。
+> 已落地 `js/balance.js` + `tools/check_balance.mjs`：敌方 HP/威胁由
+> 「kit 吞吐 × 目标回合 × 反制税」推导，content 禁止手写 HP。
+> 扩到 N 只蛊：只声明 `(rank, role, archetype, costs, modifier)`，`priceGu()` 出数，
+> `check_balance` 咬窗口。对齐全仓 RUL-008 预算形状（40/80/160/320/640）。
+
+> 2026-09-21 L1 裁决 V4.1（`RESEARCH-REQUEST-2026-09-21-v4-structural-blockers.md`）：
+> - **Q1-D 主刀「逆息」**：1 念头 / 气血 -2 / 真元 +3，CD 2 回合；当回合禁收势与生机草。
+>   拒绝战斗内常规回蓝、月芒降费、炼蛊不耗材。
+> - **Q2-B 主刀**：反制序列确定性降档（猎犬 50% / 山猪 1/3 铁皮 / Boss 与悍客主要伤害意图 50%）。
+> - **Q2-A 必做**：迎击只吞直接攻击；autoplay 不得整回合 fallback。
+> - **Q2-C**：回合窗口改为 猎犬 3–5 / 山猪 4–6 / 悍客 4–6 / Boss 6–9 / 全局 17–24。
+> - **Q3**：`crossbow_shot` / `thunder_pounce_2` 补既有反制序列，不新增类型。
+> - **Q4**：维持「读对 + 做对」（learned 也算读对）。
+> - 逆息 ≤2/局；多种子门：每路线独立 ≥70%，stalemate = 0/30。
 
 GOAL
 把 10 分钟循环从「88/88 证明按钮能按」推进到「证明这个游戏数学上还能玩」：
@@ -49,10 +73,32 @@ DECISIONS
    这是测量口径问题，不是玩法问题；PASS/FAIL 数不受影响。
 
 VERIFY
-tests: node --test 显式 8 个测试文件 → tests 98 / pass 98 / fail 0
-       （Node 22.22.2 下 `node --test <目录>` 报 MODULE_NOT_FOUND，必须显式列文件）
-syntax: node --check js/mvp_logic.js / js/mvp.js / js/mvp_content.js / tools/autoplay.mjs → 全部 OK
-gate:  node tools/autoplay.mjs --route all --seed 101 → exit 3（19/34）
+tests: node --test 显式 8 个测试文件 → tests 105 / pass 105 / fail 0
+syntax: node --check js/mvp_logic.js / js/mvp.js / js/mvp_content.js / tools/autoplay.mjs → OK
+
+V4.1 SEED 101 门（2026-09-21 实现后）
+gate: node tools/autoplay.mjs --route all --seed 101 → **26/40，exit 3**
+
+已闭合：
+- **stalemate = 0/3**（逆息消灭 soft-lock，Q1-D 生效）
+- 三线均进入 Boss（Boss 开战不满血满真元 3/3 PASS）
+- 猎犬 5 回合（窗口 3~5 PASS）· 总回合 22/23/22（17~24 PASS）
+- 逆息不再空转成回蓝循环（secure 0 / sacrifice 1）
+
+仍未达标（**非实现缺口，是冻结伤害表 × 回合窗口的算术冲突**）：
+| 项 | 窗口 | 实测 | 算术下界 |
+| --- | --- | --- | --- |
+| 猎犬 | 3–5 | 5 | 10 HP / 月光 2–3 ≈ 4–5（贴边） |
+| 山猪 | 4–6 | 5–8 | 15 HP，1/3 铁皮回合 0 输出 |
+| 悍客 | 4–6 | 9–13 | 18 HP / 月光 2–3 ≈ **6–7 下界**（即便零反制） |
+| Boss | 6–9 | 未杀死 | 28 HP / 月光 2–3 ≈ **9–14 下界** |
+| 全程通关 | 3/3 clear | 0/3 | 入 Boss 仅剩 3–7 HP |
+| debt 逆息 | ≤2 | 4 | 借月+还债后仅剩月芒（CD2） |
+
+**结论**：Q1 软锁与 Q2 反制密度已按 V4.1 解决；
+`悍客 4–6 / Boss 6–9 / 三线通关` 在**不改伤害表**的前提下数学不可达。
+待 L1 裁决：① 上调回合窗口 ② 或上调月光/白豕伤害 ③ 或下调悍客/Boss HP。
+**L2 未改任何冻结数字。**
 ```
 
 逐场指标（口径修正后，seed 101）：
@@ -101,17 +147,35 @@ RISK
 2. **secure 是三条路线里唯一真的打输的**（HP0），且它不是僵局：secure 保留石皮蛊但没有白豕蛊，
    输出最低，山猪战拖到 8 回合、吃 12 点受伤。原因记在这里，避免下次误判成又一个僵局。
 3. 敌对意图与反制序列是本 lab 的场景配置，**不应回写为正式 Godot 数值结论**。
-4. **多局达标率尚未实现**：L1 的口径是「每路线 10 局、≥7/10 通关；固定种子则代表 seed 都须有解」，
-   当前 autoplay 的 `--seed` 只接受单值，测不了达标率。这条验收项现在**没有自动化手段**，只有单种子结果。
-5. 意图预览仍显示原始伤害（如「预计 5 伤」），不反映 -5→-2 后的实际值 —— 减伤没有回显到预览（未改）。
-6. 观察成本只在 seed 101 上验过，换种子未跑。
+4. ~~多局达标率尚未实现~~ **已补工具能力（2026-09-21）**：autoplay 支持
+   `--seeds 101-110 --min-clear-rate 0.7`，多种子时按每路线通关率判定。
+   但**达标率数据尚未采集**——在 L1 裁决前跑多种子只会把当前结构性 FAIL 乘以 N。
+5. ~~意图预览仍显示原始伤害~~ **已回显减伤区间（2026-09-21）**：`previewEnemyDamage`
+   与结算同一条公式，显示 `预计 min~max 伤`（及当前路径投影值）。
+6. 观察成本只在 seed 101 上验过，换种子未跑（见 4）。
 7. `mvp.html` 与 `index.html` 逐字节相同（两个重复入口）；按 L1 指示暂不删，待 V4 数值通过后清理。
 
+> **L0 纠偏（2026-09-21）**：公理 `docs/ORIGINAL_POWER_SYSTEM_AXIOMS.md`；
+> 数值工具已 DEMOTE 为校验器。Lab 新机制三问：`docs/lab-mechanics-three-questions.md`。
+
+### 多种子实测（2026-09-21，seeds 101–105）
+
+```text
+secure   0/5 clear   sacrifice 5/5 clear   debt   0/5 clear
+stalemate 0/15      五种子逐场指标完全一致
+```
+
+**发现：V4.1 起 lab 对 `?seed=N` 实际无响应**（反制改为确定性 `counterSequence` 后，
+唯一 RNG `pickVariant` 已不用；固定路线亦无掉落随机）。
+→ `--seeds` 在加回有意义方差之前，只是同一局的复制；「≥7/10」无信息量。
+方差应加在何处（意图微扰 / 掉落 / 交易顺序）属产品，待 L1/L0。
+
 NEXT
-1. **L1 裁决两个杠杆**（二者耦合，先定哪个都行，但别只改一个就重跑）：
-   - 解僵局：战斗内加真元回复／月芒可吃小光支援降费／炼蛊台不消耗月光与小光／给「空过 + 回气」加反僵局约束。
-   - 解回合数：放宽「迎击」读法（攻击被吞但回合不空）／降低迎击出现频率／放宽回合数目标。
-     注意：若迎击不再吃掉整个回合，战斗变短、真元也更撑得住，可能**同时**缓解僵局。
-2. 裁决后按 L1 口径重跑：`node tools/autoplay.mjs --route all --seed 101`，并把多局达标率（≥7/10）补成工具能力。
-3. 验收门通过后才交 L0 试玩（记录具体体验问题，再决定是否调数值或循环）。
-4. 收尾项（不阻塞）：删 `mvp.html` 重复入口；意图预览回显减伤后的实际伤害。
+1. **通关缺口（产品/威胁预算，非实现 bug）**：
+   - secure：保炉留月光，Boss 17 HP 进场仍被磨死（差 1 血反杀，已修逆息自杀窗）。
+   - debt：借月+还债后仅剩月芒 CD2，Boss 16 HP 进场被磨死。
+   - sacrifice：**cleared**（白豕持续输出）。
+   → 构筑强度差导致 1/3 clear。L1 窗口「4–6 回合」也被强线打穿（山猪 3 回合）。
+   **请 L1/L0 裁**：窗口是否容纳构筑差，或 Boss 威胁再降一档。
+2. 三线 clear 后：`--seeds 101-110` 采多种子，再交 L0 五问试玩。
+3. 收尾：删 `mvp.html`（待门通过）。

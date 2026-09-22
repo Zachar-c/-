@@ -10,6 +10,7 @@ const load = (relativePath) => vm.runInContext(
   { filename: relativePath },
 );
 
+load('../js/balance.js');
 load('../js/mvp_content.js');
 load('../js/mvp_logic.js');
 load('../js/data.js');
@@ -62,12 +63,29 @@ test('debt trade permanently lowers essence cap to eight', () => {
 });
 
 test('forge consumes moon, small light and two essence to create moon glow', () => {
-  const result = logic.applyForge(logic.createRun(content), 'forge', content);
-  assert.equal(result.ok, true);
-  assert.equal(result.run.owned.moonlight_gu, undefined);
-  assert.equal(result.run.owned.small_light_gu, undefined);
-  assert.equal(result.run.owned.moon_glow_gu, 1);
-  assert.equal(result.run.qi, 10);
+  // 月芒 rank2：须二转（或借月例外）方可炼成持有
+  const base = logic.createRun(content);
+  const blocked = logic.applyForge(base, 'forge', { ...content, forge: { ...content.forge, allowOverRank: false } });
+  assert.equal(blocked.ok, false);
+  assert.equal(blocked.reason, 'insufficient_rank');
+  assert.equal(blocked.needRank, 2);
+
+  const over = logic.applyForge(base, 'forge', { ...content, forge: { ...content.forge, allowOverRank: true, outputRank: 2 } });
+  assert.equal(over.ok, true);
+  assert.equal(over.run.owned.moonlight_gu, undefined);
+  assert.equal(over.run.owned.small_light_gu, undefined);
+  assert.equal(over.run.owned.moon_glow_gu, 1);
+  assert.equal(over.run.qi, 10);
+});
+
+test('rank gate: one-turn cannot use rank-2 moon glow without borrow exception', () => {
+  const run = logic.createRun(content);
+  assert.equal(run.playerRank, 1);
+  const gate = logic.canUseGu(run, 'moon_glow_gu', content);
+  assert.equal(gate.ok, false);
+  assert.equal(gate.reason, 'insufficient_qi_quality');
+  const borrowed = { ...run, lowRankGu: { moon_glow_gu: true } };
+  assert.equal(logic.canUseGu(borrowed, 'moon_glow_gu', content).ok, true);
 });
 
 test('forging after borrowing moon repays the cap debt instead of duplicating it', () => {
@@ -105,7 +123,7 @@ test('intercept keeps swallowing every direct attack in the round', () => {
   assert.equal(first.swallowed, true);
   assert.equal(second.swallowed, true);
   assert.equal(second.selfDamage, 2);
-  assert.equal(second.enemy.hp, 10);
+  assert.equal(second.enemy.hp, logic.profileFor(content, 'ridge_hound').hp, '吞刀不掉血');
 });
 
 test('iron keeps swallowing attacks and increases the next charge', () => {
@@ -115,7 +133,7 @@ test('iron keeps swallowing attacks and increases the next charge', () => {
   const second = logic.resolveDirectStrike(first.enemy, { damage: 5 });
   assert.equal(second.swallowed, true);
   assert.equal(second.enemy.ironRage, 2);
-  assert.equal(second.enemy.hp, 15);
+  assert.equal(second.enemy.hp, logic.profileFor(content, 'iron_hide_boar').hp);
 });
 
 test('draw light adds three damage when no light gu was used', () => {
@@ -145,6 +163,7 @@ test('stone shell breaks the next charge counter', () => {
 
 test('moon glow suppression bypasses the counter and lowers enemy damage by three', () => {
   const enemy = logic.createEnemy(content, 'ridge_hound');
+  const maxHp = logic.profileFor(content, 'ridge_hound').hp;
   enemy.currentCounter = 'intercept';
   enemy.revealed = true;
   const hit = logic.resolveDirectStrike(enemy, {
@@ -153,7 +172,7 @@ test('moon glow suppression bypasses the counter and lowers enemy damage by thre
     suppressCounter: true,
   });
   assert.equal(hit.swallowed, false);
-  assert.equal(hit.enemy.hp, 6);
+  assert.equal(hit.enemy.hp, maxHp - 4);
   const resolved = logic.resolveEnemyAction(hit.enemy, { hp: 24, qi: 12, block: 0 }, {
     intent: { damage: 4 },
   });
@@ -165,9 +184,10 @@ test('seal target follows first or last action order', () => {
   assert.equal(logic.sealTarget('seal_last', ['moonlight_gu', 'stone_shell_gu']), 'stone_shell_gu');
 });
 
-test('boss phase changes at fourteen hp and burns three essence', () => {
+test('boss phase changes at phaseAt hp and burns three essence', () => {
+  const phaseAt = logic.profileFor(content, 'thunder_crown_sovereign').phaseAt;
   const enemy = logic.createEnemy(content, 'thunder_crown_sovereign');
-  enemy.hp = 14;
+  enemy.hp = phaseAt;
   const started = logic.startTurn(content, enemy, 2, 101).enemy;
   assert.equal(logic.phaseIndexFor(content, started), 1);
   const result = logic.resolveEnemyAction(started, { hp: 24, qi: 9, block: 0 }, {
@@ -202,7 +222,8 @@ test('battle screen exposes both known and unknown intelligence', () => {
    ------------------------------------------------------------------ */
 
 test('a counter type stays identified for the rest of the battle after one observation', () => {
-  // 山猪的 charge 意图固定带 iron 反制，用它验证「观察一次即永久识别」
+  // 山猪 V4.1 起 iron_gate 按回合取槽：T1/T4 有 iron，不是每回合都有。
+  // 「永久识别」在真正再次出现该反制时生效（learned 也算读对）。
   let enemy = logic.createEnemy(content, 'iron_hide_boar');
   enemy = logic.startTurn(content, enemy, 1, 101).enemy;
   assert.equal(enemy.currentCounter, 'iron');
@@ -213,7 +234,7 @@ test('a counter type stays identified for the rest of the battle after one obser
   assert.deepEqual(Array.from(enemy.knownCounters), ['iron']);
 
   enemy = logic.finishEnemyAction(enemy);
-  enemy = logic.startTurn(content, enemy, 3, 101).enemy;   // 第 3 回合又是 iron
+  enemy = logic.startTurn(content, enemy, 4, 101).enemy;   // 第 4 回合再次 iron
   assert.equal(enemy.currentCounter, 'iron');
   assert.equal(enemy.revealed, true, '同一反制类型本场永久识别，不再收第二次念头税');
 });
@@ -299,11 +320,8 @@ test('handling a seal counter cancels the seal special effect', () => {
   assert.equal(played.specialCancelled, false);
 });
 
-/* 记录 V4 的一处结构性缺口（不是实现错误，是冻结表与 content 的落差）：
-   悍客的伤害意图 crossbow_shot 与狼王二阶段 thunder_pounce_2 都没有 counterPool，
-   因此按「正确处理反制 → -3」的统一规则，这两处伤害天生不可减免。
-   L1 期望的「悍客 1 / 狼王重击 2~3」需要先给这两个意图补反制才能达成，
-   属数值/内容判定，已上抛，不在此处自行补。 */
+/* V4.1-Q3 已补反制序列：主要伤害意图都能进入统一减伤逻辑。
+   本用例只保留「当前回合确实没有反制时不可减免」的语义。 */
 test('V4 accepted gap: intents without a counter cannot be mitigated', () => {
   const elite = logic.createEnemy(content, 'ridge_elite_scout');
   elite.currentCounter = '';
@@ -320,6 +338,146 @@ test('V4 accepted gap: intents without a counter cannot be mitigated', () => {
   });
   assert.equal(drained.handled, false);
   assert.equal(drained.player.qi, 9, '无反制的意图无法取消，噬元照扣');
+});
+
+/* ---------------- V4.1 ---------------- */
+
+test('V4.1 counter sequences are deterministic by turn', () => {
+  // 必须像真实对局一样串 enemy，否则 intentHits 永远停在 1
+  let hound = logic.createEnemy(content, 'ridge_hound');
+  const seen = [];
+  for (let turn = 1; turn <= 4; turn++) {
+    hound = logic.startTurn(content, hound, turn, 101).enemy;
+    seen.push(hound.currentCounter || 'none');
+    hound = logic.finishEnemyAction(hound);
+  }
+  assert.deepEqual(seen, ['draw_light', 'none', 'intercept', 'none']);
+
+  // 山猪 iron_gate 用 turn 模式：T1/T4 铁皮，全回合约 1/3
+  let boar = logic.createEnemy(content, 'iron_hide_boar');
+  const boarSeen = [];
+  for (let turn = 1; turn <= 6; turn++) {
+    boar = logic.startTurn(content, boar, turn, 101).enemy;
+    boarSeen.push(boar.currentCounter || 'none');
+    boar = logic.finishEnemyAction(boar);
+  }
+  assert.equal(boarSeen[0], 'iron');
+  assert.equal(boarSeen[2], 'none');
+  assert.equal(boarSeen[3], 'iron');
+  assert.equal(boarSeen.filter((c) => c === 'iron').length, 2);
+
+  let boss = logic.createEnemy(content, 'thunder_crown_sovereign');
+  const bossSeen = [];
+  for (let turn = 1; turn <= 4; turn++) {
+    boss = logic.startTurn(content, boss, turn, 101).enemy;
+    bossSeen.push(boss.currentCounter || 'none');
+    boss = logic.finishEnemyAction(boss);
+  }
+  assert.deepEqual(bossSeen, ['intercept', 'none', 'draw_light', 'none']);
+});
+
+test('V4.1 crossbow and thunder_pounce_2 carry mitigable counters', () => {
+  // 悍客 crossbow 按意图出现次数取序列：第 1 次 seal_first
+  const elite = logic.createEnemy(content, 'ridge_elite_scout');
+  const at3 = logic.startTurn(content, elite, 3, 101).enemy;
+  assert.equal(at3.currentIntent.id, 'crossbow_shot');
+  assert.equal(at3.currentCounter, 'seal_first');
+  const handled = logic.resolveEnemyAction(at3, { hp: 24, qi: 12, block: 0 }, {
+    intent: at3.currentIntent,
+    guUsedCount: 0,
+  });
+  // 未识破 → 不给减伤（Q4：读对 + 做对）
+  assert.equal(handled.handled, false);
+  const revealed = { ...at3, revealed: true };
+  const handled2 = logic.resolveEnemyAction(revealed, { hp: 24, qi: 12, block: 0 }, {
+    intent: at3.currentIntent,
+    guUsedCount: 0,
+  });
+  assert.equal(handled2.handled, true);
+  assert.equal(handled2.damage, 1, '弩箭 4 → 1');
+
+  // 狼王二阶段 pounce2 按出现次数：draw_light / none / intercept / none
+  const bossProfile = logic.profileFor(content, 'thunder_crown_sovereign');
+  let boss = logic.createEnemy(content, 'thunder_crown_sovereign');
+  const p2 = [];
+  for (let turn = 1; turn <= 12; turn++) {
+    boss = logic.startTurn(content, boss, turn, 101).enemy;
+    if (boss.currentIntent?.id === 'thunder_pounce_2') {
+      p2.push({ turn, counter: boss.currentCounter || 'none' });
+    }
+    boss = logic.finishEnemyAction(boss);
+    boss.hp = bossProfile.phaseAt; // 保持二阶段
+    boss.lastPhaseIndex = 1;
+  }
+  assert.equal(p2.length, 6, '二阶段 burn/pounce 交替，12 回合 6 次 pounce2');
+  assert.deepEqual(
+    p2.map((x) => x.counter),
+    ['draw_light', 'none', 'intercept', 'none', 'draw_light', 'none'],
+  );
+});
+
+test('V4.1 exhaustion converts hp to qi only when damage gu are qi-locked', () => {
+  const run = logic.createRun(content);
+  // 炼蛊后只剩月芒：3 Qi 门槛
+  run.owned = { moon_glow_gu: 1 };
+  run.qi = 0;
+  run.thoughts = 2;
+  run.hp = 20;
+  const battle = { turn: 1, used: {}, cooldowns: {}, sealedToday: {}, lightSupport: 0 };
+
+  const gate = logic.exhaustionGate(run, content, battle);
+  assert.equal(gate.eligible, true);
+  assert.equal(gate.qiBlocked, true);
+
+  const result = logic.applyExhaustion(run, battle, content);
+  assert.equal(result.ok, true);
+  assert.equal(result.run.qi, 3);
+  assert.equal(result.run.hp, 18);
+  assert.equal(result.run.thoughts, 1);
+  assert.equal(result.battle.exhaustionCount, 1);
+  assert.equal(result.battle.exhaustionUsedThisTurn, true);
+  assert.equal(result.battle.exhaustionReadyAt, 3);
+
+  // 同回合禁止再触发，且禁收势/生机草
+  assert.equal(logic.exhaustionGate(result.run, content, result.battle).eligible, false);
+  assert.equal(logic.isActionBannedThisTurn('defend', result.battle, content), true);
+  assert.equal(logic.isActionBannedThisTurn('vitality_grass_gu', result.battle, content), true);
+
+  // CD 2：第 3 回合才能再逆息
+  const later = { ...result.battle, turn: 3, exhaustionUsedThisTurn: false };
+  const run2 = { ...result.run, qi: 0, thoughts: 2, hp: 16 };
+  assert.equal(logic.exhaustionGate(run2, content, later).eligible, true);
+});
+
+test('V4.1 exhaustion does not fire when a damage gu is already usable', () => {
+  const run = logic.createRun(content);
+  run.owned = { white_boar_strength_gu: 1, moonlight_gu: 1 };
+  run.qi = 0; // 月光被真元卡住
+  run.thoughts = 2;
+  run.hp = 20;
+  const battle = { turn: 1, used: {}, cooldowns: {}, sealedToday: {}, lightSupport: 0 };
+  // 白豕 0 真元可用 → 不该逆息
+  assert.equal(logic.exhaustionGate(run, content, battle).eligible, false);
+  assert.equal(logic.exhaustionGate(run, content, battle).anyUsable, true);
+});
+
+test('V4.1 exhaustion requires qi as the blocking reason', () => {
+  const run = logic.createRun(content);
+  run.owned = { moonlight_gu: 1 };
+  run.qi = 0;
+  run.thoughts = 0; // 念头不足，不是真元
+  run.hp = 20;
+  const battle = { turn: 1, used: {}, cooldowns: {}, sealedToday: {}, lightSupport: 0 };
+  const gate = logic.exhaustionGate(run, content, battle);
+  assert.equal(gate.eligible, false);
+  // 有伤害蛊但被念头卡住 → 不算「原因包含真元不足」的唯一原因时
+  // 若 also qi blocked：moonlight needs thought 1 and qi 1 → both block
+  // reason order: thought first. Still qi-blocked is true because qi < cost too.
+  // L1: 原因包含真元不足 — qiBlocked 为 true 即可，但必须没有任何可用伤害蛊。
+  // thoughts=0 使它不可用且 qiBlocked=true → 按 L1 字面仍可触发？
+  // 「原因包含真元不足」= 存在因 qi 不足而不可用的伤害蛊。这里是 true。
+  // 但 canPay 要求 thoughts>=1，所以 gate.canPay=false → eligible=false。正确。
+  assert.equal(gate.canPay, false);
 });
 
 test('V4 expected damage after correct handling matches the ruling table', () => {
@@ -348,17 +506,18 @@ test('V4 expected damage after correct handling matches the ruling table', () =>
   }).damage, 2);
 });
 
-test('V4 frozen enemy hp and damage table', () => {
-  assert.equal(logic.profileFor(content, 'ridge_hound').hp, 10);
-  assert.equal(logic.profileFor(content, 'iron_hide_boar').hp, 15);
-  assert.equal(logic.profileFor(content, 'ridge_elite_scout').hp, 18);
-  const boss = logic.profileFor(content, 'thunder_crown_sovereign');
-  assert.equal(boss.hp, 28);
-
+test('V4.1 derived enemy hp matches balance report (not hand-written)', () => {
+  const hp = content.balanceReport.enemyHp;
+  assert.equal(logic.profileFor(content, 'ridge_hound').hp, hp.ridge_hound);
+  assert.equal(logic.profileFor(content, 'iron_hide_boar').hp, hp.iron_hide_boar);
+  assert.equal(logic.profileFor(content, 'ridge_elite_scout').hp, hp.ridge_elite_scout);
+  assert.equal(logic.profileFor(content, 'thunder_crown_sovereign').hp, hp.thunder_crown_sovereign);
+  // 伤害意图仍为 V4 冻结表
   assert.equal(logic.profileFor(content, 'ridge_hound').intents[0].damage, 4);
   assert.equal(logic.profileFor(content, 'iron_hide_boar').intents[0].damage, 5);
   assert.equal(logic.profileFor(content, 'iron_hide_boar').intents[2].damage, 6);
   assert.equal(logic.profileFor(content, 'ridge_elite_scout').intents[2].damage, 4);
+  const boss = logic.profileFor(content, 'thunder_crown_sovereign');
   assert.equal(boss.phaseOne[0].damage, 5);
   assert.equal(boss.phaseTwo[1].damage, 6);
 });
@@ -376,4 +535,53 @@ test('a won battle restores two health and two essence without exceeding caps', 
   const capped = logic.applyVictoryRecovery(run);
   assert.equal(capped.hp, 24);
   assert.equal(capped.qi, 12);
+});
+
+/* 预览必须与结算同一条公式：V4 减伤回显，不再只报原始意图伤害。 */
+test('intent preview reflects V4 mitigation instead of raw damage', () => {
+  const hound = logic.createEnemy(content, 'ridge_hound');
+  hound.currentIntent = { damage: 4, tag: 'charge' };
+  hound.currentCounter = 'intercept';
+  hound.revealed = true;
+
+  const open = logic.previewEnemyDamage(hound, hound.currentIntent, {
+    attacked: false, usedLight: false, damageReduction: 0,
+    canStillAvoidAttack: true,
+  });
+  assert.equal(open.base, 4);
+  assert.equal(open.min, 1, '正确处理（不硬打）→ 4-3=1');
+  assert.equal(open.max, 4, '做错则吃满');
+
+  const committed = logic.previewEnemyDamage(hound, hound.currentIntent, {
+    attacked: true, usedLight: false, damageReduction: 0,
+    canStillAvoidAttack: false,
+  });
+  assert.equal(committed.projected, 4, '已硬打，-3 拿不到');
+  assert.equal(committed.max, 4);
+
+  const defended = logic.previewEnemyDamage(hound, hound.currentIntent, {
+    attacked: false, usedLight: false, damageReduction: 2,
+    canStillAvoidAttack: true,
+  });
+  assert.equal(defended.projected, 0, '处理正确 + 收势 2 → 4-3-2 下限 0');
+});
+
+test('intent preview includes draw-light penalty and iron rage', () => {
+  const boss = logic.createEnemy(content, 'thunder_crown_sovereign');
+  boss.ironRage = 1;
+  boss.currentIntent = { damage: 5, tag: 'charge' };
+  boss.currentCounter = 'draw_light';
+  boss.revealed = false;
+
+  const open = logic.previewEnemyDamage(boss, boss.currentIntent, {
+    usedLight: false, canStillUseLight: true, damageReduction: 0,
+  });
+  assert.equal(open.base, 6, '基础 5 + 铁皮积威 1');
+  assert.equal(open.max, 9, '未用光道 → 逐光 +3');
+  assert.equal(open.min, 3, '用光道并处理正确 → 6-3');
+
+  const noLightLeft = logic.previewEnemyDamage(boss, boss.currentIntent, {
+    usedLight: false, canStillUseLight: false, damageReduction: 0,
+  });
+  assert.equal(noLightLeft.projected, 9, '无法再用光道，逐光加伤锁定');
 });

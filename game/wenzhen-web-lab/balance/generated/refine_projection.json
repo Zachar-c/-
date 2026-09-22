@@ -1,0 +1,151 @@
+{
+  "generator": "projections",
+  "forbidden_hand_edit": true,
+  "edges": [
+    {
+      "id": "R01",
+      "from": [
+        "moonlight_gu",
+        "small_light_gu",
+        "small_light_gu"
+      ],
+      "to": "moon_glow_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONGLOW-003",
+      "success": 0.74,
+      "onceCost": 471,
+      "expectedCost": 636,
+      "marketPrice": 406,
+      "ratio": 0.6378768577494692
+    },
+    {
+      "id": "R02",
+      "from": [
+        "moonlight_gu",
+        "stone_mark_gu"
+      ],
+      "to": "moon_mark_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONTRACE-001",
+      "success": 0.74,
+      "onceCost": 277,
+      "expectedCost": 374,
+      "marketPrice": 178,
+      "ratio": 0.47552346570397114
+    },
+    {
+      "id": "R03",
+      "from": [
+        "moonlight_gu",
+        "whirlwind_gu"
+      ],
+      "to": "moon_spin_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONWHIRL-001",
+      "success": 0.74,
+      "onceCost": 277,
+      "expectedCost": 374,
+      "marketPrice": 160,
+      "ratio": 0.42743682310469316
+    },
+    {
+      "id": "R04",
+      "from": [
+        "moonlight_gu",
+        "jade_skin_gu"
+      ],
+      "to": "moon_rainbow_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONRAIMENT-001",
+      "success": 0.74,
+      "onceCost": 225,
+      "expectedCost": 304,
+      "marketPrice": 172,
+      "ratio": 0.5656888888888889
+    },
+    {
+      "id": "R05",
+      "from": [
+        "moon_glow_gu"
+      ],
+      "to": "golden_moon_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONGLOW-004",
+      "success": 0.6,
+      "onceCost": 446,
+      "expectedCost": 743,
+      "marketPrice": 2325,
+      "ratio": 3.1278026905829597
+    },
+    {
+      "id": "R06",
+      "from": [
+        "moon_glow_gu"
+      ],
+      "to": "frost_moon_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONGLOW-004",
+      "success": 0.6,
+      "onceCost": 446,
+      "expectedCost": 743,
+      "marketPrice": 1323,
+      "ratio": 1.7798206278026905
+    },
+    {
+      "id": "R07",
+      "from": [
+        "moon_glow_gu"
+      ],
+      "to": "phantom_moon_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONGLOW-004",
+      "success": 0.6,
+      "onceCost": 446,
+      "expectedCost": 743,
+      "marketPrice": 759,
+      "ratio": 1.0210762331838565
+    },
+    {
+      "id": "R08",
+      "from": [
+        "moon_glow_gu"
+      ],
+      "to": "blood_moon_gu",
+      "origin": "canonical",
+      "fact": "FACT-BLOODMOON-001",
+      "success": 0.6,
+      "onceCost": 446,
+      "expectedCost": 743,
+      "marketPrice": 455,
+      "ratio": 0.6121076233183856
+    },
+    {
+      "id": "R09",
+      "from": [
+        "phantom_moon_gu"
+      ],
+      "to": "moon_shadow_gu",
+      "origin": "canonical",
+      "fact": "FACT-PHANTOMMOON-002",
+      "success": 0.44,
+      "onceCost": 799,
+      "expectedCost": 1816,
+      "marketPrice": 2825,
+      "ratio": 1.555694618272841
+    },
+    {
+      "id": "R10",
+      "from": [
+        "moon_rainbow_gu"
+      ],
+      "to": "treasure_moon_king_gu",
+      "origin": "canonical",
+      "fact": "FACT-MOONRAIMENT-003",
+      "success": 0.26,
+      "onceCost": 212,
+      "expectedCost": 815,
+      "marketPrice": 32856,
+      "ratio": 40.29509433962264
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "PURCHASING_POWER_GATES_V1",
+  "ruling": "RUL-2026-09-21-010",
+  "unit": "I_r = 同转普通战平均元石净收入（production 口径：净新增；卖材料不算）",
+  "income_curve": {
+    "note": "独立 IncomeCurve；禁止用 rank_multiplier 伪造。数值=普通战 common 基线 × 显式阶梯（待 F8 校准，标 provisional）",
+    "provisional": true,
+    "I_by_rank": { "1": 3, "2": 8, "3": 20, "4": 55, "5": 140 },
+    "source": "battle_stone_rewards.base_by_tier.common=3 起步；R2–R5 为显式声明值，非 multiplier 推导"
+  },
+  "axes": ["IncomeCurve", "PriceCurve", "RefinementLossCurve", "BreakthroughCurve"],
+  "enforcement": "TOO_CHEAP / TOO_EXPENSIVE 报警，不自动改价",
+  "gates_fights_of_I": {
+    "1": { "gu_price": [1.5, 2.5], "refine_fail_loss": [0.5, 1.0], "breakthrough_stone": [2, 3] },
+    "2": { "gu_price": [2.0, 3.0], "refine_fail_loss": [0.75, 1.25], "breakthrough_stone": [3, 5] },
+    "3": { "gu_price": [2.5, 3.5], "refine_fail_loss": [1.0, 1.75], "breakthrough_stone": [5, 8] },
+    "4": { "gu_price": [3.0, 4.5], "refine_fail_loss": [1.5, 2.5], "breakthrough_stone": [8, 12] },
+    "5": { "gu_price": [4.0, 6.0], "refine_fail_loss": [2.0, 3.5], "breakthrough_stone": null }
+  },
+  "refine_fail_loss_def": "典型失败损失 = 一次投入期望的 (1-success) 部分；用 refinement_recipes 抽样 output 同转",
+  "forbid": "rank_multiplier 同时决定收入/物价/炼耗/突破",
+  "unresolved_leave_blank": ["黄金/紫晶是否×10", "高转经济贵多少倍", "跨转是否固定×2", "五转出现率"]
+}

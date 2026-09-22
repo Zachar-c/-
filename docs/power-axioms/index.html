@@ -1,0 +1,73 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>《问真》原作力量体系公理 · 纠偏包</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <header class="hero">
+    <p class="eyebrow">L0 纠偏令 · 2026-09-21 · FROZEN</p>
+    <h1>原作力量体系公理</h1>
+    <p class="lede">原作规律决定游戏是什么。<br />数值模型只负责检查它有没有坏。</p>
+    <p class="order">设计顺序：原作力量规律 → 游戏化压缩 → Roguelike 循环 → 数值模型 → 自动化校验<br />
+      <strong>禁止倒置</strong>为「先做标准 Roguelike，再把蛊当皮肤」。</p>
+  </header>
+
+  <nav class="toc">
+    <a href="#axioms">九条公理</a>
+    <a href="#audit">偏移审计</a>
+    <a href="#gates">机制三问</a>
+    <a href="#reject">直接 REJECT</a>
+    <a href="#lesson">工程教训</a>
+  </nav>
+
+  <main>
+    <section id="axioms">
+      <h2>九条公理</h2>
+      <ol class="axioms" id="axiom-list"></ol>
+    </section>
+
+    <section id="audit">
+      <h2>偏移审计</h2>
+      <p class="hint">完整表见 <code>docs/power-system-shift-audit.md</code>。筛选：</p>
+      <div class="filters" id="filters"></div>
+      <div class="audit" id="audit-list"></div>
+    </section>
+
+    <section id="gates">
+      <h2>新机制三问（强制）</h2>
+      <div class="gates">
+        <article><h3>SOURCE</h3><p>对应什么原作力量规律？</p></article>
+        <article><h3>GAME COMPRESSION</h3><p>为成为游戏规则，压缩或改变了什么？</p></article>
+        <article><h3>RISK</h3><p>这种压缩会不会破坏原有因果？</p></article>
+      </div>
+      <p class="note">SOURCE = none 时必须说明「为什么为了游戏性必须新增」，否则不得进入核心规则。</p>
+    </section>
+
+    <section id="reject">
+      <h2>直接 REJECT</h2>
+      <blockquote class="reject">“为了平衡，同转蛊的综合价值应该控制在 ±10%。”</blockquote>
+      <p>消灭品质差异、识货能力、低转神蛊、高转垃圾蛊与淘汰替换 → 退化为装备等级系统。</p>
+    </section>
+
+    <section id="lesson">
+      <h2>工程教训</h2>
+      <blockquote>
+        我们曾经已经掌握了原作力量体系，却在抽象、数值化和 MVP 化过程中，
+        把原作规律从「系统约束」降级成了「内容参考」，最终重新发明出一个普通 Roguelike 的技能预算体系。
+      </blockquote>
+      <p>抽象越漂亮、公式越统一时，必须检查：是否同时抽掉了这个世界真正独特的因果关系。有些「不规则」「不公平」「无法直接换算」的东西，本身就是《问真》的价值。</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Markdown 真源：<code>docs/ORIGINAL_POWER_SYSTEM_AXIOMS.md</code> · <code>docs/power-system-shift-audit.md</code></p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

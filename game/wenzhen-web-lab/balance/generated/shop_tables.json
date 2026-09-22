@@ -1,0 +1,182 @@
+{
+  "generator": "projections",
+  "forbidden_hand_edit": true,
+  "note": "价格 = intrinsic × tier × scarcity × supply × demand × markup，不写死在蛊上",
+  "tiers": {
+    "1": {
+      "income_base": 50,
+      "stock": [
+        {
+          "id": "moonlight_gu",
+          "marketPrice": 79,
+          "intrinsic": 3.52
+        },
+        {
+          "id": "small_light_gu",
+          "marketPrice": 136,
+          "intrinsic": 4.85
+        },
+        {
+          "id": "jade_skin_gu",
+          "marketPrice": 66,
+          "intrinsic": 3.17
+        },
+        {
+          "id": "stone_mark_gu",
+          "marketPrice": 118,
+          "intrinsic": 4.51
+        },
+        {
+          "id": "whirlwind_gu",
+          "marketPrice": 118,
+          "intrinsic": 4.51
+        },
+        {
+          "id": "moon_orchid_gu",
+          "marketPrice": 30,
+          "intrinsic": 2.12
+        },
+        {
+          "id": "moon_watch_gu",
+          "marketPrice": 107,
+          "intrinsic": 4.94
+        },
+        {
+          "id": "moon_dust_gu",
+          "marketPrice": 37,
+          "intrinsic": 2.36
+        }
+      ]
+    },
+    "2": {
+      "income_base": 170,
+      "stock": [
+        {
+          "id": "moon_glow_gu",
+          "marketPrice": 406,
+          "intrinsic": 8.25
+        },
+        {
+          "id": "moon_mark_gu",
+          "marketPrice": 178,
+          "intrinsic": 4.06
+        },
+        {
+          "id": "moon_spin_gu",
+          "marketPrice": 160,
+          "intrinsic": 3.87
+        },
+        {
+          "id": "moon_rainbow_gu",
+          "marketPrice": 172,
+          "intrinsic": 4.14
+        },
+        {
+          "id": "moon_veil_gu",
+          "marketPrice": 101,
+          "intrinsic": 2.48
+        },
+        {
+          "id": "moon_draw_gu",
+          "marketPrice": 182,
+          "intrinsic": 3.84
+        },
+        {
+          "id": "condense_light_gu",
+          "marketPrice": 198,
+          "intrinsic": 4.51
+        }
+      ]
+    },
+    "3": {
+      "income_base": 550,
+      "stock": [
+        {
+          "id": "golden_moon_gu",
+          "marketPrice": 2325,
+          "intrinsic": 9.93
+        },
+        {
+          "id": "frost_moon_gu",
+          "marketPrice": 1323,
+          "intrinsic": 6.39
+        },
+        {
+          "id": "phantom_moon_gu",
+          "marketPrice": 759,
+          "intrinsic": 3.66
+        },
+        {
+          "id": "blood_moon_gu",
+          "marketPrice": 455,
+          "intrinsic": 2.97
+        },
+        {
+          "id": "moon_wheel_gu",
+          "marketPrice": 620,
+          "intrinsic": 3.96
+        },
+        {
+          "id": "moon_soul_gu",
+          "marketPrice": 686,
+          "intrinsic": 4.38
+        }
+      ]
+    },
+    "4": {
+      "income_base": 1750,
+      "stock": [
+        {
+          "id": "moon_shadow_gu",
+          "marketPrice": 2825,
+          "intrinsic": 5.81
+        },
+        {
+          "id": "cold_moon_seal_gu",
+          "marketPrice": 3416,
+          "intrinsic": 7.02
+        },
+        {
+          "id": "gold_wheel_break_gu",
+          "marketPrice": 4813,
+          "intrinsic": 9.89
+        },
+        {
+          "id": "dark_moon_form_gu",
+          "marketPrice": 1885,
+          "intrinsic": 3.87
+        },
+        {
+          "id": "moon_hua_nourish_gu",
+          "marketPrice": 2096,
+          "intrinsic": 4.38
+        }
+      ]
+    },
+    "5": {
+      "income_base": 6000,
+      "stock": [
+        {
+          "id": "treasure_moon_king_gu",
+          "marketPrice": 32856,
+          "intrinsic": 15.41
+        },
+        {
+          "id": "five_star_moon_wheel_gu",
+          "marketPrice": 41660,
+          "intrinsic": 13.32
+        },
+        {
+          "id": "cold_sky_moon_soul_gu",
+          "marketPrice": 27975,
+          "intrinsic": 10.5
+        },
+        {
+          "id": "taiyin_lock_yuan_gu",
+          "marketPrice": 18961,
+          "intrinsic": 7.12
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "layer": "models",
+  "id": "refinement_graph_v1",
+  "note": "炼蛊是图。边只有拓扑与难度；成本/市价由 projection 推。",
+  "origin": "mixed",
+  "success_rate_by_rank_output": { "1": 0.88, "2": 0.74, "3": 0.6, "4": 0.44, "5": 0.26 },
+  "canon_edges": [
+    { "from": ["moonlight_gu", "small_light_gu", "small_light_gu"], "to": "moon_glow_gu", "origin": "canonical", "fact": "FACT-MOONGLOW-003" },
+    { "from": ["moonlight_gu", "stone_mark_gu"], "to": "moon_mark_gu", "origin": "canonical", "fact": "FACT-MOONTRACE-001" },
+    { "from": ["moonlight_gu", "whirlwind_gu"], "to": "moon_spin_gu", "origin": "canonical", "fact": "FACT-MOONWHIRL-001" },
+    { "from": ["moonlight_gu", "jade_skin_gu"], "to": "moon_rainbow_gu", "origin": "canonical", "fact": "FACT-MOONRAIMENT-001" },
+    { "from": ["moon_glow_gu"], "to": "golden_moon_gu", "origin": "canonical", "fact": "FACT-MOONGLOW-004" },
+    { "from": ["moon_glow_gu"], "to": "frost_moon_gu", "origin": "canonical", "fact": "FACT-MOONGLOW-004" },
+    { "from": ["moon_glow_gu"], "to": "phantom_moon_gu", "origin": "canonical", "fact": "FACT-MOONGLOW-004" },
+    { "from": ["moon_glow_gu"], "to": "blood_moon_gu", "origin": "canonical", "fact": "FACT-BLOODMOON-001" },
+    { "from": ["phantom_moon_gu"], "to": "moon_shadow_gu", "origin": "canonical", "fact": "FACT-PHANTOMMOON-002" },
+    { "from": ["moon_rainbow_gu"], "to": "treasure_moon_king_gu", "origin": "canonical", "fact": "FACT-MOONRAIMENT-003" }
+  ],
+  "adaptation_edges_note": "其余边为 adaptation，见 canonical 配方意图 + golden 校准",
+  "edge_fields_generated_not_hand": ["stones", "success", "expected_cost", "market_price"]
+}

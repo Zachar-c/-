@@ -1,0 +1,85 @@
+{
+  "id": "VERTICAL_SHOPS_V0.1",
+  "note": "五层商人。固定槽位：基础补给/核心蛊/辅助蛊/炼材/秘方/机会/高风险。五转蛊不固定出售。",
+  "slots": ["supply", "core_gu", "support_gu", "refine_mat", "recipe", "opportunity", "high_risk"],
+  "purchasingPowerCheck": true,
+  "tiers": [
+    {
+      "tier": 1,
+      "name": "一层商人",
+      "stock": {
+        "supply": [{ "id": "moon_orchid_petal", "n": 10, "price": 12 }, { "id": "moon_shine_stone", "n": 1, "price": 18 }],
+        "core_gu": [{ "id": "moonlight_gu", "price": 80 }],
+        "support_gu": [{ "id": "small_light_gu", "price": 55 }, { "id": "jade_skin_gu", "price": 75 }, { "id": "stone_mark_gu", "price": 50 }, { "id": "whirlwind_gu", "price": 65 }, { "id": "moon_dust_gu", "price": 35 }],
+        "refine_mat": [{ "id": "moon_shine_chip", "price": 15 }],
+        "recipe": [{ "id": "r1_recipe", "priceRange": [40, 90] }],
+        "opportunity": [{ "id": "moon_watch_gu", "price": 120, "stock": 0.3 }],
+        "high_risk": [{ "id": "wild_small_light", "price": 35, "wild": true, "stock": 0.4 }]
+      },
+      "incomeNorm": [35, 65],
+      "buysPerFight": "0.5~1 只普通一转蛊"
+    },
+    {
+      "tier": 2,
+      "name": "二层商人",
+      "stock": {
+        "supply": [{ "id": "r2_feed", "price": 25 }],
+        "core_gu": [{ "id": "moon_glow_gu", "price": 340 }, { "id": "moon_mark_gu", "price": 220 }, { "id": "moon_spin_gu", "price": 265 }],
+        "support_gu": [{ "id": "moon_rainbow_gu", "price": 300 }, { "id": "moon_veil_gu", "price": 245 }, { "id": "condense_light_gu", "price": 180 }],
+        "refine_mat": [{ "id": "r2_mat", "priceRange": [45, 120] }],
+        "recipe": [{ "id": "r2_recipe", "priceRange": [180, 350] }],
+        "opportunity": [{ "id": "moon_watch_gu", "price": 90, "note": "一转功能蛊在二转商店变便宜" }],
+        "high_risk": [{ "id": "r1_gu_clearance", "priceRange": [30, 60] }]
+      },
+      "incomeNorm": [120, 220],
+      "buysPerFight": "0.4~0.7 只普通二转蛊"
+    },
+    {
+      "tier": 3,
+      "name": "三层商人",
+      "stock": {
+        "supply": [{ "id": "r3_feed", "price": 80 }],
+        "core_gu": [{ "id": "golden_moon_gu", "price": 1100 }, { "id": "frost_moon_gu", "price": 960 }, { "id": "phantom_moon_gu", "price": 890 }, { "id": "blood_moon_gu", "price": 610 }],
+        "support_gu": [{ "id": "moon_wheel_gu", "price": 820 }, { "id": "moon_soul_gu", "price": 760 }],
+        "refine_mat": [{ "id": "r3_core_mat", "priceRange": [180, 450] }],
+        "recipe": [{ "id": "full_killmove_recipe", "priceRange": [500, 1200] }],
+        "opportunity": [{ "id": "r2_gu_clearance", "priceRange": [130, 240] }],
+        "high_risk": [{ "id": "blood_moon_discount", "price": 520, "note": "便宜三转，带供养问题" }]
+      },
+      "incomeNorm": [400, 700],
+      "buysPerFight": "0.3~0.5 只普通三转蛊"
+    },
+    {
+      "tier": 4,
+      "name": "四层商人",
+      "stock": {
+        "supply": [{ "id": "moon_hua_stone", "price": 200 }],
+        "core_gu": [{ "id": "moon_shadow_gu", "price": 3400 }, { "id": "cold_moon_seal_gu", "price": 3100 }, { "id": "gold_wheel_break_gu", "price": 3900 }],
+        "support_gu": [{ "id": "dark_moon_form_gu", "price": 2850 }, { "id": "moon_hua_nourish_gu", "price": 2400 }],
+        "refine_mat": [{ "id": "r4_mat", "priceRange": [700, 1800] }],
+        "recipe": [{ "id": "high_killmove_recipe", "priceRange": [2000, 4500] }],
+        "opportunity": [{ "id": "r3_gu_clearance", "priceRange": [450, 900] }],
+        "high_risk": [{ "id": "unstable_moon_shadow", "price": 2800, "successPenalty": true }]
+      },
+      "incomeNorm": [1300, 2200],
+      "buysPerFight": "高转蛊明显稀缺"
+    },
+    {
+      "tier": 5,
+      "name": "五层商人",
+      "note": "普通商人不固定出售五转蛊；仅拍卖/黑市/特殊NPC，出现概率 8~15%",
+      "stock": {
+        "supply": [{ "id": "r5_feed", "price": 800 }],
+        "core_gu": [],
+        "support_gu": [{ "id": "r4_gu", "priceRange": [1600, 3500] }],
+        "refine_mat": [{ "id": "r5_mat", "priceRange": [2500, 6500] }],
+        "recipe": [{ "id": "r5_recipe", "priceRange": [6000, 15000] }],
+        "opportunity": [{ "id": "r5_gu_black_market", "priceRange": [13500, 15000], "appearRate": 0.08, "pool": ["treasure_moon_king_gu", "five_star_moon_wheel_gu", "cold_sky_moon_soul_gu", "taiyin_lock_yuan_gu"] }],
+        "high_risk": [{ "id": "auction_r5", "priceRange": [12000, 20000], "appearRate": 0.15 }]
+      },
+      "incomeNorm": [4500, 7500],
+      "buysPerFight": "普通战已不能轻易提供完整五转蛊"
+    }
+  ],
+  "arbitrageWatch": ["buy_mat_refine_sell", "buy_gu_refine_sell_same_shop", "drop_refine_loop", "black_market_spread"]
+}

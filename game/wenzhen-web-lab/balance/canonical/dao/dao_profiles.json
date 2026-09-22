@@ -1,0 +1,79 @@
+{
+  "layer": "canonical",
+  "note": "道 = Profile，不是 tag。加血道/力道只加 profile，不重写战斗引擎。",
+  "daos": {
+    "moon": {
+      "id": "moon",
+      "name": "月道",
+      "origin": "canonical",
+      "combat_grammar": {
+        "themes": ["projection", "illumination", "trajectory", "illusion", "cold", "suppression"]
+      },
+      "resource_preferences": {
+        "primary": "primeval_essence",
+        "secondary": ["illumination_state", "target_revealed"]
+      },
+      "common_strengths": ["ranged_attack", "information", "precision", "control"],
+      "common_weaknesses": ["sustained_resource_pressure", "close_range_pressure"],
+      "compatible_effects": ["reveal", "projectile", "arc", "frost", "illusion", "suppress_qi"],
+      "value_tilt": {
+        "combat_direct": 1.0,
+        "defense": 0.7,
+        "control": 1.1,
+        "information": 1.3,
+        "mobility": 0.8,
+        "resource": 0.9,
+        "refinement": 1.0,
+        "killer_move": 1.1,
+        "economy": 0.9
+      }
+    },
+    "blood": {
+      "id": "blood",
+      "name": "血道",
+      "origin": "canonical",
+      "combat_grammar": {
+        "themes": ["self_damage", "bleeding", "life_conversion", "snowball"]
+      },
+      "resource_preferences": {
+        "primary": ["hp", "blood", "injury"]
+      },
+      "common_strengths": ["efficiency", "burst", "recovery_from_damage"],
+      "common_weaknesses": ["irreversible_cost", "anti_heal"],
+      "compatible_effects": ["bleed", "lifesteal", "self_hp_cost"],
+      "value_tilt": {
+        "combat_direct": 1.2,
+        "defense": 0.5,
+        "control": 0.6,
+        "information": 0.5,
+        "mobility": 0.6,
+        "resource": 0.8,
+        "refinement": 0.9,
+        "killer_move": 1.0,
+        "economy": 0.8
+      },
+      "note": "示例 profile，血道全系未展开"
+    },
+    "light": {
+      "id": "light",
+      "name": "光道",
+      "origin": "canonical",
+      "combat_grammar": { "themes": ["illumination", "reveal", "support_amplify"] },
+      "resource_preferences": { "primary": "primeval_essence", "secondary": ["light_state"] },
+      "common_strengths": ["information", "support", "enable_moon"],
+      "common_weaknesses": ["low_direct_pressure"],
+      "compatible_effects": ["reveal", "damage_buff", "cost_reduce"],
+      "value_tilt": {
+        "combat_direct": 0.5,
+        "defense": 0.4,
+        "control": 0.5,
+        "information": 1.4,
+        "mobility": 0.4,
+        "resource": 1.0,
+        "refinement": 1.3,
+        "killer_move": 1.2,
+        "economy": 1.0
+      }
+    }
+  }
+}

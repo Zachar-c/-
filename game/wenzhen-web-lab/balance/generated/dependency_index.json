@@ -1,0 +1,27 @@
+{
+  "generator": "projections",
+  "forbidden_hand_edit": true,
+  "note": "数值 → 依赖追溯",
+  "example": {
+    "moon_glow_gu.combat.damage": [
+      "canonical/gu/moon_gu_identity.json#moon_glow_gu",
+      "models/effect_archetypes/effects.json#burst_projectile",
+      "models/rank_profiles/ranks.json#2",
+      "models/quality_profiles/quality.json#excellent"
+    ],
+    "moon_glow_gu.economy.marketPrice": [
+      "value_vector ← combat + refinement + killer_move",
+      "models/economy/economy_curves.json#tiers.2",
+      "traits.scarcity"
+    ]
+  },
+  "impact_of": {
+    "scarcity.small_light": [
+      "moon_glow_gu",
+      "kill_moves using small_light",
+      "shop tier1-2",
+      "drop pools",
+      "refine edges into moon_glow"
+    ]
+  }
+}

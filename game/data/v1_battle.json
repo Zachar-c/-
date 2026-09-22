@@ -142,7 +142,8 @@
    "thought_cost": 2,
    "life_cost": 0,
    "damage": 8,
-   "effect": {}
+   "effect": {},
+   "override_reason": "RUL-2026-09-21-010 Q1-B：declared 8 高于组件 v1_effect 和；保留声明值待组件化迁移，禁止用 coordination 伪造通过。"
   },
   {
    "id": "km_sword_double_edge_1",

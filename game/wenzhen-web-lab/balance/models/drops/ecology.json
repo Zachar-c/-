@@ -1,0 +1,19 @@
+{
+  "layer": "models",
+  "id": "drop_ecology_v1",
+  "note": "掉落 = 生态位 Profile + 财富类型，不是 dropRate=5%。",
+  "origin": "adaptation",
+  "layers": ["guaranteed", "weighted", "conditional", "jackpot"],
+  "pity": { "jackpot_hard": 40, "build_component_soft": 12 },
+  "wealth_classes": {
+    "wild_beast": { "currency": "medium", "gu": "low", "materials": "high", "recipe": "none" },
+    "brigand": { "currency": "high", "gu": "low", "materials": "medium_gear", "recipe": "low" },
+    "cultivator": { "currency": "high", "gu": "medium", "materials": "medium", "recipe": "low" },
+    "merchant": { "currency": "very_high", "gu": "low", "merchandise": "high" },
+    "herb": { "currency": "low", "gu": "none", "materials": "herb_high" },
+    "boss": { "currency": "very_high", "gu": "low_high_value", "core_mat": "guaranteed_first" }
+  },
+  "material_bias_sources": ["ecology.material_bias", "weakness_route_hint"],
+  "drop_target_tags": ["STARTER", "BUILD_COMPONENT", "REFINEMENT", "ECONOMIC", "UPKEEP", "RECIPE", "JACKPOT"],
+  "formation_check": "关键 BUILD_COMPONENT 必须在合理场次内可形成，否则 DROP_BLOCKED_ROUTE"
+}

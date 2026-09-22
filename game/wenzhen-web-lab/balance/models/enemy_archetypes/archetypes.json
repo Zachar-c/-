@@ -1,0 +1,161 @@
+{
+  "layer": "models",
+  "id": "enemy_archetypes_v1",
+  "note": "10 模板 × 5 投影 = 50。禁止独立手填 50 份 HP。",
+  "origin": "adaptation",
+  "combat_bias_defaults": { "hp": 1.0, "damage": 1.0, "defense": 1.0, "speed": 1.0 },
+  "mechanism_growth_note": "升转增加机制密度，不是 ×2 伤害换皮",
+  "archetypes": {
+    "hunter": {
+      "id": "hunter",
+      "name": "猎杀型",
+      "tests": "基础攻防与节奏",
+      "combat_bias": { "hp": 0.85, "damage": 1.15, "defense": 0.7, "speed": 1.2 },
+      "mechanism_growth": {
+        "1": ["bite", "pounce"],
+        "2": ["wounded_pounce_bonus"],
+        "3": ["read_player_ranged"],
+        "4": ["status_attack", "track_stealth"],
+        "5": ["predict_repeat_moves"]
+      },
+      "ecology": { "type": "beast", "wealth_class": "wild_beast", "material_bias": { "beast": 1.8, "moon": 0.6 } },
+      "family": "山脊猎犬系"
+    },
+    "armored": {
+      "id": "armored",
+      "name": "重甲型",
+      "tests": "穿透、控制、持续输出",
+      "combat_bias": { "hp": 1.25, "damage": 0.85, "defense": 1.5, "speed": 0.7 },
+      "mechanism_growth": {
+        "1": ["temporary_shield"],
+        "2": ["shield_break_window"],
+        "3": ["flat_reduction"],
+        "4": ["control_immunity_while_armored"],
+        "5": ["vulnerability_after_break"]
+      },
+      "ecology": { "type": "beast", "wealth_class": "wild_beast", "material_bias": { "armor": 1.8, "gold": 1.2 } },
+      "family": "铁皮山猪系"
+    },
+    "swift": {
+      "id": "swift",
+      "name": "高速型",
+      "tests": "命中、预判、范围",
+      "combat_bias": { "hp": 0.7, "damage": 1.1, "defense": 0.5, "speed": 1.6 },
+      "mechanism_growth": {
+        "1": ["evasion_first_line"],
+        "2": ["evasion_on_lock"],
+        "3": ["reposition_after_linear"],
+        "4": ["untargetable_until_inspected"],
+        "5": ["alternate_real_illusion"]
+      },
+      "ecology": { "type": "moon_beast", "wealth_class": "wild_beast", "material_bias": { "wind": 1.5, "moon": 1.2 } },
+      "family": "影兔/风鼬系"
+    },
+    "swarm": {
+      "id": "swarm",
+      "name": "群体型",
+      "tests": "多目标、范围能力",
+      "combat_bias": { "hp": 0.9, "damage": 0.9, "defense": 0.6, "speed": 1.0 },
+      "mechanism_growth": {
+        "1": ["many_units_single_waste"],
+        "2": ["poison_if_many_alive"],
+        "3": ["moon_qi_tax_per_alive"],
+        "4": ["cover_reduce_ranged"],
+        "5": ["mother_hatch_loop"]
+      },
+      "ecology": { "type": "swarm", "wealth_class": "wild_beast", "material_bias": { "bug": 1.6 } },
+      "family": "蛊虫群"
+    },
+    "ranged": {
+      "id": "ranged",
+      "name": "远程型",
+      "tests": "距离与移动",
+      "combat_bias": { "hp": 0.8, "damage": 1.2, "defense": 0.8, "speed": 0.9 },
+      "mechanism_growth": {
+        "1": ["prefer_range", "melee_peek_penalty"],
+        "2": ["seal_first_or_last"],
+        "3": ["ignore_shield"],
+        "4": ["lock_repeat_gu"],
+        "5": ["ammo_adapt_last_turn"]
+      },
+      "ecology": { "type": "cultivator", "wealth_class": "brigand", "material_bias": { "gear": 1.5 } },
+      "family": "弩修系"
+    },
+    "controller": {
+      "id": "controller",
+      "name": "控制型",
+      "tests": "封印、打断、顺序",
+      "combat_bias": { "hp": 0.9, "damage": 1.0, "defense": 1.0, "speed": 1.0 },
+      "mechanism_growth": {
+        "1": ["seal_random_gu_every3"],
+        "2": ["seal_first_or_last_gu"],
+        "3": ["record_3_seal_repeat"],
+        "4": ["temp_max_qi_down"],
+        "5": ["publish_forbid_rule"]
+      },
+      "ecology": { "type": "cultivator", "wealth_class": "cultivator", "material_bias": { "seal": 1.4, "recipe": 1.2 } },
+      "family": "封蛊师系"
+    },
+    "mana_eater": {
+      "id": "mana_eater",
+      "name": "噬元型",
+      "tests": "真元经济",
+      "combat_bias": { "hp": 0.85, "damage": 0.9, "defense": 0.9, "speed": 1.0 },
+      "mechanism_growth": {
+        "1": ["hit_steal_qi"],
+        "2": ["periodic_steal"],
+        "3": ["bonus_if_qi_high"],
+        "4": ["steal_and_max_down"],
+        "5": ["shield_from_qi_eaten"]
+      },
+      "ecology": { "type": "aberrant", "wealth_class": "wild_beast", "material_bias": { "mana": 1.7 } },
+      "family": "吞元虫系"
+    },
+    "regen": {
+      "id": "regen",
+      "name": "恢复型",
+      "tests": "爆发与治疗压制",
+      "combat_bias": { "hp": 1.15, "damage": 0.9, "defense": 1.1, "speed": 0.6 },
+      "mechanism_growth": {
+        "1": ["periodic_heal"],
+        "2": ["lifesteal"],
+        "3": ["heal_interruptible"],
+        "4": ["regen_low_hp"],
+        "5": ["heal_max_pct_need_grievous"]
+      },
+      "ecology": { "type": "plant", "wealth_class": "herb", "material_bias": { "herb": 1.8 } },
+      "family": "生机妖植系"
+    },
+    "mirror_cultivator": {
+      "id": "mirror_cultivator",
+      "name": "镜像蛊师型",
+      "tests": "完整构筑对抗",
+      "combat_bias": { "hp": 1.0, "damage": 1.05, "defense": 1.0, "speed": 1.0 },
+      "mechanism_growth": {
+        "1": ["simple_moon_kit"],
+        "2": ["observe_player_counters"],
+        "3": ["random_route_kit"],
+        "4": ["focus_qi_suppress"],
+        "5": ["full_r5_build_random"]
+      },
+      "ecology": { "type": "cultivator", "wealth_class": "cultivator", "material_bias": { "moon": 1.4, "gu": 1.3, "recipe": 1.1 } },
+      "family": "月道蛊师"
+    },
+    "boss": {
+      "id": "boss",
+      "name": "综合Boss/异兽",
+      "tests": "综合考试",
+      "combat_bias": { "hp": 1.3, "damage": 1.2, "defense": 1.1, "speed": 1.1 },
+      "mechanism_growth": {
+        "1": ["two_phase", "remember_repeat"],
+        "2": ["intercept_plus_burn"],
+        "3": ["stack_burst"],
+        "4": ["seal_burn_phase"],
+        "5": ["three_phase_adapt_route"]
+      },
+      "ecology": { "type": "boss", "wealth_class": "boss", "material_bias": { "core_mat": 1.0 } },
+      "family": "雷冠狼王系",
+      "isBoss": true
+    }
+  }
+}

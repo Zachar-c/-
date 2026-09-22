@@ -1,0 +1,98 @@
+{
+  "layer": "rulings",
+  "note": "Fact→游戏身份。禁止把 adaptation 写进 canonical。改考据只动 Fact，再重跑 projection。",
+  "rulings": [
+    {
+      "ruling_id": "RUL-MOONSHADOW-001",
+      "facts": ["FACT-MOONSHADOW-002"],
+      "interpretation": "月影蛊的核心身份不是直接伤害蛊，而是针对真元经济的压制蛊。",
+      "game_constraints": {
+        "primary_role": "resource_denial",
+        "direct_damage_priority": "low",
+        "must_affect": ["qi_capacity", "qi_recovery", "qi_usage"]
+      },
+      "forbidden": ["设计成单纯的高伤月刃"],
+      "origin": "adaptation"
+    },
+    {
+      "ruling_id": "RUL-MOONTRACE-001",
+      "facts": ["FACT-MOONTRACE-002"],
+      "interpretation": "月痕的价值主轴是射程/破甲，不是同转爆发。",
+      "game_constraints": {
+        "primary_role": "ranged_safety",
+        "dimensions_bias": { "power": "low", "range": "high", "penetration": "mid" }
+      },
+      "forbidden": ["把月痕做成月芒的纯伤害下位替代"],
+      "origin": "adaptation"
+    },
+    {
+      "ruling_id": "RUL-MOONWHIRL-001",
+      "facts": ["FACT-MOONWHIRL-002"],
+      "interpretation": "月旋解决遮挡/闪避/轨迹，不必然提高直伤。",
+      "game_constraints": {
+        "primary_role": "trajectory_control",
+        "must_counter": ["evasion", "cover"]
+      },
+      "forbidden": ["无条件 +50% 伤害"],
+      "origin": "adaptation"
+    },
+    {
+      "ruling_id": "RUL-MOONRAIMENT-001",
+      "facts": ["FACT-MOONRAIMENT-002", "FACT-MOONRAIMENT-003"],
+      "interpretation": "月霓裳是防御/护友核，并保留通向五转宝月光王的长线。",
+      "game_constraints": {
+        "primary_role": "defense",
+        "long_line_to": "treasure_moon_king"
+      },
+      "forbidden": ["改成纯输出"],
+      "origin": "adaptation"
+    },
+    {
+      "ruling_id": "RUL-BLOODMOON-001",
+      "facts": ["FACT-BLOODMOON-001"],
+      "interpretation": "血月便宜、有流血、供养易，但带自伤/偏门代价；不应与黄金月同价同效。",
+      "game_constraints": {
+        "quality_band": "normal_to_good",
+        "must_have_cost": ["self_hp", "upkeep"],
+        "dot_identity": "bleed"
+      },
+      "forbidden": ["做成无代价高性价比三转"],
+      "origin": "adaptation"
+    },
+    {
+      "ruling_id": "RUL-REFINE-RANK-001",
+      "facts": ["FACT-REFINE-RANK-001"],
+      "interpretation": "炼制成功率随转数下降；五转不自动拥有五转蛊。",
+      "game_constraints": {
+        "success_rate_curve": "decreasing",
+        "rank5_owned_by_rank5_rate": "low"
+      },
+      "forbidden": ["材料齐就必成", "突破即送同转核"],
+      "origin": "adaptation"
+    },
+    {
+      "ruling_id": "RUL-RANK-AXIS-001",
+      "facts": ["FACT-RANK-001"],
+      "interpretation": "转数是能力空间，不是万能倍率。HP/伤害/价格/经济收入分轴。",
+      "game_constraints": {
+        "rank_is": "capability_band",
+        "not": "power_multiplier",
+        "axes_independent": ["hp", "damage", "price", "income", "essence"]
+      },
+      "forbidden": ["rankMultiplier 乘所有伤害", "共用一个转数乘数"],
+      "origin": "canonical",
+      "parent_ruling": "RUL-2026-09-19-008"
+    },
+    {
+      "ruling_id": "RUL-SMALLLIGHT-VALUE-001",
+      "facts": ["FACT-SMALLLIGHT-001"],
+      "interpretation": "小光战斗价值可低，但炼蛊/杀招组件价值高，价格不得只按即时 DPS。",
+      "game_constraints": {
+        "value_vector_required": true,
+        "refinement_weight": "high"
+      },
+      "forbidden": ["value=dps"],
+      "origin": "adaptation"
+    }
+  ]
+}

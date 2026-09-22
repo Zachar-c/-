@@ -1,5 +1,42 @@
-// 战斗。普通脚本：全局 renderBattle。判定一律走 rules.js，本文件只负责显示与派发。
-const portrait = (p) => `../assets/wenzhen/enemies/${p}.png`;
+// 战斗。普通脚本：全局 renderBattle。壳=lab.css；结算/反制=MVP CombatCore。
+const portrait = (p) => `assets/wenzhen/enemies/${p}.png`;
+
+function counterBadge(enemy) {
+  const core = globalThis.CombatCore;
+  if (!core || !enemy) return '';
+  const active = core.counterActive ? core.counterActive(enemy) : !!enemy.currentCounter;
+  if (!active) return '<span class="chip">反制 —</span>';
+  if (enemy.counterRevealed || enemy.revealed) {
+    const label = (MVP_CONTENT?.counterRules?.[enemy.currentCounter]?.label) || enemy.currentCounter;
+    return `<span class="chip live">反制 ${label}</span>`;
+  }
+  return '<span class="chip">反制 未知</span>';
+}
+
+/** MVP 情报：公开意图 / 已知弱点 / 未察信息 */
+function intelBlock(enemy) {
+  const id = enemy?.id || '';
+  const intel = (typeof MVP_CONTENT !== 'undefined' && MVP_CONTENT.intel && MVP_CONTENT.intel[id]) || null;
+  const revealed = !!(enemy?.revealed || enemy?.counterRevealed);
+  const counterId = enemy?.currentCounter || '';
+  const counterLabel = revealed && counterId
+    ? ((MVP_CONTENT?.counterRules?.[counterId]?.label) || counterId)
+    : null;
+  const intent = enemy?.enemyIntent || enemy?.currentIntent;
+  const preview = (globalThis.CombatCore?.previewEnemyDamage && intent)
+    ? globalThis.CombatCore.previewEnemyDamage(enemy, intent, { usedLight: false })
+    : null;
+  const dmgLine = preview
+    ? `预计 ${preview.base}${preview.projected !== preview.base ? ` → ${preview.projected} 伤` : ''}`
+    : (intent ? `预计 ${intent.damage || 0} 伤` : '冷却中');
+  return `
+    <div class="intel-lines">
+      <div><span class="il">下一行动</span><span>${intent ? (intent.label || intent.id) : '蓄势'} · ${dmgLine}</span></div>
+      <div><span class="il">已知弱点</span><span>${(intel && intel.known) || '—'}</span></div>
+      <div><span class="il">未察信息</span><span>${(intel && intel.unknown) || (revealed ? '已全部识破' : '反制未识破')}</span></div>
+      <div><span class="il">反制</span><span>${counterLabel || (counterId ? '未知' : '—')}</span></div>
+    </div>`;
+}
 
 function battleEncounterCard(node) {
   if (!node || !['battle', 'elite', 'boss'].includes(node.type)) return '';
@@ -88,6 +125,8 @@ function renderBattle(root) {
   const intentChip = target.enemyIntent
     ? `<span class="chip live">${intentText(target.enemyIntent)}</span>`
     : '<span class="chip spent">冷却中 · 本回合不攻击</span>';
+  const counterChip = counterBadge(target);
+  const intelHtml = intelBlock(target);
 
   const cdChips = view.intents.map((it) => {
     const ready = intentReady(target.lastFired[it.id], it.cooldown, b.turn);
@@ -173,7 +212,8 @@ function renderBattle(root) {
         <div class="gm" style="margin-top:7px">气血 ${Math.max(0, target.hp)} / ${target.hpMax}</div>
         <div class="chips" style="margin-top:12px">${phaseChips}</div>
         <div class="colhead" style="margin-top:16px">本回合意图</div>
-        <div class="chips">${intentChip}</div>
+        <div class="chips">${intentChip} ${counterChip}</div>
+        ${intelHtml}
         <div class="colhead" style="margin-top:14px">意图冷却</div>
         <div class="chips">${cdChips}</div>
         ${delayedChips ? `<div class="colhead" style="margin-top:14px">延迟结算</div><div class="chips">${delayedChips}</div>` : ''}
@@ -188,6 +228,7 @@ function renderBattle(root) {
         ${live.length ? `<div class="forewarn">⚠ 对当前目标直接攻击会被「${live.map((r) => r.label).join('、')}」吞掉（反击预警）</div>` : ''}
         <button ${basicOk ? '' : 'disabled'} data-basic-attack="1">拳脚（念头 1）</button>
         ${!target.revealed && !b.over ? '<button data-observe="1">观察（耗 1 念头 · 1 回合）</button>' : ''}
+        ${!b.over ? '<button data-exhaust="1">逆息（念头1 · 气血-2 · 真元+3）</button>' : ''}
         ${guButtons || '<div class="mr" style="font-size:12px;color:var(--ink-soft)">无可用蛊虫</div>'}
         <div class="colhead" style="margin-top:8px">杀招</div>
         ${buttons || '<div class="mr" style="font-size:12px;color:var(--ink-soft)">无可用杀招</div>'}
@@ -211,6 +252,7 @@ function renderBattle(root) {
     el.addEventListener('click', () => act.useGu(el.dataset.useGu)));
   root.querySelector('[data-basic-attack]')?.addEventListener('click', () => act.basicAttack());
   root.querySelector('[data-observe]')?.addEventListener('click', () => act.observe());
+  root.querySelector('[data-exhaust]')?.addEventListener('click', () => act.exhaust());
   root.querySelector('[data-end-turn]')?.addEventListener('click', () => act.endTurn());
   root.querySelector('[data-escape]').addEventListener('click', () => act.endBattle());
 }
