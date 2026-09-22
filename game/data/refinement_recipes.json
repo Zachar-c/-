@@ -46,7 +46,9 @@
    "materials": {
     "beast_blood": 1
    },
-   "stone_cost": 6
+   "stone_cost": 6,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：输入输出同 ID 净亏自环，真实语义定义前移出 live 可见路径"
   },
   {
    "id": "advance_stone_shell_gu",
@@ -58,7 +60,9 @@
    "materials": {
     "beast_bone": 2
    },
-   "stone_cost": 6
+   "stone_cost": 6,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：输入输出同 ID 净亏自环，真实语义定义前移出 live 可见路径"
   },
   {
    "id": "advance_moonlight_gu",
@@ -70,7 +74,9 @@
    "materials": {
     "moon_dew": 1
    },
-   "stone_cost": 6
+   "stone_cost": 6,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：输入输出同 ID 净亏自环，真实语义定义前移出 live 可见路径"
   },
   {
    "id": "stone_shell_bone_forge",

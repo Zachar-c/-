@@ -253,7 +253,10 @@
    "gu_id": "moon_glow_gu",
    "stone_cost": 80,
    "tier": 2,
-   "clue": "古方：持方即知产物，免未知损失。"
+   "clue": "古方：持方即知产物，免未知损失。",
+   "mechanical": false,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：只记账无机械收益，未接通前不得作为正式可购成长项"
   },
   {
    "id": "gu_fang_white_jade_gu",
@@ -262,7 +265,10 @@
    "gu_id": "white_jade_gu",
    "stone_cost": 80,
    "tier": 2,
-   "clue": "古方：持方即知产物，免未知损失。"
+   "clue": "古方：持方即知产物，免未知损失。",
+   "mechanical": false,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：只记账无机械收益，未接通前不得作为正式可购成长项"
   },
   {
    "id": "gu_fang_blood_heal_2_23_gu",
@@ -271,7 +277,10 @@
    "gu_id": "blood_heal_2_23_gu",
    "stone_cost": 80,
    "tier": 2,
-   "clue": "古方：持方即知产物，免未知损失。"
+   "clue": "古方：持方即知产物，免未知损失。",
+   "mechanical": false,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：只记账无机械收益，未接通前不得作为正式可购成长项"
   },
   {
    "id": "gu_fang_blood_atk_3_03_gu",
@@ -280,7 +289,10 @@
    "gu_id": "blood_atk_3_03_gu",
    "stone_cost": 200,
    "tier": 3,
-   "clue": "古方：持方即知产物，免未知损失。"
+   "clue": "古方：持方即知产物，免未知损失。",
+   "mechanical": false,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：只记账无机械收益，未接通前不得作为正式可购成长项"
   },
   {
    "id": "gu_fang_blood_atk_3_11_gu",
@@ -289,7 +301,10 @@
    "gu_id": "blood_atk_3_11_gu",
    "stone_cost": 200,
    "tier": 3,
-   "clue": "古方：持方即知产物，免未知损失。"
+   "clue": "古方：持方即知产物，免未知损失。",
+   "mechanical": false,
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 0：只记账无机械收益，未接通前不得作为正式可购成长项"
   },
   {
    "id": "purchase_sword_atk_1_06",

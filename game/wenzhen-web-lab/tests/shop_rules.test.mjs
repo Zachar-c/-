@@ -20,7 +20,8 @@ const offers = [
   { id: 'd_t2', kind: 'purchase', tier: 2, gu_id: 'd', school: 'sword' },
   { id: 'e_service', kind: 'soul_boost', tier: 9 },
   { id: 'f_npc', kind: 'purchase', tier: 1, gu_id: 'f', npc_only: true },
-  { id: 'g_fang', kind: 'gu_fang_unlock', tier: 1, gu_id: 'g' },
+  { id: 'g_fang', kind: 'gu_fang_unlock', tier: 1, gu_id: 'g', mechanical: false, retired: true },
+  { id: 'h_fang_live', kind: 'gu_fang_unlock', tier: 1, gu_id: 'h', mechanical: true },
 ];
 const pacingLayers = { 1: { shop_max_tier: 1, shop_price_pct: 0 } };
 
@@ -30,7 +31,9 @@ test('shop slots follow layer and goods keep services off the shelf budget', () 
   assert.equal(rules.slotCount(5), 6);
   assert.deepEqual(rules.goodsPool(offers, { pacingLayers, layer: 1, school: 'light' }), ['a_t1', 'b_t1']);
   assert.equal(rules.offerIsStocked(offers, 'e_service', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), false);
-  assert.equal(rules.offerIsStocked(offers, 'g_fang', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), true);
+  // L0 2026-09-25 Phase 0：无机械收益古方不得上架
+  assert.equal(rules.offerIsStocked(offers, 'g_fang', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), false);
+  assert.equal(rules.offerIsStocked(offers, 'h_fang_live', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), true);
   assert.equal(rules.offerIsStocked(offers, 'f_npc', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), false);
 });
 

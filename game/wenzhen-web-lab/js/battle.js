@@ -1,5 +1,5 @@
 // 战斗。普通脚本：全局 renderBattle。壳=lab.css；结算/反制=MVP CombatCore。
-const portrait = (p) => `assets/wenzhen/enemies/${p}.png`;
+const portrait = (p) => `../assets/wenzhen/enemies/${p}.png`;
 
 function counterBadge(enemy) {
   const core = globalThis.CombatCore;
@@ -61,8 +61,9 @@ function renderBattle(root) {
     b ? b.guSealed : {},
   );
 
+  const debugSparring = /(?:\?|&)debug=1(?:&|$)/.test(String(location.search || ''));
   if (!b) {
-    const roster = DATA.enemies.map((e) => `
+    const roster = debugSparring ? DATA.enemies.map((e) => `
       <article class="gu ${e.phases ? 'r2' : ''}">
         <img class="thumb" src="${portrait(e.portrait)}" alt="">
         <div class="gn">${e.name}</div>
@@ -70,11 +71,12 @@ function renderBattle(root) {
         <div class="ge">${e.phases ? `${e.phases.length} 阶段 · 每阶段意图 ${e.phases.map((p) => p.intents.length).join('/')}` : `单意图：${intentText(e.intent)}`}</div>
         <div class="gm">线索 ${e.clues.length} · 反击 ${e.reactions.length}</div>
         <button style="margin-top:11px" data-foe="${e.id}">演武</button>
-      </article>`).join('');
+      </article>`).join('') : '';
     root.innerHTML = `
       ${battleEncounterCard(encounter)}
+      ${debugSparring ? `
       <h2 style="margin-top:28px">自由演武 · 单一敌人</h2>
-      <div class="grid">${roster}</div>
+      <div class="grid">${roster}</div>` : ''}
       <h2 style="margin-top:28px">可用蛊虫 · 无固定槽位上限</h2>
       <div class="moves">${guRoster.length
         ? guRoster.map((g) => `<div class="move ready">
@@ -87,7 +89,8 @@ function renderBattle(root) {
       <div class="moves">${state.equipped.length
         ? state.equipped.map((id) => {
             const m = DATA.killMoves.find((x) => x.id === id);
-            return `<div class="move ready"><div class="ml">${m.label}</div><div class="me">${effectText(m.effect)}</div><div class="mc">${isDirectStrike(m) ? '直接攻击' : '非直接'} · 真元 ${m.true_qi_cost} · 念头 ${m.thought_cost}</div></div>`;
+            const kmDirect = GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {});
+            return `<div class="move ready"><div class="ml">${m.label}</div><div class="me">${killMoveEffectText(m, GU_BY_ID)}</div><div class="mc">${kmDirect ? '直接攻击' : '非直接'} · 真元 ${m.true_qi_cost} · 念头 ${m.thought_cost}</div></div>`;
           }).join('')
         : '<div class="move"><div class="mr" style="font-size:13px">尚未记入杀招。先到「杀招」页组装。</div></div>'}</div>`;
     root.querySelector('[data-start-encounter]')?.addEventListener('click', () => {
@@ -169,7 +172,7 @@ function renderBattle(root) {
       && b.actionsUsed < b.actionLimit
       && !recipeBlocked
       && !b.over;
-    const risky = (isDirectStrike(m) && live.length) || Number(m.life_cost || 0) > 0;
+    const risky = (GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {}) && live.length) || Number(m.life_cost || 0) > 0;
     const title = recipeBlocked ? '杀招本回合已用，或配方蛊已使用/封印' : '';
     const life = Number(m.life_cost || 0) > 0 ? `寿元${m.life_cost}` : '';
     return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}">${m.label} <span class="cost">真元${m.true_qi_cost}${life ? ` ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}</button>`;
@@ -205,6 +208,7 @@ function renderBattle(root) {
     <div class="enemy-stack">${actors}</div>
     <div class="field">
       <div class="foe" id="foe-box">
+        <div class="turn-pill">回合 <b>${b.turn}</b> · 行动 <b>${b.actionsUsed}/${b.actionLimit}</b></div>
         <div class="colhead">当前目标</div>
         <img src="${portrait(target.portrait)}" alt="">
         <div class="fn">${target.name}</div>
@@ -226,9 +230,19 @@ function renderBattle(root) {
       <div class="pick">
         <div class="colhead">催动蛊虫 · ${guRoster.length}</div>
         ${live.length ? `<div class="forewarn">⚠ 对当前目标直接攻击会被「${live.map((r) => r.label).join('、')}」吞掉（反击预警）</div>` : ''}
-        <button ${basicOk ? '' : 'disabled'} data-basic-attack="1">拳脚（念头 1）</button>
+        <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : ''}">拳脚（念头 1）${live.length ? ' <span class="warnmark">⚠</span>' : ''}</button>
         ${!target.revealed && !b.over ? '<button data-observe="1">观察（耗 1 念头 · 1 回合）</button>' : ''}
-        ${!b.over ? '<button data-exhaust="1">逆息（念头1 · 气血-2 · 真元+3）</button>' : ''}
+        ${(() => {
+          const roster = currentCombatRoster(b.guUsedThisTurn, b.guSealed);
+          const damageGu = roster.filter((g) => g.battleEffect?.kind === 'strike' || Number(g.battleEffect?.amount || 0) > 0);
+          const qiLocked = damageGu.length > 0 && !damageGu.some((g) => state.qi >= Number(g.trueQiCost || 0));
+          const exhaustOk = !b.over && state.thought >= 1 && !b.exhaustUsedThisTurn && !(b.exhaustCooldown > 0) && qiLocked;
+          const exhaustWhy = b.exhaustUsedThisTurn ? '本回合已逆息'
+            : b.exhaustCooldown > 0 ? `逆息冷却 ${b.exhaustCooldown} 回合`
+            : !qiLocked ? '未陷入真元枯竭'
+            : state.thought < 1 ? '念头不足' : '';
+          return `<button ${exhaustOk ? '' : 'disabled'} data-exhaust="1" title="${exhaustWhy}">逆息（念头1 · 气血-2 · 真元+3）</button>`;
+        })()}
         ${guButtons || '<div class="mr" style="font-size:12px;color:var(--ink-soft)">无可用蛊虫</div>'}
         <div class="colhead" style="margin-top:8px">杀招</div>
         ${buttons || '<div class="mr" style="font-size:12px;color:var(--ink-soft)">无可用杀招</div>'}
@@ -236,7 +250,7 @@ function renderBattle(root) {
         <div class="mc" style="margin-top:14px;font-size:12px;color:var(--ink-soft)">
           护体 ${b.block} · 寿元 ${state.lifeTime} · 回合 ${b.turn}${target.revealed ? '' : ' · 未察'}${b.over ? ` · <span style="color:var(--cinnabar)">${b.over}</span>` : ''}
         </div>
-        <button class="ghost" style="margin-top:16px" data-escape="1">${b.over ? '查看结算' : '脱离'}</button>
+        ${b.over === '胜' ? '' : `<button class="ghost" style="margin-top:16px" data-escape="1">脱离</button>`}
       </div>
       <div>
         <div class="colhead">战报</div>

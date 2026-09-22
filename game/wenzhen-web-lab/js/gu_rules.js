@@ -70,10 +70,13 @@ globalThis.GuRules = (() => {
   }
 
   function killMoveRecipeInstances(move, owned = {}, usedInstances = {}, sealedInstances = {}) {
+    const reserved = new Set();
     return (move?.recipe || []).map((definitionId) => {
       for (let index = 0; index < Number(owned[definitionId] || 0); index += 1) {
         const candidate = instanceId(definitionId, index);
-        if (!usedInstances[candidate] && !sealedInstances[candidate]) return candidate;
+        if (reserved.has(candidate) || usedInstances[candidate] || sealedInstances[candidate]) continue;
+        reserved.add(candidate);
+        return candidate;
       }
       return null;
     });
@@ -113,6 +116,48 @@ globalThis.GuRules = (() => {
       if (Number(context.statusStacks?.[name] || 0) < 1) return 'consume_status_missing';
     }
     return '';
+  }
+
+  // L0 2026-09-25：组件条件默认继承。只有杀招显式声明 componentConditionOverride
+  // 才允许突破组件限制；否则任一配方组件门禁失败，整式杀招不可用。
+  function killMoveGateMissReason(move, guById = {}, context = {}) {
+    if (!move) return 'unknown_gu';
+    if (move.componentConditionOverride) return '';
+    for (const definitionId of move.recipe || []) {
+      const gu = guById[definitionId] || {};
+      const effect = gu.v1_effect || gu.battleEffect || null;
+      const miss = gateMissReason(effect, context);
+      if (miss) return miss;
+    }
+    return '';
+  }
+
+  // Phase 0：升炼自环（投入=产出同 ID）在真实语义定义前不得进入 live 可见路径。
+  function isLiveRecipe(recipe) {
+    if (!recipe || recipe.retired || recipe.live === false) return false;
+    const inputs = [...(recipe.inputs || [])].map(String).sort();
+    const output = String(recipe.output || '');
+    if (!output || !inputs.length) return false;
+    if (inputs.length === 1 && inputs[0] === output) return false;
+    if (inputs.every((id) => id === output) && inputs.includes(output)) {
+      const unique = [...new Set(inputs)];
+      if (unique.length === 1 && unique[0] === output) return false;
+    }
+    return true;
+  }
+
+  function liveRecipes(recipes) {
+    return (recipes || []).filter(isLiveRecipe);
+  }
+
+  function isLiveShopOffer(offer) {
+    if (!offer || offer.retired || offer.live === false) return false;
+    if (offer.mechanical === false) return false;
+    return true;
+  }
+
+  function liveShopOffers(offers) {
+    return (offers || []).filter(isLiveShopOffer);
   }
 
   const emptyPlan = () => ({
@@ -188,6 +233,42 @@ globalThis.GuRules = (() => {
     return applyPart(plan, effect, context);
   }
 
+  // L0 2026-09-22：杀招效果必须由 recipe 组件按顺序合成，禁止预制 effect/damage 主结算。
+  // L0 2026-09-25：组件 battleEffect 合成结果 = 战斗语义权威；组件条件默认继承。
+  function killMoveEffectPlan(move, guById = {}, context = {}) {
+    const plan = emptyPlan();
+    plan.components = [];
+    const override = !!move?.componentConditionOverride;
+    for (const definitionId of move?.recipe || []) {
+      const gu = guById[definitionId] || {};
+      const effect = gu.v1_effect || gu.battleEffect || null;
+      const entry = { id: String(definitionId || ''), applied: false, gate: '' };
+      if (!effect) {
+        plan.components.push(entry);
+        continue;
+      }
+      const partContext = { ...context, school: gu.school || context.school || move?.tag || '' };
+      entry.gate = gateMissReason(effect, partContext);
+      if (entry.gate && !override) {
+        plan.components.push(entry);
+        continue;
+      }
+      if (effect.kind === 'composite') {
+        for (const part of effect.parts || []) applyPart(plan, part, partContext);
+      } else {
+        applyPart(plan, effect, partContext);
+      }
+      entry.applied = true;
+      plan.components.push(entry);
+    }
+    return plan;
+  }
+
+  // 直接攻击口径必须跟合成语义一致，而不是预制 m.effect.kind。
+  function killMoveIsDirectStrike(move, guById = {}, context = {}) {
+    return Number(killMoveEffectPlan(move, guById, context).damage || 0) > 0;
+  }
+
   return Object.freeze({
     canActivate,
     activationReason,
@@ -198,6 +279,13 @@ globalThis.GuRules = (() => {
     killMoveRecipeInstances,
     conditionMet,
     gateMissReason,
+    killMoveGateMissReason,
+    isLiveRecipe,
+    liveRecipes,
+    isLiveShopOffer,
+    liveShopOffers,
     effectPlan,
+    killMoveEffectPlan,
+    killMoveIsDirectStrike,
   });
 })();

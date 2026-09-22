@@ -15,7 +15,7 @@ function renderKillmove(root) {
   }).join('');
 
   const cards = DATA.killMoves.map((m) => {
-    const can = m.recipe.every((id) => (state.owned[id] || 0) > 0);
+    const can = GuRules.killMoveRecipeInstances(m, state.owned, {}, {}).every(Boolean);
     const on = state.equipped.includes(m.id);
     const mats = m.recipe.map((id) =>
       `<span title="${nameOf(id)}" style="display:inline-flex;align-items:center;gap:5px;margin-right:9px">
@@ -23,7 +23,7 @@ function renderKillmove(root) {
     return `<div class="move ${can ? 'ready' : ''}">
       <div class="ml">${m.label}</div>
       <div class="mr">${mats}</div>
-      <div class="me">${effectText(m.effect)}</div>
+      <div class="me">${killMoveEffectText(m, GU_BY_ID)}</div>
       <div class="mc">真元 ${m.true_qi_cost} · 念头 ${m.thought_cost}${m.life_cost ? ` · 寿元 ${m.life_cost}` : ''}</div>
       <button style="margin-top:11px" ${can ? '' : 'disabled'} data-km="${m.id}">${on ? '卸下' : '记入杀招'}</button>
     </div>`;

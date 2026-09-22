@@ -239,6 +239,128 @@ function toast(msg, kind = '') {
   toast._t = setTimeout(() => (t.className = kind), 2400);
 }
 
+/* Battle feedback layer — wired to combat events (L0 UX Sprint). */
+const BattleFx = {
+  host(sel) {
+    return document.querySelector(sel) || document.querySelector('.foe') || document.querySelector('#foe-box');
+  },
+  floatOn(el, amount, kind = 'dmg') {
+    if (!el || !Number.isFinite(Number(amount)) || Number(amount) === 0) return;
+    const host = el.closest?.('.foe') || el.closest?.('.enemy-actor') || el.parentElement || el;
+    if (!host) return;
+    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    const node = document.createElement('span');
+    const abs = Math.abs(Number(amount));
+    const text = kind === 'heal' || kind === 'qi' || kind === 'block'
+      ? `+${abs}`
+      : kind === 'tag'
+        ? String(amount)
+        : `-${abs}`;
+    node.className = `float-dmg${kind === 'heal' || kind === 'qi' || kind === 'block' ? ' heal' : ''}${kind === 'tag' || kind === 'counter' || kind === 'rule' ? ' fx-tag' : ''}`;
+    node.textContent = text;
+    if (kind === 'counter') node.textContent = '反制';
+    if (kind === 'rule') node.textContent = String(amount);
+    host.appendChild(node);
+    setTimeout(() => node.remove(), 760);
+  },
+  pulse(el) {
+    const target = el || document.querySelector('.foe img') || document.querySelector('.foe .fn') || document.querySelector('.foe .hpline i');
+    if (!target) return;
+    target.classList.remove('dmg-pop');
+    void target.offsetWidth;
+    target.classList.add('dmg-pop');
+    setTimeout(() => target.classList.remove('dmg-pop'), 560);
+  },
+  shakeBox() {
+    const box = document.querySelector('#foe-box');
+    if (!box) return;
+    box.classList.add('hit');
+    setTimeout(() => box.classList.remove('hit'), 300);
+  },
+  pulsePlayerPool(id) {
+    const el = document.querySelector(`#${id}`) || document.querySelector(`.pool.${id === 'hud-blood' ? 'blood' : id === 'hud-qi' ? 'qi' : ''}`);
+    const node = el || document.querySelector('#hud')?.querySelector('.pool.blood, .pool.qi');
+    if (!node) return;
+    node.classList.remove('dmg-pop');
+    void node.offsetWidth;
+    node.classList.add('dmg-pop');
+    setTimeout(() => node.classList.remove('dmg-pop'), 560);
+  },
+  damage(amount) {
+    this.floatOn(this.host('.foe img') || this.host('.foe'), amount, 'dmg');
+    this.pulse();
+    this.shakeBox();
+    Sfx.hit();
+  },
+  selfDamage(amount) {
+    this.floatOn(document.querySelector('#hud-blood') || document.querySelector('#hud'), amount, 'dmg');
+    this.pulsePlayerPool('hud-blood');
+    Sfx.hurt?.();
+  },
+  heal(amount) {
+    this.floatOn(document.querySelector('#hud-blood') || document.querySelector('#hud'), amount, 'heal');
+    this.pulsePlayerPool('hud-blood');
+  },
+  qi(amount) {
+    this.floatOn(document.querySelector('#hud-qi') || document.querySelector('#hud'), amount, 'qi');
+    this.pulsePlayerPool('hud-qi');
+  },
+  block(amount) {
+    this.floatOn(this.host('.foe') || this.host('#foe-box'), amount, 'block');
+  },
+  shieldHit(amount) {
+    this.floatOn(this.host('.foe') || this.host('#foe-box'), amount, 'block');
+    this.pulse();
+  },
+  shieldBreak() {
+    this.floatOn(this.host('.foe') || this.host('#foe-box'), '破盾', 'rule');
+    this.pulse();
+    this.shakeBox();
+  },
+  essenceBurn(amount) {
+    this.qi(-Math.abs(Number(amount) || 0));
+    toast(`真元被焚 · -${Math.abs(Number(amount) || 0)}`, 'bad');
+  },
+  countered(label) {
+    this.floatOn(this.host('.foe') || this.host('#foe-box'), '反制', 'counter');
+    this.shakeBox();
+    Sfx.hit();
+  },
+  counterRevealed() {
+    document.querySelectorAll('.forewarn, .chip.live, [data-counter-reveal]').forEach((el) => {
+      el.classList.add('fx-reveal');
+      setTimeout(() => el.classList.remove('fx-reveal'), 900);
+    });
+    const intel = document.querySelector('.intel-lines') || document.querySelector('.chips');
+    if (intel) {
+      intel.classList.add('fx-reveal');
+      setTimeout(() => intel.classList.remove('fx-reveal'), 900);
+    }
+  },
+  suppress() {
+    document.querySelectorAll('.chip.live, .forewarn, [data-counter-badge]').forEach((el) => {
+      el.classList.add('fx-suppress');
+      setTimeout(() => el.classList.remove('fx-suppress'), 1200);
+    });
+  },
+};
+
+function pulseDamage(el) {
+  BattleFx.pulse(el);
+}
+
+function floatDamage(amount, heal = false) {
+  BattleFx.floatOn(BattleFx.host('.foe img') || BattleFx.host('.foe'), amount, heal ? 'heal' : 'dmg');
+}
+
+function floatNumber(targetEl, amount, kind = 'dmg') {
+  if (!targetEl) return;
+  BattleFx.floatOn(targetEl, amount, kind === 'heal' ? 'heal' : kind === 'counter' ? 'counter' : 'dmg');
+  targetEl.classList.remove('hit');
+  void targetEl.offsetWidth;
+  targetEl.classList.add('hit');
+}
+
 function recordEvent(action, after = {}, reason = '', targets = []) {
   state.eventLog.push({
     id: `event_${String(state.eventLog.length).padStart(4, '0')}`,
@@ -406,7 +528,16 @@ function enemyTurn(b) {
       b.log.push(absorbed
         ? `${prefix}<b>${it.label}</b>，<span class="dmg">伤 ${taken}</span>（护体挡下 ${absorbed}）`
         : `${prefix}<b>${it.label}</b>，<span class="dmg">伤 ${damage}</span>`);
-      Sfx.hurt();
+      if (absorbed > 0) BattleFx.shieldHit(absorbed);
+      if (taken > 0) BattleFx.selfDamage(taken);
+      else Sfx.hurt();
+      b.lastBlow = {
+        attacker: enemy.name,
+        label: it.label,
+        damage: taken || damage,
+        turn: b.turn,
+        absorbed,
+      };
     } else {
       b.log.push(`${prefix}<b>${it.label}</b>`);
     }
@@ -421,6 +552,7 @@ function enemyTurn(b) {
     if (it.essence_burn) {
       state.qi = Math.max(0, state.qi - it.essence_burn);
       b.log.push(`${prefix}<span class="dmg">真元被焚 ${it.essence_burn}</span>`);
+      BattleFx.essenceBurn(it.essence_burn);
     }
     if (state.blood <= 0) break;
     if (RunRules.lifeDefeated(state.lifeTime)) break;
@@ -494,6 +626,21 @@ function enemyTurn(b) {
   return false;
 }
 
+function buildDeathReport(b) {
+  const lines = Array.isArray(b.log) ? b.log : [];
+  const plain = lines.map((s) => String(s).replace(/<[^>]+>/g, ''));
+  const last3 = plain.slice(-3);
+  const blow = b.lastBlow || null;
+  const counter = b.lastCounter || null;
+  const parts = [];
+  parts.push(blow
+    ? `败因：${blow.attacker} · ${blow.label}（伤 ${blow.damage}${blow.absorbed ? `，护体挡下 ${blow.absorbed}` : ''}）`
+    : `败因：资源耗尽于第 ${b.turn || 0} 回合`);
+  if (counter) parts.push(`关键失误：「${counter.label}」曾被「${counter.counterId}」反制吞掉（第 ${counter.turn} 回合）`);
+  if (last3.length) parts.push(`最后三回合：${last3.join(' / ')}`);
+  return { lastBlow: blow, lastCounter: counter, last3, detail: parts.join('；') };
+}
+
 function openBattleOutcome() {
   const b = state.battle;
   if (!b || !b.over) return;
@@ -504,15 +651,17 @@ function openBattleOutcome() {
   if (b.over === '败') {
     const lifeDeath = b.deathCause === 'life_cost';
     const soulDeath = b.deathCause === 'soul';
+    const report = buildDeathReport(b);
     state.ending = {
       title: lifeDeath ? '寿元耗尽' : soulDeath ? '魂魄耗尽' : '气血耗尽',
-      detail: lifeDeath
+      detail: (lifeDeath
         ? '寿元归零，败于当前遭遇。'
         : soulDeath
           ? '你的魂魄被抽干，败于当前遭遇。'
-          : '气血耗尽，败于当前遭遇。',
+          : '气血耗尽，败于当前遭遇。') + report.detail,
       turn: b.turn,
       outcome: 'defeat',
+      deathReport: report,
     };
     state.battle = null;
     showPage('ending');
@@ -553,10 +702,12 @@ function applyEffectPlan(b, target, plan, label) {
   if (plan.heal) {
     state.blood = Math.min(state.bloodMax, state.blood + plan.heal);
     b.log.push(`<b>${label}</b> · <span class="heal">回气 +${plan.heal}</span>`);
+    BattleFx.heal(plan.heal);
   }
   if (plan.block) {
     b.block += plan.block;
     b.log.push(`<b>${label}</b> · 护体 +${plan.block}`);
+    BattleFx.block(plan.block);
   }
   if (plan.damage) {
     /* 吸收 MVP：直接攻击过反制（迎击/铁皮吞伤、压制、handled 减伤） */
@@ -576,26 +727,34 @@ function applyEffectPlan(b, target, plan, label) {
       target.suppressed = res.enemy.suppressed;
       target.ironRage = res.enemy.ironRage;
       target.counterBroke = res.enemy.counterBroke;
+      if (plan.suppressCounter || res.suppressed) {
+        BattleFx.suppress();
+        b.log.push(`<b>${label}</b> · <span class="heal">镇压</span> · 反制规则被压下`);
+      }
       if (res.selfDamage) {
         state.blood = Math.max(0, state.blood - res.selfDamage);
         b.log.push(`迎击反噬 · <span class="dmg">气血 -${res.selfDamage}</span>`);
+        BattleFx.selfDamage(res.selfDamage);
       }
       if (res.swallowed) {
         b.log.push(`<b>${target.name}</b> · <b>${label}</b> 被反制吞掉（${res.counterId}）`);
-        Sfx.hit();
+        b.lastCounter = { label, counterId: res.counterId, turn: b.turn };
+        BattleFx.countered(label);
       } else if (res.damage > 0) {
         b.log.push(`<b>${target.name}</b> · <b>${label}</b> 命中，<span class="dmg">伤 ${res.damage}</span>`);
-        Sfx.hit();
+        BattleFx.damage(res.damage);
+      } else if (res.counterBroke || target.counterBroke) {
+        b.log.push(`<b>${target.name}</b> · <b>${label}</b> · <span class="heal">破盾/破反</span>`);
+        BattleFx.shieldBreak();
       } else {
         b.log.push(`<b>${target.name}</b> · <b>${label}</b> 未造成伤害`);
+        BattleFx.pulse();
       }
     } else {
       target.hp -= plan.damage;
       b.log.push(`<b>${target.name}</b> · <b>${label}</b> 命中，<span class="dmg">伤 ${plan.damage}</span>`);
-      Sfx.hit();
+      BattleFx.damage(plan.damage);
     }
-    const box = $('#foe-box');
-    if (box) { box.classList.add('hit'); setTimeout(() => box.classList.remove('hit'), 300); }
   }
   if (plan.statuses.length) {
     target.statuses = target.statuses || {};
@@ -706,7 +865,7 @@ const act = {
 
   forge(recipeId) {
     if (!assertRunMutable()) return;
-    const r = DATA.recipes.find((x) => x.id === recipeId);
+    const r = GuRules.liveRecipes(DATA.recipes).find((x) => x.id === recipeId);
     if (!r) return;
     const need = r.inputs.reduce((m, id) => ((m[id] = (m[id] || 0) + 1), m), {});
     for (const [id, n] of Object.entries(need)) if ((state.owned[id] || 0) < n) return toast('材料不足', 'bad');
@@ -719,6 +878,18 @@ const act = {
     for (const [id, n] of Object.entries(need)) state.owned[id] -= n;
     for (const [id, n] of Object.entries(materialNeed)) state.materials[id] -= n;
     state.stones = Math.max(0, state.stones - (r.stoneCost || 0));
+    // 合炼吃掉组件后，卸下缺件杀招，避免幽灵可点。
+    {
+      const invalid = [];
+      for (const move of DATA.killMoves) {
+        if (!state.equipped.includes(move.id)) continue;
+        if (!GuRules.killMoveRecipeInstances(move, state.owned, {}, {}).every(Boolean)) invalid.push(move);
+      }
+      if (invalid.length) {
+        const invalidIds = new Set(invalid.map((move) => move.id));
+        state.equipped = state.equipped.filter((id) => !invalidIds.has(id));
+      }
+    }
     if (Object.keys(materialNeed).length) {
       recordEvent('refine_gu', { materials: { ...state.materials } }, 'refinement_materials_spent', Object.keys(materialNeed));
     }
@@ -741,9 +912,15 @@ const act = {
 
   toggleMove(id) {
     const i = state.equipped.indexOf(id);
-    if (i >= 0) { state.equipped.splice(i, 1); Sfx.click(); }
-    else if (state.equipped.length >= 3) return toast('杀招槽已满（三）', 'bad');
-    else { state.equipped.push(id); Sfx.click(); }
+    if (i >= 0) { state.equipped.splice(i, 1); Sfx.click(); draw(); return; }
+    if (state.equipped.length >= 3) return toast('杀招槽已满（三）', 'bad');
+    const move = DATA.killMoves.find((m) => m.id === id);
+    if (!move) return toast('未找到该杀招', 'bad');
+    // 组件按实例占用校验：重复配方不能用「持有>0」蒙混。
+    const instances = GuRules.killMoveRecipeInstances(move, state.owned, {}, {});
+    if (instances.some((x) => !x)) return toast('组件不足 · 无法装备该杀招', 'bad');
+    state.equipped.push(id);
+    Sfx.click();
     draw();
   },
 
@@ -1023,6 +1200,17 @@ const act = {
 
     state.thought -= 1;
     b.actionsUsed += 1;
+    // 直接攻击会被生效中的反击吞掉（与 useMove/useGu 同口径；代价已付，不造成伤害）。
+    const hit = liveReactions(target)[0];
+    if (hit) {
+      if (hit.counter_status === 'bound') target.flags.enemy_bound = true;
+      if (hit.counter_status === 'guarded') target.flags.guarded = true;
+      b.log.push(`<b>${target.name}</b> · <b>拳脚</b> 被「${hit.label}」吞掉，<span class="dmg">未造成伤害</span>`);
+      b.log.push(`敌方转入「${statusZh(hit.counter_status)}」，该反击此后不再预警`);
+      Sfx.fail();
+      finishPlayerAction(b);
+      return;
+    }
     const damage = Number(DATA.battle.fightDamageBase || 1)
       + Number(b.buffs?.force || 0)
       + Number(b.buffs?.yi_zhang || 0);
@@ -1064,6 +1252,10 @@ const act = {
     b.exhaustCooldown = 2;
     b.actionsUsed += 1;
     b.log.push('逆息 · <span class="dmg">气血 -2</span> · 真元 +3');
+    BattleFx.selfDamage(2);
+    BattleFx.qi(3);
+    BattleFx.selfDamage(2);
+    BattleFx.qi(3);
     Sfx.click();
     draw();
   },
@@ -1081,12 +1273,14 @@ const act = {
     target.revealed = true;
     target.counterRevealed = true;
     if (globalThis.CombatCore?.revealCounter) {
-      const coreEnemy = globalThis.CombatCore.toCoreEnemy(target, globalThis.MVP_CONTENT?.enemyProfiles);
-      const after = globalThis.CombatCore.revealCounter({ player: { knownCounters: new Set() } }, coreEnemy);
-      target.currentCounter = after.currentCounter;
+      // revealCounter(enemy) 只收当前敌兵；传 state/coreEnemy 会把 currentCounter 写回 undefined。
+      const after = globalThis.CombatCore.revealCounter(target);
+      target.knownCounters = after.knownCounters;
     }
-    Sfx.click();
-    b.log.push(`你凝神细察 <b>${target.name}</b>，看清了它的线索与反击。`);
+    if (typeof Sfx !== 'undefined' && Sfx.success) Sfx.success();
+    if (typeof BattleFx !== 'undefined' && BattleFx.counterRevealed) BattleFx.counterRevealed();
+    b.log.push(`你凝神细察 <b>${target.name}</b>，看清了它的线索与反击。<span class="heal">已看破</span>`);
+    toast('观察揭示反击 · 已看破', 'good');
     finishPlayerAction(b);
   },
 
@@ -1110,7 +1304,8 @@ const act = {
     }
     if (b.actionsUsed >= b.actionLimit) return toast('本回合行动数已尽', 'bad');
     if (state.qi < m.true_qi_cost || state.thought < m.thought_cost) return toast('真元或念头不足', 'bad');
-    const gate = GuRules.gateMissReason(m.effect, {
+    // L0 2026-09-25：门禁读组件合成权威，不再读预制 m.effect。
+    const gate = GuRules.killMoveGateMissReason(m, GU_BY_ID, {
       hp: state.blood,
       hpMax: state.bloodMax,
       enemiesAlive: aliveEnemies(b).length,
@@ -1139,7 +1334,12 @@ const act = {
     }
     // 真实规则：直接攻击会被生效中的反击吞掉，且敌方随即转入对应状态、该反击此后不再预警。
     // 见 scripts/domain/action_preview_service.gd `_live_counter_labels`。
-    if (isDirectStrike(m)) {
+    if (GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {
+      school: m.tag,
+      supports: b.turnSupports,
+      swordIntent: b.swordIntent,
+      statusStacks: target.statuses || {},
+    })) {
       const hit = liveReactions(target)[0];
       if (hit) {
         if (hit.counter_status === 'bound') target.flags.enemy_bound = true;
@@ -1157,19 +1357,14 @@ const act = {
       return;
     }
 
-    const plan = GuRules.effectPlan(m.effect, {
+    // L0 2026-09-22：杀招 = 组件按 recipe 顺序合成，不再消费预制 effect/damage。
+    const plan = GuRules.killMoveEffectPlan(m, GU_BY_ID, {
       school: m.tag,
       supports: b.turnSupports,
       swordIntent: b.swordIntent,
       statusStacks: target.statuses || {},
     });
     applyEffectPlan(b, target, plan, m.label);
-    const extraDamage = Number(m.damage || 0);
-    if (extraDamage > 0) {
-      target.hp = Math.max(0, target.hp - extraDamage);
-      b.log.push(`<b>${target.name}</b> · <b>${m.label}</b> 追加命中，<span class="dmg">伤 ${extraDamage}</span>`);
-      Sfx.hit();
-    }
     if (target.hp <= 0) {
       b.log.push(`<b>${target.name}</b> 伏诛`);
       const next = aliveEnemies(b)[0];
@@ -1281,6 +1476,7 @@ const act = {
     const offer = DATA.shopOffers.find((o) => o.id === offerId);
     if (!offer || !canBuyOffer(offer)) return;
     const cost = offerCost(offer);
+    if (cost > state.stones) return toast('元石不足', 'bad');
     state.stones -= cost;
     if (offer.kind === 'purchase') {
       state.owned[offer.gu_id] = (state.owned[offer.gu_id] || 0) + 1;
@@ -1396,7 +1592,7 @@ const act = {
     const invalid = [];
     for (const move of DATA.killMoves) {
       if (!state.equipped.includes(move.id)) continue;
-      const enough = (move.recipe || []).every((id) => Number(state.owned[id] || 0) > 0);
+      const enough = GuRules.killMoveRecipeInstances(move, state.owned, {}, {}).every(Boolean);
       if (!enough) invalid.push(move);
     }
     if (invalid.length) {
@@ -1520,6 +1716,9 @@ function showPage(page) {
 }
 
 const tabs = [...document.querySelectorAll('#tabs button')];
+if (/(?:\?|&)debug=1(?:&|$)/.test(String(location.search || ''))) {
+  document.querySelector('[data-tab="cover"]')?.removeAttribute('hidden');
+}
 tabs.forEach((b) => b.addEventListener('click', () => {
   showPage(b.dataset.tab);
   Sfx.click();

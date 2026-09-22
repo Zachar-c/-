@@ -113,9 +113,9 @@ function renderHall(root) {
   root.innerHTML = `
     <div class="hall-grid">
       <section class="hall-main">
-        <div class="eyebrow">问真 · Web 拼装局</div>
+        <div class="eyebrow">问真 · 五段问道</div>
         <h1>问真</h1>
-        <p class="hall-copy">固定节点图、战斗、节点动作（险地 / 市集 / 野蛊 / 休整 / 静修）、战后三选一、统一整备。选择难度后开局；当前局面只展示可走的后续边。</p>
+        <p class="hall-copy">自凡尘起修，历经市井、险地与野蛊，炼化蛊虫、合炼杀招，直至第五层主终局。选择难度后开始；当前局只展示可走的后继节点。本局自动保存，刷新后可继续。</p>
         ${saveLine}
         ${state.ending ? `
         <div class="hall-ending" data-hall-ending>
@@ -205,7 +205,7 @@ function renderMap(root) {
       <div class="legend"><span class="dot current"></span>当前 <span class="dot done"></span>已过 <span class="dot locked"></span>可走</div>
     </div>
     <div class="map-help">每段沿路径经过 ${totalDepth} 个准备节点；当前节点会展开 2 至 3 条后继边。</div>
-    ${pathNodes.length ? `<div class="journey-trail">${pathNodes.map((node) => `<span>${node.depth + 1}. ${nodeTypeLabel(node.type)}</span>`).join('')}</div>` : ''}
+    ${pathNodes.length ? `<div class="journey-trail">${pathNodes.map((node, i) => `<span class="${node.id === selected ? 'now' : i < pathNodes.length - 1 ? 'done' : ''}">${node.depth + 1}. ${nodeTypeLabel(node.type)}</span>`).join('')}</div>` : ''}
     ${current ? `<div class="map-nodes map-choices">${mapNodeCard(current, selected, new Set([current.id]), completed)}</div>` : ''}
     ${!current && candidates.length ? `<h3 class="map-choice-title">当前可走后继</h3><div class="map-nodes map-choices">${candidates.map((node) => mapNodeCard(node, selected, available, completed)).join('')}</div>` : ''}
     ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${{ battle: '返回当前战斗', reward: '查看结算', 'node-action': '返回选择', prep: '继续整备' }[currentNodePage()]}</button></div>` : ''}`;
@@ -227,12 +227,12 @@ function mapNodeCard(node, selected, available, completed) {
   const detail = isActionNode
     ? nodeActionMenuLabels(node).join(' · ')
     : nodeEnemyIds(node).map((id) => (enemyById(id) || {}).name || id).join('、');
-  return `<article class="map-node ${stateClass}">
+  return `<article class="map-node type-${node.type} ${stateClass}${isAvailable ? ' available' : ''}"${isAvailable ? ` data-choose-node="${node.id}"` : ''}>
     <div class="rn-top"><span>${node.type === 'boss' ? '层主' : `L${node.segment} · ${node.depth + 1}`}</span><em>${nodeTypeLabel(node.type)}</em></div>
     <div class="rn-name">${node.name}</div>
     <div class="rn-enemies">${detail || '无战斗数据'}</div>
     ${isActionNode && node.summary ? `<div class="rn-summary">${node.summary}</div>` : ''}
-    ${isAvailable ? `<button data-choose-node="${node.id}">进入</button>` : `<span class="rn-state">${isSelected ? '当前' : isDone ? '已过' : '未选'}</span>`}
+    ${isAvailable ? `<span class="map-enter">进入</span>` : `<span class="rn-state">${isSelected ? '当前' : isDone ? '已过' : '未选'}</span>`}
   </article>`;
 }
 
@@ -334,6 +334,7 @@ function offerStocked(offer) {
 
 function canBuyOffer(offer) {
   if (state.shopSold.includes(offer.id)) return false;
+  if (typeof GuRules !== 'undefined' && !GuRules.isLiveShopOffer(offer)) return false;
   if (!offerStocked(offer)) return false;
   if (offerCost(offer) > state.stones) return false;
   if (offer.kind === 'gu_fang_unlock' && state.globalCodexIds.includes(offer.gu_id)) return false;
@@ -375,7 +376,8 @@ function shopStock() {
   const goods = ShopRules.stock(DATA.shopOffers, context)
     .map((id) => DATA.shopOffers.find((offer) => offer.id === id))
     .filter(Boolean);
-  const services = DATA.shopOffers.filter((offer) => ShopRules.serviceKinds.includes(offer.kind));
+  const services = DATA.shopOffers.filter((offer) => ShopRules.serviceKinds.includes(offer.kind)
+    && (typeof GuRules === 'undefined' || GuRules.isLiveShopOffer(offer)));
   return [...goods, ...services];
 }
 
@@ -586,6 +588,7 @@ function renderEnding(root) {
       <div class="kicker">终局摘要 · ${outcomeLabel}</div>
       <h1>${ending.title}</h1>
       <p class="lead">${ending.detail}</p>
+      ${ending.deathReport?.last3?.length ? `<div class="ending-death"><div class="kicker">败因摘要</div><ul>${ending.deathReport.last3.map((line) => `<li>${line}</li>`).join('')}</ul></div>` : ''}
       <div class="ending-stats">
         <span>outcome: ${ending.outcome || 'unknown'}</span>
         <span>节点 ${state.journey.completed.length}</span>

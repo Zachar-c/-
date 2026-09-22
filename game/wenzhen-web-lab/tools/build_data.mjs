@@ -177,13 +177,21 @@ if (!gu.some((entry) => entry.id === 'aptitude_gu')) {
 }
 const baseGuIds = Object.keys(COMBAT_GU_ICON);
 
-// 配方：取同时涉及所选蛊、且是二转产出的固定配方，外加两条升炼。
+// 配方：取同时涉及所选蛊、且是二转产出的固定配方。
+// L0 2026-09-25 Phase 0：升炼自环（投入=产出）与无真实语义的 advance 不进 live 可见路径。
 // 必须过滤掉没有输入蛊的条目：那种配方在原型里会变成"无材料免费开炉"。
 const fixed = recipes.filter((r) =>
   r.kind === 'fixed' && r.output_gu_id && baseGuIds.includes(r.output_gu_id) &&
   (r.input_gu_ids || []).length > 0 &&
   r.input_gu_ids.every((i) => baseGuIds.includes(i)));
-const advances = recipes.filter((r) => r.kind === 'advance' && baseGuIds.includes(r.output_gu_id)).slice(0, 2);
+const advances = recipes.filter((r) => {
+  if (r.kind !== 'advance' || r.retired || !baseGuIds.includes(r.output_gu_id)) return false;
+  const inputs = r.input_gu_ids || [];
+  if (!inputs.length) return false;
+  if (inputs.length === 1 && inputs[0] === r.output_gu_id) return false;
+  if ([...new Set(inputs)].length === 1 && inputs[0] === r.output_gu_id) return false;
+  return true;
+}).slice(0, 2);
 const picked = [...fixed, ...advances].map((r) => ({
   id: r.id, kind: r.kind, inputs: r.input_gu_ids || [], output: r.output_gu_id,
   stoneCost: r.stone_cost || 0, materials: r.materials || null, source: r.source || null,
@@ -289,7 +297,8 @@ const encounters = nodeList
 
 // L0 裁决（2026-09-20）：原型只保留蛊/材料货架与蛊方服务。
 // 不继承 Godot 的恶名、资源交换、寿元交易、以物易物、补魂丹与配方解锁服务。
-const SHOP_OFFER_KINDS = new Set(['purchase', 'material_purchase', 'gu_fang_unlock']);
+// L0 2026-09-25 Phase 0：古方（gu_fang_unlock）只记账无机械收益，未接通前不得作为正式可购成长项。
+const SHOP_OFFER_KINDS = new Set(['purchase', 'material_purchase']);
 const supportShopOffers = [
   { id: 'lab_shop_aptitude_gu', kind: 'purchase', gu_id: 'aptitude_gu', tier: 1, stone_cost: 20 },
   ...Object.entries(SARI_BY_RANK)
@@ -308,6 +317,7 @@ const supportShopOffers = [
 ];
 const shopOffers = [...shopOffersRaw, ...supportShopOffers]
   .filter((o) => SHOP_OFFER_KINDS.has(String(o.kind || '')))
+  .filter((o) => !o.retired && o.mechanical !== false)
   .map((o) => ({ ...o, gu_name: o.gu_id ? (names.gu?.[o.gu_id] || '') : '' }));
 const shopOfferIds = new Set(shopOffers.map((o) => String(o.id)));
 const materialById = lootTables.materials || {};
@@ -362,7 +372,7 @@ const mechanisms = {
     { name: '多阶段 AI（阶段 + 冷却门禁）', detail: '按 until_hp_ratio 切阶段；每阶段可有多条意图，第 T 回合发出后 T+cooldown+1 起才可再选；当前阶段所有意图都在冷却时显示 cooldown_wait、该回合不攻击', source: 'data/enemies.json 的 phases 与自带 _phases_note；本页按该语义独立实现检索台' },
     { name: '焚元意图', detail: '意图带 essence_burn 时烧掉玩家真元（蚀脉扰元 / 麻痹长嗥）', source: 'data/enemies.json phases[].intents[].essence_burn（按字段名直译，Godot 运行时不读该字段）' },
     { name: '多敌遭遇', detail: '10 个 type=combat 模板中唯一多敌 beast_swarm_pass（enemy_kinds 2 只）；规模 = enemy_kinds 长度；玩家点选目标、未选回退第一个存活；敌方按数组序逐个结算、每次立即判胜负；全灭才胜利；反击/阶段/冷却每敌一份；护体是池语义', source: 'data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）' },
-    { name: '坊市货架与蛊方服务', detail: '按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价；仅保留蛊方解锁服务', source: 'data/shops.json → purchase/material_purchase/gu_fang_unlock；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price/_shop_gu_fang_unlock' },
+    { name: '坊市货架', detail: '按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价。古方（gu_fang_unlock）因无机械收益已移出 live 货架（L0 2026-09-25 Phase 0）', source: 'data/shops.json → purchase/material_purchase；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price' },
     { name: '险地节点（探查 / 穿越 / 退回）', detail: '固定图每层 3 个候选中确定性地换入 1 个险地节点（毒瘴山道 / 积水石窟 / 黑泥沼地；槽位与模板都由 seed 决定，同 seed 同难度同图）；探查与退回只记事实（route_scouted / withdrawn_safely），穿越消耗 1 点真元、真元不足则拒绝且不结算；解析后回统一整备，不做 on_skip 后果', source: 'data/nodes.json → toxic_mountain_path / flooded_cave / black_mud_marsh（choices 均为 scout/cross/withdraw）；social_command_rules.gd:768-771,801-803（标准行动转移）；action_preview_service.gd:1022-1028,1076-1077,1085-1087（预览门禁与文案）；display_text.gd:69,86,90（显示名）、228,238,242（行动结果文案）' },
     { name: '非战斗节点的标准动作结算（险地 / 市集 / 野蛊）', detail: '固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1 共 9 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡（choices 里未搬的动作不出卡），并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw（静修节点的 meditate 见下条）；被拒不结算，解析后进入统一整备', source: 'data/nodes.json → village_short_work / ridge_market / blood_moss_grove / rest_hollow / rest_shrine / body_imprint_ritual 与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）' },
     { name: '恢复类节点（休整 / 静修）', detail: '非战斗模板池加入休整（山壁石穴 / 古祠残龛）与静修（体印仪式）后，地图上第一次出现恢复气血与真元的途径。休整节点（type=rest）是一次收益门禁、两步交互：先取「歇脚恢复」（气血恢复 max(1, floor(上限×0.30))、真元 +2，均按各自上限截断；卡片显示按当前数值算出的真实恢复量），「离开休整」卡此时才解禁——未取收益时该卡禁用并显示门禁原文「休整抉择未定：须先选择恢复、强化或移除其一，才能离开。」；探访已消费后收益卡禁用（「本次休整已处置完毕。」），重复取收益被拒（rest_already_used）且状态不变，未取收益就想离开被拒（rest_choice_required）且状态不变。静修节点（type=seclusion）走标准动作：「静修」真元 +1（按真元上限截断），离开没有休整门禁（seclusion 不在 rest-class 名单内）', source: 'data/nodes.json → rest_hollow / rest_shrine / body_imprint_ritual；rest_rules.gd:22（REST_NODE_TYPE）、:27（REST_CLASS_TYPES，seclusion 不在其中）、:121-141（_rest_heal：气血/真元公式与 rest_recovered、<节点id>_used 标记）、:165-179（_consume_rest_visit 的旗标语义，本片未搬）；social_command_rules.gd:586-589 与 encounter_session_resolver.gd:121-126（未消费不许离开 → rest_choice_required）；action_preview_service.gd:746-808（node.rest_heal / node.leave 两张卡与文案）、:811-831（已消费卡禁用的 block_reason）；social_command_rules.gd:772-773（meditate 真元 +1）与 display_text.gd:76,234（静修显示名与结果文案）' },

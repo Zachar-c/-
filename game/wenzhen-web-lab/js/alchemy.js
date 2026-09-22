@@ -23,7 +23,7 @@ function renderAlchemy(root) {
     </article>`;
   }).join('');
 
-  const rows = DATA.recipes.map((r) => {
+  const rows = GuRules.liveRecipes(DATA.recipes).map((r) => {
     const need = countBy(r.inputs);
     const miss = Object.entries(need).filter(([id, n]) => (state.owned[id] || 0) < n);
     const materialNeed = r.materials || {};

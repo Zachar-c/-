@@ -3,6 +3,13 @@ globalThis.ShopRules = (() => {
   const GOODS_KINDS = ['purchase', 'material_purchase'];
   const SERVICE_KINDS = ['gu_fang_unlock'];
 
+  // L0 2026-09-25 Phase 0：无机械收益/已退役商品不得作为正式可购成长项。
+  const isLiveOffer = (offer) => {
+    if (!offer || offer.retired || offer.live === false) return false;
+    if (offer.mechanical === false) return false;
+    return true;
+  };
+
   const saltHash = (salt) => {
     let digest = 0n;
     for (const character of String(salt || '')) {
@@ -38,6 +45,9 @@ globalThis.ShopRules = (() => {
   const maxTier = (pacingLayers, layer) =>
     Number(layerConfig(pacingLayers, layer).shop_max_tier || 1);
 
+  // 成交价 = 货架挂牌 stone_cost × 层加价。挂牌属内容数据；层加价 OWNER=
+  // pacing.shop_price_pct（稀缺/进度轴），不是第二套 market_rules 定价。
+  // 市场公价/回收参照 MvpBalance.Market（= market_rules.gd），此处只叠层。
   function layerPrice(pacingLayers, layer, base) {
     const price = Math.max(0, Number(base) || 0);
     const percent = Number(layerConfig(pacingLayers, layer).shop_price_pct || 0);
@@ -51,6 +61,7 @@ globalThis.ShopRules = (() => {
       .filter((offer) => Number(offer.tier || 1) <= cap)
       .filter((offer) => !offer.school || String(offer.school) === String(school || ''))
       .filter((offer) => !offer.npc_only)
+      .filter(isLiveOffer)
       .map((offer) => String(offer.id))
       .sort();
   }
@@ -117,6 +128,7 @@ globalThis.ShopRules = (() => {
   const offerIsStocked = (offers, offerId, context = {}) => {
     const offer = offerById(offers, offerId);
     if (!offer) return false;
+    if (!isLiveOffer(offer)) return false;
     if (SERVICE_KINDS.includes(String(offer.kind || ''))) return true;
     if (!GOODS_KINDS.includes(String(offer.kind || ''))) return false;
     return stock(offers, context).includes(String(offerId));

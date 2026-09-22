@@ -704,8 +704,27 @@ const DATA = {
         ],
         "gu_chance_pct": 55,
         "gu_pool": {
-          "weights": {},
-          "by_rarity": {}
+          "weights": {
+            "rare": 40,
+            "epic": 60
+          },
+          "by_rarity": {
+            "rare": [
+              "moon_glow_gu",
+              "moon_ray_gu",
+              "jade_skin_gu",
+              "blood_bat_gu",
+              "bear_strength_gu"
+            ],
+            "epic": [
+              "moonlight_gu",
+              "white_jade_gu",
+              "white_boar_strength_gu",
+              "blood_farewell_gu",
+              "force_atk_4_02_gu"
+            ]
+          },
+          "note": "L0 2026-09-25 Phase 0/D3：补真实池，兑现层主给新构筑未来；禁止空池假 55%。"
         },
         "scavenge_recipe": [
           "moon_shadow_locked",
@@ -3145,34 +3164,6 @@ const DATA = {
       "materials": null,
       "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊",
       "successRollMax": 100
-    },
-    {
-      "id": "advance_small_light_gu",
-      "kind": "advance",
-      "inputs": [
-        "small_light_gu"
-      ],
-      "output": "small_light_gu",
-      "stoneCost": 6,
-      "materials": {
-        "beast_blood": 1
-      },
-      "source": null,
-      "successRollMax": 100
-    },
-    {
-      "id": "advance_stone_shell_gu",
-      "kind": "advance",
-      "inputs": [
-        "stone_shell_gu"
-      ],
-      "output": "stone_shell_gu",
-      "stoneCost": 6,
-      "materials": {
-        "beast_bone": 2
-      },
-      "source": null,
-      "successRollMax": 100
     }
   ],
   "killMoves": [
@@ -5373,56 +5364,6 @@ const DATA = {
       "gu_name": ""
     },
     {
-      "id": "gu_fang_moon_glow_gu",
-      "kind": "gu_fang_unlock",
-      "card_key": "gu_fang.moon_glow_gu",
-      "gu_id": "moon_glow_gu",
-      "stone_cost": 80,
-      "tier": 2,
-      "clue": "古方：持方即知产物，免未知损失。",
-      "gu_name": "月芒蛊"
-    },
-    {
-      "id": "gu_fang_white_jade_gu",
-      "kind": "gu_fang_unlock",
-      "card_key": "gu_fang.white_jade_gu",
-      "gu_id": "white_jade_gu",
-      "stone_cost": 80,
-      "tier": 2,
-      "clue": "古方：持方即知产物，免未知损失。",
-      "gu_name": "白玉蛊"
-    },
-    {
-      "id": "gu_fang_blood_heal_2_23_gu",
-      "kind": "gu_fang_unlock",
-      "card_key": "gu_fang.blood_heal_2_23_gu",
-      "gu_id": "blood_heal_2_23_gu",
-      "stone_cost": 80,
-      "tier": 2,
-      "clue": "古方：持方即知产物，免未知损失。",
-      "gu_name": "血针蛊"
-    },
-    {
-      "id": "gu_fang_blood_atk_3_03_gu",
-      "kind": "gu_fang_unlock",
-      "card_key": "gu_fang.blood_atk_3_03_gu",
-      "gu_id": "blood_atk_3_03_gu",
-      "stone_cost": 200,
-      "tier": 3,
-      "clue": "古方：持方即知产物，免未知损失。",
-      "gu_name": "血气蛊"
-    },
-    {
-      "id": "gu_fang_blood_atk_3_11_gu",
-      "kind": "gu_fang_unlock",
-      "card_key": "gu_fang.blood_atk_3_11_gu",
-      "gu_id": "blood_atk_3_11_gu",
-      "stone_cost": 200,
-      "tier": 3,
-      "clue": "古方：持方即知产物，免未知损失。",
-      "gu_name": "血月蛊"
-    },
-    {
       "id": "purchase_sword_atk_1_06",
       "kind": "purchase",
       "card_key": "purchase.sword_atk_1_06",
@@ -6183,6 +6124,14 @@ const DATA = {
       "stock": [
         "purchase_stone_shell",
         "purchase_moonlight"
+      ],
+      "demands": [
+        {
+          "id": "steward_needs_bones",
+          "material_id": "beast_bone",
+          "quantity": 3,
+          "tier": 1
+        }
       ]
     },
     {
@@ -6200,6 +6149,14 @@ const DATA = {
       "retreat": "leave_with_map_copy",
       "reinforcements": "faction_guard_pair",
       "injury_reaction": "caution",
+      "demands": [
+        {
+          "id": "scout_needs_dew",
+          "material_id": "moon_dew",
+          "quantity": 2,
+          "tier": 1
+        }
+      ],
       "stock": []
     },
     {
@@ -6216,7 +6173,15 @@ const DATA = {
       "retreat": "offer_safe_treatment",
       "reinforcements": "none",
       "injury_reaction": "sympathy",
-      "stock": []
+      "stock": [],
+      "demands": [
+        {
+          "id": "healer_needs_blood",
+          "material_id": "beast_blood",
+          "quantity": 4,
+          "tier": 1
+        }
+      ]
     },
     {
       "id": "ridge_extortionist",
@@ -6232,7 +6197,15 @@ const DATA = {
       "retreat": "accept_stone_and_withdraw",
       "reinforcements": "beast_swarm_lure",
       "injury_reaction": "contempt",
-      "stock": []
+      "stock": [],
+      "demands": [
+        {
+          "id": "extortionist_needs_sac",
+          "material_id": "venom_sac",
+          "quantity": 2,
+          "tier": 1
+        }
+      ]
     },
     {
       "id": "wandering_peddler",
@@ -6252,6 +6225,20 @@ const DATA = {
         "purchase_stone_shell",
         "purchase_moonlight",
         "purchase_blood_droplet"
+      ],
+      "demands": [
+        {
+          "id": "peddler_needs_bones",
+          "material_id": "beast_bone",
+          "quantity": 5,
+          "tier": 1
+        },
+        {
+          "id": "peddler_needs_sac",
+          "material_id": "venom_sac",
+          "quantity": 2,
+          "tier": 1
+        }
       ]
     }
   ],
@@ -6608,9 +6595,9 @@ const DATA = {
         "source": "data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）"
       },
       {
-        "name": "坊市货架与蛊方服务",
-        "detail": "按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价；仅保留蛊方解锁服务",
-        "source": "data/shops.json → purchase/material_purchase/gu_fang_unlock；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price/_shop_gu_fang_unlock"
+        "name": "坊市货架",
+        "detail": "按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价。古方（gu_fang_unlock）因无机械收益已移出 live 货架（L0 2026-09-25 Phase 0）",
+        "source": "data/shops.json → purchase/material_purchase；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price"
       },
       {
         "name": "险地节点（探查 / 穿越 / 退回）",
@@ -6719,5 +6706,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "28f9c059d26b6c71c406d106b166c9d83d19d8f59d25a3e78e7a0fab614bb676"
+  "contentVersion": "062ed754f90dfec2a508254c225b8bc23ec503fdd625804ef2b4026a4ffdbac4"
 };

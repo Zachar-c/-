@@ -57,6 +57,40 @@ function guReasonLabel(reason) {
   }[reason] || reason || '';
 }
 
+// 杀招展示必须从组件 battleEffect 合成结果生成（L0 2026-09-25 权威语义）。
+// 预制 m.effect 只作兼容元数据，不再直接上屏。
+function killMoveEffectText(move, guById = {}) {
+  if (typeof GuRules === 'undefined' || !GuRules.killMoveEffectPlan) {
+    return effectText(move?.effect);
+  }
+  const plan = GuRules.killMoveEffectPlan(move, guById, {});
+  const parts = [];
+  if (plan.heal) parts.push(`回气 ${plan.heal}`);
+  if (plan.block) parts.push(`护体 ${plan.block}`);
+  if (plan.damage) parts.push(`击伤 ${plan.damage}`);
+  if (plan.swordIntent) parts.push(`剑意 +${plan.swordIntent}`);
+  if (plan.intentWeaken) parts.push(`弱化敌方意图 ${plan.intentWeaken}`);
+  for (const st of plan.statuses || []) parts.push(`标记 ${st.amount || 1}`);
+  if (plan.support) parts.push(`助${plan.support.school} +${plan.support.bonus}`);
+  if (plan.delayTurns) parts.push(`延迟 ${plan.delayTurns} 回合`);
+  let text = parts.length ? parts.join(' · ') : '—';
+  const conditions = [];
+  for (const definitionId of move?.recipe || []) {
+    const gu = guById[definitionId] || {};
+    const effect = gu.v1_effect || gu.battleEffect || null;
+    if (effect?.condition?.type === 'self_hp_below') {
+      conditions.push(`${gu.name || definitionId}：气血低于 ${Math.round(Number(effect.condition.threshold || 0.5) * 100)}%`);
+    }
+  }
+  if (conditions.length && !move?.componentConditionOverride) {
+    text += ` · 继承条件：${conditions.join('；')}`;
+  }
+  if (move?.componentConditionOverride) {
+    text += ' · 已覆盖组件条件';
+  }
+  return text;
+}
+
 const schoolLabel = (s) => ({
   light: '光道', moon: '月道', blood: '血道', force: '力道', earth: '土道',
   water: '水道', qi: '气道', wood: '木道', fire: '火道', wisdom: '智道',

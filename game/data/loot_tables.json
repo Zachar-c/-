@@ -2519,10 +2519,29 @@
      "weight": 3
     }
    ],
-   "gu_chance_pct": 0,
+   "gu_chance_pct": 55,
    "gu_pool": {
-    "weights": {},
-    "by_rarity": {}
+    "weights": {
+     "rare": 40,
+     "epic": 60
+    },
+    "by_rarity": {
+     "rare": [
+      "moon_glow_gu",
+      "moon_ray_gu",
+      "jade_skin_gu",
+      "blood_bat_gu",
+      "bear_strength_gu"
+     ],
+     "epic": [
+      "moonlight_gu",
+      "white_jade_gu",
+      "white_boar_strength_gu",
+      "blood_farewell_gu",
+      "force_atk_4_02_gu"
+     ]
+    },
+    "note": "L0 2026-09-25 Phase 0/D3：补真实池，兑现层主给新构筑未来；禁止空池假 55%。"
    },
    "scavenge_recipe": [
     "moon_shadow_locked",
