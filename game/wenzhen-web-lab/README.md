@@ -6,6 +6,8 @@
 
 视觉实验使用 `fast-loop-assets/moon-crystal-gu.png`（L0 提供的月光蛊参考图）与 `fast-loop-assets/moon-terrace.png`（依该图的月晶材质、冷蓝月光和深色石面生成的战斗背景）。敌方立绘复用 `../assets/wenzhen/enemies/` 中的现有资产。战斗规则沿用此前可玩版本；这轮只比较画面与反馈的体验。
 
+战斗页宽屏时左侧场景、右侧操作同屏；窄屏滚动时敌方意图、双方气血、真元与念头固定在顶部，使用蛊虫和杀招时不必回到场景上方确认状态。
+
 ## 启动
 
 直接双击打开 `lab.html`。无需 Node、Godot 或联网。
