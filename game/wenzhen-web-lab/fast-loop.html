@@ -19,6 +19,50 @@
     @media(max-width:620px){.arena{grid-template-columns:1fr 1fr}.versus{display:none}.fighter{padding:10px}.fighter .number{font-size:16px}}@media(prefers-reduced-motion:reduce){.fighter.hit,.fighter.blocked,.feedback{animation:none}.meter i{transition:none}}
     .turn-timeline{border-left:3px solid #9db08c;padding:8px 14px;background:#1d251f;margin:12px 0}.turn-timeline ol{margin:6px 0 0;padding-left:20px;line-height:1.5}.enemy h3{margin-top:18px;color:#dfd1a9}
     .intent{border:1px solid #c88d60;background:#3b2b25;border-radius:8px;padding:12px 15px;line-height:1.5}.intent strong{color:#ffd28f}
+    /* 月晶视觉实验：场景与蛊虫保留原图质感，交互层以深色半透明材质承托。 */
+    :root{font-family:"Noto Serif SC","Songti SC","Microsoft YaHei",serif;background:#060a10;color:#e8edf0}
+    body{position:relative;background:#060a10;isolation:isolate}
+    body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#05080dd9,#080e15ee 58%,#06090de8),url("fast-loop-assets/moon-terrace.png") center/cover no-repeat}
+    main{max-width:1200px;padding:28px 22px 70px}
+    h1{font-size:clamp(30px,3vw,44px);font-weight:600;letter-spacing:.16em;color:#f1f6f8;text-shadow:0 0 30px #a9d8ff7a}
+    h2{font-size:clamp(22px,2.2vw,29px);color:#f4f2e7}h3{color:#c9e1ee}
+    .muted{color:#aabdc6}.lead{font-size:17px;color:#e4e7de}
+    .panel,.card,.stat{border-color:#9cb6c74a;background:linear-gradient(145deg,#101a23ee,#0b1119ec);box-shadow:0 14px 40px #0008,inset 0 1px #dbe8ee1a;backdrop-filter:blur(14px)}
+    .panel{border-radius:14px;margin:18px 0;padding:22px}.card{border-radius:12px}.stat{border-radius:10px;min-width:120px}.stat b{color:#d8eeff;text-shadow:0 0 16px #8dc7f788}
+    button{background:linear-gradient(145deg,#a7d5ee,#547c99);border:1px solid #d4edfa;color:#06131d;border-radius:8px;box-shadow:inset 0 1px #fff8,0 5px 18px #0007;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+    button:hover:not(:disabled){background:linear-gradient(145deg,#e0f3fa,#94bfd5);transform:translateY(-2px);box-shadow:0 6px 20px #8bc8ec55}
+    button:active:not(:disabled){transform:translateY(1px)}button:focus-visible{outline:2px solid #f7deab;outline-offset:3px}
+    button.secondary{background:linear-gradient(145deg,#263d4c,#172936);color:#eaf2f4;border-color:#65899f}
+    button[data-action="move"]{background:linear-gradient(145deg,#f1dfac,#97784e);border-color:#f9eac2}
+    button[data-action="end-turn"]{margin-top:20px;padding:13px 20px;font-size:16px}
+    button[data-id="moon"]{padding-left:47px;background-image:url("fast-loop-assets/moon-crystal-gu.png"),linear-gradient(145deg,#bfdff0,#668da8);background-position:7px center,center;background-size:31px 31px,cover;background-repeat:no-repeat}
+    select{background:#0a1722;border-color:#8ab3c8;padding:10px}.notice{color:#e6d4a9}
+    .guide{border-color:#c6ab73;background:linear-gradient(135deg,#29261fee,#101b26ee)}.guide h2,.guide .step{color:#efdbab}
+    .enemy{background:linear-gradient(155deg,#0b121bee,#0a1118f7);border-color:#8ab4c568}
+    .battle-kicker{font-size:12px;letter-spacing:.3em;color:#afcddd;text-transform:uppercase;margin-bottom:5px}
+    .enemy>h2{margin-bottom:4px}.enemy>p{color:#b7cad0}
+    .arena{display:block;position:relative;min-height:475px;margin:18px 0 20px;padding:0;overflow:hidden;border:1px solid #96b9cb87;border-radius:16px;background:linear-gradient(180deg,#080f1c32 0%,#0a132329 48%,#050a12c9 100%),url("fast-loop-assets/moon-terrace.png") center 57%/cover no-repeat;box-shadow:inset 0 0 85px #020711a8,0 18px 50px #0009}
+    .arena:after{content:"";position:absolute;inset:auto 0 0;height:45%;pointer-events:none;background:linear-gradient(0deg,#020711dd,transparent)}
+    .arena.art-impact:before{content:"";position:absolute;z-index:3;left:35%;top:21%;width:40%;height:5px;pointer-events:none;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,#c3eaff,#fff,transparent);box-shadow:0 0 20px 6px #c0e9ffae;animation:moon-slash .45s ease-out both}.arena.art-ward:before{content:"";position:absolute;z-index:3;left:8%;top:19%;width:30%;height:48%;pointer-events:none;border:3px solid #a5dceb;border-radius:50%;box-shadow:0 0 35px #8fcfeea6,inset 0 0 22px #8fcfeea6;animation:ward-pulse .55s ease-out both}
+    .scene-caption{position:absolute;top:17px;left:50%;transform:translateX(-50%);z-index:3;display:grid;gap:3px;min-width:220px;text-align:center;padding:9px 22px;background:#06101bb8;border:1px solid #afc8d277;border-radius:999px;box-shadow:0 0 25px #9fd8f32c;backdrop-filter:blur(10px)}
+    .scene-caption span{font-size:12px;color:#b5cad3}.scene-caption b{font-size:19px;color:#f1e4c1;font-weight:600;letter-spacing:.12em}
+    .actor-art{position:absolute;z-index:1;bottom:88px;width:34%;height:330px;pointer-events:none;mix-blend-mode:screen;filter:drop-shadow(0 10px 30px #76baf94d)}
+    .actor-art img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;mask-image:radial-gradient(ellipse 64% 62% at 50% 52%,#000 62%,transparent 100%)}
+    .actor-player{left:2%}.actor-player img{filter:brightness(1.12) contrast(1.12)}.actor-foe{right:2%}.actor-foe.art-ink img{filter:invert(1) grayscale(1) sepia(.22) hue-rotate(160deg) contrast(1.38) brightness(.8);opacity:.8}.actor-foe.art-boss img{filter:drop-shadow(0 0 25px #aac9e980)}
+    .actor-art.art-hurt{animation:portrait-hit .55s ease-out}.versus{display:none}
+    .fighter{position:absolute;z-index:4;bottom:14px;width:min(32%,355px);padding:13px 17px;border-radius:10px;background:#06111bd9;border:1px solid #b7d3dd80;box-shadow:0 8px 30px #0009;backdrop-filter:blur(14px)}.fighter.player{left:16px}.fighter.foe{right:16px;background:#15121bcc;border-color:#d6b7a47a}
+    .fighter .name{margin:0 0 3px;font-size:13px;letter-spacing:.12em;color:#c8e3ec}.fighter .number{font-size:28px;line-height:1.1;color:#f3f7f5}.fighter .number small{font-size:13px;color:#adc1c8}.fighter>div:last-child{font-size:12px;color:#aebec4}
+    .meter{height:11px;border-color:#b4ced079;background:#02070c;margin:8px 0}.meter i{background:linear-gradient(90deg,#823b45,#f0a38e)}.fighter.player .meter i{background:linear-gradient(90deg,#387783,#b3eef0)}
+    .intent{padding:14px 18px;border-color:#d8b7818a;background:linear-gradient(90deg,#36291fe8,#1d2026e8);font-size:16px}.intent strong{color:#ffdda1}
+    .feedback{border-radius:10px;padding:17px 19px;background:#111f26f0}.feedback.good{border-color:#87d7cd}.feedback.bad{border-color:#ec8d83}.feedback .dealt{color:#a6f2ec}.feedback .hurt{color:#ffa799}.feedback strong{font-size:20px}
+    .turn-timeline{background:#0d1b24d9;border-color:#98c4d2}.log{color:#b8cdd4}.log li{border-bottom:1px solid #ffffff13;padding-bottom:4px}
+    .intro{overflow:hidden;background:linear-gradient(110deg,#0b1620d9,#0b1119f6),url("fast-loop-assets/moon-terrace.png") center/cover no-repeat}.intro-layout{display:grid;grid-template-columns:minmax(210px,36%) 1fr;align-items:center;gap:24px}.intro-art{height:360px;overflow:hidden;display:grid;place-items:center}.intro-art img{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;mask-image:radial-gradient(ellipse 65% 67%,#000 60%,transparent 100%);filter:drop-shadow(0 0 32px #aad9ff75)}.intro h2{font-size:clamp(25px,3vw,40px);line-height:1.25;color:#f5edda}.intro p{line-height:1.8;color:#d3e0e3}.intro button{padding:14px 25px}
+    .route-enemy{position:relative;overflow:hidden;min-height:360px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,#131f2b,#0b1018);border-color:#91b5c577}.route-enemy>*{position:relative;z-index:2}.route-enemy .enemy-preview{position:absolute;z-index:0;inset:0 0 110px;overflow:hidden;opacity:.72;mask-image:linear-gradient(#000 55%,transparent 100%)}.route-enemy .enemy-preview img{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;filter:invert(1) grayscale(1) contrast(1.4) brightness(.8)}.route-enemy h3{font-size:23px;color:#f6e5bc;text-shadow:0 2px 10px #000}.route-enemy p{color:#d4e0e0;text-shadow:0 2px 8px #000}.route-enemy button{align-self:flex-start}
+    @keyframes portrait-hit{0%,100%{transform:translateX(0);filter:brightness(1)}35%{transform:translateX(12px);filter:brightness(2) drop-shadow(0 0 30px #f8a69c)}70%{transform:translateX(-5px)}}
+    @keyframes moon-slash{0%{opacity:0;transform:translateX(-70px) rotate(-24deg) scaleX(.4)}35%{opacity:1}100%{opacity:0;transform:translateX(35px) rotate(-24deg) scaleX(1.2)}}@keyframes ward-pulse{0%{opacity:0;transform:scale(.6)}40%{opacity:1}100%{opacity:0;transform:scale(1.15)}}
+    @media(max-width:760px){main{padding:18px 12px 45px}.panel{padding:16px}.arena{min-height:370px}.actor-art{width:47%;height:245px;bottom:100px}.actor-player{left:-5%}.actor-foe{right:-5%}.fighter{width:45%;padding:9px 10px}.fighter.player{left:7px}.fighter.foe{right:7px}.fighter .number{font-size:23px}.scene-caption{top:8px}.row button{flex:1 1 155px}.intro-layout{grid-template-columns:1fr}.intro-art{height:235px}.route-enemy{min-height:315px}}
+    @media(max-width:470px){.arena{min-height:345px;background-position:center}.actor-art{height:195px;bottom:116px}.fighter .name{font-size:11px}.fighter .number{font-size:20px}.fighter>div:last-child{font-size:11px}.scene-caption{max-width:70%;padding:5px 9px}.scene-caption b{font-size:15px}.scene-caption span:last-child{display:none}}
+    @media(prefers-reduced-motion:reduce){button,.actor-art.art-hurt,.arena.art-impact:before,.arena.art-ward:before{transition:none;animation:none}}
   </style>
 </head>
 <body><main id="app"></main><script src="fast-loop.js"></script></body>
