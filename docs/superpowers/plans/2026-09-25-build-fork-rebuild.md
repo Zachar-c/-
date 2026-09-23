@@ -327,10 +327,19 @@ Phase 1–8 成立后，再 A/B 验证 FULL RESET vs PARTIAL CARRY。
 ## 执行顺序（当前）
 
 ```text
-T1 落盘 L0 裁决与本计划
-→ T2 Phase 0 可信实验基线
-→ T3 Gate 0 一致性验收
-→ 再进入 Phase 1
+T1 落盘 L0 裁决与本计划            DONE（4279c7b）
+→ T2 Phase 0 可信实验基线          DONE（4279c7b）
+→ T3 Gate 0 一致性验收             DONE（phase0_gate0 7/7）
+→ Phase 1 敌人三问题轴             DONE（db89436，phase1_gate1）
+→ Phase 2–7 构筑分叉内循环         DONE（bb7c700，phase2–gate7；全量 216/216 收口于 bb3f88f）
+→ Phase 8 Rank 承载轴              IN_PROGRESS
+    批A 结构验收（零数值漂移）      DONE 未提交（tests/phase8_gate8.test.mjs 11/11；全量 227/227 实测）
+    批B ×3 真元曲线                 BLOCKED → L1 Research Request（归属表「Rank ×3 真元吞掉成长」）
+→ Phase 9 / 10                     HOLD（L0 未批准，见裁决 §六）
+→ Phase 11 可赢性与联合平衡        未开工（含 G07）
 ```
 
-Phase 0 完成并通过 Gate 0 前，不进入玩法平衡，不做 Phase 1 之后的体验调整。
+Phase 0 完成并通过 Gate 0 前，不进入玩法平衡，不做 Phase 1 之后的体验调整。（历史约束，Phase 0 已过。）
+
+> V5 留痕（2026-09-23）：本节原写「T3 → 再进入 Phase 1」，与仓库实际不符（Phase 1–7 已合入），已就地更正。
+> `game/wenzhen-web-lab/docs/2026-09-25-l0-phase0-gate0-handoff.md` 的 NEXT（Phase 1）与 GIT（commit: NONE）均已过期，仅作 Phase 0 当时快照保留，不再作为当前待办。
