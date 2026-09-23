@@ -333,7 +333,7 @@ T1 落盘 L0 裁决与本计划            DONE（4279c7b）
 → Phase 1 敌人三问题轴             DONE（db89436，phase1_gate1）
 → Phase 2–7 构筑分叉内循环         DONE（bb7c700，phase2–gate7；全量 216/216 收口于 bb3f88f）
 → Phase 8 Rank 承载轴              IN_PROGRESS
-    批A 结构验收（零数值漂移）      DONE 未提交（tests/phase8_gate8.test.mjs 11/11；全量 227/227 实测）
+    批A 结构验收（零数值漂移）      DONE（08bc6aa，tests/phase8_gate8.test.mjs 11/11；全量 227/227 实测）
     批B ×3 真元曲线                 BLOCKED → L1 Research Request（归属表「Rank ×3 真元吞掉成长」）
 → Phase 9 / 10                     HOLD（L0 未批准，见裁决 §六）
 → Phase 11 可赢性与联合平衡        未开工（含 G07）
