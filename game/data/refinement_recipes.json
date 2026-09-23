@@ -11,6 +11,8 @@
    ],
    "output_gu_id": "moon_glow_gu",
    "source": "蛊真人-clean.txt 17024-17155：月芒蛊=月光蛊x1+小光蛊x2（合炼失败代价示例：小光蛊消亡）",
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 4：被 moonlight_glow 严格支配（同产出、多投入）",
    "inputs": [
     {
      "school": "light",
@@ -34,7 +36,18 @@
    ],
    "output_gu_id": "moon_ray_gu",
    "output_rank": 2,
-   "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）"
+   "materials": {
+    "beast_bone": 1
+   },
+   "fork_id": "fork_moonlight_small",
+   "branch_label": "炼向月痕·爆发",
+   "branch_axis": "burst",
+   "material_role": "recipe_key",
+   "farm_hint": "缺兽骨 → 打重甲/防御敌（铁皮山猪）",
+   "preferred_enemy_ids": ["iron_hide_boar", "ridge_elite_scout"],
+   "closes": ["kit_info_suppress", "moon_glow_gu"],
+   "delays": ["kit_info_suppress"],
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）；L0 Phase 5 兽骨=爆发支配方钥匙"
   },
   {
    "id": "advance_small_light_gu",
@@ -92,6 +105,8 @@
   {
    "id": "white_jade_advance",
    "kind": "fixed",
+   "retired": true,
+   "retire_reason": "L0 2026-09-25 Phase 4：被 white_jade_basic 严格支配（同产出、多材料多费用）",
    "input_gu_ids": [
     "jade_skin_gu",
     "white_boar_strength_gu"
@@ -124,7 +139,18 @@
     "small_light_gu"
    ],
    "output_gu_id": "moon_glow_gu",
-   "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）"
+   "materials": {
+    "moon_dew": 1
+   },
+   "fork_id": "fork_moonlight_small",
+   "branch_label": "炼向月芒·信息压制",
+   "branch_axis": "info",
+   "material_role": "recipe_key",
+   "farm_hint": "缺月露 → 打信息/反制敌（石甲散修）",
+   "preferred_enemy_ids": ["neutral_stone_wanderer", "marrow_gu_adept"],
+   "closes": ["moon_ray_gu", "kit_pierce_burst"],
+   "delays": ["kit_pierce_burst"],
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）；L0 Phase 5 月露=信息支配方钥匙"
   },
   {
    "id": "white_jade_basic",
@@ -134,9 +160,20 @@
     "jade_skin_gu",
     "white_boar_strength_gu"
    ],
-   "stone_cost": 50,
+   "stone_cost": 15,
    "output_gu_id": "white_jade_gu",
-   "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊",
+   "materials": {
+    "beast_blood": 1
+   },
+   "fork_id": "fork_jade_boar",
+   "branch_label": "炼向白玉·防御",
+   "branch_axis": "armor",
+   "material_role": "recipe_key",
+   "farm_hint": "缺兽血 → 打兽类/重甲敌（铁皮山猪）",
+   "preferred_enemy_ids": ["iron_hide_boar", "ridge_hound"],
+   "closes": ["bear_strength_gu", "kit_stable_sustain"],
+   "delays": ["kit_pierce_burst"],
+   "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊；L0 Phase 5 兽血=防御支配方钥匙",
    "inputs": [
     {
      "school": "earth",
@@ -149,6 +186,29 @@
      "count": 1
     }
    ]
+  },
+  {
+   "id": "bear_split",
+   "kind": "fixed",
+   "default_unlocked": true,
+   "input_gu_ids": [
+    "jade_skin_gu",
+    "white_boar_strength_gu"
+   ],
+   "stone_cost": 8,
+   "output_gu_id": "bear_strength_gu",
+   "materials": {
+    "venom_sac": 1
+   },
+   "fork_id": "fork_jade_boar",
+   "branch_label": "炼向熊力·持续",
+   "branch_axis": "sustain",
+   "material_role": "recipe_key",
+   "farm_hint": "缺毒囊 → 打高速/闪避敌（山脊猎犬）或精英",
+   "preferred_enemy_ids": ["ridge_hound", "thunder_crown_wolf"],
+   "closes": ["white_jade_gu"],
+   "delays": ["kit_pierce_burst"],
+   "source": "L0 Phase 4/5 分支：玉皮+白豕另一去向；毒囊=持续支配方钥匙"
   },
   {
    "id": "advance_moon_glow_gu",

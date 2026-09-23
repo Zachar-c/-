@@ -1115,6 +1115,12 @@ const DATA = {
       "rank": 1,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": "Core",
+      "buildTags": [
+        "stable_hit",
+        "ignoreEvasion",
+        "sustain_core"
+      ],
       "school": "light",
       "value": 4,
       "cost": 2,
@@ -1142,6 +1148,12 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": "Information",
+      "buildTags": [
+        "inspect",
+        "support",
+        "info_answer"
+      ],
       "school": "light",
       "value": 3,
       "cost": 1,
@@ -1173,6 +1185,11 @@ const DATA = {
       "rank": 2,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": "Support",
+      "buildTags": [
+        "suppress",
+        "info_answer"
+      ],
       "school": "light",
       "value": 9,
       "cost": 2,
@@ -1197,11 +1214,71 @@ const DATA = {
       "labOnly": false
     },
     {
+      "id": "moon_ray_gu",
+      "name": "月痕蛊",
+      "rank": 2,
+      "rarity": "rare",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "light",
+      "value": 10,
+      "cost": 2,
+      "effect": {
+        "kind": "strike",
+        "amount": 4
+      },
+      "icon": "gu_moon",
+      "combat": "moonlight_strike",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 4
+      },
+      "trueQiCost": 2,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false
+    },
+    {
+      "id": "bear_strength_gu",
+      "name": "熊力蛊",
+      "rank": 1,
+      "rarity": "rare",
+      "role": "healing",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "force",
+      "value": 5,
+      "cost": 1,
+      "effect": {
+        "kind": "heal",
+        "amount": 2
+      },
+      "icon": "gu_force",
+      "combat": "heal_and_bleed",
+      "battleEffect": {
+        "kind": "heal",
+        "amount": 2
+      },
+      "trueQiCost": 1,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false
+    },
+    {
       "id": "white_boar_strength_gu",
       "name": "白豕蛊",
       "rank": 1,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": "Transform",
+      "buildTags": [
+        "armorBreak",
+        "pierce",
+        "burst_setup"
+      ],
       "school": "force",
       "value": 10,
       "cost": 1,
@@ -1231,6 +1308,8 @@ const DATA = {
       "rank": 1,
       "rarity": "rare",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "earth",
       "value": 8,
       "cost": 1,
@@ -1256,6 +1335,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "earth",
       "value": 5,
       "cost": 1,
@@ -1281,6 +1362,8 @@ const DATA = {
       "rank": 2,
       "rarity": "epic",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "earth",
       "value": 30,
       "cost": 2,
@@ -1306,6 +1389,12 @@ const DATA = {
       "rank": 1,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": "Finisher",
+      "buildTags": [
+        "burst",
+        "condition",
+        "pierce_follow"
+      ],
       "school": "blood",
       "value": 6,
       "cost": 1,
@@ -1339,6 +1428,12 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": "Core",
+      "buildTags": [
+        "stable_hit",
+        "chip",
+        "sustain_core"
+      ],
       "school": "blood",
       "value": 5,
       "cost": 1,
@@ -1364,6 +1459,11 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "logistics",
+      "buildRole": "Resource",
+      "buildTags": [
+        "sustain",
+        "heal"
+      ],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -1389,6 +1489,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 3,
       "cost": 0,
@@ -1418,6 +1520,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 3,
       "cost": 0,
@@ -1447,6 +1551,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 3,
       "cost": 0,
@@ -1472,6 +1578,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "qi",
       "value": 3,
       "cost": 0,
@@ -1497,6 +1605,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "qi",
       "value": 5,
       "cost": 0,
@@ -1528,6 +1638,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "wood",
       "value": 3,
       "cost": 0,
@@ -1553,6 +1665,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "water",
       "value": 3,
       "cost": 0,
@@ -1578,6 +1692,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "movement",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 16,
       "cost": 3,
@@ -1603,6 +1719,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "healing",
+      "buildRole": null,
+      "buildTags": [],
       "school": "blood",
       "value": 5,
       "cost": 0,
@@ -1628,6 +1746,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "support",
+      "buildRole": null,
+      "buildTags": [],
       "school": "gold",
       "value": 5,
       "cost": 0,
@@ -1649,6 +1769,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "support",
+      "buildRole": null,
+      "buildTags": [],
       "school": "gold",
       "value": 5,
       "cost": 0,
@@ -1670,6 +1792,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "support",
+      "buildRole": null,
+      "buildTags": [],
       "school": "gold",
       "value": 8,
       "cost": 0,
@@ -1691,6 +1815,8 @@ const DATA = {
       "rank": 4,
       "rarity": "epic",
       "role": "support",
+      "buildRole": null,
+      "buildTags": [],
       "school": "gold",
       "value": 12,
       "cost": 0,
@@ -1712,6 +1838,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "support",
+      "buildRole": null,
+      "buildTags": [],
       "school": "gold",
       "value": 20,
       "cost": 0,
@@ -1733,6 +1861,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "support",
+      "buildRole": null,
+      "buildTags": [],
       "school": "gold",
       "value": 5,
       "cost": 0,
@@ -1754,6 +1884,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "bone",
       "value": 3,
       "cost": 0,
@@ -1779,6 +1911,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "human",
       "value": 3,
       "cost": 0,
@@ -1804,6 +1938,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 5,
       "cost": 0,
@@ -1829,6 +1965,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 8,
       "cost": 0,
@@ -1854,6 +1992,8 @@ const DATA = {
       "rank": 4,
       "rarity": "epic",
       "role": "healing",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 12,
       "cost": 0,
@@ -1879,6 +2019,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "sword",
       "value": 20,
       "cost": 0,
@@ -1904,6 +2046,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "blood",
       "value": 20,
       "cost": 0,
@@ -1929,6 +2073,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "fire",
       "value": 5,
       "cost": 0,
@@ -1960,6 +2106,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "water",
       "value": 8,
       "cost": 0,
@@ -1993,6 +2141,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "wisdom",
       "value": 3,
       "cost": 0,
@@ -2024,6 +2174,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "wisdom",
       "value": 8,
       "cost": 0,
@@ -2049,6 +2201,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "wind",
       "value": 3,
       "cost": 0,
@@ -2074,6 +2228,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "force",
       "value": 5,
       "cost": 1,
@@ -2085,56 +2241,6 @@ const DATA = {
       "combat": "moonlight_strike",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
-      },
-      "trueQiCost": 1,
-      "thoughtCost": 1,
-      "lowRankException": false,
-      "lifeCost": 0,
-      "labOnly": false
-    },
-    {
-      "id": "moon_ray_gu",
-      "name": "月痕蛊",
-      "rank": 2,
-      "rarity": "rare",
-      "role": "attack",
-      "school": "light",
-      "value": 10,
-      "cost": 2,
-      "effect": {
-        "kind": "strike",
-        "amount": 4
-      },
-      "icon": "gu_light",
-      "combat": "moonlight_strike",
-      "battleEffect": {
-        "kind": "strike",
-        "amount": 4
-      },
-      "trueQiCost": 2,
-      "thoughtCost": 1,
-      "lowRankException": false,
-      "lifeCost": 0,
-      "labOnly": false
-    },
-    {
-      "id": "bear_strength_gu",
-      "name": "熊力蛊",
-      "rank": 1,
-      "rarity": "rare",
-      "role": "healing",
-      "school": "force",
-      "value": 5,
-      "cost": 1,
-      "effect": {
-        "kind": "heal",
-        "amount": 2
-      },
-      "icon": "gu_force",
-      "combat": "heal_and_bleed",
-      "battleEffect": {
-        "kind": "heal",
         "amount": 2
       },
       "trueQiCost": 1,
@@ -2149,6 +2255,8 @@ const DATA = {
       "rank": 1,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "blood",
       "value": 6,
       "cost": 1,
@@ -2176,6 +2284,8 @@ const DATA = {
       "rank": 4,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "force",
       "value": 12,
       "cost": 0,
@@ -2201,6 +2311,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2226,6 +2338,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2251,6 +2365,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 20,
       "cost": 0,
@@ -2276,6 +2392,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2301,6 +2419,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2326,6 +2446,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2351,6 +2473,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2382,6 +2506,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 20,
       "cost": 0,
@@ -2413,6 +2539,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2444,6 +2572,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2475,6 +2605,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 20,
       "cost": 0,
@@ -2506,6 +2638,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 20,
       "cost": 0,
@@ -2537,6 +2671,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2562,6 +2698,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2587,6 +2725,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2612,6 +2752,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "movement",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2637,6 +2779,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "healing",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 5,
       "cost": 0,
@@ -2662,6 +2806,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 5,
       "cost": 0,
@@ -2693,6 +2839,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "logistics",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2718,6 +2866,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2743,6 +2893,8 @@ const DATA = {
       "rank": 4,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 12,
       "cost": 0,
@@ -2768,6 +2920,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 20,
       "cost": 0,
@@ -2793,6 +2947,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "movement",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2818,6 +2974,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "healing",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 5,
       "cost": 0,
@@ -2843,6 +3001,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 5,
       "cost": 0,
@@ -2874,6 +3034,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "logistics",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2899,6 +3061,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -2924,6 +3088,8 @@ const DATA = {
       "rank": 4,
       "rarity": "epic",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 12,
       "cost": 0,
@@ -2949,6 +3115,8 @@ const DATA = {
       "rank": 5,
       "rarity": "epic",
       "role": "defense",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 20,
       "cost": 0,
@@ -2974,6 +3142,8 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "movement",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 3,
       "cost": 0,
@@ -2999,6 +3169,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "healing",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 5,
       "cost": 0,
@@ -3024,6 +3196,8 @@ const DATA = {
       "rank": 2,
       "rarity": "common",
       "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 5,
       "cost": 0,
@@ -3055,6 +3229,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "logistics",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -3080,6 +3256,8 @@ const DATA = {
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
       "school": "light",
       "value": 8,
       "cost": 0,
@@ -3123,33 +3301,35 @@ const DATA = {
   ],
   "recipes": [
     {
-      "id": "moon_glow_fixed",
+      "id": "moon_ray_forged",
       "kind": "fixed",
       "inputs": [
         "moonlight_gu",
-        "small_light_gu",
         "small_light_gu"
       ],
-      "output": "moon_glow_gu",
+      "output": "moon_ray_gu",
       "stoneCost": 0,
-      "materials": null,
-      "source": "蛊真人-clean.txt 17024-17155：月芒蛊=月光蛊x1+小光蛊x2（合炼失败代价示例：小光蛊消亡）",
-      "successRollMax": 100
-    },
-    {
-      "id": "white_jade_advance",
-      "kind": "fixed",
-      "inputs": [
-        "jade_skin_gu",
-        "white_boar_strength_gu"
-      ],
-      "output": "white_jade_gu",
-      "stoneCost": 50,
       "materials": {
-        "boar_king_tusk": 1
+        "beast_bone": 1
       },
-      "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊，添头野猪王雪獠牙（后世改良，提高成功率）",
-      "successRollMax": 100
+      "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）；L0 Phase 5 兽骨=爆发支配方钥匙",
+      "successRollMax": 100,
+      "forkId": "fork_moonlight_small",
+      "branchLabel": "炼向月痕·爆发",
+      "branchAxis": "burst",
+      "materialRole": "recipe_key",
+      "farmHint": "缺兽骨 → 打重甲/防御敌（铁皮山猪）",
+      "preferredEnemyIds": [
+        "iron_hide_boar",
+        "ridge_elite_scout"
+      ],
+      "closes": [
+        "kit_info_suppress",
+        "moon_glow_gu"
+      ],
+      "delays": [
+        "kit_info_suppress"
+      ]
     },
     {
       "id": "moonlight_glow",
@@ -3160,9 +3340,27 @@ const DATA = {
       ],
       "output": "moon_glow_gu",
       "stoneCost": 0,
-      "materials": null,
-      "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）",
-      "successRollMax": 100
+      "materials": {
+        "moon_dew": 1
+      },
+      "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）；L0 Phase 5 月露=信息支配方钥匙",
+      "successRollMax": 100,
+      "forkId": "fork_moonlight_small",
+      "branchLabel": "炼向月芒·信息压制",
+      "branchAxis": "info",
+      "materialRole": "recipe_key",
+      "farmHint": "缺月露 → 打信息/反制敌（石甲散修）",
+      "preferredEnemyIds": [
+        "neutral_stone_wanderer",
+        "marrow_gu_adept"
+      ],
+      "closes": [
+        "moon_ray_gu",
+        "kit_pierce_burst"
+      ],
+      "delays": [
+        "kit_pierce_burst"
+      ]
     },
     {
       "id": "white_jade_basic",
@@ -3172,10 +3370,58 @@ const DATA = {
         "white_boar_strength_gu"
       ],
       "output": "white_jade_gu",
-      "stoneCost": 50,
-      "materials": null,
-      "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊",
-      "successRollMax": 100
+      "stoneCost": 15,
+      "materials": {
+        "beast_blood": 1
+      },
+      "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊；L0 Phase 5 兽血=防御支配方钥匙",
+      "successRollMax": 100,
+      "forkId": "fork_jade_boar",
+      "branchLabel": "炼向白玉·防御",
+      "branchAxis": "armor",
+      "materialRole": "recipe_key",
+      "farmHint": "缺兽血 → 打兽类/重甲敌（铁皮山猪）",
+      "preferredEnemyIds": [
+        "iron_hide_boar",
+        "ridge_hound"
+      ],
+      "closes": [
+        "bear_strength_gu",
+        "kit_stable_sustain"
+      ],
+      "delays": [
+        "kit_pierce_burst"
+      ]
+    },
+    {
+      "id": "bear_split",
+      "kind": "fixed",
+      "inputs": [
+        "jade_skin_gu",
+        "white_boar_strength_gu"
+      ],
+      "output": "bear_strength_gu",
+      "stoneCost": 8,
+      "materials": {
+        "venom_sac": 1
+      },
+      "source": "L0 Phase 4/5 分支：玉皮+白豕另一去向；毒囊=持续支配方钥匙",
+      "successRollMax": 100,
+      "forkId": "fork_jade_boar",
+      "branchLabel": "炼向熊力·持续",
+      "branchAxis": "sustain",
+      "materialRole": "recipe_key",
+      "farmHint": "缺毒囊 → 打高速/闪避敌（山脊猎犬）或精英",
+      "preferredEnemyIds": [
+        "ridge_hound",
+        "thunder_crown_wolf"
+      ],
+      "closes": [
+        "white_jade_gu"
+      ],
+      "delays": [
+        "kit_pierce_burst"
+      ]
     }
   ],
   "killMoves": [
@@ -3278,6 +3524,9 @@ const DATA = {
       "problemLabel": "信息/反制",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [
+        "moon_dew"
+      ],
       "intent": {
         "id": "stone_palm",
         "label": "掌势蓄而未发",
@@ -3313,6 +3562,9 @@ const DATA = {
       "problemLabel": "高速/闪避",
       "armorValue": null,
       "evasionBreakpoint": 2,
+      "preferredMaterials": [
+        "venom_sac"
+      ],
       "intent": {
         "id": "pounce",
         "label": "伏肩扑咬",
@@ -3348,6 +3600,10 @@ const DATA = {
       "problemLabel": "重甲/防御",
       "armorValue": 2,
       "evasionBreakpoint": null,
+      "preferredMaterials": [
+        "beast_bone",
+        "beast_blood"
+      ],
       "intent": {
         "id": "tusk_drive",
         "label": "獠牙冲撞",
@@ -3383,6 +3639,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "thunder_bite",
         "label": "雷冠撕咬",
@@ -3409,6 +3666,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "crush_coil",
         "label": "绞缠碾压",
@@ -3435,6 +3693,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "marrow_lance",
         "label": "蚀骨骨矛",
@@ -3470,6 +3729,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "swift_crossbow",
         "label": "弩箭上弦",
@@ -3505,6 +3765,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "miasma_burst",
         "label": "瘴气喷涌",
@@ -3593,6 +3854,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "clan_wrath",
         "label": "一族之威",
@@ -3683,6 +3945,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "corpse_tide",
         "label": "尸潮掩杀",
@@ -3773,6 +4036,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "soul_gnaw",
         "label": "噬魂魔功",
@@ -3810,6 +4074,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "crown_bolt",
         "label": "雷冠贯落",
@@ -3872,6 +4137,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "vein_whip",
         "label": "血络鞭挞",
@@ -3960,6 +4226,7 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "preferredMaterials": [],
       "intent": {
         "id": "shield_bash",
         "label": "盾墙冲撞",
@@ -5490,6 +5757,38 @@ const DATA = {
       "gu_name": ""
     },
     {
+      "id": "lab_shop_moon_dew",
+      "kind": "material_purchase",
+      "material_id": "moon_dew",
+      "tier": 1,
+      "stone_cost": 3,
+      "gu_name": ""
+    },
+    {
+      "id": "lab_shop_beast_bone",
+      "kind": "material_purchase",
+      "material_id": "beast_bone",
+      "tier": 1,
+      "stone_cost": 3,
+      "gu_name": ""
+    },
+    {
+      "id": "lab_shop_beast_blood",
+      "kind": "material_purchase",
+      "material_id": "beast_blood",
+      "tier": 1,
+      "stone_cost": 4,
+      "gu_name": ""
+    },
+    {
+      "id": "lab_shop_venom_sac",
+      "kind": "material_purchase",
+      "material_id": "venom_sac",
+      "tier": 1,
+      "stone_cost": 5,
+      "gu_name": ""
+    },
+    {
       "id": "lab_shop_gold_atk_2_12_gu",
       "kind": "purchase",
       "gu_id": "gold_atk_2_12_gu",
@@ -6774,5 +7073,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "2daa01de04e640c847c91a41d2cb9c4fe45ecbe4e79d6413e082ba38b383805e"
+  "contentVersion": "061e49e1986a381495a2155aecf82b1e8e449a06a02d448c24150f21c4cd6c1a"
 };

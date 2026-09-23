@@ -411,10 +411,28 @@ function inventoryCard(gu) {
     <span class="cnt">×${count}</span>
     <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
     <div class="gn">${gu.name}</div>
-    <div class="gm">${gu.rank} 转 · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
+    <div class="gm">${gu.rank} 转 · ${GuRules.buildRoleOf(gu, GU_BY_ID)} · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
     <div class="ge">${effectText(gu.effect)}</div>
     <div class="gu-foot"><span>卖 ${price}</span><button class="ghost" data-sell-gu="${gu.id}">卖出</button></div>
   </article>`;
+}
+
+function gainInsightPanel() {
+  const insight = state.lastGainInsight;
+  if (!insight || !insight.decisions?.length) return '';
+  const lines = insight.decisions.map((d) => `<li><b>${d.label}</b> · ${d.detail}</li>`).join('');
+  const kits = (insight.kitJoins || []).map((k) =>
+    `${k.label}${k.completes ? '（可成型）' : k.stillMissing?.length ? `（仍缺 ${k.stillMissing.length}）` : ''}`).join('、');
+  const moves = (insight.killMoveForms || []).map((k) =>
+    `${k.label}${k.changesPattern ? '·有 Variant' : k.canForm ? '·可组成' : ''}`).join('、');
+  return `
+    <section class="insight-panel" style="margin:16px 0;padding:12px 14px;border:1px solid var(--line,#ccc);border-radius:8px">
+      <div class="kicker">构筑关联 · ${insight.name}（${insight.role}）</div>
+      <ul style="margin:8px 0 0 18px">${lines}</ul>
+      ${moves ? `<div class="gm" style="margin-top:8px">杀招：${moves}</div>` : ''}
+      ${kits ? `<div class="gm">组合：${kits}</div>` : ''}
+      <div class="gm" style="margin-top:6px">主动选择：保留 / 出售 / 炼蛊 / 进入杀招 — 不会自动装备。</div>
+    </section>`;
 }
 
 function renderPrep(root) {
@@ -468,6 +486,7 @@ function renderPrep(root) {
       </div>
       <button class="primary prep-leave" data-prep-continue>完成整备 · 选择下一节点</button>
     </div>
+    ${gainInsightPanel()}
     <div class="prep-shell">
       <aside class="prep-rail">
         <section class="rail-block">
@@ -547,6 +566,7 @@ function renderReward(root) {
   }
   const node = nodeById(reward.nodeId);
   const choices = (reward.guChoices || []).map((guId) => guById(guId)).filter(Boolean);
+  const tier = reward.tier || 'common';
   root.innerHTML = `
     <div class="reward-sheet">
       <div class="kicker">战后结算 · 自动奖励已到账</div>
@@ -555,17 +575,20 @@ function renderReward(root) {
         <div><span>元石</span><b>+${reward.stones}</b></div>
         <div><span>气血</span><b>+${reward.healed || 0} · 真元回满</b></div>
         ${(reward.materialIds || []).length ? `<div><span>材料</span><b>${Object.entries(countBy(reward.materialIds)).map(([id, count]) => `${materialById(id).name}×${count}`).join('、')}</b></div>` : ''}
+        <div><span>价值</span><b>${reward.lootIdentity === 'new_future' ? '新未来' : reward.lootIdentity === 'build_component' ? '构筑组件' : '经济/成长'}${reward.valueKinds ? ` · 经${reward.valueKinds.economic || 0}/成${reward.valueKinds.growth || 0}/筑${reward.valueKinds.build || 0}` : ''}</b></div>
         <div><span>回合</span><b>${reward.turn}</b></div>
       </div>
       ${choices.length ? `
         <h2>战后出蛊 · 三选一</h2>
+        <p class="muted">${tier === 'boss' ? '层主奖励 · 优先打开此前不可达的构筑未来' : tier === 'elite' ? '精英奖励 · 构筑组件 / 较高品质' : '普通战 · 稳定经济与常用材料'}</p>
         <div class="reward-choices">${choices.map((gu) => `
           <button data-reward-gu="${gu.id}">
             <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
             <b>${gu.name}</b>
-            <span>${gu.rank} 转 · ${schoolLabel(gu.school)}</span>
+            <span>${gu.rank} 转 · ${GuRules.buildRoleOf(gu, GU_BY_ID)} · ${schoolLabel(gu.school)}</span>
             <em>${effectText(gu.effect)}</em>
           </button>`).join('')}</div>
+        <p class="muted" style="margin-top:10px">选定后不会自动装备；系统会列出可替换 / 可炼 / 可组杀招，由你决定是否重构。</p>
       ` : '<p class="muted">本次没有蛊虫掉落，直接进入统一整备。</p>'}
       ${choices.length ? '' : '<button class="primary" data-reward-continue>进入整备</button>'}
     </div>`;

@@ -16,6 +16,8 @@
    "support_bonus": 2,
    "inspect": true
   },
+  "buildRole": "Information",
+  "buildTags": ["inspect", "support", "info_answer"],
   "slot_role": "scout",
   "combat": "reveal_hidden_bonus",
   "field_actions": [
@@ -52,6 +54,8 @@
    "amount": 3,
    "ignoreEvasion": true
   },
+  "buildRole": "Core",
+  "buildTags": ["stable_hit", "ignoreEvasion", "sustain_core"],
   "slot_role": "attack",
   "combat": "moonlight_strike",
   "field_actions": [
@@ -85,6 +89,8 @@
    "suppressWhenRevealed": true,
    "suppress": true
   },
+  "buildRole": "Support",
+  "buildTags": ["suppress", "info_answer"],
   "slot_role": "attack",
   "combat": "moonlight_strike",
   "field_actions": [
@@ -181,6 +187,8 @@
   },
   "value": 3,
   "essence_cost": 0,
+  "buildRole": "Resource",
+  "buildTags": ["sustain", "heal"],
   "slot_role": "logistics",
   "combat": "vitality_grass_remedy",
   "field_actions": [
@@ -280,6 +288,8 @@
    "armorBreak": 2,
    "pierce": 2
   },
+  "buildRole": "Transform",
+  "buildTags": ["armorBreak", "pierce", "burst_setup"],
   "slot_role": "power",
   "combat": "white_boar_strength",
   "combat_effects": [
@@ -408,6 +418,8 @@
   },
   "value": 6,
   "essence_cost": 1,
+  "buildRole": "Finisher",
+  "buildTags": ["burst", "condition", "pierce_follow"],
   "slot_role": "control",
   "combat": "poison_and_slow",
   "field_actions": [
@@ -446,6 +458,8 @@
   },
   "value": 5,
   "essence_cost": 1,
+  "buildRole": "Core",
+  "buildTags": ["stable_hit", "chip", "sustain_core"],
   "v1_effect": {
    "kind": "strike",
    "amount": 2

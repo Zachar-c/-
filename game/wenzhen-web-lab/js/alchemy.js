@@ -16,14 +16,17 @@ function renderAlchemy(root) {
       <span class="cnt">×${state.wild[g.id]}</span>
       <img src="../assets/wenzhen/gu/${g.icon}.png" alt="">
       <div class="gn">${g.name}</div>
-      <div class="gm">${g.rank} 转 · 野生 · 炼化真元 ${cost}</div>
+      <div class="gm">${g.rank} 转 · ${GuRules.buildRoleOf(g, Object.fromEntries(DATA.gu.map((x) => [x.id, x])))} · 野生 · 炼化真元 ${cost}</div>
       <div class="ge">${effectText(g.effect)}</div>
       <button style="margin-top:11px" ${affordable ? '' : 'disabled'} data-attune="${g.id}">炼化</button>
       <div class="gm">${affordable ? `当前真元 ${state.qi}` : `真元不足 · 当前 ${state.qi}`}</div>
     </article>`;
   }).join('');
 
-  const rows = GuRules.liveRecipes(DATA.recipes).map((r) => {
+  const live = GuRules.liveRecipes(DATA.recipes);
+  const forks = GuRules.forkGroups(DATA.recipes);
+  const forkIds = new Set(forks.flatMap((f) => f.branches.map((b) => b.id)));
+  const rows = live.map((r) => {
     const need = countBy(r.inputs);
     const miss = Object.entries(need).filter(([id, n]) => (state.owned[id] || 0) < n);
     const materialNeed = r.materials || {};
@@ -35,12 +38,20 @@ function renderAlchemy(root) {
          <img src="${iconOf(id)}" alt="">${nameOf(id)}<span style="color:var(--cinnabar)">×${n}</span>
        </span>`).join('<span class="arrow">+</span>');
     const src = (r.source || '').replace(/^蛊真人-clean\.txt\s*/, '原文 ');
-    return `<div class="recipe">
+    const branch = r.branchLabel
+      ? `<div class="meta" style="color:var(--cinnabar)">${r.branchLabel}${(r.closes || []).length ? ` · 关闭 ${(r.closes || []).map((c) => nameOf(c)).join('/')}` : ''}${(r.delays || []).length ? ` · 推迟 ${(r.delays || []).join('/')}` : ''}</div>`
+      : '';
+    const farm = r.farmHint
+      ? `<div class="meta" style="font-size:12px">定向：${r.farmHint}</div>`
+      : '';
+    return `<div class="recipe ${forkIds.has(r.id) ? 'fork-branch' : ''}">
       <div class="io">${inputs}<span class="arrow">→</span>
         <span style="display:inline-flex;align-items:center;gap:5px">
           <img src="${iconOf(r.output)}" alt="">${nameOf(r.output)}
         </span>
       </div>
+      ${branch}
+      ${farm}
       <div class="meta">
         ${r.kind === 'advance' ? '升炼' : '合炼'} · 成算 ${r.successRollMax >= 100 ? '必成' : `${r.successRollMax}%`}${r.stoneCost ? ` · 元石 ${r.stoneCost}` : ''}
         ${Object.keys(materialNeed).length ? ` · ${Object.entries(materialNeed).map(([id, n]) => `${materialById(id).name}×${n}`).join('、')}` : ''}
@@ -51,12 +62,20 @@ function renderAlchemy(root) {
     </div>`;
   }).join('');
 
+  const forkNotes = forks.map((f) => `
+    <div class="meta" style="margin:8px 0 16px;padding:8px 10px;border-left:3px solid var(--cinnabar)">
+      <b>分支节点</b> · 投入 ${f.inputs.map(nameOf).join(' + ')}
+      → ${f.branches.map((b) => `${b.branchLabel || nameOf(b.output)}（关闭 ${(b.closes || []).map(nameOf).join('/') || '—'}）`).join(' ／ ')}
+      <div style="font-size:12px;opacity:.85">二选一后另一去向关闭或推迟；不是数值高低差。</div>
+    </div>`).join('');
+
   root.innerHTML = `
     <div class="pane-note">已在手的蛊虫见「蛊仓」页签（卖蛊也在那里）；本页把它们当作合炼与升炼的投入。</div>
     <h2 style="margin-top:22px">炼化野生蛊 · ${wild.length} 种待炼化</h2>
     <p class="lead muted">野生蛊不能催动；炼化后按实例加入已炼化蛊仓。</p>
     <div class="grid">${wildCards || '<div class="empty">暂无野生蛊。</div>'}</div>
-    <h2 style="margin-top:22px">炼蛊台 · 合炼与升炼 · ${owned.length} 种可作投入</h2>
+    <h2 style="margin-top:22px">炼蛊台 · 合炼与分支 · ${owned.length} 种可作投入</h2>
+    ${forkNotes}
     <div class="recipes">${rows}</div>`;
 
   root.querySelectorAll('[data-forge]').forEach((el) =>

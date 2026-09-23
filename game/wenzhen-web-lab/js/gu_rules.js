@@ -347,6 +347,506 @@ globalThis.GuRules = (() => {
     return Number(killMoveEffectPlan(move, guById, context).damage || 0) > 0;
   }
 
+  // ---- Phase 2：构筑角色与三套最小能力组合 ----
+  // 角色：Core / Support / Transform / Resource / Defense / Information / Finisher
+  const BUILD_ROLES = Object.freeze([
+    'Core', 'Support', 'Transform', 'Resource', 'Defense', 'Information', 'Finisher',
+  ]);
+
+  const DEFAULT_BUILD_ROLE = Object.freeze({
+    vitality_grass_gu: 'Resource',
+    stone_shell_gu: 'Defense',
+    jade_skin_gu: 'Defense',
+    white_jade_gu: 'Defense',
+    blood_droplet_gu: 'Core',
+    blood_bat_gu: 'Resource',
+    bear_strength_gu: 'Resource',
+  });
+
+  function buildRoleOf(guOrId, guById = {}) {
+    const gu = typeof guOrId === 'string' ? (guById[guOrId] || {}) : (guOrId || {});
+    const id = String(gu.id || guOrId || '');
+    return String(gu.buildRole || DEFAULT_BUILD_ROLE[id] || gu.role || 'Core');
+  }
+
+  function buildTagsOf(guOrId, guById = {}) {
+    const gu = typeof guOrId === 'string' ? (guById[guOrId] || {}) : (guOrId || {});
+    if (Array.isArray(gu.buildTags) && gu.buildTags.length) return [...gu.buildTags];
+    const effect = gu.v1_effect || gu.battleEffect || {};
+    const tags = [];
+    if (effect.inspect) tags.push('inspect');
+    if (effect.suppress || effect.suppressWhenRevealed) tags.push('suppress');
+    if (effect.armorBreak || effect.pierce) tags.push('armorBreak');
+    if (effect.ignoreEvasion) tags.push('ignoreEvasion');
+    if (effect.kind === 'heal' || effect.kind === 'heal_and_strike') tags.push('sustain');
+    if (effect.kind === 'shield' || effect.kind === 'grant_block') tags.push('guard');
+    return tags;
+  }
+
+  // 三套最小能力组合（L0 Phase 2）。成员是「能改变解法」的元件，不是纯数值。
+  const BUILD_KITS = Object.freeze({
+    kit_info_suppress: Object.freeze({
+      id: 'kit_info_suppress',
+      label: '信息→压制',
+      axis: 'info',
+      members: Object.freeze(['small_light_gu', 'moon_glow_gu']),
+      optional: Object.freeze(['light_rec_1_10_gu', 'wisdom_rec_1_20_gu']),
+      structure: Object.freeze(['inspect', 'suppress', 'strike']),
+    }),
+    kit_pierce_burst: Object.freeze({
+      id: 'kit_pierce_burst',
+      label: '破甲→爆发',
+      axis: 'armor',
+      members: Object.freeze(['white_boar_strength_gu', 'blood_farewell_gu']),
+      optional: Object.freeze(['moon_ray_gu', 'blood_atk_5_02_gu']),
+      structure: Object.freeze(['pierce', 'burst']),
+    }),
+    kit_stable_sustain: Object.freeze({
+      id: 'kit_stable_sustain',
+      label: '稳定命中→持续',
+      axis: 'evasion',
+      members: Object.freeze(['moonlight_gu', 'blood_droplet_gu', 'vitality_grass_gu']),
+      optional: Object.freeze(['blood_bat_gu', 'bear_strength_gu']),
+      structure: Object.freeze(['stable_hit', 'chip', 'sustain']),
+    }),
+  });
+
+  function kitById(kitId) {
+    return BUILD_KITS[kitId] || null;
+  }
+
+  function kitCoverage(kitId, owned = {}, guById = {}) {
+    const kit = BUILD_KITS[kitId];
+    if (!kit) return { ok: false, missing: [], present: [] };
+    const present = [];
+    const missing = [];
+    for (const id of kit.members) {
+      if (Number(owned[id] || 0) > 0) present.push(id);
+      else missing.push(id);
+    }
+    return { ok: missing.length === 0, missing, present, kit };
+  }
+
+  // 面对某问题轴时，该构筑的有效行动结构签名（Gate 2）。
+  // 同一 Build 对不同轴必须分叉；不同 Build 对同一轴也必须分叉。
+  function actionStructureFor(kitId, enemyOrAxis = {}) {
+    const kit = BUILD_KITS[kitId];
+    if (!kit) return { signature: 'unknown', steps: [] };
+    const axis = String(enemyOrAxis.problemAxis || enemyOrAxis.axis || '');
+    const steps = [];
+    if (kitId === 'kit_info_suppress') {
+      if (axis === 'info') steps.push('inspect', 'suppress', 'controlled_strike');
+      else if (axis === 'armor') steps.push('inspect', 'suppress', 'chip_strike');
+      else if (axis === 'evasion') steps.push('inspect', 'suppress', 'low_stable_strike');
+      else steps.push(...kit.structure);
+    } else if (kitId === 'kit_pierce_burst') {
+      if (axis === 'armor') steps.push('pierce', 'burst');
+      else if (axis === 'evasion') steps.push('pierce', 'stable_finisher');
+      else if (axis === 'info') steps.push('read_or_avoid', 'pierce', 'burst');
+      else steps.push(...kit.structure);
+    } else if (kitId === 'kit_stable_sustain') {
+      if (axis === 'evasion') steps.push('ignoreEvasion', 'chip', 'sustain');
+      else if (axis === 'armor') steps.push('chip', 'chip', 'sustain');
+      else if (axis === 'info') steps.push('inspect', 'stable_hit', 'sustain');
+      else steps.push(...kit.structure);
+    } else {
+      steps.push(...(kit.structure || []));
+    }
+    return {
+      kitId,
+      axis,
+      steps,
+      signature: `${kitId}|${axis}|${steps.join('>')}`,
+    };
+  }
+
+  // ---- Phase 3：获得新蛊 → 构筑改变 ----
+  // 同角色或同解法语义族的蛊可替换杀招组件；固定家族 + Variant，不做自由生成。
+  function compatibleSubstitutes(definitionId, guById = {}) {
+    const base = guById[definitionId] || {};
+    const baseRole = buildRoleOf(base, guById);
+    const baseTags = new Set(buildTagsOf(base, guById));
+    const baseEffect = base.v1_effect || base.battleEffect || {};
+    const baseKind = String(baseEffect.kind || '');
+    const baseAttack = Number(baseEffect.amount || 0) > 0
+      || baseKind === 'strike' || baseKind === 'heal_and_strike';
+    return Object.values(guById)
+      .filter((g) => {
+        if (!g || g.id === definitionId) return false;
+        if (!g.battleEffect && !g.v1_effect) return false;
+        if (buildRoleOf(g, guById) === baseRole) return true;
+        const tags = buildTagsOf(g, guById);
+        if (tags.some((t) => baseTags.has(t))) return true;
+        // 同效果族：攻/防/疗可互相顶位（杀招槽兼容替换）
+        const eff = g.v1_effect || g.battleEffect || {};
+        const kind = String(eff.kind || '');
+        if (baseKind && kind && baseKind === kind) return true;
+        const attack = Number(eff.amount || 0) > 0
+          || kind === 'strike' || kind === 'heal_and_strike';
+        if (baseAttack && attack) return true;
+        return false;
+      })
+      .map((g) => String(g.id))
+      .sort();
+  }
+
+  function killMoveVariants(move, owned = {}, guById = {}) {
+    if (!move?.recipe?.length) return [];
+    const slotOptions = (move.recipe || []).map((definitionId) => {
+      const primary = Number(owned[definitionId] || 0) > 0 ? [String(definitionId)] : [];
+      const alts = compatibleSubstitutes(definitionId, guById)
+        .filter((id) => Number(owned[id] || 0) > 0);
+      // 主件优先；替代仅在主件缺失或显式列出时进入 Variant
+      const list = primary.length ? [String(definitionId), ...alts.filter((id) => id !== definitionId)] : alts;
+      return list.length ? list : [String(definitionId)];
+    });
+    const variants = [];
+    const walk = (index, recipe) => {
+      if (index >= slotOptions.length) {
+        const plan = killMoveEffectPlan({ ...move, recipe }, guById, {});
+        const changed = recipe.join('+') !== (move.recipe || []).join('+');
+        variants.push({
+          moveId: move.id,
+          label: move.label,
+          recipe: [...recipe],
+          changed,
+          plan,
+          signature: `dmg${plan.damage}|heal${plan.heal}|blk${plan.block}|ab${plan.armorBreak || 0}|ev${plan.ignoreEvasion ? 1 : 0}|in${plan.inspect ? 1 : 0}|su${plan.suppressCounter ? 1 : 0}`,
+        });
+        return;
+      }
+      for (const id of slotOptions[index]) walk(index + 1, [...recipe, id]);
+    };
+    walk(0, []);
+    return variants;
+  }
+
+  function killMoveVariantByRecipe(move, recipe, guById = {}, context = {}) {
+    return killMoveEffectPlan({ ...move, recipe: [...recipe] }, guById, context);
+  }
+
+  // ---- Phase 4：最小炼蛊分支网络 ----
+  // 同投入多去向 = 真分支；炼一支必须关闭/推迟另一未来。
+  const forkInputKey = (recipe) => [...(recipe.inputs || [])].map(String).sort().join('+');
+
+  function forkGroups(recipes = []) {
+    const groups = new Map();
+    for (const r of liveRecipes(recipes)) {
+      const key = r.forkId || forkInputKey(r);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    }
+    return [...groups.entries()]
+      .filter(([, list]) => list.length >= 2)
+      .map(([forkId, branches]) => ({
+        forkId,
+        inputs: [...(branches[0].inputs || [])],
+        branches: branches.map((b) => ({
+          id: b.id,
+          output: b.output,
+          branchLabel: b.branchLabel || b.output,
+          branchAxis: b.branchAxis || null,
+          closes: [...(b.closes || [])],
+          delays: [...(b.delays || [])],
+          stoneCost: Number(b.stoneCost || 0),
+          materials: b.materials ? { ...b.materials } : null,
+        })),
+      }));
+  }
+
+  function isStrictlyDominatedRecipe(recipe, all = []) {
+    return all.some((o) => {
+      if (!o || o === recipe || o.output !== recipe.output) return false;
+      if (o.retired || recipe.retired) return false;
+      const oIn = (o.inputs || []).map(String);
+      const rIn = (recipe.inputs || []).map(String);
+      if (!rIn.every((id) => oIn.includes(id))) return false;
+      if (Number(o.stoneCost || 0) > Number(recipe.stoneCost || 0)) return false;
+      for (const [k, v] of Object.entries(recipe.materials || {})) {
+        if (Number((o.materials || {})[k] || 0) > Number(v)) return false;
+      }
+      const cheaper = oIn.length < rIn.length
+        || Number(o.stoneCost || 0) < Number(recipe.stoneCost || 0)
+        || Object.entries(recipe.materials || {}).some(
+          ([k, v]) => Number((o.materials || {})[k] || 0) < Number(v),
+        );
+      return cheaper;
+    });
+  }
+
+  // 炼成某支后的未来：打开什么、关闭/推迟什么（Gate 4）。
+  function branchFutures(recipe, options = {}) {
+    const { guById = {}, killMoves = [], owned = {} } = options;
+    const opens = [];
+    const closes = [...(recipe.closes || [])];
+    const delays = [...(recipe.delays || [])];
+    const output = String(recipe.output || '');
+    if (guById[output]) {
+      opens.push({ kind: 'gu', id: output, name: guById[output].name || output });
+    }
+    for (const kit of Object.values(BUILD_KITS)) {
+      if (kit.members.includes(output) || (kit.optional || []).includes(output)) {
+        opens.push({ kind: 'kit', id: kit.id, label: kit.label });
+      }
+    }
+    for (const move of killMoves || []) {
+      if ((move.recipe || []).includes(output)) {
+        opens.push({ kind: 'killmove', id: move.id, label: move.label });
+      }
+    }
+    // 投入被吃掉 → 相关组合/杀招被推迟
+    for (const inputId of recipe.inputs || []) {
+      if (Number(owned[inputId] || 0) <= 1) {
+        for (const kit of Object.values(BUILD_KITS)) {
+          if (kit.members.includes(inputId) && !delays.includes(kit.id)) delays.push(kit.id);
+        }
+      }
+    }
+    return {
+      recipeId: recipe.id,
+      output,
+      branchLabel: recipe.branchLabel || output,
+      branchAxis: recipe.branchAxis || null,
+      opens,
+      closes: [...new Set(closes)],
+      delays: [...new Set(delays)],
+    };
+  }
+
+  // Gate 4：同一初始资产下，炼 A 与炼 B 的差异签名。
+  function forgeBranchSignatures(forkId, recipes = [], options = {}) {
+    const group = forkGroups(recipes).find((g) => g.forkId === forkId);
+    if (!group) return [];
+    return group.branches.map((b) => {
+      const recipe = liveRecipes(recipes).find((r) => r.id === b.id) || b;
+      const futures = branchFutures(recipe, options);
+      const afterOwned = { ...(options.owned || {}) };
+      for (const inputId of recipe.inputs || []) {
+        afterOwned[inputId] = Math.max(0, Number(afterOwned[inputId] || 0) - 1);
+      }
+      afterOwned[recipe.output] = Number(afterOwned[recipe.output] || 0) + 1;
+      const kits = Object.values(BUILD_KITS).map((k) => kitCoverage(k.id, afterOwned, options.guById || {}));
+      const signature = [
+        `out:${recipe.output}`,
+        `axis:${recipe.branchAxis || '-'}`,
+        `close:${futures.closes.join(',') || '-'}`,
+        `kit:${kits.map((c, i) => (c.ok ? Object.values(BUILD_KITS)[i].id : '')).filter(Boolean).join(',') || '-'}`,
+        `open:${futures.opens.map((o) => o.id).join(',')}`,
+      ].join('|');
+      return { branchId: b.id, output: recipe.output, signature, futures, afterOwned };
+    });
+  }
+
+  // ---- Phase 5：材料 = 配方钥匙 / 定向追逐 ----
+  function materialConsumers(recipes = []) {
+    const map = {};
+    for (const r of liveRecipes(recipes)) {
+      for (const matId of Object.keys(r.materials || {})) {
+        if (!map[matId]) map[matId] = [];
+        map[matId].push(r.id);
+      }
+    }
+    return map;
+  }
+
+  function materialSources(materialId, recipes = [], enemies = []) {
+    const id = String(materialId || '');
+    const preferred = enemies
+      .filter((e) => (e.preferredMaterials || e.lootMaterials || []).map(String).includes(id)
+        || (e.preferred_enemy_ids || []).length === 0 && false)
+      .map((e) => ({ id: e.id, name: e.name || e.id, problemAxis: e.problemAxis || null }));
+    // 配方上的 preferred_enemy_ids 也作来源提示
+    const fromRecipes = [];
+    for (const r of liveRecipes(recipes)) {
+      if (!Number((r.materials || {})[id] || 0)) continue;
+      for (const eid of r.preferred_enemy_ids || []) {
+        const e = enemies.find((x) => x.id === eid);
+        if (e && !preferred.some((p) => p.id === e.id)) {
+          fromRecipes.push({ id: e.id, name: e.name || e.id, problemAxis: e.problemAxis || null, viaRecipe: r.id });
+        }
+      }
+    }
+    return [...preferred, ...fromRecipes];
+  }
+
+  // Gate 5：目标 Build → 配方 → 缺材料 → 哪类敌人产。
+  function farmChain(kitIdOrRecipeId, options = {}) {
+    const { recipes = [], enemies = [], owned = {}, materials = {}, guById = {} } = options;
+    const live = liveRecipes(recipes);
+    let recipe = live.find((r) => r.id === kitIdOrRecipeId);
+    let kit = BUILD_KITS[kitIdOrRecipeId] || null;
+    if (!recipe && kit) {
+      // 组合优先绑定到完成该组合的分支配方
+      const outId = kit.members[kit.members.length - 1];
+      recipe = live.find((r) => r.output === outId || (kit.members || []).includes(r.output))
+        || live.find((r) => r.branchAxis && kit.axis && r.branchAxis.startsWith(kit.axis.slice(0, 4)));
+    }
+    if (!recipe) return null;
+    const needed = Object.entries(recipe.materials || {}).map(([matId, n]) => {
+      const have = Number(materials[matId] || 0);
+      const need = Number(n || 1);
+      return {
+        materialId: matId,
+        need,
+        have,
+        missing: Math.max(0, need - have),
+        sources: materialSources(matId, recipes, enemies),
+      };
+    });
+    const missing = needed.filter((m) => m.missing > 0);
+    return {
+      kitId: kit?.id || null,
+      kitLabel: kit?.label || null,
+      recipeId: recipe.id,
+      branchLabel: recipe.branchLabel || recipe.output,
+      output: recipe.output,
+      farmHint: recipe.farm_hint || null,
+      preferredEnemyIds: [...(recipe.preferred_enemy_ids || [])],
+      materials: needed,
+      missing,
+      // 选敌建议：缺什么就去打谁
+      chase: missing.flatMap((m) => m.sources.map((s) => ({
+        enemyId: s.id,
+        enemyName: s.name,
+        problemAxis: s.problemAxis,
+        materialId: m.materialId,
+      }))),
+    };
+  }
+
+  // 获得新蛊后的构筑关联：可替换 / 可炼 / 可组杀招 / 可进哪套组合。
+  function gainInsight(guId, options = {}) {
+    const {
+      owned = {}, recipes = [], killMoves = [], guById = {},
+    } = options;
+    const id = String(guId || '');
+    const gu = guById[id] || {};
+    const role = buildRoleOf(gu, guById);
+    const tags = buildTagsOf(gu, guById);
+    const substitutes = compatibleSubstitutes(id, guById)
+      .filter((sid) => Number(owned[sid] || 0) > 0)
+      .map((sid) => ({
+        id: sid,
+        name: (guById[sid] || {}).name || sid,
+        role: buildRoleOf(sid, guById),
+      }));
+
+    const refineInto = (recipes || [])
+      .filter((r) => isLiveRecipe(r) && (r.inputs || []).includes(id))
+      .map((r) => ({
+        id: r.id,
+        output: r.output,
+        outputName: (guById[r.output] || {}).name || r.output,
+        inputs: [...(r.inputs || [])],
+      }));
+
+    const killMoveForms = [];
+    for (const move of killMoves || []) {
+      const slots = move.recipe || [];
+      const usesDirectly = slots.includes(id);
+      const fillsGap = slots.some((sid) => Number(owned[sid] || 0) <= 0
+        && compatibleSubstitutes(sid, guById).includes(id));
+      const variants = killMoveVariants(move, { ...owned, [id]: (Number(owned[id] || 0) + 1) }, guById);
+      const changedVariants = variants.filter((v) => v.changed);
+      if (usesDirectly || fillsGap || changedVariants.length) {
+        const basePlan = killMoveEffectPlan(move, guById, {});
+        const bestChanged = changedVariants[0] || null;
+        killMoveForms.push({
+          moveId: move.id,
+          label: move.label,
+          usesDirectly,
+          fillsGap,
+          canForm: variants.some((v) => v.recipe.every((rid) => Number({ ...owned, [id]: 1 }[rid] || 0) > 0)),
+          baseSignature: `dmg${basePlan.damage}|heal${basePlan.heal}|blk${basePlan.block}`,
+          variantSignature: bestChanged ? bestChanged.signature : null,
+          variantRecipe: bestChanged ? bestChanged.recipe : null,
+          changesPattern: !!(bestChanged && bestChanged.signature !== `dmg${basePlan.damage}|heal${basePlan.heal}|blk${basePlan.block}`),
+        });
+      }
+    }
+
+    const kitJoins = [];
+    const ownedBefore = { ...owned };
+    const beforeCount = Math.max(0, Number(owned[id] || 0) - 1);
+    if (beforeCount > 0) ownedBefore[id] = beforeCount;
+    else delete ownedBefore[id];
+    for (const kit of Object.values(BUILD_KITS)) {
+      const direct = kit.members.includes(id) || (kit.optional || []).includes(id);
+      const coversGap = kit.members.some((mid) => Number(ownedBefore[mid] || 0) <= 0
+        && (mid === id || compatibleSubstitutes(mid, guById).includes(id)));
+      if (direct || coversGap) {
+        // 用「获得之后」的库存对照「获得之前」，判断是否刚好补完
+        const after = kitCoverage(kit.id, owned, guById);
+        const before = kitCoverage(kit.id, ownedBefore, guById);
+        kitJoins.push({
+          kitId: kit.id,
+          label: kit.label,
+          axis: kit.axis,
+          direct,
+          coversGap,
+          completes: !!after.ok && !before.ok,
+          stillMissing: after.missing,
+        });
+      }
+    }
+
+    const decisions = [];
+    if (substitutes.length) {
+      decisions.push({
+        kind: 'replace',
+        label: '替换旧元件',
+        detail: `可换下：${substitutes.map((s) => s.name).join('、')}`,
+      });
+    }
+    if (refineInto.length) {
+      decisions.push({
+        kind: 'forge',
+        label: '进入炼蛊',
+        detail: `可炼成：${refineInto.map((r) => r.outputName).join('、')}`,
+      });
+    }
+    if (killMoveForms.some((k) => k.usesDirectly || k.fillsGap || k.changesPattern)) {
+      decisions.push({
+        kind: 'killmove',
+        label: '进入杀招',
+        detail: `可组成/改变：${killMoveForms.map((k) => k.label).join('、')}`,
+      });
+    }
+    if (kitJoins.length) {
+      decisions.push({
+        kind: 'kit',
+        label: '进入组合',
+        detail: `推进：${kitJoins.map((k) => k.label).join('、')}`,
+      });
+    }
+    decisions.push({
+      kind: 'keep',
+      label: '保留库存',
+      detail: '暂不重构，维持旧 Build',
+    });
+    if (Number(gu.value || 0) > 0) {
+      decisions.push({
+        kind: 'sell',
+        label: '出售',
+        detail: `可变现 ${Math.floor(Number(gu.value || 0) * 0.5)} 元石`,
+      });
+    }
+
+    const realKinds = new Set(decisions.map((d) => d.kind).filter((k) => k !== 'keep' && k !== 'sell'));
+    return {
+      guId: id,
+      name: gu.name || id,
+      role,
+      tags,
+      substitutes,
+      refineInto,
+      killMoveForms,
+      kitJoins,
+      decisions,
+      hasRealDecision: realKinds.size > 0 || substitutes.length > 0 || killMoveForms.length > 0,
+    };
+  }
+
   return Object.freeze({
     canActivate,
     activationReason,
@@ -367,5 +867,23 @@ globalThis.GuRules = (() => {
     killMoveIsDirectStrike,
     resolveProblemHit,
     addVerbs,
+    BUILD_ROLES,
+    BUILD_KITS,
+    buildRoleOf,
+    buildTagsOf,
+    kitById,
+    kitCoverage,
+    actionStructureFor,
+    compatibleSubstitutes,
+    killMoveVariants,
+    killMoveVariantByRecipe,
+    gainInsight,
+    forkGroups,
+    isStrictlyDominatedRecipe,
+    branchFutures,
+    forgeBranchSignatures,
+    materialConsumers,
+    materialSources,
+    farmChain,
   });
 })();

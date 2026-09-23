@@ -402,6 +402,10 @@ function rollVictoryLoot(battle) {
   const table = LootRules.layerTable(DATA.loot.tables, DATA.loot.pacingLayers, tier, layer);
   const tick = state.eventLog.length;
   const targets = DATA.loot.materialPityTargetsByTier[tier] || [];
+  const consumers = (typeof GuRules !== 'undefined' && GuRules.materialConsumers)
+    ? GuRules.materialConsumers(DATA.recipes)
+    : null;
+  const preferred = [...new Set((battle.enemies || []).flatMap((e) => e.preferredMaterials || []))];
   const materialRoll = table
     ? LootRules.rollMaterials(table, {
         seed: state.seed,
@@ -411,6 +415,8 @@ function rollVictoryLoot(battle) {
         materialPityByTier: state.materialPityByTier,
         targets,
         pityConfig: DATA.loot.pity,
+        consumers,
+        preferred,
       })
     : { materialIds: [] };
   const supportPool = DATA.flow.supportGuBySegment[String(layer)] || [];
@@ -428,14 +434,39 @@ function rollVictoryLoot(battle) {
         choiceCount: DATA.flow.rewardGuChoiceCount || 3,
       })
     : { guIds: [], rarity: '' };
+  // L0 Phase 6：精英/Boss 至少塞进一个「新未来」候选（补组合/开杀招）
+  let guChoices = guRoll.guIds || [];
+  if (tier === 'elite' || tier === 'boss') {
+    const newFuture = LootRules.newFutureGuIds({
+      owned: state.owned,
+      guById: GU_BY_ID,
+      killMoves: DATA.killMoves,
+      buildKits: GuRules.BUILD_KITS,
+    });
+    guChoices = LootRules.ensureNewFutureChoice(guChoices, newFuture, {
+      seed: state.seed, tick, tier,
+      byRarity: table?.gu_pool?.by_rarity || {},
+    });
+  }
+  const stones = RunRules.battleStoneReward(tier, layer, DATA.battle.stoneRewards);
+  const rewardCore = {
+    stones,
+    materialIds: materialRoll.materialIds,
+    guChoices,
+  };
+  const valueKinds = LootRules.classifyReward(rewardCore, { guById: GU_BY_ID, consumers });
   return {
-    stones: RunRules.battleStoneReward(tier, layer, DATA.battle.stoneRewards),
+    stones,
     tier,
     layer,
     tick,
     materialIds: materialRoll.materialIds,
-    guChoices: guRoll.guIds || [],
+    guChoices,
     guRarity: guRoll.rarity || '',
+    valueKinds,
+    lootIdentity: tier === 'boss' ? 'new_future'
+      : tier === 'elite' ? 'build_component'
+        : 'economy_growth',
     materialPityByTier: LootRules.nextMaterialPity(
       state.materialPityByTier,
       tier,
@@ -880,6 +911,12 @@ const act = {
       first ? 'first_gu_attuned' : 'gu_attuned',
       [definitionId],
     );
+    state.lastGainInsight = GuRules.gainInsight(definitionId, {
+      owned: state.owned,
+      recipes: GuRules.liveRecipes(DATA.recipes),
+      killMoves: DATA.killMoves,
+      guById: GU_BY_ID,
+    });
     Sfx.success();
     toast(`炼化成功 · ${gu.name}`, 'good');
     draw();
@@ -922,6 +959,12 @@ const act = {
     if (RunRules.refinementSucceeds(roll, r)) {
       state.owned[r.output] = (state.owned[r.output] || 0) + 1;
       recordEvent('refine_gu', { owned: { ...state.owned } }, 'refinement_succeeded', [r.output]);
+      state.lastGainInsight = GuRules.gainInsight(r.output, {
+        owned: state.owned,
+        recipes: GuRules.liveRecipes(DATA.recipes),
+        killMoves: DATA.killMoves,
+        guById: GU_BY_ID,
+      });
       Sfx.success();
       toast(`开炉成功 · ${outName}`, 'good');
     } else {
@@ -1502,6 +1545,12 @@ const act = {
     state.stones -= cost;
     if (offer.kind === 'purchase') {
       state.owned[offer.gu_id] = (state.owned[offer.gu_id] || 0) + 1;
+      state.lastGainInsight = GuRules.gainInsight(offer.gu_id, {
+        owned: state.owned,
+        recipes: GuRules.liveRecipes(DATA.recipes),
+        killMoves: DATA.killMoves,
+        guById: GU_BY_ID,
+      });
     } else if (offer.kind === 'material_purchase') {
       state.materials[offer.material_id] = (state.materials[offer.material_id] || 0) + 1;
     } else if (offer.kind === 'gu_fang_unlock') {
@@ -1654,9 +1703,29 @@ const act = {
     state.owned[guId] = (state.owned[guId] || 0) + 1;
     state.journal.unshift(`战后三选一 · ${(GU_BY_ID[guId] || {}).name || guId}`);
     recordEvent('battle_loot', { owned: { ...state.owned }, loot_pity: state.lootPity }, 'loot_gu_gained', [guId]);
+    // L0 Phase 3：获得后明确关联装备/炼蛊/杀招未来，不自动装备
+    const insight = GuRules.gainInsight(guId, {
+      owned: state.owned,
+      recipes: GuRules.liveRecipes(DATA.recipes),
+      killMoves: DATA.killMoves,
+      guById: GU_BY_ID,
+    });
+    state.lastGainInsight = insight;
+    recordEvent('battle_loot', { insight: {
+      gu_id: insight.guId,
+      role: insight.role,
+      decisions: insight.decisions.map((d) => d.kind),
+      kill_moves: insight.killMoveForms.map((k) => k.moveId),
+      kits: insight.kitJoins.map((k) => k.kitId),
+      has_real_decision: insight.hasRealDecision,
+      opens_new_choice: typeof LootRules !== 'undefined' && LootRules.opensNewChoice
+        ? LootRules.opensNewChoice(reward || {}, insight)
+        : insight.hasRealDecision,
+    } }, 'build_insight_offered', [guId]);
     // 领取后立刻失效 reward，防重复点击追加
     state.reward = null;
     Sfx.success();
+    toast(`获得 ${insight.name} · ${insight.decisions.map((d) => d.label).join(' / ')}`, 'good');
     act.openPrep();
   },
 

@@ -20,10 +20,15 @@ function renderKillmove(root) {
     const mats = m.recipe.map((id) =>
       `<span title="${nameOf(id)}" style="display:inline-flex;align-items:center;gap:5px;margin-right:9px">
          <img src="${iconOf(id)}" style="width:22px;height:22px;object-fit:contain">${nameOf(id)}</span>`).join('');
+    const variants = GuRules.killMoveVariants(m, state.owned, GU_BY_ID).filter((v) => v.changed);
+    const variantNote = variants.length
+      ? `<div class="mr" style="opacity:.85">Variant：${variants.slice(0, 2).map((v) => `${v.recipe.map(nameOf).join('+')} → ${v.signature}`).join('；')}</div>`
+      : '';
     return `<div class="move ${can ? 'ready' : ''}">
       <div class="ml">${m.label}</div>
       <div class="mr">${mats}</div>
       <div class="me">${killMoveEffectText(m, GU_BY_ID)}</div>
+      ${variantNote}
       <div class="mc">真元 ${m.true_qi_cost} · 念头 ${m.thought_cost}${m.life_cost ? ` · 寿元 ${m.life_cost}` : ''}</div>
       <button style="margin-top:11px" ${can ? '' : 'disabled'} data-km="${m.id}">${on ? '卸下' : '记入杀招'}</button>
     </div>`;

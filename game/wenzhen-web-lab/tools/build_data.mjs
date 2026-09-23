@@ -44,6 +44,7 @@ const LAB_EFFECT_GU_IDS = [
 ];
 const COMBAT_GU_ICON = {
   moonlight_gu: 'gu_moon', small_light_gu: 'gu_light', moon_glow_gu: 'gu_moon',
+  moon_ray_gu: 'gu_moon', bear_strength_gu: 'gu_force',
   white_boar_strength_gu: 'gu_force', jade_skin_gu: 'gu_water', stone_shell_gu: 'gu_earth',
   white_jade_gu: 'gu_water', blood_farewell_gu: 'gu_blood', blood_droplet_gu: 'gu_blood',
   vitality_grass_gu: 'gu_qi', sword_atk_1_06_gu: 'gu_sword', sword_atk_1_05_gu: 'gu_sword',
@@ -122,6 +123,9 @@ const guView = (e) => {
   return {
     id: e.id, name: names.gu?.[e.id] || e.id, rank: e.rank, rarity: e.rarity,
     role: support ? 'support' : role,
+    // L0 Phase 2：构筑角色（解法元件），不是数值牌定位
+    buildRole: e.buildRole || null,
+    buildTags: e.buildTags ? [...e.buildTags] : [],
     school: e.school, value: e.value, cost: Number(e.true_qi_cost ?? e.essence_cost ?? 0),
     effect: support
       ? { kind: e.id === 'aptitude_gu' ? 'aptitude_up' : 'breakthrough_material' }
@@ -177,11 +181,9 @@ if (!gu.some((entry) => entry.id === 'aptitude_gu')) {
 }
 const baseGuIds = Object.keys(COMBAT_GU_ICON);
 
-// 配方：取同时涉及所选蛊、且是二转产出的固定配方。
-// L0 2026-09-25 Phase 0：升炼自环（投入=产出）与无真实语义的 advance 不进 live 可见路径。
-// 必须过滤掉没有输入蛊的条目：那种配方在原型里会变成"无材料免费开炉"。
+// 配方：固定配方 + Phase 4 分支元数据；过滤自环与被支配项。
 const fixed = recipes.filter((r) =>
-  r.kind === 'fixed' && r.output_gu_id && baseGuIds.includes(r.output_gu_id) &&
+  r.kind === 'fixed' && !r.retired && r.output_gu_id && baseGuIds.includes(r.output_gu_id) &&
   (r.input_gu_ids || []).length > 0 &&
   r.input_gu_ids.every((i) => baseGuIds.includes(i)));
 const advances = recipes.filter((r) => {
@@ -192,11 +194,35 @@ const advances = recipes.filter((r) => {
   if ([...new Set(inputs)].length === 1 && inputs[0] === r.output_gu_id) return false;
   return true;
 }).slice(0, 2);
-const picked = [...fixed, ...advances].map((r) => ({
+const rawPicked = [...fixed, ...advances].map((r) => ({
   id: r.id, kind: r.kind, inputs: r.input_gu_ids || [], output: r.output_gu_id,
   stoneCost: r.stone_cost || 0, materials: r.materials || null, source: r.source || null,
   successRollMax: r.success_roll_max ?? 100,
+  forkId: r.fork_id || null,
+  branchLabel: r.branch_label || null,
+  branchAxis: r.branch_axis || null,
+  materialRole: r.material_role || null,
+  farmHint: r.farm_hint || null,
+  preferredEnemyIds: r.preferred_enemy_ids ? [...r.preferred_enemy_ids] : [],
+  closes: r.closes ? [...r.closes] : [],
+  delays: r.delays ? [...r.delays] : [],
 }));
+const inputKey = (r) => [...(r.inputs || [])].sort().join('+');
+const isDominated = (r, all) => all.some((o) => {
+  if (o === r || o.output !== r.output) return false;
+  const oIn = o.inputs || [];
+  const rIn = r.inputs || [];
+  if (!rIn.every((id) => oIn.includes(id))) return false;
+  if (Number(o.stoneCost || 0) > Number(r.stoneCost || 0)) return false;
+  const rMat = Object.entries(r.materials || {});
+  if (rMat.some(([k, v]) => Number((o.materials || {})[k] || 0) > Number(v))) return false;
+  const stricter = oIn.length < rIn.length
+    || Number(o.stoneCost || 0) < Number(r.stoneCost || 0)
+    || rMat.some(([k, v]) => Number((o.materials || {})[k] || 0) < Number(v))
+    || inputKey(o) !== inputKey(r);
+  return stricter && oIn.length <= rIn.length;
+});
+const picked = rawPicked.filter((r) => !isDominated(r, rawPicked));
 
 const killMoves = (v1.kill_moves || []).filter((k) => (k.recipe || []).every((i) => baseGuIds.includes(i)));
 
@@ -247,6 +273,7 @@ const pickedEnemies = pickedEnemyIds
     problemLabel: e.problemLabel || null,
     armorValue: e.armorValue ?? null,
     evasionBreakpoint: e.evasionBreakpoint ?? null,
+    preferredMaterials: e.preferredMaterials ? [...e.preferredMaterials] : [],
     intent: e.intent, portrait: ART[e.id] || PORTRAIT_BY_THEME[e.theme] || 'enemy_beast_swarm',
     // 多阶段 AI：数据里 phases 为 [{until_hp_ratio, intents[{damage,speed,cooldown,essence_burn}], reactions}]，
     // 选取语义见数据自带的 _phases_note（冷却、阶段阈值严格递减、全部冷却则 cooldown_wait）。
@@ -306,6 +333,11 @@ const encounters = nodeList
 const SHOP_OFFER_KINDS = new Set(['purchase', 'material_purchase']);
 const supportShopOffers = [
   { id: 'lab_shop_aptitude_gu', kind: 'purchase', gu_id: 'aptitude_gu', tier: 1, stone_cost: 20 },
+  // Phase 7：配方钥匙进货架，和买构筑/存突破竞争（购买力 ≈ 1–2 I）
+  { id: 'lab_shop_moon_dew', kind: 'material_purchase', material_id: 'moon_dew', tier: 1, stone_cost: 3 },
+  { id: 'lab_shop_beast_bone', kind: 'material_purchase', material_id: 'beast_bone', tier: 1, stone_cost: 3 },
+  { id: 'lab_shop_beast_blood', kind: 'material_purchase', material_id: 'beast_blood', tier: 1, stone_cost: 4 },
+  { id: 'lab_shop_venom_sac', kind: 'material_purchase', material_id: 'venom_sac', tier: 1, stone_cost: 5 },
   ...Object.entries(SARI_BY_RANK)
     .map(([rank, guId]) => {
       const entity = battleGuById[guId] || {};
