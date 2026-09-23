@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>问真 · 快速玩法实验</title>
+  <style>
+    :root{color-scheme:dark;font-family:"Noto Serif SC","Microsoft YaHei",serif;background:#151917;color:#e9e1cb}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#34423a,#151917 65%);min-height:100vh}
+    main{max-width:1000px;margin:auto;padding:24px 18px 50px}h1{font-size:28px;letter-spacing:.12em;margin:0 0 6px}h2{font-size:21px;margin:0 0 14px}h3{font-size:17px;margin:0 0 8px}
+    .muted{color:#b8b7aa}.small{font-size:13px}.lead{line-height:1.7;margin:4px 0 20px}
+    .stats,.row,.cards{display:flex;gap:10px;flex-wrap:wrap}.stats{margin:18px 0}.stat,.card,.panel{background:#202922;border:1px solid #58624a;border-radius:9px;padding:15px}.stat{min-width:105px;flex:1}.stat b{display:block;color:#f5d992;font-size:21px;margin-top:5px}
+    .panel{margin:14px 0}.card{flex:1;min-width:230px;line-height:1.55}.card strong{color:#f5d992}.card p{margin:8px 0}.badge{display:inline-block;border:1px solid #9e9a72;border-radius:20px;padding:2px 9px;font-size:12px;margin-right:6px}
+    button{font:inherit;background:#a38a55;color:#171914;border:1px solid #d0b878;border-radius:6px;padding:9px 13px;cursor:pointer;font-weight:700;margin:4px 6px 4px 0}button:hover:not(:disabled){background:#d8b86b}button:disabled{opacity:.42;cursor:not-allowed}.secondary{background:#354438;color:#eee7ce;border-color:#788e72}.danger{background:#694840;color:#fff2e1;border-color:#b07965}
+    select{font:inherit;background:#121a15;color:#f5ecd5;border:1px solid #85916c;border-radius:5px;padding:8px;max-width:100%}label{display:block;margin:8px 0}.log{max-height:220px;overflow:auto;line-height:1.5;padding-left:22px}.log li{margin-bottom:5px}.notice{color:#f5d992;font-weight:bold}.enemy{border-color:#a1745e;background:#302825}.end{border-color:#d7b868;text-align:center;padding:32px}a{color:#e9cc8b}
+    .guide{border-color:#d5b66b;background:#2e3024}.guide h2{color:#f5d992}.guide p{line-height:1.65;margin:8px 0}.guide .step{font-size:13px;color:#d5c291;letter-spacing:.08em}
+    .arena{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:16px 0}.fighter{background:#1b211d;border:1px solid #65705b;border-radius:8px;padding:14px;min-width:0}.fighter.foe{background:#382a27;border-color:#ae7860}.fighter.hit{animation:impact .5s ease-out}.fighter.blocked{animation:block .5s ease-out}.fighter .face{font-size:30px;line-height:1.1}.fighter .name{font-weight:700;margin:5px 0}.fighter .number{font-size:20px;color:#f4da9b;font-weight:700}.meter{height:10px;background:#101511;border:1px solid #58624a;border-radius:8px;overflow:hidden;margin:8px 0}.meter i{display:block;height:100%;background:#a84e45;transition:width .35s ease}.fighter.player .meter i{background:#80a477}.versus{align-self:center;color:#cbbd94;font-size:18px;font-weight:700}.feedback{border:1px solid #b59b62;border-radius:8px;background:#302c21;padding:13px 16px;margin:12px 0;animation:appear .35s ease-out}.feedback.good{border-color:#8cb181}.feedback.bad{border-color:#cf766c}.feedback.neutral{border-color:#b59b62}.feedback strong{font-size:18px;color:#f6e6bb}.feedback ul{margin:8px 0 0;padding-left:20px;line-height:1.55}.feedback li{margin:3px 0}.feedback .delta{font-weight:700;margin:7px 0}.feedback .hurt{color:#ffafa2}.feedback .dealt{color:#b7e1a2}.feedback .quiet{color:#cfc6ab}
+    @keyframes impact{0%{transform:translateX(0);box-shadow:0 0 0 transparent}25%{transform:translateX(6px);box-shadow:0 0 25px #b85b50}50%{transform:translateX(-4px)}100%{transform:translateX(0);box-shadow:0 0 0 transparent}}@keyframes block{0%{box-shadow:0 0 0 transparent}45%{box-shadow:0 0 25px #8db6aa}100%{box-shadow:0 0 0 transparent}}@keyframes appear{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:620px){.arena{grid-template-columns:1fr 1fr}.versus{display:none}.fighter{padding:10px}.fighter .number{font-size:16px}}@media(prefers-reduced-motion:reduce){.fighter.hit,.fighter.blocked,.feedback{animation:none}.meter i{transition:none}}
+    .turn-timeline{border-left:3px solid #9db08c;padding:8px 14px;background:#1d251f;margin:12px 0}.turn-timeline ol{margin:6px 0 0;padding-left:20px;line-height:1.5}.enemy h3{margin-top:18px;color:#dfd1a9}
+    .intent{border:1px solid #c88d60;background:#3b2b25;border-radius:8px;padding:12px 15px;line-height:1.5}.intent strong{color:#ffd28f}
+  </style>
+</head>
+<body><main id="app"></main><script src="fast-loop.js"></script></body>
+</html>
