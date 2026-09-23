@@ -236,7 +236,9 @@ static func _build_gu_slots(run_state, catalog: Dictionary) -> Array[Dictionary]
 	return result
 
 
-## 杀招（方案一：战斗外配置配方）。配方引用蛊 instance_id，数据在
+## L0 2026-09-22 battle2 归并：战斗伤害/效果/杀招/反击的唯一结算入口是本文件。
+## battle2/turn_engine 只提供回合念头账本，不得并行结算战斗效果。
+## 杀招效果 = recipe 组件 v1_effect 按顺序合成（见 play_kill_move）。
 ## data/v1_battle.json 或 gu 定义的 kill_moves（按 definition_id 组装）。
 static func _build_kill_moves(run_state, catalog: Dictionary) -> Array[Dictionary]:
 	var cfg: Dictionary = load_config(catalog)
@@ -275,8 +277,11 @@ static func _build_kill_moves(run_state, catalog: Dictionary) -> Array[Dictionar
 			"true_qi_cost": int(km.get("true_qi_cost", 0)),
 			"thought_cost": int(km.get("thought_cost", 1)),
 			"life_cost": int(km.get("life_cost", 0)),
-			"damage": int(km.get("damage", 0)),
-			"effect": km.get("effect", {}),
+			# LEGACY 2026-09-22：预制 damage/effect 不再主结算；效果=recipe 组件 v1_effect 顺序合成。
+			"damage": 0,
+			"effect": {},
+			"legacy_declared_damage": int(km.get("damage", 0)),
+			"legacy_declared_effect": km.get("effect", {}),
 			"reveals": false,
 		})
 		if recipe.size() != (km.get("recipe", []) as Array).size():
@@ -690,11 +695,15 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String, confirmed: 
 	if index < 0:
 		return _result(battle, false, "unknown_kill_move")
 	var km: Dictionary = battle["kill_moves"][index]
-	# 2026-09-05 切片护栏：effect 字段形状必须在资源扣费前校验，空 effect 只
-	# 允许 damage-only 杀招（例如 km_bright_thread）。
-	var km_effect_reason := effect_reason(km.get("effect", {}))
-	if not km_effect_reason.is_empty():
-		return _result(battle, false, km_effect_reason)
+	# L0 2026-09-22：形状校验改为逐组件 v1_effect（合成结算）；预制 effect 仅 LEGACY 保留。
+	var km_effect_reason := ""
+	for instance_id in km["recipe"]:
+		var check_slot := _find_slot(battle, str(instance_id))
+		if check_slot.is_empty():
+			continue
+		km_effect_reason = effect_reason(check_slot.get("effect", {}))
+		if not km_effect_reason.is_empty():
+			return _result(battle, false, km_effect_reason)
 	for instance_id in km["recipe"]:
 		var slot := _find_slot(battle, str(instance_id))
 		if slot.is_empty() or bool(slot.get("is_sealed", false)):
@@ -744,11 +753,23 @@ static func play_kill_move(battle: Dictionary, kill_move_id: String, confirmed: 
 				next["enemies"][target_index]["counter_revealed"] = (enemy["counter_revealed"] as Array).duplicate()
 				(next["enemies"][target_index]["counter_revealed"] as Array).append(tag)
 	if not countered:
-		# T14（2026-09-12）：杀招吃**本回合同流派支援**（F4：支援只惠及本回合后续同流派蛊）。
-		# 杀招的流派归属就是它的 `tag`，故与蛊共用 `_apply_effect` 的同一条支援通道。
-		next = _apply_effect(next, {"effect": km.get("effect", {}), "school": tag}, "kill_move")
-		if int(km.get("damage", 0)) > 0:
-			next = _strike_enemy(next, int(km.get("damage", 0)))
+		# L0 2026-09-22：杀招效果必须由 recipe 组件按顺序合成；预制 effect/damage 不再主结算。
+		for instance_id in km["recipe"]:
+			var part_slot := _find_slot(next, str(instance_id))
+			if part_slot.is_empty():
+				continue
+			var part_effect: Dictionary = (part_slot.get("effect", {}) as Dictionary).duplicate(true)
+			if part_effect.is_empty():
+				continue
+			# T14：杀招吃本回合同流派支援——school 取组件自身流派，缺省回落 kill move tag。
+			var part_school := str(part_slot.get("school", tag))
+			if part_school.is_empty():
+				part_school = tag
+			next = _apply_effect(next, {
+				"effect": part_effect,
+				"school": part_school,
+				"instance_id": str(instance_id),
+			}, "kill_move")
 	# T14：泄密——杀招用一次即入「被洞悉」态（原文「仙道杀招一旦被借用，当中的秘密
 	# 就会被其他蛊仙洞悉」）。条目 `reveals` 置真，并把在场敌人记入 `battle.revealed_to`，
 	# 供后续「被克制」判定消费（敌人生成侧接线属图谱 §4-D3，并入 P3）。

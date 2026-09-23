@@ -369,6 +369,57 @@ globalThis.MvpBalance = (() => {
     return Object.freeze(out);
   }
 
+  /* ---------------- Market 投影（Integration 刀5） ----------------
+     OWNER = scripts/domain/market_rules.gd + game/data/balance.json。
+     只复述同一公式，禁止第二套定价；成交价不因投影改值。 */
+  const Market = Object.freeze({
+    owner: 'game/scripts/domain/market_rules.gd',
+    t1MaterialBasePrice() {
+      return Number(WORLD.stone_per_t1_material ?? 10);
+    },
+    rankStandardPrice(rank) {
+      return Market.t1MaterialBasePrice() * worldRankMultiplier(rank);
+    },
+    publicBuybackRatio() {
+      return Number(WORLD.public_buyback_ratio ?? 0.5);
+    },
+    lowLiquidityRatio() {
+      return Number(WORLD.low_liquidity_ratio ?? 0.3);
+    },
+    publicResale(value) {
+      return Math.max(0, Number(value) || 0) * Market.publicBuybackRatio();
+    },
+    lowLiquidityResale(value) {
+      return Math.max(0, Number(value) || 0) * Market.lowLiquidityRatio();
+    },
+    guPublicPrice(rank) {
+      return Market.rankStandardPrice(rank) * 4;
+    },
+    guRecyclePrice(rank) {
+      return Market.rankStandardPrice(rank);
+    },
+    guEstimate(rank) {
+      return Market.rankStandardPrice(rank) * Number(WORLD.gu_estimate_ratio ?? 6.5);
+    },
+    guValueByRank(rank) {
+      const table = WORLD.gu_value_by_rank || {};
+      return Number(table[String(rank)] ?? table[rank] ?? 0);
+    },
+    demandPriceTiers() {
+      return WORLD.demand_price_tiers || [0.8, 1.0, 1.2];
+    },
+    demandQuote(basePerUnit, amount, tier) {
+      const tiers = Market.demandPriceTiers();
+      const index = Math.min(Math.max(0, Number(tier) || 0), tiers.length - 1);
+      const unit = Math.max(0, Number(basePerUnit) || 0) * Number(tiers[index] || 1);
+      return { unitPrice: unit, total: unit * Math.max(0, Number(amount) || 0) };
+    },
+    infoValue(baseValue, spreadCount) {
+      const base = Math.max(0, Number(baseValue) || 0);
+      return base * Math.pow(0.5, Math.max(0, Number(spreadCount) || 0));
+    },
+  });
+
   const api = Object.freeze({
     LAB,
     PP,
@@ -377,6 +428,7 @@ globalThis.MvpBalance = (() => {
     OVERRIDE_THRESHOLD,
     LAB_BUDGET_PROJECTION,
     WORLD,
+    Market,
     worldRankBudget,
     worldRankMultiplier,
     crossRankQiCost,

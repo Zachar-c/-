@@ -520,7 +520,9 @@ static func _synthesis_option(recipe: Dictionary, cfg: Dictionary, streak: int, 
 		"cost": cost,
 		"chance": chance,
 		"affordable": affordable,
-		"temp_card": str(recipe.get("temp_card_id", "")),
+		# L0 2026-09-22：战中合卡保留到战后——output_card 进入 gu_card_overrides，非临时。
+		"output_card": str(recipe.get("output_card_id", recipe.get("temp_card_id", ""))),
+		"persists_after_battle": bool(recipe.get("persists_after_battle", true)),
 	}
 
 

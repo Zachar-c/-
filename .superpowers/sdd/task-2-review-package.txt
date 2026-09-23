@@ -1,0 +1,267 @@
+﻿TASK 2 REVIEW PACKAGE
+
+===== COMMITS =====
+223c683 feat: A/B/C 涓夊眰瑙勫垯寮曟搸锛堣瘝琛?涔辩爜閬斀/閲嶅/鏁板瓧娣风敤/浣滆€呰秺浣?缃戠粶璇?鍦烘櫙澶嶅啓锛?
+
+===== STAT =====
+System.Object[]
+
+===== DIFF =====
+diff --git a/scripts/scan_candidates.py b/scripts/scan_candidates.py
+index 175aa7d..ac69e9a 100644
+--- a/scripts/scan_candidates.py
++++ b/scripts/scan_candidates.py
+@@ -1,17 +1,18 @@
+ # -*- coding: utf-8 -*-
+-"""鍏ㄤ功鍊欓€夋壂鎻忥細A/B/C 涓夌骇瑙勫垯+娓呭崟杈撳嚭锛堥鏋剁増鍏堣窇閫氱粨鏋勪笌杈撳嚭锛岃鍒欒 Task 2锛?"""
++"""鍏ㄤ功鍊欓€夋壂鎻忥細A/B/C 涓夌骇瑙勫垯+娓呭崟杈撳嚭锛堣瘝琛?涔辩爜閬斀/閲嶅/鏁板瓧娣风敤/浣滆€呰秺浣?缃戠粶璇?鍦烘櫙澶嶅啓锛夈€?""
+ import io
+ import json
+ import os
+ import re
+ import sys
++from difflib import SequenceMatcher
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ from gu_tools import PsArgs, repo_abs, write_csv_utf8_bom, write_utf8_no_bom
+ from clean_full_source import CONFIRMED_FIXES
+ 
+ CANDIDATE_FIELDS = ['seq', 'type', 'severity', 'section', 'line_source', 'line_edit', 'sample', 'rule', 'verdict']
+ RE_SECTION_HEAD = re.compile(r'^\s*绗琝s*[涓€浜屼笁鍥涗簲鍏竷鍏節鍗佺櫨鍗?-9]+\s*鑺俓s*[:锛歖?\s*\S')
+ 
+ 
+ def find_section(lines, line_index):
+@@ -22,27 +23,22 @@ def find_section(lines, line_index):
+             count += 1
+     return count
+ 
+ 
+ def build_candidate(type_, severity, section, line_source, line_edit, sample, rule, verdict=''):
+     return {'seq': 0, 'type': type_, 'severity': severity, 'section': section,
+             'line_source': line_source, 'line_edit': line_edit, 'sample': sample,
+             'rule': rule, 'verdict': verdict}
+ 
+ 
+-def scan_rules(lines):
+-    """瑙勫垯鍏ュ彛銆俆ask 1 杩斿洖绌猴紱Task 2 瀹炵幇涓夊眰瑙勫垯鍚庢浛鎹㈡湰浣撱€?""
+-    return []
+-
+-
+ def scan(lines):
+-    """瀵瑰鎵弿鍏ュ彛锛堣鍒欒 scan_rules锛涙湰浠诲姟涓虹┖瑙勫垯鍗犱綅锛夈€?""
++    """瀵瑰鎵弿鍏ュ彛锛氱粍鍚堜笁灞傝鍒欏叏閮ㄥ€欓€夈€?""
+     return scan_rules(lines)
+ 
+ 
+ def serialize_tsv(candidates, path):
+     rows = [{k: (c.get(k) if c.get(k) is not None else '') for k in CANDIDATE_FIELDS} for c in candidates]
+     if not rows:
+         parent = os.path.dirname(path)
+         if parent:
+             os.makedirs(parent, exist_ok=True)
+         with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+@@ -55,20 +51,112 @@ def serialize_md(candidates, edit_lines, path):
+     out = [u'# 鍊欓€夋竻鍗曪紙鏈哄櫒鐢熸垚锛泇erdict 鐢变細璇濆～鍐欙級', '']
+     for c in candidates:
+         out.append(u'### [seq {0}] {1} 绾?路 {2} 路 鑺倇3} 路 琛?{4}'.format(
+             c['seq'], c['severity'], c['type'], c['section'], c['line_source']))
+         out.append(u'鍘熸枃锛歿0}'.format((c['sample'] or '').replace('\n', ' ')))
+         out.append(u'瑙勫垯锛歿0}锛坴erdict={1}锛?.format(c['rule'], c['verdict']))
+         out.append('')
+     write_utf8_no_bom(path, u'\n'.join(out))
+ 
+ 
++RE_UNKNOWN_CHAR = re.compile(u'[\ufffd\uf8ff\ue000-\uf8ff]')
++RE_REDACT = re.compile(r'\[\*\*\*\]|\*\*')
++
++
++def mech_rules(lines):
++    out = []
++    for i, line in enumerate(lines, 1):
++        section = find_section(lines, i - 1)
++        for old, new in CONFIRMED_FIXES:
++            if old in line:
++                out.append(build_candidate('mech', 'A', section, i, i,
++                                           line.strip()[:120], 'wordlist', ''))
++        if RE_UNKNOWN_CHAR.search(line):
++            out.append(build_candidate('mech', 'B', section, i, i,
++                                       line.strip()[:120], 'mojibake', ''))
++        if RE_REDACT.search(line):
++            out.append(build_candidate('mech', 'B', section, i, i,
++                                       line.strip()[:120], 'redact', ''))
++    return out
++
++
++CHINESE_NUM = {u'闆?: '0', u'涓€': '1', u'浜?: '2', u'涓?: '3', u'鍥?: '4',
++               u'浜?: '5', u'鍏?: '6', u'涓?: '7', u'鍏?: '8', u'涔?: '9'}
++UNIT_WORDS = re.compile(u'[鍧楀厓鐭宠浆鎴愮骇骞存湀鏃ヤ袱宀乚')
++
++
++def semantic_rules(lines):
++    out = []
++    for i, line in enumerate(lines, 1):
++        section = find_section(lines, i - 1)
++        prev = lines[i - 2] if i > 1 else u''
++        if len(line) >= 12 and len(prev) >= 12:
++            ratio = SequenceMatcher(None, prev, line).ratio()
++            if ratio >= 0.8:
++                out.append(build_candidate('semantic', 'B', section, i - 1, i - 1,
++                                           prev.strip()[:120], 'repeat',
++                                           u'鐩镐技搴0:.2f}'.format(ratio)))
++        compact = re.sub(r'\s+', '', line)
++        han = set(re.findall(u'[涓€浜屼笁鍥涗簲鍏竷鍏節]+' + UNIT_WORDS.pattern + u'+', compact))
++        arab = set(re.findall(u'[0-9]+' + UNIT_WORDS.pattern + u'+', compact))
++        if han and arab:
++            out.append(build_candidate('semantic', 'B', section, i, i,
++                                       line.strip()[:120], 'num-mix',
++                                       u'涓枃鏁板瓧涓庨樋鎷変集鏁板瓧娣风敤'))
++    return out
++
++
++NETWORK_WORDS = [u'濡ュΕ鐨?, u'鍒峰睆', u'鐑悳', u'娴侀噺', u'鐐硅禐', u'璇勮鍖?, u'666', u'鍚愭Ы', u'鎵撳崱']
++RE_SCENE_SENT = re.compile(u'[銆傦紒锛焆')
++SCENE_VOCAB = u'椋庢湀浜戦洩灞卞厜澶╅浘姘旈湶闇滄槦娼崏鏈ㄨ姳鐭虫按鏍戝奖'
++
++
++def literary_rules(lines):
++    out = []
++    n = len(lines)
++    for i, line in enumerate(lines, 1):
++        section = find_section(lines, i - 1)
++        stripped = line.strip()
++        if re.match(u'^(?:鍐欏埌杩欓噷|璇村埌杩欓噷|绗旇€厊浣滆€厊鏈功|鍚勪綅璇昏€厊璇昏€?', stripped):
++            out.append(build_candidate('literary', 'C', section, i, i,
++                                       stripped[:90], 'author-speak', ''))
++        for w in NETWORK_WORDS:
++            if w in line:
++                out.append(build_candidate('literary', 'C', section, i, i,
++                                           stripped[:90], 'network-word', u'璇?{0}'.format(w)))
++    for start in range(0, n - 2):
++        chunk = lines[start:start + 4]
++        if _all_scene(chunk):
++            out.append(build_candidate('literary', 'C', find_section(lines, start),
++                                       start + 1, start + 1,
++                                       u' '.join(x.strip() for x in chunk)[:200],
++                                       'scene-repetition', ''))
++            break
++    return out
++
++
++def _all_scene(chunk):
++    for line in chunk:
++        s = line.strip()
++        if not s or not RE_SCENE_SENT.search(s):
++            return False
++        if re.search(u'[鈥溾€濃€樷€欙細]', s):
++            return False
++        if sum(1 for ch in SCENE_VOCAB if ch in s) < 2:
++            return False
++    return True
++
++
++def scan_rules(lines):
++    return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
++
++
+ def resolve_volume_dir(volume_id):
+     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
+         cfg = json.load(fh)
+     vol = next((v for v in cfg['volumes'] if v['id'] == volume_id), None)
+     if not vol:
+         raise SystemExit('Unknown volume: {0}'.format(volume_id))
+     pattern = re.compile(vol['directoryPattern'].replace('.', r'\.').replace('*', '.*'))
+     for name in sorted(os.listdir(repo_abs('volumes'))):
+         if pattern.match(name):
+             return os.path.join(repo_abs('volumes'), name)
+diff --git a/tests/test_scan_candidates.py b/tests/test_scan_candidates.py
+index 5a0f089..50ace23 100644
+--- a/tests/test_scan_candidates.py
++++ b/tests/test_scan_candidates.py
+@@ -4,21 +4,22 @@ import io
+ import os
+ import shutil
+ import sys
+ import tempfile
+ import unittest
+ 
+ SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts')
+ sys.path.insert(0, SCRIPTS_DIR)
+ 
+ from scan_candidates import (CANDIDATE_FIELDS, find_section, build_candidate,
+-                             serialize_tsv, serialize_md, scan)
++                             serialize_tsv, serialize_md, scan,
++                             scan_rules, mech_rules, semantic_rules, literary_rules)
+ 
+ 
+ class ScanBoneTests(unittest.TestCase):
+     def setUp(self):
+         self.tmp = tempfile.mkdtemp()
+ 
+     def tearDown(self):
+         shutil.rmtree(self.tmp)
+ 
+     def test_buildCandidateFields(self):
+@@ -49,12 +50,61 @@ class ScanBoneTests(unittest.TestCase):
+         serialize_md(cands, lines, path)
+         txt = io.open(path, 'r', encoding='utf-8').read()
+         self.assertIn(u'浣犲ソ', txt)
+         self.assertIn(u'author-speak', txt)
+ 
+     def test_findSectionMatchesChineseNumeralHead(self):
+         lines = [u'绗竴鐧句簲鍗佷竴鑺傦細绔熸槸铔婁粰浼犳壙', u'鐮帮紒', u'榛戞ゼ鍏颁竴鑴氳涪缈婚粦鏃楄儨銆?]
+         self.assertEqual(find_section(lines, 1), 1)
+ 
+ 
++class RuleTests(unittest.TestCase):
++    def test_mechWordlist(self):
++        lines = [u'绗?1 鑺傦細娴嬭瘯', u'浠栬翰闂笉鍙婏紝鐪熸槸娣笉鍙婇槻銆?, u'']
++        w = [c for c in mech_rules(lines) if c['rule'] == 'wordlist']
++        self.assertEqual(len(w), 1)
++        self.assertEqual(w[0]['severity'], 'A')
++        self.assertIn(u'娣笉鍙婇槻', w[0]['sample'])
++
++    def test_mechRedactAndMojibake(self):
++        lines = [u'灏戝勾鑴歌壊澶у彉锛氣€淸***]锛佲€?, u'涔辩爜琛孿ufffd銆?, u'']
++        r = [c for c in mech_rules(lines) if c['rule'] == 'redact']
++        m = [c for c in mech_rules(lines) if c['rule'] == 'mojibake']
++        self.assertEqual(len(r), 1)
++        self.assertEqual(len(m), 1)
++
++    def test_semanticRepeat(self):
++        lines = [u'浠栨繁娣辩殑鍚镐簡涓€鍙ｆ皵锛岀湅浜嗙湅韬竟鐨勬棌浜恒€?,
++                 u'浠栨繁娣辩殑鍚镐簡涓€鍙ｆ皵锛岀湅浜嗙湅韬竟鐨勬棌浜恒€?, u'']
++        rep = [c for c in semantic_rules(lines) if c['rule'] == 'repeat']
++        self.assertGreaterEqual(len(rep), 1)
++        self.assertEqual(rep[0]['severity'], 'B')
++
++    def test_semanticNumMix(self):
++        lines = [u'浠婃棩缁欎粬涓夊潡鍏冪煶锛屾槑鏃ュ張缁欎粬 3 鍧楀厓鐭炽€?, u'']
++        n = [c for c in semantic_rules(lines) if c['rule'] == 'num-mix']
++        self.assertGreaterEqual(len(n), 1)
++
++    def test_literaryAuthorSpeak(self):
++        lines = [u'鍐欏埌杩欓噷锛屾垜涔熶笉绂佽鍔濊鑰呬竴鍙ワ細榄旈亾鑷湁鍏朵唬浠枫€?, u'']
++        a = [c for c in literary_rules(lines) if c['rule'] == 'author-speak']
++        self.assertEqual(len(a), 1)
++        self.assertEqual(a[0]['severity'], 'C')
++
++    def test_literaryNetworkWord(self):
++        lines = [u'杩欑瑪浜ゆ槗绠€鐩翠笉瑕佸お鐖斤紝濡ュΕ鐨勩€?, u'']
++        n = [c for c in literary_rules(lines) if c['rule'] == 'network-word']
++        self.assertGreaterEqual(len(n), 1)
++
++    def test_literarySceneRep(self):
++        lines = [u'绗?12 鑺傦細搴旇瘯',
++                 u'娓呴鎷傝繃灞卞矖锛屾湀鍏夋磼钀芥灄闂达紝澶滆壊濡傛按銆?,
++                 u'寰杞绘姎鍙ゆ湪锛岄浘姘旀挨姘插崐灞憋紝浜戝奖寰樺緤銆?,
++                 u'瀵掗湶娌炬箍鐭抽樁锛岄澹版帬杩囧眿瑙掞紝鏈堝崕鏈﹁儳銆?,
++                 u'鍏夊奖浜ら敊鐭崇紳锛屽北姘旀诞娌夎崏鏈紝鏄熸枟娓愭矇銆?,
++                 u'', u'']
++        s = [c for c in literary_rules(lines) if c['rule'] == 'scene-repetition']
++        self.assertGreaterEqual(len(s), 1)
++
++
+ if __name__ == '__main__':
+     unittest.main()
+\ No newline at end of file
+

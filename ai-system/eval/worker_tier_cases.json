@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "decisionType": "worker_task_tier",
+  "source": "ai-system/tasks/* and RESEARCH-REQUEST-*.md (human/existing labels)",
+  "labelMap": {
+    "cheap_worker": "normal/docs-only",
+    "standard_worker": "normal",
+    "strong_worker": "hard",
+    "gpt6_escalation": "L1/L0 research request"
+  },
+  "cases": [
+    {
+      "id": "W01",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/phase2-first-godot-task.md",
+      "state": "Remove redundant content-catalog parse on start_new_run/start_m0_run. Bounded performance defect in run_controller.gd plus one focused regression test. No design decision, no balance, no save schema. Worker class documented as normal."
+    },
+    {
+      "id": "W02",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/p3a-effect-census.md",
+      "state": "Read-only effect census over game/data gu roles; write report and harden three tests. Zero data mutations. Documented Worker class normal."
+    },
+    {
+      "id": "W03",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/side-fix-enemy-runtime.md",
+      "state": "Side-fix enemy runtime bug with focused unit tests. Normal worker execution."
+    },
+    {
+      "id": "W04",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/wire-runtime-hp-source.md",
+      "state": "Wire runtime HP source to already-adjudicated economy.json values. Mechanical code wiring plus tests. Worker class normal."
+    },
+    {
+      "id": "W05",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/rank-foundation-canon.md",
+      "state": "Canon distillation for rank foundation into lore wiki with FACT/ANALYSIS markers. Substantial distillation work, documented Worker class normal."
+    },
+    {
+      "id": "W06",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/canon-soul-verification.md",
+      "state": "Soul-path canon verification against local source text; report evidence only. Worker class normal."
+    },
+    {
+      "id": "W07",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/wiki-soul-path-entry.md",
+      "state": "Write one soul-path wiki entry from verified quotes with FACT/ANALYSIS markers. Substantial distillation work, documented Worker class normal."
+    },
+    {
+      "id": "W08",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/visual-v2-batch1-library.md",
+      "state": "Visual research batch library indexing from local images and notes. Worker class normal."
+    },
+    {
+      "id": "W09",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/numeric-difficulty-axis-probe.md",
+      "state": "Probe existing difficulty axis numbers and file a report; no new numeric model. Worker class normal."
+    },
+    {
+      "id": "W10",
+      "gold": "standard_worker",
+      "source": "ai-system/tasks/soul-system-audit.md",
+      "state": "Audit soul system implementation vs documented contracts; list gaps only. Worker class normal."
+    },
+    {
+      "id": "W11",
+      "gold": "cheap_worker",
+      "source": "synthetic-from-practice",
+      "state": "Docs only: fix a markdown heading and a label update in a decision register. No logic change, no tests required beyond link check."
+    },
+    {
+      "id": "W12",
+      "gold": "cheap_worker",
+      "source": "synthetic-from-practice",
+      "state": "Census only: count gu.json role fallback candidates and emit a table. Pure read and report, no code edits."
+    },
+    {
+      "id": "W13",
+      "gold": "cheap_worker",
+      "source": "synthetic-from-practice",
+      "state": "Typo and marker cleanup in wiki entry captions. Pure documentation edit."
+    },
+    {
+      "id": "W14",
+      "gold": "cheap_worker",
+      "source": "synthetic-from-practice",
+      "state": "Rename marker in a single markdown note for consistency. No logic change."
+    },
+    {
+      "id": "W15",
+      "gold": "strong_worker",
+      "source": "ai-system/tasks/rank-power-budget.md",
+      "state": "Implement Rank Power Budget effect curves across multi-module Godot domain and tests. Touches balance formula and cross-module contracts. Complex code and Godot core change."
+    },
+    {
+      "id": "W16",
+      "gold": "strong_worker",
+      "source": "ai-system/tasks/p3b1-role-curves.md",
+      "state": "Unify role effect curves so fallback and handwritten gu share one Effect Budget pipeline. Architecture alignment across balance.json, domain rules, and many tests. Cross-module work."
+    },
+    {
+      "id": "W17",
+      "gold": "strong_worker",
+      "source": "ai-system/tasks/phase2-second-godot-task.md",
+      "state": "Fix multi-enemy victory loot tier determination in battle domain plus determinism regression tests. Godot core gameplay path, risk of save/runtime side effects."
+    },
+    {
+      "id": "W18",
+      "gold": "strong_worker",
+      "source": "synthetic-from-practice",
+      "state": "Refactor domain action router command surface and update UI contracts across presentation and domain layers. Multi-module architecture change with schema implications."
+    },
+    {
+      "id": "W19",
+      "gold": "strong_worker",
+      "source": "synthetic-from-practice",
+      "state": "Change save format migration path for run state and repair existing fixtures. Save format and schema change across engine tests."
+    },
+    {
+      "id": "W20",
+      "gold": "strong_worker",
+      "source": "synthetic-from-practice",
+      "state": "Rebalance boss multipliers and effect budget simultaneously in Godot core battle resolver. Balance formula and core gameplay change."
+    },
+    {
+      "id": "W21",
+      "gold": "gpt6_escalation",
+      "source": "ai-system/RESEARCH-REQUEST-2026-09-19-p3-effect-budget.md",
+      "state": "RESEARCH REQUEST: how should Effect Budget be allocated across archetypes and ranks? Multiple viable numeric models; L1 must decide. Codex cannot choose alone."
+    },
+    {
+      "id": "W22",
+      "gold": "gpt6_escalation",
+      "source": "ai-system/RESEARCH-REQUEST-2026-09-19-rank-foundation.md",
+      "state": "RESEARCH REQUEST: Rank is axis or multiplier? Product-facing numeric foundation with multiple conflicting models. L1 research required before any worker implementation."
+    },
+    {
+      "id": "W23",
+      "gold": "gpt6_escalation",
+      "source": "ai-system/RESEARCH-REQUEST-2026-09-21-balance-compat-audit.md",
+      "state": "RESEARCH REQUEST: reconcile fallback curves vs priceGu budget world. Product tradeoffs and multi-direction modeling; needs L1 ruling, not a worker patch."
+    },
+    {
+      "id": "W24",
+      "gold": "gpt6_escalation",
+      "source": "ai-system/RESEARCH-REQUEST-2026-09-20-dual-layer-hard-boundary.md",
+      "state": "RESEARCH REQUEST: HARD/SOFT binding boundary for gu visuals and rules. Product intent and major tradeoff; L0/L1 decision required before implementation."
+    },
+    {
+      "id": "W25",
+      "gold": "standard_worker",
+      "source": "adversarial-boundary",
+      "state": "Multi-module UI layout polish for the rest node screen and update the page inventory contract notes. No domain rules change. Worker-sized UI task."
+    },
+    {
+      "id": "W26",
+      "gold": "cheap_worker",
+      "source": "adversarial-boundary",
+      "state": "Architecture discussion is only in wiki for domain-router design; no code change this week. Documentation edit of that wiki note."
+    },
+    {
+      "id": "W27",
+      "gold": "cheap_worker",
+      "source": "adversarial-boundary",
+      "state": "Save format was already fixed last week; just update the release notes markdown for that ticket."
+    },
+    {
+      "id": "W28",
+      "gold": "gpt6_escalation",
+      "source": "adversarial-boundary",
+      "state": "Product intent question: should the five-region map unlock in act 2 or act 3? Needs owner decision before any worker task is written."
+    },
+    {
+      "id": "W29",
+      "gold": "cheap_worker",
+      "source": "adversarial-boundary",
+      "state": "Effect budget numbers look wrong in the report table; fix the markdown column headers only in the census report."
+    },
+    {
+      "id": "W30",
+      "gold": "strong_worker",
+      "source": "adversarial-boundary",
+      "state": "Rewrite ContentCatalog load path with reuse cache across run starts. Godot core lifecycle change plus regression tests. Not a docs task."
+    },
+    {
+      "id": "W31",
+      "gold": "standard_worker",
+      "source": "adversarial-boundary",
+      "state": "Batch-22 semantic boundary navigation for wiki characters. Research notes review and wiki write, documented Worker class normal."
+    },
+    {
+      "id": "W32",
+      "gold": "gpt6_escalation",
+      "source": "adversarial-boundary",
+      "state": "Cannot decide between two effect allocation models from repo facts alone; multi-direction modeling needs L1 research before code."
+    }
+  ]
+}

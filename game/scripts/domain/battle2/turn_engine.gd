@@ -2,6 +2,10 @@ class_name Battle2TurnEngine
 extends RefCounted
 
 
+# L0 2026-09-22 battle2 归并：本模块只做回合/念头账本（phase、thought pool、usage ledger）。
+# 战斗伤害与效果结算唯一入口 = v1_battle_resolver（杀招/蛊/拳脚/反击）。
+# 禁止在本文件新增伤害、杀招、蛊效果或第二套结算；combat_constants 仅共享词表。
+#
 # Spec-v4 phase-2 (T4.1): discrete-turn round engine - phase sequence
 # (§12.4), thought pool (§12.1/§12.2) and per-turn usage ledger (§12.3).
 # Pure domain / pure data: no UI, no dice, no shared mutable state.

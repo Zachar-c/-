@@ -8,7 +8,10 @@
     "retreat": "trade_safe_passage",
     "reinforcements": "three_day_patrol",
     "injury_reaction": "exploit",
-    "stock": ["purchase_stone_shell", "purchase_moonlight", "soul_pill"]
+    "stock": ["purchase_stone_shell", "purchase_moonlight", "soul_pill"],
+    "demands": [
+      {"id": "steward_needs_bones", "material_id": "beast_bone", "quantity": 3, "tier": 1}
+    ]
   },
   {
     "id": "earth_vein_scout",
@@ -18,7 +21,10 @@
     "known_facts": ["toxic_fog", "sealed_entry"],
     "retreat": "leave_with_map_copy",
     "reinforcements": "faction_guard_pair",
-    "injury_reaction": "caution"
+    "injury_reaction": "caution",
+    "demands": [
+      {"id": "scout_needs_dew", "material_id": "moon_dew", "quantity": 2, "tier": 1}
+    ]
   },
   {
     "id": "wandering_healer",
@@ -29,7 +35,10 @@
     "retreat": "offer_safe_treatment",
     "reinforcements": "none",
     "injury_reaction": "sympathy",
-    "stock": ["soul_pill"]
+    "stock": ["soul_pill"],
+    "demands": [
+      {"id": "healer_needs_blood", "material_id": "beast_blood", "quantity": 4, "tier": 1}
+    ]
   },
   {
     "id": "ridge_extortionist",
@@ -40,7 +49,10 @@
     "retreat": "accept_stone_and_withdraw",
     "reinforcements": "beast_swarm_lure",
     "injury_reaction": "contempt",
-    "stock": ["lifespan_pulse_drum"]
+    "stock": ["lifespan_pulse_drum"],
+    "demands": [
+      {"id": "extortionist_needs_sac", "material_id": "venom_sac", "quantity": 2, "tier": 1}
+    ]
   },
   {
     "id": "wandering_peddler",
@@ -51,6 +63,10 @@
     "retreat": "pack_up_and_leave",
     "reinforcements": "none",
     "injury_reaction": "caution",
-    "stock": ["purchase_stone_shell", "purchase_moonlight", "purchase_blood_droplet", "barter_unknown_gu"]
+    "stock": ["purchase_stone_shell", "purchase_moonlight", "purchase_blood_droplet", "barter_unknown_gu"],
+    "demands": [
+      {"id": "peddler_needs_bones", "material_id": "beast_bone", "quantity": 5, "tier": 1},
+      {"id": "peddler_needs_sac", "material_id": "venom_sac", "quantity": 2, "tier": 1}
+    ]
   }
 ]

@@ -190,3 +190,78 @@ static func _stable_index(key: String, size: int) -> int:
 	for byte in key.to_utf8_buffer():
 		h = ((h ^ int(byte)) * 16777619) & 0xFFFFFFFF
 	return h % size
+
+
+## L0 2026-09-22：战中合卡产出保留到战后——写入 gu_card_overrides（RunState 持久字段），
+## 不进 battle 临时表，战斗结束不清理。
+static func battle_synthesize(state: RunState, catalog: Dictionary, recipe_id: String) -> Dictionary:
+	var synthesis: Dictionary = catalog.get("synthesis", {})
+	var recipe: Dictionary = {}
+	for entry_value in synthesis.get("battle_recipes", []):
+		var entry: Dictionary = entry_value
+		if str(entry.get("id", "")) == str(recipe_id):
+			recipe = entry
+			break
+	if recipe.is_empty():
+		return {"state": state, "result": {"ok": false, "reason": "unknown_battle_recipe"}}
+	var output_card := str(recipe.get("output_card_id", recipe.get("temp_card_id", "")))
+	if output_card.is_empty():
+		return {"state": state, "result": {"ok": false, "reason": "missing_output_card"}}
+	var cost: Dictionary = recipe.get("material_cost", {})
+	var before_materials := state.materials.duplicate(true)
+	for material_id_value in cost.keys():
+		var material_id := str(material_id_value)
+		var need := int(cost[material_id_value])
+		if int(state.materials.get(material_id, 0)) < need:
+			return {"state": state, "result": {"ok": false, "reason": "insufficient_materials"}}
+	var materials := state.materials.duplicate(true)
+	for material_id_value in cost.keys():
+		materials[str(material_id_value)] = int(materials.get(str(material_id_value), 0)) - int(cost[material_id_value])
+	var cfg: Dictionary = synthesis.get("battle", {})
+	var base := int(cfg.get("success_base_pct", 60))
+	var streak := int(state.synthesis_fail_streak)
+	var bonus := mini(int(cfg.get("max_bonus_pct", 30)), streak * int(cfg.get("per_fail_bonus_pct", 10)))
+	var chance := clampi(base + bonus, 0, 99)
+	var success := roll_chance(state, chance, "battle_synthesize_%s" % str(recipe_id))
+	var overrides := state.gu_card_overrides.duplicate(true)
+	var before_overrides := state.gu_card_overrides.duplicate(true)
+	if success:
+		var override: Dictionary = overrides.get(output_card, {}).duplicate(true)
+		override["unlocked"] = true
+		override["source"] = "battle_synthesis"
+		override["persists_after_battle"] = true
+		overrides[output_card] = override
+		var next := state.append_event({
+			"stage": state.stage,
+			"time": state.event_log.size(),
+			"node_id": state.current_node_id,
+			"action": "battle_synthesize",
+			"before": {"materials": before_materials, "gu_card_overrides": before_overrides},
+			"after": {"materials": materials, "gu_card_overrides": overrides},
+			"reason": "battle_synthesis_succeeded",
+			"source": "synthesis_rules",
+			"targets": [output_card],
+		})
+		next.materials = materials
+		next.gu_card_overrides = overrides
+		next.synthesis_fail_streak = 0
+		return {"state": next, "result": {
+			"ok": true, "output_card": output_card, "chance": chance,
+			"persists_after_battle": true,
+		}}
+	var failed := state.append_event({
+		"stage": state.stage,
+		"time": state.event_log.size(),
+		"node_id": state.current_node_id,
+		"action": "battle_synthesize",
+		"before": {"materials": before_materials, "gu_card_overrides": before_overrides},
+		"after": {"materials": materials, "gu_card_overrides": before_overrides},
+		"reason": "battle_synthesis_failed",
+		"source": "synthesis_rules",
+		"targets": [output_card],
+	})
+	failed.materials = materials
+	failed.synthesis_fail_streak = int(state.synthesis_fail_streak) + 1
+	return {"state": failed, "result": {
+		"ok": false, "reason": "battle_synthesis_failed", "chance": chance,
+	}}

@@ -1,0 +1,193 @@
+﻿TASK 3 REREVIEW PACKAGE
+
+===== COMMITS =====
+fab95ce fix: -Apply 閫愬寮曞彿鍒ゆ柇锛堟贩寮?瑁歌瘝锛夈€佽渚?newline='' 淇?CRLF銆乤pply_to_file 鍐欏洖闆嗘垚娴嬭瘯
+
+===== DIFF =====
+diff --git a/scripts/scan_candidates.py b/scripts/scan_candidates.py
+index 1285171..65aa3a3 100644
+--- a/scripts/scan_candidates.py
++++ b/scripts/scan_candidates.py
+@@ -143,49 +143,73 @@ def _all_scene(chunk):
+             return False
+         if sum(1 for ch in SCENE_VOCAB if ch in s) < 2:
+             return False
+     return True
+ 
+ 
+ def scan_rules(lines):
+     return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
+ 
+ 
+-def _in_quote(text, token):
+-    """token 鑻ヨ惤鍦ㄦ垚瀵逛腑鏂囧紩鍙凤紙鈥溾€︹€濇垨鈥樷€︹€欙級鍐呴儴锛岃繑鍥?True銆?""
+-    idx = text.find(token)
++def _in_quote_at(text, idx, token_len):
++    """token 浣嶄簬 idx 澶勶紙闀垮害 token_len锛夛紝鍒ゆ柇鏄惁钀藉湪鎴愬涓枃寮曞彿鍐呴儴銆?""
+     if idx < 0:
+         return False
+     left = text[:idx]
+-    right = text[idx + len(token):]
++    right = text[idx + token_len:]
+     for open_q, close_q in ((u'鈥?, u'鈥?), (u'鈥?, u'鈥?)):
+         opens = left.count(open_q) - left.count(close_q)
+         closes = right.count(close_q) - right.count(open_q)
+         if opens > 0 and closes > 0:
+             return True
+     return False
+ 
+ 
+ def apply_wordlist(text, pairs):
+     applied = []
+     skipped = []
+     for old, new in pairs:
+         if old not in text:
+             continue
+-        if _in_quote(text, old):
+-            skipped.append(old)
+-            continue
+-        text = text.replace(old, new)
+-        applied.append((old, new))
++        buf = []
++        pos = 0
++        replaced = False
++        while True:
++            idx = text.find(old, pos)
++            if idx < 0:
++                buf.append(text[pos:])
++                break
++            buf.append(text[pos:idx])
++            if _in_quote_at(text, idx, len(old)):
++                buf.append(old)
++                skipped.append(old)
++            else:
++                buf.append(new)
++                replaced = True
++            pos = idx + len(old)
++        text = u''.join(buf)
++        if replaced:
++            applied.append((old, new))
+     return text, applied, skipped
+ 
+ 
++def apply_to_file(path, pairs):
++    """璇绘枃浠垛啋apply_wordlist鈫掓湁鏀瑰姩鎵嶅啓鍥烇紱newline='' 涓や晶淇濇寔鍘熸枃鎹㈣椋庢牸銆?""
++    with io.open(path, 'r', encoding='utf-8-sig', newline='') as fh:
++        raw = fh.read()
++    new_raw, applied, skipped = apply_wordlist(raw, pairs)
++    if applied:
++        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
++            fh.write(new_raw)
++    return applied, skipped
++
++
+ def resolve_volume_dir(volume_id):
+     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
+         cfg = json.load(fh)
+     vol = next((v for v in cfg['volumes'] if v['id'] == volume_id), None)
+     if not vol:
+         raise SystemExit('Unknown volume: {0}'.format(volume_id))
+     pattern = re.compile(vol['directoryPattern'].replace('.', r'\.').replace('*', '.*'))
+     for name in sorted(os.listdir(repo_abs('volumes'))):
+         if pattern.match(name):
+             return os.path.join(repo_abs('volumes'), name)
+@@ -203,28 +227,25 @@ def main():
+     out_dir = repo_abs(args.get('OutDir'))
+ 
+     volume_dir = resolve_volume_dir(volume_id)
+     edited_path = os.path.join(volume_dir, u'{0}-sec{1}.edited.txt'.format(volume_id, batch))
+     if not os.path.isfile(edited_path):
+         raise SystemExit('Edited text not found: {0}'.format(edited_path))
+     with io.open(edited_path, 'r', encoding='utf-8-sig', newline='') as fh:
+         edit_lines = fh.read().splitlines()
+ 
+     if args.get('Apply'):
+-        with io.open(edited_path, 'r', encoding='utf-8-sig') as fh:
+-            raw = fh.read()
+-        new_raw, applied, skipped = apply_wordlist(raw, CONFIRMED_FIXES)
+-        if applied:
+-            with io.open(edited_path, 'w', encoding='utf-8-sig', newline='') as fh:
+-                fh.write(new_raw)
++        applied, skipped = apply_to_file(edited_path, CONFIRMED_FIXES)
+         log_path = os.path.join(out_dir, u'apply-{0}-{1}.log'.format(volume_id, batch))
+         log_lines = []
++        with io.open(edited_path, 'r', encoding='utf-8-sig', newline='') as fh:
++            new_raw = fh.read()
+         for old, new in applied:
+             log_lines.append(u'{0}|{1}|{2}'.format(old, new, new_raw.count(new)))
+         for old in skipped:
+             log_lines.append(u'{0}|SKIP|寮曞彿璇淇濅汉宸?.format(old))
+         write_utf8_no_bom(log_path, u'\n'.join(log_lines))
+         print(u'applied: {0} skipped: {1}'.format(len(applied), len(skipped)))
+ 
+     candidates = scan(edit_lines)
+     for idx, c in enumerate(candidates, 1):
+         c['seq'] = idx
+diff --git a/tests/test_scan_candidates.py b/tests/test_scan_candidates.py
+index dbe3ad5..c15d5b9 100644
+--- a/tests/test_scan_candidates.py
++++ b/tests/test_scan_candidates.py
+@@ -101,20 +101,26 @@ class RuleTests(unittest.TestCase):
+                  u'娓呴鎷傝繃灞卞矖锛屾湀鍏夋磼钀芥灄闂达紝澶滆壊濡傛按銆?,
+                  u'寰杞绘姎鍙ゆ湪锛岄浘姘旀挨姘插崐灞憋紝浜戝奖寰樺緤銆?,
+                  u'瀵掗湶娌炬箍鐭抽樁锛岄澹版帬杩囧眿瑙掞紝鏈堝崕鏈﹁儳銆?,
+                  u'鍏夊奖浜ら敊鐭崇紳锛屽北姘旀诞娌夎崏鏈紝鏄熸枟娓愭矇銆?,
+                  u'', u'']
+         s = [c for c in literary_rules(lines) if c['rule'] == 'scene-repetition']
+         self.assertGreaterEqual(len(s), 1)
+ 
+ 
+ class ApplyTests(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.mkdtemp()
++
++    def tearDown(self):
++        shutil.rmtree(self.tmp)
++
+     def test_applyReplacesAndLogs(self):
+         txt = u'浠栫湡鏄番涓嶅強闃层€備笅涓€琛岃繕鏄番涓嶅強闃层€俓n'
+         new_txt, applied, skipped = apply_wordlist(txt, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
+         self.assertEqual(applied, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
+         self.assertEqual(skipped, [])
+         self.assertIn(u'鐚濅笉鍙婇槻', new_txt)
+         self.assertNotIn(u'娣笉鍙婇槻', new_txt)
+ 
+     def test_applySkipsQuoteContext(self):
+         txt = u'浠栬锛氣€滄垜鍋忚娣笉鍙婇槻銆傗€漒n'
+@@ -128,13 +134,35 @@ class ApplyTests(unittest.TestCase):
+         _, applied2, _ = apply_wordlist(new_txt, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
+         self.assertEqual(len(applied1), 1)
+         self.assertEqual(applied2, [])
+ 
+     def test_applySecondRunNoSideEffect(self):
+         txt = u'鐪熸槸娣笉鍙婇槻鍟娿€俓n'
+         new1, _, _ = apply_wordlist(txt, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
+         new2, applied, _ = apply_wordlist(new1 + u'娣笉鍙婇槻娈嬬暀', [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
+         self.assertNotEqual(new2, new1)  # 鏂板嚭鐜版棫璇嶄細鍐嶆鏇挎崲
+ 
++    def test_applyMixedQuoteAndBareOccurrence(self):
++        txt = u'浠栬锛氣€滄番涓嶅強闃层€傗€濅簨鍚庝紬浜虹殕娣笉鍙婇槻銆?
++        new_txt, applied, skipped = apply_wordlist(txt, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
++        self.assertEqual(len(applied), 1)
++        self.assertIn(u'鈥滄番涓嶅強闃层€傗€?, new_txt)   # 寮曞彿鍐呬繚鎸佸師璇?+        self.assertIn(u'浼椾汉鐨嗙対涓嶅強闃?, new_txt)  # 寮曞彿澶栬鏇挎崲
++        self.assertGreaterEqual(len(skipped), 1)
++
++    def test_applyToFilePreservesCrlfAndBom(self):
++        import scan_candidates as sc
++        path = os.path.join(self.tmp, 'edit.txt')
++        raw = u'\ufeff鐪熸槸娣笉鍙婇槻銆俓r\n涓嬩竴琛屼笉鍔ㄣ€俓r\n'
++        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
++            fh.write(raw)
++        applied, skipped = sc.apply_to_file(path, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
++        self.assertEqual(len(applied), 1)
++        with io.open(path, 'rb') as fh:
++            blob = fh.read()
++        self.assertTrue(blob.startswith(u'\ufeff'.encode('utf-8')))  # BOM 淇濇寔
++        self.assertEqual(blob.count(b'\r\n'), 2)                      # CRLF 淇濇寔
++        self.assertIn(u'鐚濅笉鍙婇槻'.encode('utf-8'), blob)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+\ No newline at end of file
+

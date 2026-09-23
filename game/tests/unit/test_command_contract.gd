@@ -136,7 +136,7 @@ func test_v2_command_family_registers_real_handlers() -> void:
 	# unsupported_command.
 	var v2_types := [
 		"confirm_core", "replace_core", "feed_instance", "settle_layer",
-		"collect_surviving", "release_gu", "sell_info", "enact", "dodge",
+		"collect_surviving", "release_gu", "sell_info", "fulfill_demand", "enact", "dodge",
 		"grapple", "respond", "refine_up_material", "bloodlet", "absorb_soul",
 	]
 	var catalog := ContentCatalog.load_all()

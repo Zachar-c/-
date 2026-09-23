@@ -95,6 +95,17 @@ test('sell value floors at half of the configured value', () => {
   assert.equal(flow.sellValue(0), 0);
 });
 
+test('sell value rides market_rules public_buyback_ratio', () => {
+  const ctx = vm.createContext({});
+  ctx.WORLD_BALANCE = { public_buyback_ratio: 0.3 };
+  vm.runInContext(
+    fs.readFileSync(new URL('../js/run_rules.js', import.meta.url), 'utf8') + ';'
+    + fs.readFileSync(new URL('../js/run_flow.js', import.meta.url), 'utf8'),
+    ctx,
+  );
+  assert.equal(ctx.RunFlow.sellValue(10), 3);
+});
+
 test('sari series follows the novel: rank 1 bronze, rank 2 red iron', () => {
   // 原著 `蛊真人-clean.txt:18066`：一转的是青铜舍利蛊 / 二转的是赤铁舍利蛊 / 三转白银。
   // 数据把阶梯第 2 级命名成了青铜舍利蛊（gold_atk_2_12_gu），rank 字段与原著定位冲突，

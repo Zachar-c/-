@@ -49,6 +49,11 @@ var relations: Dictionary = {}
 var pursuit: int = 0
 var ascension: Dictionary = {}
 var known_facts: Array[String] = []
+# L0 2026-09-22 市价实账：信息买卖与 NPC 需求。
+# info_sales: {info_id: {sold_to: {buyer_id: true}, spread_count: int}}
+# npc_demands: {demand_id: {material_id, quantity, tier, closed}}
+var info_sales: Dictionary = {}
+var npc_demands: Dictionary = {}
 var current_node_id: String = "awakening"
 var route_progress: Array[String] = []
 var node_flags: Dictionary = {}
@@ -96,7 +101,7 @@ const STATE_FIELDS: Array[String] = [
 	"seed", "stage", "cultivation", "essence", "essence_capacity", "health", "max_health",
 	"aptitude", "injury", "lifespan_debt", "stone", "loot_pity", "material_pity_by_tier", "synthesis_fail_streak",
 	"gu_ids", "refined_gu_ids", "equipped_gu_ids", "inheritance_ids", "body_imprints", "contracts", "clues",
-	"relations", "pursuit", "ascension", "known_facts", "current_node_id",
+	"relations", "pursuit", "ascension", "known_facts", "info_sales", "npc_demands", "current_node_id",
 	"current_node_template_id", "current_node_layer",
 	"route_progress", "node_flags", "encounter_session", "encounter_results", "saved_combos", "event_log",
 	"cultivator", "cave_aperture", "gu_instances", "gu_card_overrides", "materials",
@@ -155,6 +160,8 @@ static func new_run(run_seed: int, meta: RefCounted = null) -> RunState:
 	}
 	state.gu_card_overrides = {}
 	state.materials = {"feed_points": 0}
+	state.info_sales = {}
+	state.npc_demands = {}
 	state.relic_ids = []
 	state.meta_rules = {}
 	state.terminal_state = "active"

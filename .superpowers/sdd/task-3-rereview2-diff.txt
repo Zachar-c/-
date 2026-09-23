@@ -1,0 +1,90 @@
+diff --git a/scripts/scan_candidates.py b/scripts/scan_candidates.py
+index 65aa3a3..26a9701 100644
+--- a/scripts/scan_candidates.py
++++ b/scripts/scan_candidates.py
+@@ -1,12 +1,13 @@
+ # -*- coding: utf-8 -*-
+ """全书候选扫描：A/B/C 三级规则+清单输出（词表/乱码遮蔽/重复/数字混用/作者越位/网络词/场景复写）。"""
++import codecs
+ import io
+ import json
+ import os
+ import re
+ import sys
+ from difflib import SequenceMatcher
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ from gu_tools import PsArgs, repo_abs, write_csv_utf8_bom, write_utf8_no_bom
+ from clean_full_source import CONFIRMED_FIXES
+@@ -186,27 +187,32 @@ def apply_wordlist(text, pairs):
+                 buf.append(new)
+                 replaced = True
+             pos = idx + len(old)
+         text = u''.join(buf)
+         if replaced:
+             applied.append((old, new))
+     return text, applied, skipped
+ 
+ 
+ def apply_to_file(path, pairs):
+-    """读文件→apply_wordlist→有改动才写回；newline='' 两侧保持原文换行风格。"""
+-    with io.open(path, 'r', encoding='utf-8-sig', newline='') as fh:
+-        raw = fh.read()
+-    new_raw, applied, skipped = apply_wordlist(raw, pairs)
++    """读文件→apply_wordlist→有改动才写回；字节级读写，BOM 有无与换行风格原样保持。"""
++    with io.open(path, 'rb') as fh:
++        blob = fh.read()
++    has_bom = blob.startswith(codecs.BOM_UTF8)
++    text = blob.decode('utf-8-sig' if has_bom else 'utf-8')
++    new_text, applied, skipped = apply_wordlist(text, pairs)
+     if applied:
+-        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+-            fh.write(new_raw)
++        data = new_text.encode('utf-8')
++        if has_bom:
++            data = codecs.BOM_UTF8 + data
++        with io.open(path, 'wb') as fh:
++            fh.write(data)
+     return applied, skipped
+ 
+ 
+ def resolve_volume_dir(volume_id):
+     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
+         cfg = json.load(fh)
+     vol = next((v for v in cfg['volumes'] if v['id'] == volume_id), None)
+     if not vol:
+         raise SystemExit('Unknown volume: {0}'.format(volume_id))
+     pattern = re.compile(vol['directoryPattern'].replace('.', r'\.').replace('*', '.*'))
+diff --git a/tests/test_scan_candidates.py b/tests/test_scan_candidates.py
+index c15d5b9..32e689a 100644
+--- a/tests/test_scan_candidates.py
++++ b/tests/test_scan_candidates.py
+@@ -156,13 +156,27 @@ class ApplyTests(unittest.TestCase):
+         with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+             fh.write(raw)
+         applied, skipped = sc.apply_to_file(path, [(u'淬不及防', u'猝不及防')])
+         self.assertEqual(len(applied), 1)
+         with io.open(path, 'rb') as fh:
+             blob = fh.read()
+         self.assertTrue(blob.startswith(u'\ufeff'.encode('utf-8')))  # BOM 保持
+         self.assertEqual(blob.count(b'\r\n'), 2)                      # CRLF 保持
+         self.assertIn(u'猝不及防'.encode('utf-8'), blob)
+ 
++    def test_applyToFileKeepsNoBomFileBomless(self):
++        import scan_candidates as sc
++        path = os.path.join(self.tmp, 'edit-nobom.txt')
++        raw = u'真是淬不及防。\n第二行。\n'
++        with io.open(path, 'w', encoding='utf-8', newline='') as fh:
++            fh.write(raw)
++        applied, _ = sc.apply_to_file(path, [(u'淬不及防', u'猝不及防')])
++        self.assertEqual(len(applied), 1)
++        with io.open(path, 'rb') as fh:
++            blob = fh.read()
++        self.assertFalse(blob.startswith(b'\xef\xbb\xbf'))  # 无 BOM 文件不被加 BOM
++        self.assertEqual(blob.count(b'\n'), 2)              # LF 行尾保持
++        self.assertIn(u'猝不及防'.encode('utf-8'), blob)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+\ No newline at end of file

@@ -183,6 +183,20 @@ add(
 );
 add('pricingId=LAB_PRICING_V1', B.PRICING_ID === 'LAB_PRICING_V1', B.PRICING_ID);
 
+/* Market 投影自检：与 market_rules.gd 同式，禁止第二套定价 */
+const M = B.Market;
+add('Market owner=market_rules.gd', M.owner === 'game/scripts/domain/market_rules.gd', M.owner);
+add('t1MaterialBase=stone_per_t1_material', M.t1MaterialBasePrice() === Number(world.stone_per_t1_material ?? 10), M.t1MaterialBasePrice());
+add('publicResale(value)=value*public_buyback_ratio', M.publicResale(10) === 10 * Number(world.public_buyback_ratio ?? 0.5), M.publicResale(10));
+add('guPublicPrice=rankStandard*4', M.guPublicPrice(1) === M.rankStandardPrice(1) * 4, M.guPublicPrice(1));
+add('guRecyclePrice=rankStandard*1', M.guRecyclePrice(1) === M.rankStandardPrice(1), M.guRecyclePrice(1));
+add('guEstimate=rankStandard*gu_estimate_ratio', M.guEstimate(1) === M.rankStandardPrice(1) * Number(world.gu_estimate_ratio ?? 6.5), M.guEstimate(1));
+add('gu_value_by_rank 3/5/8/12/20', [1, 2, 3, 4, 5].map((r) => M.guValueByRank(r)).join(',') === '3,5,8,12,20', [1, 2, 3, 4, 5].map((r) => M.guValueByRank(r)).join(','));
+add('sellValue=publicResale(gu.value) 同式', Math.floor(5 * M.publicBuybackRatio()) === 2, `floor(5*${M.publicBuybackRatio()})`);
+add('demandQuote tier=1 即挂牌价', M.demandQuote(10, 1, 1).unitPrice === 10, M.demandQuote(10, 1, 1).unitPrice);
+add('demandQuote tier=2 +20%', M.demandQuote(10, 1, 2).unitPrice === 12, M.demandQuote(10, 1, 2).unitPrice);
+add('infoValue 随 spread 减半', M.infoValue(20, 1) === 10, M.infoValue(20, 1));
+
 /* 规模化烟测：priceGu 一转平砍应接近 lab 标准 2 伤 */
 const sample = B.priceGu({ rank: 1, role: 'attack', archetype: 'strike', thought: 1, qi: 1, cooldown: 0 });
 add('priceGu 一转平砍 ≈2 伤', sample.damage >= 1 && sample.damage <= 3, sample.damage);

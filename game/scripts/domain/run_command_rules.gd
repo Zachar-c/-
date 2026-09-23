@@ -14,6 +14,7 @@ const FeedingRulesScript = preload("res://scripts/domain/feeding_rules.gd")
 const RunStateScript = preload("res://scripts/domain/run_state.gd")
 const LootRulesScript = preload("res://scripts/domain/loot_rules.gd")
 const MarketRulesScript = preload("res://scripts/domain/market_rules.gd")
+const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 const Battle2TurnEngineScript = preload("res://scripts/domain/battle2/turn_engine.gd")
 const BodyRulesScript = preload("res://scripts/domain/body_rules.gd")
 const ActionResolverScript = preload("res://scripts/domain/action_resolver.gd")
@@ -166,18 +167,75 @@ static func release_gu(state, command: Dictionary, catalog: Dictionary) -> Dicti
 
 
 # market family ---------------------------------------------------------------
+# L0 2026-09-22：信息买卖入实账。sold_to / spread_count 以 RunState.info_sales 为准，
+# 禁止由命令自带；成交入元石，卖方保留 known_facts。
 static func sell_info(state, command: Dictionary, catalog: Dictionary) -> Dictionary:
-	var sold := MarketRulesScript.sell_info(command.get("info", {}),
-			str(command.get("buyer_id", "")), int(command.get("spread_count", 0)),
-			command.get("sold_to", {}), catalog)
+	var info: Dictionary = command.get("info", {})
+	var info_id := str(info.get("id", ""))
+	if info_id.is_empty():
+		return _reject(state, "missing_info_id")
+	var buyer_id := str(command.get("buyer_id", ""))
+	if buyer_id.is_empty():
+		return _reject(state, "missing_buyer_id")
+	var ledger: Dictionary = (state.info_sales.get(info_id, {}) as Dictionary).duplicate(true)
+	var sold_to: Dictionary = ledger.get("sold_to", {}).duplicate(true)
+	var spread_count := int(ledger.get("spread_count", 0))
+	var sold := MarketRulesScript.sell_info(info, buyer_id, spread_count, sold_to, catalog)
 	if not bool(sold["sold"]):
 		return _reject(state, str(sold.get("reason", "info_not_sold")))
+	sold_to[buyer_id] = true
+	ledger["sold_to"] = sold_to
+	ledger["spread_count"] = int(sold.get("spread_count", spread_count + 1))
+	var info_sales: Dictionary = state.info_sales.duplicate(true)
+	info_sales[info_id] = ledger
 	var known: Array[String] = state.known_facts.duplicate()
-	known.append(str(command.get("info", {}).get("id", "info_sold")))
+	if not known.has(info_id):
+		known.append(info_id)
+	var price := int(round(float(sold.get("price", 0.0))))
 	var next: RunState = state.append_event(_event(state, "info_sold",
-			{"known_facts": state.known_facts}, {"known_facts": known},
-			"sold_info", []))
-	return _accept(next, {"price": sold["price"], "seller_keeps_knowledge": bool(sold["seller_keeps_knowledge"])})
+			{"stone": state.stone, "known_facts": state.known_facts, "info_sales": state.info_sales},
+			{"stone": state.stone + price, "known_facts": known, "info_sales": info_sales},
+			"sold_info", [info_id, buyer_id]))
+	return _accept(next, {
+		"price": price,
+		"seller_keeps_knowledge": bool(sold["seller_keeps_knowledge"]),
+		"spread_count": ledger["spread_count"],
+	})
+
+
+# L0 2026-09-22：NPC 需求收购。报价 = MarketRules.demand_quote；履约后
+# advance_demand 扣量/关单（防刷核心），元石入账。
+static func fulfill_demand(state, command: Dictionary, catalog: Dictionary) -> Dictionary:
+	var demand_id := str(command.get("demand_id", ""))
+	if demand_id.is_empty():
+		return _reject(state, "missing_demand_id")
+	# 模板播种：首遇 NPC 需求写入实账；此后 live 优先（防刷后的扣量/关单保留）。
+	var seeded: Dictionary = state.npc_demands.duplicate(true)
+	for npc_value in catalog.get("npcs", []):
+		seeded = MarketRulesScript.seed_npc_demands(seeded, npc_value)
+	var demand: Dictionary = (seeded.get(demand_id, {}) as Dictionary).duplicate(true)
+	if demand.is_empty() or bool(demand.get("closed", false)):
+		return _reject(state, "demand_unavailable")
+	var material_id := str(demand.get("material_id", ""))
+	var owned := int(state.materials.get(material_id, 0))
+	var want := maxi(1, int(command.get("amount", 0)))
+	if want > int(demand.get("quantity", 0)):
+		return _reject(state, "demand_quantity_exceeded")
+	if owned < want:
+		return _reject(state, "insufficient_materials")
+	var base := MarketRulesScript.t1_material_base_price(catalog) \
+			* float(GuBalanceScript.rank_multiplier(maxi(1, int(demand.get("tier", 1))), catalog))
+	var quote := MarketRulesScript.demand_quote(base, want, int(demand.get("tier", 0)), catalog)
+	var price := int(round(float(quote.get("total", 0.0))))
+	var materials: Dictionary = state.materials.duplicate(true)
+	materials[material_id] = owned - want
+	var npc_demands: Dictionary = seeded.duplicate(true)
+	npc_demands[demand_id] = MarketRulesScript.advance_demand(demand, want)
+	var next: RunState = state.append_event(_event(state, "demand_fulfilled",
+			{"stone": state.stone, "materials": state.materials, "npc_demands": state.npc_demands},
+			{"stone": state.stone + price, "materials": materials, "npc_demands": npc_demands},
+			"demand_sold", [demand_id, material_id]))
+	return _accept(next, {"price": price, "unit_price": quote.get("unit_price", 0.0)})
 
 
 # battle2 orchestration family -------------------------------------------------

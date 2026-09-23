@@ -1,0 +1,257 @@
+diff --git a/scripts/scan_candidates.py b/scripts/scan_candidates.py
+index 175aa7d..ac69e9a 100644
+--- a/scripts/scan_candidates.py
++++ b/scripts/scan_candidates.py
+@@ -1,17 +1,18 @@
+ # -*- coding: utf-8 -*-
+-"""全书候选扫描：A/B/C 三级规则+清单输出（骨架版先跑通结构与输出，规则见 Task 2）."""
++"""全书候选扫描：A/B/C 三级规则+清单输出（词表/乱码遮蔽/重复/数字混用/作者越位/网络词/场景复写）。"""
+ import io
+ import json
+ import os
+ import re
+ import sys
++from difflib import SequenceMatcher
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ from gu_tools import PsArgs, repo_abs, write_csv_utf8_bom, write_utf8_no_bom
+ from clean_full_source import CONFIRMED_FIXES
+ 
+ CANDIDATE_FIELDS = ['seq', 'type', 'severity', 'section', 'line_source', 'line_edit', 'sample', 'rule', 'verdict']
+ RE_SECTION_HEAD = re.compile(r'^\s*第\s*[一二三四五六七八九十百千0-9]+\s*节\s*[:：]?\s*\S')
+ 
+ 
+ def find_section(lines, line_index):
+@@ -22,27 +23,22 @@ def find_section(lines, line_index):
+             count += 1
+     return count
+ 
+ 
+ def build_candidate(type_, severity, section, line_source, line_edit, sample, rule, verdict=''):
+     return {'seq': 0, 'type': type_, 'severity': severity, 'section': section,
+             'line_source': line_source, 'line_edit': line_edit, 'sample': sample,
+             'rule': rule, 'verdict': verdict}
+ 
+ 
+-def scan_rules(lines):
+-    """规则入口。Task 1 返回空；Task 2 实现三层规则后替换本体。"""
+-    return []
+-
+-
+ def scan(lines):
+-    """对外扫描入口（规则见 scan_rules；本任务为空规则占位）。"""
++    """对外扫描入口：组合三层规则全部候选。"""
+     return scan_rules(lines)
+ 
+ 
+ def serialize_tsv(candidates, path):
+     rows = [{k: (c.get(k) if c.get(k) is not None else '') for k in CANDIDATE_FIELDS} for c in candidates]
+     if not rows:
+         parent = os.path.dirname(path)
+         if parent:
+             os.makedirs(parent, exist_ok=True)
+         with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+@@ -55,20 +51,112 @@ def serialize_md(candidates, edit_lines, path):
+     out = [u'# 候选清单（机器生成；verdict 由会话填写）', '']
+     for c in candidates:
+         out.append(u'### [seq {0}] {1} 级 · {2} · 节{3} · 行 {4}'.format(
+             c['seq'], c['severity'], c['type'], c['section'], c['line_source']))
+         out.append(u'原文：{0}'.format((c['sample'] or '').replace('\n', ' ')))
+         out.append(u'规则：{0}（verdict={1}）'.format(c['rule'], c['verdict']))
+         out.append('')
+     write_utf8_no_bom(path, u'\n'.join(out))
+ 
+ 
++RE_UNKNOWN_CHAR = re.compile(u'[\ufffd\uf8ff\ue000-\uf8ff]')
++RE_REDACT = re.compile(r'\[\*\*\*\]|\*\*')
++
++
++def mech_rules(lines):
++    out = []
++    for i, line in enumerate(lines, 1):
++        section = find_section(lines, i - 1)
++        for old, new in CONFIRMED_FIXES:
++            if old in line:
++                out.append(build_candidate('mech', 'A', section, i, i,
++                                           line.strip()[:120], 'wordlist', ''))
++        if RE_UNKNOWN_CHAR.search(line):
++            out.append(build_candidate('mech', 'B', section, i, i,
++                                       line.strip()[:120], 'mojibake', ''))
++        if RE_REDACT.search(line):
++            out.append(build_candidate('mech', 'B', section, i, i,
++                                       line.strip()[:120], 'redact', ''))
++    return out
++
++
++CHINESE_NUM = {u'零': '0', u'一': '1', u'二': '2', u'三': '3', u'四': '4',
++               u'五': '5', u'六': '6', u'七': '7', u'八': '8', u'九': '9'}
++UNIT_WORDS = re.compile(u'[块元石转成级年月日两岁]')
++
++
++def semantic_rules(lines):
++    out = []
++    for i, line in enumerate(lines, 1):
++        section = find_section(lines, i - 1)
++        prev = lines[i - 2] if i > 1 else u''
++        if len(line) >= 12 and len(prev) >= 12:
++            ratio = SequenceMatcher(None, prev, line).ratio()
++            if ratio >= 0.8:
++                out.append(build_candidate('semantic', 'B', section, i - 1, i - 1,
++                                           prev.strip()[:120], 'repeat',
++                                           u'相似度{0:.2f}'.format(ratio)))
++        compact = re.sub(r'\s+', '', line)
++        han = set(re.findall(u'[一二三四五六七八九]+' + UNIT_WORDS.pattern + u'+', compact))
++        arab = set(re.findall(u'[0-9]+' + UNIT_WORDS.pattern + u'+', compact))
++        if han and arab:
++            out.append(build_candidate('semantic', 'B', section, i, i,
++                                       line.strip()[:120], 'num-mix',
++                                       u'中文数字与阿拉伯数字混用'))
++    return out
++
++
++NETWORK_WORDS = [u'妥妥的', u'刷屏', u'热搜', u'流量', u'点赞', u'评论区', u'666', u'吐槽', u'打卡']
++RE_SCENE_SENT = re.compile(u'[。！？]')
++SCENE_VOCAB = u'风月云雪山光天雾气露霜星潮草木花石水树影'
++
++
++def literary_rules(lines):
++    out = []
++    n = len(lines)
++    for i, line in enumerate(lines, 1):
++        section = find_section(lines, i - 1)
++        stripped = line.strip()
++        if re.match(u'^(?:写到这里|说到这里|笔者|作者|本书|各位读者|读者)', stripped):
++            out.append(build_candidate('literary', 'C', section, i, i,
++                                       stripped[:90], 'author-speak', ''))
++        for w in NETWORK_WORDS:
++            if w in line:
++                out.append(build_candidate('literary', 'C', section, i, i,
++                                           stripped[:90], 'network-word', u'词={0}'.format(w)))
++    for start in range(0, n - 2):
++        chunk = lines[start:start + 4]
++        if _all_scene(chunk):
++            out.append(build_candidate('literary', 'C', find_section(lines, start),
++                                       start + 1, start + 1,
++                                       u' '.join(x.strip() for x in chunk)[:200],
++                                       'scene-repetition', ''))
++            break
++    return out
++
++
++def _all_scene(chunk):
++    for line in chunk:
++        s = line.strip()
++        if not s or not RE_SCENE_SENT.search(s):
++            return False
++        if re.search(u'[“”‘’：]', s):
++            return False
++        if sum(1 for ch in SCENE_VOCAB if ch in s) < 2:
++            return False
++    return True
++
++
++def scan_rules(lines):
++    return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
++
++
+ def resolve_volume_dir(volume_id):
+     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
+         cfg = json.load(fh)
+     vol = next((v for v in cfg['volumes'] if v['id'] == volume_id), None)
+     if not vol:
+         raise SystemExit('Unknown volume: {0}'.format(volume_id))
+     pattern = re.compile(vol['directoryPattern'].replace('.', r'\.').replace('*', '.*'))
+     for name in sorted(os.listdir(repo_abs('volumes'))):
+         if pattern.match(name):
+             return os.path.join(repo_abs('volumes'), name)
+diff --git a/tests/test_scan_candidates.py b/tests/test_scan_candidates.py
+index 5a0f089..50ace23 100644
+--- a/tests/test_scan_candidates.py
++++ b/tests/test_scan_candidates.py
+@@ -4,21 +4,22 @@ import io
+ import os
+ import shutil
+ import sys
+ import tempfile
+ import unittest
+ 
+ SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts')
+ sys.path.insert(0, SCRIPTS_DIR)
+ 
+ from scan_candidates import (CANDIDATE_FIELDS, find_section, build_candidate,
+-                             serialize_tsv, serialize_md, scan)
++                             serialize_tsv, serialize_md, scan,
++                             scan_rules, mech_rules, semantic_rules, literary_rules)
+ 
+ 
+ class ScanBoneTests(unittest.TestCase):
+     def setUp(self):
+         self.tmp = tempfile.mkdtemp()
+ 
+     def tearDown(self):
+         shutil.rmtree(self.tmp)
+ 
+     def test_buildCandidateFields(self):
+@@ -49,12 +50,61 @@ class ScanBoneTests(unittest.TestCase):
+         serialize_md(cands, lines, path)
+         txt = io.open(path, 'r', encoding='utf-8').read()
+         self.assertIn(u'你好', txt)
+         self.assertIn(u'author-speak', txt)
+ 
+     def test_findSectionMatchesChineseNumeralHead(self):
+         lines = [u'第一百五十一节：竟是蛊仙传承', u'砰！', u'黑楼兰一脚踢翻黑旗胜。']
+         self.assertEqual(find_section(lines, 1), 1)
+ 
+ 
++class RuleTests(unittest.TestCase):
++    def test_mechWordlist(self):
++        lines = [u'第 1 节：测试', u'他躲闪不及，真是淬不及防。', u'']
++        w = [c for c in mech_rules(lines) if c['rule'] == 'wordlist']
++        self.assertEqual(len(w), 1)
++        self.assertEqual(w[0]['severity'], 'A')
++        self.assertIn(u'淬不及防', w[0]['sample'])
++
++    def test_mechRedactAndMojibake(self):
++        lines = [u'少年脸色大变：“[***]！”', u'乱码行\ufffd。', u'']
++        r = [c for c in mech_rules(lines) if c['rule'] == 'redact']
++        m = [c for c in mech_rules(lines) if c['rule'] == 'mojibake']
++        self.assertEqual(len(r), 1)
++        self.assertEqual(len(m), 1)
++
++    def test_semanticRepeat(self):
++        lines = [u'他深深的吸了一口气，看了看身边的族人。',
++                 u'他深深的吸了一口气，看了看身边的族人。', u'']
++        rep = [c for c in semantic_rules(lines) if c['rule'] == 'repeat']
++        self.assertGreaterEqual(len(rep), 1)
++        self.assertEqual(rep[0]['severity'], 'B')
++
++    def test_semanticNumMix(self):
++        lines = [u'今日给他三块元石，明日又给他 3 块元石。', u'']
++        n = [c for c in semantic_rules(lines) if c['rule'] == 'num-mix']
++        self.assertGreaterEqual(len(n), 1)
++
++    def test_literaryAuthorSpeak(self):
++        lines = [u'写到这里，我也不禁要劝读者一句：魔道自有其代价。', u'']
++        a = [c for c in literary_rules(lines) if c['rule'] == 'author-speak']
++        self.assertEqual(len(a), 1)
++        self.assertEqual(a[0]['severity'], 'C')
++
++    def test_literaryNetworkWord(self):
++        lines = [u'这笔交易简直不要太爽，妥妥的。', u'']
++        n = [c for c in literary_rules(lines) if c['rule'] == 'network-word']
++        self.assertGreaterEqual(len(n), 1)
++
++    def test_literarySceneRep(self):
++        lines = [u'第 12 节：应试',
++                 u'清风拂过山岗，月光洒落林间，夜色如水。',
++                 u'微风轻抚古木，雾气氤氲半山，云影徘徊。',
++                 u'寒露沾湿石阶，风声掠过屋角，月华朦胧。',
++                 u'光影交错石缝，山气浮沉草木，星斗渐沉。',
++                 u'', u'']
++        s = [c for c in literary_rules(lines) if c['rule'] == 'scene-repetition']
++        self.assertGreaterEqual(len(s), 1)
++
++
+ if __name__ == '__main__':
+     unittest.main()
+\ No newline at end of file

@@ -8,6 +8,8 @@ extends RefCounted
 
 
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const MarketRulesScript = preload("res://scripts/domain/market_rules.gd")
+const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 
 
 ## C8 NPC 交涉屏快照（contact 节点真实交涉选项 + 立场/恶名）。
@@ -159,6 +161,76 @@ static func build(controller) -> Dictionary:
 			out["offers"].append(offer_entry)
 	out["talk_options"] = talk_options
 	out["can_flee"] = stance != "极度仇恨"
+	# L0 2026-09-22 市价实账：NPC 需求报价 + 可售情报，预览价=结算价。
+	out["demands"] = _demand_offers(state, catalog, npc_id)
+	out["info_offers"] = _info_offers(state, catalog, npc_id)
+	return out
+
+
+## 需求收购预览：报价走 MarketRules.demand_quote，与 fulfill_demand 同式。
+static func _demand_offers(state, catalog: Dictionary, npc_id: String) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if state == null or npc_id.is_empty():
+		return out
+	var demands: Dictionary = state.npc_demands
+	for npc_value in catalog.get("npcs", []):
+		demands = MarketRulesScript.seed_npc_demands(demands, npc_value)
+	for demand_id in demands:
+		var demand: Dictionary = demands[demand_id]
+		if bool(demand.get("closed", false)):
+			continue
+		if str(demand.get("npc_id", npc_id)) != npc_id:
+			continue
+		var material_id := str(demand.get("material_id", ""))
+		var quantity := int(demand.get("quantity", 0))
+		var tier := int(demand.get("tier", 0))
+		if quantity <= 0:
+			continue
+		var base := MarketRulesScript.t1_material_base_price(catalog) \
+				* float(GuBalanceScript.rank_multiplier(maxi(1, int(demand.get("tier", 1))), catalog))
+		var quote := MarketRulesScript.demand_quote(base, 1, tier, catalog)
+		var owned := int(state.materials.get(material_id, 0))
+		var unit := int(round(float(quote.get("unit_price", 0.0))))
+		out.append({
+			"id": str(demand_id),
+			"material_id": material_id,
+			"material_name": DisplayText.material(material_id),
+			"quantity": quantity,
+			"owned": owned,
+			"unit_price": unit,
+			"executable": owned > 0,
+			"block_reason": "" if owned > 0 else "没有可交付的%s" % DisplayText.material(material_id),
+			"command": {"type": "fulfill_demand", "demand_id": str(demand_id), "amount": 1},
+		})
+	return out
+
+
+## 可售情报预览：价格 = MarketRules.sell_info（spread 衰减、一客一付）。
+static func _info_offers(state, catalog: Dictionary, npc_id: String) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if state == null or npc_id.is_empty():
+		return out
+	for fact_id in state.known_facts:
+		var info := {"id": str(fact_id), "base_value": 10.0}
+		var ledger: Dictionary = state.info_sales.get(str(fact_id), {})
+		var sold_to: Dictionary = ledger.get("sold_to", {})
+		var spread := int(ledger.get("spread_count", 0))
+		if bool(sold_to.get(npc_id, false)):
+			continue
+		var sold := MarketRulesScript.sell_info(info, npc_id, spread, sold_to, catalog)
+		if not bool(sold.get("sold", false)):
+			continue
+		var price := int(round(float(sold.get("price", 0.0))))
+		out.append({
+			"id": "info.%s" % str(fact_id),
+			"fact_id": str(fact_id),
+			"fact_name": DisplayText.fact(str(fact_id)),
+			"price": price,
+			"spread_count": spread,
+			"executable": true,
+			"block_reason": "",
+			"command": {"type": "sell_info", "info": info, "buyer_id": npc_id},
+		})
 	return out
 
 

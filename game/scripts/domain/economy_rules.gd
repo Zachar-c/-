@@ -11,6 +11,7 @@ extends RefCounted
 
 const SeededRollScript = preload("res://scripts/domain/seeded_roll.gd")
 const ContractRulesScript = preload("res://scripts/domain/contract_rules.gd")
+const GuBalanceScript = preload("res://scripts/domain/gu_balance.gd")
 
 # Per-run service usage counters live in node_flags as "svc_used_<id>" strings.
 # Single definition point (P0.2): Resolver references this constant instead of
@@ -92,6 +93,23 @@ static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> i
 		var discount := mini(revisit_cap, (visits - 1) * per)
 		multiplier *= 1.0 - float(discount) / 100.0
 	return maxi(1, int(floor(float(base) * multiplier)))
+
+
+## L0 2026-09-22 市价对齐：蛊卖出价唯一入口。基准 = GuBalance.gu_value
+## （gu_value_by_rank 中央表），再叠 sell_price_for 声望/回访系数。
+## 预览与结算必须同调本函数，禁止各报一个数。
+static func gu_sell_price(catalog: Dictionary, state: RunState, gu: Dictionary, instance_rank: int) -> int:
+	var base := int(GuBalanceScript.gu_value(gu, maxi(1, instance_rank), catalog))
+	return sell_price_for(catalog, state, base)
+
+
+## 材料卖出价唯一入口：挂牌 value 经 sell_price_for；预览/结算共用。
+static func material_sell_price(catalog: Dictionary, state: RunState, material_id: String) -> int:
+	var materials: Dictionary = catalog.get("loot_tables", {}).get("materials", {})
+	var base := int(materials.get(material_id, {}).get("value", 0))
+	if base <= 0:
+		return 0
+	return sell_price_for(catalog, state, base)
 
 
 # 2026-09-05 从 resolver.gd 迁出的资源交易门禁与数值结算（T1.2 行数门限：

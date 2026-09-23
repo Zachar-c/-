@@ -38,9 +38,10 @@ static func _sell_gu(state: RunState, command: Dictionary, catalog: Dictionary) 
 	var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 	if gu.is_empty():
 		return Resolver._rejected(state, "unknown_gu")
-	# 2026-09-04 中央计价：升阶实例按实例转数取 gu_value_by_rank。
+	# 2026-09-04 中央计价 + 2026-09-22 市价对齐：实例转数取 gu_value_by_rank，
+	# 再叠 sell_price_for；预览 caravan.sell 走同一 EconomyRules.gu_sell_price。
 	var instance_rank := maxi(int(gu.get("rank", 1)), GuInstance.max_refined_rank(state.gu_instances, gu_id))
-	var value := GuBalance.gu_value(gu, instance_rank, catalog)
+	var value := EconomyRulesScript.gu_sell_price(catalog, state, gu, instance_rank)
 	# 2026-09-03 修复：卖出必须同步销毁实例，否则下次 sync 会把卖掉的蛊
 	# 复活（元石已到手、蛊又回来 → 无限刷钱）。
 	var instances := state.gu_instances.duplicate(true)
@@ -935,7 +936,9 @@ static func _sell_material(state: RunState, command: Dictionary, catalog: Dictio
 	if owned <= 0:
 		return Resolver._rejected(state, "no_material_to_sell")
 	var base := int(materials[material_id].get("value", 1))
-	var price := Resolver.sell_price_for(catalog, state, base)
+	var price := EconomyRulesScript.material_sell_price(catalog, state, material_id)
+	if price <= 0:
+		price = Resolver.sell_price_for(catalog, state, base)
 	var stone_after := state.stone + price * owned
 	var remaining := state.materials.duplicate(true)
 	remaining[material_id] = 0

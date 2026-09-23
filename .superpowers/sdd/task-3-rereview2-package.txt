@@ -1,0 +1,94 @@
+﻿TASK 3 REREVIEW-2 PACKAGE
+eb81cae fix: apply_to_file 瀛楄妭绾ц鍐欙紝鏃燘OM鏂囦欢涓嶈杩藉姞BOM锛圛2 鍏抽棴锛?
+===== DIFF =====
+diff --git a/scripts/scan_candidates.py b/scripts/scan_candidates.py
+index 65aa3a3..26a9701 100644
+--- a/scripts/scan_candidates.py
++++ b/scripts/scan_candidates.py
+@@ -1,12 +1,13 @@
+ # -*- coding: utf-8 -*-
+ """鍏ㄤ功鍊欓€夋壂鎻忥細A/B/C 涓夌骇瑙勫垯+娓呭崟杈撳嚭锛堣瘝琛?涔辩爜閬斀/閲嶅/鏁板瓧娣风敤/浣滆€呰秺浣?缃戠粶璇?鍦烘櫙澶嶅啓锛夈€?""
++import codecs
+ import io
+ import json
+ import os
+ import re
+ import sys
+ from difflib import SequenceMatcher
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ from gu_tools import PsArgs, repo_abs, write_csv_utf8_bom, write_utf8_no_bom
+ from clean_full_source import CONFIRMED_FIXES
+@@ -186,27 +187,32 @@ def apply_wordlist(text, pairs):
+                 buf.append(new)
+                 replaced = True
+             pos = idx + len(old)
+         text = u''.join(buf)
+         if replaced:
+             applied.append((old, new))
+     return text, applied, skipped
+ 
+ 
+ def apply_to_file(path, pairs):
+-    """璇绘枃浠垛啋apply_wordlist鈫掓湁鏀瑰姩鎵嶅啓鍥烇紱newline='' 涓や晶淇濇寔鍘熸枃鎹㈣椋庢牸銆?""
+-    with io.open(path, 'r', encoding='utf-8-sig', newline='') as fh:
+-        raw = fh.read()
+-    new_raw, applied, skipped = apply_wordlist(raw, pairs)
++    """璇绘枃浠垛啋apply_wordlist鈫掓湁鏀瑰姩鎵嶅啓鍥烇紱瀛楄妭绾ц鍐欙紝BOM 鏈夋棤涓庢崲琛岄鏍煎師鏍蜂繚鎸併€?""
++    with io.open(path, 'rb') as fh:
++        blob = fh.read()
++    has_bom = blob.startswith(codecs.BOM_UTF8)
++    text = blob.decode('utf-8-sig' if has_bom else 'utf-8')
++    new_text, applied, skipped = apply_wordlist(text, pairs)
+     if applied:
+-        with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+-            fh.write(new_raw)
++        data = new_text.encode('utf-8')
++        if has_bom:
++            data = codecs.BOM_UTF8 + data
++        with io.open(path, 'wb') as fh:
++            fh.write(data)
+     return applied, skipped
+ 
+ 
+ def resolve_volume_dir(volume_id):
+     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
+         cfg = json.load(fh)
+     vol = next((v for v in cfg['volumes'] if v['id'] == volume_id), None)
+     if not vol:
+         raise SystemExit('Unknown volume: {0}'.format(volume_id))
+     pattern = re.compile(vol['directoryPattern'].replace('.', r'\.').replace('*', '.*'))
+diff --git a/tests/test_scan_candidates.py b/tests/test_scan_candidates.py
+index c15d5b9..32e689a 100644
+--- a/tests/test_scan_candidates.py
++++ b/tests/test_scan_candidates.py
+@@ -156,13 +156,27 @@ class ApplyTests(unittest.TestCase):
+         with io.open(path, 'w', encoding='utf-8-sig', newline='') as fh:
+             fh.write(raw)
+         applied, skipped = sc.apply_to_file(path, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
+         self.assertEqual(len(applied), 1)
+         with io.open(path, 'rb') as fh:
+             blob = fh.read()
+         self.assertTrue(blob.startswith(u'\ufeff'.encode('utf-8')))  # BOM 淇濇寔
+         self.assertEqual(blob.count(b'\r\n'), 2)                      # CRLF 淇濇寔
+         self.assertIn(u'鐚濅笉鍙婇槻'.encode('utf-8'), blob)
+ 
++    def test_applyToFileKeepsNoBomFileBomless(self):
++        import scan_candidates as sc
++        path = os.path.join(self.tmp, 'edit-nobom.txt')
++        raw = u'鐪熸槸娣笉鍙婇槻銆俓n绗簩琛屻€俓n'
++        with io.open(path, 'w', encoding='utf-8', newline='') as fh:
++            fh.write(raw)
++        applied, _ = sc.apply_to_file(path, [(u'娣笉鍙婇槻', u'鐚濅笉鍙婇槻')])
++        self.assertEqual(len(applied), 1)
++        with io.open(path, 'rb') as fh:
++            blob = fh.read()
++        self.assertFalse(blob.startswith(b'\xef\xbb\xbf'))  # 鏃?BOM 鏂囦欢涓嶈鍔?BOM
++        self.assertEqual(blob.count(b'\n'), 2)              # LF 琛屽熬淇濇寔
++        self.assertIn(u'鐚濅笉鍙婇槻'.encode('utf-8'), blob)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+\ No newline at end of file
+

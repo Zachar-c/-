@@ -80,3 +80,7 @@ secrets.json      本机凭据引用或 Secret 名称
 5. 任务以一个小而可回退的 Git 提交结束。
 
 没有第二个调度器、没有 Provider Router、没有通用 Agent 注册表。默认大脑和默认执行器都可替换；替换只从已配置且已验证的候选中选择，不抽象成新的 Agent 平台。
+
+## Jev System One（实验，非默认）
+
+唯一允许的实验旁路是 `jev_systemone.py`：对「任务该走 normal / hard / escalate」做类型化 Choice 提议（OpenRouter `POST /api/alpha/decisions`，model `typesafe/jev-1.13`），结果只是 decision proposal + confidence。它不写代码、不改架构、不替代 Codex/OpenCode、不进入无 fallback 的关键路径。现有 `choose-worker-model.ps1` 静态链仍是执行选择权威；Jev 仅在高置信时把任务映射到既有 `WorkerClass` 接口。

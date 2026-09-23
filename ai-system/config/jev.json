@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 3,
+  "lastVerified": "2026-09-22",
+  "apiVerification": {
+    "status": "local-laya-system-one",
+    "note": "2026-09-22: Primary transport is local Laya (convaiinnovations/laya, Apache-2.0), open-source System One for Jev. OpenRouter Jev optional (transport=openrouter).",
+    "transport": "openrouter",
+    "knownEndpoints": {
+      "decisions": "POST https://openrouter.ai/api/alpha/decisions",
+      "systemOne": "POST https://openrouter.ai/api/v1/systemone",
+      "typeSafeDirect": "POST https://api.typesafe.ai/v1/systemone"
+    },
+    "auth": "Authorization: Bearer <OPENROUTER_API_KEY>",
+    "models": {
+      "pinned": "typesafe/jev-1.13",
+      "latestAlias": "~typesafe/jev-latest",
+      "contextLength": 32000
+    },
+    "types": ["choice", "score", "noul"],
+    "errors": {
+      "400": "validation",
+      "401": "auth",
+      "402": "insufficient_credits",
+      "429": "rate_limit",
+      "500": "internal",
+      "502": "provider_error",
+      "503": "unavailable",
+      "524": "edge_timeout",
+      "529": "provider_overloaded"
+    },
+    "pricing": {
+      "input_per_mtok_usd": 0.042,
+      "output": "free",
+      "usageCostField": "usage.cost"
+    },
+    "docs": [
+      "https://openrouter.ai/docs/guides/community/jev",
+      "https://openrouter.ai/docs/guides/community/jev-tutorial",
+      "https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request",
+      "https://docs.typesafe.ai/confidence"
+    ]
+  },
+  "enabled": true,
+  "mode": "auto",
+  "transport": "laya",
+  "model": "convaiinnovations/laya",
+  "laya": {
+    "repo": "convaiinnovations/laya",
+    "package": "laya",
+    "license": "apache-2.0",
+    "note": "Open-source System One (Jev alternative). Typed choice/score/noul + calibrated probs. pip install laya; USE_TF=0 if load hangs."
+  },
+  "ollama": {
+    "host": "http://127.0.0.1:11434",
+    "model": "gemma2:2b",
+    "format": "json",
+    "temperature": 0,
+    "note": "Secondary free local fallback (not a true decision model)."
+  },
+  "openrouter": {
+    "baseUrl": "https://openrouter.ai",
+    "path": "/api/alpha/decisions",
+    "model": "typesafe/jev-1.13",
+    "apiKeyEnv": "OPENROUTER_API_KEY"
+  },
+  "decisionType": "worker_task_tier",
+  "questionId": "task_tier",
+  "instructions": "Which execution tier should handle this task?",
+  "criteria": {
+    "cheap_worker": "Docs, census, typo, or marker-only edits. No logic change.",
+    "standard_worker": "Bounded code fix, focused regression test, or wiki distillation. Documented Worker class normal. No product or architecture decision.",
+    "strong_worker": "Godot core lifecycle, multi-module architecture, save format, schema, or balance-formula change. Worker class hard.",
+    "gpt6_escalation": "Product intent, major tradeoff, or multi-direction modeling that needs L1/L0 research before any worker task."
+  },
+  "options": ["cheap_worker", "standard_worker", "strong_worker", "gpt6_escalation"],
+  "thresholds": {
+    "highConfidence": 0.8,
+    "mediumConfidence": 0.55
+  },
+  "timeoutMs": 2500,
+  "mapToWorkerClass": {
+    "cheap_worker": "normal",
+    "standard_worker": "normal",
+    "strong_worker": "hard",
+    "gpt6_escalation": "escalate"
+  },
+  "mapToFinalAction": {
+    "cheap_worker": "use_normal_chain",
+    "standard_worker": "use_normal_chain",
+    "strong_worker": "use_hard_chain",
+    "gpt6_escalation": "escalate_to_system2"
+  },
+  "observability": {
+    "logPath": "ai-system/logs/jev-decisions.jsonl",
+    "logPromptBody": false
+  }
+}

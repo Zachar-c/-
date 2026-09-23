@@ -1,0 +1,522 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>《问真》完整力量循环审计 · 2026-09-23</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div class="brand"><span class="seal">审</span><span>力量循环审计</span></div>
+      <nav class="nav">
+        <a href="#loop">循环图</a>
+        <a href="#segments">六段</a>
+        <a href="#breaks">五断点</a>
+        <a href="#killmove">杀招对照</a>
+        <a href="#runs">真实走盘</a>
+        <a href="#recs">调整候选</a>
+        <a href="#l1">L1 上抛包</a>
+        <a href="#bounds">边界</a>
+      </nav>
+    </div>
+  </header>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="kicker"><span class="dot"></span> Web Lab 当前实现 · 只读联合审计</div>
+      <h1>《问真》完整力量循环审计</h1>
+      <p class="lede">
+        把战斗 → 掉落 → 经济 → 炼蛊 → 杀招 → 修为 → 新构筑 → 战斗合成一条闭环判断：
+        哪条反馈真的兑现了成长与选择，哪条只是库存或数字。本轮只给事实与研究候选，不改规则、不裁数值。
+      </p>
+      <div class="meta-row">
+        <span><strong>对象</strong> game/wenzhen-web-lab/lab.html</span>
+        <span><strong>基线</strong> git 7f43b91 · 脏树只读</span>
+        <span><strong>验证</strong> probe_verify_economy 13/13 · 真实 DOM 走盘 seed-101</span>
+        <span><strong>日期</strong> 2026-09-23</span>
+      </div>
+
+      <div class="verdict">
+        <h2>联合结论</h2>
+        <p>
+          闭环在<strong>「战斗 → 元石 → 突破 → 真元/催动」</strong>这一条线性强度线上是通的；
+          在<strong>「战斗 → 掉落 → 炼蛊 → 杀招 → 新解法」</strong>这条构筑成长分支上大量断开。
+          玩家主要靠 Rank / 真元上限变强，而不是靠获得新力量形成新的战斗解法。
+          当前问题不只是价格或伤害偏高偏低，而是多条反馈没有兑现：
+          <em>材料难转成新力量</em>、<em>层主不给新蛊</em>、<em>杀招显示与结算不一致</em>、<em>新蛊不触发重推</em>。
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <section id="loop">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>完整力量循环</h2>
+        <span class="tag">SYSTEM LOOP · 当前实现</span>
+      </div>
+      <p class="sec-intro">
+        实线绿 = 反馈成立；虚线红 = 断点；虚线金 = 半通/条件通；灰线 = 仅线性强度。
+        点击节点可跳到对应段落。
+      </p>
+      <div class="loop-stage" aria-label="力量循环图">
+        <svg viewBox="0 0 1040 520" role="img" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10" fill="none" stroke="#57534e" stroke-width="1.2"/>
+            </marker>
+            <marker id="arrBad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10" fill="none" stroke="#b91c1c" stroke-width="1.2"/>
+            </marker>
+            <marker id="arrOk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10" fill="none" stroke="#2f6f4e" stroke-width="1.2"/>
+            </marker>
+            <marker id="arrGold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10" fill="none" stroke="#a16207" stroke-width="1.2"/>
+            </marker>
+          </defs>
+
+          <!-- 背景 -->
+          <rect x="0" y="0" width="1040" height="520" fill="#faf8f4"/>
+          <text x="40" y="36" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="600" fill="#1c1917">战斗闭环</text>
+          <text x="40" y="280" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="600" fill="#1c1917">构筑闭环</text>
+          <text x="40" y="430" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="600" fill="#1c1917">线性强度</text>
+
+          <!-- 上排：战斗闭环 -->
+          <g id="n-combat" style="cursor:pointer">
+            <rect x="200" y="48" width="150" height="56" rx="8" fill="#1c1917"/>
+            <text x="275" y="76" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#fafaf9">战斗</text>
+            <text x="275" y="118" text-anchor="middle" font-size="11" fill="#78716c" font-family="-apple-system,'PingFang SC',sans-serif">元石 · 材料 · 蛊 · 恢复</text>
+          </g>
+
+          <g id="n-loot" style="cursor:pointer">
+            <rect x="430" y="48" width="150" height="56" rx="8" fill="#ebe6db" stroke="#d6d0c4"/>
+            <text x="505" y="76" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">掉落</text>
+            <text x="505" y="118" text-anchor="middle" font-size="11" fill="#78716c" font-family="-apple-system,'PingFang SC',sans-serif">毛收入 · 非净收益</text>
+          </g>
+
+          <g id="n-stone" style="cursor:pointer">
+            <rect x="660" y="48" width="150" height="56" rx="8" fill="#ebe6db" stroke="#d6d0c4"/>
+            <text x="735" y="76" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">元石经济</text>
+            <text x="735" y="118" text-anchor="middle" font-size="11" fill="#78716c" font-family="-apple-system,'PingFang SC',sans-serif">商店 · 突破 · 无套利</text>
+          </g>
+
+          <!-- 战斗→掉落 -->
+          <path d="M350,76 H430" stroke="#2f6f4e" stroke-width="1.2" marker-end="url(#arrOk)"/>
+          <!-- 掉落→元石 -->
+          <path d="M580,76 H660" stroke="#2f6f4e" stroke-width="1.2" marker-end="url(#arrOk)"/>
+          <!-- 元石→战斗回环 -->
+          <path d="M810,76 H880 V160 H275 V104" stroke="#2f6f4e" stroke-width="1.2" fill="none" marker-end="url(#arrOk)"/>
+          <text x="890" y="130" font-size="11" fill="#2f6f4e" font-family="-apple-system,'PingFang SC',sans-serif">恢复 + 突破续航</text>
+
+          <!-- 中排：构筑 -->
+          <g id="n-mat" style="cursor:pointer">
+            <rect x="80" y="220" width="150" height="56" rx="8" fill="#faf8f4" stroke="#b91c1c" stroke-dasharray="4 3"/>
+            <text x="155" y="248" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">材料</text>
+            <text x="155" y="290" text-anchor="middle" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">3 / 80 有消费</text>
+          </g>
+
+          <g id="n-forge" style="cursor:pointer">
+            <rect x="310" y="220" width="150" height="56" rx="8" fill="#faf8f4" stroke="#b91c1c" stroke-dasharray="4 3"/>
+            <text x="385" y="248" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">炼蛊</text>
+            <text x="385" y="290" text-anchor="middle" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">6 配方 · 无成长链</text>
+          </g>
+
+          <g id="n-km" style="cursor:pointer">
+            <rect x="540" y="220" width="150" height="56" rx="8" fill="#faf8f4" stroke="#a16207" stroke-dasharray="4 3"/>
+            <text x="615" y="248" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">杀招组合</text>
+            <text x="615" y="290" text-anchor="middle" font-size="11" fill="#a16207" font-family="-apple-system,'PingFang SC',sans-serif">显示 ≠ 结算 · 无重推</text>
+          </g>
+
+          <g id="n-build" style="cursor:pointer">
+            <rect x="770" y="220" width="170" height="56" rx="8" fill="#faf8f4" stroke="#b91c1c" stroke-dasharray="4 3"/>
+            <text x="855" y="248" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">新构筑 / 新解法</text>
+            <text x="855" y="290" text-anchor="middle" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">实测 1 次 / 14 节点</text>
+          </g>
+
+          <!-- 掉落→材料（断） -->
+          <path d="M470,104 V180 H155 V220" stroke="#b91c1c" stroke-width="1.2" fill="none" stroke-dasharray="5 4" marker-end="url(#arrBad)"/>
+          <text x="250" y="168" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">B1 材料难变现/难消费</text>
+          <!-- 掉落→层主空池 -->
+          <path d="M505,104 V150 H900 V180" stroke="#b91c1c" stroke-width="1.2" fill="none" stroke-dasharray="5 4" marker-end="url(#arrBad)"/>
+          <text x="680" y="142" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">B2 层主 55% 蛊池为空</text>
+          <!-- 材料→炼蛊 -->
+          <path d="M230,248 H310" stroke="#b91c1c" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrBad)"/>
+          <!-- 炼蛊→杀招 -->
+          <path d="M460,248 H540" stroke="#a16207" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrGold)"/>
+          <!-- 杀招→构筑 -->
+          <path d="M690,248 H770" stroke="#a16207" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrGold)"/>
+          <!-- 构筑→战斗 -->
+          <path d="M855,220 V170 H275 V104" stroke="#b91c1c" stroke-width="1.2" fill="none" stroke-dasharray="5 4" marker-end="url(#arrBad)"/>
+          <text x="560" y="198" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">B5 新解法几乎不进入后续战斗</text>
+
+          <!-- B3 B4 标签 -->
+          <text x="320" y="320" font-size="11" fill="#b91c1c" font-family="-apple-system,'PingFang SC',sans-serif">B3 自环/被支配配方</text>
+          <text x="545" y="320" font-size="11" fill="#a16207" font-family="-apple-system,'PingFang SC',sans-serif">B4 门禁/条件在合成路径丢失</text>
+
+          <!-- 下排：线性 -->
+          <g id="n-cult" style="cursor:pointer">
+            <rect x="200" y="400" width="160" height="56" rx="8" fill="#ebe6db" stroke="#d6d0c4"/>
+            <text x="280" y="428" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">修为突破</text>
+            <text x="280" y="470" text-anchor="middle" font-size="11" fill="#2f6f4e" font-family="-apple-system,'PingFang SC',sans-serif">主石槽 · 线性成长</text>
+          </g>
+          <g id="n-qi" style="cursor:pointer">
+            <rect x="440" y="400" width="180" height="56" rx="8" fill="#ebe6db" stroke="#d6d0c4"/>
+            <text x="530" y="428" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#1c1917">真元上限 ×3 · 催动</text>
+            <text x="530" y="470" text-anchor="middle" font-size="11" fill="#2f6f4e" font-family="-apple-system,'PingFang SC',sans-serif">解锁高转蛊使用</text>
+          </g>
+          <g id="n-power" style="cursor:pointer">
+            <rect x="700" y="400" width="160" height="56" rx="8" fill="#1c1917"/>
+            <text x="780" y="428" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang SC',sans-serif" font-size="15" fill="#fafaf9">数值变强</text>
+            <text x="780" y="470" text-anchor="middle" font-size="11" fill="#86efac" font-family="-apple-system,'PingFang SC',sans-serif">循环成立</text>
+          </g>
+
+          <path d="M735,104 V400" stroke="#2f6f4e" stroke-width="1.2" fill="none" marker-end="url(#arrOk)"/>
+          <text x="745" y="320" font-size="11" fill="#2f6f4e" font-family="-apple-system,'PingFang SC',sans-serif">元石主消费</text>
+          <path d="M360,428 H440" stroke="#2f6f4e" stroke-width="1.2" marker-end="url(#arrOk)"/>
+          <path d="M620,428 H700" stroke="#2f6f4e" stroke-width="1.2" marker-end="url(#arrOk)"/>
+          <path d="M780,400 V330 H275 V104" stroke="#2f6f4e" stroke-width="1.2" fill="none" marker-end="url(#arrOk)"/>
+        </svg>
+      </div>
+      <div class="loop-legend">
+        <span class="legend-item"><span class="swatch ok"></span>反馈成立</span>
+        <span class="legend-item"><span class="swatch bad"></span>断点 / 未兑现</span>
+        <span class="legend-item"><span class="swatch partial"></span>半通（显示/门禁问题）</span>
+        <span class="legend-item"><span class="swatch line"></span>线性强度节点</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="segments">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>六段实证</h2>
+        <span class="tag">EVIDENCE · 应用点已回读</span>
+      </div>
+      <p class="sec-intro">
+        数字均回到真实应用点或受控探针输出。fixture 明确标注「非正常 Run」；自动策略失败不等于不可通关。
+      </p>
+
+      <div class="seg-grid">
+        <article class="seg-card" id="seg-loot">
+          <div class="seg-id">SEGMENT 01 · LOOT</div>
+          <h3>战斗收入与掉落</h3>
+          <p><span class="badge ok">毛收入成立</span> <span class="badge bad">层主空心</span></p>
+          <ul class="facts">
+            <li data-n="1">普通战毛收入 <code>3 石 + 2 材料 + 6% 三选一</code>；精英 8–14 石；层主 15–27 石。恢复（+8 血/回满真元）是状态回补，<strong>不折成钱</strong>；战斗消耗未建模，故只称毛收入。</li>
+            <li data-n="2">公式 <code>stone = base[tier] + trunc(base*20%*(layer-1))</code>（<code>run_rules.js:89-94</code>）。</li>
+            <li data-n="3">蛊几率：common 6% / elite 35% / <strong>boss 55%</strong>，但 boss <code>gu_pool.by_rarity</code> 为空 → <code>rollGu</code> 直接空返。<strong>120/120 空</strong>（6 seed × 20 tick）；对照 common 300 tick 19 中，证 harness 有效。</li>
+            <li data-n="4">图结构为一次性 DAG、只向前推进——无连刷机制。</li>
+          </ul>
+        </article>
+
+        <article class="seg-card" id="seg-econ">
+          <div class="seg-id">SEGMENT 02 · ECONOMY</div>
+          <h3>元石经济与商店</h3>
+          <p><span class="badge ok">无套利</span> <span class="badge warn">主石槽是突破</span></p>
+          <ul class="facts">
+            <li data-n="1">25 个可上架 purchase <strong>全部买价 &gt; 自身卖价</strong>（逐项核对，非全局 min/max）。材料<strong>不能卖出</strong>。</li>
+            <li data-n="2">成交价 = 挂牌 + 层加价（L1 +0% … L5 +50%）。上架还受 tier ≤ 层、school、非 <code>npc_only</code> 三重门。</li>
+            <li data-n="3">月光 t3 最早 L3（非 L1），L3 实战 2 战；血滴子 <code>npc_only</code> 永不上架；剑系商品非剑流派不可见。</li>
+            <li data-n="4">元石主要消费是<strong>突破</strong>（R2 5 / R3 12 / R4 20 / R5 30）与少量商店蛊。古方购买当前无机械收益。</li>
+          </ul>
+        </article>
+
+        <article class="seg-card" id="seg-mat">
+          <div class="seg-id">SEGMENT 03 · MATERIALS</div>
+          <h3>材料库存 → 消费</h3>
+          <p><span class="badge bad">B1 · 77/80 无用途</span></p>
+          <ul class="facts">
+            <li data-n="1">命名材料 <strong>80</strong> 种；有消费点的仅 <strong>3</strong> 种：<code>boar_king_tusk</code> / <code>beast_blood</code> / <code>beast_bone</code>。</li>
+            <li data-n="2">全仓 <code>state.materials</code> 写操作仅 3 处：掉落 +1（<code>main.js:676</code>）、炼制 -n（:879）、商店购买 +1（:1478）。</li>
+            <li data-n="3">其余 77 种（含精英保底 <code>venom_sac</code>、可购月蓝花瓣/传承信物、全部 <code>mat_*_*</code>）<strong>零消费、零出售</strong>，只有库存展示。</li>
+            <li data-n="4">含义：无法形成「为了炼某只蛊，主动去打某类敌人」的定向目标。</li>
+          </ul>
+        </article>
+
+        <article class="seg-card" id="seg-forge">
+          <div class="seg-id">SEGMENT 04 · REFINEMENT</div>
+          <h3>炼蛊图与选择</h3>
+          <p><span class="badge bad">B3 · 无成长链</span> <span class="badge mute">必成 100%</span></p>
+          <ul class="facts">
+            <li data-n="1">全库 77 蛊 / <strong>6 配方 / 4 输出</strong>；<strong>70/77</strong> 无任何配方边。无 r2+ 产出配方，无数值递进链。</li>
+            <li data-n="2">6 配方 <code>successRollMax</code> 全 100——失败分支为死代码。两个 <code>advance_*</code> 为<strong>自环且严格为负</strong>（同 ID 投入产出，净 -6 石 -材料）。</li>
+            <li data-n="3">月芒双配方、白玉双配方均存在<strong>严格被支配</strong>的劣势写法；UI 全量渲染无过滤。这是重复劣势配方，<strong>不是套利</strong>。</li>
+            <li data-n="4">新蛊五选：保留/出售/炼掉/上杀招/无「替换核心」。获得新蛊后<strong>不自动重推旧杀招</strong>，须手动回杀招页。</li>
+          </ul>
+        </article>
+
+        <article class="seg-card" id="seg-km">
+          <div class="seg-id">SEGMENT 05 · KILL MOVES</div>
+          <h3>杀招：组合、门禁、显示</h3>
+          <p><span class="badge warn">B4 · 显示≠结算</span> <span class="badge mute">固定配方，非自由推导</span></p>
+          <ul class="facts">
+            <li data-n="1">结算 = 组件 <code>battleEffect</code> 按 recipe 顺序合成；门禁/延迟仍读预制 <code>m.effect</code>；卡片文本也读预制。三套语义不一致。</li>
+            <li data-n="2">改解法（3）：明光壁（盾 3+回 1 vs 显示盾 6）、血昙（纯伤 6 vs 显示回 2+伤 3，且组件 hp&lt;50% 条件在合成路径丢失）、剑痕索命（隐藏剑意 setup）。</li>
+            <li data-n="3">仅增伤/误导（2）：双锋引一致；凝光合成伤 4+支援闩 vs 显示伤 5。</li>
+            <li data-n="4">实际 lab 走盘：满血单用血别离被门禁挡下；组成血昙后<strong>满血一击秒 5 血铁皮山猪</strong>——条件绕过已复现（fixture/规则反例路径，非正常开局）。</li>
+          </ul>
+        </article>
+
+        <article class="seg-card" id="seg-cult">
+          <div class="seg-id">SEGMENT 06 · CULTIVATION</div>
+          <h3>修为：Rank 实际开放什么</h3>
+          <p><span class="badge ok">线性强度成立</span> <span class="badge warn">qi 语义易误读</span></p>
+          <ul class="facts">
+            <li data-n="1">小突破只动 stage，qiMax / 催动 / 炼制 / 组合<strong>零变化</strong>。大突破 → Rank+1，qiMax ×3，按 <code>canActivate</code> 解锁该转蛊催动。</li>
+            <li data-n="2">炼制/组合无 rank 门禁；「维持」成本随 qiMax 放大。突破后 <code>state.qi = min(oldQiMax, newQiMax)</code>——旧 qi 当前值被丢弃，耗尽态会回填旧上限。</li>
+            <li data-n="3">初始 14 跨转蛊：核心双挂载（月光/小光/石皮/生机草/血别离/血滴子/玉皮/白豕）；鬼火/雨/才华开局不可催动，突破后补延迟/消耗/弱意图解。</li>
+            <li data-n="4">血手印 r5 开局死重（不可催动、无配方、无杀招）；卖价最高但卖即断未来 r5 解。</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="breaks">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>五个断点</h2>
+        <span class="tag">BREAKPOINTS · 循环未兑现处</span>
+      </div>
+      <p class="sec-intro">不是数值失衡清单，而是「反馈应当存在却没接上」的结构缺口。</p>
+      <div class="bp-grid">
+        <article class="bp-card">
+          <span class="bp-num">B1</span>
+          <h3>材料难转成新力量</h3>
+          <p>80 种命名材料仅 3 种有消耗；77 种零消费零出售。打击特定敌人的「定向 farm」目标不成立。</p>
+        </article>
+        <article class="bp-card">
+          <span class="bp-num">B2</span>
+          <h3>层主不给新构筑机会</h3>
+          <p>配置 55% 出蛊，池为空 → 120/120 空奖。挑战更强敌人主要只换更多元石。</p>
+        </article>
+        <article class="bp-card">
+          <span class="bp-num">B3</span>
+          <h3>炼蛊没有成长分支</h3>
+          <p>6 配方全 100%、无等级链；两自环净亏；两对被支配重复。炼制不改变战斗解法。</p>
+        </article>
+        <article class="bp-card">
+          <span class="bp-num">B4</span>
+          <h3>杀招显示 ≠ 真实结算</h3>
+          <p>预制文本、门禁条件、组件合成三套语义；血昙满血打出且组件条件丢失。玩家按错误信息决策。</p>
+        </article>
+        <article class="bp-card">
+          <span class="bp-num">B5</span>
+          <h3>新蛊几乎不进构筑</h3>
+          <p>掉落/商店新蛊不进 5 杀招配方，也不触发重推。实测 14 节点仅 1 次经后续战斗验证的构筑变化。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="killmove">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>杀招显示 vs 结算</h2>
+        <span class="tag">点击卡片展开 · 空载组件合成</span>
+      </div>
+      <p class="sec-intro">
+        「改解法」= 改变动作顺序/目标选择/应对机制/资源转换；单纯增减伤害不计。
+        文本漂移本身不是玩法质变，但会误导平衡判断，必须先从强度问题中剥离。
+      </p>
+      <div class="km-grid" id="km-grid">
+        <!-- filled by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <section id="runs">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>真实走盘证据</h2>
+        <span class="tag">lab.html DOM · 非引擎复写</span>
+      </div>
+      <p class="sec-intro">
+        进度驱动若复写 <code>main.js</code> 则作废。以下为实际页面命令/可见 DOM 驱动；
+        自动策略失败只证明该策略失败，不证明游戏不可通关。
+      </p>
+      <div class="run-strip">
+        <div class="stat">
+          <div class="k">SEED 101 · BALANCED</div>
+          <div class="v">14<span class="u">节点</span></div>
+          <div class="d">结局：魂魄耗尽 · 无软锁 · consoleErrors 0</div>
+        </div>
+        <div class="stat">
+          <div class="k">构筑变化（已验证）</div>
+          <div class="v">1<span class="u">次</span></div>
+          <div class="d">首个：节点 2 / 战斗 1 使用 small_light_gu</div>
+        </div>
+        <div class="stat">
+          <div class="k">终局状态</div>
+          <div class="v">R2<span class="u">/ 魂 0</span></div>
+          <div class="d">血 24/24 · 元 57/60 · 石 1 · 装备明光壁+血昙</div>
+        </div>
+        <div class="stat">
+          <div class="k">动作结构</div>
+          <div class="v">96<span class="u">gu</span></div>
+          <div class="d">杀招 95 · 拳脚 0 · 反例：血昙满血秒杀已复现</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>证据类</th>
+              <th>结论</th>
+              <th>边界</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>静态不变量</td>
+              <td>材料写点=3、配方图 6/4/70、显示-结算差异、突破 qi 语义、buy&gt;sell 逐项</td>
+              <td>可重复执行；与具体对局无关</td>
+            </tr>
+            <tr>
+              <td>受控 fixture</td>
+              <td>boss 空池 120/120、配方必成、自环净亏、条件绕过</td>
+              <td>非正常 Run；只证规则行为，不证局内可达频率</td>
+            </tr>
+            <tr>
+              <td>真实走盘</td>
+              <td>seed-101 balanced 14 节点魂耗败；1 次经战斗验证的构筑变化</td>
+              <td>单样本；不外推「全游戏不可胜」</td>
+            </tr>
+            <tr>
+              <td>已作废</td>
+              <td>progression/driver.mjs 全部 victory / ACTIVE_SOLUTION 统计</td>
+              <td>复写主流程，不得引用</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="recs">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>三个调整候选</h2>
+        <span class="tag">RESEARCH CANDIDATES · 非已生效裁定</span>
+      </div>
+      <p class="sec-intro">
+        以下仅供 L0/L1 评审。本轮不改变核心玩法、产品方向或阶段目标；数值与架构取舍必须上抛。
+      </p>
+      <div class="rec-grid">
+        <article class="rec-card">
+          <span class="priority">候选 A · 打通材料目标</span>
+          <h3>让掉落材料进入消耗</h3>
+          <p>目标：恢复「为了炼某只蛊，去打某类敌人」的定向循环。</p>
+          <ul>
+            <li>为 <code>venom_sac</code> / <code>moon_dew</code> / 流派 <code>mat_*</code> 接上配方或替代突破/参悟消耗</li>
+            <li>或给材料一条诚实的出售/兑换路径（当前零出口）</li>
+            <li>保持：无重复净增资产循环（不引入套利）</li>
+          </ul>
+        </article>
+        <article class="rec-card">
+          <span class="priority">候选 B · 让强敌给新力量</span>
+          <h3>兑现层主与精英的构筑回报</h3>
+          <p>目标：「挑战更强敌人 → 获得新构筑机会」成立。</p>
+          <ul>
+            <li>补齐 boss <code>gu_pool</code>（或删掉虚假 55%），使配置与行为一致</li>
+            <li>层主/精英三选一偏向「能进杀招或炼制图的新组件」，而非纯元石</li>
+            <li>先修显示-结算，再谈强弱，避免围着错误卡面调参</li>
+          </ul>
+        </article>
+        <article class="rec-card">
+          <span class="priority">候选 C · 兑现构筑选择</span>
+          <h3>杀招诚实化 + 新蛊重推通路</h3>
+          <p>目标：获得新力量后能看见并测试新解法。</p>
+          <ul>
+            <li>卡片文本/门禁/组件合成对齐；血昙类条件不得在合成路径静默丢失</li>
+            <li>获得新蛊后提示或自动列出可解锁/可强化的杀招与配方</li>
+            <li>声明式自动推导属未授权设计，本轮不恢复；只补「固定配方」的可达与提示</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="l1">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>L1 Research Request 上抛包</h2>
+        <span class="tag">READY_FOR_L1 · 自足 · 可直接转交</span>
+      </div>
+      <p class="sec-intro">
+        完整正文见 <code>working/loop-audit-20260923/L1_RESEARCH_REQUEST.md</code>（证据、数字、公式、例子已全部内嵌，L1 无需打开仓库）。
+        下列五问是本包真正要求裁决的问题；K0–K9 为已确认事实底座。
+      </p>
+      <div class="split-2">
+        <div class="panel">
+          <h3>五问（须 L1 回答）</h3>
+          <ul>
+            <li><strong>Q1 系统模型</strong>：构筑支线断开是实现漏接，还是骨架偏离「策略构筑 × 蛊师代价」？给出 1–2 个反馈回路模型与「构筑变化」可操作判据。</li>
+            <li><strong>Q2 断点定性</strong>：B1–B5 标 <code>实现缺口</code> / <code>设计裁决</code> / <code>混合</code> 并排序；只修缺口类会在哪步仍断。</li>
+            <li><strong>Q3 游戏化妥协</strong>：候选 A/B/C 采纳/改写/否决；指出通往「方源模拟器 / 纯数值 / 空技能」的禁止诱惑。</li>
+            <li><strong>Q4 杀招语义</strong>：文本 / 门禁 / 组件合成以谁为权威；血昙类条件绕过是 bug 还是组合特性；自由推导是否恢复及边界。</li>
+            <li><strong>Q5 材料角色</strong>：配方钥匙 / 祭品 / 耗材 / 关系货币等互斥模型至少 2 种，如何表达代价。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>包结构与纪律</h3>
+          <ul>
+            <li><code>RESEARCH REQUEST</code> 正文：阶段 / 问题 / 不可自决原因 / 已知事实 / 冲突 / 约束 / 期望产出</li>
+            <li>附录 A–D：五断点、三候选、应用点溯源、L2 边界</li>
+            <li>末尾 <strong>L0 决议清单</strong> 7 条，请 L1 成稿后原样附回</li>
+            <li>约束：不改核心玩法/方向/阶段目标；不把自动推导当已授权；不引入套利；fixture ≠ 正常 Run</li>
+            <li>期望产出：系统模型 + 断点定性路线 + 杀招/材料专项建议 + Worker 计划（可选）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bounds">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>证据边界与未知</h2>
+        <span class="tag">LIMITS</span>
+      </div>
+      <div class="split-2">
+        <div class="panel">
+          <h3>本轮可以引用</h3>
+          <ul>
+            <li>probe_verify_economy.js 真实输出 <strong>13/13 pass</strong></li>
+            <li>材料 3/80 消费、boss 空池、6 配方必成、自环净亏、突破 qi 语义</li>
+            <li>杀招五式显示 vs 组件合成差异表；血别离门禁 vs 血昙绕过对照</li>
+            <li>seed-101 balanced 真实 DOM 走盘账本与动作回放</li>
+            <li>既有测试文本输出：lab_transactions 7/0、loot+shop 9/0、gu_rules+run_flow 25/0、全量 167/0</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>不能下结论 / 需上抛</h3>
+          <ul>
+            <li>boss 空池 + 55% 是数据缺口还是有意为之（行为已证，意图未证）</li>
+            <li><code>advance_*</code> 同 ID 产出语义：升级占位还是漏写差异</li>
+            <li>古方 200 石产物在 <code>DATA.gu</code> 不存在，是否空头</li>
+            <li>完整通关时间线、多策略胜率：真实样本仍不足，不给虚构终局</li>
+            <li>一切定价/强度/是否恢复自由杀招推导：属产品取舍，须 L0/L1</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>《问真》完整力量循环审计 · 只读 · 不提交 · 不改生产数值</div>
+      <div class="mono">working/loop-audit-20260923/ · lab hashes pinned in summary.json</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -12,21 +12,24 @@
    "material_cost": {
     "venom_sac": 1
    },
-   "temp_card_id": "farewell_grip"
+   "output_card_id": "farewell_grip",
+   "persists_after_battle": true
   },
   {
    "id": "battle_bone_probe",
    "material_cost": {
     "beast_bone": 2
    },
-   "temp_card_id": "light_probe"
+   "output_card_id": "light_probe",
+   "persists_after_battle": true
   },
   {
    "id": "battle_dew_mend",
    "material_cost": {
     "moon_dew": 1
    },
-   "temp_card_id": "vitality_grass_remedy"
+   "output_card_id": "vitality_grass_remedy",
+   "persists_after_battle": true
   }
  ],
  "battle_blind": {

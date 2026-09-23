@@ -36,3 +36,12 @@ game/tools/_*.txt
 # 已退役的旧游戏路径：Task 7 之后磁盘上只剩本地恢复材料与缓存
 # （.git-nested-backup/、.worktrees/、.godot/、tmp*/、本地原文），均不进入 Git 树。
 /gu-zhenren-editor/
+
+# Python 字节码缓存：本机生成物，不入库（2026-09-23 收口时补围堵）。
+**/__pycache__/
+**/*.pyc
+
+# working/ 是本地工作区（含 full-compress 全本、_vol1_raw 卷原文等原文底稿）。
+# 依 AGENTS.md「禁止提交完整原始小说」与 2026-08-24「working 目录转入本地不入库」裁决，
+# 整目录保持不入库；需要归档其中某个非原文产物时单独挑出。
+/working/

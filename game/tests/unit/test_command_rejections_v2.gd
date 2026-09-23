@@ -83,12 +83,59 @@ func test_release_gu_rejects_missing_instance() -> void:
 
 func test_sell_info_rejects_a_buyer_who_already_paid() -> void:
 	var before := _state()
+	# L0 2026-09-22：sold_to/spread 以 RunState.info_sales 为准，禁止命令自带。
+	before.info_sales = {"secret_001": {"sold_to": {"buyer_a": true}, "spread_count": 1}}
 	var out := _run_on(before, "sell_info", {
 		"info": {"id": "secret_001", "base_value": 5.0},
-		"buyer_id": "buyer_a", "spread_count": 1, "sold_to": {"buyer_a": true}})
+		"buyer_id": "buyer_a"})
 	assert_false(bool(out["result"]["ok"]))
 	assert_eq(str(out["result"]["reason"]), "buyer_already_paid")
 	assert_eq(out["state"], before)
+
+
+## L0 2026-09-22：成交入元石并记 info_sales；卖方保留 known_facts。
+func test_sell_info_credits_stone_and_records_ledger() -> void:
+	var state := _state()
+	var before_stone := int(state.stone)
+	var out := _run_on(state, "sell_info", {
+		"info": {"id": "secret_ledger", "base_value": 10.0},
+		"buyer_id": "buyer_a"})
+	assert_true(bool(out["result"]["ok"]), str(out["result"]))
+	assert_eq(int(out["result"]["price"]), 10, "spread=0 时按 base_value 成交")
+	assert_eq(int(out["state"].stone), before_stone + 10)
+	assert_true(bool(out["state"].info_sales["secret_ledger"]["sold_to"]["buyer_a"]))
+	assert_eq(int(out["state"].info_sales["secret_ledger"]["spread_count"]), 1)
+	assert_true(out["state"].known_facts.has("secret_ledger"), "卖方保留知识")
+
+
+## L0 2026-09-22：二次转售衰减；同一买家不重付。
+func test_sell_info_decays_spread_and_blocks_repeat_buyer() -> void:
+	var state := _state()
+	var first := _run_on(state, "sell_info", {
+		"info": {"id": "secret_decay", "base_value": 10.0}, "buyer_id": "buyer_a"})
+	assert_true(bool(first["result"]["ok"]))
+	var second := _run_on(first["state"], "sell_info", {
+		"info": {"id": "secret_decay", "base_value": 10.0}, "buyer_id": "buyer_b"})
+	assert_true(bool(second["result"]["ok"]))
+	assert_eq(int(second["result"]["price"]), 5, "spread=1 时对半衰减")
+	var repeat := _run_on(second["state"], "sell_info", {
+		"info": {"id": "secret_decay", "base_value": 10.0}, "buyer_id": "buyer_a"})
+	assert_false(bool(repeat["result"]["ok"]))
+	assert_eq(str(repeat["result"]["reason"]), "buyer_already_paid")
+
+
+## L0 2026-09-22：需求收购报价入账，advance_demand 扣量/关单。
+func test_fulfill_demand_pays_quote_and_closes_when_empty() -> void:
+	var state := _state()
+	state.materials["beast_bone"] = 3
+	state.npc_demands = {
+		"d1": {"npc_id": "wandering_peddler", "material_id": "beast_bone", "quantity": 2, "tier": 1},
+	}
+	var out := _run_on(state, "fulfill_demand", {"demand_id": "d1", "amount": 2})
+	assert_true(bool(out["result"]["ok"]), str(out["result"]))
+	assert_true(int(out["result"]["price"]) > 0, "按 demand_quote 入账")
+	assert_eq(int(out["state"].materials["beast_bone"]), 1)
+	assert_true(bool(out["state"].npc_demands["d1"]["closed"]), "履约完毕必须关单防刷")
 
 
 func test_enact_rejects_repeat_activation() -> void:

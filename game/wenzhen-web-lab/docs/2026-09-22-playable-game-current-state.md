@@ -1,7 +1,33 @@
-# 2026-09-22 · 可玩游戏本体 · 当前状态（W0 冻结）
+# 2026-09-22 · 可玩游戏本体 · 当前状态与 W0 基线
 
-> 本文是 W0 基线冻结记录，不是完成声明。证据分级见实施计划 §2。
+> 顶部为当前进度，下方保留 W0 历史基线，不能把历史缺口当作当前代码状态。证据分级见实施计划 §2。
 > 移交记录：`2026-09-22-playable-game-handoff.md`。
+
+## CURRENT PHASE（2026-09-22 W3–W7 推进后）
+
+GOAL: lab.html 可交付 Web 游戏（G01–G10）。
+
+ACTIVE: G07 获胜轨迹未闭合，整体 **BLOCKED**。
+
+COMPLETED: W1/W2（7f43b91）；W3 战斗接缝修复与 lab_combat；W4 杀招实例/买卖账本与 lab_transactions；W5 路径/文案/演武覆盖/逆息禁用；W6 autoplay_lab smoke/lifecycle/full；W7 package_lab + README + 验收文档。复跑：combat 56/56、transactions 39/39、full 种子 101–103 均合法终局且无软锁。
+
+BLOCKED: **G07 无获胜轨迹**——自动 balanced/refine 仅得 defeat（魂魄/气血耗尽）。未改数值。需人工获胜轨迹或 L1 平衡裁定。11 条经济警报保留。
+
+NEXT: 提交 G07 轨迹给 L1/L0；或补人工两种构筑获胜录像后再标 PASS。
+
+DECISIONS: Web only、lab.html；不把 fixture 通过当成整局可胜。
+
+验收详情：docs/2026-09-22-playable-game-acceptance.md。
+
+W1/W2 代码和测试已经存在（`js/lab_save.js`、`tests/helpers/lab_browser.mjs`、`tests/lab_save.test.mjs`、`tests/lab_lifecycle.test.mjs`）；下方「无存档」「文件不存在」仅描述 W0。当时的 NEXT 已执行至 W1/W2，不再作为当前待办。
+
+### 本任务独立浏览器核查（修复前）
+
+- 空 profile、seed `20260924`、1280×720；经可见按钮新局 → `L1D0N0` 石甲散修 → 观察。气血保持 24，念头 2→1，`revealed=false→true`；`currentCounter` 从空字符串变为缺失。调用点 `observe()` 向单参数 `revealCounter(enemy)` 传了错误首参，需回归保护。
+- 首战截图出现敌人画像缺失。本机不存在 `game/wenzhen-web-lab/assets/`，而 `battle.js` 使用 `assets/wenzhen/enemies/...`；原资产在 `game/assets/wenzhen/enemies/`。列入 W5/W7 资源路径验收，本批不扩大为资产搬运。
+- 本地证据：`%TEMP%/wenzhen-w3-first-battle-before.json`、`%TEMP%/wenzhen-w3-first-battle-before.png`。仅首战观察链，不能当多敌/层主或整局通关证明。
+
+## 以下为 W0 历史基线（保留供比较）
 
 ## 目标与边界
 

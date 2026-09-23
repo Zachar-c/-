@@ -60,8 +60,44 @@ ai-system/
    ├─ common.json        # 可共享配置
    ├─ home.example.json  # 家庭环境模板
    ├─ work.example.json  # 公司环境模板
-   └─ secrets.example.json
+   ├─ secrets.example.json
+   └─ jev.json           # Jev System One 实验配置
+├─ jev_systemone.py      # Jev adapter + CLI：仅产出 decision proposal
+├─ tests/test_jev_systemone.py
+└─ eval/
+   ├─ worker_tier_cases.json
+   └─ run_worker_tier_eval.py
 ```
+
+### Jev System One（实验）
+
+高速、低成本、类型化的任务分层提议层，**不替代** Codex / OpenCode / `choose-worker-model.ps1`。
+
+```text
+STATE(任务简报) → Jev Choice(cheap|standard|strong|gpt6)
+  HIGH   → 映射到现有 WorkerClass normal|hard|escalate
+  MEDIUM → 退回现有确定性规则
+  LOW    → 升级 System 2 / 人类
+Jev 不可用 → 永远退回现有逻辑
+```
+
+```powershell
+$env:JEV_API_KEY = '<local-only>'
+& $env:MIMO_PYTHON ai-system/jev_systemone.py --task-file path/to/task.md --mode auto --log
+& $env:MIMO_PYTHON -m unittest discover -s ai-system/tests -v
+& $env:MIMO_PYTHON ai-system/eval/run_worker_tier_eval.py --mode auto
+```
+
+官方契约（2026-09-22）：经 **OpenRouter Decisions API** 调用 Jev，**一个 OpenRouter key 即可**，无需单独 TypeSafe 账号。
+
+```text
+POST https://openrouter.ai/api/alpha/decisions
+Authorization: Bearer $OPENROUTER_API_KEY
+model: typesafe/jev-1.13   # 或 ~typesafe/jev-latest
+body: { state, questions: { task_tier: { type: choice, instructions, criteria } } }
+```
+
+环境变量 `OPENROUTER_API_KEY`（兼容 `JEV_API_KEY` / `TYPESAFE_API_KEY`）。Key 不进仓库。
 
 ## 使用
 

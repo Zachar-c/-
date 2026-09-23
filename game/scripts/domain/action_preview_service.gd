@@ -3,6 +3,7 @@ extends RefCounted
 
 const SoulCapacityScript = preload("res://scripts/domain/soul_capacity.gd")
 const ResolverScript = preload("res://scripts/domain/resolver.gd")
+const EconomyRulesScript = preload("res://scripts/domain/economy_rules.gd")
 const InheritanceClaimRulesScript = preload("res://scripts/domain/inheritance_claim_rules.gd")
 const V1BattleResolver = preload("res://scripts/domain/v1_battle_resolver.gd")
 # 一转一突破（2026-09-15）：档位、成本、境界名单一来源（领域层）。
@@ -416,13 +417,16 @@ static func _append_caravan_cards(cards: Array[Dictionary], state: RunState, cat
 		var gu: Dictionary = catalog.get("gu_by_id", {}).get(gu_id, {})
 		if gu.is_empty():
 			continue
+		# L0 2026-09-22：预览价 = 结算价 = EconomyRules.gu_sell_price（禁止显示定义字面价）。
+		var instance_rank := maxi(int(gu.get("rank", 1)), GuInstance.max_refined_rank(state.gu_instances, gu_id))
+		var sell_price := EconomyRulesScript.gu_sell_price(catalog, state, gu, instance_rank)
 		cards.append(_card(state, {
 			"id": "caravan.sell.%s" % gu_id,
 			"title": "出售%s" % DisplayText.gu(gu_id),
 			"summary": "商队按估值收购已炼化的蛊虫。",
 			"executable": true,
 			"cost": {"gu_ids": [gu_id]},
-			"expected_gain": ["获得元石 %d 枚。" % int(gu.get("value", 0))],
+			"expected_gain": ["获得元石 %d 枚。" % sell_price],
 			"command": {"type": "sell_gu", "gu_id": gu_id},
 		}))
 	_append_leave_card(cards, state)
@@ -1183,7 +1187,9 @@ static func _append_material_sell_cards(cards: Array[Dictionary], state: RunStat
 		var value := int(catalog.get("material_by_id", {}).get(material_id, {}).get("value", 0))
 		if value <= 0:
 			continue
-		var price := ResolverScript.sell_price_for(catalog, state, value)
+		var price := EconomyRulesScript.material_sell_price(catalog, state, str(material_id))
+		if price <= 0:
+			price = ResolverScript.sell_price_for(catalog, state, value)
 		cards.append(_card(state, {
 			"id": "sell.%s" % material_id,
 			"title": "变卖%s" % DisplayText.material(str(material_id)),

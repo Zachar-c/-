@@ -1,0 +1,19 @@
+{
+  "note": "W6 走盘夹具：只记录种子/难度/策略/期望结果，不包含改资源指令。",
+  "plays": [
+    {
+      "seed": 101,
+      "difficulty": "normal",
+      "policy": "balanced",
+      "suite": "smoke",
+      "expect": "first_real_settlement"
+    },
+    {
+      "seed": 101,
+      "difficulty": "normal",
+      "policy": "balanced",
+      "suite": "lifecycle",
+      "expect": "reload_resume"
+    }
+  ]
+}

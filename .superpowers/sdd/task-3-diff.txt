@@ -1,0 +1,162 @@
+diff --git a/scripts/scan_candidates.py b/scripts/scan_candidates.py
+index ac69e9a..1285171 100644
+--- a/scripts/scan_candidates.py
++++ b/scripts/scan_candidates.py
+@@ -143,20 +143,49 @@ def _all_scene(chunk):
+             return False
+         if sum(1 for ch in SCENE_VOCAB if ch in s) < 2:
+             return False
+     return True
+ 
+ 
+ def scan_rules(lines):
+     return mech_rules(lines) + semantic_rules(lines) + literary_rules(lines)
+ 
+ 
++def _in_quote(text, token):
++    """token 若落在成对中文引号（“…”或‘…’）内部，返回 True。"""
++    idx = text.find(token)
++    if idx < 0:
++        return False
++    left = text[:idx]
++    right = text[idx + len(token):]
++    for open_q, close_q in ((u'“', u'”'), (u'‘', u'’')):
++        opens = left.count(open_q) - left.count(close_q)
++        closes = right.count(close_q) - right.count(open_q)
++        if opens > 0 and closes > 0:
++            return True
++    return False
++
++
++def apply_wordlist(text, pairs):
++    applied = []
++    skipped = []
++    for old, new in pairs:
++        if old not in text:
++            continue
++        if _in_quote(text, old):
++            skipped.append(old)
++            continue
++        text = text.replace(old, new)
++        applied.append((old, new))
++    return text, applied, skipped
++
++
+ def resolve_volume_dir(volume_id):
+     with io.open(repo_abs('config/editorial-volumes.json'), 'r', encoding='utf-8-sig') as fh:
+         cfg = json.load(fh)
+     vol = next((v for v in cfg['volumes'] if v['id'] == volume_id), None)
+     if not vol:
+         raise SystemExit('Unknown volume: {0}'.format(volume_id))
+     pattern = re.compile(vol['directoryPattern'].replace('.', r'\.').replace('*', '.*'))
+     for name in sorted(os.listdir(repo_abs('volumes'))):
+         if pattern.match(name):
+             return os.path.join(repo_abs('volumes'), name)
+@@ -173,20 +202,36 @@ def main():
+         raise SystemExit('Usage: -Volume vol1 -Batch 001-030 [-Source ...] [-OutDir ...] [-Apply]')
+     out_dir = repo_abs(args.get('OutDir'))
+ 
+     volume_dir = resolve_volume_dir(volume_id)
+     edited_path = os.path.join(volume_dir, u'{0}-sec{1}.edited.txt'.format(volume_id, batch))
+     if not os.path.isfile(edited_path):
+         raise SystemExit('Edited text not found: {0}'.format(edited_path))
+     with io.open(edited_path, 'r', encoding='utf-8-sig', newline='') as fh:
+         edit_lines = fh.read().splitlines()
+ 
++    if args.get('Apply'):
++        with io.open(edited_path, 'r', encoding='utf-8-sig') as fh:
++            raw = fh.read()
++        new_raw, applied, skipped = apply_wordlist(raw, CONFIRMED_FIXES)
++        if applied:
++            with io.open(edited_path, 'w', encoding='utf-8-sig', newline='') as fh:
++                fh.write(new_raw)
++        log_path = os.path.join(out_dir, u'apply-{0}-{1}.log'.format(volume_id, batch))
++        log_lines = []
++        for old, new in applied:
++            log_lines.append(u'{0}|{1}|{2}'.format(old, new, new_raw.count(new)))
++        for old in skipped:
++            log_lines.append(u'{0}|SKIP|引号语境保人工'.format(old))
++        write_utf8_no_bom(log_path, u'\n'.join(log_lines))
++        print(u'applied: {0} skipped: {1}'.format(len(applied), len(skipped)))
++
+     candidates = scan(edit_lines)
+     for idx, c in enumerate(candidates, 1):
+         c['seq'] = idx
+     tsv_path = os.path.join(out_dir, u'candidates-{0}-{1}.tsv'.format(volume_id, batch))
+     md_path = os.path.join(out_dir, u'candidates-{0}-{1}.md'.format(volume_id, batch))
+     serialize_tsv(candidates, tsv_path)
+     serialize_md(candidates, edit_lines, md_path)
+     print(u'output: {0}'.format(tsv_path))
+     print(u'output: {0}'.format(md_path))
+ 
+diff --git a/tests/test_scan_candidates.py b/tests/test_scan_candidates.py
+index 50ace23..dbe3ad5 100644
+--- a/tests/test_scan_candidates.py
++++ b/tests/test_scan_candidates.py
+@@ -5,21 +5,22 @@ import os
+ import shutil
+ import sys
+ import tempfile
+ import unittest
+ 
+ SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts')
+ sys.path.insert(0, SCRIPTS_DIR)
+ 
+ from scan_candidates import (CANDIDATE_FIELDS, find_section, build_candidate,
+                              serialize_tsv, serialize_md, scan,
+-                             scan_rules, mech_rules, semantic_rules, literary_rules)
++                             scan_rules, mech_rules, semantic_rules, literary_rules,
++                             apply_wordlist)
+ 
+ 
+ class ScanBoneTests(unittest.TestCase):
+     def setUp(self):
+         self.tmp = tempfile.mkdtemp()
+ 
+     def tearDown(self):
+         shutil.rmtree(self.tmp)
+ 
+     def test_buildCandidateFields(self):
+@@ -99,12 +100,41 @@ class RuleTests(unittest.TestCase):
+         lines = [u'第 12 节：应试',
+                  u'清风拂过山岗，月光洒落林间，夜色如水。',
+                  u'微风轻抚古木，雾气氤氲半山，云影徘徊。',
+                  u'寒露沾湿石阶，风声掠过屋角，月华朦胧。',
+                  u'光影交错石缝，山气浮沉草木，星斗渐沉。',
+                  u'', u'']
+         s = [c for c in literary_rules(lines) if c['rule'] == 'scene-repetition']
+         self.assertGreaterEqual(len(s), 1)
+ 
+ 
++class ApplyTests(unittest.TestCase):
++    def test_applyReplacesAndLogs(self):
++        txt = u'他真是淬不及防。下一行还是淬不及防。\n'
++        new_txt, applied, skipped = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
++        self.assertEqual(applied, [(u'淬不及防', u'猝不及防')])
++        self.assertEqual(skipped, [])
++        self.assertIn(u'猝不及防', new_txt)
++        self.assertNotIn(u'淬不及防', new_txt)
++
++    def test_applySkipsQuoteContext(self):
++        txt = u'他说：“我偏要淬不及防。”\n'
++        new_txt, applied, skipped = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
++        self.assertEqual(applied, [])
++        self.assertEqual(skipped, [u'淬不及防'])
++
++    def test_applyPowerIdempotent(self):
++        txt = u'他真是淬不及防。\n'
++        new_txt, applied1, _ = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
++        _, applied2, _ = apply_wordlist(new_txt, [(u'淬不及防', u'猝不及防')])
++        self.assertEqual(len(applied1), 1)
++        self.assertEqual(applied2, [])
++
++    def test_applySecondRunNoSideEffect(self):
++        txt = u'真是淬不及防啊。\n'
++        new1, _, _ = apply_wordlist(txt, [(u'淬不及防', u'猝不及防')])
++        new2, applied, _ = apply_wordlist(new1 + u'淬不及防残留', [(u'淬不及防', u'猝不及防')])
++        self.assertNotEqual(new2, new1)  # 新出现旧词会再次替换
++
++
+ if __name__ == '__main__':
+     unittest.main()
+\ No newline at end of file

@@ -122,7 +122,19 @@ func test_sell_uses_instance_rank_via_central_table() -> void:
 	var result := Resolver.apply(run, {"type": "sell_gu", "gu_id": "force_atk_1_05_gu"}, catalog)
 
 	assert_true(result["result"]["ok"])
-	assert_eq(int(result["state"].stone), 5, "rank2 batch gu must sell at table value 5")
+	# L0 2026-09-22：结算价 = EconomyRules.gu_sell_price（中央表 + sell_price_for）。
+	assert_eq(int(result["state"].stone), 5, "rank2 batch gu must sell at gu_sell_price 5")
+
+
+## L0 2026-09-22 市价对齐：预览 caravan.sell 与 sell_gu 结算必须同调 gu_sell_price。
+func test_gu_sell_price_is_shared_by_preview_and_settlement() -> void:
+	var run := _run_with_gu("force_atk_1_05_gu", 2)
+	run.stone = 0
+	var gu: Dictionary = catalog["gu_by_id"]["force_atk_1_05_gu"]
+	var quoted: int = EconomyRules.gu_sell_price(catalog, run, gu, 2)
+	assert_eq(quoted, 5, "rank2 table value 5")
+	var result := Resolver.apply(run, {"type": "sell_gu", "gu_id": "force_atk_1_05_gu"}, catalog)
+	assert_eq(int(result["state"].stone), quoted, "settlement must equal quoted gu_sell_price")
 
 
 ## 图鉴蛊条目带转数与效果文本，战斗手牌不再出现「效果未明」。

@@ -77,18 +77,19 @@ func test_release_authored_kill_move_pays_costs_and_deals_damage() -> void:
 	var out := V1.player_action(battle, {"type": "play_kill_move", "kill_move_id": "km_light_converge"})
 	assert_true(out["result"]["ok"], "释放成功：%s" % str(out["result"]))
 	var next: Dictionary = out["battle"]
-	assert_eq(int(next["enemies"][0]["hp"]), hp_before - 5, "「凝光」结算 strike 5")
+	assert_eq(int(next["enemies"][0]["hp"]), hp_before - 4, "「凝光」组件合成 strike 3+1")
 	assert_eq(int(next["player"]["true_qi"]), qi_before - 3, "真元扣 3")
 	assert_eq(int(next["player"]["thoughts"]), thoughts_before - 1, "念头扣 1")
 
 
-func test_damage_only_kill_move_deals_flat_damage() -> void:
+func test_kill_move_composes_component_effects_not_prefab_damage() -> void:
 	var battle := _battle_for_school("force")
 	assert_true(_ids(battle).has("km_force_avalanche"), "力量开局可见「崩山」")
 	var hp_before := int(battle["enemies"][0]["hp"])
 	var out := V1.player_action(battle, {"type": "play_kill_move", "kill_move_id": "km_force_avalanche"})
-	assert_true(out["result"]["ok"], "damage-only 杀招可释放：%s" % str(out["result"]))
-	assert_eq(int(out["battle"]["enemies"][0]["hp"]), hp_before - 8,
+	assert_true(out["result"]["ok"], "组件合成杀招可释放：%s" % str(out["result"]))
+	# L0：force_gu strike2 + bear_strength healing 兜底；预制 damage:8 仅 LEGACY。
+	assert_eq(int(out["battle"]["enemies"][0]["hp"]), hp_before - 2,
 		"空 effect + damage 8 仍按固定伤害结算")
 
 
@@ -110,4 +111,4 @@ func test_used_kill_move_locks_its_recipe_gu_for_the_turn() -> void:
 		if bool((slot_value as Dictionary).get("used_this_turn", false)):
 			locked += 1
 	assert_eq(locked, 2, "配方两只蛊本回合均被标记已用（与单蛊释放互斥）")
-	assert_eq(int(next["player"]["shield"]), 6, "「明光壁」结算 shield 6")
+	assert_eq(int(next["player"]["shield"]), 3, "「明光壁」组件合成 shield 3")

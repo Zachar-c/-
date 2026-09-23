@@ -1,0 +1,58 @@
+{
+  "ruling_id": "RUL-2026-09-19-010",
+  "date": "2026-09-19",
+  "by": "architect-L1",
+  "adjudicated_via": "ai-system/RESEARCH-REQUEST-2026-09-19-web-line-ruling.md",
+  "received_by": "L2",
+  "scope": [
+    "web-line",
+    "godot-canonical",
+    "conformance",
+    "enemy-runtime",
+    "p3"
+  ],
+  "statement": "Web 线判定：弃 Godot 必须走 Production-Equivalent Bake-off；当前「双线手抄」模式 REJECT（长期必漂）；当前阶段 Godot = Canonical、Web = Disposable Prototype；P3 走「一份 Effect 语义 + 一份数据真源 + Godot 先做 Canonical + 输出 conformance cases」。",
+  "decisions": [
+    {
+      "id": "W1",
+      "topic": "弃 Godot 的判定方式",
+      "ruling_verbatim": "做 Production-Equivalent Bake-off。",
+      "web_must_prove": [
+        "确定性",
+        "规则验证",
+        "存档",
+        "最小迁移",
+        "数据契约",
+        "可调试性",
+        "目标交付"
+      ],
+      "explicitly_not_required": "不要求复制 Godot 的代码量 / 测试数量。",
+      "l2_note": "即判定口径从「规模对照」改为「能力对照」：Web 必须在这 7 项上证明等价，而不是证明它写了多少行或快几倍。此前 WR 已明确的行数/耗时对照不再是判据。"
+    },
+    {
+      "id": "W2",
+      "topic": "双线分工的稳定性",
+      "ruling_verbatim": "当前双线手抄模式：REJECT，长期必漂。",
+      "current_phase": "Godot = Canonical；Web = Disposable Prototype。",
+      "if_web_long_lived": "共享数据 + shared conformance cases；禁止两个规则权威源。"
+    },
+    {
+      "id": "W3",
+      "topic": "P3 与 Web 的耦合处理",
+      "ruling_verbatim": "P3：一份 Effect 语义；一份数据真源；Godot 先做 Canonical；输出 conformance cases；Web 消费或接受一致性测试。不要新建共享规则基础设施。"
+    },
+    {
+      "id": "SIDE-FIX",
+      "topic": "旁支修复裁定",
+      "ruling_verbatim": "phases: GO；essence_burn: GO；sparked: 有明确语义才 GO。新增：最小 data→runtime contract test。"
+    }
+  ],
+  "frozen_invariants": [
+    "当前阶段只有一条规则权威源：Godot = Canonical。Web 是 Disposable Prototype，不得成为第二规则权威源。",
+    "禁止两个规则权威源；双线手抄模式已被 REJECT。",
+    "不新建共享规则基础设施（conformance 以 Godot 侧输出为准，Web 侧消费或接受一致性测试）。",
+    "弃 Godot 需通过 Production-Equivalent Bake-off 的 7 项能力等价证明，规模对照不作判据。"
+  ],
+  "l1_closing_statement": "判定口径从「Web 快不快 / 写了多少行」改为「Web 能不能在 7 项生产等价能力上成立」；在此之前，规则权威源只有一个，就是 Godot。",
+  "status": "RULED"
+}

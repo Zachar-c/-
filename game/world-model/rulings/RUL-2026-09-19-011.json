@@ -1,0 +1,126 @@
+{
+  "ruling_id": "RUL-2026-09-19-011",
+  "date": "2026-09-19",
+  "by": "architect-L1",
+  "adjudicated_via": "ai-system/RESEARCH-REQUEST-2026-09-19-p3-effect-budget.md",
+  "received_by": "L2",
+  "scope": [
+    "p3",
+    "effect-budget",
+    "rank-curve",
+    "role-default-effect"
+  ],
+  "statement": "P3-B：转数预算 40/80/160/320/640 为分配总量；默认主标量按 sqrt(Budget) 增长（R1→R5 约 ×4，非 ×16）；给出六个 role 的默认标量曲线；保留现有 6 role + 8 kind 分类；role 曲线只是默认值，剩余预算由 kind / 蛊个体效果分配；R5 一致性按 (role, kind, 归一化耗元档位) 同侪组比较「已结算总效果预算」，容差 85%–115%。",
+  "decisions": [
+    {
+      "id": "B1",
+      "topic": "转数预算总量",
+      "ruling_verbatim": "转数 = 综合层级轴，预算 40/80/160/320/640。",
+      "l2_note": "与 rank-foundation 已冻结 40/80/160/320/640（×2/转、×16 总量）一致。"
+    },
+    {
+      "id": "B2",
+      "topic": "主标量默认增长律",
+      "ruling_verbatim": "主标量默认按 sqrt(Budget) 增长，因此 R1→R5 默认约 ×4，而不是 ×16。",
+      "l2_note": "sqrt(640)/sqrt(40) = 4.0，经 L2 复算确认。取代现行 v1_battle_resolver.gd 的 amount = base + (rank-1) 线性律（R5/R1 仅 1.0–5.0×，且与预算的 16× 不同源）。"
+    },
+    {
+      "id": "B3",
+      "topic": "六个 role 的默认标量曲线",
+      "ruling_verbatim": "attack: base 4 → 4/6/8/11/16；defense: base 4 → 4/6/8/11/16；healing: base 3 → 3/4/6/8/12；logistics: base 2 → 2/3/4/6/8；movement: 1/1/2/2/3；recon: status 主值保持 1。",
+      "l2_verification": {
+        "method": "对每条曲线算 base × sqrt(B_r)/sqrt(B_1)，四舍五入、下限 1，与 L1 给定值逐项比对",
+        "match": ["attack", "defense", "healing", "logistics"],
+        "deviation": [
+          {
+            "role": "movement",
+            "given": [1, 1, 2, 2, 3],
+            "pure_sqrt": [1, 1, 2, 3, 4],
+            "note": "r4/r5 低于纯 sqrt 预测，疑为有意压低（位移不是每转都应涨）。L2 未自行采纳任一口径，见 open_items #3。"
+          },
+          {
+            "role": "recon",
+            "given": [1, 1, 1, 1, 1],
+            "pure_sqrt": [1, 1, 2, 3, 4],
+            "note": "L1 明示「status 主值保持 1」，增长预算改投 duration / target count / information depth / reliability / efficiency。这五个维度在当前 effect schema 中不存在 → 属 schema 扩展，见 open_items #4。"
+          }
+        ]
+      },
+      "status": "4/6 条按 sqrt 律精确复现；movement 与 recon 由 L1 显式偏离该律"
+    },
+    {
+      "id": "B4",
+      "topic": "取整规则",
+      "ruling_verbatim": "Round: nearest integer, minimum 1。",
+      "l2_note": "对 sqrt 律四舍五入；任何情况下结果不得低于 1（0 伤害/0 效果不允许作为默认值）。"
+    },
+    {
+      "id": "B5",
+      "topic": "分类法",
+      "ruling_verbatim": "KEEP existing 6 roles + 8 kinds。",
+      "l2_note": "6 role = attack/defense/healing/logistics/movement/recon；8 kind = strike/heal/shield/shift/sword_intent/status/weaken_intent/heal_and_strike（按 gu.json 现有 v1_effect 实测分布）。禁止为 P3 新造 role 或 kind。"
+    },
+    {
+      "id": "B6",
+      "topic": "role 曲线的地位",
+      "ruling_verbatim": "Individual Gu: Role curve is default only. Kind / Gu-specific effects decide remaining budget allocation。",
+      "l2_note": "role 曲线是兜底默认，不是上限也不是唯一分配方式。占用主标量之外的预算（多目标、持续、状态、支援加成等 D7 维度）由 kind 语义与蛊个体效果决定。即 role 曲线跑满 = 只用了预算的一个子集，不构成超预算。"
+    },
+    {
+      "id": "B7",
+      "topic": "R5 一致性口径",
+      "ruling_verbatim": "R5 peer group: (role, kind, normalized essence-cost band)。Cost bands: LOW <=15% / NORMAL <=30% / HIGH >30%。Assertion: compare RESOLVED TOTAL EFFECT BUDGET, not raw amount。Budget tolerance: 85%–115% of target rank budget, unless explicitly justified。",
+      "l2_note": "同侪组三元组，比较对象是「已结算总效果预算」而非原始 amount，容差 85%–115%。未定义项见 open_items #1 / #2。"
+    }
+  ],
+  "frozen_invariants": [
+    "转数预算 40/80/160/320/640 为效果分配总量；默认主标量按 sqrt(Budget) 增长，R1→R5 约 ×4。",
+    "取整 = 四舍五入，下限 1。",
+    "分类法保持现有 6 role + 8 kind，禁止新造 role/kind。",
+    "role 曲线只是默认值；剩余预算由 kind 语义与蛊个体效果分配，不得据此判定超预算。",
+    "R5 一致性比较「已结算总效果预算」，同侪组 = (role, kind, 归一化耗元档位)，容差 85%–115%。"
+  ],
+  "open_items": [
+    {
+      "id": 1,
+      "blocking": true,
+      "topic": "耗元档位的归一化基数未指定",
+      "evidence": "L2 实测 game/data/gu.json：802 只蛊中仅 16 只有 essence_cost 字段（取值分布 0×2 / 1×10 / 2×3 / 3×1）；true_qi_cost 在 799/802 上为 0。",
+      "question": "LOW<=15% / NORMAL<=30% / HIGH>30% 的分母是什么？候选：v1_battle.json 的 stage_base_battle[rank]（10/30/60/100/150）、蛊的 value、或真元上限。在指定前，R5 断言无法按原样写成脚本。"
+    },
+    {
+      "id": 2,
+      "blocking": true,
+      "topic": "「已结算总效果预算」的计价方式未定义",
+      "evidence": "D7 列出 11 个可投入维度，但当前 effect schema 只有单标量 amount；11 个维度中仅 1 个有字段承载。",
+      "question": "一个效果的各维度如何折算成同一个数字并归一化到「标准 rank-r 效果 == budget(r)」？这是 R5 断言的比较函数本体，未定义则断言不可执行。"
+    },
+    {
+      "id": 3,
+      "blocking": false,
+      "topic": "movement 的 r4/r5 是否确为有意低于 sqrt",
+      "question": "给定 1/1/2/2/3，纯 sqrt 预测 1/1/2/3/4。确认按给定值实现（保守）还是按 sqrt 律。"
+    },
+    {
+      "id": 4,
+      "blocking": false,
+      "topic": "recon 的增长维度在当前 schema 中不存在",
+      "question": "duration / target count / information depth / reliability / efficiency 五个维度无字段承载。是（a）本批只做「主值恒为 1」、（b）本批加 schema 扩展，还是（c）延后到专门批次？"
+    },
+    {
+      "id": 5,
+      "blocking": false,
+      "topic": "support_bonus 在新律下的增长",
+      "evidence": "现行 v1_battle_resolver.gd:default_v1_effect() 对 support_bonus 用 base + (rank-1) 线性律，与 RANK_SCALED_KINDS 的 amount 同步。recon 兜底含 support_school:self / support_bonus:1。",
+      "question": "support_bonus 是否同受 sqrt 律约束？recon 主值恒 1 时它是否也不涨？"
+    }
+  ],
+  "implementation_split": {
+    "specified_and_dispatched": "六条 role 标量曲线 + Round nearest/min 1 + KEEP 6 role/8 kind（B3 的 4 条精确曲线与 B4/B5 无歧义）；B6 作为语义约束写入实现注释与测试命名。",
+    "blocked_until_answered": "B7 的 R5 一致性断言（open_items #1/#2）；recon 增长维度（#4）能否落地。",
+    "explicitly_not_in_this_batch": "movement r4/r5 偏差（#3）与 support_bonus（#5）按 L1 给定值/现行值实现，不自行调整；待回复后再决定是否修正。"
+  },
+  "l1_closing_statement": "默认主标量按 sqrt(Budget) 增长，R1→R5 约 ×4；role 曲线只是默认值，剩余预算归 kind 与蛊个体效果；一致性比较的是已结算总效果预算，不是原始 amount。",
+  "status": "RULED_PARTIAL",
+  "status_note": "B1–B6 可执行；B7 的断言本体依赖 open_items #1/#2 的补充定义，未补充前 P3-B 的一致性校验部分不得实施。"
+}

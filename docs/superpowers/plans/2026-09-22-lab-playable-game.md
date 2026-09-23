@@ -23,12 +23,14 @@
 ## CURRENT PHASE
 
 GOAL: 从 lab 现有主链交付可玩 Web 游戏。
-ACTIVE: 实施计划编制与事实复核；已派两个只读 Worker 核查循环和接缝。
-COMPLETED: 入口/源码/现有模块/短剧本与 lab 差异已核对；尚未完成游戏本体验收。
-BLOCKED: 主链写入者交接尚未确认，不能与现有执行者并行改同一批文件。
+ACTIVE: W3 战斗可信性接缝核查与最小修复（2026-09-22，本任务 L2 调度一个 OpenCode Worker；主写仅 main.js / battle.js / combat_core.js / lab_combat.test.mjs）。
+COMPLETED: W0 移交与基线已记录；7f43b91 已落库 W1/W2 实现。本任务独立复跑 tests 155/pass 155/fail 0/skipped 0、Projection 34/34、balance 38/38、L1 phases pass=41/fail=0/alarm=11；不等于 G01–G10 全部验收。
+BLOCKED: 无本批已确认工程阻塞；W3 完整验收、W4–W7 与 11 条既有经济警报仍未闭合。
 DECISIONS: Web only；lab.html；现有五段流程；不新建规则引擎。
-NEXT: W0 冻结工作树基线 → W1 至 W6 顺序实施 → W7 独立浏览器与发行验收。
+NEXT: 复现并修复 W3 已证实的预览/结算适配缺陷 → 独立审查与回归 → 补齐 W3 真实游玩证据后再进入 W4。
 DO NOT: 把本计划、绿灯数量或 fixture 注资突破当作游戏已完成。
+
+2026-09-22 状态更正：原「尚未移交」已由 `game/wenzhen-web-lab/docs/2026-09-22-playable-game-handoff.md` 的明确交接记录取代；原「计划编制中」已过时。下方逐项勾选不凭提交标题批量补勾，未独立覆盖的验收项继续待验。
 
 ## 1. 批次与派发顺序
 

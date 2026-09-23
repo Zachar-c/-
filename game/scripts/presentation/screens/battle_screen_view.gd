@@ -283,6 +283,17 @@ func _submit_card(card: Dictionary, target_id: String) -> void:
 		_mode = "idle"
 		_refresh()
 		return
+	# L0 UX Sprint：被反制吞掉（ok 但 reason=countered）绝不能播成功墨/音。
+	var envelope: Dictionary = result if result is Dictionary else {}
+	if str(envelope.get("reason", "")) == "countered":
+		_submitted_card_keys.erase(request_key)
+		_mode = "idle"
+		if _feedback_toast != null:
+			_feedback_toast.text = "被反制吞掉"
+			_feedback_toast.visible = true
+		AudioManager.play_sfx("battle_hit", 0.55)
+		_refresh()
+		return
 	# 第18批：接入出牌音效
 	AudioManager.play_sfx("battle_card_play")
 	# 概念层：出牌成功触发墨迹扩散（状态落定）
@@ -813,6 +824,16 @@ func _submit_kill_move(kill_move_id: String, confirmed: bool, km: Dictionary = {
 		result = _commands["play_card"].call("kill_move." + kill_move_id, _target_id, confirmed)
 	# F-02 复验：被拒的杀招同样不得播放成功音效/墨迹，并释放去重键供重试。
 	if _command_rejected(result):
+		_submitted_card_keys.erase(request_key)
+		_refresh()
+		return
+	# L0 UX Sprint：杀招被反制吞掉时禁止成功反馈。
+	var kill_env: Dictionary = result if result is Dictionary else {}
+	if str(kill_env.get("reason", "")) == "countered":
+		if _feedback_toast != null:
+			_feedback_toast.text = "杀招被反制吞掉"
+			_feedback_toast.visible = true
+		AudioManager.play_sfx("battle_hit", 0.55)
 		_submitted_card_keys.erase(request_key)
 		_refresh()
 		return

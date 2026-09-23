@@ -170,12 +170,19 @@ export async function openLab(options = {}) {
     async click(selector) {
       const result = await evalJs(`(() => {
         const els = [...document.querySelectorAll(${JSON.stringify(selector)})];
-        const b = els.find((e) => !e.disabled);
+        const visible = (e) => {
+          if (e.disabled) return false;
+          if (e.hidden) return false;
+          const style = getComputedStyle(e);
+          if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return false;
+          return !!(e.offsetWidth || e.offsetHeight || e.getClientRects().length);
+        };
+        const b = els.find(visible);
         if (!b) return 'NONE';
         b.click();
         return 'ok';
       })()`);
-      if (result === 'NONE') throw new Error(`click 目标全被禁用: ${selector}`);
+      if (result === 'NONE') throw new Error(`click 目标全被禁用或不可见: ${selector}`);
       await sleep(80);
       return true;
     },

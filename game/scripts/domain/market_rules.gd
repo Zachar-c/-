@@ -63,6 +63,33 @@ static func advance_demand(demand: Dictionary, fulfilled_amount: int) -> Diction
 	return out
 
 
+# L0 2026-09-22：目录需求模板 → 实账。live 优先（已履约扣量/关单），缺省回退 npc.demands。
+static func npc_demand_templates(npc: Dictionary) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for entry_value in npc.get("demands", []):
+		var entry: Dictionary = entry_value
+		if str(entry.get("id", "")).is_empty() or str(entry.get("material_id", "")).is_empty():
+			continue
+		out.append({
+			"id": str(entry.get("id", "")),
+			"npc_id": str(npc.get("id", "")),
+			"material_id": str(entry.get("material_id", "")),
+			"quantity": maxi(1, int(entry.get("quantity", 1))),
+			"tier": maxi(0, int(entry.get("tier", 0))),
+			"closed": false,
+		})
+	return out
+
+
+static func seed_npc_demands(state_demands: Dictionary, npc: Dictionary) -> Dictionary:
+	var out := state_demands.duplicate(true)
+	for template in npc_demand_templates(npc):
+		var demand_id := str(template["id"])
+		if not out.has(demand_id):
+			out[demand_id] = template
+	return out
+
+
 # ---- §9.3 gu prices --------------------------------------------------------
 
 # A common base gu publicly sells at about 4 same-rank material values and

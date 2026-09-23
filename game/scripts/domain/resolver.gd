@@ -144,6 +144,9 @@ static func _handler_for(command_type: String) -> Variant:
 				if bool(paired["result"].get("ok", false)):
 					paired["state"] = RestRulesScript._consume_rest_visit_if_rest_class(paired["state"], catalog)
 				return paired,
+			# L0 2026-09-22：战中合卡产出保留到战后（写 gu_card_overrides，不随战斗清除）。
+			"battle_synthesize": func(state, command, catalog):
+				return SynthesisRulesScript.battle_synthesize(state, catalog, str(command.get("recipe_id", ""))),
 			"cultivate_rank_two": func(state, _command, catalog):
 				var cultivated := RefineCommandRulesScript._cultivate_rank_two(state, catalog)
 				if bool(cultivated["result"].get("ok", false)):
@@ -203,6 +206,7 @@ static func _handler_for(command_type: String) -> Variant:
 			"collect_surviving": func(state, command, catalog): return RunCommandsScript.collect_surviving(state, command, catalog),
 			"release_gu": func(state, command, catalog): return RunCommandsScript.release_gu(state, command, catalog),
 			"sell_info": func(state, command, catalog): return RunCommandsScript.sell_info(state, command, catalog),
+			"fulfill_demand": func(state, command, catalog): return RunCommandsScript.fulfill_demand(state, command, catalog),
 			"enact": func(state, command, catalog): return RunCommandsScript.enact(state, command, catalog),
 			"dodge": func(state, command, catalog): return RunCommandsScript.dodge(state, command, catalog),
 			"grapple": func(state, command, catalog): return RunCommandsScript.grapple(state, command, catalog),
@@ -266,6 +270,14 @@ static func price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 
 static func sell_price_for(catalog: Dictionary, state: RunState, base: int) -> int:
 	return EconomyRulesScript.sell_price_for(catalog, state, base)
+
+
+static func gu_sell_price(catalog: Dictionary, state: RunState, gu: Dictionary, instance_rank: int) -> int:
+	return EconomyRulesScript.gu_sell_price(catalog, state, gu, instance_rank)
+
+
+static func material_sell_price(catalog: Dictionary, state: RunState, material_id: String) -> int:
+	return EconomyRulesScript.material_sell_price(catalog, state, material_id)
 
 
 ## 搜刮候选蛊方（预览与执行共用的唯一配方选择函数，2026-09-01）：

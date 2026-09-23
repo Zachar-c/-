@@ -485,12 +485,12 @@ test('NORMAL_RUN: 败局→结局→重开清掉上一局资源', async () => {
     assert.ok(hall.ending, '大厅应保留终局摘要');
     await lab.shoot(path.join(REPORT_DIR, 'w2-normal-hall-ending-summary.png'));
 
-    // 重开：终局后 confirmAbandon 不弹窗；不得误点大厅的开始新局
-    await lab.click('[data-ending-restart]');
+    // 重开：已在大厅看摘要后，用 HUD「重开」（ending 面板此时不可见，不能点 [data-ending-restart]）
+    await lab.click('#reset');
     await sleep(80);
     let freshRun = await lab.snapshot();
     if (freshRun.ending) {
-      try { await lab.click('[data-ending-restart]'); } catch { /* already left */ }
+      try { await lab.click('#reset'); } catch { /* already left */ }
       await sleep(80);
       freshRun = await lab.snapshot();
     }

@@ -257,7 +257,15 @@ globalThis.RunFlow = (() => {
     };
   }
 
-  const sellValue = (value) => Math.floor(Math.max(0, Number(value) || 0) * 0.5);
+  // L0 2026-09-22：卖出价 = market_rules.public_resale(value)，比例读 balance.json，禁止写死 0.5。
+  const sellValue = (value) => {
+    const ratio = Number(
+      globalThis.MvpBalance?.Market?.publicBuybackRatio?.()
+        ?? globalThis.WORLD_BALANCE?.public_buyback_ratio
+        ?? 0.5,
+    );
+    return Math.floor(Math.max(0, Number(value) || 0) * ratio);
+  };
 
   // —— W2 生命周期纯规则（供 main.js 与 lab_lifecycle.test.mjs 共用）——
   // graph.nodes 是数组；节点查找一律 nodeById / nodes.find。
