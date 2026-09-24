@@ -1,7 +1,7 @@
 ---
 title: 开发时间线
 description: 2026-08-21 至 2026-09-12 的项目里程碑脉络与关键裁定
-date: 2026-09-12
+date: 2026-09-25
 tags: [timeline, history, milestones]
 ---
 
@@ -34,5 +34,5 @@ tags: [timeline, history, milestones]
 真窗键鼠验收（S 阶段全流程）、泄漏调查与全绿验收、架构纠偏（run_controller 905 行、镜像字段）、剑道 P2（T15/T16）暂缓项[^1]。
 
 [^1]: AGENTS.md 与 docs/superpowers/plans/、specs/ 文件索引（详见 PROJECT_WORLD_MODEL_AUDIT.md §23）
-[^2]: MEMORY.md（项目工作记忆，世界观与流派节）
+[^2]: [失源] MEMORY.md（项目工作记忆，世界观与流派节；源未入库已失传，主张待重锚，见 plan.md 已知缺口；剑道条目已可对照 2026-09-11 sword-cosmology spec）
 [^3]: AGENTS.md, 目标节

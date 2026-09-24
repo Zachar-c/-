@@ -1,7 +1,7 @@
 ---
 title: Agent 协作
 description: 四角色写区、Shared 单写者区、5 步硬协议与三层验收门的多 Agent 施工纪律
-date: 2026-09-12
+date: 2026-09-25
 tags: [agent-ownership, collaboration, contracts]
 ---
 
@@ -52,7 +52,7 @@ UI 只读快照只提交命令；`state_version`（=event_log.size()）过期拒
 - 工具链细节 → [验证工具链](../entities/verification-toolchain.md)
 
 [^1]: docs/contracts/2026-09-12-agent-ownership-contract.md
-[^2]: MEMORY.md（项目工作记忆，Git 纪律与 Godot 坑）
+[^2]: [失源] MEMORY.md（项目工作记忆，Git 纪律与 Godot 坑节；源未入库已失传，主张待重锚，见 plan.md 已知缺口）
 [^3]: AGENTS.md, 工具规则
 [^4]: docs/contracts/2026-09-02-domain-ui-contract.md
 [^5]: docs/contracts/module-interfaces/README.md

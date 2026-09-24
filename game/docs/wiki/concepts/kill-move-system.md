@@ -1,7 +1,7 @@
 ---
 title: 杀招系统
 description: 命名杀招的配方组装、威力配置、化解标签与泄密机制
-date: 2026-09-12
+date: 2026-09-25
 tags: [kill-moves, sword-school, combat]
 ---
 
@@ -34,5 +34,5 @@ tags: [kill-moves, sword-school, combat]
 
 [^1]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §4.2
 [^2]: PROJECT_WORLD_MODEL_AUDIT.md, §6/§15
-[^3]: docs/superpowers/specs/2026-09-11-sword-cosmology-integration.md 与 MEMORY.md 剑道条目
+[^3]: docs/superpowers/specs/2026-09-11-sword-cosmology-integration.md
 [^4]: PROJECT_WORLD_MODEL_AUDIT.md, §26

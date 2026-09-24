@@ -1,7 +1,7 @@
 ---
 title: 数据表全集
 description: data/ 目录 29 张 JSON 表的主题地图、关键数值与已知数据问题
-date: 2026-09-12
+date: 2026-09-25
 tags: [data, json, balance, tables]
 ---
 
@@ -46,4 +46,4 @@ data/ 共 29 张 JSON（约 45 万字节），全部经 ContentCatalog.validate 
 [^1]: AGENTS.md, 技术约定与当前待办
 [^2]: PROJECT_WORLD_MODEL_AUDIT.md, §11/§26
 [^3]: PROJECT_WORLD_MODEL_AUDIT.md, §14
-[^4]: MEMORY.md（项目工作记忆，流派节）
+[^4]: [失源] MEMORY.md（项目工作记忆，流派节；源未入库已失传，主张待重锚，见 plan.md 已知缺口）

@@ -1,7 +1,7 @@
 ---
 title: 知识库维护机制
 description: 本 wiki 的更新流程、lint 卫生清单与例行维护提示词（LLM Wiki 方法论）
-date: 2026-09-12
+date: 2026-09-25
 tags: [maintenance, workflow, lint, routine]
 ---
 
@@ -32,11 +32,12 @@ tags: [maintenance, workflow, lint, routine]
 - [ ] date 在实质性修订时更新；编辑时保留既有 frontmatter 字段
 - [ ] 表格用于结构化对比；流程关系用 mermaid（节点标签含括号须加引号）
 - [ ] 区分 [FACT]/[DESIGN]/[INFERRED]：推断不得写成事实
+- [ ] 失源主张：源文件灭失时脚注以 `[失源] <原名>（说明）` 显式标记并在 plan.md 已知缺口登记；重锚到现存源后移除标记
 - [ ] 豁免：`references/` 下的规范提取副本按原文保留（内含示例路径如 diagram.svg），不参与链接 lint
 
 ## 例行维护提示词（可按需调度）
 
-> 读 docs/wiki/maintenance.md 与 docs/wiki/plan.md。找出上次运行以来新增或变更的源文档（git log --diff-filter=A/M -- docs/ AGENTS.md 报告）；对每个源：读它，更新 wiki——必要时写新页、把新材料并入既有页、修正所有受影响的交叉引用与脚注引用；跑 lint 清单自查；在 plan.md 登记 What/Why。
+> 读 docs/wiki/maintenance.md 与 docs/wiki/plan.md。找出上次运行以来新增或变更的源文档（git log --diff-filter=A/M -- docs/ AGENTS.md 报告）；对每个源：读它，更新 wiki——必要时写新页、把新材料并入既有页、修正所有受影响的交叉引用与脚注引用；运行 `node lint.mjs`（本目录，脚本自定位，[失源] 脚注计入备注而非失败）并过一遍上方 lint 清单自查；在 plan.md 登记 What/Why。
 
 ## 规范来源
 

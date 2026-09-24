@@ -1,7 +1,7 @@
 ---
 title: 验证工具链
 description: 测试套件、全局检查门、交互闭环回归与渲染级验证工具的完整清单
-date: 2026-09-12
+date: 2026-09-25
 tags: [testing, verification, tools, gut]
 ---
 
@@ -30,4 +30,4 @@ ObjectDB/RID 泄漏（2026-09-06 复测 20601 实例仍复现）。Dialogue Mana
 
 [^1]: AGENTS.md, 工具规则与 AI 契约
 [^2]: PROJECT_WORLD_MODEL_AUDIT.md, §21/§22
-[^3]: MEMORY.md（项目工作记忆，Godot 坑节）
+[^3]: [失源] MEMORY.md（项目工作记忆，Godot 坑节；源未入库已失传，主张待重锚，见 plan.md 已知缺口）
