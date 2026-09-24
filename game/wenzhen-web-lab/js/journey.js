@@ -25,10 +25,6 @@ function currentNode() {
   return nodeById(state.journey.nodeId);
 }
 
-function materialById(id) {
-  return DATA.materials.find((m) => m.id === id) || { id, name: id };
-}
-
 function npcById(id) {
   return DATA.npcs.find((n) => n.id === id) || null;
 }
@@ -68,6 +64,45 @@ function currentSegment() {
   return Number(currentNode()?.segment || 1);
 }
 
+function journeyProgress() {
+  const graph = state?.journey?.graph || {};
+  const segmentCount = Math.max(1, Number(graph.segmentCount) || 5);
+  const nodesPerSegment = Math.max(0, Number(graph.prepPerSegment) || 0);
+  const completed = new Set(state?.journey?.completed || []);
+  const completedNodes = [...completed].map((id) => RunFlow.nodeById(graph, id)).filter(Boolean);
+  const activeNode = currentNode();
+  const nextNode = (state?.journey?.availableNodeIds || [])
+    .map((id) => RunFlow.nodeById(graph, id)).find(Boolean) || null;
+  const lastCompleted = completedNodes.length ? completedNodes[completedNodes.length - 1] : null;
+  const positionNode = activeNode || nextNode || lastCompleted;
+  const visitedNodes = completed.size + (activeNode && !completed.has(activeNode.id) ? 1 : 0);
+  const totalNodes = segmentCount * (nodesPerSegment + 1);
+  const passedSegments = new Set(completedNodes.filter((node) => node.type === 'boss').map((node) => Number(node.segment)));
+  const activeSegment = Math.max(1, Math.min(segmentCount,
+    Number(positionNode?.segment) || Math.min(segmentCount, passedSegments.size + 1)));
+  return { segmentCount, nodesPerSegment, visitedNodes, totalNodes, activeSegment, passedSegments, positionNode };
+}
+
+function segmentProgressMarkup(activeSegment = 1) {
+  const progress = journeyProgress();
+  return `<ol class="segment-progress" aria-label="五段修行进度">${Array.from({ length: progress.segmentCount }, (_, index) => {
+    const segment = index + 1;
+    const passed = progress.passedSegments.has(segment);
+    const current = segment === Number(activeSegment) && !passed;
+    const status = passed ? 'done' : current ? 'current' : 'future';
+    const ariaCurrent = current ? ' aria-current="step"' : '';
+    const label = passed ? '已过' : current ? '当前' : '未至';
+    return `<li class="segment-step ${status}"${ariaCurrent}><span>第 ${segment} 段</span><b>${segmentTitle(segment)}</b><em>${label}</em></li>`;
+  }).join('')}</ol>`;
+}
+
+function journeyNodeStep(node, graph = state?.journey?.graph || {}) {
+  if (!node) return '选择下一站';
+  if (node.type === 'boss') return '挑战本段层主';
+  const total = Math.max(1, Number(graph.prepPerSegment) || 1);
+  return `路途节点 ${Number(node.depth || 0) + 1} / ${total}`;
+}
+
 // 选中节点后该回到哪一页：战斗/结算/未解析的节点动作/统一整备。
 function currentNodePage() {
   if (state.battle) return 'battle';
@@ -95,10 +130,16 @@ function renderHall(root) {
   const difficulty = state.journey.difficulty || 'normal';
   const preset = DATA.flow.difficulties[difficulty] || DATA.flow.difficulties.normal;
   const started = !!state.journey.started;
-  const completed = state.journey.completed.length;
+  const progress = journeyProgress();
   const inProgress = typeof isInProgressRun === 'function' ? isInProgressRun() : false;
   const saveIssue = typeof bootSaveIssue !== 'undefined' ? bootSaveIssue : null;
   const saveStatus = typeof lastSaveStatus !== 'undefined' ? lastSaveStatus : { ok: true, reason: '' };
+  const archiveResult = globalThis.LabSave?.readArchive
+    ? LabSave.readArchive(typeof saveStorage === 'function' ? saveStorage() : null)
+    : { ok: false, reason: 'archive_unavailable' };
+  const archivedRuns = archiveResult.ok ? archiveResult.runs : [];
+  const archiveWins = archivedRuns.filter((run) => run.outcome === 'victory').length;
+  const recentRuns = archivedRuns.slice(0, 5);
   const cannotRead = saveIssue === 'unreadable';
   const storageDown = saveIssue === 'storage_error' || saveStatus.ok === false;
   const saveLine = cannotRead
@@ -115,7 +156,7 @@ function renderHall(root) {
       <section class="hall-main">
         <div class="eyebrow">问真 · 五段问道</div>
         <h1>问真</h1>
-        <p class="hall-copy">自凡尘起修，历经市井、险地与野蛊，炼化蛊虫、合炼杀招，直至第五层主终局。选择难度后开始；当前局只展示可走的后继节点。本局自动保存，刷新后可继续。</p>
+        <p class="hall-copy">在随机山境中择路而行，识破对手意图，以蛊虫、杀招与有限资源走完五境。每段路途都会通向一位层主；遭遇、异闻、坊市与整备共同构成一条修行。进度会自动保存，离开后仍可回来续修。</p>
         ${saveLine}
         ${state.ending ? `
         <div class="hall-ending" data-hall-ending>
@@ -123,43 +164,63 @@ function renderHall(root) {
           <h2>${state.ending.title}</h2>
           <p>${state.ending.detail}</p>
           <div class="resource-row">
-            <span>outcome: ${state.ending.outcome}</span>
+            <span>${state.ending.outcome === 'victory' ? '胜局' : '败局'}</span>
             <span>回合 ${state.ending.turn || 0}</span>
-            <span>已完成 ${state.journey.completed.length}</span>
+            <span>行程 ${progress.visitedNodes} / ${progress.totalNodes}</span>
           </div>
         </div>` : ''}
         <div class="difficulty-row">
           ${Object.entries(DATA.flow.difficulties).map(([key, value]) => `
-            <button class="${key === difficulty ? 'on' : ''}" data-difficulty="${key}">
-              <b>${value.label}</b><span>每段 ${value.prepPerSegment} 个准备节点</span>
-            </button>`).join('')}
+            <button class="${key === difficulty ? 'on' : ''}" data-difficulty="${key}" aria-pressed="${key === difficulty}">
+              <b>${value.label}</b><span>每段 ${value.prepPerSegment} 个路途节点 + 层主 · 全程 ${5 * (value.prepPerSegment + 1)} 节</span>
+          </button>`).join('')}
         </div>
+        ${inProgress ? '<p class="difficulty-note">更换难度或开新局会放弃当前行程；系统会在切换前再次确认。</p>' : ''}
         <div class="hall-actions">
           ${inProgress ? '<button class="primary" data-continue-run>继续当前局</button>' : ''}
           <button class="${inProgress ? 'ghost' : 'primary'}" data-start-run>${inProgress ? '开始新局' : started ? '重新开局' : '开始新局'}</button>
-          ${started && !state.ending ? '<button class="ghost" data-go-map>返回节点图</button>' : ''}
+          ${started && !state.ending ? '<button class="ghost" data-go-map>查看当前行程</button>' : ''}
         </div>
       </section>
       <aside class="hall-side">
-        <div class="kicker">当前局面</div>
-        <div class="hall-big">${completed}<span>/ ${state.journey.graph.nodes.length}</span></div>
-        <div class="hall-node">${currentNode() ? `${nodeTypeLabel(currentNode().type)} · ${currentNode().name}` : state.ending ? `已终局 · ${state.ending.outcome}` : started ? '等待选择下一个节点' : '尚未开局'}</div>
-        <div class="resource-row">
-          <span>${RunFlow.stageLabel(state.cultivation, state.cultivationStage)}</span>
-          <span>真元 ${state.qi}/${state.qiMax}</span>
-          <span>元石 ${state.stones}</span>
-          <span>气血 ${state.blood}/${state.bloodMax}</span>
+        <div class="kicker">${started ? '修行行程' : '入世前 · 本局规模'}</div>
+        <div class="hall-big">${started ? progress.visitedNodes : progress.totalNodes}<span>${started ? `/ ${progress.totalNodes}` : ' 个必经节点'}</span></div>
+        <div class="hall-node">${state.ending
+          ? `${state.ending.outcome === 'victory' ? '五境走尽' : '止步于此'} · ${state.ending.title}`
+          : currentNode()
+            ? `${nodeTypeLabel(currentNode().type)} · ${currentNode().name}`
+            : started && state.journey.availableNodeIds?.length
+              ? `前方 ${state.journey.availableNodeIds.length} 条道路 · 选择下一站`
+              : started && progress.positionNode
+              ? `下一站 · ${nodeTypeLabel(progress.positionNode.type)} · ${progress.positionNode.name}`
+              : started ? '等待选择下一节点' : '五段修行 · 每段终有层主'}
         </div>
-        <div class="hall-preset">${preset.label} · 五段 · 第五层主为终局</div>
+        <div class="hall-progress-label">${state.ending ? '本局结果已记入修行旧录' : started ? '已踏过的节点（含当前遭遇）' : `${preset.label} · 种子 ${state.seed}`}</div>
+        ${started ? `<div class="journey-meter" role="meter" aria-label="本局行程进度" aria-valuemin="0" aria-valuemax="${progress.totalNodes}" aria-valuenow="${progress.visitedNodes}"><i style="width:${Math.min(100, progress.visitedNodes / Math.max(1, progress.totalNodes) * 100)}%"></i></div>` : ''}
+        ${segmentProgressMarkup(progress.activeSegment)}
+        <div class="hall-preset">${preset.label} · ${progress.totalNodes} 个必经节点 · 种子 ${state.seed}</div>
       </aside>
     </div>
     <h2 style="margin-top:28px">本局记录</h2>
     ${state.journal.length
       ? `<div class="journal">${state.journal.slice(0, 8).map((line, i) => `<div><span>${String(state.journal.length - i).padStart(2, '0')}</span>${line}</div>`).join('')}</div>`
-      : '<div class="empty">还没有记录。开局后，节点结算、奖励与整备会写在这里。</div>'}`;
+      : '<div class="empty">还没有记录。开局后，节点结算、奖励与整备会写在这里。</div>'}
+    <section class="archive-section">
+      <div class="section-head">
+        <div><div class="kicker">跨局留存 · 最近 ${Math.min(archivedRuns.length, 5)} 局</div><h2>修行旧录</h2></div>
+        <div class="archive-total">已记 ${archivedRuns.length} 局 · 胜局 ${archiveWins}</div>
+      </div>
+      ${state.ending?.archiveSaved === false ? '<p class="hall-save bad">本局结局未能写入旧录；当前局仍可查看。</p>' : ''}
+      ${!archiveResult.ok
+        ? '<div class="empty">旧录暂不可读取，原始存档仍留在此浏览器中。</div>'
+        : recentRuns.length
+          ? `<div class="archive-list">${recentRuns.map((run) => archiveRunCard(run)).join('')}</div>`
+          : '<div class="empty">完成一局修行后，种子、路线与结局会留在这里。</div>'}
+    </section>`;
 
   root.querySelectorAll('[data-difficulty]').forEach((button) => {
     button.addEventListener('click', () => {
+      if (button.dataset.difficulty === state.journey.difficulty) return;
       if (typeof requestDifficultyChange === 'function') {
         requestDifficultyChange(button.dataset.difficulty);
         return;
@@ -173,6 +234,36 @@ function renderHall(root) {
   });
   root.querySelector('[data-start-run]').addEventListener('click', () => act.startRun(state.journey.difficulty || 'normal'));
   root.querySelector('[data-go-map]')?.addEventListener('click', () => showPage('map'));
+  root.querySelectorAll('[data-run-seed]').forEach((button) => {
+    button.addEventListener('click', () => act.startRun(button.dataset.difficulty, button.dataset.runSeed));
+  });
+}
+
+function archiveRunCard(run) {
+  const safe = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[char]);
+  const difficulty = DATA.flow.difficulties?.[run.difficulty]?.label || run.difficulty || '未知难度';
+  const ended = run.endedAt ? new Date(run.endedAt) : null;
+  const date = ended && Number.isFinite(ended.getTime())
+    ? ended.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    : '日期未知';
+  const route = (Array.isArray(run.trail) ? run.trail : []).map((node) =>
+    `<span>${safe(node.segment)} · ${safe(node.type)} · ${safe(node.name)}</span>`).join('');
+  const journal = (Array.isArray(run.journal) ? run.journal : []).map((line) => `<li>${safe(line)}</li>`).join('');
+  return `<article class="archive-run ${run.outcome === 'victory' ? 'won' : 'lost'}">
+    <div class="archive-run-head">
+      <div><div class="kicker">${run.outcome === 'victory' ? '胜局' : '败局'} · ${safe(run.rank || '')}</div>
+        <h3>${safe(run.title || '无题')}</h3></div>
+      <button class="ghost archive-replay" data-run-seed="${safe(run.seed)}" data-difficulty="${safe(run.difficulty)}">复走种子 ${safe(run.seed)}</button>
+    </div>
+    <p>${safe(run.detail || '')}</p>
+    <div class="archive-meta"><span>${difficulty}</span><span>${date}</span><span>行程 ${Number(run.visitedNodes ?? run.completedNodes) || 0}/${Number(run.totalNodes) || 0}</span></div>
+    <details><summary>查看路线与局内记录</summary>
+      <div class="archive-trail">${route || '<span>没有路线记录</span>'}</div>
+      ${journal ? `<ul class="archive-journal">${journal}</ul>` : ''}
+    </details>
+  </article>`;
 }
 
 function renderMap(root) {
@@ -190,25 +281,22 @@ function renderMap(root) {
   const pathNodes = (state.journey.graph.nodes || [])
     .filter((node) => completed.has(node.id) && node.segment === segment)
     .sort((a, b) => a.depth - b.depth || a.slot - b.slot);
-  const depthText = current
-    ? `第 ${current.depth + 1} / ${state.journey.graph.prepPerSegment} 个准备节点`
-    : candidates[0]?.type === 'boss'
-      ? '层主'
-      : `第 ${Number(candidates[0]?.depth || 0) + 1} / ${state.journey.graph.prepPerSegment} 个准备节点`;
+  const depthText = journeyNodeStep(current || candidates[0], state.journey.graph);
   const totalDepth = state.journey.graph.prepPerSegment;
   root.innerHTML = `
     <div class="section-head">
       <div>
         <div class="kicker">第 ${segment} 段 · ${segmentTitle(segment)} · ${depthText}</div>
-        <h2>${selected ? '节点结算中' : '选择下一个节点'}</h2>
+        <h2>${selected ? '当前行止' : '选择下一站'}</h2>
       </div>
       <div class="legend"><span class="dot current"></span>当前 <span class="dot done"></span>已过 <span class="dot locked"></span>可走</div>
     </div>
-    <div class="map-help">每段沿路径经过 ${totalDepth} 个准备节点；当前节点会展开 2 至 3 条后继边。</div>
+    ${segmentProgressMarkup(segment)}
+    <div class="map-help">每段要走过 ${totalDepth} 个路途节点，再迎战层主。只选择当前可走的道路；已选的路线会保留在本局旧录中。</div>
     ${pathNodes.length ? `<div class="journey-trail">${pathNodes.map((node, i) => `<span class="${node.id === selected ? 'now' : i < pathNodes.length - 1 ? 'done' : ''}">${node.depth + 1}. ${nodeTypeLabel(node.type)}</span>`).join('')}</div>` : ''}
-    ${current ? `<div class="map-nodes map-choices">${mapNodeCard(current, selected, new Set([current.id]), completed)}</div>` : ''}
+    ${current ? `<div class="map-nodes map-choices">${mapNodeCard(current, selected, new Set(), completed)}</div>` : ''}
     ${!current && candidates.length ? `<h3 class="map-choice-title">当前可走后继</h3><div class="map-nodes map-choices">${candidates.map((node) => mapNodeCard(node, selected, available, completed)).join('')}</div>` : ''}
-    ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${{ battle: '返回当前战斗', reward: '查看结算', 'node-action': '返回选择', prep: '继续整备' }[currentNodePage()]}</button></div>` : ''}`;
+    ${selected ? `<div class="leave-row"><button class="primary" data-return-node>${{ battle: '返回战斗', reward: '返回战后结算', 'node-action': '返回节点抉择', prep: '返回整备' }[currentNodePage()]}</button></div>` : ''}`;
 
   root.querySelectorAll('[data-choose-node]').forEach((button) => {
     button.addEventListener('click', () => act.chooseNode(button.dataset.chooseNode));
@@ -227,18 +315,35 @@ function mapNodeCard(node, selected, available, completed) {
   const detail = isActionNode
     ? nodeActionMenuLabels(node).join(' · ')
     : nodeEnemyIds(node).map((id) => (enemyById(id) || {}).name || id).join('、');
-  return `<article class="map-node type-${node.type} ${stateClass}${isAvailable ? ' available' : ''}"${isAvailable ? ` data-choose-node="${node.id}"` : ''}>
-    <div class="rn-top"><span>${node.type === 'boss' ? '层主' : `L${node.segment} · ${node.depth + 1}`}</span><em>${nodeTypeLabel(node.type)}</em></div>
-    <div class="rn-name">${node.name}</div>
-    <div class="rn-enemies">${detail || '无战斗数据'}</div>
-    ${isActionNode && node.summary ? `<div class="rn-summary">${node.summary}</div>` : ''}
+  const summary = isActionNode ? node.summary
+    : node.type === 'boss'
+      ? Number(node.segment) === Number(state.journey.graph.segmentCount)
+        ? '五境终战 · 击败层主，结束本局修行。'
+        : '本段终战 · 击败层主，开启下一境。'
+      : node.type === 'elite'
+        ? '精英战 · 敌群更强，战后收获更丰。'
+        : '常规战 · 胜利后获得战利与补给，再进入整备。';
+  const tag = isAvailable ? 'button' : 'article';
+  const attrs = isAvailable ? ` type="button" data-choose-node="${node.id}" aria-label="进入${nodeTypeLabel(node.type)}：${node.name}。${detail}。${summary}"` : '';
+  return `<${tag} class="map-node type-${node.type} ${stateClass}${isAvailable ? ' available' : ''}"${attrs}>
+    <span class="rn-top"><span>${node.type === 'boss' ? '层主' : `L${node.segment} · ${node.depth + 1}`}</span><em>${nodeTypeLabel(node.type)}</em></span>
+    <span class="rn-name">${node.name}</span>
+    <span class="rn-enemies">${detail || '无战斗数据'}</span>
+    ${summary ? `<span class="rn-summary">${summary}</span>` : ''}
     ${isAvailable ? `<span class="map-enter">进入</span>` : `<span class="rn-state">${isSelected ? '当前' : isDone ? '已过' : '未选'}</span>`}
-  </article>`;
+  </${tag}>`;
 }
 
 // 地图卡片上的动作摘要：休整节点列自己的两张卡（歇脚恢复 / 离开休整，标题与卡片同源），
 // 其余标准节点只列本模块真的会出卡的动作——choices 里未搬的动作不列（如体印仪式的 take_imprint）。
 function nodeActionMenuLabels(node) {
+  if (node.type === NodeActionRules.eventNodeType) {
+    const event = node.event || {};
+    const effects = [];
+    if (Number(event.health_cost || 0) > 0) effects.push(`气血 -${event.health_cost}`);
+    if (Number(event.stone_gain || 0) > 0) effects.push(`元石 +${event.stone_gain}`);
+    return [event.title || '异闻', ...effects, '可离开'];
+  }
   if (node.type === NodeActionRules.restNodeType) {
     return NodeActionRules.restCards({ summary: node.summary }).map((card) => card.title);
   }
@@ -251,7 +356,7 @@ function nodeActionMenuLabels(node) {
 const NODE_ACTION_HELP = '节点动作按 Godot standard actions 结算：做工 +3 元石、采集 +2 元石；购买情报与交易各耗 2 枚元石；探查、退回与离开只记事实；穿越消耗 1 点真元；静修恢复 1 点真元（真元上限处截断）；解析后进入统一整备。';
 const REST_ACTION_HELP = '休整节点是一次收益门禁：先取「歇脚恢复」（气血按上限的 30% 向下取整、至少 1 点，真元 +2，均不超上限），「离开休整」才会解禁；本次探访只能取一项收益。数值来源 rest_rules.gd:121-141。';
 
-// 节点动作页（险地 / 市集 / 野蛊 / 休整 / 静修）：标准节点列模板 choices 的 standard action 卡
+// 节点动作页（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻）：标准节点列模板 choices 的 standard action 卡
 // （另按 :44-45 补一张 leave 卡）；休整节点出自己的一套卡（歇脚恢复 + 离开休整，后者是两步交互的门禁）。
 // 规则、门禁、文案全部来自 js/node_action_rules.js，页面不另算。
 function renderNodeActions(root) {
@@ -262,6 +367,7 @@ function renderNodeActions(root) {
     return;
   }
   const isRest = node.type === NodeActionRules.restNodeType;
+  const isEvent = node.type === NodeActionRules.eventNodeType;
   const cards = isRest
     ? NodeActionRules.restCards({
         summary: node.summary,
@@ -271,7 +377,9 @@ function renderNodeActions(root) {
         essence: state.qi,
         essenceMax: state.qiMax,
       })
-    : NodeActionRules.options({
+    : isEvent
+      ? NodeActionRules.eventCards(node.event, { health: state.blood })
+      : NodeActionRules.options({
         choices: node.choices,
         stones: state.stones,
         essence: state.qi,
@@ -279,26 +387,22 @@ function renderNodeActions(root) {
   root.innerHTML = `
     <div class="section-head">
       <div>
-        <div class="kicker">${segmentTitle(node.segment)} · ${nodeTypeLabel(node.type)} · 第 ${node.depth + 1} / ${state.journey.graph.prepPerSegment} 个准备节点</div>
+        <div class="kicker">${segmentTitle(node.segment)} · ${nodeTypeLabel(node.type)} · ${journeyNodeStep(node)}</div>
         <h2>${node.name}</h2>
-      </div>
-      <div class="prep-resources">
-        <span>真元 ${state.qi}/${state.qiMax}</span>
-        <span>元石 ${state.stones}</span>
-        <span>气血 ${state.blood}/${state.bloodMax}</span>
       </div>
     </div>
     <div class="node-action-choices">${cards.map((option) => `
-      <article class="node-action-choice ${option.available ? 'ready' : ''}">
+      <article class="node-action-choice ${isEvent ? 'event-choice' : ''} ${option.available ? 'ready' : ''}">
         <div class="na-head"><b>${option.title || actionLabel(option.id)}</b><span>${nodeActionCostText(option)}</span></div>
         ${option.summary || node.summary ? `<p class="na-summary">${option.summary || node.summary}</p>` : ''}
         ${(option.gain || []).map((line) => `<p>${line}</p>`).join('')}
         ${(option.risk || []).map((line) => `<p class="risk">${line}</p>`).join('')}
+        ${option.unknownNote ? `<p class="na-unknown"><span>未明</span>${option.unknownNote}</p>` : ''}
         ${option.available ? '' : `<p class="blocked">${option.blockReason}</p>`}
         ${(option.remedy || []).map((line) => `<p class="remedy">${line}</p>`).join('')}
-        <button class="${option.available ? 'primary' : ''}" ${option.available ? '' : 'disabled'} data-node-action="${option.id}">${option.available ? '执行' : '不可用'}</button>
+        <button class="${option.available ? 'primary' : ''}" ${option.available ? '' : 'disabled'} data-node-action="${option.id}">${option.available ? option.buttonLabel || '执行' : '不可用'}</button>
       </article>`).join('')}</div>
-    <div class="map-help">${isRest ? REST_ACTION_HELP : NODE_ACTION_HELP}</div>`;
+    <div class="map-help">${isRest ? REST_ACTION_HELP : isEvent ? '接下机缘会当场结算列明的气血代价与元石收益；不取则安全离开。' : NODE_ACTION_HELP}</div>`;
   root.querySelectorAll('[data-node-action]').forEach((button) => {
     button.addEventListener('click', () => act.resolveNodeAction(button.dataset.nodeAction));
   });
@@ -307,8 +411,10 @@ function renderNodeActions(root) {
 // 成本文案口径同 display_text.gd:455-462（元石 X / 真元 Y），无成本显示「无消耗」。
 function nodeActionCostText(option) {
   const parts = [];
+  if (Number(option.healthCost) > 0) parts.push(`气血 -${option.healthCost}`);
   if (option.essenceCost > 0) parts.push(`真元 -${option.essenceCost}`);
   if (option.stoneCost > 0) parts.push(`元石 -${option.stoneCost}`);
+  if (Number(option.stoneGain) > 0) parts.push(`元石 +${option.stoneGain}`);
   return parts.length ? parts.join(' · ') : '无消耗';
 }
 
@@ -338,11 +444,11 @@ function canBuyOffer(offer) {
   if (!offerStocked(offer)) return false;
   if (offerCost(offer) > state.stones) return false;
   if (offer.kind === 'gu_fang_unlock' && state.globalCodexIds.includes(offer.gu_id)) return false;
-  return ['purchase', 'material_purchase', 'gu_fang_unlock'].includes(offer.kind);
+  return ['purchase', 'gu_fang_unlock'].includes(offer.kind);
 }
 
 function shopKindLabel(kind) {
-  return { purchase: '蛊', material_purchase: '材', gu_fang_unlock: '方' }[kind] || '服';
+  return { purchase: '蛊', gu_fang_unlock: '方' }[kind] || '服';
 }
 
 function shopGuName(guId) {
@@ -357,7 +463,6 @@ function shopTradeName(offer) {
 
 function offerName(offer) {
   if (offer.kind === 'purchase' && offer.gu_id) return shopGuName(offer.gu_id);
-  if (offer.kind === 'material_purchase' && offer.material_id) return materialById(offer.material_id).name;
   return shopTradeName(offer);
 }
 
@@ -367,7 +472,6 @@ function offerDetail(offer) {
     const gu = guById(offer.gu_id);
     return gu ? `${gu.rank} 转 · ${schoolLabel(gu.school)} · ${effectText(gu.effect)}` : '蛊虫货物';
   }
-  if (offer.material_id) return `材料 · ${materialById(offer.material_id).name}`;
   return '尚未说明的交易';
 }
 
@@ -449,7 +553,6 @@ function renderPrep(root) {
     aptitude: state.aptitude,
     owned: state.owned,
   }, DATA.flow);
-  const materials = DATA.materials.filter((material) => Number(state.materials[material.id] || 0) > 0);
   const offers = shopStock();
   const aptId = DATA.flow.aptitudeGuId;
   const sariName = next.sariId ? (guById(next.sariId) || {}).name : '同阶舍利蛊';
@@ -478,13 +581,7 @@ function renderPrep(root) {
         <div class="kicker">${segmentTitle(node.segment)} · ${nodeTypeLabel(node.type)} · 整备</div>
         <h2>${node.name}</h2>
       </div>
-      <div class="prep-resources">
-        <span>${RunFlow.stageLabel(state.cultivation, state.cultivationStage)}</span>
-        <span>气血 ${state.blood}/${state.bloodMax}</span>
-        <span>真元 ${state.qi}/${state.qiMax}</span>
-        <span>元石 ${state.stones}</span>
-      </div>
-      <button class="primary prep-leave" data-prep-continue>完成整备 · 选择下一节点</button>
+      <button class="primary prep-leave" data-prep-continue>完成整备 · 继续行程</button>
     </div>
     ${gainInsightPanel()}
     <div class="prep-shell">
@@ -512,10 +609,6 @@ function renderPrep(root) {
           <h3>资质 ${APTITUDE_LABEL[state.aptitude] || state.aptitude}</h3>
           <p>使用后立即提升一档，并同步更新真元容量与恢复。</p>
           <button style="margin-top:13px" class="${aptCount > 0 ? 'primary' : ''}" ${aptCount > 0 ? '' : 'disabled'} data-use-aptitude>使用资质蛊 ×${aptCount}</button>
-        </section>
-        <section class="rail-block">
-          <div class="kicker">材料 · ${materials.length} 种</div>
-          <div class="material-list">${materials.map((material) => `<div class="material-line"><span>${material.name}</span><b>×${state.materials[material.id]}</b></div>`).join('') || '<div class="empty">暂无材料。</div>'}</div>
         </section>
       </aside>
       <div class="prep-work">
@@ -574,13 +667,12 @@ function renderReward(root) {
       <div class="reward-lines">
         <div><span>元石</span><b>+${reward.stones}</b></div>
         <div><span>气血</span><b>+${reward.healed || 0} · 真元回满</b></div>
-        ${(reward.materialIds || []).length ? `<div><span>材料</span><b>${Object.entries(countBy(reward.materialIds)).map(([id, count]) => `${materialById(id).name}×${count}`).join('、')}</b></div>` : ''}
-        <div><span>价值</span><b>${reward.lootIdentity === 'new_future' ? '新未来' : reward.lootIdentity === 'build_component' ? '构筑组件' : '经济/成长'}${reward.valueKinds ? ` · 经${reward.valueKinds.economic || 0}/成${reward.valueKinds.growth || 0}/筑${reward.valueKinds.build || 0}` : ''}</b></div>
+        <div><span>战利方向</span><b>${reward.lootIdentity === 'new_future' ? '打开新构筑' : reward.lootIdentity === 'build_component' ? '完善构筑' : '资源与成长'}</b></div>
         <div><span>回合</span><b>${reward.turn}</b></div>
       </div>
       ${choices.length ? `
         <h2>战后出蛊 · 三选一</h2>
-        <p class="muted">${tier === 'boss' ? '层主奖励 · 优先打开此前不可达的构筑未来' : tier === 'elite' ? '精英奖励 · 构筑组件 / 较高品质' : '普通战 · 稳定经济与常用材料'}</p>
+        <p class="muted">${tier === 'boss' ? '层主奖励 · 优先打开此前不可达的构筑未来' : tier === 'elite' ? '精英奖励 · 构筑组件 / 较高品质' : '普通战 · 稳定元石与蛊虫成长'}</p>
         <div class="reward-choices">${choices.map((gu) => `
           <button data-reward-gu="${gu.id}">
             <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
@@ -588,8 +680,8 @@ function renderReward(root) {
             <span>${gu.rank} 转 · ${GuRules.buildRoleOf(gu, GU_BY_ID)} · ${schoolLabel(gu.school)}</span>
             <em>${effectText(gu.effect)}</em>
           </button>`).join('')}</div>
-        <p class="muted" style="margin-top:10px">选定后不会自动装备；系统会列出可替换 / 可炼 / 可组杀招，由你决定是否重构。</p>
-      ` : '<p class="muted">本次没有蛊虫掉落，直接进入统一整备。</p>'}
+        <p class="muted" style="margin-top:10px">所选蛊虫会收入蛊仓，不会自动装备。进入整备后，可检查它能否替换、炼化或组成杀招。</p>
+      ` : '<p class="muted">本次没有待选蛊虫；战利品已入账，可以直接进入整备。</p>'}
       ${choices.length ? '' : '<button class="primary" data-reward-continue>进入整备</button>'}
     </div>`;
   root.querySelectorAll('[data-reward-gu]').forEach((button) => {
@@ -606,6 +698,7 @@ function renderEnding(root) {
     return;
   }
   const outcomeLabel = ending.outcome === 'victory' ? '胜局' : ending.outcome === 'defeat' ? '败局' : '终局';
+  const progress = journeyProgress();
   root.innerHTML = `
     <div class="ending-sheet">
       <div class="kicker">终局摘要 · ${outcomeLabel}</div>
@@ -613,8 +706,8 @@ function renderEnding(root) {
       <p class="lead">${ending.detail}</p>
       ${ending.deathReport?.last3?.length ? `<div class="ending-death"><div class="kicker">败因摘要</div><ul>${ending.deathReport.last3.map((line) => `<li>${line}</li>`).join('')}</ul></div>` : ''}
       <div class="ending-stats">
-        <span>outcome: ${ending.outcome || 'unknown'}</span>
-        <span>节点 ${state.journey.completed.length}</span>
+        <span>本局结果 · ${outcomeLabel}</span>
+        <span>行程节点 · ${progress.visitedNodes} / ${progress.totalNodes}</span>
         <span>气血 ${state.blood}</span>
         <span>元石 ${state.stones}</span>
         <span>回合 ${ending.turn || 0}</span>

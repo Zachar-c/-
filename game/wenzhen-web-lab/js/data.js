@@ -1,6 +1,12 @@
 // 本文件由 tools/build_data.mjs 从 Godot 侧数据表生成，不要手改。
 // 用普通脚本（非 ES module）产出，这样 file:// 双击打开也能跑，不必起本地服务。
 const DATA = {
+  "saveCompatibilityVersion": "lab-run-v2",
+  "compatibleContentVersions": [
+    "lab-run-v1",
+    "907a8d845d0680bba5ff4ee636e21aaf78c498c6de5ef93fa2f820f7252364e6",
+    "061e49e1986a381495a2155aecf82b1e8e449a06a02d448c24150f21c4cd6c1a"
+  ],
   "runSeed": 101,
   "aptitude": {
     "essence_base": 10,
@@ -260,88 +266,6 @@ const DATA = {
   "loot": {
     "tables": {
       "common": {
-        "material_count": 1,
-        "material_pool": [
-          "beast_blood",
-          "beast_bone",
-          "moon_blue_petal",
-          {
-            "id": "mat_blood_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_bone_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_dream_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_earth_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_fire_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_force_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_gold_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_heaven_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_human_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_luck_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_qi_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_refine_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_slave_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_soul_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_sword_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_water_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_wind_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_wisdom_1",
-            "weight": 3
-          },
-          {
-            "id": "mat_wood_1",
-            "weight": 3
-          }
-        ],
         "gu_chance_pct": 6,
         "gu_pool": {
           "weights": {
@@ -374,156 +298,6 @@ const DATA = {
         }
       },
       "elite": {
-        "material_count": 1,
-        "material_pool": [
-          "beast_blood",
-          "beast_bone",
-          "venom_sac",
-          {
-            "id": "mat_blood_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_dream_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_earth_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_fire_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_force_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_gold_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_heaven_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_human_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_luck_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_qi_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_refine_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_slave_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_soul_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_sword_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_water_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_wind_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_wisdom_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_wood_2",
-            "weight": 3
-          },
-          {
-            "id": "mat_blood_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_dream_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_earth_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_fire_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_force_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_gold_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_heaven_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_human_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_luck_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_qi_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_refine_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_slave_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_soul_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_sword_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_water_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_wind_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_wisdom_3",
-            "weight": 1
-          },
-          {
-            "id": "mat_wood_3",
-            "weight": 1
-          }
-        ],
         "gu_chance_pct": 35,
         "forced_rarity": "epic",
         "gu_pool": {
@@ -551,157 +325,6 @@ const DATA = {
         }
       },
       "boss": {
-        "material_count": 2,
-        "material_pool": [
-          "beast_blood",
-          "beast_bone",
-          "venom_sac",
-          "moon_dew",
-          {
-            "id": "mat_blood_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_dream_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_earth_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_fire_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_force_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_gold_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_heaven_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_human_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_luck_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_qi_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_refine_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_slave_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_soul_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_sword_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_water_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_wind_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_wisdom_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_wood_3",
-            "weight": 2
-          },
-          {
-            "id": "mat_blood_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_dream_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_earth_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_fire_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_force_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_gold_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_heaven_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_human_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_luck_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_qi_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_refine_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_slave_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_soul_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_sword_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_water_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_wind_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_wisdom_4",
-            "weight": 3
-          },
-          {
-            "id": "mat_wood_4",
-            "weight": 3
-          }
-        ],
         "gu_chance_pct": 55,
         "gu_pool": {
           "weights": {
@@ -738,23 +361,7 @@ const DATA = {
         "rare",
         "epic",
         "legendary"
-      ],
-      "material_pity": {
-        "threshold": 3,
-        "target_bands_by_tier": {
-          "common": [
-            "crude"
-          ],
-          "elite": [
-            "plain",
-            "refined"
-          ],
-          "boss": [
-            "prized"
-          ]
-        },
-        "note": "P2-a（R-3 校准）：目标派系化——本派 promotion 链路材料中、该 tier 池声明且带段在允许集内的条目。硬限：只补池内已定义存在的目标带段，不跨 tier 拉取、不凭空生成。Reachability-3（2026-09-13 裁定）：保底计数按 tier 独立（state.material_pity_by_tier：common→f1、elite→f2/f3、boss→f4），其他带段掉落对计数零影响。带段→f 段映射 provisional（F8 校准）。"
-      }
+      ]
     },
     "pacingLayers": {
       "1": {
@@ -775,7 +382,6 @@ const DATA = {
         "enemy_rank_min": 0,
         "enemy_rank_max": 1,
         "loot": {
-          "material_count": 2,
           "weights": {
             "common": 90,
             "rare": 10,
@@ -837,7 +443,6 @@ const DATA = {
         "enemy_rank_min": 0,
         "enemy_rank_max": 2,
         "loot": {
-          "material_count": 2,
           "weights": {
             "common": 80,
             "rare": 18,
@@ -895,7 +500,6 @@ const DATA = {
         "enemy_rank_min": 1,
         "enemy_rank_max": 3,
         "loot": {
-          "material_count": 3,
           "weights": {
             "common": 70,
             "rare": 24,
@@ -953,7 +557,6 @@ const DATA = {
         "enemy_rank_min": 2,
         "enemy_rank_max": 4,
         "loot": {
-          "material_count": 3,
           "weights": {
             "common": 60,
             "rare": 28,
@@ -1011,7 +614,6 @@ const DATA = {
         "enemy_rank_min": 3,
         "enemy_rank_max": 5,
         "loot": {
-          "material_count": 4,
           "weights": {
             "common": 50,
             "rare": 30,
@@ -1052,7 +654,6 @@ const DATA = {
         }
       }
     },
-    "schoolMaterialResonance": 5,
     "schoolPools": {
       "light": [
         "small_light_gu",
@@ -1096,15 +697,6 @@ const DATA = {
         "light_log_3_33_gu",
         "light_atk_3_34_gu"
       ]
-    },
-    "materialPityTargetsByTier": {
-      "common": [
-        "beast_bone"
-      ],
-      "elite": [
-        "venom_sac"
-      ],
-      "boss": []
     },
     "school": "light"
   },
@@ -3309,20 +2901,11 @@ const DATA = {
       ],
       "output": "moon_ray_gu",
       "stoneCost": 0,
-      "materials": {
-        "beast_bone": 1
-      },
       "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）；L0 Phase 5 兽骨=爆发支配方钥匙",
       "successRollMax": 100,
       "forkId": "fork_moonlight_small",
       "branchLabel": "炼向月痕·爆发",
       "branchAxis": "burst",
-      "materialRole": "recipe_key",
-      "farmHint": "缺兽骨 → 打重甲/防御敌（铁皮山猪）",
-      "preferredEnemyIds": [
-        "iron_hide_boar",
-        "ridge_elite_scout"
-      ],
       "closes": [
         "kit_info_suppress",
         "moon_glow_gu"
@@ -3340,20 +2923,11 @@ const DATA = {
       ],
       "output": "moon_glow_gu",
       "stoneCost": 0,
-      "materials": {
-        "moon_dew": 1
-      },
       "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）；L0 Phase 5 月露=信息支配方钥匙",
       "successRollMax": 100,
       "forkId": "fork_moonlight_small",
       "branchLabel": "炼向月芒·信息压制",
       "branchAxis": "info",
-      "materialRole": "recipe_key",
-      "farmHint": "缺月露 → 打信息/反制敌（石甲散修）",
-      "preferredEnemyIds": [
-        "neutral_stone_wanderer",
-        "marrow_gu_adept"
-      ],
       "closes": [
         "moon_ray_gu",
         "kit_pierce_burst"
@@ -3371,20 +2945,11 @@ const DATA = {
       ],
       "output": "white_jade_gu",
       "stoneCost": 15,
-      "materials": {
-        "beast_blood": 1
-      },
       "source": "蛊真人-clean.txt 15860-15895：白玉蛊=白豕蛊+玉皮蛊；L0 Phase 5 兽血=防御支配方钥匙",
       "successRollMax": 100,
       "forkId": "fork_jade_boar",
       "branchLabel": "炼向白玉·防御",
       "branchAxis": "armor",
-      "materialRole": "recipe_key",
-      "farmHint": "缺兽血 → 打兽类/重甲敌（铁皮山猪）",
-      "preferredEnemyIds": [
-        "iron_hide_boar",
-        "ridge_hound"
-      ],
       "closes": [
         "bear_strength_gu",
         "kit_stable_sustain"
@@ -3402,20 +2967,11 @@ const DATA = {
       ],
       "output": "bear_strength_gu",
       "stoneCost": 8,
-      "materials": {
-        "venom_sac": 1
-      },
       "source": "L0 Phase 4/5 分支：玉皮+白豕另一去向；毒囊=持续支配方钥匙",
       "successRollMax": 100,
       "forkId": "fork_jade_boar",
       "branchLabel": "炼向熊力·持续",
       "branchAxis": "sustain",
-      "materialRole": "recipe_key",
-      "farmHint": "缺毒囊 → 打高速/闪避敌（山脊猎犬）或精英",
-      "preferredEnemyIds": [
-        "ridge_hound",
-        "thunder_crown_wolf"
-      ],
       "closes": [
         "white_jade_gu"
       ],
@@ -3524,9 +3080,6 @@ const DATA = {
       "problemLabel": "信息/反制",
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [
-        "moon_dew"
-      ],
       "intent": {
         "id": "stone_palm",
         "label": "掌势蓄而未发",
@@ -3562,9 +3115,6 @@ const DATA = {
       "problemLabel": "高速/闪避",
       "armorValue": null,
       "evasionBreakpoint": 2,
-      "preferredMaterials": [
-        "venom_sac"
-      ],
       "intent": {
         "id": "pounce",
         "label": "伏肩扑咬",
@@ -3600,10 +3150,6 @@ const DATA = {
       "problemLabel": "重甲/防御",
       "armorValue": 2,
       "evasionBreakpoint": null,
-      "preferredMaterials": [
-        "beast_bone",
-        "beast_blood"
-      ],
       "intent": {
         "id": "tusk_drive",
         "label": "獠牙冲撞",
@@ -3639,7 +3185,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "thunder_bite",
         "label": "雷冠撕咬",
@@ -3666,7 +3211,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "crush_coil",
         "label": "绞缠碾压",
@@ -3693,7 +3237,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "marrow_lance",
         "label": "蚀骨骨矛",
@@ -3729,7 +3272,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "swift_crossbow",
         "label": "弩箭上弦",
@@ -3755,6 +3297,105 @@ const DATA = {
       ]
     },
     {
+      "id": "demon_path_adept",
+      "name": "魔道蛊师",
+      "rank": 3,
+      "hp": 7,
+      "theme": "cultivator",
+      "tier": "elite",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "soul_gnaw",
+        "label": "噬魂魔功",
+        "kind": "soul_drain",
+        "soul_drain": 1,
+        "damage": 0,
+        "speed": 2
+      },
+      "portrait": "enemy_sanxiu",
+      "phases": null,
+      "phasesNote": null,
+      "clues": [
+        "bloody_miasma",
+        "green_pupils"
+      ],
+      "reactions": [
+        {
+          "id": "blood_shroud",
+          "clue": "bloody_miasma",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "血气护体"
+        }
+      ]
+    },
+    {
+      "id": "thunder_crown_sovereign",
+      "name": "雷冠狼王",
+      "rank": 5,
+      "hp": 18,
+      "theme": "beast",
+      "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "crown_bolt",
+        "label": "雷冠贯落",
+        "damage": 4,
+        "speed": 2,
+        "cooldown": 1
+      },
+      "portrait": "enemy_thunder_crown_sovereign",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "crown_bolt",
+              "label": "雷冠贯落",
+              "damage": 4,
+              "speed": 2,
+              "cooldown": 1
+            }
+          ],
+          "reactions": []
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "crown_bolt",
+              "label": "雷冠贯落",
+              "damage": 4,
+              "speed": 2,
+              "cooldown": 1
+            },
+            {
+              "id": "paralyzing_howl",
+              "label": "麻痹长嗥",
+              "damage": 0,
+              "speed": 2,
+              "essence_burn": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": []
+        }
+      ],
+      "phasesNote": null,
+      "clues": [
+        "charged_fur",
+        "crackling_air"
+      ],
+      "reactions": []
+    },
+    {
       "id": "miasma_vein_lord",
       "name": "瘴脉蛊主",
       "rank": 3,
@@ -3765,14 +3406,13 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "miasma_burst",
         "label": "瘴气喷涌",
         "damage": 2,
         "speed": 1
       },
-      "portrait": "enemy_toad",
+      "portrait": "web_boss_miasma_vein_lord",
       "phases": [
         {
           "until_hp_ratio": 1,
@@ -3844,6 +3484,94 @@ const DATA = {
       ]
     },
     {
+      "id": "blood_vein_bishop",
+      "name": "血络主教",
+      "rank": 5,
+      "hp": 20,
+      "theme": "cultivator",
+      "tier": "boss",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "vein_whip",
+        "label": "血络鞭挞",
+        "damage": 4,
+        "speed": 3,
+        "cooldown": 1
+      },
+      "portrait": "web_boss_blood_vein_bishop",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "vein_whip",
+              "label": "血络鞭挞",
+              "damage": 4,
+              "speed": 3,
+              "cooldown": 1
+            }
+          ],
+          "reactions": [
+            {
+              "id": "blood_siphon",
+              "clue": "swollen_veins",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "血络回吸"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "vein_whip",
+              "label": "血络鞭挞",
+              "damage": 4,
+              "speed": 3,
+              "cooldown": 1
+            },
+            {
+              "id": "crimson_feast",
+              "label": "猩红盛餐",
+              "damage": 5,
+              "speed": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "blood_siphon",
+              "clue": "swollen_veins",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "血络回吸"
+            }
+          ]
+        }
+      ],
+      "phasesNote": null,
+      "clues": [
+        "swollen_veins",
+        "beating_drum"
+      ],
+      "reactions": [
+        {
+          "id": "blood_siphon",
+          "clue": "swollen_veins",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "血络回吸"
+        }
+      ]
+    },
+    {
       "id": "clan_patriarch",
       "name": "族长",
       "rank": 5,
@@ -3854,7 +3582,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "clan_wrath",
         "label": "一族之威",
@@ -3862,7 +3589,7 @@ const DATA = {
         "speed": 2,
         "cooldown": 1
       },
-      "portrait": "enemy_sanxiu",
+      "portrait": "web_boss_clan_patriarch",
       "phases": [
         {
           "until_hp_ratio": 1,
@@ -3945,7 +3672,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "corpse_tide",
         "label": "尸潮掩杀",
@@ -3953,7 +3679,7 @@ const DATA = {
         "speed": 2,
         "cooldown": 1
       },
-      "portrait": "enemy_centipede",
+      "portrait": "web_boss_blue_fur_jiangshi",
       "phases": [
         {
           "until_hp_ratio": 1,
@@ -4026,196 +3752,6 @@ const DATA = {
       ]
     },
     {
-      "id": "demon_path_adept",
-      "name": "魔道蛊师",
-      "rank": 3,
-      "hp": 7,
-      "theme": "cultivator",
-      "tier": "elite",
-      "problemAxis": null,
-      "problemLabel": null,
-      "armorValue": null,
-      "evasionBreakpoint": null,
-      "preferredMaterials": [],
-      "intent": {
-        "id": "soul_gnaw",
-        "label": "噬魂魔功",
-        "kind": "soul_drain",
-        "soul_drain": 1,
-        "damage": 0,
-        "speed": 2
-      },
-      "portrait": "enemy_sanxiu",
-      "phases": null,
-      "phasesNote": null,
-      "clues": [
-        "bloody_miasma",
-        "green_pupils"
-      ],
-      "reactions": [
-        {
-          "id": "blood_shroud",
-          "clue": "bloody_miasma",
-          "window": "before_damage",
-          "trigger": "direct_strike",
-          "counter_status": "guarded",
-          "label": "血气护体"
-        }
-      ]
-    },
-    {
-      "id": "thunder_crown_sovereign",
-      "name": "雷冠狼王",
-      "rank": 5,
-      "hp": 18,
-      "theme": "beast",
-      "tier": "boss",
-      "problemAxis": null,
-      "problemLabel": null,
-      "armorValue": null,
-      "evasionBreakpoint": null,
-      "preferredMaterials": [],
-      "intent": {
-        "id": "crown_bolt",
-        "label": "雷冠贯落",
-        "damage": 4,
-        "speed": 2,
-        "cooldown": 1
-      },
-      "portrait": "enemy_thunder_crown_sovereign",
-      "phases": [
-        {
-          "until_hp_ratio": 1,
-          "intents": [
-            {
-              "id": "crown_bolt",
-              "label": "雷冠贯落",
-              "damage": 4,
-              "speed": 2,
-              "cooldown": 1
-            }
-          ],
-          "reactions": []
-        },
-        {
-          "until_hp_ratio": 0.5,
-          "intents": [
-            {
-              "id": "crown_bolt",
-              "label": "雷冠贯落",
-              "damage": 4,
-              "speed": 2,
-              "cooldown": 1
-            },
-            {
-              "id": "paralyzing_howl",
-              "label": "麻痹长嗥",
-              "damage": 0,
-              "speed": 2,
-              "essence_burn": 2,
-              "cooldown": 2
-            }
-          ],
-          "reactions": []
-        }
-      ],
-      "phasesNote": null,
-      "clues": [
-        "charged_fur",
-        "crackling_air"
-      ],
-      "reactions": []
-    },
-    {
-      "id": "blood_vein_bishop",
-      "name": "血络主教",
-      "rank": 5,
-      "hp": 20,
-      "theme": "cultivator",
-      "tier": "boss",
-      "problemAxis": null,
-      "problemLabel": null,
-      "armorValue": null,
-      "evasionBreakpoint": null,
-      "preferredMaterials": [],
-      "intent": {
-        "id": "vein_whip",
-        "label": "血络鞭挞",
-        "damage": 4,
-        "speed": 3,
-        "cooldown": 1
-      },
-      "portrait": "enemy_bat",
-      "phases": [
-        {
-          "until_hp_ratio": 1,
-          "intents": [
-            {
-              "id": "vein_whip",
-              "label": "血络鞭挞",
-              "damage": 4,
-              "speed": 3,
-              "cooldown": 1
-            }
-          ],
-          "reactions": [
-            {
-              "id": "blood_siphon",
-              "clue": "swollen_veins",
-              "window": "before_damage",
-              "trigger": "direct_strike",
-              "counter_status": "guarded",
-              "label": "血络回吸"
-            }
-          ]
-        },
-        {
-          "until_hp_ratio": 0.5,
-          "intents": [
-            {
-              "id": "vein_whip",
-              "label": "血络鞭挞",
-              "damage": 4,
-              "speed": 3,
-              "cooldown": 1
-            },
-            {
-              "id": "crimson_feast",
-              "label": "猩红盛餐",
-              "damage": 5,
-              "speed": 2,
-              "cooldown": 2
-            }
-          ],
-          "reactions": [
-            {
-              "id": "blood_siphon",
-              "clue": "swollen_veins",
-              "window": "before_damage",
-              "trigger": "direct_strike",
-              "counter_status": "guarded",
-              "label": "血络回吸"
-            }
-          ]
-        }
-      ],
-      "phasesNote": null,
-      "clues": [
-        "swollen_veins",
-        "beating_drum"
-      ],
-      "reactions": [
-        {
-          "id": "blood_siphon",
-          "clue": "swollen_veins",
-          "window": "before_damage",
-          "trigger": "direct_strike",
-          "counter_status": "guarded",
-          "label": "血络回吸"
-        }
-      ]
-    },
-    {
       "id": "faction_guard",
       "name": "势力守卫",
       "rank": 2,
@@ -4226,7 +3762,6 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
-      "preferredMaterials": [],
       "intent": {
         "id": "shield_bash",
         "label": "盾墙冲撞",
@@ -4246,10 +3781,10 @@ const DATA = {
   "encounters": [
     {
       "id": "layer_boss_stand_1",
-      "name": "崖蟒主母",
+      "name": "青茅外隘·关底",
       "stage": "one",
       "type": "combat",
-      "summary": "",
+      "summary": "青茅外隘的最后一关被强敌把守，岩壁上的爪痕与蛊痕交叠。想进下一层，先摸清守关者的路数。",
       "choices": [
         "fight"
       ],
@@ -4263,15 +3798,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 1,
       "layer": 1
     },
     {
       "id": "layer_boss_stand_2",
-      "name": "蚀骨蛊师",
+      "name": "落瘴岭·关底",
       "stage": "two",
       "type": "combat",
-      "summary": "",
+      "summary": "落瘴岭的出口藏在狭窄洞道后，守关者已占住最窄处。这里没有宽阔场地，出手前要看清局势。",
       "choices": [
         "fight"
       ],
@@ -4285,15 +3821,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 2,
       "layer": 2
     },
     {
       "id": "layer_boss_stand_3",
-      "name": "雷冠狼王",
+      "name": "血蟒涧·关底",
       "stage": "three",
       "type": "combat",
-      "summary": "",
+      "summary": "血蟒涧深处的断桥被层主占据，桥下兽痕与刀痕叠成一片。要穿过山涧，得先逼出它的破绽。",
       "choices": [
         "fight"
       ],
@@ -4307,15 +3844,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 3,
       "layer": 3
     },
     {
       "id": "layer_boss_stand_4",
-      "name": "血络主教",
+      "name": "万蛊窟·关底",
       "stage": "four",
       "type": "combat",
-      "summary": "",
+      "summary": "万蛊窟尽头的石门前，守关者已经等候多时。沿途痕迹都指向门后，却没人留下答案。",
       "choices": [
         "fight"
       ],
@@ -4330,6 +3868,7 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 4,
       "layer": 4
     },
@@ -4338,7 +3877,7 @@ const DATA = {
       "name": "兽群隘口",
       "stage": "one",
       "type": "combat",
-      "summary": "兽群堵住窄隘，击退它们可收取材料，撤退则必须改道。",
+      "summary": "兽群挤满山隘，身后还有头兽不断催逼；诱引可把威胁提到眼前，硬打则可夺取战后赏赐。",
       "choices": [
         "fight",
         "retreat",
@@ -4357,6 +3896,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4365,7 +3905,7 @@ const DATA = {
       "name": "势力关卡",
       "stage": "four",
       "type": "combat",
-      "summary": "",
+      "summary": "势力守卫封住山口，腰牌与弩机都已备好。说明来路、硬闯或退避，各有后果。",
       "choices": [
         "fight",
         "deceive",
@@ -4378,15 +3918,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "final_boss_stand",
-      "name": "瘴脉蛊主",
+      "name": "瘴脉尽头",
       "stage": "five",
       "type": "combat",
-      "summary": "瘴脉尽头，蛊主把守升仙窗口。",
+      "summary": "瘴脉尽头的蛊主挡在升仙窗口前。雾从它脚下向四面回卷，进退都要由你亲自判断。",
       "choices": [
         "fight",
         "retreat"
@@ -4398,15 +3939,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 5,
       "layer": 5
     },
     {
       "id": "iron_hide_ambush",
-      "name": "铁皮山猪",
+      "name": "铁皮野猪伏击",
       "stage": "one",
       "type": "combat",
-      "summary": "铁皮野猪拦在隘口，獠牙泛光，撞上来就是一道血口。",
+      "summary": "铁皮野猪从岩后顶出，鬃毛间结着硬壳；隘路窄得避不开，先手比蛊力更要紧。",
       "choices": [
         "fight",
         "retreat"
@@ -4418,15 +3960,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "scout_crossing_raid",
-      "name": "山脊悍客",
+      "name": "岭脊斥候伏击",
       "stage": "three",
       "type": "combat",
-      "summary": "斥候在岭脊设伏，弩机已上弦，先手藏在草丛里。",
+      "summary": "脊线上箭簇一闪，伏兵借风声遮住脚步。若惊动整队，前路很快会多出追兵。",
       "choices": [
         "fight",
         "retreat"
@@ -4438,15 +3981,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "wolf_pack_trail",
-      "name": "雷冠头狼",
+      "name": "兽群山径",
       "stage": "five",
       "type": "combat",
-      "summary": "雷冠狼独踞道中，爪下电纹明灭，是兽群头狼。",
+      "summary": "兽群沿山脊压境，爪印与撕咬痕密密叠在一起。拦路的只是先锋，身后还有整群兽物。",
       "choices": [
         "fight",
         "retreat"
@@ -4458,6 +4002,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     }
@@ -4468,7 +4013,7 @@ const DATA = {
       "name": "中立散修",
       "stage": "one",
       "type": "contact",
-      "summary": "一名散修拦在岔路前，正试探你的虚实。",
+      "summary": "散修拦在岔路前，袖口沾着新土；他先打量你的蛊囊，再问你要走哪条道。",
       "choices": [
         "negotiate",
         "deceive",
@@ -4485,6 +4030,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4493,7 +4039,7 @@ const DATA = {
       "name": "山脊商队",
       "stage": "one",
       "type": "caravan",
-      "summary": "山脊商队临时开市，可买卖或以蛊换蛊。",
+      "summary": "商队在山脊支起临时货棚。管事认得附近的路，也记得每一笔人情。",
       "choices": [
         "buy",
         "sell",
@@ -4511,6 +4057,7 @@ const DATA = {
       "bossPool": null,
       "npcId": "caravan_steward",
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4519,7 +4066,7 @@ const DATA = {
       "name": "炼蛊石穴",
       "stage": "one",
       "type": "refinement",
-      "summary": "石穴余火未熄，可以冒险炼蛊。",
+      "summary": "石穴里的炉火还温着。风从裂缝灌入，炉口却留着一批未收的蛊材。",
       "choices": [
         "refine",
         "leave"
@@ -4533,6 +4080,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4541,7 +4089,7 @@ const DATA = {
       "name": "修行山泉",
       "stage": "one",
       "type": "cultivation",
-      "summary": "山泉元气平稳，是冲击二转的短暂窗口。",
+      "summary": "山泉灵气平稳，正好静修或冲击二转；泉眼旁的脚印还没被水冲散。",
       "choices": [
         "cultivate",
         "meditate",
@@ -4556,6 +4104,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4564,7 +4113,7 @@ const DATA = {
       "name": "第一阶段养蛊总账",
       "stage": "one",
       "type": "ledger",
-      "summary": "第一阶段结束，所有已养蛊虫的养护开支需要一并结清。",
+      "summary": "这一层的养蛊账目已到期。结清、卖蛊或欠债都能过关，账却不会自己消失。",
       "choices": [
         "settle_feeding",
         "sell",
@@ -4579,6 +4128,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4587,7 +4137,7 @@ const DATA = {
       "name": "毒瘴山道",
       "stage": "one",
       "type": "hazard",
-      "summary": "毒瘴沿山口沉降。谨慎侦察可避开消耗，强行穿越能节省时间。",
+      "summary": "毒瘴沿坡压下，林间几道脚印在雾中断开。先探路稳妥，硬闯省事，也会留下破绽。",
       "choices": [
         "scout",
         "cross",
@@ -4602,6 +4152,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4610,7 +4161,7 @@ const DATA = {
       "name": "积水石窟",
       "stage": "one",
       "type": "hazard",
-      "summary": "暗河倒灌石洞，水声中有蛊虫振翅。",
+      "summary": "暗河倒灌进石窟，水面漂着几片新折的月蓝花瓣；洞顶深处传来蛊翅声。",
       "choices": [
         "scout",
         "cross",
@@ -4625,6 +4176,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4633,7 +4185,7 @@ const DATA = {
       "name": "黑泥沼地",
       "stage": "three",
       "type": "hazard",
-      "summary": "",
+      "summary": "黑泥漫过旧木栈道，踏错一步便会困在淤地；远处几根立桩仍指着干路。",
       "choices": [
         "scout",
         "cross",
@@ -4646,6 +4198,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4654,7 +4207,7 @@ const DATA = {
       "name": "月下小径",
       "stage": "one",
       "type": "inheritance",
-      "summary": "月色下留有残缺传承痕迹，可能带来蛊方线索，也可能引来竞争者。",
+      "summary": "月下石阶只剩半截，沿途手记彼此矛盾。蛊方线索在前，后来者也在前。",
       "choices": [
         "inspect",
         "claim",
@@ -4670,6 +4223,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4678,7 +4232,7 @@ const DATA = {
       "name": "血苔林",
       "stage": "two",
       "type": "wild_gu",
-      "summary": "血苔丛中藏着疗伤蛊与采集者，收益和伤势风险并存。",
+      "summary": "血苔在湿石上泛红，采药人留下的布条还挂在枝间；林里既有药材，也有兽迹。",
       "choices": [
         "harvest",
         "trade",
@@ -4693,6 +4247,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4701,7 +4256,7 @@ const DATA = {
       "name": "雾隐祠",
       "stage": "four",
       "type": "inheritance",
-      "summary": "",
+      "summary": "山雾封住残祠，门槛上的封痕已被人动过。查验、备好退路，或趁封痕未破时离开。",
       "choices": [
         "inspect",
         "claim",
@@ -4715,6 +4270,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4723,7 +4279,7 @@ const DATA = {
       "name": "山村短工",
       "stage": "one",
       "type": "market",
-      "summary": "山民寨子缺人守夜。短工给元石，交易则能换取情报。",
+      "summary": "寨中缺人守夜，村民肯拿元石换一晚值守；药师也愿用消息回报旧人情。",
       "choices": [
         "work",
         "trade",
@@ -4739,6 +4295,7 @@ const DATA = {
       "bossPool": null,
       "npcId": "wandering_healer",
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4747,7 +4304,7 @@ const DATA = {
       "name": "山脊黑市",
       "stage": "two",
       "type": "shop",
-      "summary": "收摊前的黑市只认元石，摊主不问货物来历。",
+      "summary": "黑市藏在两道山梁之间，货物没有来路，摊主也不问。看中的东西，得拿元石换。",
       "choices": [],
       "nextIds": [
         "stage_one_ledger"
@@ -4758,15 +4315,16 @@ const DATA = {
       "bossPool": null,
       "npcId": "ridge_extortionist",
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 2
     },
     {
       "id": "layer_boss_stand_1",
-      "name": "崖蟒主母",
+      "name": "青茅外隘·关底",
       "stage": "one",
       "type": "combat",
-      "summary": "",
+      "summary": "青茅外隘的最后一关被强敌把守，岩壁上的爪痕与蛊痕交叠。想进下一层，先摸清守关者的路数。",
       "choices": [
         "fight"
       ],
@@ -4780,15 +4338,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 1,
       "layer": 1
     },
     {
       "id": "layer_boss_stand_2",
-      "name": "蚀骨蛊师",
+      "name": "落瘴岭·关底",
       "stage": "two",
       "type": "combat",
-      "summary": "",
+      "summary": "落瘴岭的出口藏在狭窄洞道后，守关者已占住最窄处。这里没有宽阔场地，出手前要看清局势。",
       "choices": [
         "fight"
       ],
@@ -4802,15 +4361,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 2,
       "layer": 2
     },
     {
       "id": "layer_boss_stand_3",
-      "name": "雷冠狼王",
+      "name": "血蟒涧·关底",
       "stage": "three",
       "type": "combat",
-      "summary": "",
+      "summary": "血蟒涧深处的断桥被层主占据，桥下兽痕与刀痕叠成一片。要穿过山涧，得先逼出它的破绽。",
       "choices": [
         "fight"
       ],
@@ -4824,15 +4384,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 3,
       "layer": 3
     },
     {
       "id": "layer_boss_stand_4",
-      "name": "血络主教",
+      "name": "万蛊窟·关底",
       "stage": "four",
       "type": "combat",
-      "summary": "",
+      "summary": "万蛊窟尽头的石门前，守关者已经等候多时。沿途痕迹都指向门后，却没人留下答案。",
       "choices": [
         "fight"
       ],
@@ -4847,6 +4408,7 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 4,
       "layer": 4
     },
@@ -4855,7 +4417,7 @@ const DATA = {
       "name": "回声石洞",
       "stage": "two",
       "type": "event",
-      "summary": "石壁上刻着旧痕，岩缝里的应答不知是谁留下的。",
+      "summary": "石壁刻痕层层叠叠，岩缝里的应答却总慢半拍。你听见的不止自己的回声。",
       "choices": [],
       "nextIds": [
         "blood_moss_grove",
@@ -4867,15 +4429,41 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": [
+        "echo_cave",
+        "gu_rot_pact",
+        "huajiu_cache",
+        "tithing_cache",
+        "small_beast_tide",
+        "tide_aftermath",
+        "duel_wager",
+        "duel_loss",
+        "weird_trade",
+        "contract_seal",
+        "recognition_toll",
+        "blood_vein_offering",
+        "broken_bridge_vow",
+        "cold_ash_pile",
+        "sealed_silk_reliquary",
+        "unclaimed_waystone",
+        "cliffside_beast_bounty",
+        "gravewatch_bones",
+        "ropewalk_wager",
+        "marrow_lock_duel",
+        "unlit_soul_lantern",
+        "inked_promise",
+        "red_seal_submission",
+        "bloodstone_cistern"
+      ],
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "gu_rot_pact",
-      "name": "异闻未死",
+      "name": "腐朽蛊契",
       "stage": "two",
       "type": "event",
-      "summary": "异闻未死，风里带着一股说不清的代价味。",
+      "summary": "腐蛊外壳早已碎裂，契文却仍能回应。触碰它或可换来机缘，也会留下代价。",
       "choices": [],
       "nextIds": [],
       "enemyKind": null,
@@ -4884,6 +4472,32 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": "gu_rot_pact",
+      "eventPool": [
+        "echo_cave",
+        "gu_rot_pact",
+        "huajiu_cache",
+        "tithing_cache",
+        "small_beast_tide",
+        "tide_aftermath",
+        "duel_wager",
+        "duel_loss",
+        "weird_trade",
+        "contract_seal",
+        "recognition_toll",
+        "blood_vein_offering",
+        "broken_bridge_vow",
+        "cold_ash_pile",
+        "sealed_silk_reliquary",
+        "unclaimed_waystone",
+        "cliffside_beast_bounty",
+        "gravewatch_bones",
+        "ropewalk_wager",
+        "marrow_lock_duel",
+        "unlit_soul_lantern",
+        "inked_promise",
+        "red_seal_submission",
+        "bloodstone_cistern"
+      ],
       "layerBoss": null,
       "layer": null
     },
@@ -4892,7 +4506,7 @@ const DATA = {
       "name": "山脊市集",
       "stage": "one",
       "type": "market",
-      "summary": "临时寨市接近收摊，能补资源，但会失去深入山路的时间。",
+      "summary": "临时寨市正在收摊，摊主肯卖一条确切消息；多停一刻，就少一刻赶路。",
       "choices": [
         "trade",
         "buy_information",
@@ -4907,6 +4521,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4915,7 +4530,7 @@ const DATA = {
       "name": "商队失货",
       "stage": "three",
       "type": "caravan",
-      "summary": "",
+      "summary": "失货的箱车堵住谷口，账册与搬运痕迹互相对不上。管事不肯丢下伤员，却不能再等。",
       "choices": [
         "probe",
         "trade",
@@ -4929,15 +4544,16 @@ const DATA = {
       "bossPool": null,
       "npcId": "caravan_steward",
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "wandering_peddler",
-      "name": "石甲散修",
+      "name": "行脚货郎",
       "stage": "one",
       "type": "contact",
-      "summary": "一名货郎守着货担歇脚，担中蛊虫明码标价，也收以物易物。",
+      "summary": "货郎把蛊笼摆在两匹瘦马之间，货价写得清楚，来路却一个字也不肯提。",
       "choices": [
         "negotiate",
         "deceive",
@@ -4951,6 +4567,7 @@ const DATA = {
       "bossPool": null,
       "npcId": "wandering_peddler",
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4959,7 +4576,7 @@ const DATA = {
       "name": "药师委托",
       "stage": "four",
       "type": "commission",
-      "summary": "",
+      "summary": "药师留下的委托单只写了目标，没写路上的代价。接下委托、付费换取服务，或趁早抽身，由你定。",
       "choices": [
         "accept",
         "trade",
@@ -4972,6 +4589,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -4980,7 +4598,7 @@ const DATA = {
       "name": "兽群隘口",
       "stage": "one",
       "type": "combat",
-      "summary": "兽群堵住窄隘，击退它们可收取材料，撤退则必须改道。",
+      "summary": "兽群挤满山隘，身后还有头兽不断催逼；诱引可把威胁提到眼前，硬打则可夺取战后赏赐。",
       "choices": [
         "fight",
         "retreat",
@@ -4999,6 +4617,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 1
     },
@@ -5007,7 +4626,7 @@ const DATA = {
       "name": "贪客拦路",
       "stage": "one",
       "type": "pursuit",
-      "summary": "",
+      "summary": "有人撬开兽巢夺走蛊材，却把山兽引上归路。空行囊散在两侧，兽吼已逼近。",
       "choices": [
         "fight",
         "trade",
@@ -5020,6 +4639,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -5028,7 +4648,7 @@ const DATA = {
       "name": "势力关卡",
       "stage": "four",
       "type": "combat",
-      "summary": "",
+      "summary": "势力守卫封住山口，腰牌与弩机都已备好。说明来路、硬闯或退避，各有后果。",
       "choices": [
         "fight",
         "deceive",
@@ -5041,6 +4661,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 4
     },
@@ -5049,7 +4670,7 @@ const DATA = {
       "name": "地脉之争",
       "stage": "four",
       "type": "earth_vein",
-      "summary": "",
+      "summary": "两路人马同时摸到地脉入口，附近兽群闻着气息聚拢。站队、设局或退走，都还来得及。",
       "choices": [
         "ally",
         "scheme",
@@ -5063,6 +4684,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -5071,7 +4693,7 @@ const DATA = {
       "name": "封存地脉",
       "stage": "four",
       "type": "earth_vein",
-      "summary": "",
+      "summary": "门壁上的封痕还很新，地脉气息却从缝隙外泄。先查封印，再决定是否打开，退路仍在。",
       "choices": [
         "scout",
         "open",
@@ -5084,6 +4706,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -5092,7 +4715,7 @@ const DATA = {
       "name": "毒雾地脉",
       "stage": "five",
       "type": "earth_vein",
-      "summary": "",
+      "summary": "瘴气在地脉裂口间吞吐，近处石苔已褪色。先辨气流再占取；贸然深入，肉身会先受其害。",
       "choices": [
         "scout",
         "claim",
@@ -5105,15 +4728,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "final_boss_stand",
-      "name": "瘴脉蛊主",
+      "name": "瘴脉尽头",
       "stage": "five",
       "type": "combat",
-      "summary": "瘴脉尽头，蛊主把守升仙窗口。",
+      "summary": "瘴脉尽头的蛊主挡在升仙窗口前。雾从它脚下向四面回卷，进退都要由你亲自判断。",
       "choices": [
         "fight",
         "retreat"
@@ -5125,6 +4749,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 5,
       "layer": 5
     },
@@ -5133,7 +4758,7 @@ const DATA = {
       "name": "山壁石穴",
       "stage": "two",
       "type": "rest",
-      "summary": "山壁石穴，落潮前的安静片刻，可稍作歇息恢复气血与真元。",
+      "summary": "山壁石穴里只余风声，蛊虫也能暂歇片刻。休整可恢复气血与真元，也可尽早动身。",
       "choices": [
         "rest",
         "leave"
@@ -5145,6 +4770,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 2
     },
@@ -5153,7 +4779,7 @@ const DATA = {
       "name": "古祠残龛",
       "stage": "two",
       "type": "rest",
-      "summary": "古祠残龛，香火断绝后的清净角落，可稍作歇息恢复气血与真元。",
+      "summary": "古祠香火早已断绝，却还有一角未被潮气侵蚀。你可在此歇息，也可不惊动尘埃继续赶路。",
       "choices": [
         "rest",
         "leave"
@@ -5165,6 +4791,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
@@ -5173,7 +4800,7 @@ const DATA = {
       "name": "体印仪式",
       "stage": "one",
       "type": "seclusion",
-      "summary": "石壁留有淬体仪式。可稳固根基，也可能留下难以察觉的代价。",
+      "summary": "石壁刻着一套淬体法门，笔画间故意留了缺口。承受体印可强健肉身，却也会留下副作用。",
       "choices": [
         "meditate",
         "take_imprint",
@@ -5188,15 +4815,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     },
     {
       "id": "iron_hide_ambush",
-      "name": "铁皮山猪",
+      "name": "铁皮野猪伏击",
       "stage": "one",
       "type": "combat",
-      "summary": "铁皮野猪拦在隘口，獠牙泛光，撞上来就是一道血口。",
+      "summary": "铁皮野猪从岩后顶出，鬃毛间结着硬壳；隘路窄得避不开，先手比蛊力更要紧。",
       "choices": [
         "fight",
         "retreat"
@@ -5208,15 +4836,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 2
     },
     {
       "id": "scout_crossing_raid",
-      "name": "山脊悍客",
+      "name": "岭脊斥候伏击",
       "stage": "three",
       "type": "combat",
-      "summary": "斥候在岭脊设伏，弩机已上弦，先手藏在草丛里。",
+      "summary": "脊线上箭簇一闪，伏兵借风声遮住脚步。若惊动整队，前路很快会多出追兵。",
       "choices": [
         "fight",
         "retreat"
@@ -5228,15 +4857,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 3
     },
     {
       "id": "wolf_pack_trail",
-      "name": "雷冠头狼",
+      "name": "兽群山径",
       "stage": "five",
       "type": "combat",
-      "summary": "雷冠狼独踞道中，爪下电纹明灭，是兽群头狼。",
+      "summary": "兽群沿山脊压境，爪印与撕咬痕密密叠在一起。拦路的只是先锋，身后还有整群兽物。",
       "choices": [
         "fight",
         "retreat"
@@ -5248,15 +4878,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 5
     },
     {
       "id": "yizang_ridge",
-      "name": "荒岭间一座前人遗葬",
+      "name": "荒岭遗葬",
       "stage": "one",
       "type": "inheritance",
-      "summary": "荒岭间一座前人遗葬，草木倒伏成环。有传承者遗留的布置仍在运转。",
+      "summary": "荒岭上草木环伏，墓中机关仍有余力。信物与路线图分在两处，贪多未必能全取。",
       "choices": [
         "claim_recon",
         "claim_token",
@@ -5272,6 +4903,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": null
     }
@@ -5282,7 +4914,7 @@ const DATA = {
       "name": "兽群隘口",
       "stage": "one",
       "type": "combat",
-      "summary": "兽群堵住窄隘，击退它们可收取材料，撤退则必须改道。",
+      "summary": "兽群挤满山隘，身后还有头兽不断催逼；诱引可把威胁提到眼前，硬打则可夺取战后赏赐。",
       "choices": [
         "fight",
         "retreat",
@@ -5301,15 +4933,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 1
     },
     {
       "id": "layer_boss_stand_1",
-      "name": "崖蟒主母",
+      "name": "青茅外隘·关底",
       "stage": "one",
       "type": "combat",
-      "summary": "",
+      "summary": "青茅外隘的最后一关被强敌把守，岩壁上的爪痕与蛊痕交叠。想进下一层，先摸清守关者的路数。",
       "choices": [
         "fight"
       ],
@@ -5323,6 +4956,7 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 1,
       "layer": 1
     },
@@ -5331,7 +4965,7 @@ const DATA = {
       "name": "山壁石穴",
       "stage": "two",
       "type": "rest",
-      "summary": "山壁石穴，落潮前的安静片刻，可稍作歇息恢复气血与真元。",
+      "summary": "山壁石穴里只余风声，蛊虫也能暂歇片刻。休整可恢复气血与真元，也可尽早动身。",
       "choices": [
         "rest",
         "leave"
@@ -5343,15 +4977,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 2
     },
     {
       "id": "iron_hide_ambush",
-      "name": "铁皮山猪",
+      "name": "铁皮野猪伏击",
       "stage": "one",
       "type": "combat",
-      "summary": "铁皮野猪拦在隘口，獠牙泛光，撞上来就是一道血口。",
+      "summary": "铁皮野猪从岩后顶出，鬃毛间结着硬壳；隘路窄得避不开，先手比蛊力更要紧。",
       "choices": [
         "fight",
         "retreat"
@@ -5363,6 +4998,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 2
     },
@@ -5371,7 +5007,7 @@ const DATA = {
       "name": "山脊黑市",
       "stage": "two",
       "type": "shop",
-      "summary": "收摊前的黑市只认元石，摊主不问货物来历。",
+      "summary": "黑市藏在两道山梁之间，货物没有来路，摊主也不问。看中的东西，得拿元石换。",
       "choices": [],
       "nextIds": [
         "stage_one_ledger"
@@ -5382,15 +5018,16 @@ const DATA = {
       "bossPool": null,
       "npcId": "ridge_extortionist",
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 2
     },
     {
       "id": "layer_boss_stand_2",
-      "name": "蚀骨蛊师",
+      "name": "落瘴岭·关底",
       "stage": "two",
       "type": "combat",
-      "summary": "",
+      "summary": "落瘴岭的出口藏在狭窄洞道后，守关者已占住最窄处。这里没有宽阔场地，出手前要看清局势。",
       "choices": [
         "fight"
       ],
@@ -5404,15 +5041,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 2,
       "layer": 2
     },
     {
       "id": "scout_crossing_raid",
-      "name": "山脊悍客",
+      "name": "岭脊斥候伏击",
       "stage": "three",
       "type": "combat",
-      "summary": "斥候在岭脊设伏，弩机已上弦，先手藏在草丛里。",
+      "summary": "脊线上箭簇一闪，伏兵借风声遮住脚步。若惊动整队，前路很快会多出追兵。",
       "choices": [
         "fight",
         "retreat"
@@ -5424,15 +5062,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 3
     },
     {
       "id": "layer_boss_stand_3",
-      "name": "雷冠狼王",
+      "name": "血蟒涧·关底",
       "stage": "three",
       "type": "combat",
-      "summary": "",
+      "summary": "血蟒涧深处的断桥被层主占据，桥下兽痕与刀痕叠成一片。要穿过山涧，得先逼出它的破绽。",
       "choices": [
         "fight"
       ],
@@ -5446,6 +5085,7 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 3,
       "layer": 3
     },
@@ -5454,7 +5094,7 @@ const DATA = {
       "name": "势力关卡",
       "stage": "four",
       "type": "combat",
-      "summary": "",
+      "summary": "势力守卫封住山口，腰牌与弩机都已备好。说明来路、硬闯或退避，各有后果。",
       "choices": [
         "fight",
         "deceive",
@@ -5467,15 +5107,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 4
     },
     {
       "id": "layer_boss_stand_4",
-      "name": "血络主教",
+      "name": "万蛊窟·关底",
       "stage": "four",
       "type": "combat",
-      "summary": "",
+      "summary": "万蛊窟尽头的石门前，守关者已经等候多时。沿途痕迹都指向门后，却没人留下答案。",
       "choices": [
         "fight"
       ],
@@ -5490,15 +5131,16 @@ const DATA = {
       ],
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 4,
       "layer": 4
     },
     {
       "id": "wolf_pack_trail",
-      "name": "雷冠头狼",
+      "name": "兽群山径",
       "stage": "five",
       "type": "combat",
-      "summary": "雷冠狼独踞道中，爪下电纹明灭，是兽群头狼。",
+      "summary": "兽群沿山脊压境，爪印与撕咬痕密密叠在一起。拦路的只是先锋，身后还有整群兽物。",
       "choices": [
         "fight",
         "retreat"
@@ -5510,15 +5152,16 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": null,
       "layer": 5
     },
     {
       "id": "final_boss_stand",
-      "name": "瘴脉蛊主",
+      "name": "瘴脉尽头",
       "stage": "five",
       "type": "combat",
-      "summary": "瘴脉尽头，蛊主把守升仙窗口。",
+      "summary": "瘴脉尽头的蛊主挡在升仙窗口前。雾从它脚下向四面回卷，进退都要由你亲自判断。",
       "choices": [
         "fight",
         "retreat"
@@ -5530,6 +5173,7 @@ const DATA = {
       "bossPool": null,
       "npcId": null,
       "eventId": null,
+      "eventPool": null,
       "layerBoss": 5,
       "layer": 5
     }
@@ -5589,24 +5233,6 @@ const DATA = {
       "stone_cost": 12,
       "tier": 1,
       "gu_name": "小光蛊"
-    },
-    {
-      "id": "purchase_moon_blue_petal",
-      "kind": "material_purchase",
-      "card_key": "purchase.moon_blue_petal",
-      "material_id": "moon_blue_petal",
-      "stone_cost": 3,
-      "tier": 1,
-      "gu_name": ""
-    },
-    {
-      "id": "purchase_boar_king_tusk",
-      "kind": "material_purchase",
-      "card_key": "purchase.boar_king_tusk",
-      "material_id": "boar_king_tusk",
-      "stone_cost": 10,
-      "tier": 1,
-      "gu_name": ""
     },
     {
       "id": "purchase_jade_skin_gu",
@@ -5690,15 +5316,6 @@ const DATA = {
       "gu_name": "浪蛊"
     },
     {
-      "id": "purchase_inheritance_token",
-      "kind": "material_purchase",
-      "card_key": "purchase.inheritance_token",
-      "material_id": "inheritance_token",
-      "stone_cost": 60,
-      "tier": 2,
-      "gu_name": ""
-    },
-    {
       "id": "purchase_sword_atk_1_06",
       "kind": "purchase",
       "card_key": "purchase.sword_atk_1_06",
@@ -5757,38 +5374,6 @@ const DATA = {
       "gu_name": ""
     },
     {
-      "id": "lab_shop_moon_dew",
-      "kind": "material_purchase",
-      "material_id": "moon_dew",
-      "tier": 1,
-      "stone_cost": 3,
-      "gu_name": ""
-    },
-    {
-      "id": "lab_shop_beast_bone",
-      "kind": "material_purchase",
-      "material_id": "beast_bone",
-      "tier": 1,
-      "stone_cost": 3,
-      "gu_name": ""
-    },
-    {
-      "id": "lab_shop_beast_blood",
-      "kind": "material_purchase",
-      "material_id": "beast_blood",
-      "tier": 1,
-      "stone_cost": 4,
-      "gu_name": ""
-    },
-    {
-      "id": "lab_shop_venom_sac",
-      "kind": "material_purchase",
-      "material_id": "venom_sac",
-      "tier": 1,
-      "stone_cost": 5,
-      "gu_name": ""
-    },
-    {
       "id": "lab_shop_gold_atk_2_12_gu",
       "kind": "purchase",
       "gu_id": "gold_atk_2_12_gu",
@@ -5829,649 +5414,6 @@ const DATA = {
       "gu_name": "紫晶舍利蛊"
     }
   ],
-  "materials": [
-    {
-      "id": "beast_blood",
-      "name": "兽血",
-      "qualityBand": "plain",
-      "daoTags": [
-        "blood",
-        "qi"
-      ]
-    },
-    {
-      "id": "beast_bone",
-      "name": "兽骨",
-      "qualityBand": "crude",
-      "daoTags": [
-        "force"
-      ]
-    },
-    {
-      "id": "venom_sac",
-      "name": "毒囊",
-      "qualityBand": "refined",
-      "daoTags": [
-        "poison"
-      ]
-    },
-    {
-      "id": "moon_dew",
-      "name": "月华露",
-      "qualityBand": "refined",
-      "daoTags": [
-        "moon"
-      ]
-    },
-    {
-      "id": "moon_blue_petal",
-      "name": "月蓝花瓣",
-      "qualityBand": "crude",
-      "daoTags": [
-        "moon"
-      ]
-    },
-    {
-      "id": "boar_king_tusk",
-      "name": "野猪王牙",
-      "qualityBand": "refined",
-      "daoTags": [
-        "force"
-      ]
-    },
-    {
-      "id": "inheritance_token",
-      "name": "传承信物",
-      "qualityBand": "prized",
-      "daoTags": [
-        "human"
-      ]
-    },
-    {
-      "id": "mat_blood_1",
-      "name": "兽凝血膏",
-      "qualityBand": "crude",
-      "daoTags": [
-        "blood"
-      ]
-    },
-    {
-      "id": "mat_qi_1",
-      "name": "凝气露",
-      "qualityBand": "crude",
-      "daoTags": [
-        "qi"
-      ]
-    },
-    {
-      "id": "mat_force_1",
-      "name": "兽筋",
-      "qualityBand": "crude",
-      "daoTags": [
-        "force"
-      ]
-    },
-    {
-      "id": "mat_soul_1",
-      "name": "魂絮",
-      "qualityBand": "crude",
-      "daoTags": [
-        "soul"
-      ]
-    },
-    {
-      "id": "mat_refine_1",
-      "name": "熔炉灰",
-      "qualityBand": "crude",
-      "daoTags": [
-        "refine"
-      ]
-    },
-    {
-      "id": "mat_wisdom_1",
-      "name": "灵思墨",
-      "qualityBand": "crude",
-      "daoTags": [
-        "wisdom"
-      ]
-    },
-    {
-      "id": "mat_dream_1",
-      "name": "眠雾",
-      "qualityBand": "crude",
-      "daoTags": [
-        "dream"
-      ]
-    },
-    {
-      "id": "mat_luck_1",
-      "name": "福签",
-      "qualityBand": "crude",
-      "daoTags": [
-        "luck"
-      ]
-    },
-    {
-      "id": "mat_sword_1",
-      "name": "断刃屑",
-      "qualityBand": "crude",
-      "daoTags": [
-        "sword"
-      ]
-    },
-    {
-      "id": "mat_wood_1",
-      "name": "青树脂",
-      "qualityBand": "crude",
-      "daoTags": [
-        "wood"
-      ]
-    },
-    {
-      "id": "mat_fire_1",
-      "name": "地火膏",
-      "qualityBand": "crude",
-      "daoTags": [
-        "fire"
-      ]
-    },
-    {
-      "id": "mat_water_1",
-      "name": "潭心珠",
-      "qualityBand": "crude",
-      "daoTags": [
-        "water"
-      ]
-    },
-    {
-      "id": "mat_wind_1",
-      "name": "游风羽",
-      "qualityBand": "crude",
-      "daoTags": [
-        "wind"
-      ]
-    },
-    {
-      "id": "mat_gold_1",
-      "name": "砂金",
-      "qualityBand": "crude",
-      "daoTags": [
-        "gold"
-      ]
-    },
-    {
-      "id": "mat_earth_1",
-      "name": "壤髓泥",
-      "qualityBand": "crude",
-      "daoTags": [
-        "earth"
-      ]
-    },
-    {
-      "id": "mat_slave_1",
-      "name": "兽革扣",
-      "qualityBand": "crude",
-      "daoTags": [
-        "slave"
-      ]
-    },
-    {
-      "id": "mat_heaven_1",
-      "name": "天尘",
-      "qualityBand": "crude",
-      "daoTags": [
-        "heaven"
-      ]
-    },
-    {
-      "id": "mat_human_1",
-      "name": "遗墨纸片",
-      "qualityBand": "crude",
-      "daoTags": [
-        "human"
-      ]
-    },
-    {
-      "id": "mat_bone_1",
-      "name": "白骨粉",
-      "qualityBand": "crude",
-      "daoTags": [
-        "bone"
-      ]
-    },
-    {
-      "id": "mat_force_2",
-      "name": "荒兽筋",
-      "qualityBand": "plain",
-      "daoTags": [
-        "force"
-      ]
-    },
-    {
-      "id": "mat_force_3",
-      "name": "兽王筋",
-      "qualityBand": "refined",
-      "daoTags": [
-        "force"
-      ]
-    },
-    {
-      "id": "mat_force_4",
-      "name": "太古荒兽筋",
-      "qualityBand": "prized",
-      "daoTags": [
-        "force"
-      ]
-    },
-    {
-      "id": "mat_gold_2",
-      "name": "矿脉金砂",
-      "qualityBand": "plain",
-      "daoTags": [
-        "gold"
-      ]
-    },
-    {
-      "id": "mat_gold_3",
-      "name": "精金屑",
-      "qualityBand": "refined",
-      "daoTags": [
-        "gold"
-      ]
-    },
-    {
-      "id": "mat_gold_4",
-      "name": "藏山金精",
-      "qualityBand": "prized",
-      "daoTags": [
-        "gold"
-      ]
-    },
-    {
-      "id": "mat_wisdom_2",
-      "name": "谋算墨",
-      "qualityBand": "plain",
-      "daoTags": [
-        "wisdom"
-      ]
-    },
-    {
-      "id": "mat_wisdom_3",
-      "name": "传世墨锭",
-      "qualityBand": "refined",
-      "daoTags": [
-        "wisdom"
-      ]
-    },
-    {
-      "id": "mat_wisdom_4",
-      "name": "圣贤残墨",
-      "qualityBand": "prized",
-      "daoTags": [
-        "wisdom"
-      ]
-    },
-    {
-      "id": "mat_heaven_2",
-      "name": "雷涤尘",
-      "qualityBand": "plain",
-      "daoTags": [
-        "heaven"
-      ]
-    },
-    {
-      "id": "mat_heaven_3",
-      "name": "穹核尘",
-      "qualityBand": "refined",
-      "daoTags": [
-        "heaven"
-      ]
-    },
-    {
-      "id": "mat_heaven_4",
-      "name": "命数尘",
-      "qualityBand": "prized",
-      "daoTags": [
-        "heaven"
-      ]
-    },
-    {
-      "id": "mat_fire_2",
-      "name": "火岩髓",
-      "qualityBand": "plain",
-      "daoTags": [
-        "fire"
-      ]
-    },
-    {
-      "id": "mat_fire_3",
-      "name": "离火精",
-      "qualityBand": "refined",
-      "daoTags": [
-        "fire"
-      ]
-    },
-    {
-      "id": "mat_fire_4",
-      "name": "焚天髓",
-      "qualityBand": "prized",
-      "daoTags": [
-        "fire"
-      ]
-    },
-    {
-      "id": "mat_water_2",
-      "name": "寒潭髓",
-      "qualityBand": "plain",
-      "daoTags": [
-        "water"
-      ]
-    },
-    {
-      "id": "mat_water_3",
-      "name": "沧溟珠",
-      "qualityBand": "refined",
-      "daoTags": [
-        "water"
-      ]
-    },
-    {
-      "id": "mat_water_4",
-      "name": "弱水精",
-      "qualityBand": "prized",
-      "daoTags": [
-        "water"
-      ]
-    },
-    {
-      "id": "mat_wind_2",
-      "name": "罡风絮",
-      "qualityBand": "plain",
-      "daoTags": [
-        "wind"
-      ]
-    },
-    {
-      "id": "mat_wind_3",
-      "name": "天罡翎",
-      "qualityBand": "refined",
-      "daoTags": [
-        "wind"
-      ]
-    },
-    {
-      "id": "mat_wind_4",
-      "name": "太虚风息",
-      "qualityBand": "prized",
-      "daoTags": [
-        "wind"
-      ]
-    },
-    {
-      "id": "mat_wood_2",
-      "name": "百年松脂",
-      "qualityBand": "plain",
-      "daoTags": [
-        "wood"
-      ]
-    },
-    {
-      "id": "mat_wood_3",
-      "name": "木灵芯",
-      "qualityBand": "refined",
-      "daoTags": [
-        "wood"
-      ]
-    },
-    {
-      "id": "mat_wood_4",
-      "name": "建木青髓",
-      "qualityBand": "prized",
-      "daoTags": [
-        "wood"
-      ]
-    },
-    {
-      "id": "mat_earth_2",
-      "name": "黄泉壤",
-      "qualityBand": "plain",
-      "daoTags": [
-        "earth"
-      ]
-    },
-    {
-      "id": "mat_earth_3",
-      "name": "地心岩乳",
-      "qualityBand": "refined",
-      "daoTags": [
-        "earth"
-      ]
-    },
-    {
-      "id": "mat_earth_4",
-      "name": "息壤精",
-      "qualityBand": "prized",
-      "daoTags": [
-        "earth"
-      ]
-    },
-    {
-      "id": "mat_blood_2",
-      "name": "沁血髓",
-      "qualityBand": "plain",
-      "daoTags": [
-        "blood"
-      ]
-    },
-    {
-      "id": "mat_blood_3",
-      "name": "血菩提",
-      "qualityBand": "refined",
-      "daoTags": [
-        "blood"
-      ]
-    },
-    {
-      "id": "mat_blood_4",
-      "name": "万血精",
-      "qualityBand": "prized",
-      "daoTags": [
-        "blood"
-      ]
-    },
-    {
-      "id": "mat_dream_2",
-      "name": "酣梦丝",
-      "qualityBand": "plain",
-      "daoTags": [
-        "dream"
-      ]
-    },
-    {
-      "id": "mat_dream_3",
-      "name": "蝶梦纱",
-      "qualityBand": "refined",
-      "daoTags": [
-        "dream"
-      ]
-    },
-    {
-      "id": "mat_dream_4",
-      "name": "大梦真绫",
-      "qualityBand": "prized",
-      "daoTags": [
-        "dream"
-      ]
-    },
-    {
-      "id": "mat_luck_2",
-      "name": "吉运绦",
-      "qualityBand": "plain",
-      "daoTags": [
-        "luck"
-      ]
-    },
-    {
-      "id": "mat_luck_3",
-      "name": "鸿运绫",
-      "qualityBand": "refined",
-      "daoTags": [
-        "luck"
-      ]
-    },
-    {
-      "id": "mat_luck_4",
-      "name": "天运符",
-      "qualityBand": "prized",
-      "daoTags": [
-        "luck"
-      ]
-    },
-    {
-      "id": "mat_qi_2",
-      "name": "氤氲珠",
-      "qualityBand": "plain",
-      "daoTags": [
-        "qi"
-      ]
-    },
-    {
-      "id": "mat_qi_3",
-      "name": "纯阳息",
-      "qualityBand": "refined",
-      "daoTags": [
-        "qi"
-      ]
-    },
-    {
-      "id": "mat_qi_4",
-      "name": "龙涎气",
-      "qualityBand": "prized",
-      "daoTags": [
-        "qi"
-      ]
-    },
-    {
-      "id": "mat_human_2",
-      "name": "名家信札",
-      "qualityBand": "plain",
-      "daoTags": [
-        "human"
-      ]
-    },
-    {
-      "id": "mat_human_3",
-      "name": "宗师手札",
-      "qualityBand": "refined",
-      "daoTags": [
-        "human"
-      ]
-    },
-    {
-      "id": "mat_human_4",
-      "name": "圣贤遗篇",
-      "qualityBand": "prized",
-      "daoTags": [
-        "human"
-      ]
-    },
-    {
-      "id": "mat_slave_2",
-      "name": "厚兽革",
-      "qualityBand": "plain",
-      "daoTags": [
-        "slave"
-      ]
-    },
-    {
-      "id": "mat_slave_3",
-      "name": "兽王革",
-      "qualityBand": "refined",
-      "daoTags": [
-        "slave"
-      ]
-    },
-    {
-      "id": "mat_slave_4",
-      "name": "万兽纹革",
-      "qualityBand": "prized",
-      "daoTags": [
-        "slave"
-      ]
-    },
-    {
-      "id": "mat_soul_2",
-      "name": "凝魂玉屑",
-      "qualityBand": "plain",
-      "daoTags": [
-        "soul"
-      ]
-    },
-    {
-      "id": "mat_soul_3",
-      "name": "魂将残晶",
-      "qualityBand": "refined",
-      "daoTags": [
-        "soul"
-      ]
-    },
-    {
-      "id": "mat_soul_4",
-      "name": "先贤英魂核",
-      "qualityBand": "prized",
-      "daoTags": [
-        "soul"
-      ]
-    },
-    {
-      "id": "mat_refine_2",
-      "name": "地火熔渣",
-      "qualityBand": "plain",
-      "daoTags": [
-        "refine"
-      ]
-    },
-    {
-      "id": "mat_refine_3",
-      "name": "五金熔英",
-      "qualityBand": "refined",
-      "daoTags": [
-        "refine"
-      ]
-    },
-    {
-      "id": "mat_refine_4",
-      "name": "九转炉心",
-      "qualityBand": "prized",
-      "daoTags": [
-        "refine"
-      ]
-    },
-    {
-      "id": "mat_sword_2",
-      "name": "陨铁屑",
-      "qualityBand": "plain",
-      "daoTags": [
-        "sword"
-      ]
-    },
-    {
-      "id": "mat_sword_3",
-      "name": "寒铁屑",
-      "qualityBand": "refined",
-      "daoTags": [
-        "sword"
-      ]
-    },
-    {
-      "id": "mat_sword_4",
-      "name": "天外玄铁屑",
-      "qualityBand": "prized",
-      "daoTags": [
-        "sword"
-      ]
-    }
-  ],
   "npcs": [
     {
       "id": "caravan_steward",
@@ -6491,14 +5433,6 @@ const DATA = {
       "stock": [
         "purchase_stone_shell",
         "purchase_moonlight"
-      ],
-      "demands": [
-        {
-          "id": "steward_needs_bones",
-          "material_id": "beast_bone",
-          "quantity": 3,
-          "tier": 1
-        }
       ]
     },
     {
@@ -6516,14 +5450,6 @@ const DATA = {
       "retreat": "leave_with_map_copy",
       "reinforcements": "faction_guard_pair",
       "injury_reaction": "caution",
-      "demands": [
-        {
-          "id": "scout_needs_dew",
-          "material_id": "moon_dew",
-          "quantity": 2,
-          "tier": 1
-        }
-      ],
       "stock": []
     },
     {
@@ -6540,15 +5466,7 @@ const DATA = {
       "retreat": "offer_safe_treatment",
       "reinforcements": "none",
       "injury_reaction": "sympathy",
-      "stock": [],
-      "demands": [
-        {
-          "id": "healer_needs_blood",
-          "material_id": "beast_blood",
-          "quantity": 4,
-          "tier": 1
-        }
-      ]
+      "stock": []
     },
     {
       "id": "ridge_extortionist",
@@ -6564,15 +5482,7 @@ const DATA = {
       "retreat": "accept_stone_and_withdraw",
       "reinforcements": "beast_swarm_lure",
       "injury_reaction": "contempt",
-      "stock": [],
-      "demands": [
-        {
-          "id": "extortionist_needs_sac",
-          "material_id": "venom_sac",
-          "quantity": 2,
-          "tier": 1
-        }
-      ]
+      "stock": []
     },
     {
       "id": "wandering_peddler",
@@ -6592,20 +5502,6 @@ const DATA = {
         "purchase_stone_shell",
         "purchase_moonlight",
         "purchase_blood_droplet"
-      ],
-      "demands": [
-        {
-          "id": "peddler_needs_bones",
-          "material_id": "beast_bone",
-          "quantity": 5,
-          "tier": 1
-        },
-        {
-          "id": "peddler_needs_sac",
-          "material_id": "venom_sac",
-          "quantity": 2,
-          "tier": 1
-        }
       ]
     }
   ],
@@ -6614,9 +5510,9 @@ const DATA = {
       "id": "echo_cave",
       "kind": "delayed_cost",
       "title": "残响叩穴",
-      "summary": "洞穴深处有回声应答，已知与未知的代价都刻在石壁上。",
-      "flavor_gain": "取得回声允诺的机缘。",
-      "unknown_note": "回声的后续代价结果未明，似有低语要在魂魄深处留下印记。",
+      "summary": "洞穴里有人敲出三短一长。墙上旧字已被磨平，只剩一行新刻：听见的人算一个。",
+      "flavor_gain": "收下回声允诺的机缘。",
+      "unknown_note": "应声后，一缕回音会留在魂魄里；下一段路未必安静。",
       "health_cost": 1,
       "delayed_soul_cost": 1,
       "delayed_trigger": "next_travel",
@@ -6626,9 +5522,9 @@ const DATA = {
       "id": "gu_rot_pact",
       "kind": "curse_bargain",
       "title": "腐朽蛊契",
-      "summary": "腐朽的蛊契在掌心发热，代价与收获都写在血色纹路里。",
-      "flavor_gain": "借此蛊契牵动一线机缘。",
-      "unknown_note": "蛊契烙入体内后，元石滞胀的苦果何时显现仍未明。",
+      "summary": "残契压在一枚虫蜕下，触碰时虫蜕先碎，朱痕却自己爬上掌心。",
+      "flavor_gain": "借腐蛊契文换得一线机缘。",
+      "unknown_note": "契文未写还期，元石滞胀的苦果可能稍后才显。",
       "health_cost": 1,
       "delayed_soul_cost": 1,
       "delayed_trigger": "next_travel",
@@ -6637,27 +5533,27 @@ const DATA = {
     {
       "id": "huajiu_cache",
       "title": "行者遗藏",
-      "summary": "山腹深处藏着某位行者的遗藏，独吞者从无善终。",
-      "flavor_gain": "取走遗藏中的元石。",
-      "unknown_note": "遗藏深处是否另有埋伏，只有挖到尽头才知。",
+      "summary": "旧酒葫芦卡在岩缝，晃动时传出石子声。葫口下压着一张空白遗言。",
+      "flavor_gain": "取走遗藏中保存完好的元石。",
+      "unknown_note": "葫芦底部还压着一层封口，挖到尽头才知里面是否另有东西。",
       "health_cost": 2,
       "stone_gain": 5
     },
     {
       "id": "tithing_cache",
       "title": "献藏换赏",
-      "summary": "遗藏见光便引来窥伺，不如报与山寨换一份赏钱。",
-      "flavor_gain": "换一份稳妥的赏钱。",
-      "unknown_note": "山寨给的赏钱是否足数，全看管事的心情。",
+      "summary": "遗藏刚见光，山寨巡哨已摸到附近。报出位置只换一份现成赏钱，不必守到天黑。",
+      "flavor_gain": "领下山寨给出的赏钱。",
+      "unknown_note": "遗藏报上去后会落到谁手里，管事没有写进账册。",
       "health_cost": 0,
       "stone_gain": 2
     },
     {
       "id": "small_beast_tide",
       "title": "小兽潮",
-      "summary": "小型兽潮已经在山寨附近成形，蛊师是唯一能挡的墙。",
-      "flavor_gain": "从兽尸与赏功中收得元石。",
-      "unknown_note": "这股兽潮是否会滚成大型，眼下无人说得准。",
+      "summary": "小兽潮压向寨墙，守夜人敲响木梆。你出手后能按约领赏，却还得接着赶路。",
+      "flavor_gain": "从兽尸与赏功中收下应得的元石。",
+      "unknown_note": "兽潮散去后，山道上的追随者会不会也散去，眼下无人说得准。",
       "health_cost": 2,
       "delayed_soul_cost": 1,
       "delayed_trigger": "next_travel",
@@ -6666,9 +5562,9 @@ const DATA = {
     {
       "id": "tide_aftermath",
       "title": "潮后拾骨",
-      "summary": "兽潮退去，山道上留下成片尸骨与未干的血气。",
-      "flavor_gain": "从尸骨间拾取遗留的元石。",
-      "unknown_note": "尸骨之间还盘着什么活物，谁也说不上来。",
+      "summary": "兽潮退去，尸骨嵌在泥里；石缝间散着未被啃碎的元石，兽尸已开始发热。",
+      "flavor_gain": "从尸骨与泥缝中拾回元石。",
+      "unknown_note": "低头拾取时，骨堆深处的动静始终没有停。",
       "health_cost": 0,
       "delayed_soul_cost": 2,
       "delayed_trigger": "next_travel",
@@ -6677,18 +5573,18 @@ const DATA = {
     {
       "id": "duel_wager",
       "title": "赌斗押注",
-      "summary": "有人当街设下赌斗，胜负各安天命，注头就摆在桌面上。",
-      "flavor_gain": "赢下注头，把元石收入囊中。",
-      "unknown_note": "对手的底细与后手一概不知，只看你敢不敢押。",
+      "summary": "赌斗台只摆着一张契纸和一枚筹码；对手不露面，围观者却都已押好。",
+      "flavor_gain": "拿走赌斗台上的注头。",
+      "unknown_note": "对手的底细与后手一概不知，台下的人也没有替你作证的意思。",
       "health_cost": 1,
       "stone_gain": 4
     },
     {
       "id": "duel_loss",
       "title": "斗蛊折戟",
-      "summary": "斗蛊场上一场比试已经摆开，输家的代价写在契纸上。",
-      "flavor_gain": "即便落败，也能从场中捡到零散的元石。",
-      "unknown_note": "经脉封蛊何时松解，没有定数。",
+      "summary": "胜负已分，台上只剩碎蛊与几枚元石。输家仍跪着，掌纹里的封印尚未散去。",
+      "flavor_gain": "从散落的注头里捡回少许元石。",
+      "unknown_note": "封蛊何时松解没有定数，场边也没人肯替你担保。",
       "health_cost": 2,
       "curse_id": "meridian_seal",
       "stone_gain": 1
@@ -6696,9 +5592,9 @@ const DATA = {
     {
       "id": "weird_trade",
       "title": "秘境换物",
-      "summary": "秘境入口半开，守门者只要魂魄，不要元石。",
-      "flavor_gain": "换回一份可用的元石。",
-      "unknown_note": "换到手的东西能否合用，结果未明。",
+      "summary": "秘境只开一线，守门者不收元石，只把一盏暗灯推到你面前。",
+      "flavor_gain": "换回一份能继续上路的元石。",
+      "unknown_note": "灯里封着什么，守门者不答；你只觉魂魄像被轻轻拨了一下。",
       "health_cost": 0,
       "delayed_soul_cost": 1,
       "delayed_trigger": "next_travel",
@@ -6707,9 +5603,9 @@ const DATA = {
     {
       "id": "contract_seal",
       "title": "毒誓之契",
-      "summary": "要人用毒誓蛊立下不容反悔的契约，报酬先给。",
-      "flavor_gain": "先收下契约的酬劳。",
-      "unknown_note": "毒誓的制约何时收紧，只有违约那天才知道。",
+      "summary": "契纸没有署名，酬劳却已摆上桌。墨里混着誓蛊的血，见证人不许追问条款。",
+      "flavor_gain": "先收下契约列明的酬劳。",
+      "unknown_note": "誓约会在何时收紧，只有走到那一天才知道。",
       "health_cost": 1,
       "delayed_soul_cost": 2,
       "delayed_trigger": "next_travel",
@@ -6718,9 +5614,9 @@ const DATA = {
     {
       "id": "recognition_toll",
       "title": "认主输诚",
-      "summary": "有势力逼你认主输诚，输了名头，换一条活路。",
-      "flavor_gain": "换得对方的赏赐。",
-      "unknown_note": "蛊蚀何时发作，全看对方心意。",
+      "summary": "关卡前的印台只缺一个掌印。守关者把赏赐推近，另一只手始终按着封蛊。",
+      "flavor_gain": "收下对方许诺的赏赐。",
+      "unknown_note": "掌印留下的蛊蚀何时发作，仍由对方拿捏。",
       "health_cost": 0,
       "curse_id": "gu_erosion",
       "stone_gain": 3
@@ -6728,9 +5624,133 @@ const DATA = {
     {
       "id": "blood_vein_offering",
       "title": "血脉献祭",
-      "summary": "血脉祭坛前有人收买精血，价钱开得很高。",
+      "summary": "地脉裂口边有人收买精血，祭坛旁的元石堆得很高，石面都染成暗红。",
       "flavor_gain": "取走祭坛边堆积的元石。",
-      "unknown_note": "元石滞胀的余患何时现形，无人敢断言。",
+      "unknown_note": "血祭留下的滞胀余患何时显形，无人敢断言。",
+      "health_cost": 2,
+      "curse_id": "essence_bloat",
+      "stone_gain": 4
+    },
+    {
+      "id": "broken_bridge_vow",
+      "title": "断桥余誓",
+      "summary": "断桥下挂着一只铜铃，铃舌系着未拆的契纸。桥另一头有人留下元石，却没有脚印。",
+      "flavor_gain": "收下铜铃旁留下的元石。",
+      "unknown_note": "应声后，一缕回音会留在魂魄里；下一段路未必安静。",
+      "kind": "delayed_cost",
+      "health_cost": 1,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 2
+    },
+    {
+      "id": "cold_ash_pile",
+      "title": "冷灰拾遗",
+      "summary": "营火只剩冷灰，灰下压着整齐摆开的兽骨。最后一名拾荒者说，骨堆里有人数数。",
+      "flavor_gain": "从冷灰与兽骨间拾回元石。",
+      "unknown_note": "俯身拾取时，骨堆里的声音像隔着魂魄数你的脚步。",
+      "health_cost": 0,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 3
+    },
+    {
+      "id": "sealed_silk_reliquary",
+      "title": "丝封遗匣",
+      "summary": "丝囊封死在岩壁上，拆取时细丝割开掌心。里面的元石没有受潮，囊口却缝了三层。",
+      "flavor_gain": "取下丝囊中保存的元石。",
+      "unknown_note": "囊底还有一圈未拆的旧线，拉开后会放出什么仍未可知。",
+      "health_cost": 2,
+      "stone_gain": 5
+    },
+    {
+      "id": "unclaimed_waystone",
+      "title": "无主路钱",
+      "summary": "石堆夹着一小袋无人认领的元石，袋口沾着新泥。附近的脚印到此为止，又从另一侧折回。",
+      "flavor_gain": "拿走石堆里留下的元石。",
+      "unknown_note": "这笔路钱为何无人取走，留下脚印的人没有解释。",
+      "health_cost": 0,
+      "stone_gain": 2
+    },
+    {
+      "id": "cliffside_beast_bounty",
+      "title": "崖边悬赏",
+      "summary": "受伤的兽物把巡山人逼退到崖沿，赏格还贴在树上。血迹一路向上，没有往回走。",
+      "flavor_gain": "从兽尸与悬赏中收下元石。",
+      "unknown_note": "血腥味会留在身上，下一段路上是否还有追兵未可知。",
+      "health_cost": 2,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 3
+    },
+    {
+      "id": "gravewatch_bones",
+      "title": "守骨人不眠",
+      "summary": "兽潮后的骨堆被人垒成一圈，圈心埋着元石。守骨人已经不在，地上却多了一双新脚印。",
+      "flavor_gain": "从骨圈中取回元石。",
+      "unknown_note": "拨开骨头后，那双脚印仍在你身后多出一步。",
+      "health_cost": 0,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 3
+    },
+    {
+      "id": "ropewalk_wager",
+      "title": "索桥赌注",
+      "summary": "索桥两端各压着一份赌注，桥中央却只剩半张契纸。山风一过，桥板便互相撞响。",
+      "flavor_gain": "取走桥头留下的赌注。",
+      "unknown_note": "契纸缺掉的那一半记着谁先走上桥，无从查证。",
+      "health_cost": 1,
+      "stone_gain": 4
+    },
+    {
+      "id": "marrow_lock_duel",
+      "title": "封脉残局",
+      "summary": "斗蛊场已散，只留下一把断刃和一枚孤零零的元石。台下有人劝你别碰那张封脉符。",
+      "flavor_gain": "捡起残局里尚未被取走的元石。",
+      "unknown_note": "符印落在经脉上后何时松解，没人能替你定。",
+      "health_cost": 2,
+      "curse_id": "meridian_seal",
+      "stone_gain": 1
+    },
+    {
+      "id": "unlit_soul_lantern",
+      "title": "无火魂灯",
+      "summary": "一盏魂灯放在秘境门外，灯油早已干涸，灯芯却还留着温度。守门者让你自取灯旁的元石。",
+      "flavor_gain": "取走灯旁无人看守的元石。",
+      "unknown_note": "灯火未燃，魂魄却像被它认了出来。",
+      "health_cost": 0,
+      "delayed_soul_cost": 1,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 2
+    },
+    {
+      "id": "inked_promise",
+      "title": "墨债先偿",
+      "summary": "借贷的元石先摆到面前，契纸却要你以血印押下姓名。放贷人不问何时还，只问你敢不敢走远。",
+      "flavor_gain": "先收下契纸列出的酬劳。",
+      "unknown_note": "上路后，契文会从魂魄里取走利钱。",
+      "health_cost": 1,
+      "delayed_soul_cost": 2,
+      "delayed_trigger": "next_travel",
+      "stone_gain": 4
+    },
+    {
+      "id": "red_seal_submission",
+      "title": "朱印换路",
+      "summary": "关卡的朱印台旁堆着赏钱，守门人要的不是姓名，只要你按下掌印。",
+      "flavor_gain": "收下朱印台旁的赏钱。",
+      "unknown_note": "掌印化成蛊蚀后会如何发作，仍由掌印的势力拿捏。",
+      "health_cost": 0,
+      "curse_id": "gu_erosion",
+      "stone_gain": 3
+    },
+    {
+      "id": "bloodstone_cistern",
+      "title": "血池高价",
+      "summary": "地脉裂隙旁的石池收买精血，价钱高得反常。池沿刻满名字，最近一个还没有干。",
+      "flavor_gain": "取走石池边摆放的元石。",
+      "unknown_note": "精血换来的元石可能在体内滞胀，余患何时显现无人能断。",
       "health_cost": 2,
       "curse_id": "essence_bloat",
       "stone_gain": 4
@@ -6766,6 +5786,7 @@ const DATA = {
     "buy_information": "购买情报",
     "buy": "买蛊",
     "claim": "占取",
+    "exchange": "换物",
     "cross": "穿越",
     "deceive": "欺瞒",
     "fight": "交锋",
@@ -6774,11 +5795,13 @@ const DATA = {
     "leave": "离开",
     "lure": "诱引",
     "meditate": "静修",
+    "negotiate": "交涉",
     "open": "开启",
     "prepare": "筹备",
     "pressure": "施压",
     "probe": "试探",
     "retreat": "撤离",
+    "rest": "歇息",
     "refine": "炼蛊",
     "cultivate": "冲击二转",
     "settle_feeding": "结清养护",
@@ -6786,6 +5809,7 @@ const DATA = {
     "scout": "探查",
     "scheme": "设局",
     "take_imprint": "承受体印",
+    "sell": "售物",
     "trade": "交易",
     "withdraw": "退回",
     "work": "做工"
@@ -6838,8 +5862,7 @@ const DATA = {
         "elite": 8,
         "boss": 15
       },
-      "layer_step_pct": 20,
-      "provisional_note": "Q8-G 1-C provisional：战斗产石 = base_by_tier[tier] + base*layer_step_pct*(layer-1)/100。Batch 0 §4 冻结口径：tier+layer 结构、数值 provisional、F8 校准；production 口径为净新增（卖材料不算）。"
+      "layer_step_pct": 20
     },
     "markScratchPerLayer": 1,
     "markScratchCap": 10
@@ -6857,9 +5880,19 @@ const DATA = {
         "source": "本轮设计：docs/superpowers/specs/2026-09-20-wenzhen-web-run-flow-convergence-design.md"
       },
       {
+        "name": "异闻节点与即时抉择",
+        "detail": "每层非战斗模板池含 2 个异闻模板；seed 决定遇见的事件。只开放 6 条能由 Web 完整结算的事件，并按确定性牌序轮完后再重复；卡片展示气血代价/元石所得，可承受时收下、否则离开；同 seed 同难度仍生成相同节点图",
+        "source": "data/nodes.json → echo_cave / gu_rot_pact；data/events.json → huajiu_cache / tithing_cache / duel_wager / sealed_silk_reliquary / unclaimed_waystone / ropewalk_wager；social_command_rules.gd 事件接受结算"
+      },
+      {
+        "name": "跨局旧录与种子复走",
+        "detail": "大厅单独保存最近 24 局结局、路线、摘要与种子；按原难度与种子开新局，同一内容版本下会生成相同地图。旧录与进行中存档分开；不还原当局结束前角色状态",
+        "source": "js/lab_save.js → ARCHIVE_KEY / appendArchive；js/main.js → archiveRun / startRun(seedOverride)；js/journey.js → archiveRunCard"
+      },
+      {
         "name": "合炼与升炼配方",
-        "detail": "6 条配方的材料、元石成本、原文出处行号；判定用 run seed 与事件序号，失败销毁全部投入",
-        "source": "data/refinement_recipes.json（468 条）；refine_command_rules.gd::_refinement_roll/_apply_fixed_recipe"
+        "detail": "Web 开放配方只投入蛊虫与配方标注的元石；判定用 run seed 与事件序号，失败销毁全部蛊虫投入",
+        "source": "data/refinement_recipes.json（468 条，Web 只投影蛊虫/元石成本）；refine_command_rules.gd::_refinement_roll/_apply_fixed_recipe"
       },
       {
         "name": "蛊虫行动",
@@ -6897,8 +5930,8 @@ const DATA = {
         "source": "本轮 L0 裁决"
       },
       {
-        "name": "战利品池与保底",
-        "detail": "按 tier+layer 读取材料数/权重、蛊概率/稀有度权重；common/elite/boss 材料保底与 common 蛊保底按事件序号推进",
+        "name": "战后蛊虫与元石奖励",
+        "detail": "按 tier+layer 读取蛊概率/稀有度权重及元石收益；常见蛊保底按事件序号推进",
         "source": "data/loot_tables.json；data/pacing.json；loot_resolver.gd::settle_victory"
       },
       {
@@ -6962,9 +5995,9 @@ const DATA = {
         "source": "data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）"
       },
       {
-        "name": "坊市货架",
-        "detail": "按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价。古方（gu_fang_unlock）因无机械收益已移出 live 货架（L0 2026-09-25 Phase 0）",
-        "source": "data/shops.json → purchase/material_purchase；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price"
+        "name": "坊市蛊虫货架",
+        "detail": "按层显示 4–6 只蛊；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价",
+        "source": "data/shops.json → purchase；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price"
       },
       {
         "name": "险地节点（探查 / 穿越 / 退回）",
@@ -6973,7 +6006,7 @@ const DATA = {
       },
       {
         "name": "非战斗节点的标准动作结算（险地 / 市集 / 野蛊）",
-        "detail": "固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1 共 9 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡（choices 里未搬的动作不出卡），并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw（静修节点的 meditate 见下条）；被拒不结算，解析后进入统一整备",
+        "detail": "固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1 + 异闻 2 共 11 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡（choices 里未搬的动作不出卡），并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw；静修的 meditate 见下条。被拒不结算，解析后进入统一整备",
         "source": "data/nodes.json → village_short_work / ridge_market / blood_moss_grove / rest_hollow / rest_shrine / body_imprint_ritual 与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）"
       },
       {
@@ -7020,12 +6053,16 @@ const DATA = {
         "why": "rest_rules.gd:27 的 REST_CLASS_TYPES = [rest, refinement, cultivation]：rest 的那一份门禁已在本片搬入（见 covered 的恢复类节点），refinement / cultivation 两类节点本原型仍未接入（连节点带动作），其一次性门禁与 refine / cultivate 专属动作一并不搬"
       },
       {
-        "name": "其余节点类型的专属结算",
-        "why": "contact / caravan / event / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等），本原型固定图只放战斗与五类非战斗模板（险地 / 市集 / 野蛊 / 休整 / 静修），其余类型未接入"
+        "name": "诅咒与延迟魂魄债异闻",
+        "why": "异闻投影只开放即时气血代价与元石收益均能完整结算的 6 条事件；带 curse_id 或 delayed_soul_cost 的事件会进入 Web 事件池过滤。Web 尚无诅咒战斗效果和延迟魂债结算，暂不呈现这些选择"
       },
       {
-        "name": "非战斗槽位的类型分布进一步稀释",
-        "why": "非战斗槽位仍是每层 1 个（槽位 seed 未变），但模板池由 6 个扩到 9 个后，各类型出现频率被进一步稀释（本片首局 seed 101 / normal 实测：险地 12 / 市集 11 / 野蛊 8 / 休整 12 / 静修 7，slice-10 时是险地 31 / 市集 12 / 野蛊 7）。这是 slice-10 已登记、待 L1 裁的同一件事的延续，不是本片新增裁决项"
+        "name": "其余节点类型的专属结算",
+        "why": "contact / caravan / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等）；Web 固定图当前采用战斗与六类非战斗模板（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻），其余类型未接入"
+      },
+      {
+        "name": "非战斗槽位的类型分布与重复率",
+        "why": "非战斗槽位每层仍为 1 个，11 个模板由 seed 确定性选择；各模板等权，异闻模板内部再选有效事件。路线重复率和事件出现频率尚未做长局实测，后续根据完整跑局证据调整内容密度"
       },
       {
         "name": "knownFacts 只写不读",
@@ -7044,20 +6081,16 @@ const DATA = {
         "why": "数据未写明多意图之间的优先级（_phases_note 只定义了冷却门禁）。本页取\"数据顺序中第一条可用的\"，属原型设定，Godot 无实现可对照"
       },
       {
-        "name": "另 3 个带阶段数据的 Boss",
-        "why": "blood_vein_bishop 之外的 clan_patriarch / blue_fur_jiangshi / miasma_vein_lord 缺少对应立绘，未纳入；其中 clan_patriarch 的「家族征召」是 damage 0 且无 essence_burn，语义未知"
-      },
-      {
-        "name": "Boss 立绘",
-        "why": "血络主教无专属立绘，借用同流派血道蝙蝠图（enemy_bat.png），仅影响观感"
+        "name": "族长阶段意图「家族征召」",
+        "why": "数据条目为 damage 0 且无 essence_burn，Godot 行为语义未明确；沿用数据但不臆造额外效果，需补充规则来源后再扩展"
       },
       {
         "name": "魂魄成长与失控",
         "why": "本页已接魂魄行动分档、抽魂与魂魄归零死亡；魂魄收集、成长、狂暴和失控仍未实现"
       },
       {
-        "name": "完整事件日志与存档",
-        "why": "已接最小 run event_log 并用于炼蛊与战利品 tick；完整领域事件形状、存档与回放尚未接入"
+        "name": "完整领域事件账本与角色状态回放",
+        "why": "Web 具备进行中存档和跨局种子旧录；尚未实现 Godot 完整领域事件形状、结束前角色状态快照及精确局面回放"
       },
       {
         "name": "counter_status=\"sparked\"（雷冠头狼）",
@@ -7073,5 +6106,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "061e49e1986a381495a2155aecf82b1e8e449a06a02d448c24150f21c4cd6c1a"
+  "contentVersion": "1c47e693695324b76dda72cce2457d09aefb757c405cef23bad01debfe0ac7f2"
 };

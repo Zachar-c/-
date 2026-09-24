@@ -29,10 +29,8 @@ function renderAlchemy(root) {
   const rows = live.map((r) => {
     const need = countBy(r.inputs);
     const miss = Object.entries(need).filter(([id, n]) => (state.owned[id] || 0) < n);
-    const materialNeed = r.materials || {};
-    const materialMiss = Object.entries(materialNeed).filter(([id, n]) => (state.materials[id] || 0) < n);
     const poor = (r.stoneCost || 0) > state.stones;
-    const ok = !miss.length && !materialMiss.length && !poor;
+    const ok = !miss.length && !poor;
     const inputs = Object.entries(need).map(([id, n]) =>
       `<span style="display:inline-flex;align-items:center;gap:5px">
          <img src="${iconOf(id)}" alt="">${nameOf(id)}<span style="color:var(--cinnabar)">×${n}</span>
@@ -41,9 +39,6 @@ function renderAlchemy(root) {
     const branch = r.branchLabel
       ? `<div class="meta" style="color:var(--cinnabar)">${r.branchLabel}${(r.closes || []).length ? ` · 关闭 ${(r.closes || []).map((c) => nameOf(c)).join('/')}` : ''}${(r.delays || []).length ? ` · 推迟 ${(r.delays || []).join('/')}` : ''}</div>`
       : '';
-    const farm = r.farmHint
-      ? `<div class="meta" style="font-size:12px">定向：${r.farmHint}</div>`
-      : '';
     return `<div class="recipe ${forkIds.has(r.id) ? 'fork-branch' : ''}">
       <div class="io">${inputs}<span class="arrow">→</span>
         <span style="display:inline-flex;align-items:center;gap:5px">
@@ -51,14 +46,12 @@ function renderAlchemy(root) {
         </span>
       </div>
       ${branch}
-      ${farm}
       <div class="meta">
         ${r.kind === 'advance' ? '升炼' : '合炼'} · 成算 ${r.successRollMax >= 100 ? '必成' : `${r.successRollMax}%`}${r.stoneCost ? ` · 元石 ${r.stoneCost}` : ''}
-        ${Object.keys(materialNeed).length ? ` · ${Object.entries(materialNeed).map(([id, n]) => `${materialById(id).name}×${n}`).join('、')}` : ''}
         <span class="src">${src.slice(0, 96)}</span>
       </div>
       <button ${ok ? '' : 'disabled'} data-forge="${r.id}">开炉</button>
-      ${ok ? '' : `<span class="gm" style="color:var(--cinnabar);font-size:11px">${poor ? '元石不足' : '材料不足'}</span>`}
+      ${ok ? '' : `<span class="gm" style="color:var(--cinnabar);font-size:11px">${poor ? '元石不足' : '蛊虫不足'}</span>`}
     </div>`;
   }).join('');
 

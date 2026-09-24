@@ -1,9 +1,9 @@
 {
   "responses": {
-    "probe": {"intent":"probe","confidence":0.8,"conditions":["missing_goods"],"text":"管事将你的问话与失踪的账册反复比对。","needs_clarification":false},
-    "trade": {"intent":"trade","confidence":0.9,"conditions":["ledger_evidence"],"text":"管事收下账册证据，为你打开一条有人照看的路。","needs_clarification":false},
-    "pressure": {"intent":"pressure","confidence":0.6,"conditions":["will_gate"],"text":"管事不肯抛下受伤的护卫。","needs_clarification":false},
-    "leave": {"intent":"leave","confidence":0.8,"conditions":["suspicion"],"text":"商队合拢车厢，目送你离去。","needs_clarification":false},
-    "clarify": {"intent":"clarify","confidence":0.0,"conditions":[],"text":"管事追问你究竟想提出什么条件。","needs_clarification":true}
+    "probe": {"intent":"probe","confidence":0.8,"conditions":["missing_goods"],"text":"管事把失货账册压在掌下，逐一核对你的问话；你说到哪处失货，车厢后便有人抬起头。","needs_clarification":false},
+    "trade": {"intent":"trade","confidence":0.9,"conditions":["ledger_evidence"],"text":"管事接过账册，没有当面表态；他把一枚路引压在纸角，示意护卫放行。","needs_clarification":false},
+    "pressure": {"intent":"pressure","confidence":0.6,"conditions":["will_gate"],"text":"他朝车厢后看了一眼：护卫还没能起身，谁也别想拿他当筹码。","needs_clarification":false},
+    "leave": {"intent":"leave","confidence":0.8,"conditions":["suspicion"],"text":"商队收紧车阵，把伤员移入最里层。管事没有挽留，只将你的脸记在账簿末页。","needs_clarification":false},
+    "clarify": {"intent":"clarify","confidence":0.0,"conditions":[],"text":"管事抬手止住争执：账册、货物和护卫，你想先谈哪一件？","needs_clarification":true}
   }
 }

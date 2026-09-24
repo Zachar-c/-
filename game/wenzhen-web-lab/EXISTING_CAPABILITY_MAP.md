@@ -3,7 +3,7 @@
 ```text
 STATUS: INTEGRATION_FIRST
 RULE: MAP BEFORE MODIFY · NO NEW DOMAIN IMPLEMENTATION
-DATE: 2026-09-21
+DATE: 2026-09-24
 SCOPE: game/data · game/scripts/domain · world-model · wenzhen-web-lab
 ```
 
@@ -19,6 +19,8 @@ SCOPE: game/data · game/scripts/domain · world-model · wenzhen-web-lab
 | **LEGACY** | 旧代码仍活着 |
 | **CONFLICT** | 两处都声称是真源 |
 | **GAP** | 确无已有能力（才允许新增） |
+
+Web 产品边界（L0，2026-09-24）：Godot 仍保留完整材料规则与数据；Web 投影不包含材料掉落、交易、库存或材料作为合炼投入。Web 合炼只消耗蛊虫和配方标注的元石。
 
 ---
 
@@ -50,6 +52,8 @@ SCOPE: game/data · game/scripts/domain · world-model · wenzhen-web-lab
 | 静态数值检查（lab） | `tools/check_balance.mjs` + `balance.js` | CI/手跑 | — | **CONSUMER 工具，保留** |
 | 自动走盘（lab） | `tools/autoplay.mjs` | 验收 | `vertical/tools/sim_vertical.mjs` | **OWNER：autoplay.mjs**；sim_vertical=实验 |
 | Godot→Web 数据镜像 | `tools/build_data.mjs` → `js/data.js`（165k） | `lab.html` 全 UI | — | **共享边界已存在：`game/data/*.json`** |
+| 异闻内容投影 | `game/data/nodes.json` + `events.json` | `build_data.mjs` → `RunFlow` → `NodeActionRules` | — | **PROJECTION：Web 只开放 6 条即时气血/元石事件；诅咒与延迟魂债仍未实现** |
+| 跨局旧录 | `js/lab_save.js` 的独立本地旧录 | 大厅路线摘要与同种子复走 | — | **PROJECTION：最多 24 局；复走确定性地图，不恢复终局前状态** |
 | 模型脊柱实验 | `wenzhen-web-lab/balance/**` | 自洽 | 投影/杀招/敌人再实现一遍 | **降级：RESEARCH，非 Owner。禁止继续长成第二套引擎** |
 
 ---

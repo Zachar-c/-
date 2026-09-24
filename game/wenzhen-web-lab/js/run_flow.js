@@ -48,15 +48,34 @@ globalThis.RunFlow = (() => {
     };
   }
 
-  // 非战斗模板来自 Godot 数据（data/nodes.json 的 type=hazard / market / wild_gu：
-  // 毒瘴山道 / 积水石窟 / 黑泥沼地 / 山村短工 / 山脊市集 / 血苔林）。每层 3 个候选里固定换
+  // 非战斗模板来自 Godot 数据（data/nodes.json 的险地、市集、野蛊、休整、静修与异闻模板）。
+  // 每层 3 个候选里固定换
   // 1 个槽位为非战斗节点，槽位与模板都由 seed 决定：同 seed + difficulty 必须产出完全相同的图。
   // 槽位 seed 字符串沿用 slice-09 的 `hazard.slot` / `hazard.template`：这样每层非战斗槽位的
   // 落点与上一片逐格一致，配比不因本片改变（模板池由险地扩为合并池是本片唯一变化）。
   // 没有 choices 的模板不进池：节点动作页靠模板 choices 出按钮，空 choices 会卡死节点。
-  function nonCombatPool(nonCombatTemplates) {
+  function webReadyEvent(event) {
+    return !!event
+      && !String(event.curse_id || '')
+      && Math.max(0, Number(event.delayed_soul_cost) || 0) === 0;
+  }
+
+  function nonCombatPool(nonCombatTemplates, eventById = {}) {
     return [...(nonCombatTemplates || [])]
-      .filter((entry) => entry && entry.id && (entry.choices || []).length > 0);
+      .filter((entry) => {
+        if (!entry || !entry.id) return false;
+        if (entry.type !== 'event') return (entry.choices || []).length > 0;
+        const eventIds = (entry.eventPool || [entry.eventId || entry.id]).map(String);
+        return eventIds.some((id) => webReadyEvent(eventById[id]));
+      })
+      .map((entry) => entry.type === 'event'
+        ? {
+            ...entry,
+            eventPool: (entry.eventPool || [entry.eventId || entry.id])
+              .map(String)
+              .filter((id) => webReadyEvent(eventById[id])),
+          }
+        : entry);
   }
 
   function nonCombatSlotFor(layerKey, seed, hasPool) {
@@ -76,6 +95,7 @@ globalThis.RunFlow = (() => {
     pools = {},
     enemyById = {},
     nonCombatTemplates = [],
+    events = [],
     nonCombatTypeLabels = {},
   } = {}) {
     const difficultyKey = difficulties[difficulty] ? difficulty : 'normal';
@@ -83,7 +103,14 @@ globalThis.RunFlow = (() => {
     const prepPerSegment = Math.max(1, Number(preset.prepPerSegment || 10));
     const nodes = [];
     const roots = [];
-    const nonCombatPoolEntries = nonCombatPool(nonCombatTemplates);
+    const eventById = Object.fromEntries((events || []).map((event) => [String(event.id), event]));
+    const nonCombatPoolEntries = nonCombatPool(nonCombatTemplates, eventById);
+    const eventDeck = (events || []).filter(webReadyEvent).map((event) => String(event.id));
+    for (let i = eventDeck.length - 1, tick = 0; i > 0; i -= 1, tick += 1) {
+      const j = RunRules.seededIndex(i + 1, seed, 'event.deck', tick);
+      [eventDeck[i], eventDeck[j]] = [eventDeck[j], eventDeck[i]];
+    }
+    let eventCursor = 0;
 
     for (let segment = 1; segment <= 5; segment += 1) {
       const segmentPools = poolsForSegment(pools, segment);
@@ -97,6 +124,19 @@ globalThis.RunFlow = (() => {
           const id = nodeId(segment, depth, slot);
           if (slot === routeSlot && routeTemplate) {
             const kind = String(routeTemplate.type || '');
+            let eventId = '';
+            if (kind === 'event') {
+              const allowed = new Set(routeTemplate.eventPool.map(String));
+              for (let offset = 0; offset < eventDeck.length; offset += 1) {
+                const index = (eventCursor + offset) % eventDeck.length;
+                if (!allowed.has(eventDeck[index])) continue;
+                eventId = eventDeck[index];
+                eventCursor = (index + 1) % eventDeck.length;
+                break;
+              }
+              if (!eventId) eventId = pickId(routeTemplate.eventPool, seed, `${id}.event`, depth);
+            }
+            const event = eventId ? eventById[eventId] : null;
             row.push({
               id,
               segment,
@@ -107,10 +147,16 @@ globalThis.RunFlow = (() => {
               tier: kind,
               routeTemplateId: routeTemplate.id,
               routeKind: kind,
+              eventId,
+              event: event ? { ...event } : null,
               enemyIds: [],
-              name: `${nonCombatTypeLabels[kind] || kind} · ${routeTemplate.name || routeTemplate.id}`,
-              summary: routeTemplate.summary || '',
-              choices: [...(routeTemplate.choices || [])],
+              name: kind === 'event' && event
+                ? `${nonCombatTypeLabels[kind] || kind} · ${event.title || event.id}`
+                : `${nonCombatTypeLabels[kind] || kind} · ${routeTemplate.name || routeTemplate.id}`,
+              summary: kind === 'event' && event ? String(event.summary || '') : routeTemplate.summary || '',
+              choices: kind === 'event'
+                ? ['accept_event', 'leave']
+                : [...(routeTemplate.choices || [])],
               nextIds: [],
             });
             continue;

@@ -107,6 +107,5 @@ test('Gate 0 · every live drop gu id resolves and every live purchase has gu or
   }
   for (const offer of rules.liveShopOffers(data.shopOffers)) {
     if (offer.kind === 'purchase') assert.ok(guById[offer.gu_id] || offer.gu_id === 'aptitude_gu', offer.id);
-    if (offer.kind === 'material_purchase') assert.ok(offer.material_id, offer.id);
   }
 });

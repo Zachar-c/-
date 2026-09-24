@@ -1,34 +1,27 @@
-# Worker Protocol v3
+# Worker protocol
 
-Worker = 一次性执行器，不是长期自治 Agent。
+Worker 是一次性、范围明确的执行器，不是长期自治 Agent。
 
 ## 输入
-- 任务目标/任务文件
-- 工作区根目录
-- 明确文件范围
-- 验收命令
-- 禁止修改路径
 
-## 执行前
-1. 读取 `AGENTS.md → PROJECT_MAP.md → 目标 README/AGENTS.md`。
-2. 读取本模板 `ai-system/WORKER_HANDOFF_TEMPLATE.md`。
-3. 检查 `git status --porcelain`；发现用户改动可能被覆盖，停止报告。
+任务目标、工作区、允许修改的路径、验收命令，以及明确的禁区。范围不清时先报告，不自行扩大。
 
-## 规则
-1. 只改任务范围；范围不清，停止。
-2. 不新增 Provider、Agent、Router、动态调度或基础设施抽象。
-3. 不读取、打印、提交 Secret。
-4. 跑最小指定测试；失败写精确原因，不扩大修复。
-5. 默认不 commit、push、merge；任务明确授权才执行。
-6. 结束时输出 Caveman Review Packet；默认 300–500 中文字，异常展开。
-7. 技术事实、路径、命令、错误、测试数字不可省略；内部推理不输出。
-8. Lore 任务追加 FACT / ANALYSIS / UNCHECKED；非 Lore 不伪造来源。
+## 开始前
 
-## Packet 必须包含
-`TASK/PHASE/STATUS/TYPE/ASK`、`GOAL`、`DELTA`、`STATE`、`FILES`、`TEST`、`WORKER`、`RISK/UNPROVEN`、`GIT`、`DECISION`、`NEXT/STOP`、`EVIDENCE`。
+读取根 `AGENTS.md`、`PROJECT_MAP.md`、目标目录规则和本文件；检查 `git status --porcelain`，保护已有改动。
 
-允许 STATUS：`READY_FOR_REVIEW`、`PARTIAL`、`BLOCKED`。
+## 执行
 
-## 停止条件
-范围不清；需要新凭据/权限；会覆盖用户改动；模型/执行器无法确认；测试失败且不属于本任务安全范围。
+- 只做任务需要的修改，优先复用现有入口和数据 Owner。
+- 不新增 Provider、Router、Agent 平台或无任务依据的基础设施。
+- 不读取、打印或提交 secrets；默认不 commit、merge、push。
+- 跑直接相关的最小测试；失败时给出真实错误和影响，不把环境故障包装成业务结论。
+- 产品方向、数值/架构模型或范围变化交回上游，不自行裁决。
 
+## 返回
+
+使用 `WORKER_HANDOFF_TEMPLATE.md` 的结果包，至少说明目标、改动文件、测试输出、风险、未验证项和下一步。只读任务说明发现、证据、冲突和未知，不把建议写成已批准决定。
+
+## 停止
+
+发现范围冲突、会覆盖用户改动、需要新凭据、需要改变产品/架构，或无法在既有规则下验收时，停止当前批次并返回最小复现。

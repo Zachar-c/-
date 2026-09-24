@@ -1,5 +1,5 @@
-/** Gate 6 · Phase 6 掉落三价值 · 风险 → 新未来
- *  L0 2026-09-25：普通=经济/成长 · 精英=构筑组件 · Boss=新未来；精英/Boss 后必有新选择。
+/** Gate 6 · Phase 6 战后奖励价值 · 风险 → 新未来
+ *  L0 2026-09-24：元石提供经济、蛊虫提供构筑成长；精英/Boss 后必有新选择。
  */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -19,24 +19,18 @@ vm.runInContext(fs.readFileSync(new URL('../js/gu_rules.js', import.meta.url), '
 const loot = ctx.LootRules;
 const rules = ctx.GuRules;
 const guById = Object.fromEntries(data.gu.map((g) => [g.id, g]));
-const consumers = rules.materialConsumers(rules.liveRecipes(data.recipes));
 
 const startOwned = {
   moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
   jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
 };
 
-test('Gate 6 · loot carries three value kinds (economy / growth / build)', () => {
-  assert.equal(loot.classifyItem('moon_dew', guById, consumers), 'growth');
-  assert.equal(loot.classifyItem('moon_glow_gu', guById, consumers), 'build');
-  assert.equal(loot.classifyItem('mat_unused_x', guById, consumers), 'economic');
+test('Gate 6 · loot carries economic and build value kinds', () => {
   const kinds = loot.classifyReward({
     stones: 5,
-    materialIds: ['moon_dew'],
     guChoices: ['moon_glow_gu'],
-  }, { guById, consumers });
+  }, { guById });
   assert.equal(kinds.economic, 1);
-  assert.equal(kinds.growth, 1);
   assert.equal(kinds.build, 1);
 });
 
@@ -88,13 +82,12 @@ test('Gate 6 · elite/boss reward opens a new choice, not only buying power', ()
   });
   const reward = {
     stones: 20,
-    materialIds: ['moon_dew'],
     guChoices: [pick],
-    valueKinds: loot.classifyReward({ stones: 20, materialIds: ['moon_dew'], guChoices: [pick] }, { guById, consumers }),
+    valueKinds: loot.classifyReward({ stones: 20, guChoices: [pick] }, { guById }),
   };
   assert.equal(loot.opensNewChoice(reward, insight), true);
-  // 仅有元石/卖钱不够
-  const boring = { stones: 30, materialIds: [], guChoices: [], valueKinds: { economic: 1, growth: 0, build: 0 } };
+  // 仅有元石不够
+  const boring = { stones: 30, guChoices: [], valueKinds: { economic: 1, build: 0 } };
   assert.equal(loot.opensNewChoice(boring, { hasRealDecision: false, kitJoins: [], killMoveForms: [] }), false);
 });
 

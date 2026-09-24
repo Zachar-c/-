@@ -1,5 +1,21 @@
 // 战斗。普通脚本：全局 renderBattle。壳=lab.css；结算/反制=MVP CombatCore。
-const portrait = (p) => `../assets/wenzhen/enemies/${p}.png`;
+const WEB_BOSS_PORTRAITS = new Set([
+  'web_boss_miasma_vein_lord',
+  'web_boss_blood_vein_bishop',
+  'web_boss_clan_patriarch',
+  'web_boss_blue_fur_jiangshi',
+]);
+const portrait = (p) => `../assets/wenzhen/enemies/${p}.${WEB_BOSS_PORTRAITS.has(p) ? 'jpg' : 'png'}`;
+
+function battleReasonLabel(reason) {
+  return ({
+    battle_over: '战斗已经结束',
+    condition_miss: '效果条件未满足',
+    consume_status_missing: '目标没有可消耗的状态',
+    delay_shape_rejected: '此延迟效果暂不可用',
+    trigger_unsupported: '此触发方式暂不可用',
+  })[reason] || guReasonLabel(reason) || reason || '';
+}
 
 function counterBadge(enemy) {
   const core = globalThis.CombatCore;
@@ -112,10 +128,10 @@ function renderBattle(root) {
     const pct = Math.max(0, (enemy.hp / enemy.hpMax) * 100);
     const dead = enemy.hp <= 0;
     const chosen = enemy.id === b.targetId;
-    return `<button class="enemy-actor ${chosen ? 'target' : ''} ${dead ? 'dead' : ''}" data-target="${enemy.id}" ${dead ? 'disabled' : ''}>
+    return `<button class="enemy-actor ${chosen ? 'target' : ''} ${dead ? 'dead' : ''}" data-target="${enemy.id}" aria-pressed="${chosen}" aria-label="${enemy.name}，${dead ? '已伏诛' : `气血 ${Math.max(0, enemy.hp)} / ${enemy.hpMax}，意图 ${intentText(enemy.enemyIntent)}`}" ${dead ? 'disabled' : ''}>
       <img src="${portrait(enemy.portrait)}" alt="">
       <span class="ea-name">${enemy.name}</span>
-      <span class="ea-hp"><i style="width:${pct}%"></i></span>
+      <span class="ea-hp" role="meter" aria-label="${enemy.name}气血" aria-valuemin="0" aria-valuemax="${enemy.hpMax}" aria-valuenow="${Math.max(0, enemy.hp)}"><i style="width:${pct}%"></i></span>
       <span class="ea-intent">${dead ? '伏诛' : intentText(enemy.enemyIntent)}</span>
       <span class="ea-phase">${ev.phase ? `阶段 ${ev.phase.index + 1}/${ev.phase.total}` : '无阶段'}</span>
     </button>`;
@@ -156,6 +172,13 @@ function renderBattle(root) {
   const delayedChips = (b.delayedEffects || []).map((entry) =>
     `<span class="chip spent">${entry.label} · 第 ${entry.dueTurn} 回合</span>`).join('');
   const basicOk = state.thought >= 1 && b.actionsUsed < b.actionLimit && !b.over;
+  const observeOk = state.thought >= 1 && b.actionsUsed < b.actionLimit && !b.over;
+  const basicWhy = b.over ? '本场战斗已结束'
+    : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
+      : state.thought < 1 ? '念头不足' : '';
+  const observeWhy = b.over ? '本场战斗已结束'
+    : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
+      : state.thought < 1 ? '念头不足' : '';
 
   const buttons = state.equipped.map((id) => {
     const m = DATA.killMoves.find((x) => x.id === id);
@@ -167,15 +190,28 @@ function renderBattle(root) {
     );
     const recipeBlocked = !!b.killMoveUsedThisTurn?.[m.id]
       || recipeInstances.some((instanceId) => !instanceId);
-    const ok = state.qi >= m.true_qi_cost
-      && state.thought >= m.thought_cost
+    const thoughtCost = Number(m.thought_cost || 0);
+    const qiCost = Number(m.true_qi_cost || 0);
+    const moveGate = GuRules.killMoveGateMissReason(m, GU_BY_ID, {
+      hp: state.blood,
+      hpMax: state.bloodMax,
+      enemiesAlive: aliveEnemies(b).length,
+      turn: b.turn,
+      statusStacks: target.statuses || {},
+    });
+    const blockedReason = b.over ? '战斗已经结束'
+      : recipeBlocked ? '杀招已用，或配方蛊本回合不可用'
+        : state.qi < qiCost ? '真元不足'
+          : state.thought < thoughtCost ? '念头不足'
+            : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
+              : moveGate ? battleReasonLabel(moveGate) : '';
+    const ok = !blockedReason
       && b.actionsUsed < b.actionLimit
-      && !recipeBlocked
       && !b.over;
     const risky = (GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {}) && live.length) || Number(m.life_cost || 0) > 0;
-    const title = recipeBlocked ? '杀招本回合已用，或配方蛊已使用/封印' : '';
+    const title = blockedReason;
     const life = Number(m.life_cost || 0) > 0 ? `寿元${m.life_cost}` : '';
-    return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}">${m.label} <span class="cost">真元${m.true_qi_cost}${life ? ` ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}</button>`;
+    return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}">${m.label} <span class="cost">真元 ${qiCost} · 念头 ${thoughtCost}${life ? ` · ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}${!ok ? `<small class="action-blocked">${title || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
   const guButtons = guRoster.map((g) => {
     const used = !!b.guUsedThisTurn[g.instanceId];
@@ -197,13 +233,14 @@ function renderBattle(root) {
     const risky = (isDirectStrike({ effect: g.battleEffect }) && live.length) || Number(g.lifeCost || 0) > 0;
     const label = g.count > 1 ? `${g.name} ${g.instanceIndex}/${g.count}` : g.name;
     const life = Number(g.lifeCost || 0) > 0 ? `寿元${g.lifeCost}` : '';
-    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${guReasonLabel(blocked) || (life ? '寿元代价：归零将当场陨落' : '')}">${label} <span class="cost">真元${g.trueQiCost}${life ? ` ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}</button>`;
+    const blockedLabel = battleReasonLabel(blocked);
+    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}">${label} <span class="cost">真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
 
   root.innerHTML = `
     <div class="battle-head">
-      <div><div class="kicker">第 ${b.turn} 回合 · 场上 ${aliveEnemies(b).length}/${b.enemies.length}</div><h2>战斗</h2></div>
-      <div class="wallet">真元 ${state.qi}/${state.qiMax} · 念头 ${state.thought}/${b.actionLimit} · 行动 ${b.actionsUsed}/${b.actionLimit} · 护体 ${b.block} · 剑意 ${b.swordIntent} · 寿元 ${state.lifeTime}</div>
+      <div><div class="kicker">${encounter ? `第 ${encounter.segment} 段 · ${segmentTitle(encounter.segment)} · ${encounter.name}` : '当前遭遇'} · 第 ${b.turn} 回合</div><h2>战斗 · 场上 ${aliveEnemies(b).length}/${b.enemies.length}</h2></div>
+      <div class="wallet">行动 ${b.actionsUsed}/${b.actionLimit} · 护体 ${b.block} · 剑意 ${b.swordIntent}</div>
     </div>
     <div class="enemy-stack">${actors}</div>
     <div class="field">
@@ -212,7 +249,7 @@ function renderBattle(root) {
         <div class="colhead">当前目标</div>
         <img src="${portrait(target.portrait)}" alt="">
         <div class="fn">${target.name}</div>
-        <div class="hpline"><i style="width:${hpPct}%"></i></div>
+        <div class="hpline" role="meter" aria-label="${target.name}气血" aria-valuemin="0" aria-valuemax="${target.hpMax}" aria-valuenow="${Math.max(0, target.hp)}"><i style="width:${hpPct}%"></i></div>
         <div class="gm" style="margin-top:7px">气血 ${Math.max(0, target.hp)} / ${target.hpMax}</div>
         <div class="chips" style="margin-top:12px">${phaseChips}</div>
         <div class="colhead" style="margin-top:16px">本回合意图</div>
@@ -230,8 +267,8 @@ function renderBattle(root) {
       <div class="pick">
         <div class="colhead">催动蛊虫 · ${guRoster.length}</div>
         ${live.length ? `<div class="forewarn">⚠ 对当前目标直接攻击会被「${live.map((r) => r.label).join('、')}」吞掉（反击预警）</div>` : ''}
-        <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : ''}">拳脚（念头 1）${live.length ? ' <span class="warnmark">⚠</span>' : ''}</button>
-        ${!target.revealed && !b.over ? '<button data-observe="1">观察（耗 1 念头 · 1 回合）</button>' : ''}
+        <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : basicOk ? 'primary' : ''}" title="${basicWhy}">拳脚攻击 <span class="cost">念头 1</span>${live.length ? ' <span class="warnmark">⚠</span>' : ''}${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>
+        ${!target.revealed && !b.over ? `<button ${observeOk ? '' : 'disabled'} data-observe="1" title="${observeWhy}">观察敌手 <span class="cost">念头 1 · 消耗本回合行动</span>${observeWhy ? `<small class="action-blocked">${observeWhy}</small>` : ''}</button>` : ''}
         ${(() => {
           const roster = currentCombatRoster(b.guUsedThisTurn, b.guSealed);
           const damageGu = roster.filter((g) => g.battleEffect?.kind === 'strike' || Number(g.battleEffect?.amount || 0) > 0);
@@ -268,5 +305,5 @@ function renderBattle(root) {
   root.querySelector('[data-observe]')?.addEventListener('click', () => act.observe());
   root.querySelector('[data-exhaust]')?.addEventListener('click', () => act.exhaust());
   root.querySelector('[data-end-turn]')?.addEventListener('click', () => act.endTurn());
-  root.querySelector('[data-escape]').addEventListener('click', () => act.endBattle());
+  root.querySelector('[data-escape]')?.addEventListener('click', () => act.endBattle());
 }
