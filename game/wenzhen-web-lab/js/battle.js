@@ -7,6 +7,36 @@ const WEB_BOSS_PORTRAITS = new Set([
 ]);
 const portrait = (p) => `../assets/wenzhen/enemies/${p}.${WEB_BOSS_PORTRAITS.has(p) ? 'jpg' : 'png'}`;
 
+// 重绘会整体替换面板 DOM；战斗面板重建时这三样必须跨重绘存活：
+// 战报阅读位置、线索 details 展开态、键盘焦点。
+const BATTLE_FOCUS_ATTRS = [
+  'data-use', 'data-use-gu', 'data-target', 'data-basic-attack', 'data-observe',
+  'data-exhaust', 'data-end-turn', 'data-escape', 'data-start-encounter', 'data-foe',
+];
+
+function battleFocusKey(root) {
+  const active = document.activeElement;
+  if (!active || !root.contains(active)) return null;
+  const btn = active.closest(BATTLE_FOCUS_ATTRS.map((a) => `[${a}]`).join(', '));
+  if (!btn) return null;
+  const attr = BATTLE_FOCUS_ATTRS.find((a) => btn.hasAttribute(a));
+  return attr ? { attr, value: btn.getAttribute(attr) } : null;
+}
+
+function restoreBattleView(root, prevOpen, prevFocusKey) {
+  if (prevOpen) {
+    const details = root.querySelector('.combat-details');
+    if (details) details.open = true;
+  }
+  const log = root.querySelector('#log');
+  if (log) log.scrollTop = log.scrollHeight;
+  if (prevFocusKey) {
+    const target = [...root.querySelectorAll(`[${prevFocusKey.attr}]`)]
+      .find((el) => el.getAttribute(prevFocusKey.attr) === prevFocusKey.value);
+    if (target && !target.disabled) target.focus();
+  }
+}
+
 function battleReasonLabel(reason) {
   return ({
     battle_over: '战斗已经结束',
@@ -34,23 +64,18 @@ function intelBlock(enemy) {
   const id = enemy?.id || '';
   const intel = (typeof MVP_CONTENT !== 'undefined' && MVP_CONTENT.intel && MVP_CONTENT.intel[id]) || null;
   const revealed = !!(enemy?.revealed || enemy?.counterRevealed);
-  const counterId = enemy?.currentCounter || '';
-  const counterLabel = revealed && counterId
-    ? ((MVP_CONTENT?.counterRules?.[counterId]?.label) || counterId)
-    : null;
   const intent = enemy?.enemyIntent || enemy?.currentIntent;
   const preview = (globalThis.CombatCore?.previewEnemyDamage && intent)
     ? globalThis.CombatCore.previewEnemyDamage(enemy, intent, { usedLight: false })
     : null;
   const dmgLine = preview
-    ? `预计 ${preview.base}${preview.projected !== preview.base ? ` → ${preview.projected} 伤` : ''}`
-    : (intent ? `预计 ${intent.damage || 0} 伤` : '冷却中');
+    ? `${preview.base}${preview.projected !== preview.base ? ` → ${preview.projected}` : ''} 伤`
+    : (intent ? `${intent.damage || 0} 伤` : '冷却中');
   return `
     <div class="intel-lines">
-      <div><span class="il">下一行动</span><span>${intent ? (intent.label || intent.id) : '蓄势'} · ${dmgLine}</span></div>
+      <div><span class="il">预计伤害</span><span>${dmgLine}</span></div>
       <div><span class="il">已知弱点</span><span>${(intel && intel.known) || '—'}</span></div>
       <div><span class="il">未察信息</span><span>${(intel && intel.unknown) || (revealed ? '已全部识破' : '反制未识破')}</span></div>
-      <div><span class="il">反制</span><span>${counterLabel || (counterId ? '未知' : '—')}</span></div>
     </div>`;
 }
 
@@ -76,6 +101,8 @@ function renderBattle(root) {
     b ? b.guUsedThisTurn : {},
     b ? b.guSealed : {},
   );
+  const prevOpen = root.querySelector('.combat-details')?.open || false;
+  const prevFocusKey = battleFocusKey(root);
 
   const debugSparring = /(?:\?|&)debug=1(?:&|$)/.test(String(location.search || ''));
   if (!b) {
@@ -172,11 +199,7 @@ function renderBattle(root) {
   const delayedChips = (b.delayedEffects || []).map((entry) =>
     `<span class="chip spent">${entry.label} · 第 ${entry.dueTurn} 回合</span>`).join('');
   const basicOk = state.thought >= 1 && b.actionsUsed < b.actionLimit && !b.over;
-  const observeOk = state.thought >= 1 && b.actionsUsed < b.actionLimit && !b.over;
   const basicWhy = b.over ? '本场战斗已结束'
-    : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
-      : state.thought < 1 ? '念头不足' : '';
-  const observeWhy = b.over ? '本场战斗已结束'
     : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
       : state.thought < 1 ? '念头不足' : '';
 
@@ -211,7 +234,7 @@ function renderBattle(root) {
     const risky = (GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {}) && live.length) || Number(m.life_cost || 0) > 0;
     const title = blockedReason;
     const life = Number(m.life_cost || 0) > 0 ? `寿元${m.life_cost}` : '';
-    return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}">${m.label} <span class="cost">真元 ${qiCost} · 念头 ${thoughtCost}${life ? ` · ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}${!ok ? `<small class="action-blocked">${title || '当前不可用'}</small>` : ''}</button>`;
+    return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}"><span class="action-title">${m.label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${qiCost} · 念头 ${thoughtCost}${life ? ` · ${life}` : ''}</span>${!ok ? `<small class="action-blocked">${title || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
   const guButtons = guRoster.map((g) => {
     const used = !!b.guUsedThisTurn[g.instanceId];
@@ -234,41 +257,62 @@ function renderBattle(root) {
     const label = g.count > 1 ? `${g.name} ${g.instanceIndex}/${g.count}` : g.name;
     const life = Number(g.lifeCost || 0) > 0 ? `寿元${g.lifeCost}` : '';
     const blockedLabel = battleReasonLabel(blocked);
-    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}">${label} <span class="cost">真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span>${risky ? ' <span class="warnmark">⚠</span>' : ''}${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
+    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}"><span class="action-title">${label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span>${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
 
   root.innerHTML = `
     <div class="battle-head">
-      <div><div class="kicker">${encounter ? `第 ${encounter.segment} 段 · ${segmentTitle(encounter.segment)} · ${encounter.name}` : '当前遭遇'} · 第 ${b.turn} 回合</div><h2>战斗 · 场上 ${aliveEnemies(b).length}/${b.enemies.length}</h2></div>
-      <div class="wallet">行动 ${b.actionsUsed}/${b.actionLimit} · 护体 ${b.block} · 剑意 ${b.swordIntent}</div>
+      <div class="battle-heading">
+        <div class="kicker">${encounter ? `第 ${encounter.segment} 段 · ${segmentTitle(encounter.segment)} · ${encounter.name}` : '当前遭遇'}</div>
+        <div class="battle-title-line"><h2>交锋</h2><span class="battle-live">场上 ${aliveEnemies(b).length} / ${b.enemies.length}</span></div>
+      </div>
+      <div class="battle-runtime" role="group" aria-label="本回合战斗状态">
+        <div><span>回合</span><b>${b.turn}</b></div>
+        <div><span>行动</span><b>${b.actionsUsed}<i> / ${b.actionLimit}</i></b></div>
+        <div><span>护体</span><b>${b.block}</b></div>
+        <div><span>剑意</span><b>${b.swordIntent}</b></div>
+      </div>
     </div>
     <div class="enemy-stack">${actors}</div>
     <div class="field">
-      <div class="foe" id="foe-box">
-        <div class="turn-pill">回合 <b>${b.turn}</b> · 行动 <b>${b.actionsUsed}/${b.actionLimit}</b></div>
-        <div class="colhead">当前目标</div>
-        <img src="${portrait(target.portrait)}" alt="">
-        <div class="fn">${target.name}</div>
-        <div class="hpline" role="meter" aria-label="${target.name}气血" aria-valuemin="0" aria-valuemax="${target.hpMax}" aria-valuenow="${Math.max(0, target.hp)}"><i style="width:${hpPct}%"></i></div>
-        <div class="gm" style="margin-top:7px">气血 ${Math.max(0, target.hp)} / ${target.hpMax}</div>
-        <div class="chips" style="margin-top:12px">${phaseChips}</div>
-        <div class="colhead" style="margin-top:16px">本回合意图</div>
-        <div class="chips">${intentChip} ${counterChip}</div>
-        ${intelHtml}
-        <div class="colhead" style="margin-top:14px">意图冷却</div>
-        <div class="chips">${cdChips}</div>
-        ${delayedChips ? `<div class="colhead" style="margin-top:14px">延迟结算</div><div class="chips">${delayedChips}</div>` : ''}
-        <div class="colhead" style="margin-top:14px">线索</div>
-        <div class="chips">${clueChips}</div>
-        <div class="colhead" style="margin-top:14px">反击</div>
-        <div class="chips">${rxChips}</div>
-        ${statusChips ? `<div class="colhead" style="margin-top:14px">状态</div><div class="chips">${statusChips}</div>` : ''}
-      </div>
-      <div class="pick">
-        <div class="colhead">催动蛊虫 · ${guRoster.length}</div>
+      <section class="foe target-card" id="foe-box" aria-labelledby="target-name">
+        <div class="target-overview">
+          <img src="${portrait(target.portrait)}" alt="">
+          <div class="target-summary">
+            <div class="kicker">当前目标</div>
+            <h3 class="fn" id="target-name">${target.name}</h3>
+            <div class="target-health"><span>气血</span><b>${Math.max(0, target.hp)} <i>/ ${target.hpMax}</i></b></div>
+            <div class="hpline" role="meter" aria-label="${target.name}气血" aria-valuemin="0" aria-valuemax="${target.hpMax}" aria-valuenow="${Math.max(0, target.hp)}"><i style="width:${hpPct}%"></i></div>
+            <div class="target-phase chips">${phaseChips}</div>
+          </div>
+        </div>
+        <div class="target-intent">
+          <div class="target-intent-head"><span class="kicker">敌方意图 · 回合末</span><span>第 ${b.turn} 回合</span></div>
+          <div class="target-intent-chips">${intentChip}${counterChip}</div>
+          ${intelHtml}
+        </div>
+        <details class="combat-details">
+          <summary>线索、反击与持续状态</summary>
+          <div class="combat-detail-grid">
+            <section class="target-detail"><div>意图冷却</div><div class="chips">${cdChips}</div></section>
+            ${delayedChips ? `<section class="target-detail"><div>延迟结算</div><div class="chips">${delayedChips}</div></section>` : ''}
+            <section class="target-detail"><div>线索</div><div class="chips">${clueChips}</div></section>
+            <section class="target-detail"><div>反击条件</div><div class="chips">${rxChips}</div></section>
+            ${statusChips ? `<section class="target-detail"><div>当前状态</div><div class="chips">${statusChips}</div></section>` : ''}
+          </div>
+        </details>
+      </section>
+      <section class="pick" aria-label="战斗行动">
+        <div class="pick-head">
+          <div><div class="kicker">出手时机</div><h3>选择本回合行动</h3></div>
+          <div class="pick-remaining"><b>${Math.max(0, b.actionLimit - b.actionsUsed)}</b><span>行动余量</span></div>
+        </div>
         ${live.length ? `<div class="forewarn">⚠ 对当前目标直接攻击会被「${live.map((r) => r.label).join('、')}」吞掉（反击预警）</div>` : ''}
-        <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : basicOk ? 'primary' : ''}" title="${basicWhy}">拳脚攻击 <span class="cost">念头 1</span>${live.length ? ' <span class="warnmark">⚠</span>' : ''}${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>
-        ${!target.revealed && !b.over ? `<button ${observeOk ? '' : 'disabled'} data-observe="1" title="${observeWhy}">观察敌手 <span class="cost">念头 1 · 消耗本回合行动</span>${observeWhy ? `<small class="action-blocked">${observeWhy}</small>` : ''}</button>` : ''}
+        <section class="pick-group">
+          <div class="pick-group-title">基础行动</div>
+          <div class="pick-actions pick-basics">
+            <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : basicOk ? 'primary' : ''}" title="${basicWhy}"><span class="action-title">拳脚攻击${live.length ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">念头 1</span>${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>
+            ${!target.revealed && !b.over ? `<button ${basicOk ? '' : 'disabled'} data-observe="1" title="${basicWhy}"><span class="action-title">观察敌手</span><span class="cost">念头 1 · 消耗本回合行动</span>${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>` : ''}
         ${(() => {
           const roster = currentCombatRoster(b.guUsedThisTurn, b.guSealed);
           const damageGu = roster.filter((g) => g.battleEffect?.kind === 'strike' || Number(g.battleEffect?.amount || 0) > 0);
@@ -278,21 +322,28 @@ function renderBattle(root) {
             : b.exhaustCooldown > 0 ? `逆息冷却 ${b.exhaustCooldown} 回合`
             : !qiLocked ? '未陷入真元枯竭'
             : state.thought < 1 ? '念头不足' : '';
-          return `<button ${exhaustOk ? '' : 'disabled'} data-exhaust="1" title="${exhaustWhy}">逆息（念头1 · 气血-2 · 真元+3）</button>`;
+          return `<button ${exhaustOk ? '' : 'disabled'} data-exhaust="1" title="${exhaustWhy}"><span class="action-title">逆息</span><span class="cost">念头 1 · 气血 −2 · 真元 +3</span>${exhaustWhy ? `<small class="action-blocked">${exhaustWhy}</small>` : ''}</button>`;
         })()}
-        ${guButtons || '<div class="mr" style="font-size:12px;color:var(--ink-soft)">无可用蛊虫</div>'}
-        <div class="colhead" style="margin-top:8px">杀招</div>
-        ${buttons || '<div class="mr" style="font-size:12px;color:var(--ink-soft)">无可用杀招</div>'}
-        <button class="ghost" data-end-turn="1" ${b.over ? 'disabled' : ''}>结束回合</button>
-        <div class="mc" style="margin-top:14px;font-size:12px;color:var(--ink-soft)">
-          护体 ${b.block} · 寿元 ${state.lifeTime} · 回合 ${b.turn}${target.revealed ? '' : ' · 未察'}${b.over ? ` · <span style="color:var(--cinnabar)">${b.over}</span>` : ''}
+          </div>
+        </section>
+        <section class="pick-group">
+          <div class="pick-group-title">可催动蛊虫 <span>${guRoster.length}</span></div>
+          <div class="pick-actions">${guButtons || '<div class="pick-empty">暂无可用蛊虫</div>'}</div>
+        </section>
+        <section class="pick-group">
+          <div class="pick-group-title">已组杀招 <span>${buttons ? state.equipped.length : 0}</span></div>
+          <div class="pick-actions">${buttons || '<div class="pick-empty">尚未组装杀招</div>'}</div>
+        </section>
+        <div class="turn-actions">
+          <button class="ghost end-turn" data-end-turn="1" ${b.over ? 'disabled' : ''}>结束回合</button>
+          ${b.over === '胜' ? '' : `<button class="ghost retreat" data-escape="1">脱离战斗</button>`}
         </div>
-        ${b.over === '胜' ? '' : `<button class="ghost" style="margin-top:16px" data-escape="1">脱离</button>`}
-      </div>
-      <div>
-        <div class="colhead">战报</div>
+        ${b.over ? `<div class="battle-result ${b.over === '胜' ? 'won' : 'lost'}">本场战斗 · ${b.over}</div>` : ''}
+      </section>
+      <section class="battle-log-panel" aria-label="战报">
+        <div class="log-heading"><span class="kicker">本场记录</span><h3>战报</h3><span>${b.log.length} 条</span></div>
         <div class="log" id="log">${b.log.map((l) => `<div>${l}</div>`).join('')}</div>
-      </div>
+      </section>
     </div>`;
 
   root.querySelectorAll('[data-target]').forEach((el) =>
@@ -306,4 +357,5 @@ function renderBattle(root) {
   root.querySelector('[data-exhaust]')?.addEventListener('click', () => act.exhaust());
   root.querySelector('[data-end-turn]')?.addEventListener('click', () => act.endTurn());
   root.querySelector('[data-escape]')?.addEventListener('click', () => act.endBattle());
+  restoreBattleView(root, prevOpen, prevFocusKey);
 }

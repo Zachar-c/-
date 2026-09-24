@@ -353,7 +353,7 @@ function nodeActionMenuLabels(node) {
 }
 
 // 节点动作页底注（lab 侧说明文案，不是 Godot 原文）。
-const NODE_ACTION_HELP = '节点动作按 Godot standard actions 结算：做工 +3 元石、采集 +2 元石；购买情报与交易各耗 2 枚元石；探查、退回与离开只记事实；穿越消耗 1 点真元；静修恢复 1 点真元（真元上限处截断）；解析后进入统一整备。';
+const NODE_ACTION_HELP = '节点动作结算：做工 +3 元石、采集 +2 元石；购买情报与交易各耗 2 枚元石；探查、退回与离开只记事实；穿越消耗 1 点真元；静修恢复 1 点真元（真元上限处截断）；动作结算后进入统一整备。';
 const REST_ACTION_HELP = '休整节点是一次收益门禁：先取「歇脚恢复」（气血按上限的 30% 向下取整、至少 1 点，真元 +2，均不超上限），「离开休整」才会解禁；本次探访只能取一项收益。数值来源 rest_rules.gd:121-141。';
 
 // 节点动作页（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻）：标准节点列模板 choices 的 standard action 卡
@@ -515,7 +515,7 @@ function inventoryCard(gu) {
     <span class="cnt">×${count}</span>
     <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
     <div class="gn">${gu.name}</div>
-    <div class="gm">${gu.rank} 转 · ${GuRules.buildRoleOf(gu, GU_BY_ID)} · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
+    <div class="gm">${gu.rank} 转 · ${buildRoleLabel(GuRules.buildRoleOf(gu, GU_BY_ID))} · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
     <div class="ge">${effectText(gu.effect)}</div>
     <div class="gu-foot"><span>卖 ${price}</span><button class="ghost" data-sell-gu="${gu.id}">卖出</button></div>
   </article>`;
@@ -581,6 +581,7 @@ function renderPrep(root) {
         <div class="kicker">${segmentTitle(node.segment)} · ${nodeTypeLabel(node.type)} · 整备</div>
         <h2>${node.name}</h2>
       </div>
+      <div class="prep-orient"><b>整备自由进行</b><span>检查资源与构筑，完成后继续行程</span></div>
       <button class="primary prep-leave" data-prep-continue>完成整备 · 继续行程</button>
     </div>
     ${gainInsightPanel()}
@@ -677,7 +678,7 @@ function renderReward(root) {
           <button data-reward-gu="${gu.id}">
             <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
             <b>${gu.name}</b>
-            <span>${gu.rank} 转 · ${GuRules.buildRoleOf(gu, GU_BY_ID)} · ${schoolLabel(gu.school)}</span>
+            <span>${gu.rank} 转 · ${buildRoleLabel(GuRules.buildRoleOf(gu, GU_BY_ID))} · ${schoolLabel(gu.school)}</span>
             <em>${effectText(gu.effect)}</em>
           </button>`).join('')}</div>
         <p class="muted" style="margin-top:10px">所选蛊虫会收入蛊仓，不会自动装备。进入整备后，可检查它能否替换、炼化或组成杀招。</p>

@@ -279,6 +279,9 @@ const $ = (s) => document.querySelector(s);
 
 function toast(msg, kind = '') {
   const t = $('#toast');
+  // CSS 里的 top 是常量估算；HUD/行程脊在窄屏会换行变高，按实际底边定位才不压页签。
+  const spineBottom = $('#spine')?.getBoundingClientRect().bottom;
+  if (Number.isFinite(spineBottom) && spineBottom > 0) t.style.top = `${Math.round(spineBottom + 12)}px`;
   t.textContent = msg;
   t.className = 'on ' + kind;
   clearTimeout(toast._t);
@@ -544,6 +547,7 @@ function draw() {
   renderBattle($('#panel-battle'));
   renderCover($('#panel-cover'));
   updateNavigation();
+  syncDock();
 }
 
 function updateSceneArt() {
@@ -570,7 +574,7 @@ function enemyTurn(b) {
     const it = enemy.enemyIntent;
     const prefix = b.enemies.length > 1 ? `<b>${enemy.name}</b> · ` : '';
     if (!it) {
-      b.log.push(`${prefix}蓄势不动（cooldown_wait）`);
+      b.log.push(`${prefix}蓄势不动，本回合不攻击`);
       continue;
     }
     enemy.lastFired[it.id] = b.turn;
@@ -589,8 +593,7 @@ function enemyTurn(b) {
     }
     if (it.damage) {
       const rawDamage = Number(it.damage || 0)
-        + (it.tag === 'charge' ? Math.max(0, Number(enemy.ironRage || 0)) : 0)
-        + (enemy.currentCounter === 'draw_light' && !enemy.counterRevealed ? 0 : 0);
+        + (it.tag === 'charge' ? Math.max(0, Number(enemy.ironRage || 0)) : 0);
       /* 吸收 MVP：读对+做对减伤 / 逐光未用光 +3 */
       const core = globalThis.CombatCore;
       let handledCut = 0;
@@ -1395,8 +1398,6 @@ const act = {
     b.log.push('逆息 · <span class="dmg">气血 -2</span> · 真元 +3');
     BattleFx.selfDamage(2);
     BattleFx.qi(3);
-    BattleFx.selfDamage(2);
-    BattleFx.qi(3);
     Sfx.click();
     draw();
   },
@@ -1880,6 +1881,73 @@ function showPage(page) {
   document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === next));
   document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('on', p.id === `panel-${next}`));
   updateNavigation();
+  syncDock();
+}
+
+// 主行动坞：当前场景的「下一步」提升到底部固定位置。
+// 克隆并转发点击到场景内原件，避免重绘丢监听。
+const DOCK_HINTS = {
+  hall: '选择难度后开始修行',
+  map: '从当前可走节点中择一；未选择前不预设路线',
+  battle: '先看敌方意图，再从可用行动中选择；不预设攻击',
+  prep: '整备完成后继续行程',
+  reward: '先比较战后收获；不替你预选蛊虫',
+  'node-action': '核对代价，再选择当前节点行动',
+  ending: '本局已写入旧录，可回大厅开新局',
+  cover: '开发覆盖页 · 非正式流程',
+};
+
+function syncDock() {
+  const slot = document.querySelector('#dock-slot');
+  const hint = document.querySelector('#dock-hint');
+  if (!slot || !hint) return;
+  const page = state.page;
+  hint.textContent = DOCK_HINTS[page] || '处理当前场景中的下一步';
+  slot.innerHTML = '';
+  const panel = document.querySelector(`#panel-${page}`);
+  if (!panel) return;
+  if (page === 'hall' && panel.querySelector('[data-continue-run]')) {
+    hint.textContent = '行程已保存，可继续修行或明确选择另起新局';
+  }
+  if (page === 'map' && panel.querySelector('.map-node.available')) {
+    hint.textContent = '选择一条可走道路；每个节点的后果以规则预览为准';
+  }
+  if (page === 'battle' && panel.querySelector('[data-basic-attack]')) {
+    hint.textContent = '观察意图后，自行选择攻击、御守或结束回合';
+  }
+  if (page === 'reward' && panel.querySelector('.reward-choices')) {
+    hint.textContent = '比较三只蛊虫，再选择收入蛊仓的那一只';
+  }
+  const preferredByPage = {
+    hall: '[data-continue-run], [data-start-run]',
+    map: '[data-return-node]',
+    battle: '[data-start-encounter]',
+    prep: '[data-prep-continue]',
+    reward: '[data-reward-continue]',
+    'node-action': null,
+    ending: '[data-ending-hall]',
+  };
+  const preferred = Object.prototype.hasOwnProperty.call(preferredByPage, page)
+    ? preferredByPage[page]
+    : 'button.primary:not(:disabled)';
+  if (!preferred) return;
+  const src = panel.querySelector(preferred);
+  if (!src) return;
+  const mirror = dockMirrorButton(src);
+  mirror.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    src.click();
+  });
+  slot.appendChild(mirror);
+}
+
+// 卡片式按钮（地图节点 / 战后三选一）不镜像进 dock：多选场景由玩家在场景内直接选择，
+// dock 保持「不替你预设路线 / 不替你预选蛊虫」的口径，slot 为空即隐藏。
+function dockMirrorButton(src) {
+  const clone = src.cloneNode(true);
+  clone.classList.add('primary');
+  clone.removeAttribute('id');
+  return clone;
 }
 
 function updateNavigation() {
@@ -1919,6 +1987,7 @@ document.addEventListener('pointerdown', () => Sfx.click(), { once: true });
 
 draw();
 showPage(resumePage());
+syncDock();
 // 只读快照入口：供 tests/helpers/lab_browser.mjs 读取完整可序列化 state。
 // 不是改状态 / 调 act 的捷径。
 globalThis.__labSnapshot = function labSnapshot() {

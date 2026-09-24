@@ -6,12 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>问真</title>
 <link rel="icon" href="data:," />
-<link rel="stylesheet" href="css/lab.css" />
+<link rel="stylesheet" href="css/lab.css?v=scene-detail-v2" />
 </head>
 <body data-page="hall" data-run-active="false">
   <div id="bg"></div>
   <div id="grain"></div>
 
+  <!-- 惯性布局：状态条（常在顶）→ 行程脊（我在哪）→ 场景舞台（一事）→ 行动坞（下一步永远同一位置） -->
   <header id="hud">
     <div class="who">
       <span class="app">问真</span>
@@ -38,24 +39,26 @@
       <div class="pool soul">
         <label>魂魄</label><span class="num" id="hud-soul">1/4</span>
       </div>
-      <div class="seal" aria-hidden="true">问真</div>
     </div>
     <button id="reset" class="ghost" aria-label="放弃当前局并重新开始">放弃并重开</button>
   </header>
 
-  <nav id="tabs" aria-label="修行界面">
-    <button data-tab="hall" class="on">大厅</button>
-    <button data-tab="map">行程</button>
-    <button data-tab="battle">战斗</button>
-    <button data-tab="prep">整备</button>
-    <button data-tab="cover" hidden data-dev-only>覆盖</button>
+  <!-- 行程脊：位置与进度只读；切换场景走场景内链接，不靠猜页签 -->
+  <div id="spine" role="region" aria-label="行程位置">
+    <nav id="tabs" aria-label="场景视图">
+      <button data-tab="hall" class="on">大厅</button>
+      <button data-tab="map">行程</button>
+      <button data-tab="battle">战斗</button>
+      <button data-tab="prep">整备</button>
+      <button data-tab="cover" hidden data-dev-only>覆盖</button>
+    </nav>
     <div class="nav-context" aria-live="polite">
       <span id="run-context">尚未开始修行</span>
       <span id="run-progress">五境修行</span>
     </div>
-  </nav>
+  </div>
 
-  <main>
+  <main id="stage">
     <section id="panel-hall" class="panel on"></section>
     <section id="panel-map" class="panel"></section>
     <section id="panel-node-action" class="panel"></section>
@@ -65,6 +68,12 @@
     <section id="panel-cover" class="panel"></section>
     <section id="panel-ending" class="panel"></section>
   </main>
+
+  <!-- 主行动坞：下一步永远在底部同一位置；内容由当前场景主按钮提升/镜像 -->
+  <footer id="dock" aria-label="主行动">
+    <div class="dock-hint" id="dock-hint">选择难度，开始修行</div>
+    <div class="dock-slot" id="dock-slot"></div>
+  </footer>
 
   <div id="toast"></div>
   <!-- 普通脚本按顺序加载，不用 ES module：这样直接双击 lab.html 也能跑（file:// 下 module 会被 CORS 拦）。 -->
@@ -85,7 +94,7 @@
   <script src="js/rules.js"></script>
   <script src="js/alchemy.js"></script>
   <script src="js/killmove.js"></script>
-  <script src="js/battle.js"></script>
+  <script src="js/battle.js?v=battle-prep-1"></script>
   <script src="js/journey.js"></script>
   <script src="js/lab_save.js"></script>
   <script src="js/main.js"></script>

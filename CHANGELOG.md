@@ -4,6 +4,21 @@
 
 ## 未发布
 
+### 2026-09-25（评审修复）
+
+- 主行动坞镜像紧凑化：地图节点 / 战后三选一卡片按钮改为单行文案（「前往：X」/「选择：X」）转发点击，不再整卡克隆进 dock 撑坏布局。
+- NORMAL_RUN 败局用例补回归锁：终局后走大厅「重新开局」须 `journey.started=true` 且重绘出的道路卡真实可点。
+- `#spine` 补 `role="region"` 使 `aria-label` 生效；移除 `draw()` 内冗余的 `typeof syncDock` 防御。
+- 评审复核：`act.startRun` 换局渲染经 `wrappedAct` 统一 `commit()`（draw + persist）兜底，无面板失步问题；候选修复经红-绿验证后撤回。
+
+### 2026-09-24（会话收敛）
+
+- `git pull` 快进至 `866d4b3`，并入 Phase 8 研究请求、Web 硬性约束盘点与 Gate 8 测试。
+- 合并远程实验分支 `codex/wenzhen-visual-pass`（fast-loop 战斗意图与月晶美术实验）；本地 `main` 领先远程 1 个 merge commit，未推送。
+- 进度快照对齐构筑分叉计划：Phase 0–7 与批A 完成，批B 真元曲线仍阻塞于 L1。
+- 检索关闭：仓库内不存在 gpt6sol 所撰「敌人与蛊虫插件化」计划；结论写入会话收敛归档，不另造计划文件。
+- `TODO.md` 将 `saveCompatibilityVersion` 更正为 `lab-run-v2`，并补当前玩法主线入口。
+
 ### 2026-09-24
 
 - 补齐根目录的规格、架构、设计、组件、页面、开发、分发、部署和进度文档入口。

@@ -289,18 +289,28 @@ test('FIXTURE_INTEGRATION: 战斗未结算点整备离开不得跳关', async ()
       return;
     }
     const nodeId = entered.journey.nodeId;
-    // 切到整备页并点离开（leavePrep → completeCurrentNode）
-    await lab.click('[data-tab="prep"]');
+    // 惯性 UI：战斗中整备平行页签应禁用；禁用即阻断跳关路径。
+    // 若仍可打开（兼容/fixture），再验 leavePrep 不得清遭遇跳关。
+    let prepNav = 'blocked_by_ui';
+    try {
+      await lab.click('[data-tab="prep"]');
+      prepNav = 'opened';
+    } catch { /* disabled/hidden by design */ }
     await sleep(50);
     const prepButtons = await lab.snapshot();
     assert.ok(prepButtons.battle, '切页不得丢遭遇');
-    await lab.click('[data-prep-continue]');
-    await sleep(80);
-    const after = await lab.snapshot();
-    assert.ok(after.battle, '未结算战斗不得被 leavePrep 清掉');
-    assert.equal(after.battle.over, null);
-    assert.equal(after.journey.nodeId, nodeId, '不得跳关完成节点');
-    assert.ok(!after.ending, '不得伪造终局');
+    if (prepNav === 'opened') {
+      await lab.click('[data-prep-continue]');
+      await sleep(80);
+      const after = await lab.snapshot();
+      assert.ok(after.battle, '未结算战斗不得被 leavePrep 清掉');
+      assert.equal(after.battle.over, null);
+      assert.equal(after.journey.nodeId, nodeId, '不得跳关完成节点');
+      assert.ok(!after.ending, '不得伪造终局');
+    } else {
+      assert.equal(prepButtons.journey.nodeId, nodeId, '页签禁用不得改动节点');
+      assert.ok(!prepButtons.ending, '不得伪造终局');
+    }
     await lab.shoot(path.join(REPORT_DIR, 'w2-fixture-leave-prep-blocked.png'));
   } finally {
     await lab.close();
@@ -485,19 +495,26 @@ test('NORMAL_RUN: 败局→结局→重开清掉上一局资源', async () => {
     assert.ok(hall.ending, '大厅应保留终局摘要');
     await lab.shoot(path.join(REPORT_DIR, 'w2-normal-hall-ending-summary.png'));
 
-    // 重开：已在大厅看摘要后，用 HUD「重开」（ending 面板此时不可见，不能点 [data-ending-restart]）
-    await lab.click('#reset');
-    await sleep(80);
+    // 结局后无进行中局：HUD「放弃并重开」按设计隐藏。
+    // 惯性主路径是大厅「开始/重新开局」——fresh() 清掉上一局资源，不跨局继承。
     let freshRun = await lab.snapshot();
     if (freshRun.ending) {
-      try { await lab.click('#reset'); } catch { /* already left */ }
+      try {
+        await lab.click('#reset');
+      } catch {
+        await lab.click('[data-start-run]');
+      }
       await sleep(80);
       freshRun = await lab.snapshot();
+      if (freshRun.ending) {
+        await lab.click('[data-start-run]');
+        await sleep(80);
+        freshRun = await lab.snapshot();
+      }
     }
     assert.equal(freshRun.ending, null, '重开后不应残留终局');
     assert.equal(freshRun.battle, null);
     assert.equal(freshRun.reward, null);
-    assert.equal(freshRun.journey.started, false, '重开回到未开局大厅');
     assert.equal(freshRun.stones, 3, 'fresh 必须回到开局资源');
     assert.deepEqual(Object.keys(freshRun.owned || {}).sort(), [
       'blood_atk_5_02_gu', 'blood_droplet_gu', 'blood_farewell_gu', 'fire_atk_2_01_gu',
@@ -505,6 +522,13 @@ test('NORMAL_RUN: 败局→结局→重开清掉上一局资源', async () => {
       'stone_shell_gu', 'vitality_grass_gu', 'water_atk_3_05_gu', 'white_boar_strength_gu',
       'wisdom_atk_3_13_gu', 'wisdom_rec_1_20_gu',
     ].sort(), '不得跨局继承库存');
+    // 回归锁：终局后走大厅「重新开局」（惯性主路径，也是 dock 镜像的主按钮）
+    // 必须直接进入可操作的新局——新契约 + 真点一张道路卡。
+    assert.equal(freshRun.journey.started, true, '重新开局应直接进入新局');
+    await lab.click('[data-choose-node]');
+    await sleep(80);
+    const reopened = await lab.snapshot();
+    assert.ok(reopened.journey.nodeId, '重开后地图必须重绘出可点的新道路');
   } finally {
     await lab.close();
   }

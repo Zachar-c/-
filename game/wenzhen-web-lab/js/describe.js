@@ -98,5 +98,14 @@ function killMoveEffectText(move, guById = {}) {
 const schoolLabel = (s) => ({
   light: '光道', moon: '月道', blood: '血道', force: '力道', earth: '土道',
   water: '水道', qi: '气道', wood: '木道', fire: '火道', wisdom: '智道',
-  human: '人道',
+  human: '人道', sword: '剑道', gold: '金道', bone: '骨道', wind: '风道',
 }[s] || s || '—');
+
+// 构筑角色有两套键：buildRole/DEFAULT_BUILD_ROLE 的大写键与数据表 role 的小写键，
+// 只在上屏时翻译；规则层（GuRules.buildRoleOf）保持原始键，测试按原始键断言。
+const buildRoleLabel = (role) => ({
+  attack: '攻击', healing: '治疗', defense: '防御', recon: '侦查',
+  movement: '机动', support: '辅助', logistics: '后勤',
+  Core: '核心', Information: '情报', Support: '辅助', Transform: '蜕变',
+  Finisher: '终结', Resource: '资源',
+}[role] || role || '—');
