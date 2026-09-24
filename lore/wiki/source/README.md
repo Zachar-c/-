@@ -15,6 +15,7 @@
 - `lore/research/分支：六卷精编版/记忆库/02-人物弧光.md`：人物整理资料，属于二手整理。
 - `lore/research/分支：六卷精编版/记忆库/06-角色台账.md`：角色行为约束，属于创作辅助资料。
 - [`chapter-index.md`](chapter-index.md)：读书笔记区间索引。
+- [`section-index.md`](section-index.md)：原文卷节标记索引（生成物，`tools/build_section_index.py` 重建；行号↔节题对照，含重复与编号异常登记）。
 
 ## 回查原则
 
