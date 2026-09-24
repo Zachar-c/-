@@ -316,9 +316,6 @@ const route = routeIds.map((id) => {
   if (node.layerBoss) routeLayer = Math.min(5, node.layerBoss + 1);
   return node;
 }).filter(Boolean);
-const encounters = nodeList
-  .filter((t) => t.type === 'combat')
-  .map(nodeView);
 
 // L0 裁决（2026-09-20）：只保留蛊货架。
 // 不继承 Godot 的恶名、资源交换、寿元交易、以物易物、补魂丹与配方解锁服务。
@@ -527,6 +524,8 @@ const out = {
     'lab-run-v1',
     '907a8d845d0680bba5ff4ee636e21aaf78c498c6de5ef93fa2f820f7252364e6',
     '061e49e1986a381495a2155aecf82b1e8e449a06a02d448c24150f21c4cd6c1a',
+    // 2026-09-25：镜像不再携带无消费者的 encounters 段（旧遭遇界面已由路线图取代）。
+    '1c47e693695324b76dda72cce2457d09aefb757c405cef23bad01debfe0ac7f2',
   ],
   runSeed: firstRun.seed || 1,
   aptitude,
@@ -549,7 +548,7 @@ const out = {
     schoolPools: { [labSchool]: schoolPools[labSchool] || [] },
     school: labSchool,
   },
-  gu, recipes: picked, killMoves, enemies: pickedEnemies, encounters,
+  gu, recipes: picked, killMoves, enemies: pickedEnemies,
   nodes, route, shopOffers, npcs, events,
   /* Rank 主链：WORLD 真源快照（Integration 刀1）。Lab 投影只准读这里。 */
   worldBalance: {

@@ -322,13 +322,6 @@ h2 {
   100% { opacity: 0; transform: translate(-50%, -36px) scale(1.08); }
 }
 .foe { position: relative; }
-.turn-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  margin-bottom: 10px; padding: 4px 10px;
-  font-size: 11px; letter-spacing: 2px; color: var(--ink-stat);
-  border: 1px solid var(--hairline); background: rgba(7,17,28,.6);
-}
-.turn-badge b { color: var(--jade); font-weight: 400; }
 
 /* ── 线索 / 反击 / 状态 芯片 ───────────────────── */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
@@ -473,37 +466,17 @@ button.risky { border-color: var(--cinnabar); }
 .archive-journal { margin: 12px 0 0; padding-left: 18px; color: var(--ink-stat); }
 .archive-journal li { margin-top: 4px; font-size: 11px; line-height: 1.65; }
 
-/* 地图 */
-.route-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
-.route-node {
-  position: relative; min-height: 190px; padding: 15px;
-  border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.82), rgba(5,13,21,.74));
-}
-.route-node.current { border-color: var(--jade); box-shadow: inset 0 0 26px rgba(142,223,212,.04), 0 20px 48px rgba(0,0,0,.2); }
-.route-node.done { opacity: .72; border-left: 3px solid var(--jade); }
-.route-node.locked { opacity: .48; }
+/* 地图（路线卡片类名 rn-* 由 journey.js 生成） */
 .rn-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-ver); }
 .rn-top em { font-style: normal; }
-.rn-type { margin-top: 18px; font-size: 11px; letter-spacing: 3px; color: var(--jade); }
 .rn-name { margin-top: 7px; font-size: 17px; letter-spacing: 2px; }
-.route-node p { margin-top: 10px; font-size: 12px; line-height: 1.75; color: var(--ink-soft); }
-.route-node button { position: absolute; right: 13px; bottom: 13px; }
 .rn-state { position: absolute; right: 13px; bottom: 13px; font-size: 11px; color: var(--ink-ver); }
 
 /* 遭遇 */
-.encounter-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 28px; align-items: start; }
-.node-sheet { padding: 24px 0; }
-.node-sheet h1, .reward-sheet h1, .ending-sheet h1 { margin-top: 10px; font-family: 'STSong', 'Songti SC', serif; font-size: 42px; font-weight: 500; letter-spacing: .08em; }
+.reward-sheet h1, .ending-sheet h1 { margin-top: 10px; font-family: 'STSong', 'Songti SC', serif; font-size: 42px; font-weight: 500; letter-spacing: .08em; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
 .tagline { padding: 4px 9px; border: 1px solid var(--rule); color: var(--ink-stat); font-size: 11px; }
 .tagline.danger { color: var(--cinnabar); border-color: var(--cinnabar); }
-.choice-panel { padding: 15px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.84), rgba(5,13,21,.72)); }
-.choice-list { display: grid; gap: 8px; }
-.choice-list button { width: 100%; }
-.encounter-notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 24px; }
-.detail-card { padding: 15px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.82), rgba(5,13,21,.72)); }
-.detail-card h3 { margin-top: 8px; font-size: 16px; font-weight: 400; letter-spacing: 2px; }
-.detail-card p { margin-top: 8px; font-size: 12px; line-height: 1.8; color: var(--ink-soft); }
 
 /* 坊市 */
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
@@ -516,13 +489,6 @@ button.risky { border-color: var(--cinnabar); }
 .shop-offer button { margin-top: 12px; }
 
 /* 休整 / 收获 / 终局 */
-.rest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
-.rest-option { min-height: 132px; padding: 16px; text-align: left; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.rest-option b { font-size: 17px; font-weight: 400; letter-spacing: 2px; }
-.rest-option span { font-size: 12px; line-height: 1.7; color: var(--ink-soft); }
-.rest-option em { margin-top: auto; font-size: 11px; font-style: normal; color: var(--ink-ver); }
-.rest-option.ready { border-color: var(--jade); }
-.rest-option.skip { border-color: var(--rule); }
 .reward-sheet, .ending-sheet { max-width: 720px; padding: 28px; border: 1px solid var(--card-border); background: linear-gradient(145deg, rgba(12,25,38,.88), rgba(5,13,21,.78)); box-shadow: 0 28px 80px rgba(0,0,0,.3); }
 .ending-death {
   margin-top: 18px; padding: 12px 14px;
@@ -560,9 +526,8 @@ button.risky { border-color: var(--cinnabar); }
 }
 
 @media (max-width: 940px) {
-  .hall-grid, .encounter-grid, .field { grid-template-columns: 1fr; }
+  .hall-grid, .field { grid-template-columns: 1fr; }
   .field .log { max-height: 220px; }
-  .route-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
   .battle-head { align-items: flex-start; flex-direction: column; }
   .battle-head .wallet { white-space: normal; }
 }
@@ -578,7 +543,7 @@ button.risky { border-color: var(--cinnabar); }
   .who .tag { display: inline; font-size: 10px; margin-left: 0; }
   .pool.qi .bar { width: 92px; }
   .seal { display: none; }
-  .hall-main h1, .node-sheet h1, .reward-sheet h1, .ending-sheet h1 { font-size: 34px; }
+  .hall-main h1, .reward-sheet h1, .ending-sheet h1 { font-size: 34px; }
   .hall-actions, .combat-intro { flex-direction: column; align-items: stretch; }
   .hall-actions button, .prep-leave { width: 100%; }
   .reward-lines, .ending-stats { grid-template-columns: 1fr 1fr; }
@@ -620,9 +585,6 @@ button.risky { border-color: var(--cinnabar); }
 .journey-trail span.now { border-color: var(--cinnabar); color: var(--cinnabar); }
 .map-choice-title { margin: 18px 0 10px; font-size: 15px; font-weight: 400; letter-spacing: 2px; }
 .map-choices { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
-.node-map { display: grid; gap: 10px; padding-bottom: 12px; }
-.map-row { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; align-items: stretch; }
-.map-depth { padding-top: 15px; font-size: 11px; color: var(--ink-ver); border-right: 1px solid var(--hairline); }
 .map-nodes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .map-node {
   position: relative; display: block; width: 100%; min-height: 112px; padding: 12px 12px 36px;
@@ -636,6 +598,7 @@ button.risky { border-color: var(--cinnabar); }
   cursor: pointer;
 }
 .map-node.available:hover:not(:disabled) { color: var(--ink); transform: translateY(-2px); border-color: var(--jade); }
+/* type-* 由 journey.js 的 class="map-node type-${node.type}" 动态拼出，勿按字面量扫描判定为死 */
 .map-node.type-battle .rn-top em,
 .map-node.type-elite .rn-top em,
 .map-node.type-boss .rn-top em { color: var(--cinnabar); }
@@ -738,8 +701,7 @@ button.risky { border-color: var(--cinnabar); }
 }
 
 @media (max-width: 620px) {
-  .difficulty-row, .map-row, .map-nodes, .reward-choices { grid-template-columns: 1fr; }
-  .map-depth { padding-top: 0; border-right: 0; }
+  .difficulty-row, .map-nodes, .reward-choices { grid-template-columns: 1fr; }
   .segment-progress { gap: 4px; }
   .segment-step { padding: 7px 4px; }
   .segment-step span { font-size: 8px; }

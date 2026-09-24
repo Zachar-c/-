@@ -22,6 +22,8 @@ SCOPE: game/data · game/scripts/domain · world-model · wenzhen-web-lab
 
 Web 产品边界（L0，2026-09-24）：Godot 仍保留完整材料规则与数据；Web 投影不包含材料掉落、交易、库存或材料作为合炼投入。Web 合炼只消耗蛊虫和配方标注的元石。
 
+> **2026-09-25 删除登记（L0：减少代码量）**：`vertical/`（GOLDEN 校准）、`balance/`（RESEARCH 脊柱实验）、`golden/`（校准说明）、MVP 入口（`mvp.js`/`mvp.html`/`index.html`/`css/mvp.css`，其源码守卫测试一并移除）、`tools/autoplay.mjs`（短剧本数学验收，目标 `index.html` 已删；2026-09-22 设计文档已明确其"不能代表 lab.html 验收"，lab 验收由 `autoplay_lab.mjs` 与 node 测试覆盖）与 `game/.agents/` 技能材料已删除；`mvp_content.js`、`mvp_logic.js` 为 lab 共享模块，保留。下文涉及上述实体的行仅作历史记录，实体已不存在。
+
 ---
 
 ## 1. 概念 → Owner 表

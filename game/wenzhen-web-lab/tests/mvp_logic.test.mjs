@@ -208,12 +208,6 @@ test('light support is applied before the support charge is spent', () => {
   assert.equal(values.damage, 3);
 });
 
-test('battle screen exposes both known and unknown intelligence', () => {
-  const source = fs.readFileSync(new URL('../js/mvp.js', import.meta.url), 'utf8');
-  assert.match(source, /<dt>已知弱点<\/dt>\s*<dd>\$\{esc\(intel\.known\)\}<\/dd>/);
-  assert.match(source, /<dt>未察信息<\/dt>\s*<dd>\$\{esc\(intel\.unknown\)\}<\/dd>/);
-});
-
 /* ------------------------------------------------------------------
    V4（2026-09-21 L1 裁决）
    1. 反制第一次观察后，本场永久识别（不再每回合重新隐藏）

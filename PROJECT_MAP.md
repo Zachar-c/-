@@ -62,7 +62,7 @@
 - 用途：当前《问真》Web 游戏产品与完整流程体验入口。
 - 首读文件：`README.md`、`EXISTING_CAPABILITY_MAP.md`。
 - 当前入口：`lab.html`（可离线运行；本地存档使用浏览器 `localStorage`）。
-- 可修改范围：打磨 Web 主流程实际可见的五层路线、遭遇、成长、存档与结局；规则和基础内容优先复用 `game/data/` 并使用现有数据生成工具。`contentVersion` 用于完整内容快照追溯，进行中存档以稳定的 `saveCompatibilityVersion` 校验；新增文案、美术和兼容内容不打断长局，改变在途状态结构或规则时须提升兼容版本并提供迁移/拒绝策略。不得将 `mvp.html` 的短剧本等同于完整产品。
+- 可修改范围：打磨 Web 主流程实际可见的五层路线、遭遇、成长、存档与结局；规则和基础内容优先复用 `game/data/` 并使用现有数据生成工具。`contentVersion` 用于完整内容快照追溯，进行中存档以稳定的 `saveCompatibilityVersion` 校验；新增文案、美术和兼容内容不打断长局，改变在途状态结构或规则时须提升兼容版本并提供迁移/拒绝策略。MVP 短剧本入口（`mvp.html` 等）已于 2026-09-25 按 L0 减少代码量裁定删除，产品入口仅 `lab.html`。
 
 ### `fortune/app/`（Task 6 已导入）
 
