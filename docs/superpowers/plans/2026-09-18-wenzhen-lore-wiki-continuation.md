@@ -1,5 +1,7 @@
 # 问真 Wiki 解冻续作计划（Phase 4+）
 
+> **2026-09-25 注记**：`lore/wiki/AGENTS.md` 已升级 schema v2（LLM Wiki 六层模型；frontmatter 七字段 + `schema: 2` 迁移标记；`[断言]/[传闻]/[观点]/[后判]` 认知标记；每页至少一个可视化）。本计划中「页面只用四个 frontmatter 字段」等 v1 约束以 v2 为准；批次单元、五步流程、验收命令与 `game/` 只读冻结不变。原文实际位于仓库根 `蛊真人-clean.txt`（本地忽略），`source/` 目录缺失为既有债务。
+
 **Goal:** 解冻 `lore/wiki/`，以 opencode 作为执行层，按"主题簇 / 叙事冲突 / 世界规则链"批次继续《蛊真人》蒸馏。
 
 **Architecture:** `lore/wiki/` 是 Markdown-first 蒸馏层；`source/蛊真人-clean.txt` 与 `source/《人祖传》.txt`（本地忽略）是原文；`game/分支：六卷精编版/读书笔记/`、`.../记忆库/`、`game/docs/lore/canon-index.md` 是二级来源；`lore/research/` 是创作资料，不得当原著事实。不引入数据库、RAG、向量库、图谱或 Quartz。

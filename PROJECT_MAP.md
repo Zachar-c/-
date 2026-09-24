@@ -31,7 +31,7 @@
 
 ### `lore/wiki/`（Task 5 已迁移）
 
-- 用途：AI 可读的《蛊真人》蒸馏知识层（原 `wenzhen-lore`），按批次持续更新。
+- 用途：AI 可读的《蛊真人》蒸馏知识层（原 `wenzhen-lore`），按批次持续更新；2026-09-25 起按 LLM Wiki 方法论（schema v2，六层模型）编译，见 `lore/wiki/AGENTS.md`。
 - 首读文件：`lore/wiki/README.md`、`lore/wiki/index.md`、`lore/wiki/AGENTS.md`。
 - 当前入口：`lore/wiki/`（旧 `wenzhen-lore/` 已移除）。
 - 权威来源：父仓库 `5f3fbfc` 快照；现以 `lore/wiki/` 为准。
