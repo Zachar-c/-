@@ -1,9 +1,10 @@
 #Requires -Version 7.0
 <#
-  lore/wiki 验收脚本（Batch 0 新增，Batch 0b 增加 check6/check7）。
+  lore/wiki 验收脚本（Batch 0 新增，Batch 0b 增加 check6/check7，2026-09-25 schema v2 增加 check8）。
   从仓库根运行：pwsh -NoProfile -File lore\wiki\tools\check.ps1
   无外部依赖。逐项输出 PASS/FAIL 明细；全部通过退出码 0，任一失败退出码 1。
-  check6 校验概念页被分类索引收录，check7 校验 frontmatter 的 type 与所在目录一致。
+  check6 校验概念页被分类索引收录，check7 校验 frontmatter 的 type 与所在目录一致，
+  check8 校验声明 schema: 2 的页面带 description、date（YYYY-MM-DD）、tags（≥2）。
 #>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Continue'
@@ -156,6 +157,27 @@ foreach ($f in $conceptPages) {
 }
 if ($c7ok -eq $c7total) { Write-Output "PASS: check7 type 与目录一致 ($c7ok/$c7total)" }
 else { Write-Output "FAIL: check7 type 与目录一致 ($c7ok/$c7total)" }
+
+# 8. schema v2 页面（frontmatter 声明 schema: 2）必须带 description、date（YYYY-MM-DD）、tags（≥2）
+$c8ok = 0; $c8total = 0
+foreach ($f in $conceptPages) {
+  $fm = Get-FrontMatter $f.FullName
+  if ($null -eq $fm) { continue }
+  if ($fm -notmatch '(?m)^\s*schema\s*:\s*2\s*$') { continue }
+  $c8total++
+  $missing = @()
+  if ($fm -notmatch '(?m)^\s*description\s*:\s*\S') { $missing += 'description' }
+  $dateVal = ([regex]::Match($fm, '(?m)^\s*date\s*:\s*(\S+)')).Groups[1].Value
+  if ($dateVal -notmatch '^\d{4}-\d{2}-\d{2}$') { $missing += 'date' }
+  $tagsLine = ([regex]::Match($fm, '(?m)^\s*tags\s*:\s*(.+)$')).Groups[1].Value
+  $tagCount = ([regex]::Matches($tagsLine, '[^\s,\[\]]+')).Count
+  if ($tagCount -lt 2) { $missing += "tags($tagCount)" }
+  if ($missing.Count -eq 0) { $c8ok++ }
+  else { Add-Fail "check8 schema v2 字段缺失或格式错误 [$($missing -join ',')]: $($f.FullName)" }
+}
+if ($c8total -eq 0) { Write-Output 'PASS: check8 schema v2 字段（暂无 schema: 2 页面）' }
+elseif ($c8ok -eq $c8total) { Write-Output "PASS: check8 schema v2 字段 ($c8ok/$c8total 页)" }
+else { Write-Output "FAIL: check8 schema v2 字段 ($c8ok/$c8total 页)" }
 
 if ($failures.Count -eq 0) { Write-Output 'ALL CHECKS PASSED'; exit 0 }
 else { Write-Output "TOTAL FAILURES: $($failures.Count)"; exit 1 }
