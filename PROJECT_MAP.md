@@ -8,10 +8,17 @@
 ## 导航约定
 
 - 入口顺序：`AGENTS.md` → `PROJECT_MAP.md` → 目标目录 `README.md` / `AGENTS.md`。
-- 一次只进一个目录；没有理由不扫描全仓。
+- 一次只进一个目标目录；跨目录、审计或边界问题时再扫描全仓。
 - 已完成导入的目标目录（`lore/`、`editorial/`、`fortune/`、`ai-system/`、`game/`）是当前入口；旧 `gu-zhenren-editor/` 的受版本内容已删除（Task 7），残留本地恢复材料不作为入口。
 
 ## 目标目录
+
+### 根目录标准文档入口（2026-09-24）
+
+- 完整文档树及职责见 [README.md](README.md)；目录与数据组织见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+- [PROJECT-SPEC.md](PROJECT-SPEC.md) 链接唯一 PRD，不新增产品权威；设计、组件、页面、开发、分发和部署各有同名职责入口。
+- 当前整理状态见 [TODO.md](TODO.md)，新增更新记录见 [CHANGELOG.md](CHANGELOG.md)。
+- 本次仅增加导航与状态说明，不移动既有来源、协议、裁定或子项目目录；未配置能力不视作已实现。
 
 ### `lore/research/`（Task 5 已导入）
 
@@ -40,14 +47,21 @@
 
 ### `game/`（Task 7 已导入）
 
-- 用途：当前 Gitee Godot 游戏工程（最后迁移，保留工程结构、UID、资源路径和测试入口）。
+- 用途：Gitee Godot 成熟游戏工程，保留规则实现、权威数据、工程结构、UID、资源路径和测试入口；为 Web 产品提供可复用实现与数据来源。
 - 首读文件：`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`。
 - 当前入口：`game/`（导入提交 `ebb7f81`，744 提交、1904 文件，另有本地带过提交 `db34873`；旧 `gu-zhenren-editor/` 的受版本内容已删除）。
 - 权威来源：`https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git`（`master`）。
-- 可修改范围：仅目录导入、旧根路径配置/文档的机械引用更新、忽略规则；不改 Godot 逻辑、数据数值与契约内容。
+- 当前任务范围：依据 L0 最新方向为 Web 产品提供规则和内容参考。`game/data/` 是已存在的共享数据来源；改动其内容时，通过 Web 工程现有生成工具同步镜像。
 - 约束说明：当前生效约束以 `game/world-model/governance/CONSTRAINTS-V2.md` 为准；`game/docs/contracts/2026-09-12-agent-ownership-contract.md` 已被该约束明确降级为历史档案，不作为执行契约。
 - 2026-09-20 清理：`game/world-model/` 仅保留 `governance/`、`rulings/`、`reports/` 与历史说明；运行时、镜像数据和快照/验收脚本已删除，游戏真源为 `game/data/`。
-- 2026-09-22 L0 本轮交付入口：`game/wenzhen-web-lab/lab.html`，目标为可玩 Web 游戏本体，Godot 不纳入本轮。规格见 `docs/superpowers/specs/2026-09-22-lab-playable-game-design.md`，执行与验收见 `docs/superpowers/plans/2026-09-22-lab-playable-game.md`；沿用既有数据 Owner，不表示重写 Godot 或裁定正式单局必须 R1→R5。
+- 2026-09-24 L0 方向：浏览器 Web 版是当前完整长线游戏的产品载体；Godot 工程作为成熟规则与数据来源，可按需要复用。美术方向可以原创设计。
+
+### `game/wenzhen-web-lab/`
+
+- 用途：当前《问真》Web 游戏产品与完整流程体验入口。
+- 首读文件：`README.md`、`EXISTING_CAPABILITY_MAP.md`。
+- 当前入口：`lab.html`（可离线运行；本地存档使用浏览器 `localStorage`）。
+- 可修改范围：打磨 Web 主流程实际可见的五层路线、遭遇、成长、存档与结局；规则和基础内容优先复用 `game/data/` 并使用现有数据生成工具。`contentVersion` 用于完整内容快照追溯，进行中存档以稳定的 `saveCompatibilityVersion` 校验；新增文案、美术和兼容内容不打断长局，改变在途状态结构或规则时须提升兼容版本并提供迁移/拒绝策略。不得将 `mvp.html` 的短剧本等同于完整产品。
 
 ### `fortune/app/`（Task 6 已导入）
 

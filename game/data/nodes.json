@@ -7,7 +7,7 @@
    "enemy_kind": "neutral_stone_wanderer",
    "enemy_theme": "neutral",
    "visible": true,
-   "summary": "一名散修拦在岔路前，正试探你的虚实。",
+   "summary": "散修拦在岔路前，袖口沾着新土；他先打量你的蛊囊，再问你要走哪条道。",
    "choices": [
     "negotiate",
     "deceive",
@@ -26,7 +26,7 @@
    "stage": "one",
    "type": "caravan",
    "visible": true,
-   "summary": "山脊商队临时开市，可买卖或以蛊换蛊。",
+   "summary": "商队在山脊支起临时货棚。管事认得附近的路，也记得每一笔人情。",
    "choices": [
     "buy",
     "sell",
@@ -47,7 +47,7 @@
    "stage": "one",
    "type": "refinement",
    "visible": false,
-   "summary": "石穴余火未熄，可以冒险炼蛊。",
+   "summary": "石穴里的炉火还温着。风从裂缝灌入，炉口却留着一批未收的蛊材。",
    "choices": [
     "refine",
     "leave"
@@ -63,7 +63,7 @@
    "stage": "one",
    "type": "cultivation",
    "visible": false,
-   "summary": "山泉元气平稳，是冲击二转的短暂窗口。",
+   "summary": "山泉灵气平稳，正好静修或冲击二转；泉眼旁的脚印还没被水冲散。",
    "choices": [
     "cultivate",
     "meditate",
@@ -80,7 +80,7 @@
    "stage": "one",
    "type": "ledger",
    "visible": false,
-   "summary": "第一阶段结束，所有已养蛊虫的养护开支需要一并结清。",
+   "summary": "这一层的养蛊账目已到期。结清、卖蛊或欠债都能过关，账却不会自己消失。",
    "choices": [
     "settle_feeding",
     "sell",
@@ -97,7 +97,7 @@
    "stage": "one",
    "type": "hazard",
    "visible": false,
-   "summary": "毒瘴沿山口沉降。谨慎侦察可避开消耗，强行穿越能节省时间。",
+   "summary": "毒瘴沿坡压下，林间几道脚印在雾中断开。先探路稳妥，硬闯省事，也会留下破绽。",
    "choices": [
     "scout",
     "cross",
@@ -114,7 +114,7 @@
    "stage": "one",
    "type": "hazard",
    "visible": false,
-   "summary": "暗河倒灌石洞，水声中有蛊虫振翅。",
+   "summary": "暗河倒灌进石窟，水面漂着几片新折的月蓝花瓣；洞顶深处传来蛊翅声。",
    "choices": [
     "scout",
     "cross",
@@ -131,6 +131,7 @@
    "stage": "three",
    "type": "hazard",
    "visible": false,
+   "summary": "黑泥漫过旧木栈道，踏错一步便会困在淤地；远处几根立桩仍指着干路。",
    "choices": [
     "scout",
     "cross",
@@ -145,7 +146,7 @@
    "stage": "one",
    "type": "inheritance",
    "visible": false,
-   "summary": "月色下留有残缺传承痕迹，可能带来蛊方线索，也可能引来竞争者。",
+   "summary": "月下石阶只剩半截，沿途手记彼此矛盾。蛊方线索在前，后来者也在前。",
    "choices": [
     "inspect",
     "claim",
@@ -163,7 +164,7 @@
    "stage": "two",
    "type": "wild_gu",
    "visible": false,
-   "summary": "血苔丛中藏着疗伤蛊与采集者，收益和伤势风险并存。",
+   "summary": "血苔在湿石上泛红，采药人留下的布条还挂在枝间；林里既有药材，也有兽迹。",
    "choices": [
     "harvest",
     "trade",
@@ -180,6 +181,7 @@
    "stage": "four",
    "type": "inheritance",
    "visible": false,
+   "summary": "山雾封住残祠，门槛上的封痕已被人动过。查验、备好退路，或趁封痕未破时离开。",
    "choices": [
     "inspect",
     "claim",
@@ -198,7 +200,7 @@
    "stage": "one",
    "type": "market",
    "visible": false,
-   "summary": "山民寨子缺人守夜。短工给元石，交易则能换取情报。",
+   "summary": "寨中缺人守夜，村民肯拿元石换一晚值守；药师也愿用消息回报旧人情。",
    "choices": [
     "work",
     "trade",
@@ -217,7 +219,7 @@
    "stage": "two",
    "type": "shop",
    "visible": false,
-   "summary": "收摊前的黑市只认元石，摊主不问货物来历。",
+   "summary": "黑市藏在两道山梁之间，货物没有来路，摊主也不问。看中的东西，得拿元石换。",
    "choices": [],
    "time_scale": "hours",
    "on_skip": "none",
@@ -231,6 +233,7 @@
    "stage": "one",
    "type": "combat",
    "visible": false,
+   "summary": "青茅外隘的最后一关被强敌把守，岩壁上的爪痕与蛊痕交叠。想进下一层，先摸清守关者的路数。",
    "layer_boss": 1,
    "choices": [
     "fight"
@@ -250,6 +253,7 @@
    "stage": "two",
    "type": "combat",
    "visible": false,
+   "summary": "落瘴岭的出口藏在狭窄洞道后，守关者已占住最窄处。这里没有宽阔场地，出手前要看清局势。",
    "layer_boss": 2,
    "choices": [
     "fight"
@@ -272,6 +276,7 @@
    "stage": "three",
    "type": "combat",
    "visible": false,
+   "summary": "血蟒涧深处的断桥被层主占据，桥下兽痕与刀痕叠成一片。要穿过山涧，得先逼出它的破绽。",
    "layer_boss": 3,
    "choices": [
     "fight"
@@ -291,6 +296,7 @@
    "stage": "four",
    "type": "combat",
    "visible": false,
+   "summary": "万蛊窟尽头的石门前，守关者已经等候多时。沿途痕迹都指向门后，却没人留下答案。",
    "layer_boss": 4,
    "choices": [
     "fight"
@@ -311,11 +317,36 @@
    "stage": "two",
    "type": "event",
    "visible": false,
-   "summary": "石壁上刻着旧痕，岩缝里的应答不知是谁留下的。",
+   "summary": "石壁刻痕层层叠叠，岩缝里的应答却总慢半拍。你听见的不止自己的回声。",
    "choices": [],
    "time_scale": "days",
    "on_skip": "none",
-   "event_pool": ["echo_cave", "gu_rot_pact", "huajiu_cache", "tithing_cache", "small_beast_tide", "tide_aftermath", "duel_wager", "duel_loss", "weird_trade", "contract_seal", "recognition_toll", "blood_vein_offering"],
+   "event_pool": [
+    "echo_cave",
+    "gu_rot_pact",
+    "huajiu_cache",
+    "tithing_cache",
+    "small_beast_tide",
+    "tide_aftermath",
+    "duel_wager",
+    "duel_loss",
+    "weird_trade",
+    "contract_seal",
+    "recognition_toll",
+    "blood_vein_offering",
+    "broken_bridge_vow",
+    "cold_ash_pile",
+    "sealed_silk_reliquary",
+    "unclaimed_waystone",
+    "cliffside_beast_bounty",
+    "gravewatch_bones",
+    "ropewalk_wager",
+    "marrow_lock_duel",
+    "unlit_soul_lantern",
+    "inked_promise",
+    "red_seal_submission",
+    "bloodstone_cistern"
+   ],
    "next_ids": [
     "blood_moss_grove",
     "gu_rot_pact"
@@ -326,13 +357,38 @@
    "stage": "two",
    "type": "event",
    "visible": false,
-   "summary": "异闻未死，风里带着一股说不清的代价味。",
+   "summary": "腐蛊外壳早已碎裂，契文却仍能回应。触碰它或可换来机缘，也会留下代价。",
    "choices": [],
    "time_scale": "days",
    "on_skip": "none",
    "event_id": "gu_rot_pact",
    "dialogue_title": "gu_rot_pact",
-   "event_pool": ["echo_cave", "gu_rot_pact", "huajiu_cache", "tithing_cache", "small_beast_tide", "tide_aftermath", "duel_wager", "duel_loss", "weird_trade", "contract_seal", "recognition_toll", "blood_vein_offering"],
+   "event_pool": [
+    "echo_cave",
+    "gu_rot_pact",
+    "huajiu_cache",
+    "tithing_cache",
+    "small_beast_tide",
+    "tide_aftermath",
+    "duel_wager",
+    "duel_loss",
+    "weird_trade",
+    "contract_seal",
+    "recognition_toll",
+    "blood_vein_offering",
+    "broken_bridge_vow",
+    "cold_ash_pile",
+    "sealed_silk_reliquary",
+    "unclaimed_waystone",
+    "cliffside_beast_bounty",
+    "gravewatch_bones",
+    "ropewalk_wager",
+    "marrow_lock_duel",
+    "unlit_soul_lantern",
+    "inked_promise",
+    "red_seal_submission",
+    "bloodstone_cistern"
+   ],
    "next_ids": []
   },
   {
@@ -340,7 +396,7 @@
    "stage": "one",
    "type": "market",
    "visible": false,
-   "summary": "临时寨市接近收摊，能补资源，但会失去深入山路的时间。",
+   "summary": "临时寨市正在收摊，摊主肯卖一条确切消息；多停一刻，就少一刻赶路。",
    "choices": [
     "trade",
     "buy_information",
@@ -359,6 +415,7 @@
    "enemy_kind": "faction_guard",
    "enemy_theme": "faction",
    "visible": false,
+   "summary": "失货的箱车堵住谷口，账册与搬运痕迹互相对不上。管事不肯丢下伤员，却不能再等。",
    "choices": [
     "probe",
     "trade",
@@ -380,7 +437,7 @@
    "enemy_kind": "neutral_stone_wanderer",
    "enemy_theme": "neutral",
    "visible": false,
-   "summary": "一名货郎守着货担歇脚，担中蛊虫明码标价，也收以物易物。",
+   "summary": "货郎把蛊笼摆在两匹瘦马之间，货价写得清楚，来路却一个字也不肯提。",
    "choices": [
     "negotiate",
     "deceive",
@@ -397,6 +454,7 @@
    "stage": "four",
    "type": "commission",
    "visible": false,
+   "summary": "药师留下的委托单只写了目标，没写路上的代价。接下委托、付费换取服务，或趁早抽身，由你定。",
    "choices": [
     "accept",
     "trade",
@@ -417,7 +475,7 @@
     "neutral_stone_wanderer"
    ],
    "visible": false,
-   "summary": "兽群堵住窄隘，击退它们可收取材料，撤退则必须改道。",
+   "summary": "兽群挤满山隘，身后还有头兽不断催逼；诱引可把威胁提到眼前，硬打则可收取材料。",
    "choices": [
     "fight",
     "retreat",
@@ -437,6 +495,7 @@
    "enemy_kind": "thunder_crown_wolf",
    "enemy_theme": "beast",
    "visible": false,
+   "summary": "有人撬开兽巢夺走蛊材，却把山兽引上归路。空行囊散在两侧，兽吼已逼近。",
    "choices": [
     "fight",
     "trade",
@@ -453,6 +512,7 @@
    "enemy_kind": "faction_guard",
    "enemy_theme": "faction",
    "visible": false,
+   "summary": "势力守卫封住山口，腰牌与弩机都已备好。说明来路、硬闯或退避，各有后果。",
    "choices": [
     "fight",
     "deceive",
@@ -469,6 +529,7 @@
    "enemy_kind": "beast_swarm",
    "enemy_theme": "beast",
    "visible": false,
+   "summary": "两路人马同时摸到地脉入口，附近兽群闻着气息聚拢。站队、设局或退走，都还来得及。",
    "choices": [
     "ally",
     "scheme",
@@ -484,6 +545,7 @@
    "stage": "four",
    "type": "earth_vein",
    "visible": false,
+   "summary": "门壁上的封痕还很新，地脉气息却从缝隙外泄。先查封印，再决定是否打开，退路仍在。",
    "choices": [
     "scout",
     "open",
@@ -498,6 +560,7 @@
    "stage": "five",
    "type": "earth_vein",
    "visible": false,
+   "summary": "瘴气在地脉裂口间吞吐，近处石苔已褪色。先辨气流再占取；贸然深入，肉身会先受其害。",
    "choices": [
     "scout",
     "claim",
@@ -518,7 +581,7 @@
    "enemy_kind": "miasma_vein_lord",
    "enemy_theme": "anomaly",
    "visible": false,
-   "summary": "瘴脉尽头，蛊主把守升仙窗口。",
+   "summary": "瘴脉尽头的蛊主挡在升仙窗口前。雾从它脚下向四面回卷，进退都要由你亲自判断。",
    "choices": [
     "fight",
     "retreat"
@@ -532,7 +595,7 @@
    "stage": "two",
    "type": "rest",
    "visible": false,
-   "summary": "山壁石穴，落潮前的安静片刻，可稍作歇息恢复气血与真元。",
+   "summary": "山壁石穴里只余风声，蛊虫也能暂歇片刻。休整可恢复气血与真元，也可尽早动身。",
    "choices": [
     "rest",
     "leave"
@@ -546,7 +609,7 @@
    "stage": "two",
    "type": "rest",
    "visible": false,
-   "summary": "古祠残龛，香火断绝后的清净角落，可稍作歇息恢复气血与真元。",
+   "summary": "古祠香火早已断绝，却还有一角未被潮气侵蚀。你可在此歇息，也可不惊动尘埃继续赶路。",
    "choices": [
     "rest",
     "leave"
@@ -560,7 +623,7 @@
    "stage": "one",
    "type": "seclusion",
    "visible": false,
-   "summary": "石壁留有淬体仪式。可稳固根基，也可能留下难以察觉的代价。",
+   "summary": "石壁刻着一套淬体法门，笔画间故意留了缺口。承受体印可强健肉身，却也会留下副作用。",
    "choices": [
     "meditate",
     "take_imprint",
@@ -583,7 +646,7 @@
    "enemy_kind": "iron_hide_boar",
    "enemy_theme": "beast",
    "visible": false,
-   "summary": "铁皮野猪拦在隘口，獠牙泛光，撞上来就是一道血口。",
+   "summary": "铁皮野猪从岩后顶出，鬃毛间结着硬壳；隘路窄得避不开，先手比蛊力更要紧。",
    "choices": [
     "fight",
     "retreat"
@@ -599,7 +662,7 @@
    "enemy_kind": "ridge_elite_scout",
    "enemy_theme": "faction",
    "visible": false,
-   "summary": "斥候在岭脊设伏，弩机已上弦，先手藏在草丛里。",
+   "summary": "脊线上箭簇一闪，伏兵借风声遮住脚步。若惊动整队，前路很快会多出追兵。",
    "choices": [
     "fight",
     "retreat"
@@ -615,7 +678,7 @@
    "enemy_kind": "thunder_crown_wolf",
    "enemy_theme": "beast",
    "visible": false,
-   "summary": "雷冠狼独踞道中，爪下电纹明灭，是兽群头狼。",
+   "summary": "兽群沿山脊压境，爪印与撕咬痕密密叠在一起。拦路的只是先锋，身后还有整群兽物。",
    "choices": [
     "fight",
     "retreat"
@@ -629,7 +692,7 @@
    "stage": "one",
    "type": "inheritance",
    "visible": true,
-   "summary": "荒岭间一座前人遗葬，草木倒伏成环。有传承者遗留的布置仍在运转。",
+   "summary": "荒岭上草木环伏，墓中机关仍有余力。信物与路线图分在两处，贪多未必能全取。",
    "choices": [
     "claim_recon",
     "claim_token",

@@ -196,14 +196,11 @@ const advances = recipes.filter((r) => {
 }).slice(0, 2);
 const rawPicked = [...fixed, ...advances].map((r) => ({
   id: r.id, kind: r.kind, inputs: r.input_gu_ids || [], output: r.output_gu_id,
-  stoneCost: r.stone_cost || 0, materials: r.materials || null, source: r.source || null,
+  stoneCost: r.stone_cost || 0, source: r.source || null,
   successRollMax: r.success_roll_max ?? 100,
   forkId: r.fork_id || null,
   branchLabel: r.branch_label || null,
   branchAxis: r.branch_axis || null,
-  materialRole: r.material_role || null,
-  farmHint: r.farm_hint || null,
-  preferredEnemyIds: r.preferred_enemy_ids ? [...r.preferred_enemy_ids] : [],
   closes: r.closes ? [...r.closes] : [],
   delays: r.delays ? [...r.delays] : [],
 }));
@@ -214,11 +211,8 @@ const isDominated = (r, all) => all.some((o) => {
   const rIn = r.inputs || [];
   if (!rIn.every((id) => oIn.includes(id))) return false;
   if (Number(o.stoneCost || 0) > Number(r.stoneCost || 0)) return false;
-  const rMat = Object.entries(r.materials || {});
-  if (rMat.some(([k, v]) => Number((o.materials || {})[k] || 0) > Number(v))) return false;
   const stricter = oIn.length < rIn.length
     || Number(o.stoneCost || 0) < Number(r.stoneCost || 0)
-    || rMat.some(([k, v]) => Number((o.materials || {})[k] || 0) < Number(v))
     || inputKey(o) !== inputKey(r);
   return stricter && oIn.length <= rIn.length;
 });
@@ -244,14 +238,13 @@ const ART = {
   crag_serpent_matriarch: 'enemy_crag_serpent_matriarch',
   marrow_gu_adept: 'enemy_sanxiu',
   ridge_elite_scout: 'enemy_sanxiu',
-  miasma_vein_lord: 'enemy_toad',
-  clan_patriarch: 'enemy_sanxiu',
-  blue_fur_jiangshi: 'enemy_centipede',
   demon_path_adept: 'enemy_sanxiu',
-  // 带 phases 多阶段 AI 的 Boss（数据里共 5 个，另 3 个无对应立绘未纳入）
+  // 主要层主使用专属 Web 肖像；其余敌人仍沿用共享敌人图。
   thunder_crown_sovereign: 'enemy_thunder_crown_sovereign',
-  // 该 Boss 无专属立绘，用同流派血道蝙蝠近似（原型借图，已在覆盖页声明）
-  blood_vein_bishop: 'enemy_bat',
+  miasma_vein_lord: 'web_boss_miasma_vein_lord',
+  blood_vein_bishop: 'web_boss_blood_vein_bishop',
+  clan_patriarch: 'web_boss_clan_patriarch',
+  blue_fur_jiangshi: 'web_boss_blue_fur_jiangshi',
 };
 const nodesFile = read('data/nodes.json');
 const nodeList = Array.isArray(nodesFile) ? nodesFile : (nodesFile.nodes || []);
@@ -273,7 +266,6 @@ const pickedEnemies = pickedEnemyIds
     problemLabel: e.problemLabel || null,
     armorValue: e.armorValue ?? null,
     evasionBreakpoint: e.evasionBreakpoint ?? null,
-    preferredMaterials: e.preferredMaterials ? [...e.preferredMaterials] : [],
     intent: e.intent, portrait: ART[e.id] || PORTRAIT_BY_THEME[e.theme] || 'enemy_beast_swarm',
     // 多阶段 AI：数据里 phases 为 [{until_hp_ratio, intents[{damage,speed,cooldown,essence_burn}], reactions}]，
     // 选取语义见数据自带的 _phases_note（冷却、阶段阈值严格递减、全部冷却则 cooldown_wait）。
@@ -301,7 +293,7 @@ const nodeView = (n) => ({
     || (n.summary ? String(n.summary).split(/[，。；]/)[0] : n.id),
   stage: n.stage || null,
   type: n.type,
-  summary: n.summary || '',
+  summary: String(n.summary || '').replace('硬打则可收取材料', '硬打则可夺取战后赏赐'),
   choices: n.choices || [],
   nextIds: n.next_ids || [],
   enemyKind: n.enemy_kind || null,
@@ -310,6 +302,7 @@ const nodeView = (n) => ({
   bossPool: n.boss_pool ? [...n.boss_pool] : null,
   npcId: n.npc_id || null,
   eventId: n.event_id || null,
+  eventPool: n.event_pool ? [...n.event_pool] : null,
   layerBoss: n.layer_boss || null,
   layer: n.layer ?? n.layer_boss ?? null,
 });
@@ -327,17 +320,12 @@ const encounters = nodeList
   .filter((t) => t.type === 'combat')
   .map(nodeView);
 
-// L0 裁决（2026-09-20）：原型只保留蛊/材料货架与蛊方服务。
+// L0 裁决（2026-09-20）：只保留蛊货架。
 // 不继承 Godot 的恶名、资源交换、寿元交易、以物易物、补魂丹与配方解锁服务。
 // L0 2026-09-25 Phase 0：古方（gu_fang_unlock）只记账无机械收益，未接通前不得作为正式可购成长项。
-const SHOP_OFFER_KINDS = new Set(['purchase', 'material_purchase']);
+const SHOP_OFFER_KINDS = new Set(['purchase']);
 const supportShopOffers = [
   { id: 'lab_shop_aptitude_gu', kind: 'purchase', gu_id: 'aptitude_gu', tier: 1, stone_cost: 20 },
-  // Phase 7：配方钥匙进货架，和买构筑/存突破竞争（购买力 ≈ 1–2 I）
-  { id: 'lab_shop_moon_dew', kind: 'material_purchase', material_id: 'moon_dew', tier: 1, stone_cost: 3 },
-  { id: 'lab_shop_beast_bone', kind: 'material_purchase', material_id: 'beast_bone', tier: 1, stone_cost: 3 },
-  { id: 'lab_shop_beast_blood', kind: 'material_purchase', material_id: 'beast_blood', tier: 1, stone_cost: 4 },
-  { id: 'lab_shop_venom_sac', kind: 'material_purchase', material_id: 'venom_sac', tier: 1, stone_cost: 5 },
   ...Object.entries(SARI_BY_RANK)
     .map(([rank, guId]) => {
       const entity = battleGuById[guId] || {};
@@ -357,30 +345,22 @@ const shopOffers = [...shopOffersRaw, ...supportShopOffers]
   .filter((o) => !o.retired && o.mechanical !== false)
   .map((o) => ({ ...o, gu_name: o.gu_id ? (names.gu?.[o.gu_id] || '') : '' }));
 const shopOfferIds = new Set(shopOffers.map((o) => String(o.id)));
-const materialById = lootTables.materials || {};
-const materials = Object.entries(materialById).map(([id, value]) => ({
-  id,
-  name: value.name_zh || id,
-  qualityBand: value.quality_band || '',
-  daoTags: value.dao_tags || [],
-}));
 const labSchool = 'light';
-const schoolPromotionMaterials = new Set();
-for (const recipe of recipes) {
-  if (recipe.kind !== 'promotion' || !String(recipe.id || '').startsWith(`promote_${labSchool}_`)) continue;
-  for (const materialId of Object.keys(recipe.materials || {})) schoolPromotionMaterials.add(materialId);
-}
-const materialPityTargetsByTier = {};
-for (const [tier, bands] of Object.entries(lootTables.pity?.material_pity?.target_bands_by_tier || {})) {
-  const ids = (lootTables.loot?.[tier]?.material_pool || []).map((entry) =>
-    typeof entry === 'string' ? entry : entry.id);
-  materialPityTargetsByTier[tier] = [...new Set(ids)].filter((id) =>
-    schoolPromotionMaterials.has(id) && (bands || []).includes(materialById[id]?.quality_band));
-}
-const npcs = read('data/npcs.json').map((n) => ({
-  ...n,
-  stock: (n.stock || []).filter((id) => shopOfferIds.has(String(id))),
+const pacingLayers = Object.fromEntries(Object.entries(pacing.layers || {}).map(([layer, value]) => {
+  const clean = JSON.parse(JSON.stringify(value));
+  if (clean.loot) delete clean.loot.material_count;
+  return [layer, clean];
 }));
+const lootPity = { ...(lootTables.pity || {}) };
+delete lootPity.material_pity;
+const npcs = read('data/npcs.json').map((n) => {
+  const projected = {
+    ...n,
+    stock: (n.stock || []).filter((id) => shopOfferIds.has(String(id))),
+  };
+  delete projected.demands;
+  return projected;
+});
 const events = read('data/events.json').events || [];
 // 机制覆盖清单：给开发者看的"这个页面验了什么、没验什么"。
 // 只列已实现且能指到源头的机制；未覆盖项要写清为什么没做，避免页面看起来比实际完整。
@@ -388,7 +368,9 @@ const mechanisms = {
   covered: [
     { name: '真实蛊实体', detail: '77 只可在当前原型出现的蛊定义（基础白名单 + 战利品池 + V1 特殊效果样本 + 舍利/资质蛊）；舍利与资质蛊不进入战斗列表', source: 'data/gu.json（802 实体）+ 本轮 L0 要求的 lab-only 资质蛊' },
     { name: '固定节点图与统一整备', detail: '开局按难度生成固定五段分支图；每段准备深度为简单 15 / 普通 10 / 困难 5，只展示当前可走的 2–3 个后继；每场战斗胜利后进入同一整备页', source: '本轮设计：docs/superpowers/specs/2026-09-20-wenzhen-web-run-flow-convergence-design.md' },
-    { name: '合炼与升炼配方', detail: '6 条配方的材料、元石成本、原文出处行号；判定用 run seed 与事件序号，失败销毁全部投入', source: 'data/refinement_recipes.json（468 条）；refine_command_rules.gd::_refinement_roll/_apply_fixed_recipe' },
+    { name: '异闻节点与即时抉择', detail: '每层非战斗模板池含 2 个异闻模板；seed 决定遇见的事件。只开放 6 条能由 Web 完整结算的事件，并按确定性牌序轮完后再重复；卡片展示气血代价/元石所得，可承受时收下、否则离开；同 seed 同难度仍生成相同节点图', source: 'data/nodes.json → echo_cave / gu_rot_pact；data/events.json → huajiu_cache / tithing_cache / duel_wager / sealed_silk_reliquary / unclaimed_waystone / ropewalk_wager；social_command_rules.gd 事件接受结算' },
+    { name: '跨局旧录与种子复走', detail: '大厅单独保存最近 24 局结局、路线、摘要与种子；按原难度与种子开新局，同一内容版本下会生成相同地图。旧录与进行中存档分开；不还原当局结束前角色状态', source: 'js/lab_save.js → ARCHIVE_KEY / appendArchive；js/main.js → archiveRun / startRun(seedOverride)；js/journey.js → archiveRunCard' },
+    { name: '合炼与升炼配方', detail: 'Web 开放配方只投入蛊虫与配方标注的元石；判定用 run seed 与事件序号，失败销毁全部蛊虫投入', source: 'data/refinement_recipes.json（468 条，Web 只投影蛊虫/元石成本）；refine_command_rules.gd::_refinement_roll/_apply_fixed_recipe' },
     { name: '蛊虫行动', detail: '所有已炼化战斗蛊直接进入战斗可用列表，无固定槽位上限；每回合念头/行动数按魂魄分档，转数质量门禁、真元/念头成本、条件门禁、每回合一次限制与同流派支援按 Godot 解析器执行', source: 'data/gu.json → combat/true_qi_cost/thought_cost/v1_effect；action_points.gd::per_turn；cultivator_rules.gd::can_activate；v1_battle_resolver.gd::can_play_gu/play_gu；v1_grammar_pipeline.gd::gate_miss_reason' },
     { name: '寿元、延迟、状态消费与意图弱化', detail: 'gu life_cost 在支付后结算，归零立即败北且本次效果不执行；delay 先付费后登记，到期回合重放；consume_status 要求至少一层并在命中后全额清除；weaken_intent 只降低目标下一次伤害意图并在消费或回合末归零', source: 'data/gu.json → life_cost/v1_effect.delay/v1_effect.consume_status/kind=weaken_intent；v1_battle_resolver.gd::_spend_costs/_apply_effect/_fire_delayed_effects/_resolve_enemy_intent/end_turn；v1_grammar_pipeline.gd::gate_miss_reason' },
     { name: '野生蛊炼化', detail: '开局带 2 只野生小光蛊；野生蛊不可催动；炼化按 rank 支付 4+2×(rank-1) 真元，成功后转为已炼化实例并可出战', source: 'run_opening_flow.gd::_inject_wild_starters；refine_command_rules.gd::_attune_gu；refine_snapshot.gd::attune_candidates' },
@@ -396,7 +378,7 @@ const mechanisms = {
     { name: '杀招配方与支援', detail: '配方蛊封印门禁、配方实例本回合锁定，杀招效果吃同流派支援与剑意；额外 damage 独立结算', source: 'v1_battle_resolver.gd::play_kill_move/_apply_effect' },
     { name: '真元上限与回复', detail: '真元上限 = essence_base × aptitude_factor × cultivation_factor；战斗每回合按 v1 regen_pct 向上取整回复（丙等 25%）', source: 'data/aptitude.json；v1_battle_resolver.gd::_ceil_pct' },
     { name: '战后恢复', detail: '战斗胜利后真元回满，气血恢复最大气血的 30%；不设休整节点或调息按钮', source: '本轮 L0 裁决' },
-    { name: '战利品池与保底', detail: '按 tier+layer 读取材料数/权重、蛊概率/稀有度权重；common/elite/boss 材料保底与 common 蛊保底按事件序号推进', source: 'data/loot_tables.json；data/pacing.json；loot_resolver.gd::settle_victory' },
+    { name: '战后蛊虫与元石奖励', detail: '按 tier+layer 读取蛊概率/稀有度权重及元石收益；常见蛊保底按事件序号推进', source: 'data/loot_tables.json；data/pacing.json；loot_resolver.gd::settle_victory' },
     { name: '突破链', detail: '每转四阶；小突破消耗元石或当前转数同阶舍利蛊，舍利不可越阶；巅峰冲下一转要求资质与元石同时达标。舍利系列按原著定位建转数：一转青铜 / 二转赤铁 / 三转白银 / 四转黄金 / 五转紫晶', source: '本轮 L0 裁决；舍利转数依据 `蛊真人-clean.txt:86506`「从一转到五转，分别有青铜、赤铁、白银、黄金、紫晶舍利蛊」（另见 `:18066` `:18068`）；大突破元石成本沿用 balance；essence_capacity.gd' },
     { name: '敌人意图', detail: '意图标签与伤害，每回合公开', source: 'data/enemies.json → intent' },
     { name: '线索与反击（隐藏→揭示）', detail: '敌人自带 clues 与 reactions；揭示前不预警，揭示后可预警', source: 'v1_battle_resolver.gd:136,724-731（counter_revealed）' },
@@ -409,9 +391,9 @@ const mechanisms = {
     { name: '多阶段 AI（阶段 + 冷却门禁）', detail: '按 until_hp_ratio 切阶段；每阶段可有多条意图，第 T 回合发出后 T+cooldown+1 起才可再选；当前阶段所有意图都在冷却时显示 cooldown_wait、该回合不攻击', source: 'data/enemies.json 的 phases 与自带 _phases_note；本页按该语义独立实现检索台' },
     { name: '焚元意图', detail: '意图带 essence_burn 时烧掉玩家真元（蚀脉扰元 / 麻痹长嗥）', source: 'data/enemies.json phases[].intents[].essence_burn（按字段名直译，Godot 运行时不读该字段）' },
     { name: '多敌遭遇', detail: '10 个 type=combat 模板中唯一多敌 beast_swarm_pass（enemy_kinds 2 只）；规模 = enemy_kinds 长度；玩家点选目标、未选回退第一个存活；敌方按数组序逐个结算、每次立即判胜负；全灭才胜利；反击/阶段/冷却每敌一份；护体是池语义', source: 'data/nodes.json → beast_swarm_pass；battle_command_facade.gd:58-68,152-160（_v1_enemies）；v1_grammar_pipeline.gd:103-124（resolve_targets）、132-137（alive_count）；v1_battle_resolver.gd:110-135（_build_enemies）、644（_enemy_is_alive）、820-826（end_turn）、1063-1072（焚元）、1083-1088（护体池）' },
-    { name: '坊市货架', detail: '按层显示 4–6 件蛊/材料；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价。古方（gu_fang_unlock）因无机械收益已移出 live 货架（L0 2026-09-25 Phase 0）', source: 'data/shops.json → purchase/material_purchase；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price' },
+    { name: '坊市蛊虫货架', detail: '按层显示 4–6 只蛊；同店确定性洗牌、最高档保底、流派蛊保底；购买按层价加价', source: 'data/shops.json → purchase；data/pacing.json → layers；shop_command_rules.gd::shop_stock/shop_slot_count/shop_layer_price' },
     { name: '险地节点（探查 / 穿越 / 退回）', detail: '固定图每层 3 个候选中确定性地换入 1 个险地节点（毒瘴山道 / 积水石窟 / 黑泥沼地；槽位与模板都由 seed 决定，同 seed 同难度同图）；探查与退回只记事实（route_scouted / withdrawn_safely），穿越消耗 1 点真元、真元不足则拒绝且不结算；解析后回统一整备，不做 on_skip 后果', source: 'data/nodes.json → toxic_mountain_path / flooded_cave / black_mud_marsh（choices 均为 scout/cross/withdraw）；social_command_rules.gd:768-771,801-803（标准行动转移）；action_preview_service.gd:1022-1028,1076-1077,1085-1087（预览门禁与文案）；display_text.gd:69,86,90（显示名）、228,238,242（行动结果文案）' },
-    { name: '非战斗节点的标准动作结算（险地 / 市集 / 野蛊）', detail: '固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1 共 9 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡（choices 里未搬的动作不出卡），并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw（静修节点的 meditate 见下条）；被拒不结算，解析后进入统一整备', source: 'data/nodes.json → village_short_work / ridge_market / blood_moss_grove / rest_hollow / rest_shrine / body_imprint_ritual 与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）' },
+    { name: '非战斗节点的标准动作结算（险地 / 市集 / 野蛊）', detail: '固定图每层 3 个候选中确定性地换入 1 个非战斗节点，模板池 = 险地 3 + 市集 2 + 野蛊 1 + 休整 2 + 静修 1 + 异闻 2 共 11 个模板（槽位与模板都由 seed 决定，同 seed 同难度同图）；节点动作页按模板 choices 出标准动作卡（choices 里未搬的动作不出卡），并按 Godot 口径总是补一张 leave 卡（离开遭遇）。已接入：work（元石 +3）/ harvest（元石 +2）/ buy_information 与 trade（门禁元石 ≥ 2，不足则拒绝且不结算；成功扣 2 并记事实 bought_information / bought_service）/ leave（记 route_left_behind）/ scout / cross（门禁真元 ≥ 1，成功扣 1）/ withdraw；静修的 meditate 见下条。被拒不结算，解析后进入统一整备', source: 'data/nodes.json → village_short_work / ridge_market / blood_moss_grove / rest_hollow / rest_shrine / body_imprint_ritual 与三个险地模板；social_command_rules.gd:747-803（转移；_resource_transition:814-821 的 before/after 语义、_spend_stone_for_fact:823-831、_fact_transition:881-887）；action_preview_service.gd:44-45,992-995,1022-1035,1043-1044,1114-1115,1119,1198-1208,1306-1309（卡片、门禁、文案与 remedy）；display_text.gd:226,230,232,238,241-243（行动结果）、503-505（被拒兜底）；data/names.json → types / actions 分区（节点与动作中文名）' },
     { name: '恢复类节点（休整 / 静修）', detail: '非战斗模板池加入休整（山壁石穴 / 古祠残龛）与静修（体印仪式）后，地图上第一次出现恢复气血与真元的途径。休整节点（type=rest）是一次收益门禁、两步交互：先取「歇脚恢复」（气血恢复 max(1, floor(上限×0.30))、真元 +2，均按各自上限截断；卡片显示按当前数值算出的真实恢复量），「离开休整」卡此时才解禁——未取收益时该卡禁用并显示门禁原文「休整抉择未定：须先选择恢复、强化或移除其一，才能离开。」；探访已消费后收益卡禁用（「本次休整已处置完毕。」），重复取收益被拒（rest_already_used）且状态不变，未取收益就想离开被拒（rest_choice_required）且状态不变。静修节点（type=seclusion）走标准动作：「静修」真元 +1（按真元上限截断），离开没有休整门禁（seclusion 不在 rest-class 名单内）', source: 'data/nodes.json → rest_hollow / rest_shrine / body_imprint_ritual；rest_rules.gd:22（REST_NODE_TYPE）、:27（REST_CLASS_TYPES，seclusion 不在其中）、:121-141（_rest_heal：气血/真元公式与 rest_recovered、<节点id>_used 标记）、:165-179（_consume_rest_visit 的旗标语义，本片未搬）；social_command_rules.gd:586-589 与 encounter_session_resolver.gd:121-126（未消费不许离开 → rest_choice_required）；action_preview_service.gd:746-808（node.rest_heal / node.leave 两张卡与文案）、:811-831（已消费卡禁用的 block_reason）；social_command_rules.gd:772-773（meditate 真元 +1）与 display_text.gd:76,234（静修显示名与结果文案）' },
   ],
   notCovered: [
@@ -424,16 +406,16 @@ const mechanisms = {
     { name: '数据缺口：data/names.json → types 缺 rest 键', why: 'data/names.json 的 types 分区有 seclusion（静修）但没有 rest，而 Godot 侧的 scripts/presentation/display_text.gd:54 的 const TYPES 里 rest 是「休整」。本页类型名取 DATA.nodeTypes 优先、缺失时回退「休整」（来源 display_text.gd:54），回退表在 js/node_action_rules.js' },
     { name: '只记事实、无消费点的动作（accept / ally / claim / inspect / lure 与 contact / caravan 专属动作）', why: '这些动作只写 known_facts（social_command_rules.gd:795-800），而本原型对已知事实没有任何分支消费（见下面 knownFacts 一条）；contact 的 negotiate/deceive/retreat/fight 与 caravan 的 probe/buy/sell/exchange 还各自需要专属结算模块，一并登记不实现' },
     { name: '炼蛊 / 修行节点的休息类门禁（rest-class 剩余部分）', why: 'rest_rules.gd:27 的 REST_CLASS_TYPES = [rest, refinement, cultivation]：rest 的那一份门禁已在本片搬入（见 covered 的恢复类节点），refinement / cultivation 两类节点本原型仍未接入（连节点带动作），其一次性门禁与 refine / cultivate 专属动作一并不搬' },
-    { name: '其余节点类型的专属结算', why: 'contact / caravan / event / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等），本原型固定图只放战斗与五类非战斗模板（险地 / 市集 / 野蛊 / 休整 / 静修），其余类型未接入' },
-    { name: '非战斗槽位的类型分布进一步稀释', why: '非战斗槽位仍是每层 1 个（槽位 seed 未变），但模板池由 6 个扩到 9 个后，各类型出现频率被进一步稀释（本片首局 seed 101 / normal 实测：险地 12 / 市集 11 / 野蛊 8 / 休整 12 / 静修 7，slice-10 时是险地 31 / 市集 12 / 野蛊 7）。这是 slice-10 已登记、待 L1 裁的同一件事的延续，不是本片新增裁决项' },
+    { name: '诅咒与延迟魂魄债异闻', why: '异闻投影只开放即时气血代价与元石收益均能完整结算的 6 条事件；带 curse_id 或 delayed_soul_cost 的事件会进入 Web 事件池过滤。Web 尚无诅咒战斗效果和延迟魂债结算，暂不呈现这些选择' },
+    { name: '其余节点类型的专属结算', why: 'contact / caravan / refinement / cultivation / ledger / inheritance / commission / pursuit / earth_vein 等类型各有专属选项与命令面（商队、炼蛊、修行、总账、遗葬传承等）；Web 固定图当前采用战斗与六类非战斗模板（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻），其余类型未接入' },
+    { name: '非战斗槽位的类型分布与重复率', why: '非战斗槽位每层仍为 1 个，11 个模板由 seed 确定性选择；各模板等权，异闻模板内部再选有效事件。路线重复率和事件出现频率尚未做长局实测，后续根据完整跑局证据调整内容密度' },
     { name: 'knownFacts 只写不读', why: '本片与 slice-09 引入的 state.knownFacts 至今只被写入（scout / withdraw / leave / buy_information / trade），没有任何分支消费它；读取点只有 node_action_rules 的透传与 main.js 的事件日志。照实登记：这是「声明了但没人读」的状态槽，不要以为它已经在驱动玩法' },
     { name: '精英代价绑定', why: 'elite 战利品表声明 backlash/notoriety cost_pool；本原型不继承恶名系统，也不伪造精英代价结算' },
     { name: 'Godot 服务型系统与动态难度', why: 'L0 裁决：除蛊方服务外，资源交换、寿元交易、以物易物、洗恶名、补魂丹、配方解锁与动态难度均不作为本原型目标；相关 Godot 实现仅保留为历史参照' },
     { name: '意图选取顺序', why: '数据未写明多意图之间的优先级（_phases_note 只定义了冷却门禁）。本页取"数据顺序中第一条可用的"，属原型设定，Godot 无实现可对照' },
-    { name: '另 3 个带阶段数据的 Boss', why: 'blood_vein_bishop 之外的 clan_patriarch / blue_fur_jiangshi / miasma_vein_lord 缺少对应立绘，未纳入；其中 clan_patriarch 的「家族征召」是 damage 0 且无 essence_burn，语义未知' },
-    { name: 'Boss 立绘', why: '血络主教无专属立绘，借用同流派血道蝙蝠图（enemy_bat.png），仅影响观感' },
+    { name: '族长阶段意图「家族征召」', why: '数据条目为 damage 0 且无 essence_burn，Godot 行为语义未明确；沿用数据但不臆造额外效果，需补充规则来源后再扩展' },
     { name: '魂魄成长与失控', why: '本页已接魂魄行动分档、抽魂与魂魄归零死亡；魂魄收集、成长、狂暴和失控仍未实现' },
-    { name: '完整事件日志与存档', why: '已接最小 run event_log 并用于炼蛊与战利品 tick；完整领域事件形状、存档与回放尚未接入' },
+    { name: '完整领域事件账本与角色状态回放', why: 'Web 具备进行中存档和跨局种子旧录；尚未实现 Godot 完整领域事件形状、结束前角色状态快照及精确局面回放' },
     { name: 'counter_status="sparked"（雷冠头狼）', why: '数据漂移：data/enemies.json 声明了该反击状态，但 scripts/ 与 docs/ 里零命中，规则层无实现语义。本页不臆造，已从反击列表剔除' },
     { name: '险地节点的 on_skip', why: '数据漂移：data/nodes.json 的险地模板声明了 on_skip（lose_route / lose_clue / gain_pursuit），但 scripts/ 里零命中，Godot 域层没有实现该字段。本页不臆造跳过后果，险地只结算 choices 里的三条 standard action。休整/静修模板也带 on_skip（rest 为 none；体印仪式为 lose_foundation），本页同样不结算——休整节点没有跳过入口（见上一条），静修节点也没有' },
     { name: '线索的中文名', why: '数据缺口：data/names.json 没有 clues 分区，敌人线索只有 id（stone_dust、steady_stance 等）；本页照原样显示 id，不自行译名' },
@@ -448,10 +430,12 @@ enemies.forEach((e) => (e.reactions || []).forEach((r) => {
   }
 }));
 
+const battleStoneRewards = { ...balance.battle_stone_rewards };
+delete battleStoneRewards.provisional_note;
 const battle = {
   aptitudeMult: v1.aptitude_mult, regenPct: v1.regen_pct, stageBase: v1.stage_base,
   thoughtCostDefault: v1.thought_cost_default, trueQiCostDefault: v1.true_qi_cost_default,
-  fightDamageBase: v1.fight_damage_base, stoneRewards: balance.battle_stone_rewards,
+  fightDamageBase: v1.fight_damage_base, stoneRewards: battleStoneRewards,
   markScratchPerLayer: v1.mark_scratch_per_layer ?? 1,
   markScratchCap: v1.mark_scratch_cap ?? 10,
 };
@@ -535,6 +519,15 @@ const flow = {
 };
 
 const out = {
+  // Run saves use a deliberate compatibility epoch, not the content hash below.
+  // Text, art, and additive route/event content can ship without invalidating a long run.
+  // Bump for state/rule changes, then list prior versions that have an explicit migration.
+  saveCompatibilityVersion: 'lab-run-v2',
+  compatibleContentVersions: [
+    'lab-run-v1',
+    '907a8d845d0680bba5ff4ee636e21aaf78c498c6de5ef93fa2f820f7252364e6',
+    '061e49e1986a381495a2155aecf82b1e8e449a06a02d448c24150f21c4cd6c1a',
+  ],
   runSeed: firstRun.seed || 1,
   aptitude,
   cultivationCosts,
@@ -544,20 +537,20 @@ const out = {
       Object.entries(lootTables.loot || {}).map(([tier, table]) => {
         const clean = { ...table };
         delete clean.cost_pool;
+        delete clean.material_count;
+        delete clean.material_pool;
         if (tier === 'elite') clean.gu_chance_pct = Math.max(Number(clean.gu_chance_pct || 0), 35);
         if (tier === 'boss') clean.gu_chance_pct = Math.max(Number(clean.gu_chance_pct || 0), 55);
         return [tier, clean];
       }),
     ),
-    pity: lootTables.pity || {},
-    pacingLayers: pacing.layers || {},
-    schoolMaterialResonance: lootTables.school_material_resonance || 1,
+    pity: lootPity,
+    pacingLayers,
     schoolPools: { [labSchool]: schoolPools[labSchool] || [] },
-    materialPityTargetsByTier,
     school: labSchool,
   },
   gu, recipes: picked, killMoves, enemies: pickedEnemies, encounters,
-  nodes, route, shopOffers, materials, npcs, events,
+  nodes, route, shopOffers, npcs, events,
   /* Rank 主链：WORLD 真源快照（Integration 刀1）。Lab 投影只准读这里。 */
   worldBalance: {
     rank_step_ratio: balance.rank_step_ratio,
@@ -571,8 +564,8 @@ const out = {
   },
   actions: names.actions || {}, nodeTypes: names.types || {}, battle, mechanisms,
 };
-// contentVersion = sha256(JSON.stringify(out)) 在写入 contentVersion 字段之前。
-// 存档信封用它做内容兼容门禁；改状态结构时必须提升 LabSave.schemaVersion。
+// contentVersion = sha256(JSON.stringify(out)) 在写入 contentVersion 字段之前，供内容快照追溯。
+// 局内存档兼容使用上面的 saveCompatibilityVersion；状态变化须迁移或拒绝旧版本，schemaVersion 只标记信封格式。
 const contentVersion = createHash('sha256').update(JSON.stringify(out)).digest('hex');
 out.contentVersion = contentVersion;
 const banner = '// 本文件由 tools/build_data.mjs 从 Godot 侧数据表生成，不要手改。\n'

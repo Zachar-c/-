@@ -21,7 +21,7 @@ const READY = {
   },
 };
 
-// 需要走节点动作页的节点类型（险地 / 市集 / 野蛊 / 休整 / 静修）；由 NodeActionRules 单点定义，
+// 需要走节点动作页的节点类型（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻）；由 NodeActionRules 单点定义，
 // 避免两处分叉。必须声明在下面的 `let state = fresh()` 之前：fresh 生成固定图时要过滤模板池。
 const NODE_ACTION_TYPES = NodeActionRules.nodeTypes;
 
@@ -72,7 +72,11 @@ function saveStorage() {
 }
 
 function contentVersion() {
-  return DATA.contentVersion || '';
+  return DATA.saveCompatibilityVersion || DATA.contentVersion || '';
+}
+
+function compatibleSaveVersions() {
+  return Array.isArray(DATA.compatibleContentVersions) ? DATA.compatibleContentVersions : [];
 }
 
 function isInProgressRun() {
@@ -159,11 +163,15 @@ function bootFromSave() {
     state = fresh();
     return;
   }
-  const result = LabSave.read(saveStorage(), contentVersion());
+  const result = LabSave.read(saveStorage(), contentVersion(), compatibleSaveVersions());
   if (result.ok && result.state) {
     state = result.state;
     bootSaveIssue = null;
     saveWriteBlockedUntilNewRun = false;
+    if (result.legacyContentVersion) {
+      const migrated = LabSave.write(saveStorage(), state, contentVersion());
+      if (!migrated.ok) lastSaveStatus = migrated;
+    }
     return;
   }
   if (result.reason === 'empty') {
@@ -202,6 +210,7 @@ function fresh(difficulty = 'normal', seed) {
     pools: DATA.flow.poolsBySegment,
     enemyById,
     nonCombatTemplates: DATA.nodes.filter((node) => NODE_ACTION_TYPES.includes(node.type)),
+    events: DATA.events,
     nonCombatTypeLabels: NodeActionRules.typeLabels(DATA.nodeTypes),
   });
   const journey = {
@@ -217,7 +226,7 @@ function fresh(difficulty = 'normal', seed) {
     ...READY, seed: runSeed, owned: { ...READY.owned }, wild: { ...READY.wild }, equipped: [], battle: null, qiMax, qi: qiMax,
     thought: thoughts, thoughtMax: thoughts,
     journey, prepFor: null, reward: null, ending: null, shopSold: [], restUsed: false, journal: [],
-    materials: {}, page: 'hall', lootPity: 0, materialPityByTier: {},
+    page: 'hall', lootPity: 0,
     globalCodexIds: [], knownFacts: [],
     eventLog: [{
       id: 'event_0000', time: 0, nodeId: journey.nodeId, action: 'run_started',
@@ -225,6 +234,43 @@ function fresh(difficulty = 'normal', seed) {
       after: { stones: READY.stones, owned: { ...READY.owned }, wild: { ...READY.wild } },
     }],
   };
+}
+
+function archiveRun(ending) {
+  if (!globalThis.LabSave?.appendArchive) return { ok: false, reason: 'archive_unavailable' };
+  const now = new Date();
+  const visitedIds = [...(state.journey.completed || [])];
+  const currentId = state.journey.nodeId;
+  if (currentId && !visitedIds.includes(currentId)) visitedIds.push(currentId);
+  const trail = visitedIds
+    .map((id) => RunFlow.nodeById(state.journey.graph, id))
+    .filter(Boolean)
+    .map((node) => ({ segment: node.segment, type: node.type, name: node.name }));
+  const record = {
+    id: `${now.toISOString()}-${state.seed}`,
+    endedAt: now.toISOString(),
+    seed: state.seed,
+    difficulty: state.journey.difficulty,
+    outcome: ending.outcome,
+    title: ending.title,
+    detail: ending.detail,
+    completedNodes: state.journey.completed.length,
+    visitedNodes: trail.length,
+    totalNodes: state.journey.graph.prepPerSegment * state.journey.graph.segmentCount
+      + state.journey.graph.segmentCount,
+    rank: RunFlow.stageLabel(state.cultivation, state.cultivationStage),
+    trail,
+    journal: (state.journal || []).slice(0, 12),
+  };
+  return LabSave.appendArchive(saveStorage(), record);
+}
+
+function saveEndingArchive(ending) {
+  if (ending.archiveSaved !== undefined) return { ok: ending.archiveSaved };
+  const result = archiveRun(ending);
+  ending.archiveSaved = result.ok;
+  ending.archiveIssue = result.ok ? '' : result.reason;
+  return result;
 }
 
 bootFromSave();
@@ -401,24 +447,6 @@ function rollVictoryLoot(battle) {
   const layer = battle.layer || 1;
   const table = LootRules.layerTable(DATA.loot.tables, DATA.loot.pacingLayers, tier, layer);
   const tick = state.eventLog.length;
-  const targets = DATA.loot.materialPityTargetsByTier[tier] || [];
-  const consumers = (typeof GuRules !== 'undefined' && GuRules.materialConsumers)
-    ? GuRules.materialConsumers(DATA.recipes)
-    : null;
-  const preferred = [...new Set((battle.enemies || []).flatMap((e) => e.preferredMaterials || []))];
-  const materialRoll = table
-    ? LootRules.rollMaterials(table, {
-        seed: state.seed,
-        tick,
-        tier,
-        countAdjustment: Math.max(0, state.cultivation - 1),
-        materialPityByTier: state.materialPityByTier,
-        targets,
-        pityConfig: DATA.loot.pity,
-        consumers,
-        preferred,
-      })
-    : { materialIds: [] };
   const supportPool = DATA.flow.supportGuBySegment[String(layer)] || [];
   const guRoll = table
     ? LootRules.rollGuChoices(table, {
@@ -451,35 +479,30 @@ function rollVictoryLoot(battle) {
   const stones = RunRules.battleStoneReward(tier, layer, DATA.battle.stoneRewards);
   const rewardCore = {
     stones,
-    materialIds: materialRoll.materialIds,
     guChoices,
   };
-  const valueKinds = LootRules.classifyReward(rewardCore, { guById: GU_BY_ID, consumers });
+  const valueKinds = LootRules.classifyReward(rewardCore, { guById: GU_BY_ID });
   return {
     stones,
     tier,
     layer,
     tick,
-    materialIds: materialRoll.materialIds,
     guChoices,
     guRarity: guRoll.rarity || '',
     valueKinds,
     lootIdentity: tier === 'boss' ? 'new_future'
       : tier === 'elite' ? 'build_component'
         : 'economy_growth',
-    materialPityByTier: LootRules.nextMaterialPity(
-      state.materialPityByTier,
-      tier,
-      materialRoll.materialIds,
-      targets,
-    ),
     lootPity: LootRules.nextLootPity(state.lootPity, guRoll.rarity, DATA.loot.pity),
   };
 }
 
 function hud() {
-  $('#hud-qi').style.width = (state.qi / state.qiMax) * 100 + '%';
+  const qiPct = Math.max(0, Math.min(100, (state.qi / Math.max(1, state.qiMax)) * 100));
+  $('#hud-qi').style.width = qiPct + '%';
   $('#hud-qi-num').textContent = `${Math.round(state.qi)}/${state.qiMax}`;
+  $('#hud-qi-meter').setAttribute('aria-valuemax', String(state.qiMax));
+  $('#hud-qi-meter').setAttribute('aria-valuenow', String(Math.round(state.qi)));
   $('#hud-thought').textContent = state.thought;
   $('#hud-stone').textContent = state.stones;
   $('#hud-blood').textContent = state.blood;
@@ -487,13 +510,53 @@ function hud() {
   $('#hud-soul').textContent = `${state.soul}/${state.soulMax}`;
   const apt = { jia: '甲等', yi: '乙等', bing: '丙等', ding: '丁等' }[state.aptitude];
   $('#hud-talent').textContent = `${apt} · ${RunFlow.stageLabel(state.cultivation, state.cultivationStage)}`;
+  document.body.dataset.runActive = state.journey.started ? 'true' : 'false';
+  const progress = journeyProgress();
+  const node = currentNode() || (state.ending ? progress.positionNode : null);
+  const position = node || progress.positionNode;
+  const segment = position ? `第 ${position.segment} 段 · ${segmentTitle(position.segment)}` : '五境修行';
+  let context = '尚未开始修行';
+  if (state.ending) {
+    context = state.ending.outcome === 'victory' ? '修行有成 · 五境走尽' : '修行止步 · 败局已录';
+  } else if (state.battle) {
+    context = `${segment} · 交锋中 · 第 ${state.battle.turn} 回合`;
+  } else if (state.reward) {
+    context = `${segment} · 战后收获 · 选择蛊虫并整备`;
+  } else if (node) {
+    const isAction = NodeActionRules.nodeTypes.includes(node.type) && state.prepFor !== node.id;
+    const phase = state.prepFor === node.id ? '整备中'
+      : isAction ? '节点抉择' : state.page === 'battle' ? '迎战' : '择路前行';
+    context = `${segment} · ${phase} · ${node.name}`;
+  } else if (state.journey.started) {
+    context = `${segment} · 选择下一站`;
+  }
+  $('#run-context').textContent = context;
+  $('#run-progress').textContent = state.journey.started
+    ? `行程 ${progress.visitedNodes} / ${progress.totalNodes} · ${DATA.flow.difficulties[state.journey.difficulty]?.label || '修行中'}`
+    : `五境 · ${progress.totalNodes} 个必经节点`;
+  $('#reset').hidden = !isInProgressRun();
 }
 
 function draw() {
   hud();
+  updateSceneArt();
   renderJourneyPages();
   renderBattle($('#panel-battle'));
   renderCover($('#panel-cover'));
+  updateNavigation();
+}
+
+function updateSceneArt() {
+  const graph = state?.journey?.graph;
+  const current = currentNode();
+  const next = state?.journey?.availableNodeIds?.[0]
+    ? RunFlow.nodeById(graph, state.journey.availableNodeIds[0])
+    : null;
+  const completed = state?.journey?.completed || [];
+  const lastId = completed[completed.length - 1];
+  const last = lastId ? RunFlow.nodeById(graph, lastId) : null;
+  const segment = Number(current?.segment || next?.segment || last?.segment || 1);
+  document.body.dataset.scene = String(Math.max(1, Math.min(5, segment)));
 }
 
 const aliveEnemies = (b) => b.enemies.filter((e) => e.hp > 0);
@@ -694,6 +757,7 @@ function openBattleOutcome() {
       outcome: 'defeat',
       deathReport: report,
     };
+    saveEndingArchive(state.ending);
     state.battle = null;
     showPage('ending');
     Sfx.lose();
@@ -703,20 +767,14 @@ function openBattleOutcome() {
     state.blood = Math.min(state.bloodMax, state.blood + healed);
     state.qi = state.qiMax;
     state.stones += loot.stones;
-    for (const materialId of loot.materialIds || []) {
-      state.materials[materialId] = (state.materials[materialId] || 0) + 1;
-    }
-    state.materialPityByTier = { ...loot.materialPityByTier };
     state.lootPity = loot.lootPity;
     state.journal.unshift(`战后收获 · 元石 +${loot.stones} · 气血 +${healed} · 真元回满`);
     recordEvent('battle_loot', {
       stones: state.stones,
-      materials: { ...state.materials },
       true_qi: state.qi,
       health: state.blood,
-      material_pity_by_tier: { ...state.materialPityByTier },
       loot_pity: state.lootPity,
-    }, loot.guChoices.length ? 'gu_choices_pending' : 'auto_rewards_granted', loot.materialIds);
+    }, loot.guChoices.length ? 'gu_choices_pending' : 'auto_rewards_granted');
     state.reward = {
       ...loot,
       nodeId: b.nodeId,
@@ -927,15 +985,10 @@ const act = {
     const r = GuRules.liveRecipes(DATA.recipes).find((x) => x.id === recipeId);
     if (!r) return;
     const need = r.inputs.reduce((m, id) => ((m[id] = (m[id] || 0) + 1), m), {});
-    for (const [id, n] of Object.entries(need)) if ((state.owned[id] || 0) < n) return toast('材料不足', 'bad');
-    const materialNeed = r.materials || {};
-    for (const [id, n] of Object.entries(materialNeed)) {
-      if ((state.materials[id] || 0) < n) return toast(`材料不足 · ${materialById(id).name}`, 'bad');
-    }
+    for (const [id, n] of Object.entries(need)) if ((state.owned[id] || 0) < n) return toast('蛊虫不足', 'bad');
     if ((r.stoneCost || 0) > state.stones) return toast('元石不足', 'bad');
 
     for (const [id, n] of Object.entries(need)) state.owned[id] -= n;
-    for (const [id, n] of Object.entries(materialNeed)) state.materials[id] -= n;
     state.stones = Math.max(0, state.stones - (r.stoneCost || 0));
     // 合炼吃掉组件后，卸下缺件杀招，避免幽灵可点。
     {
@@ -948,9 +1001,6 @@ const act = {
         const invalidIds = new Set(invalid.map((move) => move.id));
         state.equipped = state.equipped.filter((id) => !invalidIds.has(id));
       }
-    }
-    if (Object.keys(materialNeed).length) {
-      recordEvent('refine_gu', { materials: { ...state.materials } }, 'refinement_materials_spent', Object.keys(materialNeed));
     }
     Sfx.forge();
 
@@ -989,7 +1039,7 @@ const act = {
     draw();
   },
 
-  startRun(difficulty = 'normal') {
+  startRun(difficulty = 'normal', seedOverride) {
     if (!confirmAbandon('开始新局将放弃当前局，确定？')) {
       skipPersistOnce = true;
       return;
@@ -997,12 +1047,16 @@ const act = {
     saveWriteBlockedUntilNewRun = false;
     bootSaveIssue = bootSaveIssue === 'unreadable' ? null : bootSaveIssue;
     // ?seed= 只影响明确的新局；继续不会走到这里。
-    state = fresh(difficulty, readUrlSeed());
+    const explicitSeed = Number(seedOverride);
+    const seed = Number.isFinite(explicitSeed) && explicitSeed > 0
+      ? Math.floor(explicitSeed)
+      : readUrlSeed();
+    state = fresh(difficulty, seed);
     state.journey.started = true;
     nextRunSeedValue = null;
     showPage('map');
     Sfx.click();
-    toast(`已开局 · ${DATA.flow.difficulties[state.journey.difficulty].label}`);
+    toast(seedOverride ? `重走旧路 · 种子 ${state.seed}` : `已开局 · ${DATA.flow.difficulties[state.journey.difficulty].label}`);
   },
 
   chooseNode(nodeId) {
@@ -1032,7 +1086,7 @@ const act = {
     act.startBattle(node.enemyIds, node.id);
   },
 
-  // 非战斗节点（险地 / 市集 / 野蛊 / 休整 / 静修）：进入后等玩家在节点动作页选一个动作。
+  // 非战斗节点（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻）：进入后等玩家在节点动作页选一个动作。
   enterNodeAction() {
     const node = currentNode();
     if (!node || !NODE_ACTION_TYPES.includes(node.type)) return showPage('map');
@@ -1050,6 +1104,27 @@ const act = {
     if (!node || !NODE_ACTION_TYPES.includes(node.type)) return;
     if (state.prepFor === node.id) return; // 已解析：节点只剩统一整备
     if (node.type === NodeActionRules.restNodeType) return act.resolveRestAction(choiceId);
+    if (node.type === NodeActionRules.eventNodeType) {
+      const result = NodeActionRules.resolveEvent(choiceId, node.event, {
+        health: state.blood,
+        stones: state.stones,
+      });
+      if (!result.ok) {
+        return toast(result.reason === 'insufficient_health'
+          ? '气血不足以承受这份代价。'
+          : '这条异闻暂不可应答。', 'bad');
+      }
+      state.blood = result.healthAfter;
+      state.stones = result.stoneAfter;
+      state.journal.unshift(`${node.name} · ${result.text}`);
+      recordEvent('choose_action', {
+        health: state.blood,
+        stone: state.stones,
+      }, result.reason, [node.eventId || node.routeTemplateId]);
+      Sfx.success();
+      toast(result.text, 'good');
+      return act.openPrep();
+    }
     const beforeStones = state.stones;
     const beforeQi = state.qi;
     const result = NodeActionRules.resolve(choiceId, {
@@ -1164,6 +1239,7 @@ const act = {
       turn: state.battle ? state.battle.turn : 0,
       outcome,
     };
+    saveEndingArchive(state.ending);
     state.battle = null;
     showPage('ending');
     if (outcome === 'victory') Sfx.win();
@@ -1551,8 +1627,6 @@ const act = {
         killMoves: DATA.killMoves,
         guById: GU_BY_ID,
       });
-    } else if (offer.kind === 'material_purchase') {
-      state.materials[offer.material_id] = (state.materials[offer.material_id] || 0) + 1;
     } else if (offer.kind === 'gu_fang_unlock') {
       state.globalCodexIds.push(offer.gu_id);
     }
@@ -1561,7 +1635,6 @@ const act = {
     recordEvent('shop', {
       stones: state.stones,
       owned: { ...state.owned },
-      materials: { ...state.materials },
       global_codex_ids: [...state.globalCodexIds],
       cost,
     }, offer.kind === 'gu_fang_unlock' ? 'shop_gu_fang_unlock_completed' : 'shop_purchase', [offer.id]);
@@ -1802,8 +1875,34 @@ function showPage(page) {
   const panelIds = [...document.querySelectorAll('.panel')].map((p) => p.id);
   const next = typeof page === 'string' && panelIds.includes(`panel-${page}`) ? page : 'hall';
   state.page = next;
+  document.body.dataset.page = next;
+  hud();
   document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === next));
   document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('on', p.id === `panel-${next}`));
+  updateNavigation();
+}
+
+function updateNavigation() {
+  const node = currentNode();
+  const available = {
+    hall: true,
+    map: !!state.journey.started && !state.ending,
+    battle: !!state.battle && !state.ending,
+    prep: !!node && state.prepFor === node.id && !state.ending,
+    cover: /(?:\?|&)debug=1(?:&|$)/.test(String(location.search || '')),
+  };
+  const reason = {
+    map: '开局后可查看行程',
+    battle: '进入战斗节点后可查看战况',
+    prep: '结算节点后可进入整备',
+    cover: '开发调试页',
+  };
+  document.querySelectorAll('#tabs button').forEach((button) => {
+    const enabled = button.hidden || available[button.dataset.tab] !== false;
+    button.disabled = !enabled;
+    button.setAttribute('aria-disabled', String(!enabled));
+    button.title = enabled ? '' : (reason[button.dataset.tab] || '当前不可用');
+  });
 }
 
 const tabs = [...document.querySelectorAll('#tabs button')];
@@ -1811,6 +1910,7 @@ if (/(?:\?|&)debug=1(?:&|$)/.test(String(location.search || ''))) {
   document.querySelector('[data-tab="cover"]')?.removeAttribute('hidden');
 }
 tabs.forEach((b) => b.addEventListener('click', () => {
+  if (b.disabled) return;
   showPage(b.dataset.tab);
   Sfx.click();
 }));

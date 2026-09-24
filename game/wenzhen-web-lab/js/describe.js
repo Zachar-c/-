@@ -20,7 +20,7 @@ function effectText(e) {
       case 'sword_intent': return `剑意 +${x.amount}`;
       case 'weaken_intent': return `弱化敌方意图 ${x.amount}`;
       case 'aptitude_up': return '使用后资质提升一档';
-      case 'breakthrough_material': return '小突破材料 · 需与当前转数同阶';
+      case 'breakthrough_material': return '同阶舍利蛊 · 可用于小突破';
       default: return x.kind;
     }
   };

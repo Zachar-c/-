@@ -34,6 +34,16 @@ function sha256(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
+// Keep the full generated PNG masters in the workspace, but ship only the optimized Web images.
+const OMIT_WEB_ART_MASTERS = new Set([
+  'web/scene-01.png', 'web/scene-02.png', 'web/scene-03.png', 'web/scene-04.png', 'web/scene-05.png',
+  'web/scene-01-preview.jpg',
+  'enemies/web_boss_miasma_vein_lord.png',
+  'enemies/web_boss_blood_vein_bishop.png',
+  'enemies/web_boss_clan_patriarch.png',
+  'enemies/web_boss_blue_fur_jiangshi.png',
+]);
+
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   const out = path.resolve(opts.out);
@@ -59,7 +69,13 @@ function main() {
     cpSync(src, path.join(labDest, name), { recursive: true });
   }
   if (existsSync(assetsSrc)) {
-    cpSync(assetsSrc, assetsDest, { recursive: true });
+    for (const rel of walk(assetsSrc)) {
+      if (OMIT_WEB_ART_MASTERS.has(rel.split(path.sep).join('/'))) continue;
+      const src = path.join(assetsSrc, rel);
+      const dest = path.join(assetsDest, rel);
+      mkdirSync(path.dirname(dest), { recursive: true });
+      cpSync(src, dest);
+    }
   }
 
   const readme = `<!doctype html>
@@ -72,14 +88,15 @@ code{background:#f4f1ea;padding:2px 6px;border-radius:4px}</style></head>
 <h2>操作</h2>
 <ul>
   <li>大厅选择难度 →「开始新局」</li>
-  <li>节点图选择发光后继 → 战斗 / 休整 / 市集 / 野蛊 / 险地</li>
+  <li>五段路线选择后继 → 战斗 / 休整 / 市集 / 野蛊 / 险地 / 异闻</li>
   <li>战斗：观察、拳脚、蛊虫、杀招、结束回合；注意敌方意图与反击预警</li>
   <li>整备：坊市买卖、炼化、开炉、杀招组装、修为突破</li>
   <li>本局自动保存（浏览器 localStorage）。刷新后从大厅「继续当前局」。</li>
+  <li>大厅保留最近 24 局修行旧录，可查看路线并以原种子复走。</li>
   <li>换浏览器或移动目录不会自动迁移存档。</li>
 </ul>
 <h2>存储</h2>
-<p>存档写在浏览器本地存储（localStorage）。隐私模式或清除站点数据会丢档；丢档时会明确提示，不会假装已保存。</p>
+<p>进行中存档按兼容版本续玩，新增内容、美术和文案不打断当前长局；跨局旧录单独保留在浏览器本地存储中。隐私模式或清除站点数据会丢档；存储失败时游戏会明确提示。</p>
 </body></html>
 `;
   writeFileSync(path.join(out, 'README.html'), readme, 'utf8');

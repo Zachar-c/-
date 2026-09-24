@@ -1,27 +1,27 @@
 # 問眞
 
-《蛊真人》同人单机卡牌肉鸽 **《問眞》**（前称《蛊路求生》/旧名 Nanjiang Smoke）——以《蛊真人》世界规则为素材的修行肉鸽原型项目。仓库不提供 `GDD.md`；当前最高设计宪章 = [蛊界世界模型纠偏设计](docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md)，既有机制规格在 Stage 0 通过前仅作为待审计实现材料。
+《蛊真人》同人单机卡牌肉鸽 **《問眞》**（前称《蛊路求生》/旧名 Nanjiang Smoke）的 Godot 成熟实现、规则数据与设计工程。当前完整产品载体为 [Web 版](wenzhen-web-lab/README.md)；本工程继续提供可复用规则、数据与实现参考。仓库不提供 `GDD.md`；设计宪章与机制规格按下文索引查阅。
 
 当前版本：`0.9.0`（语义化版本 2.0 单源：`scripts/domain/game_version.gd`，大厅/设置屏统一读取）。
 
 仓库同时保存两类内容：
 
 - 原文语料与设定提炼物（`分支：六卷精编版/`）与游戏设计原始数据（`肉鸽设计-原始数据/`）。
-- 《問眞》的设计、实施计划与 Godot 4.7.2 原型代码。
+- 《問眞》的设计、实施计划与成熟的 Godot 4.7.2 规则实现；当前产品入口见 `wenzhen-web-lab/lab.html`。
 
 ## 当前状态
 
-- **玩法循环已通**：大厅 → 地图 → 节点 → 战斗 → 结算 → 轮回，存读档/流派选择/炼蛊/杀招/商店/事件/休息均已接线，主流程验证无阻塞。
-- **视觉方向已定稿**：[问真视觉方向设计](docs/superpowers/specs/2026-09-04-wenzhen-visual-direction-design.md)（纸底网点、墨色、朱砂印章「問眞」）；[视觉最终验收报告](docs/superpowers/specs/2026-09-06-visual-final-acceptance-report.html)。
-- **屏幕视觉硬流程**：1280×720 HTML 线框稿 → 逐屏审批 → tscn 实施 → 真窗渲染验收。已交付：大厅、地图、战斗、流派选择、设置、杀招、炼蛊、商店、结算、调试；全部按线框稿 1:1 对齐（线稿留证于 `docs/superpowers/specs/*.html`）。
-- **双端可安装**：Windows 与 Android 安装包已导出并入库，见[下载安装包](#下载安装包)。
+- **Godot 规则流程已通**：大厅 → 地图 → 节点 → 战斗 → 结算 → 轮回，存读档/炼蛊/杀招/商店/事件/休息均已接线。当前 Web 产品的整局状态见 [Web 验收记录](wenzhen-web-lab/docs/2026-09-22-playable-game-acceptance.md)。
+- **既有界面记录**：[问真视觉方向设计](docs/superpowers/specs/2026-09-04-wenzhen-visual-direction-design.md) 与 [视觉最终验收报告](docs/superpowers/specs/2026-09-06-visual-final-acceptance-report.html) 记录 Godot 版本的视觉实现；Web 产品可另行设计美术。
+- **现有屏幕交付记录**：大厅、地图、战斗、流派选择、设置、杀招、炼蛊、商店、结算、调试屏已按当时的 1280×720 线框稿完成，留作规则和交互参考。
+- **Godot 版本可安装**：Windows 与 Android 安装包已导出并入库，见[下载安装包](#下载安装包)；当前产品交付目标为 Web。
 
 ## 发布说明（v0.9.0）
 
 - 应用图标与启动画面：问真风格（宣纸网点底 + 朱砂「问真」方印），程序化生成（`tools/gen_icons.py`），已接入 Windows/Android 双端。
 - 版本正式化：语义化版本 `0.9.0`（去除 `+local` 构建标识），大厅/设置屏统一显示。
 - 双端安装包重新导出并入库：Windows（PCK 内嵌、分卷 SHA256 校验）与 Android（`com.wenzhen.game`）。
-- 内容规模：802 蛊、20 流派、386+ 合炼配方、37 地图节点、12 敌人、41 条音频。
+- 内容规模：802 蛊、20 流派、386+ 合炼配方、37 地图节点、24 条异闻、32 种敌人、41 条音频。
 - 说明：Android 当前使用 debug keystore 签名，可直接 `adb install` 试玩；应用商店上架需替换为正式 release keystore（见 `tools/sign_android.ps1` 注释）。
 
 ## 下载安装包
@@ -41,7 +41,7 @@
 - [项目决策浓缩对话](docs/项目决策浓缩对话.md)：快速了解已经确认的游戏方向与版本边界。
 - [蛊界世界模型纠偏设计](docs/superpowers/specs/2026-09-16-wenzhen-world-model-correction-design.md)：当前最高设计宪章；规定原著证据、Stage 0 硬 Gate 和改造边界。
 - [机制先行锁死规格书](docs/superpowers/specs/2026-08-25-mechanics-first-lockdown-design.md)：既有机制基线——核心玩法循环/资源/流派/地图/战斗/交互/肉鸽规则；其中与世界模型冲突的部分须经 Stage 0 重新裁定。
-- [问真视觉方向设计](docs/superpowers/specs/2026-09-04-wenzhen-visual-direction-design.md)：美术风格唯一来源（纸底网点/墨色/朱砂印章）。
+- [问真视觉方向设计](docs/superpowers/specs/2026-09-04-wenzhen-visual-direction-design.md)：既有视觉方案参考（纸底网点/墨色/朱砂印章）；当前产品可重新设计美术，不受该方案或现有素材约束。
 - [南疆冒烟版设计](docs/superpowers/specs/2026-08-21-nanjiang-roguelite-smoke-design.md)：旧基线，仅作参考。
 - [协作约定](AGENTS.md)：人工与代理继续编辑本仓库时应遵循的规则。
 - [文档体系标准与维护规范](docs/superpowers/specs/2026-08-28-doc-system-standard-design.md)：文档分层、命名、作品名口径、维护检查表。
@@ -51,7 +51,7 @@
 
 | 目录 | 内容 |
 | --- | --- |
-| `assets/` | 美术资产（`wenzhen/` 问真风格：网点、立绘、图标、音乐/音效） |
+| `assets/` | 既有美术与音频素材；可供参考，当前产品不要求复用 |
 | `scenes/` | 场景（`ui/screens/` 各屏幕 tscn，`ui/widgets/` 公共组件） |
 | `scripts/` | 代码（`presentation/` 表现层、`domain/` 逻辑层、`core/` 基础设施） |
 | `data/` | 数值配置（蛊/敌人/道具/事件 JSON/TSV） |
@@ -61,9 +61,9 @@
 | `addons/` | 第三方 Godot 插件（GUT 等） |
 | `分支：六卷精编版/`、`肉鸽设计-原始数据/` | 原文语料与设定提炼物 |
 
-## 运行原型与开发
+## 运行游戏与开发
 
-《問眞》是本地可复现的 Godot 卡牌肉鸽原型，单局目标 3--5 小时、200--300 有效节点（2026-08-25 裁定）。每次开局自动生成新种子，路线、掉落与事件随种子分化；种子 `101` 保留为固定演示/回归路线。没有网络或云端服务时，交涉仍使用本地模板继续。
+Godot 工程是《問眞》的成熟规则实现与数据来源。当前产品目标为浏览器 Web 版，运行与开发入口见 [Web README](wenzhen-web-lab/README.md)；本工程内的运行和测试命令仅用于维护 Godot 版本。
 
 - 目标引擎：Godot `4.7.2`。
 - 启动：`powershell -ExecutionPolicy Bypass -File tools/play.ps1`。
@@ -103,6 +103,6 @@ MIT 许可转移。
 
 ## 范围说明
 
-当前可玩版本：南疆舞台、单机、固定身份开局、单局目标 3--5 小时（200--300 有效节点）的修行人生：从新开窍凡人开始，经资源、情报、人情、交易、战斗与机缘选择，冲击五转修为与结局（成功/险成/失败求生/蛊化坠落/真结局等，统一结算）。
+Web 产品的完整范围以唯一 [产品需求 PRD](../docs/PRODUCT_REQUIREMENTS_v1.0.md) 为准。Godot 版本当前覆盖南疆单机修行过程、五层路线及多种结局，可作为 Web 内容和规则的成熟参考。
 
 它不是方源剧情复刻，也不以青茅山为唯一舞台。原著资料用于还原世界规则、物品关系与事件因果；剧情模式、其他地域、多身份、随机资质和蛊仙阶段玩法留待后续版本。

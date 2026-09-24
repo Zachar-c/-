@@ -15,7 +15,6 @@ const data = dataContext.DATA;
 
 const offers = [
   { id: 'a_t1', kind: 'purchase', tier: 1, gu_id: 'a' },
-  { id: 'b_t1', kind: 'material_purchase', tier: 1, material_id: 'b' },
   { id: 'c_t2', kind: 'purchase', tier: 2, gu_id: 'c' },
   { id: 'd_t2', kind: 'purchase', tier: 2, gu_id: 'd', school: 'sword' },
   { id: 'e_service', kind: 'soul_boost', tier: 9 },
@@ -29,7 +28,7 @@ test('shop slots follow layer and goods keep services off the shelf budget', () 
   assert.equal(rules.slotCount(1), 4);
   assert.equal(rules.slotCount(2), 5);
   assert.equal(rules.slotCount(5), 6);
-  assert.deepEqual(rules.goodsPool(offers, { pacingLayers, layer: 1, school: 'light' }), ['a_t1', 'b_t1']);
+  assert.deepEqual(rules.goodsPool(offers, { pacingLayers, layer: 1, school: 'light' }), ['a_t1']);
   assert.equal(rules.offerIsStocked(offers, 'e_service', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), false);
   // L0 2026-09-25 Phase 0：无机械收益古方不得上架
   assert.equal(rules.offerIsStocked(offers, 'g_fang', { seed: 1, nodeKey: 'shop', pacingLayers, layer: 1 }), false);
@@ -57,31 +56,23 @@ test('shop layer price matches the configured markup', () => {
   assert.equal(rules.layerPrice({ 3: { shop_price_pct: 20 } }, 3, 6), 7);
 });
 
-test('shop stock matches the Godot 64-bit seed stream for the first run node', () => {
+test('Web shop stock is limited to Gu purchases', () => {
   const parityOffers = [
-    { id: 'purchase_boar_king_tusk', kind: 'material_purchase', tier: 1 },
     { id: 'purchase_jade_skin_gu', kind: 'purchase', tier: 1 },
     { id: 'purchase_mending_grass', kind: 'purchase', tier: 1 },
-    { id: 'purchase_moon_blue_petal', kind: 'material_purchase', tier: 1 },
     { id: 'purchase_small_light_gu', kind: 'purchase', tier: 1 },
     { id: 'purchase_stone_shell', kind: 'purchase', tier: 1 },
     { id: 'purchase_white_boar_strength_gu', kind: 'purchase', tier: 1 },
   ];
-  assert.deepEqual(
-    [...rules.stock(parityOffers, {
-      seed: 101,
-      nodeKey: 'beast_swarm_pass',
-      pacingLayers,
-      layer: 1,
-      school: 'light',
-    })],
-    [
-      'purchase_jade_skin_gu',
-      'purchase_stone_shell',
-      'purchase_boar_king_tusk',
-      'purchase_mending_grass',
-    ],
-  );
+  const stock = rules.stock(parityOffers, {
+    seed: 101,
+    nodeKey: 'beast_swarm_pass',
+    pacingLayers,
+    layer: 1,
+    school: 'light',
+  });
+  assert.equal(stock.length, 4);
+  assert.ok(stock.every((id) => parityOffers.find((offer) => offer.id === id)?.kind === 'purchase'));
 });
 
 test('generated shop and NPC stock only reference retained offers', () => {

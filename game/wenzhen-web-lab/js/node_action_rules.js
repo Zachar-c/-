@@ -1,4 +1,4 @@
-// 非战斗节点（险地 / 市集 / 野蛊 / 休整 / 静修）的动作选择规则。Godot 来源逐条照搬，
+// 非战斗节点（险地 / 市集 / 野蛊 / 休整 / 静修 / 异闻）的动作选择规则。Godot 来源逐条照搬，
 // 不新设计：
 // - scripts/domain/social_command_rules.gd:747-803（standard actions 的转移与 effect id）
 //     work             :749-750  → 元石 +3，action_work_paid
@@ -61,9 +61,10 @@
 globalThis.NodeActionRules = (() => {
   // 本模块服务的节点类型。rest 之外的四个都不在 action_preview_service.gd:44-45 的排除名单里；
   // rest 在名单内（休整走自己的卡片集合，不走 choices 出标准卡）。
-  const NODE_TYPES = ['hazard', 'market', 'wild_gu', 'rest', 'seclusion'];
+  const NODE_TYPES = ['hazard', 'market', 'wild_gu', 'rest', 'seclusion', 'event'];
   // 休整节点类型与它的一次性门禁（rest_rules.gd:22 REST_NODE_TYPE / :27 REST_CLASS_TYPES）。
   const REST_TYPE = 'rest';
+  const EVENT_TYPE = 'event';
   const LEAVE_ID = 'leave';
   // 已搬动作全集。顺序只用于 options() 的缺省值，实际以节点模板的 choices 为准。
   const ACTION_IDS = ['work', 'harvest', 'buy_information', 'trade', 'cross', 'scout', 'withdraw', 'meditate', 'leave'];
@@ -441,6 +442,81 @@ globalThis.NodeActionRules = (() => {
     return { ...base, reason: 'unsupported_standard_action' };
   }
 
+  // 事件沿用 Godot 的即时气血代价与元石收益；Web 当前没有延迟魂魄债和诅咒战斗投影，
+  // 所以只开放两类副作用均为空的事件，避免把未接入的代价显示成无害文案。
+  function supportsEvent(event) {
+    return !!event
+      && !String(event.curse_id || '')
+      && Math.max(0, Number(event.delayed_soul_cost) || 0) === 0;
+  }
+
+  function eventCards(event, { health = 0 } = {}) {
+    if (!supportsEvent(event)) return [];
+    const hpCost = Math.max(0, Math.floor(Number(event.health_cost) || 0));
+    const stoneGain = Math.max(0, Math.floor(Number(event.stone_gain) || 0));
+    const gain = [];
+    const risk = [];
+    if (stoneGain > 0) gain.push(`得到 ${stoneGain} 枚元石。`);
+    if (event.flavor_gain) gain.push(String(event.flavor_gain));
+    if (hpCost > 0) risk.push(`立即损失 ${hpCost} 点气血。`);
+    const unknownNote = String(event.unknown_note || '');
+    const available = Math.max(0, Number(health) || 0) > hpCost;
+    return [
+      {
+        id: 'accept_event',
+        title: '收下机缘',
+        buttonLabel: hpCost > 0 ? `承受气血 -${hpCost}` : '收下机缘',
+        summary: String(event.summary || ''),
+        available,
+        blockReason: available ? '' : '气血不足以承受这份代价。',
+        healthCost: hpCost,
+        stoneGain,
+        gain,
+        risk,
+        unknownNote,
+      },
+      {
+        id: 'leave',
+        title: '不取机缘',
+        buttonLabel: '继续赶路',
+        summary: '放弃眼前所得，保留气血继续前行。',
+        available: true,
+        healthCost: 0,
+        stoneGain: 0,
+        gain: [],
+        risk: [],
+        unknownNote: '',
+      },
+    ];
+  }
+
+  function resolveEvent(choiceId, event, { health = 0, stones = 0 } = {}) {
+    if (!supportsEvent(event)) return { ok: false, reason: 'unsupported_event' };
+    const healthBefore = Math.max(0, Math.floor(Number(health) || 0));
+    const stoneBefore = Math.max(0, Math.floor(Number(stones) || 0));
+    if (String(choiceId) === 'leave') {
+      return {
+        ok: true, accepted: false, reason: 'event_left',
+        healthBefore, healthAfter: healthBefore,
+        stoneBefore, stoneAfter: stoneBefore,
+        text: '你放弃眼前所得，保留气血继续赶路。',
+      };
+    }
+    if (String(choiceId) !== 'accept_event') return { ok: false, reason: 'unsupported_event_action' };
+    const hpCost = Math.max(0, Math.floor(Number(event.health_cost) || 0));
+    if (healthBefore <= hpCost) return { ok: false, reason: 'insufficient_health' };
+    const stoneGain = Math.max(0, Math.floor(Number(event.stone_gain) || 0));
+    const changes = [];
+    if (hpCost > 0) changes.push(`气血 -${hpCost}`);
+    if (stoneGain > 0) changes.push(`元石 +${stoneGain}`);
+    return {
+      ok: true, accepted: true, reason: 'event_accepted',
+      healthBefore, healthAfter: healthBefore - hpCost,
+      stoneBefore, stoneAfter: stoneBefore + stoneGain,
+      text: `${String(event.title || '异闻')} · ${changes.length ? changes.join(' · ') : '未损耗资源'}`,
+    };
+  }
+
   const restReasonLabel = (reason) => {
     const text = reason === 'rest_choice_required' ? REST_LEAVE_BLOCK
       : reason === 'rest_already_used' ? REST_USED_BLOCK
@@ -450,7 +526,7 @@ globalThis.NodeActionRules = (() => {
 
   // 节点类型显示名：data/names.json → types 优先；该分区缺 rest 键（数据缺口，覆盖页登记），
   // 回退名取自 scripts/presentation/display_text.gd:54 的 const TYPES（rest = 「休整」）。
-  const TYPE_FALLBACK = { rest: '休整' };
+  const TYPE_FALLBACK = { rest: '休整', event: '异闻' };
   const typeLabel = (type, labels = {}) => {
     const key = String(type || '');
     return String(labels?.[key] || TYPE_FALLBACK[key] || '');
@@ -460,6 +536,7 @@ globalThis.NodeActionRules = (() => {
   return Object.freeze({
     nodeTypes: NODE_TYPES,
     restNodeType: REST_TYPE,
+    eventNodeType: EVENT_TYPE,
     actionIds: ACTION_IDS,
     leaveId: LEAVE_ID,
     restHealId: REST_HEAL_ID,
@@ -477,5 +554,8 @@ globalThis.NodeActionRules = (() => {
     restCards,
     resolveRest,
     restReasonLabel,
+    supportsEvent,
+    eventCards,
+    resolveEvent,
   });
 })();

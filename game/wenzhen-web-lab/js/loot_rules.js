@@ -24,7 +24,6 @@ globalThis.LootRules = (() => {
     const layerConfig = pacingLayers?.[String(Math.min(5, Math.max(1, layer)))] || {};
     const lootConfig = layerConfig.loot || {};
     const table = JSON.parse(JSON.stringify(base));
-    if (lootConfig.material_count != null) table.material_count = lootConfig.material_count;
     const weights = lootConfig.weights || {};
     const byRarity = table.gu_pool?.by_rarity || {};
     const effective = {};
@@ -33,54 +32,6 @@ globalThis.LootRules = (() => {
     }
     if (Object.keys(effective).length) table.gu_pool.weights = effective;
     return table;
-  }
-
-  // L0 Phase 5：无 Consumer 的材料不进入正式掉落池（不删除，只不出货）。
-  function consumerFilter(pool, consumers) {
-    const normalized = normalizeEntries(pool);
-    if (!consumers || typeof consumers !== 'object') return normalized;
-    const allowed = new Set(Object.keys(consumers).filter((id) => (consumers[id] || []).length));
-    if (!allowed.size) return normalized;
-    return normalized.filter((entry) => allowed.has(entry.id));
-  }
-
-  function rollMaterials(table, {
-    seed, tick, tier, countAdjustment = 0, materialPityByTier = {}, targets = [], pityConfig = {},
-    consumers = null, preferred = [],
-  }) {
-    let pool = normalizeEntries(table.material_pool);
-    if (consumers) pool = consumerFilter(pool, consumers);
-    // 敌人亲和：优先加权；池中没有则注入（该敌定向产出钥匙材料）
-    const pref = new Set((preferred || []).map(String));
-    if (pref.size) {
-      const have = new Set(pool.map((e) => e.id));
-      pool = pool.map((entry) => (pref.has(entry.id)
-        ? { ...entry, weight: entry.weight * 3 }
-        : entry));
-      for (const id of pref) {
-        if (consumers && !(consumers[id] || []).length) continue;
-        if (!have.has(id)) pool.push({ id, weight: 5 });
-      }
-    }
-    let count = Math.max(0, Number(table.material_count || 0) + Number(countAdjustment || 0));
-    const materialIds = [];
-    while (materialIds.length < count && pool.length) {
-      const picked = pickWeighted(pool, seed, `loot.material.${tier}`, tick);
-      if (!picked) break;
-      materialIds.push(picked.id);
-      pool.splice(pool.findIndex((entry) => entry.id === picked.id), 1);
-    }
-    const threshold = Number(pityConfig.material_pity?.threshold || 0);
-    const pityCount = Number(materialPityByTier[tier] || 0);
-    const pityTargets = (targets || []).filter((id) => !consumers || (consumers[id] || []).length);
-    if (threshold > 0 && pityCount >= threshold && pityTargets.length && !materialIds.some((id) => pityTargets.includes(id))) {
-      const forced = pool.filter((entry) => pityTargets.includes(entry.id));
-      if (forced.length) {
-        const picked = forced[RunRules.seededIndex(forced.length, seed, `loot.material.forced.${tier}`, tick)];
-        materialIds.push(picked.id);
-      }
-    }
-    return { materialIds };
   }
 
   function schoolPoolByRarity(school, rarity, schoolPools, guById) {
@@ -168,14 +119,6 @@ globalThis.LootRules = (() => {
     return { guIds, rarity: first.rarity };
   }
 
-  function nextMaterialPity(currentByTier, tier, materialIds, targets = []) {
-    const next = { ...(currentByTier || {}) };
-    if (!targets.length) return next;
-    const hit = materialIds.some((id) => targets.includes(id));
-    next[tier] = hit ? 0 : Number(next[tier] || 0) + 1;
-    return next;
-  }
-
   function nextLootPity(current, rarity, pityConfig = {}) {
     const clearing = pityConfig.clearing_rarities || ['rare', 'epic', 'legendary'];
     if (clearing.includes(rarity)) return 0;
@@ -183,23 +126,13 @@ globalThis.LootRules = (() => {
     return Number(current || 0);
   }
 
-  // ---- Phase 6：掉落三价值 ----
-  // economic=元石/可售 · growth=炼蛊钥匙材料 · build=蛊/杀招/组合组件
-  function classifyItem(id, guById = {}, consumers = {}) {
-    const key = String(id || '');
-    if (guById[key]) return 'build';
-    if ((consumers[key] || []).length) return 'growth';
-    return 'economic';
-  }
-
-  function classifyReward(reward = {}, { guById = {}, consumers = {} } = {}) {
-    const kinds = { economic: 0, growth: 0, build: 0 };
+  // 战后奖励类型：元石提供经济，蛊虫提供构筑选择。
+  // economic=元石 · build=蛊/杀招/组合组件
+  function classifyReward(reward = {}, { guById = {} } = {}) {
+    const kinds = { economic: 0, build: 0 };
     if (Number(reward.stones || 0) > 0) kinds.economic += 1;
-    for (const mid of reward.materialIds || []) {
-      kinds[classifyItem(mid, guById, consumers)] += 1;
-    }
     for (const gid of reward.guChoices || reward.guIds || []) {
-      kinds[classifyItem(gid, guById, consumers)] += 1;
+      if (guById[String(gid || '')]) kinds.build += 1;
     }
     return kinds;
   }
@@ -260,13 +193,9 @@ globalThis.LootRules = (() => {
   return Object.freeze({
     pickWeighted,
     layerTable,
-    consumerFilter,
-    rollMaterials,
     rollGu,
     rollGuChoices,
-    nextMaterialPity,
     nextLootPity,
-    classifyItem,
     classifyReward,
     newFutureGuIds,
     ensureNewFutureChoice,

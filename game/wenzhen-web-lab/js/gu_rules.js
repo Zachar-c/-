@@ -549,7 +549,6 @@ globalThis.GuRules = (() => {
           closes: [...(b.closes || [])],
           delays: [...(b.delays || [])],
           stoneCost: Number(b.stoneCost || 0),
-          materials: b.materials ? { ...b.materials } : null,
         })),
       }));
   }
@@ -562,14 +561,8 @@ globalThis.GuRules = (() => {
       const rIn = (recipe.inputs || []).map(String);
       if (!rIn.every((id) => oIn.includes(id))) return false;
       if (Number(o.stoneCost || 0) > Number(recipe.stoneCost || 0)) return false;
-      for (const [k, v] of Object.entries(recipe.materials || {})) {
-        if (Number((o.materials || {})[k] || 0) > Number(v)) return false;
-      }
       const cheaper = oIn.length < rIn.length
-        || Number(o.stoneCost || 0) < Number(recipe.stoneCost || 0)
-        || Object.entries(recipe.materials || {}).some(
-          ([k, v]) => Number((o.materials || {})[k] || 0) < Number(v),
-        );
+        || Number(o.stoneCost || 0) < Number(recipe.stoneCost || 0);
       return cheaper;
     });
   }
@@ -635,83 +628,6 @@ globalThis.GuRules = (() => {
       ].join('|');
       return { branchId: b.id, output: recipe.output, signature, futures, afterOwned };
     });
-  }
-
-  // ---- Phase 5：材料 = 配方钥匙 / 定向追逐 ----
-  function materialConsumers(recipes = []) {
-    const map = {};
-    for (const r of liveRecipes(recipes)) {
-      for (const matId of Object.keys(r.materials || {})) {
-        if (!map[matId]) map[matId] = [];
-        map[matId].push(r.id);
-      }
-    }
-    return map;
-  }
-
-  function materialSources(materialId, recipes = [], enemies = []) {
-    const id = String(materialId || '');
-    const preferred = enemies
-      .filter((e) => (e.preferredMaterials || e.lootMaterials || []).map(String).includes(id)
-        || (e.preferred_enemy_ids || []).length === 0 && false)
-      .map((e) => ({ id: e.id, name: e.name || e.id, problemAxis: e.problemAxis || null }));
-    // 配方上的 preferred_enemy_ids 也作来源提示
-    const fromRecipes = [];
-    for (const r of liveRecipes(recipes)) {
-      if (!Number((r.materials || {})[id] || 0)) continue;
-      for (const eid of r.preferred_enemy_ids || []) {
-        const e = enemies.find((x) => x.id === eid);
-        if (e && !preferred.some((p) => p.id === e.id)) {
-          fromRecipes.push({ id: e.id, name: e.name || e.id, problemAxis: e.problemAxis || null, viaRecipe: r.id });
-        }
-      }
-    }
-    return [...preferred, ...fromRecipes];
-  }
-
-  // Gate 5：目标 Build → 配方 → 缺材料 → 哪类敌人产。
-  function farmChain(kitIdOrRecipeId, options = {}) {
-    const { recipes = [], enemies = [], owned = {}, materials = {}, guById = {} } = options;
-    const live = liveRecipes(recipes);
-    let recipe = live.find((r) => r.id === kitIdOrRecipeId);
-    let kit = BUILD_KITS[kitIdOrRecipeId] || null;
-    if (!recipe && kit) {
-      // 组合优先绑定到完成该组合的分支配方
-      const outId = kit.members[kit.members.length - 1];
-      recipe = live.find((r) => r.output === outId || (kit.members || []).includes(r.output))
-        || live.find((r) => r.branchAxis && kit.axis && r.branchAxis.startsWith(kit.axis.slice(0, 4)));
-    }
-    if (!recipe) return null;
-    const needed = Object.entries(recipe.materials || {}).map(([matId, n]) => {
-      const have = Number(materials[matId] || 0);
-      const need = Number(n || 1);
-      return {
-        materialId: matId,
-        need,
-        have,
-        missing: Math.max(0, need - have),
-        sources: materialSources(matId, recipes, enemies),
-      };
-    });
-    const missing = needed.filter((m) => m.missing > 0);
-    return {
-      kitId: kit?.id || null,
-      kitLabel: kit?.label || null,
-      recipeId: recipe.id,
-      branchLabel: recipe.branchLabel || recipe.output,
-      output: recipe.output,
-      farmHint: recipe.farm_hint || null,
-      preferredEnemyIds: [...(recipe.preferred_enemy_ids || [])],
-      materials: needed,
-      missing,
-      // 选敌建议：缺什么就去打谁
-      chase: missing.flatMap((m) => m.sources.map((s) => ({
-        enemyId: s.id,
-        enemyName: s.name,
-        problemAxis: s.problemAxis,
-        materialId: m.materialId,
-      }))),
-    };
   }
 
   // 获得新蛊后的构筑关联：可替换 / 可炼 / 可组杀招 / 可进哪套组合。
@@ -882,8 +798,5 @@ globalThis.GuRules = (() => {
     isStrictlyDominatedRecipe,
     branchFutures,
     forgeBranchSignatures,
-    materialConsumers,
-    materialSources,
-    farmChain,
   });
 })();

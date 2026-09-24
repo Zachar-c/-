@@ -275,7 +275,6 @@ async function playOneRun({ entry, seed, difficulty, policy, suite, shots, edge 
       blood: snap?.blood ?? null,
       life: snap?.lifeTime ?? null,
       owned: snap?.owned || {},
-      materials: snap?.materials || {},
       equipped: snap?.equipped || [],
       completed: snap?.journey?.completed?.length ?? 0,
       pages: [...new Set(ledger.map((x) => x.kind))],

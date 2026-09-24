@@ -3,10 +3,25 @@
 // 纯函数不触碰浏览器全局；storage 由调用方注入（浏览器 localStorage / 测试内存适配）。
 globalThis.LabSave = (() => {
   const KEY = 'wenzhen.lab.run.v1';
+  const ARCHIVE_KEY = 'wenzhen.lab.archive.v1';
+  const ARCHIVE_VERSION = 1;
+  const ARCHIVE_LIMIT = 24;
   const SCHEMA_VERSION = 1;
 
   function isPlainObject(value) {
     return !!value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function migrateRemovedMaterialState(state) {
+    const migrated = { ...state };
+    delete migrated.materials;
+    delete migrated.materialPityByTier;
+    if (isPlainObject(migrated.reward)) {
+      migrated.reward = { ...migrated.reward };
+      delete migrated.reward.materialIds;
+      delete migrated.reward.materialPityByTier;
+    }
+    return migrated;
   }
 
   function missingCriticalState(state) {
@@ -24,7 +39,6 @@ globalThis.LabSave = (() => {
     if (!isPlainObject(state.owned)) return true;
     if (!Number.isFinite(Number(state.stones))) return true;
     if (!Number.isFinite(Number(state.blood))) return true;
-    if (!isPlainObject(state.materials)) return true;
     if (!Array.isArray(state.shopSold)) return true;
     if (!Array.isArray(state.equipped)) return true;
     if (!Array.isArray(state.journal)) return true;
@@ -45,7 +59,7 @@ globalThis.LabSave = (() => {
     });
   }
 
-  function decode(text, contentVersion) {
+  function decode(text, contentVersion, compatibleContentVersions = []) {
     if (typeof text !== 'string' || text.length === 0) {
       return { ok: false, reason: 'empty' };
     }
@@ -61,13 +75,20 @@ globalThis.LabSave = (() => {
     if (Number(envelope.schemaVersion) !== SCHEMA_VERSION) {
       return { ok: false, reason: 'schema_mismatch', raw: text };
     }
-    if (envelope.contentVersion !== contentVersion) {
+    const legacyContentVersion = envelope.contentVersion !== contentVersion
+      && Array.isArray(compatibleContentVersions)
+      && compatibleContentVersions.includes(envelope.contentVersion);
+    if (envelope.contentVersion !== contentVersion && !legacyContentVersion) {
       return { ok: false, reason: 'content_mismatch', raw: text };
     }
     if (missingCriticalState(envelope.state)) {
       return { ok: false, reason: 'missing_state', raw: text };
     }
-    return { ok: true, state: envelope.state };
+    return {
+      ok: true,
+      state: migrateRemovedMaterialState(envelope.state),
+      legacyContentVersion: legacyContentVersion ? envelope.contentVersion : '',
+    };
   }
 
   function storageError(error) {
@@ -89,7 +110,7 @@ globalThis.LabSave = (() => {
     }
   }
 
-  function read(storage, contentVersion) {
+  function read(storage, contentVersion, compatibleContentVersions = []) {
     try {
       if (!storage || typeof storage.getItem !== 'function') {
         return { ok: false, reason: 'storage_error', error: 'storage unavailable' };
@@ -98,7 +119,7 @@ globalThis.LabSave = (() => {
       if (text == null) {
         return { ok: false, reason: 'empty', empty: true };
       }
-      const decoded = decode(String(text), contentVersion);
+      const decoded = decode(String(text), contentVersion, compatibleContentVersions);
       if (!decoded.ok) {
         return {
           ok: false,
@@ -106,7 +127,11 @@ globalThis.LabSave = (() => {
           raw: decoded.raw != null ? decoded.raw : String(text),
         };
       }
-      return { ok: true, state: decoded.state };
+      return {
+        ok: true,
+        state: decoded.state,
+        legacyContentVersion: decoded.legacyContentVersion || '',
+      };
     } catch (error) {
       return storageError(error);
     }
@@ -124,8 +149,49 @@ globalThis.LabSave = (() => {
     }
   }
 
+  function readArchive(storage) {
+    try {
+      if (!storage || typeof storage.getItem !== 'function') {
+        return { ok: false, reason: 'storage_error', error: 'storage unavailable' };
+      }
+      const text = storage.getItem(ARCHIVE_KEY);
+      if (text == null) return { ok: true, runs: [] };
+      const envelope = JSON.parse(String(text));
+      if (!isPlainObject(envelope)
+        || Number(envelope.archiveVersion) !== ARCHIVE_VERSION
+        || !Array.isArray(envelope.runs)) {
+        return { ok: false, reason: 'archive_mismatch', raw: String(text) };
+      }
+      return { ok: true, runs: envelope.runs.filter(isPlainObject).slice(0, ARCHIVE_LIMIT) };
+    } catch (error) {
+      return { ok: false, reason: 'archive_unreadable', raw: String(error?.message || error) };
+    }
+  }
+
+  function appendArchive(storage, record) {
+    if (!isPlainObject(record) || !String(record.id || '')) {
+      return { ok: false, reason: 'bad_archive_record' };
+    }
+    const current = readArchive(storage);
+    if (!current.ok) return current;
+    if (current.runs.some((run) => String(run.id || '') === String(record.id))) {
+      return { ok: true, duplicate: true, runs: current.runs };
+    }
+    const runs = [record, ...current.runs].slice(0, ARCHIVE_LIMIT);
+    try {
+      if (!storage || typeof storage.setItem !== 'function') {
+        return { ok: false, reason: 'storage_error', error: 'storage unavailable' };
+      }
+      storage.setItem(ARCHIVE_KEY, JSON.stringify({ archiveVersion: ARCHIVE_VERSION, runs }));
+      return { ok: true, runs };
+    } catch (error) {
+      return storageError(error);
+    }
+  }
+
   return {
     KEY,
+    ARCHIVE_KEY,
     SCHEMA_VERSION,
     encode,
     decode,
@@ -133,5 +199,7 @@ globalThis.LabSave = (() => {
     read,
     clear,
     missingCriticalState,
+    readArchive,
+    appendArchive,
   };
 })();

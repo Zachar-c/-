@@ -1,6 +1,6 @@
 // Deterministic shop shelf rules ported from shop_command_rules.gd.
 globalThis.ShopRules = (() => {
-  const GOODS_KINDS = ['purchase', 'material_purchase'];
+  const GOODS_KINDS = ['purchase'];
   const SERVICE_KINDS = ['gu_fang_unlock'];
 
   // L0 2026-09-25 Phase 0：无机械收益/已退役商品不得作为正式可购成长项。
@@ -161,7 +161,7 @@ globalThis.ShopRules = (() => {
   }
 
   function spendPressures({
-    stones = 0, materials = {}, owned = {}, rank = 1, stageIndex = 0,
+    stones = 0, owned = {}, rank = 1, stageIndex = 0,
     offers = [], recipes = [], flow = {}, stoneRewards = {}, layer = 1,
   } = {}) {
     const I = incomeUnit(stoneRewards, 'common', layer);
@@ -180,21 +180,6 @@ globalThis.ShopRules = (() => {
         pressure: cost <= stones && fightsOfI(cost, I) <= 6 ? 2 : 1,
       });
     }
-    for (const offer of offers) {
-      if (!isLiveOffer(offer)) continue;
-      if (offer.kind !== 'material_purchase' || !offer.material_id) continue;
-      const cost = Number(offer.stone_cost || 0);
-      const missingKey = Number(materials[offer.material_id] || 0) < 1;
-      options.push({
-        kind: 'buy_material',
-        id: offer.id,
-        label: `买材料·${offer.material_id}`,
-        cost,
-        fights: fightsOfI(cost, I),
-        affordable: cost <= stones,
-        pressure: cost <= stones && missingKey && fightsOfI(cost, I) <= 3 ? 3 : 1,
-      });
-    }
     const breakCost = nextBreakthroughCost({ rank, stageIndex, flow, owned });
     if (breakCost != null) {
       options.push({
@@ -210,13 +195,10 @@ globalThis.ShopRules = (() => {
     for (const r of recipes || []) {
       if (r.retired) continue;
       const stone = Number(r.stoneCost || 0);
-      const matOk = Object.entries(r.materials || {}).every(
-        ([id, n]) => Number(materials[id] || 0) >= Number(n || 1),
-      );
       const need = {};
       for (const id of r.inputs || []) need[id] = (need[id] || 0) + 1;
       const guOk = Object.entries(need).every(([id, n]) => Number(owned[id] || 0) >= n);
-      const can = matOk && guOk && stone <= stones;
+      const can = guOk && stone <= stones;
       options.push({
         kind: 'forge',
         id: r.id,
@@ -238,7 +220,7 @@ globalThis.ShopRules = (() => {
       if (!opt.affordable && score < 3) continue;
       byKind[opt.kind] = Math.max(byKind[opt.kind] || 0, score);
     }
-    const kinds = ['buy_build', 'buy_material', 'forge', 'save_breakthrough'];
+    const kinds = ['buy_build', 'forge', 'save_breakthrough'];
     const scores = kinds.map((k) => ({ kind: k, score: byKind[k] || 0 }));
     const max = Math.max(...scores.map((s) => s.score), 0);
     const leaders = scores.filter((s) => s.score === max && max > 0);

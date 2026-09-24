@@ -50,7 +50,6 @@ function txContext(overrides = {}) {
     aptitude: 'bing',
     owned: {},
     wild: {},
-    materials: {},
     equipped: [],
     shopSold: [],
     globalCodexIds: [],
@@ -77,7 +76,6 @@ function txContext(overrides = {}) {
     recordEvent(action, data, event, tags = []) {
       state.eventLog.push({ action, event, data, tags });
     },
-    materialById: (id) => ({ name: id }),
     confirmAbandon: () => true,
     showPage() {},
     openPrep() {},
@@ -182,21 +180,19 @@ test('FIXTURE_INTEGRATION: reward claim once, second click is a no-op', () => {
   assert.deepEqual(JSON.parse(JSON.stringify(state.owned)), after);
 });
 
-test('FIXTURE_INTEGRATION: forge missing material leaves ledger unchanged', () => {
-  const recipe = DATA.recipes.find((r) => Object.keys(r.materials || {}).length)
-    || DATA.recipes.find((r) => (r.inputs || []).length);
+test('FIXTURE_INTEGRATION: forge missing Gu input leaves ledger unchanged', () => {
+  const recipe = DATA.recipes.find((r) => (r.inputs || []).length);
   assert.ok(recipe);
   const { state, act } = txContext({
     state: {
       stones: 50,
       owned: Object.fromEntries((recipe.inputs || []).map((id) => [id, 0])),
-      materials: Object.fromEntries(Object.keys(recipe.materials || {}).map((id) => [id, 0])),
     },
     acts: ['forge'],
   });
-  const before = JSON.parse(JSON.stringify({ stones: state.stones, owned: state.owned, materials: state.materials }));
+  const before = JSON.parse(JSON.stringify({ stones: state.stones, owned: state.owned }));
   act.forge(recipe.id);
-  assert.deepEqual(JSON.parse(JSON.stringify({ stones: state.stones, owned: state.owned, materials: state.materials })), before);
+  assert.deepEqual(JSON.parse(JSON.stringify({ stones: state.stones, owned: state.owned })), before);
 });
 
 test('FIXTURE_INTEGRATION: toggleMove refuses duplicate recipes without enough instances', () => {
