@@ -18,6 +18,7 @@
 - 完整文档树及职责见 [README.md](README.md)；目录与数据组织见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 - [PROJECT-SPEC.md](PROJECT-SPEC.md) 链接唯一 PRD，不新增产品权威；设计、组件、页面、开发、分发和部署各有同名职责入口。
 - 当前整理状态见 [TODO.md](TODO.md)，新增更新记录见 [CHANGELOG.md](CHANGELOG.md)。
+- 《问真》Web 硬性约束逐项审核索引见 [docs/WEB_HARD_CONSTRAINTS_REVIEW.md](docs/WEB_HARD_CONSTRAINTS_REVIEW.md)；该索引供 L0 裁定，不是新权威。
 - 本次仅增加导航与状态说明，不移动既有来源、协议、裁定或子项目目录；未配置能力不视作已实现。
 
 ### `lore/research/`（Task 5 已导入）
