@@ -1,0 +1,140 @@
+# 外部题库覆盖度审计——100 题（L0 提供，2026-09-25）
+
+> 性质：**覆盖度审计，不是 GEN 评分盲测**。题库由 L0 提供、无独立答案键，未走 benchmark-pool 独立出题协议；两个独立答题代理（各 50 题）以 lore/wiki 全部知识页（约 80 页：characters/gu/events/rules/themes/world + 各 index）为白名单作答，答案未对原文逐条复核——依据标注仅供反查，引用准确性复核属后续工作。
+> 状态口径：`命中`=页面有完整依据；`部分`=只能答出一部分；`无据`=知识页无依据（不判对错）。
+
+## 总成绩
+
+| 域 | 题号 | 命中 | 部分 | 无据 |
+|---|---|---|---|---|
+| 一、蛊虫与蛊材 | 1–25 | 12 | 9 | 4 |
+| 二、修行体系与流派 | 26–50 | 9 | 10 | 6 |
+| 三、角色与人物 | 51–70 | 3 | 11 | 6 |
+| 四、势力、杀招与仙蛊屋 | 71–85 | 3 | 8 | 4 |
+| 五、剧情与名场面 | 86–100 | 9 | 3 | 3 |
+| **合计** | 100 | **36** | **41** | **23** |
+
+解读：触达率（命中+部分）77/100；完全命中 36/100。无据热点集中在：角色细节层（持有者/初见/亲属/早年本命蛊）、杀招名录补遗（三人成虎、坐吃山空等）、势力资产细目（仙蛊屋清单）、后期剧情（弧十二/十三、疯魔窟终局、影宗卧底结局）、以及若干量化规则（真元耐用比、升仙成功率、流派形成条件）。
+
+## 明细（1–50）
+
+| # | 状态 | 答案（压缩） | 依据 |
+|---|---|---|---|
+| 1 | 命中 | 主角古月方源（重生回 15 岁，27 步丙等），孪生弟古月方正（43 步甲等，族长栽培） | characters/fang-yuan.md（E:V1-001156）；characters/roster.md |
+| 2 | 命中 | 阴阳转身蛊（四转，黑白双蛊太极光球；阴蛊用于男身可阳转阴） | events/wolf-tide.md EVT-WTC-025/026（34508–34512 [对话\|已核]） |
+| 3 | 命中 | 春秋蝉（六转，前世三十年炼成、逆光阴五百年重生）；红莲魔尊（洪亭）所创 | gu/spring-autumn-cicada.md ST-CICADA-01/06；rules/venerables.md VEN-020 |
+| 4 | 无据 | 太光蛊仅登记为五转光道蛊（light_atk_5_03_gu），无持有者与缺陷；无"萧芒" | gu/roster-3.md（E:V2-072028） |
+| 5 | 部分 | 仅确证第二空窍蛊秘方用"三更"（添三更再三更得九）；三蛊共同需求无登记 | events/three-kings-mountain.md（70108–70126）；gu/roster-2.md 三更蛊 |
+| 6 | 无据 | 无"形如骰子、通体灰白"蛊虫记载 | —— |
+| 7 | 部分 | 兽形蛊组可举：白相仙蛇、千里地狼蛛、刀翅血蝠蛊；血滴子行为亦兽性；无"行为似野兽"成文分类 | gu/roster.md 兽形蛊组；events/wolf-tide.md（28474–28498） |
+| 8 | 命中 | 定仙游（六转仙蛊；同期第二空窍蛊功败垂成） | events/story-arc-overview.md 弧四；gu/roster.md；events/three-kings-mountain.md（E:V3-076022） |
+| 9 | 部分 | 第七位（笔记层级"十大奇蛊第七"）；位次变化未登记 | gu/spring-autumn-cicada.md 资料整理（A2a 412） |
+| 10 | 无据 | 无"智障"蛊（最近为转数未核名录"愚蠢蛊"四转） | gu/roster-3.md 转数未核列 |
+| 11 | 无据 | 无"宙锚"蛊；宙道仙蛊屋仅今古亭/恒舟/鲨流撬/三秋黄鹤台 | gu/roster.md 仙蛊屋节 |
+| 12 | 命中 | 跨域机动/传送核心；一颗仙元六年免喂；被野生镇宇仙蛊克制 | gu/roster.md 定仙游条（56826）；events/royal-court.md EVT-RTC-004 |
+| 13 | 命中 | 古月一族（秘法培育镇族蛊、非天然、一转弯月蓝水晶发射月刃） | gu/moonlight-gu.md（E:V1-001472） |
+| 14 | 命中 | 石碑巨形（七转） | gu/persistence-gu.md（F2a 239846–239850） |
+| 15 | 部分 | 四类个案齐备：破境（人兽葬生蛊）、真元储存催升（紫晶舍利蛊）、转化灌输（骨肉团圆蛊）、伪修为（四味酒虫）；无成文"四类"分类 | events/wolf-tide.md（25220）；events/royal-court.md（87528–87596）；events/south-caravan.md EVT-CAR-033；gu/roster.md |
+| 16 | 命中 | 一到五转凡、六转起仙（五处复述一致）；蛊虫共九转，六转即仙蛊、同种同世唯一 | world/cultivation-system.md（E:V2-050192 等）；CAN-IMMORTAL-BOUNDARY-001 |
+| 17 | 部分 | 平炼提年份不跨层级（十年→…→最高九十九年）；十年蛊→百年蛊为升炼（难度数十倍）；转数与年份一一对应未登记 | rules/refinement.md REF-007/008；gu/roster-2.md 年蛊条 |
+| 18 | 命中 | 山如故＋江如故（太白云生两只宙道蛊）；太白云生升仙时二蛊自发合并为六转江山如故（后升炼至八转极限） | events/royal-court.md（96404、100066、112690、113214）；rules/refinement.md REF-020 |
+| 19 | 命中 | ①性命交修毁则重创②升炼失败保蛊③合炼失败不死④升仙可提转⑤可立第二本命蛊对冲风险 | rules/refinement.md REF-017 |
+| 20 | 命中 | 本质区别="性命交修"（难以更改、更换须毁蛊师重创/死亡）；普通蛊炼废直接毁灭积累清零 | rules/refinement.md REF-017（E:V2-90864；E:V2-95094） |
+| 21 | 命中 | 春秋蝉（Run1 后期曾提升至七转）；原主红莲魔尊 | gu/spring-autumn-cicada.md ST-CICADA-04/06（E:V5-323706）；VEN-020 |
+| 22 | 部分 | 方正本命蛊=月光蛊；升仙后升炼转数无据（仅记六转血神子、被焚杀等） | characters/fang-yuan.md（3460–3575）；rules/dao-marks.md DM-013 |
+| 23 | 部分 | 三例：熊家先祖遗留之蛊（隐身瞒天过海）、白家"大仙"蛇蛊（食元泉水认主传承）、白骨传承缸未具名二转蛊 | events/wolf-tide.md（30434–30452、30126–30150）；events/south-caravan.md（38972–38984） |
+| 24 | 部分 | 仅登记为 Run1 八转蛊清单之一；流派/功能/副作用无据 | themes/philosophy.md（E:V5-309856） |
+| 25 | 部分 | 转数双口径：五转人如故（E:V3-098826）/六转人如故仙蛊（E:V5-270480）；太白云生本命蛊（碎窍用）；功能定义与杀招无据 | gu/roster-3.md；events/royal-court.md EVT-RTC-107 |
+| 26 | 命中 | 九转；五/六转之间分凡仙；九转即尊者（分仙尊/魔尊） | world/cultivation-system.md；rules/tribulation.md TRIB-015 |
+| 27 | 部分 | 初/中/高/巅峰四阶；膜：初阶光膜、中阶水膜、高阶石膜；巅峰膜（晶膜）与一转巅峰无明文 | world/cultivation-system.md（E:V1-005222）；events/south-caravan.md（49814–49842） |
+| 28 | 命中 | 丁 2-3 成/丙 4-5 成/乙 6-7 成/甲 8-9 成（最高九成九）/十绝体十成（伴崩毁早夭） | world/aptitude-and-aperture.md（E:V1-001354、E:V1-022770） |
+| 29 | 部分 | 可靠命名三种：北冥冰魄体（白凝冰）、大力真武体（黑楼兰）、古月阴荒体（方源被识破所中）；+至尊仙胎、人造十绝体；十种全名单无登记 | characters/bai-ning-bing.md；events/royal-court.md EVT-RTC-064/117；world/shadow-sect.md |
+| 30 | 命中 | 青铜→赤铁→白银→黄金→紫晶（紫晶再分四小阶） | world/cultivation-system.md（E:V1-003612 等）；world/primeval-essence.md |
+| 31 | 部分 | 青提（六转）、红枣（七转）、白荔（八转）；九转仙元未登记 | world/primeval-essence.md；rules/tribulation.md TRIB-003/004 |
+| 32 | 命中 | 第一步碎窍（自碎凡窍、勾动天劫地灾）；第二步纳气（天气地气人气三气合一、凡窍碎处仙窍生成） | events/royal-court.md EVT-RTC-084/107；events/true-yang-collapse.md EVT-ZYL-001/004 |
+| 33 | 命中 | 明文之一=突破天道封锁；渡三次万劫[推断]（方源借至尊仙窍取巧为替代路径）；无上大宗师[推断]；第四条件未决 | rules/venerables.md VEN-006/016 |
+| 34 | 部分 | 十位可拼出（远古元始/星宿；上古无极/狂蛮；中古元莲/盗天/巨阳；近古幽魂/乐土/红莲）；集中名单原文待查 | world/path-roster.md；rules/venerables.md 待核对 |
+| 35 | 部分 | 仅两人有名：太日阳莽（子）、古月阴荒（女）（人祖挖眼所化）；十子完整名单无登记 | events/three-kings-mountain.md（66438–66458）；themes/ren-zu-zhuan.md 第 5 节 |
+| 36 | 命中 | 原文无固定总数（远古四五道、当代主修至少二十道）；可举 30+ 流派 | world/path-roster.md；rules/venerables.md VEN-008 |
+| 37 | 无据 | 无"流派形成四条件"登记 | world/path-roster.md（仅时代源流） |
+| 38 | 部分 | "老墨"未见（登记主体是方源）；机制可答：真意尽数吸取只到准无上（天地极限差边角）；无上须推陈出新的开创、遗泽不可达 | rules/path-realms.md PR-004/010/015；VEN-002/003 |
+| 39 | 无据 | 无该命题；相近仅方源售 13 具蛊仙俘虏为拍卖一半（语境不同） | world/economy-roster.md（140434–140454） |
+| 40 | 部分 | 人道特长可答（《人祖传》=人道真传、人性片段炼蛊、天庭民意统治）；"人道道痕不干扰他道"机制无据（至尊仙体互不影响≠人道） | gu/roster.md 人道蛊族；world/soul-path.md；rules/dao-marks.md DM-005 |
+| 41 | 部分 | 仅两要素：真元全窍转完+提纯中阶；窍壁光膜→水膜→石膜温养进阶；第三条件无登记 | characters/fang-yuan.md ST-FANGYUAN-08（E:V1-004656） |
+| 42 | 无据 | "五成五资质冲窍壁"与"方正期末考一转巅峰"均无记载，题面前提无法核验 | characters/fang-yuan.md（1038–1052） |
+| 43 | 无据 | 真元耐用比未登记；仅跨转换算（赤铁=10×青铜、白银=10×赤铁，覆盖一至三转） | world/primeval-essence.md 跨转换算 |
+| 44 | 无据 | 升仙成功率统计无登记 | —— |
+| 45 | 命中 | 道主=进入元境令境界重回无上大宗师者；能力=抵消境界贬值、"很可能关乎尊者无敌之秘"；元境已灭路径断绝 | rules/venerables.md VEN-004/005/015 |
+| 46 | 命中 | 亚仙尊=实力圈层描述非官方称号（距尊者最近）；"一日不成尊，哪怕道痕再多，也只是亚仙尊" | rules/venerables.md VEN-011/015 |
+| 47 | 命中 | 元始仙尊开创气道（兼创奴道）；另创"三气归来""千夫所指"、为天庭创立者 | world/path-roster.md；world/heavenly-court.md |
+| 48 | 部分 | 星宿仙尊开创智道星道；九转仙蛊仅确证智慧蛊（炼化收服耗近百年）；第二只无据（"星宿本命蛊"系琅琊地灵单源待核） | world/path-roster.md；rules/venerables.md VEN-018/020；gu/wisdom-gu.md 待核对 |
+| 49 | 无据 | 无"突破大转数需一心二用"规则（仅炼蛊"一心多用"个案） | rules/refinement.md REF-016 |
+| 50 | 部分 | 目的可答：天庭幕后接管、成功道痕用于修复宿命蛊（前六名各六道）；"每百年一次""不限正魔身份"无登记 | events/central-plain-refinement-conference.md；world/ten-ancient-sects.md；rules/dao-marks.md DM-007 |
+
+## 明细（51–100）
+
+| # | 状态 | 答案（压缩） | 依据 |
+|---|---|---|---|
+| 51 | 部分 | 仅记药姬孙女、药脉继承人、被方源绑架喂黑熊成原料；称号无据 | characters/roster.md；events/wolf-tide.md EVT-WTC-014 |
+| 52 | 部分 | 前世=血翼魔尊（血翼魔教教主）；卷六自封"大爱仙尊"（曾拒绝"炼天魔尊"）；"世人称"单一定号未明文 | characters/fang-yuan.md aliases；characters/roster.md 马甲表 |
+| 53 | 无据 | 无记载；前世"真心相爱"对象未指名（111432 留白） | characters/fang-yuan.md；events/royal-court.md |
+| 54 | 部分 | 出身南疆白家、北冥冰魄体（十绝体）、后期转女身；"种族"字段无直接登记 | characters/bai-ning-bing.md；events/wolf-tide.md |
+| 55 | 部分 | 真名=洪亭（命中）；损宿命蛊所用蛊虫无据 | characters/red-lotus.md；gu/fate-gu.md |
+| 56 | 部分 | 动机=红莲之问（拒绝遵从宿命安排）；目的=真传留给"未来最有希望摧毁宿命的人"；单句定论无 | characters/red-lotus.md；themes/philosophy.md（E:V5-366004） |
+| 57 | 部分 | 创魂道流派（开辟者）+战场杀招魂狩战场；"创立势力""全流派大宗师之径"无据 | world/soul-path.md；characters/roster.md |
+| 58 | 部分 | 种族=龙人（渡尽灾劫不成尊转变成龙人、"人人如龙"）；主修流派与"天庭三公"无据 | characters/dragon-duke.md；rules/venerables.md VEN-017 |
+| 59 | 无据 | 无初见记载（仅凤九歌之女、梦翼仙蛊、前世被方源斩杀） | characters/roster.md 凤金煌条 |
+| 60 | 部分 | 未明言师徒名分；仅龙公寄予大梦仙尊期望、临终暗传音令其成就仙尊（间接） | characters/roster.md；events/fate-war.md |
+| 61 | 部分 | 开创气道、奴道（已核）；"以什么流派成尊"无据 | world/path-roster.md |
+| 62 | 命中 | 是（唯一智道、唯一女子，限定尊者层）；一万九千岁、九转长寿第二 | rules/venerables.md VEN-018/019 |
+| 63 | 部分 | 开创律道（上古）；护道人无据 | world/path-roster.md 律道行 |
+| 64 | 无据 | 所载盗天杀招为无相手/成双入对/见面不相识；无"九转侦查杀招" | world/kill-move-roster.md |
+| 65 | 无据 | 巨阳早年本命蛊无记载（仅遗泽：真阳楼/王庭福地/长生天/运道开创） | world/longevity-heaven.md；events/royal-court.md |
+| 66 | 命中 | 六转（升仙之际天地交感炼成仙蛊人如故）；五转→六转双口径已登记 | events/royal-court.md EVT-RTC-107/109；gu/roster-3.md |
+| 67 | 命中 | 八转信道蛊仙（天庭系）；招牌战场杀招=流言笼（借中洲民意越战越强，困方源/杀池曲由） | characters/roster-2.md 周雄信条；world/kill-move-roster.md |
+| 68 | 部分 | 可化身巨人（挡仙蛊屋、八转杀招齐爆）；长生天仙墓成员；完整形态谱系无据 | world/visual-frontier.md D09；world/longevity-heaven.md |
+| 69 | 无据 | 仅记影无邪经红莲重生、纯梦求真体；与春秋蝉的持有/获得关系无据 | events/story-arc-overview.md 弧九 |
+| 70 | 无据（矛盾） | wiki 记商心慈为无修行资质凡人，与"施展战场杀招"前提矛盾 | events/south-caravan.md；characters/roster.md |
+| 71 | 部分 | 仅记职务色衔配颜色名号（青正使薄青/蓝副使七星子）；"最初以什么制定代号"无明文 | world/shadow-sect.md；world/zangmeng.md |
+| 72 | 部分 | 可考炼制行动=人造十绝体（紫山真君分魂为代价、砚石老人研究）；总纲对象无据 | world/shadow-sect.md |
+| 73 | 部分 | 长期对峙、延缓大时代五百年、剿灭大梦仙尊、紫山真君"与天意同化"策略；"根本对立点"未明文（分析层归纳） | world/shadow-sect.md |
+| 74 | 命中 | 监天塔（九转仙蛊屋）；催动九转杀招"命败"重创敌军、接引天意、紫薇仙子推算布局 | gu/roster.md 仙蛊屋节；events/fate-war.md EVT-FATE-002 |
+| 75 | 部分 | 表面=义天山正魔大战；实质=影宗设局献祭、方源为棋子身死二次重生；起因细节未展开 | events/royal-court.md（86302）；events/story-arc-overview.md 弧九 |
+| 76 | 无据 | 无战役规模排名记载 | events/story-arc-overview.md |
+| 77 | 命中 | 周雄信的杀招；信道；借中洲民意越战越强、可困敌；被断外界联系后失效 | world/kill-move-roster.md 流言笼条；world/path-roster.md 信道行 |
+| 78 | 无据 | 全库无"三人成虎"记载 | world/kill-move-roster.md；rules/killer-moves.md |
+| 79 | 无据 | 全库无"坐吃山空"记载 | world/kill-move-roster.md |
+| 80 | 无据 | 无星宿创造两座仙蛊屋记载（仅星宿棋盘、衍化大阵、以身合道） | characters/star-constellation.md |
+| 81 | 命中 | 炼道仙蛊屋——蛊修历史第一炼道仙蛊屋；方源所造（四元=升炼/水炼/悔/七转血本；仅至尊仙窍内存续） | rules/refinement.md REF-022 |
+| 82 | 部分 | 仅记房家"鸡笼犬舍"一座（转数未标）；"三座七转+合体战阵"无据 | world/west-desert.md 房家条 |
+| 83 | 部分 | 留下者=盗天魔尊（互文锚点表）；"如何转化而成"无据 | themes/ren-zu-zhuan.md 互文锚点表 |
+| 84 | 部分 | 凤九歌（八转音道、草创半曲破送友风、一招败帝藏生、命运蛊仙蛊方雏形）；核心仙蛊无据 | world/kill-move-roster.md 命运歌条 |
+| 85 | 部分 | 仅记东海夏家"钓鲸舟"一座（转数未标）+人道秘境"人海"；"两座七转"无据 | world/visual-frontier.md 东海 09/11 |
+| 86 | 命中 | 至尊仙胎蛊（九转人道；义天山夺得；天意栽培方源正为阻幽魂炼此蛊） | gu/roster.md 方源蛊链；events/story-arc-overview.md 弧九 |
+| 87 | 部分 | 最接近：炼成七转坚持仙蛊、成逆流河之主（非福地）；Run2 吞并琅琊福地（非炼蛊所得）；对应事件无据 | events/reverse-flow-river.md；gu/persistence-gu.md |
+| 88 | 命中 | 四臂地王（弧五黑刘大战自创；灵感来自三头六臂；须脚踩大地；后改良四臂风王） | events/royal-court.md EVT-RTC-070/074 |
+| 89 | 命中 | 可举：开窍大典 27 步/勒索全班高碗分尸/青茅覆灭二次重生/草府大战三拳毙马尊/碎窍升仙真阳楼崩塌/监天塔命败与龙公遗言/大爱仙尊宣言 | characters/fang-yuan.md；events/wolf-tide.md；events/royal-court.md；events/true-yang-collapse.md；events/fate-war.md |
+| 90 | 部分 | 最终选中=天外之魔/最有希望摧毁宿命者（方源 Run2 取得）；"多少道真传"无据（石莲岛数量未建档） | characters/red-lotus.md；events/stone-lotus-island-contest.md |
+| 91 | 命中 | 以炼道成尊（定策"先炼道成尊"；借至尊仙窍跨万劫；疯魔窟之争悄然成尊）；尊号=大爱仙尊（自封） | rules/venerables.md VEN-006；themes/philosophy.md |
+| 92 | 命中 | 卷一末不可逆变化：古月一代陨落、白凝冰转女身、方源跌回一转、方正被带走开启对照线；标志第二次动用春秋蝉与离山南下 | events/qing-mao-mountain.md；events/wolf-tide.md EVT-WTC-023/025/026 |
+| 93 | 命中 | 天地一家大爱盟（"只为造福世间，五域和谐"）+一视同仁炼蛊服务 | themes/philosophy.md 人心经营节（E:V6-423868） |
+| 94 | 无据 | 无"雪民""人祖之心相碰撞"记载 | themes/ren-zu-zhuan.md |
+| 95 | 命中 | 世界内神话寓言文本、38 节主题线；方源悟其即人道真传（十只人道蛊虫）；名声蛊/爱情蛊改命/永生蛊传闻等剧情寓言母本 | themes/ren-zu-zhuan.md；gu/roster.md 人道蛊族节 |
+| 96 | 命中 | 可考三次：①前世被围杀自爆逆 500 年②青茅山短程逆流改命③Run1 本体被龙公击杀后宙道分身自爆开 Run2；总次数无总账 | gu/spring-autumn-cicada.md；events/wolf-tide.md；events/fate-war.md EVT-FATE-006 |
+| 97 | 无据 | 无影宗渗透天庭卧底名单及结局（仅紫山真君"与天意同化"策略、七星子接密令后被薄青杀） | world/shadow-sect.md；world/zangmeng.md |
+| 98 | 命中 | 信息与遗产分叉：Run2 更早得红莲真传（琅琊翻盘、石莲岛夺阵）；Run1 天庭修复宿命完成/龙公杀方源/界壁消弭/龙公寿尽，Run2 终局留白 | events/fate-war.md；events/stone-lotus-island-contest.md |
+| 99 | 无据 | 无"终结天庭"事件；弧十三止于三尊夺野生九转光蛊、方源暗中升炼九转天机蛊，之后留白 | events/story-arc-overview.md 弧十二/十三 |
+| 100 | 部分 | 疯魔窟=尊者博弈与永生之争舞台（无极永生失败现场、双尊对弈棋盘、历代尊者第八层道场、元境在最底层系陆畏因一面之词）；与"历代尊者复活"的直接关联无据 | themes/philosophy.md；rules/venerables.md VEN-005/006/007 |
+
+## 缺口清单（无据 23 题按主题归组，扩容候选）
+
+1. **角色细节层**：Q4 萧芒/太光蛊缺陷、Q10"智障"蛊、Q11 宙锚蛊、Q53 方源前世配偶、Q59 凤金煌初见、Q65 巨阳早年本命蛊、Q69 影无邪与春秋蝉——人物页与蛊名录的个案密度缺口。
+2. **杀招与仙蛊屋名录补遗**：Q78 三人成虎、Q79 坐吃山空、Q80 星宿两座仙蛊屋、Q82 房家三座七转、Q85 夏家两座七转——kill-move-roster/世界页的谱系补全项。
+3. **量化规则**：Q37 流派形成四条件、Q39 仙僵尸体仙材论、Q42 五成五资质冲窍壁、Q43 真元耐用比、Q44 升仙成功率、Q49 一心二用——cultivation-system/primeval-essence 扩容项。
+4. **后期剧情（弧九以后）**：Q64 盗天九转侦查杀招、Q76 战役规模排名、Q90 红莲真传数量、Q94 人祖雪民之心、Q97 影宗卧底名单、Q99 终结天庭——C 线剧情蒸馏尚未推进到的弧段（C 线当前止于弧六/段四 135,000 行）。
+5. **题面前提待核**：Q70（商心慈凡人身份与题面矛盾）、Q6/Q10/Q11（疑似题目所称蛊名与原文用词不符，需出题方确认）——不视为纯 wiki 缺口。
+
+## 边界
+
+- 本审计不判答案对错（无答案键），"命中"仅指知识页有据可答；答案准确性复核需主持人对原文逐条验证，属后续工作。
+- 无据 ≠ 原文无此事实——多数无据项在原文中有素材，属蒸馏覆盖缺口；建议按缺口清单归组立项，优先级由 L0/L1 裁定。
