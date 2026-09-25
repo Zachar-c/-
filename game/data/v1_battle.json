@@ -5,6 +5,10 @@
   "bing": 2,
   "ding": 1
  },
+ "_legacy_default_effect_by_role": {
+  "status": "legacy_godot_fallback_only",
+  "note_zh": "RUL-2026-09-25-001 Q2：role 曲线唯一真源已迁 balance.json effect_budget.default_amount_by_role。本表 amount 仅供 Godot v1_battle_resolver 参考实现（无 Godot 二进制环境、迁移批未至）继续消费，属待迁移 legacy 值（debt：docs/debt.md build_data role curve 行）；Web 自 2026-09-25 起改读 balance 真源 + projections 显式投影，不再消费本表 amount。kind 字段（role→semantic kind）仍为现行真源。Godot 迁移批删除 amount 后本表收敛为 role→kind。"
+ },
  "default_effect_by_role": {
   "attack": {
    "kind": "strike",

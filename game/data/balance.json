@@ -24,6 +24,18 @@
     "axis": "rank_power_budget",
     "axis_note_zh": "RUL-2026-09-19-008 D2/D12：全仓唯一能力预算真源。每转约 x2、1->5 约 x16，作用于效果预算（Effect Budget），不直接乘所有伤害。rank_step_ratio 升格为本曲线的步进比；standard_gu_power 指定为本曲线的唯一真源（值不变，零数值漂移）。"
   },
+  "effect_budget": {
+    "source_ruling": "RUL-2026-09-25-001 Q2",
+    "axis_note_zh": "role 曲线唯一真源（WORLD 量纲，裁定直给 30 值，无公式）。amount 是该 role 在该转的能力预算表达，不是通用倍率；Executor 内禁止隐藏 rank 缩放。Web 消费须经显式投影（wenzhen-web-lab/data/projections.json PROJ-LAB-ROLE-CURVE-001）；Godot 参考实现暂读 v1_battle.json legacy 值，迁移批后归一。",
+    "default_amount_by_role": {
+      "attack": [4, 6, 8, 11, 16],
+      "defense": [4, 6, 8, 11, 16],
+      "healing": [3, 4, 6, 8, 12],
+      "logistics": [2, 3, 4, 6, 8],
+      "movement": [1, 1, 2, 2, 3],
+      "recon": [1, 1, 1, 1, 1]
+    }
+  },
   "rank_axis_annotations": {
     "rank_step_ratio": {"axis": "rank_power_budget", "role": "step_ratio", "note_zh": "升格为 rank_power_budget 的步进比，不再是通用万能倍率。"},
     "standard_gu_power": {"axis": "rank_power_budget", "role": "source_of_truth", "note_zh": "指定为 rank_power_budget 的唯一真源，40/80/160/320/640 值不变。"},

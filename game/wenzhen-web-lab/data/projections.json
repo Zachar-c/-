@@ -54,6 +54,50 @@
       "validation": { "type": "explicit_value", "expectParent": 40 },
       "forbidWriteBack": true,
       "sourceRuling": "RUL-2026-09-19-008"
+    },
+    {
+      "id": "PROJ-LAB-ROLE-CURVE-001",
+      "childKey": "lab.roleCurve",
+      "value": {
+        "attack": [2, 3, 4, 5, 6],
+        "defense": [3, 4, 5, 6, 7],
+        "healing": [2, 3, 4, 5, 6],
+        "logistics": [1, 2, 3, 4, 5],
+        "movement": [1, 1, 1, 1, 1],
+        "recon": [1, 1, 1, 1, 1]
+      },
+      "parents": ["balance.effect_budget.default_amount_by_role"],
+      "policy": "legacy_lab_fallback_baseline_pending_l1",
+      "scope": "wenzhen_web_lab",
+      "rationale": "RUL-2026-09-25-001 Q2：保当前生成链历史基线（旧 build_data (rank-1) 线性外推的既成值）为显式投影表，换真源不换值、零行为漂移；L1 重派 lab 曲线后替换为公式投影。真实消费者=tools/build_data.mjs（写入生成物 DATA.projections.role_curve_lab）",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "data_embedded", "path": "projections.role_curve_lab" },
+      "forbidWriteBack": true,
+      "sourceRuling": "RUL-2026-09-25-001"
+    },
+    {
+      "id": "PROJ-LAB-MVP-GU-EXCEPTION-001",
+      "childKey": "lab.mvpGuOverrides",
+      "value": {
+        "guRefs": [
+          "moonlight_gu",
+          "small_light_gu",
+          "moon_glow_gu",
+          "white_boar_strength_gu",
+          "stone_shell_gu",
+          "vitality_grass_gu",
+          "jade_skin_gu"
+        ],
+        "rulingNamedFour": ["moonlight_gu", "small_light_gu", "moon_glow_gu", "white_boar_strength_gu"]
+      },
+      "parents": ["balance.effect_budget.default_amount_by_role"],
+      "policy": "explicit_projection_exception",
+      "scope": "wenzhen_web_lab",
+      "rationale": "RUL-2026-09-25-001 Q2：MVP 实验蛊 lab 量纲覆写为显式例外——有父引用（role curve 真源）、有 overrideReason、forbidWriteBack=true，禁止反推全库。前四只为裁定点名；后三只为同机制现存覆写一并登记（mvp_content.js guRef+overrideReason 为真实消费者）",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "mvp_override_refs" },
+      "forbidWriteBack": true,
+      "sourceRuling": "RUL-2026-09-25-001"
     }
   ],
   "forbidden_examples": [

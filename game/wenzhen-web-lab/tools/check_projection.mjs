@@ -28,6 +28,24 @@ function loadLabConsumer() {
   return context.MvpBalance;
 }
 
+/** 加载生成物 data.js（真实投影消费者：build_data 落库的 DATA.projections） */
+function loadDataBundle() {
+  const context = vm.createContext({});
+  const src = readFileSync(join(root, 'js/data.js'), 'utf8');
+  vm.runInContext(src + '\n;globalThis.__DATA__ = typeof DATA === "undefined" ? null : DATA;',
+    context, { filename: 'js/data.js' });
+  return context.__DATA__;
+}
+
+/** 加载 mvp_content.js（MVP 覆写真实消费者：guRef+overrideReason） */
+function loadMvpContent() {
+  const context = vm.createContext({});
+  context.WORLD_BALANCE = BAL;
+  vm.runInContext(readFileSync(join(root, 'js/balance.js'), 'utf8'), context, { filename: 'balance.js' });
+  vm.runInContext(readFileSync(join(root, 'js/mvp_content.js'), 'utf8'), context, { filename: 'mvp_content.js' });
+  return context.MVP_CONTENT;
+}
+
 /** childKey → 真实消费者读数 */
 function readConsumer(childKey) {
   const B = loadLabConsumer();
@@ -67,6 +85,38 @@ export function checkProjections(mutated = null) {
         actual === item.validation.expectParent,
         `expect ${item.validation.expectParent} got ${actual}`,
       );
+    }
+
+    // RUL-2026-09-25-001 Q2：投影表/例外项的真实消费者校验（真实消费链，非示例文本）
+    if (item.validation?.type === 'data_embedded') {
+      const bundle = loadDataBundle();
+      const actual = String(item.validation.path || '').split('.').reduce((o, k) => o?.[k], bundle);
+      add(
+        `${item.id} 生成物实值 == projection.value`,
+        JSON.stringify(actual) === JSON.stringify(item.value),
+        `embedded=${JSON.stringify(actual)}`,
+      );
+      continue;
+    }
+    if (item.validation?.type === 'mvp_override_refs') {
+      const mvp = loadMvpContent();
+      const overrides = Object.values(mvp?.actions || {})
+        .filter((a) => a?.guRef && a?.overrideReason)
+        .map((a) => a.guRef);
+      const expectRefs = item.value?.guRefs || [];
+      const same = overrides.length === expectRefs.length && expectRefs.every((g) => overrides.includes(g));
+      add(
+        `${item.id} 代码覆写与登记一致`,
+        same,
+        `code=[${overrides.join(',')}] proj=[${expectRefs.join(',')}]`,
+      );
+      const four = item.value?.rulingNamedFour || [];
+      add(
+        `${item.id} 裁定点名四蛊已登记`,
+        four.length > 0 && four.every((g) => expectRefs.includes(g)),
+        four.join(','),
+      );
+      continue;
     }
 
     // 真实消费者读数（P1）：必须与 item.value 一致

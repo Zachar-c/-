@@ -295,7 +295,12 @@ globalThis.GuRules = (() => {
         plan.inspect = true;
         break;
       default:
-        break;
+        // RUL-2026-09-25-001 frozen_invariant「No Silent Fallback」：未知 effect verb 一律
+        // fail-fast，禁止静默 no-op——Canon 新机制看似进数据实则无效是最危险的换皮形态。
+        // 新增 verb 须走 Wiki/Canon rule → Game Semantic binding → Effect verb。
+        throw new Error(
+          `gu_rules.applyPart: unknown effect kind "${String(part?.kind)}"（No Silent Fallback，RUL-2026-09-25-001）`,
+        );
     }
     addVerbs(plan, part);
     return addSupport(plan, part);

@@ -20,6 +20,17 @@ const names = read('data/names.json');
 const recipes = read('data/refinement_recipes.json').recipes;
 const v1 = read('data/v1_battle.json');
 const balance = read('data/balance.json');
+// RUL-2026-09-25-001 Q2：role 曲线真源=balance.effect_budget；lab 消费走显式投影表（无独立规则）。
+const projections = JSON.parse(fs.readFileSync(path.join(here, '..', 'data', 'projections.json'), 'utf8'));
+const labRoleCurve = projections.items?.find((i) => i.id === 'PROJ-LAB-ROLE-CURVE-001')?.value || null;
+if (!labRoleCurve) throw new Error('build_data: projections.json 缺 PROJ-LAB-ROLE-CURVE-001（No Silent Fallback）');
+for (const role of ['attack', 'defense', 'healing', 'logistics', 'movement', 'recon']) {
+  if (!Array.isArray(labRoleCurve[role]) || labRoleCurve[role].length !== 5) {
+    throw new Error(`build_data: lab 角色曲线投影缺 ${role}/5 转数值`);
+  }
+}
+const worldEffectBudget = balance.effect_budget?.default_amount_by_role || null;
+if (!worldEffectBudget) throw new Error('build_data: balance.json 缺 effect_budget.default_amount_by_role（Q2 真源）');
 const aptitude = read('data/aptitude.json');
 const lootTables = read('data/loot_tables.json');
 const pacing = read('data/pacing.json');
@@ -96,14 +107,16 @@ const shopGuIds = shopOffersRaw
   .map((o) => o.gu_id);
 const guIds = [...new Set([...Object.keys(GU_ICON), ...shopGuIds, ...LAB_EFFECT_GU_IDS])]
   .filter((id) => guEntities.some((e) => e.id === id));
-const RANK_SCALED_EFFECT_KINDS = new Set(['strike', 'shield', 'heal']);
+// RUL-2026-09-25-001 Q2：kind 真源=v1_battle role→semantic kind；amount=lab 投影表（真源
+// balance.effect_budget 的显式投影），本函数只做映射，不再持有任何 (rank-1) 独立规则。
 const defaultBattleEffect = (definition, role, rank) => {
   const raw = v1.default_effect_by_role?.[role];
   if (!raw) return {};
   const effect = JSON.parse(JSON.stringify(raw));
-  if (RANK_SCALED_EFFECT_KINDS.has(String(effect.kind || ''))) {
-    effect.amount = Number(effect.amount || 1) + Math.max(0, Number(rank || 1) - 1);
-  }
+  const curve = labRoleCurve[role];
+  if (!curve) throw new Error(`build_data: role ${role} 无 lab 曲线投影（PROJ-LAB-ROLE-CURVE-001）`);
+  const r = Math.min(5, Math.max(1, Number(rank || 1)));
+  effect.amount = curve[r - 1];
   if (effect.support_school === 'self') {
     effect.support_school = String(definition.school || '');
   }
@@ -591,7 +604,10 @@ const out = {
     thought_base_capacity: balance.thought_base_capacity,
     stone_to_essence_per_stone: balance.stone_to_essence_per_stone,
     rank_power_budget: balance.rank_power_budget,
+    effect_budget: balance.effect_budget,
   },
+  /* 显式投影落库：lab 消费的 role 曲线随生成物可见（check_projection 校验一致） */
+  projections: { role_curve_lab: labRoleCurve },
   actions: names.actions || {}, nodeTypes: names.types || {}, battle, mechanisms,
 };
 // contentVersion = sha256(JSON.stringify(out)) 在写入 contentVersion 字段之前，供内容快照追溯。
