@@ -253,7 +253,11 @@ const routeEnemyIds = routeIds.flatMap((id) => {
   const node = nodeList.find((n) => n.id === id);
   return node ? [node.enemy_kind, ...(node.enemy_kinds || [])].filter(Boolean) : [];
 });
-const pickedEnemyIds = [...new Set([...Object.keys(ART), ...routeEnemyIds])]
+// ENEMY-MODEL 批：口袋从「route 引用」扩成「全图节点引用 ∪ boss_pool 引用」——
+// 玩家在分支图里能遇到的敌人都必须进 bundle，否则遭遇时 DATA.enemies 查不到。
+const graphEnemyIds = nodeList.flatMap((n) => [n.enemy_kind, ...(n.enemy_kinds || [])].filter(Boolean));
+const bossPoolEnemyIds = nodeList.flatMap((n) => n.boss_pool || []);
+const pickedEnemyIds = [...new Set([...Object.keys(ART), ...graphEnemyIds, ...bossPoolEnemyIds])]
   .filter((id) => enemies.some((e) => e.id === id));
 const pickedEnemies = pickedEnemyIds
   .map((id) => enemies.find((e) => e.id === id))
