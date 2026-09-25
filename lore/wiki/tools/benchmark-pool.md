@@ -34,4 +34,4 @@
 | CAR（南疆商队） | [benchmark-car.md](benchmark-car.md) | GEN-1 | 同源（C 线） | 49.5/50 | —— |
 | TKF（三王福地弧四） | [benchmark-tkf.md](benchmark-tkf.md) | GEN-1 | 同源（C 线，同源局限已登记） | 50/50 | —— |
 | VEN（尊者体系页聚焦） | [benchmark-venerables.md](benchmark-venerables.md) | GEN-1 | 独立出题（12 题页级聚焦，2026-09-25） | 8/12（66.7%，页级缺口清单见题集） | —— |
-| RULES（规则层七页：TRIB/DM/REF/KM/PR/VEN/DRM） | [benchmark-rules.md](benchmark-rules.md) | GEN-1 | **独立出题试点**（本协议首次执行，2026-09-25） | **24.5/50 FAIL**（同源高分膨胀被证实；缺口清单见题集，扩容批为下批候选） | —— |
+| RULES（规则层七页：TRIB/DM/REF/KM/PR/VEN/DRM） | [benchmark-rules.md](benchmark-rules.md) | **GEN-2** | GEN-1 独立出题试点（同源高分膨胀被证实）→ GEN-2 独立出题轮换（2026-09-25） | 24.5/50 FAIL（GEN-1，缺口清单→扩容批闭缺） | **48.5/50 PASS**（GEN-2，残余缺口 2 项当场补录） |
