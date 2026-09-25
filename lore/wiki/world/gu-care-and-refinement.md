@@ -66,7 +66,7 @@ schema: 2
  - 任何蛊虫页面都应同时回答三件事：能做什么、吃什么、需要什么代价。
  - 组合效果必须注明是原著明确描述、由多个能力推得，还是仅仅是读者策略分析。
 
-相关页面：[小光蛊](../gu/small-light-gu.md)、[月光蛊](../gu/moonlight-gu.md)、[修炼体系](cultivation-system.md)、[真元](primeval-essence.md)、[方源](../characters/fang-yuan.md)。
+相关页面：[小光蛊](../gu/small-light-gu.md)、[月光蛊](../gu/moonlight-gu.md)、[修炼体系](cultivation-system.md)、[真元](primeval-essence.md)、[方源](../characters/fang-yuan.md)、[炼蛊术语体系](../rules/refinement.md)。
 
 ## 待核对
 
