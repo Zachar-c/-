@@ -1,0 +1,46 @@
+{
+  "relations": [
+    {
+      "id": "REL-REFINE-MOONGLOW",
+      "relation": "refinement",
+      "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_page": "lore/wiki/gu/small-light-gu.md",
+        "state_ids": [
+          "ST-SMALLLIGHT-04"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-002"
+        ]
+      },
+      "inputs": [
+        "moonlight_gu",
+        "small_light_gu",
+        "small_light_gu"
+      ],
+      "output": "moon_glow_gu",
+      "output_rank": 2
+    },
+    {
+      "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
+      "relation": "supports",
+      "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+      "evidence": [
+        "E:V1-010926",
+        "E:V1-017148"
+      ],
+      "provenance": {
+        "wiki_page": "lore/wiki/gu/small-light-gu.md",
+        "state_ids": [
+          "ST-SMALLLIGHT-03"
+        ],
+        "canon_refs": []
+      },
+      "from": "small_light_gu",
+      "to": "moonlight_gu"
+    }
+  ]
+}
