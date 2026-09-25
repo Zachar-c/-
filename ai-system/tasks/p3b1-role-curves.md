@@ -1,5 +1,10 @@
 # P3-B1 · 把 L1 的六条 role 转数曲线落进兜底表
 
+> **2026-09-25 休眠资产登记（A 档，见 [docs/dormant-registry.md](../../../docs/dormant-registry.md)）**：
+> 数值前提（RUL-2026-09-19-008/011、P2 预算曲线）仍现行；本包内「Godot = Canonical」前提已被
+> L0 2026-09-24 Web 载体裁定取代。批B 解锁时以本包为任务底稿，数值落点改为 Web 侧
+> （`game/wenzhen-web-lab/js/balance.js` 与 `game/data/balance.json`）。
+
 ```text
 WORKFLOW ROLE
 L3 Worker

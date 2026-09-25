@@ -108,6 +108,7 @@
   - `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`（执行计划）、`docs/superpowers/specs/2026-09-18-gu-zhenren-monorepo-migration-design.md`（设计）、`docs/debt.md`（债务）
 - 权威来源：本仓库。
 - 可修改范围：迁移记录、债务登记、验收记录；协议层只由 L0 修订。
+- 休眠文档资产索引：[docs/dormant-registry.md](docs/dormant-registry.md)（2026-09-25：冻结死档审计后登记可回收内容与换基前提；只作索引不恢复旧地位，复用走设计顺序与评审）。
 - 注意：`docs/` 与 `game/docs/` 同名但不同层——`game/docs/` 属 `game/` 内部文档，层级不高于本目录协议。
 
 ### `archive/`

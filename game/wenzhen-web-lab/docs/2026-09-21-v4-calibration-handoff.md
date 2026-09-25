@@ -1,6 +1,10 @@
 # Handoff · V4 数值校准（10 分钟循环的第一道产品验收门）
 
-本文件是 **V4 校准状态的唯一出处**。MVP 完成时的记录在
+> **状态（2026-09-25，休眠资产收口）**：本文件归档为历史记录，**不再是 V4 校准状态出处**。
+> V4/V4.1 冻结裁定与现行代码锚点见 [`V4-CALIBRATION-STATE.md`](V4-CALIBRATION-STATE.md)；
+> `tools/autoplay.mjs` 验收门与 `mvp.html`/`index.html` 入口已按 2026-09-25 L0 收敛批删除，文中相关条目仅作历史。
+
+MVP 完成时的记录在
 [`2026-09-21-mvp-handoff.md`](2026-09-21-mvp-handoff.md)，那边不再同步数值校准部分。
 
 ```text

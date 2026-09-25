@@ -10,7 +10,7 @@
 - CONTENT GATE：已建立 `saveCompatibilityVersion`（当前 `lab-run-v2`，材料循环移除后迁移旧字段）；`contentVersion` 仍标记完整内容快照。新增文案、美术与兼容内容不阻断进行中存档；状态结构或规则发生破坏性变化时须提升兼容版本并处理迁移。
 - REVALIDATE：2026-09-22 Web 整局验收曾记录缺少获胜轨迹；当前本轮未做浏览器整局复核，胜利路线、重载续玩与旧种子复走仍待实际验收。
 - DECISIONS：Web 主入口为 `game/wenzhen-web-lab/lab.html`；Godot 作为规则和数据来源；美术可原创；不以短流程切片作为最终交付。
-- NEXT：在可用浏览器环境中复核整局胜利、重载续玩、异闻代价和旧种子复走；玩法主线按构筑分叉计划推进 Phase 8 批B（等 L1）及其后阶段。
+- NEXT：在可用浏览器环境中复核整局胜利、重载续玩、异闻代价和旧种子复走；玩法主线按构筑分叉计划推进 Phase 8 批B（等 L1）及其后阶段。批B 解锁时的就绪任务底稿：[ai-system/tasks/p3b1-role-curves.md](ai-system/tasks/p3b1-role-curves.md)（数值前提 RUL-008/011 与 P2 预算曲线仍现行；落点按 Web 载体换基，见 [docs/dormant-registry.md](docs/dormant-registry.md)）。
 - DO NOT：不把 `mvp.html` 短剧本当作完整产品；不因平台选择重写已有规则；数值调整遵循现有 L1/L0 边界。
 
 ## 项目进度入口

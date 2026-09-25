@@ -19,6 +19,11 @@ SUPERSEDES: 月光蛊 A / B / C 三档重选讨论
 > 对既有任务的关系：本件关闭“月光蛊到底采用哪张”的视觉选择前置。
 > `ai-system/tasks/visual-v2-01-moonlight-poc-task.md` 中尚未执行的 Prompt 任务仍必须服从本件与统一美术对齐单，并继续经过 L1 Prompt 审查和 GPT Image 单样本门禁。
 
+> **2026-09-25 休眠资产登记（A 档，见 [docs/dormant-registry.md](../../../docs/dormant-registry.md)）**：
+> 本件与 `docs/art/standards/2026-09-20-moonlight-visual-alignment-sheet.md` 登记为**美术线重启入口**；
+> 内容与 L0 2026-09-24「美术方向可以原创设计」方向一致。重启美术线时从本件与对齐单开始，
+> Prompt 任务仍按上文 L1 审查与单样本门禁执行。
+
 ## 一、冻结选择
 
 ### 本体层 Canonical Form
