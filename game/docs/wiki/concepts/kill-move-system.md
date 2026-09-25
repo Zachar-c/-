@@ -1,38 +1,51 @@
 ---
 title: 杀招系统
-description: 命名杀招的配方组装、威力配置、化解标签与泄密机制
+description: 命名杀招的配方组装与化解/泄密落地；原著杀招代价以 lore 蒸馏为真源
 date: 2026-09-25
 tags: [kill-moves, sword-school, combat]
 ---
 
-命名杀招是玩家自由组合之上的"知识资产"层：需要通过传承、购买、线索或验证掌握；保存为杀招后一键提交，但成本照常累加，任何节省或增幅必须来自明确杀招规则[^1]。
+**原著真源**：[养蛊、用蛊与炼蛊](../../../../lore/wiki/world/gu-care-and-refinement.md)（杀招=多蛊组合、必有弊端与后遗症、威力大则真元消耗巨大）。本页写《问真》知识资产化与战斗编码，不把游戏标签写成原著规则[^1]。
 
-## 当前实现（v1_battle.json 26 条）
+## 原著锚点（摘要）
 
-构成：剑道 22 + 光 2 + 血 1 + 力 1[^2]。结构 `{id, label, tag, recipe[definition_id...], true_qi_cost, thought_cost, life_cost, damage, effect}`[^2]。威力手工配置，最高"五指拳心剑·五转"= 5 剑组成、7 真元、2 念头、伤害 24[^2]。
+| 原著规则 | 要点 | 真源 |
+|---|---|---|
+| 组合本质 | 单蛊功效单一；杀招=多蛊组合叠加 | lore 养蛊页 |
+| 代价 | 必有弊端与后遗症；威力大则真元消耗巨大 | lore 养蛊页 |
+| 术语边界 | 连招/并招是个案技巧，非通用合成公式 | lore 养蛊页 |
 
-释放校验链：配方蛊全部持有且未封印 → 念头 → 真元 → 寿元（扣到 ≤0 效果不执行直接陨落）[^2]。配方蛊仅标记 used_this_turn，实例不消耗[^2]。
+## 《问真》落地（游戏裁定）
 
-## 化解与泄密（世界模型直译）
+### 知识资产层
 
-- **化解**：杀招 tag（light/blood/force/sword）匹配敌人 `counter_hidden/counter_revealed` → 效果无效但资源照扣；隐藏化解受击后移入 revealed[^2]。
-- **泄密**：杀招用一次即 `reveals=true`，在场全部敌人 id 追加进 `battle.revealed_to`——直译原文"仙道杀招一旦被借用，当中的秘密就会被其他蛊仙洞悉"[^2]。
+命名杀招需传承/购买/线索/验证掌握；保存后一键提交，成本照常累加——节省或增幅必须来自明确杀招规则[^2]。
 
-## 剑道落地的教训（2026-09-11 考据修正）
+### 当前实现（v1_battle.json）
 
-旧版押"剑意"被推翻：原文「剑意」仅 4 次而「飞剑」200 次；侵蚀代价改写为"残锋"（永久耗道痕降转），非自伤[^3]。剑道身份 = "用法"非"层数"，八机制中刻痕（印在目标身上、道痕自寻弱点）与代价（永久耗剑道仙蛊道痕）是两颗星[^3]。杀招 `steps` 就是"多段"的合法宿主，不加新 effect kind[^3]。杀招可跨转数：层级由配方蛊决定，凡道杀招 190 次，改良是生命周期常态[^3]。
+结构 `{id, label, tag, recipe[], true_qi_cost, thought_cost, life_cost, damage, effect}`；释放校验链：配方蛊持有且未封印 → 念头 → 真元 → 寿元（≤0 则不执行直接陨落）[^3]。配方蛊仅 `used_this_turn`，实例不消耗[^3]。
+
+### 化解与泄密
+
+- **化解**：tag 匹配敌人 `counter_hidden/counter_revealed` → 效果无效但资源照扣——机制语义贴近“被看穿则失效”，**标签枚举是游戏编码**[^3]。
+- **泄密**：用过即对在场敌人公开——对应原著“杀招一旦被借用，秘密会被洞悉”的直译方向[^3]。
+
+### 剑道落地备忘
+
+“剑意”弱证据被推翻后，侵蚀代价改为“残锋”（永久耗道痕降转）；身份=用法非层数；`steps` 承载多段，不新造 effect kind[^4]。相关流派源流见 [流派总表](../../../../lore/wiki/world/path-roster.md)。
 
 ## 已知差距
 
-杀招威力违背纪律 7（中央参数导出），逐条手写 amount，内容增长时平衡成本平方级上升[^4]。规格 §4.2 的"验证过的自由编排可保存为杀招"尚未实现[^1]。
+威力逐条手写 amount，违背“中央参数导出”纪律，内容增长时平衡成本上升[^5]。
 
 ## 关联页面
 
-- 战斗内释放流程 → [战斗系统](combat-system.md)
-- 剑道流派内容 → [蛊虫与炼蛊](gu-and-synthesis.md)
-- 化解反制的敌人侧 → [数据表全集](../entities/data-tables.md)
+- 组合来源 → [蛊虫与炼蛊](gu-and-synthesis.md)
+- 战斗释放 → [战斗系统](combat-system.md)
+- 转译表 → [世界模型转译](world-model-translation.md)
 
-[^1]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §4.2
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §6/§15
-[^3]: docs/superpowers/specs/2026-09-11-sword-cosmology-integration.md
-[^4]: PROJECT_WORLD_MODEL_AUDIT.md, §26
+[^1]: lore/wiki/world/gu-care-and-refinement.md
+[^2]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §4.2
+[^3]: PROJECT_WORLD_MODEL_AUDIT.md, §6/§14/§15（化解语义 §14；counter_revealed 代码字段见 scripts/domain/action_preview_service.gd）
+[^4]: docs/superpowers/specs/2026-09-11-sword-cosmology-integration.md
+[^5]: PROJECT_WORLD_MODEL_AUDIT.md, §26

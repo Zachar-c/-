@@ -1,0 +1,633 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>宿命修真 · 视觉稿预览 v1 · 4K</title>
+<style>
+/* ── Tokens（与 tokens.json 对齐） ── */
+:root {
+  --night-0:#05070C; --night-1:#0A0F18; --night-2:#121A28; --night-3:#1A2436;
+  --night-4:#243248; --night-5:#3A4C68;
+  --lumen-100:#F6F1E6; --lumen-80:#D9D2C4; --lumen-60:#A89F90; --lumen-40:#6E675C;
+  --gold:#D4B46A; --gold-deep:#A8843C; --glow:#F0E2B0;
+  --force:#C47B5A; --soul:#7B8FD4; --blood:#B54A4A;
+  --wisdom:#6BA3A0; --wood:#7A9E6A; --time:#9B7EC8;
+  --danger:#D45B5B; --success:#6FAF8A; --info:#6B8FBF;
+  --bg-page:var(--night-1); --bg-surface:var(--night-2); --bg-raised:var(--night-3);
+  --text-1:var(--lumen-100); --text-2:var(--lumen-80); --text-3:var(--lumen-60);
+  --border-subtle:rgba(36,50,72,.55); --border-fate:rgba(168,132,60,.55);
+  --font-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --font-ui:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-mono:"Roboto Mono","Consolas",monospace;
+  --r-1:2px; --r-2:4px; --r-3:8px; --r-4:12px;
+  --glow-gold:0 0 12px rgba(212,180,106,.35);
+  --glow-soft:0 0 24px rgba(240,226,176,.18);
+  --card-shadow:0 8px 24px rgba(0,0,0,.45);
+  --card-shadow-h:0 12px 32px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-ui); color:var(--text-1); background:var(--bg-page);
+  line-height:1.55; min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212,180,106,.07), transparent 55%),
+    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(123,143,212,.05), transparent 50%);
+}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:3200px;margin:0 auto;padding:64px 80px 120px}
+.kicker{font-size:18px;letter-spacing:6px;color:var(--text-3);text-transform:uppercase}
+h1{font-family:var(--font-display);font-size:72px;font-weight:500;letter-spacing:14px;margin:16px 0 12px}
+h2{font-family:var(--font-display);font-size:48px;font-weight:500;letter-spacing:8px;margin:80px 0 16px;padding-bottom:16px;border-bottom:1px solid var(--border-fate)}
+h3{font-size:26px;font-weight:500;letter-spacing:3px;color:var(--gold);margin:40px 0 16px}
+.lead{color:var(--text-2);max-width:52ch;font-size:24px;line-height:1.65}
+.muted{color:var(--text-3);font-size:20px}
+.fate-line{height:1px;background:linear-gradient(90deg,transparent,var(--border-fate),transparent);margin:20px 0}
+/* nav */
+.toc{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;padding:20px 80px;background:rgba(5,7,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-subtle)}
+.toc a{font-size:20px;letter-spacing:2px;padding:12px 22px;border:1px solid transparent;color:var(--text-3);border-radius:var(--r-1)}
+.toc a:hover{color:var(--text-1);border-color:var(--border-fate)}
+/* swatches */
+.grid-sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;margin-top:24px}
+.sw{border:1px solid var(--border-subtle);border-radius:var(--r-2);overflow:hidden;background:var(--bg-surface)}
+.sw i{display:block;height:120px}
+.sw b{display:block;padding:14px 18px;font-size:20px;font-weight:500}
+.sw span{display:block;padding:0 18px 16px;font-family:var(--font-mono);font-size:18px;color:var(--text-3)}
+/* buttons */
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin:20px 0}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  min-height:64px;padding:0 36px;font-family:var(--font-ui);font-size:24px;letter-spacing:3px;
+  border-radius:var(--r-1);border:1px solid var(--border-fate);cursor:pointer;
+  transition:.18s ease;background:transparent;color:var(--text-1);
+}
+.btn-primary{
+  background:var(--gold);border-color:var(--gold);color:var(--night-0);font-weight:500;
+  box-shadow:var(--glow-gold);min-height:80px;padding:0 48px;letter-spacing:4px;font-size:28px;
+}
+.btn-primary:hover{background:var(--glow);border-color:var(--glow)}
+.btn-ghost:hover{color:var(--gold);border-color:var(--gold)}
+.btn-danger{border-color:var(--danger);color:var(--danger)}
+.btn-quiet{border-color:transparent;color:var(--text-3);min-height:52px;padding:0 20px;font-size:20px}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn-L{min-height:88px;font-size:30px;padding:0 56px}
+.btn-S{min-height:52px;font-size:20px;padding:0 22px;letter-spacing:2px}
+.btn:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+/* chips & bars */
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;font-size:20px;border:1px solid var(--border-subtle);border-radius:var(--r-1);background:var(--bg-surface);color:var(--text-2)}
+.chip i{width:12px;height:12px;border-radius:50%;background:currentColor}
+.chip.danger{color:var(--danger);border-color:rgba(212,91,91,.5)}
+.chip.gold{color:var(--gold);border-color:var(--border-fate)}
+.chip.hidden{color:var(--text-3);border-style:dashed}
+.bar{height:14px;background:var(--night-0);border-radius:999px;overflow:hidden;border:1px solid var(--border-subtle)}
+.bar i{display:block;height:100%;border-radius:999px}
+.bar.qi i{background:var(--wisdom)} .bar.hp i{background:var(--blood)} .bar.life i{background:var(--time)}
+.res{display:grid;gap:10px;min-width:280px}
+.res .lbl{display:flex;justify-content:space-between;font-size:22px;color:var(--text-3)}
+.res .lbl b{font-family:var(--font-mono);color:var(--text-1);font-weight:500;font-size:26px}
+/* gu card */
+.gu{
+  width:320px;border-radius:var(--r-3);background:linear-gradient(160deg,var(--night-3),var(--night-1));
+  border:1px solid var(--border-subtle);box-shadow:var(--card-shadow);padding:24px;
+  position:relative;transition:.18s;
+}
+.gu:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-h)}
+.gu .core{
+  height:160px;border-radius:var(--r-2);margin-bottom:18px;
+  background:radial-gradient(circle at 50% 45%, var(--gc,#D4B46A) 0%, transparent 70%),
+             linear-gradient(180deg,rgba(255,255,255,.04),transparent);
+  border:1px solid color-mix(in srgb, var(--gc,#D4B46A) 45%, transparent);
+  display:grid;place-items:center;
+}
+.gu .core::after{content:"";width:52px;height:52px;border:1px solid var(--gc,#D4B46A);transform:rotate(45deg);opacity:.7;box-shadow:var(--glow-soft)}
+.gu .name{font-family:var(--font-display);font-size:28px;letter-spacing:3px}
+.gu .meta{font-size:18px;color:var(--text-3);margin-top:8px;font-family:var(--font-mono)}
+.gu .desc{font-size:20px;color:var(--text-2);margin-top:12px;line-height:1.55}
+.gu .tier{position:absolute;top:16px;right:20px;font-size:16px;color:var(--gold);letter-spacing:2px}
+.gu.force{--gc:var(--force)} .gu.soul{--gc:var(--soul)} .gu.blood{--gc:var(--blood)}
+.gu.wisdom{--gc:var(--wisdom)} .gu.wood{--gc:var(--wood)} .gu.time{--gc:var(--time)}
+/* panels */
+.panel{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--r-3);padding:32px}
+.screen{
+  margin-top:32px;border:1px solid var(--border-subtle);border-radius:var(--r-4);
+  background:var(--night-0);overflow:hidden;box-shadow:var(--card-shadow);
+}
+.screen-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 36px;background:var(--bg-raised);border-bottom:1px solid var(--border-subtle);
+}
+.screen-head .title{font-family:var(--font-display);font-size:32px;letter-spacing:6px}
+.screen-body{padding:36px;min-height:720px}
+.dock{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:28px 36px;border-top:1px solid var(--border-fate);
+  background:linear-gradient(180deg,var(--night-1),var(--night-0));
+}
+.dock .hint{font-size:22px;color:var(--text-3)}
+/* topbar mock */
+.topbar{display:flex;align-items:center;gap:32px;padding:24px 36px;border-bottom:1px solid var(--border-subtle);background:rgba(10,15,24,.9)}
+.topbar .logo{font-family:var(--font-display);font-size:36px;letter-spacing:10px;color:var(--gold);text-shadow:var(--glow-soft)}
+.topbar .pools{display:flex;gap:32px;margin-left:auto}
+.pool{display:flex;align-items:center;gap:12px;font-size:20px;color:var(--text-3)}
+.pool b{font-family:var(--font-mono);color:var(--text-1);font-size:24px}
+/* timeline */
+.timeline{display:flex;gap:0;margin:28px 0}
+.tl{flex:1;text-align:center;position:relative;padding:18px 4px 8px}
+.tl::before{content:"";position:absolute;top:26px;left:0;right:0;height:1px;background:var(--border-subtle)}
+.tl:first-child::before{left:50%} .tl:last-child::before{right:50%}
+.tl .dot{width:18px;height:18px;border-radius:50%;border:1px solid var(--border-subtle);background:var(--night-0);margin:0 auto;position:relative;z-index:1}
+.tl.done .dot{background:var(--success);border-color:var(--success)}
+.tl.cur .dot{background:var(--gold);border-color:var(--gold);box-shadow:var(--glow-gold)}
+.tl span{display:block;font-size:18px;color:var(--text-3);margin-top:12px}
+.tl.cur span{color:var(--gold)}
+/* map nodes */
+.map-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.mnode{
+  border:1px solid var(--border-subtle);border-radius:var(--r-3);padding:28px;
+  background:var(--bg-surface);min-height:220px;position:relative;
+}
+.mnode .t{font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px}
+.mnode .s{font-size:20px;color:var(--text-3);margin-top:10px}
+.mnode .tag{font-size:18px;letter-spacing:3px;color:var(--text-3)}
+.mnode.avail{border-color:var(--border-fate);background:linear-gradient(160deg,rgba(212,180,106,.06),var(--bg-surface))}
+.mnode.cur{border-color:var(--gold);box-shadow:var(--glow-gold)}
+.mnode.locked{opacity:.45}
+.mnode.boss{border-color:rgba(212,91,91,.45)}
+.mnode .enter{position:absolute;right:20px;bottom:20px;font-size:18px;color:var(--gold);letter-spacing:3px}
+/* battle */
+.battle-grid{display:grid;grid-template-columns:1fr 420px;gap:32px}
+.hand{display:flex;gap:20px;overflow-x:auto;padding-bottom:12px}
+.intent{padding:20px 28px;border-left:4px solid var(--blood);background:rgba(181,74,74,.1);margin-bottom:24px;font-size:24px;color:var(--lumen-80)}
+.log{border-left:1px solid var(--border-subtle);padding-left:24px;font-size:20px;color:var(--text-2);line-height:2;max-height:520px;overflow:auto}
+.log .dmg{color:var(--danger)} .log .heal{color:var(--success)}
+/* shop */
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.offer{border:1px solid var(--border-subtle);border-radius:var(--r-3);padding:28px;background:var(--bg-surface)}
+.offer .price{font-family:var(--font-mono);color:var(--gold);font-size:32px;margin:14px 0}
+/* synth */
+.synth{display:grid;grid-template-columns:1fr 280px 1fr;gap:28px;align-items:center}
+.slot{
+  border:1px dashed var(--border-fate);border-radius:var(--r-3);min-height:260px;
+  display:grid;place-items:center;color:var(--text-3);font-size:22px;background:rgba(212,180,106,.04);
+}
+.slot.filled{border-style:solid;border-color:var(--gold);color:var(--text-1)}
+.arrow{text-align:center;color:var(--gold);font-size:42px;letter-spacing:6px}
+/* settings */
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:1px solid var(--border-subtle);font-size:24px}
+.toggle{width:72px;height:40px;border-radius:999px;background:var(--night-0);border:1px solid var(--border-subtle);position:relative}
+.toggle.on{background:var(--gold);border-color:var(--gold)}
+.toggle::after{content:"";position:absolute;top:4px;left:4px;width:30px;height:30px;border-radius:50%;background:var(--lumen-100);transition:.15s}
+.toggle.on::after{left:36px;background:var(--night-0)}
+/* settlement */
+.settle-title{font-family:var(--font-display);font-size:64px;letter-spacing:16px;text-align:center;margin:40px 0;color:var(--gold);text-shadow:var(--glow-gold)}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:36px}
+.cols3 .panel h4{font-size:20px;letter-spacing:3px;color:var(--text-3);margin-bottom:14px}
+.cols3 .panel li{font-size:22px;color:var(--text-2);margin-top:10px;list-style:none;padding-left:16px;border-left:1px solid var(--border-fate)}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:32px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+@media (max-width:1600px){
+  .wrap{padding:40px 28px 80px}
+  .two,.three,.battle-grid,.map-grid,.shop-grid,.synth{grid-template-columns:1fr}
+  .toc{padding:14px 20px}
+  h1{font-size:48px}
+  h2{font-size:32px}
+  .gu{width:260px}
+  .screen-body{min-height:480px;padding:24px}
+}
+</style>
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:16px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+<nav class="toc">
+  <a href="#foundations">Foundations</a>
+  <a href="#components">Components</a>
+  <a href="#s01">01 主界面</a>
+  <a href="#s02">02 战斗</a>
+  <a href="#s03">03 背包</a>
+  <a href="#s04">04 设置</a>
+  <a href="#s05">05 结算</a>
+  <a href="#s06">06 地图</a>
+  <a href="#s07">07 商店</a>
+  <a href="#s08">08 合成</a>
+</nav>
+
+<div class="wrap">
+  <div class="kicker">Destiny Card Roguelike · Visual Spec v1</div>
+  <h1>宿命修真</h1>
+  <p class="lead">苍凉史诗 · 黑暗中的微光。墨蓝长夜为底，命运金为唯一暖强调；六道流派色只进蛊卡。桌面优先，基准 3840×2160（4K）。</p>
+  <p class="muted" style="margin-top:16px">对应文档：docs/design/destiny-card-roguelike/ · 本页为 HTML 视觉稿，非最终 Figma 库 · 4K 版式</p>
+
+  <!-- FOUNDATIONS -->
+  <h2 id="foundations">Foundations</h2>
+  <h3>色 · 暗夜阶</h3>
+  <div class="grid-sw">
+    <div class="sw"><i style="background:#05070C"></i><b>night/0</b><span>#05070C</span></div>
+    <div class="sw"><i style="background:#0A0F18"></i><b>night/1 · page</b><span>#0A0F18</span></div>
+    <div class="sw"><i style="background:#121A28"></i><b>night/2 · surface</b><span>#121A28</span></div>
+    <div class="sw"><i style="background:#1A2436"></i><b>night/3 · raised</b><span>#1A2436</span></div>
+    <div class="sw"><i style="background:#243248"></i><b>night/4</b><span>#243248</span></div>
+    <div class="sw"><i style="background:#3A4C68"></i><b>night/5</b><span>#3A4C68</span></div>
+  </div>
+
+  <h3>色 · 微光与流派</h3>
+  <div class="grid-sw">
+    <div class="sw"><i style="background:#D4B46A"></i><b>lumen/gold</b><span>#D4B46A</span></div>
+    <div class="sw"><i style="background:#F0E2B0"></i><b>lumen/glow</b><span>#F0E2B0</span></div>
+    <div class="sw"><i style="background:#F6F1E6"></i><b>lumen/100</b><span>#F6F1E6</span></div>
+    <div class="sw"><i style="background:#C47B5A"></i><b>mark/force</b><span>#C47B5A</span></div>
+    <div class="sw"><i style="background:#7B8FD4"></i><b>mark/soul</b><span>#7B8FD4</span></div>
+    <div class="sw"><i style="background:#B54A4A"></i><b>mark/blood</b><span>#B54A4A</span></div>
+    <div class="sw"><i style="background:#6BA3A0"></i><b>mark/wisdom</b><span>#6BA3A0</span></div>
+    <div class="sw"><i style="background:#7A9E6A"></i><b>mark/wood</b><span>#7A9E6A</span></div>
+    <div class="sw"><i style="background:#9B7EC8"></i><b>mark/time</b><span>#9B7EC8</span></div>
+    <div class="sw"><i style="background:#D45B5B"></i><b>state/danger</b><span>#D45B5B</span></div>
+    <div class="sw"><i style="background:#6FAF8A"></i><b>state/success</b><span>#6FAF8A</span></div>
+    <div class="sw"><i style="background:#6B8FBF"></i><b>state/info</b><span>#6B8FBF</span></div>
+  </div>
+
+  <h3>字体</h3>
+  <div class="panel">
+    <div style="font-family:var(--font-display);font-size:56px;letter-spacing:12px">宿命修真 · 宋体</div>
+    <div style="margin-top:16px;font-size:24px">界面正文黑体 — 看清敌方意图，再决定如何改命。</div>
+    <div style="margin-top:16px;font-family:var(--font-mono);font-size:32px;color:var(--gold)">2,048 · seed 20260925 · Qi 12/20</div>
+  </div>
+
+  <!-- COMPONENTS -->
+  <h2 id="components">Components</h2>
+  <h3>Button</h3>
+  <div class="row">
+    <button class="btn btn-primary">主行动 · 金</button>
+    <button class="btn btn-primary btn-L">主行动 L</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-danger">危招 · 确认</button>
+    <button class="btn btn-quiet">Quiet</button>
+    <button class="btn btn-primary" disabled>Disabled</button>
+    <button class="btn btn-ghost btn-S">S</button>
+  </div>
+
+  <h3>ResourceBar · Intent · Timeline</h3>
+  <div class="two" style="margin-top:16px">
+    <div class="panel three">
+      <div class="res"><div class="lbl"><span>真元</span><b>12/20</b></div><div class="bar qi"><i style="width:60%"></i></div></div>
+      <div class="res"><div class="lbl"><span>气血</span><b>4/18</b></div><div class="bar hp"><i style="width:22%"></i></div></div>
+      <div class="res"><div class="lbl"><span>寿元</span><b>46</b></div><div class="bar life"><i style="width:76%"></i></div></div>
+    </div>
+    <div class="panel">
+      <div class="row">
+        <span class="chip danger"><i></i>意图 · 重击 7</span>
+        <span class="chip gold"><i></i>已反制</span>
+        <span class="chip hidden">未察</span>
+        <span class="chip">元石 2,048</span>
+      </div>
+      <div class="timeline">
+        <div class="tl done"><div class="dot"></div><span>一转</span></div>
+        <div class="tl done"><div class="dot"></div><span>二转</span></div>
+        <div class="tl cur"><div class="dot"></div><span>三转</span></div>
+        <div class="tl"><div class="dot"></div><span>四转</span></div>
+        <div class="tl"><div class="dot"></div><span>五转</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>GuCard · 六道流派</h3>
+  <div class="row" style="align-items:flex-start">
+    <div class="gu force"><div class="tier">道痕 III</div><div class="core"></div><div class="name">月光蛊</div><div class="meta">力 · 真元 3</div><div class="desc">催动月刃，对当前敌造成伤害。</div></div>
+    <div class="gu soul"><div class="tier">道痕 II</div><div class="core"></div><div class="name">摄魂蛊</div><div class="meta">魂 · 真元 4</div><div class="desc">弱化敌方下一次意图。</div></div>
+    <div class="gu blood"><div class="tier">道痕 IV</div><div class="core"></div><div class="name">血昙蛊</div><div class="meta">血 · 真元 5 · 寿元</div><div class="desc">残血时爆发；满血不可催动。</div></div>
+    <div class="gu wisdom"><div class="tier">道痕 II</div><div class="core"></div><div class="name">天眼蛊</div><div class="meta">智 · 真元 2</div><div class="desc">揭示敌方隐藏意图一层。</div></div>
+    <div class="gu wood"><div class="tier">道痕 I</div><div class="core"></div><div class="name">玉皮蛊</div><div class="meta">木 · 真元 2</div><div class="desc">获得护甲，抵御伤害。</div></div>
+    <div class="gu time"><div class="tier">道痕 V</div><div class="core"></div><div class="name">春秋蝉</div><div class="meta">时 · 真元 8</div><div class="desc">扭曲时辰，重掷本回合。</div></div>
+  </div>
+
+  <!-- 01 HALL -->
+  <h2 id="s01">01 · 主界面 Hall</h2>
+  <div class="screen">
+    <div class="topbar">
+      <div class="logo">宿命修真</div>
+      <div class="muted">丙等 · 三转中阶</div>
+      <div class="pools">
+        <div class="pool">真元 <b>12/20</b></div>
+        <div class="pool">气血 <b>4/18</b></div>
+        <div class="pool">寿元 <b>46</b></div>
+        <div class="pool">元石 <b>2,048</b></div>
+      </div>
+    </div>
+    <div class="screen-body two">
+      <div>
+        <div class="kicker">孤身问道 · 信念不灭</div>
+        <h1 style="letter-spacing:12px;margin-top:10px">宿命修真</h1>
+        <p class="lead" style="margin-top:16px">在时间长河的五段山境中择路，以蛊与杀招改命。每一次取舍，都是对宿命的一次逆写。</p>
+        <div class="row" style="margin-top:24px">
+          <span class="chip gold">问道 · 标准</span>
+          <span class="chip">逆天 · 困难</span>
+          <span class="chip">太上 · 噩梦</span>
+        </div>
+        <div class="muted" style="margin-top:16px">种子 <span style="font-family:var(--font-mono);color:var(--gold)">20260925</span> · 1280×800 可玩底线</div>
+      </div>
+      <div class="panel">
+        <h4 class="kicker">最近旧录</h4>
+        <div class="fate-line"></div>
+        <div class="muted">败局 · 三转 · 行程 9/15 · 种子 188201</div>
+        <div class="muted" style="margin-top:8px">胜局 · 五转 · 行程 15/15 · 种子 770211</div>
+        <div class="muted" style="margin-top:8px">败局 · 二转 · 行程 5/15 · 种子 55203</div>
+        <div class="timeline" style="margin-top:20px">
+          <div class="tl done"><div class="dot"></div><span>初</span></div>
+          <div class="tl done"><div class="dot"></div><span>青</span></div>
+          <div class="tl cur"><div class="dot"></div><span>北</span></div>
+          <div class="tl"><div class="dot"></div><span>中</span></div>
+          <div class="tl"><div class="dot"></div><span>终</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">有进行中的修行 · 可继续或放弃重开</div>
+      <div class="row" style="margin:0">
+        <button class="btn btn-quiet">放弃并重开</button>
+        <button class="btn btn-primary">继续当前局</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 BATTLE -->
+  <h2 id="s02">02 · 战斗 HUD</h2>
+  <div class="screen">
+    <div class="topbar">
+      <div class="logo" style="font-size:28px;letter-spacing:6px">交锋 · 第 4 回合</div>
+      <div class="pools">
+        <div class="pool">真元 <b>12/20</b></div>
+        <div class="pool">念头 <b>2/3</b></div>
+        <div class="pool">气血 <b>4/18</b></div>
+        <div class="pool">寿元 <b>46</b></div>
+      </div>
+    </div>
+    <div class="screen-body">
+      <div class="intent">⚠ 敌方意图 · <b style="color:var(--danger)">裂地重击 7</b> · 下回合蓄力，可被「压制」反制</div>
+      <div class="battle-grid">
+        <div>
+          <div class="kicker">敌手</div>
+          <div class="row" style="margin-top:10px">
+            <div class="gu blood" style="width:280px"><div class="core" style="height:120px"></div><div class="name">岩蛇母</div><div class="meta">HP 18/42</div><div class="bar hp" style="margin-top:16px"><i style="width:43%"></i></div></div>
+            <div class="gu force" style="width:280px;opacity:.5"><div class="core" style="height:120px"></div><div class="name">石皮卫</div><div class="meta">已倒</div></div>
+          </div>
+          <div class="kicker" style="margin-top:20px">手牌 · 蛊</div>
+          <div class="hand" style="margin-top:10px">
+            <div class="gu force"><div class="tier">III</div><div class="core"></div><div class="name">月光蛊</div><div class="meta">真元 3 · 念头 1</div></div>
+            <div class="gu wisdom"><div class="tier">II</div><div class="core"></div><div class="name">天眼蛊</div><div class="meta">真元 2 · 念头 1</div></div>
+            <div class="gu soul"><div class="tier">II</div><div class="core"></div><div class="name">摄魂蛊</div><div class="meta">真元 4 · 念头 2</div></div>
+            <div class="gu blood" style="border-color:var(--danger)"><div class="tier">IV</div><div class="core"></div><div class="name">血昙蛊</div><div class="meta">真元 5 · 寿元 1</div></div>
+          </div>
+          <div class="kicker" style="margin-top:16px">杀招</div>
+          <div class="row">
+            <div class="chip gold">月影连环 · 就绪</div>
+            <div class="chip hidden">未明 · 缺组件</div>
+          </div>
+        </div>
+        <div class="log">
+          <div>回合 4 开始</div>
+          <div>意图揭示 · <span class="dmg">裂地重击 7</span></div>
+          <div>催动月光蛊 → <span class="dmg">-9</span> 岩蛇母</div>
+          <div>玉皮护甲 +4</div>
+          <div>敌行动 · <span class="dmg">-3</span>（护甲吸收）</div>
+          <div class="heal">回合结束 · 真元 -2 维持</div>
+        </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">已选「月光蛊」· 消耗真元 3 · 念头 1</div>
+      <div class="row" style="margin:0">
+        <button class="btn btn-ghost">结束回合</button>
+        <button class="btn btn-primary">催动 · 月光蛊</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 INVENTORY -->
+  <h2 id="s03">03 · 背包</h2>
+  <div class="screen">
+    <div class="screen-head">
+      <div class="title">蛊仓 · 背包</div>
+      <div class="row" style="margin:0">
+        <span class="chip gold">蛊</span>
+        <span class="chip">材料</span>
+        <span class="chip">杀招</span>
+      </div>
+    </div>
+    <div class="screen-body two">
+      <div class="three" style="grid-template-columns:repeat(3,1fr)">
+        <div class="gu force"><div class="core"></div><div class="name">月光蛊</div><div class="meta">×1 · 力</div></div>
+        <div class="gu wood"><div class="core"></div><div class="name">玉皮蛊</div><div class="meta">×2 · 木</div></div>
+        <div class="gu wisdom"><div class="core"></div><div class="name">天眼蛊</div><div class="meta">×1 · 智</div></div>
+        <div class="gu time"><div class="core"></div><div class="name">石心蛊</div><div class="meta">×1 · 时</div></div>
+        <div class="gu soul"><div class="core"></div><div class="name">小光蛊</div><div class="meta">×3 · 魂</div></div>
+        <div class="gu blood"><div class="core"></div><div class="name">血昙蛊</div><div class="meta">×1 · 血</div></div>
+      </div>
+      <div class="panel">
+        <div class="kicker">详情</div>
+        <div class="fate-line"></div>
+        <div style="font-family:var(--font-display);font-size:34px;letter-spacing:4px">月光蛊</div>
+        <div class="muted" style="margin-top:10px">力道 · 道痕 III · 真元 3 · 念头 1</div>
+        <p class="lead" style="margin-top:16px;font-size:22px">催动月刃，对当前敌造成伤害。可与小光蛊合炼为月芒蛊。</p>
+        <div class="row"><span class="chip">喂养 · 月露</span><span class="chip gold">关联杀招 · 月影连环</span></div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">选中蛊可查看道痕与关联杀招</div>
+      <button class="btn btn-ghost">关闭背包</button>
+    </div>
+  </div>
+
+  <!-- 04 SETTINGS -->
+  <h2 id="s04">04 · 设置</h2>
+  <div class="screen">
+    <div class="screen-body" style="display:grid;place-items:center;min-height:380px">
+      <div class="panel" style="width:min(480px,100%)">
+        <div class="title" style="font-family:var(--font-display);font-size:36px;letter-spacing:8px">心性 · 设置</div>
+        <div class="fate-line"></div>
+        <div class="set-row"><span>主音量</span><div class="bar qi" style="width:280px"><i style="width:70%"></i></div></div>
+        <div class="set-row"><span>文字速度</span><div class="bar qi" style="width:280px"><i style="width:45%"></i></div></div>
+        <div class="set-row"><span>减动效</span><div class="toggle on"></div></div>
+        <div class="set-row"><span>伤害飘字</span><div class="toggle"></div></div>
+        <div class="set-row" style="border:0"><span>清空存档</span><button class="btn btn-danger btn-S">危险</button></div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">设置不离开本局</div>
+      <div class="row" style="margin:0">
+        <button class="btn btn-quiet">取消</button>
+        <button class="btn btn-primary">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 SETTLEMENT -->
+  <h2 id="s05">05 · 结算</h2>
+  <div class="screen">
+    <div class="screen-body">
+      <div class="settle-title">信念不灭</div>
+      <p class="lead" style="text-align:center;margin:0 auto;max-width:48ch">此身止步三转，然道痕已入骨。时间长河仍流，下一次，再写宿命。</p>
+      <div class="timeline" style="max-width:640px;margin:28px auto">
+        <div class="tl done"><div class="dot"></div><span>青茅</span></div>
+        <div class="tl done"><div class="dot"></div><span>北原</span></div>
+        <div class="tl cur"><div class="dot"></div><span>败于层主</span></div>
+        <div class="tl"><div class="dot"></div><span>中洲</span></div>
+        <div class="tl"><div class="dot"></div><span>终焉</span></div>
+      </div>
+      <div class="cols3">
+        <div class="panel"><h4>行程</h4><ul><li>走过 9 / 15 节</li><li>胜 6 · 败 1</li><li>种子 20260925</li></ul></div>
+        <div class="panel"><h4>收获</h4><ul><li>新蛊 ×3</li><li>杀招 ×1</li><li>元石峰值 2,048</li></ul></div>
+        <div class="panel"><h4>根源</h4><ul><li>败因 · 破甲不足</li><li>构筑 · 月刃流</li><li>旧录已写入</li></ul></div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">旧录已保留 · 可复走种子</div>
+      <div class="row" style="margin:0">
+        <button class="btn btn-quiet">回主界面</button>
+        <button class="btn btn-primary">重入轮回</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 MAP -->
+  <h2 id="s06">06 · 地图</h2>
+  <div class="screen">
+    <div class="screen-head">
+      <div class="title">行程 · 第三段 北原风雪</div>
+      <div class="muted">路途节点 2 / 3 · 再访层主</div>
+    </div>
+    <div class="screen-body two">
+      <div>
+        <div class="map-grid">
+          <div class="mnode locked"><div class="tag">已过 · 休整</div><div class="t">雪原篝火</div><div class="s">气血已复</div></div>
+          <div class="mnode avail"><div class="tag">可走 · 战斗</div><div class="t">狼群踪迹</div><div class="s">裂风狼 ×2</div><div class="enter">进入</div></div>
+          <div class="mnode avail"><div class="tag">可走 · 坊市</div><div class="t">北原商队</div><div class="s">蛊 · 材料 · 石</div><div class="enter">进入</div></div>
+          <div class="mnode locked"><div class="tag">未至 · 异闻</div><div class="t">冻湖低语</div><div class="s">时道机缘</div></div>
+          <div class="mnode locked"><div class="tag">未至 · 合成</div><div class="t">野蛊祭坛</div><div class="s">配方线索</div></div>
+          <div class="mnode boss locked"><div class="tag">段末 · 层主</div><div class="t">风雪之主</div><div class="s">破甲 · 高速</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="kicker">节点详情</div>
+        <div class="fate-line"></div>
+        <div style="font-family:var(--font-display);font-size:34px;letter-spacing:4px">狼群踪迹</div>
+        <div class="row"><span class="chip danger">战斗</span><span class="chip">掉落 · 木/血</span></div>
+        <p class="lead" style="font-size:22px;margin-top:16px">裂风狼以高速撕咬；稳定命中与反制闪避更有利。</p>
+        <div class="muted" style="margin-top:16px">风险 · 中 · 报酬 · 构筑材料</div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">自由择路 · 可选 2 条</div>
+      <button class="btn btn-primary">进入节点</button>
+    </div>
+  </div>
+
+  <!-- 07 SHOP -->
+  <h2 id="s07">07 · 商店</h2>
+  <div class="screen">
+    <div class="screen-head">
+      <div class="title">北原商队 · 坊市</div>
+      <div class="chip gold">元石 2,048</div>
+    </div>
+    <div class="screen-body">
+      <div class="shop-grid">
+        <div class="offer">
+          <div class="kicker">蛊</div>
+          <div style="font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px">破军蛊</div>
+          <div class="price">¤ 480</div>
+          <div class="muted">力道 · 破甲 · 对重甲敌伤害提高</div>
+          <div class="row"><button class="btn btn-ghost btn-S">购入</button></div>
+        </div>
+        <div class="offer">
+          <div class="kicker">材料</div>
+          <div style="font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px">寒铁碎片 ×3</div>
+          <div class="price">¤ 120</div>
+          <div class="muted">合炼钥匙 · 破甲系</div>
+          <div class="row"><button class="btn btn-ghost btn-S">购入</button></div>
+        </div>
+        <div class="offer" style="opacity:.45">
+          <div class="kicker">杀招</div>
+          <div style="font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px">残锋诀</div>
+          <div class="price">¤ 900</div>
+          <div class="muted">已入囊</div>
+          <div class="row"><button class="btn btn-ghost btn-S" disabled>已购</button></div>
+        </div>
+        <div class="offer">
+          <div class="kicker">蛊</div>
+          <div style="font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px">回春蛊</div>
+          <div class="price">¤ 260</div>
+          <div class="muted">木道 · 战斗中回复气血</div>
+          <div class="row"><button class="btn btn-ghost btn-S">购入</button></div>
+        </div>
+        <div class="offer">
+          <div class="kicker">材料</div>
+          <div style="font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px">狼王心血</div>
+          <div class="price">¤ 350</div>
+          <div class="muted">血道合炼 · 高风险</div>
+          <div class="row"><button class="btn btn-ghost btn-S">购入</button></div>
+        </div>
+        <div class="offer">
+          <div class="kicker">蛊</div>
+          <div style="font-family:var(--font-display);font-size:30px;letter-spacing:3px;margin-top:12px">金钟蛊</div>
+          <div class="price">¤ 720</div>
+          <div class="muted">木道 · 重甲护体</div>
+          <div class="row"><button class="btn btn-primary btn-S">购入</button><span class="muted">元石不足</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">元石有限 · 取舍即改命</div>
+      <div class="row" style="margin:0">
+        <button class="btn btn-quiet">打开背包出售</button>
+        <button class="btn btn-primary">离开坊市</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 SYNTHESIS -->
+  <h2 id="s08">08 · 合成界面</h2>
+  <div class="screen">
+    <div class="screen-head">
+      <div class="title">合炼 · 改命</div>
+      <div class="muted">成功率 72% · 消耗元石 40</div>
+    </div>
+    <div class="screen-body">
+      <div class="kicker">配方 · 月芒蛊</div>
+      <div class="synth" style="margin-top:16px">
+        <div class="slot filled">
+          <div class="gu force" style="width:220px"><div class="core" style="height:100px"></div><div class="name">月光蛊</div><div class="meta">已放入</div></div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="slot filled">
+          <div class="gu time" style="width:220px"><div class="core" style="height:100px"></div><div class="name">月芒蛊</div><div class="meta">产物预览</div></div>
+        </div>
+      </div>
+      <div class="synth" style="margin-top:12px;grid-template-columns:1fr 200px 1fr">
+        <div class="slot">
+          <div>槽 B · 拖入小光蛊 ×2<br><span class="muted">缺 1 只小光蛊</span></div>
+        </div>
+        <div></div>
+        <div class="panel">
+          <div class="kicker">代价与风险</div>
+          <div class="fate-line"></div>
+          <div class="muted">成 · 月芒（真元 3 + 气血 1）</div>
+          <div class="muted" style="margin-top:10px">败 · 失去材料 · 返回 0.5 石</div>
+          <div class="muted" style="margin-top:6px;color:var(--danger)">闭合未来 · 月光+小光 路线</div>
+        </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="hint">材料未齐 · 无法开炉</div>
+      <div class="row" style="margin:0">
+        <button class="btn btn-quiet">清空槽</button>
+        <button class="btn btn-primary" disabled>开炉合成</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fate-line" style="margin:64px 0 24px"></div>
+  <p class="muted">Visual Spec Preview · 与 tokens.json / COMPONENTS.md / SCREENS.md 对齐 · 桌面优先 · 非最终 Figma 组件库</p>
+</div>
+</body>
+</html>

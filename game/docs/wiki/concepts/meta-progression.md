@@ -33,5 +33,5 @@ Meta 解锁只能从不可变事件日志推导：`refinement_succeeded` / `scav
 - 结局归并规则 → [核心玩法循环](gameplay-loop.md)
 
 [^1]: AGENTS.md, 核心业务红线
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §19/§21
+[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §19/§21（route 白名单枚举现源：scripts/domain/content_catalog.gd 与 scripts/domain/meta_progress.gd）
 [^3]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0.1

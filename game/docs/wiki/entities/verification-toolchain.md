@@ -18,7 +18,7 @@ tags: [testing, verification, tools, gut]
 
 ## 交互门判定细节
 
-交互回归以真实按下/松开断言守门；透明容器必须 `IGNORE`，`PASS` 同样会遮挡身后兄弟节点。现役样例：`tests/unit/test_wenzhen_battle_screen.gd`。原全屏 `verify_interaction_loop.gd` 已随一次性探针清理，新增交互应按同一原则补 GUT 覆盖[^1][^2]。
+交互回归以真实按下/松开断言守门；透明容器必须 `IGNORE`，`PASS` 同样会遮挡身后兄弟节点。现役样例：`tests/unit/test_wenzhen_battle_screen.gd`。原全屏 `verify_interaction_loop.gd` 已随一次性探针清理（审计 §22 为 2026-09-12 快照，仍列其为现役；清理事实以 AGENTS.md 工具规则为准），新增交互应按同一原则补 GUT 覆盖[^1][^2]。
 
 ## 测试规模与运行纪律
 

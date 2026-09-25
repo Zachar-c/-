@@ -1,9 +1,11 @@
 ---
 title: 战斗系统
-description: v1 纯函数战斗引擎的回合结构、四类玩家行动、伤害公式与状态体系的规则层总览
-date: 2026-09-12
+description: v1 纯函数战斗引擎的回合结构、四类玩家行动、伤害公式与状态体系（纯实现层）
+date: 2026-09-25
 tags: [combat, battle, turn-based]
 ---
+
+> **定位**：本页是引擎/实现事实，不是世界观。原著战斗与杀招代价见 [`lore/wiki`](../../../../lore/wiki/world/gu-care-and-refinement.md)；设计转译见 [世界模型转译](world-model-translation.md)。
 
 2026-08-30 用户裁定全量替换卡牌战斗为 v1 引擎[^1]：battle 是普通 Dictionary，每次动作 `duplicate(true)` 后写回，无抽牌/牌库/弃牌堆[^2]。蛊虫实例的卡片化 UI 只是操作界面，不是技能许可证[^3]。
 
@@ -37,7 +39,7 @@ tags: [combat, battle, turn-based]
 - 战斗中的经济行为 → [经济系统](economy.md)
 
 [^1]: docs/superpowers/plans/ 系列与 scripts/domain/v1_battle_resolver.gd 头注释
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §15
+[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §15/§14/§20/§21
 [^3]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0/§4.1
 [^4]: data/pacing.json
 [^5]: docs/superpowers/plans/2026-09-11-sword-school-landing-plan.md, §0 引擎事实

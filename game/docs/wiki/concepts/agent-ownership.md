@@ -1,11 +1,13 @@
 ---
-title: Agent 协作
-description: 四角色写区、Shared 单写者区、5 步硬协议与三层验收门的多 Agent 施工纪律
+title: Agent 协作（历史）
+description: 已废止的四角色写区与 5 步协议记录；现行纪律见 CONSTRAINTS-V2
 date: 2026-09-25
-tags: [agent-ownership, collaboration, contracts]
+tags: [agent-ownership, collaboration, contracts, historical]
 ---
 
-项目由多 AI Agent 并行开发。2026-09-12 落档的 Agent Ownership 契约是硬门槛：**契约落档前禁止开始新功能开发**；背景是历史并行会话曾 4 次物理删除文件[^1]。
+> **历史档案（2026-09-17 起）**：本页所载 Agent Ownership 契约已随 `RUL-2026-09-17-003` 作废，**不再有约束力**。现行可执行纪律见 `game/world-model/governance/CONSTRAINTS-V2.md`（改前快照、改后跑验收；一条命令 `tools/check.ps1`）。以下内容仅作历史参考[^1]。
+
+（下文为 2026-09-12 契约原文摘要，勿当作现行门禁。）项目曾由多 AI Agent 并行开发；背景是历史并行会话曾 4 次物理删除文件[^1]。
 
 ## 四角色写区
 

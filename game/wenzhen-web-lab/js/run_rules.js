@@ -52,7 +52,8 @@ globalThis.RunRules = (() => {
     };
   }
 
-  // seeded_roll.gd + rng.gd
+  // seeded_roll.gd + rng.gd — Web 侧唯一确定性随机入口（与 Godot 同 seed 同结果）。
+  // 禁止在 shop/mvp/loot 等处再写 saltHash/LCG 副本；不引入 seedrandom 等会改序列的库。
   function saltHash(salt) {
     let digest = 0;
     for (const character of String(salt)) {
@@ -61,15 +62,34 @@ globalThis.RunRules = (() => {
     return digest;
   }
 
-  function seededIndex(bound, seed, salt, tick) {
-    if (bound <= 1) return 0;
+  function mixedSeed(seed, salt) {
     let state = Math.abs((Number(seed) * 1000003) + saltHash(salt)) % 2147483647;
     if (state === 0) state = 1;
+    return state;
+  }
+
+  function seededIndex(bound, seed, salt, tick) {
+    if (bound <= 1) return 0;
+    let state = mixedSeed(seed, salt);
     for (let i = 0; i < Math.max(Number(tick) || 0, 0); i += 1) {
       state = (state * 48271) % 2147483647;
     }
     state = (state * 48271) % 2147483647;
     return state % bound;
+  }
+
+  // shop_command_rules.gd::_shop_shuffle — Fisher-Yates on the SeededRng stream.
+  function seededShuffle(seed, salt, items) {
+    const shuffled = [...(items || [])];
+    let state = mixedSeed(seed, salt);
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      state = (state * 48271) % 2147483647;
+      const j = state % (i + 1);
+      const held = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = held;
+    }
+    return shuffled;
   }
 
   // refine_command_rules.gd::_refinement_roll
@@ -127,7 +147,10 @@ globalThis.RunRules = (() => {
     weakenedDamage,
     delayDueTurn,
     restHeal,
+    saltHash,
+    mixedSeed,
     seededIndex,
+    seededShuffle,
     refinementRoll,
     refinementSucceeds,
     resolveBattleTier,

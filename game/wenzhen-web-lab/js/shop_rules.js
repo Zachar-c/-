@@ -10,29 +10,18 @@ globalThis.ShopRules = (() => {
     return true;
   };
 
-  const saltHash = (salt) => {
-    let digest = 0n;
-    for (const character of String(salt || '')) {
-      digest = BigInt.asIntN(64, digest * 31n + BigInt(character.charCodeAt(0)));
+  // 随机入口唯一：RunRules.seededShuffle（shop_command_rules.gd::_shop_shuffle 的 JS 投影）。
+  // 不得再维护 BigInt/LCG 副本——与 Godot 同 seed 同货架。
+  function requireRunRules() {
+    const rr = globalThis.RunRules;
+    if (!rr || typeof rr.seededShuffle !== 'function') {
+      throw new Error('shop_rules.js requires RunRules.seededShuffle (load run_rules.js first)');
     }
-    return digest;
-  };
-
-  const mixedSeed = (seed, salt) =>
-    BigInt.asIntN(64, BigInt(seed) * 1000003n + saltHash(salt));
+    return rr;
+  }
 
   function seededShuffle(seed, salt, items) {
-    const shuffled = [...(items || [])];
-    let state = mixedSeed(seed, salt);
-    if (state < 0n) state = -state;
-    state %= 2147483647n;
-    if (state === 0n) state = 1n;
-    for (let i = shuffled.length - 1; i > 0; i -= 1) {
-      state = (state * 48271n) % 2147483647n;
-      const j = Number(state % BigInt(i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
+    return requireRunRules().seededShuffle(seed, salt, items);
   }
 
   const slotCount = (layer) => 4 + Math.trunc(Math.max(1, Number(layer) || 1) / 2);

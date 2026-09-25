@@ -10,6 +10,10 @@ const load = (relativePath) => vm.runInContext(
   { filename: relativePath },
 );
 
+// OWNER = game/data/balance.json — 无 silent FALLBACK，测试必须注入真源。
+context.WORLD_BALANCE = JSON.parse(
+  fs.readFileSync(new URL('../../data/balance.json', import.meta.url), 'utf8'),
+);
 load('../js/balance.js');
 load('../js/mvp_content.js');
 const B = context.MvpBalance;

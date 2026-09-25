@@ -23,7 +23,7 @@ tags: [map, generation, pacing, seeded-random]
 
 ## 锚点与节奏约束
 
-每层 anchors 来自 pacing.json：遗葬 pre_boss、炼蛊 mid、黑市 mid/pre_boss/quarter；每两行强制休整（REST_ROW_STRIDE=2，2026-09-08 由 3 收紧——此前战斗占比一度 82%）[^1]。层主位映射：L1 蟒母 / L2 蛊师 / L3 雷冠君王 / L4 血络主教 / L5 瘴脉君[^3]。
+每层 anchors 来自 pacing.json：遗藏 pre_boss、炼蛊 mid、黑市 mid/pre_boss/quarter；每两行强制休整（REST_ROW_STRIDE=2，2026-09-08 由 3 收紧——此前战斗占比一度 82%）[^1]。层主位映射：L1 崖蟒主母 / L2 蛊师 / L3 雷冠狼王 / L4 血络主教 / L5 瘴脉蛊主[^3]。层主中文名取自 `data/names.json`；雷冠狼王（狼王 L15292 有据）、崖蟒主母（巨蟒 L2504 词源）、瘴脉蛊主、血络主教、山脊悍客为游戏命名，原著词源对照见 `docs/lore/2026-09-25-list-cleansing.md` §3。
 
 **审计红旗**：终点 final_boss_stand 敌人 miasma_vein_lord（rank3/HP14）弱于 L3/L4 层主；两个 rank5 boss（蓝毛僵/族长）未编入层主位[^4]。
 

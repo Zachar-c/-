@@ -204,19 +204,15 @@ globalThis.MvpLogic = (() => {
     };
   }
 
-  function hashInt(value) {
-    let hash = 0;
-    for (const char of String(value)) hash = (hash * 31 + char.charCodeAt(0)) % 2147483647;
-    return hash || 1;
-  }
-
+  // 随机入口唯一：RunRules.seededIndex（与 Godot SeededRoll 同序列）。
   function pickVariant(seed, salt, pool) {
     const items = [...(pool || [])];
     if (!items.length) return '';
-    let state = Math.abs((Number(seed) * 1000003) + hashInt(salt)) % 2147483647;
-    if (state === 0) state = 1;
-    state = (state * 48271) % 2147483647;
-    return items[state % items.length];
+    const rr = globalThis.RunRules;
+    if (!rr || typeof rr.seededIndex !== 'function') {
+      throw new Error('mvp_logic.js requires RunRules.seededIndex (load run_rules.js first)');
+    }
+    return items[rr.seededIndex(items.length, seed, salt, 0)];
   }
 
   function phaseIndexFor(content, enemy) {

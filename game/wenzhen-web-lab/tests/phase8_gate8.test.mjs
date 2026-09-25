@@ -16,6 +16,8 @@ vm.runInContext(read('../js/data.js') + ';globalThis.DATA = DATA;', dataContext)
 const data = dataContext.DATA;
 
 const ctx = vm.createContext({});
+// OWNER = game/data/balance.json — 无 silent FALLBACK。
+ctx.WORLD_BALANCE = JSON.parse(read('../../data/balance.json'));
 vm.runInContext(read('../js/run_rules.js'), ctx);
 vm.runInContext(read('../js/gu_rules.js'), ctx);
 vm.runInContext(read('../js/run_flow.js'), ctx);

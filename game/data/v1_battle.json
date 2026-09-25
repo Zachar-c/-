@@ -80,6 +80,7 @@
  "kill_moves": [
   {
    "id": "km_light_converge",
+     "origin": "original_game_content",
    "label": "凝光",
    "tag": "light",
    "recipe": [
@@ -97,6 +98,8 @@
   },
   {
    "id": "km_light_bulwark",
+     "origin": "adaptation",
+     "origin_ref": "L130776",
    "label": "明光壁",
    "tag": "light",
    "recipe": [
@@ -114,6 +117,7 @@
   },
   {
    "id": "km_blood_ember",
+     "origin": "original_game_content",
    "label": "血昙",
    "tag": "blood",
    "recipe": [
@@ -132,6 +136,7 @@
   },
   {
    "id": "km_force_avalanche",
+     "origin": "original_game_content",
    "label": "崩山",
    "tag": "force",
    "recipe": [
@@ -147,6 +152,7 @@
   },
   {
    "id": "km_sword_double_edge_1",
+     "origin": "original_game_content",
    "label": "双锋引·一转",
    "tag": "sword",
    "recipe": [
@@ -164,6 +170,7 @@
   },
   {
    "id": "km_sword_double_edge_2",
+     "origin": "original_game_content",
    "label": "双锋引·二转",
    "tag": "sword",
    "recipe": [
@@ -181,6 +188,7 @@
   },
   {
    "id": "km_sword_double_edge_4",
+     "origin": "original_game_content",
    "label": "双锋引·四转",
    "tag": "sword",
    "recipe": [
@@ -198,6 +206,7 @@
   },
   {
    "id": "km_sword_double_edge_5",
+     "origin": "original_game_content",
    "label": "双锋引·五转",
    "tag": "sword",
    "recipe": [
@@ -215,6 +224,7 @@
   },
   {
    "id": "km_sword_qi_surge_1",
+     "origin": "original_game_content",
    "label": "剑气冲霄·一转",
    "tag": "sword",
    "recipe": [
@@ -233,6 +243,7 @@
   },
   {
    "id": "km_sword_qi_surge_2",
+     "origin": "original_game_content",
    "label": "剑气冲霄·二转",
    "tag": "sword",
    "recipe": [
@@ -251,6 +262,7 @@
   },
   {
    "id": "km_sword_qi_surge_4",
+     "origin": "original_game_content",
    "label": "剑气冲霄·四转",
    "tag": "sword",
    "recipe": [
@@ -269,6 +281,7 @@
   },
   {
    "id": "km_sword_qi_surge_5",
+     "origin": "original_game_content",
    "label": "剑气冲霄·五转",
    "tag": "sword",
    "recipe": [
@@ -287,6 +300,7 @@
   },
   {
    "id": "km_sword_myriad_shadows_2",
+     "origin": "original_game_content",
    "label": "剑影万千·二转",
    "tag": "sword",
    "recipe": [
@@ -306,6 +320,7 @@
   },
   {
    "id": "km_sword_myriad_shadows_3",
+     "origin": "original_game_content",
    "label": "剑影万千·三转",
    "tag": "sword",
    "recipe": [
@@ -325,6 +340,7 @@
   },
   {
    "id": "km_sword_myriad_shadows_4",
+     "origin": "original_game_content",
    "label": "剑影万千·四转",
    "tag": "sword",
    "recipe": [
@@ -344,6 +360,7 @@
   },
   {
    "id": "km_sword_myriad_shadows_5",
+     "origin": "original_game_content",
    "label": "剑影万千·五转",
    "tag": "sword",
    "recipe": [
@@ -363,6 +380,8 @@
   },
   {
    "id": "km_sword_mark_seek_1",
+     "origin": "canon",
+     "origin_ref": "L194470",
    "label": "剑痕索命·一转",
    "tag": "sword",
    "recipe": [
@@ -380,6 +399,8 @@
   },
   {
    "id": "km_sword_mark_seek_2",
+     "origin": "canon",
+     "origin_ref": "L194470",
    "label": "剑痕索命·二转",
    "tag": "sword",
    "recipe": [
@@ -397,6 +418,8 @@
   },
   {
    "id": "km_sword_mark_seek_4",
+     "origin": "canon",
+     "origin_ref": "L194470",
    "label": "剑痕索命·四转",
    "tag": "sword",
    "recipe": [
@@ -414,6 +437,8 @@
   },
   {
    "id": "km_sword_mark_seek_5",
+     "origin": "canon",
+     "origin_ref": "L194470",
    "label": "剑痕索命·五转",
    "tag": "sword",
    "recipe": [
@@ -431,6 +456,8 @@
   },
   {
    "id": "km_sword_five_fingers_2",
+     "origin": "canon",
+     "origin_ref": "L160024",
    "label": "五指拳心剑·二转",
    "tag": "sword",
    "recipe": [
@@ -451,6 +478,8 @@
   },
   {
    "id": "km_sword_five_fingers_4",
+     "origin": "canon",
+     "origin_ref": "L160024",
    "label": "五指拳心剑·四转",
    "tag": "sword",
    "recipe": [
@@ -471,6 +500,8 @@
   },
   {
    "id": "km_sword_five_fingers_5",
+     "origin": "canon",
+     "origin_ref": "L160024",
    "label": "五指拳心剑·五转",
    "tag": "sword",
    "recipe": [
@@ -491,6 +522,8 @@
   },
   {
    "id": "km_sword_myriad_tribulation_2",
+     "origin": "canon",
+     "origin_ref": "L192506",
    "label": "万剑劫·二转",
    "tag": "sword",
    "recipe": [
@@ -510,6 +543,8 @@
   },
   {
    "id": "km_sword_myriad_tribulation_4",
+     "origin": "canon",
+     "origin_ref": "L192506",
    "label": "万剑劫·四转",
    "tag": "sword",
    "recipe": [
@@ -529,6 +564,8 @@
   },
   {
    "id": "km_sword_myriad_tribulation_5",
+     "origin": "canon",
+     "origin_ref": "L192506",
    "label": "万剑劫·五转",
    "tag": "sword",
    "recipe": [

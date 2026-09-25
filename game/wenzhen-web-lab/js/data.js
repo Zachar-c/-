@@ -2998,6 +2998,7 @@ const DATA = {
   "killMoves": [
     {
       "id": "km_light_converge",
+      "origin": "original_game_content",
       "label": "凝光",
       "tag": "light",
       "recipe": [
@@ -3015,6 +3016,8 @@ const DATA = {
     },
     {
       "id": "km_light_bulwark",
+      "origin": "adaptation",
+      "origin_ref": "L130776",
       "label": "明光壁",
       "tag": "light",
       "recipe": [
@@ -3032,6 +3035,7 @@ const DATA = {
     },
     {
       "id": "km_blood_ember",
+      "origin": "original_game_content",
       "label": "血昙",
       "tag": "blood",
       "recipe": [
@@ -3050,6 +3054,7 @@ const DATA = {
     },
     {
       "id": "km_sword_double_edge_1",
+      "origin": "original_game_content",
       "label": "双锋引·一转",
       "tag": "sword",
       "recipe": [
@@ -3067,6 +3072,8 @@ const DATA = {
     },
     {
       "id": "km_sword_mark_seek_1",
+      "origin": "canon",
+      "origin_ref": "L194470",
       "label": "剑痕索命·一转",
       "tag": "sword",
       "recipe": [
@@ -7559,5 +7566,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "9ad39a7b2085415ff05f834589ab56be16add88cd38e2d8899c9788c430502fe"
+  "contentVersion": "d448a34428740d27ac2c9fcc4fd59a3ea430338f38004ab576e8bef4125665ea"
 };

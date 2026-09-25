@@ -11,8 +11,10 @@
  *           human_base_health / thought_base_capacity / stone_to_essence_per_stone）
  *   运行时访问点 = scripts/domain/gu_balance.gd
  *   本文件只做 LAB 投影，禁止再发明第三套 Rank。
- *   Node 工具须先设 globalThis.WORLD_BALANCE = balance.json；
- *   未注入时使用 FALLBACK，并由 tools/check_balance.mjs 断言与 JSON 一致。
+ *   OWNER 数据来源（缺一即抛错，无 silent FALLBACK）：
+ *     globalThis.WORLD_BALANCE = game/data/balance.json
+ *     或已加载 data.js 后的 DATA.worldBalance（build_data.mjs 镜像）。
+ *   tools/check_balance.mjs 注入 JSON 后断言与投影一致。
  *
  * 本工具负责发现：异常超模 / 明显低模 / 无限资源 / 不合理 DPR /
  *   敌人数学错误 / 战斗时长与资源曲线异常。
@@ -46,29 +48,40 @@ globalThis.MvpBalance = (() => {
   /* WORLD → LAB 显式投影。改这里等于改投影，不是改全仓预算。 */
   const LAB_BUDGET_PROJECTION = 20;
 
-  /* Rank 真源：优先 WORLD_BALANCE（game/data/balance.json）；否则冻结快照。 */
-  const WORLD_FALLBACK = Object.freeze({
-    rank_step_ratio: 2,
-    standard_hit_ratio: 0.2,
-    human_base_health: 100,
-    standard_human_hp: 100,
-    player_start_hp: 100,
-    thought_base_capacity: 3,
-    stone_to_essence_per_stone: 5,
-    rank_power_budget: Object.freeze({
-      rank1_budget: 40,
-      budget_by_rank: Object.freeze({ 1: 40, 2: 80, 3: 160, 4: 320, 5: 640 }),
-    }),
-  });
-  const WORLD = Object.freeze({ ...WORLD_FALLBACK, ...(globalThis.WORLD_BALANCE || {}) });
+  /* Rank 真源 = game/data/balance.json（OWNER）。缺数据直接失败，禁止 silent FALLBACK。 */
+  function ownerWorld() {
+    let source = globalThis.WORLD_BALANCE || null;
+    if (!source) {
+      // classic script：data.js 的 const DATA 是词法全局，不在 globalThis.DATA 上
+      try {
+        // eslint-disable-next-line no-undef
+        if (typeof DATA !== 'undefined' && DATA && DATA.worldBalance) source = DATA.worldBalance;
+      } catch (_) { /* no DATA */ }
+    }
+    if (!source || !source.rank_power_budget || !source.rank_power_budget.budget_by_rank) {
+      throw new Error(
+        'balance.js: missing OWNER world data (game/data/balance.json). '
+        + 'Set globalThis.WORLD_BALANCE or load data.js (DATA.worldBalance) before use. '
+        + 'Silent FALLBACK is removed — Godot/balance.json is the sole Rank owner.',
+      );
+    }
+    return source;
+  }
 
   function worldRankBudget(rank) {
-    const table = WORLD.rank_power_budget?.budget_by_rank || WORLD_FALLBACK.rank_power_budget.budget_by_rank;
-    return Number(table[String(rank)] ?? table[rank] ?? WORLD_FALLBACK.rank_power_budget.rank1_budget);
+    const table = ownerWorld().rank_power_budget.budget_by_rank;
+    const value = Number(table[String(rank)] ?? table[rank]);
+    if (!Number.isFinite(value) || value <= 0) {
+      throw new Error(`balance.js: rank_power_budget missing rank ${rank}`);
+    }
+    return value;
   }
 
   function worldRankMultiplier(rank) {
-    const step = Number(WORLD.rank_step_ratio || 2);
+    const step = Number(ownerWorld().rank_step_ratio);
+    if (!Number.isFinite(step) || step <= 0) {
+      throw new Error('balance.js: rank_step_ratio missing in OWNER balance.json');
+    }
     return Math.pow(step, Math.max(1, Number(rank || 1)) - 1);
   }
 
@@ -95,15 +108,18 @@ globalThis.MvpBalance = (() => {
     playerQi: 12,
     LAB_EXCHANGE_RATE: Object.freeze({ stones: 1, qi: 2 }), // PROJECTION of stone_to_essence_per_stone=5
     LAB_BUDGET_PROJECTION,
-    world: WORLD,
-    fullGame: Object.freeze({
-      humanHp: Number(WORLD.human_base_health || 100),
-      rank1PowerBudget: Number(WORLD.rank_power_budget?.rank1_budget || 40),
-      thoughtBaseCapacity: Number(WORLD.thought_base_capacity || 3),
-      stoneToEssence: Number(WORLD.stone_to_essence_per_stone || 5),
-      labToFullHp: 24 / Number(WORLD.human_base_health || 100),
-      note: '只允许 projection 到 LAB；禁止 LAB 回写 WORLD',
-    }),
+    get world() { return Object.freeze({ ...ownerWorld() }); },
+    get fullGame() {
+      const W = ownerWorld();
+      return Object.freeze({
+        humanHp: Number(W.human_base_health),
+        rank1PowerBudget: Number(W.rank_power_budget.rank1_budget),
+        thoughtBaseCapacity: Number(W.thought_base_capacity),
+        stoneToEssence: Number(W.stone_to_essence_per_stone),
+        labToFullHp: 24 / Number(W.human_base_health),
+        note: '只允许 projection 到 LAB；禁止 LAB 回写 WORLD',
+      });
+    },
   });
 
   /* ---------------- 效果 → 预算点（Power Point, PP） ----------------
@@ -375,16 +391,16 @@ globalThis.MvpBalance = (() => {
   const Market = Object.freeze({
     owner: 'game/scripts/domain/market_rules.gd',
     t1MaterialBasePrice() {
-      return Number(WORLD.stone_per_t1_material ?? 10);
+      return Number(ownerWorld().stone_per_t1_material ?? 10);
     },
     rankStandardPrice(rank) {
       return Market.t1MaterialBasePrice() * worldRankMultiplier(rank);
     },
     publicBuybackRatio() {
-      return Number(WORLD.public_buyback_ratio ?? 0.5);
+      return Number(ownerWorld().public_buyback_ratio ?? 0.5);
     },
     lowLiquidityRatio() {
-      return Number(WORLD.low_liquidity_ratio ?? 0.3);
+      return Number(ownerWorld().low_liquidity_ratio ?? 0.3);
     },
     publicResale(value) {
       return Math.max(0, Number(value) || 0) * Market.publicBuybackRatio();
@@ -399,14 +415,14 @@ globalThis.MvpBalance = (() => {
       return Market.rankStandardPrice(rank);
     },
     guEstimate(rank) {
-      return Market.rankStandardPrice(rank) * Number(WORLD.gu_estimate_ratio ?? 6.5);
+      return Market.rankStandardPrice(rank) * Number(ownerWorld().gu_estimate_ratio ?? 6.5);
     },
     guValueByRank(rank) {
-      const table = WORLD.gu_value_by_rank || {};
+      const table = ownerWorld().gu_value_by_rank || {};
       return Number(table[String(rank)] ?? table[rank] ?? 0);
     },
     demandPriceTiers() {
-      return WORLD.demand_price_tiers || [0.8, 1.0, 1.2];
+      return ownerWorld().demand_price_tiers || [0.8, 1.0, 1.2];
     },
     demandQuote(basePerUnit, amount, tier) {
       const tiers = Market.demandPriceTiers();
@@ -427,7 +443,7 @@ globalThis.MvpBalance = (() => {
     THREAT_V1,
     OVERRIDE_THRESHOLD,
     LAB_BUDGET_PROJECTION,
-    WORLD,
+    get WORLD() { return Object.freeze({ ...ownerWorld() }); },
     Market,
     worldRankBudget,
     worldRankMultiplier,

@@ -4,6 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const context = vm.createContext({});
+vm.runInContext(fs.readFileSync(new URL('../js/run_rules.js', import.meta.url), 'utf8'), context);
 vm.runInContext(fs.readFileSync(new URL('../js/shop_rules.js', import.meta.url), 'utf8'), context);
 const rules = context.ShopRules;
 const dataContext = vm.createContext({});

@@ -9,7 +9,7 @@ tags: [run-state, save, persistence, serialization]
 
 ## RunState 关键字段
 
-开局：丙等一转散修，80 血 / 60 寿元 / 魂 1（soul_max 4）/ 12 元石 / 洞天真元 20 / 初始蛊小光蛊（实例 gu_001）[^2]。战斗 hp 经 `sync_battle_hp_to_state` 每命令写回防双源漂移[^3]。Pity 计数器（loot_pity / material_pity / synthesis_fail_streak）在 RunState[^2]。
+开局：丙等一转散修，100 血 / 60 寿元 / 魂 1（soul_max 4）/ 12 元石 / 洞天真元 20 / 初始蛊小光蛊（实例 gu_001）[^2]。战斗 hp 经 `sync_battle_hp_to_state` 每命令写回防双源漂移[^3]。Pity 计数器（loot_pity / material_pity / synthesis_fail_streak）在 RunState[^2]。
 
 **已知债务**：`current_battle`、`current_session` 镜像字段（2026-09-12 纠偏计划列为 P1 债）[^2]。
 
@@ -36,7 +36,7 @@ Run 结束时删除进行中 Run 存档；无感自动保存、续玩恢复离�
 修改 run_state.gd / save_repository.gd 均属 Shared 单写者区，走 5 步协议[^4]；模块接口页 docs/contracts/module-interfaces/05-run-state.md[^5]。
 
 [^1]: AGENTS.md, 技术约定
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §19/§21
+[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §19/§21（开局数值见 §4；HP 按现网 data/balance.json `player_start_hp=100` 校正，RUL-2026-09-19-009，审计快照 80 已过期）
 [^3]: PROJECT_WORLD_MODEL_AUDIT.md, §9/§15
 [^4]: docs/contracts/2026-09-12-agent-ownership-contract.md
 [^5]: docs/contracts/module-interfaces/05-run-state.md
