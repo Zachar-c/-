@@ -7,7 +7,7 @@
 
 | 线 | 簇车道 | 页面范围 | 状态 |
 |---|---|---|---|
-| A（全书复杂规则精蒸馏） | 规则簇 QMS → 叙事簇 FATE → 规则簇 XQ（仙窍—仙元—灾劫—道痕） | gu/、characters/、events/ 的 ID 化；world-operating-system、cultivation-system、aptitude-and-aperture、soul-path、primeval-essence | QMS ✅ 49.5/50 · FATE ✅ 50/50 · XQ ✅ 50/50（三簇三类全部达标，v2.1 具备转正条件） |
+| A（全书复杂规则精蒸馏） | 验证簇：QMS ✅ → FATE ✅ → XQ ✅（三类达标，v2.1 冻结转正）→ **规则精蒸馏路线：灾劫体系 ✅（TRIB-001…014）→ 道痕体系 → 炼蛊术语体系（炼化/合炼/正逆炼/升炼）→ 杀招-连招-并招体系 → 流派境界五级（原 T1 延期项，按 L0 本指令恢复）** | rules/ 目录（tribulation.md 起）+ cultivation-system、aptitude-and-aperture、primeval-essence、world-operating-system、soul-path 的深度规则表 | XQ ✅ 50/50 · 灾劫 ✅ TRIB-001…014 · 道痕待开 |
 | B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域与组织（DOMAIN，进行中）→ 后续候选：经济资源、五域补全 | characters/roster.md、gu/roster.md、world/path-roster.md、world/ 四域页、characters/index.md、gu/index.md、world/index.md、index.md（Key Findings）、log.md | 三簇 roster 全绿；粗粒度抽样核验、无 benchmark |
 | C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）→ 按剧情顺序推进下一剧情簇 | events/wolf-tide.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | 第一标段已提交（小兽潮→爆发日序幕，EVT-WTC-001…007）；覆灭段核验 + benchmark-wtc 待收尾批 |
 
