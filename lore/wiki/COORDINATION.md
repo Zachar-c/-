@@ -8,12 +8,13 @@
 | 线 | 簇车道 | 页面范围 | 状态 |
 |---|---|---|---|
 | A（全书复杂规则精蒸馏） | 验证簇：QMS ✅ → FATE ✅ → XQ ✅（三类达标，v2.1 冻结转正）→ **规则精蒸馏路线：灾劫体系 ✅（TRIB-001…014）→ 道痕体系 → 炼蛊术语体系（炼化/合炼/正逆炼/升炼）→ 杀招-连招-并招体系 → 流派境界五级（原 T1 延期项，按 L0 本指令恢复）** | rules/ 目录（tribulation.md 起）+ cultivation-system、aptitude-and-aperture、primeval-essence、world-operating-system、soul-path 的深度规则表 | XQ ✅ 50/50 · 灾劫 ✅ TRIB-001…014 · 道痕待开 |
-| B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域与组织（DOMAIN，进行中）→ 后续候选：经济资源、五域补全 | characters/roster.md、gu/roster.md、world/path-roster.md、world/ 四域页、characters/index.md、gu/index.md、world/index.md、index.md（Key Findings）、log.md | 三簇 roster 全绿；粗粒度抽样核验、无 benchmark |
+| B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域（DOMAIN）✅ → 后续候选：经济资源、组织专页 | characters/roster.md、gu/roster.md、world/path-roster.md、world/ 四域页（north-plain/central-plain/east-sea/west-desert）、characters/index.md、gu/index.md、world/index.md、index.md（Key Findings）、log.md | 四簇全绿（人物/蛊虫/流派/五域）；粗粒度抽样核验、无 benchmark |
 | C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）✅ → 按剧情顺序推进下一剧情簇：**弧三·南疆商队与三王山（卷二前段，待开工登记）** | events/wolf-tide.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | WTC ✅ 50/50（EVT-WTC-001…026 全链核验 + benchmark-wtc 首测满分，出题同源局限已登记）；下一簇待开工 |
 
 ## 共享页分区块规则
 
-- `events/qing-mao-mountain.md`：A 拥有 frontmatter/ID 层/QMS 投影行；B 拥有 WTC 投影行与狼潮相关叙述。各自只追加自己的区块，不重排对方行。
+- `events/qing-mao-mountain.md`：A 拥有 frontmatter/ID 层/QMS 投影行；B 拥有 WTC 投影行与狼潮相关叙述（按线名裁定，此 B 指现 C 线）。各自只追加自己的区块，不重排对方行。
+- `world/path-roster.md`：B 线建（粗粒度归属表+阶梯实例）；A 线"流派境界五级"精蒸馏时以该页为底 refactor，已核实例锚点（图事成窗口、170734–170740）保留不重写。
 - hub 索引页（`index.md`、`events/index.md`、`world/index.md`、`characters/index.md`、`gu/index.md`、`themes/index.md`）：双方只做"新增自己页面的一行登记"；改动前先 `git diff` 查对方未提交改动。
 - `log.md`：append-only，双方各自追加自己的批次记录，不改写对方条目。
 
