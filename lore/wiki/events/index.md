@@ -8,6 +8,7 @@
 - [南疆商队与商家城](south-caravan.md)
 - [三王福地](three-kings-mountain.md)
 - [王庭之争](royal-court.md)
+- [真阳楼崩塌](true-yang-collapse.md)
 - [逆流河](reverse-flow-river.md)
 - [宿命大战](fate-war.md)
 - [中洲炼蛊大会](central-plain-refinement-conference.md)
