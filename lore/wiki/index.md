@@ -9,6 +9,8 @@
 - **南疆生态**：人族以山寨聚居，山寨与商队互相依赖；兽潮是周期性天灾，蛊师是守护山寨的中坚 `canon-index:CAN-NANJIANG-001/003`、`CAN-BEAST-TIDE-001`。
 - **兽潮机制**：兽潮由兽群链式迁徙形成（扩张→压缩→迁移→连锁）；狼巢分万兽王/百兽王/千兽王三级；山寨防御受"扩建悖论"锁死规模，见[兽潮](world/beast-tide.md)、[狼潮](events/wolf-tide.md)。
 - **蛊虫循环**：养蛊-用蛊-炼蛊构成持续压力，一般蛊师养四五只同转蛊；相似蛊可共用喂养并组合联动——这是战斗多样性的核心来源 `canon-index:CAN-GU-CARE-001`、`CAN-GU-SYNERGY-001`。
+- **方源马甲链**：古月方源→黑土→常山阴→八臂仙人→沙黄→武遗海→柳贯一→气海老祖→大爱仙尊（自封），按剧情推进换用；白凝冰同期马甲"白云"。引用马甲名前先查[全书主要人物总表](characters/roster.md)归一表，不得当作独立人物。
+- **流派源流**：太古宇道/宙道→远古元始（气道/奴道）、星宿（智道/星道）→上古无极（律道）、狂蛮（变化道/力道）→中古元莲（木道）、盗天（偷道）、巨阳（运道）；境界阶梯 普通→大师→宗师→大宗师→无上大宗师（"准 X"过渡）。见[流派总表](world/path-roster.md)。
 
 ## 分类
 
@@ -21,10 +23,11 @@
 ## 当前阅读顺序
 
 0. [全书故事骨架总览](events/story-arc-overview.md)
-1. [修炼体系](world/cultivation-system.md)
-2. [空窍与资质](world/aptitude-and-aperture.md)
-3. [南疆与山寨](world/south-jiang.md)
-4. [方源](characters/fang-yuan.md)
-5. [春秋蝉](gu/spring-autumn-cicada.md)
+1. [全书主要人物总表](characters/roster.md)（查人入口：势力分组 + 马甲归一）
+2. [修炼体系](world/cultivation-system.md)
+3. [空窍与资质](world/aptitude-and-aperture.md)
+4. [南疆与山寨](world/south-jiang.md)
+5. [方源](characters/fang-yuan.md)
+6. [春秋蝉](gu/spring-autumn-cicada.md)
 
 当前页面是首批种子，不代表全书已经整理完毕。
