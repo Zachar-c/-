@@ -28,9 +28,9 @@
 
 ## 阶段复盘
 
-- [Narrative Compiler v0.1 阶段复盘](retrospective-v0.1.md)（2026-09-25，A 线召集）：三线产出盘点、五套基准成绩、方法论结论、事故教训与下阶段行动项。**待 B/C 线会合确认；L0 决策项=Schema v2.1 转正宣布（L1 评审材料已备：[schema-v2.1-l1-review.md](schema-v2.1-l1-review.md)，结论=建议转正附 3 项条件）。**
+- [Narrative Compiler v0.1 阶段复盘](retrospective-v0.1.md)（2026-09-25，A 线召集）：三线产出盘点、五套基准成绩、方法论结论、事故教训与下阶段行动项。**B/C 线会合确认进行中；L0 已批准转正（2026-09-25），v2.2 迭代队列三项条件见 [schema-v2.1-l1-review.md](schema-v2.1-l1-review.md) 第 6 节。**
 
 ## 门禁与冻结
 
-- Schema v2.1 冻结（见 [AGENTS.md](AGENTS.md)），两线共用 `tools/check.ps1` 门禁；各簇各有 `tools/benchmark-*.md` 回归题集。
+- Schema v2.1 **已转正为长期格式**（L0 批准 2026-09-25，评审见 [schema-v2.1-l1-review.md](schema-v2.1-l1-review.md)；冻结条款与 L1 评审通道维持），三线共用 `tools/check.ps1` 门禁；各簇各有 `tools/benchmark-*.md` 回归题集。
 - 星宿仙尊/龙公页当前归 A 线 FATE 簇后续核验引用范围，B 线如需引用按现有页面链接，不迁移不改动。
