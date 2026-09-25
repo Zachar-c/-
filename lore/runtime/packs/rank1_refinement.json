@@ -1,0 +1,393 @@
+{
+  "id": "rank1_refinement",
+  "description": "一转炼蛊节点最小知识包：炼蛊术语规则 + 养蛊压力 + 小光蛊合炼事实",
+  "source": {
+    "id": "gu_zhenren_clean",
+    "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "lines": 437060
+  },
+  "entities": [
+    {
+      "id": "moonlight_gu",
+      "type": "gu",
+      "name": "月光蛊",
+      "aliases": [
+        "月光刃"
+      ],
+      "description": "古月一族秘法培育的一转镇族蛊虫，发射月刃的基础战斗蛊",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-001492"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/moonlight-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-001"
+        ]
+      }
+    },
+    {
+      "id": "small_light_gu",
+      "type": "gu",
+      "name": "小光蛊",
+      "aliases": [],
+      "description": "五角星形辅助蛊，与月光蛊协同放大月刃，可参与合炼月芒蛊",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/small-light-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-001",
+          "CAN-SMALL-LIGHT-002"
+        ]
+      }
+    },
+    {
+      "id": "moon_glow_gu",
+      "type": "gu",
+      "name": "月芒蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "CAN-ECONOMY-001",
+      "prefix": "CAN",
+      "domain": "economy",
+      "statement": "修行、战斗、炼蛊和交易都会消耗元石。",
+      "forbidden_misreading": "元石不能只作为购买时才出现的货币。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "2856"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:2856`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "元石经济、行动取舍、商队交易"
+      }
+    },
+    {
+      "id": "CAN-GU-CARE-001",
+      "prefix": "CAN",
+      "domain": "gu-care",
+      "statement": "养蛊、用蛊、炼蛊构成持续压力；一般蛊师通常养四五只同转蛊。",
+      "forbidden_misreading": "不必逐项模拟食料；烦琐后台不是原著还原。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "3806-3924"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:3806-3924`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "有限蛊槽、维护取舍、构筑容量"
+      }
+    },
+    {
+      "id": "CAN-SMALL-LIGHT-001",
+      "prefix": "CAN",
+      "domain": "small-light",
+      "statement": "小光蛊可辅助月光蛊；两者并用时，月刃的体积与攻击力扩大。",
+      "forbidden_misreading": "小光蛊的侦查、伪装或通用照明能力不是此处直接事实。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "9704-9774",
+        "10926-10940"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:9704-9774,10926-10940`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "初始蛊、辅助蛊、双蛊连携"
+      }
+    },
+    {
+      "id": "CAN-SMALL-LIGHT-002",
+      "prefix": "CAN",
+      "domain": "small-light",
+      "statement": "小光蛊是可参与合炼的凡蛊。",
+      "forbidden_misreading": "不应由此承诺复杂且全量的炼蛊模拟。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "15708-15710"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:15708-15710`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "进阶配方、路线奖励"
+      }
+    },
+    {
+      "id": "REF-001",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "三分框架",
+      "statement": "炼、养、用三个方面并列，任何一面都博大精深、究其一生探索不尽",
+      "forbidden_misreading": "三者不可混成一件事（分析层另有细化）",
+      "evidence": [
+        "E:V1-015724"
+      ],
+      "evidence_raw": "E:V1-015724（15724–15734 行）",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-002",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "单炼（定义）",
+      "statement": "炼蛊中最基础的部分：单独炼化一只已经存在的蛊虫；本质是用自我的意志来取代蛊虫本身蕴藏的原先意志",
+      "forbidden_misreading": "炼化收为己用\"只是单炼\"——不等于炼蛊的全部",
+      "evidence": [
+        "E:V5-285552",
+        "E:V1-001830"
+      ],
+      "evidence_raw": "E:V5-285552–285554；意志对抗细节见[蛊的饲养与炼化](../world/gu-care-and-refinement.md)（E:V1-001830）",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-003",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "单炼增益",
+      "statement": "春秋蝉气息能威压蛊虫、增强单炼之效果；但对合炼帮不上忙",
+      "forbidden_misreading": "个案手段（春秋蝉），不得泛化为通用增幅",
+      "evidence": [
+        "E:V1-015812"
+      ],
+      "evidence_raw": "E:V1-015812",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-004",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "合炼（定义）",
+      "statement": "将低阶蛊虫晋升为高阶；须有秘方，有些蛊虫之间不能合炼，秘方为先祖无数实践与失败总结",
+      "forbidden_misreading": "合炼方向是\"低→高\"，与逆炼正好相反",
+      "evidence": [
+        "E:V1-026908",
+        "E:V1-015724"
+      ],
+      "evidence_raw": "E:V1-026908、E:V1-015724–15734",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-005",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "逆炼（定义）",
+      "statement": "将高阶蛊虫降为低阶（分解为成分蛊虫）：幡然蛊可将二转蛊虫分解成一转，如白玉蛊分解回白豕蛊与玉皮蛊——\"这个过程被称之为逆炼\"",
+      "forbidden_misreading": "逆炼产物是成分蛊虫，不是毁坏",
+      "evidence": [
+        "E:V1-018464",
+        "E:V1-026908"
+      ],
+      "evidence_raw": "E:V1-018464–18468、E:V1-026908",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-006",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "逆炼价值",
+      "statement": "逆炼可产出全新物种：月光蛊并非天然蛊虫，而是一代族长逆炼而得；逆炼秘方价值甚至能超过很多四转、五转秘方，由族长亲自保管",
+      "forbidden_misreading": "\"低阶\"不等于\"低价值\"——逆炼秘方按稀缺性与家族垄断定价",
+      "evidence": [
+        "E:V1-026912"
+      ],
+      "evidence_raw": "E:V1-026912–26928",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-007",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "平炼（定义）",
+      "statement": "对特定蛊虫反复炼制以提升年份/品质；升炼、逆炼是炼道主流，平炼比较罕见，能够平炼的蛊虫也罕见",
+      "forbidden_misreading": "平炼不跨层级；年蛊是代表性例外（十年仙蛊平炼成二十年、三十八年……最高九十九年）",
+      "evidence": [
+        "E:V5-209556"
+      ],
+      "evidence_raw": "E:V5-209556–209562",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-008",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "升炼（定义）",
+      "statement": "跨层级提升即为升炼（十年蛊→百年蛊就不是平炼而是升炼）；难度和失败概率是平炼的数十倍甚至上百倍",
+      "forbidden_misreading": "高转数常需层层升炼、无一蹴而就的蛊方（五转恶念蛊需从一转逐级）；改良蛊方可减少步骤（两个步骤达成）",
+      "evidence": [
+        "E:V5-209570"
+      ],
+      "evidence_raw": "E:V5-209570–209572",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-009",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "方案推演",
+      "statement": "炼前要求蛊师深度思考：在头脑中不断推演正炼、逆炼中可能出现的失败，综合许多方案、组织出最精炼的炼蛊方案（风险低且时间少）",
+      "forbidden_misreading": "正炼与逆炼对举出现，原文无\"正炼\"独立定义段——正炼即顺向按方炼制属推断，待核对",
+      "evidence": [
+        "E:V4-152834"
+      ],
+      "evidence_raw": "E:V4-152834",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-010",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "炼制失败代价",
+      "statement": "高转数炼制可反复尽败：四转呕心婴泣蛊材料不罕见但难度颇高，近炼道大师也十多次尽数失败，失败气流撞毁窗棂薄膜",
+      "forbidden_misreading": "失败伴随材料、时间与物理反噬，不是无成本重试",
+      "evidence": [
+        "E:V3-093334"
+      ],
+      "evidence_raw": "E:V3-093334（93334–93340 行）",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-011",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "修复（定义）",
+      "statement": "以特定蛊虫组合修复战损蛊具/蛊虫：骨竹蛊结合鬼火蛊修复白骨车轮裂痕（三十多根骨竹蛊修复最深裂痕）；修复残缺秘方是长期研究工程（金家立志修复金蚕蛊秘方、数代方有眉目）",
+      "forbidden_misreading": "\"修复\"针对战损与残缺，与升炼的品质提升、逆炼的分解是不同操作",
+      "evidence": [
+        "E:V3-079740",
+        "E:V3-082278",
+        "E:V2-043498"
+      ],
+      "evidence_raw": "E:V3-079740–079746、E:V3-082278–082284、E:V2-043498",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-012",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "炼道境界",
+      "statement": "炼道有境界体系（准宗师、宗师、大宗师等称呼在案）：方源炼道奠基于苦练期、后达准无上大宗师",
+      "forbidden_misreading": "境界称号与流派境界（五级）是不同体系，不得混用；完整等级表未核验",
+      "evidence": [
+        "E:V4-152898",
+        "E:V4-135028"
+      ],
+      "evidence_raw": "E:V4-152898、E:V4-135028 语境；详见[蛊的饲养与炼化](../world/gu-care-and-refinement.md) 推演要素",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-REFINE-MOONGLOW",
+      "relation": "refinement",
+      "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_page": "lore/wiki/gu/small-light-gu.md",
+        "state_ids": [
+          "ST-SMALLLIGHT-04"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-002"
+        ]
+      },
+      "inputs": [
+        "moonlight_gu",
+        "small_light_gu",
+        "small_light_gu"
+      ],
+      "output": "moon_glow_gu",
+      "output_rank": 2
+    },
+    {
+      "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
+      "relation": "supports",
+      "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+      "evidence": [
+        "E:V1-010926",
+        "E:V1-017148"
+      ],
+      "provenance": {
+        "wiki_page": "lore/wiki/gu/small-light-gu.md",
+        "state_ids": [
+          "ST-SMALLLIGHT-03"
+        ],
+        "canon_refs": []
+      },
+      "from": "small_light_gu",
+      "to": "moonlight_gu"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "manifest_version": 1,
+  "generated_at": "2026-09-25T10:05:39Z",
+  "compiler": "lore/wiki/tools/compile_runtime.py",
+  "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
+  "source": {
+    "id": "gu_zhenren_clean",
+    "path": "C:\\Users\\90877\\work_space\\gu-zhenren\\蛊真人-clean.txt",
+    "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "lines": 437060
+  },
+  "scope": {
+    "canon_index": "game/docs/lore/canon-index.md（全部 CAN-*）",
+    "roster": "lore/wiki/gu/roster-3.md（六个 id 分段；「转数未核」仅蛊名无 id，跳过）",
+    "entity_pages": [
+      "moonlight_gu",
+      "small_light_gu"
+    ],
+    "rule_pages": [
+      "lore/wiki/rules/refinement.md",
+      "lore/wiki/rules/killer-moves.md",
+      "lore/wiki/world/primeval-essence.md"
+    ]
+  },
+  "counts": {
+    "entities": 156,
+    "rules_can": 43,
+    "rules_page": 31,
+    "rules_total": 74,
+    "relations": 2
+  },
+  "coverage_notes": "rank 覆盖 156/270（转数未核 114 只仅有蛊名无 id，未编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
+  "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
+  "content_version": "b51b04c4e2c696f6ce5a87ffde404ef9e745bf274db8b792337d1dcd678f2ee2"
+}

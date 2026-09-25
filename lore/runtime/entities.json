@@ -1,0 +1,3097 @@
+{
+  "entities": [
+    {
+      "id": "blood_atk_1_18_gu",
+      "type": "gu",
+      "name": "鳄力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-035502"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_3_03_gu",
+      "type": "gu",
+      "name": "血气蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_3_11_gu",
+      "type": "gu",
+      "name": "血月蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-026936"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_3_15_gu",
+      "type": "gu",
+      "name": "血蝠蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_4_01_gu",
+      "type": "gu",
+      "name": "血颅蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-033624"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_5_02_gu",
+      "type": "gu",
+      "name": "血手印蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-050082"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_5_09_gu",
+      "type": "gu",
+      "name": "血神子",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V1-028484"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_5_12_gu",
+      "type": "gu",
+      "name": "血本仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-195948"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_5_13_gu",
+      "type": "gu",
+      "name": "血本蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-199800"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_atk_5_14_gu",
+      "type": "gu",
+      "name": "血缘仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-350822"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_bat_gu",
+      "type": "gu",
+      "name": "刀翅血蝠蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "divergence"
+      },
+      "evidence": [
+        "E:V1-031864"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_droplet_gu",
+      "type": "gu",
+      "name": "血滴子",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-028476"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "blood_farewell_gu",
+      "type": "gu",
+      "name": "爱别离",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-011800"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "bone_atk_3_03_gu",
+      "type": "gu",
+      "name": "骨刺蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-039150"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "bone_def_3_01_gu",
+      "type": "gu",
+      "name": "骨枪蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "bone_def_3_05_gu",
+      "type": "gu",
+      "name": "玉骨蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-040530"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "bone_mov_4_04_gu",
+      "type": "gu",
+      "name": "骨翼蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-074910"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "dream_atk_5_02_gu",
+      "type": "gu",
+      "name": "梦蝶仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-396902"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "dream_atk_5_06_gu",
+      "type": "gu",
+      "name": "解谜蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-199800"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "dream_def_5_01_gu",
+      "type": "gu",
+      "name": "梦甲蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-396296"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "earth_atk_5_02_gu",
+      "type": "gu",
+      "name": "洞地蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-078492"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "earth_atk_5_03_gu",
+      "type": "gu",
+      "name": "地藏花蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-080158"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "earth_def_3_01_gu",
+      "type": "gu",
+      "name": "石窍蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-034292"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "fire_atk_2_01_gu",
+      "type": "gu",
+      "name": "鬼火蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-081722"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "fire_atk_4_02_gu",
+      "type": "gu",
+      "name": "丹火蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-057866"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "fire_atk_4_05_gu",
+      "type": "gu",
+      "name": "火龙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-032036"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "fire_atk_4_06_gu",
+      "type": "gu",
+      "name": "火蛇蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-058006"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "fire_atk_4_07_gu",
+      "type": "gu",
+      "name": "炎蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "fire_mov_4_39_gu",
+      "type": "gu",
+      "name": "火炭蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V4-154990"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_1_05_gu",
+      "type": "gu",
+      "name": "斤力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-081746"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_2_06_gu",
+      "type": "gu",
+      "name": "十斤之力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-081748"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_3_01_gu",
+      "type": "gu",
+      "name": "力气蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_3_07_gu",
+      "type": "gu",
+      "name": "一钧之力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-081750"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_3_29_gu",
+      "type": "gu",
+      "name": "天蓬蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-009986"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_02_gu",
+      "type": "gu",
+      "name": "苦力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-056860"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_04_gu",
+      "type": "gu",
+      "name": "全力以赴蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "timepoint"
+      },
+      "evidence": [
+        "E:V2-052464"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_08_gu",
+      "type": "gu",
+      "name": "十钧之力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-081752"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_11_gu",
+      "type": "gu",
+      "name": "兽力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-081958"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_17_gu",
+      "type": "gu",
+      "name": "借力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V4-142914"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_18_gu",
+      "type": "gu",
+      "name": "费力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-092738"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_25_gu",
+      "type": "gu",
+      "name": "巨力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-058922"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_26_gu",
+      "type": "gu",
+      "name": "直撞蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-095104"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_27_gu",
+      "type": "gu",
+      "name": "横冲蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-095104"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_4_28_gu",
+      "type": "gu",
+      "name": "横冲直撞蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-064168"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_5_10_gu",
+      "type": "gu",
+      "name": "钧力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_5_16_gu",
+      "type": "gu",
+      "name": "群力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V4-125666"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_5_19_gu",
+      "type": "gu",
+      "name": "我力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-128088"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_atk_5_20_gu",
+      "type": "gu",
+      "name": "我力仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-177370"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_gu",
+      "type": "gu",
+      "name": "力量蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V3-114472"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_heal_3_03_gu",
+      "type": "gu",
+      "name": "自力更生蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-064192"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "force_mov_5_21_gu",
+      "type": "gu",
+      "name": "飞熊之力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V3-109462"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_2_11_gu",
+      "type": "gu",
+      "name": "赤铁舍利蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-018066"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_2_12_gu",
+      "type": "gu",
+      "name": "青铜舍利蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-018066"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_2_16_gu",
+      "type": "gu",
+      "name": "舍利蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_2_19_gu",
+      "type": "gu",
+      "name": "铁蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-030746"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_3_06_gu",
+      "type": "gu",
+      "name": "金罡蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-055508"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_3_13_gu",
+      "type": "gu",
+      "name": "白银舍利蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-018066"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_4_02_gu",
+      "type": "gu",
+      "name": "金龙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-069222"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_4_04_gu",
+      "type": "gu",
+      "name": "金缕衣蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-069252"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_4_14_gu",
+      "type": "gu",
+      "name": "黄金舍利蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-018068"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_01_gu",
+      "type": "gu",
+      "name": "点金蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-069422"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_03_gu",
+      "type": "gu",
+      "name": "金风送爽蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-069230"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_05_gu",
+      "type": "gu",
+      "name": "金霞蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-069252"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_15_gu",
+      "type": "gu",
+      "name": "紫晶舍利蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-078004"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_17_gu",
+      "type": "gu",
+      "name": "金甲蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-105906"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_18_gu",
+      "type": "gu",
+      "name": "剑蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_atk_5_20_gu",
+      "type": "gu",
+      "name": "金蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-069422"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_def_3_08_gu",
+      "type": "gu",
+      "name": "铜皮蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-055814"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_def_3_09_gu",
+      "type": "gu",
+      "name": "古铜皮蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-065994"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "gold_def_3_10_gu",
+      "type": "gu",
+      "name": "铁柜蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-065586"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_1_11_gu",
+      "type": "gu",
+      "name": "命蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-002594"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_1_12_gu",
+      "type": "gu",
+      "name": "灾蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V3-104130"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_3_10_gu",
+      "type": "gu",
+      "name": "雷翼蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-027304"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_3_13_gu",
+      "type": "gu",
+      "name": "雷蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-025544"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_3_14_gu",
+      "type": "gu",
+      "name": "电蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_4_09_gu",
+      "type": "gu",
+      "name": "雷盾蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_5_01_gu",
+      "type": "gu",
+      "name": "宿命蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V3-103100"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_5_02_gu",
+      "type": "gu",
+      "name": "命运蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-316328"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_5_03_gu",
+      "type": "gu",
+      "name": "天妒仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-402772"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_5_06_gu",
+      "type": "gu",
+      "name": "天机蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-276396"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_5_07_gu",
+      "type": "gu",
+      "name": "寿蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "heaven_atk_5_08_gu",
+      "type": "gu",
+      "name": "雷电蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-376300"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_1_38_gu",
+      "type": "gu",
+      "name": "人如故仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V5-270480"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_3_19_gu",
+      "type": "gu",
+      "name": "刃蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_3_33_gu",
+      "type": "gu",
+      "name": "毒誓蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-049768"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_4_40_gu",
+      "type": "gu",
+      "name": "情蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-106818"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_02_gu",
+      "type": "gu",
+      "name": "爱情蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-186806"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_10_gu",
+      "type": "gu",
+      "name": "能力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_21_gu",
+      "type": "gu",
+      "name": "大侠蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V5-363292"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_31_gu",
+      "type": "gu",
+      "name": "海誓蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V2-071240"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_34_gu",
+      "type": "gu",
+      "name": "悔蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-309674"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_37_gu",
+      "type": "gu",
+      "name": "人如故蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-098826"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_atk_5_41_gu",
+      "type": "gu",
+      "name": "恨蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-376116"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_def_1_32_gu",
+      "type": "gu",
+      "name": "山盟蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V2-071240"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "human_heal_5_42_gu",
+      "type": "gu",
+      "name": "团圆蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "jade_skin_gu",
+      "type": "gu",
+      "name": "玉皮蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-009654"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_atk_1_04_gu",
+      "type": "gu",
+      "name": "光蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-001492"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_atk_3_02_gu",
+      "type": "gu",
+      "name": "邀月蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-016922"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_atk_3_05_gu",
+      "type": "gu",
+      "name": "月蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-016922"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_atk_5_03_gu",
+      "type": "gu",
+      "name": "太光蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-072028"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_rec_3_07_gu",
+      "type": "gu",
+      "name": "星芽蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V4-123856"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_rec_3_09_gu",
+      "type": "gu",
+      "name": "星萤蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-085972"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_rec_5_08_gu",
+      "type": "gu",
+      "name": "星河蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-106996"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "light_rec_5_12_gu",
+      "type": "gu",
+      "name": "星念蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-093044"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "luck_atk_1_03_gu",
+      "type": "gu",
+      "name": "招灾蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V3-104130"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "luck_atk_5_01_gu",
+      "type": "gu",
+      "name": "鸿运齐天蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V3-114422"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "luck_atk_5_04_gu",
+      "type": "gu",
+      "name": "狗屎运蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-199800"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "luck_atk_5_05_gu",
+      "type": "gu",
+      "name": "排难蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-128094"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "luck_rec_5_02_gu",
+      "type": "gu",
+      "name": "察运蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-113096"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "moon_glow_gu",
+      "type": "gu",
+      "name": "月芒蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "moon_shadow_gu",
+      "type": "gu",
+      "name": "月影蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-026792"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "moonlight_gu",
+      "type": "gu",
+      "name": "月光蛊",
+      "aliases": [
+        "月光刃"
+      ],
+      "description": "古月一族秘法培育的一转镇族蛊虫，发射月刃的基础战斗蛊",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-001492"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/moonlight-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-001"
+        ]
+      }
+    },
+    {
+      "id": "qi_atk_5_05_gu",
+      "type": "gu",
+      "name": "龙息蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-223776"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "qi_atk_5_08_gu",
+      "type": "gu",
+      "name": "霞蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "qi_mov_4_03_gu",
+      "type": "gu",
+      "name": "风气蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-057022"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "qi_mov_4_06_gu",
+      "type": "gu",
+      "name": "云蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-054800"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "refine_atk_1_04_gu",
+      "type": "gu",
+      "name": "化蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-039454"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "refine_log_2_03_gu",
+      "type": "gu",
+      "name": "合炼蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-012766"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "refine_log_5_01_gu",
+      "type": "gu",
+      "name": "升炼蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-394452"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "refine_log_5_02_gu",
+      "type": "gu",
+      "name": "九转升炼蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-429520"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "refine_log_5_05_gu",
+      "type": "gu",
+      "name": "炼炉蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-159688"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "refine_log_5_07_gu",
+      "type": "gu",
+      "name": "量蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "slave_atk_1_03_gu",
+      "type": "gu",
+      "name": "驭犬蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-060300"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "slave_atk_3_04_gu",
+      "type": "gu",
+      "name": "驭狼蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-078942"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "slave_atk_3_05_gu",
+      "type": "gu",
+      "name": "驭熊蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-024900"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "slave_atk_4_02_gu",
+      "type": "gu",
+      "name": "驭兽蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-083834"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "slave_atk_5_01_gu",
+      "type": "gu",
+      "name": "奴隶蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-002640"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "small_light_gu",
+      "type": "gu",
+      "name": "小光蛊",
+      "aliases": [],
+      "description": "五角星形辅助蛊，与月光蛊协同放大月刃，可参与合炼月芒蛊",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/small-light-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-001",
+          "CAN-SMALL-LIGHT-002"
+        ]
+      }
+    },
+    {
+      "id": "soul_atk_1_02_gu",
+      "type": "gu",
+      "name": "净魂仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V5-267348"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "soul_atk_5_01_gu",
+      "type": "gu",
+      "name": "魂灯蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-264322"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "stone_shell_gu",
+      "type": "gu",
+      "name": "石皮蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-076364"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "sword_atk_4_01_gu",
+      "type": "gu",
+      "name": "剑气蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V5-195606"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "sword_atk_5_02_gu",
+      "type": "gu",
+      "name": "飞剑蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-190076"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "sword_atk_5_03_gu",
+      "type": "gu",
+      "name": "剑鞘蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V5-195650"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_atk_3_06_gu",
+      "type": "gu",
+      "name": "冰肌蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-023066"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_atk_3_07_gu",
+      "type": "gu",
+      "name": "蓝鸟冰棺蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-022912"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_atk_4_02_gu",
+      "type": "gu",
+      "name": "水瀑蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-087006"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_atk_4_09_gu",
+      "type": "gu",
+      "name": "海蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-065292"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_atk_5_10_gu",
+      "type": "gu",
+      "name": "河蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-106996"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_atk_5_11_gu",
+      "type": "gu",
+      "name": "湖蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V4-154944"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "water_rec_5_04_gu",
+      "type": "gu",
+      "name": "浪迹天涯仙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-154944"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "white_boar_strength_gu",
+      "type": "gu",
+      "name": "白豕蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-009980"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "white_jade_gu",
+      "type": "gu",
+      "name": "白玉蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-009986"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wind_mov_4_04_gu",
+      "type": "gu",
+      "name": "龙行虎步蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 4,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-059088"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wind_mov_5_06_gu",
+      "type": "gu",
+      "name": "风虎云龙蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 5,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V3-107018"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wisdom_atk_1_01_gu",
+      "type": "gu",
+      "name": "智慧蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 9,
+        "rank_status": "name_reuse"
+      },
+      "evidence": [
+        "E:V3-103100"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wisdom_atk_3_21_gu",
+      "type": "gu",
+      "name": "心蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wisdom_atk_5_03_gu",
+      "type": "gu",
+      "name": "态度蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-178490"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wisdom_atk_5_04_gu",
+      "type": "gu",
+      "name": "定力蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-401946"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wisdom_atk_5_05_gu",
+      "type": "gu",
+      "name": "慧剑蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 8,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V4-182352"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wisdom_atk_5_15_gu",
+      "type": "gu",
+      "name": "妇人心蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-199800"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wood_atk_3_01_gu",
+      "type": "gu",
+      "name": "木魅蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-023550"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wood_atk_3_09_gu",
+      "type": "gu",
+      "name": "花蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 3,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-028060"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wood_atk_5_08_gu",
+      "type": "gu",
+      "name": "森林蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V6-393748"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wood_heal_3_03_gu",
+      "type": "gu",
+      "name": "草傀蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-067080"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "wood_heal_3_10_gu",
+      "type": "gu",
+      "name": "草蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": null,
+        "rank_status": "collision"
+      },
+      "evidence": [],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    }
+  ]
+}

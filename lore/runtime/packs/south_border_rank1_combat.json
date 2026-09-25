@@ -1,0 +1,696 @@
+{
+  "id": "south_border_rank1_combat",
+  "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
+  "source": {
+    "id": "gu_zhenren_clean",
+    "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "lines": 437060
+  },
+  "entities": [
+    {
+      "id": "moonlight_gu",
+      "type": "gu",
+      "name": "月光蛊",
+      "aliases": [
+        "月光刃"
+      ],
+      "description": "古月一族秘法培育的一转镇族蛊虫，发射月刃的基础战斗蛊",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-001492"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/moonlight-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-001"
+        ]
+      }
+    },
+    {
+      "id": "small_light_gu",
+      "type": "gu",
+      "name": "小光蛊",
+      "aliases": [],
+      "description": "五角星形辅助蛊，与月光蛊协同放大月刃，可参与合炼月芒蛊",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/small-light-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-001",
+          "CAN-SMALL-LIGHT-002"
+        ]
+      }
+    },
+    {
+      "id": "moon_glow_gu",
+      "type": "gu",
+      "name": "月芒蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 2,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    },
+    {
+      "id": "white_boar_strength_gu",
+      "type": "gu",
+      "name": "白豕蛊",
+      "aliases": [],
+      "description": "",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V1-009980"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md"
+        ],
+        "canon_refs": []
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "CAN-APTITUDE-001",
+      "prefix": "CAN",
+      "domain": "aptitude",
+      "statement": "资质以元海占空窍比例表达：丁等二三成，丙等四五成，乙等六七成，甲等八九成。资质越高，真元可储量与自然恢复越高。",
+      "forbidden_misreading": "资质不是经验值，也不能直接等同于战斗伤害。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "1354-1360",
+        "1182-1200",
+        "1870-1886"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:1354-1360,1182-1200,1870-1886`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "角色资质、真元容量与恢复"
+      }
+    },
+    {
+      "id": "CAN-APTITUDE-002",
+      "prefix": "CAN",
+      "domain": "aptitude",
+      "statement": "甲等资质最高可达九成九；甲等之上有十种十绝体，元海圆满十成，但伴随空窍崩毁与早夭风险。",
+      "forbidden_misreading": "十绝体不可作为普通的满资质奖励或无代价开局选项。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "22770-22778",
+        "24498-24500",
+        "30099-30106"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:22770-22778,24498-24500,30099-30106`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "世界观、特殊角色、风险叙事"
+      }
+    },
+    {
+      "id": "CAN-APTITUDE-003",
+      "prefix": "CAN",
+      "domain": "aptitude",
+      "statement": "开窍测试中，十步以下为没有修行资质；十至二十步为丁等，二十至三十步为丙等，三十至四十步为乙等，四十至五十步为甲等。",
+      "forbidden_misreading": "这是开窍测试的表现方式，不应误读为战斗中的动态经验条。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "1154-1158"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:1154-1158`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "开局资质判定、文案"
+      }
+    },
+    {
+      "id": "CAN-BEAST-TIDE-001",
+      "prefix": "CAN",
+      "domain": "beast-tide",
+      "statement": "南疆人类\"通常以家族的形式，建造山寨，龟缩一隅。每隔一段时间，都有兽潮，或者是极恶天气，来冲击山寨。蛊师成为守护山寨的中坚力量\"。",
+      "forbidden_misreading": "兽潮是**周期性天灾**，不是随处刷新的普通野怪。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "4708-4710"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:4708-4710`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "兽潮遭遇、山寨势力、护卫类敌人"
+      }
+    },
+    {
+      "id": "CAN-BEAST-TIDE-002",
+      "prefix": "CAN",
+      "domain": "beast-tide",
+      "statement": "狼潮\"每三年基本上都会有一次\"；雷冠头狼是狼群首领，\"狼潮冲击山寨时，最棘手的存在\"；青茅山上有三家山寨，每寨分担一条。",
+      "forbidden_misreading": "三家山寨分摊压力是地理事实，不表示狼潮难度按寨均分。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "4906"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:4906`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "层内节奏、Boss 定位、青茅山地理"
+      }
+    },
+    {
+      "id": "CAN-BEAST-TIER-001",
+      "prefix": "CAN",
+      "domain": "beast-tier",
+      "statement": "兽王按统御规模分**百兽王 / 千兽王 / 万兽王**三级；百兽王\"一支寻常的五人小组就能妥妥地收拾掉\"，千兽王\"往往需要三支小组合作，才能艰难狩猎\"（且前提是该兽王早已重伤），万兽王\"则需要一干家老和族长合力，才能正面对抗\"。",
+      "forbidden_misreading": "原文自陈这是\"**粗略地**划分\"，不是精确数值等级；也不可直接等同于蛊师转数。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "18746-18754"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:18746-18754`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "敌人 `rank`/`tier`、按层抽取、遭遇规模"
+      }
+    },
+    {
+      "id": "CAN-BEAST-TIER-002",
+      "prefix": "CAN",
+      "domain": "beast-tier",
+      "statement": "兽王的威胁高出寻常野兽许多倍，原因在于**身上寄生着一两只蛊虫**，与兽王共生；\"兽王一旦遭受攻击，蛊虫也会出力帮助\"。",
+      "forbidden_misreading": "寄生蛊虫是共生护卫，不是可掠夺的战利品描述。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "18748"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:18748`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "敌人 `reactions`（受击反制）机制"
+      }
+    },
+    {
+      "id": "CAN-BEAST-TIER-003",
+      "prefix": "CAN",
+      "domain": "beast-tier",
+      "statement": "生物层级由低到高为 野兽 → 异兽 → （万兽皇）→ 荒兽 → 上古荒兽 → 太古荒兽；**荒兽已\"可媲美蛊仙战力\"**。",
+      "forbidden_misreading": "**荒兽及以上不得作为凡人跑局的常规敌人**（本次扩池据此排除太古寒蛟、飓风狐、凤翼狐、九尾狐等）。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "85466",
+        "87696",
+        "315590"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:85466,87696,315590`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "敌人池范围控制"
+      }
+    },
+    {
+      "id": "CAN-CULTIVATION-001",
+      "prefix": "CAN",
+      "domain": "cultivation",
+      "statement": "蛊师修行有一至九转，每一转又分初阶、中阶、高阶、巅峰。",
+      "forbidden_misreading": "不可将转数和小境界混为一个无来源的单等级。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "1354-1356"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:1354-1356`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "角色等级、突破、内容门槛"
+      }
+    },
+    {
+      "id": "CAN-CULTIVATION-002",
+      "prefix": "CAN",
+      "domain": "cultivation",
+      "statement": "一转、二转、三转分别使用青铜、赤铁、白银真元；四转为黄金真元，五转为紫晶真元。",
+      "forbidden_misreading": "五转用语应为“紫晶真元”，不是“紫金真元”。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "3610-3614",
+        "4258",
+        "8534-8538",
+        "70354-70362"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:3610-3614,4258,8534-8538,70354-70362`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "能量类型、转数表现、中文文案"
+      }
+    },
+    {
+      "id": "CAN-CULTIVATION-003",
+      "prefix": "CAN",
+      "domain": "cultivation",
+      "statement": "六转后已脱离凡体，为蛊仙层次；九转蛊仙被称为尊者，分仙尊、魔尊。",
+      "forbidden_misreading": "首发不将蛊仙阶段扩展为可玩跑局内容。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "22766-22776",
+        "71156-71158",
+        "78246-78250"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:22766-22776,71156-71158,78246-78250`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "阶位边界、世界观文案"
+      }
+    },
+    {
+      "id": "CAN-GU-CARE-001",
+      "prefix": "CAN",
+      "domain": "gu-care",
+      "statement": "养蛊、用蛊、炼蛊构成持续压力；一般蛊师通常养四五只同转蛊。",
+      "forbidden_misreading": "不必逐项模拟食料；烦琐后台不是原著还原。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "3806-3924"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:3806-3924`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "有限蛊槽、维护取舍、构筑容量"
+      }
+    },
+    {
+      "id": "CAN-NANJIANG-001",
+      "prefix": "CAN",
+      "domain": "nanjiang",
+      "statement": "南疆地势广阔而险恶，人族以山寨聚居。",
+      "forbidden_misreading": "不能据此默认所有地点都是无主荒野。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "4706"
+      ],
+      "evidence_raw": "`分支：六卷精编版/蛊真人-clean.txt:4706`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "地图、山寨节点、山道风险"
+      }
+    },
+    {
+      "id": "CAN-NANJIANG-002",
+      "prefix": "CAN",
+      "domain": "nanjiang",
+      "statement": "低阶蛊师通常没有独自远游资格，三转才具备远游能力。",
+      "forbidden_misreading": "不应让低转角色自由横跨南疆。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "4970"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:4970`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "路线限制、护送、伪装、撤离"
+      }
+    },
+    {
+      "id": "CAN-NANJIANG-003",
+      "prefix": "CAN",
+      "domain": "nanjiang",
+      "statement": "十万大山、山寨与商队构成南疆贸易环境；商队跨越山险运送货物。",
+      "forbidden_misreading": "商队不是现代物流，也不是无风险商店。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "6046-6056"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:6046-6056`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "商队、护送、交易、山道遭遇"
+      }
+    },
+    {
+      "id": "CAN-NANJIANG-004",
+      "prefix": "CAN",
+      "domain": "nanjiang",
+      "statement": "山寨与商队相互依赖，商队驻扎后会形成临时商铺与摊市。",
+      "forbidden_misreading": "商店可受关系与局势影响，不能固定且无叙事后果。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "6098",
+        "6104"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:6098,6104`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "临时寨市、价格、情报、人情"
+      }
+    },
+    {
+      "id": "CAN-RANK-LADDER-001",
+      "prefix": "CAN",
+      "domain": "rank-ladder",
+      "statement": "**战力阶梯口径（用户裁定 2026-09-10）**：凡人 < 普通野兽 < 一转蛊修 < 二转 < …… < 五转。**蛊修最低一转**；其下依次为普通野兽与凡人。",
+      "forbidden_misreading": "`rank 0` 是\"未入转\"档，**不得放蛊修**；别把 theme 当阶梯用（散修 theme=neutral 但 grade=cultivator）。",
+      "grade": "",
+      "evidence": [],
+      "source_line_refs": [],
+      "evidence_raw": "用户裁定 + `CAN-CULTIVATION-001`（\"蛊师修行有一至九转\"）",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "敌人 `rank` / `grade` 校验、`enemy_rank_min/max`"
+      }
+    },
+    {
+      "id": "CAN-SMALL-LIGHT-001",
+      "prefix": "CAN",
+      "domain": "small-light",
+      "statement": "小光蛊可辅助月光蛊；两者并用时，月刃的体积与攻击力扩大。",
+      "forbidden_misreading": "小光蛊的侦查、伪装或通用照明能力不是此处直接事实。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "9704-9774",
+        "10926-10940"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:9704-9774,10926-10940`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "初始蛊、辅助蛊、双蛊连携"
+      }
+    },
+    {
+      "id": "CAN-SMALL-LIGHT-002",
+      "prefix": "CAN",
+      "domain": "small-light",
+      "statement": "小光蛊是可参与合炼的凡蛊。",
+      "forbidden_misreading": "不应由此承诺复杂且全量的炼蛊模拟。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "15708-15710"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:15708-15710`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "进阶配方、路线奖励"
+      }
+    },
+    {
+      "id": "KM-001",
+      "prefix": "KM",
+      "domain": "killer-move",
+      "term": "",
+      "statement": "定义：\"杀招，就是蛊虫的绝妙搭配。\"",
+      "forbidden_misreading": "搭配是必要条件，不是充分条件——组合必有代价（KM-003）",
+      "evidence": [
+        "E:V3-099762"
+      ],
+      "evidence_raw": "E:V3-099762",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/killer-moves.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "KM-002",
+      "prefix": "KM",
+      "domain": "killer-move",
+      "term": "",
+      "statement": "构成：杀招由多只蛊虫按方案组成，存在\"必要蛊虫\"（春星雨必须含星芽蛊）；可以凡蛊为主体（轻虚蝠翼由众多凡蛊组成）",
+      "forbidden_misreading": "凡蛊可组成杀招但不等于仙道杀招——仙道杀招以仙蛊为核心（首现于蛊仙语境，E:V5-311102 同段语境）",
+      "evidence": [
+        "E:V4-124430",
+        "E:V4-125528"
+      ],
+      "evidence_raw": "E:V4-124430、E:V4-125528",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/killer-moves.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "KM-003",
+      "prefix": "KM",
+      "domain": "killer-move",
+      "term": "",
+      "statement": "代价与缺陷：威力惊人则真元消耗巨大、必有缺陷；后遗症不可避免、只分严重微弱（六臂天尸王例：完善后威力翻番、时长一炷香、无法再改进，过多使用有变僵尸之忧）",
+      "forbidden_misreading": "\"必有弊端\"是全称规则；完善只能缓解不能根除",
+      "evidence": [
+        "E:V3-098114",
+        "E:V3-106762"
+      ],
+      "evidence_raw": "E:V3-098114、E:V3-106762–106772",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/killer-moves.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "PE-001",
+      "prefix": "PE",
+      "domain": "true-qi",
+      "term": "阶位颜色（凡蛊师）",
+      "statement": "一转青铜、二转赤铁、三转白银；四转黄金、五转紫晶",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-001190",
+        "E:V1-003608"
+      ],
+      "evidence_raw": "E:V1-001190（青铜海）、E:V1-003608（白银演示）；黄金/紫晶见 `canon-index:CAN-CULTIVATION-002`",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "PE-002",
+      "prefix": "PE",
+      "domain": "true-qi",
+      "term": "跨转换算",
+      "statement": "一份赤铁抵十份青铜、一份白银抵十份赤铁",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-004258"
+      ],
+      "evidence_raw": "E:V1-004258",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "PE-003",
+      "prefix": "PE",
+      "domain": "true-qi",
+      "term": "转内提纯",
+      "statement": "酒虫凝练：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-002890",
+        "E:V1-004656"
+      ],
+      "evidence_raw": "E:V1-002890（2890–2900 行）、E:V1-004656",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "PE-004",
+      "prefix": "PE",
+      "domain": "true-qi",
+      "term": "晋升总成本",
+      "statement": "全窍四成四转完需近十八成初阶、须借元石",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-004656"
+      ],
+      "evidence_raw": "E:V1-004656（4656–4678 行）",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "PE-005",
+      "prefix": "PE",
+      "domain": "true-qi",
+      "term": "外部补充",
+      "statement": "元石抽取纯净真元入元海；充足元石可部分弥补资质短板",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-001526",
+        "E:V1-001878"
+      ],
+      "evidence_raw": "E:V1-001526（1526–1530 行）、E:V1-001878",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "REF-001",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "三分框架",
+      "statement": "炼、养、用三个方面并列，任何一面都博大精深、究其一生探索不尽",
+      "forbidden_misreading": "三者不可混成一件事（分析层另有细化）",
+      "evidence": [
+        "E:V1-015724"
+      ],
+      "evidence_raw": "E:V1-015724（15724–15734 行）",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-002",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "单炼（定义）",
+      "statement": "炼蛊中最基础的部分：单独炼化一只已经存在的蛊虫；本质是用自我的意志来取代蛊虫本身蕴藏的原先意志",
+      "forbidden_misreading": "炼化收为己用\"只是单炼\"——不等于炼蛊的全部",
+      "evidence": [
+        "E:V5-285552",
+        "E:V1-001830"
+      ],
+      "evidence_raw": "E:V5-285552–285554；意志对抗细节见[蛊的饲养与炼化](../world/gu-care-and-refinement.md)（E:V1-001830）",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-004",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "合炼（定义）",
+      "statement": "将低阶蛊虫晋升为高阶；须有秘方，有些蛊虫之间不能合炼，秘方为先祖无数实践与失败总结",
+      "forbidden_misreading": "合炼方向是\"低→高\"，与逆炼正好相反",
+      "evidence": [
+        "E:V1-026908",
+        "E:V1-015724"
+      ],
+      "evidence_raw": "E:V1-026908、E:V1-015724–15734",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-005",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "逆炼（定义）",
+      "statement": "将高阶蛊虫降为低阶（分解为成分蛊虫）：幡然蛊可将二转蛊虫分解成一转，如白玉蛊分解回白豕蛊与玉皮蛊——\"这个过程被称之为逆炼\"",
+      "forbidden_misreading": "逆炼产物是成分蛊虫，不是毁坏",
+      "evidence": [
+        "E:V1-018464",
+        "E:V1-026908"
+      ],
+      "evidence_raw": "E:V1-018464–18468、E:V1-026908",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    },
+    {
+      "id": "REF-008",
+      "prefix": "REF",
+      "domain": "refinement",
+      "term": "升炼（定义）",
+      "statement": "跨层级提升即为升炼（十年蛊→百年蛊就不是平炼而是升炼）；难度和失败概率是平炼的数十倍甚至上百倍",
+      "forbidden_misreading": "高转数常需层层升炼、无一蹴而就的蛊方（五转恶念蛊需从一转逐级）；改良蛊方可减少步骤（两个步骤达成）",
+      "evidence": [
+        "E:V5-209570"
+      ],
+      "evidence_raw": "E:V5-209570–209572",
+      "provenance": {
+        "wiki_page": "lore/wiki/rules/refinement.md",
+        "generated_id": false
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-REFINE-MOONGLOW",
+      "relation": "refinement",
+      "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+      "evidence": [
+        "E:V1-015710"
+      ],
+      "provenance": {
+        "wiki_page": "lore/wiki/gu/small-light-gu.md",
+        "state_ids": [
+          "ST-SMALLLIGHT-04"
+        ],
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-002"
+        ]
+      },
+      "inputs": [
+        "moonlight_gu",
+        "small_light_gu",
+        "small_light_gu"
+      ],
+      "output": "moon_glow_gu",
+      "output_rank": 2
+    },
+    {
+      "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
+      "relation": "supports",
+      "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+      "evidence": [
+        "E:V1-010926",
+        "E:V1-017148"
+      ],
+      "provenance": {
+        "wiki_page": "lore/wiki/gu/small-light-gu.md",
+        "state_ids": [
+          "ST-SMALLLIGHT-03"
+        ],
+        "canon_refs": []
+      },
+      "from": "small_light_gu",
+      "to": "moonlight_gu"
+    }
+  ]
+}
