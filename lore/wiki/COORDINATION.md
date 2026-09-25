@@ -28,7 +28,7 @@
 
 ## 阶段复盘
 
-- [Narrative Compiler v0.1 阶段复盘](retrospective-v0.1.md)（2026-09-25，A 线召集）：三线产出盘点、五套基准成绩、方法论结论、事故教训与下阶段行动项。**待 B/C 线会合确认；L0 决策项=Schema v2.1 转正宣布。**
+- [Narrative Compiler v0.1 阶段复盘](retrospective-v0.1.md)（2026-09-25，A 线召集）：三线产出盘点、五套基准成绩、方法论结论、事故教训与下阶段行动项。**待 B/C 线会合确认；L0 决策项=Schema v2.1 转正宣布（L1 评审材料已备：[schema-v2.1-l1-review.md](schema-v2.1-l1-review.md)，结论=建议转正附 3 项条件）。**
 
 ## 门禁与冻结
 
