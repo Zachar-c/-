@@ -35,3 +35,7 @@
 | TKF（三王福地弧四） | [benchmark-tkf.md](benchmark-tkf.md) | GEN-1 | 同源（C 线，同源局限已登记） | 50/50 | —— |
 | VEN（尊者体系页聚焦） | [benchmark-venerables.md](benchmark-venerables.md) | GEN-1 | 独立出题（12 题页级聚焦，2026-09-25） | 8/12（66.7%，页级缺口清单见题集） | —— |
 | RULES（规则层七页：TRIB/DM/REF/KM/PR/VEN/DRM） | [benchmark-rules.md](benchmark-rules.md) | **GEN-2** | GEN-1 独立出题试点（同源高分膨胀被证实）→ GEN-2 独立出题轮换（2026-09-25） | 24.5/50 FAIL（GEN-1，缺口清单→扩容批闭缺） | **48.5/50 PASS**（GEN-2，残余缺口 2 项当场补录） |
+
+## 白名单规则（2026-09-26 解耦转正）
+
+- 三分流出页规则（AGENTS.md）生效后，各簇基准白名单＝簇页＋该簇投影页（实体页状态时间线、规则/世界页承接条目），逐簇在 benchmark-*.md 头部声明扩展清单；解耦后复测按扩展白名单判分，不掉分（≥45/50）方可收口。已声明簇：RTC（试点）、WTC、CAR、TKF、ZYL。
