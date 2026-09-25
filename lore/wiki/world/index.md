@@ -41,6 +41,10 @@
 ## 组织与势力
 
 - [天庭](heavenly-court.md)
+- [十大古派](ten-ancient-sects.md)（天庭地上代理人体系；完整名单待核）
+- [影宗](shadow-sect.md)（十万年谋局；僵盟幕后台面双层）
+- [僵盟](zangmeng.md)（五域仙僵互济组织：东海总部+四域分部，定义整段已核）
+- [长生天](longevity-heaven.md)（巨阳遗泽：运道/血海/劫运坛/四荒仙人）
 
 ## 视觉素材
 

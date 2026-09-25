@@ -8,7 +8,7 @@
 | 线 | 簇车道 | 页面范围 | 状态 |
 |---|---|---|---|
 | A（全书复杂规则精蒸馏） | 验证簇：QMS ✅ → FATE ✅ → XQ ✅（三类达标，v2.1 冻结转正）→ **规则精蒸馏路线：灾劫体系 ✅（TRIB-001…014）→ 道痕体系 ✅（DM-001…015）→ 炼蛊术语体系（炼化/合炼/正逆炼/升炼）→ 杀招-连招-并招体系 → 流派境界五级（原 T1 延期项，按 L0 本指令恢复）** | rules/ 目录（tribulation.md、dao-marks.md）+ cultivation-system、aptitude-and-aperture、primeval-essence、world-operating-system、soul-path 的深度规则表 | 灾劫 ✅ · 道痕 ✅ · 炼蛊术语待开；**注意：rules/index.md 归 A 线，请 B/C 线管线勿清写** |
-| B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域（DOMAIN）✅ → 经济与资源（ECON）✅ → 后续候选：组织专页（影宗/僵盟/长生天/十大古派） | characters/roster.md、gu/roster.md、world/path-roster.md、world/ 四域页+economy-roster.md、characters/index.md、gu/index.md、world/index.md、index.md（Key Findings）、log.md | 五簇全绿（人物/蛊虫/流派/五域/经济）；粗粒度抽样核验、无 benchmark；rules/ 归 A 线不动 |
+| B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域（DOMAIN）✅ → 经济与资源（ECON）✅ → 组织专页（ORG）✅ → 后续候选：主题与《人祖传》补全、世界观补漏复查 | characters/roster.md、gu/roster.md、world/path-roster.md、world/ 四域页+economy-roster.md+四组织页（shadow-sect/zangmeng/longevity-heaven/ten-ancient-sects）、characters/index.md、gu/index.md、world/index.md、index.md（Key Findings）、log.md | 六簇全绿（人物/蛊虫/流派/五域/经济/组织）；粗粒度抽样核验、无 benchmark；rules/ 归 A 线不动 |
 | C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）✅ → **弧三·南疆商队与商家城（CAR 簇）进行中：标段一＋标段二已提交（黄龙江逃生→白骨山→张家商队→父女相认，EVT-CAR-001…025）；标段三＝商家内城（节 62 起）** | events/wolf-tide.md、events/south-caravan.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | WTC ✅ 50/50（benchmark-wtc 首测满分）；CAR 标段一/二已提交，benchmark-car 随弧三打穿批落地 |
 
 ## 共享页分区块规则
