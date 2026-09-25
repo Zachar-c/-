@@ -250,7 +250,6 @@
       "source_line_refs": [
         "2856"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:2856`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "元石经济、行动取舍、商队交易"
@@ -267,7 +266,6 @@
       "source_line_refs": [
         "3806-3924"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:3806-3924`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "有限蛊槽、维护取舍、构筑容量"
@@ -285,7 +283,6 @@
         "9704-9774",
         "10926-10940"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:9704-9774,10926-10940`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "初始蛊、辅助蛊、双蛊连携"
@@ -302,7 +299,6 @@
       "source_line_refs": [
         "15708-15710"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:15708-15710`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "进阶配方、路线奖励"
@@ -318,7 +314,6 @@
       "evidence": [
         "E:V1-015724"
       ],
-      "evidence_raw": "E:V1-015724（15724–15734 行）",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -335,7 +330,6 @@
         "E:V5-285552",
         "E:V1-001830"
       ],
-      "evidence_raw": "E:V5-285552–285558；意志对抗细节见[蛊的饲养与炼化](../world/gu-care-and-refinement.md)（E:V1-001830）",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -351,7 +345,6 @@
       "evidence": [
         "E:V1-015812"
       ],
-      "evidence_raw": "E:V1-015812",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -368,7 +361,6 @@
         "E:V1-026908",
         "E:V1-015724"
       ],
-      "evidence_raw": "E:V1-026908、E:V1-015724–15734",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -385,7 +377,6 @@
         "E:V1-018464",
         "E:V1-026908"
       ],
-      "evidence_raw": "E:V1-018464–18468、E:V1-026908",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -401,7 +392,6 @@
       "evidence": [
         "E:V1-026912"
       ],
-      "evidence_raw": "E:V1-026912–26928",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -417,7 +407,6 @@
       "evidence": [
         "E:V5-209556"
       ],
-      "evidence_raw": "E:V5-209556–209562",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -433,7 +422,6 @@
       "evidence": [
         "E:V5-209570"
       ],
-      "evidence_raw": "E:V5-209570–209572",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -449,7 +437,6 @@
       "evidence": [
         "E:V4-152834"
       ],
-      "evidence_raw": "E:V4-152834",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -465,7 +452,6 @@
       "evidence": [
         "E:V3-093334"
       ],
-      "evidence_raw": "E:V3-093334（93334–93340 行）",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -483,7 +469,6 @@
         "E:V3-082278",
         "E:V2-043498"
       ],
-      "evidence_raw": "E:V3-079740–079746、E:V3-082278–082284、E:V2-043498",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -500,7 +485,6 @@
         "E:V4-152898",
         "E:V4-135028"
       ],
-      "evidence_raw": "E:V4-152898、E:V4-135028 语境；详见[蛊的饲养与炼化](../world/gu-care-and-refinement.md) 推演要素",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false

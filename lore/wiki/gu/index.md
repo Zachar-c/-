@@ -12,6 +12,8 @@
 - [熊力蛊](bear-strength-gu.md)
 - [骨蛊](bone-atk-1-08-gu.md)
 - [青藤蛊](wood-atk-1-05-gu.md)
+- [硬气蛊](qi-atk-1-01-gu.md)
+- [自己蛊](human-atk-1-01-gu.md)
 - [M0 六蛊原著边界](m0-six-gu.md)
 - [春秋蝉](spring-autumn-cicada.md)
 - [宿命蛊](fate-gu.md)

@@ -76,7 +76,9 @@ PACKS = {
         "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 敌方装载蛊四只（熊力/月痕/骨蛊/青藤，敌人持蛊化 canon 侧） + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
         "entities": ["moonlight_gu", "small_light_gu", "moon_glow_gu", "white_boar_strength_gu",
                      # GEN-3 批：敌方装载蛊入包（敌人持蛊化的 canon 侧，P5 判定文档 §B4 队列兑现）
-                     "bear_strength_gu", "moon_ray_gu", "bone_atk_1_08_gu", "wood_atk_1_05_gu"],
+                     "bear_strength_gu", "moon_ray_gu", "bone_atk_1_08_gu", "wood_atk_1_05_gu",
+                     # GEN-4 批：canon 有据非装载蛊入包（硬气/自己蛊）
+                     "qi_atk_1_01_gu", "human_atk_1_01_gu"],
         "rule_domains": ["cultivation", "aptitude", "true-qi", "nanjiang", "gu-care",
                          "small-light", "rank-ladder", "beast-tier", "beast-tide"],
         "rule_ids": ["REF-001", "REF-002", "REF-004", "REF-005", "REF-008", "KM-001", "KM-002", "KM-003"],
@@ -513,6 +515,13 @@ def build_packs(entities: list[dict], rules: list[dict], relations: list[dict],
         pack_rules = [r for r in rules
                       if r["id"] not in excluded
                       and (r["domain"] in cfg["rule_domains"] or r["id"] in cfg["rule_ids"])]
+        # GEN-4 批瘦身：evidence_raw 出包（runtime rules.json 保留原文证据串；
+        # pack 为 prompt 上下文，evidence IDs 已承载溯源）。预算 20000 字符的余量管理。
+        # 外科式：仅对有 evidence IDs 或 source_line_refs 的规则裁剪——
+        # evidence 数组为空、仅靠 evidence_raw 溯源的规则保留原文串（traceability 不断）。
+        for r in pack_rules:
+            if r.get("evidence") or r.get("source_line_refs"):
+                r.pop("evidence_raw", None)
         got_ids = {r["id"] for r in pack_rules}
         lack = [rid for rid in cfg["rule_ids"] if rid not in got_ids]
         if lack:

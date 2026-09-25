@@ -1,6 +1,6 @@
 {
   "manifest_version": 1,
-  "generated_at": "2026-09-25T19:08:57Z",
+  "generated_at": "2026-09-25T19:26:29Z",
   "compiler": "lore/wiki/tools/compile_runtime.py",
   "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
   "source": {
@@ -15,9 +15,11 @@
     "entity_pages": [
       "bear_strength_gu",
       "bone_atk_1_08_gu",
+      "human_atk_1_01_gu",
       "moon_glow_gu",
       "moon_ray_gu",
       "moonlight_gu",
+      "qi_atk_1_01_gu",
       "small_light_gu",
       "wood_atk_1_05_gu"
     ],
@@ -28,14 +30,14 @@
     ]
   },
   "counts": {
-    "entities": 160,
-    "entity_states": 24,
+    "entities": 162,
+    "entity_states": 28,
     "rules_can": 43,
     "rules_page": 52,
     "rules_total": 95,
     "relations": 2
   },
-  "coverage_notes": "rank 覆盖 160/270（转数未核 111 只仅有蛊名无 id，未编译）；实体状态行 24 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
+  "coverage_notes": "rank 覆盖 162/270（转数未核 109 只仅有蛊名无 id，未编译）；实体状态行 28 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
   "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
-  "content_version": "a3333e6df461d1981cf1bcd996881a4fe24dae75091e341ef2a756c1891129e8"
+  "content_version": "797e47133c44514582a95023d0b67d4083a2817c95b5c82b261e318467903ca9"
 }

@@ -1705,6 +1705,49 @@
       }
     },
     {
+      "id": "human_atk_1_01_gu",
+      "type": "gu",
+      "name": "自己蛊",
+      "aliases": [],
+      "description": "《人祖传》人道蛊：居于人身，须孤独审视内心方能发现；引迷途者不走旧路的痕迹、另辟全新的路",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V3-120396",
+        "E:V3-120404"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/human-atk-1-01-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-SELF-01",
+          "stage": "发现条件",
+          "statement": "自有生命起居于人身；须孤独中审视内心方能发现",
+          "evidence": [
+            "E:V3-120396"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-02",
+          "stage": "引路",
+          "statement": "助人祖离开生死门：不走宿命蛊—公平蛊留痕的旧路，另辟全新的路，\"路就在你的脚下\"",
+          "evidence": [
+            "E:V3-120404",
+            "E:V3-120408"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
       "id": "human_atk_1_38_gu",
       "type": "gu",
       "name": "人如故仙蛊",
@@ -2461,6 +2504,49 @@
           "statement": "酒虫精炼中阶真元催动断骨斩首——个案加成，不泛化",
           "evidence": [
             "E:V1-005438"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "qi_atk_1_01_gu",
+      "type": "gu",
+      "name": "硬气蛊",
+      "aliases": [],
+      "description": "气道防御蛊：动用杀招防御下降时弥补短板；珍贵并不常见（力气蛊绝迹后的可得替代）",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V2-058640",
+        "E:V2-058642"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/qi-atk-1-01-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-HARDQI-01",
+          "stage": "功用",
+          "statement": "动用杀招时防御下降，硬气蛊弥补该短板",
+          "evidence": [
+            "E:V2-058640"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-HARDQI-02",
+          "stage": "珍稀与同系",
+          "statement": "珍贵并不常见；力气蛊已绝迹（上古气道消失），硬气蛊为可得替代",
+          "evidence": [
+            "E:V2-058640",
+            "E:V2-058642"
           ],
           "canon_refs": []
         }

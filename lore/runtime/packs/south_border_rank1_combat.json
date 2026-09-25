@@ -427,6 +427,92 @@
           "canon_refs": []
         }
       ]
+    },
+    {
+      "id": "qi_atk_1_01_gu",
+      "type": "gu",
+      "name": "硬气蛊",
+      "aliases": [],
+      "description": "气道防御蛊：动用杀招防御下降时弥补短板；珍贵并不常见（力气蛊绝迹后的可得替代）",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V2-058640",
+        "E:V2-058642"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/qi-atk-1-01-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-HARDQI-01",
+          "stage": "功用",
+          "statement": "动用杀招时防御下降，硬气蛊弥补该短板",
+          "evidence": [
+            "E:V2-058640"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-HARDQI-02",
+          "stage": "珍稀与同系",
+          "statement": "珍贵并不常见；力气蛊已绝迹（上古气道消失），硬气蛊为可得替代",
+          "evidence": [
+            "E:V2-058640",
+            "E:V2-058642"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "human_atk_1_01_gu",
+      "type": "gu",
+      "name": "自己蛊",
+      "aliases": [],
+      "description": "《人祖传》人道蛊：居于人身，须孤独审视内心方能发现；引迷途者不走旧路的痕迹、另辟全新的路",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V3-120396",
+        "E:V3-120404"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/human-atk-1-01-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-SELF-01",
+          "stage": "发现条件",
+          "statement": "自有生命起居于人身；须孤独中审视内心方能发现",
+          "evidence": [
+            "E:V3-120396"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-02",
+          "stage": "引路",
+          "statement": "助人祖离开生死门：不走宿命蛊—公平蛊留痕的旧路，另辟全新的路，\"路就在你的脚下\"",
+          "evidence": [
+            "E:V3-120404",
+            "E:V3-120408"
+          ],
+          "canon_refs": []
+        }
+      ]
     }
   ],
   "rules": [
@@ -443,7 +529,6 @@
         "1182-1200",
         "1870-1886"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:1354-1360,1182-1200,1870-1886`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "角色资质、真元容量与恢复"
@@ -462,7 +547,6 @@
         "24498-24500",
         "30099-30106"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:22770-22778,24498-24500,30099-30106`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "世界观、特殊角色、风险叙事"
@@ -479,7 +563,6 @@
       "source_line_refs": [
         "1154-1158"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:1154-1158`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "开局资质判定、文案"
@@ -496,7 +579,6 @@
       "source_line_refs": [
         "4708-4710"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:4708-4710`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "兽潮遭遇、山寨势力、护卫类敌人"
@@ -513,7 +595,6 @@
       "source_line_refs": [
         "4906"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:4906`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "层内节奏、Boss 定位、青茅山地理"
@@ -530,7 +611,6 @@
       "source_line_refs": [
         "18746-18754"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:18746-18754`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "敌人 `rank`/`tier`、按层抽取、遭遇规模"
@@ -547,7 +627,6 @@
       "source_line_refs": [
         "18748"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:18748`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "敌人 `reactions`（受击反制）机制"
@@ -566,7 +645,6 @@
         "87696",
         "315590"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:85466,87696,315590`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "敌人池范围控制"
@@ -583,7 +661,6 @@
       "source_line_refs": [
         "1354-1356"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:1354-1356`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "角色等级、突破、内容门槛"
@@ -603,7 +680,6 @@
         "8534-8538",
         "70354-70362"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:3610-3614,4258,8534-8538,70354-70362`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "能量类型、转数表现、中文文案"
@@ -622,7 +698,6 @@
         "71156-71158",
         "78246-78250"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:22766-22776,71156-71158,78246-78250`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "阶位边界、世界观文案"
@@ -639,7 +714,6 @@
       "source_line_refs": [
         "3806-3924"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:3806-3924`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "有限蛊槽、维护取舍、构筑容量"
@@ -656,7 +730,6 @@
       "source_line_refs": [
         "4706"
       ],
-      "evidence_raw": "`分支：六卷精编版/蛊真人-clean.txt:4706`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "地图、山寨节点、山道风险"
@@ -673,7 +746,6 @@
       "source_line_refs": [
         "4970"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:4970`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "路线限制、护送、伪装、撤离"
@@ -690,7 +762,6 @@
       "source_line_refs": [
         "6046-6056"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:6046-6056`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "商队、护送、交易、山道遭遇"
@@ -708,7 +779,6 @@
         "6098",
         "6104"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:6098,6104`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "临时寨市、价格、情报、人情"
@@ -741,7 +811,6 @@
         "9704-9774",
         "10926-10940"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:9704-9774,10926-10940`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "初始蛊、辅助蛊、双蛊连携"
@@ -758,7 +827,6 @@
       "source_line_refs": [
         "15708-15710"
       ],
-      "evidence_raw": "`蛊真人-clean.txt:15708-15710`，A",
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "进阶配方、路线奖励"
@@ -776,7 +844,6 @@
         "E:V3-099764",
         "E:V3-105508"
       ],
-      "evidence_raw": "E:V3-099762、E:V3-099764–099766、E:V3-105508",
       "provenance": {
         "wiki_page": "lore/wiki/rules/killer-moves.md",
         "generated_id": false
@@ -794,7 +861,6 @@
         "E:V4-125528",
         "E:V3-079748"
       ],
-      "evidence_raw": "E:V4-124430、E:V4-125528、E:V3-079748–79752",
       "provenance": {
         "wiki_page": "lore/wiki/rules/killer-moves.md",
         "generated_id": false
@@ -812,7 +878,6 @@
         "E:V3-106762",
         "E:V4-173676"
       ],
-      "evidence_raw": "E:V3-098114、E:V3-106762–106772、E:V4-173676",
       "provenance": {
         "wiki_page": "lore/wiki/rules/killer-moves.md",
         "generated_id": false
@@ -829,7 +894,6 @@
         "E:V1-001190",
         "E:V1-003608"
       ],
-      "evidence_raw": "E:V1-001190（青铜海）、E:V1-003608（白银演示）；黄金/紫晶见 `canon-index:CAN-CULTIVATION-002`",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
@@ -845,7 +909,6 @@
       "evidence": [
         "E:V1-004258"
       ],
-      "evidence_raw": "E:V1-004258",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
@@ -862,7 +925,6 @@
         "E:V1-012622",
         "E:V1-013156"
       ],
-      "evidence_raw": "E:V1-012622（方源心声）、E:V1-013156 `[对话",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
@@ -879,7 +941,6 @@
         "E:V1-002890",
         "E:V1-004656"
       ],
-      "evidence_raw": "E:V1-002890（2890–2900 行）、E:V1-004656",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
@@ -895,7 +956,6 @@
       "evidence": [
         "E:V1-004656"
       ],
-      "evidence_raw": "E:V1-004656（4656–4678 行）",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
@@ -911,7 +971,6 @@
       "evidence": [
         "E:V1-015724"
       ],
-      "evidence_raw": "E:V1-015724（15724–15734 行）",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -928,7 +987,6 @@
         "E:V5-285552",
         "E:V1-001830"
       ],
-      "evidence_raw": "E:V5-285552–285558；意志对抗细节见[蛊的饲养与炼化](../world/gu-care-and-refinement.md)（E:V1-001830）",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -945,7 +1003,6 @@
         "E:V1-026908",
         "E:V1-015724"
       ],
-      "evidence_raw": "E:V1-026908、E:V1-015724–15734",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -962,7 +1019,6 @@
         "E:V1-018464",
         "E:V1-026908"
       ],
-      "evidence_raw": "E:V1-018464–18468、E:V1-026908",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false
@@ -978,7 +1034,6 @@
       "evidence": [
         "E:V5-209570"
       ],
-      "evidence_raw": "E:V5-209570–209572",
       "provenance": {
         "wiki_page": "lore/wiki/rules/refinement.md",
         "generated_id": false

@@ -95,3 +95,32 @@
 - 血针蛊/气纹霭蛊/浪蛊/雨蛊/剑纹锋蛊/剑纹刃蛊/古剑蛊：原著 0 命中，维持 pack 外（school_derived 游戏内容），不伪造 canon 身份。
 - pack 余量仅 1032 字符：GEN-4 扩容前需评估瘦身（evidence_raw 精简）或拆包（第二 pack + checker 多包校验扩展）。
 - 熊力蛊 game 侧 healing 定位 vs "力"名语义属原著到游戏妥协建模，待 L1 评审（bear-strength-gu.md 已登记）。
+
+---
+
+# P5 第三批（GEN-4）：canon 有据蛊入包、pack 瘦身与双盲测（2026-09-26）
+
+## 批次内容
+
+1. **pack 瘦身**：`evidence_raw` 出包（外科式——仅对有 evidence IDs 或 source_line_refs 的规则裁剪，溯源不断；runtime rules.json 全量保留）。pack 18968→18509 字符（10 实体），预算余量恢复到 1491。
+2. **硬气蛊/自己蛊入包**：roster-3「原文有据·转数未言」4→6 行；两张 mini 实体页（qi-atk-1-01-gu / human-atk-1-01-gu，即 P5-B2 canon 刷新两蛊的取证落点页）；转数未核 1转 63→61。
+3. **冰道谱系落盘**（queue#3 前提）：roster.md 新增「冰道系」——冰道优势在防御明文（原文 50250）；霜妖蛊/冰晶蛊（三转，白凝冰 28000 元石购得）、冰肌蛊（三转防御卓绝、一经练成无须真元支持）、雪女蛊、玄冰蛊/冰墙蛊合炼材。**bai_ice_warden 转化维持挂账**：冰道蛊入游戏池需新增 game 侧 ice school/gu（schools/pools/loot 联动），属产品数据决策，待 L1/L0。
+4. **双独立盲测**：
+   - runtime 基准四测（Pack-Only）：**4/4**（Q24 硬气蛊联动 KM-003、Q25 自己蛊、回归 Q3/Q4）。
+   - **切片实体页 Wiki-Only 基准**（兑现 P4 GATE ① 队列注记，新文件 benchmark-slice-entities.md）：**4/4**（增幅双口径区分、三步+十米、双晋升线取舍、印记变迁）。
+
+## 门禁
+
+| 门禁 | 结果 |
+|---|---|
+| check_runtime_benchmark | 通过（78 条目、25 计分题、无死重） |
+| check.ps1 | ALL PASSED（check8 57/57、check9 1875 E-ID） |
+| web 全量 | 259 测试 258 过（唯一失败仍为 B 线预存项） |
+| pack 体积/子集/仙域排除 | 通过（18509 < 20000） |
+| 独立盲测 ×2 | 4/4 + 4/4 |
+
+## GEN-5 队列
+
+- 独立出题升级（切片基准与 pack 基准的出题代理分离）。
+- 冰道蛊游戏池扩展（需 L1/L0：新 gu id + ice school 联动）→ bai_ice_warden 转 gu 杀招。
+- pack 实体继续扩容前先做 evidence/source_line_refs 精简评估。

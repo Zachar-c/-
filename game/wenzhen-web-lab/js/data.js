@@ -6738,7 +6738,7 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "a3333e6df461d1981cf1bcd996881a4fe24dae75091e341ef2a756c1891129e8",
+    "contentVersion": "797e47133c44514582a95023d0b67d4083a2817c95b5c82b261e318467903ca9",
     "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "entities": {
       "bear_strength_gu": {
@@ -7161,6 +7161,11 @@ const DATA = {
         "rank": 9,
         "rankStatus": "rank_cap"
       },
+      "human_atk_1_01_gu": {
+        "name": "自己蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
+      },
       "human_atk_1_38_gu": {
         "name": "人如故仙蛊",
         "rank": 6,
@@ -7315,6 +7320,11 @@ const DATA = {
         "name": "月光蛊",
         "rank": 1,
         "rankStatus": "verified"
+      },
+      "qi_atk_1_01_gu": {
+        "name": "硬气蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
       },
       "qi_atk_5_05_gu": {
         "name": "龙息蛊",
@@ -8015,5 +8025,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "cf32f8085e5051fe702dfa9fbc4ab2377eaa2145c9b0589cea07387756629fb3"
+  "contentVersion": "1fba411a809e848cb6142aafb7b1ce7c24729627b7a6ad7375a85d3eda6fc4f8"
 };
