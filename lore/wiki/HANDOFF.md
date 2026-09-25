@@ -4,7 +4,7 @@
 
 ## 1. 一句话状态
 
-《蛊真人》知识库（lore/wiki，Narrative Compiler v0.1）已完成：Schema v2.1 **转正**（L0 批准）、三验证簇 + 规则精蒸馏七页 + 哲学轴五批（A 线）、B 线粗蒸馏八簇（+游戏数据 2 批，已交接）、C 线三弧收口（基准 50/50·49.5·50 在案，截止卷二终）；**64 笔提交未推送**；门禁全绿。
+《蛊真人》知识库（lore/wiki，Narrative Compiler v0.1）已完成：Schema v2.1 **转正**（L0 批准）、三验证簇 + 规则精蒸馏七页 + 哲学轴五批 + v2.2 条件③ check9（A 线）、B 线粗蒸馏八簇（+游戏数据 2 批，已交接）、C 线三弧收口（基准 50/50·49.5·50 在案，截止卷二终）；**64 笔提交未推送**；门禁 check1–9 全绿。
 
 ## 2. 必读文件（按序）
 
@@ -26,13 +26,13 @@
 
 ## 4. 三线车道（速记，权威版见 COORDINATION）
 
-- **A（本会话）**：规则精蒸馏。已完成：灾劫 TRIB / 道痕 DM / 炼蛊术语 REF / 杀招 KM / 流派境界 PR / 尊者 VEN / 梦道 DRM 七页 + soul-path 深度表 + 哲学轴五批（philosophy.md）。候选：阵道外流派能力标尺、成尊四条件集齐（菇人乐土弧逐段）、人心/棋盘轴续挖、尊者页 benchmark。
-- **B（粗蒸馏）**：八簇全绿（人物/蛊虫/流派/五域/经济/组织/主题/补漏 + 二期）；rules/ 归 A 不动。
+- **A（本会话）**：规则精蒸馏。已完成：灾劫 TRIB / 道痕 DM / 炼蛊术语 REF / 杀招 KM / 流派境界 PR / 尊者 VEN / 梦道 DRM 七页 + soul-path 深度表 + 哲学轴五批（philosophy.md）+ v2.2 条件③ check9（E-ID 段号自动校验，历史失配 50 处已修正）。候选：阵道外流派能力标尺、成尊四条件集齐（菇人乐土弧逐段）、人心/棋盘轴续挖、尊者页 benchmark。
+- **B（粗蒸馏）**：十三簇全绿 + 游戏数据两批（敌人模型 b4614cc、蛊目录清洗 a321260）；已交接 [HANDOFF-B.md](HANDOFF-B.md)，转按需维护；rules/ 归 A 不动。
 - **C（剧情顺序）**：本轮已收口于卷二终——WTC ✅ 50/50 → CAR ✅ 49.5/50 → TKF ✅ 50/50（三簇全绿）；接续入口见 [HANDOFF-C.md](HANDOFF-C.md)。
 
 ## 5. 待办与队列
 
-- **v2.2 迭代队列（转正条件）**：①基准题目池轮换与独立出题机制化 ②规则口径调和专项（TRIB-002 30/18/四五十；PR-002/003）③check9 E-ID 段号自动校验。
+- **v2.2 迭代队列（转正条件）**：①基准题目池轮换与独立出题机制化 ②规则口径调和专项（TRIB-002 30/18/四五十；PR-002/003）③check9 E-ID 段号自动校验 ✅（2026-09-25 落地：全库审计 794 个 E-ID，历史段号失配 50 处同步修正）。
 - **A 线候选**：见第 4 节；另有人祖传寓言全篇逐段核验、400k+ 棋盘隐喻后文。
 - **C 线**：本轮已收口（WTC/CAR/TKF 三簇全绿，截止卷二终）；下一轮弧五·王庭之争，接续见 [HANDOFF-C.md](HANDOFF-C.md)。
 - **跨线**：推送 64 笔（L0 发话）；`measure_distillation.py` 随窗口扩张重跑（C 线 WTC/CAR/TKF 三簇待纳入）；canon-index 并档受 `game/` 冻结（L0 裁量）。
@@ -43,13 +43,13 @@
 2. 节号按卷重置、非全局唯一——引用一律以**行号**为主锚点，节#N（见 source/section-index.md）仅作人文定位。
 3. 原文行号与读书笔记行号是两套体系，笔记锚点（如"G 的 312128"）**不可直接当小说行号用**（已发生一例失配）。
 4. check.ps1 的 check6 会拦未登记索引的新页——新页必须同批登记分类 index。
-5. E-ID 段号（V1–V6）按六段表（source/section-index.md）校正，跨段引用易错。
+5. E-ID 段号（V1–V6）按六段表（source/section-index.md）校正，跨段引用易错——check9 已进门禁自动校验（段 N 行域=[本段首节起始行，下一段首节起始行-1]，段六延伸至原文末行）。
 6. 三线共用同一 checkout——开工先 `git status --short -- lore/wiki` 分辨他人改动，只 add 自己文件。
 
 ## 7. 快速命令
 
 ```
-pwsh -NoProfile -File lore/wiki/tools/check.ps1     # 门禁（check1–8）
+pwsh -NoProfile -File lore/wiki/tools/check.ps1     # 门禁（check1–9）
 py -3 lore/wiki/tools/build_section_index.py         # 重建卷节索引（原文变更后必跑）
 py -3 lore/wiki/tools/measure_distillation.py        # 蒸馏率指标（tokenizer: tiktoken cl100k）
 py -3 editorial/scripts/check_remote_base.py --NoFetch  # 离线门禁证明（网络被拦时先跑）

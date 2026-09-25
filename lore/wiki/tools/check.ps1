@@ -4,7 +4,8 @@
   从仓库根运行：pwsh -NoProfile -File lore\wiki\tools\check.ps1
   无外部依赖。逐项输出 PASS/FAIL 明细；全部通过退出码 0，任一失败退出码 1。
   check6 校验概念页被分类索引收录，check7 校验 frontmatter 的 type 与所在目录一致，
-  check8 校验声明 schema: 2 的页面带 description、date（YYYY-MM-DD）、tags（≥2）。
+  check8 校验声明 schema: 2 的页面带 description、date（YYYY-MM-DD）、tags（≥2），
+  check9 校验 E-ID 段号与六段表（source/section-index.md）一致（v2.2 转正条件③）。
 #>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Continue'
@@ -178,6 +179,55 @@ foreach ($f in $conceptPages) {
 if ($c8total -eq 0) { Write-Output 'PASS: check8 schema v2 字段（暂无 schema: 2 页面）' }
 elseif ($c8ok -eq $c8total) { Write-Output "PASS: check8 schema v2 字段 ($c8ok/$c8total 页)" }
 else { Write-Output "FAIL: check8 schema v2 字段 ($c8ok/$c8total 页)" }
+
+# 9. E-ID 段号自动校验：E:V{1-6}-{6位行号} 的段域必须与六段表（source/section-index.md）一致。
+#    段 N 的实际行域 = [本段首节起始行, 下一段首节起始行-1]——段级摘要表的“末行”只是该段最后一个
+#    节标记行，其后正文仍属本段；段六延伸至原文末行（行数取自 section-index 头注）。
+$siPath = 'lore/wiki/source/section-index.md'
+$siText = Get-Content -LiteralPath $siPath -Raw -Encoding utf8
+$segStarts = [ordered]@{}
+foreach ($m in [regex]::Matches($siText, '(?m)^\| ([一二三四五六]) \| ([\d,]+)–')) {
+  $segStarts[$m.Groups[1].Value] = [int]($m.Groups[2].Value -replace ',', '')
+}
+if ($segStarts.Count -ne 6) {
+  Add-Fail "check9 六段表解析失败（段级摘要解析到 $($segStarts.Count) 段，期望 6 段）: $siPath"
+}
+else {
+  $segByNum = @{ '1' = '一'; '2' = '二'; '3' = '三'; '4' = '四'; '5' = '五'; '6' = '六' }
+  $segOrder = @('一', '二', '三', '四', '五', '六')
+  $totalLines = 437060
+  if ($siText -match '，(\d{1,3}(?:,\d{3})*) 行') { $totalLines = [int]($Matches[1] -replace ',', '') }
+  $segBounds = @{}
+  for ($i = 0; $i -lt 6; $i++) {
+    $lo = $segStarts[$segOrder[$i]]
+    $hi = if ($i -lt 5) { $segStarts[$segOrder[$i + 1]] - 1 } else { $totalLines }
+    $segBounds[$segOrder[$i]] = @($lo, $hi)
+  }
+  $c9ok = 0; $c9total = 0
+  foreach ($f in $allWikiMd) {
+    $lines = (Get-Content -LiteralPath $f.FullName -Encoding utf8)
+    $ln = 0
+    foreach ($line in $lines) {
+      $ln++
+      foreach ($m in [regex]::Matches($line, 'E:V([1-6])-(\d{6})')) {
+        $c9total++
+        $seg = $segByNum[$m.Groups[1].Value]
+        $num = [int]$m.Groups[2].Value
+        $b = $segBounds[$seg]
+        if ($num -ge $b[0] -and $num -le $b[1]) { $c9ok++ }
+        else {
+          $trueSeg = '越界'
+          for ($i = 0; $i -lt 6; $i++) {
+            if ($num -ge $segBounds[$segOrder[$i]][0] -and $num -le $segBounds[$segOrder[$i]][1]) { $trueSeg = $segOrder[$i]; break }
+          }
+          Add-Fail "check9 E-ID 段号失配 [E:V$($m.Groups[1].Value)-$($m.Groups[2].Value) 行号实属段$trueSeg]: $($f.FullName):$ln"
+        }
+      }
+    }
+  }
+  if ($c9ok -eq $c9total) { Write-Output "PASS: check9 E-ID 段号与六段表一致 ($c9ok/$c9total 个 E-ID)" }
+  else { Write-Output "FAIL: check9 E-ID 段号与六段表一致 ($c9ok/$c9total 个 E-ID)" }
+}
 
 if ($failures.Count -eq 0) { Write-Output 'ALL CHECKS PASSED'; exit 0 }
 else { Write-Output "TOTAL FAILURES: $($failures.Count)"; exit 1 }
