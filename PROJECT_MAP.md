@@ -37,6 +37,13 @@
 - 权威来源：父仓库 `5f3fbfc` 快照；现以 `lore/wiki/` 为准。
 - 可修改范围：按 `lore/wiki/AGENTS.md` 编辑约定增补与修订页面；事实必须可追溯到 `source/`、读书笔记、记忆库或 `canon-index:` 条目，游戏数值与改编不写入原著事实区。
 
+### `lore/runtime/`（2026-09-25 新增）
+
+- 用途：Canon Runtime Projection——`lore/wiki` 与 `canon-index` 经 `lore/wiki/tools/compile_runtime.py` 编译出的机器可查询投影（entities/rules/relations/packs），供《问真》引用原著口径与 Agent Context Pack 使用。
+- 首读文件：`lore/runtime/README.md`；IR 设计与审计见 `docs/design/canon-runtime/`。
+- 边界：本目录全部为生成物，不人工维护；重跑 `py -3 lore/wiki/tools/compile_runtime.py` 完全重建。不含任何游戏数值（编译器禁入字段扫描）；游戏改编仍归 `game/data` 与 ADP-* 登记。原文 hash 变化时编译器拒绝输出。
+
+
 ### `editorial/`（Task 6 已导入）
 
 - 用途：GitHub `gu-zhenren-editor` 项目（《蛊真人》编辑部资料库、分卷精编流水线与 epub 构建脚本）。
