@@ -15,8 +15,8 @@
    "ruling_applied": "L0 裁定依原文改 rank（2026-09-25），原 game 转数见 note"
   },
   "rulings": {
-   "rank_19": "L0 裁定 2026-09-25：19 处分叉改 rank；其中 blood_bat_gu 因 m0-six-gu.md 已登记「一转落点属有意 Adaptation」且 canActivate 门槛将令 M0 开局蛊无法激活，维持 rank=1 待明确 supersede，其余 18 处已执行",
-   "name_reuse_5": "L0 裁定 2026-09-25：五处命名重用确认非有意适配，待产品侧命名方案后改名"
+   "rank_19": "L0 裁定 2026-09-25：19 处分叉改 rank；其中 blood_bat_gu 因 m0-six-gu.md 已登记「一转落点属有意 Adaptation」且 canActivate 门槛将令 M0 开局蛊无法激活，维持 rank=1 悬置（L0 2026-09-25「先不动，记为技术债务」，见 docs/debt.md），其余 18 处已执行",
+   "name_reuse_5": "L0 裁定 2026-09-25：五处命名重用确认非有意适配，悬置记债（L0 2026-09-25「先不动，记为技术债务」，见 docs/debt.md），待产品命名方案后改名"
   },
   "expansion": "扩容批第一轮（2026-09-25）：宽窗扫描 117 未核，净增 3 蛊核验（狗屎运蛊 cap6、招灾蛊/山盟蛊 命名重用），余 114 待逐蛊深挖"
  },
