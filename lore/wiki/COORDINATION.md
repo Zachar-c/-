@@ -7,9 +7,9 @@
 
 | 线 | 簇车道 | 页面范围 | 状态 |
 |---|---|---|---|
-| A（全书复杂规则精蒸馏） | 验证簇：QMS ✅ → FATE ✅ → XQ ✅（三类达标，v2.1 冻结转正）→ **规则精蒸馏路线五站全部完成：灾劫体系 ✅（TRIB-001…014）→ 道痕体系 ✅（DM-001…015）→ 炼蛊术语体系 ✅（REF-001…012，新术语平炼）→ 杀招-连招-并招体系 ✅（KM-001…012）→ 流派境界五级 ✅（PR-001…011，原 T1 延期项已恢复完成）** | rules/ 目录五页互链成网 + cultivation-system、aptitude-and-aperture、primeval-essence、world-operating-system、soul-path 的深度规则表 | **五站 ✅ 全部提交** + 哲学思考页 ✅（themes/philosophy.md，四组命题轴；B 线主题补全候选与本页重合部分由 A 线承接）；后续候选：尊者资格链核验（PR-011）、阵道外流派能力标尺、梦道机制 |
+| A（全书复杂规则精蒸馏） | 验证簇：QMS ✅ → FATE ✅ → XQ ✅（三类达标，v2.1 冻结转正）→ **规则精蒸馏路线五站全部完成：灾劫体系 ✅（TRIB-001…014）→ 道痕体系 ✅（DM-001…015）→ 炼蛊术语体系 ✅（REF-001…012，新术语平炼）→ 杀招-连招-并招体系 ✅（KM-001…012）→ 流派境界五级 ✅（PR-001…011，原 T1 延期项已恢复完成）→ 梦道机制 ✅（DRM-001…010）** | rules/ 目录五页互链成网 + cultivation-system、aptitude-and-aperture、primeval-essence、world-operating-system、soul-path 的深度规则表 | **五站 ✅ 全部提交** + 哲学思考页 ✅（themes/philosophy.md，四组命题轴；B 线主题补全候选与本页重合部分由 A 线承接）；后续候选：尊者资格链核验（PR-011）、阵道外流派能力标尺、梦道机制 |
 | B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域（DOMAIN）✅ → 经济与资源（ECON）✅ → 组织专页（ORG）✅ → 主题与《人祖传》补全（THEME）✅ → 世界观补漏复查（GAP-SWEEP）✅ → 次要人物总表（ROSTER-2）✅ → 后续候选：按需维护与跟进核验 | characters/roster.md+roster-2.md、gu/roster.md、world/path-roster.md、world/ 四域页+economy-roster.md+四组织页、themes/immortality+power-and-interest+ren-zu-zhuan 补全、characters/index.md、gu/index.md、world/index.md、themes/index.md、index.md（Key Findings）、log.md | 九簇全绿（人物主/次/蛊虫/流派/五域/经济/组织/主题/补漏）；粗粒度抽样核验、无 benchmark；rules/ 归 A 线不动 |
-| C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）✅ → **弧三·南疆商队与商家城（CAR 簇）✅**（EVT-CAR-001…044 全链核验 + benchmark-car 首测 49.5/50，收束批含弧四开启锚点）→ 下一剧情簇：**弧四·仙鹤门方正线与三王福地（TKF 簇，含 three-kings-mountain 旧页 refactor，待开工）** | events/wolf-tide.md、events/south-caravan.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | WTC ✅ 50/50 · CAR ✅ 49.5/50 |
+| C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）✅ → 弧三·南疆商队与商家城（CAR 簇）✅（benchmark-car 49.5/50）→ **弧四·仙鹤门方正线与三王福地（TKF 簇）进行中：three-kings-mountain 已重构为弧四枢纽页（v2），标段一已提交（方正线＋黑白双煞＋白狐蛊仙传承 hunt，EVT-TKF-001…006）；标段二＝三王福地犬王传承（节 147 起）** | events/wolf-tide.md、events/south-caravan.md、events/three-kings-mountain.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | WTC ✅ 50/50 · CAR ✅ 49.5/50 · TKF 标段一已提交 |
 
 ## 共享页分区块规则
 
