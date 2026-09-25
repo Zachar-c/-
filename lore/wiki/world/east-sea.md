@@ -3,7 +3,7 @@ type: world
 name: 东海
 aliases: [东海地理, 东海修行界]
 description: 五域之东海：龙宫与藏龙窟争夺、僵盟总部、东海正道八转与散修谱系；粗粒度地域入口
-date: 2026-09-25
+date: 2026-09-26
 tags: [world, region, east-sea, factions]
 sources:
   - "source:source/蛊真人-clean.txt"

@@ -3,7 +3,7 @@ type: world
 name: 经济与资源总表
 aliases: [经济总表, 资源总表, 货币体系, economy roster]
 description: 全书经济层粗粒度总表：货币层级、资源品类、市场网络、贸易定价实例、经济制度与生产体系
-date: 2026-09-25
+date: 2026-09-26
 tags: [world, economy, currency, trade, navigation]
 sources:
   - "source:source/蛊真人-clean.txt"

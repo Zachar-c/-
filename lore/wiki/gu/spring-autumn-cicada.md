@@ -3,7 +3,7 @@ type: gu
 name: 春秋蝉
 aliases: [春秋蝉, 时间道蛊虫]
 description: 时光道奇蛊：逆转光阴使持有者重生；方源六转本命，红莲魔尊（洪亭）所创
-date: 2026-09-25
+date: 2026-09-26
 tags: [gu, time, rebirth, red-lotus]
 sources:
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"

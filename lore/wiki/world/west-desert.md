@@ -3,7 +3,7 @@ type: world
 name: 西漠
 aliases: [西漠地理, 西漠修行界, 西漠诸家]
 description: 五域之西漠：房家/唐家/董家诸家谱系与西漠联军仙蛊屋；含西荒归一说明；粗粒度地域入口
-date: 2026-09-25
+date: 2026-09-26
 tags: [world, region, west-desert, factions]
 sources:
   - "source:source/蛊真人-clean.txt"
