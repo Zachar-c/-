@@ -171,7 +171,7 @@
       "type": "gu",
       "name": "月芒蛊",
       "aliases": [],
-      "description": "",
+      "description": "月光蛊与两只小光蛊合炼成的二转进攻蛊，月刃攻击力达月光蛊三倍",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -181,10 +181,61 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/moon-glow-gu.md"
         ],
-        "canon_refs": []
-      }
+        "canon_refs": [
+          "CAN-SMALL-LIGHT-002"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-MOONGLOW-01",
+          "stage": "动机/规划",
+          "statement": "方源盘点合炼路线：月光蛊+两只小光蛊→二转月芒蛊，进攻能力上涨",
+          "evidence": [
+            "E:V1-015710"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-02",
+          "stage": "合炼失败（个案）",
+          "statement": "方源首次合炼月芒蛊失败",
+          "evidence": [
+            "E:V1-017052"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-03",
+          "stage": "合炼成功（方源个案）",
+          "statement": "一只月光蛊+两只小光蛊合炼成二转月芒蛊；攻击力达月光蛊三倍，与白玉蛊攻守兼备",
+          "evidence": [
+            "E:V1-017144",
+            "E:V1-017316"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-04",
+          "stage": "增量规则",
+          "statement": "一只小光蛊增幅月刃一倍攻击力；两只仍一倍，增幅不可叠加",
+          "evidence": [
+            "E:V1-017148"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-05",
+          "stage": "使用",
+          "statement": "月芒蛊月刃实战亮相，旁观者辨认为月芒蛊而非月光蛊",
+          "evidence": [
+            "E:V1-017470"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "white_boar_strength_gu",
@@ -633,6 +684,23 @@
       "id": "PE-003",
       "prefix": "PE",
       "domain": "true-qi",
+      "term": "耐用度（越阶消耗战）",
+      "statement": "\"越高阶，真元的颜色越深，越是耐用\"（方源心声）；战斗台词口径：一转巅峰青铜真元比二转赤铁真元\"耐用三倍\"（方正对古月赤城消耗战宣言）",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-012622",
+        "E:V1-013156"
+      ],
+      "evidence_raw": "E:V1-012622（方源心声）、E:V1-013156 `[对话",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "PE-004",
+      "prefix": "PE",
+      "domain": "true-qi",
       "term": "转内提纯",
       "statement": "酒虫凝练：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶",
       "forbidden_misreading": "",
@@ -647,7 +715,7 @@
       }
     },
     {
-      "id": "PE-004",
+      "id": "PE-005",
       "prefix": "PE",
       "domain": "true-qi",
       "term": "晋升总成本",
@@ -657,23 +725,6 @@
         "E:V1-004656"
       ],
       "evidence_raw": "E:V1-004656（4656–4678 行）",
-      "provenance": {
-        "wiki_page": "lore/wiki/world/primeval-essence.md",
-        "generated_id": true
-      }
-    },
-    {
-      "id": "PE-005",
-      "prefix": "PE",
-      "domain": "true-qi",
-      "term": "外部补充",
-      "statement": "元石抽取纯净真元入元海；充足元石可部分弥补资质短板",
-      "forbidden_misreading": "",
-      "evidence": [
-        "E:V1-001526",
-        "E:V1-001878"
-      ],
-      "evidence_raw": "E:V1-001526（1526–1530 行）、E:V1-001878",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true

@@ -1,6 +1,6 @@
 {
   "manifest_version": 1,
-  "generated_at": "2026-09-25T15:13:52Z",
+  "generated_at": "2026-09-25T18:37:04Z",
   "compiler": "lore/wiki/tools/compile_runtime.py",
   "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
   "source": {
@@ -13,6 +13,7 @@
     "canon_index": "game/docs/lore/canon-index.md（全部 CAN-*）",
     "roster": "lore/wiki/gu/roster-3.md（六个 id 分段；「转数未核」仅蛊名无 id，跳过）",
     "entity_pages": [
+      "moon_glow_gu",
       "moonlight_gu",
       "small_light_gu"
     ],
@@ -24,13 +25,13 @@
   },
   "counts": {
     "entities": 156,
-    "entity_states": 11,
+    "entity_states": 16,
     "rules_can": 43,
-    "rules_page": 51,
-    "rules_total": 94,
+    "rules_page": 52,
+    "rules_total": 95,
     "relations": 2
   },
-  "coverage_notes": "rank 覆盖 156/270（转数未核 114 只仅有蛊名无 id，未编译）；实体状态行 11 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
+  "coverage_notes": "rank 覆盖 156/270（转数未核 114 只仅有蛊名无 id，未编译）；实体状态行 16 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
   "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
-  "content_version": "23c3f785a899af57972007ac45c58949e53feee6cfa2fc515b4951e24f25739f"
+  "content_version": "82cf2af674eb587791b20df12de9e7dfa6e278c7b7bfc52b16f3355dd2d83f2c"
 }

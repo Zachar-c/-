@@ -78,7 +78,7 @@ PACKS = {
         "rule_domains": ["cultivation", "aptitude", "true-qi", "nanjiang", "gu-care",
                          "small-light", "rank-ladder", "beast-tier", "beast-tide"],
         "rule_ids": ["REF-001", "REF-002", "REF-004", "REF-005", "REF-008", "KM-001", "KM-002", "KM-003"],
-        "rule_exclude_ids": ["PE-006", "PE-007"],  # 仙元属蛊仙层，不进凡人一转场景
+        "rule_exclude_ids": ["PE-006", "PE-007", "PE-008"],  # 仙元属蛊仙层，不进凡人一转场景（PE-008 仙元阶位为 778db228 批新增，P5 批补排）
         "with_relations": True,
     },
     "rank1_refinement": {

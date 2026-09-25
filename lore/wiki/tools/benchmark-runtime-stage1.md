@@ -75,7 +75,7 @@ py -3 lore/wiki/tools/check_runtime_benchmark.py --pack lore/runtime/packs/south
 
 | pack 条目 | 状态 | 说明 |
 |---|---|---|
-| （当前无） | — | 19 题已覆盖全部 pack 条目（states 随实体承载，不作独立死重统计）；新增 pack 条目时须补题或在此登记理由 |
+| （当前无） | — | 新增 pack 条目时须补题或在此登记理由（2026-09-25 P1 批注）。2026-09-26 P5 批注记：并行批 778db228 新增的 PE-008（仙元阶位，六转以上）曾经 true-qi 域漏入一转战斗包，已改由 compile_runtime `rule_exclude_ids` 根治（P5 批机械修复，pack 语义 Owner=原包作者）；pack 实体扩容（敌人装载蛊 8 只入包）因死重规则须与 GEN-3 出题轮换联动，登记为 P5 队列项 |
 
 ## 首轮自测记录（2026-09-25）
 

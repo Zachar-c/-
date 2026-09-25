@@ -7,6 +7,7 @@
 - [蛊虫总表三期·游戏映射蛊精蒸馏](roster-3.md)（gu.json 270 个原著来源蛊的转数层逐蛊核验 + 分叉报告；游戏桥接层 gu_lore.json 的源页）
 - [小光蛊](small-light-gu.md)
 - [月光蛊](moonlight-gu.md)
+- [月芒蛊](moon-glow-gu.md)
 - [M0 六蛊原著边界](m0-six-gu.md)
 - [春秋蝉](spring-autumn-cicada.md)
 - [宿命蛊](fate-gu.md)

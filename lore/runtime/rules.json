@@ -1111,6 +1111,23 @@
       "id": "PE-003",
       "prefix": "PE",
       "domain": "true-qi",
+      "term": "耐用度（越阶消耗战）",
+      "statement": "\"越高阶，真元的颜色越深，越是耐用\"（方源心声）；战斗台词口径：一转巅峰青铜真元比二转赤铁真元\"耐用三倍\"（方正对古月赤城消耗战宣言）",
+      "forbidden_misreading": "",
+      "evidence": [
+        "E:V1-012622",
+        "E:V1-013156"
+      ],
+      "evidence_raw": "E:V1-012622（方源心声）、E:V1-013156 `[对话",
+      "provenance": {
+        "wiki_page": "lore/wiki/world/primeval-essence.md",
+        "generated_id": true
+      }
+    },
+    {
+      "id": "PE-004",
+      "prefix": "PE",
+      "domain": "true-qi",
       "term": "转内提纯",
       "statement": "酒虫凝练：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶",
       "forbidden_misreading": "",
@@ -1125,7 +1142,7 @@
       }
     },
     {
-      "id": "PE-004",
+      "id": "PE-005",
       "prefix": "PE",
       "domain": "true-qi",
       "term": "晋升总成本",
@@ -1141,7 +1158,7 @@
       }
     },
     {
-      "id": "PE-005",
+      "id": "PE-006",
       "prefix": "PE",
       "domain": "true-qi",
       "term": "外部补充",
@@ -1158,7 +1175,7 @@
       }
     },
     {
-      "id": "PE-006",
+      "id": "PE-007",
       "prefix": "PE",
       "domain": "true-qi",
       "term": "仙元（蛊仙层）",
@@ -1176,16 +1193,19 @@
       }
     },
     {
-      "id": "PE-007",
+      "id": "PE-008",
       "prefix": "PE",
       "domain": "true-qi",
       "term": "仙元阶位（转数关联）",
-      "statement": "七转掌握红枣仙元；八转仙窍凝成白荔仙元",
+      "statement": "六转青提、七转红枣、八转白荔；九转＝黄杏仙元（色橙黄、形如杏子，九转尊者才有；八转白荔可提纯为黄杏）",
       "forbidden_misreading": "",
       "evidence": [
-        "E:V4-184780"
+        "E:V4-184780",
+        "E:V3-118922",
+        "E:V5-221894",
+        "E:V6-423024"
       ],
-      "evidence_raw": "E:V4-184780–184782；详见 [灾劫体系](../rules/tribulation.md) TRIB-003/004",
+      "evidence_raw": "E:V4-184780–184782；E:V3-118922（\"这是九转黄杏仙元！\"）、E:V5-221894（白荔提炼成黄杏）、E:V6-423024（外观）；详见 [灾劫体系](../rules/tribulation.md) TRIB-003/004",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
