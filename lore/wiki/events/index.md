@@ -5,6 +5,7 @@
 - [全书故事骨架总览](story-arc-overview.md)
 - [青茅山](qing-mao-mountain.md)
 - [狼潮](wolf-tide.md)
+- [南疆商队与商家城](south-caravan.md)
 - [三王福地](three-kings-mountain.md)
 - [逆流河](reverse-flow-river.md)
 - [宿命大战](fate-war.md)

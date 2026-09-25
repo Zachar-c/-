@@ -9,7 +9,7 @@
 |---|---|---|---|
 | A（全书复杂规则精蒸馏） | 验证簇：QMS ✅ → FATE ✅ → XQ ✅（三类达标，v2.1 冻结转正）→ **规则精蒸馏路线：灾劫体系 ✅（TRIB-001…014）→ 道痕体系 ✅（DM-001…015）→ 炼蛊术语体系（炼化/合炼/正逆炼/升炼）→ 杀招-连招-并招体系 → 流派境界五级（原 T1 延期项，按 L0 本指令恢复）** | rules/ 目录（tribulation.md、dao-marks.md）+ cultivation-system、aptitude-and-aperture、primeval-essence、world-operating-system、soul-path 的深度规则表 | 灾劫 ✅ · 道痕 ✅ · 炼蛊术语待开；**注意：rules/index.md 归 A 线，请 B/C 线管线勿清写** |
 | B（全书粗蒸馏，本线） | ROSTER ✅ → GU-ROSTER ✅ → PATH-ROSTER ✅ → 五域地域（DOMAIN）✅ → 后续候选：经济资源、组织专页 | characters/roster.md、gu/roster.md、world/path-roster.md、world/ 四域页（north-plain/central-plain/east-sea/west-desert）、characters/index.md、gu/index.md、world/index.md、index.md（Key Findings）、log.md | 四簇全绿（人物/蛊虫/流派/五域）；粗粒度抽样核验、无 benchmark |
-| C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）✅ → 按剧情顺序推进下一剧情簇：**弧三·南疆商队与三王山（卷二前段，待开工登记）** | events/wolf-tide.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | WTC ✅ 50/50（EVT-WTC-001…026 全链核验 + benchmark-wtc 首测满分，出题同源局限已登记）；下一簇待开工 |
+| C（全书按剧情顺序精蒸馏） | 狼潮/兽潮簇（WTC，原误标 B 线）✅ → **弧三·南疆商队与商家城（CAR 簇）进行中：标段一已提交（黄龙江逃生＋白骨山传承，EVT-CAR-001…013）；标段二＝商队与商家城（节 35 起）** | events/wolf-tide.md、events/south-caravan.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | WTC ✅ 50/50（benchmark-wtc 首测满分）；CAR 标段一已提交，benchmark-car 随弧三打穿批落地 |
 
 ## 共享页分区块规则
 
