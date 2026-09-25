@@ -1,6 +1,6 @@
 {
   "id": "south_border_rank1_combat",
-  "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
+  "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 敌方装载蛊四只（熊力/月痕/骨蛊/青藤，敌人持蛊化 canon 侧） + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
   "source": {
     "id": "gu_zhenren_clean",
     "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
@@ -256,6 +256,177 @@
         ],
         "canon_refs": []
       }
+    },
+    {
+      "id": "bear_strength_gu",
+      "type": "gu",
+      "name": "熊力蛊",
+      "aliases": [],
+      "description": "熊家寨标志蛊虫（与古月月光蛊、白家溪流蛊并列各家标志）；以蜂蜜为食，熊家寨对蜂蜜需求量大",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V1-003602",
+        "E:V1-010182"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/bear-strength-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-BEARSTR-01",
+          "stage": "标志",
+          "statement": "熊家寨标志蛊虫，与月光蛊/溪流蛊并列各家标志，不入学堂蛊室换取范围",
+          "evidence": [
+            "E:V1-003602",
+            "E:V1-020446"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEARSTR-02",
+          "stage": "饲养",
+          "statement": "以蜂蜜为食，熊家寨对蜂蜜需要量很大",
+          "evidence": [
+            "E:V1-010182"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "moon_ray_gu",
+      "type": "gu",
+      "name": "月痕蛊",
+      "aliases": [],
+      "description": "月光蛊与痕石蛊合炼而成：攻击范围增一倍达二十米，攻击力不变（秘方记载\"并不出众\"）",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V1-017156",
+        "E:V1-026764"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/moon-ray-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-MOONRAY-01",
+          "stage": "合炼路线",
+          "statement": "月光蛊+痕石蛊合炼成月痕蛊：攻击力不变、攻击范围增一倍达二十米",
+          "evidence": [
+            "E:V1-017156"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-02",
+          "stage": "秘方在案",
+          "statement": "方源持月痕蛊合炼秘方：优点=攻击距离为月光一倍，缺点=攻击力并不出众",
+          "evidence": [
+            "E:V1-026760",
+            "E:V1-026762"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "bone_atk_1_08_gu",
+      "type": "gu",
+      "name": "骨蛊",
+      "aliases": [],
+      "description": "白骨山可猎杀骨兽或收服的野生骨蛊；同系玉骨蛊能增加蛊师骨骼强度",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V2-038442",
+        "E:V2-037452"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/bone-atk-1-08-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-BONE-01",
+          "stage": "野生",
+          "statement": "白骨山可猎杀骨兽或收服野生骨蛊",
+          "evidence": [
+            "E:V2-038442"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-02",
+          "stage": "同系晋升",
+          "statement": "玉骨蛊（白骨山传承）增骨骼强度：双猪之力基础上再添一鳄之力",
+          "evidence": [
+            "E:V2-035560",
+            "E:V2-037452"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "wood_atk_1_05_gu",
+      "type": "gu",
+      "name": "青藤蛊",
+      "aliases": [],
+      "description": "木行战斗蛊：催出十五米碧绿藤条，当做鞭子甩、劈、撩、扫；树精身份对木行蛊威力增幅",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V1-016788",
+        "E:V1-023856"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/wood-atk-1-05-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-WOODGUV-01",
+          "stage": "使用",
+          "statement": "催出十五米碧绿藤条，当做鞭子甩、劈、撩、扫",
+          "evidence": [
+            "E:V1-016788"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODGUV-02",
+          "stage": "增幅",
+          "statement": "树精身份对青藤蛊等木行蛊虫威力增幅",
+          "evidence": [
+            "E:V1-023856"
+          ],
+          "canon_refs": []
+        }
+      ]
     }
   ],
   "rules": [

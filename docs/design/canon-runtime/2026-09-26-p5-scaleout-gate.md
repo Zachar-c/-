@@ -65,3 +65,33 @@
 ## 维持条件
 
 本批触及 enemies.json/projections/生成链/语义层契约——月光切片相关任何变更已重跑 C1–C6 + skin-test + check_balance（全过）；P4 GATE 状态维持有效（切片数值零改动，仅分类/provenance 增厚）。
+
+---
+
+# P5 第二批（GEN-3）：敌方装载蛊入包与独立盲测（2026-09-26）
+
+> 兑现本文件 B4 队列项：「pack 实体扩容与基准出题轮换联动」。
+
+## 批次内容
+
+1. **roster-3 补蒸馏**：新增「原文有据·转数未言」段 4 行（熊力蛊/青藤蛊/月痕蛊/骨蛊——存在与机制带 E:V 锚点、转数原文未明言）；熊力/青藤/月痕自「转数未核」名单移账（65→63、9→8），骨蛊系名单漏登补录（统计 270→271）；compile_runtime 新增 `rank_unstated` 状态（豁免 web 漂移门禁，canon_runtime 白名单测试同步扩展）。
+2. **四张 mini 实体页**：bear-strength-gu / moon-ray-gu / bone-atk-1-08-gu / wood-atk-1-05-gu（schema v2，各 2 状态行；description 使 Pack-Only 可答）。
+3. **pack 扩容**：south_border_rank1_combat 实体 4→8；体积 16601→18968 字符（预算 20000 内，余量 1032）；runtime entities 156→160、entity_states 16→24。
+4. **GEN-3 题集**：新增 G 组 4 题（Q20–23，判分依据=新实体+状态行），门槛更新 ≥16/19 → ≥20/23（比例 ≥84% 不变）。
+
+## 门禁
+
+| 门禁 | 结果 |
+|---|---|
+| check_runtime_benchmark | 通过（66 条目、23 计分题、被引用 53、无死重） |
+| check.ps1 | ALL PASSED（check8 55/55 页、check9 1859 E-ID） |
+| web 全量 | 259 测试 258 过（唯一失败仍为 B 线预存项） |
+| canon_pack 体积/子集/仙域排除 | 通过（18968 < 20000；rank_unstated 豁免漂移门禁） |
+| **独立 Pack-Only 盲测（GEN-3）** | **6/6**（新 4 题 + 老题回归 Q1/Q13，负查询无违例） |
+
+## 诚实边界与 GEN-4 队列
+
+- 硬气蛊/自己蛊（canon 有据、非敌人装载）：实体页与入包留 GEN-4。
+- 血针蛊/气纹霭蛊/浪蛊/雨蛊/剑纹锋蛊/剑纹刃蛊/古剑蛊：原著 0 命中，维持 pack 外（school_derived 游戏内容），不伪造 canon 身份。
+- pack 余量仅 1032 字符：GEN-4 扩容前需评估瘦身（evidence_raw 精简）或拆包（第二 pack + checker 多包校验扩展）。
+- 熊力蛊 game 侧 healing 定位 vs "力"名语义属原著到游戏妥协建模，待 L1 评审（bear-strength-gu.md 已登记）。

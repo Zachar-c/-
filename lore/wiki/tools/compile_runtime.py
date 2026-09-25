@@ -73,8 +73,10 @@ RELATION_SOURCES = [
 # —— Context Pack 配置（P4；实体用 roster-3 id，规则按 domain / 显式 id 选装）——
 PACKS = {
     "south_border_rank1_combat": {
-        "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
-        "entities": ["moonlight_gu", "small_light_gu", "moon_glow_gu", "white_boar_strength_gu"],
+        "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 敌方装载蛊四只（熊力/月痕/骨蛊/青藤，敌人持蛊化 canon 侧） + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
+        "entities": ["moonlight_gu", "small_light_gu", "moon_glow_gu", "white_boar_strength_gu",
+                     # GEN-3 批：敌方装载蛊入包（敌人持蛊化的 canon 侧，P5 判定文档 §B4 队列兑现）
+                     "bear_strength_gu", "moon_ray_gu", "bone_atk_1_08_gu", "wood_atk_1_05_gu"],
         "rule_domains": ["cultivation", "aptitude", "true-qi", "nanjiang", "gu-care",
                          "small-light", "rank-ladder", "beast-tier", "beast-tide"],
         "rule_ids": ["REF-001", "REF-002", "REF-004", "REF-005", "REF-008", "KM-001", "KM-002", "KM-003"],
@@ -267,6 +269,7 @@ ROSTER_STATUS = {
     "一致": "verified",
     "裁定已改": "verified",
     "命名碰撞待核": "collision",
+    "原文有据·转数未言": "rank_unstated",
 }
 
 

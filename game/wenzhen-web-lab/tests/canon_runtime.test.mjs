@@ -38,7 +38,8 @@ test('canon entity shape is whitelist-only (no game values leak into canon)', ()
       assert.equal(typeof entry.rank, 'number', id);
       assert.ok(entry.rank >= 1 && entry.rank <= 9, `${id} rank 越界：${entry.rank}`);
     }
-    assert.ok(['verified', 'divergence', 'rank_cap', 'name_reuse', 'collision', 'timepoint'].includes(entry.rankStatus), id);
+    // GEN-3 批新增 rank_unstated：原文有据（存在/机制带锚点）但转数原文未明言，豁免漂移门禁。
+    assert.ok(['verified', 'divergence', 'rank_cap', 'name_reuse', 'collision', 'timepoint', 'rank_unstated'].includes(entry.rankStatus), id);
   }
 });
 

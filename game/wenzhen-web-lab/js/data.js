@@ -6738,9 +6738,14 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "82cf2af674eb587791b20df12de9e7dfa6e278c7b7bfc52b16f3355dd2d83f2c",
+    "contentVersion": "a3333e6df461d1981cf1bcd996881a4fe24dae75091e341ef2a756c1891129e8",
     "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "entities": {
+      "bear_strength_gu": {
+        "name": "熊力蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
+      },
       "blood_atk_1_18_gu": {
         "name": "鳄力蛊",
         "rank": 2,
@@ -6805,6 +6810,11 @@ const DATA = {
         "name": "爱别离",
         "rank": 2,
         "rankStatus": "verified"
+      },
+      "bone_atk_1_08_gu": {
+        "name": "骨蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
       },
       "bone_atk_3_03_gu": {
         "name": "骨刺蛊",
@@ -7291,6 +7301,11 @@ const DATA = {
         "rank": 2,
         "rankStatus": "verified"
       },
+      "moon_ray_gu": {
+        "name": "月痕蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
+      },
       "moon_shadow_gu": {
         "name": "月影蛊",
         "rank": 4,
@@ -7495,6 +7510,11 @@ const DATA = {
         "name": "妇人心蛊",
         "rank": 6,
         "rankStatus": "rank_cap"
+      },
+      "wood_atk_1_05_gu": {
+        "name": "青藤蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
       },
       "wood_atk_3_01_gu": {
         "name": "木魅蛊",
@@ -7995,5 +8015,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "55b339a3f23216fea2cb54d3a8c112ae063f8a606caceafc8afa1453416cea53"
+  "contentVersion": "cf32f8085e5051fe702dfa9fbc4ab2377eaa2145c9b0589cea07387756629fb3"
 };
