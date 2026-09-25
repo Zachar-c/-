@@ -11,16 +11,23 @@
    "name_reuse": "游戏以传奇蛊名命名低转蛊（原文同名蛊为六转以上）",
    "collision": "蛊名子串碰撞/泛称/双口径，待核",
    "timepoint": "原文多时点转数，game取其中一段",
-   "unverified": "首现同窗未检得转数明文，待扩容批"
-  }
+   "unverified": "首现同窗未检得转数明文，待扩容批",
+   "ruling_applied": "L0 裁定依原文改 rank（2026-09-25），原 game 转数见 note"
+  },
+  "rulings": {
+   "rank_19": "L0 裁定 2026-09-25：19 处分叉改 rank；其中 blood_bat_gu 因 m0-six-gu.md 已登记「一转落点属有意 Adaptation」且 canActivate 门槛将令 M0 开局蛊无法激活，维持 rank=1 待明确 supersede，其余 18 处已执行",
+   "name_reuse_5": "L0 裁定 2026-09-25：五处命名重用确认非有意适配，待产品侧命名方案后改名"
+  },
+  "expansion": "扩容批第一轮（2026-09-25）：宽窗扫描 117 未核，净增 3 蛊核验（狗屎运蛊 cap6、招灾蛊/山盟蛊 命名重用），余 114 待逐蛊深挖"
  },
  "counts": {
   "match": 77,
-  "unverified": 117,
-  "divergence": 19,
-  "name_reuse": 5,
+  "unverified": 114,
+  "ruling_applied": 18,
+  "name_reuse": 7,
+  "divergence": 1,
   "collision": 18,
-  "rank_cap": 33,
+  "rank_cap": 34,
   "timepoint": 1
  },
  "gu": [
@@ -58,11 +65,11 @@
   {
    "id": "moon_shadow_gu",
    "name": "月影蛊",
-   "game_rank": 3,
-   "status": "divergence",
+   "game_rank": 4,
+   "status": "ruling_applied",
    "lore_rank": 4,
    "anchor": "E:V1-026792",
-   "note": "单源明文，与 game=3 分叉待裁"
+   "note": "单源明文，与 game=3 分叉待裁；L0 裁定 2026-09-25 依原文改 rank（原 game=3）"
   },
   {
    "id": "vitality_grass_gu",
@@ -77,7 +84,7 @@
    "status": "name_reuse",
    "lore_rank": 9,
    "anchor": "E:V3-114472",
-   "note": "原文力量蛊为九转传奇（103100 同）；游戏 rank=1 力量蛊为同名重用"
+   "note": "原文力量蛊为九转传奇（103100 同）；游戏 rank=1 力量蛊为同名重用；L0 裁定：确认非有意适配，待产品命名方案"
   },
   {
    "id": "bear_strength_gu",
@@ -121,18 +128,20 @@
   {
    "id": "blood_farewell_gu",
    "name": "爱别离",
-   "game_rank": 1,
-   "status": "divergence",
+   "game_rank": 2,
+   "status": "ruling_applied",
    "lore_rank": 2,
-   "anchor": "E:V1-011800"
+   "anchor": "E:V1-011800",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=1）"
   },
   {
    "id": "blood_droplet_gu",
    "name": "血滴子",
-   "game_rank": 1,
-   "status": "divergence",
+   "game_rank": 5,
+   "status": "ruling_applied",
    "lore_rank": 5,
-   "anchor": "E:V1-028476"
+   "anchor": "E:V1-028476",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=1）"
   },
   {
    "id": "blood_bat_gu",
@@ -141,7 +150,7 @@
    "status": "divergence",
    "lore_rank": 3,
    "anchor": "E:V1-031864",
-   "note": "M0 六蛊之一；游戏 rank=1 或为开局适配，见 gu/m0-six-gu.md 待裁"
+   "note": "M0 六蛊之一；游戏 rank=1 或为开局适配，见 gu/m0-six-gu.md 待裁；L0 总裁定与 m0-six-gu.md 登记 Adaptation 冲突，维持 rank=1 待明确 supersede"
   },
   {
    "id": "blood_atk_4_01_gu",
@@ -267,10 +276,11 @@
   {
    "id": "blood_atk_1_18_gu",
    "name": "鳄力蛊",
-   "game_rank": 1,
-   "status": "divergence",
+   "game_rank": 2,
+   "status": "ruling_applied",
    "lore_rank": 2,
-   "anchor": "E:V2-035502"
+   "anchor": "E:V2-035502",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=1）"
   },
   {
    "id": "bone_def_3_01_gu",
@@ -284,7 +294,8 @@
    "id": "bone_def_3_02_gu",
    "name": "螺旋骨枪蛊",
    "game_rank": 3,
-   "status": "unverified"
+   "status": "unverified",
+   "note": "39000 语境歧义（「可惜没有三转蛊」后选螺旋骨枪蛊，未明言其转数）"
   },
   {
    "id": "bone_atk_3_03_gu",
@@ -396,11 +407,11 @@
   {
    "id": "earth_atk_5_03_gu",
    "name": "地藏花蛊",
-   "game_rank": 5,
-   "status": "divergence",
+   "game_rank": 2,
+   "status": "ruling_applied",
    "lore_rank": 2,
    "anchor": "E:V3-080158",
-   "note": "五转者为晋升产物地藏花王"
+   "note": "五转者为晋升产物地藏花王；L0 裁定 2026-09-25 依原文改 rank（原 game=5）"
   },
   {
    "id": "earth_atk_1_04_gu",
@@ -425,10 +436,11 @@
   {
    "id": "fire_atk_4_02_gu",
    "name": "丹火蛊",
-   "game_rank": 4,
-   "status": "divergence",
+   "game_rank": 3,
+   "status": "ruling_applied",
    "lore_rank": 3,
-   "anchor": "E:V2-057866"
+   "anchor": "E:V2-057866",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=4）"
   },
   {
    "id": "fire_atk_3_03_gu",
@@ -469,11 +481,11 @@
   {
    "id": "fire_mov_4_39_gu",
    "name": "火炭蛊",
-   "game_rank": 4,
-   "status": "divergence",
+   "game_rank": 1,
+   "status": "ruling_applied",
    "lore_rank": 1,
    "anchor": "E:V4-154990",
-   "note": "「一转单窍火炭蛊」明文"
+   "note": "「一转单窍火炭蛊」明文；L0 裁定 2026-09-25 依原文改 rank（原 game=4）"
   },
   {
    "id": "force_atk_3_01_gu",
@@ -663,20 +675,20 @@
   {
    "id": "force_atk_4_26_gu",
    "name": "直撞蛊",
-   "game_rank": 4,
-   "status": "divergence",
+   "game_rank": 3,
+   "status": "ruling_applied",
    "lore_rank": 3,
    "anchor": "E:V3-095104",
-   "note": "「两对三转的横冲蛊、直撞蛊」明文；四转者为合炼产物"
+   "note": "「两对三转的横冲蛊、直撞蛊」明文；四转者为合炼产物；L0 裁定 2026-09-25 依原文改 rank（原 game=4）"
   },
   {
    "id": "force_atk_4_27_gu",
    "name": "横冲蛊",
-   "game_rank": 4,
-   "status": "divergence",
+   "game_rank": 3,
+   "status": "ruling_applied",
    "lore_rank": 3,
    "anchor": "E:V3-095104",
-   "note": "「两对三转的横冲蛊、直撞蛊」，四转者为合炼产物横冲直撞蛊"
+   "note": "「两对三转的横冲蛊、直撞蛊」，四转者为合炼产物横冲直撞蛊；L0 裁定 2026-09-25 依原文改 rank（原 game=4）"
   },
   {
    "id": "force_atk_4_28_gu",
@@ -727,11 +739,11 @@
   {
    "id": "gold_atk_5_03_gu",
    "name": "金风送爽蛊",
-   "game_rank": 5,
-   "status": "divergence",
+   "game_rank": 4,
+   "status": "ruling_applied",
    "lore_rank": 4,
    "anchor": "E:V2-069230",
-   "note": "「堪比五转」是效果评价非品阶"
+   "note": "「堪比五转」是效果评价非品阶；L0 裁定 2026-09-25 依原文改 rank（原 game=5）"
   },
   {
    "id": "gold_atk_4_04_gu",
@@ -744,10 +756,11 @@
   {
    "id": "gold_atk_5_05_gu",
    "name": "金霞蛊",
-   "game_rank": 5,
-   "status": "divergence",
+   "game_rank": 4,
+   "status": "ruling_applied",
    "lore_rank": 4,
-   "anchor": "E:V2-069252"
+   "anchor": "E:V2-069252",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=5）"
   },
   {
    "id": "gold_atk_3_06_gu",
@@ -774,11 +787,11 @@
   {
    "id": "gold_def_3_09_gu",
    "name": "古铜皮蛊",
-   "game_rank": 3,
-   "status": "divergence",
+   "game_rank": 4,
+   "status": "ruling_applied",
    "lore_rank": 4,
    "anchor": "E:V2-065994",
-   "note": "四转晋升后即古铜皮蛊"
+   "note": "四转晋升后即古铜皮蛊；L0 裁定 2026-09-25 依原文改 rank（原 game=3）"
   },
   {
    "id": "gold_def_3_10_gu",
@@ -800,10 +813,11 @@
   {
    "id": "gold_atk_2_12_gu",
    "name": "青铜舍利蛊",
-   "game_rank": 2,
-   "status": "divergence",
+   "game_rank": 1,
+   "status": "ruling_applied",
    "lore_rank": 1,
-   "anchor": "E:V1-018066"
+   "anchor": "E:V1-018066",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=2）"
   },
   {
    "id": "gold_atk_3_13_gu",
@@ -961,7 +975,7 @@
    "status": "name_reuse",
    "lore_rank": 7,
    "anchor": "E:V3-104130",
-   "note": "原文招灾蛊高达七转；游戏 rank=1 同名重用"
+   "note": "原文招灾蛊高达七转；游戏 rank=1 同名重用；L0 裁定：确认非有意适配，待产品命名方案"
   },
   {
    "id": "heaven_atk_3_13_gu",
@@ -1182,7 +1196,9 @@
    "id": "human_def_1_32_gu",
    "name": "山盟蛊",
    "game_rank": 1,
-   "status": "unverified"
+   "status": "name_reuse",
+   "anchor": "E:V2-071240",
+   "note": "「山盟、海誓两蛊…这两个仙蛊」明文为仙蛊（并称六转海誓蛊），具体转数未言；游戏 rank1 重用"
   },
   {
    "id": "human_atk_3_33_gu",
@@ -1227,7 +1243,7 @@
    "status": "name_reuse",
    "lore_rank": 6,
    "anchor": "E:V5-270480",
-   "note": "原文人如故为六转仙蛊；游戏 rank=1 同名重用"
+   "note": "原文人如故为六转仙蛊；游戏 rank=1 同名重用；L0 裁定：确认非有意适配，待产品命名方案"
   },
   {
    "id": "human_atk_4_39_gu",
@@ -1268,10 +1284,11 @@
   {
    "id": "light_atk_3_02_gu",
    "name": "邀月蛊",
-   "game_rank": 3,
-   "status": "divergence",
+   "game_rank": 2,
+   "status": "ruling_applied",
    "lore_rank": 2,
-   "anchor": "E:V1-016922"
+   "anchor": "E:V1-016922",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=3）"
   },
   {
    "id": "light_atk_5_03_gu",
@@ -1367,16 +1384,19 @@
    "id": "luck_atk_1_03_gu",
    "name": "招灾蛊",
    "game_rank": 1,
-   "status": "unverified",
+   "status": "name_reuse",
    "lore_rank": 7,
    "anchor": "E:V3-104130",
-   "note": "sweep 线索行需人工复核：这招灾蛊，品级高达七转，比方源如今的春秋蝉还要高一个档次。效用极端奇妙，居然是涉"
+   "note": "「招灾蛊，品级高达七转」明文；游戏 rank1 同名重用（另 heaven_atk_1_12_gu 灾蛊同锚点，双 id 撞同一传奇蛊名）"
   },
   {
    "id": "luck_atk_5_04_gu",
    "name": "狗屎运蛊",
    "game_rank": 5,
-   "status": "unverified"
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V5-199800",
+   "note": "「六转仙蛊…狗屎运蛊…」列名明文"
   },
   {
    "id": "luck_atk_5_05_gu",
@@ -1441,11 +1461,11 @@
   {
    "id": "qi_mov_4_06_gu",
    "name": "云蛊",
-   "game_rank": 4,
-   "status": "divergence",
+   "game_rank": 3,
+   "status": "ruling_applied",
    "lore_rank": 3,
    "anchor": "E:V2-054800",
-   "note": "原文「阴阳两云蛊虽是三转」，游戏泛名云蛊"
+   "note": "原文「阴阳两云蛊虽是三转」，游戏泛名云蛊；L0 裁定 2026-09-25 依原文改 rank（原 game=4）"
   },
   {
    "id": "qi_mov_1_07_gu",
@@ -1548,18 +1568,20 @@
   {
    "id": "slave_atk_3_04_gu",
    "name": "驭狼蛊",
-   "game_rank": 3,
-   "status": "divergence",
+   "game_rank": 2,
+   "status": "ruling_applied",
    "lore_rank": 2,
-   "anchor": "E:V3-078942"
+   "anchor": "E:V3-078942",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=3）"
   },
   {
    "id": "slave_atk_3_05_gu",
    "name": "驭熊蛊",
-   "game_rank": 3,
-   "status": "divergence",
+   "game_rank": 2,
+   "status": "ruling_applied",
    "lore_rank": 2,
-   "anchor": "E:V1-024900"
+   "anchor": "E:V1-024900",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=3）"
   },
   {
    "id": "slave_atk_1_06_gu",
@@ -1600,7 +1622,7 @@
    "status": "name_reuse",
    "lore_rank": 7,
    "anchor": "E:V5-267348",
-   "note": "原文净魂仙蛊至少七转；游戏 rank=1 同名重用"
+   "note": "原文净魂仙蛊至少七转；游戏 rank=1 同名重用；L0 裁定：确认非有意适配，待产品命名方案"
   },
   {
    "id": "soul_atk_5_03_gu",
@@ -1807,7 +1829,7 @@
    "status": "name_reuse",
    "lore_rank": 9,
    "anchor": "E:V3-103100",
-   "note": "原文智慧蛊九转传说口径；游戏 rank=1 同名重用，详见 gu/wisdom-gu.md"
+   "note": "原文智慧蛊九转传说口径；游戏 rank=1 同名重用，详见 gu/wisdom-gu.md；L0 裁定：确认非有意适配，待产品命名方案"
   },
   {
    "id": "wisdom_atk_1_02_gu",
@@ -1926,10 +1948,11 @@
   {
    "id": "wood_heal_3_03_gu",
    "name": "草傀蛊",
-   "game_rank": 3,
-   "status": "divergence",
+   "game_rank": 1,
+   "status": "ruling_applied",
    "lore_rank": 1,
-   "anchor": "E:V2-067080"
+   "anchor": "E:V2-067080",
+   "note": "L0 裁定 2026-09-25 依原文改 rank（原 game=3）"
   },
   {
    "id": "wood_heal_5_04_gu",
