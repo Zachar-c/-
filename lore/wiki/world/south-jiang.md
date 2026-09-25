@@ -32,7 +32,7 @@ sources:
 - 南疆不是单纯的战斗地图；地形、交通、贸易和山寨关系共同决定人物的行动成本。
 - 阅读早期剧情时，可把“山寨—商队—野外资源—兽潮”视为一套相互连接的局部生态。
 
-相关页面：[青茅山](../events/qing-mao-mountain.md)、[修炼体系](cultivation-system.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)。
+相关页面：[青茅山](../events/qing-mao-mountain.md)、[狼潮](../events/wolf-tide.md)、[兽潮](beast-tide.md)、[修炼体系](cultivation-system.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)。
 
 ## 待核对
 

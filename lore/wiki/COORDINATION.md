@@ -7,7 +7,7 @@
 | 线 | 簇车道 | 页面范围 | 状态 |
 |---|---|---|---|
 | A（Narrative Compiler 主线） | 剧情簇 QMS → 叙事簇 FATE → **规则簇：仙窍—仙元—灾劫—道痕** | gu/、characters/、events/ 的 ID 化；world-operating-system、cultivation-system、aptitude-and-aperture、soul-path、primeval-essence | QMS ✅ 49.5/50 · FATE ✅ 50/50 · 规则簇待开 |
-| B（兽潮线） | 狼潮/兽潮簇（WTC） | events/wolf-tide.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | 进行中（工作树未提交） |
+| B（兽潮线） | 狼潮/兽潮簇（WTC） | events/wolf-tide.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | 第一标段已提交（小兽潮→爆发日序幕，EVT-WTC-001…007）；覆灭段核验 + benchmark-wtc 待收尾批 |
 
 ## 共享页分区块规则
 

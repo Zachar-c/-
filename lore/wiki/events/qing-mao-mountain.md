@@ -47,6 +47,13 @@ schema: 2
 | EVT-QMS-013 | 公开勒索全班 | [方源](../characters/fang-yuan.md) | E:V1-004314 |
 | EVT-QMS-014 | 杀高碗与送盒善后 | [方源](../characters/fang-yuan.md) | E:V1-005420 |
 | EVT-QMS-015 | 狼情侦察：狼巢将满、来年必有狼潮、三只雷冠头狼三寨分摊 | 本页 | E:V1-004906（4906–4914 行） |
+| EVT-WTC-001 | 小兽潮形成与全寨动员 | [狼潮](wolf-tide.md) | E:V1-014750 |
+| EVT-WTC-002 | 野猪王围猎与角三小组覆灭 | [狼潮](wolf-tide.md) | E:V1-015236 |
+| EVT-WTC-003 | 家老救援与小兽潮清点 | [狼潮](wolf-tide.md) | E:V1-015528 |
+| EVT-WTC-004 | 前世记忆确认与备战套现 | [狼潮](wolf-tide.md) | E:V1-018240 |
+| EVT-WTC-005 | 会盟坡三寨会盟 | [狼潮](wolf-tide.md) | E:V1-020612 |
+| EVT-WTC-006 | 豪电狼现身与狂电狼情报确认 | [狼潮](wolf-tide.md) | E:V1-021860 |
+| EVT-WTC-007 | 群狼袭寨（爆发日序幕） | [狼潮](wolf-tide.md) | E:V1-025308 |
 
 ## 资料整理
 
@@ -81,4 +88,4 @@ schema: 2
 - 三族地理边界、历次狼潮的精确年份和伤亡、主要人物的完整事件顺序需要继续按章节补齐。
 - 本批新增的 A2b/A 整理条目均为笔记层级：合炼序列与蛊虫盘、战功数值、雷冠头狼/狡电狈/血滴子机制、天元宝莲与花酒行者复仇关系、血湖墓地传承细节、覆灭伤亡、铁案推断链，均须回原文逐段核验后才能升级为原著事实。
 
-关联页面：[南疆](../world/south-jiang.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)、[月光蛊](../gu/moonlight-gu.md)、[修炼体系](../world/cultivation-system.md)。
+关联页面：[南疆](../world/south-jiang.md)、[狼潮](wolf-tide.md)、[兽潮](../world/beast-tide.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)、[月光蛊](../gu/moonlight-gu.md)、[修炼体系](../world/cultivation-system.md)。
