@@ -1,0 +1,1983 @@
+{
+ "meta": {
+  "generated": "2026-09-25",
+  "purpose": "蛊虫总表精蒸馏的游戏桥接层（L0 指令：精蒸馏蛊虫总表接入游戏中建模）：lore/wiki/gu/roster-3.md 的机器可读投影，只读接入，不修改 gu.json 契约",
+  "scope": "gu.json 中 source=novel 的 270 个蛊；school_derived/test 为游戏自创（L6），不进本层",
+  "method": "同窗邻近「N转」明文检索+主持人逐条人工复核（排除指代产物/蛊师/他蛊的假阳性与子串碰撞）",
+  "status_legend": {
+   "match": "game转数与原文一致（带锚点）",
+   "divergence": "game转数与原文明文分叉，以原文为准登记",
+   "rank_cap": "原文六转以上仙蛊，游戏按凡蛊上限压缩为5",
+   "name_reuse": "游戏以传奇蛊名命名低转蛊（原文同名蛊为六转以上）",
+   "collision": "蛊名子串碰撞/泛称/双口径，待核",
+   "timepoint": "原文多时点转数，game取其中一段",
+   "unverified": "首现同窗未检得转数明文，待扩容批"
+  }
+ },
+ "counts": {
+  "match": 77,
+  "unverified": 117,
+  "divergence": 19,
+  "name_reuse": 5,
+  "collision": 18,
+  "rank_cap": 33,
+  "timepoint": 1
+ },
+ "gu": [
+  {
+   "id": "small_light_gu",
+   "name": "小光蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V1-015710",
+   "note": "同句「二转」指合炼产物月芒蛊；小光蛊一转"
+  },
+  {
+   "id": "moonlight_gu",
+   "name": "月光蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V1-001492"
+  },
+  {
+   "id": "moon_glow_gu",
+   "name": "月芒蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V1-015710"
+  },
+  {
+   "id": "moon_ray_gu",
+   "name": "月痕蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "moon_shadow_gu",
+   "name": "月影蛊",
+   "game_rank": 3,
+   "status": "divergence",
+   "lore_rank": 4,
+   "anchor": "E:V1-026792",
+   "note": "单源明文，与 game=3 分叉待裁"
+  },
+  {
+   "id": "vitality_grass_gu",
+   "name": "生机草蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_gu",
+   "name": "力量蛊",
+   "game_rank": 1,
+   "status": "name_reuse",
+   "lore_rank": 9,
+   "anchor": "E:V3-114472",
+   "note": "原文力量蛊为九转传奇（103100 同）；游戏 rank=1 力量蛊为同名重用"
+  },
+  {
+   "id": "bear_strength_gu",
+   "name": "熊力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "white_boar_strength_gu",
+   "name": "白豕蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V1-009980"
+  },
+  {
+   "id": "jade_skin_gu",
+   "name": "玉皮蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V1-009654",
+   "note": "「一转蛊虫中…次于玉皮蛊」明文"
+  },
+  {
+   "id": "white_jade_gu",
+   "name": "白玉蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V1-009986"
+  },
+  {
+   "id": "stone_shell_gu",
+   "name": "石皮蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V3-076364"
+  },
+  {
+   "id": "blood_farewell_gu",
+   "name": "爱别离",
+   "game_rank": 1,
+   "status": "divergence",
+   "lore_rank": 2,
+   "anchor": "E:V1-011800"
+  },
+  {
+   "id": "blood_droplet_gu",
+   "name": "血滴子",
+   "game_rank": 1,
+   "status": "divergence",
+   "lore_rank": 5,
+   "anchor": "E:V1-028476"
+  },
+  {
+   "id": "blood_bat_gu",
+   "name": "刀翅血蝠蛊",
+   "game_rank": 1,
+   "status": "divergence",
+   "lore_rank": 3,
+   "anchor": "E:V1-031864",
+   "note": "M0 六蛊之一；游戏 rank=1 或为开局适配，见 gu/m0-six-gu.md 待裁"
+  },
+  {
+   "id": "blood_atk_4_01_gu",
+   "name": "血颅蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V1-033624",
+   "note": "「四转的血颅蛊」明文"
+  },
+  {
+   "id": "blood_atk_5_02_gu",
+   "name": "血手印蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V2-050082"
+  },
+  {
+   "id": "blood_atk_3_03_gu",
+   "name": "血气蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V1-026840",
+   "note": "「二转月芒蛊和血气蛊合炼成三转」中转数指产物，本体待核"
+  },
+  {
+   "id": "blood_atk_5_04_gu",
+   "name": "血汗蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_5_05_gu",
+   "name": "经血蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_mov_5_06_gu",
+   "name": "血影蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_5_07_gu",
+   "name": "血战蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_1_08_gu",
+   "name": "血神子蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_5_09_gu",
+   "name": "血神子",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V1-028484"
+  },
+  {
+   "id": "blood_atk_4_10_gu",
+   "name": "血狂蛊",
+   "game_rank": 4,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_3_11_gu",
+   "name": "血月蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-026936"
+  },
+  {
+   "id": "blood_atk_5_12_gu",
+   "name": "血本仙蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V5-195948"
+  },
+  {
+   "id": "blood_atk_5_13_gu",
+   "name": "血本蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V5-199800"
+  },
+  {
+   "id": "blood_atk_5_14_gu",
+   "name": "血缘仙蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V5-350822"
+  },
+  {
+   "id": "blood_atk_3_15_gu",
+   "name": "血蝠蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V1-031864",
+   "note": "「血蝠蛊」为「刀翅血蝠蛊」子串，是否同蛊待核"
+  },
+  {
+   "id": "blood_atk_1_16_gu",
+   "name": "血脉蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_1_17_gu",
+   "name": "血蟒蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "blood_atk_1_18_gu",
+   "name": "鳄力蛊",
+   "game_rank": 1,
+   "status": "divergence",
+   "lore_rank": 2,
+   "anchor": "E:V2-035502"
+  },
+  {
+   "id": "bone_def_3_01_gu",
+   "name": "骨枪蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V2-047276",
+   "note": "双口径：三转（39000）与「二转蛊疑似骨枪蛊」（47276）"
+  },
+  {
+   "id": "bone_def_3_02_gu",
+   "name": "螺旋骨枪蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "bone_atk_3_03_gu",
+   "name": "骨刺蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-039150"
+  },
+  {
+   "id": "bone_mov_4_04_gu",
+   "name": "骨翼蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-074910"
+  },
+  {
+   "id": "bone_def_3_05_gu",
+   "name": "玉骨蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-040530"
+  },
+  {
+   "id": "bone_def_1_06_gu",
+   "name": "白骨蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "bone_def_2_07_gu",
+   "name": "骨盾蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "dream_def_5_01_gu",
+   "name": "梦甲蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V6-396296"
+  },
+  {
+   "id": "dream_atk_5_02_gu",
+   "name": "梦蝶仙蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V6-396902"
+  },
+  {
+   "id": "dream_atk_5_03_gu",
+   "name": "做梦蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "dream_atk_1_04_gu",
+   "name": "睡蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "dream_atk_1_05_gu",
+   "name": "梦境蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "dream_atk_5_06_gu",
+   "name": "解谜蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V5-199800"
+  },
+  {
+   "id": "dream_atk_5_07_gu",
+   "name": "解谜仙蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "dream_rec_2_20_gu",
+   "name": "梦话蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "earth_def_3_01_gu",
+   "name": "石窍蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-034292",
+   "note": "「石窍蛊却只有三转」明文"
+  },
+  {
+   "id": "earth_atk_5_02_gu",
+   "name": "洞地蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-078492"
+  },
+  {
+   "id": "earth_atk_5_03_gu",
+   "name": "地藏花蛊",
+   "game_rank": 5,
+   "status": "divergence",
+   "lore_rank": 2,
+   "anchor": "E:V3-080158",
+   "note": "五转者为晋升产物地藏花王"
+  },
+  {
+   "id": "earth_atk_1_04_gu",
+   "name": "地藏花王蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "earth_atk_1_05_gu",
+   "name": "泥沼蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "fire_atk_2_01_gu",
+   "name": "鬼火蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V3-081722"
+  },
+  {
+   "id": "fire_atk_4_02_gu",
+   "name": "丹火蛊",
+   "game_rank": 4,
+   "status": "divergence",
+   "lore_rank": 3,
+   "anchor": "E:V2-057866"
+  },
+  {
+   "id": "fire_atk_3_03_gu",
+   "name": "炎心蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "fire_atk_1_04_gu",
+   "name": "火鸦蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "fire_atk_4_05_gu",
+   "name": "火龙蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V1-032036"
+  },
+  {
+   "id": "fire_atk_4_06_gu",
+   "name": "火蛇蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-058006"
+  },
+  {
+   "id": "fire_atk_4_07_gu",
+   "name": "炎蛊",
+   "game_rank": 4,
+   "status": "collision",
+   "anchor": "E:V3-084408",
+   "note": "「炎蛊」与鬼炎蛊(三转)/鬼焱蛊(四转)碰撞"
+  },
+  {
+   "id": "fire_mov_4_39_gu",
+   "name": "火炭蛊",
+   "game_rank": 4,
+   "status": "divergence",
+   "lore_rank": 1,
+   "anchor": "E:V4-154990",
+   "note": "「一转单窍火炭蛊」明文"
+  },
+  {
+   "id": "force_atk_3_01_gu",
+   "name": "力气蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V2-059736",
+   "note": "凡蛊力气蛊与六转仙蛊力气蛊（199800 列）疑双实体"
+  },
+  {
+   "id": "force_atk_4_02_gu",
+   "name": "苦力蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-056860"
+  },
+  {
+   "id": "force_heal_3_03_gu",
+   "name": "自力更生蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-064192"
+  },
+  {
+   "id": "force_atk_4_04_gu",
+   "name": "全力以赴蛊",
+   "game_rank": 4,
+   "status": "timepoint",
+   "lore_rank": 3,
+   "anchor": "E:V2-052464",
+   "note": "初得三转明文；后经升炼晋升（节215《提升全力以赴蛊》），game=4 取中段时点，多时点口径"
+  },
+  {
+   "id": "force_atk_1_05_gu",
+   "name": "斤力蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V3-081746"
+  },
+  {
+   "id": "force_atk_2_06_gu",
+   "name": "十斤之力蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V3-081748"
+  },
+  {
+   "id": "force_atk_3_07_gu",
+   "name": "一钧之力蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V3-081750"
+  },
+  {
+   "id": "force_atk_4_08_gu",
+   "name": "十钧之力蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V3-081752"
+  },
+  {
+   "id": "force_atk_1_09_gu",
+   "name": "百钧之力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_5_10_gu",
+   "name": "钧力蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V3-081762",
+   "note": "证据行七转指楚度；钧力蛊本体转数待核"
+  },
+  {
+   "id": "force_atk_4_11_gu",
+   "name": "兽力蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V3-081958"
+  },
+  {
+   "id": "force_atk_1_12_gu",
+   "name": "牛力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_1_13_gu",
+   "name": "马力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_1_14_gu",
+   "name": "狼力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_1_15_gu",
+   "name": "铁冠鹰力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_5_16_gu",
+   "name": "群力蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V4-125666"
+  },
+  {
+   "id": "force_atk_4_17_gu",
+   "name": "借力蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V4-142914"
+  },
+  {
+   "id": "force_atk_4_18_gu",
+   "name": "费力蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V3-092738"
+  },
+  {
+   "id": "force_atk_5_19_gu",
+   "name": "我力蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V4-128088"
+  },
+  {
+   "id": "force_atk_5_20_gu",
+   "name": "我力仙蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V4-177370"
+  },
+  {
+   "id": "force_mov_5_21_gu",
+   "name": "飞熊之力蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V3-109462"
+  },
+  {
+   "id": "force_def_5_22_gu",
+   "name": "拔山蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_5_23_gu",
+   "name": "挽澜蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_1_24_gu",
+   "name": "大力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_4_25_gu",
+   "name": "巨力蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-058922"
+  },
+  {
+   "id": "force_atk_4_26_gu",
+   "name": "直撞蛊",
+   "game_rank": 4,
+   "status": "divergence",
+   "lore_rank": 3,
+   "anchor": "E:V3-095104",
+   "note": "「两对三转的横冲蛊、直撞蛊」明文；四转者为合炼产物"
+  },
+  {
+   "id": "force_atk_4_27_gu",
+   "name": "横冲蛊",
+   "game_rank": 4,
+   "status": "divergence",
+   "lore_rank": 3,
+   "anchor": "E:V3-095104",
+   "note": "「两对三转的横冲蛊、直撞蛊」，四转者为合炼产物横冲直撞蛊"
+  },
+  {
+   "id": "force_atk_4_28_gu",
+   "name": "横冲直撞蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-064168",
+   "note": "「六只的四转蛊了。分别是苦力蛊，横冲直撞蛊…」明文"
+  },
+  {
+   "id": "force_atk_3_29_gu",
+   "name": "天蓬蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-009986",
+   "note": "「三转的天蓬蛊」明文"
+  },
+  {
+   "id": "force_atk_3_30_gu",
+   "name": "力气仙蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "force_atk_1_31_gu",
+   "name": "天力蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "gold_atk_5_01_gu",
+   "name": "点金蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V2-069422"
+  },
+  {
+   "id": "gold_atk_4_02_gu",
+   "name": "金龙蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-069222"
+  },
+  {
+   "id": "gold_atk_5_03_gu",
+   "name": "金风送爽蛊",
+   "game_rank": 5,
+   "status": "divergence",
+   "lore_rank": 4,
+   "anchor": "E:V2-069230",
+   "note": "「堪比五转」是效果评价非品阶"
+  },
+  {
+   "id": "gold_atk_4_04_gu",
+   "name": "金缕衣蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-069252"
+  },
+  {
+   "id": "gold_atk_5_05_gu",
+   "name": "金霞蛊",
+   "game_rank": 5,
+   "status": "divergence",
+   "lore_rank": 4,
+   "anchor": "E:V2-069252"
+  },
+  {
+   "id": "gold_atk_3_06_gu",
+   "name": "金罡蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-055508"
+  },
+  {
+   "id": "gold_def_1_07_gu",
+   "name": "铁皮蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "gold_def_3_08_gu",
+   "name": "铜皮蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-055814"
+  },
+  {
+   "id": "gold_def_3_09_gu",
+   "name": "古铜皮蛊",
+   "game_rank": 3,
+   "status": "divergence",
+   "lore_rank": 4,
+   "anchor": "E:V2-065994",
+   "note": "四转晋升后即古铜皮蛊"
+  },
+  {
+   "id": "gold_def_3_10_gu",
+   "name": "铁柜蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-065586"
+  },
+  {
+   "id": "gold_atk_2_11_gu",
+   "name": "赤铁舍利蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V1-018066",
+   "note": "「二转的是赤铁舍利蛊」明文"
+  },
+  {
+   "id": "gold_atk_2_12_gu",
+   "name": "青铜舍利蛊",
+   "game_rank": 2,
+   "status": "divergence",
+   "lore_rank": 1,
+   "anchor": "E:V1-018066"
+  },
+  {
+   "id": "gold_atk_3_13_gu",
+   "name": "白银舍利蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-018066"
+  },
+  {
+   "id": "gold_atk_4_14_gu",
+   "name": "黄金舍利蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V1-018068"
+  },
+  {
+   "id": "gold_atk_5_15_gu",
+   "name": "紫晶舍利蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-078004"
+  },
+  {
+   "id": "gold_atk_2_16_gu",
+   "name": "舍利蛊",
+   "game_rank": 2,
+   "status": "collision",
+   "anchor": "E:V1-018066",
+   "note": "「舍利蛊」为舍利蛊系列泛称"
+  },
+  {
+   "id": "gold_atk_5_17_gu",
+   "name": "金甲蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-105906"
+  },
+  {
+   "id": "gold_atk_5_18_gu",
+   "name": "剑蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V4-182352",
+   "note": "「剑蛊」为「慧剑蛊」子串误配"
+  },
+  {
+   "id": "gold_atk_2_19_gu",
+   "name": "铁蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V1-030746"
+  },
+  {
+   "id": "gold_atk_5_20_gu",
+   "name": "金蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V2-069422"
+  },
+  {
+   "id": "heaven_atk_5_01_gu",
+   "name": "宿命蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 9,
+   "anchor": "E:V3-103100",
+   "note": "九转为传说口径；正文宿命蛊六转口径见 gu/fate-gu.md，双口径登记"
+  },
+  {
+   "id": "heaven_atk_5_02_gu",
+   "name": "命运蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 9,
+   "anchor": "E:V5-316328"
+  },
+  {
+   "id": "heaven_atk_5_03_gu",
+   "name": "天妒仙蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V6-402772"
+  },
+  {
+   "id": "heaven_atk_5_04_gu",
+   "name": "天怒仙蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "heaven_atk_5_05_gu",
+   "name": "天悲仙蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "heaven_atk_5_06_gu",
+   "name": "天机蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V5-276396"
+  },
+  {
+   "id": "heaven_atk_5_07_gu",
+   "name": "寿蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V1-021016",
+   "note": "「寿蛊」泛称（百年寿蛊/千年寿蛊分档）"
+  },
+  {
+   "id": "heaven_atk_5_08_gu",
+   "name": "雷电蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 9,
+   "anchor": "E:V6-376300"
+  },
+  {
+   "id": "heaven_atk_4_09_gu",
+   "name": "雷盾蛊",
+   "game_rank": 4,
+   "status": "collision",
+   "anchor": "E:V1-029180",
+   "note": "证据行未明言本体转数，待核"
+  },
+  {
+   "id": "heaven_atk_3_10_gu",
+   "name": "雷翼蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-027304"
+  },
+  {
+   "id": "heaven_atk_1_11_gu",
+   "name": "命蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V1-002594"
+  },
+  {
+   "id": "heaven_atk_1_12_gu",
+   "name": "灾蛊",
+   "game_rank": 1,
+   "status": "name_reuse",
+   "lore_rank": 7,
+   "anchor": "E:V3-104130",
+   "note": "原文招灾蛊高达七转；游戏 rank=1 同名重用"
+  },
+  {
+   "id": "heaven_atk_3_13_gu",
+   "name": "雷蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-025544"
+  },
+  {
+   "id": "heaven_atk_3_14_gu",
+   "name": "电蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V6-376300",
+   "note": "「电蛊」为「雷电蛊」子串误配"
+  },
+  {
+   "id": "human_atk_1_01_gu",
+   "name": "自己蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_02_gu",
+   "name": "爱情蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 9,
+   "anchor": "E:V4-186806"
+  },
+  {
+   "id": "human_rec_1_03_gu",
+   "name": "希望蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_1_04_gu",
+   "name": "虚荣蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_05_gu",
+   "name": "胆识蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "human_def_1_06_gu",
+   "name": "固执蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_1_07_gu",
+   "name": "尊严蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_1_08_gu",
+   "name": "忧患蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_def_5_09_gu",
+   "name": "骨肉团圆蛊",
+   "game_rank": 5,
+   "status": "unverified",
+   "lore_rank": 3,
+   "anchor": "E:V2-057692",
+   "note": "sweep 线索行需人工复核：正是通过骨肉团圆蛊，转化而来的三转巅峰雪银真元。"
+  },
+  {
+   "id": "human_atk_5_10_gu",
+   "name": "能力蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V6-402010",
+   "note": "证据行仅言收取者七转，蛊本体转数未核"
+  },
+  {
+   "id": "human_atk_5_11_gu",
+   "name": "努力蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_1_12_gu",
+   "name": "学习蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_2_13_gu",
+   "name": "才华蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_2_14_gu",
+   "name": "认真蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_3_15_gu",
+   "name": "辛苦蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_3_16_gu",
+   "name": "悲伤蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_4_17_gu",
+   "name": "愚蠢蛊",
+   "game_rank": 4,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_18_gu",
+   "name": "勇气蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_3_19_gu",
+   "name": "刃蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V1-023688",
+   "note": "「刃蛊」为「冰刃蛊」子串误配"
+  },
+  {
+   "id": "human_atk_1_20_gu",
+   "name": "匠人蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_21_gu",
+   "name": "大侠蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V5-363292"
+  },
+  {
+   "id": "human_atk_2_22_gu",
+   "name": "驯兽师蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_2_23_gu",
+   "name": "丐帮蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_3_24_gu",
+   "name": "长老蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_3_25_gu",
+   "name": "兵卒蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_4_26_gu",
+   "name": "伍长蛊",
+   "game_rank": 4,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_27_gu",
+   "name": "什长蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_1_28_gu",
+   "name": "百夫长蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_2_29_gu",
+   "name": "虚情假意蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_2_30_gu",
+   "name": "儿女情长蛊",
+   "game_rank": 2,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_31_gu",
+   "name": "海誓蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V2-071240"
+  },
+  {
+   "id": "human_def_1_32_gu",
+   "name": "山盟蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_3_33_gu",
+   "name": "毒誓蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V2-049768"
+  },
+  {
+   "id": "human_atk_5_34_gu",
+   "name": "悔蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V5-309674"
+  },
+  {
+   "id": "human_log_3_35_gu",
+   "name": "名声蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "human_def_3_36_gu",
+   "name": "人皮蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_5_37_gu",
+   "name": "人如故蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-098826"
+  },
+  {
+   "id": "human_atk_1_38_gu",
+   "name": "人如故仙蛊",
+   "game_rank": 1,
+   "status": "name_reuse",
+   "lore_rank": 6,
+   "anchor": "E:V5-270480",
+   "note": "原文人如故为六转仙蛊；游戏 rank=1 同名重用"
+  },
+  {
+   "id": "human_atk_4_39_gu",
+   "name": "理想蛊",
+   "game_rank": 4,
+   "status": "unverified"
+  },
+  {
+   "id": "human_atk_4_40_gu",
+   "name": "情蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V3-106818"
+  },
+  {
+   "id": "human_atk_5_41_gu",
+   "name": "恨蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V6-376116"
+  },
+  {
+   "id": "human_heal_5_42_gu",
+   "name": "团圆蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V2-057692",
+   "note": "「团圆蛊」为「骨肉团圆蛊」子串误配"
+  },
+  {
+   "id": "light_atk_1_01_gu",
+   "name": "月旋蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "light_atk_3_02_gu",
+   "name": "邀月蛊",
+   "game_rank": 3,
+   "status": "divergence",
+   "lore_rank": 2,
+   "anchor": "E:V1-016922"
+  },
+  {
+   "id": "light_atk_5_03_gu",
+   "name": "太光蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V2-072028"
+  },
+  {
+   "id": "light_atk_1_04_gu",
+   "name": "光蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V1-001492"
+  },
+  {
+   "id": "light_atk_3_05_gu",
+   "name": "月蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-016922"
+  },
+  {
+   "id": "light_atk_1_06_gu",
+   "name": "星光蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "light_rec_3_07_gu",
+   "name": "星芽蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V4-123856"
+  },
+  {
+   "id": "light_rec_5_08_gu",
+   "name": "星河蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-106996"
+  },
+  {
+   "id": "light_rec_3_09_gu",
+   "name": "星萤蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V3-085972"
+  },
+  {
+   "id": "light_rec_1_10_gu",
+   "name": "明星蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "light_rec_5_11_gu",
+   "name": "星眸蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "light_rec_5_12_gu",
+   "name": "星念蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-093044"
+  },
+  {
+   "id": "luck_atk_5_01_gu",
+   "name": "鸿运齐天蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V3-114422"
+  },
+  {
+   "id": "luck_rec_5_02_gu",
+   "name": "察运蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-113096"
+  },
+  {
+   "id": "luck_atk_1_03_gu",
+   "name": "招灾蛊",
+   "game_rank": 1,
+   "status": "unverified",
+   "lore_rank": 7,
+   "anchor": "E:V3-104130",
+   "note": "sweep 线索行需人工复核：这招灾蛊，品级高达七转，比方源如今的春秋蝉还要高一个档次。效用极端奇妙，居然是涉"
+  },
+  {
+   "id": "luck_atk_5_04_gu",
+   "name": "狗屎运蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "luck_atk_5_05_gu",
+   "name": "排难蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V4-128094"
+  },
+  {
+   "id": "luck_atk_1_06_gu",
+   "name": "福蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "luck_atk_1_07_gu",
+   "name": "鸿运蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "luck_atk_1_08_gu",
+   "name": "转运蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "qi_atk_1_01_gu",
+   "name": "硬气蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "qi_atk_5_02_gu",
+   "name": "尸气蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "qi_mov_4_03_gu",
+   "name": "风气蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-057022"
+  },
+  {
+   "id": "qi_atk_1_04_gu",
+   "name": "吐气蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "qi_atk_5_05_gu",
+   "name": "龙息蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V5-223776"
+  },
+  {
+   "id": "qi_mov_4_06_gu",
+   "name": "云蛊",
+   "game_rank": 4,
+   "status": "divergence",
+   "lore_rank": 3,
+   "anchor": "E:V2-054800",
+   "note": "原文「阴阳两云蛊虽是三转」，游戏泛名云蛊"
+  },
+  {
+   "id": "qi_mov_1_07_gu",
+   "name": "雾蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "qi_atk_5_08_gu",
+   "name": "霞蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V2-069252",
+   "note": "「霞蛊」为「金霞蛊」子串误配"
+  },
+  {
+   "id": "refine_log_5_01_gu",
+   "name": "升炼蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V6-394452"
+  },
+  {
+   "id": "refine_log_5_02_gu",
+   "name": "九转升炼蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 9,
+   "anchor": "E:V6-429520"
+  },
+  {
+   "id": "refine_log_2_03_gu",
+   "name": "合炼蛊",
+   "game_rank": 2,
+   "status": "match",
+   "lore_rank": 2,
+   "anchor": "E:V1-012766"
+  },
+  {
+   "id": "refine_atk_1_04_gu",
+   "name": "化蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V2-039454"
+  },
+  {
+   "id": "refine_log_5_05_gu",
+   "name": "炼炉蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V4-159688"
+  },
+  {
+   "id": "refine_log_1_06_gu",
+   "name": "精炼蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "refine_log_5_07_gu",
+   "name": "量蛊",
+   "game_rank": 5,
+   "status": "collision",
+   "anchor": "E:V3-103100",
+   "note": "「量蛊」为「力量蛊」子串误配"
+  },
+  {
+   "id": "refine_atk_1_08_gu",
+   "name": "称蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "slave_atk_5_01_gu",
+   "name": "奴隶蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V1-002640"
+  },
+  {
+   "id": "slave_atk_4_02_gu",
+   "name": "驭兽蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V3-083834"
+  },
+  {
+   "id": "slave_atk_1_03_gu",
+   "name": "驭犬蛊",
+   "game_rank": 1,
+   "status": "match",
+   "lore_rank": 1,
+   "anchor": "E:V2-060300"
+  },
+  {
+   "id": "slave_atk_3_04_gu",
+   "name": "驭狼蛊",
+   "game_rank": 3,
+   "status": "divergence",
+   "lore_rank": 2,
+   "anchor": "E:V3-078942"
+  },
+  {
+   "id": "slave_atk_3_05_gu",
+   "name": "驭熊蛊",
+   "game_rank": 3,
+   "status": "divergence",
+   "lore_rank": 2,
+   "anchor": "E:V1-024900"
+  },
+  {
+   "id": "slave_atk_1_06_gu",
+   "name": "驭虎蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "slave_atk_1_07_gu",
+   "name": "驭鹿蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "slave_atk_1_08_gu",
+   "name": "驭牛蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "slave_atk_1_09_gu",
+   "name": "傀儡蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "soul_atk_5_01_gu",
+   "name": "魂灯蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V5-264322"
+  },
+  {
+   "id": "soul_atk_1_02_gu",
+   "name": "净魂仙蛊",
+   "game_rank": 1,
+   "status": "name_reuse",
+   "lore_rank": 7,
+   "anchor": "E:V5-267348",
+   "note": "原文净魂仙蛊至少七转；游戏 rank=1 同名重用"
+  },
+  {
+   "id": "soul_atk_5_03_gu",
+   "name": "命牌蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "soul_atk_1_04_gu",
+   "name": "摄魂蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "soul_atk_1_05_gu",
+   "name": "落魄蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "soul_atk_1_06_gu",
+   "name": "灵蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "soul_atk_1_07_gu",
+   "name": "魄蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "sword_atk_4_01_gu",
+   "name": "剑气蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V5-195606"
+  },
+  {
+   "id": "sword_atk_5_02_gu",
+   "name": "飞剑蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V5-190076"
+  },
+  {
+   "id": "sword_atk_5_03_gu",
+   "name": "剑鞘蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V5-195650"
+  },
+  {
+   "id": "water_def_3_01_gu",
+   "name": "水罩蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "water_atk_4_02_gu",
+   "name": "水瀑蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V3-087006"
+  },
+  {
+   "id": "water_atk_5_03_gu",
+   "name": "溪流蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "water_rec_5_04_gu",
+   "name": "浪迹天涯仙蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V4-154944"
+  },
+  {
+   "id": "water_atk_3_05_gu",
+   "name": "雨蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "water_atk_3_06_gu",
+   "name": "冰肌蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-023066"
+  },
+  {
+   "id": "water_atk_3_07_gu",
+   "name": "蓝鸟冰棺蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-022912"
+  },
+  {
+   "id": "water_atk_1_08_gu",
+   "name": "浪蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "water_atk_4_09_gu",
+   "name": "海蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-065292"
+  },
+  {
+   "id": "water_atk_5_10_gu",
+   "name": "河蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-106996"
+  },
+  {
+   "id": "water_atk_5_11_gu",
+   "name": "湖蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V4-154944"
+  },
+  {
+   "id": "water_atk_1_12_gu",
+   "name": "泉蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_atk_1_02_gu",
+   "name": "狂风蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_mov_1_03_gu",
+   "name": "旋风蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_mov_4_04_gu",
+   "name": "龙行虎步蛊",
+   "game_rank": 4,
+   "status": "match",
+   "lore_rank": 4,
+   "anchor": "E:V2-059088"
+  },
+  {
+   "id": "wind_mov_1_05_gu",
+   "name": "迅影蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_mov_5_06_gu",
+   "name": "风虎云龙蛊",
+   "game_rank": 5,
+   "status": "match",
+   "lore_rank": 5,
+   "anchor": "E:V3-107018"
+  },
+  {
+   "id": "wind_atk_1_07_gu",
+   "name": "风刃蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_mov_1_08_gu",
+   "name": "飓风蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_mov_1_09_gu",
+   "name": "清风蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wind_atk_1_10_gu",
+   "name": "电掣蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_1_01_gu",
+   "name": "智慧蛊",
+   "game_rank": 1,
+   "status": "name_reuse",
+   "lore_rank": 9,
+   "anchor": "E:V3-103100",
+   "note": "原文智慧蛊九转传说口径；游戏 rank=1 同名重用，详见 gu/wisdom-gu.md"
+  },
+  {
+   "id": "wisdom_atk_1_02_gu",
+   "name": "思想蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_5_03_gu",
+   "name": "态度蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V4-178490"
+  },
+  {
+   "id": "wisdom_atk_5_04_gu",
+   "name": "定力蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V6-401946"
+  },
+  {
+   "id": "wisdom_atk_5_05_gu",
+   "name": "慧剑蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 8,
+   "anchor": "E:V4-182352"
+  },
+  {
+   "id": "wisdom_atk_1_06_gu",
+   "name": "刻意蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_1_07_gu",
+   "name": "玩意蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_1_08_gu",
+   "name": "留意蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_1_09_gu",
+   "name": "新意蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_1_10_gu",
+   "name": "特意蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_5_15_gu",
+   "name": "妇人心蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 6,
+   "anchor": "E:V5-199800"
+  },
+  {
+   "id": "wisdom_atk_3_17_gu",
+   "name": "读心蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_4_18_gu",
+   "name": "推演蛊",
+   "game_rank": 4,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_rec_5_19_gu",
+   "name": "算计蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_rec_1_20_gu",
+   "name": "灵感蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wisdom_atk_3_21_gu",
+   "name": "心蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V2-046036",
+   "note": "「心蛊」为「僵心蛊」子串误配"
+  },
+  {
+   "id": "wood_atk_3_01_gu",
+   "name": "木魅蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-023550"
+  },
+  {
+   "id": "wood_mov_3_02_gu",
+   "name": "三步芳草蛊",
+   "game_rank": 3,
+   "status": "unverified"
+  },
+  {
+   "id": "wood_heal_3_03_gu",
+   "name": "草傀蛊",
+   "game_rank": 3,
+   "status": "divergence",
+   "lore_rank": 1,
+   "anchor": "E:V2-067080"
+  },
+  {
+   "id": "wood_heal_5_04_gu",
+   "name": "跳跳草蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "wood_atk_1_05_gu",
+   "name": "青藤蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wood_atk_5_06_gu",
+   "name": "荆棘蛊",
+   "game_rank": 5,
+   "status": "unverified"
+  },
+  {
+   "id": "wood_def_1_07_gu",
+   "name": "木甲蛊",
+   "game_rank": 1,
+   "status": "unverified"
+  },
+  {
+   "id": "wood_atk_5_08_gu",
+   "name": "森林蛊",
+   "game_rank": 5,
+   "status": "rank_cap",
+   "lore_rank": 7,
+   "anchor": "E:V6-393748"
+  },
+  {
+   "id": "wood_atk_3_09_gu",
+   "name": "花蛊",
+   "game_rank": 3,
+   "status": "match",
+   "lore_rank": 3,
+   "anchor": "E:V1-028060"
+  },
+  {
+   "id": "wood_heal_3_10_gu",
+   "name": "草蛊",
+   "game_rank": 3,
+   "status": "collision",
+   "anchor": "E:V1-017088",
+   "note": "「草蛊」泛称（原文二转草蛊九叶生机草）"
+  }
+ ]
+}
