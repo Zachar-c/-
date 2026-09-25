@@ -18,6 +18,7 @@
 | 簇四页合计 | 16,481 字符 |
 | 逐段核验窗口 | 13,497 字符（蛊真人-clean.txt 323070–323780 行，711 行） |
 | 字符压缩倍数 | 0.8×（**口径注意**：簇页综合了 QMS 窗口、第 732/733 节与 G/H1/H2 导航的跨窗口知识，页大于单一核验窗口属预期；单窗口压缩口径只适用于 QMS 类连续窗口簇。token 级口径待真实 tokenizer 测量） |
+| **正式 token 指标** | **原文 15,737 tok → Wiki 全簇 15,472 tok（1.0×，早期簇形态：导航/综合层未摊薄），每题摊销 309 tok @ QA 100%** ——见 [distillation-metrics.md](distillation-metrics.md) |
 
 指标口径：`source tokens → retrieved wiki tokens → QA accuracy` 正式测量待 tokenizer 接入；本表当前以 50 题得分与层级判定覆盖度为代理。
 

@@ -18,6 +18,7 @@
 | 簇六页合计 | 24,995 字符（token 级口径待真实 tokenizer 测量后回填） |
 | 覆盖原文窗口 | 347,940 字符（蛊真人-clean.txt 906–17148 行，簇事实主要来源） |
 | 字符压缩倍数 | 13.9×（注意：这是字符压缩倍数，不是 token 压缩率） |
+| **正式 token 指标** | **原文 403,693 tok → Wiki 全簇 32,229 tok（12.5×），每题摊销 645 tok @ QA 99%** ——见 [distillation-metrics.md](distillation-metrics.md) |
 
 指标口径：**每 1K token 可恢复的原著有效知识**以本表 50 题得分与覆盖范围为代理；页面扩充或重构后重记本行。正式指标待一次真实 tokenizer 测量：`source tokens → retrieved wiki tokens → QA accuracy`。
 
