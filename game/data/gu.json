@@ -2,6 +2,9 @@
   {
     "id": "small_light_gu",
     "source": "novel",
+    "source_class": "canon_driven_v1",
+    "canon_refs": ["CAN-SMALL-LIGHT-001", "CAN-SMALL-LIGHT-002"],
+    "canon_anchors": ["E:V1-009708", "E:V1-015710"],
     "rank": 1,
     "feeding_cost": 1,
     "feeding_need": {
@@ -47,6 +50,9 @@
   {
     "id": "moonlight_gu",
     "source": "novel",
+    "source_class": "canon_driven_v1",
+    "canon_refs": ["CAN-SMALL-LIGHT-001"],
+    "canon_anchors": ["E:V1-001472"],
     "rank": 1,
     "feeding_cost": 1,
     "feeding_need": {
@@ -87,6 +93,9 @@
   {
     "id": "moon_glow_gu",
     "source": "novel",
+    "source_class": "canon_driven_v1",
+    "canon_refs": ["CAN-SMALL-LIGHT-002"],
+    "canon_anchors": ["E:V1-015710"],
     "rank": 2,
     "feeding_cost": 2,
     "feeding_need": {
