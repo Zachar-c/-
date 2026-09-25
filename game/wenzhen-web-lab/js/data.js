@@ -6410,7 +6410,7 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "b51b04c4e2c696f6ce5a87ffde404ef9e745bf274db8b792337d1dcd678f2ee2",
+    "contentVersion": "23c3f785a899af57972007ac45c58949e53feee6cfa2fc515b4951e24f25739f",
     "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "entities": {
       "blood_atk_1_18_gu": {
@@ -7566,5 +7566,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "d448a34428740d27ac2c9fcc4fd59a3ea430338f38004ab576e8bef4125665ea"
+  "contentVersion": "ef00380a2617fe774486ab71f9570bf1fdf71ae4a8556e047db4c6d3ecad425a"
 };

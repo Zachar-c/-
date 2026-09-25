@@ -2215,7 +2215,76 @@
         "canon_refs": [
           "CAN-SMALL-LIGHT-001"
         ]
-      }
+      },
+      "states": [
+        {
+          "id": "ST-MOONLIGHT-01",
+          "stage": "存放",
+          "statement": "学堂蛊室白银盘一排供新人挑选；弯月蓝水晶、轻如薄纸、一转",
+          "evidence": [
+            "E:V1-001472"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-02",
+          "stage": "初次炼化（一般个案）",
+          "statement": "半小时耗三成真元仅炼化十二分之一；中断约六小时被驱除殆尽",
+          "evidence": [
+            "E:V1-001840"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-03",
+          "stage": "炼成（方源个案）",
+          "statement": "春秋蝉气息镇压意志后不到五分钟炼成；落额头中间成淡蓝弯月印记",
+          "evidence": [
+            "E:V1-003366"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-04",
+          "stage": "使用",
+          "statement": "三步发射（见下方事件链图后说明）；每记一成真元，中远程十米，初练易偏飞",
+          "evidence": [
+            "E:V1-003604"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-05",
+          "stage": "位置迁移",
+          "statement": "印记随意念沿手臂移动至掌心；方源后期寄居右掌成淡蓝月牙纹路",
+          "evidence": [
+            "E:V1-003606",
+            "E:V1-010930"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-06",
+          "stage": "协同",
+          "statement": "与小光蛊双蛊同催，月刃体积与攻击力各扩大一倍（两只不叠加）",
+          "evidence": [
+            "E:V1-010926",
+            "E:V1-017148"
+          ],
+          "canon_refs": [
+            "CAN-SMALL-LIGHT-001"
+          ]
+        },
+        {
+          "id": "ST-MOONLIGHT-07",
+          "stage": "中阶真元个案",
+          "statement": "酒虫精炼中阶真元催动断骨斩首——个案加成，不泛化",
+          "evidence": [
+            "E:V1-005438"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "qi_atk_5_05_gu",
@@ -2535,7 +2604,48 @@
           "CAN-SMALL-LIGHT-001",
           "CAN-SMALL-LIGHT-002"
         ]
-      }
+      },
+      "states": [
+        {
+          "id": "ST-SMALLLIGHT-01",
+          "stage": "存放",
+          "statement": "学堂蛊室墙角，共五只；形如五角星、约半指甲盖大",
+          "evidence": [
+            "E:V1-009704"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-02",
+          "stage": "炼成",
+          "statement": "寄居宿主右掌掌心，成乳白色五角星图案",
+          "evidence": [
+            "E:V1-010930"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-03",
+          "stage": "使用",
+          "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+          "evidence": [
+            "E:V1-010926",
+            "E:V1-017148"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-04",
+          "stage": "合炼",
+          "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+          "evidence": [
+            "E:V1-015710"
+          ],
+          "canon_refs": [
+            "CAN-SMALL-LIGHT-002"
+          ]
+        }
+      ]
     },
     {
       "id": "soul_atk_1_02_gu",

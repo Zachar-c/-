@@ -73,9 +73,16 @@ def parse_benchmark(path: Path) -> tuple[list[dict], list[str]]:
 def load_pack_ids(pack_path: Path) -> tuple[set[str], dict]:
     pack = json.loads(pack_path.read_text(encoding="utf-8"))
     ids = {e["id"] for e in pack.get("entities", [])}
+    # IR v0.2：实体状态行（states[].id）也是可引用的 pack 条目
+    ids |= {s["id"] for e in pack.get("entities", []) for s in e.get("states", [])}
     ids |= {r["id"] for r in pack.get("rules", [])}
     ids |= {r["id"] for r in pack.get("relations", [])}
     return ids, pack
+
+
+def dead_weight_exempt(pack: dict) -> set[str]:
+    """实体状态行（states[].id）随实体承载，不计入死重统计（其宿主实体已被题目覆盖）。"""
+    return {s["id"] for e in pack.get("entities", []) for s in e.get("states", [])}
 
 
 def main() -> None:
@@ -117,14 +124,14 @@ def main() -> None:
         if not (set(positives) & pack_ids):
             errors.append(f"题{q['no']}：计分题无任何有效 pack 依据")
 
-    dead = sorted(pack_ids - cited)
+    dead = sorted(pack_ids - cited - dead_weight_exempt(pack))
     uncovered_registered = {u for u in uncovered if u and u != "（当前无）"}
     for item in dead:
         if item not in uncovered_registered:
             errors.append(f"pack 死重：{item} 未被任何计分题引用，也未登记未覆盖项")
 
     total = len(scored) - gap_questions
-    print(f"[check_runtime_benchmark] pack 条目 {len(pack_ids)}；"
+    print(f"[check_runtime_benchmark] pack 条目 {len(pack_ids)}（含实体状态行，死重豁免）；"
           f"计分题 {total}（缺口题 {gap_questions}）；被引用 {len(cited)}")
     if errors:
         print("[check_runtime_benchmark] 校验失败：", file=sys.stderr)

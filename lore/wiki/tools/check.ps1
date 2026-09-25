@@ -209,6 +209,9 @@ else {
     $ln = 0
     foreach ($line in $lines) {
       $ln++
+      foreach ($m in [regex]::Matches($line, 'E:V([1-6])-(\d{5})(?!\d)')) {
+        Add-Fail "check9 E-ID 非 6 位行号规范 [E:V$($m.Groups[1].Value)-$($m.Groups[2].Value) 应补齐为 6 位（段域校验对其不可见）]: $($f.FullName):$ln"
+      }
       foreach ($m in [regex]::Matches($line, 'E:V([1-6])-(\d{6})')) {
         $c9total++
         $seg = $segByNum[$m.Groups[1].Value]

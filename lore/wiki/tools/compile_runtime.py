@@ -17,6 +17,8 @@ IR 设计见 docs/design/canon-runtime/2026-09-25-p1-ir.md；审计见同目录 
   也可用 --source 显式指定。
 - 「转数未核」段只有蛊名无 id，本版跳过并在 manifest 登记 coverage；
   转数一律取 roster-3「原文转」（Canon 口径），游戏生效值属 Game Projection，不进 runtime。
+- IR v0.2（P1 月光切片批）：实体页「状态时间线」（ST-*）随实体编译为 states[]，
+  并流入 Context Pack——登记见 docs/design/canon-runtime/2026-09-25-p1-ir.md §6。
 """
 from __future__ import annotations
 
@@ -316,7 +318,27 @@ def compile_roster_entities() -> tuple[list[dict], dict[str, str], int]:
     return entities, name_to_id, unverified_count
 
 
-# ---------- 实体页合并（description/aliases/canon_refs）----------
+# ---------- 实体页合并（description/aliases/canon_refs/状态时间线）----------
+
+def parse_state_rows(text: str) -> list[dict]:
+    """解析实体页「状态时间线」表（ST-*）为状态行列表。"""
+    rows: list[dict] = []
+    for header, trows in iter_tables(text):
+        if not header or header[0] != "状态 ID":
+            continue
+        col = {name: i for i, name in enumerate(header)}
+        for cells in trows:
+            if len(cells) < len(header) or not cells[0].startswith("ST-"):
+                continue
+            rows.append({
+                "id": cells[0],
+                "stage": cells[col["阶段"]],
+                "statement": cells[col["状态"]],
+                "evidence": [m.group(0) for m in EID_RE.finditer(cells[col["证据"]])],
+                "canon_refs": CANREF_RE.findall(cells[col["证据"]]),
+            })
+    return rows
+
 
 def merge_entity_pages(entities: list[dict]) -> list[str]:
     by_id = {e["id"]: e for e in entities}
@@ -324,7 +346,8 @@ def merge_entity_pages(entities: list[dict]) -> list[str]:
     for page in sorted((WIKI / "gu").glob("*.md")):
         if page.name in ("index.md",) or page.name.startswith(("roster", "m0-")):
             continue
-        fm = parse_frontmatter(page.read_text(encoding="utf-8"))
+        text = page.read_text(encoding="utf-8")
+        fm = parse_frontmatter(text)
         if fm.get("type") != "gu":
             continue
         eid = page.stem.replace("-", "_")
@@ -338,6 +361,10 @@ def merge_entity_pages(entities: list[dict]) -> list[str]:
         ent["provenance"]["wiki_pages"].append(f"lore/wiki/gu/{page.name}")
         ent["provenance"]["canon_refs"] = [
             s.split(":", 1)[1] for s in fm.get("sources", []) if s.startswith("canon-index:")]
+        # IR v0.2：实体页「状态时间线」随实体编译（P1 月光切片批，登记见 P1-IR 文档 §6）
+        states = parse_state_rows(text)
+        if states:
+            ent["states"] = states
         merged.append(eid)
     return merged
 
@@ -413,20 +440,14 @@ def index_state_rows() -> dict[str, dict]:
     idx: dict[str, dict] = {}
     for rel in ("lore/wiki/gu/moonlight-gu.md", "lore/wiki/gu/small-light-gu.md"):
         text = (REPO / rel).read_text(encoding="utf-8")
-        for header, rows in iter_tables(text):
-            if not header or header[0] != "状态 ID":
-                continue
-            col = {name: i for i, name in enumerate(header)}
-            for cells in rows:
-                if len(cells) < len(header) or not cells[0].startswith("ST-"):
-                    continue
-                idx[cells[0]] = {
-                    "page": rel,
-                    "stage": cells[col["阶段"]],
-                    "statement": cells[col["状态"]],
-                    "evidence": [m.group(0) for m in EID_RE.finditer(cells[col["证据"]])],
-                    "canon_refs": CANREF_RE.findall(cells[col["证据"]]),
-                }
+        for row in parse_state_rows(text):
+            idx[row["id"]] = {
+                "page": rel,
+                "stage": row["stage"],
+                "statement": row["statement"],
+                "evidence": row["evidence"],
+                "canon_refs": row["canon_refs"],
+            }
     return idx
 
 
@@ -561,6 +582,7 @@ def main() -> None:
 
     # E-ID 段域校验（全对象收集）
     all_eids = [e for ent in entities for e in ent["evidence"]]
+    all_eids += [e for ent in entities for s in ent.get("states", []) for e in s["evidence"]]
     all_eids += [e for r in rules for e in r["evidence"]]
     all_eids += [e for r in relations for e in r["evidence"]]
     eid_errors = validate_eids(all_eids, ranges)
@@ -600,6 +622,7 @@ def main() -> None:
 
     counts = {
         "entities": len(entities),
+        "entity_states": sum(len(ent.get("states", [])) for ent in entities),
         "rules_can": len(canon_rules),
         "rules_page": len(page_rules),
         "rules_total": len(rules),
@@ -620,6 +643,7 @@ def main() -> None:
         "counts": counts,
         "coverage_notes": (
             f"rank 覆盖 {counts['entities']}/270（转数未核 {unverified} 只仅有蛊名无 id，未编译）；"
+            f"实体状态行 {counts['entity_states']} 条（来自实体页状态时间线，随实体与 pack 编译）；"
             "rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。"
         ),
         "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
