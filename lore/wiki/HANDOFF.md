@@ -26,7 +26,7 @@
 
 ## 4. 三线车道（速记，权威版见 COORDINATION）
 
-- **A（本会话）**：规则精蒸馏。已完成：灾劫 TRIB / 道痕 DM / 炼蛊术语 REF / 杀招 KM / 流派境界 PR / 尊者 VEN / 梦道 DRM 七页 + soul-path 深度表 + 哲学轴五批（philosophy.md）+ v2.2 条件③ check9（E-ID 段号自动校验，历史失配 50 处已修正）+ v2.2 条件② 口径调和（TRIB-002/014、PR-002/003）+ v2.2 条件① 基准机制化（benchmark-pool；RULES 独立题集首测 24.5/50）。候选：规则七页扩容批（按 benchmark-rules.md 缺口清单 24 项闭缺）、成尊四条件集齐（菇人乐土弧逐段，取证地图在 venerables.md 待核对）、人心/棋盘轴续挖、尊者页 benchmark。阵道外流派能力标尺、成尊四条件集齐（菇人乐土弧逐段）、人心/棋盘轴续挖、尊者页 benchmark。
+- **A（本会话）**：规则精蒸馏。已完成：灾劫 TRIB / 道痕 DM / 炼蛊术语 REF / 杀招 KM / 流派境界 PR / 尊者 VEN / 梦道 DRM 七页 + soul-path 深度表 + 哲学轴五批（philosophy.md）+ v2.2 条件③ check9（E-ID 段号自动校验，历史失配 50 处已修正）+ v2.2 条件② 口径调和（TRIB-002/014、PR-002/003）+ v2.2 条件① 基准机制化（benchmark-pool；RULES 独立题集首测 24.5/50）+ L0 指令批：蛊虫总表三期精蒸馏（roster-3，270 蛊转数层）+ 游戏桥接层 gu_lore.json。候选：蛊虫扩容批（117 未核转数+18 碰撞+19 分叉 game 侧裁定）、规则七页扩容批（按 benchmark-rules.md 缺口清单 24 项闭缺）、成尊四条件集齐（菇人乐土弧逐段，取证地图在 venerables.md 待核对）、人心/棋盘轴续挖、尊者页 benchmark。阵道外流派能力标尺、成尊四条件集齐（菇人乐土弧逐段）、人心/棋盘轴续挖、尊者页 benchmark。
 - **B（粗蒸馏）**：十三簇全绿 + 游戏数据两批（敌人模型 b4614cc、蛊目录清洗 a321260）；已交接 [HANDOFF-B.md](HANDOFF-B.md)，转按需维护；rules/ 归 A 不动。
 - **C（剧情顺序）**：本轮已收口于卷二终——WTC ✅ 50/50 → CAR ✅ 49.5/50 → TKF ✅ 50/50（三簇全绿）；接续入口见 [HANDOFF-C.md](HANDOFF-C.md)。
 
