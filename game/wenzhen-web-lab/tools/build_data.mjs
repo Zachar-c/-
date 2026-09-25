@@ -39,6 +39,49 @@ const enemyFile = read('data/enemies.json');
 const enemies = Array.isArray(enemyFile) ? enemyFile : (enemyFile.entities || enemyFile.enemies || []);
 const firstRun = read('data/first_run.json');
 
+// RUL-2026-09-25-001 P5 敌人持蛊化：敌方杀招伤害 = 装载主战蛊（kind=strike）按转压缩投影之和。
+// 压缩不变量：表值 ≤ lab attack 曲线且单调不减；逐 intent 构建期校验 Σ==damage（No Silent Fallback）。
+const enemyAttackTable = projections.items?.find((i) => i.id === 'PROJ-LAB-ENEMY-ATTACK-001')?.value || null;
+if (!enemyAttackTable) throw new Error('build_data: projections.json 缺 PROJ-LAB-ENEMY-ATTACK-001（No Silent Fallback）');
+for (let r = 1; r <= 5; r++) {
+  const t = Number(enemyAttackTable[String(r)]);
+  if (!Number.isFinite(t)) throw new Error(`build_data: 敌方攻击投影缺 ${r} 转（PROJ-LAB-ENEMY-ATTACK-001）`);
+  if (t > labRoleCurve.attack[r - 1]) {
+    throw new Error(`build_data: 敌方攻击投影 r${r}=${t} 超过 lab attack 曲线 ${labRoleCurve.attack[r - 1]}（压缩不变量）`);
+  }
+  if (r > 1 && t < Number(enemyAttackTable[String(r - 1)])) {
+    throw new Error(`build_data: 敌方攻击投影 r${r} 单调递减（压缩不变量）`);
+  }
+}
+const guEntityById = Object.fromEntries(guEntities.map((e) => [e.id, e]));
+const resolvedGuKind = (gid, enemyId) => {
+  const g = guEntityById[gid];
+  if (!g) throw new Error(`build_data: 敌人 ${enemyId} 引用蛊 ${gid} 不在 gu.json（No Silent Fallback）`);
+  return g.v1_effect ? g.v1_effect.kind : (v1.default_effect_by_role?.[g.role]?.kind ?? null);
+};
+for (const e of enemies) {
+  const intents = [e.intent, ...(e.phases || []).flatMap((p) => p.intents || [])].filter(Boolean);
+  for (const gid of e.guRefs || []) resolvedGuKind(gid, e.id);
+  for (const it of intents) {
+    for (const gid of it.guRefs || []) resolvedGuKind(gid, e.id);
+    const src = it.attackSource || e.attackSource || 'innate';
+    if (src !== 'gu' || !(Number(it.damage) > 0)) continue;
+    if (!Array.isArray(it.guRefs) || it.guRefs.length === 0) {
+      throw new Error(`build_data: 敌人 ${e.id} 杀招 ${it.id} attackSource=gu 缺 guRefs（No Silent Fallback）`);
+    }
+    const sum = it.guRefs.reduce((acc, gid) => {
+      const g = guEntityById[gid];
+      if (resolvedGuKind(gid, e.id) !== 'strike') return acc;
+      const amt = enemyAttackTable[String(g.rank)];
+      if (amt == null) throw new Error(`build_data: 敌方攻击投影缺 ${g.rank} 转（${gid}）`);
+      return acc + Number(amt);
+    }, 0);
+    if (sum !== Number(it.damage)) {
+      throw new Error(`build_data: 敌人 ${e.id} 杀招 ${it.id} 持蛊合成 Σ${sum} != damage ${it.damage}（No Silent Fallback）`);
+    }
+  }
+}
+
 // 原型选用的蛊：M0 白名单 + 杀招表 + 商店货架实际引用的几只。图标用 Godot 侧既有流派道徽。
 const ICON_BY_SCHOOL = {
   moon: 'gu_moon', light: 'gu_light', force: 'gu_force', water: 'gu_water',
@@ -122,6 +165,25 @@ const defaultBattleEffect = (definition, role, rank) => {
   }
   return effect;
 };
+// P5-B2 曲线收敛：显式 v1_effect 允许 amount-less——kind 定语义（canon），amount 由 lab
+// 曲线投影解析（真源 balance.effect_budget，经 PROJ-LAB-ROLE-CURVE-001）。存量手填 amount
+// （P4 冻结切片）原样保留。kind 无曲线映射且缺 amount 一律 fail-fast（No Silent Fallback）。
+const KIND_TO_CURVE_ROLE = { strike: 'attack', shield: 'defense', heal: 'healing', shift: 'movement' };
+const AMOUNT_FREE_KINDS = new Set(['inspect']); // 计划里是布尔位，不消费 amount
+const resolveEffectAmount = (id, effect, rank) => {
+  const out = JSON.parse(JSON.stringify(effect));
+  if (out.amount != null) return out;
+  if (AMOUNT_FREE_KINDS.has(out.kind)) return out;
+  const curveRole = KIND_TO_CURVE_ROLE[out.kind];
+  if (!curveRole) {
+    throw new Error(`build_data: ${id} 显式 effect kind "${out.kind}" 缺 amount 且无曲线映射（No Silent Fallback）`);
+  }
+  const curve = labRoleCurve[curveRole];
+  if (!curve) throw new Error(`build_data: role ${curveRole} 无 lab 曲线投影（PROJ-LAB-ROLE-CURVE-001）`);
+  const r = Math.min(5, Math.max(1, Number(rank || 1)));
+  out.amount = curve[r - 1];
+  return out;
+};
 const guView = (e) => {
   const battle = battleGuById[e.id] || {};
   const role = battle.role || e.role;
@@ -131,7 +193,7 @@ const guView = (e) => {
   const battleEffect = support
     ? null
     : effect
-      ? JSON.parse(JSON.stringify(effect))
+      ? resolveEffectAmount(e.id, effect, rank)
       : defaultBattleEffect(e, role, rank);
   return {
     id: e.id, name: names.gu?.[e.id] || e.id, rank: e.rank, rarity: e.rarity,
@@ -143,7 +205,7 @@ const guView = (e) => {
     effect: support
       ? { kind: e.id === 'aptitude_gu' ? 'aptitude_up' : 'breakthrough_material' }
       : effect
-        ? JSON.parse(JSON.stringify(effect))
+        ? resolveEffectAmount(e.id, effect, rank)
         : defaultBattleEffect(e, role, rank),
     icon: GU_ICON[e.id] || ICON_BY_SCHOOL[e.school] || 'gu_qi',
     combat: support ? '' : (battle.combat || ''),
@@ -153,6 +215,9 @@ const guView = (e) => {
     lowRankException: Boolean(battle.low_rank_exception || false),
     lifeCost: Number(battle.life_cost ?? 0),
     labOnly: e.id === 'aptitude_gu',
+    // P5-B2 provenance 嵌出：C5/skin 测试与运行时按 id 审计分类与锚点
+    sourceClass: e.source_class || null,
+    canonAnchors: e.canon_anchors ? [...e.canon_anchors] : [],
   };
 };
 const gu = guIds.map((id) => {
@@ -283,6 +348,10 @@ const pickedEnemies = pickedEnemyIds
     problemLabel: e.problemLabel || null,
     armorValue: e.armorValue ?? null,
     evasionBreakpoint: e.evasionBreakpoint ?? null,
+    // P5-B1 敌人持蛊化：innate=兽/凡人/尸魔/凡兵符箓；gu=蛊修杀招（intent.guRefs 组件合成），
+    // 运行时经 mvp_logic.resolveEnemyIntentDamage 走同一 Effect Grammar 投影。
+    attackSource: e.attackSource || 'innate',
+    guRefs: e.guRefs || [],
     intent: e.intent, portrait: ART[e.id] || PORTRAIT_BY_THEME[e.theme] || 'enemy_beast_swarm',
     // 多阶段 AI：数据里 phases 为 [{until_hp_ratio, intents[{damage,speed,cooldown,essence_burn}], reactions}]，
     // 选取语义见数据自带的 _phases_note（冷却、阶段阈值严格递减、全部冷却则 cooldown_wait）。
@@ -607,7 +676,10 @@ const out = {
     effect_budget: balance.effect_budget,
   },
   /* 显式投影落库：lab 消费的 role 曲线随生成物可见（check_projection 校验一致） */
-  projections: { role_curve_lab: labRoleCurve },
+  projections: {
+    role_curve_lab: labRoleCurve,
+    enemy_attack_amount_by_gu_rank: enemyAttackTable,
+  },
   actions: names.actions || {}, nodeTypes: names.types || {}, battle, mechanisms,
 };
 // contentVersion = sha256(JSON.stringify(out)) 在写入 contentVersion 字段之前，供内容快照追溯。

@@ -201,8 +201,8 @@
     ],
     "school": "light",
     "role": "movement",
-    "rarity": "rare"
-  },
+    "rarity": "rare",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shift" },    "canon_anchors": ["E:V1-002648", "E:V1-026794"],    "effect_note": "月影蛊最擅隐藏，种入空窍压制真元使用（E:V1-002648/026794）；amount 走曲线投影"  },
   {
     "id": "vitality_grass_gu",
     "source": "novel",
@@ -234,8 +234,8 @@
     ],
     "school": "light",
     "role": "logistics",
-    "rarity": "common"
-  },
+    "rarity": "common",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "heal" },    "canon_anchors": ["E:V1-017128"],    "effect_note": "九叶生机草蛊，山寨普及疗伤草蛊（E:V1-017128）；amount 走曲线投影"  },
   {
     "id": "force_gu",
     "source": "novel",
@@ -381,8 +381,8 @@
     ],
     "school": "earth",
     "role": "defense",
-    "rarity": "rare"
-  },
+    "rarity": "rare",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shield", "amount": 3 },    "canon_anchors": ["E:V1-009654"],    "effect_note": "皮甲系列（铁/铜/石/玉皮，E:V1-009654）；amount 沿用本库 combat_effects 先例"  },
   {
     "id": "white_jade_gu",
     "source": "novel",
@@ -412,8 +412,8 @@
     ],
     "school": "earth",
     "role": "defense",
-    "rarity": "epic"
-  },
+    "rarity": "epic",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shield", "amount": 5 },    "canon_anchors": ["E:V1-009986"],    "effect_note": "白豕蛊+玉皮蛊合炼成二转白玉蛊（E:V1-009986）；amount 沿用 combat_effects 先例"  },
   {
     "id": "stone_shell_gu",
     "source": "novel",
@@ -947,8 +947,8 @@
       "healing"
     ],
     "source": "school_derived",
-    "combat": "blood_healing_pattern"
-  },
+    "combat": "blood_healing_pattern",
+    "source_class": "school_derived",    "v1_effect": { "kind": "heal" },    "effect_note": "血针蛊名不在原著（0 命中）；kind 按 role，amount 走曲线投影"  },
   {
     "id": "blood_rec_2_24_gu",
     "rank": 2,
@@ -1255,8 +1255,8 @@
       "attack"
     ],
     "source": "school_derived",
-    "combat": "bone_attack_pattern"
-  },
+    "combat": "bone_attack_pattern",
+    "source_class": "school_derived",    "v1_effect": { "kind": "strike" },    "effect_note": "骨蛊名在原著（白骨山野生）但机制无据；kind 按 role，amount 走曲线投影"  },
   {
     "id": "bone_atk_1_09_gu",
     "rank": 1,
@@ -4991,7 +4991,7 @@
   {
     "id": "human_atk_1_01_gu",
     "rank": 1,
-    "role": "attack",
+    "role": "recon",
     "school": "human",
     "rarity": "common",
     "value": 3,
@@ -5000,8 +5000,8 @@
       "attack"
     ],
     "source": "novel",
-    "combat": "human_attack_pattern"
-  },
+    "combat": "human_insight_pattern",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "inspect" },    "canon_anchors": ["E:V3-120396", "E:V3-120404"],    "effect_note": "人祖传：自己蛊助人祖审视内心、认识自己、另辟新路；role attack→recon（canon 刷新）"  },
   {
     "id": "human_atk_5_02_gu",
     "rank": 5,
@@ -6615,7 +6615,7 @@
   {
     "id": "qi_atk_1_01_gu",
     "rank": 1,
-    "role": "attack",
+    "role": "defense",
     "school": "qi",
     "rarity": "common",
     "value": 3,
@@ -6624,8 +6624,8 @@
       "attack"
     ],
     "source": "novel",
-    "combat": "qi_attack_pattern"
-  },
+    "combat": "qi_guard_pattern",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shield" },    "canon_anchors": ["E:V2-058640"],    "effect_note": "硬气蛊：动用杀招防御下降，此蛊弥补短板（E:V2-058640）；role attack→defense（canon 刷新）"  },
   {
     "id": "qi_atk_5_02_gu",
     "rank": 5,
@@ -6812,8 +6812,8 @@
       "recon"
     ],
     "source": "school_derived",
-    "combat": "qi_recon_pattern"
-  },
+    "combat": "qi_recon_pattern",
+    "source_class": "school_derived",    "v1_effect": { "kind": "inspect" },    "effect_note": "气纹霭蛊名不在原著（0 命中）；kind 按 role"  },
   {
     "id": "qi_log_3_15_gu",
     "rank": 3,
@@ -9704,9 +9704,9 @@
       "water",
       "attack"
     ],
-    "source": "novel",
-    "combat": "water_attack_pattern"
-  },
+    "source": "school_derived",
+    "combat": "water_attack_pattern",
+    "source_class": "school_derived",    "v1_effect": { "kind": "strike" },    "effect_note": "浪蛊名不在原著（唯一命中为音浪蛊 substring）；source novel→school_derived 修正"  },
   {
     "id": "water_atk_4_09_gu",
     "rank": 4,
@@ -11354,8 +11354,8 @@
       "attack"
     ],
     "source": "novel",
-    "combat": "wood_attack_pattern"
-  },
+    "combat": "wood_attack_pattern",
+    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "strike" },    "canon_anchors": ["E:V1-016788"],    "effect_note": "青藤蛊：藤条十五米，当做鞭子甩劈撩扫（E:V1-016788）；amount 走曲线投影"  },
   {
     "id": "wood_atk_5_06_gu",
     "rank": 5,

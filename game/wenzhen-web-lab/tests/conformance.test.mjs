@@ -47,11 +47,23 @@ test('C1-1 切片三蛊：生成物保留 id/rank，effect 与源 v1_effect 逐�
 });
 
 test('C1-2 全量：凡源数据带显式 v1_effect 且入生成物的蛊，effect 不得被 role 兜底替换', () => {
+  // P5-B2：显式 v1_effect 允许 amount-less——生成物按 kind→role 曲线投影补 amount
+  // （PROJ-LAB-ROLE-CURVE-001），此处独立复算同一投影作为预期，防止静默换回兜底。
+  const labCurve = PROJ.items.find((i) => i.id === 'PROJ-LAB-ROLE-CURVE-001')?.value;
+  assert.ok(labCurve, '缺 PROJ-LAB-ROLE-CURVE-001');
+  const KIND_TO_CURVE_ROLE = { strike: 'attack', shield: 'defense', heal: 'healing', shift: 'movement' };
+  const AMOUNT_FREE_KINDS = new Set(['inspect']);
   let checked = 0;
   for (const gu of DATA.gu) {
     const src = guById[gu.id];
     if (!src?.v1_effect) continue;
-    assert.equal(j(gu.effect), j(src.v1_effect), `${gu.id} 显式效果被改写`);
+    const expect = { ...src.v1_effect };
+    if (expect.amount == null && !AMOUNT_FREE_KINDS.has(expect.kind)) {
+      const curve = labCurve[KIND_TO_CURVE_ROLE[expect.kind]];
+      assert.ok(curve, `${gu.id} kind ${expect.kind} 无曲线映射`);
+      expect.amount = curve[Math.min(5, Math.max(1, Number(src.rank || 1))) - 1];
+    }
+    assert.equal(j(gu.effect), j(expect), `${gu.id} 显式效果被改写`);
     checked += 1;
   }
   assert.ok(checked >= 20, `显式效果一致性覆盖不足：checked=${checked}`);
@@ -233,5 +245,47 @@ test('C5-2 分类诚实性：original_game_content / school_derived 内容不得
 test('C5-3 月光切片已分类为 canon_driven_v1（种子在案）', () => {
   for (const id of SLICE) {
     assert.equal(guById[id].source_class, 'canon_driven_v1', id);
+  }
+});
+
+// ---------- C6 敌人持蛊化（P5-B1，RUL-2026-09-25-001 P5：先证明知识变成规则，再扩大数量） ----------
+
+test('C6-1 敌人 attackSource=gu 的伤害杀招逐 intent 合成校验（Σ 压缩投影 == damage）', () => {
+  const table = DATA.projections.enemy_attack_amount_by_gu_rank;
+  assert.ok(table, '生成物缺敌方攻击投影（PROJ-LAB-ENEMY-ATTACK-001）');
+  let checked = 0;
+  for (const e of DATA.enemies) {
+    assert.ok(e.attackSource === 'gu' || e.attackSource === 'innate', `${e.id} attackSource 非法`);
+    if (e.attackSource !== 'gu') continue;
+    assert.ok(Array.isArray(e.guRefs) && e.guRefs.length > 0, `${e.id} 持蛊敌人缺装载 guRefs`);
+    const intents = [e.intent, ...(e.phases || []).flatMap((p) => p.intents || [])].filter(Boolean);
+    for (const it of intents) {
+      for (const gid of [...(it.guRefs || []), ...e.guRefs]) {
+        assert.ok(dataGuById[gid], `${e.id} 引用蛊 ${gid} 不在生成物`);
+      }
+      const src = it.attackSource || e.attackSource;
+      if (src !== 'gu' || !(Number(it.damage) > 0)) continue;
+      assert.ok(Array.isArray(it.guRefs) && it.guRefs.length > 0, `${e.id}/${it.id} 伤害杀招缺 guRefs`);
+      const sum = it.guRefs.reduce((acc, gid) => {
+        const g = dataGuById[gid];
+        return g.effect?.kind === 'strike' ? acc + Number(table[String(g.rank)]) : acc;
+      }, 0);
+      assert.equal(sum, Number(it.damage), `${e.id}/${it.id} 持蛊合成 Σ${sum} != damage ${it.damage}`);
+      checked += 1;
+    }
+  }
+  assert.ok(checked >= 20, `敌人杀招合成覆盖不足：checked=${checked}`);
+});
+
+test('C6-2 敌方攻击投影压缩不变量：≤ lab attack 曲线且单调不减', () => {
+  const table = DATA.projections.enemy_attack_amount_by_gu_rank;
+  const labCurve = DATA.projections.role_curve_lab.attack;
+  let prev = 0;
+  for (let r = 1; r <= 5; r++) {
+    const t = Number(table[String(r)]);
+    assert.ok(Number.isFinite(t), `缺 ${r} 转`);
+    assert.ok(t <= labCurve[r - 1], `r${r}=${t} 超过 lab attack 曲线 ${labCurve[r - 1]}`);
+    assert.ok(t >= prev, `r${r} 单调递减`);
+    prev = t;
   }
 });

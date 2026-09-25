@@ -21,7 +21,10 @@
       "id": "stone_palm",
       "label": "掌势蓄而未发",
       "damage": 2,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "bone_atk_1_08_gu"
+      ]
     },
     "reactions": [
       {
@@ -32,6 +35,11 @@
         "counter_status": "bound",
         "label": "石甲护身"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "bone_atk_1_08_gu",
+      "stone_shell_gu"
     ]
   },
   {
@@ -68,7 +76,8 @@
         "counter_status": "guarded",
         "label": "反口撕咬"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "ridge_elite_scout",
@@ -86,7 +95,10 @@
       "id": "swift_crossbow",
       "label": "弩箭上弦",
       "damage": 3,
-      "speed": 3
+      "speed": 3,
+      "guRefs": [
+        "fire_atk_2_01_gu"
+      ]
     },
     "reactions": [
       {
@@ -97,6 +109,11 @@
         "counter_status": "bound",
         "label": "高处闪避"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "fire_atk_2_01_gu",
+      "qi_rec_2_14_gu"
     ]
   },
   {
@@ -116,7 +133,10 @@
       "id": "miasma_burst",
       "label": "瘴气喷涌",
       "damage": 2,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "water_atk_1_08_gu"
+      ]
     },
     "_phases_note": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
     "reactions": [
@@ -138,7 +158,10 @@
             "label": "瘴气喷涌",
             "damage": 2,
             "speed": 1,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "water_atk_1_08_gu"
+            ]
           }
         ],
         "reactions": [
@@ -160,7 +183,10 @@
             "label": "瘴气喷涌",
             "damage": 2,
             "speed": 1,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "water_atk_1_08_gu"
+            ]
           },
           {
             "id": "essence_scorch",
@@ -182,6 +208,11 @@
           }
         ]
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "water_atk_1_08_gu",
+      "wood_atk_1_05_gu"
     ]
   },
   {
@@ -219,7 +250,8 @@
         "counter_status": "bound",
         "label": "厚皮硬受"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "thunder_crown_wolf",
@@ -249,7 +281,8 @@
         "counter_status": "sparked",
         "label": "雷甲反噬"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "beast_swarm",
@@ -270,7 +303,8 @@
       "damage": 2,
       "speed": 1
     },
-    "reactions": []
+    "reactions": [],
+    "attackSource": "innate"
   },
   {
     "id": "faction_guard",
@@ -289,9 +323,17 @@
       "id": "shield_bash",
       "label": "盾墙冲撞",
       "damage": 3,
-      "speed": 3
+      "speed": 3,
+      "guRefs": [
+        "sword_atk_2_12_gu"
+      ]
     },
-    "reactions": []
+    "reactions": [],
+    "attackSource": "gu",
+    "guRefs": [
+      "sword_atk_2_12_gu",
+      "jade_skin_gu"
+    ]
   },
   {
     "id": "crag_serpent_matriarch",
@@ -312,7 +354,8 @@
       "damage": 3,
       "speed": 1
     },
-    "reactions": []
+    "reactions": [],
+    "attackSource": "innate"
   },
   {
     "id": "marrow_gu_adept",
@@ -331,7 +374,10 @@
       "id": "marrow_lance",
       "label": "蚀骨骨矛",
       "damage": 3,
-      "speed": 2
+      "speed": 2,
+      "guRefs": [
+        "water_atk_3_05_gu"
+      ]
     },
     "reactions": [
       {
@@ -342,6 +388,11 @@
         "counter_status": "guarded",
         "label": "骨棘反甲"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "water_atk_3_05_gu",
+      "bone_atk_1_08_gu"
     ]
   },
   {
@@ -400,7 +451,8 @@
         ],
         "reactions": []
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "blood_vein_bishop",
@@ -419,7 +471,10 @@
       "label": "血络鞭挞",
       "damage": 4,
       "speed": 3,
-      "cooldown": 1
+      "cooldown": 1,
+      "guRefs": [
+        "blood_droplet_gu"
+      ]
     },
     "reactions": [
       {
@@ -440,7 +495,10 @@
             "label": "血络鞭挞",
             "damage": 4,
             "speed": 3,
-            "cooldown": 1
+            "cooldown": 1,
+            "guRefs": [
+              "blood_droplet_gu"
+            ]
           }
         ],
         "reactions": [
@@ -462,14 +520,18 @@
             "label": "血络鞭挞",
             "damage": 4,
             "speed": 3,
-            "cooldown": 1
+            "cooldown": 1,
+            "guRefs": [
+              "blood_droplet_gu"
+            ]
           },
           {
             "id": "crimson_feast",
             "label": "猩红盛餐",
             "damage": 5,
             "speed": 2,
-            "cooldown": 2
+            "cooldown": 2,
+            "attackSource": "innate"
           }
         ],
         "reactions": [
@@ -483,6 +545,11 @@
           }
         ]
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "blood_droplet_gu",
+      "blood_heal_2_23_gu"
     ]
   },
   {
@@ -513,7 +580,8 @@
         "counter_status": "bound",
         "label": "铁爪拿捏"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "venom_whisker_wolf_king",
@@ -543,7 +611,8 @@
         "counter_status": "guarded",
         "label": "狼群呼应"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "sand_lurker_spider",
@@ -575,7 +644,8 @@
         "counter_status": "guarded",
         "label": "沙下潜行"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "blood_forest_wolf",
@@ -605,7 +675,8 @@
         "counter_status": "bound",
         "label": "骨林硬受"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "dragon_eagle",
@@ -635,7 +706,8 @@
         "counter_status": "guarded",
         "label": "高空回旋"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "clan_warden",
@@ -654,7 +726,10 @@
       "id": "gate_block",
       "label": "山门横挡",
       "damage": 2,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "sword_atk_1_05_gu"
+      ]
     },
     "reactions": [
       {
@@ -665,6 +740,11 @@
         "counter_status": "bound",
         "label": "阵脚不乱"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "sword_atk_1_05_gu",
+      "jade_skin_gu"
     ]
   },
   {
@@ -697,6 +777,10 @@
         "counter_status": "guarded",
         "label": "老练卸力"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "qi_rec_2_14_gu"
     ]
   },
   {
@@ -716,7 +800,10 @@
       "id": "clan_authority",
       "label": "家族权柄",
       "damage": 3,
-      "speed": 2
+      "speed": 2,
+      "guRefs": [
+        "moon_ray_gu"
+      ]
     },
     "reactions": [
       {
@@ -727,6 +814,11 @@
         "counter_status": "guarded",
         "label": "家族底蕴"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "moon_ray_gu",
+      "white_jade_gu"
     ]
   },
   {
@@ -747,7 +839,11 @@
       "label": "一族之威",
       "damage": 4,
       "speed": 2,
-      "cooldown": 1
+      "cooldown": 1,
+      "guRefs": [
+        "moonlight_gu",
+        "sword_atk_1_06_gu"
+      ]
     },
     "reactions": [
       {
@@ -768,7 +864,11 @@
             "label": "一族之威",
             "damage": 4,
             "speed": 2,
-            "cooldown": 1
+            "cooldown": 1,
+            "guRefs": [
+              "moonlight_gu",
+              "sword_atk_1_06_gu"
+            ]
           }
         ],
         "reactions": [
@@ -790,7 +890,11 @@
             "label": "一族之威",
             "damage": 4,
             "speed": 2,
-            "cooldown": 1
+            "cooldown": 1,
+            "guRefs": [
+              "moonlight_gu",
+              "sword_atk_1_06_gu"
+            ]
           },
           {
             "id": "clan_muster",
@@ -813,6 +917,13 @@
           }
         ]
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "moonlight_gu",
+      "sword_atk_1_06_gu",
+      "white_jade_gu",
+      "stone_shell_gu"
     ]
   },
   {
@@ -832,7 +943,10 @@
       "id": "wild_strike",
       "label": "野路杀招",
       "damage": 2,
-      "speed": 2
+      "speed": 2,
+      "guRefs": [
+        "sword_atk_1_05_gu"
+      ]
     },
     "reactions": [
       {
@@ -843,6 +957,10 @@
         "counter_status": "bound",
         "label": "江湖老手"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "sword_atk_1_05_gu"
     ]
   },
   {
@@ -875,6 +993,10 @@
         "counter_status": "guarded",
         "label": "血气护体"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "blood_heal_2_23_gu"
     ]
   },
   {
@@ -894,7 +1016,10 @@
       "id": "thrall_lunge",
       "label": "驱役扑击",
       "damage": 3,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "moon_ray_gu"
+      ]
     },
     "reactions": [
       {
@@ -905,6 +1030,10 @@
         "counter_status": "bound",
         "label": "奴仆代受"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "moon_ray_gu"
     ]
   },
   {
@@ -935,7 +1064,8 @@
         "counter_status": "bound",
         "label": "草躯松散"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "fat_sand_scorpion",
@@ -965,7 +1095,8 @@
         "counter_status": "guarded",
         "label": "螯足无力"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "white_fur_jiangshi",
@@ -995,7 +1126,8 @@
         "counter_status": "guarded",
         "label": "尸毒沾染"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "black_fur_jiangshi",
@@ -1025,7 +1157,8 @@
         "counter_status": "bound",
         "label": "尸群推挤"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "roaming_jiangshi",
@@ -1055,7 +1188,8 @@
         "counter_status": "guarded",
         "label": "僵躯硬受"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "blue_fur_jiangshi",
@@ -1141,7 +1275,8 @@
           }
         ]
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "mountain_boar",
@@ -1171,7 +1306,8 @@
         "counter_status": "bound",
         "label": "鬃毛乱抖"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "mountain_hunter",
@@ -1201,7 +1337,8 @@
         "counter_status": "guarded",
         "label": "绳索绊足"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "mo_family_huntsman",
@@ -1222,7 +1359,10 @@
       "id": "mo_hunt_fork",
       "label": "漠家猎叉",
       "damage": 2,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "bone_atk_1_08_gu"
+      ]
     },
     "reactions": [
       {
@@ -1233,6 +1373,10 @@
         "counter_status": "guarded",
         "label": "弩盾斜架"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "bone_atk_1_08_gu"
     ]
   },
   {
@@ -1266,7 +1410,8 @@
         "counter_status": "guarded",
         "label": "凝霜格挡"
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "xiong_bear_handler",
@@ -1287,7 +1432,10 @@
       "id": "bear_pounce",
       "label": "驱熊扑击",
       "damage": 2,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "white_boar_strength_gu"
+      ]
     },
     "evasionBreakpoint": 1,
     "reactions": [
@@ -1299,6 +1447,11 @@
         "counter_status": "guarded",
         "label": "链栏横挡"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "white_boar_strength_gu",
+      "bear_strength_gu"
     ]
   },
   {
@@ -1386,7 +1539,8 @@
           }
         ]
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "bone_gun_marauder",
@@ -1407,7 +1561,10 @@
       "id": "bone_spear_barrage",
       "label": "骨枪连掷",
       "damage": 3,
-      "speed": 2
+      "speed": 2,
+      "guRefs": [
+        "water_atk_3_05_gu"
+      ]
     },
     "reactions": [
       {
@@ -1418,6 +1575,10 @@
         "counter_status": "bound",
         "label": "缠骨锁足"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "water_atk_3_05_gu"
     ]
   },
   {
@@ -1440,7 +1601,10 @@
       "id": "corpse_command",
       "label": "驱僵号令",
       "damage": 2,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "bone_atk_1_08_gu"
+      ]
     },
     "reactions": [
       {
@@ -1461,7 +1625,10 @@
             "label": "驱僵号令",
             "damage": 2,
             "speed": 1,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "bone_atk_1_08_gu"
+            ]
           }
         ],
         "reactions": [
@@ -1483,14 +1650,18 @@
             "label": "驱僵号令",
             "damage": 2,
             "speed": 1,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "bone_atk_1_08_gu"
+            ]
           },
           {
             "id": "talisman_ignite",
             "label": "掷符引火",
             "damage": 3,
             "speed": 2,
-            "cooldown": 2
+            "cooldown": 2,
+            "attackSource": "innate"
           }
         ],
         "reactions": [
@@ -1504,6 +1675,10 @@
           }
         ]
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "bone_atk_1_08_gu"
     ]
   },
   {
@@ -1525,7 +1700,10 @@
       "id": "arrest_chain",
       "label": "缉拿铁链",
       "damage": 2,
-      "speed": 2
+      "speed": 2,
+      "guRefs": [
+        "sword_atk_1_06_gu"
+      ]
     },
     "reactions": [
       {
@@ -1536,6 +1714,10 @@
         "counter_status": "bound",
         "label": "盟约锁"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "sword_atk_1_06_gu"
     ]
   },
   {
@@ -1558,7 +1740,10 @@
       "id": "overseer_whip",
       "label": "鞭笞驱兽",
       "damage": 3,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "moon_ray_gu"
+      ]
     },
     "reactions": [
       {
@@ -1579,7 +1764,10 @@
             "label": "鞭笞驱兽",
             "damage": 3,
             "speed": 1,
-            "cooldown": 1
+            "cooldown": 1,
+            "guRefs": [
+              "moon_ray_gu"
+            ]
           }
         ],
         "reactions": [
@@ -1601,7 +1789,10 @@
             "label": "鞭笞驱兽",
             "damage": 3,
             "speed": 1,
-            "cooldown": 1
+            "cooldown": 1,
+            "guRefs": [
+              "moon_ray_gu"
+            ]
           },
           {
             "id": "slave_seal_burn",
@@ -1623,6 +1814,10 @@
           }
         ]
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "moon_ray_gu"
     ]
   },
   {
@@ -1644,7 +1839,10 @@
       "id": "formation_strangle",
       "label": "阵纹绞杀",
       "damage": 3,
-      "speed": 1
+      "speed": 1,
+      "guRefs": [
+        "water_atk_3_05_gu"
+      ]
     },
     "armorValue": 1,
     "reactions": [
@@ -1656,6 +1854,11 @@
         "counter_status": "bound",
         "label": "困阵锁足"
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "water_atk_3_05_gu",
+      "qi_rec_2_14_gu"
     ]
   },
   {
@@ -1678,7 +1881,10 @@
       "id": "soul_bell",
       "label": "摄魂铃荡",
       "damage": 4,
-      "speed": 2
+      "speed": 2,
+      "guRefs": [
+        "blood_atk_5_02_gu"
+      ]
     },
     "reactions": [
       {
@@ -1699,7 +1905,10 @@
             "label": "摄魂铃荡",
             "damage": 4,
             "speed": 2,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "blood_atk_5_02_gu"
+            ]
           }
         ],
         "reactions": [
@@ -1721,7 +1930,10 @@
             "label": "摄魂铃荡",
             "damage": 4,
             "speed": 2,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "blood_atk_5_02_gu"
+            ]
           },
           {
             "id": "soul_burst",
@@ -1729,7 +1941,10 @@
             "damage": 4,
             "speed": 1,
             "essence_burn": 2,
-            "cooldown": 2
+            "cooldown": 2,
+            "guRefs": [
+              "blood_atk_5_02_gu"
+            ]
           }
         ],
         "reactions": [
@@ -1743,6 +1958,10 @@
           }
         ]
       }
+    ],
+    "attackSource": "gu",
+    "guRefs": [
+      "blood_atk_5_02_gu"
     ]
   },
   {
@@ -1855,7 +2074,8 @@
           }
         ]
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "blood_god_larva",
@@ -1966,7 +2186,8 @@
           }
         ]
       }
-    ]
+    ],
+    "attackSource": "innate"
   },
   {
     "id": "dream_wraith_echo",
@@ -2055,6 +2276,7 @@
           }
         ]
       }
-    ]
+    ],
+    "attackSource": "innate"
   }
 ]

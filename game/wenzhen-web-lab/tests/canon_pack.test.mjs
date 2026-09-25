@@ -65,6 +65,9 @@ test('immortal-stage content stays out of the mortal rank-1 pack', () => {
   const ids = new Set(pack.rules.map((r) => r.id));
   assert.ok(!ids.has('PE-006'), '仙元形成规则属蛊仙层');
   assert.ok(!ids.has('PE-007'), '仙元阶位规则属蛊仙层');
+  // P5-B4：PE-008（仙元阶位·转数关联，778db228 批新增）同样属蛊仙层，经 true-qi 域
+  // 漏入过一转包，2026-09-26 由 compile_runtime rule_exclude_ids 根治——断言常驻防回归。
+  assert.ok(!ids.has('PE-008'), '仙元阶位（转数关联）规则属蛊仙层');
   assert.ok(!ids.has('CAN-ASCENSION-001'), '升仙框架不进凡人战斗包');
 });
 

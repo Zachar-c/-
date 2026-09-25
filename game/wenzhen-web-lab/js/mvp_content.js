@@ -188,12 +188,17 @@ globalThis.MVP_CONTENT = (() => {
     ridge_elite_scout: Object.freeze({
       hp: hpFor('elite', seqSeal),
       phaseAt: null,
+      /* P5-B1 敌人持蛊化：封脉/噬元为装载蛊（enemies.json guRefs 同源）；
+         弩箭=凡兵（原著蛊修亦可持凡兵），attackSource=innate 沿用 authored 伤害。 */
+      attackSource: 'gu',
+      guRefs: ['fire_atk_2_01_gu', 'qi_rec_2_14_gu'],
       intents: Object.freeze([
         Object.freeze({
           id: 'seal_order',
           label: '封脉',
           damage: 0,
           kind: 'seal',
+          guRefs: ['qi_rec_2_14_gu'],
           counterSequence: seqSeal,
         }),
         Object.freeze({
@@ -201,6 +206,7 @@ globalThis.MVP_CONTENT = (() => {
           label: '噬元',
           damage: 0,
           kind: 'drain_qi',
+          guRefs: ['blood_heal_2_23_gu'],
           drainQi: 3,
         }),
         Object.freeze({
@@ -208,6 +214,7 @@ globalThis.MVP_CONTENT = (() => {
           label: '弩箭贯击',
           damage: 4,
           tag: 'charge',
+          attackSource: 'innate',
           counterSequence: seqSeal,
         }),
       ]),

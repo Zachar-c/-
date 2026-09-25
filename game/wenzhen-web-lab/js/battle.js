@@ -171,6 +171,11 @@ function renderBattle(root) {
   const intentChip = target.enemyIntent
     ? `<span class="chip live">${intentText(target.enemyIntent)}</span>`
     : '<span class="chip spent">冷却中 · 本回合不攻击</span>';
+  // P5-B1 敌人持蛊化：展示装载蛊（伤害杀招按 PROJ-LAB-ENEMY-ATTACK-001 组件合成）；
+  // innate=兽/凡人/尸魔/凡兵符箓，天生手段不持蛊。
+  const carriedChip = target.attackSource === 'gu' && target.guRefs?.length
+    ? `<span class="chip live">持蛊 ${target.guRefs.map((id) => GU_BY_ID[id]?.name || id).join('、')}</span>`
+    : (target.attackSource === 'innate' ? '<span class="chip none">天生手段</span>' : '');
   const counterChip = counterBadge(target);
   const intelHtml = intelBlock(target);
 
@@ -288,7 +293,7 @@ function renderBattle(root) {
         </div>
         <div class="target-intent">
           <div class="target-intent-head"><span class="kicker">敌方意图 · 回合末</span><span>第 ${b.turn} 回合</span></div>
-          <div class="target-intent-chips">${intentChip}${counterChip}</div>
+          <div class="target-intent-chips">${intentChip}${carriedChip}${counterChip}</div>
           ${intelHtml}
         </div>
         <details class="combat-details">

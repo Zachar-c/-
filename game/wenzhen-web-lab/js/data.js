@@ -747,7 +747,11 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-001472"
+      ]
     },
     {
       "id": "small_light_gu",
@@ -784,7 +788,12 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-009708",
+        "E:V1-015710"
+      ]
     },
     {
       "id": "moon_glow_gu",
@@ -818,7 +827,11 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-015710"
+      ]
     },
     {
       "id": "moon_ray_gu",
@@ -845,7 +858,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "bear_strength_gu",
@@ -872,7 +887,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "white_boar_strength_gu",
@@ -907,7 +924,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "jade_skin_gu",
@@ -934,7 +953,11 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-009654"
+      ]
     },
     {
       "id": "stone_shell_gu",
@@ -961,7 +984,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "white_jade_gu",
@@ -976,19 +1001,23 @@ const DATA = {
       "cost": 2,
       "effect": {
         "kind": "shield",
-        "amount": 4
+        "amount": 5
       },
       "icon": "gu_water",
       "combat": "white_jade_form",
       "battleEffect": {
         "kind": "shield",
-        "amount": 4
+        "amount": 5
       },
       "trueQiCost": 2,
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-009986"
+      ]
     },
     {
       "id": "blood_farewell_gu",
@@ -1027,7 +1056,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "blood_droplet_gu",
@@ -1058,7 +1089,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "vitality_grass_gu",
@@ -1076,19 +1109,23 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 1
+        "amount": 2
       },
       "icon": "gu_qi",
       "combat": "vitality_grass_remedy",
       "battleEffect": {
         "kind": "heal",
-        "amount": 1
+        "amount": 2
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-017128"
+      ]
     },
     {
       "id": "sword_atk_1_06_gu",
@@ -1119,7 +1156,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "sword_atk_1_05_gu",
@@ -1150,7 +1189,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "sword_rec_1_10_gu",
@@ -1177,34 +1218,40 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "qi_atk_1_01_gu",
       "name": "硬气蛊",
       "rank": 1,
       "rarity": "common",
-      "role": "attack",
+      "role": "defense",
       "buildRole": null,
       "buildTags": [],
       "school": "qi",
       "value": 3,
       "cost": 0,
       "effect": {
-        "kind": "strike",
-        "amount": 2
+        "kind": "shield",
+        "amount": 3
       },
       "icon": "gu_qi",
-      "combat": "qi_attack_pattern",
+      "combat": "qi_guard_pattern",
       "battleEffect": {
-        "kind": "strike",
-        "amount": 2
+        "kind": "shield",
+        "amount": 3
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V2-058640"
+      ]
     },
     {
       "id": "qi_rec_2_14_gu",
@@ -1218,26 +1265,20 @@ const DATA = {
       "value": 5,
       "cost": 0,
       "effect": {
-        "kind": "status",
-        "name": "marked",
-        "amount": 1,
-        "support_school": "qi",
-        "support_bonus": 1
+        "kind": "inspect"
       },
       "icon": "gu_qi",
       "combat": "qi_recon_pattern",
       "battleEffect": {
-        "kind": "status",
-        "name": "marked",
-        "amount": 1,
-        "support_school": "qi",
-        "support_bonus": 1
+        "kind": "inspect"
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "school_derived",
+      "canonAnchors": []
     },
     {
       "id": "wood_atk_1_05_gu",
@@ -1264,7 +1305,11 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-016788"
+      ]
     },
     {
       "id": "water_atk_1_08_gu",
@@ -1291,7 +1336,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "school_derived",
+      "canonAnchors": []
     },
     {
       "id": "moon_shadow_gu",
@@ -1318,7 +1365,12 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-002648",
+        "E:V1-026794"
+      ]
     },
     {
       "id": "blood_heal_2_23_gu",
@@ -1345,7 +1397,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "school_derived",
+      "canonAnchors": []
     },
     {
       "id": "gold_atk_2_11_gu",
@@ -1368,7 +1422,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "gold_atk_2_12_gu",
@@ -1391,7 +1447,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "gold_atk_3_13_gu",
@@ -1414,7 +1472,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "gold_atk_4_14_gu",
@@ -1437,7 +1497,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "gold_atk_5_15_gu",
@@ -1460,7 +1522,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "gold_atk_2_16_gu",
@@ -1483,7 +1547,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "bone_atk_1_08_gu",
@@ -1510,34 +1576,39 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "school_derived",
+      "canonAnchors": []
     },
     {
       "id": "human_atk_1_01_gu",
       "name": "自己蛊",
       "rank": 1,
       "rarity": "common",
-      "role": "attack",
+      "role": "recon",
       "buildRole": null,
       "buildTags": [],
       "school": "human",
       "value": 3,
       "cost": 0,
       "effect": {
-        "kind": "strike",
-        "amount": 2
+        "kind": "inspect"
       },
       "icon": "gu_qi",
-      "combat": "human_attack_pattern",
+      "combat": "human_insight_pattern",
       "battleEffect": {
-        "kind": "strike",
-        "amount": 2
+        "kind": "inspect"
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V3-120396",
+        "E:V3-120404"
+      ]
     },
     {
       "id": "sword_atk_2_12_gu",
@@ -1564,7 +1635,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "sword_def_3_14_gu",
@@ -1591,7 +1664,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "sword_heal_4_16_gu",
@@ -1618,7 +1693,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "sword_atk_5_02_gu",
@@ -1645,7 +1722,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "blood_atk_5_02_gu",
@@ -1672,7 +1751,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 2,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "fire_atk_2_01_gu",
@@ -1705,7 +1786,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "water_atk_3_05_gu",
@@ -1740,7 +1823,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "wisdom_rec_1_20_gu",
@@ -1773,7 +1858,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "wisdom_atk_3_13_gu",
@@ -1800,7 +1887,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "wind_atk_1_02_gu",
@@ -1827,7 +1916,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "force_gu",
@@ -1854,7 +1945,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "blood_bat_gu",
@@ -1883,7 +1976,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "force_atk_4_02_gu",
@@ -1910,7 +2005,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_1_01_gu",
@@ -1937,7 +2034,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_3_02_gu",
@@ -1964,7 +2063,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_5_03_gu",
@@ -1991,7 +2092,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_1_04_gu",
@@ -2018,7 +2121,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_3_05_gu",
@@ -2045,7 +2150,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_1_06_gu",
@@ -2072,7 +2179,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_3_07_gu",
@@ -2105,7 +2214,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_5_08_gu",
@@ -2138,7 +2249,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_3_09_gu",
@@ -2171,7 +2284,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_1_10_gu",
@@ -2204,7 +2319,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_5_11_gu",
@@ -2237,7 +2354,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_5_12_gu",
@@ -2270,7 +2389,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_1_13_gu",
@@ -2297,7 +2418,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_1_14_gu",
@@ -2324,7 +2447,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_def_1_15_gu",
@@ -2351,7 +2476,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_mov_1_16_gu",
@@ -2378,7 +2505,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_heal_2_17_gu",
@@ -2405,7 +2534,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_2_18_gu",
@@ -2438,7 +2569,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_log_3_19_gu",
@@ -2465,7 +2598,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_3_20_gu",
@@ -2492,7 +2627,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_4_21_gu",
@@ -2519,7 +2656,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_def_5_22_gu",
@@ -2546,7 +2685,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_mov_1_23_gu",
@@ -2573,7 +2714,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_heal_2_24_gu",
@@ -2600,7 +2743,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_2_25_gu",
@@ -2633,7 +2778,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_log_3_26_gu",
@@ -2660,7 +2807,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_3_27_gu",
@@ -2687,7 +2836,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_4_28_gu",
@@ -2714,7 +2865,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_def_5_29_gu",
@@ -2741,7 +2894,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_mov_1_30_gu",
@@ -2768,7 +2923,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_heal_2_31_gu",
@@ -2795,7 +2952,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_rec_2_32_gu",
@@ -2828,7 +2987,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_log_3_33_gu",
@@ -2855,7 +3016,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "light_atk_3_34_gu",
@@ -2882,7 +3045,9 @@ const DATA = {
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
-      "labOnly": false
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
     },
     {
       "id": "aptitude_gu",
@@ -3102,11 +3267,19 @@ const DATA = {
       "problemLabel": "信息/反制",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "bone_atk_1_08_gu",
+        "stone_shell_gu"
+      ],
       "intent": {
         "id": "stone_palm",
         "label": "掌势蓄而未发",
         "damage": 2,
-        "speed": 1
+        "speed": 1,
+        "guRefs": [
+          "bone_atk_1_08_gu"
+        ]
       },
       "portrait": "enemy_stone_wanderer",
       "phases": null,
@@ -3137,6 +3310,8 @@ const DATA = {
       "problemLabel": "高速/闪避",
       "armorValue": null,
       "evasionBreakpoint": 2,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "pounce",
         "label": "伏肩扑咬",
@@ -3172,6 +3347,8 @@ const DATA = {
       "problemLabel": "重甲/防御",
       "armorValue": 2,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "tusk_drive",
         "label": "獠牙冲撞",
@@ -3207,6 +3384,8 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "thunder_bite",
         "label": "雷冠撕咬",
@@ -3233,6 +3412,8 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "crush_coil",
         "label": "绞缠碾压",
@@ -3259,11 +3440,19 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "water_atk_3_05_gu",
+        "bone_atk_1_08_gu"
+      ],
       "intent": {
         "id": "marrow_lance",
         "label": "蚀骨骨矛",
         "damage": 3,
-        "speed": 2
+        "speed": 2,
+        "guRefs": [
+          "water_atk_3_05_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": null,
@@ -3294,11 +3483,19 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "fire_atk_2_01_gu",
+        "qi_rec_2_14_gu"
+      ],
       "intent": {
         "id": "swift_crossbow",
         "label": "弩箭上弦",
         "damage": 3,
-        "speed": 3
+        "speed": 3,
+        "guRefs": [
+          "fire_atk_2_01_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": null,
@@ -3329,6 +3526,10 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "blood_heal_2_23_gu"
+      ],
       "intent": {
         "id": "soul_gnaw",
         "label": "噬魂魔功",
@@ -3366,6 +3567,8 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "crown_bolt",
         "label": "雷冠贯落",
@@ -3428,11 +3631,19 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "water_atk_1_08_gu",
+        "wood_atk_1_05_gu"
+      ],
       "intent": {
         "id": "miasma_burst",
         "label": "瘴气喷涌",
         "damage": 2,
-        "speed": 1
+        "speed": 1,
+        "guRefs": [
+          "water_atk_1_08_gu"
+        ]
       },
       "portrait": "web_boss_miasma_vein_lord",
       "phases": [
@@ -3444,7 +3655,10 @@ const DATA = {
               "label": "瘴气喷涌",
               "damage": 2,
               "speed": 1,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "water_atk_1_08_gu"
+              ]
             }
           ],
           "reactions": [
@@ -3466,7 +3680,10 @@ const DATA = {
               "label": "瘴气喷涌",
               "damage": 2,
               "speed": 1,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "water_atk_1_08_gu"
+              ]
             },
             {
               "id": "essence_scorch",
@@ -3516,12 +3733,20 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "blood_droplet_gu",
+        "blood_heal_2_23_gu"
+      ],
       "intent": {
         "id": "vein_whip",
         "label": "血络鞭挞",
         "damage": 4,
         "speed": 3,
-        "cooldown": 1
+        "cooldown": 1,
+        "guRefs": [
+          "blood_droplet_gu"
+        ]
       },
       "portrait": "web_boss_blood_vein_bishop",
       "phases": [
@@ -3533,7 +3758,10 @@ const DATA = {
               "label": "血络鞭挞",
               "damage": 4,
               "speed": 3,
-              "cooldown": 1
+              "cooldown": 1,
+              "guRefs": [
+                "blood_droplet_gu"
+              ]
             }
           ],
           "reactions": [
@@ -3555,14 +3783,18 @@ const DATA = {
               "label": "血络鞭挞",
               "damage": 4,
               "speed": 3,
-              "cooldown": 1
+              "cooldown": 1,
+              "guRefs": [
+                "blood_droplet_gu"
+              ]
             },
             {
               "id": "crimson_feast",
               "label": "猩红盛餐",
               "damage": 5,
               "speed": 2,
-              "cooldown": 2
+              "cooldown": 2,
+              "attackSource": "innate"
             }
           ],
           "reactions": [
@@ -3604,12 +3836,23 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "moonlight_gu",
+        "sword_atk_1_06_gu",
+        "white_jade_gu",
+        "stone_shell_gu"
+      ],
       "intent": {
         "id": "clan_wrath",
         "label": "一族之威",
         "damage": 4,
         "speed": 2,
-        "cooldown": 1
+        "cooldown": 1,
+        "guRefs": [
+          "moonlight_gu",
+          "sword_atk_1_06_gu"
+        ]
       },
       "portrait": "web_boss_clan_patriarch",
       "phases": [
@@ -3621,7 +3864,11 @@ const DATA = {
               "label": "一族之威",
               "damage": 4,
               "speed": 2,
-              "cooldown": 1
+              "cooldown": 1,
+              "guRefs": [
+                "moonlight_gu",
+                "sword_atk_1_06_gu"
+              ]
             }
           ],
           "reactions": [
@@ -3643,7 +3890,11 @@ const DATA = {
               "label": "一族之威",
               "damage": 4,
               "speed": 2,
-              "cooldown": 1
+              "cooldown": 1,
+              "guRefs": [
+                "moonlight_gu",
+                "sword_atk_1_06_gu"
+              ]
             },
             {
               "id": "clan_muster",
@@ -3694,6 +3945,8 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "corpse_tide",
         "label": "尸潮掩杀",
@@ -3784,11 +4037,19 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "sword_atk_2_12_gu",
+        "jade_skin_gu"
+      ],
       "intent": {
         "id": "shield_bash",
         "label": "盾墙冲撞",
         "damage": 3,
-        "speed": 3
+        "speed": 3,
+        "guRefs": [
+          "sword_atk_2_12_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": null,
@@ -3810,6 +4071,8 @@ const DATA = {
       "problemLabel": null,
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "swarm_bite",
         "label": "蜂群撕缠",
@@ -3836,11 +4099,18 @@ const DATA = {
       "problemLabel": "情报/先手",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "bone_atk_1_08_gu"
+      ],
       "intent": {
         "id": "mo_hunt_fork",
         "label": "漠家猎叉",
         "damage": 2,
-        "speed": 1
+        "speed": 1,
+        "guRefs": [
+          "bone_atk_1_08_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": null,
@@ -3871,11 +4141,18 @@ const DATA = {
       "problemLabel": "破绽/读招",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "bone_atk_1_08_gu"
+      ],
       "intent": {
         "id": "corpse_command",
         "label": "驱僵号令",
         "damage": 2,
-        "speed": 1
+        "speed": 1,
+        "guRefs": [
+          "bone_atk_1_08_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": [
@@ -3887,7 +4164,10 @@ const DATA = {
               "label": "驱僵号令",
               "damage": 2,
               "speed": 1,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "bone_atk_1_08_gu"
+              ]
             }
           ],
           "reactions": [
@@ -3909,14 +4189,18 @@ const DATA = {
               "label": "驱僵号令",
               "damage": 2,
               "speed": 1,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "bone_atk_1_08_gu"
+              ]
             },
             {
               "id": "talisman_ignite",
               "label": "掷符引火",
               "damage": 3,
               "speed": 2,
-              "cooldown": 2
+              "cooldown": 2,
+              "attackSource": "innate"
             }
           ],
           "reactions": [
@@ -3958,6 +4242,8 @@ const DATA = {
       "problemLabel": "破绽/读招",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "blood_claw",
         "label": "血爪撕扯",
@@ -4046,11 +4332,18 @@ const DATA = {
       "problemLabel": "机动/命中",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "water_atk_3_05_gu"
+      ],
       "intent": {
         "id": "bone_spear_barrage",
         "label": "骨枪连掷",
         "damage": 3,
-        "speed": 2
+        "speed": 2,
+        "guRefs": [
+          "water_atk_3_05_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": null,
@@ -4081,11 +4374,18 @@ const DATA = {
       "problemLabel": "破绽/读招",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "moon_ray_gu"
+      ],
       "intent": {
         "id": "overseer_whip",
         "label": "鞭笞驱兽",
         "damage": 3,
-        "speed": 1
+        "speed": 1,
+        "guRefs": [
+          "moon_ray_gu"
+        ]
       },
       "portrait": "enemy_sanxiu",
       "phases": [
@@ -4097,7 +4397,10 @@ const DATA = {
               "label": "鞭笞驱兽",
               "damage": 3,
               "speed": 1,
-              "cooldown": 1
+              "cooldown": 1,
+              "guRefs": [
+                "moon_ray_gu"
+              ]
             }
           ],
           "reactions": [
@@ -4119,7 +4422,10 @@ const DATA = {
               "label": "鞭笞驱兽",
               "damage": 3,
               "speed": 1,
-              "cooldown": 1
+              "cooldown": 1,
+              "guRefs": [
+                "moon_ray_gu"
+              ]
             },
             {
               "id": "slave_seal_burn",
@@ -4169,11 +4475,18 @@ const DATA = {
       "problemLabel": "破绽/读招",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "gu",
+      "guRefs": [
+        "blood_atk_5_02_gu"
+      ],
       "intent": {
         "id": "soul_bell",
         "label": "摄魂铃荡",
         "damage": 4,
-        "speed": 2
+        "speed": 2,
+        "guRefs": [
+          "blood_atk_5_02_gu"
+        ]
       },
       "portrait": "enemy_toad",
       "phases": [
@@ -4185,7 +4498,10 @@ const DATA = {
               "label": "摄魂铃荡",
               "damage": 4,
               "speed": 2,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "blood_atk_5_02_gu"
+              ]
             }
           ],
           "reactions": [
@@ -4207,7 +4523,10 @@ const DATA = {
               "label": "摄魂铃荡",
               "damage": 4,
               "speed": 2,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "blood_atk_5_02_gu"
+              ]
             },
             {
               "id": "soul_burst",
@@ -4215,7 +4534,10 @@ const DATA = {
               "damage": 4,
               "speed": 1,
               "essence_burn": 2,
-              "cooldown": 2
+              "cooldown": 2,
+              "guRefs": [
+                "blood_atk_5_02_gu"
+              ]
             }
           ],
           "reactions": [
@@ -4257,6 +4579,8 @@ const DATA = {
       "problemLabel": "护体/磨血",
       "armorValue": 1,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "blood_rain",
         "label": "血雨漫天",
@@ -4368,6 +4692,8 @@ const DATA = {
       "problemLabel": "情报/先手",
       "armorValue": null,
       "evasionBreakpoint": null,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "nightmare_whisper",
         "label": "梦魇低语",
@@ -4458,6 +4784,8 @@ const DATA = {
       "problemLabel": "机动/命中",
       "armorValue": null,
       "evasionBreakpoint": 2,
+      "attackSource": "innate",
+      "guRefs": [],
       "intent": {
         "id": "burrow_ambush",
         "label": "地遁突袭",
@@ -6410,7 +6738,7 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "23c3f785a899af57972007ac45c58949e53feee6cfa2fc515b4951e24f25739f",
+    "contentVersion": "82cf2af674eb587791b20df12de9e7dfa6e278c7b7bfc52b16f3355dd2d83f2c",
     "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "entities": {
       "blood_atk_1_18_gu": {
@@ -7331,6 +7659,13 @@ const DATA = {
         1,
         1
       ]
+    },
+    "enemy_attack_amount_by_gu_rank": {
+      "1": 2,
+      "2": 3,
+      "3": 3,
+      "4": 4,
+      "5": 4
     }
   },
   "actions": {
@@ -7660,5 +7995,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "c258f69b14afafe4deebbe7a7fa20f691b55a19967c03f55c36df1e99a41ae1c"
+  "contentVersion": "55b339a3f23216fea2cb54d3a8c112ae063f8a606caceafc8afa1453416cea53"
 };

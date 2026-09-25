@@ -98,6 +98,19 @@
       "validation": { "type": "mvp_override_refs" },
       "forbidWriteBack": true,
       "sourceRuling": "RUL-2026-09-25-001"
+    },
+    {
+      "id": "PROJ-LAB-ENEMY-ATTACK-001",
+      "childKey": "lab.enemyAttackAmountByGuRank",
+      "value": { "1": 2, "2": 3, "3": 3, "4": 4, "5": 4 },
+      "parents": ["balance.effect_budget.default_amount_by_role"],
+      "policy": "enemy_dpr_encounter_compression_projection",
+      "scope": "wenzhen_web_lab",
+      "rationale": "RUL-2026-09-25-001 P5 敌人持蛊化：蛊修/异动敌人的杀招伤害=装载主战蛊（kind=strike）按转压缩投影之和，逐 intent 构建期校验 Σ==intent.damage（No Silent Fallback）。压缩不变量：表值 ≤ lab attack 曲线（PROJ-LAB-ROLE-CURVE-001 [2,3,4,5,6]）且单调不减；敌方 DPR≈玩家 1/4 是遭遇窗口设计（check_balance），非第三规则源。innate（兽/凡人/尸魔/凡兵符箓）intent 不参与合成。真实消费者=tools/build_data.mjs（写入生成物并校验）+ js/mvp_logic.js（运行时按装载蛊合成）",
+      "authority": "LAB_ONLY",
+      "validation": { "type": "data_embedded", "path": "projections.enemy_attack_amount_by_gu_rank" },
+      "forbidWriteBack": true,
+      "sourceRuling": "RUL-2026-09-25-001"
     }
   ],
   "forbidden_examples": [

@@ -351,6 +351,37 @@ globalThis.MvpLogic = (() => {
     };
   }
 
+  /* P5-B1 敌人持蛊化（RUL-2026-09-25-001）：attackSource=gu 的杀招伤害 = 装载主战蛊
+     （effect.kind=strike）按 PROJ-LAB-ENEMY-ATTACK-001 压缩投影之和，与构建期校验同一条
+     公式；innate（兽/凡人/尸魔/凡兵符箓）沿用 authored damage。缺蛊索引/投影表一律
+     fail-fast（No Silent Fallback），不允许静默退回 authored。 */
+  function enemyGuContext() {
+    const idx = (typeof GU_BY_ID !== 'undefined' && GU_BY_ID)
+      || globalThis.MVP_GU_CONTEXT?.guById || null;
+    const table = (typeof DATA !== 'undefined' && DATA?.projections?.enemy_attack_amount_by_gu_rank)
+      || globalThis.MVP_GU_CONTEXT?.enemyAttackTable || null;
+    return { idx, table };
+  }
+
+  function enemyIntentDamage(enemy, intent) {
+    const src = intent.attackSource || enemy?.attackSource || 'innate';
+    if (src !== 'gu') return Math.max(0, Number(intent.damage || 0));
+    const { idx, table } = enemyGuContext();
+    if (!idx || !table) {
+      throw new Error('mvp_logic: attackSource=gu 缺蛊索引/敌方投影表（No Silent Fallback）');
+    }
+    let sum = 0;
+    for (const gid of intent.guRefs || []) {
+      const g = idx[gid];
+      if (!g) throw new Error(`mvp_logic: 敌人装载蛊 ${gid} 不在生成物（No Silent Fallback）`);
+      if (g.effect?.kind !== 'strike') continue;
+      const amt = table[String(g.rank)];
+      if (amt == null) throw new Error(`mvp_logic: 敌方攻击投影缺 ${g.rank} 转（${gid}）`);
+      sum += Number(amt);
+    }
+    return sum;
+  }
+
   function resolveEnemyAction(enemy, player, context = {}) {
     const nextEnemy = clone(enemy);
     const nextPlayer = clone(player);
@@ -367,7 +398,7 @@ globalThis.MvpLogic = (() => {
     const specialSuppressed = !!nextEnemy.suppressed;
     const specialCancelled = handled || specialSuppressed;
 
-    let rawDamage = Math.max(0, Number(intent.damage || 0));
+    let rawDamage = enemyIntentDamage(nextEnemy, intent);
     if (intent.tag === 'charge') rawDamage += Math.max(0, Number(nextEnemy.ironRage || 0));
     if (counterId === 'draw_light' && !context.usedLight) rawDamage += 3;
     if (handled) rawDamage = Math.max(0, rawDamage - 3);
@@ -403,7 +434,7 @@ globalThis.MvpLogic = (() => {
      min = 本回合剩余选择里能压到的最低值；max = 做错/未识破时的最高值。 */
   function previewEnemyDamage(enemy, intent, context = {}) {
     const target = intent || enemy?.currentIntent || { damage: 0 };
-    const base = Math.max(0, Number(target.damage || 0))
+    const base = Math.max(0, enemyIntentDamage(enemy || {}, target))
       + (target.tag === 'charge' ? Math.max(0, Number(enemy?.ironRage || 0)) : 0);
     if (!base && !target.damage) return { min: 0, max: 0, base: 0, projected: 0, hasCounter: false };
 
@@ -615,6 +646,7 @@ globalThis.MvpLogic = (() => {
     pickVariant,
     phaseIndexFor,
     intentFor,
+    enemyIntentDamage,
     startTurn,
     counterRule,
     counterActive,

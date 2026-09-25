@@ -75,3 +75,23 @@ State transition
 ```
 
 不替换 CombatCore；Executor 只回答「一个合法 effect 对当前 battle state 做什么」。
+
+## 8. 敌方杀招管线（P5-B1 敌人持蛊化，2026-09-26）
+
+敌人攻击与玩家蛊虫走同一条 Effect Grammar——敌方 intent 不再是自由手填的裸数值：
+
+```text
+enemies.json（世界 Owner）
+  enemy.attackSource = 'gu' | 'innate'
+  enemy.guRefs            ── 装载（身份，含辅蛊）
+  intent.guRefs           ── 杀招组件（strike 类蛊参与合成）
+        ↓  构建期（build_data.mjs）
+  Σ enemyAttackAmount[gu.rank]  ==  intent.damage   （fail-fast 校验）
+        ↓  运行时（mvp_logic.enemyIntentDamage，CombatCore 同源）
+  同一条压缩投影公式合成伤害 → resolveEnemyAction / previewEnemyDamage
+```
+
+- **attackSource=gu**（蛊修/异动）：伤害杀招必须声明 `guRefs`，伤害=装载主战蛊（effect.kind=strike）按 `PROJ-LAB-ENEMY-ATTACK-001`（压缩投影，parent=balance.effect_budget）求和；缺 guRefs、缺投影、合成漂移一律 fail-fast。
+- **attackSource=innate**（兽/凡人/尸魔/凡兵符箓，intent 级可覆盖）：沿用 authored damage——这是显式声明，不是 fallback；原著依据=凶兽以天生手段攻击、蛊修亦可持凡兵。
+- **压缩不变量**（check_projection + C6-2 常驻断言）：表值 ≤ lab attack 曲线（PROJ-LAB-ROLE-CURVE-001）且单调不减；敌方 DPR≈玩家 1/4 是遭遇窗口设计（check_balance H1），非第三规则源。
+- **运行期一致性**：换皮测试「换皮-5」证明合成只吃 id 绑定 + kind + rank——改名不变、换组件即变、预制 damage 不驱动。

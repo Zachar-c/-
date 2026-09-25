@@ -89,3 +89,43 @@ test('GATE-③ 切片关键字段无 UNKNOWN/占位', () => {
     assert.ok(out && out.effect && out.effect.kind, `${id} 生成物效果缺失`);
   }
 });
+
+test('换皮-5 敌人杀招组件结算：伤害来自装载蛊合成，改名不变、换组件即变、innate 走 authored', () => {
+  const logicContext = vm.createContext({});
+  logicContext.MVP_GU_CONTEXT = {
+    guById: dataGuById,
+    enemyAttackTable: DATA.projections.enemy_attack_amount_by_gu_rank,
+  };
+  vm.runInContext(
+    fs.readFileSync(new URL('../js/mvp_logic.js', import.meta.url), 'utf8'),
+    logicContext,
+  );
+  const MvpLogic = logicContext.MvpLogic;
+
+  // 血脉主教 vein_whip：装载 [血滴子 r5] → 压缩投影 4（与构建期校验同一条公式）
+  const enemy = { attackSource: 'gu' };
+  const intent = { id: 'vein_whip', damage: 4, guRefs: ['blood_droplet_gu'] };
+  assert.equal(MvpLogic.enemyIntentDamage(enemy, intent), 4);
+
+  // 换皮：全部蛊改名（id 绑定不动）→ 合成逐字节不变
+  const anonContext = vm.createContext({});
+  anonContext.MVP_GU_CONTEXT = {
+    guById: Object.fromEntries(Object.entries(dataGuById).map(([id, g]) => [
+      id, { ...g, name: `匿名蛊_${id.length}`, id: `${id}__anon` },
+    ])),
+    enemyAttackTable: DATA.projections.enemy_attack_amount_by_gu_rank,
+  };
+  vm.runInContext(
+    fs.readFileSync(new URL('../js/mvp_logic.js', import.meta.url), 'utf8'),
+    anonContext,
+  );
+  assert.equal(anonContext.MvpLogic.enemyIntentDamage(enemy, intent), 4);
+
+  // 组件换成非 strike 蛊（血针蛊=heal）→ 合成 0：预制 damage(4) 不驱动，证明走的是 Grammar
+  const healIntent = { id: 'vein_whip', damage: 4, guRefs: ['blood_heal_2_23_gu'] };
+  assert.equal(MvpLogic.enemyIntentDamage(enemy, healIntent), 0);
+
+  // innate（兽/凡兵）→ authored damage，不合成
+  const innateIntent = { id: 'crossbow_shot', damage: 4, attackSource: 'innate' };
+  assert.equal(MvpLogic.enemyIntentDamage({ attackSource: 'gu' }, innateIntent), 4);
+});
