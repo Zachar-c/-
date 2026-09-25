@@ -519,6 +519,32 @@ const flow = {
   postBattleHealPct: 30,
 };
 
+// Canon Runtime（lore/runtime，由 lore/wiki/tools/compile_runtime.py 从 wiki 编译）：
+// 游戏"引用 Canon"，不再手抄原著口径——蛊仓标注 canon 转数与分叉状态，测试校验一致性。
+// 生成物缺席时降级为 canon=null（先跑 py -3 lore/wiki/tools/compile_runtime.py 可消除警告）。
+const canonRuntimeDir = path.resolve(gameRoot, '..', 'lore', 'runtime');
+let canon = null;
+try {
+  const canonEntities = JSON.parse(fs.readFileSync(path.join(canonRuntimeDir, 'entities.json'), 'utf8')).entities;
+  const canonRelations = JSON.parse(fs.readFileSync(path.join(canonRuntimeDir, 'relations.json'), 'utf8')).relations;
+  const canonManifest = JSON.parse(fs.readFileSync(path.join(canonRuntimeDir, 'manifest.json'), 'utf8'));
+  canon = {
+    contentVersion: canonManifest.content_version || null,
+    sourceSha256: canonManifest.source?.sha256 || null,
+    entities: Object.fromEntries(canonEntities.map((e) => [e.id, {
+      name: e.name,
+      rank: e.properties?.rank,
+      rankStatus: e.properties?.rank_status,
+    }])),
+    relations: canonRelations.map((r) => ({
+      id: r.id, relation: r.relation, statement: r.statement,
+      from: r.from, to: r.to, inputs: r.inputs, output: r.output, output_rank: r.output_rank,
+    })),
+  };
+} catch {
+  console.warn('[build_data] lore/runtime 缺失——DATA.canon=null（先运行 py -3 lore/wiki/tools/compile_runtime.py）');
+}
+
 const out = {
   // Run saves use a deliberate compatibility epoch, not the content hash below.
   // Text, art, and additive route/event content can ship without invalidating a long run.
@@ -554,6 +580,7 @@ const out = {
   },
   gu, recipes: picked, killMoves, enemies: pickedEnemies,
   nodes, route, shopOffers, npcs, events,
+  canon,
   /* Rank 主链：WORLD 真源快照（Integration 刀1）。Lab 投影只准读这里。 */
   worldBalance: {
     rank_step_ratio: balance.rank_step_ratio,

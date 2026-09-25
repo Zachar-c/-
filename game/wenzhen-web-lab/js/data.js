@@ -82,12 +82,14 @@ const DATA = {
     "poolsBySegment": {
       "1": {
         "battle": [
+          "beast_swarm",
           "neutral_stone_wanderer",
           "ridge_hound",
           "iron_hide_boar"
         ],
         "elite": [
           "faction_guard",
+          "mo_family_huntsman",
           "ridge_elite_scout"
         ],
         "boss": [
@@ -96,13 +98,16 @@ const DATA = {
       },
       "2": {
         "battle": [
+          "beast_swarm",
           "neutral_stone_wanderer",
           "ridge_hound",
           "iron_hide_boar"
         ],
         "elite": [
           "faction_guard",
+          "mo_family_huntsman",
           "ridge_elite_scout",
+          "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
         ],
@@ -112,13 +117,16 @@ const DATA = {
       },
       "3": {
         "battle": [
+          "beast_swarm",
           "neutral_stone_wanderer",
           "ridge_hound",
           "iron_hide_boar"
         ],
         "elite": [
           "faction_guard",
+          "mo_family_huntsman",
           "ridge_elite_scout",
+          "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
         ],
@@ -128,13 +136,16 @@ const DATA = {
       },
       "4": {
         "battle": [
+          "beast_swarm",
           "neutral_stone_wanderer",
           "ridge_hound",
           "iron_hide_boar"
         ],
         "elite": [
           "faction_guard",
+          "mo_family_huntsman",
           "ridge_elite_scout",
+          "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
         ],
@@ -144,13 +155,16 @@ const DATA = {
       },
       "5": {
         "battle": [
+          "beast_swarm",
           "neutral_stone_wanderer",
           "ridge_hound",
           "iron_hide_boar"
         ],
         "elite": [
           "faction_guard",
+          "mo_family_huntsman",
           "ridge_elite_scout",
+          "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
         ],
@@ -978,8 +992,8 @@ const DATA = {
     },
     {
       "id": "blood_farewell_gu",
-      "name": "爱别离蛊",
-      "rank": 1,
+      "name": "爱别离",
+      "rank": 2,
       "rarity": "epic",
       "role": "attack",
       "buildRole": "Finisher",
@@ -1018,7 +1032,7 @@ const DATA = {
     {
       "id": "blood_droplet_gu",
       "name": "血滴子",
-      "rank": 1,
+      "rank": 5,
       "rarity": "common",
       "role": "attack",
       "buildRole": "Core",
@@ -1078,7 +1092,7 @@ const DATA = {
     },
     {
       "id": "sword_atk_1_06_gu",
-      "name": "刃蛊",
+      "name": "剑纹刃蛊",
       "rank": 1,
       "rarity": "common",
       "role": "attack",
@@ -1109,7 +1123,7 @@ const DATA = {
     },
     {
       "id": "sword_atk_1_05_gu",
-      "name": "锋蛊",
+      "name": "剑纹锋蛊",
       "rank": 1,
       "rarity": "common",
       "role": "attack",
@@ -1194,7 +1208,7 @@ const DATA = {
     },
     {
       "id": "qi_rec_2_14_gu",
-      "name": "霭蛊",
+      "name": "气纹霭蛊",
       "rank": 2,
       "rarity": "common",
       "role": "recon",
@@ -1282,7 +1296,7 @@ const DATA = {
     {
       "id": "moon_shadow_gu",
       "name": "月影蛊",
-      "rank": 3,
+      "rank": 4,
       "rarity": "rare",
       "role": "movement",
       "buildRole": null,
@@ -1359,7 +1373,7 @@ const DATA = {
     {
       "id": "gold_atk_2_12_gu",
       "name": "青铜舍利蛊",
-      "rank": 2,
+      "rank": 1,
       "rarity": "common",
       "role": "support",
       "buildRole": null,
@@ -1763,7 +1777,7 @@ const DATA = {
     },
     {
       "id": "wisdom_atk_3_13_gu",
-      "name": "才华蛊",
+      "name": "智才华蛊",
       "rank": 3,
       "rarity": "rare",
       "role": "attack",
@@ -1928,7 +1942,7 @@ const DATA = {
     {
       "id": "light_atk_3_02_gu",
       "name": "邀月蛊",
-      "rank": 3,
+      "rank": 2,
       "rarity": "rare",
       "role": "attack",
       "buildRole": null,
@@ -1938,13 +1952,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 3
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 3
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3142,7 +3156,7 @@ const DATA = {
     },
     {
       "id": "iron_hide_boar",
-      "name": "铁皮山猪",
+      "name": "黑皮野猪",
       "rank": 2,
       "hp": 5,
       "theme": "beast",
@@ -3777,6 +3791,766 @@ const DATA = {
         "even_line"
       ],
       "reactions": []
+    },
+    {
+      "id": "beast_swarm",
+      "name": "兽群",
+      "rank": 1,
+      "hp": 4,
+      "theme": "beast",
+      "tier": "common",
+      "problemAxis": null,
+      "problemLabel": null,
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "swarm_bite",
+        "label": "蜂群撕缠",
+        "damage": 2,
+        "speed": 1
+      },
+      "portrait": "enemy_beast_swarm",
+      "phases": null,
+      "phasesNote": null,
+      "clues": [
+        "droning_wings",
+        "swarming_shadows"
+      ],
+      "reactions": []
+    },
+    {
+      "id": "mo_family_huntsman",
+      "name": "漠家猎手",
+      "rank": 2,
+      "hp": 5,
+      "theme": "faction",
+      "tier": "elite",
+      "problemAxis": "info",
+      "problemLabel": "情报/先手",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "mo_hunt_fork",
+        "label": "漠家猎叉",
+        "damage": 2,
+        "speed": 1
+      },
+      "portrait": "enemy_sanxiu",
+      "phases": null,
+      "phasesNote": null,
+      "clues": [
+        "hound_whistle",
+        "crossbow_glint"
+      ],
+      "reactions": [
+        {
+          "id": "mo_crossguard",
+          "clue": "crossbow_glint",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "弩盾斜架"
+        }
+      ]
+    },
+    {
+      "id": "jiangshi_handler_boss",
+      "name": "僵王传人",
+      "rank": 3,
+      "hp": 14,
+      "theme": "faction",
+      "tier": "boss",
+      "problemAxis": "info",
+      "problemLabel": "破绽/读招",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "corpse_command",
+        "label": "驱僵号令",
+        "damage": 2,
+        "speed": 1
+      },
+      "portrait": "enemy_sanxiu",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "corpse_command",
+              "label": "驱僵号令",
+              "damage": 2,
+              "speed": 1,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "talisman_guard",
+              "clue": "paper_talismans",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "黄符护身"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "corpse_command",
+              "label": "驱僵号令",
+              "damage": 2,
+              "speed": 1,
+              "cooldown": 2
+            },
+            {
+              "id": "talisman_ignite",
+              "label": "掷符引火",
+              "damage": 3,
+              "speed": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "talisman_guard",
+              "clue": "paper_talismans",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "黄符护身"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "corpse_bells",
+        "paper_talismans"
+      ],
+      "reactions": [
+        {
+          "id": "talisman_guard",
+          "clue": "paper_talismans",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "黄符护身"
+        }
+      ]
+    },
+    {
+      "id": "blood_grave_thrall",
+      "name": "血湖血傀",
+      "rank": 3,
+      "hp": 8,
+      "theme": "anomaly",
+      "tier": "boss",
+      "problemAxis": "info",
+      "problemLabel": "破绽/读招",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "blood_claw",
+        "label": "血爪撕扯",
+        "damage": 2,
+        "speed": 1
+      },
+      "portrait": "enemy_toad",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "blood_claw",
+              "label": "血爪撕扯",
+              "damage": 2,
+              "speed": 1,
+              "cooldown": 1
+            }
+          ],
+          "reactions": [
+            {
+              "id": "blood_tendril_bind",
+              "clue": "crimson_veins",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "血丝缠缚"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "blood_claw",
+              "label": "血爪撕扯",
+              "damage": 2,
+              "speed": 1,
+              "cooldown": 1
+            },
+            {
+              "id": "blood_seethe",
+              "label": "血沸蚀元",
+              "damage": 0,
+              "speed": 2,
+              "essence_burn": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "blood_tendril_bind",
+              "clue": "crimson_veins",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "血丝缠缚"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "crimson_veins",
+        "grave_fog"
+      ],
+      "reactions": [
+        {
+          "id": "blood_tendril_bind",
+          "clue": "crimson_veins",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "bound",
+          "label": "血丝缠缚"
+        }
+      ]
+    },
+    {
+      "id": "bone_gun_marauder",
+      "name": "骨枪马贼",
+      "rank": 3,
+      "hp": 7,
+      "theme": "cultivator",
+      "tier": "elite",
+      "problemAxis": "evasion",
+      "problemLabel": "机动/命中",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "bone_spear_barrage",
+        "label": "骨枪连掷",
+        "damage": 3,
+        "speed": 2
+      },
+      "portrait": "enemy_sanxiu",
+      "phases": null,
+      "phasesNote": null,
+      "clues": [
+        "bone_powder_trail",
+        "throwing_arc"
+      ],
+      "reactions": [
+        {
+          "id": "bone_tether",
+          "clue": "throwing_arc",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "bound",
+          "label": "缠骨锁足"
+        }
+      ]
+    },
+    {
+      "id": "slave_path_overseer",
+      "name": "奴道监工",
+      "rank": 4,
+      "hp": 12,
+      "theme": "faction",
+      "tier": "boss",
+      "problemAxis": "info",
+      "problemLabel": "破绽/读招",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "overseer_whip",
+        "label": "鞭笞驱兽",
+        "damage": 3,
+        "speed": 1
+      },
+      "portrait": "enemy_sanxiu",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "overseer_whip",
+              "label": "鞭笞驱兽",
+              "damage": 3,
+              "speed": 1,
+              "cooldown": 1
+            }
+          ],
+          "reactions": [
+            {
+              "id": "iron_barricade",
+              "clue": "chained_beasts",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "铁栏横挡"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "overseer_whip",
+              "label": "鞭笞驱兽",
+              "damage": 3,
+              "speed": 1,
+              "cooldown": 1
+            },
+            {
+              "id": "slave_seal_burn",
+              "label": "奴印蚀元",
+              "damage": 0,
+              "speed": 2,
+              "essence_burn": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "iron_barricade",
+              "clue": "chained_beasts",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "铁栏横挡"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "whip_crack",
+        "chained_beasts"
+      ],
+      "reactions": [
+        {
+          "id": "iron_barricade",
+          "clue": "chained_beasts",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "铁栏横挡"
+        }
+      ]
+    },
+    {
+      "id": "soul_path_reaper",
+      "name": "魂道摄魂人",
+      "rank": 5,
+      "hp": 16,
+      "theme": "anomaly",
+      "tier": "boss",
+      "problemAxis": "info",
+      "problemLabel": "破绽/读招",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "soul_bell",
+        "label": "摄魂铃荡",
+        "damage": 4,
+        "speed": 2
+      },
+      "portrait": "enemy_toad",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "soul_bell",
+              "label": "摄魂铃荡",
+              "damage": 4,
+              "speed": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "soul_chain",
+              "clue": "soul_lantern_flicker",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "锁魂索"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "soul_bell",
+              "label": "摄魂铃荡",
+              "damage": 4,
+              "speed": 2,
+              "cooldown": 2
+            },
+            {
+              "id": "soul_burst",
+              "label": "魂爆灭识",
+              "damage": 4,
+              "speed": 1,
+              "essence_burn": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "soul_chain",
+              "clue": "soul_lantern_flicker",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "锁魂索"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "soul_lantern_flicker",
+        "whisper_wind"
+      ],
+      "reactions": [
+        {
+          "id": "soul_chain",
+          "clue": "soul_lantern_flicker",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "bound",
+          "label": "锁魂索"
+        }
+      ]
+    },
+    {
+      "id": "blood_god_larva",
+      "name": "血神子",
+      "rank": 5,
+      "hp": 18,
+      "theme": "anomaly",
+      "tier": "boss",
+      "problemAxis": "armor",
+      "problemLabel": "护体/磨血",
+      "armorValue": 1,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "blood_rain",
+        "label": "血雨漫天",
+        "damage": 4,
+        "speed": 1
+      },
+      "portrait": "enemy_toad",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "blood_rain",
+              "label": "血雨漫天",
+              "damage": 4,
+              "speed": 1,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "blood_film",
+              "clue": "blood_moon_trace",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "血膜凝甲"
+            },
+            {
+              "id": "blood_tendon_bind",
+              "clue": "splitting_swarm",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "血丝缚肢"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "blood_rain",
+              "label": "血雨漫天",
+              "damage": 4,
+              "speed": 1,
+              "cooldown": 2
+            },
+            {
+              "id": "split_devour",
+              "label": "裂体分噬",
+              "damage": 4,
+              "speed": 1,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "blood_film",
+              "clue": "blood_moon_trace",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "血膜凝甲"
+            },
+            {
+              "id": "blood_tendon_bind",
+              "clue": "splitting_swarm",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "血丝缚肢"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "blood_moon_trace",
+        "splitting_swarm"
+      ],
+      "reactions": [
+        {
+          "id": "blood_film",
+          "clue": "blood_moon_trace",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "血膜凝甲"
+        },
+        {
+          "id": "blood_tendon_bind",
+          "clue": "splitting_swarm",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "bound",
+          "label": "血丝缚肢"
+        }
+      ]
+    },
+    {
+      "id": "dream_wraith_echo",
+      "name": "梦境残念",
+      "rank": 5,
+      "hp": 15,
+      "theme": "anomaly",
+      "tier": "boss",
+      "problemAxis": "info",
+      "problemLabel": "情报/先手",
+      "armorValue": null,
+      "evasionBreakpoint": null,
+      "intent": {
+        "id": "nightmare_whisper",
+        "label": "梦魇低语",
+        "damage": 0,
+        "speed": 2,
+        "essence_burn": 2
+      },
+      "portrait": "enemy_toad",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "nightmare_whisper",
+              "label": "梦魇低语",
+              "damage": 0,
+              "speed": 2,
+              "essence_burn": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "mirror_flower",
+              "clue": "mirage_step",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "镜花障"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "nightmare_whisper",
+              "label": "梦魇低语",
+              "damage": 0,
+              "speed": 2,
+              "essence_burn": 2,
+              "cooldown": 2
+            },
+            {
+              "id": "phantom_pain",
+              "label": "幻痛反噬",
+              "damage": 4,
+              "speed": 1,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "mirror_flower",
+              "clue": "mirage_step",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "镜花障"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "mirage_step",
+        "echoed_voice"
+      ],
+      "reactions": [
+        {
+          "id": "mirror_flower",
+          "clue": "mirage_step",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "镜花障"
+        }
+      ]
+    },
+    {
+      "id": "thousand_li_earth_tarantula",
+      "name": "千里地狼蛛",
+      "rank": 5,
+      "hp": 20,
+      "theme": "beast",
+      "tier": "boss",
+      "problemAxis": "evasion",
+      "problemLabel": "机动/命中",
+      "armorValue": null,
+      "evasionBreakpoint": 2,
+      "intent": {
+        "id": "burrow_ambush",
+        "label": "地遁突袭",
+        "damage": 4,
+        "speed": 2
+      },
+      "portrait": "enemy_beast_swarm",
+      "phases": [
+        {
+          "until_hp_ratio": 1,
+          "intents": [
+            {
+              "id": "burrow_ambush",
+              "label": "地遁突袭",
+              "damage": 4,
+              "speed": 2,
+              "cooldown": 1
+            }
+          ],
+          "reactions": [
+            {
+              "id": "spider_carapace",
+              "clue": "sand_breath",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "蛛甲横障"
+            },
+            {
+              "id": "web_binding",
+              "clue": "tremor_lines",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "蛛网黏缚"
+            }
+          ]
+        },
+        {
+          "until_hp_ratio": 0.5,
+          "intents": [
+            {
+              "id": "burrow_ambush",
+              "label": "地遁突袭",
+              "damage": 4,
+              "speed": 2,
+              "cooldown": 1
+            },
+            {
+              "id": "web_seal",
+              "label": "蛛网封穴",
+              "damage": 0,
+              "speed": 2,
+              "essence_burn": 2,
+              "cooldown": 2
+            }
+          ],
+          "reactions": [
+            {
+              "id": "spider_carapace",
+              "clue": "sand_breath",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "guarded",
+              "label": "蛛甲横障"
+            },
+            {
+              "id": "web_binding",
+              "clue": "tremor_lines",
+              "window": "before_damage",
+              "trigger": "direct_strike",
+              "counter_status": "bound",
+              "label": "蛛网黏缚"
+            }
+          ]
+        }
+      ],
+      "phasesNote": "cooldown:n on an intent means fired at turn T, next selectable from turn T+n+1; while every intent of the active phase rests the boss shows cooldown_wait and attacks nothing that turn. Phase thresholds (until_hp_ratio) descend strictly in data order.",
+      "clues": [
+        "tremor_lines",
+        "sand_breath"
+      ],
+      "reactions": [
+        {
+          "id": "spider_carapace",
+          "clue": "sand_breath",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "guarded",
+          "label": "蛛甲横障"
+        },
+        {
+          "id": "web_binding",
+          "clue": "tremor_lines",
+          "window": "before_damage",
+          "trigger": "direct_strike",
+          "counter_status": "bound",
+          "label": "蛛网黏缚"
+        }
+      ]
     }
   ],
   "nodes": [
@@ -4011,7 +4785,8 @@ const DATA = {
         "leave"
       ],
       "nextIds": [
-        "body_imprint_ritual"
+        "body_imprint_ritual",
+        "jiangshi_bell_road"
       ],
       "enemyKind": null,
       "enemyKinds": null,
@@ -4079,7 +4854,8 @@ const DATA = {
       "summary": "黑市藏在两道山梁之间，货物没有来路，摊主也不问。看中的东西，得拿元石换。",
       "choices": [],
       "nextIds": [
-        "stage_one_ledger"
+        "stage_one_ledger",
+        "bone_gun_ambush"
       ],
       "enemyKind": null,
       "enemyKinds": null,
@@ -4106,7 +4882,8 @@ const DATA = {
       "enemyTheme": "beast",
       "bossPool": [
         "crag_serpent_matriarch",
-        "marrow_gu_adept"
+        "marrow_gu_adept",
+        "slave_path_overseer"
       ],
       "npcId": null,
       "eventId": null,
@@ -4129,7 +4906,10 @@ const DATA = {
       "enemyTheme": "cultivator",
       "bossPool": [
         "marrow_gu_adept",
-        "thunder_crown_sovereign"
+        "thunder_crown_sovereign",
+        "soul_path_reaper",
+        "blood_god_larva",
+        "dream_wraith_echo"
       ],
       "npcId": null,
       "eventId": null,
@@ -4152,7 +4932,8 @@ const DATA = {
       "enemyTheme": "beast",
       "bossPool": [
         "thunder_crown_sovereign",
-        "clan_patriarch"
+        "clan_patriarch",
+        "thousand_li_earth_tarantula"
       ],
       "npcId": null,
       "eventId": null,
@@ -4193,7 +4974,8 @@ const DATA = {
       "choices": [],
       "nextIds": [
         "blood_moss_grove",
-        "gu_rot_pact"
+        "gu_rot_pact",
+        "blood_grave_stir"
       ],
       "enemyKind": null,
       "enemyKinds": null,
@@ -4378,7 +5160,8 @@ const DATA = {
       ],
       "nextIds": [
         "toxic_mountain_path",
-        "blood_moss_grove"
+        "blood_moss_grove",
+        "mo_line_pursuit"
       ],
       "enemyKind": "ridge_hound",
       "enemyKinds": [
@@ -4593,7 +5376,7 @@ const DATA = {
     },
     {
       "id": "iron_hide_ambush",
-      "name": "铁皮野猪伏击",
+      "name": "黑皮野猪伏击",
       "stage": "one",
       "type": "combat",
       "summary": "铁皮野猪从岩后顶出，鬃毛间结着硬壳；隘路窄得避不开，先手比蛊力更要紧。",
@@ -4656,7 +5439,7 @@ const DATA = {
     },
     {
       "id": "yizang_ridge",
-      "name": "荒岭遗葬",
+      "name": "荒岭遗藏",
       "stage": "one",
       "type": "inheritance",
       "summary": "荒岭上草木环伏，墓中机关仍有余力。信物与路线图分在两处，贪多未必能全取。",
@@ -4672,6 +5455,90 @@ const DATA = {
       "enemyKind": null,
       "enemyKinds": null,
       "enemyTheme": null,
+      "bossPool": null,
+      "npcId": null,
+      "eventId": null,
+      "eventPool": null,
+      "layerBoss": null,
+      "layer": null
+    },
+    {
+      "id": "mo_line_pursuit",
+      "name": "漠家猎手",
+      "stage": "one",
+      "type": "combat",
+      "summary": "漠家猎手缀在坡道背风处，犬哨一声，弩光先于人影出现。",
+      "choices": [
+        "fight",
+        "retreat"
+      ],
+      "nextIds": [],
+      "enemyKind": "mo_family_huntsman",
+      "enemyKinds": null,
+      "enemyTheme": "faction",
+      "bossPool": null,
+      "npcId": null,
+      "eventId": null,
+      "eventPool": null,
+      "layerBoss": null,
+      "layer": null
+    },
+    {
+      "id": "jiangshi_bell_road",
+      "name": "僵王传人",
+      "stage": "two",
+      "type": "combat",
+      "summary": "尸铃摇响，黄符贴地成阵——僵王传人立在道中央，身后青毛僵缓缓抬手。",
+      "choices": [
+        "fight",
+        "retreat"
+      ],
+      "nextIds": [],
+      "enemyKind": "jiangshi_handler_boss",
+      "enemyKinds": null,
+      "enemyTheme": "faction",
+      "bossPool": null,
+      "npcId": null,
+      "eventId": null,
+      "eventPool": null,
+      "layerBoss": null,
+      "layer": null
+    },
+    {
+      "id": "blood_grave_stir",
+      "name": "血湖血傀",
+      "stage": "two",
+      "type": "combat",
+      "summary": "坟雾里赤筋蠕动——血湖旧物循着尸铃醒来，挡在商队的退路上。",
+      "choices": [
+        "fight",
+        "retreat"
+      ],
+      "nextIds": [],
+      "enemyKind": "blood_grave_thrall",
+      "enemyKinds": null,
+      "enemyTheme": "anomaly",
+      "bossPool": null,
+      "npcId": null,
+      "eventId": null,
+      "eventPool": null,
+      "layerBoss": null,
+      "layer": null
+    },
+    {
+      "id": "bone_gun_ambush",
+      "name": "骨枪马贼",
+      "stage": "two",
+      "type": "combat",
+      "summary": "骨粉撒径，掷枪弧光自林隙掠出——马贼的骨枪比人先到。",
+      "choices": [
+        "fight",
+        "retreat"
+      ],
+      "nextIds": [],
+      "enemyKind": "bone_gun_marauder",
+      "enemyKinds": null,
+      "enemyTheme": "cultivator",
       "bossPool": null,
       "npcId": null,
       "eventId": null,
@@ -4694,7 +5561,8 @@ const DATA = {
       ],
       "nextIds": [
         "toxic_mountain_path",
-        "blood_moss_grove"
+        "blood_moss_grove",
+        "mo_line_pursuit"
       ],
       "enemyKind": "ridge_hound",
       "enemyKinds": [
@@ -4724,7 +5592,8 @@ const DATA = {
       "enemyTheme": "beast",
       "bossPool": [
         "crag_serpent_matriarch",
-        "marrow_gu_adept"
+        "marrow_gu_adept",
+        "slave_path_overseer"
       ],
       "npcId": null,
       "eventId": null,
@@ -4755,7 +5624,7 @@ const DATA = {
     },
     {
       "id": "iron_hide_ambush",
-      "name": "铁皮野猪伏击",
+      "name": "黑皮野猪伏击",
       "stage": "one",
       "type": "combat",
       "summary": "铁皮野猪从岩后顶出，鬃毛间结着硬壳；隘路窄得避不开，先手比蛊力更要紧。",
@@ -4782,7 +5651,8 @@ const DATA = {
       "summary": "黑市藏在两道山梁之间，货物没有来路，摊主也不问。看中的东西，得拿元石换。",
       "choices": [],
       "nextIds": [
-        "stage_one_ledger"
+        "stage_one_ledger",
+        "bone_gun_ambush"
       ],
       "enemyKind": null,
       "enemyKinds": null,
@@ -4809,7 +5679,10 @@ const DATA = {
       "enemyTheme": "cultivator",
       "bossPool": [
         "marrow_gu_adept",
-        "thunder_crown_sovereign"
+        "thunder_crown_sovereign",
+        "soul_path_reaper",
+        "blood_god_larva",
+        "dream_wraith_echo"
       ],
       "npcId": null,
       "eventId": null,
@@ -4853,7 +5726,8 @@ const DATA = {
       "enemyTheme": "beast",
       "bossPool": [
         "thunder_crown_sovereign",
-        "clan_patriarch"
+        "clan_patriarch",
+        "thousand_li_earth_tarantula"
       ],
       "npcId": null,
       "eventId": null,
@@ -5095,7 +5969,7 @@ const DATA = {
       "stone_cost": 8,
       "tier": 1,
       "school": "sword",
-      "gu_name": "刃蛊"
+      "gu_name": "剑纹刃蛊"
     },
     {
       "id": "purchase_sword_atk_2_12",
@@ -5528,6 +6402,813 @@ const DATA = {
       "stone_gain": 4
     }
   ],
+  "canon": {
+    "contentVersion": "b51b04c4e2c696f6ce5a87ffde404ef9e745bf274db8b792337d1dcd678f2ee2",
+    "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "entities": {
+      "blood_atk_1_18_gu": {
+        "name": "鳄力蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "blood_atk_3_03_gu": {
+        "name": "血气蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "blood_atk_3_11_gu": {
+        "name": "血月蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "blood_atk_3_15_gu": {
+        "name": "血蝠蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "blood_atk_4_01_gu": {
+        "name": "血颅蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "blood_atk_5_02_gu": {
+        "name": "血手印蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "blood_atk_5_09_gu": {
+        "name": "血神子",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "blood_atk_5_12_gu": {
+        "name": "血本仙蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "blood_atk_5_13_gu": {
+        "name": "血本蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "blood_atk_5_14_gu": {
+        "name": "血缘仙蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "blood_bat_gu": {
+        "name": "刀翅血蝠蛊",
+        "rank": 3,
+        "rankStatus": "divergence"
+      },
+      "blood_droplet_gu": {
+        "name": "血滴子",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "blood_farewell_gu": {
+        "name": "爱别离",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "bone_atk_3_03_gu": {
+        "name": "骨刺蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "bone_def_3_01_gu": {
+        "name": "骨枪蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "bone_def_3_05_gu": {
+        "name": "玉骨蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "bone_mov_4_04_gu": {
+        "name": "骨翼蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "dream_atk_5_02_gu": {
+        "name": "梦蝶仙蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "dream_atk_5_06_gu": {
+        "name": "解谜蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "dream_def_5_01_gu": {
+        "name": "梦甲蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "earth_atk_5_02_gu": {
+        "name": "洞地蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "earth_atk_5_03_gu": {
+        "name": "地藏花蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "earth_def_3_01_gu": {
+        "name": "石窍蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "fire_atk_2_01_gu": {
+        "name": "鬼火蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "fire_atk_4_02_gu": {
+        "name": "丹火蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "fire_atk_4_05_gu": {
+        "name": "火龙蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "fire_atk_4_06_gu": {
+        "name": "火蛇蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "fire_atk_4_07_gu": {
+        "name": "炎蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "fire_mov_4_39_gu": {
+        "name": "火炭蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "force_atk_1_05_gu": {
+        "name": "斤力蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "force_atk_2_06_gu": {
+        "name": "十斤之力蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "force_atk_3_01_gu": {
+        "name": "力气蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "force_atk_3_07_gu": {
+        "name": "一钧之力蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "force_atk_3_29_gu": {
+        "name": "天蓬蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_02_gu": {
+        "name": "苦力蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_04_gu": {
+        "name": "全力以赴蛊",
+        "rank": 3,
+        "rankStatus": "timepoint"
+      },
+      "force_atk_4_08_gu": {
+        "name": "十钧之力蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_11_gu": {
+        "name": "兽力蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_17_gu": {
+        "name": "借力蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_18_gu": {
+        "name": "费力蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_25_gu": {
+        "name": "巨力蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_26_gu": {
+        "name": "直撞蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_27_gu": {
+        "name": "横冲蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "force_atk_4_28_gu": {
+        "name": "横冲直撞蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "force_atk_5_10_gu": {
+        "name": "钧力蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "force_atk_5_16_gu": {
+        "name": "群力蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "force_atk_5_19_gu": {
+        "name": "我力蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "force_atk_5_20_gu": {
+        "name": "我力仙蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "force_gu": {
+        "name": "力量蛊",
+        "rank": 9,
+        "rankStatus": "name_reuse"
+      },
+      "force_heal_3_03_gu": {
+        "name": "自力更生蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "force_mov_5_21_gu": {
+        "name": "飞熊之力蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "gold_atk_2_11_gu": {
+        "name": "赤铁舍利蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "gold_atk_2_12_gu": {
+        "name": "青铜舍利蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "gold_atk_2_16_gu": {
+        "name": "舍利蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "gold_atk_2_19_gu": {
+        "name": "铁蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "gold_atk_3_06_gu": {
+        "name": "金罡蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "gold_atk_3_13_gu": {
+        "name": "白银舍利蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "gold_atk_4_02_gu": {
+        "name": "金龙蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "gold_atk_4_04_gu": {
+        "name": "金缕衣蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "gold_atk_4_14_gu": {
+        "name": "黄金舍利蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "gold_atk_5_01_gu": {
+        "name": "点金蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "gold_atk_5_03_gu": {
+        "name": "金风送爽蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "gold_atk_5_05_gu": {
+        "name": "金霞蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "gold_atk_5_15_gu": {
+        "name": "紫晶舍利蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "gold_atk_5_17_gu": {
+        "name": "金甲蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "gold_atk_5_18_gu": {
+        "name": "剑蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "gold_atk_5_20_gu": {
+        "name": "金蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "gold_def_3_08_gu": {
+        "name": "铜皮蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "gold_def_3_09_gu": {
+        "name": "古铜皮蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "gold_def_3_10_gu": {
+        "name": "铁柜蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "heaven_atk_1_11_gu": {
+        "name": "命蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "heaven_atk_1_12_gu": {
+        "name": "灾蛊",
+        "rank": 7,
+        "rankStatus": "name_reuse"
+      },
+      "heaven_atk_3_10_gu": {
+        "name": "雷翼蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "heaven_atk_3_13_gu": {
+        "name": "雷蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "heaven_atk_3_14_gu": {
+        "name": "电蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "heaven_atk_4_09_gu": {
+        "name": "雷盾蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "heaven_atk_5_01_gu": {
+        "name": "宿命蛊",
+        "rank": 9,
+        "rankStatus": "rank_cap"
+      },
+      "heaven_atk_5_02_gu": {
+        "name": "命运蛊",
+        "rank": 9,
+        "rankStatus": "rank_cap"
+      },
+      "heaven_atk_5_03_gu": {
+        "name": "天妒仙蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "heaven_atk_5_06_gu": {
+        "name": "天机蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "heaven_atk_5_07_gu": {
+        "name": "寿蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "heaven_atk_5_08_gu": {
+        "name": "雷电蛊",
+        "rank": 9,
+        "rankStatus": "rank_cap"
+      },
+      "human_atk_1_38_gu": {
+        "name": "人如故仙蛊",
+        "rank": 6,
+        "rankStatus": "name_reuse"
+      },
+      "human_atk_3_19_gu": {
+        "name": "刃蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "human_atk_3_33_gu": {
+        "name": "毒誓蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "human_atk_4_40_gu": {
+        "name": "情蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "human_atk_5_02_gu": {
+        "name": "爱情蛊",
+        "rank": 9,
+        "rankStatus": "rank_cap"
+      },
+      "human_atk_5_10_gu": {
+        "name": "能力蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "human_atk_5_21_gu": {
+        "name": "大侠蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "human_atk_5_31_gu": {
+        "name": "海誓蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "human_atk_5_34_gu": {
+        "name": "悔蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "human_atk_5_37_gu": {
+        "name": "人如故蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "human_atk_5_41_gu": {
+        "name": "恨蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "human_def_1_32_gu": {
+        "name": "山盟蛊",
+        "rank": null,
+        "rankStatus": "name_reuse"
+      },
+      "human_heal_5_42_gu": {
+        "name": "团圆蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "jade_skin_gu": {
+        "name": "玉皮蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "light_atk_1_04_gu": {
+        "name": "光蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "light_atk_3_02_gu": {
+        "name": "邀月蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "light_atk_3_05_gu": {
+        "name": "月蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "light_atk_5_03_gu": {
+        "name": "太光蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "light_rec_3_07_gu": {
+        "name": "星芽蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "light_rec_3_09_gu": {
+        "name": "星萤蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "light_rec_5_08_gu": {
+        "name": "星河蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "light_rec_5_12_gu": {
+        "name": "星念蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "luck_atk_1_03_gu": {
+        "name": "招灾蛊",
+        "rank": 7,
+        "rankStatus": "name_reuse"
+      },
+      "luck_atk_5_01_gu": {
+        "name": "鸿运齐天蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "luck_atk_5_04_gu": {
+        "name": "狗屎运蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "luck_atk_5_05_gu": {
+        "name": "排难蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "luck_rec_5_02_gu": {
+        "name": "察运蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "moon_glow_gu": {
+        "name": "月芒蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "moon_shadow_gu": {
+        "name": "月影蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "moonlight_gu": {
+        "name": "月光蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "qi_atk_5_05_gu": {
+        "name": "龙息蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "qi_atk_5_08_gu": {
+        "name": "霞蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "qi_mov_4_03_gu": {
+        "name": "风气蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "qi_mov_4_06_gu": {
+        "name": "云蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "refine_atk_1_04_gu": {
+        "name": "化蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "refine_log_2_03_gu": {
+        "name": "合炼蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "refine_log_5_01_gu": {
+        "name": "升炼蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "refine_log_5_02_gu": {
+        "name": "九转升炼蛊",
+        "rank": 9,
+        "rankStatus": "rank_cap"
+      },
+      "refine_log_5_05_gu": {
+        "name": "炼炉蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "refine_log_5_07_gu": {
+        "name": "量蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "slave_atk_1_03_gu": {
+        "name": "驭犬蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "slave_atk_3_04_gu": {
+        "name": "驭狼蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "slave_atk_3_05_gu": {
+        "name": "驭熊蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "slave_atk_4_02_gu": {
+        "name": "驭兽蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "slave_atk_5_01_gu": {
+        "name": "奴隶蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "small_light_gu": {
+        "name": "小光蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "soul_atk_1_02_gu": {
+        "name": "净魂仙蛊",
+        "rank": 7,
+        "rankStatus": "name_reuse"
+      },
+      "soul_atk_5_01_gu": {
+        "name": "魂灯蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "stone_shell_gu": {
+        "name": "石皮蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "sword_atk_4_01_gu": {
+        "name": "剑气蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "sword_atk_5_02_gu": {
+        "name": "飞剑蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "sword_atk_5_03_gu": {
+        "name": "剑鞘蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "water_atk_3_06_gu": {
+        "name": "冰肌蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "water_atk_3_07_gu": {
+        "name": "蓝鸟冰棺蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "water_atk_4_02_gu": {
+        "name": "水瀑蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "water_atk_4_09_gu": {
+        "name": "海蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "water_atk_5_10_gu": {
+        "name": "河蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "water_atk_5_11_gu": {
+        "name": "湖蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "water_rec_5_04_gu": {
+        "name": "浪迹天涯仙蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "white_boar_strength_gu": {
+        "name": "白豕蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "white_jade_gu": {
+        "name": "白玉蛊",
+        "rank": 2,
+        "rankStatus": "verified"
+      },
+      "wind_mov_4_04_gu": {
+        "name": "龙行虎步蛊",
+        "rank": 4,
+        "rankStatus": "verified"
+      },
+      "wind_mov_5_06_gu": {
+        "name": "风虎云龙蛊",
+        "rank": 5,
+        "rankStatus": "verified"
+      },
+      "wisdom_atk_1_01_gu": {
+        "name": "智慧蛊",
+        "rank": 9,
+        "rankStatus": "name_reuse"
+      },
+      "wisdom_atk_3_21_gu": {
+        "name": "心蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      },
+      "wisdom_atk_5_03_gu": {
+        "name": "态度蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "wisdom_atk_5_04_gu": {
+        "name": "定力蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "wisdom_atk_5_05_gu": {
+        "name": "慧剑蛊",
+        "rank": 8,
+        "rankStatus": "rank_cap"
+      },
+      "wisdom_atk_5_15_gu": {
+        "name": "妇人心蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "wood_atk_3_01_gu": {
+        "name": "木魅蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "wood_atk_3_09_gu": {
+        "name": "花蛊",
+        "rank": 3,
+        "rankStatus": "verified"
+      },
+      "wood_atk_5_08_gu": {
+        "name": "森林蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
+      },
+      "wood_heal_3_03_gu": {
+        "name": "草傀蛊",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
+      "wood_heal_3_10_gu": {
+        "name": "草蛊",
+        "rank": null,
+        "rankStatus": "collision"
+      }
+    },
+    "relations": [
+      {
+        "id": "REL-REFINE-MOONGLOW",
+        "relation": "refinement",
+        "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+        "inputs": [
+          "moonlight_gu",
+          "small_light_gu",
+          "small_light_gu"
+        ],
+        "output": "moon_glow_gu",
+        "output_rank": 2
+      },
+      {
+        "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
+        "relation": "supports",
+        "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+        "from": "small_light_gu",
+        "to": "moonlight_gu"
+      }
+    ]
+  },
   "worldBalance": {
     "rank_step_ratio": 2,
     "standard_hit_ratio": 0.2,
@@ -5878,5 +7559,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "d728b7a746f2dfa8ec2a418adce6fffc1a99ded051f704fcf43d09bc6fa79167"
+  "contentVersion": "9ad39a7b2085415ff05f834589ab56be16add88cd38e2d8899c9788c430502fe"
 };

@@ -511,12 +511,15 @@ function inventoryCard(gu) {
   const count = Number(state.owned[gu.id] || 0);
   if (count <= 0) return '';
   const price = RunFlow.sellValue(gu.value);
+  // Canon 标注：canon 与游戏转数分叉/状态待核时显示原著口径（CanRuntime 投影，非游戏数值）。
+  const canon = typeof Canon !== 'undefined' ? Canon.canonAlert(gu.id, gu.rank) : '';
   return `<article class="gu ${gu.rank > 1 ? 'r2' : ''}">
     <span class="cnt">×${count}</span>
     <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
     <div class="gn">${gu.name}</div>
     <div class="gm">${gu.rank} 转 · ${buildRoleLabel(GuRules.buildRoleOf(gu, GU_BY_ID))} · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
     <div class="ge">${effectText(gu.effect)}</div>
+    ${canon ? `<div class="gc">⟡ ${canon}</div>` : ''}
     <div class="gu-foot"><span>卖 ${price}</span><button class="ghost" data-sell-gu="${gu.id}">卖出</button></div>
   </article>`;
 }
