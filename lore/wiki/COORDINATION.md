@@ -8,7 +8,7 @@
 |---|---|---|---|
 | A（Narrative Compiler 主线） | 剧情簇 QMS → 叙事簇 FATE → 规则簇 XQ（仙窍—仙元—灾劫—道痕） | gu/、characters/、events/ 的 ID 化；world-operating-system、cultivation-system、aptitude-and-aperture、soul-path、primeval-essence | QMS ✅ 49.5/50 · FATE ✅ 50/50 · XQ ✅ 50/50（**三簇三类全部达标，v2.1 具备转正条件**） |
 | B（兽潮线） | 狼潮/兽潮簇（WTC） | events/wolf-tide.md、world/beast-tide.md、world/south-jiang.md、events/story-arc-overview.md、qing-mao-mountain 的 WTC 投影行 | 第一标段已提交（小兽潮→爆发日序幕，EVT-WTC-001…007）；覆灭段核验 + benchmark-wtc 待收尾批 |
-| C（粗蒸馏线） | 全书人物 roster（ROSTER）→ 后续候选：蛊虫总表、流派总表、五域地域与组织 | characters/roster.md、characters/index.md、index.md（Key Findings 马甲链 + 阅读顺序）、log.md | ROSTER ✅（约 45 人分组总表 + 马甲归一，11 条抽样原文核验；粗粒度无 benchmark） |
+| C（粗蒸馏线） | 全书人物 roster（ROSTER）✅ → 全书蛊虫总表（GU-ROSTER）→ 后续候选：流派总表、五域地域与组织 | characters/roster.md、gu/roster.md、characters/index.md、gu/index.md、index.md（Key Findings 马甲链 + 阅读顺序）、log.md | ROSTER ✅（约 45 人 + 马甲归一，11 条抽样核验）· GU-ROSTER ✅（约 60 蛊 + 方源蛊链 + 人道蛊族，14 条抽样核验，含 G 笔记 3121xx 锚点偏移第二例） |
 
 ## 共享页分区块规则
 
