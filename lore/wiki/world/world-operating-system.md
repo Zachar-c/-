@@ -67,7 +67,7 @@ flowchart LR
 - M2/M3 用途：M2 多轴模型是 Wiki 认知骨架（本页即 M2 入口）；M3 闭环模型是游戏系统动力（飞轮如何转、代价如何结算，设计细节不在本 Wiki 写数值）；M1 只作新手视图（转数等级感，不承载四轴）。
 - 导航用法：先定轴（问的是修为、流派、道痕还是天道关系），再进飞轮（炼制还是仙窍），最后查天道外环是否约束成立。链接只表示导航可达，不代表新增事实主张。
 
-相关页面：[修炼体系](cultivation-system.md)、[资质与空窍](aptitude-and-aperture.md)、[元海与真元](primeval-essence.md)、[养蛊、用蛊与炼蛊](gu-care-and-refinement.md)、[天庭](heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](../gu/spring-autumn-cicada.md)。
+相关页面：[修炼体系](cultivation-system.md)、[资质与空窍](aptitude-and-aperture.md)、[元海与真元](primeval-essence.md)、[养蛊、用蛊与炼蛊](gu-care-and-refinement.md)、[灾劫体系](../rules/tribulation.md)、[天庭](heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](../gu/spring-autumn-cicada.md)。
 
 ## 待核对
 

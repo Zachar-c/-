@@ -30,7 +30,7 @@ function Get-FrontMatter([string]$path) {
   return ($lines[1..($end - 1)] -join "`n")
 }
 
-$conceptDirs = @('characters', 'gu', 'events', 'world', 'themes')
+$conceptDirs = @('characters', 'gu', 'events', 'world', 'themes', 'rules')
 $conceptPages = @(foreach ($d in $conceptDirs) {
   Get-ChildItem -LiteralPath (Join-Path 'lore/wiki' $d) -Filter '*.md' -File |
     Where-Object { $_.Name -ne 'index.md' }
@@ -144,7 +144,7 @@ if ($c6ok -eq $c6total) { Write-Output "PASS: check6 概念页均被分类索引
 else { Write-Output "FAIL: check6 概念页均被分类索引收录 ($c6ok/$c6total)" }
 
 # 7. frontmatter 的 type 与所在目录一致
-$typeByDir = @{ characters = 'character'; gu = 'gu'; events = 'event'; world = 'world'; themes = 'theme' }
+$typeByDir = @{ characters = 'character'; gu = 'gu'; events = 'event'; world = 'world'; themes = 'theme'; rules = 'rules' }
 $c7ok = 0; $c7total = 0
 foreach ($f in $conceptPages) {
   $c7total++
