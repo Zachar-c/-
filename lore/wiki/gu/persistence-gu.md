@@ -4,9 +4,9 @@ name: 坚持仙蛊
 aliases: [坚持蛊]
 sources:
   - "source:source/蛊真人-clean.txt"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H1-315001-337500.md"
+  - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
+  - "notes:game/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
 ---
 
 # 坚持仙蛊

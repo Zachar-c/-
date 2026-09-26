@@ -4,11 +4,11 @@ name: 星宿仙尊
 aliases: [星宿]
 sources:
   - "source:source/蛊真人-clean.txt"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/G-270001-315000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H1-315001-337500.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H2-337501-360000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
   - "memory:lore/research/分支：六卷精编版/记忆库/02-人物弧光.md"
-  - "memory:lore/research/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
+  - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
 ---
 
 # 星宿仙尊

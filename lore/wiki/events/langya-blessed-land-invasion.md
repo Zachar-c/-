@@ -4,8 +4,8 @@ name: 天庭入侵琅琊福地
 aliases: [琅琊福地守卫战]
 sources:
   - "source:source/蛊真人-clean.txt"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/G-270001-315000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H1-315001-337500.md"
+  - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
 ---
 
 # 天庭入侵琅琊福地

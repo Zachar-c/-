@@ -4,12 +4,12 @@ name: 元莲仙尊
 aliases: [元莲]
 sources:
   - "source:source/蛊真人-clean.txt"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/B-45001-90000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/G-270001-315000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"
+  - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
+  - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
+  - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
+  - "notes:game/分支：六卷精编版/读书笔记/B-45001-90000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"
 ---
 
 # 元莲仙尊

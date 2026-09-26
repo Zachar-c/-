@@ -8,8 +8,8 @@ tags: [gu, time, rebirth, red-lotus]
 sources:
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/G-270001-315000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H1-315001-337500.md"
+  - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---

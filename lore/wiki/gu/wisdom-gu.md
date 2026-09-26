@@ -4,11 +4,11 @@ name: 智慧蛊
 aliases: [智慧蛊, 九转智慧蛊]
 sources:
   - "source:source/蛊真人-clean.txt"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/C-90001-135000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/G-270001-315000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H1-315001-337500.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/D1-135001-157500.md"
-  - "memory:lore/research/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
+  - "notes:game/分支：六卷精编版/读书笔记/C-90001-135000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
+  - "notes:game/分支：六卷精编版/读书笔记/D1-135001-157500.md"
+  - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
 ---
 
 # 智慧蛊

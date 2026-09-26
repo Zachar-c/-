@@ -8,9 +8,9 @@ date: 2026-09-26
 tags: [中洲, 炼道, 天庭, 宿命蛊, 方源, 段四]
 sources:
   - "source:source/蛊真人-clean.txt"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/G-270001-315000.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H1-315001-337500.md"
-  - "notes:lore/research/分支：六卷精编版/读书笔记/H2-337501-360000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
+  - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
 ---
 
 # 中洲炼蛊大会
