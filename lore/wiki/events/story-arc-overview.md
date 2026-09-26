@@ -30,7 +30,7 @@ sources:
 | 七 僵盟潜伏与梦境三层 | 135,001–172,000 | ✅ 精蒸馏（EVT-ZGM-001…107） | [僵盟潜伏](zangmeng-ambush.md)、[影宗](../world/shadow-sect.md)、[僵盟](../world/zangmeng.md) |
 | 八 中洲炼蛊大会 | ~150,642–156,775（嵌于弧七行域内） | ✅ 精蒸馏（EVT-CPR-001…038） | [中洲炼蛊大会](central-plain-refinement-conference.md) |
 | 九 义天山大战与二次重生 | 172,000–200,000（实读锚定；225,001–240,000 为大战后余波域） | ✅ 精蒸馏（EVT-YIT-001…084） | [义天山大战](yitian-mountain.md) |
-| 十 逆流河与琅琊 | 225,001–270,000（实读锚定；200,001–225,000 为大战后余波域） | ✅ 精蒸馏（EVT-RFR-001…122） | [逆流河](reverse-flow-river.md)、[天庭入侵琅琊福地](langya-blessed-land-invasion.md) |
+| 十 逆流河与琅琊 | 200,001–270,000（含余波域补录段 200,001–225,037，2026-09-26 双代理通读回填） | ✅ 精蒸馏（EVT-RFR-001…122＋补录行表） | [逆流河](reverse-flow-river.md)、[天庭入侵琅琊福地](langya-blessed-land-invasion.md) |
 | 十一 宿命大战 Run 1 | 270,001–323,421 | ✅ 精蒸馏（EVT-FATE-001…066） | [宿命大战](fate-war.md) |
 | 十二 Run 2 与宿命毁灭 | 323,422–360,000 | ✅ 精蒸馏（EVT-FATE-067…158） | [宿命大战](fate-war.md) |
 | 十三 三尊博弈与断点 | 360,001–437,061 | ✅ 精蒸馏（EVT-FMK-001…170） | [疯魔窟终局](feng-mo-ku.md) |
