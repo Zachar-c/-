@@ -124,3 +124,29 @@
 - 独立出题升级（切片基准与 pack 基准的出题代理分离）。
 - 冰道蛊游戏池扩展（需 L1/L0：新 gu id + ice school 联动）→ bai_ice_warden 转 gu 杀招。
 - pack 实体继续扩容前先做 evidence/source_line_refs 精简评估。
+
+---
+
+# P5 第四批（谱系批）：canon 杀招 10 条与炼蛊晋升线入 lab（2026-09-26）
+
+## 批次内容
+
+1. **杀招 provenance**：26 条 kill_moves 审计——10 条 origin=canon（剑痕索命×4 / 五指拳心剑×3 / 万剑劫×3）全部 canon_driven_v1 化，canon_anchors 原文回读核验（剑痕索命 E:V5-194470/194498 道痕刻印机制、五指拳心剑 E:V4-160166、万剑劫 E:V5-192506 以一化万）+ 剑痕索命家族 canon_refs=[KM-016]（熟练度个案，runtime 可解析）；canon_note 登记仙级→game 转数压缩适配。km_force_avalanche 空 effect 补齐 legacy 展示位（strike 8，与 damage 声明对齐；prefab 不驱动结算，数值收敛仍按 RUL-2026-09-21-010 Q1-B 留待迁移批）。
+2. **白名单扩容**：COMBAT_GU_ICON += 10 只剑蛊（全部存量显式 effect，无新数值）；lab gu 77→85。
+3. **杀招入 lab**：DATA.killMoves 5→**17**（10 条 canon 杀招全量 + 双刃剑 family + 凝光/血烬/石光壁垒）。
+4. **炼蛊线入 lab**：DATA.recipes 4→**7**（月芒/月痕/白玉[canon E:V1-009986]/熊力四线 + 古剑/断剑/匕蛊晋升线）。
+5. **断言**：conformance C7-1（canon 杀招 provenance 全量校验）/ C7-2（谱系入 lab 数量门）。
+6. **冰道蛊 L1 提案**：`2026-09-26-l1-review-ice-path.md`（新 ice school + 冰肌蛊/霜妖蛊 game 实体 + bai_ice_warden 转化 A/B 选项，待 L1）。
+
+## 门禁
+
+| 门禁 | 结果 |
+|---|---|
+| web 全量 | 261 测试 260 过（唯一失败仍为 B 线预存项） |
+| check_projection / check_balance / progression | 53/53 / 49/49 / OK（平衡零漂移：kit 不变，新增杀招/配方不进开局 kit） |
+| conformance C1–C7 | 19/19 |
+
+## 说明
+
+- 新增杀招不进开局装备（state.equipped 不变），玩家在 killmove 页/战斗中按组件可见可用——行为面通过 check_progression_loop 验证。
+- 剩余 9 条 kill_moves（qi_surge/myriad_shadows family）组件含 sword_heal/mov 系蛊，留下一批按需扩容。

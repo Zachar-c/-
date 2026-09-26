@@ -289,3 +289,36 @@ test('C6-2 敌方攻击投影压缩不变量：≤ lab attack 曲线且单调不
     prev = t;
   }
 });
+
+// ---------- C7 杀招/炼蛊谱系（P5 谱系批：canon 杀招与晋升线入 lab） ----------
+
+test('C7-1 canon 杀招 provenance：origin=canon 的 kill_moves 全部 canon_driven_v1 且引用可解析', () => {
+  const RULE_RE2 = /^(REF|KM|PE|TRIB|DM|PR|VEN|DRM)-\d{3}$/;
+  const ANCHOR_RE2 = /^E:V[1-6]-\d{5,6}$/;
+  let checked = 0;
+  for (const km of V1.kill_moves) {
+    if (km.origin !== 'canon') continue;
+    assert.equal(km.source_class, 'canon_driven_v1', `${km.id} 缺分类`);
+    const refs = km.canon_refs || [];
+    const anchors = km.canon_anchors || [];
+    assert.ok(refs.length > 0 || anchors.length > 0, `${km.id} 缺 provenance`);
+    for (const r of refs) assert.ok(RULE_RE2.test(r) && runtimeRuleIds.has(r), `${km.id} 引用 ${r} 不可解析`);
+    for (const a of anchors) assert.ok(ANCHOR_RE2.test(a), `${km.id} 锚点 ${a} 格式非法`);
+    checked += 1;
+  }
+  assert.ok(checked >= 10, `canon 杀招覆盖不足：${checked}`);
+});
+
+test('C7-2 谱系入 lab：canon 杀招 10 条 + 剑晋升配方线随白名单扩容进入生成物', () => {
+  const canonIds = V1.kill_moves.filter((k) => k.origin === 'canon').map((k) => k.id);
+  for (const id of canonIds) {
+    assert.ok(DATA.killMoves.some((k) => k.id === id), `${id} 未进 lab 生成物`);
+  }
+  assert.ok(DATA.killMoves.length >= 17, `lab 杀招数量不足：${DATA.killMoves.length}`);
+  const recipeIds = DATA.recipes.map((r) => r.id);
+  for (const rid of ['moon_ray_forged', 'white_jade_basic', 'bear_split',
+    'ascend_sword_atk_1_05_gu', 'ascend_sword_atk_1_06_gu', 'ascend_sword_rec_1_10_gu']) {
+    assert.ok(recipeIds.includes(rid), `配方 ${rid} 未进 lab 生成物`);
+  }
+  assert.ok(DATA.recipes.length >= 7, `lab 配方数量不足：${DATA.recipes.length}`);
+});

@@ -102,6 +102,12 @@ const COMBAT_GU_ICON = {
   white_boar_strength_gu: 'gu_force', jade_skin_gu: 'gu_water', stone_shell_gu: 'gu_earth',
   white_jade_gu: 'gu_water', blood_farewell_gu: 'gu_blood', blood_droplet_gu: 'gu_blood',
   vitality_grass_gu: 'gu_qi', sword_atk_1_06_gu: 'gu_sword', sword_atk_1_05_gu: 'gu_sword',
+  // P5 谱系批：剑道杀招组件入白名单——解锁 10 条 origin=canon 杀招（剑痕索命/五指拳心剑/万剑劫）
+  // 与剑晋升炼蛊线（古剑/断剑/匕蛊）进 lab；全部为存量显式 effect 蛊，无新数值。
+  sword_atk_2_12_gu: 'gu_sword', sword_atk_2_13_gu: 'gu_sword', sword_atk_2_19_gu: 'gu_sword',
+  sword_atk_2_26_gu: 'gu_sword', sword_atk_2_27_gu: 'gu_sword', sword_atk_4_01_gu: 'gu_sword',
+  sword_atk_5_02_gu: 'gu_sword', sword_atk_5_03_gu: 'gu_sword', sword_atk_5_04_gu: 'gu_sword',
+  sword_rec_5_17_gu: 'gu_sword',
   sword_rec_1_10_gu: 'gu_sword', qi_atk_1_01_gu: 'gu_qi', qi_rec_2_14_gu: 'gu_qi',
   wood_atk_1_05_gu: 'gu_qi', water_atk_1_08_gu: 'gu_water', moon_shadow_gu: 'gu_moon',
   blood_heal_2_23_gu: 'gu_blood',

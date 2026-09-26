@@ -1194,6 +1194,296 @@ const DATA = {
       "canonAnchors": []
     },
     {
+      "id": "sword_atk_2_12_gu",
+      "name": "古剑蛊",
+      "rank": 2,
+      "rarity": "common",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 5,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_2_13_gu",
+      "name": "断剑蛊",
+      "rank": 2,
+      "rarity": "common",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 5,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_2_19_gu",
+      "name": "斩剑蛊",
+      "rank": 2,
+      "rarity": "common",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 5,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_2_26_gu",
+      "name": "剑青锋蛊",
+      "rank": 2,
+      "rarity": "common",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 5,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_2_27_gu",
+      "name": "剑利剑蛊",
+      "rank": 2,
+      "rarity": "common",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 5,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_4_01_gu",
+      "name": "剑气蛊",
+      "rank": 4,
+      "rarity": "epic",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 12,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 5
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 5
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_5_02_gu",
+      "name": "飞剑蛊",
+      "rank": 5,
+      "rarity": "epic",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 20,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_5_03_gu",
+      "name": "剑鞘蛊",
+      "rank": 5,
+      "rarity": "epic",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 20,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_atk_5_04_gu",
+      "name": "剑剑蛊",
+      "rank": 5,
+      "rarity": "epic",
+      "role": "attack",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 20,
+      "cost": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "icon": "gu_sword",
+      "combat": "sword_attack_pattern",
+      "battleEffect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
+      "id": "sword_rec_5_17_gu",
+      "name": "匕蛊",
+      "rank": 5,
+      "rarity": "epic",
+      "role": "recon",
+      "buildRole": null,
+      "buildTags": [],
+      "school": "sword",
+      "value": 20,
+      "cost": 0,
+      "effect": {
+        "kind": "sword_intent",
+        "amount": 2
+      },
+      "icon": "gu_sword",
+      "combat": "sword_recon_pattern",
+      "battleEffect": {
+        "kind": "sword_intent",
+        "amount": 2
+      },
+      "trueQiCost": 0,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": null,
+      "canonAnchors": []
+    },
+    {
       "id": "sword_rec_1_10_gu",
       "name": "青锋蛊",
       "rank": 1,
@@ -1611,35 +1901,6 @@ const DATA = {
       ]
     },
     {
-      "id": "sword_atk_2_12_gu",
-      "name": "古剑蛊",
-      "rank": 2,
-      "rarity": "common",
-      "role": "attack",
-      "buildRole": null,
-      "buildTags": [],
-      "school": "sword",
-      "value": 5,
-      "cost": 0,
-      "effect": {
-        "kind": "strike",
-        "amount": 3
-      },
-      "icon": "gu_sword",
-      "combat": "sword_attack_pattern",
-      "battleEffect": {
-        "kind": "strike",
-        "amount": 3
-      },
-      "trueQiCost": 0,
-      "thoughtCost": 1,
-      "lowRankException": false,
-      "lifeCost": 0,
-      "labOnly": false,
-      "sourceClass": null,
-      "canonAnchors": []
-    },
-    {
       "id": "sword_def_3_14_gu",
       "name": "软剑蛊",
       "rank": 3,
@@ -1688,35 +1949,6 @@ const DATA = {
       "battleEffect": {
         "kind": "heal",
         "amount": 5
-      },
-      "trueQiCost": 0,
-      "thoughtCost": 1,
-      "lowRankException": false,
-      "lifeCost": 0,
-      "labOnly": false,
-      "sourceClass": null,
-      "canonAnchors": []
-    },
-    {
-      "id": "sword_atk_5_02_gu",
-      "name": "飞剑蛊",
-      "rank": 5,
-      "rarity": "epic",
-      "role": "attack",
-      "buildRole": null,
-      "buildTags": [],
-      "school": "sword",
-      "value": 20,
-      "cost": 0,
-      "effect": {
-        "kind": "strike",
-        "amount": 6
-      },
-      "icon": "gu_sword",
-      "combat": "sword_attack_pattern",
-      "battleEffect": {
-        "kind": "strike",
-        "amount": 6
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3158,6 +3390,54 @@ const DATA = {
       "delays": [
         "kit_pierce_burst"
       ]
+    },
+    {
+      "id": "ascend_sword_atk_1_05_gu",
+      "kind": "fixed",
+      "inputs": [
+        "sword_atk_1_05_gu"
+      ],
+      "output": "sword_atk_2_12_gu",
+      "stoneCost": 12,
+      "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（2 转）",
+      "successRollMax": 100,
+      "forkId": null,
+      "branchLabel": null,
+      "branchAxis": null,
+      "closes": [],
+      "delays": []
+    },
+    {
+      "id": "ascend_sword_atk_1_06_gu",
+      "kind": "fixed",
+      "inputs": [
+        "sword_atk_1_06_gu"
+      ],
+      "output": "sword_atk_2_13_gu",
+      "stoneCost": 12,
+      "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（2 转）",
+      "successRollMax": 100,
+      "forkId": null,
+      "branchLabel": null,
+      "branchAxis": null,
+      "closes": [],
+      "delays": []
+    },
+    {
+      "id": "ascend_sword_rec_1_10_gu",
+      "kind": "fixed",
+      "inputs": [
+        "sword_rec_1_10_gu"
+      ],
+      "output": "sword_rec_5_17_gu",
+      "stoneCost": 60,
+      "source": "sword-kill-move-list v2 策展：剑道四十蛊按编号 +7 成链（05→12→19…），同角色跨转晋升须兽材与元石，成本随目标转数递增（5 转）",
+      "successRollMax": 100,
+      "forkId": null,
+      "branchLabel": null,
+      "branchAxis": null,
+      "closes": [],
+      "delays": []
     }
   ],
   "killMoves": [
@@ -3236,6 +3516,60 @@ const DATA = {
       }
     },
     {
+      "id": "km_sword_double_edge_2",
+      "origin": "original_game_content",
+      "label": "双锋引·二转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu"
+      ],
+      "true_qi_cost": 3,
+      "thought_cost": 1,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 6
+      }
+    },
+    {
+      "id": "km_sword_double_edge_4",
+      "origin": "original_game_content",
+      "label": "双锋引·四转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_4_01_gu",
+        "sword_atk_2_19_gu"
+      ],
+      "true_qi_cost": 4,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 8
+      }
+    },
+    {
+      "id": "km_sword_double_edge_5",
+      "origin": "original_game_content",
+      "label": "双锋引·五转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_5_02_gu",
+        "sword_atk_5_04_gu"
+      ],
+      "true_qi_cost": 4,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 12
+      }
+    },
+    {
       "id": "km_sword_mark_seek_1",
       "origin": "canon",
       "origin_ref": "L194470",
@@ -3252,7 +3586,259 @@ const DATA = {
       "effect": {
         "kind": "strike",
         "amount": 2
-      }
+      },
+      "source_class": "canon_driven_v1",
+      "canon_refs": [
+        "KM-016"
+      ],
+      "canon_anchors": [
+        "E:V5-194470",
+        "E:V5-194498"
+      ],
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_mark_seek_2",
+      "origin": "canon",
+      "origin_ref": "L194470",
+      "label": "剑痕索命·二转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_2_12_gu",
+        "sword_rec_1_10_gu"
+      ],
+      "true_qi_cost": 3,
+      "thought_cost": 1,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "source_class": "canon_driven_v1",
+      "canon_refs": [
+        "KM-016"
+      ],
+      "canon_anchors": [
+        "E:V5-194470",
+        "E:V5-194498"
+      ],
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_mark_seek_4",
+      "origin": "canon",
+      "origin_ref": "L194470",
+      "label": "剑痕索命·四转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_4_01_gu",
+        "sword_rec_1_10_gu"
+      ],
+      "true_qi_cost": 4,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 5
+      },
+      "source_class": "canon_driven_v1",
+      "canon_refs": [
+        "KM-016"
+      ],
+      "canon_anchors": [
+        "E:V5-194470",
+        "E:V5-194498"
+      ],
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_mark_seek_5",
+      "origin": "canon",
+      "origin_ref": "L194470",
+      "label": "剑痕索命·五转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_5_02_gu",
+        "sword_rec_5_17_gu"
+      ],
+      "true_qi_cost": 4,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 6
+      },
+      "source_class": "canon_driven_v1",
+      "canon_refs": [
+        "KM-016"
+      ],
+      "canon_anchors": [
+        "E:V5-194470",
+        "E:V5-194498"
+      ],
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_five_fingers_2",
+      "origin": "canon",
+      "origin_ref": "L160024",
+      "label": "五指拳心剑·二转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu",
+        "sword_atk_2_19_gu",
+        "sword_atk_2_26_gu",
+        "sword_atk_2_27_gu"
+      ],
+      "true_qi_cost": 7,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 15
+      },
+      "source_class": "canon_driven_v1",
+      "canon_anchors": [
+        "E:V4-160166"
+      ],
+      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_five_fingers_4",
+      "origin": "canon",
+      "origin_ref": "L160024",
+      "label": "五指拳心剑·四转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_4_01_gu",
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu",
+        "sword_atk_2_19_gu",
+        "sword_atk_2_26_gu"
+      ],
+      "true_qi_cost": 7,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 17
+      },
+      "source_class": "canon_driven_v1",
+      "canon_anchors": [
+        "E:V4-160166"
+      ],
+      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_five_fingers_5",
+      "origin": "canon",
+      "origin_ref": "L160024",
+      "label": "五指拳心剑·五转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_5_02_gu",
+        "sword_atk_5_03_gu",
+        "sword_atk_5_04_gu",
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu"
+      ],
+      "true_qi_cost": 7,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 24
+      },
+      "source_class": "canon_driven_v1",
+      "canon_anchors": [
+        "E:V4-160166"
+      ],
+      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_myriad_tribulation_2",
+      "origin": "canon",
+      "origin_ref": "L192506",
+      "label": "万剑劫·二转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu",
+        "sword_atk_2_19_gu",
+        "sword_rec_1_10_gu"
+      ],
+      "true_qi_cost": 5,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 9
+      },
+      "source_class": "canon_driven_v1",
+      "canon_anchors": [
+        "E:V5-192506"
+      ],
+      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_myriad_tribulation_4",
+      "origin": "canon",
+      "origin_ref": "L192506",
+      "label": "万剑劫·四转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_4_01_gu",
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu",
+        "sword_rec_1_10_gu"
+      ],
+      "true_qi_cost": 5,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 11
+      },
+      "source_class": "canon_driven_v1",
+      "canon_anchors": [
+        "E:V5-192506"
+      ],
+      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配"
+    },
+    {
+      "id": "km_sword_myriad_tribulation_5",
+      "origin": "canon",
+      "origin_ref": "L192506",
+      "label": "万剑劫·五转",
+      "tag": "sword",
+      "recipe": [
+        "sword_atk_5_02_gu",
+        "sword_atk_5_03_gu",
+        "sword_atk_5_04_gu",
+        "sword_rec_5_17_gu"
+      ],
+      "true_qi_cost": 5,
+      "thought_cost": 2,
+      "life_cost": 0,
+      "damage": 0,
+      "effect": {
+        "kind": "strike",
+        "amount": 18
+      },
+      "source_class": "canon_driven_v1",
+      "canon_anchors": [
+        "E:V5-192506"
+      ],
+      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配"
     }
   ],
   "enemies": [
@@ -8025,5 +8611,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "1fba411a809e848cb6142aafb7b1ce7c24729627b7a6ad7375a85d3eda6fc4f8"
+  "contentVersion": "86b47c564feb849389c520bb597d83d93860d80bd08c4a7f01dc91847372cd0e"
 };
