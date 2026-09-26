@@ -34,7 +34,7 @@ fang-yuan 13、qing-mao-mountain 10、feng-mo-ku 10、central-plain-refinement-c
 127 md / 1034 KB。events/ 354 KB、根 150 KB（log.md 114 KB 为单文件之最）、tools/ 138 KB、world/ 114 KB、source/ 95 KB、gu/ 60 KB、characters/ 58 KB、rules/ 39 KB、themes/ 22 KB。
 
 ### 预算
-- 内容页 ≤40 KB；簇事件页例外上限 60 KB——超限触发三分流规则六回抽（状态→实体页状态时间线、机制→规则/世界页）。
+- 内容页 ≤40 KB；簇事件页预算（2026-09-26 T6 修订）：**非 L2 内容**（原著明确内容＋资料整理＋分析与解读＋待核对）合计 ≤20 KB，L2 事件表与投影索引是事件页的本体承载层；L2 密集簇（≥100 事件）允许 L2 表自身体量，L2 逐行精简须另行立项并过 benchmark 复测不掉分。超预算触发三分流规则六回抽（状态→实体页状态时间线、机制→规则/世界页）。
 - log.md ≥100 KB 触发轮换：历史整体切 `log-archive-2026H2.md`（搬移不改字、log.md 留轮换指针）；**现 114 KB，下批执行**。
 - source/section-index.md 属 B 线按需维护索引，只增不扩写。
 - tools/ 测试 scratch（`_*.md`、`_rows_*.txt`）不提交、用后即删（本批已清 9 件）。

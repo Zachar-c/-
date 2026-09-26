@@ -14,3 +14,7 @@
 - [元莲仙尊](yuan-lian-xian-zun.md)
 
 总表中未建独立页的条目代表已定位、待按需蒸馏；本表未列出的人物不代表没有整理价值。
+### Schema 迁移状态（T7，2026-09-26）
+
+- 已迁 v2：roster、roster-2、enemy-roster、fang-yuan、red-lotus、bai-ning-bing、he-lou-lan。
+- 仍 v1：[星宿仙尊](star-constellation.md)（尊者档案＋弧十三投影接收页——查三相合一/天人感应/天工人代适用；作规则源引用前须知其结构为 v1）、[龙公](dragon-duke.md)（三气归来/龙人种族考订）、[元莲仙尊](yuan-lian-xian-zun.md)。迁移排后续批，未被当规则源高频引用。
