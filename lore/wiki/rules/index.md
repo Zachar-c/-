@@ -16,12 +16,12 @@
 
 | 规则页 | 临时主键 | 已挂 CAN-* | canon-index 相邻域 | 并档状态 |
 |---|---|---|---|---|
-| [道痕体系](dao-marks.md) | DM 共 23 条 | 无（页内 CAN-* 均为通配指称） | CAN-IMMORTAL-*（成功道痕语义近） | 待 canon-index 规则域扩容 |
-| [梦道机制](dream-path.md) | DRM 共 3 条 | 无 | —（canon-index 尚无梦道域） | 待扩容 |
-| [杀招连招并招体系](killer-moves.md) | KM 共 28 条 | 无 | — | 待扩容；`v1_battle.json` `km_` 前缀撞名见 docs/debt.md |
-| [流派境界五级](path-realms.md) | PR 共 17 条 | 无 | CAN-RANK-*、CAN-APTITUDE-* | 待扩容 |
-| [炼蛊术语体系](refinement.md) | REF 共 30 条 | 无 | CAN-CULTIVATION-* | 待扩容 |
-| [灾劫体系](tribulation.md) | TRIB 共 22 条 | CAN-IMMORTAL-BOUNDARY-001 | CAN-IMMORTAL-* | 唯一已挂链页；余待扩容 |
-| [尊者体系](venerables.md) | VEN 共 23 条 | 无 | CAN-CULTIVATOR-* | 待扩容 |
+| [道痕体系](dao-marks.md) | DM-001…025（25 条） | 无（页内 CAN-* 均为通配指称） | CAN-IMMORTAL-*（成功道痕语义近） | 待 canon-index 规则域扩容 |
+| [梦道机制](dream-path.md) | DRM-001…016（16 条） | 无 | —（canon-index 尚无梦道域） | 待扩容 |
+| [杀招连招并招体系](killer-moves.md) | KM-001…020（20 条） | 无 | — | 待扩容；`v1_battle.json` `km_` 前缀撞名见 docs/debt.md |
+| [流派境界五级](path-realms.md) | PR-001…016（16 条） | 无 | CAN-RANK-*、CAN-APTITUDE-* | 待扩容 |
+| [炼蛊术语体系](refinement.md) | REF-001…024（24 条） | 无 | CAN-CULTIVATION-*、CAN-GU-CARE-* | 待扩容 |
+| [灾劫体系](tribulation.md) | TRIB-001…024（24 条） | CAN-IMMORTAL-BOUNDARY-001 | CAN-IMMORTAL-* | 唯一已挂链页；余待扩容 |
+| [尊者体系](venerables.md) | VEN-001…020（20 条） | 无 | CAN-CULTIVATOR-* | 待扩容 |
 
 并档规则（冻结解除时执行）：①每条临时主键逐条回 canon-index 认领 CAN-ID 或申请新建；②映射落各规则页页尾说明，不动正文锚点；③连同敌人 canon 上移（docs/debt.md「敌人 canon 库位置」行）一并处理。

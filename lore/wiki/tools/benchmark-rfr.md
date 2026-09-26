@@ -1,8 +1,8 @@
 # RFR 簇知识基准（弧十·逆流河与琅琊＋余波域补录段 · 50 题）
 
 > 用途：知识完整性回归（2026-09-26 复核方代建）。
-> 簇范围：[逆流河与琅琊](../events/reverse-flow-river.md)（EVT-RFR-001…122，225,038–269,998）＋标段〇余波域补录行表（200,001–225,037）。
-> 白名单（解耦规则：簇页＋投影页）：events/reverse-flow-river.md、events/index.md、characters/fang-yuan.md、characters/he-lou-lan.md、characters/bai-ning-bing.md、characters/red-lotus.md、world/shadow-sect.md、events/story-arc-overview.md。
+> 簇范围：[逆流河与琅琊](../events/reverse-flow-river.md)（EVT-RFR-001…122，225,038–269,998）＋标段〇余波域补录行表（200,001–206,000＋S01…S12；206,001–225,000 以 EVT-RFR-PRE 细链为准，2026-09-26 T6 收窄）。
+> 白名单（解耦规则：簇页＋投影页）：events/reverse-flow-river.md、events/index.md、characters/fang-yuan.md、characters/he-lou-lan.md、characters/bai-ning-bing.md、characters/red-lotus.md、world/shadow-sect.md、events/story-arc-overview.md、rules/tribulation.md、rules/killer-moves.md、gu/persistence-gu.md、characters/roster.md。
 > 规则：Wiki-Only；每题 1 分按要点判分；目标 ≥45/50；追溯断链计 0。E:V5＝段五（188,002–367,633）。
 
 ## 一、余波域补录段（10）
@@ -71,3 +71,4 @@
 
 - 2026-09-26 独立代理扩展白名单盲测：**49.5/50 PASS**（唯一半分＝Q50"突破天意压制"限定语未入补录行表，已随修补入；另登记：EVT-RFR-054 因果列编号笔误 083→081 已修、bai-ning-bing 龙女投影 ST-BAI-12 已补、黑楼兰 ST-15 之 216734 锚未挂 E:V 待核）
 - 2026-09-26 独立代理 Wiki-Only 盲测（首轮）：约 43.5/50（38 题全对、11 题半对、1 题全无载）。近线未达 45。缺口集中：①爱情蛊设定簇（不可操纵/不可炼化铁律、知识来源）；②逆流护身印构成（六转挽澜仙蛊核心、牵动心神破解）；③characters/long-gong.md 不存在致龙公修行路数无载；④逆流河走行/脱出规则与幽魂真传搜集过程。处置：登记补录后续批（龙公专页＋爱情蛊/逆流河机制外移）。
+- 2026-09-26 T6 体积治理（126KB→125KB，重叠去重＋三分流回抽）：复测待执行，43.5/50 为现题集基线。

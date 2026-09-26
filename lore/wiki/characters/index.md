@@ -14,6 +14,11 @@
 - [元莲仙尊](yuan-lian-xian-zun.md)
 
 总表中未建独立页的条目代表已定位、待按需蒸馏；本表未列出的人物不代表没有整理价值。
+
+### Schema 迁移状态（T7，2026-09-26）
+
+- 已迁 v2：方源、红莲、白凝冰、黑楼兰、龙公、星宿、元莲、roster / roster-2 / enemy-roster。
+- 仍 v1：无（人物独立页已全部标 `schema: 2`）。
 ### Schema 迁移状态（T7，2026-09-26）
 
 - 已迁 v2：roster、roster-2、enemy-roster、fang-yuan、red-lotus、bai-ning-bing、he-lou-lan。

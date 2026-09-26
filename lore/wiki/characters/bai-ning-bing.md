@@ -36,6 +36,9 @@ schema: 2
 | ST-BAI-10 | 弧九·砚石老人棋子 | 受砚石老人授艺（禁仙绝境与惊鸿乱斗台布置相关）、后被影宗抛弃 | E:V4-175294；EVT-YIT-013 |
 | ST-BAI-11 | 弧九五·正式入影宗 | 影无邪救活叶凡、以白相仙蛇招揽——正式入影宗、白相血脉身份点明 | E:V5-217186；余波域补录段 |
 | ST-BAI-12 | 弧十·龙女之身 | 以人人如龙炼蛊法自炼成功、转为龙女之身（直接触发龙公苏醒） | E:V5-230774；EVT-RFR-009 |
+| ST-BAI-13 | 弧十·转回男身条件 | 龙女之身（淡蓝竖眸龙瞳）须找到转身蛊另一半、升炼为仙蛊方可转回男身 | E:V5-230794；EVT-RFR-009 |
+| ST-BAI-14 | 弧十·收冰魄仙蛊 | 玉壶山徒手按冰壁至双手冻死、濒死，野生六转「冰魄仙蛊」主动飞入其虚窍（影宗南疆线） | E:V5-220962；EVT-RFR-PRE-112（蒸馏层，2026-09-26 T6 自逆流河簇回抽） |
+| ST-BAI-15 | 弧十三·归附天庭智道线 | 影宗正统线重启中归附紫薇仙子 | E:V6-374316；EVT-FMK-022 |
 
 ## 资料整理
 
@@ -55,4 +58,4 @@ schema: 2
 - 北冥冰魄体完整规则、白相传承时间线、弧三商队线与弧四三王福地线（含冰刃刺心背叛）待各簇批次的投影回填；自爆右臂（备战期）尚为笔记层级。
 - 现有读书笔记中的部分评价属于人物弧光分析，不直接等同于原著明文。
 
-关联页面：[方源](fang-yuan.md)、[青茅山](../events/qing-mao-mountain.md)、[狼潮](../events/wolf-tide.md)、[南疆](../world/south-jiang.md)、[修炼体系](../world/cultivation-system.md)、[资质与空窍](../world/aptitude-and-aperture.md)。
+关联页面：[方源](fang-yuan.md)、[青茅山](../events/qing-mao-mountain.md)、[狼潮](../events/wolf-tide.md)、[南疆](../world/south-jiang.md)、[逆流河与琅琊](../events/reverse-flow-river.md)、[修炼体系](../world/cultivation-system.md)、[资质与空窍](../world/aptitude-and-aperture.md)。
