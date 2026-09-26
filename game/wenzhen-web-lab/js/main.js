@@ -465,6 +465,9 @@ function rollVictoryLoot(battle) {
         guById: GU_BY_ID,
         supportPool,
         choiceCount: DATA.flow.rewardGuChoiceCount || 3,
+        // P5 掉落派生：被击败敌人的装载蛊进入战利品候选（夺蛊=原著标准战利品语义）；
+        // innate 敌人池空 → 流程与原表完全一致。
+        carriedPool: (battle.enemies || []).flatMap((e) => e.guRefs || []),
       })
     : { guIds: [], rarity: '' };
   // L0 Phase 6：精英/Boss 至少塞进一个「新未来」候选（补组合/开杀招）

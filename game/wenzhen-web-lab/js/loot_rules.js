@@ -95,18 +95,27 @@ globalThis.LootRules = (() => {
   // 补足到三个不同候选。候选池仍来自构建时数据，不在这里另造实体。
   function rollGuChoices(table, {
     seed, tick, tier, lootPity = 0, pityConfig = {}, school = '', schoolPools = {},
-    guById = {}, supportPool = [], choiceCount = 3,
+    guById = {}, supportPool = [], choiceCount = 3, carriedPool = [],
   } = {}) {
     const first = rollGu(table, {
       seed, tick, tier, lootPity, pityConfig, school, schoolPools, guById,
     });
     if (!first.guId) return { guIds: [], rarity: '' };
+    // P5 掉落派生（世界实体驱动）：被击败的持蛊敌人，蛊_chance 命中后首选从其装载蛊池
+    // 取（夺蛊=原著标准战利品语义，adaptation 机制）；池空/全不在册时走原表流程。
+    let carriedFirst = '';
+    const carried = [...new Set((carriedPool || []).map(String))].filter((id) => guById[id]);
+    if (carried.length) {
+      carriedFirst = carried[RunRules.seededIndex(carried.length, seed, `loot.gu.carried.${tier}`, tick)];
+    }
     const pool = [...new Set([
+      carriedFirst || first.guId,
       first.guId,
+      ...(carriedFirst ? carried : []),
       ...Object.values(table?.gu_pool?.by_rarity || {}).flat().map(String),
       ...(supportPool || []).map(String),
     ].filter(Boolean))];
-    const guIds = [String(first.guId)];
+    const guIds = [String(carriedFirst || first.guId)];
     const wanted = Math.max(1, Math.floor(Number(choiceCount) || 3));
     for (let index = 1; index < Math.min(wanted, pool.length); index += 1) {
       const remaining = pool.filter((id) => !guIds.includes(id));
@@ -116,7 +125,7 @@ globalThis.LootRules = (() => {
       ];
       guIds.push(String(picked));
     }
-    return { guIds, rarity: first.rarity };
+    return { guIds, rarity: carriedFirst ? String(guById[carriedFirst]?.rarity || first.rarity) : first.rarity };
   }
 
   function nextLootPity(current, rarity, pityConfig = {}) {

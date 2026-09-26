@@ -199,3 +199,35 @@
 
 - 持冰肌蛊的敌人被 strike 3 打 → 伤 1（armor_tax）；armorBreak 2 → 伤 3（pierce_armor）——护甲真实改变承伤语法。
 - 无 guRefs 敌人行为逐位不变（回归零风险）。
+
+---
+
+# P5 第七批（收尾批）：掉落派生入世、Godot 迁移清单、节点事件挂起理由（2026-09-26）
+
+## 1. 世界实体派生掉落（P4 遗留 #2 落地）
+
+- **机制**：`LootRules.rollGuChoices` 新增 `carriedPool`——被击败敌人的装载蛊（P5-B1 的 `guRefs`）在 `gu_chance` 命中后成为首选候选（夺蛊=原著标准战利品语义，adaptation 机制不冒领 canon）；候选池并入装载蛊+原表蛊；rarity 跟被夺蛊自身走。池空（innate 敌人）/装载蛊不在册 → 原表流程逐位不变。
+- **接线**：main.js rollVictoryLoot 传 `carriedPool = battle.enemies.flatMap(guRefs)`。
+- **门禁**：loot_rules 4/4（20 种子首选必在装载池+原表蛊在候选+不在册回退+空池回退+rarity 跟蛊走）；web 263/264（唯一失败=B 线预存）；check_balance 49/49；progression OK。
+- **语义边界**：这是"从世界实体派生"（敌人实体驱动掉落），不是 canon 事实断言——原著夺蛊是普遍行为但具体掉率/候选构造属游戏设计。
+
+## 2. Godot 收敛：迁移清单（代码面维持锁定）
+
+无 Godot 二进制，resolver 改动不可验证——本轮只落盘**精确迁移清单**（debt 行同步），二进制到位后机械执行：
+
+| 字段组 | 消费点 | 迁移目标 |
+|---|---|---|
+| default_effect_by_role（role→kind+amount） | v1_battle_resolver.gd:45（role 基础动作兜底表） | kind 留守（Q2 指定真源）；amount 改读 balance.effect_budget.default_amount_by_role |
+| aptitude_mult | v1_battle_resolver.gd:56 | 迁 balance.json（资质修正属世界数值） |
+| boss_layer_mult | battle_command_facade.gd:125 | 迁 balance.json（Boss 层倍率属世界数值） |
+| stage_base | content_catalog.gd:1161-1166（校验+分层） | 迁 balance.json（对齐 rank_power_budget） |
+| kill_moves amount/effect 预制 | v1_battle_resolver.gd:245/284（legacy_declared_effect） | 对齐 Web 模式：结算=组件合成、prefab 降为展示 |
+| regen_pct | content_catalog.gd:359（aptitude.json 消费，非 v1_battle——R0 审计勘误） | 随 aptitude.json 保持，不属本迁移 |
+
+## 3. 节点世界事件生成（P4 遗留 #3）：挂起理由
+
+现有 event 节点（2/41）为手写场景（summary/choices/nextIds 静态接线）。"生成"需要先回答 L1 设计题：事件内容从哪个 canon 源派生（CAN-NANJIANG 规则？实体 clues/reactions？Context Pack 驱动的生成时流程？）、事件对 run 状态的写面（真元/蛊/旗标）。无设计就做生成器=无据内容生产，违背"先知识后数量"原则——登记 debt，待 L1 设计题立案。
+
+## 门禁
+
+web 263/264 · check_balance 49/49 · progression OK · loot_rules 4/4
