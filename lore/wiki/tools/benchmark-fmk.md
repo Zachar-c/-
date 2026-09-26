@@ -2,7 +2,7 @@
 
 > 用途：知识完整性回归（2026-09-26 复核方代建）。
 > 簇范围：[疯魔窟终局](../events/feng-mo-ku.md)（EVT-FMK-001…170，360,001–437,061；含宿命大战 Run 2 收束 360,001–367,633 与 copy A/B 重复段缝合）。
-> 白名单（解耦规则：簇页＋投影页）：events/feng-mo-ku.md、events/index.md、characters/fang-yuan.md、characters/he-lou-lan.md、characters/red-lotus.md、world/north-plain.md（疯魔窟条）、world/heavenly-court.md、world/longevity-heaven.md、events/story-arc-overview.md。
+> 白名单（解耦规则：簇页＋投影页；2026-09-26 T6 全量回抽后按实际落位扩）：events/feng-mo-ku.md、events/index.md、events/story-arc-overview.md、characters/fang-yuan.md、characters/he-lou-lan.md、characters/red-lotus.md、characters/star-constellation.md、characters/dragon-duke.md、world/north-plain.md（疯魔窟条）、world/heavenly-court.md、world/longevity-heaven.md、world/shadow-sect.md、world/kill-move-roster.md、gu/fate-gu.md、gu/roster.md、rules/dao-marks.md、rules/killer-moves.md、rules/venerables.md、rules/tribulation.md、themes/immortality.md。
 > 规则：Wiki-Only；每题 1 分；目标 ≥45/50；追溯断链计 0。E:V5＝段五（188,002–367,633）、E:V6＝段六（367,634–末行）。
 
 ## 一、实体事实（10）
@@ -79,3 +79,5 @@
 ## 复测记录
 
 - 2026-09-26 独立代理扩展白名单盲测：50/50（49 题全锚点核验通过；Q49 的"fate-war 投影索引"佐证指针在白名单外未开卷，按弧界规则经声明页/总览/簇页三处互证计 1）
+- 2026-09-26 T6 全量回抽完成（217.7KB→142.2KB），复测待执行，基线 50/50
+- 2026-09-26 T6 复测（独立代理封闭 20 页白名单答题＋独立判卷）：**48/50，≥45 达标；较基线 50 差 2 分经核全为答题召回遗漏**——失分子事实逐一在白名单页复核有载：Q14 大宗师轴里程碑在冻结 L2 行 EVT-FMK-066/075、Q35"元境在疯魔窟"启程动因在 EVT-FMK-072 因果列、Q39 十转候选三只在 themes/immortality.md v2 行（E:V6-406726）；无页面缺陷、无白名单缺口、追溯题 Q46–50 锚组全对无断链。三分流外移的投影事实大量在投影页命中（Q5/15/18/25/37 等），白名单扩页（11 页）经实测充分承载。**T6-FMK 侧验收达成。**
