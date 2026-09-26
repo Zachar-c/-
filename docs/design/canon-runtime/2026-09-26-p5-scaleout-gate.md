@@ -150,3 +150,27 @@
 
 - 新增杀招不进开局装备（state.equipped 不变），玩家在 killmove 页/战斗中按组件可见可用——行为面通过 check_progression_loop 验证。
 - 剩余 9 条 kill_moves（qi_surge/myriad_shadows family）组件含 sword_heal/mov 系蛊，留下一批按需扩容。
+
+---
+
+# P5 第五批（冰道裁决 A' 落地）：数据入池、语义显式挂起（2026-09-26）
+
+## L0 裁决执行面
+
+- **批准并落地**：`ice` school（schools.json/school_pools.json，不挂靠 water）；`bing_ji_gu`/`shuang_yao_gu` 入 gu.json（rank 3、拼音 id、E:V1-023066/023222/023110/023148 锚点、names.json 中文名）；bai_ice_warden `guRefs` 登记持有双蛊 + `gu_note` 裁决注记。
+- **否决面执行**：两蛊**不设 v1_effect**（`semantics_pending:"ice_path"` 显式标记，shield/strike 标准 verb 被否决为最终语义，role fallback 无从伪造——两蛊不进 lab 白名单，DATA.gu 无实例）；intent.damage 1 维持不动；`attackSource` 维持 `innate`。
+- **语义债务显式化**：effect-execution-contract.md 新增 §9「待实现语义（冰道）」——冰肌蛊=持续/被动防御（无需持续真元，shield 一次落账不覆盖）、霜妖蛊=变身+破特定防御+自爆可后置；verb 扩展按 §4 路径；**完成门禁=敌人真实使用核心差异机制后 attackSource 方可 innate→gu（重跑 C6+balance+换皮）**。debt.md 新增 REVIEW 行。
+
+## 门禁
+
+| 门禁 | 结果 |
+|---|---|
+| build_data | 85 gu / 7 recipes / 17 killMoves 稳定（ice 双蛊正确不进 lab 数据） |
+| web 全量 | 261 测试 260 过（唯一失败仍为 B 线预存项） |
+| check_balance / check_projection | 49/49 / 53/53（零漂移） |
+
+## 语义实现验收清单（未来批次）
+
+1. 被动护甲 verb（冰肌蛊）+ 变身/破防/后置自爆语义（霜妖蛊）按 §4 路径落 verb + Golden Case。
+2. bai_ice_warden 杀招改由装载蛊驱动 → attackSource innate→gu。
+3. C6 合成校验 + check_balance 窗口 + 换皮测试全绿后，本债务行关闭。

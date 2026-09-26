@@ -95,3 +95,16 @@ enemies.json（世界 Owner）
 - **attackSource=innate**（兽/凡人/尸魔/凡兵符箓，intent 级可覆盖）：沿用 authored damage——这是显式声明，不是 fallback；原著依据=凶兽以天生手段攻击、蛊修亦可持凡兵。
 - **压缩不变量**（check_projection + C6-2 常驻断言）：表值 ≤ lab attack 曲线（PROJ-LAB-ROLE-CURVE-001）且单调不减；敌方 DPR≈玩家 1/4 是遭遇窗口设计（check_balance H1），非第三规则源。
 - **运行期一致性**：换皮测试「换皮-5」证明合成只吃 id 绑定 + kind + rank——改名不变、换组件即变、预制 damage 不驱动。
+
+## 9. 待实现语义（冰道，L0 裁决 2026-09-26 A'）
+
+裁决要点：持蛊化不是给敌人挂 gu_id，而是让持有的蛊真实改变战斗语法。`ice` school 与 `bing_ji_gu`/`shuang_yao_gu`（拼音 id）已批准入 `game/data`；**两者的 role-curve 标准 verb（shield/strike）被明确否决为最终语义**，数据层 `semantics_pending:"ice_path"`、不设 v1_effect、禁止 fallback 伪造。
+
+| 蛊 | canon 机制 | 最小语义要求 | v1 verb 缺口 |
+|---|---|---|---|
+| 冰肌蛊（三转，E:V1-023066/023222） | 练成冰肌防御卓绝、耐冰霜、一经练成无须真元支持 | **持续/被动防御**：练成后常驻减伤/护甲，不占回合、不耗真元 | shield 为一次落账，无被动/常驻表达 |
+| 霜妖蛊（三转，E:V1-023110/023148） | 变身类、可洞穿白玉蛊防御、绝境自爆 | **变身形态 + 破特定防御 + 自爆可后置** | 变身无 verb；armorBreak 仅破甲值；自爆=消耗性爆发+delay 后置，组合缺失 |
+
+- **verb 扩展路径**：按本契约 §4（Wiki/Canon rule → Game Semantic binding → Effect verb + Golden Case），不跳步。
+- **完成门禁（bai_ice_warden）**：敌人真实使用上述核心差异机制（被动冰肌改变承伤语法 / 霜妖变身改变攻击语法）之前，`attackSource` 维持 `innate`；改 `gu` 须重跑 C6 合成校验 + check_balance + 换皮测试。
+- 显式债务登记：`docs/debt.md` 冰道语义行。

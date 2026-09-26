@@ -1,6 +1,8 @@
 # L1 评审提案：冰道蛊入池与 bai_ice_warden 持蛊化
 
-> 提出日期：2026-09-26。状态：**待 L1 评审**（本文档只做提案，不实施）。
+> 提出日期：2026-09-26。状态：**已裁决（L0 2026-09-26，A'）**——见文末裁决记录；语义实现仍待后续批次。
+>
+> **L0 裁决记录（2026-09-26，A'）**：①批准新增 `ice` school（不挂靠 water）；②批准 `bing_ji_gu`/`shuang_yao_gu` 拼音式 id；③否决 `bing_ji_gu=shield`/`shuang_yao_gu=strike` 作为最终 canon-driven 语义；④bai_ice_warden 可登记持有双蛊，冰道 Game Semantics 实现前 `frost_javelin` 维持 `attackSource:"innate"`（显式债务，不视为持蛊化完成）；⑤否决仅凭 rank3 曲线将 intent.damage 1→3；⑥最小冰道语义=冰肌蛊持续/被动防御（无需持续真元）+ 霜妖蛊变身/破特定防御/自爆可后置；⑦完成门禁=敌人真实使用核心差异机制后 `attackSource` 方可 innate→gu。原则：**持蛊化不是挂 gu_id，而是让持有的蛊真实改变战斗语法。**
 > 背景：P5 敌人持蛊化批中 `bai_ice_warden`（frost_javelin，dmg 1）因白名单无冰道蛊暂判 `attackSource:"innate"`（登记 P5 判定文档长尾队列 + debt.md）；GEN-4 批已在 `lore/wiki/gu/roster.md` 落盘冰道谱系（canon 前提就绪）。本提案补齐 game 侧决策项。
 
 ## 1. Canon 事实（已核验，见 roster.md 冰道系）

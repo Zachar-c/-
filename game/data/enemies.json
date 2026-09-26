@@ -1411,7 +1411,9 @@
         "label": "凝霜格挡"
       }
     ],
-    "attackSource": "innate"
+    "attackSource": "innate",
+    "guRefs": ["bing_ji_gu", "shuang_yao_gu"],
+    "gu_note": "L0 裁决 2026-09-26 A'：登记持有冰道双蛊（身份）；冰道 Game Semantics（被动护甲/变身破防/自爆后置）实现前 frost_javelin 维持 innate，attackSource 改 gu 须过完成门禁（核心差异机制真实生效）"
   },
   {
     "id": "xiong_bear_handler",

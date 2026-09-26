@@ -11845,5 +11845,33 @@
     ],
     "source": "school_derived",
     "combat": "wood_attack_pattern"
+  },
+  {
+    "id": "bing_ji_gu",
+    "rank": 3,
+    "role": "defense",
+    "school": "ice",
+    "rarity": "rare",
+    "value": 8,
+    "tags": ["ice", "defense", "body"],
+    "source": "novel",
+    "combat": "ice_muscle_guard",
+    "semantics_pending": "ice_path",
+    "canon_anchors": ["E:V1-023066", "E:V1-023222"],
+    "effect_note": "冰道语义待实现（L0 裁决 2026-09-26 A'）：练成后持续/被动防御、无需持续真元——现有 shield verb 为一次落账不覆盖；不设 v1_effect，禁止 role fallback 伪造语义"
+  },
+  {
+    "id": "shuang_yao_gu",
+    "rank": 3,
+    "role": "attack",
+    "school": "ice",
+    "rarity": "rare",
+    "value": 8,
+    "tags": ["ice", "attack", "transformation"],
+    "source": "novel",
+    "combat": "frost_demon_transform",
+    "semantics_pending": "ice_path",
+    "canon_anchors": ["E:V1-023110", "E:V1-023148"],
+    "effect_note": "冰道语义待实现（L0 裁决 2026-09-26 A'）：变身、破特定防御、自爆可后置——v1 verb 集无对应表达；不设 v1_effect，禁止 role fallback 伪造语义"
   }
 ]
