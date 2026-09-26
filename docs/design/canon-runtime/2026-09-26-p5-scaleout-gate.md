@@ -231,3 +231,31 @@
 ## 门禁
 
 web 263/264 · check_balance 49/49 · progression OK · loot_rules 4/4
+
+---
+
+# P5 第八批（GEN-5）：长尾普查、转换规则成文、皮甲系/名语义第一梯队（2026-09-26）
+
+## 1. 全量普查（"740 长尾"重新定 granularity）
+
+| 层 | 数量 | 收敛路径 |
+|---|---|---|
+| explicit | 74 | 已收敛 |
+| bare·runtime 身份（roster-3 已蒸馏，有名有锚点） | **139** | 主收敛池（Tier A/B 直接转换） |
+| bare·novel 未入册 | 104 | 前置=roster 扩充蒸馏（GEN-6+） |
+| bare·game 内容（school_derived/程序化） | 487 | 无 canon 工作量；进入消费面时 Tier B 显式化 |
+
+## 2. 转换规则成文
+
+`game/world-model/semantics/long-tail-conversion-rules.md`：四类阶梯（Tier A 系列页级证据→canon_driven_v1 / Tier B 名+role 对齐→school_derived 显式 / Tier C 名 role 冲突→维持 fallback 待取证 / Tier D 对齐但零读路→机会性转换）+ kind 映射表 + amount 投影纪律。B2 批先例的一般化，后续长尾批次按此执行。
+
+## 3. 第一梯队（9 只，全部零读路=零行为风险）
+
+- **Tier A 皮甲系 3 只 → shield, canon_driven_v1**：铁皮蛊（gold_def_1_07）、铜皮蛊（gold_def_3_08）、古铜皮蛊（gold_def_3_09，铜皮上位变体）——M0 皮甲系页级锚点 E:V1-009612/009616（9614–9618 已核），石皮/玉皮 shield 库内先例。
+- **Tier B 名+role 对齐 6 只 → school_derived 显式**：骨盾蛊/木甲蛊/梦甲蛊→shield、骨翼蛊→shift、草蛊/跳跳草蛊→heal——amount-less 走曲线投影。
+- **Tier C 留守**：金甲蛊（甲名 attack role）、雷盾蛊、借力蛊/群力蛊/定力蛊（力蛊族歧义成员）——按名硬套=伪造，逐只取证后转。
+- **Tier D 登记不转换**：力蛊族主体 16 只（名+role 对齐但零读路）——进入 loot/pack 消费面时机会性转换。
+
+## 4. 门禁
+
+build_data 稳定（85 gu 不变——九只均不在 lab 数据）· web 263/264 · check_balance 49/49 · C5-2 分类审计自动覆盖。

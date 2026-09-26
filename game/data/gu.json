@@ -1199,7 +1199,10 @@
       "movement"
     ],
     "source": "novel",
-    "combat": "bone_movement_pattern"
+    "combat": "bone_movement_pattern",
+    "source_class": "school_derived",
+    "v1_effect": { "kind": "shift" },
+    "effect_note": "骨翼蛊：翼=飞行位移名语义 + movement role 对齐（Tier B）；amount 走曲线投影"
   },
   {
     "id": "bone_def_3_05_gu",
@@ -1241,7 +1244,10 @@
       "defense"
     ],
     "source": "novel",
-    "combat": "bone_defense_pattern"
+    "combat": "bone_defense_pattern",
+    "source_class": "school_derived",
+    "v1_effect": { "kind": "shield" },
+    "effect_note": "骨盾蛊：盾=护盾名语义 + defense role 对齐（Tier B）；amount 走曲线投影"
   },
   {
     "id": "bone_atk_1_08_gu",
@@ -1717,7 +1723,10 @@
       "defense"
     ],
     "source": "novel",
-    "combat": "dream_defense_pattern"
+    "combat": "dream_defense_pattern",
+    "source_class": "school_derived",
+    "v1_effect": { "kind": "shield" },
+    "effect_note": "梦甲蛊：甲=护甲名语义 + defense role 对齐（Tier B）；amount 走曲线投影"
   },
   {
     "id": "dream_atk_5_02_gu",
@@ -3964,7 +3973,11 @@
       "defense"
     ],
     "source": "novel",
-    "combat": "gold_defense_pattern"
+    "combat": "gold_defense_pattern",
+    "source_class": "canon_driven_v1",
+    "v1_effect": { "kind": "shield" },
+    "canon_anchors": ["E:V1-009612", "E:V1-009616"],
+    "effect_note": "皮甲系（铁/铜/石/玉/兽皮同一护防系列，M0 已核 9614–9618）；kind=shield 沿系列语义与石皮/玉皮先例；amount 走曲线投影"
   },
   {
     "id": "gold_def_3_08_gu",
@@ -3978,7 +3991,11 @@
       "defense"
     ],
     "source": "novel",
-    "combat": "gold_defense_pattern"
+    "combat": "gold_defense_pattern",
+    "source_class": "canon_driven_v1",
+    "v1_effect": { "kind": "shield" },
+    "canon_anchors": ["E:V1-009612", "E:V1-009616"],
+    "effect_note": "皮甲系铜皮蛊（M0 9614–9618 系列锚点）；kind=shield；amount 走曲线投影"
   },
   {
     "id": "gold_def_3_09_gu",
@@ -3992,7 +4009,11 @@
       "defense"
     ],
     "source": "novel",
-    "combat": "gold_defense_pattern"
+    "combat": "gold_defense_pattern",
+    "source_class": "canon_driven_v1",
+    "v1_effect": { "kind": "shield" },
+    "canon_anchors": ["E:V1-009612", "E:V1-009616"],
+    "effect_note": "古铜皮蛊：皮甲系铜皮上位变体（系列语义一致）；kind=shield；amount 走曲线投影"
   },
   {
     "id": "gold_def_3_10_gu",
@@ -11340,7 +11361,10 @@
       "healing"
     ],
     "source": "novel",
-    "combat": "wood_healing_pattern"
+    "combat": "wood_healing_pattern",
+    "source_class": "school_derived",
+    "v1_effect": { "kind": "heal" },
+    "effect_note": "跳跳草蛊：草蛊疗伤系 + healing role 对齐（Tier B，转数未核名单在案）；amount 走曲线投影"
   },
   {
     "id": "wood_atk_1_05_gu",
@@ -11382,7 +11406,10 @@
       "defense"
     ],
     "source": "novel",
-    "combat": "wood_defense_pattern"
+    "combat": "wood_defense_pattern",
+    "source_class": "school_derived",
+    "v1_effect": { "kind": "shield" },
+    "effect_note": "木甲蛊：甲=护甲名语义 + defense role 对齐（Tier B）；amount 走曲线投影"
   },
   {
     "id": "wood_atk_5_08_gu",
@@ -11424,7 +11451,10 @@
       "healing"
     ],
     "source": "novel",
-    "combat": "wood_healing_pattern"
+    "combat": "wood_healing_pattern",
+    "source_class": "school_derived",
+    "v1_effect": { "kind": "heal" },
+    "effect_note": "草蛊：草蛊疗伤系（九叶生机草先例）+ healing role 对齐（Tier B）；amount 走曲线投影"
   },
   {
     "id": "wood_atk_1_11_gu",
