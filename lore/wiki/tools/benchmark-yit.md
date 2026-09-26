@@ -2,7 +2,7 @@
 
 > 用途：知识完整性回归（2026-09-26 复核方代建，补 YIT 簇缺口——原批登记"benchmark 本轮不强制"）。
 > 簇范围：[义天山大战](../events/yitian-mountain.md)（EVT-YIT-001…084）。
-> 白名单（2026-09-26 解耦规则：簇页＋投影页）：events/yitian-mountain.md、events/index.md、characters/fang-yuan.md（ST-FANGYUAN 弧九行）、characters/he-lou-lan.md、characters/bai-ning-bing.md、gu/spring-autumn-cicada.md（ST-CICADA-07…09）、characters/red-lotus.md、world/shadow-sect.md、world/zangmeng.md。
+> 白名单（2026-09-26 解耦规则：簇页＋投影页）：events/yitian-mountain.md、events/index.md、characters/fang-yuan.md（ST-FANGYUAN 弧九行）、characters/he-lou-lan.md、characters/bai-ning-bing.md、gu/spring-autumn-cicada.md（ST-CICADA-07…09）、characters/red-lotus.md、world/shadow-sect.md、world/zangmeng.md、rules/tribulation.md（弧九浩劫/万劫通则承载页——复测后补）。
 > 规则：Wiki-Only；每题 1 分，按要点判分；目标 ≥45/50；追溯断链计 0。E:V4＝段四（121,058–188,001）、E:V5＝段五（188,002–367,633）。
 
 ## 一、实体事实（10）
@@ -24,7 +24,7 @@
 12. 方源第一次义天山怎么死的？（监天塔全力一击无法阻挡、身死道消；春秋蝉载意志入河即崩溃炸碎 177608）
 13. 二次重生的落点？（鬼脸红莲红光回溯使春秋蝉强行复原、逆流至一年多前炼变形仙蛊时 177680）
 14. 方源在弧九宣布主修什么？（"从今以后我就是变化道蛊仙"；推演舍命血印/血愈湖/血漂流 196464）
-15. 影无邪的修为阶梯？（出生九时辰每时辰升一转→七转困方源 185986→八转困监天塔主 185216→纯梦求真体战中质变）
+15. 影无邪的修为阶梯？（出生九时辰每时辰升一转→七转引魂入梦对方源 184566→八转困监天塔主 185216→纯梦求真体战中质变）
 16. 黑楼兰在弧九的身份动作？（弑父→态度蛊自称黑月仙子 173292→被影无邪镇压逼降转影宗助力 189380）
 17. "换魂"真相是什么？（方源与影无邪调换魂魄——「影无邪」即方源、「方源」即影无邪，解释 186001–187351 全部视角 187356）
 18. 至尊仙胎蛊重生的新肉身有何特点？（经九九八十一种变化、元胎化婴孩落地成十六岁少年；无父无母故可穿界壁 187780）
