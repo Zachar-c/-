@@ -11856,9 +11856,10 @@
     "tags": ["ice", "defense", "body"],
     "source": "novel",
     "combat": "ice_muscle_guard",
-    "semantics_pending": "ice_path",
+    "source_class": "canon_driven_v1",
+    "passive_effect": { "kind": "armor", "amount": 2 },
     "canon_anchors": ["E:V1-023066", "E:V1-023222"],
-    "effect_note": "冰道语义待实现（L0 裁决 2026-09-26 A'）：练成后持续/被动防御、无需持续真元——现有 shield verb 为一次落账不覆盖；不设 v1_effect，禁止 role fallback 伪造语义"
+    "effect_note": "冰肌蛊语义已按 L0 裁决 A'⑥ 落地：passive_effect.armor=练成后常驻护甲（不占回合/不耗真元、可被 armorBreak 破），amount 2 沿用库内 armorValue 先例；无 v1_effect（被动非催动效果），role fallback 无从伪造"
   },
   {
     "id": "shuang_yao_gu",
@@ -11871,7 +11872,8 @@
     "source": "novel",
     "combat": "frost_demon_transform",
     "semantics_pending": "ice_path",
+    "v1_effect": { "kind": "strike", "armorBreak": 2 },
     "canon_anchors": ["E:V1-023110", "E:V1-023148"],
-    "effect_note": "冰道语义待实现（L0 裁决 2026-09-26 A'）：变身、破特定防御、自爆可后置——v1 verb 集无对应表达；不设 v1_effect，禁止 role fallback 伪造语义"
+    "effect_note": "霜妖蛊语义部分落地（L0 裁决 A'⑥）：破特定防御=armorBreak 2（现有 verb）；amount 走曲线投影（消费方接入时解析）；变身/自爆后置仍 pending——完成门禁未过，bai_ice_warden 维持 innate"
   }
 ]

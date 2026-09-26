@@ -105,6 +105,9 @@ enemies.json（世界 Owner）
 | 冰肌蛊（三转，E:V1-023066/023222） | 练成冰肌防御卓绝、耐冰霜、一经练成无须真元支持 | **持续/被动防御**：练成后常驻减伤/护甲，不占回合、不耗真元 | shield 为一次落账，无被动/常驻表达 |
 | 霜妖蛊（三转，E:V1-023110/023148） | 变身类、可洞穿白玉蛊防御、绝境自爆 | **变身形态 + 破特定防御 + 自爆可后置** | 变身无 verb；armorBreak 仅破甲值；自爆=消耗性爆发+delay 后置，组合缺失 |
 
-- **verb 扩展路径**：按本契约 §4（Wiki/Canon rule → Game Semantic binding → Effect verb + Golden Case），不跳步。
+- **落地进度（2026-09-26）**：
+  - 冰肌蛊 **已落地**：`passive_effect:{kind:"armor",amount:2}`——`gu_rules.carriedGuPassiveArmor` + `resolveProblemHit` 把持有蛊常驻护甲并入承伤语法（任意轴生效、可被 armorBreak 破、与 armorValue 叠加；索引缺失+guRefs 非空 fail-fast）。Golden Case：conformance C8-1。
+  - 霜妖蛊 **部分落地**：破特定防御=`v1_effect:{kind:"strike",armorBreak:2}`（现有 armorBreak verb，C8-2）；**变身/自爆后置仍 pending**。
+  - 敌人装载蛊全量语义索引 `DATA.guSemanticsById`（含非白名单蛊）随生成物嵌出，main.js 合并进 GU_BY_ID——结算 fail-fast 依赖全量覆盖。
 - **完成门禁（bai_ice_warden）**：敌人真实使用上述核心差异机制（被动冰肌改变承伤语法 / 霜妖变身改变攻击语法）之前，`attackSource` 维持 `innate`；改 `gu` 须重跑 C6 合成校验 + check_balance + 换皮测试。
 - 显式债务登记：`docs/debt.md` 冰道语义行。

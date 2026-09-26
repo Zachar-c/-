@@ -322,3 +322,48 @@ test('C7-2 谱系入 lab：canon 杀招 10 条 + 剑晋升配方线随白名单�
   }
   assert.ok(DATA.recipes.length >= 7, `lab 配方数量不足：${DATA.recipes.length}`);
 });
+
+// ---------- C8 冰道语义（L0 裁决 A'⑥：被动护甲 + 破防；变身/自爆 pending） ----------
+
+test('C8-1 冰肌蛊被动护甲：持有即常驻减伤（不占回合/不耗真元）、armorBreak 可破、与 armorValue 叠加', () => {
+  rulesContext.MVP_GU_CONTEXT = {
+    guById: {
+      bing_ji_gu: { passive_effect: { kind: 'armor', amount: 2 } },
+      shuang_yao_gu: { v1_effect: { kind: 'strike', armorBreak: 2 } },
+    },
+  };
+  const GuRules2 = rulesContext.GuRules;
+  const hit = (enemy, plan) => GuRules2.resolveProblemHit(enemy, plan, plan.damage);
+  // 冰肌护甲对任意轴生效（非重甲轴敌人持冰肌蛊 → 承伤语法真实改变）
+  const r1 = hit({ problemAxis: 'info', guRefs: ['bing_ji_gu'] }, { kind: 'strike', damage: 3 });
+  assert.equal(r1.damage, 1, `护甲减伤错：${r1.damage}`);
+  assert.ok(r1.notes.includes('armor_tax'), r1.notes.join(','));
+  // 破甲穿透
+  const r2 = hit({ problemAxis: 'info', guRefs: ['bing_ji_gu'] }, { kind: 'strike', damage: 3, armorBreak: 2 });
+  assert.equal(r2.damage, 3, `破甲错：${r2.damage}`);
+  assert.ok(r2.notes.includes('pierce_armor'), r2.notes.join(','));
+  // 与 armorValue 叠加（重甲轴）
+  const r3 = hit({ problemAxis: 'armor', armorValue: 1, guRefs: ['bing_ji_gu'] }, { kind: 'strike', damage: 5 });
+  assert.equal(r3.damage, 2, `叠加错：${r3.damage}`);
+  // 无 guRefs 敌人行为零变化
+  const r4 = hit({ problemAxis: 'info' }, { kind: 'strike', damage: 3 });
+  assert.equal(r4.damage, 3);
+  // fail-fast：guRefs 非空但索引缺 id
+  assert.throws(() => hit({ problemAxis: 'info', guRefs: ['ghost_gu'] }, { kind: 'strike', damage: 3 }), /No Silent Fallback/);
+});
+
+test('C8-2 霜妖蛊破防表达：v1_effect strike+armorBreak 经 effectPlan 进 plan.armorBreak', () => {
+  const plan = JSON.parse(JSON.stringify(GuRules.effectPlan({ kind: 'strike', amount: 3, armorBreak: 2 }, {})));
+  assert.equal(plan.damage, 3);
+  assert.equal(plan.armorBreak, 2);
+  // 数据层：霜妖蛊 v1_effect 形状锁死（amount-less，armorBreak=2）
+  const src = guById['shuang_yao_gu'];
+  assert.equal(src.v1_effect.kind, 'strike');
+  assert.equal(src.v1_effect.armorBreak, 2);
+  assert.equal(src.v1_effect.amount, undefined);
+  assert.equal(src.semantics_pending, 'ice_path', '变身/自爆未落地前维持 pending');
+  // 冰肌蛊：被动在 passive_effect，不在 v1_effect（非催动效果）
+  const bj = guById['bing_ji_gu'];
+  assert.equal(bj.passive_effect.kind, 'armor');
+  assert.equal(bj.source_class, 'canon_driven_v1');
+});

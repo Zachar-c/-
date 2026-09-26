@@ -174,3 +174,28 @@
 1. 被动护甲 verb（冰肌蛊）+ 变身/破防/后置自爆语义（霜妖蛊）按 §4 路径落 verb + Golden Case。
 2. bai_ice_warden 杀招改由装载蛊驱动 → attackSource innate→gu。
 3. C6 合成校验 + check_balance 窗口 + 换皮测试全绿后，本债务行关闭。
+
+---
+
+# P5 第六批（冰道语义落地）：被动护甲入承伤语法、破防表达（2026-09-26）
+
+## 落地面（L0 裁决 A'⑥ 执行）
+
+1. **冰肌蛊被动护甲（语义完整落地）**：`passive_effect:{kind:"armor",amount:2}`（amount 沿用库内 armorValue 先例）——新 `gu_rules.carriedGuPassiveArmor`：持有蛊常驻护甲并入 `resolveProblemHit` 承伤语法（**任意轴生效**、可被 armorBreak 破、与 armorValue 叠加；guRefs 非空+索引缺失 fail-fast）。canon：冰肌一经练成无须真元支持=常驻体质变化，不是催动 effectPlan——故在 passive_effect 而非 v1_effect。source_class 升 canon_driven_v1。
+2. **霜妖蛊破防（部分落地）**：`v1_effect:{kind:"strike",armorBreak:2}`（amount-less，消费方接入时走曲线投影）；变身/自爆后置维持 pending（semantics_pending 不撤）。
+3. **结算索引完备化**：build_data 嵌出 `DATA.guSemanticsById`（敌人 guRefs 引用蛊全量语义索引——21 只，含不进白名单的冰道双蛊）；main.js 合并进 GU_BY_ID。消除"warden 未来入 lab 即 fail-fast"的地雷；battle 上下文必须携带完整蛊索引成为架构约束。
+4. **断言**：C8-1（被动护甲减伤/破甲/叠加/无 guRefs 零变化/未知蛊 fail-fast 五案）、C8-2（霜妖破防表达+数据形状锁死+冰肌分类）。
+5. **warden 转化门禁未过**（变身/自爆 pending）：attackSource 维持 innate，debt 行更新进度。
+
+## 门禁
+
+| 门禁 | 结果 |
+|---|---|
+| web 全量 | 263 测试 262 过（唯一失败仍为 B 线预存项） |
+| check_balance | 49/49（零漂移——冰道双蛊不进 lab 数据，护甲语法对现有敌人零变化） |
+| conformance C1–C8 | 21/21 |
+
+## 验收点（本批）
+
+- 持冰肌蛊的敌人被 strike 3 打 → 伤 1（armor_tax）；armorBreak 2 → 伤 3（pierce_armor）——护甲真实改变承伤语法。
+- 无 guRefs 敌人行为逐位不变（回归零风险）。

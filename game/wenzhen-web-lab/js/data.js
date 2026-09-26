@@ -8284,6 +8284,248 @@ const DATA = {
       "5": 4
     }
   },
+  "guSemanticsById": {
+    "bone_atk_1_08_gu": {
+      "id": "bone_atk_1_08_gu",
+      "name": "骨蛊",
+      "rank": 1,
+      "school": "bone",
+      "v1_effect": {
+        "kind": "strike"
+      },
+      "passive_effect": null
+    },
+    "stone_shell_gu": {
+      "id": "stone_shell_gu",
+      "name": "石皮蛊",
+      "rank": 1,
+      "school": "earth",
+      "v1_effect": {
+        "kind": "shield",
+        "amount": 3
+      },
+      "passive_effect": null
+    },
+    "fire_atk_2_01_gu": {
+      "id": "fire_atk_2_01_gu",
+      "name": "鬼火蛊",
+      "rank": 2,
+      "school": "fire",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 3,
+        "delay": {
+          "turns": 1
+        }
+      },
+      "passive_effect": null
+    },
+    "qi_rec_2_14_gu": {
+      "id": "qi_rec_2_14_gu",
+      "name": "气纹霭蛊",
+      "rank": 2,
+      "school": "qi",
+      "v1_effect": {
+        "kind": "inspect"
+      },
+      "passive_effect": null
+    },
+    "water_atk_1_08_gu": {
+      "id": "water_atk_1_08_gu",
+      "name": "浪蛊",
+      "rank": 1,
+      "school": "water",
+      "v1_effect": {
+        "kind": "strike"
+      },
+      "passive_effect": null
+    },
+    "wood_atk_1_05_gu": {
+      "id": "wood_atk_1_05_gu",
+      "name": "青藤蛊",
+      "rank": 1,
+      "school": "wood",
+      "v1_effect": {
+        "kind": "strike"
+      },
+      "passive_effect": null
+    },
+    "sword_atk_2_12_gu": {
+      "id": "sword_atk_2_12_gu",
+      "name": "古剑蛊",
+      "rank": 2,
+      "school": "sword",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 3
+      },
+      "passive_effect": null
+    },
+    "jade_skin_gu": {
+      "id": "jade_skin_gu",
+      "name": "玉皮蛊",
+      "rank": 1,
+      "school": "earth",
+      "v1_effect": {
+        "kind": "shield",
+        "amount": 3
+      },
+      "passive_effect": null
+    },
+    "water_atk_3_05_gu": {
+      "id": "water_atk_3_05_gu",
+      "name": "雨蛊",
+      "rank": 3,
+      "school": "water",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 2,
+        "consume_status": {
+          "name": "marked",
+          "per_stack": 1
+        }
+      },
+      "passive_effect": null
+    },
+    "blood_droplet_gu": {
+      "id": "blood_droplet_gu",
+      "name": "血滴子",
+      "rank": 5,
+      "school": "blood",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 2
+      },
+      "passive_effect": null
+    },
+    "blood_heal_2_23_gu": {
+      "id": "blood_heal_2_23_gu",
+      "name": "血针蛊",
+      "rank": 2,
+      "school": "blood",
+      "v1_effect": {
+        "kind": "heal"
+      },
+      "passive_effect": null
+    },
+    "sword_atk_1_05_gu": {
+      "id": "sword_atk_1_05_gu",
+      "name": "剑纹锋蛊",
+      "rank": 1,
+      "school": "sword",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 2,
+        "support_school": "sword",
+        "support_bonus": 1
+      },
+      "passive_effect": null
+    },
+    "moon_ray_gu": {
+      "id": "moon_ray_gu",
+      "name": "月痕蛊",
+      "rank": 2,
+      "school": "light",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 4
+      },
+      "passive_effect": null
+    },
+    "white_jade_gu": {
+      "id": "white_jade_gu",
+      "name": "白玉蛊",
+      "rank": 2,
+      "school": "earth",
+      "v1_effect": {
+        "kind": "shield",
+        "amount": 5
+      },
+      "passive_effect": null
+    },
+    "moonlight_gu": {
+      "id": "moonlight_gu",
+      "name": "月光蛊",
+      "rank": 1,
+      "school": "light",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 3,
+        "ignoreEvasion": true
+      },
+      "passive_effect": null
+    },
+    "sword_atk_1_06_gu": {
+      "id": "sword_atk_1_06_gu",
+      "name": "剑纹刃蛊",
+      "rank": 1,
+      "school": "sword",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 2,
+        "support_school": "sword",
+        "support_bonus": 1
+      },
+      "passive_effect": null
+    },
+    "bing_ji_gu": {
+      "id": "bing_ji_gu",
+      "name": "冰肌蛊",
+      "rank": 3,
+      "school": "ice",
+      "v1_effect": null,
+      "passive_effect": {
+        "kind": "armor",
+        "amount": 2
+      }
+    },
+    "shuang_yao_gu": {
+      "id": "shuang_yao_gu",
+      "name": "霜妖蛊",
+      "rank": 3,
+      "school": "ice",
+      "v1_effect": {
+        "kind": "strike",
+        "armorBreak": 2
+      },
+      "passive_effect": null
+    },
+    "white_boar_strength_gu": {
+      "id": "white_boar_strength_gu",
+      "name": "白豕蛊",
+      "rank": 1,
+      "school": "force",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 2,
+        "armorBreak": 2,
+        "pierce": 2
+      },
+      "passive_effect": null
+    },
+    "bear_strength_gu": {
+      "id": "bear_strength_gu",
+      "name": "熊力蛊",
+      "rank": 1,
+      "school": "force",
+      "v1_effect": {
+        "kind": "heal",
+        "amount": 2
+      },
+      "passive_effect": null
+    },
+    "blood_atk_5_02_gu": {
+      "id": "blood_atk_5_02_gu",
+      "name": "血手印蛊",
+      "rank": 5,
+      "school": "blood",
+      "v1_effect": {
+        "kind": "strike",
+        "amount": 8
+      },
+      "passive_effect": null
+    }
+  },
   "actions": {
     "accept": "接取",
     "ally": "结盟",
@@ -8611,5 +8853,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "86b47c564feb849389c520bb597d83d93860d80bd08c4a7f01dc91847372cd0e"
+  "contentVersion": "a495ae1b15802a9cee3e4fafba4d3e11c71431f7c7de2e7bbf4064224737b328"
 };

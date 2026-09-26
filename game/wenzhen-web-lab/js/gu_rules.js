@@ -192,6 +192,25 @@ globalThis.GuRules = (() => {
     return plan;
   }
 
+  // P5 冰道语义（L0 裁决 A'⑥）：持有蛊的被动护甲（冰肌蛊 passive_effect.kind=armor）。
+  // canon：冰肌一经练成无须真元支持——常驻承伤语法，不占回合、不是催动 effectPlan。
+  // 索引缺失 + 有 guRefs → fail-fast（No Silent Fallback）；无 guRefs → 0。
+  function carriedGuPassiveArmor(enemy) {
+    const refs = enemy?.guRefs || [];
+    if (!refs.length) return 0;
+    const idx = (typeof GU_BY_ID !== 'undefined' && GU_BY_ID)
+      || globalThis.MVP_GU_CONTEXT?.guById || null;
+    if (!idx) throw new Error('gu_rules: enemy.guRefs 非空但缺蛊索引（No Silent Fallback）');
+    let total = 0;
+    for (const gid of refs) {
+      const g = idx[gid];
+      if (!g) throw new Error(`gu_rules: 敌人装载蛊 ${gid} 不在蛊索引（No Silent Fallback）`);
+      const pe = g.passive_effect || g.passiveEffect;
+      if (pe?.kind === 'armor') total += Math.max(0, Number(pe.amount || 0));
+    }
+    return total;
+  }
+
   // L0 Phase 1：敌人问题轴 × 玩家解法。每个问题至少两种可辩护方案。
   // 返回修订后的 damage 与 trace notes（Gate 1 只看行为痕迹）。
   function resolveProblemHit(enemy, plan, rawDamage) {
@@ -200,8 +219,9 @@ globalThis.GuRules = (() => {
     const axis = String(enemy?.problemAxis || '');
     if (damage <= 0) return { damage: 0, notes };
 
-    if (axis === 'armor') {
-      let armor = Math.max(0, Number(enemy.armorValue || 0));
+    const guArmor = carriedGuPassiveArmor(enemy);
+    if (axis === 'armor' || guArmor > 0) {
+      let armor = Math.max(0, Number(enemy.armorValue || 0)) + guArmor;
       if (Number(plan.armorBreak || 0) > 0) {
         armor = Math.max(0, armor - Number(plan.armorBreak));
         notes.push('pierce_armor');
@@ -787,6 +807,7 @@ globalThis.GuRules = (() => {
     killMoveEffectPlan,
     killMoveIsDirectStrike,
     resolveProblemHit,
+    carriedGuPassiveArmor,
     addVerbs,
     BUILD_ROLES,
     BUILD_KITS,

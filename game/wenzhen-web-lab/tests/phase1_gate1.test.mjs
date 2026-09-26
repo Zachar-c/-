@@ -15,6 +15,8 @@ const data = dataContext.DATA;
 const rulesContext = vm.createContext({});
 vm.runInContext(fs.readFileSync(new URL('../js/gu_rules.js', import.meta.url), 'utf8'), rulesContext);
 const rules = rulesContext.GuRules;
+// P5 冰道语义：结算上下文必须携带蛊索引（敌人 guRefs 全量，含语义索引合并）。
+rulesContext.MVP_GU_CONTEXT = { guById: { ...Object.fromEntries(data.gu.map((g) => [g.id, g])), ...(data.guSemanticsById || {}) } };
 const guById = Object.fromEntries(data.gu.map((g) => [g.id, g]));
 const enemyById = Object.fromEntries(data.enemies.map((e) => [e.id, e]));
 

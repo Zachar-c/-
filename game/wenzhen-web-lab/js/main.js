@@ -424,6 +424,8 @@ function recordEvent(action, after = {}, reason = '', targets = []) {
 
 const STAGE_BY_RANK = ['', 'one', 'two', 'three', 'four', 'five'];
 const GU_BY_ID = Object.fromEntries(DATA.gu.map((gu) => [gu.id, gu]));
+// P5 冰道语义：合并敌人装载蛊语义索引（含不进白名单的蛊，如冰道双蛊）——结算 fail-fast 依赖全量。
+Object.assign(GU_BY_ID, DATA.guSemanticsById || {});
 
 function recomputeQiMax() {
   state.qiMax = RunRules.essenceMax(state.cultivation, state.aptitude, {

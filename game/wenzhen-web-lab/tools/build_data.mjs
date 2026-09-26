@@ -686,6 +686,25 @@ const out = {
     role_curve_lab: labRoleCurve,
     enemy_attack_amount_by_gu_rank: enemyAttackTable,
   },
+  // P5 冰道语义：敌人装载蛊全量语义索引（gu.json 世界层，含不进 lab 白名单的蛊如冰道双蛊）——
+  // 战斗结算（carriedGuPassiveArmor 等）的蛊索引必须覆盖 guRefs 引用到的每只蛊（No Silent Fallback）。
+  guSemanticsById: Object.fromEntries((() => {
+    const ids = new Set();
+    for (const e of enemies) {
+      for (const gid of e.guRefs || []) ids.add(gid);
+      for (const it of [e.intent, ...(e.phases || []).flatMap((ph) => ph.intents || [])].filter(Boolean)) {
+        for (const gid of it.guRefs || []) ids.add(gid);
+      }
+    }
+    return [...ids].map((gid) => {
+      const g = guEntityById[gid];
+      return [gid, {
+        id: gid, name: names.gu?.[gid] || gid, rank: g.rank, school: g.school,
+        v1_effect: g.v1_effect ? JSON.parse(JSON.stringify(g.v1_effect)) : null,
+        passive_effect: g.passive_effect ? JSON.parse(JSON.stringify(g.passive_effect)) : null,
+      }];
+    });
+  })()),
   actions: names.actions || {}, nodeTypes: names.types || {}, battle, mechanisms,
 };
 // contentVersion = sha256(JSON.stringify(out)) 在写入 contentVersion 字段之前，供内容快照追溯。
