@@ -9,6 +9,7 @@
 - [三王福地](three-kings-mountain.md)
 - [王庭之争](royal-court.md)
 - [真阳楼崩塌](true-yang-collapse.md)
+- [僵盟潜伏与梦境三层](zangmeng-ambush.md)
 - [逆流河](reverse-flow-river.md)
 - [义天山大战与二次重生](yitian-mountain.md)
 - [宿命大战](fate-war.md)
