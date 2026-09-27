@@ -1,0 +1,2753 @@
+{
+  "schemaVersion": 1,
+  "scope": "game/data/gu_lore.json entries sourced from the novel",
+  "total": 270,
+  "ready": 47,
+  "pending": 223,
+  "cards": [
+    {
+      "id": "small_light_gu",
+      "name": "小光蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-015710"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon explicit five-point-star form and half-fingernail scale; environment is art inference",
+      "artPath": "game/assets/wenzhen/gu/cards/small_light_gu_card.png"
+    },
+    {
+      "id": "moonlight_gu",
+      "name": "月光蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-001492"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon form cues + supplied Moonlight Gu concept reference",
+      "artPath": "game/assets/wenzhen/gu/cards/moonlight_gu_card.png"
+    },
+    {
+      "id": "moon_glow_gu",
+      "name": "月芒蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-015710"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "body inferred from canon refinement lineage and threefold moon-blade power",
+      "artPath": "game/assets/wenzhen/gu/cards/moon_glow_gu_card.png"
+    },
+    {
+      "id": "moon_ray_gu",
+      "name": "月痕蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "body/background inferred from canon twenty-meter extended range and unchanged attack power",
+      "artPath": "game/assets/wenzhen/gu/cards/moon_ray_gu_card.png"
+    },
+    {
+      "id": "moon_shadow_gu",
+      "name": "月影蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V1-026792"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "inferred dark silver moth-like Gu; canon associates it with suppressed primeval essence, while the specific cause of the monk injury is uncertain",
+      "artPath": "game/assets/wenzhen/gu/cards/moon_shadow_gu_card.png"
+    },
+    {
+      "id": "vitality_grass_gu",
+      "name": "生机草蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "plant-form inferred from nine-leaf restorative vitality grass; individual restorative leaves grounded in canon",
+      "artPath": "game/assets/wenzhen/gu/cards/vitality_grass_gu_card.png"
+    },
+    {
+      "id": "force_gu",
+      "name": "力量蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V3-114472"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "depicts canon legendary rank-nine Force Gu from Ren Zu lore; body inferred as golden beetle because canon names and characterizes it but gives no body shape; game rank-one same-name entry is a known identity collision",
+      "artPath": "game/assets/wenzhen/gu/cards/force_gu_card.png"
+    },
+    {
+      "id": "bear_strength_gu",
+      "name": "熊力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "beetle-like body inferred from bear-strength name and clan Gu context; honey feeding is canon cue",
+      "artPath": "game/assets/wenzhen/gu/cards/bear_strength_gu_card.png"
+    },
+    {
+      "id": "white_boar_strength_gu",
+      "name": "白豕蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-009980"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "white boar form inferred from canon pig-Gu family and permanent strength enhancement",
+      "artPath": "game/assets/wenzhen/gu/cards/white_boar_strength_gu_card.png"
+    },
+    {
+      "id": "jade_skin_gu",
+      "name": "玉皮蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-009654"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "body inferred as a living translucent jade-membrane Gu; canon establishes it as the rarest defensive skin-series member and refinement lineage with White Boar Gu",
+      "artPath": "game/assets/wenzhen/gu/cards/jade_skin_gu_card.png"
+    },
+    {
+      "id": "white_jade_gu",
+      "name": "白玉蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-009986"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "body inferred as a solid pearl-jade Gu; canon identifies rank-two defensive refinement result of Jade Skin Gu + White Boar Gu",
+      "artPath": "game/assets/wenzhen/gu/cards/white_jade_gu_card.png"
+    },
+    {
+      "id": "stone_shell_gu",
+      "name": "石皮蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-076364"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon explicit rough gray stone figurine-like body resembling Copper Skin Gu; workshop setting is illustrative inference",
+      "artPath": "game/assets/wenzhen/gu/cards/stone_shell_gu_card.png"
+    },
+    {
+      "id": "blood_farewell_gu",
+      "name": "爱别离",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V1-011800"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "rank-two identity canon; body and riverside farewell setting inferred from name only",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_farewell_gu_card.png"
+    },
+    {
+      "id": "blood_droplet_gu",
+      "name": "血滴子",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V1-028476"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon explicit dark-red bat body: long pointed ears, two pairs of wings (large main and smaller lower pair), no claws, blade-sharp wing edges; feeds on Gu Master life-blood and multiplies",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_droplet_gu_card.png"
+    },
+    {
+      "id": "blood_bat_gu",
+      "name": "刀翅血蝠蛊",
+      "loreStatus": "divergence",
+      "anchors": [
+        "E:V1-031864"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon explicit knife-wing blood bat swarm led by one male commanding females; four wings with sharp edges, rank-three instance; game singleton presentation is adaptation",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_bat_gu_card.png"
+    },
+    {
+      "id": "blood_atk_4_01_gu",
+      "name": "血颅蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-033624"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon rank-four Blood Skull Gu absorbs blood from victims, hovers when full and emits a fragrant blood spring; skull-like Gu body inference",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_4_01_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_02_gu",
+      "name": "血手印蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-050082"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon fifth-rank Blood Handprint Gu begins as a small vivid red palm mark and manifests as a huge palm; the actual insect body is unspecified",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "blood_atk_3_03_gu",
+      "name": "血气蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-026840"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon says Blood Qi Gu replenishes Gu Master blood vitality, improves recovery from blood loss, pairs with Wandering Zombie Gu, and refines with Moon Glow Gu into Blood Moon Gu; body inferred",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_3_03_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_04_gu",
+      "name": "血汗蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "canon names Blood Sweat Gu as one of Blood Sea Ancestor inheritances; Ice Skin prevents sweating and bleeding and therefore is incompatible with it; body inferred",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_04_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_05_gu",
+      "name": "经血蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "canon names Menses Gu as one of Blood Sea Ancestor inheritances; its effect can induce bleeding and its inheritance later reaches immortal rank; body inferred, effect shown symbolically",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "blood_mov_5_06_gu",
+      "name": "血影蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "canon names Blood Shadow Gu as one of Blood Sea Ancestor inheritances and records Shang Yanfei obtained its inheritance; body and effect inferred",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_mov_5_06_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_07_gu",
+      "name": "血战蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "canon identifies Blood Battle Gu as one of Blood Sea Ancestor’s blood-path inheritances; specific body/effect unspecified, so the armored mantis and battlefield scene are visual inference only",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_07_gu_card.png"
+    },
+    {
+      "id": "blood_atk_1_08_gu",
+      "name": "血神子蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_09_gu",
+      "name": "血神子",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V1-028484"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon Blood God Son is rank-six devil Gu promoted from Blood Droplet Gu and ranked seventh among ten great devil Gu; body inferred as a single ruby cocoon retaining swarm lineage",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_09_gu_card.png"
+    },
+    {
+      "id": "blood_atk_4_10_gu",
+      "name": "血狂蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "canon explicitly describes Blood Frenzy Gu as formless blood qi that must attach to another object, enables intermittent natural primeval-qi absorption, then causes loss of control and eventual liquefaction; card follows formless attached mass",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_4_10_gu_card.png"
+    },
+    {
+      "id": "blood_atk_3_11_gu",
+      "name": "血月蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-026936"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: blood-red crescent Gu, ranged moon-blade attack, persistent bleeding wounds and blood diet (E:V1-026936); bone-cliff escape setting is scene staging from novel context",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_3_11_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_12_gu",
+      "name": "血本仙蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-195948"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_12_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_13_gu",
+      "name": "血本蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-199800"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_13_gu_card.png"
+    },
+    {
+      "id": "blood_atk_5_14_gu",
+      "name": "血缘仙蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-350822"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_5_14_gu_card.png"
+    },
+    {
+      "id": "blood_atk_3_15_gu",
+      "name": "血蝠蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-031864"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_3_15_gu_card.png"
+    },
+    {
+      "id": "blood_atk_1_16_gu",
+      "name": "血脉蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_1_16_gu_card.png"
+    },
+    {
+      "id": "blood_atk_1_17_gu",
+      "name": "血蟒蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_1_17_gu_card.png"
+    },
+    {
+      "id": "blood_atk_1_18_gu",
+      "name": "鳄力蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-035502"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: finger-length miniature crocodile with head, body and tail but no legs; amber refinement glimmer (E:V2-035502); market appraisal setting is staging",
+      "artPath": "game/assets/wenzhen/gu/cards/blood_atk_1_18_gu_card.png"
+    },
+    {
+      "id": "bone_def_3_01_gu",
+      "name": "骨枪蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V2-047276"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/bone_def_3_01_gu_card.png"
+    },
+    {
+      "id": "bone_def_3_02_gu",
+      "name": "螺旋骨枪蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/bone_def_3_02_gu_card.png"
+    },
+    {
+      "id": "bone_atk_3_03_gu",
+      "name": "骨刺蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-039150"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: fist-sized heavy cactus-like Gu completely covered in bone spines; effect causes the user’s bones to grow spikes through skin (E:V2-039150)",
+      "artPath": "game/assets/wenzhen/gu/cards/bone_atk_3_03_gu_card.png"
+    },
+    {
+      "id": "bone_mov_4_04_gu",
+      "name": "骨翼蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-074910"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: Arm Bone Wing Gu grows paired bone wings on forearms, modestly improves movement and especially strike speed (E:V2-074910); insect body shape is visual inference",
+      "artPath": "game/assets/wenzhen/gu/cards/bone_mov_4_04_gu_card.png"
+    },
+    {
+      "id": "bone_def_3_05_gu",
+      "name": "玉骨蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-040530"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/bone_def_3_05_gu_card.png"
+    },
+    {
+      "id": "bone_def_1_06_gu",
+      "name": "白骨蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/bone_def_1_06_gu_card.png"
+    },
+    {
+      "id": "bone_def_2_07_gu",
+      "name": "骨盾蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/bone_def_2_07_gu_card.png"
+    },
+    {
+      "id": "dream_def_5_01_gu",
+      "name": "梦甲蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-396296"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_def_5_01_gu_card.png"
+    },
+    {
+      "id": "dream_atk_5_02_gu",
+      "name": "梦蝶仙蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-396902"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "dream_atk_5_03_gu",
+      "name": "做梦蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "dream_atk_1_04_gu",
+      "name": "睡蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "dream_atk_1_05_gu",
+      "name": "梦境蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_atk_1_05_gu_card.png"
+    },
+    {
+      "id": "dream_atk_5_06_gu",
+      "name": "解谜蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-199800"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_atk_5_06_gu_card.png"
+    },
+    {
+      "id": "dream_atk_5_07_gu",
+      "name": "解谜仙蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_atk_5_07_gu_card.png"
+    },
+    {
+      "id": "dream_rec_2_20_gu",
+      "name": "梦话蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/dream_rec_2_20_gu_card.png"
+    },
+    {
+      "id": "earth_def_3_01_gu",
+      "name": "石窍蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-034292"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: hard square gray-white die; one-use conversion of aperture walls to stone, instantly raises current rank while exhausting potential and self-recovery (E:V1-034292)",
+      "artPath": "game/assets/wenzhen/gu/cards/earth_def_3_01_gu_card.png"
+    },
+    {
+      "id": "earth_atk_5_02_gu",
+      "name": "洞地蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-078492"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five mother-and-child pair links two locations through a two-way spatial passage for transport and reinforcements (E:V3-078492); ring-beetle forms and pictured locations are art inference",
+      "artPath": "game/assets/wenzhen/gu/cards/earth_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "earth_atk_5_03_gu",
+      "name": "地藏花蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V3-080158"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/earth_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "earth_atk_1_04_gu",
+      "name": "地藏花王蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/earth_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "earth_atk_1_05_gu",
+      "name": "泥沼蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/earth_atk_1_05_gu_card.png"
+    },
+    {
+      "id": "fire_atk_2_01_gu",
+      "name": "鬼火蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-081722"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-two ghost fire Gu combines with Bone Bamboo Gu to repair the bone battle cart; teal wisp body is an art inference (E:V3-081722)",
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_2_01_gu_card.png"
+    },
+    {
+      "id": "fire_atk_4_02_gu",
+      "name": "丹火蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-057866"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: orange spherical Pill Fire rises from Yang Cloud and is used as a combat core; splitting Gu can multiply its number (E:V2-057866)",
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_4_02_gu_card.png"
+    },
+    {
+      "id": "fire_atk_3_03_gu",
+      "name": "炎心蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_3_03_gu_card.png"
+    },
+    {
+      "id": "fire_atk_1_04_gu",
+      "name": "火鸦蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "fire_atk_4_05_gu",
+      "name": "火龙蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-032036"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: flame first snakes outward, then forms scales, eagle claws, deer antlers, horse-like face and teeth as a giant fire dragon; fights the Blood River Python in the underground blood lake (E:V1-032036)",
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_4_05_gu_card.png"
+    },
+    {
+      "id": "fire_atk_4_06_gu",
+      "name": "火蛇蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-058006"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_4_06_gu_card.png"
+    },
+    {
+      "id": "fire_atk_4_07_gu",
+      "name": "炎蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V3-084408"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/fire_atk_4_07_gu_card.png"
+    },
+    {
+      "id": "fire_mov_4_39_gu",
+      "name": "火炭蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V4-154990"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: a one-aperture ember Gu enters a black bear and burns its internal organs; insect body is inferred from its charcoal/fire name (E:V4-154990)",
+      "artPath": "game/assets/wenzhen/gu/cards/fire_mov_4_39_gu_card.png"
+    },
+    {
+      "id": "force_atk_3_01_gu",
+      "name": "力气蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V2-059736"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_3_01_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_02_gu",
+      "name": "苦力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-056860"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: Kuli Gu is a rare force-path Gu sought by Fang Yuan alongside All-Out Effort and Self-Reliance; body shape and auction staging are visual inference (E:V2-056860)",
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_02_gu_card.png"
+    },
+    {
+      "id": "force_heal_3_03_gu",
+      "name": "自力更生蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-064192"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon rank-three Self-Reliance Gu healing effect scales with the user’s physical strength and stimulates metabolism; exact body is unspecified, amber loop-form is visual inference",
+      "artPath": "game/assets/wenzhen/gu/cards/force_heal_3_03_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_04_gu",
+      "name": "全力以赴蛊",
+      "loreStatus": "timepoint",
+      "anchors": [
+        "E:V2-052464"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_04_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_05_gu",
+      "name": "斤力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-081746"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_05_gu_card.png"
+    },
+    {
+      "id": "force_atk_2_06_gu",
+      "name": "十斤之力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-081748"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-two Ten Jin Strength Gu increases the user’s strength by ten jin; beetle body and weight grooves are visual inference (E:V3-081748)",
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_2_06_gu_card.png"
+    },
+    {
+      "id": "force_atk_3_07_gu",
+      "name": "一钧之力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-081750"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_3_07_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_08_gu",
+      "name": "十钧之力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-081752"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_08_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_09_gu",
+      "name": "百钧之力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_09_gu_card.png"
+    },
+    {
+      "id": "force_atk_5_10_gu",
+      "name": "钧力蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V3-081762"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_5_10_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_11_gu",
+      "name": "兽力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-081958"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_11_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_12_gu",
+      "name": "牛力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_12_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_13_gu",
+      "name": "马力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_13_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_14_gu",
+      "name": "狼力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_14_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_15_gu",
+      "name": "铁冠鹰力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_15_gu_card.png"
+    },
+    {
+      "id": "force_atk_5_16_gu",
+      "name": "群力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V4-125666"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Group Strength Gu is represented by an ancient recipe and is extinct in the current era; beetle form and animal-force echoes are visualization inference (E:V4-125666)",
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_5_16_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_17_gu",
+      "name": "借力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V4-142914"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_17_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_18_gu",
+      "name": "费力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-092738"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_18_gu_card.png"
+    },
+    {
+      "id": "force_atk_5_19_gu",
+      "name": "我力蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-128088"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_5_19_gu_card.png"
+    },
+    {
+      "id": "force_atk_5_20_gu",
+      "name": "我力仙蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-177370"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_5_20_gu_card.png"
+    },
+    {
+      "id": "force_mov_5_21_gu",
+      "name": "飞熊之力蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V3-109462"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_mov_5_21_gu_card.png"
+    },
+    {
+      "id": "force_def_5_22_gu",
+      "name": "拔山蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_def_5_22_gu_card.png"
+    },
+    {
+      "id": "force_atk_5_23_gu",
+      "name": "挽澜蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_5_23_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_24_gu",
+      "name": "大力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_24_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_25_gu",
+      "name": "巨力蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-058922"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_25_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_26_gu",
+      "name": "直撞蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V3-095104"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_26_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_27_gu",
+      "name": "横冲蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V3-095104"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_27_gu_card.png"
+    },
+    {
+      "id": "force_atk_4_28_gu",
+      "name": "横冲直撞蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-064168"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_4_28_gu_card.png"
+    },
+    {
+      "id": "force_atk_3_29_gu",
+      "name": "天蓬蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-009986"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_3_29_gu_card.png"
+    },
+    {
+      "id": "force_atk_3_30_gu",
+      "name": "力气仙蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_3_30_gu_card.png"
+    },
+    {
+      "id": "force_atk_1_31_gu",
+      "name": "天力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/force_atk_1_31_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_01_gu",
+      "name": "点金蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-069422"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Point Gold Gu manifests as a little golden hand and turns struck life or matter into lifeless gold statues (E:V2-069422; E:V4-070364-070368)",
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_01_gu_card.png"
+    },
+    {
+      "id": "gold_atk_4_02_gu",
+      "name": "金龙蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-069222"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-four Golden Dragon Gu manifests as a four-clawed golden dragon; worm-like core with head and claws is described later (E:V2-069222; E:V4-215032)",
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_4_02_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_03_gu",
+      "name": "金风送爽蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-069230"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "gold_atk_4_04_gu",
+      "name": "金缕衣蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-069252"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_4_04_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_05_gu",
+      "name": "金霞蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-069252"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "gold_atk_3_06_gu",
+      "name": "金罡蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-055508"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-three Golden Canopy Gu condenses golden radiance into defensive light armor; visual Gu beetle and wolf-siege staging are inference (E:V2-055508)",
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_3_06_gu_card.png"
+    },
+    {
+      "id": "gold_def_1_07_gu",
+      "name": "铁皮蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_def_1_07_gu_card.png"
+    },
+    {
+      "id": "gold_def_3_08_gu",
+      "name": "铜皮蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-055814"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_def_3_08_gu_card.png"
+    },
+    {
+      "id": "gold_def_3_09_gu",
+      "name": "古铜皮蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-065994"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_def_3_09_gu_card.png"
+    },
+    {
+      "id": "gold_def_3_10_gu",
+      "name": "铁柜蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-065586"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_def_3_10_gu_card.png"
+    },
+    {
+      "id": "gold_atk_2_11_gu",
+      "name": "赤铁舍利蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-018066"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: Red Iron Relic Gu is rank two, only effective on rank-two Gu Masters, and raises one minor cultivation stage; scene of its auction and orb body details are staging/inference (E:V1-018066)",
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_2_11_gu_card.png"
+    },
+    {
+      "id": "gold_atk_2_12_gu",
+      "name": "青铜舍利蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V1-018066"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-one Bronze Relic Gu is a fingertip-sized round Gu and advances rank-one cultivation by one minor stage; Gu body detail is inferred (E:V1-018066)",
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_2_12_gu_card.png"
+    },
+    {
+      "id": "gold_atk_3_13_gu",
+      "name": "白银舍利蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-018066"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_3_13_gu_card.png"
+    },
+    {
+      "id": "gold_atk_4_14_gu",
+      "name": "黄金舍利蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-018068"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_4_14_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_15_gu",
+      "name": "紫晶舍利蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-078004"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_15_gu_card.png"
+    },
+    {
+      "id": "gold_atk_2_16_gu",
+      "name": "舍利蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-018066"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_2_16_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_17_gu",
+      "name": "金甲蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-105906"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_17_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_18_gu",
+      "name": "剑蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V4-182352"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_18_gu_card.png"
+    },
+    {
+      "id": "gold_atk_2_19_gu",
+      "name": "铁蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-030746"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_2_19_gu_card.png"
+    },
+    {
+      "id": "gold_atk_5_20_gu",
+      "name": "金蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-069422"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/gold_atk_5_20_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_01_gu",
+      "name": "宿命蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V3-103100"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_01_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_02_gu",
+      "name": "命运蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-316328"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_03_gu",
+      "name": "天妒仙蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-402772"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_04_gu",
+      "name": "天怒仙蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_04_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_05_gu",
+      "name": "天悲仙蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_06_gu",
+      "name": "天机蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-276396"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_06_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_07_gu",
+      "name": "寿蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-021016"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_07_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_5_08_gu",
+      "name": "雷电蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-376300"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_5_08_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_4_09_gu",
+      "name": "雷盾蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-029180"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_4_09_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_3_10_gu",
+      "name": "雷翼蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-027304"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-three Thunder Wings Gu lives on the back like two lightning tattoos and condenses paired lightning wings for brief flight; the moth-like core is visual inference. Wolf-tide battlefield is context (E:V1-027304).",
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_3_10_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_1_11_gu",
+      "name": "命蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-002594"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_1_11_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_1_12_gu",
+      "name": "灾蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V3-104130"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_1_12_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_3_13_gu",
+      "name": "雷蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-025544"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_3_13_gu_card.png"
+    },
+    {
+      "id": "heaven_atk_3_14_gu",
+      "name": "电蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V6-376300"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/heaven_atk_3_14_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_01_gu",
+      "name": "自己蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_01_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_02_gu",
+      "name": "爱情蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-186806"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "human_rec_1_03_gu",
+      "name": "希望蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "ready",
+      "visualBasis": "canon Hope Gu is a very dim tiny point of light that blooms with immense brightness when the heart is entrusted to it; light-mote form follows canon, surrounding wilderness is visual staging",
+      "artPath": "game/assets/wenzhen/gu/cards/human_rec_1_03_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_04_gu",
+      "name": "虚荣蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_05_gu",
+      "name": "胆识蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "human_def_1_06_gu",
+      "name": "固执蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_def_1_06_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_07_gu",
+      "name": "尊严蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_07_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_08_gu",
+      "name": "忧患蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "human_def_5_09_gu",
+      "name": "骨肉团圆蛊",
+      "loreStatus": "unverified",
+      "anchors": [
+        "E:V2-057692"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_def_5_09_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_10_gu",
+      "name": "能力蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V6-402010"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_10_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_11_gu",
+      "name": "努力蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_11_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_12_gu",
+      "name": "学习蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_12_gu_card.png"
+    },
+    {
+      "id": "human_atk_2_13_gu",
+      "name": "才华蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_2_13_gu_card.png"
+    },
+    {
+      "id": "human_atk_2_14_gu",
+      "name": "认真蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_2_14_gu_card.png"
+    },
+    {
+      "id": "human_atk_3_15_gu",
+      "name": "辛苦蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_3_15_gu_card.png"
+    },
+    {
+      "id": "human_atk_3_16_gu",
+      "name": "悲伤蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_3_16_gu_card.png"
+    },
+    {
+      "id": "human_atk_4_17_gu",
+      "name": "愚蠢蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_4_17_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_18_gu",
+      "name": "勇气蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_18_gu_card.png"
+    },
+    {
+      "id": "human_atk_3_19_gu",
+      "name": "刃蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-023688"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_3_19_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_20_gu",
+      "name": "匠人蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_20_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_21_gu",
+      "name": "大侠蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V5-363292"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Hero Gu transforms into a person; the text shows it manifesting as a teacher figure, and later says profession Gu can become people. The Gu-body mechanism is visual inference; alley activation is scene context (E:V5-363292; E:V5-385242).",
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_21_gu_card.png"
+    },
+    {
+      "id": "human_atk_2_22_gu",
+      "name": "驯兽师蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_2_22_gu_card.png"
+    },
+    {
+      "id": "human_atk_2_23_gu",
+      "name": "丐帮蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_2_23_gu_card.png"
+    },
+    {
+      "id": "human_atk_3_24_gu",
+      "name": "长老蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_3_24_gu_card.png"
+    },
+    {
+      "id": "human_atk_3_25_gu",
+      "name": "兵卒蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_3_25_gu_card.png"
+    },
+    {
+      "id": "human_atk_4_26_gu",
+      "name": "伍长蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_4_26_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_27_gu",
+      "name": "什长蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_27_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_28_gu",
+      "name": "百夫长蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_28_gu_card.png"
+    },
+    {
+      "id": "human_atk_2_29_gu",
+      "name": "虚情假意蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_2_29_gu_card.png"
+    },
+    {
+      "id": "human_atk_2_30_gu",
+      "name": "儿女情长蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_2_30_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_31_gu",
+      "name": "海誓蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V2-071240"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_31_gu_card.png"
+    },
+    {
+      "id": "human_def_1_32_gu",
+      "name": "山盟蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V2-071240"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_def_1_32_gu_card.png"
+    },
+    {
+      "id": "human_atk_3_33_gu",
+      "name": "毒誓蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-049768"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-three Poison Oath Gu is a finger-sized purple-red insect with vicious mouthparts; it absorbs the heart blood of both parties and, when successful, bursts into red motes that bind the oath (E:V2-049768).",
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_3_33_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_34_gu",
+      "name": "悔蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-309674"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_34_gu_card.png"
+    },
+    {
+      "id": "human_log_3_35_gu",
+      "name": "名声蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_log_3_35_gu_card.png"
+    },
+    {
+      "id": "human_def_3_36_gu",
+      "name": "人皮蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_def_3_36_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_37_gu",
+      "name": "人如故蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-098826"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_37_gu_card.png"
+    },
+    {
+      "id": "human_atk_1_38_gu",
+      "name": "人如故仙蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V5-270480"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_1_38_gu_card.png"
+    },
+    {
+      "id": "human_atk_4_39_gu",
+      "name": "理想蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_4_39_gu_card.png"
+    },
+    {
+      "id": "human_atk_4_40_gu",
+      "name": "情蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-106818"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_4_40_gu_card.png"
+    },
+    {
+      "id": "human_atk_5_41_gu",
+      "name": "恨蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-376116"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_atk_5_41_gu_card.png"
+    },
+    {
+      "id": "human_heal_5_42_gu",
+      "name": "团圆蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V2-057692"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/human_heal_5_42_gu_card.png"
+    },
+    {
+      "id": "light_atk_1_01_gu",
+      "name": "月旋蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_atk_1_01_gu_card.png"
+    },
+    {
+      "id": "light_atk_3_02_gu",
+      "name": "邀月蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V1-016922"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_atk_3_02_gu_card.png"
+    },
+    {
+      "id": "light_atk_5_03_gu",
+      "name": "太光蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-072028"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Taiguang Gu releases ancient suns glory; the light has no direct attack power but passes through every barrier and illuminates a blessed land. Solar-moth body is visual inference; portal scene is Three Kings Blessed Land context (E:V2-072028).",
+      "artPath": "game/assets/wenzhen/gu/cards/light_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "light_atk_1_04_gu",
+      "name": "光蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-001492"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "light_atk_3_05_gu",
+      "name": "月蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-016922"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_atk_3_05_gu_card.png"
+    },
+    {
+      "id": "light_atk_1_06_gu",
+      "name": "星光蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_atk_1_06_gu_card.png"
+    },
+    {
+      "id": "light_rec_3_07_gu",
+      "name": "星芽蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V4-123856"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon confirms rank-three Star Bud Gu can arise naturally in an unusual blessed-land ecosystem; its seed-pod body and terrarium presentation are visual inference",
+      "artPath": "game/assets/wenzhen/gu/cards/light_rec_3_07_gu_card.png"
+    },
+    {
+      "id": "light_rec_5_08_gu",
+      "name": "星河蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-106996"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_rec_5_08_gu_card.png"
+    },
+    {
+      "id": "light_rec_3_09_gu",
+      "name": "星萤蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-085972"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon explicit tiny firefly-scale body emitting true blue starlight; used in numbers to sustain Star Gate and die gradually under the burden; interior gate chamber is a grounded scene choice",
+      "artPath": "game/assets/wenzhen/gu/cards/light_rec_3_09_gu_card.png"
+    },
+    {
+      "id": "light_rec_1_10_gu",
+      "name": "明星蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_rec_1_10_gu_card.png"
+    },
+    {
+      "id": "light_rec_5_11_gu",
+      "name": "星眸蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_rec_5_11_gu_card.png"
+    },
+    {
+      "id": "light_rec_5_12_gu",
+      "name": "星念蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-093044"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/light_rec_5_12_gu_card.png"
+    },
+    {
+      "id": "luck_atk_5_01_gu",
+      "name": "鸿运齐天蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V3-114422"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_5_01_gu_card.png"
+    },
+    {
+      "id": "luck_rec_5_02_gu",
+      "name": "察运蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-113096"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five luck-path scouting Gu reveals fortune invisible to ordinary sight; its insect body is visual inference. Ascension-cloud auras stage the fortune it reveals (E:V3-113096).",
+      "artPath": "game/assets/wenzhen/gu/cards/luck_rec_5_02_gu_card.png"
+    },
+    {
+      "id": "luck_atk_1_03_gu",
+      "name": "招灾蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V3-104130"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_1_03_gu_card.png"
+    },
+    {
+      "id": "luck_atk_5_04_gu",
+      "name": "狗屎运蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-199800"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_5_04_gu_card.png"
+    },
+    {
+      "id": "luck_atk_5_05_gu",
+      "name": "排难蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-128094"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "luck_atk_1_06_gu",
+      "name": "福蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_1_06_gu_card.png"
+    },
+    {
+      "id": "luck_atk_1_07_gu",
+      "name": "鸿运蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_1_07_gu_card.png"
+    },
+    {
+      "id": "luck_atk_1_08_gu",
+      "name": "转运蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/luck_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "qi_atk_1_01_gu",
+      "name": "硬气蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_atk_1_01_gu_card.png"
+    },
+    {
+      "id": "qi_atk_5_02_gu",
+      "name": "尸气蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "qi_mov_4_03_gu",
+      "name": "风气蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-057022"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-four Wind Custom Gu is a natural Gu shaped like a cyan-blue butterfly; each wingbeat produces diamond-like star glints, and it instills a shared habit or fashion in a group (E:V2-057022).",
+      "artPath": "game/assets/wenzhen/gu/cards/qi_mov_4_03_gu_card.png"
+    },
+    {
+      "id": "qi_atk_1_04_gu",
+      "name": "吐气蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "qi_atk_5_05_gu",
+      "name": "龙息蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-223776"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "qi_mov_4_06_gu",
+      "name": "云蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-054800"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_mov_4_06_gu_card.png"
+    },
+    {
+      "id": "qi_mov_1_07_gu",
+      "name": "雾蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_mov_1_07_gu_card.png"
+    },
+    {
+      "id": "qi_atk_5_08_gu",
+      "name": "霞蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V2-069252"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/qi_atk_5_08_gu_card.png"
+    },
+    {
+      "id": "refine_log_5_01_gu",
+      "name": "升炼蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-394452"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_log_5_01_gu_card.png"
+    },
+    {
+      "id": "refine_log_5_02_gu",
+      "name": "九转升炼蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-429520"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_log_5_02_gu_card.png"
+    },
+    {
+      "id": "refine_log_2_03_gu",
+      "name": "合炼蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-012766"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_log_2_03_gu_card.png"
+    },
+    {
+      "id": "refine_atk_1_04_gu",
+      "name": "化蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-039454"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "refine_log_5_05_gu",
+      "name": "炼炉蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-159688"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_log_5_05_gu_card.png"
+    },
+    {
+      "id": "refine_log_1_06_gu",
+      "name": "精炼蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_log_1_06_gu_card.png"
+    },
+    {
+      "id": "refine_log_5_07_gu",
+      "name": "量蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V3-103100"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_log_5_07_gu_card.png"
+    },
+    {
+      "id": "refine_atk_1_08_gu",
+      "name": "称蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/refine_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "slave_atk_5_01_gu",
+      "name": "奴隶蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-002640"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Slave Gu can control a rank-five Gu Master once implanted and is exceptionally rare; the insect body and soul-thread are visual inference (E:V1-002640; E:V3-071718).",
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_5_01_gu_card.png"
+    },
+    {
+      "id": "slave_atk_4_02_gu",
+      "name": "驭兽蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-083834"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-four Beast Taming Gu can control a ten-thousand-beast king; its body is visual inference, and the pictured horned beast is staging rather than a named canon species (E:V3-083834).",
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_4_02_gu_card.png"
+    },
+    {
+      "id": "slave_atk_1_03_gu",
+      "name": "驭犬蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-060300"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-one Dog Taming Gu is thumb-sized, jade-like, and shaped like a dog head; it flashes into a wild dog soul without harming the body, making the dog obedient (E:V2-060300; E:V2-064434).",
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_1_03_gu_card.png"
+    },
+    {
+      "id": "slave_atk_3_04_gu",
+      "name": "驭狼蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V3-078942"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: the L0 ruling sets this Wolf Taming Gu to rank two despite the game ID rank. The Gu bursts into light smoke, covers a weakened camel wolf, enters its body, and makes it submit; insect body is visual inference (E:V3-078942; E:V3-080726).",
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_3_04_gu_card.png"
+    },
+    {
+      "id": "slave_atk_3_05_gu",
+      "name": "驭熊蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V1-024900"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_3_05_gu_card.png"
+    },
+    {
+      "id": "slave_atk_1_06_gu",
+      "name": "驭虎蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_1_06_gu_card.png"
+    },
+    {
+      "id": "slave_atk_1_07_gu",
+      "name": "驭鹿蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_1_07_gu_card.png"
+    },
+    {
+      "id": "slave_atk_1_08_gu",
+      "name": "驭牛蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "slave_atk_1_09_gu",
+      "name": "傀儡蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/slave_atk_1_09_gu_card.png"
+    },
+    {
+      "id": "soul_atk_5_01_gu",
+      "name": "魂灯蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-264322"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_5_01_gu_card.png"
+    },
+    {
+      "id": "soul_atk_1_02_gu",
+      "name": "净魂仙蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V5-267348"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_1_02_gu_card.png"
+    },
+    {
+      "id": "soul_atk_5_03_gu",
+      "name": "命牌蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "soul_atk_1_04_gu",
+      "name": "摄魂蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_1_04_gu_card.png"
+    },
+    {
+      "id": "soul_atk_1_05_gu",
+      "name": "落魄蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_1_05_gu_card.png"
+    },
+    {
+      "id": "soul_atk_1_06_gu",
+      "name": "灵蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_1_06_gu_card.png"
+    },
+    {
+      "id": "soul_atk_1_07_gu",
+      "name": "魄蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/soul_atk_1_07_gu_card.png"
+    },
+    {
+      "id": "sword_atk_4_01_gu",
+      "name": "剑气蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V5-195606"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: wild rank-four Sword Qi Gu is found in Sword Break Valley; Sword Qi emits pale, semi-transparent piercing energy that can be checked by hard defense. Sword-moth body is visual inference (E:V5-195606; E:V5-190380).",
+      "artPath": "game/assets/wenzhen/gu/cards/sword_atk_4_01_gu_card.png"
+    },
+    {
+      "id": "sword_atk_5_02_gu",
+      "name": "飞剑蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-190076"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/sword_atk_5_02_gu_card.png"
+    },
+    {
+      "id": "sword_atk_5_03_gu",
+      "name": "剑鞘蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V5-195650"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Sword Sheath Gu is black, rough, palm-sized, and resembles a miniature iron sword scabbard; a wild sword-path Gu flies into it in Sword Break Valley (E:V5-195650).",
+      "artPath": "game/assets/wenzhen/gu/cards/sword_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "water_def_3_01_gu",
+      "name": "水罩蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_def_3_01_gu_card.png"
+    },
+    {
+      "id": "water_atk_4_02_gu",
+      "name": "水瀑蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-087006"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-four Waterfall Gu condenses water vapor into a huge, fast torrent that falls like a waterfall and sweeps through wolf groups near Moonlight Lake; insect body is visual inference (E:V3-087006).",
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_4_02_gu_card.png"
+    },
+    {
+      "id": "water_atk_5_03_gu",
+      "name": "溪流蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "water_rec_5_04_gu",
+      "name": "浪迹天涯仙蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-154944"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_rec_5_04_gu_card.png"
+    },
+    {
+      "id": "water_atk_3_05_gu",
+      "name": "雨蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_3_05_gu_card.png"
+    },
+    {
+      "id": "water_atk_3_06_gu",
+      "name": "冰肌蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-023066"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-three Ice Skin Gu permanently transforms the user skin into exceptionally defensive ice skin and stops sweat and bleeding; insect body and crystalline surface pattern are visual inference (E:V1-023066).",
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_3_06_gu_card.png"
+    },
+    {
+      "id": "water_atk_3_07_gu",
+      "name": "蓝鸟冰棺蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-022912"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_3_07_gu_card.png"
+    },
+    {
+      "id": "water_atk_1_08_gu",
+      "name": "浪蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "water_atk_4_09_gu",
+      "name": "海蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-065292"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_4_09_gu_card.png"
+    },
+    {
+      "id": "water_atk_5_10_gu",
+      "name": "河蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-106996"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_5_10_gu_card.png"
+    },
+    {
+      "id": "water_atk_5_11_gu",
+      "name": "浪迹江湖蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V4-154944"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Water-path Wandering Jianghu Gu belongs to a movement series and lets its user walk swiftly across water; insect body is visual inference. The bridge-and-river setting is illustrative staging (E:V4-154944).",
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_5_11_gu_card.png"
+    },
+    {
+      "id": "water_atk_1_12_gu",
+      "name": "泉蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/water_atk_1_12_gu_card.png"
+    },
+    {
+      "id": "wind_atk_1_02_gu",
+      "name": "狂风蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_atk_1_02_gu_card.png"
+    },
+    {
+      "id": "wind_mov_1_03_gu",
+      "name": "旋风蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_mov_1_03_gu_card.png"
+    },
+    {
+      "id": "wind_mov_4_04_gu",
+      "name": "龙行虎步蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V2-059088"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-four Dragon Walk Tiger Stride Gu greatly increases running speed and adds collision force; the Gu body and motion-mark imagery are visual inference, staged in the black-stone arena duel (E:V2-059088).",
+      "artPath": "game/assets/wenzhen/gu/cards/wind_mov_4_04_gu_card.png"
+    },
+    {
+      "id": "wind_mov_1_05_gu",
+      "name": "迅影蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_mov_1_05_gu_card.png"
+    },
+    {
+      "id": "wind_mov_5_06_gu",
+      "name": "风虎云龙蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V3-107018"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: rank-five Wind Tiger Cloud Dragon Gu condenses wind into tigers and cloud into dragons that charge battlefield forces; the Gu body is visual inference, while the wind-tiger/cloud-dragon forms are canon effects (E:V3-107018).",
+      "artPath": "game/assets/wenzhen/gu/cards/wind_mov_5_06_gu_card.png"
+    },
+    {
+      "id": "wind_atk_1_07_gu",
+      "name": "风刃蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_atk_1_07_gu_card.png"
+    },
+    {
+      "id": "wind_mov_1_08_gu",
+      "name": "飓风蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_mov_1_08_gu_card.png"
+    },
+    {
+      "id": "wind_mov_1_09_gu",
+      "name": "清风蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_mov_1_09_gu_card.png"
+    },
+    {
+      "id": "wind_atk_1_10_gu",
+      "name": "电掣蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wind_atk_1_10_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_01_gu",
+      "name": "智慧蛊",
+      "loreStatus": "name_reuse",
+      "anchors": [
+        "E:V3-103100"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_01_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_02_gu",
+      "name": "思想蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_02_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_5_03_gu",
+      "name": "态度蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-178490"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_5_03_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_5_04_gu",
+      "name": "定力蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-401946"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_5_04_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_5_05_gu",
+      "name": "慧剑蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V4-182352"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_5_05_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_06_gu",
+      "name": "刻意蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_06_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_07_gu",
+      "name": "玩意蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_07_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_08_gu",
+      "name": "留意蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_08_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_09_gu",
+      "name": "新意蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_09_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_1_10_gu",
+      "name": "特意蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_1_10_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_5_15_gu",
+      "name": "妇人心蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V5-199800"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_5_15_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_3_17_gu",
+      "name": "读心蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_3_17_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_4_18_gu",
+      "name": "推演蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_4_18_gu_card.png"
+    },
+    {
+      "id": "wisdom_rec_5_19_gu",
+      "name": "算计蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_rec_5_19_gu_card.png"
+    },
+    {
+      "id": "wisdom_rec_1_20_gu",
+      "name": "灵感蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_rec_1_20_gu_card.png"
+    },
+    {
+      "id": "wisdom_atk_3_21_gu",
+      "name": "心蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V2-046036"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wisdom_atk_3_21_gu_card.png"
+    },
+    {
+      "id": "wood_atk_3_01_gu",
+      "name": "木魅蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-023550"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: Qing Shu’s tree-spirit complete form, vitality, ice-coffin break and wooden prison (E:V1-023550); cicada-beetle Gu body is visual inference, not stated canon",
+      "artPath": "game/assets/wenzhen/gu/cards/wood_atk_3_01_gu_card.png"
+    },
+    {
+      "id": "wood_mov_3_02_gu",
+      "name": "三步芳草蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_mov_3_02_gu_card.png"
+    },
+    {
+      "id": "wood_heal_3_03_gu",
+      "name": "草傀蛊",
+      "loreStatus": "ruling_applied",
+      "anchors": [
+        "E:V2-067080"
+      ],
+      "artStatus": "ready",
+      "visualBasis": "canon: the L0 ruling sets this Grass Puppet Gu to rank one despite the game ID rank. The one-turn Gu served as a target for Moon Blade practice at the Gu Yue academy; grass-effigy form and seed-like core are visual inference (E:V2-067080).",
+      "artPath": "game/assets/wenzhen/gu/cards/wood_heal_3_03_gu_card.png"
+    },
+    {
+      "id": "wood_heal_5_04_gu",
+      "name": "跳跳草蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_heal_5_04_gu_card.png"
+    },
+    {
+      "id": "wood_atk_1_05_gu",
+      "name": "青藤蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_atk_1_05_gu_card.png"
+    },
+    {
+      "id": "wood_atk_5_06_gu",
+      "name": "荆棘蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_atk_5_06_gu_card.png"
+    },
+    {
+      "id": "wood_def_1_07_gu",
+      "name": "木甲蛊",
+      "loreStatus": "unverified",
+      "anchors": [],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_def_1_07_gu_card.png"
+    },
+    {
+      "id": "wood_atk_5_08_gu",
+      "name": "森林蛊",
+      "loreStatus": "rank_cap",
+      "anchors": [
+        "E:V6-393748"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_atk_5_08_gu_card.png"
+    },
+    {
+      "id": "wood_atk_3_09_gu",
+      "name": "花蛊",
+      "loreStatus": "match",
+      "anchors": [
+        "E:V1-028060"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_atk_3_09_gu_card.png"
+    },
+    {
+      "id": "wood_heal_3_10_gu",
+      "name": "草蛊",
+      "loreStatus": "collision",
+      "anchors": [
+        "E:V1-017088"
+      ],
+      "artStatus": "pending",
+      "visualBasis": null,
+      "artPath": "game/assets/wenzhen/gu/cards/wood_heal_3_10_gu_card.png"
+    }
+  ]
+}
