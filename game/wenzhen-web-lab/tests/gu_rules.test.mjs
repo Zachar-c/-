@@ -124,10 +124,11 @@ test('L0 kill move effect is composed from recipe components in order', () => {
 
 test('generated effects mirror Godot role fallback rank and self-support transforms', () => {
   const byId = Object.fromEntries(data.gu.map((entry) => [entry.id, entry]));
-  assert.equal(byId.light_atk_5_03_gu.battleEffect.amount, 6);
+  // RUL-2026-09-26-001 换基：role 兜底镜像值随新 lab 曲线（attack/defense r5: 旧 6/7 → 新 4/4）。
+  assert.equal(byId.light_atk_5_03_gu.battleEffect.amount, 4);
   // P5-B2：white_jade_gu 已收敛为显式 effect（shield 5，canon_driven_v1），
   // 镜像断言改用仍在 role 兜底上的 loot 蛊。
-  assert.equal(byId.light_def_5_22_gu.battleEffect.amount, 7);
+  assert.equal(byId.light_def_5_22_gu.battleEffect.amount, 4);
   assert.equal(byId.white_jade_gu.battleEffect.amount, 5);
   assert.equal(byId.white_jade_gu.sourceClass, 'canon_driven_v1');
   assert.equal(byId.light_rec_3_07_gu.battleEffect.support_school, 'light');

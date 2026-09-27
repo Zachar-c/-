@@ -87,6 +87,48 @@ export function checkProjections(mutated = null) {
       );
     }
 
+    // RUL-2026-09-26-001 AUTOACCEPT：world curve → formula → exact LAB curve（30 值逐值复算）
+    if (item.validation?.type === 'formula_projection') {
+      const parent = resolveParent(item.parents[0]);
+      const roles = ['attack', 'defense', 'healing', 'logistics', 'movement', 'recon'];
+      const parentOk = !!parent && roles.every((r) => Array.isArray(parent[r]) && parent[r].length === 5);
+      add(`${item.id} parent 曲线在案（六 role×5 值）`, parentOk, item.parents[0]);
+      if (parentOk) {
+        const mismatch = [];
+        for (const r of roles) {
+          for (let i = 0; i < 5; i++) {
+            const expect = Math.max(1, Math.ceil(parent[r][i] / Math.sqrt(20)));
+            if (item.value?.[r]?.[i] !== expect) mismatch.push(`${r}r${i + 1} proj=${item.value?.[r]?.[i]} formula=${expect}`);
+          }
+        }
+        add(`${item.id} 公式复算 30 值逐值一致`, mismatch.length === 0, mismatch.join('; ') || 'max(1,ceil(world/√20))');
+        const mono = roles.every((r) => item.value[r].every((v, i) => i === 0 || v >= item.value[r][i - 1]));
+        add(`${item.id} 每 role 单调不减`, mono, 'RUL frozen invariant');
+      }
+      add(
+        `${item.id} policy=sqrt_budget_scalar_projection_v1`,
+        item.policy === 'sqrt_budget_scalar_projection_v1',
+        item.policy,
+      );
+      const bundle = loadDataBundle();
+      const actual = String(item.validation.path || '').split('.').reduce((o, k) => o?.[k], bundle);
+      add(
+        `${item.id} 生成物实值 == projection.value`,
+        JSON.stringify(actual) === JSON.stringify(item.value),
+        `embedded=${JSON.stringify(actual)}`,
+      );
+      const legacy = JSON.stringify({
+        attack: [2, 3, 4, 5, 6], defense: [3, 4, 5, 6, 7], healing: [2, 3, 4, 5, 6],
+        logistics: [1, 2, 3, 4, 5], movement: [1, 1, 1, 1, 1], recon: [1, 1, 1, 1, 1],
+      });
+      add(
+        `${item.id} 无旧基线 silent fallback`,
+        !JSON.stringify(bundle?.projections || {}).includes(legacy),
+        'legacy [2,3,4,5,6] absent from generated data',
+      );
+      continue;
+    }
+
     // RUL-2026-09-25-001 Q2：投影表/例外项的真实消费者校验（真实消费链，非示例文本）
     if (item.validation?.type === 'data_embedded') {
       const bundle = loadDataBundle();
@@ -96,6 +138,19 @@ export function checkProjections(mutated = null) {
         JSON.stringify(actual) === JSON.stringify(item.value),
         `embedded=${JSON.stringify(actual)}`,
       );
+      if (item.id === 'PROJ-LAB-ENEMY-ATTACK-001') {
+        const curveItem = items.find((x) => x.id === 'PROJ-LAB-ROLE-CURVE-001');
+        const curve = curveItem?.value?.attack || [];
+        const t = item.value || {};
+        const le = ['1', '2', '3', '4', '5'].every((r) => Number(t[r]) <= (curve[Number(r) - 1] ?? Infinity));
+        add(
+          `${item.id} ≤ lab attack 曲线（RUL-2026-09-26-001 不变量）`,
+          le,
+          `table=${JSON.stringify(t)} curve=${JSON.stringify(curve)}`,
+        );
+        const mono = ['2', '3', '4', '5'].every((r, i) => Number(t[r]) >= Number(t[String(i + 1)]));
+        add(`${item.id} 单调不减`, mono, JSON.stringify(t));
+      }
       continue;
     }
     if (item.validation?.type === 'mvp_override_refs') {

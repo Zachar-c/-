@@ -177,7 +177,12 @@ test('C4-2 切片效果未静默退回 role 曲线：生成值 == 源值 且 ≠
     const out = dataGuById[id];
     const fallback = curve[src.role][Math.min(5, Math.max(1, Number(src.rank || 1))) - 1];
     assert.equal(j(out.effect), j(src.v1_effect), `${id} 被静默兜底替换`);
-    assert.notEqual(Number(out.effect.amount), fallback, `${id} amount 恰等于兜底值——兜底检测失效`);
+    // RUL-2026-09-26-001 换基后 small_light_gu 显式 amount=1 与新曲线 attack r1=1 数值重合，
+    // notEqual 判别对其失效；防兜底由上一行全对象相等断言承担（生成 effect 含 inspect/support
+    // 语义字段，兜底产物不可能同形）。其余切片蛊仍保留 notEqual 判别。
+    if (id !== 'small_light_gu') {
+      assert.notEqual(Number(out.effect.amount), fallback, `${id} amount 恰等于兜底值——兜底检测失效`);
+    }
   }
 });
 

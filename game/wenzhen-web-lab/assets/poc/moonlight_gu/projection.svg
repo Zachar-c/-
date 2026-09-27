@@ -1,0 +1,208 @@
+        <svg xmlns="http://www.w3.org/2000/svg" class="art projection-art" viewBox="0 0 760 660" role="img" aria-label="月光蛊收藏投影的银白人格化形态">
+          <defs>
+            <linearGradient id="projection-halo" x1="242" y1="82" x2="528" y2="608" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#f7fdff" stop-opacity=".72"/>
+              <stop offset=".34" stop-color="#9dd1f3" stop-opacity=".32"/>
+              <stop offset=".72" stop-color="#5f93c0" stop-opacity=".12"/>
+              <stop offset="1" stop-color="#d8f7ff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="projection-skin" x1="342" y1="132" x2="414" y2="269" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset=".42" stop-color="#ecf7ff"/>
+              <stop offset=".74" stop-color="#a8cce8"/>
+              <stop offset="1" stop-color="#f7fcff"/>
+            </linearGradient>
+            <linearGradient id="projection-hair" x1="302" y1="98" x2="456" y2="426" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset=".25" stop-color="#d9edfb"/>
+              <stop offset=".6" stop-color="#8bb9d9"/>
+              <stop offset="1" stop-color="#e9f8ff" stop-opacity=".58"/>
+            </linearGradient>
+            <linearGradient id="robe-base" x1="308" y1="244" x2="466" y2="579" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#f5fbff" stop-opacity=".78"/>
+              <stop offset=".25" stop-color="#b9ddf5" stop-opacity=".46"/>
+              <stop offset=".66" stop-color="#6f9fc6" stop-opacity=".28"/>
+              <stop offset="1" stop-color="#d7f5ff" stop-opacity=".18"/>
+            </linearGradient>
+            <linearGradient id="robe-veil" x1="250" y1="250" x2="550" y2="570" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ffffff" stop-opacity=".68"/>
+              <stop offset=".4" stop-color="#a9d6f2" stop-opacity=".34"/>
+              <stop offset=".78" stop-color="#5d8bb3" stop-opacity=".13"/>
+              <stop offset="1" stop-color="#e3f9ff" stop-opacity=".08"/>
+            </linearGradient>
+            <linearGradient id="robe-front" x1="350" y1="272" x2="429" y2="572" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#faffff" stop-opacity=".92"/>
+              <stop offset=".36" stop-color="#c3e3f6" stop-opacity=".66"/>
+              <stop offset=".74" stop-color="#81afd0" stop-opacity=".31"/>
+              <stop offset="1" stop-color="#effcff" stop-opacity=".48"/>
+            </linearGradient>
+            <radialGradient id="projection-core-glow">
+              <stop offset="0" stop-color="#ffffff"/>
+              <stop offset=".28" stop-color="#e2f7ff" stop-opacity=".86"/>
+              <stop offset=".6" stop-color="#82c8ef" stop-opacity=".38"/>
+              <stop offset="1" stop-color="#6db2e2" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="projection-ground">
+              <stop offset="0" stop-color="#0b1823" stop-opacity=".9"/>
+              <stop offset=".5" stop-color="#0c1e2b" stop-opacity=".42"/>
+              <stop offset="1" stop-color="#0c1e2b" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="chain" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#eaf9ff" stop-opacity=".2"/>
+              <stop offset=".5" stop-color="#ffffff" stop-opacity=".86"/>
+              <stop offset="1" stop-color="#97c7e6" stop-opacity=".22"/>
+            </linearGradient>
+            <filter id="projection-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="17" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <filter id="projection-soft" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="7" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <filter id="projection-shadow" x="-60%" y="-60%" width="220%" height="220%">
+              <feDropShadow dx="0" dy="20" stdDeviation="18" flood-color="#02060b" flood-opacity=".54"/>
+            </filter>
+            <clipPath id="robe-clip">
+              <path d="M310 306C286 382 283 486 294 585C336 602 452 603 496 574C479 478 455 383 430 306Z"/>
+            </clipPath>
+          </defs>
+
+          <ellipse class="projection-shadow" cx="380" cy="606" rx="248" ry="27" fill="url(#projection-ground)"/>
+
+          <g class="projection-halo" opacity=".8">
+            <ellipse cx="380" cy="324" rx="256" ry="260" fill="none" stroke="rgba(205, 236, 255, .12)" stroke-width="1" stroke-dasharray="2 15"/>
+            <ellipse cx="380" cy="324" rx="205" ry="224" fill="none" stroke="rgba(137, 201, 238, .1)" stroke-width="1"/>
+          </g>
+
+          <g class="back-crescent" filter="url(#projection-soft)">
+            <path d="M299 156C214 221 180 331 217 437C250 529 328 582 421 565C339 546 278 496 252 413C224 322 244 225 323 160Z" fill="url(#projection-halo)" opacity=".46"/>
+            <path d="M461 157C546 221 579 331 542 437C509 529 431 582 338 565C420 546 481 496 507 413C535 322 515 225 436 160Z" fill="url(#projection-halo)" opacity=".3"/>
+          </g>
+
+          <g class="projection-figure" filter="url(#projection-shadow)" transform="translate(-68.4 -61.2) scale(1.18)">
+            <g class="hair-back">
+              <path d="M335 130C300 151 286 195 292 247C297 294 282 367 257 426C282 414 303 390 318 360C323 413 312 471 284 531C319 512 344 483 357 449C371 493 372 542 359 585C390 559 405 524 407 486C421 529 444 558 478 577C457 520 452 463 462 411C481 373 488 328 477 284C465 202 420 145 365 130Z" fill="url(#projection-hair)" opacity=".88"/>
+              <path d="M316 214C331 191 350 178 375 175" fill="none" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" opacity=".58"/>
+              <path d="M447 250C429 225 408 211 383 205" fill="none" stroke="#b9ddf3" stroke-width="1.7" stroke-linecap="round" opacity=".5"/>
+              <path d="M299 329C325 315 350 311 375 317" fill="none" stroke="#dff4ff" stroke-width="1.3" stroke-linecap="round" opacity=".4"/>
+              <path d="M463 346C439 329 416 323 391 327" fill="none" stroke="#aad4ec" stroke-width="1.2" stroke-linecap="round" opacity=".38"/>
+            </g>
+
+            <g class="robe-back" opacity=".88">
+              <path d="M325 274C276 322 243 399 229 488C224 523 236 558 270 585C312 606 449 606 493 583C526 560 538 522 531 487C514 397 481 319 431 273C405 304 354 304 325 274Z" fill="url(#robe-veil)"/>
+              <path d="M296 306C245 376 226 468 231 562C250 548 267 525 278 495C283 529 283 561 279 591C302 558 315 520 320 479C332 519 349 551 372 581" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>
+              <path d="M461 307C510 376 531 468 524 562C507 548 491 525 480 495C475 529 474 561 478 591C455 558 444 520 439 479C428 519 411 551 388 581" fill="none" stroke="#bfe8ff" stroke-width="1.2" stroke-linecap="round" opacity=".32"/>
+            </g>
+
+            <g class="body">
+              <path d="M374 207L369 246C359 251 351 263 347 278L333 346C363 361 397 360 427 343L413 276C409 262 402 251 392 244L387 207Z" fill="url(#projection-skin)"/>
+              <path d="M349 261C318 274 303 307 304 351C305 389 318 421 336 447C347 420 352 389 351 358C350 330 353 307 361 289Z" fill="url(#projection-skin)" opacity=".94"/>
+              <path d="M410 260C441 274 457 307 455 352C453 391 441 422 422 448C411 420 406 389 408 357C410 328 407 306 399 289Z" fill="url(#projection-skin)" opacity=".94"/>
+              <path d="M342 260C356 249 370 244 382 245C396 246 408 251 419 261" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity=".66"/>
+              <path d="M352 281C367 271 384 269 398 275" fill="none" stroke="#b5d9ef" stroke-width="1" stroke-linecap="round" opacity=".56"/>
+            </g>
+
+            <g class="robe-base">
+              <path d="M310 306C286 382 283 486 294 585C336 602 452 603 496 574C479 478 455 383 430 306C403 335 344 338 310 306Z" fill="url(#robe-base)"/>
+              <g clip-path="url(#robe-clip)" opacity=".72">
+                <path d="M296 393C350 419 427 420 488 387" fill="none" stroke="#f7fdff" stroke-width="2" stroke-linecap="round"/>
+                <path d="M291 455C350 482 430 482 489 449" fill="none" stroke="#b3def8" stroke-width="1.3" stroke-linecap="round"/>
+                <path d="M293 517C351 544 429 543 490 513" fill="none" stroke="#e8faff" stroke-width="1.1" stroke-linecap="round" opacity=".6"/>
+                <path d="M333 333C319 421 318 513 329 589" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+                <path d="M409 335C422 420 423 514 413 591" fill="none" stroke="#8fc3e1" stroke-width="1.1" stroke-linecap="round" opacity=".5"/>
+              </g>
+            </g>
+
+            <g class="robe-front">
+              <path d="M343 304C326 373 321 472 329 572C351 591 398 594 423 575C426 474 421 379 411 304C387 329 364 329 343 304Z" fill="url(#robe-front)"/>
+              <path d="M351 321C341 390 337 486 343 566" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity=".68"/>
+              <path d="M401 320C414 391 418 489 411 570" fill="none" stroke="#a4d3ed" stroke-width="1.4" stroke-linecap="round" opacity=".66"/>
+              <path d="M366 318C363 388 363 485 369 561" fill="none" stroke="#7fb5d5" stroke-width=".9" stroke-linecap="round" opacity=".42"/>
+            </g>
+
+            <g class="arms">
+              <path d="M318 277C297 296 281 337 269 384C262 413 268 439 287 452" fill="none" stroke="url(#projection-skin)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M420 279C438 303 445 330 445 355C445 379 435 395 416 399" fill="none" stroke="url(#projection-skin)" stroke-width="16" stroke-linecap="round"/>
+              <path d="M283 334C260 356 246 389 241 430C255 437 269 438 281 432" fill="none" stroke="url(#robe-veil)" stroke-width="21" stroke-linecap="round" opacity=".82"/>
+              <path d="M435 318C447 340 458 365 473 385C453 395 434 402 416 403" fill="none" stroke="url(#robe-veil)" stroke-width="18" stroke-linecap="round" opacity=".86"/>
+              <ellipse cx="285" cy="461" rx="9" ry="13" fill="url(#projection-skin)" transform="rotate(18 285 461)"/>
+              <ellipse cx="419" cy="401" rx="8" ry="12" fill="url(#projection-skin)" transform="rotate(-24 419 401)"/>
+            </g>
+
+            <g class="shoulder-shell">
+              <path d="M315 268C286 246 254 244 229 260C267 265 294 281 314 307Z" fill="url(#robe-veil)" stroke="#ecfbff" stroke-width="1.2" opacity=".9"/>
+              <path d="M431 268C460 246 492 244 517 260C479 265 452 281 432 307Z" fill="url(#robe-veil)" stroke="#ecfbff" stroke-width="1.2" opacity=".86"/>
+              <path d="M319 292C300 281 282 280 266 286C286 291 302 302 315 319Z" fill="url(#robe-veil)" stroke="#dff7ff" stroke-width=".9" opacity=".68"/>
+              <path d="M428 292C447 281 465 280 481 286C461 291 445 302 432 319Z" fill="url(#robe-veil)" stroke="#dff7ff" stroke-width=".9" opacity=".68"/>
+            </g>
+
+            <g class="head">
+              <path d="M353 168C348 145 362 125 382 122C403 119 419 136 422 160C425 188 411 216 387 222C367 227 353 205 353 168Z" fill="url(#projection-skin)"/>
+              <path d="M359 178C369 170 380 168 391 172" fill="none" stroke="#648fb5" stroke-width="1.4" stroke-linecap="round" opacity=".72"/>
+              <path d="M411 177C402 169 392 168 383 171" fill="none" stroke="#648fb5" stroke-width="1.1" stroke-linecap="round" opacity=".58"/>
+              <path d="M379 178C377 187 375 193 372 197" fill="none" stroke="#9dc3db" stroke-width="1" stroke-linecap="round" opacity=".72"/>
+              <path d="M376 207C383 210 390 209 396 205" fill="none" stroke="#be819a" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>
+              <path d="M365 154C372 147 381 144 389 146" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity=".74"/>
+            </g>
+
+            <g class="hair-front" opacity=".92">
+              <path d="M354 151C344 166 341 190 346 217C350 238 357 253 369 264C360 243 358 219 362 192C365 171 369 157 376 145Z" fill="#d7edfb" opacity=".82"/>
+              <path d="M410 149C421 164 425 187 420 214C416 236 408 252 395 264C404 242 408 217 404 191C401 170 397 155 390 143Z" fill="#b8d8ed" opacity=".74"/>
+              <path d="M356 178C357 199 359 222 367 243" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity=".72"/>
+              <path d="M407 178C405 201 402 224 395 243" fill="none" stroke="#d9f1ff" stroke-width="1.1" stroke-linecap="round" opacity=".62"/>
+              <path d="M354 152C358 134 367 124 381 120" fill="none" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round" opacity=".8"/>
+            </g>
+
+            <g class="crown">
+              <path d="M347 141C332 104 306 83 279 92C309 100 325 120 333 152Z" fill="url(#robe-veil)" stroke="#f4fdff" stroke-width="1.3"/>
+              <path d="M413 140C429 104 455 82 482 91C452 99 435 119 428 151Z" fill="url(#robe-veil)" stroke="#f4fdff" stroke-width="1.3"/>
+              <path d="M342 125C332 107 317 95 300 92C318 103 328 121 333 142Z" fill="#dff7ff" opacity=".5"/>
+              <path d="M418 124C428 106 444 94 461 91C443 102 432 120 428 141Z" fill="#dff7ff" opacity=".46"/>
+              <circle cx="380" cy="126" r="12" fill="url(#projection-core-glow)" filter="url(#projection-soft)"/>
+              <path d="M369 126C372 117 379 111 388 111C377 115 371 123 371 132Z" fill="#ffffff" opacity=".82"/>
+            </g>
+
+            <g class="ornaments">
+              <path d="M328 151C315 182 303 221 305 263" fill="none" stroke="url(#chain)" stroke-width="1.2"/>
+              <path d="M432 151C445 182 456 221 454 263" fill="none" stroke="url(#chain)" stroke-width="1.2"/>
+              <circle cx="305" cy="269" r="5" fill="#e9f8ff" opacity=".84"/>
+              <circle cx="454" cy="269" r="4.4" fill="#d9f2ff" opacity=".8"/>
+              <path d="M345 345C331 390 325 452 331 521" fill="none" stroke="url(#chain)" stroke-width="1"/>
+              <path d="M411 345C424 390 430 452 424 521" fill="none" stroke="url(#chain)" stroke-width="1"/>
+              <path d="M330 528L337 544L330 560L323 544Z" fill="#d8f4ff" opacity=".88"/>
+              <path d="M424 528L431 544L424 560L417 544Z" fill="#a6d5ef" opacity=".82"/>
+              <path d="M369 375C363 390 361 407 366 422C372 438 380 453 380 470" fill="none" stroke="#effbff" stroke-width="1" opacity=".58"/>
+              <circle cx="380" cy="476" r="4" fill="#e9f8ff" opacity=".76"/>
+            </g>
+
+            <g class="projection-core" filter="url(#projection-glow)">
+              <circle cx="380" cy="300" r="52" fill="url(#projection-core-glow)"/>
+              <circle cx="380" cy="300" r="34" fill="none" stroke="#dff7ff" stroke-width="1.3" opacity=".7"/>
+              <circle cx="380" cy="300" r="26" fill="#eefaff"/>
+              <circle cx="380" cy="300" r="18" fill="#aee2ff" opacity=".68"/>
+              <path d="M362 302C364 289 372 280 384 279C373 286 367 296 368 308C369 319 375 327 385 332C371 331 361 319 362 302Z" fill="#ffffff" opacity=".9"/>
+              <circle cx="380" cy="300" r="5" fill="#ffffff"/>
+            </g>
+          </g>
+
+          <g class="projection-particles" fill="#effaff">
+            <circle class="moon-shard" cx="236" cy="174" r="2"/>
+            <circle class="moon-shard" cx="206" cy="332" r="1.5"/>
+            <circle class="moon-shard" cx="229" cy="493" r="1.7"/>
+            <circle class="moon-shard" cx="532" cy="214" r="1.8"/>
+            <circle class="moon-shard" cx="548" cy="398" r="1.5"/>
+            <circle class="moon-shard" cx="486" cy="556" r="1.4"/>
+          </g>
+
+          <g class="projection-blade" filter="url(#projection-soft)">
+            <path d="M424 294C500 263 579 264 648 298C583 319 502 319 424 306Z" fill="url(#blade-fill)" opacity=".86"/>
+            <path d="M438 297C508 280 575 282 632 300" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity=".84"/>
+          </g>
+        </svg>

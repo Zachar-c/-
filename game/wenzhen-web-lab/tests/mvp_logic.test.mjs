@@ -210,7 +210,8 @@ test('battle reward uses the real tier table', () => {
 test('light support is applied before the support charge is spent', () => {
   const values = logic.actionValues(content.actions.moonlight_gu, 1);
   assert.equal(values.qi, 0);
-  assert.equal(values.damage, 3);
+  // RUL-2026-09-26-001 Q4：supportedDamage 保持 +1 光道增益关系，随基 3→2。
+  assert.equal(values.damage, 2);
 });
 
 /* ------------------------------------------------------------------

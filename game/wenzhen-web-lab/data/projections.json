@@ -59,21 +59,21 @@
       "id": "PROJ-LAB-ROLE-CURVE-001",
       "childKey": "lab.roleCurve",
       "value": {
-        "attack": [2, 3, 4, 5, 6],
-        "defense": [3, 4, 5, 6, 7],
-        "healing": [2, 3, 4, 5, 6],
-        "logistics": [1, 2, 3, 4, 5],
+        "attack": [1, 2, 2, 3, 4],
+        "defense": [1, 2, 2, 3, 4],
+        "healing": [1, 1, 2, 2, 3],
+        "logistics": [1, 1, 1, 2, 2],
         "movement": [1, 1, 1, 1, 1],
         "recon": [1, 1, 1, 1, 1]
       },
       "parents": ["balance.effect_budget.default_amount_by_role"],
-      "policy": "legacy_lab_fallback_baseline_pending_l1",
+      "policy": "sqrt_budget_scalar_projection_v1",
       "scope": "wenzhen_web_lab",
-      "rationale": "RUL-2026-09-25-001 Q2：保当前生成链历史基线（旧 build_data (rank-1) 线性外推的既成值）为显式投影表，换真源不换值、零行为漂移；L1 重派 lab 曲线后替换为公式投影。真实消费者=tools/build_data.mjs（写入生成物 DATA.projections.role_curve_lab）",
+      "rationale": "RUL-2026-09-26-001 Q1/Q2（adjudicated_via RESEARCH-REQUEST-2026-09-26-lab-role-curve-projection）：LAB role amounts are a one-way projection of the WORLD default role curves. WORLD rank power budget is projected to LAB at 1/20, while default primary effect scalars follow sqrt(Budget); therefore scalar amounts project by sqrt(1/20) = 1/sqrt(20). For each role and rank: raw = world_amount / sqrt(20); lab_amount = max(1, ceil(raw)). The projection never writes back to WORLD. LAB PP weights are validation/pricing weights applied after amount projection and are not an independent source for role curves. Movement and recon use the same formula; their flat LAB amounts are an intentional consequence of small-integer projection, with higher-rank differentiation expected from effect semantics rather than hidden scalar inflation. 旧基线 attack [2,3,4,5,6] 仅存于迁移前后报告（git 历史 ≤a1bff043），不参与任何 Runtime 消费。真实消费者=tools/build_data.mjs（写入生成物 DATA.projections.role_curve_lab，check_projection 按 parent 复算 30 值断言）",
       "authority": "LAB_ONLY",
-      "validation": { "type": "data_embedded", "path": "projections.role_curve_lab" },
+      "validation": { "type": "formula_projection", "formula": "max(1, ceil(world_amount / sqrt(20)))", "path": "projections.role_curve_lab" },
       "forbidWriteBack": true,
-      "sourceRuling": "RUL-2026-09-25-001"
+      "sourceRuling": "RUL-2026-09-26-001"
     },
     {
       "id": "PROJ-LAB-MVP-GU-EXCEPTION-001",
@@ -102,15 +102,15 @@
     {
       "id": "PROJ-LAB-ENEMY-ATTACK-001",
       "childKey": "lab.enemyAttackAmountByGuRank",
-      "value": { "1": 2, "2": 3, "3": 3, "4": 4, "5": 4 },
+      "value": { "1": 1, "2": 2, "3": 2, "4": 3, "5": 4 },
       "parents": ["balance.effect_budget.default_amount_by_role"],
-      "policy": "enemy_dpr_encounter_compression_projection",
+      "policy": "enemy_attack_identity_to_role_curve_v2",
       "scope": "wenzhen_web_lab",
-      "rationale": "RUL-2026-09-25-001 P5 敌人持蛊化：蛊修/异动敌人的杀招伤害=装载主战蛊（kind=strike）按转压缩投影之和，逐 intent 构建期校验 Σ==intent.damage（No Silent Fallback）。压缩不变量：表值 ≤ lab attack 曲线（PROJ-LAB-ROLE-CURVE-001 [2,3,4,5,6]）且单调不减；敌方 DPR≈玩家 1/4 是遭遇窗口设计（check_balance），非第三规则源。innate（兽/凡人/尸魔/凡兵符箓）intent 不参与合成。真实消费者=tools/build_data.mjs（写入生成物并校验）+ js/mvp_logic.js（运行时按装载蛊合成）",
+      "rationale": "RUL-2026-09-26-001 Q3：敌方威胁是 encounter-level target（handleRate/survivalRate/targetTurns 约束 envelope），无固定 1/4 公式；数据方向=改伤随表（装备/能力 → projected effect → 敌人实际 action → intent.damage），不反向锚定。本表随新 LAB attack 曲线 [1,2,2,3,4] 重基为逐等值映射（identity to role curve：满足 ≤ 曲线、单调不减两条不变量的最小改动重基），旧表 {1:2,2:3,3:3,4:4,5:4} 属 legacy projection calibration 已解冻。蛊修/异动敌人的杀招伤害=装载主战蛊（kind=strike）按转投影之和，逐 intent 构建期校验 Σ==intent.damage（No Silent Fallback）；innate（兽/凡人/尸魔/凡兵符箓）intent 不参与合成、授权伤不变。敌方与玩家同蛊需要不同量纲时必须走显式 enemy projection policy，禁止另藏 Rank 表。真实消费者=tools/build_data.mjs（写入生成物并校验）+ js/mvp_logic.js（运行时同源解析）",
       "authority": "LAB_ONLY",
       "validation": { "type": "data_embedded", "path": "projections.enemy_attack_amount_by_gu_rank" },
       "forbidWriteBack": true,
-      "sourceRuling": "RUL-2026-09-25-001"
+      "sourceRuling": "RUL-2026-09-26-001"
     }
   ],
   "forbidden_examples": [

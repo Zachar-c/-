@@ -21,7 +21,9 @@ const content = context.MVP_CONTENT;
 
 test('kitDpr uses moonlight as the sustained engine', () => {
   const kit = B.kitDpr(content.run.owned, content.actions);
-  assert.equal(kit.dpr > 1.5 && kit.dpr < 3, true, `dpr=${kit.dpr}`);
+  // RUL-2026-09-26-001 Q4：MVP kit 随公式重基（moonlight damage 2→1），refDpr 2.5→1.5；
+  // 带宽相应从 (1.5,3) 改为 (0.75,2)。
+  assert.equal(kit.dpr > 0.75 && kit.dpr < 2, true, `dpr=${kit.dpr}`);
   assert.ok(kit.plan.some((p) => p.id === 'moonlight_gu'));
 });
 

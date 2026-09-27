@@ -1,0 +1,102 @@
+{
+  "model": "convaiinnovations/laya (System One, local)",
+  "transport": "local pip package laya (ai-system/config/jev.json 'laya')",
+  "values": {
+    "victory_route": {
+      "type": "choice",
+      "choice": "pass",
+      "probabilities": {
+        "pass": 0.5236,
+        "fail": 0.2459,
+        "inconclusive": 0.2305
+      },
+      "confidence": 0.0697,
+      "answer_confidence": 0.5236,
+      "action": {
+        "act_probability": 1.0
+      }
+    },
+    "reload_continue": {
+      "type": "choice",
+      "choice": "pass",
+      "probabilities": {
+        "pass": 0.5289,
+        "fail": 0.2337,
+        "inconclusive": 0.2374
+      },
+      "confidence": 0.0734,
+      "answer_confidence": 0.5289,
+      "action": {
+        "act_probability": 1.0
+      }
+    },
+    "event_cost": {
+      "type": "choice",
+      "choice": "pass",
+      "probabilities": {
+        "pass": 0.4628,
+        "fail": 0.2767,
+        "inconclusive": 0.2605
+      },
+      "confidence": 0.0329,
+      "answer_confidence": 0.4628,
+      "action": {
+        "act_probability": 1.0
+      }
+    },
+    "seed_replay": {
+      "type": "choice",
+      "choice": "pass",
+      "probabilities": {
+        "pass": 0.4373,
+        "fail": 0.277,
+        "inconclusive": 0.2857
+      },
+      "confidence": 0.0213,
+      "answer_confidence": 0.4373,
+      "action": {
+        "act_probability": 1.0
+      }
+    },
+    "overall": {
+      "type": "choice",
+      "choice": "pass",
+      "probabilities": {
+        "pass": 0.47,
+        "fail": 0.272,
+        "inconclusive": 0.258
+      },
+      "confidence": 0.0365,
+      "answer_confidence": 0.47,
+      "action": {
+        "act_probability": 1.0
+      }
+    },
+    "residual_risk": {
+      "type": "score",
+      "score": 1.5449,
+      "legend": {
+        "0": "negligible: deterministic assertions cover every claim",
+        "1": "low: claims covered; only breadth (more seeds/difficulties) is untested",
+        "2": "moderate: a claim rests on a single run or partial instrumentation",
+        "3": "high: a claim is unverified or instrumentation is unreliable"
+      },
+      "probabilities": {
+        "0": 0.1889,
+        "1": 0.246,
+        "2": 0.3965,
+        "3": 0.1686
+      },
+      "confidence": 0.043,
+      "answer_confidence": 0.3965,
+      "action": {
+        "act_probability": 1.0
+      }
+    }
+  },
+  "details": "DecisionResult(values={'victory_route': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.5236, 'fail': 0.2459, 'inconclusive': 0.2305}, 'confidence': 0.0697, 'answer_confidence': 0.5236, 'action': {'act_probability': 1.0}}, 'reload_continue': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.5289, 'fail': 0.2337, 'inconclusive': 0.2374}, 'confidence': 0.0734, 'answer_confidence': 0.5289, 'action': {'act_probability': 1.0}}, 'event_cost': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.4628, 'fail': 0.2767, 'inconclusive': 0.2605}, 'confidence': 0.0329, 'answer_confidence': 0.4628, 'action': {'act_probability': 1.0}}, 'seed_replay': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.4373, 'fail': 0.277, 'inconclusive': 0.2857}, 'confidence': 0.0213, 'answer_confidence': 0.4373, 'action': {'act_probability': 1.0}}, 'overall': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.47, 'fail': 0.272, 'inconclusive': 0.258}, 'confidence': 0.0365, 'answer_confidence': 0.47, 'action': {'act_probability': 1.0}}, 'residual_risk': {'type': 'score', 'score': 1.5449, 'legend': {'0': 'negligible: deterministic assertions cover every claim', '1': 'low: claims covered; only breadth (more seeds/difficulties) is untested', '2': 'moderate: a claim rests on a single run or partial instrumentation', '3': 'high: a claim is unverified or instrumentation is unreliable'}, 'probabilities': {'0': 0.1889, '1': 0.246, '2': 0.3965, '3': 0.1686}, 'confidence': 0.043, 'answer_confidence': 0.3965, 'action': {'act_probability': 1.0}}}, confidence={'victory_route': 0.0697, 'reload_continue': 0.0734, 'event_cost': 0.0329, 'seed_replay': 0.0213, 'overall': 0.0365, 'residual_risk': 0.043}, probabilities={'victory_route': {'pass': 0.5236, 'fail': 0.2459, 'inconclusive': 0.2305}, 'reload_continue': {'pass': 0.5289, 'fail': 0.2337, 'inconclusive': 0.2374}, 'event_cost': {'pass': 0.4628, 'fail': 0.2767, 'inconclusive': 0.2605}, 'seed_replay': {'pass': 0.4373, 'fail': 0.277, 'inconclusive': 0.2857}, 'overall': {'pass': 0.47, 'fail': 0.272, 'inconclusive': 0.258}, 'residual_risk': {'0': 0.1889, '1': 0.246, '2': 0.3965, '3': 0.1686}}, answers={'victory_route': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.5236, 'fail': 0.2459, 'inconclusive': 0.2305}, 'confidence': 0.0697, 'answer_confidence': 0.5236, 'action': {'act_probability': 1.0}}, 'reload_continue': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.5289, 'fail': 0.2337, 'inconclusive': 0.2374}, 'confidence': 0.0734, 'answer_confidence': 0.5289, 'action': {'act_probability': 1.0}}, 'event_cost': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.4628, 'fail': 0.2767, 'inconclusive': 0.2605}, 'confidence': 0.0329, 'answer_confidence': 0.4628, 'action': {'act_probability': 1.0}}, 'seed_replay': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.4373, 'fail': 0.277, 'inconclusive': 0.2857}, 'confidence': 0.0213, 'answer_confidence': 0.4373, 'action': {'act_probability': 1.0}}, 'overall': {'type': 'choice', 'choice': 'pass', 'probabilities': {'pass': 0.47, 'fail': 0.272, 'inconclusive': 0.258}, 'confidence': 0.0365, 'answer_confidence': 0.47, 'action': {'act_probability': 1.0}}, 'residual_risk': {'type': 'score', 'score': 1.5449, 'legend': {'0': 'negligible: deterministic assertions cover every claim', '1': 'low: claims covered; only breadth (more seeds/difficulties) is untested', '2': 'moderate: a claim rests on a single run or partial instrumentation', '3': 'high: a claim is unverified or instrumentation is unreliable'}, 'probabilities': {'0': 0.1889, '1': 0.246, '2': 0.3965, '3': 0.1686}, 'confidence': 0.043, 'answer_confidence': 0.3965, 'action': {'act_probability': 1.0}}}, usage={'input_tokens': 3072, 'output_tokens': 0}, routing=None)",
+  "state_digest": {
+    "seed": 103,
+    "outcome": "victory"
+  }
+}

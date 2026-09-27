@@ -1,0 +1,1034 @@
+{
+  "seed": 109,
+  "difficulty": "normal",
+  "policy": "gu_first",
+  "contentVersion": "lab-run-v2",
+  "run": {
+    "outcome": "defeat",
+    "terminalReason": "魂魄耗尽",
+    "visited": [
+      "L1D0N0",
+      "L1D1N2",
+      "L1D2N0",
+      "L1D3N0",
+      "L1D4N0",
+      "L1D5N1",
+      "L1D6N0",
+      "L1D7N1",
+      "L1D8N0",
+      "L1D9N0",
+      "L1B",
+      "L2D0N1",
+      "L2D1N0",
+      "L2D2N2",
+      "L2D3N0",
+      "L2D4N0",
+      "L2D5N0",
+      "L2D6N0",
+      "L2D7N0",
+      "L2D8N0",
+      "L2D9N0",
+      "L2B",
+      "L3D0N0",
+      "L3D1N0",
+      "L3D2N0",
+      "L3D3N0",
+      "L3D4N0",
+      "L3D5N0",
+      "L3D6N0",
+      "L3D7N0",
+      "L3D8N0",
+      "L3D9N0",
+      "L3B",
+      "L4D0N0",
+      "L4D1N0",
+      "L4D2N0",
+      "L4D3N0"
+    ],
+    "eventChecks": [
+      {
+        "nodeId": "L1D1N2",
+        "eventId": "unclaimed_waystone",
+        "title": "无主路钱",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 24,
+        "stonesBefore": 0,
+        "stonesAfter": 2,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L1D5N1",
+        "eventId": "huajiu_cache",
+        "title": "行者遗藏",
+        "healthCost": 2,
+        "stoneGain": 5,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 22,
+        "stonesBefore": 0,
+        "stonesAfter": 5,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L1D7N1",
+        "eventId": "tithing_cache",
+        "title": "献藏换赏",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 24,
+        "stonesBefore": 1,
+        "stonesAfter": 3,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L2D0N1",
+        "eventId": "duel_wager",
+        "title": "赌斗押注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 23,
+        "bloodAfter": 22,
+        "stonesBefore": 2,
+        "stonesAfter": 6,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L2D2N2",
+        "eventId": "ropewalk_wager",
+        "title": "索桥赌注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 23,
+        "stonesBefore": 0,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    ],
+    "reloadMapCheck": {
+      "restored": true,
+      "inProgress": true,
+      "diffCount": 0,
+      "diffs": [],
+      "completedBefore": 6,
+      "completedAfter": 6
+    },
+    "reloadBattleCheck": {
+      "restored": true,
+      "resumed": true,
+      "landedPage": "battle",
+      "inProgress": true,
+      "diffs": [],
+      "turn": 2,
+      "enemiesBefore": [
+        "iron_hide_boar:3"
+      ],
+      "enemiesAfter": [
+        "iron_hide_boar:3"
+      ]
+    },
+    "initial": {
+      "seed": 109,
+      "roots": [
+        "L1D0N0",
+        "L1D0N1",
+        "L1D0N2"
+      ],
+      "available0": [
+        "L1D0N0",
+        "L1D0N1",
+        "L1D0N2"
+      ],
+      "difficulty": "normal"
+    },
+    "final": {
+      "blood": 24,
+      "stones": 0,
+      "life": 60,
+      "soul": 0,
+      "soulMax": 4,
+      "completed": 36,
+      "ending": {
+        "outcome": "defeat",
+        "title": "魂魄耗尽",
+        "turn": 1
+      }
+    }
+  },
+  "replay": {
+    "ok": true,
+    "seedOk": true,
+    "rootsOk": true,
+    "availableOk": true,
+    "prefixOk": true,
+    "visited": [
+      "L1D0N0",
+      "L1D1N2",
+      "L1D2N0",
+      "L1D3N0",
+      "L1D4N0",
+      "L1D5N1",
+      "L1D6N0",
+      "L1D7N1",
+      "L1D8N0",
+      "L1D9N0"
+    ],
+    "expectedPrefix": [
+      "L1D0N0",
+      "L1D1N2",
+      "L1D2N0",
+      "L1D3N0",
+      "L1D4N0",
+      "L1D5N1",
+      "L1D6N0",
+      "L1D7N1",
+      "L1D8N0",
+      "L1D9N0"
+    ]
+  },
+  "consoleErrors": [],
+  "record": [
+    {
+      "kind": "boot",
+      "initial": {
+        "seed": 109,
+        "roots": [
+          "L1D0N0",
+          "L1D0N1",
+          "L1D0N2"
+        ],
+        "available0": [
+          "L1D0N0",
+          "L1D0N1",
+          "L1D0N2"
+        ],
+        "difficulty": "normal"
+      }
+    },
+    {
+      "step": 0,
+      "kind": "choose_node",
+      "nodeId": "L1D0N0"
+    },
+    {
+      "step": 3,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 4,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 5,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 6,
+      "kind": "choose_node",
+      "nodeId": "L1D1N2"
+    },
+    {
+      "step": 7,
+      "kind": "event",
+      "check": {
+        "nodeId": "L1D1N2",
+        "eventId": "unclaimed_waystone",
+        "title": "无主路钱",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 24,
+        "stonesBefore": 0,
+        "stonesAfter": 2,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 8,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 9,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 10,
+      "kind": "choose_node",
+      "nodeId": "L1D2N0"
+    },
+    {
+      "step": 11,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L1D2N0"
+    },
+    {
+      "step": 12,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 13,
+      "kind": "choose_node",
+      "nodeId": "L1D3N0"
+    },
+    {
+      "step": 14,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L1D3N0"
+    },
+    {
+      "step": 15,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 16,
+      "kind": "choose_node",
+      "nodeId": "L1D4N0"
+    },
+    {
+      "step": 17,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L1D4N0"
+    },
+    {
+      "step": 18,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 19,
+      "kind": "choose_node",
+      "nodeId": "L1D5N1"
+    },
+    {
+      "step": 20,
+      "kind": "event",
+      "check": {
+        "nodeId": "L1D5N1",
+        "eventId": "huajiu_cache",
+        "title": "行者遗藏",
+        "healthCost": 2,
+        "stoneGain": 5,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 22,
+        "stonesBefore": 0,
+        "stonesAfter": 5,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 21,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 22,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 23,
+      "kind": "choose_node",
+      "nodeId": "L1D6N0"
+    },
+    {
+      "kind": "reload_map",
+      "check": {
+        "restored": true,
+        "inProgress": true,
+        "diffCount": 0,
+        "diffs": [],
+        "completedBefore": 6,
+        "completedAfter": 6
+      }
+    },
+    {
+      "kind": "reload_battle",
+      "check": {
+        "restored": true,
+        "resumed": true,
+        "landedPage": "battle",
+        "inProgress": true,
+        "diffs": [],
+        "turn": 2,
+        "enemiesBefore": [
+          "iron_hide_boar:3"
+        ],
+        "enemiesAfter": [
+          "iron_hide_boar:3"
+        ]
+      }
+    },
+    {
+      "step": 30,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 31,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 32,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 33,
+      "kind": "choose_node",
+      "nodeId": "L1D7N1"
+    },
+    {
+      "step": 34,
+      "kind": "event",
+      "check": {
+        "nodeId": "L1D7N1",
+        "eventId": "tithing_cache",
+        "title": "献藏换赏",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 24,
+        "stonesBefore": 1,
+        "stonesAfter": 3,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 35,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 36,
+      "kind": "choose_node",
+      "nodeId": "L1D8N0"
+    },
+    {
+      "step": 38,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 39,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 40,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 41,
+      "kind": "choose_node",
+      "nodeId": "L1D9N0"
+    },
+    {
+      "step": 44,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 45,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 46,
+      "kind": "choose_node",
+      "nodeId": "L1B"
+    },
+    {
+      "step": 54,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 55,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 56,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 57,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 58,
+      "kind": "choose_node",
+      "nodeId": "L2D0N1"
+    },
+    {
+      "step": 59,
+      "kind": "event",
+      "check": {
+        "nodeId": "L2D0N1",
+        "eventId": "duel_wager",
+        "title": "赌斗押注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 23,
+        "bloodAfter": 22,
+        "stonesBefore": 2,
+        "stonesAfter": 6,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 60,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 61,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 62,
+      "kind": "choose_node",
+      "nodeId": "L2D1N0"
+    },
+    {
+      "step": 68,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 69,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 70,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 71,
+      "kind": "choose_node",
+      "nodeId": "L2D2N2"
+    },
+    {
+      "step": 72,
+      "kind": "event",
+      "check": {
+        "nodeId": "L2D2N2",
+        "eventId": "ropewalk_wager",
+        "title": "索桥赌注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 23,
+        "stonesBefore": 0,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 73,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 74,
+      "kind": "choose_node",
+      "nodeId": "L2D3N0"
+    },
+    {
+      "step": 82,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 83,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 84,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 85,
+      "kind": "choose_node",
+      "nodeId": "L2D4N0"
+    },
+    {
+      "step": 86,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D4N0"
+    },
+    {
+      "step": 87,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 88,
+      "kind": "choose_node",
+      "nodeId": "L2D5N0"
+    },
+    {
+      "step": 89,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D5N0"
+    },
+    {
+      "step": 90,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D5N0"
+    },
+    {
+      "step": 91,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 92,
+      "kind": "choose_node",
+      "nodeId": "L2D6N0"
+    },
+    {
+      "step": 93,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D6N0"
+    },
+    {
+      "step": 94,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 95,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 96,
+      "kind": "choose_node",
+      "nodeId": "L2D7N0"
+    },
+    {
+      "step": 97,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D7N0"
+    },
+    {
+      "step": 98,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D7N0"
+    },
+    {
+      "step": 99,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 100,
+      "kind": "choose_node",
+      "nodeId": "L2D8N0"
+    },
+    {
+      "step": 106,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 107,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 108,
+      "kind": "choose_node",
+      "nodeId": "L2D9N0"
+    },
+    {
+      "step": 114,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 115,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 116,
+      "kind": "choose_node",
+      "nodeId": "L2B"
+    },
+    {
+      "step": 125,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 126,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 127,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 128,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 129,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 130,
+      "kind": "choose_node",
+      "nodeId": "L3D0N0"
+    },
+    {
+      "step": 132,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 133,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 134,
+      "kind": "choose_node",
+      "nodeId": "L3D1N0"
+    },
+    {
+      "step": 136,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 137,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 138,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 139,
+      "kind": "choose_node",
+      "nodeId": "L3D2N0"
+    },
+    {
+      "step": 141,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 142,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 143,
+      "kind": "choose_node",
+      "nodeId": "L3D3N0"
+    },
+    {
+      "step": 148,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 149,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 150,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 151,
+      "kind": "choose_node",
+      "nodeId": "L3D4N0"
+    },
+    {
+      "step": 154,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 155,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 156,
+      "kind": "choose_node",
+      "nodeId": "L3D5N0"
+    },
+    {
+      "step": 159,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 160,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 161,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 162,
+      "kind": "choose_node",
+      "nodeId": "L3D6N0"
+    },
+    {
+      "step": 168,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 169,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 170,
+      "kind": "choose_node",
+      "nodeId": "L3D7N0"
+    },
+    {
+      "step": 171,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D7N0"
+    },
+    {
+      "step": 172,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D7N0"
+    },
+    {
+      "step": 173,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 174,
+      "kind": "choose_node",
+      "nodeId": "L3D8N0"
+    },
+    {
+      "step": 175,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D8N0"
+    },
+    {
+      "step": 176,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 177,
+      "kind": "choose_node",
+      "nodeId": "L3D9N0"
+    },
+    {
+      "step": 178,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D9N0"
+    },
+    {
+      "step": 179,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D9N0"
+    },
+    {
+      "step": 180,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 181,
+      "kind": "choose_node",
+      "nodeId": "L3B"
+    },
+    {
+      "step": 188,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 189,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 190,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 191,
+      "kind": "choose_node",
+      "nodeId": "L4D0N0"
+    },
+    {
+      "step": 192,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L4D0N0"
+    },
+    {
+      "step": 193,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 194,
+      "kind": "choose_node",
+      "nodeId": "L4D1N0"
+    },
+    {
+      "step": 195,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L4D1N0"
+    },
+    {
+      "step": 196,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 197,
+      "kind": "choose_node",
+      "nodeId": "L4D2N0"
+    },
+    {
+      "step": 203,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 204,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 205,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 206,
+      "kind": "choose_node",
+      "nodeId": "L4D3N0"
+    },
+    {
+      "kind": "ending",
+      "outcome": "defeat",
+      "terminalReason": "魂魄耗尽",
+      "ending": {
+        "title": "魂魄耗尽",
+        "detail": "你的魂魄被抽干，败于当前遭遇。败因：资源耗尽于第 1 回合；最后三回合：魔道蛊师 · 噬魂魔功 / 魔道蛊师 · 魂魄被抽 1 / 魂魄耗尽",
+        "turn": 1,
+        "outcome": "defeat",
+        "deathReport": {
+          "lastBlow": null,
+          "lastCounter": null,
+          "last3": [
+            "魔道蛊师 · 噬魂魔功",
+            "魔道蛊师 · 魂魄被抽 1",
+            "魂魄耗尽"
+          ],
+          "detail": "败因：资源耗尽于第 1 回合；最后三回合：魔道蛊师 · 噬魂魔功 / 魔道蛊师 · 魂魄被抽 1 / 魂魄耗尽"
+        },
+        "archiveSaved": true,
+        "archiveIssue": ""
+      }
+    },
+    {
+      "kind": "to_hall",
+      "via": "[data-ending-hall]"
+    },
+    {
+      "kind": "replay_started",
+      "seedOk": true,
+      "rootsOk": true,
+      "availableOk": true,
+      "newSeed": 109
+    }
+  ]
+}

@@ -20,7 +20,7 @@
     "intent": {
       "id": "stone_palm",
       "label": "掌势蓄而未发",
-      "damage": 2,
+      "damage": 1,
       "speed": 1,
       "guRefs": [
         "bone_atk_1_08_gu"
@@ -94,7 +94,7 @@
     "intent": {
       "id": "swift_crossbow",
       "label": "弩箭上弦",
-      "damage": 3,
+      "damage": 2,
       "speed": 3,
       "guRefs": [
         "fire_atk_2_01_gu"
@@ -132,7 +132,7 @@
     "intent": {
       "id": "miasma_burst",
       "label": "瘴气喷涌",
-      "damage": 2,
+      "damage": 1,
       "speed": 1,
       "guRefs": [
         "water_atk_1_08_gu"
@@ -156,7 +156,7 @@
           {
             "id": "miasma_burst",
             "label": "瘴气喷涌",
-            "damage": 2,
+            "damage": 1,
             "speed": 1,
             "cooldown": 2,
             "guRefs": [
@@ -181,7 +181,7 @@
           {
             "id": "miasma_burst",
             "label": "瘴气喷涌",
-            "damage": 2,
+            "damage": 1,
             "speed": 1,
             "cooldown": 2,
             "guRefs": [
@@ -322,7 +322,7 @@
     "intent": {
       "id": "shield_bash",
       "label": "盾墙冲撞",
-      "damage": 3,
+      "damage": 2,
       "speed": 3,
       "guRefs": [
         "sword_atk_2_12_gu"
@@ -373,7 +373,7 @@
     "intent": {
       "id": "marrow_lance",
       "label": "蚀骨骨矛",
-      "damage": 3,
+      "damage": 2,
       "speed": 2,
       "guRefs": [
         "water_atk_3_05_gu"
@@ -725,7 +725,7 @@
     "intent": {
       "id": "gate_block",
       "label": "山门横挡",
-      "damage": 2,
+      "damage": 1,
       "speed": 1,
       "guRefs": [
         "sword_atk_1_05_gu"
@@ -799,7 +799,7 @@
     "intent": {
       "id": "clan_authority",
       "label": "家族权柄",
-      "damage": 3,
+      "damage": 2,
       "speed": 2,
       "guRefs": [
         "moon_ray_gu"
@@ -837,7 +837,7 @@
     "intent": {
       "id": "clan_wrath",
       "label": "一族之威",
-      "damage": 4,
+      "damage": 2,
       "speed": 2,
       "cooldown": 1,
       "guRefs": [
@@ -862,7 +862,7 @@
           {
             "id": "clan_wrath",
             "label": "一族之威",
-            "damage": 4,
+            "damage": 2,
             "speed": 2,
             "cooldown": 1,
             "guRefs": [
@@ -888,7 +888,7 @@
           {
             "id": "clan_wrath",
             "label": "一族之威",
-            "damage": 4,
+            "damage": 2,
             "speed": 2,
             "cooldown": 1,
             "guRefs": [
@@ -942,7 +942,7 @@
     "intent": {
       "id": "wild_strike",
       "label": "野路杀招",
-      "damage": 2,
+      "damage": 1,
       "speed": 2,
       "guRefs": [
         "sword_atk_1_05_gu"
@@ -1015,7 +1015,7 @@
     "intent": {
       "id": "thrall_lunge",
       "label": "驱役扑击",
-      "damage": 3,
+      "damage": 2,
       "speed": 1,
       "guRefs": [
         "moon_ray_gu"
@@ -1358,7 +1358,7 @@
     "intent": {
       "id": "mo_hunt_fork",
       "label": "漠家猎叉",
-      "damage": 2,
+      "damage": 1,
       "speed": 1,
       "guRefs": [
         "bone_atk_1_08_gu"
@@ -1433,7 +1433,7 @@
     "intent": {
       "id": "bear_pounce",
       "label": "驱熊扑击",
-      "damage": 2,
+      "damage": 1,
       "speed": 1,
       "guRefs": [
         "white_boar_strength_gu"
@@ -1562,7 +1562,7 @@
     "intent": {
       "id": "bone_spear_barrage",
       "label": "骨枪连掷",
-      "damage": 3,
+      "damage": 2,
       "speed": 2,
       "guRefs": [
         "water_atk_3_05_gu"
@@ -1602,7 +1602,7 @@
     "intent": {
       "id": "corpse_command",
       "label": "驱僵号令",
-      "damage": 2,
+      "damage": 1,
       "speed": 1,
       "guRefs": [
         "bone_atk_1_08_gu"
@@ -1625,7 +1625,7 @@
           {
             "id": "corpse_command",
             "label": "驱僵号令",
-            "damage": 2,
+            "damage": 1,
             "speed": 1,
             "cooldown": 2,
             "guRefs": [
@@ -1650,7 +1650,7 @@
           {
             "id": "corpse_command",
             "label": "驱僵号令",
-            "damage": 2,
+            "damage": 1,
             "speed": 1,
             "cooldown": 2,
             "guRefs": [
@@ -1701,7 +1701,7 @@
     "intent": {
       "id": "arrest_chain",
       "label": "缉拿铁链",
-      "damage": 2,
+      "damage": 1,
       "speed": 2,
       "guRefs": [
         "sword_atk_1_06_gu"
@@ -1741,7 +1741,7 @@
     "intent": {
       "id": "overseer_whip",
       "label": "鞭笞驱兽",
-      "damage": 3,
+      "damage": 2,
       "speed": 1,
       "guRefs": [
         "moon_ray_gu"
@@ -1764,7 +1764,7 @@
           {
             "id": "overseer_whip",
             "label": "鞭笞驱兽",
-            "damage": 3,
+            "damage": 2,
             "speed": 1,
             "cooldown": 1,
             "guRefs": [
@@ -1789,7 +1789,7 @@
           {
             "id": "overseer_whip",
             "label": "鞭笞驱兽",
-            "damage": 3,
+            "damage": 2,
             "speed": 1,
             "cooldown": 1,
             "guRefs": [
@@ -1840,7 +1840,7 @@
     "intent": {
       "id": "formation_strangle",
       "label": "阵纹绞杀",
-      "damage": 3,
+      "damage": 2,
       "speed": 1,
       "guRefs": [
         "water_atk_3_05_gu"

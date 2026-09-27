@@ -1,0 +1,14 @@
+{
+  "seed": 109,
+  "difficulty": "normal",
+  "victory": false,
+  "reloadOk": true,
+  "eventOk": true,
+  "replayOk": true,
+  "noErrors": true,
+  "outcome": "defeat",
+  "events": 5,
+  "completed": 36,
+  "detail": "SEE_JSON",
+  "jsonPath": "C:\\Users\\90877\\work_space\\gu-zhenren\\screenshots\\2026-09-26-lab-acceptance\\acceptance-seed109-normal-gu_first.json"
+}

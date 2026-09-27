@@ -1,0 +1,1465 @@
+{
+  "seed": 103,
+  "difficulty": "normal",
+  "policy": "gu_first",
+  "contentVersion": "lab-run-v2",
+  "run": {
+    "outcome": "victory",
+    "terminalReason": "五段行程已走完",
+    "visited": [
+      "L1D0N0",
+      "L1D1N2",
+      "L1D2N0",
+      "L1D3N0",
+      "L1D4N0",
+      "L1D5N1",
+      "L1D6N0",
+      "L1D7N1",
+      "L1D8N0",
+      "L1D9N0",
+      "L1B",
+      "L2D0N1",
+      "L2D1N0",
+      "L2D2N2",
+      "L2D3N0",
+      "L2D4N0",
+      "L2D5N0",
+      "L2D6N0",
+      "L2D7N0",
+      "L2D8N0",
+      "L2D9N0",
+      "L2B",
+      "L3D0N0",
+      "L3D1N0",
+      "L3D2N0",
+      "L3D3N0",
+      "L3D4N0",
+      "L3D5N0",
+      "L3D6N0",
+      "L3D7N0",
+      "L3D8N0",
+      "L3D9N0",
+      "L3B",
+      "L4D0N0",
+      "L4D1N0",
+      "L4D2N0",
+      "L4D3N0",
+      "L4D4N0",
+      "L4D5N0",
+      "L4D6N0",
+      "L4D7N0",
+      "L4D8N0",
+      "L4D9N0",
+      "L4B",
+      "L5D0N0",
+      "L5D1N0",
+      "L5D2N0",
+      "L5D3N0",
+      "L5D4N0",
+      "L5D5N0",
+      "L5D6N0",
+      "L5D7N0",
+      "L5D8N0",
+      "L5D9N0",
+      "L5B"
+    ],
+    "eventChecks": [
+      {
+        "nodeId": "L1D1N2",
+        "eventId": "duel_wager",
+        "title": "赌斗押注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 23,
+        "stonesBefore": 0,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L1D5N1",
+        "eventId": "tithing_cache",
+        "title": "献藏换赏",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 23,
+        "bloodAfter": 23,
+        "stonesBefore": 0,
+        "stonesAfter": 2,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L1D7N1",
+        "eventId": "unclaimed_waystone",
+        "title": "无主路钱",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 24,
+        "stonesBefore": 2,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L2D0N1",
+        "eventId": "ropewalk_wager",
+        "title": "索桥赌注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 23,
+        "bloodAfter": 22,
+        "stonesBefore": 0,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L2D2N2",
+        "eventId": "sealed_silk_reliquary",
+        "title": "丝封遗匣",
+        "healthCost": 2,
+        "stoneGain": 5,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 22,
+        "stonesBefore": 3,
+        "stonesAfter": 8,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L4D8N0",
+        "eventId": "huajiu_cache",
+        "title": "行者遗藏",
+        "healthCost": 2,
+        "stoneGain": 5,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 22,
+        "stonesBefore": 7,
+        "stonesAfter": 12,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      },
+      {
+        "nodeId": "L5D3N0",
+        "eventId": "duel_wager",
+        "title": "赌斗押注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 23,
+        "stonesBefore": 2,
+        "stonesAfter": 6,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    ],
+    "reloadMapCheck": {
+      "restored": true,
+      "inProgress": true,
+      "diffCount": 0,
+      "diffs": [],
+      "completedBefore": 6,
+      "completedAfter": 6
+    },
+    "reloadBattleCheck": {
+      "restored": true,
+      "resumed": true,
+      "landedPage": "battle",
+      "inProgress": true,
+      "diffs": [],
+      "turn": 2,
+      "enemiesBefore": [
+        "iron_hide_boar:3"
+      ],
+      "enemiesAfter": [
+        "iron_hide_boar:3"
+      ]
+    },
+    "initial": {
+      "seed": 103,
+      "roots": [
+        "L1D0N0",
+        "L1D0N1",
+        "L1D0N2"
+      ],
+      "available0": [
+        "L1D0N0",
+        "L1D0N1",
+        "L1D0N2"
+      ],
+      "difficulty": "normal"
+    },
+    "final": {
+      "blood": 24,
+      "stones": 3,
+      "life": 60,
+      "soul": 1,
+      "soulMax": 4,
+      "completed": 55,
+      "ending": {
+        "outcome": "victory",
+        "title": "五段行程已走完",
+        "turn": 0
+      }
+    }
+  },
+  "replay": {
+    "ok": true,
+    "seedOk": true,
+    "rootsOk": true,
+    "availableOk": true,
+    "prefixOk": true,
+    "visited": [
+      "L1D0N0",
+      "L1D1N2",
+      "L1D2N0",
+      "L1D3N0",
+      "L1D4N0",
+      "L1D5N1",
+      "L1D6N0",
+      "L1D7N1",
+      "L1D8N0",
+      "L1D9N0"
+    ],
+    "expectedPrefix": [
+      "L1D0N0",
+      "L1D1N2",
+      "L1D2N0",
+      "L1D3N0",
+      "L1D4N0",
+      "L1D5N1",
+      "L1D6N0",
+      "L1D7N1",
+      "L1D8N0",
+      "L1D9N0"
+    ]
+  },
+  "consoleErrors": [],
+  "record": [
+    {
+      "kind": "boot",
+      "initial": {
+        "seed": 103,
+        "roots": [
+          "L1D0N0",
+          "L1D0N1",
+          "L1D0N2"
+        ],
+        "available0": [
+          "L1D0N0",
+          "L1D0N1",
+          "L1D0N2"
+        ],
+        "difficulty": "normal"
+      }
+    },
+    {
+      "step": 0,
+      "kind": "choose_node",
+      "nodeId": "L1D0N0"
+    },
+    {
+      "step": 3,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 4,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 5,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 6,
+      "kind": "choose_node",
+      "nodeId": "L1D1N2"
+    },
+    {
+      "step": 7,
+      "kind": "event",
+      "check": {
+        "nodeId": "L1D1N2",
+        "eventId": "duel_wager",
+        "title": "赌斗押注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 23,
+        "stonesBefore": 0,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 8,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 9,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 10,
+      "kind": "choose_node",
+      "nodeId": "L1D2N0"
+    },
+    {
+      "step": 11,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L1D2N0"
+    },
+    {
+      "step": 12,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 13,
+      "kind": "choose_node",
+      "nodeId": "L1D3N0"
+    },
+    {
+      "step": 14,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L1D3N0"
+    },
+    {
+      "step": 15,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 16,
+      "kind": "choose_node",
+      "nodeId": "L1D4N0"
+    },
+    {
+      "step": 17,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L1D4N0"
+    },
+    {
+      "step": 18,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 19,
+      "kind": "choose_node",
+      "nodeId": "L1D5N1"
+    },
+    {
+      "step": 20,
+      "kind": "event",
+      "check": {
+        "nodeId": "L1D5N1",
+        "eventId": "tithing_cache",
+        "title": "献藏换赏",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 23,
+        "bloodAfter": 23,
+        "stonesBefore": 0,
+        "stonesAfter": 2,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 21,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 22,
+      "kind": "choose_node",
+      "nodeId": "L1D6N0"
+    },
+    {
+      "kind": "reload_map",
+      "check": {
+        "restored": true,
+        "inProgress": true,
+        "diffCount": 0,
+        "diffs": [],
+        "completedBefore": 6,
+        "completedAfter": 6
+      }
+    },
+    {
+      "kind": "reload_battle",
+      "check": {
+        "restored": true,
+        "resumed": true,
+        "landedPage": "battle",
+        "inProgress": true,
+        "diffs": [],
+        "turn": 2,
+        "enemiesBefore": [
+          "iron_hide_boar:3"
+        ],
+        "enemiesAfter": [
+          "iron_hide_boar:3"
+        ]
+      }
+    },
+    {
+      "step": 29,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 30,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 31,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 32,
+      "kind": "choose_node",
+      "nodeId": "L1D7N1"
+    },
+    {
+      "step": 33,
+      "kind": "event",
+      "check": {
+        "nodeId": "L1D7N1",
+        "eventId": "unclaimed_waystone",
+        "title": "无主路钱",
+        "healthCost": 0,
+        "stoneGain": 2,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 24,
+        "stonesBefore": 2,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 34,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 35,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 36,
+      "kind": "choose_node",
+      "nodeId": "L1D8N0"
+    },
+    {
+      "step": 42,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 43,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 44,
+      "kind": "choose_node",
+      "nodeId": "L1D9N0"
+    },
+    {
+      "step": 47,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 48,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 49,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 50,
+      "kind": "choose_node",
+      "nodeId": "L1B"
+    },
+    {
+      "step": 58,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 59,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 60,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 61,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 62,
+      "kind": "choose_node",
+      "nodeId": "L2D0N1"
+    },
+    {
+      "step": 63,
+      "kind": "event",
+      "check": {
+        "nodeId": "L2D0N1",
+        "eventId": "ropewalk_wager",
+        "title": "索桥赌注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 23,
+        "bloodAfter": 22,
+        "stonesBefore": 0,
+        "stonesAfter": 4,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 64,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 65,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 66,
+      "kind": "choose_node",
+      "nodeId": "L2D1N0"
+    },
+    {
+      "step": 72,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 73,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 74,
+      "kind": "choose_node",
+      "nodeId": "L2D2N2"
+    },
+    {
+      "step": 75,
+      "kind": "event",
+      "check": {
+        "nodeId": "L2D2N2",
+        "eventId": "sealed_silk_reliquary",
+        "title": "丝封遗匣",
+        "healthCost": 2,
+        "stoneGain": 5,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 22,
+        "stonesBefore": 3,
+        "stonesAfter": 8,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 76,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 77,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 78,
+      "kind": "choose_node",
+      "nodeId": "L2D3N0"
+    },
+    {
+      "step": 85,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 86,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 87,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 88,
+      "kind": "choose_node",
+      "nodeId": "L2D4N0"
+    },
+    {
+      "step": 89,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D4N0"
+    },
+    {
+      "step": 90,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 91,
+      "kind": "choose_node",
+      "nodeId": "L2D5N0"
+    },
+    {
+      "step": 92,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D5N0"
+    },
+    {
+      "step": 93,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D5N0"
+    },
+    {
+      "step": 94,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 95,
+      "kind": "choose_node",
+      "nodeId": "L2D6N0"
+    },
+    {
+      "step": 96,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D6N0"
+    },
+    {
+      "step": 97,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 98,
+      "kind": "choose_node",
+      "nodeId": "L2D7N0"
+    },
+    {
+      "step": 99,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D7N0"
+    },
+    {
+      "step": 100,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L2D7N0"
+    },
+    {
+      "step": 101,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 102,
+      "kind": "choose_node",
+      "nodeId": "L2D8N0"
+    },
+    {
+      "step": 105,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 106,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 107,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 108,
+      "kind": "choose_node",
+      "nodeId": "L2D9N0"
+    },
+    {
+      "step": 114,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 115,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 116,
+      "kind": "choose_node",
+      "nodeId": "L2B"
+    },
+    {
+      "step": 125,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 126,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 127,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 128,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 129,
+      "kind": "choose_node",
+      "nodeId": "L3D0N0"
+    },
+    {
+      "step": 131,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 132,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 133,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 134,
+      "kind": "choose_node",
+      "nodeId": "L3D1N0"
+    },
+    {
+      "step": 136,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 137,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 138,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 139,
+      "kind": "choose_node",
+      "nodeId": "L3D2N0"
+    },
+    {
+      "step": 141,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 142,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 143,
+      "kind": "choose_node",
+      "nodeId": "L3D3N0"
+    },
+    {
+      "step": 148,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 149,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 150,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 151,
+      "kind": "choose_node",
+      "nodeId": "L3D4N0"
+    },
+    {
+      "step": 153,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 154,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 155,
+      "kind": "choose_node",
+      "nodeId": "L3D5N0"
+    },
+    {
+      "step": 158,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 159,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 160,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 161,
+      "kind": "choose_node",
+      "nodeId": "L3D6N0"
+    },
+    {
+      "step": 167,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 168,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 169,
+      "kind": "choose_node",
+      "nodeId": "L3D7N0"
+    },
+    {
+      "step": 170,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D7N0"
+    },
+    {
+      "step": 171,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D7N0"
+    },
+    {
+      "step": 172,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 173,
+      "kind": "choose_node",
+      "nodeId": "L3D8N0"
+    },
+    {
+      "step": 174,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D8N0"
+    },
+    {
+      "step": 175,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 176,
+      "kind": "choose_node",
+      "nodeId": "L3D9N0"
+    },
+    {
+      "step": 177,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D9N0"
+    },
+    {
+      "step": 178,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L3D9N0"
+    },
+    {
+      "step": 179,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 180,
+      "kind": "choose_node",
+      "nodeId": "L3B"
+    },
+    {
+      "step": 187,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 188,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 189,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 190,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 191,
+      "kind": "choose_node",
+      "nodeId": "L4D0N0"
+    },
+    {
+      "step": 192,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L4D0N0"
+    },
+    {
+      "step": 193,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 194,
+      "kind": "choose_node",
+      "nodeId": "L4D1N0"
+    },
+    {
+      "step": 195,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L4D1N0"
+    },
+    {
+      "step": 196,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 197,
+      "kind": "choose_node",
+      "nodeId": "L4D2N0"
+    },
+    {
+      "step": 203,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 204,
+      "kind": "prep",
+      "via": "[data-break]"
+    },
+    {
+      "step": 205,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 206,
+      "kind": "choose_node",
+      "nodeId": "L4D3N0"
+    },
+    {
+      "step": 212,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 213,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 214,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 215,
+      "kind": "choose_node",
+      "nodeId": "L4D4N0"
+    },
+    {
+      "step": 221,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 222,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 223,
+      "kind": "choose_node",
+      "nodeId": "L4D5N0"
+    },
+    {
+      "step": 226,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 227,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 228,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 229,
+      "kind": "choose_node",
+      "nodeId": "L4D6N0"
+    },
+    {
+      "step": 232,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 233,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 234,
+      "kind": "choose_node",
+      "nodeId": "L4D7N0"
+    },
+    {
+      "step": 239,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 240,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 241,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 242,
+      "kind": "choose_node",
+      "nodeId": "L4D8N0"
+    },
+    {
+      "step": 243,
+      "kind": "event",
+      "check": {
+        "nodeId": "L4D8N0",
+        "eventId": "huajiu_cache",
+        "title": "行者遗藏",
+        "healthCost": 2,
+        "stoneGain": 5,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 22,
+        "stonesBefore": 7,
+        "stonesAfter": 12,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 244,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 245,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 246,
+      "kind": "choose_node",
+      "nodeId": "L4D9N0"
+    },
+    {
+      "step": 247,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L4D9N0"
+    },
+    {
+      "step": 248,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 249,
+      "kind": "choose_node",
+      "nodeId": "L4B"
+    },
+    {
+      "step": 257,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 258,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 259,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 260,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 261,
+      "kind": "choose_node",
+      "nodeId": "L5D0N0"
+    },
+    {
+      "step": 263,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 264,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 265,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 266,
+      "kind": "choose_node",
+      "nodeId": "L5D1N0"
+    },
+    {
+      "step": 267,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L5D1N0"
+    },
+    {
+      "step": 268,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L5D1N0"
+    },
+    {
+      "step": 269,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 270,
+      "kind": "choose_node",
+      "nodeId": "L5D2N0"
+    },
+    {
+      "step": 271,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L5D2N0"
+    },
+    {
+      "step": 272,
+      "kind": "node_action",
+      "via": "[data-node-action]",
+      "nodeId": "L5D2N0"
+    },
+    {
+      "step": 273,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 274,
+      "kind": "choose_node",
+      "nodeId": "L5D3N0"
+    },
+    {
+      "step": 275,
+      "kind": "event",
+      "check": {
+        "nodeId": "L5D3N0",
+        "eventId": "duel_wager",
+        "title": "赌斗押注",
+        "healthCost": 1,
+        "stoneGain": 4,
+        "choice": "accept_event",
+        "bloodBefore": 24,
+        "bloodAfter": 23,
+        "stonesBefore": 2,
+        "stonesAfter": 6,
+        "acceptBlocked": false,
+        "bloodDeltaOk": true,
+        "stoneDeltaOk": true
+      }
+    },
+    {
+      "step": 276,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 277,
+      "kind": "choose_node",
+      "nodeId": "L5D4N0"
+    },
+    {
+      "step": 283,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 284,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 285,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 286,
+      "kind": "choose_node",
+      "nodeId": "L5D5N0"
+    },
+    {
+      "step": 292,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 293,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 294,
+      "kind": "choose_node",
+      "nodeId": "L5D6N0"
+    },
+    {
+      "step": 300,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 301,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 302,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 303,
+      "kind": "choose_node",
+      "nodeId": "L5D7N0"
+    },
+    {
+      "step": 309,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 310,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 311,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 312,
+      "kind": "choose_node",
+      "nodeId": "L5D8N0"
+    },
+    {
+      "step": 318,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 319,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 320,
+      "kind": "choose_node",
+      "nodeId": "L5D9N0"
+    },
+    {
+      "step": 322,
+      "kind": "reward",
+      "via": "[data-reward-continue]"
+    },
+    {
+      "step": 323,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 324,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "step": 325,
+      "kind": "choose_node",
+      "nodeId": "L5B"
+    },
+    {
+      "step": 331,
+      "kind": "reward",
+      "via": "[data-reward-gu]"
+    },
+    {
+      "step": 332,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 333,
+      "kind": "prep",
+      "via": "[data-buy-offer]"
+    },
+    {
+      "step": 334,
+      "kind": "prep",
+      "via": "[data-prep-continue]"
+    },
+    {
+      "kind": "ending",
+      "outcome": "victory",
+      "terminalReason": "五段行程已走完",
+      "ending": {
+        "title": "五段行程已走完",
+        "detail": "层主 · 瘴脉蛊主 · 结束整备",
+        "turn": 0,
+        "outcome": "victory",
+        "archiveSaved": true,
+        "archiveIssue": ""
+      }
+    },
+    {
+      "kind": "to_hall",
+      "via": "[data-ending-hall]"
+    },
+    {
+      "kind": "replay_started",
+      "seedOk": true,
+      "rootsOk": true,
+      "availableOk": true,
+      "newSeed": 103
+    }
+  ]
+}

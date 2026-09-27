@@ -94,6 +94,42 @@ function battleEncounterCard(node) {
   </section>`;
 }
 
+// 事件委托：innerHTML 后不重绑 N 个监听，长局战斗按钮多时 1% low 不被绑定成本打穿。
+function bindBattleEvents(root, encounter) {
+  if (root.dataset.bound) return;
+  root.dataset.bound = '1';
+  root.addEventListener('click', (ev) => {
+    const t = ev.target.closest(
+      '[data-target],[data-use],[data-use-gu],[data-basic-attack],[data-observe],'
+      + '[data-exhaust],[data-end-turn],[data-escape],[data-start-encounter],[data-foe]',
+    );
+    if (!t || !root.contains(t) || t.disabled) return;
+    if (t.dataset.target) act.setTarget(t.dataset.target);
+    else if (t.dataset.use) act.useMove(t.dataset.use);
+    else if (t.dataset.useGu) act.useGu(t.dataset.useGu);
+    else if (t.dataset.basicAttack) act.basicAttack();
+    else if (t.dataset.observe) act.observe();
+    else if (t.dataset.exhaust) act.exhaust();
+    else if (t.dataset.endTurn) act.endTurn();
+    else if (t.dataset.escape) act.endBattle();
+    else if (t.dataset.startEncounter != null) {
+      const ids = nodeEnemyIds(encounter || currentNode());
+      if (ids.length) act.startBattle(ids, (encounter || currentNode())?.id);
+    } else if (t.dataset.foe) act.startBattle(t.dataset.foe);
+  });
+}
+
+// 战报 DOM 只保留最近条目：长局 log 会涨到数百条，整段 innerHTML 是 draw 热点。
+const BATTLE_LOG_DOM_CAP = 80;
+function renderBattleLogHtml(log) {
+  const lines = Array.isArray(log) ? log : [];
+  const shown = lines.slice(-BATTLE_LOG_DOM_CAP);
+  const head = lines.length > shown.length
+    ? `<div class="log-truncated">较早 ${lines.length - shown.length} 条已折叠</div>`
+    : '';
+  return head + shown.map((l) => `<div>${l}</div>`).join('');
+}
+
 function renderBattle(root) {
   const b = state.battle;
   const encounter = currentNode();
@@ -123,6 +159,7 @@ function renderBattle(root) {
       <h2 style="margin-top:28px">可用蛊虫 · 无固定槽位上限</h2>
       <div class="moves">${guRoster.length
         ? guRoster.map((g) => `<div class="move ready">
+            ${(typeof MOONLIGHT_POC !== 'undefined' ? MOONLIGHT_POC.battleIcon(g.id) : '')}
             <div class="ml">${g.name}</div>
             <div class="me">${effectText(g.battleEffect)}</div>
             <div class="mc">${g.rank} 转 · ${schoolLabel(g.school)} · 真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}</div>
@@ -136,12 +173,7 @@ function renderBattle(root) {
             return `<div class="move ready"><div class="ml">${m.label}</div><div class="me">${killMoveEffectText(m, GU_BY_ID)}</div><div class="mc">${kmDirect ? '直接攻击' : '非直接'} · 真元 ${m.true_qi_cost} · 念头 ${m.thought_cost}</div></div>`;
           }).join('')
         : '<div class="move"><div class="mr" style="font-size:13px">尚未记入杀招。先到「杀招」页组装。</div></div>'}</div>`;
-    root.querySelector('[data-start-encounter]')?.addEventListener('click', () => {
-      const ids = nodeEnemyIds(encounter);
-      if (ids.length) act.startBattle(ids, encounter.id);
-    });
-    root.querySelectorAll('[data-foe]').forEach((el) =>
-      el.addEventListener('click', () => act.startBattle(el.dataset.foe)));
+    bindBattleEvents(root, encounter);
     return;
   }
 
@@ -262,7 +294,8 @@ function renderBattle(root) {
     const label = g.count > 1 ? `${g.name} ${g.instanceIndex}/${g.count}` : g.name;
     const life = Number(g.lifeCost || 0) > 0 ? `寿元${g.lifeCost}` : '';
     const blockedLabel = battleReasonLabel(blocked);
-    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}"><span class="action-title">${label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span>${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
+    const pocIcon = typeof MOONLIGHT_POC !== 'undefined' ? MOONLIGHT_POC.battleIcon(g.id) : '';
+    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}">${pocIcon}<span class="action-title">${label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span>${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
 
   root.innerHTML = `
@@ -347,20 +380,10 @@ function renderBattle(root) {
       </section>
       <section class="battle-log-panel" aria-label="战报">
         <div class="log-heading"><span class="kicker">本场记录</span><h3>战报</h3><span>${b.log.length} 条</span></div>
-        <div class="log" id="log">${b.log.map((l) => `<div>${l}</div>`).join('')}</div>
+        <div class="log" id="log">${renderBattleLogHtml(b.log)}</div>
       </section>
     </div>`;
 
-  root.querySelectorAll('[data-target]').forEach((el) =>
-    el.addEventListener('click', () => act.setTarget(el.dataset.target)));
-  root.querySelectorAll('[data-use]').forEach((el) =>
-    el.addEventListener('click', () => act.useMove(el.dataset.use)));
-  root.querySelectorAll('[data-use-gu]').forEach((el) =>
-    el.addEventListener('click', () => act.useGu(el.dataset.useGu)));
-  root.querySelector('[data-basic-attack]')?.addEventListener('click', () => act.basicAttack());
-  root.querySelector('[data-observe]')?.addEventListener('click', () => act.observe());
-  root.querySelector('[data-exhaust]')?.addEventListener('click', () => act.exhaust());
-  root.querySelector('[data-end-turn]')?.addEventListener('click', () => act.endTurn());
-  root.querySelector('[data-escape]')?.addEventListener('click', () => act.endBattle());
+  bindBattleEvents(root, encounter);
   restoreBattleView(root, prevOpen, prevFocusKey);
 }

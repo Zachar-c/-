@@ -97,3 +97,29 @@ Usage: card title typeface only (`TITLE_BRUSH_FONT` in
 `scripts/presentation/gu_style.gd`), used by `gu_card_view.gd` for card face
 titles. Distributed unmodified under its original name; the license copy ships
 beside the font and must be included in exported builds.
+
+## GSAP 3.13.0 (core, vendored) — Web lab motion layer
+
+- Package: `gsap@3.13.0` (dist core bundle only)
+- Source URL: https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js
+- License: GSAP "Standard No Charge" License — https://gsap.com/standard-license
+- License header retained verbatim at the top of the vendored file
+- Vendored file: `wenzhen-web-lab/js/vendor/gsap.min.js` (unmodified minified build)
+
+Scope: presentation-layer motion only, consumed by
+`wenzhen-web-lab/js/motion.js` through the `lab.html` entry. Loaded as a plain
+script (not ES module) so the game keeps running offline from `file://`. The
+upstream npm package is not a build-time or Godot-side dependency.
+
+Upstream file header, as shipped:
+
+```text
+/*!
+ * GSAP 3.13.0
+ * https://gsap.com
+ *
+ * @license Copyright 2025, GreenSock. All rights reserved.
+ * Subject to the terms at https://gsap.com/standard-license.
+ * @author: Jack Doyle, jack@greensock.com
+ */
+```

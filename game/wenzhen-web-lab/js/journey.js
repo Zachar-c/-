@@ -13,7 +13,7 @@ const PREP_TABS = [
 ];
 
 function guById(id) {
-  return DATA.gu.find((g) => g.id === id) || null;
+  return (typeof GU_BY_ID !== 'undefined' && GU_BY_ID[id]) || DATA.gu.find((g) => g.id === id) || null;
 }
 
 function nodeById(id) {
@@ -116,13 +116,14 @@ function segmentTitle(segment) {
   return DATA.flow.segmentTitles?.[String(segment)] || `第 ${segment} 段`;
 }
 
-function renderJourneyPages() {
-  renderHall(document.querySelector('#panel-hall'));
-  renderMap(document.querySelector('#panel-map'));
-  renderNodeActions(document.querySelector('#panel-node-action'));
-  renderPrep(document.querySelector('#panel-prep'));
-  renderReward(document.querySelector('#panel-reward'));
-  renderEnding(document.querySelector('#panel-ending'));
+// 性能：只绘当前页。showPage / draw 都经这里，避免一次动作重建全部面板。
+function renderJourneyPage(page) {
+  if (page === 'hall') renderHall(document.querySelector('#panel-hall'));
+  else if (page === 'map') renderMap(document.querySelector('#panel-map'));
+  else if (page === 'node-action') renderNodeActions(document.querySelector('#panel-node-action'));
+  else if (page === 'prep') renderPrep(document.querySelector('#panel-prep'));
+  else if (page === 'reward') renderReward(document.querySelector('#panel-reward'));
+  else if (page === 'ending') renderEnding(document.querySelector('#panel-ending'));
 }
 
 function renderHall(root) {
@@ -513,10 +514,15 @@ function inventoryCard(gu) {
   const price = RunFlow.sellValue(gu.value);
   // Canon 标注：canon 与游戏转数分叉/状态待核时显示原著口径（CanRuntime 投影，非游戏数值）。
   const canon = typeof Canon !== 'undefined' ? Canon.canonAlert(gu.id, gu.rank) : '';
-  return `<article class="gu ${gu.rank > 1 ? 'r2' : ''}">
+  // POC：月光蛊本体/收藏投影贴图挂载；非 POC 蛊回退原 icon，渲染路径不变。
+  const pocArt = typeof MOONLIGHT_POC !== 'undefined' ? MOONLIGHT_POC.cardArt(gu.id) : '';
+  const pocToggle = pocArt
+    ? `<button class="ghost poc-mode-btn" data-poc-moon-mode title="切换本体 / 收藏投影">${MOONLIGHT_POC.toggleLabel()}</button>`
+    : '';
+  return `<article class="gu ${gu.rank > 1 ? 'r2' : ''} ${pocArt ? 'poc-moon-card' : ''}">
     <span class="cnt">×${count}</span>
-    <img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">
-    <div class="gn">${gu.name}</div>
+    ${pocArt || `<img src="../assets/wenzhen/gu/${gu.icon}.png" alt="">`}
+    <div class="gn">${gu.name}${pocToggle}</div>
     <div class="gm">${gu.rank} 转 · ${buildRoleLabel(GuRules.buildRoleOf(gu, GU_BY_ID))} · ${schoolLabel(gu.school)} · 值 ${gu.value}</div>
     <div class="ge">${effectText(gu.effect)}</div>
     ${canon ? `<div class="gc">⟡ ${canon}</div>` : ''}
@@ -621,37 +627,71 @@ function renderPrep(root) {
         </nav>
         <div class="prep-pane${tab === 'shop' ? ' on' : ''}" data-pane="shop">
           <div class="pane-note">本页买完即售罄，进入下一节点后刷新。</div>
-          <div class="shop-grid">${offers.map(shopOfferCard).join('') || '<div class="empty">本层暂无可用货物。</div>'}</div>
+          <div class="shop-grid"></div>
         </div>
         <div class="prep-pane${tab === 'gu' ? ' on' : ''}" data-pane="gu">
           <div class="pane-note">卖蛊返还价值 50%；若令杀招配方失效，会自动卸下对应杀招。</div>
-          <div class="grid">${ownedGu.map(inventoryCard).join('') || '<div class="empty">蛊仓为空。</div>'}</div>
+          <div class="grid"></div>
         </div>
         <div class="prep-pane${tab === 'alchemy' ? ' on' : ''}" data-pane="alchemy"><div id="prep-alchemy"></div></div>
         <div class="prep-pane${tab === 'killmove' ? ' on' : ''}" data-pane="killmove"><div id="prep-killmove"></div></div>
       </div>
     </div>`;
 
-  renderAlchemy(root.querySelector('#prep-alchemy'));
-  renderKillmove(root.querySelector('#prep-killmove'));
-  root.querySelectorAll('[data-prep-tab]').forEach((button) => {
-    button.addEventListener('click', () => {
-      prepTab = button.dataset.prepTab;
-      root.querySelectorAll('[data-prep-tab]').forEach((tabButton) => tabButton.classList.toggle('on', tabButton === button));
+  // 性能：只绘当前页签。切页签时按需填充；整备动作重绘也只重建可见区。
+  renderPrepPane(root, tab);
+  bindPrepEvents(root);
+}
+
+function renderPrepPane(root, tab) {
+  const shop = root.querySelector('[data-pane="shop"] .shop-grid');
+  const gu = root.querySelector('[data-pane="gu"] .grid');
+  const alchemy = root.querySelector('#prep-alchemy');
+  const killmove = root.querySelector('#prep-killmove');
+  if (tab === 'shop' && shop) {
+    shop.innerHTML = shopStock().map(shopOfferCard).join('') || '<div class="empty">本层暂无可用货物。</div>';
+  } else if (tab === 'gu' && gu) {
+    const ownedGu = DATA.gu.filter((g) => Number(state.owned[g.id] || 0) > 0);
+    gu.innerHTML = ownedGu.map(inventoryCard).join('') || '<div class="empty">蛊仓为空。</div>';
+  } else if (tab === 'alchemy' && alchemy) {
+    renderAlchemy(alchemy);
+  } else if (tab === 'killmove' && killmove) {
+    renderKillmove(killmove);
+  }
+}
+
+// 事件委托：整备页按钮多，innerHTML 后逐个 addListener 是 draw 热点。
+// 炼蛊/杀招页签内的 data-forge / data-attune / data-km 也在这里收口。
+function bindPrepEvents(root) {
+  if (root.dataset.bound) return;
+  root.dataset.bound = '1';
+  root.addEventListener('click', (ev) => {
+    const t = ev.target.closest(
+      '[data-prep-tab],[data-buy-offer],[data-sell-gu],[data-break],[data-use-aptitude],'
+      + '[data-prep-continue],[data-forge],[data-attune],[data-km],[data-poc-moon-mode]',
+    );
+    if (!t || !root.contains(t) || t.disabled) return;
+    if (t.dataset.pocMoonMode != null) {
+      MOONLIGHT_POC.setMode(MOONLIGHT_POC.mode() === 'projection' ? 'canonical' : 'projection');
+      renderPrepPane(root, prepTab);
+      return;
+    }
+    if (t.dataset.prepTab) {
+      prepTab = t.dataset.prepTab;
+      root.querySelectorAll('[data-prep-tab]').forEach((tabButton) => tabButton.classList.toggle('on', tabButton === t));
       root.querySelectorAll('[data-pane]').forEach((pane) => pane.classList.toggle('on', pane.dataset.pane === prepTab));
-    });
+      renderPrepPane(root, prepTab);
+      return;
+    }
+    if (t.dataset.buyOffer) act.buyOffer(t.dataset.buyOffer);
+    else if (t.dataset.sellGu) act.sellGu(t.dataset.sellGu);
+    else if (t.dataset.break) act.breakthrough(t.dataset.break);
+    else if (t.dataset.useAptitude != null) act.useAptitudeGu();
+    else if (t.dataset.prepContinue != null) act.leavePrep();
+    else if (t.dataset.forge) act.forge(t.dataset.forge);
+    else if (t.dataset.attune) act.attuneGu(t.dataset.attune);
+    else if (t.dataset.km) act.toggleMove(t.dataset.km);
   });
-  root.querySelectorAll('[data-buy-offer]').forEach((button) => {
-    button.addEventListener('click', () => act.buyOffer(button.dataset.buyOffer));
-  });
-  root.querySelectorAll('[data-sell-gu]').forEach((button) => {
-    button.addEventListener('click', () => act.sellGu(button.dataset.sellGu));
-  });
-  root.querySelectorAll('[data-break]').forEach((button) => {
-    button.addEventListener('click', () => act.breakthrough(button.dataset.break));
-  });
-  root.querySelector('[data-use-aptitude]')?.addEventListener('click', () => act.useAptitudeGu());
-  root.querySelector('[data-prep-continue]').addEventListener('click', () => act.leavePrep());
 }
 
 function renderReward(root) {

@@ -526,7 +526,11 @@ globalThis.GuRules = (() => {
       return list.length ? list : [String(definitionId)];
     });
     const variants = [];
+    // 替代组合是笛卡尔积：中后期同投入多替代会爆。UI 只展示前几条 changed，
+    // 这里硬顶 24 条，防止整备重绘被 walk 打穿（显示截断由调用方 slice）。
+    const MAX_VARIANTS = 24;
     const walk = (index, recipe) => {
+      if (variants.length >= MAX_VARIANTS) return;
       if (index >= slotOptions.length) {
         const plan = killMoveEffectPlan({ ...move, recipe }, guById, {});
         const changed = recipe.join('+') !== (move.recipe || []).join('+');

@@ -38,3 +38,16 @@ Web 游戏不设材料掉落、材料买卖或材料合成；战后成长来自�
 - 走盘：`node tools/autoplay_lab.mjs --suite smoke --seed 101 --difficulty normal`
 - 打包：`node tools/package_lab.mjs --out <新目录>`
 - `?debug=1` 打开覆盖页与演武列表
+- 动效：`js/motion.js`（GSAP 增强，纯表现层，不写 state）。GSAP 以本地 vendor 引入（`js/vendor/gsap.min.js`），保持 `file://` 离线可玩；GSAP 缺席或系统偏好"减弱动效"时自动静默回退 lab.css 原生 CSS 动画，玩法与走盘不受影响。
+
+## 文档入口
+
+- [EXISTING_CAPABILITY_MAP.md](EXISTING_CAPABILITY_MAP.md)：能力盘点与 Owner 边界
+- [docs/lab-runtime-contract.md](docs/lab-runtime-contract.md)：运行时契约（act 写入口、存档、规则 Owner）
+- [docs/lab-mechanics-three-questions.md](docs/lab-mechanics-three-questions.md)：机制三问
+- [docs/2026-09-22-playable-game-current-state.md](docs/2026-09-22-playable-game-current-state.md)：可玩整局现状
+- [docs/2026-09-20-deepening-experiment.md](docs/2026-09-20-deepening-experiment.md)：深化实验记录
+- [../wenzhen-web/assets/gu/HIGH-FREQUENCY-CARDS-2026-09-26.md](../wenzhen-web/assets/gu/HIGH-FREQUENCY-CARDS-2026-09-26.md)：高频卡面素材说明
+- [docs/MERGE-MVP-LAB.md](docs/MERGE-MVP-LAB.md)：MVP/Lab 合流记录
+- [experiments/FROZEN.md](experiments/FROZEN.md)：冻结实验说明
+- 历史交接与验收见 [docs/](docs/)（含 2026-09-22 起 playable-game、parity-slice 系列）

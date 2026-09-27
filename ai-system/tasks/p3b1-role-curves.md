@@ -1,9 +1,10 @@
-# P3-B1 · 把 L1 的六条 role 转数曲线落进兜底表
+# P3-B1 · 批B 剩余面：换基激活 + Enemy HP envelope 重推导 + ⑤ encounter 窗口验收
 
-> **2026-09-25 休眠资产登记（A 档，见 [docs/dormant-registry.md](../../../docs/dormant-registry.md)）**：
-> 数值前提（RUL-2026-09-19-008/011、P2 预算曲线）仍现行；本包内「Godot = Canonical」前提已被
-> L0 2026-09-24 Web 载体裁定取代。批B 解锁时以本包为任务底稿，数值落点改为 Web 侧
-> （`game/wenzhen-web-lab/js/balance.js` 与 `game/data/balance.json`）。
+> **2026-09-26 收敛改写**（L2）：本包原 §A–§D（改 v1_battle.json、Godot resolver、审计工具、
+> 派生镜像）已随 `RUL-2026-09-25-001` Q2 作废——真源迁移、投影机制、MVP 例外登记、30 值断言
+> 均已随 2026-09-25/26 P2 批落地（debt.md:53/55，COORDINATION「批B 五条全过」为零漂移口径）。
+> 本包只剩批B 的**行为换基面**：把 lab 投影从旧基线换到 Q2 公式投影，重推导敌方侧，
+> 让 ⑤「换基后代表性 encounter 落目标回合区间」有实义。历史版本见 git 历史（≤6523e481）。
 
 ```text
 WORKFLOW ROLE
@@ -13,215 +14,231 @@ UPSTREAM
 L2 Orchestrator
 
 DOWNSTREAM
-L2 Review → P3-B2（一致性断言，依赖 L1 补充定义）
+L2 Review → 记录回写（debt.md / COORDINATION 批B 段）
 
 PROJECT GOAL
-把《蛊真人》做成游戏。当前阶段经 L1 裁决：Godot = Canonical（唯一规则权威源），
-Web = Disposable Prototype（RUL-2026-09-19-010）。
+把《蛊真人》做成游戏。当前产品载体=浏览器 Web 版 lab（game/wenzhen-web-lab/lab.html，
+contentVersion lab-run-v2）；基准关系=game/data / Game Semantics → generated Web data →
+Web Runtime（RUL-2026-09-25-001）；Godot=参考实现，本包零 Godot 改动。
 
 CURRENT PHASE
-P3 统一 Effect 管线。P3-A（普查）已交付；P3-B 的数值已由 L1 裁定
-（RUL-2026-09-19-011，B1–B6 可执行）。
-本任务是 P3-B 中**唯一已完全指定、无歧义**的那一块。
+L0 优先级链（RUL-2026-09-25-001 PRIO）：P2 批A 已过、P3 Conformance 已过、P4 月光切片
+GATE 已过、P5 多批已落地——全程跑在 lab 旧基线曲线（attack [2,3,4,5,6]）上。
+本任务=批B 收敛后的唯一剩余面：换基激活与随之的敌方侧重推导、窗口验收。
 
 TASK PURPOSE
-现行兜底表（802 只蛊里 741 只走的路径）是**线性 +1/转**：五转只有一转的 1.0–5.0 倍，
-而冻结的 Rank Power Budget 是 ×16。两者不同源，且 D7 列的 11 个可投维度里
-现行只用了 1 个。L1 已裁定默认主标量改按 sqrt(Budget) 增长（R1→R5 约 ×4），
-本任务就是把这条裁决变成数据 + 一处读取点。
+Q2 批B 验收五条中 ①30 值单真源/②无第二份曲线/③投影可断言/④MVP 例外有父引用 已随 P2 批
+落地；⑤「代表性 encounter 落目标回合区间」的「换基后」前提——lab 投影值激活——尚未发生：
+PROJ-LAB-ROLE-CURVE-001 仍是 policy=legacy_lab_fallback_baseline_pending_l1 的旧基线表。
+本任务把换基做完，并按 ANSWER Q2 纪律（「新 kit → 重新推导 target encounter envelope，
+不因此手调全部敌人」）重推导敌方侧，使窗口/威胁门在新曲线下重新成立。
+
+## 执行前置条件（**两条都满足才能开工**）
+
+**① L1 公式投影 policy——已答复（2026-09-26，`game/world-model/rulings/RUL-2026-09-26-001.json`，RULED）。**
+答复对象：[RESEARCH-REQUEST-2026-09-26-lab-role-curve-projection.md](../RESEARCH-REQUEST-2026-09-26-lab-role-curve-projection.md)。
+本包 TASK 各节的公式、30 值、policy 名与 rationale 均照抄该裁定，Worker 不得改数。
+
+**② 工作树干净（就本包触及面）。**
+开工前 `git status --porcelain`：若 `game/wenzhen-web-lab/data/projections.json`、
+`tools/build_data.mjs`、`js/mvp_content.js`、`game/data/enemies.json`、`js/data.js` 任一
+仍有未提交改动，停下上报，不要在其上叠加。
 
 TASK
 
-## A. 数据：`game/data/v1_battle.json` 的 `default_effect_by_role` 改存转数曲线
+## T1 · 换基激活：PROJ-LAB-ROLE-CURVE-001 公式投影化（RUL-2026-09-26-001 Q1/Q2）
 
-六个 role 各把标量 `amount` 换成按转数索引的数组 `amount_by_rank`（顺序 = 一转…五转），
-取值**照抄** L1（RUL-2026-09-19-011 B3，**不得自行调整任何一个数字**）：
+- 公式（裁定原文）：`raw_lab_amount(role, rank) = world_amount(role, rank) / sqrt(20)`；
+  `lab_amount = max(1, ceil(raw))`。缩放的是主标量量纲，不是 Rank 万能倍率。
+- 换基后的六条 LAB 曲线（逐值，Worker 不得改数）：
 
-| role | kind | `amount_by_rank` |
-|---|---|---|
-| attack | strike | `[4, 6, 8, 11, 16]` |
-| defense | shield | `[4, 6, 8, 11, 16]` |
-| healing | heal | `[3, 4, 6, 8, 12]` |
-| logistics | heal | `[2, 3, 4, 6, 8]` |
-| movement | shift | `[1, 1, 2, 2, 3]` |
-| recon | status | `[1, 1, 1, 1, 1]` |
+  | role | LAB |
+  |---|---|
+  | attack | `[1, 2, 2, 3, 4]` |
+  | defense | `[1, 2, 2, 3, 4]` |
+  | healing | `[1, 1, 2, 2, 3]` |
+  | logistics | `[1, 1, 1, 2, 2]` |
+  | movement | `[1, 1, 1, 1, 1]` |
+  | recon | `[1, 1, 1, 1, 1]` |
 
-其余键（`kind` / `name` / `support_school` / `support_bonus`）**原样保留**，不改。
+- `game/wenzhen-web-lab/data/projections.json` 的 PROJ-LAB-ROLE-CURVE-001：
+  `policy = "sqrt_budget_scalar_projection_v1"`；value 按上表重写；rationale 照抄裁定
+  给定文本（下块）；`parents`（balance.effect_budget.default_amount_by_role）与
+  `forbidWriteBack=true` 不动。
 
-**只改 `default_effect_by_role` 这一个对象。`v1_battle.json` 的其它键一律不动**
-（`regen_pct`、`stage_base`、`aptitude_mult`、`kill_moves`、`boss_layer_mult` 等）。
+  ```text
+  LAB role amounts are a one-way projection of the WORLD
+  default role curves. WORLD rank power budget is projected
+  to LAB at 1/20, while default primary effect scalars follow
+  sqrt(Budget); therefore scalar amounts project by
+  sqrt(1/20) = 1/sqrt(20).
 
-## B. 读取点：`game/scripts/domain/v1_battle_resolver.gd`
+  For each role and rank:
+  raw = world_amount / sqrt(20)
+  lab_amount = max(1, ceil(raw))
 
-1. `default_v1_effect()`：删掉 `amount = base + (rank-1)` 的线性缩放，
-   改为按 rank 索引 `amount_by_rank`。
-   - **索引口径照现状**：用 `definition.get("rank", 1)`（**不要**改成实例的 effective_rank）。
-     现状即按定义转数取，本批**不改变取哪一转**——换曲线与换取数源是两件事，后者单独评审。
-   - rank 超出 1..5 时钳到 5（`gu.json` 有 1 只 rank 10 的 `test_slay_gu`，它显式声明了
-     `v1_effect` 永不走兜底；钳位是防御，不改变它的行为）。
-   - `RANK_SCALED_KINDS` **保留**：它仍被 `_build_gu_slots` 的降转下调逻辑使用
-     （`v1_battle_resolver.gd:205`）。但**不要**再让它参与兜底的 amount 计算。
-   - **`support_bonus` 的缩放原样保留**（仍是 `base + (rank-1)`）。L1 尚未裁它，
-     改它就是自行发明（见「DO NOT」）。
-2. **防重复扣减**：`_build_gu_slots` 里 `if downgrades > 0 and RANK_SCALED_KINDS.has(kind):
-   amount = maxi(1, amount - downgrades)` **保持不动**。因为取数源没变（仍是定义转数），
-   这里不会双重扣减。若你发现任何双重扣减路径，**停下上报**，不要自行取舍。
-3. `role_default_table()` 不改。
+  The projection never writes back to WORLD. LAB PP weights
+  are validation/pricing weights applied after amount
+  projection and are not an independent source for role
+  curves. Movement and recon use the same formula; their flat
+  LAB amounts are an intentional consequence of small-integer
+  projection, with higher-rank differentiation expected from
+  effect semantics rather than hidden scalar inflation.
+  ```
 
-## C. 消灭第二份规则权威源（本任务的重点，别漏）
+- `tools/check_projection.mjs` 新增断言组（RUL AUTOACCEPT）：world curve → formula →
+  exact LAB curve 由 parent **复算**比对（30 值逐值）；parent 指向正确；policy 不含独立
+  手写 curve（无内嵌 fallback 曲线）；forbidWriteBack=true；generated data 无旧 baseline
+  silent fallback。
+- 重跑 `node tools/build_data.mjs`（在 game/wenzhen-web-lab/ 下）重生成 `js/data.js`；
+  构建期 fail-fast（缺曲线/缺 role/长度≠5）必须全绿。
+  **注意顺序依赖**：换基后旧压缩表 `{1:2,…}` 的 rank1=2 > 新 attack 曲线 rank1=1，
+  压缩不变量校验会**故意** fail——这是正控。所以本步与 T2（压缩表重基）必须同批完成后再
+  重跑构建；单独跑 T1 时构建失败属预期，如实记录即可，不得为过构建回退曲线。
+- 旧基线 `[2,3,4,5,6]` 只允许出现在迁移前后报告里，不得留在任何 Runtime 消费路径。
 
-`game/world-model/tools/audit_effect_budget.py:70-72` 目前是**用正则去 GDScript 源码里
-抠 `RANK_SCALED_KINDS`，再自行套 `b + (r-1)`** 来重建曲线的——即「审计工具里躺着第二份规则」。
-照 RUL-2026-09-19-010 W3（一份 Effect 语义 / 一份数据真源），改成**直接读数据里的
-`amount_by_rank`**，删掉那个正则抠源码的 `scaled` 逻辑。
+## T2 · 敌方攻击压缩表重基：PROJ-LAB-ENEMY-ATTACK-001（RUL-2026-09-26-001 Q3）
 
-改完后 `audit_effect_budget.py` 报出的六条曲线必须与上面 A 的表逐值相同——
-把它的输出片段放进结果包。
+- 裁定方向：**改伤随表**——数据链为「装备/能力 → projected effect → 敌人实际 action →
+  intent.damage」；不反向锚定。威胁是 encounter-level target，**无固定 1/4 公式**；
+  handleRate/survivalRate/targetTurns 继续作为 envelope 约束。
+- 旧表 `{1:2,2:3,3:3,4:4,5:4}` 已**解冻**（legacy projection calibration），随新 LAB
+  attack 曲线 `[1,2,2,3,4]` 重新生成或校验；不得手工维护另一张永久攻击曲线。
+- 两条硬不变量保留（build_data.mjs 构建期校验）：`Σ 实际被该 intent 激活的 projected
+  attack effects == intent.damage`；`single projected attack ≤ 对应 LAB attack role
+  envelope`；表值单调不减。
+- 敌方与玩家同蛊需要不同量纲时，必须走显式 enemy projection policy 表达，禁止另藏
+  Rank 表；不得为命中 DPR 偷偷修改某只蛊的投影值。
 
-## D. 派生镜像必须重生成（**写法待裁，见下**）
+## T3 · Enemy HP envelope 重推导（RUL-2026-09-26-001 Q4 + ANSWER Q2 纪律）
 
-`game/world-model/tools/build_world_model.py:315-316` 把兜底 effect 内嵌进镜像的每条蛊记录，
-所以本改动会让镜像与上游漂移。
+- 顺序（裁定指定）：MVP kit 换基（T6）→ new projected kit → new refDpr →
+  `deriveEnemyHp(...)` → 新代表性敌 HP → 验证冻结窗口。
+- 参考层（`js/mvp_content.js:129-146`）：refKit/refDpr/hpFor 机制已是推导式——换基后
+  **先读它自动算出的新 envelope**，不要手改 hpFor/targetTurns/margin/minHp（窗口
+  battle_1 3–5 / battle_2 4–6 / elite 4–6 / boss 6–9 与中值 4/5/5/7.5 是 L1 V4.1 冻结）。
+- 真实敌池（`game/data/enemies.json` 45 只 hp）：OWNER 不变；以新 envelope 校对每只，
+  按裁定三档处置：
+  1. 自动推导入窗 → PASS；
+  2. 偏差 ≤20% 且有明确世界/遭遇原因 → `balanceReport.overrideReasons` 登记
+     （现位置 `tools/check_balance.mjs:115` 消费）；
+  3. **大量代表性敌人需要 override** → 判定 projection policy 与 envelope 不兼容，
+     **不手调敌人群**，停下重新上抛模型冲突（ESCALATE）。
+- **禁止无推导依据的手调**；`game/data/enemies.json` 的 diff 必须能逐行给出推导依据。
+- 敌人 intent.damage 因 T2「改伤随表」变化的，同批更新并保留 Σ==damage 构建校验通过。
 
-- 跑 `python game/world-model/tools/check_upstream_drift.py` 确认它**确实报漂移**（这是正控）。
-- 然后按该工具的既有做法重生成镜像（**不要**手改 `game/world-model/data/**`）。
-- 再跑一次确认漂移归零。
+## T4 · ⑤ 窗口验收（硬门禁）
 
-### ⚠️ 但镜像怎么写，L2 已上抛、尚未裁 —— 见下（这条决定你能不能开工）
+全部真实输出，不看退出码标签：
 
-L2 在派工前检查发现一个耦合，已写进
-`ai-system/RESEARCH-REQUEST-2026-09-19-p3b-addendum.md` §4：
+```powershell
+cd game/wenzhen-web-lab
+node tools/check_balance.mjs        # 四窗口 battle_1[3,5]/battle_2[4,6]/elite[4,6]/boss[6,9]
+                                    # + H1 偏差门 + 威胁窗 全 PASS
+node tools/check_projection.mjs     # 全绿，含新公式断言
+node --test tests/                  # 全量测试通过（semantics/conformance/balance 等既有断言
+                                    # 若因换基过期，按新曲线更新期望值——期望值更新逐处注明依据）
+```
 
-**镜像里的 `effect` 不只是展示数据，它被世界模型引擎当规则读。**
+## T5 · 真实整局证据（记录项，非单项硬门禁——RUL Q2 明确）
 
-`game/world-model/engine/rules.py:254 resolve_effect(wm, effect, gu_rank, state)` 直接读
-`effect.get("amount", 0)`，而且**把它收到的 `gu_rank` 参数完全不用**。
-741 只走兜底的蛊，其镜像记录的 `effect` 就是兜底表的那份字典。
+用 `node tools/acceptance_lab.mjs --seed 103 --difficulty normal --policy gu_first --shots <dir>`
+跑一局真实浏览器整局（victory 或 defeat 均可接受为有效轨迹；softlock 与 console error
+必须为零）。结果 JSON 与截图随结果包归档。若节奏显著劣化（如战斗回合数系统性越窗），
+作为 T4 的窗口证据上报，不静默调参。
 
-所以把兜底表从标量改成 `amount_by_rank` 后，`resolve_effect` 会读不到 `amount` → **取 0**
-→ 世界模型引擎里 741 只蛊的效果**静默归零**。
+## T6 · MVP 例外重基（RUL-2026-09-26-001 Q4）
 
-L2 已确认**本批不存在零漂移拆法**（新曲线的一转基准值本身就变了：attack 2→4 等），
-故镜像的写法（P1 已解析标量 / P2 保留曲线并让引擎按 rank 索引 / P3 只写一转基准）
-**必须由 L1 裁决后再实施**。
-
-**开工条件**：L1 回复 P1/P2/P3 之一。在此之前本任务**不派工**。
-A/B/C/E 四节的实现细节已就绪，届时直接照做即可；D 按裁决结果执行。
-
-## E. 测试
-
-1. 更新因曲线变化而过期的既有用例（至少 `game/tests/unit/test_q7_role_defaults.gd`；
-   自己全仓跑一遍确认没有遗漏）。预期新值：
-   - logistics：r1=2 / r2=3 / r3=4 / r4=6 / r5=8（现行断言是 r2=2、r4=4、r3=3）
-   - recon：六转恒 1（不变）
-2. 新增用例，钉住 A 表的**全部 30 个值**（六 role × 五转），一条断言一个格子。
-   这是本批唯一直接承载 L1 裁决的东西，必须逐值可查。
-3. 新增用例，钉住 **rank 10 的钳位行为**（用 `test_slay_gu` 或合成夹具）：
-   走兜底时取到 r5 的值而不是崩。
-4. 新增用例，钉住 **降转下调不与新曲线双重扣减**：一个显式 `strike` 实例降 1 次，
-   其 amount 只被减 1。
+- 裁定：**机制保留，数值随新公式重基**——`new projected baseline + explicit semantic
+  exception = MVP final amount`。旧 pinned 值不因「历史上校准过」自动继承；
+  「为了维持旧 V4.1 数值」不是充分理由。
+- 每条例外登记五字段：`parentProjection`、`baselineValue`（=新公式对该 role/rank 的
+  投影值）、`overrideValue`、`overrideReason`（独立产品/语义理由）、`forbidWriteBack=true`；
+  登记 form 落 `mvp_content.js`（guRef+五字段）并在 `PROJ-LAB-MVP-GU-EXCEPTION-001`
+  rationale 同步说明。
+- `overrideValue == 旧值` 的例外必须证明为何在新 baseline 下仍应保持；证明不了就回到
+  baseline。
+- 重基后 refDpr 与代表性敌 HP envelope 随之重算（衔接 T3）；T5 的真实整局证据在重基后
+  采集。
+- `priceGu`/kitDpr 等 balance.js 检测层零改动（PP 只做 projection 之后的核算/定价校验，
+  禁止反向成为 role amount 真源——RUL frozen invariants）。
 
 SCOPE
 可写：
-- `game/data/v1_battle.json`（**仅** `default_effect_by_role` 一个对象）
-- `game/scripts/domain/v1_battle_resolver.gd`（仅 `default_v1_effect` 的 amount 计算）
-- `game/scripts/domain/content_catalog.gd`（仅 `_validate_v1_battle_role_defaults`：
-  `amount` 正整数校验改为 `amount_by_rank` 是长度 5、每项 ≥1 的整数数组）
-- `game/world-model/tools/audit_effect_budget.py`（改为读数据）
-- `game/world-model/tools/build_world_model.py`（**仅当**重生成确实需要改它）
-- `game/world-model/data/**`（**仅通过重生成工具**写入）
-- `game/tests/unit/**`（更新过期用例 + 新增用例）
+- `game/wenzhen-web-lab/data/projections.json`（两条 PROJ 条目）
+- `game/wenzhen-web-lab/tools/build_data.mjs`（仅当校验/映射需要）
+- `game/wenzhen-web-lab/tools/check_projection.mjs`（仅公式断言）
+- `game/wenzhen-web-lab/js/mvp_content.js`（仅 overrideReasons/envelope 联动面）
+- `game/data/enemies.json`（仅 hp/intent.damage 按推导更新）
+- `game/wenzhen-web-lab/js/data.js`（仅经 build_data 重生成）
+- `game/wenzhen-web-lab/tests/**`（过期期望值更新 + 新增换基断言）
 - `ai-system/tasks/p3b1-role-curves-result.md`（结果包）
 
-只读：其余一切。
+只读：其余一切（balance.json、v1_battle.json、gu.json、js/balance.js、js/run_rules.js、
+Godot 全侧、lore/**）。
 
 DO NOT
-- **禁止自行决定派生镜像怎么写**（P1/P2/P3 未裁前，§D 不得实施）——
-  镜像的 `effect` 被 `game/world-model/engine/rules.py` 当规则读，写错会让 741 只蛊静默归零。
-- **禁止自行调整 A 表里的任何数字**，也禁止顺手「优化」成 sqrt 公式——
-  L1 给的 movement `[1,1,2,2,3]` 与 recon 恒 1 是**有意偏离** sqrt 的，写成公式就表达了它。
-- **禁止实施 R5 一致性断言**（预算总量 85%–115%）——它的两个定义还缺，
-  已在 `ai-system/RESEARCH-REQUEST-2026-09-19-p3b-addendum.md` 上抛 L1，等回复。
-- **禁止改 `support_bonus` 的缩放**（L1 未裁）。
-- **禁止把兜底的取数转数从 `definition.rank` 改成 effective_rank**（单独评审）。
-- **禁止改 `game/data/gu.json`**（802 只蛊的个体数值一个都不动）。
-- **禁止改 `game/data/v1_battle.json` 里除 `default_effect_by_role` 外的任何键**。
-- **禁止改 `game/wenzhen-web-lab/**`**（已冻结）。注意：该原型读的是自己生成的
-  `js/data.js`，本批不要求同步它；它是 Disposable Prototype，形状漂移属已知且可接受，
-  在结果包里提一句即可，**不要去改它**。
-- **禁止改敌人的 hp/damage/regen/cooldown 等任何战斗平衡数值**。
-- 禁止 commit / push / merge / stash / reset；禁止新增第三方依赖；
-  禁止 `--no-verify` 绕过任何门禁。
+- **禁止改 `game/data/balance.json`**（30 值真源与全部已登记投影常量零改动）。
+- **禁止改 Godot 侧任何文件**（参考实现，无二进制无法验证）。
+- **禁止改 `game/data/v1_battle.json`**（role→kind 已瘦身的消费面不动）。
+- **禁止改 `js/balance.js`**（LAB_BUDGET_PROJECTION/PP 权重/威胁预算是已冻结锚点）。
+- **禁止手调全部敌人 hp**——只允许 envelope 推导或 override_reason 登记两条路（ANSWER Q2）。
+- **禁止动 MVP 例外登记结构**（guRefs/forbidWriteBack/父引用）。
+- **禁止偏离 `RUL-2026-09-26-001` 的公式、30 值与 policy 名自行发明任何数值**。
+- 禁止 commit / push / merge / stash / reset；禁止新增第三方依赖；禁止 `--no-verify`。
 
 DECISION AUTHORITY
-可自行决定：`amount_by_rank` 的读取实现细节、校验器的报错文案、
-重生成镜像的具体命令、测试的组织方式。
-**不可自行决定**：曲线数值、取数转数、`support_bonus` 缩放、R5 断言、任何其它键的数值。
+可自行决定：测试组织方式、结果包结构、推导表格的呈现形式。
+**不可自行决定**：曲线公式与数值（L1 答复为准）、窗口/威胁预算常量、MVP 例外关系、
+锚定方向（Q3）、任何 WORLD 侧数值。
 
 ESCALATE WHEN
-- 有测试的失败**不是**「夹具值是旧线性值」而是反映真实语义冲突
-- 重生成镜像引入了 A 表之外的数据变化
-- `check_upstream_drift.py` 在重生成后仍报漂移，且原因是本批改动之外的东西
-- 发现兜底表还有本包未列出的第三个读者
+- L1 答复的公式与「窗口 + 威胁预算」数学不可兼容（如实上报，附推导）。
+- Σ==damage 锚定方向与压缩不变量出现冲突路径。
+- 真实敌池出现系统性出窗且无法用 envelope+override 纪律覆盖。
+- 发现兜底曲线还有本包未列出的第三个读者。
 
 DELIVERABLE
-1. 改后的 `default_effect_by_role`（六条曲线）
-2. 改后的 `default_v1_effect()`（按转数索引）
-3. `audit_effect_budget.py` 改为读数据（并给出它的曲线输出）
-4. 重生成的派生镜像 + 漂移归零证据
-5. 测试：更新的过期用例 + 30 个值的逐值断言 + 钳位 + 降转不双扣
-6. **`ai-system/tasks/p3b1-role-curves-result.md`**（Caveman Review Packet）
+1. 新投影条目 diff（含 policy 陈述登记）+ check_projection 全绿输出
+2. 新压缩表 + Σ==damage 校验输出
+3. enemies.json 逐行推导依据表（envelope 值 / 实际值 / 偏差 / 处置）
+4. check_balance 四窗口 + H1 + 威胁窗全绿输出
+5. tests 全绿输出（过期期望值更新的逐处依据）
+6. 真实整局证据（acceptance JSON + 截图）
+7. `ai-system/tasks/p3b1-role-curves-result.md`（Caveman Review Packet）
 
 ACCEPTANCE
-- `python game/world-model/tools/accept.py --smoke 10` 退出码 0
-- `python game/world-model/tools/check_upstream_drift.py` 退出码 0
-- `game/data/gu.json` **零改动**（`git status` 证明）
-- `game/data/v1_battle.json` 的 diff **只落在 `default_effect_by_role` 内**
-- `game/wenzhen-web-lab/**` 零改动
-- `game/scripts/domain/` 的 diff 只落在本包列出的两个函数的范围内
-- Godot 全量 unit 通过（**必须 console 版**：`GODOT_PATH` 指向
-  `…Godot_v4.7.2-stable_win64_console.exe`；**判定通过只看真实 GUT 文本
-  （Passing/Failing/Asserts），不看退出码**——非 console 版 headless 零输出且退 0）
-- 结果包写入 `ai-system/tasks/p3b1-role-curves-result.md`
+- `node tools/check_balance.mjs` 全 PASS（含四窗口）
+- `node tools/check_projection.mjs` 全 PASS
+- `node --test tests/` 全 PASS
+- `git status` 证明：balance.json / v1_battle.json / js/balance.js / Godot 侧零改动
+- enemies.json diff 逐行有推导依据
+- 结果包落盘
 
 STATUS TARGET
 READY_FOR_P3B1_REVIEW
-```
 
 ## 技术事实（L2 已核实，Worker 不必重新考古）
 
 | 事实 | 证据 |
 |---|---|
-| 裁定原文 | `game/world-model/rulings/RUL-2026-09-19-011.json`（B1–B6 可执行，B7 缺定义） |
-| 现行兜底曲线 | `default_effect_by_role` = attack 2 / defense 3 / healing 2 / logistics 1 / movement 1 / recon 1，配 `amount + (rank-1)` 线性律 |
-| 线性律位置 | `v1_battle_resolver.gd:174`（`if RANK_SCALED_KINDS.has(kind)`） |
-| `RANK_SCALED_KINDS` | `v1_battle_resolver.gd:29` = `["strike","shield","heal"]`；另用于 `:205` 降转下调 |
-| 兜底表校验器 | `content_catalog.gd:1191-1228` `_validate_v1_battle_role_defaults`（现断言 `amount` 是正整数） |
-| 兜底表读取点 | `v1_battle_resolver.gd:41` `role_default_table()`；消费者 `:186` `_build_gu_slots`、`hall_snapshot.gd:230` |
-| 审计工具里的第二份规则 | `game/world-model/tools/audit_effect_budget.py:70-72`（正则抠 `RANK_SCALED_KINDS` + 自套 `b+(r-1)`） |
-| 镜像内嵌兜底 | `build_world_model.py:315-316`（`role_default.get(g["role"])` 写进每条蛊记录） |
-| 覆盖规模 | 802 只蛊中 741 只（92%）无手写 `v1_effect`，走兜底 |
-| 现行曲线倍数 | attack 3.0x / defense 2.3x / healing 3.0x / logistics 5.0x / movement 1.0x / recon 1.0x（对 40/80/160/320/640 的 16.0x） |
-| **Godot 跑法坑** | 非 console 版 headless **零输出且退 0**（静默假绿）；判定只看 GUT 文本 |
-| Python | `C:\Users\90877\.workbuddy\binaries\python\versions\3.13.12\python.exe`；`python` 不在 PATH |
-| 终端编码坑 | 控制台 gb2312，**必须** `PYTHONIOENCODING=utf-8` |
-| `.ps1` 必须纯 ASCII | 跑 `.ps1` 用 `pwsh` |
-
-## 执行前置条件（**两条都满足才能开工**）
-
-**① L1 必须先裁镜像写法（P1/P2/P3）。**
-见 §D 与 `ai-system/RESEARCH-REQUEST-2026-09-19-p3b-addendum.md` §4。
-未裁前本任务**不派工**——D 节的产物（派生镜像）是本改动的必经产物，
-镜子写法未定就无法产出可验收的结果。
-
-**② 工作树必须干净。**
-`game/scripts/domain/v1_battle_resolver.gd` 上另有在途改动（SIDE-FIX 敌人运行时补线 + 其返工）。
-开工前跑 `git status --porcelain`：**若该文件仍有未提交改动，停下来上报**，不要在其上叠加。
+| WORLD 真源 30 值 | `game/data/balance.json` effect_budget.default_amount_by_role（Q2 裁定值） |
+| lab 投影当前=旧基线 | `game/wenzhen-web-lab/data/projections.json:59-77`（policy=legacy_..._pending_l1） |
+| 投影消费点（纯映射） | `tools/build_data.mjs:25-33,161-192`（defaultBattleEffect/resolveEffectAmount，rank 钳位 1-5） |
+| 压缩表不变量校验 | `tools/build_data.mjs:44-53`（≤attack 曲线、单调不减）+ Σ==intent.damage |
+| 参考吞吐与敌 HP 推导 | `js/mvp_content.js:129-146`（refKit/refDpr/targetTurns 4/5/5/7.5/hpFor=deriveEnemyHp margin 1.08） |
+| 窗口与 H1 门 | `tools/check_balance.mjs:92-136`（四窗口 + 偏差>20% 需 override_reason） |
+| 威胁预算 | `js/balance.js:284-303`（THREAT_V1 + deriveEnemyDamagePerTurn）+ check_balance.mjs:145-171 |
+| override 登记位置 | `balanceReport.overrideReasons`（check_balance.mjs:115 消费） |
+| MVP 例外 | `projections.json` PROJ-LAB-MVP-GU-EXCEPTION-001 + `mvp_content.js` overrideReason 行 |
+| 真实整局驱动 | `tools/acceptance_lab.mjs`（2026-09-26 新增，四项验收一次覆盖） |
+| Python/编码坑 | 无 Python 依赖；node ≥20；控制台 gb2312，必要时 `PYTHONIOENCODING=utf-8` |
 
 ## Execution rules
 
 - Worker class: `normal`。
-- 改 `game/` 下任何文件前先 `python game/world-model/tools/snapshot.py take p3b1-role-curves`。
+- 改 `game/` 下任何文件前先 `python game/world-model/tools/snapshot.py take p3b1-role-curves-rebase`
+  （工具不可用时在结果包注明并手工 git diff 备底）。
 - 不 commit / 不 push / 不 merge / 不 stash / 不 reset。
 - 结束时按 `ai-system/WORKER_HANDOFF_TEMPLATE.md` 输出 Caveman Review Packet，
   **写入 `ai-system/tasks/p3b1-role-curves-result.md`**。

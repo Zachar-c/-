@@ -124,9 +124,21 @@ function persistSave() {
   }
 }
 
+// 存档 JSON + localStorage.setItem 是同步长任务，放在点击帧会把 1% low 打穿。
+// 合并到下一宏任务：同一帧多次 commit 只写一次；测试 click 后有 sleep，仍能读到档。
+let persistScheduled = false;
+function schedulePersistSave() {
+  if (persistScheduled) return;
+  persistScheduled = true;
+  setTimeout(() => {
+    persistScheduled = false;
+    persistSave();
+  }, 0);
+}
+
 function commit() {
   draw();
-  persistSave();
+  schedulePersistSave();
 }
 
 function resumePage() {
@@ -297,7 +309,8 @@ const BattleFx = {
     if (!el || !Number.isFinite(Number(amount)) || Number(amount) === 0) return;
     const host = el.closest?.('.foe') || el.closest?.('.enemy-actor') || el.parentElement || el;
     if (!host) return;
-    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    // .foe / .enemy-actor 在 CSS 常驻 relative；此处只补意外宿主，避免热路径 getComputedStyle。
+    if (!host.style.position) host.style.position = 'relative';
     const node = document.createElement('span');
     const abs = Math.abs(Number(amount));
     const text = kind === 'heal' || kind === 'qi' || kind === 'block'
@@ -310,20 +323,22 @@ const BattleFx = {
     if (kind === 'counter') node.textContent = '反制';
     if (kind === 'rule') node.textContent = String(amount);
     host.appendChild(node);
+    window.Motion?.float(node);
     setTimeout(() => node.remove(), 760);
   },
   pulse(el) {
     const target = el || document.querySelector('.foe img') || document.querySelector('.foe .fn') || document.querySelector('.foe .hpline i');
     if (!target) return;
+    // 用动画重启代替 void offsetWidth 强制 reflow（布局抖动在战斗热路径上会掉帧）。
     target.classList.remove('dmg-pop');
-    void target.offsetWidth;
-    target.classList.add('dmg-pop');
+    requestAnimationFrame(() => target.classList.add('dmg-pop'));
     setTimeout(() => target.classList.remove('dmg-pop'), 560);
   },
   shakeBox() {
     const box = document.querySelector('#foe-box');
     if (!box) return;
     box.classList.add('hit');
+    window.Motion?.shake(box);
     setTimeout(() => box.classList.remove('hit'), 300);
   },
   pulsePlayerPool(id) {
@@ -331,8 +346,7 @@ const BattleFx = {
     const node = el || document.querySelector('#hud')?.querySelector('.pool.blood, .pool.qi');
     if (!node) return;
     node.classList.remove('dmg-pop');
-    void node.offsetWidth;
-    node.classList.add('dmg-pop');
+    requestAnimationFrame(() => node.classList.add('dmg-pop'));
     setTimeout(() => node.classList.remove('dmg-pop'), 560);
   },
   damage(amount) {
@@ -505,17 +519,30 @@ function rollVictoryLoot(battle) {
   };
 }
 
+// HUD 数值变化时让对应数字弹一下（涨玉色 / 跌朱色；Motion 缺席时静默跳过，只读提示不阻塞）。
+const hudPrevNum = {};
+function hudNumFx(id, text) {
+  const el = $(id);
+  if (!el) return;
+  const prev = hudPrevNum[id];
+  hudPrevNum[id] = text;
+  if (prev === undefined || prev === text) return;
+  const a = parseFloat(prev);
+  const b = parseFloat(text);
+  window.Motion?.hudNum(el, Number.isFinite(a) && Number.isFinite(b) && b !== a ? (b > a ? 1 : -1) : 0);
+}
+
 function hud() {
   const qiPct = Math.max(0, Math.min(100, (state.qi / Math.max(1, state.qiMax)) * 100));
   $('#hud-qi').style.width = qiPct + '%';
-  $('#hud-qi-num').textContent = `${Math.round(state.qi)}/${state.qiMax}`;
+  hudNumFx('hud-qi-num', `${Math.round(state.qi)}/${state.qiMax}`);
   $('#hud-qi-meter').setAttribute('aria-valuemax', String(state.qiMax));
   $('#hud-qi-meter').setAttribute('aria-valuenow', String(Math.round(state.qi)));
-  $('#hud-thought').textContent = state.thought;
-  $('#hud-stone').textContent = state.stones;
-  $('#hud-blood').textContent = state.blood;
-  $('#hud-life').textContent = state.lifeTime;
-  $('#hud-soul').textContent = `${state.soul}/${state.soulMax}`;
+  hudNumFx('hud-thought', String(state.thought));
+  hudNumFx('hud-stone', String(state.stones));
+  hudNumFx('hud-blood', String(state.blood));
+  hudNumFx('hud-life', String(state.lifeTime));
+  hudNumFx('hud-soul', `${state.soul}/${state.soulMax}`);
   const apt = { jia: '甲等', yi: '乙等', bing: '丙等', ding: '丁等' }[state.aptitude];
   $('#hud-talent').textContent = `${apt} · ${RunFlow.stageLabel(state.cultivation, state.cultivationStage)}`;
   document.body.dataset.runActive = state.journey.started ? 'true' : 'false';
@@ -546,11 +573,12 @@ function hud() {
 }
 
 function draw() {
+  // 性能：只绘当前页 + HUD。showPage 切页时单独渲染目标页，避免每次动作重建全部面板。
   hud();
   updateSceneArt();
-  renderJourneyPages();
-  renderBattle($('#panel-battle'));
-  renderCover($('#panel-cover'));
+  renderJourneyPage(state.page);
+  if (state.page === 'battle') renderBattle($('#panel-battle'));
+  else if (state.page === 'cover') renderCover($('#panel-cover'));
   updateNavigation();
   syncDock();
 }
@@ -1882,9 +1910,14 @@ function showPage(page) {
   const next = typeof page === 'string' && panelIds.includes(`panel-${page}`) ? page : 'hall';
   state.page = next;
   document.body.dataset.page = next;
+  // 切到哪页就绘哪页（draw 只维护当前页；不切页的提交走 draw）。
+  renderJourneyPage(next);
+  if (next === 'battle') renderBattle($('#panel-battle'));
+  else if (next === 'cover') renderCover($('#panel-cover'));
   hud();
   document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === next));
   document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('on', p.id === `panel-${next}`));
+  window.Motion?.pageEnter(document.getElementById(`panel-${next}`));
   updateNavigation();
   syncDock();
 }
@@ -1907,6 +1940,7 @@ function syncDock() {
   const hint = document.querySelector('#dock-hint');
   if (!slot || !hint) return;
   const page = state.page;
+  const prevDock = slot.firstElementChild ? slot.firstElementChild.textContent : '';
   hint.textContent = DOCK_HINTS[page] || '处理当前场景中的下一步';
   slot.innerHTML = '';
   const panel = document.querySelector(`#panel-${page}`);
@@ -1944,6 +1978,7 @@ function syncDock() {
     src.click();
   });
   slot.appendChild(mirror);
+  if (mirror.textContent !== prevDock) window.Motion?.dockIn(mirror);
 }
 
 // 卡片式按钮（地图节点 / 战后三选一）不镜像进 dock：多选场景由玩家在场景内直接选择，
@@ -2004,6 +2039,12 @@ globalThis.__labBootInfo = function labBootInfo() {
     lastSaveStatus: { ...lastSaveStatus },
     contentVersion: contentVersion(),
     inProgress: isInProgressRun(),
+    // 动效层诊断（js/motion.js）：只读，供走盘与探针确认 GSAP 是否在驱动。
+    motion: {
+      gsap: (window.gsap && window.gsap.version) || null,
+      active: !!(window.Motion && window.Motion.active),
+      motionOn: document.documentElement.classList.contains('motion-on'),
+    },
   };
 };
 document.documentElement.dataset.ready = '1';

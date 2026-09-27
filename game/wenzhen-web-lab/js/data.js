@@ -1109,13 +1109,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_qi",
       "combat": "vitality_grass_remedy",
       "battleEffect": {
         "kind": "heal",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1525,13 +1525,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "shield",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_qi",
       "combat": "qi_guard_pattern",
       "battleEffect": {
         "kind": "shield",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1583,13 +1583,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_qi",
       "combat": "wood_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1614,13 +1614,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_water",
       "combat": "water_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1675,13 +1675,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_blood",
       "combat": "blood_healing_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1854,13 +1854,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_qi",
       "combat": "bone_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2136,13 +2136,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_wind",
       "combat": "wind_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2225,13 +2225,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 5
+        "amount": 3
       },
       "icon": "gu_force",
       "combat": "force_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 5
+        "amount": 3
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2254,13 +2254,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2283,13 +2283,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 3
+        "amount": 2
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 3
+        "amount": 2
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2312,13 +2312,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 6
+        "amount": 4
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 6
+        "amount": 4
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2341,13 +2341,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2370,13 +2370,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2399,13 +2399,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2638,13 +2638,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2667,13 +2667,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 2
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2696,13 +2696,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "shield",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_defense_pattern",
       "battleEffect": {
         "kind": "shield",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2754,13 +2754,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_healing_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2818,13 +2818,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_logistics_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2847,13 +2847,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2876,13 +2876,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 5
+        "amount": 3
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 5
+        "amount": 3
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2905,13 +2905,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "shield",
-        "amount": 7
+        "amount": 4
       },
       "icon": "gu_light",
       "combat": "light_defense_pattern",
       "battleEffect": {
         "kind": "shield",
-        "amount": 7
+        "amount": 4
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -2963,13 +2963,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_healing_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3027,13 +3027,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_logistics_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3056,13 +3056,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3085,13 +3085,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 5
+        "amount": 3
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 5
+        "amount": 3
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3114,13 +3114,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "shield",
-        "amount": 7
+        "amount": 4
       },
       "icon": "gu_light",
       "combat": "light_defense_pattern",
       "battleEffect": {
         "kind": "shield",
-        "amount": 7
+        "amount": 4
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3172,13 +3172,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_healing_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3236,13 +3236,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "icon": "gu_light",
       "combat": "light_logistics_pattern",
       "battleEffect": {
         "kind": "heal",
-        "amount": 3
+        "amount": 1
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3265,13 +3265,13 @@ const DATA = {
       "cost": 0,
       "effect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
       "battleEffect": {
         "kind": "strike",
-        "amount": 4
+        "amount": 2
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -3861,7 +3861,7 @@ const DATA = {
       "intent": {
         "id": "stone_palm",
         "label": "掌势蓄而未发",
-        "damage": 2,
+        "damage": 1,
         "speed": 1,
         "guRefs": [
           "bone_atk_1_08_gu"
@@ -4034,7 +4034,7 @@ const DATA = {
       "intent": {
         "id": "marrow_lance",
         "label": "蚀骨骨矛",
-        "damage": 3,
+        "damage": 2,
         "speed": 2,
         "guRefs": [
           "water_atk_3_05_gu"
@@ -4077,7 +4077,7 @@ const DATA = {
       "intent": {
         "id": "swift_crossbow",
         "label": "弩箭上弦",
-        "damage": 3,
+        "damage": 2,
         "speed": 3,
         "guRefs": [
           "fire_atk_2_01_gu"
@@ -4225,7 +4225,7 @@ const DATA = {
       "intent": {
         "id": "miasma_burst",
         "label": "瘴气喷涌",
-        "damage": 2,
+        "damage": 1,
         "speed": 1,
         "guRefs": [
           "water_atk_1_08_gu"
@@ -4239,7 +4239,7 @@ const DATA = {
             {
               "id": "miasma_burst",
               "label": "瘴气喷涌",
-              "damage": 2,
+              "damage": 1,
               "speed": 1,
               "cooldown": 2,
               "guRefs": [
@@ -4264,7 +4264,7 @@ const DATA = {
             {
               "id": "miasma_burst",
               "label": "瘴气喷涌",
-              "damage": 2,
+              "damage": 1,
               "speed": 1,
               "cooldown": 2,
               "guRefs": [
@@ -4432,7 +4432,7 @@ const DATA = {
       "intent": {
         "id": "clan_wrath",
         "label": "一族之威",
-        "damage": 4,
+        "damage": 2,
         "speed": 2,
         "cooldown": 1,
         "guRefs": [
@@ -4448,7 +4448,7 @@ const DATA = {
             {
               "id": "clan_wrath",
               "label": "一族之威",
-              "damage": 4,
+              "damage": 2,
               "speed": 2,
               "cooldown": 1,
               "guRefs": [
@@ -4474,7 +4474,7 @@ const DATA = {
             {
               "id": "clan_wrath",
               "label": "一族之威",
-              "damage": 4,
+              "damage": 2,
               "speed": 2,
               "cooldown": 1,
               "guRefs": [
@@ -4631,7 +4631,7 @@ const DATA = {
       "intent": {
         "id": "shield_bash",
         "label": "盾墙冲撞",
-        "damage": 3,
+        "damage": 2,
         "speed": 3,
         "guRefs": [
           "sword_atk_2_12_gu"
@@ -4692,7 +4692,7 @@ const DATA = {
       "intent": {
         "id": "mo_hunt_fork",
         "label": "漠家猎叉",
-        "damage": 2,
+        "damage": 1,
         "speed": 1,
         "guRefs": [
           "bone_atk_1_08_gu"
@@ -4734,7 +4734,7 @@ const DATA = {
       "intent": {
         "id": "corpse_command",
         "label": "驱僵号令",
-        "damage": 2,
+        "damage": 1,
         "speed": 1,
         "guRefs": [
           "bone_atk_1_08_gu"
@@ -4748,7 +4748,7 @@ const DATA = {
             {
               "id": "corpse_command",
               "label": "驱僵号令",
-              "damage": 2,
+              "damage": 1,
               "speed": 1,
               "cooldown": 2,
               "guRefs": [
@@ -4773,7 +4773,7 @@ const DATA = {
             {
               "id": "corpse_command",
               "label": "驱僵号令",
-              "damage": 2,
+              "damage": 1,
               "speed": 1,
               "cooldown": 2,
               "guRefs": [
@@ -4925,7 +4925,7 @@ const DATA = {
       "intent": {
         "id": "bone_spear_barrage",
         "label": "骨枪连掷",
-        "damage": 3,
+        "damage": 2,
         "speed": 2,
         "guRefs": [
           "water_atk_3_05_gu"
@@ -4967,7 +4967,7 @@ const DATA = {
       "intent": {
         "id": "overseer_whip",
         "label": "鞭笞驱兽",
-        "damage": 3,
+        "damage": 2,
         "speed": 1,
         "guRefs": [
           "moon_ray_gu"
@@ -4981,7 +4981,7 @@ const DATA = {
             {
               "id": "overseer_whip",
               "label": "鞭笞驱兽",
-              "damage": 3,
+              "damage": 2,
               "speed": 1,
               "cooldown": 1,
               "guRefs": [
@@ -5006,7 +5006,7 @@ const DATA = {
             {
               "id": "overseer_whip",
               "label": "鞭笞驱兽",
-              "damage": 3,
+              "damage": 2,
               "speed": 1,
               "cooldown": 1,
               "guRefs": [
@@ -7324,7 +7324,7 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "797e47133c44514582a95023d0b67d4083a2817c95b5c82b261e318467903ca9",
+    "contentVersion": "504fa0e53fd30cfb1cf572807058375fc442ed2839676253a521c35db373d516",
     "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "entities": {
       "bear_strength_gu": {
@@ -8234,32 +8234,32 @@ const DATA = {
   "projections": {
     "role_curve_lab": {
       "attack": [
+        1,
+        2,
         2,
         3,
-        4,
-        5,
-        6
+        4
       ],
       "defense": [
-        3,
-        4,
-        5,
-        6,
-        7
-      ],
-      "healing": [
+        1,
+        2,
         2,
         3,
-        4,
-        5,
-        6
+        4
+      ],
+      "healing": [
+        1,
+        1,
+        2,
+        2,
+        3
       ],
       "logistics": [
         1,
+        1,
+        1,
         2,
-        3,
-        4,
-        5
+        2
       ],
       "movement": [
         1,
@@ -8277,10 +8277,10 @@ const DATA = {
       ]
     },
     "enemy_attack_amount_by_gu_rank": {
-      "1": 2,
-      "2": 3,
-      "3": 3,
-      "4": 4,
+      "1": 1,
+      "2": 2,
+      "3": 2,
+      "4": 3,
       "5": 4
     }
   },
@@ -8853,5 +8853,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "a495ae1b15802a9cee3e4fafba4d3e11c71431f7c7de2e7bbf4064224737b328"
+  "contentVersion": "52f8d0dfac58243feeb0906dfdf772f0fdf614f2c7789d4eeaf28fe71ffeae90"
 };

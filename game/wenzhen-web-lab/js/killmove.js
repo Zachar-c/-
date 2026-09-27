@@ -1,15 +1,18 @@
 // 杀招组装。普通脚本：全局 renderKillmove。
+// 名称/图标走 GU_BY_ID；variant 只对「可组或已装备」展开，避免每次整备重绘都做笛卡尔积。
 function renderKillmove(root) {
-  const nameOf = (id) => (DATA.gu.find((g) => g.id === id) || {}).name || id;
+  const guMap = typeof GU_BY_ID !== 'undefined' ? GU_BY_ID : Object.fromEntries(DATA.gu.map((x) => [x.id, x]));
+  const nameOf = (id) => (guMap[id] && guMap[id].name) || id;
   const iconOf = (id) => {
-    const g = DATA.gu.find((x) => x.id === id);
+    const g = guMap[id];
     return g ? `../assets/wenzhen/gu/${g.icon}.png` : '';
   };
+  const kmById = Object.fromEntries(DATA.killMoves.map((m) => [m.id, m]));
 
   const slots = Array.from({ length: 3 }, (_, i) => {
     const id = state.equipped[i];
     if (!id) return '<div class="slot">空</div>';
-    const km = DATA.killMoves.find((m) => m.id === id);
+    const km = kmById[id];
     if (!km) return '<div class="slot">空</div>';
     return `<div class="slot filled" title="${km.label}">${(km.recipe[0] && `<img src="${iconOf(km.recipe[0])}" alt="">`) || km.label}</div>`;
   }).join('');
@@ -20,7 +23,9 @@ function renderKillmove(root) {
     const mats = m.recipe.map((id) =>
       `<span title="${nameOf(id)}" style="display:inline-flex;align-items:center;gap:5px;margin-right:9px">
          <img src="${iconOf(id)}" style="width:22px;height:22px;object-fit:contain">${nameOf(id)}</span>`).join('');
-    const variants = GuRules.killMoveVariants(m, state.owned, GU_BY_ID).filter((v) => v.changed);
+    const variants = (can || on)
+      ? GuRules.killMoveVariants(m, state.owned, guMap).filter((v) => v.changed)
+      : [];
     const variantNote = variants.length
       ? `<div class="mr" style="opacity:.85">Variant：${variants.slice(0, 2).map((v) => `${v.recipe.map(nameOf).join('+')} → ${v.signature}`).join('；')}</div>`
       : '';
@@ -39,7 +44,5 @@ function renderKillmove(root) {
     <div class="slots">${slots}</div>
     <h2>可组杀招 · 配方来自原著数据表</h2>
     <div class="moves">${cards}</div>`;
-
-  root.querySelectorAll('[data-km]').forEach((b) =>
-    b.addEventListener('click', () => act.toggleMove(b.dataset.km)));
+  // 点击由 journey.js 整备页事件委托收口。
 }

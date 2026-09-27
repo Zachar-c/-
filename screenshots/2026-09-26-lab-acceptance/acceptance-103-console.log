@@ -1,0 +1,14 @@
+{
+  "seed": 103,
+  "difficulty": "normal",
+  "victory": true,
+  "reloadOk": true,
+  "eventOk": true,
+  "replayOk": true,
+  "noErrors": true,
+  "outcome": "victory",
+  "events": 7,
+  "completed": 55,
+  "detail": "PASS",
+  "jsonPath": "C:\\Users\\90877\\work_space\\gu-zhenren\\screenshots\\2026-09-26-lab-acceptance\\acceptance-seed103-normal-gu_first.json"
+}

@@ -186,6 +186,24 @@ export async function openLab(options = {}) {
       await sleep(80);
       return true;
     },
+    // 页内同步点击耗时（含 act→draw 主线程成本）；不含 helper 的 sleep。
+    async measureClick(selector) {
+      return evalJs(`(() => {
+        const els = [...document.querySelectorAll(${JSON.stringify(selector)})];
+        const visible = (e) => {
+          if (e.disabled) return false;
+          if (e.hidden) return false;
+          const style = getComputedStyle(e);
+          if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return false;
+          return !!(e.offsetWidth || e.offsetHeight || e.getClientRects().length);
+        };
+        const b = els.find(visible);
+        if (!b) return { ok: false, reason: 'NONE' };
+        const t0 = performance.now();
+        b.click();
+        return { ok: true, ms: performance.now() - t0 };
+      })()`);
+    },
     async snapshot() {
       // 只读完整可序列化 state（main.js __labSnapshot）。
       const value = await evalJs(`(typeof __labSnapshot === 'function') ? __labSnapshot() : null`);
@@ -194,6 +212,47 @@ export async function openLab(options = {}) {
     async bootInfo() {
       const value = await evalJs(`(typeof __labBootInfo === 'function') ? __labBootInfo() : null`);
       return value;
+    },
+    // 只读 rAF 帧间隔采样（稳定 60 帧验收）。不改状态、不驱动玩法。
+    // 返回含 1% low：最差 1% 帧的平均帧时间换算 FPS（验收要求 > 60）。
+    // 丢掉前 warmup 帧，避免启动/GC 首帧把 1% low 打穿。
+    async sampleFps(ms = 1200, warmupFrames = 30) {
+      return evalJs(`(() => new Promise((resolve) => {
+        const gaps = [];
+        let last = performance.now();
+        const t0 = last;
+        const warmup = ${Number(warmupFrames) || 0};
+        const tick = (now) => {
+          gaps.push(now - last);
+          last = now;
+          if (now - t0 < ${Number(ms) || 1200}) requestAnimationFrame(tick);
+          else {
+            const body = gaps.slice(1 + warmup);
+            if (!body.length) {
+              resolve({ frames: 0, avgGap: 0, avgFps: 0, p50: 0, p95: 0, max: 0, low1: 0, low1Gap: 0 });
+              return;
+            }
+            body.sort((a, b) => a - b);
+            const avg = body.reduce((s, x) => s + x, 0) / body.length;
+            const p = (q) => body[Math.min(body.length - 1, Math.floor(body.length * q))];
+            // 1% low：最慢 1% 帧的平均帧时间 → FPS（业界口径；n 很小时至少取 1 帧）。
+            const worstCount = Math.max(1, Math.ceil(body.length * 0.01));
+            const worst = body.slice(-worstCount);
+            const low1Gap = worst.reduce((s, x) => s + x, 0) / worst.length;
+            resolve({
+              frames: body.length,
+              avgGap: avg,
+              avgFps: 1000 / Math.max(avg, 0.01),
+              p50: p(0.5),
+              p95: p(0.95),
+              max: body[body.length - 1],
+              low1Gap,
+              low1: 1000 / Math.max(low1Gap, 0.01),
+            });
+          }
+        };
+        requestAnimationFrame(tick);
+      }))()`);
     },
     async reload() {
       await S('Page.navigate', { url: currentUrl });

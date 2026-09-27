@@ -22,6 +22,10 @@
 | `LAB_BUDGET_PROJECTION = 20` | `js/balance.js:49` |
 | `LAB_PRICING_V1` / `THREAT_V1` 相对尺 | `js/balance.js:35`、`js/balance.js:126` |
 
+## 换基注记（2026-09-25 L0 裁定 `RUL-2026-09-25-001` Q2）
+
+role 曲线真源将迁 `game/data/balance.json` 新增 `effect_budget.default_amount_by_role`，`v1_battle.json` 只存 role→default semantic kind；WORLD→LAB 投影须显式化（parent/policy/formula/forbidWriteBack），MVP 四蛊转为 `explicit_projection_exception`（有父引用、有 policy、forbidWriteBack=true）。上表锚点在换基批落地前仍现行；换基批验收五条见 RR ANSWER Q2。
+
 ## 变更纪律
 
 - 上表冻结值属 L1/L0 边界：调整走 [`BALANCE_EVIDENCE_DISCIPLINE.md`](BALANCE_EVIDENCE_DISCIPLINE.md) 与根 `AGENTS.md` 数值边界。

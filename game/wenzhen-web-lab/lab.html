@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>问真</title>
 <link rel="icon" href="data:," />
-<link rel="stylesheet" href="css/lab.css?v=inkseal-1" />
+<link rel="stylesheet" href="css/lab.css?v=inkseal-3" />
 </head>
 <body data-page="hall" data-run-active="false">
   <div id="bg"></div>
@@ -95,9 +95,14 @@
   <script src="js/rules.js"></script>
   <script src="js/alchemy.js"></script>
   <script src="js/killmove.js"></script>
+  <script src="js/poc_moonlight.js?v=poc-1"></script>
   <script src="js/battle.js?v=battle-prep-1"></script>
   <script src="js/journey.js"></script>
   <script src="js/lab_save.js"></script>
+  <!-- 动效层：GSAP 本地 vendor（file:// 离线可用，非 ES module）+ 表现层 motion.js。
+       两者缺席时全部静默回退 lab.css 原生 CSS 动画，不影响玩法与走盘。 -->
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/motion.js?v=motion-2"></script>
   <script src="js/main.js"></script>
   <!-- 内联脚本不会被 CORS 拦，可靠地兜底：外部脚本若没执行（旧缓存 / 路径错 / 版本不匹配），
        页面会明确报错，而不是留一个 HUD 看着正常、按钮却没反应的空壳。 -->

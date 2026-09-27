@@ -1,0 +1,107 @@
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=101 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|ridge_hound:3||0||
+[autoplay] step=50 battle|||5|1|1|0|20|8|mo_family_huntsman:0,faction_guard:2||7||
+[autoplay] step=100 battle|||1|1|1|3|60|17|beast_swarm:3||12||
+[autoplay] step=150 map|||||0|1|60|24||L2D9N0,L2D9N1,L2D9N2|20||
+[autoplay] step=200 battle|||3|0|2|2|60|15|iron_hide_boar:1||24||
+{"class":"NORMAL_RUN","seed":101,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":215,"softlocks":0,"consoleErrors":0,"completed":25}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=102 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||6|0|2|0|20|3|faction_guard:0,ridge_elite_scout:2||7||
+{"class":"NORMAL_RUN","seed":102,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":87,"softlocks":0,"consoleErrors":0,"completed":10}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=103 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||5|1|1|0|20|8|mo_family_huntsman:0,faction_guard:2||7||
+[autoplay] step=100 battle|||1|0|2|3|60|14|iron_hide_boar:5||12||
+[autoplay] step=150 battle|||2|0|2|2|60|22|beast_swarm:2||19||
+[autoplay] step=200 battle|||2|0|2|5|60|21|ridge_hound:1||24||
+[autoplay] step=250 node-action|||||1|6|60|24|||31||
+[autoplay] step=300 ending|defeat||||0|0|60|0|||36||
+{"class":"NORMAL_RUN","seed":103,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":301,"softlocks":0,"consoleErrors":0,"completed":36}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=104 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|beast_swarm:4||0||
+[autoplay] step=50 battle|||5|0|2|0|20|10|ridge_elite_scout:0,mo_family_huntsman:3||7||
+[autoplay] step=100 battle|||1|1|1|5|60|15|iron_hide_boar:4||12||
+{"class":"NORMAL_RUN","seed":104,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":129,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=105 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|beast_swarm:4||0||
+[autoplay] step=50 battle|||6|0|2|0|20|5|mo_family_huntsman:0,faction_guard:1||7||
+[autoplay] step=100 battle|||2|0|2|1|60|13|iron_hide_boar:3||12||
+{"class":"NORMAL_RUN","seed":105,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":125,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=106 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|ridge_hound:3||0||
+[autoplay] step=50 reward|||||1|8|20|13|||7|R|
+[autoplay] step=100 battle|||2|1|1|3|60|15|beast_swarm:1||12||
+{"class":"NORMAL_RUN","seed":106,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":125,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=107 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||6|0|2|0|20|3|faction_guard:0,ridge_elite_scout:2||7||
+{"class":"NORMAL_RUN","seed":107,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":87,"softlocks":0,"consoleErrors":0,"completed":10}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=108 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||5|1|1|0|20|8|mo_family_huntsman:0,faction_guard:2||7||
+[autoplay] step=100 battle|||1|0|2|3|60|14|iron_hide_boar:5||12||
+{"class":"NORMAL_RUN","seed":108,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":128,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=109 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|beast_swarm:4||0||
+[autoplay] step=50 battle|||5|0|2|0|20|10|ridge_elite_scout:0,mo_family_huntsman:3||7||
+[autoplay] step=100 battle|||1|0|2|1|60|15|iron_hide_boar:5||12||
+[autoplay] step=150 battle|||2|1|1|4|60|22|iron_hide_boar:2||19||
+[autoplay] step=200 battle|||2|0|2|1|60|21|ridge_hound:1||24||
+[autoplay] step=250 node-action|||||1|5|60|24|||31||
+{"class":"NORMAL_RUN","seed":109,"policy":"balanced","outcome":"defeat","terminalReason":"魂魄耗尽","steps":293,"softlocks":0,"consoleErrors":0,"completed":36}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=110 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|beast_swarm:4||0||
+[autoplay] step=50 battle|||5|1|1|0|20|8|mo_family_huntsman:0,faction_guard:2||7||
+[autoplay] step=100 battle|||2|0|2|3|60|13|ridge_hound:1||12||
+{"class":"NORMAL_RUN","seed":110,"policy":"balanced","outcome":"defeat","terminalReason":"魂魄耗尽","steps":114,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=111 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||6|0|2|0|20|5|mo_family_huntsman:0,ridge_elite_scout:1||7||
+[autoplay] step=100 battle|||2|1|1|3|60|15|beast_swarm:1||12||
+[autoplay] step=150 battle|||1|1|1|5|60|24|beast_swarm:3||20||
+[autoplay] step=200 battle|||3|0|2|1|60|15|iron_hide_boar:1||24||
+{"class":"NORMAL_RUN","seed":111,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":215,"softlocks":0,"consoleErrors":0,"completed":25}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=112 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||6|0|2|0|20|8|faction_guard:0,mo_family_huntsman:1||7||
+[autoplay] step=100 battle|||2|0|2|5|60|15|beast_swarm:2||12||
+{"class":"NORMAL_RUN","seed":112,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":125,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=113 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|neutral_stone_wanderer:4||0||
+[autoplay] step=50 battle|||5|1|1|0|20|8|mo_family_huntsman:0,ridge_elite_scout:2||7||
+[autoplay] step=100 map|||||1|3|60|14||L2D1N0,L2D1N1,L2D1N2|12||
+[autoplay] step=150 battle|||2|0|2|6|60|22|beast_swarm:2||19||
+[autoplay] step=200 battle|||1|1|1|1|60|23|ridge_hound:2||24||
+{"class":"NORMAL_RUN","seed":113,"policy":"balanced","outcome":"defeat","terminalReason":"魂魄耗尽","steps":208,"softlocks":0,"consoleErrors":0,"completed":25}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=114 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|beast_swarm:4||0||
+[autoplay] step=50 battle|||5|0|2|0|20|6|ridge_elite_scout:0,faction_guard:4||7||
+[autoplay] step=100 battle|||1|0|2|3|60|14|iron_hide_boar:5||12||
+{"class":"NORMAL_RUN","seed":114,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":130,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=115 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|beast_swarm:4||0||
+[autoplay] step=50 battle|||5|1|1|0|20|8|mo_family_huntsman:0,ridge_elite_scout:2||7||
+[autoplay] step=100 battle|||1|1|1|3|60|15|ridge_hound:2||12||
+{"class":"NORMAL_RUN","seed":115,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":125,"softlocks":0,"consoleErrors":0,"completed":14}
+[autoplay] open entry=C:\Users\90877\work_space\gu-zhenren\game\wenzhen-web-lab\lab.html seed=116 policy=balanced
+[autoplay] run started
+[autoplay] step=0 battle|||1|0|2|3|20|24|iron_hide_boar:5||0||
+[autoplay] step=50 battle|||5|0|2|0|20|6|ridge_elite_scout:0,faction_guard:4||7||
+{"class":"NORMAL_RUN","seed":116,"policy":"balanced","outcome":"defeat","terminalReason":"气血耗尽","steps":89,"softlocks":0,"consoleErrors":0,"completed":10}
+PASS: 16 局完成（full）

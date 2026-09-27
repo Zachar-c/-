@@ -195,7 +195,9 @@ body:not([data-page="battle"]) .pool.thought { display: none; }
   scrollbar-color: rgba(233, 220, 194, .26) transparent;
 }
 .panel { display: none; }
-.panel.on { display: block; animation: rise 280ms ease both; }
+/* 未展示面板不参与布局/绘制；配合 draw 只绘当前页，避免隐藏页的样式失效成本。 */
+.panel:not(.on) { content-visibility: hidden; contain: layout style; }
+.panel.on { display: block; animation: rise 280ms ease both; contain: layout style; }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* ── 主行动坞：下一步永远在底部同一位置；主键是一方落下的印 ── */
@@ -338,7 +340,9 @@ h2::before {
   min-height: 224px; max-height: 268px; overflow: auto;
   padding-left: 15px; border-left: 1px solid var(--hairline);
   font-size: 13px; line-height: 2.0; color: var(--ink-soft);
+  contain: layout paint;
 }
+.log-truncated { opacity: .55; font-size: 11px; letter-spacing: 1px; }
 .log b { color: var(--ink); font-weight: 400; }
 .log .dmg { color: var(--cinnabar); }
 .log .heal { color: var(--jade); }
@@ -774,6 +778,16 @@ h2::before {
   .map-node.available:hover:not(:disabled) { transform: none; }
 }
 
+/* ── GSAP 动效层接管（js/motion.js）────────────────────────────────
+ * html.motion-on 由 motion.js 在「GSAP 可用且系统未偏好减弱动效」时挂上。
+ * GSAP 接管的动画在下方关掉对应 keyframes，避免 CSS/GSAP 双重驱动同一属性；
+ * GSAP 缺席时 motion-on 不存在，一切回退到上方原生 CSS 动画。 */
+html.motion-on .panel.on { animation: none; }
+html.motion-on .float-dmg { animation: none; }
+html.motion-on #foe-box.hit { animation: none; }
+/* 敌方受击横震战斗中高频触发：常驻提升为合成层，省掉每次震动的 layer 提升/回收。 */
+html.motion-on #foe-box { will-change: transform; }
+
 @media (pointer: coarse) {
   button { min-height: 44px; }
   #tabs button, .prep-tabs button { min-height: 48px; }
@@ -1066,4 +1080,56 @@ button {
   .prep-tabs { gap: 0; }
   .prep-tabs button { flex: 0 0 auto; padding-inline: 11px; }
   .shop-grid, #panel-prep .prep-pane[data-pane="gu"] .grid { grid-template-columns: 1fr; }
+}
+
+/* ===== POC：月光蛊本体/收藏投影贴图挂载（visual_poc，随 js/poc_moonlight.js 一并移除）===== */
+/* 本体：走原 .gu 卡 48px 图位，只加冰璃辉光衬托透明材质。
+   特异度必须 ≥ .gu img:not(.thumb)（0-2-1），否则 48px 规则会压掉投影横幅尺寸。 */
+.gu img.poc-canonical {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 7px rgba(169, 215, 255, .38));
+}
+/* 收藏投影：卡顶横幅 + 幻想皮肤标识（主题皮肤≠世界事实，标识不可省）。 */
+.poc-moon-card .poc-art { position: relative; margin: 2px 0 8px; }
+.gu img.poc-projection {
+  display: block;
+  width: 100%;
+  height: 118px;
+  object-fit: cover;
+  object-position: 50% 16%;
+  border: 1px solid var(--line-soft, rgba(190, 220, 244, .09));
+  border-radius: 6px;
+  background: linear-gradient(180deg, #0a1622, #050b12);
+}
+.poc-moon-card .poc-theme-flag {
+  position: absolute;
+  left: 7px;
+  bottom: 7px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid rgba(233, 220, 194, .3);
+  background: rgba(3, 7, 13, .74);
+  color: var(--ink-soft, rgba(226, 240, 252, .72));
+}
+.poc-mode-btn { margin-left: 8px; padding: 1px 8px; font-size: 10px; letter-spacing: 1px; vertical-align: 2px; }
+/* 战斗语境：蛊虫按钮 / 可用蛊虫列表固定本体小图。 */
+.pick .pick-actions .poc-gu-btn-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 8px;
+  filter: drop-shadow(0 0 5px rgba(169, 215, 255, .4));
+}
+.moves .move .poc-gu-btn-icon {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 10px;
+  filter: drop-shadow(0 0 6px rgba(169, 215, 255, .35));
 }
