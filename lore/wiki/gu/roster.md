@@ -30,7 +30,7 @@ schema: 2
 
 本页是蛊虫实体层的粗粒度总表（L5 综合导航页）：只回答"什么蛊、几转、什么用、在谁手里"，不承载饲养消耗、炼制配方细节与游戏数值。与[世界操作系统](../world/world-operating-system.md)的炼制飞轮、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)互补。
 
-- 已建独立页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)（石皮蛊/玉皮蛊/白豕蛊/刀翅血蝠蛊身份证据）。本表不重复其内容。
+- 已建独立页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[酒虫](wine-insect-gu.md)、[白豕蛊](white-boar-gu.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)（石皮蛊/玉皮蛊/白豕蛊/刀翅血蝠蛊身份证据）。本表不重复其内容。
 - 锚点约定同[人物总表](../characters/roster.md)：`A2b 17024` 指读书笔记内标注的原文行号；`原文 56826` 指 `蛊真人-clean.txt:56826`。
 - 品阶口径：一至五转凡蛊、六转起仙蛊（`canon-index:CAN-IMMORTAL-BOUNDARY-001`）；未知品阶只写"品阶未核"，不凭名称推断。
 
