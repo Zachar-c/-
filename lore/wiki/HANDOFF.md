@@ -1,4 +1,8 @@
-# HANDOFF——Narrative Compiler 会话交接（2026-09-25）
+# 历史生产记录 · HANDOFF（已降级）
+
+> **【历史文件 · 非现行工作流】**（L1 裁决 D-D，2026-09-26）：A/B/C 三线交接体系已结束。新会话请读 [l1-extraction-direction-2026-09-26.md](l1-extraction-direction-2026-09-26.md) 与 [AGENTS.md](AGENTS.md)，不要按本文件的三线车道开工。
+>
+> 现行生产链与知识生产等级（CANON_VERIFIED → … → GAME_GENERATION_READY）见方向书 §5。
 
 > 本文件是 A 线会话交接文档：任何新会话读完本文件即可无状态接续。状态快照与三线车道见 [COORDINATION.md](COORDINATION.md)；批次史见 [log.md](log.md)；本文件只保留接续所需的最小协议与待办。
 

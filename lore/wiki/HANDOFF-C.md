@@ -1,4 +1,6 @@
-# HANDOFF-C——C 线（按剧情顺序精蒸馏）会话交接（2026-09-25）
+# 历史生产记录 · HANDOFF-C（已降级）
+
+> **【历史文件 · 非现行工作流】**（L1 裁决 D-D，2026-09-26）：C 线剧情精蒸馏车道已结束。十三弧事实仍在 `events/` 各页，作检索与 Context Pack 来源；生产优先级见 [l1-extraction-direction-2026-09-26.md](l1-extraction-direction-2026-09-26.md)（弧序非主线，按需 JIT deepening）。
 
 > 本文件是 C 线会话交接文档：新会话读完 [HANDOFF.md](HANDOFF.md)（通用协议）+ 本文件即可无状态接续 C 线。车道权威版见 [COORDINATION.md](COORDINATION.md)；C 线批次史见 [log.md](log.md)（检索"TKF/CAR/WTC/RTC"）。
 

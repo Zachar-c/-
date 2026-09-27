@@ -1,4 +1,6 @@
-# B 线交接文档（全书粗蒸馏）— 2026-09-25
+# 历史生产记录 · B 线交接文档（已降级）
+
+> **【历史文件 · 非现行工作流】**（L1 裁决 D-D，2026-09-26）：B 线粗蒸馏车道已结束。现行生产链见 [l1-extraction-direction-2026-09-26.md](l1-extraction-direction-2026-09-26.md)。知识以 `lore/wiki/` 各页为准；本文件只作历史批次记录。
 
 > 接手前必读：根 `AGENTS.md` → `lore/wiki/AGENTS.md` → `lore/wiki/COORDINATION.md`（车道规则）→ `lore/wiki/log.md`（B 线条目）→ 本文件。
 > 本文件是操作层交接，不是知识规范；知识以 `lore/wiki/` 各页与 `game/data/` 为准。
