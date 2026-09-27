@@ -29,6 +29,7 @@ tags: [overview, hub, wiki, canon]
 | 页面 | 内容 |
 |---|---|
 | [世界模型转译](concepts/world-model-translation.md) | 原著事实 → 游戏机制的映射与差异声明 |
+| [Canon→Game 生产视图](concepts/canon-game-essence.md) | **Production View**（非第三真源）：生产依赖的 Canon 链与实现等级 |
 | [蛊虫与炼蛊](concepts/gu-and-synthesis.md) | 实例/蛊方落地；原著养炼以 lore 为准 |
 | [资源模型](concepts/resource-model.md) | 真元/寿元/魂魄的游戏结算；原著资源观以 lore 为准 |
 | [杀招系统](concepts/kill-move-system.md) | 配方/化解/泄密落地；原著杀招代价以 lore 为准 |
@@ -68,5 +69,5 @@ tags: [overview, hub, wiki, canon]
 [^1]: lore/wiki/AGENTS.md（L0–L5 / L6 分层：原著事实与游戏推导严格分离）
 [^2]: lore/wiki/index.md；game/docs/lore/canon-index.md
 [^3]: game/world-model/rulings/RUL-2026-09-19-008.json
-[^4]: game/AGENTS.md（数据以 game/data/ 为真源；验收以 tools/check.ps1 为准）
+[^4]: game/AGENTS.md（数据以 game/data/ 为真源；验收以 game/tools/check.ps1 为准）
 [^5]: game/world-model/rulings/RUL-2026-09-17-003.json；game/docs/contracts/2026-09-12-agent-ownership-contract.md

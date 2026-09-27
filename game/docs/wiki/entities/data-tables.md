@@ -11,7 +11,7 @@ data/ 共 29 张 JSON（约 45 万字节），全部经 ContentCatalog.validate 
 
 | 表 | 内容 | 关键数值 |
 |---|---|---|
-| gu.json | 802 只蛊（220/157/180/97/147 按转） | value 锚 3/5/8/12/20；v1_effect 62 只 |
+| gu.json | **VOID（L0 2026-09-26）**：原 802 生成条目全部删除、不予参考 | 待新血：从 wiki Canon+玩法支柱重设计 |
 | refinement_recipes.json | 469 配方 + 4 商队报价（**无 recipes.json，别找错**） | advance 377（6/10 石）/ fixed 15 / promotion 76 / free_mix 1 |
 | enemies.json | 32 敌（common 13/elite 12/boss 7） | HP 3-20；意图五类；boss 50% 血转阶段 |
 | shops.json | 38 offers | 石皮蛊 6 … 月华露 80；剑道系列 8→70 |
@@ -43,7 +43,7 @@ data/ 共 29 张 JSON（约 45 万字节），全部经 ContentCatalog.validate 
 
 原 SQL 数据排除令已解除（2026-09-10）：enemies.json 32 条由 validate 全量 + 池契约测试守卫[^1]。补一流派需改 6 处（schools/school_pools/gu.json 40 只/SCHOOL_IDS/测试硬编码/选择屏）[^4]。
 
-[^1]: AGENTS.md, 技术约定与当前待办
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §11/§26
-[^3]: PROJECT_WORLD_MODEL_AUDIT.md, §14
-[^4]: [失源] MEMORY.md（项目工作记忆，流派节；源未入库已失传，主张待重锚，见 plan.md 已知缺口）
+[^1]: game/AGENTS.md, 技术约定与当前待办
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §11/§26
+[^3]: game/PROJECT_WORLD_MODEL_AUDIT.md, §14
+[^4]: game/docs/superpowers/reports/2026-09-11-session-consolidation.md §2.5（补一流派 6 处清单）；game/scripts/domain/content_catalog.gd `SCHOOL_IDS`

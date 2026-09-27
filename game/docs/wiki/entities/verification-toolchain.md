@@ -28,6 +28,6 @@ tests/ 分为 unit/integration/helpers。unit 全量约 3-4 分钟，必须后�
 
 ObjectDB/RID 泄漏（2026-09-06 复测 20601 实例仍复现）。Dialogue Manager 已移除，不再属于遗留项。
 
-[^1]: AGENTS.md, 工具规则与 AI 契约
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §21/§22
-[^3]: [失源] MEMORY.md（项目工作记忆，Godot 坑节；源未入库已失传，主张待重锚，见 plan.md 已知缺口）
+[^1]: game/AGENTS.md, 工具规则与 AI 契约
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §21/§22
+[^3]: game/tools/test.ps1（GUT 调用形）；game/tools/import.ps1；game/docs/superpowers/plans/2026-09-10-tech-debt-atomic-execution.md A1（worktree 须 cp .godot）；game/AGENTS.md 当前待办 #6（残留泄漏）。GUT 9.6.1 断言限制细节失源，以现网 game/addons/gut 为准

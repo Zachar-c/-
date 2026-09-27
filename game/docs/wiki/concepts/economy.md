@@ -54,4 +54,4 @@ graph LR
 - 价格数据原文 → [数据表全集](../entities/data-tables.md)
 - 完整价格表 → [PROJECT_WORLD_MODEL_AUDIT.md](../../../PROJECT_WORLD_MODEL_AUDIT.md) 附录 B
 
-[^1]: PROJECT_WORLD_MODEL_AUDIT.md, §11/§12/§13/§20
+[^1]: game/PROJECT_WORLD_MODEL_AUDIT.md, §11/§12/§13/§20

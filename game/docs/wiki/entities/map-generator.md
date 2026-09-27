@@ -41,8 +41,8 @@ SeededRng（Lehmer LCG）+ seeded_roll 盐值混合（2026-09-10 修正等差阶
 - pacing/shops/nodes 数据 → [数据表全集](data-tables.md)
 - 验证工具 → [验证工具链](verification-toolchain.md)
 
-[^1]: PROJECT_WORLD_MODEL_AUDIT.md, §18
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §21
-[^3]: data/nodes.json
-[^4]: PROJECT_WORLD_MODEL_AUDIT.md, §14
-[^5]: AGENTS.md, 技术约定 W14
+[^1]: game/PROJECT_WORLD_MODEL_AUDIT.md, §18
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §21
+[^3]: game/data/nodes.json
+[^4]: game/PROJECT_WORLD_MODEL_AUDIT.md, §14
+[^5]: game/AGENTS.md, 技术约定 W14

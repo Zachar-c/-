@@ -35,8 +35,8 @@ Run 结束时删除进行中 Run 存档；无感自动保存、续玩恢复离�
 
 修改 run_state.gd / save_repository.gd 均属 Shared 单写者区，走 5 步协议[^4]；模块接口页 docs/contracts/module-interfaces/05-run-state.md[^5]。
 
-[^1]: AGENTS.md, 技术约定
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §19/§21（开局数值见 §4；HP 按现网 data/balance.json `player_start_hp=100` 校正，RUL-2026-09-19-009，审计快照 80 已过期）
-[^3]: PROJECT_WORLD_MODEL_AUDIT.md, §9/§15
-[^4]: docs/contracts/2026-09-12-agent-ownership-contract.md
-[^5]: docs/contracts/module-interfaces/05-run-state.md
+[^1]: game/AGENTS.md, 技术约定
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §19/§21（开局数值见 §4；HP 按现网 game/data/balance.json `player_start_hp=100` 校正，RUL-2026-09-19-009，审计快照 80 已过期）
+[^3]: game/PROJECT_WORLD_MODEL_AUDIT.md, §9/§15
+[^4]: game/docs/contracts/2026-09-12-agent-ownership-contract.md
+[^5]: game/docs/contracts/module-interfaces/05-run-state.md

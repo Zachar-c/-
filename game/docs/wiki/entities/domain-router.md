@@ -35,6 +35,6 @@ UI → `run_controller.submit_command`（905 行，四路分发：save/load → 
 - 战斗命令族 → [v1 战斗引擎](v1-battle-resolver.md)
 - 状态边界 → [RunState 与存档](run-state-and-saves.md)
 
-[^1]: PROJECT_WORLD_MODEL_AUDIT.md, §21
-[^2]: AGENTS.md, 禁止项
-[^3]: docs/contracts/module-interfaces/README.md
+[^1]: game/PROJECT_WORLD_MODEL_AUDIT.md, §21
+[^2]: game/AGENTS.md, 禁止项
+[^3]: game/docs/contracts/module-interfaces/README.md

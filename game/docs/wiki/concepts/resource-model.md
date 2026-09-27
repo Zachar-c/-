@@ -23,7 +23,7 @@ tags: [essence, resources, aptitude, lifespan, soul]
 
 | 轨道 | 角色 | 说明 |
 |---|---|---|
-| 局外 essence | 跨节点行动预算 | 上限/恢复公式见数据表——**游戏压缩**，原著无“节点完成回满” |
+| 局外 essence | 跨节点行动预算 | **游戏压缩三件套**：锚点=`lore/wiki/world/primeval-essence.md`（元海储量/资质影响恢复）｜维度=节奏（连续元海恢复 → 节点预算+完成回满）｜依据=`game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md` + 数据表公式。原著无“节点完成回满” |
 | 战斗 true_qi | 节点内战斗预算 | 回合回率% 为游戏节奏参数 |
 
 两轨不互相换算。元石→真元换算是游戏经济接口，对应原著“元石抽真元”语义，系数为裁定[^2]。
@@ -43,6 +43,6 @@ hp / 寿元 / 魂魄任一 ≤0 即死亡；支付类消耗预检“付费不可
 - 元石经济 → [经济系统](economy.md)
 
 [^1]: lore/wiki/AGENTS.md（L6 不进原著区）
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §8/§9/§10
-[^3]: game/AGENTS.md, 核心业务红线；docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §8/§9/§10
+[^3]: game/AGENTS.md, 核心业务红线；game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0
 [^4]: game/world-model/rulings/RUL-2026-09-19-008.json

@@ -43,5 +43,5 @@ tests/unit/test_v1_battle_resolver.gd、test_v1_basic_actions.gd、test_v1_gu_ef
 - true_qi 公式 → [资源模型](../concepts/resource-model.md)
 - 路由入口 → [领域路由核](domain-router.md)
 
-[^1]: PROJECT_WORLD_MODEL_AUDIT.md, §15/§21
-[^2]: docs/superpowers/plans/2026-09-11-sword-school-landing-plan.md, §0
+[^1]: game/PROJECT_WORLD_MODEL_AUDIT.md, §15/§21
+[^2]: game/docs/superpowers/plans/2026-09-11-sword-school-landing-plan.md, §0

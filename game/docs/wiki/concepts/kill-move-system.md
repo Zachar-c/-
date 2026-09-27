@@ -45,7 +45,7 @@ tags: [kill-moves, sword-school, combat]
 - 转译表 → [世界模型转译](world-model-translation.md)
 
 [^1]: lore/wiki/world/gu-care-and-refinement.md
-[^2]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §4.2
-[^3]: PROJECT_WORLD_MODEL_AUDIT.md, §6/§14/§15（化解语义 §14；counter_revealed 代码字段见 scripts/domain/action_preview_service.gd）
-[^4]: docs/superpowers/specs/2026-09-11-sword-cosmology-integration.md
-[^5]: PROJECT_WORLD_MODEL_AUDIT.md, §26
+[^2]: game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §4.2
+[^3]: game/PROJECT_WORLD_MODEL_AUDIT.md, §6/§14/§15（化解语义 §14；counter_revealed 代码字段见 game/scripts/domain/action_preview_service.gd）
+[^4]: game/docs/superpowers/specs/2026-09-11-sword-cosmology-integration.md
+[^5]: game/PROJECT_WORLD_MODEL_AUDIT.md, §26

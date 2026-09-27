@@ -38,9 +38,9 @@ tags: [combat, battle, turn-based]
 - 真元/念头/魂魄的来源与去向 → [资源模型](resource-model.md)
 - 战斗中的经济行为 → [经济系统](economy.md)
 
-[^1]: docs/superpowers/plans/ 系列与 scripts/domain/v1_battle_resolver.gd 头注释
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §15/§14/§20/§21
-[^3]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0/§4.1
-[^4]: data/pacing.json
-[^5]: docs/superpowers/plans/2026-09-11-sword-school-landing-plan.md, §0 引擎事实
-[^6]: PROJECT_WORLD_MODEL_AUDIT.md, §16
+[^1]: game/docs/superpowers/plans/ 系列与 game/scripts/domain/v1_battle_resolver.gd 头注释
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §15/§14/§20/§21
+[^3]: game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0/§4.1
+[^4]: game/data/pacing.json
+[^5]: game/docs/superpowers/plans/2026-09-11-sword-school-landing-plan.md, §0 引擎事实
+[^6]: game/PROJECT_WORLD_MODEL_AUDIT.md, §16

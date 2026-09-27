@@ -1,7 +1,7 @@
 ---
 title: Meta 图鉴
 description: 跨局保留的图鉴型 Meta Progression、事件日志归因机制与零数值成长原则
-date: 2026-09-12
+date: 2026-09-26
 tags: [meta-progression, codex, save, persistence]
 ---
 
@@ -9,7 +9,15 @@ tags: [meta-progression, codex, save, persistence]
 
 ## MetaProgress 11 字段
 
-`gu_codex_ids`（蛊图鉴）、`recipe_codex_ids`（蛊方图鉴）、`relic_codex_ids`、`inheritance_codex_ids`、`unlocked_content_ids`、`unlocked_random_outcomes`、`contracts_unlocked`、`journal_unlocked`、`hall_material_bonus_accrued`（仅展示）、`dda_state_adaptive_enabled`（每局拷入）、`statistics`（runs_started/won/risky/deaths）[^2]。
+| 字段 | 作用 |
+|---|---|
+| `gu_codex_ids` / `recipe_codex_ids` | 蛊图鉴 / 蛊方图鉴 |
+| `relic_codex_ids` / `inheritance_codex_ids` | 遗物 / 传承图鉴 |
+| `unlocked_content_ids` / `unlocked_random_outcomes` | 内容与随机结局解锁 |
+| `contracts_unlocked` / `journal_unlocked` | 契约 / 手记 |
+| `hall_material_bonus_accrued` | 仅展示，不参与数值成长 |
+| `dda_state_adaptive_enabled` | 每局拷入 Run |
+| `statistics` | runs_started / won / risky / deaths |
 
 ## 归因机制：事件日志回放
 
@@ -32,6 +40,6 @@ Meta 解锁只能从不可变事件日志推导：`refinement_succeeded` / `scav
 - 状态与存档实现 → [RunState 与存档](../entities/run-state-and-saves.md)
 - 结局归并规则 → [核心玩法循环](gameplay-loop.md)
 
-[^1]: AGENTS.md, 核心业务红线
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §19/§21（route 白名单枚举现源：scripts/domain/content_catalog.gd 与 scripts/domain/meta_progress.gd）
-[^3]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0.1
+[^1]: game/AGENTS.md, 核心业务红线
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §19/§21（route 白名单枚举现源：game/scripts/domain/content_catalog.gd 与 game/scripts/domain/meta_progress.gd）
+[^3]: game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §0.1

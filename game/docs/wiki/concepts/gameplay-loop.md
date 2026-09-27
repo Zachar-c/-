@@ -47,10 +47,10 @@ graph LR
 - 循环中的货币流动 → [经济系统](economy.md)
 - 死亡后保留什么 → [Meta 图鉴](meta-progression.md)
 
-[^1]: AGENTS.md, 目标节
-[^2]: PROJECT_WORLD_MODEL_AUDIT.md, §4
-[^3]: PROJECT_WORLD_MODEL_AUDIT.md, §4/§10（开局 HP 按现网 data/balance.json `player_start_hp=100` 校正，RUL-2026-09-19-009；审计快照 80 已过期）
-[^4]: PROJECT_WORLD_MODEL_AUDIT.md, §4（E1-E7 条目已从 AGENTS.md 当前待办移除，对应事实在审计 §4）
-[^5]: PROJECT_WORLD_MODEL_AUDIT.md, §13
-[^6]: AGENTS.md, 核心业务红线
-[^7]: PROJECT_WORLD_MODEL_AUDIT.md, §18
+[^1]: game/AGENTS.md, 目标节
+[^2]: game/PROJECT_WORLD_MODEL_AUDIT.md, §4
+[^3]: game/PROJECT_WORLD_MODEL_AUDIT.md, §4/§10（开局 HP 按现网 game/data/balance.json `player_start_hp=100` 校正，RUL-2026-09-19-009；审计快照 80 已过期）
+[^4]: game/PROJECT_WORLD_MODEL_AUDIT.md, §4（E1-E7 条目已从 game/AGENTS.md 当前待办移除，对应事实在审计 §4）
+[^5]: game/PROJECT_WORLD_MODEL_AUDIT.md, §13
+[^6]: game/AGENTS.md, 核心业务红线
+[^7]: game/PROJECT_WORLD_MODEL_AUDIT.md, §18

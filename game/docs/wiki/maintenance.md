@@ -1,11 +1,11 @@
 ---
 title: 知识库维护机制
 description: 本 wiki 的更新流程、lint 卫生清单与例行维护提示词（LLM Wiki 方法论）
-date: 2026-09-25
+date: 2026-09-26
 tags: [maintenance, workflow, lint, routine]
 ---
 
-本知识库采用 LLM Wiki（github.com/lucasastorian/llmwiki）的方法论：源文档是唯一事实层（只读），`docs/wiki/` 是综合编译层，文件系统是真相、页面间引用构成知识图谱[^1]。
+本知识库采用 LLM Wiki（github.com/lucasastorian/llmwiki）的方法论：源文档是唯一事实层（只读），`docs/wiki/` 是综合编译层，文件系统是真相、页面间引用构成知识图谱[^1]。仓库级统一约定与 G0 门禁见 `docs/DOCUMENTATION_GOVERNANCE.md`；本目录 `lint.mjs` 仍是 Wiki 内容质量门禁（G2），不被 G0 取代。
 
 ## 分层架构
 
@@ -26,12 +26,12 @@ tags: [maintenance, workflow, lint, routine]
 ## Lint 卫生清单（每次维护后自查）
 
 - [ ] 每页 frontmatter 四字段齐全：title / description（具体单句）/ date（YYYY-MM-DD）/ tags（≥2）
-- [ ] 每个事实主张有脚注引用，引用用完整源文件路径，指向真实存在的文件
+- [ ] 每个事实主张有脚注引用；路径用**仓库根相对全路径**（如 `game/AGENTS.md`，L1 判决 D2），指向真实存在的文件；外部标识（如 `lucasastorian/llmwiki`）仅备注
 - [ ] 无悬空 wiki 链接（页面间相对路径可解析）
 - [ ] 无孤儿页（每个页面至少被一个页面链接）
 - [ ] date 在实质性修订时更新；编辑时保留既有 frontmatter 字段
 - [ ] 表格用于结构化对比；流程关系用 mermaid（节点标签含括号须加引号）
-- [ ] 区分 [FACT]/[DESIGN]/[INFERRED]：推断不得写成事实
+- [ ] 分层词表（L1 判决 D1 + L0 补充，2026-09-26）：原著锚点/原著真源＝已核验原著事实（**正典**）；游戏裁定/差异声明＝L6 设计不得冒充原著；**游戏压缩须三件套**：原著锚点＋压缩维度＋projection/ruling 依据；纯游戏/纯实现＝无原著锚点；推断/分析句显式声明，不得写成事实。不再使用 `[FACT]/[DESIGN]/[INFERRED]` 硬标签
 - [ ] 失源主张：源文件灭失时脚注以 `[失源] <原名>（说明）` 显式标记并在 plan.md 已知缺口登记；重锚到现存源后移除标记
 - [ ] 豁免：`references/` 下的规范提取副本按原文保留（内含示例路径如 diagram.svg），不参与链接 lint
 
@@ -43,4 +43,4 @@ tags: [maintenance, workflow, lint, routine]
 
 规范提取自 llmwiki 仓库的 mcp/tools/guide.py（Apache 2.0）：页面结构（overview hub / concepts / entities / comparisons / timeline / plan）、frontmatter 必填、每页至少一个可视化、脚注引用回源、交叉引用与引用图、lint 维护工作流、nightly routine 自维护模式[^1]。
 
-[^1]: references/llmwiki-guide-extract.md（规范提取副本，源仓库 lucasastorian/llmwiki，Apache 2.0）
+[^1]: game/docs/wiki/references/llmwiki-guide-extract.md（规范提取副本，源仓库 lucasastorian/llmwiki，Apache 2.0）

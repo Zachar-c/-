@@ -19,7 +19,7 @@ tags: [gu, synthesis, refinement, schools]
 
 ## 《问真》落地（游戏裁定）
 
-- **实例模型**：同名蛊不同实体；交易/喂养/炼化/催动都针对实例。持有无硬上限，由成本形成软上限——与原著“四五只”惯例同构，但**上限数值是游戏压缩**[^2]。
+- **实例模型**：同名蛊不同实体；交易/喂养/炼化/催动都针对实例。持有无硬上限，由成本形成软上限——与原著“四五只”惯例同构。**游戏压缩三件套**：原著锚点 `CAN-GU-CARE-001`（一般只养四五只同转蛊）｜压缩维度=容量（固定只数惯例 → 无硬上限+成本软上限）｜依据= `game/AGENTS.md` 红线（不得引入蛊槽）+ `game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md` §1[^2]。
 - **目录与流派**：`gu.json` 内容池（含多道标签开放集合）是**游戏内容设计**，不是原著蛊虫全集；查“这只蛊在原著里是谁的/几转/什么用”用 [全书蛊虫总表](../../../../lore/wiki/gu/roster.md)，不要反查游戏表[^3]。
 - **蛊方四类**（469 条）：advance 晋升 / promotion 定向晋升（每步 +1 转且换蛊名）/ fixed 古方（附小说出处）/ free_mix 自由混合——**成功率与三结局权重是游戏裁定**，不得写成原著合成公式[^4]。原著已有明确合炼个案（如月光+双小光→月芒）应进 fixed 并保留出处。
 - **核心蛊**：一局一只、可推迟可更换——纯游戏构筑节奏，原著无此制度[^2]。
@@ -37,7 +37,7 @@ tags: [gu, synthesis, refinement, schools]
 - 转译差异表 → [世界模型转译](world-model-translation.md)
 
 [^1]: lore/wiki/AGENTS.md；lore/wiki/world/gu-care-and-refinement.md
-[^2]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §1/§2/§4.1
+[^2]: game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §1/§2/§4.1
 [^3]: lore/wiki/gu/roster.md；lore/wiki/gu/index.md
-[^4]: docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §5.3
-[^5]: PROJECT_WORLD_MODEL_AUDIT.md, §25
+[^4]: game/docs/superpowers/specs/2026-09-01-gu-system-economy-combat-design.md, §5.3
+[^5]: game/PROJECT_WORLD_MODEL_AUDIT.md, §25

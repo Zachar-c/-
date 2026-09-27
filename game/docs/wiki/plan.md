@@ -1,7 +1,7 @@
 ---
 title: 知识库维护计划
 description: 本知识库的建设进度与后续维护任务的追踪页（llmwiki plan.md 规范）
-date: 2026-09-25
+date: 2026-09-26
 tags: [plan, maintenance, tracker]
 ---
 
@@ -48,11 +48,30 @@ tags: [plan, maintenance, tracker]
   - Why: 引用必须指向真实承载该事实的位置（lint 规则精神）
 - [x] lint 复跑：FAIL 0 / WARN 1（meta-progression 无可视化，既有登记）
 
+## L1 判决（2026-09-26）
+
+- [x] LLM Wiki 质量审查 · L1 判决书
+  - What: 对双库质量审查七项方法论问题作判决（D1 词表正典=实践词表、D2 脚注全路径、D3 失源三件套、D4 双库分离、D5 按需同步、D6 本地门禁唯一、D7 原文 WARN）；L2 清单四项直接闭环。见 [l1-quality-ruling-2026-09-26.md](l1-quality-ruling-2026-09-26.md)
+  - Why: 清单与实践多模型冲突须 L1 择一；纯工程项不进争议
+- [x] L0 追认并补充（2026-09-26）
+  - What: ①原书事实=正典、现实现全部存疑、核查从 Wiki 出发；②D5 同步=更新受影响 L6/Game Semantics，不做页面镜像；③D6 限 Wiki 内容质量门禁，Canon→Game 另需 Runtime/Conformance 门禁；④D1「游戏压缩」三件套（锚点+压缩维度+projection/ruling）。已写回判决书与 maintenance.md
+  - Why: L0 收窄门禁语义、强化原书真源优先
+
+## L1 方向（2026-09-26）
+
+- [x] 原著扣取全量清单 · L1 方向判决书
+  - What: 事无巨细盘点 + L1 裁决 **A3 / B1' / C1 / D-D 同批清理 / D-E 全包**。见 `lore/wiki/l1-extraction-direction-2026-09-26.md`
+  - Why: Extraction → Compilation；生产重心=可运行规则
+- [x] D-D 三线降级：COORDINATION + HANDOFF/B/C 标「历史生产记录」
+- [x] B1' Production View：`concepts/canon-game-essence.md`（月光系样本 + P0–P2 链）
+- [x] 知识链状态页：根目录 `index.html` + `styles.css` + `app.js`（浏览器可预览）
+  - Why: L1 裁决落地；Production View 非第三真源，STALE 门禁入 D-E
+
 ## 已知缺口（诚实登记）
 
-- [!] MEMORY.md（项目工作记忆）从未入库且已无副本——4 处脚注失源
-  - What: 2026-09-25 lint 确认 git 全历史与工作树均无该文件（.workbuddy/memory/MEMORY.md 为同名异实的 monorepo 约定文档，非本源）；涉及 agent-ownership [^2]、data-tables [^4]、verification-toolchain [^3]、timeline [^2]，主张保留并标 [失源]，后续优先重锚到 AGENTS.md 工具规则与 specs
-  - Why: 引用必须指向真实存在的文件（lint 规则）；失源主张需显式降级而非静默保留
+- [!] MEMORY.md（项目工作记忆）从未入库且已无副本——4 处脚注已于 2026-09-26 按 L1 判决 D3 重锚
+  - What: data-tables [^4] → session-consolidation §2.5 + content_catalog `SCHOOL_IDS`；verification-toolchain [^3] → test.ps1 / import.ps1 / tech-debt A1 / AGENTS #6；agent-ownership [^2] → PROJECT_WORLD_MODEL_AUDIT + session-consolidation §4 + handoff wincred + AGENTS 禁止项；timeline [^2] → sword-cosmology + session-consolidation D1（残余：规则碎片自造、杀招跨转数用户纠正，仍待原文/裁定）
+  - Why: D3 优先重锚；残余保持显式待锚，不静默删
 - [!] reports/ 目录在仓库中不存在——工作记忆提到的 Q7 复盘等归档文件未找到，相关页面未引用它们
   - What: 以 AGENTS.md、MEMORY.md、审计报告为替代来源
   - Why: 引用必须指向真实存在的文件（lint 规则）
