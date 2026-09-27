@@ -1,7 +1,7 @@
 # Runtime 基准·一阶（南疆一转战斗场景 · Pack-Only）
 
 > 用途：测「游戏 Agent 只使用 Canon Runtime / Context Pack 能否正确行动」（Runtime Sufficiency），与 Wiki-Only 知识基准（benchmark-qms.md 等）互补。
-> Pack：[`../runtime/packs/south_border_rank1_combat.json`](../runtime/packs/south_border_rank1_combat.json)（由 `compile_runtime.py` 生成）。
+> Pack：[`../../runtime/packs/south_border_rank1_combat.json`](../../runtime/packs/south_border_rank1_combat.json)（由 `compile_runtime.py` 生成）。
 > 建立日期：2026-09-25。IR 设计：`docs/design/canon-runtime/2026-09-25-p1-ir.md`。
 
 ## 规则

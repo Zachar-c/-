@@ -7,7 +7,7 @@
 > 替代关系：当前工程实现以现行 master 与生效规格为准.
 
 
-> 产品与玩法规则以 [GDD](../../GDD.md) 为唯一事实来源。本文件只定义工程实现顺序、接口和验证步骤。
+> 产品与玩法规则以现行生效规格为唯一事实来源（仓库不提供 `GDD.md`）。本文件只定义工程实现顺序、接口和验证步骤。
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

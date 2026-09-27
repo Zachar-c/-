@@ -31,6 +31,7 @@ py -3 scripts/check_remote_base.py
 - `outlines/detail/`：每个 30 节批次的功能细纲。
 - `notes/`：全书审查、卷级裁决及战力、资源、信息、时间、人物台账。
 - `scripts/`：拆分、建档和验证脚本。
+- 索引入口：[outlines/00-full-book-outline.md](outlines/00-full-book-outline.md)、[notes/full-book-audit-register.md](notes/full-book-audit-register.md)、[notes/ledger.md](notes/ledger.md)、[index/source-audit.md](index/source-audit.md)。
 
 ## 提效工具
 

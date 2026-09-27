@@ -13,6 +13,7 @@
 | 文件 | 职责 |
 | --- | --- |
 | [AGENTS.md](AGENTS.md) | 项目协作、开发边界与 AI 执行规范 |
+| [docs/DOCUMENTATION_GOVERNANCE.md](docs/DOCUMENTATION_GOVERNANCE.md) | 文档分层、引用约定与 G0–G2 门禁 |
 | [README.md](README.md) | 项目简介、技术栈、快速开始与索引 |
 | [DESIGN.md](DESIGN.md) | 视觉风格、布局与交互规范入口 |
 | [CHANGELOG.md](CHANGELOG.md) | 可核对的更新记录 |
@@ -57,4 +58,4 @@
 1. 原著事实、分析解读和游戏设计分层保存。
 2. 能用 Markdown 和 Git 解决的问题，不提前引入数据库或自研知识引擎。
 3. 需要核验时回查本地原始资料，不把读书笔记或 AI 摘要自动升级为原著事实。
-4. 新内容先放入对应子目录，再通过父仓库统一提交和审阅。
+4. 新内容先放入对应子目录，再通过父仓库统一提交和审阅；**文档入库即治理**（见 [文档治理](docs/DOCUMENTATION_GOVERNANCE.md) §4）。

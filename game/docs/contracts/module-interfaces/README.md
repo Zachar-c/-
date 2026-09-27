@@ -5,16 +5,16 @@
 
 ## 索引
 
-| # | 模块 | 文件 | 一句话 |
+| # | 模块 | 约定页 | 一句话 |
 |---|---|---|---|
-| 01 | 战斗结算 | `v1_battle_resolver.gd` + `battle_command_facade.gd` | 蛊行动制战斗状态机，唯一入口 `Facade.apply_turn` |
-| 02 | 蛊实体与合成 | `gu_instance.gd` + `synthesis_rules.gd` + `recipe_rules.gd` | 蛊实例生命周期 + 配对映射合成 |
-| 03 | 地图节点生成 | `map_generator.gd` | 五层拓扑 + 锚点保底 + 可见性/可达性 |
-| 04 | 内容目录 | `content_catalog.gd` | 数据唯一加载入口 + Schema 校验 |
-| 05 | 运行状态 | `run_state.gd` + `save_repository.gd` | 单局状态权威载体 + 存档 |
-| 06 | 行动预览 | `action_preview_service.gd` | UI 命令卡片的唯一来源 |
-| 07 | 领域动作路由 | `resolver.gd` + `loot_resolver.gd` + `economy_rules.gd` | 非战斗动作唯一路由 + 战利品/经济 |
-| 08 | 表现层命令面 | `run_controller.gd` + `run_command_builder.gd` | UI↔领域唯一桥梁 |
+| 01 | 战斗结算 | [01-battle-settlement.md](01-battle-settlement.md) | 蛊行动制战斗状态机，唯一入口 `Facade.apply_turn` |
+| 02 | 蛊实体与合成 | [02-gu-entity-and-synthesis.md](02-gu-entity-and-synthesis.md) | 蛊实例生命周期 + 配对映射合成 |
+| 03 | 地图节点生成 | [03-map-generation.md](03-map-generation.md) | 五层拓扑 + 锚点保底 + 可见性/可达性 |
+| 04 | 内容目录 | [04-content-catalog.md](04-content-catalog.md) | 数据唯一加载入口 + Schema 校验 |
+| 05 | 运行状态 | [05-run-state.md](05-run-state.md) | 单局状态权威载体 + 存档 |
+| 06 | 行动预览 | [06-action-preview.md](06-action-preview.md) | UI 命令卡片的唯一来源 |
+| 07 | 领域动作路由 | [07-domain-action-router.md](07-domain-action-router.md) | 非战斗动作唯一路由 + 战利品/经济 |
+| 08 | 表现层命令面 | [08-presentation-command-surface.md](08-presentation-command-surface.md) | UI↔领域唯一桥梁 |
 
 ## 数据流总览（单向依赖）
 

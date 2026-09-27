@@ -46,27 +46,26 @@ Phase 2 的比较只记录：一次完成验收、测试最终通过、是否越
 
 ## 目录
 
+- [ARCHITECTURE.md](ARCHITECTURE.md)：一页架构约定
+- [WORKER_PROTOCOL.md](WORKER_PROTOCOL.md)：Worker 输入输出与边界
+- [WORKER_HANDOFF_TEMPLATE.md](WORKER_HANDOFF_TEMPLATE.md)：Caveman 短审阅包模板
+- [visual-asset-task-packet-template.md](visual-asset-task-packet-template.md)：视觉资产任务包模板
+- [REVIEW-SUBMISSION.md](REVIEW-SUBMISSION.md)：审阅提交说明
+- [PRD.md](PRD.md)：**镜像上游**历史设计（`MyAIProductionSystem`），不是《问真》PRD
+- `bootstrap.ps1` / `run-worker.ps1` / `run-workbuddy-cli-worker.ps1` / `run-workbuddy-worker.ps1` / `choose-worker-model.ps1`：执行入口
+- `config/`：`common.json`、环境模板与 `jev.json`
+- `tasks/`：Research Request 与任务包（按需点读）
+- `reviews/`：Worker 审阅记录
+
 ```text
 ai-system/
-├─ ARCHITECTURE.md       # 一页架构约定
-├─ WORKER_PROTOCOL.md    # Worker 输入输出与边界
-├─ WORKER_HANDOFF_TEMPLATE.md # Caveman 短审阅包模板
-├─ bootstrap.ps1         # 检查工具、配置和模型，不安装依赖
-├─ run-worker.ps1        # 用 OpenCode 在本地启动一次 Worker
-├─ run-workbuddy-cli-worker.ps1 # 用 WorkBuddy CLI 在本地启动一次 Worker
-├─ run-workbuddy-worker.ps1 # 将 Worker Body 投递到 WorkBuddy 云端
-├─ choose-worker-model.ps1 # 按 normal/hard 静态 fallback 链选择模型
-└─ config/
-   ├─ common.json        # 可共享配置
-   ├─ home.example.json  # 家庭环境模板
-   ├─ work.example.json  # 公司环境模板
-   ├─ secrets.example.json
-   └─ jev.json           # Jev System One 实验配置
-├─ jev_systemone.py      # Jev adapter + CLI：仅产出 decision proposal
-├─ tests/test_jev_systemone.py
-└─ eval/
-   ├─ worker_tier_cases.json
-   └─ run_worker_tier_eval.py
+├─ ARCHITECTURE.md
+├─ WORKER_PROTOCOL.md
+├─ WORKER_HANDOFF_TEMPLATE.md
+├─ bootstrap.ps1 … choose-worker-model.ps1
+├─ config/
+├─ tasks/
+└─ reviews/
 ```
 
 ### Jev System One（实验）

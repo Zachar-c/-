@@ -46,6 +46,8 @@
 - [协作约定](AGENTS.md)：人工与代理继续编辑本仓库时应遵循的规则。
 - [文档体系标准与维护规范](docs/superpowers/specs/2026-08-28-doc-system-standard-design.md)：文档分层、命名、作品名口径、维护检查表。
 - [模块清单](MODULE-INVENTORY.md)：核心模块与接口约定；[资产与来源](CREDITS.md)、[第三方许可](THIRD_PARTY_NOTICES.md)。
+- [文档索引](docs/README.md)：契约、Lore、UI、审计与历史批次。
+- [DEMO.md](DEMO.md)：试玩说明；[PONYTAIL-DEBT.md](PONYTAIL-DEBT.md)：简化债务台账。
 
 ## 目录结构
 

@@ -3,8 +3,9 @@
 1. 阅读 [AGENTS.md](AGENTS.md) → [PROJECT_MAP.md](PROJECT_MAP.md) → 目标目录 README / AGENTS。
 2. 核对已有改动、适用规格、允许写区与验收要求。Worker 执行遵循 [执行协议](ai-system/WORKER_PROTOCOL.md)。
 3. 在所属目录修改；产品范围与技术路线变更遵循 [变更控制协议](docs/CHANGE_CONTROL_PROTOCOL_v1.0.md)。
-4. 运行对应验收，保存真实输出；L2 独立复核改动、数字及根因。
-5. 同步当前待办、变更记录和受影响的入口；提交、推送遵守根规则与现有阻塞项。
+4. **文档入库即治理**（[治理规范 §4](docs/DOCUMENTATION_GOVERNANCE.md)）：定层 → 挂 hub 真实链接 → 引用/字段合规 → 跑 G0（`node tools/docs-lint.mjs`）；触碰 wiki 再跑 G1/G2 → 缺口进 `docs/debt.md`。
+5. 运行对应验收，保存真实输出；L2 独立复核改动、数字及根因。
+6. 同步当前待办、变更记录和受影响的入口；提交、推送遵守根规则与现有阻塞项。
 
 ## 《问真》Web 完整产品
 

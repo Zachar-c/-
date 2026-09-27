@@ -19,6 +19,8 @@
 4. 设计、计划、子项目文档。
 5. 代码和测试。
 
+文档卫生与治理流程见 `docs/DOCUMENTATION_GOVERNANCE.md`（LLM Wiki 方法论推广到全仓；不新增产品权威）。触碰 Markdown 后运行 `node tools/docs-lint.mjs`；wiki 内容门禁仍为 `lore/wiki/tools/check.ps1` 与 `game/docs/wiki/lint.mjs`。
+
 低层文档不能改写高层意图。根 `AGENTS.md`、子目录 `AGENTS.md` 和 `README.md` 是导航与执行边界，不是产品 PRD。`ai-system/PRD.md` 属于其镜像上游，不是《问真》PRD。
 
 ## 决策边界
@@ -67,6 +69,7 @@
 ## 实施与复核
 
 - 先检查 `git status` 和相关 diff，确认目标路径与既有改动。
+- 新增或实质修订 Markdown 时执行文档入库清单（`docs/DOCUMENTATION_GOVERNANCE.md` §4）：挂 hub 链接、引用合规、跑 `node tools/docs-lint.mjs`。
 - 选择最小可行改动，优先复用现有入口和数据 Owner，不因为“更漂亮”重写系统。
 - 运行与改动直接相关的测试或验收，并报告命令、真实输出、未验证项和既有失败。
 - 完成后由 L2 检查范围、行为、数字、测试与剩余风险；普通任务在仓库内闭环。

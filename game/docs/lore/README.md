@@ -44,7 +44,8 @@ tools/lore.ps1 report --database generated/lore/lore-v1.sqlite
 
 ## 文档
 
-- `canon-index.md`：可直接引用的原著事实与误读边界。
-- `adaptation-register.md`：每个游戏化转换的依据、偏离点与禁止越界项。
-- `game-rule-register.md`：用户已确认的游戏规则；它与原著事实索引分开维护。
-- `content-source-schema.md`：未来内容数据应保留的来源字段与审查流程。
+- [canon-index.md](canon-index.md)：可直接引用的原著事实与误读边界。
+- [adaptation-register.md](adaptation-register.md)：每个游戏化转换的依据、偏离点与禁止越界项。
+- [game-rule-register.md](game-rule-register.md)：用户已确认的游戏规则；它与原著事实索引分开维护。
+- [content-source-schema.md](content-source-schema.md)：未来内容数据应保留的来源字段与审查流程。
+- [2026-09-25-list-cleansing.md](2026-09-25-list-cleansing.md)：名录清理记录。
