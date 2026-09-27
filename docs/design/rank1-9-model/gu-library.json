@@ -1,0 +1,4181 @@
+{
+  "version": "0.2.0-draft",
+  "gu": [
+    {
+      "id": "moonlight-gu",
+      "name": "月光蛊",
+      "rank": 1,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "发射月刃：移至掌心、灌真元、挥掌发射三步；每记耗一成真元、中远程十米（E:V1-003604、3730-3736、4004-4007）",
+          "evidence": "lore/wiki/gu/moonlight-gu.md",
+          "status": "fact"
+        },
+        {
+          "kind": "support",
+          "note": "与小光蛊双蛊同催，月刃体积与攻击力各扩大一倍（单向协同，仅适用月光蛊）",
+          "evidence": "lore/wiki/gu/small-light-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/moonlight-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "古月一族秘法培育镇族蛊虫、非天然、外地没有（1472-1494）；学堂蛊室白银盘供新人挑选（1484-1496）。喂养月兰花瓣日耗四片、一块元石十片（gu-care 3798-3834）。path 月道为本表归档标签（流派总表无月道，近光道/月华谱系）。"
+    },
+    {
+      "id": "small-light-gu",
+      "name": "小光蛊",
+      "rank": 1,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "support",
+          "note": "辅助月光蛊：一只即令月刃攻击力翻倍、两只仍一倍不叠加（E:V1-017148）；可作合炼材料",
+          "evidence": "lore/wiki/gu/small-light-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/small-light-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "学堂蛊室墙角共五只、存量有限（9704-9710）；形如五角星。协同结论为单向个案，不得泛化为光道通用增幅。"
+    },
+    {
+      "id": "white-boar-strength-gu",
+      "name": "白豕蛊",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "改造蛊师身躯、从根本上增长气力且永久留存、蛊死亦留存（9688-9692）；是持续改造而非单次攻击加成",
+          "evidence": "lore/wiki/gu/m0-six-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/m0-six-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "豕蛊家族四只之一；市价高于酒虫（9694-9698）；可与玉皮蛊合炼白玉蛊（12402）。"
+    },
+    {
+      "id": "jade-skin-gu",
+      "name": "玉皮蛊",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "石皮/铜皮/铁皮/玉皮/兽皮同属护防系列且为该系列最珍稀者（9614-9618）",
+          "evidence": "lore/wiki/gu/m0-six-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/m0-six-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "市价仅次于酒虫；学堂蛊室当时无此蛊（9620）；可与白豕蛊合炼白玉蛊。"
+    },
+    {
+      "id": "stone-shell-gu",
+      "name": "石皮蛊",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "护防系列一端、学堂蛊室可见的寻常护防蛊（9600-9618）；本体功用上限未穷举",
+          "evidence": "lore/wiki/gu/m0-six-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/m0-six-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "M0 六蛊之一；不得用玉皮蛊稀有度反推其价值。"
+    },
+    {
+      "id": "wine-insect-gu",
+      "name": "酒虫",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "drain",
+      "effects": [
+        {
+          "kind": "recovery",
+          "note": "凝练/精炼真元：方源以酒虫精炼的一转中阶真元催动月光蛊断骨斩首（5438-5516 已核，个案加成不泛化）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "wild",
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab（entities.json 无键）。转数取 roster 弧一蛊链时序（资料整理层级）；酒香可引来（1416 已核）；炼化约十一至十六块元石、青竹酒一坛两块元石支撑四天（gu-care 已核）。"
+    },
+    {
+      "id": "vitality-grass-gu",
+      "name": "九叶生机草",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "drain",
+      "effects": [
+        {
+          "kind": "recovery",
+          "note": "治疗：方源战力盘点明言「进攻有月芒蛊，治疗有九叶生机草」（E:V1-017316）；产叶机制见 roster（A2b 17088-17126 资料整理）",
+          "evidence": "lore/wiki/gu/moon-glow-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "assumption"
+      },
+      "status": "assumption",
+      "note": "id 对应 game/data/gu.json vitality_grass_gu 的 kebab（仅取 id 对齐，不取游戏数值）。转数原文未检得，占位一转；治疗效果为已核事实。"
+    },
+    {
+      "id": "bear-strength-gu",
+      "name": "熊力蛊",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "熊家寨标志蛊虫、不入学堂蛊室换取范围（E:V1-003602、020446）；以蜂蜜为食（E:V1-010182）；具体功用未检得明文",
+          "evidence": "lore/wiki/gu/bear-strength-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/bear-strength-gu.md",
+        "status": "inference"
+      },
+      "status": "assumption",
+      "note": "转数未检得明文（runtime 记 rank_unstated），占位一转；「力」名与功用关系待核。"
+    },
+    {
+      "id": "bone-atk-1-08-gu",
+      "name": "骨蛊",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "白骨山可猎杀骨兽或收服野生骨蛊（E:V2-038442）；同系玉骨蛊增骨骼强度（E:V2-035560/037452），本体功用未言",
+          "evidence": "lore/wiki/gu/bone-atk-1-08-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "wild"
+        ],
+        "evidence": "lore/wiki/gu/bone-atk-1-08-gu.md",
+        "status": "fact"
+      },
+      "status": "assumption",
+      "note": "转数未检得明文，占位一转；骨道归属待核（path-roster）。"
+    },
+    {
+      "id": "wood-atk-1-05-gu",
+      "name": "青藤蛊",
+      "rank": 1,
+      "path": "木道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "催出十五米碧绿藤条当鞭甩、劈、撩、扫（E:V1-016788）；树精身份对木行蛊增幅（E:V1-023856，使用者状态而非蛊自带倍率）",
+          "evidence": "lore/wiki/gu/wood-atk-1-05-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/wood-atk-1-05-gu.md",
+        "status": "assumption"
+      },
+      "status": "assumption",
+      "note": "转数未检得明文，占位一转。页面记「木行战斗蛊」，path 木道为归档标签。"
+    },
+    {
+      "id": "qi-atk-1-01-gu",
+      "name": "硬气蛊",
+      "rank": 1,
+      "path": "气道",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "气道防御蛊：动用杀招防御下降时弥补短板；珍贵并不常见（E:V2-058640）",
+          "evidence": "lore/wiki/gu/qi-atk-1-01-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/qi-atk-1-01-gu.md",
+        "status": "assumption"
+      },
+      "status": "assumption",
+      "note": "转数未检得明文，占位一转；力气蛊绝迹（上古气道消失）后的可得替代（E:V2-058642）。path 气道为页面明言。"
+    },
+    {
+      "id": "human-atk-1-01-gu",
+      "name": "自己蛊",
+      "rank": 1,
+      "path": "人道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "《人祖传》道蛊：居于人身、须孤独审视内心方能发现（E:V3-120396）；引迷途者不走宿命旧路、另辟全新的路（E:V3-120404/120408）",
+          "evidence": "lore/wiki/gu/human-atk-1-01-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/human-atk-1-01-gu.md",
+        "status": "inference"
+      },
+      "status": "assumption",
+      "note": "转数未检得明文，占位一转；《人祖传》寓言蛊的转数体系不可硬套凡蛊（human-atk 页定位警示）。"
+    },
+    {
+      "id": "gold-atk-2-12-gu",
+      "name": "青铜舍利蛊",
+      "rank": 1,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "support",
+          "note": "舍利蛊体系（青铜/赤铁/白银/黄金/紫晶对应一至五转、皆凡蛊、无六转以上）：直接增加空窍底蕴、拔升蛊师境界（E:V3-086500）",
+          "evidence": "lore/wiki/world/economy-roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/world/economy-roster.md",
+        "status": "fact"
+      },
+      "status": "fact",
+      "note": "青铜/赤铁/白银凡间大量流通；宝黄天中一到三转舍利蛊成打卖。"
+    },
+    {
+      "id": "moon-glow-gu",
+      "name": "月芒蛊",
+      "rank": 2,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "月光蛊与两只小光蛊合炼成的二转进攻蛊，月刃攻击力达月光蛊三倍（E:V1-017144-17150）",
+          "evidence": "lore/wiki/gu/moon-glow-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/moon-glow-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "合炼须秘方；方源个案首次失败、三天后再炼成功。增量规则与整体三倍是两条口径（ST-MOONGLOW-04/03）。"
+    },
+    {
+      "id": "moon-ray-gu",
+      "name": "月痕蛊",
+      "rank": 2,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "月光蛊+痕石蛊合炼产物：攻击力不变、攻击范围增一倍达二十米（E:V1-017156）",
+          "evidence": "lore/wiki/gu/moon-ray-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/moon-ray-gu.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "转数原文未检得（runtime 记 rank_unstated），按月光蛊合炼晋升线占位二转；秘方优劣记载在案（E:V1-026760-26764）。与月芒蛊为同底二选一晋升线（均消耗月光蛊）。"
+    },
+    {
+      "id": "white-jade-gu",
+      "name": "白玉蛊",
+      "rank": 2,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "白豕蛊+玉皮蛊合炼产物、主防（gu-care 15708-15720 已核；rank 二转 E:V1-009986）；方源二转攻守兼备主力",
+          "evidence": "lore/wiki/world/gu-care-and-refinement.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/world/gu-care-and-refinement.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "方源当时元石只够一次之用、失败则经济崩溃——原著内生的供应压力个案。"
+    },
+    {
+      "id": "light-atk-3-02-gu",
+      "name": "邀月蛊",
+      "rank": 2,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "本体效果原文未核；roster-2 资料整理层级出现（青书劝售路线二）",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 2 已核（E:V1-016922，L0 裁定已改）；效果未核，凭名归档为占位攻击位。"
+    },
+    {
+      "id": "gold-atk-2-11-gu",
+      "name": "赤铁舍利蛊",
+      "rank": 2,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "support",
+          "note": "舍利蛊体系二转位（E:V3-086500）",
+          "evidence": "lore/wiki/world/economy-roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/world/economy-roster.md",
+        "status": "fact"
+      },
+      "status": "fact",
+      "note": "「二转的是赤铁舍利蛊」明文（E:V1-018066）。"
+    },
+    {
+      "id": "blood-moon-gu",
+      "name": "血月蛊",
+      "rank": 3,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "射程十米、攻击后血流不止；每月特定数日向外渗血、攻击力降至平时三分之一；食血液、种类不限、好养活（26850-26872 已核）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production",
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-2.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "月光系三转秘方之一（roster-2 蛊方与秘方层）；秘方存在已核、成分未公开。"
+    },
+    {
+      "id": "bone-def-3-05-gu",
+      "name": "玉骨蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "增加蛊师骨骼强度：摆脱凡胎俗骨、双猪之力上再添一鳄之力（E:V2-035560/037452）；白骨山传承",
+          "evidence": "lore/wiki/gu/bone-atk-1-08-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/bone-atk-1-08-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "rank 3 已核（E:V2-040530）。"
+    },
+    {
+      "id": "copper-skin-gu",
+      "name": "铜皮蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "护防系列成员（m0 已核 9614-9618）；rank 三转明文（E:V2-055814）",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "四转晋升产物即古铜皮蛊。"
+    },
+    {
+      "id": "earth-def-3-01-gu",
+      "name": "石窍蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "消耗蛊、用一次即消失：将窍壁转变成坚硬石壁、榨干空窍底蕴使蛊师瞬间达到巅峰修为；代价=终生无望三转+丧失真元自复、只能靠元石补充（24532-24544 已核）",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "供空窍受难或晋升无望须短时保命的蛊师使用；不可逆代价，不设常规战斗槽位。"
+    },
+    {
+      "id": "force-heal-3-03-gu",
+      "name": "自力更生蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "drain",
+      "effects": [
+        {
+          "kind": "recovery",
+          "note": "效果原文未核；凭名称语义与恢复位归档",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "inference",
+      "note": "rank 3 已核（E:V2-064192）；效果未核，接入前须回原文。"
+    },
+    {
+      "id": "water-atk-3-06-gu",
+      "name": "冰肌蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "练成冰肌防御卓绝、耐冰霜寒冷、冰晶成护甲；一经练成无须真元支持（如黑白豕蛊增力，V1 23066/23114/23222/23502）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "冰道系三大热门变身类蛊之一（roster 冰道系分组）；白凝冰以之配冰肌相得益彰。"
+    },
+    {
+      "id": "wood-atk-3-01-gu",
+      "name": "木魅蛊",
+      "rank": 3,
+      "path": "木道",
+      "maxRank": null,
+      "poweredAction": "drain",
+      "effects": [
+        {
+          "kind": "recovery",
+          "note": "古月青书完全体：树精化身、元气补给、冰棺破封、木牢困敌（A2b 23780-24076 资料整理）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production",
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "rank 3 已核（E:V1-023550）。roster 木系分组+元莲木道，path 木道为归档标签。"
+    },
+    {
+      "id": "light-atk-3-05-gu",
+      "name": "月蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；月光系近名占位",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 3 已核（E:V1-016922）。"
+    },
+    {
+      "id": "golden-moon-gu",
+      "name": "黄金月",
+      "rank": 3,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "三转月光系秘方产物、食月兰花瓣（A2b 26760-26794 资料整理）；具体能力未逐条核验",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab；仅见 roster 资料整理层级。"
+    },
+    {
+      "id": "frost-rain-moon-gu",
+      "name": "霜霖月",
+      "rank": 3,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "三转月光系秘方产物、食月兰花瓣（A2b 26760-26794 资料整理）；具体能力未逐条核验",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab；仅见 roster 资料整理层级。"
+    },
+    {
+      "id": "phantom-moon-gu",
+      "name": "幻影月",
+      "rank": 3,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "三转月光系秘方产物、食月兰花瓣（A2b 26760-26794 资料整理）；具体能力未逐条核验",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab；仅见 roster 资料整理层级。"
+    },
+    {
+      "id": "blood-bat-gu",
+      "name": "刀翅血蝠蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "support",
+          "note": "野外集群：操纵唯一雄蝠即可间接号令全部雌蝠（31864-31900 已核）；另有刀翅血蝠、血滴子、血狂蛊合炼秘方线索（31898）",
+          "evidence": "lore/wiki/gu/m0-six-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "wild"
+        ],
+        "evidence": "lore/wiki/gu/m0-six-gu.md",
+        "status": "fact"
+      },
+      "status": "fact",
+      "note": "转数分叉未决：原文三转（E:V1-031864）vs 游戏 rank1（M0 开局适配、L0 悬置记债）；本表取 canon 三转口径，单蛊一转形态无原文依据。"
+    },
+    {
+      "id": "gold-atk-3-13-gu",
+      "name": "白银舍利蛊",
+      "rank": 3,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "support",
+          "note": "舍利蛊体系三转位（E:V3-086500）",
+          "evidence": "lore/wiki/world/economy-roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/world/economy-roster.md",
+        "status": "fact"
+      },
+      "status": "fact",
+      "note": "「三转的是白银舍利蛊」明文（E:V1-018066）。"
+    },
+    {
+      "id": "blood-atk-4-01-gu",
+      "name": "血颅蛊",
+      "rank": 4,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；「四转的血颅蛊」明文（E:V1-033624），名指向血道攻击",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 4 已核；效果未核。"
+    },
+    {
+      "id": "fire-atk-4-05-gu",
+      "name": "火龙蛊",
+      "rank": 4,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "burst",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；「四转火龙蛊」明文（E:V1-032036），名指向火系攻击",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 4 已核；爆发映射为游戏占位。"
+    },
+    {
+      "id": "force-atk-4-04-gu",
+      "name": "全力以赴蛊",
+      "rank": 4,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "万我杀招诞生组件之一（奴力合流，E:V3-120582-120632）；本体战斗效果未核",
+          "evidence": "lore/wiki/world/kill-move-roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "inference",
+      "note": "多时点口径：初得三转明文（E:V2-052464）、后经升炼晋升（节215），game=4 取中段时点。"
+    },
+    {
+      "id": "gold-def-3-09-gu",
+      "name": "古铜皮蛊",
+      "rank": 4,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "铜皮蛊四转晋升产物（E:V2-065994）；防御语义按护防系列归纳",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "rank 4 已核（L0 裁定已改，原 game=3）。"
+    },
+    {
+      "id": "moon-shadow-gu",
+      "name": "月影蛊",
+      "rank": 4,
+      "path": "月道",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "special",
+          "note": "压制真元（A2b 26796-26816 资料整理；花酒行者重伤之因存疑）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "rank 4 单源明文、L0 裁定改（原 game=3，E:V1-026792）；压制真元为干扰效果，无对应占位动作，不入常规攻击槽。"
+    },
+    {
+      "id": "sword-atk-4-01-gu",
+      "name": "剑气蛊",
+      "rank": 4,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；名指向剑道攻击",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 4 已核（E:V5-195606）。"
+    },
+    {
+      "id": "gold-atk-4-14-gu",
+      "name": "黄金舍利蛊",
+      "rank": 4,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "support",
+          "note": "舍利蛊体系四转位；影响四转战力与势力格局、受各大组织严苛管禁、极少流通（86500-86518 已核）",
+          "evidence": "lore/wiki/world/economy-roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/world/economy-roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "门派内部另有贡献-奖励通道（78006）；还大量用作炼制仙蛊的催化。"
+    },
+    {
+      "id": "blood-atk-5-02-gu",
+      "name": "血手印蛊",
+      "rank": 5,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；名指向血道攻击",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 5 已核（E:V2-050082）。"
+    },
+    {
+      "id": "blood-droplet-gu",
+      "name": "血滴子",
+      "rank": 5,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "drain",
+      "effects": [
+        {
+          "kind": "recovery",
+          "note": "养用合一、专食蛊师本命精血；饱餐后一变二二变四裂变分化、饿了相互吞噬；强盛时铺天盖地灭村寨、弱小时不如三转蛊；电流克制（28474-28498 已核）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "一代先祖留防手段；晋升即六转魔蛊血神子、天下十大魔蛊第七；晋升线是本表最实的五转入六转通道。"
+    },
+    {
+      "id": "light-atk-5-03-gu",
+      "name": "太光蛊",
+      "rank": 5,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "burst",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "盗墓所得残蛊：月催三次、三次一过自毁；荣耀之光无攻击力但透一切隔膜、可组合成攻击杀招（72028-72044、75086 已核）",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "持有者萧芒（五转光道强者）；残蛊自毁约束使其更像一次性爆发资源。"
+    },
+    {
+      "id": "gold-atk-5-17-gu",
+      "name": "金甲蛊",
+      "rank": 5,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "效果原文未核；名指向金甲防御",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "rank 5 已核（E:V3-105906）。"
+    },
+    {
+      "id": "gold-atk-5-15-gu",
+      "name": "紫晶舍利蛊",
+      "rank": 5,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "support",
+          "note": "舍利蛊体系五转位；与黄金舍利蛊同受严苛管禁、极少流通；大量用作炼制仙蛊的催化（86500-86518 已核）",
+          "evidence": "lore/wiki/world/economy-roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "market"
+        ],
+        "evidence": "lore/wiki/world/economy-roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "rank 5 已核（E:V3-078004）；购买实例三只（B 86500-86532）。"
+    },
+    {
+      "id": "blood-atk-5-09-gu",
+      "name": "血神子",
+      "rank": 6,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "burst",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "血滴子晋升的六转魔蛊、天下十大魔蛊第七（28468-28484 已核）；强盛时铺天盖地",
+          "evidence": "lore/wiki/gu/roster-2.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster-2.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "血神子秘方系残篇（B 85476 资料整理）；玩家侧最可考的六转仙蛊获取线（养五转血滴子+残篇秘方晋升）。game rank_cap=5 登记为品阶压缩分叉。"
+    },
+    {
+      "id": "force-atk-5-19-gu",
+      "name": "我力蛊",
+      "rank": 6,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；名指向力道",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "canon 六转（E:V4-128088，game 压缩到 5）；同种仙蛊世界唯一、可能被 NPC 持有，玩家取得无直接证据。"
+    },
+    {
+      "id": "human-atk-5-31-gu",
+      "name": "海誓蛊",
+      "rank": 6,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "「山盟、海誓两蛊…这两个仙蛊」明文为仙蛊（E:V2-071240）；防御语义凭山盟海誓名归档",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "inference",
+      "note": "具体转数原文未言（并称口径六转，game rank_cap 登记）；效果未核。"
+    },
+    {
+      "id": "wanlan-immortal-gu",
+      "name": "挽澜仙蛊",
+      "rank": 6,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "逆流护身印双核之一（坚持仙蛊+挽澜仙蛊为核心、海量水道凡蛊为骨架，可逆反八转攻势、极耗仙元，F2b 240504-240552 笔记层级）；万我杀招骨架（roster F2b 240114-240186）",
+          "evidence": "lore/wiki/gu/persistence-gu.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/persistence-gu.md",
+        "status": "assumption"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab。rank 6 取 persistence 页用途段口径；roster-3 转数未核名单另记「挽澜蛊」五转口径——两处是否同一实体未核，本条按仙蛊六转登记。"
+    },
+    {
+      "id": "luck-atk-5-04-gu",
+      "name": "狗屎运蛊",
+      "rank": 6,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "运道仙蛊；巨阳仙尊早年本命蛊（双源坐实：189554-189556、356252、226958）；影宗毁损后琅琊地灵重炼、方源以落魄谷交易取得（196384/196390/195858/196410 已核）",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "「六转仙蛊…狗屎运蛊」列名明文（E:V5-199800）；仙蛊唯一、历任持有者链清晰，是 NPC 持有型仙蛊的典型。"
+    },
+    {
+      "id": "immortal-roam-gu",
+      "name": "定仙游蛊",
+      "rank": 6,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "跨域机动核心（弧四蛊链）；Run 2 未来身模拟其腾挪（H1 324354-324565）；被野生镇宇仙蛊克制（H1 324744）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "production"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab。rank 6 取 roster 弧四资料整理口径；成方秘方已核（原文 56826：仙风蛊+七颗明星蛊等辅料）。机动类不设战斗槽位。"
+    },
+    {
+      "id": "spring-autumn-cicada",
+      "name": "春秋蝉",
+      "rank": 6,
+      "path": "宙道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "逆转光阴使持有者重生（E:V1-003256-3270）；红莲魔尊（洪亭）所创（E:V5-313128、323070 已核对话）；可随宿主升炼（Run 1 至七转）；使用伴随生命修为等重大代价",
+          "evidence": "lore/wiki/gu/spring-autumn-cicada.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/spring-autumn-cicada.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "页面记「时光道」，流派总表宙道=时间奥秘，归档为宙道。轮回机制叙事原型、非战斗蛊，不设战斗槽位；对应 supply.json availability 0.15。"
+    },
+    {
+      "id": "persistence-gu",
+      "name": "坚持仙蛊",
+      "rank": 7,
+      "path": "人道",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "七转石碑巨形仙蛊（E:V5-239846）；逆流护身印核心（与挽澜仙蛊+水道凡蛊凝成，可逆反八转攻势、极耗仙元，笔记层级）；万我杀招骨架",
+          "evidence": "lore/wiki/gu/persistence-gu.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/persistence-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "元莲仙尊所炼、逆流河历代河主认主核心（E:V5-239624 已核）；方源于逆流河长期跋涉后炼出。"
+    },
+    {
+      "id": "zhizhang-immortal-gu",
+      "name": "智障仙蛊",
+      "rank": 7,
+      "path": "智道",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "单纯催发即在蛊仙周围巨大范围内瞬间形成障碍，消耗仙元与大量意志；以之为核心的杀招不少（334154-334424 已核）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "id 为本表新造 kebab（拼音）。蜗牛外形、偶闪紫色光晕；障碍场映射 guard 为归纳。"
+    },
+    {
+      "id": "sword-atk-5-02-gu",
+      "name": "飞剑蛊",
+      "rank": 7,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；名指向剑道攻击",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "canon 七转（E:V5-190076，game 压缩到 5）；仙蛊唯一、可能 NPC 持有。"
+    },
+    {
+      "id": "qi-atk-5-05-gu",
+      "name": "龙息蛊",
+      "rank": 7,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "burst",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；名指向龙息喷吐",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "canon 七转（E:V5-223776）。"
+    },
+    {
+      "id": "dream-def-5-01-gu",
+      "name": "梦甲蛊",
+      "rank": 7,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "效果原文未核；名指向梦道护甲",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "canon 七转（E:V6-396296）。"
+    },
+    {
+      "id": "heaven-atk-5-06-gu",
+      "name": "天机蛊",
+      "rank": 7,
+      "path": "天道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "预测：杀招石洞天机可预测灾劫（G 276556-276560 资料整理）；本质天道蛊虫、曾误认智道；催动需仙元+定量天道仙材，否则反噬损寿元十年至七十年（E:V6-435684-435710）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "乐土所创、砚石老人炼成、损毁于义天山、方源以天光轮转炼道杀招再炼（两次炼制第二次成功已核）；后期升炼九转（J2b 436442）——多时点，本表取七转。"
+    },
+    {
+      "id": "heaven-atk-5-03-gu",
+      "name": "天妒仙蛊",
+      "rank": 7,
+      "path": "天道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "天道蛊虫（同类有天怒、天悲）、九转蛊尊亦无法催动；与嫉妒情感共鸣自发动、代价为折损寿元（402750-402760 已核）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "「蛊修无法自主催动」的约束代表：不设玩家战斗槽位；方源炼化催动属自在天痕特殊语境。"
+    },
+    {
+      "id": "heaven-atk-5-08-gu",
+      "name": "雷电蛊",
+      "rank": 8,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "burst",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "野生天道自然炼蛊：雷电森林由资源点渐转、源头野生雷电蛊随之升上八转；森雷洞主刻意不炼化、欲以「大自然在炼蛊」推其至九转（E:V6-376428-376448）；《人祖传》插叙神话记其与仇恨蛊合击轰塌太古蓝天（内嵌神话须与正文区分）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "wild"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "转数双口径：roster-3/entities.json 取九转（E:V6-376300），roster 弧十三补录记八转、正被大自然炼蛊推向九转；本表取八转保守口径并登记分叉。"
+    },
+    {
+      "id": "wisdom-atk-5-05-gu",
+      "name": "慧剑蛊",
+      "rank": 8,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "效果原文未核；名指向智道慧剑",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "assumption"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "canon 八转（E:V4-182352）。"
+    },
+    {
+      "id": "human-atk-5-34-gu",
+      "name": "悔蛊",
+      "rank": 8,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "guard",
+      "effects": [
+        {
+          "kind": "defense",
+          "note": "用于镇压海底巨魔、隐形匿迹，藏于镇魔悔哭大阵中央海底（309122-309140 已核，方源内心独白）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "canon 八转（E:V5-309674）；镇压/匿迹语义映射 guard 为归纳；Run 2 炼阵雨炼化乐土海底大阵时入方源手（H2 354194-354779）。"
+    },
+    {
+      "id": "three-qi-immortal-gu",
+      "name": "三气仙蛊",
+      "rank": 8,
+      "path": "气道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "人气、地气、天气三只八转气道仙蛊，「三气归来」三式的基础；天庭重宝、暂借气海老祖并可随时回收（E:V6-377144/377164/377198）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "id 为本表新造 kebab；条目实为三只一组，供应与唯一性按组登记。"
+    },
+    {
+      "id": "luck-atk-5-01-gu",
+      "name": "鸿运齐天蛊",
+      "rank": 8,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "雪胡老祖炼制失败、大雪山福地被毁（F2b 240040 资料整理）——高转炼制尾部风险的代表个案",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "canon 八转（E:V3-114422）；鸿运仙蛊系巨阳核心仙蛊谱系（169090 语境）。"
+    },
+    {
+      "id": "fate-gu",
+      "name": "宿命蛊",
+      "rank": 9,
+      "path": "天道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "天道碎片/天庭秩序规则接口：启示功能（「龙人当兴」E:V5-323138-323140）；蛊修无法自主催动（path-roster 402750-402764 已核）；被方源摧毁后无法重现（E:V5-366108、E:V6-403356）",
+          "evidence": "lore/wiki/gu/fate-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/fate-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "九转（传说口径 E:V3-103100）与六转（正文口径）双口径登记（roster-3），本表取九转与 supply.json 一致；天庭核心资产、普通循环整局不可得（supply availability 0）。不设战斗槽位。"
+    },
+    {
+      "id": "wisdom-gu",
+      "name": "智慧蛊",
+      "rank": 9,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "智慧光晕提供灵感与推算：远距数息削两年寿、近距硬顶损失十数年（E:V3-118878、119142）；推演蛊方/仙蛊方/杀招的无上利器（gu-care 140664）",
+          "evidence": "lore/wiki/gu/wisdom-gu.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/wisdom-gu.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "力量蛊、智慧蛊天道归属 [对话|未决]（402758-402764），path 不标天道；星宿本命蛊说为单源未决。战斗外核心（推演线），不设战斗槽位。"
+    },
+    {
+      "id": "heaven-atk-5-02-gu",
+      "name": "命运蛊",
+      "rank": 9,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "长生天目标：「只要拥有了九转命运蛊，我长生天便能够和天庭抗衡」（原文 316328 已核）；大计=抢修复中的宿命蛊与运道仙蛊合练；十转仙蛊传闻之一、主材含九转宿命蛊（I 406724-406730）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "fact",
+      "note": "设想出自巨阳仙尊；尚未炼成——属计划层实体，不入构筑。"
+    },
+    {
+      "id": "supreme-immortal-fetus-gu",
+      "name": "至尊仙胎蛊",
+      "rank": 9,
+      "path": "人道",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "义天山夺得（00-总览弧九 资料整理）；十转有望（I 406724-406730）；人道（《人祖传》清单 328600-328614 已核）",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab；完成者自白（187244）与义天山夺得的关系未核（roster 待核对）。"
+    },
+    {
+      "id": "nine-turn-light-gu",
+      "name": "九转光蛊",
+      "rank": 9,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "strike",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "野生、藏于太阳、日爆后现世、三尊争夺（J 436001-436400 资料整理）；具体能力未核",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "wild"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab；攻击映射为占位假设；整局接触概率极低。"
+    },
+    {
+      "id": "nine-turn-fire-gu",
+      "name": "九转火蛊",
+      "rank": 9,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": "burst",
+      "effects": [
+        {
+          "kind": "attack",
+          "note": "《人祖传》传奇仙蛊：幽魂吞之、太阳失双蛊支撑自爆（J2b 436204-436216 资料整理）；具体能力未核",
+          "evidence": "lore/wiki/gu/roster.md",
+          "status": "inference"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "wild"
+        ],
+        "evidence": "lore/wiki/gu/roster.md",
+        "status": "inference"
+      },
+      "status": "inference",
+      "note": "id 为本表新造 kebab；攻击映射为占位假设。"
+    },
+    {
+      "id": "force-gu",
+      "name": "力量蛊",
+      "rank": 9,
+      "path": "unknown",
+      "maxRank": null,
+      "poweredAction": null,
+      "effects": [
+        {
+          "kind": "special",
+          "note": "原文九转传奇口径（E:V3-114472、103100 同）；游戏 rank1 同名重用为命名异常、L0 裁定非适配待改名",
+          "evidence": "lore/wiki/gu/roster-3.md",
+          "status": "fact"
+        }
+      ],
+      "acquisition": {
+        "routes": [
+          "condition"
+        ],
+        "evidence": "lore/wiki/gu/roster-3.md",
+        "status": "assumption"
+      },
+      "status": "fact",
+      "note": "命名重用异常代表：本表 canon 九转传奇蛊与游戏 rank1 力量蛊是两个实体，不得混用；硬气蛊条（E:V2-058642）记力气蛊（六转仙蛊口径）已绝迹。"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe-moon-glow",
+      "outputGu": "moon-glow-gu",
+      "rank": 2,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "月光蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "小光蛊",
+          "count": 2,
+          "status": "fact"
+        }
+      ],
+      "conditions": "合炼须秘方；方源个案首次失败、一只小光蛊消亡、三天后再炼成功（A2b 17024-17214）；产物主攻、攻击力达月光蛊三倍",
+      "evidence": [
+        "lore/wiki/gu/moon-glow-gu.md",
+        "lore/wiki/gu/small-light-gu.md",
+        "lore/wiki/world/gu-care-and-refinement.md"
+      ],
+      "status": "fact",
+      "note": "全书核验最完整的凡蛊合炼线；input 蛊在成功时被消耗。"
+    },
+    {
+      "id": "recipe-white-jade",
+      "outputGu": "white-jade-gu",
+      "rank": 2,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "白豕蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "玉皮蛊",
+          "count": 1,
+          "status": "fact"
+        }
+      ],
+      "conditions": "合炼须秘方；主防；方源当时元石只够一次之用、失败则经济崩溃（gu-care 15708-15720）；成功三要素=一心多用/理解蛊虫/秘方",
+      "evidence": [
+        "lore/wiki/world/gu-care-and-refinement.md",
+        "lore/wiki/gu/m0-six-gu.md",
+        "lore/wiki/gu/roster-3.md"
+      ],
+      "status": "fact",
+      "note": "与月芒蛊并列的已核二转合炼个案（同段对照主攻/主防）。"
+    },
+    {
+      "id": "recipe-moon-ray",
+      "outputGu": "moon-ray-gu",
+      "rank": 2,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "月光蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "material",
+          "name": "痕石蛊",
+          "count": 1,
+          "status": "inference"
+        }
+      ],
+      "conditions": "秘方在案（E:V1-026760-26764）：产物攻击范围增一倍达二十米、攻击力并不出众；与月芒蛊同底二选一",
+      "evidence": [
+        "lore/wiki/gu/moon-ray-gu.md"
+      ],
+      "status": "fact",
+      "note": "痕石蛊本体转数与获取未核，inputs 状态按材料登记。"
+    },
+    {
+      "id": "recipe-immortal-roam",
+      "outputGu": "immortal-roam-gu",
+      "rank": 6,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "仙风蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "明星蛊",
+          "count": 7,
+          "status": "fact"
+        },
+        {
+          "kind": "material",
+          "name": "辅料若干",
+          "count": 1,
+          "status": "inference"
+        }
+      ],
+      "conditions": "定仙游蛊存在成方秘方：仙风蛊+七颗明星蛊等辅料合炼（原文 56826 已核）；产物为六转跨域机动核心",
+      "evidence": [
+        "lore/wiki/gu/roster.md"
+      ],
+      "status": "fact",
+      "note": "输出转数六转取 roster 弧四资料整理口径；仙风蛊/明星蛊本体条目未建，仅作输入名登记。"
+    },
+    {
+      "id": "recipe-human-beast-burial",
+      "outputGu": null,
+      "rank": 3,
+      "inputs": [
+        {
+          "kind": "material",
+          "name": "人（处女且丙等以上蛊师资质）",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "material",
+          "name": "兽（将人吃得点滴不剩为最佳）",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "material",
+          "name": "其余材料（合计近十种，明细未公开）",
+          "count": 8,
+          "status": "inference"
+        }
+      ],
+      "conditions": "人兽葬生蛊秘方：材料近十种、主料为人与兽（25938-25946 已核）；产物为三转破境跳板、服用后资质降至四成二（弧二资料整理）；outputGu 未建实体页故记 null",
+      "evidence": [
+        "lore/wiki/gu/roster.md"
+      ],
+      "status": "inference",
+      "note": "材料约束为已核事实；产物转数取资料整理口径。"
+    },
+    {
+      "id": "recipe-four-wine",
+      "outputGu": null,
+      "rank": 2,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "酒虫",
+          "count": 2,
+          "status": "inference"
+        },
+        {
+          "kind": "material",
+          "name": "酸酒",
+          "count": 1,
+          "status": "inference"
+        },
+        {
+          "kind": "material",
+          "name": "甜酒",
+          "count": 1,
+          "status": "inference"
+        },
+        {
+          "kind": "material",
+          "name": "苦酒",
+          "count": 1,
+          "status": "inference"
+        },
+        {
+          "kind": "material",
+          "name": "辣酒",
+          "count": 1,
+          "status": "inference"
+        }
+      ],
+      "conditions": "酸甜苦辣四酒合炼四味酒虫（两酒虫加四酒为最优路线），可精炼二转真元提一境（gu-care 资料整理）；逆炼个案：四味酒虫可逆炼回酒虫（REF-029 已核，方源半年达不到）；outputGu 未建实体页故记 null",
+      "evidence": [
+        "lore/wiki/world/gu-care-and-refinement.md",
+        "lore/wiki/rules/refinement.md",
+        "lore/wiki/gu/roster.md"
+      ],
+      "status": "inference",
+      "note": "合炼配比为笔记层级；逆炼方向为已核事实。"
+    },
+    {
+      "id": "recipe-inverse-white-jade",
+      "outputGu": "white-boar-strength-gu",
+      "rank": 1,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "白玉蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "幡然蛊（分解媒介）",
+          "count": 1,
+          "status": "fact"
+        }
+      ],
+      "conditions": "逆炼：将高阶蛊虫降为低阶——白玉蛊分解回白豕蛊与玉皮蛊，「这个过程被称之为逆炼」（E:V1-018464-18468）；双输出，第二输出玉皮蛊记于本 note",
+      "evidence": [
+        "lore/wiki/rules/refinement.md"
+      ],
+      "status": "fact",
+      "note": "逆炼产物是成分蛊虫、不是毁坏；逆炼秘方价值可超四五转秘方（REF-006）。"
+    },
+    {
+      "id": "recipe-blood-god-child",
+      "outputGu": "blood-atk-5-09-gu",
+      "rank": 6,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "血滴子",
+          "count": 1,
+          "status": "fact"
+        }
+      ],
+      "conditions": "血滴子晋升即六转魔蛊血神子、天下十大魔蛊第七（28468-28484 已核）；血神子秘方系残篇（B 85476 资料整理）",
+      "evidence": [
+        "lore/wiki/gu/roster.md",
+        "lore/wiki/gu/roster-2.md"
+      ],
+      "status": "inference",
+      "note": "晋升关系为已核事实；完整秘方未知（残篇），实操成功率按 model §6 高转口径另行结算。"
+    },
+    {
+      "id": "recipe-blood-moon",
+      "outputGu": "blood-moon-gu",
+      "rank": 3,
+      "inputs": [],
+      "conditions": "血月蛊秘方存在（三转月光系秘方之一，roster-2 蛊方与秘方层）；成分 Wiki 未公开，不造配方",
+      "evidence": [
+        "lore/wiki/gu/roster-2.md",
+        "lore/wiki/gu/roster.md"
+      ],
+      "status": "inference",
+      "note": "inputs 为空是登记占位，表示配方存在但成分 unknown。"
+    },
+    {
+      "id": "recipe-five-aperture-fire-tower",
+      "outputGu": null,
+      "rank": 5,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "单窍火炭蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "双窍火炉蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "三窍火屋蛊",
+          "count": 1,
+          "status": "fact"
+        },
+        {
+          "kind": "gu",
+          "name": "四窍火楼蛊",
+          "count": 1,
+          "status": "fact"
+        }
+      ],
+      "conditions": "中洲炼蛊大会提供五张蛊方对应一至五转系列（单窍火炭蛊→双窍火炉蛊→三窍火屋蛊→四窍火楼蛊→五窍火塔蛊），一脉相承、须逐级递进炼制；高明者可改良蛊方节省步骤、甚至直接以材料一步登天（REF-018）；outputGu 未建实体页故记 null",
+      "evidence": [
+        "lore/wiki/rules/refinement.md"
+      ],
+      "status": "fact",
+      "note": "蛊方=工艺路线的代表个案：路线可选择≠任意跳步（冒进加速=自找死路，E:V4-151696）。"
+    },
+    {
+      "id": "recipe-nine-eye-wine",
+      "outputGu": null,
+      "rank": 4,
+      "inputs": [
+        {
+          "kind": "gu",
+          "name": "七香酒虫",
+          "count": 2,
+          "status": "fact"
+        }
+      ],
+      "conditions": "两只七香酒虫合炼三天得到九眼酒虫（能提升黄金真元一个小境界），耗去接近二十万元石（REF-023 已核）；outputGu 未建实体页故记 null",
+      "evidence": [
+        "lore/wiki/rules/refinement.md"
+      ],
+      "status": "inference",
+      "note": "九眼酒虫本体转数未核，rank 按功效（黄金真元=四转）占位；单次合炼成本个案。"
+    },
+    {
+      "id": "recipe-constraint-secret-required",
+      "outputGu": null,
+      "rank": null,
+      "inputs": [],
+      "conditions": "约束条目：合炼须有秘方；有些蛊虫之间不能合炼；秘方为先祖无数实践与数不清失败后总结（E:V1-015724-15734）——无秘方即无合炼，约束在知识而不在蛊虫本身",
+      "evidence": [
+        "lore/wiki/world/gu-care-and-refinement.md",
+        "lore/wiki/rules/refinement.md"
+      ],
+      "status": "fact",
+      "note": "对应 model.md §6.1 配方白名单与输入实体检查；不实现任意两蛊自动合成。"
+    },
+    {
+      "id": "recipe-constraint-failure-economics",
+      "outputGu": null,
+      "rank": null,
+      "inputs": [],
+      "conditions": "约束条目：转数越高失败率越高——五转炼制成功率往往不足千分之一、很多五转蛊师浑身上下没有一只五转蛊虫（REF-013）；春秋蝉合炼成功率不到百分之一、失败无数次（REF-013）；四转呕心婴泣蛊近炼道大师也十多次尽数失败（REF-010）；失败反噬身躯与魂魄、须为失败预留预算（REF-016）",
+      "evidence": [
+        "lore/wiki/rules/refinement.md",
+        "lore/wiki/world/gu-care-and-refinement.md"
+      ],
+      "status": "fact",
+      "note": "个案统计口径，不是全谱系成功率表；model §6.2 的 p0 只是游戏假设。"
+    },
+    {
+      "id": "recipe-constraint-immortal-unique",
+      "outputGu": null,
+      "rank": null,
+      "inputs": [],
+      "conditions": "约束条目：绝大多数仙蛊极限八转、真正能升上九转的只占相当小的一部分（REF-020）；同种仙蛊同世唯一（cultivation-system E:V2-069622，经 evidence.md E20）；仙蛊登记包含世界内 NPC 持有者；个案：江山如故六转升八转即达极限、血本仙蛊六转升至七转",
+      "evidence": [
+        "lore/wiki/rules/refinement.md",
+        "lore/wiki/world/cultivation-system.md"
+      ],
+      "status": "fact",
+      "note": "maxRank 白名单与仙蛊唯一登记的世界依据；宿命蛊被毁后无法重现（E:V6-403356）为极端个案。"
+    },
+    {
+      "id": "recipe-constraint-material-path",
+      "outputGu": null,
+      "rank": null,
+      "inputs": [],
+      "conditions": "约束条目：蛊虫是大道碎片、蛊材是道痕聚集——流派一致才可相互取代（REF-019）；仙蛊食材替代上限百分之四十、超量无效；凡蛊替代仙蛊需海量（恶念凡蛊替代乐山乐意仙蛊至少两千只五转同时催动）",
+      "evidence": [
+        "lore/wiki/rules/refinement.md"
+      ],
+      "status": "fact",
+      "note": "材料接口按配方前置处理，不另建掉落交易循环（model §6.2）。"
+    }
+  ],
+  "builds": {
+    "burst": {
+      "id": "burst",
+      "name": "爆发构筑",
+      "path": "月道",
+      "ranks": {
+        "1": {
+          "slots": [
+            {
+              "gu": "moonlight-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moonlight-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wood-atk-1-05-gu",
+                  "poweredAction": "strike",
+                  "note": "青藤蛊十五米藤鞭（E:V1-016788）"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "small-light-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/small-light-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "协同成分占位；双蛊同催月刃翻倍已核"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位；爆发位省真元回填"
+                }
+              ]
+            }
+          ]
+        },
+        "2": {
+          "slots": [
+            {
+              "gu": "moon-glow-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "moonlight-gu",
+                  "poweredAction": "strike",
+                  "note": "未合炼时退回一转月刃"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "light-atk-3-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "效果未核，纯占位第二攻击位"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "3": {
+          "slots": [
+            {
+              "gu": "blood-moon-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "moon-glow-gu",
+                  "poweredAction": "strike",
+                  "note": "退回二转月芒"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "golden-moon-gu",
+              "poweredAction": "strike",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "秘方系占位"
+                }
+              ]
+            },
+            {
+              "gu": "phantom-moon-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "秘方系占位"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "4": {
+          "slots": [
+            {
+              "gu": "blood-atk-4-01-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "force-atk-4-04-gu",
+                  "poweredAction": "strike",
+                  "note": "全力以赴蛊（多时点四转）"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "fire-atk-4-05-gu",
+              "poweredAction": "burst",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "爆发映射占位（效果未核）"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "5": {
+          "slots": [
+            {
+              "gu": "blood-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-4-01-gu",
+                  "poweredAction": "strike",
+                  "note": "退回四转血颅"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "light-atk-5-03-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "fire-atk-4-05-gu",
+                  "poweredAction": "burst",
+                  "note": "退回四转火龙占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "食精血回收占位"
+                }
+              ]
+            }
+          ]
+        },
+        "6": {
+          "slots": [
+            {
+              "gu": "blood-atk-5-09-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-2.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "light-atk-5-03-gu",
+                  "poweredAction": "burst",
+                  "note": "退回五转太光蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "force-atk-5-19-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-5-02-gu",
+                  "poweredAction": "strike",
+                  "note": "退回五转血手印占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "7": {
+          "slots": [
+            {
+              "gu": "sword-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "force-atk-5-19-gu",
+                  "poweredAction": "strike",
+                  "note": "退回六转我力蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "qi-atk-5-05-gu",
+              "poweredAction": "burst",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-5-09-gu",
+                  "poweredAction": "burst",
+                  "note": "退回六转血神子占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-atk-5-09-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-2.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "force-atk-5-19-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "8": {
+          "slots": [
+            {
+              "gu": "wisdom-atk-5-05-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "sword-atk-5-02-gu",
+                  "poweredAction": "strike",
+                  "note": "退回七转飞剑占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "heaven-atk-5-08-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "qi-atk-5-05-gu",
+                  "poweredAction": "burst",
+                  "note": "退回七转龙息占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-atk-5-09-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-2.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "force-atk-5-19-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "9": {
+          "slots": [
+            {
+              "gu": "nine-turn-light-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wisdom-atk-5-05-gu",
+                  "poweredAction": "strike",
+                  "note": "退回八转慧剑占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "nine-turn-fire-gu",
+              "poweredAction": "burst",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "heaven-atk-5-08-gu",
+                  "poweredAction": "burst",
+                  "note": "退回八转雷电占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "wisdom-atk-5-05-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "heaven-atk-5-08-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "月光系晋升线主攻：一至三转走月光→月芒→血月/三转秘方的已核链路；四转起当阶攻击蛊效果多未核（血颅/火龙/血手印均凭名占位，status=assumption）。六转核心取血神子（血滴子晋升线，全表唯一有完整原著获取链的六转攻击仙蛊）；七转以上当阶仙蛊唯一且多半 NPC 持有，九转核心（九转光蛊/九转火蛊）为传奇/野生个案、整局多半不可得，实际输出常由 fallback（八转慧剑/雷电）承担。三至五转酒虫持续在册：其真元精炼对高消耗爆发位是续航兜底。槽位数 3/3/4/3/3/3/5/5/5，L=3/3/6/3/3/3/10/10/10 均≤C[r]。同动作双槽（七转起 strike/burst 各两槽）为「主攻+同域备胎」，引擎取转数最高者、两只均计供养。混入非月道蛊（血系/力道/剑道）按 model §2.3 异道干扰 F 修正。"
+    },
+    "balanced": {
+      "id": "balanced",
+      "name": "均衡构筑",
+      "path": "月道（混修防御/恢复）",
+      "ranks": {
+        "1": {
+          "slots": [
+            {
+              "gu": "moonlight-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moonlight-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wood-atk-1-05-gu",
+                  "poweredAction": "strike",
+                  "note": "青藤蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "jade-skin-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/m0-six-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "stone-shell-gu",
+                  "poweredAction": "guard",
+                  "note": "石皮蛊护防占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "2": {
+          "slots": [
+            {
+              "gu": "moon-glow-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "moonlight-gu",
+                  "poweredAction": "strike",
+                  "note": "退回月刃"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "white-jade-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/world/gu-care-and-refinement.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "jade-skin-gu",
+                  "poweredAction": "guard",
+                  "note": "退回玉皮蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "vitality-grass-gu",
+              "poweredAction": "drain",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wine-insect-gu",
+                  "poweredAction": "drain",
+                  "note": "酒虫恢复占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "3": {
+          "slots": [
+            {
+              "gu": "blood-moon-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "moon-glow-gu",
+                  "poweredAction": "strike",
+                  "note": "退回月芒"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "water-atk-3-06-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "white-jade-gu",
+                  "poweredAction": "guard",
+                  "note": "退回白玉蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "wood-atk-3-01-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "vitality-grass-gu",
+                  "poweredAction": "drain",
+                  "note": "退回九叶生机草"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "vitality-grass-gu",
+              "poweredAction": "drain",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "4": {
+          "slots": [
+            {
+              "gu": "moon-shadow-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-moon-gu",
+                  "poweredAction": "strike",
+                  "note": "退回血月蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "gold-def-3-09-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "water-atk-3-06-gu",
+                  "poweredAction": "guard",
+                  "note": "退回冰肌蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "sword-atk-4-01-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "wood-atk-3-01-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "5": {
+          "slots": [
+            {
+              "gu": "blood-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "sword-atk-4-01-gu",
+                  "poweredAction": "strike",
+                  "note": "退回剑气蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "gold-atk-5-17-gu",
+              "poweredAction": "guard",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "gold-def-3-09-gu",
+                  "poweredAction": "guard",
+                  "note": "退回古铜皮蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wood-atk-3-01-gu",
+                  "poweredAction": "drain",
+                  "note": "退回木魅蛊元气补给"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "light-atk-5-03-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位；残蛊三次一过自毁"
+                }
+              ]
+            }
+          ]
+        },
+        "6": {
+          "slots": [
+            {
+              "gu": "blood-atk-5-09-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-2.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "light-atk-5-03-gu",
+                  "poweredAction": "burst",
+                  "note": "退回太光蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "human-atk-5-31-gu",
+              "poweredAction": "guard",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "gold-atk-5-17-gu",
+                  "poweredAction": "guard",
+                  "note": "退回金甲蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "force-atk-5-19-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-5-02-gu",
+                  "poweredAction": "strike",
+                  "note": "退回血手印占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "vitality-grass-gu",
+              "poweredAction": "drain",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "7": {
+          "slots": [
+            {
+              "gu": "sword-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "force-atk-5-19-gu",
+                  "poweredAction": "strike",
+                  "note": "退回六转我力蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "persistence-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/persistence-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "human-atk-5-31-gu",
+                  "poweredAction": "guard",
+                  "note": "退回六转海誓占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "blood-atk-5-09-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-2.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "human-atk-5-31-gu",
+              "poweredAction": "guard",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "8": {
+          "slots": [
+            {
+              "gu": "wisdom-atk-5-05-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "sword-atk-5-02-gu",
+                  "poweredAction": "strike",
+                  "note": "退回七转飞剑占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "human-atk-5-34-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "persistence-gu",
+                  "poweredAction": "guard",
+                  "note": "退回七转坚持仙蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "heaven-atk-5-08-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-5-09-gu",
+                  "poweredAction": "burst",
+                  "note": "退回六转血神子"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "zhizhang-immortal-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位；障碍场"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "9": {
+          "slots": [
+            {
+              "gu": "nine-turn-light-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wisdom-atk-5-05-gu",
+                  "poweredAction": "strike",
+                  "note": "退回八转慧剑占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "human-atk-5-34-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "heaven-atk-5-08-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "zhizhang-immortal-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "persistence-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/persistence-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "方源二转路线的构筑化：月芒主攻+白玉主防+九叶生机草治疗（「攻守兼备」「治疗有九叶生机草」均为已核引文）。原著方源二转同期至少带四蛊（月芒/白玉/酒虫/九叶），L(4)=6 已超模型 C(2)=5——模型按游戏容量裁为 3 槽，该剪刀差登记为模型与原著的已知分歧。六转以上同 burst 构筑口径：核心仙蛊唯一、多属 NPC 持有（血神子除外，有血滴子晋升链），核心位 status=assumption/inference 并以近阶凡蛊/仙蛊兜底；坚持仙蛊入列取其「逆反八转攻势」防御核语义（笔记层级）。槽位数 3/3/4/4/4/5/5/5/6，L=3/3/6/6/6/10/10/10/15 均≤C[r]。"
+    },
+    "sustain": {
+      "id": "sustain",
+      "name": "续航构筑",
+      "path": "气道（混修水/骨/月）",
+      "ranks": {
+        "1": {
+          "slots": [
+            {
+              "gu": "jade-skin-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/m0-six-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "stone-shell-gu",
+                  "poweredAction": "guard",
+                  "note": "石皮蛊护防占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "vitality-grass-gu",
+                  "poweredAction": "drain",
+                  "note": "九叶生机草治疗占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "qi-atk-1-01-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/qi-atk-1-01-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位；珍贵并不常见"
+                }
+              ]
+            }
+          ]
+        },
+        "2": {
+          "slots": [
+            {
+              "gu": "white-jade-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/world/gu-care-and-refinement.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "jade-skin-gu",
+                  "poweredAction": "guard",
+                  "note": "退回玉皮蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "moon-ray-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-ray-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "moonlight-gu",
+                  "poweredAction": "strike",
+                  "note": "未合炼时退回月刃"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "3": {
+          "slots": [
+            {
+              "gu": "water-atk-3-06-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "white-jade-gu",
+                  "poweredAction": "guard",
+                  "note": "退回白玉蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "blood-moon-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "moon-ray-gu",
+                  "poweredAction": "strike",
+                  "note": "退回月痕蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "force-heal-3-03-gu",
+              "poweredAction": "drain",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wine-insect-gu",
+                  "poweredAction": "drain",
+                  "note": "退回酒虫"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "bone-def-3-05-gu",
+              "poweredAction": "guard",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/bone-atk-1-08-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位；骨骼强化为被动向"
+                }
+              ]
+            }
+          ]
+        },
+        "4": {
+          "slots": [
+            {
+              "gu": "gold-def-3-09-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "water-atk-3-06-gu",
+                  "poweredAction": "guard",
+                  "note": "退回冰肌蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "blood-atk-4-01-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-moon-gu",
+                  "poweredAction": "strike",
+                  "note": "退回血月蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "force-heal-3-03-gu",
+              "poweredAction": "drain",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wine-insect-gu",
+                  "poweredAction": "drain",
+                  "note": "退回酒虫"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "wine-insect-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "5": {
+          "slots": [
+            {
+              "gu": "gold-atk-5-17-gu",
+              "poweredAction": "guard",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "gold-def-3-09-gu",
+                  "poweredAction": "guard",
+                  "note": "退回古铜皮蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "blood-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-4-01-gu",
+                  "poweredAction": "strike",
+                  "note": "退回血颅占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "force-heal-3-03-gu",
+                  "poweredAction": "drain",
+                  "note": "退回自力更生占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-moon-gu",
+              "poweredAction": "strike",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位；食血好养活契合续航"
+                }
+              ]
+            }
+          ]
+        },
+        "6": {
+          "slots": [
+            {
+              "gu": "wanlan-immortal-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/persistence-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "gold-atk-5-17-gu",
+                  "poweredAction": "guard",
+                  "note": "退回金甲蛊占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "human-atk-5-31-gu",
+              "poweredAction": "guard",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "vitality-grass-gu",
+              "poweredAction": "drain",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "7": {
+          "slots": [
+            {
+              "gu": "persistence-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/persistence-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wanlan-immortal-gu",
+                  "poweredAction": "guard",
+                  "note": "退回六转挽澜"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "zhizhang-immortal-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位；障碍场控场"
+                }
+              ]
+            },
+            {
+              "gu": "sword-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-5-02-gu",
+                  "poweredAction": "strike",
+                  "note": "退回血手印占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "vitality-grass-gu",
+              "poweredAction": "drain",
+              "status": "fact",
+              "evidence": [
+                "lore/wiki/gu/moon-glow-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "8": {
+          "slots": [
+            {
+              "gu": "human-atk-5-34-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "persistence-gu",
+                  "poweredAction": "guard",
+                  "note": "退回七转坚持仙蛊"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "persistence-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/persistence-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "wanlan-immortal-gu",
+                  "poweredAction": "guard",
+                  "note": "退回六转挽澜"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "zhizhang-immortal-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位；障碍场控场"
+                }
+              ]
+            },
+            {
+              "gu": "sword-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": "blood-atk-5-02-gu",
+                  "poweredAction": "strike",
+                  "note": "退回五转血手印占位"
+                },
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位标准攻击"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        },
+        "9": {
+          "slots": [
+            {
+              "gu": "human-atk-5-34-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位防御"
+                }
+              ]
+            },
+            {
+              "gu": "persistence-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/persistence-gu.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "zhizhang-immortal-gu",
+              "poweredAction": "guard",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "guard",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "sword-atk-5-02-gu",
+              "poweredAction": "strike",
+              "status": "assumption",
+              "evidence": [
+                "lore/wiki/gu/roster-3.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "strike",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "blood-droplet-gu",
+              "poweredAction": "drain",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "drain",
+                  "note": "占位"
+                }
+              ]
+            },
+            {
+              "gu": "heaven-atk-5-08-gu",
+              "poweredAction": "burst",
+              "status": "inference",
+              "evidence": [
+                "lore/wiki/gu/roster.md"
+              ],
+              "fallbacks": [
+                {
+                  "gu": null,
+                  "poweredAction": "burst",
+                  "note": "占位"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "防守反击与资源循环：guard（护防系/气道/骨骼强化）+drain（酒虫精炼、九叶生机草治疗、血滴子食精血、木魅元气补给）为主轴，攻击位从简（月痕蛊范围型、血月蛊低养护型）。六转防御核取挽澜仙蛊（逆流护身印双核之一，笔记层级）、七转取坚持仙蛊（逆反八转攻势）与智障仙蛊（已核障碍场）；两者均为仙蛊唯一、多半 NPC 持有，status=inference 并留凡蛊 fallback。八转悔蛊（镇压/匿迹）为已核防御语义。续航系九转无已核当阶防御仙蛊，九转继续由八转核心承担（g≤r 且近阶口径），缺口登记于未决清单。槽位数 3/3/4/4/4/5/5/5/6，L=3/3/6/6/6/10/10/10/15 均≤C[r]。八转/九转未设雷击爆发位（八转），九转以雷电蛊（burst）作应急爆发；续航系九转无已核当阶防御仙蛊，由八转核心承担（g≤r 近阶口径），缺口登记于未决清单。"
+    }
+  }
+}

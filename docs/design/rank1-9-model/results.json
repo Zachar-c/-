@@ -1,0 +1,5012 @@
+{
+  "modelVersion": "0.2.0-draft",
+  "parameterHash": "6df2f5776040f30ad788a210ea8fa367fa11f4350c72611db38ddf630ed45e57",
+  "modelHash": "eee8571f88652c42215d60f7f9f923aa35efbc110307092afda043ae3d3714d4",
+  "checks": [
+    "九转与各阶仙元名称",
+    "七到八转基准差距大于六到七，不制造晋阶道痕",
+    "一至三转真元10倍不等于伤害10倍",
+    "下位蛊不继承宿主的转数输出",
+    "禁常规越阶催动，凡仙资源池分离",
+    "道痕增幅与异道冲突边界",
+    "六七八转灾劫次数和道痕守恒",
+    "灾劫各级内部增长且不越级",
+    "内外时间同向增加生产与灾劫；超过300年仍计时",
+    "死窍不自产不招灾，九转周期不伪造已知",
+    "仙蛊唯一和炼制概率上限",
+    "升仙均衡成功、贪吸失败、失败不可逆、非法输入拒绝",
+    "成尊多条件，不靠道痕或三次万劫自动晋升",
+    "轮回保留知识，不保留属性；已知配方不稀释未知发现",
+    "战斗确定性与资源边界",
+    "买卖和失败残值无直接套利",
+    "杀招心智容量和控制递减",
+    "炼蛊交易原子性、投入消耗、本命蛊失败保留",
+    "随机种子相邻不会集中在极窄区间",
+    "基准筹备路线可以实际走通一至九转",
+    "炼蛊Monte Carlo均值接近理论期望，95%分位检验尾概率",
+    "载体战斗按种子确定，且与常规模板结果有差异",
+    "soulBody 对常规动作减伤可观测，爆发类全额承伤",
+    "guHouse 高耐受低输出，beastPack 群体衰减与范围收益",
+    "灾劫实战口径与聚合代理返回同形，账本接口一致",
+    "构筑审计：未知蛊、越阶、缺fallback、超心智容量、fallback强于本体全部登记",
+    "供应解析：gu精确匹配优先于泛匹配，同级行内 first-match-wins，key_gu_missing 强制整局不可得",
+    "availability 有界且不可刷：场景乘数截断到[0,1]，同一供应实例内同蛊判定恒定",
+    "supply.json 数据边界：availability∈[0,1]，渠道与场景键合法"
+  ],
+  "rankRows": [
+    {
+      "rank": 1,
+      "essence": "青铜真元",
+      "scaleStart": 1,
+      "scaleEnd": 1.3,
+      "hpStart": 100,
+      "strikeStart": 24,
+      "marksStart": 0,
+      "marksEnd": 0,
+      "refineSuccess": 0.98,
+      "refineExpectedFee": 12.244897959183673,
+      "tribulations": 0
+    },
+    {
+      "rank": 2,
+      "essence": "赤铁真元",
+      "scaleStart": 2,
+      "scaleEnd": 2.6,
+      "hpStart": 200,
+      "strikeStart": 48,
+      "marksStart": 0,
+      "marksEnd": 0,
+      "refineSuccess": 0.98,
+      "refineExpectedFee": 24.489795918367346,
+      "tribulations": 0
+    },
+    {
+      "rank": 3,
+      "essence": "白银真元",
+      "scaleStart": 4,
+      "scaleEnd": 5.2,
+      "hpStart": 400,
+      "strikeStart": 96,
+      "marksStart": 0,
+      "marksEnd": 0,
+      "refineSuccess": 0.95,
+      "refineExpectedFee": 50.526315789473685,
+      "tribulations": 0
+    },
+    {
+      "rank": 4,
+      "essence": "黄金真元",
+      "scaleStart": 8,
+      "scaleEnd": 10.4,
+      "hpStart": 800,
+      "strikeStart": 192,
+      "marksStart": 0,
+      "marksEnd": 0,
+      "refineSuccess": 0.9,
+      "refineExpectedFee": 106.66666666666666,
+      "tribulations": 0
+    },
+    {
+      "rank": 5,
+      "essence": "紫晶真元",
+      "scaleStart": 16,
+      "scaleEnd": 20.8,
+      "hpStart": 1600,
+      "strikeStart": 384,
+      "marksStart": 0,
+      "marksEnd": 0,
+      "refineSuccess": 0.85,
+      "refineExpectedFee": 225.88235294117646,
+      "tribulations": 0
+    },
+    {
+      "rank": 6,
+      "essence": "青提仙元",
+      "scaleStart": 120,
+      "scaleEnd": 660,
+      "hpStart": 12000,
+      "strikeStart": 2880,
+      "marksStart": 1000,
+      "marksEnd": 10000,
+      "refineSuccess": 0.75,
+      "refineExpectedFee": 16,
+      "tribulations": 33
+    },
+    {
+      "rank": 7,
+      "essence": "红枣仙元",
+      "scaleStart": 1320,
+      "scaleEnd": 6000,
+      "hpStart": 132000,
+      "strikeStart": 31680,
+      "marksStart": 10000,
+      "marksEnd": 49000,
+      "refineSuccess": 0.65,
+      "refineExpectedFee": 55.38461538461538,
+      "tribulations": 39
+    },
+    {
+      "rank": 8,
+      "essence": "白荔仙元",
+      "scaleStart": 18000,
+      "scaleEnd": 114120,
+      "hpStart": 1800000,
+      "strikeStart": 432000,
+      "marksStart": 49000,
+      "marksEnd": 316000,
+      "refineSuccess": 0.55,
+      "refineExpectedFee": 196.36363636363635,
+      "tribulations": 39
+    },
+    {
+      "rank": 9,
+      "essence": "黄杏仙元",
+      "scaleStart": 456480,
+      "scaleEnd": 1441440,
+      "hpStart": 45648000,
+      "strikeStart": 10955520,
+      "marksStart": 316000,
+      "marksEnd": 1000000,
+      "refineSuccess": 0.44999999999999996,
+      "refineExpectedFee": 720.0000000000001,
+      "tribulations": 0
+    }
+  ],
+  "matrix": [
+    {
+      "rank": 1,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.893290252404666,
+      "spent": 33.3
+    },
+    {
+      "rank": 1,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.3,
+      "remainingHp": 0.9619495362977587,
+      "spent": 44
+    },
+    {
+      "rank": 1,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.44,
+      "remainingHp": 1,
+      "spent": 45.52
+    },
+    {
+      "rank": 1,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.73,
+      "remainingHp": 0.7250980952170046,
+      "spent": 35
+    },
+    {
+      "rank": 1,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.08,
+      "remainingHp": 0.7225253516922517,
+      "spent": 38
+    },
+    {
+      "rank": 1,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.07,
+      "remainingHp": 0.8873666293895432,
+      "spent": 46
+    },
+    {
+      "rank": 1,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.29,
+      "remainingHp": 0.7185282015542569,
+      "spent": 35
+    },
+    {
+      "rank": 1,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.33,
+      "remainingHp": 0.6425852995946635,
+      "spent": 44
+    },
+    {
+      "rank": 1,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.43,
+      "remainingHp": 0.796552753281435,
+      "spent": 50
+    },
+    {
+      "rank": 1,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.96,
+      "turns": 5.46,
+      "remainingHp": 0.2429455056872721,
+      "spent": 35
+    },
+    {
+      "rank": 1,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.95,
+      "turns": 8.56,
+      "remainingHp": 0.21849362163622588,
+      "spent": 44
+    },
+    {
+      "rank": 1,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.39,
+      "remainingHp": 0.42377112011130974,
+      "spent": 50
+    },
+    {
+      "rank": 1,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.11,
+      "remainingHp": 0.8239710361244241,
+      "spent": 35
+    },
+    {
+      "rank": 1,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.59,
+      "remainingHp": 0.7450579985867942,
+      "spent": 36
+    },
+    {
+      "rank": 1,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.21,
+      "remainingHp": 0.8077804581895173,
+      "spent": 34
+    },
+    {
+      "rank": 1,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9
+    },
+    {
+      "rank": 1,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44
+    },
+    {
+      "rank": 1,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50
+    },
+    {
+      "rank": 1,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35
+    },
+    {
+      "rank": 1,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44
+    },
+    {
+      "rank": 1,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04
+    },
+    {
+      "rank": 1,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35
+    },
+    {
+      "rank": 1,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44
+    },
+    {
+      "rank": 1,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84
+    },
+    {
+      "rank": 2,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.893290252404666,
+      "spent": 33.3
+    },
+    {
+      "rank": 2,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.3,
+      "remainingHp": 0.9619495362977587,
+      "spent": 44
+    },
+    {
+      "rank": 2,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.44,
+      "remainingHp": 1,
+      "spent": 45.52
+    },
+    {
+      "rank": 2,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.73,
+      "remainingHp": 0.7250980952170046,
+      "spent": 35
+    },
+    {
+      "rank": 2,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.08,
+      "remainingHp": 0.7225253516922517,
+      "spent": 38
+    },
+    {
+      "rank": 2,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.07,
+      "remainingHp": 0.8873666293895432,
+      "spent": 46
+    },
+    {
+      "rank": 2,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.29,
+      "remainingHp": 0.7185282015542569,
+      "spent": 35
+    },
+    {
+      "rank": 2,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.33,
+      "remainingHp": 0.6425852995946635,
+      "spent": 44
+    },
+    {
+      "rank": 2,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.43,
+      "remainingHp": 0.796552753281435,
+      "spent": 50
+    },
+    {
+      "rank": 2,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.96,
+      "turns": 5.46,
+      "remainingHp": 0.2429455056872721,
+      "spent": 35
+    },
+    {
+      "rank": 2,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.95,
+      "turns": 8.56,
+      "remainingHp": 0.21849362163622588,
+      "spent": 44
+    },
+    {
+      "rank": 2,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.39,
+      "remainingHp": 0.42377112011130974,
+      "spent": 50
+    },
+    {
+      "rank": 2,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.11,
+      "remainingHp": 0.8239710361244241,
+      "spent": 35
+    },
+    {
+      "rank": 2,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.59,
+      "remainingHp": 0.7450579985867942,
+      "spent": 36
+    },
+    {
+      "rank": 2,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.21,
+      "remainingHp": 0.8077804581895173,
+      "spent": 34
+    },
+    {
+      "rank": 2,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9
+    },
+    {
+      "rank": 2,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44
+    },
+    {
+      "rank": 2,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50
+    },
+    {
+      "rank": 2,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35
+    },
+    {
+      "rank": 2,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44
+    },
+    {
+      "rank": 2,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04
+    },
+    {
+      "rank": 2,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35
+    },
+    {
+      "rank": 2,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44
+    },
+    {
+      "rank": 2,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84
+    },
+    {
+      "rank": 3,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.893290252404666,
+      "spent": 33.3
+    },
+    {
+      "rank": 3,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.3,
+      "remainingHp": 0.9619495362977587,
+      "spent": 44
+    },
+    {
+      "rank": 3,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.44,
+      "remainingHp": 1,
+      "spent": 45.52
+    },
+    {
+      "rank": 3,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.73,
+      "remainingHp": 0.7250980952170046,
+      "spent": 35
+    },
+    {
+      "rank": 3,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.08,
+      "remainingHp": 0.7225253516922517,
+      "spent": 38
+    },
+    {
+      "rank": 3,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.07,
+      "remainingHp": 0.8873666293895432,
+      "spent": 46
+    },
+    {
+      "rank": 3,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.29,
+      "remainingHp": 0.7185282015542569,
+      "spent": 35
+    },
+    {
+      "rank": 3,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.33,
+      "remainingHp": 0.6425852995946635,
+      "spent": 44
+    },
+    {
+      "rank": 3,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.43,
+      "remainingHp": 0.796552753281435,
+      "spent": 50
+    },
+    {
+      "rank": 3,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.96,
+      "turns": 5.46,
+      "remainingHp": 0.2429455056872721,
+      "spent": 35
+    },
+    {
+      "rank": 3,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.95,
+      "turns": 8.56,
+      "remainingHp": 0.21849362163622588,
+      "spent": 44
+    },
+    {
+      "rank": 3,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.39,
+      "remainingHp": 0.42377112011130974,
+      "spent": 50
+    },
+    {
+      "rank": 3,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.11,
+      "remainingHp": 0.8239710361244241,
+      "spent": 35
+    },
+    {
+      "rank": 3,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.59,
+      "remainingHp": 0.7450579985867942,
+      "spent": 36
+    },
+    {
+      "rank": 3,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.21,
+      "remainingHp": 0.8077804581895173,
+      "spent": 34
+    },
+    {
+      "rank": 3,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9
+    },
+    {
+      "rank": 3,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44
+    },
+    {
+      "rank": 3,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50
+    },
+    {
+      "rank": 3,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35
+    },
+    {
+      "rank": 3,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44
+    },
+    {
+      "rank": 3,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04
+    },
+    {
+      "rank": 3,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35
+    },
+    {
+      "rank": 3,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44
+    },
+    {
+      "rank": 3,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84
+    },
+    {
+      "rank": 4,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.893290252404666,
+      "spent": 33.3
+    },
+    {
+      "rank": 4,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.3,
+      "remainingHp": 0.9619495362977587,
+      "spent": 44
+    },
+    {
+      "rank": 4,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.44,
+      "remainingHp": 1,
+      "spent": 45.52
+    },
+    {
+      "rank": 4,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.73,
+      "remainingHp": 0.7250980952170046,
+      "spent": 35
+    },
+    {
+      "rank": 4,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.08,
+      "remainingHp": 0.7225253516922517,
+      "spent": 38
+    },
+    {
+      "rank": 4,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.07,
+      "remainingHp": 0.8873666293895432,
+      "spent": 46
+    },
+    {
+      "rank": 4,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.29,
+      "remainingHp": 0.7185282015542569,
+      "spent": 35
+    },
+    {
+      "rank": 4,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.33,
+      "remainingHp": 0.6425852995946635,
+      "spent": 44
+    },
+    {
+      "rank": 4,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.43,
+      "remainingHp": 0.796552753281435,
+      "spent": 50
+    },
+    {
+      "rank": 4,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.96,
+      "turns": 5.46,
+      "remainingHp": 0.2429455056872721,
+      "spent": 35
+    },
+    {
+      "rank": 4,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.95,
+      "turns": 8.56,
+      "remainingHp": 0.21849362163622588,
+      "spent": 44
+    },
+    {
+      "rank": 4,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.39,
+      "remainingHp": 0.42377112011130974,
+      "spent": 50
+    },
+    {
+      "rank": 4,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.11,
+      "remainingHp": 0.8239710361244241,
+      "spent": 35
+    },
+    {
+      "rank": 4,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.59,
+      "remainingHp": 0.7450579985867942,
+      "spent": 36
+    },
+    {
+      "rank": 4,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.21,
+      "remainingHp": 0.8077804581895173,
+      "spent": 34
+    },
+    {
+      "rank": 4,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9
+    },
+    {
+      "rank": 4,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44
+    },
+    {
+      "rank": 4,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50
+    },
+    {
+      "rank": 4,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35
+    },
+    {
+      "rank": 4,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44
+    },
+    {
+      "rank": 4,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04
+    },
+    {
+      "rank": 4,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35
+    },
+    {
+      "rank": 4,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44
+    },
+    {
+      "rank": 4,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84
+    },
+    {
+      "rank": 5,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.893290252404666,
+      "spent": 33.3
+    },
+    {
+      "rank": 5,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.3,
+      "remainingHp": 0.9619495362977587,
+      "spent": 44
+    },
+    {
+      "rank": 5,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.44,
+      "remainingHp": 1,
+      "spent": 45.52
+    },
+    {
+      "rank": 5,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.73,
+      "remainingHp": 0.7250980952170046,
+      "spent": 35
+    },
+    {
+      "rank": 5,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.08,
+      "remainingHp": 0.7225253516922517,
+      "spent": 38
+    },
+    {
+      "rank": 5,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.07,
+      "remainingHp": 0.8873666293895432,
+      "spent": 46
+    },
+    {
+      "rank": 5,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.29,
+      "remainingHp": 0.7185282015542569,
+      "spent": 35
+    },
+    {
+      "rank": 5,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.33,
+      "remainingHp": 0.6425852995946635,
+      "spent": 44
+    },
+    {
+      "rank": 5,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.43,
+      "remainingHp": 0.796552753281435,
+      "spent": 50
+    },
+    {
+      "rank": 5,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.96,
+      "turns": 5.46,
+      "remainingHp": 0.2429455056872721,
+      "spent": 35
+    },
+    {
+      "rank": 5,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.95,
+      "turns": 8.56,
+      "remainingHp": 0.21849362163622588,
+      "spent": 44
+    },
+    {
+      "rank": 5,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.39,
+      "remainingHp": 0.42377112011130974,
+      "spent": 50
+    },
+    {
+      "rank": 5,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.11,
+      "remainingHp": 0.8239710361244241,
+      "spent": 35
+    },
+    {
+      "rank": 5,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.59,
+      "remainingHp": 0.7450579985867942,
+      "spent": 36
+    },
+    {
+      "rank": 5,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.21,
+      "remainingHp": 0.8077804581895173,
+      "spent": 34
+    },
+    {
+      "rank": 5,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9
+    },
+    {
+      "rank": 5,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44
+    },
+    {
+      "rank": 5,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50
+    },
+    {
+      "rank": 5,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35
+    },
+    {
+      "rank": 5,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44
+    },
+    {
+      "rank": 5,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04
+    },
+    {
+      "rank": 5,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35
+    },
+    {
+      "rank": 5,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44
+    },
+    {
+      "rank": 5,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84
+    },
+    {
+      "rank": 6,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.893290252404666,
+      "spent": 3.84
+    },
+    {
+      "rank": 6,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.67,
+      "remainingHp": 1,
+      "spent": 7.34
+    },
+    {
+      "rank": 6,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.48,
+      "remainingHp": 1,
+      "spent": 6
+    },
+    {
+      "rank": 6,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.79,
+      "remainingHp": 0.7974438690306426,
+      "spent": 5.92
+    },
+    {
+      "rank": 6,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.65,
+      "remainingHp": 0.9382251336759806,
+      "spent": 7.28
+    },
+    {
+      "rank": 6,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.56,
+      "remainingHp": 0.9079128047637485,
+      "spent": 6.1
+    },
+    {
+      "rank": 6,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.7810774536714322,
+      "spent": 4.69
+    },
+    {
+      "rank": 6,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.47,
+      "remainingHp": 0.9234533904091405,
+      "spent": 8.94
+    },
+    {
+      "rank": 6,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.67,
+      "remainingHp": 0.8981822658817932,
+      "spent": 8.01
+    },
+    {
+      "rank": 6,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.48,
+      "remainingHp": 0.5815941251454225,
+      "spent": 8.4
+    },
+    {
+      "rank": 6,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 7.3,
+      "remainingHp": 0.998075279125149,
+      "spent": 14.04
+    },
+    {
+      "rank": 6,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.08,
+      "remainingHp": 0.9975341612414799,
+      "spent": 13.08
+    },
+    {
+      "rank": 6,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.8407836026701321,
+      "spent": 4.47
+    },
+    {
+      "rank": 6,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.23,
+      "remainingHp": 0.9999937526061419,
+      "spent": 8.46
+    },
+    {
+      "rank": 6,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.49,
+      "remainingHp": 0.9999937526061419,
+      "spent": 7.62
+    },
+    {
+      "rank": 6,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732824,
+      "spent": 3.95
+    },
+    {
+      "rank": 6,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321104,
+      "spent": 14.97
+    },
+    {
+      "rank": 6,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898382,
+      "spent": 15.39
+    },
+    {
+      "rank": 6,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42
+    },
+    {
+      "rank": 6,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965823,
+      "spent": 15
+    },
+    {
+      "rank": 6,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698011,
+      "spent": 17
+    },
+    {
+      "rank": 6,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.4679140672588978,
+      "spent": 10.33
+    },
+    {
+      "rank": 6,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15
+    },
+    {
+      "rank": 6,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37
+    },
+    {
+      "rank": 7,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.8932902524046661,
+      "spent": 3.84
+    },
+    {
+      "rank": 7,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.67,
+      "remainingHp": 1,
+      "spent": 7.34
+    },
+    {
+      "rank": 7,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.48,
+      "remainingHp": 1,
+      "spent": 6
+    },
+    {
+      "rank": 7,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.79,
+      "remainingHp": 0.7974438690306426,
+      "spent": 5.92
+    },
+    {
+      "rank": 7,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.65,
+      "remainingHp": 0.9382251336759806,
+      "spent": 7.28
+    },
+    {
+      "rank": 7,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.56,
+      "remainingHp": 0.9079128047637485,
+      "spent": 6.1
+    },
+    {
+      "rank": 7,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.7810774536714321,
+      "spent": 4.69
+    },
+    {
+      "rank": 7,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.47,
+      "remainingHp": 0.9234533904091404,
+      "spent": 8.94
+    },
+    {
+      "rank": 7,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.67,
+      "remainingHp": 0.898182265881793,
+      "spent": 8.01
+    },
+    {
+      "rank": 7,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.48,
+      "remainingHp": 0.5815941251454225,
+      "spent": 8.4
+    },
+    {
+      "rank": 7,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 7.3,
+      "remainingHp": 0.998075279125149,
+      "spent": 14.04
+    },
+    {
+      "rank": 7,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.08,
+      "remainingHp": 0.9975341612414799,
+      "spent": 13.08
+    },
+    {
+      "rank": 7,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.8407836026701321,
+      "spent": 4.47
+    },
+    {
+      "rank": 7,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.23,
+      "remainingHp": 0.9999937526061419,
+      "spent": 8.46
+    },
+    {
+      "rank": 7,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.49,
+      "remainingHp": 0.9999937526061419,
+      "spent": 7.62
+    },
+    {
+      "rank": 7,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732825,
+      "spent": 3.95
+    },
+    {
+      "rank": 7,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321103,
+      "spent": 14.97
+    },
+    {
+      "rank": 7,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898382,
+      "spent": 15.39
+    },
+    {
+      "rank": 7,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42
+    },
+    {
+      "rank": 7,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965825,
+      "spent": 15
+    },
+    {
+      "rank": 7,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698014,
+      "spent": 17
+    },
+    {
+      "rank": 7,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.46791406725889784,
+      "spent": 10.33
+    },
+    {
+      "rank": 7,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15
+    },
+    {
+      "rank": 7,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37
+    },
+    {
+      "rank": 8,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.8932902524046661,
+      "spent": 3.84
+    },
+    {
+      "rank": 8,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.67,
+      "remainingHp": 1,
+      "spent": 7.34
+    },
+    {
+      "rank": 8,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.48,
+      "remainingHp": 1,
+      "spent": 6
+    },
+    {
+      "rank": 8,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.79,
+      "remainingHp": 0.7974438690306426,
+      "spent": 5.92
+    },
+    {
+      "rank": 8,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.65,
+      "remainingHp": 0.9382251336759806,
+      "spent": 7.28
+    },
+    {
+      "rank": 8,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.56,
+      "remainingHp": 0.9079128047637485,
+      "spent": 6.1
+    },
+    {
+      "rank": 8,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.7810774536714322,
+      "spent": 4.69
+    },
+    {
+      "rank": 8,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.47,
+      "remainingHp": 0.9234533904091405,
+      "spent": 8.94
+    },
+    {
+      "rank": 8,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.67,
+      "remainingHp": 0.8981822658817932,
+      "spent": 8.01
+    },
+    {
+      "rank": 8,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.48,
+      "remainingHp": 0.5815941251454226,
+      "spent": 8.4
+    },
+    {
+      "rank": 8,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 7.3,
+      "remainingHp": 0.998075279125149,
+      "spent": 14.04
+    },
+    {
+      "rank": 8,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.08,
+      "remainingHp": 0.9975341612414799,
+      "spent": 13.08
+    },
+    {
+      "rank": 8,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.8407836026701321,
+      "spent": 4.47
+    },
+    {
+      "rank": 8,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.23,
+      "remainingHp": 0.9999937526061419,
+      "spent": 8.46
+    },
+    {
+      "rank": 8,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.49,
+      "remainingHp": 0.9999937526061419,
+      "spent": 7.62
+    },
+    {
+      "rank": 8,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732824,
+      "spent": 3.95
+    },
+    {
+      "rank": 8,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321103,
+      "spent": 14.97
+    },
+    {
+      "rank": 8,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898382,
+      "spent": 15.39
+    },
+    {
+      "rank": 8,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42
+    },
+    {
+      "rank": 8,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965823,
+      "spent": 15
+    },
+    {
+      "rank": 8,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698014,
+      "spent": 17
+    },
+    {
+      "rank": 8,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.46791406725889784,
+      "spent": 10.33
+    },
+    {
+      "rank": 8,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15
+    },
+    {
+      "rank": 8,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37
+    },
+    {
+      "rank": 9,
+      "enemy": "skirmisher",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.83,
+      "remainingHp": 0.8932902524046661,
+      "spent": 3.84
+    },
+    {
+      "rank": 9,
+      "enemy": "skirmisher",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.67,
+      "remainingHp": 1,
+      "spent": 7.34
+    },
+    {
+      "rank": 9,
+      "enemy": "skirmisher",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.48,
+      "remainingHp": 1,
+      "spent": 6
+    },
+    {
+      "rank": 9,
+      "enemy": "brute",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2.79,
+      "remainingHp": 0.7974438690306426,
+      "spent": 5.92
+    },
+    {
+      "rank": 9,
+      "enemy": "brute",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.65,
+      "remainingHp": 0.9382251336759806,
+      "spent": 7.28
+    },
+    {
+      "rank": 9,
+      "enemy": "brute",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.56,
+      "remainingHp": 0.9079128047637484,
+      "spent": 6.1
+    },
+    {
+      "rank": 9,
+      "enemy": "pressure",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.7810774536714322,
+      "spent": 4.69
+    },
+    {
+      "rank": 9,
+      "enemy": "pressure",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.47,
+      "remainingHp": 0.9234533904091405,
+      "spent": 8.94
+    },
+    {
+      "rank": 9,
+      "enemy": "pressure",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.67,
+      "remainingHp": 0.898182265881793,
+      "spent": 8.01
+    },
+    {
+      "rank": 9,
+      "enemy": "armored",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 3.48,
+      "remainingHp": 0.5815941251454224,
+      "spent": 8.4
+    },
+    {
+      "rank": 9,
+      "enemy": "armored",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 7.3,
+      "remainingHp": 0.9980752791251488,
+      "spent": 14.04
+    },
+    {
+      "rank": 9,
+      "enemy": "armored",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 9.08,
+      "remainingHp": 0.9975341612414799,
+      "spent": 13.08
+    },
+    {
+      "rank": 9,
+      "enemy": "disruptor",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 2,
+      "remainingHp": 0.8407836026701321,
+      "spent": 4.47
+    },
+    {
+      "rank": 9,
+      "enemy": "disruptor",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.23,
+      "remainingHp": 0.9999937526061419,
+      "spent": 8.46
+    },
+    {
+      "rank": 9,
+      "enemy": "disruptor",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.49,
+      "remainingHp": 0.9999937526061419,
+      "spent": 7.62
+    },
+    {
+      "rank": 9,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732824,
+      "spent": 3.95
+    },
+    {
+      "rank": 9,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321105,
+      "spent": 14.97
+    },
+    {
+      "rank": 9,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898384,
+      "spent": 15.39
+    },
+    {
+      "rank": 9,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42
+    },
+    {
+      "rank": 9,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965823,
+      "spent": 15
+    },
+    {
+      "rank": 9,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698011,
+      "spent": 17
+    },
+    {
+      "rank": 9,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.4679140672588978,
+      "spent": 10.33
+    },
+    {
+      "rank": 9,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15
+    },
+    {
+      "rank": 9,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37
+    }
+  ],
+  "sensitivity": [
+    {
+      "key": "enemyMultiplier",
+      "factor": 0.8,
+      "build": "burst",
+      "samples": 2160,
+      "winRate": 0.9837962962962963,
+      "turns": 4.292129629629629,
+      "remainingHp": 0.7137183662219396,
+      "spent": 22.29259259259259
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 0.8,
+      "build": "balanced",
+      "samples": 2160,
+      "winRate": 0.9074074074074074,
+      "turns": 8.118055555555555,
+      "remainingHp": 0.7083038483547185,
+      "spent": 28.524074074074075
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 0.8,
+      "build": "sustain",
+      "samples": 2160,
+      "winRate": 0.9606481481481481,
+      "turns": 9.325,
+      "remainingHp": 0.7841025120044977,
+      "spent": 32.592592592592595
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 0.8,
+      "build": "burst",
+      "samples": 2160,
+      "winRate": 0.8726851851851852,
+      "turns": 5.280555555555556,
+      "remainingHp": 0.48981857738130047,
+      "spent": 23.19074074074074
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 0.8,
+      "build": "balanced",
+      "samples": 2160,
+      "winRate": 0.7773148148148148,
+      "turns": 9.230092592592593,
+      "remainingHp": 0.49482457573887134,
+      "spent": 28.977777777777778
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 0.8,
+      "build": "sustain",
+      "samples": 2160,
+      "winRate": 0.8268518518518518,
+      "turns": 10.599074074074075,
+      "remainingHp": 0.5775498181823517,
+      "spent": 34.035185185185185
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 1,
+      "build": "burst",
+      "samples": 2160,
+      "winRate": 0.9537037037037037,
+      "turns": 4.171759259259259,
+      "remainingHp": 0.6494446544908951,
+      "spent": 22.29259259259259
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 1,
+      "build": "balanced",
+      "samples": 2160,
+      "winRate": 0.8513888888888889,
+      "turns": 7.809722222222222,
+      "remainingHp": 0.6286409788151992,
+      "spent": 28.524074074074075
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 1,
+      "build": "sustain",
+      "samples": 2160,
+      "winRate": 0.9009259259259259,
+      "turns": 9.052314814814816,
+      "remainingHp": 0.693021046154907,
+      "spent": 32.351851851851855
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 1,
+      "build": "burst",
+      "samples": 2160,
+      "winRate": 0.9537037037037037,
+      "turns": 4.171759259259259,
+      "remainingHp": 0.6494446544908951,
+      "spent": 22.29259259259259
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 1,
+      "build": "balanced",
+      "samples": 2160,
+      "winRate": 0.8513888888888889,
+      "turns": 7.809722222222222,
+      "remainingHp": 0.6286409788151992,
+      "spent": 28.524074074074075
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 1,
+      "build": "sustain",
+      "samples": 2160,
+      "winRate": 0.9009259259259259,
+      "turns": 9.052314814814816,
+      "remainingHp": 0.693021046154907,
+      "spent": 32.351851851851855
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 1.2,
+      "build": "burst",
+      "samples": 2160,
+      "winRate": 0.9166666666666666,
+      "turns": 4.032870370370371,
+      "remainingHp": 0.592157677414712,
+      "spent": 22.29259259259259
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 1.2,
+      "build": "balanced",
+      "samples": 2160,
+      "winRate": 0.8046296296296296,
+      "turns": 7.488425925925926,
+      "remainingHp": 0.5424884274267846,
+      "spent": 28.524074074074075
+    },
+    {
+      "key": "enemyMultiplier",
+      "factor": 1.2,
+      "build": "sustain",
+      "samples": 2160,
+      "winRate": 0.8231481481481482,
+      "turns": 8.64861111111111,
+      "remainingHp": 0.5865596809509924,
+      "spent": 31.98148148148148
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 1.2,
+      "build": "burst",
+      "samples": 2160,
+      "winRate": 0.9953703703703703,
+      "turns": 3.411111111111111,
+      "remainingHp": 0.7543718151695763,
+      "spent": 20.918518518518518
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 1.2,
+      "build": "balanced",
+      "samples": 2160,
+      "winRate": 0.9097222222222222,
+      "turns": 6.736111111111111,
+      "remainingHp": 0.7234062273619721,
+      "spent": 28.10185185185185
+    },
+    {
+      "key": "actionMultiplier",
+      "factor": 1.2,
+      "build": "sustain",
+      "samples": 2160,
+      "winRate": 0.9421296296296297,
+      "turns": 7.8375,
+      "remainingHp": 0.767334707392188,
+      "spent": 30.953703703703702
+    }
+  ],
+  "crossRank": [
+    {
+      "from": 1,
+      "to": 2,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 2.85,
+      "remainingHp": 0,
+      "spent": 35
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 2.85,
+      "remainingHp": 0,
+      "spent": 35
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 2.85,
+      "remainingHp": 0,
+      "spent": 35
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 2.85,
+      "remainingHp": 0,
+      "spent": 35
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 1,
+      "remainingHp": 0,
+      "spent": 25
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 1,
+      "remainingHp": 0,
+      "spent": 3
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 1,
+      "remainingHp": 0,
+      "spent": 3
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 1,
+      "remainingHp": 0,
+      "spent": 3
+    }
+  ],
+  "boundaryCrossRank": [
+    {
+      "from": 1,
+      "to": 2,
+      "samples": 100,
+      "winRate": 0.21,
+      "turns": 3.49,
+      "remainingHp": 0.013964396262328514,
+      "spent": 35
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "samples": 100,
+      "winRate": 0.21,
+      "turns": 3.49,
+      "remainingHp": 0.013964396262328514,
+      "spent": 35
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "samples": 100,
+      "winRate": 0.21,
+      "turns": 3.49,
+      "remainingHp": 0.013964396262328514,
+      "spent": 35
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "samples": 100,
+      "winRate": 0.21,
+      "turns": 3.49,
+      "remainingHp": 0.013964396262328514,
+      "spent": 35
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 1,
+      "remainingHp": 0,
+      "spent": 25
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "samples": 100,
+      "winRate": 0.02,
+      "turns": 2.85,
+      "remainingHp": 0.0022753722632464952,
+      "spent": 6.7
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 2,
+      "remainingHp": 0,
+      "spent": 5
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "samples": 100,
+      "winRate": 0,
+      "turns": 1.86,
+      "remainingHp": 0,
+      "spent": 4.72
+    }
+  ],
+  "economy": [
+    {
+      "rank": 1,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 84.63435423771026,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 1,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 78.10806953195448,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 1,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 84.54618714762603,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 2,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 169.2687084754205,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 2,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 156.21613906390897,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 2,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 169.09237429525206,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 3,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 338.537416950841,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 3,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 312.43227812781794,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 3,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 338.1847485905041,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 4,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 677.074833901682,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 4,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 624.8645562556359,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 4,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 676.3694971810082,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 5,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 1354.149667803364,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 5,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 1249.7291125112718,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 5,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 1352.7389943620165,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 6,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 72.00533314045536,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 6,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 64.38790656499482,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 6,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 67.74781460978156,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 7,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 216.0159994213661,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 7,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 193.1637196949845,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 7,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 203.24344382934464,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 8,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 648.0479982640984,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 8,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 579.4911590849534,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 8,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 609.7303314880342,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 9,
+      "build": "burst",
+      "survival": 1,
+      "meanWallet": 1944.1439947922947,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 9,
+      "build": "balanced",
+      "survival": 1,
+      "meanWallet": 1738.4734772548604,
+      "refineAffordable": 1
+    },
+    {
+      "rank": 9,
+      "build": "sustain",
+      "survival": 1,
+      "meanWallet": 1829.1909944641025,
+      "refineAffordable": 1
+    }
+  ],
+  "campaigns": [
+    {
+      "build": "burst",
+      "preparation": 0,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 48.7,
+      "failures": {
+        "4转:长期筹备破产": 25,
+        "5转:长期筹备破产": 5
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 0,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 60,
+      "failures": {
+        "5转:升仙失败": 30
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 0,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 60,
+      "failures": {
+        "5转:升仙失败": 30
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 0.5,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 48.7,
+      "failures": {
+        "4转:长期筹备破产": 25,
+        "5转:长期筹备破产": 5
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 0.5,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 114,
+      "failures": {
+        "8转:灾劫准备不足": 30
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 0.5,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 114,
+      "failures": {
+        "8转:灾劫准备不足": 30
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 1,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 48.7,
+      "failures": {
+        "4转:长期筹备破产": 25,
+        "5转:长期筹备破产": 5
+      }
+    },
+    {
+      "build": "burst",
+      "preparation": 1,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    },
+    {
+      "build": "burst",
+      "preparation": 1,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    },
+    {
+      "build": "balanced",
+      "preparation": 0,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 34.3,
+      "failures": {
+        "3转:长期筹备破产": 29,
+        "4转:长期筹备破产": 1
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 0,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 60,
+      "failures": {
+        "5转:升仙失败": 30
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 0,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 60,
+      "failures": {
+        "5转:升仙失败": 30
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 0.5,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 34.3,
+      "failures": {
+        "3转:长期筹备破产": 29,
+        "4转:长期筹备破产": 1
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 0.5,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 112.9,
+      "failures": {
+        "8转:灾劫准备不足": 24,
+        "8转:长期筹备破产": 6
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 0.5,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 114,
+      "failures": {
+        "8转:灾劫准备不足": 30
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 1,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 34.3,
+      "failures": {
+        "3转:长期筹备破产": 29,
+        "4转:长期筹备破产": 1
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 1,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0.36666666666666664,
+      "meanBattles": 122.2,
+      "failures": {
+        "9转:长期筹备破产": 19
+      }
+    },
+    {
+      "build": "balanced",
+      "preparation": 1,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    },
+    {
+      "build": "sustain",
+      "preparation": 0,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 49.2,
+      "failures": {
+        "4转:长期筹备破产": 18,
+        "5转:长期筹备破产": 12
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 0,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 60,
+      "failures": {
+        "5转:升仙失败": 30
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 0,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 60,
+      "failures": {
+        "5转:升仙失败": 30
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 0.5,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 49.2,
+      "failures": {
+        "4转:长期筹备破产": 18,
+        "5转:长期筹备破产": 12
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 0.5,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 114,
+      "failures": {
+        "8转:灾劫准备不足": 30
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 0.5,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 114,
+      "failures": {
+        "8转:灾劫准备不足": 30
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 1,
+      "rewardMultiplier": 0.8,
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 49.2,
+      "failures": {
+        "4转:长期筹备破产": 18,
+        "5转:长期筹备破产": 12
+      }
+    },
+    {
+      "build": "sustain",
+      "preparation": 1,
+      "rewardMultiplier": 1,
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    },
+    {
+      "build": "sustain",
+      "preparation": 1,
+      "rewardMultiplier": 1.2,
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    }
+  ],
+  "representative": {
+    "success": true,
+    "stages": [
+      {
+        "rank": 1,
+        "period": 1,
+        "wallet": 74.4200247775124,
+        "marks": 0,
+        "cost": 8,
+        "ecology": 1
+      },
+      {
+        "rank": 1,
+        "period": 2,
+        "wallet": 91.04104464369775,
+        "marks": 0,
+        "cost": 20.244897959183675,
+        "ecology": 1
+      },
+      {
+        "rank": 1,
+        "period": 3,
+        "wallet": 124.01806948833539,
+        "marks": 0,
+        "cost": 8,
+        "ecology": 1
+      },
+      {
+        "rank": 1,
+        "period": 4,
+        "wallet": 148.3684960526116,
+        "marks": 0,
+        "cost": 13.5,
+        "ecology": 1
+      },
+      {
+        "rank": 2,
+        "period": 1,
+        "wallet": 195.7914539540793,
+        "marks": 0,
+        "cost": 24,
+        "ecology": 1
+      },
+      {
+        "rank": 2,
+        "period": 2,
+        "wallet": 215.45802279495126,
+        "marks": 0,
+        "cost": 48.48979591836735,
+        "ecology": 1
+      },
+      {
+        "rank": 2,
+        "period": 3,
+        "wallet": 259.9056166744734,
+        "marks": 0,
+        "cost": 24,
+        "ecology": 1
+      },
+      {
+        "rank": 2,
+        "period": 4,
+        "wallet": 286.9383111440231,
+        "marks": 0,
+        "cost": 40,
+        "ecology": 1
+      },
+      {
+        "rank": 3,
+        "period": 1,
+        "wallet": 365.3546602303283,
+        "marks": 0,
+        "cost": 64,
+        "ecology": 1
+      },
+      {
+        "rank": 3,
+        "period": 2,
+        "wallet": 408.11901129858603,
+        "marks": 0,
+        "cost": 114.52631578947368,
+        "ecology": 1
+      },
+      {
+        "rank": 3,
+        "period": 3,
+        "wallet": 488.0392694437729,
+        "marks": 0,
+        "cost": 64,
+        "ecology": 1
+      },
+      {
+        "rank": 3,
+        "period": 4,
+        "wallet": 537.6087646220484,
+        "marks": 0,
+        "cost": 106,
+        "ecology": 1
+      },
+      {
+        "rank": 4,
+        "period": 1,
+        "wallet": 657.4863293227074,
+        "marks": 0,
+        "cost": 160,
+        "ecology": 1
+      },
+      {
+        "rank": 4,
+        "period": 2,
+        "wallet": 657.9918215149835,
+        "marks": 0,
+        "cost": 266.6666666666667,
+        "ecology": 1
+      },
+      {
+        "rank": 4,
+        "period": 3,
+        "wallet": 783.1050726104153,
+        "marks": 0,
+        "cost": 160,
+        "ecology": 1
+      },
+      {
+        "rank": 4,
+        "period": 4,
+        "wallet": 837.7684650480528,
+        "marks": 0,
+        "cost": 264,
+        "ecology": 1
+      },
+      {
+        "rank": 5,
+        "period": 1,
+        "wallet": 1088.777377702162,
+        "marks": 0,
+        "cost": 384,
+        "ecology": 1
+      },
+      {
+        "rank": 5,
+        "period": 2,
+        "wallet": 1061.2930870311347,
+        "marks": 0,
+        "cost": 609.8823529411765,
+        "ecology": 1
+      },
+      {
+        "rank": 5,
+        "period": 3,
+        "wallet": 1237.6903662064913,
+        "marks": 0,
+        "cost": 384,
+        "ecology": 1
+      },
+      {
+        "rank": 5,
+        "period": 4,
+        "wallet": 1443.8611426526058,
+        "marks": 0,
+        "cost": 384,
+        "ecology": 1
+      },
+      {
+        "rank": 6,
+        "period": 1,
+        "wallet": 16.148133914833604,
+        "marks": 2000,
+        "cost": 2.4137931034482754,
+        "ecology": 1
+      },
+      {
+        "rank": 6,
+        "period": 2,
+        "wallet": 15.158685539439169,
+        "marks": 4000,
+        "cost": 19.39272030651341,
+        "ecology": 1
+      },
+      {
+        "rank": 6,
+        "period": 3,
+        "wallet": 32.41871815038389,
+        "marks": 5000,
+        "cost": 2.8160919540229887,
+        "ecology": 1
+      },
+      {
+        "rank": 6,
+        "period": 4,
+        "wallet": 50.29364629843217,
+        "marks": 7000,
+        "cost": 3.9505747126436774,
+        "ecology": 1
+      },
+      {
+        "rank": 6,
+        "period": 5,
+        "wallet": 71.98722103806121,
+        "marks": 8000,
+        "cost": 3.2183908045977008,
+        "ecology": 1
+      },
+      {
+        "rank": 6,
+        "period": 6,
+        "wallet": 82.5796610886732,
+        "marks": 10000,
+        "cost": 4.508429118773946,
+        "ecology": 1
+      },
+      {
+        "rank": 7,
+        "period": 1,
+        "wallet": 117.77749231008707,
+        "marks": 13000,
+        "cost": 9.574712643678161,
+        "ecology": 1
+      },
+      {
+        "rank": 7,
+        "period": 2,
+        "wallet": 116.56517530650248,
+        "marks": 23000,
+        "cost": 69.4827763041556,
+        "ecology": 1
+      },
+      {
+        "rank": 7,
+        "period": 3,
+        "wallet": 176.73672775357494,
+        "marks": 26000,
+        "cost": 11.154942528735631,
+        "ecology": 1
+      },
+      {
+        "rank": 7,
+        "period": 4,
+        "wallet": 215.94295122016626,
+        "marks": 36000,
+        "cost": 16.3783908045977,
+        "ecology": 1
+      },
+      {
+        "rank": 7,
+        "period": 5,
+        "wallet": 264.4005706076069,
+        "marks": 39000,
+        "cost": 12.735172413793101,
+        "ecology": 1
+      },
+      {
+        "rank": 7,
+        "period": 6,
+        "wallet": 283.91336497308055,
+        "marks": 49000,
+        "cost": 18.658620689655173,
+        "ecology": 1
+      },
+      {
+        "rank": 8,
+        "period": 1,
+        "wallet": 384.72321482437053,
+        "marks": 53500,
+        "cost": 47.165517241379305,
+        "ecology": 1
+      },
+      {
+        "rank": 8,
+        "period": 2,
+        "wallet": 358.6499370262592,
+        "marks": 138000,
+        "cost": 264.98294670846394,
+        "ecology": 1
+      },
+      {
+        "rank": 8,
+        "period": 3,
+        "wallet": 462.31436424174814,
+        "marks": 142500,
+        "cost": 125.67310344827585,
+        "ecology": 1
+      },
+      {
+        "rank": 8,
+        "period": 4,
+        "wallet": 502.37425248513864,
+        "marks": 227000,
+        "cost": 149.92689655172413,
+        "ecology": 1
+      },
+      {
+        "rank": 8,
+        "period": 5,
+        "wallet": 580.8481585777109,
+        "marks": 231500,
+        "cost": 132.18068965517242,
+        "ecology": 1
+      },
+      {
+        "rank": 8,
+        "period": 6,
+        "wallet": 579.3241803382969,
+        "marks": 316000,
+        "cost": 159.2344827586207,
+        "ecology": 1
+      },
+      {
+        "rank": 9,
+        "period": 1,
+        "wallet": 834.3544632036198,
+        "marks": 487000,
+        "cost": 216,
+        "ecology": 1
+      },
+      {
+        "rank": 9,
+        "period": 2,
+        "wallet": 480.2017891180067,
+        "marks": 658000,
+        "cost": 936,
+        "ecology": 1
+      },
+      {
+        "rank": 9,
+        "period": 3,
+        "wallet": 810.3934235640572,
+        "marks": 829000,
+        "cost": 216,
+        "ecology": 1
+      },
+      {
+        "rank": 9,
+        "period": 4,
+        "wallet": 1159.967553089698,
+        "marks": 1000000,
+        "cost": 216,
+        "ecology": 1
+      }
+    ],
+    "totalBattles": 126,
+    "practiceActions": 160,
+    "wallet": 1159.967553089698,
+    "archiveMortalWallet": 1443.8611426526058,
+    "marks": 1000000,
+    "ledger": {
+      "support": 4650,
+      "refine": 1407.5582810231194
+    },
+    "reason": "九转四个目标完成；不推导十转或永生"
+  },
+  "aptitudes": [
+    {
+      "name": "丁",
+      "aptitude": 0.25,
+      "samples": 100,
+      "winRate": 0.94,
+      "turns": 5.09,
+      "remainingHp": 0.2895735213231739,
+      "spent": 18
+    },
+    {
+      "name": "丙",
+      "aptitude": 0.44,
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.39,
+      "remainingHp": 0.6293721292382288,
+      "spent": 44
+    },
+    {
+      "name": "乙",
+      "aptitude": 0.66,
+      "samples": 100,
+      "winRate": 1,
+      "turns": 5.23,
+      "remainingHp": 0.8511279990781843,
+      "spent": 62
+    },
+    {
+      "name": "甲",
+      "aptitude": 0.88,
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.6,
+      "remainingHp": 0.9205858090983849,
+      "spent": 76.8
+    }
+  ],
+  "refinementRisk": [
+    {
+      "rank": 1,
+      "probability": 0.98,
+      "meanAttempts": 1.0187,
+      "p95Attempts": 1,
+      "p95Fee": 12,
+      "theoreticalP95": 1
+    },
+    {
+      "rank": 2,
+      "probability": 0.98,
+      "meanAttempts": 1.0187,
+      "p95Attempts": 1,
+      "p95Fee": 24,
+      "theoreticalP95": 1
+    },
+    {
+      "rank": 3,
+      "probability": 0.95,
+      "meanAttempts": 1.0503,
+      "p95Attempts": 1,
+      "p95Fee": 48,
+      "theoreticalP95": 1
+    },
+    {
+      "rank": 4,
+      "probability": 0.9,
+      "meanAttempts": 1.1075,
+      "p95Attempts": 2,
+      "p95Fee": 192,
+      "theoreticalP95": 2
+    },
+    {
+      "rank": 5,
+      "probability": 0.85,
+      "meanAttempts": 1.1699,
+      "p95Attempts": 2,
+      "p95Fee": 384,
+      "theoreticalP95": 2
+    },
+    {
+      "rank": 6,
+      "probability": 0.75,
+      "meanAttempts": 1.3287,
+      "p95Attempts": 3,
+      "p95Fee": 36,
+      "theoreticalP95": 3
+    },
+    {
+      "rank": 7,
+      "probability": 0.65,
+      "meanAttempts": 1.532,
+      "p95Attempts": 3,
+      "p95Fee": 108,
+      "theoreticalP95": 3
+    },
+    {
+      "rank": 8,
+      "probability": 0.55,
+      "meanAttempts": 1.8055,
+      "p95Attempts": 4,
+      "p95Fee": 432,
+      "theoreticalP95": 4
+    },
+    {
+      "rank": 9,
+      "probability": 0.44999999999999996,
+      "meanAttempts": 2.2081,
+      "p95Attempts": 5,
+      "p95Fee": 1620,
+      "theoreticalP95": 6
+    }
+  ],
+  "sourceHashes": {
+    "lore/wiki/world/cultivation-system.md": "ba9c008ee23b03c638008c46cb4a0d868e9e688bcaa91b0ac08658086a78cc4c",
+    "lore/wiki/world/primeval-essence.md": "34c45f52bac39390fa9b9cf3128c8e92b3d6b2253dc785c62269ac2f985ef845",
+    "lore/wiki/world/aptitude-and-aperture.md": "0a27ca6394487cfc868f42024ebb7cfa8f802a09f4040f2d3f93436e5b0d5d86",
+    "lore/wiki/world/gu-care-and-refinement.md": "60263a0f651307e40422e977d9f54e90b19b2652dec62d1ea4080758f1b5f5b5",
+    "lore/wiki/rules/dao-marks.md": "3b53eb001434d1d58c075e8da4eba7c2dc9af27feaa53d1dd9830bb281c2b232",
+    "lore/wiki/rules/tribulation.md": "3421705576374a6fe71795f3320f4f50fa9f7c3161b865ec119a459cf7d32d9b",
+    "lore/wiki/rules/venerables.md": "1c1b4b002f004aa1bdb6f5992918ea06e2ef0699a6ef7cec0bae165236e5419c",
+    "lore/wiki/rules/refinement.md": "21480411a34046ffb2d9f9fe5eb98140c054d9c675f240eea2a1bf77b634dea9",
+    "lore/wiki/rules/path-realms.md": "2f955ac2e84733f150d9a6bcbfadf92f36c537784b2fb220ad686f1f286a28c2",
+    "lore/wiki/rules/killer-moves.md": "1bcbffa1b3d6413351594b9e28cd3de77dd5fbe2fe7ea54dff2265c320cf5153",
+    "lore/wiki/gu/moonlight-gu.md": "2898068259ddbd147aaeef4f35ccad68e1b2f285ef43df4c8c738edf4e8632e8",
+    "lore/wiki/events/royal-court.md": "671fd5ee76895003eb666cb0f0d4ae959390717c677e9cef83a428224e3d7eb7",
+    "lore/wiki/world/economy-roster.md": "810ba5213148d94407ee5e0ed8daddf73c77d01d469b292ca6592399960b9734",
+    "game/docs/lore/canon-index.md": "01931fdf87ab839ae7afffb319b89a4bcc84265fc34c903b266a0864617b4ca8"
+  },
+  "carrierMatrix": [
+    {
+      "rank": 1,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 1,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -1
+    },
+    {
+      "rank": 1,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.97
+    },
+    {
+      "rank": 1,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 1,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 1,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 1,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.51
+    },
+    {
+      "rank": 1,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.93
+    },
+    {
+      "rank": 1,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.55
+    },
+    {
+      "rank": 2,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 2,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -1
+    },
+    {
+      "rank": 2,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.97
+    },
+    {
+      "rank": 2,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 2,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 2,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 2,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.51
+    },
+    {
+      "rank": 2,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.93
+    },
+    {
+      "rank": 2,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.55
+    },
+    {
+      "rank": 3,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 3,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -1
+    },
+    {
+      "rank": 3,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.97
+    },
+    {
+      "rank": 3,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 3,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 3,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 3,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.51
+    },
+    {
+      "rank": 3,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.93
+    },
+    {
+      "rank": 3,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.55
+    },
+    {
+      "rank": 4,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 4,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -1
+    },
+    {
+      "rank": 4,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.97
+    },
+    {
+      "rank": 4,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 4,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 4,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 4,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.51
+    },
+    {
+      "rank": 4,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.93
+    },
+    {
+      "rank": 4,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.55
+    },
+    {
+      "rank": 5,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.82,
+      "remainingHp": 0.8061758656657406,
+      "spent": 31.9,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 5,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0,
+      "turns": 7.25,
+      "remainingHp": 0,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -1
+    },
+    {
+      "rank": 5,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.03,
+      "turns": 8.89,
+      "remainingHp": 0.0030336930051046524,
+      "spent": 50,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.97
+    },
+    {
+      "rank": 5,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14,
+      "remainingHp": 0.4831437590738707,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 5,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.12,
+      "remainingHp": 0.47713111229542177,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 5,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.91,
+      "remainingHp": 0.5909833462503831,
+      "spent": 63.04,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 5,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 0.49,
+      "turns": 8.96,
+      "remainingHp": 0.05371087540950396,
+      "spent": 35,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.51
+    },
+    {
+      "rank": 5,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.07,
+      "turns": 10.62,
+      "remainingHp": 0.003972609577448718,
+      "spent": 44,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.93
+    },
+    {
+      "rank": 5,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.45,
+      "turns": 14.23,
+      "remainingHp": 0.052859606250603965,
+      "spent": 57.84,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.55
+    },
+    {
+      "rank": 6,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732824,
+      "spent": 3.95,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 6,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321104,
+      "spent": 14.97,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 6,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898382,
+      "spent": 15.39,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 6,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 6,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965823,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 6,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698011,
+      "spent": 17,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 6,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.4679140672588978,
+      "spent": 10.33,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 6,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 6,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732825,
+      "spent": 3.95,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321103,
+      "spent": 14.97,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 7,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898382,
+      "spent": 15.39,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 7,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965825,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698014,
+      "spent": 17,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.46791406725889784,
+      "spent": 10.33,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 7,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732824,
+      "spent": 3.95,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321103,
+      "spent": 14.97,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 8,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898382,
+      "spent": 15.39,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 8,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965823,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698014,
+      "spent": 17,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.46791406725889784,
+      "spent": 10.33,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 8,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "soulBody",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 1.71,
+      "remainingHp": 0.8323133141732824,
+      "spent": 3.95,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "soulBody",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 9.45,
+      "remainingHp": 0.5368446236321105,
+      "spent": 14.97,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 9,
+      "enemy": "soulBody",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 0.98,
+      "turns": 11.1,
+      "remainingHp": 0.5831290737898384,
+      "spent": 15.39,
+      "pressureWinRate": 1,
+      "winRateDelta": -0.02
+    },
+    {
+      "rank": 9,
+      "enemy": "guHouse",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 6.82,
+      "remainingHp": 0.7685770150592859,
+      "spent": 14.42,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "guHouse",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 16.12,
+      "remainingHp": 0.7175154574965823,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "guHouse",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 17.79,
+      "remainingHp": 0.8090951728698011,
+      "spent": 17,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "beastPack",
+      "build": "burst",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 4.29,
+      "remainingHp": 0.4679140672588978,
+      "spent": 10.33,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "beastPack",
+      "build": "balanced",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 12.83,
+      "remainingHp": 0.692532718834917,
+      "spent": 15,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    },
+    {
+      "rank": 9,
+      "enemy": "beastPack",
+      "build": "sustain",
+      "samples": 100,
+      "winRate": 1,
+      "turns": 14.9,
+      "remainingHp": 0.7564239983406764,
+      "spent": 16.37,
+      "pressureWinRate": 1,
+      "winRateDelta": 0
+    }
+  ],
+  "tribulationCalibers": [
+    {
+      "build": "burst",
+      "caliber": "aggregate",
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    },
+    {
+      "build": "burst",
+      "caliber": "live-combat",
+      "samples": 30,
+      "completion": 0.6333333333333333,
+      "meanBattles": 111.4,
+      "failures": {
+        "8转:长期筹备破产": 2,
+        "7转:长期筹备破产": 5,
+        "6转:长期筹备破产": 3,
+        "8转:灾劫战斗失败": 1
+      }
+    },
+    {
+      "build": "balanced",
+      "caliber": "aggregate",
+      "samples": 30,
+      "completion": 0.36666666666666664,
+      "meanBattles": 122.2,
+      "failures": {
+        "9转:长期筹备破产": 19
+      }
+    },
+    {
+      "build": "balanced",
+      "caliber": "live-combat",
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 70.4,
+      "failures": {
+        "6转:长期筹备破产": 15,
+        "6转:灾劫战斗失败": 14,
+        "7转:长期筹备破产": 1
+      }
+    },
+    {
+      "build": "sustain",
+      "caliber": "aggregate",
+      "samples": 30,
+      "completion": 1,
+      "meanBattles": 126,
+      "failures": {}
+    },
+    {
+      "build": "sustain",
+      "caliber": "live-combat",
+      "samples": 30,
+      "completion": 0,
+      "meanBattles": 75,
+      "failures": {
+        "6转:灾劫战斗失败": 30
+      }
+    }
+  ],
+  "buildsSupply": {
+    "buildsFile": "C:\\Users\\90877\\work_space\\gu-zhenren\\docs\\design\\rank1-9-model\\gu-library.json",
+    "buildsFileHash": "a7e553bfd3f3a09669a807f3df51d1672b9b222bc9f917b6742d3f102619559b",
+    "supplyFile": "C:\\Users\\90877\\work_space\\gu-zhenren\\docs\\design\\rank1-9-model\\supply.json",
+    "supplyFileHash": "ecacfb89df60dfb805978e8b7e756b7806a8d4e7bb5c2ed55a3214685e69ccf4",
+    "ran": true,
+    "auditIssues": [],
+    "rows": [
+      {
+        "build": "burst",
+        "scenario": "baseline",
+        "samples": 30,
+        "completion": 0.26666666666666666,
+        "meanBattles": 85.5,
+        "meanSupport": 1602.25,
+        "meanRefine": 697.4864861513247,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 7,
+          "6转:战败": 9,
+          "8转:战败": 6
+        }
+      },
+      {
+        "build": "burst",
+        "scenario": "supply_limited",
+        "samples": 30,
+        "completion": 0.23333333333333334,
+        "meanBattles": 79.7,
+        "meanSupport": 1437.1,
+        "meanRefine": 657.4230828879213,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:战败": 13,
+          "6转:长期筹备破产": 7,
+          "8转:战败": 3
+        }
+      },
+      {
+        "build": "burst",
+        "scenario": "key_gu_missing",
+        "samples": 30,
+        "completion": 0.26666666666666666,
+        "meanBattles": 85.5,
+        "meanSupport": 1570.25,
+        "meanRefine": 697.4864861513247,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 7,
+          "6转:战败": 9,
+          "8转:战败": 6
+        }
+      },
+      {
+        "build": "burst",
+        "scenario": "refine_tail",
+        "samples": 30,
+        "completion": 0.03333333333333333,
+        "meanBattles": 83.6,
+        "meanSupport": 1489.525,
+        "meanRefine": 1296,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 7,
+          "6转:战败": 9,
+          "8转:战败": 6,
+          "9转:长期筹备破产": 6,
+          "8转:长期筹备破产": 1
+        }
+      },
+      {
+        "build": "balanced",
+        "scenario": "baseline",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 60,
+        "meanSupport": 1150.2333333333333,
+        "meanRefine": 354.25140218276,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 5,
+          "2转:战败": 8,
+          "6转:战败": 6,
+          "7转:战败": 6,
+          "8转:长期筹备破产": 3,
+          "9转:战败": 1,
+          "8转:战败": 1
+        }
+      },
+      {
+        "build": "balanced",
+        "scenario": "supply_limited",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 58.5,
+        "meanSupport": 1199.7,
+        "meanRefine": 365.32026962668266,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 8,
+          "2转:战败": 5,
+          "6转:战败": 11,
+          "7转:战败": 5,
+          "9转:战败": 1
+        }
+      },
+      {
+        "build": "balanced",
+        "scenario": "key_gu_missing",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 72.7,
+        "meanSupport": 1491.1666666666667,
+        "meanRefine": 462.93543720027566,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 9,
+          "6转:战败": 10,
+          "7转:战败": 6,
+          "8转:长期筹备破产": 3,
+          "9转:战败": 1,
+          "8转:战败": 1
+        }
+      },
+      {
+        "build": "balanced",
+        "scenario": "refine_tail",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 50.4,
+        "meanSupport": 1042.5333333333333,
+        "meanRefine": 500.4,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:长期筹备破产": 16,
+          "2转:战败": 8,
+          "6转:战败": 6
+        }
+      },
+      {
+        "build": "sustain",
+        "scenario": "baseline",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 55,
+        "meanSupport": 1267.9333333333334,
+        "meanRefine": 368.73331788855893,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:战败": 16,
+          "6转:长期筹备破产": 4,
+          "6转:补给破产": 6,
+          "2转:战败": 4
+        }
+      },
+      {
+        "build": "sustain",
+        "scenario": "supply_limited",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 54.8,
+        "meanSupport": 1264.4666666666667,
+        "meanRefine": 368.73331788855893,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:战败": 21,
+          "6转:补给破产": 3,
+          "2转:战败": 4,
+          "6转:长期筹备破产": 2
+        }
+      },
+      {
+        "build": "sustain",
+        "scenario": "key_gu_missing",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 52.3,
+        "meanSupport": 1176.6,
+        "meanRefine": 343.19496219540446,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:战败": 15,
+          "6转:长期筹备破产": 4,
+          "6转:补给破产": 5,
+          "2转:战败": 6
+        }
+      },
+      {
+        "build": "sustain",
+        "scenario": "refine_tail",
+        "samples": 30,
+        "completion": 0,
+        "meanBattles": 55,
+        "meanSupport": 1267.9333333333334,
+        "meanRefine": 576.8,
+        "ranksCovered": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "missingRanks": [],
+        "failures": {
+          "6转:战败": 16,
+          "6转:长期筹备破产": 4,
+          "6转:补给破产": 6,
+          "2转:战败": 4
+        }
+      }
+    ],
+    "arms": [
+      "baseline",
+      "supply_limited",
+      "key_gu_missing",
+      "refine_tail"
+    ]
+  },
+  "cli": {
+    "builds": "gu-library.json",
+    "supply": "supply.json",
+    "scenarios": [
+      "supply_limited",
+      "key_gu_missing",
+      "refine_tail"
+    ],
+    "campaignSeeds": 30
+  },
+  "runNotes": {
+    "libNote": null,
+    "supplyNote": null,
+    "supplyFileUsed": "C:\\Users\\90877\\work_space\\gu-zhenren\\docs\\design\\rank1-9-model\\supply.json"
+  },
+  "runMs": 929
+}

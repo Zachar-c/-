@@ -1,0 +1,288 @@
+{
+  "version": "0.2.0-draft",
+  "channels": {
+    "market": {
+      "availability": 1.0,
+      "priceMultiplier": 1.0,
+      "status": "assumption",
+      "evidence": ["game/docs/lore/canon-index.md", "lore/wiki/world/economy-roster.md"],
+      "note": "基准渠道：市集、商队临时铺市与蛊仙市场的标价购买，货币按当阶（1-5转元石、6-9转仙元石）。availability 1.0 是未受供给冲击的校准锚，实际稀缺由 supply 行逐级下调；未命中任何 supply 行的蛊落到此默认值。语义锚点：商队驻扎后形成临时商铺与摊市（canon-index CAN-NANJIANG-004）、商家城付得起元石即可入城（economy-roster 46750-46764）、宝黄天五域蛊仙市场（economy-roster 85384-85388）；数值本身无原著依据。"
+    },
+    "drop": {
+      "availability": 0.3,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/beast-tide.md", "lore/wiki/world/map-roster.md", "lore/wiki/world/economy-roster.md"],
+      "note": "遭遇/兽潮/野外获取。锚点：生死门传说内生蛊、死蛊等天然蛊虫（map-roster 71226）；南疆地沟野生镇宇仙蛊（map-roster H1 324566-324771）；兽潮动员产出经战功兑换蛊虫元石（economy-roster 21084 电狼眼珠换战功）。兽王寄生蛊按 canon-index CAN-BEAST-TIER-002 属共生护卫，禁止设计为可掠夺掉落。priceMultiplier null 表示非标价渠道，不产生直接购置费。"
+    },
+    "condition": {
+      "availability": 0.2,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/gu/moonlight-gu.md", "lore/wiki/world/gu-care-and-refinement.md"],
+      "note": "特定地点、组织授权或材料条件取得。锚点：学堂蛊室白银盘供新人挑选（moonlight-gu 1484-1496）、蛊室定期免费领蛊与额外获取须付费（gu-care 3764-3784）、合炼须秘方与材料（gu-care 15724-15734）、标志蛊不入学堂蛊室换取范围（bear-strength E:V1-020446）。priceMultiplier null 表示前置条件不按价格结算。"
+    },
+    "production": {
+      "availability": 0.5,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/world-operating-system.md", "lore/wiki/world/economy-roster.md"],
+      "note": "仙窍/福地自产与流水线产能。锚点：仙窍生态经营快产仙材（world-operating-system 171108-171146，经 economy-roster 生产体系转引）、石巢流水线炼蛊（economy-roster C 131300-131800）。本渠道只登记蛊获取，不与仙元生产 I=10ef、资源产出 V=6Uef 重复记账；priceMultiplier null 表示自产无购置价，成本走供养与仙窍维护。"
+    }
+  },
+  "supply": [
+    {
+      "match": { "gu": "spring-autumn-cicada" },
+      "channel": "condition",
+      "availability": 0.15,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/spring-autumn-cicada.md"],
+      "note": "六转仙蛊、红莲魔尊（洪亭）所创、方源前世耗时三十年炼成的本命（E:V5-313128、E:V5-323070、3258-3262 行）；创蝉与归属链笔记层仍未完全核验。0.15 表示整局内以极低概率经条件事件接触，非标价商品。"
+    },
+    {
+      "match": { "gu": "moonlight-gu" },
+      "channel": "condition",
+      "availability": 0.85,
+      "priceMultiplier": 1.0,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/moonlight-gu.md", "lore/wiki/world/gu-care-and-refinement.md"],
+      "note": "古月一族秘法培育的镇族蛊虫、非天然蛊虫、外地没有（1472-1494 行）；学堂蛊室白银盘供新人随意挑选（1484-1496 行）。0.85 为族内蛊室假设，族外场景应判不可得或叠加场景乘数；蛊室定期免费领蛊、额外获取须付费（3764-3784 行），故保留 1.0 价格倍率。"
+    },
+    {
+      "match": { "gu": "small-light-gu" },
+      "channel": "condition",
+      "availability": 0.6,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/small-light-gu.md"],
+      "note": "学堂蛊室墙角共五只（9704-9710 行），存量有限；可参与合炼月芒蛊（15710 行）。0.6 反映蛊室存量约束，纯游戏假设。"
+    },
+    {
+      "match": { "gu": "moon-glow-gu" },
+      "channel": "condition",
+      "availability": 0.4,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/moon-glow-gu.md", "lore/wiki/world/world-operating-system.md"],
+      "note": "月光蛊加两只小光蛊合炼的二转进攻蛊、月刃攻击力达月光蛊三倍（E:V1-015710）；合炼须秘方，个案一次失败小光蛊消亡、三天后再炼成功（world-operating-system F2b 240114-240186）。取得受材料与秘方条件约束，故走 condition 而非 market。"
+    },
+    {
+      "match": { "gu": "white-jade-gu" },
+      "channel": "condition",
+      "availability": 0.4,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/roster.md", "lore/wiki/world/gu-care-and-refinement.md"],
+      "note": "二转防御系合炼产物：白豕蛊加玉皮蛊，主防（gu-care 15708-15720 行）；方源当时元石只够一次之用、若失败则经济崩溃，为原著内生的供应压力个案。0.4 为游戏假设。"
+    },
+    {
+      "match": { "gu": "bear-strength-gu" },
+      "channel": "condition",
+      "availability": 0.4,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/bear-strength-gu.md"],
+      "note": "熊家寨标志蛊虫，不入学堂蛊室换取范围（E:V1-003602、E:V1-020446），以蜂蜜为食；跨寨取得需人情、交换或冲突，不设标价。0.4 为游戏假设。"
+    },
+    {
+      "match": { "gu": "persistence-gu" },
+      "channel": "condition",
+      "availability": 0.05,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/persistence-gu.md", "lore/wiki/rules/refinement.md"],
+      "note": "仙蛊个案（万我杀招骨架之一，坚持仙蛊加挽澜仙蛊，world-operating-system F2b 240114-240186）；仙蛊世界唯一为游戏参数（parameters.json meta.immortalGuUnique）。0.05 表示仅特定机缘可得。"
+    },
+    {
+      "match": { "gu": "wisdom-gu" },
+      "channel": "condition",
+      "availability": 0.05,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/wisdom-gu.md"],
+      "note": "智道奇蛊，原著中长期由特定持有者占有（琅琊地灵等交易语境，economy-roster 资料整理）；不可繁衍类奇蛊（星萤蛊不可繁衍同类例，economy-roster C 123762-124300）。0.05 为游戏假设。"
+    },
+    {
+      "match": { "gu": "fate-gu" },
+      "channel": "condition",
+      "availability": 0.0,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/gu/fate-gu.md", "lore/wiki/world/path-roster.md"],
+      "note": "天道蛊虫蛊修无法自主催动（path-roster 已核 402750-402764 行），宿命蛊为天庭核心资产；availability 0 表示普通循环整局不可得，用于检验引擎 fallback 与拒绝路径，不是可调高的常规供应。"
+    },
+    {
+      "match": { "path": "*", "rarity": "unique" },
+      "channel": "condition",
+      "availability": 0.1,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/rules/refinement.md"],
+      "note": "唯一性蛊的泛匹配兜底：绝大多数仙蛊极限八转、九转只占相当小的一部分（REF-020，E:V6-405752 起），世界唯一仙蛊不设市场流通。需消费端提供 rarity 数据才命中；否则落到 rank 行或 market 默认。"
+    },
+    {
+      "match": { "path": "*", "rarity": "wild" },
+      "channel": "drop",
+      "availability": 0.25,
+      "priceMultiplier": null,
+      "status": "inference",
+      "evidence": ["lore/wiki/world/map-roster.md", "lore/wiki/world/beast-tide.md"],
+      "note": "野生天然蛊虫与兽潮产出：生死门天然蛊虫传说（71226 行）、南疆地沟野生镇宇仙蛊（H1 324566-324771）、兽潮战功兑换（21084 行）。单行覆盖 1-9 转是登记的简化：野生仙蛊类个案（地沟）实际远稀于野生凡蛊。0.25 为凡阶野生假设。"
+    },
+    {
+      "match": { "rank": 1, "path": "木道" },
+      "channel": "production",
+      "availability": 0.55,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/world-operating-system.md", "lore/wiki/world/economy-roster.md"],
+      "note": "样例生产通道：福地草木生态快产仙材（171108-171146 行）加石巢流水线炼蛊产能（C 131300-131800）归纳出「有生产基地者可自产同道低阶蛊」；木道为首批样例，属游戏假设，非原著木道特供。"
+    },
+    {
+      "match": { "rank": 2, "path": "木道" },
+      "channel": "production",
+      "availability": 0.5,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/world-operating-system.md", "lore/wiki/world/economy-roster.md"],
+      "note": "同上样例生产通道；随转数上升自产成功率下降为纯游戏假设。"
+    },
+    {
+      "match": { "rank": 3, "path": "木道" },
+      "channel": "production",
+      "availability": 0.45,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/world-operating-system.md", "lore/wiki/world/economy-roster.md"],
+      "note": "同上样例生产通道；四转及以上木道蛊不设自产行，落到 rank 市场行，登记为保守边界。"
+    },
+    {
+      "match": { "rank": 1, "path": "气道" },
+      "channel": "production",
+      "availability": 0.55,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/economy-roster.md"],
+      "note": "样例生产通道：气道仙材有明确生产与贸易实例（economy-roster H2 337501-337730 龙人分身横扫气道仙材）；气道蛊自产为游戏假设，非原著气道特供。"
+    },
+    {
+      "match": { "rank": 2, "path": "气道" },
+      "channel": "production",
+      "availability": 0.5,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/economy-roster.md"],
+      "note": "同上气道样例生产通道。"
+    },
+    {
+      "match": { "rank": 3, "path": "气道" },
+      "channel": "production",
+      "availability": 0.45,
+      "priceMultiplier": null,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/economy-roster.md"],
+      "note": "同上气道样例生产通道；四转及以上气道蛊落到 rank 市场行。"
+    },
+    {
+      "match": { "rank": 1, "path": "*", "rarity": "common" },
+      "channel": "market",
+      "availability": 0.9,
+      "priceMultiplier": 1.0,
+      "status": "assumption",
+      "evidence": ["game/docs/lore/canon-index.md", "lore/wiki/world/economy-roster.md"],
+      "note": "一转凡蛊流通最广：商队驻扎形成临时商铺摊市（CAN-NANJIANG-003/004）、商家城付得起元石即可入城（46750-46764 行）；蛊室定期免费领蛊（gu-care 3764-3784 行）为 condition 侧补充。0.9 为游戏假设。"
+    },
+    {
+      "match": { "rank": 2, "path": "*", "rarity": "common" },
+      "channel": "market",
+      "availability": 0.8,
+      "priceMultiplier": 1.1,
+      "status": "assumption",
+      "evidence": ["lore/wiki/world/gu-care-and-refinement.md"],
+      "note": "二转普通蛊日耗元石一至两块（3887-3889 行），养护与购置成本同步抬升；U(2)=2 与该日耗量级一致。价格倍率 1.1 为游戏假设。"
+    },
+    {
+      "match": { "rank": 3, "path": "*", "rarity": "common" },
+      "channel": "market",
+      "availability": 0.7,
+      "priceMultiplier": 1.3,
+      "status": "assumption",
+      "evidence": ["lore/wiki/gu/roster.md"],
+      "note": "三转市购单点实例：冰晶蛊三转、白凝冰以紫荆令牌二万八千元石购得（roster 50264-50296 行）——中洲后期个案，证明三转蛊可市购但量级远超起步钱包；economy-roster 明示所有定价均为单点实例。倍率为游戏假设。"
+    },
+    {
+      "match": { "rank": 4, "path": "*", "rarity": "common" },
+      "channel": "market",
+      "availability": 0.55,
+      "priceMultiplier": 1.5,
+      "status": "inference",
+      "evidence": ["lore/wiki/world/economy-roster.md"],
+      "note": "黄金舍利蛊因影响四转战力与势力格局受各大组织严苛管禁、极少流通（86500-86518 行）；把「经济控制=武力控制」的管禁逻辑归纳为四转物资整体可得性下降，倍率数值为假设。"
+    },
+    {
+      "match": { "rank": 5, "path": "*", "rarity": "common" },
+      "channel": "market",
+      "availability": 0.4,
+      "priceMultiplier": 1.8,
+      "status": "inference",
+      "evidence": ["lore/wiki/world/economy-roster.md", "lore/wiki/rules/refinement.md"],
+      "note": "紫晶舍利蛊同受严苛管禁（86500-86518 行）；五转蛊炼制成功率往往不足千分之一、很多五转蛊师浑身上下没有一只五转蛊虫（REF-013，E:V3-095076）——市面存量与炼制供给双稀缺，倍率数值为假设。"
+    },
+    {
+      "match": { "rank": 6 },
+      "channel": "market",
+      "availability": 0.5,
+      "priceMultiplier": 1.0,
+      "status": "inference",
+      "evidence": ["lore/wiki/world/economy-roster.md"],
+      "note": "仙人段基准：仙元石为蛊仙硬通货（123706-123724 行）、宝黄天为五域蛊仙市场（85384-85388 行）；「冒充蛊仙入场」说明入场资格本身稀缺，故可得性不满配。价格以仙元石计，无跨币汇率。"
+    },
+    {
+      "match": { "rank": 7 },
+      "channel": "market",
+      "availability": 0.35,
+      "priceMultiplier": 1.25,
+      "status": "inference",
+      "evidence": ["lore/wiki/world/economy-roster.md"],
+      "note": "北原拍卖大会系近两百多年来唯一一次大规模换仙蛊的机会（134844-134856 行），且寿蛊没有一只流出拍卖（140264 行）——高转仙蛊交易机会稀少为归纳；倍率为游戏假设。"
+    },
+    {
+      "match": { "rank": 8 },
+      "channel": "market",
+      "availability": 0.2,
+      "priceMultiplier": 1.5,
+      "status": "inference",
+      "evidence": ["lore/wiki/rules/refinement.md"],
+      "note": "绝大多数仙蛊极限就是八转（REF-020，E:V6-405752 行起）——八转仙蛊存量天然封顶，流通更稀；倍率为游戏假设。"
+    },
+    {
+      "match": { "rank": 9 },
+      "channel": "market",
+      "availability": 0.05,
+      "priceMultiplier": 2.0,
+      "status": "inference",
+      "evidence": ["lore/wiki/rules/refinement.md"],
+      "note": "真正能升上九转的仙蛊只占相当小的一部分（REF-020）；与模型 maxRank 白名单一致，九转仙蛊市场近乎无流通，主要靠条件与炼制；倍率为游戏假设。"
+    }
+  ],
+  "scenarios": {
+    "supply_limited": {
+      "channelMultipliers": {
+        "market": { "availability": 0.6, "priceMultiplier": 1.4 },
+        "drop": { "availability": 0.7, "priceMultiplier": 1.0 },
+        "condition": { "availability": 0.7, "priceMultiplier": 1.0 },
+        "production": { "availability": 0.7, "priceMultiplier": 1.0 }
+      },
+      "note": "供给收缩场景：原型为仙鹤门封锁狐仙福地商贸（economy-roster 85384-85388）、战时战功贡献取代货币的畸形繁荣（economy-roster 123888）、灾劫对福地生产的损毁循环（world-operating-system 171108-171146）。乘数与行内有效值相乘后截断到 [0,1]；market 价格抬升 1.4 倍表示封锁下的稀缺溢价。"
+    },
+    "key_gu_missing": {
+      "dropGu": ["moonlight-gu", "small-light-gu", "moon-glow-gu", "white-jade-gu"],
+      "note": "命中的核心蛊整局不可得，引擎走构筑 fallback。四者取自月光蛊晋升家族，对应三套固定策略的攻击核（月光蛊/月芒蛊）、辅助核（小光蛊）与防御核（白玉蛊）；id 沿用 lore/wiki/gu/ 页面命名，对应 lore/runtime/entities.json 的 snake_case（moonlight_gu、small_light_gu、moon_glow_gu、white_jade_gu）。"
+    },
+    "refine_tail": {
+      "budgetMode": "p95",
+      "note": "完整账本炼制记账从期望费切到理论 95% 费：单次费用 12U 不变，尝试次数由 1/p 改为 ceil(ln(0.05)/ln(1-p))，p 为准备后成功率（clamp 后 0.98/0.98/0.95/0.90/0.85/0.75/0.65/0.55/0.45）。九转 p=0.45：期望 720 仙元石切到 6 次 x324=1944 仙元石。"
+    }
+  }
+}

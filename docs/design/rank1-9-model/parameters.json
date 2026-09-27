@@ -1,0 +1,85 @@
+{
+  "version": "0.2.0-draft",
+  "status": "research-model-not-production-balance",
+  "authority": "用户 2026-09-27 授权从 Wiki 推导一至九转；全部游戏参数为待实玩校准的设计值",
+  "combat": {
+    "baseHp": 100,
+    "actionsPerTurn": 2,
+    "maxTurns": 30,
+    "blockExpires": true,
+    "mortalStageFactors": [1, 1.1, 1.2, 1.3],
+    "immortalStock": 15,
+    "markUnit": 1000,
+    "conflictCoefficient": 0.5,
+    "conflictFloor": 0.35,
+    "damageVariance": 0.1,
+    "enemyHpVariance": 0.15,
+    "enemyDamageVariance": 0.15,
+    "thoughtCapacity": [4,5,6,7,8,12,16,20,24],
+    "comboMaximumBonus": 0.6,
+    "controlResistancePerUse": 0.5
+  },
+  "ranks": [
+    {"rank":1,"name":"一转","essence":"青铜真元","currency":"元石","base":1,"essenceQuality":1,"marksStart":0,"marksEnd":0,"priceUnit":1,"practiceNeed":12,"periods":4},
+    {"rank":2,"name":"二转","essence":"赤铁真元","currency":"元石","base":2,"essenceQuality":10,"marksStart":0,"marksEnd":0,"priceUnit":2,"practiceNeed":18,"periods":4},
+    {"rank":3,"name":"三转","essence":"白银真元","currency":"元石","base":4,"essenceQuality":100,"marksStart":0,"marksEnd":0,"priceUnit":4,"practiceNeed":24,"periods":4},
+    {"rank":4,"name":"四转","essence":"黄金真元","currency":"元石","base":8,"essenceQuality":1000,"marksStart":0,"marksEnd":0,"priceUnit":8,"practiceNeed":30,"periods":4},
+    {"rank":5,"name":"五转","essence":"紫晶真元","currency":"元石","base":16,"essenceQuality":10000,"marksStart":0,"marksEnd":0,"priceUnit":16,"practiceNeed":36,"periods":4},
+    {"rank":6,"name":"六转","essence":"青提仙元","currency":"仙元石","base":60,"essenceQuality":1,"marksStart":1000,"marksEnd":10000,"priceUnit":1,"internalYears":300,"periods":6,"tribulations":{"earth":{"every":10,"marks":200},"heaven":{"every":100,"marks":1000}}},
+    {"rank":7,"name":"七转","essence":"红枣仙元","currency":"仙元石","base":120,"essenceQuality":100,"marksStart":10000,"marksEnd":49000,"priceUnit":3,"internalYears":300,"periods":6,"tribulations":{"earth":{"every":10,"marks":300},"heaven":{"every":50,"marks":1500},"grand":{"every":100,"marks":7000}}},
+    {"rank":8,"name":"八转","essence":"白荔仙元","currency":"仙元石","base":360,"essenceQuality":10000,"marksStart":49000,"marksEnd":316000,"priceUnit":9,"internalYears":300,"periods":6,"tribulations":{"heaven":{"every":10,"marks":500},"grand":{"every":50,"marks":2000},"myriad":{"every":100,"marks":80000}}},
+    {"rank":9,"name":"九转","essence":"黄杏仙元","currency":"仙元石","base":1440,"essenceQuality":1000000,"priceUnit":27,"marksStart":316000,"marksEnd":1000000,"periods":4,"campaignProjectMarks":171000}
+  ],
+  "aptitudes": {"丁":0.25,"丙":0.44,"乙":0.66,"甲":0.88},
+  "actions": {
+    "basic":{"ap":1,"damage":10,"block":0,"mortalCost":0,"immortalCost":0,"cooldown":0},
+    "strike":{"ap":1,"damage":24,"block":0,"mortalCost":10,"immortalCost":1,"cooldown":0},
+    "burst":{"ap":2,"damage":66,"block":0,"mortalCost":25,"immortalCost":3,"cooldown":3},
+    "guard":{"ap":1,"damage":0,"block":20,"mortalCost":8,"immortalCost":1,"cooldown":0},
+    "drain":{"ap":1,"damage":14,"block":0,"mortalCost":0,"immortalCost":0,"restoreMortal":3,"restoreImmortal":0.3,"cooldown":2}
+  },
+  "enemies": {
+    "skirmisher":{"hp":75,"damage":13,"armor":0,"windupEvery":0},
+    "brute":{"hp":125,"damage":26,"armor":0,"windupEvery":2},
+    "pressure":{"hp":95,"damage":22,"armor":0,"windupEvery":0},
+    "armored":{"hp":105,"damage":17,"armor":0.35,"windupEvery":0},
+    "disruptor":{"hp":90,"damage":16,"armor":0,"windupEvery":0,"energyLoss":4},
+    "soulBody":{"hp":70,"damage":24,"armor":0,"windupEvery":0,"carrier":"soulBody"},
+    "guHouse":{"hp":200,"damage":4,"armor":0.4,"windupEvery":0,"carrier":"guHouse"},
+    "beastPack":{"hp":300,"damage":24,"armor":0,"windupEvery":0,"carrier":"beastPack","packUnits":6}
+  },
+  "carriers": {
+    "damageClasses": {"basic":"regular","strike":"regular","drain":"regular","burst":"burst","guard":"none"},
+    "soulBodyResist": {"regular":0.65,"burst":0},
+    "packDamageFloor": 0.25,
+    "packAoeYield": {"basic":1,"strike":1.2,"burst":1.5,"drain":1},
+    "tribulationCarrier": {"earth":"beastPack","heaven":"soulBody","grand":"guHouse","myriad":"guHouse"},
+    "tribulationMarginRef": 0.75,
+    "note": "v0.2 新增：特殊战斗载体与灾劫实战化均为纯游戏设计假设，非原著数值。概念锚点只取自 lore/wiki（魂道：魂魄由虚返实、常规手段难伤；杀招体系 KM-006：蛊屋本质是固定化杀招、高耐受；兽潮：多单位聚合、逐波衰减）。soulBodyResist 为该类伤害被减免的比例（0=全额承伤）；beastPack 单回合输出按剩余单位数线性衰减且不低于 packDamageFloor，玩家范围收益用 packAoeYield 简单系数表达。"
+  },
+  "economy": {
+    "grossPerPeriod":24,"foodPerGu":1,"guCount":5,"recoverFullHp":12,"mortalRefillPerPoint":0.12,"immortalRefillPerUnit":1,
+    "fieldCost":3,"refinementFee":12,"startingWallet":48,"resaleFraction":0.35,"failureSalvageFraction":0.25,
+    "naturalRecoveryHours":8,"immortalProductionPerPeriod":10,"apertureMaintenance":4,"resourceYield":6
+  },
+  "refinement": {
+    "baseSuccess":[0.95,0.9,0.85,0.8,0.75,0.65,0.55,0.45,0.35],
+    "attainmentBonus":0.03,"preparationBonus":0.1,"minSuccess":0.1,"maxSuccess":0.98,
+    "failureInjuryFraction":0.1,"maxChainDepth":4,"refundInputGu":false
+  },
+  "growth": {
+    "practicePerAction":3,"practiceEssenceCost":10,"practiceMoneyCost":2,
+    "breakthroughReserve":[0,55,60,65,70],"breakthroughAid":50,
+    "ascension":{"stepIntake":0.2,"steps":5,"imbalanceLimit":0.2,"minimumHumanQi":0.6,"heavenEarthMax":1.2,"backlash":25},
+    "venerableMarksThreshold":300000,"venerableResearch":100,"researchPerProject":25,
+    "tribulationBands":{"earth":[0.6,0.9],"heaven":[1,1.4],"grand":[1.6,2.2],"myriad":[2.6,3.4]},
+    "tribulationDamageFraction":0.35,"rebuildCost":8,"tribulationLiveEscalation":0.06
+  },
+  "meta": {
+    "recipePool":24,"discoveriesPerRun":2,"offerCount":3,"recipeKnowledgePersistent":true,
+    "retainGu":false,"retainMoney":false,"retainCultivation":false,"retainAttainment":false,
+    "duplicateConversion":"一次本局情报，不给永久属性或货币",
+    "immortalGuUnique":true
+  },
+  "validation": {"seeds":100,"fixedSeed":20260927,"referenceAptitude":0.44,"perturbations":[0.8,1,1.2]}
+}
