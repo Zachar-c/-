@@ -1,0 +1,85 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3efe6" />
+  <title>问真 · 一局蛊途</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <header class="hero">
+    <p class="eyebrow">App · 开发顺序② · 接成一局 · Prototype</p>
+    <h1>一局蛊途</h1>
+    <p class="sub">战损 · 补给 · 路线 · 蛊方跨世 · 数值源 rank1-9-model</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="hud">
+        <div class="hud-item"><span class="label">世</span><strong id="life">1</strong></div>
+        <div class="hud-item"><span class="label">段</span><strong id="stage">0</strong><span class="unit" id="stage-note">/ 起点</span></div>
+        <div class="hud-item"><span class="label">转</span><strong id="rank">1</strong></div>
+        <div class="hud-item"><span class="label">元石</span><strong id="wallet">48</strong></div>
+        <div class="hud-item"><span class="label">耐受</span><strong id="hp">100</strong><span class="unit">/100</span></div>
+        <div class="hud-item"><span class="label">真元</span><strong id="mp">44</strong><span class="unit">/44</span></div>
+        <div class="hud-item"><span class="label">伤次</span><strong id="wounds">0</strong></div>
+      </div>
+      <p id="knowledge" class="memory-line"></p>
+      <div class="bars">
+        <div class="bar-row"><span>路线</span><div class="bar"><i id="bar-route" style="width:0%"></i></div><em id="route-label">起</em></div>
+      </div>
+    </section>
+
+    <section class="panel" id="map-panel">
+      <h3>本局路线 · 有限节点</h3>
+      <div id="map" class="map"></div>
+      <p class="choice-note">每段先看条件再选：战斗拿收益，修行跨转，炼台转型，商队补供给或抄方。选完不能反悔。</p>
+    </section>
+
+    <section class="panel" id="main-panel">
+      <div class="place-head">
+        <h2 id="screen-title">入局</h2>
+        <p class="place-tag" id="screen-tag">[Design] 节点</p>
+      </div>
+      <p id="scene" class="scene"></p>
+      <div id="intent" class="intent" hidden></div>
+      <div id="enemy-box" class="enemy-box" hidden></div>
+      <div id="hand" class="hand"></div>
+      <div id="choices" class="choices"></div>
+      <div class="action-row" id="main-actions">
+        <button type="button" id="btn-resolve" class="btn btn-primary" hidden>结算回合</button>
+        <button type="button" id="btn-clear" class="btn" hidden>清空选择</button>
+        <button type="button" id="btn-restart" class="btn">重开本局</button>
+      </div>
+      <p id="combo-tip" class="combo-tip"></p>
+    </section>
+
+    <section class="panel">
+      <div class="layout">
+        <div class="col">
+          <h3>蛊组</h3>
+          <div id="gu-list" class="gu-list"></div>
+          <h3>账本（模型 economy）</h3>
+          <div id="ledger" class="inv"></div>
+        </div>
+        <div class="col">
+          <h3>日志</h3>
+          <div id="log" class="log"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="end-panel" hidden>
+      <h2>本局收束</h2>
+      <div id="end-story"></div>
+      <p class="result-line">验收：第二世知道蛊方后，是否改变前段路线、购买和炼制选择？</p>
+    </section>
+  </main>
+  <script src="params.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

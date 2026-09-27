@@ -1,0 +1,69 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3efe6" />
+  <title>问真 · 蛊战回合</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <header class="hero">
+    <p class="eyebrow">App · 开发顺序① · 一场战斗 · Prototype</p>
+    <h1>蛊战回合</h1>
+    <p class="sub">回合制 · 固定规则组合 · 数值源 rank1-9-model（一转）· 八场连续 · 不是数值对撞</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="hud">
+        <div class="hud-item"><span class="label">回合</span><strong id="turn">1</strong></div>
+        <div class="hud-item"><span class="label">耐受</span><strong id="hp">100</strong><span class="unit">/100</span></div>
+        <div class="hud-item"><span class="label">真元</span><strong id="mp">44</strong><span class="unit">/44</span></div>
+        <div class="hud-item"><span class="label">本回剩余AP</span><strong id="ap">2</strong></div>
+        <div class="hud-item"><span class="label">敌</span><strong id="enemy-name">—</strong></div>
+        <div class="hud-item"><span class="label">敌血</span><strong id="enemy-hp">0</strong></div>
+      </div>
+      <div id="intent" class="intent"></div>
+    </section>
+
+    <section class="panel">
+      <h3>敌</h3>
+      <div id="enemy-box" class="enemy-box"></div>
+      <h3>本回行动（可多选，点「结算回合」生效）</h3>
+      <div id="hand" class="hand"></div>
+      <div class="action-row">
+        <button type="button" id="btn-resolve" class="btn btn-primary">结算回合</button>
+        <button type="button" id="btn-clear" class="btn">清空选择</button>
+        <button type="button" id="btn-next" class="btn" hidden>下一场</button>
+        <button type="button" id="btn-restart" class="btn">重开</button>
+      </div>
+      <p id="combo-tip" class="combo-tip"></p>
+    </section>
+
+    <section class="panel">
+      <div class="layout">
+        <div class="col">
+          <h3>规则（固定，不做任意拼接）</h3>
+          <div id="rules" class="rules"></div>
+        </div>
+        <div class="col">
+          <h3>战报</h3>
+          <div id="log" class="log"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="result-panel" hidden>
+      <h2 id="result-title"></h2>
+      <p id="result-body" class="result-line"></p>
+      <p class="choice-note">开发顺序①的验收：这一场是否值得再打一次？选择是否来自消耗/联动/敌人应对，而不是堆数值？</p>
+    </section>
+  </main>
+  <script src="params.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
