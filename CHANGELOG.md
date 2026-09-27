@@ -4,6 +4,22 @@
 
 ## 未发布
 
+### 2026-09-27（一至九转数值研究）
+
+- 新增 [一至九转数值模型](docs/design/rank1-9-model/README.md)：从 Wiki / Canon 事实独立推导转数、真元/仙元、道痕、战斗构筑、供养、炼蛊、升仙、灾劫、成尊和跨局蛊方规则，未覆盖现有游戏数据。
+- 提供独立参数与可执行计算器、21项规则检查、13500场战斗、24300场敏感性对照、810条完整预算路线、90000次炼制采样；实际结果及限制见 [验证报告](docs/design/rank1-9-model/validation.md)。独立 L1 和玩家实测仍未完成，不宣称正式平衡。
+- 新研究入口已挂接 docs hub 与项目地图；原著缺口、模型与生产边界及校准风险登记至债务清单。
+- 同日 v0.2 集成扩展：新增 [原著蛊库与三套构筑](docs/design/rank1-9-model/gu-library.md)（69 只蛊、15 条配方/约束、逐条证据标注）、[供应模型与三场景](docs/design/rank1-9-model/supply-model.md)、战斗载体与灾劫实战口径及 [引擎终审记录](docs/design/rank1-9-model/engine-v02.md)；验证器 21→29 项检查，构筑×供应全臂与灾劫两口径对照入验证报告。
+- 两项模型修订待 L1 追认（未赋能动作回落占位口径、凡人蛊赋能动作乘小境界进度系数），已登记债务清单；当前完成率为 v0.2-draft 参数下的研究发现，非平衡结论，不为结果调参。
+
+### 2026-09-27（文档治理推广与存量收口）
+
+- 新增 [docs/DOCUMENTATION_GOVERNANCE.md](docs/DOCUMENTATION_GOVERNANCE.md)：LLM Wiki 文档治理推广到全仓（分层、引用、失源、词表、G0–G2 门禁、**入库即治理 §4**）；`lore/wiki` 与 `game/docs/wiki` 双库保持分离，只统一规范口径。
+- 新增 [tools/docs-lint.mjs](tools/docs-lint.mjs)（G0）：全仓 Markdown 断链 / 编译层孤儿 / frontmatter 日期 / 脚注路径 / mermaid 卫生。
+- **存量治理**：源层/历史/过程记录归入 G0 豁免；新建 [docs/README.md](docs/README.md)、[game/docs/README.md](game/docs/README.md)；module-interfaces / lore / wenzhen-web-lab / editorial / ai-system hub 补真实链接。其他孤儿 221→1。
+- 修正断链与脚注路径：战斗 HUD 场景 README 相对层级、runtime pack 相对路径、`GDD.md` 历史悬空引用、game wiki 三处脚注全路径（L1 D2）、ai-system 视觉报告魂道链接。
+- 根 `AGENTS.md`、`PROJECT_MAP.md`、`DEVELOPMENT.md`、`README.md` 与双库维护文档接入治理与入库清单。
+
 ### 2026-09-25（评审修复）
 
 - 主行动坞镜像紧凑化：地图节点 / 战后三选一卡片按钮改为单行文案（「前往：X」/「选择：X」）转发点击，不再整卡克隆进 dock 撑坏布局。

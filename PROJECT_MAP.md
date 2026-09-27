@@ -56,7 +56,7 @@
 ### `game/`（Task 7 已导入）
 
 - 用途：Gitee Godot 成熟游戏工程，保留规则实现、权威数据、工程结构、UID、资源路径和测试入口；为 Web 产品提供可复用实现与数据来源。
-- 首读文件：`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`。
+- 首读文件：`game/AGENTS.md`、`game/world-model/governance/CONSTRAINTS-V2.md`、`game/docs/README.md`（工程文档索引）。
 - 当前入口：`game/`（导入提交 `ebb7f81`，744 提交、1904 文件，另有本地带过提交 `db34873`；旧 `gu-zhenren-editor/` 的受版本内容已删除）。
 - 权威来源：`https://gitee.com/chen-dong-s/gu-zhenrens-pigeon-meat.git`（`master`）。
 - 当前任务范围：依据 L0 最新方向为 Web 产品提供规则和内容参考。`game/data/` 是已存在的共享数据来源；改动其内容时，通过 Web 工程现有生成工具同步镜像。
@@ -74,7 +74,7 @@
 ### `fortune/app/`（Task 6 已导入）
 
 - 用途：GitHub `fortune-app` 项目。
-- 首读文件：`fortune/app/PRD.md`（该仓库无 README）。
+- 首读文件：[fortune/app/PRD.md](fortune/app/PRD.md)（该仓库无 README）。
 - 当前入口：`fortune/app/`（导入提交 `6603115`，36 文件；未复制本地外层包装目录 `fortune-app/fortune-app/`）。
 - 权威来源：`https://github.com/Zachar-c/fortune-app.git`（`master`，基线 `a039639`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
@@ -90,7 +90,7 @@
 ### `ai-system/`（Task 6 已导入）
 
 - 用途：GitHub `my-ai-production-system` 项目 + 本仓库的 AI 执行环境约定（Worker 协议、模型链、任务包）。
-- 首读文件：`ai-system/AGENTS.md`、`ai-system/README.md`。
+- 首读文件：[ai-system/AGENTS.md](ai-system/AGENTS.md)、[ai-system/README.md](ai-system/README.md)、[ai-system/ARCHITECTURE.md](ai-system/ARCHITECTURE.md)。`ai-system/PRD.md` 是镜像上游历史设计，**不是**《问真》PRD。
 - 当前入口：`ai-system/`（导入提交 `479145d`，1 文件）。
 - 权威来源：`https://github.com/Zachar-c/my-ai-production-system.git`（`main`，基线 `fbe67e2`）。
 - 可修改范围：仅目录导入与导航更新；不改产品逻辑。
@@ -100,11 +100,15 @@
 
 ### `docs/`
 
+- 新研究入口：[一至九转数值模型](docs/design/rank1-9-model/README.md)（2026-09-27）：仅 Wiki / Canon 事实推导的局内构筑与轮回蛊方模型，含独立计算器与验证报告；不复用或覆盖现有游戏数值，不新增产品权威。
+
 - 用途：**《问真》权威协议层**、项目计划、设计说明与债务清单。
 - 首读文件：
+  - `docs/README.md`（文档索引，2026-09-27）
   - `docs/PRODUCT_REQUIREMENTS_v1.0.md`（**第 1 层 PRD，《问真》唯一产品权威**）
   - `docs/AI_DEVELOPMENT_PROTOCOL_v1.0.md`（第 2 层：L0/L1/L2/Worker 职责与文档优先级）
   - `docs/CHANGE_CONTROL_PROTOCOL_v1.0.md`（第 2 层：变更控制与优先级阶梯）
+  - `docs/DOCUMENTATION_GOVERNANCE.md`（文档治理与 G0–G2 门禁；2026-09-27）
   - `docs/superpowers/plans/2026-09-18-gu-zhenren-monorepo-migration.md`（执行计划）、`docs/superpowers/specs/2026-09-18-gu-zhenren-monorepo-migration-design.md`（设计）、`docs/debt.md`（债务）
 - 权威来源：本仓库。
 - 可修改范围：迁移记录、债务登记、验收记录；协议层只由 L0 修订。

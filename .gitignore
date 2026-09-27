@@ -48,3 +48,9 @@ game/tools/_*.txt
 
 # .workbuddy/ 是本地 AI 助手工具的状态/记忆缓存（2026-09-25 全量落库批登记），不入库。
 /.workbuddy/
+
+# .zcode/ 是 ZCode 会话本地缓存（计划/状态），不入库（2026-09-27 全量落库批补围堵）。
+/.zcode/
+
+# docs-lint 的 --json 生成物随跑随写，不入库（工具本体 tools/docs-lint.mjs 正常入库）。
+/tools/docs-lint-report.json
