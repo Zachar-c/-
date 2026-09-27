@@ -1,115 +1,145 @@
-/* 《问真》力量循环审计 · 交互 */
-(function () {
-  const killMoves = [
-    {
-      id: "km_light_converge",
-      name: "凝光",
-      kind: "damage",
-      tag: "光 · 伤",
-      text: "击伤 5",
-      plan: "击伤 4 · 光系支援闩 +2（后续回合）",
-      note: "仅增伤/Setup：当次差 1，UI 按 5 误导；支援闩影响后续回合，非当次质变。",
-      recipe: "月光 + 小光",
-    },
-    {
-      id: "km_light_bulwark",
-      name: "明光壁",
-      kind: "solution",
-      tag: "光 · 防",
-      text: "护体 6",
-      plan: "护体 3 · 回复 1",
-      note: "改解法：盾减半并添回复——防御与续航的取舍被写进结算，卡片未反映。",
-      recipe: "石皮 + 生机草",
-    },
-    {
-      id: "km_blood_ember",
-      name: "血昙",
-      kind: "solution",
-      tag: "血 · 伤",
-      text: "回气 2 · 击伤 3",
-      plan: "击伤 6 · 无回复",
-      note: "改解法：混合回复+伤害 → 纯伤害；组件「气血&lt;50%」条件在合成路径丢失，满血可打。实测满血一击秒 5 血山猪。",
-      recipe: "血别离 + 血滴子",
-    },
-    {
-      id: "km_sword_double_edge_1",
-      name: "双锋引",
-      kind: "damage",
-      tag: "剑 · 伤",
-      text: "击伤 4",
-      plan: "击伤 4 · 剑系支援闩 +1",
-      note: "仅增伤：总量与预制一致；支援闩属 setup，不计构筑质变。",
-      recipe: "剑伤 R1 ×2（非开局）",
-    },
-    {
-      id: "km_sword_mark_seek_1",
-      name: "剑痕索命",
-      kind: "solution",
-      tag: "剑 · 伤",
-      text: "击伤 2",
-      plan: "击伤 2 · 剑意 1 · 剑支援闩 +1",
-      note: "改解法：隐藏剑意 setup 喂养后续剑打击——动作顺序可变，卡片未显示。",
-      recipe: "剑伤 + 剑辅（非开局）",
-    },
-  ];
+const chains = [
+  {
+    level: "p0",
+    title: "P0 · 杀招 + 炼蛊 + 蛊虫",
+    meta: "第一生产主线 · 验证样本：月光 / 小光 / 月芒",
+    steps: ["Evidence", "Rule", "Entity / Relation", "Canon Runtime", "Production View", "Game Semantics", "Runtime"],
+  },
+  {
+    level: "p1",
+    title: "P1 · 力量承载",
+    meta: "真元 · 资质 · 转数 · 念头 · 魂魄",
+    steps: ["CANON_VERIFIED 部分", "Semantic 绑定中"],
+  },
+  {
+    level: "p2",
+    title: "P2 · 经济世界",
+    meta: "打谁 · 养什么 · 炼什么 · 买什么",
+    steps: ["经济 / 蛊材 / 养蛊", "掉落 / 敌人库存 / 交易"],
+  },
+];
 
-  const grid = document.getElementById("km-grid");
-  if (grid) {
-    grid.innerHTML = killMoves
-      .map(
-        (k) => `
-      <article class="km-card" data-kind="${k.kind}" data-id="${k.id}" tabindex="0" role="button" aria-expanded="false">
-        <h3>${k.name}</h3>
-        <div class="km-sub">${k.tag} · ${k.recipe}</div>
-        <div class="km-face">
-          <div class="km-row">
-            <div class="lbl">显示</div>
-            <div class="val">${k.text}</div>
-          </div>
-          <div class="km-row settle">
-            <div class="lbl">结算</div>
-            <div class="val">${k.plan}</div>
-          </div>
-        </div>
-        <div class="km-note">${k.note}</div>
-      </article>`
-      )
-      .join("");
+const sample = [
+  {
+    ref: "CAN-SMALL-LIGHT-001",
+    rule: "小光辅助月光，月刃增强",
+    game: "辅助蛊须真实改变主蛊输出，非装饰标签",
+    status: "CANON_VERIFIED",
+    kind: "ok",
+  },
+  {
+    ref: "CAN-SMALL-LIGHT-002 · E:V1-015708",
+    rule: "月光+双小光 → 月芒",
+    game: "recipe 是组件结构，不是技能解锁钥匙",
+    status: "RUNTIME_READY",
+    kind: "ok",
+  },
+  {
+    ref: "ST-MOONGLOW-02…04",
+    rule: "首炼失败 · 三倍攻击 · 叠加上限",
+    game: "合成失败与叠加须可结算",
+    status: "SEMANTICS_READY",
+    kind: "ok",
+  },
+  {
+    ref: "KM-* · killer-moves",
+    rule: "杀招=多蛊运行结构",
+    game: "组件合成，禁止独立技能表",
+    status: "PARTIAL",
+    kind: "partial",
+  },
+  {
+    ref: "REF-* · refinement",
+    rule: "炼化意志 / 合炼秘方 / 推演",
+    game: "炼蛊是过程不是购买",
+    status: "KNOWLEDGE_READY",
+    kind: "warn",
+  },
+];
 
-    grid.querySelectorAll(".km-card").forEach((card) => {
-      const toggle = () => {
-        const open = card.classList.toggle("open");
-        card.setAttribute("aria-expanded", open ? "true" : "false");
-      };
-      card.addEventListener("click", toggle);
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          toggle();
-        }
-      });
-    });
-  }
+const stats = [
+  ["Markdown 页", "122"],
+  ["概念页", "82"],
+  ["E-ID", "4950"],
+  ["EVT 引用", "2647"],
+  ["ST 引用", "289"],
+  ["规则 ID", "~190"],
+  ["十三弧覆盖", "100% 行域"],
+];
 
-  const nodeMap = {
-    "n-combat": "seg-loot",
-    "n-loot": "seg-loot",
-    "n-stone": "seg-econ",
-    "n-mat": "seg-mat",
-    "n-forge": "seg-forge",
-    "n-km": "seg-km",
-    "n-build": "breaks",
-    "n-cult": "seg-cult",
-    "n-qi": "seg-cult",
-    "n-power": "runs",
-  };
+const debt = [
+  ["待核对", "193"],
+  ["笔记层级", "48"],
+  ["未核验", "46"],
+  ["两说", "9"],
+  ["策略", "仅清阻塞 Knowledge Ready"],
+];
 
-  Object.entries(nodeMap).forEach(([nodeId, targetId]) => {
-    const node = document.getElementById(nodeId);
-    if (!node) return;
-    node.addEventListener("click", () => {
-      const el = document.getElementById(targetId);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+const flow = [
+  "需求 / 游戏支柱",
+  "确定所需 Canon",
+  "回 Wiki",
+  "清必要知识债",
+  "Knowledge Ready",
+  "Canon Runtime",
+  "Game Semantics",
+  "Conformance",
+  "Game",
+];
+
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function renderChains() {
+  const root = document.getElementById("chains");
+  chains.forEach((c) => {
+    const box = el("article", `chain ${c.level}`);
+    const head = el("div", "title");
+    head.append(el("strong", null, c.title), el("span", null, c.meta));
+    const steps = el("div", "steps");
+    c.steps.forEach((s) => steps.append(el("i", null, s)));
+    box.append(head, steps);
+    root.append(box);
   });
-})();
+}
+
+function renderSample() {
+  const tbody = document.querySelector("#sample tbody");
+  sample.forEach((row) => {
+    const tr = el("tr");
+    const ref = el("td");
+    ref.append(el("code", null, row.ref));
+    tr.append(ref, el("td", null, row.rule), el("td", null, row.game));
+    const st = el("td");
+    st.append(el("span", `badge ${row.kind}`, row.status));
+    tr.append(st);
+    tbody.append(tr);
+  });
+}
+
+function renderStats(id, rows) {
+  const root = document.getElementById(id);
+  rows.forEach(([k, v]) => {
+    const li = el("li");
+    li.append(el("span", null, k), el("b", null, v));
+    root.append(li);
+  });
+}
+
+function renderFlow() {
+  const root = document.getElementById("flow");
+  flow.forEach((step, i) => {
+    root.append(el("span", null, step));
+    if (i < flow.length - 1) root.append(el("span", "arrow", "→"));
+  });
+}
+
+renderChains();
+renderSample();
+renderStats("stats", stats);
+renderStats("debt", debt);
+renderFlow();

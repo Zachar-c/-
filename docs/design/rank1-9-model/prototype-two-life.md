@@ -1,6 +1,6 @@
 # 一局蛊途：两世蛊方闭环验证
 
-日期：2026-09-27。状态：**原型功能已验证，玩家体验未验证**。本页记录 `working/gu-run-proto/` 的本地实验；`working/` 被 Git 忽略，原型尚未接入 Web 产品。它不修改 PRD、不把实验数值写成原著规则。
+日期：2026-09-27。状态：**原型功能已验证，玩家体验未验证**。本页记录 `working/gu-run-proto/` 的本地实验；`working/` 默认被 Git 忽略，只有显式纳入的原型文件受版本控制，原型尚未接入 Web 产品。它不修改 PRD、不把实验数值写成原著规则。
 
 ## 验证问题
 
@@ -20,7 +20,11 @@ Wiki 的[蛊虫关系](../../../lore/wiki/gu/gu-relations.md)现把这两条合�
 
 固定种子 `20260927`。第一世选闭关冲二转，在商队花 8 元石并占用该段抄月芒方；后来才买到第二只小光，已错过炼台。完成终验后只提交蛊方知识。
 
-刷新页面进入第二世后，一转、48 元石、初始四蛊重置，月芒方仍已知。同一个商队节点改用来买第二只小光，下一段便能实际合炼月芒；月光和双小光被投入，二转月芒进入编制并对敌造成可观察伤害。另测得：一转可持有炼成的二转白玉蛊，但不能编入战斗；未完成本世即刷新时，刚抄到的方不会进入永久记忆。
+刷新页面进入第二世后，一转、48 元石、初始四蛊重置，月芒方仍已知。同一个商队节点改用来买第二只小光，下一段便能实际合炼月芒；月光和双小光被投入，二转月芒进入编制并对敌造成可观察伤害。另测得：一转可持有炼成的二转白玉蛊，但不能编入战斗。
+
+## 中断与续局边界
+
+未结束本世时刷新，会按版本、种子和世次校验局内检查点，恢复当前路线、元石、蛊组、随机状态及战斗进度。本世抄得的方随同一世进度恢复，**直到结局才写入跨世记忆**；手动「重开本局」会丢弃未提交进度并恢复本世初始编制。结局清除旧检查点，刷新进入下一世。损坏或不匹配的检查点回退为当前世新局，不覆盖已提交的蛊方知识。页面内的「从零重测」经确认后只清除此原型的记忆与检查点，回到第一世；取消确认不会改动数据。若浏览器禁止本地存储，原型不会保住刷新前的局内进度；正式 Web 产品有独立存档实现，本实验不替代它。
 
 ## 验收与剩余问题
 
@@ -30,8 +34,12 @@ Wiki 的[蛊虫关系](../../../lore/wiki/gu/gu-relations.md)现把这两条合�
 node model_link.mjs
 node run_test.mjs
 node two_lives_test.mjs
+node resume_test.mjs
+node reset_test.mjs
 ```
 
-结果分别为 `MODEL LINK PASS`、`RUN PROTO CHECKS PASSED`、`TWO-LIFE CONTRACT PASSED`；320px 手机宽度无横向溢出。Wiki 门禁 `lore/wiki/tools/check.ps1` 为 `ALL CHECKS PASSED`，G0 `tools/docs-lint.mjs` 为 `FAIL 0 / WARN 0`（Wiki 对本地原文缺席给已知 WARN）。
+结果分别为 `MODEL LINK PASS`、`RUN PROTO CHECKS PASSED`、`TWO-LIFE CONTRACT PASSED`、`RESUME CHECKS PASSED`、`RESET CHECKS PASSED`；续局与从零重测分别有 22 项、16 项检查通过，320px 手机宽度无横向溢出。Wiki 门禁 `lore/wiki/tools/check.ps1` 为 `ALL CHECKS PASSED`，G0 `tools/docs-lint.mjs` 为 `FAIL 0 / WARN 0`（Wiki 对本地原文缺席给已知 WARN）。
+
+`two_lives_test.mjs`、`resume_test.mjs` 与 `reset_test.mjs` 目前仍是 `working/` 内的本地测试文件，默认不进入 Git；以上结果可在当前工作区复核，不能当作新 checkout 已具备的 CI 门禁。
 
 脚本只证明规则和流程确实运行，**还不能证明人会因为蛊方知识自发改变选择**。下一次产品判断应让不了解脚本的玩家连续玩两世，观察他们是否主动提前买第二只小光、何时愿为破境牺牲首段收益、是否觉得炼成后打法改变有价值。通过前，不把这份五段原型当作 PRD 所要求的完整长局，也不把 `working/` 本地代码直接并入 `game/wenzhen-web-lab/`。

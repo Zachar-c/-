@@ -378,6 +378,8 @@ const run = {
   turn: 1,
   battleOver: false,
   battleWon: false,
+  pendingFight: null,
+  enemyWeaken: 0,
 };
 
 function addLog(kind, text, cls = '') {
@@ -427,12 +429,25 @@ function resetRun() {
   run.pendingFight = null;
   run.enemyWeaken = 0;
   run.picked = [];
+  run.ready = ['moon', 'small', 'jade', 'boar'];
   run.burstCd = 0;
   run.guard = 0;
   run.turn = 1;
   run.battleOver = false;
+  run.battleWon = false;
   addLog('入局', `第 ${meta.life} 世开始。种子 ${baseSeed}；已知蛊方 ${meta.known.map((id) => RECIPES[id].name).join('、') || '无'}。钱包 ${run.wallet} 元石，耐受 ${run.hp}，丙等真元 ${run.mp}。`);
   addLog('源', `经济参数来自 rank1-9-model economy：满耐 ${ECO.recoverFullHp}U、炼费 ${ECO.refinementFee}U、遇敌毛收 ${ECO.grossPerPeriod}U。`);
+}
+
+function resetPrototypeFromZero() {
+  try {
+    localStorage.removeItem(META_KEY);
+    localStorage.removeItem(CHECKPOINT_KEY);
+  } catch { /* storage may be unavailable */ }
+  meta = { life: 1, completed: 0, known: [] };
+  document.getElementById('end-panel').hidden = true;
+  resetRun();
+  render();
 }
 
 function clearCheckpoint() {
@@ -456,15 +471,19 @@ function finiteInt(value, min, max) {
 function validCheckpoint(saved) {
   if (!saved || saved.version !== CHECKPOINT_VERSION || saved.seed !== baseSeed || saved.life !== meta.life) return false;
   const s = saved.run;
+  const runFields = ['screen', 'seg', 'wallet', 'rank', 'randomState', 'learnedThisLife', 'hp', 'mp', 'wounds', 'gu', 'spent', 'earned', 'log', 'enemy', 'enemyHp', 'enemyMax', 'patternIdx', 'chargeBonus', 'packUnits', 'picked', 'ready', 'burstCd', 'guard', 'turn', 'battleOver', 'battleWon', 'pendingFight', 'enemyWeaken'];
+  if (!s || typeof s !== 'object' || Array.isArray(s) || Object.keys(s).length !== runFields.length || Object.keys(s).some((key) => !runFields.includes(key))) return false;
   if (!s || !['intro', 'seg', 'prep', 'battle', 'shop', 'rest', 'refine'].includes(s.screen)) return false;
   if (!finiteInt(s.seg, 0, SEGS.length - 1) || !finiteInt(s.wallet, 0, 100000) || !finiteInt(s.rank, 1, 9) ||
       !finiteInt(s.randomState, 0, 0xffffffff) || !finiteInt(s.hp, 0, HP_MAX) || !finiteInt(s.mp, 0, MP_MAX) ||
       !finiteInt(s.wounds, 0, 1000) || !finiteInt(s.earned, 0, 100000) || !finiteInt(s.burstCd, 0, 100) ||
       !finiteInt(s.guard, 0, 10000) || !finiteInt(s.turn, 1, MODEL.combat.maxTurns + 1) ||
       !finiteInt(s.patternIdx, 0, 10000) || !finiteInt(s.enemyHp, 0, 100000) || !finiteInt(s.enemyMax, 0, 100000) ||
-      !finiteInt(s.packUnits, 0, 1000) || !finiteInt(s.chargeBonus, 0, 1000) || !finiteInt(s.enemyWeaken || 0, 0, 1000)) return false;
+      !finiteInt(s.packUnits, 0, 1000) || !finiteInt(s.chargeBonus, 0, 1000) || !finiteInt(s.enemyWeaken, 0, 1000) ||
+      typeof s.battleOver !== 'boolean' || typeof s.battleWon !== 'boolean') return false;
   const guIds = new Set(Object.keys(GU).filter((id) => id !== 'fist'));
   if (!s.gu || typeof s.gu !== 'object' || Array.isArray(s.gu) || Object.keys(s.gu).some((id) => !guIds.has(id))) return false;
+  if (['moon', 'small', 'jade', 'boar'].some((id) => !Object.hasOwn(s.gu, id))) return false;
   for (const [id, g] of Object.entries(s.gu)) {
     if (!g || typeof g.alive !== 'boolean' || (id === 'small' ? !finiteInt(g.n, 1, 2) : g.n !== undefined)) return false;
   }
@@ -1542,6 +1561,10 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   clearCheckpoint();
   resetRun();
   render();
+});
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!window.confirm('从零重测将清除此原型的跨世蛊方记忆，并丢弃当前进度。其他网站数据不会更改。继续吗？')) return;
+  resetPrototypeFromZero();
 });
 
 document.getElementById('end-panel').hidden = true;
