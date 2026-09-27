@@ -1,0 +1,77 @@
+{
+  "ruling_id": "RUL-2026-09-25-001",
+  "date": "2026-09-25",
+  "by": "producer",
+  "received_by": "L2",
+  "adjudicated_via": "ai-system/RESEARCH-REQUEST-2026-09-25-dormant-asset-rebase.md",
+  "scope": [
+    "effect-grammar",
+    "effect-execution-contract",
+    "rank-curve",
+    "effect-budget",
+    "soul",
+    "conformance",
+    "wiki-production-gate",
+    "carrier-baseline"
+  ],
+  "statement": "L0 对休眠资产换基评审四问的直接裁定。Q1-A'：采纳旧 Effect Grammar 的执行语义与事务纪律为 Web 正式 Runtime 的 Effect Execution Contract（trigger→condition→cost commit→selector→modifier→operation；condition miss 不扣成本；cost commit 为第一笔不可逆变化；consume_status 原子结算；delay 先付成本后登记；selector 稳定语义；effect 执行确定性；禁止 resolver 散落特殊蛊 id 判断），撤销其「唯一权威/全局操作集冻结」地位，strike/shield/heal/status/weaken_intent 降为 V1 最小 verb 集；新增 verb 必须走 Wiki/Canon rule → Game Semantic binding → Effect verb，禁止反向。Executor 内禁止任何隐藏 Rank 万能倍率；amount 只来自 Canon-driven explicit projection 或 legacy role default curve。Q2：role 曲线单一真源入 game/data/balance.json 新增 effect_budget.default_amount_by_role；v1_battle.json 只存 role→default semantic kind；Web 经显式 projection policy/PP 消费（parent/policy/formula/forbidWriteBack），MVP 四蛊为 explicit_projection_exception；Enemy HP 输入跟随新 projected kit throughput 重新推导 envelope；完整整局通关不作为 role curve 单项硬门禁。Q3：先按 lab-run-v2 做魂轴事实刷新再重派数值模型；RUL-004~007 设计原则继续有效；若旧矛盾仍在按 S1 soul_foundation/soul_integrity 分离 → S2 AP 从 foundation 派生 → S3 魂道蛊与魂攻击入轴 → S4 修魂资源竞争 → S5 敌人与整局平衡 的顺序推进，不得先用旧 200 局模拟调难度。Q4：立即恢复 conformance，基准关系反转为 game/data / Game Semantics → generated Web data → Web Runtime；Web Runtime 是生产执行器但不是数据真源，Godot 降为成熟参考实现与规则资产来源；P0=生成数据一致性+Effect semantic Golden Cases+Projection conformance，P1=No Silent Fallback+canon_driven_v1 Provenance；第一批 C1–C5 断言放进现有 node --test，不引新框架。",
+  "supersedes": "RUL-2026-09-19-010 的冻结不变量「Godot = Canonical、Web = Disposable Prototype」（基准关系反转为 game/data / Game Semantics → generated Web data → Web Runtime；RUL-010 其余内容作为历史记录保留）",
+  "voids": [],
+  "frozen_invariants": [
+    "Knowledge Ready ≠ Game Ready：Wiki-only benchmark ≥45/50 是必要条件而非充分条件",
+    "Rank 不进 Effect Executor：Executor 只执行已解析完成的 effect，无 amount += rank-1 类隐藏倍率（与 RUL-2026-09-19-008/011 对齐）",
+    "新增 Effect verb 唯一路径：Wiki/Canon rule → Game Semantic binding → Effect verb",
+    "曲线单真源：role 曲线只在 game/data/balance.json，Godot/Web 不允许第二份",
+    "No Silent Fallback：未知 verb / 缺 binding / 缺 projection parent / 生成丢字段一律 fail-fast"
+  ],
+  "decisions": [
+    {
+      "id": "GATE",
+      "topic": "Wiki 生产线状态阶梯",
+      "ruling": "新增 KNOWLEDGE_READY / SEMANTICS_READY / GAME_GENERATION_READY 三状态。GAME_GENERATION_READY 六条件：①独立 benchmark ≥45/50；②关键 Canon Rule/Entity/Relation 已编译进 Canon Runtime；③切片关键字段无 UNKNOWN/裸名占位；④Canon→Game Semantics binding 明确；⑤Runtime conformance 全通过；⑥切片核心玩法不依赖 legacy_role_fallback 等通用兜底。当前南疆 Rank1 继续作为第一个 Canon-driven slice，不扩大到整库。"
+    },
+    {
+      "id": "Q1",
+      "topic": "效果语法采纳深度",
+      "ruling": "A'：按节采纳执行语义与事务纪律为 Effect Execution Contract；撤销 FINAL 与 5 操作永久冻结；5 操作降为 V1 最小 verb 集；与 CombatCore 关系为 CombatCore → Effect Semantic Executor → State transition，不替换 CombatCore。"
+    },
+    {
+      "id": "Q2",
+      "topic": "role curves 真源与投影",
+      "ruling": "真源 = game/data/balance.json effect_budget.default_amount_by_role（attack 4/6/8/11/16；defense 4/6/8/11/16；healing 3/4/6/8/12；logistics 2/3/4/6/8；movement 1/1/2/2/3；recon 1/1/1/1/1）；v1_battle.json 只存 role→default semantic kind；WORLD→LAB 走显式 projection（LAB_BUDGET_PROJECTION 保留但须显式父子关系）；MVP 四蛊 explicit_projection_exception（有 parent、有 policy/reason、forbidWriteBack=true）；批B 验收五条（30 值单真源/无第二份曲线/投影可自动断言/例外有父引用/代表性 encounter 落目标回合区间）。"
+    },
+    {
+      "id": "Q3",
+      "topic": "魂轴处置",
+      "ruling": "先按 lab-run-v2 事实刷新（soul 字段/上限、AP 是否实读 soul、增长入口、死亡入口、存档字段、战斗入口、魂道蛊入口、旧 A/B 两套残留），再重派 L1 数值模型；RUL-004~007 设计裁决继续有效；矛盾仍在时按 S1–S5 顺序。"
+    },
+    {
+      "id": "Q4",
+      "topic": "conformance 恢复与基准",
+      "ruling": "基准反转为 game/data / Game Semantics → generated Web data → Web Runtime。P0：生成数据一致性（不丢 entity/不改 id/不改关键字段/不偷偷 fallback）、Effect semantic Golden Cases（state+effect→exact resulting state）、Projection conformance（差异=可解释投影，非 magic number 白名单）。P1：No Silent Fallback、canon_driven_v1 Provenance（先只要求新内容带 canon_ref/rule_ref）。第一批 C1 数据生成（月光切片）、C2 效果执行、C3 WORLD→LAB 投影（40/80/160/320/640→2/4/8/16/32）、C4 删 binding 必失败、C5 无 ref 即失败，全部放进现有 node --test。"
+    },
+    {
+      "id": "PRIO",
+      "topic": "项目优先级链",
+      "ruling": "P0 补 RULES 簇独立 benchmark 缺口 → P1 打通月光体系 Canon Runtime → P2 建立 Game Semantics + Effect Contract → P3 建立 Conformance → P4 完成无核心 fallback 的 Rank1 垂直切片 → P5 再批量扩展蛊虫。先证明知识能够变成规则，再扩大知识数量；114 只缺 rank/effect 的蛊继续 breadth-first 补，但不作为游戏架构前置条件。"
+    }
+  ],
+  "effects": [
+    {
+      "target": "game/docs/q8/GU_EFFECT_GRAMMAR_V2_FINAL.md",
+      "action": "annotate",
+      "to": "「唯一权威/全局操作集冻结」地位撤销：执行语义与事务纪律升级为 Web Effect Execution Contract；5 操作降为 V1 最小 verb 集；文件保留为语义设计的历史底稿，不再作为现行权威引用。"
+    },
+    {
+      "target": "ai-system/tasks/p3b1-role-curves.md",
+      "action": "annotate",
+      "to": "§A 落点由 v1_battle.json default_effect_by_role 改为 balance.json effect_budget.default_amount_by_role；§B/§C/§D 的 Godot resolver/审计工具/派生镜像节随 world-model 清理与真源迁移作废；批B 验收按本裁定 Q2 五条执行。"
+    },
+    {
+      "target": "game/world-model/rulings/RUL-2026-09-19-010.json",
+      "action": "annotate",
+      "to": "其 frozen_invariant「Godot = Canonical、Web = Disposable Prototype」由本裁定 supersedes 字段取代；RUL-010 文件本体不改，作为历史记录保留。"
+    }
+  ],
+  "status": "RULED"
+}

@@ -1,0 +1,81 @@
+{
+  "ruling_id": "RUL-2026-09-26-001",
+  "date": "2026-09-26",
+  "by": "architect-L1",
+  "adjudicated_via": "ai-system/RESEARCH-REQUEST-2026-09-26-lab-role-curve-projection.md",
+  "received_by": "L2",
+  "scope": [
+    "lab-projection",
+    "role-curve",
+    "enemy-attack-projection",
+    "mvp-exceptions",
+    "enemy-hp-envelope"
+  ],
+  "statement": "lab role 曲线换基公式裁定：WORLD 主效果标量随 Budget 平方根投影到 LAB。scalar_projection(rank) = sqrt(labBudget(rank)/worldBudget(rank)) = sqrt(1/20) = 1/sqrt(20)；即 raw_lab_amount(role,rank) = world_amount(role,rank)/sqrt(20)，lab_amount = max(1, ceil(raw))。缩放的是主标量量纲，不是把 Rank 当万能倍率；WORLD 六条 role curve 仍是唯一上游事实，LAB 只做显式量纲投影。由此六条 LAB 曲线：attack [1,2,2,3,4]、defense [1,2,2,3,4]、healing [1,1,2,2,3]、logistics [1,1,1,2,2]、movement [1,1,1,1,1]、recon [1,1,1,1,1]；旧基线 [2,3,4,5,6] 不得作为任何隐藏校准源，只用于迁移前后报告。敌方侧：威胁是 encounter-level target（handleRate/survivalRate/targetTurns 继续约束 envelope），数据方向改为「装备/能力 → projected effect → 敌人实际 action → intent.damage」（改伤随表，不反向锚定）；旧敌方压缩表 {1:2,2:3,3:3,4:4,5:4} 解冻重基，Σ 实际被激活的 projected attack effects == intent.damage 与 single projected attack ≤ 对应 LAB attack role envelope 两条硬不变量保留；敌方与玩家的量纲差异必须走显式 enemy projection policy，不得另藏一份 Rank 表。MVP 例外：机制保留但 numeric baseline 必须随新公式重基，旧 pinned 值不自动继承，仅保留有独立产品/语义理由的差异，每条记录 parentProjection/baselineValue/overrideValue/overrideReason/forbidWriteBack=true；随后重算 refDpr 与代表性 Enemy HP envelope，并验证冻结窗口 battle_1 3–5 / battle_2 4–6 / elite 4–6 / boss 6–9。若换基后大量代表性敌人需 override 方能入窗，判定 projection policy 与 envelope 不兼容——不手调敌人群，重新上抛。",
+  "supersedes": [],
+  "voids": [],
+  "frozen_invariants": [
+    "WORLD 六条 role curve（balance.json effect_budget.default_amount_by_role）是唯一上游事实；LAB 只做单向显式投影，禁止回写",
+    "lab_amount = max(1, ceil(world_amount / sqrt(20)))——ceil 保留 Rank 信息，min 1 表达「已存在可执行的 primary effect 不因量纲压缩变 0」",
+    "LAB PP 权重只做 projection 之后的核算/定价校验，不得反向成为 role amount 真源（禁止循环真源）",
+    "movement/recon 同公式不特殊放大；其 Rank 成长来自 selector/范围/条件/时序/信息质量/语义 verb，不来自标量膨胀",
+    "Σ 激活 projected attack effects == intent.damage；single projected enemy attack ≤ 对应 LAB attack role envelope",
+    "敌方 DPR 不设固定 1/4 公式；由行动频率/技能序列/cooldown/suppress/多蛊组合/targetTurns/threat budget 共同控制",
+    "No Silent Fallback：generated data 不允许旧 baseline 回退；WORLD curve 变化时 LAB 投影必须自动跟随"
+  ],
+  "decisions": [
+    {
+      "id": "Q1",
+      "topic": "六条 LAB 曲线（公式与逐值）",
+      "ruling_verbatim": "world_amount / √20 → ceil → min 1。attack [1,2,2,3,4]、defense [1,2,2,3,4]、healing [1,1,2,2,3]、logistics [1,1,1,2,2]、movement [1,1,1,1,1]、recon [1,1,1,1,1]。旧 attack 2/3/4/5/6 不保留为任何隐藏校准源，只用于迁移前后报告，不参与 Runtime。",
+      "l2_note": "√20≈4.4721；HP 比例 24/100=0.24 只作合理性旁证，不作公式（避免把独立数值轴重新耦合）。"
+    },
+    {
+      "id": "Q2",
+      "topic": "取整与 movement/recon",
+      "ruling_verbatim": "ceil，最小 1；movement/recon 同公式，不特殊放大。round 会使 R1=R2（6/√20=1.34 取整为 1）令大量 WORLD 差异量化消失；min=1 的语义是可执行 primary effect 不因投影变 0，真正为 0 的效果应由 effect semantic 自行表达。",
+      "l2_note": "movement/recon 的 Rank 成长预期走 selector/范围/条件/时序/信息质量/语义 verb。"
+    },
+    {
+      "id": "Q3",
+      "topic": "敌方攻击投影与威胁",
+      "ruling_verbatim": "威胁预算保持 encounter-level；敌方 intent.damage 跟随实际投影后的能力，不反向锚定能力表（改伤随表）。旧 enemy attack table 解冻重基，随新 LAB attack curve [1,2,2,3,4] 重新生成或校验；不得手工维护另一张永久攻击曲线，敌方与玩家同蛊不同量纲必须走显式 enemy projection policy。",
+      "l2_note": "不为命中 DPR 偷偷修改某只蛊的投影值。"
+    },
+    {
+      "id": "Q4",
+      "topic": "MVP 例外重基与 envelope",
+      "ruling_verbatim": "MVP exception 机制保留，但 numeric baseline 必须随新公式重基；仅保留有独立语义理由的 override。每条记录 parentProjection/baselineValue/overrideValue/overrideReason/forbidWriteBack=true；overrideValue==旧值时必须证明为何在新 baseline 下仍应保持——「为了维持旧 V4.1 数值」不是充分理由。随后重算 refDpr 与代表性 Enemy HP envelope；自动推导入窗即 PASS，偏差 ≤20% 且有明确理由可 override_reason，大量 override 则判定 policy 与 envelope 不兼容并重新上抛。",
+      "l2_note": "本条直接决定批B T3/T6 的执行面与升级条件。"
+    },
+    {
+      "id": "AUTOACCEPT",
+      "topic": "自动验收断言",
+      "ruling_verbatim": "check_projection 至少锁：world curve → formula → exact LAB curve，30 个值逐值断言；parent 指向 balance.json effect_budget.default_amount_by_role；policy 不含独立手写 curve；forbidWriteBack=true；WORLD curve 变化时 LAB 自动变化；generated data 不允许旧 baseline silent fallback。",
+      "l2_note": "登记于 tools/check_projection.mjs 的新增断言组。"
+    }
+  ],
+  "effects": [
+    {
+      "target": "game/wenzhen-web-lab/data/projections.json",
+      "action": "rebase",
+      "to": "PROJ-LAB-ROLE-CURVE-001.policy = sqrt_budget_scalar_projection_v1；value 按本裁定六条 LAB 曲线重写；rationale 登记公式与单向投影纪律；PROJ-LAB-ENEMY-ATTACK-001 解冻重基。"
+    },
+    {
+      "target": "game/wenzhen-web-lab/tools/check_projection.mjs",
+      "action": "annotate",
+      "to": "新增 AUTOACCEPT 断言组（公式可由 parent 复算、30 值逐值、无内嵌 fallback、forbidWriteBack、parent 指向）。"
+    },
+    {
+      "target": "game/wenzhen-web-lab/js/mvp_content.js",
+      "action": "annotate",
+      "to": "MVP 例外按 Q4 重基并补齐五字段记录（parentProjection/baselineValue/overrideValue/overrideReason/forbidWriteBack）。"
+    },
+    {
+      "target": "ai-system/tasks/p3b1-role-curves.md",
+      "action": "annotate",
+      "to": "批B 执行包按本裁定解锁派工（前置①满足）。"
+    }
+  ],
+  "status": "RULED"
+}

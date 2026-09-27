@@ -1,6 +1,8 @@
 # RESEARCH REQUEST · 休眠资产换基评审(B 档数值/架构件复用方案)
 
-> **STATUS: PENDING_L1**
+> **STATUS: ANSWERED（2026-09-25 · L0 直接裁定，即时生效）**
+> 裁定要点:Q1-A'(采纳执行语义/事务纪律,撤销 FINAL 与 5 操作永久冻结)· Q2(曲线真源入 balance.json,Web 显式投影)· Q3(先事实刷新再重派魂模型)· Q4(恢复 conformance,基准反转为 game/data→generated→Web Runtime)。总门禁:**Knowledge Ready ≠ Game Ready**。
+> 正式裁定文件:`game/world-model/rulings/RUL-2026-09-25-001.json`。全文见文末 ANSWER 节。
 >
 > 日期：2026-09-25　发起：L2 Orchestrator　送审：L1　后续批准：L0(凡涉及核心体验取舍或行为变更)
 >
@@ -203,6 +205,82 @@ MVP 蛊(月光/小光/月芒/白豕)= 10 分钟实验组合,禁止反推全库�
 - Q1 是架构与数值模型取舍、Q2 是数值映射口径、Q3 是模型层设计委托的兑现、Q4 是一致性机制设计——均属根 `AGENTS.md`/`docs/AI_DEVELOPMENT_PROTOCOL_v1.0.md` 规定的 L1 判定；Q1 若裁采纳，行为变更还须 L0 批准。
 - L2 已完成且不在本件范围：死档审计与分档、A 档落地、全部代码/数据锚点核实(`docs/dormant-registry.md`)。
 
-## ANSWER(待 L1 填写)
+## ANSWER（2026-09-25 · L0 直接裁定）
 
-> 裁决落盘后在此节登记：每问一个结论 + 依据 + 需 L0 批准项清单；并同步回写 `docs/dormant-registry.md` B 档对应行的「换基前提」为已裁决状态。
+> 本件送审 L1,由 L0(用户)直接裁定并批准。本节为落盘摘要;与裁定原文冲突时以原文为准。四问结论与总门禁同时落盘为 `game/world-model/rulings/RUL-2026-09-25-001.json`。
+
+### 总门禁(新增,先于四问)
+
+**Knowledge Ready ≠ Game Ready。** Wiki-only benchmark ≥45/50 是必要条件,不是充分条件。知识簇标记 `GAME_GENERATION_READY` 须同时满足:
+
+1. 独立 Wiki-only benchmark ≥45/50;
+2. 关键 Canon Rule / Entity / Relation 已编译进入 Canon Runtime;
+3. 当前游戏切片所需关键字段不存在 UNKNOWN/裸名字占位;
+4. Canon → Game Semantics binding 已明确;
+5. 对应 Runtime conformance tests 全通过;
+6. 该切片核心玩法不依赖 `legacy_role_fallback` 等通用肉鸽兜底。
+
+新增状态阶梯:`KNOWLEDGE_READY` / `SEMANTICS_READY` / `GAME_GENERATION_READY`。当前南疆 Rank1 继续作为第一个 Canon-driven slice;不扩大到整库。
+
+### Q1 · 裁决 A':按节采纳,撤销「FINAL/全局操作集冻结」地位
+
+**升级为 Web 正式 Runtime 的 Effect Execution Contract**(旧语法中保留的最有价值部分):
+
+```text
+trigger → condition → cost commit → selector → modifier → operation
+```
+
+- condition miss 不扣成本;cost commit 是第一笔不可逆状态变化;
+- consume_status 原子结算;delay 先付成本后登记;
+- selector 有稳定语义;effect 执行确定性;
+- 不允许 resolver 中散落特殊蛊 id 判断。
+
+**strike/shield/heal/status/weaken_intent 降为 V1 最小 verb 集**,不再是最终世界语法。项目目标已变为 Canon Rule → Game Semantics → Runtime,未来 Wiki 会自然产生 inspect/suppress/seal/consume/transform/distance/armor interaction/delayed activation/resource manipulation/killer-move composition 等真实世界动词。新增 verb 唯一路径:
+
+```text
+Wiki / Canon rule → Game Semantic binding → Effect verb
+```
+
+禁止「肉鸽需要一个新技能 → 直接加 verb → 事后找 Lore 解释」。
+
+**Rank 缩放**:禁止 Effect Executor 内存在隐藏的 `amount += rank - 1` 或任何万能 Rank 自动倍率。Rank 只负责能力预算、使用门槛、真元质量、可承载复杂度、稀缺度/社会层级等上游约束;具体 effect amount 来自 Canon-driven explicit projection 或 Legacy 内容的 role default curve。Executor 只执行已解析完成的 effect:
+
+```text
+Rank → Effect Budget / Projection → Resolved Effect → Executor
+```
+
+与 RUL-008/011 对齐。
+
+**与 CombatCore 的关系**:不替换 CombatCore。目标分层 `CombatCore(回合/行动/敌我生命周期/Command 编排) → Effect Semantic Executor(一个合法 effect 对当前 battle state 做什么) → State transition`。
+
+### Q2 · 裁决:曲线真源入 balance.json,Web 显式投影
+
+- 不做 Godot/Web 双写;不建议把真源埋进 `v1_battle.json`。真源 = `game/data/balance.json`(`rank_power_budget` 已在),新增 `effect_budget.default_amount_by_role`,保存六条曲线(attack 4/6/8/11/16;defense 4/6/8/11/16;healing 3/4/6/8/12;logistics 2/3/4/6/8;movement 1/1/2/2/3;recon 1/1/1/1/1)。`v1_battle.json` 只负责 `role → default semantic kind`(attack→strike、defense→shield 等),不再拥有第二份曲线。
+- **Web 投影**:WORLD 曲线不直接复制到 LAB;流程为 `WORLD Effect Budget / role curve → explicit projection policy → LAB PP → LAB amount`。`LAB_BUDGET_PROJECTION` 继续存在,但必须有显式父子关系,不允许靠注释约定。MVP 当前四蛊保留为 `explicit_projection_exception`:必须有 parent、有 policy/reason、forbidWriteBack=true;不得反推全库。
+- **Enemy HP**:`deriveEnemyHp()` 若继续使用 kit throughput,role 曲线换基后输入必须跟随新的 projected kit throughput;做法是「新 kit → 重新推导 target encounter envelope」,不因此手调全部敌人。
+- **批B 验收**:①30 个 curve 值只有一个真源;②Godot/Web 不存在第二份曲线;③WORLD→LAB 投影公式可自动断言;④explicit MVP exceptions 有父引用;⑤换基后代表性 encounter 落在目标回合区间。**「完整整局必须通关」不作为 role curve 单项硬门禁**(整局胜率同时受敌池、路线、资源和奖励影响)。
+
+### Q3 · 裁决:先做事实刷新,再重新派 L1 数值模型
+
+- 9-19 报告中仍有效的是**设计裁决**:魂是 Build Axis;current 与 capacity/foundation 必须分离;百人魂/千人魂/万人魂是 AP 设计来源;魂不能只是第三死亡条;魂道需要真正进入蛊虫与战斗;魂成长与真元、肉身形成资源机会成本。RUL-004~007 原则继续成立。
+- 但 9-19 报告的**运行时事实**不得直接用于今天的 Web 数值设计。须按 `lab-run-v2` 重新核实:当前 soul 字段、soul 上限、AP 是否实际读取 soul、增长入口、死亡入口、存档字段、战斗入口、魂道蛊入口;特别核对旧 Godot A 套 `soul/soul_max` 与 B 套 `soul_magnitude/...` 在 Web 当前还剩多少。事实刷新后再回答具体换算。
+- 若事实刷新确认旧矛盾仍存在,后续顺序:**S1** 统一语义——`soul_foundation`(魂魄底蕴/量级)与 `soul_integrity`(当前受损状态)分离,禁止拿同一个 1–4 soul 同时表示修为/当前生命/AP/最大容量;**S2** AP 从 foundation 派生;**S3** 魂道蛊和魂道攻击进入这条轴;**S4** 建立修魂资源竞争;**S5** 最后做敌人与整局数值平衡。不要反过来先拿旧 200 局模拟调难度。
+
+### Q4 · 裁决:立即恢复 conformance,基准反转
+
+- 旧「Godot Canonical → Web follower」过时。新基准关系:
+
+```text
+game/data / Game Semantics → generated Web data → Web Runtime
+```
+
+Web Runtime 是生产执行器,但不是数据真源;Godot 继续作为成熟参考实现与规则资产来源,不再是 Web 必须逐行为一致的上游 Runtime。(即 RUL-2026-09-19-010 的「Godot=Canonical、Web=Disposable Prototype」不变量作废,由 RUL-2026-09-25-001 取代基准关系。)
+
+- **P0 断言**:①生成数据一致性(game/data → js/data.js:不丢 entity、不改 id、不改关键字段、不偷偷 fallback;失败含义=编译/生成管线漂移);②Effect semantic conformance(Golden Cases:`state + effect → exact resulting state`,至少覆盖 strike/shield/heal/support/sealed/weaken 或当前已批准控制 verb;失败含义=Runtime 对 Game Semantic 的解释发生改变);③Projection conformance(所有 WORLD→LAB 差异必须以 parent/policy/formula/value/forbidWriteBack 表达为可解释投影,不是白名单 magic number,例如 `balance.rank_power_budget → LAB_BUDGET_PROJECTION → labBudget`)。
+- **P1 断言**:④No Silent Fallback(未知 effect verb、Canon-driven entity 缺关键 binding、projection 找不到 parent、generation 丢字段,一律 fail-fast;禁止偷偷变成 `attack → strike 2`);⑤Provenance(先只要求 `canon_driven_v1` 内容具有 canon_ref/rule_ref,不一次要求 800 只 legacy 蛊全部补齐)。
+- **第一批测试**(不引新框架,直接放进现有 Node test):**C1** Data Generation——月光切片(moonlight_gu/small_light_gu/moon_glow/moon_radiance/相关 killer move)断言 source data → generated data 的 ID 与关键语义字段一致;**C2** Effect Execution——固定 battle state,输入 effect → exact HP/Qi/status/support delta;**C3** Projection——断言 40/80/160/320/640 经当前 policy 得 2/4/8/16/32 及其他批准的有意偏差;**C4** No Silent Fallback——删除一个必需 Canon binding,测试必须失败,不能自动退回 generic strike;**C5** Source Classification——新增 canon_driven_v1 内容但没有 Canon/Rule ref 则失败。
+
+### 需 L0 后续批准项(本裁定未覆盖)
+
+- 视觉圣经/美术线门禁(视觉类 B 档复用前提);视觉定位 v1 冻结件生死;根目录孤儿审计员文件处置。
+- `game/world-model/rulings/RUL-2026-09-19-010.json` 本体的修订注记已由 RUL-2026-09-25-001 的 supersedes 字段承接,无需改旧文件。

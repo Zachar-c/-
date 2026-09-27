@@ -1,5 +1,10 @@
 # 蛊虫效果语法 V2 最终版（唯一权威）
 
+> **状态（2026-09-25，L0 裁定 `RUL-2026-09-25-001` Q1-A'）**：本件「唯一权威 / 全局操作集冻结」地位**撤销**。
+> 执行语义与事务纪律（管线顺序、condition 零成本、cost commit 不可逆、consume_status 原子、delay 先付、selector 稳定语义、执行确定性、禁散落蛊 id 判断）升级为 **Web Effect Execution Contract**；
+> strike/shield/heal/status/weaken_intent 降为 **V1 最小 verb 集**，不再是最终世界语法。本件保留为语义设计底稿，不再作为现行权威引用。
+> 裁定全文：`ai-system/RESEARCH-REQUEST-2026-09-25-dormant-asset-rebase.md` ANSWER 节。
+
 > - **版本**：R2 FINAL（2026-09-12）
 > - **地位**：本文档是 Effect Grammar 的**唯一权威**。`GU_EFFECT_GRAMMAR_V2.md`（V2 原案）与 `GU_EFFECT_GRAMMAR_V2_REVISED.md`（R1 修订案）降级为决策记录；任何冲突以本文件为准。
 > - **状态**：**实施冻结**——Go/No-Go（§10）九项条件全部 PASS 之前，禁止编写任何生产实现代码（含引擎改动与数据改写）。
