@@ -935,11 +935,12 @@
       "prefix": "PE",
       "domain": "true-qi",
       "term": "转内提纯",
-      "statement": "酒虫凝练：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶",
+      "statement": "酒虫凝练已有真元：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶，不是回元；不同酒虫的适用转数不同，巅峰不可越转",
       "forbidden_misreading": "",
       "evidence": [
-        "E:V1-002890",
-        "E:V1-004656"
+        "E:V1-004656",
+        "E:V1-020082",
+        "E:V3-078626"
       ],
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",

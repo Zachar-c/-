@@ -12,8 +12,16 @@
 
 ## 流派
 
-- [流派总表](path-roster.md)（四时代源流与诸尊开创归属、境界阶梯、人物×流派矩阵；查流派先看这里）
-- [魂道](soul-path.md)
+- [流派总表](path-roster.md)（四时代源流与诸尊开创归属、境界阶梯、人物×流派矩阵；查流派先看这里。当代"主修流派至少有二十道"口径原文 396036）
+- 太古：[宇道](space-path.md)、[宙道](time-path.md)
+- 远古：[气道](qi-path.md)、[奴道](enslavement-path.md)、[智道](wisdom-path.md)（衍生分支：[情道](emotion-path.md)、[魅道](charm-path.md)）、[星道](star-path.md)、[炼道](refinement-path.md)、[炎道](fire-path.md)
+- 上古：[律道](rule-path.md)（衍生分支：[禁道](restriction-path.md)、[虚道](void-path.md)）、[变化道](transformation-path.md)、[力道](strength-path.md)（三支：兽力虚影流／气象天地流／人力钧力流）、[风道](wind-path.md)、[光道](light-path.md)、[暗道](dark-path.md)
+- 中古：[木道](wood-path.md)、[偷道](theft-path.md)、[运道](luck-path.md)、[金道](metal-path.md)、[水道](water-path.md)、[冰雪道](ice-path.md)、[云道](cloud-path.md)、[土道](earth-path.md)、[雷道](lightning-path.md)、[信道](information-path.md)、[音道](sound-path.md)
+- 近古以降与其他：[骨道](bone-path.md)、[血道](blood-path.md)、[剑道](sword-path.md)、[刀道](blade-path.md)（与剑道同源刃蛊）
+- 小派与乐土后新流派：[食道](food-path.md)、[毒道](poison-path.md)、[幻道](illusion-path.md)、[丹道](pill-path.md)、[画道](painting-path.md)、[兵道](soldier-path.md)
+- 特殊：[魂道](soul-path.md)（幽魂开创）、[梦道机制](../rules/dream-path.md)（梦道归规则页）
+
+各派页收流派级事实（开创/分支/代表蛊与杀招/人物）；机制术语、境界五级、道痕与灾劫等跨派规则仍归 rules/ 对应页。
 
 ## 杀招
 

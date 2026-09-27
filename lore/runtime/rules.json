@@ -371,6 +371,23 @@
       }
     },
     {
+      "id": "CAN-BREAKTHROUGH-001",
+      "prefix": "CAN",
+      "domain": "breakthrough",
+      "statement": "一转巅峰冲二转比转内小境界突破难得多；冲破晶膜一般至少需要五成五墨绿真元，四成四的元海不足以维持独力冲击。",
+      "forbidden_misreading": "不能把冲二转做成开局支付少量元石的即时升级；外援方案是游戏设计，非原著通用服务。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "14346-14356"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:14346-14356`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "破境门槛、低资质外援"
+      }
+    },
+    {
       "id": "CAN-CULTIVATION-001",
       "prefix": "CAN",
       "domain": "cultivation",
@@ -477,6 +494,24 @@
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "元石经济、行动取舍、商队交易"
+      }
+    },
+    {
+      "id": "CAN-ESSENCE-001",
+      "prefix": "CAN",
+      "domain": "essence",
+      "statement": "一份二转赤铁真元相当于十份一转青铜真元；资质另行决定元海可占空窍的比例。",
+      "forbidden_misreading": "不应把高转显示成同样的可用真元预算，也不能误写成晋升自动提高资质。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "4258",
+        "1182-1200"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:4258,1182-1200`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "跨转真元品质、容量显示"
       }
     },
     {
@@ -702,6 +737,100 @@
       }
     },
     {
+      "id": "CAN-PATH-001",
+      "prefix": "CAN",
+      "domain": "path",
+      "statement": "蛊师流派源流总述（图事成讲述）：太古宇道/宙道；远古元始（气道/奴道）、星宿（智道/星道）、阵道（末期，祖师不可考）与炼道、炎道；上古无极（律道）、狂蛮（变化道/力道）与风/光/暗道；中古元莲（木道）、盗天（偷道）、巨阳（运道）与金/水/冰雪/云/土/雷/信/音道；近古骨/虚/禁道。",
+      "forbidden_misreading": "图事成讲述是梦境场景中的世界史框架；小派（魅道/幻道等）被明示\"暂且不提\"，不是完整流派清单。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "246640-246680"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:246640-246680`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "流派谱系、时代框架、文案口径"
+      }
+    },
+    {
+      "id": "CAN-PATH-002",
+      "prefix": "CAN",
+      "domain": "path",
+      "statement": "力道细分为三大流派：兽力虚影流（牛力虎力等兽力）、气象天地流（风力水力火力等天地自然力）、人力钧力流（斤力蛊系列）；人力钧力流为霸仙楚度所创，已成五域力道主流。",
+      "forbidden_misreading": "三分支是\"力源\"三分，不是三套独立修炼体系；楚度创流不改变力道整体没落的时代口径。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "138030-138040",
+        "195088-195098"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:138030-138040,195088-195098`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "力道构筑、分支文案"
+      }
+    },
+    {
+      "id": "CAN-PATH-003",
+      "prefix": "CAN",
+      "domain": "path",
+      "statement": "智道三元为念、意、情；情道脱胎于智道（取\"情\"独立成派），魅情道是从智道拓展衍生的小分支且从未真正脱离智道——世间没有魅情道痕、只有智道道痕。",
+      "forbidden_misreading": "情道已独立开派而魅情道无独立道痕，两者道痕独立性不同不可互换；\"智道三分支\"指念意情三元与衍生派，不是三个并列大流派。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "104864",
+        "215210",
+        "250082",
+        "250178",
+        "304748"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:104864,215210,250082,250178,304748`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "智道分支、道痕归属"
+      }
+    },
+    {
+      "id": "CAN-PATH-004",
+      "prefix": "CAN",
+      "domain": "path",
+      "statement": "炼道分两大流派：毛民天地流（借天地道痕营造炼蛊环境）与人族隔绝流；单以人族隔绝流论，炼制六转仙蛊成功率不到百分之一。",
+      "forbidden_misreading": "原文仅见\"两大流派\"表述，未见炼道五分支总述；两大流派是炼蛊环境/路径之分，不是战力分支。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "194034-194040",
+        "195820"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:194034-194040,195820`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "炼蛊方案、成功率口径"
+      }
+    },
+    {
+      "id": "CAN-PATH-005",
+      "prefix": "CAN",
+      "domain": "path",
+      "statement": "禁道与虚道是律道衍生的小流派（未完全脱离律道）；提升虚道境界本质上仍旧是律道真意。",
+      "forbidden_misreading": "分支未完全脱离母道不等于可与律道互换；虚道产生时代另有\"近古产生/上古盛行\"两说张力，未裁定前不得合并。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "192118",
+        "331398",
+        "347178",
+        "347194"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:192118,331398,347178,347194`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "律道分支、真意归属"
+      }
+    },
+    {
       "id": "CAN-RANK-LADDER-001",
       "prefix": "CAN",
       "domain": "rank-ladder",
@@ -749,6 +878,47 @@
       "provenance": {
         "wiki_page": "game/docs/lore/canon-index.md",
         "applicable_systems": "进阶配方、路线奖励"
+      }
+    },
+    {
+      "id": "CAN-STRENGTH-001",
+      "prefix": "CAN",
+      "domain": "strength",
+      "statement": "白豕蛊催用增力时会消耗真元；黑、白豕蛊改造身躯后力量长期归蛊师所有，蛊消失后仍保留，已得之力发挥时无需逐拳耗元。",
+      "forbidden_misreading": "不要把白豕蛊写成每拳耗元的爆发攻击，也不要断言催用增力本身零消耗。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "9688-9692",
+        "12758",
+        "15308",
+        "16076"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:9688-9692,12758,15308,16076`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "力道肉身养成、零元行动"
+      }
+    },
+    {
+      "id": "CAN-WINE-001",
+      "prefix": "CAN",
+      "domain": "wine",
+      "statement": "酒虫提纯已有真元一个小境界；一转酒虫、二转适用的四味酒虫及四转适用的九眼酒虫各有转数边界，本转巅峰不能继续越转提纯。",
+      "forbidden_misreading": "酒虫不回复真元；不可让一转酒虫提纯二转真元，或让巅峰越过本转上限。",
+      "grade": "A",
+      "evidence": [],
+      "source_line_refs": [
+        "4656-4676",
+        "20082-20084",
+        "37018",
+        "60718",
+        "78626-78628"
+      ],
+      "evidence_raw": "`蛊真人-clean.txt:4656-4676,20082-20084,37018,60718,78626-78628`，A",
+      "provenance": {
+        "wiki_page": "game/docs/lore/canon-index.md",
+        "applicable_systems": "修炼辅助、真元品质"
       }
     },
     {
@@ -1129,13 +1299,14 @@
       "prefix": "PE",
       "domain": "true-qi",
       "term": "转内提纯",
-      "statement": "酒虫凝练：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶",
+      "statement": "酒虫凝练已有真元：一转初阶青铜→苍绿中阶；两成初阶凝半成中阶，不是回元；不同酒虫的适用转数不同，巅峰不可越转",
       "forbidden_misreading": "",
       "evidence": [
-        "E:V1-002890",
-        "E:V1-004656"
+        "E:V1-004656",
+        "E:V1-020082",
+        "E:V3-078626"
       ],
-      "evidence_raw": "E:V1-002890（2890–2900 行）、E:V1-004656",
+      "evidence_raw": "E:V1-004656、E:V1-020082、E:V3-078626；[酒虫](../gu/wine-insect-gu.md)",
       "provenance": {
         "wiki_page": "lore/wiki/world/primeval-essence.md",
         "generated_id": true
@@ -1489,7 +1660,7 @@
       "domain": "refinement",
       "term": "本命蛊规则",
       "statement": "本命蛊最大优点：升炼失败后哪怕反噬再严重也能保留原有蛊虫（升炼即便失败无数次都会保存下来）；合炼失败本命蛊不会死亡、至多受伤奄奄一息；但若炼蛊失败致蛊仙死亡，本命蛊基本上也会毁掉；本命蛊与蛊师性命交修、一旦毁灭蛊师立即重创；可立第二本命蛊对冲炼蛊失败风险；本命蛊一旦形成便难以更改——更换须毁去原本命蛊、蛊师遭受巨大牵连，轻则重创重则死亡；升仙顺利时理想情况下本命蛊还会提升转数",
-      "forbidden_misreading": "\"失败保留\"只限蛊虫本体，不豁免蛊师反噬；非本命蛊炼制失败直接毁灭、积累清零（E:V3-095094）",
+      "forbidden_misreading": "\"失败保留\"只限蛊虫本体，不豁免蛊师反噬；非本命蛊炼制失败直接毁灭、积累清零（E:V3-095094）。**升仙提转幅度（2026-09-27 补录）：原文个案为\"升仙顺利时理想情况下本命蛊提升转数、成为七转\"（六转正义仙蛊→七转，+1 转，E:V6-432814），无\"一转凡蛊升仙即跃升为仙蛊（+5 转）\"的依据",
       "evidence": [
         "E:V3-090864",
         "E:V5-329114",
