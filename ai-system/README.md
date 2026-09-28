@@ -57,6 +57,15 @@ Phase 2 的比较只记录：一次完成验收、测试最终通过、是否越
 - `tasks/`：Research Request 与任务包（按需点读）
 - `reviews/`：Worker 审阅记录
 
+### 2026-09-24 待评审资料
+
+- [四道玩法设计请求](RESEARCH-REQUEST-2026-09-24-four-dao-design.md)
+- [人道蛊、插件与侦查设计请求](RESEARCH-REQUEST-2026-09-24-human-gu-plugins-and-recon.md)
+- [人道蛊、插件与侦查 L1 评审摘录](L1-REVIEW-2026-09-24-human-gu-plugins-and-recon.md)
+- [人道蛊、插件与侦查数值请求](RESEARCH-REQUEST-2026-09-24-human-gu-plugins-numerics.md)
+
+以上为日期限定的请求与评审记录；是否仍待裁定以各文件状态及后续裁定为准。
+
 ```text
 ai-system/
 ├─ ARCHITECTURE.md

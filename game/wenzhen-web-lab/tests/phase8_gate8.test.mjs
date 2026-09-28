@@ -198,16 +198,13 @@ test('Gate 8d · canActivate enforces rank as carriage gate: (1,1) yes, (1,2) no
   assert.equal(rules.canActivate(2, 2), true);
 });
 
-test('Gate 8d · essenceMax is rank-monotone and rank1 follows the DATA aptitude formula', () => {
+test('Gate 8d · essenceMax is rank-monotone and ignores legacy multiplicative DATA factors', () => {
   const dataMap = {
     essenceBase: data.aptitude.essence_base,
     aptitudeFactor: data.aptitude.aptitude_factor,
     cultivationFactor: data.aptitude.cultivation_factor,
   };
-  const expectedRank1 = data.aptitude.essence_base
-    * data.aptitude.aptitude_factor.bing
-    * data.aptitude.cultivation_factor['1'];
-  assert.equal(runRules.essenceMax(1, 'bing', dataMap), expectedRank1, 'rank1 must equal base×aptitude×cultivation formula');
+  assert.equal(runRules.essenceMax(1, 'bing', dataMap), 6);
   let previous = -Infinity;
   for (const rank of [1, 2, 3, 4, 5]) {
     const value = runRules.essenceMax(rank, 'bing', dataMap);

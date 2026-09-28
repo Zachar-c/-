@@ -57,13 +57,13 @@ test('NORMAL_RUN: observed reaction swallows punch once, then permits the next p
       before.battle.enemies.find(e => e.id === id).hp);
     assert.equal(after.battle.enemies.find(e => e.id === id).flags[flag], true);
     assert.ok(after.battle.log.some(line => line.includes('吞掉')));
-    assert.equal(after.battle.turn, before.battle.turn + 1, 'second action advances exactly one turn');
+    assert.equal(after.battle.turn, before.battle.turn + 1, 'one active action advances the turn');
     await lab.click('[data-basic-attack]');
     const next = await lab.snapshot();
     assert.ok(next.battle.enemies.find(e => e.id === id).hp <
       after.battle.enemies.find(e => e.id === id).hp, 'settled reaction must not swallow twice');
-    assert.equal(next.thought, after.thought - 1);
-    assert.equal(next.battle.actionsUsed, after.battle.actionsUsed + 1);
+    assert.equal(next.thought, after.thought, 'basic attack does not spend battle thought');
+    assert.equal(next.battle.turn, after.battle.turn + 1);
   } finally { await lab.close(); }
 });
 
@@ -76,8 +76,8 @@ test('NORMAL_RUN: hidden legacy reaction does not newly block a punch', async ()
     const after = await lab.snapshot();
     assert.ok(after.battle.enemies.find(e => e.id === id).hp <
       before.battle.enemies.find(e => e.id === id).hp);
-    assert.equal(after.thought, before.thought - 1);
+    assert.equal(after.thought, before.thought, 'basic attack does not spend battle thought');
     assert.equal(after.qi, before.qi);
-    assert.equal(after.battle.actionsUsed, before.battle.actionsUsed + 1);
+    assert.equal(after.battle.turn, before.battle.turn + 1);
   } finally { await lab.close(); }
 });

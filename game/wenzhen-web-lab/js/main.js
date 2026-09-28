@@ -5,9 +5,9 @@ const READY = {
   cultivation: 1,
   cultivationStage: 0,
   school: DATA.loot.school,
-  stones: 3, blood: 24, bloodMax: 24,
+  stones: 3, blood: 10, bloodMax: 10,
   lifeTime: 60,
-  soul: 1, soulMax: 4,
+  soul: 1, soulMax: 1,
   aptitude: 'bing', stage: 'one',
   owned: {
     moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
@@ -31,7 +31,7 @@ const NODE_ACTION_TYPES = NodeActionRules.nodeTypes;
 let nextRunSeedValue = null;
 let saveWriteBlockedUntilNewRun = false;
 let skipPersistOnce = false;
-let bootSaveIssue = null; // null | 'unreadable' | 'storage_error'
+let bootSaveIssue = null; // null | 'outdated' | 'unreadable' | 'storage_error'
 let lastSaveStatus = { ok: true, reason: '' };
 
 function nextRunSeed() {
@@ -198,8 +198,8 @@ function bootFromSave() {
     state = fresh();
     return;
   }
-  // 坏档 / 版本不匹配：保留原文，不覆盖；UI 显示无法读取，由玩家明确重新开局。
-  bootSaveIssue = 'unreadable';
+  // 坏档 / 版本不匹配：保留原文，不覆盖；由玩家明确重新开局。
+  bootSaveIssue = result.reason === 'content_mismatch' ? 'outdated' : 'unreadable';
   saveWriteBlockedUntilNewRun = true;
   state = fresh();
 }
@@ -208,7 +208,7 @@ let state;
 
 function fresh(difficulty = 'normal', seed) {
   const runSeed = resolveRunSeed(seed);
-  const thoughts = RunRules.actionPointsPerTurn(READY.soul);
+  const thoughts = HumanRules.BASELINE.thoughtMax;
   const qiMax = RunRules.essenceMax(READY.cultivation, READY.aptitude, {
     essenceBase: DATA.aptitude.essence_base,
     aptitudeFactor: DATA.aptitude.aptitude_factor,
@@ -236,7 +236,7 @@ function fresh(difficulty = 'normal', seed) {
   return {
     // seed 必须写在 READY 展开之后：禁止 READY.seed 覆盖已选择种子。
     ...READY, seed: runSeed, owned: { ...READY.owned }, wild: { ...READY.wild }, equipped: [], battle: null, qiMax, qi: qiMax,
-    thought: thoughts, thoughtMax: thoughts,
+    thought: thoughts, thoughtMax: thoughts, modifierLedger: [],
     journey, prepFor: null, reward: null, ending: null, shopSold: [], restUsed: false, journal: [],
     page: 'hall', lootPity: 0,
     globalCodexIds: [], knownFacts: [],
@@ -442,11 +442,7 @@ const GU_BY_ID = Object.fromEntries(DATA.gu.map((gu) => [gu.id, gu]));
 Object.assign(GU_BY_ID, DATA.guSemanticsById || {});
 
 function recomputeQiMax() {
-  state.qiMax = RunRules.essenceMax(state.cultivation, state.aptitude, {
-    essenceBase: DATA.aptitude.essence_base,
-    aptitudeFactor: DATA.aptitude.aptitude_factor,
-    cultivationFactor: DATA.aptitude.cultivation_factor,
-  });
+  state.qiMax = RunRules.essenceMax(state.cultivation, state.aptitude);
   state.qi = Math.min(state.qi, state.qiMax);
 }
 
@@ -490,7 +486,7 @@ function rollVictoryLoot(battle) {
     const newFuture = LootRules.newFutureGuIds({
       owned: state.owned,
       guById: GU_BY_ID,
-      killMoves: DATA.killMoves,
+      killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
       buildKits: GuRules.BUILD_KITS,
     });
     guChoices = LootRules.ensureNewFutureChoice(guChoices, newFuture, {
@@ -600,10 +596,82 @@ const aliveEnemies = (b) => b.enemies.filter((e) => e.hp > 0);
 const targetOf = (b) => b.enemies.find((e) => e.id === b.targetId && e.hp > 0)
   || b.enemies.find((e) => e.hp > 0) || null;
 
+function heldPlayerGuInstances() {
+  return Object.entries(state.owned || {}).flatMap(([id, count]) =>
+    Array.from({ length: Math.max(0, Math.floor(Number(count || 0))) }, (_, index) =>
+      HumanRules.guInstance(id, index + 1)));
+}
+
+function startMaintainedGu(human, instanceId, gu, turn) {
+  const effect = gu?.battleEffect;
+  if (effect?.kind !== 'maintained') return { ok: false, reason: 'not_maintained' };
+  return HumanRules.startMaintained(human, instanceId, {
+    startCost: gu.trueQiCost,
+    upkeepCost: effect.upkeep_qi,
+    turn,
+    modifiers: (effect.modifiers || []).map((entry) => ({
+      attribute: entry.attribute, amount: entry.amount,
+      sourceEffectId: entry.effect_id,
+    })),
+  });
+}
+
+function pluginHumanPlan(b, enemy) {
+  const human = enemy.human;
+  const stone = human.guInstances.find((item) => item.definitionId === 'stone_shell_gu' && item.state === 'held');
+  const canStone = stone && !stone.sealed
+    && !human.maintainedGu.some((item) => item.instanceId === stone.instanceId && item.active)
+    && !GuRules.activationReason(GU_BY_ID[stone.definitionId], {
+      playerRank: human.rank, trueQi: human.essence, thought: human.thought,
+      actionLimitReached: false,
+    });
+  const roll = RunRules.seededIndex(10, state.seed, `${b.nodeId}:${enemy.id}:action`, b.turn);
+  if (canStone && roll < 7) {
+    return { kind: 'gu', guInstanceId: stone.instanceId, guId: stone.definitionId, label: GU_BY_ID[stone.definitionId].name };
+  }
+  return { kind: 'basic_attack', label: '拳脚攻击' };
+}
+
+function resolvePluginHumanTurn(b, enemy) {
+  const human = enemy.human;
+  const plan = enemy.plannedAction || pluginHumanPlan(b, enemy);
+  if (plan.kind === 'gu') {
+    const gu = GU_BY_ID[plan.guId];
+    const gate = GuRules.activationReason(gu, {
+      playerRank: human.rank, trueQi: human.essence, thought: human.thought,
+      actionLimitReached: false,
+    });
+    if (!gate) {
+      const result = startMaintainedGu(human, plan.guInstanceId, gu, b.turn);
+      if (result.ok) {
+        human.thought -= gu.thoughtCost;
+        b.log.push(`<b>${enemy.name}</b> 催动 <b>${gu.name}</b> · 真元 -${result.cost} · 念头 -${gu.thoughtCost}；防御 ${HumanRules.attribute(human, 'defense')}`);
+        return;
+      }
+    }
+    b.log.push(`<b>${enemy.name}</b> 原定催蛊失效，转为拳脚攻击`);
+  }
+  const playerDefense = b.playerHuman ? HumanRules.attribute(b.playerHuman, 'defense') : 0;
+  const damage = Math.max(1, HumanRules.attribute(human, 'attack') - playerDefense);
+  const absorbed = Math.min(b.block, damage);
+  b.block -= absorbed;
+  const taken = damage - absorbed;
+  state.blood -= taken;
+  b.log.push(`<b>${enemy.name}</b> · 拳脚攻击，<span class="dmg">伤 ${taken}</span>${absorbed ? `（护体挡下 ${absorbed}）` : ''}`);
+  b.lastBlow = { attacker: enemy.name, label: '拳脚攻击', damage: taken || damage, turn: b.turn, absorbed };
+  if (absorbed > 0) BattleFx.shieldHit(absorbed);
+  if (taken > 0) BattleFx.selfDamage(taken);
+}
+
 // 敌方回合 + 刻痕结算 + 真元回复 + 回合推进。返回 true 表示战斗已结束。
 // 意图选取与冷却门禁见 rules.js（语义来自数据自带的 _phases_note）。
 function enemyTurn(b) {
   for (const enemy of aliveEnemies(b)) {
+    if (enemy.human) {
+      resolvePluginHumanTurn(b, enemy);
+      if (state.blood <= 0) break;
+      continue;
+    }
     const it = enemy.enemyIntent;
     const prefix = b.enemies.length > 1 ? `<b>${enemy.name}</b> · ` : '';
     if (!it) {
@@ -738,20 +806,38 @@ function enemyTurn(b) {
     if (remaining <= 0) delete b.guSealed[instanceId];
     else b.guSealed[instanceId] = remaining;
   }
-  state.qi = Math.min(
-    state.qiMax,
-    state.qi + RunRules.battleRegen(state.qiMax, DATA.battle.regenPct[state.aptitude]),
-  );
-  state.thoughtMax = RunRules.actionPointsPerTurn(state.soul);
-  state.thought = state.thoughtMax;
+  state.qi = Math.min(state.qiMax, state.qi + RunRules.essenceRegen(state.cultivation));
+  if (b.playerHuman) {
+    b.playerHuman.essence = state.qi;
+    for (const event of HumanRules.upkeep(b.playerHuman)) {
+      const gu = GU_BY_ID[event.instanceId.split('::')[0]];
+      b.log.push(event.ok
+        ? `你维持 <b>${gu?.name || event.instanceId}</b> · 真元 -${event.cost}`
+        : `你无法维持 <b>${gu?.name || event.instanceId}</b> · 效果解除`);
+    }
+    state.qi = b.playerHuman.essence;
+  }
   b.guUsedThisTurn = {};
   b.killMoveUsedThisTurn = {};
   b.actionsUsed = 0;
-  b.actionLimit = state.thoughtMax;
+  b.actionLimit = RunRules.actionPointsPerTurn(state.soul);
   b.turnSupports = {};
   b.turn += 1;
   b.log.push(`— 第 ${b.turn} 回合 —`);
   if (fireDelayedEffects(b)) return true;
+  for (const enemy of aliveEnemies(b)) {
+    if (!enemy.human) continue;
+    enemy.human.essence = Math.min(
+      HumanRules.attribute(enemy.human, 'essenceMax'),
+      enemy.human.essence + HumanRules.attribute(enemy.human, 'essenceRegen'),
+    );
+    for (const event of HumanRules.upkeep(enemy.human)) {
+      const gu = GU_BY_ID[event.instanceId.split('::')[0]];
+      b.log.push(event.ok
+        ? `<b>${enemy.name}</b> 维持 <b>${gu?.name || event.instanceId}</b> · 真元 -${event.cost}`
+        : `<b>${enemy.name}</b> 无法维持 <b>${gu?.name || event.instanceId}</b> · 防护解除`);
+    }
+  }
   aliveEnemies(b).forEach((enemy) => act._pickIntent(b, enemy));
   return false;
 }
@@ -977,7 +1063,7 @@ function fireDelayedEffects(b) {
 }
 
 function finishPlayerAction(b) {
-  if (!b.over && state.thought <= 0) return act.endTurn();
+  if (!b.over && b.actionsUsed >= b.actionLimit) return act.endTurn();
   draw();
 }
 
@@ -1008,7 +1094,8 @@ const act = {
     state.lastGainInsight = GuRules.gainInsight(definitionId, {
       owned: state.owned,
       recipes: GuRules.liveRecipes(DATA.recipes),
-      killMoves: DATA.killMoves,
+      killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+      buildKits: GuRules.BUILD_KITS,
       guById: GU_BY_ID,
     });
     Sfx.success();
@@ -1048,7 +1135,8 @@ const act = {
       state.lastGainInsight = GuRules.gainInsight(r.output, {
         owned: state.owned,
         recipes: GuRules.liveRecipes(DATA.recipes),
-        killMoves: DATA.killMoves,
+        killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+        buildKits: GuRules.BUILD_KITS,
         guById: GU_BY_ID,
       });
       Sfx.success();
@@ -1062,6 +1150,7 @@ const act = {
   },
 
   toggleMove(id) {
+    if (!DATA.killMovesEnabled) return toast('杀招系统暂未开放', 'bad');
     const i = state.equipped.indexOf(id);
     if (i >= 0) { state.equipped.splice(i, 1); Sfx.click(); draw(); return; }
     if (state.equipped.length >= 3) return toast('杀招槽已满（三）', 'bad');
@@ -1081,7 +1170,7 @@ const act = {
       return;
     }
     saveWriteBlockedUntilNewRun = false;
-    bootSaveIssue = bootSaveIssue === 'unreadable' ? null : bootSaveIssue;
+    bootSaveIssue = ['unreadable', 'outdated'].includes(bootSaveIssue) ? null : bootSaveIssue;
     // ?seed= 只影响明确的新局；继续不会走到这里。
     const explicitSeed = Number(seedOverride);
     const seed = Number.isFinite(explicitSeed) && explicitSeed > 0
@@ -1303,6 +1392,31 @@ const act = {
     const picked = ids.map((id) => DATA.enemies.find((x) => x.id === id)).filter(Boolean);
     if (!picked.length) return toast('内容错误 · 未找到敌人数据', 'bad');
     const enemies = picked.map((e) => {
+      if (e.grade === 'cultivator' && e.guLoadout) {
+        const instances = (e.guLoadout.required || []).map((guId, index) => HumanRules.guInstance(guId, index + 1));
+        const human = HumanRules.actor({ id: e.id, rank: e.rank, guInstances: instances });
+        const precast = e.guLoadout.precast === 'seeded_half'
+          && RunRules.seededIndex(2, state.seed, `${nodeId}:${e.id}:precast`, 0) === 0;
+        const precastLog = [];
+        if (precast) {
+          for (const instance of instances) {
+            const gu = GU_BY_ID[instance.definitionId];
+            if (gu?.battleEffect?.kind !== 'maintained') continue;
+            const gate = GuRules.activationReason(gu, {
+              playerRank: human.rank, trueQi: human.essence, thought: human.thought,
+              actionLimitReached: false,
+            });
+            if (gate) continue;
+            const result = startMaintainedGu(human, instance.instanceId, gu, 0);
+            if (result.ok) {
+              human.thought -= gu.thoughtCost;
+              precastLog.push(`${gu.name}：真元 -${result.cost}、念头 -${gu.thoughtCost}`);
+            }
+          }
+        }
+        return { ...e, hpMax: human.baseline.hpMax, hp: human.hp, human,
+          plannedAction: null, precastLog, flags: {}, statuses: {}, intentWeaken: 0 };
+      }
       const core = (globalThis.CombatCore?.toCoreEnemy
         ? globalThis.CombatCore.toCoreEnemy({ ...e, hpMax: e.hp }, globalThis.MVP_CONTENT?.enemyProfiles)
         : null) || {};
@@ -1322,16 +1436,24 @@ const act = {
         intentWeaken: 0,
       };
     });
-    state.thoughtMax = RunRules.actionPointsPerTurn(state.soul);
+    state.thoughtMax = HumanRules.BASELINE.thoughtMax;
     state.thought = state.thoughtMax;
+    state.qi = state.qiMax;
+    const playerHuman = HumanRules.actor({
+      id: 'player', rank: state.cultivation, guInstances: heldPlayerGuInstances(),
+      baseline: { ...HumanRules.base(state.cultivation), essenceMax: state.qiMax },
+    });
+    playerHuman.modifierLedger = (state.modifierLedger || []).map((entry) => ({ ...entry }));
     state.battle = {
-      enemies, targetId: enemies[0].id,
+      enemies, targetId: enemies[0].id, playerHuman,
       block: 0, turn: 1, over: null, nodeId,
       layer: (nodeId && nodeById(nodeId)?.layer) || 1,
       guUsedThisTurn: {}, guSealed: {}, killMoveUsedThisTurn: {}, buffs: {},
       turnSupports: {}, swordIntent: 0, delayedEffects: [],
-      actionsUsed: 0, actionLimit: state.thoughtMax,
-      log: [`<b>${enemies.map((e) => e.name).join('、')}</b> 逼近。`],
+      actionsUsed: 0, actionLimit: RunRules.actionPointsPerTurn(state.soul),
+      log: [`<b>${enemies.map((e) => e.name).join('、')}</b> 逼近。`,
+        ...enemies.flatMap((enemy) => (enemy.precastLog || []).map((line) =>
+          `<b>${enemy.name}</b> 战前催动 ${line}`))],
     };
     state.battle.enemies.forEach((enemy) => act._pickIntent(state.battle, enemy));
     showPage('battle');
@@ -1342,6 +1464,10 @@ const act = {
   // 选本回合敌方意图：阶段 + 冷却门禁（全部在冷却则为 null = cooldown_wait）
   _pickIntent(b, enemy = targetOf(b)) {
     if (!enemy || enemy.hp <= 0) return;
+    if (enemy.human) {
+      enemy.plannedAction = pluginHumanPlan(b, enemy);
+      return;
+    }
     const view = phaseView(enemy);
     const idx = view.phase ? view.phase.index : null;
     if (enemy.phaseIndex !== undefined && idx !== enemy.phaseIndex && idx !== null) {
@@ -1373,9 +1499,6 @@ const act = {
     const target = targetOf(b);
     if (!target) return openBattleOutcome();
     if (b.actionsUsed >= b.actionLimit) return toast('本回合行动数已尽', 'bad');
-    if (state.thought < 1) return toast('念头不足', 'bad');
-
-    state.thought -= 1;
     b.actionsUsed += 1;
     // 直接攻击会被生效中的反击吞掉（与 useMove/useGu 同口径；代价已付，不造成伤害）。
     const hit = liveReactions(target)[0];
@@ -1388,9 +1511,12 @@ const act = {
       finishPlayerAction(b);
       return;
     }
-    const damage = Number(DATA.battle.fightDamageBase || 1)
+    const raw = (b.playerHuman ? HumanRules.attribute(b.playerHuman, 'attack') : HumanRules.BASELINE.attack)
       + Number(b.buffs?.force || 0)
       + Number(b.buffs?.yi_zhang || 0);
+    const damage = target.human
+      ? Math.max(1, raw - HumanRules.attribute(target.human, 'defense'))
+      : raw;
     target.hp = Math.max(0, target.hp - damage);
     b.log.push(`<b>${target.name}</b> · <b>拳脚</b> 命中，<span class="dmg">伤 ${damage}</span>`);
     Sfx.hit();
@@ -1460,6 +1586,7 @@ const act = {
   },
 
   useMove(id) {
+    if (!DATA.killMovesEnabled) return toast('杀招系统暂未开放', 'bad');
     if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
@@ -1586,6 +1713,21 @@ const act = {
     });
     if (gate) return toast(guReasonLabel(gate), 'bad');
 
+    if (gu.battleEffect?.kind === 'maintained') {
+      const human = b.playerHuman;
+      human.essence = state.qi;
+      const activated = startMaintainedGu(human, instanceId, gu, b.turn);
+      if (!activated.ok) return toast(guReasonLabel(activated.reason), 'bad');
+      state.qi = human.essence;
+      state.thought -= gu.thoughtCost;
+      human.thought = state.thought;
+      b.actionsUsed += 1;
+      b.guUsedThisTurn[instanceId] = true;
+      b.log.push(`你催动 <b>${gu.name}</b> · 真元 -${activated.cost} · 念头 -${gu.thoughtCost}；防御 ${HumanRules.attribute(human, 'defense')}`);
+      finishPlayerAction(b);
+      return;
+    }
+
     state.qi -= gu.trueQiCost;
     state.thought -= gu.thoughtCost;
     b.actionsUsed += 1;
@@ -1658,7 +1800,8 @@ const act = {
       state.lastGainInsight = GuRules.gainInsight(offer.gu_id, {
         owned: state.owned,
         recipes: GuRules.liveRecipes(DATA.recipes),
-        killMoves: DATA.killMoves,
+        killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+        buildKits: GuRules.BUILD_KITS,
         guById: GU_BY_ID,
       });
     } else if (offer.kind === 'gu_fang_unlock') {
@@ -1814,7 +1957,8 @@ const act = {
     const insight = GuRules.gainInsight(guId, {
       owned: state.owned,
       recipes: GuRules.liveRecipes(DATA.recipes),
-      killMoves: DATA.killMoves,
+      killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+      buildKits: GuRules.BUILD_KITS,
       guById: GU_BY_ID,
     });
     state.lastGainInsight = insight;

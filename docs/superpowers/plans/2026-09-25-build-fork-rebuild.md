@@ -1,5 +1,7 @@
 # 实施计划 ·《问真》玩法核心循环重建 V1（构筑分叉验证）
 
+> **2026-09-24 适用范围校正：**本计划是构筑分叉阶段的历史实施记录。之后当前 PRD 已明确 Web 版取消材料库存、掉落、交易及材料作为合炼投入，Web 实现也已移除该循环。因此下文 Phase 5 及 Phase 6/7 的材料任务不再是可派发事项；Phase 1–4、6–8、11 仅保留与当前 PRD 相容的部分。当前待办以 [Web 优化任务拆分](2026-09-24-wenzhen-web-optimization-tasks.md) 为入口。本注记不改写既有阶段的历史验收数字；HOLD-1/HOLD-2 与 Phase 8 数值上抛继续有效。
+
 ```yaml
 STATUS: APPROVED_FOR_EXECUTION
 DATE: 2026-09-25
@@ -334,7 +336,7 @@ T1 落盘 L0 裁决与本计划            DONE（4279c7b）
 → Phase 2–7 构筑分叉内循环         DONE（bb7c700，phase2–gate7；全量 216/216 收口于 bb3f88f）
 → Phase 8 Rank 承载轴              IN_PROGRESS
     批A 结构验收（零数值漂移）      DONE（08bc6aa，tests/phase8_gate8.test.mjs 11/11；全量 227/227 实测）
-    批B ×3 真元曲线                 BLOCKED → L1 Research Request（归属表「Rank ×3 真元吞掉成长」）
+    批B ×3 真元曲线                 BLOCKED → L1 Research Request ([GitHub #5](https://github.com/Zachar-c/-/issues/5))（归属表「Rank ×3 真元吞掉成长」）
 → Phase 9 / 10                     HOLD（L0 未批准，见裁决 §六）
 → Phase 11 可赢性与联合平衡        未开工（含 G07）
 ```

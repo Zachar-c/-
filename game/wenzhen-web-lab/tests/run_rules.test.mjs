@@ -14,12 +14,8 @@ test('battle regen uses the domain ceiling percentage', () => {
   assert.equal(rules.battleRegen(10, 25), 3);
 });
 
-test('per-turn thoughts follow the soul action-point tiers', () => {
-  assert.equal(rules.actionPointsPerTurn(1), 2);
-  assert.equal(rules.actionPointsPerTurn(9), 2);
-  assert.equal(rules.actionPointsPerTurn(10), 3);
-  assert.equal(rules.actionPointsPerTurn(1000), 5);
-  assert.equal(rules.actionPointsPerTurn(10000), 6);
+test('each human turn has one action regardless of soul', () => {
+  for (const soul of [1, 9, 10, 1000, 10000]) assert.equal(rules.actionPointsPerTurn(soul), 1);
 });
 
 test('sword intent caps at five and decays by half each turn', () => {
@@ -109,15 +105,17 @@ test('battle stone rewards use tier base plus layer scaling', () => {
   assert.equal(rules.battleStoneReward('unknown', 5, config), 0);
 });
 
-test('essence max follows aptitude and cultivation factors', () => {
+test('essence capacity and regen follow the additive rank table', () => {
   const data = {
     essenceBase: 10,
     aptitudeFactor: { bing: 2 },
     cultivationFactor: { 1: 1, 2: 3, 3: 9 },
   };
-  assert.equal(rules.essenceMax(1, 'bing', data), 20);
-  assert.equal(rules.essenceMax(2, 'bing', data), 60);
-  assert.equal(rules.essenceMax(3, 'bing', data), 180);
+  assert.deepEqual([1, 2, 3, 4, 5].map((rank) => rules.essenceMax(rank, 'bing', data)), [6, 8, 10, 12, 14]);
+  assert.deepEqual([1, 2, 3, 4, 5].map((rank) => rules.essenceRegen(rank)), [2, 2, 3, 3, 4]);
+  assert.equal(rules.essenceMax(1, 'jia', data), 8);
+  assert.equal(rules.essenceMax(1, 'ding', data), 5);
+  assert.equal(rules.essenceMax(5, 'neutral', data), 14);
 });
 
 test('breakthrough advances one rank and charges the configured cost', () => {

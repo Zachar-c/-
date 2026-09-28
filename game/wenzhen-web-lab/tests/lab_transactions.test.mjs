@@ -12,6 +12,7 @@ vm.runInContext(
   dataCtx,
 );
 const DATA = dataCtx.DATA;
+const GU_BY_ID = Object.fromEntries(DATA.gu.map((gu) => [gu.id, gu]));
 
 function loadRules() {
   const ctx = vm.createContext({ DATA, globalThis: { DATA } });
@@ -62,7 +63,7 @@ function txContext(overrides = {}) {
   const ctx = vm.createContext({
     state,
     DATA,
-    GU_BY_ID: Object.fromEntries(DATA.gu.map((g) => [g.id, g])),
+    GU_BY_ID,
     GuRules: rules.GuRules,
     RunRules: rules.RunRules,
     RunFlow: rules.RunFlow,
@@ -134,6 +135,76 @@ test('FIXTURE_INTEGRATION: buy once charges once and marks sold once', () => {
   assert.deepEqual(JSON.parse(JSON.stringify({ stones: state.stones, owned: state.owned, sold: state.shopSold })), after);
 });
 
+test('FIXTURE_INTEGRATION: legacy light run can buy an existing blood or force Gu', () => {
+  const crossSchoolOffer = DATA.shopOffers.find((offer) =>
+    offer.kind === 'purchase' && ['blood', 'force'].includes(GU_BY_ID[offer.gu_id]?.school));
+  assert.ok(crossSchoolOffer, 'snapshot must expose an existing blood/force shop Gu');
+
+  const { state, act } = txContext({
+    state: { playableSchool: 'light', stones: 20, shopSold: [] },
+    acts: ['buyOffer'],
+    ctx: { canBuyOffer: () => true, offerCost: () => 0 },
+  });
+  act.buyOffer(crossSchoolOffer.id);
+  assert.equal(state.owned[crossSchoolOffer.gu_id], 1);
+  assert.equal(state.stones, 20);
+});
+
+test('FIXTURE_INTEGRATION: legacy light run can claim an existing non-light reward Gu', () => {
+  const gu = DATA.gu.find((entry) => ['blood', 'force'].includes(entry.school));
+  assert.ok(gu, 'snapshot must expose an existing blood/force Gu');
+  const { state, act } = txContext({
+    state: {
+      playableSchool: 'light',
+      reward: { guChoices: [gu.id], stones: 0, nodeId: 'fixture' },
+    },
+    acts: ['chooseRewardGu', 'openPrep'],
+  });
+
+  act.chooseRewardGu(gu.id);
+  assert.equal(state.owned[gu.id], 1);
+  assert.equal(state.reward, null);
+});
+
+test('FIXTURE_INTEGRATION: legacy light run can forge an existing cross-school recipe', () => {
+  const recipe = DATA.recipes.find((entry) => entry.id === 'bear_split');
+  assert.ok(recipe, 'snapshot must expose the existing force recipe');
+  const owned = Object.fromEntries(recipe.inputs.map((id) => [id, 1]));
+  const { state, act } = txContext({
+    state: { playableSchool: 'light', stones: 100, owned },
+    acts: ['forge'],
+  });
+
+  act.forge(recipe.id);
+  assert.equal(state.owned.jade_skin_gu, 0);
+  assert.equal(state.owned.white_boar_strength_gu, 0);
+  assert.equal(state.eventLog.at(-1)?.action, 'refine_gu');
+});
+
+test('FIXTURE_INTEGRATION: paused kill moves cannot be equipped even with their components', () => {
+  const move = DATA.killMoves.find((entry) => entry.id === 'km_blood_ember');
+  assert.ok(move, 'snapshot must expose the existing blood kill move');
+  const owned = Object.fromEntries(move.recipe.map((id) => [id, 1]));
+  const { state, act } = txContext({
+    state: { playableSchool: 'light', owned, equipped: [] },
+    acts: ['toggleMove'],
+  });
+
+  act.toggleMove(move.id);
+  assert.deepEqual(state.equipped, []);
+});
+
+test('FIXTURE_INTEGRATION: paused kill moves cannot spend battle resources', () => {
+  const move = DATA.killMoves[0];
+  const { state, act } = txContext({
+    state: { qi: 5, thought: 2, equipped: [move.id] },
+    acts: ['useMove'],
+  });
+  act.useMove(move.id);
+  assert.equal(state.qi, 5);
+  assert.equal(state.thought, 2);
+});
+
 test('FIXTURE_INTEGRATION: sell credits once and unequips instance-starved kill moves', () => {
   const gu = DATA.gu.find((g) => Number(g.value) > 0);
   const move = {
@@ -195,7 +266,7 @@ test('FIXTURE_INTEGRATION: forge missing Gu input leaves ledger unchanged', () =
   assert.deepEqual(JSON.parse(JSON.stringify({ stones: state.stones, owned: state.owned })), before);
 });
 
-test('FIXTURE_INTEGRATION: toggleMove refuses duplicate recipes without enough instances', () => {
+test('FIXTURE_INTEGRATION: paused kill moves stay unavailable regardless of recipe instances', () => {
   const gu = DATA.gu[0];
   const move = {
     id: 'dup_move',
@@ -215,7 +286,7 @@ test('FIXTURE_INTEGRATION: toggleMove refuses duplicate recipes without enough i
     assert.deepEqual(state.equipped, []);
     state.owned[gu.id] = 2;
     act.toggleMove('dup_move');
-    assert.deepEqual(state.equipped, ['dup_move']);
+    assert.deepEqual(state.equipped, []);
   } finally {
     DATA.killMoves.pop();
   }

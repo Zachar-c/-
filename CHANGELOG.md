@@ -4,6 +4,16 @@
 
 ## 未发布
 
+### 2026-09-28（GitHub Issues 状态对账）
+
+- 将明确仍有效的 WOPT-06/07/08、Phase 8 L1 阻塞、当前 GAME_GENERATION_READY 链、Wiki/Runtime/Rank 模型债务与 v1_battle Godot 迁移登记到 GitHub；相应 TODO、债务行和旧计划补上 issue 链接。已完成、跳过或仅待新裁决的历史记录未批量建单。现有 Web 临时 Markdown 孤儿对应 [GitHub #1](https://github.com/Zachar-c/-/issues/1)。
+
+### 2026-09-28（拉取后的文档偏移核对）
+
+- 合并 `AGENTS.md`、`TODO.md` 与 Wiki 索引、日志的本地文档冲突；当前阶段状态以较新的远端裁定和验收为准，保留本地历史计划入口。
+- 将本地血道、光道、力道取证中远端页面未覆盖的事实与适用边界并入对应 Wiki 页；在 `ai-system/README.md` 补四份本地评审资料的入口。
+- G0 文档门禁、G1 lore Wiki 门禁、G2 game Wiki 门禁均通过；剩余 8 个 Web 临时过程记录孤儿登记在 [债务清单](docs/debt.md)。代码与数据冲突仍待单独处理。
+
 ### 2026-09-28（原著蛊组构筑核验）
 
 - 应用户“先搭配现有库存，不扩蛊库”要求，新增[现有库存关系图](docs/design/rank1-9-model/inventory-combinations.md)与[可机检关系数据](docs/design/rank1-9-model/inventory-relations.json)：69 蛊中 20 蛊连出 17 条关系（含 1 条显式标记的角色计划）；缺件只登记不新增，另标注通用动作槽与血滴子、木魅蛊、月影蛊语义冲突。同步把九叶生机草本体改回原文二转，并区分其一转生机叶产物。

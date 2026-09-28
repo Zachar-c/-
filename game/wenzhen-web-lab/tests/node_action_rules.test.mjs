@@ -391,10 +391,10 @@ test('node type labels prefer data names and fall back to the Godot TYPES table 
   assert.equal(rules.typeLabel('rest', { rest: '别的名字' }), '别的名字');
   assert.equal(rules.typeLabel('seclusion', { seclusion: '静修' }), '静修');
   assert.equal(rules.typeLabel('unknown_type', {}), '');
-  assert.deepEqual(plain(rules.typeLabels({ market: '市集' })), { rest: '休整', market: '市集' });
+  assert.deepEqual(plain(rules.typeLabels({ market: '市集' })), { rest: '休整', event: '异闻', market: '市集' });
   assert.deepEqual(
     plain(rules.nodeTypes),
-    ['hazard', 'market', 'wild_gu', 'rest', 'seclusion'],
+    ['hazard', 'market', 'wild_gu', 'rest', 'seclusion', 'event'],
   );
 });
 

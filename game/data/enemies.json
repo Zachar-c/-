@@ -1,5 +1,18 @@
 [
   {
+    "id": "stone_armor_gu_master",
+    "theme": "neutral",
+    "grade": "cultivator",
+    "tier": "common",
+    "rank": 1,
+    "hp": 10,
+    "guLoadout": {
+      "required": ["stone_shell_gu"],
+      "optionalPools": [],
+      "precast": "seeded_half"
+    }
+  },
+  {
     "id": "neutral_stone_wanderer",
     "origin": "adaptation",
     "origin_ref": "L51260",

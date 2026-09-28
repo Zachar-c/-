@@ -3,14 +3,8 @@
 globalThis.RunRules = (() => {
   const ceilPct = (value, percent) => Math.ceil((Number(value) * Number(percent)) / 100);
 
-  // action_points.gd::per_turn
-  function actionPointsPerTurn(soul) {
-    const value = Number(soul || 0);
-    for (const [threshold, points] of [[10000, 6], [1000, 5], [100, 4], [10, 3]]) {
-      if (value >= threshold) return points;
-    }
-    return 2;
-  }
+  // L1 HumanBaseline V1：念头是每场复杂行动预算，行动槽固定每回合一格。
+  const actionPointsPerTurn = () => 1;
 
   // v1_battle_resolver.gd::_ceil_pct / start()
   const battleRegen = (trueQiMax, percent) => ceilPct(trueQiMax, percent);
@@ -113,13 +107,17 @@ globalThis.RunRules = (() => {
     return base + Math.trunc((base * stepPct * (Math.max(1, layer) - 1)) / 100);
   }
 
-  // essence_capacity.gd::essence_max_for
-  function essenceMax(rank, aptitude, data) {
-    const cultivation = Math.max(1, Number(rank) || 1);
-    const base = Number(data.essenceBase || 10);
-    const aptitudeFactor = Number(data.aptitudeFactor?.[aptitude] || 1);
-    const cultivationFactor = Number(data.cultivationFactor?.[cultivation] || 1);
-    return base * aptitudeFactor * cultivationFactor;
+  // L1 HumanBaseline V1：以转数表加资质小幅修正，废除旧乘法膨胀。
+  const rankEssence = Object.freeze([0, 6, 8, 10, 12, 14]);
+  const rankRegen = Object.freeze([0, 2, 2, 3, 3, 4]);
+  const aptitudeOffset = Object.freeze({ ding: -1, bing: 0, yi: 1, jia: 2, neutral: 0 });
+  function essenceMax(rank, aptitude, _legacyData, guModifier = 0) {
+    const level = Math.max(1, Math.min(5, Math.floor(Number(rank) || 1)));
+    return rankEssence[level] + (aptitudeOffset[aptitude] || 0) + Number(guModifier || 0);
+  }
+  function essenceRegen(rank, guModifier = 0) {
+    const level = Math.max(1, Math.min(5, Math.floor(Number(rank) || 1)));
+    return rankRegen[level] + Number(guModifier || 0);
   }
 
   // refine_command_rules.gd::_breakthrough
@@ -156,6 +154,7 @@ globalThis.RunRules = (() => {
     resolveBattleTier,
     battleStoneReward,
     essenceMax,
+    essenceRegen,
     nextBreakthrough,
   });
 })();

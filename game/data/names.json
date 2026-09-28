@@ -905,6 +905,7 @@
     "venomous_mist_escape": "毒雾遁行"
   },
   "enemies": {
+    "stone_armor_gu_master": "石甲蛊师",
     "beast_swarm": "兽群",
     "greedy_wanderer": "贪婪散修",
     "faction_guard": "势力守卫",

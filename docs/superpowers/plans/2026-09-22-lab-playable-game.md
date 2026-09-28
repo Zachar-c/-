@@ -1,5 +1,7 @@
 # 《问真》lab.html 可玩游戏本体 Implementation Plan
 
+> **2026-09-28 状态对账：**本文 W1–W7 复选框是历史实施记录，不作为当前待办真源。当前 Web 优化状态以 [WOPT 任务拆分](2026-09-24-wenzhen-web-optimization-tasks.md) 为准；尚未完成的 WOPT-06/07/08 分别由 [GitHub #2](https://github.com/Zachar-c/-/issues/2)、[GitHub #3](https://github.com/Zachar-c/-/issues/3)、[GitHub #4](https://github.com/Zachar-c/-/issues/4) 跟踪。旧记录保留作证据，不因本注记宣称验收通过。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. 本仓库的 Worker 协议和 L0/L1/L2 决策边界优先，不为技能增加重复审批。
 
 **Goal:** 通过 `game/wenzhen-web-lab/lab.html` 交付可正常开局、构筑成长、完成五段胜负流程、自动保存续玩、重新开始的 Web 游戏本体，以真实玩家流程而非局部原型脚本为验收。
