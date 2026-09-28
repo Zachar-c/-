@@ -12,6 +12,7 @@
 - [熊力蛊](bear-strength-gu.md)
 - [白豕蛊与肉身增力](white-boar-gu.md)
 - [酒虫与同转真元提纯](wine-insect-gu.md)
+- [九叶生机草与生机叶](vitality-grass-gu.md)
 - [骨蛊](bone-atk-1-08-gu.md)
 - [青藤蛊](wood-atk-1-05-gu.md)
 - [硬气蛊](qi-atk-1-01-gu.md)
