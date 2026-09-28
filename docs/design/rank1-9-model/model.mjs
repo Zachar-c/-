@@ -287,6 +287,11 @@ export function auditBuilds(lib) {
         if(complexity>capacity)issues.push({buildId,r,type:'capacity-exceeded',complexity,capacity});
       }
       for(const slot of stage?.slots??[]){
+        if(slot.gu==null){
+          // 明示的匿名动作预算；不代表存在一只可获取的原著蛊。
+          if(!P.actions[slot.poweredAction])issues.push({buildId,r,slot:null,type:'unknown-action',action:slot.poweredAction});
+          continue;
+        }
         const prim=guIndex.get(slot.gu);
         if(!prim){issues.push({buildId,r,slot:slot.gu,type:'unknown-gu'});continue;}
         if(!Array.isArray(slot.fallbacks)||slot.fallbacks.length===0)issues.push({buildId,r,slot:slot.gu,type:'no-fallback'});

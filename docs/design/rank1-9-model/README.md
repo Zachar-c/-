@@ -19,12 +19,15 @@
 | [事实与推导](evidence.md) | 事实锚点、冲突、未知、逐项改编依据 |
 | [完整模型](model.md) | 变量单位、一至九转标尺、战斗、构筑、养炼、成长、升仙、仙窍、灾劫、成尊、轮回 |
 | [参数](parameters.json) | 唯一机器参数入口；所有非原著常量集中配置 |
-| [原著蛊库](gu-library.json) · [蛊库说明](gu-library.md) | 69 只原著蛊、15 条配方/约束事实、三套逐转构筑（burst/balanced/sustain），逐条证据标注 |
+| [原著蛊库](gu-library.json) · [蛊库说明](gu-library.md) | 69 只原著蛊、15 条配方/约束登记、三套逐转数值测试配置（burst/balanced/sustain）；配置不是完整流派构筑 |
 | [供应数据](supply.json) · [供应模型](supply-model.md) | 四渠道可得性与价格；supply_limited / key_gu_missing / refine_tail 三场景 |
 | [可执行模型](model.mjs) | 独立研究计算器，不接游戏运行时 |
 | [验证器](validate.mjs) | 不变量、对照、随机战斗、经济、全程账本、敏感性、炼制尾部风险 |
 | [引擎扩展终审](engine-v02.md) | 战斗载体、灾劫实战口径、CLI 契约、集成裁决与数字漂移登记 |
 | [两世蛊方原型验证](prototype-two-life.md) | 本地五段原型的跨世蛊方闭环、Canon 边界、两世试玩与未验证的玩家体验 |
+| [力道蛊组与龙公双体系](strength-build-study.md) | 方源力道的完整战斗构筑研究样本（现库存缺件）；龙公变化/气道完整杀招体系的功能样本（逐蛊组成未核） |
+| [流派机制差异审计](path-mechanics-audit.md) | 41 个 Wiki 流派页的证据分层、同质化根因与逐派建模门槛 |
+| [现有库存体系搭配](inventory-combinations.md) · [关系数据](inventory-relations.json) | 严格 69 蛊内完整流派战斗构筑为 0；原著搭配实例与基于作用特性的游戏适配假设分层，登记缺件边界 |
 | [验证报告](validation.md) | 参数生成的表格及真实结果 |
 | [完整结果](results.json) | 全部矩阵、账本、模型与来源 SHA-256 |
 | [复核与限制](review.md) | 已修正问题、模型适用范围、尚未证实内容 |

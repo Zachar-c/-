@@ -1,0 +1,216 @@
+{
+  "version": "0.1-research",
+  "inventory": "gu-library.json",
+  "scope": "Only Gu already present in the 69-entry research inventory. Relations are attested examples, not an exhaustive whitelist of compatible Gu. External requirements are text, never added as stock nodes.",
+  "affordanceHypotheses": [
+    {
+      "id": "AFF-01",
+      "sourceGu": "small-light-gu",
+      "provides": "增强可受光效增幅的输出",
+      "targetPredicate": "目标效果确有可被放大的光性输出；按效果而非蛊名或流派标签判定",
+      "attestedExample": "INV-01",
+      "hypothesis": "游戏中可尝试让小光蛊辅助其他具备此效果的蛊；逐只验证适配、代价与上限，不预设所有光系蛊通用或同样翻倍。",
+      "unknowns": ["除月光蛊外哪些现有蛊符合条件", "不同目标能否同催", "不同转数的代价及增幅是否递减"],
+      "status": "game-inference",
+      "evidenceBoundary": "原著只核得小光蛊辅助月光蛊及月芒合炼；不是光系普适增幅的原著事实。"
+    },
+    {
+      "id": "AFF-02",
+      "sourceGu": "white-boar-strength-gu",
+      "provides": "留在身体上的力量状态",
+      "targetPredicate": "目标效果明确读取使用者已有肉身力量，而非仅按所持蛊数量加成",
+      "attestedExamples": ["INV-07", "INV-11", "INV-12"],
+      "hypothesis": "后续任何读取肉身力量的招式都可成为候选；合炼白豕蛊后已获得的力量仍能作为输入。",
+      "unknowns": ["其他现有蛊是否读取肉身力量", "各目标的力量换算与上限"],
+      "status": "game-inference",
+      "evidenceBoundary": "留存、自力更生随力量增强与全力以赴调用猪力各有原著依据；不推定所有力道蛊自动加成。"
+    },
+    {
+      "id": "AFF-03",
+      "sourceGu": "wine-insect-gu",
+      "provides": "提纯已有的一转真元品质",
+      "targetPredicate": "目标在当前一转阶段消耗可由酒虫提纯的真元；后续作用取决于目标如何使用真元品质",
+      "attestedExample": "INV-02",
+      "hypothesis": "酒虫不必绑定月光蛊；以真元品质为中介筛选其他可受益的一转行为，逐个确认收益。",
+      "unknowns": ["现有其他一转蛊的实际收益", "提纯的真元使用成本与机会成本"],
+      "status": "game-inference",
+      "evidenceBoundary": "原著已核一转真元提纯及月光蛊实例；不将其写成战斗回元或跨转通用增伤。"
+    },
+    {
+      "id": "AFF-04",
+      "sourceGu": "wood-atk-3-01-gu",
+      "provides": "树精形态及其对木行效果的增幅环境",
+      "targetPredicate": "目标效果在树精形态下仍可催动且确有可被形态增强的木行作用",
+      "attestedExamples": ["INV-10", "INV-16"],
+      "hypothesis": "以形态和目标效果是否适配筛选候选蛊，不把木魅固定为青藤蛊专属配件。",
+      "unknowns": ["其他现有木行蛊是否可在树精形态使用", "各目标的增幅及过度使用边界"],
+      "status": "game-inference",
+      "evidenceBoundary": "原著有青藤与生机叶等实例及木魅风险；不自动给全部木道蛊同一倍率。"
+    }
+  ],
+  "relations": [
+    {
+      "id": "INV-01",
+      "kind": "co-activation",
+      "gu": ["moonlight-gu", "small-light-gu"],
+      "effect": "同催时月刃体积与攻击力各扩大一倍；第二只小光蛊不再叠加该增幅。",
+      "limit": "只证实小光蛊辅助月光蛊，不推广到所有光蛊。",
+      "evidence": ["蛊真人-clean.txt:10926-10940", "蛊真人-clean.txt:17148"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-02",
+      "kind": "resource-mediation",
+      "gu": ["wine-insect-gu", "moonlight-gu"],
+      "effect": "一转酒虫精炼已有的一转真元；方源以精炼后的真元催月光蛊，月刃威力提高。",
+      "limit": "一转酒虫不回复真元，也不能精炼二转真元。",
+      "evidence": ["蛊真人-clean.txt:5438-5516", "蛊真人-clean.txt:10444"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-03",
+      "kind": "refinement",
+      "gu": ["moonlight-gu", "small-light-gu", "moon-glow-gu"],
+      "inputs": [{"gu": "moonlight-gu", "count": 1}, {"gu": "small-light-gu", "count": 2}],
+      "output": "moon-glow-gu",
+      "effect": "两只小光蛊在同催时不叠加，但作为合炼材料与月光蛊生成二转月芒蛊；成蛊后攻击力为月光蛊三倍。",
+      "limit": "输入蛊被合炼消耗；月芒整体三倍与小光同催翻倍是不同口径。",
+      "evidence": ["蛊真人-clean.txt:15710", "蛊真人-clean.txt:17144-17150"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-04",
+      "kind": "refinement-with-missing-input",
+      "gu": ["moonlight-gu", "moon-ray-gu"],
+      "output": "moon-ray-gu",
+      "requiresOutsideStock": ["痕石蛊"],
+      "effect": "另一条月光蛊合炼方向：月痕蛊攻击力不变，攻击范围提高一倍至二十米。",
+      "limit": "痕石蛊不在现有 69 蛊库存；未核月痕蛊转数，不能凭本关系补入。",
+      "evidence": ["蛊真人-clean.txt:17156", "蛊真人-clean.txt:26760-26764"],
+      "status": "canon-partial-inventory"
+    },
+    {
+      "id": "INV-05",
+      "kind": "shared-input-branch",
+      "gu": ["moon-glow-gu", "moon-ray-gu"],
+      "effect": "月芒与月痕是消耗同类月光蛊底子的两条方向：前者取威力，后者取射程。",
+      "limit": "不是世界唯一式互斥；持有多只月光蛊时可分别炼。",
+      "evidence": ["蛊真人-clean.txt:17144-17156"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-06",
+      "kind": "refinement",
+      "gu": ["white-boar-strength-gu", "jade-skin-gu", "white-jade-gu"],
+      "inputs": [{"gu": "white-boar-strength-gu", "count": 1}, {"gu": "jade-skin-gu", "count": 1}],
+      "output": "white-jade-gu",
+      "effect": "白豕蛊与玉皮蛊合炼二转白玉蛊，白玉蛊保留并强化防御能力。",
+      "limit": "白玉蛊丧失白豕蛊继续增力的能力；合炼后供养费也可能高于两只输入蛊之和。",
+      "evidence": ["蛊真人-clean.txt:15710-15712", "蛊真人-clean.txt:16906-16912", "蛊真人-clean.txt:16140-16148"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-07",
+      "kind": "persistent-state-through-refinement",
+      "gu": ["white-boar-strength-gu", "white-jade-gu"],
+      "effect": "先催白豕蛊积累肉身力量，再将其炼入白玉蛊，已得到的力量仍留在身体里。",
+      "limit": "已得力量留存不等于白玉蛊能继续增力；这是先后次序关系，不是两蛊同时催动加成。",
+      "evidence": ["蛊真人-clean.txt:16076", "蛊真人-clean.txt:16910-16912"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-08",
+      "kind": "coverage-not-amplification",
+      "gu": ["moon-glow-gu", "white-jade-gu", "vitality-grass-gu"],
+      "effect": "方源盘点月芒进攻、白玉防御、九叶生机草治疗。",
+      "limit": "这是同一蛊组的职能覆盖，没有三蛊互相增幅的明文；侦查与移动仍是缺口。",
+      "evidence": ["蛊真人-clean.txt:17316-17342"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-09",
+      "kind": "body-co-effect",
+      "gu": ["water-atk-3-06-gu", "bone-def-3-05-gu"],
+      "effect": "冰肌与玉骨相互影响，有叠加之效；玉骨一次性永久改骨。",
+      "limit": "玉骨使用时剧痛可致死；原文明确说适合白凝冰而不适合方源，不能设为普适最优组合。",
+      "evidence": ["蛊真人-clean.txt:39724-39732", "蛊真人-clean.txt:41452-41464"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-10",
+      "kind": "form-amplification",
+      "gu": ["wood-atk-3-01-gu", "wood-atk-1-05-gu"],
+      "effect": "木魅蛊令古月青书逐渐成为树精；树精身份再催青藤蛊，威力获得增幅，并可吸收自然元气。",
+      "limit": "失控催用木魅蛊将变成死树人；月旋、松针、生机叶也参与原文蛊组，但不在本库存，不能假装这一对已是完整构筑。",
+      "evidence": ["蛊真人-clean.txt:23844-23864"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-11",
+      "kind": "body-stat-dependency",
+      "gu": ["white-boar-strength-gu", "force-heal-3-03-gu"],
+      "effect": "白豕蛊能永久增长使用者肉身力量；自力更生蛊疗效随使用者力量增长。两条原著规则可串接。",
+      "limit": "原文未给这两只蛊同场使用的专属倍数；自力更生催用仍耗真元。",
+      "evidence": ["蛊真人-clean.txt:9688-9692", "蛊真人-clean.txt:53792-53806"],
+      "status": "derived-from-two-canon-rules"
+    },
+    {
+      "id": "INV-12",
+      "kind": "strength-call",
+      "gu": ["white-boar-strength-gu", "force-atk-4-04-gu"],
+      "effect": "已取得的猪力是全力以赴蛊可调用的兽力虚影之一；早期一次只能催出一种兽力。",
+      "limit": "没有苦力蛊时不可宣称全力以赴一口气打出八影；苦力蛊不在现有 69 蛊库存。",
+      "evidence": ["蛊真人-clean.txt:53010-53014", "蛊真人-clean.txt:59286-59298"],
+      "status": "canon"
+    },
+    {
+      "id": "INV-13",
+      "kind": "planned-core-and-support",
+      "gu": ["force-atk-4-04-gu", "force-heal-3-03-gu"],
+      "effect": "方源明确把全力以赴定为力道核心，自力更生列为支点之一。",
+      "limit": "另一支点苦力蛊不在现有库存；本关系说明方案意图，不证明这两只蛊单独形成完整力道循环。",
+      "evidence": ["蛊真人-clean.txt:52506-52512"],
+      "status": "canon-partial-inventory"
+    },
+    {
+      "id": "INV-14",
+      "kind": "advancement-with-unknown-recipe",
+      "gu": ["blood-droplet-gu", "blood-atk-5-09-gu"],
+      "output": "blood-atk-5-09-gu",
+      "effect": "血滴子养用合一、以蛊师本命精血繁殖；再往后晋升为六转血神子。",
+      "limit": "完整晋升配方未知；血滴子吸血不等于给主人治疗或恢复真元，电流可克制血滴子。",
+      "evidence": ["蛊真人-clean.txt:28474-28498"],
+      "status": "canon-partial-inventory"
+    },
+    {
+      "id": "INV-15",
+      "kind": "killer-move-with-missing-components",
+      "gu": ["persistence-gu", "wanlan-immortal-gu"],
+      "requiresOutsideStock": ["逆流河", "足量且适配的水道凡蛊"],
+      "effect": "坚持仙蛊使方源获逆流河认可，挽澜仙蛊操纵河水；两者为杀招基础。",
+      "limit": "仅有两仙蛊不能融汇，须水道凡蛊沟通；逆流河是天地秘境，不是背包蛊虫。",
+      "evidence": ["蛊真人-clean.txt:240136-240142", "蛊真人-clean.txt:240292-240300"],
+      "status": "canon-partial-inventory"
+    },
+    {
+      "id": "INV-16",
+      "kind": "generated-consumable-amplification",
+      "gu": ["vitality-grass-gu", "wood-atk-3-01-gu"],
+      "requiresOutsideStock": ["由九叶生机草撕下的一转生机叶；它是产出物，本库存未单列"],
+      "effect": "九叶生机草产生生机叶；古月青书在木魅树精形态下催生机叶等木行蛊，威力会增幅。",
+      "limit": "增强对象是生机叶，不是九叶生机草本体；补叶消耗二转真元，木魅过度催用致命。",
+      "evidence": ["蛊真人-clean.txt:16494-16498", "蛊真人-clean.txt:17106-17108", "蛊真人-clean.txt:23848-23864"],
+      "status": "derived-from-two-canon-rules"
+    },
+    {
+      "id": "INV-17",
+      "kind": "recipe-research-plan",
+      "gu": ["wisdom-gu", "blood-atk-5-09-gu"],
+      "requiresOutsideStock": ["血神子仙蛊七成残方", "方源前世的炼蛊积累"],
+      "effect": "方源预计借智慧蛊的灵感与前世积累完善血神子仙蛊方。",
+      "limit": "这是方源当时的推算计划，不是该段已经炼成血神子，也不是智慧蛊直接增幅血神子战斗威力。",
+      "evidence": ["蛊真人-clean.txt:130288"],
+      "status": "character-plan"
+    }
+  ]
+}

@@ -17,7 +17,7 @@
         },
         {
           "kind": "support",
-          "note": "与小光蛊双蛊同催，月刃体积与攻击力各扩大一倍（单向协同，仅适用月光蛊）",
+          "note": "与小光蛊双蛊同催，月刃体积与攻击力各扩大一倍（原著已核实例为月光蛊，不限定游戏中的其他候选适配）",
           "evidence": "lore/wiki/gu/small-light-gu.md",
           "status": "fact"
         }
@@ -55,7 +55,7 @@
         "status": "inference"
       },
       "status": "fact",
-      "note": "学堂蛊室墙角共五只、存量有限（9704-9710）；形如五角星。协同结论为单向个案，不得泛化为光道通用增幅。"
+      "note": "学堂蛊室墙角共五只、存量有限（9704-9710）；形如五角星。原著已核协同仅为月光蛊个案；其他光性效果的适配是游戏推导，见 inventory-relations.json 的 AFF-01，不得写成原著普适规则。"
     },
     {
       "id": "white-boar-strength-gu",
@@ -68,7 +68,13 @@
         {
           "kind": "special",
           "note": "改造蛊师身躯、从根本上增长气力且永久留存、蛊死亦留存（9688-9692）；是持续改造而非单次攻击加成",
-          "evidence": "lore/wiki/gu/m0-six-gu.md",
+          "evidence": "lore/wiki/gu/white-boar-gu.md",
+          "status": "fact"
+        },
+        {
+          "kind": "model-boundary",
+          "note": "催动白豕蛊增力时消耗真元（12758）；获得的力量无需真元即可发挥（15308），白豕蛊消失后仍留在身上（16076）。原著未给出单次真元数值或固定伤害。",
+          "evidence": "lore/wiki/gu/white-boar-gu.md",
           "status": "fact"
         }
       ],
@@ -80,7 +86,7 @@
         "status": "inference"
       },
       "status": "fact",
-      "note": "豕蛊家族四只之一；市价高于酒虫（9694-9698）；可与玉皮蛊合炼白玉蛊（12402）。"
+      "note": "豕蛊家族四只之一；黑白豕蛊永久增力且蛊死不失（9688-9692）；市价高于酒虫（9694-9698）；可与玉皮蛊合炼白玉蛊（12402）。原著确认催动增力耗真元、已得力量发挥不耗元（12758、15308）；具体增伤和费用仍属游戏数值。"
     },
     {
       "id": "jade-skin-gu",
@@ -138,13 +144,13 @@
       "rank": 1,
       "path": "unknown",
       "maxRank": null,
-      "poweredAction": "drain",
+      "poweredAction": null,
       "effects": [
         {
-          "kind": "recovery",
-          "note": "凝练/精炼真元：方源以酒虫精炼的一转中阶真元催动月光蛊断骨斩首（5438-5516 已核，个案加成不泛化）",
-          "evidence": "lore/wiki/gu/roster.md",
-          "status": "inference"
+          "kind": "essence-quality",
+          "note": "一转酒虫将一转青铜真元提纯一个小境界（初阶→中阶；E:V1-002890、E:V1-004672）；它改变真元品质，不回复或增加真元数量。巅峰真元已处本转顶点，不能再提升（E:V3-078626）。",
+          "evidence": "lore/wiki/gu/wine-insect-gu.md",
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -155,21 +161,21 @@
         "evidence": "lore/wiki/gu/roster.md",
         "status": "inference"
       },
-      "status": "inference",
-      "note": "id 为本表新造 kebab（entities.json 无键）。转数取 roster 弧一蛊链时序（资料整理层级）；酒香可引来（1416 已核）；炼化约十一至十六块元石、青竹酒一坛两块元石支撑四天（gu-care 已核）。"
+      "status": "fact",
+      "note": "一转蛊；只登记一转青铜真元品阶提纯。提纯链总纲已核：二转四味→赤铁、三转七香→白银、四转九眼→黄金各一小境界，五转酒虫不存在（E:V2-060664–060666）；合炼材料 E:V2-060688–060690。酒香可引来（1416 已核）；酒虫是修炼辅助，不是战斗回真元动作。"
     },
     {
       "id": "vitality-grass-gu",
       "name": "九叶生机草",
-      "rank": 1,
+      "rank": 2,
       "path": "unknown",
       "maxRank": null,
       "poweredAction": "drain",
       "effects": [
         {
           "kind": "recovery",
-          "note": "治疗：方源战力盘点明言「进攻有月芒蛊，治疗有九叶生机草」（E:V1-017316）；产叶机制见 roster（A2b 17088-17126 资料整理）",
-          "evidence": "lore/wiki/gu/moon-glow-gu.md",
+          "note": "二转本体可催生一转消耗型生机叶，用后一个小时内其他叶无效；方源将其列为治疗手段（E:V1-016490、E:V1-016494、E:V1-016498、E:V1-017342）。",
+          "evidence": "lore/wiki/gu/vitality-grass-gu.md",
           "status": "fact"
         }
       ],
@@ -180,8 +186,8 @@
         "evidence": "lore/wiki/gu/roster.md",
         "status": "assumption"
       },
-      "status": "assumption",
-      "note": "id 对应 game/data/gu.json vitality_grass_gu 的 kebab（仅取 id 对齐，不取游戏数值）。转数原文未检得，占位一转；治疗效果为已核事实。"
+      "status": "fact",
+      "note": "本体二转原文明确（E:V1-016490）；产出的一转生机叶是另一种消耗蛊，不能把产物转数误记为本体转数。poweredAction=drain 仅是旧模拟器占位动作，非原著吸血回元。"
     },
     {
       "id": "bear-strength-gu",
@@ -206,7 +212,7 @@
         "status": "inference"
       },
       "status": "assumption",
-      "note": "转数未检得明文（runtime 记 rank_unstated），占位一转；「力」名与功用关系待核。"
+      "note": "转数未检得明文（runtime 记 rank_unstated），占位一转。2026-09-28 负面穷举：全书仅 4 处（3602/10182/20446/26920），均为标志蛊与蜂蜜饲养语境，功用明文未检得——不得按名称映射增力或治疗。"
     },
     {
       "id": "bone-atk-1-08-gu",
@@ -418,9 +424,9 @@
       "effects": [
         {
           "kind": "attack",
-          "note": "本体效果原文未核；roster-2 资料整理层级出现（青书劝售路线二）",
-          "evidence": "lore/wiki/gu/roster-3.md",
-          "status": "assumption"
+          "note": "二转酒虫晋升蛊（家族秘方，E:V1-016922）；战例：古月博狼潮战中散发紫色漩涡月光，吸引并吞并家老射出的月刃，劈掌放大为比马车还大的紫色月刃、斩中雷冠头狼（E:V1-028282–028296、028316）。吞并放大是明文机制，固定倍率无原著数值。",
+          "evidence": "lore/wiki/gu/roster-2.md",
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -431,7 +437,7 @@
         "status": "assumption"
       },
       "status": "fact",
-      "note": "rank 2 已核（E:V1-016922，L0 裁定已改）；效果未核，凭名归档为占位攻击位。"
+      "note": "rank 2 已核（E:V1-016922）；效果已核（狼潮战例 E:V1-028282–028296，2026-09-28 效果细化批）。食月兰花瓣、喂养成本等未核。"
     },
     {
       "id": "gold-atk-2-11-gu",
@@ -563,15 +569,15 @@
       "id": "force-heal-3-03-gu",
       "name": "自力更生蛊",
       "rank": 3,
-      "path": "unknown",
+      "path": "strength",
       "maxRank": null,
       "poweredAction": "drain",
       "effects": [
         {
           "kind": "recovery",
-          "note": "效果原文未核；凭名称语义与恢复位归档",
-          "evidence": "lore/wiki/gu/roster-3.md",
-          "status": "assumption"
+          "note": "主动催动消耗真元；使用者力量越强，治疗效果越好，不按伤势严重程度提高疗效（E:V2-053792、E:V2-053802）。",
+          "evidence": "蛊真人-clean.txt:53792-53806",
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -581,8 +587,8 @@
         "evidence": "lore/wiki/gu/roster-3.md",
         "status": "assumption"
       },
-      "status": "inference",
-      "note": "rank 3 已核（E:V2-064192）；效果未核，接入前须回原文。"
+      "status": "fact",
+      "note": "三转治疗蛊（E:V2-053798）；治疗强度随力量增长，催动须灌注真元。取得渠道仍为模型假设。"
     },
     {
       "id": "water-atk-3-06-gu",
@@ -670,9 +676,9 @@
       "effects": [
         {
           "kind": "attack",
-          "note": "三转月光系秘方产物、食月兰花瓣（A2b 26760-26794 资料整理）；具体能力未逐条核验",
+          "note": "三转秘方产物：射程十步不变、攻击威力再度增强，金黄月牙足有半人高（E:V1-026786）；食大量月兰花瓣（E:V1-026822）。",
           "evidence": "lore/wiki/gu/roster.md",
-          "status": "inference"
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -682,8 +688,8 @@
         "evidence": "lore/wiki/gu/roster.md",
         "status": "inference"
       },
-      "status": "inference",
-      "note": "id 为本表新造 kebab；仅见 roster 资料整理层级。"
+      "status": "fact",
+      "note": "效果已核（E:V1-026786，2026-09-28 效果细化批）；id 为本表新造 kebab。"
     },
     {
       "id": "frost-rain-moon-gu",
@@ -695,9 +701,9 @@
       "effects": [
         {
           "kind": "attack",
-          "note": "三转月光系秘方产物、食月兰花瓣（A2b 26760-26794 资料整理）；具体能力未逐条核验",
+          "note": "三转秘方产物：月刃幽白冰冷、透着寒霜之气，中者冰寒入体、行动缓慢（E:V1-026788）；食大量月兰花瓣（E:V1-026822）。",
           "evidence": "lore/wiki/gu/roster.md",
-          "status": "inference"
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -707,8 +713,8 @@
         "evidence": "lore/wiki/gu/roster.md",
         "status": "inference"
       },
-      "status": "inference",
-      "note": "id 为本表新造 kebab；仅见 roster 资料整理层级。"
+      "status": "fact",
+      "note": "效果已核（E:V1-026788，2026-09-28 效果细化批）；id 为本表新造 kebab。"
     },
     {
       "id": "phantom-moon-gu",
@@ -716,13 +722,13 @@
       "rank": 3,
       "path": "月道",
       "maxRank": null,
-      "poweredAction": "strike",
+      "poweredAction": null,
       "effects": [
         {
-          "kind": "attack",
-          "note": "三转月光系秘方产物、食月兰花瓣（A2b 26760-26794 资料整理）；具体能力未逐条核验",
+          "kind": "support",
+          "note": "非进攻型：催动令蛊师化出一道幻影，分散火力、迷惑敌人（E:V1-026790）；以此为晋升基础再往上即四转月影蛊（E:V1-026792）；食大量月兰花瓣（E:V1-026822）。",
           "evidence": "lore/wiki/gu/roster.md",
-          "status": "inference"
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -732,8 +738,8 @@
         "evidence": "lore/wiki/gu/roster.md",
         "status": "inference"
       },
-      "status": "inference",
-      "note": "id 为本表新造 kebab；仅见 roster 资料整理层级。"
+      "status": "fact",
+      "note": "效果已核（E:V1-026790–026792，2026-09-28 效果细化批）；非进攻蛊，poweredAction 撤空；id 为本表新造 kebab。"
     },
     {
       "id": "blood-bat-gu",
@@ -839,15 +845,15 @@
       "id": "force-atk-4-04-gu",
       "name": "全力以赴蛊",
       "rank": 4,
-      "path": "unknown",
+      "path": "strength",
       "maxRank": null,
       "poweredAction": "strike",
       "effects": [
         {
           "kind": "attack",
-          "note": "万我杀招诞生组件之一（奴力合流，E:V3-120582-120632）；本体战斗效果未核",
-          "evidence": "lore/wiki/world/kill-move-roster.md",
-          "status": "inference"
+          "note": "以已有兽力虚影为输入，初期每次只能催出一种兽力（E:V2-053012）；与苦力蛊及伤势配合后可同时催出多种（E:V2-059292-059298）。不是独立的固定伤害攻击。",
+          "evidence": "蛊真人-clean.txt:53010-53014,59292-59298",
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -857,8 +863,8 @@
         "evidence": "lore/wiki/gu/roster-3.md",
         "status": "assumption"
       },
-      "status": "inference",
-      "note": "多时点口径：初得三转明文（E:V2-052464）、后经升炼晋升（节215），game=4 取中段时点。"
+      "status": "fact",
+      "note": "多时点口径：初得三转明文（E:V2-052464）、后经升炼晋升（节215），game=4 取中段时点。催动真元消耗很少、兽力虚影本身不耗真元（E:V2-053716-053720）。poweredAction=strike 仅是现有模拟器接口映射，不代表蛊本身独立造成固定伤害。"
     },
     {
       "id": "gold-def-3-09-gu",
@@ -895,9 +901,9 @@
       "effects": [
         {
           "kind": "special",
-          "note": "压制真元（A2b 26796-26816 资料整理；花酒行者重伤之因存疑）",
+          "note": "压制真元明文：能种入蛊师空窍、压制住蛊师真元的使用（E:V1-026794）；方源认出即四转族长暗算花酒行者所用蛊虫（E:V1-026796）。",
           "evidence": "lore/wiki/gu/roster.md",
-          "status": "inference"
+          "status": "fact"
         }
       ],
       "acquisition": {
@@ -908,7 +914,7 @@
         "status": "inference"
       },
       "status": "fact",
-      "note": "rank 4 单源明文、L0 裁定改（原 game=3，E:V1-026792）；压制真元为干扰效果，无对应占位动作，不入常规攻击槽。"
+      "note": "rank 4 明文（E:V1-026792 幻影月晋升线）；压制真元效果已核（E:V1-026794–026796，2026-09-28 效果细化批）。干扰效果，无对应占位动作，不入常规攻击槽；花酒行者重伤之因仍属笔记层口径。"
     },
     {
       "id": "sword-atk-4-01-gu",
@@ -2092,7 +2098,7 @@
   "builds": {
     "burst": {
       "id": "burst",
-      "name": "爆发构筑",
+      "name": "爆发数值测试配置",
       "path": "月道",
       "ranks": {
         "1": {
@@ -2133,19 +2139,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位；爆发位省真元回填"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2187,19 +2190,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2256,19 +2256,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2310,19 +2307,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2428,19 +2422,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2517,19 +2508,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2606,19 +2594,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2695,28 +2680,25 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         }
       },
-      "notes": "月光系晋升线主攻：一至三转走月光→月芒→血月/三转秘方的已核链路；四转起当阶攻击蛊效果多未核（血颅/火龙/血手印均凭名占位，status=assumption）。六转核心取血神子（血滴子晋升线，全表唯一有完整原著获取链的六转攻击仙蛊）；七转以上当阶仙蛊唯一且多半 NPC 持有，九转核心（九转光蛊/九转火蛊）为传奇/野生个案、整局多半不可得，实际输出常由 fallback（八转慧剑/雷电）承担。三至五转酒虫持续在册：其真元精炼对高消耗爆发位是续航兜底。槽位数 3/3/4/3/3/3/5/5/5，L=3/3/6/3/3/3/10/10/10 均≤C[r]。同动作双槽（七转起 strike/burst 各两槽）为「主攻+同域备胎」，引擎取转数最高者、两只均计供养。混入非月道蛊（血系/力道/剑道）按 model §2.3 异道干扰 F 修正。"
+      "notes": "数值测试配置，非完整流派构筑：一至二转月光与小光同催、合炼月芒已核；三转血月/秘方位仅为后续测试占位，未核月芒→血月合炼或完整战术链。四转起当阶攻击蛊效果多未核（血颅/火龙/血手印等占位）。六转占位取血神子：仅血滴子晋升方向已核，完整蛊方与玩家获取链未知。七转以上仙蛊唯一且可得性未保证，九转光/火是传奇个案，测试输出常由 fallback 承担。酒虫只提纯一转真元品质，不映射回复动作；匿名 drain 是旧模拟器占位。槽位数 3/3/4/3/3/3/5/5/5，L=3/3/6/3/3/3/10/10/10 均≤C[r]。同动作双槽为引擎备胎规则，不是原著蛊组协同；异道折损为研究参数。"
     },
     "balanced": {
       "id": "balanced",
-      "name": "均衡构筑",
+      "name": "均衡数值测试配置",
       "path": "月道（混修防御/恢复）",
       "ranks": {
         "1": {
@@ -2762,19 +2744,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -2829,9 +2808,9 @@
               ],
               "fallbacks": [
                 {
-                  "gu": "wine-insect-gu",
+                  "gu": null,
                   "poweredAction": "drain",
-                  "note": "酒虫恢复占位"
+                  "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
                 },
                 {
                   "gu": null,
@@ -3451,11 +3430,11 @@
           ]
         }
       },
-      "notes": "方源二转路线的构筑化：月芒主攻+白玉主防+九叶生机草治疗（「攻守兼备」「治疗有九叶生机草」均为已核引文）。原著方源二转同期至少带四蛊（月芒/白玉/酒虫/九叶），L(4)=6 已超模型 C(2)=5——模型按游戏容量裁为 3 槽，该剪刀差登记为模型与原著的已知分歧。六转以上同 burst 构筑口径：核心仙蛊唯一、多属 NPC 持有（血神子除外，有血滴子晋升链），核心位 status=assumption/inference 并以近阶凡蛊/仙蛊兜底；坚持仙蛊入列取其「逆反八转攻势」防御核语义（笔记层级）。槽位数 3/3/4/4/4/5/5/5/6，L=3/3/6/6/6/10/10/10/15 均≤C[r]。"
+      "notes": "数值测试配置，非完整流派构筑：原著方源二转持月芒主攻、白玉主防、九叶生机草治疗，但仍缺侦查和移动；酒虫是另一只同期蛊。四蛊的模型复杂度 L(4)=6 超过 C(2)=5，故测试裁为 3 槽，这是模型与原著的已知分歧。六转以上仙蛊唯一且玩家可得性未知；血滴子向血神子晋升方向已核，但完整蛊方未知。核心位 status=assumption/inference 并由 fallback 兜底；坚持仙蛊防御语义尚有笔记层边界。槽位数 3/3/4/4/4/5/5/5/6，L=3/3/6/6/6/10/10/10/15 均≤C[r]。"
     },
     "sustain": {
       "id": "sustain",
-      "name": "续航构筑",
+      "name": "续航数值测试配置",
       "path": "气道（混修水/骨/月）",
       "ranks": {
         "1": {
@@ -3481,12 +3460,8 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": "vitality-grass-gu",
@@ -3498,7 +3473,8 @@
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             },
             {
               "gu": "qi-atk-1-01-gu",
@@ -3560,19 +3536,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -3627,9 +3600,9 @@
               ],
               "fallbacks": [
                 {
-                  "gu": "wine-insect-gu",
+                  "gu": null,
                   "poweredAction": "drain",
-                  "note": "退回酒虫"
+                  "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
                 },
                 {
                   "gu": null,
@@ -3706,9 +3679,9 @@
               ],
               "fallbacks": [
                 {
-                  "gu": "wine-insect-gu",
+                  "gu": null,
                   "poweredAction": "drain",
-                  "note": "退回酒虫"
+                  "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
                 },
                 {
                   "gu": null,
@@ -3718,19 +3691,16 @@
               ]
             },
             {
-              "gu": "wine-insect-gu",
+              "gu": null,
               "poweredAction": "drain",
-              "status": "inference",
-              "evidence": [
-                "lore/wiki/gu/roster.md"
-              ],
               "fallbacks": [
                 {
                   "gu": null,
                   "poweredAction": "drain",
                   "note": "占位"
                 }
-              ]
+              ],
+              "note": "匿名 drain 占位；不绑定酒虫或原著恢复蛊"
             }
           ]
         },
@@ -4175,7 +4145,7 @@
           ]
         }
       },
-      "notes": "防守反击与资源循环：guard（护防系/气道/骨骼强化）+drain（酒虫精炼、九叶生机草治疗、血滴子食精血、木魅元气补给）为主轴，攻击位从简（月痕蛊范围型、血月蛊低养护型）。六转防御核取挽澜仙蛊（逆流护身印双核之一，笔记层级）、七转取坚持仙蛊（逆反八转攻势）与智障仙蛊（已核障碍场）；两者均为仙蛊唯一、多半 NPC 持有，status=inference 并留凡蛊 fallback。八转悔蛊（镇压/匿迹）为已核防御语义。续航系九转无已核当阶防御仙蛊，九转继续由八转核心承担（g≤r 且近阶口径），缺口登记于未决清单。槽位数 3/3/4/4/4/5/5/5/6，L=3/3/6/6/6/10/10/10/15 均≤C[r]。八转/九转未设雷击爆发位（八转），九转以雷电蛊（burst）作应急爆发；续航系九转无已核当阶防御仙蛊，由八转核心承担（g≤r 近阶口径），缺口登记于未决清单。"
+      "notes": "数值测试配置，非气道或其他流派的完整构筑：guard/drain 是旧模拟器动作槽。九叶生机草可治疗；血滴子食精血用于繁殖，不给主人治疗或回元；木魅是树精形态及天然元气吸收，不等于直接回复真元。这三种作用不能当成同一种原著续航机制。挽澜与坚持虽是逆流护身印双核，但还需逆流河和适配水道凡蛊，不能只凭两仙蛊成立；智障仙蛊、悔蛊等占位只用于测试。九转缺当阶防御核，继续使用八转 fallback。槽位数 3/3/4/4/4/5/5/5/6，L=3/3/6/6/6/10/10/10/15 均≤C[r]。雷电蛊应急爆发也只是测试动作映射。"
     }
   }
 }

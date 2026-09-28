@@ -1,8 +1,9 @@
 {
   "modelVersion": "0.2.0-draft",
   "parameterHash": "6df2f5776040f30ad788a210ea8fa367fa11f4350c72611db38ddf630ed45e57",
-  "modelHash": "eee8571f88652c42215d60f7f9f923aa35efbc110307092afda043ae3d3714d4",
+  "modelHash": "f84d08d221a7ee128297ef89dc02e5ec9a7182498fcbae7ccfff67aaac14f602",
   "checks": [
+    "酒虫仅作一转真元品质提纯，不映射战斗回复",
     "九转与各阶仙元名称",
     "七到八转基准差距大于六到七，不制造晋阶道痕",
     "一至三转真元10倍不等于伤害10倍",
@@ -3599,19 +3600,19 @@
   ],
   "sourceHashes": {
     "lore/wiki/world/cultivation-system.md": "ba9c008ee23b03c638008c46cb4a0d868e9e688bcaa91b0ac08658086a78cc4c",
-    "lore/wiki/world/primeval-essence.md": "34c45f52bac39390fa9b9cf3128c8e92b3d6b2253dc785c62269ac2f985ef845",
+    "lore/wiki/world/primeval-essence.md": "d3fcce15b731af17f6b154e72e7f496eb70095c3b5ee8ee7f1b414f4df99ff8b",
     "lore/wiki/world/aptitude-and-aperture.md": "0a27ca6394487cfc868f42024ebb7cfa8f802a09f4040f2d3f93436e5b0d5d86",
-    "lore/wiki/world/gu-care-and-refinement.md": "60263a0f651307e40422e977d9f54e90b19b2652dec62d1ea4080758f1b5f5b5",
+    "lore/wiki/world/gu-care-and-refinement.md": "b73edd7e7c8af9b17cc60ab65b6fd28eb68bb02c6c08c4e84d356b8d6f6df90c",
     "lore/wiki/rules/dao-marks.md": "3b53eb001434d1d58c075e8da4eba7c2dc9af27feaa53d1dd9830bb281c2b232",
     "lore/wiki/rules/tribulation.md": "3421705576374a6fe71795f3320f4f50fa9f7c3161b865ec119a459cf7d32d9b",
     "lore/wiki/rules/venerables.md": "1c1b4b002f004aa1bdb6f5992918ea06e2ef0699a6ef7cec0bae165236e5419c",
-    "lore/wiki/rules/refinement.md": "21480411a34046ffb2d9f9fe5eb98140c054d9c675f240eea2a1bf77b634dea9",
+    "lore/wiki/rules/refinement.md": "ecdd7d29d7c2d138f0648993977ff8b9570880410e2442a433c2cf1d5ef7a9e9",
     "lore/wiki/rules/path-realms.md": "2f955ac2e84733f150d9a6bcbfadf92f36c537784b2fb220ad686f1f286a28c2",
     "lore/wiki/rules/killer-moves.md": "1bcbffa1b3d6413351594b9e28cd3de77dd5fbe2fe7ea54dff2265c320cf5153",
     "lore/wiki/gu/moonlight-gu.md": "2898068259ddbd147aaeef4f35ccad68e1b2f285ef43df4c8c738edf4e8632e8",
     "lore/wiki/events/royal-court.md": "671fd5ee76895003eb666cb0f0d4ae959390717c677e9cef83a428224e3d7eb7",
     "lore/wiki/world/economy-roster.md": "810ba5213148d94407ee5e0ed8daddf73c77d01d469b292ca6592399960b9734",
-    "game/docs/lore/canon-index.md": "01931fdf87ab839ae7afffb319b89a4bcc84265fc34c903b266a0864617b4ca8"
+    "game/docs/lore/canon-index.md": "850a9d8bb9eb9c8292c046717eb6786b42961eb6cf3cf5e4707ad823d8b5c9f0"
   },
   "carrierMatrix": [
     {
@@ -4652,7 +4653,7 @@
   ],
   "buildsSupply": {
     "buildsFile": "C:\\Users\\90877\\work_space\\gu-zhenren\\docs\\design\\rank1-9-model\\gu-library.json",
-    "buildsFileHash": "a7e553bfd3f3a09669a807f3df51d1672b9b222bc9f917b6742d3f102619559b",
+    "buildsFileHash": "f6eef60ce7843ee79aad864d1548c3a989b870e7c5e74883be9dbb151df777bc",
     "supplyFile": "C:\\Users\\90877\\work_space\\gu-zhenren\\docs\\design\\rank1-9-model\\supply.json",
     "supplyFileHash": "ecacfb89df60dfb805978e8b7e756b7806a8d4e7bb5c2ed55a3214685e69ccf4",
     "ran": true,
@@ -4664,7 +4665,7 @@
         "samples": 30,
         "completion": 0.26666666666666666,
         "meanBattles": 85.5,
-        "meanSupport": 1602.25,
+        "meanSupport": 1210.1833333333334,
         "meanRefine": 697.4864861513247,
         "ranksCovered": [
           1,
@@ -4690,7 +4691,7 @@
         "samples": 30,
         "completion": 0.23333333333333334,
         "meanBattles": 79.7,
-        "meanSupport": 1437.1,
+        "meanSupport": 1070.7666666666667,
         "meanRefine": 657.4230828879213,
         "ranksCovered": [
           1,
@@ -4716,7 +4717,7 @@
         "samples": 30,
         "completion": 0.26666666666666666,
         "meanBattles": 85.5,
-        "meanSupport": 1570.25,
+        "meanSupport": 1178.1833333333334,
         "meanRefine": 697.4864861513247,
         "ranksCovered": [
           1,
@@ -4740,9 +4741,9 @@
         "build": "burst",
         "scenario": "refine_tail",
         "samples": 30,
-        "completion": 0.03333333333333333,
-        "meanBattles": 83.6,
-        "meanSupport": 1489.525,
+        "completion": 0.1,
+        "meanBattles": 84.3,
+        "meanSupport": 1156.1833333333334,
         "meanRefine": 1296,
         "ranksCovered": [
           1,
@@ -4760,7 +4761,7 @@
           "6转:长期筹备破产": 7,
           "6转:战败": 9,
           "8转:战败": 6,
-          "9转:长期筹备破产": 6,
+          "9转:长期筹备破产": 4,
           "8转:长期筹备破产": 1
         }
       },
@@ -4770,7 +4771,7 @@
         "samples": 30,
         "completion": 0,
         "meanBattles": 60,
-        "meanSupport": 1150.2333333333333,
+        "meanSupport": 1138.2333333333333,
         "meanRefine": 354.25140218276,
         "ranksCovered": [
           1,
@@ -4800,7 +4801,7 @@
         "samples": 30,
         "completion": 0,
         "meanBattles": 58.5,
-        "meanSupport": 1199.7,
+        "meanSupport": 1187.7,
         "meanRefine": 365.32026962668266,
         "ranksCovered": [
           1,
@@ -4828,7 +4829,7 @@
         "samples": 30,
         "completion": 0,
         "meanBattles": 72.7,
-        "meanSupport": 1491.1666666666667,
+        "meanSupport": 1479.1666666666667,
         "meanRefine": 462.93543720027566,
         "ranksCovered": [
           1,
@@ -4857,7 +4858,7 @@
         "samples": 30,
         "completion": 0,
         "meanBattles": 50.4,
-        "meanSupport": 1042.5333333333333,
+        "meanSupport": 1030.5333333333333,
         "meanRefine": 500.4,
         "ranksCovered": [
           1,
@@ -4882,9 +4883,9 @@
         "scenario": "baseline",
         "samples": 30,
         "completion": 0,
-        "meanBattles": 55,
-        "meanSupport": 1267.9333333333334,
-        "meanRefine": 368.73331788855893,
+        "meanBattles": 60.4,
+        "meanSupport": 1318.6,
+        "meanRefine": 419.81002927486776,
         "ranksCovered": [
           1,
           2,
@@ -4898,10 +4899,9 @@
         ],
         "missingRanks": [],
         "failures": {
-          "6转:战败": 16,
+          "6转:战败": 18,
           "6转:长期筹备破产": 4,
-          "6转:补给破产": 6,
-          "2转:战败": 4
+          "6转:补给破产": 8
         }
       },
       {
@@ -4909,9 +4909,9 @@
         "scenario": "supply_limited",
         "samples": 30,
         "completion": 0,
-        "meanBattles": 54.8,
-        "meanSupport": 1264.4666666666667,
-        "meanRefine": 368.73331788855893,
+        "meanBattles": 60.2,
+        "meanSupport": 1314.4666666666667,
+        "meanRefine": 419.81002927486776,
         "ranksCovered": [
           1,
           2,
@@ -4925,9 +4925,8 @@
         ],
         "missingRanks": [],
         "failures": {
-          "6转:战败": 21,
+          "6转:战败": 25,
           "6转:补给破产": 3,
-          "2转:战败": 4,
           "6转:长期筹备破产": 2
         }
       },
@@ -4936,9 +4935,9 @@
         "scenario": "key_gu_missing",
         "samples": 30,
         "completion": 0,
-        "meanBattles": 52.3,
-        "meanSupport": 1176.6,
-        "meanRefine": 343.19496219540446,
+        "meanBattles": 60.4,
+        "meanSupport": 1318.6,
+        "meanRefine": 419.81002927486776,
         "ranksCovered": [
           1,
           2,
@@ -4952,10 +4951,9 @@
         ],
         "missingRanks": [],
         "failures": {
-          "6转:战败": 15,
+          "6转:战败": 18,
           "6转:长期筹备破产": 4,
-          "6转:补给破产": 5,
-          "2转:战败": 6
+          "6转:补给破产": 8
         }
       },
       {
@@ -4963,9 +4961,9 @@
         "scenario": "refine_tail",
         "samples": 30,
         "completion": 0,
-        "meanBattles": 55,
-        "meanSupport": 1267.9333333333334,
-        "meanRefine": 576.8,
+        "meanBattles": 60.4,
+        "meanSupport": 1318.6,
+        "meanRefine": 660,
         "ranksCovered": [
           1,
           2,
@@ -4979,10 +4977,9 @@
         ],
         "missingRanks": [],
         "failures": {
-          "6转:战败": 16,
+          "6转:战败": 18,
           "6转:长期筹备破产": 4,
-          "6转:补给破产": 6,
-          "2转:战败": 4
+          "6转:补给破产": 8
         }
       }
     ],
@@ -4994,8 +4991,8 @@
     ]
   },
   "cli": {
-    "builds": "gu-library.json",
-    "supply": "supply.json",
+    "builds": "docs/design/rank1-9-model/gu-library.json",
+    "supply": "docs/design/rank1-9-model/supply.json",
     "scenarios": [
       "supply_limited",
       "key_gu_missing",
@@ -5008,5 +5005,5 @@
     "supplyNote": null,
     "supplyFileUsed": "C:\\Users\\90877\\work_space\\gu-zhenren\\docs\\design\\rank1-9-model\\supply.json"
   },
-  "runMs": 929
+  "runMs": 820
 }

@@ -46,6 +46,20 @@ for(const n of [libNote,supplyNote])if(n)console.error('提示：'+n);
 // ---------- v0.1 不变量检查（保持原序与原文） ----------
 const checks=[];
 function check(name,fn){fn();checks.push(name);}
+if(lib)check('酒虫仅作一转真元品质提纯，不映射战斗回复',()=>{
+  const wine=lib.gu?.find(g=>g.id==='wine-insect-gu');
+  assert(wine,'构筑库缺少酒虫条目');
+  assert.notEqual(wine.poweredAction,'drain','酒虫不能映射为 drain 战斗动作');
+  assert(wine.effects?.some(e=>e.kind==='essence-quality'&&/一个小境界/.test(e.note??'')),'酒虫须登记一转真元提纯一个小境界');
+  assert(!wine.effects?.some(e=>e.kind==='recovery'),'酒虫不得登记真元回复效果');
+  const visit=node=>{
+    if(Array.isArray(node))return node.forEach(visit);
+    if(!node||typeof node!=='object')return;
+    assert(node.gu!=='wine-insect-gu','构筑战斗槽位不能绑定酒虫；酒虫是修炼阶段真元提纯蛊');
+    for(const value of Object.values(node))visit(value);
+  };
+  visit(lib.builds);
+});
 check('九转与各阶仙元名称',()=>{assert.equal(P.ranks.length,9);assert.equal(rank(9).essence,'黄杏仙元');assert.throws(()=>rank(10));});
 check('七到八转基准差距大于六到七，不制造晋阶道痕',()=>{assert(scale(8)/scale(7)>scale(7)/scale(6));assert(scale(8)/scale(7,1)>scale(7)/scale(6,1));});
 check('一至三转真元10倍不等于伤害10倍',()=>{assert.equal(essenceCost(2,1).cost,1);assert.equal(essenceCost(3,1).cost,.1);assert.equal(scale(2)/scale(1),2);});
@@ -152,6 +166,8 @@ check('构筑审计：未知蛊、越阶、缺fallback、超心智容量、fallb
   assert(types([{gu:'a',poweredAction:'strike',fallbacks:[{gu:'b'}]},{gu:'b',poweredAction:'strike',fallbacks:[{gu:'a'}]},{gu:'c',poweredAction:'strike',fallbacks:[{gu:'a'}]},{gu:'d',poweredAction:'strike',fallbacks:[{gu:'a'}]},{gu:'a',poweredAction:'basic',fallbacks:[{gu:'b'}]}]).includes('capacity-exceeded'));
   const fb=auditBuilds(mk([{gu:'a',poweredAction:'burst',fallbacks:[{gu:'hi',poweredAction:'burst'}]}]));
   assert(fb.some(i=>i.type==='fallback-stronger'&&i.sFb>i.sPrim),'fallback 强于本体必须登记');
+  assert.deepEqual(auditBuilds(mk([{gu:null,poweredAction:'drain',fallbacks:[{gu:null,poweredAction:'drain'}]}])),[],'明示的匿名预算不是未知蛊');
+  assert(types([{gu:null,poweredAction:'unknown'}]).includes('unknown-action'),'匿名预算仍须合法动作');
   assert.deepEqual(auditBuilds(mk([{gu:'a',poweredAction:'strike',fallbacks:[{gu:'b',poweredAction:'strike'}]}])),[]);
 });
 check('供应解析：gu精确匹配优先于泛匹配，同级行内 first-match-wins，key_gu_missing 强制整局不可得',()=>{
@@ -245,7 +261,7 @@ const root=path.resolve(dir,'../../..');
 const report={modelVersion:P.version,parameterHash:hash(path.join(dir,'parameters.json')),modelHash:hash(path.join(dir,'model.mjs')),checks,rankRows,matrix,sensitivity,crossRank,boundaryCrossRank,economy,campaigns,representative,aptitudes,refinementRisk,sourceHashes:Object.fromEntries(sourcePaths.map(p=>[p,hash(path.join(root,p))])),carrierMatrix,tribulationCalibers,buildsSupply,cli:{builds:buildsArg,supply:supplyArg,scenarios:scenarioKeys,campaignSeeds},runNotes:{libNote,supplyNote,supplyFileUsed:supplyData?supplyFile:null},runMs};
 fs.writeFileSync(path.join(dir,'results.json'),JSON.stringify(report,null,2)+'\n');
 const pct=x=>(100*x).toFixed(1)+'%',num=x=>Number(x.toFixed(2)).toLocaleString('en-US');
-let md=`# 一至九转模型：可复算验证报告\n\n日期：2026-09-27。由 [validate.mjs](validate.mjs) 生成；主说明见 [README](README.md)。仅验证此模型，不代表玩家体验或既有游戏验收。\n\n参数 SHA-256：\`${report.parameterHash}\`。\n\n## 规则与边界\n\n${checks.map(s=>'- 通过：'+s).join('\n')}\n\n## 九转标尺\n\n所有生命/伤害/概率都是游戏设计值。生命是战斗耐受，不是原著肉身实测。\n\n|转数|仙元/真元|初始耐受|标准攻击|道痕起点→终点|准备后炼制率|完整周期灾劫事件|\n|---|---|---:|---:|---|---:|---:|\n`;
+let md=`# 一至九转模型：可复算验证报告\n\n日期：2026-09-27。由 [validate.mjs](validate.mjs) 生成；主说明见 [README](README.md)。仅验证此模型，不代表玩家体验或既有游戏验收。burst/balanced/sustain 是数值测试配置，不是已完成的流派蛊虫构筑；现有 69 蛊的构筑证据盘点见[库存关系](inventory-combinations.md)。\n\n参数 SHA-256：\`${report.parameterHash}\`。\n\n## 规则与边界\n\n${checks.map(s=>'- 通过：'+s).join('\n')}\n\n## 九转标尺\n\n所有生命/伤害/概率都是游戏设计值。生命是战斗耐受，不是原著肉身实测。\n\n|转数|仙元/真元|初始耐受|标准攻击|道痕起点→终点|准备后炼制率|完整周期灾劫事件|\n|---|---|---:|---:|---|---:|---:|\n`;
 md+=rankRows.map(x=>`|${x.rank}|${x.essence}|${num(x.hpStart)}|${num(x.strikeStart)}|${x.marksStart}→${x.marksEnd}|${pct(x.refineSuccess)}|${x.tribulations}|`).join('\n');
 md+='\n\n六至八转的事件为完整账本，重合时间同时记入；九转的 0 表示未编造周期，不表示无灾劫。\n\n## 战斗矩阵\n\n每行100个种子；同转初始道痕、满状态；策略为固定脚本，无配方抽取、玩家学习或实战操作。\n\n|转|敌人|构筑|胜率|平均回合|剩余耐受|\n|---|---|---|---:|---:|---:|\n';
 md+=matrix.map(x=>`|${x.rank}|${x.enemy}|${x.build}|${pct(x.winRate)}|${num(x.turns)}|${pct(x.remainingHp)}|`).join('\n');
@@ -262,7 +278,7 @@ mdV02+=carrierMatrix.map(x=>`|${x.rank}|${x.enemy}|${x.build}|${pct(x.winRate)}|
 mdV02+=`\n\n## 灾劫两口径对照（v0.2）\n\n同一账本接口（alive/injury/ecology/marks/power/margin）下的两种结算：聚合代理（resolveTribulation，v0.1 口径）与实战口径（tribulationFight：敌人=载体模板×tribulationPower 威能倍率）。实战口径 margin=剩余耐受/${P.carriers.tribulationMarginRef} 仅用于与代理口径同轴对比，不再作为生死门槛；存活后道痕记法与生态修复费公式与代理口径完全相同。preparation=1、rewardMultiplier=1、每行 ${campaignSeeds} 个种子；实战口径未接蛊库（§4.1 占位动作口径），升仙与成尊仍是聚合代理。\n\n|构筑|口径|完成率|平均场次|失败位置与原因|\n|---|---|---:|---:|---|\n`;
 mdV02+=tribulationCalibers.map(x=>`|${x.build}|${x.caliber==='aggregate'?'聚合代理':'实战载体'}|${pct(x.completion)}|${num(x.meanBattles)}|${JSON.stringify(x.failures)}|`).join('\n');
 if(buildsSupply){
-  mdV02+=`\n\n## 真实构筑×供应（v0.2，--builds）\n\n构筑库：\`${buildsSupply.buildsFile}\`（SHA-256 \`${buildsSupply.buildsFileHash??'—'}\`）；供应：\`${buildsSupply.supplyFile}\`${buildsSupply.supplyFileHash?`（SHA-256 \`${buildsSupply.supplyFileHash}\`）`:'（未提供，按全可得基线）'}。场景臂：${buildsSupply.arms.filter(a=>a!=='baseline'&&a.startsWith('未提供')===false).join('、')||'无'}；每行 ${campaignSeeds} 个种子；preparation=1、rewardMultiplier=1；灾劫用聚合代理口径。构筑静态审计问题 ${buildsSupply.auditIssues.length} 条${buildsSupply.auditIssues.length?'（明细见 results.json 的 buildsSupply.auditIssues）':'（防套利口径全部通过）'}。供养合计与炼制费为全程账本累计（一至五转元石、六至九转仙元石混计，仅作同表量级对照，不跨币相加解读）；complete 与失败分布见下表，缺失转数指该构筑未声明槽位的阶段（引擎退回基础动作、供养按 0 计）。\n\n|构筑|场景|样本|完成率|平均场次|供养合计均值|炼制费合计均值|缺档转数|失败位置与原因|\n|---|---|---:|---:|---:|---:|---:|---|---|\n`;
+  mdV02+=`\n\n## 数值测试配置×供应（v0.2，--builds）\n\n测试配置库：\`${buildsSupply.buildsFile}\`（SHA-256 \`${buildsSupply.buildsFileHash??'—'}\`）；供应：\`${buildsSupply.supplyFile}\`${buildsSupply.supplyFileHash?`（SHA-256 \`${buildsSupply.supplyFileHash}\`）`:'（未提供，按全可得基线）'}。场景臂：${buildsSupply.arms.filter(a=>a!=='baseline'&&a.startsWith('未提供')===false).join('、')||'无'}；每行 ${campaignSeeds} 个种子；preparation=1、rewardMultiplier=1；灾劫用聚合代理口径。槽位静态审计问题 ${buildsSupply.auditIssues.length} 条${buildsSupply.auditIssues.length?'（明细见 results.json 的 buildsSupply.auditIssues）':'（防套利口径全部通过）'}。供养合计与炼制费为全程账本累计（一至五转元石、六至九转仙元石混计，仅作同表量级对照，不跨币相加解读）；complete 与失败分布见下表，缺失转数指该配置未声明槽位的阶段（引擎退回基础动作、供养按 0 计）。\n\n|测试配置|场景|样本|完成率|平均场次|供养合计均值|炼制费合计均值|缺档转数|失败位置与原因|\n|---|---|---:|---:|---:|---:|---:|---|---|\n`;
   mdV02+=buildsSupply.rows.map(x=>`|${x.build}|${x.scenario}|${x.samples}|${pct(x.completion)}|${num(x.meanBattles)}|${num(x.meanSupport)}|${num(x.meanRefine)}|${x.missingRanks.length?x.missingRanks.join('/'):'—'}|${JSON.stringify(x.failures)}|`).join('\n');
 }
 const cutIdx=md.indexOf('## 已知验证限制');
@@ -272,7 +288,7 @@ const v02Limits=[
   '升仙、八转后研究与成尊条件仍是聚合代理；实战口径只替换六至八转灾劫结算，替换后完成率显著下降是如实记录的漂移，不为变绿调参。',
   '高阶同转沿用同一战术模板，载体矩阵跨转的相似结果是尺度归一化的产物，不是独立的高阶内容证据。',
   '场景 priceMultiplier（如 supply_limited 的 market ×1.4 稀缺溢价）未进入引擎记账：v0.2 引擎无购置扣费，供养按行内价格倍率计；渠道稀缺表现为当期不可得→构筑 fallback/占位，未实现「等待期数」报告。',
-  buildsSupply?'「真实构筑×供应」节来自命令行指定的构筑库，属临时验证输入，不构成内容交付；gu-library.json 正式交付后须重跑。':`未运行「真实构筑×供应」节：未给 --builds${libNote?'（'+libNote+'）':''}；gu-library.json 交付后以 --builds 接入，默认运行不依赖该文件。`,
+  buildsSupply?'「数值测试配置×供应」节来自命令行指定的蛊库，检验旧动作槽与供应回落；不构成完整流派蛊虫构筑或玩家体验的证据。':`未运行「数值测试配置×供应」节：未给 --builds${libNote?'（'+libNote+'）':''}；需以 --builds 接入研究蛊库，默认运行不依赖该文件。`,
   supplyData?`供应数据取自 ${supplyFile}；未命中任何 supply 行的蛊落到 market 默认（可得、价格倍率 1）。`:'本轮未加载供应数据文件：供应数据边界检查跳过，场景臂按全可得基线运行。',
   'model.mjs 存在四处登记在案的修复级改动（供应乘数形态、通配匹配、审计覆盖、兽群系数键域，见 [engine-v02](engine-v02.md) §4）；模型哈希因此与 v0.1 报告不同，beastPack 相关行数字随之漂移。',
 ];
