@@ -10,8 +10,9 @@ const RECIPES = {
   whitejade: { name: '白玉方', input: '玉皮蛊 + 白豕蛊', result: '二转白玉蛊', source: 'lore/wiki/world/gu-care-and-refinement.md:15710 · lore/wiki/gu/roster-3.md:white_jade_gu' },
 };
 const META_KEY = 'wenzhen_gu_run_recipes_v1';
-const CHECKPOINT_KEY = 'wenzhen_gu_run_checkpoint_v1';
-const CHECKPOINT_VERSION = 1;
+const LEGACY_CHECKPOINT_KEY = 'wenzhen_gu_run_checkpoint_v1';
+const CHECKPOINT_KEY = 'wenzhen_gu_run_checkpoint_v2';
+const CHECKPOINT_VERSION = 2;
 function loadMeta() {
   try {
     const saved = JSON.parse(localStorage.getItem(META_KEY) || '{}');
@@ -50,6 +51,13 @@ const ECO = {
 const A = MODEL.aptitude.value;
 const HP_MAX = MODEL.combat.baseHp;
 const MP_MAX = Math.round(100 * A);
+const STAGE_NAMES = ['初阶', '中阶', '高阶', '巅峰'];
+const PRACTICE_PER_STAGE = 4; // model: 12 进度 / 每次 +3
+const BREAKTHROUGH_RESERVE = 55; // Wiki E:V1-014352：一转冲二转的真元准备量
+const BREAKTHROUGH_COST = 12; // [Design] 原型中的闭关费用
+function essenceQuality() { return run.rank === 2 ? 10 : 1; }
+function maxMp() { return MP_MAX * essenceQuality(); } // 青铜真元当量；元海仍为资质限定的 44%
+function actionCost(c) { return c.cost * ((c.rank || 1) === 2 ? 10 : 1); }
 // 一转心智容量 C=4（模型 thoughtCapacity[0]）：出战编制上限
 const READY_MAX = 4;
 
@@ -96,15 +104,12 @@ const GU = {
   },
   boar: {
     id: 'boar',
-    name: '白豕蛊 · 爆发',
-    ap: MODEL.actions.burst.ap,
-    cost: MODEL.actions.burst.mortalCost,
-    desc: `爆发 ${MODEL.actions.burst.damage} · 真元 ${MODEL.actions.burst.mortalCost} · 冷却 ${MODEL.actions.burst.cooldown}`,
-    kind: 'atk',
-    dmg: MODEL.actions.burst.damage,
-    cls: 'burst',
-    burst: true,
-    cooldown: MODEL.actions.burst.cooldown,
+    name: '白豕蛊 · 锻体',
+    ap: 0,
+    cost: 0,
+    desc: '闭关催用消耗真元，逐步增强肉身；已得之力常驻，拳脚不耗真元',
+    kind: 'cultivation',
+    cls: 'none',
   },
   // —— 扩充：同一套模型预算下的不同打法 ——
   moonray: {
@@ -152,22 +157,11 @@ const GU = {
   winebug: {
     id: 'winebug',
     name: '酒虫',
-    ap: 1,
+    ap: 0,
     cost: 0,
-    desc: '凝元：回 12 真元 · 0 费但占 AP（续航位）',
-    kind: 'restore',
-    restore: 12,
+    desc: '闭关时同转提纯：4 份本阶真元转为 1 份高一小境界真元；巅峰无效',
+    kind: 'cultivation',
     cls: 'none',
-  },
-  bear: {
-    id: 'bear',
-    name: '熊力蛊',
-    ap: 1,
-    cost: 4,
-    desc: '近身 16 伤 · 4 真元（便宜的第二输出点）',
-    kind: 'atk',
-    dmg: 16,
-    cls: 'basic',
   },
   // 炼成产物
   moonglow: {
@@ -176,7 +170,7 @@ const GU = {
     rank: 2, // Wiki: ST-MOONGLOW-03 / E:V1-017144
     ap: MODEL.actions.burst.ap,
     cost: MODEL.actions.burst.mortalCost,
-    desc: `炼成：月光+双小光。[Canon] 相对月光攻击三倍；[Design] 爆发 ${MODEL.actions.strike.damage * 3} · 冷却 ${MODEL.actions.burst.cooldown}`,
+    desc: `炼成：月光+双小光。[Canon] 相对月光攻击三倍；[Design] 爆发 ${MODEL.actions.strike.damage * 3} · 赤铁真元 25 份（250 青铜当量） · 冷却 ${MODEL.actions.burst.cooldown}`,
     kind: 'atk',
     dmg: MODEL.actions.strike.damage * 3,
     cls: 'burst',
@@ -190,7 +184,7 @@ const GU = {
     rank: 2, // Wiki: roster-3 white_jade_gu / E:V1-009986
     ap: MODEL.actions.guard.ap,
     cost: 10,
-    desc: '炼成：玉皮+白豕（[Canon] 配方）；[Design] 重盾 32 · 真元 10',
+    desc: '炼成：玉皮+白豕（[Canon] 配方）；[Design] 重盾 32 · 赤铁真元 10 份（100 青铜当量）',
     kind: 'def',
     shield: 32,
     cls: 'none',
@@ -207,34 +201,10 @@ const KILLER_MOVES = [
     desc: '月光借小光加倍（×2）',
   },
   {
-    id: 'vineBoar',
-    name: '杀招 · 藤力绞杀',
-    need: ['vine', 'boar'],
-    desc: '额外 +12 伤，敌下一手再 −8',
-  },
-  {
-    id: 'jadeBoar',
-    name: '杀招 · 皮力互济',
-    need: ['jade', 'boar'],
-    desc: '护盾 20 + 反击 15',
-  },
-  {
-    id: 'wineMoon',
-    name: '杀招 · 回元养锋',
-    need: ['winebug', 'moon'],
-    desc: '本回合结束回 6 真元',
-  },
-  {
     id: 'hardGate',
     name: '杀招 · 硬气封门',
     need: ['hardqi', 'jade'],
     desc: '护盾合计 28 · 本回合免疫扰元',
-  },
-  {
-    id: 'whiteWall',
-    name: '杀招 · 白玉当关',
-    need: ['whitejade', 'boar'],
-    desc: '护盾 32 · 反击 20 · 爆发不另计冷却',
   },
   {
     id: 'raySmall',
@@ -307,7 +277,6 @@ const SEGS = [
     options: [
       { id: 'fight', kind: 'fight', label: '拦路战 · 快攻', hint: '收益 24U · skirmisher', pick: 0 },
       { id: 'rest', kind: 'rest', label: '路边休整', hint: '回状态 · 少量供养' },
-      { id: 'breakthrough', kind: 'breakthrough', label: '闭关冲二转', hint: '[Design] 12U · 本段机会 · 可催二转蛊' },
     ],
   },
   {
@@ -350,6 +319,11 @@ const run = {
   seg: 0,
   wallet: ECO.startingWallet,
   rank: 1,
+  minorStage: 0,
+  practice: 0,
+  aid: false,
+  strength: 0,
+  restUsed: false,
   randomState: baseSeed,
   learnedThisLife: [],
   hp: HP_MAX,
@@ -361,7 +335,7 @@ const run = {
     jade: { ...GU.jade, alive: true },
     boar: { ...GU.boar, alive: true },
   },
-  spent: { feed: 0, heal: 0, refine: 0, field: 0, study: 0, breakthrough: 0 },
+  spent: { feed: 0, heal: 0, refine: 0, field: 0, study: 0, practice: 0, breakthrough: 0 },
   earned: 0,
   log: [],
   // battle state
@@ -372,7 +346,7 @@ const run = {
   chargeBonus: 0,
   packUnits: 0,
   picked: [],
-  ready: ['moon', 'small', 'jade', 'boar'],
+  ready: ['moon', 'small', 'jade'],
   burstCd: 0,
   guard: 0,
   turn: 1,
@@ -394,7 +368,7 @@ function hasGu(id) {
 
 function activeCards() {
   // 仅允许当前转数可催动的蛊进入战斗。
-  return ['fist', ...run.ready].filter((id) => id === 'fist' || (hasGu(id) && (GU[id].rank || 1) <= run.rank));
+  return ['fist', ...run.ready].filter((id) => id === 'fist' || (hasGu(id) && GU[id].kind !== 'cultivation' && (GU[id].rank || 1) <= run.rank));
 }
 
 function ownedGuIds() {
@@ -406,6 +380,11 @@ function resetRun() {
   run.seg = 0;
   run.wallet = ECO.startingWallet;
   run.rank = 1;
+  run.minorStage = 0;
+  run.practice = 0;
+  run.aid = false;
+  run.strength = 0;
+  run.restUsed = false;
   run.randomState = baseSeed;
   run.learnedThisLife = [];
   run.hp = HP_MAX;
@@ -417,7 +396,7 @@ function resetRun() {
     jade: { ...GU.jade, alive: true },
     boar: { ...GU.boar, alive: true },
   };
-  run.spent = { feed: 0, heal: 0, refine: 0, field: 0, study: 0, breakthrough: 0 };
+  run.spent = { feed: 0, heal: 0, refine: 0, field: 0, study: 0, practice: 0, breakthrough: 0 };
   run.earned = 0;
   run.log = [];
   run.enemy = null;
@@ -429,7 +408,7 @@ function resetRun() {
   run.pendingFight = null;
   run.enemyWeaken = 0;
   run.picked = [];
-  run.ready = ['moon', 'small', 'jade', 'boar'];
+  run.ready = ['moon', 'small', 'jade'];
   run.burstCd = 0;
   run.guard = 0;
   run.turn = 1;
@@ -442,6 +421,7 @@ function resetRun() {
 function resetPrototypeFromZero() {
   try {
     localStorage.removeItem(META_KEY);
+    localStorage.removeItem(LEGACY_CHECKPOINT_KEY);
     localStorage.removeItem(CHECKPOINT_KEY);
   } catch { /* storage may be unavailable */ }
   meta = { life: 1, completed: 0, known: [] };
@@ -471,11 +451,12 @@ function finiteInt(value, min, max) {
 function validCheckpoint(saved) {
   if (!saved || saved.version !== CHECKPOINT_VERSION || saved.seed !== baseSeed || saved.life !== meta.life) return false;
   const s = saved.run;
-  const runFields = ['screen', 'seg', 'wallet', 'rank', 'randomState', 'learnedThisLife', 'hp', 'mp', 'wounds', 'gu', 'spent', 'earned', 'log', 'enemy', 'enemyHp', 'enemyMax', 'patternIdx', 'chargeBonus', 'packUnits', 'picked', 'ready', 'burstCd', 'guard', 'turn', 'battleOver', 'battleWon', 'pendingFight', 'enemyWeaken'];
+  const runFields = ['screen', 'seg', 'wallet', 'rank', 'minorStage', 'practice', 'aid', 'strength', 'restUsed', 'randomState', 'learnedThisLife', 'hp', 'mp', 'wounds', 'gu', 'spent', 'earned', 'log', 'enemy', 'enemyHp', 'enemyMax', 'patternIdx', 'chargeBonus', 'packUnits', 'picked', 'ready', 'burstCd', 'guard', 'turn', 'battleOver', 'battleWon', 'pendingFight', 'enemyWeaken'];
   if (!s || typeof s !== 'object' || Array.isArray(s) || Object.keys(s).length !== runFields.length || Object.keys(s).some((key) => !runFields.includes(key))) return false;
-  if (!s || !['intro', 'seg', 'prep', 'battle', 'shop', 'rest', 'refine'].includes(s.screen)) return false;
-  if (!finiteInt(s.seg, 0, SEGS.length - 1) || !finiteInt(s.wallet, 0, 100000) || !finiteInt(s.rank, 1, 9) ||
-      !finiteInt(s.randomState, 0, 0xffffffff) || !finiteInt(s.hp, 0, HP_MAX) || !finiteInt(s.mp, 0, MP_MAX) ||
+  if (!s || !['intro', 'seg', 'cultivate', 'prep', 'battle', 'shop', 'rest', 'refine'].includes(s.screen)) return false;
+  if (!finiteInt(s.seg, 0, SEGS.length - 1) || !finiteInt(s.wallet, 0, 100000) || !finiteInt(s.rank, 1, 2) ||
+      !finiteInt(s.minorStage, 0, 3) || !finiteInt(s.practice, 0, PRACTICE_PER_STAGE - 1) || typeof s.aid !== 'boolean' || !finiteInt(s.strength, 0, 1) || typeof s.restUsed !== 'boolean' ||
+      !finiteInt(s.randomState, 0, 0xffffffff) || !finiteInt(s.hp, 0, HP_MAX) || !finiteInt(s.mp, 0, MP_MAX * (s.rank === 2 ? 10 : 1)) ||
       !finiteInt(s.wounds, 0, 1000) || !finiteInt(s.earned, 0, 100000) || !finiteInt(s.burstCd, 0, 100) ||
       !finiteInt(s.guard, 0, 10000) || !finiteInt(s.turn, 1, MODEL.combat.maxTurns + 1) ||
       !finiteInt(s.patternIdx, 0, 10000) || !finiteInt(s.enemyHp, 0, 100000) || !finiteInt(s.enemyMax, 0, 100000) ||
@@ -492,7 +473,7 @@ function validCheckpoint(saved) {
       !s.picked.every((id) => id === 'fist' || guIds.has(id)) || new Set(s.picked).size !== s.picked.length ||
       !listOfGu(s.learnedThisLife, Object.keys(RECIPES).length)) return false;
   if (s.picked.some((id) => !s.ready.includes(id) && id !== 'fist')) return false;
-  const spentKeys = ['feed', 'heal', 'refine', 'field', 'study', 'breakthrough'];
+  const spentKeys = ['feed', 'heal', 'refine', 'field', 'study', 'practice', 'breakthrough'];
   if (!s.spent || Object.keys(s.spent).some((key) => !spentKeys.includes(key)) || spentKeys.some((key) => !finiteInt(s.spent[key], 0, 100000))) return false;
   if (!Array.isArray(s.log) || s.log.length > 80 || s.log.some((l) => !l || typeof l.kind !== 'string' || l.kind.length > 40 || typeof l.text !== 'string' || l.text.length > 500 || typeof l.cls !== 'string' || !['', 'good', 'hit'].includes(l.cls) || !finiteInt(l.seg, 0, SEGS.length - 1) || !finiteInt(l.life, 1, 100000))) return false;
   if (s.learnedThisLife.some((id) => !RECIPES[id])) return false;
@@ -544,6 +525,7 @@ function chooseOption(opt) {
   }
   if (opt.kind === 'rest') {
     run.screen = 'rest';
+    run.restUsed = false;
     render();
     return;
   }
@@ -557,20 +539,60 @@ function chooseOption(opt) {
     render();
     return;
   }
-  if (opt.kind === 'breakthrough') {
-    const cost = 12; // [Design] 五段原型压缩的一次破境选择，不是原著晋升公式。
-    if (run.wallet < cost) {
-      addLog('破境', `需 ${cost}U，元石不足。`);
-      render();
-      return;
-    }
-    run.wallet -= cost;
-    run.spent.breakthrough += cost;
-    run.rank = 2;
-    addLog('破境', `选闭关冲二转 · −${cost}U · 放弃本段战斗/休整（[Design]）。`, 'good');
-    nextSeg();
+}
+
+function practiceCultivation(useWine) {
+  if (run.rank !== 1 || run.minorStage >= 3) return;
+  if (useWine && !hasGu('winebug')) return;
+  const essence = useWine ? 4 : MODEL.progression?.practiceEssenceCost || 10;
+  const cost = MODEL.progression?.practiceMoneyCost || 2;
+  if (run.mp < essence || run.wallet < cost) {
+    addLog('修行', `每次需真元 ${essence}、元石 ${cost}U；当前不足。`);
+    render();
     return;
   }
+  run.mp -= essence;
+  run.wallet -= cost;
+  run.spent.practice += cost;
+  run.practice += useWine ? 2 : 1;
+  run.mp = Math.min(maxMp(), run.mp + essence); // 模型：八小时内自然恢复本次修炼支出；酒虫不凭空生元。
+  addLog('修行', `${useWine ? '酒虫提纯 4→1 份高一小境界真元并用于冲膜' : '闭关温养元海'} · 进度 ${Math.min(run.practice, PRACTICE_PER_STAGE)}/${PRACTICE_PER_STAGE} · 催用 ${essence} 真元，8 小时恢复 · −${cost}U（酒虫进度 +2 为 [Design]）。`);
+  if (run.practice >= PRACTICE_PER_STAGE) {
+    run.minorStage += 1;
+    run.practice = 0;
+    addLog('小境界', `一转${STAGE_NAMES[run.minorStage]}；元海容量仍为 ${MP_MAX}%`, 'good');
+  }
+  render();
+}
+
+function imprintBoar() {
+  if (!hasGu('boar') || run.strength) return;
+  const cost = 10;
+  if (run.mp < cost) { addLog('锻体', `白豕催用需 ${cost} 真元。`); render(); return; }
+  run.mp -= cost;
+  run.strength = 1;
+  addLog('锻体', `白豕催用 −${cost} 真元；肉身获得一份猪力。此后拳脚不再为这份力量消耗真元，即使蛊炼失也保留（伤害 +8 为 [Design]）。`, 'good');
+  render();
+}
+
+function breakthrough() {
+  if (run.rank !== 1) return;
+  const missing = Math.max(0, BREAKTHROUGH_RESERVE - MP_MAX);
+  if (run.minorStage < 3 || !run.aid || run.mp < MP_MAX || run.wallet < BREAKTHROUGH_COST) {
+    addLog('破境', `需一转巅峰、满 ${MP_MAX}% 元海、另筹 ${missing}% 冲窍外援与 ${BREAKTHROUGH_COST}U；当前条件未齐。`);
+    render();
+    return;
+  }
+  run.wallet -= BREAKTHROUGH_COST;
+  run.spent.breakthrough += BREAKTHROUGH_COST;
+  run.mp = 0; // 冲窍耗尽现有青铜真元；随后模拟闭关稳定恢复，不直接给满池。
+  run.aid = false;
+  run.rank = 2;
+  run.minorStage = 0;
+  run.practice = 0;
+  run.mp = Math.round(maxMp() * 0.6); // [Design] 冲窍后的闭关恢复至六成，并非原著固定恢复率。
+  addLog('破境', `一转巅峰蓄满 ${MP_MAX}% 元海，借外援补足 ${missing}% 冲开晶膜 · −${BREAKTHROUGH_COST}U。原有青铜真元耗尽；闭关稳定后恢复 ${run.mp}/${maxMp()} 青铜当量赤铁真元（六成恢复属 [Design]）。`, 'good');
+  render();
 }
 
 function nextSeg() {
@@ -600,7 +622,7 @@ function payFeed() {
 
 function toggleReady(id) {
   if (id === 'fist') return;
-  if (!hasGu(id)) return;
+  if (!hasGu(id) || GU[id].kind === 'cultivation') return;
   if ((GU[id].rank || 1) > run.rank) {
     addLog('编制', `${GU[id].name}是二转蛊，当前一转不能出战。`);
     render();
@@ -635,8 +657,8 @@ function startBattle(pickIdx, final) {
   run.battleWon = false;
   run.pendingFight = null;
   run.screen = 'battle';
-  run.ready = run.ready.filter((id) => hasGu(id) && (GU[id].rank || 1) <= run.rank);
-  if (!run.ready.length) run.ready = ownedGuIds().filter((id) => (GU[id].rank || 1) <= run.rank).slice(0, READY_MAX);
+  run.ready = run.ready.filter((id) => hasGu(id) && GU[id].kind !== 'cultivation' && (GU[id].rank || 1) <= run.rank);
+  if (!run.ready.length) run.ready = ownedGuIds().filter((id) => GU[id].kind !== 'cultivation' && (GU[id].rank || 1) <= run.rank).slice(0, READY_MAX);
   while (run.ready.length > READY_MAX) run.ready.pop();
   // 出场消耗 fieldCost（模型）
   if (run.wallet >= ECO.fieldCost) {
@@ -652,12 +674,18 @@ function currentIntent() {
   return run.enemy.patterns[run.patternIdx % run.enemy.patterns.length];
 }
 
+function grantBreakthroughAid() {
+  if (run.rank !== 1 || run.aid || !['skirmisher', 'armored'].includes(run.enemy.id)) return;
+  run.aid = true;
+  addLog('外援', '这场战果换得一次冲窍外援资格；丙等 44% 元海仍需另补 11% 冲窍准备量。[Design] 外援来源与取得方式。', 'good');
+}
+
 function pickedAp() {
   return run.picked.reduce((s, id) => s + GU[id].ap, 0);
 }
 
 function pickedCost() {
-  return run.picked.reduce((s, id) => s + GU[id].cost, 0);
+  return run.picked.reduce((s, id) => s + actionCost(GU[id]), 0);
 }
 
 function comboActive() {
@@ -678,8 +706,8 @@ function togglePick(id) {
     render();
     return;
   }
-  if (pickedCost() + c.cost > run.mp) {
-    addLog('真元', `真元不足，差 ${pickedCost() + c.cost - run.mp}。`);
+  if (pickedCost() + actionCost(c) > run.mp) {
+    addLog('真元', `真元不足，差 ${pickedCost() + actionCost(c) - run.mp} 青铜当量。`);
     render();
     return;
   }
@@ -704,14 +732,12 @@ function resolveTurn() {
   let extraCounter = 0;
   let weakenAmt = 0;
   let heal = 0;
-  let restore = 0;
   let immuneSteal = false;
-  let refundMp = 0;
 
   run.picked.forEach((id) => {
     const c = GU[id];
     if (c.kind === 'atk') {
-      let d = c.dmg;
+      let d = c.dmg + (id === 'fist' ? run.strength * 8 : 0); // [Design] 已刻印的白豕之力常驻增伤
       if (id === 'moon' && combo) {
         d *= 2;
         notes.push('杀招·月刃同心 ×2');
@@ -743,41 +769,18 @@ function resolveTurn() {
       notes.push(`护盾 ${c.shield}`);
     } else if (c.kind === 'heal') {
       heal += c.heal || 0;
-    } else if (c.kind === 'restore') {
-      restore += c.restore || 0;
     }
   });
 
   // 杀招加成
-  if (killerIds.has('vineBoar')) {
-    dmg += 12;
-    weakenAmt += 8;
-    notes.push('杀招·藤力绞杀 +12 / 敌再 −8');
-  }
-  if (killerIds.has('jadeBoar')) {
-    extraShield += 20;
-    extraCounter += 15;
-    notes.push('杀招·皮力互济 盾20/反15');
-  }
-  if (killerIds.has('wineMoon')) {
-    refundMp += 6;
-    notes.push('杀招·回元养锋 +6 元');
-  }
   if (killerIds.has('hardGate')) {
     extraShield += 28;
     immuneSteal = true;
     notes.push('杀招·硬气封门 盾28/免扰元');
   }
-  if (killerIds.has('whiteWall')) {
-    extraShield += 32;
-    extraCounter += 20;
-    usedBurst = false; // 杀招承担爆发
-    notes.push('杀招·白玉当关 盾32/反20');
-  }
   if (extraShield > 0) run.guard = Math.max(run.guard, extraShield);
 
   run.mp = Math.max(0, run.mp - pickedCost());
-  run.mp = Math.min(MP_MAX, run.mp + restore + refundMp);
   if (heal > 0) {
     run.hp = Math.min(HP_MAX, run.hp + heal);
     notes.push(`治疗 +${heal}`);
@@ -817,6 +820,7 @@ function resolveTurn() {
       const pay = ECO.grossPerPeriod;
       run.wallet += pay;
       run.earned += pay;
+      grantBreakthroughAid();
       addLog('胜', `反击收掉 ${run.enemy.name} · +${pay}U`, 'good');
       render();
       return;
@@ -835,6 +839,7 @@ function resolveTurn() {
     const pay = ECO.grossPerPeriod;
     run.wallet += pay;
     run.earned += pay;
+    grantBreakthroughAid();
     addLog('胜', `击破 ${run.enemy.name} · 毛收 +${pay}U`, 'good');
     render();
     return;
@@ -909,8 +914,9 @@ function resolveTurn() {
 /* ---------- 休整 / 商店 / 炼台 ---------- */
 
 function doRest(mode) {
+  if (run.restUsed) { addLog('休整', '此处已经休整过一次。'); render(); return; }
   if (mode === 'full') {
-    const cost = ECO.recoverFullHp;
+    const cost = ECO.recoverFullHp * essenceQuality();
     if (run.wallet < cost) {
       addLog('休整', `满耐需 ${cost}U，不够。`);
       render();
@@ -919,10 +925,10 @@ function doRest(mode) {
     run.wallet -= cost;
     run.spent.heal += cost;
     run.hp = HP_MAX;
-    run.mp = MP_MAX;
+    run.mp = maxMp();
     addLog('休整', `满耐满元 · −${cost}U`);
   } else if (mode === 'half') {
-    const cost = Math.round(ECO.recoverFullHp / 2);
+    const cost = Math.round(ECO.recoverFullHp * essenceQuality() / 2);
     if (run.wallet < cost) {
       addLog('休整', `半耐需 ${cost}U，不够。`);
       render();
@@ -931,21 +937,22 @@ function doRest(mode) {
     run.wallet -= cost;
     run.spent.heal += cost;
     run.hp = Math.min(HP_MAX, run.hp + Math.round(HP_MAX * 0.5));
-    run.mp = Math.min(MP_MAX, run.mp + Math.round(MP_MAX * 0.5));
+    run.mp = Math.min(maxMp(), run.mp + Math.round(maxMp() * 0.5));
     addLog('休整', `半耐半元 · −${cost}U`);
   } else {
     // 免费小休 + 供养结算
     run.hp = Math.min(HP_MAX, run.hp + 15);
-    run.mp = Math.min(MP_MAX, run.mp + 10);
-    addLog('休整', '免费小休：+15 耐 / +10 元');
+    run.mp = Math.min(maxMp(), run.mp + 10 * essenceQuality());
+    addLog('休整', `免费小休：+15 耐 / +${10 * essenceQuality()} 青铜当量`);
     payFeed();
   }
+  run.restUsed = true;
   render();
 }
 
 function doShop(mode) {
   if (mode === 'mp') {
-    const pts = 20;
+    const pts = 20 * essenceQuality();
     const costU = Math.ceil(pts * ECO.mortalRefillPerPoint);
     if (run.wallet < costU) {
       addLog('商队', `补 ${pts} 真元需 ${costU}U，不够。`);
@@ -953,7 +960,7 @@ function doShop(mode) {
       return;
     }
     run.wallet -= costU;
-    run.mp = Math.min(MP_MAX, run.mp + pts);
+    run.mp = Math.min(maxMp(), run.mp + pts);
     addLog('商队', `真元 +${pts} · −${costU}U（${ECO.mortalRefillPerPoint}U/点）`);
   } else if (mode === 'hp') {
     const cost = 6;
@@ -967,7 +974,8 @@ function doShop(mode) {
     addLog('商队', `耐受 +30 · −${cost}U`);
   } else if (mode.startsWith('buy:')) {
     const id = mode.slice(4);
-    const prices = { small: 8, boar: 16, moonray: 14, vine: 12, herb: 10, hardqi: 12, winebug: 10, bear: 11 };
+    const prices = { small: 8, boar: 16, moonray: 14, vine: 12, herb: 10, hardqi: 12, winebug: 10 };
+    if (!Object.hasOwn(prices, id)) return;
     const cost = prices[id] || 16;
     if (id === 'small') {
       const count = hasGu('small') ? run.gu.small.n || 1 : 0;
@@ -991,8 +999,8 @@ function doShop(mode) {
     }
     run.wallet -= cost;
     run.gu[id] = { ...GU[id], alive: true };
-    if (run.ready.length < READY_MAX && !run.ready.includes(id)) run.ready.push(id);
-    addLog('商队', `购入 ${GU[id].name} · −${cost}U${run.ready.includes(id) ? '（已进编制）' : '（编制已满，请备战时替换）'}`);
+    if (GU[id].kind !== 'cultivation' && run.ready.length < READY_MAX && !run.ready.includes(id)) run.ready.push(id);
+    addLog('商队', `购入 ${GU[id].name} · −${cost}U${GU[id].kind === 'cultivation' ? '（闭关用，不占出战编制）' : run.ready.includes(id) ? '（已进编制）' : '（编制已满，请备战时替换）'}`);
   }
   render();
 }
@@ -1009,7 +1017,7 @@ function studyRecipe(id) {
 }
 
 function doRefine(kind) {
-  if (kind !== 'trade' && !knowsRecipe(kind)) {
+  if (!knowsRecipe(kind)) {
     addLog('炼台', `尚未掌握${RECIPES[kind]?.name || '此方'}；去商队抄方或带着上一世记忆再来。`);
     render();
     return;
@@ -1040,7 +1048,7 @@ function doRefine(kind) {
       run.ready = run.ready.filter((id) => hasGu(id));
       if (run.rank >= 2 && run.ready.length < READY_MAX) run.ready.push('moonglow');
       addLog('炼成', `月芒成 · 吃掉月光与双小光 · −${fee}U`, 'good');
-      addLog('转型', '旧组合没了。爆发位更强，协同与续航方式变了。');
+      addLog('转型', '月光与双小光合成一只二转蛊，原先的双蛊协同不再可用。');
     } else {
       run.gu.moon.alive = false;
       run.gu.small.alive = false;
@@ -1067,7 +1075,7 @@ function doRefine(kind) {
       run.ready = run.ready.filter((id) => hasGu(id));
       if (run.rank >= 2 && run.ready.length < READY_MAX) run.ready.push('whitejade');
       addLog('炼成', `白玉成 · 吃掉玉皮与白豕 · −${fee}U`, 'good');
-      addLog('转型', '重盾上线，爆发位让出。皮力互济杀招消失。');
+      addLog('转型', `重盾上线；已刻印的白豕之力${run.strength ? '仍留在肉身' : '尚未取得'}。`);
     } else {
       run.gu.jade.alive = false;
       run.gu.boar.alive = false;
@@ -1078,32 +1086,6 @@ function doRefine(kind) {
     return;
   }
 
-  if (kind === 'trade') {
-    // 以小光换真元补满（把辅件变续航）——展示「炼/用」在同一决定
-    if (!hasGu('small')) {
-      addLog('炼台', '没有小光可拆。');
-      render();
-      return;
-    }
-    const success = random01() < p0;
-    run.wallet -= fee;
-    run.spent.refine += fee;
-    if (success) {
-      const count = run.gu.small.n || 1;
-      if (count > 1) run.gu.small.n = count - 1;
-      else run.gu.small.alive = false;
-      run.mp = MP_MAX;
-      run.wallet += 8;
-      addLog('炼台', `拆解一只小光：真元回满 + 8U。${count > 1 ? '还留一只协同。' : '协同没了。'}`, 'good');
-    } else {
-      const count = run.gu.small.n || 1;
-      if (count > 1) run.gu.small.n = count - 1;
-      else run.gu.small.alive = false;
-      addLog('炼败', '拆解失败，投入的那只小光仍毁。', 'hit');
-    }
-    render();
-    return;
-  }
 }
 
 function endRun(won) {
@@ -1143,6 +1125,7 @@ function endRun(won) {
 function render() {
   document.getElementById('life').textContent = String(meta.life);
   document.getElementById('rank').textContent = String(run.rank);
+  document.getElementById('rank-stage').textContent = STAGE_NAMES[run.minorStage];
   document.getElementById('knowledge').textContent = `已知蛊方：${meta.known.map((id) => RECIPES[id].name).join('、') || '无'}${run.learnedThisLife.length ? ` · 本世抄得：${run.learnedThisLife.map((id) => RECIPES[id].name).join('、')}` : ''} · 种子 ${baseSeed}`;
   document.getElementById('stage').textContent = String(run.seg);
   document.getElementById('stage-note').textContent =
@@ -1150,6 +1133,7 @@ function render() {
   document.getElementById('wallet').textContent = String(run.wallet);
   document.getElementById('hp').textContent = String(run.hp);
   document.getElementById('mp').textContent = String(run.mp);
+  document.getElementById('mp-cap').textContent = `/${maxMp()} 青铜当量`;
   document.getElementById('wounds').textContent = String(run.wounds);
 
   const pct = Math.round((run.seg / (SEGS.length - 1)) * 100);
@@ -1179,7 +1163,9 @@ function render() {
     .join('');
 
   document.getElementById('ledger').innerHTML = `
-    <div class="inv-item"><strong>经济参数</strong><span>满耐 ${ECO.recoverFullHp}U · 真元 ${ECO.mortalRefillPerPoint}U/点 · 炼费 ${ECO.refinementFee}U · 遇敌毛收 ${ECO.grossPerPeriod}U · 出场 ${ECO.fieldCost}U</span></div>
+    <div class="inv-item"><strong>真元</strong><span>丙等元海 ${MP_MAX}% · ${run.rank === 1 ? '青铜' : '赤铁'}质量 ×${essenceQuality()} · 有效容量 ${maxMp()} 青铜当量；小境界 ${STAGE_NAMES[run.minorStage]}</span></div>
+    <div class="inv-item"><strong>经济参数</strong><span>满耐 ${ECO.recoverFullHp * essenceQuality()}U · 真元 ${ECO.mortalRefillPerPoint}U/青铜当量 · 炼费 ${ECO.refinementFee}U · 遇敌毛收 ${ECO.grossPerPeriod}U · 出场 ${ECO.fieldCost}U</span></div>
+    <div class="inv-item"><strong>肉身</strong><span>白豕刻印 ${run.strength ? '已成：拳脚 +8 伤，0 真元' : '未成：需闭关耗 10 真元催用'}（增伤为 [Design]）</span></div>
     <div class="inv-item"><strong>供养</strong><span>每只蛊 ${ECO.foodPerGu}U / 段（休整点结算）</span></div>
     <div class="inv-item"><strong>炼制</strong><span>原型成功率 95% · 失败投入全失；二转蛊须二转方能出战</span></div>
     <div class="inv-item"><strong>组合名 [Design]</strong><span>${KILLER_MOVES.map((m) => m.name.replace('杀招 · ', '')).join('、')}</span></div>
@@ -1216,7 +1202,7 @@ function renderMain() {
   if (run.screen === 'intro') {
     title.textContent = '一局开始';
     tag.textContent = `第 ${meta.life} 世 · 有限节点`;
-    scene.textContent = `一转起步：月光、小光、玉皮、白豕各一。\n已知蛊方：${meta.known.map((id) => RECIPES[id].name).join('、') || '无'}。\n\n商队抄方会占去整段；已知方让你把这段机会改用于购蛊或炼蛊。二转蛊要先突破二转才能出战。`;
+    scene.textContent = `一转初阶起步：月光、小光、玉皮、白豕各一。\n已知蛊方：${meta.known.map((id) => RECIPES[id].name).join('、') || '无'}。\n\n闭关逐步修到巅峰；44% 元海若要冲二转，还需补足 55% 门槛。白豕蛊先耗元锻体，所得力量可在元尽时保留。`;
     tip.textContent = '跨世只保存蛊方知识；路线、钱、蛊和转数每世重来。';
     choices.innerHTML = `<div class="action-row">
       <button type="button" class="btn btn-primary" data-act="start">出发</button>
@@ -1230,8 +1216,8 @@ function renderMain() {
     title.textContent = seg.title;
     tag.textContent = `[Design] 第 ${run.seg + 1}/${SEGS.length} 段`;
     scene.textContent = seg.scene;
-    tip.textContent = `钱包 ${run.wallet}U · 耐 ${run.hp} · 元 ${run.mp} · 伤次 ${run.wounds}`;
-    choices.innerHTML = `<div class="action-row">${seg.options
+    tip.textContent = `一转${STAGE_NAMES[run.minorStage]} · 修行 ${run.practice}/${PRACTICE_PER_STAGE} · 冲窍外援${run.aid ? '已得' : '未得'} · 肉身猪力${run.strength ? '已刻印' : '未刻印'}`;
+    choices.innerHTML = `<div class="action-row"><button type="button" class="btn btn-ok" data-act="cultivate">闭关修行<small>不推进路段；耗时、耗石、耗元；巅峰后可准备冲窍</small></button>${seg.options
       .map((o, i) => {
         const disabled = o.kind === 'refine' && run.wallet < ECO.refinementFee;
         return `<button type="button" class="btn ${o.final ? 'btn-primary' : ''}" data-opt="${i}" ${disabled ? 'disabled' : ''}>
@@ -1240,17 +1226,35 @@ function renderMain() {
       })
       .join('')}</div>`;
     bindOpts();
+    bindActs();
+    return;
+  }
+
+  if (run.screen === 'cultivate') {
+    title.textContent = '闭关修行';
+    tag.textContent = `${run.rank}转${STAGE_NAMES[run.minorStage]} · 丙等元海 ${MP_MAX}%`;
+    const missing = Math.max(0, BREAKTHROUGH_RESERVE - MP_MAX);
+    scene.textContent = `普通修炼：每次 +1 进度，催用 10 真元、花 2U 和 8 小时；8 小时内自然恢复本次真元消耗；4 次进一小境界。酒虫在一转初/中/高阶可把已有 4 份真元提纯为 1 份高一小境界真元，原型折算为 +2 修行进度 [Design]。\n白豕催用一次耗 10 真元，获得的肉身力量常驻。\n巅峰冲二转：需满 ${MP_MAX}% 元海，战场外援补 ${missing}% 至 ${BREAKTHROUGH_RESERVE}%，另耗 ${BREAKTHROUGH_COST}U。`;
+    tip.textContent = `修行 ${run.practice}/${PRACTICE_PER_STAGE} · 真元 ${run.mp}/${maxMp()} 青铜当量 · 外援${run.aid ? '已得' : '未得（可由前两场战斗取得）'}`;
+    choices.innerHTML = `<div class="action-row">
+      <button type="button" class="btn" data-act="practice" ${run.rank !== 1 || run.minorStage >= 3 ? 'disabled' : ''}>温养晶膜<small>+1 进度 · 催用10真元、8小时后恢复 · −2U</small></button>
+      <button type="button" class="btn" data-act="wine-practice" ${run.rank !== 1 || run.minorStage >= 3 || !hasGu('winebug') ? 'disabled' : ''}>酒虫提纯<small>同转下一小境界；4→1 真元，修行 +2 [Design]；巅峰无效</small></button>
+      <button type="button" class="btn" data-act="boar-imprint" ${!hasGu('boar') || run.strength ? 'disabled' : ''}>白豕催用，锻体<small>耗 10 真元；已得之力永久保留，拳脚 0 真元</small></button>
+      <button type="button" class="btn btn-primary" data-act="breakthrough" ${run.rank !== 1 || run.minorStage !== 3 || !run.aid || run.mp < MP_MAX || run.wallet < BREAKTHROUGH_COST ? 'disabled' : ''}>冲二转晶膜<small>巅峰 + ${BREAKTHROUGH_RESERVE}% 准备量 + 外援；冲窍后闭关恢复六成 [Design]</small></button>
+      <button type="button" class="btn" data-act="back-seg">出关</button>
+    </div>`;
+    bindActs();
     return;
   }
 
   if (run.screen === 'rest') {
     title.textContent = '休整';
-    tag.textContent = '模型：满耐 12U / 半耐 6U / 免费小休+供养';
+    tag.textContent = `[Design] 满耐 ${ECO.recoverFullHp * essenceQuality()}U / 半耐 ${Math.round(ECO.recoverFullHp * essenceQuality() / 2)}U / 免费小休+供养`;
     scene.textContent = '把伤养回去，或者把钱留给后面的硬仗。';
     choices.innerHTML = `<div class="action-row">
-      <button type="button" class="btn btn-ok" data-act="rest-full">满耐满元 · 12U</button>
-      <button type="button" class="btn" data-act="rest-half">半耐半元 · 6U</button>
-      <button type="button" class="btn" data-act="rest-free">免费小休 + 阶段供养</button>
+      <button type="button" class="btn btn-ok" data-act="rest-full" ${run.restUsed ? 'disabled' : ''}>满耐满元 · ${ECO.recoverFullHp * essenceQuality()}U</button>
+      <button type="button" class="btn" data-act="rest-half" ${run.restUsed ? 'disabled' : ''}>半耐半元 · ${Math.round(ECO.recoverFullHp * essenceQuality() / 2)}U</button>
+      <button type="button" class="btn" data-act="rest-free" ${run.restUsed ? 'disabled' : ''}>免费小休 + 阶段供养</button>
       <button type="button" class="btn" data-act="leave-node">离开</button>
     </div>`;
     bindActs();
@@ -1267,13 +1271,12 @@ function renderMain() {
       ['vine', '青藤 · 12U', '削弱控制'],
       ['herb', '生机草 · 10U', '即时治疗'],
       ['hardqi', '硬气 · 12U', '防+反'],
-      ['winebug', '酒虫 · 10U', '回元续航'],
-      ['bear', '熊力 · 11U', '便宜第二刀'],
-      ['boar', '白豕 · 16U', '爆发位'],
+      ['winebug', '酒虫 · 10U', '同转提纯真元，闭关修炼；不回元'],
+      ['boar', '白豕 · 16U', '耗元锻体，已得之力常驻'],
     ];
     choices.innerHTML = `<div class="action-row">
       ${Object.entries(RECIPES).map(([id, recipe]) => `<button type="button" class="btn" data-act="shop-study:${id}" ${knowsRecipe(id) ? 'disabled' : ''}>抄${recipe.name} · 8U<small>${knowsRecipe(id) ? '已掌握' : `[Design] 占本段 · ${recipe.input}→${recipe.result}`}</small></button>`).join('')}
-      <button type="button" class="btn btn-ok" data-act="shop-mp">真元 +20 · ~2U</button>
+      <button type="button" class="btn btn-ok" data-act="shop-mp">真元 +${20 * essenceQuality()} 青铜当量 · ${Math.ceil(20 * essenceQuality() * ECO.mortalRefillPerPoint)}U</button>
       <button type="button" class="btn" data-act="shop-hp">耐受 +30 · 6U</button>
       ${buys
         .map(([id, label, hint]) => {
@@ -1297,7 +1300,6 @@ function renderMain() {
     choices.innerHTML = `<div class="action-row">
       <button type="button" class="btn btn-primary" data-act="refine-moonglow" ${knowsRecipe('moonglow') ? '' : 'disabled'}>炼月芒<small>${knowsRecipe('moonglow') ? '月光+双小光 → 二转月芒 · 12U' : '未识月芒方 · 商队抄录后可炼'}</small></button>
       <button type="button" class="btn" data-act="refine-whitejade" ${knowsRecipe('whitejade') ? '' : 'disabled'}>炼白玉<small>${knowsRecipe('whitejade') ? '玉皮+白豕 → 二转白玉 · 12U' : '未识白玉方 · 商队抄录后可炼'}</small></button>
-      <button type="button" class="btn" data-act="refine-trade">拆小光换续航<small>毁同心 · 元回满 +8U · 12U</small></button>
       <button type="button" class="btn" data-act="leave-node">不炼，带走组合</button>
     </div>`;
     bindActs();
@@ -1311,7 +1313,7 @@ function renderMain() {
     tag.textContent = `心智容量 C=${READY_MAX} · 只带 ${READY_MAX} 只进本场`;
     scene.textContent = `即将对上：${e.name}\n${e.desc}\n\n背包里的蛊不会自动上场。这一场带谁，决定你有哪些杀招。`;
     tip.textContent = `已选 ${run.ready.length}/${READY_MAX}：${run.ready.map((id) => GU[id] ? GU[id].name : id).join('、') || '空'}。杀招依赖同场组合。`;
-    const owned = ownedGuIds();
+    const owned = ownedGuIds().filter((id) => GU[id].kind !== 'cultivation');
     hand.innerHTML = owned
       .map((id) => {
         const c = GU[id];
@@ -1364,14 +1366,14 @@ function renderMain() {
         const c = GU[id];
         const picked = run.picked.includes(id);
         const apLeft = MODEL.combat.actionsPerTurn - (pickedAp() - (picked ? c.ap : 0));
-        const mpLeft = run.mp - (pickedCost() - (picked ? c.cost : 0));
+        const mpLeft = run.mp - (pickedCost() - (picked ? actionCost(c) : 0));
         const cd = c.burst && run.burstCd > 0;
         const disabled =
-          run.battleOver || (!picked && (apLeft < c.ap || mpLeft < c.cost || cd));
+          run.battleOver || (!picked && (apLeft < c.ap || mpLeft < actionCost(c) || cd));
         return `
           <button type="button" class="gu-btn ${picked ? 'is-picked' : ''}" data-pick="${id}" ${disabled ? 'disabled' : ''}>
             <span class="name">${c.name}</span>
-            <span class="cost">AP ${c.ap} · 元 ${c.cost}${cd ? ' · 冷却' + run.burstCd : ''}</span>
+            <span class="cost">AP ${c.ap} · 元 ${actionCost(c)}${cd ? ' · 冷却' + run.burstCd : ''}</span>
             <span class="desc">${c.desc}</span>
           </button>
         `;
@@ -1402,7 +1404,7 @@ function renderMain() {
     if (km.length) {
       tip.textContent = '将触发杀招：' + km.map((k) => `${k.name}（${k.desc}）`).join('；');
     } else if (comboActive()) tip.textContent = '协同：月刃 ×2（杀招·月刃同心）。';
-    else if (run.picked.includes('boar')) tip.textContent = '爆发吃满 2AP 与冷却——确认意图。';
+    else if (run.picked.includes('fist') && run.strength) tip.textContent = '肉身猪力已刻印：拳脚增伤，不耗真元。';
     else tip.textContent = `AP ${MODEL.combat.actionsPerTurn}/回合 · 盾过期 · 杀招需同回合固定组合`;
     return;
   }
@@ -1447,9 +1449,9 @@ function buildLogText() {
     `入局已知：${meta.known.filter((id) => !run.learnedThisLife.includes(id)).map((id) => RECIPES[id].name).join('、') || '无'} · 本世抄得：${run.learnedThisLife.map((id) => RECIPES[id].name).join('、') || '无'}`,
     `原著关系依据：${Object.values(RECIPES).map((recipe) => `${recipe.name} ${recipe.source}`).join('；')}`,
     `段 ${run.seg}/${SEGS.length - 1} · 结果 ${run.screen === 'end' ? (run.hp > 0 ? '走完' : '倒下') : '进行中'}`,
-    `当前转数 ${run.rank}`,
-    `钱包 ${run.wallet}U · 耐 ${run.hp} · 元 ${run.mp} · 伤次 ${run.wounds}`,
-    `赚 ${run.earned}U · 供 ${run.spent.feed} · 治 ${run.spent.heal} · 炼 ${run.spent.refine} · 场 ${run.spent.field} · 抄方 ${run.spent.study} · 破境 ${run.spent.breakthrough}`,
+    `当前转数 ${run.rank}${STAGE_NAMES[run.minorStage]} · 修行 ${run.practice}/${PRACTICE_PER_STAGE}`,
+    `钱包 ${run.wallet}U · 耐 ${run.hp} · 元 ${run.mp}/${maxMp()} 青铜当量 · 元海 ${MP_MAX}% · 伤次 ${run.wounds}`,
+    `赚 ${run.earned}U · 供 ${run.spent.feed} · 治 ${run.spent.heal} · 炼 ${run.spent.refine} · 场 ${run.spent.field} · 抄方 ${run.spent.study} · 修行 ${run.spent.practice} · 破境 ${run.spent.breakthrough}`,
     `在身：${guNames || '无'}`,
     '',
     '## 日志（新→旧）',
@@ -1460,6 +1462,12 @@ function buildLogText() {
 }
 
 function onAct(key) {
+  if (key === 'cultivate') { run.screen = 'cultivate'; render(); return; }
+  if (key === 'back-seg') { enterSeg(); return; }
+  if (key === 'practice') { practiceCultivation(false); return; }
+  if (key === 'wine-practice') { practiceCultivation(true); return; }
+  if (key === 'boar-imprint') { imprintBoar(); return; }
+  if (key === 'breakthrough') { breakthrough(); return; }
   if (key === 'copy-log') {
     const t = buildLogText();
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1542,10 +1550,6 @@ function onAct(key) {
   }
   if (key === 'refine-whitejade') {
     doRefine('whitejade');
-    return;
-  }
-  if (key === 'refine-trade') {
-    doRefine('trade');
     return;
   }
 }
