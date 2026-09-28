@@ -78,4 +78,4 @@ schema: 2
 - 人祖传永生蛊寓言的完整原文位置与节次归属未核（66484 窗口为场景引用，非寓言全文）。
 - 断点后任何永生结局不得补写。
 
-关联页面：[自由](freedom.md)、[宿命](fate.md)、[坚持](persistence.md)、[实力与利益](power-and-interest.md)、[人祖传](ren-zu-zhuan.md)、[宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[全书蛊虫总表](../gu/roster.md)、[长生天](../world/longevity-heaven.md)。
+关联页面：[自由](freedom.md)、[宿命](fate.md)、[坚持](persistence.md)、[实力与利益](power-and-interest.md)、[人祖传](ren-zu-zhuan.md)、[宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[全书蛊虫总表](../gu/roster.md)、[长生天](../world/longevity-heaven.md)。

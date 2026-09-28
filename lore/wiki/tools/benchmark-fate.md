@@ -1,7 +1,7 @@
 # FATE 簇知识基准（春秋蝉—红莲—宿命蛊—宿命大战 · 50 题）
 
 > 用途：第二簇知识完整性回归。本簇是 Narrative Compiler v0.1 的压力测试：时间线分叉、两轮轮回、人物认知、传闻/对话、后续揭示与证据缺口并存。
-> 簇范围：[春秋蝉](../gu/spring-autumn-cicada.md)、[红莲魔尊](../characters/red-lotus.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)。星宿仙尊/龙公页**不在**簇内、仅可作引用目标。
+> 簇范围：[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[红莲魔尊](../characters/red-lotus.md)、[宿命蛊](../gu/fate-gu.md)、[宿命大战](../events/fate-war.md)。星宿仙尊/龙公页**不在**簇内、仅可作引用目标。
 > 建立日期：2026-09-25。Schema v2.1 冻结版适用。
 
 ## 规则

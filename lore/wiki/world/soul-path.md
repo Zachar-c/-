@@ -66,7 +66,7 @@ schema: 2
   「胆识蛊可以壮魂」（“挡尸”“撞魂”原文 0 命中；「胆识蛊」514 命中、「壮魂」42 命中）；
   “落魄蛊可以炼魂”同理，实为「落魄谷可以炼魂」（“蛊”“谷”同音）。两条校正后均与原文一致，
   故本页事实层按校正后的用字收录。
-- 相关页面：[修炼体系](cultivation-system.md)、[真元](primeval-essence.md)、[世界操作系统](world-operating-system.md)。
+- 相关页面：[血道](blood-path.md)、[光道](light-path.md)、[力道](strength-path.md)、[修炼体系](cultivation-system.md)、[真元](primeval-essence.md)、[世界操作系统](world-operating-system.md)。
 
 ## 待核对
 

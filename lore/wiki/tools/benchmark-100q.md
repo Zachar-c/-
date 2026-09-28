@@ -22,13 +22,13 @@
 |---|---|---|---|
 | 1 | 命中 | 主角古月方源（重生回 15 岁，27 步丙等），孪生弟古月方正（43 步甲等，族长栽培） | characters/fang-yuan.md（E:V1-001156）；characters/roster.md |
 | 2 | 命中 | 阴阳转身蛊（四转，黑白双蛊太极光球；阴蛊用于男身可阳转阴） | events/wolf-tide.md EVT-WTC-025/026（34508–34512 [对话\|已核]） |
-| 3 | 命中 | 春秋蝉（六转，前世三十年炼成、逆光阴五百年重生）；红莲魔尊（洪亭）所创 | gu/spring-autumn-cicada.md ST-CICADA-01/06；rules/venerables.md VEN-020 |
+| 3 | 命中 | 春秋蝉（六转，前世三十年炼成、逆光阴五百年重生）；红莲魔尊（洪亭）所创 | gu/spring-autumn-cicada-gu.md ST-CICADA-01/06；rules/venerables.md VEN-020 |
 | 4 | 无据 | 太光蛊仅登记为五转光道蛊（light_atk_5_03_gu），无持有者与缺陷；无"萧芒" | gu/roster-3.md（E:V2-072028） |
 | 5 | 部分 | 仅确证第二空窍蛊秘方用"三更"（添三更再三更得九）；三蛊共同需求无登记 | events/three-kings-mountain.md（70108–70126）；gu/roster-2.md 三更蛊 |
 | 6 | 无据 | 无"形如骰子、通体灰白"蛊虫记载 | —— |
 | 7 | 部分 | 兽形蛊组可举：白相仙蛇、千里地狼蛛、刀翅血蝠蛊；血滴子行为亦兽性；无"行为似野兽"成文分类 | gu/roster.md 兽形蛊组；events/wolf-tide.md（28474–28498） |
 | 8 | 命中 | 定仙游（六转仙蛊；同期第二空窍蛊功败垂成） | events/story-arc-overview.md 弧四；gu/roster.md；events/three-kings-mountain.md（E:V3-076022） |
-| 9 | 部分 | 第七位（笔记层级"十大奇蛊第七"）；位次变化未登记 | gu/spring-autumn-cicada.md 资料整理（A2a 412） |
+| 9 | 部分 | 第七位（笔记层级"十大奇蛊第七"）；位次变化未登记 | gu/spring-autumn-cicada-gu.md 资料整理（A2a 412） |
 | 10 | 无据 | 无"智障"蛊（最近为转数未核名录"愚蠢蛊"四转） | gu/roster-3.md 转数未核列 |
 | 11 | 无据 | 无"宙锚"蛊；宙道仙蛊屋仅今古亭/恒舟/鲨流撬/三秋黄鹤台 | gu/roster.md 仙蛊屋节 |
 | 12 | 命中 | 跨域机动/传送核心；一颗仙元六年免喂；被野生镇宇仙蛊克制 | gu/roster.md 定仙游条（56826）；events/royal-court.md EVT-RTC-004 |
@@ -40,7 +40,7 @@
 | 18 | 命中 | 山如故＋江如故（太白云生两只宙道蛊）；太白云生升仙时二蛊自发合并为六转江山如故（后升炼至八转极限） | events/royal-court.md（96404、100066、112690、113214）；rules/refinement.md REF-020 |
 | 19 | 命中 | ①性命交修毁则重创②升炼失败保蛊③合炼失败不死④升仙可提转⑤可立第二本命蛊对冲风险 | rules/refinement.md REF-017 |
 | 20 | 命中 | 本质区别="性命交修"（难以更改、更换须毁蛊师重创/死亡）；普通蛊炼废直接毁灭积累清零 | rules/refinement.md REF-017（E:V3-090864；E:V3-095094） |
-| 21 | 命中 | 春秋蝉（Run1 后期曾提升至七转）；原主红莲魔尊 | gu/spring-autumn-cicada.md ST-CICADA-04/06（E:V5-323706）；VEN-020 |
+| 21 | 命中 | 春秋蝉（Run1 后期曾提升至七转）；原主红莲魔尊 | gu/spring-autumn-cicada-gu.md ST-CICADA-04/06（E:V5-323706）；VEN-020 |
 | 22 | 部分 | 方正本命蛊=月光蛊；升仙后升炼转数无据（仅记六转血神子、被焚杀等） | characters/fang-yuan.md（3460–3575）；rules/dao-marks.md DM-013 |
 | 23 | 部分 | 三例：熊家先祖遗留之蛊（隐身瞒天过海）、白家"大仙"蛇蛊（食元泉水认主传承）、白骨传承缸未具名二转蛊 | events/wolf-tide.md（30434–30452、30126–30150）；events/south-caravan.md（38972–38984） |
 | 24 | 部分 | 仅登记为 Run1 八转蛊清单之一；流派/功能/副作用无据 | themes/philosophy.md（E:V5-309856） |
@@ -120,7 +120,7 @@
 | 93 | 命中 | 天地一家大爱盟（"只为造福世间，五域和谐"）+一视同仁炼蛊服务 | themes/philosophy.md 人心经营节（E:V6-423868） |
 | 94 | 无据 | 无"雪民""人祖之心相碰撞"记载 | themes/ren-zu-zhuan.md |
 | 95 | 命中 | 世界内神话寓言文本、38 节主题线；方源悟其即人道真传（十只人道蛊虫）；名声蛊/爱情蛊改命/永生蛊传闻等剧情寓言母本 | themes/ren-zu-zhuan.md；gu/roster.md 人道蛊族节 |
-| 96 | 命中 | 可考三次：①前世被围杀自爆逆 500 年②青茅山短程逆流改命③Run1 本体被龙公击杀后宙道分身自爆开 Run2；总次数无总账 | gu/spring-autumn-cicada.md；events/wolf-tide.md；events/fate-war.md EVT-FATE-006 |
+| 96 | 命中 | 可考三次：①前世被围杀自爆逆 500 年②青茅山短程逆流改命③Run1 本体被龙公击杀后宙道分身自爆开 Run2；总次数无总账 | gu/spring-autumn-cicada-gu.md；events/wolf-tide.md；events/fate-war.md EVT-FATE-006 |
 | 97 | 无据 | 无影宗渗透天庭卧底名单及结局（仅紫山真君"与天意同化"策略、七星子接密令后被薄青杀） | world/shadow-sect.md；world/zangmeng.md |
 | 98 | 命中 | 信息与遗产分叉：Run2 更早得红莲真传（琅琊翻盘、石莲岛夺阵）；Run1 天庭修复宿命完成/龙公杀方源/界壁消弭/龙公寿尽，Run2 终局留白 | events/fate-war.md；events/stone-lotus-island-contest.md |
 | 99 | 无据 | 无"终结天庭"事件；弧十三止于三尊夺野生九转光蛊、方源暗中升炼九转天机蛊，之后留白 | events/story-arc-overview.md 弧十二/十三 |

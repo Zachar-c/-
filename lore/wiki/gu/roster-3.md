@@ -27,6 +27,8 @@ schema: 2
 | id | 蛊名 | game转 | 原文转 | 锚点 | 备注 |
 |---|---|---|---|---|---|
 | blood_bat_gu | 刀翅血蝠蛊 | 1 | 3 | E:V1-031864 | M0 六蛊之一；游戏 rank=1 或为开局适配，见 gu/m0-six-gu.md 待裁；L0 总裁定与 m0-six-gu.md 登记 Adaptation 冲突，维持 rank=1 待明确 supersede |
+| vitality_grass_gu | 九叶生机草 | 1 | 2 | E:V1-026952 | game 侧占位一转、原文明文二转（gu_lore status=unverified）；一至九转模型库已按原文纠为二转，gu.json 待解冲突后复核；专页 vitality-grass-gu.md |
+
 
 ## 命名重用异常（传奇蛊名 × 游戏 rank1；L0 已确认非适配，悬置记债 docs/debt.md）
 
@@ -78,6 +80,11 @@ schema: 2
 | wisdom_atk_5_05_gu | 慧剑蛊 | 5 | 8 | E:V4-182352 |  |
 | wisdom_atk_5_15_gu | 妇人心蛊 | 5 | 6 | E:V5-199800 |  |
 | wood_atk_5_08_gu | 森林蛊 | 5 | 7 | E:V6-393748 |  |
+| spring_autumn_cicada_gu | 春秋蝉 | 5 | 6 | E:V1-032214、E:V2-064426 | 六转及以上天下唯一（32214）；方源本命蛊，重生机制；专页 spring-autumn-cicada-gu.md |
+| wisdom_gu | 智慧蛊 | 5 | 9 | E:V3-118944 | 九转仙蛊（另见 E:V3-103100 「力量蛊、智慧蛊、宿命蛊等皆是九转仙蛊」）；与 wisdom_atk_1_01_gu（游戏传奇名重用）为「两名两物」，勿混；专页 wisdom-gu.md |
+| fate_gu | 宿命蛊 | 5 | 9 | E:V3-103100、E:V5-197694 | 九转仙蛊、天庭核心（以它为核心造九转仙蛊屋监天塔）；专页 fate-gu.md |
+| persistence_gu | 坚持仙蛊 | 5 | 7 | E:V5-239862 | 七转仙蛊，配方源七转修为；专页 persistence-gu.md |
+
 
 ## 多时点口径
 
@@ -166,6 +173,8 @@ schema: 2
 | wind_mov_5_06_gu | 风虎云龙蛊 | 5 | 5 | E:V3-107018 |  |
 | wood_atk_3_01_gu | 木魅蛊 | 3 | 3 | E:V1-023550 |  |
 | wood_atk_3_09_gu | 花蛊 | 3 | 3 | E:V1-028060 |  |
+| wine_insect_gu | 酒虫 | 1 | 1 | E:V2-050904 | 「虽然是一转蛊，但却是二转蛊的价格」；精炼真元一个小境界、不补元不加速恢复；专页 wine-insect-gu.md |
+
 
 ## 裁定已改（L0 2026-09-25，原 game 转数见备注）
 
@@ -223,6 +232,8 @@ schema: 2
 | bone_atk_1_08_gu | 骨蛊 | 1 | — | E:V2-038442、E:V2-037452 | 白骨山可猎杀骨兽或收服野生骨蛊；同系玉骨蛊增骨骼强度（双猪之力上再添一鳄之力）；此前转数未核名单漏登记，本批补漏；专页 bone-atk-1-08-gu.md |
 | qi_atk_1_01_gu | 硬气蛊 | 1 | — | E:V2-058640、E:V2-058642 | 气道防御蛊：动用杀招防御下降时弥补短板；珍贵并不常见，力气蛊绝迹后的可得替代（上古气道已消失）；专页 qi-atk-1-01-gu.md |
 | human_atk_1_01_gu | 自己蛊 | 1 | — | E:V3-120396、E:V3-120404 | 《人祖传》：居于人身的道蛊，须孤独审视内心方能发现；引迷途者不走出路的痕迹、另辟全新的路；专页 human-atk-1-01-gu.md |
+| light_atk_1_01_gu | 月旋蛊 | 1 | — | E:V1-026760 | 月系第三支；仅次于月光蛊/月芒蛊的月道攻击支线，转数原文未明言；专页 light-atk-1-01-gu.md |
+
 
 ## 转数未核（首现同窗与宽窗均未检得明文，逐蛊深挖余量）
 
@@ -235,5 +246,5 @@ schema: 2
 ## 关联页面
 
 - 一期核心蛊 → [全书蛊虫总表](roster.md)；二期辅助蛊 → [蛊虫总表二期](roster-2.md)
-- 已建实体页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)
+- 已建实体页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[春秋蝉](spring-autumn-cicada-gu.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)
 - 品阶口径 → canon-index:CAN-IMMORTAL-BOUNDARY-001；游戏桥接层 → `game/data/gu_lore.json`（L6 投影，本页不承载游戏数值语义）

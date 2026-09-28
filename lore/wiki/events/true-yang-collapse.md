@@ -241,4 +241,4 @@ graph TD
 - 方源何时新得五转修罗尸蛊（RTC 遗留 98960）、狼魂蛊转数矛盾（90788 vs 92316）、狐仙福地流速口径（85958 五倍 vs 87434 六倍于北原）——随对应簇回核。
 - 次要支线未单列：袁白范医夜探芝林、凤玄机停大比、东方长凡遗蛊引东方余亮取密藏、秦百胜合纵连横细节、凤金煌梦遇空绝老仙细节、石磊与万象星君二八分成歧义（131858）。
 
-关联页面：[王庭之争](royal-court.md)、[三王福地](three-kings-mountain.md)、[方源](../characters/fang-yuan.md)、[黑楼兰](../characters/he-lou-lan.md)、[北原](../world/north-plain.md)、[春秋蝉](../gu/spring-autumn-cicada.md)。
+关联页面：[王庭之争](royal-court.md)、[三王福地](three-kings-mountain.md)、[方源](../characters/fang-yuan.md)、[黑楼兰](../characters/he-lou-lan.md)、[北原](../world/north-plain.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)。

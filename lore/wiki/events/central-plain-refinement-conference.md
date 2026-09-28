@@ -35,7 +35,7 @@ sources:
 | 世界·地理 | 五德山、星象福地、帝君城 | [中洲](../world/central-plain.md)、[地图总表](../world/map-roster.md) |
 | 势力 | 十大古派＝天庭内部派系的地上代理人；天庭接手大会 | [天庭](../world/heavenly-court.md)、[十大古派](../world/ten-ancient-sects.md) |
 | 人物 | 方源、红莲魔尊、宋紫星、凤金煌、古月方正、鹤风扬、余木蠢等 | 按名录检索：[方源](../characters/fang-yuan.md)、[红莲魔尊](../characters/red-lotus.md)、[角色总表](../characters/roster.md)、[角色总表二期](../characters/roster-2.md)、[敌方名录](../characters/enemy-roster.md) |
-| 蛊 | 春秋蝉、宿命蛊、智慧蛊、血神子 | [春秋蝉](../gu/spring-autumn-cicada.md)、[宿命蛊](../gu/fate-gu.md)、[智慧蛊](../gu/wisdom-gu.md)、[蛊虫总表](../gu/roster.md) |
+| 蛊 | 春秋蝉、宿命蛊、智慧蛊、血神子 | [春秋蝉](../gu/spring-autumn-cicada-gu.md)、[宿命蛊](../gu/fate-gu.md)、[智慧蛊](../gu/wisdom-gu.md)、[蛊虫总表](../gu/roster.md) |
 | 杀招 | 见面似相识、血魔解体、墨化、曝光蛊等 | [杀招名录](../rules/killer-moves.md)、[杀招总表](../world/kill-move-roster.md) |
 | 后续轮次 | Run 1／Run 2 大会与帝君城大战（含五域界壁缩减） | **未核验**（笔记转述），见《待核对》；轮次对照见[宿命大战](fate-war.md) |
 
@@ -251,4 +251,4 @@ flowchart TD
 - **本窗口外未结**：方正于 155770–155861 复活后的下落与后续用途本窗口内未见再提（属弧七线）；159001 起进入琅琊攻防线，不在本页范围。
 - **边界（非缺口）**：本页只改 `events/central-plain-refinement-conference.md` 一个文件，未触碰共享页（`events/index.md`、`events/story-arc-overview.md`、`log.md`、`COORDINATION.md`）；既有入口路径与标题未变，各页回链无需改动。
 
-关联页面：[宿命大战](fate-war.md)、[十三弧事件链总览](story-arc-overview.md)、[义天山大战与二次重生](yitian-mountain.md)、[石莲岛与红莲真传争夺](stone-lotus-island-contest.md)、[天庭入侵琅琊福地](langya-blessed-land-invasion.md)、[天庭](../world/heavenly-court.md)、[十大古派](../world/ten-ancient-sects.md)、[中洲](../world/central-plain.md)、[道痕体系](../rules/dao-marks.md)、[炼蛊](../rules/refinement.md)、[流派境界](../rules/path-realms.md)、[杀招体系](../rules/killer-moves.md)、[蛊的饲养与炼化](../world/gu-care-and-refinement.md)、[红莲魔尊](../characters/red-lotus.md)、[方源](../characters/fang-yuan.md)、[角色总表二期](../characters/roster-2.md)、[宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命](../themes/fate.md)。
+关联页面：[宿命大战](fate-war.md)、[十三弧事件链总览](story-arc-overview.md)、[义天山大战与二次重生](yitian-mountain.md)、[石莲岛与红莲真传争夺](stone-lotus-island-contest.md)、[天庭入侵琅琊福地](langya-blessed-land-invasion.md)、[天庭](../world/heavenly-court.md)、[十大古派](../world/ten-ancient-sects.md)、[中洲](../world/central-plain.md)、[道痕体系](../rules/dao-marks.md)、[炼蛊](../rules/refinement.md)、[流派境界](../rules/path-realms.md)、[杀招体系](../rules/killer-moves.md)、[蛊的饲养与炼化](../world/gu-care-and-refinement.md)、[红莲魔尊](../characters/red-lotus.md)、[方源](../characters/fang-yuan.md)、[角色总表二期](../characters/roster-2.md)、[宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[宿命](../themes/fate.md)。

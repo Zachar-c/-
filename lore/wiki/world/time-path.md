@@ -31,6 +31,6 @@ schema: 2
 ## 待核对
 
 - 宙道开派者不可考；红莲魔尊宙道真传的完整清单未系统收集（黄史上人所得部分未建档）。
-- 春秋蝉机制细节归 [春秋蝉](../gu/spring-autumn-cicada.md)，本页不重复。
+- 春秋蝉机制细节归 [春秋蝉](../gu/spring-autumn-cicada-gu.md)，本页不重复。
 
-关联页面：[宇道](space-path.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[红莲魔尊](../characters/red-lotus.md)、[流派总表](path-roster.md)、[宿命](../themes/fate.md)。
+关联页面：[宇道](space-path.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[红莲魔尊](../characters/red-lotus.md)、[流派总表](path-roster.md)、[宿命](../themes/fate.md)。

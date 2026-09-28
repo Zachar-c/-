@@ -135,7 +135,7 @@ graph LR
 
 以下条目来自读书笔记/记忆整理，尚未完成逐段原文核验，不得当作原著原文事实。Run 1 / Run 2 仍然分开。
 
-- 现有读书笔记记录：方源前世来自地球，经历约五百年后成为六转魔道巨擘、血翼魔教教主；他炼成[春秋蝉](../gu/spring-autumn-cicada.md)后遭到正道围杀并自爆。对应笔记锚点为 A2a 的 252–310、3648–3650、4298 行。
+- 现有读书笔记记录：方源前世来自地球，经历约五百年后成为六转魔道巨擘、血翼魔教教主；他炼成[春秋蝉](../gu/spring-autumn-cicada-gu.md)后遭到正道围杀并自爆。对应笔记锚点为 A2a 的 252–310、3648–3650、4298 行。
 - 故事开端，方源通过春秋蝉回到过去；重生后春秋蝉寄居体内并沉睡，重生机制和信息优势是理解其早期行动的前提。
 - 早期资质测试中，方源走了 27 步，属于丙等；整理笔记记录其真元海约为四成四。分级与数值锚点为 A2a 的 1156、1358、14458–14460 行。
 - 重生初期的明确目标包括尽快修炼到三转离开青茅山、夺回双亲遗产，以及取得花酒行者遗藏；对应笔记锚点为 A2a 的 644–670、1736–1738、2724–2786 行。
@@ -197,7 +197,7 @@ graph LR
 
 ### 关键蛊虫
 
-- [春秋蝉](../gu/spring-autumn-cicada.md)：重生机制相关的导航入口（见本页《资料整理》；本节不作机制的事实断言）
+- [春秋蝉](../gu/spring-autumn-cicada-gu.md)：重生机制相关的导航入口（见本页《资料整理》；本节不作机制的事实断言）
 - [宿命蛊](../gu/fate-gu.md)：后期冲突相关的导航入口（缺口见本页《待核对》）
 - [坚持仙蛊](../gu/persistence-gu.md)：逆流河与代际相关的导航入口（依据见链接页；本节不作炼成与代际的事实断言）
 - [小光蛊](../gu/small-light-gu.md)、[月光蛊](../gu/moonlight-gu.md)：早期蛊虫
@@ -240,4 +240,4 @@ graph LR
 - 本页的行为模式、叙事意义和人物阶段归纳属于分析层；不得直接当作游戏数值、技能设计或原著明文。
 - 「关系网络」是导航层，不构成新的事实主张；其中「永生」等暂无独立页面的节点，需在后续批次确认是否建页或并入既有主题页。
 
-关联页面：[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命蛊](../gu/fate-gu.md)、[坚持仙蛊](../gu/persistence-gu.md)、[元莲仙尊](yuan-lian-xian-zun.md)、[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[天庭](../world/heavenly-court.md)、[宿命大战](../events/fate-war.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)、[石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)、[天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)、[青茅山](../events/qing-mao-mountain.md)、[三王山](../events/three-kings-mountain.md)、[逆流河](../events/reverse-flow-river.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。
+关联页面：[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[宿命蛊](../gu/fate-gu.md)、[坚持仙蛊](../gu/persistence-gu.md)、[元莲仙尊](yuan-lian-xian-zun.md)、[红莲魔尊](red-lotus.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[天庭](../world/heavenly-court.md)、[宿命大战](../events/fate-war.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)、[石莲岛与红莲真传争夺](../events/stone-lotus-island-contest.md)、[天庭入侵琅琊福地](../events/langya-blessed-land-invasion.md)、[青茅山](../events/qing-mao-mountain.md)、[三王山](../events/three-kings-mountain.md)、[逆流河](../events/reverse-flow-river.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)、[坚持](../themes/persistence.md)、[修炼体系](../world/cultivation-system.md)。

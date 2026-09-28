@@ -6,7 +6,7 @@
 
 - **修炼体系**：蛊师一至九转、每转分初/中/高/巅峰四阶；一至五转为凡人蛊师（真元青铜→赤铁→白银→黄金→紫晶），六转脱凡入仙，九转称尊者（分仙尊/魔尊）`canon-index:CAN-CULTIVATION-001/002/003`。
 - **资质**：以元海占空窍比例表达，丁 2-3 成 / 丙 4-5 成 / 乙 6-7 成 / 甲 8-9 成；甲等之上有十绝体，元海圆满但伴空窍崩毁与早夭风险 `canon-index:CAN-APTITUDE-001/002`。
-- **真元与破境**：一份二转赤铁真元抵十份一转青铜真元；一转巅峰冲二转的晶膜一般要至少五成五墨绿真元，四成四的丙等元海不能靠即时付款直接突破。酒虫提纯已有真元一个小境界，不回元；白豕蛊催用增力时耗元，已获得的肉身力量可不耗元发挥。见[真元](world/primeval-essence.md)、[酒虫](gu/wine-insect-gu.md)、[白豕蛊](gu/white-boar-gu.md)，`canon-index:CAN-ESSENCE-001/CAN-BREAKTHROUGH-001/CAN-WINE-001/CAN-STRENGTH-001`。
+- **真元与破境**：一份二转赤铁真元抵十份一转青铜真元；一转巅峰冲二转的晶膜一般要至少五成五墨绿真元，四成四的丙等元海不能靠即时付款直接突破。酒虫提纯已有真元一个小境界，不回元；白豕蛊催用增力时耗元，已获得的肉身力量可不耗元发挥。见[真元](world/primeval-essence.md)、[酒虫](gu/wine-insect-gu.md)、[白豕蛊](gu/white-boar-strength-gu.md)，`canon-index:CAN-ESSENCE-001/CAN-BREAKTHROUGH-001/CAN-WINE-001/CAN-STRENGTH-001`。
 - **南疆生态**：人族以山寨聚居，山寨与商队互相依赖；兽潮是周期性天灾，蛊师是守护山寨的中坚 `canon-index:CAN-NANJIANG-001/003`、`CAN-BEAST-TIDE-001`。
 - **兽潮机制**：兽潮由兽群链式迁徙形成（扩张→压缩→迁移→连锁）；狼巢分万兽王/百兽王/千兽王三级；山寨防御受"扩建悖论"锁死规模，见[兽潮](world/beast-tide.md)、[狼潮](events/wolf-tide.md)。
 - **蛊虫循环**：养蛊-用蛊-炼蛊构成持续压力，一般蛊师养四五只同转蛊；相似蛊可共用喂养并组合联动——这是战斗多样性的核心来源 `canon-index:CAN-GU-CARE-001`、`CAN-GU-SYNERGY-001`。
@@ -33,6 +33,6 @@
 3. [空窍与资质](world/aptitude-and-aperture.md)
 4. [南疆与山寨](world/south-jiang.md)
 5. [方源](characters/fang-yuan.md)
-6. [春秋蝉](gu/spring-autumn-cicada.md)
+6. [春秋蝉](gu/spring-autumn-cicada-gu.md)
 
 当前页面是首批种子，不代表全书已经整理完毕。

@@ -30,7 +30,7 @@ schema: 2
 
 本页是蛊虫实体层的粗粒度总表（L5 综合导航页）：只回答"什么蛊、几转、什么用、在谁手里"，不承载饲养消耗、炼制配方细节与游戏数值。与[世界操作系统](../world/world-operating-system.md)的炼制飞轮、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)互补。
 
-- 已建独立页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[酒虫](wine-insect-gu.md)、[白豕蛊](white-boar-gu.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)（石皮蛊/玉皮蛊/白豕蛊/刀翅血蝠蛊身份证据）。本表不重复其内容。
+- 已建独立页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[酒虫](wine-insect-gu.md)、[白豕蛊](white-boar-strength-gu.md)、[春秋蝉](spring-autumn-cicada-gu.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)（石皮蛊/玉皮蛊/白豕蛊/刀翅血蝠蛊身份证据）。本表不重复其内容。
 - 锚点约定同[人物总表](../characters/roster.md)：`A2b 17024` 指读书笔记内标注的原文行号；`原文 56826` 指 `蛊真人-clean.txt:56826`。
 - 品阶口径：一至五转凡蛊、六转起仙蛊（`canon-index:CAN-IMMORTAL-BOUNDARY-001`）；未知品阶只写"品阶未核"，不凭名称推断。
 
@@ -114,7 +114,7 @@ schema: 2
 
 ### 仙蛊代表（六转以上）
 
-- **[春秋蝉](spring-autumn-cicada.md)**（六转，方源本命）：重生机制见独立页。
+- **[春秋蝉](spring-autumn-cicada-gu.md)**（六转，方源本命）：重生机制见独立页。
 - **定仙游蛊**（六转）：跨域机动（原文 56826 秘方）；Run 2 未来身模拟其腾挪（H1 324354–324565）；被野生镇宇仙蛊克制（H1 324744）。
 - **神游蛊**（六转，有缺陷）：三王福地宝藏（B 70138–70198）；砚石老人以之换第二空窍蛊秘方（B 86192–86220）。
 - **天机仙蛊**（七转，天道蛊虫——曾误认智道）：本质为乐土所创、砚石老人炼成、损毁于义天山，方源后以天光轮转炼道杀招再炼（J 435682–435714）；预测（杀招石洞天机可预测灾劫 G 276556–276560）；两次炼制第二次成功（原文 276528–276546 已核）；后期升炼九转（J2b 436442）。
@@ -275,6 +275,6 @@ schema: 2
 - 兽用蛊（电眼蛊、地听肉耳草）归 B 线兽潮簇车道；太古荒兽（佑天光、左夜灰、狗尾续命貂、孽龙帝藏生、祸空，F2b 249422–249486）非蛊虫，不录入本表。
 - 次要蛊虫未录入：玉滴蛊（2026-09-28 批核查：clean 原文与读书笔记库均 0 命中，疑为笔误或外部来源，登记存疑）；邀月蛊、七香酒虫、蒙汗蝶、白虫茧、隐石蛊、疗光蛊已入[总表二期](roster-2.md)《原著明确内容》，血狂蛊已入本表《原著明确内容》（均为 2026-09-28 效果细化批）；血滴子已在本表《凡蛊代表·血系》。六卷精编版相对全本有删节，行号以 clean 文本为准。
 
-关联页面：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)、[世界操作系统](../world/world-operating-system.md)、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)、[全书主要人物总表](../characters/roster.md)、[全书故事骨架总览](../events/story-arc-overview.md)。
+关联页面：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[春秋蝉](spring-autumn-cicada-gu.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)、[世界操作系统](../world/world-operating-system.md)、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)、[全书主要人物总表](../characters/roster.md)、[全书故事骨架总览](../events/story-arc-overview.md)。
 
 仙蛊屋总表质量审计（2026-09-26）：抽验 20 条全证实、无内容编造；4 处锚点微调（功德碑 305236/万像宫殿 348836/天池 183408/太宇寺 295326）已就地修正；2 处文中两写/两说（功德榜·碑、万象·万像、近水楼台归属水妮说）已标注待核。

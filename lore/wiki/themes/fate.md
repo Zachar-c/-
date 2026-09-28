@@ -27,7 +27,7 @@ sources:
 
 - [宿命大战](../events/fate-war.md)：主题主冲突，当前页区分两次轮回。
 - [逆流河](../events/reverse-flow-river.md)：与生死、规则和不可回避的过程相连。
-- [宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)：分别连接规则本体、重生、时间线和天意介入。
+- [宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)：分别连接规则本体、重生、时间线和天意介入。
 
 ## 主题冲突
 
@@ -65,4 +65,4 @@ sources:
 - 天意、宿命蛊、命运蛊和运道之间的精确机制需要按原文逐段核验，不能只依据读书笔记摘要。
 - 方源不同轮回的因果边界已有笔记整理，但仍应与原文的章节编号和上下文交叉确认。
 
-关联页面：[人祖传](ren-zu-zhuan.md)、[自由](freedom.md)、[坚持](persistence.md)、[宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命大战](../events/fate-war.md)、[方源](../characters/fang-yuan.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)。
+关联页面：[人祖传](ren-zu-zhuan.md)、[自由](freedom.md)、[坚持](persistence.md)、[宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[宿命大战](../events/fate-war.md)、[方源](../characters/fang-yuan.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)。

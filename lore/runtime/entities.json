@@ -5,7 +5,7 @@
       "type": "gu",
       "name": "熊力蛊",
       "aliases": [],
-      "description": "熊家寨标志蛊虫（与古月月光蛊、白家溪流蛊并列各家标志）；以蜂蜜为食，熊家寨对蜂蜜需求量大",
+      "description": "熊家寨标志蛊虫（与古月月光蛊、白家溪流蛊并列各家标志）；以蜂蜜为食。原文对「熊力蛊」只给标志与食料两层，未给转数与催动机制；「熊力」作为一种力的机制另写在棕熊本力蛊与熊豪蛊名下。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -19,13 +19,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/bear-strength-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-BEAR-001"
+        ]
       },
       "states": [
         {
           "id": "ST-BEARSTR-01",
           "stage": "标志",
-          "statement": "熊家寨标志蛊虫，与月光蛊/溪流蛊并列各家标志，不入学堂蛊室换取范围",
+          "statement": "熊家寨标志蛊虫，与月光蛊／溪流蛊并列各家标志，不入（三寨战功）换取范围",
           "evidence": [
             "E:V1-003602",
             "E:V1-020446"
@@ -35,9 +37,30 @@
         {
           "id": "ST-BEARSTR-02",
           "stage": "饲养",
-          "statement": "以蜂蜜为食，熊家寨对蜂蜜需要量很大",
+          "statement": "以蜂蜜为食，熊家寨对蜂蜜需要量很大；采集需抗蜇能力",
           "evidence": [
             "E:V1-010182"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEARSTR-03",
+          "stage": "家族特有",
+          "statement": "家族特有蛊或为稀有天然蛊、或为逆炼新物种；三家标志蛊「皆是如此情形」",
+          "evidence": [
+            "E:V1-026916",
+            "E:V1-026920"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEARSTR-04",
+          "stage": "近系（非本蛊明文）",
+          "statement": "「熊力」为峰谷型力种（专长拍击）；永久载体棕熊本力蛊（二转）、临时载体熊豪蛊（有时限）",
+          "evidence": [
+            "E:V2-043034",
+            "E:V2-050298",
+            "E:V2-051574"
           ],
           "canon_refs": []
         }
@@ -68,7 +91,7 @@
       "type": "gu",
       "name": "血气蛊",
       "aliases": [],
-      "description": "",
+      "description": "血道蛊虫；明文功能为补充蛊师血气、抬高战场生存率，与游僵蛊搭配可使其后遗症锐减至无，并可作为三转血月蛊的合炼材料。同名双写现象待核：低阶\"血气蛊\"（合炼材料、二转蛊师渴求）与血海九道真传中的「血气仙蛊」（六转、蛊仙层次）是否为同一实体，原文无一句直陈其本体转数",
       "properties": {
         "rank": null,
         "rank_status": "collision"
@@ -76,17 +99,103 @@
       "evidence": [],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/blood-atk-3-03-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-BLOODQI-01",
+          "stage": "名目首次出现",
+          "statement": "在血月蛊配方中以第二种材料出现，句法上不带转数限定",
+          "evidence": [
+            "E:V1-026840"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-02",
+          "stage": "本体转数口径",
+          "statement": "口径A：句中\"二转\"只修饰月芒蛊，血气蛊转数未明确；口径B：并列读法得二转（合理推导）；两读并存",
+          "evidence": [
+            "E:V1-026840",
+            "E:V1-026882"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-03",
+          "stage": "功能明文",
+          "statement": "补充蛊师血气；持有者精力旺盛、失血过多可补，战场生存能力高出一筹；珍贵",
+          "evidence": [
+            "E:V1-026876"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-04",
+          "stage": "获取难度",
+          "statement": "「却是有些麻烦」；熊姜极度渴望，身为二转佼佼者直到战死也未得偿",
+          "evidence": [
+            "E:V1-026874",
+            "E:V1-026878",
+            "E:V1-026882"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-05",
+          "stage": "搭配收益",
+          "statement": "与游僵蛊搭配，后者后遗症锐减至无、化身僵尸时间大大延长；反面为血液渐少真成僵尸",
+          "evidence": [
+            "E:V1-021036",
+            "E:V1-026880"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-06",
+          "stage": "名录登记（通名）",
+          "statement": "列入血海九道真传名录，写作\"血气蛊\"；该名录整体为蛊仙层次",
+          "evidence": [
+            "E:V3-075640",
+            "E:V6-429248",
+            "E:V6-429250"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-07",
+          "stage": "仙蛊形态与转数",
+          "statement": "叙述改称「血气仙蛊」，为血海真传一道，被气绝魔仙所得；方源持有，转数「只是六转」",
+          "evidence": [
+            "E:V6-385630",
+            "E:V6-429262",
+            "E:V6-430476",
+            "E:V6-430482"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODQI-08",
+          "stage": "名目双写待核",
+          "statement": "血量一路有\"血颅凡蛊／血颅仙蛊\"明文对照，血气一路无\"血气凡蛊\"（0 处）；双口径并存",
+          "evidence": [
+            "E:V6-430452",
+            "E:V6-430454",
+            "E:V4-155616"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "blood_atk_3_11_gu",
       "type": "gu",
       "name": "血月蛊",
       "aliases": [],
-      "description": "",
+      "description": "二转月芒蛊＋血气蛊合炼而成的三转月系攻击蛊；月刃通体血红、脸盆大小，造成伤口即血流不止，射程仅十米、攻击力明文「差强人意」；最大弊端是每月特定几天外溢鲜血、攻击力暴降到平时三分之一，最大优点是好养活（食料＝新鲜血液、种类不限）",
       "properties": {
         "rank": 3,
         "rank_status": "verified"
@@ -96,10 +205,132 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/blood-atk-3-11-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-BLOODMOON-01",
+          "stage": "秘方在案",
+          "statement": "照影蛊读得血月蛊秘方：二转月芒蛊＋血气蛊合炼成三转蛊虫；月刃通体血红、脸盆大小、伤口血流不止",
+          "evidence": [
+            "E:V1-026836",
+            "E:V1-026838",
+            "E:V1-026840",
+            "E:V1-026842"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-02",
+          "stage": "评价明文",
+          "statement": "射程十米、攻击「差强人意」；血流不止在战场只是小麻烦，且被治疗蛊克制",
+          "evidence": [
+            "E:V1-026852",
+            "E:V1-026854"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-03",
+          "stage": "弊端明文",
+          "statement": "每月特定几天外溢鲜血，期间攻击力暴降到平时三分之一",
+          "evidence": [
+            "E:V1-026856",
+            "E:V1-026858"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-04",
+          "stage": "优点明文",
+          "statement": "好养活；食料由月兰花瓣改为新鲜血液，种类不限、南疆随处可见",
+          "evidence": [
+            "E:V1-026862",
+            "E:V1-026866",
+            "E:V1-026868",
+            "E:V1-026870"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-05",
+          "stage": "体系定位",
+          "statement": "方源按\"攻击／防御／治疗／存储／侦察／移动\"六位配装，血月蛊任攻击位（自评勉强够格）",
+          "evidence": [
+            "E:V1-026936",
+            "E:V1-026946",
+            "E:V1-026948"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-06",
+          "stage": "合炼成功",
+          "statement": "失败一次后第二次炼成；外形类月光蛊，寄居右手掌心化为红色月牙印记",
+          "evidence": [
+            "E:V1-027270",
+            "E:V1-027272",
+            "E:V1-027302"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-07",
+          "stage": "实战（狼潮）",
+          "statement": "血刃命中狂电狼造成不可止血伤口；家老复盘承认靠伤势积累",
+          "evidence": [
+            "E:V1-027386",
+            "E:V1-027448"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-08",
+          "stage": "持有者自述",
+          "statement": "自评「擅长持久战」但被治疗蛊克制；最大弊端为周期性外溢鲜血、战斗力暴降",
+          "evidence": [
+            "E:V1-027474",
+            "E:V1-027476",
+            "E:V1-027480"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-09",
+          "stage": "转借他人",
+          "statement": "转投白凝冰，对方上手即用；真元消耗由接蛊者承担",
+          "evidence": [
+            "E:V2-035326",
+            "E:V2-035330",
+            "E:V2-035332"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-10",
+          "stage": "非攻击用途",
+          "statement": "不用于攻击时可勉强操纵，用于切猴头；一用即真元见底",
+          "evidence": [
+            "E:V2-037096",
+            "E:V2-037104",
+            "E:V2-037106"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BLOODMOON-11",
+          "stage": "对外自证",
+          "statement": "主动抛给铁若男检查；以「容易喂养」解释其为族中唯一存留之蛊",
+          "evidence": [
+            "E:V2-056134",
+            "E:V2-056136"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "blood_atk_3_15_gu",
@@ -304,7 +535,7 @@
       "type": "gu",
       "name": "骨蛊",
       "aliases": [],
-      "description": "白骨山可猎杀骨兽或收服的野生骨蛊；同系玉骨蛊能增加蛊师骨骼强度",
+      "description": "「骨蛊」在原文只是白骨山骨系野生蛊的泛称（全书仅 1 处独立成词），并非某只具体蛊的名；白骨山传承中的具体骨系蛊为玉骨蛊、铁骨蛊、飞骨盾、肉白骨，上位有四转精铁骨蛊、无常骨蛊。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -318,13 +549,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/bone-atk-1-08-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-BONE-001"
+        ]
       },
       "states": [
         {
           "id": "ST-BONE-01",
-          "stage": "野生",
-          "statement": "白骨山可猎杀骨兽或收服野生骨蛊",
+          "stage": "泛称",
+          "statement": "白骨山可猎杀骨兽或收服野生的骨蛊（泛称，非具体蛊）",
           "evidence": [
             "E:V2-038442"
           ],
@@ -332,11 +565,42 @@
         },
         {
           "id": "ST-BONE-02",
-          "stage": "同系晋升",
-          "statement": "玉骨蛊（白骨山传承）增骨骼强度：双猪之力基础上再添一鳄之力",
+          "stage": "传承",
+          "statement": "白骨山传承中的玉骨蛊能增加骨骼强度，使骨骼更坚硬坚韧；与鳄力蛊配合即可突破承载上限",
           "evidence": [
             "E:V2-035560",
             "E:V2-037452"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-03",
+          "stage": "收获",
+          "statement": "方源得骨枪蛊／螺旋骨枪蛊、飞骨盾、玉骨蛊、铁骨蛊、肉白骨与骨书",
+          "evidence": [
+            "E:V2-040528",
+            "E:V2-040530"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-04",
+          "stage": "使用",
+          "statement": "铁骨蛊：三转、瞬耗大量真元、极限剧痛、晕厥即前功尽弃；成后骨骼坚硬若铁",
+          "evidence": [
+            "E:V2-041282",
+            "E:V2-041310",
+            "E:V2-041468"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-05",
+          "stage": "上层品种",
+          "statement": "精铁骨蛊（四转）逆炼可得铁骨蛊；无常骨蛊（四转）使肉身能承担更强魂魄",
+          "evidence": [
+            "E:V2-066066",
+            "E:V3-092110"
           ],
           "canon_refs": []
         }
@@ -367,7 +631,7 @@
       "type": "gu",
       "name": "骨枪蛊",
       "aliases": [],
-      "description": "",
+      "description": "白骨传承的基础之蛊，原文明文「此蛊虽是一转」，量多成习、前世被百家大量装备并成为百家蛊师的特征；以奶水为食、养在奶缸中，饲养消耗巨大；合炼进阶可得二转螺旋骨枪蛊（多一股钻劲）。原文两处\"三转\"字样分别指缸中不存在的蛊与另一种骨刺蛊，非骨枪蛊",
       "properties": {
         "rank": null,
         "rank_status": "collision"
@@ -375,17 +639,166 @@
       "evidence": [],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/bone-def-3-01-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-BONESPEAR-01",
+          "stage": "转数明文",
+          "statement": "白凝冰在奶缸前点明「此蛊虽是一转，但是架不住量多」，缸中几乎盛满；后市集老者亦称「虽然只是一转」",
+          "evidence": [
+            "E:V2-038974",
+            "E:V2-038976",
+            "E:V2-038978",
+            "E:V2-047234"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-02",
+          "stage": "传承定位",
+          "statement": "被定义为「这道白骨传承的基础之物」，类比古月山寨的月刃蛊",
+          "evidence": [
+            "E:V2-038980"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-03",
+          "stage": "装备史",
+          "statement": "前世百家发现传承后大量装备，骨枪蛊成为百家蛊师的一个特征",
+          "evidence": [
+            "E:V2-038982"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-04",
+          "stage": "进阶件",
+          "statement": "缸中另有二转蛊＝螺旋骨枪蛊，带螺旋刻纹；为骨枪蛊的进阶，多出一股钻劲",
+          "evidence": [
+            "E:V2-038984",
+            "E:V2-038986",
+            "E:V2-038988",
+            "E:V2-038990"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-05",
+          "stage": "缸内上限",
+          "statement": "白凝冰遗憾「可惜没有三转蛊」；缸中最高为「这种二转的蛊」（螺旋骨枪蛊）",
+          "evidence": [
+            "E:V2-039000",
+            "E:V2-039002"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-06",
+          "stage": "取得",
+          "statement": "方源空窍中多了两百只骨枪蛊、二十多只螺旋骨枪蛊；自评「总算有一种常规稳定的进攻手段」",
+          "evidence": [
+            "E:V2-039016",
+            "E:V2-039894"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-07",
+          "stage": "饲养条件",
+          "statement": "以奶水为食、养在奶缸；缸底联通泉眼活水，消耗巨大；需自有奶泉方能养活",
+          "evidence": [
+            "E:V2-039030",
+            "E:V2-039032",
+            "E:V2-039034"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-08",
+          "stage": "空窍负担",
+          "statement": "一转高阶空窍装载数百只骨枪蛊后再接引真元「不堪重负」；处置为移入白凝冰空窍",
+          "evidence": [
+            "E:V2-040946",
+            "E:V2-040958"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-09",
+          "stage": "断供饿死",
+          "statement": "奶泉水不足只能舍弃部分；即便尽力喂养，已饿死三分之二",
+          "evidence": [
+            "E:V2-042736",
+            "E:V2-043270"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-10",
+          "stage": "最优保有量",
+          "statement": "用一只足够、顶多再留一只备用，其余不卖只能烂在手中并耗费奶水",
+          "evidence": [
+            "E:V2-042000"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-11",
+          "stage": "商业化",
+          "statement": "定价三百一十至三百二十元石（普通一转蛊约二百五十）；批量卖出五十六只；螺旋骨枪蛊报价七百八十",
+          "evidence": [
+            "E:V2-047248",
+            "E:V2-047252",
+            "E:V2-047260",
+            "E:V2-047272",
+            "E:V2-047280"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-12",
+          "stage": "二转指代行",
+          "statement": "老者端详螺旋骨枪蛊称「这是二转蛊，似乎是骨枪蛊的……」；方源补完升阶规则",
+          "evidence": [
+            "E:V2-047274",
+            "E:V2-047276",
+            "E:V2-047278"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-13",
+          "stage": "秘方倒推风险",
+          "statement": "商铺明言可雇佣秘方大师倒推秘方；他人查看秘方后确认「不少其他的秘方，都是以骨枪蛊为基础的」",
+          "evidence": [
+            "E:V2-047344",
+            "E:V2-048502"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONESPEAR-14",
+          "stage": "杀招复用与出清",
+          "statement": "螺旋钻星枪需少量螺旋骨枪蛊；空窍中的骨枪蛊与螺旋骨枪蛊被贩卖一空",
+          "evidence": [
+            "E:V4-123804",
+            "E:V2-049868"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "bone_def_3_05_gu",
       "type": "gu",
       "name": "玉骨蛊",
       "aliases": [],
-      "description": "",
+      "description": "白骨山传承中的骨系改造蛊：永久把蛊师骨骼改造成玉质，使其更坚硬柔韧、可在双猪之力上再承一鳄之力；属一次性消耗蛊，使用时剧痛可致人死亡，与冰肌蛊搭配为「冰肌玉骨」；转数原文无直接句（并列清单两读，roster-3 与 gu_lore 取三转）",
       "properties": {
         "rank": 3,
         "rank_status": "verified"
@@ -395,10 +808,105 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/bone-def-3-05-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-JADEBONE-01",
+          "stage": "名目与来源",
+          "statement": "白骨山传承中的骨系改造蛊，能增加蛊师的骨骼强度；用后可再用鳄力蛊",
+          "evidence": [
+            "E:V2-035560",
+            "E:V2-035562"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-02",
+          "stage": "入手",
+          "statement": "方源敲齿关取出一根通体泛绿、形似碧光玉石的骨头并炼化；白凝冰求换未成",
+          "evidence": [
+            "E:V2-039716",
+            "E:V2-039718",
+            "E:V2-039734"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-03",
+          "stage": "效果",
+          "statement": "永久把骨骼改成玉质，更坚硬更柔韧；与黑白豕蛊、鳄力蛊同属永久改造",
+          "evidence": [
+            "E:V2-039726",
+            "E:V2-037452"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-04",
+          "stage": "承载解锁",
+          "statement": "改造前只能承担双猪之力；用后可在其基础上再增添一鳄之力",
+          "evidence": [
+            "E:V2-037452",
+            "E:V2-041448"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-05",
+          "stage": "代价",
+          "statement": "一次性消耗蛊；使用时极剧疼痛，多名蛊师被硬生生疼死",
+          "evidence": [
+            "E:V2-039732"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-06",
+          "stage": "实测使用",
+          "statement": "白凝冰使用玉骨蛊，痛到抓破床单但坚持到最后；方源先用了铁骨蛊",
+          "evidence": [
+            "E:V2-041340",
+            "E:V2-041344",
+            "E:V2-041346"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-07",
+          "stage": "搭配",
+          "statement": "与冰肌蛊搭配效果最佳，叠加为「冰肌玉骨」；方源另择「钢筋铁骨」",
+          "evidence": [
+            "E:V2-039728",
+            "E:V2-039730",
+            "E:V2-041464"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-08",
+          "stage": "作料",
+          "statement": "第二空窍蛊秘方需动用玉骨蛊、冰肌蛊与黄金舍利蛊",
+          "evidence": [
+            "E:V2-070124",
+            "E:V2-070252"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADEBONE-09",
+          "stage": "转数",
+          "statement": "无直接句；「三转级数」并列清单可两读（口径A 三转／口径B 未明确）",
+          "evidence": [
+            "E:V2-040530",
+            "E:V2-041268"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "bone_mov_4_04_gu",
@@ -525,7 +1033,7 @@
       "type": "gu",
       "name": "石窍蛊",
       "aliases": [],
-      "description": "",
+      "description": "三转消耗蛊：形如骰子、通体灰白坚硬，用后把空窍窍壁改造成石壁、榨干底蕴与潜力，令修为瞬间达到同转巅峰，代价是阻断下一大境界的晋升并丧失自我回复真元的能力；常见于走投无路的蛊师",
       "properties": {
         "rank": 3,
         "rank_status": "verified"
@@ -535,7 +1043,128 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/earth-def-3-01-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-STONEORIFICE-01",
+          "stage": "名目与外形",
+          "statement": "形如骰子、正正方方、通体灰白、坚硬无比；消耗蛊，用一次就消失",
+          "evidence": [
+            "E:V1-024532",
+            "E:V1-032276",
+            "E:V1-024534"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-02",
+          "stage": "转数",
+          "statement": "「石窍蛊却只有三转」明文；另一处「三转的蛊虫只有一只，是只石窍蛊」",
+          "evidence": [
+            "E:V1-034292",
+            "E:V3-076364"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-03",
+          "stage": "机制",
+          "statement": "将窍壁转变成坚硬石壁，把空窍底蕴与潜力完全榨干，令修为瞬间达同转巅峰",
+          "evidence": [
+            "E:V1-024536",
+            "E:V1-032280"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-04",
+          "stage": "使用过程",
+          "statement": "蛊炸开成灰白石粉弥漫真元之海；光膜渐渐增厚、由光质变石质；数秒后化为石窍",
+          "evidence": [
+            "E:V1-032284",
+            "E:V1-032286",
+            "E:V1-032288"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-05",
+          "stage": "代价",
+          "statement": "断前进之路：24540 口径为终生将没有晋升三转的可能性，32294 口径为很难再跨入四转；并丧失自我回复真元的能力、今后只能靠元石补充",
+          "evidence": [
+            "E:V1-024540",
+            "E:V1-032294"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-06",
+          "stage": "适用人群",
+          "statement": "给走投无路者：空窍有无法医治的裂痕，或晋升无望而须短时间提升修为活命",
+          "evidence": [
+            "E:V1-024542",
+            "E:V1-024544"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-07",
+          "stage": "获取",
+          "statement": "以强取蛊从白凝冰空窍夺得；白凝冰自行合炼（成本相当高）；石人族供奉中亦有一只",
+          "evidence": [
+            "E:V1-024208",
+            "E:V1-024546",
+            "E:V3-076364"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-08",
+          "stage": "逆转与自愈",
+          "statement": "四转血颅蛊令空窍从石窍重新转化为光膜、修为提升效果消失甚至削减修为；十绝体的窍壁会自行复原",
+          "evidence": [
+            "E:V1-034292",
+            "E:V1-032294"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONEORIFICE-09",
+          "stage": "实际使用",
+          "statement": "方源在青茅山因春秋蝉压破空窍而用，从三转初阶跃升到三转巅峰、得雪银真元",
+          "evidence": [
+            "E:V1-032292",
+            "E:V2-057796"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "fate_gu",
+      "type": "gu",
+      "name": "宿命蛊",
+      "aliases": [
+        "宿命",
+        "宿命仙蛊"
+      ],
+      "description": "九转仙蛊、天道碎片：天庭秩序的规则接口，红莲与方源反抗的核心对象",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V3-103100",
+        "E:V5-197694"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/fate-gu.md"
         ],
         "canon_refs": []
       }
@@ -545,7 +1174,7 @@
       "type": "gu",
       "name": "鬼火蛊",
       "aliases": [],
-      "description": "",
+      "description": "鬼系攻杀类蛊虫；原文明文「是二转魂道蛊虫」，同时另处写「隶属炎道、魂道」。寄居持有者舌底化为蓝色火焰团，吐幽蓝鬼火、冷意阴寒；与一转骨竹蛊结合可修复五转战骨车轮，点睛在于烧灼出的白骨烟气。炼制细琐繁杂、耗心神，是炼蛊大会第二场的试题（同时炼十只）",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -555,10 +1184,162 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/fire-atk-2-01-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-GHOSTFIRE-01",
+          "stage": "转数（口径A）",
+          "statement": "明文「是二转魂道蛊虫」；书店段亦写「二转的鬼火蛊，店中有许多」；大会试题为「炼制二转的鬼火蛊」",
+          "evidence": [
+            "E:V3-081722",
+            "E:V3-084408",
+            "E:V4-151198"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-02",
+          "stage": "道属（两口径）",
+          "statement": "口径A：二转魂道蛊虫；口径B：隶属炎道、魂道，炼制合于魂道蛊虫特征；两口径并存",
+          "evidence": [
+            "E:V3-084408",
+            "E:V4-151206"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-03",
+          "stage": "转数（口径B）",
+          "statement": "赌斗中依次出现三只不同个体：一转鬼火蛊、二转鬼火蛊、三转鬼火蛊；规则背景为「只能是一转手段」",
+          "evidence": [
+            "E:V4-155278",
+            "E:V4-155280",
+            "E:V4-155326",
+            "E:V4-155328",
+            "E:V4-155398"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-04",
+          "stage": "谱系分科",
+          "statement": "鬼系按功能分科，鬼火蛊与鬼叫蛊、鬼脸蛊、鬼斧蛊同属「用作攻杀」一类",
+          "evidence": [
+            "E:V3-081800"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-05",
+          "stage": "寄居形态",
+          "statement": "寄托舌底，化为蓝色火焰团；另有旁述「舌头底下寄居着鬼火蛊」",
+          "evidence": [
+            "E:V3-082266",
+            "E:V3-084786"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-06",
+          "stage": "催发表现",
+          "statement": "吐出幽蓝色鬼火，附着目标静燃，散发出阵阵冷意、阴寒刺骨",
+          "evidence": [
+            "E:V3-082270",
+            "E:V3-082272",
+            "E:V3-082276"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-07",
+          "stage": "修复用途（需求）",
+          "statement": "白骨车轮濒临破碎，需骨竹蛊结合鬼火蛊方能修复，使之具备再战之能",
+          "evidence": [
+            "E:V3-079740",
+            "E:V3-079746",
+            "E:V3-081720"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-08",
+          "stage": "修复实操（支付）",
+          "statement": "逐根灼烧骨竹蛊成白骨烟气补裂痕；最深裂痕耗三十多根",
+          "evidence": [
+            "E:V3-082278",
+            "E:V3-082282",
+            "E:V3-082284"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-09",
+          "stage": "炼制难度",
+          "statement": "大会试题须同时炼十只、以用时排名；奖励为五张三转冰道蛊方；对心神消耗大、易致魂魄虚弱",
+          "evidence": [
+            "E:V4-151200",
+            "E:V4-151202",
+            "E:V4-151206"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-10",
+          "stage": "炼制手法",
+          "statement": "魂道＋炎道结合，焚烧幽魂作假鬼火炼真鬼火；幽魂须自备",
+          "evidence": [
+            "E:V4-151208",
+            "E:V4-151210"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-11",
+          "stage": "复投工序",
+          "statement": "关键步骤投入丹火蛊与魂球蛊各一，二者交融为鬼火蛊雏形；旁白点名\"复投\"",
+          "evidence": [
+            "E:V4-151272",
+            "E:V4-151274",
+            "E:V4-151278"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-12",
+          "stage": "失败概率",
+          "statement": "蛊在生产中爆炸并非操作失误，而是炼制本身存在失败概率；另处复述一只无故毁灭",
+          "evidence": [
+            "E:V4-151254",
+            "E:V4-153822"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-13",
+          "stage": "成型与并发",
+          "statement": "十只鬼火蛊齐飞而出；观者评为「一心二用」、速度极快",
+          "evidence": [
+            "E:V4-151298",
+            "E:V4-151314"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-GHOSTFIRE-14",
+          "stage": "上位品种",
+          "statement": "晋升路线为三转鬼炎蛊；四转鬼焱蛊寄居夜狼王；鬼炎蛊为惨蓝色鬼火",
+          "evidence": [
+            "E:V3-084408",
+            "E:V3-088744",
+            "E:V3-088746"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "fire_atk_4_02_gu",
@@ -663,7 +1444,7 @@
       "type": "gu",
       "name": "斤力蛊",
       "aliases": [],
-      "description": "",
+      "description": "一转力道蛊：可增长蛊师一斤之力，蛊店标价每只两百二十块元石；由北原七转蛊仙楚度（霸仙）研发，属人力钧力流的基础档，也是北原近数百年力道主流的最小单位",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -673,10 +1454,87 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/force-atk-1-05-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-JINFORCE-01",
+          "stage": "行市",
+          "statement": "南疆蛊店报价：一转斤力蛊可增长蛊师一斤之力，每只两百二十块元石",
+          "evidence": [
+            "E:V3-081746"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JINFORCE-02",
+          "stage": "阶梯",
+          "statement": "同柜台同梯次报出十斤之力蛊（二转／十斤力气／六百九十元石）、一钧之力蛊（三转／一钧三十斤／四千五百五十元石）、十钧之力蛊（四转／三万六千元石）",
+          "evidence": [
+            "E:V3-081748",
+            "E:V3-081750",
+            "E:V3-081752",
+            "E:V3-081764"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JINFORCE-03",
+          "stage": "源流归属",
+          "statement": "方源此前走兽力蛊的上古力道路线；斤力蛊、钧力蛊是最近数百年北原盛行起来的力道主流",
+          "evidence": [
+            "E:V3-081756",
+            "E:V3-081758"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JINFORCE-04",
+          "stage": "研发者",
+          "statement": "七转蛊仙楚度（霸仙）研发出斤力蛊和钧力蛊，并一手炼成六转仙蛊「力贯千钧」；三百年前成仙，秘方广为流传",
+          "evidence": [
+            "E:V3-081762",
+            "E:V3-081770"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JINFORCE-05",
+          "stage": "秘方优势",
+          "statement": "楚度秘方材料普通易收集、成本低廉、成功可能比兽力蛊高一线，故在北原广为流传",
+          "evidence": [
+            "E:V3-081772",
+            "E:V3-081774",
+            "E:V3-092078"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JINFORCE-06",
+          "stage": "流派清单",
+          "statement": "人力钧力流＝斤力蛊、十斤之力蛊、一钧之力蛊、十钧之力蛊、百钧之力蛊；楚度一人开创，已成五域力道主流、北原蛊师几乎都采用",
+          "evidence": [
+            "E:V4-138036",
+            "E:V4-138038",
+            "E:V4-138040",
+            "E:V5-195084"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JINFORCE-07",
+          "stage": "体系缺陷",
+          "statement": "力道蛊虫只有斤力蛊、钧力蛊、兽力蛊这些且大多用作攻击，防御／侦察／辅助少得可怜，难以构成完整的一套纯粹力道蛊",
+          "evidence": [
+            "E:V3-081810",
+            "E:V3-081814"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "force_atk_2_06_gu",
@@ -1119,7 +1977,7 @@
       "type": "gu",
       "name": "青铜舍利蛊",
       "aliases": [],
-      "description": "",
+      "description": "一转舍利蛊：圆球状凡蛊、拇指大小；可升华窍壁、直接升上一阶小境界；只针对一转蛊师，价格一般两千元石左右；天然生成、无法合炼，属该转极珍",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -1129,10 +1987,116 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/gold-atk-2-12-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-BRONZERELIC-01",
+          "stage": "体系定位",
+          "statement": "舍利蛊系列五档一一对应：一转青铜、二转赤铁、三转白银、四转黄金、五转紫晶；青铜专门针对一转蛊师",
+          "evidence": [
+            "E:V1-018064",
+            "E:V1-018066",
+            "E:V1-018068",
+            "E:V5-333192"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-02",
+          "stage": "机制",
+          "statement": "圆球状凡蛊、拇指大小、外形毫不起眼；可升华窍壁、助推修为，直接升上一阶小境界",
+          "evidence": [
+            "E:V1-018060",
+            "E:V5-333188",
+            "E:V3-086504"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-03",
+          "stage": "上限与代价",
+          "statement": "只推升小境界，每转的大境界需蛊师自己突破；单次无后遗症，但堆用会令突破大境界更难",
+          "evidence": [
+            "E:V2-038026",
+            "E:V3-087604",
+            "E:V2-057786"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-04",
+          "stage": "使用个案·交易",
+          "statement": "百家以\"猎到一头成年黑熊\"为条件赠方源一只青铜舍利蛊；方源当即用掉，修为由一转中阶升到一转高阶",
+          "evidence": [
+            "E:V2-037946",
+            "E:V2-038016",
+            "E:V2-038022",
+            "E:V2-038024",
+            "E:V2-039504"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-05",
+          "stage": "使用个案·连用",
+          "statement": "纯梦分身连用三颗青铜舍利蛊：光膜→水膜→石膜→晶膜",
+          "evidence": [
+            "E:V5-333228",
+            "E:V5-333230",
+            "E:V5-333232",
+            "E:V5-333234",
+            "E:V5-333236"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-06",
+          "stage": "使用个案·赏赐",
+          "statement": "马英杰赏马鸿运三枚青铜舍利蛊；马鸿运一晚将修为冲刺到二转",
+          "evidence": [
+            "E:V3-105988",
+            "E:V3-105992"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-07",
+          "stage": "行市与稀缺",
+          "statement": "青铜舍利蛊价格一般两千元石左右；舍利蛊均为天然蛊、无法合炼，\"有钱还买不到\"",
+          "evidence": [
+            "E:V2-050908",
+            "E:V2-050912",
+            "E:V5-333206"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-08",
+          "stage": "流通分层",
+          "statement": "青铜、赤铁、白银在凡间大量流通；黄金、紫晶受严苛管禁，仅在宝黄天等蛊仙市场可成打买",
+          "evidence": [
+            "E:V3-086508",
+            "E:V2-065440",
+            "E:V3-086518"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BRONZERELIC-09",
+          "stage": "性质与形成",
+          "statement": "舍利蛊是人道蛊虫，对异人、人族有本质效用，在异人、人族规模众多处形成更多",
+          "evidence": [
+            "E:V5-333214",
+            "E:V5-333216",
+            "E:V3-105998"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "gold_atk_2_16_gu",
@@ -1515,7 +2479,7 @@
       "type": "gu",
       "name": "雷翼蛊",
       "aliases": [],
-      "description": "",
+      "description": "三转移动类雷道蛊：凝聚一对雷光羽翼令蛊师短暂飞翔，速度有之但不灵活；消耗真元较多、与隐鳞蛊互斥；原文有完整的入手—使用—损毁—弃养个案",
       "properties": {
         "rank": 3,
         "rank_status": "verified"
@@ -1525,10 +2489,101 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/heaven-atk-3-10-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-THUNDERWING-01",
+          "stage": "野外目击",
+          "statement": "方源摸清三只狂电狼底细：其一寄居雷翼蛊，可短暂飞翔、机动性最强；千兽王身上多寄居二至三转野生蛊",
+          "evidence": [
+            "E:V1-025626",
+            "E:V1-025628"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-02",
+          "stage": "入手",
+          "statement": "方源晋升三转后依制从家族选取三转蛊；选中雷翼蛊——家老斩杀狂电狼所得的战利品，能凝雷光羽翼",
+          "evidence": [
+            "E:V1-026668",
+            "E:V1-026670",
+            "E:V1-026672",
+            "E:V1-026674"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-03",
+          "stage": "配置定位",
+          "statement": "六方面配置中雷翼蛊占移动位、补齐移动短板；至 27804 时该配置的治疗位为空",
+          "evidence": [
+            "E:V1-026676",
+            "E:V1-026946",
+            "E:V1-026948",
+            "E:V1-027804"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-04",
+          "stage": "寄居形态",
+          "statement": "三转雷翼蛊寄居方源后背、如同两道闪电纹身；催动时一对幽蓝雷翼在身后瞬间成形",
+          "evidence": [
+            "E:V1-027304",
+            "E:V1-028708"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-05",
+          "stage": "使用约束",
+          "statement": "消耗真元较多且丙等资质真元储备最低，须珍惜使用；与隐鳞蛊不能同时使用；雷翼乃电流凝聚，速度有之但不灵活",
+          "evidence": [
+            "E:V1-027380",
+            "E:V1-028568",
+            "E:V1-028956"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-06",
+          "stage": "受创",
+          "statement": "雷盾蛊死亡殃及，雷翼蛊奄奄一息、难堪再用；此后状态不可靠，可能在飞行中掉链子",
+          "evidence": [
+            "E:V1-029174",
+            "E:V1-029546",
+            "E:V1-031836"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-07",
+          "stage": "弃养",
+          "statement": "被血狂蛊污染、出现不受操纵迹象且将化血水成为污染源；方源连催三次令其脱离后背并抛出，被刀翅血蝠群斩碎",
+          "evidence": [
+            "E:V1-032388",
+            "E:V1-032390",
+            "E:V1-032392",
+            "E:V1-032394"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-THUNDERWING-08",
+          "stage": "更替",
+          "statement": "丢蛊后移动位成为短板，随即得到千里地狼蛛（坐骑类巨型蛊、以土为食）接替",
+          "evidence": [
+            "E:V1-032528",
+            "E:V1-032530"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "heaven_atk_3_13_gu",
@@ -1671,7 +2726,7 @@
       "type": "gu",
       "name": "寿蛊",
       "aliases": [],
-      "description": "",
+      "description": "泛称类蛊虫：唯一能\"从根本上、毫无后遗症地\"增添阳寿的至宝，原文将其定为凡蛊；转数未明言，按年数分档（八十年／百年／三百年／五百年／千年等）。既是延寿正品，也是蛊仙间最强劲的硬通货",
       "properties": {
         "rank": null,
         "rank_status": "collision"
@@ -1679,10 +2734,106 @@
       "evidence": [],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/heaven-atk-5-07-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-LIFESPAN-01",
+          "stage": "机制确认",
+          "statement": "增添阳寿；原文明确它\"不意味不死\"，且是人类延寿诸法中唯一\"根本上、毫无后遗症\"的正道",
+          "evidence": [
+            "E:V1-021020",
+            "E:V1-021028",
+            "E:V4-140260"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-02",
+          "stage": "分档口径",
+          "statement": "泛称类实体，按年数分档（十五／六十／八十／一百／三百／五百／一千年），每档＝对应年数的阳寿增量",
+          "evidence": [
+            "E:V1-005926",
+            "E:V1-021022",
+            "E:V2-072384",
+            "E:V3-108698",
+            "E:V4-173074"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-03",
+          "stage": "题名之辨",
+          "statement": "\"四千年寿蛊\"仅见于章节标题，正文对应的是\"累计延寿到四千多岁\"，非单只档位",
+          "evidence": [
+            "E:V5-288976",
+            "E:V5-289108",
+            "E:V5-289070"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-04",
+          "stage": "存在形式与产出",
+          "statement": "形如参须老树根；静止时不可察、飞行快过光；源于生命、有生命处皆可能孕育，但产出条件不定",
+          "evidence": [
+            "E:V2-072382",
+            "E:V1-005856",
+            "E:V5-198384",
+            "E:V4-142076"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-05",
+          "stage": "经济属性",
+          "statement": "只是凡蛊，却是蛊仙交易中最强劲的硬通货；拍卖会上几乎不流出，凡人交易中偶有拍卖",
+          "evidence": [
+            "E:V5-198348",
+            "E:V5-198350",
+            "E:V4-142074",
+            "E:V4-140266"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-06",
+          "stage": "材料与食料",
+          "statement": "与木魅蛊合炼晋四／五转；为智慧蛊的唯一食料；为第二空窍仙蛊的仙材",
+          "evidence": [
+            "E:V1-021016",
+            "E:V5-200062",
+            "E:V5-198394",
+            "E:V4-153192"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-07",
+          "stage": "天道控制",
+          "statement": "灾劫与寿蛊并列为\"天意的两大杀手锏\"；天地出产随大时代枯荣，终局可至存量全无",
+          "evidence": [
+            "E:V5-198626",
+            "E:V6-405586",
+            "E:V5-289082"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-LIFESPAN-08",
+          "stage": "转数未明",
+          "statement": "全书 285 行命中（含重复文本块）均未给转数；品阶口径原文只用\"凡蛊\"一词",
+          "evidence": [
+            "E:V5-198348",
+            "E:V4-142076",
+            "E:V5-242408"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "heaven_atk_5_08_gu",
@@ -1708,8 +2859,10 @@
       "id": "human_atk_1_01_gu",
       "type": "gu",
       "name": "自己蛊",
-      "aliases": [],
-      "description": "《人祖传》人道蛊：居于人身，须孤独审视内心方能发现；引迷途者不走旧路的痕迹、另辟全新的路",
+      "aliases": [
+        "自己"
+      ],
+      "description": "《人祖传》人道蛊：自人有生命起便居于其身、寄于孤独之心，须孤独中审视内心方能发现；吞吃他蛊一口即以「自己的」方式归还力量与爱情，会因宿主自欺而主动离去",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -1723,13 +2876,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/human-atk-1-01-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-SELF-001"
+        ]
       },
       "states": [
         {
           "id": "ST-SELF-01",
-          "stage": "发现条件",
-          "statement": "自有生命起居于人身；须孤独中审视内心方能发现",
+          "stage": "居所",
+          "statement": "自人有生命起即在体内；须孤独中审视内心方能发现",
           "evidence": [
             "E:V3-120396"
           ],
@@ -1737,11 +2892,131 @@
         },
         {
           "id": "ST-SELF-02",
+          "stage": "寄居位置",
+          "statement": "寄居于\"心\"，具体写作\"孤独之心\"",
+          "evidence": [
+            "E:V5-229232",
+            "E:V4-157982"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-03",
+          "stage": "人道归属",
+          "statement": "被方源明文列入人道蛊虫清单；《人祖传》被判为人道真传",
+          "evidence": [
+            "E:V5-328608",
+            "E:V5-328610"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-04",
+          "stage": "取得\"自己的力量\"",
+          "statement": "咬力量蛊一口，自此宿主拥有属于自己的力量",
+          "evidence": [
+            "E:V4-153580",
+            "E:V4-153586"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-05",
+          "stage": "取得\"自己的爱情\"",
+          "statement": "曾咬爱情蛊一口（宿命蛊点明它只吃过力量与爱情）",
+          "evidence": [
+            "E:V5-299926"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-06",
+          "stage": "能力缺口",
+          "statement": "没有\"自己的智慧\"；规划再咬智慧蛊一口",
+          "evidence": [
+            "E:V5-299926",
+            "E:V6-379824"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-07",
+          "stage": "输出方式",
+          "statement": "使用已获力量\"不需要任何的代价\"（自述）；可对外动手活捉羽民",
+          "evidence": [
+            "E:V4-157988",
+            "E:V4-157984"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-08",
+          "stage": "自身功能",
+          "statement": "有自己蛊则遇失败蛊不会迷失自己；可主动提醒宿主（骄傲蛊占位）",
+          "evidence": [
+            "E:V4-153538",
+            "E:V6-411088"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-09",
+          "stage": "提议能力",
+          "statement": "对恐惧蛊的处置提议是\"让我吃了它\"，宿主可否决",
+          "evidence": [
+            "E:V5-218990",
+            "E:V5-218992"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-10",
           "stage": "引路",
-          "statement": "助人祖离开生死门：不走宿命蛊—公平蛊留痕的旧路，另辟全新的路，\"路就在你的脚下\"",
+          "statement": "不走宿命蛊—公平蛊留痕的旧路；\"只要你想走，路就在你的脚下\"",
           "evidence": [
             "E:V3-120404",
-            "E:V3-120408"
+            "E:V3-120408",
+            "E:V3-120412"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-11",
+          "stage": "唯一依靠",
+          "statement": "思想蛊：\"其他的蛊都靠不住，只有靠你的自己蛊\"；\"你也只能一个人走\"",
+          "evidence": [
+            "E:V3-120432",
+            "E:V3-120438"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-12",
+          "stage": "离去",
+          "statement": "因宿主把态度蛊戴在其上、连自己都骗，主动飞走",
+          "evidence": [
+            "E:V6-416310",
+            "E:V6-416312",
+            "E:V6-416314"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-13",
+          "stage": "离去后果",
+          "statement": "\"人若骗自己，自己会离人而去，人会丢掉自己\"；人祖自认再无法获得自由",
+          "evidence": [
+            "E:V6-416316",
+            "E:V6-416318"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-14",
+          "stage": "层次边界",
+          "statement": "不入九转仙蛊名单（该名单为力量／智慧／宿命等）",
+          "evidence": [
+            "E:V3-103100"
           ],
           "canon_refs": []
         }
@@ -1967,8 +3242,11 @@
       "id": "human_def_1_32_gu",
       "type": "gu",
       "name": "山盟蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "山盟仙蛊",
+        "山盟海誓蛊"
+      ],
+      "description": "信道盟誓类仙蛊：立誓须面对一座高山，摧毁对应之山即誓言失效（明文缺陷）；能建立不可违背的守望盟约，是魔道蛊仙互信的主要基石；非攻伐、不供防御，价值在报酬与人脉；转数原文未明言（与六转海誓蛊并称）",
       "properties": {
         "rank": null,
         "rank_status": "name_reuse"
@@ -1978,10 +3256,150 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/human-def-1-32-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-OATH-01",
+          "stage": "身份·道属",
+          "statement": "信道盟誓类蛊虫，与海誓蛊、诺言蛊、白纸黑字蛊同列；黎山仙子的本命／核心仙蛊",
+          "evidence": [
+            "E:V6-376870",
+            "E:V4-130064",
+            "E:V4-146096",
+            "E:V4-148250"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-02",
+          "stage": "转数",
+          "statement": "明文为仙蛊；具体转数原文未明言（并称的海誓蛊明写六转，两蛊合称\"这两个仙蛊\"）",
+          "evidence": [
+            "E:V2-071240"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-03",
+          "stage": "立誓条件",
+          "statement": "立誓时人需面对一片大海或者一座高山",
+          "evidence": [
+            "E:V2-071262"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-04",
+          "stage": "明文缺陷",
+          "statement": "摧毁对应的海洋或高山，誓言即失效",
+          "evidence": [
+            "E:V2-071262"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-05",
+          "stage": "盟约效力",
+          "statement": "建立不可违背的守望盟约，是魔道蛊仙相互信任的主要基石",
+          "evidence": [
+            "E:V4-123360"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-06",
+          "stage": "条款可定制",
+          "statement": "说真话／不得恶意加害盟友／战利品六四分配／带有时间期限",
+          "evidence": [
+            "E:V4-125614",
+            "E:V4-125742",
+            "E:V4-131352",
+            "E:V4-130674"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-07",
+          "stage": "违约后果·条款口径",
+          "statement": "违约者应誓而死；施压表述作\"可得赔上性命\"",
+          "evidence": [
+            "E:V4-125614",
+            "E:V4-130504"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-08",
+          "stage": "违约后果·执行口径",
+          "statement": "宙道仙级杀招令反噬暂缓；黎山仙子违约两次分别受重伤与轻伤，仍活得很好",
+          "evidence": [
+            "E:V4-148578",
+            "E:V4-148580",
+            "E:V4-171386",
+            "E:V4-173560"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-09",
+          "stage": "誓约载体",
+          "statement": "誓约应在具名之山（大雪山／方寸山）；山毁则誓约失效、反噬随之消失",
+          "evidence": [
+            "E:V4-139880",
+            "E:V4-148584",
+            "E:V4-148868",
+            "E:V4-148586"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-10",
+          "stage": "定位",
+          "statement": "既非攻伐仙蛊，也不提供防御、不助转移；但得之者有巨大优势",
+          "evidence": [
+            "E:V4-139894",
+            "E:V4-139896"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-11",
+          "stage": "收益",
+          "statement": "替他人缔约可得丰厚报酬并交友广泛；为黎山仙子的经济支柱",
+          "evidence": [
+            "E:V4-139888",
+            "E:V4-139890",
+            "E:V4-140230"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-12",
+          "stage": "借用制度",
+          "statement": "方源付三块仙元石借用；旁人十块亦不借；借出冒风险（焚天魔女借蛊袁家有借难还）",
+          "evidence": [
+            "E:V4-136368",
+            "E:V4-136370",
+            "E:V4-136372",
+            "E:V4-136376"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-OATH-13",
+          "stage": "命名边界",
+          "statement": "\"山盟海誓蛊\"为两蛊合称；游戏 id `human_def_1_32_gu` 为 rank=1 同名重用",
+          "evidence": [
+            "E:V2-074310",
+            "E:V2-071240"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "human_heal_5_42_gu",
@@ -2005,8 +3423,10 @@
       "id": "jade_skin_gu",
       "type": "gu",
       "name": "玉皮蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "玉皮"
+      ],
+      "description": "一转皮甲系最珍稀防御蛊：皮肤化玉并撑起玉光护体，耗元少于铜皮蛊而防御更强，但受击越多耗元越剧",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -2016,10 +3436,200 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/jade-skin-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-JADESKIN-01",
+          "stage": "系列定位",
+          "statement": "皮甲系（兽皮／铁皮／铜皮／石皮／玉皮）中最珍稀者；市价仅次于酒虫",
+          "evidence": [
+            "E:V1-009612",
+            "E:V1-009616",
+            "E:V1-009618"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-02",
+          "stage": "渠道稀缺",
+          "statement": "中型家族学堂蛊室不备此蛊；商铺偶见，可与月光蛊搭配",
+          "evidence": [
+            "E:V1-009620",
+            "E:V1-017846"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-03",
+          "stage": "他人持有态（方正）",
+          "statement": "族长以\"提前奖励\"授予，附\"率先突破二转\"的条件",
+          "evidence": [
+            "E:V1-009808",
+            "E:V1-009814"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-04",
+          "stage": "实战防御开启",
+          "statement": "皮肤化玉＋玉光护体；可防月刃、可挡住致命一击",
+          "evidence": [
+            "E:V1-011930",
+            "E:V1-013112",
+            "E:V1-011986"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-05",
+          "stage": "受击耗元",
+          "statement": "一场激战多次使用耗去八分墨绿真元（＝六成四翠绿）",
+          "evidence": [
+            "E:V1-012600",
+            "E:V1-012618"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-06",
+          "stage": "防御被击穿",
+          "statement": "徒手两拳被打破（使用者重伤/昏迷）；另有高阶杀招穿透一厘米即止的个案",
+          "evidence": [
+            "E:V1-013630",
+            "E:V1-013638",
+            "E:V1-011932"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-07",
+          "stage": "常态喂养",
+          "statement": "每十天吞食二两玉石；玉石贵且来源受限；玉眼石猴眼珠可替代",
+          "evidence": [
+            "E:V1-012418",
+            "E:V1-012420",
+            "E:V1-012478"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-08",
+          "stage": "参与合炼·失败",
+          "statement": "与月光蛊合炼失败：月光蛊现裂痕、玉皮蛊萎靡不振",
+          "evidence": [
+            "E:V1-015780"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-09",
+          "stage": "被合炼吸收·防御线",
+          "statement": "与白豕蛊合炼为白玉蛊，防御能力被保留并强化（增力被舍弃）",
+          "evidence": [
+            "E:V1-016910",
+            "E:V1-016056"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-10",
+          "stage": "被合炼吸收·月系线",
+          "statement": "与月光蛊合炼为月霓裳，最高可升至五转宝月光王蛊",
+          "evidence": [
+            "E:V1-017160",
+            "E:V1-015738"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-JADESKIN-11",
+          "stage": "秘密收藏态",
+          "statement": "方源因\"解释不了来源\"而秘密收藏、不放公开场合使用；置于第二秘洞",
+          "evidence": [
+            "E:V1-013716",
+            "E:V1-013690"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
+      "id": "light_atk_1_01_gu",
+      "type": "gu",
+      "name": "月旋蛊",
+      "aliases": [],
+      "description": "月光蛊＋旋风蛊合炼的月系分支：月刃由蓝变绿、由直线变曲线，古月青书的选用路线；转数原文未明言（旁证指向二转）",
+      "properties": {
+        "rank": null,
+        "rank_status": "rank_unstated"
+      },
+      "evidence": [
+        "E:V1-026760"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/light-atk-1-01-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-GU-MOONSPIN-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-MOONSPIN-01",
+          "stage": "体系定线",
+          "statement": "月光蛊＋旋风蛊合炼成月旋蛊：月刃由蓝变绿、由直线变曲线；原文称\"常见的路线\"",
+          "evidence": [
+            "E:V1-017158"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSPIN-02",
+          "stage": "持有与使用",
+          "statement": "古月青书持有；寄居左掌成绿色月牙印记，甩出绿色曲线月刃",
+          "evidence": [
+            "E:V1-016800",
+            "E:V1-016802",
+            "E:V1-016804"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSPIN-03",
+          "stage": "木魅增幅对照",
+          "statement": "青书化树精时，月旋蛊无变化，木行蛊获增幅",
+          "evidence": [
+            "E:V1-023848",
+            "E:V1-023856"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSPIN-04",
+          "stage": "作三转底子",
+          "statement": "白色照影蛊所记三转秘方以月旋蛊、月痕蛊等为底子",
+          "evidence": [
+            "E:V1-026780"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSPIN-05",
+          "stage": "转数未明",
+          "statement": "全书 4 处提及均无转数明文；旁证指向二转（合理推导）",
+          "evidence": [
+            "E:V1-016800",
+            "E:V1-026780"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "light_atk_1_04_gu",
@@ -2046,7 +3656,7 @@
       "type": "gu",
       "name": "邀月蛊",
       "aliases": [],
-      "description": "",
+      "description": "酒虫晋升线 B 线的中间形态：酒虫可依家族秘方合炼为二转邀月蛊、再晋升三转七香酒虫；转数原文明文「二转」。全书仅 2 行独立出现，本页按薄证据处理",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -2056,10 +3666,63 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/light-atk-3-02-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-YAOYUE-01",
+          "stage": "体系定线",
+          "statement": "家族收录秘方：酒虫可晋升为二转邀月蛊、三转七香酒虫；七香酒虫保留精炼真元能力",
+          "evidence": [
+            "E:V1-016922"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-YAOYUE-02",
+          "stage": "在案提议",
+          "statement": "青书提议以酒虫换家族合炼，成功则方源得五年使用权、失败另有补偿，风险转嫁家族",
+          "evidence": [
+            "E:V1-016924",
+            "E:V1-016926"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-YAOYUE-03",
+          "stage": "实战使用",
+          "statement": "狼潮中古月博施放邀月蛊：左掌散出漩涡状紫色月光，吞并家老射出的月刃",
+          "evidence": [
+            "E:V1-028282",
+            "E:V1-028284",
+            "E:V1-028286"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-YAOYUE-04",
+          "stage": "战果",
+          "statement": "劈出比马车还大的紫色月刃，在雷冠头狼右前肢留下巨大伤口、血流不止",
+          "evidence": [
+            "E:V1-028294",
+            "E:V1-028316"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-YAOYUE-05",
+          "stage": "归属未定",
+          "statement": "原文两处出现均未将邀月蛊系于月光蛊支线，“光系”归类无原文依据",
+          "evidence": [
+            "E:V1-016922",
+            "E:V1-028282"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "light_atk_3_05_gu",
@@ -2185,8 +3848,10 @@
       "id": "luck_atk_1_03_gu",
       "type": "gu",
       "name": "招灾蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "招灾仙蛊"
+      ],
+      "description": "运道七转仙蛊：替蛊仙招灾引难，将地灾天劫从原目标勾连到持蛊者身上；本质自我牺牲之蛊，收服须「自我牺牲的心」；与排难蛊一体两面",
       "properties": {
         "rank": 7,
         "rank_status": "name_reuse"
@@ -2196,10 +3861,113 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/luck-atk-1-03-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-CALAMITY-01",
+          "stage": "形态",
+          "statement": "形如蚕茧／蚕蛹、浑身灰白、小拇指大小",
+          "evidence": [
+            "E:V3-104238",
+            "E:V3-104502"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-02",
+          "stage": "品阶",
+          "statement": "七转仙蛊，比六转春秋蝉高一个档次；列入七转仙蛊名录",
+          "evidence": [
+            "E:V3-104130",
+            "E:V3-104510",
+            "E:V5-199798"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-03",
+          "stage": "道属",
+          "statement": "隶属运道；与排难蛊同为运道蛊虫，一体两面",
+          "evidence": [
+            "E:V3-104522",
+            "E:V3-104524",
+            "E:V3-104248"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-04",
+          "stage": "核心效用",
+          "statement": "替蛊仙招灾引难，将地灾天劫脱离原目标、勾连到自身",
+          "evidence": [
+            "E:V3-104132"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-05",
+          "stage": "炼制来源",
+          "statement": "墨瑶借摧毁小塔楼后的伟力回流、感应排难蛊炼成，近水楼台温养后带出福地",
+          "evidence": [
+            "E:V3-104190",
+            "E:V3-104194"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-06",
+          "stage": "收服条件",
+          "statement": "不计仙凡身份，须有缘人有自我牺牲的心；无此心而强行收服则反噬或自毁",
+          "evidence": [
+            "E:V3-104254",
+            "E:V3-104256"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-07",
+          "stage": "收服实录",
+          "statement": "方源取蛊，顺利成为其物，无震荡反噬",
+          "evidence": [
+            "E:V3-104468"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-08",
+          "stage": "使用限制",
+          "statement": "凡人无仙窍不能装载与炼化；不可盲目催动；暴露即招觊觎",
+          "evidence": [
+            "E:V3-104542",
+            "E:V3-104556",
+            "E:V4-123238"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-09",
+          "stage": "喂养",
+          "statement": "方源以六头大蛇的黑血喂养过",
+          "evidence": [
+            "E:V5-200070"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CALAMITY-10",
+          "stage": "命名边界",
+          "statement": "全书「灾蛊」43 处全部含于「招灾蛊」内，未检得独立用例；两个 wiki id 共用同一锚点",
+          "evidence": [
+            "E:V3-104120",
+            "E:V3-104130"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "luck_atk_5_01_gu",
@@ -2286,7 +4054,7 @@
       "type": "gu",
       "name": "月芒蛊",
       "aliases": [],
-      "description": "月光蛊与两只小光蛊合炼成的二转进攻蛊，月刃攻击力达月光蛊三倍",
+      "description": "月光蛊＋两只小光蛊合炼成的二转进攻蛊；月刃大如脸盆、攻击力为月光蛊三倍、射程未随晋升增加（原文\"十米／十步\"两口径）",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -2300,14 +4068,14 @@
           "lore/wiki/gu/moon-glow-gu.md"
         ],
         "canon_refs": [
-          "CAN-SMALL-LIGHT-002"
+          "CAN-GU-MOONGLOW-001"
         ]
       },
       "states": [
         {
           "id": "ST-MOONGLOW-01",
-          "stage": "动机/规划",
-          "statement": "方源盘点合炼路线：月光蛊+两只小光蛊→二转月芒蛊，进攻能力上涨",
+          "stage": "动机／规划",
+          "statement": "盘点合炼路线：月光蛊＋两只小光蛊→二转月芒蛊，代表进攻能力上涨",
           "evidence": [
             "E:V1-015710"
           ],
@@ -2324,10 +4092,11 @@
         },
         {
           "id": "ST-MOONGLOW-03",
-          "stage": "合炼成功（方源个案）",
-          "statement": "一只月光蛊+两只小光蛊合炼成二转月芒蛊；攻击力达月光蛊三倍，与白玉蛊攻守兼备",
+          "stage": "合炼成功",
+          "statement": "二转月芒蛊成立；攻击力达月光蛊三倍，与白玉蛊攻守兼备",
           "evidence": [
             "E:V1-017144",
+            "E:V1-017150",
             "E:V1-017316"
           ],
           "canon_refs": []
@@ -2335,7 +4104,7 @@
         {
           "id": "ST-MOONGLOW-04",
           "stage": "增量规则",
-          "statement": "一只小光蛊增幅月刃一倍攻击力；两只仍一倍，增幅不可叠加",
+          "statement": "一只小光蛊增幅一倍攻击力；两只仍一倍，增幅不可叠加",
           "evidence": [
             "E:V1-017148"
           ],
@@ -2343,10 +4112,74 @@
         },
         {
           "id": "ST-MOONGLOW-05",
-          "stage": "使用",
-          "statement": "月芒蛊月刃实战亮相，旁观者辨认为月芒蛊而非月光蛊",
+          "stage": "实战亮相",
+          "statement": "月刃被旁观者辨认为月芒蛊而非月光蛊",
           "evidence": [
-            "E:V1-017470"
+            "E:V1-017470",
+            "E:V1-017502"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-06",
+          "stage": "形态与寄居",
+          "statement": "呈月光蛊放大一倍之形；寄居右掌，可收入空窍",
+          "evidence": [
+            "E:V1-017142",
+            "E:V1-019662",
+            "E:V1-019666"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-07",
+          "stage": "射程口径",
+          "statement": "最大化攻击力的路线射程仍旧十米；心语另作\"十步\"",
+          "evidence": [
+            "E:V1-017154",
+            "E:V1-024162"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-08",
+          "stage": "真元预算",
+          "statement": "一记一成真元；二转初／中／高阶＝四／八／十六记",
+          "evidence": [
+            "E:V1-018640",
+            "E:V1-020174"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-09",
+          "stage": "食料依赖",
+          "statement": "月芒蛊需月兰花瓣维持；花瓣只能存放五天",
+          "evidence": [
+            "E:V1-021220",
+            "E:V1-021222",
+            "E:V1-003874"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-10",
+          "stage": "群战检验",
+          "statement": "一记收割五六只石猴；三记至少十七八头；对隐形猴王命中极难",
+          "evidence": [
+            "E:V1-018636",
+            "E:V1-018690",
+            "E:V1-018942"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-11",
+          "stage": "作为三转底蛊",
+          "statement": "二转月芒蛊＋血气蛊可合炼三转血月蛊；距三转独有明文",
+          "evidence": [
+            "E:V1-026840",
+            "E:V1-026874"
           ],
           "canon_refs": []
         }
@@ -2357,7 +4190,7 @@
       "type": "gu",
       "name": "月痕蛊",
       "aliases": [],
-      "description": "月光蛊与痕石蛊合炼而成：攻击范围增一倍达二十米，攻击力不变（秘方记载\"并不出众\"）",
+      "description": "月光蛊＋痕石蛊合炼的月系分支：攻击力不变、攻击范围翻倍达二十米；转数原文未明言（旁证指向二转）",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -2371,13 +4204,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/moon-ray-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-MOONRAY-001"
+        ]
       },
       "states": [
         {
           "id": "ST-MOONRAY-01",
-          "stage": "合炼路线",
-          "statement": "月光蛊+痕石蛊合炼成月痕蛊：攻击力不变、攻击范围增一倍达二十米",
+          "stage": "体系定线",
+          "statement": "月光蛊＋痕石蛊合炼成月痕蛊：攻击力不变、攻击范围增一倍达二十米",
           "evidence": [
             "E:V1-017156"
           ],
@@ -2386,10 +4221,40 @@
         {
           "id": "ST-MOONRAY-02",
           "stage": "秘方在案",
-          "statement": "方源持月痕蛊合炼秘方：优点=攻击距离为月光一倍，缺点=攻击力并不出众",
+          "statement": "方源以照影蛊读到月痕蛊秘方：优点＝攻击距离为月光一倍，缺点＝攻击力并不出众",
           "evidence": [
             "E:V1-026760",
-            "E:V1-026762"
+            "E:V1-026762",
+            "E:V1-026764"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-03",
+          "stage": "辅材可购",
+          "statement": "树屋售痕石蛊，与月光蛊搭配可合炼更高级蛊虫",
+          "evidence": [
+            "E:V1-017846",
+            "E:V1-017848"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-04",
+          "stage": "作三转底子",
+          "statement": "白色照影蛊所记三转秘方以月旋蛊、月痕蛊等为底子",
+          "evidence": [
+            "E:V1-026780"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-05",
+          "stage": "转数未明",
+          "statement": "全书 5 处提及均无转数明文；旁证指向二转（合理推导）",
+          "evidence": [
+            "E:V1-017156",
+            "E:V1-026780"
           ],
           "canon_refs": []
         }
@@ -2399,8 +4264,10 @@
       "id": "moon_shadow_gu",
       "type": "gu",
       "name": "月影蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "月影"
+      ],
+      "description": "幻影月蛊的晋升上位（四转，原文明文）：一经种入空窍即压制对手真元的使用，压制幅度按目标修为分档；不造成伤害，故在战例中属\"拖累\"而非\"致命",
       "properties": {
         "rank": 4,
         "rank_status": "verified"
@@ -2410,17 +4277,82 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/moon-shadow-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-MOONSHADOW-01",
+          "stage": "机制明文",
+          "statement": "月影蛊能种入空窍、压制真元使用；压制幅度按目标修为分档（四转三成／五转一成半／三转六成）",
+          "evidence": [
+            "E:V1-026794",
+            "E:V1-026802"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSHADOW-02",
+          "stage": "晋阶与转数",
+          "statement": "幻影月蛊为晋升基础，再上为四转月影蛊；转数原文明文",
+          "evidence": [
+            "E:V1-026792",
+            "E:V1-002648"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSHADOW-03",
+          "stage": "战例",
+          "statement": "四代族长战败后偷袭花酒行者，其\"最擅隐藏\"，乘对手消耗后种入",
+          "evidence": [
+            "E:V1-002648",
+            "E:V1-002668"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSHADOW-04",
+          "stage": "死因辨正",
+          "statement": "原文后段明确月影蛊只是限制真元、并不足以致命，真正致伤指向刀翅血蝠",
+          "evidence": [
+            "E:V1-026810",
+            "E:V1-028054",
+            "E:V1-031870"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSHADOW-05",
+          "stage": "反制边界",
+          "statement": "春秋蝉在其进入空窍时发威，可将月影蛊反炼（方源推断，非实测）",
+          "evidence": [
+            "E:V1-026804",
+            "E:V1-026806"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONSHADOW-06",
+          "stage": "死因口径未统一",
+          "statement": "同期原文另有\"被月影蛊拖累死\"的通俗归因，与后段\"不足以致命\"并存",
+          "evidence": [
+            "E:V1-002746",
+            "E:V1-028054"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "moonlight_gu",
       "type": "gu",
       "name": "月光蛊",
       "aliases": [
-        "月光刃"
+        "月光刃",
+        "月刃蛊"
       ],
       "description": "古月一族秘法培育的一转镇族蛊虫，发射月刃的基础战斗蛊",
       "properties": {
@@ -2470,9 +4402,10 @@
         {
           "id": "ST-MOONLIGHT-04",
           "stage": "使用",
-          "statement": "三步发射（见下方事件链图后说明）；每记一成真元，中远程十米，初练易偏飞",
+          "statement": "三步发射（见事件链后说明）；每记一成真元，中远程十米，初练易偏飞",
           "evidence": [
-            "E:V1-003604"
+            "E:V1-003604",
+            "E:V1-004006"
           ],
           "canon_refs": []
         },
@@ -2506,15 +4439,121 @@
             "E:V1-005438"
           ],
           "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-08",
+          "stage": "喂养（掺料降本）",
+          "statement": "掺一根知心草，每顿一片月兰花瓣即饱（日耗四片降至两片）",
+          "evidence": [
+            "E:V1-006126"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-09",
+          "stage": "断粮",
+          "statement": "可能自我封印（冬眠），蓝芒消散、水晶褪为灰石，日久成顽石（小概率）",
+          "evidence": [
+            "E:V1-006184"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-10",
+          "stage": "合炼晋升",
+          "statement": "四路线：月芒蛊（攻三倍）/月痕蛊（二十米）/月旋蛊（曲线刃）/月霓裳（防御·最高可晋五转宝月光王蛊）",
+          "evidence": [
+            "E:V1-017152"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-11",
+          "stage": "真元预算（月芒蛊）",
+          "statement": "一成浅红真元/记；二转初/中/高阶分别四/八/十六记",
+          "evidence": [
+            "E:V1-020174"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-12",
+          "stage": "受打击",
+          "statement": "宿主手掌被射穿时，掌中寄居的月光蛊\"受到重大打击，濒临死亡\"",
+          "evidence": [
+            "E:V1-013388"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-13",
+          "stage": "他人持有（非方源）",
+          "statement": "一名被杀的蛊师\"舌头上有一个月牙的印记，正是寄居着的月光蛊\"，临死仍放出一记月刃",
+          "evidence": [
+            "E:V1-011790"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-14",
+          "stage": "族外出现（存疑）",
+          "statement": "从北原葛家族库取得\"一清二楚蛊、曰光蛊、月光蛊等\"用于鉴定灰白石板",
+          "evidence": [
+            "E:V3-091274"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-15",
+          "stage": "合炼失败后",
+          "statement": "表面黯淡无光（受伤），至少三天后才能再次合炼；失败亦可能直接消亡",
+          "evidence": [
+            "E:V1-017070",
+            "E:V1-017074"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-16",
+          "stage": "本命蛊（保护态）",
+          "statement": "古月一族绝大多数族人以它为本命蛊；本命蛊在合炼中不会死亡、至多受伤",
+          "evidence": [
+            "E:V1-001490",
+            "E:V1-017186"
+          ],
+          "canon_refs": []
         }
       ]
+    },
+    {
+      "id": "persistence_gu",
+      "type": "gu",
+      "name": "坚持仙蛊",
+      "aliases": [
+        "坚持蛊"
+      ],
+      "description": "七转石碑巨形仙蛊；元莲所炼、逆流河河主认主核心，方源第二代主人",
+      "properties": {
+        "rank": 7,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V5-239862"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/persistence-gu.md"
+        ],
+        "canon_refs": []
+      }
     },
     {
       "id": "qi_atk_1_01_gu",
       "type": "gu",
       "name": "硬气蛊",
       "aliases": [],
-      "description": "气道防御蛊：动用杀招防御下降时弥补短板；珍贵并不常见（力气蛊绝迹后的可得替代）",
+      "description": "气道防御蛊：动用杀招时防御下降，硬气蛊以无形气流包裹全身弥补该短板，看似毫无防御实则坚如磐石；气道在上古鼎盛后被力道取代，力气蛊已绝迹，硬气蛊属可得品种。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -2528,25 +4567,49 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/qi-atk-1-01-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-QI-001"
+        ]
       },
       "states": [
         {
           "id": "ST-HARDQI-01",
           "stage": "功用",
-          "statement": "动用杀招时防御下降，硬气蛊弥补该短板",
+          "statement": "动用杀招时防御下降，硬气蛊弥补该短板；机制为无形气流包裹全身，看似无防御实则坚如磐石",
           "evidence": [
-            "E:V2-058640"
+            "E:V2-058640",
+            "E:V2-059538"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-HARDQI-02",
           "stage": "珍稀与同系",
-          "statement": "珍贵并不常见；力气蛊已绝迹（上古气道消失），硬气蛊为可得替代",
+          "statement": "珍贵并不常见；同为气道的有朝气蛊、风气蛊；力气蛊已绝迹（上古气道消失）",
           "evidence": [
             "E:V2-058640",
-            "E:V2-058642"
+            "E:V2-058656",
+            "E:V2-058644"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-HARDQI-03",
+          "stage": "隐蔽性",
+          "statement": "硬气蛊无形无色，对手难以判断防御是否已开",
+          "evidence": [
+            "E:V2-059548"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-HARDQI-04",
+          "stage": "谱系旁证（非本蛊明文）",
+          "statement": "气道蛊「能转换有无形」；力气蛊（三转）以力之气承载兽力虚影，半成一影、八影四成真元",
+          "evidence": [
+            "E:V2-058650",
+            "E:V2-059730",
+            "E:V2-059764"
           ],
           "canon_refs": []
         }
@@ -2752,8 +4815,11 @@
       "id": "slave_atk_1_03_gu",
       "type": "gu",
       "name": "驭犬蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "驭兽蛊",
+        "犬蛊"
+      ],
+      "description": "一转奴道驭兽蛊：形似拇指大的玉狗头，催动后化玉光射入兽体、种在魂魄中夺其自主；一枚只能用一次，控制成败取决于双方魂魄，兽王可反噬",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -2763,17 +4829,179 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/slave-atk-1-03-gu.md"
         ],
-        "canon_refs": []
-      }
+        "canon_refs": [
+          "CAN-CULTIVATOR-002",
+          "CAN-GU-DOG-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-BEASTTAME-01",
+          "stage": "身份·品阶",
+          "statement": "一转（同族跨一转至七转仙蛊）；按兽种命名（驭犬/驭狼/驭熊…）",
+          "evidence": [
+            "E:V2-060300",
+            "E:V3-078940",
+            "E:V4-129376"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-02",
+          "stage": "形态",
+          "statement": "形似玉石、拇指大小、酷似狗头",
+          "evidence": [
+            "E:V2-064436"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-03",
+          "stage": "催动",
+          "statement": "一滴真元即可疯狂催动；化玉光、由实化虚射入兽体",
+          "evidence": [
+            "E:V2-064438",
+            "E:V2-064440"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-04",
+          "stage": "命中",
+          "statement": "中在魂魄、不伤身躯；兽当场服从",
+          "evidence": [
+            "E:V2-064454",
+            "E:V2-064448"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-05",
+          "stage": "联系可变",
+          "statement": "灰雾越浓联系越弱、越稀薄联系越强",
+          "evidence": [
+            "E:V2-064622",
+            "E:V2-064646"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-06",
+          "stage": "支配性质",
+          "statement": "被支配者失去身体指挥权，可被强迫自伤",
+          "evidence": [
+            "E:V1-025958",
+            "E:V1-025948"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-07",
+          "stage": "控制上限（成长失效）",
+          "statement": "异兽成年后需四转蛊，否则不听话甚至逃遁",
+          "evidence": [
+            "E:V3-083846"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-08",
+          "stage": "代价·消耗",
+          "statement": "消耗蛊，爆成轻烟后成败都消散；不可回收；兽死蛊亡",
+          "evidence": [
+            "E:V3-080866",
+            "E:V2-064848",
+            "E:V2-070608"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-09",
+          "stage": "代价·魂魄",
+          "statement": "真元不多、关键在魂魄；连番收服致魂魄震荡，重则受损失忆降智",
+          "evidence": [
+            "E:V3-083460",
+            "E:V3-083462",
+            "E:V3-083464"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-10",
+          "stage": "生效条件",
+          "statement": "须种入魂魄＋魂魄压制目标＋目标无守护蛊",
+          "evidence": [
+            "E:V2-065120",
+            "E:V2-065044",
+            "E:V2-065046"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-11",
+          "stage": "反噬",
+          "statement": "百兽王魂魄不甘反抗，经蛊向蛊师袭来精神冲击",
+          "evidence": [
+            "E:V2-065122",
+            "E:V2-065126"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-12",
+          "stage": "优化·分层控制",
+          "statement": "控兽王、由兽王间接控群，减少魂魄负担",
+          "evidence": [
+            "E:V3-083844"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-13",
+          "stage": "获取·野生寄生",
+          "statement": "兽王身上可能寄生驭兽蛊；搜刮万狼王尸体得四转驭狼蛊",
+          "evidence": [
+            "E:V3-078940",
+            "E:V3-083646",
+            "E:V3-083852",
+            "E:V3-083848"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-14",
+          "stage": "获取·市场管制",
+          "statement": "四转以上市面一般不出售、价值暴涨，需自炼",
+          "evidence": [
+            "E:V3-083836",
+            "E:V3-083838",
+            "E:V3-083842"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEASTTAME-15",
+          "stage": "流派凭证",
+          "statement": "犬王传承以\"至少炼化一转驭犬蛊\"为门槛；三王各挑本流派传人",
+          "evidence": [
+            "E:V2-060354",
+            "E:V2-064574"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "slave_atk_3_04_gu",
       "type": "gu",
       "name": "驭狼蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "驭兽蛊"
+      ],
+      "description": "奴道驭兽蛊族的狼种分件：催动后化作轻烟罩落，种入目标魂魄夺其自主；一次性消耗蛊，成败均消散；成本真元不多而关键是魂魄；一转至五转皆有秘方，二转明文；三转驭千狼王、四转驭万狼王或异兽",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -2783,10 +5011,177 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/slave-atk-3-04-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-WOLFTAME-01",
+          "stage": "身份·族属",
+          "statement": "奴道驭兽蛊族按兽种分件的狼种件；「驭兽蛊」为族属统称",
+          "evidence": [
+            "E:V1-025948",
+            "E:V3-078940",
+            "E:V3-081834"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-02",
+          "stage": "品阶（本页锚定件）",
+          "statement": "原文明文为二转（三处独立用例）；与 roster-3 第 198 行\"原文转 2／L0 裁定\"对齐",
+          "evidence": [
+            "E:V3-078942",
+            "E:V3-080200",
+            "E:V3-080708"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-03",
+          "stage": "品阶·系列跨度",
+          "statement": "同族秘方一转到五转皆有且每转多种；五转驭狼蛊有实战用例",
+          "evidence": [
+            "E:V3-089750",
+            "E:V3-089752",
+            "E:V3-090658",
+            "E:V3-100956"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-04",
+          "stage": "族属上限（非本件）",
+          "statement": "族属存在七转仙蛊，可控天下野兽、异兽、万兽王／万兽皇、荒兽、上古荒兽",
+          "evidence": [
+            "E:V4-129376",
+            "E:V3-085466"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-05",
+          "stage": "催动形态",
+          "statement": "化蓝烟／轻烟罩落目标，种入魂魄；转数越高轻烟越浓",
+          "evidence": [
+            "E:V3-080198",
+            "E:V3-080200",
+            "E:V3-080728",
+            "E:V3-083500"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-06",
+          "stage": "生效条件",
+          "statement": "由双方魂魄强弱定成败；百兽狼王魂魄反抗后被百人魂碾压而败",
+          "evidence": [
+            "E:V3-080202"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-07",
+          "stage": "代价·一次性消耗",
+          "statement": "消耗蛊，爆成轻烟后成败均消散；失败亦扣（\"失去了二转驭狼蛊\"）",
+          "evidence": [
+            "E:V3-080866",
+            "E:V3-083430",
+            "E:V3-083642"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-08",
+          "stage": "代价·魂魄损伤",
+          "statement": "催动真元不多但关键在魂魄；连番使用致震荡浮躁，重则魂魄受损、丧失记忆、智力下降",
+          "evidence": [
+            "E:V3-083460",
+            "E:V3-083462",
+            "E:V3-083464"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-09",
+          "stage": "转数—目标对应",
+          "statement": "三转驭千狼王；四转驭万狼王或异兽；四转后可间接驭群以减魂魄负担",
+          "evidence": [
+            "E:V3-080868",
+            "E:V3-083844"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-10",
+          "stage": "目标成长失效",
+          "statement": "异兽幼体三转可奴，成年即需四转蛊，否则不听话甚至逃遁",
+          "evidence": [
+            "E:V3-083846"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-11",
+          "stage": "反制",
+          "statement": "目标以火光／焚身蛊烧尽轻烟，或以金罡蛊阻断催动；收服可换目标再试",
+          "evidence": [
+            "E:V3-083428",
+            "E:V3-083548",
+            "E:V3-084366",
+            "E:V3-083436"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-12",
+          "stage": "获取·寄生与猎取",
+          "statement": "兽王身上可能寄生相应驭兽蛊；猎杀后自尸身搜刮（二／三／四转均有实例）",
+          "evidence": [
+            "E:V3-078940",
+            "E:V3-083646",
+            "E:V3-083852",
+            "E:V3-083848"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-13",
+          "stage": "获取·市场与秘方",
+          "statement": "四转以上市面一般不出售、价值暴涨；秘方一至五转皆有、每转多至八种",
+          "evidence": [
+            "E:V3-083836",
+            "E:V3-083838",
+            "E:V3-083840",
+            "E:V3-089752"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-14",
+          "stage": "应用·规模",
+          "statement": "狼潮连番收编百兽王／千狼王；四转蛊一役收编万狼王及近两万狼群；缺秘方则规模止于数千头",
+          "evidence": [
+            "E:V3-083714",
+            "E:V3-092268",
+            "E:V3-080870"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOLFTAME-15",
+          "stage": "命名边界",
+          "statement": "「驭兽蛊」为族属统称、非并列第二蛊；本 id 对应二转那一枚",
+          "evidence": [
+            "E:V1-025948",
+            "E:V3-078940",
+            "E:V3-078942"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "slave_atk_3_05_gu",
@@ -2852,8 +5247,10 @@
       "id": "small_light_gu",
       "type": "gu",
       "name": "小光蛊",
-      "aliases": [],
-      "description": "五角星形辅助蛊，与月光蛊协同放大月刃，可参与合炼月芒蛊",
+      "aliases": [
+        "小光谷（形近误植）"
+      ],
+      "description": "一转光道辅助蛊；双蛊同催令月刃体积与攻击力各翻一倍，增幅不叠加，可参与合炼月芒蛊",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -2874,42 +5271,106 @@
       "states": [
         {
           "id": "ST-SMALLLIGHT-01",
-          "stage": "存放",
-          "statement": "学堂蛊室墙角，共五只；形如五角星、约半指甲盖大",
+          "stage": "蛊室存放",
+          "statement": "学堂蛊室墙角，共五只；五角星形、约半个指甲盖大、乳白微光",
           "evidence": [
-            "E:V1-009704"
+            "E:V1-009704",
+            "E:V1-009706",
+            "E:V1-009708"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-SMALLLIGHT-02",
-          "stage": "炼成",
-          "statement": "寄居宿主右掌掌心，成乳白色五角星图案",
+          "stage": "被选取",
+          "statement": "方源在蛊室取得一只；评价为\"马马虎虎，至少符合发展方向\"",
           "evidence": [
-            "E:V1-010930"
+            "E:V1-009704",
+            "E:V1-009710"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-SMALLLIGHT-03",
-          "stage": "使用",
-          "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+          "stage": "炼化完成",
+          "statement": "寄居右掌掌心，成乳白色五角星图案；可被外部检查者看见",
           "evidence": [
-            "E:V1-010926",
-            "E:V1-017148"
+            "E:V1-010930",
+            "E:V1-013678"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-SMALLLIGHT-04",
-          "stage": "合炼",
-          "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+          "stage": "现役增幅",
+          "statement": "双蛊同催，月刃体积与攻击力各扩大一倍；增幅不叠加",
           "evidence": [
-            "E:V1-015710"
+            "E:V1-010932",
+            "E:V1-010940",
+            "E:V1-017148"
           ],
-          "canon_refs": [
-            "CAN-SMALL-LIGHT-002"
-          ]
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-05",
+          "stage": "二次获取",
+          "statement": "年末考核第一后入蛊室免费再取一只",
+          "evidence": [
+            "E:V1-014438"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-06",
+          "stage": "参与合炼",
+          "statement": "与月光蛊合炼月芒蛊；两只小光蛊为配方组件",
+          "evidence": [
+            "E:V1-015710",
+            "E:V1-017148"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-07",
+          "stage": "合炼失败",
+          "statement": "一只未响应而消散；幸存蛊虫受伤、表面黯淡、成功率下降",
+          "evidence": [
+            "E:V1-017056",
+            "E:V1-017058",
+            "E:V1-017070",
+            "E:V1-017072"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-08",
+          "stage": "合炼产物态",
+          "statement": "月芒蛊成立后，小光蛊不再单独存在（已被合炼吸收）",
+          "evidence": [
+            "E:V1-017146",
+            "E:V1-017150"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-09",
+          "stage": "集群部署",
+          "statement": "三十余只同型部署，驱散地洞黑暗；遭范围电光纷纷击溃",
+          "evidence": [
+            "E:V3-103410",
+            "E:V3-103416",
+            "E:V3-103434"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-10",
+          "stage": "可补充态",
+          "statement": "与月光蛊对照：小光蛊死掉可去商铺购买，容易补充",
+          "evidence": [
+            "E:V1-017068"
+          ],
+          "canon_refs": []
         }
       ]
     },
@@ -2917,8 +5378,10 @@
       "id": "soul_atk_1_02_gu",
       "type": "gu",
       "name": "净魂仙蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "净魂"
+      ],
+      "description": "魂道辅助修行仙蛊：精炼魂魄、剔除杂质，过度使用反剔精华；明文为六转（「至少七转」是解魂道陷阱的需求门槛，非品阶）；凡蛊级万我／落魄阵／鬼官衣／星魂战场多套杀招的核心，喂养须上万头白莲巨蚕蛊血肉",
       "properties": {
         "rank": 7,
         "rank_status": "name_reuse"
@@ -2928,10 +5391,137 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/soul-atk-1-02-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-PURESOUL-01",
+          "stage": "识名",
+          "statement": "琅琊地灵认出此蛊名为净魂，为魂道蛊仙辅助修行之物；方源自认此前误称其为\"分魂\"",
+          "evidence": [
+            "E:V4-123190",
+            "E:V4-123192"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-02",
+          "stage": "品阶·明文",
+          "statement": "方源重炼个体为六转；六转名录含净魂而七转名录不含；魂道仙蛊仅\"七转换魂、六转净魂两只\"",
+          "evidence": [
+            "E:V5-270940",
+            "E:V5-273794",
+            "E:V5-275032"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-03",
+          "stage": "核心效用",
+          "statement": "精炼魂魄、剔除杂质于体外；使用过度则连精华魂魄一并剔除",
+          "evidence": [
+            "E:V4-123190"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-04",
+          "stage": "杀招核心",
+          "statement": "杀招万我的核心蛊；万我的力道虚影蕴宿主魂魄，故动用会消耗魂魄底蕴",
+          "evidence": [
+            "E:V4-123194",
+            "E:V4-123196",
+            "E:V4-123198"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-05",
+          "stage": "喂养需求",
+          "statement": "须上万头白莲巨蚕蛊血肉；一次喂养需数万头，而白莲巨蚕蛊十分罕见",
+          "evidence": [
+            "E:V4-124558",
+            "E:V4-148880",
+            "E:V4-128586"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-06",
+          "stage": "饥饿风险",
+          "statement": "频频催动后饿得虚弱；饥饿仙蛊强行催用会致仙蛊死亡，万我风险剧增",
+          "evidence": [
+            "E:V4-128004",
+            "E:V4-128016",
+            "E:V4-128018"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-07",
+          "stage": "被毁",
+          "statement": "义天山大战后，净魂等仙蛊毁于方源的特意之下，影无邪未及拯救",
+          "evidence": [
+            "E:V5-199310"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-08",
+          "stage": "重炼",
+          "statement": "主材只需一小段魂丝（百里魂丝亦够）；累计近三十次失败，方源接手后第十五次成功",
+          "evidence": [
+            "E:V5-267298",
+            "E:V5-270906"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-09",
+          "stage": "改良",
+          "statement": "以雪莲花精替代冰道仙材改良仙蛊方；雪莲花精为七转仙材",
+          "evidence": [
+            "E:V5-270596",
+            "E:V5-270936"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-10",
+          "stage": "身兼数职",
+          "statement": "兼作万我核心、自身魂道修行与替代驾驭魂兽；利用率高但分身乏术",
+          "evidence": [
+            "E:V5-281508",
+            "E:V5-281510",
+            "E:V5-281512"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-11",
+          "stage": "母体挪用",
+          "statement": "复用为落魄阵核心、鬼官衣核心、星魂战场核心",
+          "evidence": [
+            "E:V5-273654",
+            "E:V5-271538",
+            "E:V4-180362"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-PURESOUL-12",
+          "stage": "命名边界",
+          "statement": "游戏 id `soul_atk_1_02_gu` 为 rank=1 同名重用；「分魂」是角色误称而非别名",
+          "evidence": [
+            "E:V5-270940",
+            "E:V4-123192"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "soul_atk_5_01_gu",
@@ -2954,11 +5544,240 @@
       }
     },
     {
+      "id": "spring_autumn_cicada_gu",
+      "type": "gu",
+      "name": "春秋蝉",
+      "aliases": [
+        "时间道蛊虫"
+      ],
+      "description": "时光道奇蛊·仙蛊：献祭蛊师全部只留意识，载之逆流光阴长河实现重生；食光阴河水、恢复须历一轮春秋，且被天意侵蚀",
+      "properties": {
+        "rank": 6,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V1-032214",
+        "E:V2-064426"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/spring-autumn-cicada-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-CICADA-01",
+          "stage": "前世炼成",
+          "statement": "六转品级；方源前世第一只也是最后一只六转蛊虫，三十年酝酿侥幸炼成",
+          "evidence": [
+            "E:V1-003258",
+            "E:V1-003256"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-02",
+          "stage": "前世自爆重生",
+          "statement": "逆转光阴五百年，元气大损、随重生寄托方源身并沉眠",
+          "evidence": [
+            "E:V1-003256",
+            "E:V1-003270"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-03",
+          "stage": "青茅山现身",
+          "statement": "镇压酒虫反噬、助炼两蛊；症状为双翅枯黄卷边残缺；虚弱至极方容于一转空窍",
+          "evidence": [
+            "E:V1-003176",
+            "E:V1-003294",
+            "E:V1-003334"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-04",
+          "stage": "气息外放的纪律",
+          "statement": "因非战斗蛊且会引天地异象，须藏于空窍、不可外放",
+          "evidence": [
+            "E:V1-030810",
+            "E:V1-030812"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-05",
+          "stage": "空窍死线期",
+          "statement": "恢复越快越逼近撑破空窍；石窍蛊可暂缓但断前路",
+          "evidence": [
+            "E:V1-032218",
+            "E:V1-032222",
+            "E:V1-032294"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-06",
+          "stage": "一轮春秋后恢复",
+          "statement": "历经一轮春秋，双翅泛出新绿、边角有了完整弧线",
+          "evidence": [
+            "E:V1-015804",
+            "E:V1-015806"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-07",
+          "stage": "合炼无损",
+          "statement": "春秋蝉\"不管怎么合炼，它都不会灭亡\"；本命蛊身份使其免于消亡危机",
+          "evidence": [
+            "E:V1-017206"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-08",
+          "stage": "战力与克制认知",
+          "statement": "气息对一至四转强烈震慑、对五转效果不大、对同级六转无威慑；并被认为可被智道克制",
+          "evidence": [
+            "E:V1-021652",
+            "E:V5-189578"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-09",
+          "stage": "六转唯一性确认",
+          "statement": "六转蛊天下唯一；再造须待前一只消亡",
+          "evidence": [
+            "E:V1-032214",
+            "E:V2-064426"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-10",
+          "stage": "本命蛊沉睡位",
+          "statement": "沉睡第一空窍中央，再也挪移不走；成为\"索命的刀刃\"",
+          "evidence": [
+            "E:V3-090878",
+            "E:V3-093512"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-11",
+          "stage": "Run 1 后期升七转",
+          "statement": "提升至七转；升炼不改名；以春秋必成加持二次重生",
+          "evidence": [
+            "E:V3-085444",
+            "E:V5-323692",
+            "E:V5-309872"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-12",
+          "stage": "Run 2 重生后",
+          "statement": "回到六转、萎靡焦黄如枯木；自动复原时点为数年后中洲炼蛊大会；此阶段已无撑破空窍之忧",
+          "evidence": [
+            "E:V5-323702",
+            "E:V5-323704",
+            "E:V5-323710",
+            "E:V5-323712"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-13",
+          "stage": "归属",
+          "statement": "红莲魔尊（洪亭）所创——龙公两处已核对话；方源六转本命",
+          "evidence": [
+            "E:V5-313128",
+            "E:V5-323070",
+            "E:V1-003296"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-14",
+          "stage": "弧九·影无邪劫持发动",
+          "statement": "影无邪魂魄与方源仙僵之身刹那自爆、\"都化为了养分，献祭给了春秋蝉\"；方源惊\"怎么会被影无邪催使出来？\"",
+          "evidence": [
+            "E:V5-188012",
+            "E:V5-188028"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-15",
+          "stage": "天意侵蚀揭示",
+          "statement": "幽魂魔尊意志点破\"春秋蝉这种大杀器，早就被天意侵蚀了\"、发动亦是天意催动",
+          "evidence": [
+            "E:V5-188084",
+            "E:V5-188104",
+            "E:V5-188116",
+            "E:V5-188130"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-16",
+          "stage": "弧九·影无邪短程重生",
+          "statement": "影无邪意志借蝉重生回义天山时段；幽魂命其重建影宗",
+          "evidence": [
+            "E:V5-188178"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-17",
+          "stage": "被封印期",
+          "statement": "被第三位蛊仙以杀招封印，三个月内无法催动；期间只能被动挨饿",
+          "evidence": [
+            "E:V5-194186",
+            "E:V5-200366"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-18",
+          "stage": "禁用与驱除天意",
+          "statement": "列入完全禁止使用名单；改天消意散＋升炼逆炼两路并进；方源改良为平炼，终得\"再无丝毫天意\"之蝉",
+          "evidence": [
+            "E:V5-276650",
+            "E:V5-276654",
+            "E:V5-276722",
+            "E:V5-277260",
+            "E:V5-277262"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-CICADA-19",
+          "stage": "八转环境禁用",
+          "statement": "光阴长河因宿命蛊被毁而狂暴，蝉一发动必被拍碎；纵升八转亦无法催用",
+          "evidence": [
+            "E:V6-372050",
+            "E:V6-372052",
+            "E:V6-372054",
+            "E:V6-404378"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
       "id": "stone_shell_gu",
       "type": "gu",
       "name": "石皮蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "石皮"
+      ],
+      "description": "一转护防系列（兽皮—铁皮—铜皮—石皮—玉皮）的寻常档：双臂化灰白石化并裹上厚石皮，硬到对手指甲不能洞穿，代价是石臂沉重、速度太慢",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -2968,17 +5787,124 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/stone-shell-gu.md"
         ],
-        "canon_refs": []
-      }
+        "canon_refs": [
+          "CAN-GU-STONESHELL-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-STONESHELL-01",
+          "stage": "身份",
+          "statement": "一转；与铜皮／铁皮／玉皮／兽皮同属一个护防系列，外形灰扑如石头工艺品",
+          "evidence": [
+            "E:V3-076364",
+            "E:V1-009610",
+            "E:V1-009602"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-02",
+          "stage": "价位档",
+          "statement": "只被明说高于兽皮蛊；未入珍稀档",
+          "evidence": [
+            "E:V1-009616",
+            "E:V1-009618"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-03",
+          "stage": "获取渠道",
+          "statement": "石人地底挖掘所得；作为供奉大宗上缴；学堂蛊室连续陈列六只",
+          "evidence": [
+            "E:V3-076368",
+            "E:V3-076364",
+            "E:V1-009604"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-04",
+          "stage": "催动形态",
+          "statement": "双臂由黄转灰白、膨胀成粗大石臂（催动伴随真元勃发）",
+          "evidence": [
+            "E:V1-011888"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-05",
+          "stage": "防御生效",
+          "statement": "裹厚石皮，对手指甲不能洞穿",
+          "evidence": [
+            "E:V1-011894"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-06",
+          "stage": "代价生效",
+          "statement": "石臂太沉重，速度太慢，对手自认可轻松闪避",
+          "evidence": [
+            "E:V1-011894",
+            "E:V1-011892"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-07",
+          "stage": "重量的收益",
+          "statement": "石臂扫中即横飞、摔得七荤八素",
+          "evidence": [
+            "E:V1-011900",
+            "E:V1-011904"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-08",
+          "stage": "代价被补偿",
+          "statement": "以蜂蛊碧风轮环臂，石臂速度激增",
+          "evidence": [
+            "E:V1-011896",
+            "E:V1-011898"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-09",
+          "stage": "上位形态（推导）",
+          "statement": "二转磐石蛊：全身石化成\"石头人\"，须合炼而得",
+          "evidence": [
+            "E:V1-022634",
+            "E:V1-022616",
+            "E:V1-017606"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-STONESHELL-10",
+          "stage": "同名辨析",
+          "statement": "石窍蛊同为\"石\"名与供奉品，但作用于空窍、榨干潜力，不属防御谱系",
+          "evidence": [
+            "E:V3-076364",
+            "E:V1-024532",
+            "E:V1-032294"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "sword_atk_4_01_gu",
       "type": "gu",
       "name": "剑气蛊",
       "aliases": [],
-      "description": "",
+      "description": "剑道穿刺性攻击蛊：指尖射出一道淡白色半透明剑气；被克制即徒然耗真元、毫无效果；已知四转野生个体（中洲剑断山谷），持有者个案转数未明",
       "properties": {
         "rank": 4,
         "rank_status": "verified"
@@ -2988,10 +5914,80 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/sword-atk-4-01-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-SWORDQI-01",
+          "stage": "持有与使用",
+          "statement": "南疆烂泥山倪家少族长倪健以剑气蛊为最大手段；并拢食中二指出指尖射出淡白色半透明剑气",
+          "evidence": [
+            "E:V5-190382",
+            "E:V5-190388",
+            "E:V5-190408"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SWORDQI-02",
+          "stage": "弱点暴露",
+          "statement": "棕熊身上野生防御蛊凝成硬板，剑气被克制：穿刺攻击徒然耗真元、毫无效果，目标一点伤都没有",
+          "evidence": [
+            "E:V5-190392",
+            "E:V5-190394",
+            "E:V5-190396",
+            "E:V5-190418"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SWORDQI-03",
+          "stage": "志趣冲突",
+          "statement": "倪坤借予泥泞蛊逼孙儿放弃剑道改修倪家土道；倪健自陈\"就是喜欢剑道\"，最终靠泥泞蛊取胜",
+          "evidence": [
+            "E:V5-190428",
+            "E:V5-190460",
+            "E:V5-190472",
+            "E:V5-190476"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SWORDQI-04",
+          "stage": "野生产地",
+          "statement": "中洲剑断山谷由薄青剑光斩断山脉形成；剑道道痕刻印成特殊环境，孕养出野生剑道蛊虫",
+          "evidence": [
+            "E:V5-195620",
+            "E:V5-195622",
+            "E:V5-195628"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SWORDQI-05",
+          "stage": "哄抢事件",
+          "statement": "一只四转剑气蛊被发现后逃窜，引动三转、四转蛊师哄抢；旁观者评\"可遇而不可求\"",
+          "evidence": [
+            "E:V5-195606",
+            "E:V5-195632",
+            "E:V5-195634"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SWORDQI-06",
+          "stage": "转数口径",
+          "statement": "带转数的表述只见于剑断山谷组（路人对话）；持有者倪健组 4 处命中均无转数表述",
+          "evidence": [
+            "E:V5-195606",
+            "E:V5-190418"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "sword_atk_5_02_gu",
@@ -3034,11 +6030,144 @@
       }
     },
     {
+      "id": "vitality_grass_gu",
+      "type": "gu",
+      "name": "九叶生机草",
+      "aliases": [
+        "生机草蛊",
+        "生机草",
+        "九叶草",
+        "vitality grass"
+      ],
+      "description": "二转草蛊，本体具治疗作用但原文只一句带过，真正价值在把真元转成叶片——九片叶各可撕成一片一转消耗型生机叶，是古月山寨二转期最受欢迎的基础治疗手段与方源的主要元石来源",
+      "properties": {
+        "rank": 2,
+        "rank_status": "divergence"
+      },
+      "evidence": [
+        "E:V1-026952"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/vitality-grass-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-GU-CARE-001",
+          "CAN-ECONOMY-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-VITAL-01",
+          "stage": "身份",
+          "statement": "二转草蛊、本体具治疗作用；九叶圆盘、翡翠根茎、参须状草根",
+          "evidence": [
+            "E:V1-016488",
+            "E:V1-016490"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-02",
+          "stage": "取叶",
+          "statement": "每片叶撕下即一只一转消耗型生机叶；摘叶微痛",
+          "evidence": [
+            "E:V1-016494",
+            "E:V1-016496",
+            "E:V1-017094"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-03",
+          "stage": "使用限制",
+          "statement": "用一片疗伤后一小时内其他生机叶无效",
+          "evidence": [
+            "E:V1-016498"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-04",
+          "stage": "催生",
+          "statement": "真元灌入长新叶；方源个案两成真元/片、四成四真元海一次两片、半天补满九片",
+          "evidence": [
+            "E:V1-017106",
+            "E:V1-017108",
+            "E:V1-017114"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-05",
+          "stage": "经济",
+          "statement": "一转消耗类，基准 50 元石/片；狼潮期升至 65→70→80（记忆 100）",
+          "evidence": [
+            "E:V1-017120",
+            "E:V1-020544",
+            "E:V1-024826",
+            "E:V1-025032",
+            "E:V1-020572"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-06",
+          "stage": "代售",
+          "statement": "方源不零售，交代理江牙对外贩卖、赚差价",
+          "evidence": [
+            "E:V1-017256",
+            "E:V1-017278"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-07",
+          "stage": "家族管控",
+          "statement": "家族有五株集体财产、后勤蛊师统一生产；药姬垄断售卖",
+          "evidence": [
+            "E:V1-017130",
+            "E:V1-025096"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-08",
+          "stage": "强制上缴",
+          "statement": "药堂通告勒令上缴、统一生产，方源上榜",
+          "evidence": [
+            "E:V1-025110"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-09",
+          "stage": "退场/替代",
+          "statement": "上缴后改用兜率花；理想替代为三转生生不息蛊/不死草/自力更生蛊",
+          "evidence": [
+            "E:V1-027806",
+            "E:V1-027810"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-VITAL-10",
+          "stage": "增幅（跨页）",
+          "statement": "木魅树精状态下生机叶作为木行蛊获增幅",
+          "evidence": [
+            "E:V1-023856"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
       "id": "water_atk_3_06_gu",
       "type": "gu",
       "name": "冰肌蛊",
       "aliases": [],
-      "description": "",
+      "description": "三转肌肤永久改造蛊：用后练成「冰肌」，常驻防御且无须真元支持，兼具免汗止血；与玉骨蛊搭配成「冰肌玉骨」，与主动防御蛊可两层叠加；入手与配方原文未交代",
       "properties": {
         "rank": 3,
         "rank_status": "verified"
@@ -3048,10 +6177,96 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/water-atk-3-06-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-ICESKIN-01",
+          "stage": "名目与转数",
+          "statement": "三转冰肌蛊；用后周身肌肤被永久改造成「冰肌」",
+          "evidence": [
+            "E:V1-023066",
+            "E:V2-039244"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-02",
+          "stage": "常驻定性",
+          "statement": "肌肤一经练成，如同黑白豕蛊增添的力量，再无须真元支持",
+          "evidence": [
+            "E:V1-023222"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-03",
+          "stage": "战场承伤",
+          "statement": "冰肌的防御力量支撑性命；挡下冰系攻击；被蜈蚣甩尾击中仍被割开大口",
+          "evidence": [
+            "E:V1-024132",
+            "E:V1-023502",
+            "E:V1-028766"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-04",
+          "stage": "止血免汗",
+          "statement": "免汗止血：伤口覆霜止血；方源无冰肌则失血较多；取血取肉须先破冰肌",
+          "evidence": [
+            "E:V2-039244",
+            "E:V1-023220",
+            "E:V2-040014",
+            "E:V2-039978"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-05",
+          "stage": "搭配加成",
+          "statement": "与玉骨蛊合成「冰肌玉骨」；与天蓬蛊两层防御叠加才保住性命",
+          "evidence": [
+            "E:V2-039728",
+            "E:V2-041460",
+            "E:V2-036364"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-06",
+          "stage": "破防与环境压制",
+          "statement": "单凭冰肌扛不住强刀锋；在福地中这类防御被削弱至无",
+          "evidence": [
+            "E:V2-048070",
+            "E:V2-064768"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-07",
+          "stage": "作料",
+          "statement": "第二空窍蛊秘方「冰肌化茎」需动用冰肌蛊",
+          "evidence": [
+            "E:V2-070124",
+            "E:V2-070252"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-ICESKIN-08",
+          "stage": "命名碰撞",
+          "statement": "「冰肌玉骨」亦用于星宿仙尊与雪儿的外貌描写，与蛊效合成词同形",
+          "evidence": [
+            "E:V4-180242",
+            "E:V5-274038"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "water_atk_3_07_gu",
@@ -3177,8 +6392,10 @@
       "id": "white_boar_strength_gu",
       "type": "gu",
       "name": "白豕蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "白猪蛊（未见于原文）"
+      ],
+      "description": "一转珍稀豕蛊：催用时耗真元并逐日改造肉身，所得力量永久归蛊师所有、蛊死不失、无真元亦可发挥，上限一猪之力",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -3188,17 +6405,133 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/white-boar-strength-gu.md"
         ],
-        "canon_refs": []
-      }
+        "canon_refs": [
+          "CAN-STRENGTH-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-WHITEBOAR-01",
+          "stage": "市面流通",
+          "statement": "一转珍稀蛊，600 元石，一出现即被收购；市场上另有仿冒品",
+          "evidence": [
+            "E:V1-009686",
+            "E:V1-006816",
+            "E:V6-398326"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-02",
+          "stage": "得蛊",
+          "statement": "花酒行者传承所得；方源判断该蛊是\"第一个考验\"的钥匙",
+          "evidence": [
+            "E:V1-009992",
+            "E:V1-009994"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-03",
+          "stage": "持蛊催用",
+          "statement": "灌入深绿真元→白光照体→肌肉改造；催用耗元",
+          "evidence": [
+            "E:V1-010994",
+            "E:V1-010996",
+            "E:V1-012758"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-04",
+          "stage": "力量驻留",
+          "statement": "力量\"一点一滴\"进入肉身，\"从此驻扎，再不流逝\"",
+          "evidence": [
+            "E:V1-011000"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-05",
+          "stage": "达上限",
+          "statement": "一猪之力后白豕蛊不再增力；外形出现流线型肌肉群",
+          "evidence": [
+            "E:V1-011066",
+            "E:V1-012348",
+            "E:V1-012344"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-06",
+          "stage": "异种叠加",
+          "statement": "追加黑豕蛊可得第二猪之力（同种不叠、异种可叠）",
+          "evidence": [
+            "E:V1-018198",
+            "E:V2-051286"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-07",
+          "stage": "常态喂养",
+          "statement": "每五天一顿、每顿一整头成年猪的肉；需定时狩猎",
+          "evidence": [
+            "E:V1-010070",
+            "E:V1-012424"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-08",
+          "stage": "被合炼消失",
+          "statement": "与玉皮蛊合炼为白玉蛊；猪肉需求归零，但力量保留",
+          "evidence": [
+            "E:V1-016140",
+            "E:V1-016076"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-09",
+          "stage": "可逆炼还原",
+          "statement": "用幡然蛊分解白玉蛊，可重新得到白豕蛊与玉皮蛊",
+          "evidence": [
+            "E:V1-018466"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-10",
+          "stage": "力量化为道痕",
+          "statement": "一猪之力对应力道道痕刻印在身；不能动用蛊虫时仍可发出一猪猛力",
+          "evidence": [
+            "E:V5-237136",
+            "E:V5-188382"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-11",
+          "stage": "承载上限风险",
+          "statement": "凡躯有承载极限；与鳄力蛊同用会超出承受、危害自身",
+          "evidence": [
+            "E:V2-035556",
+            "E:V2-041448"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "white_jade_gu",
       "type": "gu",
       "name": "白玉蛊",
       "aliases": [],
-      "description": "",
+      "description": "白豕蛊＋玉皮蛊合炼出的二转防御蛊：只保留并强化玉皮蛊的防御、丧失白豕蛊的增力，催动须持续灌真元且承击越重耗越剧，可用幡然蛊逆炼回双前身，再升三转天蓬蛊",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -3208,10 +6541,100 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/white-jade-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-WHITEJADE-01",
+          "stage": "谱系定线",
+          "statement": "白豕蛊＋玉皮蛊合炼成二转白玉蛊，再升三转天蓬蛊；月芒主攻、白玉主防",
+          "evidence": [
+            "E:V1-009986",
+            "E:V1-015712"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-02",
+          "stage": "合炼",
+          "statement": "方源加野猪王雪獠牙（后世改良的成功率窍门）合炼成功，白豕蛊与玉皮蛊同时消失",
+          "evidence": [
+            "E:V1-015874",
+            "E:V1-015888",
+            "E:V1-015892"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-03",
+          "stage": "防御运作",
+          "statement": "需持续灌真元、不能常驻；承击越多耗越剧；单次遭石猴王偷袭约耗半成绯红真元",
+          "evidence": [
+            "E:V1-016070",
+            "E:V1-018880",
+            "E:V1-018896"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-04",
+          "stage": "承击极限",
+          "statement": "玉皮蛊上限十六只石猴，白玉蛊可面对三十多只；上百只则招架不住；连续破裂致消亡",
+          "evidence": [
+            "E:V1-016056",
+            "E:V1-016058",
+            "E:V1-016114",
+            "E:V1-025584"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-05",
+          "stage": "能力取舍",
+          "statement": "只保留并强化玉皮蛊的防御，丧失白豕蛊增强力量的效果",
+          "evidence": [
+            "E:V1-016910",
+            "E:V1-016912"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-06",
+          "stage": "饲养",
+          "statement": "食物为玉石、每二十天八两；喂养费用高于玉皮蛊与白豕蛊之和；猪肉需求归零",
+          "evidence": [
+            "E:V1-016140",
+            "E:V1-016144",
+            "E:V1-016148"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-07",
+          "stage": "逆炼",
+          "statement": "幡然蛊可将白玉蛊分解回白豕蛊与玉皮蛊，此过程称逆炼",
+          "evidence": [
+            "E:V1-018464",
+            "E:V1-018466",
+            "E:V1-018468"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEJADE-08",
+          "stage": "升转与退役",
+          "statement": "以水罩蛊＋白玉蛊合炼天蓬蛊首次失败、水罩蛊死亡；三转后以天蓬蛊替代白玉蛊",
+          "evidence": [
+            "E:V1-026662",
+            "E:V1-026664",
+            "E:V1-027884"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "wind_mov_4_04_gu",
@@ -3252,6 +6675,191 @@
         ],
         "canon_refs": []
       }
+    },
+    {
+      "id": "wine_insect_gu",
+      "type": "gu",
+      "name": "酒虫",
+      "aliases": [],
+      "description": "提纯已有真元一个小境界的修炼辅助蛊；分一/二/三/四转四档形态，不补真元、不越本转巅峰、不加速恢复",
+      "properties": {
+        "rank": 1,
+        "rank_status": "verified"
+      },
+      "evidence": [
+        "E:V2-050904"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/wine-insect-gu.md"
+        ],
+        "canon_refs": [
+          "CAN-WINE-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-WINE-01",
+          "stage": "一转酒虫",
+          "statement": "方源以已有青铜真元提纯出高一小境界的真元",
+          "evidence": [
+            "E:V1-004656"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-02",
+          "stage": "四味酒虫",
+          "statement": "二转真元可提纯一小境界；三转方源已不能用",
+          "evidence": [
+            "E:V1-020082",
+            "E:V2-037018"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-03",
+          "stage": "九眼酒虫",
+          "statement": "三转方源不能用；四转巅峰已无可提纯的小境界",
+          "evidence": [
+            "E:V2-060718",
+            "E:V3-078626"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-04",
+          "stage": "野生·食源约束态",
+          "statement": "靠酒香与酒类食源存活；须醉酒（速度降半）方可捕捉",
+          "evidence": [
+            "E:V1-001416",
+            "E:V1-002418",
+            "E:V1-002458"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-05",
+          "stage": "缺食·降级态",
+          "statement": "供食长期不足，品级由五转降为一转，但意志仍顽强",
+          "evidence": [
+            "E:V1-002936",
+            "E:V1-002942"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-06",
+          "stage": "缺食·自我封印态",
+          "statement": "结成白色蚕茧、蜷缩沉睡；属少数蛊虫的例外机制",
+          "evidence": [
+            "E:V1-006186",
+            "E:V1-006188"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-07",
+          "stage": "缺食·退化还原态",
+          "statement": "同源先例：蒙汗蝶因断食不断退化，最终还原成酒虫",
+          "evidence": [
+            "E:V1-016920"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-08",
+          "stage": "炼化中·意志对抗态",
+          "statement": "与前主人的强者意志比拼，起手即反噬",
+          "evidence": [
+            "E:V1-002934",
+            "E:V1-003160",
+            "E:V1-003166"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-09",
+          "stage": "已成本命蛊·可精炼态",
+          "statement": "完全炼化后方能以最大效率精炼；每次操作须由蛊师主动灌注",
+          "evidence": [
+            "E:V1-002902",
+            "E:V1-004656"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-10",
+          "stage": "精炼作业·净损耗态",
+          "statement": "投入两成初阶真元得半成中阶（4:1）；须以元石持续补入",
+          "evidence": [
+            "E:V1-004678",
+            "E:V1-005326"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-11",
+          "stage": "转数失配态",
+          "statement": "一转酒虫不能精炼二转赤铁真元；二转起对本人无用",
+          "evidence": [
+            "E:V1-016892",
+            "E:V1-006664"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-12",
+          "stage": "材料化态",
+          "statement": "走流传最广路线合炼后，产物（白虫茧/蒙汗蝶）不再有精炼能力",
+          "evidence": [
+            "E:V1-016900",
+            "E:V1-016918"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-13",
+          "stage": "逆炼还原态",
+          "statement": "四味酒虫可经浪子/幡然/化蝶/莫测蛊逆炼回酒虫或他蛊",
+          "evidence": [
+            "E:V2-037028",
+            "E:V2-037034"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-14",
+          "stage": "高资质持有态",
+          "statement": "对资质九成六的白凝冰弊大于利",
+          "evidence": [
+            "E:V2-060722"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-15",
+          "stage": "本转巅峰·失效封存态",
+          "statement": "四转巅峰已到顶，封存并「功成身退」",
+          "evidence": [
+            "E:V3-078626",
+            "E:V3-078630",
+            "E:V3-078632"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WINE-16",
+          "stage": "暴露/被索取态",
+          "statement": "家族以五年使用权换秘方；后为防侦破主动摧毁一只",
+          "evidence": [
+            "E:V1-016924",
+            "E:V2-037022"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "wisdom_atk_1_01_gu",
@@ -3372,11 +6980,160 @@
       }
     },
     {
+      "id": "wisdom_gu",
+      "type": "gu",
+      "name": "智慧蛊",
+      "aliases": [
+        "九转智慧蛊"
+      ],
+      "description": "九转智道仙蛊·野生：以智慧光晕赋予使用者无穷灵感，代价是燃烧寿命、食料为寿蛊；灵感上限取决于底蕴与证据",
+      "properties": {
+        "rank": 9,
+        "rank_status": "rank_cap"
+      },
+      "evidence": [
+        "E:V3-118944"
+      ],
+      "provenance": {
+        "wiki_pages": [
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/wisdom-gu.md"
+        ],
+        "canon_refs": []
+      },
+      "states": [
+        {
+          "id": "ST-WISDOM-01",
+          "stage": "《人祖传》时代",
+          "statement": "人祖、古月阴荒先后献出中年以换取其帮助；多次出现、曾坑过人祖",
+          "evidence": [
+            "E:V3-111030",
+            "E:V5-267354"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-02",
+          "stage": "真传秘境封存",
+          "statement": "由巨阳仙尊封印；方源未靠近即开始损耗寿命、加速老化",
+          "evidence": [
+            "E:V3-111034",
+            "E:V3-111038"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-03",
+          "stage": "首次接近的实测损耗",
+          "statement": "万步之遥、几息之间削去两年寿命",
+          "evidence": [
+            "E:V3-119172"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-04",
+          "stage": "近距离硬顶",
+          "statement": "损失十数年寿命；被当作逼退手段",
+          "evidence": [
+            "E:V3-119174",
+            "E:V3-119740"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-05",
+          "stage": "与方源达成协议",
+          "statement": "大同风下为求生与方源达成协议；始终未被炼化",
+          "evidence": [
+            "E:V5-198290",
+            "E:V4-124328"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-06",
+          "stage": "达成协议后：逃跑与回归",
+          "statement": "察觉大战在即先行逃跑；后返回并在灵芝顶扩散光晕表示应承",
+          "evidence": [
+            "E:V3-120322",
+            "E:V4-126204",
+            "E:V4-126226"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-07",
+          "stage": "承认条件被确认",
+          "statement": "肉身与魂魄缺一不可；以其他仙僵尸躯替代无效",
+          "evidence": [
+            "E:V5-198294",
+            "E:V5-198284"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-08",
+          "stage": "蹭用期（鼎盛）",
+          "statement": "被动光晕即为方源提供无限灵感，支撑大量推算与蛊方改良",
+          "evidence": [
+            "E:V4-121888",
+            "E:V4-123502",
+            "E:V4-180756"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-09",
+          "stage": "喂养期",
+          "statement": "由琅琊地灵以寿蛊代为豢养，地灵图谋以喂养控制智慧蛊而未果",
+          "evidence": [
+            "E:V5-200062",
+            "E:V5-289006",
+            "E:V5-289008"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-10",
+          "stage": "暴露与争夺",
+          "statement": "凤九歌发现野生仙蛊、寿命被削（青丝变白发）；天庭将其列为主要进攻目标",
+          "evidence": [
+            "E:V5-288830",
+            "E:V5-288894",
+            "E:V5-293538"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-11",
+          "stage": "转手／丢失",
+          "statement": "紫薇仙子未能找到智慧蛊（其追逐信道环境之特性为天庭所不知）；方源后亦称智慧蛊已失",
+          "evidence": [
+            "E:V5-293528",
+            "E:V5-293530",
+            "E:V6-372580"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WISDOM-12",
+          "stage": "驯服尝试失败",
+          "statement": "以寿蛊长期喂养未能取得控制权",
+          "evidence": [
+            "E:V5-289006",
+            "E:V5-289008"
+          ],
+          "canon_refs": []
+        }
+      ]
+    },
+    {
       "id": "wood_atk_1_05_gu",
       "type": "gu",
       "name": "青藤蛊",
       "aliases": [],
-      "description": "木行战斗蛊：催出十五米碧绿藤条，当做鞭子甩、劈、撩、扫；树精身份对木行蛊威力增幅",
+      "description": "木行战斗蛊：掌心催出十五米碧绿藤条，当鞭子甩劈撩扫并用于缠绕束缚；树精（木魅蛊）身份可增幅其威力，但青藤的生长量受环境天然元气供给限制。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -3390,24 +7147,49 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/wood-atk-1-05-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-WOOD-001"
+        ]
       },
       "states": [
         {
           "id": "ST-WOODGUV-01",
-          "stage": "使用",
-          "statement": "催出十五米碧绿藤条，当做鞭子甩、劈、撩、扫",
+          "stage": "催动",
+          "statement": "掌心催出十五米碧绿藤条，当鞭子甩、劈、撩、扫，可击裂青石方砖",
           "evidence": [
-            "E:V1-016788"
+            "E:V1-016788",
+            "E:V1-016792"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-WOODGUV-02",
           "stage": "增幅",
-          "statement": "树精身份对青藤蛊等木行蛊虫威力增幅",
+          "statement": "树精身份催动木行蛊虫时威力增幅，青藤蛊在覆盖范围内",
           "evidence": [
+            "E:V1-021014",
             "E:V1-023856"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODGUV-03",
+          "stage": "束缚",
+          "statement": "缠绕腰肢／双臂十余道，双熊之力下仅能崩断一根；被斩断则数量减少",
+          "evidence": [
+            "E:V1-020942",
+            "E:V1-020982",
+            "E:V1-024052"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODGUV-04",
+          "stage": "供给约束",
+          "statement": "树精形态下藤条生长依赖环境天然元气；元气耗尽、扩散不足则催不出更多青藤",
+          "evidence": [
+            "E:V1-024054",
+            "E:V1-024056"
           ],
           "canon_refs": []
         }
@@ -3417,8 +7199,11 @@
       "id": "wood_atk_3_01_gu",
       "type": "gu",
       "name": "木魅蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "木魅",
+        "木魅树精"
+      ],
+      "description": "三转功能蛊（原文明文）：化身为树精，从空气中汲取天地元气自补真元、最擅长持久战，并对木行蛊有增幅；代价是肌肉木化与意识侵蚀，久用必成树人尸体。晋升需与百年／千年寿蛊合炼",
       "properties": {
         "rank": 3,
         "rank_status": "verified"
@@ -3428,10 +7213,78 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/wood-atk-3-01-gu.md"
         ],
         "canon_refs": []
-      }
+      },
+      "states": [
+        {
+          "id": "ST-WOODSPRITE-01",
+          "stage": "机制明文",
+          "statement": "化身为木魅树精，从空气中汲取天地元气补充真元、不需分心，最擅长持久战（战斗时间暴涨三倍）",
+          "evidence": [
+            "E:V1-021002",
+            "E:V1-021008",
+            "E:V1-021012"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODSPRITE-02",
+          "stage": "形态与迹象",
+          "statement": "轻度使用即发梢生叶；重度使用则双眼转翠绿、皮肤成褐色树皮、高约三米的树精之身",
+          "evidence": [
+            "E:V1-020996",
+            "E:V1-020998",
+            "E:V1-023786",
+            "E:V1-023920"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODSPRITE-03",
+          "stage": "增幅与边界",
+          "statement": "对青藤蛊、松针蛊、生机叶等木行蛊增幅；月旋蛊无变化；增幅受环境元气存量限制",
+          "evidence": [
+            "E:V1-021014",
+            "E:V1-023856",
+            "E:V1-024054"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODSPRITE-04",
+          "stage": "代价",
+          "statement": "用久则肌肉木化、意识与感官被侵蚀，最终变成树人尸体；规避途径是\"必须搭配其他蛊虫一齐使用\"",
+          "evidence": [
+            "E:V1-021030",
+            "E:V1-021360",
+            "E:V1-024058"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODSPRITE-05",
+          "stage": "晋升路线",
+          "statement": "三转木魅蛊与百年寿蛊合炼为四转百年木魅，再与千年寿蛊合炼为五转千年木魅；最奢侈路线之一",
+          "evidence": [
+            "E:V1-021016"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODSPRITE-06",
+          "stage": "实战",
+          "statement": "青书以三转之身动用木魅蛊越级迎战白凝冰，最终被木魅之力侵蚀致死",
+          "evidence": [
+            "E:V1-023556",
+            "E:V1-023848",
+            "E:V1-024066"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "wood_atk_3_09_gu",

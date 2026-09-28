@@ -3,7 +3,7 @@
   "description": "南疆一转战斗场景最小知识包：MVP 四蛊 + 敌方装载蛊四只（熊力/月痕/骨蛊/青藤，敌人持蛊化 canon 侧） + 修炼/资质/真元/南疆/养蛊/战力阶梯规则 + 基础杀招边界",
   "source": {
     "id": "gu_zhenren_clean",
-    "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "sha256": "95cd0b13684e5ce9c47dea0c198d3ecfc1a7182c2263674cb021af6cbb287647",
     "lines": 437060
   },
   "entities": [
@@ -12,7 +12,8 @@
       "type": "gu",
       "name": "月光蛊",
       "aliases": [
-        "月光刃"
+        "月光刃",
+        "月刃蛊"
       ],
       "description": "古月一族秘法培育的一转镇族蛊虫，发射月刃的基础战斗蛊",
       "properties": {
@@ -62,9 +63,10 @@
         {
           "id": "ST-MOONLIGHT-04",
           "stage": "使用",
-          "statement": "三步发射（见下方事件链图后说明）；每记一成真元，中远程十米，初练易偏飞",
+          "statement": "三步发射（见事件链后说明）；每记一成真元，中远程十米，初练易偏飞",
           "evidence": [
-            "E:V1-003604"
+            "E:V1-003604",
+            "E:V1-004006"
           ],
           "canon_refs": []
         },
@@ -98,6 +100,89 @@
             "E:V1-005438"
           ],
           "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-08",
+          "stage": "喂养（掺料降本）",
+          "statement": "掺一根知心草，每顿一片月兰花瓣即饱（日耗四片降至两片）",
+          "evidence": [
+            "E:V1-006126"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-09",
+          "stage": "断粮",
+          "statement": "可能自我封印（冬眠），蓝芒消散、水晶褪为灰石，日久成顽石（小概率）",
+          "evidence": [
+            "E:V1-006184"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-10",
+          "stage": "合炼晋升",
+          "statement": "四路线：月芒蛊（攻三倍）/月痕蛊（二十米）/月旋蛊（曲线刃）/月霓裳（防御·最高可晋五转宝月光王蛊）",
+          "evidence": [
+            "E:V1-017152"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-11",
+          "stage": "真元预算（月芒蛊）",
+          "statement": "一成浅红真元/记；二转初/中/高阶分别四/八/十六记",
+          "evidence": [
+            "E:V1-020174"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-12",
+          "stage": "受打击",
+          "statement": "宿主手掌被射穿时，掌中寄居的月光蛊\"受到重大打击，濒临死亡\"",
+          "evidence": [
+            "E:V1-013388"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-13",
+          "stage": "他人持有（非方源）",
+          "statement": "一名被杀的蛊师\"舌头上有一个月牙的印记，正是寄居着的月光蛊\"，临死仍放出一记月刃",
+          "evidence": [
+            "E:V1-011790"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-14",
+          "stage": "族外出现（存疑）",
+          "statement": "从北原葛家族库取得\"一清二楚蛊、曰光蛊、月光蛊等\"用于鉴定灰白石板",
+          "evidence": [
+            "E:V3-091274"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-15",
+          "stage": "合炼失败后",
+          "statement": "表面黯淡无光（受伤），至少三天后才能再次合炼；失败亦可能直接消亡",
+          "evidence": [
+            "E:V1-017070",
+            "E:V1-017074"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONLIGHT-16",
+          "stage": "本命蛊（保护态）",
+          "statement": "古月一族绝大多数族人以它为本命蛊；本命蛊在合炼中不会死亡、至多受伤",
+          "evidence": [
+            "E:V1-001490",
+            "E:V1-017186"
+          ],
+          "canon_refs": []
         }
       ]
     },
@@ -105,8 +190,10 @@
       "id": "small_light_gu",
       "type": "gu",
       "name": "小光蛊",
-      "aliases": [],
-      "description": "五角星形辅助蛊，与月光蛊协同放大月刃，可参与合炼月芒蛊",
+      "aliases": [
+        "小光谷（形近误植）"
+      ],
+      "description": "一转光道辅助蛊；双蛊同催令月刃体积与攻击力各翻一倍，增幅不叠加，可参与合炼月芒蛊",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -127,42 +214,106 @@
       "states": [
         {
           "id": "ST-SMALLLIGHT-01",
-          "stage": "存放",
-          "statement": "学堂蛊室墙角，共五只；形如五角星、约半指甲盖大",
+          "stage": "蛊室存放",
+          "statement": "学堂蛊室墙角，共五只；五角星形、约半个指甲盖大、乳白微光",
           "evidence": [
-            "E:V1-009704"
+            "E:V1-009704",
+            "E:V1-009706",
+            "E:V1-009708"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-SMALLLIGHT-02",
-          "stage": "炼成",
-          "statement": "寄居宿主右掌掌心，成乳白色五角星图案",
+          "stage": "被选取",
+          "statement": "方源在蛊室取得一只；评价为\"马马虎虎，至少符合发展方向\"",
           "evidence": [
-            "E:V1-010930"
+            "E:V1-009704",
+            "E:V1-009710"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-SMALLLIGHT-03",
-          "stage": "使用",
-          "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+          "stage": "炼化完成",
+          "statement": "寄居右掌掌心，成乳白色五角星图案；可被外部检查者看见",
           "evidence": [
-            "E:V1-010926",
-            "E:V1-017148"
+            "E:V1-010930",
+            "E:V1-013678"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-SMALLLIGHT-04",
-          "stage": "合炼",
-          "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+          "stage": "现役增幅",
+          "statement": "双蛊同催，月刃体积与攻击力各扩大一倍；增幅不叠加",
           "evidence": [
-            "E:V1-015710"
+            "E:V1-010932",
+            "E:V1-010940",
+            "E:V1-017148"
           ],
-          "canon_refs": [
-            "CAN-SMALL-LIGHT-002"
-          ]
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-05",
+          "stage": "二次获取",
+          "statement": "年末考核第一后入蛊室免费再取一只",
+          "evidence": [
+            "E:V1-014438"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-06",
+          "stage": "参与合炼",
+          "statement": "与月光蛊合炼月芒蛊；两只小光蛊为配方组件",
+          "evidence": [
+            "E:V1-015710",
+            "E:V1-017148"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-07",
+          "stage": "合炼失败",
+          "statement": "一只未响应而消散；幸存蛊虫受伤、表面黯淡、成功率下降",
+          "evidence": [
+            "E:V1-017056",
+            "E:V1-017058",
+            "E:V1-017070",
+            "E:V1-017072"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-08",
+          "stage": "合炼产物态",
+          "statement": "月芒蛊成立后，小光蛊不再单独存在（已被合炼吸收）",
+          "evidence": [
+            "E:V1-017146",
+            "E:V1-017150"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-09",
+          "stage": "集群部署",
+          "statement": "三十余只同型部署，驱散地洞黑暗；遭范围电光纷纷击溃",
+          "evidence": [
+            "E:V3-103410",
+            "E:V3-103416",
+            "E:V3-103434"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SMALLLIGHT-10",
+          "stage": "可补充态",
+          "statement": "与月光蛊对照：小光蛊死掉可去商铺购买，容易补充",
+          "evidence": [
+            "E:V1-017068"
+          ],
+          "canon_refs": []
         }
       ]
     },
@@ -171,7 +322,7 @@
       "type": "gu",
       "name": "月芒蛊",
       "aliases": [],
-      "description": "月光蛊与两只小光蛊合炼成的二转进攻蛊，月刃攻击力达月光蛊三倍",
+      "description": "月光蛊＋两只小光蛊合炼成的二转进攻蛊；月刃大如脸盆、攻击力为月光蛊三倍、射程未随晋升增加（原文\"十米／十步\"两口径）",
       "properties": {
         "rank": 2,
         "rank_status": "verified"
@@ -185,14 +336,14 @@
           "lore/wiki/gu/moon-glow-gu.md"
         ],
         "canon_refs": [
-          "CAN-SMALL-LIGHT-002"
+          "CAN-GU-MOONGLOW-001"
         ]
       },
       "states": [
         {
           "id": "ST-MOONGLOW-01",
-          "stage": "动机/规划",
-          "statement": "方源盘点合炼路线：月光蛊+两只小光蛊→二转月芒蛊，进攻能力上涨",
+          "stage": "动机／规划",
+          "statement": "盘点合炼路线：月光蛊＋两只小光蛊→二转月芒蛊，代表进攻能力上涨",
           "evidence": [
             "E:V1-015710"
           ],
@@ -209,10 +360,11 @@
         },
         {
           "id": "ST-MOONGLOW-03",
-          "stage": "合炼成功（方源个案）",
-          "statement": "一只月光蛊+两只小光蛊合炼成二转月芒蛊；攻击力达月光蛊三倍，与白玉蛊攻守兼备",
+          "stage": "合炼成功",
+          "statement": "二转月芒蛊成立；攻击力达月光蛊三倍，与白玉蛊攻守兼备",
           "evidence": [
             "E:V1-017144",
+            "E:V1-017150",
             "E:V1-017316"
           ],
           "canon_refs": []
@@ -220,7 +372,7 @@
         {
           "id": "ST-MOONGLOW-04",
           "stage": "增量规则",
-          "statement": "一只小光蛊增幅月刃一倍攻击力；两只仍一倍，增幅不可叠加",
+          "statement": "一只小光蛊增幅一倍攻击力；两只仍一倍，增幅不可叠加",
           "evidence": [
             "E:V1-017148"
           ],
@@ -228,10 +380,74 @@
         },
         {
           "id": "ST-MOONGLOW-05",
-          "stage": "使用",
-          "statement": "月芒蛊月刃实战亮相，旁观者辨认为月芒蛊而非月光蛊",
+          "stage": "实战亮相",
+          "statement": "月刃被旁观者辨认为月芒蛊而非月光蛊",
           "evidence": [
-            "E:V1-017470"
+            "E:V1-017470",
+            "E:V1-017502"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-06",
+          "stage": "形态与寄居",
+          "statement": "呈月光蛊放大一倍之形；寄居右掌，可收入空窍",
+          "evidence": [
+            "E:V1-017142",
+            "E:V1-019662",
+            "E:V1-019666"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-07",
+          "stage": "射程口径",
+          "statement": "最大化攻击力的路线射程仍旧十米；心语另作\"十步\"",
+          "evidence": [
+            "E:V1-017154",
+            "E:V1-024162"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-08",
+          "stage": "真元预算",
+          "statement": "一记一成真元；二转初／中／高阶＝四／八／十六记",
+          "evidence": [
+            "E:V1-018640",
+            "E:V1-020174"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-09",
+          "stage": "食料依赖",
+          "statement": "月芒蛊需月兰花瓣维持；花瓣只能存放五天",
+          "evidence": [
+            "E:V1-021220",
+            "E:V1-021222",
+            "E:V1-003874"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-10",
+          "stage": "群战检验",
+          "statement": "一记收割五六只石猴；三记至少十七八头；对隐形猴王命中极难",
+          "evidence": [
+            "E:V1-018636",
+            "E:V1-018690",
+            "E:V1-018942"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONGLOW-11",
+          "stage": "作为三转底蛊",
+          "statement": "二转月芒蛊＋血气蛊可合炼三转血月蛊；距三转独有明文",
+          "evidence": [
+            "E:V1-026840",
+            "E:V1-026874"
           ],
           "canon_refs": []
         }
@@ -241,8 +457,10 @@
       "id": "white_boar_strength_gu",
       "type": "gu",
       "name": "白豕蛊",
-      "aliases": [],
-      "description": "",
+      "aliases": [
+        "白猪蛊（未见于原文）"
+      ],
+      "description": "一转珍稀豕蛊：催用时耗真元并逐日改造肉身，所得力量永久归蛊师所有、蛊死不失、无真元亦可发挥，上限一猪之力",
       "properties": {
         "rank": 1,
         "rank_status": "verified"
@@ -252,17 +470,133 @@
       ],
       "provenance": {
         "wiki_pages": [
-          "lore/wiki/gu/roster-3.md"
+          "lore/wiki/gu/roster-3.md",
+          "lore/wiki/gu/white-boar-strength-gu.md"
         ],
-        "canon_refs": []
-      }
+        "canon_refs": [
+          "CAN-STRENGTH-001"
+        ]
+      },
+      "states": [
+        {
+          "id": "ST-WHITEBOAR-01",
+          "stage": "市面流通",
+          "statement": "一转珍稀蛊，600 元石，一出现即被收购；市场上另有仿冒品",
+          "evidence": [
+            "E:V1-009686",
+            "E:V1-006816",
+            "E:V6-398326"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-02",
+          "stage": "得蛊",
+          "statement": "花酒行者传承所得；方源判断该蛊是\"第一个考验\"的钥匙",
+          "evidence": [
+            "E:V1-009992",
+            "E:V1-009994"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-03",
+          "stage": "持蛊催用",
+          "statement": "灌入深绿真元→白光照体→肌肉改造；催用耗元",
+          "evidence": [
+            "E:V1-010994",
+            "E:V1-010996",
+            "E:V1-012758"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-04",
+          "stage": "力量驻留",
+          "statement": "力量\"一点一滴\"进入肉身，\"从此驻扎，再不流逝\"",
+          "evidence": [
+            "E:V1-011000"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-05",
+          "stage": "达上限",
+          "statement": "一猪之力后白豕蛊不再增力；外形出现流线型肌肉群",
+          "evidence": [
+            "E:V1-011066",
+            "E:V1-012348",
+            "E:V1-012344"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-06",
+          "stage": "异种叠加",
+          "statement": "追加黑豕蛊可得第二猪之力（同种不叠、异种可叠）",
+          "evidence": [
+            "E:V1-018198",
+            "E:V2-051286"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-07",
+          "stage": "常态喂养",
+          "statement": "每五天一顿、每顿一整头成年猪的肉；需定时狩猎",
+          "evidence": [
+            "E:V1-010070",
+            "E:V1-012424"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-08",
+          "stage": "被合炼消失",
+          "statement": "与玉皮蛊合炼为白玉蛊；猪肉需求归零，但力量保留",
+          "evidence": [
+            "E:V1-016140",
+            "E:V1-016076"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-09",
+          "stage": "可逆炼还原",
+          "statement": "用幡然蛊分解白玉蛊，可重新得到白豕蛊与玉皮蛊",
+          "evidence": [
+            "E:V1-018466"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-10",
+          "stage": "力量化为道痕",
+          "statement": "一猪之力对应力道道痕刻印在身；不能动用蛊虫时仍可发出一猪猛力",
+          "evidence": [
+            "E:V5-237136",
+            "E:V5-188382"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WHITEBOAR-11",
+          "stage": "承载上限风险",
+          "statement": "凡躯有承载极限；与鳄力蛊同用会超出承受、危害自身",
+          "evidence": [
+            "E:V2-035556",
+            "E:V2-041448"
+          ],
+          "canon_refs": []
+        }
+      ]
     },
     {
       "id": "bear_strength_gu",
       "type": "gu",
       "name": "熊力蛊",
       "aliases": [],
-      "description": "熊家寨标志蛊虫（与古月月光蛊、白家溪流蛊并列各家标志）；以蜂蜜为食，熊家寨对蜂蜜需求量大",
+      "description": "熊家寨标志蛊虫（与古月月光蛊、白家溪流蛊并列各家标志）；以蜂蜜为食。原文对「熊力蛊」只给标志与食料两层，未给转数与催动机制；「熊力」作为一种力的机制另写在棕熊本力蛊与熊豪蛊名下。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -276,13 +610,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/bear-strength-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-BEAR-001"
+        ]
       },
       "states": [
         {
           "id": "ST-BEARSTR-01",
           "stage": "标志",
-          "statement": "熊家寨标志蛊虫，与月光蛊/溪流蛊并列各家标志，不入学堂蛊室换取范围",
+          "statement": "熊家寨标志蛊虫，与月光蛊／溪流蛊并列各家标志，不入（三寨战功）换取范围",
           "evidence": [
             "E:V1-003602",
             "E:V1-020446"
@@ -292,9 +628,30 @@
         {
           "id": "ST-BEARSTR-02",
           "stage": "饲养",
-          "statement": "以蜂蜜为食，熊家寨对蜂蜜需要量很大",
+          "statement": "以蜂蜜为食，熊家寨对蜂蜜需要量很大；采集需抗蜇能力",
           "evidence": [
             "E:V1-010182"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEARSTR-03",
+          "stage": "家族特有",
+          "statement": "家族特有蛊或为稀有天然蛊、或为逆炼新物种；三家标志蛊「皆是如此情形」",
+          "evidence": [
+            "E:V1-026916",
+            "E:V1-026920"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BEARSTR-04",
+          "stage": "近系（非本蛊明文）",
+          "statement": "「熊力」为峰谷型力种（专长拍击）；永久载体棕熊本力蛊（二转）、临时载体熊豪蛊（有时限）",
+          "evidence": [
+            "E:V2-043034",
+            "E:V2-050298",
+            "E:V2-051574"
           ],
           "canon_refs": []
         }
@@ -305,7 +662,7 @@
       "type": "gu",
       "name": "月痕蛊",
       "aliases": [],
-      "description": "月光蛊与痕石蛊合炼而成：攻击范围增一倍达二十米，攻击力不变（秘方记载\"并不出众\"）",
+      "description": "月光蛊＋痕石蛊合炼的月系分支：攻击力不变、攻击范围翻倍达二十米；转数原文未明言（旁证指向二转）",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -319,13 +676,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/moon-ray-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-MOONRAY-001"
+        ]
       },
       "states": [
         {
           "id": "ST-MOONRAY-01",
-          "stage": "合炼路线",
-          "statement": "月光蛊+痕石蛊合炼成月痕蛊：攻击力不变、攻击范围增一倍达二十米",
+          "stage": "体系定线",
+          "statement": "月光蛊＋痕石蛊合炼成月痕蛊：攻击力不变、攻击范围增一倍达二十米",
           "evidence": [
             "E:V1-017156"
           ],
@@ -334,10 +693,40 @@
         {
           "id": "ST-MOONRAY-02",
           "stage": "秘方在案",
-          "statement": "方源持月痕蛊合炼秘方：优点=攻击距离为月光一倍，缺点=攻击力并不出众",
+          "statement": "方源以照影蛊读到月痕蛊秘方：优点＝攻击距离为月光一倍，缺点＝攻击力并不出众",
           "evidence": [
             "E:V1-026760",
-            "E:V1-026762"
+            "E:V1-026762",
+            "E:V1-026764"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-03",
+          "stage": "辅材可购",
+          "statement": "树屋售痕石蛊，与月光蛊搭配可合炼更高级蛊虫",
+          "evidence": [
+            "E:V1-017846",
+            "E:V1-017848"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-04",
+          "stage": "作三转底子",
+          "statement": "白色照影蛊所记三转秘方以月旋蛊、月痕蛊等为底子",
+          "evidence": [
+            "E:V1-026780"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-MOONRAY-05",
+          "stage": "转数未明",
+          "statement": "全书 5 处提及均无转数明文；旁证指向二转（合理推导）",
+          "evidence": [
+            "E:V1-017156",
+            "E:V1-026780"
           ],
           "canon_refs": []
         }
@@ -348,7 +737,7 @@
       "type": "gu",
       "name": "骨蛊",
       "aliases": [],
-      "description": "白骨山可猎杀骨兽或收服的野生骨蛊；同系玉骨蛊能增加蛊师骨骼强度",
+      "description": "「骨蛊」在原文只是白骨山骨系野生蛊的泛称（全书仅 1 处独立成词），并非某只具体蛊的名；白骨山传承中的具体骨系蛊为玉骨蛊、铁骨蛊、飞骨盾、肉白骨，上位有四转精铁骨蛊、无常骨蛊。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -362,13 +751,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/bone-atk-1-08-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-BONE-001"
+        ]
       },
       "states": [
         {
           "id": "ST-BONE-01",
-          "stage": "野生",
-          "statement": "白骨山可猎杀骨兽或收服野生骨蛊",
+          "stage": "泛称",
+          "statement": "白骨山可猎杀骨兽或收服野生的骨蛊（泛称，非具体蛊）",
           "evidence": [
             "E:V2-038442"
           ],
@@ -376,11 +767,42 @@
         },
         {
           "id": "ST-BONE-02",
-          "stage": "同系晋升",
-          "statement": "玉骨蛊（白骨山传承）增骨骼强度：双猪之力基础上再添一鳄之力",
+          "stage": "传承",
+          "statement": "白骨山传承中的玉骨蛊能增加骨骼强度，使骨骼更坚硬坚韧；与鳄力蛊配合即可突破承载上限",
           "evidence": [
             "E:V2-035560",
             "E:V2-037452"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-03",
+          "stage": "收获",
+          "statement": "方源得骨枪蛊／螺旋骨枪蛊、飞骨盾、玉骨蛊、铁骨蛊、肉白骨与骨书",
+          "evidence": [
+            "E:V2-040528",
+            "E:V2-040530"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-04",
+          "stage": "使用",
+          "statement": "铁骨蛊：三转、瞬耗大量真元、极限剧痛、晕厥即前功尽弃；成后骨骼坚硬若铁",
+          "evidence": [
+            "E:V2-041282",
+            "E:V2-041310",
+            "E:V2-041468"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-BONE-05",
+          "stage": "上层品种",
+          "statement": "精铁骨蛊（四转）逆炼可得铁骨蛊；无常骨蛊（四转）使肉身能承担更强魂魄",
+          "evidence": [
+            "E:V2-066066",
+            "E:V3-092110"
           ],
           "canon_refs": []
         }
@@ -391,7 +813,7 @@
       "type": "gu",
       "name": "青藤蛊",
       "aliases": [],
-      "description": "木行战斗蛊：催出十五米碧绿藤条，当做鞭子甩、劈、撩、扫；树精身份对木行蛊威力增幅",
+      "description": "木行战斗蛊：掌心催出十五米碧绿藤条，当鞭子甩劈撩扫并用于缠绕束缚；树精（木魅蛊）身份可增幅其威力，但青藤的生长量受环境天然元气供给限制。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -405,24 +827,49 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/wood-atk-1-05-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-WOOD-001"
+        ]
       },
       "states": [
         {
           "id": "ST-WOODGUV-01",
-          "stage": "使用",
-          "statement": "催出十五米碧绿藤条，当做鞭子甩、劈、撩、扫",
+          "stage": "催动",
+          "statement": "掌心催出十五米碧绿藤条，当鞭子甩、劈、撩、扫，可击裂青石方砖",
           "evidence": [
-            "E:V1-016788"
+            "E:V1-016788",
+            "E:V1-016792"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-WOODGUV-02",
           "stage": "增幅",
-          "statement": "树精身份对青藤蛊等木行蛊虫威力增幅",
+          "statement": "树精身份催动木行蛊虫时威力增幅，青藤蛊在覆盖范围内",
           "evidence": [
+            "E:V1-021014",
             "E:V1-023856"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODGUV-03",
+          "stage": "束缚",
+          "statement": "缠绕腰肢／双臂十余道，双熊之力下仅能崩断一根；被斩断则数量减少",
+          "evidence": [
+            "E:V1-020942",
+            "E:V1-020982",
+            "E:V1-024052"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-WOODGUV-04",
+          "stage": "供给约束",
+          "statement": "树精形态下藤条生长依赖环境天然元气；元气耗尽、扩散不足则催不出更多青藤",
+          "evidence": [
+            "E:V1-024054",
+            "E:V1-024056"
           ],
           "canon_refs": []
         }
@@ -433,7 +880,7 @@
       "type": "gu",
       "name": "硬气蛊",
       "aliases": [],
-      "description": "气道防御蛊：动用杀招防御下降时弥补短板；珍贵并不常见（力气蛊绝迹后的可得替代）",
+      "description": "气道防御蛊：动用杀招时防御下降，硬气蛊以无形气流包裹全身弥补该短板，看似毫无防御实则坚如磐石；气道在上古鼎盛后被力道取代，力气蛊已绝迹，硬气蛊属可得品种。",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -447,25 +894,49 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/qi-atk-1-01-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-QI-001"
+        ]
       },
       "states": [
         {
           "id": "ST-HARDQI-01",
           "stage": "功用",
-          "statement": "动用杀招时防御下降，硬气蛊弥补该短板",
+          "statement": "动用杀招时防御下降，硬气蛊弥补该短板；机制为无形气流包裹全身，看似无防御实则坚如磐石",
           "evidence": [
-            "E:V2-058640"
+            "E:V2-058640",
+            "E:V2-059538"
           ],
           "canon_refs": []
         },
         {
           "id": "ST-HARDQI-02",
           "stage": "珍稀与同系",
-          "statement": "珍贵并不常见；力气蛊已绝迹（上古气道消失），硬气蛊为可得替代",
+          "statement": "珍贵并不常见；同为气道的有朝气蛊、风气蛊；力气蛊已绝迹（上古气道消失）",
           "evidence": [
             "E:V2-058640",
-            "E:V2-058642"
+            "E:V2-058656",
+            "E:V2-058644"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-HARDQI-03",
+          "stage": "隐蔽性",
+          "statement": "硬气蛊无形无色，对手难以判断防御是否已开",
+          "evidence": [
+            "E:V2-059548"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-HARDQI-04",
+          "stage": "谱系旁证（非本蛊明文）",
+          "statement": "气道蛊「能转换有无形」；力气蛊（三转）以力之气承载兽力虚影，半成一影、八影四成真元",
+          "evidence": [
+            "E:V2-058650",
+            "E:V2-059730",
+            "E:V2-059764"
           ],
           "canon_refs": []
         }
@@ -475,8 +946,10 @@
       "id": "human_atk_1_01_gu",
       "type": "gu",
       "name": "自己蛊",
-      "aliases": [],
-      "description": "《人祖传》人道蛊：居于人身，须孤独审视内心方能发现；引迷途者不走旧路的痕迹、另辟全新的路",
+      "aliases": [
+        "自己"
+      ],
+      "description": "《人祖传》人道蛊：自人有生命起便居于其身、寄于孤独之心，须孤独中审视内心方能发现；吞吃他蛊一口即以「自己的」方式归还力量与爱情，会因宿主自欺而主动离去",
       "properties": {
         "rank": null,
         "rank_status": "rank_unstated"
@@ -490,13 +963,15 @@
           "lore/wiki/gu/roster-3.md",
           "lore/wiki/gu/human-atk-1-01-gu.md"
         ],
-        "canon_refs": []
+        "canon_refs": [
+          "CAN-GU-SELF-001"
+        ]
       },
       "states": [
         {
           "id": "ST-SELF-01",
-          "stage": "发现条件",
-          "statement": "自有生命起居于人身；须孤独中审视内心方能发现",
+          "stage": "居所",
+          "statement": "自人有生命起即在体内；须孤独中审视内心方能发现",
           "evidence": [
             "E:V3-120396"
           ],
@@ -504,11 +979,131 @@
         },
         {
           "id": "ST-SELF-02",
+          "stage": "寄居位置",
+          "statement": "寄居于\"心\"，具体写作\"孤独之心\"",
+          "evidence": [
+            "E:V5-229232",
+            "E:V4-157982"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-03",
+          "stage": "人道归属",
+          "statement": "被方源明文列入人道蛊虫清单；《人祖传》被判为人道真传",
+          "evidence": [
+            "E:V5-328608",
+            "E:V5-328610"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-04",
+          "stage": "取得\"自己的力量\"",
+          "statement": "咬力量蛊一口，自此宿主拥有属于自己的力量",
+          "evidence": [
+            "E:V4-153580",
+            "E:V4-153586"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-05",
+          "stage": "取得\"自己的爱情\"",
+          "statement": "曾咬爱情蛊一口（宿命蛊点明它只吃过力量与爱情）",
+          "evidence": [
+            "E:V5-299926"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-06",
+          "stage": "能力缺口",
+          "statement": "没有\"自己的智慧\"；规划再咬智慧蛊一口",
+          "evidence": [
+            "E:V5-299926",
+            "E:V6-379824"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-07",
+          "stage": "输出方式",
+          "statement": "使用已获力量\"不需要任何的代价\"（自述）；可对外动手活捉羽民",
+          "evidence": [
+            "E:V4-157988",
+            "E:V4-157984"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-08",
+          "stage": "自身功能",
+          "statement": "有自己蛊则遇失败蛊不会迷失自己；可主动提醒宿主（骄傲蛊占位）",
+          "evidence": [
+            "E:V4-153538",
+            "E:V6-411088"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-09",
+          "stage": "提议能力",
+          "statement": "对恐惧蛊的处置提议是\"让我吃了它\"，宿主可否决",
+          "evidence": [
+            "E:V5-218990",
+            "E:V5-218992"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-10",
           "stage": "引路",
-          "statement": "助人祖离开生死门：不走宿命蛊—公平蛊留痕的旧路，另辟全新的路，\"路就在你的脚下\"",
+          "statement": "不走宿命蛊—公平蛊留痕的旧路；\"只要你想走，路就在你的脚下\"",
           "evidence": [
             "E:V3-120404",
-            "E:V3-120408"
+            "E:V3-120408",
+            "E:V3-120412"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-11",
+          "stage": "唯一依靠",
+          "statement": "思想蛊：\"其他的蛊都靠不住，只有靠你的自己蛊\"；\"你也只能一个人走\"",
+          "evidence": [
+            "E:V3-120432",
+            "E:V3-120438"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-12",
+          "stage": "离去",
+          "statement": "因宿主把态度蛊戴在其上、连自己都骗，主动飞走",
+          "evidence": [
+            "E:V6-416310",
+            "E:V6-416312",
+            "E:V6-416314"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-13",
+          "stage": "离去后果",
+          "statement": "\"人若骗自己，自己会离人而去，人会丢掉自己\"；人祖自认再无法获得自由",
+          "evidence": [
+            "E:V6-416316",
+            "E:V6-416318"
+          ],
+          "canon_refs": []
+        },
+        {
+          "id": "ST-SELF-14",
+          "stage": "层次边界",
+          "statement": "不入九转仙蛊名单（该名单为力量／智慧／宿命等）",
+          "evidence": [
+            "E:V3-103100"
           ],
           "canon_refs": []
         }
@@ -1045,34 +1640,33 @@
     {
       "id": "REL-REFINE-MOONGLOW",
       "relation": "refinement",
-      "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+      "statement": "双蛊同催，月刃体积与攻击力各扩大一倍；增幅不叠加",
       "evidence": [
-        "E:V1-015710"
+        "E:V1-010932",
+        "E:V1-010940",
+        "E:V1-017148"
       ],
       "provenance": {
         "wiki_page": "lore/wiki/gu/small-light-gu.md",
         "state_ids": [
           "ST-SMALLLIGHT-04"
         ],
-        "canon_refs": [
-          "CAN-SMALL-LIGHT-002"
-        ]
+        "canon_refs": []
       },
       "inputs": [
         "moonlight_gu",
         "small_light_gu",
         "small_light_gu"
       ],
-      "output": "moon_glow_gu",
-      "output_rank": 2
+      "output": "moon_glow_gu"
     },
     {
       "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
       "relation": "supports",
-      "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+      "statement": "寄居右掌掌心，成乳白色五角星图案；可被外部检查者看见",
       "evidence": [
-        "E:V1-010926",
-        "E:V1-017148"
+        "E:V1-010930",
+        "E:V1-013678"
       ],
       "provenance": {
         "wiki_page": "lore/wiki/gu/small-light-gu.md",

@@ -1,12 +1,12 @@
 {
   "manifest_version": 1,
-  "generated_at": "2026-09-28T00:21:17Z",
+  "generated_at": "2026-09-28T12:02:43Z",
   "compiler": "lore/wiki/tools/compile_runtime.py",
   "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
   "source": {
     "id": "gu_zhenren_clean",
-    "path": "C:\\Users\\90877\\work_space\\gu-zhenren\\蛊真人-clean.txt",
-    "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "path": "source\\蛊真人-clean.txt",
+    "sha256": "95cd0b13684e5ce9c47dea0c198d3ecfc1a7182c2263674cb021af6cbb287647",
     "lines": 437060
   },
   "scope": {
@@ -14,14 +14,45 @@
     "roster": "lore/wiki/gu/roster-3.md（六个 id 分段；「转数未核」仅蛊名无 id，跳过）",
     "entity_pages": [
       "bear_strength_gu",
+      "blood_atk_3_03_gu",
+      "blood_atk_3_11_gu",
       "bone_atk_1_08_gu",
+      "bone_def_3_01_gu",
+      "bone_def_3_05_gu",
+      "earth_def_3_01_gu",
+      "fate_gu",
+      "fire_atk_2_01_gu",
+      "force_atk_1_05_gu",
+      "gold_atk_2_12_gu",
+      "heaven_atk_3_10_gu",
+      "heaven_atk_5_07_gu",
       "human_atk_1_01_gu",
+      "human_def_1_32_gu",
+      "jade_skin_gu",
+      "light_atk_1_01_gu",
+      "light_atk_3_02_gu",
+      "luck_atk_1_03_gu",
       "moon_glow_gu",
       "moon_ray_gu",
+      "moon_shadow_gu",
       "moonlight_gu",
+      "persistence_gu",
       "qi_atk_1_01_gu",
+      "slave_atk_1_03_gu",
+      "slave_atk_3_04_gu",
       "small_light_gu",
-      "wood_atk_1_05_gu"
+      "soul_atk_1_02_gu",
+      "spring_autumn_cicada_gu",
+      "stone_shell_gu",
+      "sword_atk_4_01_gu",
+      "vitality_grass_gu",
+      "water_atk_3_06_gu",
+      "white_boar_strength_gu",
+      "white_jade_gu",
+      "wine_insect_gu",
+      "wisdom_gu",
+      "wood_atk_1_05_gu",
+      "wood_atk_3_01_gu"
     ],
     "rule_pages": [
       "lore/wiki/rules/refinement.md",
@@ -30,14 +61,14 @@
     ]
   },
   "counts": {
-    "entities": 162,
-    "entity_states": 28,
-    "rules_can": 52,
+    "entities": 169,
+    "entity_states": 368,
+    "rules_can": 62,
     "rules_page": 55,
-    "rules_total": 107,
+    "rules_total": 117,
     "relations": 2
   },
-  "coverage_notes": "rank 覆盖 162/270（转数未核 109 只仅有蛊名无 id，未编译）；实体状态行 28 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
+  "coverage_notes": "rank 覆盖 169/270（转数未核 109 只仅有蛊名无 id，未编译）；实体状态行 368 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
   "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
-  "content_version": "4ff9c46c5998fbc96919a75511d31563fe006a3123bdcb8d3d54c015e8ad4357"
+  "content_version": "f136fadd12aa34062676fc87a2cc54685e9421b0acdc1b77d1eb211a1837783a"
 }

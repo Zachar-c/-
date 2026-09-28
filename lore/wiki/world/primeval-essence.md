@@ -48,7 +48,7 @@ schema: 2
 - 讨论战斗时，应区分"蛊的理论能力""催动一次的消耗"和"角色当前剩余真元"。
 - 仙窍生产的仙元、生态产出的资源、交易所得仙元石是相关而不同的环节；经营可提供持续行动条件，但资源有交易与培育等多种用途，不能画成全部必然转为仙元的一条流水线。仙窍与灾劫关系见[修炼体系](cultivation-system.md)。
 
-相关页面：[资质与空窍](aptitude-and-aperture.md)、[修炼体系](cultivation-system.md)、[酒虫](../gu/wine-insect-gu.md)、[月光蛊](../gu/moonlight-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[方源](../characters/fang-yuan.md)。
+相关页面：[资质与空窍](aptitude-and-aperture.md)、[修炼体系](cultivation-system.md)、[酒虫](../gu/wine-insect-gu.md)、[月光蛊](../gu/moonlight-gu.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[方源](../characters/fang-yuan.md)。
 
 ## 待核对
 

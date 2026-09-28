@@ -68,13 +68,13 @@
         {
           "kind": "special",
           "note": "改造蛊师身躯、从根本上增长气力且永久留存、蛊死亦留存（9688-9692）；是持续改造而非单次攻击加成",
-          "evidence": "lore/wiki/gu/white-boar-gu.md",
+          "evidence": "lore/wiki/gu/white-boar-strength-gu.md",
           "status": "fact"
         },
         {
           "kind": "model-boundary",
           "note": "催动白豕蛊增力时消耗真元（12758）；获得的力量无需真元即可发挥（15308），白豕蛊消失后仍留在身上（16076）。原著未给出单次真元数值或固定伤害。",
-          "evidence": "lore/wiki/gu/white-boar-gu.md",
+          "evidence": "lore/wiki/gu/white-boar-strength-gu.md",
           "status": "fact"
         }
       ],
@@ -1252,7 +1252,7 @@
         {
           "kind": "special",
           "note": "逆转光阴使持有者重生（E:V1-003256-3270）；红莲魔尊（洪亭）所创（E:V5-313128、323070 已核对话）；可随宿主升炼（Run 1 至七转）；使用伴随生命修为等重大代价",
-          "evidence": "lore/wiki/gu/spring-autumn-cicada.md",
+          "evidence": "lore/wiki/gu/spring-autumn-cicada-gu.md",
           "status": "fact"
         }
       ],
@@ -1260,7 +1260,7 @@
         "routes": [
           "condition"
         ],
-        "evidence": "lore/wiki/gu/spring-autumn-cicada.md",
+        "evidence": "lore/wiki/gu/spring-autumn-cicada-gu.md",
         "status": "inference"
       },
       "status": "fact",

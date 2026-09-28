@@ -80,7 +80,7 @@ schema: 2
 - **红莲真传、石莲岛分座与岛岛相联的杀招机制** → [石莲岛争夺](stone-lotus-island-contest.md)。
 - **琅琊福地攻防机制**（大同风、定真枝丫变、福地并入）→ [天庭入侵琅琊福地](langya-blessed-land-invasion.md)。
 - **中洲炼蛊大会的赛制与道痕产出** → [中洲炼蛊大会](central-plain-refinement-conference.md)。
-- **宿命蛊本体与春秋蝉的设定、状态** → [宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada.md)。
+- **宿命蛊本体与春秋蝉的设定、状态** → [宿命蛊](../gu/fate-gu.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)。
 - **超出本页口径的收束**（疯魔窟第八层后续、宿命蛊被拆分分发天下 367440 / 367452 行、龙公寿尽 367468 行）→ 弧十三疯魔窟事件页（`events/feng-mo-ku.md`，在制）；本页不予重复。
 - **游戏周目、胜负条件与改编裁定** → `design/`，不进本页。
 
@@ -455,4 +455,4 @@ graph LR
 - **疯魔窟段与行段交错**：EVT-FATE-112/113（345340–345912 行）与 EVT-FATE-114（345920–346452 行）在原文中属同一区段的不同支线，叙述先后需回原文核定，本页暂按行号排列。
 - **盲测题集**：benchmark-* 盲测题集本批次未生成，登记为后续待办。
 
-关联页面：[宿命蛊](../gu/fate-gu.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](../gu/spring-autumn-cicada.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)。
+关联页面：[宿命蛊](../gu/fate-gu.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)、[宿命](../themes/fate.md)、[自由](../themes/freedom.md)。

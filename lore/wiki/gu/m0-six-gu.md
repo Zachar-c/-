@@ -44,4 +44,4 @@ M0 六蛊：小光蛊、月光蛊、石皮蛊、玉皮蛊、白豕蛊、刀翅�
 - 刀翅血蝠蛊：一转形态是否存在原文依据尚未找到；M0 的品阶落点与单体战斗形态属 Adaptation。
 - 小光蛊：品阶、饲料、消耗、持续时间、全部适配蛊虫尚未建立完整条目（同[小光蛊](small-light-gu.md)待核对）。
 
-关联页面：[小光蛊](small-light-gu.md)、[月光蛊](moonlight-gu.md)。
+关联页面：[小光蛊](small-light-gu.md)、[月光蛊](moonlight-gu.md)、[蛊虫与蛊师能力来源](cultivator-effects-and-scouting.md)。

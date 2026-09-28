@@ -34,7 +34,7 @@ schema: 2
 本页是 QMS 簇（青茅山弧）的事件定义页；实体状态、机制与规则细节外移如下，本页不复述：
 
 - 方源本窗口状态线（凡人 → 开窍丙等 → 一转初阶／中阶／高阶／巅峰 → 二转初阶；资产与伪装姿态）→ [方源](../characters/fang-yuan.md)（ST-FANGYUAN 系列）
-- 月光蛊（本命蛊、月刃、印记）→ [月光蛊](../gu/moonlight-gu.md)；小光蛊（第二只蛊、双蛊合击）→ [小光蛊](../gu/small-light-gu.md)；春秋蝉（六转本命、气息镇压）→ [春秋蝉](../gu/spring-autumn-cicada.md)
+- 月光蛊（本命蛊、月刃、印记）→ [月光蛊](../gu/moonlight-gu.md)；小光蛊（第二只蛊、双蛊合击）→ [小光蛊](../gu/small-light-gu.md)；春秋蝉（六转本命、气息镇压）→ [春秋蝉](../gu/spring-autumn-cicada-gu.md)
 - 酒虫、白豕蛊、玉皮蛊、癞土蛤蟆、幽影随行蛊、爱别离、闪光蛊、大肚蛙、蛐蛐蛊、红岩蟒、玉眼石猴等本窗口出场蛊虫的属性与用法 → [蛊虫总表](../gu/index.md)、[蛊虫总表（续）](../gu/roster-2.md)；**机制待外移规则页**（E:V1-004678 精炼比率、E:V1-013508 玉皮蛊护体、E:V1-011742 幽影随行蛊）
 - 开窍步数分级、资质比例、空窍探查与元海占比 → [资质与空窍](../world/aptitude-and-aperture.md)；**机制待外移规则页**（E:V1-001196、E:V1-001818）
 - 真元色阶（青铜／赤铁／白银）、跨阶换算比、元海圆满四成四、冲击二转门槛 → [真元](../world/primeval-essence.md)、[修炼体系](../world/cultivation-system.md)；**机制待外移规则页**（E:V1-012604、E:V1-012616、E:V1-014458、E:V1-014356）
@@ -498,7 +498,7 @@ graph TD
 
 **本批新增（跨页引用同步债务，不得在本批修改）**
 
-- 旧号 `EVT-QMS-001…015` 重排为连续 `001…114` 后，`../characters/fang-yuan.md`、`../gu/moonlight-gu.md`、`../gu/small-light-gu.md`、`../gu/spring-autumn-cicada.md`、`wolf-tide.md`、`fate-war.md`、`../tools/benchmark-qms.md`、`../tools/benchmark-wtc.md`、`../log.md` 中的既有 QMS 编号引用全部失配，须由后续批次按本页《资料整理》的旧→新对照逐一同步。
+- 旧号 `EVT-QMS-001…015` 重排为连续 `001…114` 后，`../characters/fang-yuan.md`、`../gu/moonlight-gu.md`、`../gu/small-light-gu.md`、`../gu/spring-autumn-cicada-gu.md`、`wolf-tide.md`、`fate-war.md`、`../tools/benchmark-qms.md`、`../tools/benchmark-wtc.md`、`../log.md` 中的既有 QMS 编号引用全部失配，须由后续批次按本页《资料整理》的旧→新对照逐一同步。
 - `wolf-tide.md` 的 `EVT-WTC-001…003` 与本页 Q105／Q106／Q109 同指一段剧程（小兽潮／野猪王围猎／家军救援），两页事件的归属分工须在下次缝合时裁定。
 
 关联页面：[南疆](../world/south-jiang.md)、[狼潮](wolf-tide.md)、[兽潮](../world/beast-tide.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)、[月光蛊](../gu/moonlight-gu.md)、[修炼体系](../world/cultivation-system.md)。

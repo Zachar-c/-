@@ -66,4 +66,4 @@ schema: 2
 - 天意、命运蛊暂无独立页面，登记为后续节点候选；本页《关键关系》已改为链接形式，链接只表示导航可达，不代表新增事实主张。
 - 2026-09-25 核验窗口限于第 732 节；"宿命蛊最终修复完成"的原文时点、"龙人当兴"启示的完整出处（龙公转述还是直接启示）仍待逐段核验。
 
-关联页面：[宿命大战](../events/fate-war.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](spring-autumn-cicada.md)、[宿命](../themes/fate.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)。
+关联页面：[宿命大战](../events/fate-war.md)、[红莲魔尊](../characters/red-lotus.md)、[星宿仙尊](../characters/star-constellation.md)、[龙公](../characters/dragon-duke.md)、[天庭](../world/heavenly-court.md)、[方源](../characters/fang-yuan.md)、[春秋蝉](spring-autumn-cicada-gu.md)、[宿命](../themes/fate.md)、[中洲炼蛊大会](../events/central-plain-refinement-conference.md)。

@@ -2,7 +2,7 @@
 
 > 用途：知识完整性回归（2026-09-26 复核方代建，补 YIT 簇缺口——原批登记"benchmark 本轮不强制"）。
 > 簇范围：[义天山大战](../events/yitian-mountain.md)（EVT-YIT-001…084）。
-> 白名单（2026-09-26 解耦规则：簇页＋投影页）：events/yitian-mountain.md、events/index.md、characters/fang-yuan.md（ST-FANGYUAN 弧九行）、characters/he-lou-lan.md、characters/bai-ning-bing.md、gu/spring-autumn-cicada.md（ST-CICADA-07…09）、characters/red-lotus.md、world/shadow-sect.md、world/zangmeng.md、rules/tribulation.md（弧九浩劫/万劫通则承载页——复测后补）。
+> 白名单（2026-09-26 解耦规则：簇页＋投影页）：events/yitian-mountain.md、events/index.md、characters/fang-yuan.md（ST-FANGYUAN 弧九行）、characters/he-lou-lan.md、characters/bai-ning-bing.md、gu/spring-autumn-cicada-gu.md（ST-CICADA-07…09）、characters/red-lotus.md、world/shadow-sect.md、world/zangmeng.md、rules/tribulation.md（弧九浩劫/万劫通则承载页——复测后补）。
 > 规则：Wiki-Only；每题 1 分，按要点判分；目标 ≥45/50；追溯断链计 0。E:V4＝段四（121,058–188,001）、E:V5＝段五（188,002–367,633）。
 
 ## 一、实体事实（10）

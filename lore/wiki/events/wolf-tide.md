@@ -132,4 +132,4 @@ graph TD
 - 方源引狼灭蛮石小组回收蛊虫、白凝冰追杀线（A2b 笔记 22300–24270 行附近）属备战期独立事件，本批未核验，不在本页事件链中。
 - 白凝冰冰川封印与意识消散的程度在节 196–199 间反复（33812 行"意识消散殆尽"与 33996 行"冷眼旁观"并存），其冰魄体状态边界待白凝冰实体页批次核验（本页只按事件链记录各锚点）。
 
-关联页面：[兽潮](../world/beast-tide.md)、[青茅山](qing-mao-mountain.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)、[南疆](../world/south-jiang.md)、[元莲仙尊](../characters/yuan-lian-xian-zun.md)、[春秋蝉](../gu/spring-autumn-cicada.md)。
+关联页面：[兽潮](../world/beast-tide.md)、[青茅山](qing-mao-mountain.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)、[南疆](../world/south-jiang.md)、[元莲仙尊](../characters/yuan-lian-xian-zun.md)、[春秋蝉](../gu/spring-autumn-cicada-gu.md)。
