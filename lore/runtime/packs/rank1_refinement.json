@@ -3,7 +3,7 @@
   "description": "一转炼蛊节点最小知识包：炼蛊术语规则 + 养蛊压力 + 小光蛊合炼事实",
   "source": {
     "id": "gu_zhenren_clean",
-    "sha256": "95cd0b13684e5ce9c47dea0c198d3ecfc1a7182c2263674cb021af6cbb287647",
+    "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "lines": 437060
   },
   "entities": [
@@ -190,9 +190,7 @@
       "id": "small_light_gu",
       "type": "gu",
       "name": "小光蛊",
-      "aliases": [
-        "小光谷（形近误植）"
-      ],
+      "aliases": [],
       "description": "一转光道辅助蛊；双蛊同催令月刃体积与攻击力各翻一倍，增幅不叠加，可参与合炼月芒蛊",
       "properties": {
         "rank": 1,
