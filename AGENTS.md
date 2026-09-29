@@ -21,7 +21,7 @@
 
 - 文档卫生与治理流程见 `docs/DOCUMENTATION_GOVERNANCE.md`；触碰 Markdown 后运行 `node tools/docs-lint.mjs`，触碰 Wiki 时另跑对应内容门禁 `lore/wiki/tools/check.ps1` 或 `game/docs/wiki/lint.mjs`。
 - 涉及 AI 规划、Worker 或模型选择时，先读 `ai-system/AGENTS.md`、`ai-system/WORKER_PROTOCOL.md`、`ai-system/config/common.json`、`ai-system/config/model-rules.json`。具体角色流程、任务包和结果格式以这几份文件为准，本文件不重复维护模板。
-- 禁止把 `source/`、完整原始小说或《人祖传》全文提交到 Git；仅在本地 `source/` 保留原文。
+- 禁止把 `source/`、完整原始小说或《人祖传》全文提交到 Git；仅在本地 `source/` 保留原文。**例外（2026-09-29 用户裁决）：EPUB 派生规范全文 `source/蛊真人-epub-canon.txt` 允许入库推送**，作为新 Canonical Novel Source 候选；其余原文底稿仍一律不入库。
 - 不擅自改产品逻辑、数据数值、游戏契约或 Wiki 语义。Wiki 按 `lore/wiki/AGENTS.md` 编辑。
 - Worker 默认不 commit、merge 或 push；推送须在验收通过并经用户确认后进行。阶段验收后独立提交。
 - 不运行 `git reset --hard`，不强制覆盖未核对内容。递归移动或删除前，解析并验证目标绝对路径。
@@ -56,7 +56,7 @@
 
 ## 数据与安全边界
 
-- 不把 `source/`、完整原始小说或《人祖传》全文提交到 Git；本地原始资料只用于必要回查。
+- 不把 `source/`、完整原始小说或《人祖传》全文提交到 Git；本地原始资料只用于必要回查。**例外（2026-09-29 用户裁决）：`source/蛊真人-epub-canon.txt`（EPUB 派生规范全文）允许入库推送。**
 - 不覆盖用户未提交的改动，不使用 `git reset --hard`、强制检出或未经核对的递归删除/移动。
 - 不提交密钥、缓存、构建产物、嵌套仓库或本地工作树。
 - 不改变产品逻辑、数据数值、游戏契约或 Wiki 语义，除非任务明确且上游决定已生效。

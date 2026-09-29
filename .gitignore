@@ -1,5 +1,8 @@
 # Local-only source bundle; never stage or push it.
-/source/
+/source/*
+# 2026-09-29 用户裁决：EPUB 派生规范全文（蛊真人-epub-canon.txt）允许入库推送，
+# 作为新 Canonical Novel Source 候选；其余 source/ 原文底稿仍保持忽略不入库。
+!/source/蛊真人-epub-canon.txt
 
 # Preserved nested repository metadata; the parent repository is authoritative.
 **/.git-nested-backup/
