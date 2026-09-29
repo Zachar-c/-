@@ -7324,7 +7324,7 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "504fa0e53fd30cfb1cf572807058375fc442ed2839676253a521c35db373d516",
+    "contentVersion": "80274607aa7af89c759df208104c2d46cc76c8131b9d558e31a344ceba31b21f",
     "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "entities": {
       "bear_strength_gu": {
@@ -7409,8 +7409,8 @@ const DATA = {
       },
       "bone_def_3_01_gu": {
         "name": "骨枪蛊",
-        "rank": null,
-        "rankStatus": "collision"
+        "rank": 1,
+        "rankStatus": "verified"
       },
       "bone_def_3_05_gu": {
         "name": "玉骨蛊",
@@ -7451,6 +7451,11 @@ const DATA = {
         "name": "石窍蛊",
         "rank": 3,
         "rankStatus": "verified"
+      },
+      "fate_gu": {
+        "name": "宿命蛊",
+        "rank": 9,
+        "rankStatus": "rank_cap"
       },
       "fire_atk_2_01_gu": {
         "name": "鬼火蛊",
@@ -7740,7 +7745,7 @@ const DATA = {
       "heaven_atk_5_07_gu": {
         "name": "寿蛊",
         "rank": null,
-        "rankStatus": "collision"
+        "rankStatus": "rank_unstated"
       },
       "heaven_atk_5_08_gu": {
         "name": "雷电蛊",
@@ -7821,6 +7826,11 @@ const DATA = {
         "name": "玉皮蛊",
         "rank": 1,
         "rankStatus": "verified"
+      },
+      "light_atk_1_01_gu": {
+        "name": "月旋蛊",
+        "rank": null,
+        "rankStatus": "rank_unstated"
       },
       "light_atk_1_04_gu": {
         "name": "光蛊",
@@ -7906,6 +7916,11 @@ const DATA = {
         "name": "月光蛊",
         "rank": 1,
         "rankStatus": "verified"
+      },
+      "persistence_gu": {
+        "name": "坚持仙蛊",
+        "rank": 7,
+        "rankStatus": "rank_cap"
       },
       "qi_atk_1_01_gu": {
         "name": "硬气蛊",
@@ -7994,11 +8009,16 @@ const DATA = {
       },
       "soul_atk_1_02_gu": {
         "name": "净魂仙蛊",
-        "rank": 7,
+        "rank": 6,
         "rankStatus": "name_reuse"
       },
       "soul_atk_5_01_gu": {
         "name": "魂灯蛊",
+        "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "spring_autumn_cicada_gu": {
+        "name": "春秋蝉",
         "rank": 6,
         "rankStatus": "rank_cap"
       },
@@ -8021,6 +8041,11 @@ const DATA = {
         "name": "剑鞘蛊",
         "rank": 5,
         "rankStatus": "verified"
+      },
+      "vitality_grass_gu": {
+        "name": "九叶生机草",
+        "rank": 2,
+        "rankStatus": "divergence"
       },
       "water_atk_3_06_gu": {
         "name": "冰肌蛊",
@@ -8077,6 +8102,11 @@ const DATA = {
         "rank": 5,
         "rankStatus": "verified"
       },
+      "wine_insect_gu": {
+        "name": "酒虫",
+        "rank": 1,
+        "rankStatus": "verified"
+      },
       "wisdom_atk_1_01_gu": {
         "name": "智慧蛊",
         "rank": 9,
@@ -8105,6 +8135,11 @@ const DATA = {
       "wisdom_atk_5_15_gu": {
         "name": "妇人心蛊",
         "rank": 6,
+        "rankStatus": "rank_cap"
+      },
+      "wisdom_gu": {
+        "name": "智慧蛊",
+        "rank": 9,
         "rankStatus": "rank_cap"
       },
       "wood_atk_1_05_gu": {
@@ -8142,7 +8177,7 @@ const DATA = {
       {
         "id": "REL-REFINE-MOONGLOW",
         "relation": "refinement",
-        "statement": "月光蛊加两只小光蛊，可合炼成二转月芒蛊",
+        "statement": "与月光蛊合炼月芒蛊；两只小光蛊为配方组件",
         "inputs": [
           "moonlight_gu",
           "small_light_gu",
@@ -8154,7 +8189,7 @@ const DATA = {
       {
         "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
         "relation": "supports",
-        "statement": "双蛊同催：月刃体积与攻击力各扩大一倍；一只即翻倍、两只不叠加",
+        "statement": "双蛊同催，月刃体积与攻击力各扩大一倍；增幅不叠加",
         "from": "small_light_gu",
         "to": "moonlight_gu"
       }
@@ -8853,5 +8888,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "52f8d0dfac58243feeb0906dfdf772f0fdf614f2c7789d4eeaf28fe71ffeae90"
+  "contentVersion": "08cac0fefa0f133982224f57dbc6af11b74b14dbef7ff675ec0fd1b01c9a4d8b"
 };

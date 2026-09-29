@@ -45,7 +45,8 @@ RELATION_SOURCES = [
     {
         "id": "REL-SMALLLIGHT-MOONLIGHT-SUPPORT",
         "source_page": "lore/wiki/gu/small-light-gu.md",
-        "st_id": "ST-SMALLLIGHT-03",
+        # 现役增幅（双蛊同催→增幅不叠加）才是 supports 事实；ST-03 是炼化完成，误绑则陈述错位。
+        "st_id": "ST-SMALLLIGHT-04",
         "relation": "supports",
         "from_name": "小光蛊",
         "to_name": "月光蛊",
@@ -62,11 +63,13 @@ RELATION_SOURCES = [
     {
         "id": "REL-REFINE-MOONGLOW",
         "source_page": "lore/wiki/gu/small-light-gu.md",
-        "st_id": "ST-SMALLLIGHT-04",
+        # 参与合炼（与月光蛊合炼月芒蛊）才是 refinement 事实；ST-04 是现役增幅，误绑则陈述错位。
+        "st_id": "ST-SMALLLIGHT-06",
         "relation": "refinement",
         "inputs": [{"name": "月光蛊", "count": 1}, {"name": "小光蛊", "count": 2}],
         "output_name": "月芒蛊",
-        "output_rank_from_statement": True,
+        # 转数显式声明：不再从状态行散文里正则抠「N转」——ST-06 文本不含转数，抠不到就静默丢字段。
+        "output_rank": 2,
     },
 ]
 
@@ -96,8 +99,6 @@ PACKS = {
 
 BANNED_KEYS = {"damage", "cooldown", "drop_rate", "success_rate", "value", "cost",
                "price", "balance_value", "hp", "probability"}
-
-CN_NUM = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
 
 
 def fail(msg: str) -> None:
@@ -490,9 +491,8 @@ def compile_relations(name_to_id: dict[str, str], st_index: dict[str, dict]) -> 
                 inputs.extend([iid] * item["count"])
             rel["inputs"] = inputs
             rel["output"] = out
-            m = re.search(r"([一二三四五六七八九])转", st["statement"])
-            if cfg.get("output_rank_from_statement") and m:
-                rel["output_rank"] = CN_NUM[m.group(1)]
+            if cfg.get("output_rank") is not None:
+                rel["output_rank"] = cfg["output_rank"]
         if rel["id"] in seen:
             fail(f"Relation id 重复：{rel['id']}")
         seen.add(rel["id"])

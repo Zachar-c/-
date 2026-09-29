@@ -1,6 +1,6 @@
 {
   "manifest_version": 1,
-  "generated_at": "2026-09-28T18:13:31Z",
+  "generated_at": "2026-09-29T02:48:13Z",
   "compiler": "lore/wiki/tools/compile_runtime.py",
   "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
   "source": {
@@ -110,5 +110,5 @@
   },
   "coverage_notes": "rank 覆盖 169/270（转数未核 109 只仅有蛊名无 id，未编译）；实体状态行 825 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
   "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
-  "content_version": "b5dc877423105233f06032385c0588b4a002885d070763024412ec4d9b2fa111"
+  "content_version": "80274607aa7af89c759df208104c2d46cc76c8131b9d558e31a344ceba31b21f"
 }
