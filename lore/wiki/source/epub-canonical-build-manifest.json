@@ -9,7 +9,7 @@
   "extractor": "beautifulsoup4 4.15.0, html.parser",
   "python_version": "3.12.10",
   "normalization": "p.get_text('', strip=True); U+3000 to ASCII space; collapse repeated ASCII spaces; paragraph bytes otherwise retained",
-  "address_schema": "EPUB:chapter_N:para_M (paragraph IDs are per chapter, 1-based)",
+  "address_schema": "EPUB:chapter_N:para_M | EPUB:chapter_N:heading (paragraph IDs are per chapter, 1-based)",
   "line_ending_policy": "logical artifact is UTF-8 LF with terminal LF; worktree may be CRLF via Git autocrlf",
   "chapter_count": 2365,
   "chapter_min": 0,
@@ -26,9 +26,65 @@
   "live_unique_eid_count": 6515,
   "live_reference_count": 22802,
   "live_files_count": 138,
-  "eids_auto_verified": 5714,
+  "eids_auto_verified": 6322,
   "eids_human_approved": 0,
-  "eids_blocked": 801,
+  "eids_blocked": 193,
+  "eids_human_review_required": 193,
+  "baseline_blocker_total": 801,
+  "baseline_blocker_partition": {
+    "heading_anchor": 105,
+    "legacy_blank_or_out_of_range": 21,
+    "multiple_candidates": 76,
+    "no_full_paragraph_match": 576,
+    "segment_label_out_of_range": 23
+  },
+  "baseline_auto_total": 5714,
+  "baseline_auto_withheld_ambiguous_region": 1,
+  "migration_basis_counts": {
+    "": 193,
+    "exact_full_paragraph": 5783,
+    "heading_locator": 101,
+    "positional_alignment": 438
+  },
+  "blocked_by_withheld_reason": {
+    "ambiguous_region": 5,
+    "blank_or_out_of_range": 21,
+    "context_too_wide": 62,
+    "heading_unresolved": 3,
+    "multiple_candidates": 2,
+    "positional_text_divergence": 8,
+    "segment_alignment": 76,
+    "slot_outside_anchor_window": 16
+  },
+  "legacy_variance_by_kind": {
+    "heading": 101,
+    "identical": 5810,
+    "legacy_redaction": 27,
+    "no_counterpart": 10,
+    "orthographic_variant": 49,
+    "paragraph_boundary": 44,
+    "punctuation": 305,
+    "wording": 148
+  },
+  "secondary_reason_counts": {
+    "content_divergence": 152,
+    "legacy_content_missing": 33,
+    "legacy_redaction": 27,
+    "legacy_typo": 49,
+    "paragraph_segmentation_difference": 122,
+    "punctuation_variant": 305,
+    "true_ambiguity": 69
+  },
+  "backbone_anchor_count": 186936,
+  "backbone_dropped_legacy_lines": 28295,
+  "ambiguous_chapters": [
+    61,
+    62,
+    836,
+    837,
+    879,
+    880
+  ],
   "legacy_only_eids": 255,
   "live_eids_missing_from_legacy_map": 1890,
   "legacy_exact_address_mismatches": 306,
@@ -37,5 +93,58 @@
   "recent_pages_commit": "55032879754489fe5644830b5c37b28992d9e2f8",
   "legacy_mapped_address_missing": 0,
   "old_source_line_missing": 21,
-  "decision_policy": "current live E-ID auto-verifies only when its segment/line is valid and the old-source line uniquely equals a full canonical paragraph under whitespace-only normalization"
+  "decision_policy": "auto_verified = the E-ID's locator is uniquely determined and order-consistent. The EPUB is the text truth and the old TXT is only a legacy evidence-recovery source, so wording that differs between them does NOT by itself withhold a row; it is recorded in legacy_variance. Resolution bases: exact_full_paragraph (the legacy line uniquely equals a canonical paragraph), positional_alignment (the closed interval between two verified anchors is an exact one-to-one match of prose lines onto paragraphs, so the slot is forced by order alone; the canonical text is never normalized towards the legacy wording), heading_locator (the legacy 节 heading resolves to a unique chapter heading), human_approved (human reviewed). blocked = no position could be pinned, or the resolution landed in a duplicate/alternate-version chapter; every blocked live row carries human_review_required=true.",
+  "blocker_class_priority": [
+    "heading_anchor",
+    "segment_label_out_of_range",
+    "legacy_blank_or_out_of_range",
+    "multiple_candidates",
+    "no_full_paragraph_match"
+  ],
+  "withheld_reason_vocabulary": [
+    "blank_or_out_of_range",
+    "heading_unresolved",
+    "multiple_candidates",
+    "unbounded_window",
+    "segment_alignment",
+    "context_too_wide",
+    "slot_outside_anchor_window",
+    "positional_text_divergence",
+    "ambiguous_region"
+  ],
+  "context_alignment": {
+    "max_context_span_lines": 5,
+    "similarity_floor": 0.9,
+    "min_boundary_chars": 8,
+    "legacy_markup_fold": "〖〗 removed",
+    "structural_markers": [
+      "阅读网",
+      "更新最快",
+      "本章未完",
+      "未完待续",
+      "全文阅读",
+      "首发",
+      "笔趣阁",
+      "月票",
+      "推荐票",
+      "各位书友",
+      "求收藏",
+      "订阅",
+      "章节目录",
+      "www.",
+      "http",
+      "请记住",
+      "手机阅读"
+    ]
+  },
+  "secondary_reason_vocabulary": [
+    "legacy_typo",
+    "legacy_redaction",
+    "paragraph_segmentation_difference",
+    "legacy_content_missing",
+    "true_ambiguity",
+    "punctuation_variant",
+    "content_divergence"
+  ],
+  "variant_fold": "黒→黑, 夭→天, 曰→日, 盅→蛊, 姓→性"
 }

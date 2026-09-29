@@ -146,6 +146,8 @@ chapter_0（序）、47（求票）、2269（全渠道感言）、2358（完本�
 
 ## 9. 2026-09-29 独立 verifier 复核（取代 §6 原切源结论）
 
+> **本节「801 需复核或修复」的拆分口径已被 §10（口径 v3「C2 消歧」）取代（2026-09-29 用户裁决）。** 本节保留为当时的 verifier 快照，其中 5,714/801 与「801 项由 666 无精确段落命中、77 多候选…组成」的数字不再是最新结论；801/802 的差异原因见 §10.3，正文数字以 §10 为准。
+
 本节使用已提交派生文本、用户附件 EPUB、仓库根旧源及当前 Wiki 页面独立重建。**§6「基本安全，可进入切换执行」已被本节证据取代；当前不切换 Canon source pointer。** 可复核产物见本目录 `source/epub-canonical-build-manifest.json`、`source/chapter-paragraph-index.tsv`、`source/eid-migration-decisions.tsv`、`source/migration-page-coverage.tsv`；重建器见 `tools/verify_epub_migration.py`。
 
 - EPUB 哈希：`be1c357f…60d972`；派生文本 UTF-8/LF 逻辑哈希：`9f6952f8…dd421a22`；章节 2,365（chapter_0–2364），段落 215,213，逻辑物理行 219,942。219,943 是把尾部 newline 再拆成空元素的计数，不是物理行数。
@@ -155,4 +157,91 @@ chapter_0（序）、47（求票）、2269（全渠道感言）、2358（完本�
 - runtime 80 个实体页逐页覆盖：涉及 4,414 个页内唯一 E-ID，3,903 可自动迁移、511 阻断；75/80 页仍含阻断项。最近 40 页：2,319 个页内唯一 E-ID，2,011 可自动迁移、308 阻断；40/40 页仍含阻断项。
 - 重点页（自动 / 总 E-ID）：月光蛊 123/125，酒虫 170/184，春秋蝉 130/132，智慧蛊 74/82。非自动项尚未人工复核。
 
-结论：先重建当前 live E-ID 完整清单并逐项处理 801 个阻断；所有 live E-ID 达到 `auto_verified` 或 `human_approved`、重点页复核、shadow compile 和完整回归/回滚演练前，不执行正式切源。旧 TXT 保留。
+结论：先重建当前 live E-ID 完整清单并逐项处理当时口径下的 801 个阻断；所有 live E-ID 达到 `auto_verified` 或 `human_approved`、重点页复核、shadow compile 和完整回归/回滚演练前，不执行正式切源。旧 TXT 保留。（该 801 的拆分口径见 §10 更正。）
+
+---
+
+## 10. 2026-09-29 口径 v3（C2 消歧）：定位由「位置证明」决定，而非「文本相同」
+
+用户裁决（2026-09-29）：
+1. **批准重构 verifier 判定口径**，并**废止「801 = 真正 blocker」这个解释**；
+2. **不能把「版本不同」本身等同于「已验证」**；
+3. 两个源确属不同版本时，**EPUB 升为 Canon**（但实际切换仍冻结至 blocked = 0）；
+4. 旧 TXT **不再视为文本真值**，只作为 **legacy evidence recovery source**；不得为了匹配旧 TXT 而把 EPUB 正确文本归一化成旧源错误文本。
+
+### 10.1 旧口径的缺陷
+
+口径 v2 仍以「旧源行 == 规范段落」为中心，于是把互不相干的情况混为 blocked：
+
+- **段标签越界**：唯一精确全段落匹配下，仅因行号落在 `section-index.md` 声明的卷分段之外（卷间空隙带，如 34,411–34,589）而被阻断（例：`E:V1-034416`、`E:V1-034444`、`E:V2-075012`）。
+- **版本差异**：旧 TXT 与 EPUB 是两个不同版本，唯一命中段落与旧行「几乎但不完全相同」，被当成失败丢弃。
+- **源净化残留**：旧源残留 `**` 占位符、盗版站水印（如 `8 9 阅 读 网`）、`〖〗` 装饰符。
+- **模式缺口**：章标题行不属于任何 `<p>`，与「E-ID 本身无效」被合并为同一类。
+
+版本差异已由旧源文本证据确证，例如 `黑豕蛊`↔`黒豕蛊`、`爱别离`↔`爱生离`、`夭蓬蛊`↔`天蓬蛊`，以及语义互斥的 **`高出了两倍有余`↔`高出了两倍不足`**；另有大量标点互换。
+
+### 10.2 口径 v3（两阶段：先证位置，再看文本）
+
+EPUB 是文本真值，旧 TXT 只是证据恢复源。因此一条 E-ID 之所以 `auto_verified`，是因为它的**定位符被唯一确定且与章节顺序一致**，而**不是**因为两版文本恰好逐字相同。措辞差异只记入 `legacy_variance`，不再阻断。
+
+**第一阶段：锚点骨干。** 对每条旧源非空行，若其在规范段落中**唯一**出现，即得一个锚点 `(旧源逻辑行序 → 段落序)`。锚点集用**最长严格递增子序列（LIS）**筛出顺序自洽的骨干（保留 **186,936** 个）。贪心单调过滤会把骨干从 186,936 砍到 7,255——早期一个孤例高序锚点会污染 running max，故弃用。
+
+**第二阶段：闭区间 1:1 双射证明。** 对相邻两个骨干锚点构成的**闭区间** `[low, high]`，把「节标题 / 章节目录行 / 站点水印」标为 structural，其余标为 prose。若 `prose 行数 == 段落数`，则该区间内 prose→段落 的映射被**顺序唯一确定**：目标行的 slot `= low.段落序 + rank - 1`（`rank` 为区间内到目标行为止的 non-structural 行数）。此证明**不依赖目标行自身文本**，因此可以安全跨过版本差异。区间宽度上限 5 行（即迁移令要求的旧源 ±2 行窗口）。
+
+守卫常量（只用于证明，不用来「选最相似」）：
+
+| 项 | 值 |
+|---|---|
+| `MAX_CONTEXT_SPAN`（闭区间最大跨旧源行数） | 5 |
+| `SIMILARITY_FLOOR` | 0.90 |
+| `MIN_BOUNDARY_CHARS`（截断/水印包含判定） | 8 |
+| `legacy_markup_fold` | `〖〗` removed（仅比较用，不改写规范文本） |
+
+位置证明通过后，规范文本与旧源行仍可逐字不同；差异只记入 `legacy_variance`（`identical` / `punctuation` / `orthographic_variant`（正字法折叠 `黒→黑, 夭→天, 曰→日, 盅→蛊, 姓→性`）/ `legacy_redaction` / `paragraph_boundary` / `wording`），**不因差异本身阻断**。
+
+| decision | 含义 | 计入已验证 |
+|---|---|---|
+| `auto_verified` | 定位符被唯一确定且顺序一致；`migration_basis` ∈ `exact_full_paragraph` / `positional_alignment` / `heading_locator` | 是 |
+| `blocked` | 无法钉住位置，或落点进入重复/异版章；附互斥的 `primary_blocker_class` 与 `withheld_reason`，一律 `human_review_required = true` | 否 |
+| `out_of_scope` | 非 live（仅存在于旧映射表） | 否 |
+
+新增合法定位符种类 **`EPUB:chapter_N:heading`**（章标题行本身），只记在 decisions 台账里，不改动段落索引。
+
+### 10.3 801 / 802 的差异原因
+
+**801 是正确的 live blocked 行数。** §9 的「组成」不是互斥分区：它把一个互斥残差（`666 无精确段落命中`）与非互斥谓词计数（`77 多候选`）混在一起相加。实测谓词计数为 `zero_candidate = 703`、`empty = 21`、`multi = 77`、`heading = 15`、`segment_bad = 23`、`one_candidate_but_blocked = 21`；**38 行同时满足多个谓词**，故谓词计数之和（839）大于行数。严格按优先级互斥分区（v1 口径）为 `no_full_paragraph_match = 666`、`multiple_candidates = 76`、`segment_label_out_of_range = 23`、`legacy_blank_or_out_of_range = 21`、`heading_anchor = 15`，合计 **801**。即 §9 的 `77` 应为 `76`，其 `666 + 77 + 23 + 21 + 15 = 802` 多算 1 行。
+
+### 10.4 口径 v3 结论（6,515 个 Live E-ID）
+
+| 项 | v1 基线 | v3 |
+|---|---|---|
+| `auto_verified` | 5,714 | **6,322**（+609） |
+| `blocked` = `human_review_required` | 801 | **193** |
+| `human_approved` | 0 | **0** |
+| 合计 | 6,515 | **6,515** |
+
+- **v1 基线分区**（801，按同一优先级重算）：`no_full_paragraph_match` 576、`heading_anchor` 105、`multiple_candidates` 76、`segment_label_out_of_range` 23、`legacy_blank_or_out_of_range` 21。`heading_anchor` 由 15 升到 105，是因 `line_is_heading` 扩展识别了 `章节目录 第N节：…` 目录行，90 行由 `no_full_paragraph_match` 移入此类；该扩展同时把原本 0/15 的章标题解析提升到 101/105 解出。
+- **解析依据（`migration_basis`）**：`exact_full_paragraph` 5,783、`positional_alignment` 438（闭区间双射证明，规范文本与旧源行可逐字不同）、`heading_locator` 101（`human_approved` 0）。
+- **残留 193 的 `withheld_reason`**：`segment_alignment` 76、`context_too_wide` 62、`blank_or_out_of_range` 21、`slot_outside_anchor_window` 16、`positional_text_divergence` 8、`ambiguous_region` 5、`heading_unresolved` 3、`multiple_candidates` 2。
+- **与旧源差异分布（`legacy_variance_by_kind`）**：`identical` 5,810、`punctuation` 305、`wording` 148、`heading` 101、`orthographic_variant` 49、`paragraph_boundary` 44、`legacy_redaction` 27、`no_counterpart` 10。
+- **重复/异版区**：`chapter_61/62`、`836/837`、`879/880` 一律不机器强裁，落点进入即 `ambiguous_region`（5 行）；另有 1 行本可 `exact_full_paragraph` 的基线行因候选落入异版区被降级。
+- **边界错误只修 migration record**：未改任何 Wiki claim；旧源空行/越界 21 行一律留人工 review，未强行指认。
+- **二次运行一致性**：两次独立运行产出的四个文件 SHA-256 完全相同。
+
+### 10.5 页面覆盖（口径 v3）
+
+| 队列 | 页数 | 页内 E-ID | auto | blocked | 含阻断页数 |
+|---|---|---|---|---|---|
+| runtime 恢复 80 页 | 80 | 4,414 | 4,313 | 101 | 40（v2 计 58、v1 计 75） |
+| 最近新增 40 页 | 40 | 2,319 | 2,273 | 46 | 20（v2 计 36、v1 计 40） |
+| 其他活动 Wiki 页 | 118 | 3,377 | 3,251 | 126 | 34 |
+| 全部 198 页 | 198 | 7,791 | 7,564 | 227（含非 live 重复计） | 74 |
+
+重点页残留 blocker（均为 `no_full_paragraph_match`）：月光蛊 1、酒虫 2、春秋蝉 0、智慧蛊 3。
+
+### 10.6 未变的约束
+
+- 规范文本未被改动：`chapter-paragraph-index.tsv` 除新增章标题行外段落哈希不变；未为迁就旧源改写任何规范文本。
+- **blocked（193）清零以前：不切 Canon、不开始正式 locator migration、不拿旧的 4,594 结论作为依据。**
+- v3 仍**不满足**进入 shadow compile 的条件：`auto_verified + human_approved = 6,322 ≠ 6,515`，且 `blocked = 193 ≠ 0`。
+- 新增 Wiki 生产保持冻结。
