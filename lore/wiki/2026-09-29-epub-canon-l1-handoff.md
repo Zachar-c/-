@@ -73,3 +73,9 @@
 
 - EPUB 原件与旧源 `蛊真人-clean.txt` 均在附件目录（本地）；切换执行批需要时可直接读取。
 - 30 个段号越界 E-ID 的修正需 L1 提供正确锚点口径（沿用行号 or 改用段内节号）。
+
+## 8. 2026-09-29 L2 执行补记：候选计划已按新证据重排
+
+旧 §2/§5 是 `c841d522` 迁移快照及当时提出的候选，不代表当前完整 Live E-ID 集；“4,594 精确即可批量迁移”的前提已被独立 verifier 证伪。现执行顺序改为：固定并复现派生文本 → 从当前活动 Wiki/runtime/Web 重提取 Live E-ID → 重建逐项决策及页覆盖账本 → 处理人工阻断 → shadow compile → regression 与 rollback drill → 最后才考虑 Canon/index pointer 切换。E-ID 保留为历史 Evidence ID；不能因 locator 更新而删除旧 ID。
+
+复核事实与机器产物见关联迁移报告 §9 及 [`source/README.md`](source/README.md)。当前结果：6,515 个 Live E-ID，5,714 自动匹配、801 阻断；80 个恢复实体页中 75 页有阻断项，最近 40 页中 40 页有阻断项。正式切源尚未执行。

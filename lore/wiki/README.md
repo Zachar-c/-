@@ -11,6 +11,8 @@
 3. 页面没有回答问题时，用 `rg` 回查现有原文和读书笔记。
 4. 确认后的结论写回对应 Wiki 页面，并保留章节或行号来源。
 
+原文来源状态与 EPUB 迁移验收材料见 [`source/README.md`](source/README.md)。在迁移门禁完成前，旧 `蛊真人-clean.txt` 仍是当前 Canonical Novel Source。
+
 ```powershell
 rg -n "关键词" "source\蛊真人-clean.txt"
 rg -n "关键词" "game\分支：六卷精编版\读书笔记"
