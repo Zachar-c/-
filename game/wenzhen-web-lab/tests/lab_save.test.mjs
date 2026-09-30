@@ -140,6 +140,23 @@ test('decode rejects missing critical state fields', () => {
   assert.equal(notObject.reason, 'missing_state');
 });
 
+test('decode rejects coerced and non-finite critical numbers', () => {
+  for (const [field, invalidValues] of Object.entries({
+    seed: [null, '', '101', Number.NaN, Number.POSITIVE_INFINITY],
+    stones: [null, '', '3', Number.NaN, Number.NEGATIVE_INFINITY],
+    blood: [null, '', '24', Number.NaN, Number.POSITIVE_INFINITY],
+  })) {
+    for (const value of invalidValues) {
+      const result = LabSave.decode(
+        LabSave.encode(sampleState({ [field]: value }), CONTENT),
+        CONTENT,
+      );
+      assert.equal(result.ok, false, `${field}=${String(value)} must be rejected`);
+      assert.equal(result.reason, 'missing_state');
+    }
+  }
+});
+
 test('repeated restore is idempotent and stable', () => {
   const stateBefore = sampleState();
   const raw = LabSave.encode(stateBefore, CONTENT);

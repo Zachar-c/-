@@ -34,7 +34,7 @@ Web 游戏不设材料掉落、材料买卖或材料合成；战后成长来自�
 
 ## 开发
 
-- 测试：`node --test tests/*.test.mjs`
+- 测试：`node --test tests/*.test.mjs`。其中浏览器集成用例需要本机安装 Edge 或 Chrome；纯规则与存档单测不需要浏览器。
 - 走盘：`node tools/autoplay_lab.mjs --suite smoke --seed 101 --difficulty normal`
 - 打包：`node tools/package_lab.mjs --out <新目录>`
 - `?debug=1` 打开覆盖页与演武列表
