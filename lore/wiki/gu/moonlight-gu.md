@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 月光蛊
 aliases: [月光蛊, 月光刃, 月刃蛊]
 description: 古月一族秘法培育的一转镇族蛊虫，发射月刃的基础战斗蛊
@@ -11,6 +12,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
 schema: 2
 ---
+
 
 # 月光蛊
 

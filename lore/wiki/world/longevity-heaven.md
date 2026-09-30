@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 长生天
 aliases: [Longevity Heaven, 长生天组织]
 description: 巨阳仙尊遗泽组织：运道传承、血海、劫运坛、四荒仙人架构；命运蛊大计主导者
@@ -14,6 +15,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J-405001-437061.md"
 schema: 2
 ---
+
 
 # 长生天
 

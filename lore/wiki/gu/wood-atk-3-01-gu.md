@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 木魅蛊
 aliases: [木魅蛊, 木魅, 木魅树精]
 description: 三转功能蛊（原文明文）：化身为树精，从空气中汲取天地元气自补真元、最擅长持久战，并对木行蛊有增幅；代价是肌肉木化与意识侵蚀，久用必成树人尸体。晋升需与百年／千年寿蛊合炼
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 木魅蛊
 

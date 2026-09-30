@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 水道
 aliases: [水道流派, water path]
 description: 水道流派：中古涌现，东海最盛、仙蛊规模五域第一；浪迹天涯与方源水道宗师
@@ -8,6 +9,7 @@ tags: [world, path, water, east-sea]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 水道
 

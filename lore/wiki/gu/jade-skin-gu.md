@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 玉皮蛊
 aliases: [玉皮蛊, 玉皮]
 description: 一转皮甲系最珍稀防御蛊：皮肤化玉并撑起玉光护体，耗元少于铜皮蛊而防御更强，但受击越多耗元越剧
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 玉皮蛊
 

@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 酒虫
 aliases: [酒虫]
 description: 提纯已有真元一个小境界的修炼辅助蛊；分一/二/三/四转四档形态，不补真元、不越本转巅峰、不加速恢复
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-WINE-001"
 schema: 2
 ---
+
 
 # 酒虫
 

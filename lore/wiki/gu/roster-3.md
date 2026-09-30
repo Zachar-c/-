@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: index
 name: 蛊虫总表三期·游戏映射蛊精蒸馏
 aliases: [蛊虫三期, 游戏映射蛊名录, gu roster 3]
 description: game/data/gu.json 中 270 个原著来源蛊的转数层精蒸馏名录——逐蛊核验状态、原文锚点、L0 裁定与分叉报告，游戏桥接层 gu_lore.json 的源页
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 蛊虫总表三期·游戏映射蛊精蒸馏
 

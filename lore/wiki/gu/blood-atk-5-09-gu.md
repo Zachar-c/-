@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 血神子
 aliases: [血神子仙蛊]
 description: 六转血道魔蛊、天下十大魔蛊第七，由五转血滴子晋升而来；血海九道真传之一，蛊方历为残篇（七成完善度），催动须以血缘亲人换取一位位血神子分体
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 血神子
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 气道
 aliases: [气道流派, qi path]
 description: 气道流派：元始仙尊开创并气道成尊；三气归来三式与三气仙蛊、龙公压箱底杀招
@@ -8,6 +9,7 @@ tags: [world, path, qi, primordial-origin]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 气道
 

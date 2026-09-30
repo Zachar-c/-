@@ -1,5 +1,6 @@
 ---
 type: rules
+kind: rule
 name: 灾劫体系
 aliases: [灾劫, 地灾, 天劫, 浩劫, 万劫]
 description: 蛊仙灾劫的四级阶梯、各转周期、递增约束、天意边界、个体差异、十大凶灾、组合升格、排遣与延缓手段规则
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-IMMORTAL-BOUNDARY-001"
 schema: 2
 ---
+
 
 # 灾劫体系
 

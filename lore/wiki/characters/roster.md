@@ -1,5 +1,6 @@
 ---
 type: character
+kind: index
 name: 全书主要人物总表
 aliases: [人物总表, 人物 roster, 势力人物图谱]
 description: 按势力与登场弧线分组的全书主要人物一览，含方源马甲归一表；粗粒度身份层，条目即后续建页锚点
@@ -28,6 +29,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2b-421001-437061-补读.md"
 schema: 2
 ---
+
 
 # 全书主要人物总表
 

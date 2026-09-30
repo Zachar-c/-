@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 修炼体系
 aliases: [境界, 转数, 小境界]
 description: 转数-小境界-真元颜色-身份层次四轴与仙窍飞轮（灾劫/道痕）的修为规则页
@@ -13,6 +14,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
 schema: 2
 ---
+
 
 # 修炼体系
 

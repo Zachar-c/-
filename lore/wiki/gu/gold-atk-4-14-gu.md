@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 黄金舍利蛊
 aliases: []
 description: 四转舍利蛊：只对四转蛊师有效，直接提升四转一个小境界；凡蛊、天然生成无法合炼；凡人市场受各大家族严苛管禁，宝黄天才有货；市价接近三十万元石；除增长修为外还大量用作炼制仙蛊的催化材料
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 黄金舍利蛊
 

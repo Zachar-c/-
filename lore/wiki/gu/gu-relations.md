@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: relation
 name: 蛊虫关系
 aliases: [蛊虫关系图谱, 合炼链, 逆炼链, 平炼升炼, 本命关系, 蛊虫关系总纲]
 description: 蛊虫与蛊虫、蛊虫与蛊师的关系总纲：合炼/逆炼/平炼升炼、同种唯一、本命、替代协同——每条规则附原文实例，并标注哪些可映射到 game/data/refinement_recipes.json 的配方 schema
@@ -13,6 +14,7 @@ sources:
   - "canon-index:CAN-SMALL-LIGHT-002"
 schema: 2
 ---
+
 
 # 蛊虫关系
 

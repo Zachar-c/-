@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 影宗
 aliases: [Shadow Sect, 影宗组织]
 description: 十万年谋局的隐世组织：紫山真君布局、幕后台面双层结构（僵盟为其台面），方源后继任宗主
@@ -14,6 +15,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/D2-157501-180000.md"
 schema: 2
 ---
+
 
 # 影宗
 

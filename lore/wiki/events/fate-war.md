@@ -1,5 +1,6 @@
 ---
 type: event
+kind: event
 name: 宿命大战
 aliases: [宿命蛊争夺]
 description: 围绕宿命蛊修复的两轮多方大战；Run 1 全链（270001–323421）与 Run 2 已逐段核验（323422–360000）
@@ -12,6 +13,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
 schema: 2
 ---
+
 
 # 宿命大战
 

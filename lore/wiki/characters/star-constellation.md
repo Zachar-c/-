@@ -1,5 +1,6 @@
 ---
 type: character
+kind: character
 name: 星宿仙尊
 aliases: [星宿]
 description: 十大尊者唯一女性、开创智道；三相星影与天人感应/天工人代，天庭长期支点
@@ -14,6 +15,7 @@ sources:
   - "memory:lore/research/分支：六卷精编版/记忆库/02-人物弧光.md"
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
 ---
+
 
 # 星宿仙尊
 

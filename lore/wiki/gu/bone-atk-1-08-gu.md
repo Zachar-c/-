@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 骨蛊
 aliases: [骨蛊]
 description: 「骨蛊」在原文只是白骨山骨系野生蛊的泛称（全书仅 1 处独立成词），并非某只具体蛊的名；白骨山传承中的具体骨系蛊为玉骨蛊、铁骨蛊、飞骨盾、肉白骨，上位有四转精铁骨蛊、无常骨蛊。
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-BONE-001"
 schema: 2
 ---
+
 
 # 骨蛊
 

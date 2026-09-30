@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="问真 · 《蛊真人》蒸馏知识库：阅读优先的设定 Wiki 与知识缺口审计视图。">
+  <title>问真 · 知识库</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%23111820'/%3E%3Cpath d='M12 42c13-24 28-24 40 0M20 47h24' fill='none' stroke='%23d2b57a' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css?v=20260930-kind-fix">
+  <script src="app.js?v=20260930-kind-fix" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="问真知识库首页">
+      <span class="brand-mark">問</span>
+      <span class="brand-text">问真</span>
+    </a>
+
+    <form class="global-search" id="search-form" role="search" autocomplete="off">
+      <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.6" cy="8.6" r="5.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.7 12.7L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="搜索蛊虫、人物、流派、事件…" aria-label="全局搜索">
+      <kbd>/</kbd>
+    </form>
+
+    <nav class="topnav" aria-label="主导航">
+      <a href="#/browse" data-tab="wiki">知识库</a>
+      <a href="#/category/world" data-tab="world">世界图谱</a>
+      <a href="#/art" data-tab="art">美术馆</a>
+    </nav>
+
+    <button id="audit-toggle" class="audit-toggle" type="button" aria-pressed="false">
+      <span class="audit-dot" aria-hidden="true"></span>审计模式<b>关</b>
+    </button>
+  </header>
+
+  <main id="main" tabindex="-1"><div class="loading">正在载入知识库…</div></main>
+</body>
+</html>

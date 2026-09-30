@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 木道
 aliases: [木道流派, wood path]
 description: 木道流派：元莲仙尊开创、天元宝皇莲与天莲派；树人延寿、元莲派陈衣与神帝城巅峰
@@ -8,6 +9,7 @@ tags: [world, path, wood, yuan-lian]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 木道
 

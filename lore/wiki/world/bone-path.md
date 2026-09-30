@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 骨道
 aliases: [骨道流派, bone path]
 description: 骨道流派：近古产生，袁贲八转专修北原战力第一；骨肉团圆蛊传承与骨道蛊虫实例
@@ -8,6 +9,7 @@ tags: [world, path, bone, yuan-ben]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 骨道
 

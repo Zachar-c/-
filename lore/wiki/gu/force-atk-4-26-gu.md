@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 直撞蛊
 aliases: []
 description: 三转力道移动蛊，与横冲蛊成对：笔直向前的强行突破型冲锋、力量源自蛊师本身；与横冲蛊可为主体合炼出四转横冲直撞蛊；runtime id 为 force_atk_4_26_gu
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 直撞蛊
 

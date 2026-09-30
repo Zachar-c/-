@@ -1,5 +1,6 @@
 ---
 type: theme
+kind: theme
 name: 坚持
 aliases: [坚持]
 sources:
@@ -8,6 +9,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
   - "source:source/蛊真人-clean.txt"
 ---
+
 
 # 坚持
 

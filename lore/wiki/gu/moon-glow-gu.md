@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 月芒蛊
 aliases: [月芒蛊]
 description: 月光蛊＋两只小光蛊合炼成的二转进攻蛊；月刃大如脸盆、攻击力为月光蛊三倍、射程未随晋升增加（原文"十米／十步"两口径）
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-MOONGLOW-001"
 schema: 2
 ---
+
 
 # 月芒蛊
 

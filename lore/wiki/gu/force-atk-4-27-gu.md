@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 横冲蛊
 aliases: []
 description: 三转力道移动蛊，与直撞蛊成对：横向冲锋、能在移动中发力；方源卖跳跳草换购，与直撞蛊可为主体合炼出四转横冲直撞蛊；runtime id 为 force_atk_4_27_gu
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 横冲蛊
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 蛊虫、蛊方、炼蛊与杀招
 aliases: [蛊方, 炼蛊流程, 炼蛊怎么炼, 杀招固化, 人蛊关系链]
 description: 蛊虫-蛊方-炼蛊-杀招关系总纲：蛊方结构、炼蛊五步流程（前提/炼前/执行/手法辅助/成败）、双向转化桥与检索指引
@@ -8,6 +9,7 @@ tags: [world, gu, refinement, killer-moves, hub]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 蛊虫、蛊方、炼蛊与杀招
 

@@ -1,9 +1,11 @@
 ---
 type: world
+kind: reference
 name: 视觉素材·青茅山（采集批 A）
 aliases: [视觉素材 A]
 sources: ["source:source/蛊真人-clean.txt"]
 ---
+
 
 # 视觉素材·青茅山（采集批 A）
 

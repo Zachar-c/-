@@ -1,0 +1,1002 @@
+{
+  "characters/bai-ning-bing.md": {
+    "kind": "character",
+    "title": "白凝冰",
+    "reason": "具体人物"
+  },
+  "characters/dragon-duke.md": {
+    "kind": "character",
+    "title": "龙公",
+    "reason": "具体人物"
+  },
+  "characters/enemy-roster.md": {
+    "kind": "index",
+    "title": "敌人名录",
+    "reason": "人物/敌人总表"
+  },
+  "characters/fang-yuan.md": {
+    "kind": "character",
+    "title": "方源",
+    "reason": "具体人物"
+  },
+  "characters/he-lou-lan.md": {
+    "kind": "character",
+    "title": "黑楼兰",
+    "reason": "具体人物"
+  },
+  "characters/index.md": {
+    "kind": "index",
+    "title": "人物",
+    "reason": "目录 hub"
+  },
+  "characters/red-lotus.md": {
+    "kind": "character",
+    "title": "红莲魔尊",
+    "reason": "具体人物"
+  },
+  "characters/roster-2.md": {
+    "kind": "index",
+    "title": "次要人物总表",
+    "reason": "人物/敌人总表"
+  },
+  "characters/roster.md": {
+    "kind": "index",
+    "title": "全书主要人物总表",
+    "reason": "人物/敌人总表"
+  },
+  "characters/star-constellation.md": {
+    "kind": "character",
+    "title": "星宿仙尊",
+    "reason": "具体人物"
+  },
+  "characters/yuan-lian-xian-zun.md": {
+    "kind": "character",
+    "title": "元莲仙尊",
+    "reason": "具体人物"
+  },
+  "gu/bear-strength-gu.md": {
+    "kind": "gu",
+    "title": "熊力蛊",
+    "reason": "具体蛊"
+  },
+  "gu/blood-atk-1-18-gu.md": {
+    "kind": "gu",
+    "title": "鳄力蛊",
+    "reason": "具体蛊"
+  },
+  "gu/blood-atk-3-03-gu.md": {
+    "kind": "gu",
+    "title": "血气蛊",
+    "reason": "具体蛊"
+  },
+  "gu/blood-atk-3-11-gu.md": {
+    "kind": "gu",
+    "title": "血月蛊",
+    "reason": "具体蛊"
+  },
+  "gu/blood-atk-5-09-gu.md": {
+    "kind": "gu",
+    "title": "血神子",
+    "reason": "具体蛊"
+  },
+  "gu/blood-atk-5-12-gu.md": {
+    "kind": "gu",
+    "title": "血本仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/blood-droplet-gu.md": {
+    "kind": "gu",
+    "title": "血滴子",
+    "reason": "具体蛊"
+  },
+  "gu/blood-farewell-gu.md": {
+    "kind": "gu",
+    "title": "爱别离",
+    "reason": "具体蛊"
+  },
+  "gu/bone-atk-1-08-gu.md": {
+    "kind": "gu",
+    "title": "骨蛊",
+    "reason": "具体蛊"
+  },
+  "gu/bone-def-3-01-gu.md": {
+    "kind": "gu",
+    "title": "骨枪蛊",
+    "reason": "具体蛊"
+  },
+  "gu/bone-def-3-05-gu.md": {
+    "kind": "gu",
+    "title": "玉骨蛊",
+    "reason": "具体蛊"
+  },
+  "gu/close-door-gu.md": {
+    "kind": "gu",
+    "title": "关门蛊",
+    "reason": "具体蛊"
+  },
+  "gu/cultivator-effects-and-scouting.md": {
+    "kind": "relation",
+    "title": "蛊虫与蛊师能力来源",
+    "reason": "关系/来源/边界"
+  },
+  "gu/dream-atk-5-02-gu.md": {
+    "kind": "gu",
+    "title": "梦蝶仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/earth-atk-5-03-gu.md": {
+    "kind": "gu",
+    "title": "地藏花蛊",
+    "reason": "具体蛊"
+  },
+  "gu/earth-def-3-01-gu.md": {
+    "kind": "gu",
+    "title": "石窍蛊",
+    "reason": "具体蛊"
+  },
+  "gu/fate-gu.md": {
+    "kind": "gu",
+    "title": "宿命蛊",
+    "reason": "具体蛊"
+  },
+  "gu/fire-atk-2-01-gu.md": {
+    "kind": "gu",
+    "title": "鬼火蛊",
+    "reason": "具体蛊"
+  },
+  "gu/fire-atk-4-02-gu.md": {
+    "kind": "gu",
+    "title": "丹火蛊",
+    "reason": "具体蛊"
+  },
+  "gu/fire-mov-4-39-gu.md": {
+    "kind": "gu",
+    "title": "火炭蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-atk-1-05-gu.md": {
+    "kind": "gu",
+    "title": "斤力蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-atk-3-29-gu.md": {
+    "kind": "gu",
+    "title": "天蓬蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-atk-4-26-gu.md": {
+    "kind": "gu",
+    "title": "直撞蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-atk-4-27-gu.md": {
+    "kind": "gu",
+    "title": "横冲蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-atk-5-20-gu.md": {
+    "kind": "gu",
+    "title": "我力仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-heal-3-03-gu.md": {
+    "kind": "gu",
+    "title": "自力更生蛊",
+    "reason": "具体蛊"
+  },
+  "gu/force-mov-5-21-gu.md": {
+    "kind": "gu",
+    "title": "飞熊之力蛊",
+    "reason": "具体蛊"
+  },
+  "gu/gold-atk-2-11-gu.md": {
+    "kind": "gu",
+    "title": "赤铁舍利蛊",
+    "reason": "具体蛊"
+  },
+  "gu/gold-atk-2-12-gu.md": {
+    "kind": "gu",
+    "title": "青铜舍利蛊",
+    "reason": "具体蛊"
+  },
+  "gu/gold-atk-4-02-gu.md": {
+    "kind": "gu",
+    "title": "金龙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/gold-atk-4-14-gu.md": {
+    "kind": "gu",
+    "title": "黄金舍利蛊",
+    "reason": "具体蛊"
+  },
+  "gu/gold-def-3-09-gu.md": {
+    "kind": "gu",
+    "title": "古铜皮蛊",
+    "reason": "具体蛊"
+  },
+  "gu/gu-relations.md": {
+    "kind": "relation",
+    "title": "蛊虫关系",
+    "reason": "关系/来源/边界"
+  },
+  "gu/heaven-atk-3-10-gu.md": {
+    "kind": "gu",
+    "title": "雷翼蛊",
+    "reason": "具体蛊"
+  },
+  "gu/heaven-atk-5-02-gu.md": {
+    "kind": "gu",
+    "title": "命运蛊",
+    "reason": "具体蛊"
+  },
+  "gu/heaven-atk-5-03-gu.md": {
+    "kind": "gu",
+    "title": "天妒仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/heaven-atk-5-06-gu.md": {
+    "kind": "gu",
+    "title": "天机蛊",
+    "reason": "具体蛊"
+  },
+  "gu/heaven-atk-5-07-gu.md": {
+    "kind": "gu",
+    "title": "寿蛊",
+    "reason": "具体蛊"
+  },
+  "gu/human-atk-1-01-gu.md": {
+    "kind": "gu",
+    "title": "自己蛊",
+    "reason": "具体蛊"
+  },
+  "gu/human-atk-5-02-gu.md": {
+    "kind": "gu",
+    "title": "爱情蛊",
+    "reason": "具体蛊"
+  },
+  "gu/human-atk-5-31-gu.md": {
+    "kind": "gu",
+    "title": "海誓蛊",
+    "reason": "具体蛊"
+  },
+  "gu/human-atk-5-34-gu.md": {
+    "kind": "gu",
+    "title": "悔蛊",
+    "reason": "具体蛊"
+  },
+  "gu/human-def-1-32-gu.md": {
+    "kind": "gu",
+    "title": "山盟蛊",
+    "reason": "具体蛊"
+  },
+  "gu/index.md": {
+    "kind": "index",
+    "title": "蛊虫",
+    "reason": "目录 hub"
+  },
+  "gu/jade-skin-gu.md": {
+    "kind": "gu",
+    "title": "玉皮蛊",
+    "reason": "具体蛊"
+  },
+  "gu/light-atk-1-01-gu.md": {
+    "kind": "gu",
+    "title": "月旋蛊",
+    "reason": "具体蛊"
+  },
+  "gu/light-atk-3-02-gu.md": {
+    "kind": "gu",
+    "title": "邀月蛊",
+    "reason": "具体蛊"
+  },
+  "gu/light-rec-5-12-gu.md": {
+    "kind": "gu",
+    "title": "星念蛊",
+    "reason": "具体蛊"
+  },
+  "gu/luck-atk-1-03-gu.md": {
+    "kind": "gu",
+    "title": "招灾蛊",
+    "reason": "具体蛊"
+  },
+  "gu/luck-atk-5-01-gu.md": {
+    "kind": "gu",
+    "title": "鸿运齐天蛊",
+    "reason": "具体蛊"
+  },
+  "gu/luck-atk-5-04-gu.md": {
+    "kind": "gu",
+    "title": "狗屎运蛊",
+    "reason": "具体蛊"
+  },
+  "gu/luck-atk-5-05-gu.md": {
+    "kind": "gu",
+    "title": "排难蛊",
+    "reason": "具体蛊"
+  },
+  "gu/m0-six-gu.md": {
+    "kind": "relation",
+    "title": "M0 六蛊原著边界",
+    "reason": "关系/来源/边界"
+  },
+  "gu/moon-glow-gu.md": {
+    "kind": "gu",
+    "title": "月芒蛊",
+    "reason": "具体蛊"
+  },
+  "gu/moon-ray-gu.md": {
+    "kind": "gu",
+    "title": "月痕蛊",
+    "reason": "具体蛊"
+  },
+  "gu/moon-shadow-gu.md": {
+    "kind": "gu",
+    "title": "月影蛊",
+    "reason": "具体蛊"
+  },
+  "gu/moonlight-gu.md": {
+    "kind": "gu",
+    "title": "月光蛊",
+    "reason": "具体蛊"
+  },
+  "gu/open-door-gu.md": {
+    "kind": "gu",
+    "title": "开门蛊",
+    "reason": "具体蛊"
+  },
+  "gu/persistence-gu.md": {
+    "kind": "gu",
+    "title": "坚持仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/qi-atk-1-01-gu.md": {
+    "kind": "gu",
+    "title": "硬气蛊",
+    "reason": "具体蛊"
+  },
+  "gu/qi-mov-4-03-gu.md": {
+    "kind": "gu",
+    "title": "风气蛊",
+    "reason": "具体蛊"
+  },
+  "gu/refine-log-5-02-gu.md": {
+    "kind": "gu",
+    "title": "九转升炼蛊",
+    "reason": "具体蛊"
+  },
+  "gu/roster-2.md": {
+    "kind": "index",
+    "title": "蛊虫总表二期",
+    "reason": "蛊虫总表"
+  },
+  "gu/roster-3.md": {
+    "kind": "index",
+    "title": "蛊虫总表三期·游戏映射蛊精蒸馏",
+    "reason": "蛊虫总表"
+  },
+  "gu/roster.md": {
+    "kind": "index",
+    "title": "全书蛊虫总表",
+    "reason": "蛊虫总表"
+  },
+  "gu/slave-atk-1-03-gu.md": {
+    "kind": "gu",
+    "title": "驭犬蛊",
+    "reason": "具体蛊"
+  },
+  "gu/slave-atk-3-04-gu.md": {
+    "kind": "gu",
+    "title": "驭狼蛊",
+    "reason": "具体蛊"
+  },
+  "gu/slave-atk-4-02-gu.md": {
+    "kind": "gu",
+    "title": "驭兽蛊",
+    "reason": "具体蛊"
+  },
+  "gu/slave-atk-5-01-gu.md": {
+    "kind": "gu",
+    "title": "奴隶蛊",
+    "reason": "具体蛊"
+  },
+  "gu/small-light-gu.md": {
+    "kind": "gu",
+    "title": "小光蛊",
+    "reason": "具体蛊"
+  },
+  "gu/soul-atk-1-02-gu.md": {
+    "kind": "gu",
+    "title": "净魂仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/soul-atk-5-01-gu.md": {
+    "kind": "gu",
+    "title": "魂灯蛊",
+    "reason": "具体蛊"
+  },
+  "gu/spring-autumn-cicada-gu.md": {
+    "kind": "gu",
+    "title": "春秋蝉",
+    "reason": "具体蛊"
+  },
+  "gu/stone-shell-gu.md": {
+    "kind": "gu",
+    "title": "石皮蛊",
+    "reason": "具体蛊"
+  },
+  "gu/sword-atk-4-01-gu.md": {
+    "kind": "gu",
+    "title": "剑气蛊",
+    "reason": "具体蛊"
+  },
+  "gu/sword-atk-5-02-gu.md": {
+    "kind": "gu",
+    "title": "飞剑蛊",
+    "reason": "具体蛊"
+  },
+  "gu/vitality-grass-gu.md": {
+    "kind": "gu",
+    "title": "九叶生机草",
+    "reason": "具体蛊"
+  },
+  "gu/water-atk-3-06-gu.md": {
+    "kind": "gu",
+    "title": "冰肌蛊",
+    "reason": "具体蛊"
+  },
+  "gu/water-atk-3-07-gu.md": {
+    "kind": "gu",
+    "title": "蓝鸟冰棺蛊",
+    "reason": "具体蛊"
+  },
+  "gu/water-rec-5-04-gu.md": {
+    "kind": "gu",
+    "title": "浪迹天涯仙蛊",
+    "reason": "具体蛊"
+  },
+  "gu/white-boar-strength-gu.md": {
+    "kind": "gu",
+    "title": "白豕蛊",
+    "reason": "具体蛊"
+  },
+  "gu/white-jade-gu.md": {
+    "kind": "gu",
+    "title": "白玉蛊",
+    "reason": "具体蛊"
+  },
+  "gu/wind-mov-4-04-gu.md": {
+    "kind": "gu",
+    "title": "龙行虎步蛊",
+    "reason": "具体蛊"
+  },
+  "gu/wine-insect-gu.md": {
+    "kind": "gu",
+    "title": "酒虫",
+    "reason": "具体蛊"
+  },
+  "gu/wisdom-atk-5-05-gu.md": {
+    "kind": "gu",
+    "title": "慧剑蛊",
+    "reason": "具体蛊"
+  },
+  "gu/wisdom-gu.md": {
+    "kind": "gu",
+    "title": "智慧蛊",
+    "reason": "具体蛊"
+  },
+  "gu/wood-atk-1-05-gu.md": {
+    "kind": "gu",
+    "title": "青藤蛊",
+    "reason": "具体蛊"
+  },
+  "gu/wood-atk-3-01-gu.md": {
+    "kind": "gu",
+    "title": "木魅蛊",
+    "reason": "具体蛊"
+  },
+  "gu/wood-heal-3-03-gu.md": {
+    "kind": "gu",
+    "title": "草傀蛊",
+    "reason": "具体蛊"
+  },
+  "events/central-plain-refinement-conference.md": {
+    "kind": "event",
+    "title": "中洲炼蛊大会",
+    "reason": "具体事件"
+  },
+  "events/fate-war.md": {
+    "kind": "event",
+    "title": "宿命大战",
+    "reason": "具体事件"
+  },
+  "events/feng-mo-ku.md": {
+    "kind": "event",
+    "title": "疯魔窟终局",
+    "reason": "具体事件"
+  },
+  "events/index.md": {
+    "kind": "index",
+    "title": "事件与舞台",
+    "reason": "目录 hub"
+  },
+  "events/langya-blessed-land-invasion.md": {
+    "kind": "event",
+    "title": "天庭入侵琅琊福地",
+    "reason": "具体事件"
+  },
+  "events/qing-mao-mountain.md": {
+    "kind": "event",
+    "title": "青茅山",
+    "reason": "具体事件"
+  },
+  "events/reverse-flow-river.md": {
+    "kind": "event",
+    "title": "逆流河与琅琊",
+    "reason": "具体事件"
+  },
+  "events/royal-court.md": {
+    "kind": "event",
+    "title": "王庭之争",
+    "reason": "具体事件"
+  },
+  "events/south-caravan.md": {
+    "kind": "event",
+    "title": "南疆商队与商家城",
+    "reason": "具体事件"
+  },
+  "events/stone-lotus-island-contest.md": {
+    "kind": "event",
+    "title": "石莲岛与红莲真传争夺",
+    "reason": "具体事件"
+  },
+  "events/story-arc-overview.md": {
+    "kind": "index",
+    "title": "全书故事骨架总览",
+    "reason": "全书事件总览"
+  },
+  "events/three-kings-mountain.md": {
+    "kind": "event",
+    "title": "三王山",
+    "reason": "具体事件"
+  },
+  "events/true-yang-collapse.md": {
+    "kind": "event",
+    "title": "真阳楼崩塌",
+    "reason": "具体事件"
+  },
+  "events/wolf-tide.md": {
+    "kind": "event",
+    "title": "青茅山狼潮",
+    "reason": "具体事件"
+  },
+  "events/yitian-mountain.md": {
+    "kind": "event",
+    "title": "义天山大战",
+    "reason": "具体事件"
+  },
+  "events/zangmeng-ambush.md": {
+    "kind": "event",
+    "title": "弧七·僵盟潜伏与梦境三层",
+    "reason": "具体事件"
+  },
+  "world/aptitude-and-aperture.md": {
+    "kind": "world",
+    "title": "资质与空窍",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/beast-tide.md": {
+    "kind": "world",
+    "title": "兽潮",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/blade-path.md": {
+    "kind": "path",
+    "title": "刀道",
+    "reason": "流派 *-path"
+  },
+  "world/blood-path.md": {
+    "kind": "path",
+    "title": "血道",
+    "reason": "流派 *-path"
+  },
+  "world/bone-path.md": {
+    "kind": "path",
+    "title": "骨道",
+    "reason": "流派 *-path"
+  },
+  "world/central-plain.md": {
+    "kind": "world",
+    "title": "中洲",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/charm-path.md": {
+    "kind": "path",
+    "title": "魅道",
+    "reason": "流派 *-path"
+  },
+  "world/cloud-path.md": {
+    "kind": "path",
+    "title": "云道",
+    "reason": "流派 *-path"
+  },
+  "world/cultivation-system.md": {
+    "kind": "world",
+    "title": "修炼体系",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/dark-path.md": {
+    "kind": "path",
+    "title": "暗道",
+    "reason": "流派 *-path"
+  },
+  "world/earth-path.md": {
+    "kind": "path",
+    "title": "土道",
+    "reason": "流派 *-path"
+  },
+  "world/east-sea.md": {
+    "kind": "world",
+    "title": "东海",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/economy-roster.md": {
+    "kind": "index",
+    "title": "经济与资源总表",
+    "reason": "世界总表/名录"
+  },
+  "world/emotion-path.md": {
+    "kind": "path",
+    "title": "情道",
+    "reason": "流派 *-path"
+  },
+  "world/enslavement-path.md": {
+    "kind": "path",
+    "title": "奴道",
+    "reason": "流派 *-path"
+  },
+  "world/fire-path.md": {
+    "kind": "path",
+    "title": "炎道",
+    "reason": "流派 *-path"
+  },
+  "world/food-path.md": {
+    "kind": "path",
+    "title": "食道",
+    "reason": "流派 *-path"
+  },
+  "world/formation-path.md": {
+    "kind": "path",
+    "title": "阵道",
+    "reason": "流派 *-path"
+  },
+  "world/gu-care-and-refinement.md": {
+    "kind": "world",
+    "title": "蛊的饲养与炼化",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/gu-refine-killer-chain.md": {
+    "kind": "world",
+    "title": "蛊虫、蛊方、炼蛊与杀招",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/heavenly-court.md": {
+    "kind": "world",
+    "title": "天庭",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/ice-path.md": {
+    "kind": "path",
+    "title": "冰雪道",
+    "reason": "流派 *-path"
+  },
+  "world/illusion-path.md": {
+    "kind": "path",
+    "title": "幻道",
+    "reason": "流派 *-path"
+  },
+  "world/index.md": {
+    "kind": "index",
+    "title": "世界规则",
+    "reason": "目录 hub"
+  },
+  "world/information-path.md": {
+    "kind": "path",
+    "title": "信道",
+    "reason": "流派 *-path"
+  },
+  "world/kill-move-roster.md": {
+    "kind": "index",
+    "title": "杀招实例名录",
+    "reason": "世界总表/名录"
+  },
+  "world/light-path.md": {
+    "kind": "path",
+    "title": "光道",
+    "reason": "流派 *-path"
+  },
+  "world/lightning-path.md": {
+    "kind": "path",
+    "title": "雷道",
+    "reason": "流派 *-path"
+  },
+  "world/longevity-heaven.md": {
+    "kind": "world",
+    "title": "长生天",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/luck-path.md": {
+    "kind": "path",
+    "title": "运道",
+    "reason": "流派 *-path"
+  },
+  "world/map-roster.md": {
+    "kind": "index",
+    "title": "全书地点总表",
+    "reason": "世界总表/名录"
+  },
+  "world/metal-path.md": {
+    "kind": "path",
+    "title": "金道",
+    "reason": "流派 *-path"
+  },
+  "world/north-plain.md": {
+    "kind": "world",
+    "title": "北原",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/painting-path.md": {
+    "kind": "path",
+    "title": "画道",
+    "reason": "流派 *-path"
+  },
+  "world/path-roster.md": {
+    "kind": "index",
+    "title": "流派总表",
+    "reason": "流派总表"
+  },
+  "world/pill-path.md": {
+    "kind": "path",
+    "title": "丹道",
+    "reason": "流派 *-path"
+  },
+  "world/poison-path.md": {
+    "kind": "path",
+    "title": "毒道",
+    "reason": "流派 *-path"
+  },
+  "world/primeval-essence.md": {
+    "kind": "world",
+    "title": "真元",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/qi-path.md": {
+    "kind": "path",
+    "title": "气道",
+    "reason": "流派 *-path"
+  },
+  "world/refinement-path.md": {
+    "kind": "path",
+    "title": "炼道",
+    "reason": "流派 *-path"
+  },
+  "world/restriction-path.md": {
+    "kind": "path",
+    "title": "禁道",
+    "reason": "流派 *-path"
+  },
+  "world/rule-path.md": {
+    "kind": "path",
+    "title": "律道",
+    "reason": "流派 *-path"
+  },
+  "world/shadow-sect.md": {
+    "kind": "world",
+    "title": "影宗",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/soldier-path.md": {
+    "kind": "path",
+    "title": "兵道",
+    "reason": "流派 *-path"
+  },
+  "world/soul-path.md": {
+    "kind": "path",
+    "title": "魂道",
+    "reason": "流派 *-path"
+  },
+  "world/sound-path.md": {
+    "kind": "path",
+    "title": "音道",
+    "reason": "流派 *-path"
+  },
+  "world/south-jiang.md": {
+    "kind": "world",
+    "title": "南疆",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/space-path.md": {
+    "kind": "path",
+    "title": "宇道",
+    "reason": "流派 *-path"
+  },
+  "world/star-path.md": {
+    "kind": "path",
+    "title": "星道",
+    "reason": "流派 *-path"
+  },
+  "world/strength-path.md": {
+    "kind": "path",
+    "title": "力道",
+    "reason": "流派 *-path"
+  },
+  "world/sword-path.md": {
+    "kind": "path",
+    "title": "剑道",
+    "reason": "流派 *-path"
+  },
+  "world/ten-ancient-sects.md": {
+    "kind": "world",
+    "title": "十大古派",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/theft-path.md": {
+    "kind": "path",
+    "title": "偷道",
+    "reason": "流派 *-path"
+  },
+  "world/time-path.md": {
+    "kind": "path",
+    "title": "宙道",
+    "reason": "流派 *-path"
+  },
+  "world/transformation-path.md": {
+    "kind": "path",
+    "title": "变化道",
+    "reason": "流派 *-path"
+  },
+  "world/visual-central-plain.md": {
+    "kind": "reference",
+    "title": "视觉素材·中洲（采集批 C）",
+    "reason": "视觉素材说明"
+  },
+  "world/visual-frontier.md": {
+    "kind": "reference",
+    "title": "视觉素材·北原西漠东海（采集批 D）",
+    "reason": "视觉素材说明"
+  },
+  "world/visual-late-era.md": {
+    "kind": "reference",
+    "title": "视觉素材·后期（采集批 E）",
+    "reason": "视觉素材说明"
+  },
+  "world/visual-nanjiang-shangjia.md": {
+    "kind": "reference",
+    "title": "视觉素材·商家城与南疆（采集批 B）",
+    "reason": "视觉素材说明"
+  },
+  "world/visual-qing-mao.md": {
+    "kind": "reference",
+    "title": "视觉素材·青茅山（采集批 A）",
+    "reason": "视觉素材说明"
+  },
+  "world/void-path.md": {
+    "kind": "path",
+    "title": "虚道",
+    "reason": "流派 *-path"
+  },
+  "world/water-path.md": {
+    "kind": "path",
+    "title": "水道",
+    "reason": "流派 *-path"
+  },
+  "world/west-desert.md": {
+    "kind": "world",
+    "title": "西漠",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/wind-path.md": {
+    "kind": "path",
+    "title": "风道",
+    "reason": "流派 *-path"
+  },
+  "world/wisdom-path.md": {
+    "kind": "path",
+    "title": "智道",
+    "reason": "流派 *-path"
+  },
+  "world/wood-path.md": {
+    "kind": "path",
+    "title": "木道",
+    "reason": "流派 *-path"
+  },
+  "world/world-operating-system.md": {
+    "kind": "world",
+    "title": "世界操作系统",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "world/zangmeng.md": {
+    "kind": "world",
+    "title": "僵盟",
+    "reason": "世界舞台/环境/组织/经济"
+  },
+  "rules/dao-marks.md": {
+    "kind": "rule",
+    "title": "道痕体系",
+    "reason": "规则簇"
+  },
+  "rules/dream-path.md": {
+    "kind": "rule",
+    "title": "梦道机制",
+    "reason": "规则簇"
+  },
+  "rules/index.md": {
+    "kind": "index",
+    "title": "规则页索引",
+    "reason": "目录 hub"
+  },
+  "rules/killer-moves.md": {
+    "kind": "rule",
+    "title": "杀招连招并招体系",
+    "reason": "规则簇"
+  },
+  "rules/path-realms.md": {
+    "kind": "rule",
+    "title": "流派境界五级",
+    "reason": "规则簇"
+  },
+  "rules/refinement.md": {
+    "kind": "rule",
+    "title": "炼蛊术语体系",
+    "reason": "规则簇"
+  },
+  "rules/tribulation.md": {
+    "kind": "rule",
+    "title": "灾劫体系",
+    "reason": "规则簇"
+  },
+  "rules/venerables.md": {
+    "kind": "rule",
+    "title": "尊者体系",
+    "reason": "规则簇"
+  },
+  "themes/fate.md": {
+    "kind": "theme",
+    "title": "宿命",
+    "reason": "主题/人祖传"
+  },
+  "themes/freedom.md": {
+    "kind": "theme",
+    "title": "自由",
+    "reason": "主题/人祖传"
+  },
+  "themes/immortality.md": {
+    "kind": "theme",
+    "title": "永生",
+    "reason": "主题/人祖传"
+  },
+  "themes/index.md": {
+    "kind": "index",
+    "title": "主题与《人祖传》",
+    "reason": "目录 hub"
+  },
+  "themes/persistence.md": {
+    "kind": "theme",
+    "title": "坚持",
+    "reason": "主题/人祖传"
+  },
+  "themes/philosophy.md": {
+    "kind": "theme",
+    "title": "哲学思考",
+    "reason": "主题/人祖传"
+  },
+  "themes/power-and-interest.md": {
+    "kind": "theme",
+    "title": "实力与利益",
+    "reason": "主题/人祖传"
+  },
+  "themes/ren-zu-zhuan.md": {
+    "kind": "theme",
+    "title": "人祖传",
+    "reason": "主题/人祖传"
+  }
+}

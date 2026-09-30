@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 宙道
 aliases: [宙道流派, time path, 时间之道]
 description: 宙道流派：太古两大流派之一，钻研时间奥秘；春秋蝉、度日如年与红莲宙道巅峰
@@ -8,6 +9,7 @@ tags: [world, path, time, red-lotus]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 宙道
 

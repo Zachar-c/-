@@ -1,5 +1,6 @@
 ---
 type: theme
+kind: theme
 name: 人祖传
 aliases: [人祖传寓言, 人祖传隐喻]
 sources:
@@ -11,6 +12,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
   - "notes:game/分支：六卷精编版/读书笔记/I-360001-405000.md"
 ---
+
 
 # 人祖传
 

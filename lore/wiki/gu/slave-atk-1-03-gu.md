@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 驭犬蛊
 aliases: [驭犬蛊]
 description: 一转奴道驭兽蛊：形似拇指大的玉狗头，催动后化玉光射入兽体、种在魂魄中夺其自主；一枚只能用一次，控制成败取决于双方魂魄，兽王可反噬
@@ -11,6 +12,7 @@ sources:
   - "canon-index:CAN-GU-DOG-001"
 schema: 2
 ---
+
 
 # 驭犬蛊
 

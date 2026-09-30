@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 运道
 aliases: [运道流派, luck path]
 description: 运道流派：巨阳仙尊开创并运道成尊；鸿运齐天蛊、排难蛊排遣灾劫与气运直觉
@@ -8,6 +9,7 @@ tags: [world, path, luck, ju-yang]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 运道
 

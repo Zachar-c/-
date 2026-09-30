@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 赤铁舍利蛊
 aliases: []
 description: 二转舍利蛊：只对二转蛊师有效，一次催动即升华窍壁、直接升上一阶小境界，随后底蕴耗尽、身躯透明消失；凡间大量流通、市价约八千元石，超过普通的三转蛊；天然蛊、无法合炼
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 赤铁舍利蛊
 

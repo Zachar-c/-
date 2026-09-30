@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 毒道
 aliases: [毒道流派, poison path]
 description: 毒道流派：毒道蛊师与妇人心养炼合一；蜂罗刺、毒气吐纳等杀招实例
@@ -8,6 +9,7 @@ tags: [world, path, poison]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 毒道
 

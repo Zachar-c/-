@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 自己蛊
 aliases: [自己蛊, 自己]
 description: 《人祖传》人道蛊：自人有生命起便居于其身、寄于孤独之心，须孤独中审视内心方能发现；吞吃他蛊一口即以「自己的」方式归还力量与爱情，会因宿主自欺而主动离去
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-SELF-001"
 schema: 2
 ---
+
 
 # 自己蛊
 

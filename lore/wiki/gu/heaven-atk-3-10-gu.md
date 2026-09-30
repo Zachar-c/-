@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 雷翼蛊
 aliases: [雷翼蛊]
 description: 三转移动类雷道蛊：凝聚一对雷光羽翼令蛊师短暂飞翔，速度有之但不灵活；消耗真元较多、与隐鳞蛊互斥；原文有完整的入手—使用—损毁—弃养个案
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 雷翼蛊
 

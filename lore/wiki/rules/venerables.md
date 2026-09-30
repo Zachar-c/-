@@ -1,5 +1,6 @@
 ---
 type: rules
+kind: rule
 name: 尊者体系
 aliases: [尊者, 成尊, 道主, 天道制衡, 亚仙尊]
 description: 尊者的资格条件、寿命口径、万劫道痕统计口径、异人成尊之谜、尊者个案带（星宿/长毛/红莲）、境界贬值与道主机制、重生竞争、天道制衡与天道哲学
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 尊者体系
 

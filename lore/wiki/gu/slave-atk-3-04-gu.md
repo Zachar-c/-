@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 驭狼蛊
 aliases: [驭狼蛊]
 description: 奴道驭兽蛊族的狼种分件：催动后化作轻烟罩落，种入目标魂魄夺其自主；一次性消耗蛊，成败均消散；成本真元不多而关键是魂魄；一转至五转皆有秘方，二转明文；三转驭千狼王、四转驭万狼王或异兽
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 驭狼蛊
 

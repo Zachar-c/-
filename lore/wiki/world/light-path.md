@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 光道
 aliases: [光道流派, light path]
 description: 光道流派：上古涌现、夏家主修之一，光帝君专修；杀招可顺光线追溯源头
@@ -8,6 +9,7 @@ tags: [world, path, light, xia-family]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 光道
 

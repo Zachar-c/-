@@ -1,5 +1,6 @@
 ---
 type: world
+kind: index
 name: 杀招实例名录
 aliases: [杀招总表, 杀招名录, kill move roster]
 description: 全书杀招实例清单（按持有者分组）：与 A 线杀招-连招-并招规则页互补，只记谁的什么杀招与锚点
@@ -23,6 +24,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2a-405001-421000-补读.md"
 schema: 2
 ---
+
 
 # 杀招实例名录
 

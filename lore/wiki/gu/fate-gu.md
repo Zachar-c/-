@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 宿命蛊
 aliases: [宿命, 宿命仙蛊]
 description: 九转仙蛊、天道碎片：天庭秩序的规则接口，红莲与方源反抗的核心对象
@@ -13,6 +14,7 @@ sources:
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
 schema: 2
 ---
+
 
 # 宿命蛊
 

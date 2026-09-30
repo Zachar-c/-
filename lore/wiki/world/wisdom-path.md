@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 智道
 aliases: [智道流派, 智修, wisdom path]
 description: 智道流派：星宿开创、推算需情报、一脉单传、念意情三元与情道/魅情道两个衍生分支
@@ -8,6 +9,7 @@ tags: [world, path, wisdom, star-constellation]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 智道
 

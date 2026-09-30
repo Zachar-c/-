@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 兵道
 aliases: [兵道流派, soldier path]
 description: 兵道流派：乐土仙尊之后天庭蛊仙车尾草创，手段成熟、地位仅次于秦鼎菱
@@ -8,6 +9,7 @@ tags: [world, path, soldier, che-wei]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 兵道
 

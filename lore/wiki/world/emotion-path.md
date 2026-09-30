@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 情道
 aliases: [情道流派, 智道情支, emotion path]
 description: 情道流派：脱胎于智道三元之"情"，游子蛊慈母蛊与仙蛊悔两套代表仙蛊，专擅影响情绪
@@ -8,6 +9,7 @@ tags: [world, path, emotion, wisdom-branch]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 情道
 

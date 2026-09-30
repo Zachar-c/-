@@ -1,5 +1,6 @@
 ---
 type: world
+kind: index
 name: 经济与资源总表
 aliases: [经济总表, 资源总表, 货币体系, economy roster]
 description: 全书经济层粗粒度总表：货币层级、资源品类、市场网络、贸易定价实例、经济制度与生产体系
@@ -18,6 +19,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2a-405001-421000-补读.md"
 schema: 2
 ---
+
 
 # 经济与资源总表
 

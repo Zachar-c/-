@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 驭兽蛊
 aliases: []
 description: 奴道驭兽一脉的通名兼具体件：四转者可控制万兽王，北原市面一般不出售、四转之上价值暴涨；仙蛊阶的七转驭兽蛊（原文又称驭兽仙蛊／奴兽仙蛊）可控荒兽与上古荒兽，仅一只、藏于琅琊福地
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 驭兽蛊
 

@@ -1,5 +1,7 @@
 # 个人 AI 开发环境
 
+Wiki 记录：[表结构裁决](RESEARCH-REQUEST-2026-09-30-wiki-table-taxonomy.md)、[站点交接](HANDOFF-2026-09-30-wiki-site-kinds.md)、[已撤回的叙事层任务包](tasks/2026-09-30-wiki-narrative-layer.md)。最后一项仅保留历史与待审产物，禁止继续执行。
+
 这是个人开发环境的最小实现，不是 Agent 平台。
 
 ## 当前状态

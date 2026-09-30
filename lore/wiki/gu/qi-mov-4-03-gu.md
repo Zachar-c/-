@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 风气蛊
 aliases: []
 description: 四转气道天然蛊：形如蝴蝶，吸收生命活力、从风中诞生；针对一支种族群体施展，营造集体流行的爱好或习惯，可对兽群、亦可对内对外统治部落家族
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 风气蛊
 

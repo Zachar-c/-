@@ -1,5 +1,6 @@
 ---
 type: rules
+kind: rule
 name: 道痕体系
 aliases: [道痕, 刻印道痕, 成功道痕]
 description: 道痕的本质定义、七种取得途径（含增益放大蛊）、增幅冲突作用、残留冲洗、转移边界与丢失清空规则、排列与能力、蛊材承载、自然道痕/洞天规模与福地攻防总纲
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 道痕体系
 

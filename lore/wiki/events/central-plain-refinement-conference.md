@@ -1,5 +1,6 @@
 ---
 type: event
+kind: event
 schema: 2
 name: 中洲炼蛊大会
 aliases: [炼蛊大会, 炼蛊大比]
@@ -12,6 +13,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
 ---
+
 
 # 中洲炼蛊大会
 

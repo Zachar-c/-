@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 火炭蛊
 aliases: []
 description: 火道五件递进蛊族的起手件：原文明文一转、全名 单窍火炭蛊；可弹入兽体使内脏燃烧半刻钟，也是二转火炉蛊的主要合炼材料
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 火炭蛊
 

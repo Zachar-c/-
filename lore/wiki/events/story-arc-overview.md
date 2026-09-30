@@ -1,5 +1,6 @@
 ---
 type: event
+kind: index
 name: 全书故事骨架总览
 aliases: [故事弧总览, 全书粗蒸馏骨架]
 sources:
@@ -10,6 +11,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2b-421001-437061-补读.md"
   - "memory:lore/research/分支：六卷精编版/全书总纲.md"
 ---
+
 
 # 全书故事骨架总览
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 风道
 aliases: [风道流派, wind path]
 description: 风道流派：上古涌现，武家第一真传与武庸八转风道；风卷龙鞭、纠风等杀招实例
@@ -8,6 +9,7 @@ tags: [world, path, wind, wu-family]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 风道
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 西漠
 aliases: [西漠地理, 西漠修行界, 西漠诸家]
 description: 五域之西漠：房家/唐家/董家诸家谱系与西漠联军仙蛊屋；含西荒归一说明；粗粒度地域入口
@@ -13,6 +14,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/F-225001-270000.md"
 schema: 2
 ---
+
 
 # 西漠
 

@@ -1,5 +1,6 @@
 ---
 type: rules
+kind: rule
 name: 流派境界五级
 aliases: [流派境界, 大师, 宗师, 大宗师, 无上大宗师, 真意]
 description: 流派境界的定义（对大道的理解）、五级阶梯与准级过渡、大师/宗师特征与稀缺标尺、提升机制与真意定义、梦境上限与提升个案、能力标尺与顶层稀缺度
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 流派境界五级
 

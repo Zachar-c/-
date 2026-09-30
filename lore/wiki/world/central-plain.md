@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 中洲
 aliases: [中州, 中洲地理, 中洲修行界]
 description: 五域之中洲：天庭与十大古派代理体系、帝君城、仙鹤门等门派谱系；粗粒度地域入口
@@ -14,6 +15,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
 schema: 2
 ---
+
 
 # 中洲
 

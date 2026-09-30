@@ -1,9 +1,11 @@
 ---
 type: gu
+kind: relation
 name: 蛊虫与蛊师能力来源
 aliases: [侦察蛊, 身体改造蛊]
 sources: ["source:source/蛊真人-clean.txt"]
 ---
+
 
 # 蛊虫与蛊师能力来源
 

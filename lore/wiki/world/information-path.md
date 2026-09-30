@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 信道
 aliases: [信道流派, information path]
 description: 信道流派：中古涌现，誓言类仙蛊（山盟海誓/同感/诺言）与流言笼；信道手段与人道结合
@@ -8,6 +9,7 @@ tags: [world, path, information, oath]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 信道
 

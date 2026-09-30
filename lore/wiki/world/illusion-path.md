@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 幻道
 aliases: [幻道流派, illusion path]
 description: 幻道流派：图事成口中小派；天莲派仙蛊屋幻景园为幻道大成、幻魔仙黄晓所创
@@ -8,6 +9,7 @@ tags: [world, path, illusion]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 幻道
 

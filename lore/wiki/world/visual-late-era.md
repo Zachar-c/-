@@ -1,9 +1,11 @@
 ---
 type: world
+kind: reference
 name: 视觉素材·后期（采集批 E）
 aliases: [视觉素材 E]
 sources: ["source:source/蛊真人-clean.txt"]
 ---
+
 
 # 视觉素材·后期（采集批 E）
 

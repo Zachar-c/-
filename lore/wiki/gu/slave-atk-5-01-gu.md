@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 奴隶蛊
 aliases: []
 description: 奴道控制人而非兽的代表蛊：一转到五转皆有，一旦种下便能控制蛊师，成否取决于魂魄之间的较量；五转者珍稀罕见、价格高昂，仙蛊阶称奴隶仙蛊（六转），只有一次使用机会
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 奴隶蛊
 

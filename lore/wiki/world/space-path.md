@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 宇道
 aliases: [宇道流派, space path, 空间之道]
 description: 宇道流派：太古两大流派之一，钻研空间奥秘；挪移/定仙游等空间仙蛊与盗天宇道造诣
@@ -8,6 +9,7 @@ tags: [world, path, space, ancient]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 宇道
 

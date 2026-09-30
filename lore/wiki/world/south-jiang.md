@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 南疆
 aliases: [南疆修行界, 南疆地理]
 sources:
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-NANJIANG-004"
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
 ---
+
 
 # 南疆
 

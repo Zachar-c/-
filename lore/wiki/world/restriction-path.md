@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 禁道
 aliases: [禁道流派, restriction path, 禁师]
 description: 禁道流派：律道衍生小分支、近古产生，斩断元气与蛊虫联系；陶铸为八转禁道代表
@@ -8,6 +9,7 @@ tags: [world, path, restriction, rule-branch, tao-zhu]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 禁道
 

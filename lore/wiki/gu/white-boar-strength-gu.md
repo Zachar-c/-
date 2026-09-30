@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 白豕蛊
 aliases: [白豕蛊]
 description: 一转珍稀豕蛊：催用时耗真元并逐日改造肉身，所得力量永久归蛊师所有、蛊死不失、无真元亦可发挥，上限一猪之力
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-STRENGTH-001"
 schema: 2
 ---
+
 
 # 白豕蛊
 

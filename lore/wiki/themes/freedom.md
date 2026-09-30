@@ -1,5 +1,6 @@
 ---
 type: theme
+kind: theme
 name: 自由
 aliases: [自由, 自由蛊, 自主选择]
 sources:
@@ -8,6 +9,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
 ---
+
 
 # 自由
 

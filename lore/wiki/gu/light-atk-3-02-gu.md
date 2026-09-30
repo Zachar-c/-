@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 邀月蛊
 aliases: [邀月蛊]
 description: 酒虫晋升线 B 线的中间形态：酒虫可依家族秘方合炼为二转邀月蛊、再晋升三转七香酒虫；转数原文明文「二转」。全书仅 2 行独立出现，本页按薄证据处理
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 邀月蛊
 

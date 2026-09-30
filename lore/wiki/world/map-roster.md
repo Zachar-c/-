@@ -1,5 +1,6 @@
 ---
 type: world
+kind: index
 name: 全书地点总表
 aliases: [地图总表, 地点名录, map roster]
 description: 跨五域地标、福地洞天与超地理空间的总表：按域分组的地名锚点层，服务关卡与场景检索
@@ -27,6 +28,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2b-421001-437061-补读.md"
 schema: 2
 ---
+
 
 # 全书地点总表
 

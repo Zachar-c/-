@@ -1,5 +1,6 @@
 ---
 type: event
+kind: event
 name: 三王山
 aliases: [三王传承, 黑白双煞, 白狐蛊仙传承, 三王福地]
 description: 弧四事件页：仙鹤门方正线、白狐蛊仙传承 hunt、三王福地与定仙游（TKF 簇；本批核验标段一）
@@ -11,6 +12,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
 schema: 2
 ---
+
 
 # 三王山
 

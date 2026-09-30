@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 金龙蛊
 aliases: []
 description: 四转金道攻伐蛊，形为四爪金龙，出手方式是催动后推出一道金龙碾压目标；攻伐霸道但风格粗犷、难以细腻操纵，跨域作战时战力被压下一转
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 金龙蛊
 

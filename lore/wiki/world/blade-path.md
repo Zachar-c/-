@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 刀道
 aliases: [刀道流派, blade path]
 description: 刀道流派：与剑道同源刃蛊、非常小的流派；蒙屠七转与西漠刀九郎
@@ -8,6 +9,7 @@ tags: [world, path, blade, meng-tu]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 刀道
 

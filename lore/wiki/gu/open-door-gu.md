@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 开门蛊
 aliases: [开门蛊, 关门蛊, 闭门蛊]
 description: 五转凡蛊对——盗天魔尊遗留的落魄谷/盗天真传空间钥匙，开门入内、关门封闭，可逆互证；兼作大同风场景退路
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
+
 
 # 开门蛊（含关门蛊／闭门蛊）
 

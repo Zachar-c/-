@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 爱别离
 aliases: []
 description: 二转蛊虫第一毒：以一转生息草、寡妇蛛、红针蝎加一颗爱人之心炼成，是全书唯一写明“以爱人之心为代价”的毒蛊；毒烈至极却无强攻能力，只能偷袭，毒素入体后连三转治疗蛊也未必能治
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 爱别离
 

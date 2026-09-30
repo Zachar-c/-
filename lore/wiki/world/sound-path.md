@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 音道
 aliases: [音道流派, sound path]
 description: 音道流派：中古涌现，凤九歌六曲六杀招（碧玉歌化玉）与命运歌、沈从声浩然轰响
@@ -8,6 +9,7 @@ tags: [world, path, sound, feng-jiu-ge]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 音道
 

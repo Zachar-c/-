@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 虚道
 aliases: [虚道流派, void path, 虚空道]
 description: 虚道流派：律道衍生小分支，虚虚实实避难而无敌；时代两说（近古产生/上古盛行）显式张力
@@ -8,6 +9,7 @@ tags: [world, path, void, rule-branch]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 虚道
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 力道
 aliases: [力道流派, 力修, 兽力虚影流, 气象天地流, 人力钧力流]
 description: 力道流派：狂蛮开创、三大分支（兽力虚影/气象天地/人力钧力）、楚度复兴与没落时代口径
@@ -8,6 +9,7 @@ tags: [world, path, strength, chu-du]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 力道
 

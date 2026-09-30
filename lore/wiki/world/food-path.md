@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 食道
 aliases: [食道流派, food path]
 description: 食道流派：隐秘流派、专研喂养难题；早已不存、巨阳食道手段成谜，龙鱼为其创造之物
@@ -8,6 +9,7 @@ tags: [world, path, food, feeding]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 食道
 

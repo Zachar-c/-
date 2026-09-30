@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 阵道
 aliases: [阵道流派, 蛊阵, formation path]
 description: 阵道流派：远古末期创造、祖师不可考，以一道内涵万道、最复杂的流派；复合蛊阵与宗师标尺
@@ -8,6 +9,7 @@ tags: [world, path, formation, gu-array]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 阵道
 

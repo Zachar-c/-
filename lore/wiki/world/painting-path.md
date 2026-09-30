@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 画道
 aliases: [画道流派, painting path]
 description: 画道流派：元莲开创且刻意收敛从未扩散；以道痕作画、豆神宫与安居乐业画道效果
@@ -8,6 +9,7 @@ tags: [world, path, painting, yuan-lian]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 画道
 

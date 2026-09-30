@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 寿蛊
 aliases: [寿蛊]
 description: 泛称类蛊虫：唯一能"从根本上、毫无后遗症地"增添阳寿的至宝，原文将其定为凡蛊；转数未明言（roster-3／game 的 rank=5 属游戏侧数值、非原著事实，已落地 L0 裁定 2026-09-28），按年数分档（八十年／百年／三百年／五百年／千年等）。既是延寿正品，也是蛊仙间最强劲的硬通货
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 寿蛊
 

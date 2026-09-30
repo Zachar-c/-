@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 血道
 aliases: [血道流派, blood path]
 description: 血道流派：战力五强之一、历史短而巅峰高；血海老祖九道真传与方源前世主修
@@ -8,6 +9,7 @@ tags: [world, path, blood, blood-sea-ancestor]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 血道
 

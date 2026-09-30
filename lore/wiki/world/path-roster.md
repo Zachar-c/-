@@ -1,5 +1,6 @@
 ---
 type: world
+kind: index
 name: 流派总表
 aliases: [流派谱系, 流派源流, path roster, 三百六十行]
 description: 全书蛊师流派源流总表：四时代开创归属、境界阶梯、人物×流派矩阵；骨架为图事成流派源流讲述（原文已核）
@@ -22,6 +23,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2a-405001-421000-补读.md"
 schema: 2
 ---
+
 
 # 流派总表
 

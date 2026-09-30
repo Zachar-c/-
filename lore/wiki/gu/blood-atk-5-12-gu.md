@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 血本仙蛊
 aliases: []
 description: 六转血道仙蛊，上一任琅琊地灵独创：在炼蛊过程中护住一部分仙材或蛊虫、失败后可还原出来（炼蛊保本）；方源手中的杀招核心，后升炼至八转、成为四元方悔血炼池四元之一，至八转达极限无法升九转
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 血本仙蛊
 

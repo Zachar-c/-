@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 星道
 aliases: [星道流派, star path]
 description: 星道流派：星宿仙尊开创；星萤蛊（上古近绝迹）、灿烂星甲与星道传承
@@ -8,6 +9,7 @@ tags: [world, path, star, xing-ying]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 星道
 

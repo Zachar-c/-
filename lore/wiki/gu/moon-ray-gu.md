@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 月痕蛊
 aliases: [月痕蛊]
 description: 月光蛊＋痕石蛊合炼的月系分支：攻击力不变、攻击范围翻倍达二十米；转数原文未明言（旁证指向二转）
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-MOONRAY-001"
 schema: 2
 ---
+
 
 # 月痕蛊
 

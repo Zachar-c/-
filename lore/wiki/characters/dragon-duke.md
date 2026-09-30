@@ -1,5 +1,6 @@
 ---
 type: character
+kind: character
 name: 龙公
 aliases: [龙公护道人]
 description: 天庭护道人、红莲之师；三气归来钥匙，宿命大战寿尽冲锋而死
@@ -14,6 +15,7 @@ sources:
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
   - "memory:lore/research/分支：六卷精编版/记忆库/02-人物弧光.md"
 ---
+
 
 # 龙公
 

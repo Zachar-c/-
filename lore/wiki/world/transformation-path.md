@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 变化道
 aliases: [变化道流派, transformation path]
 description: 变化道流派：狂蛮开创、"一道外映万道"；冰凰刻印、飞熊变与变身身体素质优势
@@ -8,6 +9,7 @@ tags: [world, path, transformation, kuang-man]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 变化道
 

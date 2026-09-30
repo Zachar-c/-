@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 土道
 aliases: [土道流派, earth path]
 description: 土道流派：中古涌现，乐土仙尊土道成尊；南疆土道蛊仙最多，龙鲸乐土大阵土道仙蛊群
@@ -8,6 +9,7 @@ tags: [world, path, earth, immortal-joy]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 土道
 

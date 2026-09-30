@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 金道
 aliases: [金道流派, metal path]
 description: 金道流派：中古涌现、战力五强之一；金道道痕伤口难治，凤金煌与秦百胜等实例
@@ -8,6 +9,7 @@ tags: [world, path, metal, feng-jin-huang]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 金道
 

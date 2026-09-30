@@ -1,5 +1,6 @@
 ---
 type: theme
+kind: theme
 name: 宿命
 aliases: [宿命, 宿命蛊]
 sources:
@@ -9,6 +10,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
   - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
 ---
+
 
 # 宿命
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 魅道
 aliases: [魅情道, charm path, 魅道流派]
 description: 魅道（魅情道）：从智道衍生的小分支，以情对战以魅惑人；无独立道痕、只有智道道痕
@@ -8,6 +9,7 @@ tags: [world, path, charm, wisdom-branch]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 魅道（魅情道）
 

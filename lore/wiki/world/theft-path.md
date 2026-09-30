@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 偷道
 aliases: [偷道流派, theft path]
 description: 偷道流派：盗天魔尊开创、一直非主流；无相手/神不知/鬼不觉与大盗鬼手、房家偷道仙蛊屋；盗天真传入口钥匙
@@ -10,6 +11,7 @@ sources:
   - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
+
 
 # 偷道
 

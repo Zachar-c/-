@@ -1,5 +1,6 @@
 ---
 type: character
+kind: index
 name: 敌人名录
 aliases: [敌人总表, 对立面图谱, enemy roster]
 description: 方源对立面按威胁层级与弧线的总表：个人恩怨→势力追杀→组织对抗→魔尊尊者→体系层（天意/天道/宿命）
@@ -22,6 +23,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J-405001-437061.md"
 schema: 2
 ---
+
 
 # 敌人名录
 

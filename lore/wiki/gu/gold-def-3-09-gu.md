@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 古铜皮蛊
 aliases: []
 description: 铜皮蛊系列的第四转形态：铜皮蛊一到三转皆有，晋升四转即为古铜皮蛊，防御力强于三转铜皮蛊；须以滚烫铜汁浇身加速养成，过程痛苦残酷且不得使用任何防御手段；是皮甲系防御组合的核心一环
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 古铜皮蛊
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 兽潮
 aliases: [兽潮机制, 狼潮]
 description: 南疆周期性兽潮的成因链、兽王等级与山寨防御规则；青茅山狼潮为核验案例
@@ -12,6 +13,7 @@ sources:
   - "canon-index:CAN-NANJIANG-001"
 schema: 2
 ---
+
 
 # 兽潮
 

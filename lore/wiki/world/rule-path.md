@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 律道
 aliases: [律道流派, rule path, 规则之道]
 description: 律道流派：无极开创、衍生小流派极多的第一流派，禁道与虚道为其最著名分支
@@ -8,6 +9,7 @@ tags: [world, path, rule, wu-ji]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 律道
 

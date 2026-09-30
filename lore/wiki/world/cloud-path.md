@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 云道
 aliases: [云道流派, cloud path]
 description: 云道流派：中古涌现，太白云生宙道兼修云道；平步青云与九云环
@@ -8,6 +9,7 @@ tags: [world, path, cloud, tai-bai-yun-sheng]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 云道
 

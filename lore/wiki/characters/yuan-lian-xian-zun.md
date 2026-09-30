@@ -1,5 +1,6 @@
 ---
 type: character
+kind: character
 name: 元莲仙尊
 aliases: [元莲]
 description: 入主天庭三仙尊之一；木道源流、坚持仙蛊第一代主人、天元宝皇莲与豆神宫
@@ -15,6 +16,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
   - "notes:game/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"
 ---
+
 
 # 元莲仙尊
 

@@ -1,5 +1,6 @@
 ---
 type: character
+kind: character
 name: 黑楼兰
 aliases: [黑楼兰, 黑家少主]
 description: 北原黑家族长、十绝大力真武体；弧五与方源结盟覆灭马家、攻略真阳楼，后入影宗
@@ -13,6 +14,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
 schema: 2
 ---
+
 
 # 黑楼兰
 

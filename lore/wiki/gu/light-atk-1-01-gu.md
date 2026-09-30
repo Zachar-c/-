@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 月旋蛊
 aliases: [月旋蛊]
 description: 月光蛊＋旋风蛊合炼的月系分支：月刃由蓝变绿、由直线变曲线，古月青书的选用路线；转数原文未明言（旁证指向二转）
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-MOONSPIN-001"
 schema: 2
 ---
+
 
 # 月旋蛊
 

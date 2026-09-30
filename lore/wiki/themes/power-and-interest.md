@@ -1,5 +1,6 @@
 ---
 type: theme
+kind: theme
 name: 实力与利益
 aliases: [实力至上, 利益计算, 实力主题]
 description: 全书社会运行伦理："唯有实力才是一切"与"以利为先"；组织牺牲论与财富蛊寓言
@@ -12,6 +13,7 @@ sources:
   - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
 schema: 2
 ---
+
 
 # 实力与利益
 

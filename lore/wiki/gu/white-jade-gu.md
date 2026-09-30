@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 白玉蛊
 aliases: [白玉蛊]
 description: 白豕蛊＋玉皮蛊合炼出的二转防御蛊：只保留并强化玉皮蛊的防御、丧失白豕蛊的增力，催动须持续灌真元且承击越重耗越剧，可用幡然蛊逆炼回双前身，再升三转天蓬蛊
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 白玉蛊
 

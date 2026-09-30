@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 硬气蛊
 aliases: [硬气蛊]
 description: 气道防御蛊：动用杀招时防御下降，硬气蛊以无形气流包裹全身弥补该短板，看似毫无防御实则坚如磐石；气道在上古鼎盛后被力道取代，力气蛊已绝迹，硬气蛊属可得品种。
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-QI-001"
 schema: 2
 ---
+
 
 # 硬气蛊
 

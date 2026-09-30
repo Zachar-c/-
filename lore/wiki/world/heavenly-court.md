@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 天庭
 aliases: [中洲天庭]
 sources:
@@ -10,6 +11,7 @@ sources:
   - "memory:lore/research/分支：六卷精编版/记忆库/02-人物弧光.md"
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
 ---
+
 
 # 天庭
 

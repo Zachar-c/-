@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 暗道
 aliases: [暗道流派, dark path]
 description: 暗道流派：上古涌现，方源梦境升宗师、暗渡仙蛊；黑城与姜钰仙子等实例
@@ -8,6 +9,7 @@ tags: [world, path, dark, fang-yuan]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 暗道
 

@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 青铜舍利蛊
 aliases: [青铜舍利蛊]
 description: 一转舍利蛊：圆球状凡蛊、拇指大小；可升华窍壁、直接升上一阶小境界；只针对一转蛊师，价格一般两千元石左右；天然生成、无法合炼，属该转极珍
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 青铜舍利蛊
 

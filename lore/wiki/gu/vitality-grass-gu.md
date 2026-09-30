@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 九叶生机草
 aliases: [九叶生机草, 生机草蛊, 生机草, 九叶草, vitality grass]
 description: 二转草蛊，本体具治疗作用但原文只一句带过，真正价值在把真元转成叶片——九片叶各可撕成一片一转消耗型生机叶，是古月山寨二转期最受欢迎的基础治疗手段与方源的主要元石来源
@@ -11,6 +12,7 @@ sources:
   - "canon-index:CAN-ECONOMY-001"
 schema: 2
 ---
+
 
 # 九叶生机草
 

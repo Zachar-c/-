@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 斤力蛊
 aliases: [斤力蛊]
 description: 一转力道蛊：可增长蛊师一斤之力，蛊店标价每只两百二十块元石；由北原七转蛊仙楚度（霸仙）研发，属人力钧力流的基础档，也是北原近数百年力道主流的最小单位
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 斤力蛊
 

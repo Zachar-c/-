@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 僵盟
 aliases: [僵尸联盟, 五域僵盟, Corpse Alliance]
 description: 五域仙僵互济组织：东海总部+四域分部，创立目的为研究重获肉身；幕后受影宗台面布置影响
@@ -13,6 +14,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/E-180001-225000.md"
 schema: 2
 ---
+
 
 # 僵盟
 

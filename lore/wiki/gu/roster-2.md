@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: index
 name: 蛊虫总表二期
 aliases: [蛊虫二期, 次要蛊虫名录, gu roster 2]
 description: 次要蛊虫与专项蛊名录（二期，约 24 种）：辅助/存储/秘方/荒兽级，锚点层与一期总表互补
@@ -20,6 +21,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/I2b-382501-405000-补读.md"
 schema: 2
 ---
+
 
 # 蛊虫总表二期
 

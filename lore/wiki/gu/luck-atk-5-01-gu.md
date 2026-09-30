@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 鸿运齐天蛊
 aliases: [鸿运齐天仙蛊]
 description: 运道八转仙蛊、一次性消耗蛊：本体无形无质，是一团恢弘气运；成宿主后持续吞吸与宿主相关者的运道并集于一身，效果延续至宿主肉身死亡，全程不耗仙元
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 鸿运齐天蛊
 

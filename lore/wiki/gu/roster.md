@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: index
 name: 全书蛊虫总表
 aliases: [蛊虫总表, 蛊虫 roster, 仙蛊名录]
 description: 按品阶与谱系分组的全书重要蛊虫一览，含方源蛊链时序、人道蛊族、仙蛊屋与杀招代表；粗粒度身份层
@@ -25,6 +26,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2b-421001-437061-补读.md"
 schema: 2
 ---
+
 
 # 全书蛊虫总表
 

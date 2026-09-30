@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 炼道
 aliases: [炼道流派, 炼蛊流派, 毛民天地流, 人族隔绝流]
 description: 炼道流派：远古产生、两大流派（毛民天地流/人族隔绝流）、三老与炼道四能、涉及各流派的特殊性
@@ -8,6 +9,7 @@ tags: [world, path, refinement, langya]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 炼道
 

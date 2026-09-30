@@ -1,5 +1,6 @@
 ---
 type: rules
+kind: rule
 name: 梦道机制
 aliases: [梦道, 梦境, 入梦, 梦渡, 梦道杀招]
 description: 梦道流派的建立、外显梦境规则、跨流派杀招原理、三尊说与现世仙蛊、梦道蛊材料与形态分界、梦渡传道运作、真意灌输机制与梦境大变局
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 梦道机制
 

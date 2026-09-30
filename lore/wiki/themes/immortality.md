@@ -1,5 +1,6 @@
 ---
 type: theme
+kind: theme
 name: 永生
 aliases: [永生主题, 长生, immortality]
 description: 全书第一母题：方源与诸尊的共同目标；无极"永生从来就不存在"的失败与人祖传永生蛊寓言
@@ -12,6 +13,7 @@ sources:
   - "memory:game/分支：六卷精编版/记忆库/04-人祖传-隐喻索引.md"
 schema: 2
 ---
+
 
 # 永生
 

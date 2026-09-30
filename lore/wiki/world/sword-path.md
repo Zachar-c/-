@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 剑道
 aliases: [剑道流派, sword path, 刃蛊一脉]
 description: 剑道流派：源出刃蛊、与刀道同源；薄青一人开创，公认战力最强五大流派之一
@@ -8,6 +9,7 @@ tags: [world, path, sword, bo-qing]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 剑道
 

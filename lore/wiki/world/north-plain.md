@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 北原
 aliases: [北原草原, 北原地理]
 description: 五域之北原：十年暴风雪生态、王庭福地与真阳楼、长生天与北原诸家；粗粒度地域入口
@@ -14,6 +15,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"
 schema: 2
 ---
+
 
 # 北原
 

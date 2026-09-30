@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 真元
 aliases: [真元海, 真元比例, 真元颜色]
 description: 真元阶位颜色、换算比与凝练补充规则的世界规则页
@@ -12,6 +13,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
 schema: 2
 ---
+
 
 # 真元
 

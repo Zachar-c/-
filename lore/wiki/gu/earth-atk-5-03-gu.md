@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 地藏花蛊
 aliases: []
 description: 二转的储藏之蛊、一次性的消耗蛊；一旦种植在地上就不能再移动，以地气为食；唯一作用是把其他蛊虫包养在花心，用黄金花液模拟封印状态使其沉眠；往上晋升可得五转的地藏花王
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 地藏花蛊
 

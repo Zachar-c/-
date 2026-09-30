@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 冰肌蛊
 aliases: [冰肌蛊]
 description: 三转肌肤永久改造蛊：用后练成「冰肌」，常驻防御且无须真元支持，兼具免汗止血；与玉骨蛊搭配成「冰肌玉骨」，与主动防御蛊可两层叠加；入手与配方原文未交代
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 冰肌蛊
 

@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 魂灯蛊
 aliases: []
 description: 宗族祠堂“三件套”之一（命牌蛊／魂灯蛊／血绳蛊）：形如瓢虫，燃晦暗的淡蓝烛光以表征对应蛊仙的存亡，破碎即主亡；可与命牌蛊配对用于推算蛊仙的具体位置
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 魂灯蛊
 

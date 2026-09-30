@@ -1,5 +1,6 @@
 ---
 type: event
+kind: event
 name: 南疆商队与商家城
 aliases: [黄龙江, 白骨山, 商家城, 商队弧]
 description: 弧三事件页：黄龙江逃生、白骨山传承与商队/商家城线（CAR 簇；本批核验标段一）
@@ -10,6 +11,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
 schema: 2
 ---
+
 
 # 南疆商队与商家城
 

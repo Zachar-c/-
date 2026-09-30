@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 天蓬蛊
 aliases: []
 description: 三转防御蛊：由二转白玉蛊与水行防御蛊虫合炼而成，令蛊师全身皮肤硬如白玉、削减月刃类攻击；防御可观但缺乏刚性、不缓冲力道；runtime id 为 force_atk_3_29_gu
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 天蓬蛊
 

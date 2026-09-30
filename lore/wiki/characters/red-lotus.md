@@ -1,5 +1,6 @@
 ---
 type: character
+kind: character
 name: 红莲魔尊
 aliases: [洪亭]
 description: 本名洪亭，龙公之徒；创春秋蝉、损宿命蛊，把失败转化为留给后继者的遗产
@@ -14,6 +15,7 @@ sources:
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
 schema: 2
 ---
+
 
 # 红莲魔尊
 

@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: relation
 name: M0 六蛊原著边界
 aliases: [M0 六蛊]
 sources:
@@ -7,6 +8,7 @@ sources:
   - "canon-index:CAN-SMALL-LIGHT-001"
   - "canon-index:CAN-SMALL-LIGHT-002"
 ---
+
 
 # M0 六蛊原著边界
 

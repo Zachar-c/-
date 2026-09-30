@@ -1,5 +1,6 @@
 ---
 type: character
+kind: character
 name: 白凝冰
 aliases: [白凝冰, 北冥冰魄体]
 description: 南疆青茅山白家寨天才、十绝北冥冰魄体；弧二冰封天鹤转女身，弧三与方源同盟，弧五暂入影宗
@@ -13,6 +14,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
 schema: 2
 ---
+
 
 # 白凝冰
 

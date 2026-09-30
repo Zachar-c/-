@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 梦蝶仙蛊
 aliases: []
 description: 六转梦道侦查仙蛊，由纯梦分身的本命五转梦蝶凡蛊升炼而成：可在梦境中侦查下一幕的场景与事物、乃至下下一幕，但侦查不到梦主将遭遇什么、也侦查不到梦境演变产生的新人物
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 梦蝶仙蛊
 

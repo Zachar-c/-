@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 青藤蛊
 aliases: [青藤蛊]
 description: 木行战斗蛊：掌心催出十五米碧绿藤条，当鞭子甩劈撩扫并用于缠绕束缚；树精（木魅蛊）身份可增幅其威力，但青藤的生长量受环境天然元气供给限制。
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-WOOD-001"
 schema: 2
 ---
+
 
 # 青藤蛊
 

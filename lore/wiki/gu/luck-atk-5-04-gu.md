@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 狗屎运蛊
 aliases: [狗屎运仙蛊]
 description: 运道仙蛊，巨阳仙尊早年本命蛊、己运真传精髓之一：原型为蜣螂，黄金作色；以六头不同荒犬的粪便喂养，作用是增幅自身气运、削减地灾威能，对攻防腾挪毫无帮助
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 狗屎运蛊
 

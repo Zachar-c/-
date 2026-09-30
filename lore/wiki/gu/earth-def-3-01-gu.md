@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 石窍蛊
 aliases: [石窍蛊]
 description: 三转消耗蛊：形如骰子、通体灰白坚硬，用后把空窍窍壁改造成石壁、榨干底蕴与潜力，令修为瞬间达到同转巅峰，代价是阻断下一大境界的晋升并丧失自我回复真元的能力；常见于走投无路的蛊师
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 石窍蛊
 

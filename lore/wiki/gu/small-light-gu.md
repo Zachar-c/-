@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 小光蛊
 aliases: [小光蛊]
 description: 一转光道辅助蛊；双蛊同催令月刃体积与攻击力各翻一倍，增幅不叠加，可参与合炼月芒蛊
@@ -12,6 +13,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
 schema: 2
 ---
+
 
 # 小光蛊
 

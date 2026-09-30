@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 玉骨蛊
 aliases: [玉骨蛊]
 description: 白骨山传承中的骨系改造蛊：永久把蛊师骨骼改造成玉质，使其更坚硬柔韧、可在双猪之力上再承一鳄之力；属一次性消耗蛊，使用时剧痛可致人死亡，与冰肌蛊搭配为「冰肌玉骨」；转数原文无直接句（并列清单两读，roster-3 与 gu_lore 取三转）
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 玉骨蛊
 

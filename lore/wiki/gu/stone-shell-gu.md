@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 石皮蛊
 aliases: [石皮蛊, 石皮]
 description: 一转护防系列（兽皮—铁皮—铜皮—石皮—玉皮）的寻常档：双臂化灰白石化并裹上厚石皮，硬到对手指甲不能洞穿，代价是石臂沉重、速度太慢
@@ -10,6 +11,7 @@ sources:
   - "canon-index:CAN-GU-STONESHELL-001"
 schema: 2
 ---
+
 
 # 石皮蛊
 

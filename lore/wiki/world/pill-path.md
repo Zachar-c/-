@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 丹道
 aliases: [丹道流派, pill path]
 description: 丹道流派：乐土仙尊之后阮丹自创、不擅攻伐；天庭手段之一，方源流派空白之一
@@ -8,6 +9,7 @@ tags: [world, path, pill, ruan-dan]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 丹道
 

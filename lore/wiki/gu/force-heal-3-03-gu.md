@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 自力更生蛊
 aliases: []
 description: 三转力道治疗蛊：形如蟑螂，依附蛊师自身力量，力气越大疗效越好，与肉白骨持平甚至超越；只能治疗蛊师本人，四万五千块元石一只，北原受压制降为二转效用；runtime id 为 force_heal_3_03_gu
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 自力更生蛊
 

@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 月影蛊
 aliases: [月影蛊, 月影]
 description: 幻影月蛊的晋升上位（四转，双源明文）：一经种入空窍即压制对手真元的使用，压制幅度按目标修为分档；不造成伤害，故在战例中属"拖累"而非"致命"
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 月影蛊
 

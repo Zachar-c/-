@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 世界操作系统
 aliases: [World OS]
 description: 蛊真人底层力量模型骨架：修为/流派/道痕/天道四轴与炼制、仙窍两大飞轮
@@ -12,6 +13,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
 schema: 2
 ---
+
 
 # 世界操作系统
 

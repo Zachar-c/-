@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 排难蛊
 aliases: [排难仙蛊]
 description: 运道仙蛊，八十八角真阳楼的主要基石之一：与王庭福地共生，每十年配合福地敞开一丝隐秘缝隙，把天灾地劫排遣出去；战时以排难之光／光柱消解灾劫，令天劫地灾威力骤降甚至泯灭
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 排难蛊
 

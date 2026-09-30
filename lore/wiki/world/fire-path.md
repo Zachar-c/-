@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 炎道
 aliases: [炎道流派, fire path, 火道]
 description: 炎道流派：远古产生、战力五强之一；焚天魔女炎道大宗师，太阳为最大炎脉节点；火道用字并存
@@ -8,6 +9,7 @@ tags: [world, path, fire, burning]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 炎道
 

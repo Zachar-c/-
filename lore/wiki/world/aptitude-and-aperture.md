@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 资质与空窍
 aliases: [资质, 空窍]
 description: 开窍步数分级、资质比例、十绝体与凡窍→仙窍形成的规则页
@@ -13,6 +14,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
 schema: 2
 ---
+
 
 # 资质与空窍
 

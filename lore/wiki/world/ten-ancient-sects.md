@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 十大古派
 aliases: [中洲十大古派, Ten Ancient Sects]
 description: 中洲十大古派：天庭的地上代理人体系，占中洲八成资源；完整名单未全核
@@ -12,6 +13,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/J2b-421001-437061-补读.md"
 schema: 2
 ---
+
 
 # 十大古派
 

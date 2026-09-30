@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 剑气蛊
 aliases: [剑气蛊]
 description: 剑道穿刺性攻击蛊：指尖射出一道淡白色半透明剑气；被克制即徒然耗真元、毫无效果；已知四转野生个体（中洲剑断山谷），持有者个案转数未明
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 剑气蛊
 

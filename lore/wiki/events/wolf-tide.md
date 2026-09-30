@@ -1,5 +1,6 @@
 ---
 type: event
+kind: event
 name: 青茅山狼潮
 aliases: [狼潮, 小兽潮, 群狼袭寨, 青茅覆灭]
 description: 青茅山小兽潮→大狼潮→狡电狈→鹤灾→覆灭与再次重生的核验事件链（WTC 簇，弧二全程）
@@ -13,6 +14,7 @@ sources:
   - "canon-index:CAN-BEAST-TIDE-002"
 schema: 2
 ---
+
 
 # 青茅山狼潮
 

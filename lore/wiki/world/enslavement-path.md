@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 奴道
 aliases: [奴道流派, enslavement path]
 description: 奴道流派：元始开创、脱胎魂道；奴隶蛊体系、万我奴力合流与驭兽奴役
@@ -8,6 +9,7 @@ tags: [world, path, enslavement, wan-wo]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 奴道
 

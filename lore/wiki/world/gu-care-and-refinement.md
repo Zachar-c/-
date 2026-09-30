@@ -1,5 +1,6 @@
 ---
 type: world
+kind: world
 name: 蛊的饲养与炼化
 aliases: [养蛊, 炼蛊, 炼化]
 description: 养蛊-炼蛊-用蛊三事的饲养消耗、炼化规则与组合代价
@@ -14,6 +15,7 @@ sources:
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
 schema: 2
 ---
+
 
 # 蛊的饲养与炼化
 

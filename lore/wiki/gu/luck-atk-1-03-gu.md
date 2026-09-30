@@ -1,5 +1,6 @@
 ---
 type: gu
+kind: gu
 name: 招灾蛊
 aliases: [招灾蛊, 招灾仙蛊]
 description: 运道七转仙蛊：替蛊仙招灾引难，将地灾天劫从原目标勾连到持蛊者身上；本质自我牺牲之蛊，收服须「自我牺牲的心」；与排难蛊一体两面
@@ -9,6 +10,7 @@ sources:
   - "source:source/蛊真人-clean.txt"
 schema: 2
 ---
+
 
 # 招灾蛊
 

@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 雷道
 aliases: [雷道流派, lightning path]
 description: 雷道流派：中古涌现、战力五强之一；雷鬼真君井斓（雷魂双修）与雷心殉爆等杀招
@@ -8,6 +9,7 @@ tags: [world, path, lightning, leigui]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 雷道
 

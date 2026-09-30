@@ -1,5 +1,6 @@
 ---
 type: world
+kind: path
 name: 冰雪道
 aliases: [冰雪道流派, 冰道, ice-snow path]
 description: 冰雪道流派：中古涌现，白凝冰北冥冰魄体与白相真传；雪胡老祖冰雪道大宗师级
@@ -8,6 +9,7 @@ tags: [world, path, ice, bai-ning-bing]
 sources: ["source:source/蛊真人-clean.txt"]
 schema: 2
 ---
+
 
 # 冰雪道
 
