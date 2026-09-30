@@ -1,95 +1,403 @@
 # 蛊虫
 
-蛊虫页先记录原著明确能力、限制、寄居或使用条件；游戏效果不写入原著事实区。
+> 给要查蛊的人：不知道读什么就先走短路径，知道要什么就按用途/流派/转数/剧情四条路进去。
 
-- [全书蛊虫总表](roster.md)（按品阶与谱系分组的全书蛊虫一览 + 方源蛊链时序 + 人道蛊族 + 仙蛊屋；查蛊先看这里）
-- [蛊虫总表二期](roster-2.md)（辅助/存储/通信/专项蛊约 24 种；总表查不到的蛊到这里）
-- [蛊虫总表三期·游戏映射蛊精蒸馏](roster-3.md)（gu.json 270 个原著来源蛊的转数层逐蛊核验 + 分叉报告；游戏桥接层 gu_lore.json 的源页）
-- [小光蛊](small-light-gu.md)
-- [月光蛊](moonlight-gu.md)
-- [月芒蛊](moon-glow-gu.md)
-- [月痕蛊](moon-ray-gu.md)
-- [月旋蛊](light-atk-1-01-gu.md)
-- [熊力蛊](bear-strength-gu.md)
-- [白豕蛊与肉身增力](white-boar-strength-gu.md)
-- [玉皮蛊](jade-skin-gu.md)
-- [石皮蛊](stone-shell-gu.md)
-- [酒虫与同转真元提纯](wine-insect-gu.md)
-- [九叶生机草与生机叶](vitality-grass-gu.md)
-- [骨蛊](bone-atk-1-08-gu.md)
-- [青藤蛊](wood-atk-1-05-gu.md)
-- [硬气蛊](qi-atk-1-01-gu.md)
-- [自己蛊](human-atk-1-01-gu.md)
-- [驭犬蛊](slave-atk-1-03-gu.md)
-- [M0 六蛊原著边界](m0-six-gu.md)
-- [蛊虫与蛊师能力来源](cultivator-effects-and-scouting.md)（身体改造、防护、侦察的已核验边界）
-- [春秋蝉](spring-autumn-cicada-gu.md)
-- [宿命蛊](fate-gu.md)
-- [智慧蛊](wisdom-gu.md)
-- [坚持仙蛊](persistence-gu.md)
-- [蛊虫关系](gu-relations.md)（合炼/逆炼/平炼升炼链、同种唯一、本命、替代协同、交易传承与仙蛊屋核心——关系图谱入口）
-- [白玉蛊](white-jade-gu.md)
-- [玉骨蛊](bone-def-3-05-gu.md)
-- [冰肌蛊](water-atk-3-06-gu.md)
-- [石窍蛊](earth-def-3-01-gu.md)
-- [血气蛊](blood-atk-3-03-gu.md)
-- [血月蛊](blood-atk-3-11-gu.md)
-- [骨枪蛊](bone-def-3-01-gu.md)
-- [鬼火蛊](fire-atk-2-01-gu.md)
-- [邀月蛊](light-atk-3-02-gu.md)
-- [月影蛊](moon-shadow-gu.md)
-- [木魅蛊](wood-atk-3-01-gu.md)
-- [寿蛊](heaven-atk-5-07-gu.md)
-- [剑气蛊](sword-atk-4-01-gu.md)
-- [雷翼蛊](heaven-atk-3-10-gu.md)
-- [斤力蛊](force-atk-1-05-gu.md)
-- [青铜舍利蛊](gold-atk-2-12-gu.md)
-- [山盟蛊](human-def-1-32-gu.md)
-- [净魂仙蛊](soul-atk-1-02-gu.md)
-- [招灾蛊](luck-atk-1-03-gu.md)
-- [驭狼蛊](slave-atk-3-04-gu.md)
-- [血神子](blood-atk-5-09-gu.md)
-- [血本仙蛊](blood-atk-5-12-gu.md)
-- [爱别离](blood-farewell-gu.md)
-- [梦蝶仙蛊](dream-atk-5-02-gu.md)
-- [我力仙蛊](force-atk-5-20-gu.md)
-- [飞熊之力蛊](force-mov-5-21-gu.md)
-- [命运蛊](heaven-atk-5-02-gu.md)
-- [天妒仙蛊](heaven-atk-5-03-gu.md)
-- [天机蛊](heaven-atk-5-06-gu.md)
-- [爱情蛊](human-atk-5-02-gu.md)
-- [海誓蛊](human-atk-5-31-gu.md)
-- [悔蛊](human-atk-5-34-gu.md)
-- [鸿运齐天蛊](luck-atk-5-01-gu.md)
-- [狗屎运蛊](luck-atk-5-04-gu.md)
-- [排难蛊](luck-atk-5-05-gu.md)
-- [魂灯蛊](soul-atk-5-01-gu.md)
-- [飞剑蛊](sword-atk-5-02-gu.md)
-- [慧剑蛊](wisdom-atk-5-05-gu.md)
-- [九转升炼蛊](refine-log-5-02-gu.md)
-- [浪迹天涯仙蛊](water-rec-5-04-gu.md)
-- [鳄力蛊](blood-atk-1-18-gu.md)
-- [血滴子](blood-droplet-gu.md)
-- [地藏花蛊](earth-atk-5-03-gu.md)
-- [丹火蛊](fire-atk-4-02-gu.md)
-- [横冲蛊](force-atk-4-27-gu.md)
-- [直撞蛊](force-atk-4-26-gu.md)
-- [自力更生蛊](force-heal-3-03-gu.md)
-- [天蓬蛊](force-atk-3-29-gu.md)
-- [赤铁舍利蛊](gold-atk-2-11-gu.md)
-- [黄金舍利蛊](gold-atk-4-14-gu.md)
-- [古铜皮蛊](gold-def-3-09-gu.md)
-- [金龙蛊](gold-atk-4-02-gu.md)
-- [火炭蛊](fire-mov-4-39-gu.md)
-- [风气蛊](qi-mov-4-03-gu.md)
-- [驭兽蛊](slave-atk-4-02-gu.md)
-- [奴隶蛊](slave-atk-5-01-gu.md)
-- [星念蛊](light-rec-5-12-gu.md)
-- [蓝鸟冰棺蛊](water-atk-3-07-gu.md)
-- [龙行虎步蛊](wind-mov-4-04-gu.md)
-- [草傀蛊](wood-heal-3-03-gu.md)
+## 怎么用本页
 
-总表中未建独立页的条目代表已定位、待按需蒸馏；未整理的蛊虫仍需回查原文，不根据名称或游戏数据补全能力。
+- **我刚接触这世界** → 先读[新手认识的 10 只蛊](#新手认识的-10-只蛊)，十分钟建立「蛊是什么」的直觉。
+- **我要跟上方源** → 走[方源核心蛊链](#方源核心蛊链)，看他在各弧换用什么、为什么换。
+- **我要找某类蛊** → 用[按用途查](#按用途查)（战斗 / 辅助 / 炼道 / 坐骑 / 特殊）。
+- **我要按流派/道找** → 用[按流派查](#按流派查)；流派总纲见[流派总表](../world/path-roster.md)。
+- **我要按品阶找** → 用[按转数查](#按转数查)。转数口径以各页为准，本节只是查找索引。
+- **我要找剧情里最重要的** → 用[按剧情重要度查](#按剧情重要度查)。
+- **我要查规则、合炼、本命** → 先看[蛊虫关系](gu-relations.md)，再进总表。
+
+本目录页先记录原著明确能力、限制、寄居或使用条件；游戏效果不写入原著事实区。总表中未建独立页的条目代表已定位、待按需蒸馏；未整理的蛊虫仍需回查原文，不根据名称或游戏数据补全能力。
+
+## 短路径
+
+### 新手认识的 10 只蛊
+
+按「先看懂世界怎么运转」的顺序，不按剧情出场顺序：
+
+1. [月光蛊](moonlight-gu.md)——古月一族镇族一转战斗蛊，最标准的「一只蛊 = 一项能力」。
+2. [小光蛊](small-light-gu.md)——一转辅助蛊，双蛊同催令月刃翻倍，看懂「蛊可以协同」。
+3. [酒虫](wine-insect-gu.md)——提纯真元一小境界的修炼辅助，看懂「养蛊—用蛊」的日常循环。
+4. [白豕蛊](white-boar-strength-gu.md)——催用增力且力量永久留存，看懂「肉身改造型」蛊。
+5. [玉皮蛊](jade-skin-gu.md)——一转皮甲最珍稀档，看懂「防御也要持续灌真元」。
+6. [九叶生机草](vitality-grass-gu.md)——真元转生机叶，山寨治疗与方源早期元石来源。
+7. [月芒蛊](moon-glow-gu.md)——月光＋双小光合炼产物，看懂「合炼进阶」的入门例子。
+8. [春秋蝉](spring-autumn-cicada-gu.md)——全书引擎：献祭重生、逆光阴长河。
+9. [宿命蛊](fate-gu.md)——九转天道仙蛊，后期一切大戏的对抗对象。
+10. [蛊虫关系](gu-relations.md)——不是一只蛊，而是合炼/本命/替代协同的规则总纲。
+
+### 方源核心蛊链
+
+只列跨弧真正改变他打法的节点；完整时序见[全书蛊虫总表](roster.md)「方源蛊链时序」。
+
+| 阶段 | 蛊 | 一句话 |
+|---|---|---|
+| 弧一 | [酒虫](wine-insect-gu.md) | 提纯真元，把丙等资质的修炼效率拉起来 |
+| 弧一 | [月光蛊](moonlight-gu.md) + [小光蛊](small-light-gu.md) | 战斗主力与协同，青茅山时期的日常输出 |
+| 弧一末 | [月芒蛊](moon-glow-gu.md) | 首只合炼进阶，攻击翻三倍 |
+| 弧一末 | [白玉蛊](white-jade-gu.md) | 防御合炼产物，弃增力换护体 |
+| 全程 | [春秋蝉](spring-autumn-cicada-gu.md) | 本命仙蛊，重生引擎与天意侵蚀的代价 |
+| 弧三 | [玉骨蛊](bone-def-3-05-gu.md) | 白骨山传承，骨骼玉化承更重增力 |
+| 弧三 | [血滴子](blood-droplet-gu.md) | 虫群型消耗战力，后晋升[血神子](blood-atk-5-09-gu.md) |
+| 弧五 | [天机蛊](heaven-atk-5-06-gu.md) | 问天预测，失败反噬损寿 |
+| 中后期 | [坚持仙蛊](persistence-gu.md) | 「万我」杀招骨架之一 |
+| 后期 | [九转升炼蛊](refine-log-5-02-gu.md) / [悔蛊](human-atk-5-34-gu.md) | 炼道降难度 / 悔池与红莲传承核心 |
+
+## 总表·关系·边界
+
+查蛊先从这四页进，避免在 80 余个独立页里乱撞：
+
+- [全书蛊虫总表](roster.md)——按品阶与谱系分组的全书蛊虫一览 + 方源蛊链时序 + 人道蛊族 + 仙蛊屋；粗粒度身份层，查蛊先看这里。
+- [蛊虫总表二期](roster-2.md)——辅助/存储/通信/专项蛊约 24 种；总表查不到的蛊到这里。
+- [蛊虫总表三期·游戏映射蛊精蒸馏](roster-3.md)——gu.json 270 个原著来源蛊的转数层逐蛊核验 + 分叉报告；游戏桥接层 gu_lore.json 的源页。
+- [蛊虫关系](gu-relations.md)——合炼/逆炼/平炼升炼链、同种唯一、本命、替代协同、交易传承与仙蛊屋核心——关系图谱入口。
+- [M0 六蛊原著边界](m0-six-gu.md)——石皮蛊/玉皮蛊/白豕蛊/刀翅血蝠蛊等六蛊的身份证据与改编边界登记页。
+- [蛊虫与蛊师能力来源](cultivator-effects-and-scouting.md)——身体改造、防护、侦察的已核验边界。
+
+## 按用途查
+
+人类找蛊最常见的问法是「它干什么用」。战斗再细分为攻杀与防护/肉身。
+
+### 战斗·攻杀
+
+- [月光蛊](moonlight-gu.md)——古月镇族一转战斗蛊，发射月刃。
+- [小光蛊](small-light-gu.md)——一转光道辅助，双催令月刃体积与攻击翻倍，可合炼月芒。
+- [月芒蛊](moon-glow-gu.md)——月光＋双小光合炼的二转进攻蛊，月刃大如脸盆、攻击三倍。
+- [月痕蛊](moon-ray-gu.md)——月光＋痕石合炼，攻击不变、射程翻倍至二十米。
+- [月旋蛊](light-atk-1-01-gu.md)——月光＋旋风合炼，月刃由直线变曲线，古月青书选用路线。
+- [邀月蛊](light-atk-3-02-gu.md)——二转酒虫晋升线中间形态，紫色月漩可吞并月刃再放出。
+- [月影蛊](moon-shadow-gu.md)——四转，种入空窍压制对手真元使用，拖累而非致命。
+- [血月蛊](blood-atk-3-11-gu.md)——三转血红月刃，伤口血流不止；射程短、月信期威力暴降，但好养活。
+- [鳄力蛊](blood-atk-1-18-gu.md)——二转野生增力蛊，永久添「一鳄之力」，须先以骨蛊加固骨骼。
+- [熊力蛊](bear-strength-gu.md)——熊家寨标志蛊虫，以蜂蜜为食；「熊力」机制另见棕熊本力蛊与熊豪蛊。
+- [斤力蛊](force-atk-1-05-gu.md)——一转力道最小单位，增一斤之力，楚度人力钧力流基础档。
+- [直撞蛊](force-atk-4-26-gu.md)——三转力道直线冲锋，与横冲成对，可合炼四转横冲直撞。
+- [横冲蛊](force-atk-4-27-gu.md)——三转力道横向冲锋，与直撞成对。
+- [龙行虎步蛊](wind-mov-4-04-gu.md)——四转力道移动蛊，大步连踏龙吟虎啸，速度远超横冲直撞。
+- [我力仙蛊](force-atk-5-20-gu.md)——黑楼兰本命力道仙蛊，「万我」杀招第一核心。
+- [飞熊之力蛊](force-mov-5-21-gu.md)——力道仙蛊，攻击时概率爆发飞熊神力，黑楼兰晋升门槛件。
+- [骨枪蛊](bone-def-3-01-gu.md)——白骨传承基础蛊（明文一转），量多成习、以奶水饲养。
+- [玉骨蛊](bone-def-3-05-gu.md)——骨骼永久玉化，可再承一鳄之力；与冰肌成「冰肌玉骨」。
+- [骨蛊](bone-atk-1-08-gu.md)——白骨山骨系野生蛊的**泛称**（非某只具体蛊名），具体骨系见玉骨/铁骨/飞骨盾等。
+- [鬼火蛊](fire-atk-2-01-gu.md)——二转魂道鬼火，寄居舌底吐幽蓝冷焰，兼炎道口径。
+- [丹火蛊](fire-atk-4-02-gu.md)——三转火球连发攻击，可配增数/增威/减耗蛊成战术。
+- [金龙蛊](gold-atk-4-02-gu.md)——四转金道攻伐，金龙碾压，霸道但粗犷难细操。
+- [青藤蛊](wood-atk-1-05-gu.md)——木行藤条，鞭打缠绕，受环境天然元气供给限制。
+- [剑气蛊](sword-atk-4-01-gu.md)——剑道穿刺剑气，被克制则徒然耗真元。
+- [飞剑蛊](sword-atk-5-02-gu.md)——七转剑道攻伐仙蛊，薄青常用，多套飞剑杀招主蛊。
+- [慧剑蛊](wisdom-atk-5-05-gu.md)——八转剑道兼智道，「慧剑斩情丝」专破爱情蛊道痕。
+- [爱别离](blood-farewell-gu.md)——二转第一毒，以爱人之心炼成，毒烈却只能偷袭。
+- [血滴子](blood-droplet-gu.md)——五转虫群型，食蛊师精血裂变分化，强盛可灭村寨。
+- [血神子](blood-atk-5-09-gu.md)——六转血道魔蛊、十大魔蛊第七，血滴子上位，以血亲换分体。
+
+### 战斗·防护与肉身
+
+- [玉皮蛊](jade-skin-gu.md)——一转皮甲最珍稀，皮肤化玉、玉光护体，受击越多耗元越剧。
+- [石皮蛊](stone-shell-gu.md)——一转护防寻常档，双臂石化裹厚石皮，硬但沉重缓慢。
+- [白玉蛊](white-jade-gu.md)——白豕＋玉皮合炼的二转防御蛊，强化防御、丧失增力。
+- [古铜皮蛊](gold-def-3-09-gu.md)——铜皮系四转形态，须滚烫铜汁浇身养成，皮甲核心一环。
+- [白豕蛊](white-boar-strength-gu.md)——一转珍稀豕蛊，增力永久留存、蛊死不失。
+- [天蓬蛊](force-atk-3-29-gu.md)——三转防御，白玉＋水行合炼，皮肤硬如白玉但不缓冲力道。
+- [冰肌蛊](water-atk-3-06-gu.md)——三转肌肤永久改造，常驻防御无须真元支持。
+- [硬气蛊](qi-atk-1-01-gu.md)——气道防御，以无形气流包身补杀招防御短板。
+- [血气蛊](blood-atk-3-03-gu.md)——补血气抬战场生存率，可减游僵后遗症，亦是血月蛊合炼材。
+- [蓝鸟冰棺蛊](water-atk-3-07-gu.md)——三转冰鸟自动锁敌、撞击自爆冻封目标，白凝冰持有。
+
+### 辅助（修炼·治疗·侦查）
+
+- [酒虫](wine-insect-gu.md)——提纯已有真元一个小境界，不补真元、不越本转巅峰。
+- [邀月蛊](light-atk-3-02-gu.md)——酒虫晋升线中间件（战斗用法见上）。
+- [九叶生机草](vitality-grass-gu.md)——二转草蛊，真元转九片生机叶，山寨基础治疗与方源元石来源。
+- [自力更生蛊](force-heal-3-03-gu.md)——三转力道治疗，力气越大疗效越好，只能治自己。
+- [青铜舍利蛊](gold-atk-2-12-gu.md)——一转舍利，直升一阶小境界，天然无法合炼。
+- [赤铁舍利蛊](gold-atk-2-11-gu.md)——二转舍利，升华窍壁升一阶后耗尽消失，市价约八千。
+- [黄金舍利蛊](gold-atk-4-14-gu.md)——四转舍利，直升级并大量用作仙蛊催化材，宝黄天才有货。
+- [寿蛊](heaven-atk-5-07-gu.md)——唯一无后遗症添阳寿的凡蛊，兼仙界最强硬通货。
+- [净魂仙蛊](soul-atk-1-02-gu.md)——六转魂道精炼魂魄、剔除杂质，多套杀招核心。
+- [星念蛊](light-rec-5-12-gu.md)——智道念蛊，把念头凝成可见「星念」用于推算。
+- [智慧蛊](wisdom-gu.md)——九转野生智道，智慧光晕赋无穷灵感，代价是燃烧寿命。
+- [木魅蛊](wood-atk-3-01-gu.md)——三转化身树精自补真元、增幅木蛊，久用必木化。
+- [梦蝶仙蛊](dream-atk-5-02-gu.md)——六转梦道侦查，可探梦境下一幕，却探不到梦主遭遇。
+- [魂灯蛊](soul-atk-5-01-gu.md)——宗族祠堂三件套之一，燃蓝烛表存亡，可配命牌定位。
+
+### 炼道（炼蛊·储藏·保本）
+
+- [九转升炼蛊](refine-log-5-02-gu.md)——降他蛊升炼难度至少一倍，四元方悔血炼池核心。
+- [血本仙蛊](blood-atk-5-12-gu.md)——炼蛊失败保本还原仙材/蛊虫，后成四元方悔血炼池四元之一。
+- [地藏花蛊](earth-atk-5-03-gu.md)——二转一次性储藏蛊，种地不动、包养其他蛊使其沉眠。
+- [火炭蛊](fire-mov-4-39-gu.md)——一转火道起手件，弹入兽体内脏燃烧，亦是二转火炉蛊合炼材。
+- [石窍蛊](earth-def-3-01-gu.md)——三转一次性改造空窍，瞬间达同转巅峰，代价是断晋升、失自回真元。
+
+### 坐骑与驭使
+
+- [驭犬蛊](slave-atk-1-03-gu.md)——一转奴道夺兽魂自主，一次性，兽王可反噬。
+- [驭狼蛊](slave-atk-3-04-gu.md)——奴道狼种分件，一次性种魂夺自主，一至五转皆有秘方。
+- [驭兽蛊](slave-atk-4-02-gu.md)——奴道通名兼具体件，四转可控万兽王；仙蛊阶藏琅琊福地。
+- [奴隶蛊](slave-atk-5-01-gu.md)——奴道控**人**代表蛊，种下后控制蛊师，成败取决于魂魄较量。
+- [草傀蛊](wood-heal-3-03-gu.md)——奴道草木傀儡，「最优良的炮灰」，产物随转数升阶。
+
+### 特殊（命运·规则·人道·奇蛊）
+
+- [春秋蝉](spring-autumn-cicada-gu.md)——时光道奇蛊，献祭全部只留意识，逆光阴长河重生。
+- [宿命蛊](fate-gu.md)——九转天道仙蛊，天庭秩序的规则接口。
+- [命运蛊](heaven-atk-5-02-gu.md)——以宿命蛊为材合练的**目标态**仙蛊方，尚非既成品。
+- [天机蛊](heaven-atk-5-06-gu.md)——天道问天即得答案，失败反噬损寿十年至七十年。
+- [天妒仙蛊](heaven-atk-5-03-gu.md)——天道蛊虫的例外：嫉妒共鸣自发动、折损寿元。
+- [爱情蛊](human-atk-5-02-gu.md)——九转可抗命与运，靠「认可」而非炼化取得。
+- [悔蛊](human-atk-5-34-gu.md)——八转勾动无穷后悔之情，红莲传承核心与悔池骨架。
+- [海誓蛊](human-atk-5-31-gu.md)——六转信道盟誓，面海立誓、毁海即失效，可重复运用。
+- [山盟蛊](human-def-1-32-gu.md)——信道盟誓，面山立誓、毁山即失效，魔道互信基石。
+- [自己蛊](human-atk-1-01-gu.md)——《人祖传》人道蛊，居于孤独之心，自欺则主动离去。
+- [坚持仙蛊](persistence-gu.md)——七转石碑巨形仙蛊，逆流河河主认主核心，方源第二代主人。
+- [招灾蛊](luck-atk-1-03-gu.md)——七转运道，替蛊仙招灾引难，收服须自我牺牲之心。
+- [排难蛊](luck-atk-5-05-gu.md)——八十八角真阳楼基石，把天灾地劫排遣出去。
+- [鸿运齐天蛊](luck-atk-5-01-gu.md)——八转一次性，无形气运本体，持续吞吸他人运道集于一身。
+- [狗屎运蛊](luck-atk-5-04-gu.md)——巨阳早年本命，增幅自身气运、削减地灾威能。
+- [风气蛊](qi-mov-4-03-gu.md)——四转气道天然蛊，对种群营造流行爱好或习惯，可治部落家族。
+
+## 按流派查
+
+同一蛊常跨多道（如血月蛊是月系＋血系、慧剑蛊是剑道＋智道），会在多个流派下重复出现。流派源流见[流派总表](../world/path-roster.md)。
+
+### 光道 / 月系
+
+- [月光蛊](moonlight-gu.md)——月系基础战力，发月刃。
+- [小光蛊](small-light-gu.md)——月系辅助，双催令月刃翻倍。
+- [月芒蛊](moon-glow-gu.md)——月光＋双小光合炼的二转进攻上位。
+- [月痕蛊](moon-ray-gu.md)——月光＋痕石合炼，范围翻倍。
+- [月旋蛊](light-atk-1-01-gu.md)——月光＋旋风合炼，月刃走曲线。
+- [邀月蛊](light-atk-3-02-gu.md)——酒虫晋升线的月系中间件。
+- [月影蛊](moon-shadow-gu.md)——四转，压制空窍真元。
+- [血月蛊](blood-atk-3-11-gu.md)——月系攻击＋血系合炼产物。
+
+### 力道
+
+- [斤力蛊](force-atk-1-05-gu.md)——人力钧力流最小单位。
+- [熊力蛊](bear-strength-gu.md)——熊家寨标志蛊（转数原文未给）。
+- [白豕蛊](white-boar-strength-gu.md)——永久增力，一猪之力上限。
+- [鳄力蛊](blood-atk-1-18-gu.md)——永久增一鳄之力，须先加固骨骼。
+- [直撞蛊](force-atk-4-26-gu.md) / [横冲蛊](force-atk-4-27-gu.md)——三转力道冲锋成对件。
+- [天蓬蛊](force-atk-3-29-gu.md)——三转力道防御。
+- [龙行虎步蛊](wind-mov-4-04-gu.md)——四转力道移动。
+- [我力仙蛊](force-atk-5-20-gu.md) / [飞熊之力蛊](force-mov-5-21-gu.md)——力道仙蛊，万我与黑楼兰线。
+- [自力更生蛊](force-heal-3-03-gu.md)——力道治疗。
+
+### 骨道
+
+- [骨蛊](bone-atk-1-08-gu.md)——骨系野生蛊泛称说明。
+- [骨枪蛊](bone-def-3-01-gu.md)——白骨传承基础件。
+- [玉骨蛊](bone-def-3-05-gu.md)——骨骼玉化改造。
+
+### 血道
+
+- [血气蛊](blood-atk-3-03-gu.md)——补血气、抬生存。
+- [血滴子](blood-droplet-gu.md)——五转虫群。
+- [血神子](blood-atk-5-09-gu.md)——六转魔蛊，血滴子上位。
+- [血本仙蛊](blood-atk-5-12-gu.md)——炼蛊保本。
+- [爱别离](blood-farewell-gu.md)——血/毒系第一毒。
+- [血月蛊](blood-atk-3-11-gu.md)——月＋血合炼（也见月系）。
+
+### 冰雪 / 水道
+
+- [冰肌蛊](water-atk-3-06-gu.md)——肌肤冰化常驻防御。
+- [蓝鸟冰棺蛊](water-atk-3-07-gu.md)——冰鸟自爆冻封。
+- [浪迹天涯仙蛊](water-rec-5-04-gu.md)——六转水道移动，近水楼台核心。
+
+### 火 / 炎道
+
+- [火炭蛊](fire-mov-4-39-gu.md)——一转起手件。
+- [鬼火蛊](fire-atk-2-01-gu.md)——二转魂道鬼火（兼炎道口径）。
+- [丹火蛊](fire-atk-4-02-gu.md)——三转火球连发。
+
+### 金道
+
+- [青铜舍利蛊](gold-atk-2-12-gu.md) / [赤铁舍利蛊](gold-atk-2-11-gu.md) / [黄金舍利蛊](gold-atk-4-14-gu.md)——舍利蛊三档，升阶与催化。
+- [金龙蛊](gold-atk-4-02-gu.md)——四转攻伐。
+- [古铜皮蛊](gold-def-3-09-gu.md)——铜皮系四转防御。
+
+### 木道 / 草木
+
+- [青藤蛊](wood-atk-1-05-gu.md)——藤条攻缠。
+- [木魅蛊](wood-atk-3-01-gu.md)——树精化身自补。
+- [草傀蛊](wood-heal-3-03-gu.md)——草木傀儡（奴道，也见坐骑与驭使）。
+- [九叶生机草](vitality-grass-gu.md)——草蛊产生机叶。
+
+### 奴道
+
+- [驭犬蛊](slave-atk-1-03-gu.md) / [驭狼蛊](slave-atk-3-04-gu.md) / [驭兽蛊](slave-atk-4-02-gu.md)——驭兽一脉由犬到万兽王。
+- [奴隶蛊](slave-atk-5-01-gu.md)——控人代表。
+- [草傀蛊](wood-heal-3-03-gu.md)——草木傀儡。
+
+### 气道
+
+- [硬气蛊](qi-atk-1-01-gu.md)——无形气流包身防御。
+- [风气蛊](qi-mov-4-03-gu.md)——种群风习营造。
+
+### 雷道
+
+- [雷翼蛊](heaven-atk-3-10-gu.md)——雷光羽翼短暂飞翔。
+
+### 剑道
+
+- [剑气蛊](sword-atk-4-01-gu.md)——穿刺剑气。
+- [飞剑蛊](sword-atk-5-02-gu.md)——七转攻伐主蛊。
+- [慧剑蛊](wisdom-atk-5-05-gu.md)——八转剑道兼智道（也见智道）。
+
+### 魂道
+
+- [净魂仙蛊](soul-atk-1-02-gu.md)——精炼魂魄。
+- [魂灯蛊](soul-atk-5-01-gu.md)——存亡指示。
+- [鬼火蛊](fire-atk-2-01-gu.md)——二转魂道鬼火。
+
+### 智道
+
+- [智慧蛊](wisdom-gu.md)——九转灵感引擎。
+- [星念蛊](light-rec-5-12-gu.md)——念头外化推算。
+- [慧剑蛊](wisdom-atk-5-05-gu.md)——兼通智道的剑道仙蛊。
+
+### 梦道
+
+- [梦蝶仙蛊](dream-atk-5-02-gu.md)——梦境侦查。
+
+### 运道
+
+- [招灾蛊](luck-atk-1-03-gu.md) / [排难蛊](luck-atk-5-05-gu.md)——一体两面的灾劫调度。
+- [鸿运齐天蛊](luck-atk-5-01-gu.md) / [狗屎运蛊](luck-atk-5-04-gu.md)——气运集身与自运增幅。
+
+### 天道
+
+- [宿命蛊](fate-gu.md)——最著名的天道蛊虫。
+- [天机蛊](heaven-atk-5-06-gu.md)——问天得答案。
+- [天妒仙蛊](heaven-atk-5-03-gu.md)——天道例外，嫉妒共鸣。
+- [命运蛊](heaven-atk-5-02-gu.md)——以宿命为材的目标态。
+- [寿蛊](heaven-atk-5-07-gu.md)——天道口径下的延寿正品（页内有归属讨论）。
+
+### 人道 / 信道盟誓
+
+- [自己蛊](human-atk-1-01-gu.md) / [爱情蛊](human-atk-5-02-gu.md) / [悔蛊](human-atk-5-34-gu.md)——《人祖传》人道线代表。
+- [海誓蛊](human-atk-5-31-gu.md) / [山盟蛊](human-def-1-32-gu.md)——信道盟誓对。
+- [坚持仙蛊](persistence-gu.md)——坚持（人道）的仙蛊形态。
+
+### 宙道 / 时光
+
+- [春秋蝉](spring-autumn-cicada-gu.md)——逆光阴长河重生。
+
+### 炼道
+
+- [九转升炼蛊](refine-log-5-02-gu.md)——降升炼难度。
+- [血本仙蛊](blood-atk-5-12-gu.md)——炼蛊保本（也见血道）。
+- [地藏花蛊](earth-atk-5-03-gu.md)——包养沉眠的储藏件。
+
+### 土道
+
+- [地藏花蛊](earth-atk-5-03-gu.md)——以地气为食的储藏蛊。
+- [石窍蛊](earth-def-3-01-gu.md)——窍壁石化改造。
+
+## 按转数查
+
+口径提示：原著转数与游戏 rank 可能不一致（如骨枪蛊文件名标三转、原文明文一转）。**引用前以各页正文为准**；分叉登记见[蛊虫总表三期](roster-3.md)。
+
+### 一转凡蛊
+
+- [月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[白豕蛊](white-boar-strength-gu.md)、[玉皮蛊](jade-skin-gu.md)、[石皮蛊](stone-shell-gu.md)、[斤力蛊](force-atk-1-05-gu.md)、[青藤蛊](wood-atk-1-05-gu.md)、[硬气蛊](qi-atk-1-01-gu.md)、[自己蛊](human-atk-1-01-gu.md)、[驭犬蛊](slave-atk-1-03-gu.md)、[骨枪蛊](bone-def-3-01-gu.md)（原文明文一转）、[火炭蛊](fire-mov-4-39-gu.md)（原文明文一转）、[青铜舍利蛊](gold-atk-2-12-gu.md)。
+
+### 二转凡蛊
+
+- [月芒蛊](moon-glow-gu.md)、[白玉蛊](white-jade-gu.md)、[月痕蛊](moon-ray-gu.md)（旁证二转）、[月旋蛊](light-atk-1-01-gu.md)（旁证二转）、[邀月蛊](light-atk-3-02-gu.md)（明文二转）、[九叶生机草](vitality-grass-gu.md)、[爱别离](blood-farewell-gu.md)、[鬼火蛊](fire-atk-2-01-gu.md)、[赤铁舍利蛊](gold-atk-2-11-gu.md)、[地藏花蛊](earth-atk-5-03-gu.md)、[鳄力蛊](blood-atk-1-18-gu.md)、[驭狼蛊](slave-atk-3-04-gu.md)（二转明文、一至五转皆有秘方）。
+
+### 三转凡蛊
+
+- [血月蛊](blood-atk-3-11-gu.md)、[玉骨蛊](bone-def-3-05-gu.md)（三转口径）、[冰肌蛊](water-atk-3-06-gu.md)、[蓝鸟冰棺蛊](water-atk-3-07-gu.md)、[天蓬蛊](force-atk-3-29-gu.md)、[自力更生蛊](force-heal-3-03-gu.md)、[木魅蛊](wood-atk-3-01-gu.md)、[草傀蛊](wood-heal-3-03-gu.md)、[石窍蛊](earth-def-3-01-gu.md)、[丹火蛊](fire-atk-4-02-gu.md)（原文三转）、[直撞蛊](force-atk-4-26-gu.md)、[横冲蛊](force-atk-4-27-gu.md)（原文三转）。
+
+### 四转凡蛊
+
+- [月影蛊](moon-shadow-gu.md)、[古铜皮蛊](gold-def-3-09-gu.md)、[金龙蛊](gold-atk-4-02-gu.md)、[黄金舍利蛊](gold-atk-4-14-gu.md)、[风气蛊](qi-mov-4-03-gu.md)、[驭兽蛊](slave-atk-4-02-gu.md)、[龙行虎步蛊](wind-mov-4-04-gu.md)、[剑气蛊](sword-atk-4-01-gu.md)（已知四转野生个体）。
+
+### 五转凡蛊
+
+- [血滴子](blood-droplet-gu.md)、[奴隶蛊](slave-atk-5-01-gu.md)（五转珍稀档）、[星念蛊](light-rec-5-12-gu.md)（五转凡蛊为一次性，亦有六转仙蛊形态）。
+
+### 仙蛊（六转及以上）
+
+- 六转：[春秋蝉](spring-autumn-cicada-gu.md)、[净魂仙蛊](soul-atk-1-02-gu.md)、[梦蝶仙蛊](dream-atk-5-02-gu.md)、[血神子](blood-atk-5-09-gu.md)、[血本仙蛊](blood-atk-5-12-gu.md)（后升八转）、[浪迹天涯仙蛊](water-rec-5-04-gu.md)、[我力仙蛊](force-atk-5-20-gu.md)（后升七转）、[飞熊之力蛊](force-mov-5-21-gu.md)、[海誓蛊](human-atk-5-31-gu.md)。
+- 七转：[坚持仙蛊](persistence-gu.md)、[天机蛊](heaven-atk-5-06-gu.md)（多时点升变）、[天妒仙蛊](heaven-atk-5-03-gu.md)（七转、方源欲升八转）、[招灾蛊](luck-atk-1-03-gu.md)、[飞剑蛊](sword-atk-5-02-gu.md)。
+- 八转：[慧剑蛊](wisdom-atk-5-05-gu.md)、[悔蛊](human-atk-5-34-gu.md)、[鸿运齐天蛊](luck-atk-5-01-gu.md)。
+- 九转：[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[爱情蛊](human-atk-5-02-gu.md)、[命运蛊](heaven-atk-5-02-gu.md)（目标态口径）、[九转升炼蛊](refine-log-5-02-gu.md)。
+
+### 转数未明 / 多时点口径
+
+- [熊力蛊](bear-strength-gu.md)——原文只给标志与食料，未给转数。
+- [寿蛊](heaven-atk-5-07-gu.md)——凡蛊、按年数分档，具体转数未明言。
+- [山盟蛊](human-def-1-32-gu.md)——与海誓并称，转数原文未明言。
+- [骨蛊](bone-atk-1-08-gu.md)——泛称页，不适用单只转数。
+- [星念蛊](light-rec-5-12-gu.md)——五转凡蛊与六转仙蛊两形态并存。
+
+## 按剧情重要度查
+
+「重要度」指对理解全书设定与主线的贡献，不是战力排名。
+
+### 改变全书走向
+
+- [春秋蝉](spring-autumn-cicada-gu.md)——重生引擎，一切时间线的前提。
+- [宿命蛊](fate-gu.md)——天庭秩序接口，红莲与方源共同对抗的对象。
+- [智慧蛊](wisdom-gu.md)——九转灵感与寿命代价，星宿本命之说待核。
+- [爱情蛊](human-atk-5-02-gu.md)——洪亭改命之钥，宿命大战关键。
+- [命运蛊](heaven-atk-5-02-gu.md)——长生天制霸天庭的目标态蓝图。
+
+### 弧线核心与方源关键
+
+- [酒虫](wine-insect-gu.md)——弧一修炼辅助，反噬唤醒春秋蝉。
+- [月光蛊](moonlight-gu.md) / [小光蛊](small-light-gu.md)——弧一战斗日常。
+- [月芒蛊](moon-glow-gu.md) / [白玉蛊](white-jade-gu.md)——弧一末合炼进阶样本。
+- [九叶生机草](vitality-grass-gu.md)——山寨治疗与早期经济。
+- [玉骨蛊](bone-def-3-05-gu.md)——白骨山传承节点。
+- [血滴子](blood-droplet-gu.md) / [血神子](blood-atk-5-09-gu.md)——血道战力线。
+- [天机蛊](heaven-atk-5-06-gu.md)——弧五预测核心，反噬与升炼贯穿后期。
+- [坚持仙蛊](persistence-gu.md)——「万我」骨架。
+- [悔蛊](human-atk-5-34-gu.md)——红莲传承与悔池。
+- [石窍蛊](earth-def-3-01-gu.md)——走投无路者的代价型代表，折射凡蛊师困境。
+
+### 势力标志与名场面
+
+- [熊力蛊](bear-strength-gu.md)——熊家寨标志（与古月月光、白家溪流并列）。
+- [月影蛊](moon-shadow-gu.md)——族长暗算花酒行者所用之蛊。
+- [雷翼蛊](heaven-atk-3-10-gu.md)——完整入手—使用—损毁—弃养个案。
+- [木魅蛊](wood-atk-3-01-gu.md)——古月青书完全体。
+- [蓝鸟冰棺蛊](water-atk-3-07-gu.md)——白凝冰战斗标志。
+- [我力仙蛊](force-atk-5-20-gu.md)——黑楼兰本命、两度易主。
+- [招灾蛊](luck-atk-1-03-gu.md) / [排难蛊](luck-atk-5-05-gu.md)——真阳楼与灾劫调度。
+- [飞剑蛊](sword-atk-5-02-gu.md) / [慧剑蛊](wisdom-atk-5-05-gu.md)——薄青剑道名场面。
+- [天妒仙蛊](heaven-atk-5-03-gu.md)——杜志晓折寿与方源炼化。
+
+### 机制样本与世相
+
+- [石皮蛊](stone-shell-gu.md) / [玉皮蛊](jade-skin-gu.md) / [古铜皮蛊](gold-def-3-09-gu.md)——皮甲系阶梯。
+- [白豕蛊](white-boar-strength-gu.md) / [鳄力蛊](blood-atk-1-18-gu.md) / [斤力蛊](force-atk-1-05-gu.md)——增力系阶梯。
+- [青铜舍利蛊](gold-atk-2-12-gu.md) / [赤铁舍利蛊](gold-atk-2-11-gu.md) / [黄金舍利蛊](gold-atk-4-14-gu.md)——舍利与市价体系。
+- [火炭蛊](fire-mov-4-39-gu.md) / [丹火蛊](fire-atk-4-02-gu.md)——火道递进与配合战术。
+- [硬气蛊](qi-atk-1-01-gu.md) / [风气蛊](qi-mov-4-03-gu.md)——气道兴衰侧影。
+- [驭犬蛊](slave-atk-1-03-gu.md) / [驭狼蛊](slave-atk-3-04-gu.md) / [驭兽蛊](slave-atk-4-02-gu.md) / [奴隶蛊](slave-atk-5-01-gu.md)——奴道控制阶梯。
+- [草傀蛊](wood-heal-3-03-gu.md)——「最优良的炮灰」。
+- [地藏花蛊](earth-atk-5-03-gu.md)——储藏与封印机制。
+- [魂灯蛊](soul-atk-5-01-gu.md)——宗族存亡制度件。
+- [爱别离](blood-farewell-gu.md)——毒蛊代价叙事。
+- [血气蛊](blood-atk-3-03-gu.md)——同名双写待核样本。
+- [海誓蛊](human-atk-5-31-gu.md) / [山盟蛊](human-def-1-32-gu.md)——盟誓社会功能。
+- [自己蛊](human-atk-1-01-gu.md)——《人祖传》寓言入口。
+
+## 相关阅读路径
+
+- 世界怎么运转：[世界操作系统](../world/world-operating-system.md)、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)、[蛊虫、蛊方、炼蛊与杀招](../world/gu-refine-killer-chain.md)。
+- 规则与配方：[炼蛊术语体系](../rules/refinement.md)、[杀招连招并招体系](../rules/killer-moves.md)、[流派总表](../world/path-roster.md)。
+- 跟人走：[全书主要人物总表](../characters/roster.md)、[方源](../characters/fang-yuan.md)。
+- 跟剧情走：[全书故事骨架总览](../events/story-arc-overview.md)、[青茅山狼潮](../events/wolf-tide.md)、[宿命大战](../events/fate-war.md)。
+- 《人祖传》与人道：[人祖传](../themes/ren-zu-zhuan.md)。
+
 ### Schema 迁移状态（T7，2026-09-26）
 
 - 已迁 v2：本目录其余蛊页（含 roster 系、智慧蛊、坚持仙蛊）。

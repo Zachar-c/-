@@ -28,7 +28,7 @@ schema: 2
 
 # 全书蛊虫总表
 
-本页是蛊虫实体层的粗粒度总表（L5 综合导航页）：只回答"什么蛊、几转、什么用、在谁手里"，不承载饲养消耗、炼制配方细节与游戏数值。与[世界操作系统](../world/world-operating-system.md)的炼制飞轮、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)互补。
+本页是蛊虫实体层的粗粒度总表（L5 综合导航页）：只回答"什么蛊、几转、什么用、在谁手里"，不承载饲养消耗、炼制配方细节与游戏数值。与[世界操作系统](../world/world-operating-system.md)的炼制飞轮、[养蛊、用蛊与炼蛊](../world/gu-care-and-refinement.md)互补。人类按用途/流派/转数/剧情查找，或走「新手 10 只蛊」「方源核心蛊链」短路径，见[蛊虫目录](index.md)。
 
 - 已建独立页：[月光蛊](moonlight-gu.md)、[小光蛊](small-light-gu.md)、[酒虫](wine-insect-gu.md)、[白豕蛊](white-boar-strength-gu.md)、[春秋蝉](spring-autumn-cicada-gu.md)、[宿命蛊](fate-gu.md)、[智慧蛊](wisdom-gu.md)、[坚持仙蛊](persistence-gu.md)、[M0 六蛊原著边界](m0-six-gu.md)（石皮蛊/玉皮蛊/白豕蛊/刀翅血蝠蛊身份证据）。本表不重复其内容。
 - 锚点约定同[人物总表](../characters/roster.md)：`A2b 17024` 指读书笔记内标注的原文行号；`原文 56826` 指 `蛊真人-clean.txt:56826`。

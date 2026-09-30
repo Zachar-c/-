@@ -20,7 +20,7 @@
 | runtime 正文源 | `source.id=gu_zhenren_epub`、`path=source/蛊真人-epub-canon.txt`、`sha256=9f6952f8…`、`lines=219942` | [`lore/runtime/manifest.json:6-11`](../runtime/manifest.json) |
 | 旧源降级 | `legacy_evidence_source` 保留旧 TXT `sha256=bf78d414…`、`lines=437060`，仅供旧 E-ID/行号回查 | [`lore/runtime/manifest.json:12-16`](../runtime/manifest.json) |
 | 定位表 | `lore/runtime/evidence-locators.json`：1,997 条 = 1,955 `auto_verified` + 42 `blocked`；42 条 `epub_locator` 全为 `null`（未伪称已映射） | 本包 §7 命令 3 |
-| 编译器校验链 | 编译前校验 EPUB 正文、段落索引、迁移台账三方 SHA-256；逐条核对段落哈希与旧源哈希；台账缺任一 live E-ID 即 `fail()` 退出 | [`lore/wiki/tools/compile_runtime.py:130-166`](../wiki/tools/compile_runtime.py) |
+| 编译器校验链 | 编译前校验 EPUB 正文、段落索引、迁移台账三方 SHA-256；逐条核对段落哈希与旧源哈希；台账缺任一 live E-ID 即 `fail()` 退出 | [`lore/wiki/tools/compile_runtime.py:130-166`](tools/compile_runtime.py) |
 | Web 侧同步 | `game/wenzhen-web-lab/js/data.js` 的 `contentVersion` / `sourceSha256` 已随 runtime 更新 | [`game/wenzhen-web-lab/js/data.js:7326-7327`](../../game/wenzhen-web-lab/js/data.js) |
 | 回归断言 | 新增断言：`blocked` 计数等于 `manifest.unresolved_evidence_count`、`epub_locator` 空值与 `decision` 一致、实体 evidence 必须在定位表中 | [`game/wenzhen-web-lab/tests/canon_pack.test.mjs:32-43`](../../game/wenzhen-web-lab/tests/canon_pack.test.mjs) |
 | 门禁 | G0 `docs-lint`：FAIL 0 / WARN 0；G1 `check.ps1`：check1–9 全 PASS（21,046 个 E-ID 段号校验）；`node --test canon_pack.test.mjs`：9/9 PASS | §7 命令 4–6 |
@@ -122,7 +122,7 @@ Wiki 页面层本轮只改了**主张措辞**（采纳 EPUB 用词并标注版�
 
 ### 4.1 事实
 
-- [`lore/wiki/tools/compile_runtime.py:90-93`](../wiki/tools/compile_runtime.py) 新增硬编码 `state_ids` 白名单（15 项），`build_packs` 据此裁剪实体状态（[`compile_runtime.py:557-561`](../wiki/tools/compile_runtime.py)），并在白名单与实际编译结果不符时 `fail()`。
+- [`lore/wiki/tools/compile_runtime.py:90-93`](tools/compile_runtime.py) 新增硬编码 `state_ids` 白名单（15 项），`build_packs` 据此裁剪实体状态（[`compile_runtime.py:557-561`](tools/compile_runtime.py)），并在白名单与实际编译结果不符时 `fail()`。
 - 生成物效果：`lore/runtime/packs/south_border_rank1_combat.json` 状态行 **84 → 15**（entities 10、rules 32、relations 2 均未变）；`lore/runtime/entities.json` 仍为 169 实体 / 825 状态行 / 162 evidence，**全量数据未丢**。
 - 选取规则无法从产物反推：7 个实体各取 `*-01/02`，`moonlight_gu` 取 `ST-MOONLIGHT-03/04/05`（跳过 01/02）。仓库内无任何文档说明依据；`game/wenzhen-web-lab` 未引用具体 `ST-*`（`git grep -n "ST-" -- game/wenzhen-web-lab` 只命中 `CAN-*`）。
 - `lore/runtime/manifest.json` 的 `coverage_notes` 仍写「实体状态行 825 条（来自实体页状态时间线，随实体与 pack 编译）」，**未反映 pack 实际只装 15 条**。
@@ -221,7 +221,7 @@ Wiki 页面层本轮只改了**主张措辞**（采纳 EPUB 用词并标注版�
 ### 11.1 范围与机制
 
 - 范围：runtime 消费且当前真 blocked 的 **20 条**（`evidence-locators.json` 1,997 条中，排除 D5 的 22 条陈旧项后）。剔除机制限制的 1 条后，实际复核 19 条。
-- 机制：台账人工复核保留路径已存在（[`lore/wiki/tools/verify_epub_migration.py:783-803`](../wiki/tools/verify_epub_migration.py)）——重跑时若旧行的 `old_source_sha256` / `old_text_sha256` / `new_source_sha256_lf` / `paragraph_sha256` 与当前一致且 `reviewer`/`reviewed_at`/`review_reason` 非空，则 `human_approved` 被保留。因此只改台账单元格，未重跑任何生成脚本。
+- 机制：台账人工复核保留路径已存在（[`lore/wiki/tools/verify_epub_migration.py:783-803`](tools/verify_epub_migration.py)）——重跑时若旧行的 `old_source_sha256` / `old_text_sha256` / `new_source_sha256_lf` / `paragraph_sha256` 与当前一致且 `reviewer`/`reviewed_at`/`review_reason` 非空，则 `human_approved` 被保留。因此只改台账单元格，未重跑任何生成脚本。
 - 一次性辅助脚本置于系统临时目录（仓库外），未入库。
 
 ### 11.2 结果：15 条通过，5 条保留 blocked

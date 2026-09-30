@@ -3,7 +3,7 @@ type: character
 name: 全书主要人物总表
 aliases: [人物总表, 人物 roster, 势力人物图谱]
 description: 按势力与登场弧线分组的全书主要人物一览，含方源马甲归一表；粗粒度身份层，条目即后续建页锚点
-date: 2026-09-26
+date: 2026-09-30
 tags: [character, roster, navigation, factions]
 sources:
   - "source:source/蛊真人-clean.txt"
@@ -31,12 +31,15 @@ schema: 2
 
 # 全书主要人物总表
 
-本页是人物实体层的粗粒度总表（L5 综合导航页）：只回答"谁、属于谁、在哪段剧情、结局如何"，不承载修为机制、状态机与杀招细节。与[全书故事骨架总览](../events/story-arc-overview.md)互补——弧线页给事件顺序，本页给实体锚点。
+本页是人物实体层的粗粒度总表（L5 综合导航页）：只回答"谁、属于谁、在哪段剧情、结局如何"，不承载修为机制、状态机与杀招细节。与[全书故事骨架总览](../events/story-arc-overview.md)互补——弧线页给事件顺序，本页给实体锚点。索引与阅读路径见[人物索引](index.md)。
 
 - 已建独立页：[方源](fang-yuan.md)、[白凝冰](bai-ning-bing.md)、[黑楼兰](he-lou-lan.md)、[星宿仙尊](star-constellation.md)、[龙公](dragon-duke.md)、[红莲魔尊](red-lotus.md)、[元莲仙尊](yuan-lian-xian-zun.md)。本表不重复其内容。
+- **势力入口**：分组按人物**首次主要登场**的势力/弧线（下方卷一至卷六各节即势力分组）；组织侧见[天庭](../world/heavenly-court.md)、[影宗](../world/shadow-sect.md)、[僵盟](../world/zangmeng.md)、[长生天](../world/longevity-heaven.md)、[十大古派](../world/ten-ancient-sects.md)。人物常跨势力迁移（如黑楼兰：黑家→影宗），跨组轨迹在各条目内注明——分组只为检索，不代表阵营归属。
+- **马甲归一入口**：见下方《方源马甲归一表》（常山阴/沙黄/武遗海/柳贯一/气海老祖等均为方源；白云为白凝冰）。引用马甲名前先归一，不得当作独立人物。
+- **关系网入口**：贯穿人物条目与各条目跨组轨迹给关系锚点；深入导航见[方源·关系网络](fang-yuan.md)、[红莲魔尊·关系网络](red-lotus.md)、[星宿仙尊](star-constellation.md)与[龙公](dragon-duke.md)的页内关系区块；对立面结构见[敌人名录](enemy-roster.md)。
+- **写同人「动机与关系」路径**：本表贯穿人物（目标与结局锚点）→ 上条关系网入口 → [次要人物总表](roster-2.md)配角线 → [全书故事骨架总览](../events/story-arc-overview.md)各弧「状态与人物」「主题与因果桥」（时代背景）→ [规则索引](../rules/index.md)「禁止误读」列（边界）。
 - 其余条目是后续建页的定位锚点：引用时先用本表，需要细节再按锚点回查。
 - 锚点约定：`A2a 324–408` 等指读书笔记内标注的原文行号（文件见 frontmatter sources）；`原文 1330` 指 `蛊真人-clean.txt:1330`，可直接回查。
-- 分组按人物**首次主要登场**的势力/弧线；人物常跨势力迁移（如黑楼兰：黑家→影宗），跨组轨迹在各条目内注明。
 
 ## 原著明确内容
 
