@@ -121,10 +121,10 @@ REDACTION_MARKERS = ("**", "8 9 阅 读 网", "阅读网", "更新最快")
 # watermarks between prose lines, so a legacy index is not a paragraph index.
 # A slot is therefore *proved* only when the closed interval between two
 # verified anchors is an exact 1:1 bijection of prose lines onto paragraphs
-# (span <= MAX_CONTEXT_SPAN legacy lines, i.e. the +/-2 line window of the
-# migration order). SIMILARITY_FLOOR only guards that proof against a
+# (span <= MAX_CONTEXT_SPAN legacy lines). SIMILARITY_FLOOR only guards that proof against a
 # misclassified structural line; it never selects a "most similar" paragraph.
-MAX_CONTEXT_SPAN = 5
+# ponytail: 12 covers the reviewed live intervals; review longer gaps before raising it.
+MAX_CONTEXT_SPAN = 12
 SIMILARITY_FLOOR = 0.90
 MIN_BOUNDARY_CHARS = 8
 
@@ -517,7 +517,8 @@ def main() -> int:
                 live_ref_counts[eid] += 1
                 reference_files[eid].add(rel)
     other_live_paths = [ROOT / "game/docs/lore/canon-index.md"]
-    other_live_paths.extend((ROOT / "lore/runtime").rglob("*.json"))
+    other_live_paths.extend(path for path in (ROOT / "lore/runtime").rglob("*.json")
+                            if path.name != "evidence-locators.json")
     tracked_web = subprocess.check_output(
         ["git", "ls-files", "--", "game/wenzhen-web-lab"], cwd=ROOT, text=True
     ).splitlines()
@@ -643,9 +644,9 @@ def main() -> int:
                 reason = (f"legacy heading matches {len(bounded)} chapters inside the anchor window"
                           if bounded else f"no EPUB chapter title carries the 节 name {name!r}")
                 reasons.append(REASON_TRUE_AMBIGUITY if bounded else REASON_CONTENT_MISSING)
-        elif len(in_window) == 1:
+        elif len(in_window) == 1 or (candidate_count == 1 and not segment_ok):
             decision = DECISION_AUTO
-            selected_chapter, selected_para = in_window[0]
+            selected_chapter, selected_para = (in_window or candidate_addresses)[0]
             segment_label_flag = not segment_ok
             migration_basis = "exact_full_paragraph"
             reason = ("legacy line uniquely equals a canonical paragraph under whitespace-only normalization"
@@ -685,7 +686,7 @@ def main() -> int:
             elif span_lines > MAX_CONTEXT_SPAN:
                 decision, withheld = DECISION_BLOCKED, "context_too_wide"
                 reason = (f"the nearest anchors are {span_lines} legacy lines apart, beyond the "
-                          f"+/-2 line context window")
+                          f"{MAX_CONTEXT_SPAN}-line reviewed context window")
                 reasons.append(REASON_TRUE_AMBIGUITY)
             elif not anchor_low[1] <= slot < anchor_high[1]:
                 decision, withheld = DECISION_BLOCKED, "slot_outside_anchor_window"

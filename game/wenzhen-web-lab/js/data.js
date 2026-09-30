@@ -7324,8 +7324,8 @@ const DATA = {
     }
   ],
   "canon": {
-    "contentVersion": "80274607aa7af89c759df208104c2d46cc76c8131b9d558e31a344ceba31b21f",
-    "sourceSha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
+    "contentVersion": "59f7e5207dfd26e89ccbe2d8a1610a37fff5b3ae6e167c6793462c11d2971757",
+    "sourceSha256": "9f6952f85b566c3e707915542a2dda8a5d454d03be994b4039d5aa98dd421a22",
     "entities": {
       "bear_strength_gu": {
         "name": "熊力蛊",
@@ -8888,5 +8888,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "08cac0fefa0f133982224f57dbc6af11b74b14dbef7ff675ec0fd1b01c9a4d8b"
+  "contentVersion": "97a44f660b217d1b7f13e8865f81316961687b1f99c6532a8fb7169409afd505"
 };

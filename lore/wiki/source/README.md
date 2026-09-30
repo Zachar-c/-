@@ -4,8 +4,9 @@
 
 ## 主要原文
 
-- 仓库根 `蛊真人-clean.txt`：**legacy evidence recovery source**（旧版 TXT）。runtime manifest 仍绑定其 SHA-256，但按 2026-09-29 裁决它**不再作为文本真值**，只用于证据恢复与版本差异对照。`source/蛊真人-clean.txt` 是同一旧源的 LF 副本，行号相同但文件哈希不同。
-- `source/蛊真人-epub-canon.txt`：EPUB 派生 **Canonical Source**（2026-09-29 用户裁决「EPUB 升为 Canon」）；Canon pointer 的正式切换冻结至 `blocked = 0`，迁移尚未开始。
+- 仓库根 `蛊真人-clean.txt`：**legacy evidence recovery source**（旧版 TXT），只用于旧 E-ID、行号回查与版本差异对照。`source/蛊真人-clean.txt` 是同一旧源的 LF 副本，行号相同但文件哈希不同。
+- `source/蛊真人-epub-canon.txt`：EPUB 派生 **Canonical Source**。2026-09-30 按用户要求接入 Wiki runtime；旧 E-ID 不改号，已核验定位接入生成的 `lore/runtime/evidence-locators.json`，未决定位保持空值，不伪称对应新段落。全量待审项仍由 #13 跟踪。
+- `source/蛊真人 -- 蛊真人 -- ( WeLib.org ).epub`：**Canon 源原件**（WeLib 版，12,504,156 字节，SHA-256 `be1c357f7f0131adb2d14be76130614c919cf8eb3364aa673cbf49513160d972`），与 `epub-canonical-build-manifest.json` 的 `epub_sha256` 一致；本地留存、不入库（`source/` 整目录被 `.gitignore` 排除，仅派生 canon 例外）。2026-09-30 已对原件直接确认：一段·第七十七节「阴差阳错」在 spine 与 `toc.ncx` 中均不存在（第七十六节 → 第七十八节），「幽影虫」全书 0 次——属**源侧已知缺节**，非提取失败。
 - `source/《人祖传》.txt`：世界内典籍，GB18030 编码。
 
 ## EPUB 迁移验证产物

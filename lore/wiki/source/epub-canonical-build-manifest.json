@@ -24,12 +24,12 @@
   "spine_items": 2367,
   "legacy_map_eid_count": 4880,
   "live_unique_eid_count": 6515,
-  "live_reference_count": 22802,
+  "live_reference_count": 22667,
   "live_files_count": 138,
-  "eids_auto_verified": 6322,
+  "eids_auto_verified": 6405,
   "eids_human_approved": 0,
-  "eids_blocked": 193,
-  "eids_human_review_required": 193,
+  "eids_blocked": 110,
+  "eids_human_review_required": 110,
   "baseline_blocker_total": 801,
   "baseline_blocker_partition": {
     "heading_anchor": 105,
@@ -41,20 +41,18 @@
   "baseline_auto_total": 5714,
   "baseline_auto_withheld_ambiguous_region": 1,
   "migration_basis_counts": {
-    "": 193,
-    "exact_full_paragraph": 5783,
+    "": 110,
+    "exact_full_paragraph": 5804,
     "heading_locator": 101,
-    "positional_alignment": 438
+    "positional_alignment": 500
   },
   "blocked_by_withheld_reason": {
     "ambiguous_region": 5,
     "blank_or_out_of_range": 21,
-    "context_too_wide": 62,
     "heading_unresolved": 3,
     "multiple_candidates": 2,
     "positional_text_divergence": 8,
-    "segment_alignment": 76,
-    "slot_outside_anchor_window": 16
+    "segment_alignment": 71
   },
   "legacy_variance_by_kind": {
     "heading": 101,
@@ -63,17 +61,17 @@
     "no_counterpart": 10,
     "orthographic_variant": 49,
     "paragraph_boundary": 44,
-    "punctuation": 305,
-    "wording": 148
+    "punctuation": 312,
+    "wording": 141
   },
   "secondary_reason_counts": {
-    "content_divergence": 152,
+    "content_divergence": 145,
     "legacy_content_missing": 33,
     "legacy_redaction": 27,
     "legacy_typo": 49,
-    "paragraph_segmentation_difference": 122,
-    "punctuation_variant": 305,
-    "true_ambiguity": 69
+    "paragraph_segmentation_difference": 101,
+    "punctuation_variant": 312,
+    "true_ambiguity": 7
   },
   "backbone_anchor_count": 186936,
   "backbone_dropped_legacy_lines": 28295,
@@ -113,7 +111,7 @@
     "ambiguous_region"
   ],
   "context_alignment": {
-    "max_context_span_lines": 5,
+    "max_context_span_lines": 12,
     "similarity_floor": 0.9,
     "min_boundary_chars": 8,
     "legacy_markup_fold": "〖〗 removed",

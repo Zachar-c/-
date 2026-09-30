@@ -4,6 +4,24 @@
 
 ## 未发布
 
+### 2026-09-30（Wiki 知识缺口分批 B1–B7）
+
+- 按盲测失败点补条件因果与检索入口：常极右试验（Q03/Q04）、疯魔窟审讯（Q11/Q12）、光阴长河避侦查/避年兽（Q09/Q10）、血狂蛊→千里地狼蛛失控与被迫骑乘（Q01）、古月博十绝体误认（Q02）、商乖离/柴火熊战死拆分（Q07）、白凝冰与黑楼兰战力对照（Q08）、暗渡「忽略」vs 星雾掩「模糊」。
+- 纠正三处归因：307 次痛晕≠死亡；古月博「识破」改为条件句误认（后文证伪）；盲测 Q07 混误两场相邻战死。
+- 只读 Wiki 复验 10/10 可答；`check.ps1` 九项全绿（21122 E-ID）。分批方案见 `ai-system/tasks/2026-09-30-wiki-knowledge-gap-batches.md`。跟踪 [GitHub #6](https://github.com/Zachar-c/-/issues/6)。全库 IA 迁移仍不批准。
+
+### 2026-09-30（星雾掩 Wiki 复核）
+
+- 在星念蛊页补齐星雾掩用途、初版与改良版区别、角色筹资陈述、改良缘由及改良版防御/持续条件；本主题局部新旧原文对照未发现语义差异。
+- 视觉页、杀招名录与相关事件页增加机制页导航；事件因果与历史锚保持原样。
+
+### 2026-09-30（EPUB 正文接入）
+
+- Wiki runtime 改用 [EPUB 规范正文](source/蛊真人-epub-canon.txt)标识与哈希，保留旧 E-ID 和行号；生成 [EPUB 定位表](lore/runtime/evidence-locators.json)，未决项定位留空。
+- 口径 v4（`context_window` 5→12，只扩大搜索范围、不降低唯一定位判据）经 L1 追认；live 6,515 个 E-ID = 6,405 `auto_verified` + 15 `human_approved` + 95 `blocked`；runtime 使用 1,997 个 = 1,979 + 15 + **3 未决**（`unresolved_evidence_count = 3`）。
+- 已知源缺口：一段·第七十七节「阴差阳错」、六段·第六百七十七节在原 EPUB 的 spine 与目录中即不存在（原件 SHA-256 `be1c357f…`，与 `epub_sha256` 一致），相关锚点只保留旧行号回查，不建旧 TXT 回退。
+- 单点修复 2 页（`soul-atk-5-01-gu.md`、`heaven-atk-5-07-gu.md`）；全链门禁 G0/G1/canon_pack 通过。剩余 95 条 live `blocked` 由 [GitHub #13](https://github.com/Zachar-c/-/issues/13) 跟踪；Godot GUT 145 项为既有失败，不在本次范围。
+
 ### 2026-09-28（GitHub Issues 状态对账）
 
 - 将明确仍有效的 WOPT-06/07/08、Phase 8 L1 阻塞、当前 GAME_GENERATION_READY 链、Wiki/Runtime/Rank 模型债务与 v1_battle Godot 迁移登记到 GitHub；相应 TODO、债务行和旧计划补上 issue 链接。已完成、跳过或仅待新裁决的历史记录未批量建单。现有 Web 临时 Markdown 孤儿对应 [GitHub #1](https://github.com/Zachar-c/-/issues/1)。

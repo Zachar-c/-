@@ -245,3 +245,32 @@ EPUB 是文本真值，旧 TXT 只是证据恢复源。因此一条 E-ID 之所�
 - **blocked（193）清零以前：不切 Canon、不开始正式 locator migration、不拿旧的 4,594 结论作为依据。**
 - v3 仍**不满足**进入 shadow compile 的条件：`auto_verified + human_approved = 6,322 ≠ 6,515`，且 `blocked = 193 ≠ 0`。
 - 新增 Wiki 生产保持冻结。
+
+## 11. 口径 v4 追认与封账（2026-09-30，L1 裁决）
+
+§10 记录的是 v3 快照。本节记录 v3 之后的**已裁决变更**；§10.2 表格中的 `MAX_CONTEXT_SPAN` 由 5 改为 **12（accepted）**，其余判据不变。
+
+| 项 | 决定 | 说明 |
+|---|---|---|
+| `context_window` | 5 → **12，accepted** | **只扩大候选搜索范围，不降低「唯一定位 + 验证」标准**：位置证明仍要求闭区间 prose↔段落 1:1 双射，`SIMILARITY_FLOOR` 仍只作证明护栏、不参与选段 |
+| 段号越界放行 | accepted | 段号标签越界但候选唯一时按 `exact_full_paragraph` 放行；该批 21 条旧行与 canon 段落逐字相同（相似度 1.0000） |
+| 人工复核 | 台账内 `human_approved`，走既有保留路径 | 15 条；`verify_epub_migration.py:783-803` 在旧源/旧行/新源/段落四哈希一致且复核三字段非空时保留人工结论 |
+| 旧源缺节 | **known source gap**，不换版本、不建 fallback | 一段·第七十七节「阴差阳错」、六段·第六百七十七节在原 EPUB 的 spine 与 `toc.ncx` 中均不存在；「幽影虫」全书 0 次。已对原件（SHA-256 `be1c357f…`，与 `epub_sha256` 一致）直接确认 |
+| 页面级换锚 | 2 页 | `soul-atk-5-01-gu.md`（`E:V5-286670` → `E:V5-258000` 等 4 条已定位锚点）、`heaven-atk-5-07-gu.md`（`E:V5-289108/289398` → `E:V5-288976/289268`，未扩 heading 机制） |
+
+### 11.1 最终数字（live 6,515 / runtime 1,997）
+
+| 口径 | live E-ID（6,515） | runtime 使用的 E-ID（1,997） |
+|---|---|---|
+| `auto_verified` | 6,405 | 1,979 |
+| `human_approved` | 15 | 15 |
+| `blocked` | **95** | **3** |
+
+`manifest.unresolved_evidence_count = 3`，三条均为一段·第七十七节所缺内容（`E:V1-012144`、`E:V1-012146`、`E:V1-012150`），定位留空、不伪称已映射。
+
+### 11.2 封账状态
+
+- 全链门禁：`check.ps1` ALL CHECKS PASSED（21,097 个 E-ID）、`docs-lint` FAIL 0 / WARN 0、`canon_pack.test.mjs` 9/9、`build_data.mjs` 重建后 `js/data.js` 仅 2 行哈希变化。
+- `game/tools/check.ps1`（Godot GUT）145 failing 为**既有失败**（地图/战斗/UI 单测），Godot 侧不读取 `lore/runtime` 或定位表，与本次切源无关，本轮不修；对应 [GitHub #10](https://github.com/Zachar-c/-/issues/10)。
+- 未新增 fallback、schema、迁移门禁或长期机制；§10.6 的「blocked 清零前不切 Canon」约束由本节裁决取代（当前口径下指针切换已获授权）。
+- 审阅材料与逐条证据见 [`2026-09-30-epub-canon-l1-review-pack.md`](2026-09-30-epub-canon-l1-review-pack.md)。

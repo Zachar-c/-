@@ -124,5 +124,5 @@
 
 ## 本地-only 位置（不进入 Git）
 
-- `source/`：本地共享原始资料位置，被根 `.gitignore` 的 `/source/` 规则排除；完整原文只保留在这里。
+- `source/`：原始资料位置；`source/蛊真人-epub-canon.txt` 是允许入库的 EPUB 正文真源，其余原文仍按根 `AGENTS.md` 保持本地不入库。
 - `**/.git-nested-backup/`、`**/.worktrees/`：本地恢复材料，被根规则排除，不进入 Monorepo。

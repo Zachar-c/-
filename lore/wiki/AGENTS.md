@@ -2,6 +2,8 @@
 
 本目录是《蛊真人》的 AI 可读蒸馏层，按 LLM Wiki 方法论运作：源文档只读，本目录是持续重构的编译层，读时综合。**ingest 是对既有页面的 refactor，不是追加摘要**；新资料进入时重写受影响的实体页、事件页并显式标记冲突。编辑前先读 `index.md` 和相关分类的 `index.md`。仓库级文档治理与 G0 全仓门禁见 `docs/DOCUMENTATION_GOVERNANCE.md`；本目录 `tools/check.ps1` 仍是内容门禁（G1）。
 
+2026-09-30 来源切换：正文以 `source/蛊真人-epub-canon.txt` 为准。存量 `E:V…` 和 `蛊真人-clean.txt:行号` 是旧源历史锚；新定位查 `lore/runtime/evidence-locators.json`，其中 `blocked` 项不得当作已映射。以下旧源示例和旧段号校验仅用于保留既有 Wiki 资产，不代表旧 TXT 仍是正文真值。
+
 Wiki 的目标是压缩 AI 理解原文的上下文成本：AI 平时优先读 Wiki，遇到缺口、冲突或高风险细节再回查原文；Wiki 的价值是减少 AI 重读原文并加速《问真》的剧情、系统、美术和关卡生产，不为知识治理本身继续增加规则。
 
 ## 分层模型

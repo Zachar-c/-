@@ -11,16 +11,16 @@
 3. 页面没有回答问题时，用 `rg` 回查现有原文和读书笔记。
 4. 确认后的结论写回对应 Wiki 页面，并保留章节或行号来源。
 
-原文来源状态与 EPUB 迁移验收材料见 [`source/README.md`](source/README.md)。在迁移门禁完成前，旧 `蛊真人-clean.txt` 仍是当前 Canonical Novel Source。
+原文来源状态与 EPUB 迁移验收材料见 [`source/README.md`](source/README.md)。现以 `source/蛊真人-epub-canon.txt` 为正文真源；旧 E-ID 和行号保留作历史回查。全量 E-ID 定位及未决状态见 `lore/wiki/source/eid-migration-decisions.tsv`，运行时使用的子集见 `lore/runtime/evidence-locators.json`；旧裸行号可查 `lore/wiki/source/old-line-to-epub-map.tsv`。当前接入状态、待 L1 裁决的口径项（迁移窗口放宽、pack 状态行白名单、正文站点残留）与产物同步缺陷见 [`2026-09-30-epub-canon-l1-review-pack.md`](2026-09-30-epub-canon-l1-review-pack.md)。
 
 ```powershell
-rg -n "关键词" "source\蛊真人-clean.txt"
+rg -n "关键词" "source\蛊真人-epub-canon.txt"
 rg -n "关键词" "game\分支：六卷精编版\读书笔记"
 ```
 
 ## 来源优先级
 
-1. `source/蛊真人-clean.txt`
+1. `source/蛊真人-epub-canon.txt`
 2. `source/《人祖传》.txt`
 3. `game/docs/lore/canon-index.md`
 4. 现有读书笔记和记忆库

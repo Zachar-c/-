@@ -1,14 +1,21 @@
 {
   "manifest_version": 1,
-  "generated_at": "2026-09-29T02:48:13Z",
+  "generated_at": "2026-09-30T04:50:42Z",
   "compiler": "lore/wiki/tools/compile_runtime.py",
   "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
   "source": {
-    "id": "gu_zhenren_clean",
+    "id": "gu_zhenren_epub",
+    "path": "source/蛊真人-epub-canon.txt",
+    "sha256": "9f6952f85b566c3e707915542a2dda8a5d454d03be994b4039d5aa98dd421a22",
+    "lines": 219942
+  },
+  "legacy_evidence_source": {
     "path": "蛊真人-clean.txt",
     "sha256": "bf78d41427e28bb8b64f1ad6d93b971d1a77458abf273e554aabe7f27a155d34",
     "lines": 437060
   },
+  "evidence_locators": "lore/runtime/evidence-locators.json",
+  "unresolved_evidence_count": 3,
   "scope": {
     "canon_index": "game/docs/lore/canon-index.md（全部 CAN-*）",
     "roster": "lore/wiki/gu/roster-3.md（六个 id 分段；「转数未核」仅蛊名无 id，跳过）",
@@ -110,5 +117,5 @@
   },
   "coverage_notes": "rank 覆盖 169/270（转数未核 109 只仅有蛊名无 id，未编译）；实体状态行 825 条（来自实体页状态时间线，随实体与 pack 编译）；rank 取 roster-3「原文转」口径；游戏生效值（gu.json.rank）属 Game Projection 不在本层。",
   "rule": "Wiki = Source of Truth；本目录全部为生成物，重跑编译器完全重建，不人工维护。",
-  "content_version": "80274607aa7af89c759df208104c2d46cc76c8131b9d558e31a344ceba31b21f"
+  "content_version": "59f7e5207dfd26e89ccbe2d8a1610a37fff5b3ae6e167c6793462c11d2971757"
 }

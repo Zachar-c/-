@@ -15,13 +15,13 @@
 - 按 `docs/CHANGE_CONTROL_PROTOCOL_v1.0.md` 执行变更控制。核心体验、核心系统、阶段范围或开发平台变更须由 L0（用户）批准；新想法不得直接进入代码，在途任务按协议继续。
 - L2（Codex）不得自行改变核心玩法、产品方向或阶段目标。产品意图与重大取舍上报 L0；数值、架构判定及多方向建模上报 L1（ChatGPT）；仓库内可验证的问题由 L2 处理。
 - 设计类任务遵循固定顺序：原文取证 → 核验并蒸馏到 Wiki → L1 评审原著到游戏的改造 → 计划 → Worker 实施。前 3 步未完成，不得实施依赖该结论的工作。
-- 原文依据从根目录 `蛊真人-clean.txt` 取证（带行号，单条引文不超过 60 字）；不得把 `game/data/` 直接当作原著证据。Wiki 事实须可追溯，分析须与事实区分，“待核对”不得当作原著事实。
+- 原文依据从 `source/蛊真人-epub-canon.txt` 取证（带章节/段落定位，单条引文不超过 60 字）；旧 `蛊真人-clean.txt` 行号仅供历史证据回查。不得把 `game/data/` 直接当作原著证据。Wiki 事实须可追溯，分析须与事实区分，“待核对”不得当作原著事实。
 
 ## 执行入口与范围
 
 - 文档卫生与治理流程见 `docs/DOCUMENTATION_GOVERNANCE.md`；触碰 Markdown 后运行 `node tools/docs-lint.mjs`，触碰 Wiki 时另跑对应内容门禁 `lore/wiki/tools/check.ps1` 或 `game/docs/wiki/lint.mjs`。
 - 涉及 AI 规划、Worker 或模型选择时，先读 `ai-system/AGENTS.md`、`ai-system/WORKER_PROTOCOL.md`、`ai-system/config/common.json`、`ai-system/config/model-rules.json`。具体角色流程、任务包和结果格式以这几份文件为准，本文件不重复维护模板。
-- 禁止把 `source/`、完整原始小说或《人祖传》全文提交到 Git；仅在本地 `source/` 保留原文。**例外（2026-09-29 用户裁决）：EPUB 派生规范全文 `source/蛊真人-epub-canon.txt` 允许入库推送**，作为新 Canonical Novel Source 候选；其余原文底稿仍一律不入库。
+- 禁止把 `source/`、完整原始小说或《人祖传》全文提交到 Git；仅在本地 `source/` 保留原文。**例外（2026-09-29 用户裁决，2026-09-30 接入）：EPUB 派生规范全文 `source/蛊真人-epub-canon.txt` 允许入库推送**，作为当前 Canonical Novel Source；其余原文底稿仍一律不入库。
 - 不擅自改产品逻辑、数据数值、游戏契约或 Wiki 语义。Wiki 按 `lore/wiki/AGENTS.md` 编辑。
 - Worker 默认不 commit、merge 或 push；推送须在验收通过并经用户确认后进行。阶段验收后独立提交。
 - 不运行 `git reset --hard`，不强制覆盖未核对内容。递归移动或删除前，解析并验证目标绝对路径。
@@ -57,6 +57,7 @@
 ## 数据与安全边界
 
 - 不把 `source/`、完整原始小说或《人祖传》全文提交到 Git；本地原始资料只用于必要回查。**例外（2026-09-29 用户裁决）：`source/蛊真人-epub-canon.txt`（EPUB 派生规范全文）允许入库推送。**
+- L0 提供的 Canon/source 原件第一次拿到即落盘到 `source/`（本地不入库），当场记录文件名 + SHA-256 并回报路径与哈希；后续 Agent 不得重复要求 L0 上传，除非已确认项目目录、附件目录与历史可访问位置确实都不存在。
 - 不覆盖用户未提交的改动，不使用 `git reset --hard`、强制检出或未经核对的递归删除/移动。
 - 不提交密钥、缓存、构建产物、嵌套仓库或本地工作树。
 - 不改变产品逻辑、数据数值、游戏契约或 Wiki 语义，除非任务明确且上游决定已生效。

@@ -21,6 +21,7 @@
 | 文件 | 内容 |
 |---|---|
 | `manifest.json` | 编译元数据：原文 sha256/行数、编译范围、计数、coverage、content_version |
+| `evidence-locators.json` | 旧 E-ID 到 EPUB 段落的已核验定位；未决项的定位为 `null`，旧行号保留 |
 | `entities.json` | Entity[]：gu 实体（id 与 `game/data/gu.json` 同键空间），rank 取 roster-3「原文转」口径 + rank_status |
 | `rules.json` | Rule[]：CAN-*（canon-index 全部）+ REF-*（炼蛊）+ KM-*（杀招）+ PE-*（真元，生成 ID） |
 | `relations.json` | Relation[]：supports / refinement（合炼 n-ary） |
@@ -30,5 +31,5 @@
 
 - 本层**不含任何游戏数值**（damage/cost/drop_rate 等被编译器禁入字段扫描拒绝）；游戏数值与改编属 Game Projection（`game/data/*` + ADP-*）。
 - 所有事实可追溯：`evidence`（E-ID → 原文行号）、`provenance`（wiki 页 / ST 行 / CAN 条目）。
-- 原文 `蛊真人-clean.txt` hash 变化或缺失时编译器拒绝输出，E-ID 不会静默指向新原文。
+- EPUB 正文与迁移清单的 hash 必须匹配；旧 `蛊真人-clean.txt` 仍用于旧 E-ID 和行号校验。未决 E-ID 不会静默指向 EPUB 段落。
 - `rank` 是 Canon 口径（原文转数）；游戏生效值（如 rank_cap 压缩到 5）是 Game Projection，对照 `rank_status` 理解分叉。

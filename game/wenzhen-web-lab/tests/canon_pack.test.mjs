@@ -12,6 +12,7 @@ const pack = readJson('../../../lore/runtime/packs/south_border_rank1_combat.jso
 const manifest = readJson('../../../lore/runtime/manifest.json');
 const canon = readJson('../../../lore/runtime/entities.json');
 const canonRules = readJson('../../../lore/runtime/rules.json');
+const locators = readJson('../../../lore/runtime/evidence-locators.json');
 
 // Stage 1 战斗场景定义（与 js/balance.js 的 MVP 组合、js/main.js READY.owned 对应）。
 const SCENE_GU = ['moonlight_gu', 'small_light_gu', 'moon_glow_gu', 'white_boar_strength_gu'];
@@ -26,6 +27,18 @@ const SCENE_RULES = [
 test('pack is bound to the compiled runtime source', () => {
   assert.equal(pack.source.sha256, manifest.source.sha256);
   assert.equal(pack.source.lines, manifest.source.lines);
+});
+
+test('legacy evidence retains only verified EPUB locators', () => {
+  assert.equal(manifest.source.id, 'gu_zhenren_epub');
+  assert.equal(Object.values(locators).filter((x) => x.decision === 'blocked').length,
+    manifest.unresolved_evidence_count);
+  for (const entry of Object.values(locators)) {
+    assert.equal(Boolean(entry.epub_locator), entry.decision !== 'blocked');
+  }
+  for (const entity of canon.entities) {
+    for (const id of entity.evidence) assert.ok(locators[id], id);
+  }
 });
 
 test('scene gu are present with canon rank and status', () => {

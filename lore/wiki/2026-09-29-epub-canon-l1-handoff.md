@@ -79,3 +79,7 @@
 旧 §2/§5 是 `c841d522` 迁移快照及当时提出的候选，不代表当前完整 Live E-ID 集；“4,594 精确即可批量迁移”的前提已被独立 verifier 证伪。现执行顺序改为：固定并复现派生文本 → 从当前活动 Wiki/runtime/Web 重提取 Live E-ID → 重建逐项决策及页覆盖账本 → 处理人工阻断 → shadow compile → regression 与 rollback drill → 最后才考虑 Canon/index pointer 切换。E-ID 保留为历史 Evidence ID；不能因 locator 更新而删除旧 ID。
 
 复核事实与机器产物见关联迁移报告 §9 及 §10 及 [`source/README.md`](source/README.md)。口径 **v3（C2 消歧，2026-09-29）** 结果（6,515 个 Live E-ID）：**6,322 `auto_verified`（较 v1 基线 +609）、0 `human_approved`、193 `blocked`**；`blocked` 全部标记 `human_review_required`。runtime 恢复 80 页中 40 页仍含阻断项（v2 计 58、v1 计 75），最近 40 页中 20 页（v2 计 36、v1 计 40）。旧口径「801 = 真正 blocker」已作废；801/802 的差异原因是互斥残差与非互斥谓词计数混加（详见报告 §10.3）。正式切源尚未执行；**blocked 清零前不切 Canon、不做正式 locator migration**。进入 shadow compile 的条件仍为 `auto_verified + human_approved = 6,515` 且 `blocked = 0`，当前均未满足。
+
+## 9. 2026-09-30 接手会话补记：切源已接入，四项口径待 L1 裁决
+
+L0 于 2026-09-30 要求把 EPUB 正文接入 Wiki runtime，接入改动在工作区未提交状态（HEAD 仍为 `4b739c45`）。复核发现接入同时带来四项未裁决变更：迁移窗口 `MAX_CONTEXT_SPAN` 5→12、段号越界按唯一候选放行、pack 状态行硬编码白名单（84→15）、EPUB 正文站点残留；另有 runtime 产物早于迁移台账 24 分钟导致 22 条 E-ID 状态不一致。全部证据、复现命令与逐条问题见 [`2026-09-30-epub-canon-l1-review-pack.md`](2026-09-30-epub-canon-l1-review-pack.md)。本节不改写 §8 的 v3 结论——§8 描述的是已归档口径，工作区台账已非该口径，须待 L1 裁决后统一升版与同步。

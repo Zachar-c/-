@@ -8,13 +8,11 @@ IR 设计见 docs/design/canon-runtime/2026-09-25-p1-ir.md；审计见同目录 
 
 诚实边界：
 - 本脚本只做结构化搬运与校验，不产生任何新设定；statement/证据均取自 wiki 行原文。
-- Relation 的结构（from/to/inputs/output）在 RELATION_SOURCES 配置中显式声明并锚定到
-  具体 ST-/CAN- 行；行文本缺失或措辞漂移导致解析失败时编译报错退出（强迫人工复核），
-  不静默产出。自由文本关系挖掘是后续里程碑。
-- E-ID 只做「段号↔行号区间」校验（与 check.ps1 check9 同款），不做行内容比对；
-  原文身份由 manifest.source.sha256 保护——原文缺失或 hash 变化时拒绝编译。
-- 原文蛊真人-clean.txt 不入 Git。查找顺序：仓库根 → （在 .worktrees/* 内时）主检出根。
-  也可用 --source 显式指定。
+- Relation 结构由 RELATION_SOURCES 显式声明；其三个 ST 依赖的页面、陈述、证据 ID、
+  Canon 引用有经审阅的字段指纹，变化或状态行缺失均要求人工复核，不做语义解析。
+- 旧 E-ID 仍以旧版行号校验；EPUB 定位取已核验的迁移清单，blocked 留空。
+- EPUB 正文和迁移清单哈希必须一致；旧版蛊真人-clean.txt 仅在本地存在时核对。
+  旧源查找顺序：仓库根 → （在 .worktrees/* 内时）主检出根；也可用 --source 指定。
 - 「转数未核」段只有蛊名无 id，本版跳过并在 manifest 登记 coverage；
   转数一律取 roster-3「原文转」（Canon 口径），游戏生效值属 Game Projection，不进 runtime。
 - IR v0.2（P1 月光切片批）：实体页「状态时间线」（ST-*）随实体编译为 states[]，
@@ -23,6 +21,7 @@ IR 设计见 docs/design/canon-runtime/2026-09-25-p1-ir.md；审计见同目录 
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import re
@@ -37,6 +36,11 @@ CANON_INDEX = REPO / "game" / "docs" / "lore" / "canon-index.md"
 SECTION_INDEX = WIKI / "source" / "section-index.md"
 
 SOURCE_NAME = "蛊真人-clean.txt"
+EPUB_SOURCE = REPO / "source" / "蛊真人-epub-canon.txt"
+EPUB_MANIFEST = WIKI / "source" / "epub-canonical-build-manifest.json"
+EPUB_DECISIONS = WIKI / "source" / "eid-migration-decisions.tsv"
+EPUB_PARAGRAPHS = WIKI / "source" / "chapter-paragraph-index.tsv"
+OLD_LINE_MAP = WIKI / "source" / "old-line-to-epub-map.tsv"
 EID_RE = re.compile(r"E:V([1-6])-(\d{5,6})")
 CANREF_RE = re.compile(r"CAN-[A-Z0-9]+(?:-[A-Z0-9]+)*")
 
@@ -73,6 +77,13 @@ RELATION_SOURCES = [
     },
 ]
 
+# Reviewed page/statement/evidence/canon_refs payloads; update only after human review.
+RELATION_ST_SHA256 = {
+    "ST-SMALLLIGHT-04": "5eabb8a4ffa9c5460f848f9298bfbc542f0678c6ae28710891b75c6a75207979",
+    "ST-MOONLIGHT-06": "af9e7e8de4e76ebedbbbd15db478318be0ece80904ae084121b6754fe5268b05",
+    "ST-SMALLLIGHT-06": "e4e00e5bdc6a5a94b15bbc700df5b16945bc5b23ed84e0470821244151837a38",
+}
+
 # —— Context Pack 配置（P4；实体用 roster-3 id，规则按 domain / 显式 id 选装）——
 PACKS = {
     "south_border_rank1_combat": {
@@ -82,6 +93,10 @@ PACKS = {
                      "bear_strength_gu", "moon_ray_gu", "bone_atk_1_08_gu", "wood_atk_1_05_gu",
                      # GEN-4 批：canon 有据非装载蛊入包（硬气/自己蛊）
                      "qi_atk_1_01_gu", "human_atk_1_01_gu"],
+        "state_ids": ["ST-MOONLIGHT-03", "ST-MOONLIGHT-04", "ST-MOONLIGHT-05",
+                      "ST-BEARSTR-01", "ST-BEARSTR-02", "ST-MOONRAY-01", "ST-MOONRAY-02",
+                      "ST-BONE-01", "ST-BONE-02", "ST-WOODGUV-01", "ST-WOODGUV-02",
+                      "ST-HARDQI-01", "ST-HARDQI-02", "ST-SELF-01", "ST-SELF-02"],
         "rule_domains": ["cultivation", "aptitude", "true-qi", "nanjiang", "gu-care",
                          "small-light", "rank-ladder", "beast-tier", "beast-tide"],
         "rule_ids": ["REF-001", "REF-002", "REF-004", "REF-005", "REF-008", "KM-001", "KM-002", "KM-003"],
@@ -118,7 +133,43 @@ def sha256_of(path: Path) -> str:
     return h.hexdigest()
 
 
-def find_source(explicit: str | None) -> Path:
+def load_epub_locators(eids: list[str]) -> dict[str, dict]:
+    build = json.loads(EPUB_MANIFEST.read_text(encoding="utf-8"))
+    logical_hash = hashlib.sha256(EPUB_SOURCE.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+    if logical_hash != build["canonical_logical_sha256_lf"]:
+        fail("EPUB 规范源与迁移清单的 SHA-256 不一致")
+    paragraph_hash = hashlib.sha256(EPUB_PARAGRAPHS.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+    if paragraph_hash != build["chapter_paragraph_index_sha256_lf"]:
+        fail("EPUB 段落索引与迁移清单的 SHA-256 不一致")
+    with EPUB_PARAGRAPHS.open(encoding="utf-8", newline="") as f:
+        paragraphs = {(r["chapter_id"], r["paragraph_id"]): r["paragraph_sha256"]
+                      for r in csv.DictReader(f, delimiter="\t")}
+    with EPUB_DECISIONS.open(encoding="utf-8", newline="") as f:
+        rows = {r["eid"]: r for r in csv.DictReader(f, delimiter="\t") if r["scope"] == "live"}
+    missing = sorted(set(eids) - rows.keys())
+    if missing:
+        fail(f"迁移清单缺少现用 E-ID：{missing[:10]}（共 {len(missing)} 个）")
+    result = {}
+    for eid in sorted(set(eids)):
+        row = rows[eid]
+        if row["new_source_sha256_lf"] != logical_hash:
+            fail(f"迁移清单来源哈希不一致：{eid}")
+        if row["old_source_sha256"] != build["old_source_sha256"]:
+            fail(f"迁移清单旧源哈希不一致：{eid}")
+        decision = row["decision"]
+        if decision not in ("auto_verified", "human_approved", "blocked"):
+            fail(f"E-ID 决策异常：{eid}={decision}")
+        locator = row["canonical_locator"] if decision != "blocked" else None
+        if locator and row["selected_locator_kind"] == "para":
+            key = (row["selected_chapter_id"], row["selected_paragraph_id"])
+            if paragraphs.get(key) != row["paragraph_sha256"]:
+                fail(f"EPUB 定位与段落索引不一致：{eid}")
+        result[eid] = {"epub_locator": locator, "decision": decision,
+                       "legacy_line": int(row["old_line"]), "legacy_volume": int(row["old_vol"])}
+    return result
+
+
+def find_source(explicit: str | None) -> Path | None:
     if explicit:
         p = Path(explicit)
         if not p.is_file():
@@ -130,8 +181,7 @@ def find_source(explicit: str | None) -> Path:
     for p in candidates:
         if p.is_file():
             return p
-    fail(f"未找到原文 {SOURCE_NAME}（候选：{', '.join(str(c) for c in candidates)}）；"
-         f"E-ID 无原文可校验，拒绝编译。")
+    return None
 
 
 # ---------- 通用解析 ----------
@@ -461,11 +511,16 @@ def compile_relations(name_to_id: dict[str, str], st_index: dict[str, dict]) -> 
     relations = []
     seen: set[str] = set()
     for cfg in RELATION_SOURCES:
-        if cfg.get("dedupe_of"):
-            continue  # 同一事实的第二处 ST 行仅作交叉确认（存在性已在 st_index 校验），不重复产出
         st = st_index.get(cfg["st_id"])
         if st is None:
             fail(f"Relation 配置引用的状态行不存在：{cfg['st_id']}（{cfg['source_page']}）")
+        payload = {key: st[key] for key in ("page", "statement", "evidence", "canon_refs")}
+        digest = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True,
+                                           separators=(",", ":")).encode("utf-8")).hexdigest()
+        if digest != RELATION_ST_SHA256[cfg["st_id"]]:
+            fail(f"Relation 依赖状态行已变化：{cfg['st_id']}（{cfg['source_page']}）；需人工复核并更新 RELATION_ST_SHA256")
+        if cfg.get("dedupe_of"):
+            continue  # 交叉确认行通过同一审阅守卫后不重复产出
         rel: dict = {
             "id": cfg["id"],
             "relation": cfg["relation"],
@@ -510,7 +565,12 @@ def build_packs(entities: list[dict], rules: list[dict], relations: list[dict],
         missing = [eid for eid in cfg["entities"] if eid not in by_id]
         if missing:
             fail(f"Pack {pid} 引用不存在的实体：{missing}")
-        pack_entities = [by_id[eid] for eid in cfg["entities"]]
+        selected_states = set(cfg.get("state_ids", []))
+        pack_entities = [{**by_id[eid], "states": [s for s in by_id[eid].get("states", [])
+                                             if s["id"] in selected_states]}
+                         for eid in cfg["entities"]] if selected_states else [by_id[eid] for eid in cfg["entities"]]
+        if selected_states and selected_states != {s["id"] for e in pack_entities for s in e["states"]}:
+            fail(f"Pack {pid} 请求的状态行未编译出来：{sorted(selected_states - {s['id'] for e in pack_entities for s in e['states']})}")
         excluded = set(cfg.get("rule_exclude_ids", []))
         pack_rules = [r for r in rules
                       if r["id"] not in excluded
@@ -566,18 +626,22 @@ def write_json(path: Path, data) -> bytes:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--source", help="显式指定蛊真人-clean.txt 路径（默认自动查找）")
+    ap.add_argument("--source", help="显式指定旧版蛊真人-clean.txt 回查路径（默认自动查找）")
     args = ap.parse_args()
 
-    src = find_source(args.source)
-    digest = sha256_of(src)
-    lines = len(src.read_text(encoding="utf-8").splitlines())
-    source_info = {"id": "gu_zhenren_clean", "path": str(src), "sha256": digest,
-                   "lines": lines}
-    print(f"[compile_runtime] 原文：{src}")
-    print(f"[compile_runtime] sha256={digest[:16]}… 行数={lines}")
-
+    build = json.loads(EPUB_MANIFEST.read_text(encoding="utf-8"))
     ranges = load_segment_ranges()
+    src = find_source(args.source)
+    digest = sha256_of(src) if src else build["old_source_sha256"]
+    if digest != build["old_source_sha256"]:
+        fail("旧版回查源与迁移清单的 SHA-256 不一致")
+    lines = (len(src.read_text(encoding="utf-8").splitlines()) if src else
+             max(int(row.split("\t", 1)[0]) for row in OLD_LINE_MAP.read_text(encoding="utf-8").splitlines()))
+    source_info = {"id": "gu_zhenren_epub", "path": "source/蛊真人-epub-canon.txt",
+                   "sha256": build["canonical_logical_sha256_lf"],
+                   "lines": build["physical_line_count_lf"]}
+    print(f"[compile_runtime] EPUB 原文：{EPUB_SOURCE}；旧行号回查源：{src or '迁移清单'}")
+
     canon_rules = compile_canon_rules()
     entities, name_to_id, unverified = compile_roster_entities()
     merged_pages = merge_entity_pages(entities)
@@ -600,6 +664,7 @@ def main() -> None:
     eid_errors = validate_eids(all_eids, ranges)
     if eid_errors:
         fail("E-ID 校验失败：\n  " + "\n  ".join(eid_errors))
+    locators = load_epub_locators(all_eids)
 
     # CAN 原始行号引用不超过原文总行数
     line_errors = []
@@ -646,6 +711,10 @@ def main() -> None:
         "compiler": "lore/wiki/tools/compile_runtime.py",
         "ir_spec": "docs/design/canon-runtime/2026-09-25-p1-ir.md",
         "source": source_info,
+        "legacy_evidence_source": {"path": str(src.relative_to(REPO)) if src and src.is_relative_to(REPO) else SOURCE_NAME,
+                                   "sha256": digest, "lines": lines},
+        "evidence_locators": "lore/runtime/evidence-locators.json",
+        "unresolved_evidence_count": sum(r["decision"] == "blocked" for r in locators.values()),
         "scope": {
             "canon_index": "game/docs/lore/canon-index.md（全部 CAN-*）",
             "roster": "lore/wiki/gu/roster-3.md（六个 id 分段；「转数未核」仅蛊名无 id，跳过）",
@@ -663,6 +732,7 @@ def main() -> None:
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     blobs = [
+        write_json(OUT_DIR / "evidence-locators.json", locators),
         write_json(OUT_DIR / "entities.json", {"entities": entities}),
         write_json(OUT_DIR / "rules.json", {"rules": rules}),
         write_json(OUT_DIR / "relations.json", {"relations": relations}),
