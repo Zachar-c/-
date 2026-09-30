@@ -2,10 +2,12 @@
 type: world
 name: 偷道
 aliases: [偷道流派, theft path]
-description: 偷道流派：盗天魔尊开创、一直非主流；无相手/神不知/鬼不觉与大盗鬼手、房家偷道仙蛊屋
-date: 2026-09-28
+description: 偷道流派：盗天魔尊开创、一直非主流；无相手/神不知/鬼不觉与大盗鬼手、房家偷道仙蛊屋；盗天真传入口钥匙
+date: 2026-09-30
 tags: [world, path, theft, thief-heaven]
-sources: ["source:source/蛊真人-clean.txt"]
+sources:
+  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 
@@ -20,6 +22,7 @@ schema: 2
 - 道属辨析："鬼不觉虽是有鬼之名，却是偷道杀招"（与魂道杀招鬼官衣互斥）`蛊真人-clean.txt:271588` `[对话|已核]`（说话人：方源自语）。
 - 创派过程：房家仙蛊屋催出的仙道杀招正是盗天魔尊当年用来开创流派的杀招——偷道；该杀招可令宝月绿洲的天然道痕显形、尽数投入偷道仙蛊屋；盗天魔尊创出这一招后厚积薄发引出质变，正式创建偷道流派 `蛊真人-clean.txt:329650` `[对话|已核]`（说话人：房睇长）、`329654`、`329664` `[叙事|已核]`；房家凭偷道仙蛊屋与杀招偷道迅速改善战局 `蛊真人-clean.txt:329692` `[叙事|已核]`。
 - 方源自创仙道杀招"大盗鬼手"，以九转杀招鬼不觉为核心、七转大盗仙蛊等为辅助 `蛊真人-clean.txt:285494` `[对话|已核]`（说话人：方源）；以之偷取定仙游仙蛊 `蛊真人-clean.txt:325824`–`325826` `[叙事|已核]`（325826 说话人：方源）。
+- **盗天真传入口钥匙（2026-09-30 补录）**：落魄谷一带的盗天布置须五转[开门蛊](../gu/open-door-gu.md)进入、五转[关门蛊](../gu/close-door-gu.md)（异写闭门蛊）封闭甬道；继承真传的关键唯「天外之魔」身份，故线索广撒、钥匙易得（`source:蛊真人-epub-canon.txt` EPUB `chapter_0518` `para_035`–`para_036`、`chapter_0998` `para_059`、`para_077`）`[叙事|已核]`。落魄谷二探的验证序列（关门→开门→可逆确认）与大同风忌惮／退路见[义天山大战](../events/yitian-mountain.md) EVT-YIT-036。
 
 ## 分析与解读
 
@@ -31,4 +34,4 @@ schema: 2
 - 房家偷道杀招的完整机制（329428–329665 段）未逐段核验；大盗鬼手的完整蛊虫构成未建档。
 - 偷道在盗天魔尊与房家、方源之外的修行者实例未收集。
 
-关联页面：[流派总表](path-roster.md)、[智道](wisdom-path.md)（反推算对位）、[杀招连招并招体系](../rules/killer-moves.md)、[全书主要人物总表](../characters/roster.md)（盗天魔尊、房睇长）。
+关联页面：[流派总表](path-roster.md)、[智道](wisdom-path.md)（反推算对位）、[杀招连招并招体系](../rules/killer-moves.md)、[全书主要人物总表](../characters/roster.md)（盗天魔尊、房睇长）、[开门蛊](../gu/open-door-gu.md)、[关门蛊](../gu/close-door-gu.md)。

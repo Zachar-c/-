@@ -143,6 +143,7 @@
 
 ### 特殊（命运·规则·人道·奇蛊）
 
+- [开门蛊](open-door-gu.md) / [关门蛊](close-door-gu.md)——五转盗天遗留钥匙对，开闭落魄谷／盗天真传光门（关门蛊异写闭门蛊）。
 - [春秋蝉](spring-autumn-cicada-gu.md)——时光道奇蛊，献祭全部只留意识，逆光阴长河重生。
 - [宿命蛊](fate-gu.md)——九转天道仙蛊，天庭秩序的规则接口。
 - [命运蛊](heaven-atk-5-02-gu.md)——以宿命蛊为材合练的**目标态**仙蛊方，尚非既成品。
@@ -320,7 +321,7 @@
 
 ### 五转凡蛊
 
-- [血滴子](blood-droplet-gu.md)、[奴隶蛊](slave-atk-5-01-gu.md)（五转珍稀档）、[星念蛊](light-rec-5-12-gu.md)（五转凡蛊为一次性，亦有六转仙蛊形态）。
+- [血滴子](blood-droplet-gu.md)、[奴隶蛊](slave-atk-5-01-gu.md)（五转珍稀档）、[星念蛊](light-rec-5-12-gu.md)（五转凡蛊为一次性，亦有六转仙蛊形态）、[开门蛊](open-door-gu.md) / [关门蛊](close-door-gu.md)（盗天遗留钥匙对，关门蛊异写闭门蛊）。
 
 ### 仙蛊（六转及以上）
 
@@ -359,6 +360,7 @@
 - [血滴子](blood-droplet-gu.md) / [血神子](blood-atk-5-09-gu.md)——血道战力线。
 - [天机蛊](heaven-atk-5-06-gu.md)——弧五预测核心，反噬与升炼贯穿后期。
 - [坚持仙蛊](persistence-gu.md)——「万我」骨架。
+- [开门蛊／关门蛊](open-door-gu.md)——盗天真传钥匙对，弧八继承鬼不觉的可逆验证与退路保底。
 - [悔蛊](human-atk-5-34-gu.md)——红莲传承与悔池。
 - [石窍蛊](earth-def-3-01-gu.md)——走投无路者的代价型代表，折射凡蛊师困境。
 
@@ -388,6 +390,7 @@
 - [爱别离](blood-farewell-gu.md)——毒蛊代价叙事。
 - [血气蛊](blood-atk-3-03-gu.md)——同名双写待核样本。
 - [海誓蛊](human-atk-5-31-gu.md) / [山盟蛊](human-def-1-32-gu.md)——盟誓社会功能。
+- [开门蛊](open-door-gu.md) / [关门蛊](close-door-gu.md)——成对钥匙、可逆确认与退路封口的机制样本。
 - [自己蛊](human-atk-1-01-gu.md)——《人祖传》寓言入口。
 
 ## 相关阅读路径

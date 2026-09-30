@@ -58,6 +58,7 @@
 | 北原 | [王庭之争](royal-court.md)、[真阳楼崩塌](true-yang-collapse.md)、[逆流河](reverse-flow-river.md)（大雪山/琅琊）、[疯魔窟终局](feng-mo-ku.md)（北方疯魔窟） |
 | 中洲 | [中洲炼蛊大会](central-plain-refinement-conference.md)、[僵盟潜伏与梦境三层](zangmeng-ambush.md)（方源入中洲）、[宿命大战](fate-war.md)（帝君城/天庭）、[天庭入侵琅琊福地](langya-blessed-land-invasion.md) |
 | 光阴长河与跨五域 | [石莲岛与红莲真传争夺](stone-lotus-island-contest.md)、[宿命大战](fate-war.md)（五域大战/五域合一）、[疯魔窟终局](feng-mo-ku.md)（事实浮冰） |
+| 东海 | [疯魔窟终局](feng-mo-ku.md)（鲛人王庭胁迫与两天联盟成立、夏家厄难、东海正气盟）、[宿命大战](fate-war.md)（龙宫线） |
 
 ### 按主题速查
 
