@@ -4,8 +4,8 @@ param(
     [string]$TaskFile,
     [ValidateSet('domestic', 'overseas')]
     [string]$Body = 'overseas',
-    [ValidateSet('hunyuan4', 'deepseekV41')]
-    [string]$ModelSlot = 'deepseekV41',
+    [ValidateSet('deepseekV32Volc', 'glm51', 'kimiK25', 'minimaxM27')]
+    [string]$ModelSlot = 'deepseekV32Volc',
     [switch]$AutoApprove,
     [string]$CliPath = '',
     [switch]$DryRun
@@ -16,7 +16,7 @@ $ErrorActionPreference = 'Stop'
 $systemRoot = $PSScriptRoot
 $repoRoot = Split-Path -Parent $systemRoot
 $commonPath = Join-Path $systemRoot 'config\common.json'
-$common = Get-Content -Raw -LiteralPath $commonPath | ConvertFrom-Json
+$common = Get-Content -Raw -Encoding UTF8 -LiteralPath $commonPath | ConvertFrom-Json
 $bodyConfig = $common.workerBodies.PSObject.Properties[$Body].Value
 $modelConfig = $bodyConfig.models.PSObject.Properties[$ModelSlot].Value
 if ($null -eq $bodyConfig -or $null -eq $modelConfig) {
@@ -55,13 +55,13 @@ $taskBody
 --- END TASK ---
 "@
 
-$args = @($cliPath, '--print', '--output-format', 'json', '--model', [string]$modelConfig.selector)
+$cliArgs = @($cliPath, '--print', '--output-format', 'json', '--model', [string]$modelConfig.selector)
 if ($AutoApprove) {
-    $args += @('--permission-mode', 'auto')
+    $cliArgs += @('--permission-mode', 'auto')
 } else {
-    $args += @('--permission-mode', 'acceptEdits')
+    $cliArgs += @('--permission-mode', 'acceptEdits')
 }
-$args += $workerPrompt
+$cliArgs += $workerPrompt
 
 if ($DryRun) {
     Write-Output 'mode=dry-run'
@@ -78,8 +78,32 @@ if ($DryRun) {
 
 Push-Location $repoRoot
 try {
-    & node @args
-    exit $LASTEXITCODE
+    $cliOutput = @(& node @cliArgs 2>&1 | ForEach-Object { $_.ToString() })
+    $code = $LASTEXITCODE
+    $cliOutput | ForEach-Object { Write-Output $_ }
+
+    # WorkBuddy CLI can print auth errors and still exit 0. Do not trust exit code alone.
+    # Keep markers specific so task text mentioning "quota"/"Error" cannot false-FAIL.
+    $joined = $cliOutput -join [Environment]::NewLine
+    if ($code -eq 0 -and (
+            $joined -match 'Authentication required\. Please use /login' -or
+            $joined -match 'Invalid API key' -or
+            $joined -match 'Unauthorized\.? ' -or
+            $joined -match 'token expired' -or
+            $joined -match '"is_error"\s*:\s*true')) {
+        Write-Output 'L3_WORKBUDDY_RESULT=FAIL reason=auth-or-quota'
+        exit 1
+    }
+    if ($code -eq 0 -and [string]::IsNullOrWhiteSpace($joined)) {
+        Write-Output 'L3_WORKBUDDY_RESULT=FAIL reason=empty-output'
+        exit 1
+    }
+    if ($code -eq 0) {
+        Write-Output 'L3_WORKBUDDY_RESULT=PASS'
+    } else {
+        Write-Output ('L3_WORKBUDDY_RESULT=FAIL reason=exit-code:{0}' -f $code)
+    }
+    exit $code
 } finally {
     Pop-Location
 }

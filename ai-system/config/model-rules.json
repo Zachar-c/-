@@ -1,85 +1,133 @@
 {
   "schemaVersion": 2,
-  "lastVerified": "2026-09-19",
-  "scope": "Only the four configured WorkBuddy model slots are eligible.",
+  "lastVerified": "2026-09-30",
+  "scope": "Configured local MiMoCode and WorkBuddy model slots only.",
   "selection": {
     "mode": "static-fallback-chain",
-    "input": "normal-or-hard",
+    "input": "cheap-or-normal-or-hard",
     "skipUnavailable": true,
     "fixedPoolLast": true,
     "noSilentFallback": true,
     "performanceOrderingIsManual": true
   },
   "chains": {
+    "cheap": [
+      "local/mimo-v2.6-flash",
+      "local/mimo-v2.5",
+      "domestic/deepseekV32Volc",
+      "domestic/glm51",
+      "overseas/deepseekV32Volc"
+    ],
     "normal": [
-      "overseas/deepseekV41",
-      "domestic/hunyuan4",
-      "overseas/hunyuan4",
-      "domestic/deepseekV41"
+      "local/mimo-v2.6-pro",
+      "domestic/deepseekV32Volc",
+      "domestic/glm51",
+      "domestic/kimiK25",
+      "overseas/deepseekV32Volc"
     ],
     "hard": [
-      "overseas/hunyuan4",
-      "domestic/hunyuan4",
-      "overseas/deepseekV41",
-      "domestic/deepseekV41"
+      "domestic/glm51",
+      "domestic/kimiK25",
+      "domestic/minimaxM27",
+      "domestic/deepseekV32Volc"
     ]
   },
   "candidates": {
-    "overseas/deepseekV41": {
+    "local/mimo-v2.6-flash": {
       "enabled": true,
-      "workerBody": "overseas",
-      "modelSlot": "deepseekV41",
-      "selector": "Deepseek-V4.1-Flash",
-      "quotaClass": "daily-reset",
+      "workerBody": "mimocode",
+      "modelSlot": "mimo-v2.6-flash",
+      "selector": "xiaomi/mimo-v2.6-flash",
+      "runner": "run-mimocode-worker.ps1",
+      "quotaClass": "local-quota",
       "availability": "always",
-      "costPolicy": "free-quota",
+      "costPolicy": "free-local-quota",
       "fallbackToNext": true,
-      "source": [
-        "https://deepseek.com/news/deepseek-v4-1-flash/",
-        "https://api-docs.deepseek.com/quick_start/pricing/"
-      ]
+      "source": ["mimo models (local CLI)", "config/common.json localL3Worker"]
     },
-    "domestic/hunyuan4": {
+    "local/mimo-v2.5": {
+      "enabled": true,
+      "workerBody": "mimocode",
+      "modelSlot": "mimo-v2.5",
+      "selector": "xiaomi/mimo-v2.5",
+      "runner": "run-mimocode-worker.ps1",
+      "quotaClass": "local-quota",
+      "availability": "always",
+      "costPolicy": "free-local-quota",
+      "fallbackToNext": true,
+      "source": ["mimo models (local CLI)", "config/common.json localL3Worker"]
+    },
+    "local/mimo-v2.6-pro": {
+      "enabled": true,
+      "workerBody": "mimocode",
+      "modelSlot": "mimo-v2.6-pro",
+      "selector": "xiaomi/mimo-v2.6-pro",
+      "runner": "run-mimocode-worker.ps1",
+      "quotaClass": "local-quota",
+      "availability": "always",
+      "costPolicy": "free-local-quota",
+      "fallbackToNext": true,
+      "source": ["mimo models (local CLI)", "config/common.json localL3Worker"]
+    },
+    "domestic/deepseekV32Volc": {
       "enabled": true,
       "workerBody": "domestic",
-      "modelSlot": "hunyuan4",
-      "selector": "Hy4 preview",
-      "quotaClass": "daily-reset",
-      "availability": "23:00-08:00-Asia/Shanghai",
-      "costPolicy": "free-during-window",
-      "fallbackToNext": true,
-      "source": [
-        "https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model",
-        "https://github.com/Tencent-Hunyuan/Hy4-preview"
-      ]
-    },
-    "overseas/hunyuan4": {
-      "enabled": true,
-      "workerBody": "overseas",
-      "modelSlot": "hunyuan4",
-      "selector": "Hy4 preview",
-      "quotaClass": "daily-reset",
+      "modelSlot": "deepseekV32Volc",
+      "selector": "deepseek-v3-2-volc",
+      "runner": "run-workbuddy-cli-worker.ps1",
+      "quotaClass": "package-quota",
       "availability": "always",
-      "costPolicy": "free-quota",
+      "costPolicy": "package-quota",
       "fallbackToNext": true,
-      "source": [
-        "https://github.com/Tencent-Hunyuan/Hy4-preview",
-        "https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model"
-      ]
+      "source": ["codebuddy --help model list (2026-09-30)"]
     },
-    "domestic/deepseekV41": {
+    "domestic/glm51": {
       "enabled": true,
       "workerBody": "domestic",
-      "modelSlot": "deepseekV41",
-      "selector": "Deepseek-V4.1-Flash",
-      "quotaClass": "fixed-pool",
+      "modelSlot": "glm51",
+      "selector": "glm-5.1",
+      "runner": "run-workbuddy-cli-worker.ps1",
+      "quotaClass": "package-quota",
       "availability": "always",
-      "costPolicy": "exclusive-discount-0.03x",
+      "costPolicy": "package-quota",
       "fallbackToNext": true,
-      "source": [
-        "https://www.workbuddy.cn/pricing/",
-        "https://api-docs.deepseek.com/quick_start/pricing/"
-      ]
+      "source": ["codebuddy --help model list (2026-09-30)"]
+    },
+    "domestic/kimiK25": {
+      "enabled": true,
+      "workerBody": "domestic",
+      "modelSlot": "kimiK25",
+      "selector": "kimi-k2.5",
+      "runner": "run-workbuddy-cli-worker.ps1",
+      "quotaClass": "package-quota",
+      "availability": "always",
+      "costPolicy": "package-quota",
+      "fallbackToNext": true,
+      "source": ["codebuddy --help model list (2026-09-30)"]
+    },
+    "domestic/minimaxM27": {
+      "enabled": true,
+      "workerBody": "domestic",
+      "modelSlot": "minimaxM27",
+      "selector": "minimax-m2.7",
+      "runner": "run-workbuddy-cli-worker.ps1",
+      "quotaClass": "package-quota",
+      "availability": "always",
+      "costPolicy": "package-quota",
+      "fallbackToNext": true,
+      "source": ["codebuddy --help model list (2026-09-30)"]
+    },
+    "overseas/deepseekV32Volc": {
+      "enabled": true,
+      "workerBody": "overseas",
+      "modelSlot": "deepseekV32Volc",
+      "selector": "deepseek-v3-2-volc",
+      "runner": "run-workbuddy-cli-worker.ps1",
+      "quotaClass": "package-quota",
+      "availability": "always",
+      "costPolicy": "package-quota",
+      "fallbackToNext": true,
+      "source": ["codebuddy --help model list (2026-09-30)"]
     }
   }
 }

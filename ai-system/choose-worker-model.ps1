@@ -1,16 +1,17 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('normal', 'hard')]
+    [ValidateSet('cheap', 'normal', 'hard')]
     [string]$WorkerClass = 'normal',
     [switch]$OverseasReady,
     [switch]$DomesticReady,
+    [switch]$MimoReady,
     [string[]]$ExcludeCandidate = @(),
     [datetime]$Now = (Get-Date)
 )
 
 $ErrorActionPreference = 'Stop'
 $policyPath = Join-Path $PSScriptRoot 'config\model-rules.json'
-$policy = Get-Content -Raw -LiteralPath $policyPath | ConvertFrom-Json
+$policy = Get-Content -Raw -Encoding UTF8 -LiteralPath $policyPath | ConvertFrom-Json
 $route = $policy.chains.PSObject.Properties[$WorkerClass].Value
 if ($null -eq $route) {
     throw "Unknown worker class: $WorkerClass"
@@ -40,7 +41,8 @@ foreach ($candidateId in @($route)) {
     }
 
     $bodyReady = ($candidate.workerBody -eq 'domestic' -and $DomesticReady) -or
-        ($candidate.workerBody -eq 'overseas' -and $OverseasReady)
+        ($candidate.workerBody -eq 'overseas' -and $OverseasReady) -or
+        ($candidate.workerBody -eq 'mimocode' -and $MimoReady)
     if (-not $bodyReady) {
         $skipped += [pscustomobject]@{ candidate = $candidateId; reason = 'worker-body-not-ready' }
         continue

@@ -11,11 +11,23 @@ WorkBuddy 适配器已完成请求体构造和提交逻辑，首次真实任务�
 ## 当前关系
 
 ```text
+L0 用户
+  ↓
+L1 ChatGPT / Sol（判断、设计、裁决）
+  ↓
+L2 Codex（仓库理解、任务拆解、验收）
+  ↓
+L3 廉价 / 免费模型（DeepSeek / GLM / Qwen / MiMo / WorkBuddy）
+  ↓
+写代码 / 搜索 / 扫描 / 跑测试 / 批处理
+```
+
+```text
 Codex / gpt-5.6-luna（默认，可替换）
         |
         v
 OpenCode + Muse Spark 1.3（默认，可替换）
-        |
+        |  低价值任务可改为 run-l3-worker.ps1 自动下发到 L3 链
         v
 当前仓库工作区
 ```
@@ -118,11 +130,11 @@ pwsh -File ai-system/run-worker.ps1 -Profile home -TaskFile path/to/task.md
 pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass normal -DomesticReady -OverseasReady
 pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass hard -DomesticReady -OverseasReady
 
-# 规则输出 domestic/deepseekV41 后再执行；国内 DeepSeek 为 0.03 倍优惠
-pwsh -File ai-system/run-workbuddy-cli-worker.ps1 -Body domestic -ModelSlot deepseekV41 -TaskFile path/to/task.md -AutoApprove
+# 规则输出 domestic/deepseekV32Volc 后再执行
+pwsh -File ai-system/run-workbuddy-cli-worker.ps1 -Body domestic -ModelSlot deepseekV32Volc -TaskFile path/to/task.md -AutoApprove
 
-# 23:00–08:00 规则会把复杂任务优先选到国内 Hy4 preview
-pwsh -File ai-system/run-workbuddy-cli-worker.ps1 -Body domestic -ModelSlot hunyuan4 -TaskFile path/to/task.md -AutoApprove
+# 也可指定 glm-5.1 / kimi-k2.5 / minimax-m2.7
+pwsh -File ai-system/run-workbuddy-cli-worker.ps1 -Body domestic -ModelSlot glm51 -TaskFile path/to/task.md -AutoApprove
 
 # WorkBuddy Worker Body：任务文件会作为 POST /openapi/v2/tasks 的 prompt
 $env:WORKBUDDY_ACCESS_TOKEN = '<local-only-token>'
@@ -136,7 +148,7 @@ pwsh -File ai-system/run-workbuddy-worker.ps1 -TaskFile path/to/task.md -Title '
 ```powershell
 pwsh -File ai-system/run-workbuddy-cli-worker.ps1 `
   -CliPath "$env:LOCALAPPDATA\Programs\WorkBuddyAI\resources\app.asar.unpacked\cli\bin\codebuddy" `
-  -Body overseas -ModelSlot deepseekV41 -TaskFile path/to/task.md -AutoApprove
+  -Body overseas -ModelSlot deepseekV32Volc -TaskFile path/to/task.md -AutoApprove
 ```
 
 如果本机没有 OpenCode CLI，Bootstrap 会报告缺失；不会把桌面端、其他模型或其他 Provider 静默当成替代品。需要替代时，只从已配置且已验证的候选中选择。
@@ -146,42 +158,87 @@ WorkBuddy CLI 复用本机登录态和免费额度，不把凭据写入仓库。
 模型规则选择：
 
 ```powershell
+# cheap: 低价值任务（扫文档、批处理、只读检查）
+pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass cheap -MimoReady -OverseasReady -DomesticReady
+
 # normal: 日常代码、审查、批处理
-pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass normal -OverseasReady -DomesticReady
+pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass normal -MimoReady -OverseasReady -DomesticReady
 
 # hard: 复杂代码、Godot 核心改动、架构任务
 pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass hard -OverseasReady -DomesticReady
 
 # 某个候选本次任务失败后，显式排除它并取下一个
-pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass hard -OverseasReady -DomesticReady -ExcludeCandidate overseas/hunyuan4
+pwsh -File ai-system/choose-worker-model.ps1 -WorkerClass cheap -MimoReady -ExcludeCandidate 'local/mimo-v2.6-flash'
 ```
 
-当前只维护两条静态链：
+当前维护三条静态链（模型 ID 以 `codebuddy --help` / `mimo models` 实机返回为准，2026-09-30）：
 
 ```text
+cheap:
+  local MiMoCode xiaomi/mimo-v2.6-flash
+  → local MiMoCode xiaomi/mimo-v2.5
+  → domestic WorkBuddy deepseek-v3-2-volc
+  → domestic WorkBuddy glm-5.1
+  → overseas WorkBuddyAI deepseek-v3-2-volc
+
 normal:
-  overseas DeepSeek daily
-  → domestic Hy4 night-free
-  → overseas Hy4 daily
-  → domestic DeepSeek fixed-pool
+  local MiMoCode xiaomi/mimo-v2.6-pro
+  → domestic WorkBuddy deepseek-v3-2-volc
+  → domestic WorkBuddy glm-5.1
+  → domestic WorkBuddy kimi-k2.5
+  → overseas WorkBuddyAI deepseek-v3-2-volc
 
 hard:
-  overseas Hy4 daily
-  → domestic Hy4 night-free
-  → overseas DeepSeek daily
-  → domestic DeepSeek fixed-pool
+  domestic WorkBuddy glm-5.1
+  → domestic WorkBuddy kimi-k2.5
+  → domestic WorkBuddy minimax-m2.7
+  → domestic WorkBuddy deepseek-v3-2-volc
 ```
 
 选择器只做三件事：读取链、跳过未启用/未登录/不在时间窗口内的候选、输出 primary 和剩余 fallbackChain。它不维护性能分数、余额状态、健康评分或自动学习。模型失败、额度错误和重试由调用方/Worker 执行层处理；不静默切换到链外模型。
+
+### L3 自动下发
+
+层级为 L0 用户 → L1 ChatGPT → L2 Codex → L3 廉价模型。Codex 把边界清晰的低价值任务包（`tasks/*.md`）自动下发给 L3，不需要人工复制提示词。
+
+```text
+L2 Codex / MiMoCode（当前替位）
+        |
+        v
+run-l3-worker.ps1  →  choose-worker-model.ps1 静态链
+        |
+        +-- run-mimocode-worker.ps1   (local/mimo-*)
+        +-- run-workbuddy-cli-worker.ps1  (WorkBuddy / WorkBuddyAI)
+        |
+        v
+失败 → 自动 Exclude → 下一个候选 → 全失败则 finalStatus=all-candidates-failed
+```
+
+这不是 Router / Provider 平台，只是 `choose-worker-model.ps1` 已预留的 caller 回退循环。`mimo run` 与 WorkBuddy CLI 在 API/登录失败时都可能仍返回退出码 0，runner 必须解析 JSONL / stderr 成功判据，不能只看 exit code。
+
+注意：`xiaomi/*` 经 CLI/llm-server 返回的 402 `Insufficient account balance` 是 MiMo **反代防御**的伪装错误，不是真欠费；桌面官方客户端（`mimo-desktop`）可正常对话。CLI 无法使用桌面 provider，故本地 MiMo L3 在官方通道外记为 `anti-proxy-blocked` 并自动换候选。
+
+```powershell
+# DryRun：只输出会选中的候选与 fallback 链
+pwsh -File ai-system/run-l3-worker.ps1 -TaskFile ai-system/tasks/l3-smoke-task.md -WorkerClass cheap -DryRun
+
+# 真实下发：失败自动 Exclude 并沿 cheap 链回退
+pwsh -File ai-system/run-l3-worker.ps1 -TaskFile ai-system/tasks/l3-smoke-task.md -WorkerClass cheap
+
+# 只跑本地 MiMoCode 候选
+pwsh -File ai-system/run-mimocode-worker.ps1 -TaskFile ai-system/tasks/l3-smoke-task.md -ModelSlot mimo-v2.6-flash -AutoApprove
+```
 
 ## 当前接入状态
 
 | 入口 | 状态 | 说明 |
 |---|---|---|
-| 国内 WorkBuddy | CLI 已接通 | `Hy4 preview` 夜间免费；`Deepseek-V4.1-Flash` 低价优惠；两者均有额度限制 |
-| 海外 WorkBuddyAI | GUI 模型已确认，CLI 待认证 | `Hy4 preview`、`Deepseek-V4.1-Flash` 均显示免费，但 CLI 当前返回 401；GUI 登录态尚未共享给 CLI |
-| WorkBuddy CLI 冒烟 | 已完成 | 已验证返回 `BRIDGE_READY`，本次成本为 0 |
-| WorkBuddy Worker Body API | 适配器已完成 | 需要访问令牌和云端绑定工作区 |
+| 国内 WorkBuddy CLI | 待 `/login` | CLI 可执行；模型列表为 `deepseek-v3-2-volc` / `glm-5.1` / `kimi-k2.5` / `minimax-m2.7` 等；当前报 `Authentication required`，需 TUI `/login` |
+| 海外 WorkBuddyAI | CLI 未安装 | 本机仅有 WorkBuddy 国内；海外路径待安装后再验 |
+| WorkBuddy Worker Body API | 适配器已完成 | 需要 `WORKBUDDY_ACCESS_TOKEN` 和云端绑定工作区 |
+| MiMoCode CLI (`mimo run`) | anti-proxy-blocked | `xiaomi/*` 经 CLI/llm-server 返回 402 伪装「余额不足」，属反代防御；桌面 `mimo-desktop` 可用但 CLI 无法调用 |
+| MiMoCode 桌面官方客户端 | 可用 | 仅人工/桌面会话；不作为无人值守 L3 执行器 |
+| L3 自动下发 `run-l3-worker.ps1` | 管道已验证 | 已实测：候选失败 → Exclude → 换下一个 → 全失败报告；端到端出活取决于上游登录/通道 |
 | OpenCode + Muse Spark 1.3 / Wiki | VERIFIED | 已有长期 Wiki Batch 生产记录 |
 | OpenCode + Muse Spark 1.3 / Godot | PARTIALLY VERIFIED | #001/#002 两个受控任务完成；可用于低风险任务，但仍需 Codex 审查 |
 | 豆包标准版 / doubao2api | BLOCKED | 运行时已安装；桌面端登录态不能直接复用为网页 Cookie，尚未形成可调用 Worker |

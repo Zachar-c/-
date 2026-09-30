@@ -15,28 +15,40 @@
     "freeQuota": true,
     "cloudAlternative": "workbuddy-worker-body",
     "defaultBody": "overseas",
-    "defaultModelSlot": "deepseekV41"
+    "defaultModelSlot": "deepseekV32Volc"
   },
   "workerBodies": {
     "domestic": {
       "product": "WorkBuddy",
       "region": "国内",
       "models": {
-        "hunyuan4": {
-          "label": "混元四",
-          "selector": "Hy4 preview",
-          "availability": "free-23:00-08:00-Asia/Shanghai",
-          "quotaLimited": true,
-          "costPolicy": "free-during-window",
-          "costMultiplier": 0.29
-        },
-        "deepseekV41": {
-          "label": "DeepSeek V4.1",
-          "selector": "Deepseek-V4.1-Flash",
+        "deepseekV32Volc": {
+          "label": "DeepSeek V3.2",
+          "selector": "deepseek-v3-2-volc",
           "availability": "always-available",
           "quotaLimited": true,
-          "costPolicy": "exclusive-discount",
-          "costMultiplier": 0.03
+          "costPolicy": "package-quota"
+        },
+        "glm51": {
+          "label": "GLM-5.1",
+          "selector": "glm-5.1",
+          "availability": "always-available",
+          "quotaLimited": true,
+          "costPolicy": "package-quota"
+        },
+        "kimiK25": {
+          "label": "Kimi K2.5",
+          "selector": "kimi-k2.5",
+          "availability": "always-available",
+          "quotaLimited": true,
+          "costPolicy": "package-quota"
+        },
+        "minimaxM27": {
+          "label": "MiniMax M2.7",
+          "selector": "minimax-m2.7",
+          "availability": "always-available",
+          "quotaLimited": true,
+          "costPolicy": "package-quota"
         }
       }
     },
@@ -44,24 +56,46 @@
       "product": "WorkBuddyAI",
       "region": "海外",
       "models": {
-        "hunyuan4": {
-          "label": "混元四",
-          "selector": "Hy4 preview",
+        "deepseekV32Volc": {
+          "label": "DeepSeek V3.2",
+          "selector": "deepseek-v3-2-volc",
           "availability": "always-available",
           "quotaLimited": true,
-          "costPolicy": "free-now-quota",
-          "costMultiplier": 0.0
+          "costPolicy": "package-quota"
         },
-        "deepseekV41": {
-          "label": "DeepSeek V4.1",
-          "selector": "Deepseek-V4.1-Flash",
+        "glm51": {
+          "label": "GLM-5.1",
+          "selector": "glm-5.1",
           "availability": "always-available",
           "quotaLimited": true,
-          "costPolicy": "free-now-quota",
-          "costMultiplier": 0.0
+          "costPolicy": "package-quota"
         }
       }
     }
+  },
+  "localL3Worker": {
+    "surface": "mimocode-cli",
+    "command": "mimo",
+    "fallbackCommandPath": "C:\\Users\\Zachary\\.mimocode\\bin\\mimo.exe",
+    "defaultModel": "xiaomi/mimo-v2.6-flash",
+    "models": {
+      "mimo-v2.6-flash": {
+        "label": "MiMo v2.6 Flash",
+        "selector": "xiaomi/mimo-v2.6-flash",
+        "costPolicy": "free-local-quota"
+      },
+      "mimo-v2.5": {
+        "label": "MiMo v2.5",
+        "selector": "xiaomi/mimo-v2.5",
+        "costPolicy": "free-local-quota"
+      },
+      "mimo-v2.6-pro": {
+        "label": "MiMo v2.6 Pro",
+        "selector": "xiaomi/mimo-v2.6-pro",
+        "costPolicy": "free-local-quota"
+      }
+    },
+    "note": "Local cheap L3 surface for low-value tasks. Used while Codex quota is exhausted and kept as a free-tier candidate. Not a Provider Router."
   },
   "localFallbackWorker": {
     "surface": "opencode",

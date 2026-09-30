@@ -22,7 +22,7 @@ OpenCode + Muse Spark 1.3（默认，可替换）
 测试与 Review
 ```
 
-默认执行器不可用时，才查找 `config/model-rules.json` 中已配置的 WorkBuddy 候选；候选按 `normal` / `hard` 静态链执行，固定池在链尾。没有可验证候选则停止，不新增 Router 或 Provider。
+默认执行器不可用时，才查找 `config/model-rules.json` 中已配置的候选；候选按 `cheap` / `normal` / `hard` 静态链执行，固定池在链尾。低价值任务由 `run-l3-worker.ps1` 自动下发并在失败时 Exclude 换下一个候选。没有可验证候选则停止，不新增 Router 或 Provider。
 
 WorkBuddy Worker Body API 仍可用于已经绑定仓库的云端工作区；它不读取调用机器的本地绝对路径。桥接脚本只投递任务体，不伪造本地文件访问。
 
