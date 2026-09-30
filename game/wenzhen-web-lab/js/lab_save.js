@@ -26,7 +26,7 @@ globalThis.LabSave = (() => {
 
   function missingCriticalState(state) {
     if (!isPlainObject(state)) return true;
-    if (!Number.isFinite(Number(state.seed))) return true;
+    if (typeof state.seed !== 'number' || !Number.isFinite(state.seed)) return true;
     if (!isPlainObject(state.journey)) return true;
     const journey = state.journey;
     if (typeof journey.difficulty !== 'string' || !journey.difficulty) return true;
@@ -37,8 +37,8 @@ globalThis.LabSave = (() => {
     if (!Array.isArray(journey.completed)) return true;
     if (typeof journey.started !== 'boolean') return true;
     if (!isPlainObject(state.owned)) return true;
-    if (!Number.isFinite(Number(state.stones))) return true;
-    if (!Number.isFinite(Number(state.blood))) return true;
+    if (typeof state.stones !== 'number' || !Number.isFinite(state.stones)) return true;
+    if (typeof state.blood !== 'number' || !Number.isFinite(state.blood)) return true;
     if (!Array.isArray(state.shopSold)) return true;
     if (!Array.isArray(state.equipped)) return true;
     if (!Array.isArray(state.journal)) return true;
