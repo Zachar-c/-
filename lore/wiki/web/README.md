@@ -15,6 +15,8 @@ python -m http.server 8877 --bind 127.0.0.1 --directory lore\wiki\web\app\dist
 
 打开：<http://127.0.0.1:8877/>
 
+2026-10-01 起按用户要求，`app/dist/` 的静态页面、知识数据与优化图片纳入 Git。拉取仓库后可直接运行上述本地预览，无需先安装构建依赖；Wiki 正文变更后仍须重建并提交对应站点快照。此快照不自动发布到远程 ChatGPT Site。
+
 构建依赖：`pyyaml`、`beautifulsoup4`、`markdown-it-py`、`pillow`。构建后执行 `node lore/wiki/web/app/check-app.mjs`，核对分类列表与前端源/产物一致性。
 
 ## 目录
@@ -36,7 +38,7 @@ python -m http.server 8877 --bind 127.0.0.1 --directory lore\wiki\web\app\dist
 ## 边界
 
 - 站点**不承载新事实**；正文以 `lore/wiki/**.md` 与 `source/` 为准。
-- `dist/` 为生成物，可随时 `python lore\wiki\web\build_app.py` 重建。
+- `dist/` 为受版本控制的生成快照，可随时 `python lore\wiki\web\build_app.py` 重建；正文仍以 Wiki 页面为准。
 - 远程 ChatGPT Site 需单独同步；本地构建不自动发布。
 
 ## 相关

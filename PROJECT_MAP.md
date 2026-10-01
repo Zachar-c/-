@@ -37,6 +37,8 @@
 - 权威来源：父仓库 `5f3fbfc` 快照；现以 `lore/wiki/` 为准。
 - 可修改范围：按 `lore/wiki/AGENTS.md` 编辑约定增补与修订页面；事实必须可追溯到 `source/`、读书笔记、记忆库或 `canon-index:` 条目，游戏数值与改编不写入原著事实区。
 
+Wiki 网站窗口见 [lore/wiki/web/README.md](lore/wiki/web/README.md)。2026-10-01 用户要求将 `lore/wiki/web/app/dist/` 静态快照纳入 Git，包含页面、Wiki 数据与优化图片；可拉取后直接启动本地预览，正文变更后重建快照。此生成物入库例外不改变 Wiki 正文权威。
+
 ### `lore/runtime/`（2026-09-25 新增）
 
 - 用途：Canon Runtime Projection——`lore/wiki` 与 `canon-index` 经 `lore/wiki/tools/compile_runtime.py` 编译出的机器可查询投影（entities/rules/relations/packs），供《问真》引用原著口径与 Agent Context Pack 使用。

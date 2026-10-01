@@ -1,1 +1,3 @@
-dist/
+# Published local Wiki snapshot is tracked; copied tooling metadata is not.
+dist/.gitignore
+dist/check-app.mjs
