@@ -1,5 +1,7 @@
 # 个人 AI 开发环境
 
+当前Wiki交接：[2026-10-01 Wiki交接](HANDOFF-2026-10-01-wiki.md)。包含已推送状态、网站快照、撤回任务与下一批入口。
+
 Wiki 记录：[表结构裁决](RESEARCH-REQUEST-2026-09-30-wiki-table-taxonomy.md)、[站点交接](HANDOFF-2026-09-30-wiki-site-kinds.md)、[已撤回的叙事层任务包](tasks/2026-09-30-wiki-narrative-layer.md)。最后一项仅保留历史与待审产物，禁止继续执行。
 
 下一批：[既有正文归并与纠偏](tasks/2026-10-01-wiki-existing-content-refactor.md)，处理四个既有页面；手动转交Worker，不恢复逐章追加蒸馏。
