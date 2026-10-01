@@ -532,9 +532,9 @@ graph TD
 - A13 疑为录入错误的用字（原样保留）：E:V1-010792「都会像下属村庄派遣蛊师」、E:V1-011792「然而从他的后背穿射而出」、E:V1-014864「嘴中不时像外吐出舌头」，三处「像／然而」疑为「向／然后」。
 - A14 江鹤人设一致性：E:V1-010818 自称「江牙」之兄，E:V1-012312 又称江牙为「我表弟」，兄／表兄之谓前后不一。
 
-**本批新增（跨页引用同步债务，不得在本批修改）**
+**跨页引用同步记录**
 
-- 旧号 `EVT-QMS-001…015` 重排为连续 `001…114` 后，`../characters/fang-yuan.md`、`../gu/moonlight-gu.md`、`../gu/small-light-gu.md`、`../gu/spring-autumn-cicada-gu.md`、`wolf-tide.md`、`fate-war.md`、`../tools/benchmark-qms.md`、`../tools/benchmark-wtc.md`、`../log.md` 中的既有 QMS 编号引用全部失配，须由后续批次按本页《资料整理》的旧→新对照逐一同步。
+- 狼情侦察旧引用（旧 EVT-QMS-015，E:V1-004906）已同步为 EVT-QMS-039，见 [狼潮](wolf-tide.md) 与其基准题；春秋蝉显现旧引用（旧 EVT-QMS-010）已同步为 EVT-QMS-027，见 [宿命大战](fate-war.md)。人物页与月光蛊页的历史定义存在编号碰撞，须按事件锚点继续核对后再改。
 - `wolf-tide.md` 的 `EVT-WTC-001…003` 与本页 Q105／Q106／Q109 同指一段剧程（小兽潮／野猪王围猎／家军救援），两页事件的归属分工须在下次缝合时裁定。
 
 关联页面：[南疆](../world/south-jiang.md)、[狼潮](wolf-tide.md)、[兽潮](../world/beast-tide.md)、[方源](../characters/fang-yuan.md)、[白凝冰](../characters/bai-ning-bing.md)、[月光蛊](../gu/moonlight-gu.md)、[修炼体系](../world/cultivation-system.md)。
