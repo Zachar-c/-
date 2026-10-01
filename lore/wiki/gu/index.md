@@ -48,6 +48,22 @@
 | 中后期 | [坚持仙蛊](persistence-gu.md) | 「万我」杀招骨架之一 |
 | 后期 | [九转升炼蛊](refine-log-5-02-gu.md) / [悔蛊](human-atk-5-34-gu.md) | 炼道降难度 / 悔池与红莲传承核心 |
 
+### 核心机制与持有链档案
+
+这些实体档案集中维护已核身份、状态或机制；总表保留枚举与尚未迁移的历史资料，使用未迁移资料前须回查 Canon。全书尚存缺口见[完整性调查](../source/completeness-audit.md)。
+
+- [态度蛊](attitude-gu.md)。
+- [定仙游](fixed-immortal-travel-gu.md)。
+- [至尊仙胎蛊](supreme-immortal-fetus-gu.md)。
+- [万我仙蛊](myriads-self-immortal-gu.md)。
+- [胆识蛊](guts-gu.md)。
+- [年蛊](year-gu.md)。
+- [星门蛊](star-gate-gu.md)。
+- [神游蛊](divine-travel-gu.md)。
+
+- [人如故](man-as-before-gu.md) —— 师承、复活与状态边界的补录档案。
+- [江山如故](landscape-as-before-gu.md) —— 师承、复活与状态边界的补录档案。
+
 ## 总表·关系·边界
 
 查蛊先从这四页进，避免在 80 余个独立页里乱撞：

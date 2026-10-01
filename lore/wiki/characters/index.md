@@ -12,6 +12,22 @@
 
 ## 分组导航
 
+### 核心人物补录档案
+
+这些实体档案集中维护已核身份、状态或机制；总表保留枚举与尚未迁移的历史资料，使用未迁移资料前须回查 Canon。全书尚存缺口见[完整性调查](../source/completeness-audit.md)。
+
+- [凤九歌](feng-jiu-ge.md)。
+- [巨阳仙尊](ju-yang-xian-zun.md)。
+- [幽魂魔尊](you-hun-mo-zun.md)。
+- [乐土仙尊](le-tu-xian-zun.md)。
+- [古月方正](fang-zheng.md)。
+- [太白云生](tai-bai-yun-sheng.md)。
+- [商心慈](shang-xin-ci.md)。
+- [赵怜云](zhao-lian-yun.md)。
+- [凤金煌](feng-jin-huang.md)。
+- [武庸](wu-yong.md)。
+
+
 ### 查人入口（总表三件套）
 
 - [全书主要人物总表](roster.md) —— 按势力与登场弧线分组的全书人物一览，含方源马甲归一表与贯穿人物轨迹；回答「谁、属于谁、在哪段剧情、结局如何」。
@@ -27,6 +43,9 @@
 - [星宿仙尊](star-constellation.md) —— 天庭智道与合道根基：三相合一/天人感应/天工人代的适用入口。
 - [龙公](dragon-duke.md) —— 天庭方宿命大战核心战力：三气归来、龙人种族考订。
 - [元莲仙尊](yuan-lian-xian-zun.md) —— 坚持仙蛊与木道渊源：逆流河谱系相关。
+
+- [紫山真君](zi-shan-zhen-jun.md) —— 师承、复活与状态边界的补录档案。
+- [影无邪](ying-wu-xie.md) —— 师承、复活与状态边界的补录档案。
 
 ### 势力入口（人和组织的归属）
 

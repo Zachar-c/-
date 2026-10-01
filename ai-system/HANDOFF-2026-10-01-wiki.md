@@ -2,6 +2,10 @@
 
 工作区：`C:\Users\Zachary\DevEnv\06_个人项目\gu-zhenren`，分支 `master`。本交接前最新远程提交 `ed521050`。先读根 `PROJECT_MAP.md`、`lore/wiki/README.md`、`lore/wiki/AGENTS.md`；涉及Worker再读本目录协议。
 
+## 本地续批交付（2026-10-01）
+
+当前工作区为 `/home/usrs/dev/codex-test`；本文件开头的 Windows 路径与远程提交为前次交接快照。`bbc622e8` 已完成第一批，本轮续批见[任务状态](tasks/2026-10-01-wiki-existing-content-refactor.md)与[Wiki 日志](../lore/wiki/log.md)：方源长段分节、真元提纯与晋升区分、升炼证据归并、生死仙窍预期与规则页同步，以及入口目标纠偏已完成。本地网站快照随正文重建；本轮尚未提交或推送，GitHub CLI 未登录，远程事项未核对。后续从现有差异与尚存缺口继续，不按旧 READY 状态重做第一批。
+
 ## 用户目标与执行边界
 
 Wiki应减少AI处理约700万字原文的需要，支持高质量同人创作；网站是用户查看产物和其他人访问的窗口。优先解决正文质量与混乱结构，不能用目录漂亮、门禁通过或补录数量代替知识质量。
@@ -16,9 +20,9 @@ Wiki应减少AI处理约700万字原文的需要，支持高质量同人创作�
 - `ed521050`：本地网站静态快照纳入Git，含210页数据、142张优化图片。`lore/wiki/web/app/dist/`现在受版本控制，正文变化后须重建并提交快照。
 - Wiki正文真源仍为 `source/蛊真人-epub-canon.txt`。旧TXT行号、重复区、脱敏描述仅作历史回查，不代表EPUB状态；映射不自动证明事实相同。
 
-## 下一批：直接执行现有任务包
+## 续接状态（2026-10-01）
 
-使用[既有正文归并与纠偏任务包](tasks/2026-10-01-wiki-existing-content-refactor.md)，状态为已备好、尚未执行。目标四页：
+使用[既有正文归并与纠偏任务包](tasks/2026-10-01-wiki-existing-content-refactor.md)，第一批已由 `bbc622e8` 完成，不能按旧 READY 状态重跑；持续交付续批状态以任务包“当前续批”和 Wiki 日志为准。原四页范围：
 
 - `lore/wiki/characters/fang-yuan.md`
 - `lore/wiki/world/gu-care-and-refinement.md`

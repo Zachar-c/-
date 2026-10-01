@@ -350,6 +350,12 @@ def render_page(source: Path, known: set[str], game_index: dict) -> dict:
     category = source.relative_to(WIKI).parts[0] if source != WIKI / "index.md" else "home"
     title = str(meta.get("name") or re.search(r"^#\s+(.+)$", body, re.M).group(1) if re.search(r"^#\s+(.+)$", body, re.M) else source.stem)
     soup = BeautifulSoup(md.render(body), "html.parser")
+    heading_counts = Counter()
+    for heading in soup.find_all(re.compile(r"^h[1-6]$")):
+        slug = re.sub(r"[^\w\s-]", "", heading.get_text().strip().lower())
+        slug = re.sub(r"\s", "-", slug)
+        heading_counts[slug] += 1
+        heading["id"] = slug if heading_counts[slug] == 1 else f"{slug}-{heading_counts[slug] - 1}"
     for link in soup.find_all("a", href=True):
         href = link["href"]
         if href.startswith(("http:", "https:", "mailto:", "#")):
@@ -380,6 +386,8 @@ def render_page(source: Path, known: set[str], game_index: dict) -> dict:
     gap_items = len(re.findall(r"^\s*[-*]\s+", gap, re.M))
     evidence_ids = sorted(set(re.findall(r"E:V\d-\d{6}", body)))
     raw_refs = len(re.findall(r"蛊真人-clean\.txt(?::\d+|[^\n]{0,30}\d+\s*行)", body))
+    # rawRefs retains the existing projection key; it counts both legacy line and EPUB chapter locators.
+    raw_refs += len(re.findall(r"\bchapter_\d{4}\b", body))
     notes = bool(re.search(r"notes:|memory:", raw))
     inferred = len(re.findall(r"\[(?:[^\]]*\|)?推断\]|待推断|推测", body))
     unresolved = len(re.findall(r"\[(?:[^\]]*\|)?未决\]|待核对|未检得明文|原文未言", body))

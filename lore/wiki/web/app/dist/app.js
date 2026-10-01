@@ -24,6 +24,10 @@ const SHORT_CAT = { characters: '人物', gu: '蛊虫', events: '事件', world:
 const KIND_LABEL = () => db.kinds || {};
 function kindLabel(k) { return (db.kinds && db.kinds[k]) || k; }
 function pagesByKind(k) { return entryPages().filter(p => p.kind === k); }
+function classificationLink(page) {
+  const typed = Object.hasOwn(db.kinds || {}, page.kind);
+  return `<a href="#/${typed ? 'kind' : 'category'}/${esc(typed ? page.kind : page.category)}">${esc(typed ? kindLabel(page.kind) : catLabel(page.category))}</a>`;
+}
 function kindChip(page) {
   if (!page.kind) return '';
   return `<span class="chip chip-kind" data-kind="${esc(page.kind)}">${esc(kindLabel(page.kind))}</span>`;
@@ -93,14 +97,14 @@ const TAGS = {
   inferred: { label: '推导', cls: 'chip-inferred' },
   evidence: { label: '缺证据', cls: 'chip-evidence' },
   thin: { label: '信息不足', cls: 'chip-thin' },
-  ok: { label: '已核实', cls: 'chip-ok' },
+  ok: { label: '无自动警示', cls: 'chip-ok' },
 };
 const TAG_SECTION = { gap: '待核对', inferred: '分析与解读', evidence: '待核对', thin: '', ok: '原著明确内容' };
 const AUDIT_COLOR = { gap: '#b8794c', inferred: '#a8913f', evidence: '#7d6450', thin: '#3d474e', ok: '#4d7d6c' };
 const SECTION_TAG = { '待核对': 'gap', '分析与解读': 'inferred', '资料整理': 'inferred', '原著明确内容': 'ok' };
 const FLAG_ORDER = ['gap', 'inferred', 'evidence', 'thin', 'ok'];
 
-// 审计标记是「命中该特征」，一个条目可同时命中多个；无任何命中即为已核实
+// 审计标记是「命中该特征」，一个条目可同时命中多个；无任何命中仅表示未见自动警示，不证明内容完整或事实已核
 function auditFlags(page) {
   const a = page.audit;
   const f = [];
@@ -331,7 +335,7 @@ function ibBase(page) {
   const a = page.audit;
   const rows = [];
   rows.push(['类型', esc(entryType(page))]);
-  rows.push(['分类', `<a href="#/category/${page.category}">${esc(catLabel(page.category))}</a>`]);
+  rows.push(['分类', classificationLink(page)]);
   if (page.category === 'gu') {
     // 转数来源分离：原著字段与游戏仓库各自成行，谁也补全不了谁
     const { canon, multi, game } = rankInfo(page);
@@ -352,14 +356,14 @@ function ibBase(page) {
             : '<span class="ib-sub">未收录</span>']);
     }
   }
-  if (auditMode) rows.push(['证据锚点', a.evidenceIds ? `${a.evidenceIds} 个 ID${a.rawRefs ? ' · ' + a.rawRefs + ' 处行号' : ''}` : '未识别']);
+  if (auditMode) rows.push(['证据锚点', (a.evidenceIds || a.rawRefs) ? `${a.evidenceIds} 个 ID${a.rawRefs ? ' · ' + a.rawRefs + ' 处原文定位' : ''}` : '未识别']);
   return `<div class="ib-section"><h4>基本信息</h4><dl class="ib-rows">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></div>`;
 }
 
 function ibAudit(page) {
   const a = page.audit;
   const rows = [
-    ['标记', auditChips(page, true) || `<span class="chip chip-ok">已核实</span>`],
+    ['标记', auditChips(page, true) || `<span class="chip chip-ok">无自动警示</span>`],
     ['待核对项', String(a.gapItems)],
     ['未决表述', String(a.unresolved)],
     ['推断标记', String(a.inferred)],
@@ -528,7 +532,7 @@ function viewHome() {
       <div class="audit-card">
         <div class="audit-stats">
           <div class="audit-stat"><div class="num">${s.total}</div><div class="lbl">条目总数</div></div>
-          <div class="audit-stat"><div class="num ok">${s.ok}</div><div class="lbl">已核实</div></div>
+          <div class="audit-stat"><div class="num ok">${s.ok}</div><div class="lbl">无自动警示</div></div>
           <div class="audit-stat"><div class="num dim">${entryPages().reduce((n, p) => n + p.audit.gapItems, 0)}</div><div class="lbl">待核对项总计</div></div>
         </div>
         <div class="audit-rows">
@@ -554,7 +558,7 @@ function viewHome() {
   const hero = $('#hero-search');
   hero.addEventListener('input', () => {
     searchQuery = hero.value.trim();
-    location.hash = '#/search';
+    location.hash = '#/search' + (searchQuery ? '?q=' + encodeURIComponent(searchQuery) : '');
   });
 }
 
@@ -620,19 +624,18 @@ const LAYER_VIEWS = [['all', '全部'], ['canon', '原著'], ['research', '研�
 const VIEW_ALLOW = { all: null, canon: ['canon'], research: ['research', 'notes', 'meta'], gap: ['gap'], game: ['game'] };
 let layerView = localStorage.getItem('wikiLayerView') || 'all';
 
-// 普通模式（审计关）默认只给「结论 + 实现」；推导/缺口/结构说明留给显式选择或审计模式
+// 阅读与审计使用同一份完整正文；分层筛选只由读者的显式选择决定。
 function effectiveAllow(view) {
-  if (view === 'all' && !auditMode) return ['canon', 'game'];
   return VIEW_ALLOW[view];
 }
 
 function layerBar() {
   const hint = auditMode
     ? '原著事实 / 合理推导 /《问真》实现 三层可分看，缺口（待核对）单列；正文里的证据 ID 可点开核对行号'
-    : '默认只显示结论与《问真》实现；点「研究」「缺口」可按需展开推导与缺失，证据 ID 可点开核对行号';
+    : '默认展示全部正文；原著事实、整理笔记、分析、待核对与游戏改编分层标明，可按需筛选，证据 ID 可点开回查';
   return `<div class="layer-bar">
     <span class="lb-label">按层查看</span>
-    ${LAYER_VIEWS.map(([id, label]) => `<button type="button" class="lb-btn${layerView === id ? ' live' : ''}" data-view="${id}" aria-pressed="${layerView === id}">${id === 'all' && !auditMode ? '阅读' : label}</button>`).join('')}
+    ${LAYER_VIEWS.map(([id, label]) => `<button type="button" class="lb-btn${layerView === id ? ' live' : ''}" data-view="${id}" aria-pressed="${layerView === id}">${label}</button>`).join('')}
     <span class="lb-hint">${hint}</span>
   </div>`;
 }
@@ -743,7 +746,7 @@ function viewArticle(page) {
     <div class="col-body">
       <nav class="crumbs">
         <a href="#/">首页</a><span class="sep">/</span>
-        ${page.category === 'home' ? '<span>Wiki 原入口</span>' : `<a href="#/category/${page.category}">${esc(catLabel(page.category))}</a>${entryType(page) === catLabel(page.category) ? '' : `<span class="sep">/</span><span>${esc(entryType(page))}</span>`}`}
+        ${page.category === 'home' ? '<span>Wiki 原入口</span>' : classificationLink(page)}
       </nav>
       <h1 class="page-title">${esc(page.title)}</h1>
       ${page.description ? `<p class="lede" id="page-lede">${esc(page.description)}</p>` : ''}
@@ -751,7 +754,7 @@ function viewArticle(page) {
         <span class="chip chip-type">${esc(entryType(page))}</span>
         ${page.category === 'gu' ? rankChip(page) : ''}
         ${auditMode ? auditChips(page, true) : ''}
-        ${auditMode && a.evidenceIds ? `<span class="sep"></span><span class="meta-note">证据锚点 ${a.evidenceIds} 个 ID${a.rawRefs ? ` · ${a.rawRefs} 处行号` : ''}</span>` : ''}
+        ${auditMode && (a.evidenceIds || a.rawRefs) ? `<span class="sep"></span><span class="meta-note">证据锚点 ${a.evidenceIds} 个 ID${a.rawRefs ? ` · ${a.rawRefs} 处原文定位` : ''}</span>` : ''}
         ${auditMode && page.date ? `<span class="meta-note">最后补全 ${esc(page.date)}</span>` : ''}
       </div>
       ${auditMode ? `<div class="audit-banner"><span>审阅</span><div><b>审计模式已开启。</b>正文各章节按识别结果着色；标记由页面文本自动识别，仅帮助定位缺失章节，不代表原著不存在。</div></div>` : ''}
@@ -802,10 +805,9 @@ function syncTocVisibility() {
 // 页面上没有可收起的层时该控件自然不出现——不新增任何页型专属组件。
 function applyArticleView(view) {
   const allow = effectiveAllow(view);
-  const quiet = !auditMode && view === 'all';
   $$('.article-sec').forEach(sec => {
     const l = sec.dataset.layer;
-    const on = !l || (quiet ? (l === 'canon' || l === 'game') : (!allow || allow.includes(l)));
+    const on = !l || !allow || allow.includes(l);
     sec.classList.toggle('hidden', !on);
   });
   const gp = $('.game-projection');
@@ -818,9 +820,6 @@ function applyLayerView(view) {
   if (!doc) return;
   doc.dataset.view = view;
   const allow = effectiveAllow(view);
-  // 普通模式的默认阅读视图：v2 证据骨架整组收起，只留「主题档案 + 游戏实现」；
-  // 显式点「原著 / 研究 / 缺口」时再按层展开，审计模式下始终全量可见。
-  const quiet = !auditMode && view === 'all';
   $$('.doc-sec', doc).forEach(sec => {
     if (sec.classList.contains('doc-sec--themes')) {
       let shown = 0;
@@ -836,7 +835,7 @@ function applyLayerView(view) {
       });
       sec.classList.toggle('hidden', shown === 0);
     } else {
-      sec.classList.toggle('hidden', quiet || !(!allow || allow.includes(sec.dataset.layer)));
+      sec.classList.toggle('hidden', !!allow && !allow.includes(sec.dataset.layer));
     }
   });
   const gp = $('.game-projection');
@@ -909,7 +908,7 @@ function enhanceArticle(page, skipToc = false) {
   const toc = $('#toc');
   if (!article) return;
   const heads = $$('h2', article);
-  heads.forEach((h, i) => { h.id = 'sec-' + i; });
+  heads.forEach((h, i) => { h.id ||= 'sec-' + i; });
 
   // 把扁平的「h2 + 后续兄弟节点」切成章节块，带上构建期标注的层，供渐进披露复用
   if (heads.length && article.querySelector('h2[data-layer]')) {
@@ -972,6 +971,17 @@ function enhanceArticle(page, skipToc = false) {
 
 /* 证据行号展开 + 审计标记跳转：全局委托，新旧页型通用 */
 document.addEventListener('click', (e) => {
+  // 页内导航只滚动，保留当前文章路由，后续切换审计模式仍停留在本页。
+  const link = e.target.closest('a[href^="#"]');
+  const href = link?.getAttribute('href');
+  if (href && !href.startsWith('#/')) {
+    const target = document.getElementById(decodeURIComponent(href.slice(1)));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+  }
   const btn = e.target.closest('button.ev');
   if (btn) {
     const host = btn.closest('.blk-body, .sec-body, .doc-intro, .article') || btn.parentElement;
@@ -1035,7 +1045,7 @@ function render() {
   if (!db) return;
   const route = currentRoute();
   const isArt = route === '/art';
-  const isWorld = route === '/category/world';
+  const isWorld = route === '/kind/world' || route === '/category/world';
 
   document.body.classList.toggle('audit-on', auditMode);
   const toggle = $('#audit-toggle');
@@ -1118,13 +1128,13 @@ $('#search').addEventListener('input', () => {
     render();
     if (route === '/search') history.replaceState(null, '', '#/search' + (searchQuery ? '?q=' + encodeURIComponent(searchQuery) : ''));
   } else {
-    location.hash = '#/search';
+    location.hash = '#/search' + (searchQuery ? '?q=' + encodeURIComponent(searchQuery) : '');
   }
 });
 
 $('#search-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  if (currentRoute() !== '/search') location.hash = '#/search';
+  if (currentRoute() !== '/search') location.hash = '#/search' + (searchQuery ? '?q=' + encodeURIComponent(searchQuery) : '');
 });
 
 document.addEventListener('keydown', (e) => {
@@ -1139,6 +1149,7 @@ document.addEventListener('keydown', (e) => {
 // 页内锚点（#sec-3、#game-projection）不是路由：详情页目录全靠它，不能重绘成「未找到」
 window.addEventListener('hashchange', () => {
   if (!location.hash.startsWith('#/')) return;
+  if (currentRoute() === '/search') searchQuery = new URLSearchParams(location.hash.split('?')[1] || '').get('q') || '';
   render();
   window.scrollTo(0, 0);
 });
